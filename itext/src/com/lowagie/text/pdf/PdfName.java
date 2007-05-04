@@ -58,8 +58,8 @@ package com.lowagie.text.pdf;
  * %, (, ), [, ], &lt;, &gt;, {, }, / and #. Any character except 0x00 may be included
  * in a name by writing its twocharacter hex code, preceded by #. The maximum number
  * of characters in a name is 127.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.5 (page 39-40).
+ * This object is described in the 'Portable Document Format Reference Manual version 1.7'
+ * section 3.2.4 (page 56-58).
  * <P>
  *
  * @see		PdfObject

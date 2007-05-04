@@ -49,9 +49,12 @@
  */
 package com.lowagie.text.factories;
 
+import java.awt.Color;
 import java.util.Properties;
 
 import com.lowagie.text.Anchor;
+import com.lowagie.text.Cell;
+import com.lowagie.text.ChapterAutoNumber;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.ElementTags;
 import com.lowagie.text.FontFactory;
@@ -59,6 +62,9 @@ import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.Section;
+import com.lowagie.text.Utilities;
 import com.lowagie.text.html.Markup;
 
 /**
@@ -106,7 +112,7 @@ public class ElementFactory {
 		if (value != null && value.endsWith("%")) {
 			float p = Float.parseFloat(
 					value.substring(0, value.length() - 1) + "f") / 100f;
-			chunk.setTextRise(p * chunk.getFont().size());
+			chunk.setTextRise(p * chunk.getFont().getSize());
 		}
 		value = attributes.getProperty(ElementTags.GENERICTAG);
 		if (value != null) {
@@ -182,11 +188,11 @@ public class ElementFactory {
 	public static List getList(Properties attributes) {
 		List list = new List();
 
-		list.setNumbered("true".equalsIgnoreCase(attributes.getProperty(ElementTags.NUMBERED)));
-		list.setLettered("true".equalsIgnoreCase(attributes.getProperty(ElementTags.LETTERED)));
-		list.setLowercase("true".equalsIgnoreCase(attributes.getProperty(ElementTags.LOWERCASE)));
-		list.setAutoindent("true".equalsIgnoreCase(attributes.getProperty(ElementTags.AUTO_INDENT_ITEMS)));
-		list.setAlignindent("true".equalsIgnoreCase(attributes.getProperty(ElementTags.ALIGN_INDENTATION_ITEMS)));
+		list.setNumbered(Utilities.checkTrueOrFalse(attributes, ElementTags.NUMBERED));
+		list.setLettered(Utilities.checkTrueOrFalse(attributes, ElementTags.LETTERED));
+		list.setLowercase(Utilities.checkTrueOrFalse(attributes, ElementTags.LOWERCASE));
+		list.setAutoindent(Utilities.checkTrueOrFalse(attributes, ElementTags.AUTO_INDENT_ITEMS));
+		list.setAlignindent(Utilities.checkTrueOrFalse(attributes, ElementTags.ALIGN_INDENTATION_ITEMS));
 		
 		String value;
 		
@@ -222,5 +228,120 @@ public class ElementFactory {
         }
         
 		return list;
+	}
+	
+	public static Cell getCell(Properties attributes) {
+		Cell cell = new Cell();
+		String value;
+
+		cell.setHorizontalAlignment(attributes.getProperty(ElementTags.HORIZONTALALIGN));
+		cell.setVerticalAlignment(attributes.getProperty(ElementTags.VERTICALALIGN));
+		cell.setWidth(attributes.getProperty(ElementTags.WIDTH));
+		
+		value = attributes.getProperty(ElementTags.COLSPAN);
+		if (value != null) {
+			cell.setColspan(Integer.parseInt(value));
+		}
+		value = attributes.getProperty(ElementTags.ROWSPAN);
+		if (value != null) {
+			cell.setRowspan(Integer.parseInt(value));
+		}
+		value = attributes.getProperty(ElementTags.LEADING);
+		if (value != null) {
+			cell.setLeading(Float.parseFloat(value + "f"));
+		}
+		cell.setHeader(Utilities.checkTrueOrFalse(attributes, ElementTags.HEADER));
+		if (Utilities.checkTrueOrFalse(attributes, ElementTags.NOWRAP)) {
+			cell.setMaxLines(1);
+		}
+		value = attributes.getProperty(ElementTags.BORDERWIDTH);
+		if (value != null) {
+			cell.setBorderWidth(Float.parseFloat(value + "f"));
+		}
+		int border = 0;
+		if (Utilities.checkTrueOrFalse(attributes, ElementTags.LEFT)) {
+			border |= Rectangle.LEFT;
+		}
+		if (Utilities.checkTrueOrFalse(attributes, ElementTags.RIGHT)) {
+			border |= Rectangle.RIGHT;
+		}
+		if (Utilities.checkTrueOrFalse(attributes, ElementTags.TOP)) {
+			border |= Rectangle.TOP;
+		}
+		if (Utilities.checkTrueOrFalse(attributes, ElementTags.BOTTOM)) {
+			border |= Rectangle.BOTTOM;
+		}
+		cell.setBorder(border);
+		
+		String r = attributes.getProperty(ElementTags.RED);
+		String g = attributes.getProperty(ElementTags.GREEN);
+		String b = attributes.getProperty(ElementTags.BLUE);
+		if (r != null || g != null || b != null) {
+			int red = 0;
+			int green = 0;
+			int blue = 0;
+			if (r != null) red = Integer.parseInt(r);
+			if (g != null) green = Integer.parseInt(g);
+			if (b != null) blue = Integer.parseInt(b);
+			cell.setBorderColor(new Color(red, green, blue));
+		}
+		else {
+			cell.setBorderColor(Markup.decodeColor(attributes.getProperty(ElementTags.BORDERCOLOR)));
+		}
+		r = (String)attributes.remove(ElementTags.BGRED);
+		g = (String)attributes.remove(ElementTags.BGGREEN);
+		b = (String)attributes.remove(ElementTags.BGBLUE);
+		value = attributes.getProperty(ElementTags.BACKGROUNDCOLOR);
+		if (r != null || g != null || b != null) {
+			int red = 0;
+			int green = 0;
+			int blue = 0;
+			if (r != null) red = Integer.parseInt(r);
+			if (g != null) green = Integer.parseInt(g);
+			if (b != null) blue = Integer.parseInt(b);
+			cell.setBackgroundColor(new Color(red, green, blue));
+		}
+		else if (value != null) {
+			cell.setBackgroundColor(Markup.decodeColor(value));
+		}
+		else {
+			value = attributes.getProperty(ElementTags.GRAYFILL);
+			if (value != null) {
+				cell.setGrayFill(Float.parseFloat(value + "f"));
+			}
+		}
+		return cell;
+	}
+	
+	public static ChapterAutoNumber getChapter(Properties attributes) {
+		ChapterAutoNumber chapter = new ChapterAutoNumber("");
+		setSectionParameters(chapter, attributes);
+		return chapter;
+	}
+	
+	public static Section getSection(Section parent, Properties attributes) {
+		Section section = parent.addSection("");
+		setSectionParameters(section, attributes);
+		return section;
+	}
+	
+	private static void setSectionParameters(Section section, Properties attributes) {
+		String value;
+		value = attributes.getProperty(ElementTags.NUMBERDEPTH);
+		if (value != null) {
+			section.setNumberDepth(Integer.parseInt(value));
+		}
+		value = attributes.getProperty(ElementTags.INDENT);
+		if (value != null) {
+			section.setIndentation(Float.parseFloat(value + "f"));
+		}
+		value = attributes.getProperty(ElementTags.INDENTATIONLEFT);
+		if (value != null) {
+			section.setIndentationLeft(Float.parseFloat(value + "f"));
+		}
+		value = attributes.getProperty(ElementTags.INDENTATIONRIGHT);
+		if (value != null) {
+			section.setIndentationRight(Float.parseFloat(value + "f"));
+		}
 	}
 }

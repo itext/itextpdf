@@ -62,8 +62,8 @@ import java.util.ListIterator;
  * An array is a sequence of PDF objects. An array may contain a mixture of object types.
  * An array is written as a left square bracket ([), followed by a sequence of objects,
  * followed by a right square bracket (]).<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.6 (page 40).
+ * This object is described in the 'Portable Document Format Reference Manual version 1.7'
+ * section 3.2.5 (page 58).
  *
  * @see		PdfObject
  */

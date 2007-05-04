@@ -78,15 +78,13 @@ import java.util.Properties;
 
 public class Chapter extends Section {
     
-    // constructors
-    
+    // constant
 	private static final long serialVersionUID = 1791000695779357361L;
 	
 	/**
 	 * Constructs a new <CODE>Chapter</CODE>.
 	 * @param	number		the Chapter number
      */
-    
     public Chapter(int number) {
         super(null, 1);
         numbers = new ArrayList();
@@ -108,64 +106,42 @@ public class Chapter extends Section {
         triggerNewPage = true;
     }
     
-/**
- * Constructs a new <CODE>Chapter</CODE>.
- *
- * @param	title		the Chapter title (as a <CODE>String</CODE>)
- * @param	number		the Chapter number
- */
-    
+    /**
+     * Constructs a new <CODE>Chapter</CODE>.
+     *
+     * @param	title		the Chapter title (as a <CODE>String</CODE>)
+     * @param	number		the Chapter number
+     */
     public Chapter(String title, int number) {
         this(new Paragraph(title), number);
     }
     
-/**
- * Creates a new <CODE>Chapter</CODE> following a set of attributes.
- *
- * @param	attributes	the attributes
- * @param number a userdefined Chapter number
- */
-    
-    public Chapter(Properties attributes, int number) {
-        this(new Paragraph(""), number);
-        
-        String value;
-        if ((value = (String)attributes.remove(ElementTags.NUMBERDEPTH)) != null) {
-            setNumberDepth(Integer.parseInt(value));
-        }
-        if ((value = (String)attributes.remove(ElementTags.INDENT)) != null) {
-            setIndentation(Float.parseFloat(value + "f"));
-        }
-        if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.parseFloat(value + "f"));
-        }
-        if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.parseFloat(value + "f"));
-        }
-    }
-    
     // implementation of the Element-methods
     
-/**
- * Gets the type of the text element.
- *
- * @return	a type
- */
-    
+    /**
+     * Gets the type of the text element.
+     *
+     * @return	a type
+     */
     public int type() {
         return Element.CHAPTER;
     }
     
-    // methods
+// deprecated stuff
     
-/**
- * Checks if a given tag corresponds with this object.
- *
- * @param   tag     the given tag
- * @return  true if the tag corresponds
- */
-    
-    public static boolean isTag(String tag) {
-        return ElementTags.CHAPTER.equals(tag);
+    /**
+     * Creates a new <CODE>Chapter</CODE> following a set of attributes.
+     *
+     * @param	attributes	the attributes
+     * @param number a userdefined Chapter number
+     * @deprecated Use ElementFactory.getChapter(attributes)
+     */
+    public Chapter(Properties attributes, int number) {
+    	this("", number);
+    	Chapter chapter = com.lowagie.text.factories.ElementFactory.getChapter(attributes);
+    	setNumberDepth(chapter.getNumberDepth());
+    	setIndentation(chapter.getIndentation());
+    	setIndentationLeft(chapter.getIndentationLeft());
+    	setIndentationRight(chapter.getIndentationRight());
     }
 }

@@ -400,7 +400,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      */
     public float getLeading() {
         if (Float.isNaN(leading)) {
-            return font.leading(1.5f);
+            return font.getCalculatedLeading(1.5f);
         }
         return leading;
     }
@@ -499,7 +499,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     	Phrase p = new Phrase(true);
     	p.setLeading(leading);
     	p.font = font;
-    	if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS && font.getBaseFont() == null) {
+    	if (font.getFamily() != Font.SYMBOL && font.getFamily() != Font.ZAPFDINGBATS && font.getBaseFont() == null) {
             int index;
             while((index = SpecialSymbol.index(string)) > -1) {
                 if (index > 0) {
@@ -507,7 +507,7 @@ public class Phrase extends ArrayList implements TextElementArray {
                     ((ArrayList)p).add(new Chunk(firstPart, font));
                     string = string.substring(index);
                 }
-                Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
+                Font symbol = new Font(Font.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
                 StringBuffer buf = new StringBuffer();
                 buf.append(SpecialSymbol.getCorrespondingSymbol(string.charAt(0)));
                 string = string.substring(1);

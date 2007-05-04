@@ -192,16 +192,6 @@ public class MarkedSection extends MarkedObject {
 	// public methods
 	    
 	/**
-	 * Alters the attributes of this <CODE>Section</CODE>.
-	 *
-	 * @param	attributes	the attributes
-	 */
-	    
-	public void set(Properties attributes) {
-		((Section)element).set(attributes);
-	}
-	    
-	/**
 	 * Sets the title of this section.
 	 *
 	 * @param	title	the new title

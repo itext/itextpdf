@@ -569,7 +569,7 @@ public class Table extends Rectangle {
         if (mDebug) {
             if (aLocation.x < 0) throw new BadElementException("row coordinate of location must be >= 0");
             if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
-            if (!isValidLocation(aCell, aLocation)) throw new BadElementException("Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
+            if (!isValidLocation(aCell, aLocation)) throw new BadElementException("Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.getColspan() + " and a rowspan of " + aCell.getRowspan() + " is illegal (beyond boundaries/overlapping).");
         }
         if (aCell.border() == UNDEFINED) aCell.setBorder(defaultLayout.border());
         aCell.fill();
@@ -624,10 +624,10 @@ public class Table extends Rectangle {
         cell.setBorderWidth(defaultLayout.borderWidth());
         cell.setBorderColor(defaultLayout.borderColor());
         cell.setBackgroundColor(defaultLayout.backgroundColor());
-        cell.setHorizontalAlignment(defaultLayout.horizontalAlignment());
-        cell.setVerticalAlignment(defaultLayout.verticalAlignment());
-        cell.setColspan(defaultLayout.colspan());
-        cell.setRowspan(defaultLayout.rowspan());
+        cell.setHorizontalAlignment(defaultLayout.getHorizontalAlignment());
+        cell.setVerticalAlignment(defaultLayout.getVerticalAlignment());
+        cell.setColspan(defaultLayout.getColspan());
+        cell.setRowspan(defaultLayout.getRowspan());
         addCell(cell, location);
     }
     
@@ -864,11 +864,11 @@ public class Table extends Rectangle {
         if (aCell.backgroundColor() == null) {
             aCell.setBackgroundColor(defaultLayout.backgroundColor());
         }
-        if (aCell.horizontalAlignment() == Element.ALIGN_UNDEFINED) {
-            aCell.setHorizontalAlignment(defaultLayout.horizontalAlignment());
+        if (aCell.getHorizontalAlignment() == Element.ALIGN_UNDEFINED) {
+            aCell.setHorizontalAlignment(defaultLayout.getHorizontalAlignment());
         }
-        if (aCell.verticalAlignment() == Element.ALIGN_UNDEFINED) {
-            aCell.setVerticalAlignment(defaultLayout.verticalAlignment());
+        if (aCell.getVerticalAlignment() == Element.ALIGN_UNDEFINED) {
+            aCell.setVerticalAlignment(defaultLayout.getVerticalAlignment());
         }
     }
     
@@ -1434,7 +1434,7 @@ public class Table extends Rectangle {
                                         Cell lDummyC = (Cell)lDummyElement;
                                         // Find col to add cell in and set col span
                                         col = colMap[l];
-                                        int ot = colMap[l+lDummyC.colspan()];
+                                        int ot = colMap[l+lDummyC.getColspan()];
                                         
                                         lDummyC.setColspan(ot-col);
                                     }
@@ -1451,8 +1451,8 @@ public class Table extends Rectangle {
                         if ( Cell.class.isInstance(aElement) ) {
                             
                             // adjust spans for cell
-                            ((Cell) aElement).setRowspan(((Cell) ((Row) rows.get(i)).getCell(j)).rowspan() + lDummyHeights[i] - 1);
-                            ((Cell) aElement).setColspan(((Cell) ((Row) rows.get(i)).getCell(j)).colspan() + lDummyWidths[j] - 1);
+                            ((Cell) aElement).setRowspan(((Cell) ((Row) rows.get(i)).getCell(j)).getRowspan() + lDummyHeights[i] - 1);
+                            ((Cell) aElement).setColspan(((Cell) ((Row) rows.get(i)).getCell(j)).getColspan() + lDummyWidths[j] - 1);
                             
                             // most likely this cell covers a larger area because of the row/cols splits : define not-to-be-filled cells
                             placeCell(newRows,((Cell) aElement), new Point(lDummyRow,lDummyColumn));
@@ -1503,12 +1503,12 @@ public class Table extends Rectangle {
         // rowspan not beyond last column
         if ( aLocation.x < rows.size() )        // if false : new location is already at new, not-yet-created area so no check
         {
-            if ((aLocation.y + aCell.colspan()) > columns) {
+            if ((aLocation.y + aCell.getColspan()) > columns) {
                 return false;
             }
             
-            int difx = ((rows.size() - aLocation.x) >  aCell.rowspan()) ? aCell.rowspan() : rows.size() - aLocation.x;
-            int dify = ((columns - aLocation.y) >  aCell.colspan()) ? aCell.colspan() : columns - aLocation.y;
+            int difx = ((rows.size() - aLocation.x) >  aCell.getRowspan()) ? aCell.getRowspan() : rows.size() - aLocation.x;
+            int dify = ((columns - aLocation.y) >  aCell.getColspan()) ? aCell.getColspan() : columns - aLocation.y;
             // no other content at cells targetted by rowspan/colspan
             for (int i=aLocation.x; i < (aLocation.x + difx); i++) {
                 for (int j=aLocation.y; j < (aLocation.y + dify); j++) {
@@ -1519,7 +1519,7 @@ public class Table extends Rectangle {
             }
         }
         else {
-            if ((aLocation.y + aCell.colspan()) > columns) {
+            if ((aLocation.y + aCell.getColspan()) > columns) {
                 return false;
             }
         }
@@ -1539,9 +1539,9 @@ public class Table extends Rectangle {
         int i;
         Row row = null;
         int lColumns = ((Row) someRows.get(0)).columns();
-        int rowCount = aPosition.x + aCell.rowspan() - someRows.size();
+        int rowCount = aPosition.x + aCell.getRowspan() - someRows.size();
         assumeTableDefaults(aCell);
-        if ( (aPosition.x + aCell.rowspan()) > someRows.size() )        //create new rows ?
+        if ( (aPosition.x + aCell.getRowspan()) > someRows.size() )        //create new rows ?
         {
             for (i = 0; i < rowCount; i++) {
                 row = new Row(lColumns);
@@ -1550,8 +1550,8 @@ public class Table extends Rectangle {
         }
         
         // reserve cell in rows below
-        for (i = aPosition.x + 1; i < (aPosition.x  + aCell.rowspan()); i++) {
-            if ( !((Row) someRows.get(i)).reserve(aPosition.y, aCell.colspan())) {
+        for (i = aPosition.x + 1; i < (aPosition.x  + aCell.getRowspan()); i++) {
+            if ( !((Row) someRows.get(i)).reserve(aPosition.y, aCell.getColspan())) {
                 
                 // should be impossible to come here :-)
                 throw new RuntimeException("addCell - error in reserve");

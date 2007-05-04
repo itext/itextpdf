@@ -53,8 +53,8 @@ package com.lowagie.text.pdf;
 /**
  * <CODE>PdfNull</CODE> is the Null object represented by the keyword <VAR>null</VAR>.
  * <P>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.9 (page 53).
+ * This object is described in the 'Portable Document Format Reference Manual version 1.7'
+ * section 3.2.8 (page 63).
  *
  * @see		PdfObject
  */

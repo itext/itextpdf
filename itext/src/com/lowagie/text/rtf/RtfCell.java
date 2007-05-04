@@ -199,31 +199,31 @@ public class RtfCell {
             cellRight = cellLeft + cellWidth;
             return cellRight;
         }
-        if (cell.cellWidth() != null && !cell.cellWidth().equals("")) {
+        if (cell.getWidth() != null && !cell.getWidth().equals("")) {
 
-            this.cellWidth = (int) (Integer.parseInt(cell.cellWidth()) * RtfWriter.TWIPSFACTOR);
+            this.cellWidth = (int) (Integer.parseInt(cell.getWidth()) * RtfWriter.TWIPSFACTOR);
         }
         cellRight = cellLeft + this.cellWidth;
         store = cell;
         emptyCell = false;
-        if (cell.colspan() > 1) {
-            if (cell.rowspan() > 1) {
+        if (cell.getColspan() > 1) {
+            if (cell.getRowspan() > 1) {
                 mergeType = MERGE_BOTH_FIRST;
-                for (int i = y; i < y + cell.rowspan(); i++) {
+                for (int i = y; i < y + cell.getRowspan(); i++) {
                     if (i > y) mainTable.setMerge(x, i, MERGE_VERT_PREV, this);
-                    for (int j = x + 1; j < x + cell.colspan(); j++) {
+                    for (int j = x + 1; j < x + cell.getColspan(); j++) {
                         mainTable.setMerge(j, i, MERGE_BOTH_PREV, this);
                     }
                 }
             } else {
                 mergeType = MERGE_HORIZ_FIRST;
-                for (int i = x + 1; i < x + cell.colspan(); i++) {
+                for (int i = x + 1; i < x + cell.getColspan(); i++) {
                     mainTable.setMerge(i, y, MERGE_HORIZ_PREV, this);
                 }
             }
-        } else if (cell.rowspan() > 1) {
+        } else if (cell.getRowspan() > 1) {
             mergeType = MERGE_VERT_FIRST;
-            for (int i = y + 1; i < y + cell.rowspan(); i++) {
+            for (int i = y + 1; i < y + cell.getRowspan(); i++) {
                 mainTable.setMerge(x, i, MERGE_VERT_PREV, this);
             }
         }
@@ -283,7 +283,7 @@ public class RtfCell {
                     os.write(cellMergeFirst);
                     break;
             }
-            switch (store.verticalAlignment()) {
+            switch (store.getVerticalAlignment()) {
                 case Element.ALIGN_BOTTOM:
                     os.write(RtfWriter.escape);
                     os.write(cellVerticalAlignBottom);
@@ -443,7 +443,7 @@ public class RtfCell {
                             container.add(element);
                         } else {
                             container = new Paragraph();
-                            container.setAlignment(store.horizontalAlignment());
+                            container.setAlignment(store.getHorizontalAlignment());
                             container.add(element);
                         }
                     } else {
@@ -456,7 +456,7 @@ public class RtfCell {
                         // if horizontal alignment is undefined overwrite
                         // with that of enclosing cell
                         if (element instanceof Paragraph && ((Paragraph) element).getAlignment() == Element.ALIGN_UNDEFINED) {
-                            ((Paragraph) element).setAlignment(store.horizontalAlignment());
+                            ((Paragraph) element).setAlignment(store.getHorizontalAlignment());
                         }
                         writer.addElement(element, os);
                         if (element.type() == Element.PARAGRAPH && cellIterator.hasNext()) {

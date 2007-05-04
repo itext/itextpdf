@@ -116,10 +116,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      * The borders of this RtfCell
      */
     private RtfBorderGroup borders = null;
-    /**
-     * The vertical alignment of this RtfCell
-     */
-    private int verticalAlignment = Cell.ALIGN_MIDDLE;
+    
     /**
      * The background color of this RtfCell
      */
@@ -132,14 +129,6 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      * The merge type of this RtfCell
      */
     private int mergeType = MERGE_NONE;
-    /**
-     * The number of columns spanned by this RtfCell
-     */
-    private int colspan = 1;
-    /**
-     * The number of rows spanned by this RtfCell
-     */
-    private int rowspan = 1;
     /**
      * The RtfDocument this RtfCell belongs to
      */
@@ -159,6 +148,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     public RtfCell() {
         super();
         this.borders = new RtfBorderGroup();
+        verticalAlignment = ALIGN_MIDDLE;
     }
     
     /**
@@ -169,6 +159,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     public RtfCell(String content) {
         super(content);
         this.borders = new RtfBorderGroup();
+        verticalAlignment = ALIGN_MIDDLE;
     }
     
     /**
@@ -180,6 +171,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     public RtfCell(Element element) throws BadElementException {
         super(element);
         this.borders = new RtfBorderGroup();
+        verticalAlignment = ALIGN_MIDDLE;
     }
     
     /**
@@ -190,6 +182,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     public RtfCell(Properties properties) {
         super(properties);
         this.borders = new RtfBorderGroup();
+        verticalAlignment = ALIGN_MIDDLE;
     }
     
     /**
@@ -200,6 +193,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     protected RtfCell(boolean deleted) {
         super();
         this.deleted = deleted;
+        verticalAlignment = ALIGN_MIDDLE;
     }
     
     /**
@@ -228,9 +222,9 @@ public class RtfCell extends Cell implements RtfExtendedElement {
             return;
         }
         
-        this.colspan = cell.colspan();
-        this.rowspan = cell.rowspan();
-        if(cell.rowspan() > 1) {
+        this.colspan = cell.getColspan();
+        this.rowspan = cell.getRowspan();
+        if(cell.getRowspan() > 1) {
             this.mergeType = MERGE_VERT_PARENT;
         }
         if(cell instanceof RtfCell) {
@@ -238,7 +232,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
         } else {
             this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, cell.border(), cell.borderWidth(), cell.borderColor());
         }
-        this.verticalAlignment = cell.verticalAlignment();
+        this.verticalAlignment = cell.getVerticalAlignment();
         if(cell.backgroundColor() == null) {
             this.backgroundColor = new RtfColor(this.document, 255, 255, 255);
         } else {
@@ -258,7 +252,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                         container.add(element);
                     } else {
                         container = new Paragraph();
-                        container.setAlignment(cell.horizontalAlignment());
+                        container.setAlignment(cell.getHorizontalAlignment());
                         container.add(element);
                     }
                 } else {
@@ -271,7 +265,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                     // if horizontal alignment is undefined overwrite
                     // with that of enclosing cell
                     if (element instanceof Paragraph && ((Paragraph) element).getAlignment() == Element.ALIGN_UNDEFINED) {
-                        ((Paragraph) element).setAlignment(cell.horizontalAlignment());
+                        ((Paragraph) element).setAlignment(cell.getHorizontalAlignment());
                     }
 
                     RtfBasicElement rtfElement = this.document.getMapper().mapElement(element);
@@ -428,24 +422,6 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     }
     
     /**
-     * Gets the number of columns this RtfCell spans
-     * 
-     * @return The number of columns this RtfCell spans
-     */
-    protected int getColspan() {
-        return this.colspan;
-    }
-    
-    /**
-     * Gets the number of rows this RtfCell spans
-     * 
-     * @return The number of rows this RtfCell spans
-     */
-    protected int getRowspan() {
-        return this.rowspan;
-    }
-    
-    /**
      * Gets the cell padding of this RtfCell
      * 
      * @return The cell padding of this RtfCell
@@ -470,15 +446,6 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      */
     public void setBorders(RtfBorderGroup borderGroup) {
         this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, borderGroup);
-    }
-    
-    /**
-     * Get the vertical alignment of this RtfCell
-     * 
-     * @return The vertical alignment of this RtfCell
-     */
-    protected int getVerticalAlignment() {
-        return this.verticalAlignment;
     }
     
     /**

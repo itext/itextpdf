@@ -55,7 +55,6 @@ import java.util.Properties;
 
 import org.xml.sax.Attributes;
 
-import com.lowagie.text.Cell;
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -188,7 +187,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
         }
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
-            if (Table.isTag(peer.getTag()) || Cell.isTag(peer.getTag())) {
+            if (Table.isTag(peer.getTag()) || ElementTags.CELL.equals(peer.getTag())) {
                 Properties p = peer.getAttributes(attrs);
                 String value;
                 if (Table.isTag(peer.getTag())

@@ -302,9 +302,9 @@ public class RtfFont extends Font implements RtfExtendedElement {
                 }
             }
             
-            setSize(font.size());
-            setStyle(font.style());
-            setColor(font.color());
+            setSize(font.getSize());
+            setStyle(font.getStyle());
+            setColor(font.getColor());
         }
 
         if(this.fontName.equalsIgnoreCase("unknown")) {
@@ -564,7 +564,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     public void setSize(float size){
         super.setSize(size);
-        this.fontSize = (int) size();
+        this.fontSize = (int) getSize();
     }
 
     /**
@@ -581,7 +581,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     public void setStyle(int style){
         super.setStyle(style);
-        this.fontStyle = style();
+        this.fontStyle = getStyle();
     }
     
     /**
@@ -589,7 +589,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     public void setStyle(String style) {
         super.setStyle(style);
-        fontStyle = style();
+        fontStyle = getStyle();
     }
 
     /**
@@ -692,23 +692,23 @@ public class RtfFont extends Font implements RtfExtendedElement {
             dFamilyname = this.fontName;
         }
 
-        float dSize = font.size();
+        float dSize = font.getSize();
         if(dSize == Font.UNDEFINED) {
-            dSize = this.size();
+            dSize = this.getSize();
         }
 
         int dStyle = Font.UNDEFINED;
-        if(this.style() != Font.UNDEFINED && font.style() != Font.UNDEFINED) {
-            dStyle = this.style() | font.style();
-        } else if(this.style() != Font.UNDEFINED) {
-            dStyle = this.style();
-        } else if(font.style() != Font.UNDEFINED) {
-            dStyle = font.style();
+        if(this.getStyle() != Font.UNDEFINED && font.getStyle() != Font.UNDEFINED) {
+            dStyle = this.getStyle() | font.getStyle();
+        } else if(this.getStyle() != Font.UNDEFINED) {
+            dStyle = this.getStyle();
+        } else if(font.getStyle() != Font.UNDEFINED) {
+            dStyle = font.getStyle();
         }
 
-        Color dColor = font.color();
+        Color dColor = font.getColor();
         if(dColor == null) {
-            dColor = this.color();
+            dColor = this.getColor();
         }
         
         int dCharset = this.charset;

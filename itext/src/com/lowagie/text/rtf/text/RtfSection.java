@@ -95,12 +95,12 @@ public class RtfSection extends RtfElement {
         super(doc);
         items = new ArrayList();
         try {
-            if(section.title() != null) {
-                this.title = (RtfParagraph) doc.getMapper().mapElement(section.title());
+            if(section.getTitle() != null) {
+                this.title = (RtfParagraph) doc.getMapper().mapElement(section.getTitle());
             }
             if(document.getAutogenerateTOCEntries()) {
                 StringBuffer titleText = new StringBuffer();
-                Iterator it = section.title().iterator();
+                Iterator it = section.getTitle().iterator();
                 while(it.hasNext()) {
                     Element element = (Element) it.next();
                     if(element.type() == Element.CHUNK) {
@@ -122,7 +122,7 @@ public class RtfSection extends RtfElement {
                 }
             }
             
-            updateIndentation(section.indentationLeft(), section.indentationRight(), section.indentation());
+            updateIndentation(section.getIndentationLeft(), section.getIndentationRight(), section.getIndentation());
         } catch(DocumentException de) {
             de.printStackTrace();
         }

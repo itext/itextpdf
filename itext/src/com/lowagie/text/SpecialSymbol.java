@@ -95,7 +95,7 @@ public class SpecialSymbol {
         if (greek == ' ') {
             return new Chunk(String.valueOf(c), font);
         }
-        Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
+        Font symbol = new Font(Font.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
         String s = String.valueOf(greek);
         return new Chunk(s, symbol);
     }

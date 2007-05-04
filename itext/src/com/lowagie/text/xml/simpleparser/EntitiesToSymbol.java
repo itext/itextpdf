@@ -363,7 +363,7 @@ public class EntitiesToSymbol {
                 return new Chunk(e, font);
             }
         }
-        Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
+        Font symbol = new Font(Font.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
         return new Chunk(String.valueOf(s), symbol);
     }
     

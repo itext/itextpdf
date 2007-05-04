@@ -55,8 +55,8 @@ package com.lowagie.text.pdf;
  * <P>
  * Integers may be specified by signed or unsigned constants. Reals may only be
  * in decimal format.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.3 (page 37).
+ * This object is described in the 'Portable Document Format Reference Manual version 1.7'
+ * section 3.3.2 (page 52-53).
  *
  * @see		PdfObject
  * @see		BadPdfFormatException

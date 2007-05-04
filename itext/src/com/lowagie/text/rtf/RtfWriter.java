@@ -960,15 +960,15 @@ public class RtfWriter extends DocWriter {
             out.write(sectionDefaults);
             writeSectionDefaults(out);
         }
-        if (sectionElement.title() != null) {
+        if (sectionElement.getTitle() != null) {
             if (writeTOC) {
                 StringBuffer title = new StringBuffer("");
-                for (ListIterator li = sectionElement.title().getChunks().listIterator(); li.hasNext();) {
+                for (ListIterator li = sectionElement.getTitle().getChunks().listIterator(); li.hasNext();) {
                     title.append(((Chunk) li.next()).getContent());
                 }
-                add(new RtfTOCEntry(title.toString(), sectionElement.title().getFont()));
+                add(new RtfTOCEntry(title.toString(), sectionElement.getTitle().getFont()));
             } else {
-                add(sectionElement.title());
+                add(sectionElement.getTitle());
             }
             out.write(escape);
             out.write(paragraph);
@@ -1135,14 +1135,14 @@ public class RtfWriter extends DocWriter {
         }
         out.write(escape);
         out.write(fontSize);
-        if (font.size() > 0) {
-            writeInt(out, (int) (font.size() * 2));
+        if (font.getSize() > 0) {
+            writeInt(out, (int) (font.getSize() * 2));
         } else {
             writeInt(out, 20);
         }
         out.write(escape);
         out.write(fontColor);
-        writeInt(out, addColor(font.color()));
+        writeInt(out, addColor(font.getColor()));
         if (font.isBold()) {
             out.write(escape);
             out.write(bold);
@@ -2275,19 +2275,19 @@ public class RtfWriter extends DocWriter {
             RtfHeaderFooter rhf = (RtfHeaderFooter) hf;
             if(rhf.content() instanceof Chunk) {
                 addFont(((Chunk) rhf.content()).getFont());
-                addColor(((Chunk) rhf.content()).getFont().color());
+                addColor(((Chunk) rhf.content()).getFont().getColor());
             } else if(rhf.content() instanceof Phrase) {
                 addFont(((Phrase) rhf.content()).getFont());
-                addColor(((Phrase) rhf.content()).getFont().color());
+                addColor(((Phrase) rhf.content()).getFont().getColor());
             }
         }
         if(hf.getBefore() != null) {
             addFont(hf.getBefore().getFont());
-            addColor(hf.getBefore().getFont().color());
+            addColor(hf.getBefore().getFont().getColor());
         }
         if(hf.getAfter() != null) {
             addFont(hf.getAfter().getFont());
-            addColor(hf.getAfter().getFont().color());
+            addColor(hf.getAfter().getFont().getColor());
         }
     }
 

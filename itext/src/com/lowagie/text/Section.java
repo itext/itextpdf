@@ -83,30 +83,28 @@ import java.util.Properties;
 
 public class Section extends ArrayList implements TextElementArray {
     
-    // membervariables
-    
-private static final long serialVersionUID = 3324172577544748043L;
+    // constant
+	private static final long serialVersionUID = 3324172577544748043L;
 
-/** This is the title of this section. */
+	// member variables
+	
+	/** The title of this section. */
     protected Paragraph title;
     
-/** This is the number of sectionnumbers that has to be shown before the section title. */
+    /** The bookmark title if different from the content title */
+    protected String bookmarkTitle;
+    
+    /** The number of sectionnumbers that has to be shown before the section title. */
     protected int numberDepth;
     
-/** The indentation of this section on the left side. */
+    /** The indentation of this section on the left side. */
     protected float indentationLeft;
     
-/** The indentation of this section on the right side. */
+    /** The indentation of this section on the right side. */
     protected float indentationRight;
     
-/** The additional indentation of the content of this section. */
-    protected float sectionIndent;
-    
-/** This is the number of subsections. */
-    protected int subsections = 0;
-    
-/** This is the complete list of sectionnumbers of this section and the parents of this section. */
-    protected ArrayList numbers = null;
+    /** The additional indentation of the content of this section. */
+    protected float indentation;
     
     /** false if the bookmark children are not visible */
     protected boolean bookmarkOpen = true;
@@ -114,56 +112,42 @@ private static final long serialVersionUID = 3324172577544748043L;
     /** true if the section has to trigger a new page */
     protected boolean triggerNewPage = false;
     
-    /** The bookmark title if different from the content title */
-    protected String bookmarkTitle;
+    /** This is the number of subsections. */
+    protected int subsections = 0;
+    
+    /** This is the complete list of sectionnumbers of this section and the parents of this section. */
+    protected ArrayList numbers = null;
+    
     // constructors
     
-/**
- * Constructs a new <CODE>Section</CODE>.
- */
-    
+    /**
+     * Constructs a new <CODE>Section</CODE>.
+     */    
     protected Section() {
         title = new Paragraph();
         numberDepth = 1;
     }
     
-/**
- * Constructs a new <CODE>Section</CODE>.
- *
- * @param	title			a <CODE>Paragraph</CODE>
- * @param	numberDepth		the numberDepth
- */
-    
-    Section(Paragraph title, int numberDepth) {
+    /**
+     * Constructs a new <CODE>Section</CODE>.
+     *
+     * @param	title			a <CODE>Paragraph</CODE>
+     * @param	numberDepth		the numberDepth
+     */
+    protected Section(Paragraph title, int numberDepth) {
         this.numberDepth = numberDepth;
         this.title = title;
     }
     
-    // private methods
-    
-/**
- * Sets the number of this section.
- *
- * @param	number		the number of this section
- * @param	numbers		an <CODE>ArrayList</CODE>, containing the numbers of the Parent
- */
-    
-    private void setNumbers(int number, ArrayList numbers) {
-        this.numbers = new ArrayList();
-        this.numbers.add(new Integer(number));
-        this.numbers.addAll(numbers);
-    }
-    
     // implementation of the Element-methods
     
-/**
- * Processes the element by adding it (or the different parts) to an
- * <CODE>ElementListener</CODE>.
- *
- * @param	listener		the <CODE>ElementListener</CODE>
- * @return	<CODE>true</CODE> if the element was processed successfully
- */
-    
+    /**
+     * Processes the element by adding it (or the different parts) to an
+     * <CODE>ElementListener</CODE>.
+     *
+     * @param	listener		the <CODE>ElementListener</CODE>
+     * @return	<CODE>true</CODE> if the element was processed successfully
+     */
     public boolean process(ElementListener listener) {
         try {
         	Element element;
@@ -178,22 +162,40 @@ private static final long serialVersionUID = 3324172577544748043L;
         }
     }
     
-/**
- * Gets the type of the text element.
- *
- * @return	a type
- */
-    
+    /**
+     * Gets the type of the text element.
+     *
+     * @return	a type
+     */    
     public int type() {
         return Element.SECTION;
     }
     
-/**
- * Gets all the chunks in this element.
- *
- * @return	an <CODE>ArrayList</CODE>
- */
+    /**
+     * Checks if this object is a <CODE>Chapter</CODE>.
+     *
+     * @return	<CODE>true</CODE> if it is a <CODE>Chapter</CODE>,
+     *			<CODE>false</CODE> if it is a <CODE>Section</CODE>.
+     */
+    public boolean isChapter() {
+        return type() == Element.CHAPTER;
+    }
     
+    /**
+     * Checks if this object is a <CODE>Section</CODE>.
+     *
+     * @return	<CODE>true</CODE> if it is a <CODE>Section</CODE>,
+     *			<CODE>false</CODE> if it is a <CODE>Chapter</CODE>.
+     */
+    public boolean isSection() {
+        return type() == Element.SECTION;
+    }
+    
+    /**
+     * Gets all the chunks in this element.
+     *
+     * @return	an <CODE>ArrayList</CODE>
+     */
     public ArrayList getChunks() {
         ArrayList tmp = new ArrayList();
         for (Iterator i = iterator(); i.hasNext(); ) {
@@ -204,15 +206,14 @@ private static final long serialVersionUID = 3324172577544748043L;
     
     // overriding some of the ArrayList-methods
     
-/**
- * Adds a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
- * to this <CODE>Section</CODE>.
- *
- * @param	index	index at which the specified element is to be inserted
- * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>=
- * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
- */
-    
+    /**
+     * Adds a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
+     * to this <CODE>Section</CODE>.
+     *
+     * @param	index	index at which the specified element is to be inserted
+     * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>=
+     * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
+     */
     public void add(int index, Object o) {
         try {
             Element element = (Element) o;
@@ -230,7 +231,7 @@ private static final long serialVersionUID = 3324172577544748043L;
                 super.add(index, element);
             }
             else {
-                throw new ClassCastException(String.valueOf(element.type()));
+                throw new ClassCastException("You can add a " + element.getClass().getName() + " to a Section.");
             }
         }
         catch(ClassCastException cce) {
@@ -238,15 +239,14 @@ private static final long serialVersionUID = 3324172577544748043L;
         }
     }
     
-/**
- * Adds a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
- * to this <CODE>Section</CODE>.
- *
- * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
- * @return	a boolean
- * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or <CODE>Section</CODE>
- */
-    
+    /**
+     * Adds a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
+     * to this <CODE>Section</CODE>.
+     *
+     * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
+     * @return	a boolean
+     * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or <CODE>Section</CODE>
+     */
     public boolean add(Object o) {
         try {
             Element element = (Element) o;
@@ -278,7 +278,7 @@ private static final long serialVersionUID = 3324172577544748043L;
             	return super.add(o);
             }
             else {
-                throw new ClassCastException(String.valueOf(element.type()));
+                throw new ClassCastException("You can add a " + element.getClass().getName() + " to a Section.");
             }
         }
         catch(ClassCastException cce) {
@@ -286,15 +286,14 @@ private static final long serialVersionUID = 3324172577544748043L;
         }
     }
     
-/**
- * Adds a collection of <CODE>Element</CODE>s
- * to this <CODE>Section</CODE>.
- *
- * @param	collection	a collection of <CODE>Paragraph</CODE>s, <CODE>List</CODE>s and/or <CODE>Table</CODE>s
- * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
- * @throws	ClassCastException if one of the objects isn't a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE>
- */
-    
+    /**
+     * Adds a collection of <CODE>Element</CODE>s
+     * to this <CODE>Section</CODE>.
+     *
+     * @param	collection	a collection of <CODE>Paragraph</CODE>s, <CODE>List</CODE>s and/or <CODE>Table</CODE>s
+     * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
+     * @throws	ClassCastException if one of the objects isn't a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE>
+     */
     public boolean addAll(Collection collection) {
         for (Iterator iterator = collection.iterator(); iterator.hasNext(); ) {
             this.add(iterator.next());
@@ -304,15 +303,14 @@ private static final long serialVersionUID = 3324172577544748043L;
     
     // methods that return a Section
     
-/**
- * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
- *
- * @param	indentation	the indentation of the new section
- * @param	title		the title of the new section
- * @param	numberDepth	the numberDepth of the section
- * @return  a new Section object
- */
-    
+    /**
+     * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
+     *
+     * @param	indentation	the indentation of the new section
+     * @param	title		the title of the new section
+     * @param	numberDepth	the numberDepth of the section
+     * @return  a new Section object
+     */
     public Section addSection(float indentation, Paragraph title, int numberDepth) {
         Section section = new Section(title, numberDepth);
         section.setIndentation(indentation);
@@ -320,293 +318,108 @@ private static final long serialVersionUID = 3324172577544748043L;
         return section;
     }
     
-/**
- * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
- *
- * @param	indentation	the indentation of the new section
- * @param	title		the title of the new section
- * @return  a new Section object
- */
-    
+    /**
+     * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
+     *
+     * @param	indentation	the indentation of the new section
+     * @param	title		the title of the new section
+     * @return  a new Section object
+     */
     public Section addSection(float indentation, Paragraph title) {
-        Section section = new Section(title, 1);
-        section.setIndentation(indentation);
-        add(section);
-        return section;
+        return addSection(indentation, title, numberDepth + 1);
     }
     
-/**
- * Creates a <CODE>Section</CODE>, add it to this <CODE>Section</CODE> and returns it.
- *
- * @param	title		the title of the new section
- * @param	numberDepth	the numberDepth of the section
- * @return  a new Section object
- */
-    
+    /**
+     * Creates a <CODE>Section</CODE>, add it to this <CODE>Section</CODE> and returns it.
+     *
+     * @param	title		the title of the new section
+     * @param	numberDepth	the numberDepth of the section
+     * @return  a new Section object
+     */
     public Section addSection(Paragraph title, int numberDepth) {
-        Section section = new Section(title, numberDepth);
-        add(section);
-        return section;
+        return addSection(0, title, numberDepth);
     }
     
-/**
- * Adds a marked section. For use in class MarkedSection only!
- */
+    /**
+     * Adds a marked section. For use in class MarkedSection only!
+     */
     public MarkedSection addMarkedSection() {
     	MarkedSection section = new MarkedSection(new Section(null, numberDepth + 1));
     	add(section);
     	return section;
     }
     
-/**
- * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
- *
- * @param	title		the title of the new section
- * @return  a new Section object
- */
-    
+    /**
+     * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
+     *
+     * @param	title		the title of the new section
+     * @return  a new Section object
+     */
     public Section addSection(Paragraph title) {
-        Section section = new Section(title, numberDepth + 1);
-        add(section);
-        return section;
+        return addSection(0, title, numberDepth + 1);
     }
     
-/**
- * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
- *
- * @param	indentation	the indentation of the new section
- * @param	title		the title of the new section
- * @param	numberDepth	the numberDepth of the section
- * @return  a new Section object
- */
-    
+    /**
+     * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+     *
+     * @param	indentation	the indentation of the new section
+     * @param	title		the title of the new section
+     * @param	numberDepth	the numberDepth of the section
+     * @return  a new Section object
+     */
     public Section addSection(float indentation, String title, int numberDepth) {
-        Section section = new Section(new Paragraph(title), numberDepth);
-        section.setIndentation(indentation);
-        add(section);
-        return section;
+        return addSection(indentation, new Paragraph(title), numberDepth);
     }
     
-/**
- * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
- *
- * @param	title		the title of the new section
- * @param	numberDepth	the numberDepth of the section
- * @return  a new Section object
- */
-    
+    /**
+     * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+     *
+     * @param	title		the title of the new section
+     * @param	numberDepth	the numberDepth of the section
+     * @return  a new Section object
+     */
     public Section addSection(String title, int numberDepth) {
-        Section section = new Section(new Paragraph(title), numberDepth);
-        add(section);
-        return section;
+        return addSection(new Paragraph(title), numberDepth);
     }
     
-/**
- * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
- *
- * @param	indentation	the indentation of the new section
- * @param	title		the title of the new section
- * @return  a new Section object
- */
-    
+    /**
+     * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+     *
+     * @param	indentation	the indentation of the new section
+     * @param	title		the title of the new section
+     * @return  a new Section object
+     */
     public Section addSection(float indentation, String title) {
-        Section section = new Section(new Paragraph(title), 1);
-        section.setIndentation(indentation);
-        add(section);
-        return section;
+        return addSection(indentation, new Paragraph(title));
     }
     
-/**
- * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
- *
- * @param	title		the title of the new section
- * @return  a new Section object
- */
-    
+    /**
+     * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+     *
+     * @param	title		the title of the new section
+     * @return  a new Section object
+     */
     public Section addSection(String title) {
-        Section section = new Section(new Paragraph(title), numberDepth + 1);
-        add(section);
-        return section;
+        return addSection(new Paragraph(title));
     }
-    
-/**
- * Creates a given <CODE>Section</CODE> following a set of attributes and adds it to this one.
- *
- * @param	attributes	the attributes
- * @return      a Section
- */
-    
-    public Section addSection(Properties attributes) {
-        Section section = new Section(new Paragraph(""), 1);
-        String value;
-        if ((value = (String)attributes.remove(ElementTags.NUMBER)) != null) {
-            subsections = Integer.parseInt(value) - 1;
-        }
-        section.set(attributes);
-        add(section);
-        return section;
-    }
-    
     
     // public methods
     
-/**
- * Alters the attributes of this <CODE>Section</CODE>.
- *
- * @param	attributes	the attributes
- */
-    
-    public void set(Properties attributes) {
-        String value;
-        if ((value = (String)attributes.remove(ElementTags.NUMBERDEPTH)) != null) {
-            setNumberDepth(Integer.parseInt(value));
-        }
-        if ((value = (String)attributes.remove(ElementTags.INDENT)) != null) {
-            setIndentation(Float.parseFloat(value + "f"));
-        }
-        if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.parseFloat(value + "f"));
-        }
-        if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.parseFloat(value + "f"));
-        }
-    }
-    
-/**
- * Sets the title of this section.
- *
- * @param	title	the new title
- */
-    
+    /**
+     * Sets the title of this section.
+     *
+     * @param	title	the new title
+     */
     public void setTitle(Paragraph title) {
         this.title = title;
     }
-    
-/**
- * Sets the depth of the sectionnumbers that will be shown preceding the title.
- * <P>
- * If the numberdepth is 0, the sections will not be numbered. If the numberdepth
- * is 1, the section will be numbered with their own number. If the numberdepth is
- * higher (for instance x > 1), the numbers of x - 1 parents will be shown.
- *
- * @param	numberDepth		the new numberDepth
- */
-    
-    public void setNumberDepth(int numberDepth) {
-        this.numberDepth = numberDepth;
-    }
-    
-/**
- * Sets the indentation of this <CODE>Section</CODE> on the left side.
- *
- * @param	indentation		the indentation
- */
-    
-    public void setIndentationLeft(float indentation) {
-        indentationLeft = indentation;
-    }
-    
-/**
- * Sets the indentation of this <CODE>Section</CODE> on the right side.
- *
- * @param	indentation		the indentation
- */
-    
-    public void setIndentationRight(float indentation) {
-        indentationRight = indentation;
-    }
-    
-/**
- * Sets the indentation of the content of this <CODE>Section</CODE>.
- *
- * @param	indentation		the indentation
- */
-    
-    public void setIndentation(float indentation) {
-        sectionIndent = indentation;
-    }
-    
-    // methods to retrieve information
-    
-/**
- * Checks if this object is a <CODE>Chapter</CODE>.
- *
- * @return	<CODE>true</CODE> if it is a <CODE>Chapter</CODE>,
- *			<CODE>false</CODE> if it is a <CODE>Section</CODE>.
- */
-    
-    public boolean isChapter() {
-        return type() == Element.CHAPTER;
-    }
-    
-/**
- * Checks if this object is a <CODE>Section</CODE>.
- *
- * @return	<CODE>true</CODE> if it is a <CODE>Section</CODE>,
- *			<CODE>false</CODE> if it is a <CODE>Chapter</CODE>.
- */
-    
-    public boolean isSection() {
-        return type() == Element.SECTION;
-    }
-    
-/**
- * Returns the numberdepth of this <CODE>Section</CODE>.
- *
- * @return	the numberdepth
- */
-    
-    public int numberDepth() {
-        return numberDepth;
-    }
-    
-/**
- * Returns the indentation of this <CODE>Section</CODE> on the left side.
- *
- * @return	the indentation
- */
-    
-    public float indentationLeft() {
-        return indentationLeft;
-    }
-    
-/**
- * Returns the indentation of this <CODE>Section</CODE> on the right side.
- *
- * @return	the indentation
- */
-    
-    public float indentationRight() {
-        return indentationRight;
-    }
-    
-/**
- * Returns the indentation of the content of this <CODE>Section</CODE>.
- *
- * @return	the indentation
- */
-    
-    public float indentation() {
-        return sectionIndent;
-    }
-    
-/**
- * Returns the depth of this section.
- *
- * @return	the depth
- */
-    
-    public int depth() {
-        return numbers.size();
-    }
-    
-/**
- * Returns the title, preceeded by a certain number of sectionnumbers.
- *
- * @return	a <CODE>Paragraph</CODE>
- */
-    
-    public Paragraph title() {
+
+	/**
+     * Returns the title, preceeded by a certain number of sectionnumbers.
+     *
+     * @return	a <CODE>Paragraph</CODE>
+     */
+    public Paragraph getTitle() {
         if (title == null) {
             return null;
         }
@@ -624,33 +437,80 @@ private static final long serialVersionUID = 3324172577544748043L;
         return result;
     }
     
-/**
- * Checks if a given tag corresponds with a title tag for this object.
- *
- * @param   tag     the given tag
- * @return  true if the tag corresponds
- */
-    
-    public static boolean isTitle(String tag) {
-        return ElementTags.TITLE.equals(tag);
-    }
-    
-/**
- * Checks if a given tag corresponds with this object.
- *
- * @param   tag     the given tag
- * @return  true if the tag corresponds
- */
-    
-    public static boolean isTag(String tag) {
-        return ElementTags.SECTION.equals(tag);
-    }
-    
-    /** Getter for property bookmarkOpen.
-     * @return Value of property bookmarkOpen.
+    /**
+     * Sets the depth of the sectionnumbers that will be shown preceding the title.
+     * <P>
+     * If the numberdepth is 0, the sections will not be numbered. If the numberdepth
+     * is 1, the section will be numbered with their own number. If the numberdepth is
+     * higher (for instance x > 1), the numbers of x - 1 parents will be shown.
+     *
+     * @param	numberDepth		the new numberDepth
      */
-    public boolean isBookmarkOpen() {
-        return bookmarkOpen;
+    public void setNumberDepth(int numberDepth) {
+        this.numberDepth = numberDepth;
+    }
+    
+	/**
+     * Returns the numberdepth of this <CODE>Section</CODE>.
+     *
+     * @return	the numberdepth
+     */
+    public int getNumberDepth() {
+        return numberDepth;
+    }
+    
+    /**
+     * Sets the indentation of this <CODE>Section</CODE> on the left side.
+     *
+     * @param	indentation		the indentation
+     */
+    public void setIndentationLeft(float indentation) {
+        indentationLeft = indentation;
+    }
+
+	/**
+     * Returns the indentation of this <CODE>Section</CODE> on the left side.
+     *
+     * @return	the indentation
+     */
+    public float getIndentationLeft() {
+        return indentationLeft;
+    }
+    
+    /**
+     * Sets the indentation of this <CODE>Section</CODE> on the right side.
+     *
+     * @param	indentation		the indentation
+     */
+    public void setIndentationRight(float indentation) {
+        indentationRight = indentation;
+    }
+
+	/**
+     * Returns the indentation of this <CODE>Section</CODE> on the right side.
+     *
+     * @return	the indentation
+     */
+    public float getIndentationRight() {
+        return indentationRight;
+    }
+    
+    /**
+     * Sets the indentation of the content of this <CODE>Section</CODE>.
+     *
+     * @param	indentation		the indentation
+     */
+    public void setIndentation(float indentation) {
+        this.indentation = indentation;
+    }
+
+	/**
+     * Returns the indentation of the content of this <CODE>Section</CODE>.
+     *
+     * @return	the indentation
+     */
+    public float getIndentation() {
+        return indentation;
     }
     
     /** Setter for property bookmarkOpen.
@@ -660,31 +520,30 @@ private static final long serialVersionUID = 3324172577544748043L;
     public void setBookmarkOpen(boolean bookmarkOpen) {
         this.bookmarkOpen = bookmarkOpen;
     }
-
-    /** Getter for property bookmarkOpen.
-     * @return Value of property triggerNewPage.
-     */
-    public boolean isTriggerNewPage() {
-		return triggerNewPage;
-	}
     
-    /** Setter for property triggerNewPage.
+    /**
+     * Getter for property bookmarkOpen.
+     * @return Value of property bookmarkOpen.
+     */
+    public boolean isBookmarkOpen() {
+        return bookmarkOpen;
+    }
+    
+    /**
+     * Setter for property triggerNewPage.
      * @param triggerNewPage true if a new page has to be triggered.
      */
 	public void setTriggerNewPage(boolean triggerNewPage) {
 		this.triggerNewPage = triggerNewPage;
 	}
 
-	/**
-     * Gets the bookmark title.
-     * @return the bookmark title
-     */    
-    public Paragraph getBookmarkTitle() {
-        if (bookmarkTitle == null)
-            return title();
-        else
-            return new Paragraph(bookmarkTitle);
-    }
+    /**
+     * Getter for property bookmarkOpen.
+     * @return Value of property triggerNewPage.
+     */
+    public boolean isTriggerNewPage() {
+		return triggerNewPage;
+	}
     
     /**
      * Sets the bookmark title. The bookmark title is the same as the section title but
@@ -693,6 +552,17 @@ private static final long serialVersionUID = 3324172577544748043L;
      */    
     public void setBookmarkTitle(String bookmarkTitle) {
         this.bookmarkTitle = bookmarkTitle;
+    }
+
+	/**
+     * Gets the bookmark title.
+     * @return the bookmark title
+     */    
+    public Paragraph getBookmarkTitle() {
+        if (bookmarkTitle == null)
+            return getTitle();
+        else
+            return new Paragraph(bookmarkTitle);
     }
     
     /**
@@ -707,5 +577,104 @@ private static final long serialVersionUID = 3324172577544748043L;
     			((Section)s).setChapterNumber(number);
     		}
     	}
+    }
+
+	/**
+     * Returns the depth of this section.
+     *
+     * @return	the depth
+     */
+    
+    public int getDepth() {
+        return numbers.size();
+    }
+    
+    // private methods
+    
+    /**
+     * Sets the number of this section.
+     *
+     * @param	number		the number of this section
+     * @param	numbers		an <CODE>ArrayList</CODE>, containing the numbers of the Parent
+     */
+    private void setNumbers(int number, ArrayList numbers) {
+        this.numbers = new ArrayList();
+        this.numbers.add(new Integer(number));
+        this.numbers.addAll(numbers);
+    }
+    
+    // deprecated stuff
+    
+    /**
+	 * Returns the title, preceeded by a certain number of sectionnumbers.
+	 *
+	 * @return	a <CODE>Paragraph</CODE>
+	 * @deprecated Use {@link #getTitle()} instead
+	 */
+	public Paragraph title() {
+		return getTitle();
+	}
+    
+    /**
+	 * Returns the numberdepth of this <CODE>Section</CODE>.
+	 *
+	 * @return	the numberdepth
+	 * @deprecated Use {@link #getNumberDepth()} instead
+	 */
+	public int numberDepth() {
+		return getNumberDepth();
+	}
+    
+    /**
+	 * Returns the indentation of this <CODE>Section</CODE> on the left side.
+	 *
+	 * @return	the indentation
+	 * @deprecated Use {@link #getIndentationLeft()} instead
+	 */
+	public float indentationLeft() {
+		return getIndentationLeft();
+	}
+    
+    /**
+	 * Returns the indentation of this <CODE>Section</CODE> on the right side.
+	 *
+	 * @return	the indentation
+	 * @deprecated Use {@link #getIndentationRight()} instead
+	 */
+	public float indentationRight() {
+		return getIndentationRight();
+	}
+    
+    /**
+	 * Returns the indentation of the content of this <CODE>Section</CODE>.
+	 *
+	 * @return	the indentation
+	 * @deprecated Use {@link #getIndentation()} instead
+	 */
+	public float indentation() {
+		return getIndentation();
+	}
+    
+    /**
+	 * Returns the depth of this section.
+	 *
+	 * @return	the depth
+	 * @deprecated Use {@link #getDepth()} instead
+	 */
+	
+	public int depth() {
+		return getDepth();
+	}
+    
+    /**
+     * Creates a given <CODE>Section</CODE> following a set of attributes and adds it to this one.
+     *
+     * @param	attributes	the attributes
+     * @return      a Section
+     * @deprecated Use ElementFactory.getSection(this, attributes)
+     */
+        
+    public Section addSection(Properties attributes) {
+    	return com.lowagie.text.factories.ElementFactory.getSection(this, attributes);
     }
 }

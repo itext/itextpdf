@@ -172,7 +172,7 @@ public class PdfTable extends Rectangle {
 				for(int i = 0; i < row.columns(); i++) {
 					cell = (Cell) row.getCell(i);
 					if (cell != null) {
-						currentCell = new PdfCell(cell, rowNumber+prevRows, positions[i], positions[i + cell.colspan()], offsets[rowNumber], cellspacing(), cellpadding());
+						currentCell = new PdfCell(cell, rowNumber+prevRows, positions[i], positions[i + cell.getColspan()], offsets[rowNumber], cellspacing(), cellpadding());
 						try {
                      if (offsets[rowNumber] - currentCell.height() - cellpadding() < offsets[rowNumber + currentCell.rowspan()]) {
                         offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.height() - cellpadding();

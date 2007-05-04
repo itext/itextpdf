@@ -821,7 +821,7 @@ public class HtmlWriter extends DocWriter {
                 
                 // start tag
                 addTabs(indent);
-                if (cell.header()) {
+                if (cell.isHeader()) {
                     writeStart(HtmlTags.HEADERCELL);
                 }
                 else {
@@ -837,24 +837,24 @@ public class HtmlWriter extends DocWriter {
                 if (cell.backgroundColor() != null) {
                     write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(cell.backgroundColor()));
                 }
-                String alignment = HtmlEncoder.getAlignment(cell.horizontalAlignment());
+                String alignment = HtmlEncoder.getAlignment(cell.getHorizontalAlignment());
                 if (!"".equals(alignment)) {
                     write(HtmlTags.HORIZONTALALIGN, alignment);
                 }
-                alignment = HtmlEncoder.getAlignment(cell.verticalAlignment());
+                alignment = HtmlEncoder.getAlignment(cell.getVerticalAlignment());
                 if (!"".equals(alignment)) {
                     write(HtmlTags.VERTICALALIGN, alignment);
                 }
-                if (cell.cellWidth() != null) {
-                    write(HtmlTags.WIDTH, cell.cellWidth());
+                if (cell.getWidth() != null) {
+                    write(HtmlTags.WIDTH, cell.getWidth());
                 }
-                if (cell.colspan() != 1) {
-                    write(HtmlTags.COLSPAN, String.valueOf(cell.colspan()));
+                if (cell.getColspan() != 1) {
+                    write(HtmlTags.COLSPAN, String.valueOf(cell.getColspan()));
                 }
-                if (cell.rowspan() != 1) {
-                    write(HtmlTags.ROWSPAN, String.valueOf(cell.rowspan()));
+                if (cell.getRowspan() != 1) {
+                    write(HtmlTags.ROWSPAN, String.valueOf(cell.getRowspan()));
                 }
-                if (cell.noWrap()) {
+                if (cell.getMaxLines() == 1) {
                     write(HtmlTags.NOWRAP, String.valueOf(true));
                 }
                 os.write(GT);
@@ -868,7 +868,7 @@ public class HtmlWriter extends DocWriter {
                 }
                 // end tag
                 addTabs(indent);
-                if (cell.header()) {
+                if (cell.isHeader()) {
                     writeEnd(HtmlTags.HEADERCELL);
                 }
                 else {
@@ -1015,26 +1015,26 @@ public class HtmlWriter extends DocWriter {
  */
     
     protected void writeSection(Section section, int indent) throws IOException {
-        if (section.title() != null) {
-            int depth = section.depth() - 1;
+        if (section.getTitle() != null) {
+            int depth = section.getDepth() - 1;
             if (depth > 5) {
                 depth = 5;
             }
             Properties styleAttributes = new Properties();
-            if (section.title().hasLeading()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, section.title().getTotalLeading() + "pt");
+            if (section.getTitle().hasLeading()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, section.getTitle().getTotalLeading() + "pt");
             // start tag
             addTabs(indent);
             writeStart(HtmlTags.H[depth]);
-            write(section.title().getFont(), styleAttributes);
-            String alignment = HtmlEncoder.getAlignment(section.title().getAlignment());
+            write(section.getTitle().getFont(), styleAttributes);
+            String alignment = HtmlEncoder.getAlignment(section.getTitle().getAlignment());
             if (!"".equals(alignment)) {
                 write(HtmlTags.ALIGN, alignment);
             }
             writeMarkupAttributes(markup);
             os.write(GT);
-            currentfont.push(section.title().getFont());
+            currentfont.push(section.getTitle().getFont());
             // contents
-            for (Iterator i = section.title().iterator(); i.hasNext(); ) {
+            for (Iterator i = section.getTitle().iterator(); i.hasNext(); ) {
                 write((Element)i.next(), indent + 1);
             }
             // end tag
@@ -1070,14 +1070,14 @@ public class HtmlWriter extends DocWriter {
         if (isOtherFont(font)) {
             writeCssProperty(Markup.CSS_KEY_FONTFAMILY, font.getFamilyname());
             
-            if (font.size() != Font.UNDEFINED) {
-                writeCssProperty(Markup.CSS_KEY_FONTSIZE, font.size() + "pt");
+            if (font.getSize() != Font.UNDEFINED) {
+                writeCssProperty(Markup.CSS_KEY_FONTSIZE, font.getSize() + "pt");
             }
-            if (font.color() != null) {
-                writeCssProperty(Markup.CSS_KEY_COLOR, HtmlEncoder.encode(font.color()));
+            if (font.getColor() != null) {
+                writeCssProperty(Markup.CSS_KEY_COLOR, HtmlEncoder.encode(font.getColor()));
             }
             
-            int fontstyle = font.style();
+            int fontstyle = font.getStyle();
             BaseFont bf = font.getBaseFont();
             if (bf != null) {
                 String ps = bf.getPostscriptFontName().toLowerCase();

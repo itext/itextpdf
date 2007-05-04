@@ -477,6 +477,7 @@ public class ElementTags {
   * @return	an alignment value (one of the ALIGN_ constants of the Element interface) 
   */
     public static int alignmentValue(String alignment) {
+    	if (alignment == null) return Element.ALIGN_UNDEFINED;
         if (ALIGN_CENTER.equalsIgnoreCase(alignment)) {
             return Element.ALIGN_CENTER;
         }
@@ -504,7 +505,6 @@ public class ElementTags {
         if (ALIGN_BASELINE.equalsIgnoreCase(alignment)) {
             return Element.ALIGN_BASELINE;
         }
-
         return Element.ALIGN_UNDEFINED;
     }
 }

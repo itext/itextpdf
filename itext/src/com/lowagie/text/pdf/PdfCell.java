@@ -179,7 +179,7 @@ public class PdfCell extends Rectangle {
         cloneNonPositionParameters(cell);
         this.cellpadding = cellpadding;
         this.cellspacing = cellspacing;
-        this.verticalAlignment = cell.verticalAlignment();
+        this.verticalAlignment = cell.getVerticalAlignment();
         this.useAscender = cell.isUseAscender();
         this.useDescender = cell.isUseDescender();
         this.useBorderPadding = cell.isUseBorderPadding();
@@ -190,8 +190,8 @@ public class PdfCell extends Rectangle {
         PdfChunk overflow;
         lines = new ArrayList();
         images = new ArrayList();
-        leading = cell.leading();
-        int alignment = cell.horizontalAlignment();
+        leading = cell.getLeading();
+        int alignment = cell.getHorizontalAlignment();
         left += cellspacing + cellpadding;
         right -= cellspacing + cellpadding;
 
@@ -201,7 +201,7 @@ public class PdfCell extends Rectangle {
 
         contentHeight = 0;
 
-        rowspan = cell.rowspan();
+        rowspan = cell.getRowspan();
 
         ArrayList allActions;
         int aCounter;
