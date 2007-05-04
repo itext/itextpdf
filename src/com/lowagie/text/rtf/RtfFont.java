@@ -138,23 +138,23 @@ public class RtfFont extends Font {
             dFamilyname = this.familyName;
         }
 
-        float dSize = font.size();
+        float dSize = font.getSize();
         if(dSize == Font.UNDEFINED) {
-            dSize = this.size();
+            dSize = this.getSize();
         }
 
         int dStyle = Font.UNDEFINED;
-        if(this.style() != Font.UNDEFINED && font.style() != Font.UNDEFINED) {
-            dStyle = this.style() | font.style();
-        } else if(this.style() != Font.UNDEFINED) {
-            dStyle = this.style();
-        } else if(font.style() != Font.UNDEFINED) {
-            dStyle = font.style();
+        if(this.getStyle() != Font.UNDEFINED && font.getStyle() != Font.UNDEFINED) {
+            dStyle = this.getStyle() | font.getStyle();
+        } else if(this.getStyle() != Font.UNDEFINED) {
+            dStyle = this.getStyle();
+        } else if(font.getStyle() != Font.UNDEFINED) {
+            dStyle = font.getStyle();
         }
 
-        Color dColor = font.color();
+        Color dColor = font.getColor();
         if(dColor == null) {
-            dColor = this.color();
+            dColor = this.getColor();
         }
 
         return new RtfFont(dFamilyname, dSize, dStyle, dColor);

@@ -68,7 +68,7 @@ public class ZapfDingbatsNumberList extends List {
 	public ZapfDingbatsNumberList(int type) {
 		super(true);
 		this.type = type;
-		float fontsize = symbol.getFont().size();
+		float fontsize = symbol.getFont().getSize();
 		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
 	}
 
@@ -80,7 +80,7 @@ public class ZapfDingbatsNumberList extends List {
 	public ZapfDingbatsNumberList(int type, int symbolIndent) {
 		super(true, symbolIndent);
 		this.type = type;
-		float fontsize = symbol.getFont().size();
+		float fontsize = symbol.getFont().getSize();
 		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
 	}
 

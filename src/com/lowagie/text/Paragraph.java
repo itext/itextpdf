@@ -104,6 +104,9 @@ public class Paragraph extends Phrase {
     /** Holds value of property extraParagraphSpace. */
     private float extraParagraphSpace = 0;
     
+    /** Does the paragraph has to be kept together on 1 page. */
+    protected boolean keeptogether = false;
+    
     // constructors
     
     /**
@@ -355,11 +358,21 @@ public class Paragraph extends Phrase {
     }
     
     /**
-     * Setter for property extraParagraphSpace.
-     * @param extraParagraphSpace New value of property extraParagraphSpace.
+     * Indicates that the paragraph has to be kept together on one page.
+     *
+     * @param   keeptogether    true of the paragraph may not be split over 2 pages
      */
-    public void setExtraParagraphSpace(float extraParagraphSpace) {
-        this.extraParagraphSpace = extraParagraphSpace;
+    public void setKeepTogether(boolean keeptogether) {
+        this.keeptogether = keeptogether;
+    }
+    
+    /**
+     * Checks if this paragraph has to be kept together on one page.
+     *
+     * @return  true if the paragraph may not be split over 2 pages.
+     */
+    public boolean getKeepTogether() {
+        return keeptogether;
     }
 
     // methods to retrieve information
@@ -391,7 +404,7 @@ public class Paragraph extends Phrase {
      */
     public float getTotalLeading() {
     	float m = font == null ?
-    			Font.DEFAULTSIZE * multipliedLeading : font.leading(multipliedLeading);
+    			Font.DEFAULTSIZE * multipliedLeading : font.getCalculatedLeading(multipliedLeading);
     	if (m > 0 && !hasLeading()) {
     		return m;
     	}
@@ -449,6 +462,14 @@ public class Paragraph extends Phrase {
     public float getExtraParagraphSpace() {
         return this.extraParagraphSpace;
     }
+    
+    /**
+     * Setter for property extraParagraphSpace.
+     * @param extraParagraphSpace New value of property extraParagraphSpace.
+     */
+    public void setExtraParagraphSpace(float extraParagraphSpace) {
+        this.extraParagraphSpace = extraParagraphSpace;
+    }
 
     // deprecated stuff
     
@@ -492,29 +513,4 @@ public class Paragraph extends Phrase {
 	public float indentationRight() {
 		return getIndentationRight();
 	}
-    
-    /** Does the paragraph has to be kept together on 1 page. */
-    protected boolean keeptogether = false;
-    
-    /**
-     * Indicates that the paragraph has to be kept together on one page.
-     *
-     * @param   keeptogether    true of the paragraph may not be split over 2 pages
-     * @deprecated wrap the Paragraph in a ColumnText or PdfPTable
-     * if you want to keep it together.
-     */
-    public void setKeepTogether(boolean keeptogether) {
-        this.keeptogether = keeptogether;
-    }
-    
-    /**
-     * Checks if this paragraph has to be kept together on one page.
-     *
-     * @return  true if the paragraph may not be split over 2 pages.
-     * @deprecated wrap the Paragraph in a ColumnText or PdfPTable
-     * if you want to keep it together.
-     */
-    public boolean getKeepTogether() {
-        return keeptogether;
-    }
 }

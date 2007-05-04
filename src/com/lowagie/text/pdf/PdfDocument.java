@@ -528,7 +528,7 @@ class PdfDocument extends Document {
                     // so we cast both to a Section
                     Section section = (Section) element;
                     
-                    boolean hasTitle = section.title() != null;
+                    boolean hasTitle = section.getTitle() != null;
                     
                     // if the section is a chapter, we begin a new page
                     if (section.isTriggerNewPage()) {
@@ -545,7 +545,7 @@ class PdfDocument extends Document {
                     if (rotation == 90 || rotation == 180)
                         fith = pageSize.height() - fith;
                     	PdfDestination destination = new PdfDestination(PdfDestination.FITH, fith);
-                    	while (currentOutline.level() >= section.depth()) {
+                    	while (currentOutline.level() >= section.getDepth()) {
                     		currentOutline = currentOutline.parent();
                     	}
                     	PdfOutline outline = new PdfOutline(currentOutline, destination, section.getBookmarkTitle(), section.isBookmarkOpen());
@@ -554,33 +554,33 @@ class PdfDocument extends Document {
                     
                     // some values are set
                     carriageReturn();
-                    indentation.indentLeft += section.indentationLeft();
-                    indentation.indentRight += section.indentationRight();
-                    indentation.sectionIndentLeft += section.indentationLeft();
-                    indentation.sectionIndentRight += section.indentationRight();
+                    indentation.indentLeft += section.getIndentationLeft();
+                    indentation.indentRight += section.getIndentationRight();
+                    indentation.sectionIndentLeft += section.getIndentationLeft();
+                    indentation.sectionIndentRight += section.getIndentationRight();
                     
                     PdfPageEvent pageEvent = writer.getPageEvent();
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
-                            pageEvent.onChapter(writer, this, indentTop() - currentHeight, section.title());
+                            pageEvent.onChapter(writer, this, indentTop() - currentHeight, section.getTitle());
                         else
-                            pageEvent.onSection(writer, this, indentTop() - currentHeight, section.depth(), section.title());
+                            pageEvent.onSection(writer, this, indentTop() - currentHeight, section.getDepth(), section.getTitle());
                     
                     // the title of the section (if any has to be printed)
                     if (hasTitle) {
                         isParagraph = false;
-                        add(section.title());
+                        add(section.getTitle());
                         isParagraph = true;
                     }
-                    indentation.indentLeft += section.indentation();
-                    indentation.sectionIndentLeft += section.indentation();
+                    indentation.indentLeft += section.getIndentation();
+                    indentation.sectionIndentLeft += section.getIndentation();
                     // we process the section
                     element.process(this);
                     // some parameters are set back to normal again
-                    indentation.indentLeft -= section.indentationLeft() + section.indentation();
-                    indentation.indentRight -= section.indentationRight();
-                    indentation.sectionIndentLeft -= section.indentationLeft() + section.indentation();
-                    indentation.sectionIndentRight -= section.indentationRight();
+                    indentation.indentLeft -= section.getIndentationLeft() + section.getIndentation();
+                    indentation.indentRight -= section.getIndentationRight();
+                    indentation.sectionIndentLeft -= section.getIndentationLeft() + section.getIndentation();
+                    indentation.sectionIndentRight -= section.getIndentationRight();
                     
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)

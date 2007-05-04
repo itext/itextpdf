@@ -175,17 +175,17 @@ public class Row implements Element {
         for (int i = 0; i < column; i++) {
             newReserved[i] = reserved[i];
             newCells[i] = cells[i];
-            if (newCells[i] != null && (i + ((Cell) newCells[i]).colspan() > column)) {
-                ((Cell) newCells[i]).setColspan(((Cell) cells[i]).colspan() - 1);
+            if (newCells[i] != null && (i + ((Cell) newCells[i]).getColspan() > column)) {
+                ((Cell) newCells[i]).setColspan(((Cell) cells[i]).getColspan() - 1);
             }
         }
         for (int i = column; i < columns; i++) {
             newReserved[i] = reserved[i + 1];
             newCells[i] = cells[i + 1];
         }
-        if (cells[column] != null && ((Cell) cells[column]).colspan() > 1) {
+        if (cells[column] != null && ((Cell) cells[column]).getColspan() > 1) {
             newCells[column] = cells[column];
-            ((Cell) newCells[column]).setColspan(((Cell) newCells[column]).colspan() - 1);
+            ((Cell) newCells[column]).setColspan(((Cell) newCells[column]).getColspan() - 1);
         }
         reserved = newReserved;
         cells = newCells;
@@ -219,7 +219,7 @@ public class Row implements Element {
         if ((column < 0) || (column > columns)) throw new IndexOutOfBoundsException("addCell - illegal column argument");
         if ( !((getObjectID(element) == CELL) || (getObjectID(element) == TABLE)) ) throw new IllegalArgumentException("addCell - only Cells or Tables allowed");
         
-        int lColspan = ( (Cell.class.isInstance(element)) ? ((Cell) element).colspan() : 1);
+        int lColspan = ( (Cell.class.isInstance(element)) ? ((Cell) element).getColspan() : 1);
         
         if (!reserve(column, lColspan)) {
             return -1;

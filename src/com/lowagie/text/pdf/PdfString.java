@@ -63,8 +63,8 @@ import java.io.OutputStream;
  * specify unbalanced parenthesis, non-printing ASCII characters, and the backslash character
  * itself. Use of the \<I>ddd</I> escape sequence is the preferred way to represent characters
  * outside the printable ASCII character set.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.4 (page 37-39).
+ * This object is described in the 'Portable Document Format Reference Manual version 1.7'
+ * section 3.2.3 (page 53-56).
  *
  * @see		PdfObject
  * @see		BadPdfFormatException

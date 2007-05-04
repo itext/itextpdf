@@ -260,7 +260,7 @@ public class RtfRow {
             Cell cell = firstCell.getStore();
             int cols = 0;
             if(cell != null) {
-                cols = cell.colspan();
+                cols = cell.getColspan();
             }
             if (cols > 1) {
                 RtfCell lastCell = (RtfCell) cells.get(i + cols - 1);

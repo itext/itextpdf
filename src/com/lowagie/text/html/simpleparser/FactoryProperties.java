@@ -77,7 +77,7 @@ public class FactoryProperties {
     
     public Chunk createChunk(String text, ChainedProperties props) {
         Font font = getFont(props);
-        float size = font.size();
+        float size = font.getSize();
         size /= 2;
         Chunk ck = new Chunk(text, font);
         if (props.hasProperty("sub"))

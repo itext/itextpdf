@@ -51,6 +51,7 @@ package com.lowagie.text;
 
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -91,6 +92,16 @@ public class Utilities {
 			original2[original.length] = item;
 			return original2;
 		}
+	}
+
+	/**
+	 * Checks for a true/false value of a key in a Properties object.
+	 * @param attributes
+	 * @param key
+	 * @return
+	 */
+	public static boolean checkTrueOrFalse(Properties attributes, String key) {
+		return "true".equalsIgnoreCase(attributes.getProperty(key));
 	}
 
 }

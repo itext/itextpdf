@@ -191,11 +191,11 @@ public class PdfChunk implements SplitCharacter{
         value = chunk.getContent();
         
         Font f = chunk.getFont();
-        float size = f.size();
+        float size = f.getSize();
         if (size == Font.UNDEFINED)
             size = 12;
         baseFont = f.getBaseFont();
-        int style = f.style();
+        int style = f.getStyle();
         if (style == Font.UNDEFINED) {
             style = Font.NORMAL;
         }
@@ -242,7 +242,7 @@ public class PdfChunk implements SplitCharacter{
         if (action != null)
             attributes.put(Chunk.ACTION, action);
         // the color can't be stored in a PdfFont
-        noStroke.put(Chunk.COLOR, f.color());
+        noStroke.put(Chunk.COLOR, f.getColor());
         noStroke.put(Chunk.ENCODING, font.getFont().getEncoding());
         Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
         if (obj == null) {

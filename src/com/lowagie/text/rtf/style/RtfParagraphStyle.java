@@ -579,7 +579,7 @@ public class RtfParagraphStyle extends RtfFont {
                 setStyle(this.baseStyle.getFontStyle());
             }
             if(!((this.modified & MODIFIED_FONT_COLOR) == MODIFIED_FONT_COLOR)) {
-                setColor(this.baseStyle.color());
+                setColor(this.baseStyle.getColor());
             }
             if(!((this.modified & MODIFIED_LINE_LEADING) == MODIFIED_LINE_LEADING)) {
                 setLineLeading(this.baseStyle.getLineLeading());

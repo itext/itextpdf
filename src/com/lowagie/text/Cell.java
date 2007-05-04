@@ -50,12 +50,10 @@
 
 package com.lowagie.text;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
-import com.lowagie.text.html.Markup;
 import com.lowagie.text.pdf.PdfPCell;
 
 /**
@@ -95,54 +93,66 @@ import com.lowagie.text.pdf.PdfPCell;
 
 public class Cell extends Rectangle implements TextElementArray {
 
-	// static final membervariable
-
-    // This accessor replaces the dangerous static member DUMMY_CELL
-    /**
-     * Get dummy cell used when merging inner tables. 
-     * @return a cell with colspan 3 and no border
-     */
-    public static Cell getDummyCell() {
-        Cell cell = new Cell(true);
-        cell.setColspan(3);
-        cell.setBorder(NO_BORDER);
-        return cell;
-	}
-
 	// membervariables
 
-/** This is the <CODE>ArrayList</CODE> of <CODE>Element</CODE>s. */
+	/**
+	 * The <CODE>ArrayList</CODE> of <CODE>Element</CODE>s
+	 * that are part of the content of the Cell.
+	 */
 	protected ArrayList arrayList = null;
 
-/** This is the horizontal alignment. */
+	/** The horizontal alignment of the cell content. */
 	protected int horizontalAlignment = Element.ALIGN_UNDEFINED;
 
-/** This is the vertical alignment. */
+	/** The vertical alignment of the cell content. */
 	protected int verticalAlignment = Element.ALIGN_UNDEFINED;
 
-/** This is the vertical alignment. */
+	/**
+	 * The width of the cell as a String.
+	 * It can be an absolute value "100" or a percentage "20%".
+	 */
 	protected String width;
 
-/** This is the colspan. */
+	/** The colspan of the cell. */
 	protected int colspan = 1;
 
-/** This is the rowspan. */
+	/** The rowspan of the cell. */
 	protected int rowspan = 1;
 
-/** This is the leading. */
+	/** The leading of the content inside the cell. */
 	float leading = Float.NaN;
 
-/** Is this <CODE>Cell</CODE> a header? */
+	/** Is this <CODE>Cell</CODE> a header? */
 	protected boolean header;
 
-    /** Indicates that the largest ascender height should be used to determine the
+	/**
+	 * Maximum number of lines allowed in the cell.  
+	 * The default value of this property is not to limit the maximum number of lines
+	 * (contributed by dperezcar@fcc.es)
+	 */
+	protected int maxLines = Integer.MAX_VALUE;
+	
+	/**
+	 * If a truncation happens due to the {@link #maxLines} property, then this text will 
+	 * be added to indicate a truncation has happened.
+	 * Default value is null, and means avoiding marking the truncation.  
+	 * A useful value of this property could be e.g. "..."
+	 * (contributed by dperezcar@fcc.es)
+	 */
+	String showTruncation;
+
+    /**
+     * Indicates that the largest ascender height should be used to determine the
      * height of the first line.  Note that this only has an effect when rendered
-     * to PDF.  Setting this to true can help with vertical alignment problems. */
+     * to PDF.  Setting this to true can help with vertical alignment problems.
+     */
     protected boolean useAscender = false;
 
-    /** Indicates that the largest descender height should be added to the height of
+    /**
+     * Indicates that the largest descender height should be added to the height of
      * the last line (so characters like y don't dip into the border).   Note that
-     * this only has an effect when rendered to PDF. */
+     * this only has an effect when rendered to PDF.
+     */
     protected boolean useDescender = false;
 
     /**
@@ -150,50 +160,39 @@ public class Cell extends Rectangle implements TextElementArray {
      * this only has an effect when rendered to PDF.
      */
     protected boolean useBorderPadding;
+    
+	/** Does this <CODE>Cell</CODE> force a group change? */
+	protected boolean groupChange = true;
 
 	// constructors
 
-/**
- * Constructs an empty <CODE>Cell</CODE>.
- */
-
+    /** Constructs an empty <CODE>Cell</CODE>. */
 	public Cell() {
 		// creates a Rectangle with BY DEFAULT a border of 0.5
 		super(0, 0, 0, 0);
 		setBorder(UNDEFINED);
 		setBorderWidth(0.5f);
-
-		// initializes the arraylist and adds an element
+		// initializes the arraylist
 		arrayList = new ArrayList();
 	}
 
-/**
- * Constructs an empty <CODE>Cell</CODE> (for internal use only).
- *
- * @param   dummy   a dummy value
- */
-
+	/**
+	 * Constructs an empty <CODE>Cell</CODE> (for internal use only).
+	 *
+	 * @param   dummy   a dummy value
+	 */
 	public Cell(boolean dummy) {
 		this();
 		arrayList.add(new Paragraph(0));
 	}
 
-/**
- * Constructs a <CODE>Cell</CODE> with a certain content.
- * <P>
- * The <CODE>String</CODE> will be converted into a <CODE>Paragraph</CODE>.
- *
- * @param	content		a <CODE>String</CODE>
- */
-
+	/**
+	 * Constructs a <CODE>Cell</CODE> with a certain content.<p>
+	 * The <CODE>String</CODE> will be converted into a <CODE>Paragraph</CODE>.
+	 * @param	content		a <CODE>String</CODE>
+	 */
 	public Cell(String content) {
-		// creates a Rectangle with BY DEFAULT a border of 0.5
-		super(0, 0, 0, 0);
-		setBorder(UNDEFINED);
-		setBorderWidth(0.5f);
-
-		// initializes the arraylist and adds an element
-		arrayList = new ArrayList();
+		this();
 		try {
 			addElement(new Paragraph(content));
 		}
@@ -201,129 +200,31 @@ public class Cell extends Rectangle implements TextElementArray {
 		}
 	}
 
-/**
- * Constructs a <CODE>Cell</CODE> with a certain <CODE>Element</CODE>.
- * <P>
- * if the element is a <CODE>ListItem</CODE>, <CODE>Row</CODE> or
- * <CODE>Cell</CODE>, an exception will be thrown.
- *
- * @param	element		the element
- * @throws	BadElementException when the creator was called with a <CODE>ListItem</CODE>, <CODE>Row</CODE> or <CODE>Cell</CODE>
- */
-
+	/**
+	 * Constructs a <CODE>Cell</CODE> with a certain <CODE>Element</CODE>.<p>
+	 * if the element is a <CODE>ListItem</CODE>, <CODE>Row</CODE> or
+	 * <CODE>Cell</CODE>, an exception will be thrown.
+	 *
+	 * @param	element		the element
+	 * @throws	BadElementException when the creator was called with a <CODE>ListItem</CODE>, <CODE>Row</CODE> or <CODE>Cell</CODE>
+	 */
 	public Cell(Element element) throws BadElementException {
-		// creates a Rectangle with BY DEFAULT a border of 0.5
-		super(0, 0, 0, 0);
-		setBorder(UNDEFINED);
-		setBorderWidth(0.5f);
-
- 		// Update by Benoit WIART <b.wiart@proxiad.com>
- 		if(element instanceof Phrase) {
-			Phrase p = (Phrase)element;
-			leading = p.getLeading();
-		}
-
-		// initializes the arraylist and adds an element
-		arrayList = new ArrayList();
-		addElement(element);
-	}
-
-/**
- * Returns a <CODE>Cell</CODE> that has been constructed taking in account
- * the value of some <VAR>attributes</VAR>.
- *
- * @param	attributes		Some attributes
- */
-
-	public Cell(Properties attributes) {
 		this();
-		String value;
-		if ((value = (String)attributes.remove(ElementTags.HORIZONTALALIGN)) != null) {
-			setHorizontalAlignment(value);
+ 		if(element instanceof Phrase) {
+			setLeading(((Phrase)element).getLeading());
 		}
-		if ((value = (String)attributes.remove(ElementTags.VERTICALALIGN)) != null) {
-			setVerticalAlignment(value);
-		}
-		if ((value = (String)attributes.remove(ElementTags.WIDTH)) != null) {
-			setWidth(value);
-		}
-		if ((value = (String)attributes.remove(ElementTags.COLSPAN)) != null) {
-			setColspan(Integer.parseInt(value));
-		}
-		if ((value = (String)attributes.remove(ElementTags.ROWSPAN)) != null) {
-			setRowspan(Integer.parseInt(value));
-		}
-		if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-			setLeading(Float.parseFloat(value + "f"));
-		}
-		if ((value = (String)attributes.remove(ElementTags.HEADER)) != null) {
-			setHeader(Boolean.valueOf(value).booleanValue());
-		}
-		if ((value = (String)attributes.remove(ElementTags.NOWRAP)) != null) {
-			setNoWrap(Boolean.valueOf(value).booleanValue());
-		}
-		if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
-			setBorderWidth(Float.parseFloat(value + "f"));
-		}
-		int border = 0;
-		if ((value = (String)attributes.remove(ElementTags.LEFT)) != null) {
-			if (Boolean.valueOf(value).booleanValue()) border |= Rectangle.LEFT;
-		}
-		if ((value = (String)attributes.remove(ElementTags.RIGHT)) != null) {
-			if (Boolean.valueOf(value).booleanValue()) border |= Rectangle.RIGHT;
-		}
-		if ((value = (String)attributes.remove(ElementTags.TOP)) != null) {
-			if (Boolean.valueOf(value).booleanValue()) border |= Rectangle.TOP;
-		}
-		if ((value = (String)attributes.remove(ElementTags.BOTTOM)) != null) {
-			if (Boolean.valueOf(value).booleanValue()) border |= Rectangle.BOTTOM;
-		}
-		setBorder(border);
-		String r = (String)attributes.remove(ElementTags.RED);
-		String g = (String)attributes.remove(ElementTags.GREEN);
-		String b = (String)attributes.remove(ElementTags.BLUE);
-		if (r != null || g != null || b != null) {
-			int red = 0;
-			int green = 0;
-			int blue = 0;
-			if (r != null) red = Integer.parseInt(r);
-			if (g != null) green = Integer.parseInt(g);
-			if (b != null) blue = Integer.parseInt(b);
-			setBorderColor(new Color(red, green, blue));
-		}
-		else if ((value = (String)attributes.remove(ElementTags.BORDERCOLOR)) != null) {
-			setBorderColor(Markup.decodeColor(value));
-		}
-		r = (String)attributes.remove(ElementTags.BGRED);
-		g = (String)attributes.remove(ElementTags.BGGREEN);
-		b = (String)attributes.remove(ElementTags.BGBLUE);
-		if (r != null || g != null || b != null) {
-			int red = 0;
-			int green = 0;
-			int blue = 0;
-			if (r != null) red = Integer.parseInt(r);
-			if (g != null) green = Integer.parseInt(g);
-			if (b != null) blue = Integer.parseInt(b);
-			setBackgroundColor(new Color(red, green, blue));
-		}
-		else if ((value = (String)attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
-			setBackgroundColor(Markup.decodeColor(value));
-		}
-		if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
-			setGrayFill(Float.parseFloat(value + "f"));
-		}
+		addElement(element);
 	}
 
 	// implementation of the Element-methods
 
-/**
- * Processes the element by adding it (or the different parts) to an
- * <CODE>ElementListener</CODE>.
- *
- * @param	listener	an <CODE>ElementListener</CODE>
- * @return	<CODE>true</CODE> if the element was processed successfully
- */
-
+	/**
+	 * Processes the element by adding it (or the different parts) to an
+	 * <CODE>ElementListener</CODE>.
+	 *
+	 * @param	listener	an <CODE>ElementListener</CODE>
+	 * @return	<CODE>true</CODE> if the element was processed successfully
+	 */
 	public boolean process(ElementListener listener) {
 		try {
 			return listener.add(this);
@@ -333,22 +234,20 @@ public class Cell extends Rectangle implements TextElementArray {
 		}
 	}
 
-/**
- * Gets the type of the text element.
- *
- * @return	a type
- */
-
+	/**
+	 * Gets the type of the text element.
+	 *
+	 * @return	a type
+	 */
 	public int type() {
 		return Element.CELL;
 	}
 
-/**
- * Gets all the chunks in this element.
- *
- * @return	an <CODE>ArrayList</CODE>
- */
-
+	/**
+	 * Gets all the chunks in this element.
+	 *
+	 * @return	an <CODE>ArrayList</CODE>
+	 */
 	public ArrayList getChunks() {
 		ArrayList tmp = new ArrayList();
 		for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
@@ -357,18 +256,330 @@ public class Cell extends Rectangle implements TextElementArray {
 		return tmp;
 	}
 
-	// methods to set the membervariables
+	// Getters and setters
 
-/**
- * Adds an element to this <CODE>Cell</CODE>.
- * <P>
- * Remark: you can't add <CODE>ListItem</CODE>s, <CODE>Row</CODE>s, <CODE>Cell</CODE>s,
- * <CODE>JPEG</CODE>s, <CODE>GIF</CODE>s or <CODE>PNG</CODE>s to a <CODE>Cell</CODE>.
- *
- * @param element The <CODE>Element</CODE> to add
- * @throws BadElementException if the method was called with a <CODE>ListItem</CODE>, <CODE>Row</CODE> or <CODE>Cell</CODE>
- */
+	/**
+     * Gets the horizontal alignment.
+     *
+     * @return	a value
+     */
+   	public int getHorizontalAlignment() {
+   		return horizontalAlignment;
+   	}
 
+	/**
+	 * Sets the horizontal alignment.
+	 * @param	value	the new value
+	 */
+	public void setHorizontalAlignment(int value) {
+		horizontalAlignment = value;
+	}
+
+	/**
+	 * Sets the alignment of this cell.
+	 * This methods allows you to set the alignment as a String.
+	 * @param	alignment		the new alignment as a <CODE>String</CODE>
+	 */
+	public void setHorizontalAlignment(String alignment) {
+		setHorizontalAlignment(ElementTags.alignmentValue(alignment));
+	}
+
+	/**
+	 * Gets the vertical alignment.
+	 * @return	a value
+	 */
+	public int getVerticalAlignment() {
+		return verticalAlignment;
+	}
+
+	/**
+	 * Sets the vertical alignment.
+	 * @param	value	the new value
+	 */
+	public void setVerticalAlignment(int value) {
+		verticalAlignment = value;
+	}
+
+	/**
+	 * Sets the alignment of this paragraph.
+	 *
+	 * @param	alignment		the new alignment as a <CODE>String</CODE>
+	 */
+	public void setVerticalAlignment(String alignment) {
+		setVerticalAlignment(ElementTags.alignmentValue(alignment));
+	}
+
+	/**
+	 * Sets the width.
+	 *
+	 * @param	value	the new value
+	 */
+	public void setWidth(String value) {
+		width = value;
+	}
+
+	/**
+	 * Gets the width.
+	 *
+	 * @return	a value
+	 */
+	public String getWidth() {
+		return width;
+	}
+
+	/**
+	 * Sets the colspan.
+	 *
+	 * @param	value	the new value
+	 */
+	public void setColspan(int value) {
+		colspan = value;
+	}
+
+	/**
+	 * Gets the colspan.
+	 * @return	a value
+	 */
+	public int getColspan() {
+		return colspan;
+	}
+
+	/**
+	 * Sets the rowspan.
+	 *
+	 * @param	value	the new value
+	 */
+	public void setRowspan(int value) {
+		rowspan = value;
+	}
+
+	/**
+	 * Gets the rowspan.
+	 * @return	a value
+	 */
+	public int getRowspan() {
+		return rowspan;
+	}
+
+	/**
+	 * Sets the leading.
+	 *
+	 * @param	value	the new value
+	 */
+	public void setLeading(float value) {
+		leading = value;
+	}
+
+	/**
+	 * Gets the leading.
+	 *
+	 * @return	a value
+	 */
+	public float getLeading() {
+		if (Float.isNaN(leading)) {
+			return 16;
+		}
+		return leading;
+	}
+
+	/**
+	 * Sets header.
+	 *
+	 * @param	value	the new value
+	 */
+	public void setHeader(boolean value) {
+		header = value;
+	}
+
+	/**
+	 * Is this <CODE>Cell</CODE> a header?
+	 *
+	 * @return	a value
+	 */
+	public boolean isHeader() {
+		return header;
+	}
+	
+	/**
+	 * Setter for {@link #maxLines}
+	 * @param value the maximum number of lines
+	 */
+	public void setMaxLines(int value) {
+		maxLines = value;
+	}
+	
+	/**
+	 * Getter for {@link #maxLines}
+	 * @return the maxLines value
+	 */
+	public int getMaxLines() {
+		return maxLines;
+	}
+		
+	/**
+	 * Setter for {@link #showTruncation}
+	 * @param value	Can be null for avoiding marking the truncation.
+	 */
+	public void setShowTruncation(String value) {
+		showTruncation = value;
+	}
+	
+	/**
+	 * Getter for {@link #showTruncation}
+	 * @return the showTruncation value
+	 */
+	public String getShowTruncation() {
+		return showTruncation;
+	}
+
+	/**
+	 * Sets the value of {@link #useAscender}.
+	 * @param use use ascender height if true
+	 */
+	public void setUseAscender(boolean use) {
+	    useAscender = use;
+	}
+
+	/**
+	 * Gets the value of {@link #useAscender}
+	 * @return useAscender
+	 */
+	public boolean isUseAscender() {
+	    return useAscender;
+	}
+
+	/**
+	 * Sets the value of {@link #useDescender}.
+	 * @param use use descender height if true
+	 */
+	public void setUseDescender(boolean use) {
+	    useDescender = use;
+	}
+
+	/**
+	 * gets the value of {@link #useDescender }
+	 * @return useDescender
+	 */
+	public boolean isUseDescender() {
+	    return useDescender;
+	}
+
+	/**
+	 * Sets the value of {@link #useBorderPadding}.
+	 * @param use adjust layour for borders if true
+	 */
+	public void setUseBorderPadding(boolean use) {
+	    useBorderPadding = use;
+	}
+
+	/**
+	 * Gets the value of {@link #useBorderPadding}.
+	 * @return useBorderPadding
+	 */
+	public boolean isUseBorderPadding() {
+	    return useBorderPadding;
+	}
+
+	/**
+	 * Does this <CODE>Cell</CODE> force a group change?
+	 *
+	 * @return	a value
+	 */
+	public boolean getGroupChange() {
+		return groupChange;
+	}
+
+	/**
+	 * Sets group change.
+	 *
+	 * @param	value	the new value
+	 */
+	public void setGroupChange(boolean value) {
+		groupChange = value;
+	}
+	
+// arraylist stuff
+
+	/**
+	 * Gets the number of <CODE>Element</CODE>s in the Cell.
+	 *
+	 * @return	a <CODE>size</CODE>.
+	 */
+	public int size() {
+		return arrayList.size();
+	}
+
+	/**
+	 * Gets an iterator of <CODE>Element</CODE>s.
+	 *
+	 * @return	an <CODE>Iterator</CODE>.
+	 */
+	public Iterator getElements() {
+		return arrayList.iterator();
+	}
+	
+	/**
+	 * Clears all the <CODE>Element</CODE>s of this <CODE>Cell</CODE>.
+	 */
+	public void clear() {
+		arrayList.clear();
+	}
+
+	/**
+	 * Checks if the <CODE>Cell</CODE> is empty.
+	 *
+	 * @return	<CODE>false</CODE> if there are non-empty <CODE>Element</CODE>s in the <CODE>Cell</CODE>.
+	 */
+	public boolean isEmpty() {
+		switch(size()) {
+			case 0:
+				return true;
+			case 1:
+				Element element = (Element) arrayList.get(0);
+				switch (element.type()) {
+					case Element.CHUNK:
+						return ((Chunk) element).isEmpty();
+					case Element.ANCHOR:
+					case Element.PHRASE:
+					case Element.PARAGRAPH:
+						return ((Phrase) element).isEmpty();
+					case Element.LIST:
+						return ((List) element).size() == 0;
+				}
+			return false;
+			default:
+				return false;
+		}
+	}
+	
+	/**
+	 * Makes sure there is at least 1 object in the Cell.
+	 *
+	 * Otherwise it might not be shown in the table.
+	 */
+	void fill() {
+		if (size() == 0) arrayList.add(new Paragraph(0));
+	}
+
+	/**
+	 * Checks if this <CODE>Cell</CODE> is a placeholder for a (nested) table.
+	 *
+	 * @return	true if the only element in this cell is a table
+	 */
+	public boolean isTable() {
+		return (size() == 1)
+			&& (((Element)arrayList.get(0)).type() == Element.TABLE);
+	}
+	
+	/**
+	 * Adds an element to this <CODE>Cell</CODE>.
+	 * <P>
+	 * Remark: you can't add <CODE>ListItem</CODE>s, <CODE>Row</CODE>s, <CODE>Cell</CODE>s,
+	 * <CODE>JPEG</CODE>s, <CODE>GIF</CODE>s or <CODE>PNG</CODE>s to a <CODE>Cell</CODE>.
+	 *
+	 * @param element The <CODE>Element</CODE> to add
+	 * @throws BadElementException if the method was called with a <CODE>ListItem</CODE>, <CODE>Row</CODE> or <CODE>Cell</CODE>
+	 */
 	public void addElement(Element element) throws BadElementException {
 		if (isTable()) {
 			Table table = (Table) arrayList.get(0);
@@ -384,19 +595,21 @@ public class Cell extends Rectangle implements TextElementArray {
 			case Element.CELL:
 				throw new BadElementException("You can't add listitems, rows or cells to a cell.");
 			case Element.LIST:
+				List list = (List)element;
 				if (Float.isNaN(leading)) {
-					leading = ((List) element).getTotalLeading();
+					setLeading(list.getTotalLeading());
 				}
-				if (((List) element).size() == 0) return;
+				if (list.size() == 0) return;
 				arrayList.add(element);
 				return;
 			case Element.ANCHOR:
 			case Element.PARAGRAPH:
 			case Element.PHRASE:
+				Phrase p = (Phrase)element;
 				if (Float.isNaN(leading)) {
-					leading = ((Phrase) element).getLeading();
+					setLeading(p.getLeading());
 				}
-				if (((Phrase) element).isEmpty()) return;
+				if (p.isEmpty()) return;
 				arrayList.add(element);
 				return;
 			case Element.CHUNK:
@@ -407,7 +620,6 @@ public class Cell extends Rectangle implements TextElementArray {
 				Table table = new Table(3);
 				float[] widths = new float[3];
 				widths[1] = ((Table)element).widthPercentage();
-
 				switch(((Table)element).alignment()) {
 					case Element.ALIGN_LEFT:
 						widths[0] = 0f;
@@ -446,18 +658,17 @@ public class Cell extends Rectangle implements TextElementArray {
 				clear();
 				arrayList.add(table);
 				return;
-				default:
-					arrayList.add(element);
+			default:
+				arrayList.add(element);
 		}
 	}
 
-/**
- * Add an <CODE>Object</CODE> to this cell.
- *
- * @param o the object to add
- * @return always <CODE>true</CODE>
- */
-
+	/**
+	 * Add an <CODE>Object</CODE> to this cell.
+	 *
+	 * @param o the object to add
+	 * @return always <CODE>true</CODE>
+	 */
 	public boolean add(Object o) {
 		try {
 			this.addElement((Element) o);
@@ -471,517 +682,18 @@ public class Cell extends Rectangle implements TextElementArray {
 		}
 	}
 
-/**
- * Sets the leading.
- *
- * @param	value	the new value
- */
-
-	public void setLeading(float value) {
-		leading = value;
-	}
-
-/**
- * Sets the horizontal alignment.
- *
- * @param	value	the new value
- */
-
-	public void setHorizontalAlignment(int value) {
-		horizontalAlignment = value;
-	}
-
-/**
- * Sets the alignment of this cell.
- *
- * @param	alignment		the new alignment as a <CODE>String</CODE>
- */
-
-	public void setHorizontalAlignment(String alignment) {
-		if (ElementTags.ALIGN_CENTER.equalsIgnoreCase(alignment)) {
-			this.horizontalAlignment = Element.ALIGN_CENTER;
-			return;
-		}
-		if (ElementTags.ALIGN_RIGHT.equalsIgnoreCase(alignment)) {
-			this.horizontalAlignment = Element.ALIGN_RIGHT;
-			return;
-		}
-		if (ElementTags.ALIGN_JUSTIFIED.equalsIgnoreCase(alignment)) {
-			this.horizontalAlignment = Element.ALIGN_JUSTIFIED;
-			return;
-		}
-		if (ElementTags.ALIGN_JUSTIFIED_ALL.equalsIgnoreCase(alignment)) {
-			this.horizontalAlignment = Element.ALIGN_JUSTIFIED_ALL;
-			return;
-		}
-		this.horizontalAlignment = Element.ALIGN_LEFT;
-	}
-
-/**
- * Sets the vertical alignment.
- *
- * @param	value	the new value
- */
-
-	public void setVerticalAlignment(int value) {
-		verticalAlignment = value;
-	}
-
-/**
- * Sets the alignment of this paragraph.
- *
- * @param	alignment		the new alignment as a <CODE>String</CODE>
- */
-
-	public void setVerticalAlignment(String alignment) {
-		if (ElementTags.ALIGN_MIDDLE.equalsIgnoreCase(alignment)) {
-			this.verticalAlignment = Element.ALIGN_MIDDLE;
-			return;
-		}
-		if (ElementTags.ALIGN_BOTTOM.equalsIgnoreCase(alignment)) {
-			this.verticalAlignment = Element.ALIGN_BOTTOM;
-			return;
-		}
-		if (ElementTags.ALIGN_BASELINE.equalsIgnoreCase(alignment)) {
-			this.verticalAlignment = Element.ALIGN_BASELINE;
-			return;
-		}
-		this.verticalAlignment = Element.ALIGN_TOP;
-	}
-
-/**
- * Sets the width.
- *
- * @param	value	the new value
- */
-
-	public void setWidth(String value) {
-		width = value;
-	}
-
-/**
- * Sets the colspan.
- *
- * @param	value	the new value
- */
-
-	public void setColspan(int value) {
-		colspan = value;
-	}
-
-/**
- * Sets the rowspan.
- *
- * @param	value	the new value
- */
-
-	public void setRowspan(int value) {
-		rowspan = value;
-	}
-
-/**
- * Sets header.
- *
- * @param	value	the new value
- */
-
-	public void setHeader(boolean value) {
-		header = value;
-	}
-
-/**
- * Set nowrap.
- *
- * @param	value	the new value
- */
-
-	public void setNoWrap(boolean value) {
-		maxLines = 1;
-	}
-
-	// methods to retrieve information
-
-/**
- * Gets the number of <CODE>Element</CODE>s in the Cell.
- *
- * @return	a <CODE>size</CODE>.
- */
-
-	public int size() {
-		return arrayList.size();
-	}
-
-/**
- * Checks if the <CODE>Cell</CODE> is empty.
- *
- * @return	<CODE>false</CODE> if there are non-empty <CODE>Element</CODE>s in the <CODE>Cell</CODE>.
- */
-
-	public boolean isEmpty() {
-		switch(size()) {
-			case 0:
-				return true;
-			case 1:
-				Element element = (Element) arrayList.get(0);
-				switch (element.type()) {
-					case Element.CHUNK:
-						return ((Chunk) element).isEmpty();
-					case Element.ANCHOR:
-					case Element.PHRASE:
-					case Element.PARAGRAPH:
-						return ((Phrase) element).isEmpty();
-					case Element.LIST:
-						return ((List) element).size() == 0;
-				}
-				return false;
-				default:
-					return false;
-		}
-	}
-
-/**
- * Makes sure there is at least 1 object in the Cell.
- *
- * Otherwise it might not be shown in the table.
- */
-
-	void fill() {
-		if (size() == 0) arrayList.add(new Paragraph(0));
-	}
-
-/**
- * Checks if the <CODE>Cell</CODE> is empty.
- *
- * @return	<CODE>false</CODE> if there are non-empty <CODE>Element</CODE>s in the <CODE>Cell</CODE>.
- */
-
-	public boolean isTable() {
-		return (size() == 1) && (((Element)arrayList.get(0)).type() == Element.TABLE);
-	}
-
-/**
- * Gets an iterator of <CODE>Element</CODE>s.
- *
- * @return	an <CODE>Iterator</CODE>.
- */
-
-	public Iterator getElements() {
-		return arrayList.iterator();
-	}
-
-/**
- * Gets the horizontal alignment.
- *
- * @return	a value
- */
-
-	public int horizontalAlignment() {
-		return horizontalAlignment;
-	}
-
-/**
- * Gets the vertical alignment.
- *
- * @return	a value
- */
-
-	public int verticalAlignment() {
-		return verticalAlignment;
-	}
-
-/**
- * Gets the width.
- *
- * @return	a value
- */
-
-	public String cellWidth() {
-		return width;
-	}
-
-/**
- * Gets the colspan.
- *
- * @return	a value
- */
-
-	public int colspan() {
-		return colspan;
-	}
-
-/**
- * Gets the rowspan.
- *
- * @return	a value
- */
-
-	public int rowspan() {
-		return rowspan;
-	}
-
-/**
- * Gets the leading.
- *
- * @return	a value
- */
-
-	public float leading() {
-		if (Float.isNaN(leading)) {
-			return 16;
-		}
-		return leading;
-	}
-
-/**
- * Is this <CODE>Cell</CODE> a header?
- *
- * @return	a value
- */
-
-	public boolean header() {
-		return header;
-	}
-
-/**
- * Get nowrap.
- *
- * @return	a value
- */
-
-	public boolean noWrap() {
-		return maxLines == 1;
-	}
-
-/**
- * Clears all the <CODE>Element</CODE>s of this <CODE>Cell</CODE>.
- */
-	public void clear() {
-		arrayList.clear();
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @return NA
- */
-	public float top() {
-		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @return NA
- */
-	public float bottom() {
-		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @return NA
- */
-	public float left() {
-		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @return NA
- */
-	public float right() {
-		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @param margin
- * @return NA
- */
-	public float top(int margin) {
-		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @param margin
- * @return NA
- */
-	public float bottom(int margin) {
-		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @param margin
- * @return NA
- */
-	public float left(int margin) {
-		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @param margin NA
- * @return NA
- */
-	public float right(int margin) {
-		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @param value NA
- */
-	public void setTop(int value) {
-		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @param value NA
- */
-	public void setBottom(int value) {
-		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @param value NA
- */
-	public void setLeft(int value) {
-		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
-	}
-
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- * @param value NA
- */
-	public void setRight(int value) {
-		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
-	}
-
-/**
- * Checks if a given tag corresponds with this object.
- *
- * @param   tag     the given tag
- * @return  true if the tag corresponds
- */
-
-	public static boolean isTag(String tag) {
-		return ElementTags.CELL.equals(tag);
-	}
-
-/** Does this <CODE>Cell</CODE> force a group change? */
-	protected boolean groupChange = true;
-
-/**
- * Does this <CODE>Cell</CODE> force a group change?
- *
- * @return	a value
- */
-
-	public boolean getGroupChange() {
-		return groupChange;
-	}
-
-/**
- * Sets group change.
- *
- * @param	value	the new value
- */
-
-	public void setGroupChange(boolean value) {
-		groupChange = value;
-	}
+	// helper methods
 	
 	/**
-	 * Getter for {@link #maxLines}
-	 * @return the maxLines value
-	 */
-	public int getMaxLines() {
-		return maxLines;
+     * Get dummy cell used when merging inner tables. 
+     * @return a cell with colspan 3 and no border
+     */
+    private static Cell getDummyCell() {
+        Cell cell = new Cell(true);
+        cell.setColspan(3);
+        cell.setBorder(NO_BORDER);
+        return cell;
 	}
-	/**
-	 * Setter for {@link #maxLines}
-	 * @param value the maximum number of lines
-	 */
-	public void setMaxLines(int value) {
-		maxLines = value;
-	}
-	/**
-	 * Maximum number of lines allowed in the cell.  
-	 * The default value of this property is not to limit the maximum number of lines
-	 * (contributed by dperezcar@fcc.es)
-	 */
-	protected int maxLines = Integer.MAX_VALUE;
-	/**Setter for {@link #showTruncation}
-	 * @param value	Can be null for avoiding marking the truncation.*/
-	public void setShowTruncation(String value) {
-		showTruncation = value;
-	}
-	/**
-	 * Getter for {@link #showTruncation}
-	 * @return the showTruncation value
-	 */
-	public String getShowTruncation() {
-		return showTruncation;
-	}
-	/**
-	 * If a truncation happens due to the {@link #maxLines} property, then this text will 
-	 * be added to indicate a truncation has happened.
-	 * Default value is null, and means avoiding marking the truncation.  
-	 * A useful value of this property could be e.g. "..."
-	 * (contributed by dperezcar@fcc.es)
-	 */
-	String showTruncation;
-
-
-    /**
-     * Sets the value of {@link #useAscender}.
-     * @param use use ascender height if true
-     */
-    public void setUseAscender(boolean use) {
-        useAscender = use;
-    }
-
-    /**
-     * Gets the value of {@link #useAscender}
-     * @return useAscender
-     */
-    public boolean isUseAscender() {
-        return useAscender;
-    }
-
-    /**
-     * Sets the value of {@link #useDescender}.
-     * @param use use descender height if true
-     */
-    public void setUseDescender(boolean use) {
-        useDescender = use;
-    }
-
-    /**
-     * gets the value of {@link #useDescender }
-     * @return useDescender
-     */
-    public boolean isUseDescender() {
-        return useDescender;
-    }
-
-    /**
-     * Sets the value of {@link #useBorderPadding}.
-     * @param use adjust layour for borders if true
-     */
-    public void setUseBorderPadding(boolean use) {
-        useBorderPadding = use;
-    }
-
-    /**
-     * Gets the value of {@link #useBorderPadding}.
-     * @return useBorderPadding
-     */
-    public boolean isUseBorderPadding() {
-        return useBorderPadding;
-    }
 
 	/**
 	 * Creates a PdfPCell based on this Cell object.
@@ -997,9 +709,9 @@ public class Cell extends Rectangle implements TextElementArray {
 		cell.setColspan(colspan);
 		cell.setUseBorderPadding(useBorderPadding);
 		cell.setUseDescender(useDescender);
-		cell.setLeading(leading(), 0);
+		cell.setLeading(getLeading(), 0);
 		cell.cloneNonPositionParameters(this);
-		cell.setNoWrap(noWrap());
+		cell.setNoWrap(getMaxLines() == 1);
 		for (Iterator i = getElements(); i.hasNext(); ) {
             Element e = (Element)i.next();
             if (e.type() == Element.PHRASE || e.type() == Element.PARAGRAPH) {
@@ -1010,5 +722,219 @@ public class Cell extends Rectangle implements TextElementArray {
 			cell.addElement(e);
 		}
 		return cell;
+	}
+
+	// unsupported Rectangle methods
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 */
+	public float top() {
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 */
+	public float bottom() {
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 */
+	public float left() {
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 */
+	public float right() {
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @param margin
+	 * @return NA
+	 */
+	public float top(int margin) {
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @param margin
+	 * @return NA
+	 */
+	public float bottom(int margin) {
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @param margin
+	 * @return NA
+	 */
+	public float left(int margin) {
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @param margin NA
+	 * @return NA
+	 */
+	public float right(int margin) {
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @param value NA
+	 */
+	public void setTop(int value) {
+		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @param value NA
+	 */
+	public void setBottom(int value) {
+		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @param value NA
+	 */
+	public void setLeft(int value) {
+		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @param value NA
+	 */
+	public void setRight(int value) {
+		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+	}
+    
+// deprecated stuff
+
+	/**
+	 * Returns a <CODE>Cell</CODE> that has been constructed taking in account
+	 * the value of some <VAR>attributes</VAR>.
+	 *
+	 * @param	attributes		Some attributes
+	 * @deprecated use ElementFactory.getCell(attributes)
+	 */
+	public Cell(Properties attributes) {
+		this();
+		Cell tmp = com.lowagie.text.factories.ElementFactory.getCell(attributes);
+		this.cloneNonPositionParameters(tmp);
+		this.setHorizontalAlignment(tmp.getHorizontalAlignment());
+		this.setVerticalAlignment(tmp.getVerticalAlignment());
+		this.setWidth(tmp.getWidth());
+		this.setColspan(tmp.getColspan());
+		this.setRowspan(tmp.getRowspan());
+		this.setLeading(tmp.getLeading());
+		this.setHeader(tmp.isHeader());
+		this.setMaxLines(tmp.getMaxLines());
+	}
+    
+    /**
+	 * Gets the horizontal alignment.
+	 * @return	a value
+	 * @deprecated Use {@link #getHorizontalAlignment()} instead
+	 */
+	public int horizontalAlignment() {
+		return getHorizontalAlignment();
+	}
+
+    /**
+	 * Gets the vertical alignment.
+	 * @return	a value
+	 * @deprecated Use {@link #getVerticalAlignment()} instead
+	 */
+	public int verticalAlignment() {
+		return getVerticalAlignment();
+	}
+
+	/**
+	 * Gets the width.
+	 *
+	 * @return	a value
+	 * @deprecated Use {@link #getWidth()} instead
+	 */
+	public String cellWidth() {
+		return getWidth();
+	}
+	
+	/**
+	 * Gets the colspan.
+	 * @return	a value
+	 * @deprecated Use {@link #getColspan()} instead
+	 */
+	public int colspan() {
+		return getColspan();
+	}
+
+	/**
+	 * Gets the rowspan.
+	 * @return	a value
+	 * @deprecated Use {@link #getRowspan()} instead
+	 */
+	public int rowspan() {
+		return getRowspan();
+	}
+	
+	/**
+	 * Gets the leading.
+	 *
+	 * @return	a value
+	 * @deprecated Use {@link #getLeading()} instead
+	 */
+	public float leading() {
+		return getLeading();
+	}
+
+	/**
+	 * Is this <CODE>Cell</CODE> a header?
+	 *
+	 * @return	a value
+	 * @deprecated Use {@link #isHeader()} instead
+	 */
+	public boolean header() {
+		return isHeader();
+	}
+
+	/**
+	 * Set nowrap.
+	 *
+	 * @param	value	the new value
+	 * @deprecated Use setMaxLines(1) instead
+	 */
+	public void setNoWrap(boolean value) {
+		if (value)
+			maxLines = 1;
+		else
+			maxLines = Integer.MAX_VALUE;
+	}
+
+	/**
+	 * Get nowrap.
+	 *
+	 * @return	a value
+	 * @deprecated Use getMaxLines() == 1 instead
+	 */
+	public boolean noWrap() {
+		return maxLines == 1;
 	}
 }

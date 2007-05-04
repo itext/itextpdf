@@ -244,9 +244,6 @@ public abstract class Image extends Rectangle {
 	/** if the annotation is not null the image will be clickable. */
 	protected Annotation annotation = null;
 
-	/** Contains extra markupAttributes */
-	protected Properties markupAttributes;
-
 	/** ICC Profile attached */
 	protected ICC_Profile profile = null;
 

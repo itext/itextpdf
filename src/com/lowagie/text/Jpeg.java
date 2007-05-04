@@ -52,7 +52,6 @@ package com.lowagie.text;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -108,57 +107,9 @@ public class Jpeg extends Image {
      * @throws BadElementException
      * @throws IOException
      */
-    
     public Jpeg(URL url) throws BadElementException, IOException {
         super(url);
         processParameters();
-    }
-    
-    /**
-     * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
-     *
-     * @param		url			the <CODE>URL</CODE> where the image can be found.
-     * @param width new width of the Jpeg
-     * @param height new height of the Jpeg
-     * @throws BadElementException
-     * @throws IOException
-     * @deprecated	use Image.getInstance(...) to create an Image
-     */
-    
-    public Jpeg(URL url, float width, float height) throws BadElementException, IOException {
-        this(url);
-        scaledWidth = width;
-        scaledHeight = height;
-    }
-    
-    /**
-     * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
-     *
-     * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
-     * @throws BadElementException
-     * @throws MalformedURLException
-     * @throws IOException
-     * @deprecated	use Image.getInstance(...) to create an Image
-     */
-    
-    public Jpeg(String filename) throws BadElementException, MalformedURLException, IOException {
-        this(Image.toURL(filename));
-    }
-    
-    /**
-     * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
-     *
-     * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
-     * @param width new width of the Jpeg
-     * @param height new height of the Jpeg
-     * @throws BadElementException
-     * @throws MalformedURLException
-     * @throws IOException
-     * @deprecated	use Image.getInstance(...) to create an Image
-     */
-    
-    public Jpeg(String filename, float width, float height) throws BadElementException, MalformedURLException, IOException {
-        this(Image.toURL(filename), width, height);
     }
     
     /**
@@ -201,7 +152,6 @@ public class Jpeg extends Image {
      * @return	an int
      * @throws IOException
      */
-    
     private static final int getShort(InputStream is) throws IOException {
         return (is.read() << 8) + is.read();
     }
@@ -212,7 +162,6 @@ public class Jpeg extends Image {
      * @param	marker      an int
      * @return	a type: <VAR>VALID_MARKER</CODE>, <VAR>UNSUPPORTED_MARKER</VAR> or <VAR>NOPARAM_MARKER</VAR>
      */
-    
     private static final int marker(int marker) {
         for (int i = 0; i < VALID_MARKERS.length; i++) {
             if (marker == VALID_MARKERS[i]) {
@@ -239,7 +188,6 @@ public class Jpeg extends Image {
      * @throws BadElementException
      * @throws IOException
      */
-    
     private void processParameters() throws BadElementException, IOException {
         type = JPEG;
         originalType = ORIGINAL_JPEG;

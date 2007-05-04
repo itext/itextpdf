@@ -76,8 +76,8 @@ import java.util.ArrayList;
  * object. The keyword <B>stream</B> that follows the stream dictionary should be followed by
  * a carriage return and linefeed or just a linefeed.<BR>
  * Remark: In this version only the FLATEDECODE-filter is supported.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.8 (page 41-53).<BR>
+ * This object is described in the 'Portable Document Format Reference Manual version 1.7'
+ * section 3.2.7 (page 60-63).<BR>
  *
  * @see		PdfObject
  * @see		PdfDictionary

@@ -93,7 +93,7 @@ public class GreekList extends List {
 	 * change the font to SYMBOL
 	 */
 	protected void setGreekFont() {
-		float fontsize = symbol.getFont().size();
+		float fontsize = symbol.getFont().getSize();
 		symbol.setFont(FontFactory.getFont(FontFactory.SYMBOL, fontsize, Font.NORMAL));
 	}
 
