@@ -153,6 +153,9 @@ public class RtfDocumentHeader extends RtfElement {
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
+            // This is so that all colour, font and similar information is processed once, before
+            // the header section is written.
+            writeSectionDefinition();
             result.write(this.codePage.writeDefinition());
             result.write(this.fontList.writeDefinition());
             result.write(this.colorList.writeDefinition());
