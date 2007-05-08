@@ -88,7 +88,7 @@ public class PdfImage extends PdfStream {
         put(PdfName.HEIGHT, new PdfNumber(image.height()));
         if (image.getLayer() != null)
             put(PdfName.OC, image.getLayer().getRef());
-        if (image.isMask() && (image.bpc() == 1 || image.bpc() > 0xff))
+        if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 0xff))
             put(PdfName.IMAGEMASK, PdfBoolean.PDFTRUE);
         if (maskRef != null) {
             if (image.isSmask())
@@ -96,7 +96,7 @@ public class PdfImage extends PdfStream {
             else
                 put(PdfName.MASK, maskRef);
         }
-        if (image.isMask() && image.isInvertMask())
+        if (image.isMask() && image.isInverted())
             put(PdfName.DECODE, new PdfLiteral("[1 0]"));
         if (image.isInterpolation())
             put(PdfName.INTERPOLATE, PdfBoolean.PDFTRUE);
@@ -106,7 +106,7 @@ public class PdfImage extends PdfStream {
             // Raw Image data
             if (image.isImgRaw()) {
                 // will also have the CCITT parameters
-                int colorspace = image.colorspace();
+                int colorspace = image.getColorspace();
                 int transparency[] = image.getTransparency();
                 if (transparency != null && !image.isMask() && maskRef == null) {
                     String s = "[";
@@ -115,9 +115,9 @@ public class PdfImage extends PdfStream {
                     s += "]";
                     put(PdfName.MASK, new PdfLiteral(s));
                 }
-                bytes = image.rawData();
+                bytes = image.getRawData();
                 put(PdfName.LENGTH, new PdfNumber(bytes.length));
-                int bpc = image.bpc();
+                int bpc = image.getBpc();
                 if (bpc > 0xff) {
                     if (!image.isMask())
                         put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
@@ -160,9 +160,9 @@ public class PdfImage extends PdfStream {
                     PdfDictionary additional = image.getAdditional();
                     if (additional != null)
                         putAll(additional);
-                    if (image.isMask() && (image.bpc() == 1 || image.bpc() > 8))
+                    if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 8))
                         remove(PdfName.COLORSPACE);
-                    put(PdfName.BITSPERCOMPONENT, new PdfNumber(image.bpc()));
+                    put(PdfName.BITSPERCOMPONENT, new PdfNumber(image.getBpc()));
                     if (image.isDeflated())
                         put(PdfName.FILTER, PdfName.FLATEDECODE);
                     else {
@@ -174,18 +174,18 @@ public class PdfImage extends PdfStream {
             
             // GIF, JPEG or PNG
             String errorID;
-            if (image.rawData() == null){
-                is = image.url().openStream();
-                errorID = image.url().toString();
+            if (image.getRawData() == null){
+                is = image.getUrl().openStream();
+                errorID = image.getUrl().toString();
             }
             else{
-                is = new java.io.ByteArrayInputStream(image.rawData());
+                is = new java.io.ByteArrayInputStream(image.getRawData());
                 errorID = "Byte array";
             }
             switch(image.type()) {
                 case Image.JPEG:
                     put(PdfName.FILTER, PdfName.DCTDECODE);
-                    switch(image.colorspace()) {
+                    switch(image.getColorspace()) {
                         case 1:
                             put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
                             break;
@@ -199,8 +199,8 @@ public class PdfImage extends PdfStream {
                             }
                     }
                     put(PdfName.BITSPERCOMPONENT, new PdfNumber(8));
-                    if (image.rawData() != null){
-                        bytes = image.rawData();
+                    if (image.getRawData() != null){
+                        bytes = image.getRawData();
                         put(PdfName.LENGTH, new PdfNumber(bytes.length));
                         return;
                     }

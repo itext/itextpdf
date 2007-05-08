@@ -122,7 +122,7 @@ public class Tiff2Pdf extends AbstractTool {
                 if (img.getDpiX() > 0 && img.getDpiY() > 0) {
                     img.scalePercent(7200f / img.getDpiX(), 7200f / img.getDpiY());
                 }
-				document.setPageSize(new Rectangle(img.scaledWidth(), img.scaledHeight()));
+				document.setPageSize(new Rectangle(img.getScaledWidth(), img.getScaledHeight()));
 				adjustSize = true;
 			}
 			else if ("LETTER".equals(getValue("pagesize"))) {
@@ -140,16 +140,16 @@ public class Tiff2Pdf extends AbstractTool {
                         img.scalePercent(7200f / img.getDpiX(), 7200f / img.getDpiY());
                     }
                 	if (adjustSize) {
-    					document.setPageSize(new Rectangle(img.scaledWidth(),
-    							img.scaledHeight()));
+    					document.setPageSize(new Rectangle(img.getScaledWidth(),
+    							img.getScaledHeight()));
                         document.newPage();
                 		img.setAbsolutePosition(0, 0);
                 	}
                 	else {
-                		if (img.scaledWidth() > width || img.scaledHeight() > height) {
+                		if (img.getScaledWidth() > width || img.getScaledHeight() > height) {
                             if (img.getDpiX() > 0 && img.getDpiY() > 0) {
-                                float adjx = width / img.scaledWidth();
-                                float adjy = height / img.scaledHeight();
+                                float adjx = width / img.getScaledWidth();
+                                float adjy = height / img.getScaledHeight();
                                 float adj = Math.min(adjx, adjy);
                                 img.scalePercent(7200f / img.getDpiX() * adj, 7200f / img.getDpiY() * adj);
                             }

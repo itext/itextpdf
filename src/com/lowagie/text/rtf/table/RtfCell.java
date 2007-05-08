@@ -230,13 +230,13 @@ public class RtfCell extends Cell implements RtfExtendedElement {
         if(cell instanceof RtfCell) {
             this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, ((RtfCell) cell).getBorders());
         } else {
-            this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, cell.border(), cell.borderWidth(), cell.borderColor());
+            this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, cell.getBorder(), cell.getBorderWidth(), cell.getBorderColor());
         }
         this.verticalAlignment = cell.getVerticalAlignment();
-        if(cell.backgroundColor() == null) {
+        if(cell.getBackgroundColor() == null) {
             this.backgroundColor = new RtfColor(this.document, 255, 255, 255);
         } else {
-            this.backgroundColor = new RtfColor(this.document, cell.backgroundColor());
+            this.backgroundColor = new RtfColor(this.document, cell.getBackgroundColor());
         }
         
         this.cellPadding = (int) this.parentRow.getParentTable().getCellPadding();
@@ -447,13 +447,13 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     public void setBorders(RtfBorderGroup borderGroup) {
         this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, borderGroup);
     }
-    
-    /**
+
+	/**
      * Get the background color of this RtfCell
      * 
      * @return The background color of this RtfCell
      */
-    protected RtfColor getBackgroundColor() {
+    protected RtfColor getRtfBackgroundColor() {
         return this.backgroundColor;
     }
 
@@ -469,7 +469,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
         this.cellPadding = mergeParent.getCellpadding();
         this.borders = mergeParent.getBorders();
         this.verticalAlignment = mergeParent.getVerticalAlignment();
-        this.backgroundColor = mergeParent.getBackgroundColor();
+        this.backgroundColor = mergeParent.getRtfBackgroundColor();
     }
 
     /**

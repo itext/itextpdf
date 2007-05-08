@@ -1380,32 +1380,32 @@ public class AcroFields {
                     switch (rotation) {
                         case 270:
                             r = new Rectangle(
-                                pageSize.top() - r.bottom(),
-                                r.left(),
-                                pageSize.top() - r.top(),
-                                r.right());
+                                pageSize.getTop() - r.getBottom(),
+                                r.getLeft(),
+                                pageSize.getTop() - r.getTop(),
+                                r.getRight());
                             break;
                         case 180:
                             r = new Rectangle(
-                                pageSize.right() - r.left(),
-                                pageSize.top() - r.bottom(),
-                                pageSize.right() - r.right(),
-                                pageSize.top() - r.top());
+                                pageSize.getRight() - r.getLeft(),
+                                pageSize.getTop() - r.getBottom(),
+                                pageSize.getRight() - r.getRight(),
+                                pageSize.getTop() - r.getTop());
                             break;
                         case 90:
                             r = new Rectangle(
-                                r.bottom(),
-                                pageSize.right() - r.left(),
-                                r.top(),
-                                pageSize.right() - r.right());
+                                r.getBottom(),
+                                pageSize.getRight() - r.getLeft(),
+                                r.getTop(),
+                                pageSize.getRight() - r.getRight());
                             break;
                     }
                     r.normalize();
                 }
-                ret[ptr++] = r.left();
-                ret[ptr++] = r.bottom();
-                ret[ptr++] = r.right();
-                ret[ptr++] = r.top();
+                ret[ptr++] = r.getLeft();
+                ret[ptr++] = r.getBottom();
+                ret[ptr++] = r.getRight();
+                ret[ptr++] = r.getTop();
             }
             catch (Exception e) {
                 // empty on purpose

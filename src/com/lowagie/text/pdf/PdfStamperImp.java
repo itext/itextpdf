@@ -316,20 +316,20 @@ class PdfStamperImp extends PdfWriter {
         switch (rotation) {
             case 90:
                 out.append(PdfContents.ROTATE90);
-                out.append(page.top());
+                out.append(page.getTop());
                 out.append(' ').append('0').append(PdfContents.ROTATEFINAL);
                 break;
             case 180:
                 out.append(PdfContents.ROTATE180);
-                out.append(page.right());
+                out.append(page.getRight());
                 out.append(' ');
-                out.append(page.top());
+                out.append(page.getTop());
                 out.append(PdfContents.ROTATEFINAL);
                 break;
             case 270:
                 out.append(PdfContents.ROTATE270);
                 out.append('0').append(' ');
-                out.append(page.right());
+                out.append(page.getRight());
                 out.append(PdfContents.ROTATEFINAL);
                 break;
         }
@@ -770,7 +770,7 @@ class PdfStamperImp extends PdfWriter {
                         Rectangle box = PdfReader.getNormalizedRectangle((PdfArray)PdfReader.getPdfObject(merged.get(PdfName.RECT)));
                         PdfContentByte cb = getOverContent(page);
                         cb.setLiteral("Q ");
-                        cb.addTemplate(app, box.left(), box.bottom());
+                        cb.addTemplate(app, box.getLeft(), box.getBottom());
                         cb.setLiteral("q ");
                     }
                 }
@@ -953,7 +953,7 @@ class PdfStamperImp extends PdfWriter {
 						Rectangle box = PdfReader.getNormalizedRectangle((PdfArray)PdfReader.getPdfObject(annDic.get(PdfName.RECT)));
 						PdfContentByte cb = getOverContent(page);
 						cb.setLiteral("Q ");
-						cb.addTemplate(app, box.left(), box.bottom());
+						cb.addTemplate(app, box.getLeft(), box.getBottom());
 						cb.setLiteral("q ");
 					}
 				}
@@ -1102,24 +1102,24 @@ class PdfStamperImp extends PdfWriter {
                             switch (rotation) {
                                 case 90:
                                     annot.put(PdfName.RECT, new PdfRectangle(
-                                    pageSize.top() - rect.bottom(),
+                                    pageSize.getTop() - rect.bottom(),
                                     rect.left(),
-                                    pageSize.top() - rect.top(),
+                                    pageSize.getTop() - rect.top(),
                                     rect.right()));
                                     break;
                                 case 180:
                                     annot.put(PdfName.RECT, new PdfRectangle(
-                                    pageSize.right() - rect.left(),
-                                    pageSize.top() - rect.bottom(),
-                                    pageSize.right() - rect.right(),
-                                    pageSize.top() - rect.top()));
+                                    pageSize.getRight() - rect.left(),
+                                    pageSize.getTop() - rect.bottom(),
+                                    pageSize.getRight() - rect.right(),
+                                    pageSize.getTop() - rect.top()));
                                     break;
                                 case 270:
                                     annot.put(PdfName.RECT, new PdfRectangle(
                                     rect.bottom(),
-                                    pageSize.right() - rect.left(),
+                                    pageSize.getRight() - rect.left(),
                                     rect.top(),
-                                    pageSize.right() - rect.right()));
+                                    pageSize.getRight() - rect.right()));
                                     break;
                             }
                         }

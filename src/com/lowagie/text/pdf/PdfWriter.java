@@ -2654,7 +2654,7 @@ public class PdfWriter extends DocWriter implements
         else {
             if (image.isImgTemplate()) {
                 name = new PdfName("img" + images.size());
-                if (image.templateData() == null) {
+                if (image.getTemplateData() == null) {
                     if(image instanceof ImgWMF){
                         try {
                             ImgWMF wmf = (ImgWMF)image;

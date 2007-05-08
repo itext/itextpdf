@@ -130,7 +130,7 @@ class PdfFont implements Comparable {
         if (image == null)
             return size;
         else {
-            return image.scaledHeight();
+            return image.getScaledHeight();
         }
     }
     
@@ -155,14 +155,14 @@ class PdfFont implements Comparable {
         if (image == null)
             return font.getWidthPoint(character, size) * hScale;
         else
-            return image.scaledWidth();
+            return image.getScaledWidth();
     }
     
     float width(String s) {
         if (image == null)
             return font.getWidthPoint(s, size) * hScale;
         else
-            return image.scaledWidth();
+            return image.getScaledWidth();
     }
     
     BaseFont getFont() {

@@ -376,43 +376,99 @@ public class PdfCell extends Rectangle {
     }
 
     /**
+	 * Returns the lower left x-coordinaat.
+	 *
+	 * @return		the lower left x-coordinaat
+	 * @deprecated Use {@link #getLeft()} instead
+	 */
+	
+	public float left() {
+		return getLeft();
+	}
+
+
+
+
+	/**
      * Returns the lower left x-coordinaat.
      *
      * @return		the lower left x-coordinaat
      */
 
-    public float left() {
-        return super.left(cellspacing);
+    public float getLeft() {
+        return super.getLeft(cellspacing);
     }
 
     /**
+	 * Returns the upper right x-coordinate.
+	 *
+	 * @return		the upper right x-coordinate
+	 * @deprecated Use {@link #getRight()} instead
+	 */
+	
+	public float right() {
+		return getRight();
+	}
+
+
+
+
+	/**
      * Returns the upper right x-coordinate.
      *
      * @return		the upper right x-coordinate
      */
 
-    public float right() {
-        return super.right(cellspacing);
+    public float getRight() {
+        return super.getRight(cellspacing);
     }
 
     /**
+	 * Returns the upper right y-coordinate.
+	 *
+	 * @return		the upper right y-coordinate
+	 * @deprecated Use {@link #getTop()} instead
+	 */
+	
+	public float top() {
+		return getTop();
+	}
+
+
+
+
+	/**
      * Returns the upper right y-coordinate.
      *
      * @return		the upper right y-coordinate
      */
 
-    public float top() {
-        return super.top(cellspacing);
+    public float getTop() {
+        return super.getTop(cellspacing);
     }
 
     /**
+	 * Returns the lower left y-coordinate.
+	 *
+	 * @return		the lower left y-coordinate
+	 * @deprecated Use {@link #getBottom()} instead
+	 */
+	
+	public float bottom() {
+		return getBottom();
+	}
+
+
+
+
+	/**
      * Returns the lower left y-coordinate.
      *
      * @return		the lower left y-coordinate
      */
 
-    public float bottom() {
-        return super.bottom(cellspacing);
+    public float getBottom() {
+        return super.getBottom(cellspacing);
     }
     
     // methods
@@ -458,7 +514,7 @@ public class PdfCell extends Rectangle {
             if (chunk != null) {
                 Image image = chunk.getImage();
                 if (image != null) {
-                    firstLineRealHeight = firstLine.getChunk(0).getImage().scaledHeight();
+                    firstLineRealHeight = firstLine.getChunk(0).getImage().getScaledHeight();
                 } else {
                     firstLineRealHeight = useAscender ? firstLine.getAscender() : leading;
                 }
@@ -516,7 +572,7 @@ public class PdfCell extends Rectangle {
 
     private float addImage(Image i, float left, float right, float extraHeight, int alignment) {
         Image image = Image.getInstance(i);
-        if (image.scaledWidth() > right - left) {
+        if (image.getScaledWidth() > right - left) {
             image.scaleToFit(right - left, Float.MAX_VALUE);
         }
         flushCurrentLine();
@@ -529,10 +585,10 @@ public class PdfCell extends Rectangle {
         right = right - left;
         left = 0f;
 
-        if ((image.alignment() & Image.RIGHT) == Image.RIGHT) {
-            left = right - image.scaledWidth();
-        } else if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) {
-            left = left + ((right - left - image.scaledWidth()) / 2f);
+        if ((image.getAlignment() & Image.RIGHT) == Image.RIGHT) {
+            left = right - image.getScaledWidth();
+        } else if ((image.getAlignment() & Image.MIDDLE) == Image.MIDDLE) {
+            left = left + ((right - left - image.getScaledWidth()) / 2f);
         }
         Chunk imageChunk = new Chunk(image, left, 0);
         imageLine.add(new PdfChunk(imageChunk, null));
@@ -552,12 +608,12 @@ public class PdfCell extends Rectangle {
 
     public ArrayList getLines(float top, float bottom) {
         float lineHeight;
-        float currentPosition = Math.min(top(), top);
+        float currentPosition = Math.min(getTop(), top);
         setTop(currentPosition + cellspacing);
         ArrayList result = new ArrayList();
 
         // if the bottom of the page is higher than the top of the cell: do nothing
-        if (top() < bottom) {
+        if (getTop() < bottom) {
             return result;
         }
         
@@ -593,7 +649,7 @@ public class PdfCell extends Rectangle {
             Image image;
             for (Iterator i = images.iterator(); i.hasNext();) {
                 image = (Image) i.next();
-                image.setAbsolutePosition(image.absoluteX(), image.absoluteY() - difference - leading);
+                image.setAbsolutePosition(image.getAbsoluteX(), image.getAbsoluteY() - difference - leading);
             }
         }
         return result;
@@ -612,10 +668,10 @@ public class PdfCell extends Rectangle {
     public ArrayList getImages(float top, float bottom) {
 
         // if the bottom of the page is higher than the top of the cell: do nothing
-        if (top() < bottom) {
+        if (getTop() < bottom) {
             return new ArrayList();
         }
-        top = Math.min(top(), top);
+        top = Math.min(getTop(), top);
         // initialisations
         Image image;
         float height;
@@ -623,10 +679,10 @@ public class PdfCell extends Rectangle {
         // we loop over the images
         for (Iterator i = images.iterator(); i.hasNext() && !header;) {
             image = (Image) i.next();
-            height = image.absoluteY();
+            height = image.getAbsoluteY();
             // if the currentPosition is higher than the bottom, we add the line to the result
             if (top - height > (bottom + cellpadding)) {
-                image.setAbsolutePosition(image.absoluteX(), top - height);
+                image.setAbsolutePosition(image.getAbsoluteX(), top - height);
                 result.add(image);
                 i.remove();
             }
@@ -703,7 +759,7 @@ public class PdfCell extends Rectangle {
         float result = 0f;
         for (Iterator i = images.iterator(); i.hasNext();) {
             Image image = (Image) i.next();
-            result += image.scaledHeight();
+            result += image.getScaledHeight();
         }
         return remainingLines() * leading + 2 * cellpadding + cellspacing + result + leading / 2.5f;
     }
@@ -835,13 +891,13 @@ public class PdfCell extends Rectangle {
      */
 
     public Rectangle rectangle(float top, float bottom) {
-        Rectangle tmp = new Rectangle(left(), bottom(), right(), top());
+        Rectangle tmp = new Rectangle(getLeft(), getBottom(), getRight(), getTop());
         tmp.cloneNonPositionParameters(this);
-        if (top() > top) {
+        if (getTop() > top) {
             tmp.setTop(top);
             tmp.setBorder(border - (border & TOP));
         }
-        if (bottom() < bottom) {
+        if (getBottom() < bottom) {
             tmp.setBottom(bottom);
             tmp.setBorder(border - (border & BOTTOM));
         }

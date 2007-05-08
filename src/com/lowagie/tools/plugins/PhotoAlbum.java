@@ -130,8 +130,8 @@ public class PhotoAlbum extends AbstractTool {
                     if (dpiX == 0) dpiX=72;
                     dpiY=img.getDpiY();
                     if (dpiY == 0) dpiY=72;
-                    imgWidthPica=(72*img.plainWidth()) / dpiX;
-                    imgHeightPica=(72*img.plainHeight()) / dpiY;
+                    imgWidthPica=(72*img.getPlainWidth()) / dpiX;
+                    imgHeightPica=(72*img.getPlainHeight()) / dpiY;
                     img.scaleAbsolute(imgWidthPica,imgHeightPica);
                     document.setPageSize(new Rectangle(imgWidthPica, imgHeightPica));
                 	if (document.isOpen()) {

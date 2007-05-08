@@ -401,14 +401,14 @@ public class ColumnText {
             PdfPTable t = new PdfPTable(1);
             float w = img.getWidthPercentage();
             if (w == 0) {
-                t.setTotalWidth(img.scaledWidth());
+                t.setTotalWidth(img.getScaledWidth());
                 t.setLockedWidth(true);
             }
             else
                 t.setWidthPercentage(w);
-            t.setSpacingAfter(img.spacingAfter());
-            t.setSpacingBefore(img.spacingBefore());
-            switch (img.alignment()) {
+            t.setSpacingAfter(img.getSpacingAfter());
+            t.setSpacingBefore(img.getSpacingBefore());
+            switch (img.getAlignment()) {
                 case Image.LEFT:
                     t.setHorizontalAlignment(Element.ALIGN_LEFT);
                     break;
@@ -421,10 +421,10 @@ public class ColumnText {
             }
             PdfPCell c = new PdfPCell(img, true);
             c.setPadding(0);
-            c.setBorder(img.border());
-            c.setBorderColor(img.borderColor());
-            c.setBorderWidth(img.borderWidth());
-            c.setBackgroundColor(img.backgroundColor());
+            c.setBorder(img.getBorder());
+            c.setBorderColor(img.getBorderColor());
+            c.setBorderWidth(img.getBorderWidth());
+            c.setBackgroundColor(img.getBackgroundColor());
             t.addCell(c);
             element = t;
         }

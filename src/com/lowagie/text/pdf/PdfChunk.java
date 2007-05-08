@@ -299,7 +299,7 @@ public class PdfChunk implements SplitCharacter{
     PdfChunk split(float width) {
         newlineSplit = false;
         if (image != null) {
-            if (image.scaledWidth() > width) {
+            if (image.getScaledWidth() > width) {
                 PdfChunk pc = new PdfChunk(Chunk.OBJECT_REPLACEMENT_CHARACTER, this);
                 value = "";
                 attributes = new HashMap();
@@ -427,7 +427,7 @@ public class PdfChunk implements SplitCharacter{
     
     PdfChunk truncate(float width) {
         if (image != null) {
-            if (image.scaledWidth() > width) {
+            if (image.getScaledWidth() > width) {
                 PdfChunk pc = new PdfChunk("", this);
                 value = "";
                 attributes.remove(Chunk.IMAGE);
@@ -533,7 +533,7 @@ public class PdfChunk implements SplitCharacter{
     public float getWidthCorrected(float charSpacing, float wordSpacing)
     {
         if (image != null) {
-            return image.scaledWidth() + charSpacing;
+            return image.getScaledWidth() + charSpacing;
         }
         int numberOfSpaces = 0;
         int idx = -1;

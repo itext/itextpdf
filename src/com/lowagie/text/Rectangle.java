@@ -52,7 +52,6 @@ package com.lowagie.text;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Properties;
 
 import com.lowagie.text.pdf.GrayColor;
 
@@ -73,7 +72,7 @@ import com.lowagie.text.pdf.GrayColor;
 
 public class Rectangle implements Element {
 
-	// static membervariables (concerning the presence of borders)
+	// static final membervariables (concerning the presence of borders)
 
 	/** This is the value that will be used as <VAR>undefined </VAR>. */
 	public static final int UNDEFINED = -1;
@@ -110,6 +109,9 @@ public class Rectangle implements Element {
 	/** the upper right y-coordinate. */
 	protected float ury;
 
+	/** The rotation of the Rectangle */
+	protected int rotation = 0;
+
 	/** This represents the status of the 4 sides of the rectangle. */
 	protected int border = UNDEFINED;
 
@@ -117,19 +119,13 @@ public class Rectangle implements Element {
 	protected float borderWidth = UNDEFINED;
 
 	/** The color of the border of this rectangle. */
-	protected Color color = null;
+	protected Color borderColor = null;
 
-	/** The color of the left border of this rectangle. */
-	protected Color borderColorLeft = null;
+	/** This is the color of the background of this rectangle. */
+	protected Color backgroundColor = null;
 
-	/** The color of the right border of this rectangle. */
-	protected Color borderColorRight = null;
-
-	/** The color of the top border of this rectangle. */
-	protected Color borderColorTop = null;
-
-	/** The color of the bottom border of this rectangle. */
-	protected Color borderColorBottom = null;
+	/** Whether variable width/color borders are used. */
+	protected boolean useVariableBorders = false;
 
 	/** The width of the left border of this rectangle. */
 	protected float borderWidthLeft = UNDEFINED;
@@ -143,16 +139,17 @@ public class Rectangle implements Element {
 	/** The width of the bottom border of this rectangle. */
 	protected float borderWidthBottom = UNDEFINED;
 
-	/** Whether variable width borders are used. */
-	protected boolean useVariableBorders = false;
+	/** The color of the left border of this rectangle. */
+	protected Color borderColorLeft = null;
 
-	/** This is the color of the background of this rectangle. */
-	protected Color background = null;
+	/** The color of the right border of this rectangle. */
+	protected Color borderColorRight = null;
 
-	protected int rotation = 0;
+	/** The color of the top border of this rectangle. */
+	protected Color borderColorTop = null;
 
-	/** Contains extra markupAttributes */
-	protected Properties markupAttributes;
+	/** The color of the bottom border of this rectangle. */
+	protected Color borderColorBottom = null;
 
 	// constructors
 
@@ -168,7 +165,6 @@ public class Rectangle implements Element {
 	 * @param ury
 	 *            upper right y
 	 */
-
 	public Rectangle(float llx, float lly, float urx, float ury) {
 		this.llx = llx;
 		this.lly = lly;
@@ -185,7 +181,6 @@ public class Rectangle implements Element {
 	 * @param ury
 	 *            upper right y
 	 */
-
 	public Rectangle(float urx, float ury) {
 		this(0, 0, urx, ury);
 	}
@@ -196,74 +191,9 @@ public class Rectangle implements Element {
 	 * @param rect
 	 *            another <CODE>Rectangle</CODE>
 	 */
-
 	public Rectangle(Rectangle rect) {
 		this(rect.llx, rect.lly, rect.urx, rect.ury);
 		cloneNonPositionParameters(rect);
-	}
-
-	/**
-	 * Copies all of the parameters from a <CODE>Rectangle</CODE> object
-	 * except the position.
-	 * 
-	 * @param rect
-	 *            <CODE>Rectangle</CODE> to copy from
-	 */
-
-	public void cloneNonPositionParameters(Rectangle rect) {
-		this.rotation = rect.rotation;
-		this.border = rect.border;
-		this.borderWidth = rect.borderWidth;
-		this.color = rect.color;
-		this.background = rect.background;
-		this.borderColorLeft = rect.borderColorLeft;
-		this.borderColorRight = rect.borderColorRight;
-		this.borderColorTop = rect.borderColorTop;
-		this.borderColorBottom = rect.borderColorBottom;
-		this.borderWidthLeft = rect.borderWidthLeft;
-		this.borderWidthRight = rect.borderWidthRight;
-		this.borderWidthTop = rect.borderWidthTop;
-		this.borderWidthBottom = rect.borderWidthBottom;
-		this.useVariableBorders = rect.useVariableBorders;
-	}
-
-	/**
-	 * Copies all of the parameters from a <CODE>Rectangle</CODE> object
-	 * except the position.
-	 * 
-	 * @param rect
-	 *            <CODE>Rectangle</CODE> to copy from
-	 */
-
-	public void softCloneNonPositionParameters(Rectangle rect) {
-		if (rect.rotation != 0)
-			this.rotation = rect.rotation;
-		if (rect.border != UNDEFINED)
-			this.border = rect.border;
-		if (rect.borderWidth != UNDEFINED)
-			this.borderWidth = rect.borderWidth;
-		if (rect.color != null)
-			this.color = rect.color;
-		if (rect.background != null)
-			this.background = rect.background;
-		if (rect.borderColorLeft != null)
-			this.borderColorLeft = rect.borderColorLeft;
-		if (rect.borderColorRight != null)
-			this.borderColorRight = rect.borderColorRight;
-		if (rect.borderColorTop != null)
-			this.borderColorTop = rect.borderColorTop;
-		if (rect.borderColorBottom != null)
-			this.borderColorBottom = rect.borderColorBottom;
-		if (rect.borderWidthLeft != UNDEFINED)
-			this.borderWidthLeft = rect.borderWidthLeft;
-		if (rect.borderWidthRight != UNDEFINED)
-			this.borderWidthRight = rect.borderWidthRight;
-		if (rect.borderWidthTop != UNDEFINED)
-			this.borderWidthTop = rect.borderWidthTop;
-		if (rect.borderWidthBottom != UNDEFINED)
-			this.borderWidthBottom = rect.borderWidthBottom;
-		if (useVariableBorders)
-			this.useVariableBorders = rect.useVariableBorders;
 	}
 
 	// implementation of the Element interface
@@ -276,7 +206,6 @@ public class Rectangle implements Element {
 	 *            an <CODE>ElementListener</CODE>
 	 * @return <CODE>true</CODE> if the element was processed successfully
 	 */
-
 	public boolean process(ElementListener listener) {
 		try {
 			return listener.add(this);
@@ -290,7 +219,6 @@ public class Rectangle implements Element {
 	 * 
 	 * @return a type
 	 */
-
 	public int type() {
 		return Element.RECTANGLE;
 	}
@@ -300,12 +228,150 @@ public class Rectangle implements Element {
 	 * 
 	 * @return an <CODE>ArrayList</CODE>
 	 */
-
 	public ArrayList getChunks() {
 		return new ArrayList();
 	}
 
-	// methods
+	// methods to get/set the dimensions
+
+	/**
+	 * Sets the lower left x-coordinate.
+	 * 
+	 * @param value
+	 *            the new value
+	 */
+	public void setLeft(float value) {
+		llx = value;
+	}
+
+	/**
+	 * Returns the lower left x-coordinate.
+	 * 
+	 * @return the lower left x-coordinate
+	 */
+	public float getLeft() {
+		return llx;
+	}
+
+	/**
+	 * Returns the lower left x-coordinate, considering a given margin.
+	 * 
+	 * @param margin
+	 *            a margin
+	 * @return the lower left x-coordinate
+	 */
+	public float getLeft(float margin) {
+		return llx + margin;
+	}
+
+	/**
+	 * Sets the upper right x-coordinate.
+	 * 
+	 * @param value
+	 *            the new value
+	 */
+
+	public void setRight(float value) {
+		urx = value;
+	}
+
+	/**
+	 * Returns the upper right x-coordinate.
+	 * 
+	 * @return the upper right x-coordinate
+	 */
+	public float getRight() {
+		return urx;
+	}
+
+	/**
+	 * Returns the upper right x-coordinate, considering a given margin.
+	 * 
+	 * @param margin
+	 *            a margin
+	 * @return the upper right x-coordinate
+	 */
+	public float getRight(float margin) {
+		return urx - margin;
+	}
+
+	/**
+	 * Returns the width of the rectangle.
+	 * 
+	 * @return a width
+	 */
+	public float width() {
+		return urx - llx;
+	}
+
+	/**
+	 * Sets the upper right y-coordinate.
+	 * 
+	 * @param value
+	 *            the new value
+	 */
+	public void setTop(float value) {
+		ury = value;
+	}
+
+	/**
+	 * Returns the upper right y-coordinate.
+	 * 
+	 * @return the upper right y-coordinate
+	 */
+	public float getTop() {
+		return ury;
+	}
+
+	/**
+	 * Returns the upper right y-coordinate, considering a given margin.
+	 * 
+	 * @param margin
+	 *            a margin
+	 * @return the upper right y-coordinate
+	 */
+	public float getTop(float margin) {
+		return ury - margin;
+	}
+
+	/**
+	 * Sets the lower left y-coordinate.
+	 * 
+	 * @param value
+	 *            the new value
+	 */
+	public void setBottom(float value) {
+		lly = value;
+	}
+
+	/**
+	 * Returns the lower left y-coordinate.
+	 * 
+	 * @return the lower left y-coordinate
+	 */
+	public float getBottom() {
+		return lly;
+	}
+
+	/**
+	 * Returns the lower left y-coordinate, considering a given margin.
+	 * 
+	 * @param margin
+	 *            a margin
+	 * @return the lower left y-coordinate
+	 */
+	public float getBottom(float margin) {
+		return lly + margin;
+	}
+
+	/**
+	 * Returns the height of the rectangle.
+	 * 
+	 * @return a height
+	 */
+	public float height() {
+		return ury - lly;
+	}
 
 	/**
 	 * Switches lowerleft with upperright
@@ -323,27 +389,15 @@ public class Rectangle implements Element {
 		}
 	}
 
-	/**
-	 * Gets a Rectangle that is altered to fit on the page.
-	 * 
-	 * @param top
-	 *            the top position
-	 * @param bottom
-	 *            the bottom position
-	 * @return a <CODE>Rectangle</CODE>
-	 */
+	// methods to get/set the rotation
 
-	public Rectangle rectangle(float top, float bottom) {
-		Rectangle tmp = new Rectangle(this);
-		if (top() > top) {
-			tmp.setTop(top);
-			tmp.setBorder(border - (border & TOP));
-		}
-		if (bottom() < bottom) {
-			tmp.setBottom(bottom);
-			tmp.setBorder(border - (border & BOTTOM));
-		}
-		return tmp;
+	/**
+	 * Gets the rotation of the rectangle
+	 * 
+	 * @return a rotation value
+	 */
+	public int getRotation() {
+		return rotation;
 	}
 
 	/**
@@ -352,60 +406,46 @@ public class Rectangle implements Element {
 	 * 
 	 * @return a <CODE>Rectangle</CODE>
 	 */
-
 	public Rectangle rotate() {
 		Rectangle rect = new Rectangle(lly, llx, ury, urx);
 		rect.rotation = rotation + 90;
 		rect.rotation %= 360;
 		return rect;
 	}
-
-	// methods to set the membervariables
+	
+	// border
 
 	/**
-	 * Sets the lower left x-coordinate.
+	 * Returns the exact type of the border.
 	 * 
-	 * @param value
-	 *            the new value
+	 * @return a value
 	 */
-
-	public void setLeft(float value) {
-		llx = value;
+	public int getBorder() {
+		return border;
 	}
 
 	/**
-	 * Sets the upper right x-coordinate.
+	 * Indicates if the table has borders.
 	 * 
-	 * @param value
-	 *            the new value
+	 * @return a boolean
 	 */
-
-	public void setRight(float value) {
-		urx = value;
+	public boolean hasBorders() {
+		return (border > 0)
+				&& ((borderWidth > 0) || (borderWidthLeft > 0)
+						|| (borderWidthRight > 0) || (borderWidthTop > 0) || (borderWidthBottom > 0));
 	}
 
 	/**
-	 * Sets the upper right y-coordinate.
+	 * Indicates if the table has a some type of border.
 	 * 
-	 * @param value
-	 *            the new value
+	 * @param type
+	 *            the type of border
+	 * @return a boolean
 	 */
-
-	public void setTop(float value) {
-		ury = value;
+	public boolean hasBorder(int type) {
+		return border != UNDEFINED && (border & type) == type;
 	}
-
-	/**
-	 * Sets the lower left y-coordinate.
-	 * 
-	 * @param value
-	 *            the new value
-	 */
-
-	public void setBottom(float value) {
-		lly = value;
-	}
-
+	
 	/**
 	 * Enables/Disables the border on the specified sides. The border is
 	 * specified as an integer bitwise combination of the constants: <CODE>
@@ -416,7 +456,6 @@ public class Rectangle implements Element {
 	 * @param value
 	 *            the new value
 	 */
-
 	public void setBorder(int value) {
 		border = value;
 	}
@@ -449,6 +488,17 @@ public class Rectangle implements Element {
 		border &= ~side;
 	}
 
+	// borderwidth
+
+	/**
+	 * Gets the borderwidth.
+	 * 
+	 * @return a value
+	 */
+	public float getBorderWidth() {
+		return borderWidth;
+	}
+	
 	/**
 	 * Sets the borderwidth of the table.
 	 * 
@@ -460,6 +510,18 @@ public class Rectangle implements Element {
 		borderWidth = value;
 	}
 
+	// bordercolor
+
+	/**
+	 * Gets the color of the border.
+	 * 
+	 * @return a value
+	 */
+
+	public Color getBorderColor() {
+		return borderColor;
+	}
+	
 	/**
 	 * Sets the color of the border.
 	 * 
@@ -468,49 +530,20 @@ public class Rectangle implements Element {
 	 */
 
 	public void setBorderColor(Color value) {
-		color = value;
+		borderColor = value;
 	}
+
+	// backgroundcolor
 
 	/**
-	 * Sets the value of the border color
+	 * Gets the backgroundcolor.
 	 * 
-	 * @param value
-	 *            a color value
+	 * @return a value
 	 */
-	public void setBorderColorRight(Color value) {
-		borderColorRight = value;
+	public Color getBackgroundColor() {
+		return backgroundColor;
 	}
-
-	/**
-	 * Sets the value of the border color
-	 * 
-	 * @param value
-	 *            a color value
-	 */
-	public void setBorderColorLeft(Color value) {
-		borderColorLeft = value;
-	}
-
-	/**
-	 * Sets the value of the border color
-	 * 
-	 * @param value
-	 *            a color value
-	 */
-	public void setBorderColorTop(Color value) {
-		borderColorTop = value;
-	}
-
-	/**
-	 * Sets the value of the border color
-	 * 
-	 * @param value
-	 *            a color value
-	 */
-	public void setBorderColorBottom(Color value) {
-		borderColorBottom = value;
-	}
-
+	
 	/**
 	 * Sets the backgroundcolor of the rectangle.
 	 * 
@@ -519,192 +552,7 @@ public class Rectangle implements Element {
 	 */
 
 	public void setBackgroundColor(Color value) {
-		background = value;
-	}
-
-	/**
-	 * Sets the grayscale of the rectangle.
-	 * 
-	 * @param value
-	 *            the new value
-	 */
-
-	public void setGrayFill(float value) {
-        background = new GrayColor(value);
-	}
-
-	// methods to get the membervariables
-
-	/**
-	 * Returns the lower left x-coordinate.
-	 * 
-	 * @return the lower left x-coordinate
-	 */
-
-	public float left() {
-		return llx;
-	}
-
-	/**
-	 * Returns the upper right x-coordinate.
-	 * 
-	 * @return the upper right x-coordinate
-	 */
-
-	public float right() {
-		return urx;
-	}
-
-	/**
-	 * Returns the upper right y-coordinate.
-	 * 
-	 * @return the upper right y-coordinate
-	 */
-
-	public float top() {
-		return ury;
-	}
-
-	/**
-	 * Returns the lower left y-coordinate.
-	 * 
-	 * @return the lower left y-coordinate
-	 */
-
-	public float bottom() {
-		return lly;
-	}
-
-	/**
-	 * Returns the lower left x-coordinate, considering a given margin.
-	 * 
-	 * @param margin
-	 *            a margin
-	 * @return the lower left x-coordinate
-	 */
-
-	public float left(float margin) {
-		return llx + margin;
-	}
-
-	/**
-	 * Returns the upper right x-coordinate, considering a given margin.
-	 * 
-	 * @param margin
-	 *            a margin
-	 * @return the upper right x-coordinate
-	 */
-
-	public float right(float margin) {
-		return urx - margin;
-	}
-
-	/**
-	 * Returns the upper right y-coordinate, considering a given margin.
-	 * 
-	 * @param margin
-	 *            a margin
-	 * @return the upper right y-coordinate
-	 */
-
-	public float top(float margin) {
-		return ury - margin;
-	}
-
-	/**
-	 * Returns the lower left y-coordinate, considering a given margin.
-	 * 
-	 * @param margin
-	 *            a margin
-	 * @return the lower left y-coordinate
-	 */
-
-	public float bottom(float margin) {
-		return lly + margin;
-	}
-
-	/**
-	 * Returns the width of the rectangle.
-	 * 
-	 * @return a width
-	 */
-
-	public float width() {
-		return urx - llx;
-	}
-
-	/**
-	 * Returns the height of the rectangle.
-	 * 
-	 * @return a height
-	 */
-
-	public float height() {
-		return ury - lly;
-	}
-
-	/**
-	 * Indicates if the table has borders.
-	 * 
-	 * @return a boolean
-	 */
-
-	public boolean hasBorders() {
-		return (border > 0)
-				&& ((borderWidth > 0) || (borderWidthLeft > 0)
-						|| (borderWidthRight > 0) || (borderWidthTop > 0) || (borderWidthBottom > 0));
-	}
-
-	/**
-	 * Indicates if the table has a some type of border.
-	 * 
-	 * @param type
-	 *            the type of border
-	 * @return a boolean
-	 */
-
-	public boolean hasBorder(int type) {
-		return border != UNDEFINED && (border & type) == type;
-	}
-
-	/**
-	 * Returns the exact type of the border.
-	 * 
-	 * @return a value
-	 */
-
-	public int border() {
-		return border;
-	}
-
-	/**
-	 * Gets the borderwidth.
-	 * 
-	 * @return a value
-	 */
-
-	public float borderWidth() {
-		return borderWidth;
-	}
-
-	/**
-	 * Gets the color of the border.
-	 * 
-	 * @return a value
-	 */
-
-	public Color borderColor() {
-		return color;
-	}
-
-	/**
-	 * Gets the backgroundcolor.
-	 * 
-	 * @return a value
-	 */
-
-	public Color backgroundColor() {
-		return background;
+		backgroundColor = value;
 	}
 
 	/**
@@ -713,60 +561,75 @@ public class Rectangle implements Element {
 	 * @return a value
 	 */
 
-	public float grayFill() {
-        if (background instanceof GrayColor)
-            return ((GrayColor)background).getGray();
+	public float getGrayFill() {
+        if (backgroundColor instanceof GrayColor)
+            return ((GrayColor)backgroundColor).getGray();
         else
             return 0;
 	}
 
 	/**
-	 * Gets the rotation of the rectangle
+	 * Sets the grayscale of the rectangle.
 	 * 
-	 * @return a rotation value
+	 * @param value
+	 *            the new value
 	 */
-	public int getRotation() {
-		return rotation;
+	public void setGrayFill(float value) {
+        backgroundColor = new GrayColor(value);
+	}
+
+	// variable borders
+	
+	/**
+	 * Indicates whether variable width borders are being used. Returns true if
+	 * <CODE>setBorderWidthLeft, setBorderWidthRight, setBorderWidthTop, or
+	 * setBorderWidthBottom</CODE> has been called.
+	 * 
+	 * @return true if variable width borders are in use
+	 *  
+	 */
+	public boolean isUseVariableBorders() {
+		return useVariableBorders;
 	}
 
 	/**
-	 * Gets the color of a border.
+	 * Sets a parameter indicating if the rectangle has variable borders
 	 * 
-	 * @return a color value
+	 * @param useVariableBorders
+	 *            indication if the rectangle has variable borders
 	 */
-	public Color getBorderColorLeft() {
-		if (borderColorLeft == null) return color;
-		return borderColorLeft;
+	public void setUseVariableBorders(boolean useVariableBorders) {
+		this.useVariableBorders = useVariableBorders;
+	}
+	
+	// variable border width
+
+	/** Gives the border width of a specific side. */
+	private float getVariableBorderWidth(float variableWidthValue, int side) {
+		if ((border & side) != 0) {
+			return variableWidthValue != UNDEFINED ? variableWidthValue
+					: borderWidth;
+		} else {
+			return 0;
+		}
 	}
 
 	/**
-	 * Gets the color of a border.
+	 * Updates the border flag for a side based on the specified width. A width
+	 * of 0 will disable the border on that side. Any other width enables it.
 	 * 
-	 * @return a color value
+	 * @param width
+	 *            width of border
+	 * @param side
+	 *            border side constant
 	 */
-	public Color getBorderColorRight() {
-		if (borderColorRight == null) return color;
-		return borderColorRight;
-	}
-
-	/**
-	 * Gets the color of a border.
-	 * 
-	 * @return a color value
-	 */
-	public Color getBorderColorTop() {
-		if (borderColorTop == null) return color;
-		return borderColorTop;
-	}
-
-	/**
-	 * Gets the color of a border.
-	 * 
-	 * @return a color value
-	 */
-	public Color getBorderColorBottom() {
-		if (borderColorBottom == null) return color;
-		return borderColorBottom;
+	private void updateBorderBasedOnWidth(float width, int side) {
+		useVariableBorders = true;
+		if (width > 0) {
+			enableBorderSide(side);
+		} else {
+			disableBorderSide(side);
+		}
 	}
 
 	/**
@@ -849,54 +712,172 @@ public class Rectangle implements Element {
 		updateBorderBasedOnWidth(borderWidthBottom, BOTTOM);
 	}
 
+	// variable border color
+	
 	/**
-	 * Updates the border flag for a side based on the specified width. A width
-	 * of 0 will disable the border on that side. Any other width enables it.
+	 * Gets the color of a border.
 	 * 
-	 * @param width
-	 *            width of border
-	 * @param side
-	 *            border side constant
+	 * @return a color value
 	 */
+	public Color getBorderColorLeft() {
+		if (borderColorLeft == null) return borderColor;
+		return borderColorLeft;
+	}
 
-	private void updateBorderBasedOnWidth(float width, int side) {
-		useVariableBorders = true;
-		if (width > 0) {
-			enableBorderSide(side);
-		} else {
-			disableBorderSide(side);
+	/**
+	 * Sets the value of the border color
+	 * 
+	 * @param value
+	 *            a color value
+	 */
+	public void setBorderColorLeft(Color value) {
+		borderColorLeft = value;
+	}
+
+	/**
+	 * Gets the color of a border.
+	 * 
+	 * @return a color value
+	 */
+	public Color getBorderColorRight() {
+		if (borderColorRight == null) return borderColor;
+		return borderColorRight;
+	}
+
+	/**
+	 * Sets the value of the border color
+	 * 
+	 * @param value
+	 *            a color value
+	 */
+	public void setBorderColorRight(Color value) {
+		borderColorRight = value;
+	}
+
+	/**
+	 * Gets the color of a border.
+	 * 
+	 * @return a color value
+	 */
+	public Color getBorderColorTop() {
+		if (borderColorTop == null) return borderColor;
+		return borderColorTop;
+	}
+
+	/**
+	 * Sets the value of the border color
+	 * 
+	 * @param value
+	 *            a color value
+	 */
+	public void setBorderColorTop(Color value) {
+		borderColorTop = value;
+	}
+
+	/**
+	 * Gets the color of a border.
+	 * 
+	 * @return a color value
+	 */
+	public Color getBorderColorBottom() {
+		if (borderColorBottom == null) return borderColor;
+		return borderColorBottom;
+	}
+
+	/**
+	 * Sets the value of the border color
+	 * 
+	 * @param value
+	 *            a color value
+	 */
+	public void setBorderColorBottom(Color value) {
+		borderColorBottom = value;
+	}
+
+	// special methods
+
+	/**
+	 * Gets a Rectangle that is altered to fit on the page.
+	 * 
+	 * @param top
+	 *            the top position
+	 * @param bottom
+	 *            the bottom position
+	 * @return a <CODE>Rectangle</CODE>
+	 */
+	public Rectangle rectangle(float top, float bottom) {
+		Rectangle tmp = new Rectangle(this);
+		if (getTop() > top) {
+			tmp.setTop(top);
+			tmp.disableBorderSide(TOP);
 		}
-	}
-
-	private float getVariableBorderWidth(float variableWidthValue, int side) {
-		if ((border & side) != 0) {
-			return variableWidthValue != UNDEFINED ? variableWidthValue
-					: borderWidth;
-		} else {
-			return 0;
+		if (getBottom() < bottom) {
+			tmp.setBottom(bottom);
+			tmp.disableBorderSide(BOTTOM);
 		}
+		return tmp;
 	}
 
 	/**
-	 * Indicates whether variable width borders are being used. Returns true if
-	 * <CODE>setBorderWidthLeft, setBorderWidthRight, setBorderWidthTop, or
-	 * setBorderWidthBottom</CODE> has been called.
+	 * Copies all of the parameters from a <CODE>Rectangle</CODE> object
+	 * except the position.
 	 * 
-	 * @return true if variable width borders are in use
-	 *  
+	 * @param rect
+	 *            <CODE>Rectangle</CODE> to copy from
 	 */
-	public boolean isUseVariableBorders() {
-		return useVariableBorders;
+	public void cloneNonPositionParameters(Rectangle rect) {
+		this.rotation = rect.rotation;
+		this.border = rect.border;
+		this.borderWidth = rect.borderWidth;
+		this.borderColor = rect.borderColor;
+		this.backgroundColor = rect.backgroundColor;
+		this.useVariableBorders = rect.useVariableBorders;
+		this.borderWidthLeft = rect.borderWidthLeft;
+		this.borderWidthRight = rect.borderWidthRight;
+		this.borderWidthTop = rect.borderWidthTop;
+		this.borderWidthBottom = rect.borderWidthBottom;
+		this.borderColorLeft = rect.borderColorLeft;
+		this.borderColorRight = rect.borderColorRight;
+		this.borderColorTop = rect.borderColorTop;
+		this.borderColorBottom = rect.borderColorBottom;
 	}
 
 	/**
-	 * Sets a parameter indicating if the rectangle has variable borders
+	 * Copies all of the parameters from a <CODE>Rectangle</CODE> object
+	 * except the position.
 	 * 
-	 * @param useVariableBorders
-	 *            indication if the rectangle has variable borders
+	 * @param rect
+	 *            <CODE>Rectangle</CODE> to copy from
 	 */
-	public void setUseVariableBorders(boolean useVariableBorders) {
-		this.useVariableBorders = useVariableBorders;
+	public void softCloneNonPositionParameters(Rectangle rect) {
+		if (rect.rotation != 0)
+			this.rotation = rect.rotation;
+		if (rect.border != UNDEFINED)
+			this.border = rect.border;
+		if (rect.borderWidth != UNDEFINED)
+			this.borderWidth = rect.borderWidth;
+		if (rect.borderColor != null)
+			this.borderColor = rect.borderColor;
+		if (rect.backgroundColor != null)
+			this.backgroundColor = rect.backgroundColor;
+		if (useVariableBorders)
+			this.useVariableBorders = rect.useVariableBorders;
+		if (rect.borderWidthLeft != UNDEFINED)
+			this.borderWidthLeft = rect.borderWidthLeft;
+		if (rect.borderWidthRight != UNDEFINED)
+			this.borderWidthRight = rect.borderWidthRight;
+		if (rect.borderWidthTop != UNDEFINED)
+			this.borderWidthTop = rect.borderWidthTop;
+		if (rect.borderWidthBottom != UNDEFINED)
+			this.borderWidthBottom = rect.borderWidthBottom;
+		if (rect.borderColorLeft != null)
+			this.borderColorLeft = rect.borderColorLeft;
+		if (rect.borderColorRight != null)
+			this.borderColorRight = rect.borderColorRight;
+		if (rect.borderColorTop != null)
+			this.borderColorTop = rect.borderColorTop;
+		if (rect.borderColorBottom != null)
+			this.borderColorBottom = rect.borderColorBottom;
 	}
 	
 	/**
@@ -913,4 +894,146 @@ public class Rectangle implements Element {
 		return buf.toString();
 	}
 
+// deprecated stuff
+
+	/**
+	 * Returns the lower left x-coordinate.
+	 * 
+	 * @return the lower left x-coordinate
+	 * @deprecated Use {@link #getLeft()} instead
+	 */
+	public float left() {
+		return getLeft();
+	}
+
+	/**
+	 * Returns the upper right x-coordinate.
+	 * 
+	 * @return the upper right x-coordinate
+	 * @deprecated Use {@link #getRight()} instead
+	 */
+	public float right() {
+		return getRight();
+	}
+
+	/**
+	 * Returns the upper right y-coordinate.
+	 * 
+	 * @return the upper right y-coordinate
+	 * @deprecated Use {@link #getTop()} instead
+	 */
+	public float top() {
+		return getTop();
+	}
+
+	/**
+	 * Returns the lower left y-coordinate.
+	 * 
+	 * @return the lower left y-coordinate
+	 * @deprecated Use {@link #getBottom()} instead
+	 */
+	public float bottom() {
+		return getBottom();
+	}
+
+	/**
+	 * Returns the lower left x-coordinate, considering a given margin.
+	 * 
+	 * @param margin
+	 *            a margin
+	 * @return the lower left x-coordinate
+	 * @deprecated Use {@link #getLeft(float)} instead
+	 */
+	public float left(float margin) {
+		return getLeft(margin);
+	}
+
+	/**
+	 * Returns the upper right x-coordinate, considering a given margin.
+	 * 
+	 * @param margin
+	 *            a margin
+	 * @return the upper right x-coordinate
+	 * @deprecated Use {@link #getRight(float)} instead
+	 */
+	public float right(float margin) {
+		return getRight(margin);
+	}
+
+	/**
+	 * Returns the upper right y-coordinate, considering a given margin.
+	 * 
+	 * @param margin
+	 *            a margin
+	 * @return the upper right y-coordinate
+	 * @deprecated Use {@link #getTop(float)} instead
+	 */
+	public float top(float margin) {
+		return getTop(margin);
+	}
+
+	/**
+	 * Returns the lower left y-coordinate, considering a given margin.
+	 * 
+	 * @param margin
+	 *            a margin
+	 * @return the lower left y-coordinate
+	 * @deprecated Use {@link #getBottom(float)} instead
+	 */
+	public float bottom(float margin) {
+		return getBottom(margin);
+	}
+
+	/**
+	 * Returns the exact type of the border.
+	 * 
+	 * @return a value
+	 * @deprecated Use {@link #getBorder()} instead
+	 */
+	public int border() {
+		return getBorder();
+	}
+
+	/**
+	 * Gets the borderwidth.
+	 * 
+	 * @return a value
+	 * @deprecated Use {@link #getBorderWidth()} instead
+	 */
+	public float borderWidth() {
+		return getBorderWidth();
+	}
+
+	/**
+	 * Gets the color of the border.
+	 * 
+	 * @return a value
+	 * @deprecated Use {@link #getBorderColor()} instead
+	 */
+	
+	public Color borderColor() {
+		return getBorderColor();
+	}
+
+	/**
+	 * Gets the backgroundcolor.
+	 * 
+	 * @return a value
+	 * @deprecated Use {@link #getBackgroundColor()} instead
+	 */
+	public Color backgroundColor() {
+		return getBackgroundColor();
+	}
+
+	/**
+	 * Gets the grayscale.
+	 * 
+	 * @return a value
+	 * @deprecated Use {@link #getGrayFill()} instead
+	 */
+	
+	public float grayFill() {
+		return getGrayFill();
+	}
+	
 }

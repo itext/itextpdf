@@ -141,11 +141,11 @@ public class PdfRectangle extends PdfArray {
  */
     
     public PdfRectangle(Rectangle rectangle, int rotation) {
-        this(rectangle.left(), rectangle.bottom(), rectangle.right(), rectangle.top(), rotation);
+        this(rectangle.getLeft(), rectangle.getBottom(), rectangle.getRight(), rectangle.getTop(), rotation);
     }
     
     public PdfRectangle(Rectangle rectangle) {
-        this(rectangle.left(), rectangle.bottom(), rectangle.right(), rectangle.top(), 0);
+        this(rectangle.getLeft(), rectangle.getBottom(), rectangle.getRight(), rectangle.getTop(), 0);
     }
     
     // methods

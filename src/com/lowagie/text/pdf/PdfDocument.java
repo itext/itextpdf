@@ -1109,9 +1109,9 @@ class PdfDocument extends Document {
         // backgroundcolors, etc...
         pageSize = nextPageSize;
         thisBoxSize = new HashMap(boxSize);
-        if (pageSize.backgroundColor() != null
+        if (pageSize.getBackgroundColor() != null
         || pageSize.hasBorders()
-        || pageSize.borderColor() != null) {
+        || pageSize.getBorderColor() != null) {
             add(pageSize);
         }
 
@@ -1511,7 +1511,7 @@ class PdfDocument extends Document {
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
                         graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
-                        text.moveText(xMarker + lastBaseFactor + image.scaledWidth() - text.getXTLM(), 0);
+                        text.moveText(xMarker + lastBaseFactor + image.getScaledWidth() - text.getXTLM(), 0);
                     }
                 }
                 xMarker += width;
@@ -2268,20 +2268,20 @@ class PdfDocument extends Document {
     
     private void add(Image image) throws PdfException, DocumentException {
         
-        if (image.hasAbsolutePosition()) {
+        if (image.hasAbsoluteY()) {
             graphics.addImage(image);
             pageEmpty = false;
             return;
         }
         
         // if there isn't enough room for the image on this page, save it for the next page
-        if (currentHeight != 0 && indentTop() - currentHeight - image.scaledHeight() < indentBottom()) {
+        if (currentHeight != 0 && indentTop() - currentHeight - image.getScaledHeight() < indentBottom()) {
             if (!strictImageSequence && imageWait == null) {
                 imageWait = image;
                 return;
             }
             newPage();
-            if (currentHeight != 0 && indentTop() - currentHeight - image.scaledHeight() < indentBottom()) {
+            if (currentHeight != 0 && indentTop() - currentHeight - image.getScaledHeight() < indentBottom()) {
                 imageWait = image;
                 return;
             }
@@ -2290,42 +2290,42 @@ class PdfDocument extends Document {
         // avoid endless loops
         if (image == imageWait)
             imageWait = null;
-        boolean textwrap = (image.alignment() & Image.TEXTWRAP) == Image.TEXTWRAP
-        && !((image.alignment() & Image.MIDDLE) == Image.MIDDLE);
-        boolean underlying = (image.alignment() & Image.UNDERLYING) == Image.UNDERLYING;
+        boolean textwrap = (image.getAlignment() & Image.TEXTWRAP) == Image.TEXTWRAP
+        && !((image.getAlignment() & Image.MIDDLE) == Image.MIDDLE);
+        boolean underlying = (image.getAlignment() & Image.UNDERLYING) == Image.UNDERLYING;
         float diff = leading / 2;
         if (textwrap) {
             diff += leading;
         }
-        float lowerleft = indentTop() - currentHeight - image.scaledHeight() -diff;
+        float lowerleft = indentTop() - currentHeight - image.getScaledHeight() -diff;
         float mt[] = image.matrix();
         float startPosition = indentLeft() - mt[4];
-        if ((image.alignment() & Image.RIGHT) == Image.RIGHT) startPosition = indentRight() - image.scaledWidth() - mt[4];
-        if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition = indentLeft() + ((indentRight() - indentLeft() - image.scaledWidth()) / 2) - mt[4];
-        if (image.hasAbsoluteX()) startPosition = image.absoluteX();
+        if ((image.getAlignment() & Image.RIGHT) == Image.RIGHT) startPosition = indentRight() - image.getScaledWidth() - mt[4];
+        if ((image.getAlignment() & Image.MIDDLE) == Image.MIDDLE) startPosition = indentLeft() + ((indentRight() - indentLeft() - image.getScaledWidth()) / 2) - mt[4];
+        if (image.hasAbsoluteX()) startPosition = image.getAbsoluteX();
         if (textwrap) {
-            if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {
-                imageEnd = currentHeight + image.scaledHeight() + diff;
+            if (imageEnd < 0 || imageEnd < currentHeight + image.getScaledHeight() + diff) {
+                imageEnd = currentHeight + image.getScaledHeight() + diff;
             }
-            if ((image.alignment() & Image.RIGHT) == Image.RIGHT) {
+            if ((image.getAlignment() & Image.RIGHT) == Image.RIGHT) {
             	// indentation suggested by Pelikan Stephan
-            	indentation.imageIndentRight += image.scaledWidth() + image.indentationLeft();
+            	indentation.imageIndentRight += image.getScaledWidth() + image.getIndentationLeft();
             }
             else {
             	// indentation suggested by Pelikan Stephan
-            	indentation.imageIndentLeft += image.scaledWidth() + image.indentationRight();
+            	indentation.imageIndentLeft += image.getScaledWidth() + image.getIndentationRight();
             }
         }
         else {
-        	if ((image.alignment() & Image.RIGHT) == Image.RIGHT) startPosition -= image.indentationRight();
-        	else if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition += image.indentationLeft() - image.indentationRight();
-        	else startPosition += image.indentationLeft();
+        	if ((image.getAlignment() & Image.RIGHT) == Image.RIGHT) startPosition -= image.getIndentationRight();
+        	else if ((image.getAlignment() & Image.MIDDLE) == Image.MIDDLE) startPosition += image.getIndentationLeft() - image.getIndentationRight();
+        	else startPosition += image.getIndentationLeft();
         }
         graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], startPosition, lowerleft - mt[5]);
         if (!(textwrap || underlying)) {
-            currentHeight += image.scaledHeight() + diff;
+            currentHeight += image.getScaledHeight() + diff;
             flushLines();
-            text.moveText(0, - (image.scaledHeight() + diff));
+            text.moveText(0, - (image.getScaledHeight() + diff));
             newLine();
         }
     }
@@ -2586,10 +2586,10 @@ class PdfDocument extends Document {
             
 			// we paint the graphics of the table after looping through all the cells
 			Rectangle tablerec = new Rectangle(table);
-			tablerec.setBorder(table.border());
-			tablerec.setBorderWidth(table.borderWidth());
-			tablerec.setBorderColor(table.borderColor());
-			tablerec.setBackgroundColor(table.backgroundColor());
+			tablerec.setBorder(table.getBorder());
+			tablerec.setBorderWidth(table.getBorderWidth());
+			tablerec.setBorderColor(table.getBorderColor());
+			tablerec.setBackgroundColor(table.getBackgroundColor());
 			PdfContentByte under = writer.getDirectContentUnder();
 			under.rectangle(tablerec.rectangle(top(), indentBottom()));
 			under.add(ctx.cellGraphics);
@@ -2597,7 +2597,7 @@ class PdfDocument extends Document {
 			// since it might have been covered by cell backgrounds
 			tablerec.setBackgroundColor(null);
 			tablerec = tablerec.rectangle(top(), indentBottom());
-			tablerec.setBorder(table.border());
+			tablerec.setBorder(table.getBorder());
 			under.rectangle(tablerec);
 			// end bugfix
 
@@ -2606,17 +2606,17 @@ class PdfDocument extends Document {
             
 			if (!rows.isEmpty()) {
 				isContinue = true;
-				graphics.setLineWidth(table.borderWidth());
-				if (cellsShown && (table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) {
+				graphics.setLineWidth(table.getBorderWidth());
+				if (cellsShown && (table.getBorder() & Rectangle.BOTTOM) == Rectangle.BOTTOM) {
 					// Draw the bottom line
                                 
 					// the color is set to the color of the element
-					Color tColor = table.borderColor();
+					Color tColor = table.getBorderColor();
 					if (tColor != null) {
 						graphics.setColorStroke(tColor);
 					}
-					graphics.moveTo(table.left(), Math.max(table.bottom(), indentBottom()));
-					graphics.lineTo(table.right(), Math.max(table.bottom(), indentBottom()));
+					graphics.moveTo(table.getLeft(), Math.max(table.getBottom(), indentBottom()));
+					graphics.lineTo(table.getRight(), Math.max(table.getBottom(), indentBottom()));
 					graphics.stroke();
 					if (tColor != null) {
 						graphics.resetRGBColorStroke();
@@ -2651,14 +2651,14 @@ class PdfDocument extends Document {
 				if (size > 0) {
 					// this is the top of the headersection
 					cell = (PdfCell) headercells.get(0);
-					float oldTop = cell.top(0);
+					float oldTop = cell.getTop(0);
 					// loop over all the cells of the table header
 					for (int i = 0; i < size; i++) {
 						cell = (PdfCell) headercells.get(i);
 						// calculation of the new cellpositions
-						cell.setTop(indentTop() - oldTop + cell.top(0));
-						cell.setBottom(indentTop() - oldTop + cell.bottom(0));
-						ctx.pagetop = cell.bottom();
+						cell.setTop(indentTop() - oldTop + cell.getTop(0));
+						cell.setBottom(indentTop() - oldTop + cell.getBottom(0));
+						ctx.pagetop = cell.getBottom();
 						// we paint the borders of the cell
 						ctx.cellGraphics.rectangle(cell.rectangle(indentTop(), indentBottom()));
 						// we write the text of the cell
@@ -2669,7 +2669,7 @@ class PdfDocument extends Document {
 							graphics.addImage(image);
 						}
 						lines = cell.getLines(indentTop(), indentBottom());
-						float cellTop = cell.top(indentTop());
+						float cellTop = cell.getTop(indentTop());
 						text.moveText(0, cellTop-heightCorrection);
 						float cellDisplacement = flushLines() - cellTop+heightCorrection;
 						text.moveText(0, cellDisplacement);
@@ -2691,8 +2691,8 @@ class PdfDocument extends Document {
 				int i = 0;
 				while (i < size) {
 					cell = (PdfCell) cells.get(i);
-					if (cell.top(-table.cellspacing()) > ctx.lostTableBottom) {
-						float newBottom = ctx.pagetop - difference + cell.bottom();
+					if (cell.getTop(-table.cellspacing()) > ctx.lostTableBottom) {
+						float newBottom = ctx.pagetop - difference + cell.getBottom();
 						float neededHeight = cell.remainingHeight();
 						if (newBottom > ctx.pagetop - neededHeight) {
 							difference += newBottom - (ctx.pagetop - neededHeight);
@@ -2702,11 +2702,11 @@ class PdfDocument extends Document {
 				}
 				size = cells.size();
 				table.setTop(indentTop());
-				table.setBottom(ctx.pagetop - difference + table.bottom(table.cellspacing()));
+				table.setBottom(ctx.pagetop - difference + table.getBottom(table.cellspacing()));
 				for (i = 0; i < size; i++) {
 					cell = (PdfCell) cells.get(i);
-					float newBottom = ctx.pagetop - difference + cell.bottom();
-					float newTop = ctx.pagetop - difference + cell.top(-table.cellspacing());
+					float newBottom = ctx.pagetop - difference + cell.getBottom();
+					float newTop = ctx.pagetop - difference + cell.getTop(-table.cellspacing());
 					if (newTop > indentTop() - currentHeight) {
 						newTop = indentTop() - currentHeight;
 					}
@@ -2720,7 +2720,7 @@ class PdfDocument extends Document {
 			}
 		}
         
-        float tableHeight = table.top() - table.bottom();
+        float tableHeight = table.getTop() - table.getBottom();
         // bugfix by Adauto Martins when have more than two tables and more than one page 
         // If continuation of table in other page (bug report #1460051)
         if (isContinue) {
@@ -2763,10 +2763,10 @@ class PdfDocument extends Document {
             PdfCell cell = (PdfCell) iterator.next();
             Rectangle cellRect = cell.rectangle(ctx.pagetop, indentBottom());
             if (useTop) {
-                ctx.maxCellBottom = Math.max(ctx.maxCellBottom, cellRect.top());
+                ctx.maxCellBottom = Math.max(ctx.maxCellBottom, cellRect.getTop());
             } else {
                 if (ctx.currentRowspan(cell) == 1) {
-                    ctx.maxCellBottom = Math.max(ctx.maxCellBottom, cellRect.bottom());
+                    ctx.maxCellBottom = Math.max(ctx.maxCellBottom, cellRect.getBottom());
                 }
             }
         }
@@ -2807,7 +2807,7 @@ class PdfDocument extends Document {
             boolean isCurrentCellPartOfRow = !iterator.hasNext();
             
             if (previousCell != null) {
-                if (cell.left() <= previousCell.left()) {
+                if (cell.getLeft() <= previousCell.getLeft()) {
                     isEndOfRow = true;
                     isCurrentCellPartOfRow = false;
                 }
@@ -2866,7 +2866,7 @@ class PdfDocument extends Document {
             while (iterator.hasNext()) {
             	cell = (PdfCell) iterator.next();
             	if (!cell.isHeader()) {
-            		if (cell.bottom() < indentBottom()) return;
+            		if (cell.getBottom() < indentBottom()) return;
             	}
             }
         }
@@ -2887,7 +2887,7 @@ class PdfDocument extends Document {
                 if (lines != null && !lines.isEmpty()) {
                     
                     // we write the text
-                    float cellTop = cell.top(ctx.pagetop - ctx.oldHeight);
+                    float cellTop = cell.getTop(ctx.pagetop - ctx.oldHeight);
                     text.moveText(0, cellTop);
                     float cellDisplacement = flushLines() - cellTop;
                     
@@ -2898,12 +2898,12 @@ class PdfDocument extends Document {
 
                     ctx.cellRendered(cell, getPageNumber());
                 } 
-                float indentBottom = Math.max(cell.bottom(), indentBottom());
+                float indentBottom = Math.max(cell.getBottom(), indentBottom());
                 Rectangle tableRect = ctx.table.rectangle(ctx.pagetop, indentBottom());
-                indentBottom = Math.max(tableRect.bottom(), indentBottom);
+                indentBottom = Math.max(tableRect.getBottom(), indentBottom);
                 
                 // we paint the borders of the cells
-                Rectangle cellRect = cell.rectangle(tableRect.top(), indentBottom);
+                Rectangle cellRect = cell.rectangle(tableRect.getTop(), indentBottom);
  				//cellRect.setBottom(cellRect.bottom());
                 if (cellRect.height() > 0) {
                     ctx.lostTableBottom = indentBottom;
@@ -2933,7 +2933,7 @@ class PdfDocument extends Document {
 	boolean breakTableIfDoesntFit(PdfTable table) throws DocumentException {
 		table.updateRowAdditions();
 		// Do we have any full page available?
-		if (!table.hasToFitPageTable() && table.bottom() <= indentation.indentBottom) {
+		if (!table.hasToFitPageTable() && table.getBottom() <= indentation.indentBottom) {
 			// Then output that page
 			add(table, true);
 			return true;
@@ -2952,7 +2952,7 @@ class PdfDocument extends Document {
     float bottom(Table table) {
         // constructing a PdfTable
         PdfTable tmp = getPdfTable(table, false);
-        return tmp.bottom();
+        return tmp.getBottom();
     }
     
 //	[M5] header/footer

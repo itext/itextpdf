@@ -263,7 +263,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 		float[] width = widths[0];
 		Rectangle rect = new Rectangle(width[0], heights[heights.length - 1], width[width.length - 1], heights[0]);
 		rect.cloneNonPositionParameters(this);
-        int bd = rect.border();
+        int bd = rect.getBorder();
         rect.setBorder(Rectangle.NO_BORDER);
 		canvases[PdfPTable.BACKGROUNDCANVAS].rectangle(rect);
         rect.setBorder(bd);

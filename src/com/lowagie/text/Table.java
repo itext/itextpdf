@@ -571,7 +571,7 @@ public class Table extends Rectangle {
             if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
             if (!isValidLocation(aCell, aLocation)) throw new BadElementException("Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.getColspan() + " and a rowspan of " + aCell.getRowspan() + " is illegal (beyond boundaries/overlapping).");
         }
-        if (aCell.border() == UNDEFINED) aCell.setBorder(defaultLayout.border());
+        if (aCell.getBorder() == UNDEFINED) aCell.setBorder(defaultLayout.getBorder());
         aCell.fill();
         placeCell(rows, aCell, aLocation);
         setCurrentLocationToNextValidPosition(aLocation);
@@ -620,10 +620,10 @@ public class Table extends Rectangle {
     
     public void addCell(Phrase content, Point location) throws BadElementException {
         Cell cell = new Cell(content);
-        cell.setBorder(defaultLayout.border());
-        cell.setBorderWidth(defaultLayout.borderWidth());
-        cell.setBorderColor(defaultLayout.borderColor());
-        cell.setBackgroundColor(defaultLayout.backgroundColor());
+        cell.setBorder(defaultLayout.getBorder());
+        cell.setBorderWidth(defaultLayout.getBorderWidth());
+        cell.setBorderColor(defaultLayout.getBorderColor());
+        cell.setBackgroundColor(defaultLayout.getBackgroundColor());
         cell.setHorizontalAlignment(defaultLayout.getHorizontalAlignment());
         cell.setVerticalAlignment(defaultLayout.getVerticalAlignment());
         cell.setColspan(defaultLayout.getColspan());
@@ -852,17 +852,17 @@ public class Table extends Rectangle {
     
     private void assumeTableDefaults(Cell aCell) {
         
-        if (aCell.border() == Rectangle.UNDEFINED) {
-            aCell.setBorder(defaultLayout.border());
+        if (aCell.getBorder() == Rectangle.UNDEFINED) {
+            aCell.setBorder(defaultLayout.getBorder());
         }
-        if (aCell.borderWidth() == Rectangle.UNDEFINED) {
-            aCell.setBorderWidth(defaultLayout.borderWidth());
+        if (aCell.getBorderWidth() == Rectangle.UNDEFINED) {
+            aCell.setBorderWidth(defaultLayout.getBorderWidth());
         }
-        if (aCell.borderColor() == null) {
-            aCell.setBorderColor(defaultLayout.borderColor());
+        if (aCell.getBorderColor() == null) {
+            aCell.setBorderColor(defaultLayout.getBorderColor());
         }
-        if (aCell.backgroundColor() == null) {
-            aCell.setBackgroundColor(defaultLayout.backgroundColor());
+        if (aCell.getBackgroundColor() == null) {
+            aCell.setBackgroundColor(defaultLayout.getBackgroundColor());
         }
         if (aCell.getHorizontalAlignment() == Element.ALIGN_UNDEFINED) {
             aCell.setHorizontalAlignment(defaultLayout.getHorizontalAlignment());
@@ -1694,34 +1694,70 @@ public class Table extends Rectangle {
     }
     
     /**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 * @deprecated Use {@link #getTop()} instead
+	 */
+	public float top() {
+		return getTop();
+	}
+
+	/**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      * @return NA
      */
-    public float top() {
+    public float getTop() {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
     
     /**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 * @deprecated Use {@link #getBottom()} instead
+	 */
+	public float bottom() {
+		return getBottom();
+	}
+
+	/**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      * @return NA
      */
-    public float bottom() {
+    public float getBottom() {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
     
     /**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 * @deprecated Use {@link #getLeft()} instead
+	 */
+	public float left() {
+		return getLeft();
+	}
+
+	/**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      * @return NA
      */
-    public float left() {
+    public float getLeft() {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
     
     /**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 * @deprecated Use {@link #getRight()} instead
+	 */
+	public float right() {
+		return getRight();
+	}
+
+	/**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      * @return NA
      */
-    public float right() {
+    public float getRight() {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
     

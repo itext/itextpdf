@@ -561,7 +561,7 @@ public class MetaDo {
                         cb.clip();
                         cb.newPath();
                         bmp.scaleAbsolute(destWidth * bmp.width() / srcWidth, -destHeight * bmp.height() / srcHeight);
-                        bmp.setAbsolutePosition(xDest - destWidth * xSrc / srcWidth, yDest + destHeight * ySrc / srcHeight - bmp.scaledHeight());
+                        bmp.setAbsolutePosition(xDest - destWidth * xSrc / srcWidth, yDest + destHeight * ySrc / srcHeight - bmp.getScaledHeight());
                         cb.addImage(bmp);
                         cb.restoreState();
                     }
@@ -685,7 +685,7 @@ public class MetaDo {
         InputStream imgIn;
         byte data[] = null;
         if (image.getOriginalData() == null) {
-            imgIn = image.url().openStream();
+            imgIn = image.getUrl().openStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             int b = 0;
             while ((b = imgIn.read()) != -1)

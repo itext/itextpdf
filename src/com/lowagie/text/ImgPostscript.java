@@ -110,7 +110,7 @@ public class ImgPostscript extends Image {
 
     public ImgPostscript(String filename) throws
     MalformedURLException, IOException {
-        this(Image.toURL(filename));
+        this(Utilities.toURL(filename));
     }
 
     /**

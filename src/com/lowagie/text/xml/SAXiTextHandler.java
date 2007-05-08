@@ -349,9 +349,9 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // images
-        if (Image.isTag(name)) {
+        if (ElementTags.IMAGE.equals(name)) {
             try {
-                Image img = Image.getInstance(attributes);
+                Image img = ElementFactory.getImage(attributes);
                 try {
                 	addImage(img);
                     return;
@@ -648,7 +648,7 @@ public class SAXiTextHandler extends DefaultHandler {
         if (ignore)
             return;
         // tags that don't have any content
-        if (isNewpage(name) || Annotation.isTag(name) || Image.isTag(name)
+        if (isNewpage(name) || Annotation.isTag(name) || ElementTags.IMAGE.equals(name)
                 || isNewline(name)) {
             return;
         }

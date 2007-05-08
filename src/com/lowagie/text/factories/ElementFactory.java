@@ -50,14 +50,18 @@
 package com.lowagie.text.factories;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Properties;
 
 import com.lowagie.text.Anchor;
+import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
 import com.lowagie.text.ChapterAutoNumber;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.ElementTags;
 import com.lowagie.text.FontFactory;
+import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
@@ -73,6 +77,11 @@ import com.lowagie.text.html.Markup;
 
 public class ElementFactory {
 
+	/**
+	 * Creates a Chunk object based on a list of properties.
+	 * @param attributes
+	 * @return
+	 */
 	public static Chunk getChunk(Properties attributes) {
 		Chunk chunk = new Chunk();
 		
@@ -124,7 +133,12 @@ public class ElementFactory {
 		}
 		return chunk;
 	}
-	
+
+	/**
+	 * Creates a Phrase object based on a list of properties.
+	 * @param attributes
+	 * @return
+	 */
 	public static Phrase getPhrase(Properties attributes) {
 		Phrase phrase = new Phrase();
 		phrase.setFont(FontFactory.getFont(attributes));
@@ -147,7 +161,12 @@ public class ElementFactory {
         }
         return phrase;
 	}
-	
+
+	/**
+	 * Creates an Anchor object based on a list of properties.
+	 * @param attributes
+	 * @return
+	 */
 	public static Anchor getAnchor(Properties attributes) {
 		Anchor anchor = new Anchor(getPhrase(attributes));
 		String value;
@@ -161,7 +180,12 @@ public class ElementFactory {
         }
 		return anchor;
 	}
-	
+
+	/**
+	 * Creates a Paragraph object based on a list of properties.
+	 * @param attributes
+	 * @return
+	 */
 	public static Paragraph getParagraph(Properties attributes) {
 		Paragraph paragraph = new Paragraph(getPhrase(attributes));
         String value;
@@ -179,12 +203,22 @@ public class ElementFactory {
         }
 		return paragraph;
 	}
-	
+
+	/**
+	 * Creates a ListItem object based on a list of properties.
+	 * @param attributes
+	 * @return
+	 */
 	public static ListItem getListItem(Properties attributes) {
 		ListItem item = new ListItem(getParagraph(attributes));
 		return item;
 	}
-	
+
+	/**
+	 * Creates a List object based on a list of properties.
+	 * @param attributes
+	 * @return
+	 */
 	public static List getList(Properties attributes) {
 		List list = new List();
 
@@ -229,7 +263,12 @@ public class ElementFactory {
         
 		return list;
 	}
-	
+
+	/**
+	 * Creates a Cell object based on a list of properties.
+	 * @param attributes
+	 * @return
+	 */
 	public static Cell getCell(Properties attributes) {
 		Cell cell = new Cell();
 		String value;
@@ -312,19 +351,34 @@ public class ElementFactory {
 		}
 		return cell;
 	}
-	
+
+	/**
+	 * Creates a ChapterAutoNumber object based on a list of properties.
+	 * @param attributes
+	 * @return
+	 */
 	public static ChapterAutoNumber getChapter(Properties attributes) {
 		ChapterAutoNumber chapter = new ChapterAutoNumber("");
 		setSectionParameters(chapter, attributes);
 		return chapter;
 	}
-	
+
+	/**
+	 * Creates a Section object based on a list of properties.
+	 * @param attributes
+	 * @return
+	 */
 	public static Section getSection(Section parent, Properties attributes) {
 		Section section = parent.addSection("");
 		setSectionParameters(section, attributes);
 		return section;
 	}
-	
+
+	/**
+	 * Helper method to create a Chapter/Section object.
+	 * @param attributes
+	 * @return
+	 */
 	private static void setSectionParameters(Section section, Properties attributes) {
 		String value;
 		value = attributes.getProperty(ElementTags.NUMBERDEPTH);
@@ -343,5 +397,61 @@ public class ElementFactory {
 		if (value != null) {
 			section.setIndentationRight(Float.parseFloat(value + "f"));
 		}
+	}
+
+	/**
+	 * Creates an Image object based on a list of properties.
+	 * @param attributes
+	 * @return
+	 */
+	public static Image getImage(Properties attributes)
+			throws BadElementException, MalformedURLException, IOException {
+		String value;
+		
+		value = attributes.getProperty(ElementTags.URL);
+		if (value == null)
+			throw new MalformedURLException("The URL of the image is missing.");
+		Image image = Image.getInstance(value);
+		
+		value = attributes.getProperty(ElementTags.ALIGN);
+		int align = 0;
+		if (value != null) {
+			if (ElementTags.ALIGN_LEFT.equalsIgnoreCase(value))
+				align |= Image.LEFT;
+			else if (ElementTags.ALIGN_RIGHT.equalsIgnoreCase(value))
+				align |= Image.RIGHT;
+			else if (ElementTags.ALIGN_MIDDLE.equalsIgnoreCase(value))
+				align |= Image.MIDDLE;
+		}
+		if ("true".equalsIgnoreCase(attributes.getProperty(ElementTags.UNDERLYING)))
+			align |= Image.UNDERLYING;
+		if ("true".equalsIgnoreCase(attributes.getProperty(ElementTags.TEXTWRAP)))
+			align |= Image.TEXTWRAP;
+		image.setAlignment(align);
+		
+		value = attributes.getProperty(ElementTags.ALT);
+		if (value != null) {
+			image.setAlt(value);
+		}
+		
+		String x = attributes.getProperty(ElementTags.ABSOLUTEX);
+		String y = attributes.getProperty(ElementTags.ABSOLUTEY);
+		if ((x != null)	&& (y != null)) {
+			image.setAbsolutePosition(Float.parseFloat(x + "f"),
+					Float.parseFloat(y + "f"));
+		}
+		value = attributes.getProperty(ElementTags.PLAINWIDTH);
+		if (value != null) {
+			image.scaleAbsoluteWidth(Float.parseFloat(value + "f"));
+		}
+		value = attributes.getProperty(ElementTags.PLAINHEIGHT);
+		if (value != null) {
+			image.scaleAbsoluteHeight(Float.parseFloat(value + "f"));
+		}
+		value = attributes.getProperty(ElementTags.ROTATION);
+		if (value != null) {
+			image.setRotation(Float.parseFloat(value + "f"));
+		}
+		return image;
 	}
 }
