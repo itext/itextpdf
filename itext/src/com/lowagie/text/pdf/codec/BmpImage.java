@@ -91,6 +91,7 @@ import com.lowagie.text.BadElementException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.ImgRaw;
+import com.lowagie.text.Utilities;
 import com.lowagie.text.pdf.PdfArray;
 import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfName;
@@ -217,7 +218,7 @@ public class BmpImage {
      * @return the image
      */    
     public static Image getImage(String file) throws IOException {
-        return getImage(Image.toURL(file));
+        return getImage(Utilities.toURL(file));
     }
     
     /** Reads a BMP from a byte array.

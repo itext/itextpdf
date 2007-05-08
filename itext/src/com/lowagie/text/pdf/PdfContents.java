@@ -98,23 +98,23 @@ class PdfContents extends PdfStream {
             switch (rotation) {
                 case 90:
                     out.write(ROTATE90);
-                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.top())));
+                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.getTop())));
                     out.write(' ');
                     out.write('0');
                     out.write(ROTATEFINAL);
                     break;
                 case 180:
                     out.write(ROTATE180);
-                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.right())));
+                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.getRight())));
                     out.write(' ');
-                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.top())));
+                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.getTop())));
                     out.write(ROTATEFINAL);
                     break;
                 case 270:
                     out.write(ROTATE270);
                     out.write('0');
                     out.write(' ');
-                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.right())));
+                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.getRight())));
                     out.write(ROTATEFINAL);
                     break;
             }

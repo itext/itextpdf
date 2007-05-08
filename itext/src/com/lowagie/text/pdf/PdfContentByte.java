@@ -796,10 +796,10 @@ public class PdfContentByte {
      * @param rect a <CODE>Rectangle</CODE>
      */
     public void variableRectangle(Rectangle rect) {
-        float t = rect.top();
-        float b = rect.bottom();
-        float r = rect.right();
-        float l = rect.left();
+        float t = rect.getTop();
+        float b = rect.getBottom();
+        float r = rect.getRight();
+        float l = rect.getLeft();
         float wt = rect.getBorderWidthTop();
         float wb = rect.getBorderWidthBottom();
         float wr = rect.getBorderWidthRight();
@@ -933,13 +933,13 @@ public class PdfContentByte {
     
     public void rectangle(Rectangle rectangle) {
         // the coordinates of the border are retrieved
-        float x1 = rectangle.left();
-        float y1 = rectangle.bottom();
-        float x2 = rectangle.right();
-        float y2 = rectangle.top();
+        float x1 = rectangle.getLeft();
+        float y1 = rectangle.getBottom();
+        float x2 = rectangle.getRight();
+        float y2 = rectangle.getTop();
 
         // the backgroundcolor is set
-        Color background = rectangle.backgroundColor();
+        Color background = rectangle.getBackgroundColor();
         if (background != null) {
             setColorFill(background);
             rectangle(x1, y1, x2 - x1, y2 - y1);
@@ -960,12 +960,12 @@ public class PdfContentByte {
         }
         else {
             // the width is set to the width of the element
-            if (rectangle.borderWidth() != Rectangle.UNDEFINED) {
-                setLineWidth(rectangle.borderWidth());
+            if (rectangle.getBorderWidth() != Rectangle.UNDEFINED) {
+                setLineWidth(rectangle.getBorderWidth());
             }
 
             // the color is set to the color of the element
-            Color color = rectangle.borderColor();
+            Color color = rectangle.getBorderColor();
             if (color != null) {
                 setColorStroke(color);
             }
@@ -1101,11 +1101,11 @@ public class PdfContentByte {
      * @throws DocumentException if the <CODE>Image</CODE> does not have absolute positioning
      */
     public void addImage(Image image, boolean inlineImage) throws DocumentException {
-        if (!image.hasAbsolutePosition())
+        if (!image.hasAbsoluteY())
             throw new DocumentException("The image must have absolute positioning.");
         float matrix[] = image.matrix();
-        matrix[Image.CX] = image.absoluteX() - matrix[Image.CX];
-        matrix[Image.CY] = image.absoluteY() - matrix[Image.CY];
+        matrix[Image.CX] = image.getAbsoluteX() - matrix[Image.CX];
+        matrix[Image.CY] = image.getAbsoluteY() - matrix[Image.CY];
         addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], inlineImage);
     }
     
@@ -1146,7 +1146,7 @@ public class PdfContentByte {
                 beginLayer(image.getLayer());
             if (image.isImgTemplate()) {
                 writer.addDirectImageSimple(image);
-                PdfTemplate template = image.templateData();
+                PdfTemplate template = image.getTemplateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
@@ -1218,7 +1218,7 @@ public class PdfContentByte {
             }
             if (image.getLayer() != null)
                 endLayer();
-            Annotation annot = image.annotation();
+            Annotation annot = image.getAnnotation();
             if (annot == null)
                 return;
             float[] r = new float[unitRect.length];

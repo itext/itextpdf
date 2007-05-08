@@ -729,32 +729,68 @@ public class Cell extends Rectangle implements TextElementArray {
 	/**
 	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
 	 * @return NA
+	 * @deprecated Use {@link #getTop()} instead
 	 */
 	public float top() {
+		return getTop();
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 */
+	public float getTop() {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
 	}
 
 	/**
 	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
 	 * @return NA
+	 * @deprecated Use {@link #getBottom()} instead
 	 */
 	public float bottom() {
+		return getBottom();
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 */
+	public float getBottom() {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
 	}
 
 	/**
 	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
 	 * @return NA
+	 * @deprecated Use {@link #getLeft()} instead
 	 */
 	public float left() {
-		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+		return getLeft();
 	}
 
 	/**
 	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
 	 * @return NA
 	 */
+	public float getLeft() {
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 * @deprecated Use {@link #getRight()} instead
+	 */
 	public float right() {
+		return getRight();
+	}
+
+	/**
+	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
+	 * @return NA
+	 */
+	public float getRight() {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
 	}
 

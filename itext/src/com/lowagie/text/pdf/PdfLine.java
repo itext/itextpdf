@@ -181,7 +181,7 @@ public class PdfLine {
     
     private void addToLine(PdfChunk chunk) {
         if (chunk.changeLeading && chunk.isImage()) {
-        	float f = chunk.getImage().scaledHeight() + chunk.getImageOffsetY();
+        	float f = chunk.getImage().getScaledHeight() + chunk.getImageOffsetY();
         	if (f > height) height = f;
         }
     	line.add(chunk);
@@ -406,7 +406,7 @@ public class PdfLine {
                 maxSize = Math.max(chunk.font().size(), maxSize);
             }
             else {
-                maxSize = Math.max(chunk.getImage().scaledHeight() + chunk.getImageOffsetY() , maxSize);
+                maxSize = Math.max(chunk.getImage().getScaledHeight() + chunk.getImageOffsetY() , maxSize);
             }
         }
         return maxSize;
@@ -441,7 +441,7 @@ public class PdfLine {
        for (int k = 0; k < line.size(); ++k) {
            PdfChunk ck = (PdfChunk)line.get(k);
            if (ck.isImage())
-               ascender = Math.max(ascender, ck.getImage().scaledHeight() + ck.getImageOffsetY());
+               ascender = Math.max(ascender, ck.getImage().getScaledHeight() + ck.getImageOffsetY());
            else {
                PdfFont font = ck.font();
                ascender = Math.max(ascender, font.getFont().getFontDescriptor(BaseFont.ASCENT, font.size()));

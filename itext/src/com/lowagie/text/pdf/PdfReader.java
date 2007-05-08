@@ -3184,7 +3184,7 @@ public class PdfReader implements PdfViewerPreferences {
                         page.put(key, dic.get(key));
                 }
                 if (page.get(PdfName.MEDIABOX) == null) {
-                    PdfArray arr = new PdfArray(new float[]{0,0,PageSize.LETTER.right(),PageSize.LETTER.top()});
+                    PdfArray arr = new PdfArray(new float[]{0,0,PageSize.LETTER.getRight(),PageSize.LETTER.getTop()});
                     page.put(PdfName.MEDIABOX, arr);
                 }
                 refsn.add(rpage);

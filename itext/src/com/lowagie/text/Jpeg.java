@@ -217,7 +217,7 @@ public class Jpeg extends Image {
                         firstPass = false;
                         len = getShort(is);
                         if (len < 16) {
-                            skip(is, len - 2);
+                            Utilities.skip(is, len - 2);
                             continue;
                         }
                         byte bcomp[] = new byte[JFIF_ID.length];
@@ -232,10 +232,10 @@ public class Jpeg extends Image {
                             }
                         }
                         if (!found) {
-                            skip(is, len - 2 - bcomp.length);
+                            Utilities.skip(is, len - 2 - bcomp.length);
                             continue;
                         }
-                        skip(is, 2);
+                        Utilities.skip(is, 2);
                         int units = is.read();
                         int dx = getShort(is);
                         int dy = getShort(is);
@@ -247,7 +247,7 @@ public class Jpeg extends Image {
                             dpiX = (int)((float)dx * 2.54f + 0.5f);
                             dpiY = (int)((float)dy * 2.54f + 0.5f);
                         }
-                        skip(is, len - 2 - bcomp.length - 7);
+                        Utilities.skip(is, len - 2 - bcomp.length - 7);
                         continue;
                     }
                     if (marker == M_APPE) {
@@ -267,7 +267,7 @@ public class Jpeg extends Image {
                     firstPass = false;
                     int markertype = marker(marker);
                     if (markertype == VALID_MARKER) {
-                        skip(is, 2);
+                        Utilities.skip(is, 2);
                         if (is.read() != 0x08) {
                             throw new BadElementException(errorID + " must have 8 bits per component.");
                         }
@@ -283,7 +283,7 @@ public class Jpeg extends Image {
                         throw new BadElementException(errorID + ": unsupported JPEG marker: " + marker);
                     }
                     else if (markertype != NOPARAM_MARKER) {
-                        skip(is, getShort(is) - 2);
+                        Utilities.skip(is, getShort(is) - 2);
                     }
                 }
             }

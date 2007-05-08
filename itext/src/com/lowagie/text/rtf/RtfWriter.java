@@ -1495,7 +1495,7 @@ public class RtfWriter extends DocWriter {
         if (!(type == Image.ORIGINAL_JPEG || type == Image.ORIGINAL_BMP
             || type == Image.ORIGINAL_PNG || type == Image.ORIGINAL_WMF))
             throw new DocumentException("Only BMP, PNG, WMF and JPEG images are supported by the RTF Writer");
-        switch (image.alignment()) {
+        switch (image.getAlignment()) {
             case Element.ALIGN_LEFT:
                 out.write(escape);
                 out.write(alignLeft);
@@ -1534,10 +1534,10 @@ public class RtfWriter extends DocWriter {
         }
         out.write(escape);
         out.write(pictureWidth);
-        writeInt(out, (int) (image.plainWidth() * TWIPSFACTOR));
+        writeInt(out, (int) (image.getPlainWidth() * TWIPSFACTOR));
         out.write(escape);
         out.write(pictureHeight);
-        writeInt(out, (int) (image.plainHeight() * TWIPSFACTOR));
+        writeInt(out, (int) (image.getPlainHeight() * TWIPSFACTOR));
 
 
 // For some reason this messes up the intended image size. It makes it too big. Weird
@@ -1553,12 +1553,12 @@ public class RtfWriter extends DocWriter {
         if (image.width() > 0) {
             out.write(escape);
             out.write(pictureScaleX);
-            writeInt(out, (int) (100 / image.width() * image.plainWidth()));
+            writeInt(out, (int) (100 / image.width() * image.getPlainWidth()));
         }
         if (image.height() > 0) {
             out.write(escape);
             out.write(pictureScaleY);
-            writeInt(out, (int) (100 / image.height() * image.plainHeight()));
+            writeInt(out, (int) (100 / image.height() * image.getPlainHeight()));
         }
         out.write(delimiter);
         InputStream imgIn;
@@ -1567,7 +1567,7 @@ public class RtfWriter extends DocWriter {
         }
         else {
             if (image.getOriginalData() == null) {
-                imgIn = image.url().openStream();
+                imgIn = image.getUrl().openStream();
             } else {
                 imgIn = new ByteArrayInputStream(image.getOriginalData());
             }

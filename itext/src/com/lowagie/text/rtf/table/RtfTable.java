@@ -139,7 +139,7 @@ public class RtfTable extends RtfElement {
         this.proportionalWidths = table.getProportionalWidths();
         this.cellPadding = (float) (table.cellpadding() * TWIPS_FACTOR);
         this.cellSpacing = (float) (table.cellspacing() * TWIPS_FACTOR);
-        this.borders = new RtfBorderGroup(this.document, RtfBorder.ROW_BORDER, table.border(), table.borderWidth(), table.borderColor());
+        this.borders = new RtfBorderGroup(this.document, RtfBorder.ROW_BORDER, table.getBorder(), table.getBorderWidth(), table.getBorderColor());
         this.alignment = table.alignment();
         
         int i = 0;

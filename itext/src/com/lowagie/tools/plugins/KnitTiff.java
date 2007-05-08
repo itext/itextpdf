@@ -108,8 +108,8 @@ public class KnitTiff extends AbstractTool {
 			RandomAccessFileOrArray odd = new RandomAccessFileOrArray(odd_file.getAbsolutePath());
 			RandomAccessFileOrArray even = new RandomAccessFileOrArray(even_file.getAbsolutePath());
 			Image img = TiffImage.getTiffImage(odd, 1);
-			Document document = new Document(new Rectangle(img.scaledWidth(),
-					img.scaledHeight()));
+			Document document = new Document(new Rectangle(img.getScaledWidth(),
+					img.getScaledHeight()));
 			PdfWriter writer = PdfWriter.getInstance(document,
 					new FileOutputStream(pdf_file));
 			document.open();
@@ -120,13 +120,13 @@ public class KnitTiff extends AbstractTool {
 				try {
 					Image imgOdd = TiffImage.getTiffImage(odd, c + 1);
 					Image imgEven = TiffImage.getTiffImage(even, count - c);
-					document.setPageSize(new Rectangle(imgOdd.scaledWidth(),
-							imgOdd.scaledHeight()));
+					document.setPageSize(new Rectangle(imgOdd.getScaledWidth(),
+							imgOdd.getScaledHeight()));
 					document.newPage();
 					imgOdd.setAbsolutePosition(0, 0);
 					cb.addImage(imgOdd);
-					document.setPageSize(new Rectangle(imgEven.scaledWidth(),
-							imgEven.scaledHeight()));
+					document.setPageSize(new Rectangle(imgEven.getScaledWidth(),
+							imgEven.getScaledHeight()));
 					document.newPage();
 					imgEven.setAbsolutePosition(0, 0);
 					cb.addImage(imgEven);

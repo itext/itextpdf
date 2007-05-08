@@ -163,11 +163,11 @@ public class RtfImage extends RtfElement {
                 || imageType == Image.ORIGINAL_PNG || imageType == Image.ORIGINAL_WMF)) {
             throw new DocumentException("Only BMP, PNG, WMF and JPEG images are supported by the RTF Writer");
         }
-        alignment = image.alignment();
+        alignment = image.getAlignment();
         width = image.width();
         height = image.height();
-        plainWidth = image.plainWidth();
-        plainHeight = image.plainHeight();
+        plainWidth = image.getPlainWidth();
+        plainHeight = image.getPlainHeight();
         this.image = getImage(image);
     }
     
@@ -187,7 +187,7 @@ public class RtfImage extends RtfElement {
                 imageIn = new ByteArrayInputStream(MetaDo.wrapBMP(image));
             } else {
                 if (image.getOriginalData() == null) {
-                    imageIn = image.url().openStream();
+                    imageIn = image.getUrl().openStream();
                 } else {
                     imageIn = new ByteArrayInputStream(image.getOriginalData());
                 }

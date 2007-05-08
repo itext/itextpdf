@@ -333,8 +333,8 @@ public class HtmlWriter extends DocWriter {
             if (document.bottomMargin() > 0) {
                 write(HtmlTags.BOTTOMMARGIN, String.valueOf(document.bottomMargin()));
             }
-            if (pageSize.backgroundColor() != null) {
-                write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(pageSize.backgroundColor()));
+            if (pageSize.getBackgroundColor() != null) {
+                write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(pageSize.getBackgroundColor()));
             }
             if (document.getJavaScript_onLoad() != null) {
                 write(HtmlTags.JAVASCRIPT_ONLOAD, HtmlEncoder.encode(document.getJavaScript_onLoad()));
@@ -828,14 +828,14 @@ public class HtmlWriter extends DocWriter {
                     writeStart(HtmlTags.CELL);
                 }
                 writeMarkupAttributes(markup);
-                if (cell.borderWidth() != Rectangle.UNDEFINED) {
-                    write(HtmlTags.BORDERWIDTH, String.valueOf(cell.borderWidth()));
+                if (cell.getBorderWidth() != Rectangle.UNDEFINED) {
+                    write(HtmlTags.BORDERWIDTH, String.valueOf(cell.getBorderWidth()));
                 }
-                if (cell.borderColor() != null) {
-                    write(HtmlTags.BORDERCOLOR, HtmlEncoder.encode(cell.borderColor()));
+                if (cell.getBorderColor() != null) {
+                    write(HtmlTags.BORDERCOLOR, HtmlEncoder.encode(cell.getBorderColor()));
                 }
-                if (cell.backgroundColor() != null) {
-                    write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(cell.backgroundColor()));
+                if (cell.getBackgroundColor() != null) {
+                    write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(cell.getBackgroundColor()));
                 }
                 String alignment = HtmlEncoder.getAlignment(cell.getHorizontalAlignment());
                 if (!"".equals(alignment)) {
@@ -933,14 +933,14 @@ public class HtmlWriter extends DocWriter {
                 }
                 write(HtmlTags.CELLPADDING, String.valueOf(table.cellpadding()));
                 write(HtmlTags.CELLSPACING, String.valueOf(table.cellspacing()));
-                if (table.borderWidth() != Rectangle.UNDEFINED) {
-                    write(HtmlTags.BORDERWIDTH, String.valueOf(table.borderWidth()));
+                if (table.getBorderWidth() != Rectangle.UNDEFINED) {
+                    write(HtmlTags.BORDERWIDTH, String.valueOf(table.getBorderWidth()));
                 }
-                if (table.borderColor() != null) {
-                    write(HtmlTags.BORDERCOLOR, HtmlEncoder.encode(table.borderColor()));
+                if (table.getBorderColor() != null) {
+                    write(HtmlTags.BORDERCOLOR, HtmlEncoder.encode(table.getBorderColor()));
                 }
-                if (table.backgroundColor() != null) {
-                    write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(table.backgroundColor()));
+                if (table.getBackgroundColor() != null) {
+                    write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(table.getBackgroundColor()));
                 }
                 os.write(GT);
                 // contents
@@ -965,14 +965,14 @@ public class HtmlWriter extends DocWriter {
             case Element.IMGTEMPLATE:
             {
                 Image image = (Image) element;
-                if (image.url() == null) {
+                if (image.getUrl() == null) {
                     return;
                 }
                 
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.IMAGE);
-                String path = image.url().toString();
+                String path = image.getUrl().toString();
                 if (imagepath != null) {
                     if (path.indexOf('/') > 0) {
                         path = imagepath + path.substring(path.lastIndexOf('/') + 1);
@@ -982,20 +982,20 @@ public class HtmlWriter extends DocWriter {
                     }
                 }
                 write(HtmlTags.URL, path);
-                if ((image.alignment() & Image.RIGHT) > 0) {
+                if ((image.getAlignment() & Image.RIGHT) > 0) {
                     write(HtmlTags.ALIGN, HtmlTags.ALIGN_RIGHT);
                 }
-                else if ((image.alignment() & Image.MIDDLE) > 0) {
+                else if ((image.getAlignment() & Image.MIDDLE) > 0) {
                     write(HtmlTags.ALIGN, HtmlTags.ALIGN_MIDDLE);
                 }
                 else {
                     write(HtmlTags.ALIGN, HtmlTags.ALIGN_LEFT);
                 }
-                if (image.alt() != null) {
-                    write(HtmlTags.ALT, image.alt());
+                if (image.getAlt() != null) {
+                    write(HtmlTags.ALT, image.getAlt());
                 }
-                write(HtmlTags.PLAINWIDTH, String.valueOf(image.scaledWidth()));
-                write(HtmlTags.PLAINHEIGHT, String.valueOf(image.scaledHeight()));
+                write(HtmlTags.PLAINWIDTH, String.valueOf(image.getScaledWidth()));
+                write(HtmlTags.PLAINHEIGHT, String.valueOf(image.getScaledHeight()));
                 writeMarkupAttributes(markup);
                 writeEnd();
                 return;

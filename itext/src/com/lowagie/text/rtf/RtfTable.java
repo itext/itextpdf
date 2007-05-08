@@ -110,9 +110,9 @@ public class RtfTable {
         int cellspacing = (int) (table.cellspacing() * RtfWriter.TWIPSFACTOR);
         float[] propWidths = table.getProportionalWidths();
 
-        int borders = table.border();
-        java.awt.Color borderColor = table.borderColor();
-        float borderWidth = table.borderWidth();
+        int borders = table.getBorder();
+        java.awt.Color borderColor = table.getBorderColor();
+        float borderWidth = table.getBorderWidth();
 
         for (int i = 0; i < table.size(); i++) {
             RtfRow rtfRow = new RtfRow(writer, this);

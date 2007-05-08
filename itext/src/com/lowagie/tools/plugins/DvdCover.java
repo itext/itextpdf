@@ -140,19 +140,19 @@ public class DvdCover extends AbstractTool {
             if (getValue("front") != null) {
             	Image front = (Image)getValue("front");
             	front.scaleToFit(370, 525);
-            	front.setAbsolutePosition(410f + (370f - front.scaledWidth()) / 2f, (525f - front.scaledHeight()) / 2f);
+            	front.setAbsolutePosition(410f + (370f - front.getScaledWidth()) / 2f, (525f - front.getScaledHeight()) / 2f);
             	document.add(front);
             }
             if (getValue("back") != null) {
             	Image back = (Image)getValue("back");
             	back.scaleToFit(370, 525);
-            	back.setAbsolutePosition((370f - back.scaledWidth()) / 2f, (525f - back.scaledHeight()) / 2f);
+            	back.setAbsolutePosition((370f - back.getScaledWidth()) / 2f, (525f - back.getScaledHeight()) / 2f);
             	document.add(back);
             }
             if (getValue("side") != null) {
             	Image side = (Image)getValue("side");
             	side.scaleToFit(40, 525);
-            	side.setAbsolutePosition(370 + (40f - side.scaledWidth()) / 2f, (525f - side.scaledHeight()) / 2f);
+            	side.setAbsolutePosition(370 + (40f - side.getScaledWidth()) / 2f, (525f - side.getScaledHeight()) / 2f);
             	document.add(side);
             }
             

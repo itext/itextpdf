@@ -311,24 +311,24 @@ public class PdfSignatureAppearance {
         switch (rotation) {
             case 90:
                 pageRect = new Rectangle(
-                pageRect.bottom(),
-                pageSize.top() - pageRect.left(),
-                pageRect.top(),
-                pageSize.top() - pageRect.right());
+                pageRect.getBottom(),
+                pageSize.getTop() - pageRect.getLeft(),
+                pageRect.getTop(),
+                pageSize.getTop() - pageRect.getRight());
                 break;
             case 180:
                 pageRect = new Rectangle(
-                pageSize.right() - pageRect.left(),
-                pageSize.top() - pageRect.bottom(),
-                pageSize.right() - pageRect.right(),
-                pageSize.top() - pageRect.top());
+                pageSize.getRight() - pageRect.getLeft(),
+                pageSize.getTop() - pageRect.getBottom(),
+                pageSize.getRight() - pageRect.getRight(),
+                pageSize.getTop() - pageRect.getTop());
                 break;
             case 270:
                 pageRect = new Rectangle(
-                pageSize.right() - pageRect.bottom(),
-                pageRect.left(),
-                pageSize.right() - pageRect.top(),
-                pageRect.right());
+                pageSize.getRight() - pageRect.getBottom(),
+                pageRect.getLeft(),
+                pageSize.getRight() - pageRect.getTop(),
+                pageRect.getRight());
                 break;
         }
         if (rotation != 0)
@@ -484,14 +484,14 @@ public class PdfSignatureAppearance {
 
                 ColumnText ct2 = new ColumnText(t);
                 ct2.setRunDirection(runDirection);
-                ct2.setSimpleColumn(new Phrase(signedBy, font), signatureRect.left(), signatureRect.bottom(), signatureRect.right(), signatureRect.top(), signedSize, Element.ALIGN_LEFT);
+                ct2.setSimpleColumn(new Phrase(signedBy, font), signatureRect.getLeft(), signatureRect.getBottom(), signatureRect.getRight(), signatureRect.getTop(), signedSize, Element.ALIGN_LEFT);
 
                 ct2.go();
             }
             else if (render == SignatureRenderGraphicAndDescription) {
                 ColumnText ct2 = new ColumnText(t);
                 ct2.setRunDirection(runDirection);
-                ct2.setSimpleColumn(signatureRect.left(), signatureRect.bottom(), signatureRect.right(), signatureRect.top(), 0, Element.ALIGN_RIGHT);
+                ct2.setSimpleColumn(signatureRect.getLeft(), signatureRect.getBottom(), signatureRect.getRight(), signatureRect.getTop(), 0, Element.ALIGN_RIGHT);
 
                 Image im = Image.getInstance(signatureGraphic);
                 im.scaleToFit(signatureRect.width(), signatureRect.height());
@@ -501,11 +501,11 @@ public class PdfSignatureAppearance {
                 float x = 0;
                 // experimentation found this magic number to counteract Adobe's signature graphic, which
                 // offsets the y co-ordinate by 15 units
-                float y = -im.scaledHeight() + 15;
+                float y = -im.getScaledHeight() + 15;
 
-                x = x + (signatureRect.width() - im.scaledWidth()) / 2;
-                y = y - (signatureRect.height() - im.scaledHeight()) / 2;
-                p.add(new Chunk(im, x + (signatureRect.width() - im.scaledWidth()) / 2, y, false));
+                x = x + (signatureRect.width() - im.getScaledWidth()) / 2;
+                y = y - (signatureRect.height() - im.getScaledHeight()) / 2;
+                p.add(new Chunk(im, x + (signatureRect.width() - im.getScaledWidth()) / 2, y, false));
                 ct2.addElement(p);
                 ct2.go();
             }
@@ -516,7 +516,7 @@ public class PdfSignatureAppearance {
             }
             ColumnText ct = new ColumnText(t);
             ct.setRunDirection(runDirection);
-            ct.setSimpleColumn(new Phrase(text, font), dataRect.left(), dataRect.bottom(), dataRect.right(), dataRect.top(), size, Element.ALIGN_LEFT);
+            ct.setSimpleColumn(new Phrase(text, font), dataRect.getLeft(), dataRect.getBottom(), dataRect.getRight(), dataRect.getTop(), size, Element.ALIGN_LEFT);
             ct.go();
         }
         if (app[3] == null && !acro6Layers) {
@@ -527,7 +527,7 @@ public class PdfSignatureAppearance {
         }
         if (app[4] == null && !acro6Layers) {
             PdfTemplate t = app[4] = new PdfTemplate(writer);
-            t.setBoundingBox(new Rectangle(0, rect.height() * (1 - TOP_SECTION), rect.right(), rect.top()));
+            t.setBoundingBox(new Rectangle(0, rect.height() * (1 - TOP_SECTION), rect.getRight(), rect.getTop()));
             writer.addDirectTemplateSimple(t, new PdfName("n4"));
             Font font;
             if (layer2Font == null)
@@ -611,7 +611,7 @@ public class PdfSignatureAppearance {
             font.setSize(maxFontSize);
             Phrase ph = new Phrase(text, font);
             ct = new ColumnText(null);
-            ct.setSimpleColumn(ph, rect.left(), rect.bottom(), rect.right(), rect.top(), maxFontSize, Element.ALIGN_LEFT);
+            ct.setSimpleColumn(ph, rect.getLeft(), rect.getBottom(), rect.getRight(), rect.getTop(), maxFontSize, Element.ALIGN_LEFT);
             ct.setRunDirection(runDirection);
             status = ct.go(true);
             if ((status & ColumnText.NO_MORE_TEXT) != 0)
@@ -624,7 +624,7 @@ public class PdfSignatureAppearance {
                 size = (min + max) / 2;
                 ct = new ColumnText(null);
                 font.setSize(size);
-                ct.setSimpleColumn(new Phrase(text, font), rect.left(), rect.bottom(), rect.right(), rect.top(), size, Element.ALIGN_LEFT);
+                ct.setSimpleColumn(new Phrase(text, font), rect.getLeft(), rect.getBottom(), rect.getRight(), rect.getTop(), size, Element.ALIGN_LEFT);
                 ct.setRunDirection(runDirection);
                 status = ct.go(true);
                 if ((status & ColumnText.NO_MORE_TEXT) != 0) {

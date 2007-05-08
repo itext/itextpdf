@@ -94,6 +94,7 @@ import java.util.zip.InflaterInputStream;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.ImgRaw;
+import com.lowagie.text.Utilities;
 import com.lowagie.text.pdf.ByteBuffer;
 import com.lowagie.text.pdf.PdfArray;
 import com.lowagie.text.pdf.PdfDictionary;
@@ -227,7 +228,7 @@ public class PngImage {
      * @return the image
      */    
     public static Image getImage(String file) throws IOException {
-        return getImage(Image.toURL(file));
+        return getImage(Utilities.toURL(file));
     }
     
     /** Reads a PNG from a byte array.
@@ -311,7 +312,7 @@ public class PngImage {
                         }
                         break;
                 }
-                Image.skip(is, len);
+                Utilities.skip(is, len);
             }
             else if (IHDR.equals(marker)) {
                 width = getInt(is);
@@ -337,7 +338,7 @@ public class PngImage {
                     additional.put(PdfName.COLORSPACE, colorspace);
                 }
                 else {
-                    Image.skip(is, len);
+                    Utilities.skip(is, len);
                 }
             }
             else if (pHYs.equals(marker)) {
@@ -423,9 +424,9 @@ public class PngImage {
                 break;
             }
             else {
-                Image.skip(is, len);
+                Utilities.skip(is, len);
             }
-            Image.skip(is, 4);
+            Utilities.skip(is, 4);
         }
     }
     

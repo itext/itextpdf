@@ -53,17 +53,14 @@ package com.lowagie.text;
 import java.awt.Graphics2D;
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Properties;
 
 import com.lowagie.text.pdf.PRIndirectReference;
-import com.lowagie.text.pdf.PRTokeniser;
 import com.lowagie.text.pdf.PdfArray;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfDictionary;
@@ -92,7 +89,7 @@ import com.lowagie.text.pdf.codec.TiffImage;
 
 public abstract class Image extends Rectangle {
 
-	// static membervariables
+	// static final membervariables
 
 	/** this is a kind of image alignment. */
 	public static final int DEFAULT = 0;
@@ -160,8 +157,7 @@ public abstract class Image extends Rectangle {
 	/** type of image */
     public static final int ORIGINAL_PS = 7;
 
-	/** Image color inversion */
-	protected boolean invert = false;
+    // member variables
 
 	/** The imagetype. */
 	protected int type;
@@ -172,6 +168,9 @@ public abstract class Image extends Rectangle {
 	/** The raw data of the image. */
 	protected byte rawData[];
 
+	/** The bits per component of the raw image. It also flags a CCITT image. */
+	protected int bpc = 1;
+	
 	/** The template to be treated as an image. */
 	protected PdfTemplate template[] = new PdfTemplate[1];
 
@@ -199,173 +198,22 @@ public abstract class Image extends Rectangle {
 	/** This is the original height of the image taking rotation into account. */
 	protected float scaledHeight;
 
-	/** This is the rotation of the image. */
-	protected float rotation;
-
-	/** this is the colorspace of a jpeg-image. */
-	protected int colorspace = -1;
-
-	/**
-	 * this is the bits per component of the raw image. It also flags a CCITT
-	 * image.
-	 */
-	protected int bpc = 1;
-
-	/** this is the transparency information of the raw image */
-	protected int transparency[];
-
-	// for the moment these variables are only used for Images in class Table
-	// code contributed by Pelikan Stephan
-	/** the indentation to the left. */
-	protected float indentationLeft = 0;
-
-	/** the indentation to the right. */
-	protected float indentationRight = 0;
-
-	// serial stamping
-
+	/** an iText attributed unique id for this image. */
 	protected Long mySerialId = getSerialId();
 
-	static long serialId = 0;
-
-	/** Holds value of property dpiX. */
-	protected int dpiX = 0;
-
-	/** Holds value of property dpiY. */
-	protected int dpiY = 0;
-
-	protected boolean mask = false;
-
-	protected Image imageMask;
-
-	/** Holds value of property interpolation. */
-	protected boolean interpolation;
-
-	/** if the annotation is not null the image will be clickable. */
-	protected Annotation annotation = null;
-
-	/** ICC Profile attached */
-	protected ICC_Profile profile = null;
-
-	/** Holds value of property deflated. */
-	protected boolean deflated = false;
-
-	private PdfDictionary additional = null;
-
-	/** Holds value of property smask. */
-	private boolean smask;
-
-	/** Holds value of property XYRatio. */
-	private float XYRatio = 0;
-
-	/** Holds value of property originalType. */
-	protected int originalType = ORIGINAL_NONE;
-
-	/** Holds value of property originalData. */
-	protected byte[] originalData;
-
-	/** The spacing before the image. */
-	protected float spacingBefore;
-
-	/** The spacing after the image. */
-	protected float spacingAfter;
-
-	/**
-	 * Holds value of property widthPercentage.
-	 */
-	private float widthPercentage = 100;
-
-	protected PdfOCG layer;
-
-    /**
-     * Holds value of property initialRotation.
-     */
-    private float initialRotation;
-    
-	// constructors
-
+	// image from file or URL
+	
 	/**
 	 * Constructs an <CODE>Image</CODE> -object, using an <VAR>url </VAR>.
 	 * 
 	 * @param url
 	 *            the <CODE>URL</CODE> where the image can be found.
 	 */
-
 	public Image(URL url) {
 		super(0, 0);
 		this.url = url;
 		this.alignment = DEFAULT;
-		rotation = 0;
-	}
-
-	/**
-	 * Constructs an <CODE>Image</CODE> -object, using an <VAR>url </VAR>.
-	 * 
-	 * @param image
-	 *            another Image object.
-	 */
-
-	protected Image(Image image) {
-		super(image);
-		this.type = image.type;
-		this.url = image.url;
-		this.alignment = image.alignment;
-		this.alt = image.alt;
-		this.absoluteX = image.absoluteX;
-		this.absoluteY = image.absoluteY;
-		this.plainWidth = image.plainWidth;
-		this.plainHeight = image.plainHeight;
-		this.scaledWidth = image.scaledWidth;
-		this.scaledHeight = image.scaledHeight;
-		this.rotation = image.rotation;
-		this.colorspace = image.colorspace;
-		this.rawData = image.rawData;
-		this.template = image.template;
-		this.bpc = image.bpc;
-		this.transparency = image.transparency;
-		this.mySerialId = image.mySerialId;
-		this.invert = image.invert;
-		this.dpiX = image.dpiX;
-		this.dpiY = image.dpiY;
-		this.mask = image.mask;
-		this.imageMask = image.imageMask;
-		this.interpolation = image.interpolation;
-		this.annotation = image.annotation;
-		this.markupAttributes = image.markupAttributes;
-		this.profile = image.profile;
-		this.deflated = image.deflated;
-		this.additional = image.additional;
-		this.smask = image.smask;
-		this.XYRatio = image.XYRatio;
-		this.originalData = image.originalData;
-		this.originalType = image.originalType;
-		this.spacingAfter = image.spacingAfter;
-		this.spacingBefore = image.spacingBefore;
-		this.widthPercentage = image.widthPercentage;
-		this.layer = image.layer;
-        this.initialRotation = image.initialRotation;
-        this.directReference = image.directReference;
-	}
-
-	/**
-	 * gets an instance of an Image
-	 * 
-	 * @param image
-	 *            an Image object
-	 * @return a new Image object
-	 */
-
-	public static Image getInstance(Image image) {
-		if (image == null)
-			return null;
-		try {
-			Class cs = image.getClass();
-			Constructor constructor = cs
-					.getDeclaredConstructor(new Class[] { Image.class });
-			return (Image) constructor.newInstance(new Object[] { image });
-		} catch (Exception e) {
-			throw new ExceptionConverter(e);
-		}
+		rotationRadians = 0;
 	}
 
 	/**
@@ -378,7 +226,6 @@ public abstract class Image extends Rectangle {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-
 	public static Image getInstance(URL url) throws BadElementException,
 			MalformedURLException, IOException {
 		InputStream is = null;
@@ -418,7 +265,7 @@ public abstract class Image extends Rectangle {
 				try {
 					if (url.getProtocol().equals("file")) {
 						String file = url.getFile();
-                        file = unEscapeURL(file);
+                        file = Utilities.unEscapeURL(file);
 						ra = new RandomAccessFileOrArray(file);
 					} else
 						ra = new RandomAccessFileOrArray(url);
@@ -440,6 +287,22 @@ public abstract class Image extends Rectangle {
 		}
 	}
 
+	/**
+	 * Gets an instance of an Image.
+	 * 
+	 * @param filename
+	 *            a filename
+	 * @return an object of type <CODE>Gif</CODE>,<CODE>Jpeg</CODE> or
+	 *         <CODE>Png</CODE>
+	 * @throws BadElementException
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
+	public static Image getInstance(String filename)
+			throws BadElementException, MalformedURLException, IOException {
+		return getInstance(Utilities.toURL(filename));
+	}
+    
 	/**
 	 * gets an instance of an Image
 	 * 
@@ -507,6 +370,151 @@ public abstract class Image extends Rectangle {
 	}
 
 	/**
+	 * Gets an instance of an Image in raw mode.
+	 * 
+	 * @param width
+	 *            the width of the image in pixels
+	 * @param height
+	 *            the height of the image in pixels
+	 * @param components
+	 *            1,3 or 4 for GrayScale, RGB and CMYK
+	 * @param data
+	 *            the image data
+	 * @param bpc
+	 *            bits per component
+	 * @return an object of type <CODE>ImgRaw</CODE>
+	 * @throws BadElementException
+	 *             on error
+	 */
+	public static Image getInstance(int width, int height, int components,
+			int bpc, byte data[]) throws BadElementException {
+		return Image.getInstance(width, height, components, bpc, data, null);
+	}
+
+	/**
+	 * Creates an Image with CCITT G3 or G4 compression. It assumes that the
+	 * data bytes are already compressed.
+	 * 
+	 * @param width
+	 *            the exact width of the image
+	 * @param height
+	 *            the exact height of the image
+	 * @param reverseBits
+	 *            reverses the bits in <code>data</code>. Bit 0 is swapped
+	 *            with bit 7 and so on
+	 * @param typeCCITT
+	 *            the type of compression in <code>data</code>. It can be
+	 *            CCITTG4, CCITTG31D, CCITTG32D
+	 * @param parameters
+	 *            parameters associated with this stream. Possible values are
+	 *            CCITT_BLACKIS1, CCITT_ENCODEDBYTEALIGN, CCITT_ENDOFLINE and
+	 *            CCITT_ENDOFBLOCK or a combination of them
+	 * @param data
+	 *            the image data
+	 * @return an Image object
+	 * @throws BadElementException
+	 *             on error
+	 */
+	public static Image getInstance(int width, int height, boolean reverseBits,
+			int typeCCITT, int parameters, byte[] data)
+			throws BadElementException {
+		return Image.getInstance(width, height, reverseBits, typeCCITT,
+				parameters, data, null);
+	}
+
+	/**
+	 * Creates an Image with CCITT G3 or G4 compression. It assumes that the
+	 * data bytes are already compressed.
+	 * 
+	 * @param width
+	 *            the exact width of the image
+	 * @param height
+	 *            the exact height of the image
+	 * @param reverseBits
+	 *            reverses the bits in <code>data</code>. Bit 0 is swapped
+	 *            with bit 7 and so on
+	 * @param typeCCITT
+	 *            the type of compression in <code>data</code>. It can be
+	 *            CCITTG4, CCITTG31D, CCITTG32D
+	 * @param parameters
+	 *            parameters associated with this stream. Possible values are
+	 *            CCITT_BLACKIS1, CCITT_ENCODEDBYTEALIGN, CCITT_ENDOFLINE and
+	 *            CCITT_ENDOFBLOCK or a combination of them
+	 * @param data
+	 *            the image data
+	 * @param transparency
+	 *            transparency information in the Mask format of the image
+	 *            dictionary
+	 * @return an Image object
+	 * @throws BadElementException
+	 *             on error
+	 */
+	public static Image getInstance(int width, int height, boolean reverseBits,
+			int typeCCITT, int parameters, byte[] data, int transparency[])
+			throws BadElementException {
+		if (transparency != null && transparency.length != 2)
+			throw new BadElementException(
+					"Transparency length must be equal to 2 with CCITT images");
+		Image img = new ImgCCITT(width, height, reverseBits, typeCCITT,
+				parameters, data);
+		img.transparency = transparency;
+		return img;
+	}
+
+	/**
+	 * Gets an instance of an Image in raw mode.
+	 * 
+	 * @param width
+	 *            the width of the image in pixels
+	 * @param height
+	 *            the height of the image in pixels
+	 * @param components
+	 *            1,3 or 4 for GrayScale, RGB and CMYK
+	 * @param data
+	 *            the image data
+	 * @param bpc
+	 *            bits per component
+	 * @param transparency
+	 *            transparency information in the Mask format of the image
+	 *            dictionary
+	 * @return an object of type <CODE>ImgRaw</CODE>
+	 * @throws BadElementException
+	 *             on error
+	 */
+	public static Image getInstance(int width, int height, int components,
+			int bpc, byte data[], int transparency[])
+			throws BadElementException {
+		if (transparency != null && transparency.length != components * 2)
+			throw new BadElementException(
+					"Transparency length must be equal to (componentes * 2)");
+		if (components == 1 && bpc == 1) {
+			byte g4[] = CCITTG4Encoder.compress(data, width, height);
+			return Image.getInstance(width, height, false, Image.CCITTG4,
+					Image.CCITT_BLACKIS1, g4, transparency);
+		}
+		Image img = new ImgRaw(width, height, components, bpc, data);
+		img.transparency = transparency;
+		return img;
+	}
+
+	// images from a PdfTemplate
+	
+	/**
+	 * gets an instance of an Image
+	 * 
+	 * @param template
+	 *            a PdfTemplate that has to be wrapped in an Image object
+	 * @return an Image object
+	 * @throws BadElementException
+	 */
+	public static Image getInstance(PdfTemplate template)
+			throws BadElementException {
+		return new ImgTemplate(template);
+	}
+    
+    // images from a java.awt.Image
+    
+	/**
 	 * Gets an instance of an Image from a java.awt.Image.
 	 * 
 	 * @param image
@@ -522,7 +530,6 @@ public abstract class Image extends Rectangle {
 	 * @throws IOException
 	 *             on error
 	 */
-
 	public static Image getInstance(java.awt.Image image, java.awt.Color color,
 			boolean forceBW) throws BadElementException, IOException {
 		
@@ -753,46 +760,31 @@ public abstract class Image extends Rectangle {
         return getInstance(tp);
     }
 
-	/**
-	 * Gets an instance of an Image.
-	 * 
-	 * @param filename
-	 *            a filename
-	 * @return an object of type <CODE>Gif</CODE>,<CODE>Jpeg</CODE> or
-	 *         <CODE>Png</CODE>
-	 * @throws BadElementException
-	 * @throws MalformedURLException
-	 * @throws IOException
-	 */
-
-	public static Image getInstance(String filename)
-			throws BadElementException, MalformedURLException, IOException {
-		return getInstance(toURL(filename));
-	}
-
-	/**
-	 * Gets an instance of an Image in raw mode.
-	 * 
-	 * @param width
-	 *            the width of the image in pixels
-	 * @param height
-	 *            the height of the image in pixels
-	 * @param components
-	 *            1,3 or 4 for GrayScale, RGB and CMYK
-	 * @param data
-	 *            the image data
-	 * @param bpc
-	 *            bits per component
-	 * @return an object of type <CODE>ImgRaw</CODE>
-	 * @throws BadElementException
-	 *             on error
-	 */
-
-	public static Image getInstance(int width, int height, int components,
-			int bpc, byte data[]) throws BadElementException {
-		return Image.getInstance(width, height, components, bpc, data, null);
-	}
-
+    // image from indirect reference
+    
+    /**
+     * Holds value of property directReference.
+     * An image is embedded into a PDF as an Image XObject.
+     * This object is referenced by a PdfIndirectReference object.
+     */
+    private PdfIndirectReference directReference;
+    
+    /**
+     * Getter for property directReference.
+     * @return Value of property directReference.
+     */
+    public PdfIndirectReference getDirectReference() {
+        return this.directReference;
+    }
+    
+    /**
+     * Setter for property directReference.
+     * @param directReference New value of property directReference.
+     */
+    public void setDirectReference(PdfIndirectReference directReference) {
+        this.directReference = directReference;
+    }
+    
     /**
      * Reuses an existing image.
      * @param ref the reference to the image dictionary
@@ -822,465 +814,83 @@ public abstract class Image extends Rectangle {
         return img;
     }
 
+    // copy constructor
+    
+	/**
+	 * Constructs an <CODE>Image</CODE> -object, using an <VAR>url </VAR>.
+	 * 
+	 * @param image
+	 *            another Image object.
+	 */
+	protected Image(Image image) {
+		super(image);
+		this.type = image.type;
+		this.url = image.url;
+		this.rawData = image.rawData;
+		this.bpc = image.bpc;
+		this.template = image.template;
+		this.alignment = image.alignment;
+		this.alt = image.alt;
+		this.absoluteX = image.absoluteX;
+		this.absoluteY = image.absoluteY;
+		this.plainWidth = image.plainWidth;
+		this.plainHeight = image.plainHeight;
+		this.scaledWidth = image.scaledWidth;
+		this.scaledHeight = image.scaledHeight;
+		this.mySerialId = image.mySerialId;
+
+        this.directReference = image.directReference;
+        
+		this.rotationRadians = image.rotationRadians;
+        this.initialRotation = image.initialRotation;
+        this.indentationLeft = image.indentationLeft;
+        this.indentationRight = image.indentationRight;
+		this.spacingBefore = image.spacingBefore;
+		this.spacingAfter = image.spacingAfter;
+
+		this.widthPercentage = image.widthPercentage;
+		this.annotation = image.annotation;
+		this.layer = image.layer;
+		this.interpolation = image.interpolation;
+		this.originalType = image.originalType;
+		this.originalData = image.originalData;
+		this.deflated = image.deflated;
+		this.dpiX = image.dpiX;
+		this.dpiY = image.dpiY;
+		this.XYRatio = image.XYRatio;
+		
+		this.colorspace = image.colorspace;
+		this.invert = image.invert;
+		this.profile = image.profile;
+		this.additional = image.additional;
+		this.mask = image.mask;
+		this.imageMask = image.imageMask;
+		this.smask = image.smask;
+		this.transparency = image.transparency;
+	}
+
 	/**
 	 * gets an instance of an Image
 	 * 
-	 * @param template
-	 *            a PdfTemplate that has to be wrapped in an Image object
-	 * @return an Image object
-	 * @throws BadElementException
+	 * @param image
+	 *            an Image object
+	 * @return a new Image object
 	 */
-	public static Image getInstance(PdfTemplate template)
-			throws BadElementException {
-		return new ImgTemplate(template);
-	}
-
-	/**
-	 * Creates an Image with CCITT G3 or G4 compression. It assumes that the
-	 * data bytes are already compressed.
-	 * 
-	 * @param width
-	 *            the exact width of the image
-	 * @param height
-	 *            the exact height of the image
-	 * @param reverseBits
-	 *            reverses the bits in <code>data</code>. Bit 0 is swapped
-	 *            with bit 7 and so on
-	 * @param typeCCITT
-	 *            the type of compression in <code>data</code>. It can be
-	 *            CCITTG4, CCITTG31D, CCITTG32D
-	 * @param parameters
-	 *            parameters associated with this stream. Possible values are
-	 *            CCITT_BLACKIS1, CCITT_ENCODEDBYTEALIGN, CCITT_ENDOFLINE and
-	 *            CCITT_ENDOFBLOCK or a combination of them
-	 * @param data
-	 *            the image data
-	 * @return an Image object
-	 * @throws BadElementException
-	 *             on error
-	 */
-	public static Image getInstance(int width, int height, boolean reverseBits,
-			int typeCCITT, int parameters, byte[] data)
-			throws BadElementException {
-		return Image.getInstance(width, height, reverseBits, typeCCITT,
-				parameters, data, null);
-	}
-
-	/**
-	 * Creates an Image with CCITT G3 or G4 compression. It assumes that the
-	 * data bytes are already compressed.
-	 * 
-	 * @param width
-	 *            the exact width of the image
-	 * @param height
-	 *            the exact height of the image
-	 * @param reverseBits
-	 *            reverses the bits in <code>data</code>. Bit 0 is swapped
-	 *            with bit 7 and so on
-	 * @param typeCCITT
-	 *            the type of compression in <code>data</code>. It can be
-	 *            CCITTG4, CCITTG31D, CCITTG32D
-	 * @param parameters
-	 *            parameters associated with this stream. Possible values are
-	 *            CCITT_BLACKIS1, CCITT_ENCODEDBYTEALIGN, CCITT_ENDOFLINE and
-	 *            CCITT_ENDOFBLOCK or a combination of them
-	 * @param data
-	 *            the image data
-	 * @param transparency
-	 *            transparency information in the Mask format of the image
-	 *            dictionary
-	 * @return an Image object
-	 * @throws BadElementException
-	 *             on error
-	 */
-	public static Image getInstance(int width, int height, boolean reverseBits,
-			int typeCCITT, int parameters, byte[] data, int transparency[])
-			throws BadElementException {
-		if (transparency != null && transparency.length != 2)
-			throw new BadElementException(
-					"Transparency length must be equal to 2 with CCITT images");
-		Image img = new ImgCCITT(width, height, reverseBits, typeCCITT,
-				parameters, data);
-		img.transparency = transparency;
-		return img;
-	}
-
-	/**
-	 * Gets an instance of an Image in raw mode.
-	 * 
-	 * @param width
-	 *            the width of the image in pixels
-	 * @param height
-	 *            the height of the image in pixels
-	 * @param components
-	 *            1,3 or 4 for GrayScale, RGB and CMYK
-	 * @param data
-	 *            the image data
-	 * @param bpc
-	 *            bits per component
-	 * @param transparency
-	 *            transparency information in the Mask format of the image
-	 *            dictionary
-	 * @return an object of type <CODE>ImgRaw</CODE>
-	 * @throws BadElementException
-	 *             on error
-	 */
-
-	public static Image getInstance(int width, int height, int components,
-			int bpc, byte data[], int transparency[])
-			throws BadElementException {
-		if (transparency != null && transparency.length != components * 2)
-			throw new BadElementException(
-					"Transparency length must be equal to (componentes * 2)");
-		if (components == 1 && bpc == 1) {
-			byte g4[] = CCITTG4Encoder.compress(data, width, height);
-			return Image.getInstance(width, height, false, Image.CCITTG4,
-					Image.CCITT_BLACKIS1, g4, transparency);
+	public static Image getInstance(Image image) {
+		if (image == null)
+			return null;
+		try {
+			Class cs = image.getClass();
+			Constructor constructor = cs
+					.getDeclaredConstructor(new Class[] { Image.class });
+			return (Image) constructor.newInstance(new Object[] { image });
+		} catch (Exception e) {
+			throw new ExceptionConverter(e);
 		}
-		Image img = new ImgRaw(width, height, components, bpc, data);
-		img.transparency = transparency;
-		return img;
 	}
 
-	/**
-	 * Returns an <CODE>Image</CODE> that has been constructed taking in
-	 * account the value of some <VAR>attributes </VAR>.
-	 * 
-	 * @param attributes
-	 *            Some attributes
-	 * @return an <CODE>Image</CODE>
-	 * @throws BadElementException
-	 * @throws MalformedURLException
-	 * @throws IOException
-	 */
-
-	public static Image getInstance(Properties attributes)
-			throws BadElementException, MalformedURLException, IOException {
-		String value = (String) attributes.remove(ElementTags.URL);
-		if (value == null)
-			throw new MalformedURLException("The URL of the image is missing.");
-		Image image = Image.getInstance(value);
-		int align = 0;
-		if ((value = (String) attributes.remove(ElementTags.ALIGN)) != null) {
-			if (ElementTags.ALIGN_LEFT.equalsIgnoreCase(value))
-				align |= Image.LEFT;
-			else if (ElementTags.ALIGN_RIGHT.equalsIgnoreCase(value))
-				align |= Image.RIGHT;
-			else if (ElementTags.ALIGN_MIDDLE.equalsIgnoreCase(value))
-				align |= Image.MIDDLE;
-		}
-		if ((value = (String) attributes.remove(ElementTags.UNDERLYING)) != null) {
-			if (Boolean.valueOf(value).booleanValue())
-				align |= Image.UNDERLYING;
-		}
-		if ((value = (String) attributes.remove(ElementTags.TEXTWRAP)) != null) {
-			if (Boolean.valueOf(value).booleanValue())
-				align |= Image.TEXTWRAP;
-		}
-		image.setAlignment(align);
-		if ((value = (String) attributes.remove(ElementTags.ALT)) != null) {
-			image.setAlt(value);
-		}
-		String x;
-		String y;
-		if (((x = (String) attributes.remove(ElementTags.ABSOLUTEX)) != null)
-				&& ((y = (String) attributes.remove(ElementTags.ABSOLUTEY)) != null)) {
-			image.setAbsolutePosition(Float.parseFloat(x + "f"),
-					Float.parseFloat(y + "f"));
-		}
-		if ((value = (String) attributes.remove(ElementTags.PLAINWIDTH)) != null) {
-			image.scaleAbsoluteWidth(Float.parseFloat(value + "f"));
-		}
-		if ((value = (String) attributes.remove(ElementTags.PLAINHEIGHT)) != null) {
-			image.scaleAbsoluteHeight(Float.parseFloat(value + "f"));
-		}
-		if ((value = (String) attributes.remove(ElementTags.ROTATION)) != null) {
-			image.setRotation(Float.parseFloat(value + "f"));
-		}
-		return image;
-	}
-
-	// methods to set information
-
-	/**
-	 * Sets the alignment for the image.
-	 * 
-	 * @param alignment
-	 *            the alignment
-	 */
-
-	public void setAlignment(int alignment) {
-		this.alignment = alignment;
-	}
-
-	/**
-	 * Sets the alternative information for the image.
-	 * 
-	 * @param alt
-	 *            the alternative information
-	 */
-
-	public void setAlt(String alt) {
-		this.alt = alt;
-	}
-
-	/**
-	 * Sets the absolute position of the <CODE>Image</CODE>.
-	 * 
-	 * @param absoluteX
-	 * @param absoluteY
-	 */
-
-	public void setAbsolutePosition(float absoluteX, float absoluteY) {
-		this.absoluteX = absoluteX;
-		this.absoluteY = absoluteY;
-	}
-
-	/**
-	 * Scale the image to an absolute width and an absolute height.
-	 * 
-	 * @param newWidth
-	 *            the new width
-	 * @param newHeight
-	 *            the new height
-	 */
-
-	public void scaleAbsolute(float newWidth, float newHeight) {
-		plainWidth = newWidth;
-		plainHeight = newHeight;
-		float[] matrix = matrix();
-		scaledWidth = matrix[DX] - matrix[CX];
-		scaledHeight = matrix[DY] - matrix[CY];
-	}
-
-	/**
-	 * Scale the image to an absolute width.
-	 * 
-	 * @param newWidth
-	 *            the new width
-	 */
-
-	public void scaleAbsoluteWidth(float newWidth) {
-		plainWidth = newWidth;
-		float[] matrix = matrix();
-		scaledWidth = matrix[DX] - matrix[CX];
-		scaledHeight = matrix[DY] - matrix[CY];
-	}
-
-	/**
-	 * Scale the image to an absolute height.
-	 * 
-	 * @param newHeight
-	 *            the new height
-	 */
-
-	public void scaleAbsoluteHeight(float newHeight) {
-		plainHeight = newHeight;
-		float[] matrix = matrix();
-		scaledWidth = matrix[DX] - matrix[CX];
-		scaledHeight = matrix[DY] - matrix[CY];
-	}
-
-	/**
-	 * Scale the image to a certain percentage.
-	 * 
-	 * @param percent
-	 *            the scaling percentage
-	 */
-
-	public void scalePercent(float percent) {
-		scalePercent(percent, percent);
-	}
-
-	/**
-	 * Scale the width and height of an image to a certain percentage.
-	 * 
-	 * @param percentX
-	 *            the scaling percentage of the width
-	 * @param percentY
-	 *            the scaling percentage of the height
-	 */
-
-	public void scalePercent(float percentX, float percentY) {
-		plainWidth = (width() * percentX) / 100f;
-		plainHeight = (height() * percentY) / 100f;
-		float[] matrix = matrix();
-		scaledWidth = matrix[DX] - matrix[CX];
-		scaledHeight = matrix[DY] - matrix[CY];
-	}
-
-	/**
-	 * Scales the image so that it fits a certain width and height.
-	 * 
-	 * @param fitWidth
-	 *            the width to fit
-	 * @param fitHeight
-	 *            the height to fit
-	 */
-
-	public void scaleToFit(float fitWidth, float fitHeight) {
-        scalePercent(100);
-		float percentX = (fitWidth * 100) / scaledWidth();
-		float percentY = (fitHeight * 100) / scaledHeight();
-		scalePercent(percentX < percentY ? percentX : percentY);
-	}
-
-    /**
-     * Gets the current image rotation in radians.
-     * @return the current image rotation in radians
-     */
-    public float getImageRotation() {
-		float rot = (float) ((rotation - initialRotation) % (2.0 * Math.PI));
-		if (rot < 0) {
-			rot += 2.0 * Math.PI; //__IDS__
-		}
-        return rot;
-    }
-    
-	/**
-	 * Sets the rotation of the image in radians.
-	 * 
-	 * @param r
-	 *            rotation in radians
-	 */
-
-	public void setRotation(float r) {
-		double d = Math.PI; //__IDS__
-		rotation = (float) ((r + initialRotation) % (2.0 * d)); //__IDS__
-		if (rotation < 0) {
-			rotation += 2.0 * d; //__IDS__
-		}
-		float[] matrix = matrix();
-		scaledWidth = matrix[DX] - matrix[CX];
-		scaledHeight = matrix[DY] - matrix[CY];
-	}
-
-	/**
-	 * Sets the rotation of the image in degrees.
-	 * 
-	 * @param deg
-	 *            rotation in degrees
-	 */
-
-	public void setRotationDegrees(float deg) {
-		double d = Math.PI; //__IDS__
-		setRotation(deg / 180 * (float) d); //__IDS__
-	}
-
-	/**
-	 * Sets the annotation of this Image.
-	 * 
-	 * @param annotation
-	 *            the annotation
-	 */
-
-	public void setAnnotation(Annotation annotation) {
-		this.annotation = annotation;
-	}
-
-	/**
-	 * Gets the annotation.
-	 * 
-	 * @return the annotation that is linked to this image
-	 */
-
-	public Annotation annotation() {
-		return annotation;
-	}
-
-	// methods to retrieve information
-
-	/**
-	 * Gets the bpc for the image.
-	 * <P>
-	 * Remark: this only makes sense for Images of the type <CODE>RawImage
-	 * </CODE>.
-	 * 
-	 * @return a bpc value
-	 */
-
-	public int bpc() {
-		return bpc;
-	}
-
-	/**
-	 * Gets the raw data for the image.
-	 * <P>
-	 * Remark: this only makes sense for Images of the type <CODE>RawImage
-	 * </CODE>.
-	 * 
-	 * @return the raw data
-	 */
-
-	public byte[] rawData() {
-		return rawData;
-	}
-
-	/**
-	 * Gets the template to be used as an image.
-	 * <P>
-	 * Remark: this only makes sense for Images of the type <CODE>ImgTemplate
-	 * </CODE>.
-	 * 
-	 * @return the template
-	 */
-
-	public PdfTemplate templateData() {
-		return template[0];
-	}
-
-	/**
-	 * Sets data from a PdfTemplate
-	 * 
-	 * @param template
-	 *            the template with the content
-	 */
-	public void setTemplateData(PdfTemplate template) {
-		this.template[0] = template;
-	}
-
-	/**
-	 * Checks if the <CODE>Images</CODE> has to be added at an absolute
-	 * position.
-	 * 
-	 * @return a boolean
-	 */
-
-	public boolean hasAbsolutePosition() {
-		return !Float.isNaN(absoluteY);
-	}
-
-	/**
-	 * Checks if the <CODE>Images</CODE> has to be added at an absolute X
-	 * position.
-	 * 
-	 * @return a boolean
-	 */
-
-	public boolean hasAbsoluteX() {
-		return !Float.isNaN(absoluteX);
-	}
-
-	/**
-	 * Returns the absolute X position.
-	 * 
-	 * @return a position
-	 */
-
-	public float absoluteX() {
-		return absoluteX;
-	}
-
-	/**
-	 * Returns the absolute Y position.
-	 * 
-	 * @return a position
-	 */
-
-	public float absoluteY() {
-		return absoluteY;
-	}
-
+	// implementation of the Element interface
+	
 	/**
 	 * Returns the type.
 	 * 
@@ -1290,6 +900,8 @@ public abstract class Image extends Rectangle {
 	public int type() {
 		return type;
 	}
+
+	// checking the type of Image
 
 	/**
 	 * Returns <CODE>true</CODE> if the image is a <CODE>Jpeg</CODE>
@@ -1323,6 +935,8 @@ public abstract class Image extends Rectangle {
 	public boolean isImgTemplate() {
 		return type == IMGTEMPLATE;
 	}
+	
+	// getters and setters
 
 	/**
 	 * Gets the <CODE>String</CODE> -representation of the reference to the
@@ -1331,8 +945,64 @@ public abstract class Image extends Rectangle {
 	 * @return a <CODE>String</CODE>
 	 */
 
-	public URL url() {
+	public URL getUrl() {
 		return url;
+	}
+
+	/**
+	 * Sets the url of the image
+	 * 
+	 * @param url
+	 *            the url of the image
+	 */
+	public void setUrl(URL url) {
+		this.url = url;
+	}
+
+	/**
+	 * Gets the raw data for the image.
+	 * <P>
+	 * Remark: this only makes sense for Images of the type <CODE>RawImage
+	 * </CODE>.
+	 * 
+	 * @return the raw data
+	 */
+	public byte[] getRawData() {
+		return rawData;
+	}
+
+	/**
+	 * Gets the bpc for the image.
+	 * <P>
+	 * Remark: this only makes sense for Images of the type <CODE>RawImage
+	 * </CODE>.
+	 * 
+	 * @return a bpc value
+	 */
+	public int getBpc() {
+		return bpc;
+	}
+
+	/**
+	 * Gets the template to be used as an image.
+	 * <P>
+	 * Remark: this only makes sense for Images of the type <CODE>ImgTemplate
+	 * </CODE>.
+	 * 
+	 * @return the template
+	 */
+	public PdfTemplate getTemplateData() {
+		return template[0];
+	}
+
+	/**
+	 * Sets data from a PdfTemplate
+	 * 
+	 * @param template
+	 *            the template with the content
+	 */
+	public void setTemplateData(PdfTemplate template) {
+		this.template[0] = template;
 	}
 
 	/**
@@ -1340,9 +1010,19 @@ public abstract class Image extends Rectangle {
 	 * 
 	 * @return a value
 	 */
-
-	public int alignment() {
+	public int getAlignment() {
 		return alignment;
+	}
+
+	/**
+	 * Sets the alignment for the image.
+	 * 
+	 * @param alignment
+	 *            the alignment
+	 */
+
+	public void setAlignment(int alignment) {
+		this.alignment = alignment;
 	}
 
 	/**
@@ -1351,17 +1031,79 @@ public abstract class Image extends Rectangle {
 	 * @return a <CODE>String</CODE>
 	 */
 
-	public String alt() {
+	public String getAlt() {
 		return alt;
 	}
+
+	/**
+	 * Sets the alternative information for the image.
+	 * 
+	 * @param alt
+	 *            the alternative information
+	 */
+
+	public void setAlt(String alt) {
+		this.alt = alt;
+	}
+
+	/**
+	 * Sets the absolute position of the <CODE>Image</CODE>.
+	 * 
+	 * @param absoluteX
+	 * @param absoluteY
+	 */
+
+	public void setAbsolutePosition(float absoluteX, float absoluteY) {
+		this.absoluteX = absoluteX;
+		this.absoluteY = absoluteY;
+	}
+
+	/**
+	 * Checks if the <CODE>Images</CODE> has to be added at an absolute X
+	 * position.
+	 * 
+	 * @return a boolean
+	 */
+	public boolean hasAbsoluteX() {
+		return !Float.isNaN(absoluteX);
+	}
+
+	/**
+	 * Returns the absolute X position.
+	 * 
+	 * @return a position
+	 */
+	public float getAbsoluteX() {
+		return absoluteX;
+	}
+
+	/**
+	 * Checks if the <CODE>Images</CODE> has to be added at an absolute
+	 * position.
+	 * 
+	 * @return a boolean
+	 */
+	public boolean hasAbsoluteY() {
+		return !Float.isNaN(absoluteY);
+	}
+
+	/**
+	 * Returns the absolute Y position.
+	 * 
+	 * @return a position
+	 */
+	public float getAbsoluteY() {
+		return absoluteY;
+	}
+
+	// width and height
 
 	/**
 	 * Gets the scaled width of the image.
 	 * 
 	 * @return a value
 	 */
-
-	public float scaledWidth() {
+	public float getScaledWidth() {
 		return scaledWidth;
 	}
 
@@ -1370,21 +1112,109 @@ public abstract class Image extends Rectangle {
 	 * 
 	 * @return a value
 	 */
-
-	public float scaledHeight() {
+	public float getScaledHeight() {
 		return scaledHeight;
 	}
 
 	/**
-	 * Gets the colorspace for the image.
-	 * <P>
-	 * Remark: this only makes sense for Images of the type <CODE>Jpeg</CODE>.
+	 * Gets the plain width of the image.
 	 * 
-	 * @return a colorspace value
+	 * @return a value
 	 */
+	public float getPlainWidth() {
+		return plainWidth;
+	}
 
-	public int colorspace() {
-		return colorspace;
+	/**
+	 * Gets the plain height of the image.
+	 * 
+	 * @return a value
+	 */
+	public float getPlainHeight() {
+		return plainHeight;
+	}
+	
+	/**
+	 * Scale the image to an absolute width and an absolute height.
+	 * 
+	 * @param newWidth
+	 *            the new width
+	 * @param newHeight
+	 *            the new height
+	 */
+	public void scaleAbsolute(float newWidth, float newHeight) {
+		plainWidth = newWidth;
+		plainHeight = newHeight;
+		float[] matrix = matrix();
+		scaledWidth = matrix[DX] - matrix[CX];
+		scaledHeight = matrix[DY] - matrix[CY];
+	}
+
+	/**
+	 * Scale the image to an absolute width.
+	 * 
+	 * @param newWidth
+	 *            the new width
+	 */
+	public void scaleAbsoluteWidth(float newWidth) {
+		plainWidth = newWidth;
+		float[] matrix = matrix();
+		scaledWidth = matrix[DX] - matrix[CX];
+		scaledHeight = matrix[DY] - matrix[CY];
+	}
+
+	/**
+	 * Scale the image to an absolute height.
+	 * 
+	 * @param newHeight
+	 *            the new height
+	 */
+	public void scaleAbsoluteHeight(float newHeight) {
+		plainHeight = newHeight;
+		float[] matrix = matrix();
+		scaledWidth = matrix[DX] - matrix[CX];
+		scaledHeight = matrix[DY] - matrix[CY];
+	}
+
+	/**
+	 * Scale the image to a certain percentage.
+	 * 
+	 * @param percent
+	 *            the scaling percentage
+	 */
+	public void scalePercent(float percent) {
+		scalePercent(percent, percent);
+	}
+
+	/**
+	 * Scale the width and height of an image to a certain percentage.
+	 * 
+	 * @param percentX
+	 *            the scaling percentage of the width
+	 * @param percentY
+	 *            the scaling percentage of the height
+	 */
+	public void scalePercent(float percentX, float percentY) {
+		plainWidth = (width() * percentX) / 100f;
+		plainHeight = (height() * percentY) / 100f;
+		float[] matrix = matrix();
+		scaledWidth = matrix[DX] - matrix[CX];
+		scaledHeight = matrix[DY] - matrix[CY];
+	}
+
+	/**
+	 * Scales the image so that it fits a certain width and height.
+	 * 
+	 * @param fitWidth
+	 *            the width to fit
+	 * @param fitHeight
+	 *            the height to fit
+	 */
+	public void scaleToFit(float fitWidth, float fitHeight) {
+        scalePercent(100);
+		float percentX = (fitWidth * 100) / getScaledWidth();
+		float percentY = (fitHeight * 100) / getScaledHeight();
+		scalePercent(percentX < percentY ? percentX : percentY);
 	}
 
 	/**
@@ -1392,26 +1222,25 @@ public abstract class Image extends Rectangle {
 	 * 
 	 * @return an array [AX, AY, BX, BY, CX, CY, DX, DY]
 	 */
-
 	public float[] matrix() {
 		float[] matrix = new float[8];
-		float cosX = (float) Math.cos(rotation);
-		float sinX = (float) Math.sin(rotation);
+		float cosX = (float) Math.cos(rotationRadians);
+		float sinX = (float) Math.sin(rotationRadians);
 		matrix[AX] = plainWidth * cosX;
 		matrix[AY] = plainWidth * sinX;
 		matrix[BX] = (-plainHeight) * sinX;
 		matrix[BY] = plainHeight * cosX;
-		if (rotation < Math.PI / 2f) {
+		if (rotationRadians < Math.PI / 2f) {
 			matrix[CX] = matrix[BX];
 			matrix[CY] = 0;
 			matrix[DX] = matrix[AX];
 			matrix[DY] = matrix[AY] + matrix[BY];
-		} else if (rotation < Math.PI) {
+		} else if (rotationRadians < Math.PI) {
 			matrix[CX] = matrix[AX] + matrix[BX];
 			matrix[CY] = matrix[BY];
 			matrix[DX] = 0;
 			matrix[DY] = matrix[AY];
-		} else if (rotation < Math.PI * 1.5f) {
+		} else if (rotationRadians < Math.PI * 1.5f) {
 			matrix[CX] = matrix[AX];
 			matrix[CY] = matrix[AY] + matrix[BY];
 			matrix[DX] = matrix[BX];
@@ -1425,160 +1254,12 @@ public abstract class Image extends Rectangle {
 		return matrix;
 	}
 
-	/**
-	 * This method is an alternative for the <CODE>InputStream.skip()</CODE>
-	 * -method that doesn't seem to work properly for big values of <CODE>size
-	 * </CODE>.
-	 * 
-	 * @param is
-	 *            the <CODE>InputStream</CODE>
-	 * @param size
-	 *            the number of bytes to skip
-	 * @throws IOException
-	 */
+	// serial stamping
 
-	static public void skip(InputStream is, int size) throws IOException {
-        long n;
-		while (size > 0) {
-            n = is.skip(size);
-            if (n <= 0)
-                break;
-			size -= n;
-		}
-	}
-
-    private static String excUri = " <>#%\"{}[]|\\\u005E\u0060";
-    private static String[] excUriEsc = {"%20", "%3C", "%3E", "%23", "%25", "%22", "%7B", "%7D", "%5B", "%5D", "%7C", "%5C", "%5E", "%60"};
-    
-    /**
-     * Holds value of property directReference.
-     */
-    private PdfIndirectReference directReference;
-    
-	/**
-	 * This method makes a valid URL from a given filename.
-	 * <P>
-	 * This method makes the conversion of this library from the JAVA 2 platform
-	 * to a JDK1.1.x-version easier.
-	 * 
-	 * @param filename
-	 *            a given filename
-	 * @return a valid URL
-	 * @throws MalformedURLException
-	 */
-
-	public static URL toURL(String filename) throws MalformedURLException {
-		if (filename.startsWith("file:/") || filename.startsWith("http://")
-				|| filename.startsWith("https://")
-				|| filename.startsWith("jar:")) {
-			return new URL(filename);
-		}
-		File f = new File(filename);
-		String path = f.getAbsolutePath();
-		if (File.separatorChar != '/') {
-			path = path.replace(File.separatorChar, '/');
-		}
-		if (!path.startsWith("/")) {
-			path = "/" + path;
-		}
-		if (!path.endsWith("/") && f.isDirectory()) {
-			path = path + "/";
-		}
-        char[] t = path.toCharArray();
-        StringBuffer sb = new StringBuffer();
-        for (int k = 0; k < t.length; ++k) {
-            char c = t[k];
-            int a = excUri.indexOf(c);
-            if (a >= 0)
-                sb.append(excUriEsc[a]);
-            else
-                sb.append(c);
-        }
-		return new URL("file", "", sb.toString());
-	}
-
-    /**
-     * Unescapes an URL. All the "%xx" are replaced by the 'xx' hex char value.
-     * @param src the url to unescape
-     * @return the eunescaped value
-     */    
-    public static String unEscapeURL(String src) {
-        StringBuffer bf = new StringBuffer();
-        char[] s = src.toCharArray();
-        for (int k = 0; k < s.length; ++k) {
-            char c = s[k];
-            if (c == '%') {
-                if (k + 2 >= s.length) {
-                    bf.append(c);
-                    continue;
-                }
-                int a0 = PRTokeniser.getHex((int)s[k + 1]);
-                int a1 = PRTokeniser.getHex((int)s[k + 2]);
-                if (a0 < 0 || a1 < 0) {
-                    bf.append(c);
-                    continue;
-                }
-                bf.append((char)(a0 * 16 + a1));
-                k += 2;
-            }
-            else
-                bf.append(c);
-        }
-        return bf.toString();
-    }
-    
-	/**
-	 * Returns the transparency.
-	 * 
-	 * @return the transparency values
-	 */
-
-	public int[] getTransparency() {
-		return transparency;
-	}
-
-	/**
-	 * Sets the transparency values
-	 * 
-	 * @param transparency
-	 *            the transparency values
-	 */
-	public void setTransparency(int transparency[]) {
-		this.transparency = transparency;
-	}
-
-	/**
-	 * Checks if a given tag corresponds with this object.
-	 * 
-	 * @param tag
-	 *            the given tag
-	 * @return true if the tag corresponds
-	 */
-
-	public static boolean isTag(String tag) {
-		return ElementTags.IMAGE.equals(tag);
-	}
-
-	/**
-	 * Gets the plain width of the image.
-	 * 
-	 * @return a value
-	 */
-
-	public float plainWidth() {
-		return plainWidth;
-	}
-
-	/**
-	 * Gets the plain height of the image.
-	 * 
-	 * @return a value
-	 */
-
-	public float plainHeight() {
-		return plainHeight;
-	}
-
+	/** a static that is used for attributing a unique id to each image. */
+	static long serialId = 0;
+	
+	/** Creates a new serial id. */
 	static protected synchronized Long getSerialId() {
 		++serialId;
 		return new Long(serialId);
@@ -1593,138 +1274,243 @@ public abstract class Image extends Rectangle {
 		return mySerialId;
 	}
 
-	/**
-	 * Gets the dots-per-inch in the X direction. Returns 0 if not available.
-	 * 
-	 * @return the dots-per-inch in the X direction
-	 */
-	public int getDpiX() {
-		return dpiX;
-	}
+    // rotation, note that the superclass also has a rotation value.
 
-	/**
-	 * Gets the dots-per-inch in the Y direction. Returns 0 if not available.
-	 * 
-	 * @return the dots-per-inch in the Y direction
-	 */
-	public int getDpiY() {
-		return dpiY;
-	}
+	/** This is the rotation of the image in radians. */
+	protected float rotationRadians;
+    
+    /** Holds value of property initialRotation. */
+    private float initialRotation;
 
-	/**
-	 * Sets the dots per inch value
-	 * 
-	 * @param dpiX
-	 *            dpi for x coordinates
-	 * @param dpiY
-	 *            dpi for y coordinates
-	 */
-	public void setDpi(int dpiX, int dpiY) {
-		this.dpiX = dpiX;
-		this.dpiY = dpiY;
-	}
-
-	/**
-	 * Returns <CODE>true</CODE> if this <CODE>Image</CODE> has the
-	 * requisites to be a mask.
-	 * 
-	 * @return <CODE>true</CODE> if this <CODE>Image</CODE> can be a mask
-	 */
-	public boolean isMaskCandidate() {
-		if (type == IMGRAW) {
-			if (bpc > 0xff)
-				return true;
+    /**
+     * Gets the current image rotation in radians.
+     * @return the current image rotation in radians
+     */
+    public float getImageRotation() {
+		double d = 2.0 * Math.PI;
+		float rot = (float) ((rotationRadians - initialRotation) % d);
+		if (rot < 0) {
+			rot += d;
 		}
-		return colorspace == 1;
+        return rot;
+    }
+    
+	/**
+	 * Sets the rotation of the image in radians.
+	 * 
+	 * @param r
+	 *            rotation in radians
+	 */
+	public void setRotation(float r) {
+		double d = 2.0 * Math.PI;
+		rotationRadians = (float) ((r + initialRotation) % d);
+		if (rotationRadians < 0) {
+			rotationRadians += d;
+		}
+		float[] matrix = matrix();
+		scaledWidth = matrix[DX] - matrix[CX];
+		scaledHeight = matrix[DY] - matrix[CY];
 	}
 
 	/**
-	 * Make this <CODE>Image</CODE> a mask.
+	 * Sets the rotation of the image in degrees.
 	 * 
-	 * @throws DocumentException
-	 *             if this <CODE>Image</CODE> can not be a mask
+	 * @param deg
+	 *            rotation in degrees
 	 */
-	public void makeMask() throws DocumentException {
-		if (!isMaskCandidate())
-			throw new DocumentException("This image can not be an image mask.");
-		mask = true;
+	public void setRotationDegrees(float deg) {
+		double d = Math.PI;
+		setRotation(deg / 180 * (float) d);
+	}
+    
+    /**
+     * Getter for property initialRotation.
+     * @return Value of property initialRotation.
+     */
+    public float getInitialRotation() {
+        return this.initialRotation;
+    }
+    
+    /**
+     * Some image formats, like TIFF may present the images rotated that have
+     * to be compensated.
+     * @param initialRotation New value of property initialRotation.
+     */
+    public void setInitialRotation(float initialRotation) {
+        float old_rot = rotationRadians - this.initialRotation;
+        this.initialRotation = initialRotation;
+        setRotation(old_rot);
+    }
+    
+    // indentations
+
+	/** the indentation to the left. */
+	protected float indentationLeft = 0;
+
+	/** the indentation to the right. */
+	protected float indentationRight = 0;
+
+	/** The spacing before the image. */
+	protected float spacingBefore;
+
+	/** The spacing after the image. */
+	protected float spacingAfter;
+
+	/**
+	 * Gets the left indentation.
+	 * 
+	 * @return the left indentation
+	 */
+	public float getIndentationLeft() {
+		return indentationLeft;
 	}
 
 	/**
-	 * Sets the explicit masking.
+	 * Sets the left indentation.
 	 * 
-	 * @param mask
-	 *            the mask to be applied
-	 * @throws DocumentException
-	 *             on error
+	 * @param f
 	 */
-	public void setImageMask(Image mask) throws DocumentException {
-		if (this.mask)
-			throw new DocumentException(
-					"An image mask cannot contain another image mask.");
-		if (!mask.mask)
-			throw new DocumentException(
-					"The image mask is not a mask. Did you do makeMask()?");
-		imageMask = mask;
-		smask = (mask.bpc > 1 && mask.bpc <= 8);
+	public void setIndentationLeft(float f) {
+		indentationLeft = f;
 	}
 
 	/**
-	 * Gets the explicit masking.
+	 * Gets the right indentation.
 	 * 
-	 * @return the explicit masking
+	 * @return the right indentation
 	 */
-	public Image getImageMask() {
-		return imageMask;
+	public float getIndentationRight() {
+		return indentationRight;
 	}
 
 	/**
-	 * Returns <CODE>true</CODE> if this <CODE>Image</CODE> is a mask.
+	 * Sets the right indentation.
 	 * 
-	 * @return <CODE>true</CODE> if this <CODE>Image</CODE> is a mask
+	 * @param f
 	 */
-	public boolean isMask() {
-		return mask;
+	public void setIndentationRight(float f) {
+		indentationRight = f;
 	}
 
 	/**
-	 * Inverts the meaning of the bits of a mask.
+	 * Gets the spacing before this image.
 	 * 
-	 * @param invert
-	 *            <CODE>true</CODE> to invert the meaning of the bits of a
-	 *            mask
+	 * @return the spacing
 	 */
-	public void setInvertMask(boolean invert) {
-		this.invert = invert;
+	public float getSpacingBefore() {
+		return spacingBefore;
 	}
 
 	/**
-	 * Returns <CODE>true</CODE> if the bits are to be inverted in the mask.
+	 * Sets the spacing before this image.
 	 * 
-	 * @return <CODE>true</CODE> if the bits are to be inverted in the mask
+	 * @param spacing
+	 *            the new spacing
 	 */
-	public boolean isInvertMask() {
-		return invert;
+
+	public void setSpacingBefore(float spacing) {
+		this.spacingBefore = spacing;
 	}
 
 	/**
-	 * Getter for the inverted value
+	 * Gets the spacing before this image.
 	 * 
-	 * @return true if the image is inverted
+	 * @return the spacing
 	 */
-	public boolean isInverted() {
-		return invert;
+	public float getSpacingAfter() {
+		return spacingAfter;
 	}
 
 	/**
-	 * Sets inverted true or false
+	 * Sets the spacing after this image.
 	 * 
-	 * @param invert
-	 *            true or false
+	 * @param spacing
+	 *            the new spacing
 	 */
-	public void setInverted(boolean invert) {
-		this.invert = invert;
+
+	public void setSpacingAfter(float spacing) {
+		this.spacingAfter = spacing;
 	}
+
+    // widthpercentage (for the moment only used in ColumnText)
+
+	/**
+	 * Holds value of property widthPercentage.
+	 */
+	private float widthPercentage = 100;
+	
+	/**
+	 * Getter for property widthPercentage.
+	 * 
+	 * @return Value of property widthPercentage.
+	 */
+	public float getWidthPercentage() {
+		return this.widthPercentage;
+	}
+
+	/**
+	 * Setter for property widthPercentage.
+	 * 
+	 * @param widthPercentage
+	 *            New value of property widthPercentage.
+	 */
+	public void setWidthPercentage(float widthPercentage) {
+		this.widthPercentage = widthPercentage;
+	}
+
+    // annotation
+
+	/** if the annotation is not null the image will be clickable. */
+	protected Annotation annotation = null;
+	
+	/**
+	 * Sets the annotation of this Image.
+	 * 
+	 * @param annotation
+	 *            the annotation
+	 */
+	public void setAnnotation(Annotation annotation) {
+		this.annotation = annotation;
+	}
+
+	/**
+	 * Gets the annotation.
+	 * 
+	 * @return the annotation that is linked to this image
+	 */
+	public Annotation getAnnotation() {
+		return annotation;
+	}
+
+    // Optional Content
+
+    /** Optional Content layer to which we want this Image to belong. */
+	protected PdfOCG layer;
+	
+	/**
+	 * Gets the layer this image belongs to.
+	 * 
+	 * @return the layer this image belongs to or <code>null</code> for no
+	 *         layer defined
+	 */
+	public PdfOCG getLayer() {
+		return layer;
+	}
+
+	/**
+	 * Sets the layer this image belongs to.
+	 * 
+	 * @param layer
+	 *            the layer this image belongs to
+	 */
+	public void setLayer(PdfOCG layer) {
+		this.layer = layer;
+	}
+
+	// interpolation
+
+	/** Holds value of property interpolation. */
+	protected boolean interpolation;
 
 	/**
 	 * Getter for property interpolation.
@@ -1745,152 +1531,15 @@ public abstract class Image extends Rectangle {
 	public void setInterpolation(boolean interpolation) {
 		this.interpolation = interpolation;
 	}
+	
+	// original type and data
 
-	/**
-	 * Tags this image with an ICC profile.
-	 * 
-	 * @param profile
-	 *            the profile
-	 */
-	public void tagICC(ICC_Profile profile) {
-		this.profile = profile;
-	}
+	/** Holds value of property originalType. */
+	protected int originalType = ORIGINAL_NONE;
 
-	/**
-	 * Checks is the image has an ICC profile.
-	 * 
-	 * @return the ICC profile or <CODE>null</CODE>
-	 */
-	public boolean hasICCProfile() {
-		return (this.profile != null);
-	}
-
-	/**
-	 * Gets the images ICC profile.
-	 * 
-	 * @return the ICC profile
-	 */
-	public ICC_Profile getICCProfile() {
-		return profile;
-	}
-
-	/**
-	 * Getter for property deflated.
-	 * 
-	 * @return Value of property deflated.
-	 *  
-	 */
-	public boolean isDeflated() {
-		return this.deflated;
-	}
-
-	/**
-	 * Setter for property deflated.
-	 * 
-	 * @param deflated
-	 *            New value of property deflated.
-	 *  
-	 */
-	public void setDeflated(boolean deflated) {
-		this.deflated = deflated;
-	}
-
-	/**
-	 * Getter for property indexed.
-	 * 
-	 * @return Value of property indexed.
-	 *  
-	 */
-	public PdfDictionary getAdditional() {
-		return this.additional;
-	}
-
-	/**
-	 * Sets the /Colorspace key.
-	 * 
-	 * @param additional
-	 *            New value of property indexed.
-	 */
-	public void setAdditional(PdfDictionary additional) {
-		this.additional = additional;
-	}
-
-	/**
-	 * Getter for property smask.
-	 * 
-	 * @return Value of property smask.
-	 *  
-	 */
-	public boolean isSmask() {
-		return this.smask;
-	}
-
-	/**
-	 * Setter for property smask.
-	 * 
-	 * @param smask
-	 *            New value of property smask.
-	 *  
-	 */
-	public void setSmask(boolean smask) {
-		this.smask = smask;
-	}
-
-	/**
-	 * Gets the X/Y pixel dimensionless aspect ratio.
-	 * 
-	 * @return the X/Y pixel dimensionless aspect ratio
-	 */
-	public float getXYRatio() {
-		return this.XYRatio;
-	}
-
-	/**
-	 * Sets the X/Y pixel dimensionless aspect ratio.
-	 * 
-	 * @param XYRatio
-	 *            the X/Y pixel dimensionless aspect ratio
-	 */
-	public void setXYRatio(float XYRatio) {
-		this.XYRatio = XYRatio;
-	}
-
-	/**
-	 * Gets the left indentation.
-	 * 
-	 * @return the left indentation
-	 */
-	public float indentationLeft() {
-		return indentationLeft;
-	}
-
-	/**
-	 * Gets the right indentation.
-	 * 
-	 * @return the right indentation
-	 */
-	public float indentationRight() {
-		return indentationRight;
-	}
-
-	/**
-	 * Sets the left indentation.
-	 * 
-	 * @param f
-	 */
-	public void setIndentationLeft(float f) {
-		indentationLeft = f;
-	}
-
-	/**
-	 * Sets the right indentation.
-	 * 
-	 * @param f
-	 */
-	public void setIndentationRight(float f) {
-		indentationRight = f;
-	}
-
+	/** Holds value of property originalData. */
+	protected byte[] originalData;
+	
 	/**
 	 * Getter for property originalType.
 	 * 
@@ -1933,108 +1582,184 @@ public abstract class Image extends Rectangle {
 		this.originalData = originalData;
 	}
 
+	// the following values are only set for specific types of images.
+	
+	/** Holds value of property deflated. */
+	protected boolean deflated = false;
+
 	/**
-	 * Sets the url of the image
+	 * Getter for property deflated.
 	 * 
-	 * @param url
-	 *            the url of the image
+	 * @return Value of property deflated.
+	 *  
 	 */
-	public void setUrl(URL url) {
-		this.url = url;
+	public boolean isDeflated() {
+		return this.deflated;
 	}
 
 	/**
-	 * Sets the spacing before this image.
+	 * Setter for property deflated.
 	 * 
-	 * @param spacing
-	 *            the new spacing
+	 * @param deflated
+	 *            New value of property deflated.
 	 */
+	public void setDeflated(boolean deflated) {
+		this.deflated = deflated;
+	}
+	
+	// DPI info
+	
+	/** Holds value of property dpiX. */
+	protected int dpiX = 0;
 
-	public void setSpacingBefore(float spacing) {
-		this.spacingBefore = spacing;
+	/** Holds value of property dpiY. */
+	protected int dpiY = 0;
+
+	/**
+	 * Gets the dots-per-inch in the X direction. Returns 0 if not available.
+	 * 
+	 * @return the dots-per-inch in the X direction
+	 */
+	public int getDpiX() {
+		return dpiX;
 	}
 
 	/**
-	 * Sets the spacing after this image.
+	 * Gets the dots-per-inch in the Y direction. Returns 0 if not available.
 	 * 
-	 * @param spacing
-	 *            the new spacing
+	 * @return the dots-per-inch in the Y direction
 	 */
-
-	public void setSpacingAfter(float spacing) {
-		this.spacingAfter = spacing;
+	public int getDpiY() {
+		return dpiY;
 	}
 
 	/**
-	 * Gets the spacing before this image.
+	 * Sets the dots per inch value
 	 * 
-	 * @return the spacing
+	 * @param dpiX
+	 *            dpi for x coordinates
+	 * @param dpiY
+	 *            dpi for y coordinates
 	 */
+	public void setDpi(int dpiX, int dpiY) {
+		this.dpiX = dpiX;
+		this.dpiY = dpiY;
+	}
+	
+	// XY Ratio
+	
+	/** Holds value of property XYRatio. */
+	private float XYRatio = 0;
 
-	public float spacingBefore() {
-		return spacingBefore;
+	/**
+	 * Gets the X/Y pixel dimensionless aspect ratio.
+	 * 
+	 * @return the X/Y pixel dimensionless aspect ratio
+	 */
+	public float getXYRatio() {
+		return this.XYRatio;
 	}
 
 	/**
-	 * Gets the spacing before this image.
+	 * Sets the X/Y pixel dimensionless aspect ratio.
 	 * 
-	 * @return the spacing
+	 * @param XYRatio
+	 *            the X/Y pixel dimensionless aspect ratio
 	 */
+	public void setXYRatio(float XYRatio) {
+		this.XYRatio = XYRatio;
+	}
+	
+	// color, colorspaces and transparency
 
-	public float spacingAfter() {
-		return spacingAfter;
+	/** this is the colorspace of a jpeg-image. */
+	protected int colorspace = -1;
+
+	/**
+	 * Gets the colorspace for the image.
+	 * <P>
+	 * Remark: this only makes sense for Images of the type <CODE>Jpeg</CODE>.
+	 * 
+	 * @return a colorspace value
+	 */
+	public int getColorspace() {
+		return colorspace;
+	}
+    
+	/** Image color inversion */
+	protected boolean invert = false;
+
+	/**
+	 * Getter for the inverted value
+	 * 
+	 * @return true if the image is inverted
+	 */
+	public boolean isInverted() {
+		return invert;
 	}
 
 	/**
-	 * Getter for property widthPercentage.
+	 * Sets inverted true or false
 	 * 
-	 * @return Value of property widthPercentage.
+	 * @param invert
+	 *            true or false
 	 */
-	public float getWidthPercentage() {
-		return this.widthPercentage;
+	public void setInverted(boolean invert) {
+		this.invert = invert;
+	}
+
+	/** ICC Profile attached */
+	protected ICC_Profile profile = null;
+
+	/**
+	 * Tags this image with an ICC profile.
+	 * 
+	 * @param profile
+	 *            the profile
+	 */
+	public void tagICC(ICC_Profile profile) {
+		this.profile = profile;
 	}
 
 	/**
-	 * Setter for property widthPercentage.
+	 * Checks is the image has an ICC profile.
 	 * 
-	 * @param widthPercentage
-	 *            New value of property widthPercentage.
+	 * @return the ICC profile or <CODE>null</CODE>
 	 */
-	public void setWidthPercentage(float widthPercentage) {
-		this.widthPercentage = widthPercentage;
+	public boolean hasICCProfile() {
+		return (this.profile != null);
 	}
 
 	/**
-	 * Gets the layer this image belongs to.
+	 * Gets the images ICC profile.
 	 * 
-	 * @return the layer this image belongs to or <code>null</code> for no
-	 *         layer defined
+	 * @return the ICC profile
 	 */
-	public PdfOCG getLayer() {
-		return layer;
+	public ICC_Profile getICCProfile() {
+		return profile;
+	}
+
+	/** a dictionary with additional information */
+	private PdfDictionary additional = null;
+	
+	/**
+	 * Getter for the dictionary with additional information.
+	 * 
+	 * @return a PdfDictionary with additional information.
+	 */
+	public PdfDictionary getAdditional() {
+		return this.additional;
 	}
 
 	/**
-	 * Sets the layer this image belongs to.
+	 * Sets the /Colorspace key.
 	 * 
-	 * @param layer
-	 *            the layer this image belongs to
+	 * @param additional
+	 *            a PdfDictionary with additional information.
 	 */
-	public void setLayer(PdfOCG layer) {
-		this.layer = layer;
+	public void setAdditional(PdfDictionary additional) {
+		this.additional = additional;
 	}
-
-    private PdfObject simplifyColorspace(PdfObject obj) {
-        if (obj == null || !obj.isArray())
-            return obj;
-        PdfObject first = (PdfObject)(((PdfArray)obj).getArrayList().get(0));
-        if (PdfName.CALGRAY.equals(first))
-            return PdfName.DEVICEGRAY;
-        else if (PdfName.CALRGB.equals(first))
-            return PdfName.DEVICERGB;
-        else
-            return obj;
-    }
 
     /**
      * Replaces CalRGB and CalGray colorspaces with DeviceRGB and DeviceGray.
@@ -2059,40 +1784,380 @@ public abstract class Image extends Rectangle {
         }
         additional.put(PdfName.COLORSPACE, value);
     }
-    
-    /**
-     * Getter for property initialRotation.
-     * @return Value of property initialRotation.
-     */
-    public float getInitialRotation() {
-        return this.initialRotation;
+	
+	/**
+	 * Gets a PDF Name from an array or returns the object that was passed.
+	 */
+    private PdfObject simplifyColorspace(PdfObject obj) {
+        if (obj == null || !obj.isArray())
+            return obj;
+        PdfObject first = (PdfObject)(((PdfArray)obj).getArrayList().get(0));
+        if (PdfName.CALGRAY.equals(first))
+            return PdfName.DEVICEGRAY;
+        else if (PdfName.CALRGB.equals(first))
+            return PdfName.DEVICERGB;
+        else
+            return obj;
     }
-    
-    /**
-     * Some image formats, like TIFF may present the images rotated that have
-     * to be compensated.
-     * @param initialRotation New value of property initialRotation.
-     */
-    public void setInitialRotation(float initialRotation) {
-        float old_rot = rotation - this.initialRotation;
-        this.initialRotation = initialRotation;
-        setRotation(old_rot);
-    }
-    
-    /**
-     * Getter for property directReference.
-     * @return Value of property directReference.
-     */
-    public PdfIndirectReference getDirectReference() {
-        return this.directReference;
-    }
-    
-    /**
-     * Setter for property directReference.
-     * @param directReference New value of property directReference.
-     */
-    public void setDirectReference(PdfIndirectReference directReference) {
-        this.directReference = directReference;
-    }
-    
+
+	/** Is this image a mask? */
+	protected boolean mask = false;
+	
+	/** The image that serves as a mask for this image. */
+	protected Image imageMask;
+
+	/** Holds value of property smask. */
+	private boolean smask;
+
+	/**
+	 * Returns <CODE>true</CODE> if this <CODE>Image</CODE> is a mask.
+	 * 
+	 * @return <CODE>true</CODE> if this <CODE>Image</CODE> is a mask
+	 */
+	public boolean isMask() {
+		return mask;
+	}
+
+	/**
+	 * Make this <CODE>Image</CODE> a mask.
+	 * 
+	 * @throws DocumentException
+	 *             if this <CODE>Image</CODE> can not be a mask
+	 */
+	public void makeMask() throws DocumentException {
+		if (!isMaskCandidate())
+			throw new DocumentException("This image can not be an image mask.");
+		mask = true;
+	}
+
+	/**
+	 * Returns <CODE>true</CODE> if this <CODE>Image</CODE> has the
+	 * requisites to be a mask.
+	 * 
+	 * @return <CODE>true</CODE> if this <CODE>Image</CODE> can be a mask
+	 */
+	public boolean isMaskCandidate() {
+		if (type == IMGRAW) {
+			if (bpc > 0xff)
+				return true;
+		}
+		return colorspace == 1;
+	}
+
+	/**
+	 * Gets the explicit masking.
+	 * 
+	 * @return the explicit masking
+	 */
+	public Image getImageMask() {
+		return imageMask;
+	}
+
+	/**
+	 * Sets the explicit masking.
+	 * 
+	 * @param mask
+	 *            the mask to be applied
+	 * @throws DocumentException
+	 *             on error
+	 */
+	public void setImageMask(Image mask) throws DocumentException {
+		if (this.mask)
+			throw new DocumentException(
+					"An image mask cannot contain another image mask.");
+		if (!mask.mask)
+			throw new DocumentException(
+					"The image mask is not a mask. Did you do makeMask()?");
+		imageMask = mask;
+		smask = (mask.bpc > 1 && mask.bpc <= 8);
+	}
+
+	/**
+	 * Getter for property smask.
+	 * 
+	 * @return Value of property smask.
+	 *  
+	 */
+	public boolean isSmask() {
+		return this.smask;
+	}
+
+	/**
+	 * Setter for property smask.
+	 * 
+	 * @param smask
+	 *            New value of property smask.
+	 */
+	public void setSmask(boolean smask) {
+		this.smask = smask;
+	}
+
+	/** this is the transparency information of the raw image */
+	protected int transparency[];
+
+	/**
+	 * Returns the transparency.
+	 * 
+	 * @return the transparency values
+	 */
+
+	public int[] getTransparency() {
+		return transparency;
+	}
+
+	/**
+	 * Sets the transparency values
+	 * 
+	 * @param transparency
+	 *            the transparency values
+	 */
+	public void setTransparency(int transparency[]) {
+		this.transparency = transparency;
+	}
+	
+	// deprecated stuff
+
+	/**
+	 * Gets the <CODE>String</CODE> -representation of the reference to the
+	 * image.
+	 * 
+	 * @return a <CODE>String</CODE>
+	 * @deprecated Use {@link #getUrl()} instead
+	 */
+	
+	public URL url() {
+		return getUrl();
+	}
+
+	/**
+	 * Gets the template to be used as an image.
+	 * <P>
+	 * Remark: this only makes sense for Images of the type <CODE>ImgTemplate
+	 * </CODE>.
+	 * 
+	 * @return the template
+	 * @deprecated Use {@link #getTemplateData()} instead
+	 */
+	public PdfTemplate templateData() {
+		return getTemplateData();
+	}
+
+	/**
+	 * Returns an <CODE>Image</CODE> that has been constructed taking in
+	 * account the value of some <VAR>attributes </VAR>.
+	 * 
+	 * @param attributes
+	 *            Some attributes
+	 * @return an <CODE>Image</CODE>
+	 * @throws BadElementException
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @deprecated use ElementFactory.getImage(attributes)
+	 */
+	public static Image getInstance(java.util.Properties attributes)
+			throws BadElementException, MalformedURLException, IOException {
+		return com.lowagie.text.factories.ElementFactory.getImage(attributes);
+	}
+	
+	/**
+	 * Gets the left indentation.
+	 * 
+	 * @return the left indentation
+	 * @deprecated Use {@link #getIndentationLeft()} instead
+	 */
+	public float indentationLeft() {
+		return getIndentationLeft();
+	}
+
+	/**
+	 * Gets the right indentation.
+	 * 
+	 * @return the right indentation
+	 * @deprecated Use {@link #getIndentationRight()} instead
+	 */
+	public float indentationRight() {
+		return getIndentationRight();
+	}
+
+	/**
+	 * Gets the spacing before this image.
+	 * 
+	 * @return the spacing
+	 * @deprecated Use {@link #getSpacingBefore()} instead
+	 */
+	public float spacingBefore() {
+		return getSpacingBefore();
+	}
+
+	/**
+	 * Gets the spacing before this image.
+	 * 
+	 * @return the spacing
+	 * @deprecated Use {@link #getSpacingAfter()} instead
+	 */
+	public float spacingAfter() {
+		return getSpacingAfter();
+	}
+
+	/**
+	 * Gets the raw data for the image.
+	 * <P>
+	 * Remark: this only makes sense for Images of the type <CODE>RawImage
+	 * </CODE>.
+	 * 
+	 * @return the raw data
+	 * @deprecated Use {@link #getRawData()} instead
+	 */
+	public byte[] rawData() {
+		return getRawData();
+	}
+	
+	/**
+	 * Gets the bpc for the image.
+	 * <P>
+	 * Remark: this only makes sense for Images of the type <CODE>RawImage
+	 * </CODE>.
+	 * 
+	 * @return a bpc value
+	 * @deprecated Use {@link #getBpc()} instead
+	 */
+	public int bpc() {
+		return getBpc();
+	}
+
+	/**
+	 * Gets the annotation.
+	 * 
+	 * @return the annotation that is linked to this image
+	 * @deprecated Use {@link #getAnnotation()} instead
+	 */
+	public Annotation annotation() {
+		return getAnnotation();
+	}
+
+	/**
+	 * Checks if the <CODE>Images</CODE> has to be added at an absolute
+	 * position.
+	 * 
+	 * @return a boolean
+	 * @deprecated Use {@link #hasAbsoluteY()} instead
+	 */
+	public boolean hasAbsolutePosition() {
+		return hasAbsoluteY();
+	}
+
+	/**
+	 * Returns the absolute X position.
+	 * 
+	 * @return a position
+	 * @deprecated Use {@link #getAbsoluteX()} instead
+	 */
+	public float absoluteX() {
+		return getAbsoluteX();
+	}
+
+	/**
+	 * Returns the absolute Y position.
+	 * 
+	 * @return a position
+	 * @deprecated Use {@link #getAbsoluteY()} instead
+	 */
+	public float absoluteY() {
+		return getAbsoluteY();
+	}
+
+	/**
+	 * Gets the plain width of the image.
+	 * 
+	 * @return a value
+	 * @deprecated Use {@link #getPlainWidth()} instead
+	 */
+	public float plainWidth() {
+		return getPlainWidth();
+	}
+
+	/**
+	 * Gets the plain height of the image.
+	 * 
+	 * @return a value
+	 * @deprecated Use {@link #getPlainHeight()} instead
+	 */
+	public float plainHeight() {
+		return getPlainHeight();
+	}
+
+	/**
+	 * Gets the scaled height of the image.
+	 * 
+	 * @return a value
+	 * @deprecated Use {@link #getScaledWidth()} instead
+	 */
+	public float scaledWidth() {
+		return getScaledWidth();
+	}
+
+	/**
+	 * Gets the scaled height of the image.
+	 * 
+	 * @return a value
+	 * @deprecated Use {@link #getScaledHeight()} instead
+	 */
+	public float scaledHeight() {
+		return getScaledHeight();
+	}
+
+	/**
+	 * Gets the alignment for the image.
+	 * 
+	 * @return a value
+	 * @deprecated Use {@link #getAlignment()} instead
+	 */
+	public int alignment() {
+		return getAlignment();
+	}
+
+	/**
+	 * Gets the alternative text for the image.
+	 * 
+	 * @return a <CODE>String</CODE>
+	 * @deprecated Use {@link #getAlt()} instead
+	 */
+	
+	public String alt() {
+		return getAlt();
+	}
+	
+	/**
+	 * Gets the colorspace for the image.
+	 * <P>
+	 * Remark: this only makes sense for Images of the type <CODE>Jpeg</CODE>.
+	 * 
+	 * @return a colorspace value
+	 * @deprecated Use {@link #getColorspace()} instead
+	 */
+	public int colorspace() {
+		return getColorspace();
+	}
+
+	/**
+	 * Inverts the meaning of the bits of a mask.
+	 * 
+	 * @param invert
+	 *            <CODE>true</CODE> to invert the meaning of the bits of a
+	 *            mask
+	 * @deprecated	use setInverted
+	 */
+	public void setInvertMask(boolean invert) {
+		setInverted(invert);
+	}
+
+	/**
+	 * Returns <CODE>true</CODE> if the bits are to be inverted in the mask.
+	 * 
+	 * @return <CODE>true</CODE> if the bits are to be inverted in the mask
+	 * @deprecated use isInvert()
+	 */
+	public boolean isInvertMask() {
+		return isInverted();
+	}
 }

@@ -49,10 +49,17 @@
  */
 package com.lowagie.text;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Set;
+
+import com.lowagie.text.pdf.PRTokeniser;
 
 /**
  * A collection of convenience methods that were present in many different iText
@@ -102,6 +109,100 @@ public class Utilities {
 	 */
 	public static boolean checkTrueOrFalse(Properties attributes, String key) {
 		return "true".equalsIgnoreCase(attributes.getProperty(key));
+	}
+
+	/**
+	 * Unescapes an URL. All the "%xx" are replaced by the 'xx' hex char value.
+	 * @param src the url to unescape
+	 * @return the eunescaped value
+	 */    
+	public static String unEscapeURL(String src) {
+	    StringBuffer bf = new StringBuffer();
+	    char[] s = src.toCharArray();
+	    for (int k = 0; k < s.length; ++k) {
+	        char c = s[k];
+	        if (c == '%') {
+	            if (k + 2 >= s.length) {
+	                bf.append(c);
+	                continue;
+	            }
+	            int a0 = PRTokeniser.getHex((int)s[k + 1]);
+	            int a1 = PRTokeniser.getHex((int)s[k + 2]);
+	            if (a0 < 0 || a1 < 0) {
+	                bf.append(c);
+	                continue;
+	            }
+	            bf.append((char)(a0 * 16 + a1));
+	            k += 2;
+	        }
+	        else
+	            bf.append(c);
+	    }
+	    return bf.toString();
+	}
+
+	private static String[] excUriEsc = {"%20", "%3C", "%3E", "%23", "%25", "%22", "%7B", "%7D", "%5B", "%5D", "%7C", "%5C", "%5E", "%60"};
+	private static String excUri = " <>#%\"{}[]|\\\u005E\u0060";
+	/**
+	 * This method makes a valid URL from a given filename.
+	 * <P>
+	 * This method makes the conversion of this library from the JAVA 2 platform
+	 * to a JDK1.1.x-version easier.
+	 * 
+	 * @param filename
+	 *            a given filename
+	 * @return a valid URL
+	 * @throws MalformedURLException
+	 */
+	public static URL toURL(String filename) throws MalformedURLException {
+		if (filename.startsWith("file:/") || filename.startsWith("http://")
+				|| filename.startsWith("https://")
+				|| filename.startsWith("jar:")) {
+			return new URL(filename);
+		}
+		File f = new File(filename);
+		String path = f.getAbsolutePath();
+		if (File.separatorChar != '/') {
+			path = path.replace(File.separatorChar, '/');
+		}
+		if (!path.startsWith("/")) {
+			path = "/" + path;
+		}
+		if (!path.endsWith("/") && f.isDirectory()) {
+			path = path + "/";
+		}
+	    char[] t = path.toCharArray();
+	    StringBuffer sb = new StringBuffer();
+	    for (int k = 0; k < t.length; ++k) {
+	        char c = t[k];
+	        int a = Utilities.excUri.indexOf(c);
+	        if (a >= 0)
+	            sb.append(Utilities.excUriEsc[a]);
+	        else
+	            sb.append(c);
+	    }
+		return new URL("file", "", sb.toString());
+	}
+
+	/**
+	 * This method is an alternative for the <CODE>InputStream.skip()</CODE>
+	 * -method that doesn't seem to work properly for big values of <CODE>size
+	 * </CODE>.
+	 * 
+	 * @param is
+	 *            the <CODE>InputStream</CODE>
+	 * @param size
+	 *            the number of bytes to skip
+	 * @throws IOException
+	 */
+	static public void skip(InputStream is, int size) throws IOException {
+	    long n;
+		while (size > 0) {
+	        n = is.skip(size);
+	        if (n <= 0)
+	            break;
+			size -= n;
+		}
 	}
 
 }

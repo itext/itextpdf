@@ -254,7 +254,7 @@ public class RtfCell {
                 rStyle = RtfTableCell.getStyleControlWord(c.rightBorderStyle());
                 bStyle = RtfTableCell.getStyleControlWord(c.bottomBorderStyle());
             } else {
-                lWidth = tWidth = rWidth = bWidth = store.borderWidth();
+                lWidth = tWidth = rWidth = bWidth = store.getBorderWidth();
                 lStyle = tStyle = rStyle = bStyle = RtfRow.tableBorder;
             }
 
@@ -299,7 +299,7 @@ public class RtfCell {
                     break;
             }
 
-            if (((store.border() & Rectangle.LEFT) == Rectangle.LEFT) &&
+            if (((store.getBorder() & Rectangle.LEFT) == Rectangle.LEFT) &&
                     (lWidth > 0)) {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderLeft);
@@ -310,14 +310,14 @@ public class RtfCell {
                 writeInt(os, (int) (lWidth * RtfWriter.TWIPSFACTOR));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
-                if (store.borderColor() == null)
+                if (store.getBorderColor() == null)
                     writeInt(os, writer.addColor(new
                             Color(0, 0, 0)));
                 else
-                    writeInt(os, writer.addColor(store.borderColor()));
+                    writeInt(os, writer.addColor(store.getBorderColor()));
                 os.write((byte) '\n');
             }
-            if (((store.border() & Rectangle.TOP) == Rectangle.TOP) && (tWidth > 0)) {
+            if (((store.getBorder() & Rectangle.TOP) == Rectangle.TOP) && (tWidth > 0)) {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderTop);
                 os.write(RtfWriter.escape);
@@ -327,14 +327,14 @@ public class RtfCell {
                 writeInt(os, (int) (tWidth * RtfWriter.TWIPSFACTOR));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
-                if (store.borderColor() == null)
+                if (store.getBorderColor() == null)
                     writeInt(os, writer.addColor(new
                             Color(0, 0, 0)));
                 else
-                    writeInt(os, writer.addColor(store.borderColor()));
+                    writeInt(os, writer.addColor(store.getBorderColor()));
                 os.write((byte) '\n');
             }
-            if (((store.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) &&
+            if (((store.getBorder() & Rectangle.BOTTOM) == Rectangle.BOTTOM) &&
                     (bWidth > 0)) {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderBottom);
@@ -345,14 +345,14 @@ public class RtfCell {
                 writeInt(os, (int) (bWidth * RtfWriter.TWIPSFACTOR));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
-                if (store.borderColor() == null)
+                if (store.getBorderColor() == null)
                     writeInt(os, writer.addColor(new
                             Color(0, 0, 0)));
                 else
-                    writeInt(os, writer.addColor(store.borderColor()));
+                    writeInt(os, writer.addColor(store.getBorderColor()));
                 os.write((byte) '\n');
             }
-            if (((store.border() & Rectangle.RIGHT) == Rectangle.RIGHT) &&
+            if (((store.getBorder() & Rectangle.RIGHT) == Rectangle.RIGHT) &&
                     (rWidth > 0)) {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderRight);
@@ -363,19 +363,19 @@ public class RtfCell {
                 writeInt(os, (int) (rWidth * RtfWriter.TWIPSFACTOR));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
-                if (store.borderColor() == null)
+                if (store.getBorderColor() == null)
                     writeInt(os, writer.addColor(new
                             Color(0, 0, 0)));
                 else
-                    writeInt(os, writer.addColor(store.borderColor()));
+                    writeInt(os, writer.addColor(store.getBorderColor()));
                 os.write((byte) '\n');
             }
             os.write(RtfWriter.escape);
             os.write(cellBackgroundColor);
-            if (store.backgroundColor() == null) {
+            if (store.getBackgroundColor() == null) {
                 writeInt(os, writer.addColor(new Color(255, 255, 255)));
             } else {
-                writeInt(os, writer.addColor(store.backgroundColor()));
+                writeInt(os, writer.addColor(store.getBackgroundColor()));
             }
             os.write((byte) '\n');
             os.write(RtfWriter.escape);

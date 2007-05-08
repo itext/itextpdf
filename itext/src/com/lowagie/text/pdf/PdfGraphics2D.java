@@ -1370,7 +1370,7 @@ public class PdfGraphics2D extends Graphics2D {
             if (mask!=null) {
                 com.lowagie.text.Image msk = com.lowagie.text.Image.getInstance(mask, null, true);
                 msk.makeMask();
-                msk.setInvertMask(true);
+                msk.setInverted(true);
                 image.setImageMask(msk);
             }
             cb.addImage(image, (float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
