@@ -381,6 +381,12 @@ public class PdfSignatureAppearance {
      * @throws DocumentException on error
      */    
     public PdfTemplate getAppearance() throws DocumentException {
+        if (isInvisible()) {
+            PdfTemplate t = new PdfTemplate(writer);
+            t.setBoundingBox(new Rectangle(0, 0));
+            writer.addDirectTemplateSimple(t, null);
+            return t;
+        }
         if (app[0] == null) {
             PdfTemplate t = app[0] = new PdfTemplate(writer);
             t.setBoundingBox(new Rectangle(100, 100));
@@ -898,12 +904,11 @@ public class PdfSignatureAppearance {
             sigField.setFlags(flags);
 
             int pagen = getPage();
-            if (!isInvisible()) {
+            if (!isInvisible())
                 sigField.setWidget(getPageRect(), null);
-                sigField.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, getAppearance());
-            }
             else
                 sigField.setWidget(new Rectangle(0, 0), null);
+            sigField.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, getAppearance());
             sigField.setPage(pagen);
             writer.addAnnotation(sigField, pagen);
         }
