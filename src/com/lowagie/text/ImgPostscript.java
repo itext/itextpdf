@@ -157,17 +157,18 @@ public class ImgPostscript extends Image {
                     sb.append(c);
                 }
                 //System.out.println("<<" + sb.toString() + ">>");
-                if (sb.toString().startsWith("%%BoundingBox:")) {
-                    boundingbox = sb.toString();
+                String s = sb.toString();
+                if (s.startsWith("%%BoundingBox:")) {
+                    boundingbox = s;
 
                 }
-                if (sb.toString().startsWith("%%TemplateBox:")) {
-                    templatebox = sb.toString();
+                if (s.startsWith("%%TemplateBox:")) {
+                    templatebox = s;
                 }
-                if (sb.toString().startsWith("%%EndComments")) {
+                if (s.startsWith("%%EndComments")) {
                     break;
                 }
-                if ((!sb.toString().startsWith("%%"))&&(!sb.toString().startsWith("%!"))) {
+                if ((!s.startsWith("%%"))&&(!s.startsWith("%!"))) {
                    break;
                }
 
