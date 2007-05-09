@@ -544,7 +544,7 @@ public class Cell extends Rectangle implements TextElementArray {
 					case Element.PARAGRAPH:
 						return ((Phrase) element).isEmpty();
 					case Element.LIST:
-						return ((List) element).size() == 0;
+						return ((List) element).isEmpty();
 				}
 			return false;
 			default:
@@ -599,7 +599,7 @@ public class Cell extends Rectangle implements TextElementArray {
 				if (Float.isNaN(leading)) {
 					setLeading(list.getTotalLeading());
 				}
-				if (list.size() == 0) return;
+				if (list.isEmpty()) return;
 				arrayList.add(element);
 				return;
 			case Element.ANCHOR:
