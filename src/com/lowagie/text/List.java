@@ -410,7 +410,16 @@ public class List implements TextElementArray {
     public int size() {
         return list.size();
     }
-    
+
+    /**
+     * Returns <CODE>true</CODE> if the list is empty.
+     * 
+     * @return <CODE>true</CODE> if the list is empty
+     */
+    public boolean isEmpty() {
+    	return list.isEmpty();
+    }
+
     /**
      * Gets the leading of the first listitem.
      *
