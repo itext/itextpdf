@@ -52,7 +52,6 @@ package com.lowagie.text;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Properties;
 
 /**
  * Wrapper that allows to add properties to a Chapter/Section object.
