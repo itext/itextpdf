@@ -242,7 +242,7 @@ public class FontFactoryImp {
         String value = attributes.getProperty(Markup.HTML_ATTR_STYLE);
         if (value != null && value.length() > 0) {
             Properties styleAttributes = Markup.parseAttributes(value);
-            if (styleAttributes.size() == 0) {
+            if (styleAttributes.isEmpty()) {
                 attributes.put(Markup.HTML_ATTR_STYLE, value);
             }
             else {
