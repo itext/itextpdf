@@ -65,13 +65,13 @@ public class PdfAppearance extends PdfTemplate {
         stdFieldFontNames.put("Helvetica-BoldOblique", new PdfName("HeBO"));
         stdFieldFontNames.put("Helvetica-Bold", new PdfName("HeBo"));
         stdFieldFontNames.put("Helvetica-Oblique", new PdfName("HeOb"));
-        stdFieldFontNames.put("Helvetica", new PdfName("Helv"));
+        stdFieldFontNames.put("Helvetica", PdfName.HELV);
         stdFieldFontNames.put("Symbol", new PdfName("Symb"));
         stdFieldFontNames.put("Times-BoldItalic", new PdfName("TiBI"));
         stdFieldFontNames.put("Times-Bold", new PdfName("TiBo"));
         stdFieldFontNames.put("Times-Italic", new PdfName("TiIt"));
         stdFieldFontNames.put("Times-Roman", new PdfName("TiRo"));
-        stdFieldFontNames.put("ZapfDingbats", new PdfName("ZaDb"));
+        stdFieldFontNames.put("ZapfDingbats", PdfName.ZADB);
         stdFieldFontNames.put("HYSMyeongJo-Medium", new PdfName("HySm"));
         stdFieldFontNames.put("HYGoThic-Medium", new PdfName("HyGo"));
         stdFieldFontNames.put("HeiseiKakuGo-W5", new PdfName("KaGo"));
