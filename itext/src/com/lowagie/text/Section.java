@@ -53,7 +53,6 @@ package com.lowagie.text;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Properties;
 
 /**
  * A <CODE>Section</CODE> is a part of a <CODE>Document</CODE> containing
@@ -584,7 +583,6 @@ public class Section extends ArrayList implements TextElementArray {
      *
      * @return	the depth
      */
-    
     public int getDepth() {
         return numbers.size();
     }
@@ -661,7 +659,6 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @return	the depth
 	 * @deprecated Use {@link #getDepth()} instead
 	 */
-	
 	public int depth() {
 		return getDepth();
 	}
@@ -673,8 +670,7 @@ public class Section extends ArrayList implements TextElementArray {
      * @return      a Section
      * @deprecated Use ElementFactory.getSection(this, attributes)
      */
-        
-    public Section addSection(Properties attributes) {
+    public Section addSection(java.util.Properties attributes) {
     	return com.lowagie.text.factories.ElementFactory.getSection(this, attributes);
     }
 }

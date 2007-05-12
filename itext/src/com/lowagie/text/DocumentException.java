@@ -74,20 +74,18 @@ public class DocumentException extends Exception {
     
     // constructors
     
-/**
- * Constructs a <CODE>DocumentException</CODE> whithout a message.
- */
-    
+    /**
+     * Constructs a <CODE>DocumentException</CODE> whithout a message.
+     */
     public DocumentException() {
         super();
     }
     
-/**
- * Constructs a <code>DocumentException</code> with a message.
- *
- * @param		message			a message describing the exception
- */
-    
+    /**
+     * Constructs a <code>DocumentException</code> with a message.
+     *
+     * @param		message			a message describing the exception
+     */
     public DocumentException(String message) {
         super(message);
     }
@@ -173,15 +171,4 @@ public class DocumentException extends Exception {
         else
             return s.substring(i + 1);
     }
-    
-    /** requests to fill in the stack trace we will have to ignore.
-     * We can't throw an exception here, because this method
-     * is called by the constructor of Throwable */
-//    public Throwable fillInStackTrace() {
-//        if (ex == null)
-//            return super.fillInStackTrace();
-//        else
-//            return this;
-//    }
-
 }

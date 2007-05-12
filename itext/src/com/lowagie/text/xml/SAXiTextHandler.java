@@ -81,7 +81,6 @@ import com.lowagie.text.Meta;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.Row;
 import com.lowagie.text.Section;
 import com.lowagie.text.Table;
 import com.lowagie.text.TextElementArray;
@@ -262,7 +261,7 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // symbols
-        if (EntitiesToSymbol.isTag(name)) {
+        if (ElementTags.ENTITY.equals(name)) {
             Font f = new Font();
             if (currentChunk != null) {
                 handleEndingTags(ElementTags.CHUNK);
@@ -310,8 +309,8 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // tables
-        if (Table.isTag(name)) {
-            Table table = new Table(attributes);
+        if (ElementTags.TABLE.equals(name)) {
+            Table table = ElementFactory.getTable(attributes);
             float widths[] = table.getProportionalWidths();
             for (int i = 0; i < widths.length; i++) {
                 if (widths[i] == 0) {
@@ -371,8 +370,8 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // annotations
-        if (Annotation.isTag(name)) {
-            Annotation annotation = new Annotation(attributes);
+        if (ElementTags.ANNOTATION.equals(name)) {
+            Annotation annotation = ElementFactory.getAnnotation(attributes);
             TextElementArray current;
             try {
                 try {
@@ -648,7 +647,7 @@ public class SAXiTextHandler extends DefaultHandler {
         if (ignore)
             return;
         // tags that don't have any content
-        if (isNewpage(name) || Annotation.isTag(name) || ElementTags.IMAGE.equals(name)
+        if (isNewpage(name) || ElementTags.ANNOTATION.equals(name) || ElementTags.IMAGE.equals(name)
                 || isNewline(name)) {
             return;
         }
@@ -708,7 +707,7 @@ public class SAXiTextHandler extends DefaultHandler {
             }
 
             // tables
-            if (Table.isTag(name)) {
+            if (ElementTags.TABLE.equals(name)) {
                 Table table = (Table) stack.pop();
                 try {
                     TextElementArray previous = (TextElementArray) stack.pop();
@@ -721,7 +720,7 @@ public class SAXiTextHandler extends DefaultHandler {
             }
 
             // rows
-            if (Row.isTag(name)) {
+            if (ElementTags.ROW.equals(name)) {
                 ArrayList cells = new ArrayList();
                 int columns = 0;
                 Table table;
@@ -737,8 +736,8 @@ public class SAXiTextHandler extends DefaultHandler {
                         break;
                     }
                 }
-                if (table.columns() < columns) {
-                    table.addColumns(columns - table.columns());
+                if (table.getColumns() < columns) {
+                    table.addColumns(columns - table.getColumns());
                 }
                 Collections.reverse(cells);
                 String width;

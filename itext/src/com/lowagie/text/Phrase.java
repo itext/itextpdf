@@ -460,7 +460,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     }
     
     // kept for historical reasons; people should use FontSelector
-    // eligable for deprecation, but the methods are mentioned in the book p277.
+    // eligible for deprecation, but the methods are mentioned in the book p277.
     
     /**
      * Constructs a Phrase that can be used in the static getInstance() method.

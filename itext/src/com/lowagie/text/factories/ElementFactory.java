@@ -52,14 +52,18 @@ package com.lowagie.text.factories;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import com.lowagie.text.Anchor;
+import com.lowagie.text.Annotation;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
 import com.lowagie.text.ChapterAutoNumber;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.ElementTags;
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
@@ -68,6 +72,7 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Section;
+import com.lowagie.text.Table;
 import com.lowagie.text.Utilities;
 import com.lowagie.text.html.Markup;
 
@@ -80,7 +85,7 @@ public class ElementFactory {
 	/**
 	 * Creates a Chunk object based on a list of properties.
 	 * @param attributes
-	 * @return
+	 * @return a Chunk
 	 */
 	public static Chunk getChunk(Properties attributes) {
 		Chunk chunk = new Chunk();
@@ -137,7 +142,7 @@ public class ElementFactory {
 	/**
 	 * Creates a Phrase object based on a list of properties.
 	 * @param attributes
-	 * @return
+	 * @return a Phrase
 	 */
 	public static Phrase getPhrase(Properties attributes) {
 		Phrase phrase = new Phrase();
@@ -165,7 +170,7 @@ public class ElementFactory {
 	/**
 	 * Creates an Anchor object based on a list of properties.
 	 * @param attributes
-	 * @return
+	 * @return an Anchor
 	 */
 	public static Anchor getAnchor(Properties attributes) {
 		Anchor anchor = new Anchor(getPhrase(attributes));
@@ -184,7 +189,7 @@ public class ElementFactory {
 	/**
 	 * Creates a Paragraph object based on a list of properties.
 	 * @param attributes
-	 * @return
+	 * @return a Paragraph
 	 */
 	public static Paragraph getParagraph(Properties attributes) {
 		Paragraph paragraph = new Paragraph(getPhrase(attributes));
@@ -207,7 +212,7 @@ public class ElementFactory {
 	/**
 	 * Creates a ListItem object based on a list of properties.
 	 * @param attributes
-	 * @return
+	 * @return a ListItem
 	 */
 	public static ListItem getListItem(Properties attributes) {
 		ListItem item = new ListItem(getParagraph(attributes));
@@ -267,7 +272,7 @@ public class ElementFactory {
 	/**
 	 * Creates a Cell object based on a list of properties.
 	 * @param attributes
-	 * @return
+	 * @return a Cell
 	 */
 	public static Cell getCell(Properties attributes) {
 		Cell cell = new Cell();
@@ -293,9 +298,97 @@ public class ElementFactory {
 		if (Utilities.checkTrueOrFalse(attributes, ElementTags.NOWRAP)) {
 			cell.setMaxLines(1);
 		}
+		setRectangleProperties(cell, attributes);
+		return cell;
+	}
+	
+	/**
+	 * Creates an Table object based on a list of properties.
+	 * @param attributes
+	 * @return a Table
+	 */
+	public static Table getTable(Properties attributes) {
+		String value;
+		Table table;
+		try {
+
+			value = attributes.getProperty(ElementTags.WIDTHS);
+			if (value != null) {
+				StringTokenizer widthTokens = new StringTokenizer(value, ";");
+				ArrayList values = new ArrayList();
+				while (widthTokens.hasMoreTokens()) {
+					values.add(widthTokens.nextToken());
+				}
+				table = new Table(values.size());
+		        float[] widths = new float[table.getColumns()];
+				for (int i = 0; i < values.size(); i++) {
+					value = (String)values.get(i);
+					widths[i] = Float.parseFloat(value + "f");
+				}
+				table.setWidths(widths);
+			}
+			else {
+				value = attributes.getProperty(ElementTags.COLUMNS);
+				try {
+					table = new Table(Integer.parseInt(value));
+				}
+				catch(Exception e) {
+					table = new Table(1);
+				}
+			}
+			
+	        table.setBorder(Table.BOX);
+	        table.setBorderWidth(1);
+	        table.getDefaultLayout().setBorder(Table.BOX);
+	        
+	        value = attributes.getProperty(ElementTags.LASTHEADERROW);
+	        if (value != null) {
+	            table.setLastHeaderRow(Integer.parseInt(value));
+	        }
+	        value = attributes.getProperty(ElementTags.ALIGN);
+	        if (value != null) {
+	            table.setAlignment(value);
+	        }
+	        value = attributes.getProperty(ElementTags.CELLSPACING);
+	        if (value != null) {
+	            table.setSpacing(Float.parseFloat(value + "f"));
+	        }
+	        value = attributes.getProperty(ElementTags.CELLPADDING);
+	        if (value != null) {
+	            table.setPadding(Float.parseFloat(value + "f"));
+	        }
+	        value = attributes.getProperty(ElementTags.OFFSET);
+	        if (value != null) {
+	            table.setOffset(Float.parseFloat(value + "f"));
+	        }
+	        value = attributes.getProperty(ElementTags.WIDTH);
+	        if (value != null) {
+	            if (value.endsWith("%"))
+	                table.setWidth(Float.parseFloat(value.substring(0, value.length() - 1) + "f"));
+	            else {
+	            	table.setWidth(Float.parseFloat(value + "f"));
+	            	table.setLocked(true);
+	            }
+	        }
+	        table.setTableFitsPage(Utilities.checkTrueOrFalse(attributes, ElementTags.TABLEFITSPAGE));
+	        table.setCellsFitPage(Utilities.checkTrueOrFalse(attributes, ElementTags.CELLSFITPAGE));
+	        table.setConvert2pdfptable(Utilities.checkTrueOrFalse(attributes, ElementTags.CONVERT2PDFP));
+	        
+	        setRectangleProperties(table, attributes);
+			return table;
+		} catch (BadElementException e) {
+			throw new ExceptionConverter(e);
+		}
+	}
+
+	/**
+	 * Sets some Rectangle properties (for a Cell, Table,...).
+	 */
+	private static void setRectangleProperties(Rectangle rect, Properties attributes) {
+		String value;
 		value = attributes.getProperty(ElementTags.BORDERWIDTH);
 		if (value != null) {
-			cell.setBorderWidth(Float.parseFloat(value + "f"));
+			rect.setBorderWidth(Float.parseFloat(value + "f"));
 		}
 		int border = 0;
 		if (Utilities.checkTrueOrFalse(attributes, ElementTags.LEFT)) {
@@ -310,7 +403,7 @@ public class ElementFactory {
 		if (Utilities.checkTrueOrFalse(attributes, ElementTags.BOTTOM)) {
 			border |= Rectangle.BOTTOM;
 		}
-		cell.setBorder(border);
+		rect.setBorder(border);
 		
 		String r = attributes.getProperty(ElementTags.RED);
 		String g = attributes.getProperty(ElementTags.GREEN);
@@ -322,10 +415,10 @@ public class ElementFactory {
 			if (r != null) red = Integer.parseInt(r);
 			if (g != null) green = Integer.parseInt(g);
 			if (b != null) blue = Integer.parseInt(b);
-			cell.setBorderColor(new Color(red, green, blue));
+			rect.setBorderColor(new Color(red, green, blue));
 		}
 		else {
-			cell.setBorderColor(Markup.decodeColor(attributes.getProperty(ElementTags.BORDERCOLOR)));
+			rect.setBorderColor(Markup.decodeColor(attributes.getProperty(ElementTags.BORDERCOLOR)));
 		}
 		r = (String)attributes.remove(ElementTags.BGRED);
 		g = (String)attributes.remove(ElementTags.BGGREEN);
@@ -338,24 +431,23 @@ public class ElementFactory {
 			if (r != null) red = Integer.parseInt(r);
 			if (g != null) green = Integer.parseInt(g);
 			if (b != null) blue = Integer.parseInt(b);
-			cell.setBackgroundColor(new Color(red, green, blue));
+			rect.setBackgroundColor(new Color(red, green, blue));
 		}
 		else if (value != null) {
-			cell.setBackgroundColor(Markup.decodeColor(value));
+			rect.setBackgroundColor(Markup.decodeColor(value));
 		}
 		else {
 			value = attributes.getProperty(ElementTags.GRAYFILL);
 			if (value != null) {
-				cell.setGrayFill(Float.parseFloat(value + "f"));
+				rect.setGrayFill(Float.parseFloat(value + "f"));
 			}
 		}
-		return cell;
 	}
-
+	
 	/**
 	 * Creates a ChapterAutoNumber object based on a list of properties.
 	 * @param attributes
-	 * @return
+	 * @return a Chapter
 	 */
 	public static ChapterAutoNumber getChapter(Properties attributes) {
 		ChapterAutoNumber chapter = new ChapterAutoNumber("");
@@ -366,7 +458,7 @@ public class ElementFactory {
 	/**
 	 * Creates a Section object based on a list of properties.
 	 * @param attributes
-	 * @return
+	 * @return a Section
 	 */
 	public static Section getSection(Section parent, Properties attributes) {
 		Section section = parent.addSection("");
@@ -377,7 +469,6 @@ public class ElementFactory {
 	/**
 	 * Helper method to create a Chapter/Section object.
 	 * @param attributes
-	 * @return
 	 */
 	private static void setSectionParameters(Section section, Properties attributes) {
 		String value;
@@ -402,7 +493,7 @@ public class ElementFactory {
 	/**
 	 * Creates an Image object based on a list of properties.
 	 * @param attributes
-	 * @return
+	 * @return an Image
 	 */
 	public static Image getImage(Properties attributes)
 			throws BadElementException, MalformedURLException, IOException {
@@ -453,5 +544,62 @@ public class ElementFactory {
 			image.setRotation(Float.parseFloat(value + "f"));
 		}
 		return image;
+	}
+
+	/**
+	 * Creates an Annotation object based on a list of properties.
+	 * @param attributes
+	 * @return an Annotation
+	 */
+	public static Annotation getAnnotation(Properties attributes) {
+		float llx = 0, lly = 0, urx = 0, ury = 0;
+		String value;
+		
+		value = attributes.getProperty(ElementTags.LLX);
+		if (value != null) {
+			llx = Float.parseFloat(value + "f");
+		}
+		value = attributes.getProperty(ElementTags.LLY);
+		if (value != null) {
+			lly = Float.parseFloat(value + "f");
+		}
+		value = attributes.getProperty(ElementTags.URX);
+		if (value != null) {
+			urx = Float.parseFloat(value + "f");
+		}
+		value = attributes.getProperty(ElementTags.URY);
+		if (value != null) {
+			ury = Float.parseFloat(value + "f");
+		}
+		
+		String title = attributes.getProperty(ElementTags.TITLE);
+		String text = attributes.getProperty(ElementTags.CONTENT);
+		if (title != null || text != null) {
+			return new Annotation(title, text, llx, lly, urx, ury);
+		}
+		value = attributes.getProperty(ElementTags.URL);
+		if (value != null) {
+			return new Annotation(llx, lly, urx, ury, value);
+		}
+		value = attributes.getProperty(ElementTags.NAMED);
+		if (value != null) {
+			return new Annotation(llx, lly, urx, ury, Integer.parseInt(value));
+		}
+		String file = attributes.getProperty(ElementTags.FILE);
+		String destination = attributes.getProperty(ElementTags.DESTINATION);
+		String page = (String) attributes.remove(ElementTags.PAGE);
+		if (file != null) {
+			if (destination != null) {
+				return new Annotation(llx, lly, urx, ury, file, destination);
+			}
+			if (page != null) {
+				return new Annotation(llx, lly, urx, ury, file, Integer.parseInt(page));
+			}
+		}
+		if (title == null)
+			title = "";
+		if (text == null)
+			text = "";
+		return new Annotation(title, text, llx, lly, urx, ury);
 	}
 }

@@ -887,7 +887,7 @@ public class HtmlWriter extends DocWriter {
                 os.write(GT);
                 // contents
                 Element cell;
-                for (int i = 0; i < row.columns(); i++) {
+                for (int i = 0; i < row.getColumns(); i++) {
                     if ((cell = (Element)row.getCell(i)) != null) {
                         write(cell, indent + 1);
                     }
@@ -919,20 +919,17 @@ public class HtmlWriter extends DocWriter {
                 write(HtmlTags.WIDTH);
                 os.write(EQUALS);
                 os.write(QUOTE);
-                if (! "".equals(table.absWidth())){
-                    write(table.absWidth());
-                }
-                else{
-                    write(String.valueOf(table.widthPercentage()));
+                write(String.valueOf(table.getWidth()));
+                if (!table.isLocked()){
                     write("%");
                 }
                 os.write(QUOTE);
-                String alignment = HtmlEncoder.getAlignment(table.alignment());
+                String alignment = HtmlEncoder.getAlignment(table.getAlignment());
                 if (!"".equals(alignment)) {
                     write(HtmlTags.ALIGN, alignment);
                 }
-                write(HtmlTags.CELLPADDING, String.valueOf(table.cellpadding()));
-                write(HtmlTags.CELLSPACING, String.valueOf(table.cellspacing()));
+                write(HtmlTags.CELLPADDING, String.valueOf(table.getPadding()));
+                write(HtmlTags.CELLSPACING, String.valueOf(table.getSpacing()));
                 if (table.getBorderWidth() != Rectangle.UNDEFINED) {
                     write(HtmlTags.BORDERWIDTH, String.valueOf(table.getBorderWidth()));
                 }

@@ -52,7 +52,6 @@ package com.lowagie.text;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Properties;
 
 import com.lowagie.text.pdf.PdfPCell;
 
@@ -585,7 +584,7 @@ public class Cell extends Rectangle implements TextElementArray {
 			Table table = (Table) arrayList.get(0);
 			Cell tmp = new Cell(element);
 			tmp.setBorder(NO_BORDER);
-			tmp.setColspan(table.columns());
+			tmp.setColspan(table.getColumns());
 			table.addCell(tmp);
 			return;
 		}
@@ -619,8 +618,8 @@ public class Cell extends Rectangle implements TextElementArray {
 			case Element.TABLE:
 				Table table = new Table(3);
 				float[] widths = new float[3];
-				widths[1] = ((Table)element).widthPercentage();
-				switch(((Table)element).alignment()) {
+				widths[1] = ((Table)element).getWidth();
+				switch(((Table)element).getAlignment()) {
 					case Element.ALIGN_LEFT:
 						widths[0] = 0f;
 						widths[2] = 100f - widths[1];
@@ -871,7 +870,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * @param	attributes		Some attributes
 	 * @deprecated use ElementFactory.getCell(attributes)
 	 */
-	public Cell(Properties attributes) {
+	public Cell(java.util.Properties attributes) {
 		this();
 		Cell tmp = com.lowagie.text.factories.ElementFactory.getCell(attributes);
 		this.cloneNonPositionParameters(tmp);

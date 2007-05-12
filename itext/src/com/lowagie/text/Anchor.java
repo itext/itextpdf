@@ -54,7 +54,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Properties;
 
 /**
  * An <CODE>Anchor</CODE> can be a reference or a destination of a reference.
@@ -314,7 +313,7 @@ public class Anchor extends Phrase {
      * @param	attributes		Some attributes
      * @deprecated use ElementFactory.getAnchor(attributes)
      */
-    public Anchor(Properties attributes) {
+    public Anchor(java.util.Properties attributes) {
         this(com.lowagie.text.factories.ElementFactory.getAnchor(attributes));
     }
     

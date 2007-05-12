@@ -141,7 +141,8 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 			sumWidths += widths[i];
 		}
 		if (sumWidths > 0) {
-			table.setAbsWidth(String.valueOf(sumWidths));
+			table.setWidth(sumWidths);
+			table.setLocked(true);
 			table.setWidths(widths);
 		}
 		else {
@@ -157,9 +158,10 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 			}
 		}
 		if (width > 0) {
-			table.setAbsWidth(String.valueOf(width));
+			table.setWidth(width);
+			table.setLocked(true);
 		}
-		if (widthpercentage > 0) {
+		else if (widthpercentage > 0) {
 			table.setWidth(widthpercentage);
 		}
 		return table;

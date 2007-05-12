@@ -71,20 +71,17 @@ public class BadElementException extends DocumentException {
         super(ex);
     }
     
-/**
- * Constructs a <CODE>BadElementException</CODE> whithout a message.
- */
-    
+    /**
+     * Constructs a <CODE>BadElementException</CODE> whithout a message.
+     */
     BadElementException() {
         super();
     }
     
-/**
- * Constructs a <code>BadElementException</code> with a message.
- *
- * @param		message			a message describing the exception
- */
-    
+    /**
+     * Constructs a <code>BadElementException</code> with a message.
+     * @param		message			a message describing the exception
+     */
     public BadElementException(String message) {
         super(message);
     }

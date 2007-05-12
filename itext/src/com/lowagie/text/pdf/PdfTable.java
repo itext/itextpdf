@@ -110,7 +110,7 @@ public class PdfTable extends Rectangle {
 		// copying the attributes from class Table
         cloneNonPositionParameters(table);
 
-		this.columns = table.columns();
+		this.columns = table.getColumns();
 		positions = table.getWidths(left, right - left);
         
 		// initialisation of some parameters
@@ -151,7 +151,7 @@ public class PdfTable extends Rectangle {
 		int rowNumber = 0;
 		int groupNumber = 0;
 		boolean groupChange;
-		int firstDataRow = table.firstDataRow();
+		int firstDataRow = table.getLastHeaderRow() + 1;
 		Cell cell;
 		PdfCell currentCell;
 		ArrayList newCells = new ArrayList();
@@ -169,7 +169,7 @@ public class PdfTable extends Rectangle {
 				if (rowNumber < rows - 1 && offsets[rowNumber + 1] > offsets[rowNumber]) offsets[rowNumber + 1] = offsets[rowNumber];
 			}
 			else {
-				for(int i = 0; i < row.columns(); i++) {
+				for(int i = 0; i < row.getColumns(); i++) {
 					cell = (Cell) row.getCell(i);
 					if (cell != null) {
 						currentCell = new PdfCell(cell, rowNumber+prevRows, positions[i], positions[i + cell.getColspan()], offsets[rowNumber], cellspacing(), cellpadding());
@@ -272,7 +272,7 @@ public class PdfTable extends Rectangle {
 	 */
     
 	final float cellpadding() {
-		return table.cellpadding();
+		return table.getPadding();
 	}
     
 	/**
@@ -282,7 +282,7 @@ public class PdfTable extends Rectangle {
 	 */
     
 	final float cellspacing() {
-		return table.cellspacing();
+		return table.getSpacing();
 	}
 	
 	/**
@@ -292,7 +292,7 @@ public class PdfTable extends Rectangle {
 	 */
 
 	public final boolean hasToFitPageTable() {
-		return table.hasToFitPageTable();
+		return table.isTableFitsPage();
 	}
 
 	/**
@@ -302,7 +302,7 @@ public class PdfTable extends Rectangle {
 	 */
 	
 	public final boolean hasToFitPageCells() {
-		return table.hasToFitPageCells();
+		return table.isCellsFitPage();
 	}
 
 	/**

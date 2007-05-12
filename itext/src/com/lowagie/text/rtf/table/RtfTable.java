@@ -135,12 +135,12 @@ public class RtfTable extends RtfElement {
      */
     private void importTable(Table table) {
         this.rows = new ArrayList();
-        this.tableWidthPercent = table.widthPercentage();
+        this.tableWidthPercent = table.getWidth();
         this.proportionalWidths = table.getProportionalWidths();
-        this.cellPadding = (float) (table.cellpadding() * TWIPS_FACTOR);
-        this.cellSpacing = (float) (table.cellspacing() * TWIPS_FACTOR);
+        this.cellPadding = (float) (table.getPadding() * TWIPS_FACTOR);
+        this.cellSpacing = (float) (table.getSpacing() * TWIPS_FACTOR);
         this.borders = new RtfBorderGroup(this.document, RtfBorder.ROW_BORDER, table.getBorder(), table.getBorderWidth(), table.getBorderColor());
-        this.alignment = table.alignment();
+        this.alignment = table.getAlignment();
         
         int i = 0;
         Iterator rowIterator = table.iterator();
@@ -152,9 +152,9 @@ public class RtfTable extends RtfElement {
             ((RtfRow) this.rows.get(i)).handleCellSpanning();
             ((RtfRow) this.rows.get(i)).cleanRow();
         }
-        this.headerRows = table.lastHeaderRow();
-        this.cellsFitToPage = table.hasToFitPageCells();
-        this.tableFitToPage = table.hasToFitPageTable();
+        this.headerRows = table.getLastHeaderRow();
+        this.cellsFitToPage = table.isCellsFitPage();
+        this.tableFitToPage = table.isTableFitsPage();
     }
     
     /**

@@ -55,7 +55,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Properties;
 import java.util.Set;
 
 import com.lowagie.text.pdf.HyphenationEvent;
@@ -796,7 +795,7 @@ public class Chunk implements Element {
 	 * @deprecated use ElementFactory.getChunk()
 	 */
 
-	public Chunk(Properties attributes) {
+	public Chunk(java.util.Properties attributes) {
 		this(com.lowagie.text.factories.ElementFactory.getChunk(attributes));
 	}
 

@@ -63,10 +63,13 @@ import com.lowagie.text.pdf.PdfPTable;
  */
 public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementArray {
 
+	// constants
 	/** the CellAttributes object represents a row. */
 	public static final boolean ROW = true;
 	/** the CellAttributes object represents a cell. */
 	public static final boolean CELL = false;
+	
+	// member variables
 	/** the content of the Cell. */
 	private ArrayList content = new ArrayList();
 	/** the width of the Cell. */

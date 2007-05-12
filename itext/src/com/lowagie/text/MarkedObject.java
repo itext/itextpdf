@@ -118,12 +118,16 @@ public class MarkedObject implements Element {
 	}
 
 	/**
+	 * Getter for the markup attributes.
 	 * @return the markupAttributes
 	 */
 	public Properties getMarkupAttributes() {
 		return markupAttributes;
 	}
 	
+	/**
+	 * Adds one markup attribute.
+	 */
 	public void setMarkupAttribute(String key, String value) {
 		markupAttributes.setProperty(key, value);
 	}

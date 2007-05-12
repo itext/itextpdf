@@ -50,8 +50,6 @@
 
 package com.lowagie.text;
 
-import java.util.Properties;
-
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
  * <P>
@@ -480,7 +478,7 @@ public class Paragraph extends Phrase {
      * @param	attributes		Some attributes
      * @deprecated use ElementFactory.getParagraph(attributes)
      */
-    public Paragraph(Properties attributes) {
+    public Paragraph(java.util.Properties attributes) {
         this(com.lowagie.text.factories.ElementFactory.getParagraph(attributes));
     }
     

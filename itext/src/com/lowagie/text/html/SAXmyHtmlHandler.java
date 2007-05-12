@@ -60,7 +60,6 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ElementTags;
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Table;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.xml.SAXiTextHandler;
 import com.lowagie.text.xml.XmlPeer;
@@ -187,10 +186,10 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
         }
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
-            if (Table.isTag(peer.getTag()) || ElementTags.CELL.equals(peer.getTag())) {
+            if (ElementTags.TABLE.equals(peer.getTag()) || ElementTags.CELL.equals(peer.getTag())) {
                 Properties p = peer.getAttributes(attrs);
                 String value;
-                if (Table.isTag(peer.getTag())
+                if (ElementTags.TABLE.equals(peer.getTag())
                         && (value = p.getProperty(ElementTags.BORDERWIDTH)) != null) {
                     if (Float.parseFloat(value + "f") > 0) {
                         tableBorder = true;
@@ -265,7 +264,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
         }
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
-            if (Table.isTag(peer.getTag())) {
+            if (ElementTags.TABLE.equals(peer.getTag())) {
                 tableBorder = false;
             }
             super.handleEndingTags(peer.getTag());

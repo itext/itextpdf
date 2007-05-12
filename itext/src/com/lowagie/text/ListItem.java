@@ -50,8 +50,6 @@
 
 package com.lowagie.text;
 
-import java.util.Properties;
-
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
  * that can be added to a <CODE>List</CODE>.
@@ -260,7 +258,7 @@ public class ListItem extends Paragraph {
      * @param	attributes		Some attributes
      * @deprecated use ElementFactory.getParagraph(attributes)
      */
-    public ListItem(Properties attributes) {
+    public ListItem(java.util.Properties attributes) {
     	this(com.lowagie.text.factories.ElementFactory.getParagraph(attributes));
     }
     

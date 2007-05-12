@@ -87,7 +87,6 @@ public class MarkedSection extends MarkedObject {
 	 * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>=
 	 * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
 	 */
-	 
 	public void add(int index, Object o) {
 		((Section)element).add(index, o);
 	}
@@ -99,8 +98,7 @@ public class MarkedSection extends MarkedObject {
 	 * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
 	 * @return	a boolean
 	 * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or <CODE>Section</CODE>
-	 */
-	    
+	 */ 
 	public boolean add(Object o) {
 		return ((Section)element).add(o);
 	}
@@ -133,20 +131,18 @@ public class MarkedSection extends MarkedObject {
 	 * @param	collection	a collection of <CODE>Paragraph</CODE>s, <CODE>List</CODE>s and/or <CODE>Table</CODE>s
 	 * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
 	 * @throws	ClassCastException if one of the objects isn't a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE>
-	 */
-	    
+	 */ 
 	public boolean addAll(Collection collection) {
 		return ((Section)element).addAll(collection);
 	}
-	    
+	  
 	/**
 	 * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
 	 *
 	 * @param	indentation	the indentation of the new section
 	 * @param	numberDepth	the numberDepth of the section
 	 * @return  a new Section object
-	 */
-	    
+	 */   
 	public MarkedSection addSection(float indentation, int numberDepth) {
 		MarkedSection section = ((Section)element).addMarkedSection();
 		section.setIndentation(indentation);
@@ -160,7 +156,6 @@ public class MarkedSection extends MarkedObject {
 	 * @param	indentation	the indentation of the new section
 	 * @return  a new Section object
 	 */
-	    
 	public MarkedSection addSection(float indentation) {
 		MarkedSection section = ((Section)element).addMarkedSection();
 		section.setIndentation(indentation);
@@ -250,8 +245,7 @@ public class MarkedSection extends MarkedObject {
 	 * Sets the indentation of this <CODE>Section</CODE> on the right side.
 	 *
 	 * @param	indentation		the indentation
-	 */
-	    
+	 */   
 	public void setIndentationRight(float indentation) {
 		((Section)element).setIndentationRight(indentation);
 	}

@@ -53,7 +53,6 @@ package com.lowagie.text.xml.simpleparser;
 import java.util.HashMap;
 
 import com.lowagie.text.Chunk;
-import com.lowagie.text.ElementTags;
 import com.lowagie.text.Font;
 
 /**
@@ -346,13 +345,12 @@ public class EntitiesToSymbol {
         map.put("zeta", new Character((char)122));
     }
     
- /**
-  * Gets a chunk with a symbol character.
-  * @param e a symbol value (see Entities class: alfa is greek alfa,...)
-  * @param font the font if the symbol isn't found (otherwise Font.SYMBOL)
-  * @return a Chunk
-  */
-    
+    /**
+     * Gets a chunk with a symbol character.
+     * @param e a symbol value (see Entities class: alfa is greek alfa,...)
+     * @param font the font if the symbol isn't found (otherwise Font.SYMBOL)
+     * @return a Chunk
+     */
     public static Chunk get(String e, Font font) {
         char s = getCorrespondingSymbol(e);
         if (s == (char)0) {
@@ -367,29 +365,17 @@ public class EntitiesToSymbol {
         return new Chunk(String.valueOf(s), symbol);
     }
     
-/**
- * Looks for the corresponding symbol in the font Symbol.
- *
- * @param	name	the name of the entity
- * @return	the corresponding character in font Symbol
- */
-    
+    /**
+     * Looks for the corresponding symbol in the font Symbol.
+     *
+     * @param	name	the name of the entity
+     * @return	the corresponding character in font Symbol
+     */
     public static char getCorrespondingSymbol(String name) {
         Character symbol = (Character) map.get(name);
         if (symbol == null) {
             return (char)0;
         }
         return symbol.charValue();
-    }
-    
-/**
- * Checks if a given tag corresponds with this object.
- *
- * @param   tag     the given tag
- * @return  true if the tag corresponds
- */
-    
-    public static boolean isTag(String tag) {
-        return ElementTags.ENTITY.equals(tag);
     }
 }
