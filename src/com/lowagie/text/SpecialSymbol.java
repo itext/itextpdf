@@ -66,13 +66,12 @@ package com.lowagie.text;
 
 public class SpecialSymbol {
     
-/**
- * Returns the first occurrence of a special symbol in a <CODE>String</CODE>.
- *
- * @param	string		a <CODE>String</CODE>
- * @return	an index of -1 if no special symbol was found
- */
-    
+	/**
+	 * Returns the first occurrence of a special symbol in a <CODE>String</CODE>.
+	 *
+	 * @param	string		a <CODE>String</CODE>
+	 * @return	an index of -1 if no special symbol was found
+	 */
     public static int index(String string) {
         int length = string.length();
         for (int i = 0; i < length; i++) {
@@ -83,13 +82,12 @@ public class SpecialSymbol {
         return -1;
     }
     
-/**
- * Gets a chunk with a symbol character.
- * @param c a character that has to be changed into a symbol
- * @param font Font if there is no SYMBOL character corresponding with c
- * @return a SYMBOL version of a character
- */
-    
+    /**
+     * Gets a chunk with a symbol character.
+     * @param c a character that has to be changed into a symbol
+     * @param font Font if there is no SYMBOL character corresponding with c
+     * @return a SYMBOL version of a character
+     */
     public static Chunk get(char c, Font font) {
         char greek = SpecialSymbol.getCorrespondingSymbol(c);
         if (greek == ' ') {
@@ -100,13 +98,12 @@ public class SpecialSymbol {
         return new Chunk(s, symbol);
     }
     
-/**
- * Looks for the corresponding symbol in the font Symbol.
- *
- * @param	c	the original ASCII-char
- * @return	the corresponding symbol in font Symbol
- */
-    
+    /**
+     * Looks for the corresponding symbol in the font Symbol.
+     *
+     * @param	c	the original ASCII-char
+     * @return	the corresponding symbol in font Symbol
+     */
     public static char getCorrespondingSymbol(char c) {
         switch(c) {
             case 913:

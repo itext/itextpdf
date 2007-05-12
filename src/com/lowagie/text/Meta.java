@@ -219,7 +219,6 @@ public class Meta implements Element {
 	 * @return	a <CODE>String</CODE>
 	 * @deprecated Use {@link #getName()} instead
 	 */
-	
 	public String name() {
 		return getName();
 	}

@@ -52,7 +52,6 @@
 package com.lowagie.text;
 
 import java.util.ArrayList;
-import java.util.Properties;
 
 /**
  * A <CODE>Chapter</CODE> is a special <CODE>Section</CODE>.
@@ -136,7 +135,7 @@ public class Chapter extends Section {
      * @param number a userdefined Chapter number
      * @deprecated Use ElementFactory.getChapter(attributes)
      */
-    public Chapter(Properties attributes, int number) {
+    public Chapter(java.util.Properties attributes, int number) {
     	this("", number);
     	Chapter chapter = com.lowagie.text.factories.ElementFactory.getChapter(attributes);
     	setNumberDepth(chapter.getNumberDepth());

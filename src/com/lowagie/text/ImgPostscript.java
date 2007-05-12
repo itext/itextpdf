@@ -147,7 +147,7 @@ public class ImgPostscript extends Image {
                 is = new java.io.ByteArrayInputStream(rawData);
             }
             String boundingbox=null;
-            String templatebox=null;
+            //String templatebox=null;
             Reader r = new BufferedReader(new InputStreamReader(is));
             //  StreamTokenizer st = new StreamTokenizer(r);
             while (r.ready()) {
@@ -162,9 +162,9 @@ public class ImgPostscript extends Image {
                     boundingbox = s;
 
                 }
-                if (s.startsWith("%%TemplateBox:")) {
-                    templatebox = s;
-                }
+                //if (s.startsWith("%%TemplateBox:")) {
+                //    templatebox = s;
+                //}
                 if (s.startsWith("%%EndComments")) {
                     break;
                 }
