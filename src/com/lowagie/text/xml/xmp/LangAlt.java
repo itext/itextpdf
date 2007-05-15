@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Bruno Lowagie.
+ * Copyright 2007 by Armin Haberling
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -53,118 +53,54 @@ package com.lowagie.text.xml.xmp;
 import java.util.Enumeration;
 import java.util.Properties;
 
-/**
- * Abstract superclass of the XmpSchemas supported by iText.
- */
-public abstract class XmpSchema extends Properties {
+public class LangAlt extends Properties {
+
+	/** A serial version id. */
+	private static final long serialVersionUID = 4396971487200843099L;
 	
-	/** the namesspace */
-	protected String xmlns;
-	
-	/** Constructs an XMP schema. 
-	 * @param xmlns
-	 */
-	public XmpSchema(String xmlns) {
+	/** Key for the default language. */
+	public static String DEFAULT = "x-default";
+
+	/** Creates a Properties object that stores languages for use in an XmpSchema */
+	public LangAlt(String defaultValue) {
 		super();
-		this.xmlns = xmlns;
+		addLanguage(DEFAULT, defaultValue);
 	}
+
+	/** Creates a Properties object that stores languages for use in an XmpSchema */
+	public LangAlt() {
+		super();
+	}
+
 	/**
-	 * The String representation of the contents.
-	 * @return a String representation.
+	 * Add a language.
+	 */
+	public void addLanguage(String language, String value) {
+		setProperty(language, XmpSchema.escape(value));
+	}
+
+	/**
+	 * Process a property.
+	 */
+	protected void process(StringBuffer buf, Object lang) {
+		buf.append("<rdf:li xml:lang=\"");
+		buf.append(lang);
+		buf.append("\" >");
+		buf.append(get(lang));
+		buf.append("</rdf:li>");
+	}
+
+	/**
+	 * Creates a String that can be used in an XmpSchema.
 	 */
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
-		for (Enumeration e = this.propertyNames(); e.hasMoreElements(); ) {
-			process(buf, e.nextElement());
+		StringBuffer sb = new StringBuffer();
+		sb.append("<rdf:Alt>");
+		for (Enumeration e = this.propertyNames(); e.hasMoreElements();) {
+			process(sb, e.nextElement());
 		}
-		return buf.toString();
+		sb.append("</rdf:Alt>");
+		return sb.toString();
 	}
-	/**
-	 * Processes a property
-	 * @param buf
-	 * @param p
-	 */
-	protected void process(StringBuffer buf, Object p) {
-		buf.append('<');
-		buf.append(p);
-		buf.append('>');
-		buf.append(this.get(p));
-		buf.append("</");
-		buf.append(p);
-		buf.append('>');
-	}
-	/**
-	 * @return Returns the xmlns.
-	 */
-	public String getXmlns() {
-		return xmlns;
-	}	
-	
-	/**
-	 * @param key
-	 * @param value
-	 * @return the previous property (null if there wasn't one)
-	 */
-	public synchronized Object addProperty(String key, String value) {
-		return this.setProperty(key, value);
-	}
-	
-	/**
-	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
-	 */
-	public synchronized Object setProperty(String key, String value) {
-		return super.setProperty(key, escape(value));
-	}
-	
-	/**
-	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
-	 * 
-	 * @param key
-	 * @param value
-	 * @return the previous property (null if there wasn't one)
-	 */
-	public synchronized Object setProperty(String key, XmpArray value) {
-		return super.setProperty(key, value.toString());
-	}
-	
-	/**
-	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
-	 * 
-	 * @param key
-	 * @param value
-	 * @return the previous property (null if there wasn't one)
-	 */
-	public synchronized Object setProperty(String key, LangAlt value) {
-		return super.setProperty(key, value.toString());
-	 }
-	
-	/**
-	 * @param content
-	 * @return an escaped string
-	 */
-	public static String escape(String content) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < content.length(); i++) {
-			switch(content.charAt(i)) {
-			case '<':
-				buf.append("&lt;");
-				break;
-			case '>':
-				buf.append("&gt;");
-				break;
-			case '\'':
-				buf.append("&apos;");
-				break;
-			case '\"':
-				buf.append("&quot;");
-				break;
-			case '&':
-				buf.append("&amp;");
-				break;
-			default:
-				buf.append(content.charAt(i));
-			}
-		}
-		return buf.toString();
-	}
+
 }
