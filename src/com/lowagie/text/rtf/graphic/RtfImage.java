@@ -172,8 +172,8 @@ public class RtfImage extends RtfElement {
         super(doc);
         imageType = image.getOriginalType();
         if (!(imageType == Image.ORIGINAL_JPEG || imageType == Image.ORIGINAL_BMP
-                || imageType == Image.ORIGINAL_PNG || imageType == Image.ORIGINAL_WMF)) {
-            throw new DocumentException("Only BMP, PNG, WMF and JPEG images are supported by the RTF Writer");
+                || imageType == Image.ORIGINAL_PNG || imageType == Image.ORIGINAL_WMF || imageType == Image.ORIGINAL_GIF)) {
+            throw new DocumentException("Only BMP, PNG, WMF, GIF and JPEG images are supported by the RTF Writer");
         }
         alignment = image.getAlignment();
         width = image.getWidth();
@@ -262,6 +262,7 @@ public class RtfImage extends RtfElement {
             	    result.write(PICTURE_JPEG);
             		break;
             	case Image.ORIGINAL_PNG:
+                case Image.ORIGINAL_GIF:
             	    result.write(PICTURE_PNG);
             		break;
             	case Image.ORIGINAL_WMF:
