@@ -114,6 +114,18 @@ public class RtfImage extends RtfElement {
      * Constant for the picture height scale
      */
     private static final byte[] PICTURE_SCALED_HEIGHT = "\\pichgoal".getBytes();
+    /**
+     * Constant for horizontal picture scaling
+     */
+    private static final byte[] PICTURE_SCALE_X = "\\picscalex".getBytes();
+    /**
+     * Constant for vertical picture scaling
+     */
+    private static final byte[] PICTURE_SCALE_Y = "\\picscaley".getBytes();
+    /**
+     * Constant for converting pixels to twips
+     */
+    private static final int PIXEL_TWIPS_FACTOR = 15;
     
     /**
      * The type of image this is.
@@ -226,20 +238,20 @@ public class RtfImage extends RtfElement {
         try {
             if(this.topLevelElement) {
                 result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
-            }
-            switch(alignment) {
-            	case Element.ALIGN_LEFT:
-            		result.write(RtfParagraphStyle.ALIGN_LEFT);
-            		break;
-            	case Element.ALIGN_RIGHT:
-            		result.write(RtfParagraphStyle.ALIGN_RIGHT);
-            		break;
-            	case Element.ALIGN_CENTER:
-            		result.write(RtfParagraphStyle.ALIGN_CENTER);
-            		break;
-            	case Element.ALIGN_JUSTIFIED:
-            		result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
-            		break;
+                switch(alignment) {
+                    case Element.ALIGN_LEFT:
+                        result.write(RtfParagraphStyle.ALIGN_LEFT);
+                        break;
+                    case Element.ALIGN_RIGHT:
+                        result.write(RtfParagraphStyle.ALIGN_RIGHT);
+                        break;
+                    case Element.ALIGN_CENTER:
+                        result.write(RtfParagraphStyle.ALIGN_CENTER);
+                        break;
+                    case Element.ALIGN_JUSTIFIED:
+                        result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
+                        break;
+                }
             }
             result.write(OPEN_GROUP);
             result.write(PICTURE_GROUP);
@@ -261,14 +273,28 @@ public class RtfImage extends RtfElement {
             result.write(intToByteArray((int) width));
             result.write(PICTURE_HEIGHT);
             result.write(intToByteArray((int) height));
-            if(width != plainWidth || this.imageType == Image.ORIGINAL_BMP) {
+            if(this.document.getDocumentSettings().isWriteImageScalingInformation()) {
+                result.write(PICTURE_SCALE_X);
+                result.write(intToByteArray((int)(100 * plainWidth / width)));
+                result.write(PICTURE_SCALE_Y);
+                result.write(intToByteArray((int)(100 * plainHeight / height)));
+            }
+            if(this.document.getDocumentSettings().isImagePDFConformance()) {
                 result.write(PICTURE_SCALED_WIDTH);
                 result.write(intToByteArray((int) (plainWidth * RtfElement.TWIPS_FACTOR)));
-            }
-            if(height != plainHeight || this.imageType == Image.ORIGINAL_BMP) {
                 result.write(PICTURE_SCALED_HEIGHT);
                 result.write(intToByteArray((int) (plainHeight * RtfElement.TWIPS_FACTOR)));
+            } else {
+                if(this.width != this.plainWidth || this.imageType == Image.ORIGINAL_BMP) {
+                    result.write(PICTURE_SCALED_WIDTH);
+                    result.write(intToByteArray((int) (plainWidth * PIXEL_TWIPS_FACTOR)));
+                }
+                if(this.height != this.plainHeight || this.imageType == Image.ORIGINAL_BMP) {
+                    result.write(PICTURE_SCALED_HEIGHT);
+                    result.write(intToByteArray((int) (plainHeight * PIXEL_TWIPS_FACTOR)));
+                }
             }
+
             result.write(DELIMITER);
             result.write((byte) '\n');
             result.write(image);
