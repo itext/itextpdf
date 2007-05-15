@@ -120,7 +120,7 @@ public class PdfReader implements PdfViewerPreferences {
     protected Key certificateKey = null; //added by Aiken Sam for certificate decryption
     protected Certificate certificate = null; //added by Aiken Sam for certificate decryption
     protected String certificateKeyProvider = null; //added by Aiken Sam for certificate decryption
-    protected boolean ownerPasswordUsed;
+    private boolean ownerPasswordUsed;
     protected ArrayList strings = new ArrayList();
     protected boolean sharedStreams = true;
     protected boolean consolidateNamedDestinations = false;
@@ -760,7 +760,8 @@ public class PdfReader implements PdfViewerPreferences {
             else
                 ownerPasswordUsed = true;
         } else if (filter.equals(PdfName.PUBSEC)) {   
-            decrypt.setupByEncryptionKey(encryptionKey, lengthValue);  
+            decrypt.setupByEncryptionKey(encryptionKey, lengthValue);
+            ownerPasswordUsed = true;
         }
                  
         for (int k = 0; k < strings.size(); ++k) {
@@ -3351,7 +3352,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @return <CODE>true</CODE> if the document was opened with the owner password or if it's not encrypted,
      * <CODE>false</CODE> if the document was opened with the user password
      */
-    public boolean isOpenedWithFullPermissions() {
+    public final boolean isOpenedWithFullPermissions() {
         return !encrypted || ownerPasswordUsed;
     }
     
