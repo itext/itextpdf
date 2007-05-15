@@ -119,15 +119,15 @@ public class handout_pdf extends java.lang.Object {
 				while (i < n) {
 					i++;
 					Rectangle rect = reader.getPageSizeWithRotation(i);
-					float factorx = (x2 - x1) / rect.width();
-					float factory = (y1[p] - y2[p]) / rect.height();
+					float factorx = (x2 - x1) / rect.getWidth();
+					float factory = (y1[p] - y2[p]) / rect.getHeight();
 					float factor = (factorx < factory ? factorx : factory);
-					float dx = (factorx == factor ? 0f : ((x2 - x1) - rect.width() * factor) / 2f);
-					float dy = (factory == factor ? 0f : ((y1[p] - y2[p]) - rect.height() * factor) / 2f);
+					float dx = (factorx == factor ? 0f : ((x2 - x1) - rect.getWidth() * factor) / 2f);
+					float dy = (factory == factor ? 0f : ((y1[p] - y2[p]) - rect.getHeight() * factor) / 2f);
 					page = writer.getImportedPage(reader, i);
 					rotation = reader.getPageRotation(i);
 					if (rotation == 90 || rotation == 270) {
-						cb.addTemplate(page, 0, -factor, factor, 0, x1 + dx, y2[p] + dy + rect.height() * factor);
+						cb.addTemplate(page, 0, -factor, factor, 0, x1 + dx, y2[p] + dy + rect.getHeight() * factor);
 					}
 					else {
 						cb.addTemplate(page, factor, 0, 0, factor, x1 + dx, y2[p] + dy);
@@ -138,7 +138,7 @@ public class handout_pdf extends java.lang.Object {
 						cb.moveTo(x3, l);
 						cb.lineTo(x4, l);
 					}
-					cb.rectangle(x1 + dx, y2[p] + dy, rect.width() * factor, rect.height() * factor);
+					cb.rectangle(x1 + dx, y2[p] + dy, rect.getWidth() * factor, rect.getHeight() * factor);
 					cb.stroke();
 					System.out.println("Processed page " + i);
 					p++;

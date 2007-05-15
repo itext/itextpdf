@@ -77,11 +77,11 @@ public class MetaDoPS {
     cb.saveState();
 //    java.awt.Graphics2D g2 = cb.createGraphicsShapes(PageSize.A4.
     java.awt.Graphics2D g2 = cb.createGraphics(PageSize.A4.
-        width(), PageSize.A4.height());
+        getWidth(), PageSize.A4.getHeight());
     try {
       PAContext context = new PAContext(g2,
-                                        new Dimension( (int) PageSize.A4.width(),
-          (int) PageSize.A4.height()));
+                                        new Dimension( (int) PageSize.A4.getWidth(),
+          (int) PageSize.A4.getHeight()));
       context.draw(in);
 //      context.draw(new BufferedInputStream(in));
       // ( (Graphics2D) backBuffer.getGraphics()).dispose();

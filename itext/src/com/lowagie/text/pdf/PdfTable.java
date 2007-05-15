@@ -174,13 +174,13 @@ public class PdfTable extends Rectangle {
 					if (cell != null) {
 						currentCell = new PdfCell(cell, rowNumber+prevRows, positions[i], positions[i + cell.getColspan()], offsets[rowNumber], cellspacing(), cellpadding());
 						try {
-                     if (offsets[rowNumber] - currentCell.height() - cellpadding() < offsets[rowNumber + currentCell.rowspan()]) {
-                        offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.height() - cellpadding();
+                     if (offsets[rowNumber] - currentCell.getHeight() - cellpadding() < offsets[rowNumber + currentCell.rowspan()]) {
+                        offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.getHeight() - cellpadding();
 							}
 						}
 						catch(ArrayIndexOutOfBoundsException aioobe) {
-							if (offsets[rowNumber] - currentCell.height() < offsets[rows - 1]) {
-								offsets[rows - 1] = offsets[rowNumber] - currentCell.height();
+							if (offsets[rowNumber] - currentCell.getHeight() < offsets[rows - 1]) {
+								offsets[rows - 1] = offsets[rowNumber] - currentCell.getHeight();
 							}
 						}
 						if (rowNumber < firstDataRow) {

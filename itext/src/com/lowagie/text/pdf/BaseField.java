@@ -169,22 +169,22 @@ public abstract class BaseField {
     }
     
     protected PdfAppearance getBorderAppearance() {
-        PdfAppearance app = PdfAppearance.createAppearance(writer, box.width(), box.height());
+        PdfAppearance app = PdfAppearance.createAppearance(writer, box.getWidth(), box.getHeight());
         switch (rotation) {
             case 90:
-                app.setMatrix(0, 1, -1, 0, box.height(), 0);
+                app.setMatrix(0, 1, -1, 0, box.getHeight(), 0);
                 break;
             case 180:
-                app.setMatrix(-1, 0, 0, -1, box.width(), box.height());
+                app.setMatrix(-1, 0, 0, -1, box.getWidth(), box.getHeight());
                 break;
             case 270:
-                app.setMatrix(0, -1, 1, 0, 0, box.width());
+                app.setMatrix(0, -1, 1, 0, 0, box.getWidth());
                 break;
         }
         // background
         if (backgroundColor != null) {
             app.setColorFill(backgroundColor);
-            app.rectangle(0, 0, box.width(), box.height());
+            app.rectangle(0, 0, box.getWidth(), box.getHeight());
             app.fill();
         }
         // border
@@ -193,7 +193,7 @@ public abstract class BaseField {
                 app.setColorStroke(borderColor);
                 app.setLineWidth(borderWidth);
                 app.moveTo(0, borderWidth / 2);
-                app.lineTo(box.width(), borderWidth / 2);
+                app.lineTo(box.getWidth(), borderWidth / 2);
                 app.stroke();
             }
         }
@@ -201,7 +201,7 @@ public abstract class BaseField {
             if (borderWidth != 0 && borderColor != null) {
                 app.setColorStroke(borderColor);
                 app.setLineWidth(borderWidth);
-                app.rectangle(borderWidth / 2, borderWidth / 2, box.width() - borderWidth, box.height() - borderWidth);
+                app.rectangle(borderWidth / 2, borderWidth / 2, box.getWidth() - borderWidth, box.getHeight() - borderWidth);
                 app.stroke();
             }
             // beveled
@@ -217,7 +217,7 @@ public abstract class BaseField {
             if (borderWidth != 0 && borderColor != null) {
                 app.setColorStroke(borderColor);
                 app.setLineWidth(borderWidth);
-                app.rectangle(borderWidth / 2, borderWidth / 2, box.width() - borderWidth, box.height() - borderWidth);
+                app.rectangle(borderWidth / 2, borderWidth / 2, box.getWidth() - borderWidth, box.getHeight() - borderWidth);
                 app.stroke();
             }
             // inset
@@ -232,12 +232,12 @@ public abstract class BaseField {
                     app.setLineDash(3, 0);
                 app.setColorStroke(borderColor);
                 app.setLineWidth(borderWidth);
-                app.rectangle(borderWidth / 2, borderWidth / 2, box.width() - borderWidth, box.height() - borderWidth);
+                app.rectangle(borderWidth / 2, borderWidth / 2, box.getWidth() - borderWidth, box.getHeight() - borderWidth);
                 app.stroke();
                 if ((options & COMB) != 0 && maxCharacterLength > 1) {
-                    float step = box.width() / maxCharacterLength;
+                    float step = box.getWidth() / maxCharacterLength;
                     float yb = borderWidth / 2;
-                    float yt = box.height() - borderWidth / 2;
+                    float yt = box.getHeight() - borderWidth / 2;
                     for (int k = 1; k < maxCharacterLength; ++k) {
                         float x = step * k;
                         app.moveTo(x, yb);
@@ -370,10 +370,10 @@ public abstract class BaseField {
         
     private void drawTopFrame(PdfAppearance app) {
         app.moveTo(borderWidth, borderWidth);
-        app.lineTo(borderWidth, box.height() - borderWidth);
-        app.lineTo(box.width() - borderWidth, box.height() - borderWidth);
-        app.lineTo(box.width() - 2 * borderWidth, box.height() - 2 * borderWidth);
-        app.lineTo(2 * borderWidth, box.height() - 2 * borderWidth);
+        app.lineTo(borderWidth, box.getHeight() - borderWidth);
+        app.lineTo(box.getWidth() - borderWidth, box.getHeight() - borderWidth);
+        app.lineTo(box.getWidth() - 2 * borderWidth, box.getHeight() - 2 * borderWidth);
+        app.lineTo(2 * borderWidth, box.getHeight() - 2 * borderWidth);
         app.lineTo(2 * borderWidth, 2 * borderWidth);
         app.lineTo(borderWidth, borderWidth);
         app.fill();
@@ -381,10 +381,10 @@ public abstract class BaseField {
     
     private void drawBottomFrame(PdfAppearance app) {
         app.moveTo(borderWidth, borderWidth);
-        app.lineTo(box.width() - borderWidth, borderWidth);
-        app.lineTo(box.width() - borderWidth, box.height() - borderWidth);
-        app.lineTo(box.width() - 2 * borderWidth, box.height() - 2 * borderWidth);
-        app.lineTo(box.width() - 2 * borderWidth, 2 * borderWidth);
+        app.lineTo(box.getWidth() - borderWidth, borderWidth);
+        app.lineTo(box.getWidth() - borderWidth, box.getHeight() - borderWidth);
+        app.lineTo(box.getWidth() - 2 * borderWidth, box.getHeight() - 2 * borderWidth);
+        app.lineTo(box.getWidth() - 2 * borderWidth, 2 * borderWidth);
         app.lineTo(2 * borderWidth, 2 * borderWidth);
         app.lineTo(borderWidth, borderWidth);
         app.fill();

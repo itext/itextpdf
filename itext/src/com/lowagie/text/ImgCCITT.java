@@ -140,7 +140,7 @@ public class ImgCCITT extends Image {
         colorspace = parameters;
         bpc = typeCCITT;
         rawData = data;
-        plainWidth = width();
-        plainHeight = height();
+        plainWidth = getWidth();
+        plainHeight = getHeight();
     }
 }

@@ -339,8 +339,8 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
      */
     public void setPageSize(Rectangle pageSize) {
         if(!guessFormat(pageSize, false)) {
-            this.pageWidth = (int) (pageSize.width() * RtfElement.TWIPS_FACTOR);
-            this.pageHeight = (int) (pageSize.height() * RtfElement.TWIPS_FACTOR);
+            this.pageWidth = (int) (pageSize.getWidth() * RtfElement.TWIPS_FACTOR);
+            this.pageHeight = (int) (pageSize.getHeight() * RtfElement.TWIPS_FACTOR);
             this.landscape = pageWidth > pageHeight;
         }
     }
@@ -430,6 +430,6 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
      * @return <code>True</code> if the Rectangles equal, <code>false</code> otherwise
      */
     private boolean rectEquals(Rectangle rect1, Rectangle rect2) {
-        return (rect1.width() == rect2.width()) && (rect1.height() == rect2.height());
+        return (rect1.getWidth() == rect2.getWidth()) && (rect1.getHeight() == rect2.getHeight());
     }
 }

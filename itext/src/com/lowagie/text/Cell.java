@@ -110,7 +110,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * The width of the cell as a String.
 	 * It can be an absolute value "100" or a percentage "20%".
 	 */
-	protected String width;
+	protected float width;
+	protected boolean percentage = false;
 
 	/** The colspan of the cell. */
 	protected int colspan = 1;
@@ -313,17 +314,41 @@ public class Cell extends Rectangle implements TextElementArray {
 	 *
 	 * @param	value	the new value
 	 */
+	public void setWidth(float value) {
+		this.width = value;
+	}
+	
+	/**
+	 * Sets the width.
+	 * It can be an absolute value "100" or a percentage "20%"
+	 *
+	 * @param	value	the new value
+	 */
 	public void setWidth(String value) {
-		width = value;
+		if (value.endsWith("%")) {
+			value = value.substring(0, value.length() - 1);
+			percentage = true;
+		}
+		width = Integer.parseInt(value);
+	}
+	
+	/**
+	 * Gets the width.
+	 */
+	public float getWidth() {
+		return width;
 	}
 
 	/**
-	 * Gets the width.
+	 * Gets the width as a String.
 	 *
 	 * @return	a value
 	 */
-	public String getWidth() {
-		return width;
+	public String getWidthAsString() {
+		String w = String.valueOf(width);
+		if (w.endsWith(".0")) w = w.substring(0, w.length() - 2);
+		if (percentage) w += "%";
+		return w;
 	}
 
 	/**
@@ -906,10 +931,10 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Gets the width.
 	 *
 	 * @return	a value
-	 * @deprecated Use {@link #getWidth()} instead
+	 * @deprecated Use {@link #getWidthAsString()} instead
 	 */
 	public String cellWidth() {
-		return getWidth();
+		return getWidthAsString();
 	}
 	
 	/**

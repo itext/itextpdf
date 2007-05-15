@@ -174,9 +174,9 @@ public class ImgPostscript extends Image {
 
             }
             if(boundingbox==null){
-              scaledHeight=PageSize.A4.height();
+              scaledHeight=PageSize.A4.getHeight();
             setTop(scaledHeight);
-            scaledWidth=PageSize.A4.width();
+            scaledWidth=PageSize.A4.getWidth();
             setRight(scaledWidth);
               return;
             }
@@ -203,8 +203,8 @@ public class ImgPostscript extends Image {
             if (is != null) {
                 is.close();
             }
-            plainWidth = width();
-            plainHeight = height();
+            plainWidth = getWidth();
+            plainHeight = getHeight();
         }
     }
 
@@ -215,8 +215,8 @@ public class ImgPostscript extends Image {
      */
     public void readPostscript(PdfTemplate template) throws IOException {
         setTemplateData(template);
-        template.setWidth(width());
-        template.setHeight(height());
+        template.setWidth(getWidth());
+        template.setHeight(getHeight());
         InputStream is = null;
         try {
             if (rawData == null) {

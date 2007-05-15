@@ -1195,8 +1195,8 @@ public abstract class Image extends Rectangle {
 	 *            the scaling percentage of the height
 	 */
 	public void scalePercent(float percentX, float percentY) {
-		plainWidth = (width() * percentX) / 100f;
-		plainHeight = (height() * percentY) / 100f;
+		plainWidth = (getWidth() * percentX) / 100f;
+		plainHeight = (getHeight() * percentY) / 100f;
 		float[] matrix = matrix();
 		scaledWidth = matrix[DX] - matrix[CX];
 		scaledHeight = matrix[DY] - matrix[CY];

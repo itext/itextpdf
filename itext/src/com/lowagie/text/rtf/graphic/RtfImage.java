@@ -164,8 +164,8 @@ public class RtfImage extends RtfElement {
             throw new DocumentException("Only BMP, PNG, WMF and JPEG images are supported by the RTF Writer");
         }
         alignment = image.getAlignment();
-        width = image.width();
-        height = image.height();
+        width = image.getWidth();
+        height = image.getHeight();
         plainWidth = image.getPlainWidth();
         plainHeight = image.getPlainHeight();
         this.image = getImage(image);

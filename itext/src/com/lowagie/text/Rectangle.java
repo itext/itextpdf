@@ -300,7 +300,7 @@ public class Rectangle implements Element {
 	 * 
 	 * @return a width
 	 */
-	public float width() {
+	public float getWidth() {
 		return urx - llx;
 	}
 
@@ -369,7 +369,7 @@ public class Rectangle implements Element {
 	 * 
 	 * @return a height
 	 */
-	public float height() {
+	public float getHeight() {
 		return ury - lly;
 	}
 
@@ -885,9 +885,9 @@ public class Rectangle implements Element {
 	 */
 	public String toString() {
 		StringBuffer buf = new StringBuffer("Rectangle: ");
-		buf.append(width());
+		buf.append(getWidth());
 		buf.append('x');
-		buf.append(height());
+		buf.append(getHeight());
 		buf.append(" (rot: ");
 		buf.append(rotation);
 		buf.append(" degrees)");
@@ -961,6 +961,16 @@ public class Rectangle implements Element {
 	}
 
 	/**
+	 * Returns the width of the rectangle.
+	 * 
+	 * @return a width
+	 * @deprecated Use {@link #getWidth()} instead
+	 */
+	public float width() {
+		return getWidth();
+	}
+
+	/**
 	 * Returns the upper right y-coordinate, considering a given margin.
 	 * 
 	 * @param margin
@@ -982,6 +992,16 @@ public class Rectangle implements Element {
 	 */
 	public float bottom(float margin) {
 		return getBottom(margin);
+	}
+
+	/**
+	 * Returns the height of the rectangle.
+	 * 
+	 * @return a height
+	 * @deprecated Use {@link #getHeight()} instead
+	 */
+	public float height() {
+		return getHeight();
 	}
 
 	/**

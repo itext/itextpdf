@@ -154,7 +154,7 @@ public class PdfTemplate extends PdfContentByte {
      * @return width the bounding width
      */
     public float getWidth() {
-        return bBox.width();
+        return bBox.getWidth();
     }
     
     /**
@@ -164,7 +164,7 @@ public class PdfTemplate extends PdfContentByte {
      */
     
     public float getHeight() {
-        return bBox.height();
+        return bBox.getHeight();
     }
     
     public Rectangle getBoundingBox() {

@@ -157,8 +157,8 @@ public class ImgWMF extends Image {
             if (is != null) {
                 is.close();
             }
-            plainWidth = width();
-            plainHeight = height();
+            plainWidth = getWidth();
+            plainHeight = getHeight();
         }
     }
     
@@ -169,8 +169,8 @@ public class ImgWMF extends Image {
      */    
     public void readWMF(PdfTemplate template) throws IOException, DocumentException {
         setTemplateData(template);
-        template.setWidth(width());
-        template.setHeight(height());
+        template.setWidth(getWidth());
+        template.setHeight(getHeight());
         InputStream is = null;
         try {
             if (rawData == null){

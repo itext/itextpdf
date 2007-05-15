@@ -543,7 +543,7 @@ class PdfDocument extends Document {
                     float fith = indentTop() - currentHeight;
                     int rotation = pageSize.getRotation();
                     if (rotation == 90 || rotation == 180)
-                        fith = pageSize.height() - fith;
+                        fith = pageSize.getHeight() - fith;
                     	PdfDestination destination = new PdfDestination(PdfDestination.FITH, fith);
                     	while (currentOutline.level() >= section.getDepth()) {
                     		currentOutline = currentOutline.parent();
@@ -2905,7 +2905,7 @@ class PdfDocument extends Document {
                 // we paint the borders of the cells
                 Rectangle cellRect = cell.rectangle(tableRect.getTop(), indentBottom);
  				//cellRect.setBottom(cellRect.bottom());
-                if (cellRect.height() > 0) {
+                if (cellRect.getHeight() > 0) {
                     ctx.lostTableBottom = indentBottom;
                     ctx.cellGraphics.rectangle(cellRect);
                 }

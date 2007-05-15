@@ -84,8 +84,8 @@ public class PdfImage extends PdfStream {
         this.name = new PdfName(name);
         put(PdfName.TYPE, PdfName.XOBJECT);
         put(PdfName.SUBTYPE, PdfName.IMAGE);
-        put(PdfName.WIDTH, new PdfNumber(image.width()));
-        put(PdfName.HEIGHT, new PdfNumber(image.height()));
+        put(PdfName.WIDTH, new PdfNumber(image.getWidth()));
+        put(PdfName.HEIGHT, new PdfNumber(image.getHeight()));
         if (image.getLayer() != null)
             put(PdfName.OC, image.getLayer().getRef());
         if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 0xff))
@@ -135,8 +135,8 @@ public class PdfImage extends PdfStream {
                         decodeparms.put(PdfName.ENDOFLINE, PdfBoolean.PDFTRUE);
                     if ((colorspace & Image.CCITT_ENDOFBLOCK) != 0)
                         decodeparms.put(PdfName.ENDOFBLOCK, PdfBoolean.PDFFALSE);
-                    decodeparms.put(PdfName.COLUMNS, new PdfNumber(image.width()));
-                    decodeparms.put(PdfName.ROWS, new PdfNumber(image.height()));
+                    decodeparms.put(PdfName.COLUMNS, new PdfNumber(image.getWidth()));
+                    decodeparms.put(PdfName.ROWS, new PdfNumber(image.getHeight()));
                     put(PdfName.DECODEPARMS, decodeparms);
                 }
                 else {
