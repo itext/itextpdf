@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Carsten Hammer
+ * Copyright 2007 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2007 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2007 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -47,23 +47,27 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.tools;
 
-package com.lowagie.tools.plugins.treeview;
+import java.lang.reflect.Method;
 
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.JOptionPane;
 
-import com.lowagie.text.pdf.PdfObject;
-import com.lowagie.text.pdf.PdfReader;
-/**
- * Interface with one method to iterate over iText PDF objects.
- */
-public interface ICommonAnalyzer {
-  /**
-   * Method that iterates over the iText PDF objects in a node.
-   * @param pdfobj PdfObject
-   * @param pdfreader PdfReader
-   * @param node DefaultMutableTreeNode
-   */
-  void iterateObjects(PdfObject pdfobj, PdfReader pdfreader,
-		  DefaultMutableTreeNode node);
+public class ToolboxAvailable {
+
+	/**
+	 * Checks if the toolbox if available.
+	 * If it is, the toolbox is started.
+	 * If it isn't, an error message is shown.
+	 */
+	public static void main(String[] args) {
+		try {
+			Class c = Class.forName("com.lowagie.tools.Toolbox");
+			Method toolboxMain = c.getMethod("main", new Class[] {args.getClass()});
+			toolboxMain.invoke(null, new Object[] {args} );
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,
+					"You need the toolbox.jar with class com.lowagie.tools.Toolbox to use the iText Toolbox.");
+		}
+	}
 }
