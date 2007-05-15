@@ -751,7 +751,8 @@ public class SAXiTextHandler extends DefaultHandler {
                 int j = 0;
                 for (Iterator i = cells.iterator(); i.hasNext();) {
                     cell = (Cell) i.next();
-                    if ((width = cell.getWidth()) == null) {
+                    width = cell.getWidthAsString();
+                    if (cell.getWidth() == 0) {
                         if (cell.getColspan() == 1 && cellWidths[j] == 0) {
                             try {
                                 cellWidths[j] = 100f / columns;

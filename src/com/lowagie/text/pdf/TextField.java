@@ -158,7 +158,7 @@ public class TextField extends BaseField {
         }
         BaseFont ufont = getRealFont();
         boolean borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
-        float h = box.height() - borderWidth * 2;
+        float h = box.getHeight() - borderWidth * 2;
         float bw2 = borderWidth;
         if (borderExtra) {
             h -= borderWidth * 2;
@@ -169,7 +169,7 @@ public class TextField extends BaseField {
         offsetX = Math.max(offsetX, 1);
         float offX = Math.min(bw2, offsetX);
         app.saveState();
-        app.rectangle(offX, offX, box.width() - 2 * offX, box.height() - 2 * offX);
+        app.rectangle(offX, offX, box.getWidth() - 2 * offX, box.getHeight() - 2 * offX);
         app.clip();
         app.newPath();
         Color fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
@@ -187,7 +187,7 @@ public class TextField extends BaseField {
         Phrase phrase = composePhrase(ptext, ufont, fcolor, fontSize);
         if ((options & MULTILINE) != 0) {
             float usize = fontSize;
-            float width = box.width() - 4 * offsetX - extraMarginLeft;
+            float width = box.getWidth() - 4 * offsetX - extraMarginLeft;
             float factor = ufont.getFontDescriptor(BaseFont.BBOXURY, 1) - ufont.getFontDescriptor(BaseFont.BBOXLLY, 1);
             ColumnText ct = new ColumnText(null);
             if (usize == 0) {
@@ -217,7 +217,7 @@ public class TextField extends BaseField {
             ct.setCanvas(app);
             float leading = usize * factor;
             float offsetY = offsetX + h - ufont.getFontDescriptor(BaseFont.BBOXURY, usize);
-            ct.setSimpleColumn(extraMarginLeft + 2 * offsetX, -20000, box.width() - 2 * offsetX, offsetY + leading);
+            ct.setSimpleColumn(extraMarginLeft + 2 * offsetX, -20000, box.getWidth() - 2 * offsetX, offsetY + leading);
             ct.setLeading(leading);
             ct.setAlignment(alignment);
             ct.setRunDirection(rtl);
@@ -233,19 +233,19 @@ public class TextField extends BaseField {
                 if (wd == 0)
                     usize = maxCalculatedSize;
                 else
-                    usize = (box.width() - extraMarginLeft - 4 * offsetX) / wd;
+                    usize = (box.getWidth() - extraMarginLeft - 4 * offsetX) / wd;
                 if (usize > maxCalculatedSize)
                     usize = maxCalculatedSize;
                 if (usize < 4)
                     usize = 4;
             }
             changeFontSize(phrase, usize);
-            float offsetY = offX + ((box.height() - 2*offX) - ufont.getFontDescriptor(BaseFont.ASCENT, usize)) / 2;
+            float offsetY = offX + ((box.getHeight() - 2*offX) - ufont.getFontDescriptor(BaseFont.ASCENT, usize)) / 2;
             if (offsetY < offX)
                 offsetY = offX;
             if (offsetY - offX < -ufont.getFontDescriptor(BaseFont.DESCENT, usize)) {
                 float ny = -ufont.getFontDescriptor(BaseFont.DESCENT, usize) + offX;
-                float dy = box.height() - offX - ufont.getFontDescriptor(BaseFont.ASCENT, usize);
+                float dy = box.getHeight() - offX - ufont.getFontDescriptor(BaseFont.ASCENT, usize);
                 offsetY = Math.min(ny, Math.max(offsetY, dy));
             }
             if ((options & COMB) != 0 && maxCharacterLength > 0) {
@@ -257,7 +257,7 @@ public class TextField extends BaseField {
                 else if (alignment == Element.ALIGN_CENTER) {
                     position = (maxCharacterLength - textLen) / 2;
                 }
-                float step = (box.width() - extraMarginLeft) / maxCharacterLength;
+                float step = (box.getWidth() - extraMarginLeft) / maxCharacterLength;
                 float start = step / 2 + position * step;
                 if (textColor == null)
                     app.setGrayFill(0);
@@ -281,10 +281,10 @@ public class TextField extends BaseField {
             }
             else {
                 if (alignment == Element.ALIGN_RIGHT) {
-                    ColumnText.showTextAligned(app, Element.ALIGN_RIGHT, phrase, extraMarginLeft + box.width() - 2 * offsetX, offsetY - extraMarginTop, 0, rtl, 0);
+                    ColumnText.showTextAligned(app, Element.ALIGN_RIGHT, phrase, extraMarginLeft + box.getWidth() - 2 * offsetX, offsetY - extraMarginTop, 0, rtl, 0);
                 }
                 else if (alignment == Element.ALIGN_CENTER) {
-                    ColumnText.showTextAligned(app, Element.ALIGN_CENTER, phrase, extraMarginLeft + box.width() / 2, offsetY - extraMarginTop, 0, rtl, 0);
+                    ColumnText.showTextAligned(app, Element.ALIGN_CENTER, phrase, extraMarginLeft + box.getWidth() / 2, offsetY - extraMarginTop, 0, rtl, 0);
                 }
                 else
                     ColumnText.showTextAligned(app, Element.ALIGN_LEFT, phrase, extraMarginLeft + 2 * offsetX, offsetY - extraMarginTop, 0, rtl, 0);
@@ -313,7 +313,7 @@ public class TextField extends BaseField {
         if (usize == 0)
             usize = 12;
         boolean borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
-        float h = box.height() - borderWidth * 2;
+        float h = box.getHeight() - borderWidth * 2;
         if (borderExtra)
             h -= borderWidth * 2;
         float offsetX = (borderExtra ? 2 * borderWidth : borderWidth);
@@ -333,12 +333,12 @@ public class TextField extends BaseField {
             last = choices.length;
         topFirst = first;
         app.saveState();
-        app.rectangle(offsetX, offsetX, box.width() - 2 * offsetX, box.height() - 2 * offsetX);
+        app.rectangle(offsetX, offsetX, box.getWidth() - 2 * offsetX, box.getHeight() - 2 * offsetX);
         app.clip();
         app.newPath();
         Color fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
         app.setColorFill(new Color(10, 36, 106));
-        app.rectangle(offsetX, offsetX + h - (topChoice - first + 1) * leading, box.width() - 2 * offsetX, leading);
+        app.rectangle(offsetX, offsetX + h - (topChoice - first + 1) * leading, box.getWidth() - 2 * offsetX, leading);
         app.fill();
         float xp = offsetX * 2;
         float yp = offsetX + h - ufont.getFontDescriptor(BaseFont.BBOXURY, usize);

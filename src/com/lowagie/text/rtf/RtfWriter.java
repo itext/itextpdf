@@ -826,8 +826,8 @@ public class RtfWriter extends DocWriter {
      */
     public boolean setPageSize(Rectangle pageSize) {
         if (!parseFormat(pageSize, false)) {
-            pageWidth = (int) (pageSize.width() * TWIPSFACTOR);
-            pageHeight = (int) (pageSize.height() * TWIPSFACTOR);
+            pageWidth = (int) (pageSize.getWidth() * TWIPSFACTOR);
+            pageHeight = (int) (pageSize.getHeight() * TWIPSFACTOR);
             landscape = pageWidth > pageHeight;
         }
         return true;
@@ -1550,15 +1550,15 @@ public class RtfWriter extends DocWriter {
 //        writeInt(out, (int) (image.plainHeight() * twipsFactor));
 
 
-        if (image.width() > 0) {
+        if (image.getWidth() > 0) {
             out.write(escape);
             out.write(pictureScaleX);
-            writeInt(out, (int) (100 / image.width() * image.getPlainWidth()));
+            writeInt(out, (int) (100 / image.getWidth() * image.getPlainWidth()));
         }
-        if (image.height() > 0) {
+        if (image.getHeight() > 0) {
             out.write(escape);
             out.write(pictureScaleY);
-            writeInt(out, (int) (100 / image.height() * image.getPlainHeight()));
+            writeInt(out, (int) (100 / image.getHeight() * image.getPlainHeight()));
         }
         out.write(delimiter);
         InputStream imgIn;
@@ -2218,7 +2218,7 @@ public class RtfWriter extends DocWriter {
      * @return true if rect1 and rect2 represent the same rectangle
      */
     private boolean rectEquals(Rectangle rect1, Rectangle rect2) {
-        return (rect1.width() == rect2.width()) && (rect1.height() == rect2.height());
+        return (rect1.getWidth() == rect2.getWidth()) && (rect1.getHeight() == rect2.getHeight());
     }
 
     /**

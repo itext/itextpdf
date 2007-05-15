@@ -845,8 +845,8 @@ public class HtmlWriter extends DocWriter {
                 if (!"".equals(alignment)) {
                     write(HtmlTags.VERTICALALIGN, alignment);
                 }
-                if (cell.getWidth() != null) {
-                    write(HtmlTags.WIDTH, cell.getWidth());
+                if (cell.getWidthAsString() != null) {
+                    write(HtmlTags.WIDTH, cell.getWidthAsString());
                 }
                 if (cell.getColspan() != 1) {
                     write(HtmlTags.COLSPAN, String.valueOf(cell.getColspan()));

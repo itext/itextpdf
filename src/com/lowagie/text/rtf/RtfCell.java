@@ -199,9 +199,8 @@ public class RtfCell {
             cellRight = cellLeft + cellWidth;
             return cellRight;
         }
-        if (cell.getWidth() != null && !cell.getWidth().equals("")) {
-
-            this.cellWidth = (int) (Integer.parseInt(cell.getWidth()) * RtfWriter.TWIPSFACTOR);
+        if (cell.getWidth() == 0) {
+            this.cellWidth = (int) (cell.getWidth() * RtfWriter.TWIPSFACTOR);
         }
         cellRight = cellLeft + this.cellWidth;
         store = cell;

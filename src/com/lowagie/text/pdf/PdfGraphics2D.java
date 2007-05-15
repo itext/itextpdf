@@ -1456,10 +1456,10 @@ public class PdfGraphics2D extends Graphics2D {
                 BufferedImage img = tp.getImage();
                 Rectangle2D rect = tp.getAnchorRect();
                 com.lowagie.text.Image image = com.lowagie.text.Image.getInstance(img, null);
-                PdfPatternPainter pattern = cb.createPattern(image.width(), image.height());
+                PdfPatternPainter pattern = cb.createPattern(image.getWidth(), image.getHeight());
                 AffineTransform inverse = this.normalizeMatrix();
                 inverse.translate(rect.getX(), rect.getY());
-                inverse.scale(rect.getWidth() / image.width(), -rect.getHeight() / image.height());
+                inverse.scale(rect.getWidth() / image.getWidth(), -rect.getHeight() / image.getHeight());
                 double[] mx = new double[6];
                 inverse.getMatrix(mx);
                 pattern.setPatternMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]) ;

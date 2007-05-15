@@ -292,8 +292,8 @@ public class Jpeg extends Image {
             if (is != null) {
                 is.close();
             }
-            plainWidth = width();
-            plainHeight = height();
+            plainWidth = getWidth();
+            plainHeight = getHeight();
         }
     }
 }

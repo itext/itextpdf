@@ -1210,8 +1210,8 @@ public class PdfContentByte {
             }
             if (image.hasBorders()) {
                 saveState();
-                float w = image.width();
-                float h = image.height();
+                float w = image.getWidth();
+                float h = image.getHeight();
                 concatCTM(a / w, b / w, c / h, d / h, e, f);
                 rectangle(image);
                 restoreState();
