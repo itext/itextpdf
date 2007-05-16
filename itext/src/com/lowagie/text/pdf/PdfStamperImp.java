@@ -102,6 +102,8 @@ class PdfStamperImp extends PdfWriter {
      */
     PdfStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append) throws DocumentException, IOException {
         super(new PdfDocument(), os);
+        if (!reader.isOpenedWithFullPermissions())
+            throw new IllegalArgumentException("PdfReader not opened with owner password");
         if (reader.isTampered())
             throw new DocumentException("The original document was reused. Read it again from file.");
         reader.setTampered(true);

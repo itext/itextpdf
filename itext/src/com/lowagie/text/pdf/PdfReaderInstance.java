@@ -81,6 +81,8 @@ class PdfReaderInstance {
     }
     
     PdfImportedPage getImportedPage(int pageNumber) {
+        if (!reader.isOpenedWithFullPermissions())
+            throw new IllegalArgumentException("PdfReader not opened with owner password");
         if (pageNumber < 1 || pageNumber > reader.getNumberOfPages())
             throw new IllegalArgumentException("Invalid page number");
         Integer i = new Integer(pageNumber);
