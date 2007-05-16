@@ -220,27 +220,8 @@ public class PdfCell extends Rectangle {
                         line.resetAlignment();
                         addLine(line);
                     }
-                    allActions = new ArrayList();
-                    processActions(element, null, allActions);
-                    aCounter = 0;
-                    ListItem item;
                     // we loop over all the listitems
-                    for (Iterator items = ((List) element).getItems().iterator(); items.hasNext();) {
-                        item = (ListItem) items.next();
-                        line = new PdfLine(left + item.getIndentationLeft(), right, alignment, item.getLeading());
-                        line.setListItem(item);
-                        for (Iterator j = item.getChunks().iterator(); j.hasNext();) {
-                            chunk = new PdfChunk((Chunk) j.next(), (PdfAction) (allActions.get(aCounter++)));
-                            while ((overflow = line.add(chunk)) != null) {
-                                addLine(line);
-                                line = new PdfLine(left + item.getIndentationLeft(), right, alignment, item.getLeading());
-                                chunk = overflow;
-                            }
-                            line.resetAlignment();
-                            addLine(line);
-                            line = new PdfLine(left + item.getIndentationLeft(), right, alignment, leading);
-                        }
-                    }
+                    addList((List)element, left, right, alignment);
                     line = new PdfLine(left, right, alignment, leading);
                     break;
                     // if the element is something else
@@ -335,8 +316,38 @@ public class PdfCell extends Rectangle {
         this.rownumber = rownumber;
     }
 
-
-
+    private void addList(List list, float left, float right, int alignment) {
+        PdfChunk chunk;
+        PdfChunk overflow;
+        ArrayList allActions = new ArrayList();
+        processActions(list, null, allActions);
+        int aCounter = 0;
+        for (Iterator it = list.getItems().iterator(); it.hasNext();) {
+            Element ele = (Element)it.next();
+            switch (ele.type()) {
+                case Element.LISTITEM:
+                    ListItem item = (ListItem)ele;
+                    line = new PdfLine(left + item.getIndentationLeft(), right, alignment, item.getLeading());
+                    line.setListItem(item);
+                    for (Iterator j = item.getChunks().iterator(); j.hasNext();) {
+                        chunk = new PdfChunk((Chunk) j.next(), (PdfAction) (allActions.get(aCounter++)));
+                        while ((overflow = line.add(chunk)) != null) {
+                            addLine(line);
+                            line = new PdfLine(left + item.getIndentationLeft(), right, alignment, item.getLeading());
+                            chunk = overflow;
+                        }
+                        line.resetAlignment();
+                        addLine(line);
+                        line = new PdfLine(left + item.getIndentationLeft(), right, alignment, leading);
+                    }
+                    break;
+                case Element.LIST:
+                    List sublist = (List)ele;
+                    addList(sublist, left + sublist.getIndentationLeft(), right, alignment);
+                    break;
+            }
+        }
+    }
 
     // overriding of the Rectangle methods
 
