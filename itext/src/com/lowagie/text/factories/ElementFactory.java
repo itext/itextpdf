@@ -222,7 +222,7 @@ public class ElementFactory {
 	/**
 	 * Creates a List object based on a list of properties.
 	 * @param attributes
-	 * @return
+	 * @return the List
 	 */
 	public static List getList(Properties attributes) {
 		List list = new List();
