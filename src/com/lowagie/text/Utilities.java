@@ -105,7 +105,7 @@ public class Utilities {
 	 * Checks for a true/false value of a key in a Properties object.
 	 * @param attributes
 	 * @param key
-	 * @return
+	 * @return a true/false value of a key in a Properties object
 	 */
 	public static boolean checkTrueOrFalse(Properties attributes, String key) {
 		return "true".equalsIgnoreCase(attributes.getProperty(key));
