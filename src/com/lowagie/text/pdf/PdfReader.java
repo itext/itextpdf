@@ -107,7 +107,6 @@ public class PdfReader implements PdfViewerPreferences {
     protected PageRefs pageRefs;
     protected PRAcroForm acroForm = null;
     protected boolean acroFormParsed = false;
-    protected ArrayList pageInh;
     protected boolean encrypted = false;
     protected boolean rebuilt = false;
     protected int freeXref;
@@ -955,7 +954,6 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     protected void readPages() throws IOException {
-        pageInh = new ArrayList();
         catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
         rootPages = (PdfDictionary)getPdfObject(catalog.get(PdfName.PAGES));
         pageRefs = new PageRefs(this);
