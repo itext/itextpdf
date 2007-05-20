@@ -838,7 +838,7 @@ public class Table extends Rectangle {
                 row.setElement(((Row) rows.get(i)).getCell(j) ,j);
             }
             for (int j = columns; j < newColumns && i < curPosition.x; j++) {
-                row.setElement(defaultLayout, j);
+                row.setElement(null, j);
             }
             newRows.add(row);
         }
