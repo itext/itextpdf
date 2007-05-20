@@ -68,7 +68,6 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
-import com.lowagie.text.ImgPostscript;
 import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
@@ -2663,14 +2662,6 @@ public class PdfWriter extends DocWriter implements
                         catch (Exception e) {
                             throw new DocumentException(e);
                         }
-                    }else{
-                        try {
-                            ((ImgPostscript)image).readPostscript(PdfTemplate.createTemplate(this, 0, 0));
-                        }
-                        catch (Exception e) {
-                            throw new DocumentException(e);
-                        }
-                        
                     }
                 }
             }

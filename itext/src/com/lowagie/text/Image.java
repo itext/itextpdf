@@ -250,9 +250,6 @@ public abstract class Image extends Rectangle {
 					&& c3 == PngImage.PNGID[2] && c4 == PngImage.PNGID[3]) {
 				return PngImage.getImage(url);
 			}
-            if (c1 == '%' && c2 == '!' && c3 == 'P' && c4 == 'S') {
-               return new ImgPostscript(url);
-            }
 			if (c1 == 0xD7 && c2 == 0xCD) {
 				return new ImgWMF(url);
 			}
@@ -336,9 +333,6 @@ public abstract class Image extends Rectangle {
 					&& c3 == PngImage.PNGID[2] && c4 == PngImage.PNGID[3]) {
 				return PngImage.getImage(imgb);
 			}
-            if (c1 == '%' && c2 == '!' && c3 == 'P' && c4 == 'S') {
-               return new ImgPostscript(imgb);
-            }
 			if (c1 == 0xD7 && c2 == 0xCD) {
 				return new ImgWMF(imgb);
 			}
