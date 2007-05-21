@@ -54,7 +54,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.lowagie.text.Image;
+import com.lowagie.text.Utilities;
 
 public class InputMeta {
     
@@ -97,7 +97,7 @@ public class InputMeta {
     
     public void skip(int len) throws IOException{
         length += len;
-        Image.skip(in, len);
+        Utilities.skip(in, len);
     }
     
     public int getLength() {

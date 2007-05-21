@@ -107,7 +107,6 @@ public class PdfReader implements PdfViewerPreferences {
     protected PageRefs pageRefs;
     protected PRAcroForm acroForm = null;
     protected boolean acroFormParsed = false;
-    protected ArrayList pageInh;
     protected boolean encrypted = false;
     protected boolean rebuilt = false;
     protected int freeXref;
@@ -120,7 +119,7 @@ public class PdfReader implements PdfViewerPreferences {
     protected Key certificateKey = null; //added by Aiken Sam for certificate decryption
     protected Certificate certificate = null; //added by Aiken Sam for certificate decryption
     protected String certificateKeyProvider = null; //added by Aiken Sam for certificate decryption
-    protected boolean ownerPasswordUsed;
+    private boolean ownerPasswordUsed;
     protected ArrayList strings = new ArrayList();
     protected boolean sharedStreams = true;
     protected boolean consolidateNamedDestinations = false;
@@ -590,7 +589,7 @@ public class PdfReader implements PdfViewerPreferences {
 
         byte uValue[] = null;
         byte oValue[] = null;
-        int cryptoMode = PdfWriter.ENCRYPTION_RC4_40;
+        int cryptoMode = PdfWriter.STANDARD_ENCRYPTION_40;
         int lengthValue = 0;  
         
         PdfObject filter = getPdfObjectRelease(enc.get(PdfName.FILTER));
@@ -621,7 +620,7 @@ public class PdfReader implements PdfViewerPreferences {
                 lengthValue = ( (PdfNumber) o).intValue();
                 if (lengthValue > 128 || lengthValue < 40 || lengthValue % 8 != 0)
                     throw new IOException("Illegal Length value.");
-                cryptoMode = PdfWriter.ENCRYPTION_RC4_128;
+                cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
             }  else if (rValue == 4) {
                 PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
                 if (dic == null)
@@ -630,7 +629,7 @@ public class PdfReader implements PdfViewerPreferences {
                 if (dic == null)
                     throw new IOException("/StdCF not found (encryption)");
                 if (PdfName.V2.equals(dic.get(PdfName.CFM)))
-                    cryptoMode = PdfWriter.ENCRYPTION_RC4_128;
+                    cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
                 else if (PdfName.AESV2.equals(dic.get(PdfName.CFM)))
                     cryptoMode = PdfWriter.ENCRYPTION_AES_128;
                 else
@@ -639,7 +638,7 @@ public class PdfReader implements PdfViewerPreferences {
                 if (em != null && em.toString().equals("false"))
                     cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
             } else {
-                cryptoMode = PdfWriter.ENCRYPTION_RC4_40;
+                cryptoMode = PdfWriter.STANDARD_ENCRYPTION_40;
             }
         } else if (filter.equals(PdfName.PUBSEC)) {
             boolean foundRecipient = false;
@@ -659,7 +658,7 @@ public class PdfReader implements PdfViewerPreferences {
                 lengthValue = ( (PdfNumber) o).intValue();
                 if (lengthValue > 128 || lengthValue < 40 || lengthValue % 8 != 0)
                     throw new IOException("Illegal Length value.");
-                cryptoMode = PdfWriter.ENCRYPTION_RC4_128;                
+                cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;                
                 recipients = (PdfArray)enc.get(PdfName.RECIPIENTS);                                
             } else if (vValue == 4) {
                 PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
@@ -670,7 +669,7 @@ public class PdfReader implements PdfViewerPreferences {
                     throw new IOException("/DefaultCryptFilter not found (encryption)");
                 if (PdfName.V2.equals(dic.get(PdfName.CFM)))
                 {
-                    cryptoMode = PdfWriter.ENCRYPTION_RC4_128;
+                    cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
                     lengthValue = 128;
                 }
                 else if (PdfName.AESV2.equals(dic.get(PdfName.CFM)))
@@ -686,7 +685,7 @@ public class PdfReader implements PdfViewerPreferences {
                 
                 recipients = (PdfArray)dic.get(PdfName.RECIPIENTS);                                    
             } else {
-                cryptoMode = PdfWriter.ENCRYPTION_RC4_40;
+                cryptoMode = PdfWriter.STANDARD_ENCRYPTION_40;
                 lengthValue = 40;                
                 recipients = (PdfArray)enc.get(PdfName.RECIPIENTS);                
             }
@@ -760,7 +759,8 @@ public class PdfReader implements PdfViewerPreferences {
             else
                 ownerPasswordUsed = true;
         } else if (filter.equals(PdfName.PUBSEC)) {   
-            decrypt.setupByEncryptionKey(encryptionKey, lengthValue);  
+            decrypt.setupByEncryptionKey(encryptionKey, lengthValue);
+            ownerPasswordUsed = true;
         }
                  
         for (int k = 0; k < strings.size(); ++k) {
@@ -954,7 +954,6 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     protected void readPages() throws IOException {
-        pageInh = new ArrayList();
         catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
         rootPages = (PdfDictionary)getPdfObject(catalog.get(PdfName.PAGES));
         pageRefs = new PageRefs(this);
@@ -3184,7 +3183,7 @@ public class PdfReader implements PdfViewerPreferences {
                         page.put(key, dic.get(key));
                 }
                 if (page.get(PdfName.MEDIABOX) == null) {
-                    PdfArray arr = new PdfArray(new float[]{0,0,PageSize.LETTER.right(),PageSize.LETTER.top()});
+                    PdfArray arr = new PdfArray(new float[]{0,0,PageSize.LETTER.getRight(),PageSize.LETTER.getTop()});
                     page.put(PdfName.MEDIABOX, arr);
                 }
                 refsn.add(rpage);
@@ -3351,7 +3350,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @return <CODE>true</CODE> if the document was opened with the owner password or if it's not encrypted,
      * <CODE>false</CODE> if the document was opened with the user password
      */
-    public boolean isOpenedWithFullPermissions() {
+    public final boolean isOpenedWithFullPermissions() {
         return !encrypted || ownerPasswordUsed;
     }
     

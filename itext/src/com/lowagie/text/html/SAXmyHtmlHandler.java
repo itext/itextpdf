@@ -55,14 +55,11 @@ import java.util.Properties;
 
 import org.xml.sax.Attributes;
 
-import com.lowagie.text.Cell;
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ElementTags;
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Table;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.xml.SAXiTextHandler;
 import com.lowagie.text.xml.XmlPeer;
@@ -189,10 +186,10 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
         }
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
-            if (Table.isTag(peer.getTag()) || Cell.isTag(peer.getTag())) {
+            if (ElementTags.TABLE.equals(peer.getTag()) || ElementTags.CELL.equals(peer.getTag())) {
                 Properties p = peer.getAttributes(attrs);
                 String value;
-                if (Table.isTag(peer.getTag())
+                if (ElementTags.TABLE.equals(peer.getTag())
                         && (value = p.getProperty(ElementTags.BORDERWIDTH)) != null) {
                     if (Float.parseFloat(value + "f") > 0) {
                         tableBorder = true;
@@ -235,7 +232,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
     public void endElement(String uri, String lname, String name) {
         // System.err.println("End: " + name);
     	name = name.toLowerCase();
-        if (Paragraph.isTag(name)) {
+        if (ElementTags.PARAGRAPH.equals(name)) {
             try {
                 document.add((Element) stack.pop());
                 return;
@@ -249,7 +246,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
         }
         if (((HtmlTagMap) myTags).isTitle(name)) {
             if (currentChunk != null) {
-                bodyAttributes.put(ElementTags.TITLE, currentChunk.content());
+                bodyAttributes.put(ElementTags.TITLE, currentChunk.getContent());
             }
             return;
         }
@@ -267,7 +264,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
         }
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
-            if (Table.isTag(peer.getTag())) {
+            if (ElementTags.TABLE.equals(peer.getTag())) {
                 tableBorder = false;
             }
             super.handleEndingTags(peer.getTag());

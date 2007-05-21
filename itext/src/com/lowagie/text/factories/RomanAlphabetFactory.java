@@ -1,4 +1,9 @@
 /*
+ * $Id$
+ * $Name$
+ *
+ * Copyright 2007 by Bruno Lowagie.
+ *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.mozilla.org/MPL/
@@ -41,29 +46,85 @@
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
- *
- * This class is based on a sample class by SUN.
- * The original copyright notice is as follows:
- * 
- * Copyright 1998 by Sun Microsystems, Inc.,
- * 901 San Antonio Road, Palo Alto, California, 94303, U.S.A.
- * All rights reserved.
- *
- * This software is the confidential and proprietary information
- * of Sun Microsystems, Inc. ("Confidential Information").  You
- * shall not disclose such Confidential Information and shall use
- * it only in accordance with the terms of the license agreement
- * you entered into with Sun.
- * 
- * The license agreement can be found at this URL:
- * http://java.sun.com/products/java-media/2D/samples/samples-license.html
- * See also the file sun.txt in directory com.lowagie.text.pdf
  */
 
-package com.lowagie.text.pdf.codec.postscript;
+package com.lowagie.text.factories;
 
-public interface PACommand {
+/**
+ * This class can produce String combinations representing a number.
+ * "a" to "z" represent 1 to 26, "AA" represents 27, "AB" represents 28,
+ * and so on; "ZZ" is followed by "AAA".
+ */
+public class RomanAlphabetFactory {
 
-    public void execute(PAContext context) throws PainterException;
+	/**
+	 * Translates a positive integer (not equal to zero)
+	 * into a String using the letters 'a' to 'z';
+	 * 1 = a, 2 = b, ..., 26 = z, 27 = aa, 28 = ab,...
+	 */
+	public static final String getString(int index) {
+    	if (index < 1) throw new NumberFormatException(
+    			"You can't translate a negative number into an alphabetical value.");
+    	
+    	index--;
+    	int bytes = 1;
+    	int start = 0;
+    	int symbols = 26;  
+    	while(index >= symbols + start) {
+    		bytes++;
+    	    start += symbols;
+    		symbols *= 26;
+    	}
+    	      
+    	int c = index - start;
+    	char[] value = new char[bytes];
+    	while(bytes > 0) {
+    		value[--bytes] = (char)( 'a' + (c % 26));
+    		c /= 26;
+    	}
+    	
+    	return new String(value);
+	}
+	
+	/**
+	 * Translates a positive integer (not equal to zero)
+	 * into a String using the letters 'a' to 'z';
+	 * 1 = a, 2 = b, ..., 26 = z, 27 = aa, 28 = ab,...
+	 */
+	public static final String getLowerCaseString(int index) {
+		return getString(index);		
+	}
+	
+	/**
+	 * Translates a positive integer (not equal to zero)
+	 * into a String using the letters 'A' to 'Z';
+	 * 1 = A, 2 = B, ..., 26 = Z, 27 = AA, 28 = AB,...
+	 */
+	public static final String getUpperCaseString(int index) {
+		return getString(index).toUpperCase();		
+	}
 
+	
+	/**
+	 * Translates a positive integer (not equal to zero)
+	 * into a String using the letters 'a' to 'z'
+	 * (a = 1, b = 2, ..., z = 26, aa = 27, ab = 28,...).
+	 */
+	public static final String getString(int index, boolean lowercase) {
+		if (lowercase) {
+			return getLowerCaseString(index);
+		}
+		else {
+			return getUpperCaseString(index);
+		}
+	}
+	
+	/**
+	 * Test this class using this main method.
+	 */
+	public static void main(String[] args) {
+		for (int i = 1; i < 32000; i++) {
+			System.out.println(getString(i));
+		}
+	}
 }

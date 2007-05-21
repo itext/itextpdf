@@ -102,6 +102,8 @@ class PdfStamperImp extends PdfWriter {
      */
     PdfStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append) throws DocumentException, IOException {
         super(new PdfDocument(), os);
+        if (!reader.isOpenedWithFullPermissions())
+            throw new IllegalArgumentException("PdfReader not opened with owner password");
         if (reader.isTampered())
             throw new DocumentException("The original document was reused. Read it again from file.");
         reader.setTampered(true);
@@ -316,20 +318,20 @@ class PdfStamperImp extends PdfWriter {
         switch (rotation) {
             case 90:
                 out.append(PdfContents.ROTATE90);
-                out.append(page.top());
+                out.append(page.getTop());
                 out.append(' ').append('0').append(PdfContents.ROTATEFINAL);
                 break;
             case 180:
                 out.append(PdfContents.ROTATE180);
-                out.append(page.right());
+                out.append(page.getRight());
                 out.append(' ');
-                out.append(page.top());
+                out.append(page.getTop());
                 out.append(PdfContents.ROTATEFINAL);
                 break;
             case 270:
                 out.append(PdfContents.ROTATE270);
                 out.append('0').append(' ');
-                out.append(page.right());
+                out.append(page.getRight());
                 out.append(PdfContents.ROTATEFINAL);
                 break;
         }
@@ -770,7 +772,7 @@ class PdfStamperImp extends PdfWriter {
                         Rectangle box = PdfReader.getNormalizedRectangle((PdfArray)PdfReader.getPdfObject(merged.get(PdfName.RECT)));
                         PdfContentByte cb = getOverContent(page);
                         cb.setLiteral("Q ");
-                        cb.addTemplate(app, box.left(), box.bottom());
+                        cb.addTemplate(app, box.getLeft(), box.getBottom());
                         cb.setLiteral("q ");
                     }
                 }
@@ -953,7 +955,7 @@ class PdfStamperImp extends PdfWriter {
 						Rectangle box = PdfReader.getNormalizedRectangle((PdfArray)PdfReader.getPdfObject(annDic.get(PdfName.RECT)));
 						PdfContentByte cb = getOverContent(page);
 						cb.setLiteral("Q ");
-						cb.addTemplate(app, box.left(), box.bottom());
+						cb.addTemplate(app, box.getLeft(), box.getBottom());
 						cb.setLiteral("q ");
 					}
 				}
@@ -1010,11 +1012,15 @@ class PdfStamperImp extends PdfWriter {
             acroForm.put(PdfName.FIELDS, fields);
             markUsed(acroForm);
         }
+        if (!acroForm.contains(PdfName.DA)) {
+            acroForm.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
+            markUsed(acroForm);
+        }
         fields.add(ref);
         markUsed(fields);
     }
     
-    void addFieldResources() {
+    void addFieldResources() throws IOException {
         if (fieldTemplates.isEmpty())
             return;
         PdfDictionary catalog = reader.getCatalog();
@@ -1035,8 +1041,29 @@ class PdfStamperImp extends PdfWriter {
             PdfTemplate template = (PdfTemplate)it.next();
             PdfFormField.mergeResources(dr, (PdfDictionary)template.getResources(), this);
         }
+        if (dr.get(PdfName.ENCODING) == null)
+            dr.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
         PdfDictionary fonts = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
-        if (fonts != null && acroForm.get(PdfName.DA) == null) {
+        if (fonts == null) {
+            fonts = new PdfDictionary();
+            dr.put(PdfName.FONT, fonts);
+        }
+        if (!fonts.contains(PdfName.HELV)) {
+            PdfDictionary dic = new PdfDictionary(PdfName.FONT);
+            dic.put(PdfName.BASEFONT, PdfName.HELVETICA);
+            dic.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
+            dic.put(PdfName.NAME, PdfName.HELV);
+            dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
+            fonts.put(PdfName.HELV, addToBody(dic).getIndirectReference());
+        }
+        if (!fonts.contains(PdfName.ZADB)) {
+            PdfDictionary dic = new PdfDictionary(PdfName.FONT);
+            dic.put(PdfName.BASEFONT, PdfName.ZAPFDINGBATS);
+            dic.put(PdfName.NAME, PdfName.ZADB);
+            dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
+            fonts.put(PdfName.ZADB, addToBody(dic).getIndirectReference());
+        }
+        if (acroForm.get(PdfName.DA) == null) {
             acroForm.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
             markUsed(acroForm);
         }
@@ -1079,12 +1106,15 @@ class PdfStamperImp extends PdfWriter {
                         addDocumentField(field.getIndirectReference());
                 }
                 if (annot.isAnnotation()) {
-                    PdfArray annots = (PdfArray)PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
-                    if (annots == null) {
+                    PdfObject pdfobj = PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
+                    PdfArray annots = null;
+                    if (pdfobj == null || !pdfobj.isArray()) {
                         annots = new PdfArray();
                         pageN.put(PdfName.ANNOTS, annots);
                         markUsed(pageN);
                     }
+                    else 
+                       annots = (PdfArray)pdfobj;
                     annots.add(annot.getIndirectReference());
                     markUsed(annots);
                     if (!annot.isUsed()) {
@@ -1095,24 +1125,24 @@ class PdfStamperImp extends PdfWriter {
                             switch (rotation) {
                                 case 90:
                                     annot.put(PdfName.RECT, new PdfRectangle(
-                                    pageSize.top() - rect.bottom(),
+                                    pageSize.getTop() - rect.bottom(),
                                     rect.left(),
-                                    pageSize.top() - rect.top(),
+                                    pageSize.getTop() - rect.top(),
                                     rect.right()));
                                     break;
                                 case 180:
                                     annot.put(PdfName.RECT, new PdfRectangle(
-                                    pageSize.right() - rect.left(),
-                                    pageSize.top() - rect.bottom(),
-                                    pageSize.right() - rect.right(),
-                                    pageSize.top() - rect.top()));
+                                    pageSize.getRight() - rect.left(),
+                                    pageSize.getTop() - rect.bottom(),
+                                    pageSize.getRight() - rect.right(),
+                                    pageSize.getTop() - rect.top()));
                                     break;
                                 case 270:
                                     annot.put(PdfName.RECT, new PdfRectangle(
                                     rect.bottom(),
-                                    pageSize.right() - rect.left(),
+                                    pageSize.getRight() - rect.left(),
                                     rect.top(),
-                                    pageSize.right() - rect.right()));
+                                    pageSize.getRight() - rect.right()));
                                     break;
                             }
                         }

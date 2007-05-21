@@ -63,8 +63,8 @@ import com.lowagie.text.DocWriter;
  * An indirect object consists of an object identifier, a direct object, and the <B>endobj</B>
  * keyword. The <I>object identifier</I> consists of an integer <I>object number</I>, an integer
  * <I>generation number</I>, and the <B>obj</B> keyword.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.10 (page 53).
+ * This object is described in the 'Portable Document Format Reference Manual version 1.7'
+ * section 3.2.9 (page 63-65).
  *
  * @see		PdfObject
  * @see		PdfIndirectReference

@@ -152,10 +152,10 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 	 */
 	public void onGenericTag(PdfWriter writer, Document document,
 			Rectangle rect, String text) {
-		rect.setBottom(rect.bottom() - 3);
+		rect.setBottom(rect.getBottom() - 3);
 		PdfFormField field = (PdfFormField) genericChunkFields.get(text);
 		if (field == null) {
-			TextField tf = new TextField(writer, new Rectangle(rect.left(padding), rect.bottom(padding), rect.right(padding), rect.top(padding)), text);
+			TextField tf = new TextField(writer, new Rectangle(rect.getLeft(padding), rect.getBottom(padding), rect.getRight(padding), rect.getTop(padding)), text);
 			tf.setFontSize(14);
 			try {
 				field = tf.getTextField();
@@ -164,7 +164,7 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 			}
 		}
 		else {
-			field.put(PdfName.RECT,  new PdfRectangle(rect.left(padding), rect.bottom(padding), rect.right(padding), rect.top(padding)));
+			field.put(PdfName.RECT,  new PdfRectangle(rect.getLeft(padding), rect.getBottom(padding), rect.getRight(padding), rect.getTop(padding)));
 		}
 		if (parent == null)
 			writer.addAnnotation(field);
@@ -177,7 +177,7 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 	 */
 	public void cellLayout(PdfPCell cell, Rectangle rect, PdfContentByte[] canvases) {
 		if (cellField == null || (fieldWriter == null && parent == null)) throw new ExceptionConverter(new IllegalArgumentException("You have used the wrong constructor for this FieldPositioningEvents class."));
-		cellField.put(PdfName.RECT, new PdfRectangle(rect.left(padding), rect.bottom(padding), rect.right(padding), rect.top(padding)));
+		cellField.put(PdfName.RECT, new PdfRectangle(rect.getLeft(padding), rect.getBottom(padding), rect.getRight(padding), rect.getTop(padding)));
 		if (parent == null)
 			fieldWriter.addAnnotation(cellField);
 		else

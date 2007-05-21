@@ -1,5 +1,7 @@
 /*
- * Copyright 2005 by Paulo Soares.
+ * $Id$
+ *
+ * Copyright 2005-2007 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -12,10 +14,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2007 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2007 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -106,6 +108,34 @@
  *  function from the net (the function was buggy, so I had to fix  *
  *  it, too!).  I also made the program more friendly towards       *
  *  files with mixed-case filenames.                                *
+ *                                                                  *
+ ********************************************************************/
+
+/********************************************************************
+ *                                                                  *
+ *  1/31/2005, by Paulo Soares                                      *
+ *                                                                  *
+ *  This code was integrated into iText.                            * 
+ *  Note that the itoa function mentioned in the comment by Rod     *
+ *  Smith is no longer in the code because Java has native support  *
+ *  in PrintWriter to convert integers to strings                   *
+ *                                                                  *
+ ********************************************************************/
+
+/********************************************************************
+ *                                                                  *
+ *  7/16/2005, by Bruno Lowagie                                     *
+ *                                                                  *
+ *  I solved an Eclipse Warning.                                    *
+ *                                                                  *
+ ********************************************************************/
+
+/********************************************************************
+ *                                                                  *
+ *  9/14/2006, by Xavier Le Vourch                                  *
+ *                                                                  *
+ *  expand import clauses (import java.io.*)                        *                                           
+ *  the removal of an exception in readString was restored on 9/16  *
  *                                                                  *
  ********************************************************************/
 package com.lowagie.text.pdf;

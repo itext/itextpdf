@@ -48,7 +48,6 @@
  */
 package com.lowagie.text.pdf.crypto;
 
-import com.lowagie.text.ExceptionConverter;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.engines.AESFastEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;

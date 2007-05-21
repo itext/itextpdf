@@ -377,7 +377,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
                     }
                     if (hit) {
                         if (idx < 0)
-                            page = (pageNum + pageShift) + "";
+                            page = Integer.toString(pageNum + pageShift);
                         else
                             page = (pageNum + pageShift) + page.substring(idx);
                     }

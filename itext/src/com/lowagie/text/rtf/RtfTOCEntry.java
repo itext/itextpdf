@@ -65,7 +65,7 @@ import com.lowagie.text.Font;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
- * @version $Revision$Date: 2006/09/12 12:16:35 $
+ * @version $Revision$Date: 2007/03/15 19:26:36 $
  * @deprecated Please move to the RtfWriter2 and associated classes. com.lowagie.text.rtf.field.RtfTOCEntry replaces the functionality of this class.
  */
 public class RtfTOCEntry extends Chunk implements RtfField {
@@ -117,7 +117,7 @@ public class RtfTOCEntry extends Chunk implements RtfField {
 
         if (!hideText) {
             writer.writeInitialFontSignature( out, new Chunk("", contentFont) );
-            out.write( RtfWriter.filterSpecialChar( content(), true ).getBytes() );
+            out.write( RtfWriter.filterSpecialChar( getContent(), true ).getBytes() );
             writer.writeFinishingFontSignature( out, new Chunk("", contentFont) );
         }
 

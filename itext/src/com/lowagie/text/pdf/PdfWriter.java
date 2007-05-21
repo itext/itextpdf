@@ -68,7 +68,6 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
-import com.lowagie.text.ImgPostscript;
 import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
@@ -1696,9 +1695,9 @@ public class PdfWriter extends DocWriter implements
 	// types of encryption
 	
     /** Type of encryption */
-    public static final int ENCRYPTION_RC4_40 = 0;
+    public static final int STANDARD_ENCRYPTION_40 = 0;
     /** Type of encryption */
-    public static final int ENCRYPTION_RC4_128 = 1;
+    public static final int STANDARD_ENCRYPTION_128 = 1;
     /** Type of encryption */
     public static final int ENCRYPTION_AES_128 = 2;
     /** Mask to separate the encryption type from the encryption mode. */
@@ -1725,10 +1724,10 @@ public class PdfWriter extends DocWriter implements
     /** The operation permitted when the document is opened with the user password */
     public static final int AllowDegradedPrinting = 4;
     
-    // Strength of the RC4 encryption (kept for historical reasons)
-    /** Type of RC4 encryption strength*/
+    // Strength of the encryption (kept for historical reasons)
+    /** Type of standard encryption strength*/
     public static final boolean STRENGTH40BITS = false;
-    /** Type of RC4 encryption strength */
+    /** Type of standard encryption strength */
     public static final boolean STRENGTH128BITS = true;
     
     /** Contains the business logic for cryptography. */
@@ -1775,7 +1774,7 @@ public class PdfWriter extends DocWriter implements
      * @deprecated use the methods described in the PdfEncryptionSettings interface
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
-        setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
+        setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? STANDARD_ENCRYPTION_128 : STANDARD_ENCRYPTION_40);
     }
     
     /**
@@ -1793,7 +1792,7 @@ public class PdfWriter extends DocWriter implements
      * @deprecated use the methods described in the PdfEncryptionSettings interface
      */
     public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
-        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
+        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength ? STANDARD_ENCRYPTION_128 : STANDARD_ENCRYPTION_40);
     }
     
     /**
@@ -1803,7 +1802,7 @@ public class PdfWriter extends DocWriter implements
      *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
      *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
      *  The permissions can be combined by ORing them.
-     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
+     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
      * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
@@ -2654,7 +2653,7 @@ public class PdfWriter extends DocWriter implements
         else {
             if (image.isImgTemplate()) {
                 name = new PdfName("img" + images.size());
-                if (image.templateData() == null) {
+                if (image.getTemplateData() == null) {
                     if(image instanceof ImgWMF){
                         try {
                             ImgWMF wmf = (ImgWMF)image;
@@ -2663,14 +2662,6 @@ public class PdfWriter extends DocWriter implements
                         catch (Exception e) {
                             throw new DocumentException(e);
                         }
-                    }else{
-                        try {
-                            ((ImgPostscript)image).readPostscript(PdfTemplate.createTemplate(this, 0, 0));
-                        }
-                        catch (Exception e) {
-                            throw new DocumentException(e);
-                        }
-                        
                     }
                 }
             }

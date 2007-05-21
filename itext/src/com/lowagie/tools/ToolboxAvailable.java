@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002 Paulo Soares
+ * Copyright 2007 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2007 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2007 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -47,54 +47,27 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.tools;
 
-package com.lowagie.text.pdf.codec.postscript;
+import java.lang.reflect.Method;
 
-import java.awt.Dimension;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.swing.JOptionPane;
 
-import com.lowagie.text.PageSize;
-import com.lowagie.text.pdf.PdfContentByte;
+public class ToolboxAvailable {
 
-public class MetaDoPS {
-
-  public PdfContentByte cb;
-  InputStream in;
-  int left;
-  int top;
-  int right;
-  int bottom;
-  int inch;
-
-  public MetaDoPS(InputStream in, PdfContentByte cb) {
-    this.cb = cb;
-    this.in = in;
-  }
-
-  public void readAll() {
-
-    cb.saveState();
-    java.awt.Graphics2D g2 = cb.createGraphicsShapes(PageSize.A4.
-        width(), PageSize.A4.height());
-    try {
-      PAContext context = new PAContext(g2,
-                                        new Dimension( (int) PageSize.A4.width(),
-          (int) PageSize.A4.height()));
-      context.draw(in);
-//      context.draw(new BufferedInputStream(in));
-      // ( (Graphics2D) backBuffer.getGraphics()).dispose();
-      in.close();
-    }
-    catch (IOException ex) {
-      ex.printStackTrace();
-    }
-    catch (PainterException ex) {
-      ex.printStackTrace();
-    }
-    g2.dispose();
-    cb.restoreState();
-
-  }
-
+	/**
+	 * Checks if the toolbox if available.
+	 * If it is, the toolbox is started.
+	 * If it isn't, an error message is shown.
+	 */
+	public static void main(String[] args) {
+		try {
+			Class c = Class.forName("com.lowagie.tools.Toolbox");
+			Method toolboxMain = c.getMethod("main", new Class[] {args.getClass()});
+			toolboxMain.invoke(null, new Object[] {args} );
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,
+					"You need the toolbox.jar with class com.lowagie.tools.Toolbox to use the iText Toolbox.");
+		}
+	}
 }

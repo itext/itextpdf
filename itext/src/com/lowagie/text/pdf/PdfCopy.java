@@ -53,7 +53,6 @@ package com.lowagie.text.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -118,7 +117,7 @@ public class PdfCopy extends PdfWriter {
             return this.gen == other.gen && this.num == other.num;
         }
         public String toString() {
-            return "" + num + " " + gen;
+            return Integer.toString(num) + ' ' + gen;
         }
     }
     
@@ -190,7 +189,7 @@ public class PdfCopy extends PdfWriter {
         }
         PdfObject obj = PdfReader.getPdfObjectRelease(in);
         if (obj != null && obj.isDictionary()) {
-            PdfName type = (PdfName)((PdfDictionary)obj).get(PdfName.TYPE);
+            PdfName type = (PdfName)PdfReader.getPdfObjectRelease(((PdfDictionary)obj).get(PdfName.TYPE));
             if (type != null && PdfName.PAGE.equals(type)) {
                 return theRef;
             }
@@ -208,7 +207,7 @@ public class PdfCopy extends PdfWriter {
     protected PdfDictionary copyDictionary(PdfDictionary in)
     throws IOException, BadPdfFormatException {
         PdfDictionary out = new PdfDictionary();
-        PdfName type = (PdfName)in.get(PdfName.TYPE);
+        PdfName type = (PdfName)PdfReader.getPdfObjectRelease(in.get(PdfName.TYPE));
         
         for (Iterator it = in.getKeys().iterator(); it.hasNext();) {
             PdfName key = (PdfName)it.next();

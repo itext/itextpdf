@@ -65,10 +65,6 @@
 	<target name="release.sf" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
         <copy file="${itext.bin}/iText.jar" todir="${itext.dist}" overwrite="yes" />
-		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-signed.jar" overwrite="yes"/>
-		<signjar keystore="${itext.bin}/.keystore" jar="${itext.dist}/itext-signed.jar" alias="itext" storepass="fdptext1" />
-		<copy file="${itext.bin}/bc.jar" tofile="${itext.dist}/bc-signed.jar" overwrite="yes"/>
-		<signjar keystore="${itext.bin}/.keystore" jar="${itext.dist}/bc-signed.jar" alias="itext" storepass="fdptext1" />
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.sf}/itext-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${releasenumber}.zip" overwrite="yes"/>
@@ -80,8 +76,6 @@
 	<target name="earlyaccess.sf" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
         <copy file="${itext.bin}/iText.jar" todir="${itext.dist}" overwrite="yes" />
-		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-signed.jar" overwrite="yes"/>
-		<signjar keystore="${itext.bin}/.keystore" jar="${itext.dist}/itext-signed.jar" alias="itext" storepass="fdptext1" />
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.sf}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${earlyaccesslowagie}.zip" overwrite="yes"/>

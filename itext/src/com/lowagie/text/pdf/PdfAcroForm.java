@@ -125,9 +125,9 @@ public class PdfAcroForm extends PdfDictionary {
             PdfFormField.mergeResources(dic, (PdfDictionary)template.getResources());
         }
         put(PdfName.DR, dic);
+        put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
         PdfDictionary fonts = (PdfDictionary)dic.get(PdfName.FONT);
         if (fonts != null) {
-            put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
             writer.eliminateFontSubset(fonts);
         }
         return true;

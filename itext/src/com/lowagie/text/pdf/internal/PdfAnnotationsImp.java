@@ -177,24 +177,24 @@ public class PdfAnnotationsImp {
                     	switch (rotation) {
                         	case 90:
                         		dic.put(PdfName.RECT, new PdfRectangle(
-                        				pageSize.top() - rect.bottom(),
+                        				pageSize.getTop() - rect.bottom(),
 										rect.left(),
-										pageSize.top() - rect.top(),
+										pageSize.getTop() - rect.top(),
 										rect.right()));
                         		break;
                         	case 180:
                         		dic.put(PdfName.RECT, new PdfRectangle(
-                        				pageSize.right() - rect.left(),
-										pageSize.top() - rect.bottom(),
-										pageSize.right() - rect.right(),
-										pageSize.top() - rect.top()));
+                        				pageSize.getRight() - rect.left(),
+										pageSize.getTop() - rect.bottom(),
+										pageSize.getRight() - rect.right(),
+										pageSize.getTop() - rect.top()));
                         		break;
                         	case 270:
                         		dic.put(PdfName.RECT, new PdfRectangle(
                         				rect.bottom(),
-										pageSize.right() - rect.left(),
+										pageSize.getRight() - rect.left(),
 										rect.top(),
-										pageSize.right() - rect.right()));
+										pageSize.getRight() - rect.right()));
                         		break;
                     	}
                     }
@@ -240,7 +240,7 @@ public class PdfAnnotationsImp {
            case Annotation.LAUNCH:
                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.APPLICATION),(String) annot.attributes().get(Annotation.PARAMETERS),(String) annot.attributes().get(Annotation.OPERATION),(String) annot.attributes().get(Annotation.DEFAULTDIR)));
            default:
-        	   return new PdfAnnotation(writer, defaultRect.left(), defaultRect.bottom(), defaultRect.right(), defaultRect.top(), new PdfString(annot.title(), PdfObject.TEXT_UNICODE), new PdfString(annot.content(), PdfObject.TEXT_UNICODE));
+        	   return new PdfAnnotation(writer, defaultRect.getLeft(), defaultRect.getBottom(), defaultRect.getRight(), defaultRect.getTop(), new PdfString(annot.title(), PdfObject.TEXT_UNICODE), new PdfString(annot.content(), PdfObject.TEXT_UNICODE));
        }
    }
 }

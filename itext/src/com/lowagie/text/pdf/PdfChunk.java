@@ -59,6 +59,7 @@ import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.SplitCharacter;
+import com.lowagie.text.Utilities;
 
 /**
  * A <CODE>PdfChunk</CODE> is the PDF translation of a <CODE>Chunk</CODE>.
@@ -187,14 +188,14 @@ public class PdfChunk implements SplitCharacter{
     
     PdfChunk(Chunk chunk, PdfAction action) {
         thisChunk[0] = this;
-        value = chunk.content();
+        value = chunk.getContent();
         
-        Font f = chunk.font();
-        float size = f.size();
+        Font f = chunk.getFont();
+        float size = f.getSize();
         if (size == Font.UNDEFINED)
             size = 12;
         baseFont = f.getBaseFont();
-        int style = f.style();
+        int style = f.getStyle();
         if (style == Font.UNDEFINED) {
             style = Font.NORMAL;
         }
@@ -225,23 +226,23 @@ public class PdfChunk implements SplitCharacter{
                 }
             }
             if ("".equals(attr.get(Chunk.GENERICTAG))) {
-                attributes.put(Chunk.GENERICTAG, chunk.content());
+                attributes.put(Chunk.GENERICTAG, chunk.getContent());
             }
         }
         if (f.isUnderlined()) {
             Object obj[] = {null, new float[]{0, 1f / 15, 0, -1f / 3, 0}};
-            Object unders[][] = Chunk.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
+            Object unders[][] = Utilities.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
             attributes.put(Chunk.UNDERLINE, unders);
         }
         if (f.isStrikethru()) {
             Object obj[] = {null, new float[]{0, 1f / 15, 0, 1f / 3, 0}};
-            Object unders[][] = Chunk.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
+            Object unders[][] = Utilities.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
             attributes.put(Chunk.UNDERLINE, unders);
         }
         if (action != null)
             attributes.put(Chunk.ACTION, action);
         // the color can't be stored in a PdfFont
-        noStroke.put(Chunk.COLOR, f.color());
+        noStroke.put(Chunk.COLOR, f.getColor());
         noStroke.put(Chunk.ENCODING, font.getFont().getEncoding());
         Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
         if (obj == null) {
@@ -298,7 +299,7 @@ public class PdfChunk implements SplitCharacter{
     PdfChunk split(float width) {
         newlineSplit = false;
         if (image != null) {
-            if (image.scaledWidth() > width) {
+            if (image.getScaledWidth() > width) {
                 PdfChunk pc = new PdfChunk(Chunk.OBJECT_REPLACEMENT_CHARACTER, this);
                 value = "";
                 attributes = new HashMap();
@@ -426,7 +427,7 @@ public class PdfChunk implements SplitCharacter{
     
     PdfChunk truncate(float width) {
         if (image != null) {
-            if (image.scaledWidth() > width) {
+            if (image.getScaledWidth() > width) {
                 PdfChunk pc = new PdfChunk("", this);
                 value = "";
                 attributes.remove(Chunk.IMAGE);
@@ -532,7 +533,7 @@ public class PdfChunk implements SplitCharacter{
     public float getWidthCorrected(float charSpacing, float wordSpacing)
     {
         if (image != null) {
-            return image.scaledWidth() + charSpacing;
+            return image.getScaledWidth() + charSpacing;
         }
         int numberOfSpaces = 0;
         int idx = -1;

@@ -58,8 +58,8 @@ package com.lowagie.text.pdf;
  * %, (, ), [, ], &lt;, &gt;, {, }, / and #. Any character except 0x00 may be included
  * in a name by writing its twocharacter hex code, preceded by #. The maximum number
  * of characters in a name is 127.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.5 (page 39-40).
+ * This object is described in the 'Portable Document Format Reference Manual version 1.7'
+ * section 3.2.4 (page 56-58).
  * <P>
  *
  * @see		PdfObject
@@ -487,6 +487,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName H = new PdfName("H");
     /** A name of an attribute. */
     public static final PdfName HEIGHT = new PdfName("Height");
+    /** A name */
+    public static final PdfName HELV = new PdfName("Helv");
     /** A name of a base 14 type 1 font */
     public static final PdfName HELVETICA = new PdfName("Helvetica");
     /** A name of a base 14 type 1 font */
@@ -741,6 +743,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName PATTERNTYPE = new PdfName("PatternType");
     /** A name */
     public static final PdfName PDF = new PdfName("PDF");
+    /** A name */
+    public static final PdfName PDFDOCENCODING = new PdfName("PDFDocEncoding");
     /** A name */
     public static final PdfName PERCEPTUAL = new PdfName("Perceptual");
     /** A name */
@@ -1077,6 +1081,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName XYZ = new PdfName("XYZ");
     /** A name */
     public static final PdfName YSTEP = new PdfName("YStep");
+    /** A name */
+    public static final PdfName ZADB = new PdfName("ZaDb");
     /** A name of a base 14 type 1 font */
     public static final PdfName ZAPFDINGBATS = new PdfName("ZapfDingbats");
     /** A name */

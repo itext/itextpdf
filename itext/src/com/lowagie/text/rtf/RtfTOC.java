@@ -70,7 +70,7 @@ import com.lowagie.text.Font;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
- * @version $Revision$Date: 2006/09/14 23:10:54 $
+ * @version $Revision$Date: 2007/03/15 19:26:36 $
  * @deprecated Please move to the RtfWriter2 and associated classes. com.lowagie.text.rtf.field.RtfTableOfContents replaces the functionality of this class.
  */
 public class RtfTOC extends Chunk implements RtfField {
@@ -98,7 +98,7 @@ public class RtfTOC extends Chunk implements RtfField {
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
 
         writer.writeInitialFontSignature( out, this );
-        out.write( RtfWriter.filterSpecialChar( content(), true ).getBytes() );
+        out.write( RtfWriter.filterSpecialChar( getContent(), true ).getBytes() );
         writer.writeFinishingFontSignature( out, this );
         
         if (addTOCAsTOCEntry) {

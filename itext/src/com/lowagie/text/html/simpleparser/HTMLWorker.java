@@ -224,8 +224,8 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                     img.setSpacingBefore(Float.parseFloat(before));
                 if (after != null)
                     img.setSpacingAfter(Float.parseFloat(after));
-                float wp = lengthParse(width, (int)img.width());
-                float lp = lengthParse(height, (int)img.height());
+                float wp = lengthParse(width, (int)img.getWidth());
+                float lp = lengthParse(height, (int)img.getHeight());
                 if (wp > 0 && lp > 0)
                     img.scalePercent(wp > lp ? lp : wp);
                 else if (wp > 0)
@@ -445,7 +445,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 ((com.lowagie.text.List)list).add(item);
                 ArrayList cks = item.getChunks();
                 if (!cks.isEmpty())
-                    item.listSymbol().setFont(((Chunk)cks.get(0)).font());
+                    item.getListSymbol().setFont(((Chunk)cks.get(0)).getFont());
                 stack.push(list);
                 return;
             }

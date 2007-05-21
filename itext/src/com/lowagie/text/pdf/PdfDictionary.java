@@ -67,8 +67,8 @@ import java.util.Set;
  * key-value pair specifying the name and value of an attribute.<BR>
  * A dictionary is represented by two left angle brackets (<<), followed by a sequence of
  * key-value pairs, followed by two right angle brackets (>>).<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.7 (page 40-41).
+ * This object is described in the 'Portable Document Format Reference Manual version 1.7'
+ * section 3.2.6 (page 59-60).
  * <P>
  *
  * @see		PdfObject

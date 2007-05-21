@@ -329,7 +329,7 @@ public class PushbuttonField extends BaseField {
             return app;
         BaseFont ufont = getRealFont();
         boolean borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
-        float h = box.height() - borderWidth * 2;
+        float h = box.getHeight() - borderWidth * 2;
         float bw2 = borderWidth;
         if (borderExtra) {
             h -= borderWidth * 2;
@@ -342,8 +342,8 @@ public class PushbuttonField extends BaseField {
         float textX = Float.NaN;
         float textY = 0;
         float fsize = fontSize;
-        float wt = box.width() - 2 * offX - 2;
-        float ht = box.height() - 2 * offX;
+        float wt = box.getWidth() - 2 * offX - 2;
+        float ht = box.getHeight() - 2 * offX;
         float adj = (iconFitToBounds ? 0 : offX + 1);
         int nlayout = layout;
         if (image == null && template == null && iconReference == null)
@@ -355,49 +355,49 @@ public class PushbuttonField extends BaseField {
                 case LAYOUT_LABEL_OVER_ICON:
                     if (text != null && text.length() > 0 && wt > 0 && ht > 0) {
                         fsize = calculateFontSize(wt, ht);
-                        textX = (box.width() - ufont.getWidthPoint(text, fsize)) / 2;
-                        textY = (box.height() - ufont.getFontDescriptor(BaseFont.ASCENT, fsize)) / 2;
+                        textX = (box.getWidth() - ufont.getWidthPoint(text, fsize)) / 2;
+                        textY = (box.getHeight() - ufont.getFontDescriptor(BaseFont.ASCENT, fsize)) / 2;
                     }
                 case LAYOUT_ICON_ONLY:
                     if (nlayout == LAYOUT_LABEL_OVER_ICON || nlayout == LAYOUT_ICON_ONLY)
-                        iconBox = new Rectangle(box.left() + adj, box.bottom() + adj, box.right() - adj, box.top() - adj);
+                        iconBox = new Rectangle(box.getLeft() + adj, box.getBottom() + adj, box.getRight() - adj, box.getTop() - adj);
                     break;
                 case LAYOUT_ICON_TOP_LABEL_BOTTOM:
                     if (text == null || text.length() == 0 || wt <= 0 || ht <= 0) {
                         nlayout = LAYOUT_ICON_ONLY;
                         continue;
                     }
-                    float nht = box.height() * 0.35f - offX;
+                    float nht = box.getHeight() * 0.35f - offX;
                     if (nht > 0)
                         fsize = calculateFontSize(wt, nht);
                     else
                         fsize = 4;
-                    textX = (box.width() - ufont.getWidthPoint(text, fsize)) / 2;
+                    textX = (box.getWidth() - ufont.getWidthPoint(text, fsize)) / 2;
                     textY = offX - ufont.getFontDescriptor(BaseFont.DESCENT, fsize);
-                    iconBox = new Rectangle(box.left() + adj, textY + fsize, box.right() - adj, box.top() - adj);
+                    iconBox = new Rectangle(box.getLeft() + adj, textY + fsize, box.getRight() - adj, box.getTop() - adj);
                     break;
                 case LAYOUT_LABEL_TOP_ICON_BOTTOM:
                     if (text == null || text.length() == 0 || wt <= 0 || ht <= 0) {
                         nlayout = LAYOUT_ICON_ONLY;
                         continue;
                     }
-                    nht = box.height() * 0.35f - offX;
+                    nht = box.getHeight() * 0.35f - offX;
                     if (nht > 0)
                         fsize = calculateFontSize(wt, nht);
                     else
                         fsize = 4;
-                    textX = (box.width() - ufont.getWidthPoint(text, fsize)) / 2;
-                    textY = box.height() - offX - fsize;
+                    textX = (box.getWidth() - ufont.getWidthPoint(text, fsize)) / 2;
+                    textY = box.getHeight() - offX - fsize;
                     if (textY < offX)
                         textY = offX;
-                    iconBox = new Rectangle(box.left() + adj, box.bottom() + adj, box.right() - adj, textY + ufont.getFontDescriptor(BaseFont.DESCENT, fsize));
+                    iconBox = new Rectangle(box.getLeft() + adj, box.getBottom() + adj, box.getRight() - adj, textY + ufont.getFontDescriptor(BaseFont.DESCENT, fsize));
                     break;
                 case LAYOUT_LABEL_LEFT_ICON_RIGHT:
                     if (text == null || text.length() == 0 || wt <= 0 || ht <= 0) {
                         nlayout = LAYOUT_ICON_ONLY;
                         continue;
                     }
-                    float nw = box.width() * 0.35f - offX;
+                    float nw = box.getWidth() * 0.35f - offX;
                     if (nw > 0)
                         fsize = calculateFontSize(wt, nw);
                     else
@@ -408,15 +408,15 @@ public class PushbuttonField extends BaseField {
                         continue;
                     }
                     textX = offX + 1;
-                    textY = (box.height() - ufont.getFontDescriptor(BaseFont.ASCENT, fsize)) / 2;
-                    iconBox = new Rectangle(textX + ufont.getWidthPoint(text, fsize), box.bottom() + adj, box.right() - adj, box.top() - adj);
+                    textY = (box.getHeight() - ufont.getFontDescriptor(BaseFont.ASCENT, fsize)) / 2;
+                    iconBox = new Rectangle(textX + ufont.getWidthPoint(text, fsize), box.getBottom() + adj, box.getRight() - adj, box.getTop() - adj);
                     break;
                 case LAYOUT_ICON_LEFT_LABEL_RIGHT:
                     if (text == null || text.length() == 0 || wt <= 0 || ht <= 0) {
                         nlayout = LAYOUT_ICON_ONLY;
                         continue;
                     }
-                    nw = box.width() * 0.35f - offX;
+                    nw = box.getWidth() * 0.35f - offX;
                     if (nw > 0)
                         fsize = calculateFontSize(wt, nw);
                     else
@@ -426,16 +426,16 @@ public class PushbuttonField extends BaseField {
                         fsize = fontSize;
                         continue;
                     }
-                    textX = box.width() - ufont.getWidthPoint(text, fsize) - offX - 1;
-                    textY = (box.height() - ufont.getFontDescriptor(BaseFont.ASCENT, fsize)) / 2;
-                    iconBox = new Rectangle(box.left() + adj, box.bottom() + adj, textX - 1, box.top() - adj);
+                    textX = box.getWidth() - ufont.getWidthPoint(text, fsize) - offX - 1;
+                    textY = (box.getHeight() - ufont.getFontDescriptor(BaseFont.ASCENT, fsize)) / 2;
+                    iconBox = new Rectangle(box.getLeft() + adj, box.getBottom() + adj, textX - 1, box.getTop() - adj);
                     break;
             }
             break;
         }
-        if (textY < box.bottom() + offX)
-            textY = box.bottom() + offX;
-        if (iconBox != null && (iconBox.width() <= 0 || iconBox.height() <= 0))
+        if (textY < box.getBottom() + offX)
+            textY = box.getBottom() + offX;
+        if (iconBox != null && (iconBox.getWidth() <= 0 || iconBox.getHeight() <= 0))
             iconBox = null;
         boolean haveIcon = false;
         float boundingBoxWidth = 0;
@@ -446,19 +446,19 @@ public class PushbuttonField extends BaseField {
                 tp = new PdfTemplate(writer);
                 tp.setBoundingBox(new Rectangle(image));
                 writer.addDirectTemplateSimple(tp, PdfName.FRM);
-                tp.addImage(image, image.width(), 0, 0, image.height(), 0, 0);
+                tp.addImage(image, image.getWidth(), 0, 0, image.getHeight(), 0, 0);
                 haveIcon = true;
-                boundingBoxWidth = tp.getBoundingBox().width();
-                boundingBoxHeight = tp.getBoundingBox().height();
+                boundingBoxWidth = tp.getBoundingBox().getWidth();
+                boundingBoxHeight = tp.getBoundingBox().getHeight();
             }
             else if (template != null) {
                 tp = new PdfTemplate(writer);
                 tp.setBoundingBox(new Rectangle(template.getWidth(), template.getHeight()));
                 writer.addDirectTemplateSimple(tp, PdfName.FRM);
-                tp.addTemplate(template, template.getBoundingBox().left(), template.getBoundingBox().bottom());
+                tp.addTemplate(template, template.getBoundingBox().getLeft(), template.getBoundingBox().getBottom());
                 haveIcon = true;
-                boundingBoxWidth = tp.getBoundingBox().width();
-                boundingBoxHeight = tp.getBoundingBox().height();
+                boundingBoxWidth = tp.getBoundingBox().getWidth();
+                boundingBoxHeight = tp.getBoundingBox().getHeight();
             }
             else if (iconReference != null) {
                 PdfDictionary dic = (PdfDictionary)PdfReader.getPdfObject(iconReference);
@@ -466,14 +466,14 @@ public class PushbuttonField extends BaseField {
                     Rectangle r2 = PdfReader.getNormalizedRectangle((PdfArray)PdfReader.getPdfObject(dic.get(PdfName.BBOX)));
                     matrix = (PdfArray)PdfReader.getPdfObject(dic.get(PdfName.MATRIX));
                     haveIcon = true;
-                    boundingBoxWidth = r2.width();
-                    boundingBoxHeight = r2.height();
+                    boundingBoxWidth = r2.getWidth();
+                    boundingBoxHeight = r2.getHeight();
                 }
             }
         }
         if (haveIcon) {
-            float icx = iconBox.width() / boundingBoxWidth;
-            float icy = iconBox.height() / boundingBoxHeight;
+            float icx = iconBox.getWidth() / boundingBoxWidth;
+            float icy = iconBox.getHeight() / boundingBoxHeight;
             if (proportionalIcon) {
                 switch (scaleIcon) {
                     case SCALE_ICON_IS_TOO_BIG:
@@ -510,10 +510,10 @@ public class PushbuttonField extends BaseField {
                         break;
                 }
             }
-            float xpos = iconBox.left() + (iconBox.width() - (boundingBoxWidth * icx)) * iconHorizontalAdjustment;
-            float ypos = iconBox.bottom() + (iconBox.height() - (boundingBoxHeight * icy)) * iconVerticalAdjustment;
+            float xpos = iconBox.getLeft() + (iconBox.getWidth() - (boundingBoxWidth * icx)) * iconHorizontalAdjustment;
+            float ypos = iconBox.getBottom() + (iconBox.getHeight() - (boundingBoxHeight * icy)) * iconVerticalAdjustment;
             app.saveState();
-            app.rectangle(iconBox.left(), iconBox.bottom(), iconBox.width(), iconBox.height());
+            app.rectangle(iconBox.getLeft(), iconBox.getBottom(), iconBox.getWidth(), iconBox.getHeight());
             app.clip();
             app.newPath();
             if (tp != null)
@@ -535,7 +535,7 @@ public class PushbuttonField extends BaseField {
         }
         if (!Float.isNaN(textX)) {
             app.saveState();
-            app.rectangle(offX, offX, box.width() - 2 * offX, box.height() - 2 * offX);
+            app.rectangle(offX, offX, box.getWidth() - 2 * offX, box.getHeight() - 2 * offX);
             app.clip();
             app.newPath();
             if (textColor == null)

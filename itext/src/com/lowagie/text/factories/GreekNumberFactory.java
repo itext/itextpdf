@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Carsten Hammer
+ * Copyright 2007 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,23 +47,84 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.text.factories;
 
-package com.lowagie.tools.plugins.treeview;
+import com.lowagie.text.SpecialSymbol;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import com.lowagie.text.pdf.PdfObject;
-import com.lowagie.text.pdf.PdfReader;
 /**
- * Interface with one method to iterate over iText PDF objects.
+ * This class can produce String combinations representing a number built with
+ * Greek letters (from alpha to omega, then alpha alpha, alpha beta, alpha gamma).
+ * We are aware of the fact that the original Greek numbering is different;
+ * See http://www.cogsci.indiana.edu/farg/harry/lan/grknum.htm#ancient
+ * but this isn't implemented yet; the main reason being the fact that we
+ * need a font that has the obsolete Greek characters qoppa and sampi.
  */
-public interface ICommonAnalyzer {
-  /**
-   * Method that iterates over the iText PDF objects in a node.
-   * @param pdfobj PdfObject
-   * @param pdfreader PdfReader
-   * @param node DefaultMutableTreeNode
-   */
-  void iterateObjects(PdfObject pdfobj, PdfReader pdfreader,
-		  DefaultMutableTreeNode node);
+public class GreekNumberFactory {
+	/** 
+	 * Changes an int into a lower case Greek letter combination.
+	 * @param index the original number
+	 * @return the letter combination
+	 */
+	public static final String getString(int index) {
+		return getString(index, true);
+	}
+	
+	/** 
+	 * Changes an int into a lower case Greek letter combination.
+	 * @param index the original number
+	 * @return the letter combination
+	 */
+	public static final String getLowerCaseString(int index) {
+		return getString(index);		
+	}
+	
+	/** 
+	 * Changes an int into a upper case Greek letter combination.
+	 * @param index the original number
+	 * @return the letter combination
+	 */
+	public static final String getUpperCaseString(int index) {
+		return getString(index).toUpperCase();		
+	}
+
+	/** 
+	 * Changes an int into a Greek letter combination.
+	 * @param index the original number
+	 * @return the letter combination
+	 */
+	public static final String getString(int index, boolean lowercase) {
+		if (index < 1) return "";
+	    index--;
+	    	
+	    int bytes = 1;
+	    int start = 0;
+	    int symbols = 24;  
+	   	while(index >= symbols + start) {
+	   		bytes++;
+	   	    start += symbols;
+	   		symbols *= 24;
+	   	}
+	   	      
+	   	int c = index - start;
+	   	char[] value = new char[bytes];
+	   	while(bytes > 0) {
+	   		bytes--;
+	   		value[bytes] = (char)(c % 24);
+	   		if (value[bytes] > 16) value[bytes]++;
+	   		value[bytes] += (lowercase ? 945 : 913);
+	   		value[bytes] = SpecialSymbol.getCorrespondingSymbol(value[bytes]);
+	   		c /= 24;
+	   	}
+	   	
+	   	return String.valueOf(value);
+	}
+	
+	/**
+	 * Test this class using this main method.
+	 */
+	public static void main(String[] args) {
+		for (int i = 1; i < 1000; i++) {
+			System.out.println(getString(i));
+		}
+	}
 }

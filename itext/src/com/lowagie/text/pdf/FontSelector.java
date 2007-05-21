@@ -74,7 +74,7 @@ public class FontSelector {
             return;
         }
         BaseFont bf = font.getCalculatedBaseFont(true);
-        Font f2 = new Font(bf, font.size(), font.getCalculatedStyle(), font.color());
+        Font f2 = new Font(bf, font.getSize(), font.getCalculatedStyle(), font.getColor());
         fonts.add(f2);
     }
     

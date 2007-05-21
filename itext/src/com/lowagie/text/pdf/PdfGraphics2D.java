@@ -371,6 +371,12 @@ public class PdfGraphics2D extends Graphics2D {
             cb.beginText();
             cb.setFontAndSize(baseFont, fontSize);
             cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
+            Float fontTextAttributeWidth = (Float)font.getAttributes().get(TextAttribute.WIDTH);
+            fontTextAttributeWidth = (fontTextAttributeWidth == null)
+                                     ? TextAttribute.WIDTH_REGULAR
+                                     : fontTextAttributeWidth;
+            if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth))
+                cb.setHorizontalScaling(100.0f / fontTextAttributeWidth.floatValue());
             double width = 0;
             if (font.getSize2D() > 0) {
                 float scale = 1000 / font.getSize2D();
@@ -384,6 +390,8 @@ public class PdfGraphics2D extends Graphics2D {
             if (s.length() > 1) {
                 cb.setCharacterSpacing(0);
             }
+            if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth))
+                cb.setHorizontalScaling(100);
             cb.endText();
             setTransform(at);
             if(underline)
@@ -1362,7 +1370,7 @@ public class PdfGraphics2D extends Graphics2D {
             if (mask!=null) {
                 com.lowagie.text.Image msk = com.lowagie.text.Image.getInstance(mask, null, true);
                 msk.makeMask();
-                msk.setInvertMask(true);
+                msk.setInverted(true);
                 image.setImageMask(msk);
             }
             cb.addImage(image, (float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
@@ -1448,10 +1456,10 @@ public class PdfGraphics2D extends Graphics2D {
                 BufferedImage img = tp.getImage();
                 Rectangle2D rect = tp.getAnchorRect();
                 com.lowagie.text.Image image = com.lowagie.text.Image.getInstance(img, null);
-                PdfPatternPainter pattern = cb.createPattern(image.width(), image.height());
+                PdfPatternPainter pattern = cb.createPattern(image.getWidth(), image.getHeight());
                 AffineTransform inverse = this.normalizeMatrix();
                 inverse.translate(rect.getX(), rect.getY());
-                inverse.scale(rect.getWidth() / image.width(), -rect.getHeight() / image.height());
+                inverse.scale(rect.getWidth() / image.getWidth(), -rect.getHeight() / image.getHeight());
                 double[] mx = new double[6];
                 inverse.getMatrix(mx);
                 pattern.setPatternMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]) ;

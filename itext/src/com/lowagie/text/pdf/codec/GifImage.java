@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.ImgRaw;
+import com.lowagie.text.Utilities;
 import com.lowagie.text.pdf.PdfArray;
 import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfName;
@@ -137,7 +138,7 @@ public class GifImage {
      * @throws IOException on error
      */    
     public GifImage(String file) throws IOException {
-        this(Image.toURL(file));
+        this(Utilities.toURL(file));
     }
     
     /** Reads gif images from a byte array.

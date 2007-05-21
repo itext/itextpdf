@@ -86,7 +86,7 @@ public class BarcodeEANSUPP extends Barcode{
      */
     public Rectangle getBarcodeSize() {
         Rectangle rect = ean.getBarcodeSize();
-        rect.setRight(rect.width() + supp.getBarcodeSize().width() + n);
+        rect.setRight(rect.getWidth() + supp.getBarcodeSize().getWidth() + n);
         return rect;
     }
     
@@ -136,7 +136,7 @@ public class BarcodeEANSUPP extends Barcode{
         ean.placeBarcode(cb, barColor, textColor);
         cb.restoreState();
         cb.saveState();
-        cb.concatCTM(1, 0, 0, 1, eanR.width() + n, eanR.height() - ean.getBarHeight());
+        cb.concatCTM(1, 0, 0, 1, eanR.getWidth() + n, eanR.getHeight() - ean.getBarHeight());
         supp.placeBarcode(cb, barColor, textColor);
         cb.restoreState();
         return getBarcodeSize();

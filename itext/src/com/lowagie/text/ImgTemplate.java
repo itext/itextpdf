@@ -86,7 +86,7 @@ public class ImgTemplate extends Image {
         scaledWidth = template.getWidth();
         setRight(scaledWidth);
         setTemplateData(template);
-        plainWidth = width();
-        plainHeight = height();
+        plainWidth = getWidth();
+        plainHeight = getHeight();
     }
 }

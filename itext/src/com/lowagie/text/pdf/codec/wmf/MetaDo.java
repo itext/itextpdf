@@ -560,8 +560,8 @@ public class MetaDo {
                         cb.rectangle(xDest, yDest, destWidth, destHeight);
                         cb.clip();
                         cb.newPath();
-                        bmp.scaleAbsolute(destWidth * bmp.width() / srcWidth, -destHeight * bmp.height() / srcHeight);
-                        bmp.setAbsolutePosition(xDest - destWidth * xSrc / srcWidth, yDest + destHeight * ySrc / srcHeight - bmp.scaledHeight());
+                        bmp.scaleAbsolute(destWidth * bmp.getWidth() / srcWidth, -destHeight * bmp.getHeight() / srcHeight);
+                        bmp.setAbsolutePosition(xDest - destWidth * xSrc / srcWidth, yDest + destHeight * ySrc / srcHeight - bmp.getScaledHeight());
                         cb.addImage(bmp);
                         cb.restoreState();
                     }
@@ -685,7 +685,7 @@ public class MetaDo {
         InputStream imgIn;
         byte data[] = null;
         if (image.getOriginalData() == null) {
-            imgIn = image.url().openStream();
+            imgIn = image.getUrl().openStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             int b = 0;
             while ((b = imgIn.read()) != -1)
@@ -717,18 +717,18 @@ public class MetaDo {
 
         writeDWord(os, 5);
         writeWord(os, META_SETWINDOWEXT);
-        writeWord(os, (int)image.height());
-        writeWord(os, (int)image.width());
+        writeWord(os, (int)image.getHeight());
+        writeWord(os, (int)image.getWidth());
 
         writeDWord(os, 13 + sizeBmpWords);
         writeWord(os, META_DIBSTRETCHBLT);
         writeDWord(os, 0x00cc0020);
-        writeWord(os, (int)image.height());
-        writeWord(os, (int)image.width());
+        writeWord(os, (int)image.getHeight());
+        writeWord(os, (int)image.getWidth());
         writeWord(os, 0);
         writeWord(os, 0);
-        writeWord(os, (int)image.height());
-        writeWord(os, (int)image.width());
+        writeWord(os, (int)image.getHeight());
+        writeWord(os, (int)image.getWidth());
         writeWord(os, 0);
         writeWord(os, 0);
         os.write(data, 14, data.length - 14);

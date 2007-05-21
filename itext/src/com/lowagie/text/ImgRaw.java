@@ -91,7 +91,7 @@ public class ImgRaw extends Image {
         colorspace = components;
         this.bpc = bpc;
         rawData = data;
-        plainWidth = width();
-        plainHeight = height();
+        plainWidth = getWidth();
+        plainHeight = getHeight();
     }
 }

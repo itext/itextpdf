@@ -49,19 +49,19 @@
 package com.lowagie.text.pdf.crypto;
 
 /**
- * An initialization vector generator for a CBC block encryption. It's a random generator based on RC4.
+ * An initialization vector generator for a CBC block encryption. It's a random generator based on ARCFOUR.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class IVGenerator {
     
-    private static RC4Encryption rc4;
+    private static ARCFOUREncryption arcfour;
     
     static {
-        rc4 = new RC4Encryption();
+        arcfour = new ARCFOUREncryption();
         long time = System.currentTimeMillis();
         long mem = Runtime.getRuntime().freeMemory();
         String s = time + "+" + mem;
-        rc4.prepareRC4Key(s.getBytes());
+        arcfour.prepareARCFOURKey(s.getBytes());
     }
     
     /** Creates a new instance of IVGenerator */
@@ -83,8 +83,8 @@ public class IVGenerator {
      */
     public static byte[] getIV(int len) {
         byte[] b = new byte[len];
-        synchronized (rc4) {
-            rc4.encryptRC4(b);
+        synchronized (arcfour) {
+            arcfour.encryptARCFOUR(b);
         }
         return b;
     }    

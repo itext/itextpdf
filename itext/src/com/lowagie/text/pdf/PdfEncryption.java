@@ -49,7 +49,7 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.pdf.crypto.RC4Encryption;
+import com.lowagie.text.pdf.crypto.ARCFOUREncryption;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -66,9 +66,9 @@ import com.lowagie.text.ExceptionConverter;
  */
 public class PdfEncryption {
 
-	public static final int RC4_40 = 2;
+	public static final int STANDARD_ENCRYPTION_40 = 2;
 
-	public static final int RC4_128 = 3;
+	public static final int STANDARD_ENCRYPTION_128 = 3;
 
 	public static final int AES_128 = 4;
 
@@ -118,7 +118,7 @@ public class PdfEncryption {
 
 	private int revision;
 
-	private RC4Encryption rc4 = new RC4Encryption();
+	private ARCFOUREncryption arcfour = new ARCFOUREncryption();
 
 	/** The generic key length. It may be 40 or 128. */
 	private int keyLength;
@@ -155,17 +155,17 @@ public class PdfEncryption {
 		encryptMetadata = (mode & PdfWriter.DO_NOT_ENCRYPT_METADATA) == 0;
 		mode &= PdfWriter.ENCRYPTION_MASK;
 		switch (mode) {
-		case PdfWriter.ENCRYPTION_RC4_40:
+		case PdfWriter.STANDARD_ENCRYPTION_40:
 			encryptMetadata = true;
 			keyLength = 40;
-			revision = RC4_40;
+			revision = STANDARD_ENCRYPTION_40;
 			break;
-		case PdfWriter.ENCRYPTION_RC4_128:
+		case PdfWriter.STANDARD_ENCRYPTION_128:
 			if (kl > 0)
 				keyLength = kl;
 			else
 				keyLength = 128;
-			revision = RC4_128;
+			revision = STANDARD_ENCRYPTION_128;
 			break;
 		case PdfWriter.ENCRYPTION_AES_128:
 			keyLength = 128;
@@ -207,7 +207,7 @@ public class PdfEncryption {
 		byte ownerKey[] = new byte[32];
 
 		byte digest[] = md5.digest(ownerPad);
-		if (revision == RC4_128 || revision == AES_128) {
+		if (revision == STANDARD_ENCRYPTION_128 || revision == AES_128) {
 			byte mkey[] = new byte[keyLength / 8];
 			// only use for the input as many bit as the key consists of
 			for (int k = 0; k < 50; ++k)
@@ -216,12 +216,12 @@ public class PdfEncryption {
 			for (int i = 0; i < 20; ++i) {
 				for (int j = 0; j < mkey.length; ++j)
 					mkey[j] = (byte) (digest[j] ^ i);
-				rc4.prepareRC4Key(mkey);
-				rc4.encryptRC4(ownerKey);
+				arcfour.prepareARCFOURKey(mkey);
+				arcfour.encryptARCFOUR(ownerKey);
 			}
 		} else {
-			rc4.prepareRC4Key(digest, 0, 5);
-			rc4.encryptRC4(userPad, ownerKey);
+			arcfour.prepareARCFOURKey(digest, 0, 5);
+			arcfour.encryptARCFOUR(userPad, ownerKey);
 		}
 
 		return ownerKey;
@@ -259,7 +259,7 @@ public class PdfEncryption {
 		System.arraycopy(md5.digest(), 0, digest, 0, mkey.length);
 
 		// only use the really needed bits as input for the hash
-		if (revision == RC4_128 || revision == AES_128) {
+		if (revision == STANDARD_ENCRYPTION_128 || revision == AES_128) {
 			for (int k = 0; k < 50; ++k)
 				System.arraycopy(md5.digest(digest), 0, digest, 0, mkey.length);
 		}
@@ -273,7 +273,7 @@ public class PdfEncryption {
 	 */
 	// use the revision to choose the setup method
 	private void setupUserKey() {
-		if (revision == RC4_128 || revision == AES_128) {
+		if (revision == STANDARD_ENCRYPTION_128 || revision == AES_128) {
 			md5.update(pad);
 			byte digest[] = md5.digest(documentID);
 			System.arraycopy(digest, 0, userKey, 0, 16);
@@ -282,12 +282,12 @@ public class PdfEncryption {
 			for (int i = 0; i < 20; ++i) {
 				for (int j = 0; j < mkey.length; ++j)
 					digest[j] = (byte) (mkey[j] ^ i);
-				rc4.prepareRC4Key(digest, 0, mkey.length);
-				rc4.encryptRC4(userKey, 0, 16);
+				arcfour.prepareARCFOURKey(digest, 0, mkey.length);
+				arcfour.encryptARCFOUR(userKey, 0, 16);
 			}
 		} else {
-			rc4.prepareRC4Key(mkey);
-			rc4.encryptRC4(pad, userKey);
+			arcfour.prepareARCFOURKey(mkey);
+			arcfour.encryptARCFOUR(pad, userKey);
 		}
 	}
 
@@ -297,7 +297,7 @@ public class PdfEncryption {
 			int permissions) {
 		if (ownerPassword == null || ownerPassword.length == 0)
 			ownerPassword = md5.digest(createDocumentId());
-		permissions |= (revision == RC4_128 || revision == AES_128) ? 0xfffff0c0
+		permissions |= (revision == STANDARD_ENCRYPTION_128 || revision == AES_128) ? 0xfffff0c0
 				: 0xffffffc0;
 		permissions &= 0xfffffffc;
 		// PDF refrence 3.5.2 Standard Security Handler, Algorithum 3.3-1
@@ -407,11 +407,11 @@ public class PdfEncryption {
 				throw new ExceptionConverter(f);
 			}
 
-			if (revision == RC4_40) {
+			if (revision == STANDARD_ENCRYPTION_40) {
 				dic.put(PdfName.V, new PdfNumber(1));
 				dic.put(PdfName.SUBFILTER, PdfName.ADBE_PKCS7_S4);
 				dic.put(PdfName.RECIPIENTS, recipients);
-			} else if (revision == RC4_128 && encryptMetadata) {
+			} else if (revision == STANDARD_ENCRYPTION_128 && encryptMetadata) {
 				dic.put(PdfName.V, new PdfNumber(2));
 				dic.put(PdfName.LENGTH, new PdfNumber(128));
 				dic.put(PdfName.SUBFILTER, PdfName.ADBE_PKCS7_S4);
@@ -466,9 +466,9 @@ public class PdfEncryption {
 			dic.put(PdfName.P, new PdfNumber(permissions));
 			dic.put(PdfName.R, new PdfNumber(revision));
 
-			if (revision == RC4_40) {
+			if (revision == STANDARD_ENCRYPTION_40) {
 				dic.put(PdfName.V, new PdfNumber(1));
-			} else if (revision == RC4_128 && encryptMetadata) {
+			} else if (revision == STANDARD_ENCRYPTION_128 && encryptMetadata) {
 				dic.put(PdfName.V, new PdfNumber(2));
 				dic.put(PdfName.LENGTH, new PdfNumber(128));
 

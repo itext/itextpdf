@@ -102,7 +102,7 @@ public class Document implements DocListener {
     // membervariables
     
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-	private static final String ITEXT_VERSION = "iText 2.0.2 (by lowagie.com)";
+	private static final String ITEXT_VERSION = "iText 2.0.3 (by lowagie.com)";
     
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging
@@ -672,7 +672,7 @@ public class Document implements DocListener {
  */
     
     public float left() {
-        return pageSize.left(marginLeft);
+        return pageSize.getLeft(marginLeft);
     }
     
 	/**
@@ -682,7 +682,7 @@ public class Document implements DocListener {
  */
     
     public float right() {
-        return pageSize.right(marginRight);
+        return pageSize.getRight(marginRight);
     }
     
 	/**
@@ -692,7 +692,7 @@ public class Document implements DocListener {
  */
     
     public float top() {
-        return pageSize.top(marginTop);
+        return pageSize.getTop(marginTop);
     }
     
 	/**
@@ -702,7 +702,7 @@ public class Document implements DocListener {
  */
     
     public float bottom() {
-        return pageSize.bottom(marginBottom);
+        return pageSize.getBottom(marginBottom);
     }
     
 	/**
@@ -714,7 +714,7 @@ public class Document implements DocListener {
  */
     
     public float left(float margin) {
-        return pageSize.left(marginLeft + margin);
+        return pageSize.getLeft(marginLeft + margin);
     }
     
 	/**
@@ -726,7 +726,7 @@ public class Document implements DocListener {
  */
     
     public float right(float margin) {
-        return pageSize.right(marginRight + margin);
+        return pageSize.getRight(marginRight + margin);
     }
     
 	/**
@@ -738,7 +738,7 @@ public class Document implements DocListener {
  */
     
     public float top(float margin) {
-        return pageSize.top(marginTop + margin);
+        return pageSize.getTop(marginTop + margin);
     }
     
 	/**
@@ -750,7 +750,7 @@ public class Document implements DocListener {
  */
     
     public float bottom(float margin) {
-        return pageSize.bottom(marginBottom + margin);
+        return pageSize.getBottom(marginBottom + margin);
     }
     
 	/**

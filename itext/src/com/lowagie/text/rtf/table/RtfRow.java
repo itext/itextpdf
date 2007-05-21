@@ -209,7 +209,7 @@ public class RtfRow extends RtfElement {
         
         int cellRight = 0;
         int cellWidth = 0;
-        for(int i = 0; i < row.columns(); i++) {
+        for(int i = 0; i < row.getColumns(); i++) {
             cellWidth = (int) (this.width * this.parentTable.getProportionalWidths()[i] / 100);
             cellRight = cellRight + cellWidth;
             

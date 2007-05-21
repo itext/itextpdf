@@ -88,7 +88,14 @@ public class RtfDocumentSettings {
      * How to cache the document during generation. Defaults to RtfDataCache.CACHE_MEMORY;
      */
     private int dataCacheStyle = RtfDataCache.CACHE_MEMORY;
-
+    /**
+     * Whether to write image scaling information. This is required for Word 2000, 97 and Word for Mac
+     */
+    private boolean writeImageScalingInformation = false;
+    /**
+     * Whether images should be written in order to mimick the PDF output. 
+     */
+    private boolean imagePDFConformance = true;
     
     /**
      * Constructs a new RtfDocumentSettings object.
@@ -216,5 +223,84 @@ public class RtfDocumentSettings {
      */
     public int getDataCacheStyle() {
         return this.dataCacheStyle;
+    }
+
+    
+    /**
+     * Gets the current setting on image PDF conformance.
+     * 
+     * @return The current image PDF conformance.
+     */
+    public boolean isImagePDFConformance() {
+        return this.imagePDFConformance;
+    }
+
+    
+    /**
+     * Sets the image PDF conformance setting. By default images will be added
+     * as if they were displayed with 72dpi. Set this to <code>false</code>
+     * if images should be generated with the Word default DPI setting.
+     * 
+     * @param imagePDFConformance <code>True</code> if PDF equivalence is desired, <code>false</code>
+     *   for the default Word display.
+     */
+    public void setImagePDFConformance(boolean imagePDFConformance) {
+        this.imagePDFConformance = imagePDFConformance;
+    }
+
+    
+    /**
+     * Gets whether to write scaling information for images.
+     * 
+     * @return Whether to write scaling information for images.
+     */
+    public boolean isWriteImageScalingInformation() {
+        return this.writeImageScalingInformation;
+    }
+
+    
+    /**
+     * Sets whether image scaling information should be written. This needs to be set to <code>true</code>
+     * MS Word 2000, MS Word 97 and Word for Mac.
+     * 
+     * @param writeImageScalingInformation Whether to write image scaling information.
+     */
+    public void setWriteImageScalingInformation(boolean writeImageScalingInformation) {
+        this.writeImageScalingInformation = writeImageScalingInformation;
+    }
+    
+    /**
+     * Set the options required for RTF documents to display correctly in MS Word 2000
+     * and MS Word 97.
+     * Sets <code>outputTableRowDefinitionAfter = true</code> and <code>writeImageScalingInformation = true</code>.
+     */
+    public void setOptionsForMSWord2000And97() {
+        this.setOutputTableRowDefinitionAfter(true);
+        this.setWriteImageScalingInformation(true);
+    }
+    
+    /**
+     * Set the options required for RTF documents to display correctly in MS Word for Mac.
+     * Sets <code>writeImageScalingInformation = true</code>.
+     */
+    public void setOptionsForMSWordForMac() {
+        this.setWriteImageScalingInformation(true);
+    }
+    
+    /**
+     * Set the options required for RTF documents to display correctly in MS Word XP (2002).
+     * Sets <code>writeImageScalingInformation = false</code>.
+     */
+    public void setOptionsForMSWordXP() {
+        this.setWriteImageScalingInformation(false);
+    }
+
+    /**
+     * Set the options required for RTF documents to display correctly in OpenOffice.Org
+     * Writer.
+     * Sets <code>outputTableRowDefinitionAfter = false</code>.
+     */
+    public void setOptionsForOpenOfficeOrg() {
+        this.setOutputTableRowDefinitionAfter(false);
     }
 }

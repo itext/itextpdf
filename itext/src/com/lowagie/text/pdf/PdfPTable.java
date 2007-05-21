@@ -325,7 +325,7 @@ public class PdfPTable implements Element{
         float totalWidth = 0;
         for (int k = 0; k < columnWidth.length; ++k)
             totalWidth += columnWidth[k];
-        widthPercentage = totalWidth / (pageSize.right() - pageSize.left()) * 100f;
+        widthPercentage = totalWidth / (pageSize.getRight() - pageSize.getLeft()) * 100f;
         setWidths(columnWidth);
     }
 
