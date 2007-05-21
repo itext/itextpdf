@@ -81,7 +81,6 @@ public class XfaForm {
     private org.w3c.dom.Document domDocument;
     private boolean changed;
     private Node datasetsNode;
-    private Node templateNode;
     public static final String XFA_DATA_SCHEMA = "http://www.xfa.org/schema/xfa-data/1.0/";
     
     /**
@@ -137,7 +136,6 @@ public class XfaForm {
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 String s = n.getLocalName();
                 if (s.equals("template")) {
-                    templateNode = n;
                     templateSom = new Xml2SomTemplate(n);
                 }
                 else if (s.equals("datasets")) {
