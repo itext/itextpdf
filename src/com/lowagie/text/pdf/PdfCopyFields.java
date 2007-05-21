@@ -131,7 +131,7 @@ public class PdfCopyFields
      * @throws DocumentException if the document is already open
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
-        fc.setEncryption(userPassword, ownerPassword, permissions, strength128Bits);
+    	fc.setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? PdfWriter.STANDARD_ENCRYPTION_128 : PdfWriter.STANDARD_ENCRYPTION_40);
     }
     
     /**

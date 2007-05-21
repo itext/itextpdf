@@ -154,7 +154,6 @@ public class BarcodeDatamatrix {
         new DmParams(144, 144, 24, 24, 1558, 156, 62)};
 
     private static final String x12 = "\r*> 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private int extOut;
     private short[] place;
     private byte[] image;
     private int height;
@@ -173,7 +172,7 @@ public class BarcodeDatamatrix {
     }
 
     private void draw(byte[] data, int dataSize, DmParams dm) {
-        int i, j, p, nrow, ncol, x, y, xs, ys, z;
+        int i, j, p, x, y, xs, ys, z;
         int xByte = (dm.width + ws * 2 + 7) / 8;
         Arrays.fill(image, (byte)0);
         //alignment patterns
@@ -201,8 +200,6 @@ public class BarcodeDatamatrix {
                 setBit(i, j, xByte);
             }
         }
-        nrow = dm.height - (dm.height / dm.heightSection * 2);
-        ncol = dm.width - (dm.width / dm.widthSection * 2);
         p = 0;
         for (ys = 0; ys < dm.height; ys += dm.heightSection) {
             for (y = 1; y < dm.heightSection - 1; ++y) {
@@ -600,7 +597,6 @@ public class BarcodeDatamatrix {
             ++order;
             switch (c) {
             case '.':
-                extOut = ptrIn;
                 return ptrOut;
             case 'e':
                 if (ptrIn + 6 > textSize)
