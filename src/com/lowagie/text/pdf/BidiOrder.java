@@ -1052,6 +1052,24 @@ public final class BidiOrder {
     }
     
     /**
+     * Return the start of the run including index that includes only resultTypes in validSet.
+     * This assumes the value at index is valid, and does not check it.
+     */
+    private int findRunStart(int index, byte[] validSet) {
+        loop:
+            while (--index >= 0) {
+                byte t = resultTypes[index];
+                for (int i = 0; i < validSet.length; ++i) {
+                    if (t == validSet[i]) {
+                        continue loop;
+                    }
+                }
+                return index + 1;
+            }
+            return 0;
+    }
+    
+    /**
      * Set resultTypes from start up to (but not including) limit to newType.
      */
     private void setTypes(int start, int limit, byte newType) {
