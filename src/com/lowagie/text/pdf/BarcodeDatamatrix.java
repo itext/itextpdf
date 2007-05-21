@@ -154,6 +154,7 @@ public class BarcodeDatamatrix {
         new DmParams(144, 144, 24, 24, 1558, 156, 62)};
 
     private static final String x12 = "\r*> 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private int extOut;
     private short[] place;
     private byte[] image;
     private int height;
@@ -597,6 +598,7 @@ public class BarcodeDatamatrix {
             ++order;
             switch (c) {
             case '.':
+                extOut = ptrIn;
                 return ptrOut;
             case 'e':
                 if (ptrIn + 6 > textSize)
@@ -694,7 +696,7 @@ public class BarcodeDatamatrix {
      * <CODE>DM_ERROR_EXTENSION</CODE> - an error was while parsing an extension.
      */
     public int generate(byte[] text, int textOffset, int textSize) {
-        int extOut, extCount, e, k, full;
+        int extCount, e, k, full;
         DmParams dm, last;
         byte[] data = new byte[2500];
         extOut = 0;
