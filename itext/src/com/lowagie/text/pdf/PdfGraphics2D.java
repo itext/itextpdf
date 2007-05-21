@@ -100,6 +100,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.lowagie.text.pdf.internal.PolylineShape;
+
 public class PdfGraphics2D extends Graphics2D {
     
     private static final int FILL = 1;
@@ -1079,11 +1081,8 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#drawPolyline(int[], int[], int)
      */
     public void drawPolyline(int[] x, int[] y, int nPoints) {
-        Line2D line = new Line2D.Double(x[0],y[0],x[0],y[0]);
-        for (int i = 1; i < nPoints; i++) {
-            line.setLine(line.getX2(), line.getY2(), x[i], y[i]);
-            draw(line);
-        }
+        PolylineShape polyline = new PolylineShape(x, y, nPoints);
+        draw(polyline);
     }
     
     /**
