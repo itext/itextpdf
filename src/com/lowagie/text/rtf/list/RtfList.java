@@ -311,6 +311,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         }
         return result.toByteArray();
     }
+    
     private void writeIndentations(final OutputStream result) throws IOException
     {
         result.write(LIST_LEVEL_FIRST_INDENT);
@@ -542,8 +543,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 result.write(TAB);
                 result.write(CLOSE_GROUP);                
                 //.result.write(rtfElement.write());
-                rtfElement.writeContent(result);                
-                result.write(RtfParagraph.PARAGRAPH);
+                rtfElement.writeContent(result);
+                if(i < (items.size() - 1) || !this.inTable || this.listLevel > 0) {
+                    result.write(RtfParagraph.PARAGRAPH);
+                }
                 if(((RtfListItem) rtfElement).isContainsInnerList()) {
                     result.write(writeListNumbers());
                 }
