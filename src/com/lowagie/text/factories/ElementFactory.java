@@ -280,8 +280,11 @@ public class ElementFactory {
 
 		cell.setHorizontalAlignment(attributes.getProperty(ElementTags.HORIZONTALALIGN));
 		cell.setVerticalAlignment(attributes.getProperty(ElementTags.VERTICALALIGN));
-		cell.setWidth(attributes.getProperty(ElementTags.WIDTH));
 		
+		value = attributes.getProperty(ElementTags.WIDTH);
+		if (value != null) {
+			cell.setWidth(value);
+		}
 		value = attributes.getProperty(ElementTags.COLSPAN);
 		if (value != null) {
 			cell.setColspan(Integer.parseInt(value));
