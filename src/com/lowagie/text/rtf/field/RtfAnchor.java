@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.field;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Anchor;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -59,13 +60,15 @@ import com.lowagie.text.rtf.text.RtfPhrase;
 
 
 /**
+ * The RtfAnchor is the RTF representation of an Anchor object.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Werner Daehn (Werner.Daehn@BusinessObjects.com)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
-public class RtfAnchor extends RtfField {
-
+public class RtfAnchor extends RtfField 
+{
     /**
      * Constant for a hyperlink
      */
@@ -97,16 +100,20 @@ public class RtfAnchor extends RtfField {
      * type to HYPERLINK and then writes the url.
      * 
      * @return The field instructions for this RtfAnchor
+     * @deprecated replaced by {@link #writeFieldInstContent(OutputStream)}
      * @throws IOException
      */
-    protected byte[] writeFieldInstContent() throws IOException {
+    protected byte[] writeFieldInstContent() throws IOException
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        
+        writeFieldInstContent(result);        
+        return result.toByteArray();
+    }
+    protected void writeFieldInstContent(OutputStream result) throws IOException 
+    {
         result.write(HYPERLINK);
         result.write(DELIMITER);
-        result.write(this.document.filterSpecialChar(url, true, true).getBytes());
-        
-        return result.toByteArray();
+        result.write(this.document.filterSpecialChar(url, true, true).getBytes());    	
     }
     
     /**
@@ -114,9 +121,20 @@ public class RtfAnchor extends RtfField {
      * of the RtfPhrase.
      * 
      * @return The field result for this RtfAnchor
+     * @deprecated replaced by {@link #writeFieldResultContent(OutputStream)}
      * @throws IOException
      */
-    protected byte[] writeFieldResultContent() throws IOException  {
+    protected byte[] writeFieldResultContent() throws IOException 
+    {
         return content.write();
+    }    
+    /**
+     * Write the field result for this RtfAnchor. Writes the content
+     * of the RtfPhrase.
+     */
+    protected void writeFieldResultContent(OutputStream out) throws IOException 
+    {
+        content.writeContent(out);
     }
+    
 }

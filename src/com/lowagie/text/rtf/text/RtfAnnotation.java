@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Annotation;
 import com.lowagie.text.rtf.RtfElement;
@@ -62,8 +63,9 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfAnnotation provides support for adding Annotations to the rtf document.
  * Only simple Annotations with Title / Content are supported.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfAnnotation extends RtfElement {
 
@@ -105,29 +107,37 @@ public class RtfAnnotation extends RtfElement {
      * Writes the content of the RtfAnnotation
      * 
      * @return The content of this RtfAnnotation
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(OPEN_GROUP);
-            result.write(ANNOTATION_ID);
-            result.write(DELIMITER);
-            result.write(intToByteArray(document.getRandomInt()));
-            result.write(CLOSE_GROUP);
-            result.write(OPEN_GROUP);
-            result.write(ANNOTATION_AUTHOR);
-            result.write(DELIMITER);
-            result.write(title.getBytes());
-            result.write(CLOSE_GROUP);
-            result.write(OPEN_GROUP);
-            result.write(ANNOTATION);
-            result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
-            result.write(DELIMITER);
-            result.write(content.getBytes());
-            result.write(CLOSE_GROUP);
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+    /**
+     * Writes the content of the RtfAnnotation
+     */
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        result.write(OPEN_GROUP);
+        result.write(ANNOTATION_ID);
+        result.write(DELIMITER);
+        result.write(intToByteArray(document.getRandomInt()));
+        result.write(CLOSE_GROUP);
+        result.write(OPEN_GROUP);
+        result.write(ANNOTATION_AUTHOR);
+        result.write(DELIMITER);
+        result.write(title.getBytes());
+        result.write(CLOSE_GROUP);
+        result.write(OPEN_GROUP);
+        result.write(ANNOTATION);
+        result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+        result.write(DELIMITER);
+        result.write(content.getBytes());
+        result.write(CLOSE_GROUP);    	
     }
 }

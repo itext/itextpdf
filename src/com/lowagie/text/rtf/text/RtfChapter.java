@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Chapter;
 import com.lowagie.text.rtf.RtfBasicElement;
@@ -62,8 +63,9 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfChapter wraps a Chapter element.
  * INTERNAL CLASS
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfChapter extends RtfSection {
 
@@ -81,25 +83,39 @@ public class RtfChapter extends RtfSection {
      * Writes the RtfChapter and its contents
      * 
      * @return A byte array containing the RtfChapter and its contents 
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            if(this.document.getLastElementWritten() != null && !(this.document.getLastElementWritten() instanceof RtfChapter)) {
-                result.write("\\page".getBytes());
-            }
-            result.write("\\sectd".getBytes());
-            result.write(document.getDocumentHeader().writeSectionDefinition());
-            if(this.title != null) {
-                result.write(this.title.write());
-            }
-            for(int i = 0; i < items.size(); i++) {
-                result.write(((RtfBasicElement) items.get(i)).write());
-            }
-            result.write("\\sect".getBytes());
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    
+    /**
+     * Writes the RtfChapter and its contents
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        if(this.document.getLastElementWritten() != null && !(this.document.getLastElementWritten() instanceof RtfChapter)) {
+            result.write("\\page".getBytes());
+        }
+        result.write("\\sectd".getBytes());
+        //.result.write(document.getDocumentHeader().writeSectionDefinition());
+        document.getDocumentHeader().writeSectionDefinition(result);
+        if(this.title != null) {
+            //.result.write(this.title.write());
+            this.title.writeContent(result);
+        }
+        for(int i = 0; i < items.size(); i++) {
+        	RtfBasicElement rbe = (RtfBasicElement)items.get(i);
+            //.result.write((rbe).write());
+        	rbe.writeContent(result);
+        }
+        result.write("\\sect".getBytes());
+    }        
+    
 }

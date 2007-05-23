@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.style;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -63,8 +64,9 @@ import com.lowagie.text.rtf.document.RtfDocument;
 /**
  * The RtfStylesheetList stores the RtfParagraphStyles that are used in the document.
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfStylesheetList extends RtfElement implements RtfExtendedElement {
 
@@ -87,6 +89,21 @@ public class RtfStylesheetList extends RtfElement implements RtfExtendedElement 
         this.styleMap = new HashMap();
     }
 
+    /**
+     * unused
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     */
+    public byte[] write()
+    {
+    	return(new byte[0]);
+    }
+    /**
+     * unused
+     */
+    public void writeContent(OutputStream out) throws IOException
+    {	
+    }
+    
     /**
      * Register a RtfParagraphStyle with this RtfStylesheetList.
      * 
@@ -139,27 +156,38 @@ public class RtfStylesheetList extends RtfElement implements RtfExtendedElement 
     
     /**
      * Writes the definition of the stylesheet list.
+     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
      */
     public byte[] writeDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write("{".getBytes());
-            result.write("\\stylesheet".getBytes());
-            result.write(RtfBasicElement.DELIMITER);
-            if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
-                result.write("\n".getBytes());
-            }
-            Iterator it = this.styleMap.values().iterator();
-            while(it.hasNext()) {
-                result.write(((RtfParagraphStyle) it.next()).writeDefinition());
-            }
-            result.write("}".getBytes());
-            if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
-                result.write('\n');
-            }
+        	writeDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+    
+    /**
+     * Writes the definition of the stylesheet list.
+     */
+    public void writeDefinition(final OutputStream result) throws IOException
+    {
+        result.write("{".getBytes());
+        result.write("\\stylesheet".getBytes());
+        result.write(RtfBasicElement.DELIMITER);
+        if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
+            result.write("\n".getBytes());
+        }
+        Iterator it = this.styleMap.values().iterator();
+        while(it.hasNext()) {
+        	RtfParagraphStyle rps = (RtfParagraphStyle)it.next();
+            //.result.write((rps).writeDefinition());
+        	rps.writeDefinition(result);
+        }
+        result.write("}".getBytes());
+        if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
+            result.write('\n');
+        }    	
     }
 }

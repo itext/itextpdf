@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
@@ -63,8 +64,9 @@ import com.lowagie.text.rtf.RtfExtendedElement;
  * The RtfPageSetting stores the page size / page margins for a RtfDocument.
  * INTERNAL CLASS - NOT TO BE USED DIRECTLY
  *  
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
 
@@ -160,26 +162,30 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
     }
     
     /**
+     * unused
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     */
+    public byte[] write()
+    {
+    	return(new byte[0]);
+    }
+    /**
+     * unused
+     */
+    public void writeContent(final OutputStream out) throws IOException
+    {    	
+    }
+    
+    /**
      * Writes the page size / page margin definition
      * 
      * @return A byte array with the page size / page margin definition
+     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
      */
     public byte[] writeDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(PAGE_WIDTH);
-            result.write(intToByteArray(pageWidth));
-            result.write(PAGE_HEIGHT);
-            result.write(intToByteArray(pageHeight));
-            result.write(MARGIN_LEFT);
-            result.write(intToByteArray(marginLeft));
-            result.write(MARGIN_RIGHT);
-            result.write(intToByteArray(marginRight));
-            result.write(MARGIN_TOP);
-            result.write(intToByteArray(marginTop));
-            result.write(MARGIN_BOTTOM);
-            result.write(intToByteArray(marginBottom));
-            result.write((byte)'\n');
+        	writeDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
@@ -187,39 +193,69 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
     }
     
     /**
+     * Writes the page size / page margin definition
+     */
+    public void writeDefinition(final OutputStream result) throws IOException
+    {
+        result.write(PAGE_WIDTH);
+        result.write(intToByteArray(pageWidth));
+        result.write(PAGE_HEIGHT);
+        result.write(intToByteArray(pageHeight));
+        result.write(MARGIN_LEFT);
+        result.write(intToByteArray(marginLeft));
+        result.write(MARGIN_RIGHT);
+        result.write(intToByteArray(marginRight));
+        result.write(MARGIN_TOP);
+        result.write(intToByteArray(marginTop));
+        result.write(MARGIN_BOTTOM);
+        result.write(intToByteArray(marginBottom));
+        result.write((byte)'\n');    	
+    }
+    
+    /**
      * Writes the definition part for a new section
      * 
      * @return A byte array containing the definition for a new section
+     * @deprecated replaced by {@link #writeSectionDefinition(OutputStream)}
      */
     public byte[] writeSectionDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            if(landscape) {
-                result.write(LANDSCAPE);
-                result.write(SECTION_PAGE_WIDTH);
-                result.write(intToByteArray(pageWidth));
-                result.write(SECTION_PAGE_HEIGHT);
-                result.write(intToByteArray(pageHeight));
-                result.write((byte)'\n');
-            } else {
-                result.write(SECTION_PAGE_WIDTH);
-                result.write(intToByteArray(pageWidth));
-                result.write(SECTION_PAGE_HEIGHT);
-                result.write(intToByteArray(pageHeight));
-                result.write((byte)'\n');
-            }
-            result.write(SECTION_MARGIN_LEFT);
-            result.write(intToByteArray(marginLeft));
-            result.write(SECTION_MARGIN_RIGHT);
-            result.write(intToByteArray(marginRight));
-            result.write(SECTION_MARGIN_TOP);
-            result.write(intToByteArray(marginTop));
-            result.write(SECTION_MARGIN_BOTTOM);
-            result.write(intToByteArray(marginBottom));
+        	writeSectionDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+    /**
+     * Writes the definition part for a new section
+     * 
+     * @return A byte array containing the definition for a new section
+     */
+    public void writeSectionDefinition(final OutputStream result) throws IOException
+    {
+        if(landscape) {
+            result.write(LANDSCAPE);
+            result.write(SECTION_PAGE_WIDTH);
+            result.write(intToByteArray(pageWidth));
+            result.write(SECTION_PAGE_HEIGHT);
+            result.write(intToByteArray(pageHeight));
+            result.write((byte)'\n');
+        } else {
+            result.write(SECTION_PAGE_WIDTH);
+            result.write(intToByteArray(pageWidth));
+            result.write(SECTION_PAGE_HEIGHT);
+            result.write(intToByteArray(pageHeight));
+            result.write((byte)'\n');
+        }
+        result.write(SECTION_MARGIN_LEFT);
+        result.write(intToByteArray(marginLeft));
+        result.write(SECTION_MARGIN_RIGHT);
+        result.write(intToByteArray(marginRight));
+        result.write(SECTION_MARGIN_TOP);
+        result.write(intToByteArray(marginTop));
+        result.write(SECTION_MARGIN_BOTTOM);
+        result.write(intToByteArray(marginBottom));    	
     }
 
     /**

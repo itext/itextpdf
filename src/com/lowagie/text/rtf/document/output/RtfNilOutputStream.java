@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 2001, 2002, 2003, 2004 by Mark Hall
+ * Copyright 2007 Thomas Bickel
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -19,8 +16,6 @@
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
  * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
- * Co-Developer of the code is Mark Hall. Portions created by the Co-Developer are
- * Copyright (C) 2006 by Mark Hall. All Rights Reserved
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -50,93 +45,45 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.rtf.text;
+package com.lowagie.text.rtf.document.output;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-
-import com.lowagie.text.rtf.RtfAddableElement;
 
 /**
- * The RtfTabGroup is a convenience class if the same tabs are to be added
- * to multiple paragraphs.<br /><br />
- * 
- * <code>RtfTabGroup tabs = new RtfTabGroup();<br />
- * tabs.add(new RtfTab(70, RtfTab.TAB_LEFT_ALIGN));<br />
- * tabs.add(new RtfTab(160, RtfTab.TAB_CENTER_ALIGN));<br />
- * tabs.add(new RtfTab(250, RtfTab.TAB_DECIMAL_ALIGN));<br />
- * tabs.add(new RtfTab(500, RtfTab.TAB_RIGHT_ALIGN));<br />
- * Paragraph para = new Paragraph();<br />
- * para.add(tabs);<br />
- * para.add("\tLeft aligned\tCentre aligned\t12,45\tRight aligned");</code>
+ * The RtfNilOutputStream is a dummy output stream that sends all
+ * bytes to the big byte bucket in the sky. It is used to improve
+ * speed in those situations where processing is required, but
+ * the results are not needed.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
+ * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
-public class RtfTabGroup extends RtfAddableElement {
-	/**
-	 * The tabs to add.
-	 */
-	private ArrayList tabs = null;
-
-	/**
-	 * Constructs an empty RtfTabGroup.
-	 */
-	public RtfTabGroup() {
-		this.tabs = new ArrayList();
-	}
-	
-	/**
-	 * Constructs a RtfTabGroup with a set of tabs.
-	 * 
-	 * @param tabs An ArrayList with the RtfTabs to group in this RtfTabGroup.
-	 */
-	public RtfTabGroup(ArrayList tabs) {
-		this.tabs = new ArrayList();
-		for(int i = 0; i < tabs.size(); i++) {
-			if(tabs.get(i) instanceof RtfTab) {
-				this.tabs.add(tabs.get(i));
-			}
-		}
-	}
-	
-	/**
-	 * Adds a RtfTab to the list of grouped tabs.
-	 * 
-	 * @param tab The RtfTab to add.
-	 */
-	public void add(RtfTab tab) {
-		this.tabs.add(tab);
-	}
-	
-	/**
-	 * Combines the tab output form all grouped tabs.
-	 * 
-	 * @deprecated replaced by {@link #writeContent(OutputStream)}
-	 */
-	public byte[] write() 
-	{
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-	}
-    /**
-     * Combines the tab output form all grouped tabs.
-     */    
-    public void writeContent(final OutputStream result) throws IOException
+public final class RtfNilOutputStream extends OutputStream
+{
+    private long size = 0;
+    
+    public RtfNilOutputStream()
+    {           
+    }
+    
+    public long getSize()
     {
-    	for(int i = 0; i < this.tabs.size(); i++) {
-    		RtfTab rt = (RtfTab) this.tabs.get(i);
-    		//.result.write((rt).write());
-    		rt.writeContent(result);
-    	}
-    }        
-	
+        return(size);
+    }
+    
+    public void write(int b)
+    {
+        size++;
+    }
+    public void write(byte[] b, int off, int len)
+    {
+        if (b == null) {
+            throw new NullPointerException();
+        } else if ((off < 0) || (off > b.length) || (len < 0) ||
+               ((off + len) > b.length) || ((off + len) < 0)) {
+            throw new IndexOutOfBoundsException();
+        }
+        size += len;
+    }
 }

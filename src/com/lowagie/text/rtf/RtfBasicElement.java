@@ -50,14 +50,18 @@
 
 package com.lowagie.text.rtf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import com.lowagie.text.rtf.document.RtfDocument;
 
 /**
  * The RtfBasicElement interface defines the interface for elements that can
  * be added to the RtfWriter.
  *
- * Version: $Id$
+ * @version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public interface RtfBasicElement {
     /**
@@ -83,9 +87,19 @@ public interface RtfBasicElement {
 
     /**
      * Return the content of the Element in a byte array
+     * 
      * @return The byte array containing the data
+     * @deprecated replaced by {@link #writeContent(java.io.OutputStream)} 
      */
     public byte[] write();
+    
+    /**
+     * Writes the element content to the given output stream.
+     * This method replaces the {@link #write()} method which is now deprecated. 
+     * 
+     * @param out
+     */
+    public void writeContent(OutputStream out) throws IOException;
     
     /**
      * Sets the RtfDocument this RtfElement belongs to

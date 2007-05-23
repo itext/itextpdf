@@ -53,6 +53,7 @@ package com.lowagie.text.rtf.text;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.rtf.RtfElement;
@@ -65,8 +66,9 @@ import com.lowagie.text.rtf.style.RtfFont;
  * The RtfChunk contains one piece of text. The smallest text element available
  * in iText.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfChunk extends RtfElement {
 
@@ -136,40 +138,48 @@ public class RtfChunk extends RtfElement {
      * is written, then the content, and then more font information
      * 
      * @return A byte array with the content of this RtfChunk
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            if(this.background != null) {
-                result.write(OPEN_GROUP);
-            }
-            
-            result.write(font.writeBegin());
-            if(superSubScript < 0) {
-                result.write(FONT_SUBSCRIPT);
-            } else if(superSubScript > 0) {
-                result.write(FONT_SUPERSCRIPT);
-            }
-            if(this.background != null) {
-                result.write(HIGHLIGHT);
-                result.write(intToByteArray(this.background.getColorNumber()));
-            }
-            result.write(DELIMITER);
-            
-            result.write(document.filterSpecialChar(content, false, softLineBreaks || this.document.getDocumentSettings().isAlwaysGenerateSoftLinebreaks()).getBytes());
-            
-            if(superSubScript != 0) {
-                result.write(FONT_END_SUPER_SUBSCRIPT);
-            }
-            result.write(font.writeEnd());
-            
-            if(this.background != null) {
-                result.write(CLOSE_GROUP);
-            }
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+    /**
+     * Writes the content of this RtfChunk. First the font information
+     * is written, then the content, and then more font information
+     */ 
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        if(this.background != null) {
+            result.write(OPEN_GROUP);
+        }
+        
+        result.write(font.writeBegin());
+        if(superSubScript < 0) {
+            result.write(FONT_SUBSCRIPT);
+        } else if(superSubScript > 0) {
+            result.write(FONT_SUPERSCRIPT);
+        }
+        if(this.background != null) {
+            result.write(HIGHLIGHT);
+            result.write(intToByteArray(this.background.getColorNumber()));
+        }
+        result.write(DELIMITER);
+       	result.write(document.filterSpecialChar(content, false, softLineBreaks || this.document.getDocumentSettings().isAlwaysGenerateSoftLinebreaks()).getBytes());
+        
+        if(superSubScript != 0) {
+            result.write(FONT_END_SUPER_SUBSCRIPT);
+        }
+        result.write(font.writeEnd());
+        
+        if(this.background != null) {
+            result.write(CLOSE_GROUP);
+        }    	
     }
     
     /**

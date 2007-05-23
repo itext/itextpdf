@@ -53,6 +53,7 @@
 package com.lowagie.text.rtf.field;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Font;
 
@@ -64,12 +65,17 @@ import com.lowagie.text.Font;
  * and the user will have to update it first. A text to inform the user of this is
  * displayed instead.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfTableOfContents extends RtfField {
 
+	/**
+	 * field inst content
+	 */
+	private final static String FIELD_INST = "TOC \\\\f \\\\h \\\\u \\\\o \"1-5\" ";
     /**
      * The default text to display
      */
@@ -85,24 +91,49 @@ public class RtfTableOfContents extends RtfField {
         super(null, new Font());
         this.defaultText = defaultText;
     }
-
+    
     /**
      * Writes the field instruction content
      * 
      * @return A byte array containing with the field instructions
+     * @deprecated
      * @throws IOException
      */
-    protected byte[] writeFieldInstContent() throws IOException {
-        return "TOC \\\\f \\\\h \\\\u \\\\o \"1-5\" ".getBytes();
+    protected byte[] writeFieldInstContent() throws IOException 
+    {
+        return FIELD_INST.getBytes();
+    }
+    /**
+     * Writes the field instruction content
+     */ 
+    protected void writeFieldInstContent(final OutputStream out) throws IOException 
+    {
+    	out.write(FIELD_INST.getBytes());
     }
 
     /**
      * Writes the field result content
      * 
      * @return An byte array containing the default text
+     * @deprecated
      * @throws IOException
      */
-    protected byte[] writeFieldResultContent() throws IOException {
-        return document.filterSpecialChar(defaultText, true, true).getBytes();
+    protected byte[] writeFieldResultContent() throws IOException 
+    {
+        return getDefaultTextBytes();
     }
+    /**
+     * Writes the field result content
+     */
+    protected void writeFieldResultContent(final OutputStream out) throws IOException 
+    {
+    	byte[] b = getDefaultTextBytes();
+    	if(b != null) out.write(b);
+    }
+    
+    private byte[] getDefaultTextBytes()
+    {
+    	return(document.filterSpecialChar(defaultText, true, true).getBytes());
+    }    
+    
 }

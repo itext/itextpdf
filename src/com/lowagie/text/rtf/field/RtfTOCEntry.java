@@ -54,6 +54,7 @@ package com.lowagie.text.rtf.field;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Font;
 
@@ -63,9 +64,10 @@ import com.lowagie.text.Font;
  * contents. Add the RtfTOCEntry in those locations in the document where table of
  * contents entries should link to 
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfTOCEntry extends RtfField {
 
@@ -111,25 +113,33 @@ public class RtfTOCEntry extends RtfField {
      * Writes the content of the RtfTOCEntry
      * 
      * @return A byte array with the contents of the RtfTOCEntry
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(TEXT_HIDDEN_ON);
-            result.write(OPEN_GROUP);
-            if(this.showPageNumber) {
-                result.write(TOC_ENTRY_PAGE_NUMBER);
-            } else {
-                result.write(TOC_ENTRY_NO_PAGE_NUMBER);
-            }
-            result.write(DELIMITER);
-            result.write(this.document.filterSpecialChar(this.entry, true, false).getBytes());
-            result.write(CLOSE_GROUP);
-            result.write(TEXT_HIDDEN_OFF);
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+    /**
+     * Writes the content of the RtfTOCEntry
+     */ 
+    public void writeContent(final OutputStream result) throws IOException
+    {    	
+        result.write(TEXT_HIDDEN_ON);
+        result.write(OPEN_GROUP);
+        if(this.showPageNumber) {
+            result.write(TOC_ENTRY_PAGE_NUMBER);
+        } else {
+            result.write(TOC_ENTRY_NO_PAGE_NUMBER);
+        }
+        result.write(DELIMITER);
+        result.write(this.document.filterSpecialChar(this.entry, true, false).getBytes());
+        result.write(CLOSE_GROUP);
+        result.write(TEXT_HIDDEN_OFF);
     }
     
     /**
@@ -144,19 +154,36 @@ public class RtfTOCEntry extends RtfField {
     /**
      * UNUSED
      * @return null
+     * @deprecated
      * @throws IOException never thrown
      */
-    protected byte[] writeFieldInstContent() throws IOException {
+    protected byte[] writeFieldInstContent() throws IOException 
+    {
         return null;
+    }
+    /**
+     * unused
+     */
+    protected void writeFieldInstContent(OutputStream out) throws IOException 
+    {
     }
 
     /**
      * UNUSED
      * @return null
+     * @deprecated
      * @throws IOException never thrown
      */
     protected byte[] writeFieldResultContent() throws IOException {
         return null;
+    }
+    
+    /*
+     * unused
+     * @see com.lowagie.text.rtf.field.RtfField#writeFieldResultContent(java.io.OutputStream)
+     */
+    protected void writeFieldResultContent(OutputStream out) throws IOException
+    {
     }
 
 }

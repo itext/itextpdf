@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
@@ -69,8 +70,9 @@ import com.lowagie.text.rtf.style.RtfParagraphStyle;
  * The RtfParagraph is an extension of the RtfPhrase that adds alignment and
  * indentation properties. It wraps a Paragraph.
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfParagraph extends RtfPhrase {
 
@@ -140,41 +142,52 @@ public class RtfParagraph extends RtfPhrase {
      * and then the RtfChunks of this RtfParagraph are added.
      * 
      * @return The content of this RtfParagraph
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(PARAGRAPH_DEFAULTS);
-            result.write(PLAIN);
-
-            if(inTable) {
-                result.write(IN_TABLE);
-            }
-            
-            if(this.paragraphStyle != null) {
-                result.write(this.paragraphStyle.writeBegin());
-            }
-            result.write("\\plain".getBytes());
-            
-            for(int i = 0; i < chunks.size(); i++) {
-                result.write(((RtfBasicElement) chunks.get(i)).write());
-            }
-            
-            if(this.paragraphStyle != null) {
-                result.write(this.paragraphStyle.writeEnd());
-            }
-            
-            if(!inTable) {
-                result.write(PARAGRAPH);
-            }
-            if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
-                result.write('\n');
-            }
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    /**
+     * Writes the content of this RtfParagraph. First paragraph specific data is written
+     * and then the RtfChunks of this RtfParagraph are added.
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        result.write(PARAGRAPH_DEFAULTS);
+        result.write(PLAIN);
+
+        if(inTable) {
+            result.write(IN_TABLE);
+        }
+        
+        if(this.paragraphStyle != null) {
+            result.write(this.paragraphStyle.writeBegin());
+        }
+        result.write("\\plain".getBytes());
+        
+        for(int i = 0; i < chunks.size(); i++) {
+        	RtfBasicElement rbe = (RtfBasicElement)chunks.get(i);
+            //.result.write((rbe).write());
+        	rbe.writeContent(result);
+        }
+        
+        if(this.paragraphStyle != null) {
+            result.write(this.paragraphStyle.writeEnd());
+        }
+        
+        if(!inTable) {
+            result.write(PARAGRAPH);
+        }
+        if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
+            result.write('\n');
+        }
+    }        
     
     /**
      * Gets the left indentation of this RtfParagraph.

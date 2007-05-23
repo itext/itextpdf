@@ -52,6 +52,7 @@
 package com.lowagie.text.rtf.field;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -59,9 +60,10 @@ import com.lowagie.text.rtf.document.RtfDocument;
 /**
  * The RtfTotalPageNumber provides the total number of pages field in rtf documents.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Jose Hurtado (jose.hurtado@gft.com)
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfTotalPageNumber extends RtfField {
 
@@ -109,19 +111,39 @@ public class RtfTotalPageNumber extends RtfField {
      * Writes the field NUMPAGES instruction with Arabic format
      * 
      * @return A byte array containing "NUMPAGES \\\\* Arabic".
+     * @deprecated
      * @throws IOException
      */
-    protected byte[] writeFieldInstContent() throws IOException {
+    protected byte[] writeFieldInstContent() throws IOException 
+    {
         return ARABIC_TOTAL_PAGES;
+    }
+    /**
+     * Writes the field NUMPAGES instruction with Arabic format: "NUMPAGES \\\\* Arabic".
+     */ 
+    protected void writeFieldInstContent(OutputStream out) throws IOException 
+    {
+    	out.write(ARABIC_TOTAL_PAGES);
     }
 
     /**
      * Writes the field result content
      * 
      * @return An byte array containing "1".
+     * @deprecated
      * @throws IOException
      */
-    protected byte[] writeFieldResultContent() throws IOException {
+    protected byte[] writeFieldResultContent() throws IOException 
+    {
         return "1".getBytes();
     }
+
+    /**
+     * Writes the field result content "1"
+     */
+    protected void writeFieldResultContent(final OutputStream out) throws IOException 
+    {
+    	out.write("1".getBytes());
+    }
+    
 }

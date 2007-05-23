@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.table;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
@@ -79,6 +80,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen Stundzig
  * @author Benoit Wiart
+ * @author Thomas Bickel (tmb99@inode.at)
  * @see com.lowagie.text.rtf.table.RtfBorder
  */
 public class RtfCell extends Cell implements RtfExtendedElement {
@@ -291,59 +293,12 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      * Write the cell definition part of this RtfCell
      * 
      * @return A byte array with the cell definition
+     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
      */
     public byte[] writeDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            if(this.mergeType == MERGE_VERT_PARENT) {
-                result.write("\\clvmgf".getBytes());
-            } else if(this.mergeType == MERGE_VERT_CHILD) {
-                result.write("\\clvmrg".getBytes());
-            }
-            switch (verticalAlignment) {
-                case Element.ALIGN_BOTTOM:
-                    result.write("\\clvertalb".getBytes());
-                    break;
-                case Element.ALIGN_CENTER:
-                case Element.ALIGN_MIDDLE:
-                    result.write("\\clvertalc".getBytes());
-                    break;
-                case Element.ALIGN_TOP:
-                    result.write("\\clvertalt".getBytes());
-                    break;
-            }
-            result.write(this.borders.write());
-
-            if(this.backgroundColor != null) {
-                result.write("\\clcbpat".getBytes());
-                result.write(intToByteArray(this.backgroundColor.getColorNumber()));
-            }
-            result.write('\n');
-            
-            result.write("\\clftsWidth3".getBytes());
-            result.write('\n');
-            
-            result.write("\\clwWidth".getBytes());
-            result.write(intToByteArray(this.cellWidth));
-            result.write('\n');
-            
-            if(this.cellPadding > 0) {
-                result.write("\\clpadl".getBytes());
-                result.write(intToByteArray(this.cellPadding / 2));
-                result.write("\\clpadt".getBytes());
-                result.write(intToByteArray(this.cellPadding / 2));
-                result.write("\\clpadr".getBytes());
-                result.write(intToByteArray(this.cellPadding / 2));
-                result.write("\\clpadb".getBytes());
-                result.write(intToByteArray(this.cellPadding / 2));
-                result.write("\\clpadfl3".getBytes());
-                result.write("\\clpadft3".getBytes());
-                result.write("\\clpadfr3".getBytes());
-                result.write("\\clpadfb3".getBytes());
-            }
-            result.write("\\cellx".getBytes());
-            result.write(intToByteArray(this.cellRight));
-            
+        	writeDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
@@ -352,38 +307,107 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     }
     
     /**
+     * Write the cell definition part of this RtfCell
+     * 
+     * @return A byte array with the cell definition
+     */
+    public void writeDefinition(final OutputStream result) throws IOException 
+    {
+        if(this.mergeType == MERGE_VERT_PARENT) {
+            result.write("\\clvmgf".getBytes());
+        } else if(this.mergeType == MERGE_VERT_CHILD) {
+            result.write("\\clvmrg".getBytes());
+        }
+        switch (verticalAlignment) {
+            case Element.ALIGN_BOTTOM:
+                result.write("\\clvertalb".getBytes());
+                break;
+            case Element.ALIGN_CENTER:
+            case Element.ALIGN_MIDDLE:
+                result.write("\\clvertalc".getBytes());
+                break;
+            case Element.ALIGN_TOP:
+                result.write("\\clvertalt".getBytes());
+                break;
+        }
+        //.result.write(this.borders.write());
+        this.borders.writeContent(result);
+
+        if(this.backgroundColor != null) {
+            result.write("\\clcbpat".getBytes());
+            result.write(intToByteArray(this.backgroundColor.getColorNumber()));
+        }
+        result.write('\n');
+        
+        result.write("\\clftsWidth3".getBytes());
+        result.write('\n');
+        
+        result.write("\\clwWidth".getBytes());
+        result.write(intToByteArray(this.cellWidth));
+        result.write('\n');
+        
+        if(this.cellPadding > 0) {
+            result.write("\\clpadl".getBytes());
+            result.write(intToByteArray(this.cellPadding / 2));
+            result.write("\\clpadt".getBytes());
+            result.write(intToByteArray(this.cellPadding / 2));
+            result.write("\\clpadr".getBytes());
+            result.write(intToByteArray(this.cellPadding / 2));
+            result.write("\\clpadb".getBytes());
+            result.write(intToByteArray(this.cellPadding / 2));
+            result.write("\\clpadfl3".getBytes());
+            result.write("\\clpadft3".getBytes());
+            result.write("\\clpadfr3".getBytes());
+            result.write("\\clpadfb3".getBytes());
+        }
+        result.write("\\cellx".getBytes());
+        result.write(intToByteArray(this.cellRight));
+    }
+
+    
+    /**
      * Write the content of this RtfCell
      * 
      * @return A byte array with the content of this RtfCell
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-    public byte[] write() {
+    public byte[] write() 
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            if(this.content.size() == 0) {
-                result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
-                if(this.parentRow.getParentTable().getTableFitToPage()) {
-                    result.write(RtfParagraphStyle.KEEP_TOGETHER_WITH_NEXT);
-                }
-                result.write(RtfParagraph.IN_TABLE);
-            } else {
-                for(int i = 0; i < this.content.size(); i++) {
-                    RtfBasicElement rtfElement = (RtfBasicElement) this.content.get(i);
-                    if(rtfElement instanceof RtfParagraph) {
-                        ((RtfParagraph) rtfElement).setKeepTogetherWithNext(this.parentRow.getParentTable().getTableFitToPage());
-                    }
-                    result.write(rtfElement.write());
-                    if(rtfElement instanceof RtfParagraph && i < (this.content.size() - 1)) {
-                        result.write(RtfParagraph.PARAGRAPH);
-                    }
-                }
-            }
-            result.write("\\cell".getBytes());
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         
         return result.toByteArray();
     }
+    /**
+     * Write the content of this RtfCell
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        if(this.content.size() == 0) {
+            result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+            if(this.parentRow.getParentTable().getTableFitToPage()) {
+                result.write(RtfParagraphStyle.KEEP_TOGETHER_WITH_NEXT);
+            }
+            result.write(RtfParagraph.IN_TABLE);
+        } else {
+            for(int i = 0; i < this.content.size(); i++) {
+                RtfBasicElement rtfElement = (RtfBasicElement) this.content.get(i);
+                if(rtfElement instanceof RtfParagraph) {
+                    ((RtfParagraph) rtfElement).setKeepTogetherWithNext(this.parentRow.getParentTable().getTableFitToPage());
+                }
+                //.result.write(rtfElement.write());
+                rtfElement.writeContent(result);
+                if(rtfElement instanceof RtfParagraph && i < (this.content.size() - 1)) {
+                    result.write(RtfParagraph.PARAGRAPH);
+                }
+            }
+        }
+        result.write("\\cell".getBytes());
+    }        
 
     /**
      * Sets the right margin of this cell. Used in merge operations

@@ -51,6 +51,7 @@
 package com.lowagie.text.rtf.field;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -59,9 +60,10 @@ import com.lowagie.text.rtf.document.RtfDocument;
 /**
  * The RtfPageNumber provides the page number field in rtf documents.
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfPageNumber extends RtfField {
 
@@ -109,19 +111,40 @@ public class RtfPageNumber extends RtfField {
      * Writes the field instruction content
      * 
      * @return A byte array containing "PAGE"
+     * @deprecated replaced by {@link #writeFieldInstContent(OutputStream)}
      * @throws IOException
      */
-    protected byte[] writeFieldInstContent() throws IOException {
+    protected byte[] writeFieldInstContent() throws IOException 
+    {
         return PAGE_NUMBER;
     }
-
+    /**
+     * Writes the field instruction content
+     * 
+     * @throws IOException
+     */
+    protected void writeFieldInstContent(final OutputStream out) throws IOException 
+    {
+    	out.write(PAGE_NUMBER);
+    }
+    
     /**
      * Writes the field result content
      * 
      * @return An empty byte array
+     * @deprecated replaced by {@link #writeFieldResultContent(OutputStream)}
      * @throws IOException
      */
-    protected byte[] writeFieldResultContent() throws IOException {
+    protected byte[] writeFieldResultContent() throws IOException 
+    {
         return new byte[0];
+    }
+    /**
+     * Writes the field result content
+     * 
+     * @throws IOException
+     */
+    protected void writeFieldResultContent(final OutputStream out) throws IOException 
+    {        
     }
 }

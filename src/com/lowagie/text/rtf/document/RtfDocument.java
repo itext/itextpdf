@@ -57,18 +57,17 @@ import java.util.ArrayList;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfMapper;
-import com.lowagie.text.rtf.document.output.RtfDataCache;
-import com.lowagie.text.rtf.document.output.RtfDiskCache;
-import com.lowagie.text.rtf.document.output.RtfMemoryCache;
+import com.lowagie.text.rtf.document.output.*;
 import com.lowagie.text.rtf.graphic.RtfImage;
 
 /**
  * The RtfDocument stores all document related data and also the main data stream.
  * INTERNAL CLASS - NOT TO BE USED DIRECTLY
  *
- * Version: $Id$
+ * @version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Todd Bush [Tab support]
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfDocument extends RtfElement {
     /**
@@ -119,6 +118,21 @@ public class RtfDocument extends RtfElement {
     }
 
     /**
+     * unused
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     */
+    public byte[] write()
+    {
+    	return(new byte[0]);
+    }
+    /**
+     * unused
+     */
+    public void writeContent(final OutputStream out) throws IOException
+    {    	
+    }
+    
+    /**
      * Writes the document
      *
      * @param out The <code>OutputStream</code> to write the RTF document to.
@@ -127,7 +141,8 @@ public class RtfDocument extends RtfElement {
         try {
             out.write(OPEN_GROUP);
             out.write(RtfDocument.RTF_DOCUMENT);
-            out.write(documentHeader.write());
+            //out.write(documentHeader.write());
+            documentHeader.writeContent(out);
             data.writeTo(out);
             out.write(CLOSE_GROUP);
         } catch(IOException ioe) {
@@ -143,9 +158,19 @@ public class RtfDocument extends RtfElement {
     public void open() {
         try {
             switch(this.documentSettings.getDataCacheStyle()) {
-                case RtfDataCache.CACHE_MEMORY : this.data = new RtfMemoryCache();break;
-                case RtfDataCache.CACHE_DISK   : this.data = new RtfDiskCache();break;
+            	case RtfDataCache.CACHE_MEMORY_EFFICIENT:  
+            		this.data = new RtfEfficientMemoryCache(); 
+            		break;
+                case RtfDataCache.CACHE_MEMORY:
+                	this.data = new RtfMemoryCache();
+                	break;
+                case RtfDataCache.CACHE_DISK:
+                	this.data = new RtfDiskCache();
+                	break;
+                default:
+                	throw(new RuntimeException("unknown"));
             }
+    		
         } catch(IOException ioe) {
             System.err.println("Could not initialise disk cache. Using memory cache.");
             ioe.printStackTrace();
@@ -166,7 +191,7 @@ public class RtfDocument extends RtfElement {
                 if(element instanceof RtfImage) {
                     ((RtfImage) element).setTopLevelElement(true);
                 }
-                data.getOutputStream().write(element.write());
+                element.writeContent( data.getOutputStream() );
                 this.lastElementWritten = element;
             }
         } catch(IOException ioe) {

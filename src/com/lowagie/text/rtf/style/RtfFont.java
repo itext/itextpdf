@@ -53,6 +53,7 @@ package com.lowagie.text.rtf.style;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.RtfExtendedElement;
@@ -70,6 +71,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * @author Renaud Michel (r.michel@immedia.be)
  * @author Werner Daehn (Werner.Daehn@BusinessObjects.com)
  * @author Lidong Liu (tmslld@gmail.com)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfFont extends Font implements RtfExtendedElement {
     /**
@@ -320,19 +322,28 @@ public class RtfFont extends Font implements RtfExtendedElement {
      * Writes the font definition
      *
      * @return A byte array with the font definition
+     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
      */
     public byte[] writeDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(FONT_FAMILY);
-            result.write(FONT_CHARSET);
-            result.write(intToByteArray(charset));
-            result.write(DELIMITER);
-            result.write(document.filterSpecialChar(fontName, true, false).getBytes());
+        	writeDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+    
+    /**
+     * Writes the font definition
+     */
+    public void writeDefinition(final OutputStream result) throws IOException
+    {
+        result.write(FONT_FAMILY);
+        result.write(FONT_CHARSET);
+        result.write(intToByteArray(charset));
+        result.write(DELIMITER);
+        result.write(document.filterSpecialChar(fontName, true, false).getBytes());    	
     }
     
     /**
@@ -452,9 +463,16 @@ public class RtfFont extends Font implements RtfExtendedElement {
     /**
      * Unused
      * @return an empty byte array
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
     public byte[] write() {
         return new byte[0];
+    }
+    /**
+     * unused
+     */
+    public void writeContent(OutputStream out) throws IOException
+    {    	
     }
     
     /**

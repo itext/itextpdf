@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -69,8 +70,9 @@ import com.lowagie.text.rtf.field.RtfTOCEntry;
  * The RtfSection wraps a Section element.
  * INTERNAL CLASS
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfSection extends RtfElement {
 
@@ -132,22 +134,35 @@ public class RtfSection extends RtfElement {
      * Write this RtfSection and its contents
      * 
      * @return A byte array with the RtfSection and its contents
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-    public byte[] write() {
+    public byte[] write()
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(RtfParagraph.PARAGRAPH);
-            if(this.title != null) {
-                result.write(this.title.write());
-            }
-            for(int i = 0; i < items.size(); i++) {
-                result.write(((RtfBasicElement) items.get(i)).write());
-            }
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    /**
+     * Write this RtfSection and its contents
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        result.write(RtfParagraph.PARAGRAPH);
+        if(this.title != null) {
+            //.result.write(this.title.write());
+            this.title.writeContent(result);
+        }
+        for(int i = 0; i < items.size(); i++) {
+        	RtfBasicElement rbe = (RtfBasicElement) items.get(i);
+            //.result.write((rbe).write());
+            rbe.writeContent(result);
+        }
+    }        
+
     
     /**
      * Sets whether this RtfSection is in a table. Sets the correct inTable setting for all

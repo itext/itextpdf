@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 2001, 2002, 2003, 2004 by Mark Hall
+ * Copyright 2007 by Thomas Bickel
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -19,8 +16,6 @@
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
  * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
- * Co-Developer of the code is Mark Hall. Portions created by the Co-Developer are
- * Copyright (C) 2006 by Mark Hall. All Rights Reserved
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -50,101 +45,48 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.rtf;
+package com.lowagie.text.rtf.document.output;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Font;
-import com.lowagie.text.rtf.document.RtfDocument;
-
 /**
- * The RtfAddableElement is the superclass for all rtf specific elements
- * that need to be added to an iText document. It is an extension of Chunk
- * and it also implements RtfBasicElement. It is an abstract class thus it
- * cannot be instantiated itself and has to be subclassed to be used.
+ * The RtfEfficientMemoryCache is an RtfDataCache that keeps the whole rtf document
+ * data in memory.
+ * More efficient than {@link RtfMemoryCache}.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
  */
-public abstract class RtfAddableElement extends Chunk implements RtfBasicElement {
-
-	/**
-	 * The RtfDocument this RtfAddableElement belongs to.
-	 */
-	protected RtfDocument doc = null;
-	/**
-	 * Whether this RtfAddableElement is contained in a table.
-	 */
-	protected boolean inTable = false;
-	/**
-	 * Whether this RtfAddableElement is contained in a header.
-	 */
-	protected boolean inHeader = false;
-	
-	/**
-	 * Constructs a new RtfAddableElement. The Chunk content is
-	 * set to an empty string and the font to the default Font().
-	 */
-	public RtfAddableElement() {
-		super("", new Font());
-	}
-
-	/**
-	 * Subclasses have to implement this method.
-	 * 
-	 * @deprecated replaced by {@link #writeContent(OutputStream)}
-	 */
-	public abstract byte[] write();
-
-	/**
-     * Writes the element content to the given output stream.
-     * This method replaces the {@link #write()} method which is now deprecated. 
-	 */
-    public void writeContent(OutputStream out) throws IOException
-    {
-    	byte[] content = write();
-    	out.write(content);
-    }
-	
-	/**
-	 * Sets the RtfDocument this RtfAddableElement belongs to
-	 */
-	public void setRtfDocument(RtfDocument doc) {
-		this.doc = doc;
-	}
-
-	/**
-	 * Sets whether this RtfAddableElement is contained in a table.
-	 */
-	public void setInTable(boolean inTable) {
-		this.inTable = inTable;
-	}
-
-	/**
-	 * Sets whether this RtfAddableElement is contained in a header/footer.
-	 */
-	public void setInHeader(boolean inHeader) {
-		this.inHeader = inHeader;
-	}
-
+public class RtfEfficientMemoryCache implements RtfDataCache 
+{
     /**
-     * Transforms an integer into its String representation and then returns the bytes
-     * of that string.
-     *
-     * @param i The integer to convert
-     * @return A byte array representing the integer
+     * The buffer for the rtf document data.
      */
-    public byte[] intToByteArray(int i) {
-        return Integer.toString(i).getBytes();
+    private final RtfByteArrayBuffer bab;
+    
+    /**
+     * Constructs a RtfMemoryCache.
+     */
+    public RtfEfficientMemoryCache()
+    {
+        bab = new RtfByteArrayBuffer();
     }
     
     /**
-     *  RtfAddableElement subclasses are never assumed to be empty.
+     * Gets the OutputStream.
      */
-    public boolean isEmpty() {
-        return false;
+    public OutputStream getOutputStream()
+    {
+        return(bab);
     }
+
+    /**
+     * Writes the content of the buffer into the OutputStream.
+     */
+    public void writeTo(OutputStream target) throws IOException 
+    {
+        bab.writeTo(target);
+    }
+
 }

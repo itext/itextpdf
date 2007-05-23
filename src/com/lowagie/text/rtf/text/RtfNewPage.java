@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -60,8 +61,9 @@ import com.lowagie.text.rtf.document.RtfDocument;
 /**
  * The RtfNewPage creates a new page. INTERNAL CLASS
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfNewPage extends RtfElement {
 
@@ -83,15 +85,24 @@ public class RtfNewPage extends RtfElement {
      * Writes a new page
      * 
      * @return A byte array with the new page set
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(NEW_PAGE);
-            result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    /**
+     * Writes a new page
+     */ 
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        result.write(NEW_PAGE);
+        result.write(RtfParagraph.PARAGRAPH_DEFAULTS);    	
+    }
+    
 }

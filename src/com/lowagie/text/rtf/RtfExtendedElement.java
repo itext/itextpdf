@@ -50,16 +50,29 @@
 
 package com.lowagie.text.rtf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * The RtfExtendedElement interface is to be used for elements that also
  * write data into the definition part of the rtf document
- * Version: $Id$
+ * 
+ * @version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
-public interface RtfExtendedElement extends RtfBasicElement {
+public interface RtfExtendedElement extends RtfBasicElement
+{
     /**
      * Return the definition part of the element in a byte array
+     * 
      * @return A byte array containing the definition data of the Element
+     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
      */
     public byte[] writeDefinition();
+
+    /**
+     * Write the definition part of the element
+     */
+    public void writeDefinition(OutputStream out) throws IOException;
 }
