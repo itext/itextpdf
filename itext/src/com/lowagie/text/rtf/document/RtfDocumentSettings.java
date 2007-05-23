@@ -59,8 +59,9 @@ import com.lowagie.text.rtf.style.RtfParagraphStyle;
  * how the actual document is then generated and some settings may mean that some
  * RTF readers can't read the document or render it wrongly.
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfDocumentSettings {
 
@@ -210,9 +211,16 @@ public class RtfDocumentSettings {
      */
     public void setDataCacheStyle(int dataCacheStyle) {
         switch(dataCacheStyle) {
-            case RtfDataCache.CACHE_MEMORY : this.dataCacheStyle = RtfDataCache.CACHE_MEMORY;break;
-            case RtfDataCache.CACHE_DISK   : this.dataCacheStyle = RtfDataCache.CACHE_DISK;break;
-            default                        : this.dataCacheStyle = RtfDataCache.CACHE_MEMORY;break;
+            case RtfDataCache.CACHE_MEMORY_EFFICIENT:	
+            	this.dataCacheStyle = RtfDataCache.CACHE_MEMORY_EFFICIENT;
+            	break;
+            case RtfDataCache.CACHE_DISK: 				
+            	this.dataCacheStyle = RtfDataCache.CACHE_DISK;
+            	break;
+            default:
+            case RtfDataCache.CACHE_MEMORY: 			
+            	this.dataCacheStyle = RtfDataCache.CACHE_MEMORY;
+            	break;
         }
     }
     

@@ -2,6 +2,7 @@ package com.lowagie.text.rtf.graphic;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -21,8 +22,9 @@ import com.lowagie.text.rtf.RtfAddableElement;
  * in the standard iText point, but in EMU where 1 inch = 914400 EMU
  * or 1 cm = 360000 EMU. 
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfShape extends RtfAddableElement {
     /**
@@ -229,8 +231,26 @@ public class RtfShape extends RtfAddableElement {
     /**
      * Writes the RtfShape. Some settings are automatically translated into
      * or require other properties and these are set first.
+     * 
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
 	public byte[] write() {
+		
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        try {
+        	writeContent(result);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+        return result.toByteArray();
+	}
+	
+    /**
+     * Writes the RtfShape. Some settings are automatically translated into
+     * or require other properties and these are set first.
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
 		this.shapeNr = this.doc.getRandomInt();
 		
 		this.properties.put("ShapeType", new RtfShapeProperty("ShapeType", this.type));
@@ -246,86 +266,85 @@ public class RtfShape extends RtfAddableElement {
 		if(this.properties.containsKey("posv")) {
 			this.position.setIgnoreYRelative(true);
 		}
+    	
+    	result.write(OPEN_GROUP);
+    	result.write("\\shp".getBytes());
+    	result.write("\\shplid".getBytes());
+    	result.write(intToByteArray(this.shapeNr));
+    	//.result.write(this.position.write());
+    	this.position.writeContent(result);
+    	switch(this.wrapping) {
+    	case SHAPE_WRAP_NONE:
+    		result.write("\\shpwr3".getBytes());
+    		break;
+    	case SHAPE_WRAP_TOP_BOTTOM:
+    		result.write("\\shpwr1".getBytes());
+    		break;
+    	case SHAPE_WRAP_BOTH:
+    		result.write("\\shpwr2".getBytes());
+    		result.write("\\shpwrk0".getBytes());
+    		break;
+    	case SHAPE_WRAP_LEFT:
+    		result.write("\\shpwr2".getBytes());
+    		result.write("\\shpwrk1".getBytes());
+    		break;
+    	case SHAPE_WRAP_RIGHT:
+    		result.write("\\shpwr2".getBytes());
+    		result.write("\\shpwrk2".getBytes());
+    		break;
+    	case SHAPE_WRAP_LARGEST:
+    		result.write("\\shpwr2".getBytes());
+    		result.write("\\shpwrk3".getBytes());
+    		break;
+    	case SHAPE_WRAP_TIGHT_BOTH:
+    		result.write("\\shpwr4".getBytes());
+    		result.write("\\shpwrk0".getBytes());
+    		break;
+    	case SHAPE_WRAP_TIGHT_LEFT:
+    		result.write("\\shpwr4".getBytes());
+    		result.write("\\shpwrk1".getBytes());
+    		break;
+    	case SHAPE_WRAP_TIGHT_RIGHT:
+    		result.write("\\shpwr4".getBytes());
+    		result.write("\\shpwrk2".getBytes());
+    		break;
+    	case SHAPE_WRAP_TIGHT_LARGEST:
+    		result.write("\\shpwr4".getBytes());
+    		result.write("\\shpwrk3".getBytes());
+    		break;
+    	case SHAPE_WRAP_THROUGH:
+    		result.write("\\shpwr5".getBytes());
+    		break;
+    	default:
+    		result.write("\\shpwr3".getBytes());
+    	}
+    	if(this.inHeader) {
+    		result.write("\\shpfhdr1".getBytes());
+    	} 
+    	if(this.doc.getDocumentSettings().isOutputDebugLineBreaks()) {
+    		result.write('\n');
+    	}
+    	result.write(OPEN_GROUP);
+    	result.write("\\*\\shpinst".getBytes());
+    	Iterator it = this.properties.values().iterator();
+    	while(it.hasNext()) {
+    		RtfShapeProperty rsp = (RtfShapeProperty) it.next();
+    		//.result.write(rsp.write());
+    		rsp.writeContent(result);
+    	}
+    	if(!this.shapeText.equals("")) {
+    		result.write(OPEN_GROUP);
+    		result.write("\\shptxt".getBytes());
+    		result.write(DELIMITER);
+    		result.write(this.shapeText.getBytes());
+    		result.write(CLOSE_GROUP);
+    	}
+    	result.write(CLOSE_GROUP);
+    	if(this.doc.getDocumentSettings().isOutputDebugLineBreaks()) {
+    		result.write('\n');
+    	}
+    	result.write(CLOSE_GROUP);
 		
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	result.write(OPEN_GROUP);
-        	result.write("\\shp".getBytes());
-        	result.write("\\shplid".getBytes());
-        	result.write(intToByteArray(this.shapeNr));
-        	result.write(this.position.write());
-        	switch(this.wrapping) {
-        	case SHAPE_WRAP_NONE:
-        		result.write("\\shpwr3".getBytes());
-        		break;
-        	case SHAPE_WRAP_TOP_BOTTOM:
-        		result.write("\\shpwr1".getBytes());
-        		break;
-        	case SHAPE_WRAP_BOTH:
-        		result.write("\\shpwr2".getBytes());
-        		result.write("\\shpwrk0".getBytes());
-        		break;
-        	case SHAPE_WRAP_LEFT:
-        		result.write("\\shpwr2".getBytes());
-        		result.write("\\shpwrk1".getBytes());
-        		break;
-        	case SHAPE_WRAP_RIGHT:
-        		result.write("\\shpwr2".getBytes());
-        		result.write("\\shpwrk2".getBytes());
-        		break;
-        	case SHAPE_WRAP_LARGEST:
-        		result.write("\\shpwr2".getBytes());
-        		result.write("\\shpwrk3".getBytes());
-        		break;
-        	case SHAPE_WRAP_TIGHT_BOTH:
-        		result.write("\\shpwr4".getBytes());
-        		result.write("\\shpwrk0".getBytes());
-        		break;
-        	case SHAPE_WRAP_TIGHT_LEFT:
-        		result.write("\\shpwr4".getBytes());
-        		result.write("\\shpwrk1".getBytes());
-        		break;
-        	case SHAPE_WRAP_TIGHT_RIGHT:
-        		result.write("\\shpwr4".getBytes());
-        		result.write("\\shpwrk2".getBytes());
-        		break;
-        	case SHAPE_WRAP_TIGHT_LARGEST:
-        		result.write("\\shpwr4".getBytes());
-        		result.write("\\shpwrk3".getBytes());
-        		break;
-        	case SHAPE_WRAP_THROUGH:
-        		result.write("\\shpwr5".getBytes());
-        		break;
-        	default:
-        		result.write("\\shpwr3".getBytes());
-        	}
-        	if(this.inHeader) {
-        		result.write("\\shpfhdr1".getBytes());
-        	} 
-        	if(this.doc.getDocumentSettings().isOutputDebugLineBreaks()) {
-        		result.write('\n');
-        	}
-        	result.write(OPEN_GROUP);
-        	result.write("\\*\\shpinst".getBytes());
-        	Iterator it = this.properties.values().iterator();
-        	while(it.hasNext()) {
-        		result.write(((RtfShapeProperty) it.next()).write());
-        	}
-        	if(!this.shapeText.equals("")) {
-        		result.write(OPEN_GROUP);
-        		result.write("\\shptxt".getBytes());
-        		result.write(DELIMITER);
-        		result.write(this.shapeText.getBytes());
-        		result.write(CLOSE_GROUP);
-        	}
-        	result.write(CLOSE_GROUP);
-        	if(this.doc.getDocumentSettings().isOutputDebugLineBreaks()) {
-        		result.write('\n');
-        	}
-        	result.write(CLOSE_GROUP);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-	}
+    }        
+	
 }

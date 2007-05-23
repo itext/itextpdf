@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.style;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
@@ -66,8 +67,9 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * it needs to be set as the font of a Paragraph. Otherwise it will work like a
  * RtfFont. It also supports inheritance of styles.
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfParagraphStyle extends RtfFont {
 
@@ -648,28 +650,36 @@ public class RtfParagraphStyle extends RtfFont {
     
     /**
      * Writes the definition of this RtfParagraphStyle for the stylesheet list.
+     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
      */
     public byte[] writeDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write("{".getBytes());
-            result.write("\\style".getBytes());
-            result.write("\\s".getBytes());
-            result.write(intToByteArray(this.styleNumber));
-            result.write(RtfBasicElement.DELIMITER);
-            result.write(writeParagraphSettings());
-            result.write(super.writeBegin());
-            result.write(RtfBasicElement.DELIMITER);
-            result.write(this.styleName.getBytes());
-            result.write(";".getBytes());
-            result.write("}".getBytes());
-            if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
-                result.write('\n');
-            }
+        	writeDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+    /**
+     * Writes the definition of this RtfParagraphStyle for the stylesheet list.
+     */
+    public void writeDefinition(final OutputStream result) throws IOException 
+    {
+        result.write("{".getBytes());
+        result.write("\\style".getBytes());
+        result.write("\\s".getBytes());
+        result.write(intToByteArray(this.styleNumber));
+        result.write(RtfBasicElement.DELIMITER);
+        result.write(writeParagraphSettings());
+        result.write(super.writeBegin());
+        result.write(RtfBasicElement.DELIMITER);
+        result.write(this.styleName.getBytes());
+        result.write(";".getBytes());
+        result.write("}".getBytes());
+        if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
+            result.write('\n');
+        }    	
     }
     
     /**
@@ -696,11 +706,18 @@ public class RtfParagraphStyle extends RtfFont {
     }
     
     /**
-     * Unused
-     * @return An empty byte array.
+     * unused
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-    public byte[] write() {
-        return new byte[0];
+    public byte[] write()
+    {
+    	return(new byte[0]);
+    }
+    /**
+     * unused
+     */
+    public void writeContent(final OutputStream out) throws IOException
+    {    	
     }
     
     /**

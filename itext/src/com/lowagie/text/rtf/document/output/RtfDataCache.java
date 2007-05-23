@@ -58,10 +58,16 @@ import java.io.OutputStream;
  * The RtfDataCache interface must be implemented by classes wishing to
  * act as caches for the rtf document data.
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
-public interface RtfDataCache {
+public interface RtfDataCache 
+{
+    /**
+     * Constant for caching efficently into memory.
+     */
+    public static final int CACHE_MEMORY_EFFICIENT = 3;
     /**
      * Constant for caching into memory.
      */
@@ -70,12 +76,14 @@ public interface RtfDataCache {
      * Constant for caching to the disk.
      */
     public static final int CACHE_DISK = 1;
+    
     /**
      * Get the OutputStream that the RtfDocument can write to.
      * 
      * @return The OutputStream the RtfDocument can use.
      */
     public OutputStream getOutputStream();
+    
     /**
      * Write the content of the cache into the OutputStream.
      * 
