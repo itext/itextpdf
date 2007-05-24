@@ -104,14 +104,14 @@ public class RtfDocument extends RtfElement {
      */
     private static final byte[] RTF_DOCUMENT = "\\rtf1".getBytes();
 
-    private final static byte[] FSC_LINE = getLatin1Bytes("\\line ");
-    private final static byte[] FSC_PAR = getLatin1Bytes("\\par ");
-    private final static byte[] FSC_TAB = getLatin1Bytes("\\tab ");
-    private final static byte[] FSC_PAGE_PAR = getLatin1Bytes("\\page\\par ");
-    private final static byte[] FSC_NEWPAGE = getLatin1Bytes("$newpage$");
-    private final static byte[] FSC_BACKSLASH = getLatin1Bytes("\\");
-    private final static byte[] FSC_HEX_PREFIX = getLatin1Bytes("\\\'");
-    private final static byte[] FSC_UNI_PREFIX = getLatin1Bytes("\\u");
+    private final static byte[] FSC_LINE = "\\line ".getBytes();
+    private final static byte[] FSC_PAR = "\\par ".getBytes();
+    private final static byte[] FSC_TAB = "\\tab ".getBytes();
+    private final static byte[] FSC_PAGE_PAR = "\\page\\par ".getBytes();
+    private final static byte[] FSC_NEWPAGE = "$newpage$".getBytes();
+    private final static byte[] FSC_BACKSLASH = "\\".getBytes();
+    private final static byte[] FSC_HEX_PREFIX = "\\\'".getBytes();
+    private final static byte[] FSC_UNI_PREFIX = "\\u".getBytes();
     
     /**
      * The default constructor for a RtfDocument
@@ -378,23 +378,6 @@ public class RtfDocument extends RtfElement {
         return(true);
     }
     
-    private static byte[] getLatin1Bytes(final String s) {
-        if(s == null) {
-            return(null);
-        }
-        final int n = s.length();
-        if(n == 0) {
-            return(new byte[0]);
-        }
-        final byte[] result = new byte[n];
-        for(int k = 0; k < n; k++) {
-            final char c = s.charAt(k);
-            result[k] = (byte)((c <= 0xff) ? c : '?');
-        }
-        return(result);
-    }
-
-
     /**
      * Whether to automagically generate table of contents entries when
      * adding Chapters or Sections.
