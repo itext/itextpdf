@@ -1089,10 +1089,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#drawPolygon(int[], int[], int)
      */
     public void drawPolygon(int[] xPoints, int[] yPoints, int nPoints) {
-        Polygon poly = new Polygon();
-        for (int i = 0; i < nPoints; i++) {
-            poly.addPoint(xPoints[i], yPoints[i]);
-        }
+        Polygon poly = new Polygon(xPoints, yPoints, nPoints);
         draw(poly);
     }
     
