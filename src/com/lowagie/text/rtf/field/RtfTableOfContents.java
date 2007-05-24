@@ -52,8 +52,7 @@
 
 package com.lowagie.text.rtf.field;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 import com.lowagie.text.Font;
 
@@ -120,20 +119,23 @@ public class RtfTableOfContents extends RtfField {
      */
     protected byte[] writeFieldResultContent() throws IOException 
     {
-        return getDefaultTextBytes();
+    	ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+    	writeFieldResultContent(out);
+        return out.toByteArray();
     }
     /**
      * Writes the field result content
      */
     protected void writeFieldResultContent(final OutputStream out) throws IOException 
     {
-    	byte[] b = getDefaultTextBytes();
-    	if(b != null) out.write(b);
+    	document.filterSpecialChar(out, defaultText, true, true);
+//    	byte[] b = getDefaultTextBytes();
+//    	if(b != null) out.write(b);
     }
     
-    private byte[] getDefaultTextBytes()
-    {
-    	return(document.filterSpecialChar(defaultText, true, true).getBytes());
-    }    
+//    private byte[] getDefaultTextBytes()
+//    {
+//    	return(document.filterSpecialChar(defaultText, true, true).getBytes());
+//    }    
     
 }

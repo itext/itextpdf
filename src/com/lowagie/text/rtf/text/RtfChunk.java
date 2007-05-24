@@ -170,7 +170,8 @@ public class RtfChunk extends RtfElement {
             result.write(intToByteArray(this.background.getColorNumber()));
         }
         result.write(DELIMITER);
-       	result.write(document.filterSpecialChar(content, false, softLineBreaks || this.document.getDocumentSettings().isAlwaysGenerateSoftLinebreaks()).getBytes());
+       	//.result.write(document.filterSpecialChar(content, false, softLineBreaks || this.document.getDocumentSettings().isAlwaysGenerateSoftLinebreaks()).getBytes());
+        document.filterSpecialChar(result, content, false, softLineBreaks || this.document.getDocumentSettings().isAlwaysGenerateSoftLinebreaks());
         
         if(superSubScript != 0) {
             result.write(FONT_END_SUPER_SUBSCRIPT);

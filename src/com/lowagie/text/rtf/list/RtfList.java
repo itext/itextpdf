@@ -298,6 +298,20 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         fontBullet = new RtfFont(document, new Font(Font.SYMBOL, 10, Font.NORMAL, new Color(0, 0, 0)));
     }
     
+    /**
+     * @deprecated
+     * @return
+     */
+    private byte[] writeIndentations() {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        try {
+        	writeIndentations(result);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+        return result.toByteArray();
+    }
+    
     private void writeIndentations(final OutputStream result) throws IOException
     {
         result.write(LIST_LEVEL_FIRST_INDENT);

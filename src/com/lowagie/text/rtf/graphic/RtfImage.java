@@ -69,6 +69,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
 /**
  * The RtfImage contains one image. Supported image types are jpeg, png, wmf, bmp.
  * 
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Paulo Soares
  * @author Thomas Bickel (tmb99@inode.at)
@@ -238,9 +239,10 @@ public class RtfImage extends RtfElement {
     
     
     /**
-     * lookup table used for converting bytes to hex chars. 
+     * lookup table used for converting bytes to hex chars.
+     * TODO Should probably be refactored into a helper class
      */
-    private final static byte[] byte2charLUT = new byte[512]; //'0001020304050607 ... fafbfcfdfeff'
+    public final static byte[] byte2charLUT = new byte[512]; //'0001020304050607 ... fafbfcfdfeff'
     static {
     	char c = '0';
     	for(int k = 0; k < 16; k++) {
@@ -253,6 +255,7 @@ public class RtfImage extends RtfElement {
     /**
      * Writes the image data to the given buffer as hex encoded text.
      * 
+     * @param binary
      * @param bab
      * @throws IOException
      */
@@ -274,7 +277,7 @@ public class RtfImage extends RtfElement {
     /**
      * Returns the image raw data size in bytes.
      * 
-     * @return the raw data size of the image in bytes
+     * @return
      */
     private int imageDataSize()
     {

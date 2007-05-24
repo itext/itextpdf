@@ -137,7 +137,8 @@ public class RtfTOCEntry extends RtfField {
             result.write(TOC_ENTRY_NO_PAGE_NUMBER);
         }
         result.write(DELIMITER);
-        result.write(this.document.filterSpecialChar(this.entry, true, false).getBytes());
+        //.result.write(this.document.filterSpecialChar(this.entry, true, false).getBytes());
+        this.document.filterSpecialChar(result, this.entry, true, false);
         result.write(CLOSE_GROUP);
         result.write(TEXT_HIDDEN_OFF);
     }

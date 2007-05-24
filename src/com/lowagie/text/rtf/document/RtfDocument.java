@@ -64,6 +64,7 @@ import com.lowagie.text.rtf.graphic.RtfImage;
  * The RtfDocument stores all document related data and also the main data stream.
  * INTERNAL CLASS - NOT TO BE USED DIRECTLY
  *
+ * @version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Todd Bush [Tab support]
  * @author Thomas Bickel (tmb99@inode.at)
@@ -103,16 +104,25 @@ public class RtfDocument extends RtfElement {
      */
     private static final byte[] RTF_DOCUMENT = "\\rtf1".getBytes();
 
+    private final static byte[] FSC_LINE = getLatin1Bytes("\\line ");
+    private final static byte[] FSC_PAR = getLatin1Bytes("\\par ");
+    private final static byte[] FSC_TAB = getLatin1Bytes("\\tab ");
+    private final static byte[] FSC_PAGE_PAR = getLatin1Bytes("\\page\\par ");
+    private final static byte[] FSC_NEWPAGE = getLatin1Bytes("$newpage$");
+    private final static byte[] FSC_BACKSLASH = getLatin1Bytes("\\");
+    private final static byte[] FSC_HEX_PREFIX = getLatin1Bytes("\\\'");
+    private final static byte[] FSC_UNI_PREFIX = getLatin1Bytes("\\u");
+    
     /**
      * The default constructor for a RtfDocument
      */
     public RtfDocument() {
         super(null);
-        data = new RtfMemoryCache();
-        mapper = new RtfMapper(this);
-        documentHeader = new RtfDocumentHeader(this);
-        documentHeader.init();
-        previousRandomInts = new ArrayList();
+        this.data = new RtfMemoryCache();
+        this.mapper = new RtfMapper(this);
+        this.documentHeader = new RtfDocumentHeader(this);
+        this.documentHeader.init();
+        this.previousRandomInts = new ArrayList();
         this.documentSettings = new RtfDocumentSettings(this);
     }
 
@@ -141,8 +151,8 @@ public class RtfDocument extends RtfElement {
             out.write(OPEN_GROUP);
             out.write(RtfDocument.RTF_DOCUMENT);
             //out.write(documentHeader.write());
-            documentHeader.writeContent(out);
-            data.writeTo(out);
+            this.documentHeader.writeContent(out);
+            this.data.writeTo(out);
             out.write(CLOSE_GROUP);
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -190,7 +200,7 @@ public class RtfDocument extends RtfElement {
                 if(element instanceof RtfImage) {
                     ((RtfImage) element).setTopLevelElement(true);
                 }
-                element.writeContent( data.getOutputStream() );
+                element.writeContent( this.data.getOutputStream() );
                 this.lastElementWritten = element;
             }
         } catch(IOException ioe) {
@@ -204,7 +214,7 @@ public class RtfDocument extends RtfElement {
      * @return The RtfMapper
      */
     public RtfMapper getMapper() {
-        return mapper;
+        return this.mapper;
     }
     
     /**
@@ -216,8 +226,8 @@ public class RtfDocument extends RtfElement {
         Integer newInt = null;
         do {
             newInt = new Integer((int) (Math.random() * Integer.MAX_VALUE));
-        } while(previousRandomInts.contains(newInt));
-        previousRandomInts.add(newInt);
+        } while(this.previousRandomInts.contains(newInt));
+        this.previousRandomInts.add(newInt);
         return newInt.intValue();
     }
     
@@ -236,6 +246,7 @@ public class RtfDocument extends RtfElement {
      * @param useHex indicated if the hexadecimal value has to be used
      * @param softLineBreaks whether to use soft line breaks instead of default hard ones.
      *
+     * @deprecated replaced by {@link #filterSpecialChar(OutputStream, String, boolean, boolean)}
      * @return The converted String
      */
     public String filterSpecialChar(String str, boolean useHex, boolean softLineBreaks) {
@@ -243,7 +254,7 @@ public class RtfDocument extends RtfElement {
             return "";
         }
         int length = str.length();
-        int z = (int) 'z';
+        int z = 'z';
         StringBuffer ret = new StringBuffer(length);
         for (int i = 0; i < length; i++) {
             char ch = str.charAt(i);
@@ -258,9 +269,9 @@ public class RtfDocument extends RtfElement {
                 }
             } else if (ch == '\t') {
                 ret.append("\\tab ");
-            } else if (((int) ch) > z && this.documentSettings.isAlwaysUseUnicode()) {
+            } else if ((ch) > z && this.documentSettings.isAlwaysUseUnicode()) {
                 if(useHex) {
-                    ret.append("\\\'").append(Long.toHexString((long) ch));
+                    ret.append("\\\'").append(Long.toHexString(ch));
                 } else {
                     ret.append("\\u").append((long) ch).append('?');
                 }
@@ -280,6 +291,110 @@ public class RtfDocument extends RtfElement {
         return s;
     }
     
+    /**
+     * Writes the given string to the given {@link OutputStream} encoding the string characters.
+     * 
+     * @param out destination OutputStream
+     * @param str string to write
+     * @param useHex if <code>true</code> hex encoding characters is preferred to unicode encoding if possible
+     * @param softLineBreaks if <code>true</code> return characters are written as soft line breaks
+     * 
+     * @throws IOException
+     */
+    public void filterSpecialChar(final OutputStream out, final String str, final boolean useHex, final boolean softLineBreaks) throws IOException
+    {
+        if(out == null) {
+            throw(new NullPointerException("null OutpuStream"));
+        }
+
+        final boolean alwaysUseUniCode = this.documentSettings.isAlwaysUseUnicode();
+        if(str == null) {
+            return;
+        }
+        final int len = str.length();
+        if(len == 0) {
+            return;
+        }
+
+        for(int k = 0; k < len; k++) {
+            final char c = str.charAt(k);
+            if(c < 0x20) {
+                //allow return and tab only
+                if(c == '\n') {
+                    out.write(softLineBreaks ? FSC_LINE : FSC_PAR);
+                } else
+                    if(c == '\t') {
+                        out.write(FSC_TAB);                 
+                    } else {
+                        out.write('?');
+                    }
+            } else 
+                if((c == '\\') || (c == '{') || (c == '}')) {
+                    //escape
+                    out.write(FSC_BACKSLASH);
+                    out.write(c);
+                } else
+                    if((c == '$') && (len-k >= FSC_NEWPAGE.length) && subMatch(str, k, FSC_NEWPAGE)) {
+                        //"$newpage$" -> "\\page\\par "
+                        out.write(FSC_PAGE_PAR);
+                        k += FSC_NEWPAGE.length-1;
+                    } else {
+                        if((c > 0xff) || ((c > 'z') && alwaysUseUniCode)) {
+                            if(useHex && (c <= 0xff)) {
+                                //encode as 2 char hex string 
+                                out.write(FSC_HEX_PREFIX);
+                                out.write(RtfImage.byte2charLUT, c*2, 2);
+                            } else {
+                                //encode as decimal, signed short value
+                                out.write(FSC_UNI_PREFIX);
+                                String s = Short.toString((short)c);
+                                for(int x = 0; x < s.length(); x++) {
+                                    out.write(s.charAt(x));
+                                }
+                                out.write('?');
+                            }
+                        } else {
+                            out.write(c);
+                        }
+                    }
+        }       
+    }
+    /**
+     * Returns <code>true</code> if <tt>m.length</tt> characters in <tt>str</tt>, starting at offset <tt>soff</tt>
+     * match the bytes in the given array <tt>m</tt>.
+     * 
+     * @param str the string to search for a match
+     * @param soff the starting offset in str
+     * @param m the array to match
+     * @return <code>true</code> if there is match
+     */
+    private static boolean subMatch(final String str, int soff, final byte[] m)
+    {
+        for(int k = 0; k < m.length; k++) {
+            if(str.charAt(soff++) != m[k]) {
+                return(false);
+            }
+        }
+        return(true);
+    }
+    
+    private static byte[] getLatin1Bytes(final String s) {
+        if(s == null) {
+            return(null);
+        }
+        final int n = s.length();
+        if(n == 0) {
+            return(new byte[0]);
+        }
+        final byte[] result = new byte[n];
+        for(int k = 0; k < n; k++) {
+            final char c = s.charAt(k);
+            result[k] = (byte)((c <= 0xff) ? c : '?');
+        }
+        return(result);
+    }
+
+
     /**
      * Whether to automagically generate table of contents entries when
      * adding Chapters or Sections.
