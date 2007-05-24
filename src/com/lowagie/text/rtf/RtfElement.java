@@ -64,15 +64,6 @@ import com.lowagie.text.rtf.document.RtfDocument;
  */
 public abstract class RtfElement implements RtfBasicElement {
     /**
-     * Constant for a rtf escape
-     */
-    //public static final byte[] ESCAPE = "\\".getBytes();
-    /**
-     * Constant for a rtf extended escape
-     */
-    //public static final byte[] EXTENDED_ESCAPE = "\\*\\".getBytes();
-
-    /**
      * The RtfDocument this RtfElement belongs to
      */
     protected RtfDocument document = null;
