@@ -69,7 +69,6 @@ import com.lowagie.text.rtf.text.RtfParagraph;
 /**
  * The RtfImage contains one image. Supported image types are jpeg, png, wmf, bmp.
  * 
- * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Paulo Soares
  * @author Thomas Bickel (tmb99@inode.at)
@@ -255,7 +254,6 @@ public class RtfImage extends RtfElement {
      * Writes the image data to the given buffer as hex encoded text.
      * 
      * @param bab
-     * @param binary
      * @throws IOException
      */
     private void writeImageDataHexEncoded(final OutputStream bab) throws IOException
@@ -276,7 +274,7 @@ public class RtfImage extends RtfElement {
     /**
      * Returns the image raw data size in bytes.
      * 
-     * @return
+     * @return the raw data size of the image in bytes
      */
     private int imageDataSize()
     {

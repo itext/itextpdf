@@ -152,7 +152,7 @@ public class RtfListItem extends RtfParagraph {
      * @param out destination stream
      * @return <code>true</code> if a RtfList definition was written, <code>false</code> otherwise
      * @throws IOException
-     * @see {@link RtfList#writeDefinition(OutputStream)}
+     * @see RtfList#writeDefinition(OutputStream)
      */
     public boolean writeDefinition(OutputStream out) throws IOException
     {

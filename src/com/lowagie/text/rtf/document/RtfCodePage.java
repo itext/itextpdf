@@ -61,7 +61,6 @@ import com.lowagie.text.rtf.RtfExtendedElement;
  * The RtfCodePage class allows different code pages to be used in the rtf document.
  * Currently always ansi / ansicpg1252
  *
- * @version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
  */

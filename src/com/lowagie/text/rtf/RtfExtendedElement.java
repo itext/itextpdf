@@ -57,7 +57,6 @@ import java.io.OutputStream;
  * The RtfExtendedElement interface is to be used for elements that also
  * write data into the definition part of the rtf document
  * 
- * @version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
  */
