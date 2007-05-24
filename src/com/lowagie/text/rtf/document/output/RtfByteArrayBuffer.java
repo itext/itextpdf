@@ -104,7 +104,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	/**
 	 * Returns the number of bytes that have been written to this buffer so far.
 	 * 
-	 * @return number of bytes written to this buffer
+     * @return number of bytes written to this buffer
 	 */
 	public long size()
 	{
@@ -201,7 +201,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	 * Writes all bytes available in the given inputstream to this buffer. 
 	 * 
 	 * @param in
-	 * @return number of bytes written
+     * @return number of bytes written
 	 * @throws IOException
 	 */
 	public long write(final InputStream in) throws IOException
@@ -257,7 +257,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	/**
 	 * Returns the internal list of byte array buffers without copying the buffer contents. 
 	 * 
-	 * @return an byte aray of buffers
+     * @return number of bytes written
 	 */
 	public byte[][] toByteArrayArray()
 	{
@@ -268,7 +268,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	/**
 	 * Allocates a new array and copies all data that has been written to this buffer to the newly allocated array.
 	 * 
-	 * @return a new byte array
+     * @return a new byte array
 	 */
 	public byte[] toByteArray()
 	{
