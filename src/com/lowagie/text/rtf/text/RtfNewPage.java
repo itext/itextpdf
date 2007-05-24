@@ -70,7 +70,7 @@ public class RtfNewPage extends RtfElement {
     /**
      * Constant for a new page
      */
-    private static final byte[] NEW_PAGE = "\\page".getBytes();
+    public static final byte[] NEW_PAGE = "\\page".getBytes();
     
     /**
      * Constructs a RtfNewPage
