@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -191,7 +192,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 cprops.addToChain(tag, h);
                 Image img = null;
                 if (interfaceProps != null) {
-                    HashMap images = (HashMap)interfaceProps.get("img_static");
+                    Map images = (Map)interfaceProps.get("img_static");
                     if (images != null) {
                         Image tim = (Image)images.get(src);
                         if (tim != null)
