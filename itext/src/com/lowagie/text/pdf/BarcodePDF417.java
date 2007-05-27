@@ -746,7 +746,10 @@ public class BarcodePDF417 {
                 if (c[j] == '\r')
                     c[j] = '\n';
             }
-            System.out.println(Character.toString(v.type) + new String(c));
+            StringBuffer sb = new StringBuffer();
+            sb.append(v.type);
+            sb.append(c);
+            System.out.println(sb.toString());
         }
     }
 
