@@ -172,7 +172,7 @@ public class PdfPKCS7 {
      */    
     public PdfPKCS7(byte[] contentsKey, byte[] certsKey, String provider) throws SecurityException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, IOException, StreamParsingException {
         X509CertParser cr = new X509CertParser();
-        cr.engineInit(new ByteArrayInputStream(contentsKey));
+        cr.engineInit(new ByteArrayInputStream(certsKey));
         certs = cr.engineReadAll();
         signCert = (X509Certificate)certs.iterator().next();
         crls = new ArrayList();
