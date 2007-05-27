@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *
@@ -308,8 +308,6 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     
     /**
      * Write the cell definition part of this RtfCell
-     * 
-     * @return A byte array with the cell definition
      */
     public void writeDefinition(final OutputStream result) throws IOException 
     {

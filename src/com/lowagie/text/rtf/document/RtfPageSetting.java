@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 2003, 2004 by Mark Hall
  *
@@ -229,8 +229,6 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
     }
     /**
      * Writes the definition part for a new section
-     * 
-     * @return A byte array containing the definition for a new section
      */
     public void writeSectionDefinition(final OutputStream result) throws IOException
     {

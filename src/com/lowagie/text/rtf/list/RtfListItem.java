@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 2001, 2002, 2003, 2004, 2005 by Mark Hall
  *
@@ -152,7 +152,6 @@ public class RtfListItem extends RtfParagraph {
      * @param out destination stream
      * @return <code>true</code> if a RtfList definition was written, <code>false</code> otherwise
      * @throws IOException
-     * @see {@link RtfList#writeDefinition(OutputStream)}
      */
     public boolean writeDefinition(OutputStream out) throws IOException
     {
