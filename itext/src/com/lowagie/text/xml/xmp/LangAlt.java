@@ -59,7 +59,7 @@ public class LangAlt extends Properties {
 	private static final long serialVersionUID = 4396971487200843099L;
 	
 	/** Key for the default language. */
-	public static String DEFAULT = "x-default";
+	public static final String DEFAULT = "x-default";
 
 	/** Creates a Properties object that stores languages for use in an XmpSchema */
 	public LangAlt(String defaultValue) {
