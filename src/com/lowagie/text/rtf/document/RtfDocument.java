@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 2003, 2004, 2005 by Mark Hall
  *
@@ -64,7 +64,7 @@ import com.lowagie.text.rtf.graphic.RtfImage;
  * The RtfDocument stores all document related data and also the main data stream.
  * INTERNAL CLASS - NOT TO BE USED DIRECTLY
  *
- * @version: $Id$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Todd Bush [Tab support]
  * @author Thomas Bickel (tmb99@inode.at)

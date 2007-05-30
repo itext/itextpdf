@@ -59,7 +59,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfBasicElement interface defines the interface for elements that can
  * be added to the RtfWriter.
  *
- * @version: $Id$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
  */
