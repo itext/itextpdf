@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.Document;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -58,6 +59,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.URL;
 /** An implementation of a RandomAccessFile for input only
  * that accepts a file or a byte array as data source.
@@ -67,6 +69,8 @@ import java.net.URL;
 public class RandomAccessFileOrArray implements DataInput {
     
     MappedRandomAccessFile rf;
+    RandomAccessFile trf;
+    boolean plainRandomAccess;
     String filename;
     byte arrayIn[];
     int arrayInPtr;
@@ -77,10 +81,11 @@ public class RandomAccessFileOrArray implements DataInput {
     private int startOffset = 0;
 
     public RandomAccessFileOrArray(String filename) throws IOException {
-    	this(filename, false);
+    	this(filename, false, Document.plainRandomAccess);
     }
     
-    public RandomAccessFileOrArray(String filename, boolean forceRead) throws IOException {
+    public RandomAccessFileOrArray(String filename, boolean forceRead, boolean plainRandomAccess) throws IOException {
+        this.plainRandomAccess = plainRandomAccess;
         File file = new File(filename);
         if (!file.canRead()) {
             if (filename.startsWith("file:/") || filename.startsWith("http://") || filename.startsWith("https://") || filename.startsWith("jar:")) {
@@ -118,7 +123,10 @@ public class RandomAccessFileOrArray implements DataInput {
         	return;
         }
         this.filename = filename;
-        rf = new MappedRandomAccessFile(filename, "r");
+        if (plainRandomAccess)
+            trf = new RandomAccessFile(filename, "r");
+        else
+            rf = new MappedRandomAccessFile(filename, "r");
     }
 
     public RandomAccessFileOrArray(URL url) throws IOException {
@@ -155,6 +163,7 @@ public class RandomAccessFileOrArray implements DataInput {
         filename = file.filename;
         arrayIn = file.arrayIn;
         startOffset = file.startOffset;
+        plainRandomAccess = file.plainRandomAccess;
     }
     
     public void pushBack(byte b) {
@@ -168,7 +177,7 @@ public class RandomAccessFileOrArray implements DataInput {
             return back & 0xff;
         }
         if (arrayIn == null)
-            return rf.read();
+            return plainRandomAccess ? trf.read() : rf.read();
         else {
             if (arrayInPtr >= arrayIn.length)
                 return -1;
@@ -193,7 +202,7 @@ public class RandomAccessFileOrArray implements DataInput {
             }
         }
         if (arrayIn == null) {
-            return rf.read(b, off, len) + n;
+            return (plainRandomAccess ? trf.read(b, off, len) : rf.read(b, off, len)) + n;
         }
         else {
             if (arrayInPtr >= arrayIn.length)
@@ -260,19 +269,23 @@ public class RandomAccessFileOrArray implements DataInput {
     }
     
     public void reOpen() throws IOException {
-        if (filename != null && rf == null)
-            rf = new MappedRandomAccessFile(filename, "r");
+        if (filename != null && rf == null && trf == null) {
+            if (plainRandomAccess)
+                trf = new RandomAccessFile(filename, "r");
+            else
+                rf = new MappedRandomAccessFile(filename, "r");
+        }
         seek(0);
     }
     
     protected void insureOpen() throws IOException {
-        if (filename != null && rf == null) {
+        if (filename != null && rf == null && trf == null) {
             reOpen();
         }
     }
     
     public boolean isOpen() {
-        return (filename == null || rf != null);
+        return (filename == null || rf != null || trf != null);
     }
     
     public void close() throws IOException {
@@ -281,12 +294,16 @@ public class RandomAccessFileOrArray implements DataInput {
             rf.close();
             rf = null;
         }
+        else if (trf != null) {
+            trf.close();
+            trf = null;
+        }
     }
     
     public int length() throws IOException {
         if (arrayIn == null) {
             insureOpen();
-            return (int)rf.length() - startOffset;
+            return (int)(plainRandomAccess ? trf.length() : rf.length()) - startOffset;
         }
         else
             return arrayIn.length - startOffset;
@@ -297,7 +314,10 @@ public class RandomAccessFileOrArray implements DataInput {
         isBack = false;
         if (arrayIn == null) {
             insureOpen();
-            rf.seek(pos);
+            if (plainRandomAccess)
+                trf.seek(pos);
+            else
+                rf.seek(pos);
         }
         else
             arrayInPtr = pos;
@@ -311,7 +331,7 @@ public class RandomAccessFileOrArray implements DataInput {
         insureOpen();
         int n = isBack ? 1 : 0;
         if (arrayIn == null) {
-            return (int)rf.getFilePointer() - n - startOffset;
+            return (int)(plainRandomAccess ? trf.getFilePointer() : rf.getFilePointer()) - n - startOffset;
         }
         else
             return arrayInPtr - n - startOffset;

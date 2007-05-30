@@ -110,6 +110,12 @@ public class Document implements DocListener {
 	 */
     public static boolean compress = true; 
     
+	/**
+	 * When true the file access is not done through a memory mapped file. Use it if the file
+     * is too big to be mapped in your address space.
+	 */
+    public static boolean plainRandomAccess = false; 
+    
 	/** The DocListener. */
     private ArrayList listeners = new ArrayList();
     
