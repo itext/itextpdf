@@ -264,7 +264,7 @@ class PdfDocument extends Document {
                         String name = (String) entry.getKey();
                         Object obj[] = (Object[]) entry.getValue();
                         PdfIndirectReference ref = (PdfIndirectReference)obj[1];
-                        ar.add(new PdfString(name));
+                        ar.add(new PdfString(name, null));
                         ar.add(ref);
                     }
                     PdfDictionary dests = new PdfDictionary();
