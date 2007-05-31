@@ -57,6 +57,7 @@ import java.io.OutputStream;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.style.RtfParagraphStyle;
 import com.lowagie.text.rtf.text.RtfChunk;
 import com.lowagie.text.rtf.text.RtfParagraph;
 
@@ -110,6 +111,14 @@ public class RtfListItem extends RtfParagraph {
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
+        if(this.paragraphStyle.getSpacingBefore() > 0) {
+            result.write(RtfParagraphStyle.SPACING_BEFORE);
+            result.write(intToByteArray(paragraphStyle.getSpacingBefore()));
+        }
+        if(this.paragraphStyle.getSpacingAfter() > 0) {
+            result.write(RtfParagraphStyle.SPACING_AFTER);
+            result.write(intToByteArray(this.paragraphStyle.getSpacingAfter()));
+        }
         for(int i = 0; i < chunks.size(); i++) {
             RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
             if(rtfElement instanceof RtfChunk) {

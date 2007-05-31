@@ -82,6 +82,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
+ * @author Felix Satyaputra (f_satyaputra@yahoo.co.uk)
  */
 public class RtfList extends RtfElement implements RtfExtendedElement {
 
@@ -122,9 +123,13 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      */
     private static final byte[] LIST_LEVEL_STYLE_NUMBERED_END = ".;".getBytes();
     /**
-     * Constant for the list level bulleted style
+     * Constant for the beginning of the list level bulleted style
      */
-    private static final byte[] LIST_LEVEL_STYLE_BULLETED = "\\\'01\\u-3913 ?;".getBytes();
+    private static final byte[] LIST_LEVEL_STYLE_BULLETED_BEGIN = "\\\'01".getBytes();
+    /**
+     * Constant for the end of the list level bulleted style
+     */
+    private static final byte[] LIST_LEVEL_STYLE_BULLETED_END = ";".getBytes();
     /**
      * Constant for the beginning of the list level numbers
      */
@@ -221,6 +226,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * The parent List in multi-level lists.
      */
     private RtfList parentList = null;
+    /**
+     * The text to use as the bullet character
+     */
+    private String bulletCharacter = "\u00b7"; 
     
     /**
      * Constructs a new RtfList for the specified List.
@@ -295,7 +304,13 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         }
         
         fontNumber = new RtfFont(document, new Font(Font.TIMES_ROMAN, 10, Font.NORMAL, new Color(0, 0, 0)));
-        fontBullet = new RtfFont(document, new Font(Font.SYMBOL, 10, Font.NORMAL, new Color(0, 0, 0)));
+        if (list.getSymbol() != null && list.getSymbol().getFont() != null && !list.getSymbol().getContent().startsWith("-") && list.getSymbol().getContent().length() > 0) {
+            // only set this to bullet symbol is not default
+            this.fontBullet = new RtfFont(document, list.getSymbol().getFont());
+            this.bulletCharacter = list.getSymbol().getContent().substring(0, 1);
+        } else {
+            this.fontBullet = new RtfFont(document, new Font(Font.SYMBOL, 10, Font.NORMAL, new Color(0, 0, 0)));
+        }        
     }
     
     /**
@@ -379,7 +394,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             result.write(intToByteArray(listLevel));
             result.write(LIST_LEVEL_STYLE_NUMBERED_END);
         } else {
-            result.write(LIST_LEVEL_STYLE_BULLETED);
+            result.write(LIST_LEVEL_STYLE_BULLETED_BEGIN);
+            this.document.filterSpecialChar(result, this.bulletCharacter, false, false);
+            result.write(LIST_LEVEL_STYLE_BULLETED_END);
         }
         result.write(CLOSE_GROUP);
         result.write(OPEN_GROUP);
@@ -505,14 +522,14 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
-		result.write(writeListBeginning());
-        result.write(writeListNumbers());
         result.write(OPEN_GROUP);
         int itemNr = 0;
         for(int i = 0; i < items.size(); i++) {
             RtfElement rtfElement = (RtfElement) items.get(i);
             if(rtfElement instanceof RtfListItem) {
                 itemNr++;
+                result.write(writeListBeginning());
+                result.write(writeListNumbers());
                 result.write(OPEN_GROUP);
                 result.write(LIST_TEXT);
                 result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
@@ -538,7 +555,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     }
                     result.write(LIST_NUMBER_END);
                 } else {
-                    result.write(LIST_BULLET);
+                    this.document.filterSpecialChar(result, this.bulletCharacter, true, false);
                 }
                 result.write(TAB);
                 result.write(CLOSE_GROUP);                
@@ -547,15 +564,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 if(i < (items.size() - 1) || !this.inTable || this.listLevel > 0) {
                     result.write(RtfParagraph.PARAGRAPH);
                 }
-                if(((RtfListItem) rtfElement).isContainsInnerList()) {
-                    result.write(writeListNumbers());
-                }
                 result.write("\n".getBytes());
             } else if(rtfElement instanceof RtfList) {
                 //.result.write(rtfElement.write());
             	rtfElement.writeContent(result);
-        		result.write(writeListBeginning());
-                result.write(writeListNumbers());
                 result.write("\n".getBytes());
             }
         }
