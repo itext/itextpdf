@@ -30,7 +30,7 @@
 		<java classname="com.lowagie.tools.CvsLogParser" dir="${basedir}" fork="true">
 			<arg value="${itext.home}/changelog.txt" />
 	        <classpath>
-    	        <pathelement location="${itext.bin}/iText.jar" />
+    	        <pathelement location="${itext.lib}/iText.jar" />
         	</classpath>
 		</java>
     </target>
@@ -64,9 +64,9 @@
 	
 	<target name="release.sf" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
-        <copy file="${itext.bin}/iText.jar" todir="${itext.dist}" overwrite="yes" />
-		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.bin}/iText.jar" tofile="${itext.sf}/itext-${releasenumber}.jar" overwrite="yes"/>
+        <copy file="${itext.lib}/iText.jar" todir="${itext.dist}" overwrite="yes" />
+		<copy file="${itext.lib}/iText.jar" tofile="${itext.dist}/itext-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.lib}/iText.jar" tofile="${itext.sf}/itext-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${releasenumber}.zip" overwrite="yes"/>
 		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/itext-src-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/itext-docs-${releasenumber}.tar.gz" overwrite="yes"/>
@@ -75,9 +75,9 @@
 	
 	<target name="earlyaccess.sf" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
-        <copy file="${itext.bin}/iText.jar" todir="${itext.dist}" overwrite="yes" />
-		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
-		<copy file="${itext.bin}/iText.jar" tofile="${itext.sf}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
+        <copy file="${itext.lib}/iText.jar" todir="${itext.dist}" overwrite="yes" />
+		<copy file="${itext.lib}/iText.jar" tofile="${itext.dist}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
+		<copy file="${itext.lib}/iText.jar" tofile="${itext.sf}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${earlyaccesslowagie}.zip" overwrite="yes"/>
 		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/itext-src-${earlyaccesslowagie}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/itext-docs-${earlyaccesslowagie}.tar.gz" overwrite="yes"/>
@@ -88,7 +88,7 @@
     <!-- Making the jars with the Asian Fontfiles                         -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
 	<target name="asian.jar" description="--> makes iTextAsian.jar and iTextAsianCmaps.jar">
-        <jar jarfile="${itext.bin}/iTextAsian.jar" basedir="${itext.src}" includes="**/*.cmap,**/*.properties" />
-        <jar jarfile="${itext.bin}/iTextAsianCmaps.jar" basedir="${itext.src}" excludes="**/*.java, **/*.ps,**/*.txt,**/*.gif,**/*.afm,**/*.html,**/*.cmap,**/*.properties" />
+        <jar jarfile="${itext.lib}/iTextAsian.jar" basedir="${itext.src}" includes="**/*.cmap,**/*.properties" />
+        <jar jarfile="${itext.lib}/iTextAsianCmaps.jar" basedir="${itext.src}" excludes="**/*.java, **/*.ps,**/*.txt,**/*.gif,**/*.afm,**/*.html,**/*.cmap,**/*.properties" />
 	</target>
 </project>

@@ -25,7 +25,6 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 	
 	<target name="release" description="--> builds a release after you have exported the src and www module from CVS">
-		<ant antfile="ant/download.xml" inheritAll="false" target="download.bin" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="ant.zip" />
 		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
@@ -35,7 +34,6 @@
 	</target>
 	
 	<target name="earlyaccess" description="--> builds a release after you have exported the src and www module from CVS">
-		<ant antfile="ant/download.xml" inheritAll="false" target="download.bin" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="ant.zip" />
 		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
@@ -47,18 +45,6 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Forwarding targetcalls to subscripts                             -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-	
-	<target name="download">
-		<ant antfile="ant/download.xml" inheritAll="false" target="download" />
-	</target>
-	
-	<target name="download.bin">
-		<ant antfile="ant/download.xml" inheritAll="false" target="download.bin" />
-	</target>
-	
-	<target name="getFromCvs">
-		<ant antfile="ant/download.xml" inheritAll="false" target="getFromCvs" />
-	</target>
 	
 	<target name="compile">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile" />
