@@ -10,9 +10,9 @@
 	<property file=".ant.properties" />
 
 	<path id="itext.classpath">
-	    <pathelement location="${itext.classes}"/>
-	    <pathelement path="${itext.bin}/bcmail-jdk14-135.jar"/>
-	    <pathelement path="${itext.bin}/bcprov-jdk14-135.jar"/>
+	    <pathelement location="${itext.bin}"/>
+	    <pathelement path="${itext.lib}/bcmail-jdk14-135.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-jdk14-135.jar"/>
 	</path>
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -89,8 +89,8 @@
 			<arg value="examples.xsl" />
 			<arg value="tutorial.xsl" />
 	        <classpath>
-    	        <pathelement location="${itext.bin}/iText.jar" />
-    	        <pathelement location="${itext.bin}/crimson.jar" />
+    	        <pathelement location="${itext.lib}/iText.jar" />
+    	        <pathelement location="${itext.lib}/crimson.jar" />
         	</classpath>
 		</java>
     </target>
