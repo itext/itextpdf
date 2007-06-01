@@ -41,12 +41,12 @@
 
 	<target name="src.zip" description="--> makes a zipfile with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, META-INF/MANIFEST.MF" />
+		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties" />
 	</target>
 	
 	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<tar tarfile="${itext.dist}/src.tar" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, META-INF/MANIFEST.MF" />
+		<tar tarfile="${itext.dist}/src.tar" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties" />
 		<gzip zipfile="${itext.dist}/src.tar.gz" src="${itext.dist}/src.tar"/>
 		<delete file="${itext.dist}/src.tar"/>
 	</target>
