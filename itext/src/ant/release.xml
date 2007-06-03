@@ -15,25 +15,10 @@
 
     <target name="help" description="--> shows the help screen">
         <echo>MAKING A NEW RELEASE (release.xml)</echo>
-        <echo>archive.src: archiving the source</echo>
-        <echo>ant.zip: makes a zip file with the ANT scripts</echo>
-        <echo>release.sf: making the release for SourceForge</echo>
-        <echo>changelog: parsing a changelog.txt file</echo>
+        <echo>archive.src: archiving the source (zip and tar.gz)</echo>
+        <echo>asian.jar: creates a new version of iTextAsian.jar and iTextAsianCmaps.jar</echo>
         <echo />
 	</target>
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Parsing the changelog                                            -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-    <target name="changelog" description="--> parsing a changelog">
-		<java classname="com.lowagie.tools.CvsLogParser" dir="${basedir}" fork="true">
-			<arg value="${itext.home}/changelog.txt" />
-	        <classpath>
-    	        <pathelement location="${itext.lib}/iText.jar" />
-        	</classpath>
-		</java>
-    </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Archiving the code                                               -->
@@ -53,11 +38,6 @@
 	
 	<target name="archive.src" depends="src.zip, src.tar.gz" description="--> archives the source code" />
 
-	<target name="ant.zip" description="--> makes a zipfile with the ANT scripts">
-		<mkdir dir="${itext.dist}"/>
-		<zip zipfile="${itext.dist}/iTextAnt.zip" basedir="${itext.src}" includes="build.xml, ant/**" />
-	</target>
-
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Making a release, ready for upload to SourceForge                -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
@@ -72,17 +52,6 @@
 		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/itext-docs-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/iTextAnt.zip" tofile="${itext.sf}/iTextAnt-${releasenumber}.zip" overwrite="yes"/>
 	</target>
-	
-	<target name="earlyaccess.sf" description="--> makes a complete iText release ready to publish on SourceForge">
-		<mkdir dir="${itext.sf}"/>
-        <copy file="${itext.lib}/iText.jar" todir="${itext.dist}" overwrite="yes" />
-		<copy file="${itext.lib}/iText.jar" tofile="${itext.dist}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
-		<copy file="${itext.lib}/iText.jar" tofile="${itext.sf}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
-		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${earlyaccesslowagie}.zip" overwrite="yes"/>
-		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/itext-src-${earlyaccesslowagie}.tar.gz" overwrite="yes"/>
-		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/itext-docs-${earlyaccesslowagie}.tar.gz" overwrite="yes"/>
-		<copy file="${itext.dist}/iTextAnt.zip" tofile="${itext.sf}/itext-ant-${earlyaccesslowagie}.zip" overwrite="yes"/>
-	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Making the jars with the Asian Fontfiles                         -->
@@ -91,4 +60,5 @@
         <jar jarfile="${itext.lib}/iTextAsian.jar" basedir="${itext.src}" includes="**/*.cmap,**/*.properties" />
         <jar jarfile="${itext.lib}/iTextAsianCmaps.jar" basedir="${itext.src}" excludes="**/*.java, **/*.ps,**/*.txt,**/*.gif,**/*.afm,**/*.html,**/*.cmap,**/*.properties" />
 	</target>
+
 </project>

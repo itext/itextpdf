@@ -21,9 +21,11 @@
 
     <target name="help" description="--> shows the help screen">
         <echo>BUILDING THE iText SITE (site.xml)</echo>
+        <echo>ant lowagie.com: Building the lowagie.com pages</echo>
         <echo>ant javadoc: Building the API documentation</echo>
         <echo>ant docs.tar.gz: Building and jarring the API documentation</echo>
-        <echo>ant lowagie.com: Building the lowagie.com part</echo>
+        <echo>ant tutorial: creates the tutorial pages (without the examples)</echo>
+        <echo>ant tutorial.tar.gz: creates the tutorial and makes tar.gz files</echo>
         <echo />
 	</target>
 
@@ -46,10 +48,39 @@
         <xslt basedir="${itext.src.lowagie}" destdir="${itext.lowagie}" extension=".html" style="${itext.src.lowagie}/lowagie.xsl" includes="*.xml">
 			<param name="releasenumber" expression="${releasenumber}"/>
 			<param name="releasedate" expression="${releasedate}"/>
-			<param name="earlyaccessnumber" expression="${earlyaccessnumber}"/>
-			<param name="earlyaccesspaulo" expression="${earlyaccesspaulo}"/>
-			<param name="earlyaccesslowagie" expression="${earlyaccesslowagie}"/>
 		</xslt>
+    </target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Building the API documentation                                   -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+    <target name="javadoc" description="--> generates the complete documentation with javadoc">
+        <mkdir dir="${itext.docs}" />
+        <javadoc
+            destdir="${itext.docs}"
+            author="true"
+            private="true">
+			<packageset dir="${itext.src}" defaultexcludes="yes">
+      			<include name="com/lowagie/**" />
+		    </packageset>
+        	<classpath refid="itext.classpath"/>
+            <link href="http://java.sun.com/j2se/1.3/docs/api/" />
+        	<link href="http://www.bouncycastle.org/docs/docs1.4/" />
+        	<header>&lt;a href="http://itext.ugent.be/itext-in-action/" target="_blank"&gt;&lt;img src="http://itext.ugent.be/img/lowagie_3d.jpg" border="0" /&gt;&lt;/a&gt;</header>
+        </javadoc>
+    </target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Building and archiving the API documentation                     -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="docs.tar.gz" depends="javadoc" description="--> makes a tar.gz-file with the complete javadoc documentation">
+        <mkdir dir="${itext.dist}" />
+        <mkdir dir="${itext.downloads}" />
+        <tar tarfile="${itext.downloads}/docs.tar" basedir="${itext.docs}" />
+        <gzip zipfile="${itext.dist}/docs.tar.gz" src="${itext.downloads}/docs.tar" />
+        <delete file="${itext.downloads}/docs.tar" />
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -109,38 +140,6 @@
         <tar tarfile="${itext.downloads}/examples.tar" basedir="${itext.build}" includes="examples/**" />
         <gzip zipfile="${itext.dist}/examples.tar.gz" src="${itext.downloads}/examples.tar" />
         <delete file="${itext.downloads}/examples.tar" />
-    </target>
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Building the API documentation                                   -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-	
-    <target name="javadoc" description="--> generates the complete documentation with javadoc">
-        <mkdir dir="${itext.docs}" />
-        <javadoc
-            destdir="${itext.docs}"
-            author="true"
-            private="true">
-			<packageset dir="${itext.src}" defaultexcludes="yes">
-      			<include name="com/lowagie/**" />
-		    </packageset>
-        	<classpath refid="itext.classpath"/>
-            <link href="http://java.sun.com/j2se/1.3/docs/api/" />
-        	<link href="http://www.bouncycastle.org/docs/docs1.4/" />
-        	<header>&lt;a href="http://itext.ugent.be/itext-in-action/" target="_blank"&gt;&lt;img src="http://itext.ugent.be/img/lowagie_3d.jpg" border="0" /&gt;&lt;/a&gt;</header>
-        </javadoc>
-    </target>
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Building and archiving the API documentation                     -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-    <target name="docs.tar.gz" depends="javadoc" description="--> makes a tar.gz-file with the complete javadoc documentation">
-        <mkdir dir="${itext.dist}" />
-        <mkdir dir="${itext.downloads}" />
-        <tar tarfile="${itext.downloads}/docs.tar" basedir="${itext.docs}" />
-        <gzip zipfile="${itext.dist}/docs.tar.gz" src="${itext.downloads}/docs.tar" />
-        <delete file="${itext.downloads}/docs.tar" />
     </target>
 
 </project>
