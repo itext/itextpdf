@@ -14,33 +14,11 @@
     <target name="help" description="--> shows the help screen">
         <echo>Using ANT for ${ant.project.name}</echo>
         <echo />
-		<ant antfile="ant/download.xml" inheritAll="false" />
 		<ant antfile="ant/compile.xml" inheritAll="false" />
 		<ant antfile="ant/site.xml" inheritAll="false" />
 		<ant antfile="ant/release.xml" inheritAll="false" />
+        <echo>release: making the all the files needed for a release (except tutorial)</echo>
     </target>
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Make a new release after exporting the modules src/www from CVS  -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-	
-	<target name="release" description="--> builds a release after you have exported the src and www module from CVS">
-		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
-		<ant antfile="ant/release.xml" inheritAll="false" target="ant.zip" />
-		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
-		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
-		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
-		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf" />
-	</target>
-	
-	<target name="earlyaccess" description="--> builds a release after you have exported the src and www module from CVS">
-		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
-		<ant antfile="ant/release.xml" inheritAll="false" target="ant.zip" />
-		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
-		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
-		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
-		<ant antfile="ant/release.xml" inheritAll="false" target="earlyaccess.sf" />
-	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Forwarding targetcalls to subscripts                             -->
@@ -62,8 +40,8 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.debug" />
 	</target>
 	
-	<target name="update-parser">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="update-parser" />
+	<target name="lowagie.com">
+		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 	</target>
 	
 	<target name="javadoc">
@@ -72,10 +50,6 @@
 	
 	<target name="docs.tar.gz">
 		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
-	</target>
-	
-	<target name="lowagie.com">
-		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 	</target>
 	
 	<target name="tutorial">
@@ -90,12 +64,20 @@
 		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
 	</target>
 	
-	<target name="ant.zip">
-		<ant antfile="ant/release.xml" inheritAll="false" target="ant.zip" />
+	<target name="asian.jar">
+		<ant antfile="ant/release.xml" inheritAll="false" target="asian.jar" />
 	</target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Make a new release after exporting the modules src/www from CVS  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 	
-	<target name="changelog">
-		<ant antfile="ant/release.xml" inheritAll="false" target="changelog" />
+	<target name="release" description="--> builds a release after you have exported the src and www module from CVS">
+		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
+		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
+		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf" />
 	</target>
 	
 </project>
