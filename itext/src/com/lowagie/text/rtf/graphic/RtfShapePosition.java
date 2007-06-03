@@ -2,6 +2,7 @@ package com.lowagie.text.rtf.graphic;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.rtf.RtfAddableElement;
 
@@ -9,8 +10,9 @@ import com.lowagie.text.rtf.RtfAddableElement;
  * The RtfShapePosition stores position and ordering
  * information for one RtfShape.
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfShapePosition extends RtfAddableElement {
     /**
@@ -161,45 +163,54 @@ public class RtfShapePosition extends RtfAddableElement {
 
     /**
      * Write this RtfShapePosition.
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-	public byte[] write() {
+	public byte[] write() 
+	{
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-        	result.write("\\shpleft".getBytes());
-        	result.write(intToByteArray(this.left));
-        	result.write("\\shptop".getBytes());
-        	result.write(intToByteArray(this.top));
-        	result.write("\\shpright".getBytes());
-        	result.write(intToByteArray(this.right));
-        	result.write("\\shpbottom".getBytes());
-        	result.write(intToByteArray(this.bottom));
-        	result.write("\\shpz".getBytes());
-        	result.write(intToByteArray(this.zOrder));
-        	switch(this.xRelativePos) {
-        	case POSITION_X_RELATIVE_PAGE: result.write("\\shpbxpage".getBytes()); break;
-        	case POSITION_X_RELATIVE_MARGIN: result.write("\\shpbxmargin".getBytes()); break;
-        	case POSITION_X_RELATIVE_COLUMN: result.write("\\shpbxcolumn".getBytes()); break;
-        	}
-        	if(this.ignoreXRelative) {
-        		result.write("\\shpbxignore".getBytes());
-        	}
-        	switch(this.yRelativePos) {
-        	case POSITION_Y_RELATIVE_PAGE: result.write("\\shpbypage".getBytes()); break;
-        	case POSITION_Y_RELATIVE_MARGIN: result.write("\\shpbymargin".getBytes()); break;
-        	case POSITION_Y_RELATIVE_PARAGRAPH: result.write("\\shpbypara".getBytes()); break;
-        	}
-        	if(this.ignoreYRelative) {
-        		result.write("\\shpbyignore".getBytes());
-        	}
-        	if(this.shapeBelowText) {
-        		result.write("\\shpfblwtxt1".getBytes());
-        	} else {
-        		result.write("\\shpfblwtxt0".getBytes());
-        	}
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
 	}
+    /**
+     * Write this RtfShapePosition.
+     */
+    public void writeContent(final OutputStream result) throws IOException
+    {    	
+    	result.write("\\shpleft".getBytes());
+    	result.write(intToByteArray(this.left));
+    	result.write("\\shptop".getBytes());
+    	result.write(intToByteArray(this.top));
+    	result.write("\\shpright".getBytes());
+    	result.write(intToByteArray(this.right));
+    	result.write("\\shpbottom".getBytes());
+    	result.write(intToByteArray(this.bottom));
+    	result.write("\\shpz".getBytes());
+    	result.write(intToByteArray(this.zOrder));
+    	switch(this.xRelativePos) {
+    	case POSITION_X_RELATIVE_PAGE: result.write("\\shpbxpage".getBytes()); break;
+    	case POSITION_X_RELATIVE_MARGIN: result.write("\\shpbxmargin".getBytes()); break;
+    	case POSITION_X_RELATIVE_COLUMN: result.write("\\shpbxcolumn".getBytes()); break;
+    	}
+    	if(this.ignoreXRelative) {
+    		result.write("\\shpbxignore".getBytes());
+    	}
+    	switch(this.yRelativePos) {
+    	case POSITION_Y_RELATIVE_PAGE: result.write("\\shpbypage".getBytes()); break;
+    	case POSITION_Y_RELATIVE_MARGIN: result.write("\\shpbymargin".getBytes()); break;
+    	case POSITION_Y_RELATIVE_PARAGRAPH: result.write("\\shpbypara".getBytes()); break;
+    	}
+    	if(this.ignoreYRelative) {
+    		result.write("\\shpbyignore".getBytes());
+    	}
+    	if(this.shapeBelowText) {
+    		result.write("\\shpfblwtxt1".getBytes());
+    	} else {
+    		result.write("\\shpfblwtxt0".getBytes());
+    	}
+    }
 
 }

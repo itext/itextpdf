@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *
@@ -50,24 +50,19 @@
 
 package com.lowagie.text.rtf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import com.lowagie.text.rtf.document.RtfDocument;
 
 /**
  * RtfElement is the base class for all RTF Element classes
  *
- * Version: $Id$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
-public class RtfElement implements RtfBasicElement {
-    /**
-     * Constant for a rtf escape
-     */
-    //public static final byte[] ESCAPE = "\\".getBytes();
-    /**
-     * Constant for a rtf extended escape
-     */
-    //public static final byte[] EXTENDED_ESCAPE = "\\*\\".getBytes();
-
+public abstract class RtfElement implements RtfBasicElement {
     /**
      * The RtfDocument this RtfElement belongs to
      */
@@ -98,7 +93,8 @@ public class RtfElement implements RtfBasicElement {
      * @param i The integer to convert
      * @return A byte array representing the integer
      */
-    public byte[] intToByteArray(int i) {
+    public byte[] intToByteArray(int i)
+    {
         return Integer.toString(i).getBytes();
     }
 
@@ -106,10 +102,26 @@ public class RtfElement implements RtfBasicElement {
      * Returns the content of the RtfElement in a byte array.
      *
      * @return An empty byte array
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-    public byte[] write() {
-        return new byte[0];
-    }
+    public abstract byte[] write();
+    
+    /**
+     * Writes the element content to the given output stream.
+     */    
+    public void writeContent(final OutputStream out) throws IOException
+    {
+    	try {
+        	byte[] content = write();
+			out.write(content);
+		} catch(OutOfMemoryError e) {
+			System.out.println(getClass());
+			throw(e);
+		} catch(RuntimeException e) {
+			System.out.println(getClass());
+			throw(e);
+		}
+    }        
     
     /**
      * Sets the RtfDocument this RtfElement belongs to
@@ -146,4 +158,6 @@ public class RtfElement implements RtfBasicElement {
     public void setInHeader(boolean inHeader) {
         this.inHeader = inHeader;
     }
+    
+    
 }

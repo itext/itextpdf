@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,8 +65,9 @@ import com.lowagie.text.rtf.RtfElement;
  * Stores one information group element. Valid elements are
  * author, title, subject, keywords, producer and creationdate.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfInfoElement extends RtfElement {
 
@@ -119,46 +121,56 @@ public class RtfInfoElement extends RtfElement {
      * Writes this RtfInfoElement
      * 
      * @return A byte array containing the RtfInfoElement data
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-    public byte[] write() {
+    public byte[] write()
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(OPEN_GROUP);
-            switch(infoType) {
-                case Meta.AUTHOR:
-                    result.write(INFO_AUTHOR);
-                	break;
-                case Meta.SUBJECT:
-                    result.write(INFO_SUBJECT);
-            		break;
-                case Meta.KEYWORDS:
-                    result.write(INFO_KEYWORDS);
-            		break;
-                case Meta.TITLE:
-                    result.write(INFO_TITLE);
-            		break;
-                case Meta.PRODUCER:
-                    result.write(INFO_PRODUCER);
-            		break;
-                case Meta.CREATIONDATE:
-                    result.write(INFO_CREATION_DATE);
-                	break;
-                default:
-                    result.write(INFO_AUTHOR);
-                	break;
-            }
-            result.write(DELIMITER);
-            if(infoType == Meta.CREATIONDATE) {
-                result.write(convertDate(content).getBytes());
-            } else {
-                result.write(content.getBytes());
-            }
-            result.write(CLOSE_GROUP);
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    
+    /**
+     * Writes the element content to the given output stream.
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        result.write(OPEN_GROUP);
+        switch(infoType) {
+            case Meta.AUTHOR:
+                result.write(INFO_AUTHOR);
+            	break;
+            case Meta.SUBJECT:
+                result.write(INFO_SUBJECT);
+        		break;
+            case Meta.KEYWORDS:
+                result.write(INFO_KEYWORDS);
+        		break;
+            case Meta.TITLE:
+                result.write(INFO_TITLE);
+        		break;
+            case Meta.PRODUCER:
+                result.write(INFO_PRODUCER);
+        		break;
+            case Meta.CREATIONDATE:
+                result.write(INFO_CREATION_DATE);
+            	break;
+            default:
+                result.write(INFO_AUTHOR);
+            	break;
+        }
+        result.write(DELIMITER);
+        if(infoType == Meta.CREATIONDATE) {
+            result.write(convertDate(content).getBytes());
+        } else {
+            result.write(content.getBytes());
+        }
+        result.write(CLOSE_GROUP);
+    }        
     
     /**
      * Converts a date from the format used by iText to the format required by

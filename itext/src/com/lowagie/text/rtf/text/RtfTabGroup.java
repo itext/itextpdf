@@ -54,6 +54,7 @@ package com.lowagie.text.rtf.text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import com.lowagie.text.rtf.RtfAddableElement;
@@ -71,8 +72,9 @@ import com.lowagie.text.rtf.RtfAddableElement;
  * para.add(tabs);<br />
  * para.add("\tLeft aligned\tCentre aligned\t12,45\tRight aligned");</code>
  * 
- * @version $Revision$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfTabGroup extends RtfAddableElement {
 	/**
@@ -112,16 +114,29 @@ public class RtfTabGroup extends RtfAddableElement {
 	
 	/**
 	 * Combines the tab output form all grouped tabs.
+	 * 
+	 * @deprecated replaced by {@link #writeContent(OutputStream)}
 	 */
-	public byte[] write() {
+	public byte[] write() 
+	{
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-        	for(int i = 0; i < this.tabs.size(); i++) {
-        		result.write(((RtfTab) this.tabs.get(i)).write());
-        	}
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
 	}
+    /**
+     * Combines the tab output form all grouped tabs.
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+    	for(int i = 0; i < this.tabs.size(); i++) {
+    		RtfTab rt = (RtfTab) this.tabs.get(i);
+    		//.result.write((rt).write());
+    		rt.writeContent(result);
+    	}
+    }        
+	
 }

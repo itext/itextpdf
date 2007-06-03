@@ -53,6 +53,7 @@ package com.lowagie.text.rtf.style;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
@@ -62,8 +63,9 @@ import com.lowagie.text.rtf.document.RtfDocument;
 /**
  * The RtfColor stores one rtf color value for a rtf document
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfColor extends RtfElement implements RtfExtendedElement {
 
@@ -177,24 +179,48 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
     }
 
     /**
+     * unused
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     */
+    public byte[] write()
+    {
+    	return(new byte[0]);
+    }
+    /**
+     * unused
+     */
+    public void writeContent(final OutputStream out) throws IOException
+    {    	
+    }
+    
+    /**
      * Write the definition part of this RtfColor.
      * 
      * @return A byte array with the definition of this colour
+     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
      */
     public byte[] writeDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(COLOR_RED);
-            result.write(intToByteArray(red));
-            result.write(COLOR_GREEN);
-            result.write(intToByteArray(green));
-            result.write(COLOR_BLUE);
-            result.write(intToByteArray(blue));
-            result.write(COLON);
+        	writeDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+    
+    /**
+     * Write the definition part of this RtfColor.
+     */
+    public void writeDefinition(final OutputStream result) throws IOException
+    {
+        result.write(COLOR_RED);
+        result.write(intToByteArray(red));
+        result.write(COLOR_GREEN);
+        result.write(intToByteArray(green));
+        result.write(COLOR_BLUE);
+        result.write(intToByteArray(blue));
+        result.write(COLON);    	
     }
 
     /**

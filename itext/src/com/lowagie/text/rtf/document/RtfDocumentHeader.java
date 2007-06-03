@@ -52,9 +52,11 @@ package com.lowagie.text.rtf.document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.rtf.RtfElement;
+import com.lowagie.text.rtf.document.output.RtfNilOutputStream;
 import com.lowagie.text.rtf.headerfooter.RtfHeaderFooter;
 import com.lowagie.text.rtf.headerfooter.RtfHeaderFooterGroup;
 import com.lowagie.text.rtf.list.RtfList;
@@ -71,8 +73,9 @@ import com.lowagie.text.rtf.style.RtfStylesheetList;
  * The RtfDocumentHeader contains all classes required for the generation of
  * the document header area.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfDocumentHeader extends RtfElement {
     /**
@@ -149,34 +152,69 @@ public class RtfDocumentHeader extends RtfElement {
      * Write the contents of the document header area.
      * 
      * @return A byte array with the contents of the document header area
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-    public byte[] write() {
+    public byte[] write() {    	
         ByteArrayOutputStream result = new ByteArrayOutputStream();
+		try {
+			writeContent(result);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+		}        
+		return result.toByteArray();
+    }   
+    /**
+     * Writes the element content to the given output stream.
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
         try {
             // This is so that all colour, font and similar information is processed once, before
             // the header section is written.
-            writeSectionDefinition();
-            result.write(this.codePage.writeDefinition());
-            result.write(this.fontList.writeDefinition());
-            result.write(this.colorList.writeDefinition());
-            result.write(this.stylesheetList.writeDefinition());
-            result.write(this.listTable.writeDefinition());
-            result.write(this.infoGroup.write());
-            result.write(this.pageSetting.writeDefinition());
-            result.write(writeSectionDefinition());
+            //.writeSectionDefinition();
+            writeSectionDefinition(new RtfNilOutputStream());
+            
+//            result.write(this.codePage.writeDefinition());
+//            result.write(this.fontList.writeDefinition());
+//            result.write(this.colorList.writeDefinition());
+//            result.write(this.stylesheetList.writeDefinition());
+//            result.write(this.listTable.writeDefinition());
+//            result.write(this.infoGroup.write());
+//            result.write(this.pageSetting.writeDefinition());
+
+            this.codePage.writeDefinition(result);
+            this.fontList.writeDefinition(result);
+            this.colorList.writeDefinition(result);
+            this.stylesheetList.writeDefinition(result);
+            this.listTable.writeDefinition(result);
+            this.infoGroup.writeContent(result);
+            this.pageSetting.writeDefinition(result);
+            
+            //.result.write(writeSectionDefinition());
+            writeSectionDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
-        return result.toByteArray();
-    }
+    }        
 
     /**
      * Writes the section definition data
      * 
      * @return A byte array with the section definition data
+     * @deprecated
      */
-    public byte[] writeSectionDefinition() {
+    public byte[] writeSectionDefinition()
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
+       	writeSectionDefinition(result);
+        return result.toByteArray();
+    }
+    /**
+     * Writes the section definition data
+     * @param result
+     */
+    public void writeSectionDefinition(final OutputStream result) 
+    {
         try {
             RtfHeaderFooterGroup header = convertHeaderFooter(this.header, RtfHeaderFooter.TYPE_HEADER);
             RtfHeaderFooterGroup footer = convertHeaderFooter(this.footer, RtfHeaderFooter.TYPE_FOOTER);
@@ -190,13 +228,15 @@ public class RtfDocumentHeader extends RtfElement {
                 header.setHasFacingPages();
                 footer.setHasFacingPages();
             }
-            result.write(footer.write());
-            result.write(header.write());
-            result.write(pageSetting.writeSectionDefinition());
+            //.result.write(footer.write());
+            footer.writeContent(result);
+            //.result.write(header.write());
+            header.writeContent(result);
+            //.result.write(pageSetting.writeSectionDefinition());
+            pageSetting.writeSectionDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
-        }
-        return result.toByteArray();
+        }    	
     }
     
     /**

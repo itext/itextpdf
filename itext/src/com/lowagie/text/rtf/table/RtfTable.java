@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.table;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -67,10 +68,11 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * The RtfTable wraps a Table.
  * INTERNAL USE ONLY
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen Stundzig
  * @author Benoit Wiart
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfTable extends RtfElement {
 
@@ -161,24 +163,35 @@ public class RtfTable extends RtfElement {
      * Writes the content of this RtfTable
      * 
      * @return A byte array with the content of this RtfTable
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-    public byte[] write() {
+    public byte[] write() 
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            if(!inHeader) {
-                result.write(RtfParagraph.PARAGRAPH);
-            }
-            
-            for(int i = 0; i < this.rows.size(); i++) {
-                result.write(((RtfElement) this.rows.get(i)).write());
-            }
-            
-            result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    /**
+     * Writes the content of this RtfTable
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        if(!inHeader) {
+            result.write(RtfParagraph.PARAGRAPH);
+        }
+        
+        for(int i = 0; i < this.rows.size(); i++) {
+        	RtfElement re = (RtfElement)this.rows.get(i);
+            //.result.write(re.write());
+        	re.writeContent(result);
+        }
+        
+        result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+    }        
     
     /**
      * Gets the alignment of this RtfTable

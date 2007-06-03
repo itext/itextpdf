@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 2001, 2002, 2003, 2004, 2005 by Mark Hall
  *
@@ -52,10 +52,12 @@ package com.lowagie.text.rtf.list;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.ListItem;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.style.RtfParagraphStyle;
 import com.lowagie.text.rtf.text.RtfChunk;
 import com.lowagie.text.rtf.text.RtfParagraph;
 
@@ -63,8 +65,9 @@ import com.lowagie.text.rtf.text.RtfParagraph;
 /**
  * The RtfListItem acts as a wrapper for a ListItem.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfListItem extends RtfParagraph {
 
@@ -91,35 +94,54 @@ public class RtfListItem extends RtfParagraph {
      * Writes the content of this RtfListItem.
      * 
      * @return A byte array with the content of this RtfListItem.
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-    public byte[] write() {
+    public byte[] write() 
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            for(int i = 0; i < chunks.size(); i++) {
-                RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
-                if(rtfElement instanceof RtfChunk) {
-                    ((RtfChunk) rtfElement).setSoftLineBreaks(true);
-                } else if(rtfElement instanceof RtfList) {
-                    result.write(RtfParagraph.PARAGRAPH);
-                    this.containsInnerList = true;
-                }
-                result.write(rtfElement.write());
-                if(rtfElement instanceof RtfList) {
-                    result.write(this.parentList.writeListBeginning());
-                    result.write("\\tab".getBytes());
-                }
-            }
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    /**
+     * Writes the content of this RtfListItem.
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        if(this.paragraphStyle.getSpacingBefore() > 0) {
+            result.write(RtfParagraphStyle.SPACING_BEFORE);
+            result.write(intToByteArray(paragraphStyle.getSpacingBefore()));
+        }
+        if(this.paragraphStyle.getSpacingAfter() > 0) {
+            result.write(RtfParagraphStyle.SPACING_AFTER);
+            result.write(intToByteArray(this.paragraphStyle.getSpacingAfter()));
+        }
+        for(int i = 0; i < chunks.size(); i++) {
+            RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
+            if(rtfElement instanceof RtfChunk) {
+                ((RtfChunk) rtfElement).setSoftLineBreaks(true);
+            } else if(rtfElement instanceof RtfList) {
+                result.write(RtfParagraph.PARAGRAPH);
+                this.containsInnerList = true;
+            }
+            //.result.write(rtfElement.write());
+            rtfElement.writeContent(result);
+            if(rtfElement instanceof RtfList) {
+                result.write(this.parentList.writeListBeginning());
+                result.write("\\tab".getBytes());
+            }
+        }
+    }        
 
     /**
      * Returns the definition of the first list contained in this RtfListItem or
      * an empty byte array if no inner RtfLists exist.
      * 
      * @return The definition of the first inner RtfList or an empty byte array.
+     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
      */
     public byte[] writeDefinition() {
         for(int i = 0; i < chunks.size(); i++) {
@@ -129,6 +151,28 @@ public class RtfListItem extends RtfParagraph {
             }
         }
         return new byte[0];
+    }
+    /**
+     * Writes the definition of the first element in this RtfListItem that is
+     * an instanceof {@link RtfList} to the given stream.<br> 
+     * If this item does not contain a {@link RtfList} element nothing is written
+     * and the method returns <code>false</code>.
+     * 
+     * @param out destination stream
+     * @return <code>true</code> if a RtfList definition was written, <code>false</code> otherwise
+     * @throws IOException
+     */
+    public boolean writeDefinition(OutputStream out) throws IOException
+    {
+        for(int i = 0; i < chunks.size(); i++) {
+            RtfBasicElement rtfElement = (RtfBasicElement)chunks.get(i);
+            if(rtfElement instanceof RtfList) {
+            	RtfList rl = (RtfList)rtfElement;
+            	rl.writeDefinition(out);
+                return(true);
+            }
+        }
+        return(false);    	
     }
     
     /**

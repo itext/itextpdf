@@ -366,7 +366,13 @@ public class TIFFDirectory extends Object implements Serializable {
         }
         
         // Read the offset of the next IFD.
-        nextIFDOffset = readUnsignedInt(stream);
+        try {
+            nextIFDOffset = readUnsignedInt(stream);
+        }
+        catch (Exception e) {
+            // broken tiffs may not have this pointer
+            nextIFDOffset = 0;
+        }
     }
     
     /** Returns the number of directory entries. */

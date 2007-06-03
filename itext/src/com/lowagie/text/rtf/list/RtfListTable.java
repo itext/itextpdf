@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.list;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import com.lowagie.text.rtf.RtfElement;
@@ -63,8 +64,9 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfListTable manages all RtfLists in one RtfDocument. It also generates
  * the list and list override tables in the document header.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfListTable extends RtfElement implements RtfExtendedElement {
 
@@ -122,54 +124,80 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
     }
 
     /**
+     * unused
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     */
+    public byte[] write()
+    {
+    	return(new byte[0]);
+    }
+    /**
+     * unused
+     */
+    public void writeContent(final OutputStream out) throws IOException
+    {    	
+    }
+    
+    /**
      * Writes the list and list override tables.
      * 
      * @return A byte array with the list and list override tables.
+     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
      */
     public byte[] writeDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        int[] listIds = new int[lists.size()];
         try {
-            result.write(OPEN_GROUP);
-            result.write(LIST_TABLE);
-            result.write("\n".getBytes());
-            for(int i = 0; i < lists.size(); i++) {
-                result.write(OPEN_GROUP);
-                result.write(LIST);
-                result.write(LIST_TEMPLATE_ID);
-                result.write(intToByteArray(document.getRandomInt()));
-                result.write(LIST_HYBRID);
-                result.write("\n".getBytes());
-                result.write(((RtfList) lists.get(i)).writeDefinition());
-                result.write(LIST_ID);
-                listIds[i] = document.getRandomInt();
-                result.write(intToByteArray(listIds[i]));
-                result.write(CLOSE_GROUP);
-                result.write("\n".getBytes());
-            }
-            result.write(CLOSE_GROUP);
-            result.write("\n".getBytes());
-            result.write(OPEN_GROUP);
-            result.write(LIST_OVERRIDE_TABLE);
-            result.write("\n".getBytes());
-            for(int i = 0; i < lists.size(); i++) {
-                result.write(OPEN_GROUP);
-                result.write(LIST_OVERRIDE);
-                result.write(LIST_ID);
-                result.write(intToByteArray(listIds[i]));
-                result.write(LIST_OVERRIDE_COUNT);
-                result.write(intToByteArray(0));
-                result.write(LIST_NUMBER);
-                result.write(intToByteArray(((RtfList) lists.get(i)).getListNumber()));
-                result.write(CLOSE_GROUP);
-                result.write("\n".getBytes());
-            }
-            result.write(CLOSE_GROUP);
-            result.write("\n".getBytes());
+        	writeDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+    
+    /**
+     * Writes the list and list override tables.
+     */
+    public void writeDefinition(final OutputStream result) throws IOException
+    {
+        final int[] listIds = new int[lists.size()];
+        result.write(OPEN_GROUP);
+        result.write(LIST_TABLE);
+        result.write("\n".getBytes());
+        for(int i = 0; i < lists.size(); i++) {
+            result.write(OPEN_GROUP);
+            result.write(LIST);
+            result.write(LIST_TEMPLATE_ID);
+            result.write(intToByteArray(document.getRandomInt()));
+            result.write(LIST_HYBRID);
+            result.write("\n".getBytes());
+            final RtfList rList = (RtfList) lists.get(i); 
+            //.result.write(rList.writeDefinition());
+            rList.writeDefinition(result);
+            result.write(LIST_ID);
+            listIds[i] = document.getRandomInt();
+            result.write(intToByteArray(listIds[i]));
+            result.write(CLOSE_GROUP);
+            result.write("\n".getBytes());
+        }
+        result.write(CLOSE_GROUP);
+        result.write("\n".getBytes());
+        result.write(OPEN_GROUP);
+        result.write(LIST_OVERRIDE_TABLE);
+        result.write("\n".getBytes());
+        for(int i = 0; i < lists.size(); i++) {
+            result.write(OPEN_GROUP);
+            result.write(LIST_OVERRIDE);
+            result.write(LIST_ID);
+            result.write(intToByteArray(listIds[i]));
+            result.write(LIST_OVERRIDE_COUNT);
+            result.write(intToByteArray(0));
+            result.write(LIST_NUMBER);
+            result.write(intToByteArray(((RtfList) lists.get(i)).getListNumber()));
+            result.write(CLOSE_GROUP);
+            result.write("\n".getBytes());
+        }
+        result.write(CLOSE_GROUP);
+        result.write("\n".getBytes());    	
     }
 
     /**

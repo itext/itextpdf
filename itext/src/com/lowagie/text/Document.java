@@ -102,13 +102,19 @@ public class Document implements DocListener {
     // membervariables
     
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-	private static final String ITEXT_VERSION = "iText 2.0.3 (by lowagie.com)";
+	private static final String ITEXT_VERSION = "iText 2.0.4 (by lowagie.com)";
     
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging
 	 * purposes.
 	 */
     public static boolean compress = true; 
+    
+	/**
+	 * When true the file access is not done through a memory mapped file. Use it if the file
+     * is too big to be mapped in your address space.
+	 */
+    public static boolean plainRandomAccess = false; 
     
 	/** The DocListener. */
     private ArrayList listeners = new ArrayList();

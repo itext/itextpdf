@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 2003, 2004, 2005 by Mark Hall
  *
@@ -57,18 +57,17 @@ import java.util.ArrayList;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfMapper;
-import com.lowagie.text.rtf.document.output.RtfDataCache;
-import com.lowagie.text.rtf.document.output.RtfDiskCache;
-import com.lowagie.text.rtf.document.output.RtfMemoryCache;
+import com.lowagie.text.rtf.document.output.*;
 import com.lowagie.text.rtf.graphic.RtfImage;
 
 /**
  * The RtfDocument stores all document related data and also the main data stream.
  * INTERNAL CLASS - NOT TO BE USED DIRECTLY
  *
- * Version: $Id$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Todd Bush [Tab support]
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfDocument extends RtfElement {
     /**
@@ -105,19 +104,43 @@ public class RtfDocument extends RtfElement {
      */
     private static final byte[] RTF_DOCUMENT = "\\rtf1".getBytes();
 
+    private final static byte[] FSC_LINE = "\\line ".getBytes();
+    private final static byte[] FSC_PAR = "\\par ".getBytes();
+    private final static byte[] FSC_TAB = "\\tab ".getBytes();
+    private final static byte[] FSC_PAGE_PAR = "\\page\\par ".getBytes();
+    private final static byte[] FSC_NEWPAGE = "$newpage$".getBytes();
+    private final static byte[] FSC_BACKSLASH = "\\".getBytes();
+    private final static byte[] FSC_HEX_PREFIX = "\\\'".getBytes();
+    private final static byte[] FSC_UNI_PREFIX = "\\u".getBytes();
+    
     /**
      * The default constructor for a RtfDocument
      */
     public RtfDocument() {
         super(null);
-        data = new RtfMemoryCache();
-        mapper = new RtfMapper(this);
-        documentHeader = new RtfDocumentHeader(this);
-        documentHeader.init();
-        previousRandomInts = new ArrayList();
+        this.data = new RtfMemoryCache();
+        this.mapper = new RtfMapper(this);
+        this.documentHeader = new RtfDocumentHeader(this);
+        this.documentHeader.init();
+        this.previousRandomInts = new ArrayList();
         this.documentSettings = new RtfDocumentSettings(this);
     }
 
+    /**
+     * unused
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     */
+    public byte[] write()
+    {
+    	return(new byte[0]);
+    }
+    /**
+     * unused
+     */
+    public void writeContent(final OutputStream out) throws IOException
+    {    	
+    }
+    
     /**
      * Writes the document
      *
@@ -127,8 +150,9 @@ public class RtfDocument extends RtfElement {
         try {
             out.write(OPEN_GROUP);
             out.write(RtfDocument.RTF_DOCUMENT);
-            out.write(documentHeader.write());
-            data.writeTo(out);
+            //out.write(documentHeader.write());
+            this.documentHeader.writeContent(out);
+            this.data.writeTo(out);
             out.write(CLOSE_GROUP);
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -143,9 +167,19 @@ public class RtfDocument extends RtfElement {
     public void open() {
         try {
             switch(this.documentSettings.getDataCacheStyle()) {
-                case RtfDataCache.CACHE_MEMORY : this.data = new RtfMemoryCache();break;
-                case RtfDataCache.CACHE_DISK   : this.data = new RtfDiskCache();break;
+            	case RtfDataCache.CACHE_MEMORY_EFFICIENT:  
+            		this.data = new RtfEfficientMemoryCache(); 
+            		break;
+                case RtfDataCache.CACHE_MEMORY:
+                	this.data = new RtfMemoryCache();
+                	break;
+                case RtfDataCache.CACHE_DISK:
+                	this.data = new RtfDiskCache();
+                	break;
+                default:
+                	throw(new RuntimeException("unknown"));
             }
+    		
         } catch(IOException ioe) {
             System.err.println("Could not initialise disk cache. Using memory cache.");
             ioe.printStackTrace();
@@ -166,7 +200,7 @@ public class RtfDocument extends RtfElement {
                 if(element instanceof RtfImage) {
                     ((RtfImage) element).setTopLevelElement(true);
                 }
-                data.getOutputStream().write(element.write());
+                element.writeContent( this.data.getOutputStream() );
                 this.lastElementWritten = element;
             }
         } catch(IOException ioe) {
@@ -180,7 +214,7 @@ public class RtfDocument extends RtfElement {
      * @return The RtfMapper
      */
     public RtfMapper getMapper() {
-        return mapper;
+        return this.mapper;
     }
     
     /**
@@ -192,8 +226,8 @@ public class RtfDocument extends RtfElement {
         Integer newInt = null;
         do {
             newInt = new Integer((int) (Math.random() * Integer.MAX_VALUE));
-        } while(previousRandomInts.contains(newInt));
-        previousRandomInts.add(newInt);
+        } while(this.previousRandomInts.contains(newInt));
+        this.previousRandomInts.add(newInt);
         return newInt.intValue();
     }
     
@@ -212,6 +246,7 @@ public class RtfDocument extends RtfElement {
      * @param useHex indicated if the hexadecimal value has to be used
      * @param softLineBreaks whether to use soft line breaks instead of default hard ones.
      *
+     * @deprecated replaced by {@link #filterSpecialChar(OutputStream, String, boolean, boolean)}
      * @return The converted String
      */
     public String filterSpecialChar(String str, boolean useHex, boolean softLineBreaks) {
@@ -219,7 +254,7 @@ public class RtfDocument extends RtfElement {
             return "";
         }
         int length = str.length();
-        int z = (int) 'z';
+        int z = 'z';
         StringBuffer ret = new StringBuffer(length);
         for (int i = 0; i < length; i++) {
             char ch = str.charAt(i);
@@ -234,9 +269,9 @@ public class RtfDocument extends RtfElement {
                 }
             } else if (ch == '\t') {
                 ret.append("\\tab ");
-            } else if (((int) ch) > z && this.documentSettings.isAlwaysUseUnicode()) {
+            } else if ((ch) > z && this.documentSettings.isAlwaysUseUnicode()) {
                 if(useHex) {
-                    ret.append("\\\'").append(Long.toHexString((long) ch));
+                    ret.append("\\\'").append(Long.toHexString(ch));
                 } else {
                     ret.append("\\u").append((long) ch).append('?');
                 }
@@ -254,6 +289,93 @@ public class RtfDocument extends RtfElement {
             return ret.toString();
         }
         return s;
+    }
+    
+    /**
+     * Writes the given string to the given {@link OutputStream} encoding the string characters.
+     * 
+     * @param out destination OutputStream
+     * @param str string to write
+     * @param useHex if <code>true</code> hex encoding characters is preferred to unicode encoding if possible
+     * @param softLineBreaks if <code>true</code> return characters are written as soft line breaks
+     * 
+     * @throws IOException
+     */
+    public void filterSpecialChar(final OutputStream out, final String str, final boolean useHex, final boolean softLineBreaks) throws IOException
+    {
+        if(out == null) {
+            throw(new NullPointerException("null OutpuStream"));
+        }
+
+        final boolean alwaysUseUniCode = this.documentSettings.isAlwaysUseUnicode();
+        if(str == null) {
+            return;
+        }
+        final int len = str.length();
+        if(len == 0) {
+            return;
+        }
+
+        for(int k = 0; k < len; k++) {
+            final char c = str.charAt(k);
+            if(c < 0x20) {
+                //allow return and tab only
+                if(c == '\n') {
+                    out.write(softLineBreaks ? FSC_LINE : FSC_PAR);
+                } else
+                    if(c == '\t') {
+                        out.write(FSC_TAB);                 
+                    } else {
+                        out.write('?');
+                    }
+            } else 
+                if((c == '\\') || (c == '{') || (c == '}')) {
+                    //escape
+                    out.write(FSC_BACKSLASH);
+                    out.write(c);
+                } else
+                    if((c == '$') && (len-k >= FSC_NEWPAGE.length) && subMatch(str, k, FSC_NEWPAGE)) {
+                        //"$newpage$" -> "\\page\\par "
+                        out.write(FSC_PAGE_PAR);
+                        k += FSC_NEWPAGE.length-1;
+                    } else {
+                        if((c > 0xff) || ((c > 'z') && alwaysUseUniCode)) {
+                            if(useHex && (c <= 0xff)) {
+                                //encode as 2 char hex string 
+                                out.write(FSC_HEX_PREFIX);
+                                out.write(RtfImage.byte2charLUT, c*2, 2);
+                            } else {
+                                //encode as decimal, signed short value
+                                out.write(FSC_UNI_PREFIX);
+                                String s = Short.toString((short)c);
+                                for(int x = 0; x < s.length(); x++) {
+                                    out.write(s.charAt(x));
+                                }
+                                out.write('?');
+                            }
+                        } else {
+                            out.write(c);
+                        }
+                    }
+        }       
+    }
+    /**
+     * Returns <code>true</code> if <tt>m.length</tt> characters in <tt>str</tt>, starting at offset <tt>soff</tt>
+     * match the bytes in the given array <tt>m</tt>.
+     * 
+     * @param str the string to search for a match
+     * @param soff the starting offset in str
+     * @param m the array to match
+     * @return <code>true</code> if there is match
+     */
+    private static boolean subMatch(final String str, int soff, final byte[] m)
+    {
+        for(int k = 0; k < m.length; k++) {
+            if(str.charAt(soff++) != m[k]) {
+                return(false);
+            }
+        }
+        return(true);
     }
     
     /**

@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.style;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import com.lowagie.text.rtf.RtfElement;
@@ -64,6 +65,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  *
  * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfFontList extends RtfElement implements RtfExtendedElement {
     
@@ -96,6 +98,21 @@ public class RtfFontList extends RtfElement implements RtfExtendedElement {
     }
 
     /**
+     * unused
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     */
+    public byte[] write()
+    {
+    	return(new byte[0]);
+    }
+    /**
+     * unused
+     */
+    public void writeContent(OutputStream out) throws IOException
+    {	
+    }
+    
+    /**
      * Gets the index of the font in the list of fonts. If the font does not
      * exist in the list, it is added.
      *
@@ -123,27 +140,39 @@ public class RtfFontList extends RtfElement implements RtfExtendedElement {
      * Writes the definition of the font list
      *
      * @return A byte array with the definition of the font list
+     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
      */
     public byte[] writeDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(DEFAULT_FONT);
-            result.write(intToByteArray(0));
-            result.write(OPEN_GROUP);
-            result.write(FONT_TABLE);
-            for(int i = 0; i < fontList.size(); i++) {
-                result.write(OPEN_GROUP);
-                result.write(FONT_NUMBER);
-                result.write(intToByteArray(i));
-                result.write(((RtfFont) fontList.get(i)).writeDefinition());
-                result.write(COMMA_DELIMITER);
-                result.write(CLOSE_GROUP);
-            }
-            result.write(CLOSE_GROUP);
-            result.write((byte)'\n');
+        	writeDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    
+    /**
+     * Writes the definition of the font list
+     */
+    public void writeDefinition(final OutputStream result) throws IOException 
+    {
+        result.write(DEFAULT_FONT);
+        result.write(intToByteArray(0));
+        result.write(OPEN_GROUP);
+        result.write(FONT_TABLE);
+        for(int i = 0; i < fontList.size(); i++) {
+            result.write(OPEN_GROUP);
+            result.write(FONT_NUMBER);
+            result.write(intToByteArray(i));
+            RtfFont rf = (RtfFont) fontList.get(i);
+            //.result.write((rf).writeDefinition());
+            rf.writeDefinition(result);
+            result.write(COMMA_DELIMITER);
+            result.write(CLOSE_GROUP);
+        }
+        result.write(CLOSE_GROUP);
+        result.write((byte)'\n');    	
+    }
+    
 }

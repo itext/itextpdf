@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import com.lowagie.text.Chunk;
@@ -69,6 +70,7 @@ import com.lowagie.text.rtf.style.RtfFont;
  * 
  * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfPhrase extends RtfElement {
 
@@ -145,27 +147,40 @@ public class RtfPhrase extends RtfElement {
      * the RtfChunks of this RtfPhrase are written.
      * 
      * @return The content of this RtfPhrase
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-    public byte[] write() {
+    public byte[] write()
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(PARAGRAPH_DEFAULTS);
-            result.write(PLAIN);
-            if(inTable) {
-                result.write(IN_TABLE);
-            }
-            if(this.lineLeading > 0) {
-                result.write(LINE_SPACING);
-                result.write(intToByteArray(this.lineLeading));
-            }
-            for(int i = 0; i < chunks.size(); i++) {
-                result.write(((RtfBasicElement) chunks.get(i)).write());
-            }
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    /**
+     * Write the content of this RtfPhrase. First resets to the paragraph defaults
+     * then if the RtfPhrase is in a RtfCell a marker for this is written and finally
+     * the RtfChunks of this RtfPhrase are written.
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        result.write(PARAGRAPH_DEFAULTS);
+        result.write(PLAIN);
+        if(inTable) {
+            result.write(IN_TABLE);
+        }
+        if(this.lineLeading > 0) {
+            result.write(LINE_SPACING);
+            result.write(intToByteArray(this.lineLeading));
+        }
+        for(int i = 0; i < chunks.size(); i++) {
+        	RtfBasicElement rbe = (RtfBasicElement) chunks.get(i);
+            //.result.write((rbe).write());
+        	rbe.writeContent(result);
+        }
+    }        
     
     /**
      * Sets whether this RtfPhrase is in a table. Sets the correct inTable setting for all

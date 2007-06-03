@@ -100,7 +100,7 @@ public class SimpleNamedDestination implements SimpleXMLDocHandler {
     }
     
     /**
-     * Exports the bookmarks to XML. The DTD for this XML is:
+     * Exports the destinations to XML. The DTD for this XML is:
      * <p>
      * <pre>
      * &lt;?xml version='1.0' encoding='UTF-8'?&gt;
@@ -124,7 +124,7 @@ public class SimpleNamedDestination implements SimpleXMLDocHandler {
     }
     
     /**
-     * Exports the bookmarks to XML.
+     * Exports the destinations to XML.
      * @param names the names
      * @param wrt the export destination. The writer is not closed
      * @param encoding the encoding according to IANA conventions

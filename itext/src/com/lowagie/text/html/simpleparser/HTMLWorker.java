@@ -191,17 +191,22 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 cprops.addToChain(tag, h);
                 Image img = null;
                 if (interfaceProps != null) {
-                    HashMap images = (HashMap)interfaceProps.get("img_static");
-                    if (images != null) {
-                        Image tim = (Image)images.get(src);
-                        if (tim != null)
-                            img = Image.getInstance(tim);
-                    } else {
-                        if (!src.startsWith("http")) { // relative src references only
-                            String baseurl = (String)interfaceProps.get("img_baseurl");
-                            if (baseurl != null) {
-                                src = baseurl+src;
-                                img = Image.getInstance(src);
+                    ImageProvider ip = (ImageProvider)interfaceProps.get("img_provider");
+                    if (ip != null)
+                        img = ip.getImage(src, h, cprops, document);
+                    if (img == null) {
+                        HashMap images = (HashMap)interfaceProps.get("img_static");
+                        if (images != null) {
+                            Image tim = (Image)images.get(src);
+                            if (tim != null)
+                                img = Image.getInstance(tim);
+                        } else {
+                            if (!src.startsWith("http")) { // relative src references only
+                                String baseurl = (String)interfaceProps.get("img_baseurl");
+                                if (baseurl != null) {
+                                    src = baseurl+src;
+                                    img = Image.getInstance(src);
+                                }
                             }
                         }
                     }

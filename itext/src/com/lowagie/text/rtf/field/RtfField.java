@@ -55,6 +55,7 @@ package com.lowagie.text.rtf.field;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
@@ -69,9 +70,10 @@ import com.lowagie.text.rtf.style.RtfFont;
  * and writeFieldResultContent. All other field functionality is handled by the
  * RtfField class.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Dirk Weigenand (Dirk.Weigenand@smb-tec.com)
+ * @author Thomas Bickel (tmb99@inode.at)
  */
 public abstract class RtfField extends Chunk implements RtfBasicElement {
 
@@ -184,44 +186,55 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the field beginning. Also writes field properties.
      * 
      * @return A byte array with the field beginning.
+     * @deprecated replaced by {@link #writeFieldBegin(OutputStream)}
      * @throws IOException
      */
-    private byte[] writeFieldBegin() throws IOException {
+    private byte[] writeFieldBegin() throws IOException 
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-
+        writeFieldBegin(result);
+        return result.toByteArray();
+    }
+    /**
+     * Writes the field beginning. Also writes field properties.
+     * 
+     * @return A byte array with the field beginning.
+     * @throws IOException
+     */
+    private void writeFieldBegin(OutputStream result) throws IOException 
+    {
         result.write(OPEN_GROUP);
         result.write(FIELD);
-
-        if (fieldDirty) {
-            result.write(FIELD_DIRTY);
-        }
-        if (fieldEdit) {
-            result.write(FIELD_EDIT);
-        }
-        if (fieldLocked) {
-            result.write(FIELD_LOCKED);
-        }
-        if (fieldPrivate) {
-            result.write(FIELD_PRIVATE);
-        }
-
-        return result.toByteArray();
+        if(fieldDirty) result.write(FIELD_DIRTY);
+        if(fieldEdit) result.write(FIELD_EDIT);
+        if(fieldLocked) result.write(FIELD_LOCKED);
+        if(fieldPrivate) result.write(FIELD_PRIVATE);
     }
     
     /**
      * Writes the beginning of the field instruction area.
      * 
      * @return The beginning of the field instruction area
+     * @deprecated replaced by {@link #writeFieldInstBegin(OutputStream)}
      * @throws IOException
      */
-    private byte[] writeFieldInstBegin() throws IOException {
+    private byte[] writeFieldInstBegin() throws IOException
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        
+        writeFieldInstBegin(result);
+        return result.toByteArray();
+    }
+    /**
+     * Writes the beginning of the field instruction area.
+     * 
+     * @return The beginning of the field instruction area
+     * @throws IOException
+     */
+    private void writeFieldInstBegin(OutputStream result) throws IOException 
+    {
         result.write(OPEN_GROUP);        
         result.write(FIELD_INSTRUCTIONS);
         result.write(DELIMITER);
-        
-        return result.toByteArray();
     }
     
     /**
@@ -229,42 +242,67 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * method in your subclasses.
      * 
      * @return The content of the field instruction area
+     * @deprecated replaced by {@link #writeFieldInstContent(OutputStream)}
      * @throws IOException If an error occurs.
      */
     protected abstract byte[] writeFieldInstContent() throws IOException;
+
+    /**
+     * Writes the content of the field instruction area. Override this
+     * method in your subclasses.
+     */
+    protected void writeFieldInstContent(OutputStream out) throws IOException
+    {
+    	byte[] b = writeFieldInstContent();
+    	if(b != null) out.write(b);
+    }
     
     /**
      * Writes the end of the field instruction area.
      * 
      * @return A byte array containing the end of the field instruction area
+     * @deprecated replaced by {@link #writeFieldInstEnd(OutputStream)}
      * @throws IOException
      */
-    private byte[] writeFieldInstEnd() throws IOException {
+    private byte[] writeFieldInstEnd() throws IOException 
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-
-        if (fieldAlt) {
+        writeFieldInstEnd(result);
+        return result.toByteArray();
+    }
+    /**
+     * Writes the end of the field instruction area.
+     */
+    private void writeFieldInstEnd(OutputStream result) throws IOException 
+    {
+        if(fieldAlt) {
             result.write(DELIMITER);
             result.write(FIELD_ALT);
         }
         result.write(CLOSE_GROUP);
-        
-        return result.toByteArray();
     }
     
     /**
      * Writes the beginning of the field result area
      * 
      * @return A byte array containing the beginning of the field result area
+     * @deprecated replaced by {@link #writeFieldResultBegin(OutputStream)} 
      * @throws IOException
      */
-    private byte[] writeFieldResultBegin() throws IOException {
+    private byte[] writeFieldResultBegin() throws IOException 
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        
+        writeFieldResultBegin(result);
+        return result.toByteArray();
+    }
+    /**
+     * Writes the beginning of the field result area
+     */
+    private void writeFieldResultBegin(final OutputStream result) throws IOException 
+    {
         result.write(OPEN_GROUP);
         result.write(FIELD_RESULT);
         result.write(DELIMITER);
-        
-        return result.toByteArray();
     }
     
     /**
@@ -272,62 +310,106 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * method in your subclasses.
      * 
      * @return A byte array containing the field result
+     * @deprecated replaced by {@link #writeFieldResultContent(OutputStream)}
      * @throws IOException If an error occurs
      */
-    protected abstract byte[] writeFieldResultContent() throws IOException;
+    protected abstract byte[] writeFieldResultContent() throws IOException;    
+    /**
+     * Writes the content of the pre-calculated field result. Override this
+     * method in your subclasses.
+     */ 
+    protected void writeFieldResultContent(OutputStream out) throws IOException
+    {
+    	byte[] b = writeFieldResultContent();
+    	if(b != null) out.write(b);
+    }
     
     /**
      * Writes the end of the field result area
      * 
      * @return A byte array containing the end of the field result area
+     * @deprecated replaced by {@link #writeFieldResultEnd(OutputStream)}
      * @throws IOException
      */
-    private byte[] writeFieldResultEnd() throws IOException {
+    private byte[] writeFieldResultEnd() throws IOException 
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        
-        result.write(DELIMITER);
-        result.write(CLOSE_GROUP);
-        
+        writeFieldResultEnd(result);
         return result.toByteArray();
     }
-
+    /**
+     * Writes the end of the field result area
+     */ 
+    private void writeFieldResultEnd(final OutputStream result) throws IOException 
+    {
+        result.write(DELIMITER);
+        result.write(CLOSE_GROUP);
+    }
+    
     /**
      * Writes the end of the field
      * 
      * @return A byte array containing the end of the field
+     * @deprecated replaced by {@link #writeFieldEnd(OutputStream)}
      * @throws IOException
      */
-    private byte[] writeFieldEnd() throws IOException {
+    private byte[] writeFieldEnd() throws IOException
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        
-        result.write(CLOSE_GROUP);
-        
+        writeFieldEnd(result);        
         return result.toByteArray();
     }
+    /**
+     * Writes the end of the field
+     */
+    private void writeFieldEnd(OutputStream result) throws IOException
+    {
+        result.write(CLOSE_GROUP);
+    }
+    
     
     /**
      * Write the content of this RtfField.
      * 
      * @return A byte array containing the content of this RtfField
+     * @deprecated replaced by {@link #writeContent(OutputStream)}
      */
-    public byte[] write() {
+    public byte[] write()
+    {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(this.font.writeBegin());
-            result.write(writeFieldBegin());
-            result.write(writeFieldInstBegin());
-            result.write(writeFieldInstContent());
-            result.write(writeFieldInstEnd());
-            result.write(writeFieldResultBegin());
-            result.write(writeFieldResultContent());
-            result.write(writeFieldResultEnd());
-            result.write(writeFieldEnd());
-            result.write(this.font.writeEnd());
+        	writeContent(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    /**
+     * Writes the element content to the given output stream.
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+        result.write(this.font.writeBegin());
+        
+//        result.write(writeFieldBegin());
+//        result.write(writeFieldInstBegin());
+//        result.write(writeFieldInstContent());
+//        result.write(writeFieldInstEnd());
+//        result.write(writeFieldResultBegin());
+//        result.write(writeFieldResultContent());
+//        result.write(writeFieldResultEnd());
+//        result.write(writeFieldEnd());        
+        writeFieldBegin(result);
+        writeFieldInstBegin(result);
+        writeFieldInstContent(result);
+        writeFieldInstEnd(result);
+        writeFieldResultBegin(result);
+        writeFieldResultContent(result);
+        writeFieldResultEnd(result);
+        writeFieldEnd(result);
+        
+        result.write(this.font.writeEnd());
+    }        
         
     /**
      * Get whether this field is an alt field
