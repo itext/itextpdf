@@ -255,7 +255,6 @@ public class RtfImage extends RtfElement {
     /**
      * Writes the image data to the given buffer as hex encoded text.
      * 
-     * @param binary
      * @param bab
      * @throws IOException
      */
@@ -277,7 +276,7 @@ public class RtfImage extends RtfElement {
     /**
      * Returns the image raw data size in bytes.
      * 
-     * @return
+     * @return the size in bytes
      */
     private int imageDataSize()
     {
