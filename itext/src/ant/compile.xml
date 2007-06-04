@@ -11,8 +11,8 @@
 	
 	<path id="itext.classpath">
 	    <pathelement location="${itext.bin}"/>
-	    <pathelement path="${itext.lib}/bcmail-jdk14-135.jar"/>
-	    <pathelement path="${itext.lib}/bcprov-jdk14-135.jar"/>
+	    <pathelement path="${itext.lib}/bcmail-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-${bc.version}.jar"/>
 	</path>
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -67,10 +67,10 @@
                 <include name="**/*.txt"/>
             </fileset>
         </copy>
-        <jar jarfile="${itext.lib}/iText.jar" basedir="${itext.bin}" excludes="com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**">
+        <jar jarfile="${itext.jar}" basedir="${itext.bin}" excludes="com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**">
             <manifest>
                 <attribute name="Main-Class" value="com.lowagie.tools.ToolboxAvailable"/>
-                <attribute name="Class-Path" value="toolbox.jar bcmail-jdk14-135.jar bcprov-jdk14-135.jar"/>
+                <attribute name="Class-Path" value="toolbox.jar bcmail-${bc.version}.jar bcprov-${bc.version}.jar"/>
             </manifest>
         </jar>
     </target>
