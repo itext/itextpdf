@@ -50,6 +50,7 @@
 
 package com.lowagie.text.xml.xmp;
 
+import com.lowagie.text.pdf.PdfWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -181,7 +182,7 @@ public class XmpWriter {
      * @param info
      * @throws IOException
      */
-    public XmpWriter(OutputStream os, PdfDictionary info) throws IOException {
+    public XmpWriter(OutputStream os, PdfDictionary info, int PdfXConformance) throws IOException {
         this(os);
         if (info != null) {
         	DublinCoreSchema dc = new DublinCoreSchema();
@@ -222,6 +223,14 @@ public class XmpWriter {
         	if (dc.size() > 0) addRdfDescription(dc);
         	if (p.size() > 0) addRdfDescription(p);
         	if (basic.size() > 0) addRdfDescription(basic);
+            if (PdfXConformance == PdfWriter.PDFA1A || PdfXConformance == PdfWriter.PDFA1B) {
+                PdfA1Schema a1 = new PdfA1Schema();
+                if (PdfXConformance == PdfWriter.PDFA1A)
+                    a1.addConformance("A");
+                else
+                    a1.addConformance("B");
+                addRdfDescription(a1);
+            }
         }
     }
     

@@ -53,7 +53,7 @@ public interface PdfXConformance {
     
     /**
      * Sets the PDF/X conformance level.
-     * Allowed values are PDFX1A2001 and PDFX32002.
+     * Allowed values are PDFX1A2001, PDFX32002, PDFA1A and PDFA1B.
      * It must be called before opening the document.
      * @param pdfxConformance the conformance level
      */    

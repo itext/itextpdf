@@ -1572,7 +1572,7 @@ public class PdfWriter extends DocWriter implements
 	private byte[] createXmpMetadataBytes() {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    try {
-	    	XmpWriter xmp = new XmpWriter(baos, pdf.getInfo());
+	    	XmpWriter xmp = new XmpWriter(baos, pdf.getInfo(), pdfxConformance.getPDFXConformance());
 	        xmp.close();
 	    }
 	    catch(IOException ioe) {
@@ -1587,7 +1587,11 @@ public class PdfWriter extends DocWriter implements
     /** A PDF/X level. */
     public static final int PDFX1A2001 = 1;
     /** A PDF/X level. */
-    public static final int PDFX32002 = 2;
+    public static final int PDFX32002 = 2;    
+    /** PDFA-1A level. */
+    public static final int PDFA1A = 3;
+    /** PDFA-1B level. */
+    public static final int PDFA1B = 4;
     
     /** Stores the PDF/X level. */
     private PdfXConformanceImp pdfxConformance = new PdfXConformanceImp();
