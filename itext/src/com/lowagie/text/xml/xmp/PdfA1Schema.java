@@ -1,7 +1,8 @@
 /*
- * $Id$
+ * $Id: PdfA1Schema.java 2364 2006-09-14 22:41:26Z xlv $
+ * $Name$
  *
- * Copyright 2006 Bruno Lowagie
+ * Copyright 2005 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -14,10 +15,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2005 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2005 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -30,7 +31,7 @@
  * the MPL, indicate your decision by deleting the provisions above and
  * replace them with the notice and other provisions required by the LGPL.
  * If you do not delete the provisions above, a recipient may use your version
- * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE.
+ * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the MPL as stated above or under the terms of the GNU
@@ -39,7 +40,7 @@
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
+ * FOR A PARTICULAR PURPOSE. See the GNU LIBRARY GENERAL PUBLIC LICENSE for more
  * details.
  *
  * If you didn't download this code from the following link, you should check if
@@ -47,27 +48,43 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf.interfaces;
+package com.lowagie.text.xml.xmp;
 
-public interface PdfXConformance {
+import com.lowagie.text.Document;
+
+/**
+ * An implementation of an XmpSchema.
+ */
+public class PdfA1Schema extends XmpSchema {
+    
+    /** default namespace identifier*/
+    public static final String DEFAULT_XPATH_ID = "pdfaid";
+    /** default namespace uri*/
+    public static final String DEFAULT_XPATH_URI = "http://www.aiim.org/pdfa/ns/id/";
+    
+    /** Part, always 1. */
+    public static final String PART = "pdfaid:part";
+    /** Conformance, A or B. */
+    public static final String CONFORMANCE = "pdfaid:conformance";
+    
+    public PdfA1Schema() {
+        super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
+        addPart("1");
+    }
     
     /**
-     * Sets the PDF/X conformance level.
-     * Allowed values are PDFX1A2001, PDFX32002, PDFA1A and PDFA1B.
-     * It must be called before opening the document.
-     * @param pdfxConformance the conformance level
-     */    
-    public void setPDFXConformance(int pdfxConformance);
-
-	/**
-	 * Getter for the PDF/X Conformance value.
-	 * @return the pdfxConformance
-	 */
-	public int getPDFXConformance();
-	
-    /**
-     * Checks if the PDF/X Conformance is necessary.
-     * @return true if the PDF has to be in conformance with any of the PDF/X specifications
+     * Adds part.
+     * @param part
      */
-    public boolean isPdfX();
+    public void addPart(String part) {
+        setProperty(PART, part);
+    }
+    
+    /**
+     * Adds the conformance.
+     * @param conformance
+     */
+    public void addConformance(String conformance) {
+        setProperty(CONFORMANCE, conformance);
+    }
 }
