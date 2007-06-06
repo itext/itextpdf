@@ -112,6 +112,8 @@ class PdfCopyFieldsImp extends PdfWriter {
     }
     
     void addDocument(PdfReader reader) throws DocumentException {
+        if (!reader.isOpenedWithFullPermissions())
+            throw new IllegalArgumentException("PdfReader not opened with owner password");
         openDoc();
         if (readers2intrefs.containsKey(reader)) {
             reader = new PdfReader(reader);
