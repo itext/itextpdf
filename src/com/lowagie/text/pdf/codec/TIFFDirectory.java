@@ -629,7 +629,7 @@ public class TIFFDirectory extends Object implements Serializable {
                 stream.skip(12*entries);
                 offset = readUnsignedInt(stream, isBigEndian);
             } catch(EOFException eof) {
-                numDirectories--;
+                //numDirectories--;
                 break;
             }
         }
