@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
  *
@@ -92,7 +92,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     protected float leading = Float.NaN;
     
     /** This is the font of this phrase. */
-    protected Font font = new Font();
+    protected Font font;
     
     // constructors
     
@@ -119,6 +119,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      */
     public Phrase(float leading) {
         this.leading = leading;
+        font = new Font();
     }
     
     /**
@@ -139,7 +140,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      * @param	chunk		a <CODE>Chunk</CODE>
      */
     public Phrase(float leading, Chunk chunk) {
-        this(leading);
+        this.leading = leading;
         super.add(chunk);
         font = chunk.getFont();
     }
@@ -161,7 +162,6 @@ public class Phrase extends ArrayList implements TextElementArray {
      */
     public Phrase(String string, Font font) {
         this(Float.NaN, string, font);
-        this.font = font;
     }
     
     /**
@@ -183,7 +183,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      * @param	font		a <CODE>Font</CODE>
      */
     public Phrase(float leading, String string, Font font) {
-        this(leading);
+        this.leading = leading;
         this.font = font;
     	/* bugfix by August Detlefsen */
         if (string != null && string.length() != 0) {
