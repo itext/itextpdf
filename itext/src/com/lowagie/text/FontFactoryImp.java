@@ -288,7 +288,7 @@ public class FontFactoryImp {
             fontname = value;
         }
         if ((value = attributes.getProperty(ElementTags.SIZE)) != null) {
-            size = Float.parseFloat(value + "f");
+            size = Markup.parseLength(value);
         }
         if ((value = attributes.getProperty(Markup.HTML_ATTR_STYLE)) != null) {
             style |= Font.getStyleValue(value);
