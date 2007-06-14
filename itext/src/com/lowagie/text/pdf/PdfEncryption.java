@@ -554,9 +554,10 @@ public class PdfEncryption {
 		for (int i = 0; i < userPad.length; i++) {
 			boolean match = true;
 			for (int j = 0; j < userPad.length - i; j++) {
-				if (userPad[i + j] != pad[j])
+				if (userPad[i + j] != pad[j]) {
 					match = false;
 					break;
+                }
 			}
 			if (!match) continue;
 			byte[] userPassword = new byte[i];
