@@ -50,6 +50,7 @@
 
 package com.lowagie.text;
 
+import java.awt.color.ICC_Profile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -90,10 +91,14 @@ public class Jpeg extends Image {
     /** Marker value */
     public static final int M_APP0 = 0xE0;
     /** Marker value */
+    public static final int M_APP2 = 0xE2;
+    /** Marker value */
     public static final int M_APPE = 0xEE;
     
     /** sequence that is used in all Jpeg files */
     public static final byte JFIF_ID[] = {0x4A, 0x46, 0x49, 0x46, 0x00};
+    
+    private byte[][] icc;
     // Constructors
     
     Jpeg(Image image) {
@@ -264,6 +269,24 @@ public class Jpeg extends Image {
                         }
                         continue;
                     }
+                    if (marker == M_APP2) {
+                        len = getShort(is) - 2;
+                        byte[] byteapp2 = new byte[len];
+                        for (int k = 0; k < len; ++k) {
+                            byteapp2[k] = (byte)is.read();
+                        }
+                        if (byteapp2.length >= 14) {
+                            String app2 = new String(byteapp2, 0, 11, "ISO-8859-1");
+                            if (app2.equals("ICC_PROFILE")) {
+                                int order = byteapp2[12] & 0xff;
+                                int count = byteapp2[13] & 0xff;
+                                if (icc == null)
+                                    icc = new byte[count][];
+                                icc[order - 1] = byteapp2;
+                            }
+                        }
+                        continue;
+                    }
                     firstPass = false;
                     int markertype = marker(marker);
                     if (markertype == VALID_MARKER) {
@@ -292,8 +315,27 @@ public class Jpeg extends Image {
             if (is != null) {
                 is.close();
             }
-            plainWidth = getWidth();
-            plainHeight = getHeight();
+        }
+        plainWidth = getWidth();
+        plainHeight = getHeight();
+        if (icc != null) {
+            int total = 0;
+            for (int k = 0; k < icc.length; ++k) {
+                if (icc[k] == null) {
+                    icc = null;
+                    return;
+                }
+                total += icc[k].length - 14;
+            }
+            byte[] ficc = new byte[total];
+            total = 0;
+            for (int k = 0; k < icc.length; ++k) {
+                System.arraycopy(icc[k], 14, ficc, total, icc[k].length - 14);
+                total += icc[k].length - 14;
+            }
+            ICC_Profile icc_prof = ICC_Profile.getInstance(ficc);
+            tagICC(icc_prof);
+            icc = null;
         }
     }
 }
