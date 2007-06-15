@@ -975,7 +975,7 @@ public class PdfPTable implements Element{
     }
     
 /**
- * Gets the spacing before this table.
+ * Gets the spacing after this table.
  *
  * @return	the spacing
  */
