@@ -1,5 +1,8 @@
 package com.lowagie.text.rtf.graphic;
 
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.ByteArrayOutputStream;
@@ -32,6 +35,10 @@ import com.lowagie.text.rtf.RtfAddableElement;
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfShapeProperty extends RtfAddableElement {
+    /**
+    * Property for defining an image.
+    */
+    public static final String PROPERTY_IMAGE = "pib";
     /**
      * Property for defining vertices in freeform shapes. Requires a
      * Point array as the value.
@@ -108,6 +115,10 @@ public class RtfShapeProperty extends RtfAddableElement {
      * The stored value is either an int or a Point array.
      */
 	private static final int PROPERTY_TYPE_ARRAY = 5;
+    /**
+    * The stored value is an Image.
+    */
+    private static final int PROPERTY_TYPE_IMAGE = 6;
 	
     /**
      * The value type.
@@ -200,6 +211,18 @@ public class RtfShapeProperty extends RtfAddableElement {
     }
 	
     /**
+    * Constructs a RtfShapeProperty with an Image value.
+    * 
+    * @param name The property name to use.
+    * @param value The Image to use.
+    */
+    public RtfShapeProperty(String name, Image value) {
+        this.name = name;
+        this.value = value;
+        this.type = PROPERTY_TYPE_IMAGE;
+    }
+
+    /**
      * Gets the name of this RtfShapeProperty.
      * 
      * @return The name of this RtfShapeProperty.
@@ -285,6 +308,20 @@ public class RtfShapeProperty extends RtfAddableElement {
                 }
             }
     		break;
+        case PROPERTY_TYPE_IMAGE:
+            Image image = (Image)this.value;
+            RtfImage img = null;
+            try {
+                img = new RtfImage(this.doc, image);
+            }
+            catch (DocumentException de) {
+                throw new ExceptionConverter(de);
+            }
+            img.setTopLevelElement(true);
+            result.write(OPEN_GROUP);
+            img.writeContent(result);
+            result.write(CLOSE_GROUP);
+            break;
     	}
     	result.write(CLOSE_GROUP);
     	result.write(CLOSE_GROUP);
