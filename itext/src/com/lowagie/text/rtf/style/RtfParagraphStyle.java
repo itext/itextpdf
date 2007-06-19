@@ -298,6 +298,7 @@ public class RtfParagraphStyle extends RtfFont {
         this.document = doc;
         this.styleName = style.getStyleName();
         this.alignment = style.getAlignment();
+        this.firstLineIndent = (int)(style.getFirstLineIndent() * RtfBasicElement.TWIPS_FACTOR);
         this.indentLeft = (int) (style.getIndentLeft() * RtfBasicElement.TWIPS_FACTOR);
         this.indentRight = (int) (style.getIndentRight() * RtfBasicElement.TWIPS_FACTOR);
         this.spacingBefore = (int) (style.getSpacingBefore() * RtfBasicElement.TWIPS_FACTOR);
