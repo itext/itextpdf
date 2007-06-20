@@ -50,8 +50,6 @@
 
 package com.lowagie.text.xml.xmp;
 
-import com.lowagie.text.Document;
-
 /**
  * An implementation of an XmpSchema.
  */
