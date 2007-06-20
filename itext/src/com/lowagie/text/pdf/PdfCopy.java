@@ -136,10 +136,6 @@ public class PdfCopy extends PdfWriter {
         pdf.addWriter(this);
         indirectMap = new HashMap();
     }
-    
-    public void open() {
-        super.open();
-    }
 
     /** Getter for property rotateContents.
      * @return Value of property rotateContents.
