@@ -101,6 +101,13 @@ import java.util.Map;
 import java.util.Set;
 
 import com.lowagie.text.pdf.internal.PolylineShape;
+import java.util.Locale;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
 
 public class PdfGraphics2D extends Graphics2D {
     
@@ -185,12 +192,6 @@ public class PdfGraphics2D extends Graphics2D {
         super();
         dg2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        try {
-            Class.forName("com.sun.image.codec.jpeg.JPEGCodec");
-        }
-        catch (Throwable t) {
-            convertImagesToJPEG = false;
-        }
         this.convertImagesToJPEG = convertImagesToJPEG;
         this.jpegQuality = quality;
         this.onlyShapes = onlyShapes;
@@ -1354,10 +1355,16 @@ public class PdfGraphics2D extends Graphics2D {
                 g3.dispose();
                 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                com.sun.image.codec.jpeg.JPEGImageEncoder encoder = com.sun.image.codec.jpeg.JPEGCodec.createJPEGEncoder(baos);
-                com.sun.image.codec.jpeg.JPEGEncodeParam param = com.sun.image.codec.jpeg.JPEGCodec.getDefaultJPEGEncodeParam(scaled);
-                param.setQuality(jpegQuality, true);
-                encoder.encode(scaled, param);
+                ImageWriteParam iwparam = new JPEGImageWriteParam(Locale.getDefault());
+                iwparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                iwparam.setCompressionQuality(jpegQuality);//Set here your compression rate
+                ImageWriter iw = (ImageWriter)ImageIO.getImageWritersByFormatName("jpg").next();
+                ImageOutputStream ios = ImageIO.createImageOutputStream(baos);
+                iw.setOutput(ios);
+                iw.write(null, new IIOImage(scaled, null, null), iwparam);
+                iw.dispose();
+                ios.close();
+
                 scaled.flush();
                 scaled = null;
                 image = com.lowagie.text.Image.getInstance(baos.toByteArray());
