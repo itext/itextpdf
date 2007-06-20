@@ -728,14 +728,6 @@ public class RtfWriter extends DocWriter {
     }
 
     /**
-     * Signals that the <CODE>Document</CODE> has been opened and that
-     * <CODE>Elements</CODE> can be added.
-     */
-    public void open() {
-        super.open();
-    }
-
-    /**
      * Signals that the <CODE>Document</CODE> was closed and that no other
      * <CODE>Elements</CODE> will be added.
      * <p>
