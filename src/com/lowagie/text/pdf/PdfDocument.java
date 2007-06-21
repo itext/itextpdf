@@ -2847,7 +2847,7 @@ class PdfDocument extends Document {
                 PdfCell c = (PdfCell) row.get(j);
                 int rowspan = c.rowspan();                
                 // fill in missing rowspan cells to complete "scan line"
-                for (int k = 1; k < rowspan && rows.size() <= i+k; k++) {
+                for (int k = 1; k < rowspan && rows.size() < i+k; k++) {
                     ArrayList spannedRow = ((ArrayList) rows.get(i + k));
                     if (spannedRow.size() > j)
                     	spannedRow.add(j, c);
