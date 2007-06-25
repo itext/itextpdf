@@ -101,7 +101,7 @@ import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
  */
 
 class PdfDocument extends Document {
-    
+	
     /**
      * <CODE>PdfInfo</CODE> is the PDF InfoDictionary.
      * <P>
@@ -554,11 +554,11 @@ class PdfDocument extends Document {
                     
                     // some values are set
                     carriageReturn();
-                    indentation.indentLeft += section.getIndentationLeft();
-                    indentation.indentRight += section.getIndentationRight();
+                    //indentation.indentLeft += section.getIndentationLeft();
+                    //indentation.indentRight += section.getIndentationRight();
                     indentation.sectionIndentLeft += section.getIndentationLeft();
                     indentation.sectionIndentRight += section.getIndentationRight();
-                    
+      
                     PdfPageEvent pageEvent = writer.getPageEvent();
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
@@ -572,22 +572,23 @@ class PdfDocument extends Document {
                         add(section.getTitle());
                         isParagraph = true;
                     }
-                    indentation.indentLeft += section.getIndentation();
+                    //indentation.indentLeft += section.getIndentation();
                     indentation.sectionIndentLeft += section.getIndentation();
                     // we process the section
                     element.process(this);
+                    flushLines();
                     // some parameters are set back to normal again
-                    indentation.indentLeft -= section.getIndentationLeft() + section.getIndentation();
-                    indentation.indentRight -= section.getIndentationRight();
-                    indentation.sectionIndentLeft -= section.getIndentationLeft() + section.getIndentation();
+                    //indentation.indentLeft -= section.getIndentationLeft() + section.getIndentation();
+                    //indentation.indentRight -= section.getIndentationRight();
+                    indentation.sectionIndentLeft -= (section.getIndentationLeft() + section.getIndentation());
                     indentation.sectionIndentRight -= section.getIndentationRight();
-                    
+
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
                             pageEvent.onChapterEnd(writer, this, indentTop() - currentHeight);
                         else
                             pageEvent.onSectionEnd(writer, this, indentTop() - currentHeight);
-                    
+
                     break;
                 }
                 case Element.LIST: {
@@ -1271,13 +1272,12 @@ class PdfDocument extends Document {
             // this is a line in the loop
             l = (PdfLine) i.next();
             
+            float moveTextX = l.indentLeft() - indentLeft() + indentation.listIndentLeft + indentation.sectionIndentLeft;
             if(isNewpage && newline) { // fix Ken@PDI
                 newline=false;
-                text.moveText(l.indentLeft() - indentLeft() + indentation.listIndentLeft + indentation.paragraph,-l.height());
+                moveTextX += indentation.paragraph;
             }
-            else {
-                text.moveText(l.indentLeft() - indentLeft() + indentation.listIndentLeft, -l.height());
-            }
+            text.moveText(moveTextX, -l.height());
             
             // is the line preceeded by a symbol?
             if (l.listSymbol() != null) {
@@ -1291,9 +1291,7 @@ class PdfDocument extends Document {
             currentFont = (PdfFont)currentValues[0];
             
             displacement += l.height();
-            if (indentLeft() - indentation.listIndentLeft != l.indentLeft()) {
-                text.moveText(indentLeft() - l.indentLeft() - indentation.listIndentLeft, 0);
-            }
+            text.moveText(-moveTextX, 0);
             
         }
         lines = new ArrayList();
@@ -1654,7 +1652,7 @@ class PdfDocument extends Document {
      */
     
     private float indentLeft() {
-        return left(indentation.indentLeft + indentation.listIndentLeft + indentation.imageIndentLeft);
+        return left(indentation.indentLeft + indentation.listIndentLeft + indentation.imageIndentLeft + indentation.sectionIndentLeft);
     }
     
     /**
@@ -1664,7 +1662,7 @@ class PdfDocument extends Document {
      */
     
     private float indentRight() {
-        return right(indentation.indentRight + indentation.imageIndentRight);
+        return right(indentation.indentRight + indentation.sectionIndentRight);
     }
     
     /**
