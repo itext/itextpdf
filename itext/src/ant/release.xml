@@ -56,8 +56,8 @@
     <!-- Making the jars with the Asian Fontfiles                         -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
 	<target name="asian.jar" description="--> makes iTextAsian.jar and iTextAsianCmaps.jar">
-        <jar jarfile="${itext.lib}/iTextAsian.jar" basedir="${itext.src}" includes="**/*.cmap,**/*.properties" />
-        <jar jarfile="${itext.lib}/iTextAsianCmaps.jar" basedir="${itext.src}" excludes="**/*.java, **/*.ps,**/*.txt,**/*.gif,**/*.afm,**/*.html,**/*.cmap,**/*.properties" />
+        <jar jarfile="${itext.lib}/iTextAsian.jar" basedir="${itext.src}" includes="**/*.cmap,**/*.properties,**/cmap_info.txt" excludes="**/.ant.properties" />
+        <jar jarfile="${itext.lib}/iTextAsianCmaps.jar" basedir="${itext.src}" includes="com/lowagie/text/pdf/fonts/cmaps/**" />
 	</target>
 
 </project>
