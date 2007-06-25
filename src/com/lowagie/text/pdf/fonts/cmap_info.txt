@@ -1,0 +1,19 @@
+This file contains some info on the files with extension
+*.cmap or *.properties that are shipped in separate jars
+(iTextAsian.jar and iTextAsianCmaps.jar).
+
+These files are based on data found on the following page:
+http://partners.adobe.com/public/developer/acrobat/index_advanced.html
+(scroll down to CMaps for PDF 1.4 CJK Fonts).
+
+iTextAsian.jar and/or iTextAsianCmaps.jar contain information about
+a selection of Asian fonts that is identical to the information that
+is distributed on Adobe's site; but the information was pre-processed
+to map directly the Unicode value with CID value using a 64k char array.
+The jar also contains font metrics extracted from CJK Adobe fonts.
+
+All these files were produced by core iText developer Paulo Soares
+from the original Adobe sources in conformance with Adobe's policy
+about third party software that produces/renders/manipulates PDF
+documents (as confirmed by Leonard Rosenthol, Adobe's PDF Technical
+Standards Evangelist).
