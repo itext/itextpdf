@@ -172,17 +172,21 @@ public class PdfPageLabels {
     /**
      * Retrieves the page labels from a PDF as an array of String objects.
      * @param reader a PdfReader object that has the page labels you want to retrieve
-     * @return	a String array
+     * @return	a String array or <code>null</code> if no page labels are present
      */
     public static String[] getPageLabels(PdfReader reader) {
     	
 		int n = reader.getNumberOfPages();
-		String[] labelstrings = new String[n];
 		
     	PdfDictionary dict = reader.getCatalog();
-		PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObject((PdfObject)dict.get(PdfName.PAGELABELS));
-		PdfArray numbers = (PdfArray)PdfReader.getPdfObject((PdfObject)labels.get(PdfName.NUMS));
+		PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObject(dict.get(PdfName.PAGELABELS));
+        if (labels == null)
+            return null;
+		PdfArray numbers = (PdfArray)PdfReader.getPdfObject(labels.get(PdfName.NUMS));
+        if (numbers == null)
+            return null;
 		
+		String[] labelstrings = new String[n];
 		PdfNumber pageIndex;
 		PdfDictionary pageLabel;
 		HashMap numberTree = new HashMap();
