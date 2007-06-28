@@ -346,8 +346,8 @@ public class PngImage {
                 int dy = getInt(is);
                 int unit = is.read();
                 if (unit == 1) {
-                    dpiX = (int)((float)dx * 0.0254f);
-                    dpiY = (int)((float)dy * 0.0254f);
+                    dpiX = (int)((float)dx * 0.0254f + 0.5f);
+                    dpiY = (int)((float)dy * 0.0254f + 0.5f);
                 }
                 else {
                     if (dy != 0)

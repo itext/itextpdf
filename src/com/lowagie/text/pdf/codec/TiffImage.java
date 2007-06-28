@@ -89,10 +89,10 @@ public class TiffImage {
         switch (resolutionUnit) {
             case TIFFConstants.RESUNIT_INCH:
             case TIFFConstants.RESUNIT_NONE:
-                dpi = (int)frac;
+                dpi = (int)(frac + 0.5);
                 break;
             case TIFFConstants.RESUNIT_CENTIMETER:
-                dpi = (int)(frac * 2.54);
+                dpi = (int)(frac * 2.54 + 0.5);
                 break;
         }
         return dpi;
