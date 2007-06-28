@@ -177,6 +177,8 @@ class PdfStamperImp extends PdfWriter {
         if (openAction != null) {
             catalog.put(PdfName.OPENACTION, openAction);
         }
+        if (pdf.pageLabels != null)
+            catalog.put(PdfName.PAGELABELS, pdf.pageLabels.getDictionary(this));
         byte[] altMetadata = xmpMetadata;
         if (altMetadata == null) {
             PdfObject xmpo = PdfReader.getPdfObject(catalog.get(PdfName.METADATA));

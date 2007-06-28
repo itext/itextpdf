@@ -50,12 +50,13 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TreeMap;
 
 import com.lowagie.text.factories.RomanAlphabetFactory;
 import com.lowagie.text.factories.RomanNumberFactory;
+import java.util.Arrays;
 
 /** Page labels are used to identify each
  * page visually on the screen or in print.
@@ -90,12 +91,12 @@ public class PdfPageLabels {
                 new PdfName("r"), PdfName.A, new PdfName("a")};
     /** The sequence of logical pages. Will contain at least a value for page 1
      */    
-    TreeMap map;
+    private HashMap map;
     
     /** Creates a new PdfPageLabel with a default logical page 1
      */
     public PdfPageLabels() {
-        map = new TreeMap();
+        map = new HashMap();
         addPageLabel(1, DECIMAL_ARABIC_NUMERALS, null, 1);
     }
 
@@ -108,12 +109,14 @@ public class PdfPageLabels {
     public void addPageLabel(int page, int numberStyle, String text, int firstPage) {
         if (page < 1 || firstPage < 1)
             throw new IllegalArgumentException("In a page label the page numbers must be greater or equal to 1.");
-        PdfName pdfName = null;
+        PdfDictionary dic = new PdfDictionary();
         if (numberStyle >= 0 && numberStyle < numberingStyle.length)
-            pdfName = numberingStyle[numberStyle];
-        Integer iPage = new Integer(page);
-        Object obj = new Object[]{iPage, pdfName, text, new Integer(firstPage)};
-        map.put(iPage, obj);
+            dic.put(PdfName.S, numberingStyle[numberStyle]);
+        if (text != null)
+            dic.put(PdfName.P, new PdfString(text, PdfObject.TEXT_UNICODE));
+        if (firstPage != 1)
+            dic.put(PdfName.ST, new PdfNumber(firstPage));
+        map.put(new Integer(page - 1), dic);
     }
 
     /** Adds or replaces a page label. The first logical page has the default
@@ -135,38 +138,31 @@ public class PdfPageLabels {
         addPageLabel(page, numberStyle, null, 1);
     }
     
+    /** Adds or replaces a page label.
+     */
+    public void addPageLabel(PdfPageLabelFormat format) {
+        addPageLabel(format.physicalPage, format.numberStyle, format.prefix, format.logicalPage);
+    }
+    
     /** Removes a page label. The first page label can not be removed, only changed.
      * @param page the real page to remove
      */    
     public void removePageLabel(int page) {
         if (page <= 1)
             return;
-        map.remove(new Integer(page));
+        map.remove(new Integer(page - 1));
     }
 
     /** Gets the page label dictionary to insert into the document.
      * @return the page label dictionary
      */    
-    PdfDictionary getDictionary() {
-        PdfDictionary dic = new PdfDictionary();
-        PdfArray array = new PdfArray();
-        for (Iterator it = map.values().iterator(); it.hasNext();) {
-            Object obj[] = (Object[])it.next();
-            PdfDictionary subDic = new PdfDictionary();
-            PdfName pName = (PdfName)obj[1];
-            if (pName != null)
-                subDic.put(PdfName.S, pName);
-            String text = (String)obj[2];
-            if (text != null)
-                subDic.put(PdfName.P, new PdfString(text, PdfObject.TEXT_UNICODE));
-            int st = ((Integer)obj[3]).intValue();
-            if (st != 1)
-                subDic.put(PdfName.ST, new PdfNumber(st));
-            array.add(new PdfNumber(((Integer)obj[0]).intValue() - 1));
-            array.add(subDic);
+    PdfDictionary getDictionary(PdfWriter writer) {
+        try {
+            return PdfNumberTree.writeTree(map, writer);
         }
-        dic.put(PdfName.NUMS, array);
-        return dic;
+        catch (IOException e) {
+            throw new ExceptionConverter(e);
+        }
     }
     
     /**
@@ -182,19 +178,10 @@ public class PdfPageLabels {
 		PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObject(dict.get(PdfName.PAGELABELS));
         if (labels == null)
             return null;
-		PdfArray numbers = (PdfArray)PdfReader.getPdfObject(labels.get(PdfName.NUMS));
-        if (numbers == null)
-            return null;
 		
 		String[] labelstrings = new String[n];
-		PdfNumber pageIndex;
-		PdfDictionary pageLabel;
-		HashMap numberTree = new HashMap();
-		for (Iterator i = numbers.listIterator(); i.hasNext(); ) {
-			pageIndex = (PdfNumber)i.next();
-			pageLabel = (PdfDictionary) PdfReader.getPdfObject((PdfObject)i.next());
-			numberTree.put(new Integer(pageIndex.intValue()), pageLabel);
-		}
+		
+		HashMap numberTree = PdfNumberTree.readTree(labels);
 		
 		int pagecount = 1;
 		Integer current;
@@ -203,7 +190,7 @@ public class PdfPageLabels {
 		for (int i = 0; i < n; i++) {
 			current = new Integer(i);
 			if (numberTree.containsKey(current)) {
-				PdfDictionary d = (PdfDictionary)numberTree.get(current);
+				PdfDictionary d = (PdfDictionary)PdfReader.getPdfObject((PdfObject)numberTree.get(current));
 				if (d.contains(PdfName.ST)) {
 					pagecount = ((PdfNumber)d.get(PdfName.ST)).intValue();
 				}
@@ -211,7 +198,7 @@ public class PdfPageLabels {
 					pagecount = 1;
 				}
 				if (d.contains(PdfName.P)) {
-					prefix = ((PdfString)d.get(PdfName.P)).toString();
+					prefix = ((PdfString)d.get(PdfName.P)).toUnicodeString();
 				}
 				if (d.contains(PdfName.S)) {
 					type = ((PdfName)d.get(PdfName.S)).toString().charAt(1);
@@ -237,5 +224,77 @@ public class PdfPageLabels {
 			pagecount++;
 		}
 		return labelstrings;
+    }
+    
+    /**
+     * Retrieves the page labels from a PDF as an array of {@link PdfPageLabelFormat} objects.
+     * @param reader a PdfReader object that has the page labels you want to retrieve
+     * @return	a PdfPageLabelEntry array, containing an entry for each format change
+     * or <code>null</code> if no page labels are present
+     */
+    public static PdfPageLabelFormat[] getPageLabelFormats(PdfReader reader) {
+        PdfDictionary dict = reader.getCatalog();
+        PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObject(dict.get(PdfName.PAGELABELS));
+        if (labels == null) 
+            return null;
+        PdfNumber pageIndex;
+        PdfDictionary pageLabel;
+        HashMap numberTree = PdfNumberTree.readTree(labels);
+        Integer numbers[] = new Integer[numberTree.size()];
+        numbers = (Integer[])numberTree.keySet().toArray(numbers);
+        Arrays.sort(numbers);
+        PdfPageLabelFormat[] formats = new PdfPageLabelFormat[numberTree.size()];
+        String prefix;
+        int numberStyle;
+        int pagecount;
+        for (int k = 0; k < numbers.length; ++k) {
+            Integer key = numbers[k];
+            PdfDictionary d = (PdfDictionary)PdfReader.getPdfObject((PdfObject)numberTree.get(key));
+            if (d.contains(PdfName.ST)) {
+                pagecount = ((PdfNumber)d.get(PdfName.ST)).intValue();
+            } else {
+                pagecount = 1;
+            }
+            if (d.contains(PdfName.P)) {
+                prefix = ((PdfString)d.get(PdfName.P)).toUnicodeString();
+            } else {
+                prefix = "";
+            }
+            if (d.contains(PdfName.S)) {
+                char type = ((PdfName)d.get(PdfName.S)).toString().charAt(1);
+                switch(type) {
+                    case 'R': numberStyle = UPPERCASE_ROMAN_NUMERALS; break;
+                    case 'r': numberStyle = LOWERCASE_ROMAN_NUMERALS; break;
+                    case 'A': numberStyle = UPPERCASE_LETTERS; break;
+                    case 'a': numberStyle = LOWERCASE_LETTERS; break;
+                    default: numberStyle = DECIMAL_ARABIC_NUMERALS; break;
+                }
+            } else {
+                numberStyle = EMPTY;
+            }
+            formats[k] = new PdfPageLabelFormat(key.intValue()+1, numberStyle, prefix, pagecount);
+        }
+        return formats;
+    }
+
+    public static class PdfPageLabelFormat {
+        
+        public int physicalPage;
+        public int numberStyle;
+        public String prefix;
+        public int logicalPage;
+        
+        /** Creates a page label format.
+         * @param physicalPage the real page to start the numbering. First page is 1
+         * @param numberStyle the numbering style such as LOWERCASE_ROMAN_NUMERALS
+         * @param prefix the text to prefix the number. Can be <CODE>null</CODE> or empty
+         * @param logicalPage the first logical page number
+         */
+        public PdfPageLabelFormat(int physicalPage, int numberStyle, String prefix, int logicalPage) {
+            this.physicalPage = physicalPage;
+            this.numberStyle = numberStyle;
+            this.prefix = prefix;
+            this.logicalPage = logicalPage;
+        }
     }
 }
