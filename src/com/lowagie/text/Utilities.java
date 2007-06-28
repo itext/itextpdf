@@ -141,8 +141,6 @@ public class Utilities {
 	    return bf.toString();
 	}
 
-	private static String[] excUriEsc = {"%20", "%3C", "%3E", "%23", "%25", "%22", "%7B", "%7D", "%5B", "%5D", "%7C", "%5C", "%5E", "%60"};
-	private static String excUri = " <>#%\"{}[]|\\\u005E\u0060";
 	/**
 	 * This method makes a valid URL from a given filename.
 	 * <P>
