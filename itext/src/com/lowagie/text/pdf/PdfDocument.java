@@ -1740,7 +1740,7 @@ class PdfDocument extends Document {
         
         // [C4] pagelabels
         if (pageLabels != null) {
-            catalog.put(PdfName.PAGELABELS, pageLabels.getDictionary());
+            catalog.put(PdfName.PAGELABELS, pageLabels.getDictionary(writer));
         }
         
         // [C5] named objects
