@@ -203,7 +203,7 @@ public class BmpImage {
         BmpImage bmp = new BmpImage(is, noHeader, size);
         try {
             Image img = bmp.getImage();
-            img.setDpi((int)((double)bmp.xPelsPerMeter * 0.0254), (int)((double)bmp.yPelsPerMeter * 0.0254));
+            img.setDpi((int)((double)bmp.xPelsPerMeter * 0.0254 + 0.5), (int)((double)bmp.yPelsPerMeter * 0.0254 + 0.5));
             img.setOriginalType(Image.ORIGINAL_BMP);
             return img;
         }
