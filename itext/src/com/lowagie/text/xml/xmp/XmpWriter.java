@@ -203,6 +203,7 @@ public class XmpWriter {
         		}
         		if (PdfName.SUBJECT.equals(key)) {
         			dc.addSubject(((PdfString)obj).toUnicodeString());
+        			dc.addDescription(((PdfString)obj).toUnicodeString());
         		}
         		if (PdfName.KEYWORDS.equals(key)) {
         			p.addKeywords(((PdfString)obj).toUnicodeString());
@@ -261,6 +262,7 @@ public class XmpWriter {
         		}
         		if ("Subject".equals(key)) {
         			dc.addSubject(value);
+        			dc.addDescription(value);
         		}
         		if ("Keywords".equals(key)) {
         			p.addKeywords(value);
