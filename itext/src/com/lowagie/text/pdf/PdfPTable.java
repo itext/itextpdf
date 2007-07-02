@@ -1079,4 +1079,13 @@ public class PdfPTable implements Element{
         this.footerRows = footerRows;
     }
     
+    /**
+     * Completes the current row with the default cell. An incomplete row will be dropped
+     * but calling this method will make sure that it will be present in the table.
+     */
+    public void completeRow() {
+        while (currentRowIdx > 0) {
+            addCell(defaultCell);
+        }
+    }
 }
