@@ -503,6 +503,25 @@ public class DocumentFont extends BaseFont {
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object[] params) throws DocumentException, IOException {
     }
 
+    /**
+     * Gets the width of a <CODE>char</CODE> in normalized 1000 units.
+     * @param char1 the unicode <CODE>char</CODE> to get the width of
+     * @return the width in normalized 1000 units
+     */
+    public int getWidth(char char1) {
+        if (cjkMirror != null)
+            return cjkMirror.getWidth(char1);
+        else if (isType0) {
+            int[] ws = (int[])metrics.get(new Integer((int)char1));
+            if (ws != null)
+                return ws[1];
+            else
+                return 0;
+        }
+        else
+            return super.getWidth(char1);
+    }
+    
     public int getWidth(String text) {
         if (cjkMirror != null)
             return cjkMirror.getWidth(text);
@@ -560,6 +579,26 @@ public class DocumentFont extends BaseFont {
                 System.arraycopy(b, 0, b2, 0, ptr);
                 return b2;
             }
+        }
+    }
+    
+    byte[] convertToBytes(char char1) {
+        if (cjkMirror != null)
+            return PdfEncodings.convertToBytes(char1, CJKFont.CJK_ENCODING);
+        else if (isType0) {
+            int[] ws = (int[])metrics.get(new Integer((int)char1));
+            if (ws != null) {
+                int g = ws[0];
+                return new byte[]{(byte)(g / 256), (byte)(g)};
+            }
+            else
+                return new byte[0];
+        }
+        else {
+            if (uni2byte.containsKey(char1))
+                return new byte[]{(byte)uni2byte.get(char1)};
+            else
+                return new byte[0];
         }
     }
     

@@ -272,6 +272,12 @@ public class Type3Font extends BaseFont {
         return b2;
     }
     
+    byte[] convertToBytes(char char1) {
+        if (charExists(char1))
+            return new byte[]{(byte)char1};
+        else return new byte[0];
+    }
+    
     public int getWidth(char char1) {
         if (!widths3.containsKey(char1))
             throw new IllegalArgumentException("The char " + (int)char1 + " is not defined in a Type3 font");
