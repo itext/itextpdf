@@ -694,9 +694,16 @@ public abstract class BaseFont {
         if (fastWinansi) {
             if (char1 < 128 || (char1 >= 160 && char1 <= 255))
                 return widths[char1];
-            return widths[PdfEncodings.winansi.get(char1)];
+            else
+                return widths[PdfEncodings.winansi.get(char1)];
         }
-        return getWidth(new String(new char[]{char1}));
+        else {
+            int total = 0;
+            byte mbytes[] = convertToBytes(char1);
+            for (int k = 0; k < mbytes.length; ++k)
+                total += widths[0xff & mbytes[k]];
+            return total;
+        }
     }
     
     /**
@@ -851,6 +858,24 @@ public abstract class BaseFont {
                 return b;
         }
         return PdfEncodings.convertToBytes(text, encoding);
+    }
+    
+    /**
+     * Converts a <CODE>char</CODE> to a </CODE>byte</CODE> array according
+     * to the font's encoding.
+     * @param text the <CODE>String</CODE> to be converted
+     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
+     */
+    byte[] convertToBytes(char char1) {
+        if (directTextToByte)
+            return PdfEncodings.convertToBytes(char1, null);
+        if (specialMap != null) {
+            if (specialMap.containsKey((int)char1))
+                return new byte[]{(byte)specialMap.get((int)char1)};
+            else
+                return new byte[0];
+        }
+        return PdfEncodings.convertToBytes(char1, encoding);
     }
     
     /** Outputs to the writer the font dictionaries and streams.
@@ -1173,7 +1198,7 @@ public abstract class BaseFont {
      * <CODE>false</CODE> otherwise
      */    
     public boolean charExists(char c) {
-        byte b[] = convertToBytes(new String(new char[]{c}));
+        byte b[] = convertToBytes(c);
         return b.length > 0;
     }
     
@@ -1185,7 +1210,7 @@ public abstract class BaseFont {
      * <CODE>false</CODE> otherwise
      */    
     public boolean setCharAdvance(char c, int advance) {
-        byte b[] = convertToBytes(new String(new char[]{c}));
+        byte b[] = convertToBytes(c);
         if (b.length == 0)
             return false;
         widths[0xff & b[0]] = advance;
@@ -1273,7 +1298,7 @@ public abstract class BaseFont {
      * <code>null</code>
      */    
     public int[] getCharBBox(char c) {
-        byte b[] = convertToBytes(new String(new char[]{c}));
+        byte b[] = convertToBytes(c);
         if (b.length == 0)
             return null;
         else

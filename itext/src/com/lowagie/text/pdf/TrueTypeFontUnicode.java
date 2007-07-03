@@ -113,13 +113,31 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         vertical = enc.endsWith("V");
     }
     
-/**
- * Gets the width of a <CODE>String</CODE> in normalized 1000 units.
- * @param text the <CODE>String</CODE> to get the witdth of
- * @return the width in normalized 1000 units
- */
-    public int getWidth(String text)
-    {
+    /**
+     * Gets the width of a <CODE>char</CODE> in normalized 1000 units.
+     * @param char1 the unicode <CODE>char</CODE> to get the width of
+     * @return the width in normalized 1000 units
+     */
+    public int getWidth(char char1) {
+        if (vertical)
+            return 1000;
+        if (fontSpecific) {
+            if ((char1 & 0xff00) == 0 || (char1 & 0xff00) == 0xf000)
+                return getRawWidth(char1 & 0xff, null);
+            else
+                return 0;
+        }
+        else {
+            return getRawWidth(char1, encoding);
+        }
+    }
+    
+    /**
+     * Gets the width of a <CODE>String</CODE> in normalized 1000 units.
+     * @param text the <CODE>String</CODE> to get the witdth of
+     * @return the width in normalized 1000 units
+     */
+    public int getWidth(String text) {
         if (vertical)
             return text.length() * 1000;
         int total = 0;
@@ -369,8 +387,11 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @param text the text
      * @return always <CODE>null</CODE>
      */    
-    byte[] convertToBytes(String text)
-    {
+    byte[] convertToBytes(String text) {
+        return null;
+    }
+
+    byte[] convertToBytes(char char1) {
         return null;
     }
 
