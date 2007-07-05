@@ -121,7 +121,7 @@ public class BuildTutorial {
 	 * @throws IOException when something goes wrong while reading or creating a file or directory
 	 */
 	public static void action(File source, File destination, File xsl_examples, File xsl_site) throws IOException {
-		if ("CVS".equals(source.getName())) return;
+		if (".svn".equals(source.getName())) return;
 		System.out.print(source.getName());
 		if (source.isDirectory()) {
 			System.out.print(" ");
