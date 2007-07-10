@@ -1141,6 +1141,8 @@ public class PdfWriter extends DocWriter implements
                     catalog.mergeDifferent(extraCatalog);
                 }
                 
+                writeOutlines(catalog, false);
+                
                 // add the Catalog to the body
                 PdfIndirectObject indirectCatalog = addToBody(catalog, false);
                 // add the info-object to the body
@@ -1269,6 +1271,30 @@ public class PdfWriter extends DocWriter implements
          return directContent.getRootOutline();
      }
      
+     protected java.util.List newBookmarks;
+     
+    /**
+     * Sets the bookmarks. The list structure is defined in
+     * {@link SimpleBookmark}.
+     * @param outlines the bookmarks or <CODE>null</CODE> to remove any
+     */
+    public void setOutlines(java.util.List outlines) {
+        newBookmarks = outlines;
+    }
+    
+    protected void writeOutlines(PdfDictionary catalog, boolean namedAsNames) throws IOException {
+        if (newBookmarks == null || newBookmarks.isEmpty())
+            return;
+        PdfDictionary top = new PdfDictionary();
+        PdfIndirectReference topRef = getPdfIndirectReference();
+        Object kids[] = SimpleBookmark.iterateOutlines(this, topRef, newBookmarks, namedAsNames);
+        top.put(PdfName.FIRST, (PdfIndirectReference)kids[0]);
+        top.put(PdfName.LAST, (PdfIndirectReference)kids[1]);
+        top.put(PdfName.COUNT, new PdfNumber(((Integer)kids[2]).intValue()));
+        addToBody(top, topRef);
+        catalog.put(PdfName.OUTLINES, topRef);
+    }
+    
 //	[C2] PdfVersion interface
      /** possible PDF version (header) */
      public static final char VERSION_1_2 = '2';
