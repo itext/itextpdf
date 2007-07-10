@@ -89,7 +89,6 @@ public class PdfCopy extends PdfWriter {
     protected int currentObjectNum = 1;
     protected PdfReader reader;
     protected PdfIndirectReference acroForm;
-    protected List newBookmarks;
     protected int[] namePtr = {0};
     /** Holds value of property rotateContents. */
     private boolean rotateContents = true;
@@ -406,16 +405,7 @@ public class PdfCopy extends PdfWriter {
         try {
             PdfDictionary theCat = pdf.getCatalog(rootObj);
             if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
-            if (newBookmarks == null || newBookmarks.isEmpty())
-                return theCat;
-            PdfDictionary top = new PdfDictionary();
-            PdfIndirectReference topRef = getPdfIndirectReference();
-            Object kids[] = SimpleBookmark.iterateOutlines(this, topRef, newBookmarks, false);
-            top.put(PdfName.FIRST, (PdfIndirectReference)kids[0]);
-            top.put(PdfName.LAST, (PdfIndirectReference)kids[1]);
-            top.put(PdfName.COUNT, new PdfNumber(((Integer)kids[2]).intValue()));
-            addToBody(top, topRef);
-            theCat.put(PdfName.OUTLINES, topRef);
+            writeOutlines(theCat, false);
             return theCat;
         }
         catch (IOException e) {
@@ -423,15 +413,6 @@ public class PdfCopy extends PdfWriter {
         }
     }
     
-    /**
-     * Sets the bookmarks. The list structure is defined in
-     * <CODE>SimpleBookmark#</CODE>.
-     * @param outlines the bookmarks or <CODE>null</CODE> to remove any
-     */    
-    public void setOutlines(List outlines) {
-        newBookmarks = outlines;
-    }
-
     /**
      * Signals that the <CODE>Document</CODE> was closed and that no other
      * <CODE>Elements</CODE> will be added.

@@ -78,8 +78,6 @@ class PdfStamperImp extends PdfWriter {
     protected boolean flat = false;
     protected boolean flatFreeText = false;
     protected int namePtr[] = {0};
-    protected boolean namedAsNames;
-    protected List newBookmarks;
     protected HashSet partialFlattening = new HashSet();
     protected boolean useVp = false;
     protected PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
@@ -1258,22 +1256,12 @@ class PdfStamperImp extends PdfWriter {
         deleteOutlines();
         if (newBookmarks.isEmpty())
             return;
-        namedAsNames = (reader.getCatalog().get(PdfName.DESTS) != null);
-        PdfDictionary top = new PdfDictionary();
-        PdfIndirectReference topRef = getPdfIndirectReference();
-        Object kids[] = SimpleBookmark.iterateOutlines(this, topRef, newBookmarks, namedAsNames);
-        top.put(PdfName.FIRST, (PdfIndirectReference)kids[0]);
-        top.put(PdfName.LAST, (PdfIndirectReference)kids[1]);
-        top.put(PdfName.COUNT, new PdfNumber(((Integer)kids[2]).intValue()));
-        addToBody(top, topRef);
-        reader.getCatalog().put(PdfName.OUTLINES, topRef);
-        markUsed(reader.getCatalog());
+        PdfDictionary catalog = reader.getCatalog();
+        boolean namedAsNames = (catalog.get(PdfName.DESTS) != null);
+        writeOutlines(catalog, namedAsNames);
+        markUsed(catalog);
     }
-    
-    void setOutlines(List outlines) {
-        newBookmarks = outlines;
-    }
-    
+        
     /**
      * Sets the viewer preferences.
      * @param preferences the viewer preferences
