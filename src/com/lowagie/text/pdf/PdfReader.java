@@ -1823,19 +1823,19 @@ public class PdfReader implements PdfViewerPreferences {
         if (state == 1)
             throw new RuntimeException("Illegal length in ASCII85Decode.");
         if (state == 2) {
-            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85;
-            out.write((byte)((r >> 24) + (((r >> 16) & 0xff) != 0 ? 1 : 0)));
-        }
-         else if (state == 3) {
-            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85  + chn[2] * 85 * 85;
+            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85 + 85 * 85 * 85  + 85 * 85 + 85;
             out.write((byte)(r >> 24));
-            out.write((byte)((r >> 16) + (((r >> 8) & 0xff) != 0 ? 1 : 0)));
         }
-        else if (state == 4) {
-            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85  + chn[2] * 85 * 85  + chn[3] * 85 ;
+        else if (state == 3) {
+            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85  + chn[2] * 85 * 85 + 85 * 85 + 85;
             out.write((byte)(r >> 24));
             out.write((byte)(r >> 16));
-            out.write((byte)((r >> 8) + ((r & 0xff) != 0 ? 1 : 0)));
+        }
+        else if (state == 4) {
+            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85  + chn[2] * 85 * 85  + chn[3] * 85 + 85;
+            out.write((byte)(r >> 24));
+            out.write((byte)(r >> 16));
+            out.write((byte)(r >> 8));
         }
         return out.toByteArray();
     }
