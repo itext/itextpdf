@@ -460,11 +460,14 @@ public class PdfCopy extends PdfWriter {
     }
     
     /**
-     * Create a page stamp. The general usage to stamp something in a page is:
+     * Create a page stamp. New content and annotations, including new fields, are allowed.
+     * The fields added cannot have parents in another pages. This method modifies the PdfReader instance.<p>
+     * The general usage to stamp something in a page is:
      * <p>
      * <pre>
      * PdfImportedPage page = copy.getImportedPage(reader, 1);
      * PdfCopy.PageStamp ps = copy.createPageStamp(page);
+     * ps.addAnnotation(PdfAnnotation.createText(copy, new Rectangle(50, 180, 70, 200), "Hello", "No Thanks", true, "Comment"));
      * PdfContentByte under = ps.getUnderContent();
      * under.addImage(img);
      * PdfContentByte over = ps.getOverContent();
@@ -499,22 +502,35 @@ public class PdfCopy extends PdfWriter {
             this.pageN = pageN;
             this.reader = reader;
             this.cstp = cstp;
-            pageResources = new PageResources();
-            PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(pageN.get(PdfName.RESOURCES));
-            pageResources.setOriginalResources(resources, cstp.namePtr);
-            under = new PdfCopy.StampContent(cstp,pageResources);
-            over = new PdfCopy.StampContent(cstp,pageResources);
         }
         
         public PdfContentByte getUnderContent(){
+            if (under == null) {
+                if (pageResources == null) {
+                    pageResources = new PageResources();
+                    PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(pageN.get(PdfName.RESOURCES));
+                    pageResources.setOriginalResources(resources, cstp.namePtr);
+                }
+                under = new PdfCopy.StampContent(cstp, pageResources);
+            }
             return under;
         }
         
         public PdfContentByte getOverContent(){
+            if (over == null) {
+                if (pageResources == null) {
+                    pageResources = new PageResources();
+                    PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(pageN.get(PdfName.RESOURCES));
+                    pageResources.setOriginalResources(resources, cstp.namePtr);
+                }
+                over = new PdfCopy.StampContent(cstp, pageResources);
+            }
             return over;
         }
         
         public void alterContents() throws IOException {
+            if (over == null && under == null)
+                return;
             PdfArray ar = null;
             PdfObject content = PdfReader.getPdfObject(pageN.get(PdfName.CONTENTS), pageN);
             if (content == null) {
