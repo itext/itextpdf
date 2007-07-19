@@ -55,12 +55,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Rectangle;
+import java.util.ArrayList;
 
 /**
  * Make copies of PDF documents. Documents can be edited after reading and
@@ -92,6 +92,8 @@ public class PdfCopy extends PdfWriter {
     protected int[] namePtr = {0};
     /** Holds value of property rotateContents. */
     private boolean rotateContents = true;
+    protected PdfArray fieldArray;
+    protected HashMap fieldTemplates;
     
     /**
      * A key to allow us to hash indirect references
@@ -404,12 +406,55 @@ public class PdfCopy extends PdfWriter {
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj) {
         try {
             PdfDictionary theCat = pdf.getCatalog(rootObj);
-            if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
+            if (fieldArray == null) {
+                if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
+            }
+            else
+                addFieldResources(theCat);
             writeOutlines(theCat, false);
             return theCat;
         }
         catch (IOException e) {
             throw new ExceptionConverter(e);
+        }
+    }
+    
+    private void addFieldResources(PdfDictionary catalog) throws IOException {
+        if (fieldArray == null)
+            return;
+        PdfDictionary acroForm = new PdfDictionary();
+        catalog.put(PdfName.ACROFORM, acroForm);
+        acroForm.put(PdfName.FIELDS, fieldArray);
+        acroForm.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
+        if (fieldTemplates.isEmpty())
+            return;
+        PdfDictionary dr = new PdfDictionary();
+        acroForm.put(PdfName.DR, dr);
+        for (Iterator it = fieldTemplates.keySet().iterator(); it.hasNext();) {
+            PdfTemplate template = (PdfTemplate)it.next();
+            PdfFormField.mergeResources(dr, (PdfDictionary)template.getResources());
+        }
+        if (dr.get(PdfName.ENCODING) == null)
+            dr.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
+        PdfDictionary fonts = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
+        if (fonts == null) {
+            fonts = new PdfDictionary();
+            dr.put(PdfName.FONT, fonts);
+        }
+        if (!fonts.contains(PdfName.HELV)) {
+            PdfDictionary dic = new PdfDictionary(PdfName.FONT);
+            dic.put(PdfName.BASEFONT, PdfName.HELVETICA);
+            dic.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
+            dic.put(PdfName.NAME, PdfName.HELV);
+            dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
+            fonts.put(PdfName.HELV, addToBody(dic).getIndirectReference());
+        }
+        if (!fonts.contains(PdfName.ZADB)) {
+            PdfDictionary dic = new PdfDictionary(PdfName.FONT);
+            dic.put(PdfName.BASEFONT, PdfName.ZAPFDINGBATS);
+            dic.put(PdfName.NAME, PdfName.ZADB);
+            dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
+            fonts.put(PdfName.ZADB, addToBody(dic).getIndirectReference());
         }
     }
     
@@ -596,6 +641,98 @@ public class PdfCopy extends PdfWriter {
                     out.append(page.getRight());
                     out.append(PdfContents.ROTATEFINAL);
                     break;
+            }
+        }
+        
+        private void addDocumentField(PdfIndirectReference ref) {
+            if (cstp.fieldArray == null)
+                cstp.fieldArray = new PdfArray();
+            cstp.fieldArray.add(ref);
+        }
+
+        private void expandFields(PdfFormField field, ArrayList allAnnots) {
+            allAnnots.add(field);
+            ArrayList kids = field.getKids();
+            if (kids != null) {
+                for (int k = 0; k < kids.size(); ++k)
+                    expandFields((PdfFormField)kids.get(k), allAnnots);
+            }
+        }
+
+        public void addAnnotation(PdfAnnotation annot) {
+            try {
+                ArrayList allAnnots = new ArrayList();
+                if (annot.isForm()) {
+                    PdfFormField field = (PdfFormField)annot;
+                    if (field.getParent() != null)
+                        return;
+                    expandFields(field, allAnnots);
+                    if (cstp.fieldTemplates == null)
+                        cstp.fieldTemplates = new HashMap();
+                }
+                else
+                    allAnnots.add(annot);
+                for (int k = 0; k < allAnnots.size(); ++k) {
+                    annot = (PdfAnnotation)allAnnots.get(k);
+                    if (annot.isForm()) {
+                        if (!annot.isUsed()) {
+                            HashMap templates = annot.getTemplates();
+                            if (templates != null)
+                                cstp.fieldTemplates.putAll(templates);
+                        }
+                        PdfFormField field = (PdfFormField)annot;
+                        if (field.getParent() == null)
+                            addDocumentField(field.getIndirectReference());
+                    }
+                    if (annot.isAnnotation()) {
+                        PdfObject pdfobj = PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
+                        PdfArray annots = null;
+                        if (pdfobj == null || !pdfobj.isArray()) {
+                            annots = new PdfArray();
+                            pageN.put(PdfName.ANNOTS, annots);
+                        }
+                        else 
+                            annots = (PdfArray)pdfobj;
+                        annots.add(annot.getIndirectReference());
+                        if (!annot.isUsed()) {
+                            PdfRectangle rect = (PdfRectangle)annot.get(PdfName.RECT);
+                            if (rect != null && (rect.left() != 0 || rect.right() != 0 || rect.top() != 0 || rect.bottom() != 0)) {
+                                int rotation = reader.getPageRotation(pageN);
+                                Rectangle pageSize = reader.getPageSizeWithRotation(pageN);
+                                switch (rotation) {
+                                    case 90:
+                                        annot.put(PdfName.RECT, new PdfRectangle(
+                                        pageSize.getTop() - rect.bottom(),
+                                        rect.left(),
+                                        pageSize.getTop() - rect.top(),
+                                        rect.right()));
+                                        break;
+                                    case 180:
+                                        annot.put(PdfName.RECT, new PdfRectangle(
+                                        pageSize.getRight() - rect.left(),
+                                        pageSize.getTop() - rect.bottom(),
+                                        pageSize.getRight() - rect.right(),
+                                        pageSize.getTop() - rect.top()));
+                                        break;
+                                    case 270:
+                                        annot.put(PdfName.RECT, new PdfRectangle(
+                                        rect.bottom(),
+                                        pageSize.getRight() - rect.left(),
+                                        rect.top(),
+                                        pageSize.getRight() - rect.right()));
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    if (!annot.isUsed()) {
+                        annot.setUsed();
+                        cstp.addToBody(annot, annot.getIndirectReference());
+                    }
+                }
+            }
+            catch (IOException e) {
+                throw new ExceptionConverter(e);
             }
         }
     }
