@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
  *
@@ -62,7 +61,7 @@ import java.util.SimpleTimeZone;
  * defined by the international standard ASN.1 (Abstract Syntax Notation One, defined
  * in CCITT X.208 or ISO/IEC 8824). A date is a <CODE>PdfString</CODE> of the form:
  * <P><BLOCKQUOTE>
- * (D: YYYYMMDDHHmmSSOHH'mm')
+ * (D:YYYYMMDDHHmmSSOHH'mm')
  * </BLOCKQUOTE><P>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 7.2 (page 183-184)
@@ -149,13 +148,59 @@ public class PdfDate extends PdfString {
     
     /**
      * Gives the W3C format of the PdfDate.
-     * @param d
+     * @param d the date in the format D:YYYYMMDDHHmmSSOHH'mm'
      * @return a formatted date
      */
     public static String getW3CDate(String d) {
-    	SimpleDateFormat w3c = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    	Calendar c = decode(d);
-		return w3c.format(c.getTime());
+        if (d.startsWith("D:"))
+            d = d.substring(2);
+        StringBuffer sb = new StringBuffer();
+        if (d.length() < 4)
+            return "0000";
+        sb.append(d.substring(0, 4)); //year
+        d = d.substring(4);
+        if (d.length() < 2)
+            return sb.toString();
+        sb.append('-').append(d.substring(0, 2)); //month
+        d = d.substring(2);
+        if (d.length() < 2)
+            return sb.toString();
+        sb.append('-').append(d.substring(0, 2)); //day
+        d = d.substring(2);
+        if (d.length() < 2)
+            return sb.toString();
+        sb.append('T').append(d.substring(0, 2)); //hour
+        d = d.substring(2);
+        if (d.length() < 2) {
+            sb.append(":00Z");
+            return sb.toString();
+        }
+        sb.append(':').append(d.substring(0, 2)); //minute
+        d = d.substring(2);
+        if (d.length() < 2) {
+            sb.append("Z");
+            return sb.toString();
+        }
+        sb.append(':').append(d.substring(0, 2)); //second
+        d = d.substring(2);
+        if (d.startsWith("-") || d.startsWith("+")) {
+            String sign = d.substring(0, 1);
+            d = d.substring(1);
+            String h = "00";
+            String m = "00";
+            if (d.length() >= 2) {
+                h = d.substring(0, 2);
+                if (d.length() > 2) {
+                    d = d.substring(3);
+                    if (d.length() >= 2)
+                        m = d.substring(0, 2);
+                }
+                sb.append(sign).append(h).append(':').append(m);
+                return sb.toString();
+            }
+        }
+        sb.append('Z');
+        return sb.toString();
     }
     
     /**
