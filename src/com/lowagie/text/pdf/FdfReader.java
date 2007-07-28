@@ -138,6 +138,8 @@ public class FdfReader extends PdfReader {
     protected void readFields() {
         catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
         PdfDictionary fdf = (PdfDictionary)getPdfObject(catalog.get(PdfName.FDF));
+        if (fdf == null)
+            return;
         PdfString fs = (PdfString)getPdfObject(fdf.get(PdfName.F));
         if (fs != null)
             fileSpec = fs.toUnicodeString();
