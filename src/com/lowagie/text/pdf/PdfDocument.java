@@ -821,7 +821,7 @@ class PdfDocument extends Document {
         lastElementType = -1;
         isNewpage = true;
         if (writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()))) {
-        	setNewMargins();
+        	setNewPageSizeAndMargins();
             return false;
         }
     	if (!open || close) {
@@ -1091,7 +1091,7 @@ class PdfDocument extends Document {
         textEmptySize = text.size();
 
     	markPoint = 0;
-        setNewMargins();
+        setNewPageSizeAndMargins();
         imageEnd = -1;
         indentation.imageIndentRight = 0;
         indentation.imageIndentLeft = 0;
@@ -1100,7 +1100,6 @@ class PdfDocument extends Document {
         currentHeight = 0;
         
         // backgroundcolors, etc...
-        pageSize = nextPageSize;
         thisBoxSize = new HashMap(boxSize);
         if (pageSize.getBackgroundColor() != null
         || pageSize.hasBorders()
@@ -2138,7 +2137,8 @@ class PdfDocument extends Document {
             boxSize.put(boxName, new PdfRectangle(size));
     }
     
-    private void setNewMargins() {
+    private void setNewPageSizeAndMargins() {
+        pageSize = nextPageSize;
     	if (marginMirroring && (getPageNumber() & 1) == 0) {
             marginRight = nextMarginLeft;
             marginLeft = nextMarginRight;
