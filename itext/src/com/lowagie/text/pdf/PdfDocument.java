@@ -821,6 +821,7 @@ class PdfDocument extends Document {
         lastElementType = -1;
         isNewpage = true;
         if (writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()))) {
+        	setNewPageSizeAndMargins();
             return false;
         }
     	if (!open || close) {
@@ -1090,16 +1091,7 @@ class PdfDocument extends Document {
         textEmptySize = text.size();
 
     	markPoint = 0;
-        if (marginMirroring && (getPageNumber() & 1) == 0) {
-            marginRight = nextMarginLeft;
-            marginLeft = nextMarginRight;
-        }
-        else {
-            marginLeft = nextMarginLeft;
-            marginRight = nextMarginRight;
-        }
-        marginTop = nextMarginTop;
-        marginBottom = nextMarginBottom;
+        setNewPageSizeAndMargins();
         imageEnd = -1;
         indentation.imageIndentRight = 0;
         indentation.imageIndentLeft = 0;
@@ -1108,7 +1100,6 @@ class PdfDocument extends Document {
         currentHeight = 0;
         
         // backgroundcolors, etc...
-        pageSize = nextPageSize;
         thisBoxSize = new HashMap(boxSize);
         if (pageSize.getBackgroundColor() != null
         || pageSize.hasBorders()
@@ -2144,6 +2135,20 @@ class PdfDocument extends Document {
             boxSize.remove(boxName);
         else
             boxSize.put(boxName, new PdfRectangle(size));
+    }
+    
+    private void setNewPageSizeAndMargins() {
+        pageSize = nextPageSize;
+    	if (marginMirroring && (getPageNumber() & 1) == 0) {
+            marginRight = nextMarginLeft;
+            marginLeft = nextMarginRight;
+        }
+        else {
+            marginLeft = nextMarginLeft;
+            marginRight = nextMarginRight;
+        }
+        marginTop = nextMarginTop;
+        marginBottom = nextMarginBottom;
     }
     
     /**
