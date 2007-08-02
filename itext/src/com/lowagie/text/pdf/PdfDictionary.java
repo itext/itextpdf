@@ -299,6 +299,7 @@ public class PdfDictionary extends PdfObject {
     }
     
     public String toString() {
+    	if (get(PdfName.TYPE) == null) return "Dictionary";
     	return "Dictionary of type: " + get(PdfName.TYPE);
     }
     
