@@ -298,6 +298,9 @@ public class PdfDictionary extends PdfObject {
         return hashMap.containsKey(key);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfObject#toString()
+     */
     public String toString() {
     	if (get(PdfName.TYPE) == null) return "Dictionary";
     	return "Dictionary of type: " + get(PdfName.TYPE);
