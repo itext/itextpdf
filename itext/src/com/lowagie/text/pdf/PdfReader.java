@@ -473,10 +473,10 @@ public class PdfReader implements PdfViewerPreferences {
      */
     public static Rectangle getNormalizedRectangle(PdfArray box) {
         ArrayList rect = box.getArrayList();
-        float llx = ((PdfNumber)rect.get(0)).floatValue();
-        float lly = ((PdfNumber)rect.get(1)).floatValue();
-        float urx = ((PdfNumber)rect.get(2)).floatValue();
-        float ury = ((PdfNumber)rect.get(3)).floatValue();
+        float llx = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(0))).floatValue();
+        float lly = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(1))).floatValue();
+        float urx = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(2))).floatValue();
+        float ury = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(3))).floatValue();
         return new Rectangle(Math.min(llx, urx), Math.min(lly, ury),
         Math.max(llx, urx), Math.max(lly, ury));
     }
