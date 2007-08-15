@@ -2683,15 +2683,13 @@ public class PdfWriter extends DocWriter implements
         else {
             if (image.isImgTemplate()) {
                 name = new PdfName("img" + images.size());
-                if (image.getTemplateData() == null) {
-                    if(image instanceof ImgWMF){
-                        try {
-                            ImgWMF wmf = (ImgWMF)image;
-                            wmf.readWMF(PdfTemplate.createTemplate(this, 0, 0));
-                        }
-                        catch (Exception e) {
-                            throw new DocumentException(e);
-                        }
+                if(image instanceof ImgWMF){
+                    try {
+                        ImgWMF wmf = (ImgWMF)image;
+                        wmf.readWMF(PdfTemplate.createTemplate(this, 0, 0));
+                    }
+                    catch (Exception e) {
+                        throw new DocumentException(e);
                     }
                 }
             }
