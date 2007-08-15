@@ -616,7 +616,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         return true;
     }
     
-    public static final String tagsSupportedString = "ol ul li a pre font span br p div body table td th tr i b u sub sup em strong"
+    public static final String tagsSupportedString = "ol ul li a pre font span br p div body table td th tr i b u sub sup em strong s strike"
         + " h1 h2 h3 h4 h5 h6 img";
     
     public static final HashMap tagsSupported = new HashMap();
