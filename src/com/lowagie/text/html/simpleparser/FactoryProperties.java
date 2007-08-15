@@ -191,6 +191,8 @@ public class FactoryProperties {
             style |= Font.BOLD;
         if (props.hasProperty("u"))
             style |= Font.UNDERLINE;
+        if (props.hasProperty("s"))
+            style |= Font.STRIKETHRU ;
         String value = props.getProperty("size");
         float size = 12;
         if (value != null)
@@ -274,5 +276,7 @@ public class FactoryProperties {
         followTags.put("sup", "sup");
         followTags.put("em", "i");
         followTags.put("strong", "b");
+        followTags.put("s", "s");
+        followTags.put("stike", "s");
     }
 }
