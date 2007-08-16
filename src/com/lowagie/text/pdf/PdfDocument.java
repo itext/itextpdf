@@ -650,13 +650,8 @@ class PdfDocument extends Document {
                         break; //nothing to do
 
                     // before every table, we add a new line and flush all lines
-
-                    indentation.indentLeft -= indentation.paragraph + indentation.sectionIndentLeft;
-                    indentation.indentRight -= indentation.sectionIndentRight;
                     ensureNewLine();
                     flushLines();
-                    indentation.indentLeft += indentation.paragraph + indentation.sectionIndentLeft;
-                    indentation.indentRight += indentation.sectionIndentRight;
                     
                     addPTable(ptable);
                     pageEmpty = false;
