@@ -175,7 +175,7 @@ public class PdfPageLabels {
 		int n = reader.getNumberOfPages();
 		
     	PdfDictionary dict = reader.getCatalog();
-		PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObject(dict.get(PdfName.PAGELABELS));
+		PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObjectRelease(dict.get(PdfName.PAGELABELS));
         if (labels == null)
             return null;
 		
@@ -190,7 +190,7 @@ public class PdfPageLabels {
 		for (int i = 0; i < n; i++) {
 			current = new Integer(i);
 			if (numberTree.containsKey(current)) {
-				PdfDictionary d = (PdfDictionary)PdfReader.getPdfObject((PdfObject)numberTree.get(current));
+				PdfDictionary d = (PdfDictionary)PdfReader.getPdfObjectRelease((PdfObject)numberTree.get(current));
 				if (d.contains(PdfName.ST)) {
 					pagecount = ((PdfNumber)d.get(PdfName.ST)).intValue();
 				}
@@ -237,8 +237,6 @@ public class PdfPageLabels {
         PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObject(dict.get(PdfName.PAGELABELS));
         if (labels == null) 
             return null;
-        PdfNumber pageIndex;
-        PdfDictionary pageLabel;
         HashMap numberTree = PdfNumberTree.readTree(labels);
         Integer numbers[] = new Integer[numberTree.size()];
         numbers = (Integer[])numberTree.keySet().toArray(numbers);
