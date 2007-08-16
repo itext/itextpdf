@@ -361,6 +361,7 @@ public class PdfGraphics2D extends Graphics2D {
 //            drawGlyphVector(this.font.createGlyphVector(getFontRenderContext(), s), x, y);
         }
         else {
+        	boolean restoreTextRenderingMode = false;
             AffineTransform at = getTransform();
             AffineTransform at2 = getTransform();
             at2.translate(x, y);
@@ -373,13 +374,67 @@ public class PdfGraphics2D extends Graphics2D {
             inverse.getMatrix(mx);
             cb.beginText();
             cb.setFontAndSize(baseFont, fontSize);
+            // Check if we need to simulate an italic font.
+            // When there are different fonts for italic, bold, italic bold
+            // the font.getName() will be different from the font.getFontName()
+            // value. When they are the same value then we are normally dealing
+            // with a single font that has been made into an italic or bold
+            // font.
+            if (font.isItalic() && font.getFontName().equals(font.getName())) {
+                float angle = baseFont.getFontDescriptor(BaseFont.ITALICANGLE, 1000);
+                float angle2 = font.getItalicAngle();
+                // We don't have an italic version of this font so we need
+                // to set the font angle ourselves to produce an italic font.
+                if (angle2 == 0) {
+                    // The JavaVM didn't have an angle setting for making
+                    // the font an italic font so use a default of
+                    // italic angle of 15 degrees.
+                    angle2 = 15.0f;
+                } else {
+                    // This sign of the angle for Java and PDF seams
+                    // seams to be reversed.
+                    angle2 = -angle2;
+                }
+                if (angle == 0) {
+                    mx[2] = angle2 / 100.0f;
+                }
+            } 
             cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
+            
             Float fontTextAttributeWidth = (Float)font.getAttributes().get(TextAttribute.WIDTH);
             fontTextAttributeWidth = (fontTextAttributeWidth == null)
                                      ? TextAttribute.WIDTH_REGULAR
                                      : fontTextAttributeWidth;
             if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth))
                 cb.setHorizontalScaling(100.0f / fontTextAttributeWidth.floatValue());
+            
+            // Set the horizontal scaling to match the Java font if needed.
+            Float hscale = (Float) font.getAttributes().get(TextAttribute.WIDTH);
+            hscale = (hscale == null) ? TextAttribute.WIDTH_REGULAR : hscale;
+            cb.setHorizontalScaling(100.0f / hscale.floatValue());
+
+            // Get the weight of the font so we can detect fonts with a weight
+            // that makes them bold, but the Font.isBold() value is false.
+            Float weight = (Float) font.getAttributes().get(TextAttribute.WEIGHT);
+            if (weight == null) {
+                weight = (font.isBold()) ? TextAttribute.WEIGHT_BOLD
+                                         : TextAttribute.WEIGHT_REGULAR;
+            }
+
+            // Check if we need to simulate a bold font.
+            if ((font.isBold() || (weight.floatValue() >= TextAttribute.WEIGHT_SEMIBOLD.floatValue()))
+                && (font.getFontName().equals(font.getName()))) {
+                // Simulate a bold font.
+                float strokeWidth = font.getSize2D() * (weight.floatValue() - TextAttribute.WEIGHT_REGULAR.floatValue()) / 30f;
+                if (strokeWidth != 1) {
+                    cb.setTextRenderingMode(PdfContentByte.
+                        TEXT_RENDER_MODE_FILL_STROKE);
+                    cb.setLineWidth(strokeWidth);
+                    cb.setColorStroke(getColor());
+                    restoreTextRenderingMode = true;
+                }
+            }
+
             double width = 0;
             if (font.getSize2D() > 0) {
                 float scale = 1000 / font.getSize2D();
@@ -393,8 +448,12 @@ public class PdfGraphics2D extends Graphics2D {
             if (s.length() > 1) {
                 cb.setCharacterSpacing(0);
             }
-            if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth))
-                cb.setHorizontalScaling(100);
+            
+            // Restore the original TextRenderingMode if needed.
+            if (restoreTextRenderingMode) {
+                cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);
+            } 
+            
             cb.endText();
             setTransform(at);
             if(underline)
