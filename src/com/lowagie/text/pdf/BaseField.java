@@ -181,6 +181,7 @@ public abstract class BaseField {
                 app.setMatrix(0, -1, 1, 0, 0, box.getWidth());
                 break;
         }
+        app.saveState();
         // background
         if (backgroundColor != null) {
             app.setColorFill(backgroundColor);
@@ -247,6 +248,7 @@ public abstract class BaseField {
                 }
             }
         }
+        app.restoreState();
         return app;
     }
     
