@@ -605,6 +605,7 @@ class PdfDocument extends Document {
                     // some parameters are set back to normal again
                     indentation.listIndentLeft -= list.getIndentationLeft();
                     indentation.indentRight -= list.getIndentationRight();
+                    carriageReturn();
                     break;
                 }
                 case Element.LISTITEM: {
