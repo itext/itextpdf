@@ -400,16 +400,12 @@ public class PdfGraphics2D extends Graphics2D {
                 }
             } 
             cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
-            
             Float fontTextAttributeWidth = (Float)font.getAttributes().get(TextAttribute.WIDTH);
             fontTextAttributeWidth = (fontTextAttributeWidth == null)
                                      ? TextAttribute.WIDTH_REGULAR
                                      : fontTextAttributeWidth;
-
-            // Set the horizontal scaling to match the Java font if needed.
-            Float hscale = (Float) font.getAttributes().get(TextAttribute.WIDTH);
-            hscale = (hscale == null) ? TextAttribute.WIDTH_REGULAR : hscale;
-            cb.setHorizontalScaling(100.0f / hscale.floatValue());
+            if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth))
+                cb.setHorizontalScaling(100.0f / fontTextAttributeWidth.floatValue());
 /*
 			Quarantined: this code never looks at BaseFont to see if the font
 			is already bold. Maybe it doesn't matter, maybe it does, maybe it can't be sure.
@@ -437,6 +433,7 @@ public class PdfGraphics2D extends Graphics2D {
                 }
             }
 */
+
             double width = 0;
             if (font.getSize2D() > 0) {
                 float scale = 1000 / font.getSize2D();
@@ -450,12 +447,14 @@ public class PdfGraphics2D extends Graphics2D {
             if (s.length() > 1) {
                 cb.setCharacterSpacing(0);
             }
-            
+            if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth))
+                cb.setHorizontalScaling(100);
+                
             // Restore the original TextRenderingMode if needed.
             //if (restoreTextRenderingMode) {
             //    cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);
             //} 
-            
+
             cb.endText();
             setTransform(at);
             if(underline)
