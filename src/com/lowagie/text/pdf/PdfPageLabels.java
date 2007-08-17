@@ -234,7 +234,7 @@ public class PdfPageLabels {
      */
     public static PdfPageLabelFormat[] getPageLabelFormats(PdfReader reader) {
         PdfDictionary dict = reader.getCatalog();
-        PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObject(dict.get(PdfName.PAGELABELS));
+        PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObjectRelease(dict.get(PdfName.PAGELABELS));
         if (labels == null) 
             return null;
         HashMap numberTree = PdfNumberTree.readTree(labels);
@@ -247,7 +247,7 @@ public class PdfPageLabels {
         int pagecount;
         for (int k = 0; k < numbers.length; ++k) {
             Integer key = numbers[k];
-            PdfDictionary d = (PdfDictionary)PdfReader.getPdfObject((PdfObject)numberTree.get(key));
+            PdfDictionary d = (PdfDictionary)PdfReader.getPdfObjectRelease((PdfObject)numberTree.get(key));
             if (d.contains(PdfName.ST)) {
                 pagecount = ((PdfNumber)d.get(PdfName.ST)).intValue();
             } else {
