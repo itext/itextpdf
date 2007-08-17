@@ -361,7 +361,7 @@ public class PdfGraphics2D extends Graphics2D {
 //            drawGlyphVector(this.font.createGlyphVector(getFontRenderContext(), s), x, y);
         }
         else {
-        	boolean restoreTextRenderingMode = false;
+        	//boolean restoreTextRenderingMode = false;
             AffineTransform at = getTransform();
             AffineTransform at2 = getTransform();
             at2.translate(x, y);
@@ -405,14 +405,16 @@ public class PdfGraphics2D extends Graphics2D {
             fontTextAttributeWidth = (fontTextAttributeWidth == null)
                                      ? TextAttribute.WIDTH_REGULAR
                                      : fontTextAttributeWidth;
-            if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth))
-                cb.setHorizontalScaling(100.0f / fontTextAttributeWidth.floatValue());
-            
+
             // Set the horizontal scaling to match the Java font if needed.
             Float hscale = (Float) font.getAttributes().get(TextAttribute.WIDTH);
             hscale = (hscale == null) ? TextAttribute.WIDTH_REGULAR : hscale;
             cb.setHorizontalScaling(100.0f / hscale.floatValue());
-
+/*
+			Quarantined: this code never looks at BaseFont to see if the font
+			is already bold. Maybe it doesn't matter, maybe it does, maybe it can't be sure.
+			Requires further testing. (See mailing list posts August 16, 2007)
+			
             // Get the weight of the font so we can detect fonts with a weight
             // that makes them bold, but the Font.isBold() value is false.
             Float weight = (Float) font.getAttributes().get(TextAttribute.WEIGHT);
@@ -434,7 +436,7 @@ public class PdfGraphics2D extends Graphics2D {
                     restoreTextRenderingMode = true;
                 }
             }
-
+*/
             double width = 0;
             if (font.getSize2D() > 0) {
                 float scale = 1000 / font.getSize2D();
@@ -450,9 +452,9 @@ public class PdfGraphics2D extends Graphics2D {
             }
             
             // Restore the original TextRenderingMode if needed.
-            if (restoreTextRenderingMode) {
-                cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);
-            } 
+            //if (restoreTextRenderingMode) {
+            //    cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);
+            //} 
             
             cb.endText();
             setTransform(at);
