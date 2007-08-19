@@ -164,7 +164,7 @@ public class PdfString extends PdfObject {
      */
     
     public String toString() {
-        return value;
+        return toUnicodeString();
     }
     
     // other methods
