@@ -807,6 +807,17 @@ class PdfDocument extends Document {
     private boolean isNewpage = false;
     private int textEmptySize;
     
+    // [C9] Metadata for the page
+    /** XMP Metadata for the page. */
+    protected byte[] xmpMetadata = null;
+	/**
+	 * Use this method to set the XMP Metadata.
+	 * @param xmpMetadata The xmpMetadata to set.
+	 */
+	public void setXmpMetadata(byte[] xmpMetadata) {
+		this.xmpMetadata = xmpMetadata;
+	}
+    
     /**
      * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
      *
@@ -864,6 +875,20 @@ class PdfDocument extends Document {
         	PdfPage page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
 
         	// we complete the page dictionary
+        	
+            // [C9] if there is XMP data to add: add it
+            if (xmpMetadata != null) {
+            	PdfStream xmp = new PdfStream(xmpMetadata);
+            	xmp.put(PdfName.TYPE, PdfName.METADATA);
+            	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+            	PdfEncryption crypto = writer.getEncryption();
+                if (crypto != null && !crypto.isMetadataEncrypted()) {
+                    PdfArray ar = new PdfArray();
+                    ar.add(PdfName.CRYPT);
+                    xmp.put(PdfName.FILTER, ar);
+                }
+            	page.put(PdfName.METADATA, writer.addToBody(xmp).getIndirectReference());
+            }
         	
         	// [U3] page actions: transition, duration, additional actions
         	if (this.transition!=null) {
