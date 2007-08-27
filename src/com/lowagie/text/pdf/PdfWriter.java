@@ -1585,6 +1585,14 @@ public class PdfWriter extends DocWriter implements
 	}
 	
 	/**
+	 * Use this method to set the XMP Metadata for each page.
+	 * @param xmpMetadata The xmpMetadata to set.
+	 */
+	public void setPageXmpMetadata(byte[] xmpMetadata) {
+		pdf.setXmpMetadata(xmpMetadata);
+	}
+	
+	/**
 	 * Use this method to creates XMP Metadata based
 	 * on the metadata in the PdfDocument.
 	 */
