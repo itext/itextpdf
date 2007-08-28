@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Creates a name tree.
@@ -76,7 +77,8 @@ public class PdfNameTree {
             return null;
         String names[] = new String[items.size()];
         names = (String[])items.keySet().toArray(names);
-        Arrays.sort(names);
+        if (!(items instanceof LinkedHashMap))
+        	Arrays.sort(names);
         if (names.length <= leafSize) {
             PdfDictionary dic = new PdfDictionary();
             PdfArray ar = new PdfArray();

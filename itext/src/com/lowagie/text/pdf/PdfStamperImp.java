@@ -52,7 +52,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import com.lowagie.text.DocumentException;
@@ -1189,7 +1188,7 @@ class PdfStamperImp extends PdfWriter {
     }
     
     void setJavaScript() throws IOException {
-        ArrayList djs = pdf.getDocumentJavaScript();
+        HashMap djs = pdf.getDocumentLevelJS();
         if (djs.isEmpty())
             return;
         PdfDictionary catalog = reader.getCatalog();
@@ -1200,16 +1199,7 @@ class PdfStamperImp extends PdfWriter {
             markUsed(catalog);
         }
         markUsed(names);
-        String s = String.valueOf(djs.size() - 1);
-        int n = s.length();
-        String pad = "000000000000000";
-        HashMap maptree = new HashMap();
-        for (int k = 0; k < djs.size(); ++k) {
-            s = String.valueOf(k);
-            s = pad.substring(0, n - s.length()) + s;
-            maptree.put(s, djs.get(k));
-        }
-        PdfDictionary tree = PdfNameTree.writeTree(maptree, this);
+        PdfDictionary tree = PdfNameTree.writeTree(djs, this);
         names.put(PdfName.JAVASCRIPT, addToBody(tree).getIndirectReference());
     }
 
