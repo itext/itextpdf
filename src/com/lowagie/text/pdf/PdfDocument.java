@@ -2011,7 +2011,7 @@ class PdfDocument extends Document {
         if (js.get(PdfName.JS) == null)
             throw new RuntimeException("Only JavaScript actions are allowed.");
         try {
-            documentLevelJS.put(String.valueOf(jsCounter), writer.addToBody(js).getIndirectReference());
+            documentLevelJS.put("iTextJS_" + jsCounter, writer.addToBody(js).getIndirectReference());
             jsCounter++;
         }
         catch (IOException e) {
