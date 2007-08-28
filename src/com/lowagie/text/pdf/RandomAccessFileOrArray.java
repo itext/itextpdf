@@ -293,6 +293,10 @@ public class RandomAccessFileOrArray implements DataInput {
         if (rf != null) {
             rf.close();
             rf = null;
+            // it's very expensive to open a memory mapped file and for the usage pattern of this class
+            // in iText it's faster the next re-openings to be done as a plain random access
+            // file
+            plainRandomAccess = true;
         }
         else if (trf != null) {
             trf.close();
