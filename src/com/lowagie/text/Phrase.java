@@ -345,21 +345,28 @@ public class Phrase extends ArrayList implements TextElementArray {
      * @return true if adding the Chunk succeeded
      */
     protected synchronized boolean addChunk(Chunk chunk) {
+    	Font f = chunk.getFont();
+    	String c = chunk.getContent();
         if (!font.isStandardFont()) {
-            chunk.setFont(font.difference(chunk.getFont()));
+            f = font.difference(chunk.getFont());
         }
         if (size() > 0 && !chunk.hasAttributes()) {
             try {
                 Chunk previous = (Chunk) get(size() - 1);
-                if (!previous.hasAttributes() && previous.getFont().compareTo(chunk.getFont()) == 0 && !"".equals(previous.getContent().trim()) && !"".equals(chunk.getContent().trim())) {
-                    previous.append(chunk.getContent());
+                if (!previous.hasAttributes()
+                		&& previous.getFont().compareTo(f) == 0
+                		&& !"".equals(previous.getContent().trim())
+                		&& !"".equals(c.trim())) {
+                    previous.append(c);
                     return true;
                 }
             }
             catch(ClassCastException cce) {
             }
         }
-        return super.add(chunk);
+        Chunk newChunk = new Chunk(c, f);
+        newChunk.setAttributes(chunk.getAttributes());
+        return super.add(newChunk);
     }
     
     /**
