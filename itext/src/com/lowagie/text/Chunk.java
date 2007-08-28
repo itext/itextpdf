@@ -365,6 +365,14 @@ public class Chunk implements Element {
 	}
 
 	/**
+	 * Sets the attributes all at once.
+	 * @param	attributes	the attributes of a Chunk
+	 */
+	public void setAttributes(HashMap attributes) {
+		this.attributes = attributes;
+	}
+
+	/**
 	 * Sets an arbitrary attribute.
 	 * 
 	 * @param name
