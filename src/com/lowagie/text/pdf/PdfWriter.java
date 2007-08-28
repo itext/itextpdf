@@ -1462,6 +1462,35 @@ public class PdfWriter extends DocWriter implements
      public void addJavaScript(String code) {
          addJavaScript(code, false);
      }
+     /**
+      * Use this method to add a JavaScript action at the document level.
+      * When the document opens, all this JavaScript runs.
+      * @param js The JavaScrip action
+      */
+     public void addJavaScript(String name, PdfAction js) {
+         pdf.addJavaScript(name, js);
+     }
+     
+     /**
+      * Use this method to add a JavaScript action at the document level.
+      * When the document opens, all this JavaScript runs.
+      * @param code the JavaScript code
+      * @param unicode select JavaScript unicode. Note that the internal
+      * Acrobat JavaScript engine does not support unicode,
+      * so this may or may not work for you
+      */
+     public void addJavaScript(String name, String code, boolean unicode) {
+         addJavaScript(name, PdfAction.javaScript(code, this, unicode));
+     }
+     
+     /**
+      * Use this method to adds a JavaScript action at the document level.
+      * When the document opens, all this JavaScript runs.
+      * @param code the JavaScript code
+      */
+     public void addJavaScript(String name, String code) {
+         addJavaScript(name, code, false);
+     }
      
      /**
       * Use this method to add a file attachment at the document level.

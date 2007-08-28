@@ -53,10 +53,10 @@ package com.lowagie.text.pdf;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -249,11 +249,12 @@ class PdfDocument extends Document {
         /**
          * Adds the names of the named destinations to the catalog.
          * @param localDestinations the local destinations
-         * @param documentJavaScript the javascript used in the document
+         * @param documentLevelJS the javascript used in the document
+         * @param documentFileAttachment	the attached files
          * @param writer the writer the catalog applies to
          */
-        void addNames(TreeMap localDestinations, ArrayList documentJavaScript, HashMap documentFileAttachment, PdfWriter writer) {
-            if (localDestinations.isEmpty() && documentJavaScript.isEmpty() && documentFileAttachment.isEmpty())
+        void addNames(TreeMap localDestinations, LinkedHashMap documentLevelJS, HashMap documentFileAttachment, PdfWriter writer) {
+            if (localDestinations.isEmpty() && documentLevelJS.isEmpty() && documentFileAttachment.isEmpty())
                 return;
             try {
                 PdfDictionary names = new PdfDictionary();
@@ -271,19 +272,9 @@ class PdfDocument extends Document {
                     dests.put(PdfName.NAMES, ar);
                     names.put(PdfName.DESTS, writer.addToBody(dests).getIndirectReference());
                 }
-                if (!documentJavaScript.isEmpty()) {
-                    String s[] = new String[documentJavaScript.size()];
-                    for (int k = 0; k < s.length; ++k)
-                        s[k] = Integer.toHexString(k);
-                    Arrays.sort(s);
-                    PdfArray ar = new PdfArray();
-                    for (int k = 0; k < s.length; ++k) {
-                        ar.add(new PdfString(s[k]));
-                        ar.add((PdfIndirectReference)documentJavaScript.get(k));
-                    }
-                    PdfDictionary js = new PdfDictionary();
-                    js.put(PdfName.NAMES, ar);
-                    names.put(PdfName.JAVASCRIPT, writer.addToBody(js).getIndirectReference());
+                if (!documentLevelJS.isEmpty()) {
+                    PdfDictionary tree = PdfNameTree.writeTree(documentLevelJS, writer);
+                    names.put(PdfName.JAVASCRIPT, writer.addToBody(tree).getIndirectReference());
                 }
                 if (!documentFileAttachment.isEmpty()) {
                     names.put(PdfName.EMBEDDEDFILES, writer.addToBody(PdfNameTree.writeTree(documentFileAttachment, writer)).getIndirectReference());
@@ -1756,7 +1747,7 @@ class PdfDocument extends Document {
         }
         
         // [C5] named objects
-        catalog.addNames(localDestinations, documentJavaScript, documentFileAttachment, writer);
+        catalog.addNames(localDestinations, getDocumentLevelJS(), documentFileAttachment, writer);
         
         // [C6] actions
         if (openActionName != null) {
@@ -2014,20 +2005,32 @@ class PdfDocument extends Document {
     /**
      * Stores a list of document level JavaScript actions.
      */
-    private ArrayList documentJavaScript = new ArrayList();
+    int jsCounter;
+    private LinkedHashMap documentLevelJS = new LinkedHashMap();
     void addJavaScript(PdfAction js) {
         if (js.get(PdfName.JS) == null)
             throw new RuntimeException("Only JavaScript actions are allowed.");
         try {
-            documentJavaScript.add(writer.addToBody(js).getIndirectReference());
+            documentLevelJS.put(String.valueOf(jsCounter), writer.addToBody(js).getIndirectReference());
+            jsCounter++;
+        }
+        catch (IOException e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+    void addJavaScript(String name, PdfAction js) {
+        if (js.get(PdfName.JS) == null)
+            throw new RuntimeException("Only JavaScript actions are allowed.");
+        try {
+            documentLevelJS.put(name, writer.addToBody(js).getIndirectReference());
         }
         catch (IOException e) {
             throw new ExceptionConverter(e);
         }
     }
     
-    ArrayList getDocumentJavaScript() {
-        return documentJavaScript;
+    LinkedHashMap getDocumentLevelJS() {
+    	return documentLevelJS;
     }
     
     private HashMap documentFileAttachment = new HashMap();
