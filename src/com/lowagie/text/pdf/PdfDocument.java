@@ -487,21 +487,26 @@ class PdfDocument extends Document {
                     
                     // if a paragraph has to be kept together, we wrap it in a table object
                     if (paragraph.getKeepTogether()) {
+                    	carriageReturn();
                         PdfPTable table = new PdfPTable(1);
                         table.setWidthPercentage(100f);
                         PdfPCell cell = new PdfPCell();
                         cell.addElement(paragraph);
                         cell.setBorder(Table.NO_BORDER);
+                        cell.setPadding(0);
                         table.addCell(cell);
+                        indentation.indentLeft -= paragraph.getIndentationLeft();
+                        indentation.indentRight -= paragraph.getIndentationRight();
                         this.add(table);
+                        indentation.indentLeft += paragraph.getIndentationLeft();
+                        indentation.indentRight += paragraph.getIndentationRight();
                     }
                     else {
                     	line.setExtraIndent(paragraph.getFirstLineIndent());
                     	element.process(this);
+                        carriageReturn();
+                        addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
                     }
-
-                    carriageReturn();
-                    addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
 
                     if (pageEvent != null && isParagraph)
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
@@ -560,14 +565,11 @@ class PdfDocument extends Document {
                         add(section.getTitle());
                         isParagraph = true;
                     }
-                    //indentation.indentLeft += section.getIndentation();
                     indentation.sectionIndentLeft += section.getIndentation();
                     // we process the section
                     element.process(this);
                     flushLines();
                     // some parameters are set back to normal again
-                    //indentation.indentLeft -= section.getIndentationLeft() + section.getIndentation();
-                    //indentation.indentRight -= section.getIndentationRight();
                     indentation.sectionIndentLeft -= (section.getIndentationLeft() + section.getIndentation());
                     indentation.sectionIndentRight -= section.getIndentationRight();
 
