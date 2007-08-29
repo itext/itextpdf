@@ -500,6 +500,7 @@ class PdfDocument extends Document {
                     	element.process(this);
                     }
 
+                    carriageReturn();
                     addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
 
                     if (pageEvent != null && isParagraph)
@@ -1680,7 +1681,6 @@ class PdfDocument extends Document {
     	if (extraspace == 0) return;
     	if (pageEmpty) return;
     	if (currentHeight + line.height() + leading > indentTop() - indentBottom()) return;
-    	carriageReturn();
         leading = extraspace;
         carriageReturn();
         Chunk space = new Chunk(" ", f);
