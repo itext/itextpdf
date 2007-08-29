@@ -487,22 +487,26 @@ class PdfDocument extends Document {
                     
                     // if a paragraph has to be kept together, we wrap it in a table object
                     if (paragraph.getKeepTogether()) {
+                    	carriageReturn();
                         PdfPTable table = new PdfPTable(1);
                         table.setWidthPercentage(100f);
                         PdfPCell cell = new PdfPCell();
                         cell.addElement(paragraph);
                         cell.setBorder(Table.NO_BORDER);
+                        cell.setPadding(0);
                         table.addCell(cell);
+                        indentation.indentLeft -= paragraph.getIndentationLeft();
+                        indentation.indentRight -= paragraph.getIndentationRight();
                         this.add(table);
+                        indentation.indentLeft += paragraph.getIndentationLeft();
+                        indentation.indentRight += paragraph.getIndentationRight();
                     }
                     else {
-                    	indentation.paragraph += paragraph.getIndentationLeft();
                     	line.setExtraIndent(paragraph.getFirstLineIndent());
                     	element.process(this);
-                    	indentation.paragraph -= paragraph.getIndentationLeft();
+                        carriageReturn();
+                        addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
                     }
-                    
-                    addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
 
                     if (pageEvent != null && isParagraph)
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
@@ -545,8 +549,6 @@ class PdfDocument extends Document {
                     
                     // some values are set
                     carriageReturn();
-                    //indentation.indentLeft += section.getIndentationLeft();
-                    //indentation.indentRight += section.getIndentationRight();
                     indentation.sectionIndentLeft += section.getIndentationLeft();
                     indentation.sectionIndentRight += section.getIndentationRight();
       
@@ -563,14 +565,11 @@ class PdfDocument extends Document {
                         add(section.getTitle());
                         isParagraph = true;
                     }
-                    //indentation.indentLeft += section.getIndentation();
                     indentation.sectionIndentLeft += section.getIndentation();
                     // we process the section
                     element.process(this);
                     flushLines();
                     // some parameters are set back to normal again
-                    //indentation.indentLeft -= section.getIndentationLeft() + section.getIndentation();
-                    //indentation.indentRight -= section.getIndentationRight();
                     indentation.sectionIndentLeft -= (section.getIndentationLeft() + section.getIndentation());
                     indentation.sectionIndentRight -= section.getIndentationRight();
 
@@ -794,8 +793,6 @@ class PdfDocument extends Document {
     }
 
 //	[L3] DocListener interface
-
-    private boolean isNewpage = false;
     private int textEmptySize;
     
     // [C9] Metadata for the page
@@ -817,7 +814,6 @@ class PdfDocument extends Document {
      */ 
     public boolean newPage() {
         lastElementType = -1;
-        isNewpage = true;
         if (writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()))) {
         	setNewPageSizeAndMargins();
             return false;
@@ -932,7 +928,6 @@ class PdfDocument extends Document {
         catch (IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        isNewpage = false;
         return true;
     }
 
@@ -1249,12 +1244,10 @@ class PdfDocument extends Document {
         if (lines == null) {
             return 0;
         }
-        boolean newline=false;
         // checks if a new Line has to be made.
         if (line != null && line.size() > 0) {
             lines.add(line);
             line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
-            newline=true;
         }
         
         // checks if the ArrayList with the lines is empty
@@ -1276,10 +1269,6 @@ class PdfDocument extends Document {
             l = (PdfLine) i.next();
             
             float moveTextX = l.indentLeft() - indentLeft() + indentation.listIndentLeft + indentation.sectionIndentLeft;
-            if(isNewpage && newline) { // fix Ken@PDI
-                newline=false;
-                moveTextX += indentation.paragraph;
-            }
             text.moveText(moveTextX, -l.height());
             
             // is the line preceeded by a symbol?
@@ -1617,8 +1606,6 @@ class PdfDocument extends Document {
 
     Indentation indentation = new Indentation();
     public static class Indentation {
-        /** Indentation to the left caused by a paragraph. */
-    	float paragraph = 0;
         
         /** This represents the current indentation of the PDF Elements on the left side. */
         private float indentLeft = 0;
