@@ -468,7 +468,7 @@ public class PdfCopy extends PdfWriter {
      * to the outputstream embedded in a Trailer.
      */
     
-    public synchronized void close() {
+    public void close() {
         if (open) {
             PdfReaderInstance ri = currentPdfReaderInstance;
             pdf.close();

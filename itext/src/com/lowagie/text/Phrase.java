@@ -344,7 +344,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      * @param chunk a Chunk to add to the Phrase
      * @return true if adding the Chunk succeeded
      */
-    protected synchronized boolean addChunk(Chunk chunk) {
+    protected boolean addChunk(Chunk chunk) {
     	Font f = chunk.getFont();
     	String c = chunk.getContent();
         if (!font.isStandardFont()) {

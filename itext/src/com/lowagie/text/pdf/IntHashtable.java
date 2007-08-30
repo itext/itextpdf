@@ -334,7 +334,7 @@ public class IntHashtable implements Cloneable {
     /***
      * <p>Clears this hashtable so that it contains no keys.</p>
      */
-    public synchronized void clear() {
+    public void clear() {
     	Entry tab[] = table;
         for (int index = tab.length; --index >= 0;) {
             tab[index] = null;

@@ -1107,7 +1107,7 @@ public class PdfWriter extends DocWriter implements
      * to the outputstream embedded in a Trailer.
      * @see com.lowagie.text.DocWriter#close()
      */
-    public synchronized void close() {
+    public void close() {
         if (open) {
             if ((currentPageNumber - 1) != pageReferences.size())
                 throw new RuntimeException("The page " + pageReferences.size() +

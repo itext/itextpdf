@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 2005 by Bruno Lowagie.
  *
@@ -105,14 +105,14 @@ public abstract class XmpSchema extends Properties {
 	 * @param value
 	 * @return the previous property (null if there wasn't one)
 	 */
-	public synchronized Object addProperty(String key, String value) {
+	public Object addProperty(String key, String value) {
 		return this.setProperty(key, value);
 	}
 	
 	/**
 	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
 	 */
-	public synchronized Object setProperty(String key, String value) {
+	public Object setProperty(String key, String value) {
 		return super.setProperty(key, escape(value));
 	}
 	
@@ -123,7 +123,7 @@ public abstract class XmpSchema extends Properties {
 	 * @param value
 	 * @return the previous property (null if there wasn't one)
 	 */
-	public synchronized Object setProperty(String key, XmpArray value) {
+	public Object setProperty(String key, XmpArray value) {
 		return super.setProperty(key, value.toString());
 	}
 	
@@ -134,7 +134,7 @@ public abstract class XmpSchema extends Properties {
 	 * @param value
 	 * @return the previous property (null if there wasn't one)
 	 */
-	public synchronized Object setProperty(String key, LangAlt value) {
+	public Object setProperty(String key, LangAlt value) {
 		return super.setProperty(key, value.toString());
 	 }
 	

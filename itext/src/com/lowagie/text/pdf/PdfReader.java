@@ -70,6 +70,7 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
 
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
@@ -2600,6 +2601,26 @@ public class PdfReader implements PdfViewerPreferences {
         }
         catalog.remove(PdfName.ACROFORM);
         pageRefs.resetReleasePage();
+    }
+    
+    public ArrayList getLinks(int page) {
+        pageRefs.resetReleasePage();
+        ArrayList result = new ArrayList();
+        PdfDictionary pageDic = pageRefs.getPageN(page);
+        if (pageDic.get(PdfName.ANNOTS) != null) {
+            PdfArray annots = (PdfArray)getPdfObject(pageDic.get(PdfName.ANNOTS));
+            ArrayList arr = annots.getArrayList();
+            for (int j = 0; j < arr.size(); ++j) {
+                PdfDictionary annot = (PdfDictionary)getPdfObjectRelease((PdfObject)arr.get(j));
+              
+                if (PdfName.LINK.equals(annot.get(PdfName.SUBTYPE))) {
+                	result.add(new PdfAnnotation.PdfImportedLink(annot));
+                }
+            }
+        }
+    	pageRefs.releasePage(page);
+        pageRefs.resetReleasePage();
+        return result;
     }
 
     private void iterateBookmarks(PdfObject outlineRef, HashMap names) {
