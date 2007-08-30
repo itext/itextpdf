@@ -885,7 +885,7 @@ public class TIFFFaxDecoder {
         }
     }
     
-    public synchronized void decodeT6(byte[] buffer,
+    public void decodeT6(byte[] buffer,
     byte[] compData,
     int startX,
     int height,
