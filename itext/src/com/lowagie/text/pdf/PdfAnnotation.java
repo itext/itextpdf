@@ -873,7 +873,7 @@ public class PdfAnnotation extends PdfDictionary {
     		PdfAnnotation annotation = new PdfAnnotation(writer, new Rectangle(llx, lly, urx, ury));
     		if (newPage != 0) {
     	        PdfIndirectReference ref = writer.getPageReference(newPage);
-    	        destination.arrayList.set(0, ref);
+    	        destination.getArrayList().set(0, ref);
     		}
     		if (destination != null) annotation.put(PdfName.DEST, destination);
     		annotation.hashMap.putAll(parameters);
