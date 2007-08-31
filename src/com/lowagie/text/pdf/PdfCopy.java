@@ -206,7 +206,7 @@ public class PdfCopy extends PdfWriter {
         }
         PdfObject obj = PdfReader.getPdfObjectRelease(in);
         if (obj != null && obj.isDictionary()) {
-            PdfName type = (PdfName)PdfReader.getPdfObjectRelease(((PdfDictionary)obj).get(PdfName.TYPE));
+            PdfObject type = PdfReader.getPdfObjectRelease(((PdfDictionary)obj).get(PdfName.TYPE));
             if (type != null && PdfName.PAGE.equals(type)) {
                 return theRef;
             }
@@ -224,7 +224,7 @@ public class PdfCopy extends PdfWriter {
     protected PdfDictionary copyDictionary(PdfDictionary in)
     throws IOException, BadPdfFormatException {
         PdfDictionary out = new PdfDictionary();
-        PdfName type = (PdfName)PdfReader.getPdfObjectRelease(in.get(PdfName.TYPE));
+        PdfObject type = PdfReader.getPdfObjectRelease(in.get(PdfName.TYPE));
         
         for (Iterator it = in.getKeys().iterator(); it.hasNext();) {
             PdfName key = (PdfName)it.next();
