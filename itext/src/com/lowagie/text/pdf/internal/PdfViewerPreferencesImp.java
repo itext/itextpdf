@@ -104,7 +104,7 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 	};
 	/** A series of viewer preferences. */
 	public static final PdfName DUPLEX_PREFERENCES[] = {
-		PdfName.SIMPLEX, PdfName.DUPLEXFLIPSHORTEDGE, PdfName.DUPLEXFLIPSHORTEDGE
+		PdfName.SIMPLEX, PdfName.DUPLEXFLIPSHORTEDGE, PdfName.DUPLEXFLIPLONGEDGE
 	};
 	
 	/** This value will hold the viewer preferences for the page layout and page mode. */
