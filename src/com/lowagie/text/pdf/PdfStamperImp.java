@@ -837,10 +837,9 @@ class PdfStamperImp extends PdfWriter {
                 ArrayList ar = annots.getArrayList();
                 for (int idx = 0; idx < ar.size(); ++idx) {
                     PdfObject annoto = PdfReader.getPdfObject((PdfObject)ar.get(idx));
-                        if ((annoto instanceof PdfIndirectReference) && !annoto.isIndirect())
-                            continue;
-                    PdfDictionary annot = (PdfDictionary)annoto;
-                    if (PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE))) {
+                    if ((annoto instanceof PdfIndirectReference) && !annoto.isIndirect())
+                        continue;
+                    if (!annoto.isDictionary() || PdfName.WIDGET.equals(((PdfDictionary)annoto).get(PdfName.SUBTYPE))) {
                         ar.remove(idx);
                         --idx;
                     }
