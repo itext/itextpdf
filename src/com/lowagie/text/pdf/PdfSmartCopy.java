@@ -93,7 +93,9 @@ public class PdfSmartCopy extends PdfCopy {
     protected PdfIndirectReference copyIndirect(PRIndirectReference in) throws IOException, BadPdfFormatException {
         PdfObject srcObj = PdfReader.getPdfObjectRelease(in);
         ByteStore streamKey = null;
-        if (srcObj.type == PdfObject.STREAM) {
+        boolean validStream = false;
+        if (srcObj.isStream() && !((PRStream)srcObj).contains(PdfName.BBOX)) {
+            validStream = true;
             // Only the content and the key names is compared, probably the key values should also be compared
             streamKey = new ByteStore((PRStream)srcObj);
             PdfIndirectReference streamRef = (PdfIndirectReference) streamMap.get(streamKey);
@@ -117,7 +119,7 @@ public class PdfSmartCopy extends PdfCopy {
         }
         iRef.setCopied();
 
-        if (srcObj.type == PdfObject.STREAM) {
+        if (validStream) {
             streamMap.put(streamKey, theRef);
         }
 
