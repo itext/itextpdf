@@ -70,7 +70,6 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
 
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
