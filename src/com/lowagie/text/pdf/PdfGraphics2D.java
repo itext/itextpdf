@@ -361,7 +361,7 @@ public class PdfGraphics2D extends Graphics2D {
 //            drawGlyphVector(this.font.createGlyphVector(getFontRenderContext(), s), x, y);
         }
         else {
-        	//boolean restoreTextRenderingMode = false;
+        	boolean restoreTextRenderingMode = false;
             AffineTransform at = getTransform();
             AffineTransform at2 = getTransform();
             at2.translate(x, y);
@@ -406,33 +406,30 @@ public class PdfGraphics2D extends Graphics2D {
                                      : fontTextAttributeWidth;
             if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth))
                 cb.setHorizontalScaling(100.0f / fontTextAttributeWidth.floatValue());
-/*
-			Quarantined: this code never looks at BaseFont to see if the font
-			is already bold. Maybe it doesn't matter, maybe it does, maybe it can't be sure.
-			Requires further testing. (See mailing list posts August 16, 2007)
 			
-            // Get the weight of the font so we can detect fonts with a weight
-            // that makes them bold, but the Font.isBold() value is false.
-            Float weight = (Float) font.getAttributes().get(TextAttribute.WEIGHT);
-            if (weight == null) {
-                weight = (font.isBold()) ? TextAttribute.WEIGHT_BOLD
-                                         : TextAttribute.WEIGHT_REGULAR;
-            }
-
             // Check if we need to simulate a bold font.
-            if ((font.isBold() || (weight.floatValue() >= TextAttribute.WEIGHT_SEMIBOLD.floatValue()))
-                && (font.getFontName().equals(font.getName()))) {
-                // Simulate a bold font.
-                float strokeWidth = font.getSize2D() * (weight.floatValue() - TextAttribute.WEIGHT_REGULAR.floatValue()) / 30f;
-                if (strokeWidth != 1) {
-                    cb.setTextRenderingMode(PdfContentByte.
-                        TEXT_RENDER_MODE_FILL_STROKE);
-                    cb.setLineWidth(strokeWidth);
-                    cb.setColorStroke(getColor());
-                    restoreTextRenderingMode = true;
+            // Do nothing if the BaseFont is already bold. This test is not foolproof but it will work most of the times.
+            if (baseFont.getPostscriptFontName().toLowerCase().indexOf("bold") < 0) { 
+                // Get the weight of the font so we can detect fonts with a weight
+                // that makes them bold, but the Font.isBold() value is false.
+                Float weight = (Float) font.getAttributes().get(TextAttribute.WEIGHT);
+                if (weight == null) {
+                    weight = (font.isBold()) ? TextAttribute.WEIGHT_BOLD
+                                             : TextAttribute.WEIGHT_REGULAR;
+                }
+                if ((font.isBold() || (weight.floatValue() >= TextAttribute.WEIGHT_SEMIBOLD.floatValue()))
+                    && (font.getFontName().equals(font.getName()))) {
+                    // Simulate a bold font.
+                    float strokeWidth = font.getSize2D() * (weight.floatValue() - TextAttribute.WEIGHT_REGULAR.floatValue()) / 30f;
+                    if (strokeWidth != 1) {
+                        cb.setTextRenderingMode(PdfContentByte.
+                            TEXT_RENDER_MODE_FILL_STROKE);
+                        cb.setLineWidth(strokeWidth);
+                        cb.setColorStroke(getColor());
+                        restoreTextRenderingMode = true;
+                    }
                 }
             }
-*/
 
             double width = 0;
             if (font.getSize2D() > 0) {
@@ -451,9 +448,9 @@ public class PdfGraphics2D extends Graphics2D {
                 cb.setHorizontalScaling(100);
                 
             // Restore the original TextRenderingMode if needed.
-            //if (restoreTextRenderingMode) {
-            //    cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);
-            //} 
+            if (restoreTextRenderingMode) {
+                cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);
+            } 
 
             cb.endText();
             setTransform(at);
