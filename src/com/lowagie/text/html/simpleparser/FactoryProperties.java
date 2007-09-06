@@ -277,6 +277,6 @@ public class FactoryProperties {
         followTags.put("em", "i");
         followTags.put("strong", "b");
         followTags.put("s", "s");
-        followTags.put("stike", "s");
+        followTags.put("strike", "s");
     }
 }
