@@ -49,7 +49,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.SimpleTimeZone;
@@ -178,7 +177,7 @@ public class PdfDate extends PdfString {
         sb.append(':').append(d.substring(0, 2)); //minute
         d = d.substring(2);
         if (d.length() < 2) {
-            sb.append("Z");
+            sb.append('Z');
             return sb.toString();
         }
         sb.append(':').append(d.substring(0, 2)); //second

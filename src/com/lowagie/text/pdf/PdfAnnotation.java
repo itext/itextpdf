@@ -54,7 +54,6 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.HashMap;
 
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
 /**
  * A <CODE>PdfAnnotation</CODE> is a note that is associated with a page.
@@ -852,7 +851,7 @@ public class PdfAnnotation extends PdfDictionary {
     			float x = destination.getAsNumber(2).floatValue();
     			float y = destination.getAsNumber(3).floatValue();
         		float xx = x * a + y * c + e;
-        		float yy = x * b + y * d + f;;
+        		float yy = x * b + y * d + f;
         		destination.getArrayList().set(2, new PdfNumber(xx));
         		destination.getArrayList().set(3, new PdfNumber(yy));
     		}
