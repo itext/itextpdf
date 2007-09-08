@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 2001, 2002 by Bruno Lowagie.
  *
@@ -539,7 +539,7 @@ public class SAXiTextHandler extends DefaultHandler {
      */
 
     public void ignorableWhitespace(char[] ch, int start, int length) {
-        // do nothing: we handle white space ourselves in the characters method
+        characters(ch, start, length);
     }
 
     /**
@@ -561,7 +561,7 @@ public class SAXiTextHandler extends DefaultHandler {
         String content = new String(ch, start, length);
         // System.err.println("'" + content + "'");
 
-        if (content.trim().length() == 0) {
+        if (content.trim().length() == 0 && content.indexOf(' ') < 0) {
             return;
         }
 
