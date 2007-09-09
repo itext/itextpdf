@@ -863,7 +863,7 @@ public abstract class BaseFont {
     /**
      * Converts a <CODE>char</CODE> to a </CODE>byte</CODE> array according
      * to the font's encoding.
-     * @param text the <CODE>String</CODE> to be converted
+     * @param char1 the <CODE>char</CODE> to be converted
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
      */
     byte[] convertToBytes(char char1) {
