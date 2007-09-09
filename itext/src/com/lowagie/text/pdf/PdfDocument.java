@@ -56,7 +56,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -253,7 +252,7 @@ class PdfDocument extends Document {
          * @param documentFileAttachment	the attached files
          * @param writer the writer the catalog applies to
          */
-        void addNames(TreeMap localDestinations, LinkedHashMap documentLevelJS, HashMap documentFileAttachment, PdfWriter writer) {
+        void addNames(TreeMap localDestinations, HashMap documentLevelJS, HashMap documentFileAttachment, PdfWriter writer) {
             if (localDestinations.isEmpty() && documentLevelJS.isEmpty() && documentFileAttachment.isEmpty())
                 return;
             try {
@@ -1993,7 +1992,7 @@ class PdfDocument extends Document {
      * Stores a list of document level JavaScript actions.
      */
     int jsCounter;
-    private LinkedHashMap documentLevelJS = new LinkedHashMap();
+    private HashMap documentLevelJS = new HashMap();
     void addJavaScript(PdfAction js) {
         if (js.get(PdfName.JS) == null)
             throw new RuntimeException("Only JavaScript actions are allowed.");
@@ -2016,7 +2015,7 @@ class PdfDocument extends Document {
         }
     }
     
-    LinkedHashMap getDocumentLevelJS() {
+    HashMap getDocumentLevelJS() {
     	return documentLevelJS;
     }
     
