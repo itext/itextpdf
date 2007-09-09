@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
  *
@@ -141,8 +141,6 @@ public class Utilities {
 	    return bf.toString();
 	}
 
-	private static String[] excUriEsc = {"%20", "%3C", "%3E", "%23", "%25", "%22", "%7B", "%7D", "%5B", "%5D", "%7C", "%5C", "%5E", "%60"};
-	private static String excUri = " <>#%\"{}[]|\\\u005E\u0060";
 	/**
 	 * This method makes a valid URL from a given filename.
 	 * <P>
@@ -155,33 +153,12 @@ public class Utilities {
 	 * @throws MalformedURLException
 	 */
 	public static URL toURL(String filename) throws MalformedURLException {
-		if (filename.startsWith("file:/") || filename.startsWith("http://")
-				|| filename.startsWith("https://")
-				|| filename.startsWith("jar:")) {
-			return new URL(filename);
-		}
-		File f = new File(filename);
-		String path = f.getAbsolutePath();
-		if (File.separatorChar != '/') {
-			path = path.replace(File.separatorChar, '/');
-		}
-		if (!path.startsWith("/")) {
-			path = "/" + path;
-		}
-		if (!path.endsWith("/") && f.isDirectory()) {
-			path = path + "/";
-		}
-	    char[] t = path.toCharArray();
-	    StringBuffer sb = new StringBuffer();
-	    for (int k = 0; k < t.length; ++k) {
-	        char c = t[k];
-	        int a = Utilities.excUri.indexOf(c);
-	        if (a >= 0)
-	            sb.append(Utilities.excUriEsc[a]);
-	        else
-	            sb.append(c);
-	    }
-		return new URL("file", "", sb.toString());
+        try {
+            return new URL(filename);
+        }
+        catch (Exception e) {
+            return new File(filename).toURL();
+        }
 	}
 
 	/**

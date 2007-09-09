@@ -106,7 +106,7 @@ public class PdfEncodings {
     
     static final IntHashtable pdfEncoding = new IntHashtable();
     
-    static final HashMap extraEncodings = new HashMap();
+    static HashMap extraEncodings = new HashMap();
     
     static {        
         for (int k = 128; k < 160; ++k) {
@@ -144,10 +144,7 @@ public class PdfEncodings {
                 b[k] = (byte)text.charAt(k);
             return b;
         }
-        ExtraEncoding extra = null;
-        synchronized (extraEncodings) {
-            extra = (ExtraEncoding)extraEncodings.get(encoding.toLowerCase());
-        }
+        ExtraEncoding extra = (ExtraEncoding)extraEncodings.get(encoding.toLowerCase());
         if (extra != null) {
             byte b[] = extra.charToByte(text, encoding);
             if (b != null)
@@ -202,6 +199,54 @@ public class PdfEncodings {
         }
     }
     
+    /** Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
+     * to the font's encoding.
+     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
+     * @param encoding the encoding
+     * @param char1 the <CODE>char</CODE> to be converted
+     */
+    public static final byte[] convertToBytes(char char1, String encoding) {
+        if (encoding == null || encoding.length() == 0)
+            return new byte[]{(byte)char1};
+        ExtraEncoding extra = (ExtraEncoding)extraEncodings.get(encoding.toLowerCase());
+        if (extra != null) {
+            byte b[] = extra.charToByte(char1, encoding);
+            if (b != null)
+                return b;
+        }
+        IntHashtable hash = null;
+        if (encoding.equals(BaseFont.WINANSI))
+            hash = winansi;
+        else if (encoding.equals(PdfObject.TEXT_PDFDOCENCODING))
+            hash = pdfEncoding;
+        if (hash != null) {
+            int c = 0;
+            if (char1 < 128 || (char1 >= 160 && char1 <= 255))
+                c = char1;
+            else
+                c = hash.get(char1);
+            if (c != 0)
+                return new byte[]{(byte)c};
+            else
+                return new byte[0];
+        }
+        if (encoding.equals(PdfObject.TEXT_UNICODE)) {
+            // workaround for jdk 1.2.2 bug
+            byte b[] = new byte[4];
+            b[0] = -2;
+            b[1] = -1;
+            b[2] = (byte)(char1 >> 8);
+            b[3] = (byte)(char1 & 0xff);
+            return b;
+        }
+        try {
+            return String.valueOf(char1).getBytes(encoding);
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+    
     /** Converts a </CODE>byte</CODE> array to a <CODE>String</CODE> according
      * to the some encoding.
      * @param bytes the bytes to convert
@@ -217,10 +262,7 @@ public class PdfEncodings {
                 c[k] = (char)(bytes[k] & 0xff);
             return new String(c);
         }
-        ExtraEncoding extra = null;
-        synchronized (extraEncodings) {
-            extra = (ExtraEncoding)extraEncodings.get(encoding.toLowerCase());
-        }
+        ExtraEncoding extra = (ExtraEncoding)extraEncodings.get(encoding.toLowerCase());
         if (extra != null) {
             String text = extra.byteToChar(bytes, encoding);
             if (text != null)
@@ -488,12 +530,25 @@ public class PdfEncodings {
      * @param enc the conversion class
      */    
     public static void addExtraEncoding(String name, ExtraEncoding enc) {
-        synchronized (extraEncodings) {
-            extraEncodings.put(name.toLowerCase(), enc);
+        synchronized (extraEncodings) { // This serializes concurrent updates
+            HashMap newEncodings = (HashMap)extraEncodings.clone();
+            newEncodings.put(name.toLowerCase(), enc);
+            extraEncodings = newEncodings;  // This swap does not require synchronization with reader
         }
     }
-
+    
     private static class WingdingsConversion implements ExtraEncoding {
+        
+        public byte[] charToByte(char char1, String encoding) {
+            if (char1 == ' ')
+                return new byte[]{(byte)char1};
+            else if (char1 >= '\u2701' && char1 <= '\u27BE') {
+                byte v = table[char1 - 0x2700];
+                if (v != 0)
+                    return new byte[]{v};
+            }
+            return new byte[0];
+        }
         
         public byte[] charToByte(String text, String encoding) {
             char cc[] = text.toCharArray();
@@ -572,6 +627,20 @@ public class PdfEncodings {
             return b2;
         }
         
+        public byte[] charToByte(char char1, String encoding) {
+            if (char1 < ' ')
+                return new byte[0];
+            if (char1 < 128)
+                return new byte[]{(byte)char1};
+            else {
+                byte v = (byte)c2b.get(char1);
+                if (v != 0)
+                    return new byte[]{v};
+                else
+                    return new byte[0];
+            }
+        }
+        
         public String byteToChar(byte[] b, String encoding) {
             int len = b.length;
             char cc[] = new char[len];
@@ -638,6 +707,14 @@ public class PdfEncodings {
             return b2;
         }
         
+        public byte[] charToByte(char char1, String encoding) {
+            byte v = (byte)translation.get((int)char1);
+            if (v != 0)
+                return new byte[]{v};
+            else
+                return new byte[0];
+        }
+        
         public String byteToChar(byte[] b, String encoding) {
             return null;
         }
@@ -691,6 +768,13 @@ public class PdfEncodings {
     }
     
     private static class SymbolTTConversion implements ExtraEncoding {
+        
+        public byte[] charToByte(char char1, String encoding) {
+            if ((char1 & 0xff00) == 0 || (char1 & 0xff00) == 0xf000)
+                return new byte[]{(byte)char1};
+            else
+                return new byte[0];
+        }
         
         public byte[] charToByte(String text, String encoding) {
             char ch[] = text.toCharArray();

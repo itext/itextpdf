@@ -53,10 +53,10 @@ package com.lowagie.text.pdf;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -101,7 +101,7 @@ import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
  */
 
 class PdfDocument extends Document {
-    
+	
     /**
      * <CODE>PdfInfo</CODE> is the PDF InfoDictionary.
      * <P>
@@ -249,11 +249,12 @@ class PdfDocument extends Document {
         /**
          * Adds the names of the named destinations to the catalog.
          * @param localDestinations the local destinations
-         * @param documentJavaScript the javascript used in the document
+         * @param documentLevelJS the javascript used in the document
+         * @param documentFileAttachment	the attached files
          * @param writer the writer the catalog applies to
          */
-        void addNames(TreeMap localDestinations, ArrayList documentJavaScript, HashMap documentFileAttachment, PdfWriter writer) {
-            if (localDestinations.isEmpty() && documentJavaScript.isEmpty() && documentFileAttachment.isEmpty())
+        void addNames(TreeMap localDestinations, LinkedHashMap documentLevelJS, HashMap documentFileAttachment, PdfWriter writer) {
+            if (localDestinations.isEmpty() && documentLevelJS.isEmpty() && documentFileAttachment.isEmpty())
                 return;
             try {
                 PdfDictionary names = new PdfDictionary();
@@ -271,19 +272,9 @@ class PdfDocument extends Document {
                     dests.put(PdfName.NAMES, ar);
                     names.put(PdfName.DESTS, writer.addToBody(dests).getIndirectReference());
                 }
-                if (!documentJavaScript.isEmpty()) {
-                    String s[] = new String[documentJavaScript.size()];
-                    for (int k = 0; k < s.length; ++k)
-                        s[k] = Integer.toHexString(k);
-                    Arrays.sort(s);
-                    PdfArray ar = new PdfArray();
-                    for (int k = 0; k < s.length; ++k) {
-                        ar.add(new PdfString(s[k]));
-                        ar.add((PdfIndirectReference)documentJavaScript.get(k));
-                    }
-                    PdfDictionary js = new PdfDictionary();
-                    js.put(PdfName.NAMES, ar);
-                    names.put(PdfName.JAVASCRIPT, writer.addToBody(js).getIndirectReference());
+                if (!documentLevelJS.isEmpty()) {
+                    PdfDictionary tree = PdfNameTree.writeTree(documentLevelJS, writer);
+                    names.put(PdfName.JAVASCRIPT, writer.addToBody(tree).getIndirectReference());
                 }
                 if (!documentFileAttachment.isEmpty()) {
                     names.put(PdfName.EMBEDDEDFILES, writer.addToBody(PdfNameTree.writeTree(documentFileAttachment, writer)).getIndirectReference());
@@ -496,22 +487,26 @@ class PdfDocument extends Document {
                     
                     // if a paragraph has to be kept together, we wrap it in a table object
                     if (paragraph.getKeepTogether()) {
+                    	carriageReturn();
                         PdfPTable table = new PdfPTable(1);
                         table.setWidthPercentage(100f);
                         PdfPCell cell = new PdfPCell();
                         cell.addElement(paragraph);
                         cell.setBorder(Table.NO_BORDER);
+                        cell.setPadding(0);
                         table.addCell(cell);
+                        indentation.indentLeft -= paragraph.getIndentationLeft();
+                        indentation.indentRight -= paragraph.getIndentationRight();
                         this.add(table);
+                        indentation.indentLeft += paragraph.getIndentationLeft();
+                        indentation.indentRight += paragraph.getIndentationRight();
                     }
                     else {
-                    	indentation.paragraph += paragraph.getIndentationLeft();
                     	line.setExtraIndent(paragraph.getFirstLineIndent());
                     	element.process(this);
-                    	indentation.paragraph -= paragraph.getIndentationLeft();
+                        carriageReturn();
+                        addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
                     }
-                    
-                    addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
 
                     if (pageEvent != null && isParagraph)
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
@@ -554,11 +549,9 @@ class PdfDocument extends Document {
                     
                     // some values are set
                     carriageReturn();
-                    indentation.indentLeft += section.getIndentationLeft();
-                    indentation.indentRight += section.getIndentationRight();
                     indentation.sectionIndentLeft += section.getIndentationLeft();
                     indentation.sectionIndentRight += section.getIndentationRight();
-                    
+      
                     PdfPageEvent pageEvent = writer.getPageEvent();
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
@@ -572,22 +565,20 @@ class PdfDocument extends Document {
                         add(section.getTitle());
                         isParagraph = true;
                     }
-                    indentation.indentLeft += section.getIndentation();
                     indentation.sectionIndentLeft += section.getIndentation();
                     // we process the section
                     element.process(this);
+                    flushLines();
                     // some parameters are set back to normal again
-                    indentation.indentLeft -= section.getIndentationLeft() + section.getIndentation();
-                    indentation.indentRight -= section.getIndentationRight();
-                    indentation.sectionIndentLeft -= section.getIndentationLeft() + section.getIndentation();
+                    indentation.sectionIndentLeft -= (section.getIndentationLeft() + section.getIndentation());
                     indentation.sectionIndentRight -= section.getIndentationRight();
-                    
+
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
                             pageEvent.onChapterEnd(writer, this, indentTop() - currentHeight);
                         else
                             pageEvent.onSectionEnd(writer, this, indentTop() - currentHeight);
-                    
+
                     break;
                 }
                 case Element.LIST: {
@@ -604,6 +595,7 @@ class PdfDocument extends Document {
                     // some parameters are set back to normal again
                     indentation.listIndentLeft -= list.getIndentationLeft();
                     indentation.indentRight -= list.getIndentationRight();
+                    carriageReturn();
                     break;
                 }
                 case Element.LISTITEM: {
@@ -648,13 +640,8 @@ class PdfDocument extends Document {
                         break; //nothing to do
 
                     // before every table, we add a new line and flush all lines
-
-                    indentation.indentLeft -= indentation.paragraph + indentation.sectionIndentLeft;
-                    indentation.indentRight -= indentation.sectionIndentRight;
                     ensureNewLine();
                     flushLines();
-                    indentation.indentLeft += indentation.paragraph + indentation.sectionIndentLeft;
-                    indentation.indentRight += indentation.sectionIndentRight;
                     
                     addPTable(ptable);
                     pageEmpty = false;
@@ -806,9 +793,18 @@ class PdfDocument extends Document {
     }
 
 //	[L3] DocListener interface
-
-    private boolean isNewpage = false;
     private int textEmptySize;
+    
+    // [C9] Metadata for the page
+    /** XMP Metadata for the page. */
+    protected byte[] xmpMetadata = null;
+	/**
+	 * Use this method to set the XMP Metadata.
+	 * @param xmpMetadata The xmpMetadata to set.
+	 */
+	public void setXmpMetadata(byte[] xmpMetadata) {
+		this.xmpMetadata = xmpMetadata;
+	}
     
     /**
      * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
@@ -818,8 +814,8 @@ class PdfDocument extends Document {
      */ 
     public boolean newPage() {
         lastElementType = -1;
-        isNewpage = true;
         if (writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()))) {
+        	setNewPageSizeAndMargins();
             return false;
         }
     	if (!open || close) {
@@ -866,6 +862,20 @@ class PdfDocument extends Document {
         	PdfPage page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
 
         	// we complete the page dictionary
+        	
+            // [C9] if there is XMP data to add: add it
+            if (xmpMetadata != null) {
+            	PdfStream xmp = new PdfStream(xmpMetadata);
+            	xmp.put(PdfName.TYPE, PdfName.METADATA);
+            	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+            	PdfEncryption crypto = writer.getEncryption();
+                if (crypto != null && !crypto.isMetadataEncrypted()) {
+                    PdfArray ar = new PdfArray();
+                    ar.add(PdfName.CRYPT);
+                    xmp.put(PdfName.FILTER, ar);
+                }
+            	page.put(PdfName.METADATA, writer.addToBody(xmp).getIndirectReference());
+            }
         	
         	// [U3] page actions: transition, duration, additional actions
         	if (this.transition!=null) {
@@ -918,7 +928,6 @@ class PdfDocument extends Document {
         catch (IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        isNewpage = false;
         return true;
     }
 
@@ -1089,16 +1098,7 @@ class PdfDocument extends Document {
         textEmptySize = text.size();
 
     	markPoint = 0;
-        if (marginMirroring && (getPageNumber() & 1) == 0) {
-            marginRight = nextMarginLeft;
-            marginLeft = nextMarginRight;
-        }
-        else {
-            marginLeft = nextMarginLeft;
-            marginRight = nextMarginRight;
-        }
-        marginTop = nextMarginTop;
-        marginBottom = nextMarginBottom;
+        setNewPageSizeAndMargins();
         imageEnd = -1;
         indentation.imageIndentRight = 0;
         indentation.imageIndentLeft = 0;
@@ -1107,7 +1107,6 @@ class PdfDocument extends Document {
         currentHeight = 0;
         
         // backgroundcolors, etc...
-        pageSize = nextPageSize;
         thisBoxSize = new HashMap(boxSize);
         if (pageSize.getBackgroundColor() != null
         || pageSize.hasBorders()
@@ -1245,12 +1244,10 @@ class PdfDocument extends Document {
         if (lines == null) {
             return 0;
         }
-        boolean newline=false;
         // checks if a new Line has to be made.
         if (line != null && line.size() > 0) {
             lines.add(line);
             line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
-            newline=true;
         }
         
         // checks if the ArrayList with the lines is empty
@@ -1271,13 +1268,8 @@ class PdfDocument extends Document {
             // this is a line in the loop
             l = (PdfLine) i.next();
             
-            if(isNewpage && newline) { // fix Ken@PDI
-                newline=false;
-                text.moveText(l.indentLeft() - indentLeft() + indentation.listIndentLeft + indentation.paragraph,-l.height());
-            }
-            else {
-                text.moveText(l.indentLeft() - indentLeft() + indentation.listIndentLeft, -l.height());
-            }
+            float moveTextX = l.indentLeft() - indentLeft() + indentation.listIndentLeft + indentation.sectionIndentLeft;
+            text.moveText(moveTextX, -l.height());
             
             // is the line preceeded by a symbol?
             if (l.listSymbol() != null) {
@@ -1291,9 +1283,7 @@ class PdfDocument extends Document {
             currentFont = (PdfFont)currentValues[0];
             
             displacement += l.height();
-            if (indentLeft() - indentation.listIndentLeft != l.indentLeft()) {
-                text.moveText(indentLeft() - l.indentLeft() - indentation.listIndentLeft, 0);
-            }
+            text.moveText(-moveTextX, 0);
             
         }
         lines = new ArrayList();
@@ -1616,8 +1606,6 @@ class PdfDocument extends Document {
 
     Indentation indentation = new Indentation();
     public static class Indentation {
-        /** Indentation to the left caused by a paragraph. */
-    	float paragraph = 0;
         
         /** This represents the current indentation of the PDF Elements on the left side. */
         private float indentLeft = 0;
@@ -1654,7 +1642,7 @@ class PdfDocument extends Document {
      */
     
     private float indentLeft() {
-        return left(indentation.indentLeft + indentation.listIndentLeft + indentation.imageIndentLeft);
+        return left(indentation.indentLeft + indentation.listIndentLeft + indentation.imageIndentLeft + indentation.sectionIndentLeft);
     }
     
     /**
@@ -1664,7 +1652,7 @@ class PdfDocument extends Document {
      */
     
     private float indentRight() {
-        return right(indentation.indentRight + indentation.imageIndentRight);
+        return right(indentation.indentRight + indentation.sectionIndentRight);
     }
     
     /**
@@ -1742,11 +1730,11 @@ class PdfDocument extends Document {
         
         // [C4] pagelabels
         if (pageLabels != null) {
-            catalog.put(PdfName.PAGELABELS, pageLabels.getDictionary());
+            catalog.put(PdfName.PAGELABELS, pageLabels.getDictionary(writer));
         }
         
         // [C5] named objects
-        catalog.addNames(localDestinations, documentJavaScript, documentFileAttachment, writer);
+        catalog.addNames(localDestinations, getDocumentLevelJS(), documentFileAttachment, writer);
         
         // [C6] actions
         if (openActionName != null) {
@@ -2004,20 +1992,32 @@ class PdfDocument extends Document {
     /**
      * Stores a list of document level JavaScript actions.
      */
-    private ArrayList documentJavaScript = new ArrayList();
+    int jsCounter;
+    private LinkedHashMap documentLevelJS = new LinkedHashMap();
     void addJavaScript(PdfAction js) {
         if (js.get(PdfName.JS) == null)
             throw new RuntimeException("Only JavaScript actions are allowed.");
         try {
-            documentJavaScript.add(writer.addToBody(js).getIndirectReference());
+            documentLevelJS.put("iTextJS_" + jsCounter, writer.addToBody(js).getIndirectReference());
+            jsCounter++;
+        }
+        catch (IOException e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+    void addJavaScript(String name, PdfAction js) {
+        if (js.get(PdfName.JS) == null)
+            throw new RuntimeException("Only JavaScript actions are allowed.");
+        try {
+            documentLevelJS.put(name, writer.addToBody(js).getIndirectReference());
         }
         catch (IOException e) {
             throw new ExceptionConverter(e);
         }
     }
     
-    ArrayList getDocumentJavaScript() {
-        return documentJavaScript;
+    LinkedHashMap getDocumentLevelJS() {
+    	return documentLevelJS;
     }
     
     private HashMap documentFileAttachment = new HashMap();
@@ -2146,6 +2146,20 @@ class PdfDocument extends Document {
             boxSize.remove(boxName);
         else
             boxSize.put(boxName, new PdfRectangle(size));
+    }
+    
+    private void setNewPageSizeAndMargins() {
+        pageSize = nextPageSize;
+    	if (marginMirroring && (getPageNumber() & 1) == 0) {
+            marginRight = nextMarginLeft;
+            marginLeft = nextMarginRight;
+        }
+        else {
+            marginLeft = nextMarginLeft;
+            marginRight = nextMarginRight;
+        }
+        marginTop = nextMarginTop;
+        marginBottom = nextMarginBottom;
     }
     
     /**
@@ -2847,7 +2861,7 @@ class PdfDocument extends Document {
                 PdfCell c = (PdfCell) row.get(j);
                 int rowspan = c.rowspan();                
                 // fill in missing rowspan cells to complete "scan line"
-                for (int k = 1; k < rowspan && rows.size() <= i+k; k++) {
+                for (int k = 1; k < rowspan && rows.size() < i+k; k++) {
                     ArrayList spannedRow = ((ArrayList) rows.get(i + k));
                     if (spannedRow.size() > j)
                     	spannedRow.add(j, c);

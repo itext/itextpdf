@@ -1,6 +1,6 @@
 /*
  * $Id$
- * $Name$
+ * $Name:  $
  *
  * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
  *
@@ -92,7 +92,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     protected float leading = Float.NaN;
     
     /** This is the font of this phrase. */
-    protected Font font = new Font();
+    protected Font font;
     
     // constructors
     
@@ -119,6 +119,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      */
     public Phrase(float leading) {
         this.leading = leading;
+        font = new Font();
     }
     
     /**
@@ -139,7 +140,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      * @param	chunk		a <CODE>Chunk</CODE>
      */
     public Phrase(float leading, Chunk chunk) {
-        this(leading);
+        this.leading = leading;
         super.add(chunk);
         font = chunk.getFont();
     }
@@ -161,7 +162,6 @@ public class Phrase extends ArrayList implements TextElementArray {
      */
     public Phrase(String string, Font font) {
         this(Float.NaN, string, font);
-        this.font = font;
     }
     
     /**
@@ -183,7 +183,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      * @param	font		a <CODE>Font</CODE>
      */
     public Phrase(float leading, String string, Font font) {
-        this(leading);
+        this.leading = leading;
         this.font = font;
     	/* bugfix by August Detlefsen */
         if (string != null && string.length() != 0) {
@@ -344,22 +344,29 @@ public class Phrase extends ArrayList implements TextElementArray {
      * @param chunk a Chunk to add to the Phrase
      * @return true if adding the Chunk succeeded
      */
-    protected synchronized boolean addChunk(Chunk chunk) {
+    protected boolean addChunk(Chunk chunk) {
+    	Font f = chunk.getFont();
+    	String c = chunk.getContent();
         if (!font.isStandardFont()) {
-            chunk.setFont(font.difference(chunk.getFont()));
+            f = font.difference(chunk.getFont());
         }
         if (size() > 0 && !chunk.hasAttributes()) {
             try {
                 Chunk previous = (Chunk) get(size() - 1);
-                if (!previous.hasAttributes() && previous.getFont().compareTo(chunk.getFont()) == 0 && !"".equals(previous.getContent().trim()) && !"".equals(chunk.getContent().trim())) {
-                    previous.append(chunk.getContent());
+                if (!previous.hasAttributes()
+                		&& previous.getFont().compareTo(f) == 0
+                		&& !"".equals(previous.getContent().trim())
+                		&& !"".equals(c.trim())) {
+                    previous.append(c);
                     return true;
                 }
             }
             catch(ClassCastException cce) {
             }
         }
-        return super.add(chunk);
+        Chunk newChunk = new Chunk(c, f);
+        newChunk.setAttributes(chunk.getAttributes());
+        return super.add(newChunk);
     }
     
     /**

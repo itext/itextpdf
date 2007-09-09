@@ -126,8 +126,24 @@ public class PdfXConformanceImp implements PdfXConformance {
     	return pdfxConformance == PdfWriter.PDFX32002;
     }
     
+    /**
+     * Checks if the PDF has to be in conformance with PDFA1
+     * @return true of the PDF has to be in conformance with PDFA1
+     */
+    public boolean isPdfA1() {
+    	return pdfxConformance == PdfWriter.PDFA1A || pdfxConformance == PdfWriter.PDFA1B;
+    }
+    
+    /**
+     * Checks if the PDF has to be in conformance with PDFA1A
+     * @return true of the PDF has to be in conformance with PDFA1A
+     */
+    public boolean isPdfA1A() {
+    	return pdfxConformance == PdfWriter.PDFA1A;
+    }
+    
     public void completeInfoDictionary(PdfDictionary info) {
-        if (isPdfX()) {
+        if (isPdfX() && !isPdfA1()) {
             if (info.get(PdfName.GTS_PDFXVERSION) == null) {
                 if (isPdfX1A2001()) {
                     info.put(PdfName.GTS_PDFXVERSION, new PdfString("PDF/X-1:2001"));
@@ -149,7 +165,7 @@ public class PdfXConformanceImp implements PdfXConformance {
     }
     
     public void completeExtraCatalog(PdfDictionary extraCatalog) {
-        if (isPdfX()) {
+        if (isPdfX() && !isPdfA1()) {
             if (extraCatalog.get(PdfName.OUTPUTINTENTS) == null) {
                 PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
                 out.put(PdfName.OUTPUTCONDITION, new PdfString("SWOP CGATS TR 001-1995"));

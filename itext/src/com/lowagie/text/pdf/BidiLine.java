@@ -59,7 +59,7 @@ import com.lowagie.text.Chunk;
 public class BidiLine {
     
     protected int runDirection;
-    protected int pieceSize = 2048;
+    protected int pieceSize = 256;
     protected char text[] = new char[pieceSize];
     protected PdfChunk detailChunks[] = new PdfChunk[pieceSize];
     protected int totalTextLength = 0;

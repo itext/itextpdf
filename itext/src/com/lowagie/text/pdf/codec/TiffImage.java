@@ -89,10 +89,10 @@ public class TiffImage {
         switch (resolutionUnit) {
             case TIFFConstants.RESUNIT_INCH:
             case TIFFConstants.RESUNIT_NONE:
-                dpi = (int)frac;
+                dpi = (int)(frac + 0.5);
                 break;
             case TIFFConstants.RESUNIT_CENTIMETER:
-                dpi = (int)(frac * 2.54);
+                dpi = (int)(frac * 2.54 + 0.5);
                 break;
         }
         return dpi;
@@ -385,14 +385,21 @@ public class TiffImage {
                     zip = new DeflaterOutputStream(stream);
             }
             if (compression == TIFFConstants.COMPRESSION_OJPEG) {
-                if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))
-                || (!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFBYTECOUNT))) {
-                    throw new RuntimeException("Missing tag(s) for OJPEG compression.");
+                
+                // Assume that the TIFFTAG_JPEGIFBYTECOUNT tag is optional, since it's obsolete and 
+                // is often missing
+
+                if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))) {
+                    throw new IOException("Missing tag(s) for OJPEG compression.");
                 }
                 int jpegOffset = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFOFFSET);
-                int jpegLength = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFBYTECOUNT) +
-                        (int)size[0];
+                int jpegLength = s.length() - jpegOffset;
 
+                if (dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFBYTECOUNT)) {
+                    jpegLength = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFBYTECOUNT) +
+                        (int)size[0];
+                }
+                
                 byte[] jpeg = new byte[Math.min(jpegLength, s.length() - jpegOffset)];
 
                 int posFilePointer = s.getFilePointer();

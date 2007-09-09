@@ -333,4 +333,12 @@ public class PdfStream extends PdfDictionary {
         else if (bytes != null)
             os.write(bytes);
     }
+    
+    /**
+     * @see com.lowagie.text.pdf.PdfObject#toString()
+     */
+    public String toString() {
+    	if (get(PdfName.TYPE) == null) return "Stream";
+    	return "Stream of type: " + get(PdfName.TYPE);
+    }
 }

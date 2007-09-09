@@ -267,7 +267,7 @@ public class List implements TextElementArray {
             }
             item.setIndentationLeft(symbolIndent, autoindent);
             item.setIndentationRight(0);
-            list.add(item);
+            return list.add(item);
         }
         else if (o instanceof List) {
             List nested = (List) o;

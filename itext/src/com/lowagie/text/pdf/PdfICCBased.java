@@ -55,15 +55,13 @@ import com.lowagie.text.ExceptionConverter;
  * @see		PdfStream
  */
 
-class PdfICCBased extends PdfStream {
+public class PdfICCBased extends PdfStream {
     
-    protected int NumberOfComponents;
-    
-    PdfICCBased(ICC_Profile profile) {
+    public PdfICCBased(ICC_Profile profile) {
         super();
         try {
-            NumberOfComponents = profile.getNumComponents();
-            switch (NumberOfComponents) {
+            int numberOfComponents = profile.getNumComponents();
+            switch (numberOfComponents) {
                 case 1:
                     put(PdfName.ALTERNATE, PdfName.DEVICEGRAY);
                     break;
@@ -74,9 +72,9 @@ class PdfICCBased extends PdfStream {
                     put(PdfName.ALTERNATE, PdfName.DEVICECMYK);
                     break;
                 default:
-                    throw new PdfException(NumberOfComponents + " component(s) is not supported in PDF1.4");
+                    throw new PdfException(numberOfComponents + " component(s) is not supported in PDF1.4");
             }
-            put(PdfName.N, new PdfNumber(NumberOfComponents));
+            put(PdfName.N, new PdfNumber(numberOfComponents));
             bytes = profile.getData();
             flateCompress();
         } catch (Exception e) {

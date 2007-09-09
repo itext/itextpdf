@@ -315,7 +315,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     
     /**
      * @deprecated
-     * @return
+     * @return a byte array
      */
     private byte[] writeIndentations() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();

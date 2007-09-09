@@ -1241,12 +1241,11 @@ public class Table extends Rectangle {
     private void placeCell(ArrayList someRows, Cell aCell, Point aPosition) {
         int i;
         Row row = null;
-        int lColumns = ((Row) someRows.get(0)).getColumns();
         int rowCount = aPosition.x + aCell.getRowspan() - someRows.size();
         assumeTableDefaults(aCell);
         if ( (aPosition.x + aCell.getRowspan()) > someRows.size() ) {
             for (i = 0; i < rowCount; i++) {
-                row = new Row(lColumns);
+                row = new Row(columns);
                 someRows.add(row);
             }
         }

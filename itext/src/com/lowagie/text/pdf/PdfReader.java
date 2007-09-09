@@ -473,10 +473,10 @@ public class PdfReader implements PdfViewerPreferences {
      */
     public static Rectangle getNormalizedRectangle(PdfArray box) {
         ArrayList rect = box.getArrayList();
-        float llx = ((PdfNumber)rect.get(0)).floatValue();
-        float lly = ((PdfNumber)rect.get(1)).floatValue();
-        float urx = ((PdfNumber)rect.get(2)).floatValue();
-        float ury = ((PdfNumber)rect.get(3)).floatValue();
+        float llx = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(0))).floatValue();
+        float lly = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(1))).floatValue();
+        float urx = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(2))).floatValue();
+        float ury = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(3))).floatValue();
         return new Rectangle(Math.min(llx, urx), Math.min(lly, ury),
         Math.max(llx, urx), Math.max(lly, ury));
     }
@@ -1823,16 +1823,16 @@ public class PdfReader implements PdfViewerPreferences {
         if (state == 1)
             throw new RuntimeException("Illegal length in ASCII85Decode.");
         if (state == 2) {
-            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85;
+            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85 + 85 * 85 * 85  + 85 * 85 + 85;
             out.write((byte)(r >> 24));
         }
         else if (state == 3) {
-            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85  + chn[2] * 85 * 85;
+            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85  + chn[2] * 85 * 85 + 85 * 85 + 85;
             out.write((byte)(r >> 24));
             out.write((byte)(r >> 16));
         }
         else if (state == 4) {
-            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85  + chn[2] * 85 * 85  + chn[3] * 85 ;
+            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85  + chn[2] * 85 * 85  + chn[3] * 85 + 85;
             out.write((byte)(r >> 24));
             out.write((byte)(r >> 16));
             out.write((byte)(r >> 8));
@@ -2600,6 +2600,26 @@ public class PdfReader implements PdfViewerPreferences {
         }
         catalog.remove(PdfName.ACROFORM);
         pageRefs.resetReleasePage();
+    }
+    
+    public ArrayList getLinks(int page) {
+        pageRefs.resetReleasePage();
+        ArrayList result = new ArrayList();
+        PdfDictionary pageDic = pageRefs.getPageN(page);
+        if (pageDic.get(PdfName.ANNOTS) != null) {
+            PdfArray annots = (PdfArray)getPdfObject(pageDic.get(PdfName.ANNOTS));
+            ArrayList arr = annots.getArrayList();
+            for (int j = 0; j < arr.size(); ++j) {
+                PdfDictionary annot = (PdfDictionary)getPdfObjectRelease((PdfObject)arr.get(j));
+              
+                if (PdfName.LINK.equals(annot.get(PdfName.SUBTYPE))) {
+                	result.add(new PdfAnnotation.PdfImportedLink(annot));
+                }
+            }
+        }
+    	pageRefs.releasePage(page);
+        pageRefs.resetReleasePage();
+        return result;
     }
 
     private void iterateBookmarks(PdfObject outlineRef, HashMap names) {

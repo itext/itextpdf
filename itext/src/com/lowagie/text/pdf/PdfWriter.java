@@ -1107,7 +1107,7 @@ public class PdfWriter extends DocWriter implements
      * to the outputstream embedded in a Trailer.
      * @see com.lowagie.text.DocWriter#close()
      */
-    public synchronized void close() {
+    public void close() {
         if (open) {
             if ((currentPageNumber - 1) != pageReferences.size())
                 throw new RuntimeException("The page " + pageReferences.size() +
@@ -1140,6 +1140,8 @@ public class PdfWriter extends DocWriter implements
                 if (extraCatalog != null) {
                     catalog.mergeDifferent(extraCatalog);
                 }
+                
+                writeOutlines(catalog, false);
                 
                 // add the Catalog to the body
                 PdfIndirectObject indirectCatalog = addToBody(catalog, false);
@@ -1269,6 +1271,30 @@ public class PdfWriter extends DocWriter implements
          return directContent.getRootOutline();
      }
      
+     protected java.util.List newBookmarks;
+     
+    /**
+     * Sets the bookmarks. The list structure is defined in
+     * {@link SimpleBookmark}.
+     * @param outlines the bookmarks or <CODE>null</CODE> to remove any
+     */
+    public void setOutlines(java.util.List outlines) {
+        newBookmarks = outlines;
+    }
+    
+    protected void writeOutlines(PdfDictionary catalog, boolean namedAsNames) throws IOException {
+        if (newBookmarks == null || newBookmarks.isEmpty())
+            return;
+        PdfDictionary top = new PdfDictionary();
+        PdfIndirectReference topRef = getPdfIndirectReference();
+        Object kids[] = SimpleBookmark.iterateOutlines(this, topRef, newBookmarks, namedAsNames);
+        top.put(PdfName.FIRST, (PdfIndirectReference)kids[0]);
+        top.put(PdfName.LAST, (PdfIndirectReference)kids[1]);
+        top.put(PdfName.COUNT, new PdfNumber(((Integer)kids[2]).intValue()));
+        addToBody(top, topRef);
+        catalog.put(PdfName.OUTLINES, topRef);
+    }
+    
 //	[C2] PdfVersion interface
      /** possible PDF version (header) */
      public static final char VERSION_1_2 = '2';
@@ -1410,7 +1436,7 @@ public class PdfWriter extends DocWriter implements
      /**
       * Use this method to add a JavaScript action at the document level.
       * When the document opens, all this JavaScript runs.
-      * @param js The JavaScrip action
+      * @param js The JavaScript action
       */
      public void addJavaScript(PdfAction js) {
          pdf.addJavaScript(js);
@@ -1435,6 +1461,38 @@ public class PdfWriter extends DocWriter implements
       */
      public void addJavaScript(String code) {
          addJavaScript(code, false);
+     }
+     /**
+      * Use this method to add a JavaScript action at the document level.
+      * When the document opens, all this JavaScript runs.
+      * @param name	The name of the JS Action in the name tree
+      * @param js The JavaScript action
+      */
+     public void addJavaScript(String name, PdfAction js) {
+         pdf.addJavaScript(name, js);
+     }
+     
+     /**
+      * Use this method to add a JavaScript action at the document level.
+      * When the document opens, all this JavaScript runs.
+      * @param name	The name of the JS Action in the name tree
+      * @param code the JavaScript code
+      * @param unicode select JavaScript unicode. Note that the internal
+      * Acrobat JavaScript engine does not support unicode,
+      * so this may or may not work for you
+      */
+     public void addJavaScript(String name, String code, boolean unicode) {
+         addJavaScript(name, PdfAction.javaScript(code, this, unicode));
+     }
+     
+     /**
+      * Use this method to adds a JavaScript action at the document level.
+      * When the document opens, all this JavaScript runs.
+      * @param name	The name of the JS Action in the name tree
+      * @param code the JavaScript code
+      */
+     public void addJavaScript(String name, String code) {
+         addJavaScript(name, code, false);
      }
      
      /**
@@ -1559,6 +1617,14 @@ public class PdfWriter extends DocWriter implements
 	}
 	
 	/**
+	 * Use this method to set the XMP Metadata for each page.
+	 * @param xmpMetadata The xmpMetadata to set.
+	 */
+	public void setPageXmpMetadata(byte[] xmpMetadata) {
+		pdf.setXmpMetadata(xmpMetadata);
+	}
+	
+	/**
 	 * Use this method to creates XMP Metadata based
 	 * on the metadata in the PdfDocument.
 	 */
@@ -1572,7 +1638,7 @@ public class PdfWriter extends DocWriter implements
 	private byte[] createXmpMetadataBytes() {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    try {
-	    	XmpWriter xmp = new XmpWriter(baos, pdf.getInfo());
+	    	XmpWriter xmp = new XmpWriter(baos, pdf.getInfo(), pdfxConformance.getPDFXConformance());
 	        xmp.close();
 	    }
 	    catch(IOException ioe) {
@@ -1587,7 +1653,11 @@ public class PdfWriter extends DocWriter implements
     /** A PDF/X level. */
     public static final int PDFX1A2001 = 1;
     /** A PDF/X level. */
-    public static final int PDFX32002 = 2;
+    public static final int PDFX32002 = 2;    
+    /** PDFA-1A level. */
+    public static final int PDFA1A = 3;
+    /** PDFA-1B level. */
+    public static final int PDFA1B = 4;
     
     /** Stores the PDF/X level. */
     private PdfXConformanceImp pdfxConformance = new PdfXConformanceImp();
@@ -2653,15 +2723,13 @@ public class PdfWriter extends DocWriter implements
         else {
             if (image.isImgTemplate()) {
                 name = new PdfName("img" + images.size());
-                if (image.getTemplateData() == null) {
-                    if(image instanceof ImgWMF){
-                        try {
-                            ImgWMF wmf = (ImgWMF)image;
-                            wmf.readWMF(PdfTemplate.createTemplate(this, 0, 0));
-                        }
-                        catch (Exception e) {
-                            throw new DocumentException(e);
-                        }
+                if(image instanceof ImgWMF){
+                    try {
+                        ImgWMF wmf = (ImgWMF)image;
+                        wmf.readWMF(PdfTemplate.createTemplate(this, 0, 0));
+                    }
+                    catch (Exception e) {
+                        throw new DocumentException(e);
                     }
                 }
             }

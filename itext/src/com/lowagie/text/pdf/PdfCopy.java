@@ -55,11 +55,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Rectangle;
+import java.util.ArrayList;
 
 /**
  * Make copies of PDF documents. Documents can be edited after reading and
@@ -88,7 +89,11 @@ public class PdfCopy extends PdfWriter {
     protected int currentObjectNum = 1;
     protected PdfReader reader;
     protected PdfIndirectReference acroForm;
-    protected List newBookmarks;
+    protected int[] namePtr = {0};
+    /** Holds value of property rotateContents. */
+    private boolean rotateContents = true;
+    protected PdfArray fieldArray;
+    protected HashMap fieldTemplates;
     
     /**
      * A key to allow us to hash indirect references
@@ -132,9 +137,21 @@ public class PdfCopy extends PdfWriter {
         pdf.addWriter(this);
         indirectMap = new HashMap();
     }
+
+    /** Getter for property rotateContents.
+     * @return Value of property rotateContents.
+     *
+     */
+    public boolean isRotateContents() {
+        return this.rotateContents;
+    }
     
-    public void open() {
-        super.open();
+    /** Setter for property rotateContents.
+     * @param rotateContents New value of property rotateContents.
+     *
+     */
+    public void setRotateContents(boolean rotateContents) {
+        this.rotateContents = rotateContents;
     }
 
     /**
@@ -189,7 +206,7 @@ public class PdfCopy extends PdfWriter {
         }
         PdfObject obj = PdfReader.getPdfObjectRelease(in);
         if (obj != null && obj.isDictionary()) {
-            PdfName type = (PdfName)PdfReader.getPdfObjectRelease(((PdfDictionary)obj).get(PdfName.TYPE));
+            PdfObject type = PdfReader.getPdfObjectRelease(((PdfDictionary)obj).get(PdfName.TYPE));
             if (type != null && PdfName.PAGE.equals(type)) {
                 return theRef;
             }
@@ -207,7 +224,7 @@ public class PdfCopy extends PdfWriter {
     protected PdfDictionary copyDictionary(PdfDictionary in)
     throws IOException, BadPdfFormatException {
         PdfDictionary out = new PdfDictionary();
-        PdfName type = (PdfName)PdfReader.getPdfObjectRelease(in.get(PdfName.TYPE));
+        PdfObject type = PdfReader.getPdfObjectRelease(in.get(PdfName.TYPE));
         
         for (Iterator it = in.getKeys().iterator(); it.hasNext();) {
             PdfName key = (PdfName)it.next();
@@ -272,6 +289,7 @@ public class PdfCopy extends PdfWriter {
             case PdfObject.STRING:
             case PdfObject.NULL:
             case PdfObject.BOOLEAN:
+            case 0:
                 return in;
             case PdfObject.STREAM:
                 return copyStream((PRStream)in);
@@ -388,17 +406,12 @@ public class PdfCopy extends PdfWriter {
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj) {
         try {
             PdfDictionary theCat = pdf.getCatalog(rootObj);
-            if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
-            if (newBookmarks == null || newBookmarks.isEmpty())
-                return theCat;
-            PdfDictionary top = new PdfDictionary();
-            PdfIndirectReference topRef = getPdfIndirectReference();
-            Object kids[] = SimpleBookmark.iterateOutlines(this, topRef, newBookmarks, false);
-            top.put(PdfName.FIRST, (PdfIndirectReference)kids[0]);
-            top.put(PdfName.LAST, (PdfIndirectReference)kids[1]);
-            top.put(PdfName.COUNT, new PdfNumber(((Integer)kids[2]).intValue()));
-            addToBody(top, topRef);
-            theCat.put(PdfName.OUTLINES, topRef);
+            if (fieldArray == null) {
+                if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
+            }
+            else
+                addFieldResources(theCat);
+            writeOutlines(theCat, false);
             return theCat;
         }
         catch (IOException e) {
@@ -406,15 +419,45 @@ public class PdfCopy extends PdfWriter {
         }
     }
     
-    /**
-     * Sets the bookmarks. The list structure is defined in
-     * <CODE>SimpleBookmark#</CODE>.
-     * @param outlines the bookmarks or <CODE>null</CODE> to remove any
-     */    
-    public void setOutlines(List outlines) {
-        newBookmarks = outlines;
+    private void addFieldResources(PdfDictionary catalog) throws IOException {
+        if (fieldArray == null)
+            return;
+        PdfDictionary acroForm = new PdfDictionary();
+        catalog.put(PdfName.ACROFORM, acroForm);
+        acroForm.put(PdfName.FIELDS, fieldArray);
+        acroForm.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
+        if (fieldTemplates.isEmpty())
+            return;
+        PdfDictionary dr = new PdfDictionary();
+        acroForm.put(PdfName.DR, dr);
+        for (Iterator it = fieldTemplates.keySet().iterator(); it.hasNext();) {
+            PdfTemplate template = (PdfTemplate)it.next();
+            PdfFormField.mergeResources(dr, (PdfDictionary)template.getResources());
+        }
+        if (dr.get(PdfName.ENCODING) == null)
+            dr.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
+        PdfDictionary fonts = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
+        if (fonts == null) {
+            fonts = new PdfDictionary();
+            dr.put(PdfName.FONT, fonts);
+        }
+        if (!fonts.contains(PdfName.HELV)) {
+            PdfDictionary dic = new PdfDictionary(PdfName.FONT);
+            dic.put(PdfName.BASEFONT, PdfName.HELVETICA);
+            dic.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
+            dic.put(PdfName.NAME, PdfName.HELV);
+            dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
+            fonts.put(PdfName.HELV, addToBody(dic).getIndirectReference());
+        }
+        if (!fonts.contains(PdfName.ZADB)) {
+            PdfDictionary dic = new PdfDictionary(PdfName.FONT);
+            dic.put(PdfName.BASEFONT, PdfName.ZAPFDINGBATS);
+            dic.put(PdfName.NAME, PdfName.ZADB);
+            dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
+            fonts.put(PdfName.ZADB, addToBody(dic).getIndirectReference());
+        }
     }
-
+    
     /**
      * Signals that the <CODE>Document</CODE> was closed and that no other
      * <CODE>Elements</CODE> will be added.
@@ -425,7 +468,7 @@ public class PdfCopy extends PdfWriter {
      * to the outputstream embedded in a Trailer.
      */
     
-    public synchronized void close() {
+    public void close() {
         if (open) {
             PdfReaderInstance ri = currentPdfReaderInstance;
             pdf.close();
@@ -441,7 +484,6 @@ public class PdfCopy extends PdfWriter {
             }
         }
     }
-    PdfIndirectReference add(PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException  { return null; }
     public PdfIndirectReference add(PdfOutline outline) { return null; }
     public void addAnnotation(PdfAnnotation annot) {  }
     PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException { return null; }
@@ -459,6 +501,265 @@ public class PdfCopy extends PdfWriter {
                 }
                 currentPdfReaderInstance = null;
             }
+        }
+    }
+    
+    /**
+     * Create a page stamp. New content and annotations, including new fields, are allowed.
+     * The fields added cannot have parents in another pages. This method modifies the PdfReader instance.<p>
+     * The general usage to stamp something in a page is:
+     * <p>
+     * <pre>
+     * PdfImportedPage page = copy.getImportedPage(reader, 1);
+     * PdfCopy.PageStamp ps = copy.createPageStamp(page);
+     * ps.addAnnotation(PdfAnnotation.createText(copy, new Rectangle(50, 180, 70, 200), "Hello", "No Thanks", true, "Comment"));
+     * PdfContentByte under = ps.getUnderContent();
+     * under.addImage(img);
+     * PdfContentByte over = ps.getOverContent();
+     * over.beginText();
+     * over.setFontAndSize(bf, 18);
+     * over.setTextMatrix(30, 30);
+     * over.showText("total page " + totalPage);
+     * over.endText();
+     * ps.alterContents();
+     * copy.addPage(page);
+     * </pre>
+     * @param iPage an imported page
+     * @return the <CODE>PageStamp</CODE>
+     */
+    public PageStamp createPageStamp(PdfImportedPage iPage) {
+        int pageNum = iPage.getPageNumber();
+        PdfReader reader = iPage.getPdfReaderInstance().getReader();
+        PdfDictionary pageN = reader.getPageN(pageNum);
+        return new PageStamp(reader, pageN, this);
+    }
+    
+    public static class PageStamp {
+        
+        PdfDictionary pageN;
+        PdfCopy.StampContent under;
+        PdfCopy.StampContent over;
+        PageResources pageResources;
+        PdfReader reader;
+        PdfCopy cstp;
+        
+        PageStamp(PdfReader reader, PdfDictionary pageN, PdfCopy cstp) {
+            this.pageN = pageN;
+            this.reader = reader;
+            this.cstp = cstp;
+        }
+        
+        public PdfContentByte getUnderContent(){
+            if (under == null) {
+                if (pageResources == null) {
+                    pageResources = new PageResources();
+                    PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(pageN.get(PdfName.RESOURCES));
+                    pageResources.setOriginalResources(resources, cstp.namePtr);
+                }
+                under = new PdfCopy.StampContent(cstp, pageResources);
+            }
+            return under;
+        }
+        
+        public PdfContentByte getOverContent(){
+            if (over == null) {
+                if (pageResources == null) {
+                    pageResources = new PageResources();
+                    PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(pageN.get(PdfName.RESOURCES));
+                    pageResources.setOriginalResources(resources, cstp.namePtr);
+                }
+                over = new PdfCopy.StampContent(cstp, pageResources);
+            }
+            return over;
+        }
+        
+        public void alterContents() throws IOException {
+            if (over == null && under == null)
+                return;
+            PdfArray ar = null;
+            PdfObject content = PdfReader.getPdfObject(pageN.get(PdfName.CONTENTS), pageN);
+            if (content == null) {
+                ar = new PdfArray();
+                pageN.put(PdfName.CONTENTS, ar);
+            } else if (content.isArray()) {
+                ar = (PdfArray)content;
+            } else if (content.isStream()) {
+                ar = new PdfArray();
+                ar.add(pageN.get(PdfName.CONTENTS));
+                pageN.put(PdfName.CONTENTS, ar);
+            } else {
+                ar = new PdfArray();
+                pageN.put(PdfName.CONTENTS, ar);
+            }
+            ByteBuffer out = new ByteBuffer();
+            if (under != null) {
+                out.append(PdfContents.SAVESTATE);
+                applyRotation(pageN, out);
+                out.append(under.getInternalBuffer());
+                out.append(PdfContents.RESTORESTATE);
+            }
+            if (over != null)
+                out.append(PdfContents.SAVESTATE);
+            PdfStream stream = new PdfStream(out.toByteArray());
+            stream.flateCompress();
+            PdfIndirectReference ref1 = cstp.addToBody(stream).getIndirectReference();
+            ar.addFirst(ref1);
+            out.reset();
+            if (over != null) {
+                out.append(' ');
+                out.append(PdfContents.RESTORESTATE);
+                out.append(PdfContents.SAVESTATE);
+                applyRotation(pageN, out);
+                out.append(over.getInternalBuffer());
+                out.append(PdfContents.RESTORESTATE);
+                stream = new PdfStream(out.toByteArray());
+                stream.flateCompress();
+                ar.add(cstp.addToBody(stream).getIndirectReference());
+            }
+            pageN.put(PdfName.RESOURCES, pageResources.getResources());
+        }
+        
+        void applyRotation(PdfDictionary pageN, ByteBuffer out) {
+            if (!cstp.rotateContents)
+                return;
+            Rectangle page = reader.getPageSizeWithRotation(pageN);
+            int rotation = page.getRotation();
+            switch (rotation) {
+                case 90:
+                    out.append(PdfContents.ROTATE90);
+                    out.append(page.getTop());
+                    out.append(' ').append('0').append(PdfContents.ROTATEFINAL);
+                    break;
+                case 180:
+                    out.append(PdfContents.ROTATE180);
+                    out.append(page.getRight());
+                    out.append(' ');
+                    out.append(page.getTop());
+                    out.append(PdfContents.ROTATEFINAL);
+                    break;
+                case 270:
+                    out.append(PdfContents.ROTATE270);
+                    out.append('0').append(' ');
+                    out.append(page.getRight());
+                    out.append(PdfContents.ROTATEFINAL);
+                    break;
+            }
+        }
+        
+        private void addDocumentField(PdfIndirectReference ref) {
+            if (cstp.fieldArray == null)
+                cstp.fieldArray = new PdfArray();
+            cstp.fieldArray.add(ref);
+        }
+
+        private void expandFields(PdfFormField field, ArrayList allAnnots) {
+            allAnnots.add(field);
+            ArrayList kids = field.getKids();
+            if (kids != null) {
+                for (int k = 0; k < kids.size(); ++k)
+                    expandFields((PdfFormField)kids.get(k), allAnnots);
+            }
+        }
+
+        public void addAnnotation(PdfAnnotation annot) {
+            try {
+                ArrayList allAnnots = new ArrayList();
+                if (annot.isForm()) {
+                    PdfFormField field = (PdfFormField)annot;
+                    if (field.getParent() != null)
+                        return;
+                    expandFields(field, allAnnots);
+                    if (cstp.fieldTemplates == null)
+                        cstp.fieldTemplates = new HashMap();
+                }
+                else
+                    allAnnots.add(annot);
+                for (int k = 0; k < allAnnots.size(); ++k) {
+                    annot = (PdfAnnotation)allAnnots.get(k);
+                    if (annot.isForm()) {
+                        if (!annot.isUsed()) {
+                            HashMap templates = annot.getTemplates();
+                            if (templates != null)
+                                cstp.fieldTemplates.putAll(templates);
+                        }
+                        PdfFormField field = (PdfFormField)annot;
+                        if (field.getParent() == null)
+                            addDocumentField(field.getIndirectReference());
+                    }
+                    if (annot.isAnnotation()) {
+                        PdfObject pdfobj = PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
+                        PdfArray annots = null;
+                        if (pdfobj == null || !pdfobj.isArray()) {
+                            annots = new PdfArray();
+                            pageN.put(PdfName.ANNOTS, annots);
+                        }
+                        else 
+                            annots = (PdfArray)pdfobj;
+                        annots.add(annot.getIndirectReference());
+                        if (!annot.isUsed()) {
+                            PdfRectangle rect = (PdfRectangle)annot.get(PdfName.RECT);
+                            if (rect != null && (rect.left() != 0 || rect.right() != 0 || rect.top() != 0 || rect.bottom() != 0)) {
+                                int rotation = reader.getPageRotation(pageN);
+                                Rectangle pageSize = reader.getPageSizeWithRotation(pageN);
+                                switch (rotation) {
+                                    case 90:
+                                        annot.put(PdfName.RECT, new PdfRectangle(
+                                        pageSize.getTop() - rect.bottom(),
+                                        rect.left(),
+                                        pageSize.getTop() - rect.top(),
+                                        rect.right()));
+                                        break;
+                                    case 180:
+                                        annot.put(PdfName.RECT, new PdfRectangle(
+                                        pageSize.getRight() - rect.left(),
+                                        pageSize.getTop() - rect.bottom(),
+                                        pageSize.getRight() - rect.right(),
+                                        pageSize.getTop() - rect.top()));
+                                        break;
+                                    case 270:
+                                        annot.put(PdfName.RECT, new PdfRectangle(
+                                        rect.bottom(),
+                                        pageSize.getRight() - rect.left(),
+                                        rect.top(),
+                                        pageSize.getRight() - rect.right()));
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    if (!annot.isUsed()) {
+                        annot.setUsed();
+                        cstp.addToBody(annot, annot.getIndirectReference());
+                    }
+                }
+            }
+            catch (IOException e) {
+                throw new ExceptionConverter(e);
+            }
+        }
+    }
+    
+    public static class StampContent extends PdfContentByte {
+        PageResources pageResources;
+        
+        /** Creates a new instance of StampContent */
+        StampContent(PdfWriter writer, PageResources pageResources) {
+            super(writer);
+            this.pageResources = pageResources;
+        }
+        
+        /**
+         * Gets a duplicate of this <CODE>PdfContentByte</CODE>. All
+         * the members are copied by reference but the buffer stays different.
+         *
+         * @return a copy of this <CODE>PdfContentByte</CODE>
+         */
+        public PdfContentByte getDuplicate() {
+            return new PdfCopy.StampContent(writer, pageResources);
+        }
+        
+        PageResources getPageResources() {
+            return pageResources;
         }
     }
 }

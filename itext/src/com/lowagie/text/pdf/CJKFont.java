@@ -198,6 +198,26 @@ class CJKFont extends BaseFont {
         return (encodings != null && (enc.equals("Identity-H") || enc.equals("Identity-V") || encodings.indexOf("_" + enc + "_") >= 0));
     }
         
+    /**
+     * Gets the width of a <CODE>char</CODE> in normalized 1000 units.
+     * @param char1 the unicode <CODE>char</CODE> to get the width of
+     * @return the width in normalized 1000 units
+     */
+    public int getWidth(char char1) {
+        int c = (int)char1;
+        if (!cidDirect)
+            c = translationMap[c];
+        int v;
+        if (vertical)
+            v = vMetrics.get(c);
+        else
+            v = hMetrics.get(c);
+        if (v > 0)
+            return v;
+        else
+            return 1000;
+    }
+    
     public int getWidth(String text) {
         int total = 0;
         for (int k = 0; k < text.length(); ++k) {

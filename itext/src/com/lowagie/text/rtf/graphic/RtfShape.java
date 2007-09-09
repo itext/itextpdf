@@ -28,6 +28,10 @@ import com.lowagie.text.rtf.RtfAddableElement;
  */
 public class RtfShape extends RtfAddableElement {
     /**
+    * Constant for a Picture Frame.
+    */
+    public static final int SHAPE_PICTURE_FRAME = 75;
+    /**
      * Constant for a free form shape. The shape verticies must
      * be specified with an array of Point objects in a
      * RtfShapeProperty with the name PROPERTY_VERTICIES.

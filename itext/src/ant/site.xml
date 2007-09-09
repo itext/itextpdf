@@ -11,8 +11,8 @@
 
 	<path id="itext.classpath">
 	    <pathelement location="${itext.bin}"/>
-	    <pathelement path="${itext.lib}/bcmail-jdk14-135.jar"/>
-	    <pathelement path="${itext.lib}/bcprov-jdk14-135.jar"/>
+	    <pathelement path="${itext.lib}/bcmail-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-${bc.version}.jar"/>
 	</path>
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -120,7 +120,7 @@
 			<arg value="examples.xsl" />
 			<arg value="tutorial.xsl" />
 	        <classpath>
-    	        <pathelement location="${itext.lib}/iText.jar" />
+    	        <pathelement location="${itext.jar}" />
     	        <pathelement location="${itext.lib}/crimson.jar" />
         	</classpath>
 		</java>

@@ -52,7 +52,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import com.lowagie.text.DocumentException;
@@ -78,8 +77,6 @@ class PdfStamperImp extends PdfWriter {
     protected boolean flat = false;
     protected boolean flatFreeText = false;
     protected int namePtr[] = {0};
-    protected boolean namedAsNames;
-    protected List newBookmarks;
     protected HashSet partialFlattening = new HashSet();
     protected boolean useVp = false;
     protected PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
@@ -177,6 +174,8 @@ class PdfStamperImp extends PdfWriter {
         if (openAction != null) {
             catalog.put(PdfName.OPENACTION, openAction);
         }
+        if (pdf.pageLabels != null)
+            catalog.put(PdfName.PAGELABELS, pdf.pageLabels.getDictionary(this));
         byte[] altMetadata = xmpMetadata;
         if (altMetadata == null) {
             PdfObject xmpo = PdfReader.getPdfObject(catalog.get(PdfName.METADATA));
@@ -371,7 +370,7 @@ class PdfStamperImp extends PdfWriter {
             if (ps.over != null)
                 out.append(PdfContents.SAVESTATE);
             PdfStream stream = new PdfStream(out.toByteArray());
-            try{stream.flateCompress();}catch(Exception e){throw new ExceptionConverter(e);}
+            stream.flateCompress();
             ar.addFirst(addToBody(stream).getIndirectReference());
             out.reset();
             if (ps.over != null) {
@@ -382,7 +381,7 @@ class PdfStamperImp extends PdfWriter {
                 out.append(ps.over.getInternalBuffer());
                 out.append(PdfContents.RESTORESTATE);
                 stream = new PdfStream(out.toByteArray());
-                try{stream.flateCompress();}catch(Exception e){throw new ExceptionConverter(e);}
+                stream.flateCompress();
                 ar.add(addToBody(stream).getIndirectReference());
             }
             alterResources(ps);
@@ -838,10 +837,9 @@ class PdfStamperImp extends PdfWriter {
                 ArrayList ar = annots.getArrayList();
                 for (int idx = 0; idx < ar.size(); ++idx) {
                     PdfObject annoto = PdfReader.getPdfObject((PdfObject)ar.get(idx));
-                        if ((annoto instanceof PdfIndirectReference) && !annoto.isIndirect())
-                            continue;
-                    PdfDictionary annot = (PdfDictionary)annoto;
-                    if (PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE))) {
+                    if ((annoto instanceof PdfIndirectReference) && !annoto.isIndirect())
+                        continue;
+                    if (!annoto.isDictionary() || PdfName.WIDGET.equals(((PdfDictionary)annoto).get(PdfName.SUBTYPE))) {
                         ar.remove(idx);
                         --idx;
                     }
@@ -1189,7 +1187,7 @@ class PdfStamperImp extends PdfWriter {
     }
     
     void setJavaScript() throws IOException {
-        ArrayList djs = pdf.getDocumentJavaScript();
+        HashMap djs = pdf.getDocumentLevelJS();
         if (djs.isEmpty())
             return;
         PdfDictionary catalog = reader.getCatalog();
@@ -1200,16 +1198,7 @@ class PdfStamperImp extends PdfWriter {
             markUsed(catalog);
         }
         markUsed(names);
-        String s = String.valueOf(djs.size() - 1);
-        int n = s.length();
-        String pad = "000000000000000";
-        HashMap maptree = new HashMap();
-        for (int k = 0; k < djs.size(); ++k) {
-            s = String.valueOf(k);
-            s = pad.substring(0, n - s.length()) + s;
-            maptree.put(s, djs.get(k));
-        }
-        PdfDictionary tree = PdfNameTree.writeTree(maptree, this);
+        PdfDictionary tree = PdfNameTree.writeTree(djs, this);
         names.put(PdfName.JAVASCRIPT, addToBody(tree).getIndirectReference());
     }
 
@@ -1256,22 +1245,12 @@ class PdfStamperImp extends PdfWriter {
         deleteOutlines();
         if (newBookmarks.isEmpty())
             return;
-        namedAsNames = (reader.getCatalog().get(PdfName.DESTS) != null);
-        PdfDictionary top = new PdfDictionary();
-        PdfIndirectReference topRef = getPdfIndirectReference();
-        Object kids[] = SimpleBookmark.iterateOutlines(this, topRef, newBookmarks, namedAsNames);
-        top.put(PdfName.FIRST, (PdfIndirectReference)kids[0]);
-        top.put(PdfName.LAST, (PdfIndirectReference)kids[1]);
-        top.put(PdfName.COUNT, new PdfNumber(((Integer)kids[2]).intValue()));
-        addToBody(top, topRef);
-        reader.getCatalog().put(PdfName.OUTLINES, topRef);
-        markUsed(reader.getCatalog());
+        PdfDictionary catalog = reader.getCatalog();
+        boolean namedAsNames = (catalog.get(PdfName.DESTS) != null);
+        writeOutlines(catalog, namedAsNames);
+        markUsed(catalog);
     }
-    
-    void setOutlines(List outlines) {
-        newBookmarks = outlines;
-    }
-    
+        
     /**
      * Sets the viewer preferences.
      * @param preferences the viewer preferences
