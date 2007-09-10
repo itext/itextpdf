@@ -82,6 +82,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
+import com.lowagie.text.Utilities;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.internal.PdfAnnotationsImp;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
@@ -1997,8 +1998,7 @@ class PdfDocument extends Document {
         if (js.get(PdfName.JS) == null)
             throw new RuntimeException("Only JavaScript actions are allowed.");
         try {
-            documentLevelJS.put("iTextJS_" + jsCounter, writer.addToBody(js).getIndirectReference());
-            jsCounter++;
+            documentLevelJS.put(Utilities.SIXTEEN_DIGITS.format(jsCounter++), writer.addToBody(js).getIndirectReference());
         }
         catch (IOException e) {
             throw new ExceptionConverter(e);
