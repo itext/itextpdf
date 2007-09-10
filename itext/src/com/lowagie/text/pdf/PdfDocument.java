@@ -86,6 +86,7 @@ import com.lowagie.text.Utilities;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.internal.PdfAnnotationsImp;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
+import java.text.DecimalFormat;
 
 /**
  * <CODE>PdfDocument</CODE> is the class that is used by <CODE>PdfWriter</CODE>
@@ -1994,11 +1995,14 @@ class PdfDocument extends Document {
      */
     int jsCounter;
     private HashMap documentLevelJS = new HashMap();
+    private DecimalFormat SIXTEEN_DIGITS;
     void addJavaScript(PdfAction js) {
         if (js.get(PdfName.JS) == null)
             throw new RuntimeException("Only JavaScript actions are allowed.");
         try {
-            documentLevelJS.put(Utilities.SIXTEEN_DIGITS.format(jsCounter++), writer.addToBody(js).getIndirectReference());
+            if (SIXTEEN_DIGITS == null)
+                SIXTEEN_DIGITS = new DecimalFormat("0000000000000000");
+            documentLevelJS.put(SIXTEEN_DIGITS.format(jsCounter++), writer.addToBody(js).getIndirectReference());
         }
         catch (IOException e) {
             throw new ExceptionConverter(e);
