@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -68,6 +69,8 @@ import com.lowagie.text.pdf.PRTokeniser;
 
 public class Utilities {
 
+    public static final DecimalFormat SIXTEEN_DIGITS = new DecimalFormat("0000000000000000");
+    
 	/**
 	 * Gets the keys of a Hashtable
 	 * 
