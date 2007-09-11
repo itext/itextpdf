@@ -106,9 +106,11 @@ public class BarcodePDF417 {
     private int macroSegmentCount=0;
     private int macroSegmentId=-1;
     private String macroFileId;
+    private int macroIndex;
     protected int bitPtr;
     protected int cwPtr;
     protected SegmentList segmentList;
+    
     
     /** Creates a new <CODE>BarcodePDF417</CODE> with the default settings. */    
     public BarcodePDF417() {
@@ -688,6 +690,7 @@ public class BarcodePDF417 {
             throw new IllegalStateException("macroSemgentCount must be > 0");
         }
 
+        macroIndex = cwPtr;
         codewords[cwPtr++] = MACRO_SEGMENT_ID;
         append(macroSegmentId, 5);
             
@@ -863,9 +866,18 @@ public class BarcodePDF417 {
         errorLevel = maxPossibleErrorLevel(tot - lenCodewords);
         lenErr = 2 << errorLevel;
         pad = tot - lenErr - lenCodewords;
-        cwPtr = lenCodewords;
-        while (pad-- != 0)
-            codewords[cwPtr++] = TEXT_MODE;
+        if ((options & PDF417_USE_MACRO) != 0) {
+            // the padding comes before the control block
+            System.arraycopy(codewords, macroIndex, codewords, macroIndex + pad, pad);
+            cwPtr = lenCodewords + pad;
+            while (pad-- != 0)
+                codewords[macroIndex++] = TEXT_MODE;
+        }
+        else {
+            cwPtr = lenCodewords;
+            while (pad-- != 0)
+                codewords[cwPtr++] = TEXT_MODE;
+        }
         codewords[0] = lenCodewords = cwPtr;
         calculateErrorCorrection(lenCodewords);
         lenCodewords = tot;
