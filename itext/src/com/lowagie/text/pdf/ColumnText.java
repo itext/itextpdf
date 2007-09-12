@@ -329,6 +329,7 @@ public class ColumnText {
         waitPhrase = org.waitPhrase;
         useAscender = org.useAscender;
         filledWidth = org.filledWidth;
+        adjustFirstLine = org.adjustFirstLine;
     }
     
     private void addWaitingPhrase() {
@@ -1085,7 +1086,7 @@ public class ColumnText {
             throw new DocumentException("Irregular columns are not supported in composite mode.");
         linesWritten = 0;
         descender = 0;
-        boolean firstPass = true;
+        boolean firstPass = adjustFirstLine;
         main_loop:
         while (true) {
             if (compositeElements.isEmpty())
@@ -1489,5 +1490,26 @@ public class ColumnText {
     public void updateFilledWidth(float w) {
         if (w > filledWidth)
             filledWidth = w;
+    }
+
+    private boolean adjustFirstLine = true;
+
+    /**
+     * Gets the first line adjustment property.
+     * @return the first line adjustment property.
+     */
+    public boolean isAdjustFirstLine() {
+        return this.adjustFirstLine;
+    }
+
+    /**
+     * Sets the first line adjustment. Some objects have properties, like spacing before, that
+     * behave differently if the object is the first to be written after go() or not. The first line adjustment is 
+     * <CODE>true</CODE> by default but can be changed if several objects are to be placed one
+     * after the other in the same column calling go() several times.
+     * @param adjustFirstLine <CODE>true</CODE> to adjust the first line, <CODE>false</CODE> otherwise
+     */
+    public void setAdjustFirstLine(boolean adjustFirstLine) {
+        this.adjustFirstLine = adjustFirstLine;
     }
 }
