@@ -82,7 +82,6 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
-import com.lowagie.text.Utilities;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.internal.PdfAnnotationsImp;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
@@ -681,7 +680,6 @@ class PdfDocument extends Document {
                        		PdfPTable ptable = ((Table)element).createPdfPTable();
                        		if (ptable.size() <= ptable.getHeaderRows())
                        			break; //nothing to do
-             		
                        		// before every table, we add a new line and flush all lines
                        		ensureNewLine();
                        		flushLines();
@@ -1282,7 +1280,6 @@ class PdfDocument extends Document {
             writeLineToContent(l, text, graphics, currentValues, writer.getSpaceCharRatio());
             
             currentFont = (PdfFont)currentValues[0];
-            
             displacement += l.height();
             text.moveText(-moveTextX, 0);
             
@@ -2555,7 +2552,6 @@ class PdfDocument extends Document {
 			allCells.addAll(dataCells);
 			dataCells = allCells;
 		}
-        
         ArrayList cells = dataCells;
         ArrayList rows = extractRows(cells, ctx);
         boolean isContinue = false;
@@ -2902,7 +2898,6 @@ class PdfDocument extends Document {
                 
                 // if there is still text to render we render it
                 if (lines != null && !lines.isEmpty()) {
-                    
                     // we write the text
                     float cellTop = cell.getTop(ctx.pagetop - ctx.oldHeight);
                     text.moveText(0, cellTop);
