@@ -747,9 +747,9 @@ public class PdfCell extends Rectangle {
      *
      * @return	a value
      */
-    private int remainingLinesHeight() {
+    private float remainingLinesHeight() {
         if (lines.isEmpty()) return 0;
-        int result = 0;
+        float result = 0;
         int size = lines.size();
         PdfLine line;
         for (int i = 0; i < size; i++) {
