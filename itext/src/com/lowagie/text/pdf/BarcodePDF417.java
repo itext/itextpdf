@@ -697,11 +697,7 @@ public class BarcodePDF417 {
         if (macroFileId != null) {
             append(macroFileId);
         }
-        
-        codewords[cwPtr++] = MACRO_SEGMENT_COUNT;
-        codewords[cwPtr++] = 1;
-        append(macroSegmentCount, 5);
-        
+                
         if (macroSegmentId >= macroSegmentCount-1) {
             codewords[cwPtr++] = MACRO_LAST_SEGMENT;
         }
@@ -1106,7 +1102,6 @@ public class BarcodePDF417 {
     protected static final int ABSOLUTE_MAX_TEXT_SIZE = 5420;
     protected static final int MAX_DATA_CODEWORDS = 926;
     protected static final int MACRO_SEGMENT_ID=928;
-    protected static final int MACRO_SEGMENT_COUNT=923;
     protected static final int MACRO_LAST_SEGMENT=922;
 
     private static final String MIXED_SET = "0123456789&\r\t,:#-.$/+%*=^";
