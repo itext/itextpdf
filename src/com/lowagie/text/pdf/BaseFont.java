@@ -145,8 +145,39 @@ public abstract class BaseFont {
     /** java.awt.Font property */
     public static final int AWT_LEADING = 11;
     /** java.awt.Font property */
-    public static final int AWT_MAXADVANCE = 12;
-    
+    public static final int AWT_MAXADVANCE = 12;    
+    /**
+     * The undeline position. Usually a negative value.
+     */
+    public static final int UNDERLINE_POSITION = 13;
+    /**
+     * The underline thickness.
+     */
+    public static final int UNDERLINE_THICKNESS = 14;
+    /**
+     * The strikethrough position.
+     */
+    public static final int STRIKETHROUGH_POSITION = 15;
+    /**
+     * The strikethrough thickness.
+     */
+    public static final int STRIKETHROUGH_THICKNESS = 16;
+    /**
+     * The recommended vertical size for subscripts for this font.
+     */
+    public static final int SUBSCRIPT_SIZE = 17;
+    /**
+     * The recommended vertical offset from the baseline for subscripts for this font. Usually a negative value.
+     */
+    public static final int SUBSCRIPT_OFFSET = 18;
+    /**
+     * The recommended vertical size for superscripts for this font.
+     */
+    public static final int SUPERSCRIPT_SIZE = 19;
+    /**
+     * The recommended vertical offset from the baseline for superscripts for this font.
+     */
+    public static final int SUPERSCRIPT_OFFSET = 20;
     /** The font is Type 1.
      */    
     public static final int FONT_TYPE_T1 = 0;

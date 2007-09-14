@@ -225,6 +225,10 @@ class TrueTypeFont extends BaseFont {
      */
     protected boolean isFixedPitch = false;
     
+    protected int underlinePosition;
+    
+    protected int underlineThickness;
+    
     /** The components of table 'head'.
      */
     protected static class FontHeader {
@@ -480,7 +484,8 @@ class TrueTypeFont extends BaseFont {
         short mantissa = rf.readShort();
         int fraction = rf.readUnsignedShort();
         italicAngle = (double)mantissa + (double)fraction / 16384.0;
-        rf.skipBytes(4);
+        underlinePosition = rf.readShort();
+        underlineThickness = rf.readShort();
         isFixedPitch = rf.readInt() != 0;
     }
     
@@ -1261,6 +1266,22 @@ class TrueTypeFont extends BaseFont {
                 return fontSize * (int)hhea.LineGap / head.unitsPerEm;
             case AWT_MAXADVANCE:
                 return fontSize * (int)hhea.advanceWidthMax / head.unitsPerEm;
+            case UNDERLINE_POSITION:
+                return (underlinePosition - underlineThickness / 2) * fontSize / head.unitsPerEm;
+            case UNDERLINE_THICKNESS:
+                return underlineThickness * fontSize / head.unitsPerEm;
+            case STRIKETHROUGH_POSITION:
+                return os_2.yStrikeoutPosition * fontSize / head.unitsPerEm;
+            case STRIKETHROUGH_THICKNESS:
+                return os_2.yStrikeoutSize * fontSize / head.unitsPerEm;
+            case SUBSCRIPT_SIZE:
+                return os_2.ySubscriptYSize * fontSize / head.unitsPerEm;
+            case SUBSCRIPT_OFFSET:
+                return -os_2.ySubscriptYOffset * fontSize / head.unitsPerEm;
+            case SUPERSCRIPT_SIZE:
+                return os_2.ySuperscriptYSize * fontSize / head.unitsPerEm;
+            case SUPERSCRIPT_OFFSET:
+                return os_2.ySuperscriptYOffset * fontSize / head.unitsPerEm;
         }
         return 0;
     }
