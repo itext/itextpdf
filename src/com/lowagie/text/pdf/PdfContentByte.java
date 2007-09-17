@@ -1346,6 +1346,8 @@ public class PdfContentByte {
      */
     public void setFontAndSize(BaseFont bf, float size) {
         checkWriter();
+        if (size < 0.0001f && size > -0.0001f)
+            throw new IllegalArgumentException("Font size too small: " + size);
         state.size = size;
         state.fontDetails = writer.addSimple(bf);
         PageResources prs = getPageResources();
