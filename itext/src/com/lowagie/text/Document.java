@@ -369,8 +369,6 @@ public class Document implements DocListener {
  *
 	 * @return <CODE>true</CODE> if the page was added, <CODE>false</CODE>
 	 *         if not.
-	 * @throws DocumentException
-	 *             when a document isn't open yet, or has been closed
  */
     
     public boolean newPage() {
