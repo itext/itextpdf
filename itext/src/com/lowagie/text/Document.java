@@ -115,6 +115,9 @@ public class Document implements DocListener {
      * is too big to be mapped in your address space.
 	 */
     public static boolean plainRandomAccess = false; 
+ 
+    /** Scales the WMF font size. The default value is 0.86. */
+    public static float wmfFontCorrection = 0.86f;
     
 	/** The DocListener. */
     private ArrayList listeners = new ArrayList();
