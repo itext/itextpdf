@@ -2574,7 +2574,10 @@ public class PdfReader implements PdfViewerPreferences {
             }
             ArrayList arr = annots.getArrayList();
             for (int j = 0; j < arr.size(); ++j) {
-                PdfDictionary annot = (PdfDictionary)getPdfObjectRelease((PdfObject)arr.get(j));
+                PdfObject obj = getPdfObjectRelease((PdfObject)arr.get(j));
+                if (obj == null || !obj.isDictionary())
+                    continue;
+                PdfDictionary annot = (PdfDictionary)obj;
                 if (PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE)))
                     arr.remove(j--);
             }
