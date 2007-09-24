@@ -476,7 +476,6 @@ class PdfDocument extends Document {
                     if (currentHeight + line.height() + leading > indentTop() - indentBottom()) {
                         newPage();
                     }
-
                     indentation.indentLeft += paragraph.getIndentationLeft();
                     indentation.indentRight += paragraph.getIndentationRight();
                     carriageReturn();
@@ -1267,9 +1266,8 @@ class PdfDocument extends Document {
             // this is a line in the loop
             l = (PdfLine) i.next();
             
-            float moveTextX = l.indentLeft() - indentLeft() + indentation.listIndentLeft + indentation.sectionIndentLeft;
+            float moveTextX = l.indentLeft() - indentLeft() + indentation.indentLeft + indentation.listIndentLeft + indentation.sectionIndentLeft;
             text.moveText(moveTextX, -l.height());
-            
             // is the line preceeded by a symbol?
             if (l.listSymbol() != null) {
                 ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
