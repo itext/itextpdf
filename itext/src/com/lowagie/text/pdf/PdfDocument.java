@@ -1681,6 +1681,10 @@ class PdfDocument extends Document {
     	if (currentHeight + line.height() + leading > indentTop() - indentBottom()) return;
         leading = extraspace;
         carriageReturn();
+        if (f.isUnderlined() || f.isStrikethru()) {
+            f = new Font(f);
+            f.setStyle(Font.UNDEFINED);
+        }
         Chunk space = new Chunk(" ", f);
         space.process(this);
         carriageReturn();
