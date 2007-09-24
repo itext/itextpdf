@@ -1683,7 +1683,11 @@ class PdfDocument extends Document {
         carriageReturn();
         if (f.isUnderlined() || f.isStrikethru()) {
             f = new Font(f);
+            int style = f.getStyle();
+            style &= ~Font.UNDERLINE;
+            style &= ~Font.STRIKETHRU;
             f.setStyle(Font.UNDEFINED);
+            f.setStyle(style);
         }
         Chunk space = new Chunk(" ", f);
         space.process(this);
