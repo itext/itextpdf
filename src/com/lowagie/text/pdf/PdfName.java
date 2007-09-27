@@ -558,6 +558,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName JAVASCRIPT = new PdfName("JavaScript");
     /** A name */
+    public static final PdfName JPXDECODE = new PdfName("JPXDecode");
+    /** A name */
     public static final PdfName JS = new PdfName("JS");
     /** A name */
     public static final PdfName K = new PdfName("K");

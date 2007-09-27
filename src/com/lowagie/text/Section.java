@@ -226,6 +226,7 @@ public class Section extends ArrayList implements TextElementArray {
             element.type() == Element.PTABLE ||
             element.type() == Element.IMGTEMPLATE ||
             element.type() == Element.JPEG ||
+            element.type() == Element.JPEG2000 ||
             element.type() == Element.IMGRAW) {
                 super.add(index, element);
             }
@@ -259,6 +260,7 @@ public class Section extends ArrayList implements TextElementArray {
             element.type() == Element.IMGTEMPLATE ||
             element.type() == Element.PTABLE ||
             element.type() == Element.JPEG ||
+            element.type() == Element.JPEG2000 ||
             element.type() == Element.IMGRAW) {
                 return super.add(o);
             }

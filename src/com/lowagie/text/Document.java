@@ -267,6 +267,7 @@ public class Document implements DocListener {
 					|| type == Element.CHAPTER || type == Element.SECTION
 					|| type == Element.LIST || type == Element.LISTITEM
 					|| type == Element.RECTANGLE || type == Element.JPEG
+                    || type == Element.JPEG2000
 					|| type == Element.IMGRAW || type == Element.IMGTEMPLATE
 					|| type == Element.MARKED)) {
 				throw new DocumentException(

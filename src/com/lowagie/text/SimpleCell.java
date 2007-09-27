@@ -150,6 +150,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 				|| element.type() == Element.LIST
 				|| element.type() == Element.MARKED
 				|| element.type() == Element.JPEG
+				|| element.type() == Element.JPEG2000
 				|| element.type() == Element.IMGRAW
 				|| element.type() == Element.IMGTEMPLATE) {
 			content.add(element);
