@@ -207,6 +207,16 @@ public class PdfImage extends PdfStream {
                     streamBytes = new ByteArrayOutputStream();
                     transferBytes(is, streamBytes, -1);
                     break;
+                case Image.JPEG2000:
+                    put(PdfName.FILTER, PdfName.JPXDECODE);
+                    if (image.getRawData() != null){
+                        bytes = image.getRawData();
+                        put(PdfName.LENGTH, new PdfNumber(bytes.length));
+                        return;
+                    }
+                    streamBytes = new ByteArrayOutputStream();
+                    transferBytes(is, streamBytes, -1);
+                    break;
                 default:
                     throw new BadPdfFormatException(errorID + " is an unknown Image format.");
             }

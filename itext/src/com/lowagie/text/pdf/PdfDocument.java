@@ -704,6 +704,7 @@ class PdfDocument extends Document {
                     break;
                 }
                 case Element.JPEG:
+                case Element.JPEG2000:
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE: {
                     //carriageReturn(); suggestion by Marc Campforts

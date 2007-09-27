@@ -157,6 +157,9 @@ public abstract class Image extends Rectangle {
 	/** type of image */
     public static final int ORIGINAL_PS = 7;
 
+	/** type of image */
+	public static final int ORIGINAL_JPEG2000 = 8;
+
     // member variables
 
 	/** The imagetype. */
@@ -246,6 +249,9 @@ public abstract class Image extends Rectangle {
 			if (c1 == 0xFF && c2 == 0xD8) {
 				return new Jpeg(url);
 			}
+			if (c1 == 0x00 && c2 == 0x00 && c3 == 0x00 && c4 == 0x0c) {
+				return new Jpeg2000(url);
+			}
 			if (c1 == PngImage.PNGID[0] && c2 == PngImage.PNGID[1]
 					&& c3 == PngImage.PNGID[2] && c4 == PngImage.PNGID[3]) {
 				return PngImage.getImage(url);
@@ -328,6 +334,9 @@ public abstract class Image extends Rectangle {
 			}
 			if (c1 == 0xFF && c2 == 0xD8) {
 				return new Jpeg(imgb);
+			}
+			if (c1 == 0x00 && c2 == 0x00 && c3 == 0x00 && c4 == 0x0c) {
+				return new Jpeg2000(imgb);
 			}
 			if (c1 == PngImage.PNGID[0] && c2 == PngImage.PNGID[1]
 					&& c3 == PngImage.PNGID[2] && c4 == PngImage.PNGID[3]) {
