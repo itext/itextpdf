@@ -176,37 +176,58 @@ public class Jpeg2000 extends Image {
                 inp = new java.io.ByteArrayInputStream(rawData);
                 errorID = "Byte array";
             }
-            jp2_read_boxhdr();
-            if (JP2_JP != boxType) {
-                throw new IOException("Expected JP Marker");
-            }
-            if (0x0d0a870a != cio_read(4)) {
-                throw new IOException("Error with JP Marker");
-            }
-
-            jp2_read_boxhdr();
-            if (JP2_FTYP != boxType) {
-                throw new IOException("Expected FTYP Marker");
-            }
-            Utilities.skip(inp, boxLength - 8);
-            jp2_read_boxhdr();
-            do {
-                if (JP2_JP2H != boxType) {
-                    if (boxType == JP2_JP2C) {
-                        throw new IOException("Expected JP2H Marker");
-                    }
-                    Utilities.skip(inp, boxLength - 8);
-                    jp2_read_boxhdr();
+            boxLength = cio_read(4);
+            if (boxLength == 0x0000000c) {
+                boxType = cio_read(4);
+                if (JP2_JP != boxType) {
+                    throw new IOException("Expected JP Marker");
                 }
-            } while(JP2_JP2H != boxType);
-            jp2_read_boxhdr();
-            if (JP2_IHDR != boxType) {
-                throw new IOException("Expected IHDR Marker");
+                if (0x0d0a870a != cio_read(4)) {
+                    throw new IOException("Error with JP Marker");
+                }
+
+                jp2_read_boxhdr();
+                if (JP2_FTYP != boxType) {
+                    throw new IOException("Expected FTYP Marker");
+                }
+                Utilities.skip(inp, boxLength - 8);
+                jp2_read_boxhdr();
+                do {
+                    if (JP2_JP2H != boxType) {
+                        if (boxType == JP2_JP2C) {
+                            throw new IOException("Expected JP2H Marker");
+                        }
+                        Utilities.skip(inp, boxLength - 8);
+                        jp2_read_boxhdr();
+                    }
+                } while(JP2_JP2H != boxType);
+                jp2_read_boxhdr();
+                if (JP2_IHDR != boxType) {
+                    throw new IOException("Expected IHDR Marker");
+                }
+                scaledHeight = cio_read(4);
+                setTop(scaledHeight);
+                scaledWidth = cio_read(4);
+                setRight(scaledWidth);
+                bpc = -1;
             }
-            scaledHeight = cio_read(4);
-            setTop(scaledHeight);
-            scaledWidth = cio_read(4);
-            setRight(scaledWidth);
+            else if (boxLength == 0xff4fff51) {
+                Utilities.skip(inp, 4);
+                int x1 = cio_read(4);
+                int y1 = cio_read(4);
+                int x0 = cio_read(4);
+                int y0 = cio_read(4);
+                Utilities.skip(inp, 16);
+                colorspace = cio_read(2);
+                bpc = 8;
+                scaledHeight = y1 - y0;
+                setTop(scaledHeight);
+                scaledWidth = x1 - x0;
+                setRight(scaledWidth);
+            }
+            else {
+                throw new IOException("Not a valid Jpeg2000 file");
+            }
         }
         finally {
             if (inp != null) {
