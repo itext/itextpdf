@@ -350,14 +350,15 @@ public class Phrase extends ArrayList implements TextElementArray {
     protected boolean addChunk(Chunk chunk) {
     	Font f = chunk.getFont();
     	String c = chunk.getContent();
-        if (!font.isStandardFont()) {
+        if (font != null && !font.isStandardFont()) {
             f = font.difference(chunk.getFont());
         }
         if (size() > 0 && !chunk.hasAttributes()) {
             try {
                 Chunk previous = (Chunk) get(size() - 1);
                 if (!previous.hasAttributes()
-                		&& previous.getFont().compareTo(f) == 0
+                		&& (f == null
+                		|| f.compareTo(previous.getFont()) == 0)
                 		&& !"".equals(previous.getContent().trim())
                 		&& !"".equals(c.trim())) {
                     previous.append(c);
