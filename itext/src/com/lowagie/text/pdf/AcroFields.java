@@ -61,7 +61,9 @@ import org.w3c.dom.Node;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.codec.Base64;
 
 /** Query and change fields in existing documents either by method
  * calls or by FDF merging.
@@ -1239,8 +1241,14 @@ public class AcroFields {
             int flags = 0;
             if (ff != null)
                 flags = ff.intValue();
-            if ((flags & PdfFormField.FF_PUSHBUTTON) != 0)
+            if ((flags & PdfFormField.FF_PUSHBUTTON) != 0) {
+                //we'll assume that the value is an image in base64
+                Image img = Image.getInstance(Base64.decode(value));
+                PushbuttonField pb = getNewPushbuttonFromField(name);
+                pb.setImage(img);
+                replacePushbuttonField(name, pb.getField());
                 return true;
+            }
             PdfName v = new PdfName(value);
             if ((flags & PdfFormField.FF_RADIO) == 0) {
                 for (int idx = 0; idx < item.values.size(); ++idx) {
