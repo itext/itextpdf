@@ -410,7 +410,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      * @return	the linespacing
      */
     public float getLeading() {
-        if (Float.isNaN(leading)) {
+        if (Float.isNaN(leading) && font != null) {
             return font.getCalculatedLeading(1.5f);
         }
         return leading;
