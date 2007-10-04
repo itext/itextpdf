@@ -142,7 +142,7 @@ public class BuildTutorial {
 		}
 		else if (source.getName().equals("index.xml")) {
 			System.out.println("... transformed");
-			convert(source, xsl_site, new File(destination, "index.html"));
+			convert(source, xsl_site, new File(destination, "index.php"));
 			File buildfile = new File(destination, "build.xml");
 			String path = buildfile.getCanonicalPath().substring(root.length());
 			path = path.replace(File.separatorChar, '/');
