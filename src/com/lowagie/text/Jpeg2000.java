@@ -50,7 +50,6 @@
 
 package com.lowagie.text;
 
-import java.awt.color.ICC_Profile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -231,7 +230,7 @@ public class Jpeg2000 extends Image {
         }
         finally {
             if (inp != null) {
-                try{inp.close();}catch(Exception e){};
+                try{inp.close();}catch(Exception e){}
                 inp = null;
             }
         }
