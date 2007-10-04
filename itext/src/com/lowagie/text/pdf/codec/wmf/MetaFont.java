@@ -49,6 +49,7 @@
  */
 
 package com.lowagie.text.pdf.codec.wmf;
+import com.lowagie.text.Document;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -207,6 +208,6 @@ public class MetaFont extends MetaObject {
     }
     
     public float getFontSize(MetaState state) {
-        return Math.abs(state.transformY(height) - state.transformY(0)) * 0.86f;
+        return Math.abs(state.transformY(height) - state.transformY(0)) * Document.wmfFontCorrection;
     }
 }

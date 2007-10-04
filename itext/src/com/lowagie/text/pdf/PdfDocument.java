@@ -56,7 +56,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -86,6 +85,7 @@ import com.lowagie.text.Table;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.internal.PdfAnnotationsImp;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
+import java.text.DecimalFormat;
 
 /**
  * <CODE>PdfDocument</CODE> is the class that is used by <CODE>PdfWriter</CODE>
@@ -253,7 +253,7 @@ class PdfDocument extends Document {
          * @param documentFileAttachment	the attached files
          * @param writer the writer the catalog applies to
          */
-        void addNames(TreeMap localDestinations, LinkedHashMap documentLevelJS, HashMap documentFileAttachment, PdfWriter writer) {
+        void addNames(TreeMap localDestinations, HashMap documentLevelJS, HashMap documentFileAttachment, PdfWriter writer) {
             if (localDestinations.isEmpty() && documentLevelJS.isEmpty() && documentFileAttachment.isEmpty())
                 return;
             try {
@@ -476,7 +476,6 @@ class PdfDocument extends Document {
                     if (currentHeight + line.height() + leading > indentTop() - indentBottom()) {
                         newPage();
                     }
-
                     indentation.indentLeft += paragraph.getIndentationLeft();
                     indentation.indentRight += paragraph.getIndentationRight();
                     carriageReturn();
@@ -680,7 +679,6 @@ class PdfDocument extends Document {
                        		PdfPTable ptable = ((Table)element).createPdfPTable();
                        		if (ptable.size() <= ptable.getHeaderRows())
                        			break; //nothing to do
-             		
                        		// before every table, we add a new line and flush all lines
                        		ensureNewLine();
                        		flushLines();
@@ -706,6 +704,7 @@ class PdfDocument extends Document {
                     break;
                 }
                 case Element.JPEG:
+                case Element.JPEG2000:
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE: {
                     //carriageReturn(); suggestion by Marc Campforts
@@ -1268,9 +1267,8 @@ class PdfDocument extends Document {
             // this is a line in the loop
             l = (PdfLine) i.next();
             
-            float moveTextX = l.indentLeft() - indentLeft() + indentation.listIndentLeft + indentation.sectionIndentLeft;
+            float moveTextX = l.indentLeft() - indentLeft() + indentation.indentLeft + indentation.listIndentLeft + indentation.sectionIndentLeft;
             text.moveText(moveTextX, -l.height());
-            
             // is the line preceeded by a symbol?
             if (l.listSymbol() != null) {
                 ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
@@ -1281,7 +1279,6 @@ class PdfDocument extends Document {
             writeLineToContent(l, text, graphics, currentValues, writer.getSpaceCharRatio());
             
             currentFont = (PdfFont)currentValues[0];
-            
             displacement += l.height();
             text.moveText(-moveTextX, 0);
             
@@ -1685,6 +1682,14 @@ class PdfDocument extends Document {
     	if (currentHeight + line.height() + leading > indentTop() - indentBottom()) return;
         leading = extraspace;
         carriageReturn();
+        if (f.isUnderlined() || f.isStrikethru()) {
+            f = new Font(f);
+            int style = f.getStyle();
+            style &= ~Font.UNDERLINE;
+            style &= ~Font.STRIKETHRU;
+            f.setStyle(Font.UNDEFINED);
+            f.setStyle(style);
+        }
         Chunk space = new Chunk(" ", f);
         space.process(this);
         carriageReturn();
@@ -1993,13 +1998,15 @@ class PdfDocument extends Document {
      * Stores a list of document level JavaScript actions.
      */
     int jsCounter;
-    private LinkedHashMap documentLevelJS = new LinkedHashMap();
+    private HashMap documentLevelJS = new HashMap();
+    private DecimalFormat SIXTEEN_DIGITS;
     void addJavaScript(PdfAction js) {
         if (js.get(PdfName.JS) == null)
             throw new RuntimeException("Only JavaScript actions are allowed.");
         try {
-            documentLevelJS.put("iTextJS_" + jsCounter, writer.addToBody(js).getIndirectReference());
-            jsCounter++;
+            if (SIXTEEN_DIGITS == null)
+                SIXTEEN_DIGITS = new DecimalFormat("0000000000000000");
+            documentLevelJS.put(SIXTEEN_DIGITS.format(jsCounter++), writer.addToBody(js).getIndirectReference());
         }
         catch (IOException e) {
             throw new ExceptionConverter(e);
@@ -2016,7 +2023,7 @@ class PdfDocument extends Document {
         }
     }
     
-    LinkedHashMap getDocumentLevelJS() {
+    HashMap getDocumentLevelJS() {
     	return documentLevelJS;
     }
     
@@ -2552,7 +2559,6 @@ class PdfDocument extends Document {
 			allCells.addAll(dataCells);
 			dataCells = allCells;
 		}
-        
         ArrayList cells = dataCells;
         ArrayList rows = extractRows(cells, ctx);
         boolean isContinue = false;
@@ -2899,7 +2905,6 @@ class PdfDocument extends Document {
                 
                 // if there is still text to render we render it
                 if (lines != null && !lines.isEmpty()) {
-                    
                     // we write the text
                     float cellTop = cell.getTop(ctx.pagetop - ctx.oldHeight);
                     text.moveText(0, cellTop);

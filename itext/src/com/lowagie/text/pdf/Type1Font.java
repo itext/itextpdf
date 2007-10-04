@@ -705,6 +705,10 @@ class Type1Font extends BaseFont
                 return 0;
             case AWT_MAXADVANCE:
                 return (urx - llx) * fontSize / 1000;
+            case UNDERLINE_POSITION:
+                return UnderlinePosition * fontSize / 1000;
+            case UNDERLINE_THICKNESS:
+                return UnderlineThickness * fontSize / 1000;
         }
         return 0;
     }

@@ -94,7 +94,6 @@ public class RtfParagraph extends RtfPhrase {
      */
     public RtfParagraph(RtfDocument doc, Paragraph paragraph) {
         super(doc);
-        
         RtfFont baseFont = null;
         if(paragraph.getFont() instanceof RtfParagraphStyle) {
             this.paragraphStyle = this.document.getDocumentHeader().getRtfParagraphStyle(((RtfParagraphStyle) paragraph.getFont()).getStyleName());
@@ -112,8 +111,7 @@ public class RtfParagraph extends RtfPhrase {
                 this.paragraphStyle.setLineLeading((int) (paragraph.getLeading() * RtfElement.TWIPS_FACTOR));
             }
             this.paragraphStyle.setKeepTogether(paragraph.getKeepTogether());
-        }
-        
+        }        
         for(int i = 0; i < paragraph.size(); i++) {
             Element chunk = (Element) paragraph.get(i);
             if(chunk instanceof Chunk) {

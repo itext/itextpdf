@@ -2202,6 +2202,7 @@ public class PdfReader implements PdfViewerPreferences {
      */
     public void setTampered(boolean tampered) {
         this.tampered = tampered;
+        pageRefs.keepPages();
     }
 
     /** Gets the XML metadata.
@@ -2573,7 +2574,10 @@ public class PdfReader implements PdfViewerPreferences {
             }
             ArrayList arr = annots.getArrayList();
             for (int j = 0; j < arr.size(); ++j) {
-                PdfDictionary annot = (PdfDictionary)getPdfObjectRelease((PdfObject)arr.get(j));
+                PdfObject obj = getPdfObjectRelease((PdfObject)arr.get(j));
+                if (obj == null || !obj.isDictionary())
+                    continue;
+                PdfDictionary annot = (PdfDictionary)obj;
                 if (PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE)))
                     arr.remove(j--);
             }
@@ -3007,6 +3011,7 @@ public class PdfReader implements PdfViewerPreferences {
         private ArrayList pageInh;
         private int lastPageRead = -1;
         private int sizep;
+        private boolean keepPages;
 
         private PageRefs(PdfReader reader) throws IOException {
             this.reader = reader;
@@ -3106,10 +3111,14 @@ public class PdfReader implements PdfViewerPreferences {
                             lastPageRead = pageNum;
                         reader.lastXrefPartial = -1;
                         refsp.put(pageNum, ref.getNumber());
+                        if (keepPages)
+                            lastPageRead = -1;
                         return ref;
                     }
                     else {
                         if (lastPageRead != pageNum)
+                            lastPageRead = -1;
+                        if (keepPages)
                             lastPageRead = -1;
                         return new PRIndirectReference(reader, n);
                     }
@@ -3120,6 +3129,13 @@ public class PdfReader implements PdfViewerPreferences {
             }
         }
 
+        void keepPages() {
+            if (refsp == null || keepPages)
+                return;
+            keepPages = true;
+            refsp.clear();
+        }
+        
         /**
          * @param pageNum
          */

@@ -959,6 +959,7 @@ public class HtmlWriter extends DocWriter {
             }
             case Element.IMGRAW:
             case Element.JPEG:
+            case Element.JPEG2000:
             case Element.IMGTEMPLATE:
             {
                 Image image = (Image) element;

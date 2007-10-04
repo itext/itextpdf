@@ -102,7 +102,7 @@ public class Document implements DocListener {
     // membervariables
     
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-	private static final String ITEXT_VERSION = "iText 2.0.5 (by lowagie.com)";
+	private static final String ITEXT_VERSION = "iText 2.0.6 (by lowagie.com)";
     
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging
@@ -115,6 +115,9 @@ public class Document implements DocListener {
      * is too big to be mapped in your address space.
 	 */
     public static boolean plainRandomAccess = false; 
+ 
+    /** Scales the WMF font size. The default value is 0.86. */
+    public static float wmfFontCorrection = 0.86f;
     
 	/** The DocListener. */
     private ArrayList listeners = new ArrayList();
@@ -264,6 +267,7 @@ public class Document implements DocListener {
 					|| type == Element.CHAPTER || type == Element.SECTION
 					|| type == Element.LIST || type == Element.LISTITEM
 					|| type == Element.RECTANGLE || type == Element.JPEG
+                    || type == Element.JPEG2000
 					|| type == Element.IMGRAW || type == Element.IMGTEMPLATE
 					|| type == Element.MARKED)) {
 				throw new DocumentException(
@@ -366,8 +370,6 @@ public class Document implements DocListener {
  *
 	 * @return <CODE>true</CODE> if the page was added, <CODE>false</CODE>
 	 *         if not.
-	 * @throws DocumentException
-	 *             when a document isn't open yet, or has been closed
  */
     
     public boolean newPage() {

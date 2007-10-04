@@ -210,6 +210,7 @@ public class PdfCell extends Rectangle {
             element = (Element) i.next();
             switch (element.type()) {
                 case Element.JPEG:
+                case Element.JPEG2000:
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE:
                     addImage((Image) element, left, right, 0.4f * leading, alignment); //
@@ -743,19 +744,18 @@ public class PdfCell extends Rectangle {
     }
 
     /**
-     * Returns the number of lines in the cell that are not empty.
+     * Returns the total height of all the lines in the cell.
      *
      * @return	a value
      */
-
-    public int remainingLines() {
+    private float remainingLinesHeight() {
         if (lines.isEmpty()) return 0;
-        int result = 0;
+        float result = 0;
         int size = lines.size();
         PdfLine line;
         for (int i = 0; i < size; i++) {
             line = (PdfLine) lines.get(i);
-            if (line.size() > 0) result++;
+            result += line.height();
         }
         return result;
     }
@@ -772,7 +772,7 @@ public class PdfCell extends Rectangle {
             Image image = (Image) i.next();
             result += image.getScaledHeight();
         }
-        return remainingLines() * leading + 2 * cellpadding + cellspacing + result + leading / 2.5f;
+        return remainingLinesHeight() + cellspacing + 2 * cellpadding + result;
     }
     
     // methods to retrieve membervariables

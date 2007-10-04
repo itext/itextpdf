@@ -107,7 +107,8 @@ public class Phrase extends ArrayList implements TextElementArray {
      * Copy constructor for <CODE>Phrase</CODE>.
      */
     public Phrase(Phrase phrase) {
-        super(phrase);
+        super();
+        this.addAll(phrase);
         leading = phrase.getLeading();
         font = phrase.getFont();
     }
@@ -284,6 +285,9 @@ public class Phrase extends ArrayList implements TextElementArray {
         if (o instanceof String) {
             return super.add(new Chunk((String) o, font));
         }
+        if (o instanceof com.lowagie.text.rtf.RtfBasicElement) {
+        	return super.add(o);
+        }
         try {
             Element element = (Element) o;
             switch(element.type()) {
@@ -347,14 +351,15 @@ public class Phrase extends ArrayList implements TextElementArray {
     protected boolean addChunk(Chunk chunk) {
     	Font f = chunk.getFont();
     	String c = chunk.getContent();
-        if (!font.isStandardFont()) {
+        if (font != null && !font.isStandardFont()) {
             f = font.difference(chunk.getFont());
         }
         if (size() > 0 && !chunk.hasAttributes()) {
             try {
                 Chunk previous = (Chunk) get(size() - 1);
                 if (!previous.hasAttributes()
-                		&& previous.getFont().compareTo(f) == 0
+                		&& (f == null
+                		|| f.compareTo(previous.getFont()) == 0)
                 		&& !"".equals(previous.getContent().trim())
                 		&& !"".equals(c.trim())) {
                     previous.append(c);
@@ -406,7 +411,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      * @return	the linespacing
      */
     public float getLeading() {
-        if (Float.isNaN(leading)) {
+        if (Float.isNaN(leading) && font != null) {
             return font.getCalculatedLeading(1.5f);
         }
         return leading;

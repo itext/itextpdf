@@ -750,6 +750,7 @@ public class Font implements Comparable {
 	 * @return a <CODE>Font</CODE>
 	 */
 	public Font difference(Font font) {
+		if (font == null) return this;
 		// size
 		float dSize = font.size;
 		if (dSize == UNDEFINED) {

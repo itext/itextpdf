@@ -610,8 +610,6 @@ public class PdfEncodings {
             int len = cc.length;
             for (int k = 0; k < len; ++k) {
                 char c = cc[k];
-                if (c < ' ')
-                    continue;
                 if (c < 128)
                     b[ptr++] = (byte)c;
                 else {
@@ -628,8 +626,6 @@ public class PdfEncodings {
         }
         
         public byte[] charToByte(char char1, String encoding) {
-            if (char1 < ' ')
-                return new byte[0];
             if (char1 < 128)
                 return new byte[]{(byte)char1};
             else {
