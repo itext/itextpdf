@@ -291,6 +291,7 @@ public class TiffImage {
                 case TIFFConstants.COMPRESSION_LZW:
                 case TIFFConstants.COMPRESSION_PACKBITS:
                 case TIFFConstants.COMPRESSION_DEFLATE:
+                case TIFFConstants.COMPRESSION_ADOBE_DEFLATE:
                 case TIFFConstants.COMPRESSION_OJPEG:
                 case TIFFConstants.COMPRESSION_JPEG:
                     break;
@@ -427,6 +428,7 @@ public class TiffImage {
                         outBuf = new byte[(w * bitsPerSample * samplePerPixel + 7) / 8 * height];
                     switch (compression) {
                         case TIFFConstants.COMPRESSION_DEFLATE:
+                        case TIFFConstants.COMPRESSION_ADOBE_DEFLATE:
                             inflate(im, outBuf);
                             break;
                         case TIFFConstants.COMPRESSION_NONE:
