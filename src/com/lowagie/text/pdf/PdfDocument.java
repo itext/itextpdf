@@ -1649,7 +1649,7 @@ class PdfDocument extends Document {
      */
     
     private float indentRight() {
-        return right(indentation.indentRight + indentation.sectionIndentRight);
+        return right(indentation.indentRight + indentation.sectionIndentRight + indentation.imageIndentRight);
     }
     
     /**
