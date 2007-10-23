@@ -53,6 +53,8 @@ import java.lang.reflect.Method;
 
 import javax.swing.JOptionPane;
 
+import com.lowagie.text.Document;
+
 public class ToolboxAvailable {
 
 	/**
@@ -67,7 +69,9 @@ public class ToolboxAvailable {
 			toolboxMain.invoke(null, new Object[] {args} );
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
-					"You need the toolbox.jar with class com.lowagie.tools.Toolbox to use the iText Toolbox.");
+					"You need the toolbox.jar with class com.lowagie.tools.Toolbox to use the iText Toolbox.",
+					Document.getVersion() + " Toolbox error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }
