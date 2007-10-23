@@ -49,6 +49,7 @@
  */
 package com.lowagie.tools;
 
+import java.awt.GraphicsEnvironment;
 import java.lang.reflect.Method;
 
 import javax.swing.JOptionPane;
@@ -63,6 +64,9 @@ public class ToolboxAvailable {
 	 * If it isn't, an error message is shown.
 	 */
 	public static void main(String[] args) {
+	    if (GraphicsEnvironment.isHeadless()) {
+	        System.out.println(Document.getVersion() + " Toolbox error: headless display");
+	    } else
 		try {
 			Class c = Class.forName("com.lowagie.tools.Toolbox");
 			Method toolboxMain = c.getMethod("main", new Class[] {args.getClass()});
