@@ -805,7 +805,7 @@ public class Barcode128 extends Barcode{
         ais.put(426, 6);
         ais.put(7001, 17);
         ais.put(7002, -1);
-        for (int k = 7030; k < 704; ++k)
+        for (int k = 7030; k < 7040; ++k)
             ais.put(k, -1);
         ais.put(8001, 18);
         ais.put(8002, -1);
