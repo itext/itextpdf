@@ -213,7 +213,7 @@ public class TiffImage {
                 byte im[] = new byte[(int)size[0]];
                 s.seek(offset[0]);
                 s.readFully(im);
-                img = Image.getInstance(w, h, reverse, imagecomp, params, im);
+                img = Image.getInstance(w, h, false, imagecomp, params, im);
                 img.setInverted(true);
             }
             else {
@@ -351,6 +351,12 @@ public class TiffImage {
                 resolutionUnit = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_RESOLUTIONUNIT);
             dpiX = getDpi(dir.getField(TIFFConstants.TIFFTAG_XRESOLUTION), resolutionUnit);
             dpiY = getDpi(dir.getField(TIFFConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
+            int fillOrder = 1;
+            boolean reverse = false;
+            TIFFField fillOrderField =  dir.getField(TIFFConstants.TIFFTAG_FILLORDER);
+            if (fillOrderField != null)
+                fillOrder = fillOrderField.getAsInt(0);
+            reverse = (fillOrder == TIFFConstants.FILLORDER_LSB2MSB);
             int rowsStrip = h;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ROWSPERSTRIP)) //another hack for broken tiffs
                 rowsStrip = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
@@ -426,6 +432,8 @@ public class TiffImage {
                     byte outBuf[] = null;
                     if (compression != TIFFConstants.COMPRESSION_NONE)
                         outBuf = new byte[(w * bitsPerSample * samplePerPixel + 7) / 8 * height];
+                    if (reverse)
+                        reverseBits(im);
                     switch (compression) {
                         case TIFFConstants.COMPRESSION_DEFLATE:
                         case TIFFConstants.COMPRESSION_ADOBE_DEFLATE:
@@ -505,6 +513,11 @@ public class TiffImage {
         }
     }
     
+    public static void reverseBits(byte[] b) {
+        for (int k = 0; k < b.length; ++k)
+            b[k] = TIFFFaxDecoder.flipTable[b[k] & 0xff];
+    }
+    
     static long[] getArrayLongShort(TIFFDirectory dir, int tag) {
         TIFFField field = dir.getField(tag);
         if (field == null)
@@ -526,24 +539,29 @@ public class TiffImage {
         int srcCount = 0, dstCount = 0;
         byte repeat, b;
         
-        while (dstCount < dst.length) {
-            b = data[srcCount++];
-            if (b >= 0 && b <= 127) {
-                // literal run packet
-                for (int i=0; i<(b + 1); i++) {
-                    dst[dstCount++] = data[srcCount++];
-                }
+        try {
+            while (dstCount < dst.length) {
+                b = data[srcCount++];
+                if (b >= 0 && b <= 127) {
+                    // literal run packet
+                    for (int i=0; i<(b + 1); i++) {
+                        dst[dstCount++] = data[srcCount++];
+                    }
 
-            } else if (b <= -1 && b >= -127) {
-                // 2 byte encoded run packet
-                repeat = data[srcCount++];
-                for (int i=0; i<(-b + 1); i++) {
-                    dst[dstCount++] = repeat;
+                } else if (b <= -1 && b >= -127) {
+                    // 2 byte encoded run packet
+                    repeat = data[srcCount++];
+                    for (int i=0; i<(-b + 1); i++) {
+                        dst[dstCount++] = repeat;
+                    }
+                } else {
+                    // no-op packet. Do nothing
+                    srcCount++;
                 }
-            } else {
-                // no-op packet. Do nothing
-                srcCount++;
             }
+        }
+        catch (Exception e) {
+            // do nothing
         }
     }
 
