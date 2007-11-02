@@ -172,7 +172,7 @@ public class XmpWriter {
 		for (int i = 0; i < extraSpace; i++) {
 			writer.write(EXTRASPACE);
 		}
-		writer.write("<?xpacket ends=\"" + end + "\" ?>");
+		writer.write("<?xpacket end=\"" + end + "\" ?>");
 		writer.flush();
 		writer.close();
 	}
