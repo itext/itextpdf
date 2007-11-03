@@ -104,7 +104,7 @@ public class XmpWriter {
 	public XmpWriter(OutputStream os, String utfEncoding, int extraSpace) throws IOException {
 		this.extraSpace = extraSpace;
 		writer = new OutputStreamWriter(os, utfEncoding);
-		writer.write("<?xpacket begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\" ?>\n");
+		writer.write("<?xpacket begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n");
 		writer.write("<x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n");
 		writer.write("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n");
 		about = "";
@@ -172,7 +172,7 @@ public class XmpWriter {
 		for (int i = 0; i < extraSpace; i++) {
 			writer.write(EXTRASPACE);
 		}
-		writer.write("<?xpacket end=\"" + end + "\" ?>");
+		writer.write("<?xpacket end=\"" + end + "\"?>");
 		writer.flush();
 		writer.close();
 	}
