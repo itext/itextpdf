@@ -1378,7 +1378,8 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     private boolean drawImage(Image img, Image mask, AffineTransform xform, Color bgColor, ImageObserver obs) {
-        if (xform==null) return true;
+        if (xform==null)
+            xform = new AffineTransform();
         
         xform.translate(0, img.getHeight(obs));
         xform.scale(img.getWidth(obs), img.getHeight(obs));
