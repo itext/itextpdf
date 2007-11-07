@@ -586,7 +586,9 @@ public class PdfReader implements PdfViewerPreferences {
             if (documentIDs.size() > 1)
                 strings.remove(documentIDs.getArrayList().get(1));
         }
-
+        // just in case we have a broken producer
+        if (documentID == null)
+            documentID = new byte[0];
         byte uValue[] = null;
         byte oValue[] = null;
         int cryptoMode = PdfWriter.STANDARD_ENCRYPTION_40;
