@@ -2025,21 +2025,37 @@ public class AcroFields {
     private static final PdfName[] buttonRemove = {PdfName.MK, PdfName.F , PdfName.FF , PdfName.Q , PdfName.BS , PdfName.BORDER};
     
     /**
-     * Creates a new pushbutton from an existing field. This pushbutton can be changed and be used to replace 
+     * Creates a new pushbutton from an existing field. If there are several pushbuttons with the same name
+     * only the first one is used. This pushbutton can be changed and be used to replace 
      * an existing one, with the same name or other name, as long is it is in the same document. To replace an existing pushbutton
      * call {@link #replacePushbuttonField(String,PdfFormField)}.
      * @param field the field name that should be a pushbutton
      * @return a new pushbutton or <CODE>null</CODE> if the field is not a pushbutton
      */
     public PushbuttonField getNewPushbuttonFromField(String field) {
+        return getNewPushbuttonFromField(field, 0);
+    }
+    
+    /**
+     * Creates a new pushbutton from an existing field. This pushbutton can be changed and be used to replace 
+     * an existing one, with the same name or other name, as long is it is in the same document. To replace an existing pushbutton
+     * call {@link #replacePushbuttonField(String,PdfFormField,int)}.
+     * @param field the field name that should be a pushbutton
+     * @param order the field order in fields with same name
+     * @return a new pushbutton or <CODE>null</CODE> if the field is not a pushbutton
+     */
+    public PushbuttonField getNewPushbuttonFromField(String field, int order) {
         try {
             if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
                 return null;
-            float[] pos = getFieldPositions(field);
-            Rectangle box = new Rectangle(pos[1], pos[2], pos[3], pos[4]);
-            PushbuttonField newButton = new PushbuttonField(writer, box, null);
             Item item = getFieldItem(field);
-            PdfDictionary dic = (PdfDictionary)item.merged.get(0);
+            if (order >= item.merged.size())
+                return null;
+            int posi = order * 5;
+            float[] pos = getFieldPositions(field);
+            Rectangle box = new Rectangle(pos[posi + 1], pos[posi + 2], pos[posi + 3], pos[posi + 4]);
+            PushbuttonField newButton = new PushbuttonField(writer, box, null);
+            PdfDictionary dic = (PdfDictionary)item.merged.get(order);
             decodeGenericDictionary(dic, newButton);
             PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.MK));
             if (mk != null) {
@@ -2090,7 +2106,7 @@ public class AcroFields {
     }
     
     /**
-     * Replaces the field with a new pushbutton. The pushbutton can be created with
+     * Replaces the first field with a new pushbutton. The pushbutton can be created with
      * {@link #getNewPushbuttonFromField(String)} from the same document or it can be a
      * generic PdfFormField of the type pushbutton.
      * @param field the field name
@@ -2099,12 +2115,28 @@ public class AcroFields {
      * was not a pushbutton
      */
     public boolean replacePushbuttonField(String field, PdfFormField button) {
+        return replacePushbuttonField(field, button, 0);
+    }
+    
+    /**
+     * Replaces the designated field with a new pushbutton. The pushbutton can be created with
+     * {@link #getNewPushbuttonFromField(String,int)} from the same document or it can be a
+     * generic PdfFormField of the type pushbutton.
+     * @param field the field name
+     * @param button the <CODE>PdfFormField</CODE> representing the pushbutton
+     * @param order the field order in fields with same name
+     * @return <CODE>true</CODE> if the field was replaced, <CODE>false</CODE> if the field
+     * was not a pushbutton
+     */
+    public boolean replacePushbuttonField(String field, PdfFormField button, int order) {
         if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
             return false;
         Item item = getFieldItem(field);
-        PdfDictionary merged = (PdfDictionary)item.merged.get(0);
-        PdfDictionary values = (PdfDictionary)item.values.get(0);
-        PdfDictionary widgets = (PdfDictionary)item.widgets.get(0);
+        if (order >= item.merged.size())
+            return false;
+        PdfDictionary merged = (PdfDictionary)item.merged.get(order);
+        PdfDictionary values = (PdfDictionary)item.values.get(order);
+        PdfDictionary widgets = (PdfDictionary)item.widgets.get(order);
         for (int k = 0; k < buttonRemove.length; ++k) {
             merged.remove(buttonRemove[k]);
             values.remove(buttonRemove[k]);
@@ -2114,8 +2146,11 @@ public class AcroFields {
             PdfName key = (PdfName)it.next();
             if (key.equals(PdfName.T) || key.equals(PdfName.RECT))
                 continue;
+            if (key.equals(PdfName.FF))
+                values.put(key, button.get(key));
+            else
+                widgets.put(key, button.get(key));
             merged.put(key, button.get(key));
-            widgets.put(key, button.get(key));
         }
         return true;
     }
