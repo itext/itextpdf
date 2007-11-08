@@ -133,7 +133,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	protected int maxLines = Integer.MAX_VALUE;
 	
 	/**
-	 * If a truncation happens due to the {@link #maxLines} property, then this text will 
+	 * If a truncation happens due to the maxLines property, then this text will 
 	 * be added to indicate a truncation has happened.
 	 * Default value is null, and means avoiding marking the truncation.  
 	 * A useful value of this property could be e.g. "..."
@@ -425,7 +425,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 	
 	/**
-	 * Setter for {@link #maxLines}
+	 * Setter for maxLines
 	 * @param value the maximum number of lines
 	 */
 	public void setMaxLines(int value) {
@@ -433,7 +433,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 	
 	/**
-	 * Getter for {@link #maxLines}
+	 * Getter for maxLines
 	 * @return the maxLines value
 	 */
 	public int getMaxLines() {
@@ -441,7 +441,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 		
 	/**
-	 * Setter for {@link #showTruncation}
+	 * Setter for showTruncation
 	 * @param value	Can be null for avoiding marking the truncation.
 	 */
 	public void setShowTruncation(String value) {
@@ -449,7 +449,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 	
 	/**
-	 * Getter for {@link #showTruncation}
+	 * Getter for showTruncation
 	 * @return the showTruncation value
 	 */
 	public String getShowTruncation() {
@@ -457,7 +457,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 
 	/**
-	 * Sets the value of {@link #useAscender}.
+	 * Sets the value of useAscender.
 	 * @param use use ascender height if true
 	 */
 	public void setUseAscender(boolean use) {
@@ -465,7 +465,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 
 	/**
-	 * Gets the value of {@link #useAscender}
+	 * Gets the value of useAscender
 	 * @return useAscender
 	 */
 	public boolean isUseAscender() {
@@ -473,7 +473,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 
 	/**
-	 * Sets the value of {@link #useDescender}.
+	 * Sets the value of useDescender.
 	 * @param use use descender height if true
 	 */
 	public void setUseDescender(boolean use) {
@@ -481,7 +481,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 
 	/**
-	 * gets the value of {@link #useDescender }
+	 * gets the value of useDescender
 	 * @return useDescender
 	 */
 	public boolean isUseDescender() {
@@ -489,7 +489,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 
 	/**
-	 * Sets the value of {@link #useBorderPadding}.
+	 * Sets the value of useBorderPadding.
 	 * @param use adjust layour for borders if true
 	 */
 	public void setUseBorderPadding(boolean use) {
@@ -497,7 +497,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 
 	/**
-	 * Gets the value of {@link #useBorderPadding}.
+	 * Gets the value of useBorderPadding.
 	 * @return useBorderPadding
 	 */
 	public boolean isUseBorderPadding() {

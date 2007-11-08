@@ -916,7 +916,7 @@ public class PdfCell extends Rectangle {
     }
 
     /**
-     * Sets the value of {@link #useAscender}.
+     * Sets the value of useAscender.
      * @param use use ascender height if true
      */
     public void setUseAscender(boolean use) {
@@ -924,7 +924,7 @@ public class PdfCell extends Rectangle {
     }
 
     /**
-     * Gets the value of {@link #useAscender}
+     * Gets the value of useAscender
      * @return useAscender
      */
     public boolean isUseAscender() {
@@ -932,7 +932,7 @@ public class PdfCell extends Rectangle {
     }
 
     /**
-     * Sets the value of {@link #useDescender}.
+     * Sets the value of useDescender.
      * @param use use descender height if true
      */
     public void setUseDescender(boolean use) {
@@ -940,7 +940,7 @@ public class PdfCell extends Rectangle {
     }
 
     /**
-     * gets the value of {@link #useDescender }
+     * gets the value of useDescender
      * @return useDescender
      */
     public boolean isUseDescender() {
@@ -948,7 +948,7 @@ public class PdfCell extends Rectangle {
     }
 
     /**
-     * Sets the value of {@link #useBorderPadding}.
+     * Sets the value of useBorderPadding.
      * @param use adjust layour for borders if true
      */
     public void setUseBorderPadding(boolean use) {
@@ -956,7 +956,7 @@ public class PdfCell extends Rectangle {
     }
 
     /**
-     * Gets the value of {@link #useBorderPadding}.
+     * Gets the value of useBorderPadding.
      * @return useBorderPadding
      */
     public boolean isUseBorderPadding() {
