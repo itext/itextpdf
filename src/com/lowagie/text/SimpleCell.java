@@ -277,7 +277,8 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 	}
 	
 	/** Sets the padding parameters if they are undefined. 
-	 * @param padding*/
+	 * @param padding
+	 */
 	public void setPadding(float padding) {
 		if (Float.isNaN(padding_right)) {
 			setPadding_right(padding);

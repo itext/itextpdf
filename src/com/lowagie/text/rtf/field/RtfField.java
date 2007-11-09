@@ -198,7 +198,6 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     /**
      * Writes the field beginning. Also writes field properties.
      * 
-     * @return A byte array with the field beginning.
      * @throws IOException
      */
     private void writeFieldBegin(OutputStream result) throws IOException 
@@ -227,7 +226,6 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     /**
      * Writes the beginning of the field instruction area.
      * 
-     * @return The beginning of the field instruction area
      * @throws IOException
      */
     private void writeFieldInstBegin(OutputStream result) throws IOException 
