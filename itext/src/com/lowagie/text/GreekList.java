@@ -46,7 +46,7 @@
  */
 package com.lowagie.text;
 
-import com.lowagie.text.factories.GreekNumberFactory;
+import com.lowagie.text.factories.GreekAlphabetFactory;
 
 /**
  * 
@@ -108,7 +108,7 @@ public class GreekList extends List {
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
-			Chunk chunk = new Chunk(GreekNumberFactory.getString(first + list.size(), lowercase), symbol.getFont());
+			Chunk chunk = new Chunk(GreekAlphabetFactory.getString(first + list.size(), lowercase), symbol.getFont());
 			chunk.append(". ");
 			item.setListSymbol(chunk);
 			item.setIndentationLeft(symbolIndent, autoindent);
@@ -136,7 +136,7 @@ public class GreekList extends List {
 	 * @deprecated use GreekNumberFactory.getString(int, boolean)
 	 */
 	public static int[] getGreekValue(int index, boolean lowercase) {
-	   	byte[] result = GreekNumberFactory.getString(index, lowercase).getBytes();
+	   	byte[] result = GreekAlphabetFactory.getString(index, lowercase).getBytes();
 	   	int n = result.length;
 	   	int[] r = new int[n];
 	   	System.arraycopy(result, 0, r, 0, n);
