@@ -1670,7 +1670,9 @@ public class PdfWriter extends DocWriter implements
             throw new PdfXConformanceException("PDFX conformance can only be set before opening the document.");
         if (crypto != null)
             throw new PdfXConformanceException("A PDFX conforming document cannot be encrypted.");
-        if (pdfx!= PDFXNONE)
+        if (pdfx == PDFA1A || pdfx == PDFA1B)
+            setPdfVersion(VERSION_1_4);
+        else if (pdfx != PDFXNONE)
             setPdfVersion(VERSION_1_3);
         pdfxConformance.setPDFXConformance(pdfx);
     }
