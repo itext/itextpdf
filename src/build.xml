@@ -28,6 +28,10 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile" />
 	</target>
 	
+	<target name="compile.examples">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.examples" />
+	</target>
+	
 	<target name="compile.debug">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.debug" />
 	</target>
