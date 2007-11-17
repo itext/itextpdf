@@ -31,12 +31,15 @@
 	
 	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<tar tarfile="${itext.dist}/src.tar" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties" />
-		<gzip zipfile="${itext.dist}/src.tar.gz" src="${itext.dist}/src.tar"/>
-		<delete file="${itext.dist}/src.tar"/>
+		<tar compression="gzip" tarfile="${itext.dist}/src.tar.gz" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties" />
 	</target>
 	
-	<target name="archive.src" depends="src.zip, src.tar.gz" description="--> archives the source code" />
+	<target name="src.jar" description="--> makes a jar file with the source code">
+		<mkdir dir="${itext.dist}"/>
+		<jar destfile="${itext.dist}/iText-${releasenumber}-sources.jar" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties" />
+	</target>
+	
+	<target name="archive.src" depends="src.zip, src.tar.gz, src.jar" description="--> archives the source code" />
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Making a release, ready for upload to SourceForge                -->
@@ -44,12 +47,24 @@
 	
 	<target name="release.sf" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
-        <copy file="${itext.jar}" todir="${itext.dist}" overwrite="yes" />
-		<copy file="${itext.jar}" tofile="${itext.dist}/itext-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.jar}" tofile="${itext.sf}/itext-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${releasenumber}.zip" overwrite="yes"/>
-		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/itext-src-${releasenumber}.tar.gz" overwrite="yes"/>
-		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/itext-docs-${releasenumber}.tar.gz" overwrite="yes"/>
+		<copy file="${itext.jar}" todir="${itext.dist}" overwrite="yes" />
+		<copy file="${itext.jar}" tofile="${itext.dist}/iText-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.jar}" tofile="${itext.sf}/iText-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/iText-src-${releasenumber}.zip" overwrite="yes"/>
+		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/iText-src-${releasenumber}.tar.gz" overwrite="yes"/>
+		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/iText-docs-${releasenumber}.tar.gz" overwrite="yes"/>
+		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.sf}/iText-${releasenumber}-sources.jar" overwrite="yes"/>
+		<copy file="${itext.src}/ant/pom.xml" tofile="${itext.dist}/pom.xml" overwrite="yes"/>
+		<replace file="${itext.dist}/pom.xml" token="releasenumber" value="${releasenumber}"/>
+		<replace file="${itext.dist}/pom.xml" token="bc.jdk" value="${bc.jdk}"/>
+		<replace file="${itext.dist}/pom.xml" token="bc.version" value="${bc.version}"/>
+		<jar destfile="${itext.dist}/iText-${releasenumber}-bundle.jar">
+			<fileset dir="${itext.dist}">
+				<include name="pom.xml" />
+				<include name="iText-${releasenumber}.jar" />
+				<include name="iText-${releasenumber}-sources.jar" />
+			</fileset>
+		</jar>
 	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

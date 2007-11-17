@@ -7,12 +7,23 @@
 
 <project name="iText.compile" default="help">
 	
+	<property file="local.properties" />
+	<property file="${user.home}/.ant.properties" />
 	<property file=".ant.properties" />
 	
 	<path id="itext.classpath">
 	    <pathelement location="${itext.bin}"/>
-	    <pathelement path="${itext.lib}/bcmail-${bc.version}.jar"/>
-	    <pathelement path="${itext.lib}/bcprov-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
+	</path>
+
+	<path id="itext.examples.classpath">
+	    <pathelement location="${itext.bin}"/>
+	    <pathelement location="${jfreechart.jar}"/>
+	    <pathelement location="${jcommon.jar}"/>
+	    <pathelement location="${servlet.jar}"/>
+	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
 	</path>
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -51,6 +62,18 @@
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Compiling the examples                                           -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="compile.examples" depends="compile" description="--> compiles the iText examples">
+        <mkdir dir="${itext.bin.examples}" />
+
+        <javac source="1.4" target="1.4" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
+    	<classpath refid="itext.examples.classpath"/>
+    	</javac>
+    </target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Jarring the code                                                 -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
@@ -70,7 +93,7 @@
         <jar jarfile="${itext.jar}" basedir="${itext.bin}" excludes="com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**">
             <manifest>
                 <attribute name="Main-Class" value="com.lowagie.tools.ToolboxAvailable"/>
-                <attribute name="Class-Path" value="toolbox.jar bcmail-${bc.version}.jar bcprov-${bc.version}.jar"/>
+                <attribute name="Class-Path" value="toolbox.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar"/>
             </manifest>
         </jar>
     </target>
@@ -86,5 +109,22 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 	
     <target name="jar.debug"  depends="compile.debug, make.jar" description="--> makes a jarfile from the iText code" />
-
+    
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Signing the jar                                                  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+    <target name="check-keystore" >
+        <condition property="keystore-exists">
+            <available file="${keystore.bruno}" type="file"/>
+        </condition>
+    </target>
+ 
+    <target name="keystore" depends="check-keystore" unless="keystore-exists">
+        <genkey alias="itext" keystore="${keystore.bruno}" storepass="${password.bruno}" dname="CN=Bruno Lowagie, OU=developer, O=lowagie.com, L=Sint-Amandsberg, ST=Oost-Vlaanderen,C=BE"/>
+    </target>
+ 
+    <target name="sign.jar" depends="keystore">
+       <signjar jar="${itext.jar}" alias="itext" storepass="${password.bruno}" keystore="${keystore.bruno}"/>
+    </target>
 </project>
