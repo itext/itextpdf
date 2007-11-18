@@ -8,7 +8,7 @@
 <project name="iText.compile" default="help">
 	
 	<property file="local.properties" />
-	
+	<property file="${user.home}/.ant.properties" />
 	<property file=".ant.properties" />
 	
 	<path id="itext.classpath">
@@ -21,7 +21,7 @@
 	    <pathelement location="${itext.bin}"/>
 	    <pathelement location="${jfreechart.jar}"/>
 	    <pathelement location="${jcommon.jar}"/>
-	    <pathelement location="${servletapi.jar}"/>
+	    <pathelement location="${servlet.jar}"/>
 	    <pathelement path="${itext.lib}/bcmail-${bc.version}.jar"/>
 	    <pathelement path="${itext.lib}/bcprov-${bc.version}.jar"/>
 	</path>
@@ -70,7 +70,7 @@
 
         <fail message="Missing dependency 'jfreechart.jar'" unless="jfreechart.jar"/>
         <fail message="Missing dependency 'jcommon.jar'" unless="jcommon.jar"/>
-        <fail message="Missing dependency 'servletapi.jar'" unless="servletapi.jar"/>
+        <fail message="Missing dependency 'servlet.jar'" unless="servlet.jar"/>
 
         <javac source="1.4" target="1.4" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
     	<classpath refid="itext.examples.classpath"/>
