@@ -113,5 +113,22 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 	
     <target name="jar.debug"  depends="compile.debug, make.jar" description="--> makes a jarfile from the iText code" />
-
+    
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Signing the jar                                                  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+    <target name="check-keystore" >
+        <condition property="keystore-exists">
+            <available file="${keystore.bruno}" type="file"/>
+        </condition>
+    </target>
+ 
+    <target name="keystore" depends="check-keystore" unless="keystore-exists">
+        <genkey alias="itext" keystore="${keystore.bruno}" storepass="${password.bruno}" dname="CN=Bruno Lowagie, OU=developer, O=lowagie.com, L=Sint-Amandsberg, ST=Oost-Vlaanderen,C=BE"/>
+    </target>
+ 
+    <target name="sign.jar" depends="keystore">
+       <signjar jar="${itext.jar}" alias="itext" storepass="${password.bruno}" keystore="${keystore.bruno}"/>
+    </target>
 </project>

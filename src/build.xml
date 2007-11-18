@@ -80,6 +80,7 @@
 		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
 		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
 		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf" />
 	</target>
