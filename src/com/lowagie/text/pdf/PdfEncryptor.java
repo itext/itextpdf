@@ -226,4 +226,76 @@ public class PdfEncryptor {
         if ((PdfWriter.AllowDegradedPrinting & permissions) == PdfWriter.AllowDegradedPrinting) buf.append(" Degraded printing");
         return buf.toString();
     }
+    
+    /**
+     * Tells you if printing is allowed.
+     * @param permissions the permissions value of a PDF file
+     * @return	true if printing is allowed
+     */
+    public static boolean isAllowPrinting(int permissions) {
+        return (PdfWriter.AllowPrinting & permissions) == PdfWriter.AllowPrinting;
+    }
+    
+    /**
+     * Tells you if modifying content is allowed.
+     * @param permissions the permissions value of a PDF file
+     * @return	true if modifying content is allowed
+     */
+    public static boolean isAllowModifyContents(int permissions) {
+        return (PdfWriter.AllowModifyContents & permissions) == PdfWriter.AllowModifyContents;
+    } 
+    
+    /**
+     * Tells you if copying is allowed.
+     * @param permissions the permissions value of a PDF file
+     * @return	true if copying is allowed
+     */
+    public static boolean isAllowCopy(int permissions) {
+        return (PdfWriter.AllowCopy & permissions) == PdfWriter.AllowCopy;
+    }
+    
+    /**
+     * Tells you if modifying annotations is allowed.
+     * @param permissions the permissions value of a PDF file
+     * @return	true if modifying annotations is allowed
+     */
+    public static boolean isAllowModifyAnnotations(int permissions) {
+        return (PdfWriter.AllowModifyAnnotations & permissions) == PdfWriter.AllowModifyAnnotations;
+    }
+    
+    /**
+     * Tells you if filling in fields is allowed.
+     * @param permissions the permissions value of a PDF file
+     * @return	true if filling in fields is allowed
+     */
+    public static boolean isAllowFillIn(int permissions) {
+        return (PdfWriter.AllowFillIn & permissions) == PdfWriter.AllowFillIn;
+    }
+    
+    /**
+     * Tells you if repurposing for screenreaders is allowed.
+     * @param permissions the permissions value of a PDF file
+     * @return	true if repurposing for screenreaders is allowed
+     */
+    public static boolean isAllowScreenReaders(int permissions) {
+        return (PdfWriter.AllowScreenReaders & permissions) == PdfWriter.AllowScreenReaders;
+    }
+    
+    /**
+     * Tells you if document assembly is allowed.
+     * @param permissions the permissions value of a PDF file
+     * @return	true if document assembly is allowed
+     */
+    public static boolean isAllowAssembly(int permissions) {
+        return (PdfWriter.AllowAssembly & permissions) == PdfWriter.AllowAssembly;
+    }
+    
+    /**
+     * Tells you if degraded printing is allowed.
+     * @param permissions the permissions value of a PDF file
+     * @return	true if degraded printing is allowed
+     */
+    public static boolean isAllowDegradedPrinting(int permissions) {
+        return (PdfWriter.AllowDegradedPrinting & permissions) == PdfWriter.AllowDegradedPrinting;
+    }
 }
