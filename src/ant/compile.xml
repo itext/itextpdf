@@ -68,10 +68,6 @@
     <target name="compile.examples" depends="compile" description="--> compiles the iText examples">
         <mkdir dir="${itext.bin.examples}" />
 
-        <fail message="Missing dependency 'jfreechart.jar'" unless="jfreechart.jar"/>
-        <fail message="Missing dependency 'jcommon.jar'" unless="jcommon.jar"/>
-        <fail message="Missing dependency 'servlet.jar'" unless="servlet.jar"/>
-
         <javac source="1.4" target="1.4" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
     	<classpath refid="itext.examples.classpath"/>
     	</javac>

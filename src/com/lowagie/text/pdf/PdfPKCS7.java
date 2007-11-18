@@ -51,6 +51,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -76,8 +81,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.lowagie.text.ExceptionConverter;
-import java.math.BigInteger;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OutputStream;
@@ -95,9 +98,15 @@ import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERString;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.DERUTCTime;
+import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.jce.provider.X509CRLParser;
 import org.bouncycastle.jce.provider.X509CertParser;
+import org.bouncycastle.tsp.TimeStampRequest;
+import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.util.StreamParsingException;
+import org.bouncycastle.util.encoders.Base64;
+
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * This class does all the processing related to signing and verifying a PKCS#7
@@ -123,7 +132,8 @@ public class PdfPKCS7 {
     private boolean verifyResult;
     private byte externalDigest[];
     private byte externalRSAdata[];
-    
+    private TimeStampServerConnection timeStampServerConnection;
+
     private static final String ID_PKCS7_DATA = "1.2.840.113549.1.7.1";
     private static final String ID_PKCS7_SIGNED_DATA = "1.2.840.113549.1.7.2";
     private static final String ID_MD5 = "1.2.840.113549.2.5";
@@ -879,7 +889,11 @@ public class PdfPKCS7 {
             // Add the digest
             signerinfo.add(new DEROctetString(digest));
             
-            
+            if (timeStampServerConnection != null) {
+                // Add the time stamp from server
+                timeStampServerConnection.addTimeStampInfo(digest, signerinfo);
+            }
+
             // Finally build the body out of all the components above
             ASN1EncodableVector body = new ASN1EncodableVector();
             body.add(new DERInteger(version));
@@ -1049,7 +1063,24 @@ public class PdfPKCS7 {
     public void setSignName(String signName) {
         this.signName = signName;
     }
-    
+
+
+    /**
+     * Getter for property timeStampServerConnection.
+     * @return Value of property timeStampServerConnection.
+     */
+    public TimeStampServerConnection getTimeStampServerConnection() {
+        return timeStampServerConnection;
+    }
+
+    /**
+     * Setter for property timeStampServerConnection.
+     * @param timeStampServerConnection New value of property timeStampServerConnection.
+     */
+    public void setTimeStampServerConnection(TimeStampServerConnection timeStampServerConnection) {
+        this.timeStampServerConnection = timeStampServerConnection;
+    }
+
     /**
      * a class that holds an X509 name
      */
@@ -1293,4 +1324,170 @@ public class PdfPKCS7 {
             return buf.toString().trim();
         }
     }
+    
+    public static class TimeStampServerConnection {
+        /**
+         * Based on code submitted by Aiken Sam, 2006-11-15.
+         */
+
+        /**
+         * Optional user name
+         */
+        private String userName = null;
+
+        /**
+         * Optional password
+         */
+        private String password = null;
+
+        /**
+         * URL of the time stamp server
+         */
+        private String serverURL = null;
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String passwordTimestamp) {
+            this.password = passwordTimestamp;
+        }
+
+        public String getServerURL() {
+            return serverURL;
+        }
+
+        public void setServerURL(String serverTimestamp) {
+            this.serverURL = serverTimestamp;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String usernameTimestamp) {
+            this.userName = usernameTimestamp;
+        }
+
+        /**
+         * Add the time stamp response from the server.
+         * @param digest digest to time stamp.
+         * @param signerInfo time stamp response will be appended to this signer info.
+         */
+        public void addTimeStampInfo(byte[] digest,
+                ASN1EncodableVector signerInfo) {
+            try {
+                byte[] timestampHash = computeHash(digest);
+
+                ASN1Sequence seq = getServerResponse(timestampHash);
+
+                if (seq != null) {
+                    insertTimeStampInfo(seq, signerInfo);
+                }
+            } catch (NoSuchAlgorithmException e) {
+                throw new ExceptionConverter(e);
+            } catch (IOException ioe) {
+                throw new ExceptionConverter(ioe);
+            }
+        }
+
+        /**
+         * Compute the hash value locally.
+         * @param digest data that needs to be time stamped.
+         * @return hash value to be sent to the time stamp server.
+         * @throws NoSuchAlgorithmException
+         */
+        protected byte[] computeHash(byte[] digest)
+                throws NoSuchAlgorithmException {
+            return MessageDigest.getInstance("SHA1").digest(digest);
+        }
+
+        /**
+         * Append the time stamp response to the signer info.
+         * @param seq time stamp response from server.
+         * @param signerInfo time stamp response will be appended to this signer info.
+         */
+        protected void insertTimeStampInfo(ASN1Sequence seq,
+                ASN1EncodableVector signerInfo) {
+            ASN1EncodableVector unauthAttributes = new ASN1EncodableVector();
+
+            // time Stamp token : id-aa-timeStampToken da RFC3161, alias old
+            // id-smime-aa-timeStampToken
+            ASN1EncodableVector v = new ASN1EncodableVector();
+            v.add(new DERObjectIdentifier("1.2.840.113549.1.9.16.2.14")); // id-aa-timeStampToken
+
+            DERObject timeStampToken = (DERObject) seq.getObjectAt(1);
+            v.add(new DERSet(timeStampToken));
+
+            unauthAttributes.add(new DERSequence(v));
+
+            signerInfo.add(new DERTaggedObject(false, 1, new DERSet(
+                    unauthAttributes)));
+        }
+
+        /**
+         * Connect to the server and get a time stamp response for the hash value.
+         * @param hash value to be time stamped.
+         * @return time stamp response as a ASN1Sequence.
+         * @throws IOException
+         */
+        public ASN1Sequence getServerResponse(byte[] hash) throws IOException {
+            byte[] respBytes = null;
+
+            URL url = new URL(serverURL);
+            URLConnection openHomeConnection = url.openConnection();
+
+            openHomeConnection.setDoInput(true);
+            openHomeConnection.setDoOutput(true);
+            openHomeConnection.setUseCaches(false);
+            openHomeConnection.setRequestProperty("Content-Type",
+                    "application/timestamp-query");
+            openHomeConnection.setRequestProperty("Content-Transfer-Encoding",
+                    "binary");
+
+            if ((userName != null) && !userName.equals("")) {
+                String userPassword = userName + ":" + password;
+                openHomeConnection.setRequestProperty("Authorization", "Basic "
+                        + new String(Base64.encode(userPassword.getBytes())));
+            }
+
+            OutputStream out = openHomeConnection.getOutputStream();
+
+            TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
+            tsqGenerator.setCertReq(true);
+            BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
+            TimeStampRequest tsrequest = tsqGenerator.generate(
+                    X509ObjectIdentifiers.id_SHA1.getId(), hash, nonce);
+
+            byte[] tsq = tsrequest.getEncoded();
+
+            out.write(tsq);
+            out.close();
+
+            InputStream fis = openHomeConnection.getInputStream();
+            byte[] buffer = new byte[1024];
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int bytesRead = 0;
+            while ((bytesRead = fis.read(buffer, 0, buffer.length)) >= 0) {
+                baos.write(buffer, 0, bytesRead);
+            }
+
+            respBytes = baos.toByteArray();
+
+            if ("base64".equalsIgnoreCase(openHomeConnection
+                    .getContentEncoding())) {
+                respBytes = Base64.decode(respBytes);
+            }
+
+            ASN1InputStream tempstream = new ASN1InputStream(
+                    new ByteArrayInputStream(respBytes));
+
+            ASN1Sequence seq = (ASN1Sequence) tempstream.readObject();
+
+            return seq;
+        }
+
+    }
+
 }
