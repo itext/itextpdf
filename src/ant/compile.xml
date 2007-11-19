@@ -121,10 +121,22 @@
     </target>
  
     <target name="keystore" depends="check-keystore" unless="keystore-exists">
-        <genkey alias="itext" keystore="${itext.keystore.filename}" storepass="${itext.keystore.password}" dname="CN=iText Self-Signed Certificate"/>
+        <genkey
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+            dname="${itext.keystore.dname}"
+        />
     </target>
  
     <target name="sign.jar" depends="keystore">
-       <signjar jar="${itext.jar}" alias="itext" storepass="${itext.keystore.password}" keystore="${itext.keystore.filename}"/>
+        <signjar
+            jar="${itext.jar}"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
     </target>
 </project>
