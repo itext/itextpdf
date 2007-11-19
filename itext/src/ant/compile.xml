@@ -116,15 +116,27 @@
 	
     <target name="check-keystore" >
         <condition property="keystore-exists">
-            <available file="${keystore.bruno}" type="file"/>
+            <available file="${itext.keystore.filename}" type="file"/>
         </condition>
     </target>
  
     <target name="keystore" depends="check-keystore" unless="keystore-exists">
-        <genkey alias="itext" keystore="${keystore.bruno}" storepass="${password.bruno}" dname="CN=Bruno Lowagie, OU=developer, O=lowagie.com, L=Sint-Amandsberg, ST=Oost-Vlaanderen,C=BE"/>
+        <genkey
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+            dname="${itext.keystore.dname}"
+        />
     </target>
  
     <target name="sign.jar" depends="keystore">
-       <signjar jar="${itext.jar}" alias="itext" storepass="${password.bruno}" keystore="${keystore.bruno}"/>
+        <signjar
+            jar="${itext.jar}"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
     </target>
 </project>
