@@ -216,14 +216,14 @@ public class PdfEncryptor {
      */
     public static String getPermissionsVerbose(int permissions) {
     	StringBuffer buf = new StringBuffer("Allowed:");
-    	if ((PdfWriter.AllowPrinting & permissions) == PdfWriter.AllowPrinting) buf.append(" Printing");
-        if ((PdfWriter.AllowModifyContents & permissions) == PdfWriter.AllowModifyContents) buf.append(" Modify contents");
-        if ((PdfWriter.AllowCopy & permissions) == PdfWriter.AllowCopy) buf.append(" Copy");
-        if ((PdfWriter.AllowModifyAnnotations & permissions) == PdfWriter.AllowModifyAnnotations) buf.append(" Modify annotations");
-        if ((PdfWriter.AllowFillIn & permissions) == PdfWriter.AllowFillIn) buf.append(" Fill in");
-        if ((PdfWriter.AllowScreenReaders & permissions) == PdfWriter.AllowScreenReaders) buf.append(" Screen readers");
-        if ((PdfWriter.AllowAssembly & permissions) == PdfWriter.AllowAssembly) buf.append(" Assembly");
-        if ((PdfWriter.AllowDegradedPrinting & permissions) == PdfWriter.AllowDegradedPrinting) buf.append(" Degraded printing");
+    	if ((PdfWriter.ALLOW_PRINTING & permissions) == PdfWriter.ALLOW_PRINTING) buf.append(" Printing");
+        if ((PdfWriter.ALLOW_MODIFY_CONTENTS & permissions) == PdfWriter.ALLOW_MODIFY_CONTENTS) buf.append(" Modify contents");
+        if ((PdfWriter.ALLOW_COPY & permissions) == PdfWriter.ALLOW_COPY) buf.append(" Copy");
+        if ((PdfWriter.ALLOW_MODIFY_ANNOTATIONS & permissions) == PdfWriter.ALLOW_MODIFY_ANNOTATIONS) buf.append(" Modify annotations");
+        if ((PdfWriter.ALLOW_FILL_IN & permissions) == PdfWriter.ALLOW_FILL_IN) buf.append(" Fill in");
+        if ((PdfWriter.ALLOW_SCREENREADERS & permissions) == PdfWriter.ALLOW_SCREENREADERS) buf.append(" Screen readers");
+        if ((PdfWriter.ALLOW_ASSEMBLY & permissions) == PdfWriter.ALLOW_ASSEMBLY) buf.append(" Assembly");
+        if ((PdfWriter.ALLOW_DEGRADED_PRINTING & permissions) == PdfWriter.ALLOW_DEGRADED_PRINTING) buf.append(" Degraded printing");
         return buf.toString();
     }
     
@@ -232,8 +232,8 @@ public class PdfEncryptor {
      * @param permissions the permissions value of a PDF file
      * @return	true if printing is allowed
      */
-    public static boolean isAllowPrinting(int permissions) {
-        return (PdfWriter.AllowPrinting & permissions) == PdfWriter.AllowPrinting;
+    public static boolean isPrintingAllowed(int permissions) {
+        return (PdfWriter.ALLOW_PRINTING & permissions) == PdfWriter.ALLOW_PRINTING;
     }
     
     /**
@@ -241,8 +241,8 @@ public class PdfEncryptor {
      * @param permissions the permissions value of a PDF file
      * @return	true if modifying content is allowed
      */
-    public static boolean isAllowModifyContents(int permissions) {
-        return (PdfWriter.AllowModifyContents & permissions) == PdfWriter.AllowModifyContents;
+    public static boolean isModifyContentsAllowed(int permissions) {
+        return (PdfWriter.ALLOW_MODIFY_CONTENTS & permissions) == PdfWriter.ALLOW_MODIFY_CONTENTS;
     } 
     
     /**
@@ -250,8 +250,8 @@ public class PdfEncryptor {
      * @param permissions the permissions value of a PDF file
      * @return	true if copying is allowed
      */
-    public static boolean isAllowCopy(int permissions) {
-        return (PdfWriter.AllowCopy & permissions) == PdfWriter.AllowCopy;
+    public static boolean isCopyAllowed(int permissions) {
+        return (PdfWriter.ALLOW_COPY & permissions) == PdfWriter.ALLOW_COPY;
     }
     
     /**
@@ -259,8 +259,8 @@ public class PdfEncryptor {
      * @param permissions the permissions value of a PDF file
      * @return	true if modifying annotations is allowed
      */
-    public static boolean isAllowModifyAnnotations(int permissions) {
-        return (PdfWriter.AllowModifyAnnotations & permissions) == PdfWriter.AllowModifyAnnotations;
+    public static boolean isModifyAnnotationsAllowed(int permissions) {
+        return (PdfWriter.ALLOW_MODIFY_ANNOTATIONS & permissions) == PdfWriter.ALLOW_MODIFY_ANNOTATIONS;
     }
     
     /**
@@ -268,8 +268,8 @@ public class PdfEncryptor {
      * @param permissions the permissions value of a PDF file
      * @return	true if filling in fields is allowed
      */
-    public static boolean isAllowFillIn(int permissions) {
-        return (PdfWriter.AllowFillIn & permissions) == PdfWriter.AllowFillIn;
+    public static boolean isFillInAllowed(int permissions) {
+        return (PdfWriter.ALLOW_FILL_IN & permissions) == PdfWriter.ALLOW_FILL_IN;
     }
     
     /**
@@ -277,8 +277,8 @@ public class PdfEncryptor {
      * @param permissions the permissions value of a PDF file
      * @return	true if repurposing for screenreaders is allowed
      */
-    public static boolean isAllowScreenReaders(int permissions) {
-        return (PdfWriter.AllowScreenReaders & permissions) == PdfWriter.AllowScreenReaders;
+    public static boolean isScreenReadersAllowed(int permissions) {
+        return (PdfWriter.ALLOW_SCREENREADERS & permissions) == PdfWriter.ALLOW_SCREENREADERS;
     }
     
     /**
@@ -286,8 +286,8 @@ public class PdfEncryptor {
      * @param permissions the permissions value of a PDF file
      * @return	true if document assembly is allowed
      */
-    public static boolean isAllowAssembly(int permissions) {
-        return (PdfWriter.AllowAssembly & permissions) == PdfWriter.AllowAssembly;
+    public static boolean isAssemblyAllowed(int permissions) {
+        return (PdfWriter.ALLOW_ASSEMBLY & permissions) == PdfWriter.ALLOW_ASSEMBLY;
     }
     
     /**
@@ -295,7 +295,7 @@ public class PdfEncryptor {
      * @param permissions the permissions value of a PDF file
      * @return	true if degraded printing is allowed
      */
-    public static boolean isAllowDegradedPrinting(int permissions) {
-        return (PdfWriter.AllowDegradedPrinting & permissions) == PdfWriter.AllowDegradedPrinting;
+    public static boolean isDegradedPrintingAllowed(int permissions) {
+        return (PdfWriter.ALLOW_DEGRADED_PRINTING & permissions) == PdfWriter.ALLOW_DEGRADED_PRINTING;
     }
 }

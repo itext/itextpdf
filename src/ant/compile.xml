@@ -121,7 +121,7 @@
     </target>
  
     <target name="keystore" depends="check-keystore" unless="keystore-exists">
-        <genkey alias="itext" keystore="${keystore.bruno}" storepass="${password.bruno}" dname="CN=Bruno Lowagie, OU=developer, O=lowagie.com, L=Sint-Amandsberg, ST=Oost-Vlaanderen,C=BE"/>
+        <genkey alias="itext" keystore="${keystore.bruno}" storepass="${password.bruno}" dname="CN=iText Self-Signed Certificate"/>
     </target>
  
     <target name="sign.jar" depends="keystore">

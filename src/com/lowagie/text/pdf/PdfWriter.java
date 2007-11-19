@@ -1780,21 +1780,38 @@ public class PdfWriter extends DocWriter implements
 	// permissions
 	
     /** The operation permitted when the document is opened with the user password */
-    public static final int AllowPrinting = 4 + 2048;
+    public static final int ALLOW_PRINTING = 4 + 2048;
     /** The operation permitted when the document is opened with the user password */
-    public static final int AllowModifyContents = 8;
+    public static final int ALLOW_MODIFY_CONTENTS = 8;
     /** The operation permitted when the document is opened with the user password */
-    public static final int AllowCopy = 16;
+    public static final int ALLOW_COPY = 16;
     /** The operation permitted when the document is opened with the user password */
-    public static final int AllowModifyAnnotations = 32;
+    public static final int ALLOW_MODIFY_ANNOTATIONS = 32;
     /** The operation permitted when the document is opened with the user password */
-    public static final int AllowFillIn = 256;
+    public static final int ALLOW_FILL_IN = 256;
     /** The operation permitted when the document is opened with the user password */
-    public static final int AllowScreenReaders = 512;
+    public static final int ALLOW_SCREENREADERS = 512;
     /** The operation permitted when the document is opened with the user password */
-    public static final int AllowAssembly = 1024;
+    public static final int ALLOW_ASSEMBLY = 1024;
     /** The operation permitted when the document is opened with the user password */
-    public static final int AllowDegradedPrinting = 4;
+    public static final int ALLOW_DEGRADED_PRINTING = 4;
+	
+    /** @deprecated use ALLOW_PRINTING */
+    public static final int AllowPrinting = ALLOW_PRINTING;
+    /** @deprecated use ALLOW_MODIFY_CONTENTS */
+    public static final int AllowModifyContents = ALLOW_MODIFY_CONTENTS;
+    /** @deprecated use ALLOW_COPY */
+    public static final int AllowCopy = ALLOW_COPY;
+    /** @deprecated use ALLOW_MODIFY_ANNOTATIONS */
+    public static final int AllowModifyAnnotations = ALLOW_MODIFY_ANNOTATIONS;
+    /** @deprecated use ALLOW_FILL_IN */
+    public static final int AllowFillIn = ALLOW_FILL_IN;
+    /** @deprecated use ALLOW_SCREENREADERS */
+    public static final int AllowScreenReaders = ALLOW_SCREENREADERS;
+    /** @deprecated use ALLOW_ASSEMBLY */
+    public static final int AllowAssembly = ALLOW_ASSEMBLY;
+    /** @deprecated use ALLOW_DEGRADED_PRINTING */
+    public static final int AllowDegradedPrinting = ALLOW_DEGRADED_PRINTING;
     
     // Strength of the encryption (kept for historical reasons)
     /** Type of standard encryption strength*/
