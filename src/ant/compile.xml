@@ -13,8 +13,8 @@
 	
 	<path id="itext.classpath">
 	    <pathelement location="${itext.bin}"/>
-	    <pathelement path="${itext.lib}/bcmail-${bc.version}.jar"/>
-	    <pathelement path="${itext.lib}/bcprov-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
 	</path>
 
 	<path id="itext.examples.classpath">
@@ -22,8 +22,8 @@
 	    <pathelement location="${jfreechart.jar}"/>
 	    <pathelement location="${jcommon.jar}"/>
 	    <pathelement location="${servlet.jar}"/>
-	    <pathelement path="${itext.lib}/bcmail-${bc.version}.jar"/>
-	    <pathelement path="${itext.lib}/bcprov-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
 	</path>
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -93,7 +93,7 @@
         <jar jarfile="${itext.jar}" basedir="${itext.bin}" excludes="com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**">
             <manifest>
                 <attribute name="Main-Class" value="com.lowagie.tools.ToolboxAvailable"/>
-                <attribute name="Class-Path" value="toolbox.jar bcmail-${bc.version}.jar bcprov-${bc.version}.jar"/>
+                <attribute name="Class-Path" value="toolbox.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar"/>
             </manifest>
         </jar>
     </target>
