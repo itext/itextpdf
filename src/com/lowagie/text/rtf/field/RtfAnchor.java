@@ -100,8 +100,9 @@ public class RtfAnchor extends RtfField
      * type to HYPERLINK and then writes the url.
      * 
      * @return The field instructions for this RtfAnchor
-     * @deprecated replaced by {@link #writeFieldInstContent(OutputStream)}
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldInstContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     protected byte[] writeFieldInstContent() throws IOException
     {
@@ -109,6 +110,14 @@ public class RtfAnchor extends RtfField
         writeFieldInstContent(result);        
         return result.toByteArray();
     }
+
+    /**
+     * Write the field instructions for this RtfAnchor. Sets the field
+     * type to HYPERLINK and then writes the url.
+     *
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
+     */
     protected void writeFieldInstContent(OutputStream result) throws IOException 
     {
         result.write(HYPERLINK);
@@ -122,20 +131,25 @@ public class RtfAnchor extends RtfField
      * of the RtfPhrase.
      * 
      * @return The field result for this RtfAnchor
-     * @deprecated replaced by {@link #writeFieldResultContent(OutputStream)}
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldResultContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     protected byte[] writeFieldResultContent() throws IOException 
     {
         return content.write();
-    }    
+    }
+    
     /**
      * Write the field result for this RtfAnchor. Writes the content
      * of the RtfPhrase.
+     * 
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */
-    protected void writeFieldResultContent(OutputStream out) throws IOException 
+    protected void writeFieldResultContent(OutputStream result) throws IOException 
     {
-        content.writeContent(out);
+        content.writeContent(result);
     }
     
 }

@@ -95,8 +95,9 @@ public class RtfTableOfContents extends RtfField {
      * Writes the field instruction content
      * 
      * @return A byte array containing with the field instructions
-     * @deprecated
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldInstContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     protected byte[] writeFieldInstContent() throws IOException 
     {
@@ -104,18 +105,22 @@ public class RtfTableOfContents extends RtfField {
     }
     /**
      * Writes the field instruction content
+     * 
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */ 
-    protected void writeFieldInstContent(final OutputStream out) throws IOException 
+    protected void writeFieldInstContent(final OutputStream result) throws IOException 
     {
-    	out.write(FIELD_INST.getBytes());
+    	result.write(FIELD_INST.getBytes());
     }
 
     /**
      * Writes the field result content
      * 
      * @return An byte array containing the default text
-     * @deprecated
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldResultContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     protected byte[] writeFieldResultContent() throws IOException 
     {
@@ -123,19 +128,15 @@ public class RtfTableOfContents extends RtfField {
     	writeFieldResultContent(out);
         return out.toByteArray();
     }
+    
     /**
      * Writes the field result content
+     * 
+     * @param out The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */
     protected void writeFieldResultContent(final OutputStream out) throws IOException 
     {
     	document.filterSpecialChar(out, defaultText, true, true);
-//    	byte[] b = getDefaultTextBytes();
-//    	if(b != null) out.write(b);
-    }
-    
-//    private byte[] getDefaultTextBytes()
-//    {
-//    	return(document.filterSpecialChar(defaultText, true, true).getBytes());
-//    }    
-    
+    }    
 }

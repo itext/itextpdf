@@ -111,40 +111,43 @@ public class RtfPageNumber extends RtfField {
      * Writes the field instruction content
      * 
      * @return A byte array containing "PAGE"
-     * @deprecated replaced by {@link #writeFieldInstContent(OutputStream)}
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldInstContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     protected byte[] writeFieldInstContent() throws IOException 
     {
         return PAGE_NUMBER;
     }
+    
     /**
      * Writes the field instruction content
-     * 
-     * @throws IOException
+     *
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */
-    protected void writeFieldInstContent(final OutputStream out) throws IOException 
+    protected void writeFieldInstContent(final OutputStream result) throws IOException 
     {
-    	out.write(PAGE_NUMBER);
+    	result.write(PAGE_NUMBER);
     }
     
     /**
      * Writes the field result content
      * 
      * @return An empty byte array
-     * @deprecated replaced by {@link #writeFieldResultContent(OutputStream)}
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldResultContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
-    protected byte[] writeFieldResultContent() throws IOException 
-    {
+    protected byte[] writeFieldResultContent() throws IOException {
         return new byte[0];
     }
     /**
      * Writes the field result content
      * 
-     * @throws IOException
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */
-    protected void writeFieldResultContent(final OutputStream out) throws IOException 
-    {        
+    protected void writeFieldResultContent(final OutputStream result) throws IOException {        
     }
 }

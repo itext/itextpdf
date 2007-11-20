@@ -186,8 +186,9 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the field beginning. Also writes field properties.
      * 
      * @return A byte array with the field beginning.
-     * @deprecated replaced by {@link #writeFieldBegin(OutputStream)}
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldBegin(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     private byte[] writeFieldBegin() throws IOException 
     {
@@ -195,9 +196,11 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
         writeFieldBegin(result);
         return result.toByteArray();
     }
+    
     /**
      * Writes the field beginning. Also writes field properties.
      * 
+     * @param result The <code>OutputStream</code> to write to.
      * @throws IOException
      */
     private void writeFieldBegin(OutputStream result) throws IOException 
@@ -214,8 +217,9 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the beginning of the field instruction area.
      * 
      * @return The beginning of the field instruction area
-     * @deprecated replaced by {@link #writeFieldInstBegin(OutputStream)}
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldInstBegin(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     private byte[] writeFieldInstBegin() throws IOException
     {
@@ -223,9 +227,11 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
         writeFieldInstBegin(result);
         return result.toByteArray();
     }
+    
     /**
      * Writes the beginning of the field instruction area.
      * 
+     * @param result The <code>OutputStream</code> to write to.
      * @throws IOException
      */
     private void writeFieldInstBegin(OutputStream result) throws IOException 
@@ -240,27 +246,31 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * method in your subclasses.
      * 
      * @return The content of the field instruction area
-     * @deprecated replaced by {@link #writeFieldInstContent(OutputStream)}
      * @throws IOException If an error occurs.
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldInstContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     protected abstract byte[] writeFieldInstContent() throws IOException;
 
     /**
      * Writes the content of the field instruction area. Override this
      * method in your subclasses.
+     * 
+     * @param result The <code>OutputStream</code> to write to.
      */
-    protected void writeFieldInstContent(OutputStream out) throws IOException
+    protected void writeFieldInstContent(OutputStream result) throws IOException
     {
     	byte[] b = writeFieldInstContent();
-    	if(b != null) out.write(b);
+    	if(b != null) result.write(b);
     }
     
     /**
      * Writes the end of the field instruction area.
      * 
      * @return A byte array containing the end of the field instruction area
-     * @deprecated replaced by {@link #writeFieldInstEnd(OutputStream)}
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldInstEnd(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     private byte[] writeFieldInstEnd() throws IOException 
     {
@@ -268,8 +278,11 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
         writeFieldInstEnd(result);
         return result.toByteArray();
     }
+    
     /**
      * Writes the end of the field instruction area.
+     * 
+     * @param result The <code>OutputStream</code> to write to.
      */
     private void writeFieldInstEnd(OutputStream result) throws IOException 
     {
@@ -284,8 +297,9 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the beginning of the field result area
      * 
      * @return A byte array containing the beginning of the field result area
-     * @deprecated replaced by {@link #writeFieldResultBegin(OutputStream)} 
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldResultBegin(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     private byte[] writeFieldResultBegin() throws IOException 
     {
@@ -293,8 +307,11 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
         writeFieldResultBegin(result);
         return result.toByteArray();
     }
+    
     /**
      * Writes the beginning of the field result area
+     * 
+     * @param result The <code>OutputStream</code> to write to.
      */
     private void writeFieldResultBegin(final OutputStream result) throws IOException 
     {
@@ -308,26 +325,32 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * method in your subclasses.
      * 
      * @return A byte array containing the field result
-     * @deprecated replaced by {@link #writeFieldResultContent(OutputStream)}
      * @throws IOException If an error occurs
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldResultContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
-    protected abstract byte[] writeFieldResultContent() throws IOException;    
+    protected abstract byte[] writeFieldResultContent() throws IOException;
+    
     /**
      * Writes the content of the pre-calculated field result. Override this
      * method in your subclasses.
+     * 
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */ 
-    protected void writeFieldResultContent(OutputStream out) throws IOException
+    protected void writeFieldResultContent(OutputStream result) throws IOException
     {
     	byte[] b = writeFieldResultContent();
-    	if(b != null) out.write(b);
+    	if(b != null) result.write(b);
     }
     
     /**
      * Writes the end of the field result area
      * 
      * @return A byte array containing the end of the field result area
-     * @deprecated replaced by {@link #writeFieldResultEnd(OutputStream)}
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldResultEnd(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     private byte[] writeFieldResultEnd() throws IOException 
     {
@@ -335,8 +358,12 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
         writeFieldResultEnd(result);
         return result.toByteArray();
     }
+    
     /**
      * Writes the end of the field result area
+     * 
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */ 
     private void writeFieldResultEnd(final OutputStream result) throws IOException 
     {
@@ -348,8 +375,9 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the end of the field
      * 
      * @return A byte array containing the end of the field
-     * @deprecated replaced by {@link #writeFieldEnd(OutputStream)}
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldEnd(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     private byte[] writeFieldEnd() throws IOException
     {
@@ -357,8 +385,12 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
         writeFieldEnd(result);        
         return result.toByteArray();
     }
+    
     /**
      * Writes the end of the field
+     * 
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */
     private void writeFieldEnd(OutputStream result) throws IOException
     {
@@ -370,7 +402,8 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Write the content of this RtfField.
      * 
      * @return A byte array containing the content of this RtfField
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write()
     {
@@ -382,20 +415,16 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
         }
         return result.toByteArray();
     }
+    
     /**
      * Writes the element content to the given output stream.
+     * 
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
         result.write(this.font.writeBegin());
-//        result.write(writeFieldBegin());
-//        result.write(writeFieldInstBegin());
-//        result.write(writeFieldInstContent());
-//        result.write(writeFieldInstEnd());
-//        result.write(writeFieldResultBegin());
-//        result.write(writeFieldResultContent());
-//        result.write(writeFieldResultEnd());
-//        result.write(writeFieldEnd());        
         writeFieldBegin(result);
         writeFieldInstBegin(result);
         writeFieldInstContent(result);
