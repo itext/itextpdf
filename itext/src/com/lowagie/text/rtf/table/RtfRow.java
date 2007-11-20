@@ -280,22 +280,34 @@ public class RtfRow extends RtfElement {
      * Writes the row definition/settings.
      * 
      * @return A byte array with the row definitions/settings.
-     * @deprecated replaced by {@link #writeRowDefinitions(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeRowDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     private byte[] writeRowDefinitions() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-        	writeRowDefinitions(result);
+        	writeRowDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
+    
     /**
      * Writes the row definition/settings.
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeRowDefinitions(OutputStream)}, scheduled for removal at or after 2.1.0
      */
-    private void writeRowDefinitions(final OutputStream result) throws IOException
-    {
+    private void writeRowDefinitions(final OutputStream result) throws IOException {
+        writeRowDefinition(result);
+    }
+    
+    /**
+     * Writes the row definition/settings.
+     *
+     * @param result The <code>OutputStream</code> to write the definitions to.
+     */
+    private void writeRowDefinition(final OutputStream result) throws IOException {
         result.write(ROW_BEGIN);
         result.write('\n');
         result.write(ROW_WIDTH_STYLE);
@@ -324,7 +336,7 @@ public class RtfRow extends RtfElement {
         }
         result.write(ROW_GRAPH);
         
-        //.result.write(this.parentTable.getBorders().write());
+        //.result.write(this.parentTable.getBorders().write()); TODO Remove on deprecation
         this.parentTable.getBorders().writeContent(result);
         
         if(this.parentTable.getCellSpacing() > 0) {
@@ -353,7 +365,7 @@ public class RtfRow extends RtfElement {
         
         for(int i = 0; i < this.cells.size(); i++) {
             RtfCell rtfCell = (RtfCell) this.cells.get(i);
-            //result.write(rtfCell.writeDefinition());
+            //result.write(rtfCell.writeDefinition()); // TODO Remove on deprecation
             rtfCell.writeDefinition(result);
         }    	
     }
@@ -362,7 +374,8 @@ public class RtfRow extends RtfElement {
      * Writes the content of this RtfRow
      * 
      * @return A byte array with the content of this RtfRow
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write() 
     {
@@ -380,7 +393,7 @@ public class RtfRow extends RtfElement {
     public void writeContent(final OutputStream result) throws IOException
     {
         //.result.write(writeRowDefinitions());
-    	writeRowDefinitions(result);
+    	writeRowDefinition(result);
         
         for(int i = 0; i < this.cells.size(); i++) {
             RtfCell rtfCell = (RtfCell) this.cells.get(i);
@@ -392,7 +405,7 @@ public class RtfRow extends RtfElement {
 
         if(this.document.getDocumentSettings().isOutputTableRowDefinitionAfter()) {
             //.result.write(writeRowDefinitions());
-        	writeRowDefinitions(result);
+        	writeRowDefinition(result);
         }
 
         result.write(ROW_END);

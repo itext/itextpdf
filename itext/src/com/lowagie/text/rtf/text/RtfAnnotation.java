@@ -107,7 +107,8 @@ public class RtfAnnotation extends RtfElement {
      * Writes the content of the RtfAnnotation
      * 
      * @return The content of this RtfAnnotation
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();

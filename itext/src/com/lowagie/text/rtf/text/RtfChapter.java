@@ -83,7 +83,8 @@ public class RtfChapter extends RtfSection {
      * Writes the RtfChapter and its contents
      * 
      * @return A byte array containing the RtfChapter and its contents 
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();

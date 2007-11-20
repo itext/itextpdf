@@ -134,7 +134,8 @@ public class RtfSection extends RtfElement {
      * Write this RtfSection and its contents
      * 
      * @return A byte array with the RtfSection and its contents
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write()
     {
