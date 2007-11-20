@@ -7,6 +7,8 @@
 
 <project name="iText.release" default="help">
 	
+	<property file="local.properties" />
+	<property file="${user.home}/.ant.properties" />
 	<property file=".ant.properties" />
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -65,6 +67,47 @@
 				<include name="iText-${releasenumber}-sources.jar" />
 			</fileset>
 		</jar>
+	</target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Generates jdiff report against previous version                  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
+
+	<target name="jdiff" description="--> generates jdiff report against previous version">
+		<fail unless="JDIFF_HOME" message="JDIFF_HOME must be defined" />
+		<fail unless="itext.previous.version" message="itext.previous.version must be defined" />
+		<fail unless="itext.previous.location" message="itext.previous.location must be defined" />
+
+		<taskdef name="jdiff" classname="jdiff.JDiffAntTask" classpath="${JDIFF_HOME}/antjdiff.jar" />
+
+		<mkdir dir="${itext.reports}"/>
+		<jdiff destdir="${itext.reports}" verbose="on" stats="on" docchanges="on">
+			<old name="${itext.previous.version}">
+				<dirset dir="${itext.previous.location}/src" includes="com/**" />
+			</old>
+			<new name="current">
+				<dirset dir="${itext.src}" includes="com/**" />
+			</new>
+		</jdiff>
+		<copy file="${itext.reports}/missingSinces.txt"
+			tofile="${itext.reports}/missingSinces.err" >
+
+			<filterchain>
+				<striplinecomments>
+					<comment value="OK: "/>
+				</striplinecomments>
+			</filterchain>
+		</copy>
+
+		<concat>
+			<filelist dir="${itext.reports}" files="missingSinces.err"/>
+		</concat>
+
+		<fail message="missing @since tags">
+			<condition>
+				<length file="${itext.reports}/missingSinces.err" when="greater" length="0" />
+			</condition>
+		</fail>
 	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
