@@ -231,6 +231,8 @@ public class PdfEncryptor {
      * Tells you if printing is allowed.
      * @param permissions the permissions value of a PDF file
      * @return	true if printing is allowed
+     *
+     * @since 2.0.7
      */
     public static boolean isPrintingAllowed(int permissions) {
         return (PdfWriter.ALLOW_PRINTING & permissions) == PdfWriter.ALLOW_PRINTING;
@@ -240,6 +242,8 @@ public class PdfEncryptor {
      * Tells you if modifying content is allowed.
      * @param permissions the permissions value of a PDF file
      * @return	true if modifying content is allowed
+     *
+     * @since 2.0.7
      */
     public static boolean isModifyContentsAllowed(int permissions) {
         return (PdfWriter.ALLOW_MODIFY_CONTENTS & permissions) == PdfWriter.ALLOW_MODIFY_CONTENTS;
@@ -249,6 +253,8 @@ public class PdfEncryptor {
      * Tells you if copying is allowed.
      * @param permissions the permissions value of a PDF file
      * @return	true if copying is allowed
+     *
+     * @since 2.0.7
      */
     public static boolean isCopyAllowed(int permissions) {
         return (PdfWriter.ALLOW_COPY & permissions) == PdfWriter.ALLOW_COPY;
@@ -258,6 +264,8 @@ public class PdfEncryptor {
      * Tells you if modifying annotations is allowed.
      * @param permissions the permissions value of a PDF file
      * @return	true if modifying annotations is allowed
+     *
+     * @since 2.0.7
      */
     public static boolean isModifyAnnotationsAllowed(int permissions) {
         return (PdfWriter.ALLOW_MODIFY_ANNOTATIONS & permissions) == PdfWriter.ALLOW_MODIFY_ANNOTATIONS;
@@ -267,6 +275,8 @@ public class PdfEncryptor {
      * Tells you if filling in fields is allowed.
      * @param permissions the permissions value of a PDF file
      * @return	true if filling in fields is allowed
+     *
+     * @since 2.0.7
      */
     public static boolean isFillInAllowed(int permissions) {
         return (PdfWriter.ALLOW_FILL_IN & permissions) == PdfWriter.ALLOW_FILL_IN;
@@ -276,6 +286,8 @@ public class PdfEncryptor {
      * Tells you if repurposing for screenreaders is allowed.
      * @param permissions the permissions value of a PDF file
      * @return	true if repurposing for screenreaders is allowed
+     *
+     * @since 2.0.7
      */
     public static boolean isScreenReadersAllowed(int permissions) {
         return (PdfWriter.ALLOW_SCREENREADERS & permissions) == PdfWriter.ALLOW_SCREENREADERS;
@@ -285,6 +297,8 @@ public class PdfEncryptor {
      * Tells you if document assembly is allowed.
      * @param permissions the permissions value of a PDF file
      * @return	true if document assembly is allowed
+     *
+     * @since 2.0.7
      */
     public static boolean isAssemblyAllowed(int permissions) {
         return (PdfWriter.ALLOW_ASSEMBLY & permissions) == PdfWriter.ALLOW_ASSEMBLY;
@@ -294,6 +308,8 @@ public class PdfEncryptor {
      * Tells you if degraded printing is allowed.
      * @param permissions the permissions value of a PDF file
      * @return	true if degraded printing is allowed
+     *
+     * @since 2.0.7
      */
     public static boolean isDegradedPrintingAllowed(int permissions) {
         return (PdfWriter.ALLOW_DEGRADED_PRINTING & permissions) == PdfWriter.ALLOW_DEGRADED_PRINTING;
