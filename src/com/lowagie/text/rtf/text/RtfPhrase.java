@@ -147,7 +147,8 @@ public class RtfPhrase extends RtfElement {
      * the RtfChunks of this RtfPhrase are written.
      * 
      * @return The content of this RtfPhrase
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write()
     {

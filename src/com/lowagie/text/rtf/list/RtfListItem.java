@@ -94,7 +94,8 @@ public class RtfListItem extends RtfParagraph {
      * Writes the content of this RtfListItem.
      * 
      * @return A byte array with the content of this RtfListItem.
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write() 
     {
@@ -141,7 +142,8 @@ public class RtfListItem extends RtfParagraph {
      * an empty byte array if no inner RtfLists exist.
      * 
      * @return The definition of the first inner RtfList or an empty byte array.
-     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] writeDefinition() {
         for(int i = 0; i < chunks.size(); i++) {

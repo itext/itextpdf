@@ -89,7 +89,8 @@ public interface RtfBasicElement {
      * Return the content of the Element in a byte array
      * 
      * @return The byte array containing the data
-     * @deprecated replaced by {@link #writeContent(java.io.OutputStream)} 
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write();
     

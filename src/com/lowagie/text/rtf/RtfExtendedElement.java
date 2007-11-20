@@ -67,7 +67,8 @@ public interface RtfExtendedElement extends RtfBasicElement
      * Return the definition part of the element in a byte array
      * 
      * @return A byte array containing the definition data of the Element
-     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] writeDefinition();
 

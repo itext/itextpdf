@@ -115,7 +115,8 @@ public class RtfColorList extends RtfElement implements RtfExtendedElement {
     
     /**
      * unused
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write()
     {
@@ -133,7 +134,8 @@ public class RtfColorList extends RtfElement implements RtfExtendedElement {
      * methods of the RtfColors in the colour list. 
      * 
      * @return A byte array with the definition colour list
-     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] writeDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();

@@ -128,7 +128,8 @@ public class RtfDocument extends RtfElement {
 
     /**
      * unused
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write()
     {
@@ -246,7 +247,8 @@ public class RtfDocument extends RtfElement {
      * @param useHex indicated if the hexadecimal value has to be used
      * @param softLineBreaks whether to use soft line breaks instead of default hard ones.
      *
-     * @deprecated replaced by {@link #filterSpecialChar(OutputStream, String, boolean, boolean)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #filterSpecialChar(OutputStream, String, boolean, boolean)}, scheduled for removal at or after 2.1.0
      * @return The converted String
      */
     public String filterSpecialChar(String str, boolean useHex, boolean softLineBreaks) {

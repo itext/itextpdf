@@ -236,7 +236,8 @@ public class RtfShape extends RtfAddableElement {
      * Writes the RtfShape. Some settings are automatically translated into
      * or require other properties and these are set first.
      * 
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
 	public byte[] write() {
 		

@@ -115,7 +115,8 @@ public class RtfTabGroup extends RtfAddableElement {
 	/**
 	 * Combines the tab output form all grouped tabs.
 	 * 
-	 * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
 	 */
 	public byte[] write() 
 	{

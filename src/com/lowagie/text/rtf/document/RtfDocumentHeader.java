@@ -152,7 +152,8 @@ public class RtfDocumentHeader extends RtfElement {
      * Write the contents of the document header area.
      * 
      * @return A byte array with the contents of the document header area
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write() {    	
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -201,7 +202,8 @@ public class RtfDocumentHeader extends RtfElement {
      * Writes the section definition data
      * 
      * @return A byte array with the section definition data
-     * @deprecated
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeSectionDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] writeSectionDefinition()
     {
