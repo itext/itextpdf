@@ -58,6 +58,8 @@ import com.lowagie.text.SpecialSymbol;
  * See http://www.cogsci.indiana.edu/farg/harry/lan/grknum.htm#ancient
  * but this isn't implemented yet; the main reason being the fact that we
  * need a font that has the obsolete Greek characters qoppa and sampi.
+ *
+ * @since 2.0.7 (was called GreekNumberFactory in earlier versions)
  */
 public class GreekAlphabetFactory {
 	/** 

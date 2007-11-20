@@ -2043,6 +2043,8 @@ public class AcroFields {
      * @param field the field name that should be a pushbutton
      * @param order the field order in fields with same name
      * @return a new pushbutton or <CODE>null</CODE> if the field is not a pushbutton
+     *
+     * @since 2.0.7
      */
     public PushbuttonField getNewPushbuttonFromField(String field, int order) {
         try {
@@ -2127,6 +2129,8 @@ public class AcroFields {
      * @param order the field order in fields with same name
      * @return <CODE>true</CODE> if the field was replaced, <CODE>false</CODE> if the field
      * was not a pushbutton
+     *
+     * @since 2.0.7
      */
     public boolean replacePushbuttonField(String field, PdfFormField button, int order) {
         if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
