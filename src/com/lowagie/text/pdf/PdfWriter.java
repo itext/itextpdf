@@ -1928,7 +1928,7 @@ public class PdfWriter extends DocWriter implements
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
      * @throws DocumentException if the document is already open
-     * @deprecated As of iText 2.0.3, replaced by (@link #setEncryption(byte[], byte[], int, int)}. Scheduled for removal at or after 2.2.0r removal at or after 2.2.0
+     * @deprecated As of iText 2.0.3, replaced by (@link #setEncryption(byte[], byte[], int, int)}. Scheduled for removal at or after 2.2.0
      */
     public void setEncryption(int encryptionType, String userPassword, String ownerPassword, int permissions) throws DocumentException {
         setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, encryptionType);
