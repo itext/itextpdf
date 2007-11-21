@@ -207,19 +207,6 @@ public class PdfDictionary extends PdfObject {
     // methods concerning the type of Dictionary
     
 /**
- * Checks if a <CODE>PdfDictionary</CODE> is of a certain type.
- *
- * @param		type	a type of dictionary
- * @return		<CODE>true</CODE> of <CODE>false</CODE>
- *
- * @deprecated
- */
-    
-    public boolean isDictionaryType(PdfName type) {
-        return type.equals(dictionaryType);
-    }
-    
-/**
  *  Checks if a <CODE>Dictionary</CODE> is of the type FONT.
  *
  * @return		<CODE>true</CODE> if it is, <CODE>false</CODE> if it isn't.

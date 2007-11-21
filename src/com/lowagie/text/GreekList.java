@@ -133,7 +133,8 @@ public class GreekList extends List {
 	 * aaa comes right after zz.
 	 * @param index	a number greater than 0
 	 * @return	a String corresponding with the index.
-	 * @deprecated use GreekNumberFactory.getString(int, boolean)
+	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.GreekAlphabetFactory#getString(int, boolean)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public static int[] getGreekValue(int index, boolean lowercase) {
 	   	byte[] result = GreekAlphabetFactory.getString(index, lowercase).getBytes();
@@ -147,7 +148,8 @@ public class GreekList extends List {
 	 * set the greek-letters to lowercase otherwise to uppercase
 	 * 
 	 * @param greeklower
-	 * @deprecated use setLowercase(boolean)
+	 * @deprecated As of iText 2.0.3, replaced by {@link #setLowercase(boolean)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public void setGreekLower(boolean greeklower) {
 		setLowercase(greeklower);
@@ -157,7 +159,8 @@ public class GreekList extends List {
 	 * Checks if the list is greek-letter with lowercase
 	 *
 	 * @return	<CODE>true</CODE> if the greek-letter is lowercase, <CODE>false</CODE> otherwise.
-	 * @deprecated use isLowercase()
+	 * @deprecated As of iText 2.0.3, replaced by {@link #isLowercase()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public boolean isGreekLower() {
 		return isLowercase();

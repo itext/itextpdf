@@ -391,7 +391,8 @@ public class PdfCell extends Rectangle {
 	 * Returns the lower left x-coordinaat.
 	 *
 	 * @return		the lower left x-coordinaat
-	 * @deprecated Use {@link #getLeft()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getLeft()},
+	 * scheduled for removal at 2.1.0
 	 */
 	
 	public float left() {
@@ -415,7 +416,8 @@ public class PdfCell extends Rectangle {
 	 * Returns the upper right x-coordinate.
 	 *
 	 * @return		the upper right x-coordinate
-	 * @deprecated Use {@link #getRight()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getRight()},
+	 * scheduled for removal at or after 2.1.0
 	 */
 	
 	public float right() {
@@ -439,7 +441,8 @@ public class PdfCell extends Rectangle {
 	 * Returns the upper right y-coordinate.
 	 *
 	 * @return		the upper right y-coordinate
-	 * @deprecated Use {@link #getTop()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getTop()},
+	 * scheduled for removal at or after 2.1.0
 	 */
 	
 	public float top() {
@@ -463,7 +466,8 @@ public class PdfCell extends Rectangle {
 	 * Returns the lower left y-coordinate.
 	 *
 	 * @return		the lower left y-coordinate
-	 * @deprecated Use {@link #getBottom()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getBottom()},
+	 * scheduled for removal at or after 2.1.0
 	 */
 	
 	public float bottom() {

@@ -2420,7 +2420,6 @@ class PdfDocument extends Document {
 	 * @param table a high level table object
 	 * @param supportRowAdditions
 	 * @return returns a PdfTable object
-	 * @see PdfWriter#getPdfTable(Table)
 	 */
 
 	PdfTable getPdfTable(Table table, boolean supportRowAdditions) {
@@ -2939,35 +2938,13 @@ class PdfDocument extends Document {
             }
         }
     }
-
-	/**
-	 * @see PdfWriter#breakTableIfDoesntFit(PdfTable)
-	 * (contributed by dperezcar@fcc.es)
-	 * @param table				Table to add
-	 * @return true if the table will be broken
-	 * @throws DocumentException
-	 * @deprecated
-	 */
-	
-	boolean breakTableIfDoesntFit(PdfTable table) throws DocumentException {
-		table.updateRowAdditions();
-		// Do we have any full page available?
-		if (!table.hasToFitPageTable() && table.getBottom() <= indentation.indentBottom) {
-			// Then output that page
-			add(table, true);
-			return true;
-		}
-		return false;
-	}
     
     /**
      * Returns the bottomvalue of a <CODE>Table</CODE> if it were added to this document.
      *
      * @param	table	the table that may or may not be added to this document
      * @return	a bottom value
-     * @deprecated
      */
-    
     float bottom(Table table) {
         // constructing a PdfTable
         PdfTable tmp = getPdfTable(table, false);

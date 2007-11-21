@@ -1827,27 +1827,27 @@ public class PdfWriter extends DocWriter implements
      */
     public static final int ALLOW_DEGRADED_PRINTING = 4;
 	
-    /** @deprecated use ALLOW_PRINTING */
+    /** @deprecated As of iText 2.0.7, use {@link #ALLOW_PRINTING} instead. Scheduled for removal at or after 2.2.0 */
     public static final int AllowPrinting = ALLOW_PRINTING;
-    /** @deprecated use ALLOW_MODIFY_CONTENTS */
+    /** @deprecated As of iText 2.0.7, use {@link #ALLOW_MODIFY_CONTENTS} instead. Scheduled for removal at or after 2.2.0 */
     public static final int AllowModifyContents = ALLOW_MODIFY_CONTENTS;
-    /** @deprecated use ALLOW_COPY */
+    /** @deprecated As of iText 2.0.7, use {@link #ALLOW_COPY} instead. Scheduled for removal at or after 2.2.0 */
     public static final int AllowCopy = ALLOW_COPY;
-    /** @deprecated use ALLOW_MODIFY_ANNOTATIONS */
+    /** @deprecated As of iText 2.0.7, use {@link #ALLOW_MODIFY_ANNOTATIONS} instead. Scheduled for removal at or after 2.2.0 */
     public static final int AllowModifyAnnotations = ALLOW_MODIFY_ANNOTATIONS;
-    /** @deprecated use ALLOW_FILL_IN */
+    /** @deprecated As of iText 2.0.7, use {@link #ALLOW_FILL_IN} instead. Scheduled for removal at or after 2.2.0 */
     public static final int AllowFillIn = ALLOW_FILL_IN;
-    /** @deprecated use ALLOW_SCREENREADERS */
+    /** @deprecated As of iText 2.0.7, use {@link #ALLOW_SCREENREADERS} instead. Scheduled for removal at or after 2.2.0 */
     public static final int AllowScreenReaders = ALLOW_SCREENREADERS;
-    /** @deprecated use ALLOW_ASSEMBLY */
+    /** @deprecated As of iText 2.0.7, use {@link #ALLOW_ASSEMBLY} instead. Scheduled for removal at or after 2.2.0 */
     public static final int AllowAssembly = ALLOW_ASSEMBLY;
-    /** @deprecated use ALLOW_DEGRADED_PRINTING */
+    /** @deprecated As of iText 2.0.7, use {@link #ALLOW_DEGRADED_PRINTING} instead. Scheduled for removal at or after 2.2.0 */
     public static final int AllowDegradedPrinting = ALLOW_DEGRADED_PRINTING;
     
     // Strength of the encryption (kept for historical reasons)
-    /** Type of standard encryption strength*/
+    /** @deprecated As of iText 2.0.7, use {@link #STANDARD_ENCRYPTION_40} instead. Scheduled for removal at or after 2.2.0 */
     public static final boolean STRENGTH40BITS = false;
-    /** Type of standard encryption strength */
+    /** @deprecated As of iText 2.0.7, use {@link #STANDARD_ENCRYPTION_128} instead. Scheduled for removal at or after 2.2.0 */
     public static final boolean STRENGTH128BITS = true;
     
     /** Contains the business logic for cryptography. */
@@ -1891,7 +1891,7 @@ public class PdfWriter extends DocWriter implements
      * @param permissions the user permissions
      * @param strength128Bits <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
      * @throws DocumentException if the document is already open
-     * @deprecated use the methods described in the PdfEncryptionSettings interface
+     * @deprecated As of iText 2.0.3, replaced by (@link #setEncryption(byte[], byte[], int, int)}. Scheduled for removal at or after 2.2.0
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
         setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? STANDARD_ENCRYPTION_128 : STANDARD_ENCRYPTION_40);
@@ -1909,7 +1909,7 @@ public class PdfWriter extends DocWriter implements
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
      * @throws DocumentException if the document is already open
-     * @deprecated use the methods described in the PdfEncryptionSettings interface
+     * @deprecated As of iText 2.0.3, replaced by (@link #setEncryption(byte[], byte[], int, int)}. Scheduled for removal at or after 2.2.0
      */
     public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
         setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength ? STANDARD_ENCRYPTION_128 : STANDARD_ENCRYPTION_40);
@@ -1928,7 +1928,7 @@ public class PdfWriter extends DocWriter implements
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
      * @throws DocumentException if the document is already open
-     * @deprecated use the methods described in the PdfEncryptionSettings interface
+     * @deprecated As of iText 2.0.3, replaced by (@link #setEncryption(byte[], byte[], int, int)}. Scheduled for removal at or after 2.2.0r removal at or after 2.2.0
      */
     public void setEncryption(int encryptionType, String userPassword, String ownerPassword, int permissions) throws DocumentException {
         setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, encryptionType);
@@ -2878,61 +2878,11 @@ public class PdfWriter extends DocWriter implements
 //	[M4] Old table functionality; do we still need it?
     
     /**
-     * Sometimes it is necessary to know where the just added <CODE>Table</CODE> ends.
-     *
-     * For instance to avoid to add another table in a page that is ending up, because
-     * the new table will be probably splitted just after the header (it is an
-     * unpleasant effect, isn't it?).
-     *
-     * Added on September 8th, 2001
-     * by Francesco De Milato
-     * francesco.demilato@tiscalinet.it
-     * @param table the <CODE>Table</CODE>
-     * @return the bottom height of the just added table
-     * @deprecated	this method will probably disappear in one of the next releases
-     */
-    
-    public float getTableBottom(Table table) {
-        return pdf.bottom(table) - pdf.indentBottom();
-    }
-    
-    /**
-	 * Gets a pre-rendered table.
-	 * (Contributed by dperezcar@fcc.es) 
-	 * @param table		Contains the table definition.  Its contents are deleted, after being pre-rendered.
-     * @return a PdfTable
-     * @deprecated	this method will probably disappear in one of the next releases
-	 */
-	
-	public PdfTable getPdfTable(Table table) {
-		return pdf.getPdfTable(table, true);
-	}
-
-	/**
-	 * Row additions to the original {@link Table} used to build the {@link PdfTable} are processed and pre-rendered,
-	 * and then the contents are deleted. 
-	 * If the pre-rendered table doesn't fit, then it is fully rendered and its data discarded.  
-	 * There shouldn't be any column change in the underlying {@link Table} object.
-	 * (Contributed by dperezcar@fcc.es) 
-	 *
-	 * @param	table		The pre-rendered table obtained from {@link #getPdfTable(Table)} 
-	 * @return	true if the table is rendered and emptied.
-	 * @throws DocumentException
-	 * @see #getPdfTable(Table)
-     * @deprecated	this method will probably disappear in one of the next releases
-	 */
-	
-	public boolean breakTableIfDoesntFit(PdfTable table) throws DocumentException {
-		return pdf.breakTableIfDoesntFit(table);
-	}
-    
-    /**
      * Checks if a <CODE>Table</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
      *
      * @param	table	the table that has to be checked
      * @param	margin	a certain margin
      * @return	<CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
-     * @deprecated	this method will probably disappear in one of the next releases
      */
     
     public boolean fitsPage(Table table, float margin) {
@@ -2944,36 +2894,12 @@ public class PdfWriter extends DocWriter implements
      *
      * @param	table	the table that has to be checked
      * @return	<CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
-     * @deprecated	this method will probably disappear in one of the next releases
      */
     
     public boolean fitsPage(Table table) {
         return fitsPage(table, 0);
     }
-    
-    /**
-     * Checks if a <CODE>PdfPTable</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
-     *
-     * @param	table	the table that has to be checked
-     * @param	margin	a certain margin
-     * @return	<CODE>true</CODE> if the <CODE>PdfPTable</CODE> fits the page, <CODE>false</CODE> otherwise.
-     * @deprecated	this method will probably disappear in one of the next releases
-     */
-    public boolean fitsPage(PdfPTable table, float margin) {
-        return pdf.fitsPage(table, margin);
-    }
-    
-    /**
-     * Checks if a <CODE>PdfPTable</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
-     *
-     * @param	table	the table that has to be checked
-     * @return	<CODE>true</CODE> if the <CODE>PdfPTable</CODE> fits the page, <CODE>false</CODE> otherwise.
-     * @deprecated	this method will probably disappear in one of the next releases
-     */
-    public boolean fitsPage(PdfPTable table) {
-        return pdf.fitsPage(table, 0);
-    }
-
+//  [F12] tagged PDF
     /**
      * A flag indicating the presence of structure elements that contain user properties attributes.
      */

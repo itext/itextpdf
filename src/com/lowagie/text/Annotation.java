@@ -589,7 +589,8 @@ public class Annotation implements Element {
 	 * 
 	 * @param attributes
 	 *            Some attributes
-	 * @deprecated Use ElementFactory.getAnnotation(attributes)
+	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getAnnotation(Properties)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public Annotation(java.util.Properties attributes) {
 		this(com.lowagie.text.factories.ElementFactory.getAnnotation(attributes));

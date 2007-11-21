@@ -133,7 +133,8 @@ public class Chapter extends Section {
      *
      * @param	attributes	the attributes
      * @param number a userdefined Chapter number
-     * @deprecated Use ElementFactory.getChapter(attributes)
+     * @deprecated As of iText 2.0.3, use {@link com.lowagie.text.factories.ElementFactory#getChapter(Properties)} instead,
+     * scheduled for removal at 2.1.0
      */
     public Chapter(java.util.Properties attributes, int number) {
     	this("", number);

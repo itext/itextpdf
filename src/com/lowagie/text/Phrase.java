@@ -543,6 +543,8 @@ public class Phrase extends ArrayList implements TextElementArray {
      * the value of some <VAR>attributes</VAR>.
      *
      * @param	attributes		Some attributes
+     * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getPhrase(Properties)},
+	 * scheduled for removal at 2.1.0
      */
     public Phrase(Properties attributes) {
         this(com.lowagie.text.factories.ElementFactory.getPhrase(attributes));
@@ -551,7 +553,8 @@ public class Phrase extends ArrayList implements TextElementArray {
      * Gets the font of the first <CODE>Chunk</CODE> that appears in this <CODE>Phrase</CODE>.
      *
      * @return	a <CODE>Font</CODE>
-     * @deprecated Use {@link #getFont()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getFont()},
+	 * scheduled for removal at 2.1.0
      */  
     public Font font() {
     	return getFont();
@@ -560,7 +563,8 @@ public class Phrase extends ArrayList implements TextElementArray {
      * Gets the leading of this phrase.
      *
      * @return	the linespacing
-     * @deprecated Use {@link #getLeading()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getLeading()},
+	 * scheduled for removal at 2.1.0
      */
     public float leading() {
     	return getLeading();
@@ -569,7 +573,8 @@ public class Phrase extends ArrayList implements TextElementArray {
      * Checks you if the leading of this phrase is defined.
      *
      * @return	true if the leading is defined
-     * @deprecated Use {@link #hasLeading()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #hasLeading()},
+	 * scheduled for removal at 2.1.0
      */
     public boolean leadingDefined() {
     	return hasLeading();
@@ -578,7 +583,8 @@ public class Phrase extends ArrayList implements TextElementArray {
     /**
 	 * Returns the content as a String object.
 	 * This method differs from toString because toString will return an ArrayList with the toString value of the Chunks in this Phrase.
-	 * @deprecated Use {@link #getContent()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getContent()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public String content() {
 		return getContent();

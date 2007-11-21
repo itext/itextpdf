@@ -806,7 +806,8 @@ public class Font implements Comparable {
 	 * Gets the size of this font.
 	 * 
 	 * @return a size
-	 * @deprecated Use {@link #getSize()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getSize()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float size() {
 		return getSize();
@@ -818,7 +819,8 @@ public class Font implements Comparable {
 	 * @param linespacing
 	 *            a certain linespacing
 	 * @return the height of a line
-	 * @deprecated Use {@link #getCalculatedLeading(float)} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getCalculatedLeading(float)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float leading(float linespacing) {
 		return getCalculatedLeading(linespacing);
@@ -828,7 +830,8 @@ public class Font implements Comparable {
 	 * Gets the style of this font.
 	 * 
 	 * @return a size
-	 * @deprecated Use {@link #getStyle()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getStyle()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int style() {
 		return getStyle();
@@ -838,7 +841,8 @@ public class Font implements Comparable {
 	 * Gets the color of this font.
 	 * 
 	 * @return a color
-	 * @deprecated Use {@link #getColor()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getColor()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public Color color() {
 		return getColor();
