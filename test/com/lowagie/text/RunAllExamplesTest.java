@@ -40,17 +40,6 @@ public class RunAllExamplesTest {
     public void testFormExamples() {
         runSingleTest(com.lowagie.examples.forms.TextFields.class);
         runSingleTest(com.lowagie.examples.forms.FormTextField.class);
-        runSingleTest(com.lowagie.examples.forms.ListFields.class,
-                "pushbutton.pdf",
-                "radiobutton.pdf",
-                "checkbox.pdf",
-                "textfield.pdf",
-                "SimpleRegistrationForm.pdf",
-                "combo.pdf",
-                "list.pdf",
-                "TextFields.pdf",
-                "signature.pdf"
-                ); // FIXME: test output
         runSingleTest(com.lowagie.examples.forms.FormCheckbox.class);
         runSingleTest(com.lowagie.examples.forms.SimpleRegistrationForm.class);
         runSingleTest(com.lowagie.examples.forms.FormSignature.class);
@@ -63,6 +52,17 @@ public class RunAllExamplesTest {
         runSingleTest(com.lowagie.examples.forms.FormPushButton.class);
         runSingleTest(com.lowagie.examples.forms.FormList.class);
         runSingleTest(com.lowagie.examples.forms.FormRadioButton.class);
+        runSingleTest(com.lowagie.examples.forms.ListFields.class,
+                "pushbutton.pdf",
+                "radiobutton.pdf",
+                "checkbox.pdf",
+                "textfield.pdf",
+                "SimpleRegistrationForm.pdf",
+                "combo.pdf",
+                "list.pdf",
+                "TextFields.pdf",
+                "signature.pdf"
+                ); // FIXME: test output
     }
 
     @Test
