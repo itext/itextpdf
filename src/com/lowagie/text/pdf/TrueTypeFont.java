@@ -966,7 +966,7 @@ class TrueTypeFont extends BaseFont {
      * @param fontStream the indirect reference to a PdfStream containing the font or <CODE>null</CODE>
      * @throws DocumentException if there is an error
      */
-    protected PdfDictionary getFontDescriptor(PdfIndirectReference fontStream, String subsetPrefix) {
+    protected PdfDictionary getFontDescriptor(PdfIndirectReference fontStream, String subsetPrefix, PdfIndirectReference cidset) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONTDESCRIPTOR);
         dic.put(PdfName.ASCENT, new PdfNumber((int)os_2.sTypoAscender * 1000 / head.unitsPerEm));
         dic.put(PdfName.CAPHEIGHT, new PdfNumber((int)os_2.sCapHeight * 1000 / head.unitsPerEm));
@@ -976,6 +976,8 @@ class TrueTypeFont extends BaseFont {
         (int)head.yMin * 1000 / head.unitsPerEm,
         (int)head.xMax * 1000 / head.unitsPerEm,
         (int)head.yMax * 1000 / head.unitsPerEm));
+        if (cidset != null)
+            dic.put(PdfName.CIDSET, cidset);
         if (cff) {
             if (encoding.startsWith("Identity-"))
                 dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName+"-"+encoding));
@@ -1224,7 +1226,7 @@ class TrueTypeFont extends BaseFont {
                 ind_font = obj.getIndirectReference();
             }
         }
-        pobj = getFontDescriptor(ind_font, subsetPrefix);
+        pobj = getFontDescriptor(ind_font, subsetPrefix, null);
         if (pobj != null){
             obj = writer.addToBody(pobj);
             ind_font = obj.getIndirectReference();
