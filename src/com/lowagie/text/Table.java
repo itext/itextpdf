@@ -350,6 +350,7 @@ public class Table extends Rectangle {
     /**
      * Gets the default layout of the Table.
      * @return a cell with all the defaults
+     * @since 2.0.7
      */
     public Cell getDefaultCell() {
         return defaultCell;
@@ -359,6 +360,7 @@ public class Table extends Rectangle {
      * Sets the default layout of the Table to
      * the provided Cell
      * @param value a cell with all the defaults
+     * @since 2.0.7
      */
     public void setDefaultCell(Cell value) {
         defaultCell = value;
