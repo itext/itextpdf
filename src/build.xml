@@ -44,6 +44,10 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
 	</target>
 	
+	<target name="sign.jar">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
+	</target>
+	
 	<target name="jar.debug">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.debug" />
 	</target>
