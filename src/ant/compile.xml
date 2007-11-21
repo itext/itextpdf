@@ -113,6 +113,7 @@
             </fileset>
         </copy>
         <junit printsummary="yes" showoutput="no" filtertrace="no" haltonfailure="yes" dir="${itext.bin.data}">
+            <sysproperty key="java.awt.headless" value="true"/>
             <classpath refid="itext.test.classpath" />
             <batchtest fork="yes">
                 <fileset dir="${itext.src.test}">
