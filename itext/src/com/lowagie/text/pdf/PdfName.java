@@ -214,6 +214,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName CIDFONTTYPE2 = new PdfName("CIDFontType2");
     /** A name */
+    public static final PdfName CIDSET = new PdfName("CIDSet");
+    /** A name */
     public static final PdfName CIDSYSTEMINFO = new PdfName("CIDSystemInfo");
     /** A name */
     public static final PdfName CIDTOGIDMAP = new PdfName("CIDToGIDMap");
