@@ -98,6 +98,7 @@
         </javac>
 
         <mkdir dir="${itext.bin.data}" />
+        <mkdir dir="${itext.reports}/xml" />
         <copy flatten="yes" todir="${itext.bin.data}">
             <fileset dir="${itext.src.examples}">
                 <include name="**/*.bmp"/>
@@ -115,12 +116,19 @@
         <junit printsummary="yes" showoutput="no" filtertrace="no" haltonfailure="yes" dir="${itext.bin.data}">
             <sysproperty key="java.awt.headless" value="true"/>
             <classpath refid="itext.test.classpath" />
-            <batchtest fork="yes">
+            <batchtest fork="yes" todir="${itext.reports}/xml">
                 <fileset dir="${itext.src.test}">
                     <include name="**/*Test.java" />
                 </fileset>
             </batchtest>
+            <formatter type="xml" />
         </junit>
+        <junitreport todir="${itext.reports}/xml">
+            <fileset dir="${itext.reports}/xml">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${itext.reports}/junit" />
+        </junitreport>
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

@@ -80,8 +80,8 @@
 
 		<taskdef name="jdiff" classname="jdiff.JDiffAntTask" classpath="${JDIFF_HOME}/antjdiff.jar" />
 
-		<mkdir dir="${itext.reports}"/>
-		<jdiff destdir="${itext.reports}" verbose="on" stats="on" docchanges="on">
+		<mkdir dir="${itext.reports}/jdiff"/>
+		<jdiff destdir="${itext.reports}/jdiff" verbose="on" stats="on" docchanges="on">
 			<old name="${itext.previous.version}">
 				<dirset dir="${itext.previous.location}/src" includes="com/**" />
 			</old>
@@ -89,8 +89,8 @@
 				<dirset dir="${itext.src}" includes="com/**" />
 			</new>
 		</jdiff>
-		<copy file="${itext.reports}/missingSinces.txt"
-			tofile="${itext.reports}/missingSinces.err" >
+		<copy file="${itext.reports}/jdiff/missingSinces.txt"
+			tofile="${itext.reports}/jdiff/missingSinces.err" >
 
 			<filterchain>
 				<striplinecomments>
@@ -100,12 +100,12 @@
 		</copy>
 
 		<concat>
-			<filelist dir="${itext.reports}" files="missingSinces.err"/>
+			<filelist dir="${itext.reports}/jdiff" files="missingSinces.err"/>
 		</concat>
 
 		<fail message="missing @since tags">
 			<condition>
-				<length file="${itext.reports}/missingSinces.err" when="greater" length="0" />
+				<length file="${itext.reports}/jdiff/missingSinces.err" when="greater" length="0" />
 			</condition>
 		</fail>
 	</target>
