@@ -796,7 +796,8 @@ public class Font implements Comparable {
 	 * Gets the family of this font.
 	 * 
 	 * @return the value of the family
-	 * @deprecated Use {@link #getFamily()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getFamily()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int family() {
 		return getFamily();
