@@ -166,7 +166,7 @@ public class Table extends Rectangle {
     private Point curPosition = new Point(0, 0);
     
     /** This Empty Cell contains the DEFAULT layout of each Cell added with the method addCell(String content). */
-    private Cell defaultLayout = new Cell(true);
+    private Cell defaultCell = new Cell(true);
     
     /** This is the number of the last row of the table headers. */
     private int lastHeaderRow = -1;
@@ -235,7 +235,7 @@ public class Table extends Rectangle {
         super(0, 0, 0, 0);
         setBorder(BOX);
         setBorderWidth(1);
-        defaultLayout.setBorder(BOX);
+        defaultCell.setBorder(BOX);
         
         // a table should have at least 1 column
         if (columns <= 0) {
@@ -267,7 +267,7 @@ public class Table extends Rectangle {
     	this.columns = t.columns;
     	this.rows = t.rows;
     	this.curPosition = t.curPosition;
-    	this.defaultLayout = t.defaultLayout;
+    	this.defaultCell = t.defaultCell;
     	this.lastHeaderRow = t.lastHeaderRow;
     	this.alignment = t.alignment;
     	this.cellpadding = t.cellpadding;
@@ -351,8 +351,8 @@ public class Table extends Rectangle {
      * Gets the default layout of the Table.
      * @return a cell with all the defaults
      */
-    public Cell getDefaultLayout() {
-        return defaultLayout;
+    public Cell getDefaultCell() {
+        return defaultCell;
     }
     
     /**
@@ -360,8 +360,8 @@ public class Table extends Rectangle {
      * the provided Cell
      * @param value a cell with all the defaults
      */
-    public void setDefaultLayout(Cell value) {
-        defaultLayout = value;
+    public void setDefaultCell(Cell value) {
+        defaultCell = value;
     }
 
 	/**
@@ -683,7 +683,7 @@ public class Table extends Rectangle {
         if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
         if (!isValidLocation(aCell, aLocation)) throw new BadElementException("Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.getColspan() + " and a rowspan of " + aCell.getRowspan() + " is illegal (beyond boundaries/overlapping).");
         
-        if (aCell.getBorder() == UNDEFINED) aCell.setBorder(defaultLayout.getBorder());
+        if (aCell.getBorder() == UNDEFINED) aCell.setBorder(defaultCell.getBorder());
         aCell.fill();
         placeCell(rows, aCell, aLocation);
         setCurrentLocationToNextValidPosition(aLocation);
@@ -728,14 +728,14 @@ public class Table extends Rectangle {
      */
     public void addCell(Phrase content, Point location) throws BadElementException {
         Cell cell = new Cell(content);
-        cell.setBorder(defaultLayout.getBorder());
-        cell.setBorderWidth(defaultLayout.getBorderWidth());
-        cell.setBorderColor(defaultLayout.getBorderColor());
-        cell.setBackgroundColor(defaultLayout.getBackgroundColor());
-        cell.setHorizontalAlignment(defaultLayout.getHorizontalAlignment());
-        cell.setVerticalAlignment(defaultLayout.getVerticalAlignment());
-        cell.setColspan(defaultLayout.getColspan());
-        cell.setRowspan(defaultLayout.getRowspan());
+        cell.setBorder(defaultCell.getBorder());
+        cell.setBorderWidth(defaultCell.getBorderWidth());
+        cell.setBorderColor(defaultCell.getBorderColor());
+        cell.setBackgroundColor(defaultCell.getBackgroundColor());
+        cell.setHorizontalAlignment(defaultCell.getHorizontalAlignment());
+        cell.setVerticalAlignment(defaultCell.getVerticalAlignment());
+        cell.setColspan(defaultCell.getColspan());
+        cell.setRowspan(defaultCell.getRowspan());
         addCell(cell, location);
     }
     
@@ -1156,7 +1156,7 @@ public class Table extends Rectangle {
             for (int i=0; i < rows.size(); i++) {
                 for (int j=0; j < columns; j++) {
                     if (!((Row) rows.get(i)).isReserved(j)) {
-                        addCell(defaultLayout, new Point(i, j));
+                        addCell(defaultCell, new Point(i, j));
                     }
                 }
             }
@@ -1212,22 +1212,22 @@ public class Table extends Rectangle {
     private void assumeTableDefaults(Cell aCell) {
         
         if (aCell.getBorder() == Rectangle.UNDEFINED) {
-            aCell.setBorder(defaultLayout.getBorder());
+            aCell.setBorder(defaultCell.getBorder());
         }
         if (aCell.getBorderWidth() == Rectangle.UNDEFINED) {
-            aCell.setBorderWidth(defaultLayout.getBorderWidth());
+            aCell.setBorderWidth(defaultCell.getBorderWidth());
         }
         if (aCell.getBorderColor() == null) {
-            aCell.setBorderColor(defaultLayout.getBorderColor());
+            aCell.setBorderColor(defaultCell.getBorderColor());
         }
         if (aCell.getBackgroundColor() == null) {
-            aCell.setBackgroundColor(defaultLayout.getBackgroundColor());
+            aCell.setBackgroundColor(defaultCell.getBackgroundColor());
         }
         if (aCell.getHorizontalAlignment() == Element.ALIGN_UNDEFINED) {
-            aCell.setHorizontalAlignment(defaultLayout.getHorizontalAlignment());
+            aCell.setHorizontalAlignment(defaultCell.getHorizontalAlignment());
         }
         if (aCell.getVerticalAlignment() == Element.ALIGN_UNDEFINED) {
-            aCell.setVerticalAlignment(defaultLayout.getVerticalAlignment());
+            aCell.setVerticalAlignment(defaultCell.getVerticalAlignment());
         }
     }
     
@@ -1402,7 +1402,8 @@ public class Table extends Rectangle {
      *
      * @param    attributes        Some attributes
      * @throws BadElementException 
-     * @deprecated 
+	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getTable(Properties)},
+	 * scheduled for removal at 2.1.0
      */
     public Table(java.util.Properties attributes) {
         this(com.lowagie.text.factories.ElementFactory.getTable(attributes));
@@ -1412,7 +1413,8 @@ public class Table extends Rectangle {
 	 * Gets the number of columns.
 	 *
 	 * @return    a value
-	 * @deprecated Use {@link #getColumns()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getColumns()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int columns() {
 		return getColumns();
@@ -1422,7 +1424,8 @@ public class Table extends Rectangle {
 	 * Gets the horizontal alignment.
 	 *
 	 * @return  a value
-	 * @deprecated Use {@link #getAlignment()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getAlignment()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int alignment() {
 		return getAlignment();
@@ -1432,7 +1435,8 @@ public class Table extends Rectangle {
 	 * Gets the cellpadding.
 	 *
 	 * @return  a value
-	 * @deprecated Use {@link #getPadding()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getPadding()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float cellpadding() {
 		return getPadding();
@@ -1442,7 +1446,8 @@ public class Table extends Rectangle {
 	 * Gets the cellspacing.
 	 *
 	 * @return  a value
-	 * @deprecated Use {@link #getSpacing()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getSpacing()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float cellspacing() {
 		return getSpacing();
@@ -1452,7 +1457,8 @@ public class Table extends Rectangle {
      * Sets the cellpadding.
      *
      * @param       value   the new value
-     * @deprecated	use setPadding
+	 * @deprecated As of iText 2.0.3, replaced by {@link #setPadding(float)},
+	 * scheduled for removal at 2.1.0
      */
     public void setSpaceInsideCell(float value) {
         cellpadding = value;
@@ -1462,7 +1468,8 @@ public class Table extends Rectangle {
      * Sets the cellspacing.
      *
      * @param       value   the new value
-     * @deprecated	use setSpacing
+	 * @deprecated As of iText 2.0.3, replaced by {@link #setSpacing(float)},
+	 * scheduled for removal at 2.1.0
      */
     public void setSpaceBetweenCells(float value) {
         cellspacing = value;
@@ -1472,7 +1479,8 @@ public class Table extends Rectangle {
 	 * Gets the last number of the rows that contain headers.
 	 *  
 	 * @return a rownumber
-	 * @deprecated Use {@link #getLastHeaderRow()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getLastHeaderRow()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int lastHeaderRow() {
 		return getLastHeaderRow();
@@ -1482,7 +1490,8 @@ public class Table extends Rectangle {
 	 * Gets the table width (a percentage).
 	 *
 	 * @return      the table width
-	 * @deprecated Use {@link #getWidth()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getWidth()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float widthPercentage() {
 		return getWidth();
@@ -1492,7 +1501,8 @@ public class Table extends Rectangle {
      * Sets the width of this table (in percentage of the available space).
      *
      * @param   width           the width
-     * @deprecated setTotalWidth(int width)
+	 * @deprecated As of iText 2.0.3, replaced by {@link #setWidth(float)} and {@link #setLocked(boolean)},
+	 * scheduled for removal at 2.1.0
      */
     public void setAbsWidth(String width) {
     	setWidth(Float.parseFloat(width + "f"));
@@ -1503,7 +1513,8 @@ public class Table extends Rectangle {
      * Gets the table width (in pixels).
      *
      * @return  the table width
-     * @deprecated use getWidth
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getWidth()},
+	 * scheduled for removal at 2.1.0
      */
     public String absWidth() {
     	if (isLocked())
@@ -1519,10 +1530,11 @@ public class Table extends Rectangle {
      * added with method <CODE>addCell(String content)</CODE>.
      *
      * @param       value   the new border value
-     * @deprecated	use getDefaultCell.setBorder
+	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setBorder(int)},
+	 * scheduled for removal at 2.1.0
      */
     public void setDefaultCellBorder(int value) {
-        defaultLayout.setBorder(value);
+        defaultCell.setBorder(value);
     }
     
     /**
@@ -1530,10 +1542,11 @@ public class Table extends Rectangle {
      * added with method <CODE>addCell(String content)</CODE>.
      *
      * @param       value   the new width
-     * @deprecated	use getDefaultCell.setBorderWidth
+	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setBorderWidth(float)},
+	 * scheduled for removal at 2.1.0
      */
     public void setDefaultCellBorderWidth(float value) {
-        defaultLayout.setBorderWidth(value);
+        defaultCell.setBorderWidth(value);
     }
     
     /**
@@ -1541,10 +1554,11 @@ public class Table extends Rectangle {
      * added with method <CODE>addCell(String content)</CODE>.
      *
      * @param       color   the new color
-     * @deprecated	getDefaultCell.setBorderColor
+	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setBorderColor(Color)},
+	 * scheduled for removal at 2.1.0
      */
     public void setDefaultCellBorderColor(Color color) {
-        defaultLayout.setBorderColor(color);
+        defaultCell.setBorderColor(color);
     }
     
     /**
@@ -1552,10 +1566,11 @@ public class Table extends Rectangle {
      * added with method <CODE>addCell(String content)</CODE>.
      *
      * @param       color   the new color
-     * @deprecated	use getDefaultCell.setBackgroundColor
+	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setBackgroundColor(Color)},
+	 * scheduled for removal at 2.1.0
      */
     public void setDefaultCellBackgroundColor(Color color) {
-        defaultLayout.setBackgroundColor(color);
+        defaultCell.setBackgroundColor(color);
     }
     
     /**
@@ -1563,11 +1578,12 @@ public class Table extends Rectangle {
      * added with method <CODE>addCell(String content)</CODE>.
      *
      * @param       value   the new value
-     * @deprecated	use getDefaultCell.setGrayFill
+	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setGrayFill(float)},
+	 * scheduled for removal at 2.1.0
      */
     public void setDefaultCellGrayFill(float value) {
         if (value >= 0 && value <= 1) {
-            defaultLayout.setGrayFill(value);
+            defaultCell.setGrayFill(value);
         }
     }
     
@@ -1576,10 +1592,11 @@ public class Table extends Rectangle {
      * added with method <CODE>addCell(String content)</CODE>.
      *
      * @param       value   the new alignment value
-     * @deprecated	use getDefaultCell.setHorizontalAlignment
+	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setHorizontalAlignment(int)},
+	 * scheduled for removal at 2.1.0
      */
     public void setDefaultHorizontalAlignment(int value) {
-        defaultLayout.setHorizontalAlignment(value);
+        defaultCell.setHorizontalAlignment(value);
     }
     
     /**
@@ -1587,10 +1604,11 @@ public class Table extends Rectangle {
      * added with method <CODE>addCell(String content)</CODE>.
      *
      * @param       value   the new alignment value
-     * @deprecated	use getDefaultCell.setVerticalAlignment
+	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setVerticalAlignment(int)},
+	 * scheduled for removal at 2.1.0
      */
     public void setDefaultVerticalAlignment(int value) {
-        defaultLayout.setVerticalAlignment(value);
+        defaultCell.setVerticalAlignment(value);
     }
     
     /**
@@ -1598,10 +1616,11 @@ public class Table extends Rectangle {
      * added with method <CODE>addCell(String content)</CODE>.
      *
      * @param       value   the new rowspan value
-     * @deprecated	use getDefaultCell.setRowspan
+	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setRowspan(int)},
+	 * scheduled for removal at 2.1.0
      */
     public void setDefaultRowspan(int value) {
-        defaultLayout.setRowspan(value);
+        defaultCell.setRowspan(value);
     }
     
     /**
@@ -1609,10 +1628,32 @@ public class Table extends Rectangle {
      * added with method <CODE>addCell(String content)</CODE>.
      *
      * @param       value   the new colspan value
-     * @deprecated	use getDefaultCell.setColspan
+	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setColspan(int)},
+	 * scheduled for removal at 2.1.0
      */
     public void setDefaultColspan(int value) {
-        defaultLayout.setColspan(value);
+        defaultCell.setColspan(value);
+    }
+    
+    /**
+     * Gets the default layout of the Table.
+     * @return a cell with all the defaults
+     * @deprecated As of iText 2.0.7, replaced by {@link #getDefaultCell()},
+     * scheduled for removal at 2.2.0
+     */
+    public Cell getDefaultLayout() {
+        return getDefaultCell();
+    }
+    
+    /**
+     * Sets the default layout of the Table to
+     * the provided Cell
+     * @param value a cell with all the defaults
+     * @deprecated As of iText 2.0.7, replaced by {@link #setDefaultCell(Cell)},
+     * scheduled for removal at 2.2.0
+     */
+    public void setDefaultLayout(Cell value) {
+        defaultCell = value;
     }
     
 }

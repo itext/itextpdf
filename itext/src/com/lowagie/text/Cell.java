@@ -753,7 +753,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	/**
 	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
 	 * @return NA
-	 * @deprecated Use {@link #getTop()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getTop()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float top() {
 		return getTop();
@@ -770,7 +771,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	/**
 	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
 	 * @return NA
-	 * @deprecated Use {@link #getBottom()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getBottom()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float bottom() {
 		return getBottom();
@@ -787,7 +789,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	/**
 	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
 	 * @return NA
-	 * @deprecated Use {@link #getLeft()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getLeft()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float left() {
 		return getLeft();
@@ -804,7 +807,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	/**
 	 * This method throws an <CODE>UnsupportedOperationException</CODE>.
 	 * @return NA
-	 * @deprecated Use {@link #getRight()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getRight()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float right() {
 		return getRight();
@@ -893,7 +897,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * the value of some <VAR>attributes</VAR>.
 	 *
 	 * @param	attributes		Some attributes
-	 * @deprecated use ElementFactory.getCell(attributes)
+	 * @deprecated As of iText 2.0.3, use {@link com.lowagie.text.factories.ElementFactory#getCell(Properties)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public Cell(java.util.Properties attributes) {
 		this();
@@ -912,7 +917,8 @@ public class Cell extends Rectangle implements TextElementArray {
     /**
 	 * Gets the horizontal alignment.
 	 * @return	a value
-	 * @deprecated Use {@link #getHorizontalAlignment()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getHorizontalAlignment()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int horizontalAlignment() {
 		return getHorizontalAlignment();
@@ -921,7 +927,8 @@ public class Cell extends Rectangle implements TextElementArray {
     /**
 	 * Gets the vertical alignment.
 	 * @return	a value
-	 * @deprecated Use {@link #getVerticalAlignment()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getVerticalAlignment()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int verticalAlignment() {
 		return getVerticalAlignment();
@@ -931,7 +938,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Gets the width.
 	 *
 	 * @return	a value
-	 * @deprecated Use {@link #getWidthAsString()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getWidthAsString()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public String cellWidth() {
 		return getWidthAsString();
@@ -940,7 +948,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	/**
 	 * Gets the colspan.
 	 * @return	a value
-	 * @deprecated Use {@link #getColspan()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getColspan()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int colspan() {
 		return getColspan();
@@ -949,7 +958,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	/**
 	 * Gets the rowspan.
 	 * @return	a value
-	 * @deprecated Use {@link #getRowspan()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getRowspan()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int rowspan() {
 		return getRowspan();
@@ -959,7 +969,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Gets the leading.
 	 *
 	 * @return	a value
-	 * @deprecated Use {@link #getLeading()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getLeading()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float leading() {
 		return getLeading();
@@ -969,7 +980,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Is this <CODE>Cell</CODE> a header?
 	 *
 	 * @return	a value
-	 * @deprecated Use {@link #isHeader()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #isHeader()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public boolean header() {
 		return isHeader();
@@ -979,7 +991,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Set nowrap.
 	 *
 	 * @param	value	the new value
-	 * @deprecated Use setMaxLines(1) instead
+	 * @deprecated As of iText 2.0.3, use setMaxLines(1) instead,
+	 * scheduled for removal at 2.1.0
 	 */
 	public void setNoWrap(boolean value) {
 		if (value)
@@ -992,7 +1005,8 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Get nowrap.
 	 *
 	 * @return	a value
-	 * @deprecated Use getMaxLines() == 1 instead
+	 * @deprecated As of iText 2.0.3, use getMaxLines() == 1 instead,
+	 * scheduled for removal at 2.1.0
 	 */
 	public boolean noWrap() {
 		return maxLines == 1;

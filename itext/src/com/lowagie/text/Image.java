@@ -1931,7 +1931,8 @@ public abstract class Image extends Rectangle {
 	 * image.
 	 * 
 	 * @return a <CODE>String</CODE>
-	 * @deprecated Use {@link #getUrl()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getUrl()},
+	 * scheduled for removal at 2.1.0
 	 */
 	
 	public URL url() {
@@ -1945,7 +1946,8 @@ public abstract class Image extends Rectangle {
 	 * </CODE>.
 	 * 
 	 * @return the template
-	 * @deprecated Use {@link #getTemplateData()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getTemplateData()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public PdfTemplate templateData() {
 		return getTemplateData();
@@ -1961,7 +1963,8 @@ public abstract class Image extends Rectangle {
 	 * @throws BadElementException
 	 * @throws MalformedURLException
 	 * @throws IOException
-	 * @deprecated use ElementFactory.getImage(attributes)
+	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getImage(Properties)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public static Image getInstance(java.util.Properties attributes)
 			throws BadElementException, MalformedURLException, IOException {
@@ -1972,7 +1975,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the left indentation.
 	 * 
 	 * @return the left indentation
-	 * @deprecated Use {@link #getIndentationLeft()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentationLeft()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float indentationLeft() {
 		return getIndentationLeft();
@@ -1982,7 +1986,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the right indentation.
 	 * 
 	 * @return the right indentation
-	 * @deprecated Use {@link #getIndentationRight()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentationRight()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float indentationRight() {
 		return getIndentationRight();
@@ -1992,7 +1997,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the spacing before this image.
 	 * 
 	 * @return the spacing
-	 * @deprecated Use {@link #getSpacingBefore()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getSpacingBefore()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float spacingBefore() {
 		return getSpacingBefore();
@@ -2002,7 +2008,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the spacing before this image.
 	 * 
 	 * @return the spacing
-	 * @deprecated Use {@link #getSpacingAfter()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getSpacingAfter()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float spacingAfter() {
 		return getSpacingAfter();
@@ -2015,7 +2022,8 @@ public abstract class Image extends Rectangle {
 	 * </CODE>.
 	 * 
 	 * @return the raw data
-	 * @deprecated Use {@link #getRawData()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getRawData()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public byte[] rawData() {
 		return getRawData();
@@ -2028,7 +2036,8 @@ public abstract class Image extends Rectangle {
 	 * </CODE>.
 	 * 
 	 * @return a bpc value
-	 * @deprecated Use {@link #getBpc()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getBpc()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int bpc() {
 		return getBpc();
@@ -2038,7 +2047,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the annotation.
 	 * 
 	 * @return the annotation that is linked to this image
-	 * @deprecated Use {@link #getAnnotation()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getAnnotation()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public Annotation annotation() {
 		return getAnnotation();
@@ -2049,7 +2059,8 @@ public abstract class Image extends Rectangle {
 	 * position.
 	 * 
 	 * @return a boolean
-	 * @deprecated Use {@link #hasAbsoluteY()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #hasAbsoluteY()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public boolean hasAbsolutePosition() {
 		return hasAbsoluteY();
@@ -2059,7 +2070,8 @@ public abstract class Image extends Rectangle {
 	 * Returns the absolute X position.
 	 * 
 	 * @return a position
-	 * @deprecated Use {@link #getAbsoluteX()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getAbsoluteX()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float absoluteX() {
 		return getAbsoluteX();
@@ -2069,7 +2081,8 @@ public abstract class Image extends Rectangle {
 	 * Returns the absolute Y position.
 	 * 
 	 * @return a position
-	 * @deprecated Use {@link #getAbsoluteY()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getAbsoluteY()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float absoluteY() {
 		return getAbsoluteY();
@@ -2079,7 +2092,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the plain width of the image.
 	 * 
 	 * @return a value
-	 * @deprecated Use {@link #getPlainWidth()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getPlainWidth()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float plainWidth() {
 		return getPlainWidth();
@@ -2089,7 +2103,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the plain height of the image.
 	 * 
 	 * @return a value
-	 * @deprecated Use {@link #getPlainHeight()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getPlainHeight()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float plainHeight() {
 		return getPlainHeight();
@@ -2099,7 +2114,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the scaled height of the image.
 	 * 
 	 * @return a value
-	 * @deprecated Use {@link #getScaledWidth()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getScaledWidth()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float scaledWidth() {
 		return getScaledWidth();
@@ -2109,7 +2125,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the scaled height of the image.
 	 * 
 	 * @return a value
-	 * @deprecated Use {@link #getScaledHeight()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getScaledHeight()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float scaledHeight() {
 		return getScaledHeight();
@@ -2119,7 +2136,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the alignment for the image.
 	 * 
 	 * @return a value
-	 * @deprecated Use {@link #getAlignment()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getAlignment()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int alignment() {
 		return getAlignment();
@@ -2129,7 +2147,8 @@ public abstract class Image extends Rectangle {
 	 * Gets the alternative text for the image.
 	 * 
 	 * @return a <CODE>String</CODE>
-	 * @deprecated Use {@link #getAlt()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getAlt()},
+	 * scheduled for removal at 2.1.0
 	 */
 	
 	public String alt() {
@@ -2142,7 +2161,8 @@ public abstract class Image extends Rectangle {
 	 * Remark: this only makes sense for Images of the type <CODE>Jpeg</CODE>.
 	 * 
 	 * @return a colorspace value
-	 * @deprecated Use {@link #getColorspace()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getColorspace()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int colorspace() {
 		return getColorspace();
@@ -2154,7 +2174,8 @@ public abstract class Image extends Rectangle {
 	 * @param invert
 	 *            <CODE>true</CODE> to invert the meaning of the bits of a
 	 *            mask
-	 * @deprecated	use setInverted
+	 * @deprecated As of iText 2.0.3, replaced by {@link #setInverted(boolean)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public void setInvertMask(boolean invert) {
 		setInverted(invert);
@@ -2164,7 +2185,8 @@ public abstract class Image extends Rectangle {
 	 * Returns <CODE>true</CODE> if the bits are to be inverted in the mask.
 	 * 
 	 * @return <CODE>true</CODE> if the bits are to be inverted in the mask
-	 * @deprecated use isInvert()
+	 * @deprecated As of iText 2.0.3, replaced by {@link #isInverted()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public boolean isInvertMask() {
 		return isInverted();

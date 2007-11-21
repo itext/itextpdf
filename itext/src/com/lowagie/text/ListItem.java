@@ -256,7 +256,8 @@ public class ListItem extends Paragraph {
      * the value of some <VAR>attributes</VAR>.
      *
      * @param	attributes		Some attributes
-     * @deprecated use ElementFactory.getParagraph(attributes)
+     * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getListItem(Properties)},
+	 * scheduled for removal at 2.1.0
      */
     public ListItem(java.util.Properties attributes) {
     	this(com.lowagie.text.factories.ElementFactory.getParagraph(attributes));
@@ -266,7 +267,8 @@ public class ListItem extends Paragraph {
 	 * Returns the listsymbol.
 	 *
 	 * @return	a <CODE>Chunk</CODE>
-	 * @deprecated Use {@link #getListSymbol()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getListSymbol()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public Chunk listSymbol() {
 		return getListSymbol();

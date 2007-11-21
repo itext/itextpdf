@@ -342,7 +342,7 @@ public class ElementFactory {
 			
 	        table.setBorder(Table.BOX);
 	        table.setBorderWidth(1);
-	        table.getDefaultLayout().setBorder(Table.BOX);
+	        table.getDefaultCell().setBorder(Table.BOX);
 	        
 	        value = attributes.getProperty(ElementTags.LASTHEADERROW);
 	        if (value != null) {
