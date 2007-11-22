@@ -433,7 +433,7 @@ public class TiffImage {
                     if (compression != TIFFConstants.COMPRESSION_NONE)
                         outBuf = new byte[(w * bitsPerSample * samplePerPixel + 7) / 8 * height];
                     if (reverse)
-                        reverseBits(im);
+                        TIFFFaxDecoder.reverseBits(im);
                     switch (compression) {
                         case TIFFConstants.COMPRESSION_DEFLATE:
                         case TIFFConstants.COMPRESSION_ADOBE_DEFLATE:
@@ -511,17 +511,6 @@ public class TiffImage {
         catch (Exception e) {
             throw new ExceptionConverter(e);
         }
-    }
-    
-    /**
-      * Reverses the bits in the array
-      * @param b the bits to reverse
-      *
-      * @since 2.0.7
-     */
-    public static void reverseBits(byte[] b) {
-        for (int k = 0; k < b.length; ++k)
-            b[k] = TIFFFaxDecoder.flipTable[b[k] & 0xff];
     }
     
     static long[] getArrayLongShort(TIFFDirectory dir, int tag) {
