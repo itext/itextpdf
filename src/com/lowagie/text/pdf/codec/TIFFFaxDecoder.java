@@ -577,6 +577,17 @@ public class TIFFFaxDecoder {
         this.currChangingElems = new int[w];
     }
     
+    /**
+      * Reverses the bits in the array
+      * @param b the bits to reverse
+      *
+      * @since 2.0.7
+     */
+    public static void reverseBits(byte[] b) {
+        for (int k = 0; k < b.length; ++k)
+            b[k] = flipTable[b[k] & 0xff];
+    }
+
     // One-dimensional decoding methods
     
     public void decode1D(byte[] buffer, byte[] compData,
