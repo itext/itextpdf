@@ -64,6 +64,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * 
  * @version $Revision$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Howard Shanks (hgshank@yahoo.com)
  */
 public class RtfParser {
 	/**
@@ -228,7 +229,19 @@ public class RtfParser {
 				ctrlWord = "\\cf" + this.importHeader.mapColorNr(ctrlWord.substring(3));
 			} else if(RtfColorTableParser.stringMatches(ctrlWord, "\\cb")) {
 				ctrlWord = "\\cb" + this.importHeader.mapColorNr(ctrlWord.substring(3));
-			}
+			} else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcbpat")){
+                ctrlWord = "\\clcbpat" + this.importHeader.mapColorNr(ctrlWord.substring(8));
+            } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcbpatraw")) {
+                ctrlWord = "\\clcbpatraw" + this.importHeader.mapColorNr(ctrlWord.substring(11));
+            } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcfpat")) {
+                ctrlWord = "\\clcfpat" + this.importHeader.mapColorNr(ctrlWord.substring(11));
+            } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcfpatraw")) {
+                ctrlWord = "\\clcfpatraw" + this.importHeader.mapColorNr(ctrlWord.substring(11));
+            } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\trcfpat")) {
+                ctrlWord = "\\trcfpat" + this.importHeader.mapColorNr(ctrlWord.substring(11));
+            } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\trcbpat")) {
+                ctrlWord = "\\trcbpat" + this.importHeader.mapColorNr(ctrlWord.substring(11));
+            }
 			this.rtfDoc.add(new RtfDirectContent(ctrlWord));
 		} else if(this.state == PARSER_IN_FONT_TABLE) {
 			this.fontTableParser.handleCtrlWord(ctrlWord, groupLevel);
