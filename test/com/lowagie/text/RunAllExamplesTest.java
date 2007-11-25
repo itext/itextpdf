@@ -24,6 +24,8 @@ public class RunAllExamplesTest {
         r.testDirectContentExamples();
         r.testFontExamples();
         r.testRtfExamples();
+        
+        r.testWindowsFonts();
     }
 
     public void runSingleTest(Class c, String... args) {
@@ -86,7 +88,7 @@ public class RunAllExamplesTest {
         runSingleTest(com.lowagie.examples.general.read.ReadEncrypted.class);
         runSingleTest(com.lowagie.examples.general.LandscapePortrait.class);
         runSingleTest(com.lowagie.examples.general.CustomPageSize.class);
-        // FIXME: closing System.out!!!! runSingleTest(com.lowagie.examples.general.HelloSystemOut.class);
+        runSingleTest(com.lowagie.examples.general.HelloSystemOut.class);
         runSingleTest(com.lowagie.examples.general.HelloWorldMultiple.class);
     }
 
