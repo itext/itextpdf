@@ -800,7 +800,8 @@ public class Chunk implements Element {
 	 * 
 	 * @param attributes
 	 *            Some attributes
-	 * @deprecated use ElementFactory.getChunk()
+	 * @deprecated As of iText 2.0.3, use {@link com.lowagie.text.factories.ElementFactory#getChunk(Properties)} instead,
+	 * scheduled for removal at 2.1.0
 	 */
 
 	public Chunk(java.util.Properties attributes) {
@@ -811,7 +812,8 @@ public class Chunk implements Element {
 	 * Returns the content of this <CODE>Chunk</CODE>.
 	 * 
 	 * @return a <CODE>String</CODE>
-	 * @deprecated Use {@link #getContent()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getContent()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public String content() {
 		return getContent();
@@ -821,7 +823,8 @@ public class Chunk implements Element {
 	 * Gets the font of this <CODE>Chunk</CODE>.
 	 * 
 	 * @return a <CODE>Font</CODE>
-	 * @deprecated Use {@link #getFont()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getFont()},
+	 * scheduled for removal at 2.1.0
 	 */
 	
 	public Font font() {
@@ -834,7 +837,8 @@ public class Chunk implements Element {
 	 * @param table
 	 *            a Hashtable
 	 * @return the keyset of a Hashtable (or an empty set if table is null)
-	 * @deprecated Use {@link Utilities#getKeySet(Hashtable)} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link Utilities#getKeySet(Hashtable)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public static Set getKeySet(Hashtable table) {
 		return Utilities.getKeySet(table);
@@ -848,7 +852,9 @@ public class Chunk implements Element {
 	 * @param item
 	 *            the item to be added to the array
 	 * @return a new array with the item appended
-	 * @deprecated Use {@link Utilities#addToArray(Object[][],Object[])} instead
+	 * 
+	 * @deprecated As of iText 2.0.3, replaced by {@link Utilities#addToArray(Object[][],Object[])},
+	 * scheduled for removal at 2.1.0
 	 */
 	public static Object[][] addToArray(Object original[][], Object item[]) {
 		return Utilities.addToArray(original, item);

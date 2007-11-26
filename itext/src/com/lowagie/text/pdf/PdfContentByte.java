@@ -1604,8 +1604,9 @@ public class PdfContentByte {
      * Adds an outline to the document.
      *
      * @param outline the outline
-     * @deprecated not needed anymore. The outlines are extracted
-     * from the root outline
+     * @deprecated As of iText 2.0.6 or earlier,
+     * not needed anymore. The outlines are extracted from the root outline,
+	 * scheduled for removal at or after 2.1.0
      */
     public void addOutline(PdfOutline outline) {
         // for compatibility

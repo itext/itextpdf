@@ -609,7 +609,8 @@ public class Section extends ArrayList implements TextElementArray {
 	 * Returns the title, preceeded by a certain number of sectionnumbers.
 	 *
 	 * @return	a <CODE>Paragraph</CODE>
-	 * @deprecated Use {@link #getTitle()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getTitle()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public Paragraph title() {
 		return getTitle();
@@ -619,7 +620,8 @@ public class Section extends ArrayList implements TextElementArray {
 	 * Returns the numberdepth of this <CODE>Section</CODE>.
 	 *
 	 * @return	the numberdepth
-	 * @deprecated Use {@link #getNumberDepth()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getNumberDepth()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int numberDepth() {
 		return getNumberDepth();
@@ -629,7 +631,8 @@ public class Section extends ArrayList implements TextElementArray {
 	 * Returns the indentation of this <CODE>Section</CODE> on the left side.
 	 *
 	 * @return	the indentation
-	 * @deprecated Use {@link #getIndentationLeft()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentationLeft()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float indentationLeft() {
 		return getIndentationLeft();
@@ -639,7 +642,8 @@ public class Section extends ArrayList implements TextElementArray {
 	 * Returns the indentation of this <CODE>Section</CODE> on the right side.
 	 *
 	 * @return	the indentation
-	 * @deprecated Use {@link #getIndentationRight()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentationRight()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float indentationRight() {
 		return getIndentationRight();
@@ -649,7 +653,8 @@ public class Section extends ArrayList implements TextElementArray {
 	 * Returns the indentation of the content of this <CODE>Section</CODE>.
 	 *
 	 * @return	the indentation
-	 * @deprecated Use {@link #getIndentation()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentation()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float indentation() {
 		return getIndentation();
@@ -659,7 +664,8 @@ public class Section extends ArrayList implements TextElementArray {
 	 * Returns the depth of this section.
 	 *
 	 * @return	the depth
-	 * @deprecated Use {@link #getDepth()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getDepth()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int depth() {
 		return getDepth();
@@ -670,7 +676,8 @@ public class Section extends ArrayList implements TextElementArray {
      *
      * @param	attributes	the attributes
      * @return      a Section
-     * @deprecated Use ElementFactory.getSection(this, attributes)
+     * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getSection(Section, Properties)},
+	 * scheduled for removal at 2.1.0
      */
     public Section addSection(java.util.Properties attributes) {
     	return com.lowagie.text.factories.ElementFactory.getSection(this, attributes);

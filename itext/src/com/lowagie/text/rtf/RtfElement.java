@@ -102,7 +102,8 @@ public abstract class RtfElement implements RtfBasicElement {
      * Returns the content of the RtfElement in a byte array.
      *
      * @return An empty byte array
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public abstract byte[] write();
     

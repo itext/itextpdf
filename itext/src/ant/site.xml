@@ -11,8 +11,8 @@
 
 	<path id="itext.classpath">
 	    <pathelement location="${itext.bin}"/>
-	    <pathelement path="${itext.lib}/bcmail-${bc.version}.jar"/>
-	    <pathelement path="${itext.lib}/bcprov-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
 	</path>
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -141,5 +141,5 @@
         <gzip zipfile="${itext.dist}/examples.tar.gz" src="${itext.downloads}/examples.tar" />
         <delete file="${itext.downloads}/examples.tar" />
     </target>
-
+	
 </project>

@@ -309,6 +309,8 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         return 1;
     }
     
+    private static final byte[] rotbits = {(byte)0x80,(byte)0x40,(byte)0x20,(byte)0x10,(byte)0x08,(byte)0x04,(byte)0x02,(byte)0x01};
+    
     /** Outputs to the writer the font dictionaries and streams.
      * @param writer the writer for this document
      * @param ref the font indirect reference
@@ -324,6 +326,24 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         PdfIndirectReference ind_font = null;
         PdfObject pobj = null;
         PdfIndirectObject obj = null;
+        PdfIndirectReference cidset = null;
+        if (writer.getPDFXConformance() == PdfWriter.PDFA1A || writer.getPDFXConformance() == PdfWriter.PDFA1B) {
+            PdfStream stream;
+            if (metrics.length == 0) {
+                stream = new PdfStream(new byte[]{(byte)0x80});
+            }
+            else {
+                int top = ((int[])metrics[metrics.length - 1])[0];
+                byte[] bt = new byte[top / 8 + 1];
+                for (int k = 0; k < metrics.length; ++k) {
+                    int v = ((int[])metrics[k])[0];
+                    bt[v / 8] |= rotbits[v % 8];
+                }
+                stream = new PdfStream(bt);
+                stream.flateCompress();
+            }
+            cidset = writer.addToBody(stream).getIndirectReference();
+        }
         // sivan: cff
         if (cff) {
 			RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
@@ -363,7 +383,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         String subsetPrefix = "";
         if (subset)
             subsetPrefix = createSubsetPrefix();
-        PdfDictionary dic = getFontDescriptor(ind_font, subsetPrefix);
+        PdfDictionary dic = getFontDescriptor(ind_font, subsetPrefix, cidset);
         obj = writer.addToBody(dic);
         ind_font = obj.getIndirectReference();
 

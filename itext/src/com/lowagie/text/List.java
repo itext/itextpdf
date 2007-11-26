@@ -522,7 +522,8 @@ public class List implements TextElementArray {
      * the value of some <VAR>attributes</VAR>.
      *
      * @param	attributes		Some attributes
-     * @deprecated use ElementFactory.getList(attributes);
+     * 	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getList(Properties)},
+	 * scheduled for removal at 2.1.0
      */
 
 	public List(java.util.Properties attributes) {
@@ -544,7 +545,8 @@ public class List implements TextElementArray {
     /**
      * Checks if the list lettering is lowercase.
      * @return  <CODE>true</CODE> if it is lowercase, <CODE>false</CODE> otherwise.
-     * @deprecated use isLowercase();
+	 * @deprecated As of iText 2.0.3, replaced by {@link #isLowercase()},
+	 * scheduled for removal at 2.1.0
      */
     public boolean isLowerCase() {
         return isLowercase();
@@ -553,7 +555,8 @@ public class List implements TextElementArray {
     /**
      * Gets the first number        .
      * @return a number
-     * @deprecated use getFirst();
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getFirst()},
+	 * scheduled for removal at 2.1.0
      */
     public int first() {
         return getFirst();
@@ -562,7 +565,8 @@ public class List implements TextElementArray {
     /**
      * Gets the Chunk containing the symbol.
      * @return a Chunk with a symbol
-     * @deprecated use getSymbol();
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getSymbol()},
+	 * scheduled for removal at 2.1.0
      */
     public Chunk symbol() {
         return getSymbol();
@@ -571,7 +575,8 @@ public class List implements TextElementArray {
     /**
      * Gets the indentation of this paragraph on the left side.
      * @return	the indentation
-     * @deprecated use getIndentationLeft();
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentationLeft()},
+	 * scheduled for removal at 2.1.0
      */
     
     public float indentationLeft() {
@@ -581,7 +586,8 @@ public class List implements TextElementArray {
     /**
      * Gets the indentation of this paragraph on the right side.
      * @return	the indentation
-     * @deprecated use getIndentationRight();
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentationRight()},
+	 * scheduled for removal at 2.1.0
      */
     
     public float indentationRight() {
@@ -591,7 +597,8 @@ public class List implements TextElementArray {
 	/**
      * Gets the symbol indentation.
      * @return the symbol indentation
-     * @deprecated use getSymbolIndent();
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getSymbolIndent()},
+	 * scheduled for removal at 2.1.0
      */
     public float symbolIndent() {
         return getSymbolIndent();

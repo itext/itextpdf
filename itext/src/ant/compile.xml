@@ -6,15 +6,15 @@
 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
 <project name="iText.compile" default="help">
-	
+	<property file="local.properties" />
 	<property file=".ant.properties" />
 	
 	<path id="itext.classpath">
 	    <pathelement location="${itext.bin}"/>
-	    <pathelement path="${itext.lib}/bcmail-${bc.version}.jar"/>
-	    <pathelement path="${itext.lib}/bcprov-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
 	</path>
-	
+
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Help                                                             -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -25,6 +25,7 @@
         <echo>ant compile.debug: compiles iText and allows you to debug the code</echo>
         <echo>ant jar: compiles and jars iText</echo>
         <echo>ant jar.debug: compiles for debugging and jars iText</echo>
+        <echo>ant sign.jar: compiles and jars iText, then signs the jar</echo>
         <echo />
 	</target>
 
@@ -34,7 +35,7 @@
 
     <target name="compile" description="--> compiles the iText code">
         <mkdir dir="${itext.bin}" />
-        <javac source="1.4" target="1.4" srcdir="${itext.src}" destdir="${itext.bin}">
+        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}" destdir="${itext.bin}">
     	<classpath refid="itext.classpath"/>
     	</javac>
     </target>
@@ -45,7 +46,7 @@
 
     <target name="compile.debug" description="--> compiles the iText code for debugging">
         <mkdir dir="${itext.bin}" />
-        <javac source="1.4" target="1.4" srcdir="${itext.src}" destdir="${itext.bin}" listfiles="yes" debug="true" debuglevel="lines,vars,source">
+        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}" destdir="${itext.bin}" listfiles="yes" debug="true" debuglevel="lines,vars,source">
         	<classpath refid="itext.classpath"/>
        	</javac>
     </target>
@@ -70,7 +71,7 @@
         <jar jarfile="${itext.jar}" basedir="${itext.bin}" excludes="com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**">
             <manifest>
                 <attribute name="Main-Class" value="com.lowagie.tools.ToolboxAvailable"/>
-                <attribute name="Class-Path" value="toolbox.jar bcmail-${bc.version}.jar bcprov-${bc.version}.jar"/>
+                <attribute name="Class-Path" value="toolbox.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar"/>
             </manifest>
         </jar>
     </target>
@@ -86,5 +87,34 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 	
     <target name="jar.debug"  depends="compile.debug, make.jar" description="--> makes a jarfile from the iText code" />
-
+    
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Signing the jar                                                  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+    <target name="check-keystore" >
+        <condition property="keystore-exists">
+            <available file="${itext.keystore.filename}" type="file"/>
+        </condition>
+    </target>
+ 
+    <target name="keystore" depends="check-keystore" unless="keystore-exists">
+        <genkey
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+            dname="${itext.keystore.dname}"
+        />
+    </target>
+ 
+    <target name="sign.jar" depends="keystore">
+        <signjar
+            jar="${itext.jar}"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
+    </target>
 </project>

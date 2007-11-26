@@ -311,7 +311,8 @@ public class Anchor extends Phrase {
      * the value of some <VAR>attributes</VAR>.
      *
      * @param	attributes		Some attributes
-     * @deprecated use ElementFactory.getAnchor(attributes)
+     * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getAnchor(Properties)},
+     * scheduled for removel at 2.1.0
      */
     public Anchor(java.util.Properties attributes) {
         this(com.lowagie.text.factories.ElementFactory.getAnchor(attributes));
@@ -321,7 +322,8 @@ public class Anchor extends Phrase {
 	 * Returns the name of this <CODE>Anchor</CODE>.
 	 *
 	 * @return	a name
-	 * @deprecated Use {@link #getName()} instead
+	 * @deprecated As of iText 2.0.3, use {@link #getName()} instead,
+	 * scheduled for removal at 2.1.0
 	 */   
 	public String name() {
 		return getName();
@@ -331,7 +333,8 @@ public class Anchor extends Phrase {
 	 * Gets the reference of this <CODE>Anchor</CODE>.
 	 *
 	 * @return	a reference
-	 * @deprecated Use {@link #getReference()} instead
+	 * @deprecated As of iText 2.0.3, use {@link #getReference()} instead,
+	 * scheduled for removal at 2.1.0
 	 */
 	public String reference() {
 		return getReference();
@@ -341,7 +344,8 @@ public class Anchor extends Phrase {
 	 * Gets the reference of this <CODE>Anchor</CODE>.
 	 *
 	 * @return	an <CODE>URL</CODE>
-	 * @deprecated Use {@link #getUrl()} instead
+	 * @deprecated As of iText 2.0.3, use {@link #getUrl()} instead,
+	 * scheduled for removal at 2.1.0
 	 */
 	public URL url() {
 		return getUrl();

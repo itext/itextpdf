@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: GreekNumberFactory.java 2686 2007-04-17 09:09:25Z blowagie $
  * $Name$
  *
  * Copyright 2007 by Bruno Lowagie.
@@ -58,8 +58,10 @@ import com.lowagie.text.SpecialSymbol;
  * See http://www.cogsci.indiana.edu/farg/harry/lan/grknum.htm#ancient
  * but this isn't implemented yet; the main reason being the fact that we
  * need a font that has the obsolete Greek characters qoppa and sampi.
+ *
+ * @since 2.0.7 (was called GreekNumberFactory in earlier versions)
  */
-public class GreekNumberFactory {
+public class GreekAlphabetFactory {
 	/** 
 	 * Changes an int into a lower case Greek letter combination.
 	 * @param index the original number

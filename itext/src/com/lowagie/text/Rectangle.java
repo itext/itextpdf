@@ -900,7 +900,8 @@ public class Rectangle implements Element {
 	 * Returns the lower left x-coordinate.
 	 * 
 	 * @return the lower left x-coordinate
-	 * @deprecated Use {@link #getLeft()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getLeft()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float left() {
 		return getLeft();
@@ -910,7 +911,8 @@ public class Rectangle implements Element {
 	 * Returns the upper right x-coordinate.
 	 * 
 	 * @return the upper right x-coordinate
-	 * @deprecated Use {@link #getRight()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getRight()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float right() {
 		return getRight();
@@ -920,7 +922,8 @@ public class Rectangle implements Element {
 	 * Returns the upper right y-coordinate.
 	 * 
 	 * @return the upper right y-coordinate
-	 * @deprecated Use {@link #getTop()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getTop()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float top() {
 		return getTop();
@@ -930,7 +933,8 @@ public class Rectangle implements Element {
 	 * Returns the lower left y-coordinate.
 	 * 
 	 * @return the lower left y-coordinate
-	 * @deprecated Use {@link #getBottom()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getBottom()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float bottom() {
 		return getBottom();
@@ -942,7 +946,8 @@ public class Rectangle implements Element {
 	 * @param margin
 	 *            a margin
 	 * @return the lower left x-coordinate
-	 * @deprecated Use {@link #getLeft(float)} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getLeft(float)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float left(float margin) {
 		return getLeft(margin);
@@ -954,7 +959,8 @@ public class Rectangle implements Element {
 	 * @param margin
 	 *            a margin
 	 * @return the upper right x-coordinate
-	 * @deprecated Use {@link #getRight(float)} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getRight(float)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float right(float margin) {
 		return getRight(margin);
@@ -964,7 +970,8 @@ public class Rectangle implements Element {
 	 * Returns the width of the rectangle.
 	 * 
 	 * @return a width
-	 * @deprecated Use {@link #getWidth()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getWidth()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float width() {
 		return getWidth();
@@ -976,7 +983,8 @@ public class Rectangle implements Element {
 	 * @param margin
 	 *            a margin
 	 * @return the upper right y-coordinate
-	 * @deprecated Use {@link #getTop(float)} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getTop(float)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float top(float margin) {
 		return getTop(margin);
@@ -988,7 +996,8 @@ public class Rectangle implements Element {
 	 * @param margin
 	 *            a margin
 	 * @return the lower left y-coordinate
-	 * @deprecated Use {@link #getBottom(float)} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getBottom(float)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float bottom(float margin) {
 		return getBottom(margin);
@@ -998,7 +1007,8 @@ public class Rectangle implements Element {
 	 * Returns the height of the rectangle.
 	 * 
 	 * @return a height
-	 * @deprecated Use {@link #getHeight()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getHeight()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float height() {
 		return getHeight();
@@ -1008,7 +1018,8 @@ public class Rectangle implements Element {
 	 * Returns the exact type of the border.
 	 * 
 	 * @return a value
-	 * @deprecated Use {@link #getBorder()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getBorder()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int border() {
 		return getBorder();
@@ -1018,7 +1029,8 @@ public class Rectangle implements Element {
 	 * Gets the borderwidth.
 	 * 
 	 * @return a value
-	 * @deprecated Use {@link #getBorderWidth()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getBorderWidth()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float borderWidth() {
 		return getBorderWidth();
@@ -1028,7 +1040,8 @@ public class Rectangle implements Element {
 	 * Gets the color of the border.
 	 * 
 	 * @return a value
-	 * @deprecated Use {@link #getBorderColor()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getBorderColor()},
+	 * scheduled for removal at 2.1.0
 	 */
 	
 	public Color borderColor() {
@@ -1039,7 +1052,8 @@ public class Rectangle implements Element {
 	 * Gets the backgroundcolor.
 	 * 
 	 * @return a value
-	 * @deprecated Use {@link #getBackgroundColor()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getBackgroundColor()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public Color backgroundColor() {
 		return getBackgroundColor();
@@ -1049,7 +1063,8 @@ public class Rectangle implements Element {
 	 * Gets the grayscale.
 	 * 
 	 * @return a value
-	 * @deprecated Use {@link #getGrayFill()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getGrayFill()},
+	 * scheduled for removal at 2.1.0
 	 */
 	
 	public float grayFill() {

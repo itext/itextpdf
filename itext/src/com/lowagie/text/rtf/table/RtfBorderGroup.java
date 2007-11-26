@@ -208,7 +208,8 @@ public class RtfBorderGroup extends RtfElement {
      * Writes the borders of this RtfBorderGroup
      * 
      * @return A byte array with the borders of this RtfBorderGroup
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write() 
     {

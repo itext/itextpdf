@@ -111,27 +111,33 @@ public class RtfTotalPageNumber extends RtfField {
      * Writes the field NUMPAGES instruction with Arabic format
      * 
      * @return A byte array containing "NUMPAGES \\\\* Arabic".
-     * @deprecated
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldInstContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     protected byte[] writeFieldInstContent() throws IOException 
     {
         return ARABIC_TOTAL_PAGES;
     }
+    
     /**
      * Writes the field NUMPAGES instruction with Arabic format: "NUMPAGES \\\\* Arabic".
+     * 
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */ 
-    protected void writeFieldInstContent(OutputStream out) throws IOException 
+    protected void writeFieldInstContent(OutputStream result) throws IOException 
     {
-    	out.write(ARABIC_TOTAL_PAGES);
+    	result.write(ARABIC_TOTAL_PAGES);
     }
 
     /**
      * Writes the field result content
      * 
      * @return An byte array containing "1".
-     * @deprecated
      * @throws IOException
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldResultContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     protected byte[] writeFieldResultContent() throws IOException 
     {
@@ -139,7 +145,10 @@ public class RtfTotalPageNumber extends RtfField {
     }
 
     /**
-     * Writes the field result content "1"
+     * Writes the field result content "1".
+     * 
+     * @param out The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */
     protected void writeFieldResultContent(final OutputStream out) throws IOException 
     {

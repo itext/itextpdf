@@ -40,6 +40,10 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.debug" />
 	</target>
 	
+	<target name="sign.jar">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
+	</target>
+	
 	<target name="lowagie.com">
 		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 	</target>
@@ -76,8 +80,10 @@
 		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
 		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
 		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.maven" />
 	</target>
 	
 </project>

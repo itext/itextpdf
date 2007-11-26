@@ -117,19 +117,22 @@ public class RomanList extends List {
 // deprecated methods
 	
 	/**
-	 * @deprecated use RomanNumberFactory.getString(int)
+	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.RomanNumberFactory#getString(int)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public static String toRoman(int number) {
 		return RomanNumberFactory.getString(number);
 	}
 	/**
-	 * @deprecated use RomanNumberFactory.getString(int, boolean)
+	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.RomanNumberFactory#getString(int, boolean)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public static String toRomanLowerCase(int number) {
 		return RomanNumberFactory.getString(number, true);
 	}
 	/**
-	 * @deprecated use RomanNumberFactory.getString(int, boolean)
+	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.RomanNumberFactory#getString(int, boolean)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public static String toRomanUpperCase(int number) {
 		return RomanNumberFactory.getString(number, false);
@@ -139,7 +142,8 @@ public class RomanList extends List {
 	 * set the roman-letters to lowercase otherwise to uppercase
 	 * 
 	 * @param romanlower
-	 * @deprecated use setLowercase(boolean)
+	 * @deprecated As of iText 2.0.3, replaced by {@link #setLowercase(boolean)},
+	 * scheduled for removal at 2.1.0
 	 */
 	public void setRomanLower(boolean romanlower) {
 		setLowercase(romanlower);
@@ -149,7 +153,8 @@ public class RomanList extends List {
 	 * Checks if the list is roman-letter with lowercase
 	 *
 	 * @return	<CODE>true</CODE> if the roman-letter is lowercase, <CODE>false</CODE> otherwise.
-	 * @deprecated use isLowercase()
+	 * @deprecated As of iText 2.0.3, replaced by {@link #isLowercase()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public boolean isRomanLower() {
 		return isLowercase();

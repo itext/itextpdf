@@ -457,7 +457,7 @@ public abstract class DocWriter implements DocListener {
     }
 
     /** Checks if the stream is to be closed on document close
-     * @return true if the stream is closed on documnt close
+     * @return true if the stream is closed on document close
      *
      */
     public boolean isCloseStream() {

@@ -293,7 +293,8 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      * Write the cell definition part of this RtfCell
      * 
      * @return A byte array with the cell definition
-     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] writeDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -367,7 +368,8 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      * Write the content of this RtfCell
      * 
      * @return A byte array with the content of this RtfCell
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write() 
     {

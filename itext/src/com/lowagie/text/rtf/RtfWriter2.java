@@ -246,7 +246,8 @@ public class RtfWriter2 extends DocWriter {
      * @param dataCacheStyle The style to use.
      * @throws DocumentException If data has already been written into the data cache.
      * @throws IOException If the disk cache could not be initialised.
-     * @deprecated Use RtfWriter2.getDocumentSettings().setDataCacheStyle(...);
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link com.lowagie.text.rtf.document.RtfDocumentSettings#setDataCacheStyle(int)} via {@link #getDocumentSettings()}, scheduled for removal at or after 2.1.0
      */
     public void setDataCacheStyle(int dataCacheStyle) {
         this.rtfDoc.getDocumentSettings().setDataCacheStyle(dataCacheStyle);

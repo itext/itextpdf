@@ -314,21 +314,39 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     }
     
     /**
-     * @deprecated
      * @return a byte array
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeIndentations(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     private byte[] writeIndentations() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-        	writeIndentations(result);
+        	writeIndentation(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
     }
     
-    private void writeIndentations(final OutputStream result) throws IOException
-    {
+    /**
+     * Write the indentation values for this <code>RtfList</code>.
+     * 
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException On i/o errors.
+     * @deprecated As of iText 2.0.6, replaced by
+     * {@link #writeIndentations(OutputStream)}, scheduled for removal at or after 2.1.0
+     */
+    private void writeIndentations(final OutputStream result) throws IOException {
+        writeIndentation(result);
+    }
+    
+    /**
+     * Write the indentation values for this <code>RtfList</code>.
+     * 
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException On i/o errors.
+     */
+    private void writeIndentation(final OutputStream result) throws IOException {
         result.write(LIST_LEVEL_FIRST_INDENT);
         result.write(intToByteArray(firstIndent));
         result.write(RtfParagraphStyle.INDENT_LEFT);
@@ -341,7 +359,8 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * Writes the definition part of this list level
      * 
      * @return A byte array containing the definition of this list level
-     * @deprecated replaced by {@link #writeDefinition(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] writeDefinition()
     {
@@ -413,7 +432,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             result.write(intToByteArray(fontBullet.getFontNumber()));
         }
         //.result.write(writeIndentations());
-        writeIndentations(result);
+        writeIndentation(result);
         result.write(LIST_LEVEL_SYMBOL_INDENT);
         result.write(intToByteArray(this.leftIndent));
         result.write(CLOSE_GROUP);
@@ -466,7 +485,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     break;
             }
             //.result.write(writeIndentations());
-            writeIndentations(result);
+            writeIndentation(result);
             result.write(RtfFont.FONT_SIZE);
             result.write(intToByteArray(fontNumber.getFontSize() * 2));
             if(this.symbolIndent > 0) {
@@ -503,7 +522,8 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * Writes the content of the RtfList
      * 
      * @return A byte array containing the actual content of the RtfList
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write()  
     {
@@ -542,8 +562,8 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 } else {
                     result.write(intToByteArray(fontBullet.getFontNumber()));
                 }
-                //.result.write(writeIndentations());
-                writeIndentations(result);
+                //.result.write(writeIndentations()); TODO Remove on deprecation
+                writeIndentation(result);
                 result.write(DELIMITER);
                 if(this.listType != LIST_TYPE_BULLET) {
                     switch(this.listType) {
@@ -559,14 +579,14 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 }
                 result.write(TAB);
                 result.write(CLOSE_GROUP);                
-                //.result.write(rtfElement.write());
+                //result.write(rtfElement.write()); TODO Remove on deprecation
                 rtfElement.writeContent(result);
-                if(i < (items.size() - 1) || !this.inTable || this.listLevel > 0) {
+                if(i < (items.size() - 1) || !this.inTable || this.listLevel > 0) { // TODO Fix no paragraph on last list item in tables
                     result.write(RtfParagraph.PARAGRAPH);
                 }
                 result.write("\n".getBytes());
             } else if(rtfElement instanceof RtfList) {
-                //.result.write(rtfElement.write());
+                //result.write(rtfElement.write()); TODO Remove on deprecation
             	rtfElement.writeContent(result);
                 result.write("\n".getBytes());
             }

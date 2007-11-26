@@ -113,7 +113,8 @@ public class RtfTOCEntry extends RtfField {
      * Writes the content of the RtfTOCEntry
      * 
      * @return A byte array with the contents of the RtfTOCEntry
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -124,8 +125,12 @@ public class RtfTOCEntry extends RtfField {
         }
         return result.toByteArray();
     }
+    
     /**
-     * Writes the content of the RtfTOCEntry
+     * Writes the content of the <code>RtfTOCEntry</code>.
+     * 
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException on i/o errors.
      */ 
     public void writeContent(final OutputStream result) throws IOException
     {    	
@@ -155,8 +160,9 @@ public class RtfTOCEntry extends RtfField {
     /**
      * UNUSED
      * @return null
-     * @deprecated
      * @throws IOException never thrown
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldInstContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     protected byte[] writeFieldInstContent() throws IOException 
     {
@@ -172,16 +178,16 @@ public class RtfTOCEntry extends RtfField {
     /**
      * UNUSED
      * @return null
-     * @deprecated
      * @throws IOException never thrown
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeFieldResultContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     protected byte[] writeFieldResultContent() throws IOException {
         return null;
     }
     
-    /*
+    /**
      * unused
-     * @see com.lowagie.text.rtf.field.RtfField#writeFieldResultContent(java.io.OutputStream)
      */
     protected void writeFieldResultContent(OutputStream out) throws IOException
     {

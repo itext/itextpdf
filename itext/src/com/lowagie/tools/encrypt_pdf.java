@@ -70,14 +70,14 @@ public class encrypt_pdf {
     private final static int STRENGTH = 5;
     private final static int MOREINFO = 6;
     private final static int permit[] = {
-    	PdfWriter.AllowPrinting,
-    	PdfWriter.AllowModifyContents,
-    	PdfWriter.AllowCopy,
-    	PdfWriter.AllowModifyAnnotations,
-    	PdfWriter.AllowFillIn,
-    	PdfWriter.AllowScreenReaders,
-    	PdfWriter.AllowAssembly,
-        PdfWriter.AllowDegradedPrinting};
+    	PdfWriter.ALLOW_PRINTING,
+    	PdfWriter.ALLOW_MODIFY_CONTENTS,
+    	PdfWriter.ALLOW_COPY,
+    	PdfWriter.ALLOW_MODIFY_ANNOTATIONS,
+    	PdfWriter.ALLOW_FILL_IN,
+    	PdfWriter.ALLOW_SCREENREADERS,
+    	PdfWriter.ALLOW_ASSEMBLY,
+        PdfWriter.ALLOW_DEGRADED_PRINTING};
 
     private static void usage() {
         System.out.println("usage: input_file output_file user_password owner_password permissions 128|40 [new info string pairs]");

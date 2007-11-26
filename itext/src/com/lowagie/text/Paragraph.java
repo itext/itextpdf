@@ -476,7 +476,8 @@ public class Paragraph extends Phrase {
      * the value of some <VAR>attributes</VAR>.
      *
      * @param	attributes		Some attributes
-     * @deprecated use ElementFactory.getParagraph(attributes)
+	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getParagraph(Properties)},
+	 * scheduled for removal at 2.1.0
      */
     public Paragraph(java.util.Properties attributes) {
         this(com.lowagie.text.factories.ElementFactory.getParagraph(attributes));
@@ -486,7 +487,8 @@ public class Paragraph extends Phrase {
 	 * Gets the alignment of this paragraph.
 	 *
 	 * @return	alignment
-	 * @deprecated Use {@link #getAlignment()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getAlignment()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public int alignment() {
 		return getAlignment();
@@ -496,7 +498,8 @@ public class Paragraph extends Phrase {
 	 * Gets the indentation of this paragraph on the left side.
 	 *
 	 * @return	the indentation
-	 * @deprecated Use {@link #getIndentationLeft()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentationLeft()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float indentationLeft() {
 		return getIndentationLeft();
@@ -506,7 +509,8 @@ public class Paragraph extends Phrase {
 	 * Gets the indentation of this paragraph on the right side.
 	 *
 	 * @return	the indentation
-	 * @deprecated Use {@link #getIndentationRight()} instead
+	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentationRight()},
+	 * scheduled for removal at 2.1.0
 	 */
 	public float indentationRight() {
 		return getIndentationRight();

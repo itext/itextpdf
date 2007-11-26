@@ -140,7 +140,8 @@ public class RtfParagraph extends RtfPhrase {
      * and then the RtfChunks of this RtfParagraph are added.
      * 
      * @return The content of this RtfParagraph
-     * @deprecated replaced by {@link #writeContent(OutputStream)}
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
