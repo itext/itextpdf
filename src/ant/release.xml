@@ -70,47 +70,6 @@
 	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Generates jdiff report against previous version                  -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
-
-	<target name="jdiff" description="--> generates jdiff report against previous version">
-		<fail unless="JDIFF_HOME" message="JDIFF_HOME must be defined" />
-		<fail unless="itext.previous.version" message="itext.previous.version must be defined" />
-		<fail unless="itext.previous.location" message="itext.previous.location must be defined" />
-
-		<taskdef name="jdiff" classname="jdiff.JDiffAntTask" classpath="${JDIFF_HOME}/antjdiff.jar" />
-
-		<mkdir dir="${itext.reports}/jdiff"/>
-		<jdiff destdir="${itext.reports}/jdiff" verbose="on" stats="on" docchanges="on">
-			<old name="${itext.previous.version}">
-				<dirset dir="${itext.previous.location}/src" includes="com/**" />
-			</old>
-			<new name="current">
-				<dirset dir="${itext.src}" includes="com/**" />
-			</new>
-		</jdiff>
-		<copy file="${itext.reports}/jdiff/missingSinces.txt"
-			tofile="${itext.reports}/jdiff/missingSinces.err" >
-
-			<filterchain>
-				<striplinecomments>
-					<comment value="OK: "/>
-				</striplinecomments>
-			</filterchain>
-		</copy>
-
-		<concat>
-			<filelist dir="${itext.reports}/jdiff" files="missingSinces.err"/>
-		</concat>
-
-		<fail message="missing @since tags">
-			<condition>
-				<length file="${itext.reports}/jdiff/missingSinces.err" when="greater" length="0" />
-			</condition>
-		</fail>
-	</target>
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Making the jars with the Asian Fontfiles                         -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
 	<target name="asian.jar" description="--> makes iTextAsian.jar and iTextAsianCmaps.jar">

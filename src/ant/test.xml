@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- iText, a JAVA - PDF library                                      -->
+<!-- $Id: site.xml 2991 2007-11-19 03:10:45Z xlv $                    -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<project name="iText.test" default="help" basedir=".">
+	
+	<property file=".ant.properties" />
+
+	<path id="itext.classpath">
+	    <pathelement location="${itext.bin}"/>
+	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${JDIFF_HOME}/antjdiff.jar"/>
+	</path>
+
+	<path id="itext.examples.classpath">
+	    <pathelement location="${itext.bin}"/>
+	    <pathelement location="${jfreechart.jar}"/>
+	    <pathelement location="${jcommon.jar}"/>
+	    <pathelement location="${servlet.jar}"/>
+	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
+	</path>
+	
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Help                                                             -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="help" description="--> shows the help screen">
+        <echo>TESTING iText (test.xml)</echo>
+	</target>
+
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Compiling the examples                                           -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="compile.examples" description="--> compiles the iText examples">
+        <mkdir dir="${itext.bin.examples}" />
+
+        <javac source="${itext.jdk.examples}" target="${itext.jdk.examples}" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
+    	<classpath refid="itext.examples.classpath"/>
+    	</javac>
+    </target>
+	
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Compiling and running the tests                                  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="test.setup" depends="compile.examples" description="--> compiles and runs the iText tests">
+        <mkdir dir="${itext.bin.test}" />
+    	
+        <javac source="${itext.jdk.test}" target="${itext.jdk.test}" srcdir="${itext.src.test}" destdir="${itext.bin.test}">
+            <classpath refid="itext.test.classpath"/>
+        </javac>
+    	
+        <path id="itext.test.classpath">
+            <pathelement location="${itext.jar}"/>
+            <pathelement location="${itext.bin.examples}"/>
+            <pathelement location="${itext.bin.test}"/>
+            <pathelement location="${itext.lib}/iTextAsian.jar"/>
+            <pathelement location="${jfreechart.jar}"/>
+            <pathelement location="${jcommon.jar}"/>
+            <pathelement location="${servlet.jar}"/>
+            <pathelement location="${junit.jar}"/>
+            <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
+            <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
+        </path>
+
+        <mkdir dir="${itext.bin.data}" />
+        <mkdir dir="${itext.reports}/xml" />
+        <copy flatten="yes" todir="${itext.bin.data}">
+            <fileset dir="${itext.src.examples}">
+                <include name="**/*.bmp"/>
+                <include name="**/*.gif"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.otf"/>
+                <include name="**/*.pdf"/>
+                <include name="**/*.png"/>
+                <include name="**/*.tif"/>
+                <include name="**/*.wmf"/>
+                <include name="**/*.xfdf"/>
+                <include name="**/*.xml"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="test" depends="test.setup" description="--> compiles and runs the iText tests">
+        <junit printsummary="yes" showoutput="no" filtertrace="no" haltonfailure="yes" dir="${itext.bin.data}">
+            <sysproperty key="java.awt.headless" value="true"/>
+            <classpath refid="itext.test.classpath" />
+            <batchtest fork="yes" todir="${itext.reports}/xml">
+                <fileset dir="${itext.src.test}">
+                    <include name="**/*Test.java" />
+                    <exclude name="**/Swing*Test.java" />
+                </fileset>
+            </batchtest>
+            <formatter type="xml" />
+        </junit>
+        <junitreport todir="${itext.reports}/xml">
+            <fileset dir="${itext.reports}/xml">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${itext.reports}/junit" />
+        </junitreport>
+    </target>
+
+    <target name="test.swing" depends="test.setup" description="--> compiles and runs the iText Swing tests">
+        <junit printsummary="yes" showoutput="no" filtertrace="no" haltonfailure="yes" dir="${itext.bin.data}">
+            <classpath refid="itext.test.classpath" />
+            <batchtest fork="yes" todir="${itext.reports}/xml">
+                <fileset dir="${itext.src.test}">
+                    <include name="**/Swing*Test.java" />
+                </fileset>
+            </batchtest>
+            <formatter type="xml" />
+        </junit>
+        <junitreport todir="${itext.reports}/xml">
+            <fileset dir="${itext.reports}/xml">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${itext.reports}/junit" />
+        </junitreport>
+    </target>
+	
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Generates jdiff report against previous version                  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
+
+	<target name="jdiff" description="--> generates jdiff report against previous version">
+
+		<taskdef name="jdiff" classname="jdiff.JDiffAntTask">
+        	<classpath refid="itext.classpath"/>
+		</taskdef>
+
+		<mkdir dir="${itext.reports}/jdiff"/>
+		<jdiff destdir="${itext.reports}/jdiff" verbose="on" stats="on" docchanges="on">
+			<old name="${itext.previous.version}">
+				<dirset dir="${itext.previous.location}/src" includes="com/**" />
+			</old>
+			<new name="current">
+				<dirset dir="${itext.src}" includes="com/**" />
+			</new>
+		</jdiff>
+		<copy file="${itext.reports}/jdiff/missingSinces.txt"
+			tofile="${itext.reports}/jdiff/missingSinces.err" >
+
+			<filterchain>
+				<striplinecomments>
+					<comment value="OK: "/>
+				</striplinecomments>
+			</filterchain>
+		</copy>
+
+		<concat>
+			<filelist dir="${itext.reports}/jdiff" files="missingSinces.err"/>
+		</concat>
+
+		<fail message="missing @since tags">
+			<condition>
+				<length file="${itext.reports}/jdiff/missingSinces.err" when="greater" length="0" />
+			</condition>
+		</fail>
+	</target>
+</project>
