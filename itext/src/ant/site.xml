@@ -141,5 +141,5 @@
         <gzip zipfile="${itext.dist}/examples.tar.gz" src="${itext.downloads}/examples.tar" />
         <delete file="${itext.downloads}/examples.tar" />
     </target>
-
+	
 </project>

@@ -28,32 +28,20 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile" />
 	</target>
 	
-	<target name="compile.examples">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.examples" />
-	</target>
-	
 	<target name="compile.debug">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.debug" />
-	</target>
-	
-	<target name="test">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="test" />
-	</target>
-	
-	<target name="test.swing">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="test.swing" />
 	</target>
 	
 	<target name="jar">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
 	</target>
 	
-	<target name="sign.jar">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
-	</target>
-	
 	<target name="jar.debug">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.debug" />
+	</target>
+	
+	<target name="sign.jar">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
 	</target>
 	
 	<target name="lowagie.com">
@@ -84,10 +72,6 @@
 		<ant antfile="ant/release.xml" inheritAll="false" target="asian.jar" />
 	</target>
 
-	<target name="jdiff">
-		<ant antfile="ant/release.xml" inheritAll="false" target="jdiff" />
-	</target>
-
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Make a new release after exporting the modules src/www from CVS  -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -99,6 +83,7 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
 		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.maven" />
 	</target>
 	
 </project>

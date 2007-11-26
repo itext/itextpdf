@@ -28,17 +28,17 @@
 
 	<target name="src.zip" description="--> makes a zipfile with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties" />
+		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
 	</target>
 	
 	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<tar compression="gzip" tarfile="${itext.dist}/src.tar.gz" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties" />
+		<tar compression="gzip" tarfile="${itext.dist}/src.tar.gz" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
 	</target>
 	
 	<target name="src.jar" description="--> makes a jar file with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<jar destfile="${itext.dist}/iText-${releasenumber}-sources.jar" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties" />
+		<jar destfile="${itext.dist}/iText-${releasenumber}-sources.jar" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
 	</target>
 	
 	<target name="archive.src" depends="src.zip, src.tar.gz, src.jar" description="--> archives the source code" />
@@ -56,58 +56,22 @@
 		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/iText-src-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/iText-docs-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.sf}/iText-${releasenumber}-sources.jar" overwrite="yes"/>
+	</target>
+	
+	<target name="release.maven" description="--> makes a bundle ready to publish for Maven">
+		<mkdir dir="${itext.maven}"/>
 		<copy file="${itext.src}/ant/pom.xml" tofile="${itext.dist}/pom.xml" overwrite="yes"/>
 		<replace file="${itext.dist}/pom.xml" token="releasenumber" value="${releasenumber}"/>
 		<replace file="${itext.dist}/pom.xml" token="bc.jdk" value="${bc.jdk}"/>
 		<replace file="${itext.dist}/pom.xml" token="bc.version" value="${bc.version}"/>
-		<jar destfile="${itext.dist}/iText-${releasenumber}-bundle.jar">
+		<jar destfile="${itext.maven}/iText-${releasenumber}-bundle.jar">
 			<fileset dir="${itext.dist}">
 				<include name="pom.xml" />
 				<include name="iText-${releasenumber}.jar" />
 				<include name="iText-${releasenumber}-sources.jar" />
 			</fileset>
 		</jar>
-	</target>
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Generates jdiff report against previous version                  -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
-
-	<target name="jdiff" description="--> generates jdiff report against previous version">
-		<fail unless="JDIFF_HOME" message="JDIFF_HOME must be defined" />
-		<fail unless="itext.previous.version" message="itext.previous.version must be defined" />
-		<fail unless="itext.previous.location" message="itext.previous.location must be defined" />
-
-		<taskdef name="jdiff" classname="jdiff.JDiffAntTask" classpath="${JDIFF_HOME}/antjdiff.jar" />
-
-		<mkdir dir="${itext.reports}/jdiff"/>
-		<jdiff destdir="${itext.reports}/jdiff" verbose="on" stats="on" docchanges="on">
-			<old name="${itext.previous.version}">
-				<dirset dir="${itext.previous.location}/src" includes="com/**" />
-			</old>
-			<new name="current">
-				<dirset dir="${itext.src}" includes="com/**" />
-			</new>
-		</jdiff>
-		<copy file="${itext.reports}/jdiff/missingSinces.txt"
-			tofile="${itext.reports}/jdiff/missingSinces.err" >
-
-			<filterchain>
-				<striplinecomments>
-					<comment value="OK: "/>
-				</striplinecomments>
-			</filterchain>
-		</copy>
-
-		<concat>
-			<filelist dir="${itext.reports}/jdiff" files="missingSinces.err"/>
-		</concat>
-
-		<fail message="missing @since tags">
-			<condition>
-				<length file="${itext.reports}/jdiff/missingSinces.err" when="greater" length="0" />
-			</condition>
-		</fail>
+		<move file="${itext.dist}/pom.xml" tofile="${itext.maven}/pom.xml"/>
 	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
