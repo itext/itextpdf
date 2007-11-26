@@ -6,8 +6,7 @@
 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
 <project name="iText.compile" default="help">
-	
-	<property file="local.properties" />
+
 	<property file="${user.home}/.ant.properties" />
 	<property file=".ant.properties" />
 	
@@ -58,7 +57,8 @@
 
     <target name="compile" description="--> compiles the iText code">
         <mkdir dir="${itext.bin}" />
-        <javac source="1.4" target="1.4" srcdir="${itext.src}" destdir="${itext.bin}">
+    	<echo>Compiling with Java version: ${java.version}</echo>
+        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}" destdir="${itext.bin}">
     	<classpath refid="itext.classpath"/>
     	</javac>
     </target>
@@ -69,7 +69,7 @@
 
     <target name="compile.debug" description="--> compiles the iText code for debugging">
         <mkdir dir="${itext.bin}" />
-        <javac source="1.4" target="1.4" srcdir="${itext.src}" destdir="${itext.bin}" listfiles="yes" debug="true" debuglevel="lines,vars,source">
+        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}" destdir="${itext.bin}" listfiles="yes" debug="true" debuglevel="lines,vars,source">
         	<classpath refid="itext.classpath"/>
        	</javac>
     </target>
@@ -81,7 +81,7 @@
     <target name="compile.examples" depends="compile" description="--> compiles the iText examples">
         <mkdir dir="${itext.bin.examples}" />
 
-        <javac source="1.4" target="1.4" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
+        <javac source="${itext.jdk.examples}" target="${itext.jdk.examples}" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
     	<classpath refid="itext.examples.classpath"/>
     	</javac>
     </target>
@@ -92,8 +92,8 @@
 
     <target name="test.setup" depends="jar, compile.examples" description="--> compiles and runs the iText tests">
         <mkdir dir="${itext.bin.test}" />
-
-        <javac source="1.5" target="1.5" srcdir="${itext.src.test}" destdir="${itext.bin.test}">
+    	
+        <javac source="${itext.jdk.test}" target="${itext.jdk.test}" srcdir="${itext.src.test}" destdir="${itext.bin.test}">
             <classpath refid="itext.test.classpath"/>
         </javac>
 
