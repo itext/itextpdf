@@ -40,6 +40,10 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="test" />
 	</target>
 	
+	<target name="test.swing">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="test.swing" />
+	</target>
+	
 	<target name="jar">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
 	</target>

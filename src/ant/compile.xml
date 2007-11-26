@@ -90,7 +90,7 @@
     <!-- Compiling and running the tests                                  -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <target name="test" depends="jar, compile.examples" description="--> compiles and runs the iText tests">
+    <target name="test.setup" depends="jar, compile.examples" description="--> compiles and runs the iText tests">
         <mkdir dir="${itext.bin.test}" />
 
         <javac source="1.5" target="1.5" srcdir="${itext.src.test}" destdir="${itext.bin.test}">
@@ -113,12 +113,34 @@
                 <include name="**/*.xml"/>
             </fileset>
         </copy>
+    </target>
+
+    <target name="test" depends="test.setup" description="--> compiles and runs the iText tests">
         <junit printsummary="yes" showoutput="no" filtertrace="no" haltonfailure="yes" dir="${itext.bin.data}">
             <sysproperty key="java.awt.headless" value="true"/>
             <classpath refid="itext.test.classpath" />
             <batchtest fork="yes" todir="${itext.reports}/xml">
                 <fileset dir="${itext.src.test}">
                     <include name="**/*Test.java" />
+                    <exclude name="**/Swing*Test.java" />
+                </fileset>
+            </batchtest>
+            <formatter type="xml" />
+        </junit>
+        <junitreport todir="${itext.reports}/xml">
+            <fileset dir="${itext.reports}/xml">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${itext.reports}/junit" />
+        </junitreport>
+    </target>
+
+    <target name="test.swing" depends="test.setup" description="--> compiles and runs the iText Swing tests">
+        <junit printsummary="yes" showoutput="no" filtertrace="no" haltonfailure="yes" dir="${itext.bin.data}">
+            <classpath refid="itext.test.classpath" />
+            <batchtest fork="yes" todir="${itext.reports}/xml">
+                <fileset dir="${itext.src.test}">
+                    <include name="**/Swing*Test.java" />
                 </fileset>
             </batchtest>
             <formatter type="xml" />

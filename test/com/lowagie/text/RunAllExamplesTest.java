@@ -146,7 +146,6 @@ public class RunAllExamplesTest {
         runSingleTest(com.lowagie.examples.objects.images.Scaling.class);
         runSingleTest(com.lowagie.examples.objects.images.AnnotatedImage.class);
         runSingleTest(com.lowagie.examples.objects.images.Alignment.class);
-        // FIXME calls System.exit runSingleTest(com.lowagie.examples.objects.images.AwtImage.class);
         runSingleTest(com.lowagie.examples.objects.images.ImageChunks.class);
         runSingleTest(com.lowagie.examples.objects.images.Rotating.class);
         runSingleTest(com.lowagie.examples.objects.images.AbsolutePositions.class);
@@ -194,12 +193,11 @@ public class RunAllExamplesTest {
         runSingleTest(com.lowagie.examples.objects.tables.alternatives.PaddingBorders.class);
         runSingleTest(com.lowagie.examples.objects.tables.alternatives.RepeatingTable.class);
         runSingleTest(com.lowagie.examples.objects.tables.alternatives.NestedTables.class);
-        // FIXME calls exit runSingleTest(com.lowagie.examples.objects.tables.alternatives.JTable2Pdf.class);
     }
 
     @Test
     public void testAnchorExamples() {
-        runSingleTest(com.lowagie.examples.objects.anchors.OpenApplication.class, "C://windows");
+        runSingleTest(com.lowagie.examples.objects.anchors.OpenApplication.class, System.getenv("WINDIR"));
         runSingleTest(com.lowagie.examples.objects.anchors.ChainedActions.class);
         runSingleTest(com.lowagie.examples.objects.anchors.JavaScriptAction.class);
         runSingleTest(com.lowagie.examples.objects.anchors.Actions.class);
