@@ -34,7 +34,9 @@
 
     <target name="compile.examples" description="--> compiles the iText examples">
         <mkdir dir="${itext.bin.examples}" />
-        <javac source="${itext.jdk.examples}" target="${itext.jdk.examples}" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}" classpath="${JDIFF_HOME}/antjdiff.jar" />
+        <javac source="${itext.jdk.examples}" target="${itext.jdk.examples}" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
+        	<classpath refid="itext.examples.classpath"/>
+    	</javac>
     </target>
     
     <target name="jar">
