@@ -26,6 +26,7 @@
         <echo>ant compile.debug: compiles iText and allows you to debug the code</echo>
         <echo>ant jar: compiles and jars iText</echo>
         <echo>ant jar.debug: compiles for debugging and jars iText</echo>
+        <echo>ant sign.jar: compiles and jars iText, then signs the jar</echo>
         <echo />
 	</target>
 

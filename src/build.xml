@@ -28,32 +28,20 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile" />
 	</target>
 	
-	<target name="compile.examples">
-		<ant antfile="ant/test.xml" inheritAll="false" target="compile.examples" />
-	</target>
-	
 	<target name="compile.debug">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.debug" />
-	</target>
-	
-	<target name="test">
-		<ant antfile="ant/test.xml" inheritAll="false" target="test" />
-	</target>
-	
-	<target name="test.swing">
-		<ant antfile="ant/test.xml" inheritAll="false" target="test.swing" />
 	</target>
 	
 	<target name="jar">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
 	</target>
 	
-	<target name="sign.jar">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
-	</target>
-	
 	<target name="jar.debug">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.debug" />
+	</target>
+	
+	<target name="sign.jar">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
 	</target>
 	
 	<target name="lowagie.com">
@@ -82,10 +70,6 @@
 	
 	<target name="asian.jar">
 		<ant antfile="ant/release.xml" inheritAll="false" target="asian.jar" />
-	</target>
-
-	<target name="jdiff">
-		<ant antfile="ant/test.xml" inheritAll="false" target="jdiff" />
 	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

@@ -6,18 +6,13 @@
 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
 <project name="iText.test" default="help" basedir=".">
-	
-	<property file=".ant.properties" />
 
-	<path id="itext.classpath">
-	    <pathelement location="${itext.bin}"/>
-	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
-	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
-	    <pathelement path="${JDIFF_HOME}/antjdiff.jar"/>
-	</path>
+	<property file="ant/.ant.test.properties" />
+	<property file="ant/.ant.properties" />
+	<property file="local.properties" />
 
 	<path id="itext.examples.classpath">
-	    <pathelement location="${itext.bin}"/>
+	    <pathelement location="${itext.jar}"/>
 	    <pathelement location="${jfreechart.jar}"/>
 	    <pathelement location="${jcommon.jar}"/>
 	    <pathelement location="${servlet.jar}"/>
@@ -33,24 +28,25 @@
         <echo>TESTING iText (test.xml)</echo>
 	</target>
 
-
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Compiling the examples                                           -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
     <target name="compile.examples" description="--> compiles the iText examples">
         <mkdir dir="${itext.bin.examples}" />
-
-        <javac source="${itext.jdk.examples}" target="${itext.jdk.examples}" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
-    	<classpath refid="itext.examples.classpath"/>
-    	</javac>
+        <javac source="${itext.jdk.examples}" target="${itext.jdk.examples}" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}" classpath="${JDIFF_HOME}/antjdiff.jar" />
+    </target>
+    
+    <target name="jar">
+       	<echo>${JAVA_HOME}</echo>
+    	<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
     </target>
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Compiling and running the tests                                  -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <target name="test.setup" depends="compile.examples" description="--> compiles and runs the iText tests">
+    <target name="test.setup" depends="jar, compile.examples" description="--> compiles and runs the iText tests">
         <mkdir dir="${itext.bin.test}" />
     	
         <javac source="${itext.jdk.test}" target="${itext.jdk.test}" srcdir="${itext.src.test}" destdir="${itext.bin.test}">
@@ -131,10 +127,8 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
 
 	<target name="jdiff" description="--> generates jdiff report against previous version">
-
-		<taskdef name="jdiff" classname="jdiff.JDiffAntTask">
-        	<classpath refid="itext.classpath"/>
-		</taskdef>
+		<fail unless="JDIFF_HOME" message="JDIFF_HOME must be defined" />
+		<taskdef name="jdiff" classname="jdiff.JDiffAntTask" classpath="${JDIFF_HOME}/antjdiff.jar" />
 
 		<mkdir dir="${itext.reports}/jdiff"/>
 		<jdiff destdir="${itext.reports}/jdiff" verbose="on" stats="on" docchanges="on">
