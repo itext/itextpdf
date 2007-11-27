@@ -36,7 +36,6 @@
 
     <target name="compile" description="--> compiles the iText code">
         <mkdir dir="${itext.bin}" />
-    	<echo>Compiling with Java version: ${java.version}</echo>
         <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}" destdir="${itext.bin}">
     	<classpath refid="itext.classpath"/>
     	</javac>
