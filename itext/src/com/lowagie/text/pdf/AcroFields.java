@@ -1243,7 +1243,13 @@ public class AcroFields {
                 flags = ff.intValue();
             if ((flags & PdfFormField.FF_PUSHBUTTON) != 0) {
                 //we'll assume that the value is an image in base64
-                Image img = Image.getInstance(Base64.decode(value));
+                Image img;
+                try {
+                    img = Image.getInstance(Base64.decode(value));
+                }
+                catch (Exception e) {
+                    return false;
+                }
                 PushbuttonField pb = getNewPushbuttonFromField(name);
                 pb.setImage(img);
                 replacePushbuttonField(name, pb.getField());
