@@ -7,7 +7,7 @@
 
 <project name="iText.test" default="help" basedir=".">
 
-	<property file="local.properties" />
+	<property file="ant/local.properties" />
 	<property file="ant/.ant.test.properties" />
 	<property file="ant/.ant.properties" />
 
@@ -130,6 +130,9 @@
 
 	<target name="jdiff" description="--> generates jdiff report against previous version">
 		<fail unless="JDIFF_HOME" message="JDIFF_HOME must be defined" />
+		<fail unless="itext.previous.version" message="itext.previous.version must be defined" /> 	 
+		<fail unless="itext.previous.location" message="itext.previous.location must be defined" />
+			
 		<taskdef name="jdiff" classname="jdiff.JDiffAntTask" classpath="${JDIFF_HOME}/antjdiff.jar" />
 
 		<mkdir dir="${itext.reports}/jdiff"/>

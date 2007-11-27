@@ -6,8 +6,7 @@
 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
 <project name="iText.compile" default="help">
-
-	<property file="${user.home}/.ant.properties" />
+	<property file="local.properties" />
 	<property file=".ant.properties" />
 	
 	<path id="itext.classpath">
