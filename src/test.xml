@@ -7,9 +7,9 @@
 
 <project name="iText.test" default="help" basedir=".">
 
+	<property file="local.properties" />
 	<property file="ant/.ant.test.properties" />
 	<property file="ant/.ant.properties" />
-	<property file="local.properties" />
 
 	<path id="itext.examples.classpath">
 	    <pathelement location="${itext.jar}"/>
