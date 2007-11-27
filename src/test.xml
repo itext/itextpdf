@@ -40,7 +40,6 @@
     </target>
     
     <target name="jar">
-       	<echo>${JAVA_HOME}</echo>
     	<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
     </target>
 	
