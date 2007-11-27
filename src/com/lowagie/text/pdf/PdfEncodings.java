@@ -163,7 +163,7 @@ public class PdfEncodings {
             int c = 0;
             for (int k = 0; k < len; ++k) {
                 char char1 = cc[k];
-                if (char1 < 128 || (char1 >= 160 && char1 <= 255))
+                if (char1 < 128 || (char1 > 160 && char1 <= 255))
                     c = char1;
                 else
                     c = hash.get(char1);
@@ -221,7 +221,7 @@ public class PdfEncodings {
             hash = pdfEncoding;
         if (hash != null) {
             int c = 0;
-            if (char1 < 128 || (char1 >= 160 && char1 <= 255))
+            if (char1 < 128 || (char1 > 160 && char1 <= 255))
                 c = char1;
             else
                 c = hash.get(char1);
@@ -299,7 +299,7 @@ public class PdfEncodings {
         int len = text.length();
         for (int k = 0; k < len; ++k) {
             char char1 = text.charAt(k);
-            if (char1 < 128 || (char1 >= 160 && char1 <= 255))
+            if (char1 < 128 || (char1 > 160 && char1 <= 255))
                 continue;
             if (!pdfEncoding.containsKey(char1))
                 return false;
