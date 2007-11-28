@@ -83,6 +83,7 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
 		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.maven" />
 	</target>
 	
 </project>
