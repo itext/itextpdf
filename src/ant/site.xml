@@ -7,6 +7,8 @@
 
 <project name="iText.site" default="help" basedir=".">
 	
+	<property file="local.properties" />
+	<property file="${user.home}/.ant.properties" />
 	<property file=".ant.properties" />
 
 	<path id="itext.classpath">

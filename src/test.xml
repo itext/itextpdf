@@ -8,6 +8,7 @@
 <project name="iText.test" default="help" basedir=".">
 
 	<property file="ant/local.properties" />
+	<property file="${user.home}/.ant.properties" />
 	<property file="ant/.ant.test.properties" />
 	<property file="ant/.ant.properties" />
 
