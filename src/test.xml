@@ -139,7 +139,7 @@
 			<old name="${itext.previous.version}">
 				<dirset dir="${itext.previous.location}/src" includes="com/**" />
 			</old>
-			<new name="current">
+			<new name="${releasenumber}">
 				<dirset dir="${itext.src}" includes="com/**" />
 			</new>
 		</jdiff>
