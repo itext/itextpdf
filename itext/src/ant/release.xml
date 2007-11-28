@@ -60,18 +60,23 @@
 	
 	<target name="release.maven" description="--> makes a bundle ready to publish for Maven">
 		<mkdir dir="${itext.maven}"/>
-		<copy file="${itext.src}/ant/pom.xml" tofile="${itext.dist}/pom.xml" overwrite="yes"/>
-		<replace file="${itext.dist}/pom.xml" token="releasenumber" value="${releasenumber}"/>
-		<replace file="${itext.dist}/pom.xml" token="bc.jdk" value="${bc.jdk}"/>
-		<replace file="${itext.dist}/pom.xml" token="bc.version" value="${bc.version}"/>
-		<jar destfile="${itext.maven}/iText-${releasenumber}-bundle.jar">
-			<fileset dir="${itext.dist}">
+		<copy file="${itext.src}/ant/pom.xml" tofile="${itext.maven}/pom.xml" overwrite="yes"/>
+		<replace file="${itext.maven}/pom.xml" token="releasenumber" value="${releasenumber}"/>
+		<replace file="${itext.maven}/pom.xml" token="bc.jdk" value="${bc.jdk}"/>
+		<replace file="${itext.maven}/pom.xml" token="bc.version" value="${bc.version}"/>
+		<copy file="${itext.dist}/iText-${releasenumber}.jar" tofile="${itext.maven}/itext-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.maven}/itext-${releasenumber}-sources.jar" overwrite="yes"/>
+		<jar destfile="${itext.maven}/itext-${releasenumber}-javadoc.jar">
+			<fileset dir="${itext.docs}"/>
+		</jar>
+		<jar destfile="${itext.maven}/itext-${releasenumber}-bundle.jar">
+			<fileset dir="${itext.maven}">
 				<include name="pom.xml" />
-				<include name="iText-${releasenumber}.jar" />
-				<include name="iText-${releasenumber}-sources.jar" />
+				<include name="itext-${releasenumber}.jar" />
+				<include name="itext-${releasenumber}-sources.jar" />
+				<include name="itext-${releasenumber}-javadoc.jar" />
 			</fileset>
 		</jar>
-		<move file="${itext.dist}/pom.xml" tofile="${itext.maven}/pom.xml"/>
 	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
