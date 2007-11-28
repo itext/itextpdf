@@ -109,7 +109,7 @@
         />
     </target>
  
-    <target name="sign.jar" depends="keystore">
+    <target name="sign.jar" depends="keystore, jar">
         <signjar
             jar="${itext.jar}"
             keystore="${itext.keystore.filename}"
