@@ -157,7 +157,7 @@ public class Utilities {
             return new URL(filename);
         }
         catch (Exception e) {
-            return new File(filename).toURL();
+            return new File(filename).toURI().toURL();
         }
 	}
 
