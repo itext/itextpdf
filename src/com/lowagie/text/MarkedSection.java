@@ -274,7 +274,7 @@ public class MarkedSection extends MarkedObject {
 	   
 	/**
 	 * Gets the title of this MarkedSection.
-	 * @deprecated Use {@link #getTitle()} instead; will be removed in iText 2.0.8
+	 * @deprecated As of iText 2.0.8, replaced by {@link #getTitle()}, scheduled for removal at 2.2.0
 	 */
 	public MarkedObject title() {
 		return getTitle();
