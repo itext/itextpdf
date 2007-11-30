@@ -281,7 +281,7 @@ public class HtmlWriter extends DocWriter {
                         writeStart(HtmlTags.DIV);
                         writeMarkupAttributes(ms.getMarkupAttributes());
                         os.write(GT);
-                		MarkedObject mo = ((MarkedSection)element).title();
+                		MarkedObject mo = ((MarkedSection)element).getTitle();
                 		if (mo != null) {
                 			markup = mo.getMarkupAttributes();
                 			mo.process(this);

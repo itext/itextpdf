@@ -714,7 +714,7 @@ class PdfDocument extends Document {
                 case Element.MARKED: {
                 	MarkedObject mo;
                 	if (element instanceof MarkedSection) {
-                		mo = ((MarkedSection)element).title();
+                		mo = ((MarkedSection)element).getTitle();
                 		if (mo != null) {
                 			mo.process(this);
                 		}
