@@ -81,8 +81,19 @@ import java.util.Iterator;
  */
 
 public class Section extends ArrayList implements TextElementArray {
-    
     // constant
+	/**
+	 * A possible number style. The default number style: "1.2.3."
+	 * @since	iText 2.0.8
+	 */
+	public static final int NUMBERSTYLE_DOTTED = 0;
+	/**
+	 * A possible number style. For instance: "1.2.3"
+	 * @since	iText 2.0.8
+	 */
+	public static final int NUMBERSTYLE_DOTTED_WITHOUT_FINAL_DOT = 1;
+	
+	/** A serial version uid. */
 	private static final long serialVersionUID = 3324172577544748043L;
 
 	// member variables
@@ -92,9 +103,15 @@ public class Section extends ArrayList implements TextElementArray {
     
     /** The bookmark title if different from the content title */
     protected String bookmarkTitle;
-    
+
     /** The number of sectionnumbers that has to be shown before the section title. */
     protected int numberDepth;
+    
+    /**
+     * The style for sectionnumbers.
+     * @since	iText 2.0.8
+     */
+    protected int numberStyle = NUMBERSTYLE_DOTTED;
     
     /** The indentation of this section on the left side. */
     protected float indentationLeft;
@@ -421,9 +438,23 @@ public class Section extends ArrayList implements TextElementArray {
      * @return	a <CODE>Paragraph</CODE>
      */
     public Paragraph getTitle() {
-        if (title == null) {
-            return null;
-        }
+        return constructTitle(title, numbers, numberDepth, numberStyle);
+    }
+    
+    /**
+     * Constructs a Paragraph that will be used as title for a Section or Chapter.
+     * @param	title	the title of the section
+     * @param	numbers	a list of sectionnumbers
+     * @param	numberDepth	how many numbers have to be shown
+     * @param	numberStyle	the numbering style
+     * @return	a Paragraph object
+	 * @since	iText 2.0.8
+     */
+    public static Paragraph constructTitle(Paragraph title, ArrayList numbers, int numberDepth, int numberStyle) {
+    	if (title == null) {
+    		return null;
+    	}
+
         int depth = Math.min(numbers.size(), numberDepth);
         if (depth < 1) {
             return title;
@@ -432,6 +463,9 @@ public class Section extends ArrayList implements TextElementArray {
         for (int i = 0; i < depth; i++) {
             buf.insert(0, ".");
             buf.insert(0, ((Integer) numbers.get(i)).intValue());
+        }
+        if (numberStyle == NUMBERSTYLE_DOTTED_WITHOUT_FINAL_DOT) {
+        	buf.deleteCharAt(buf.length() - 2);
         }
         Paragraph result = new Paragraph(title);
         result.add(0, new Chunk(buf.toString(), title.getFont()));
@@ -459,6 +493,25 @@ public class Section extends ArrayList implements TextElementArray {
     public int getNumberDepth() {
         return numberDepth;
     }
+
+    /**
+     * Sets the style for numbering sections.
+     * Possible values are NUMBERSTYLE_DOTTED: 1.2.3. (the default)
+     * or NUMBERSTYLE_DOTTED_WITHOUT_FINAL_DOT: 1.2.3
+	 * @since	iText 2.0.8
+     */
+	public void setNumberStyle(int numberStyle) {
+		this.numberStyle = numberStyle;
+	}
+	
+	/**
+	 * Gets the style used for numbering sections.
+	 * @since	iText 2.0.8
+	 * @return	a value corresponding with a numbering style
+	 */
+	public int getNumberStyle() {
+		return numberStyle;
+	}
     
     /**
      * Sets the indentation of this <CODE>Section</CODE> on the left side.

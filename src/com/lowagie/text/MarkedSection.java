@@ -194,26 +194,14 @@ public class MarkedSection extends MarkedObject {
 		if (title.element instanceof Paragraph)
 			this.title = title;
 	}
-	   
+
 	/**
 	 * Gets the title of this MarkedSection.
+	 * @return	a MarkObject with a Paragraph containing the title of a Section
+	 * @since	iText 2.0.8
 	 */
-    public MarkedObject title() {
-        if (title == null) {
-            return null;
-        }
-        int depth = Math.min(((Section)element).numbers.size(), ((Section)element).numberDepth);
-        if (depth < 1) {
-            return title;
-        }
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < depth; i++) {
-            buf.insert(0, ".");
-            buf.insert(0, ((Integer) ((Section)element).numbers.get(i)).intValue());
-        }
-        if (buf.length() > 0) buf.append(' ');
-        Paragraph result = new Paragraph((Paragraph)title.element);
-        result.add(0, new Chunk(buf.toString(), ((Paragraph)title.element).getFont()));
+    public MarkedObject getTitle() {
+    	Paragraph result = Section.constructTitle((Paragraph)title.element, ((Section)element).numbers, ((Section)element).numberDepth, ((Section)element).numberStyle);
         MarkedObject mo = new MarkedObject(result);
         mo.markupAttributes = title.markupAttributes;
         return mo;
@@ -282,5 +270,13 @@ public class MarkedSection extends MarkedObject {
 	 */    
 	public void setBookmarkTitle(String bookmarkTitle) {
 	  	((Section)element).setBookmarkTitle(bookmarkTitle);
+	}
+	   
+	/**
+	 * Gets the title of this MarkedSection.
+	 * @deprecated Use {@link #getTitle()} instead; will be removed in iText 2.0.8
+	 */
+	public MarkedObject title() {
+		return getTitle();
 	}
 }

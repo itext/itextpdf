@@ -155,6 +155,7 @@ public class List implements TextElementArray {
     /**
      * Constructs a <CODE>List</CODE> with a specific symbol indentation.
      * @param	symbolIndent	the symbol indentation
+     * @since	iText 2.0.8
      */
     public List(float symbolIndent) {
     	this.symbolIndent = symbolIndent;
