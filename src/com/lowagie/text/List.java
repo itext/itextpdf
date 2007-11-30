@@ -153,6 +153,14 @@ public class List implements TextElementArray {
     }
     
     /**
+     * Constructs a <CODE>List</CODE> with a specific symbol indentation.
+     * @param	symbolIndent	the symbol indentation
+     */
+    public List(float symbolIndent) {
+    	this.symbolIndent = symbolIndent;
+    }
+    
+    /**
      * Constructs a <CODE>List</CODE>.
      * @param	numbered		a boolean
      */
