@@ -133,6 +133,7 @@ public class PdfReader implements PdfViewerPreferences {
     private boolean partial;
     private PRIndirectReference cryptoRef;
 	private PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
+    private boolean encryptionError;
 
     /**
      * Holds value of property appendable.
@@ -502,7 +503,7 @@ public class PdfReader implements PdfViewerPreferences {
                 readDocObj();
             }
             catch (Exception ne) {
-                if (rebuilt)
+                if (rebuilt || encryptionError)
                     throw new IOException(ne.getMessage());
                 rebuilt = true;
                 encrypted = false;
@@ -569,6 +570,7 @@ public class PdfReader implements PdfViewerPreferences {
         PdfObject encDic = trailer.get(PdfName.ENCRYPT);
         if (encDic == null || encDic.toString().equals("null"))
             return;
+        encryptionError = true;
         byte[] encryptionKey = null;    	
         encrypted = true;
         PdfDictionary enc = (PdfDictionary)getPdfObject(encDic);
@@ -774,6 +776,7 @@ public class PdfReader implements PdfViewerPreferences {
             cryptoRef = (PRIndirectReference)encDic;
             xrefObj.set(cryptoRef.getNumber(), null);
         }
+        encryptionError = false;
     }
 
     /**
