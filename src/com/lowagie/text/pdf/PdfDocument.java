@@ -98,6 +98,7 @@ import java.text.DecimalFormat;
  * @see		com.lowagie.text.Document
  * @see		com.lowagie.text.DocListener
  * @see		PdfWriter
+ * @since	2.0.8 (class was package-private before)
  */
 
 public class PdfDocument extends Document {
@@ -110,6 +111,7 @@ public class PdfDocument extends Document {
      * should be strings.<BR>
      * This object is described in the 'Portable Document Format Reference Manual version 1.3'
      * section 6.10 (page 120-121)
+     * @since	2.0.8 (PdfDocument was package-private before)
      */
     
     public static class PdfInfo extends PdfDictionary {
@@ -1602,6 +1604,10 @@ public class PdfDocument extends Document {
     }
 
     protected Indentation indentation = new Indentation();
+
+    /**
+     * @since	2.0.8 (PdfDocument was package-private before)
+     */
     public static class Indentation {
         
         /** This represents the current indentation of the PDF Elements on the left side. */
@@ -2428,6 +2434,7 @@ public class PdfDocument extends Document {
     
 	/**
 	 * This is a helper class for adding a Table to a document.
+	 * @since	2.0.8 (PdfDocument was package-private before)
 	 */
     protected static class RenderingContext {
         float pagetop = -1;
