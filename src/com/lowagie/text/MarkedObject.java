@@ -116,6 +116,22 @@ public class MarkedObject implements Element {
 	public int type() {
 		return MARKED;
 	}
+	
+	/**
+	 * @see com.lowagie.text.Element#isContent()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isContent() {
+		return true;
+	}
+
+	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNestable() {
+		return true;
+	}
 
 	/**
 	 * Getter for the markup attributes.

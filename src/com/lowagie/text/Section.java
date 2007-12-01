@@ -219,6 +219,22 @@ public class Section extends ArrayList implements TextElementArray {
         }
         return tmp;
     }
+	
+	/**
+	 * @see com.lowagie.text.Element#isContent()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isContent() {
+		return true;
+	}
+
+	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNestable() {
+		return false;
+	}
     
     // overriding some of the ArrayList-methods
     
@@ -233,22 +249,11 @@ public class Section extends ArrayList implements TextElementArray {
     public void add(int index, Object o) {
         try {
             Element element = (Element) o;
-            if (element.type() == Element.PARAGRAPH ||
-            element.type() == Element.LIST ||
-            element.type() == Element.CHUNK ||
-            element.type() == Element.PHRASE ||
-            element.type() == Element.ANCHOR ||
-            element.type() == Element.ANNOTATION ||
-            element.type() == Element.TABLE ||
-            element.type() == Element.PTABLE ||
-            element.type() == Element.IMGTEMPLATE ||
-            element.type() == Element.JPEG ||
-            element.type() == Element.JPEG2000 ||
-            element.type() == Element.IMGRAW) {
+            if (element.isNestable()) {
                 super.add(index, element);
             }
             else {
-                throw new ClassCastException("You can add a " + element.getClass().getName() + " to a Section.");
+                throw new ClassCastException("You can't add a " + element.getClass().getName() + " to a Section.");
             }
         }
         catch(ClassCastException cce) {
@@ -267,21 +272,7 @@ public class Section extends ArrayList implements TextElementArray {
     public boolean add(Object o) {
         try {
             Element element = (Element) o;
-            if (element.type() == Element.PARAGRAPH ||
-            element.type() == Element.LIST ||
-            element.type() == Element.CHUNK ||
-            element.type() == Element.PHRASE ||
-            element.type() == Element.ANCHOR ||
-            element.type() == Element.ANNOTATION ||
-            element.type() == Element.TABLE ||
-            element.type() == Element.IMGTEMPLATE ||
-            element.type() == Element.PTABLE ||
-            element.type() == Element.JPEG ||
-            element.type() == Element.JPEG2000 ||
-            element.type() == Element.IMGRAW) {
-                return super.add(o);
-            }
-            else if (element.type() == Element.SECTION) {
+            if (element.type() == Element.SECTION) {
                 Section section = (Section) o;
                 section.setNumbers(++subsections, numbers);
                 return super.add(section);
@@ -292,7 +283,7 @@ public class Section extends ArrayList implements TextElementArray {
             	section.setNumbers(++subsections, numbers);
             	return super.add(mo);
             }
-            else if (element instanceof MarkedObject) {
+            else if (element.isNestable()) {
             	return super.add(o);
             }
             else {

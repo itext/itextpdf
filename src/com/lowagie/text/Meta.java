@@ -135,6 +135,22 @@ public class Meta implements Element {
         return new ArrayList();
     }
     
+	/**
+	 * @see com.lowagie.text.Element#isContent()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isContent() {
+		return false;
+	}
+
+	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNestable() {
+		return false;
+	}
+    
     // methods
     
     /**

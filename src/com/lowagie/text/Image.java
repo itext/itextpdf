@@ -910,6 +910,14 @@ public abstract class Image extends Rectangle {
 		return type;
 	}
 
+	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNestable() {
+		return true;
+	}
+
 	// checking the type of Image
 
 	/**

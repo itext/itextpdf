@@ -160,7 +160,7 @@ public class Table extends Rectangle {
     private int columns;
     
     /** This is the list of <CODE>Row</CODE>s. */
-    private ArrayList rows = new ArrayList();
+    protected ArrayList rows = new ArrayList();
     
     /** The current Position in the table. */
     private Point curPosition = new Point(0, 0);
@@ -317,6 +317,14 @@ public class Table extends Rectangle {
     public ArrayList getChunks() {
         return new ArrayList();
     }
+
+	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNestable() {
+		return true;
+	}
     
     // getters and setters
 

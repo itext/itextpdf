@@ -405,6 +405,22 @@ public class MultiColumnText implements Element {
     public ArrayList getChunks() {
         return null;
     }
+    
+	/**
+	 * @see com.lowagie.text.Element#isContent()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isContent() {
+		return true;
+	}
+
+	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNestable() {
+		return true;
+	}
 
     /**
      * Calculates the appropriate y position for the bottom

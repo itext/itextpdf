@@ -257,31 +257,12 @@ public class Document implements DocListener {
 			throw new DocumentException(
 					"The document has been closed. You can't add any Elements.");
         }
-        int type = element.type();
-        if (open) {
-			if (!(type == Element.CHUNK || type == Element.PHRASE
-					|| type == Element.PARAGRAPH || type == Element.TABLE
-					|| type == Element.PTABLE
-					|| type == Element.MULTI_COLUMN_TEXT
-					|| type == Element.ANCHOR || type == Element.ANNOTATION
-					|| type == Element.CHAPTER || type == Element.SECTION
-					|| type == Element.LIST || type == Element.LISTITEM
-					|| type == Element.RECTANGLE || type == Element.JPEG
-                    || type == Element.JPEG2000
-					|| type == Element.IMGRAW || type == Element.IMGTEMPLATE
-					|| type == Element.MARKED)) {
+        if (open && !element.isContent()) {
 				throw new DocumentException(
 						"The document is open; you can only add Elements with content.");
-			}
-		} else {
-			if (!(type == Element.HEADER || type == Element.TITLE
-					|| type == Element.SUBJECT || type == Element.KEYWORDS
-					|| type == Element.AUTHOR || type == Element.PRODUCER
-					|| type == Element.CREATOR || type == Element.CREATIONDATE
-					|| type == Element.MARKED)) {
+		} else if (!open && element.isContent()) {
 				throw new DocumentException(
 						"The document is not open yet; you can only add Meta information.");
-            }
         }
         boolean success = false;
         DocListener listener;

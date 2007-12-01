@@ -100,7 +100,7 @@ import java.text.DecimalFormat;
  * @see		PdfWriter
  */
 
-class PdfDocument extends Document {
+public class PdfDocument extends Document {
 	
     /**
      * <CODE>PdfInfo</CODE> is the PDF InfoDictionary.
@@ -321,7 +321,7 @@ class PdfDocument extends Document {
     }
 
     /** The <CODE>PdfWriter</CODE>. */
-    private PdfWriter writer;
+    protected PdfWriter writer;
     
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
@@ -344,25 +344,25 @@ class PdfDocument extends Document {
 //	[L0] ElementListener interface
     
     /** This is the PdfContentByte object, containing the text. */
-    private PdfContentByte text;
+    protected PdfContentByte text;
     
     /** This is the PdfContentByte object, containing the borders and other Graphics. */
-    private PdfContentByte graphics;
+    protected PdfContentByte graphics;
     
     /** This represents the leading of the lines. */
-    private float leading = 0;
+    protected float leading = 0;
     
     /** This represents the current alignment of the PDF Elements. */
-    private int alignment = Element.ALIGN_LEFT;
+    protected int alignment = Element.ALIGN_LEFT;
     
     /** This is the current height of the document. */
-    private float currentHeight = 0;
+    protected float currentHeight = 0;
     
     /** Signals that onParagraph is valid (to avoid that a Chapter/Section title is treated as a Paragraph). */
-    private boolean isParagraph = true;
+    protected boolean isParagraph = true;
     
     /** The current active <CODE>PdfAction</CODE> when processing an <CODE>Anchor</CODE>. */
-    private PdfAction anchorAction = null;
+    protected PdfAction anchorAction = null;
     
     /**
      * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
@@ -792,7 +792,7 @@ class PdfDocument extends Document {
     }
 
 //	[L3] DocListener interface
-    private int textEmptySize;
+    protected int textEmptySize;
     
     // [C9] Metadata for the page
     /** XMP Metadata for the page. */
@@ -1073,7 +1073,7 @@ class PdfDocument extends Document {
 // DOCLISTENER METHODS END
 
     /** Signals that OnOpenDocument should be called. */
-    private boolean firstPageEvent = true;
+    protected boolean firstPageEvent = true;
     
     /**
      * Initializes a page.
@@ -1081,7 +1081,7 @@ class PdfDocument extends Document {
      * If the footer/header is set, it is printed.
      * @throws DocumentException on error
      */
-    private void initPage() throws DocumentException { 
+    protected void initPage() throws DocumentException { 
         // the pagenumber is incremented
         pageN++;
 
@@ -1146,15 +1146,15 @@ class PdfDocument extends Document {
     }
 
     /** The line that is currently being written. */
-    private PdfLine line = null;
+    protected PdfLine line = null;
     /** The lines that are written until now. */
-    private ArrayList lines = new ArrayList();
+    protected ArrayList lines = new ArrayList();
     
     /**
      * Adds the current line to the list of lines and also adds an empty line.
      * @throws DocumentException on error
      */
-    private void newLine() throws DocumentException {
+    protected void newLine() throws DocumentException {
         lastElementType = -1;
         carriageReturn();
         if (lines != null && !lines.isEmpty()) {
@@ -1169,7 +1169,7 @@ class PdfDocument extends Document {
      * of lines and a new empty line is added.
      * @throws DocumentException on error
      */  
-    private void carriageReturn() {
+    protected void carriageReturn() {
         // the arraylist with lines may not be null
         if (lines == null) {
             lines = new ArrayList();
@@ -1215,12 +1215,12 @@ class PdfDocument extends Document {
     }
 
     /** Holds the type of the last element, that has been added to the document. */
-    private int lastElementType = -1;
+    protected int lastElementType = -1;
     
     /**
      * Ensures that a new line has been started. 
      */
-    private void ensureNewLine() {
+    protected void ensureNewLine() {
       try {
         if ((lastElementType == Element.PHRASE) || 
             (lastElementType == Element.CHUNK)) {
@@ -1238,7 +1238,7 @@ class PdfDocument extends Document {
      * @return the displacement that was caused
      * @throws DocumentException on error
      */ 
-    private float flushLines() throws DocumentException {
+    protected float flushLines() throws DocumentException {
         // checks if the ArrayList with the lines is not null
         if (lines == null) {
             return 0;
@@ -1601,35 +1601,35 @@ class PdfDocument extends Document {
         currentValues[1] = new Float(lastBaseFactor);
     }
 
-    Indentation indentation = new Indentation();
+    protected Indentation indentation = new Indentation();
     public static class Indentation {
         
         /** This represents the current indentation of the PDF Elements on the left side. */
-        private float indentLeft = 0;
+        public float indentLeft = 0;
         
         /** Indentation to the left caused by a section. */
-        private float sectionIndentLeft = 0;
+        public float sectionIndentLeft = 0;
         
         /** This represents the current indentation of the PDF Elements on the left side. */
-        private float listIndentLeft = 0;
+        public float listIndentLeft = 0;
         
         /** This is the indentation caused by an image on the left. */
-        private float imageIndentLeft = 0;
+        public float imageIndentLeft = 0;
         
         /** This represents the current indentation of the PDF Elements on the right side. */
-        private float indentRight = 0;
+        public float indentRight = 0;
         
         /** Indentation to the right caused by a section. */
-        private float sectionIndentRight = 0;
+        public float sectionIndentRight = 0;
         
         /** This is the indentation caused by an image on the right. */
-        private float imageIndentRight = 0;
+        public float imageIndentRight = 0;
         
         /** This represents the current indentation of the PDF Elements on the top side. */
-        private float indentTop = 0;
+        public float indentTop = 0;
         
         /** This represents the current indentation of the PDF Elements on the bottom side. */
-        private float indentBottom = 0;
+        public float indentBottom = 0;
     }
     
     /**
@@ -1638,7 +1638,7 @@ class PdfDocument extends Document {
      * @return	a margin
      */
     
-    private float indentLeft() {
+    protected float indentLeft() {
         return left(indentation.indentLeft + indentation.listIndentLeft + indentation.imageIndentLeft + indentation.sectionIndentLeft);
     }
     
@@ -1648,7 +1648,7 @@ class PdfDocument extends Document {
      * @return	a margin
      */
     
-    private float indentRight() {
+    protected float indentRight() {
         return right(indentation.indentRight + indentation.sectionIndentRight + indentation.imageIndentRight);
     }
     
@@ -1658,7 +1658,7 @@ class PdfDocument extends Document {
      * @return	a margin
      */
     
-    private float indentTop() {
+    protected float indentTop() {
         return top(indentation.indentTop);
     }
     
@@ -1676,7 +1676,7 @@ class PdfDocument extends Document {
      * Adds extra space.
      * This method should probably be rewritten.
      */
-    private void addSpacing(float extraspace, float oldleading, Font f) {
+    protected void addSpacing(float extraspace, float oldleading, Font f) {
     	if (extraspace == 0) return;
     	if (pageEmpty) return;
     	if (currentHeight + line.height() + leading > indentTop() - indentBottom()) return;
@@ -1699,7 +1699,7 @@ class PdfDocument extends Document {
 //	Info Dictionary and Catalog
     
     /** some meta information about the Document. */
-    private PdfInfo info = new PdfInfo();
+    protected PdfInfo info = new PdfInfo();
     
     /**
      * Gets the <CODE>PdfInfo</CODE>-object.
@@ -1773,10 +1773,10 @@ class PdfDocument extends Document {
 //	[C1] outlines
     
     /** This is the root outline of the document. */
-    private PdfOutline rootOutline;
+    protected PdfOutline rootOutline;
     
     /** This is the current <CODE>PdfOutline</CODE> in the hierarchy of outlines. */
-    private PdfOutline currentOutline;
+    protected PdfOutline currentOutline;
     
     /**
      * Adds a named outline to the document .
@@ -1952,7 +1952,7 @@ class PdfDocument extends Document {
      * Stores the destinations keyed by name. Value is
      * <CODE>Object[]{PdfAction,PdfIndirectReference,PdfDestintion}</CODE>.
      */
-    private TreeMap localDestinations = new TreeMap();
+    protected TreeMap localDestinations = new TreeMap();
     
     PdfAction getLocalGotoAction(String name) {
         PdfAction action;
@@ -1998,8 +1998,8 @@ class PdfDocument extends Document {
      * Stores a list of document level JavaScript actions.
      */
     int jsCounter;
-    private HashMap documentLevelJS = new HashMap();
-    private DecimalFormat SIXTEEN_DIGITS;
+    protected HashMap documentLevelJS = new HashMap();
+    protected DecimalFormat SIXTEEN_DIGITS;
     void addJavaScript(PdfAction js) {
         if (js.get(PdfName.JS) == null)
             throw new RuntimeException("Only JavaScript actions are allowed.");
@@ -2027,7 +2027,7 @@ class PdfDocument extends Document {
     	return documentLevelJS;
     }
     
-    private HashMap documentFileAttachment = new HashMap();
+    protected HashMap documentFileAttachment = new HashMap();
 
     void addFileAttachment(String description, PdfFileSpecification fs) throws IOException {
         if (description == null) {
@@ -2057,20 +2057,20 @@ class PdfDocument extends Document {
 	
 //	[C6] document level actions
     
-    private String openActionName;
+    protected String openActionName;
     
     void setOpenAction(String name) {
         openActionName = name;
         openActionAction = null;
     }
 
-    private PdfAction openActionAction;
+    protected PdfAction openActionAction;
     void setOpenAction(PdfAction action) {
         openActionAction = action;
         openActionName = null;
     }
 
-    private PdfDictionary additionalActions;
+    protected PdfDictionary additionalActions;
     void addAdditionalAction(PdfName actionType, PdfAction action)  {
         if (additionalActions == null)  {
             additionalActions = new PdfDictionary();
@@ -2085,7 +2085,7 @@ class PdfDocument extends Document {
     
 //	[C7] portable collections
     
-    private PdfCollection collection;
+    protected PdfCollection collection;
 
     /**
      * Sets the collection dictionary.
@@ -2155,7 +2155,7 @@ class PdfDocument extends Document {
             boxSize.put(boxName, new PdfRectangle(size));
     }
     
-    private void setNewPageSizeAndMargins() {
+    protected void setNewPageSizeAndMargins() {
         pageSize = nextPageSize;
     	if (marginMirroring && (getPageNumber() & 1) == 0) {
             marginRight = nextMarginLeft;
@@ -2182,7 +2182,7 @@ class PdfDocument extends Document {
 //	[U2] empty pages
 
     /** This checks if the page is empty. */
-    private boolean pageEmpty = true;
+    protected boolean pageEmpty = true;
     
     void setPageEmpty(boolean pageEmpty) {
         this.pageEmpty = pageEmpty;
@@ -2225,7 +2225,7 @@ class PdfDocument extends Document {
 
 //	[U8] thumbnail images
     
-    private PdfIndirectReference thumb;
+    protected PdfIndirectReference thumb;
     void setThumbnail(Image image) throws PdfException, DocumentException {
         thumb = writer.getImageReference(writer.addDirectImageSimple(image));
     }
@@ -2242,7 +2242,7 @@ class PdfDocument extends Document {
 //	[M3] Images
     
     /** Holds value of property strictImageSequence. */
-    private boolean strictImageSequence = false;   
+    protected boolean strictImageSequence = false;   
     
     /** Getter for property strictImageSequence.
      * @return Value of property strictImageSequence.
@@ -2261,7 +2261,7 @@ class PdfDocument extends Document {
     }
     
     /** This is the position where the image ends. */
-    private float imageEnd = -1;
+    protected float imageEnd = -1;
  
 	/**
 	 * Method added by Pelikan Stephan
@@ -2278,7 +2278,7 @@ class PdfDocument extends Document {
 	}
     
     /** This is the image that could not be shown on a previous page. */
-    private Image imageWait = null;
+    protected Image imageWait = null;
     
     /**
      * Adds an image to the document.
@@ -2287,7 +2287,7 @@ class PdfDocument extends Document {
      * @throws DocumentException on error
      */
     
-    private void add(Image image) throws PdfException, DocumentException {
+    protected void add(Image image) throws PdfException, DocumentException {
         
         if (image.hasAbsoluteY()) {
             graphics.addImage(image);
@@ -2429,7 +2429,7 @@ class PdfDocument extends Document {
 	/**
 	 * This is a helper class for adding a Table to a document.
 	 */
-    private static class RenderingContext {
+    protected static class RenderingContext {
         float pagetop = -1;
         float oldHeight = -1;
 
@@ -2533,7 +2533,7 @@ class PdfDocument extends Document {
 	 * @param onlyFirstPage		Render only the first full page
 	 * @throws DocumentException
 	 */
-    private void add(PdfTable table, boolean onlyFirstPage) throws DocumentException {
+    protected void add(PdfTable table, boolean onlyFirstPage) throws DocumentException {
         // before every table, we flush all lines
         flushLines();
         
@@ -2753,7 +2753,7 @@ class PdfDocument extends Document {
         pageEmpty = false;
     }
     
-    private void analyzeRow(ArrayList rows, RenderingContext ctx) {
+    protected void analyzeRow(ArrayList rows, RenderingContext ctx) {
         ctx.maxCellBottom = indentBottom();
 
         // determine whether row(index) is in a rowspan
@@ -2791,7 +2791,7 @@ class PdfDocument extends Document {
         }
     }
 
-    private boolean mayBeRemoved(ArrayList row) {
+    protected boolean mayBeRemoved(ArrayList row) {
         Iterator iterator = row.iterator();
         boolean mayBeRemoved = true;
         while (iterator.hasNext()) {
@@ -2802,7 +2802,7 @@ class PdfDocument extends Document {
         return mayBeRemoved;
     }
 
-    private void consumeRowspan(ArrayList row, RenderingContext ctx) {
+    protected void consumeRowspan(ArrayList row, RenderingContext ctx) {
         Iterator iterator = row.iterator();
         while (iterator.hasNext()) {
             PdfCell c = (PdfCell) iterator.next();
@@ -2810,7 +2810,7 @@ class PdfDocument extends Document {
         }
     }
     
-    private ArrayList extractRows(ArrayList cells, RenderingContext ctx) {
+    protected ArrayList extractRows(ArrayList cells, RenderingContext ctx) {
         PdfCell cell;
         PdfCell previousCell = null;
         ArrayList rows = new ArrayList();
@@ -2877,7 +2877,7 @@ class PdfDocument extends Document {
         return rows;
     }
 
-    private void renderCells(RenderingContext ctx, java.util.List cells, boolean hasToFit) throws DocumentException {
+    protected void renderCells(RenderingContext ctx, java.util.List cells, boolean hasToFit) throws DocumentException {
         PdfCell cell;
         Iterator iterator;
         if (hasToFit) {
@@ -2952,7 +2952,7 @@ class PdfDocument extends Document {
     }
     
 //	[M5] header/footer
-    private void doFooter() throws DocumentException {
+    protected void doFooter() throws DocumentException {
     	if (footer == null) return;
 		// Begin added by Edgar Leonardo Prieto Perilla
     	// Avoid footer identation
@@ -2997,7 +2997,7 @@ class PdfDocument extends Document {
         // End added by Edgar Leonardo Prieto Perilla
     }
     
-    private void doHeader() throws DocumentException {
+    protected void doHeader() throws DocumentException {
         // if there is a header, the header = added
         if (header == null) return;
 		// Begin added by Edgar Leonardo Prieto Perilla
