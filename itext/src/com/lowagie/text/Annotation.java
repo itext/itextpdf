@@ -582,6 +582,22 @@ public class Annotation implements Element {
 	public HashMap attributes() {
 		return annotationAttributes;
 	}
+	
+	/**
+	 * @see com.lowagie.text.Element#isContent()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isContent() {
+		return true;
+	}
+
+	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNestable() {
+		return true;
+	}
 
 	/**
 	 * Returns an <CODE>Annotation</CODE> that has been constructed taking in
@@ -595,4 +611,5 @@ public class Annotation implements Element {
 	public Annotation(java.util.Properties attributes) {
 		this(com.lowagie.text.factories.ElementFactory.getAnnotation(attributes));
 	}
+
 }

@@ -125,6 +125,14 @@ public class Chapter extends Section {
     public int type() {
         return Element.CHAPTER;
     }
+
+	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNestable() {
+		return false;
+	}
     
 // deprecated stuff
     

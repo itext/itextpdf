@@ -234,6 +234,22 @@ public class Phrase extends ArrayList implements TextElementArray {
         }
         return tmp;
     }
+	
+	/**
+	 * @see com.lowagie.text.Element#isContent()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isContent() {
+		return true;
+	}
+
+	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNestable() {
+		return true;
+	}
     
     // overriding some of the ArrayList-methods
     

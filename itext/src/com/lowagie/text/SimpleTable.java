@@ -342,6 +342,14 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 	}
 
 	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNestable() {
+		return true;
+	}
+
+	/**
 	 * @see com.lowagie.text.TextElementArray#add(java.lang.Object)
 	 */
 	public boolean add(Object o) {

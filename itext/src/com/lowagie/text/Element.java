@@ -310,6 +310,23 @@ public interface Element {
 	public int type();
 
 	/**
+	 * Checks if this element is a content object.
+	 * If not, it's a metadata object.
+	 * @since	iText 2.0.8
+	 * @return	true if this is a 'content' element; false if this is a 'medadata' element
+	 */
+	
+	public boolean isContent();
+	
+	/**
+	 * Checks if this element is nestable.
+	 * @since	iText 2.0.8
+	 * @return	true if this element can be nested inside other elements.
+	 */
+	
+	public boolean isNestable();
+	
+	/**
 	 * Gets all the chunks in this element.
 	 * 
 	 * @return an <CODE>ArrayList</CODE>
