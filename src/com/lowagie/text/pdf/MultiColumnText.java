@@ -419,7 +419,7 @@ public class MultiColumnText implements Element {
 	 * @since	iText 2.0.8
 	 */
 	public boolean isNestable() {
-		return true;
+		return false;
 	}
 
     /**

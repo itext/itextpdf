@@ -522,7 +522,7 @@ public class PdfDocument extends Document {
                     // so we cast both to a Section
                     Section section = (Section) element;
                     
-                    boolean hasTitle = section.getTitle() != null;
+                    boolean needsTitle = section.getTitle() != null;
                     
                     // if the section is a chapter, we begin a new page
                     if (section.isTriggerNewPage()) {
@@ -533,7 +533,7 @@ public class PdfDocument extends Document {
                         newLine();
                     }
 
-                    if (hasTitle) {
+                    if (needsTitle) {
                     float fith = indentTop() - currentHeight;
                     int rotation = pageSize.getRotation();
                     if (rotation == 90 || rotation == 180)
@@ -559,7 +559,7 @@ public class PdfDocument extends Document {
                             pageEvent.onSection(writer, this, indentTop() - currentHeight, section.getDepth(), section.getTitle());
                     
                     // the title of the section (if any has to be printed)
-                    if (hasTitle) {
+                    if (needsTitle) {
                         isParagraph = false;
                         add(section.getTitle());
                         isParagraph = true;
