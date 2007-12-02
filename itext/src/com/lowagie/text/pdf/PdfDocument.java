@@ -523,8 +523,10 @@ public class PdfDocument extends Document {
                     // Chapters and Sections only differ in their constructor
                     // so we cast both to a Section
                     Section section = (Section) element;
+                    PdfPageEvent pageEvent = writer.getPageEvent();
                     
-                    boolean needsTitle = section.getTitle() != null;
+                    boolean hasTitle = section.isNotAddedYet()
+                    	&& section.getTitle() != null;
                     
                     // if the section is a chapter, we begin a new page
                     if (section.isTriggerNewPage()) {
@@ -535,11 +537,11 @@ public class PdfDocument extends Document {
                         newLine();
                     }
 
-                    if (needsTitle) {
-                    float fith = indentTop() - currentHeight;
-                    int rotation = pageSize.getRotation();
-                    if (rotation == 90 || rotation == 180)
-                        fith = pageSize.getHeight() - fith;
+                    if (hasTitle) {
+                    	float fith = indentTop() - currentHeight;
+                    	int rotation = pageSize.getRotation();
+                    	if (rotation == 90 || rotation == 180)
+                    		fith = pageSize.getHeight() - fith;
                     	PdfDestination destination = new PdfDestination(PdfDestination.FITH, fith);
                     	while (currentOutline.level() >= section.getDepth()) {
                     		currentOutline = currentOutline.parent();
@@ -553,15 +555,14 @@ public class PdfDocument extends Document {
                     indentation.sectionIndentLeft += section.getIndentationLeft();
                     indentation.sectionIndentRight += section.getIndentationRight();
       
-                    PdfPageEvent pageEvent = writer.getPageEvent();
-                    if (pageEvent != null)
+                    if (section.isNotAddedYet() && pageEvent != null)
                         if (element.type() == Element.CHAPTER)
                             pageEvent.onChapter(writer, this, indentTop() - currentHeight, section.getTitle());
                         else
                             pageEvent.onSection(writer, this, indentTop() - currentHeight, section.getDepth(), section.getTitle());
                     
                     // the title of the section (if any has to be printed)
-                    if (needsTitle) {
+                    if (hasTitle) {
                         isParagraph = false;
                         add(section.getTitle());
                         isParagraph = true;
@@ -574,7 +575,7 @@ public class PdfDocument extends Document {
                     indentation.sectionIndentLeft -= (section.getIndentationLeft() + section.getIndentation());
                     indentation.sectionIndentRight -= section.getIndentationRight();
 
-                    if (pageEvent != null)
+                    if (section.isComplete() && pageEvent != null)
                         if (element.type() == Element.CHAPTER)
                             pageEvent.onChapterEnd(writer, this, indentTop() - currentHeight);
                         else
@@ -1611,31 +1612,31 @@ public class PdfDocument extends Document {
     public static class Indentation {
         
         /** This represents the current indentation of the PDF Elements on the left side. */
-        public float indentLeft = 0;
+        float indentLeft = 0;
         
         /** Indentation to the left caused by a section. */
-        public float sectionIndentLeft = 0;
+        float sectionIndentLeft = 0;
         
         /** This represents the current indentation of the PDF Elements on the left side. */
-        public float listIndentLeft = 0;
+        float listIndentLeft = 0;
         
         /** This is the indentation caused by an image on the left. */
-        public float imageIndentLeft = 0;
+        float imageIndentLeft = 0;
         
         /** This represents the current indentation of the PDF Elements on the right side. */
-        public float indentRight = 0;
+        float indentRight = 0;
         
         /** Indentation to the right caused by a section. */
-        public float sectionIndentRight = 0;
+        float sectionIndentRight = 0;
         
         /** This is the indentation caused by an image on the right. */
-        public float imageIndentRight = 0;
+        float imageIndentRight = 0;
         
         /** This represents the current indentation of the PDF Elements on the top side. */
-        public float indentTop = 0;
+        float indentTop = 0;
         
         /** This represents the current indentation of the PDF Elements on the bottom side. */
-        public float indentBottom = 0;
+        float indentBottom = 0;
     }
     
     /**

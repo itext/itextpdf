@@ -274,6 +274,11 @@ public class Document implements DocListener {
             listener = (DocListener) iterator.next();
             success |= listener.add(element);
         }
+		if (element instanceof LargeElement) {
+			LargeElement e = (LargeElement)element;
+			if (!e.isComplete())
+				e.flushContent();
+		}
         return success;
     }
     

@@ -56,6 +56,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ElementListener;
 import com.lowagie.text.Image;
+import com.lowagie.text.LargeElement;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.events.PdfPTableEventForwarder;
@@ -70,7 +71,7 @@ import com.lowagie.text.pdf.events.PdfPTableEventForwarder;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 
-public class PdfPTable implements Element{
+public class PdfPTable implements LargeElement{
     
     /** The index of the original <CODE>PdfcontentByte</CODE>.
      */    
@@ -147,6 +148,12 @@ public class PdfPTable implements Element{
      * on one page if possible
      */
     private boolean keepTogether;
+    
+    /**
+     * Indicates if the PdfPTable is complete once added to the document.
+     * @since	iText 2.0.8
+     */
+    protected boolean complete = true;
     
     /**
      * Holds value of property footerRows.
@@ -1104,4 +1111,29 @@ public class PdfPTable implements Element{
             addCell(defaultCell);
         }
     }
+	
+	/**
+	 * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#flushContent()
+	 */
+	public void flushContent() {
+		deleteBodyRows();
+		setSkipFirstHeader(true);
+	}
+
+	/**
+     * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#isComplete()
+	 */
+	public boolean isComplete() {
+		return complete;
+	}
+
+	/**
+     * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#setComplete(boolean)
+	 */
+	public void setComplete(boolean complete) {
+		this.complete = complete;
+	}
 }

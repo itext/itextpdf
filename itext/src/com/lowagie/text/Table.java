@@ -152,7 +152,7 @@ import com.lowagie.text.pdf.PdfPTable;
  * @see         Cell
  */
 
-public class Table extends Rectangle {
+public class Table extends Rectangle implements LargeElement {
     
     // membervariables
     
@@ -160,7 +160,7 @@ public class Table extends Rectangle {
     private int columns;
     
     /** This is the list of <CODE>Row</CODE>s. */
-    protected ArrayList rows = new ArrayList();
+    private ArrayList rows = new ArrayList();
     
     /** The current Position in the table. */
     private Point curPosition = new Point(0, 0);
@@ -209,6 +209,12 @@ public class Table extends Rectangle {
     
     /** if you want to generate tables the old way, set this value to false. */
     protected boolean convert2pdfptable = false;
+    
+    /**
+     * Indicates if the PdfPTable is complete once added to the document.
+     * @since	iText 2.0.8
+     */
+    protected boolean complete = true;
     
     // constructors
     
@@ -1665,5 +1671,30 @@ public class Table extends Rectangle {
     public void setDefaultLayout(Cell value) {
         defaultCell = value;
     }
+
+	
+	/**
+	 * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#flushContent()
+	 */
+	public void flushContent() {
+		deleteAllRows();
+	}
+
+	/**
+     * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#isComplete()
+	 */
+	public boolean isComplete() {
+		return complete;
+	}
+
+	/**
+     * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#setComplete(boolean)
+	 */
+	public void setComplete(boolean complete) {
+		this.complete = complete;
+	}
     
 }

@@ -1,5 +1,8 @@
 /*
- * Copyright 2005 by Michael Niedermair.
+ * $Id: Element.java 3048 2007-12-01 10:33:01Z blowagie $
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -48,57 +51,36 @@
 package com.lowagie.text;
 
 /**
- * Chapter with auto numbering.
- *
- * @author Michael Niedermair
+ * Interface implemented by Element objects that can potentially consume
+ * a lot of memory. Objects implementing the LargeElement interface can
+ * be added to a Document more than once. If you have invoked setCompleted(false),
+ * they will be added partially and the content that was added will be
+ * removed until you've invoked setCompleted(true);
+ * @since	iText 2.0.8
  */
-public class ChapterAutoNumber extends Chapter {
 
-    // constant
-    private static final long serialVersionUID = -9217457637987854167L;
-
-    /**
-     * Create a new object.
-     *
-     * @param para     the Chapter title (as a <CODE>Paragraph</CODE>)
-     */
-    public ChapterAutoNumber(final Paragraph para) {
-        super(para, 0);
-    }
-
-    /**
-     * Create a new objet.
-     * 
-     * @param title	    the Chapter title (as a <CODE>String</CODE>)
-     */
-    public ChapterAutoNumber(final String title) {
-        super(title, 0);
-    }
-
-    /**
-     * Create a new section for this chapter and ad it.
-     *
-     * @param title  the Section title (as a <CODE>String</CODE>)
-     * @return Returns the new section.
-     */
-    public Section addSection(final String title) {
-    	if (isAddedCompletely()) {
-    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
-    	}
-        return addSection(title, 2);
-    }
-
-    /**
-     * Create a new section for this chapter and add it.
-     *
-     * @param title  the Section title (as a <CODE>Paragraph</CODE>)
-     * @return Returns the new section.
-     */
-    public Section addSection(final Paragraph title) {
-    	if (isAddedCompletely()) {
-    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
-    	}
-        return addSection(title, 2);
-    }
-
+public interface LargeElement extends Element {
+	
+	/**
+	 * If you invoke setCompleted(false), you indicate that the content
+	 * of the object isn't complete yet; it can be added to the document
+	 * partially, but more will follow. If you invoke setCompleted(true),
+	 * you indicate that you won't add any more data to the object.
+	 * @since	iText 2.0.8
+	 * @param	complete	false if you'll be adding more data after
+	 * 						adding the object to the document.
+	 */
+	public void setComplete(boolean complete);
+	
+	/**
+	 * Indicates if the element is complete or not.
+	 * @since	iText 2.0.8
+	 * @return	indicates if the element is complete according to the user.
+	 */
+	public boolean isComplete();
+	
+	/**
+	 * Flushes the content that has been added.
+	 */
+	public void flushContent();
 }
