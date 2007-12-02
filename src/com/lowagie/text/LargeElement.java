@@ -56,6 +56,7 @@ package com.lowagie.text;
  * be added to a Document more than once. If you have invoked setCompleted(false),
  * they will be added partially and the content that was added will be
  * removed until you've invoked setCompleted(true);
+ * @since	iText 2.0.8
  */
 
 public interface LargeElement extends Element {

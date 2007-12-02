@@ -134,13 +134,22 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     /** This is the complete list of sectionnumbers of this section and the parents of this section. */
     protected ArrayList numbers = null;
     
-    /** Indicates if the Section will be complete once added to the document. */
+    /**
+     * Indicates if the Section will be complete once added to the document.
+     * @since	iText 2.0.8
+     */
     protected boolean complete = true;
     
-    /** Indicates if the Section was added completely to the document. */
+    /**
+     * Indicates if the Section was added completely to the document.
+     * @since	iText 2.0.8
+     */
     protected boolean addedCompletely = false;
     
-    /** Indicates if this is the first time the section was added. */
+    /**
+     * Indicates if this is the first time the section was added.
+     * @since	iText 2.0.8
+     */
     protected boolean notAddedYet = true;
     
     // constructors
