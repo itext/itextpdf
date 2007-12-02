@@ -135,7 +135,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     protected ArrayList numbers = null;
     
     /** Indicates if the Section will be complete once added to the document. */
-    protected boolean completed = true;
+    protected boolean complete = true;
     
     /** Indicates if the Section was added completely to the document. */
     protected boolean addedCompletely = false;
@@ -712,7 +712,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 			element = (Element)i.next();
 			if (element instanceof Section) {
 				Section s = (Section)element;
-				if (!s.isCompleted() && size() == 1) {
+				if (!s.isComplete() && size() == 1) {
 					s.flushContent();
 					return;
 				}
@@ -726,18 +726,18 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 
 	/**
      * @since	iText 2.0.8
-	 * @see com.lowagie.text.LargeElement#isCompleted()
+	 * @see com.lowagie.text.LargeElement#isComplete()
 	 */
-	public boolean isCompleted() {
-		return completed;
+	public boolean isComplete() {
+		return complete;
 	}
 
 	/**
      * @since	iText 2.0.8
-	 * @see com.lowagie.text.LargeElement#setCompleted(boolean)
+	 * @see com.lowagie.text.LargeElement#setComplete(boolean)
 	 */
-	public void setCompleted(boolean completed) {
-		this.completed = completed;
+	public void setComplete(boolean complete) {
+		this.complete = complete;
 	}
     
     // deprecated stuff

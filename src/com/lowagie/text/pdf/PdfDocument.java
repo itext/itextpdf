@@ -575,7 +575,7 @@ public class PdfDocument extends Document {
                     indentation.sectionIndentLeft -= (section.getIndentationLeft() + section.getIndentation());
                     indentation.sectionIndentRight -= section.getIndentationRight();
 
-                    if (section.isCompleted() && pageEvent != null)
+                    if (section.isComplete() && pageEvent != null)
                         if (element.type() == Element.CHAPTER)
                             pageEvent.onChapterEnd(writer, this, indentTop() - currentHeight);
                         else

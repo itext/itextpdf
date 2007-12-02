@@ -66,17 +66,17 @@ public interface LargeElement extends Element {
 	 * partially, but more will follow. If you invoke setCompleted(true),
 	 * you indicate that you won't add any more data to the object.
 	 * @since	iText 2.0.8
-	 * @param	completed	false if you'll be adding more data after
+	 * @param	complete	false if you'll be adding more data after
 	 * 						adding the object to the document.
 	 */
-	public void setCompleted(boolean completed);
+	public void setComplete(boolean complete);
 	
 	/**
-	 * Indicates if the element is completed or not.
+	 * Indicates if the element is complete or not.
 	 * @since	iText 2.0.8
-	 * @return	indicates if the element is completed according to the user.
+	 * @return	indicates if the element is complete according to the user.
 	 */
-	public boolean isCompleted();
+	public boolean isComplete();
 	
 	/**
 	 * Flushes the content that has been added.

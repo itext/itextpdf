@@ -276,7 +276,7 @@ public class Document implements DocListener {
         }
 		if (element instanceof LargeElement) {
 			LargeElement e = (LargeElement)element;
-			if (!e.isCompleted())
+			if (!e.isComplete())
 				e.flushContent();
 		}
         return success;

@@ -153,7 +153,7 @@ public class PdfPTable implements LargeElement{
      * Indicates if the PdfPTable is complete once added to the document.
      * @since	iText 2.0.8
      */
-    protected boolean completed = true;
+    protected boolean complete = true;
     
     /**
      * Holds value of property footerRows.
@@ -1123,17 +1123,17 @@ public class PdfPTable implements LargeElement{
 
 	/**
      * @since	iText 2.0.8
-	 * @see com.lowagie.text.LargeElement#isCompleted()
+	 * @see com.lowagie.text.LargeElement#isComplete()
 	 */
-	public boolean isCompleted() {
-		return completed;
+	public boolean isComplete() {
+		return complete;
 	}
 
 	/**
      * @since	iText 2.0.8
-	 * @see com.lowagie.text.LargeElement#setCompleted(boolean)
+	 * @see com.lowagie.text.LargeElement#setComplete(boolean)
 	 */
-	public void setCompleted(boolean completed) {
-		this.completed = completed;
+	public void setComplete(boolean complete) {
+		this.complete = complete;
 	}
 }
