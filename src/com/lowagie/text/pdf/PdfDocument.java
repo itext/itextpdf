@@ -2515,8 +2515,7 @@ public class PdfDocument extends Document {
 
 	/**
 	 * Adds a new table to the document.
-	 * @param table				Table to add.  Rendered rows will be deleted after processing.
-	 * @param onlyFirstPage		Render only the first full page
+	 * @param t				Table to add.  Rendered rows will be deleted after processing.
 	 * @throws DocumentException
 	 * @since	iText 2.0.8
 	 */
