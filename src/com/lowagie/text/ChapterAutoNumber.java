@@ -82,6 +82,9 @@ public class ChapterAutoNumber extends Chapter {
      * @return Returns the new section.
      */
     public Section addSection(final String title) {
+    	if (isAddedCompletely()) {
+    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
+    	}
         return addSection(title, 2);
     }
 
@@ -92,6 +95,9 @@ public class ChapterAutoNumber extends Chapter {
      * @return Returns the new section.
      */
     public Section addSection(final Paragraph title) {
+    	if (isAddedCompletely()) {
+    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
+    	}
         return addSection(title, 2);
     }
 

@@ -80,7 +80,7 @@ import java.util.Iterator;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Section extends ArrayList implements TextElementArray {
+public class Section extends ArrayList implements TextElementArray, LargeElement {
     // constant
 	/**
 	 * A possible number style. The default number style: "1.2.3."
@@ -133,6 +133,15 @@ public class Section extends ArrayList implements TextElementArray {
     
     /** This is the complete list of sectionnumbers of this section and the parents of this section. */
     protected ArrayList numbers = null;
+    
+    /** Indicates if the Section will be complete once added to the document. */
+    protected boolean completed = true;
+    
+    /** Indicates if the Section was added completely to the document. */
+    protected boolean addedCompletely = false;
+    
+    /** Indicates if this is the first time the section was added. */
+    protected boolean notAddedYet = true;
     
     // constructors
     
@@ -247,6 +256,9 @@ public class Section extends ArrayList implements TextElementArray {
      * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
      */
     public void add(int index, Object o) {
+    	if (isAddedCompletely()) {
+    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
+    	}
         try {
             Element element = (Element) o;
             if (element.isNestable()) {
@@ -270,6 +282,9 @@ public class Section extends ArrayList implements TextElementArray {
      * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or <CODE>Section</CODE>
      */
     public boolean add(Object o) {
+    	if (isAddedCompletely()) {
+    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
+    	}
         try {
             Element element = (Element) o;
             if (element.type() == Element.SECTION) {
@@ -321,6 +336,9 @@ public class Section extends ArrayList implements TextElementArray {
      * @return  a new Section object
      */
     public Section addSection(float indentation, Paragraph title, int numberDepth) {
+    	if (isAddedCompletely()) {
+    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
+    	}
         Section section = new Section(title, numberDepth);
         section.setIndentation(indentation);
         add(section);
@@ -587,7 +605,7 @@ public class Section extends ArrayList implements TextElementArray {
      * @return Value of property triggerNewPage.
      */
     public boolean isTriggerNewPage() {
-		return triggerNewPage;
+		return triggerNewPage && notAddedYet;
 	}
     
     /**
@@ -646,10 +664,85 @@ public class Section extends ArrayList implements TextElementArray {
         this.numbers.add(new Integer(number));
         this.numbers.addAll(numbers);
     }
-    
-    // deprecated stuff
+
+	/**
+	 * Indicates if this is the first time the section is added.
+	 * @since	iText2.0.8
+	 * @return	true if the section wasn't added yet
+	 */
+	public boolean isNotAddedYet() {
+		return notAddedYet;
+	}
+
+	/**
+	 * Sets the indicaction if the section was already added to
+	 * the document.
+	 * @since	iText2.0.8
+	 * @param notAddedYet
+	 */
+	public void setNotAddedYet(boolean notAddedYet) {
+		this.notAddedYet = notAddedYet;
+	}
     
     /**
+     * @see com.lowagie.text.LargeElement#isAddedCompletely()
+     * @since	iText 2.0.8
+     */
+    private boolean isAddedCompletely() {
+		return addedCompletely;
+	}
+    
+	/**
+     * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#setAddedCompletely(boolean)
+	 */
+	private void setAddedCompletely(boolean addedCompletely) {
+		this.addedCompletely = addedCompletely;
+	}
+	
+	/**
+	 * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#flushContent()
+	 */
+	public void flushContent() {
+		setNotAddedYet(false);
+		title = null;
+		Element element;
+		for (Iterator i = iterator(); i.hasNext(); ) {
+			element = (Element)i.next();
+			if (element instanceof Section) {
+				Section s = (Section)element;
+				if (!s.isCompleted() && size() == 1) {
+					s.flushContent();
+					return;
+				}
+				else {
+					s.setAddedCompletely(true);
+				}
+			}
+			i.remove();
+		}
+	}
+
+	/**
+     * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#isCompleted()
+	 */
+	public boolean isCompleted() {
+		return completed;
+	}
+
+	/**
+     * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#setCompleted(boolean)
+	 */
+	public void setCompleted(boolean completed) {
+		this.completed = completed;
+	}
+    
+    // deprecated stuff
+
+	/**
 	 * Returns the title, preceeded by a certain number of sectionnumbers.
 	 *
 	 * @return	a <CODE>Paragraph</CODE>
