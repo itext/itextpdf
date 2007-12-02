@@ -688,7 +688,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
      * @see com.lowagie.text.LargeElement#isAddedCompletely()
      * @since	iText 2.0.8
      */
-    private boolean isAddedCompletely() {
+    protected boolean isAddedCompletely() {
 		return addedCompletely;
 	}
     
@@ -696,7 +696,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
      * @since	iText 2.0.8
 	 * @see com.lowagie.text.LargeElement#setAddedCompletely(boolean)
 	 */
-	private void setAddedCompletely(boolean addedCompletely) {
+	protected void setAddedCompletely(boolean addedCompletely) {
 		this.addedCompletely = addedCompletely;
 	}
 	

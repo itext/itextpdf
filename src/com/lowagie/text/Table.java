@@ -160,7 +160,7 @@ public class Table extends Rectangle {
     private int columns;
     
     /** This is the list of <CODE>Row</CODE>s. */
-    protected ArrayList rows = new ArrayList();
+    private ArrayList rows = new ArrayList();
     
     /** The current Position in the table. */
     private Point curPosition = new Point(0, 0);
