@@ -86,7 +86,7 @@ public class PdfTable extends Rectangle {
 	
 	/** Cached column widths. */
 	protected float[] positions;
-
+	
 	// constructors
 
 	/**
@@ -96,17 +96,15 @@ public class PdfTable extends Rectangle {
 	 * @param	left	the left border on the page
 	 * @param	right	the right border on the page
 	 * @param	top		the start position of the top of the table
-	 * @param	supportUpdateRowAdditions	
-	 * 					if true, table rows will be deleted after building the PdfTable table, 
-	 * 					in order to preserve memory and detect future row additions
+	 * @since	a parameter of this method has been removed in iText 2.0.8
 	 */
     
-	PdfTable(Table table, float left, float right, float top, boolean supportUpdateRowAdditions) {
+	PdfTable(Table table, float left, float right, float top) {
 		// constructs a Rectangle (the bottomvalue will be changed afterwards)
 		super(left, top, right, top);
 		this.table = table;
         table.complete();
-
+        
 		// copying the attributes from class Table
         cloneNonPositionParameters(table);
 
@@ -121,9 +119,6 @@ public class PdfTable extends Rectangle {
 		cells = new ArrayList();
 
 		updateRowAdditionsInternal();
-		if (supportUpdateRowAdditions) {
-			table.deleteAllRows();
-		}
 	}
 
 	// methods
@@ -173,19 +168,21 @@ public class PdfTable extends Rectangle {
 					cell = (Cell) row.getCell(i);
 					if (cell != null) {
 						currentCell = new PdfCell(cell, rowNumber+prevRows, positions[i], positions[i + cell.getColspan()], offsets[rowNumber], cellspacing(), cellpadding());
+						if (rowNumber < firstDataRow) {
+							currentCell.setHeader();
+							headercells.add(currentCell);
+							if (!table.isNotAddedYet())
+								continue;
+						}
 						try {
-                     if (offsets[rowNumber] - currentCell.getHeight() - cellpadding() < offsets[rowNumber + currentCell.rowspan()]) {
-                        offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.getHeight() - cellpadding();
+							if (offsets[rowNumber] - currentCell.getHeight() - cellpadding() < offsets[rowNumber + currentCell.rowspan()]) {
+								offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.getHeight() - cellpadding();
 							}
 						}
 						catch(ArrayIndexOutOfBoundsException aioobe) {
 							if (offsets[rowNumber] - currentCell.getHeight() < offsets[rows - 1]) {
 								offsets[rows - 1] = offsets[rowNumber] - currentCell.getHeight();
 							}
-						}
-						if (rowNumber < firstDataRow) {
-							currentCell.setHeader();
-							headercells.add(currentCell);
 						}
 						currentCell.setGroupNumber(groupNumber);
 						groupChange |= cell.getGroupChange();
@@ -312,5 +309,14 @@ public class PdfTable extends Rectangle {
 	 */
 	public float getOffset() {
 		return table.getOffset();
+	}
+	
+	/**
+	 * Checks if the corresponting Table has already been added to the document.
+	 * @return	true if the table is being added for the first time
+	 * @since	iText 2.0.8
+	 */
+	public boolean isNotAddedYet() {
+		return table.isNotAddedYet();
 	}
 }

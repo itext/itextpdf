@@ -532,10 +532,6 @@ public class PdfDocument extends Document {
                     if (section.isTriggerNewPage()) {
                         newPage();
                     }
-                    // otherwise, we begin a new line
-                    else {
-                        newLine();
-                    }
 
                     if (hasTitle) {
                     	float fith = indentTop() - currentHeight;
@@ -661,12 +657,7 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.TABLE : {
-					PdfTable table;
-                    if (element instanceof PdfTable) {
-                    	// Already pre-rendered
-                    	table = (PdfTable)element;
-						table.updateRowAdditions();
-                    } else if (element instanceof SimpleTable) {
+                    if (element instanceof SimpleTable) {
                     	PdfPTable ptable = ((SimpleTable)element).createPdfPTable();
                     	if (ptable.size() <= ptable.getHeaderRows())
                     		break; //nothing to do
@@ -698,12 +689,11 @@ public class PdfDocument extends Document {
                     		carriageReturn();
                     		lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
                     		currentHeight += offset;
-                    		table = getPdfTable((Table)element, false);
+                    		addPdfTable((Table)element);
                     	}
 					} else {
 						return false;
 					}
-                    add(table, false);
                     break;
                 }
                 case Element.JPEG:
@@ -2422,18 +2412,6 @@ public class PdfDocument extends Document {
 //	[M4'] Adding a Table
     
 	/**
-	 * Gets a PdfTable object
-	 * (contributed by dperezcar@fcc.es)
-	 * @param table a high level table object
-	 * @param supportRowAdditions
-	 * @return returns a PdfTable object
-	 */
-
-	PdfTable getPdfTable(Table table, boolean supportRowAdditions) {
-        return new PdfTable(table, indentLeft(), indentRight(), indentTop() - currentHeight, supportRowAdditions);
-	}
-    
-	/**
 	 * This is a helper class for adding a Table to a document.
 	 * @since	2.0.8 (PdfDocument was package-private before)
 	 */
@@ -2540,11 +2518,13 @@ public class PdfDocument extends Document {
 	 * @param table				Table to add.  Rendered rows will be deleted after processing.
 	 * @param onlyFirstPage		Render only the first full page
 	 * @throws DocumentException
+	 * @since	iText 2.0.8
 	 */
-    protected void add(PdfTable table, boolean onlyFirstPage) throws DocumentException {
+    private void addPdfTable(Table t) throws DocumentException {
         // before every table, we flush all lines
         flushLines();
-        
+
+    	PdfTable table = new PdfTable(t, indentLeft(), indentRight(), indentTop() - currentHeight);
         RenderingContext ctx = new RenderingContext();
         ctx.pagetop = indentTop();
         ctx.oldHeight = currentHeight;
@@ -2556,17 +2536,8 @@ public class PdfDocument extends Document {
 		PdfCell cell;
 
 		// drawing the table
-		ArrayList dataCells = table.getCells();
-                
 		ArrayList headercells = table.getHeaderCells();
-		// Check if we have removed header cells in a previous call
-		if (!headercells.isEmpty() && (dataCells.isEmpty() || dataCells.get(0) != headercells.get(0))) {
-			ArrayList allCells = new ArrayList(dataCells.size()+headercells.size());
-			allCells.addAll(headercells);
-			allCells.addAll(dataCells);
-			dataCells = allCells;
-		}
-        ArrayList cells = dataCells;
+        ArrayList cells = table.getCells();
         ArrayList rows = extractRows(cells, ctx);
         boolean isContinue = false;
 		while (!cells.isEmpty()) {
@@ -2653,7 +2624,7 @@ public class PdfDocument extends Document {
 				// old page
 				pageEmpty = false;
                 float difference = ctx.lostTableBottom;
-
+                
 				// new page
 				newPage();
                 
@@ -2740,9 +2711,6 @@ public class PdfDocument extends Document {
                
 					cell.setTop(newTop );
 					cell.setBottom(newBottom );
-				}
-				if (onlyFirstPage) {
-					break;
 				}
 			}
 		}
@@ -2955,7 +2923,7 @@ public class PdfDocument extends Document {
      */
     float bottom(Table table) {
         // constructing a PdfTable
-        PdfTable tmp = getPdfTable(table, false);
+        PdfTable tmp = new PdfTable(table, indentLeft(), indentRight(), indentTop() - currentHeight);
         return tmp.getBottom();
     }
     
