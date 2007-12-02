@@ -151,6 +151,7 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Indicates if the PdfPTable is complete once added to the document.
+     * @since	iText 2.0.8
      */
     protected boolean completed = true;
     

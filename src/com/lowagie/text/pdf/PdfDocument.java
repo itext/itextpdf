@@ -1612,31 +1612,31 @@ public class PdfDocument extends Document {
     public static class Indentation {
         
         /** This represents the current indentation of the PDF Elements on the left side. */
-        public float indentLeft = 0;
+        float indentLeft = 0;
         
         /** Indentation to the left caused by a section. */
-        public float sectionIndentLeft = 0;
+        float sectionIndentLeft = 0;
         
         /** This represents the current indentation of the PDF Elements on the left side. */
-        public float listIndentLeft = 0;
+        float listIndentLeft = 0;
         
         /** This is the indentation caused by an image on the left. */
-        public float imageIndentLeft = 0;
+        float imageIndentLeft = 0;
         
         /** This represents the current indentation of the PDF Elements on the right side. */
-        public float indentRight = 0;
+        float indentRight = 0;
         
         /** Indentation to the right caused by a section. */
-        public float sectionIndentRight = 0;
+        float sectionIndentRight = 0;
         
         /** This is the indentation caused by an image on the right. */
-        public float imageIndentRight = 0;
+        float imageIndentRight = 0;
         
         /** This represents the current indentation of the PDF Elements on the top side. */
-        public float indentTop = 0;
+        float indentTop = 0;
         
         /** This represents the current indentation of the PDF Elements on the bottom side. */
-        public float indentBottom = 0;
+        float indentBottom = 0;
     }
     
     /**
