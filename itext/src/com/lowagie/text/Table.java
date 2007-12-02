@@ -211,6 +211,12 @@ public class Table extends Rectangle implements LargeElement {
     protected boolean convert2pdfptable = false;
     
     /**
+     * Indicates if this is the first time the section was added.
+     * @since	iText 2.0.8
+     */
+    protected boolean notAddedYet = true;
+    
+    /**
      * Indicates if the PdfPTable is complete once added to the document.
      * @since	iText 2.0.8
      */
@@ -1370,6 +1376,9 @@ public class Table extends Rectangle implements LargeElement {
         setAutoFillEmptyCells(true);
     	complete();
     	PdfPTable pdfptable = new PdfPTable(widths);
+    	pdfptable.setComplete(complete);
+    	if (isNotAddedYet())
+    		pdfptable.setSkipFirstHeader(true);
     	pdfptable.setTableEvent(SimpleTable.getDimensionlessInstance(this, cellspacing));
     	pdfptable.setHeaderRows(lastHeaderRow + 1);
     	pdfptable.setSplitLate(cellsFitPage);
@@ -1409,6 +1418,54 @@ public class Table extends Rectangle implements LargeElement {
         }
     	return pdfptable;
     }
+
+	/**
+	 * Indicates if this is the first time the section is added.
+	 * @since	iText2.0.8
+	 * @return	true if the section wasn't added yet
+	 */
+	public boolean isNotAddedYet() {
+		return notAddedYet;
+	}
+
+	/**
+	 * Sets the indicaction if the section was already added to
+	 * the document.
+	 * @since	iText2.0.8
+	 * @param notAddedYet
+	 */
+	public void setNotAddedYet(boolean notAddedYet) {
+		this.notAddedYet = notAddedYet;
+	}
+	
+	/**
+	 * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#flushContent()
+	 */
+	public void flushContent() {		
+		this.setNotAddedYet(false);
+        ArrayList headerrows = new ArrayList();
+        for (int i = 0; i < getLastHeaderRow() + 1; i++) {
+            headerrows.add(rows.get(i));
+        }
+        rows = headerrows;
+	}
+
+	/**
+     * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#isComplete()
+	 */
+	public boolean isComplete() {
+		return complete;
+	}
+
+	/**
+     * @since	iText 2.0.8
+	 * @see com.lowagie.text.LargeElement#setComplete(boolean)
+	 */
+	public void setComplete(boolean complete) {
+		this.complete = complete;
+	}
     
     // deprecated stuff
     
@@ -1671,30 +1728,4 @@ public class Table extends Rectangle implements LargeElement {
     public void setDefaultLayout(Cell value) {
         defaultCell = value;
     }
-
-	
-	/**
-	 * @since	iText 2.0.8
-	 * @see com.lowagie.text.LargeElement#flushContent()
-	 */
-	public void flushContent() {
-		deleteAllRows();
-	}
-
-	/**
-     * @since	iText 2.0.8
-	 * @see com.lowagie.text.LargeElement#isComplete()
-	 */
-	public boolean isComplete() {
-		return complete;
-	}
-
-	/**
-     * @since	iText 2.0.8
-	 * @see com.lowagie.text.LargeElement#setComplete(boolean)
-	 */
-	public void setComplete(boolean complete) {
-		this.complete = complete;
-	}
-    
 }
