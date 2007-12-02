@@ -310,13 +310,4 @@ public class PdfTable extends Rectangle {
 	public float getOffset() {
 		return table.getOffset();
 	}
-	
-	/**
-	 * Checks if the corresponting Table has already been added to the document.
-	 * @return	true if the table is being added for the first time
-	 * @since	iText 2.0.8
-	 */
-	public boolean isNotAddedYet() {
-		return table.isNotAddedYet();
-	}
 }
