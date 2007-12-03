@@ -1005,6 +1005,7 @@ public abstract class BaseFont {
      * For the other fonts the array has a single element with {"4", "", "", "",
      * font name}.
      * @return the full name of the font
+     * @since 2.0.8
      */
     public abstract String[][] getAllNameEntries(); 
 
@@ -1056,6 +1057,7 @@ public abstract class BaseFont {
      * @throws DocumentException on error
      * @throws IOException on error
      * @return an array of Object[] built with {getPostscriptFontName(), getFamilyFontName(), getFullFontName()}
+     * @since 2.0.8
      */
     public static String[][] getAllNameEntries(String name, String encoding, byte ttfAfm[]) throws DocumentException, IOException {
         String nameBase = getBaseName(name);

@@ -462,6 +462,7 @@ public class DocumentFont extends BaseFont {
      * For the other fonts the array has a single element with {"4", "", "", "",
      * font name}.
      * @return the full name of the font
+     * @since 2.0.8
      */
     public String[][] getAllNameEntries() {
         return new String[][]{{"4", "", "", "", fontName}};

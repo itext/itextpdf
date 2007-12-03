@@ -163,6 +163,9 @@ public class Type3Font extends BaseFont {
         return new String[][]{{"", "", "", ""}};
     }
     
+    /**
+     * @since 2.0.8
+     */    
     public String[][] getAllNameEntries() {
         return new String[][]{{"4", "", "", "", ""}};
     }

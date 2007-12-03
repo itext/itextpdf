@@ -210,7 +210,7 @@ class TrueTypeFont extends BaseFont {
      */    
     protected String fullName[][];
 
-    /** All the names auf the Names-Table
+    /** All the names of the Names-Table
      */
     protected String allNameEntries[][];
     
@@ -569,7 +569,6 @@ class TrueTypeFont extends BaseFont {
     }
     
     /** Extracts all the names of the names-Table
-     * @param id the name id to retrieve
      * @throws DocumentException on error
      * @throws IOException on error
      */    
