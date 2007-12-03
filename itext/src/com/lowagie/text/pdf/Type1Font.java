@@ -732,6 +732,18 @@ class Type1Font extends BaseFont
         return new String[][]{{"", "", "", FullName}};
     }
     
+    /** Gets all the entries of the names-table. If it is a True Type font
+     * each array element will have {Name ID, Platform ID, Platform Encoding ID,
+     * Language ID, font name}. The interpretation of this values can be
+     * found in the Open Type specification, chapter 2, in the 'name' table.<br>
+     * For the other fonts the array has a single element with {"4", "", "", "",
+     * font name}.
+     * @return the full name of the font
+     */
+    public String[][] getAllNameEntries() {
+        return new String[][]{{"4", "", "", "", FullName}};
+    }
+    
     /** Gets the family name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
