@@ -998,6 +998,16 @@ public abstract class BaseFont {
      */
     public abstract String[][] getFullFontName();
     
+    /** Gets all the entries of the names-table. If it is a True Type font
+     * each array element will have {Name ID, Platform ID, Platform Encoding ID,
+     * Language ID, font name}. The interpretation of this values can be
+     * found in the Open Type specification, chapter 2, in the 'name' table.<br>
+     * For the other fonts the array has a single element with {"4", "", "", "",
+     * font name}.
+     * @return the full name of the font
+     */
+    public abstract String[][] getAllNameEntries(); 
+
     /** Gets the full name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -1037,6 +1047,24 @@ public abstract class BaseFont {
         else
             fontBuilt = createFont(name, encoding, false, false, ttfAfm, null);
         return new Object[]{fontBuilt.getPostscriptFontName(), fontBuilt.getFamilyFontName(), fontBuilt.getFullFontName()};
+    }
+    
+    /** Gets all the entries of the namestable from the font. Only the required tables are read.
+     * @param name the name of the font
+     * @param encoding the encoding of the font
+     * @param ttfAfm the true type font or the afm in a byte array
+     * @throws DocumentException on error
+     * @throws IOException on error
+     * @return an array of Object[] built with {getPostscriptFontName(), getFamilyFontName(), getFullFontName()}
+     */
+    public static String[][] getAllNameEntries(String name, String encoding, byte ttfAfm[]) throws DocumentException, IOException {
+        String nameBase = getBaseName(name);
+        BaseFont fontBuilt = null;
+        if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().endsWith(".otf") || nameBase.toLowerCase().indexOf(".ttc,") > 0)
+            fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true);
+        else
+            fontBuilt = createFont(name, encoding, false, false, ttfAfm, null);
+        return fontBuilt.getAllNameEntries();
     }
     
     /** Gets the family name of the font. If it is a True Type font

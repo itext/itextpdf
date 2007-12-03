@@ -152,7 +152,7 @@ public class Type3Font extends BaseFont {
     }
     
     public String[][] getFamilyFontName() {
-        return new String[0][];
+        return getFullFontName();
     }
     
     public float getFontDescriptor(int key, float fontSize) {
@@ -160,7 +160,11 @@ public class Type3Font extends BaseFont {
     }
     
     public String[][] getFullFontName() {
-        return new String[0][];
+        return new String[][]{{"", "", "", ""}};
+    }
+    
+    public String[][] getAllNameEntries() {
+        return new String[][]{{"4", "", "", "", ""}};
     }
     
     public int getKerning(char char1, char char2) {

@@ -210,6 +210,10 @@ class TrueTypeFont extends BaseFont {
      */    
     protected String fullName[][];
 
+    /** All the names auf the Names-Table
+     */
+    protected String allNameEntries[][];
+    
     /** The family name of the font
      */    
     protected String familyName[][];
@@ -564,6 +568,46 @@ class TrueTypeFont extends BaseFont {
         return thisName;
     }
     
+    /** Extracts all the names of the names-Table
+     * @param id the name id to retrieve
+     * @throws DocumentException on error
+     * @throws IOException on error
+     */    
+    String[][] getAllNames() throws DocumentException, IOException {
+        int table_location[];
+        table_location = (int[])tables.get("name");
+        if (table_location == null)
+            throw new DocumentException("Table 'name' does not exist in " + fileName + style);
+        rf.seek(table_location[0] + 2);
+        int numRecords = rf.readUnsignedShort();
+        int startOfStorage = rf.readUnsignedShort();
+        ArrayList names = new ArrayList();
+        for (int k = 0; k < numRecords; ++k) {
+            int platformID = rf.readUnsignedShort();
+            int platformEncodingID = rf.readUnsignedShort();
+            int languageID = rf.readUnsignedShort();
+            int nameID = rf.readUnsignedShort();
+            int length = rf.readUnsignedShort();
+            int offset = rf.readUnsignedShort();
+            int pos = rf.getFilePointer();
+            rf.seek(table_location[0] + startOfStorage + offset);
+            String name;
+            if (platformID == 0 || platformID == 3 || (platformID == 2 && platformEncodingID == 1)){
+                name = readUnicodeString(length);
+            }
+            else {
+                name = readStandardString(length);
+            }
+            names.add(new String[]{String.valueOf(nameID), String.valueOf(platformID),
+                    String.valueOf(platformEncodingID), String.valueOf(languageID), name});
+            rf.seek(pos);
+        }
+        String thisName[][] = new String[names.size()][];
+        for (int k = 0; k < names.size(); ++k)
+            thisName[k] = (String[])names.get(k);
+        return thisName;
+    }
+    
     void checkCff() {
         int table_location[];
         table_location = (int[])tables.get("CFF ");
@@ -619,6 +663,7 @@ class TrueTypeFont extends BaseFont {
             fontName = getBaseFont();
             fullName = getNames(4); //full name
             familyName = getNames(1); //family name
+            allNameEntries = getAllNames();
             if (!justNames) {
                 fillTables();
                 readGlyphWidths();
@@ -1344,6 +1389,18 @@ class TrueTypeFont extends BaseFont {
      */
     public String[][] getFullFontName() {
         return fullName;
+    }
+    
+    /** Gets all the entries of the Names-Table. If it is a True Type font
+     * each array element will have {Name ID, Platform ID, Platform Encoding ID,
+     * Language ID, font name}. The interpretation of this values can be
+     * found in the Open Type specification, chapter 2, in the 'name' table.<br>
+     * For the other fonts the array has a single element with {"", "", "",
+     * font name}.
+     * @return the full name of the font
+     */
+    public String[][] getAllNameEntries() {
+        return allNameEntries;
     }
     
     /** Gets the family name of the font. If it is a True Type font
