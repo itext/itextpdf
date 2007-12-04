@@ -52,13 +52,20 @@ package com.lowagie.text.rtf.direct;
 
 import com.lowagie.text.rtf.style.*;
 import com.lowagie.text.Element;
+
 /**
+ * <code>RtfDestinationStylesheetTable</code> handles data destined for the 
+ * Stylesheet Table destination according to the RTF Specification.
+ * 
  * @author Howard Shank (hgshank@yahoo.com)
  *
  */
 public class RtfDestinationStylesheetTable implements RtfDestination {
 	
-	
+	/**
+	 * <code>RtfParagraphStyle</code> object for setting styleshee values
+	 * as they are parsed from the input.
+	 */
 	private RtfParagraphStyle rtfParagraphStyle = null;
 	
 	/**
@@ -149,7 +156,7 @@ public class RtfDestinationStylesheetTable implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#closeDestination()
 	 */
 	public boolean closeDestination() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -157,7 +164,7 @@ public class RtfDestinationStylesheetTable implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleBinaryData(byte[])
 	 */
 	public boolean handleBinaryData(byte[] binData) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -165,7 +172,7 @@ public class RtfDestinationStylesheetTable implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleControlWord(java.lang.String, int)
 	 */
 	public boolean handleControlWord(String ctrlWord, int param) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -173,7 +180,7 @@ public class RtfDestinationStylesheetTable implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleControlWord(java.lang.String)
 	 */
 	public boolean handleControlWord(String ctrlWord) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -181,7 +188,7 @@ public class RtfDestinationStylesheetTable implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleGroupEnd()
 	 */
 	public boolean handleGroupEnd() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -189,21 +196,21 @@ public class RtfDestinationStylesheetTable implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleGroupStart()
 	 */
 	public boolean handleGroupStart() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleCharacter(char[])
 	 */
 	public boolean handleCharacter(char[] ch) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleText(char)
 	 */
 	public boolean handleText(char ch) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -211,7 +218,7 @@ public class RtfDestinationStylesheetTable implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleText(java.lang.String)
 	 */
 	public boolean handleText(String text) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 	
@@ -220,7 +227,9 @@ public class RtfDestinationStylesheetTable implements RtfDestination {
 		//this.rtfParagraphStyle = new RtfParagraphStyle();
 	}
 	
-	
+	/**
+	 * Reset the default values. 
+	 */
 	private void clear() {
 		styleNr = 0;
 		alignment = Element.ALIGN_LEFT;
@@ -237,184 +246,249 @@ public class RtfDestinationStylesheetTable implements RtfDestination {
 		noWordWrapping = 0;
 		noOverflowPeriodComma = 0;
 	}
-	
+	/**
+	 * Set the justification percentage from parsed value.
+	 * @param percent The justification percentage
+	 * @return The justification percentage
+	 */
 	public int setJustificationPercentage(int percent) {
 		this.justificationPercentage = percent;
 		return this.justificationPercentage;
 	}
+	/**
+	 * Get the justification percentage.
+	 * @return The justification percentage value.
+	 */
 	public int getJustificationPercentage() {
 		return this.justificationPercentage;
 	}
+	/**
+	 * Set the alignment value from the parsed value.
+	 * @param alignment The alignment value.
+	 * @return The alignment value.
+	 */
 	public int setAlignment(int alignment) {
 		this.alignment = alignment;
 		return this.alignment;
 	}
+	/**
+	 * Get the alignment value.
+	 * @return The alignment value.
+	 */
 	public int getAlignment() {
 		return this.alignment;
 	}
 	/**
+	 * Get the first line indent value.
+	 * 
 	 * @return the firstLineIndent
 	 */
 	public int getFirstLineIndent() {
 		return firstLineIndent;
 	}
 	/**
+	 * Set the first line indent value.
 	 * @param firstLineIndent the firstLineIndent to set
 	 */
 	public void setFirstLineIndent(int firstLineIndent) {
 		this.firstLineIndent = firstLineIndent;
 	}
 	/**
-	 * @return the indent
+	 * Get the left indent value
+	 * @return the left indent
 	 */
 	public int getIndent() {
 		return leftIndent;
 	}
 	/**
-	 * @param indent the indent to set
+	 * Set the left indent value from the value parsed.
+	 * @param indent the left indent value.
 	 */
 	public void setIndent(int indent) {
 		this.leftIndent = indent;
 	}
 	/**
-	 * @return the adustRightIndent
+	 * Get the right indent adjustment value
+	 * @return the adustRightIndent value
 	 */
 	public int getAdustRightIndent() {
 		return adustRightIndent;
 	}
 	/**
+	 * Set the right indent adjustment value
 	 * @param adustRightIndent the adustRightIndent to set
 	 */
 	public void setAdustRightIndent(int adustRightIndent) {
 		this.adustRightIndent = adustRightIndent;
 	}
 	/**
+	 * Get the left indent value
 	 * @return the leftIndent
 	 */
 	public int getLeftIndent() {
 		return leftIndent;
 	}
 	/**
+	 * Set the left indent value
 	 * @param leftIndent the leftIndent to set
 	 */
 	public void setLeftIndent(int leftIndent) {
 		this.leftIndent = leftIndent;
 	}
 	/**
+	 * Get the value indicating if document has mirrored indents.
+	 * 
 	 * @return the mirrorIndent
 	 */
 	public int getMirrorIndent() {
 		return mirrorIndent;
 	}
 	/**
+	 * Set the mirrored indent value from the parsed value.
+	 * 
 	 * @param mirrorIndent the mirrorIndent to set
 	 */
 	public void setMirrorIndent(int mirrorIndent) {
 		this.mirrorIndent = mirrorIndent;
 	}
 	/**
+	 * Get the right indent value.
+	 * 
 	 * @return the rightIndent
 	 */
 	public int getRightIndent() {
 		return rightIndent;
 	}
 	/**
+	 * Set the right indent value.
+	 * 
 	 * @param rightIndent the rightIndent to set
 	 */
 	public void setRightIndent(int rightIndent) {
 		this.rightIndent = rightIndent;
 	}
 	/**
+	 * Get the ovirride widow control value.
+	 * 
 	 * @return the overrideWidowControl
 	 */
 	public int getOverrideWidowControl() {
 		return overrideWidowControl;
 	}
 	/**
+	 * Set the override widow control.
+	 * 
 	 * @param overrideWidowControl the overrideWidowControl to set
 	 */
 	public void setOverrideWidowControl(int overrideWidowControl) {
 		this.overrideWidowControl = overrideWidowControl;
 	}
 	/**
+	 * Get the auto space between DBC and English indicator.
+	 * 
 	 * @return the autoSpaceBetweenDBCEnglish
 	 */
 	public int getAutoSpaceBetweenDBCEnglish() {
 		return AutoSpaceBetweenDBCEnglish;
 	}
 	/**
+	 * Set the auto space between DBC and English indicator.
+	 * 
 	 * @param autoSpaceBetweenDBCEnglish the autoSpaceBetweenDBCEnglish to set
 	 */
 	public void setAutoSpaceBetweenDBCEnglish(int autoSpaceBetweenDBCEnglish) {
 		AutoSpaceBetweenDBCEnglish = autoSpaceBetweenDBCEnglish;
 	}
 	/**
+	 * Get the auto space between DBC and Numbers indicator.
 	 * @return the autoSpaceBetweenDBCNumbers
 	 */
 	public int getAutoSpaceBetweenDBCNumbers() {
 		return AutoSpaceBetweenDBCNumbers;
 	}
 	/**
+	 * Set the auto space between DBC and Numbers indicator.
 	 * @param autoSpaceBetweenDBCNumbers the autoSpaceBetweenDBCNumbers to set
 	 */
 	public void setAutoSpaceBetweenDBCNumbers(int autoSpaceBetweenDBCNumbers) {
 		AutoSpaceBetweenDBCNumbers = autoSpaceBetweenDBCNumbers;
 	}
 	/**
+	 * Get no character wrapping indicator.
+	 * 
 	 * @return the noCharacterWrapping
 	 */
 	public int getNoCharacterWrapping() {
 		return noCharacterWrapping;
 	}
 	/**
+	 * Set the no character wrapping indicator from parsed value
+	 * 
 	 * @param noCharacterWrapping the noCharacterWrapping to set
 	 */
 	public void setNoCharacterWrapping(int noCharacterWrapping) {
 		this.noCharacterWrapping = noCharacterWrapping;
 	}
 	/**
+	 * Get the no overflow period comma indicator.
+	 * 
 	 * @return the noOverflowPeriodComma
 	 */
 	public int getNoOverflowPeriodComma() {
 		return noOverflowPeriodComma;
 	}
 	/**
+	 * Set the no overflow period comma indicator from the parsed value.
+	 * 
 	 * @param noOverflowPeriodComma the noOverflowPeriodComma to set
 	 */
 	public void setNoOverflowPeriodComma(int noOverflowPeriodComma) {
 		this.noOverflowPeriodComma = noOverflowPeriodComma;
 	}
 	/**
+	 * Get the no word wrapping indicator.
+	 * 
 	 * @return the noWordWrapping
 	 */
 	public int getNoWordWrapping() {
 		return noWordWrapping;
 	}
 	/**
+	 * Set the no word wrapping indicator from the parsed value.
+	 * 
 	 * @param noWordWrapping the noWordWrapping to set
 	 */
 	public void setNoWordWrapping(int noWordWrapping) {
 		this.noWordWrapping = noWordWrapping;
 	}
 	/**
+	 * Get this style number.
+	 * 
 	 * @return the styleNr
 	 */
 	public int getStyleNr() {
 		return styleNr;
 	}
 	/**
+	 * Set this style number from the parsed value.
+	 * 
 	 * @param styleNr the styleNr to set
 	 */
 	public void setStyleNr(int styleNr) {
 		this.styleNr = styleNr;
 	}
 	/**
+	 * Get this style type.
+	 * For example Style, Character Style, etc.
+	 * 
 	 * @return the styleType
 	 */
 	public int getStyleType() {
 		return styleType;
 	}
 	/**
+	 * Set the style type.
+	 * 
 	 * @param styleType the styleType to set
 	 */
 	public void setStyleType(int styleType) {

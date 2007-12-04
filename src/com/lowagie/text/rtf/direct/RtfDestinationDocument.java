@@ -53,88 +53,106 @@ import com.lowagie.text.Document;
 import com.lowagie.text.rtf.document.*;
 import com.lowagie.text.rtf.direct.RtfParser;
 /**
+ * <code>RtfDestinationDocument</code> handles data destined for the document destination
+ * according to the RTF Specification.
+ * 
  * @author Howard Shank (hgshank@yahoo.com)
  *
  */
 public final class RtfDestinationDocument extends RtfDestinationBase {
-
+	/**
+	 * The RtfDocument object.
+	 * 
+	 * @see com.lowagie.text.rtf.document.RtfDocument
+	 */
 	private RtfDocument rtfDoc = null;
+	/**
+	 * The iText Document object.
+	 * 
+	 * @see com.lowagie.text.Document
+	 */
 	private Document doc = null;
+	/**
+	 * Indicates the parser action. Import or Conversion.
+	 * 
+	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_UNIDENTIFIED
+	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_CONVERT
+	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FRAGMENT
+	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FULL
+	 */
 	private int conversionType = 0;
 	/**
-	 * Constructs a new RtfFontTableParser.
-	 * 
-	 * @param importHeader The RtfImportHeader to add font mappings to.
+	 * Default constructor
 	 */
 	public RtfDestinationDocument() {
+		super();
+		this.rtfDoc = null;
+		this.doc = null;
+		this.conversionType = RtfParser.TYPE_UNIDENTIFIED;
 	}
-	
+	/**
+	 * Constructs a new <code>RtfDestinationDocument</code> using
+	 * the parameters to initialize the object.
+	 * @param rtfDoc The <code>RtfDocument</code> this works with.
+	 * @param doc The iText <code>Document</code> this works with.
+	 * @param type The type of conversion being done.
+	 */
 	public RtfDestinationDocument(RtfDocument rtfDoc, Document doc, int type) {
+		super();
 		this.rtfDoc = rtfDoc;
 		this.doc = doc;
 		this.conversionType = type;
 	}
 	
+	// Interface definitions
+
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestinationBase#clear()
+	 */
 	protected void clear() {
 	}
-		
-	// Interface definitions
-	
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#closeDestination()
 	 */
 	public boolean closeDestination() {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleBinaryData(byte[])
 	 */
 	public boolean handleBinaryData(byte[] binData) {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleControlWord(java.lang.String, int)
 	 */
 	public boolean handleControlWord(String ctrlWord, int param) {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleControlWord(java.lang.String)
 	 */
 	public boolean handleControlWord(String ctrlWord) {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleGroupEnd()
 	 */
 	public boolean handleGroupEnd() {
 		return false;
 	}
-
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleGroupStart()
 	 */
 	public boolean handleGroupStart() {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleText(char)
 	 */
 	public boolean handleText(char ch) {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleText(java.lang.String)
 	 */

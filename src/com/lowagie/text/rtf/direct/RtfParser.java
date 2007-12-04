@@ -72,6 +72,9 @@ import com.lowagie.text.List;
  */
 
 public class RtfParser {
+	/**
+	 * Debugging flag.
+	 */
 	private static final boolean debugParser = false;	// DEBUG Files are unlikely to be read by any reader! 
 	/**
 	 * The iText document to add the RTF document to.
@@ -109,7 +112,7 @@ public class RtfParser {
 	 */
 	private int conversionType = TYPE_IMPORT_FULL;
 
-	/**
+	/*
 	 * Destinations
 	 */
 	
@@ -150,7 +153,7 @@ public class RtfParser {
 	private boolean newGroup = false;
 
 	
-	/**
+	/*
 	 * Bitmapping:
 	 * 
 	 * 0111 1111 1111 1111 = Unkown state
@@ -161,7 +164,7 @@ public class RtfParser {
 	 * 8xxx xxxx xxxx xxxx = Errors
 	 */
 	
-	/**
+	/*
 	 * Header state values
 	 */
 
@@ -247,9 +250,11 @@ public class RtfParser {
 	public static final int PARSER_IN_LATENTSTYLES = PARSER_IN_HEADER | 0x000015;
 	
 	public static final int PARSER_IN_PARAGRAPH_GROUP_PROPERTIES =PARSER_IN_HEADER | 0x000016;
-	/**
+	
+	/*
 	 * Document state values
 	 */
+	
 	/**
 	 * Currently the RTF document content is being parsed.
 	 */
@@ -282,6 +287,10 @@ public class RtfParser {
 	
 	
 	/**
+	 * Conversion type is unknown
+	 */
+	public static final int TYPE_UNIDENTIFIED = -1;
+	/**
 	 * Conversion type is an import. Uses direct content to add everything.
 	 * This is what the original import does.
 	 */
@@ -290,7 +299,6 @@ public class RtfParser {
 	 * Conversion type is an import of a partial file/fragment. Uses direct content to add everything.
 	 */
 	public static final int TYPE_IMPORT_FRAGMENT = 1;
-	
 	/**
 	 * Conversion type is a conversion. This uses the document (not rtfDoc) to add
 	 * all the elements making it a different supported documents depending on the writer used.
@@ -302,7 +310,7 @@ public class RtfParser {
 	public static final int DESTINATION_SKIP = 1;
 	
 	//////////////////////////////////// TOKENISE VARIABLES ///////////////////
-	/**
+	/*
 	 * State flags use 4/28 bitmask.
 	 * First 4 bits (nibble) indicates major state. Used for unknown and error
 	 * Last 28 bits indicates the value;
@@ -388,7 +396,7 @@ public class RtfParser {
 	//////////////////////////////////// STATS VARIABLES ///////////////////
 
 	
-	/***********
+	/* *********
 	 *  READER *
 	 ***********/
 	/**
@@ -464,10 +472,12 @@ public class RtfParser {
 	}
 
 	/**
-	 * @param type
-	 * @param rtfDoc
-	 * @param readerIn
-	 * @param doc
+	 * Initialize the parser object values. 
+	 * 
+	 * @param type Type of conversion or import
+	 * @param rtfDoc The <code>RtfDocument</code>
+	 * @param readerIn The input stream
+	 * @param doc The iText <code>Document</code>
 	 */
 	private void init(int type, RtfDocument rtfDoc, Reader readerIn, Document doc) {
 
@@ -485,14 +495,17 @@ public class RtfParser {
 		
 		this.destFontTable = new RtfDestinationFontTable(this.importMgr);
 		this.destColorTable = new RtfDestinationColorTable(this.importMgr);
-		this.destInfo = new RtfDestinationInfo(this.importMgr);
+		this.destInfo = new RtfDestinationInfo();
 		this.destStylesheetTable = new RtfDestinationStylesheetTable(this.importMgr);
 		this.destNull = new RtfDestinationNull();
 		this.destDocument = new RtfDestinationDocument(this.rtfDoc, this.document, this.conversionType);
 		
 		this.rtfKeywordMgr = new RtfCtrlWordMgr(this, this.pbReader);		
 	}
-	
+	/**
+	 * Initialize the statistics values.
+	 *
+	 */
 	protected void init_stats() {
 		byteCount = 0;
 		ctrlWordCount = 0;
@@ -569,7 +582,7 @@ public class RtfParser {
 	}
 	
 	
-	/******************************************
+	/* *****************************************
 	 *   DOCUMENT CONTROL METHODS
 	 *   
 	 *   Handles -
@@ -581,9 +594,7 @@ public class RtfParser {
 	 */
 	
 	/**
-	 * Handles open group tokens.
-	 * (non-Javadoc)
-	 * @see com.lowagie.text.rtf.direct.IRtfParser2#handleOpenGroup()
+	 * Handles open group tokens. ({)
 	 */
 	public int handleOpenGroup() {
 		int result = errOK;
@@ -606,7 +617,7 @@ public class RtfParser {
 	}
 	
 	/**
-	 * Handles close group tokens.
+	 * Handles close group tokens. (})
 	 */
 	public int handleCloseGroup() {
 		int result = errOK;
@@ -819,72 +830,114 @@ public class RtfParser {
 	
 	/////////////////////////////////////////////////////////////
 	// accessors for destinations
-	
+	/**
+	 * Set the current destination object for the current state.
+	 * @param dest The destination value to set.
+	 */
 	public void setCurrentDestination(RtfDestination dest) {
 		this.currentState.destination = dest;
 		return;
 	}
-
+	/**
+	 * Get the current destination object.
+	 * 
+	 * @return The current state destination
+	 */
 	public RtfDestination getCurrentDestination() {
 		return this.currentState.destination;
 	}
 	
 	////////////////////////////////////////////////////////////
 	//
-	public void setDestinationListTable() {
-		
+	/**
+	 * Helper method to set destination to the List Table destination.
+	 */
+	public void setDestinationListTable() {	
 	}
+	/**
+	 * Helper method to set destination to the document destination.
+	 */
 	public void setDestinationDocument() {
 		this.setCurrentDestination(this.destDocument);
 	}
+	/**
+	 * Helper method to set destination to the NULL destination.
+	 */
 	public void setDestinationNull() {
 		this.setCurrentDestination(this.destNull);
 	}
+	/**
+	 * Helper method to set destination to the Font Table destination.
+	 */
 	public void setDestinationFontTable() {
 		this.setCurrentDestination(this.destFontTable);
 	}
+	/**
+	 * Helper method to set destination to the Color Table destination.
+	 */
 	public void setDestinationColorTable() {
 		this.setCurrentDestination(this.destColorTable);
 	}
+	/**
+	 * Helper method to set destination to the Info Table destination.
+	 */
 	public void setDestinationInfo() {
 		this.setCurrentDestination(this.destInfo);
 	}
+	/**
+	 * Helper method to set destination to the Stylesheet Table destination.
+	 */
 	public void setDestinationStylesheetTable() {
 		this.setCurrentDestination(this.destStylesheetTable);
 	}
-	
+	/**
+	 * Get the <code>RtfDestinationFontTable</code> object.
+	 * @return destFontTable
+	 */
 	public RtfDestinationFontTable getDestFontTable() {
 		return this.destFontTable;
 	}
 	/**
-	 * The RtfColorTableParser to use for parsing the color table.
+	 * Get the <code>RtfColorTableParser</code>o bject.
+	 * @return destColorTable
 	 */
 	public RtfDestinationColorTable getDestColorTable() {
 		return this.destColorTable;
 	}
 	/**
-	 * The RtfDestInfo
+	 * Get the <code>RtfDestinationInfo</code>o bject.
+	 * @return destInfo
 	 */
 	public RtfDestinationInfo getDestInfo() {
 		return this.destInfo;
 	}
 	/**
-	 * The RtfDestStylesheet.
+	 * Get the <code>RtfDestinationStylesheetTable</code>o bject.
+	 * @return destStylesheetTable
 	 */
 	public RtfDestinationStylesheetTable getDestStylesheet() {
 		return this.destStylesheetTable;
 	}
-	// add additional destinations
-	
+
+	// TODO: add additional destinations
+	/**
+	 * Helper method to determine if this is a new group.
+	 * @return true if this is a new group, otherwise it returns false.
+	 */
 	public boolean isNewGroup() {
 		return this.newGroup;
 	}
+	/**
+	 * Helper method to set the new group flag
+	 * @param value The boolean value to set the flag
+	 * @return The value of newGroup
+	 */
 	public boolean setNewGroup(boolean value) {
 		this.newGroup = value;
 		return this.newGroup;
 	}
 	
-	/**************
+	/* ************
 	 *  TOKENISER *
 	 **************/
 	
@@ -899,7 +952,6 @@ public class RtfParser {
 		
 		
 		while(this.pbReader.read(nextChar) != -1) {
-			//while(pbReader.read(nextChar) != -1) {
 			this.byteCount++;
 			
 	        if (this.getTokeniserState() == TOKENISER_BINARY)                      // if we're parsing binary data, handle it directly
@@ -936,6 +988,7 @@ public class RtfParser {
 							if(pbReader.read(nextChar) == -1) {
 								return;
 							}
+							this.byteCount++;
 							hexChars.append(nextChar);
 	                    	try {
 								nextChar[0]=(char)Integer.parseInt(hexChars.toString(), 16);
@@ -996,6 +1049,7 @@ public class RtfParser {
 		if(reader.read(nextChar) == -1) {
 				return errEndOfFile;
 		}
+		this.byteCount++;
 
 		StringBuffer parsedCtrlWord = new StringBuffer();
 		StringBuffer parsedParam= new StringBuffer();
@@ -1007,9 +1061,16 @@ public class RtfParser {
 			return this.handleCtrlWord(ctrlWordParam);
 		}
 		
-		for( ; Character.isLetter(nextChar[0]); reader.read(nextChar) ) {
+//		for( ; Character.isLetter(nextChar[0]); reader.read(nextChar) ) {
+//			parsedCtrlWord.append(nextChar[0]);
+//		}
+		do {
 			parsedCtrlWord.append(nextChar[0]);
-		}
+			//TODO: catch EOF
+			reader.read(nextChar);
+			this.byteCount++;
+		} while  (Character.isLetter(nextChar[0]));
+		
 		ctrlWordParam.ctrlWord = parsedCtrlWord.toString();
 
 		if(nextChar[0] == '-') {
@@ -1017,13 +1078,21 @@ public class RtfParser {
 			if(reader.read(nextChar) == -1) {
 					return errEndOfFile;
 			}
+			this.byteCount++;
 		}
 		
 		if(Character.isDigit(nextChar[0])) {
 			ctrlWordParam.hasParam = true;
-			for( ; Character.isDigit(nextChar[0]); reader.read(nextChar) ) {
+//			for( ; Character.isDigit(nextChar[0]); reader.read(nextChar) ) {
+//				parsedParam.append(nextChar[0]);
+//			}
+			do {
 				parsedParam.append(nextChar[0]);
-			}
+				//TODO: catch EOF
+				reader.read(nextChar);
+				this.byteCount++;
+			} while  (Character.isDigit(nextChar[0]));
+			
 			ctrlWordParam.param = parsedParam.toString();
 		}
 		
@@ -1116,30 +1185,61 @@ public class RtfParser {
 		this.binByteCount = binaryCount;
 		return;
 	}
-	
+	/**
+	 * Helper method to determin if conversion is TYPE_CONVERT
+	 * @return true if TYPE_CONVERT, otherwise false
+	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_CONVERT
+	 */
 	public boolean isConvert() {
 		return (this.getConversionType() == RtfParser.TYPE_CONVERT);
 	}
 	
+	/**
+	 * Helper method to determin if conversion is TYPE_IMPORT_FULL or TYPE_IMPORT_FRAGMENT
+	 * @return true if TYPE_CONVERT, otherwise false
+	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FULL
+	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FRAGMENT
+	 */
 	public boolean isImport() {
 		return (isImportFull() || this.isImportFragment());
 	}
+	/**
+	 * Helper method to determin if conversion is TYPE_IMPORT_FULL
+	 * @return true if TYPE_CONVERT, otherwise false
+	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FULL
+	 */
 	public boolean isImportFull() {
 		return (this.getConversionType() == RtfParser.TYPE_IMPORT_FULL);
 	}
+	/**
+	 * Helper method to determin if conversion is TYPE_IMPORT_FRAGMENT
+	 * @return true if TYPE_CONVERT, otherwise false
+	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FRAGMENT
+	 */
 	public boolean isImportFragment() {
 		return (this.getConversionType() == RtfParser.TYPE_IMPORT_FRAGMENT);
 	}
-	
+	/**
+	 * Helper method to indicate if this control word was a \* control word.
+	 * @return true if it was a \* control word, otherwise false
+	 */
 	public boolean getExtendedDestination() {
 		return this.currentState.isExtendedDestination;
 	}
+	/**
+	 * Helper method to set the extended control word flag.
+	 * @param value Boolean to set the value to.
+	 * @return isExtendedDestination.
+	 */
 	public boolean setExtendedDestination(boolean value) {
 		this.currentState.isExtendedDestination = value;
 		return this.currentState.isExtendedDestination;
 	}
 
-/*	public void printStats(PrintStream out) {
+/*	
+ *	Statistics
+ *
+ 	public void printStats(PrintStream out) {
 		if(out == null) return;
 		
 		out.println("");

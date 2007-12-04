@@ -51,6 +51,9 @@
 package com.lowagie.text.rtf.direct;
 
 /**
+ * <code>RtfDestinationDocument</code> handles data destined for the font table destination
+ * according to the RTF Specification.
+ * 
  * @author Howard Shank (hgshank@yahoo.com)
  *
  */
@@ -128,6 +131,9 @@ public final class RtfDestinationFontTable extends RtfDestinationBase {
 		clear();
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestinationBase#clear()
+	 */
 	protected void clear() {
 		this.themeFont = "";
 		this.fontNr = "";
@@ -145,23 +151,44 @@ public final class RtfDestinationFontTable extends RtfDestinationBase {
 		this.fontFileCpg = "";
 		this.fbias = 0;
 	}
-	
+	/**
+	 * Set the font name to the parsed value.
+	 * 
+	 * @param fontName The font name.
+	 */
 	public void setFontName(String fontName) {
 		this.fontName = fontName;
 	}
-	
+	/**
+	 * Set the font family to the parsed value.
+	 * 
+	 * @param fontFamily The font family.
+	 */
 	public void setFontFamily(String fontFamily) {
 		this.fontFamily = fontFamily;
 	}
-	
+	/**
+	 * Set the font number to the parsed value.
+	 * This is used for mapping fonts to the new font numbers
+	 * 
+	 * @param fontNr The font number.
+	 */
 	public void setFontNumber(String fontNr) {
 		this.fontNr = fontNr;
 	}
-	
+	/**
+	 * Set the alternate font name.
+	 * 
+	 * @param fontAlternate The falt font value
+	 */
 	public void setFontAlternate(String fontAlternate) {
 		this.falt = fontAlternate;
 	}
-	
+	/**
+	 * Set the character-set to the parsed value.
+	 * 
+	 * @param charset The charset value
+	 */
 	public void setCharset(String charset) {
 		if(charset.length() == 0) {
 			charset = "0";
@@ -183,7 +210,7 @@ public final class RtfDestinationFontTable extends RtfDestinationBase {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleBinaryData(byte[])
 	 */
 	public boolean handleBinaryData(byte[] binData) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -191,7 +218,7 @@ public final class RtfDestinationFontTable extends RtfDestinationBase {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleControlWord(java.lang.String, int)
 	 */
 	public boolean handleControlWord(String ctrlWord, int param) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -199,7 +226,7 @@ public final class RtfDestinationFontTable extends RtfDestinationBase {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleControlWord(java.lang.String)
 	 */
 	public boolean handleControlWord(String ctrlWord) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -216,10 +243,13 @@ public final class RtfDestinationFontTable extends RtfDestinationBase {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleGroupStart()
 	 */
 	public boolean handleGroupStart() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestinationBase#handleCharacter(char[])
+	 */
 	public boolean handleCharacter(char[] ch) {
 		this.fontName += ch[0];
 		return true;
@@ -229,7 +259,7 @@ public final class RtfDestinationFontTable extends RtfDestinationBase {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleText(char)
 	 */
 	public boolean handleText(char ch) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -245,7 +275,9 @@ public final class RtfDestinationFontTable extends RtfDestinationBase {
 	 */
 	public void setDefaults() {
 	}
-	
+	/**
+	 * Process the font information that was parsed from the input.
+	 */
 	private void processFont() {
 		//TODO: If primary font fails, use the alternate
 		this.fontName = this.fontName.trim();

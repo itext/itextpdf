@@ -52,6 +52,9 @@ package com.lowagie.text.rtf.direct;
 import java.awt.Color;
 
 /**
+ * <code>RtfDestinationDocument</code> handles data destined for the color table destination
+ * according to the RTF Specification.
+ * 
  * @author Howard Shank (hgshank@yahoo.com)
  *
  */
@@ -86,22 +89,33 @@ public class RtfDestinationColorTable extends RtfDestinationBase  {
 		this.importHeader = importHeader;
 		this.clear();
 	}
-	
+	/**
+	 * Reset this object color values.
+	 */
 	protected void clear() {
 		this.red = -1;
 		this.green = -1;
 		this.blue = -1;
 		// do not reset colorNr
 	}
-	
+	/**
+	 * Set the red color to value.
+	 * @param value Value to set red to.
+	 */
 	public void setRed(int value) {
 		this.red = value;
 	}
-	
+	/**
+	 * Set the green color value.
+	 * @param value Value to set green to.
+	 */
 	public void setGreen(int value) {
 		this.green = value;
 	}
-	
+	/**
+	 * Set the blue color value.
+	 * @param value Value to set blue to.
+	 */
 	public void setBlue(int value) {
 		this.blue = value;		
 	}
@@ -110,7 +124,6 @@ public class RtfDestinationColorTable extends RtfDestinationBase  {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#closeDestination()
 	 */
 	public boolean closeDestination() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -118,7 +131,6 @@ public class RtfDestinationColorTable extends RtfDestinationBase  {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleBinaryData(byte[])
 	 */
 	public boolean handleBinaryData(byte[] binData) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -126,7 +138,6 @@ public class RtfDestinationColorTable extends RtfDestinationBase  {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleControlWord(java.lang.String, int)
 	 */
 	public boolean handleControlWord(String ctrlWord, int param) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -134,7 +145,6 @@ public class RtfDestinationColorTable extends RtfDestinationBase  {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleControlWord(java.lang.String)
 	 */
 	public boolean handleControlWord(String ctrlWord) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -150,7 +160,6 @@ public class RtfDestinationColorTable extends RtfDestinationBase  {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleGroupStart()
 	 */
 	public boolean handleGroupStart() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -158,7 +167,6 @@ public class RtfDestinationColorTable extends RtfDestinationBase  {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleText(char)
 	 */
 	public boolean handleText(char ch) {
-		// TODO Auto-generated method stub
 		if(ch == ';') {
 			this.processColor();
 		}
@@ -169,7 +177,6 @@ public class RtfDestinationColorTable extends RtfDestinationBase  {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleText(java.lang.String)
 	 */
 	public boolean handleText(String text) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -187,7 +194,12 @@ public class RtfDestinationColorTable extends RtfDestinationBase  {
 	 */
 	public void setDefaults() {
 	}
-	
+	/**
+	 * Processes the color triplet parsed from the document.
+	 * Add it to the import mapping so colors can be mapped when encountered
+	 * in the RTF import or conversion.
+	 *
+	 */
 	private void processColor() {
 		if(red != -1 && green != -1 && blue != -1) {
 			this.importHeader.importColor(Integer.toString(this.colorNr), new Color(this.red, this.green, this.blue));

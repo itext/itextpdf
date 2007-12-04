@@ -51,18 +51,20 @@
 package com.lowagie.text.rtf.direct;
 
 /**
+ * <code>RtfDestinationListTable</code> handles data destined for the List Table destination
+ * according to the RTF Specification.
+ * 
  * @author Howard Shank (hgshank@yahoo.com)
  *
  */
 public class RtfDestinationListTable implements RtfDestination {
 	/**
-	 * The RtfImportHeader to add color mappings to.
+	 * The RtfImportHeader to add List mappings to.
 	 */
 	private RtfImportMgr importHeader = null;
 	
 	public RtfDestinationListTable(RtfImportMgr importHeader) {
 		this.importHeader = importHeader;
-		//this.clear();
 	}
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#closeDestination()

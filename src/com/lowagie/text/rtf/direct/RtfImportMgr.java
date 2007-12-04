@@ -18,9 +18,12 @@ import com.lowagie.text.rtf.style.RtfFont;
  * from font and color numbers from the imported RTF document to
  * the RTF document that is the target of the import. This guarantees
  * that the merged document has the correct font and color settings.
+ * It also handles other list based items that need mapping, for example
+ * stylesheets and lists.
  * 
  * @version $Revision: 2337 $
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Howard Shank (hgshank@yahoo.com)
  */
 public class RtfImportMgr {
     //TODO: Add list, stylesheet, info, etc. mappings
@@ -173,7 +176,8 @@ public class RtfImportMgr {
     }
 
     /**
-     * Imports a List.
+     * Imports a List value. The List number for the List defined
+     * is determined and then the resulting mapping is added.
      */
     public void importList(String listNr, List list) {
         RtfList rtfList = new RtfList(this.rtfDoc, list);
@@ -188,7 +192,10 @@ public class RtfImportMgr {
     }
 
     /**
-     * 
+     * Performs the mapping from the original list number to the actual
+     * list number in the resulting RTF document. If the list number was not
+     * seen during import (thus no mapping) then 0 is returned, guaranteeing
+     * that the list number is always valid.
      */
     public String mapListNr(String listNr) {
         if(this.importListMapping.containsKey(listNr)) {
@@ -199,7 +206,8 @@ public class RtfImportMgr {
     }
 
     /**
-     * Imports a Stylesheet List.
+     * Imports a stylesheet list value. The stylesheet number for the stylesheet defined
+     * is determined and then the resulting mapping is added.
      */
     public boolean importStylesheetList(String listNr, List listIn) {
         RtfList rtfList = new RtfList(this.rtfDoc, listIn);
@@ -213,7 +221,10 @@ public class RtfImportMgr {
         }
     }
     /**
-     * 
+     * Performs the mapping from the original stylesheet number to the actual
+     * stylesheet number in the resulting RTF document. If the stylesheet number was not
+     * seen during import (thus no mapping) then 0 is returned, guaranteeing
+     * that the stylesheet number is always valid.
      */
     public String mapStylesheetListNr(String listNr) {
         if(this.importStylesheetListMapping.containsKey(listNr)) {

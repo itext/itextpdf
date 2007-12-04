@@ -51,20 +51,19 @@
 package com.lowagie.text.rtf.direct;
 
 /**
+ * <code>RtfDestinationInfo</code> handles data destined for the info destination
+ * according to the RTF Specification.
+ * 
  * @author Howard Shank (hgshank@yahoo.com)
  *
  */
 public class RtfDestinationInfo implements RtfDestination {
 	/**
-	 * The RtfImportHeader to add color mappings to.
+	 * The string value to add to the info group.
+	 * 
+	 * @param text The string to be added
+	 * @return true if handled, false if not handled
 	 */
-	private RtfImportMgr importHeader = null;
-	
-	public RtfDestinationInfo(RtfImportMgr importHeader) {
-		this.importHeader = importHeader;
-		//this.clear();
-	}
-	
 	public boolean add(String text) {
 		return true;
 	}
@@ -72,7 +71,7 @@ public class RtfDestinationInfo implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#closeDestination()
 	 */
 	public boolean closeDestination() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -80,7 +79,7 @@ public class RtfDestinationInfo implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleBinaryData(byte[])
 	 */
 	public boolean handleBinaryData(byte[] binData) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -88,7 +87,7 @@ public class RtfDestinationInfo implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleControlWord(java.lang.String, int)
 	 */
 	public boolean handleControlWord(String ctrlWord, int param) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -96,7 +95,7 @@ public class RtfDestinationInfo implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleControlWord(java.lang.String)
 	 */
 	public boolean handleControlWord(String ctrlWord) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -104,7 +103,7 @@ public class RtfDestinationInfo implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleGroupEnd()
 	 */
 	public boolean handleGroupEnd() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -112,21 +111,21 @@ public class RtfDestinationInfo implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleGroupStart()
 	 */
 	public boolean handleGroupStart() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleCharacter(char[])
 	 */
 	public boolean handleCharacter(char[] ch) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleText(char)
 	 */
 	public boolean handleText(char ch) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -134,7 +133,7 @@ public class RtfDestinationInfo implements RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.IRtfDestination#handleText(java.lang.String)
 	 */
 	public boolean handleText(String text) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 

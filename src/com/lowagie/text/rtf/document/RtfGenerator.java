@@ -1,8 +1,8 @@
 /*
- * $Id$
+ * $Id: RtfInfoGroup.java 2996 2007-11-20 22:40:36Z hallm $
  * $Name$
  *
- * Copyright 2007 by Howard Shank (hgshank@yahoo.com)
+ * Copyright 2003, 2004 by Mark Hall
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999-2006 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000-2006 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -47,71 +47,69 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.text.rtf.direct;
+
+package com.lowagie.text.rtf.document;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.rtf.RtfElement;
+
 
 /**
- * <code>RtfDestination</code> is the base for destinations as defined
- * in the RTF Specification.
+ * The RtfInfoGroup stores information group elements. 
  * 
+ * @version $Id: RtfInfoGroup.java 2996 2007-11-20 22:40:36Z hallm $
+ * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Howard Shank (hgshank@yahoo.com)
- *
  */
-abstract interface RtfDestination {
-	/**
-	 * Method to handle a control word and integer parameter
-	 * @param ctrlWord The control word
-	 * @param param The integer parameter
-	 * @return true if handled, false if not handled
-	 */
-	public abstract boolean handleControlWord(String ctrlWord, int param);
-	/**
-	 * Method to handle a control word without a parameter
-	 * @param ctrlWord The control word
-	 * @return true if handled, false if not handled
-	 */
-	public abstract boolean handleControlWord(String ctrlWord);
-	/**
-	 * Method to handle binary data. For example, images.
-	 * @param binData Byte array containing the data
-	 * @return true if handle, false if not handled
-	 */
-	public abstract boolean handleBinaryData(byte[] binData);
-	/**
-	 * Method to handle a character
-	 * @param ch The character input
-	 * @return true if handled, false if not handled
-	 */
-	public abstract boolean handleCharacter(char[] ch);
-	/**
-	 * Method to handle text data.
-	 * This method may not be used. HGS 2007/12/04
-	 * @param ch
-	 * @return true if handled, false if not handled
-	 */
-	public abstract boolean handleText(char ch);
-	/**
-	 * Method to handle a text string.
-	 * 
-	 * @param text The string data
-	 * @return true if handled, false if not handled
-	 */
-	public abstract boolean handleText(String text);
-	/**
-	 * Method to handle an open group token ({)
-	 * 
-	 * @return true if handled, false if not handled
-	 */
-	public abstract boolean handleGroupStart();
-	/**
-	 * Method to handle a close group token (})
-	 * 
-	 * @return true if handled, false if not handled
-	 */
-	public abstract boolean handleGroupEnd();
-	/**
-	 * Method to handle closing of a destination
-	 * 
-	 * @return true if handled, false if not handled
-	 */
-	public abstract boolean closeDestination();	
+public class RtfGenerator extends RtfElement {
+    /**
+     * Information group starting tag
+     */
+    private static final byte[] GENERATOR = "\\*\\generator".getBytes();
+    
+    /**
+     * Constructs a RtfInfoGroup belonging to a RtfDocument
+     * 
+     * @param doc The RtfDocument this RtfInfoGroup belongs to
+     */
+    public RtfGenerator(RtfDocument doc) {
+        super(doc);
+    }
+    
+    
+    /**
+     * Writes the RtfInfoGroup and its RtfInfoElement elements.
+     * 
+     * @return A byte array containing the group and its elements
+     * @deprecated As of iText 2.0.6 or earlier, replaced by
+     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
+     */
+    public byte[] write()
+    {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        try {
+			writeContent(result);
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+        return result.toByteArray();
+    }
+    
+    /**
+     * Writes the element content to the given output stream.
+     */    
+    public void writeContent(final OutputStream result) throws IOException
+    {
+    	result.write(OPEN_GROUP);
+		result.write(GENERATOR);
+		result.write(DELIMITER);
+		result.write(Document.getVersion().getBytes());
+		result.write(CLOSE_GROUP);
+		result.write((byte) '\n');
+    }        
+    
 }

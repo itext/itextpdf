@@ -51,7 +51,7 @@
 package com.lowagie.text.rtf.direct;
 
 /**
- * This destination is for discarded entries. They go nowhere.
+ * <code>RtfDestinationNull</code> is for discarded entries. They go nowhere.
  * If a control word destination is unknown or ignored, this is the destination
  * that should be set.
  * 
@@ -67,9 +67,17 @@ public final class RtfDestinationNull extends RtfDestinationBase {
 	public RtfDestinationNull() {
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestinationBase#clear()
+	 */
 	protected void clear() {
 	}
-		
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestinationBase#setDefaults()
+	 */
+	public void setDefaults() {
+	}
+
 	// Interface definitions
 	
 	/* (non-Javadoc)
@@ -135,9 +143,4 @@ public final class RtfDestinationNull extends RtfDestinationBase {
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.lowagie.text.rtf.direct.RtfDestinationBase#setDefaults()
-	 */
-	public void setDefaults() {
-	}
 }

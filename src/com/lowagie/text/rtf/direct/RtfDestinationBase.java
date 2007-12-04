@@ -49,52 +49,85 @@
  */
  package com.lowagie.text.rtf.direct;
 
+ /**
+  * <code>RtfDestinationBase</code> is the base class for destinations according
+  * to the RTF Specification. All destinations must extend from this class.
+  * 
+  * @author Howard Shank (hgshank@yahoo.com
+  * 
+  * @see com.lowagie.text.rtf.direct.RtfDestination
+  */
 public abstract class RtfDestinationBase implements RtfDestination {
 
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#closeDestination()
+	 */
 	public boolean closeDestination() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleBinaryData(byte[])
+	 */
 	public boolean handleBinaryData(byte[] binData) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleControlWord(java.lang.String, int)
+	 */
 	public boolean handleControlWord(String ctrlWord, int param) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleControlWord(java.lang.String)
+	 */
 	public boolean handleControlWord(String ctrlWord) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleGroupEnd()
+	 */
 	public boolean handleGroupEnd() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleGroupStart()
+	 */
 	public boolean handleGroupStart() {
-		// TODO Auto-generated method stub
 		return false;
 	}
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleCharacter(char[])
+	 */
 	public boolean handleCharacter(char[] ch) {
-		// TODO Auto-generated method stub
 		return false;
 	}
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleText(char)
+	 */
 	public boolean handleText(char ch) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleText(java.lang.String)
+	 */
 	public boolean handleText(String text) {
-		// TODO Auto-generated method stub
 		return false;
 	}
-	
+	/**
+	 * Method to clear all variable values. Must be implemented in child class.
+	 *
+	 */
 	protected abstract void clear();
+	/**
+	 * Method to set this object to the default values. Must be implemented in child class.
+	 *
+	 */
 	protected abstract void setDefaults();
 
 }

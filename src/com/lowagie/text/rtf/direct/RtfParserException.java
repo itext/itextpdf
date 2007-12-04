@@ -1,11 +1,14 @@
 package com.lowagie.text.rtf.direct;
 
 /**
- * Signals that an error has occurred in a <CODE>RtfParser2</CODE>.
+ * Signals that an error has occurred in a <CODE>RtfParser</CODE>.
  */
 
 public class RtfParserException extends Exception {
 	private static final long serialVersionUID = 2857489935812968235L;
+	/**
+	 * Contained inner exception object.
+	 */
 	private Exception ex;
 
     /**
