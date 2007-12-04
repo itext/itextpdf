@@ -74,6 +74,14 @@ public class RtfImportMappings {
 	 * The colorNr to Color mappings.
 	 */
 	private HashMap colorMappings = null;
+	/**
+	 * The listNr to List mappings.
+	 */
+	private HashMap listMappings = null;
+	/**
+	 * The sytlesheetListNr to Stylesheet mappings.
+	 */
+	private HashMap stylesheetListMappings = null;
 	
 	/**
 	 * Constructs a new RtfImportMappings initialising the mappings.
@@ -81,6 +89,8 @@ public class RtfImportMappings {
 	public RtfImportMappings() {
 		this.fontMappings = new HashMap();
 		this.colorMappings = new HashMap();
+		this.listMappings = new HashMap();
+		this.stylesheetListMappings = new HashMap();
 	}
 	
 	/**
@@ -92,7 +102,6 @@ public class RtfImportMappings {
 	public void addFont(String fontNr, String fontName) {
 		this.fontMappings.put(fontNr, fontName);
 	}
-	
 	/**
 	 * Add a color to the list of mappings.
 	 * 
@@ -102,6 +111,24 @@ public class RtfImportMappings {
 	public void addColor(String colorNr, Color color) {
 		this.colorMappings.put(colorNr, color);
 	}
+	/**
+	 * Add a List to the list of mappings.
+	 * 
+	 * @param listNr The List number.
+	 * @param list The List.
+	 */
+	public void addList(String listNr, Color list) {
+		this.listMappings.put(listNr, list);
+	}
+	/**
+	 * Add a Stylesheet List to the list of mappings.
+	 * 
+	 * @param stylesheetListNr The Stylesheet List number.
+	 * @param list The StylesheetList.
+	 */
+	public void addStylesheetList(String stylesheetListNr, Color list) {
+		this.stylesheetListMappings.put(stylesheetListNr, list);
+	}	
 	
 	/**
 	 * Gets the list of font mappings. String to String.
@@ -119,5 +146,23 @@ public class RtfImportMappings {
 	 */
 	public HashMap getColorMappings() {
 		return this.colorMappings;
+	}	
+	
+	/**
+	 * Gets the list of List mappings.
+	 * 
+	 * @return The List mappings.
+	 */
+	public HashMap getListMappings() {
+		return this.listMappings;
+	}	
+	
+	/**
+	 * Gets the list of Stylesheet mappings. .
+	 * 
+	 * @return The Stylesheet List mappings.
+	 */
+	public HashMap getStylesheetListMappings() {
+		return this.stylesheetListMappings;
 	}
 }

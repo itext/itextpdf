@@ -1,8 +1,8 @@
-/**
+/*
  * $Id$
  * $Name$
  *
- * Copyright 2006 by Mark Hall
+ * Copyright 2007 by Howard Shank (hgshank@yahoo.com)
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -51,10 +51,15 @@ package com.lowagie.text.rtf.direct;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.io.PushbackReader;
+import java.io.BufferedReader;
 import java.io.Reader;
-import java.util.Iterator;
-
+import java.io.PrintStream;
+import java.util.*;
+import com.lowagie.text.Document;
 import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.direct.ctrlwords.*;
+import com.lowagie.text.List;
 
 /**
  * The RtfParser allows the importing of RTF documents or
@@ -62,217 +67,1094 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * font and color definitions corrected and then added to
  * the document being written.
  * 
- * @version $Revision$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
- * @author Howard Shanks (hgshank@yahoo.com)
+ * @author Howard Shank (hgshank@yahoo.com)
  */
+
 public class RtfParser {
+	private static final boolean debugParser = false;	// DEBUG Files are unlikely to be read by any reader! 
 	/**
-	 * Currently the RTF document header is being parsed.
+	 * The iText document to add the RTF document to.
 	 */
-	private static final int PARSER_IN_HEADER = 0;
-	/**
-	 * Currently the RTF font table is being parsed.
-	 */
-	private static final int PARSER_IN_FONT_TABLE = 1;
-	/**
-	 * Currently the RTF color table is being parsed.
-	 */
-	private static final int PARSER_IN_COLOR_TABLE = 2;
-	/**
-	 * Currently the RTF info group is being parsed.
-	 */
-	private static final int PARSER_IN_INFO_GROUP = 4;
-	/**
-	 * Currently the RTF document content is being parsed.
-	 */
-	private static final int PARSER_IN_DOCUMENT = 8;
-	
+	private Document document = null;
 	/**
 	 * The RtfDocument to add the RTF document or fragment to.
 	 */
 	private RtfDocument rtfDoc = null;
 	/**
-	 * The RtfTokeniser to use for tokenising the RTF document or fragment.
+	 * The RtfKeywords that creates and handles keywords that are implemented.
 	 */
-	private RtfTokeniser tokeniser = null;
+	private RtfCtrlWordMgr rtfKeywordMgr = null;
 	/**
 	 * The RtfImportHeader to store imported font and color mappings in.
 	 */
-	private RtfImportHeader importHeader = null;
+	private RtfImportMgr importMgr = null;
+
+	/**
+	 * Stack for saving states for groups
+	 */
+	private Stack stackState = null;
+	/**
+	 * The current parser state.
+	 */	
+	private RtfParserState currentState = null;
+
+	/**
+	 * The pushback reader to read the input stream.
+	 */
+	private PushbackReader pbReader = null;
+	
+	/**
+	 * Conversion type. Identifies if we are doing in import or a convert.
+	 */
+	private int conversionType = TYPE_IMPORT_FULL;
+
+	/**
+	 * Destinations
+	 */
+	
+	/**
+	 * The RtfDestination to use for the document.
+	 */
+	private RtfDestinationNull destNull = null;
+
+	/**
+	 * The RtfDestination to use for the document.
+	 */
+	private RtfDestinationDocument destDocument = null;
 	/**
 	 * The RtfFontTableParser to use for parsing the font table.
 	 */
-	private RtfFontTableParser fontTableParser = null;
+	private RtfDestinationFontTable destFontTable = null;
 	/**
 	 * The RtfColorTableParser to use for parsing the color table.
 	 */
-	private RtfColorTableParser colorTableParser = null;
+	private RtfDestinationColorTable destColorTable = null;
 	/**
-	 * The current parser state.
+	 * The RtfDestInfo
 	 */
-	private int state = PARSER_IN_HEADER;
+	private RtfDestinationInfo destInfo = null;
+	/**
+	 * The RtfDestinationStylesheetTable.
+	 */
+	private RtfDestinationStylesheetTable destStylesheetTable = null;
+	/**
+	 * The RtfDestinationListTable.
+	 */
+	private RtfDestinationListTable destListTable = null;
 	
+	
+	/**
+	 * Flag to indicate if last token was an open group token '{'
+	 */
+	private boolean newGroup = false;
+
+	
+	/**
+	 * Bitmapping:
+	 * 
+	 * 0111 1111 1111 1111 = Unkown state
+	 * 0xxx xxxx xxxx xxxx = In Header
+	 * 1xxx xxxx xxxx xxxx = In Document
+	 * 2xxx xxxx xxxx xxxx = Reserved
+	 * 4xxx xxxx xxxx xxxx = Other
+	 * 8xxx xxxx xxxx xxxx = Errors
+	 */
+	
+	/**
+	 * Header state values
+	 */
+
+	/**
+	 * Currently the RTF document header is being parsed.
+	 */
+	public static final int PARSER_IN_HEADER = (0x0 << 28) | 0x000000;
+	/**
+	 * Currently the RTF charset is being parsed.
+	 */
+	public static final int PARSER_IN_CHARSET = PARSER_IN_HEADER | 0x000001;
+	/**
+	 * Currently the RTF deffont is being parsed.
+	 */
+	public static final int PARSER_IN_DEFFONT = PARSER_IN_HEADER | 0x000002;
+	/**
+	 * Currently the RTF font table is being parsed.
+	 */
+	public static final int PARSER_IN_FONT_TABLE = PARSER_IN_HEADER | 0x000003;
+	/**
+	 * Currently a RTF font table info element is being parsed.
+	 */
+	public static final int PARSER_IN_FONT_TABLE_INFO = PARSER_IN_HEADER | 0x000004;
+	/**
+	 * Currently the RTF filetbl is being parsed.
+	 */
+	public static final int PARSER_IN_FILE_TABLE = PARSER_IN_HEADER | 0x000005;
+	/**
+	 * Currently the RTF color table is being parsed.
+	 */
+	public static final int PARSER_IN_COLOR_TABLE = PARSER_IN_HEADER | 0x000006;
+	/**
+	 * Currently the RTF  stylesheet is being parsed.
+	 */
+	public static final int PARSER_IN_STYLESHEET = PARSER_IN_HEADER | 0x000007;
+	/**
+	 * Currently the RTF listtables is being parsed.
+	 */
+	public static final int PARSER_IN_LIST_TABLE = PARSER_IN_HEADER | 0x000008;
+	/**
+	 * Currently the RTF listtable override is being parsed.
+	 */
+	public static final int PARSER_IN_LISTOVERRIDE_TABLE = PARSER_IN_HEADER | 0x000009;
+	/**
+	 * Currently the RTF revtbl is being parsed.
+	 */
+	public static final int PARSER_IN_REV_TABLE = PARSER_IN_HEADER | 0x00000A;
+	/**
+	 * Currently the RTF rsidtable is being parsed.
+	 */
+	public static final int PARSER_IN_RSID_TABLE = PARSER_IN_HEADER | 0x0000B;
+	/**
+	 * Currently the RTF generator is being parsed.
+	 */
+	public static final int PARSER_IN_GENERATOR = PARSER_IN_HEADER | 0x00000C;
+	/**
+	 * Currently the RTF Paragraph group properties Table (word 2002)
+	 */
+	public static final int PARSER_IN_PARAGRAPH_TABLE = PARSER_IN_HEADER | 0x00000E;
+	/**
+	 * Currently the RTF Old Properties.
+	 */
+	public static final int PARSER_IN_OLDCPROPS = PARSER_IN_HEADER | 0x00000F;
+	/**
+	 * Currently the RTF Old Properties.
+	 */
+	public static final int PARSER_IN_OLDPPROPS = PARSER_IN_HEADER | 0x000010;
+	/**
+	 * Currently the RTF Old Properties.
+	 */
+	public static final int PARSER_IN_OLDTPROPS = PARSER_IN_HEADER | 0x000012;
+	/**
+	 * Currently the RTF Old Properties.
+	 */
+	public static final int PARSER_IN_OLDSPROPS = PARSER_IN_HEADER | 0x000013;
+	/**
+	 * Currently the RTF User Protection Information.
+	 */
+	public static final int PARSER_IN_PROT_USER_TABLE = PARSER_IN_HEADER | 0x000014;
+	/**
+	 * Currently the Latent Style and Formatting usage restrictions
+	 */
+	public static final int PARSER_IN_LATENTSTYLES = PARSER_IN_HEADER | 0x000015;
+	
+	public static final int PARSER_IN_PARAGRAPH_GROUP_PROPERTIES =PARSER_IN_HEADER | 0x000016;
+	/**
+	 * Document state values
+	 */
+	/**
+	 * Currently the RTF document content is being parsed.
+	 */
+	public static final int PARSER_IN_DOCUMENT = (0x2 << 28 ) | 0x000000;
+
+	/**
+	 * Currently the RTF info group is being parsed.
+	 */
+	public static final int PARSER_IN_INFO_GROUP = PARSER_IN_DOCUMENT | 0x000001;
+
+	
+	public static final int PARSER_IN_UPR = PARSER_IN_DOCUMENT | 0x000002;
+	/**
+	 * The parser is at the beginning or the end of the file.
+	 */
+	public static final int PARSER_STARTSTOP = (0x4 << 28)| 0x0001;
+	
+	/**
+	 * Currently the parser is in an error state.
+	 */
+	public static final int PARSER_ERROR = (0x8 << 28) | 0x0000;
+	/**
+	 * The parser reached the end of the file.
+	 */
+	public static final int PARSER_ERROR_EOF = PARSER_ERROR | 0x0001;
+	/**
+	 * Currently the parser is in an unknown state.
+	 */
+	public static final int PARSER_IN_UNKNOWN = PARSER_ERROR | 0x0FFFFFFF;
+	
+	
+	/**
+	 * Conversion type is an import. Uses direct content to add everything.
+	 * This is what the original import does.
+	 */
+	public static final int TYPE_IMPORT_FULL = 0;
+	/**
+	 * Conversion type is an import of a partial file/fragment. Uses direct content to add everything.
+	 */
+	public static final int TYPE_IMPORT_FRAGMENT = 1;
+	
+	/**
+	 * Conversion type is a conversion. This uses the document (not rtfDoc) to add
+	 * all the elements making it a different supported documents depending on the writer used.
+	 */
+	public static final int TYPE_CONVERT = 2;
+
+	
+	public static final int DESTINATION_NORMAL = 0;
+	public static final int DESTINATION_SKIP = 1;
+	
+	//////////////////////////////////// TOKENISE VARIABLES ///////////////////
+	/**
+	 * State flags use 4/28 bitmask.
+	 * First 4 bits (nibble) indicates major state. Used for unknown and error
+	 * Last 28 bits indicates the value;
+	 */
+	
+	/**
+	 * The RtfTokeniser is in its ground state. Any token may follow.
+	 */
+	public static final int TOKENISER_NORMAL = 0x00000000;
+	/**
+	 * The last token parsed was a slash.
+	 */
+	public static final int TOKENISER_SKIP_BYTES = 0x00000001;
+	/**
+	 * The RtfTokeniser is currently tokenising a control word.
+	 */
+	public static final int TOKENISER_SKIP_GROUP = 0x00000002;
+	/**
+	 * The RtfTokeniser is currently reading binary stream.
+	 */
+	public static final int TOKENISER_BINARY= 0x00000003;
+	/**
+	 * The RtfTokeniser is currently reading hex data.
+	 */
+	public static final int TOKENISER_HEX= 0x00000004;
+	/**
+	 * The RtfTokeniser is currently in error state
+	 */
+	public static final int TOKENISER_STATE_IN_ERROR =  0x80000000; // 1000 0000 0000 0000 0000 0000 0000 0000
+	/**
+	 * The RtfTokeniser is currently in an unkown state
+	 */
+	public static final int TOKENISER_STATE_IN_UNKOWN = 0xFF000000; // 1111 0000 0000 0000 0000 0000 0000 0000
+	
+	/**
+	 * The current group nesting level.
+	 */
+	private int groupLevel = 0;
+	/**
+	 * The current document group nesting level. Used for fragments.
+	 */
+	private int docGroupLevel = 0;
+	/**
+	 * When the tokeniser is Binary.
+	 */
+	private long binByteCount = 0;
+	/**
+	 * When the tokeniser is set to skip bytes, binSkipByteCount is the number of bytes to skip.
+	 */
+	private long binSkipByteCount = 0;
+	/**
+	 * When the tokeniser is set to skip to next group, this is the group indentifier to return to.
+	 */
+	private int skipGroupLevel = 0;
+
+	//RTF parser error codes
+	public static final int  errOK =0;                        // Everything's fine!
+	public static final int  errStackUnderflow   =  -1;       // Unmatched '}'
+	public static final int  errStackOverflow    =  -2;       // Too many '{' -- memory exhausted
+	public static final int  errUnmatchedBrace   =  -3;       // RTF ended during an open group.
+	public static final int  errInvalidHex       =  -4;       // invalid hex character found in data
+	public static final int  errBadTable         =  -5;       // RTF table (sym or prop) invalid
+	public static final int  errAssertion        =  -6;       // Assertion failure
+	public static final int  errEndOfFile        =  -7;       // End of file reached while reading RTF
+	public static final int  errCtrlWordNotFound =  -8;		  // control word was not found
+	//////////////////////////////////// TOKENISE VARIABLES ///////////////////
+	
+	
+	//////////////////////////////////// STATS VARIABLES ///////////////////
+	private long byteCount = 0;
+	private long ctrlWordCount = 0;
+	private long openGroupCount = 0;
+	private long closeGroupCount = 0;
+	private long characterCount = 0;
+	private long ctrlWordHandledCount = 0;
+	private long ctrlWordNotHandledCount = 0;
+	private long ctrlWordSkippedCount = 0;
+	private long groupSkippedCount = 0;
+	private long startTime = 0;
+	private long endTime = 0;
+	private Date startDate = null;
+	private Date endDate = null;
+	//////////////////////////////////// STATS VARIABLES ///////////////////
+
+	
+	/***********
+	 *  READER *
+	 ***********/
 	/**
 	 * Imports a complete RTF document.
 	 * 
-	 * @param reader The Reader to read the RTF document from.
-	 * @param rtfDoc The RtfDocument to add the imported document to.
+	 * @param readerIn 
+	 * 		The Reader to read the RTF document from.
+	 * @param rtfDoc 
+	 * 		The RtfDocument to add the imported document to.
 	 * @throws IOException On I/O errors.
 	 */
-	public void importRtfDocument(Reader reader, RtfDocument rtfDoc) throws IOException {
-		this.rtfDoc = rtfDoc;
-		this.state = PARSER_IN_HEADER;
-		this.importHeader = new RtfImportHeader(this.rtfDoc);
-		this.fontTableParser = new RtfFontTableParser(this.importHeader);
-		this.colorTableParser = new RtfColorTableParser(this.importHeader);
-		this.tokeniser = new RtfTokeniser(this, 0);
-		this.tokeniser.tokenise(reader);
+	public void importRtfDocument(Reader readerIn, RtfDocument rtfDoc) throws IOException {
+		if(readerIn == null || rtfDoc == null) return;
+		this.init(TYPE_IMPORT_FULL, rtfDoc, readerIn, null);
+		this.setCurrentDestination(this.destNull);
+		startDate = new Date();
+		startTime = System.currentTimeMillis();
+		this.groupLevel = 0;
+		this.tokenise();
+		endTime = System.currentTimeMillis();
+		endDate = new Date();
 	}
 	
 	/**
+	 * Converts an RTF document to an iText document.
+	 * 
+	 * @param readerIn 
+	 * 		The Reader to read the RTF file from.
+	 * @param rtfDoc 
+	 * 		The RTF document to add the RTF file to.
+	 * @param doc 
+	 * 		The iText document that the RTF file is to be added to.
+	 * @throws IOException 
+	 * 		On I/O errors.
+	 */
+	public void convertRtfDocument(Reader readerIn, RtfDocument rtfDoc, Document doc) throws IOException {
+		if(readerIn == null || rtfDoc == null || doc == null) return;
+		this.init(TYPE_CONVERT, rtfDoc, readerIn, doc);
+		this.setCurrentDestination(this.destNull);
+		startDate = new Date();
+		startTime = System.currentTimeMillis();
+		this.groupLevel = 0;
+		this.tokenise();
+		endTime = System.currentTimeMillis();
+		endDate = new Date();
+	}
+
+
+	/**
 	 * Imports an RTF fragment.
 	 * 
-	 * @param reader The Reader to read the RTF fragment from.
-	 * @param rtfDoc The RTF document to add the RTF fragment to.
-	 * @param importMappings The RtfImportMappings defining font and color mappings for the fragment.
-	 * @throws IOException On I/O errors.
+	 * @param readerIn 
+	 * 		The Reader to read the RTF fragment from.
+	 * @param rtfDoc 
+	 * 		The RTF document to add the RTF fragment to.
+	 * @param importMappings 
+	 * 		The RtfImportMappings defining font and color mappings for the fragment.
+	 * @throws IOException 
+	 * 		On I/O errors.
 	 */
-	public void importRtfFragment(Reader reader, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException {
-		this.rtfDoc = rtfDoc;
-		this.state = PARSER_IN_DOCUMENT;
-		this.importHeader = new RtfImportHeader(this.rtfDoc);
-		this.fontTableParser = new RtfFontTableParser(this.importHeader);
-		this.colorTableParser = new RtfColorTableParser(this.importHeader);
-		handleImportMappings(importMappings);
-		this.tokeniser = new RtfTokeniser(this, 1);
-		this.tokeniser.tokenise(reader);
+	public void importRtfFragment(Reader readerIn, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException {
+		if(readerIn == null || rtfDoc == null || importMappings==null) return;
+		this.init(TYPE_IMPORT_FRAGMENT, rtfDoc, readerIn, null);
+		this.handleImportMappings(importMappings);
+		this.setCurrentDestination(this.destDocument);
+		this.groupLevel = 1;
+		setParserState(RtfParser.PARSER_IN_DOCUMENT);
+		startDate = new Date();
+		startTime = System.currentTimeMillis();
+		this.tokenise();
+		endTime = System.currentTimeMillis();
+		endDate = new Date();
 	}
 
 	/**
-	 * Imports the mappings defined in the RtfImportMappings into the
-	 * RtfImportHeader of this RtfParser.
+	 * @param type
+	 * @param rtfDoc
+	 * @param readerIn
+	 * @param doc
+	 */
+	private void init(int type, RtfDocument rtfDoc, Reader readerIn, Document doc) {
+
+		init_stats();
+		// initialize reader to a PushbackReader
+		this.pbReader = init_Reader(readerIn);
+		
+		this.conversionType = type;
+		this.rtfDoc = rtfDoc;
+		this.document = doc;
+		this.currentState = new RtfParserState();
+		this.stackState = new Stack();
+		this.setParserState(PARSER_STARTSTOP);
+		this.importMgr = new RtfImportMgr(this.rtfDoc, this.document);
+		
+		this.destFontTable = new RtfDestinationFontTable(this.importMgr);
+		this.destColorTable = new RtfDestinationColorTable(this.importMgr);
+		this.destInfo = new RtfDestinationInfo(this.importMgr);
+		this.destStylesheetTable = new RtfDestinationStylesheetTable(this.importMgr);
+		this.destNull = new RtfDestinationNull();
+		this.destDocument = new RtfDestinationDocument(this.rtfDoc, this.document, this.conversionType);
+		
+		this.rtfKeywordMgr = new RtfCtrlWordMgr(this, this.pbReader);		
+	}
+	
+	protected void init_stats() {
+		byteCount = 0;
+		ctrlWordCount = 0;
+		openGroupCount = 0;
+		closeGroupCount = 0;
+		characterCount = 0;
+		ctrlWordHandledCount = 0;
+		ctrlWordNotHandledCount = 0;
+		ctrlWordSkippedCount = 0;
+		groupSkippedCount = 0;
+		startTime = 0;
+		endTime = 0;
+		startDate = null;
+		endDate = null;
+	}
+	
+	/**
+	 * Casts the input reader to a PushbackReader or 
+	 * creates a new PushbackReader from the Reader passed in.
 	 * 
-	 * @param importMappings The RtfImportMappings to import.
+	 * @param readerIn
+	 * 		The Reader object for the input file.
+	 * @return
+	 * 		PushbackReader object.
+	 */
+	private PushbackReader init_Reader(Reader readerIn) {
+		Reader newReader = readerIn;
+		// Initializing the reader as a BufferedReader 
+		// cut test processing time by approximately 50%
+		// default uses 8192 character buffer
+		if(!(newReader instanceof BufferedReader)) {
+			newReader = new BufferedReader(newReader);	// Since JDK1.1
+		}
+		// Initializing the reader as a PushbackReader is
+		// a requirement of the parser to be able to put back
+		// read ahead characters.
+		if(!(newReader instanceof PushbackReader)) {
+			newReader = new PushbackReader(newReader);	// Since JDK1.1
+		}
+		
+		// return the proper reader object to the parser setup
+		return  (PushbackReader)newReader;
+	}
+	
+	/**
+	 * Imports the mappings defined in the RtfImportMappings into the
+	 * RtfImportHeader of this RtfParser2.
+	 * 
+	 * @param importMappings 
+	 * 		The RtfImportMappings to import.
 	 */
 	private void handleImportMappings(RtfImportMappings importMappings) {
 		Iterator it = importMappings.getFontMappings().keySet().iterator();
 		while(it.hasNext()) {
 			String fontNr = (String) it.next();
-			this.importHeader.importFont(fontNr, (String) importMappings.getFontMappings().get(fontNr));
+			this.importMgr.importFont(fontNr, (String) importMappings.getFontMappings().get(fontNr));
 		}
 		it = importMappings.getColorMappings().keySet().iterator();
 		while(it.hasNext()) {
 			String colorNr = (String) it.next();
-			this.importHeader.importColor(colorNr, (Color) importMappings.getColorMappings().get(colorNr));
+			this.importMgr.importColor(colorNr, (Color) importMappings.getColorMappings().get(colorNr));
 		}
+		it = importMappings.getListMappings().keySet().iterator();
+		while(it.hasNext()) {
+			String listNr = (String) it.next();
+			this.importMgr.importList(listNr, (List) importMappings.getListMappings().get(listNr));
+		}
+		it = importMappings.getStylesheetListMappings().keySet().iterator();
+		while(it.hasNext()) {
+			String stylesheetListNr = (String) it.next();
+			this.importMgr.importStylesheetList(stylesheetListNr, (List) importMappings.getStylesheetListMappings().get(stylesheetListNr));
+		}
+		
 	}
+	
+	
+	/******************************************
+	 *   DOCUMENT CONTROL METHODS
+	 *   
+	 *   Handles -
+	 *   handleOpenGroup: 	Open groups		- '{'
+	 *   handleCloseGroup: 	Close groups	- '}'
+	 *   handleCtrlWord: 	Ctrl Words		- '\...'
+	 *   handleCharacter: 	Characters		- Plain Text, etc.
+	 * 
+	 */
 	
 	/**
 	 * Handles open group tokens.
-	 * 
-	 * @param groupLevel The current group nesting level.
+	 * (non-Javadoc)
+	 * @see com.lowagie.text.rtf.direct.IRtfParser2#handleOpenGroup()
 	 */
-	public void handleOpenGroup(int groupLevel) {
-		if(this.state == PARSER_IN_DOCUMENT) {
-			this.rtfDoc.add(new RtfDirectContent("{"));
+	public int handleOpenGroup() {
+		int result = errOK;
+		this.openGroupCount++;	// stats
+		if (this.getTokeniserState() == TOKENISER_SKIP_GROUP) { 
+			this.groupSkippedCount++;
 		}
+
+		this.groupLevel++;		// current group level in tokeniser
+		this.docGroupLevel++;	// current group level in document
+		this.newGroup = true;
+		
+		this.stackState.push(this.currentState);
+		this.currentState = new RtfParserState(this.currentState);
+		if(debugParser) {
+			this.rtfDoc.add(new RtfDirectContent("\n DEBUG: handleOpenGroup()"));
+			this.rtfDoc.add(new RtfDirectContent("\n DEBUG: grouplevel=" + Integer.toString(groupLevel) + "\n"));
+		}
+		return result;
 	}
 	
 	/**
-	 * Handles close group tokens. Depending on what is currently
-	 * being parsed the parse state may change.
-	 * 
-	 * @param groupLevel The current group nesting level.
+	 * Handles close group tokens.
 	 */
-	public void handleCloseGroup(int groupLevel) {
-		if(this.state == PARSER_IN_DOCUMENT && groupLevel > 1) {
-			this.rtfDoc.add(new RtfDirectContent("}"));
-		} else if(this.state == PARSER_IN_INFO_GROUP && groupLevel == 2) {
-			this.state = PARSER_IN_DOCUMENT;
-		} else if(this.state == PARSER_IN_FONT_TABLE) {
-			this.fontTableParser.handleCloseGroup(groupLevel);
-			if(groupLevel == 2) {
-				this.state = PARSER_IN_HEADER;
+	public int handleCloseGroup() {
+		int result = errOK;
+		this.closeGroupCount++;	// stats
+
+		if (this.getTokeniserState() != TOKENISER_SKIP_GROUP) {
+			if(debugParser) {
+				this.rtfDoc.add(new RtfDirectContent("\n DEBUG: handleCloseGroup()"));
+				this.rtfDoc.add(new RtfDirectContent("\n DEBUG: grouplevel=" + Integer.toString(groupLevel)));
+				RtfCtrlWordBase kwd = (RtfCtrlWordBase)this.getControlwordHandler();
+				this.rtfDoc.add(new RtfDirectContent("\n DEBUG: ControlWordHandler=[" + kwd.toString() + "]"));
+				kwd = (RtfCtrlWordBase)this.getGroupHandler();
+				this.rtfDoc.add(new RtfDirectContent("\n DEBUG: GroupHandler=[" + kwd.toString() + "]"));
+				this.rtfDoc.add(new RtfDirectContent("\n "));
 			}
-		} else if(this.state == PARSER_IN_COLOR_TABLE) {
-			this.state = PARSER_IN_HEADER;
+
+			RtfCtrlWordBase kwd = (RtfCtrlWordBase)this.getControlwordHandler();
+			if(kwd != null) {
+				kwd.handleEndControlWord();
+			}
+			
+			kwd = (RtfCtrlWordBase)this.getGroupHandler();
+			if(kwd != null) {
+				kwd.handleCloseGroup();
+			}
 		}
+		
+		if(this.stackState.size() >0 ) {
+			this.currentState = (RtfParserState)this.stackState.pop();
+		} else {
+			result = errStackUnderflow;
+		}
+		
+		this.docGroupLevel--;
+		this.groupLevel--;
+		
+		if (this.getTokeniserState() == TOKENISER_SKIP_GROUP && this.groupLevel < this.skipGroupLevel) {
+			this.setTokeniserState(TOKENISER_NORMAL);
+		}
+
+		return result;	
 	}
 	
-	/**
-	 * Handles single control character tokens.
-	 * 
-	 * @param ctrlCharacter The control character to handle.
-	 * @param groupLevel The current group nesting level.
-	 */
-	public void handleCtrlCharacter(String ctrlCharacter, int groupLevel) {
-		if(this.state == PARSER_IN_DOCUMENT) {
-			this.rtfDoc.add(new RtfDirectContent(ctrlCharacter));
-		}
-	}
-	
+
 	/**
 	 * Handles control word tokens. Depending on the current
 	 * state a control word can lead to a state change. When
-	 * parsing the actual document contents, The font number,
-	 * color number and background color number are remapped.
+	 * parsing the actual document contents, certain tabled
+	 * values are remapped. i.e. colors, fonts, styles, etc.
 	 * 
-	 * @param ctrlWord The control word to handle.
-	 * @param groupLevel The current group nesting level.
+	 * @param kwdParam The control word to handle.
 	 */
-	public void handleCtrlWord(String ctrlWord, int groupLevel) {
-		if(this.state == PARSER_IN_DOCUMENT) {
-			if(RtfColorTableParser.stringMatches(ctrlWord, "\\f")) {
-				ctrlWord = "\\f" + this.importHeader.mapFontNr(ctrlWord.substring(2));
-			} else if(RtfColorTableParser.stringMatches(ctrlWord, "\\cf")) {
-				ctrlWord = "\\cf" + this.importHeader.mapColorNr(ctrlWord.substring(3));
-			} else if(RtfColorTableParser.stringMatches(ctrlWord, "\\cb")) {
-				ctrlWord = "\\cb" + this.importHeader.mapColorNr(ctrlWord.substring(3));
-			} else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcbpat")){
-                ctrlWord = "\\clcbpat" + this.importHeader.mapColorNr(ctrlWord.substring(8));
-            } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcbpatraw")) {
-                ctrlWord = "\\clcbpatraw" + this.importHeader.mapColorNr(ctrlWord.substring(11));
-            } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcfpat")) {
-                ctrlWord = "\\clcfpat" + this.importHeader.mapColorNr(ctrlWord.substring(11));
-            } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcfpatraw")) {
-                ctrlWord = "\\clcfpatraw" + this.importHeader.mapColorNr(ctrlWord.substring(11));
-            } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\trcfpat")) {
-                ctrlWord = "\\trcfpat" + this.importHeader.mapColorNr(ctrlWord.substring(11));
-            } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\trcbpat")) {
-                ctrlWord = "\\trcbpat" + this.importHeader.mapColorNr(ctrlWord.substring(11));
-            }
-			this.rtfDoc.add(new RtfDirectContent(ctrlWord));
-		} else if(this.state == PARSER_IN_FONT_TABLE) {
-			this.fontTableParser.handleCtrlWord(ctrlWord, groupLevel);
-		} else if(this.state == PARSER_IN_COLOR_TABLE) {
-			this.colorTableParser.handleCtrlWord(ctrlWord, groupLevel);
-		} else if(this.state == PARSER_IN_HEADER) {
-			if(ctrlWord.equals("\\info")) {
-				this.state = PARSER_IN_INFO_GROUP;
-			} else if(ctrlWord.equals("\\fonttbl")) {
-				this.state = PARSER_IN_FONT_TABLE;
-			} else if(ctrlWord.equals("\\colortbl")) {
-				this.state = PARSER_IN_COLOR_TABLE;
-			}
+	public int handleCtrlWord(RtfCtrlWordData kwdParam) {
+		this.ctrlWordCount++; // stats
+
+		if (this.getTokeniserState() == TOKENISER_SKIP_GROUP) { 
+			this.ctrlWordSkippedCount++;
+			return errOK;
 		}
+		
+		int result = this.rtfKeywordMgr.handleKeyword(kwdParam, this.groupLevel); 
+		if( result == errOK) {
+			this.ctrlWordHandledCount++;
+		} else {
+			this.ctrlWordNotHandledCount++;
+			result = errOK;	// hack for now.
+		}
+		return result;
+	}
+
+	/**
+	 * Handles text tokens. These are either handed on to the
+	 * appropriate destination handler.
+	 * 
+	 * @param nextChar
+	 * 		The text token to handle.
+	 */
+	public int handleCharacter(char[] nextChar) {		
+		this.characterCount++;	// stats
+
+		if (this.getTokeniserState() == TOKENISER_SKIP_GROUP) { 
+			return errOK;
+		}
+
+		boolean handled = false;
+
+		RtfDestination dest = (RtfDestination)this.getCurrentDestination();
+		if(dest != null) {
+			handled = dest.handleCharacter(nextChar);
+		}
+
+		return errOK;
+	}
+
+	/**
+	 * Get the state of the parser.
+	 *
+	 * @return
+	 * 		The current RtfParserState state object.
+	 */
+	public RtfParserState getState(){
+		return this.currentState;
+	}	
+
+	/**
+	 * Get the current state of the parser.
+	 * 
+	 * @return 
+	 * 		The current state of the parser.
+	 */
+	public int getParserState(){
+		return this.currentState.parserState;
 	}
 	
 	/**
-	 * Handles text tokens. These are either handed on to the
-	 * RtfColorTableParser or RtfFontTableParser or added directly
-	 * to the document.
-	 * 
-	 * @param text The text token to handle.
-	 * @param groupLevel The current group nesting level.
+	 * Set the state value of the parser.
+	 *
+	 * @param newState
+	 * 		The new state for the parser
+	 * @return
+	 * 		The state of the parser.
 	 */
-	public void handleText(String text, int groupLevel) {
-		if(this.state == PARSER_IN_DOCUMENT) {
-			this.rtfDoc.add(new RtfDirectContent(text));
-		} else if(this.state == PARSER_IN_FONT_TABLE) {
-			this.fontTableParser.handleText(text, groupLevel);
-		} else if(this.state == PARSER_IN_COLOR_TABLE) {
-			this.colorTableParser.handleText(text, groupLevel);
-		}
+	public int setParserState(int newState){
+		this.currentState.parserState = newState;
+		return this.currentState.parserState;
 	}
+	
+	/**
+	 * Get the primary handler for this group.
+	 * The primary handler is used after all the group options and text have been set appropriately.
+	 * 
+	 * @return
+	 * 		Returns KwdBase object that is the current group handler
+	 */
+	public Object getGroupHandler() {
+		return this.currentState.groupHandler;
+	}
+	
+	/**
+	 * Set the primary handler for this group.
+	 * The primary handler is used after all the group options and text have been set appropriately.
+	 * 
+	 * @param kwdbase
+	 */
+	public void setGroupHandler(Object kwdbase) {
+		this.currentState.groupHandler = kwdbase;
+	}
+	
+	/**
+	 * Set the handler for this control word.
+	 * The handler is invoked when a new control word is found.
+	 * 
+	 * @param kwdbase
+	 */
+	public void setControlWordHandler(RtfCtrlWordBase kwd) {
+		if(this.currentState.ctrlWordHandler != null) {
+			((RtfCtrlWordBase)this.currentState.ctrlWordHandler).handleEndControlWord();
+		}
+		this.currentState.ctrlWordHandler = kwd;
+	}
+
+	/**
+	 * Get the handler for this control word.
+	 * The handler is invoked when a new control word is found.
+	 * 
+	 * @return
+	 * 	 Object representing the current handler
+	 */
+	public Object getControlwordHandler() {
+		return this.currentState.ctrlWordHandler;
+	}
+
+	/**
+	 * Get the conversion type.
+	 * 
+	 * @return
+	 * 		The type of the conversion. Import or Convert.
+	 */
+	public int getConversionType() {
+		return this.conversionType;
+	}
+	
+	/**
+	 * Get the RTF Document object.
+	 * @return
+	 * 		Returns the object rtfDoc.
+	 */
+	public RtfDocument getRtfDocument() {
+		return this.rtfDoc;
+	}
+	
+	/**
+	 * Get the Document object.
+	 * @return
+	 * 		Returns the object rtfDoc.
+	 */
+	public Document getDocument() {
+		return this.document;
+	}
+
+	/**
+	 * Get the RtfImportHeader object.
+	 * @return
+	 * 		Returns the object importHeader.
+	 */
+	public RtfImportMgr getImportManager() {
+		return importMgr;
+	}
+	
+	
+	/////////////////////////////////////////////////////////////
+	// accessors for destinations
+	
+	public void setCurrentDestination(RtfDestination dest) {
+		this.currentState.destination = dest;
+		return;
+	}
+
+	public RtfDestination getCurrentDestination() {
+		return this.currentState.destination;
+	}
+	
+	////////////////////////////////////////////////////////////
+	//
+	public void setDestinationListTable() {
+		
+	}
+	public void setDestinationDocument() {
+		this.setCurrentDestination(this.destDocument);
+	}
+	public void setDestinationNull() {
+		this.setCurrentDestination(this.destNull);
+	}
+	public void setDestinationFontTable() {
+		this.setCurrentDestination(this.destFontTable);
+	}
+	public void setDestinationColorTable() {
+		this.setCurrentDestination(this.destColorTable);
+	}
+	public void setDestinationInfo() {
+		this.setCurrentDestination(this.destInfo);
+	}
+	public void setDestinationStylesheetTable() {
+		this.setCurrentDestination(this.destStylesheetTable);
+	}
+	
+	public RtfDestinationFontTable getDestFontTable() {
+		return this.destFontTable;
+	}
+	/**
+	 * The RtfColorTableParser to use for parsing the color table.
+	 */
+	public RtfDestinationColorTable getDestColorTable() {
+		return this.destColorTable;
+	}
+	/**
+	 * The RtfDestInfo
+	 */
+	public RtfDestinationInfo getDestInfo() {
+		return this.destInfo;
+	}
+	/**
+	 * The RtfDestStylesheet.
+	 */
+	public RtfDestinationStylesheetTable getDestStylesheet() {
+		return this.destStylesheetTable;
+	}
+	// add additional destinations
+	
+	public boolean isNewGroup() {
+		return this.newGroup;
+	}
+	public boolean setNewGroup(boolean value) {
+		this.newGroup = value;
+		return this.newGroup;
+	}
+	
+	/**************
+	 *  TOKENISER *
+	 **************/
+	
+	/**
+	 * Read through the input file and parse the data stream into tokens.
+	 */	
+	public void tokenise() throws IOException {
+		int errorCode = errOK;	// error code
+		char[] nextChar = new char[1]; // input variable
+		nextChar[0]=0;	// set to 0
+		this.setTokeniserState(TOKENISER_NORMAL);	// set initial tokeniser state
+		
+		
+		while(this.pbReader.read(nextChar) != -1) {
+			//while(pbReader.read(nextChar) != -1) {
+			this.byteCount++;
+			
+	        if (this.getTokeniserState() == TOKENISER_BINARY)                      // if we're parsing binary data, handle it directly
+	        {
+	            if ((errorCode = parseChar(nextChar)) != errOK)
+	                return; 
+	        }  else {
+				switch(nextChar[0]) {
+					case '{':	// scope delimiter - Open
+						this.handleOpenGroup();
+						break;
+					case '}':  // scope delimiter - Close
+						this.handleCloseGroup();
+						break;
+					case 0x0a:	// noise character
+					case 0x0d:	// noise character
+//						if(this.isImport()) {
+//							this.rtfDoc.add(new RtfDirectContent(new String(nextChar)));
+//						}
+						break;
+					case '\\':	// Control word start delimiter
+							if(parseCtrlWord(pbReader) != errOK) {
+							// TODO: Indicate some type of error
+							return;
+						}
+						break;
+					default:
+						if(groupLevel == 0) { // BOMs
+							break;
+						}
+						if(this.getTokeniserState() == TOKENISER_HEX) {
+							StringBuffer hexChars = new StringBuffer();
+							hexChars.append(nextChar);
+							if(pbReader.read(nextChar) == -1) {
+								return;
+							}
+							hexChars.append(nextChar);
+	                    	try {
+								nextChar[0]=(char)Integer.parseInt(hexChars.toString(), 16);
+							} catch (NumberFormatException e) {
+								return;
+							}
+		                    this.setTokeniserState(TOKENISER_NORMAL);
+						}
+					
+						if ((errorCode = parseChar(nextChar)) != errOK) {
+                        	return; // some error occurred. we should send a
+									// real error
+						}
+						break;
+				}	// switch(nextChar[0])
+			}	// end if (this.getTokeniserState() == TOKENISER_BINARY)
+		}// end while(reader.read(nextChar) != -1)
+	}
+	
+	/**
+	 * Process the character and send it to the current destination.
+	 * @param ch
+	 * 		The character to process
+	 * @return
+	 * 		Returns an error code or errOK if no error.
+	 */
+	private int parseChar(char[] ch) {
+		// figure out where to put the character
+		// needs to handle group levels for parsing
+		// examples
+		/*
+		 * {\f3\froman\fcharset2\fprq2{\*\panose 05050102010706020507}Symbol;}
+		 * {\f7\fswiss\fcharset0\fprq2{\*\panose 020b0604020202030204}Helv{\*\falt Arial};} <- special case!!!!
+		 * {\f5\froman\fcharset0 Tahoma;}
+		 * {\f6\froman\fcharset0 Arial Black;}
+		 * {\info(\author name}{\company company name}}
+		 * ... document text ...
+		 */
+	    if (this.getTokeniserState() == TOKENISER_BINARY && --binByteCount <= 0)
+	    	this.setTokeniserStateNormal();
+	    if (this.getTokeniserState() == TOKENISER_SKIP_BYTES && --binSkipByteCount <= 0)
+	    	this.setTokeniserStateNormal();
+	    return this.handleCharacter(ch);
+	}
+	
+	/**
+	 * Parses a keyword and it's parameter if one exists
+	 * @param reader
+	 * 		This is a pushback reader for file input.
+	 * @return
+	 * 		Returns an error code or errOK if no error.
+	 * @throws IOException
+	 * 		Catch any file read problem.
+	 */
+	private int parseCtrlWord(PushbackReader reader) throws IOException {
+		char[] nextChar = new char[1];
+		
+		if(reader.read(nextChar) == -1) {
+				return errEndOfFile;
+		}
+
+		StringBuffer parsedCtrlWord = new StringBuffer();
+		StringBuffer parsedParam= new StringBuffer();
+		RtfCtrlWordData ctrlWordParam = new RtfCtrlWordData();
+		
+		if(!Character.isLetterOrDigit(nextChar[0])) {
+			parsedCtrlWord.append(nextChar[0]);
+			ctrlWordParam.ctrlWord = parsedCtrlWord.toString();
+			return this.handleCtrlWord(ctrlWordParam);
+		}
+		
+		for( ; Character.isLetter(nextChar[0]); reader.read(nextChar) ) {
+			parsedCtrlWord.append(nextChar[0]);
+		}
+		ctrlWordParam.ctrlWord = parsedCtrlWord.toString();
+
+		if(nextChar[0] == '-') {
+			ctrlWordParam.isNeg = true;
+			if(reader.read(nextChar) == -1) {
+					return errEndOfFile;
+			}
+		}
+		
+		if(Character.isDigit(nextChar[0])) {
+			ctrlWordParam.hasParam = true;
+			for( ; Character.isDigit(nextChar[0]); reader.read(nextChar) ) {
+				parsedParam.append(nextChar[0]);
+			}
+			ctrlWordParam.param = parsedParam.toString();
+		}
+		
+		// push this character back into the stream
+		if(nextChar[0] != ' ' || this.isImport() ) {
+			reader.unread(nextChar);
+		}
+		
+	    if(debugParser) {
+	//	    // debug: insrsid6254399
+	//	    if(ctrlWordParam.ctrlWord.equals("proptype") && ctrlWordParam.param.equals("30")) {
+	//	    	System.out.print("Debug value found\n");
+	//	    }
+	//	    if(ctrlWordParam.ctrlWord.equals("panose") ) {
+	//	    	System.out.print("Debug value found\n");
+	//	    }
+	    }
+	    
+		return this.handleCtrlWord(ctrlWordParam);
+	}
+	
+	/**
+	 * Set the current state of the tokeniser.
+	 * @param value The new state of the tokeniser.
+	 * @return The state of the tokeniser.
+	 */
+	public int setTokeniserState(int value) {
+		this.currentState.tokeniserState = value;
+		return this.currentState.tokeniserState;
+	}
+	
+	/**
+	 * Get the current state of the tokeniser.
+	 * @return The current state of the tokeniser.
+	 */
+	public int getTokeniserState() {
+		return this.currentState.tokeniserState;
+	}
+
+	/**
+	 * Gets the current group level
+	 * 
+	 * @return
+	 * 		The current group level value.
+	 */
+	public int getLevel() {
+		return this.groupLevel;
+	}
+	
+
+	/**
+	 * Set the tokeniser state to skip to the end of the group.
+	 * Sets the state to TOKENISER_SKIP_GROUP and skipGroupLevel to the current group level.
+	 */
+	public void setTokeniserStateNormal() {
+		this.setTokeniserState(TOKENISER_NORMAL);
+		return;
+	}
+
+	/**
+	 * Set the tokeniser state to skip to the end of the group.
+	 * Sets the state to TOKENISER_SKIP_GROUP and skipGroupLevel to the current group level.
+	 */
+	public void setTokeniserStateSkipGroup() {
+		this.setTokeniserState(TOKENISER_SKIP_GROUP);
+		this.skipGroupLevel = this.groupLevel;
+		return;
+	}
+	
+	/**
+	 * Sets the number of bytes to skip and the state of the tokeniser.
+	 * 
+	 * @param numberOfBytesToSkip
+	 * 			The numbere of bytes to skip in the file.
+	 */
+	public void setTokeniserSkipBytes(long numberOfBytesToSkip) {
+		this.setTokeniserState(TOKENISER_SKIP_BYTES);
+		this.binSkipByteCount = numberOfBytesToSkip;
+		return;
+	}
+	
+	/**
+	 * Sets the number of binary bytes.
+	 * 
+	 * @param binaryCount
+	 * 			The numbere of binary bytes.
+	 */
+	public void setTokeniserStateBinary(int binaryCount) {
+		this.setTokeniserState(TOKENISER_BINARY);
+		this.binByteCount = binaryCount;
+		return;
+	}
+	
+	public boolean isConvert() {
+		return (this.getConversionType() == RtfParser.TYPE_CONVERT);
+	}
+	
+	public boolean isImport() {
+		return (isImportFull() || this.isImportFragment());
+	}
+	public boolean isImportFull() {
+		return (this.getConversionType() == RtfParser.TYPE_IMPORT_FULL);
+	}
+	public boolean isImportFragment() {
+		return (this.getConversionType() == RtfParser.TYPE_IMPORT_FRAGMENT);
+	}
+	
+	public boolean getExtendedDestination() {
+		return this.currentState.isExtendedDestination;
+	}
+	public boolean setExtendedDestination(boolean value) {
+		this.currentState.isExtendedDestination = value;
+		return this.currentState.isExtendedDestination;
+	}
+
+/*	public void printStats(PrintStream out) {
+		if(out == null) return;
+		
+		out.println("");
+		out.println("Parser statistics:");
+		out.println("Process start date: " + startDate.toLocaleString());
+		out.println("Process end date  : " + endDate.toLocaleString());
+		out.println("  Elapsed time    : " + Long.toString(endTime - startTime) + " milliseconds.");
+		out.println("Total bytes read  : " + Long.toString(byteCount));
+		out.println("Open group count  : " + Long.toString(openGroupCount));
+		out.print("Close group count : " + Long.toString(closeGroupCount));
+		out.println(" (Groups Skipped): " + Long.toString(groupSkippedCount));
+		out.print("Control word count: " + Long.toString(ctrlWordCount));
+		out.print(" - Handled: " + Long.toString(ctrlWordHandledCount));
+		out.print(" Not Handled: " + Long.toString(ctrlWordNotHandledCount));
+		out.println(" Skipped: " + Long.toString(ctrlWordSkippedCount));
+		out.println("Plain text char count: " + Long.toString(characterCount));		
+	}*/
 }
