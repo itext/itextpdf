@@ -76,6 +76,7 @@ import com.lowagie.text.rtf.style.RtfStylesheetList;
  * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
+ * @author Howard Shank (hgshank@yahoo.com)
  */
 public class RtfDocumentHeader extends RtfElement {
     /**
@@ -107,6 +108,10 @@ public class RtfDocumentHeader extends RtfElement {
      * Stores all paragraph styles used in the document.
      */
     private RtfStylesheetList stylesheetList = null;
+    /**
+     * Generator string in document
+     */
+    private RtfGenerator generator = null;
     /**
      * The information group with author/subject/keywords/title/producer/creationdate data
      */
@@ -146,6 +151,7 @@ public class RtfDocumentHeader extends RtfElement {
         this.pageSetting = new RtfPageSetting(this.document);
         this.header = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_HEADER);
         this.footer = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_FOOTER);
+        this.generator = new RtfGenerator(this.document);
     }
     
     /**
@@ -188,6 +194,7 @@ public class RtfDocumentHeader extends RtfElement {
             this.colorList.writeDefinition(result);
             this.stylesheetList.writeDefinition(result);
             this.listTable.writeDefinition(result);
+            this.generator.writeContent(result);
             this.infoGroup.writeContent(result);
             this.pageSetting.writeDefinition(result);
             

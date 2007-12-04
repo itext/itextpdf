@@ -234,13 +234,13 @@ public class RtfParser {
             } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcbpatraw")) {
                 ctrlWord = "\\clcbpatraw" + this.importHeader.mapColorNr(ctrlWord.substring(11));
             } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcfpat")) {
-                ctrlWord = "\\clcfpat" + this.importHeader.mapColorNr(ctrlWord.substring(11));
+                ctrlWord = "\\clcfpat" + this.importHeader.mapColorNr(ctrlWord.substring(8));
             } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\clcfpatraw")) {
                 ctrlWord = "\\clcfpatraw" + this.importHeader.mapColorNr(ctrlWord.substring(11));
             } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\trcfpat")) {
-                ctrlWord = "\\trcfpat" + this.importHeader.mapColorNr(ctrlWord.substring(11));
+                ctrlWord = "\\trcfpat" + this.importHeader.mapColorNr(ctrlWord.substring(8));
             } else if (RtfColorTableParser.stringMatches(ctrlWord, "\\trcbpat")) {
-                ctrlWord = "\\trcbpat" + this.importHeader.mapColorNr(ctrlWord.substring(11));
+                ctrlWord = "\\trcbpat" + this.importHeader.mapColorNr(ctrlWord.substring(8));
             }
 			this.rtfDoc.add(new RtfDirectContent(ctrlWord));
 		} else if(this.state == PARSER_IN_FONT_TABLE) {
