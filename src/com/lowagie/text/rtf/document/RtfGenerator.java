@@ -1,8 +1,8 @@
 /*
- * $Id: RtfInfoGroup.java 2996 2007-11-20 22:40:36Z hallm $
+ * $Id$
  * $Name$
  *
- * Copyright 2003, 2004 by Mark Hall
+ * Copyright 2007 by Howard Shank
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -53,28 +53,28 @@ package com.lowagie.text.rtf.document;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.rtf.RtfElement;
 
 
 /**
- * The RtfInfoGroup stores information group elements. 
+ * The RtfGenerator creates the (\*\generator ...} element. 
  * 
- * @version $Id: RtfInfoGroup.java 2996 2007-11-20 22:40:36Z hallm $
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @version $Id$
  * @author Howard Shank (hgshank@yahoo.com)
  */
 public class RtfGenerator extends RtfElement {
     /**
-     * Information group starting tag
+     * Generator group starting tag
      */
     private static final byte[] GENERATOR = "\\*\\generator".getBytes();
     
     /**
-     * Constructs a RtfInfoGroup belonging to a RtfDocument
+     * Constructs a <code>RtfGenerator</code> belonging to a RtfDocument
      * 
-     * @param doc The RtfDocument this RtfInfoGroup belongs to
+     * @param doc The <code>RtfDocument</code> this <code>RtfGenerator</code> belongs to
      */
     public RtfGenerator(RtfDocument doc) {
         super(doc);
@@ -82,9 +82,9 @@ public class RtfGenerator extends RtfElement {
     
     
     /**
-     * Writes the RtfInfoGroup and its RtfInfoElement elements.
+     * Writes the RtfGenerator.
      * 
-     * @return A byte array containing the group and its elements
+     * @return A byte array containing the group
      * @deprecated As of iText 2.0.6 or earlier, replaced by
      * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
      */
