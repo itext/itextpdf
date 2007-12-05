@@ -136,14 +136,62 @@
 		<taskdef name="jdiff" classname="jdiff.JDiffAntTask" classpath="${JDIFF_HOME}/antjdiff.jar" />
 
 		<mkdir dir="${itext.reports}/jdiff"/>
-		<jdiff destdir="${itext.reports}/jdiff" verbose="on" stats="on" docchanges="on">
-			<old name="${itext.previous.version}">
-				<dirset dir="${itext.previous.location}/src" includes="com/**" />
-			</old>
-			<new name="${releasenumber}">
-				<dirset dir="${itext.src}" includes="com/**" />
-			</new>
-		</jdiff>
+
+		<!-- jdiff task split to have extra arguments for memory and classpath -->
+		<javadoc version="true" author="true" source="1.4" private="true"
+				destdir="${itext.reports}/jdiff/${itext.previous.version}"
+				sourcepath="${itext.previous.location}/src"
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
+			<arg value="-J-Xmx128m"/>
+		</javadoc>
+
+		<javadoc version="true" author="true" source="1.4" private="true"
+				destdir="${itext.reports}/jdiff/${releasenumber}"
+				sourcepath="${itext.src}"
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
+			<arg value="-J-Xmx128m"/>
+		</javadoc>
+
+		<javadoc version="true" author="true" source="1.4" private="true"
+				destdir="${itext.reports}/jdiff"
+				sourcepath="${itext.previous.location}/src"
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
+			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
+				<param name="-apiname" value="${itext.previous.version}"/>
+				<param name="-baseURI" value="http://www.w3.org"/>
+				<param name="-apidir" value="${itext.reports}/jdiff"/>
+			</doclet>
+			<arg value="-J-Xmx128m"/>
+		</javadoc>
+
+		<javadoc version="true" author="true" source="1.4" private="true"
+				destdir="${itext.reports}/jdiff"
+				sourcepath="${itext.src}"
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
+			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
+				<param name="-apiname" value="${releasenumber}"/>
+				<param name="-baseURI" value="http://www.w3.org"/>
+				<param name="-apidir" value="${itext.reports}/jdiff"/>
+			</doclet>
+			<arg value="-J-Xmx128m"/>
+		</javadoc>
+
+		<javadoc private="true" source="1.4"
+				destdir="${itext.reports}/jdiff"
+				sourcefiles="${JDIFF_HOME}/Null.java" >
+			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
+				<param name="-oldapi" value="${itext.previous.version}"/>
+				<param name="-newapi" value="${releasenumber}"/>
+				<param name="-oldapidir" value="${itext.reports}/jdiff"/>
+				<param name="-newapidir" value="${itext.reports}/jdiff"/>
+				<param name="-javadocold" value="../${itext.previous.version}/"/>
+				<param name="-javadocnew" value="../${releasenumber}/"/>
+				<param name="-stats"/>
+				<param name="-docchanges"/>
+			</doclet>
+			<arg value="-J-Xmx128m"/>
+		</javadoc>
+
 		<copy file="${itext.reports}/jdiff/missingSinces.txt"
 			tofile="${itext.reports}/jdiff/missingSinces.err" >
 
