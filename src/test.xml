@@ -192,7 +192,7 @@
 			<arg value="-J-Xmx128m"/>
 		</javadoc>
 
-		<copy file="${itext.reports}/jdiff/missingSinces.txt"
+		<copy overwrite="true" file="${itext.reports}/jdiff/missingSinces.txt"
 			tofile="${itext.reports}/jdiff/missingSinces.err" >
 
 			<filterchain>
