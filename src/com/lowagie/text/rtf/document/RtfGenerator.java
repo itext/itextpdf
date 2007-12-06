@@ -53,7 +53,6 @@ package com.lowagie.text.rtf.document;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.rtf.RtfElement;
@@ -64,6 +63,7 @@ import com.lowagie.text.rtf.RtfElement;
  * 
  * @version $Id$
  * @author Howard Shank (hgshank@yahoo.com)
+ * @since 2.0.8 
  */
 public class RtfGenerator extends RtfElement {
     /**
