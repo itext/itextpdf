@@ -37,7 +37,7 @@
 
     <target name="compile" description="--> compiles the iText code">
         <mkdir dir="${itext.bin}" />
-        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}" destdir="${itext.bin}">
+        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}/core" destdir="${itext.bin}">
     	<classpath refid="itext.classpath"/>
     	</javac>
     </target>
@@ -48,7 +48,7 @@
 
     <target name="compile.debug" description="--> compiles the iText code for debugging">
         <mkdir dir="${itext.bin}" />
-        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}" destdir="${itext.bin}" listfiles="yes" debug="true" debuglevel="lines,vars,source">
+        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}/core" destdir="${itext.bin}" listfiles="yes" debug="true" debuglevel="lines,vars,source">
         	<classpath refid="itext.classpath"/>
        	</javac>
     </target>
@@ -60,13 +60,13 @@
     <target name="make.jar" description="--> makes a jarfile from the iText code">
         <mkdir dir="${itext.bin}/com/lowagie/text/pdf/fonts" />
         <copy todir="${itext.bin}/com/lowagie/text/pdf/fonts" overwrite="yes">
-            <fileset dir="${itext.src}/com/lowagie/text/pdf/fonts">
+            <fileset dir="${itext.src}/core/com/lowagie/text/pdf/fonts">
                 <include name="**/*.afm"/>
                 <include name="**/*.html"/>
             </fileset>
         </copy>
         <copy todir="${itext.bin}/com/lowagie/text/" overwrite="yes">
-            <fileset dir="${itext.src}/com/lowagie/text/">
+            <fileset dir="${itext.src}/core/com/lowagie/text/">
                 <include name="**/*.txt"/>
             </fileset>
         </copy>
