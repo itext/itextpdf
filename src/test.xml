@@ -51,10 +51,6 @@
     <target name="test.setup" depends="jar, compile.examples" description="--> compiles and runs the iText tests">
         <mkdir dir="${itext.bin.test}" />
     	
-        <javac source="${itext.jdk.test}" target="${itext.jdk.test}" srcdir="${itext.src.test}" destdir="${itext.bin.test}">
-            <classpath refid="itext.test.classpath"/>
-        </javac>
-    	
         <path id="itext.test.classpath">
             <pathelement location="${itext.jar}"/>
             <pathelement location="${itext.bin.examples}"/>
@@ -68,6 +64,10 @@
             <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
         </path>
 
+        <javac source="${itext.jdk.test}" target="${itext.jdk.test}" srcdir="${itext.src.test}" destdir="${itext.bin.test}">
+            <classpath refid="itext.test.classpath"/>
+        </javac>
+    	
         <mkdir dir="${itext.bin.data}" />
         <mkdir dir="${itext.reports}/xml" />
         <copy flatten="yes" todir="${itext.bin.data}">
