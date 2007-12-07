@@ -50,74 +50,95 @@
 package com.lowagie.text.rtf.direct;
 
 import java.awt.Color;
-import java.util.HashMap;
 
 /**
- * The RtfImportMappings make it possible to define font
- * and color mappings when using the RtfWriter2.importRtfFragment
- * method. This is necessary, because a RTF fragment does not
- * contain font or color information, just references to the
- * font and color tables.<br /><br />
- * 
- * The font mappings are fontNr -&gt; fontName and the color
- * mappigns are colorNr -&gt; Color.
+ * The RtfColorTableParser handles the events generated
+ * by the RtfTokeniser while the RTF color table is
+ * being parsed.
  * 
  * @version $Revision$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
-public class RtfImportMappings {
+public class RtfColorTableParser {
 	/**
-	 * The fontNr to fontName mappings.
+	 * The RtfImportHeader to add color mappings to.
 	 */
-	private HashMap fontMappings = null;
+	private RtfImportHeader importHeader = null;
 	/**
-	 * The colorNr to Color mappings.
+	 * The number of the current color being parsed.
 	 */
-	private HashMap colorMappings = null;
+	private int colorNr = 0;
+	/**
+	 * The red component of the current color being parsed.
+	 */
+	private int red = -1;
+	/**
+	 * The green component of the current color being parsed.
+	 */
+	private int green = -1;
+	/**
+	 * The blue component of the current color being parsed.
+	 */
+	private int blue = -1;
 	
 	/**
-	 * Constructs a new RtfImportMappings initialising the mappings.
+	 * Constructs a new RtfColorTableParser.
+	 * 
+	 * @param importHeader The RtfImportHeader to add the color mappings to.
 	 */
-	public RtfImportMappings() {
-		this.fontMappings = new HashMap();
-		this.colorMappings = new HashMap();
+	public RtfColorTableParser(RtfImportHeader importHeader) {
+		this.importHeader = importHeader;
+		this.colorNr = 0;
+		this.red = -1;
+		this.green = -1;
+		this.blue = -1;
+	}
+
+    public static boolean stringMatches(String text, String start) {
+        if (!text.startsWith(start))
+            return false;
+        int first = start.length();
+        int last = text.length();
+        if (first == last)
+            return false;
+        for (int k = first; k < last; ++k) {
+            char c = text.charAt(k);
+            if (c < '0' || c > '9')
+                return false;
+        }
+        return true;
+    }
+    
+	/**
+	 * Handle RTF control words. The relevant control words are
+	 * \red, \green and \blue each with a number specifying the
+	 * value for that component.
+	 * 
+	 * @param ctrlWord The control word to handle.
+	 * @param groupLevel Unused
+	 */
+	public void handleCtrlWord(String ctrlWord, int groupLevel) {
+        if (stringMatches(ctrlWord, "\\red"))
+            this.red = Integer.parseInt(ctrlWord.substring(4));
+        else if (stringMatches(ctrlWord, "\\green"))
+            this.green = Integer.parseInt(ctrlWord.substring(6));
+        else if (stringMatches(ctrlWord, "\\blue"))
+            this.blue = Integer.parseInt(ctrlWord.substring(5));
 	}
 	
 	/**
-	 * Add a font to the list of mappings.
+	 * Handle text content. This is to find the end of each color
+	 * definition, because they are separated by a semicolon (;).
 	 * 
-	 * @param fontNr The font number.
-	 * @param fontName The font name.
+	 * @param text The text to handle.
+	 * @param groupLevel Unused.
 	 */
-	public void addFont(String fontNr, String fontName) {
-		this.fontMappings.put(fontNr, fontName);
-	}
-	
-	/**
-	 * Add a color to the list of mappings.
-	 * 
-	 * @param colorNr The color number.
-	 * @param color The Color.
-	 */
-	public void addColor(String colorNr, Color color) {
-		this.colorMappings.put(colorNr, color);
-	}
-	
-	/**
-	 * Gets the list of font mappings. String to String.
-	 * 
-	 * @return The font mappings.
-	 */
-	public HashMap getFontMappings() {
-		return this.fontMappings;
-	}
-	
-	/**
-	 * Gets the list of color mappings. String to Color.
-	 * 
-	 * @return The color mappings.
-	 */
-	public HashMap getColorMappings() {
-		return this.colorMappings;
+	public void handleText(String text, int groupLevel) {
+		if(text.indexOf(';') != -1) {
+			if(red != -1 && green != -1 && blue != -1) {
+				this.importHeader.importColor(Integer.toString(this.colorNr), new Color(this.red, this.green, this.blue));
+			}
+			this.colorNr++;
+		}
 	}
 }
