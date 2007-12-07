@@ -232,6 +232,10 @@ public class HtmlWriter extends DocWriter {
         if (pause) {
             return false;
         }
+        if (open && !element.isContent()) {
+				throw new DocumentException(
+						"The document is open; you can only add Elements with content.");
+        }
         try {
             switch(element.type()) {
                 case Element.HEADER:

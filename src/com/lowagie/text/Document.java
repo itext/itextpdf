@@ -255,14 +255,11 @@ public class Document implements DocListener {
     public boolean add(Element element) throws DocumentException {
         if (close) {
 			throw new DocumentException(
-					"The document has been closed. You can't add any Elements.");
+				"The document has been closed. You can't add any Elements.");
         }
-        if (open && !element.isContent()) {
-				throw new DocumentException(
-						"The document is open; you can only add Elements with content.");
-		} else if (!open && element.isContent()) {
-				throw new DocumentException(
-						"The document is not open yet; you can only add Meta information.");
+		if (!open && element.isContent()) {
+			throw new DocumentException(
+				"The document is not open yet; you can only add Meta information.");
         }
         boolean success = false;
         DocListener listener;
