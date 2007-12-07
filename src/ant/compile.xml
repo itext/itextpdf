@@ -24,6 +24,7 @@
         <echo>COMPILING AND JARRING THE CODE (compile.xml)</echo>
         <echo>ant compile: compiles iText</echo>
         <echo>ant compile.debug: compiles iText and allows you to debug the code</echo>
+        <echo>ant delete: deletes all generated data</echo>
         <echo>ant jar: compiles and jars iText</echo>
         <echo>ant jar.debug: compiles for debugging and jars iText</echo>
         <echo>ant sign.jar: compiles and jars iText, then signs the jar</echo>
@@ -118,4 +119,13 @@
             storetype="${itext.keystore.storetype}"
         />
     </target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Deleting all generated data                                      -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="delete" description="--> deletes all generated data">
+        <delete dir="${itext.build}" />
+    </target>
+
 </project>

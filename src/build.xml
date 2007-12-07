@@ -32,6 +32,10 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.debug" />
 	</target>
 	
+	<target name="delete">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="delete" />
+	</target>
+	
 	<target name="jar">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
 	</target>
