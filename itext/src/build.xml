@@ -32,6 +32,10 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.debug" />
 	</target>
 	
+	<target name="compile.rtf">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.rtf" />
+	</target>
+	
 	<target name="delete">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="delete" />
 	</target>
@@ -42,6 +46,10 @@
 	
 	<target name="jar.debug">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.debug" />
+	</target>
+	
+	<target name="jar.rtf">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rtf" />
 	</target>
 	
 	<target name="sign.jar">

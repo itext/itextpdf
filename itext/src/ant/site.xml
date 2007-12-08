@@ -61,7 +61,7 @@
         <mkdir dir="${itext.docs}" />
         <javadoc
             destdir="${itext.docs}"
-            author="true"
+            author="true" maxmemory="128m"
             private="true">
 			<packageset dir="${itext.src}/core" defaultexcludes="yes">
       			<include name="com/lowagie/**" />
@@ -70,7 +70,6 @@
             <link href="http://java.sun.com/j2se/1.4/docs/api/" />
         	<link href="http://www.bouncycastle.org/docs/docs1.4/" />
         	<header>&lt;a href="http://itext.ugent.be/itext-in-action/" target="_blank"&gt;&lt;img src="http://itext.ugent.be/img/lowagie_3d.jpg" border="0" /&gt;&lt;/a&gt;</header>
-            <arg value="-J-Xmx128m"/>
         </javadoc>
     </target>
 
