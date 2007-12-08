@@ -141,21 +141,19 @@
 		<mkdir dir="${itext.reports}/jdiff"/>
 
 		<!-- jdiff task split to have extra arguments for memory and classpath -->
-		<javadoc version="true" author="true" source="1.4" private="true"
+		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${itext.previous.version}"
 				sourcepath="${itext.previous.location}/src/core"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
-			<arg value="-J-Xmx128m"/>
 		</javadoc>
 
-		<javadoc version="true" author="true" source="1.4" private="true"
+		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${releasenumber}"
 				sourcepath="${itext.src}/core"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
-			<arg value="-J-Xmx128m"/>
 		</javadoc>
 
-		<javadoc version="true" author="true" source="1.4" private="true"
+		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
 				sourcepath="${itext.previous.location}/src/core"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
@@ -164,10 +162,9 @@
 				<param name="-baseURI" value="http://www.w3.org"/>
 				<param name="-apidir" value="${itext.reports}/jdiff"/>
 			</doclet>
-			<arg value="-J-Xmx128m"/>
 		</javadoc>
 
-		<javadoc version="true" author="true" source="1.4" private="true"
+		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
 				sourcepath="${itext.src}/core"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
@@ -176,10 +173,9 @@
 				<param name="-baseURI" value="http://www.w3.org"/>
 				<param name="-apidir" value="${itext.reports}/jdiff"/>
 			</doclet>
-			<arg value="-J-Xmx128m"/>
 		</javadoc>
 
-		<javadoc private="true" source="1.4"
+		<javadoc private="true" source="1.4" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
 				sourcefiles="${JDIFF_HOME}/Null.java" >
 			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
@@ -192,7 +188,6 @@
 				<param name="-stats"/>
 				<param name="-docchanges"/>
 			</doclet>
-			<arg value="-J-Xmx128m"/>
 		</javadoc>
 
 		<copy overwrite="true" file="${itext.reports}/jdiff/missingSinces.txt"
