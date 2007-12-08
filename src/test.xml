@@ -43,6 +43,10 @@
     <target name="jar">
     	<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
     </target>
+
+	<target name="jar.rtf">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rtf" />
+    </target>
 	
     <path id="itext.test.classpath">
         <pathelement location="${itext.jar}"/>
@@ -127,7 +131,7 @@
         </junitreport>
     </target>
 
-    <target name="test.rtf" depends="test.setup" description="--> compiles and runs the iText rtf tests">
+    <target name="test.rtf" depends="test.setup, jar.rtf" description="--> compiles and runs the iText rtf tests">
         <javac source="${itext.jdk.test}" target="${itext.jdk.test}" srcdir="${itext.src.test}/rtf" destdir="${itext.bin.test}">
             <classpath>
                 <path refid="itext.test.classpath"/>
