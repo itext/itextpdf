@@ -114,7 +114,7 @@
             <classpath refid="itext.test.classpath" />
             <batchtest fork="yes" todir="${itext.reports}/xml">
                 <fileset dir="${itext.src.test}/swing">
-                    <include name="**/Swing*Test.java" />
+                    <include name="**/*Test.java" />
                 </fileset>
             </batchtest>
             <formatter type="xml" />
@@ -126,7 +126,35 @@
             <report format="frames" todir="${itext.reports}/junit" />
         </junitreport>
     </target>
-	
+
+    <target name="test.rtf" depends="test.setup" description="--> compiles and runs the iText rtf tests">
+        <javac source="${itext.jdk.test}" target="${itext.jdk.test}" srcdir="${itext.src.test}/rtf" destdir="${itext.bin.test}">
+            <classpath>
+                <path refid="itext.test.classpath"/>
+                <pathelement location="${itext.rtf.jar}"/>
+            </classpath>
+        </javac>
+
+        <junit printsummary="yes" showoutput="no" filtertrace="no" haltonfailure="yes" dir="${itext.bin.data}">
+            <classpath>
+                <path refid="itext.test.classpath"/>
+                <pathelement location="${itext.rtf.jar}"/>
+            </classpath>
+            <batchtest fork="yes" todir="${itext.reports}/xml">
+                <fileset dir="${itext.src.test}/rtf">
+                    <include name="**/*Test.java" />
+                </fileset>
+            </batchtest>
+            <formatter type="xml" />
+        </junit>
+        <junitreport todir="${itext.reports}/xml">
+            <fileset dir="${itext.reports}/xml">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${itext.reports}/junit" />
+        </junitreport>
+    </target>
+
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Generates jdiff report against previous version                  -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	

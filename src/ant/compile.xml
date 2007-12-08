@@ -54,6 +54,17 @@
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Compiling the rtf code                                           -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="compile.rtf" depends="compile" description="--> compiles the iText code">
+        <mkdir dir="${itext.rtf.bin}" />
+        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.rtf.src}" destdir="${itext.rtf.bin}">
+            <classpath refid="itext.classpath"/>
+        </javac>
+    </target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Jarring the code                                                 -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
@@ -89,6 +100,14 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 	
     <target name="jar.debug"  depends="compile.debug, make.jar" description="--> makes a jarfile from the iText code" />
+    
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Jarring the rtf code                                             -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="jar.rtf"  depends="compile.rtf, make.jar" description="--> makes a jarfile from the iText rtf code">
+        <jar jarfile="${itext.rtf.jar}" basedir="${itext.rtf.bin}"/>
+    </target>
     
 	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Signing the jar                                                  -->
