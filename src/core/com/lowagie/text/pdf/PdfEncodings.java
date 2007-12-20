@@ -109,7 +109,7 @@ public class PdfEncodings {
     static HashMap extraEncodings = new HashMap();
     
     static {        
-        for (int k = 128; k < 160; ++k) {
+        for (int k = 128; k < 161; ++k) {
             char c = winansiByteToChar[k];
             if (c != 65533)
                 winansi.put(c, k);
