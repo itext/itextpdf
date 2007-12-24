@@ -103,6 +103,13 @@ public class MappedRandomAccessFile {
         this.mappedByteBuffer = channel.map(mapMode, 0L, channel.size());
         mappedByteBuffer.load();
     }
+
+    /**
+     * @since 2.0.8
+     */
+    public FileChannel getChannel() {
+    	return channel;
+    }
     
     /**
      * @see java.io.RandomAccessFile#read()
