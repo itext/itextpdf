@@ -61,6 +61,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 /** An implementation of a RandomAccessFile for input only
  * that accepts a file or a byte array as data source.
  *
@@ -628,5 +629,19 @@ public class RandomAccessFileOrArray implements DataInput {
     public void setStartOffset(int startOffset) {
         this.startOffset = startOffset;
     }
-    
+
+    /**
+     * @since 2.0.8
+     */
+    public java.nio.ByteBuffer getNioByteBuffer() throws IOException {
+    	if (filename != null) {
+    		FileChannel channel;
+            if (plainRandomAccess)
+                channel = trf.getChannel();
+            else
+                channel = rf.getChannel();
+            return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+    	}
+    	return java.nio.ByteBuffer.wrap(arrayIn);
+    }
 }
