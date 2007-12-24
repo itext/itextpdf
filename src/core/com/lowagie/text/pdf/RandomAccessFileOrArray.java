@@ -629,7 +629,10 @@ public class RandomAccessFileOrArray implements DataInput {
     public void setStartOffset(int startOffset) {
         this.startOffset = startOffset;
     }
-    
+
+    /**
+     * @since 2.0.8
+     */
     public java.nio.ByteBuffer getNioByteBuffer() throws IOException {
     	if (filename != null) {
     		FileChannel channel;

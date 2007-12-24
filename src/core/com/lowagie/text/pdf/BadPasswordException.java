@@ -2,6 +2,9 @@ package com.lowagie.text.pdf;
 
 import java.io.IOException;
 
+/**
+ * @since 2.0.8
+ */
 public class BadPasswordException extends IOException {
 
 	/** Serial Version UID. */
