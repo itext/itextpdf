@@ -757,7 +757,7 @@ public class PdfReader implements PdfViewerPreferences {
                 //check by user password
                 decrypt.setupByUserPassword(documentID, password, oValue, pValue);
                 if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
-                    throw new IOException("Bad user password");
+                    throw new BadPasswordException();
                 }
             }
             else
