@@ -104,6 +104,10 @@ public class MappedRandomAccessFile {
         mappedByteBuffer.load();
     }
     
+    public FileChannel getChannel() {
+    	return channel;
+    }
+    
     /**
      * @see java.io.RandomAccessFile#read()
      * @return int next integer or -1 on EOF
