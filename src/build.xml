@@ -83,6 +83,10 @@
 	<target name="asian.jar">
 		<ant antfile="ant/release.xml" inheritAll="false" target="asian.jar" />
 	</target>
+	
+	<target name="release.rups">
+		<ant antfile="ant/rups.xml" inheritAll="false" target="release" />
+	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Make a new release after exporting the modules src/www from CVS  -->
