@@ -53,10 +53,15 @@ package com.lowagie.text.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.pdf.PdfCopy.IndirectReferences;
+import com.lowagie.text.pdf.PdfCopy.RefKey;
+import java.security.MessageDigest;
 import java.util.Arrays;
 
 /**
@@ -95,9 +100,8 @@ public class PdfSmartCopy extends PdfCopy {
         ByteStore streamKey = null;
         boolean validStream = false;
         if (srcObj.isStream() && !((PRStream)srcObj).contains(PdfName.BBOX)) {
-            validStream = true;
-            // Only the content and the key names is compared, probably the key values should also be compared
             streamKey = new ByteStore((PRStream)srcObj);
+            validStream = true;
             PdfIndirectReference streamRef = (PdfIndirectReference) streamMap.get(streamKey);
             if (streamRef != null) {
                 return streamRef;
@@ -131,17 +135,74 @@ public class PdfSmartCopy extends PdfCopy {
     static class ByteStore {
         private byte[] b;
         private int hash;
+        private MessageDigest md5;
+
+        private void serObject(PdfObject obj, int level, ByteBuffer bb) throws IOException {
+            if (level <= 0)
+                return;
+            if (obj == null) {
+                bb.append("$Lnull");
+                return;
+            }
+            obj = PdfReader.getPdfObject(obj);
+            if (obj.isStream()) {
+                bb.append("$B");
+                serDic((PdfDictionary)obj, level - 1, bb);
+                if (level > 0) {
+                    md5.reset();
+                    bb.append(md5.digest(PdfReader.getStreamBytesRaw((PRStream)obj)));
+                }
+            }
+            else if (obj.isDictionary()) {
+                serDic((PdfDictionary)obj, level - 1, bb);
+            }
+            else if (obj.isArray()) {
+                serArray((PdfArray)obj, level - 1, bb);
+            }
+            else if (obj.isString()) {
+                bb.append("$S").append(obj.toString());
+            }
+            else if (obj.isName()) {
+                bb.append("$N").append(obj.toString());
+            }
+            else
+                bb.append("$L").append(obj.toString());
+        }
+        
+        private void serDic(PdfDictionary dic, int level, ByteBuffer bb) throws IOException {
+            bb.append("$D");
+            if (level <= 0)
+                return;
+            Object[] keys = dic.getKeys().toArray();
+            Arrays.sort(keys);
+            for (int k = 0; k < keys.length; ++k) {
+                serObject((PdfObject)keys[k], level, bb);
+                serObject(dic.get((PdfName)keys[k]), level, bb);
+            }
+        }
+        
+        private void serArray(PdfArray array, int level, ByteBuffer bb) throws IOException {
+            bb.append("$A");
+            if (level <= 0)
+                return;
+            ArrayList ar = array.getArrayList();
+            for (int k = 0; k < ar.size(); ++k) {
+                serObject((PdfObject)ar.get(k), level, bb);
+            }
+        }
         
         ByteStore(PRStream str) throws IOException {
-            byte[] streamContent = PdfReader.getStreamBytesRaw(str);
-            Object[] keys = str.getKeys().toArray();
-            Arrays.sort(keys);
-            ByteBuffer bb = new ByteBuffer();
-            for (int k = 0; k < keys.length; ++k) {
-                bb.append(keys[k].toString());
+            try {
+                md5 = MessageDigest.getInstance("MD5");
             }
-            bb.append(streamContent);
+            catch (Exception e) {
+                throw new ExceptionConverter(e);
+            }
+            ByteBuffer bb = new ByteBuffer();
+            int level = 10;
+            serObject(str, level, bb);
             this.b = bb.toByteArray();
+            md5 = null;
         }
 
         public boolean equals(Object obj) {
