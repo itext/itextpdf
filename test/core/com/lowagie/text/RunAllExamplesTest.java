@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 
+import java.io.File;
 import org.junit.Test;
 
 public class RunAllExamplesTest {
@@ -197,7 +198,7 @@ public class RunAllExamplesTest {
 
     @Test
     public void testAnchorExamples() {
-        runSingleTest(com.lowagie.examples.objects.anchors.OpenApplication.class, System.getenv("WINDIR"));
+        runSingleTest(com.lowagie.examples.objects.anchors.OpenApplication.class, System.getenv("WINDIR") + File.separatorChar);
         runSingleTest(com.lowagie.examples.objects.anchors.ChainedActions.class);
         runSingleTest(com.lowagie.examples.objects.anchors.JavaScriptAction.class);
         runSingleTest(com.lowagie.examples.objects.anchors.Actions.class);
