@@ -159,7 +159,7 @@ public class PdfGraphics2D extends Graphics2D {
 
     // Added by Jurij Bilas
     protected boolean underline;          // indicates if the font style is underlined
-    
+      
     protected PdfGState fillGState[] = new PdfGState[256];
     protected PdfGState strokeGState[] = new PdfGState[256];
     protected int currentFillGState = 255;
@@ -182,6 +182,7 @@ public class PdfGraphics2D extends Graphics2D {
     private PdfGraphics2D() {
         dg2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        setRenderingHint(HyperLinkKey.KEY_INSTANCE, HyperLinkKey.VALUE_HYPERLINKKEY_OFF);
     }
     
     /**
@@ -192,6 +193,7 @@ public class PdfGraphics2D extends Graphics2D {
         super();
         dg2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        setRenderingHint(HyperLinkKey.KEY_INSTANCE, HyperLinkKey.VALUE_HYPERLINKKEY_OFF);
         this.convertImagesToJPEG = convertImagesToJPEG;
         this.jpegQuality = quality;
         this.onlyShapes = onlyShapes;
@@ -435,6 +437,17 @@ public class PdfGraphics2D extends Graphics2D {
             if (font.getSize2D() > 0) {
                 float scale = 1000 / font.getSize2D();
                 width = font.deriveFont(AffineTransform.getScaleInstance(scale, scale)).getStringBounds(s, getFontRenderContext()).getWidth() / scale;
+            }
+            // if the hyperlink flag is set add an action to the text
+            Object url = getRenderingHint(HyperLinkKey.KEY_INSTANCE);
+            if (url != null && !url.equals(HyperLinkKey.VALUE_HYPERLINKKEY_OFF))
+            {
+            	float scale = 1000 / font.getSize2D();
+            	double height = font.deriveFont(AffineTransform.getScaleInstance(scale, scale)).getStringBounds(s, getFontRenderContext()).getHeight() / scale;
+                double leftX = cb.getXTLM();
+                double leftY = cb.getYTLM();
+                PdfAction action = new  PdfAction(url.toString());
+				cb.setAction(action, (float)leftX, (float)leftY, (float)(leftX+width), (float)(leftY+height));
             }
             if (s.length() > 1) {
                 float adv = ((float)width - baseFont.getWidthPoint(s, fontSize)) / (s.length() - 1);
@@ -702,11 +715,18 @@ public class PdfGraphics2D extends Graphics2D {
      * @param arg1
      */
     public void setRenderingHint(Key arg0, Object arg1) {
-        if (arg1 != null) {
-            rhints.put(arg0, arg1);
-        } else {
-            rhints.remove(arg0);
-        }
+    	 if (arg1 != null) {
+         	rhints.put(arg0, arg1);
+         } else {
+        	 if (arg0 instanceof HyperLinkKey)
+        	 {
+        		 rhints.put(arg0, HyperLinkKey.VALUE_HYPERLINKKEY_OFF);
+        	 }
+        	 else
+        	 {
+        		 rhints.remove(arg0);
+        	 }
+         }
     }
     
     /**
@@ -1595,4 +1615,23 @@ public class PdfGraphics2D extends Graphics2D {
 
 		private static final long serialVersionUID = 6450197945596086638L;
     }
+    public static class HyperLinkKey extends RenderingHints.Key
+	{
+	 	public static HyperLinkKey KEY_INSTANCE = new HyperLinkKey(9999);
+	 	public static Object VALUE_HYPERLINKKEY_OFF = new String("0");
+	 	
+		protected HyperLinkKey(int arg0) {
+			super(arg0);
+		}
+		
+		public boolean isCompatibleValue(Object val)
+		{
+			return true;
+		}
+		public String toString()
+		{
+			return "HyperLinkKey";
+		}
+	}
+
 }
