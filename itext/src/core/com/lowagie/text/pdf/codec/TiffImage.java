@@ -163,13 +163,14 @@ public class TiffImage {
                 dpiX = 0;
                 dpiY = 0;
             }
-            long tstrip = 0xFFFFFFFFL;
+            int rowsStrip = h;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ROWSPERSTRIP))
-                tstrip = dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
-            int rowsStrip = (int)Math.min(h, tstrip);
+                rowsStrip = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
+            if (rowsStrip <= 0 || rowsStrip > h)
+                rowsStrip = h;
             long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
             long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
-            if ((size == null || (size.length == 1 && size[0] == 0)) && h == rowsStrip) { // some TIFF producers are really lousy, so...
+            if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) { // some TIFF producers are really lousy, so...
                 size = new long[]{s.length() - (int)offset[0]};
             }
             boolean reverse = false;
@@ -360,9 +361,11 @@ public class TiffImage {
             int rowsStrip = h;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ROWSPERSTRIP)) //another hack for broken tiffs
                 rowsStrip = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
+            if (rowsStrip <= 0 || rowsStrip > h)
+                rowsStrip = h;
             long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
             long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
-            if ((size == null || (size.length == 1 && size[0] == 0)) && h == rowsStrip) { // some TIFF producers are really lousy, so...
+            if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) { // some TIFF producers are really lousy, so...
                 size = new long[]{s.length() - (int)offset[0]};
             }
             if (compression == TIFFConstants.COMPRESSION_LZW) {
