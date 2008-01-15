@@ -1615,10 +1615,14 @@ public class PdfGraphics2D extends Graphics2D {
 
 		private static final long serialVersionUID = 6450197945596086638L;
     }
+
+    /**
+     * @since 2.0.8
+     */
     public static class HyperLinkKey extends RenderingHints.Key
 	{
-	 	public static HyperLinkKey KEY_INSTANCE = new HyperLinkKey(9999);
-	 	public static Object VALUE_HYPERLINKKEY_OFF = new String("0");
+	 	public static final HyperLinkKey KEY_INSTANCE = new HyperLinkKey(9999);
+	 	public static final Object VALUE_HYPERLINKKEY_OFF = new String("0");
 	 	
 		protected HyperLinkKey(int arg0) {
 			super(arg0);
