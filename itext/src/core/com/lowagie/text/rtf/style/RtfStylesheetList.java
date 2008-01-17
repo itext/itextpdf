@@ -112,8 +112,8 @@ public class RtfStylesheetList extends RtfElement implements RtfExtendedElement 
      */
     public void registerParagraphStyle(RtfParagraphStyle rtfParagraphStyle) {
         RtfParagraphStyle tempStyle = new RtfParagraphStyle(this.document, rtfParagraphStyle);
-        tempStyle.setStyleNumber(this.styleMap.size());
         tempStyle.handleInheritance();
+        tempStyle.setStyleNumber(this.styleMap.size());
         this.styleMap.put(tempStyle.getStyleName(), tempStyle);
     }
 
