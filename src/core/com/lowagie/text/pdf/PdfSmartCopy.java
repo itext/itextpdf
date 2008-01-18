@@ -99,7 +99,7 @@ public class PdfSmartCopy extends PdfCopy {
         PdfObject srcObj = PdfReader.getPdfObjectRelease(in);
         ByteStore streamKey = null;
         boolean validStream = false;
-        if (srcObj.isStream() && !((PRStream)srcObj).contains(PdfName.BBOX)) {
+        if (srcObj.isStream()) {
             streamKey = new ByteStore((PRStream)srcObj);
             validStream = true;
             PdfIndirectReference streamRef = (PdfIndirectReference) streamMap.get(streamKey);
