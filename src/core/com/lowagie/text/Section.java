@@ -311,7 +311,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
             	return super.add(o);
             }
             else {
-                throw new ClassCastException("You can add a " + element.getClass().getName() + " to a Section.");
+                throw new ClassCastException("You can't add a " + element.getClass().getName() + " to a Section.");
             }
         }
         catch(ClassCastException cce) {
