@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  leave out Doctype declaration until implications are fully understood
+  (or bugs in suns jnlp dtd are fixed)
+ <!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Discriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
+
+  RUPS JavaWebStart file
+-->
+<jnlp spec="1.1+" codebase="http://itext.ugent.be/library/rups/" href="rups.jnlp" version="$Id:  $">
+  <information>
+    <title>iText RUPS</title>
+    <vendor>lowagie.com</vendor>
+    <homepage href="http://www.lowagie.com/iText/"/>
+    <description>A tool that allows you to read/update PDF syntax</description>
+    <description kind="short">Reading / Updating PDF Syntax</description>
+    <icon href="http://itext.ugent.be/img/itexttoolbox.gif"/>
+    <offline-allowed/>
+    <shortcut online="true" >
+      <!-- put a shortcut on the desktop -->
+      <desktop/>
+      <!-- put shortcut in start menu too -->
+      <menu submenu="iText RUPS"/>
+    </shortcut>
+  </information>
+  <security>
+    <all-permissions/>
+  </security>
+  <update check="always" policy="prompt-update"></update>
+  <resources>
+    <j2se version="1.5+" initial-heap-size="512m" max-heap-size="1024m"/>
+    <jar href="http://itext.ugent.be/library/rups/iText-rups.jar" main="true" download="eager"/>
+    <jar href="http://itext.ugent.be/library/rups/bcmail-jdk14-138.jar" main="false" download="eager"/>
+    <jar href="http://itext.ugent.be/library/rups/bcprov-jdk14-138.jar" main="false" download="eager"/>
+    <jar href="http://itext.ugent.be/library/rups/dom4j-1.6.1.jar" main="false" download="eager"/>
+    <jar href="http://itext.ugent.be/library/rups/iText.jar" main="false" download="eager"/>
+    <jar href="http://itext.ugent.be/library/rups/pdf-renderer.jar" main="false" download="eager"/>
+  </resources>
+  <application-desc main-class="com.lowagie.rups.Rups"/>
+</jnlp>

@@ -32,12 +32,24 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.debug" />
 	</target>
 	
+	<target name="compile.rtf">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.rtf" />
+	</target>
+	
+	<target name="delete">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="delete" />
+	</target>
+	
 	<target name="jar">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
 	</target>
 	
 	<target name="jar.debug">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.debug" />
+	</target>
+	
+	<target name="jar.rtf">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rtf" />
 	</target>
 	
 	<target name="sign.jar">
@@ -70,6 +82,10 @@
 	
 	<target name="asian.jar">
 		<ant antfile="ant/release.xml" inheritAll="false" target="asian.jar" />
+	</target>
+	
+	<target name="release.rups">
+		<ant antfile="ant/rups.xml" inheritAll="false" target="release" />
 	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
