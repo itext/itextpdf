@@ -1,51 +1,35 @@
 /*
- * Copyright (c) 2001 Sun Microsystems, Inc. All Rights Reserved.
+ * Copyright 2003-2005 by Paulo Soares.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * This list of constants was originally released with libtiff
+ * under the following license:
  *
- * -Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ * Copyright (c) 1988-1997 Sam Leffler
+ * Copyright (c) 1991-1997 Silicon Graphics, Inc.
  *
- * -Redistribution in binary form must reproduct the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * Neither the name of Sun Microsystems, Inc. or the names of contributors may
- * be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * This software is provided "AS IS," without a warranty of any kind. ALL
- * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING ANY
- * IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR
- * NON-INFRINGEMENT, ARE HEREBY EXCLUDED. SUN AND ITS LICENSORS SHALL NOT BE
- * LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING
- * OR DISTRIBUTING THE SOFTWARE OR ITS DERIVATIVES. IN NO EVENT WILL SUN OR ITS
- * LICENSORS BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT,
- * INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER
- * CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF
- * OR INABILITY TO USE SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES.
- *
- * You acknowledge that Software is not designed,licensed or intended for use in
- * the design, construction, operation or maintenance of any nuclear facility.
+ * Permission to use, copy, modify, distribute, and sell this software and 
+ * its documentation for any purpose is hereby granted without fee, provided
+ * that (i) the above copyright notices and this permission notice appear in
+ * all copies of the software and related documentation, and (ii) the names of
+ * Sam Leffler and Silicon Graphics may not be used in any advertising or
+ * publicity relating to the software without the specific, prior written
+ * permission of Sam Leffler and Silicon Graphics.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+ * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+ * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+ * 
+ * IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+ * ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+ * OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+ * WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+ * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+ * OF THIS SOFTWARE.
  */
 package com.lowagie.text.pdf.codec;
 
 /**
- * A baseline TIFF reader. The reader has some functionality in addition to
- * the baseline specifications for Bilevel images, for which the group 3 and
- * group 4 decompression schemes have been implemented. Support for LZW
- * decompression has also been added. Support for Horizontal differencing
- * predictor decoding is also included, when used with LZW compression.
- * However, this support is limited to data with bitsPerSample value of 8.
- * When reading in RGB images, support for alpha and extraSamples being
- * present has been added. Support for reading in images with 16 bit samples
- * has been added. Support for the SampleFormat tag (signed samples as well
- * as floating-point samples) has also been added. In all other cases, support
- * is limited to Baseline specifications.
- *
- *
+ * A list of constants used in class TIFFImage.
  */
 public class TIFFConstants {
     
