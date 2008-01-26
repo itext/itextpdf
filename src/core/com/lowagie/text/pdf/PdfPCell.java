@@ -174,15 +174,37 @@ public class PdfPCell extends Rectangle{
      * @param table The <CODE>PdfPTable</CODE>
      */
     public PdfPCell(PdfPTable table) {
+        this(table, null);
+    }
+    
+    /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>.
+     * This constructor allows nested tables.
+     * 
+     * @param table The <CODE>PdfPTable</CODE>
+     * @param style	The style to apply to the cell (you could use getDefaultCell())
+     */
+    public PdfPCell(PdfPTable table, PdfPCell style) {
         super(0, 0, 0, 0);
         borderWidth = 0.5f;
         border = BOX;
         column.setLeading(0, 1);
-        setPadding(0);
         this.table = table;
         table.setWidthPercentage(100);
         table.setExtendLastRow(true);
         column.addElement(table);
+        if (style != null) {
+        	cloneNonPositionParameters(style);
+        	verticalAlignment = style.verticalAlignment;
+        	paddingLeft = style.paddingLeft;
+        	paddingRight = style.paddingRight;
+        	paddingTop = style.paddingTop;
+        	paddingBottom = style.paddingBottom;
+        	colspan = style.colspan;
+        	cellEvent = style.cellEvent;
+        	useDescender = style.useDescender;
+        	useBorderPadding = style.useBorderPadding;
+        	rotation = style.rotation;
+        }
     }
     
     /** Constructs a deep copy of a <CODE>PdfPCell</CODE>.
