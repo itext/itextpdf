@@ -182,6 +182,7 @@ public class PdfPCell extends Rectangle{
      * 
      * @param table The <CODE>PdfPTable</CODE>
      * @param style	The style to apply to the cell (you could use getDefaultCell())
+     * @since 2.1.0
      */
     public PdfPCell(PdfPTable table, PdfPCell style) {
         super(0, 0, 0, 0);
