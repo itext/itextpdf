@@ -206,6 +206,9 @@ public class PdfPCell extends Rectangle{
         	useBorderPadding = style.useBorderPadding;
         	rotation = style.rotation;
         }
+        else {
+        	setPadding(0);
+        }
     }
     
     /** Constructs a deep copy of a <CODE>PdfPCell</CODE>.
