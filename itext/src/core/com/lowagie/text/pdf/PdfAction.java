@@ -222,7 +222,7 @@ public class PdfAction extends PdfDictionary {
         }
     }
     
-    /** Launchs an application or a document.
+    /** Launches an application or a document.
      * @param application the application to be launched or the document to be opened or printed.
      * @param parameters (Windows-specific) A parameter string to be passed to the application.
      * It can be <CODE>null</CODE>.
@@ -249,7 +249,7 @@ public class PdfAction extends PdfDictionary {
         }
     }
     
-    /** Launchs an application or a document.
+    /** Launches an application or a document.
      * @param application the application to be launched or the document to be opened or printed.
      * @param parameters (Windows-specific) A parameter string to be passed to the application.
      * It can be <CODE>null</CODE>.

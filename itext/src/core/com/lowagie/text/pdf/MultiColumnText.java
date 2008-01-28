@@ -123,7 +123,7 @@ public class MultiColumnText implements Element {
     private PdfDocument document;
     /**
      * Default constructor.  Sets height to <CODE>AUTOMATIC</CODE>.
-     * Columns will repeat on each page as necessary to accomodate content length.
+     * Columns will repeat on each page as necessary to accommodate content length.
      */
     public MultiColumnText() {
         this(AUTOMATIC);
@@ -214,7 +214,7 @@ public class MultiColumnText implements Element {
 
     /**
      * Add the specified number of evenly spaced rectangular columns.
-     * Columns will be seperated by the specified gutterWidth.
+     * Columns will be separated by the specified gutterWidth.
      *
      * @param left        left boundary of first column
      * @param right       right boundary of last column
@@ -469,7 +469,7 @@ public class MultiColumnText implements Element {
     
     /**
      * Shifts the current column.
-     * @return true if the currentcolumn has changed
+     * @return true if the current column has changed
      */
     public boolean shiftCurrentColumn() {
     	if (currentColumn + 1 < columnDefs.size()) {

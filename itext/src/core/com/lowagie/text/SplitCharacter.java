@@ -89,7 +89,7 @@ public interface SplitCharacter {
      * @param cc an array of characters at least <CODE>end</CODE> sized
      * @param ck an array of <CODE>PdfChunk</CODE>. The main use is to be able to call
      * {@link PdfChunk#getUnicodeEquivalent(char)}. It may be <CODE>null</CODE>
-     * or shorter than <CODE>end</CODE>. If <CODE>null</CODE> no convertion takes place.
+     * or shorter than <CODE>end</CODE>. If <CODE>null</CODE> no conversion takes place.
      * If shorter than <CODE>end</CODE> the last element is used
      * @return <CODE>true</CODE> if the character(s) can split a line
      */

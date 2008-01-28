@@ -629,7 +629,7 @@ public class CFFFont {
             super.increment(currentOffset);
             currentOffset[0] += size;
         }
-        // this is imcomplete!
+        // this is incomplete!
         public void emit(byte[] buffer) {
             if (size==5) {
                 buffer[myOffset]   = 29;
@@ -884,7 +884,7 @@ public class CFFFont {
             l.addLast(privateBase);
             
             // looking at the PS that acrobat generates from a PDF with
-            // a CFF opentype font embeded with an identity-H encoding,
+            // a CFF opentype font embedded with an identity-H encoding,
             // it seems that it does not need a FontName.
             //l.addLast(new DictNumberItem((standardStrings.length+(stringOffsets.length-1)+2)));
             //l.addLast(new UInt8Item((char)12));
@@ -1137,7 +1137,7 @@ public class CFFFont {
                     getDictItem();
                     if (key=="Subrs")
                     	//Add the private offset to the lsubrs since the offset is 
-                    	// relative to the begining of the PrivateDict
+                    	// relative to the beginning of the PrivateDict
                         fonts[j].privateSubrs = ((Integer)args[0]).intValue()+fonts[j].privateOffset;
                 }
             }

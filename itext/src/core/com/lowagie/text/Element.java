@@ -313,7 +313,7 @@ public interface Element {
 	 * Checks if this element is a content object.
 	 * If not, it's a metadata object.
 	 * @since	iText 2.0.8
-	 * @return	true if this is a 'content' element; false if this is a 'medadata' element
+	 * @return	true if this is a 'content' element; false if this is a 'metadata' element
 	 */
 	
 	public boolean isContent();

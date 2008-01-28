@@ -112,7 +112,7 @@ public class XmlParser {
  * Parses a given file.
  * @param document The document that will listen to the parser
  * @param is The inputsource with the content
- * @param tagmap A userdefined tagmap
+ * @param tagmap A user defined tagmap
  */
     
     public void go(DocListener document, InputSource is, String tagmap) {
@@ -131,7 +131,7 @@ public class XmlParser {
      * Parses a given file.
      * @param document The document that will listen to the parser
      * @param is the inputsource with the content
-     * @param tagmap an inputstream to a userdefined tagmap
+     * @param tagmap an inputstream to a user defined tagmap
      */
         
         public void go(DocListener document, InputSource is, InputStream tagmap) {
@@ -150,7 +150,7 @@ public class XmlParser {
  * Parses a given file.
  * @param document The document that will listen to the parser
  * @param is the inputsource with the content
- * @param tagmap a userdefined tagmap
+ * @param tagmap a user defined tagmap
  */
     
     public void go(DocListener document, InputSource is, HashMap tagmap) {
@@ -187,7 +187,7 @@ public class XmlParser {
  * Parses a given file.
  * @param document the document that will listen to the parser
  * @param file the path to a file with the content
- * @param tagmap a userdefined tagmap
+ * @param tagmap a user defined tagmap
  */
     
     public void go(DocListener document, String file, String tagmap) {
@@ -206,7 +206,7 @@ public class XmlParser {
  * Parses a given file.
  * @param document The document that will listen to the parser
  * @param file the path to a file with the content
- * @param tagmap a userdefined tagmap
+ * @param tagmap a user defined tagmap
  */
     
     public void go(DocListener document, String file, HashMap tagmap) {
@@ -236,7 +236,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  * @param document The document that will listen to the parser
  * @param is The inputsource with the content
- * @param tagmap a userdefined tagmap
+ * @param tagmap a user defined tagmap
  */
     
     public static void parse(DocListener document, InputSource is, String tagmap) {
@@ -248,7 +248,7 @@ public class XmlParser {
  * Parses a given file and writes the content to a document, using a certain tagmap.
  * @param document The document that will listen to the parser
  * @param is The inputsource with the content
- * @param tagmap a userdefined tagmap
+ * @param tagmap a user defined tagmap
  */
     
     public static void parse(DocListener document, InputSource is, HashMap tagmap) {
@@ -271,7 +271,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  * @param document The document that will listen to the parser
  * @param file The path to a file with the content
- * @param tagmap A userdefined tagmap
+ * @param tagmap A user defined tagmap
  */
     
     public static void parse(DocListener document, String file, String tagmap) {
@@ -283,7 +283,7 @@ public class XmlParser {
  * Parses a given file and writes the content to a document, using a certain tagmap.
  * @param document The document that will listen to the parser
  * @param file The path to a file with the content
- * @param tagmap A userdefined tagmap
+ * @param tagmap A user defined tagmap
  */
     
     public static void parse(DocListener document, String file, HashMap tagmap) {
@@ -306,7 +306,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  * @param document The document that will listen to the parser
  * @param is The inputstream with the content
- * @param tagmap A userdefined tagmap
+ * @param tagmap A user defined tagmap
  */
     
     public static void parse(DocListener document, InputStream is, String tagmap) {
@@ -318,7 +318,7 @@ public class XmlParser {
  * Parses a given file and writes the content to a document, using a certain tagmap.
  * @param document The document that will listen to the parser
  * @param is The InputStream with the content
- * @param tagmap A userdefined tagmap
+ * @param tagmap A user defined tagmap
  */
     
     public static void parse(DocListener document, InputStream is, HashMap tagmap) {
@@ -341,7 +341,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  * @param document The document that will listen to the parser
  * @param is The reader that reads the content
- * @param tagmap A userdefined tagmap
+ * @param tagmap A user defined tagmap
  */
     
     public static void parse(DocListener document, Reader is, String tagmap) {
@@ -353,7 +353,7 @@ public class XmlParser {
  * Parses a given file and writes the content to a document, using a certain tagmap.
  * @param document The document that will listen to the parser
  * @param is The reader that reads the content
- * @param tagmap A userdefined tagmap
+ * @param tagmap A user defined tagmap
  */
     
     public static void parse(DocListener document, Reader is, HashMap tagmap) {

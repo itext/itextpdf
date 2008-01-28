@@ -458,9 +458,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 
     
     /**
-     * Writes the initialisation part of the RtfList
+     * Writes the initialization part of the RtfList
      * 
-     * @return A byte array containing the initialisation part
+     * @return A byte array containing the initialization part
      */
     protected byte[] writeListBeginning() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();

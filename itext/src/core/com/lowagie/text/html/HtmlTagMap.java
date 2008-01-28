@@ -257,7 +257,7 @@ private static final long serialVersionUID = 5287430058473705350L;
     }
     
 /**
- * Checks if this is the linl tag.
+ * Checks if this is the link tag.
  * @param tag a tagvalue
  * @return true if tag is LINK or link
  */

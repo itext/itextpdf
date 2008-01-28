@@ -50,7 +50,7 @@ import com.lowagie.text.factories.GreekAlphabetFactory;
 
 /**
  * 
- * A special-version of <CODE>LIST</CODE> whitch use greek-letters.
+ * A special-version of <CODE>LIST</CODE> which use greek-letters.
  * 
  * @see com.lowagie.text.List
  */

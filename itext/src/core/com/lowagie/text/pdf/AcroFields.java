@@ -580,7 +580,7 @@ public class AcroFields {
                 }
             }
         }
-        //rotation, border and backgound color
+        //rotation, border and background color
         PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.MK));
         if (mk != null) {
             PdfArray ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BC));
@@ -1132,7 +1132,7 @@ public class AcroFields {
 
     /**
      * Regenerates the field appearance.
-     * This is usefull when you change a field property, but not its value,
+     * This is useful when you change a field property, but not its value,
      * for instance form.setFieldProperty("f", "bgcolor", Color.BLUE, null);
      * This won't have any effect, unless you use regenerateField("f") after changing
      * the property.
@@ -1528,7 +1528,7 @@ public class AcroFields {
         return this.generateAppearances;
     }
     
-    /** Sets the option to generate appearances. Not generating apperances
+    /** Sets the option to generate appearances. Not generating appearances
      * will speed-up form filling but the results can be
      * unexpected in Acrobat. Don't use it unless your environment is well
      * controlled. The default is <CODE>true</CODE>.
@@ -1893,7 +1893,7 @@ public class AcroFields {
     
     /**
      * Sets extra margins in text fields to better mimic the Acrobat layout.
-     * @param extraMarginLeft the extra marging left
+     * @param extraMarginLeft the extra margin left
      * @param extraMarginTop the extra margin top
      */    
     public void setExtraMargin(float extraMarginLeft, float extraMarginTop) {

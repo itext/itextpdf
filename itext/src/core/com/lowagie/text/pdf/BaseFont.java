@@ -767,7 +767,7 @@ public abstract class BaseFont {
  * Gets the descent of a <CODE>String</CODE> in normalized 1000 units. The descent will always be
  * less than or equal to zero even if all the characters have an higher descent.
  * @param text the <CODE>String</CODE> to get the descent of
- * @return the dexcent in normalized 1000 units
+ * @return the descent in normalized 1000 units
  */
     public int getDescent(String text) {
         int min = 0;
@@ -802,7 +802,7 @@ public abstract class BaseFont {
  * less than or equal to zero even if all the characters have an higher descent.
  * @param text the <CODE>String</CODE> to get the descent of
  * @param fontSize the size of the font
- * @return the dexcent in points
+ * @return the descent in points
  */
     public float getDescentPoint(String text, float fontSize)
     {
@@ -844,7 +844,7 @@ public abstract class BaseFont {
     
     /**
      * Gets the width of a <CODE>String</CODE> in points.
-     * @param text the <CODE>String</CODE> to get the witdth of
+     * @param text the <CODE>String</CODE> to get the width of
      * @param fontSize the font size
      * @return the width in points
      */
@@ -854,7 +854,7 @@ public abstract class BaseFont {
     
     /**
      * Gets the width of a <CODE>char</CODE> in points.
-     * @param char1 the <CODE>char</CODE> to get the witdth of
+     * @param char1 the <CODE>char</CODE> to get the width of
      * @param fontSize the font size
      * @return the width in points
      */

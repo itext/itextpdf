@@ -52,7 +52,7 @@ package com.lowagie.text;
 
 /**
  * This is an <CODE>Element</CODE> that contains
- * some userdefined meta information about the document.
+ * some user defined meta information about the document.
  * <P>
  * <B>Example:</B>
  * <BLOCKQUOTE><PRE>

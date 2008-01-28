@@ -54,12 +54,12 @@ import java.util.ListIterator;
  * This class expands a string into a list of numbers. The main use is to select a
  * range of pages.
  * <p>
- * The general systax is:<br>
+ * The general syntax is:<br>
  * [!][o][odd][e][even]start-end
  * <p>
  * You can have multiple ranges separated by commas ','. The '!' modifier removes the
  * range from what is already selected. The range changes are incremental, that is,
- * numbers are added or deleted as the range appears. The start or the end, but not both, can be ommited.
+ * numbers are added or deleted as the range appears. The start or the end, but not both, can be omitted.
  */
 public class SequenceList {
     protected static final int COMMA = 1;

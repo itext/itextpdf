@@ -133,7 +133,7 @@ public class PdfGState extends PdfDictionary {
     }
     
     /**
-     * Determines the behaviour of overlapping glyphs within a text object
+     * Determines the behavior of overlapping glyphs within a text object
      * in the transparent imaging model.
      * @param v
      */

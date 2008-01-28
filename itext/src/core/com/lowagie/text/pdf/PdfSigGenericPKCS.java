@@ -58,7 +58,7 @@ import com.lowagie.text.ExceptionConverter;
  */
 public abstract class PdfSigGenericPKCS extends PdfSignature {
     /**
-     * The hash algorith, for example "SHA1"
+     * The hash algorithm, for example "SHA1"
      */    
     protected String hashAlgorithm;
     /**

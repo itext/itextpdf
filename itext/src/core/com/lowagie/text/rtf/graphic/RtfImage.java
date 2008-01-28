@@ -150,7 +150,7 @@ public class RtfImage extends RtfElement {
      */
     private float width = 0;
     /**
-     * The height of this picutre
+     * The height of this picture
      */
     private float height = 0;
     /**
@@ -172,7 +172,7 @@ public class RtfImage extends RtfElement {
      * 
      * @param doc The RtfDocument this RtfImage belongs to
      * @param image The Image that this RtfImage wraps
-     * @throws DocumentException If an error occured accessing the image content
+     * @throws DocumentException If an error occurred accessing the image content
      */
     public RtfImage(RtfDocument doc, Image image) throws DocumentException
     {

@@ -71,7 +71,7 @@ public class SAXmyHandler extends SAXiTextHandler {
  * triggered by the parser to actions on the <CODE>Document</CODE>-object.
  *
  * @param	document	this is the document on which events must be triggered
- * @param myTags a userdefined tagmap
+ * @param myTags a user defined tagmap
  */
     
     public SAXmyHandler(DocListener document, HashMap myTags) {

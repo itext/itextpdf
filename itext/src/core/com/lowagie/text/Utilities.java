@@ -114,7 +114,7 @@ public class Utilities {
 	/**
 	 * Unescapes an URL. All the "%xx" are replaced by the 'xx' hex char value.
 	 * @param src the url to unescape
-	 * @return the eunescaped value
+	 * @return the unescaped value
 	 */    
 	public static String unEscapeURL(String src) {
 	    StringBuffer bf = new StringBuffer();

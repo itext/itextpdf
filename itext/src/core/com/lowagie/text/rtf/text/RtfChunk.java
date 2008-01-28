@@ -85,7 +85,7 @@ public class RtfChunk extends RtfElement {
      */
     private static final byte[] FONT_END_SUPER_SUBSCRIPT = "\\nosupersub".getBytes();
     /**
-     * Constant for background colour.
+     * Constant for background color.
      */
     private static final byte[] HIGHLIGHT = "\\highlight".getBytes();
 
@@ -106,7 +106,7 @@ public class RtfChunk extends RtfElement {
      */
     private float superSubScript = 0;
     /**
-     * An optional background colour.
+     * An optional background color.
      */
     private RtfColor background = null;
 

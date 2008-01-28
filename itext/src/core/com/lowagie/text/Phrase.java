@@ -70,7 +70,7 @@ import java.util.Properties;
  * <STRONG>Phrase phrase1 = new Phrase("this is a phrase");</STRONG>
  * // In this example the leading is passed as a parameter
  * <STRONG>Phrase phrase2 = new Phrase(16, "this is a phrase with leading 16");</STRONG>
- * // When a Font is passed (explicitely or embedded in a chunk), the default leading = 1.5 * size of the font
+ * // When a Font is passed (explicitly or embedded in a chunk), the default leading = 1.5 * size of the font
  * <STRONG>Phrase phrase3 = new Phrase("this is a phrase with a red, normal font Courier, size 12", FontFactory.getFont(FontFactory.COURIER, 12, Font.NORMAL, new Color(255, 0, 0)));</STRONG>
  * <STRONG>Phrase phrase4 = new Phrase(new Chunk("this is a phrase"));</STRONG>
  * <STRONG>Phrase phrase5 = new Phrase(18, new Chunk("this is a phrase", FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLD, new Color(255, 0, 0)));</STRONG>

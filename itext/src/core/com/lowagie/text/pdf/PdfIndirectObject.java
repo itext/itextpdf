@@ -150,7 +150,7 @@ public class PdfIndirectObject {
     }
     
 /**
- * Writes eficiently to a stream
+ * Writes efficiently to a stream
  *
  * @param os the stream to write to
  * @throws IOException on write error

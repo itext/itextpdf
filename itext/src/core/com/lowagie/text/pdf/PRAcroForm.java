@@ -122,7 +122,7 @@ public class PRAcroForm extends PdfDictionary {
     }
     /**
      * Read, and comprehend the acroform
-     * @param root the docment root
+     * @param root the document root
      */
     public void readAcroForm(PdfDictionary root) {
         if (root == null)

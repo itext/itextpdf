@@ -112,7 +112,7 @@ public class PdfTemplate extends PdfContentByte {
      * @param writer the PdfWriter to use
      * @param width the bounding box width
      * @param height the bounding box height
-     * @return the templated created
+     * @return the created template
      */
     public static PdfTemplate createTemplate(PdfWriter writer, float width, float height) {
         return createTemplate(writer, width, height, null);
@@ -138,7 +138,7 @@ public class PdfTemplate extends PdfContentByte {
     }
     
     /**
-     * Sets the bounding heigth of this template.
+     * Sets the bounding height of this template.
      *
      * @param height the bounding height
      */
@@ -158,9 +158,9 @@ public class PdfTemplate extends PdfContentByte {
     }
     
     /**
-     * Gets the bounding heigth of this template.
+     * Gets the bounding height of this template.
      *
-     * @return heigth the bounding height
+     * @return height the bounding height
      */
     
     public float getHeight() {

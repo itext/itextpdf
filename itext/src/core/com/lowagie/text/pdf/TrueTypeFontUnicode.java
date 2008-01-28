@@ -134,7 +134,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
     
     /**
      * Gets the width of a <CODE>String</CODE> in normalized 1000 units.
-     * @param text the <CODE>String</CODE> to get the witdth of
+     * @param text the <CODE>String</CODE> to get the width of
      * @return the width in normalized 1000 units
      */
     public int getWidth(String text) {
@@ -297,7 +297,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
     /** The method used to sort the metrics array.
      * @param o1 the first element
      * @param o2 the second element
-     * @return the comparisation
+     * @return the comparison
      */    
     public int compare(Object o1, Object o2) {
         int m1 = ((int[])o1)[0];

@@ -169,7 +169,7 @@ public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElemen
      * 
      * @param doc The RtfDocument this RtfHeaderFooter belongs to
      * @param headerFooter The RtfHeaderFooter to display
-     * @param type The typ of RtfHeaderFooterGroup to create
+     * @param type The type of RtfHeaderFooterGroup to create
      */
     public RtfHeaderFooterGroup(RtfDocument doc, RtfHeaderFooter headerFooter, int type) {
         super(new Phrase(""), false);
@@ -185,7 +185,7 @@ public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElemen
      * 
      * @param doc The RtfDocument this RtfHeaderFooter belongs to
      * @param headerFooter The HeaderFooter to display
-     * @param type The typ of RtfHeaderFooterGroup to create
+     * @param type The type of RtfHeaderFooterGroup to create
      */
     public RtfHeaderFooterGroup(RtfDocument doc, HeaderFooter headerFooter, int type) {
         super(new Phrase(""), false);
@@ -316,7 +316,7 @@ public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElemen
     /**
      * Set that this RtfHeaderFooterGroup should have a title page. If only
      * a header / footer for all pages exists, then it will be copied to the
-     * first page aswell.
+     * first page as well.
      */
     public void setHasTitlePage() {
         if(this.mode == MODE_SINGLE) {
@@ -329,7 +329,7 @@ public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElemen
     /**
      * Set that this RtfHeaderFooterGroup should have facing pages. If only
      * a header / footer for all pages exists, then it will be copied to the left
-     * and right pages aswell.
+     * and right pages as well.
      */
     public void setHasFacingPages() {
         if(this.mode == MODE_SINGLE) {

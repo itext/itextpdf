@@ -55,7 +55,7 @@ public class RtfShape extends RtfAddableElement {
      */
 	public static final int SHAPE_DIAMOND = 4;
     /**
-     * Constant for a isoscelle triangle.
+     * Constant for a isosceles triangle.
      */
 	public static final int SHAPE_TRIANGLE_ISOSCELES = 5;
     /**

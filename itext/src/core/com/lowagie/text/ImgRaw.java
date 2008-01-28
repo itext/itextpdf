@@ -67,7 +67,7 @@ public class ImgRaw extends Image {
         super(image);
     }
 
-/** Creats an Image in raw mode.
+/** Creates an Image in raw mode.
  *
  * @param width the exact width of the image
  * @param height the exact height of the image

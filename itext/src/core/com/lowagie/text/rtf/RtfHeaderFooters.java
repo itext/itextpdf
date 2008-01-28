@@ -90,14 +90,14 @@ public class RtfHeaderFooters extends HeaderFooter {
     private HeaderFooter firstPage = null;
 
     /**
-     * Contructs a HeaderFooters object
+     * Constructs a HeaderFooters object
      */
     public RtfHeaderFooters() {
         super( new Phrase(""), false );
     }
 
     /**
-     * Contructs a HeaderFooters object
+     * Constructs a HeaderFooters object
      * @param before
      * @param after
      */
@@ -106,7 +106,7 @@ public class RtfHeaderFooters extends HeaderFooter {
     }
 
     /**
-     * Contructs a HeaderFooters object
+     * Constructs a HeaderFooters object
      * @param before
      * @param numbered
      */

@@ -451,7 +451,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     }
 
 	/**
-     * Returns the title, preceeded by a certain number of sectionnumbers.
+     * Returns the title, preceded by a certain number of sectionnumbers.
      *
      * @return	a <CODE>Paragraph</CODE>
      */
@@ -684,7 +684,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 	}
 
 	/**
-	 * Sets the indicaction if the section was already added to
+	 * Sets the indication if the section was already added to
 	 * the document.
 	 * @since	iText2.0.8
 	 * @param notAddedYet
@@ -750,7 +750,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     // deprecated stuff
 
 	/**
-	 * Returns the title, preceeded by a certain number of sectionnumbers.
+	 * Returns the title, preceded by a certain number of sectionnumbers.
 	 *
 	 * @return	a <CODE>Paragraph</CODE>
 	 * @deprecated As of iText 2.0.3, replaced by {@link #getTitle()},

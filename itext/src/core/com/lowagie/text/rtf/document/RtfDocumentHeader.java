@@ -139,7 +139,7 @@ public class RtfDocumentHeader extends RtfElement {
     }
 
     /**
-     * Initialises the RtfDocumentHeader.
+     * initializes the RtfDocumentHeader.
      */
     protected void init() {
         this.codePage = new RtfCodePage(this.document);
@@ -176,7 +176,7 @@ public class RtfDocumentHeader extends RtfElement {
     public void writeContent(final OutputStream result) throws IOException
     {
         try {
-            // This is so that all colour, font and similar information is processed once, before
+            // This is so that all color, font and similar information is processed once, before
             // the header section is written.
             //.writeSectionDefinition();
             writeSectionDefinition(new RtfNilOutputStream());

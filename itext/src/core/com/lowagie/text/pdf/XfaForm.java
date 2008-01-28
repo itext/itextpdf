@@ -349,14 +349,14 @@ public class XfaForm {
     
     /**
      * A structure to store each part of a SOM name and link it to the next part
-     * beginning from the lower hierarchie.
+     * beginning from the lower hierarchy.
      */
     public static class InverseStore {
         protected ArrayList part = new ArrayList();
         protected ArrayList follow = new ArrayList();
         
         /**
-         * Gets the full name by traversing the hiearchie using only the
+         * Gets the full name by traversing the hierarchy using only the
          * index 0.
          * @return the full name
          */
@@ -372,7 +372,7 @@ public class XfaForm {
         
         /**
          * Search the current node for a similar name. A similar name starts
-         * with the same name but has a differnt index. For example, "detail[3]" 
+         * with the same name but has a different index. For example, "detail[3]" 
          * is similar to "detail[9]". The main use is to discard names that
          * correspond to out of bounds records.
          * @param name the name to search
@@ -450,7 +450,7 @@ public class XfaForm {
          */
         protected HashMap name2Node;
         /**
-         * The data to do a search from the bottom hierarchie.
+         * The data to do a search from the bottom hierarchy.
          */
         protected HashMap inverseSearch;
         /**
@@ -551,7 +551,7 @@ public class XfaForm {
         /**
          * Adds a SOM name to the search node chain.
          * @param inverseSearch the start point
-         * @param stack the stack with the separeted SOM parts
+         * @param stack the stack with the separated SOM parts
          * @param unstack the full name
          */
         public static void inverseSearchAdd(HashMap inverseSearch, Stack2 stack, String unstack) {
@@ -579,7 +579,7 @@ public class XfaForm {
         }
 
         /**
-         * Searchs the SOM hiearchie from the bottom.
+         * Searches the SOM hierarchy from the bottom.
          * @param parts the SOM parts
          * @return the full name or <CODE>null</CODE> if not found
          */
@@ -673,16 +673,16 @@ public class XfaForm {
         }
 
         /**
-         * Gets the data to do a search from the bottom hierarchie.
-         * @return the data to do a search from the bottom hierarchie
+         * Gets the data to do a search from the bottom hierarchy.
+         * @return the data to do a search from the bottom hierarchy
          */
         public HashMap getInverseSearch() {
             return inverseSearch;
         }
 
         /**
-         * Sets the data to do a search from the bottom hierarchie.
-         * @param inverseSearch the data to do a search from the bottom hierarchie
+         * Sets the data to do a search from the bottom hierarchy.
+         * @param inverseSearch the data to do a search from the bottom hierarchy
          */
         public void setInverseSearch(HashMap inverseSearch) {
             this.inverseSearch = inverseSearch;

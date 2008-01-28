@@ -183,7 +183,7 @@ public class SimpleXMLParser {
 			if (previousCharacter == -1) {
 				character = reader.read();
 			}
-			// or re-examin the previous character
+			// or re-examine the previous character
 			else {
 				character = previousCharacter;
 				previousCharacter = -1;
@@ -674,7 +674,7 @@ public class SimpleXMLParser {
     /**
      * Returns the IANA encoding name that is auto-detected from
      * the bytes specified, with the endian-ness of that encoding where appropriate.
-     * (method found in org.apache.xerces.impl.XMLEntityManager, originaly published
+     * (method found in org.apache.xerces.impl.XMLEntityManager, originally published
      * by the Apache Software Foundation under the Apache Software License; now being
      * used in iText under the MPL)
      * @param b4    The first four bytes of the input.
@@ -716,7 +716,7 @@ public class SimpleXMLParser {
             return "ISO-10646-UCS-4";
         }
         if (b0 == 0x00 && b1 == 0x3C && b2 == 0x00 && b3 == 0x00) {
-            // UCS-4, unusual octect order (3412)
+            // UCS-4, unusual octet order (3412)
             // REVISIT: What should this be?
             return "ISO-10646-UCS-4";
         }

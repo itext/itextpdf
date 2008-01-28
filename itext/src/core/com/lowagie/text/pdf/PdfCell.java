@@ -184,7 +184,7 @@ public class PdfCell extends Rectangle {
         this.useDescender = cell.isUseDescender();
         this.useBorderPadding = cell.isUseBorderPadding();
 
-        // initialisation of some parameters
+        // initialization of some parameters
         PdfChunk chunk;
         Element element;
         PdfChunk overflow;
@@ -388,9 +388,9 @@ public class PdfCell extends Rectangle {
     }
 
     /**
-	 * Returns the lower left x-coordinaat.
+	 * Returns the lower left x-coordinate.
 	 *
-	 * @return		the lower left x-coordinaat
+	 * @return		the lower left x-coordinate
 	 * @deprecated As of iText 2.0.3, replaced by {@link #getLeft()},
 	 * scheduled for removal at 2.1.0
 	 */
@@ -403,9 +403,9 @@ public class PdfCell extends Rectangle {
 
 
 	/**
-     * Returns the lower left x-coordinaat.
+     * Returns the lower left x-coordinate.
      *
-     * @return		the lower left x-coordinaat
+     * @return		the lower left x-coordinate
      */
 
     public float getLeft() {
@@ -688,7 +688,7 @@ public class PdfCell extends Rectangle {
             return new ArrayList();
         }
         top = Math.min(getTop(), top);
-        // initialisations
+        // initializations
         Image image;
         float height;
         ArrayList result = new ArrayList();
@@ -727,10 +727,10 @@ public class PdfCell extends Rectangle {
     /**
      * Checks if the cell may be removed.
      * <P>
-     * Headers may allways be removed, even if they are drawn only partially:
+     * Headers may always be removed, even if they are drawn only partially:
      * they will be repeated on each following page anyway!
      *
-     * @return	<CODE>true</CODE> if all the lines are allready drawn; <CODE>false</CODE> otherwise.
+     * @return	<CODE>true</CODE> if all the lines are already drawn; <CODE>false</CODE> otherwise.
      */
 
     boolean mayBeRemoved() {
@@ -953,7 +953,7 @@ public class PdfCell extends Rectangle {
 
     /**
      * Sets the value of useBorderPadding.
-     * @param use adjust layour for borders if true
+     * @param use adjust layout for borders if true
      */
     public void setUseBorderPadding(boolean use) {
         useBorderPadding = use;

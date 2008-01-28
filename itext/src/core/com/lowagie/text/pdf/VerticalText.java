@@ -55,7 +55,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Phrase;
 
 /** Writes text vertically. Note that the naming is done according
- * to horizontal text although it referrs to vertical text.
+ * to horizontal text although it refers to vertical text.
  * A line with the alignment Element.LEFT_ALIGN will actually
  * be top aligned.
  */
@@ -213,7 +213,7 @@ public class VerticalText {
     
     /**
      * Outputs the lines to the document. The output can be simulated.
-     * @param simulate <CODE>true</CODE> to simulate the writting to the document
+     * @param simulate <CODE>true</CODE> to simulate the writing to the document
      * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
      * and/or <CODE>NO_MORE_COLUMN</CODE>
      */
@@ -285,7 +285,7 @@ public class VerticalText {
         this.startY = startY;
     }
     
-    /** Gets the X coordinate where the next line will be writen. This value will change
+    /** Gets the X coordinate where the next line will be written. This value will change
      * after each call to <code>go()</code>.
      * @return  the X coordinate
      */    
@@ -293,7 +293,7 @@ public class VerticalText {
         return startX;
     }
 
-    /** Gets the Y coordinate where the next line will be writen.
+    /** Gets the Y coordinate where the next line will be written.
      * @return  the Y coordinate
      */    
     public float getOriginY() {

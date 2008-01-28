@@ -67,7 +67,7 @@ public class Type3Font extends BaseFont {
     /**
      * Creates a Type3 font.
      * @param writer the writer
-     * @param chars an array of chars corresponding to the glyphs used (not used, prisent for compability only)
+     * @param chars an array of chars corresponding to the glyphs used (not used, present for compatibility only)
      * @param colorized if <CODE>true</CODE> the font may specify color, if <CODE>false</CODE> no color commands are allowed
      * and only images as masks can be used
      */    

@@ -56,9 +56,9 @@ import com.lowagie.text.Phrase;
 
 
 /**
- * This HeaderFooter specialization extends the normal HeaderFooter impl.
+ * This HeaderFooter specialization extends the normal HeaderFooter implementation.
  * by the new ctor with 'Element' param.
- * So we have the ability to add a table or some moe sophisticated stuff
+ * So we have the ability to add a table or some more sophisticated stuff
  * as header or footer content.
  * 
  * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.

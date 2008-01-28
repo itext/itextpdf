@@ -607,7 +607,7 @@ public class TextField extends BaseField {
     
     /**
      * Sets extra margins in text fields to better mimic the Acrobat layout.
-     * @param extraMarginLeft the extra marging left
+     * @param extraMarginLeft the extra margin left
      * @param extraMarginTop the extra margin top
      */    
     public void setExtraMargin(float extraMarginLeft, float extraMarginTop) {

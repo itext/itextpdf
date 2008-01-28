@@ -288,7 +288,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	/**
 	 * Called when a <CODE>Chunk</CODE> with a generic tag is written.
 	 * <P>
-	 * It is usefull to pinpoint the <CODE>Chunk</CODE> location to generate
+	 * It is useful to pinpoint the <CODE>Chunk</CODE> location to generate
 	 * bookmarks, for example.
 	 * 
 	 * @param writer

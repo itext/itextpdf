@@ -77,7 +77,7 @@ public class RtfTestBase extends TestCase {
     protected RtfDocument rtfDoc = null;
     
     /**
-     * Constructs a new <code>RtfTestBase</code>, initialising
+     * Constructs a new <code>RtfTestBase</code>, initializing
      * the <code>RtfDocument</code>.
      */
     public RtfTestBase() {

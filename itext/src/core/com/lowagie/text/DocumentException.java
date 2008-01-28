@@ -75,7 +75,7 @@ public class DocumentException extends Exception {
     // constructors
     
     /**
-     * Constructs a <CODE>DocumentException</CODE> whithout a message.
+     * Constructs a <CODE>DocumentException</CODE> without a message.
      */
     public DocumentException() {
         super();

@@ -189,7 +189,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     private int fontNumber = 0;
     /**
-     * The colour of this font
+     * The color of this font
      */
     private RtfColor color = null;
     /**
@@ -252,7 +252,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
     }
     
     /**
-     * Constructs a RtfFont with the given font name, font size, font style, colour
+     * Constructs a RtfFont with the given font name, font size, font style, color
      * and charset. This can be used when generating non latin-1 text.
      * 
      * @param fontName The font name to use

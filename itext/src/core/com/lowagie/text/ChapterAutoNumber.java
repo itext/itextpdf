@@ -67,7 +67,7 @@ public class ChapterAutoNumber extends Chapter {
     }
 
     /**
-     * Create a new objet.
+     * Create a new object.
      * 
      * @param title	    the Chapter title (as a <CODE>String</CODE>)
      */

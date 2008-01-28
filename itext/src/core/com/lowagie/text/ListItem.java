@@ -104,7 +104,7 @@ public class ListItem extends Paragraph {
 	
 	// member variables
 	
-	/** this is the symbol that wil precede the listitem. */
+	/** this is the symbol that will precede the listitem. */
     private Chunk symbol;
     
     // constructors

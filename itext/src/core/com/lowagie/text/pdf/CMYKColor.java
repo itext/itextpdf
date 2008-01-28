@@ -63,7 +63,7 @@ public class CMYKColor extends ExtendedColor {
     float black;
 
     /**
-     * Constructs a CMYK Color beased on 4 colorvalues (values are integers from 0 to 255).
+     * Constructs a CMYK Color based on 4 color values (values are integers from 0 to 255).
      * @param intCyan
      * @param intMagenta
      * @param intYellow

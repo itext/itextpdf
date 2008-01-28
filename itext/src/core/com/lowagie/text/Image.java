@@ -162,7 +162,7 @@ public abstract class Image extends Rectangle {
 
     // member variables
 
-	/** The imagetype. */
+	/** The image type. */
 	protected int type;
 
 	/** The URL of the image. */
@@ -716,7 +716,7 @@ public abstract class Image extends Rectangle {
 	
 	/**
 	 * Gets an instance of a Image from a java.awt.Image.
-	 * The image is added as a JPEG with a userdefined quality.
+	 * The image is added as a JPEG with a user defined quality.
 	 * 
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> object to which the image will be added
@@ -735,7 +735,7 @@ public abstract class Image extends Rectangle {
 	
     /**
      * Gets an instance of a Image from a java.awt.Image.
-     * The image is added as a JPEG with a userdefined quality.
+     * The image is added as a JPEG with a user defined quality.
      *
      * @param cb
      *            the <CODE>PdfContentByte</CODE> object to which the image will be added

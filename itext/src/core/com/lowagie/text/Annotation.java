@@ -295,7 +295,7 @@ public class Annotation implements Element {
 	}
 
 	/**
-	 * Creates a Screen anotation to embed media clips
+	 * Creates a Screen annotation to embed media clips
 	 * 
 	 * @param llx
 	 * @param lly
@@ -472,7 +472,7 @@ public class Annotation implements Element {
 	}
 
 	/**
-	 * Returns the uppper right x-value.
+	 * Returns the upper right x-value.
 	 * 
 	 * @return a value
 	 */
@@ -481,7 +481,7 @@ public class Annotation implements Element {
 	}
 
 	/**
-	 * Returns the uppper right y-value.
+	 * Returns the upper right y-value.
 	 * 
 	 * @return a value
 	 */

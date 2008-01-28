@@ -140,7 +140,7 @@ public class Chapter extends Section {
      * Creates a new <CODE>Chapter</CODE> following a set of attributes.
      *
      * @param	attributes	the attributes
-     * @param number a userdefined Chapter number
+     * @param number a user defined Chapter number
      * @deprecated As of iText 2.0.3, use {@link com.lowagie.text.factories.ElementFactory#getChapter(Properties)} instead,
      * scheduled for removal at 2.1.0
      */

@@ -65,7 +65,7 @@ import java.io.OutputStream;
 public interface RtfDataCache 
 {
     /**
-     * Constant for caching efficently into memory.
+     * Constant for caching efficiently into memory.
      */
     public static final int CACHE_MEMORY_EFFICIENT = 3;
     /**
