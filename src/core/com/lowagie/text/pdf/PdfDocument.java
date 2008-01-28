@@ -223,7 +223,7 @@ public class PdfDocument extends Document {
      * to the tree of pages contained in the document, a reference to the tree of objects representing
      * the document's outline, a reference to the document's article threads, and the list of named
      * destinations. In addition, the Catalog indicates whether the document's outline or thumbnail
-     * page images should be displayed automatically when the document is viewed and wether some location
+     * page images should be displayed automatically when the document is viewed and whether some location
      * other than the first page should be shown when the document is opened.<BR>
      * In this class however, only the reference to the tree of pages is implemented.<BR>
      * This object is described in the 'Portable Document Format Reference Manual version 1.3'
@@ -1078,7 +1078,7 @@ public class PdfDocument extends Document {
         // the pagenumber is incremented
         pageN++;
 
-        // initialisation of some page objects
+        // initialization of some page objects
         annotationsImp.resetAnnotations();
         pageResources = new PageResources();
         
@@ -1171,7 +1171,7 @@ public class PdfDocument extends Document {
         if (line != null) {
             // we check if the end of the page is reached (bugfix by Francois Gravel)
             if (currentHeight + line.height() + leading < indentTop() - indentBottom()) {
-                // if so nonempty lines are added and the heigt is augmented
+                // if so nonempty lines are added and the height is augmented
                 if (line.size() > 0) {
                     currentHeight += line.height();
                     lines.add(line);
@@ -1247,7 +1247,7 @@ public class PdfDocument extends Document {
             return 0;
         }
         
-        // initialisation of some parameters
+        // initialization of some parameters
         Object currentValues[] = new Object[2];
         PdfFont currentFont = null;
         float displacement = 0;
@@ -1262,7 +1262,7 @@ public class PdfDocument extends Document {
             
             float moveTextX = l.indentLeft() - indentLeft() + indentation.indentLeft + indentation.listIndentLeft + indentation.sectionIndentLeft;
             text.moveText(moveTextX, -l.height());
-            // is the line preceeded by a symbol?
+            // is the line preceded by a symbol?
             if (l.listSymbol() != null) {
                 ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
             }
@@ -2531,7 +2531,7 @@ public class PdfDocument extends Document {
         ctx.rowspanMap = new HashMap();
         ctx.table = table;
         
-		// initialisation of parameters
+		// initialization of parameters
 		PdfCell cell;
 
 		// drawing the table
@@ -2540,7 +2540,7 @@ public class PdfDocument extends Document {
         ArrayList rows = extractRows(cells, ctx);
         boolean isContinue = false;
 		while (!cells.isEmpty()) {
-			// initialisation of some extra parameters;
+			// initialization of some extra parameters;
 			ctx.lostTableBottom = 0;
                         
 			// loop over the cells
@@ -2930,7 +2930,7 @@ public class PdfDocument extends Document {
     protected void doFooter() throws DocumentException {
     	if (footer == null) return;
 		// Begin added by Edgar Leonardo Prieto Perilla
-    	// Avoid footer identation
+    	// Avoid footer indentation
     	float tmpIndentLeft = indentation.indentLeft;
     	float tmpIndentRight = indentation.indentRight;
     	// Begin added: Bonf (Marc Schneider) 2003-07-29
@@ -2976,7 +2976,7 @@ public class PdfDocument extends Document {
         // if there is a header, the header = added
         if (header == null) return;
 		// Begin added by Edgar Leonardo Prieto Perilla
-		// Avoid header identation
+		// Avoid header indentation
 		float tmpIndentLeft = indentation.indentLeft;
 		float tmpIndentRight = indentation.indentRight;
         // Begin added: Bonf (Marc Schneider) 2003-07-29
@@ -3005,7 +3005,7 @@ public class PdfDocument extends Document {
         flushLines();
         currentHeight = 0;
         // Begin added by Edgar Leonardo Prieto Perilla
-        // Restore identation
+        // Restore indentation
 		indentation.indentLeft = tmpIndentLeft;
 		indentation.indentRight = tmpIndentRight;
         // Begin added: Bonf (Marc Schneider) 2003-07-29

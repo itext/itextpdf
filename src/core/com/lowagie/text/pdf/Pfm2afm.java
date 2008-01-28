@@ -543,7 +543,7 @@ public class Pfm2afm {
     };
     
 /*
- *  Windows chararacter names.  Give a name to the usused locations
+ *  Windows character names.  Give a name to the used locations
  *  for when the all flag is specified.
  */
     private String WinChars[] = {

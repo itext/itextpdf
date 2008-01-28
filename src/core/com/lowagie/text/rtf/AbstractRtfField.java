@@ -118,7 +118,7 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
     private boolean rtfFieldIsAlt = false;
 
     /**
-     * Determines whtether the field is locked, i.e. it cannot be
+     * Determines whether the field is locked, i.e. it cannot be
      * updated.
      * 
      * @return <tt>true</tt> iff the field cannot be updated,
@@ -160,7 +160,7 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
     }
 
     /**
-     * Set whether text has been added, removed from thre field result
+     * Set whether text has been added, removed from the field result
      * since the field was last updated.
      * @param rtfFieldWasEdited Determines whether text has been
      * added, removed from the field result since the field was last

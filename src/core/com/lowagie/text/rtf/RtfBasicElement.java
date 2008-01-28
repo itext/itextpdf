@@ -81,7 +81,7 @@ public interface RtfBasicElement {
      */
     public static final byte[] COMMA_DELIMITER = ";".getBytes();
     /**
-     * The factor to use for translating from iText to rtf measurments
+     * The factor to use for translating from iText to rtf measurements
      */
     public static final double TWIPS_FACTOR = 20;
 

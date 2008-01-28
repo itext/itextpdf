@@ -312,7 +312,7 @@ public class Anchor extends Phrase {
      *
      * @param	attributes		Some attributes
      * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getAnchor(Properties)},
-     * scheduled for removel at 2.1.0
+     * scheduled for removal at 2.1.0
      */
     public Anchor(java.util.Properties attributes) {
         this(com.lowagie.text.factories.ElementFactory.getAnchor(attributes));

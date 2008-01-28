@@ -490,7 +490,7 @@ public class Cell extends Rectangle implements TextElementArray {
 
 	/**
 	 * Sets the value of useBorderPadding.
-	 * @param use adjust layour for borders if true
+	 * @param use adjust layout for borders if true
 	 */
 	public void setUseBorderPadding(boolean use) {
 	    useBorderPadding = use;

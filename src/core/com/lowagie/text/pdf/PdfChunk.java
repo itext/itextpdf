@@ -120,7 +120,7 @@ public class PdfChunk implements SplitCharacter{
 /**
  * Metric attributes.
  * <P>
- * This attributes require the mesurement of characters widths when rendering
+ * This attributes require the measurement of characters widths when rendering
  * such as underline.
  */
     protected HashMap attributes = new HashMap();
@@ -128,7 +128,7 @@ public class PdfChunk implements SplitCharacter{
 /**
  * Non metric attributes.
  * <P>
- * This attributes do not require the mesurement of characters widths when rendering
+ * This attributes do not require the measurement of characters widths when rendering
  * such as Color.
  */
     protected HashMap noStroke = new HashMap();
@@ -543,7 +543,7 @@ public class PdfChunk implements SplitCharacter{
     }
     
     /**
-     * Gets the text displacement relatiev to the baseline.
+     * Gets the text displacement relative to the baseline.
      * @return a displacement in points
      */
     public float getTextRise() {

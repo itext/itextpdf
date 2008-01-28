@@ -76,7 +76,7 @@ public class RtfImportMappings {
 	private HashMap colorMappings = null;
 	
 	/**
-	 * Constructs a new RtfImportMappings initialising the mappings.
+	 * Constructs a new RtfImportMappings initializing the mappings.
 	 */
 	public RtfImportMappings() {
 		this.fontMappings = new HashMap();

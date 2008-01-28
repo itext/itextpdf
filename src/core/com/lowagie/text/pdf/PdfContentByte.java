@@ -121,13 +121,13 @@ public class PdfContentByte {
         }
     }
     
-    /** The alignement is center */
+    /** The alignment is center */
     public static final int ALIGN_CENTER = Element.ALIGN_CENTER;
     
-    /** The alignement is left */
+    /** The alignment is left */
     public static final int ALIGN_LEFT = Element.ALIGN_LEFT;
     
-    /** The alignement is right */
+    /** The alignment is right */
     public static final int ALIGN_RIGHT = Element.ALIGN_RIGHT;
 
     /** A possible line cap value */
@@ -715,8 +715,8 @@ public class PdfContentByte {
      * @param       y1      y-coordinate of the first control point
      * @param       x2      x-coordinate of the second control point
      * @param       y2      y-coordinate of the second control point
-     * @param       x3      x-coordinaat of the ending point (= new current point)
-     * @param       y3      y-coordinaat of the ending point (= new current point)
+     * @param       x3      x-coordinate of the ending point (= new current point)
+     * @param       y3      y-coordinate of the ending point (= new current point)
      */
     
     public void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
@@ -728,8 +728,8 @@ public class PdfContentByte {
      *
      * @param       x2      x-coordinate of the second control point
      * @param       y2      y-coordinate of the second control point
-     * @param       x3      x-coordinaat of the ending point (= new current point)
-     * @param       y3      y-coordinaat of the ending point (= new current point)
+     * @param       x3      x-coordinate of the ending point (= new current point)
+     * @param       y3      y-coordinate of the ending point (= new current point)
      */
     
     public void curveTo(float x2, float y2, float x3, float y3) {
@@ -741,8 +741,8 @@ public class PdfContentByte {
      *
      * @param       x1      x-coordinate of the first control point
      * @param       y1      y-coordinate of the first control point
-     * @param       x3      x-coordinaat of the ending point (= new current point)
-     * @param       y3      y-coordinaat of the ending point (= new current point)
+     * @param       x3      x-coordinate of the ending point (= new current point)
+     * @param       y3      y-coordinate of the ending point (= new current point)
      */
     
     public void curveFromTo(float x1, float y1, float x3, float y3) {
@@ -1764,7 +1764,7 @@ public class PdfContentByte {
      * such that the curve goes from (x1, y1) to (x4, y4) with (x2, y2) and
      * (x3, y3) as their respective Bezier control points.
      * <P>
-     * Note: this code was taken from ReportLab (www.reportlab.org), an excelent
+     * Note: this code was taken from ReportLab (www.reportlab.org), an excellent
      * PDF generator for Python (BSD license: http://www.reportlab.org/devfaq.html#1.3 ).
      *
      * @param x1 a corner of the enclosing rectangle
@@ -1955,7 +1955,7 @@ public class PdfContentByte {
      *
      * @param width the bounding box width
      * @param height the bounding box height
-     * @return the templated created
+     * @return the created template
      */
     public PdfTemplate createTemplate(float width, float height) {
         return createTemplate(width, height, null);
@@ -2091,7 +2091,7 @@ public class PdfContentByte {
      * <P>
      * This method is described in the 'Portable Document Format Reference Manual version 1.3'
      * section 8.5.2.1 (page 331).</P>
-     * Following the PDF manual, each operand must be a number between 0 (miniumum intensity) and
+     * Following the PDF manual, each operand must be a number between 0 (minimum intensity) and
      * 1 (maximum intensity). This method however accepts only integers between 0x00 and 0xFF.
      *
      * @param cyan the intensity of red
@@ -2120,7 +2120,7 @@ public class PdfContentByte {
      * This method is described in the 'Portable Document Format Reference Manual version 1.3'
      * section 8.5.2.1 (page 331).</P>
      * <P>
-     * Following the PDF manual, each operand must be a number between 0 (miniumum intensity) and
+     * Following the PDF manual, each operand must be a number between 0 (minimum intensity) and
      * 1 (maximum intensity). This method however accepts only integers between 0x00 and 0xFF.</P>
      *
      * @param red the intensity of red
@@ -2141,7 +2141,7 @@ public class PdfContentByte {
      * <P>
      * This method is described in the 'Portable Document Format Reference Manual version 1.3'
      * section 8.5.2.1 (page 331).</P>
-     * Following the PDF manual, each operand must be a number between 0 (miniumum intensity) and
+     * Following the PDF manual, each operand must be a number between 0 (minimum intensity) and
      * 1 (maximum intensity). This method however accepts only integers between 0x00 and 0xFF.
      *
      * @param red the intensity of red
@@ -2907,7 +2907,7 @@ public class PdfContentByte {
     }
     
     /**
-     * Begins a graphic block whose visibility is controled by the <CODE>layer</CODE>.
+     * Begins a graphic block whose visibility is controlled by the <CODE>layer</CODE>.
      * Blocks can be nested. Each block must be terminated by an {@link #endLayer()}.<p>
      * Note that nested layers with {@link PdfLayer#addChild(PdfLayer)} only require a single
      * call to this method and a single call to {@link #endLayer()}; all the nesting control
@@ -2944,7 +2944,7 @@ public class PdfContentByte {
     }
     
     /**
-     * Ends a layer controled graphic block. It will end the most recent open block.
+     * Ends a layer controlled graphic block. It will end the most recent open block.
      */    
     public void endLayer() {
         int n = 1;

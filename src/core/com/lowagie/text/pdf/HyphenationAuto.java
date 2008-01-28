@@ -66,10 +66,10 @@ public class HyphenationAuto implements HyphenationEvent {
     protected String post;
     
     /** Creates a new hyphenation instance usable in <CODE>Chunk</CODE>.
-     * @param lang the language ("en" for english, for example)
+     * @param lang the language ("en" for English, for example)
      * @param country the country ("GB" for Great-Britain or "none" for no country, for example)
-     * @param leftMin the minimun number of letters before the hyphen
-     * @param rightMin the minimun number of letters after the hyphen
+     * @param leftMin the minimum number of letters before the hyphen
+     * @param rightMin the minimum number of letters after the hyphen
      */    
     public HyphenationAuto(String lang, String country, int leftMin, int rightMin) {
         hyphenator = new Hyphenator(lang, country, leftMin, rightMin);

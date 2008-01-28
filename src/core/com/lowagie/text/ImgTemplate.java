@@ -69,7 +69,7 @@ public class ImgTemplate extends Image {
         super(image);
     }
     
-    /** Creats an Image from a PdfTemplate.
+    /** Creates an Image from a PdfTemplate.
      *
      * @param template the PdfTemplate
      * @throws BadElementException on error

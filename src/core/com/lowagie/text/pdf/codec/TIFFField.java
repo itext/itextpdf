@@ -55,7 +55,7 @@ import java.io.Serializable;
  *
  * <p> A field in a TIFF Image File Directory (IFD).  A field is defined
  * as a sequence of values of identical data type.  TIFF 6.0 defines
- * 12 data types, which are mapped internally onto the Java datatypes
+ * 12 data types, which are mapped internally onto the Java data types
  * byte, int, long, float, and double.
  *
  * <p><b> This class is not a committed part of the JAI API.  It may
@@ -122,7 +122,7 @@ public class TIFFField extends Object implements Comparable, Serializable {
      * Constructs a TIFFField with arbitrary data.  The data
      * parameter must be an array of a Java type appropriate for the
      * type of the TIFF field.  Since there is no available 32-bit
-     * unsigned datatype, long is used. The mapping between types is
+     * unsigned data type, long is used. The mapping between types is
      * as follows:
      *
      * <table border=1>

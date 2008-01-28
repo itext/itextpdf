@@ -54,7 +54,7 @@ import java.util.HashMap;
  * <CODE>PdfPage</CODE> is the PDF Page-object.
  * <P>
  * A Page object is a dictionary whose keys describe a single page containing text,
- * graphics, and images. A Page onjects is a leaf of the Pages tree.<BR>
+ * graphics, and images. A Page object is a leaf of the Pages tree.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 6.4 (page 73-81)
  *
@@ -152,7 +152,7 @@ public class PdfPage extends PdfDictionary {
 /**
  * Checks if this page element is a tree of pages.
  * <P>
- * This method allways returns <CODE>false</CODE>.
+ * This method always returns <CODE>false</CODE>.
  *
  * @return	<CODE>false</CODE> because this is a single page
  */

@@ -53,7 +53,7 @@ package com.lowagie.text;
 import java.lang.reflect.Field;
 
 /**
- * The <CODE>PageSize</CODE>-object contains a number of rectangles representing the most common papersizes.
+ * The <CODE>PageSize</CODE>-object contains a number of rectangles representing the most common paper sizes.
  *
  * @see		Rectangle
  */
@@ -215,7 +215,7 @@ public class PageSize {
     /** This is the Pengiun small paperback format. */
     public static final Rectangle PENGUIN_SMALL_PAPERBACK = new Rectangle(314,513);
     
-    /** This is the Penguin large paparback format. */
+    /** This is the Penguin large paperback format. */
     public static final Rectangle PENGUIN_LARGE_PAPERBACK = new Rectangle(365,561);
       
     /**

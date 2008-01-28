@@ -202,7 +202,7 @@ public class RtfRow {
      * Import a <code>Row</code>.
      * <P>
      * All the parameters are taken from the <code>RtfTable</code> which contains
-     * this <code>RtfRow</code> and they do exactely what they say
+     * this <code>RtfRow</code> and they do exactly what they say
      * @param row
      * @param propWidths in percent
      * @param tableWidth in percent
@@ -218,7 +218,7 @@ public class RtfRow {
     public boolean importRow(Row row, float[] propWidths, int tableWidth, int pageWidth, int cellpadding,
                              int cellspacing, int borders, java.awt.Color borderColor, float borderWidth,
                              int y) {
-        // the width of this row is the absolute witdh, calculated from the
+        // the width of this row is the absolute width, calculated from the
         // proportional with of the table and the total width of the page
         this.origRow = row;
         this.width = pageWidth * tableWidth / 100;

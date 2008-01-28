@@ -72,7 +72,7 @@ import com.lowagie.text.pdf.PdfPTable;
  * <P>
  * The matrix of a table is not necessarily an m x n-matrix. It can contain holes
  * or cells that are bigger than the unit. Believe me or not, but it took some serious
- * thinking to make this as userfriendly as possible. I hope you wil find the result
+ * thinking to make this as user friendly as possible. I hope you will find the result
  * quite simple (I love simple solutions, especially for complex problems).
  * I didn't want it to be something as complex as the Java <CODE>GridBagLayout</CODE>.
  * <P>
@@ -488,7 +488,7 @@ public class Table extends Rectangle implements LargeElement {
     /**
      * Enables/disables automatic insertion of empty cells before table is rendered. (default = false)
      * As some people may want to create a table, fill only a couple of the cells and don't bother with
-     * investigating which empty ones need to be added, this default behaviour may be very welcome.
+     * investigating which empty ones need to be added, this default behavior may be very welcome.
      * Disabling is recommended to increase speed. (empty cells should be added through extra code then)
      *
      * @param       aDoAutoFill   enable/disable autofill
@@ -662,7 +662,7 @@ public class Table extends Rectangle implements LargeElement {
     
 	/**
 	 * Method to check if the Table should be converted to a PdfPTable or not.
-	 * @return false if the table should be handled the oldfashioned way.
+	 * @return false if the table should be handled the old fashioned way.
 	 */
 	public boolean isConvert2pdfptable() {
 		return convert2pdfptable;
@@ -845,7 +845,7 @@ public class Table extends Rectangle implements LargeElement {
     }
     
     /**
-     * Gives you the posibility to add columns.
+     * Gives you the possibility to add columns.
      *
      * @param   aColumns    the number of columns to add
      */
@@ -1208,7 +1208,7 @@ public class Table extends Rectangle implements LargeElement {
             
             int difx = ((rows.size() - aLocation.x) >  aCell.getRowspan()) ? aCell.getRowspan() : rows.size() - aLocation.x;
             int dify = ((columns - aLocation.y) >  aCell.getColspan()) ? aCell.getColspan() : columns - aLocation.y;
-            // no other content at cells targetted by rowspan/colspan
+            // no other content at cells targeted by rowspan/colspan
             for (int i=aLocation.x; i < (aLocation.x + difx); i++) {
                 for (int j=aLocation.y; j < (aLocation.y + dify); j++) {
                     if (((Row) rows.get(i)).isReserved(j)) {
@@ -1320,7 +1320,7 @@ public class Table extends Rectangle implements LargeElement {
      * @param       left            this is the position of the first border at the left (cellpadding not included)
      * @param       totalWidth      this is the space between the first border at the left
      *                                              and the last border at the right (cellpadding not included)
-     * @return      an array with borderpositions
+     * @return      an array with border positions
      */
     public float[] getWidths(float left, float totalWidth) {
         // for x columns, there are x+1 borders
@@ -1429,7 +1429,7 @@ public class Table extends Rectangle implements LargeElement {
 	}
 
 	/**
-	 * Sets the indicaction if the section was already added to
+	 * Sets the indication if the section was already added to
 	 * the document.
 	 * @since	iText2.0.8
 	 * @param notAddedYet

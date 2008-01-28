@@ -852,7 +852,7 @@ public final class BidiOrder {
         byte[] result = (byte[])resultLevels.clone(); // will be returned to caller
         
         // don't worry about linebreaks since if there is a break within
-        // a series of WS values preceeding S, the linebreak itself
+        // a series of WS values preceding S, the linebreak itself
         // causes the reset.
         for (int i = 0; i < result.length; ++i) {
             byte t = initialTypes[i];

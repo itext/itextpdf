@@ -161,8 +161,8 @@ public class RtfDocument extends RtfElement {
     }
     
     /**
-     * Opens the RtfDocument and initialises the data cache. If the data cache is
-     * set to CACHE_DISK, but the cache cannot be initialised then the memory cache
+     * Opens the RtfDocument and initializes the data cache. If the data cache is
+     * set to CACHE_DISK, but the cache cannot be initialized then the memory cache
      * is used.
      */
     public void open() {
@@ -182,7 +182,7 @@ public class RtfDocument extends RtfElement {
             }
     		
         } catch(IOException ioe) {
-            System.err.println("Could not initialise disk cache. Using memory cache.");
+            System.err.println("Could not initialize disk cache. Using memory cache.");
             ioe.printStackTrace();
             this.data = new RtfMemoryCache();
         }
@@ -391,9 +391,9 @@ public class RtfDocument extends RtfElement {
     }
     
     /**
-     * Get whether to autmatically generate table of contents entries
+     * Get whether to automatically generate table of contents entries
      * 
-     * @return Wheter to automatically generate TOC entries
+     * @return Whether to automatically generate TOC entries
      */
     public boolean getAutogenerateTOCEntries() {
         return this.autogenerateTOCEntries;

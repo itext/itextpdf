@@ -57,7 +57,7 @@ import java.util.ArrayList;
  * some meta information about the document.
  * <P>
  * An object of type <CODE>Meta</CODE> can not be constructed by the user.
- * Userdefined meta information should be placed in a <CODE>Header</CODE>-object.
+ * User defined meta information should be placed in a <CODE>Header</CODE>-object.
  * <CODE>Meta</CODE> is reserved for: Subject, Keywords, Author, Title, Producer
  * and Creationdate information.
  *

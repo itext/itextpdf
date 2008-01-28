@@ -308,7 +308,7 @@ public class PdfCopy extends PdfWriter {
     }
     
     /**
-     * convenience method. Given an importedpage, set our "globals"
+     * convenience method. Given an imported page, set our "globals"
      */
     protected int setFromIPage(PdfImportedPage iPage) {
         int pageNum = iPage.getPageNumber();
@@ -464,7 +464,7 @@ public class PdfCopy extends PdfWriter {
      * <P>
      * The pages-tree is built and written to the outputstream.
      * A Catalog is constructed, as well as an Info-object,
-     * the referencetable is composed and everything is written
+     * the reference table is composed and everything is written
      * to the outputstream embedded in a Trailer.
      */
     

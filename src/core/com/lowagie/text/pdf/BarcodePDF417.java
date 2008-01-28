@@ -78,7 +78,7 @@ public class BarcodePDF417 {
      */    
     public static final int PDF417_FIXED_ROWS = 4;
     /** The error level correction is set automatically according
-     * to ISO 15438 recomendations.
+     * to ISO 15438 recommendations.
      */    
     public static final int PDF417_AUTO_ERROR_LEVEL = 0;
     /** The error level correction is set by the user. It can be 0 to 8. */    
@@ -971,7 +971,7 @@ public class BarcodePDF417 {
     }
     
     /** Gets the codeword array. This array is always 928 elements long.
-     * It can be writen to if the option <CODE>PDF417_USE_RAW_CODEWORDS</CODE>
+     * It can be written to if the option <CODE>PDF417_USE_RAW_CODEWORDS</CODE>
      * is set.
      * @return the codeword array
      */

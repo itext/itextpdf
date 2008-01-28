@@ -153,7 +153,7 @@ public class PdfStream extends PdfDictionary {
     /**
      * Writes the stream length to the <CODE>PdfWriter</CODE>.
      * <p>
-     * This method must be called and can only be called if the contructor {@link #PdfStream(InputStream,PdfWriter)}
+     * This method must be called and can only be called if the constructor {@link #PdfStream(InputStream,PdfWriter)}
      * is used to create the stream.
      * @throws IOException on error
      * @see #PdfStream(InputStream,PdfWriter)

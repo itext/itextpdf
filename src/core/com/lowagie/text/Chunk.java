@@ -495,7 +495,7 @@ public class Chunk implements Element {
 	}
 
 	/**
-	 * Gets the text displacement relatiev to the baseline.
+	 * Gets the text displacement relative to the baseline.
 	 * 
 	 * @return a displacement in points
 	 */

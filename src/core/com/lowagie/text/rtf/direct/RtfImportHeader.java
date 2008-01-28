@@ -57,7 +57,7 @@ import com.lowagie.text.rtf.style.RtfColor;
 import com.lowagie.text.rtf.style.RtfFont;
 
 /**
- * The RtfImportHeader stores the docment header information from
+ * The RtfImportHeader stores the document header information from
  * an RTF document that is being imported. Currently font and
  * color settings are stored. The RtfImportHeader maintains a mapping
  * from font and color numbers from the imported RTF document to
@@ -73,7 +73,7 @@ public class RtfImportHeader {
 	 */
 	private HashMap importFontMapping = null;
 	/**
-	 * The HashMap storing the color number mapings.
+	 * The HashMap storing the color number mappings.
 	 */
 	private HashMap importColorMapping = null;
 	/**

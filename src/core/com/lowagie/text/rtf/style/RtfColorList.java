@@ -61,7 +61,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
 
 
 /**
- * The RtfColorList stores all colours that appear in the document. Black
+ * The RtfColorList stores all colors that appear in the document. Black
  * and White are always added
  * 
  * @version $Id$
@@ -71,18 +71,18 @@ import com.lowagie.text.rtf.document.RtfDocument;
 public class RtfColorList extends RtfElement implements RtfExtendedElement {
 
     /**
-     * Constant for the beginning of the colour table
+     * Constant for the beginning of the color table
      */
     private static final byte[] COLOR_TABLE = "\\colortbl".getBytes();
     
     /**
-     * ArrayList containing all colours of this RtfColorList
+     * ArrayList containing all colors of this RtfColorList
      */
     ArrayList colorList = new ArrayList();
     
     /**
      * Constructs a new RtfColorList for the RtfDocument. Will add the default
-     * black and white colours.
+     * black and white colors.
      * 
      * @param doc The RtfDocument this RtfColorList belongs to
      */
@@ -93,8 +93,8 @@ public class RtfColorList extends RtfElement implements RtfExtendedElement {
     }
     
     /**
-     * Returns the index of the given RtfColor in the colour list. If the RtfColor
-     * is not in the list of colours, then it is added.
+     * Returns the index of the given RtfColor in the color list. If the RtfColor
+     * is not in the list of colors, then it is added.
      * 
      * @param color The RtfColor for which to get the index
      * @return The index of the RtfColor
@@ -130,10 +130,10 @@ public class RtfColorList extends RtfElement implements RtfExtendedElement {
     }
     
     /**
-     * Write the definition part of the colour list. Calls the writeDefinition
-     * methods of the RtfColors in the colour list. 
+     * Write the definition part of the color list. Calls the writeDefinition
+     * methods of the RtfColors in the color list. 
      * 
-     * @return A byte array with the definition colour list
+     * @return A byte array with the definition color list
      * @deprecated As of iText 2.0.6 or earlier, replaced by
      * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
      */
@@ -148,8 +148,8 @@ public class RtfColorList extends RtfElement implements RtfExtendedElement {
     }
 
     /**
-     * Write the definition part of the colour list. Calls the writeDefinition
-     * methods of the RtfColors in the colour list. 
+     * Write the definition part of the color list. Calls the writeDefinition
+     * methods of the RtfColors in the color list. 
      */
     public void writeDefinition(final OutputStream result) throws IOException
     {

@@ -97,7 +97,7 @@ public class ExceptionConverter extends RuntimeException {
 
     /**
      * The toString() is changed to be prefixed with ExceptionConverter 
-     * @return Stringversion of the exception
+     * @return String version of the exception
      */
     public String toString() {
         return prefix + ex;

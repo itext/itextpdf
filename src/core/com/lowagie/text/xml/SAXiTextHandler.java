@@ -177,7 +177,7 @@ public class SAXiTextHandler extends DefaultHandler {
      * Document.open() and Document.close() method.
      * <P>
      * If you set this parameter to true (= default), the parser will open the
-     * Document object when the start-root-tag is encounterd and close it when
+     * Document object when the start-root-tag is encountered and close it when
      * the end-root-tag is met. If you set it to false, you have to open and
      * close the Document object yourself.
      * 

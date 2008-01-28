@@ -80,7 +80,7 @@ public class RtfTab extends RtfAddableElement {
 	 */
 	public static final int TAB_LEFT_ALIGN = 0;
 	/**
-	 * A tab where the text is centre aligned.
+	 * A tab where the text is center aligned.
 	 */
 	public static final int TAB_CENTER_ALIGN = 1;
 	/**

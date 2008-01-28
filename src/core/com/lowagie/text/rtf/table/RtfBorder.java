@@ -115,7 +115,7 @@ public class RtfBorder extends RtfElement {
      */
     protected static final byte[] BORDER_WIDTH = "\\brdrw".getBytes();
     /**
-     * Constant for the border colour number
+     * Constant for the border color number
      */
     protected static final byte[] BORDER_COLOR_NUMBER = "\\brdrcf".getBytes();
     /**
@@ -375,7 +375,7 @@ public class RtfBorder extends RtfElement {
      */
     private int borderWidth = 20;
     /**
-     * The colour of this RtfBorder
+     * The color of this RtfBorder
      */
     private RtfColor borderColor = null;
     
@@ -403,7 +403,7 @@ public class RtfBorder extends RtfElement {
      * @param borderPosition The position of this RtfBorder
      * @param borderStyle The style of this RtfBorder
      * @param borderWidth The width of this RtfBorder
-     * @param borderColor The colour of this RtfBorder
+     * @param borderColor The color of this RtfBorder
      */
     protected RtfBorder(RtfDocument doc, int borderType, int borderPosition, int borderStyle, float borderWidth, Color borderColor) {
         super(doc);
@@ -543,7 +543,7 @@ public class RtfBorder extends RtfElement {
     }
     
     /**
-     * Gets the colour of this RtfBorder
+     * Gets the color of this RtfBorder
      * 
      * @return Returns RtfColor of this RtfBorder
      */

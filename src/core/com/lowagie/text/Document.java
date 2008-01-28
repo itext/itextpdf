@@ -71,7 +71,7 @@ import java.util.Iterator;
  * opened.
  * <LI>When you change the header/footer on a certain page, this will be
  * effective starting on the next page.
- * <LI>Ater closing the document, every listener (as well as its <CODE>
+ * <LI>After closing the document, every listener (as well as its <CODE>
  * OutputStream</CODE>) is closed too.
  * </OL>
  * Example: <BLOCKQUOTE>

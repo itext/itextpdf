@@ -48,7 +48,7 @@ package com.lowagie.text;
 
 /**
  * 
- * A special-version of <CODE>LIST</CODE> whitch use zapfdingbats-numbers (1..10).
+ * A special-version of <CODE>LIST</CODE> which use zapfdingbats-numbers (1..10).
  * 
  * @see com.lowagie.text.List
  * @author Michael Niedermair and Bruno Lowagie

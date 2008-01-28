@@ -57,7 +57,7 @@ import com.lowagie.text.Rectangle;
  * <P>
  * Rectangles are used to describe locations on the page and bounding boxes for several
  * objects in PDF, such as fonts. A rectangle is represented as an <CODE>array</CODE> of
- * four numbers, specifying the lower lef <I>x</I>, lower left <I>y</I>, upper right <I>x</I>,
+ * four numbers, specifying the lower left <I>x</I>, lower left <I>y</I>, upper right <I>x</I>,
  * and upper right <I>y</I> coordinates of the rectangle, in that order.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 7.1 (page 183).
@@ -171,7 +171,7 @@ public class PdfRectangle extends PdfArray {
 /**
  * Returns the lower left x-coordinate.
  *
- * @return		the lower left x-coordinaat
+ * @return		the lower left x-coordinate
  */
     
     public float left() {

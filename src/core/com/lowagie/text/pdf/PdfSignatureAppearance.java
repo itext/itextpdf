@@ -850,7 +850,7 @@ public class PdfSignatureAppearance {
      * <p>
      * If calling preClose() <B>dont't</B> call PdfStamper.close().
      * <p>
-     * No external signatures are allowed if this methos is called.
+     * No external signatures are allowed if this method is called.
      * @throws IOException on error
      * @throws DocumentException on error
      */    
@@ -1202,7 +1202,7 @@ public class PdfSignatureAppearance {
     }
     
     /**
-     * Acrobat 6.0 and higher recomends that only layer n2 and n4 be present. This method sets that mode.
+     * Acrobat 6.0 and higher recommends that only layer n2 and n4 be present. This method sets that mode.
      * @param acro6Layers if <code>true</code> only the layers n2 and n4 will be present
      */
     public void setAcro6Layers(boolean acro6Layers) {

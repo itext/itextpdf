@@ -83,7 +83,7 @@ public class PdfAnnotationsImp {
     protected ArrayList annotations;
     
     /**
-     * This is an array containg references to some delayed annotations
+     * This is an array containing references to some delayed annotations
      * (that were added for a page that doesn't exist yet).
      */
     protected ArrayList delayedAnnotations = new ArrayList();

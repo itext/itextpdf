@@ -143,7 +143,7 @@ public class ByteBuffer extends OutputStream {
      * Converts an double (multiplied by 100 and cast to an int) into an array of bytes.
      *
      * @param   i   the int
-     * @return  a bytearray
+     * @return  a byte array
      */
     
     private static byte[] convertToBytes(int i) {

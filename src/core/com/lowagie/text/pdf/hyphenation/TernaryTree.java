@@ -23,7 +23,7 @@ import java.util.Stack;
 /**
  * <h2>Ternary Search Tree.</h2>
  *
- * <p>A ternary search tree is a hibrid between a binary tree and
+ * <p>A ternary search tree is a hybrid between a binary tree and
  * a digital search tree (trie). Keys are limited to strings.
  * A data value of type char is stored in each leaf node.
  * It can be used as an index (or pointer) to the data.
@@ -45,12 +45,12 @@ import java.util.Stack;
  * patterns which will be keys in this tree. The strings patterns
  * are usually small (from 2 to 5 characters), but each char in the
  * tree is stored in a node. Thus memory usage is the main concern.
- * We will sacrify 'elegance' to keep memory requirenments to the
+ * We will sacrifice 'elegance' to keep memory requirements to the
  * minimum. Using java's char type as pointer (yes, I know pointer
  * it is a forbidden word in java) we can keep the size of the node
  * to be just 8 bytes (3 pointers and the data char). This gives
- * room for about 65000 nodes. In my tests the english patterns
- * took 7694 nodes and the german patterns 10055 nodes,
+ * room for about 65000 nodes. In my tests the English patterns
+ * took 7694 nodes and the German patterns 10055 nodes,
  * so I think we are safe.</p>
  *
  * <p>All said, this is a map with strings as keys and char as value.
@@ -97,7 +97,7 @@ public class TernaryTree implements Cloneable, Serializable {
      * <li>0xFFFF to indicate that the branch starting at
      * this node is compressed</li></ul>
      * <p>This shouldn't be a problem if we give the usual semantics to
-     * strings since 0xFFFF is garanteed not to be an Unicode character.</p>
+     * strings since 0xFFFF is guaranteed not to be an Unicode character.</p>
      */
     protected char[] sc;
 
@@ -194,7 +194,7 @@ public class TernaryTree implements Cloneable, Serializable {
                 eq[p] = pp;
                 lo[pp]++;
                 if (kv.get(lo[pp]) == 0) {
-                    // key completly decompressed leaving garbage in key array
+                    // key completely decompressed leaving garbage in key array
                     lo[pp] = 0;
                     sc[pp] = 0;
                     hi[pp] = 0;

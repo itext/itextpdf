@@ -70,12 +70,12 @@ public class RtfShapeProperty extends RtfAddableElement {
      */
     public static final String PROPERTY_LAYOUT_IN_CELL = "fLayoutInCell";
     /**
-     * Property for signalling a vertical flip of the shape. Requires a
+     * Property for signaling a vertical flip of the shape. Requires a
      * boolean value.
      */
     public static final String PROPERTY_FLIP_V = "fFlipV";
     /**
-     * Property for signalling a horizontal flip of the shape. Requires a
+     * Property for signaling a horizontal flip of the shape. Requires a
      * boolean value.
      */
     public static final String PROPERTY_FLIP_H = "fFlipH";
@@ -134,7 +134,7 @@ public class RtfShapeProperty extends RtfAddableElement {
 	private Object value = null;
 	
     /**
-     * Internaly used to create the RtfShape.
+     * Internally used to create the RtfShape.
      * 
      * @param name The property name to use.
      * @param value The property value to use.

@@ -463,8 +463,8 @@ public class PdfPTable implements LargeElement{
      * @param rowStart the first row to be written, zero index
      * @param rowEnd the last row to be written + 1. If it is -1 all the
      * rows to the end are written
-     * @param xPos the x write coodinate
-     * @param yPos the y write coodinate
+     * @param xPos the x write coordinate
+     * @param yPos the y write coordinate
      * @param canvases an array of 4 <CODE>PdfContentByte</CODE> obtained from
      * <CODE>beginWrittingRows()</CODE>
      * @return the y coordinate position of the bottom of the last row
@@ -487,8 +487,8 @@ public class PdfPTable implements LargeElement{
      * @param rowStart the first row to be written, zero index
      * @param rowEnd the last row to be written + 1. If it is -1 all the
      * rows to the end are written
-     * @param xPos the x write coodinate
-     * @param yPos the y write coodinate
+     * @param xPos the x write coordinate
+     * @param yPos the y write coordinate
      * @param canvases an array of 4 <CODE>PdfContentByte</CODE> obtained from
      * <CODE>beginWrittingRows()</CODE>
      * @return the y coordinate position of the bottom of the last row
@@ -540,8 +540,8 @@ public class PdfPTable implements LargeElement{
      * @param rowStart the first row to be written, zero index
      * @param rowEnd the last row to be written + 1. If it is -1 all the
      * rows to the end are written
-     * @param xPos the x write coodinate
-     * @param yPos the y write coodinate
+     * @param xPos the x write coordinate
+     * @param yPos the y write coordinate
      * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
      * be written to
      * @return the y coordinate position of the bottom of the last row
@@ -562,8 +562,8 @@ public class PdfPTable implements LargeElement{
      * @param rowStart the first row to be written, zero index
      * @param rowEnd the last row to be written + 1. If it is -1 all the
      * rows to the end are written
-     * @param xPos the x write coodinate
-     * @param yPos the y write coodinate
+     * @param xPos the x write coordinate
+     * @param yPos the y write coordinate
      * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
      * be written to
      * @return the y coordinate position of the bottom of the last row

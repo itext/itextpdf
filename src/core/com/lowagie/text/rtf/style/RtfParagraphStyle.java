@@ -106,7 +106,7 @@ public class RtfParagraphStyle extends RtfFont {
      */
     public static final byte[] KEEP_TOGETHER = "\\keep".getBytes();
     /**
-     * Constant for keeping the paragraph toghether with the next one on one page
+     * Constant for keeping the paragraph together with the next one on one page
      */
     public static final byte[] KEEP_TOGETHER_WITH_NEXT = "\\keepn".getBytes();
     /**
@@ -136,7 +136,7 @@ public class RtfParagraphStyle extends RtfFont {
     public static final RtfParagraphStyle STYLE_HEADING_3 = new RtfParagraphStyle("heading 3", "Normal");
 
     /**
-     * Initialises the properties of the styles.
+     * Initializes the properties of the styles.
      */
     static {
         STYLE_HEADING_1.setSize(16);
@@ -186,7 +186,7 @@ public class RtfParagraphStyle extends RtfFont {
      */
     private static final int MODIFIED_FONT_STYLE = 128;
     /**
-     * The font colour has been modified.
+     * The font color has been modified.
      */
     private static final int MODIFIED_FONT_COLOR = 256;
     /**
@@ -266,7 +266,7 @@ public class RtfParagraphStyle extends RtfFont {
      * @param fontName The name of the font to use for this RtfParagraphStyle.
      * @param fontSize The size of the font to use for this RtfParagraphStyle.
      * @param fontStyle The style of the font to use for this RtfParagraphStyle.
-     * @param fontColor The colour of the font to use for this RtfParagraphStyle.
+     * @param fontColor The color of the font to use for this RtfParagraphStyle.
      */
     public RtfParagraphStyle(String styleName, String fontName, int fontSize, int fontStyle, Color fontColor) {
         super(null, new RtfFont(fontName, fontSize, fontStyle, fontColor));
@@ -362,7 +362,7 @@ public class RtfParagraphStyle extends RtfFont {
     }
     
     /**
-     * Sets the first line indententation of this RtfParagraphStyle. It
+     * Sets the first line indentation of this RtfParagraphStyle. It
      * is relative to the left indentation.
      * 
      * @param firstLineIndent The first line indentation to use.
@@ -478,7 +478,7 @@ public class RtfParagraphStyle extends RtfFont {
     }
     
     /**
-     * Sets the colour of this RtfParagraphStyle.
+     * Sets the color of this RtfParagraphStyle.
      * 
      * @param color The Color to use.
      */
@@ -528,7 +528,7 @@ public class RtfParagraphStyle extends RtfFont {
     }
     
     /**
-     * Gets whether the paragraph should be kept toggether with the next in
+     * Gets whether the paragraph should be kept together with the next in
      * this RtfParagraphStyle.
      * 
      * @return Whether the paragraph should be kept together with the next.

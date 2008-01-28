@@ -372,7 +372,7 @@ public class RtfWriter extends DocWriter {
      * Colors
      */
 
-    /** Begin colour table tag. */
+    /** Begin color table tag. */
     private static final byte[] colorTable = "colortbl".getBytes();
 
     /** Red value tag. */
@@ -573,7 +573,7 @@ public class RtfWriter extends DocWriter {
     /** This <code>ArrayList</code> contains all fonts used in the document. */
     private ArrayList fontList = new ArrayList();
 
-    /** This <code>ArrayList</code> contains all colours used in the document. */
+    /** This <code>ArrayList</code> contains all colors used in the document. */
     private ArrayList colorList = new ArrayList();
 
     /** This <code>ByteArrayOutputStream</code> contains the main body of the document. */
@@ -1622,7 +1622,7 @@ public class RtfWriter extends DocWriter {
     }
 
     /**
-     * Add a <code>Meta</code> element. It is written to the Inforamtion Group
+     * Add a <code>Meta</code> element. It is written to the Information Group
      * and merged with the main <code>ByteArrayOutputStream</code> when the
      * Document is closed.
      *
@@ -1709,12 +1709,12 @@ public class RtfWriter extends DocWriter {
     }
 
     /**
-     * Add a new <code>Color</code> to the list of colours. If the <code>Color</code>
-     * already exists in the list of colours, then it is not added again.
+     * Add a new <code>Color</code> to the list of colors. If the <code>Color</code>
+     * already exists in the list of colors, then it is not added again.
      *
      * @param newColor The <code>Color</code> to be added
      *
-     * @return The index of the <code>color</code> in the colour list
+     * @return The index of the <code>color</code> in the color list
      */
     protected int addColor(Color newColor) {
         int cn = 0;
@@ -1733,7 +1733,7 @@ public class RtfWriter extends DocWriter {
      * Merge all the different <code>ArrayList</code>s and <code>ByteArrayOutputStream</code>s
      * to the final <code>ByteArrayOutputStream</code>
      *
-     * @return <code>true</code> if all information was sucessfully written to the <code>ByteArrayOutputStream</code>
+     * @return <code>true</code> if all information was successfully written to the <code>ByteArrayOutputStream</code>
      */
     private boolean writeDocument() {
         try {
@@ -1852,7 +1852,7 @@ public class RtfWriter extends DocWriter {
     }
 
     /**
-     * Write the colour list to the final <code>ByteArrayOutputStream</code>
+     * Write the color list to the final <code>ByteArrayOutputStream</code>
      * @throws IOException
      */
     private void writeColorList() throws IOException {
@@ -2056,7 +2056,7 @@ public class RtfWriter extends DocWriter {
     }
 
     /**
-     * Initialise all helper classes.
+     * initialize all helper classes.
      * Clears alls lists, creates new <code>ByteArrayOutputStream</code>'s
      */
     private void initDefaults() {

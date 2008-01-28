@@ -72,7 +72,7 @@ public interface PdfVersion {
     /**
 	 * If the PDF Header hasn't been written yet,
 	 * this changes the version as it will appear in the PDF Header,
-	 * but only if param refers to a higher version.
+	 * but only if the parameter refers to a higher version.
 	 * If the PDF header was already written to the OutputStream,
 	 * this changes the version as it will appear in the Catalog.
 	 * @param version	a character representing the PDF version

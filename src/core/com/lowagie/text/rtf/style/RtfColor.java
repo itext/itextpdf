@@ -86,12 +86,12 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
      */
     private static final byte COLON = (byte) ';';
     /**
-     * Constant for the number of the colour in the list of colours
+     * Constant for the number of the color in the list of colors
      */
     private static final byte[] COLOR_NUMBER = "\\cf".getBytes();
 
     /**
-     * The number of the colour in the list of colours
+     * The number of the color in the list of colors
      */
     private int colorNumber = 0;
     /**
@@ -114,7 +114,7 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
      * @param red The red value to use
      * @param green The green value to use
      * @param blue The blue value to use
-     * @param colorNumber The number of the colour in the colour list
+     * @param colorNumber The number of the color in the color list
      */
     protected RtfColor(RtfDocument doc, int red, int green, int blue, int colorNumber) {
         super(doc);
@@ -197,7 +197,7 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
     /**
      * Write the definition part of this RtfColor.
      * 
-     * @return A byte array with the definition of this colour
+     * @return A byte array with the definition of this color
      * @deprecated As of iText 2.0.6 or earlier, replaced by
      * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
      */
@@ -228,7 +228,7 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
     /**
      * Writes the beginning of this RtfColor
      * 
-     * @return A byte array with the colour start data
+     * @return A byte array with the color start data
      */
     public byte[] writeBegin() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -254,7 +254,7 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
      * Tests if this RtfColor is equal to another RtfColor.
      * 
      * @param obj another RtfColor
-     * @return <code>True</code> if red, green and blue values of the two colours match,
+     * @return <code>True</code> if red, green and blue values of the two colors match,
      *   <code>false</code> otherwise.
      */
     public boolean equals(Object obj) {
@@ -304,7 +304,7 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
     }
     
     /**
-     * Gets the number of this RtfColor in the list of colours
+     * Gets the number of this RtfColor in the list of colors
      * 
      * @return Returns the colorNumber.
      */

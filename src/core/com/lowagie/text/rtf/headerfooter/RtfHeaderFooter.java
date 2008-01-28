@@ -126,7 +126,7 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
      */
     private static final byte[] FOOTER_FIRST = "\\footerf".getBytes();
     /**
-     * Constnat for a footer on the left hand pages
+     * Constant for a footer on the left hand pages
      */
     private static final byte[] FOOTER_LEFT = "\\footerl".getBytes();
     /**
