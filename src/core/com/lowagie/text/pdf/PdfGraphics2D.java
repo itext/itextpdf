@@ -436,18 +436,24 @@ public class PdfGraphics2D extends Graphics2D {
             double width = 0;
             if (font.getSize2D() > 0) {
                 float scale = 1000 / font.getSize2D();
-                width = font.deriveFont(AffineTransform.getScaleInstance(scale, scale)).getStringBounds(s, getFontRenderContext()).getWidth() / scale;
+                Font derivedFont = font.deriveFont(AffineTransform.getScaleInstance(scale, scale));
+                width = derivedFont.getStringBounds(s, getFontRenderContext()).getWidth();
+                if (derivedFont.isTransformed())
+                    width /= scale;
             }
             // if the hyperlink flag is set add an action to the text
             Object url = getRenderingHint(HyperLinkKey.KEY_INSTANCE);
             if (url != null && !url.equals(HyperLinkKey.VALUE_HYPERLINKKEY_OFF))
             {
-            	float scale = 1000 / font.getSize2D();
-            	double height = font.deriveFont(AffineTransform.getScaleInstance(scale, scale)).getStringBounds(s, getFontRenderContext()).getHeight() / scale;
+                float scale = 1000 / font.getSize2D();
+                Font derivedFont = font.deriveFont(AffineTransform.getScaleInstance(scale, scale));
+                double height = derivedFont.getStringBounds(s, getFontRenderContext()).getHeight();
+                if (derivedFont.isTransformed())
+                    height /= scale;
                 double leftX = cb.getXTLM();
                 double leftY = cb.getYTLM();
                 PdfAction action = new  PdfAction(url.toString());
-				cb.setAction(action, (float)leftX, (float)leftY, (float)(leftX+width), (float)(leftY+height));
+                cb.setAction(action, (float)leftX, (float)leftY, (float)(leftX+width), (float)(leftY+height));
             }
             if (s.length() > 1) {
                 float adv = ((float)width - baseFont.getWidthPoint(s, fontSize)) / (s.length() - 1);
