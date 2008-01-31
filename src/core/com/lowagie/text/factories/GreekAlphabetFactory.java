@@ -1,5 +1,5 @@
 /*
- * $Id: GreekNumberFactory.java 2686 2007-04-17 09:09:25Z blowagie $
+ * $Id$
  * $Name$
  *
  * Copyright 2007 by Bruno Lowagie.
