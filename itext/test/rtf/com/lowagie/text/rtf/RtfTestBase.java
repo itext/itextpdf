@@ -1,5 +1,5 @@
 /*
- * $Id: RtfAddableElement.java 2996 2007-11-20 22:40:36Z hallm $
+ * $Id$
  * $Name$
  *
  * Copyright 2007 by Mark Hall
