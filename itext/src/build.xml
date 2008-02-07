@@ -36,8 +36,8 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.rtf" />
 	</target>
 	
-	<target name="delete">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="delete" />
+	<target name="clean">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="clean" />
 	</target>
 	
 	<target name="jar">
