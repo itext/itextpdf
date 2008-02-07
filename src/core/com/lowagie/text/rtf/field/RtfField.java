@@ -284,7 +284,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
-        result.write(this.font.writeBegin());
+        this.font.writeBegin(result);
         writeFieldBegin(result);
         writeFieldInstBegin(result);
         writeFieldInstContent(result);
@@ -293,7 +293,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
         writeFieldResultContent(result);
         writeFieldResultEnd(result);
         writeFieldEnd(result);
-        result.write(this.font.writeEnd());
+        this.font.writeEnd(result);
     }        
         
     /**

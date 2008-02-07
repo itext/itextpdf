@@ -142,7 +142,7 @@ public class RtfChunk extends RtfElement {
             result.write(OPEN_GROUP);
         }
         
-        result.write(font.writeBegin());
+        this.font.writeBegin(result);
         if(superSubScript < 0) {
             result.write(FONT_SUBSCRIPT);
         } else if(superSubScript > 0) {
@@ -158,7 +158,7 @@ public class RtfChunk extends RtfElement {
         if(superSubScript != 0) {
             result.write(FONT_END_SUPER_SUBSCRIPT);
         }
-        result.write(font.writeEnd());
+        this.font.writeEnd(result);
         
         if(this.background != null) {
             result.write(CLOSE_GROUP);

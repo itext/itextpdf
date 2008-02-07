@@ -50,7 +50,6 @@
 package com.lowagie.text.rtf.style;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -599,56 +598,51 @@ public class RtfParagraphStyle extends RtfFont {
     /**
      * Writes the settings of this RtfParagraphStyle.
      * 
-     * @return A byte array with the settings of this RtfParagraphStyle.
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException On i/o errors.
      */
-    private byte[] writeParagraphSettings() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-            if(this.keepTogether) {
-                result.write(RtfParagraphStyle.KEEP_TOGETHER);
-            }
-            if(this.keepTogetherWithNext) {
-                result.write(RtfParagraphStyle.KEEP_TOGETHER_WITH_NEXT);
-            }
-            switch (alignment) {
-                case Element.ALIGN_LEFT:
-                    result.write(RtfParagraphStyle.ALIGN_LEFT);
-                    break;
-                case Element.ALIGN_RIGHT:
-                    result.write(RtfParagraphStyle.ALIGN_RIGHT);
-                    break;
-                case Element.ALIGN_CENTER:
-                    result.write(RtfParagraphStyle.ALIGN_CENTER);
-                    break;
-                case Element.ALIGN_JUSTIFIED:
-                case Element.ALIGN_JUSTIFIED_ALL:
-                    result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
-                    break;
-            }
-            result.write(FIRST_LINE_INDENT);
-            result.write(intToByteArray(this.firstLineIndent));
-            result.write(RtfParagraphStyle.INDENT_LEFT);
-            result.write(intToByteArray(indentLeft));
-            result.write(RtfParagraphStyle.INDENT_RIGHT);
-            result.write(intToByteArray(indentRight));
-            if(this.spacingBefore > 0) {
-                result.write(RtfParagraphStyle.SPACING_BEFORE);
-                result.write(intToByteArray(this.spacingBefore));
-            }
-            if(this.spacingAfter > 0) {
-                result.write(RtfParagraphStyle.SPACING_AFTER);
-                result.write(intToByteArray(this.spacingAfter));
-            }
-            if(this.lineLeading > 0) {
-                result.write(RtfParagraph.LINE_SPACING);
-                result.write(intToByteArray(this.lineLeading));
-            }            
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
+    private void writeParagraphSettings(final OutputStream result) throws IOException {
+        if(this.keepTogether) {
+            result.write(RtfParagraphStyle.KEEP_TOGETHER);
         }
-        return result.toByteArray();
+        if(this.keepTogetherWithNext) {
+            result.write(RtfParagraphStyle.KEEP_TOGETHER_WITH_NEXT);
+        }
+        switch (alignment) {
+            case Element.ALIGN_LEFT:
+                result.write(RtfParagraphStyle.ALIGN_LEFT);
+                break;
+            case Element.ALIGN_RIGHT:
+                result.write(RtfParagraphStyle.ALIGN_RIGHT);
+                break;
+            case Element.ALIGN_CENTER:
+                result.write(RtfParagraphStyle.ALIGN_CENTER);
+                break;
+            case Element.ALIGN_JUSTIFIED:
+            case Element.ALIGN_JUSTIFIED_ALL:
+                result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
+                break;
+        }
+        result.write(FIRST_LINE_INDENT);
+        result.write(intToByteArray(this.firstLineIndent));
+        result.write(RtfParagraphStyle.INDENT_LEFT);
+        result.write(intToByteArray(indentLeft));
+        result.write(RtfParagraphStyle.INDENT_RIGHT);
+        result.write(intToByteArray(indentRight));
+        if(this.spacingBefore > 0) {
+            result.write(RtfParagraphStyle.SPACING_BEFORE);
+            result.write(intToByteArray(this.spacingBefore));
+        }
+        if(this.spacingAfter > 0) {
+            result.write(RtfParagraphStyle.SPACING_AFTER);
+            result.write(intToByteArray(this.spacingAfter));
+        }
+        if(this.lineLeading > 0) {
+            result.write(RtfParagraph.LINE_SPACING);
+            result.write(intToByteArray(this.lineLeading));
+        }            
     }
-    
+
     /**
      * Writes the definition of this RtfParagraphStyle for the stylesheet list.
      */
@@ -659,8 +653,8 @@ public class RtfParagraphStyle extends RtfFont {
         result.write("\\s".getBytes());
         result.write(intToByteArray(this.styleNumber));
         result.write(RtfBasicElement.DELIMITER);
-        result.write(writeParagraphSettings());
-        result.write(super.writeBegin());
+        writeParagraphSettings(result);
+        super.writeBegin(result);
         result.write(RtfBasicElement.DELIMITER);
         result.write(this.styleName.getBytes());
         result.write(";".getBytes());
@@ -672,25 +666,23 @@ public class RtfParagraphStyle extends RtfFont {
     
     /**
      * Writes the start information of this RtfParagraphStyle.
+     *
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException On i/o errors.
      */
-    public byte[] writeBegin() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-            result.write("\\s".getBytes());
-            result.write(intToByteArray(this.styleNumber));
-            result.write(writeParagraphSettings());
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
+    public void writeBegin(final OutputStream result) throws IOException {
+        result.write("\\s".getBytes());
+        result.write(intToByteArray(this.styleNumber));
+        writeParagraphSettings(result);
     }
     
     /**
      * Unused
-     * @return An empty byte array.
+     * 
+     * @param result The <code>OutputStream</code> that nothing is written to
+     * @throws IOException On i/o errors.
      */
-    public byte[] writeEnd() {
-        return new byte[0];
+    public void writeEnd(final OutputStream result) throws IOException {
     }
     
     /**

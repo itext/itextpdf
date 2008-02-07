@@ -148,7 +148,7 @@ public class RtfParagraph extends RtfPhrase {
         }
         
         if(this.paragraphStyle != null) {
-            result.write(this.paragraphStyle.writeBegin());
+            this.paragraphStyle.writeBegin(result);
         }
         result.write("\\plain".getBytes());
         
@@ -158,7 +158,7 @@ public class RtfParagraph extends RtfPhrase {
         }
         
         if(this.paragraphStyle != null) {
-            result.write(this.paragraphStyle.writeEnd());
+            this.paragraphStyle.writeEnd(result);
         }
         
         if(!inTable) {

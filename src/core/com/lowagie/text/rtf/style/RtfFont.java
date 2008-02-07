@@ -51,7 +51,6 @@
 package com.lowagie.text.rtf.style;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -333,115 +332,105 @@ public class RtfFont extends Font implements RtfExtendedElement {
     /**
      * Writes the font beginning
      *
-     * @return A byte array with the font start data
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException On i/o errors.
      */
-    public byte[] writeBegin() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-            if(this.fontNumber != Font.UNDEFINED) {
-                result.write(RtfFontList.FONT_NUMBER);
-                result.write(intToByteArray(fontNumber));
-            }
-            if(this.fontSize != Font.UNDEFINED) {
-                result.write(FONT_SIZE);
-                result.write(intToByteArray(fontSize * 2));
-            }
-            if(this.fontStyle != UNDEFINED) {
-                if((fontStyle & STYLE_BOLD) == STYLE_BOLD) {
-                    result.write(FONT_BOLD);
-                }
-                if((fontStyle & STYLE_ITALIC) == STYLE_ITALIC) {
-                    result.write(FONT_ITALIC);
-                }
-                if((fontStyle & STYLE_UNDERLINE) == STYLE_UNDERLINE) {
-                    result.write(FONT_UNDERLINE);
-                }
-                if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
-                    result.write(FONT_STRIKETHROUGH);
-                }
-                if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
-                    result.write(FONT_HIDDEN);
-                }
-                if((fontStyle & STYLE_DOUBLE_STRIKETHROUGH) == STYLE_DOUBLE_STRIKETHROUGH) {
-                    result.write(FONT_DOUBLE_STRIKETHROUGH);
-                    result.write(intToByteArray(1));
-                }
-                if((fontStyle & STYLE_SHADOW) == STYLE_SHADOW) {
-                    result.write(FONT_SHADOW);
-                }
-                if((fontStyle & STYLE_OUTLINE) == STYLE_OUTLINE) {
-                    result.write(FONT_OUTLINE);
-                }
-                if((fontStyle & STYLE_EMBOSSED) == STYLE_EMBOSSED) {
-                    result.write(FONT_EMBOSSED);
-                }
-                if((fontStyle & STYLE_ENGRAVED) == STYLE_ENGRAVED) {
-                    result.write(FONT_ENGRAVED);
-                }
-            }
-            if(color != null) {
-                result.write(color.writeBegin());
-            }
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
+    public void writeBegin(final OutputStream result) throws IOException {
+        if(this.fontNumber != Font.UNDEFINED) {
+            result.write(RtfFontList.FONT_NUMBER);
+            result.write(intToByteArray(fontNumber));
         }
-        return result.toByteArray();
+        if(this.fontSize != Font.UNDEFINED) {
+            result.write(FONT_SIZE);
+            result.write(intToByteArray(fontSize * 2));
+        }
+        if(this.fontStyle != UNDEFINED) {
+            if((fontStyle & STYLE_BOLD) == STYLE_BOLD) {
+                result.write(FONT_BOLD);
+            }
+            if((fontStyle & STYLE_ITALIC) == STYLE_ITALIC) {
+                result.write(FONT_ITALIC);
+            }
+            if((fontStyle & STYLE_UNDERLINE) == STYLE_UNDERLINE) {
+                result.write(FONT_UNDERLINE);
+            }
+            if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
+                result.write(FONT_STRIKETHROUGH);
+            }
+            if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
+                result.write(FONT_HIDDEN);
+            }
+            if((fontStyle & STYLE_DOUBLE_STRIKETHROUGH) == STYLE_DOUBLE_STRIKETHROUGH) {
+                result.write(FONT_DOUBLE_STRIKETHROUGH);
+                result.write(intToByteArray(1));
+            }
+            if((fontStyle & STYLE_SHADOW) == STYLE_SHADOW) {
+                result.write(FONT_SHADOW);
+            }
+            if((fontStyle & STYLE_OUTLINE) == STYLE_OUTLINE) {
+                result.write(FONT_OUTLINE);
+            }
+            if((fontStyle & STYLE_EMBOSSED) == STYLE_EMBOSSED) {
+                result.write(FONT_EMBOSSED);
+            }
+            if((fontStyle & STYLE_ENGRAVED) == STYLE_ENGRAVED) {
+                result.write(FONT_ENGRAVED);
+            }
+        }
+        if(color != null) {
+            color.writeBegin(result);
+        }
     }
-    
+
     /**
      * Write the font end
      *
-     * @return A byte array with the end of font data
+     * @param result The <code>OutputStream</code> to write to.
+     * @throws IOException On i/o errors.
      */
-    public byte[] writeEnd() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-            if(this.fontStyle != UNDEFINED) {
-                if((fontStyle & STYLE_BOLD) == STYLE_BOLD) {
-                    result.write(FONT_BOLD);
-                    result.write(intToByteArray(0));
-                }
-                if((fontStyle & STYLE_ITALIC) == STYLE_ITALIC) {
-                    result.write(FONT_ITALIC);
-                    result.write(intToByteArray(0));
-                }
-                if((fontStyle & STYLE_UNDERLINE) == STYLE_UNDERLINE) {
-                    result.write(FONT_UNDERLINE);
-                    result.write(intToByteArray(0));
-                }
-                if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
-                    result.write(FONT_STRIKETHROUGH);
-                    result.write(intToByteArray(0));
-                }
-                if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
-                    result.write(FONT_HIDDEN);
-                    result.write(intToByteArray(0));
-                }
-                if((fontStyle & STYLE_DOUBLE_STRIKETHROUGH) == STYLE_DOUBLE_STRIKETHROUGH) {
-                    result.write(FONT_DOUBLE_STRIKETHROUGH);
-                    result.write(intToByteArray(0));
-                }
-                if((fontStyle & STYLE_SHADOW) == STYLE_SHADOW) {
-                    result.write(FONT_SHADOW);
-                    result.write(intToByteArray(0));
-                }
-                if((fontStyle & STYLE_OUTLINE) == STYLE_OUTLINE) {
-                    result.write(FONT_OUTLINE);
-                    result.write(intToByteArray(0));
-                }
-                if((fontStyle & STYLE_EMBOSSED) == STYLE_EMBOSSED) {
-                    result.write(FONT_EMBOSSED);
-                    result.write(intToByteArray(0));
-                }
-                if((fontStyle & STYLE_ENGRAVED) == STYLE_ENGRAVED) {
-                    result.write(FONT_ENGRAVED);
-                    result.write(intToByteArray(0));
-                }
+    public void writeEnd(final OutputStream result) throws IOException{
+        if(this.fontStyle != UNDEFINED) {
+            if((fontStyle & STYLE_BOLD) == STYLE_BOLD) {
+                result.write(FONT_BOLD);
+                result.write(intToByteArray(0));
             }
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
+            if((fontStyle & STYLE_ITALIC) == STYLE_ITALIC) {
+                result.write(FONT_ITALIC);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_UNDERLINE) == STYLE_UNDERLINE) {
+                result.write(FONT_UNDERLINE);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
+                result.write(FONT_STRIKETHROUGH);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
+                result.write(FONT_HIDDEN);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_DOUBLE_STRIKETHROUGH) == STYLE_DOUBLE_STRIKETHROUGH) {
+                result.write(FONT_DOUBLE_STRIKETHROUGH);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_SHADOW) == STYLE_SHADOW) {
+                result.write(FONT_SHADOW);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_OUTLINE) == STYLE_OUTLINE) {
+                result.write(FONT_OUTLINE);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_EMBOSSED) == STYLE_EMBOSSED) {
+                result.write(FONT_EMBOSSED);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_ENGRAVED) == STYLE_ENGRAVED) {
+                result.write(FONT_ENGRAVED);
+                result.write(intToByteArray(0));
+            }
         }
-        return result.toByteArray();
     }
 
     /**

@@ -112,7 +112,7 @@ public class RtfListItem extends RtfParagraph {
             }
             rtfElement.writeContent(result);
             if(rtfElement instanceof RtfList) {
-                result.write(this.parentList.writeListBeginning());
+                this.parentList.writeListBeginning(result);
                 result.write("\\tab".getBytes());
             }
         }

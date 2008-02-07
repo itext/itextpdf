@@ -51,7 +51,6 @@
 package com.lowagie.text.rtf.style;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -202,26 +201,22 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
     /**
      * Writes the beginning of this RtfColor
      * 
-     * @return A byte array with the color start data
      */
-    public byte[] writeBegin() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
+    public void writeBegin(final OutputStream result) {
         try {
             result.write(COLOR_NUMBER);
             result.write(intToByteArray(colorNumber));
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
-        return result.toByteArray();
     }
     
     /**
      * Unused
      * 
-     * @return An empty (<code>byte[0]</code>) byte array
+     * @param result The <code>OutputStream</code> to which nothing will be written
      */
-    public byte[] writeEnd() {
-        return new byte[0];
+    public void writeEnd(final OutputStream result) {
     }
     
     /**

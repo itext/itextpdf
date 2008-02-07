@@ -51,7 +51,6 @@
 package com.lowagie.text.rtf.list;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -401,65 +400,55 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         }    	
     }
 
-    
+
     /**
      * Writes the initialization part of the RtfList
      * 
-     * @return A byte array containing the initialization part
+     * @param result The <code>OutputStream</code> to write to
+     * @throws IOException On i/o errors.
      */
-    protected byte[] writeListBeginning() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-            result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
-            if(this.inTable) {
-                result.write(RtfParagraph.IN_TABLE);
-            }
-            switch (this.alignment) {
-                case Element.ALIGN_LEFT:
-                    result.write(RtfParagraphStyle.ALIGN_LEFT);
-                    break;
-                case Element.ALIGN_RIGHT:
-                    result.write(RtfParagraphStyle.ALIGN_RIGHT);
-                    break;
-                case Element.ALIGN_CENTER:
-                    result.write(RtfParagraphStyle.ALIGN_CENTER);
-                    break;
-                case Element.ALIGN_JUSTIFIED:
-                case Element.ALIGN_JUSTIFIED_ALL:
-                    result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
-                    break;
-            }
-            writeIndentation(result);
-            result.write(RtfFont.FONT_SIZE);
-            result.write(intToByteArray(fontNumber.getFontSize() * 2));
-            if(this.symbolIndent > 0) {
-                result.write("\\tx".getBytes());
-                result.write(intToByteArray(this.leftIndent));
-            }
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
+    protected void writeListBeginning(final OutputStream result) throws IOException {
+        result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+        if(this.inTable) {
+            result.write(RtfParagraph.IN_TABLE);
         }
-        return result.toByteArray();
+        switch (this.alignment) {
+            case Element.ALIGN_LEFT:
+                result.write(RtfParagraphStyle.ALIGN_LEFT);
+                break;
+            case Element.ALIGN_RIGHT:
+                result.write(RtfParagraphStyle.ALIGN_RIGHT);
+                break;
+            case Element.ALIGN_CENTER:
+                result.write(RtfParagraphStyle.ALIGN_CENTER);
+                break;
+            case Element.ALIGN_JUSTIFIED:
+            case Element.ALIGN_JUSTIFIED_ALL:
+                result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
+                break;
+        }
+        writeIndentation(result);
+        result.write(RtfFont.FONT_SIZE);
+        result.write(intToByteArray(fontNumber.getFontSize() * 2));
+        if(this.symbolIndent > 0) {
+            result.write("\\tx".getBytes());
+            result.write(intToByteArray(this.leftIndent));
+        }
     }
 
     /**
      * Writes only the list number and list level number.
      * 
-     * @return The list number and list level number of this RtfList.
+     * @param result The <code>OutputStream</code> to write to
+     * @throws IOException On i/o errors.
      */
-    protected byte[] writeListNumbers() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-            result.write(RtfListTable.LIST_NUMBER);
-            result.write(intToByteArray(listNumber));
-            if(listLevel > 0) {
-                result.write(LIST_LEVEL_NUMBER);
-                result.write(intToByteArray(listLevel));
-            }
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
+    protected void writeListNumbers(final OutputStream result) throws IOException {
+        result.write(RtfListTable.LIST_NUMBER);
+        result.write(intToByteArray(listNumber));
+        if(listLevel > 0) {
+            result.write(LIST_LEVEL_NUMBER);
+            result.write(intToByteArray(listLevel));
         }
-        return result.toByteArray();
     }
     
     /**
@@ -473,8 +462,8 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             RtfElement rtfElement = (RtfElement) items.get(i);
             if(rtfElement instanceof RtfListItem) {
                 itemNr++;
-                result.write(writeListBeginning());
-                result.write(writeListNumbers());
+                writeListBeginning(result);
+                writeListNumbers(result);
                 result.write(OPEN_GROUP);
                 result.write(LIST_TEXT);
                 result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
