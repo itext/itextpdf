@@ -61,10 +61,10 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.rtf.direct.RtfImportMappings;
-import com.lowagie.text.rtf.direct.RtfParser;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.document.RtfDocumentSettings;
+import com.lowagie.text.rtf.parser.RtfImportMappings;
+import com.lowagie.text.rtf.parser.RtfParser;
 import com.lowagie.text.rtf.text.RtfNewPage;
 
 /**
@@ -259,11 +259,7 @@ public class RtfWriter2 extends DocWriter {
      * @throws DocumentException On errors adding to this RTF document.
      */
     public void importRtfDocument(Reader documentSource) throws IOException, DocumentException {
-    	if(!this.open) {
-    		throw new DocumentException("The document must be open to import RTF documents.");
-    	}
-    	RtfParser rtfImport = new RtfParser();
-    	rtfImport.importRtfDocument(documentSource, this.rtfDoc);
+        importRtfDocument(documentSource, null);
     }
     
     /**
@@ -283,7 +279,10 @@ public class RtfWriter2 extends DocWriter {
      * @author Howard Shank
      */
     public void importRtfDocument(Reader documentSource, EventListener[] events ) throws IOException, DocumentException {
-    	com.lowagie.text.rtf.parser.RtfParser rtfImport = new com.lowagie.text.rtf.parser.RtfParser();
+        if(!this.open) {
+            throw new DocumentException("The document must be open to import RTF documents.");
+        }
+    	RtfParser rtfImport = new RtfParser();
     	if(events != null) {
     		for(int idx=0;idx<events.length;idx++) {
         		rtfImport.addListener(events[idx]);
@@ -304,11 +303,7 @@ public class RtfWriter2 extends DocWriter {
      * @throws DocumentException On errors adding to this RTF fragment.
      */
     public void importRtfFragment(Reader documentSource, RtfImportMappings mappings) throws IOException, DocumentException {
-    	if(!this.open) {
-    		throw new DocumentException("The document must be open to import RTF fragments.");
-    	}
-    	RtfParser rtfImport = new RtfParser();
-    	rtfImport.importRtfFragment(documentSource, this.rtfDoc, mappings);
+        importRtfFragment(documentSource, mappings, null);
     }
     
     /**
@@ -330,38 +325,16 @@ public class RtfWriter2 extends DocWriter {
      * @since 2.0.8
      * @author Howard Shank
      */
-    public void importRtfFragment(Reader documentSource, com.lowagie.text.rtf.parser.RtfImportMappings mappings, EventListener[] events ) throws IOException, DocumentException {
-    	com.lowagie.text.rtf.parser.RtfParser rtfImport = new com.lowagie.text.rtf.parser.RtfParser();
+    public void importRtfFragment(Reader documentSource, RtfImportMappings mappings, EventListener[] events ) throws IOException, DocumentException {
+        if(!this.open) {
+            throw new DocumentException("The document must be open to import RTF fragments.");
+        }
+    	RtfParser rtfImport = new RtfParser();
     	if(events != null) {
     		for(int idx=0;idx<events.length;idx++) {
         		rtfImport.addListener(events[idx]);
     		}
     	}
     	rtfImport.importRtfFragment(documentSource, this.rtfDoc, mappings);
-    }
-    
-	/**
-	 * Converts an RTF document to any document that iText has a writer for.
-     * Uses new RtfParser object.
-	 * 
-	 * @param documentSource The input <code>Reader</code> object
-	 * @param doc The <i>iText</i> <code>Document</code> object
-	 * @param eventListeners The array of event listeners. May be null
-	 * @throws IOException
-	 * @throws DocumentException
-	 * 
-     * @see com.lowagie.text.rtf.parser.RtfParser
-     * @see com.lowagie.text.rtf.parser.RtfParser#convertRtfDocument(Reader, Document)
-     * @since 2.0.8
-     * @author Howard Shank
-	 */
-    public void convertRtfDocument(Reader documentSource, Document doc, EventListener[] events ) throws IOException, DocumentException {
-    	com.lowagie.text.rtf.parser.RtfParser rtfImport = new com.lowagie.text.rtf.parser.RtfParser();
-    	if(events != null) {
-    		for(int idx=0;idx<events.length;idx++) {
-        		rtfImport.addListener(events[idx]);
-    		}
-    	}
-    	rtfImport.convertRtfDocument(documentSource, doc);
     }
 }
