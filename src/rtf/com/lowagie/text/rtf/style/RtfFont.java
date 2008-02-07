@@ -701,4 +701,36 @@ public class RtfFont extends Font implements RtfExtendedElement {
         
         return new RtfFont(dFamilyname, dSize, dStyle, dColor, dCharset);
     }
+    
+    /**
+     * The <code>RtfFont</code> is never a standard font.
+     * 
+     * @since 2.1.0
+     */
+    public boolean isStandardFont() {
+        return false;
+    }
+    
+    /**
+     * Compares this <code>RtfFont</code> to either a {@link com.lowagie.text.Font} or
+     * an <code>RtfFont</code>.
+     * 
+     * @since 2.1.0
+     */
+    public int compareTo(Object object) {
+        if (object == null) {
+            return -1;
+        }
+        if(object instanceof RtfFont) {
+            if(this.getFontName().compareTo(((RtfFont) object).getFontName()) != 0) {
+                return 1;
+            } else {
+                return super.compareTo(object);
+            }
+        } else if(object instanceof Font) {
+            return super.compareTo(object);
+        } else {
+            return -3;
+        }
+    }
 }
