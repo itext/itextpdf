@@ -24,7 +24,7 @@
         <echo>COMPILING AND JARRING THE CODE (compile.xml)</echo>
         <echo>ant compile: compiles iText</echo>
         <echo>ant compile.debug: compiles iText and allows you to debug the code</echo>
-        <echo>ant delete: deletes all generated data</echo>
+        <echo>ant clean: deletes all generated data</echo>
         <echo>ant jar: compiles and jars iText</echo>
         <echo>ant jar.debug: compiles for debugging and jars iText</echo>
         <echo>ant sign.jar: compiles and jars iText, then signs the jar</echo>
@@ -81,7 +81,7 @@
                 <include name="**/*.txt"/>
             </fileset>
         </copy>
-        <jar jarfile="${itext.jar}" basedir="${itext.bin}" excludes="com/lowagie/rups/**,com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**">
+        <jar jarfile="${itext.jar}" basedir="${itext.bin}">
             <manifest>
                 <attribute name="Main-Class" value="com.lowagie.tools.ToolboxAvailable"/>
                 <attribute name="Class-Path" value="toolbox.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar"/>
@@ -143,7 +143,7 @@
     <!-- Deleting all generated data                                      -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <target name="delete" description="--> deletes all generated data">
+    <target name="clean" description="--> deletes all generated data">
         <delete dir="${itext.build}" />
     </target>
 
