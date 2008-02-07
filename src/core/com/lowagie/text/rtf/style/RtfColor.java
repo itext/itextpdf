@@ -180,35 +180,9 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
 
     /**
      * unused
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-    	return(new byte[0]);
-    }
-    /**
-     * unused
      */
     public void writeContent(final OutputStream out) throws IOException
     {    	
-    }
-    
-    /**
-     * Write the definition part of this RtfColor.
-     * 
-     * @return A byte array with the definition of this color
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeDefinition() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeDefinition(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
     }
     
     /**

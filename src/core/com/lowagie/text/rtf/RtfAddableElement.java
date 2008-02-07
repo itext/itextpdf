@@ -93,25 +93,12 @@ public abstract class RtfAddableElement extends Chunk implements RtfBasicElement
 	}
 
 	/**
-	 * Subclasses have to implement this method.
-	 * 
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-	 */
-	public abstract byte[] write();
-
-	/**
      * Writes the element content to the given output stream.
-     * This method replaces the {@link #write()} method which is now deprecated. 
 	 */
-    public void writeContent(OutputStream out) throws IOException
-    {
-    	byte[] content = write();
-    	out.write(content);
-    }
+    public abstract void writeContent(OutputStream out) throws IOException;
 	
 	/**
-	 * Sets the RtfDocument this RtfAddableElement belongs to
+	 * Sets the RtfDocument this RtfAddableElement belongs to.
 	 */
 	public void setRtfDocument(RtfDocument doc) {
 		this.doc = doc;

@@ -108,19 +108,6 @@ public class RtfTotalPageNumber extends RtfField {
     }
     
     /**
-     * Writes the field NUMPAGES instruction with Arabic format
-     * 
-     * @return A byte array containing "NUMPAGES \\\\* Arabic".
-     * @throws IOException
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeFieldInstContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    protected byte[] writeFieldInstContent() throws IOException 
-    {
-        return ARABIC_TOTAL_PAGES;
-    }
-    
-    /**
      * Writes the field NUMPAGES instruction with Arabic format: "NUMPAGES \\\\* Arabic".
      * 
      * @param result The <code>OutputStream</code> to write to.
@@ -129,19 +116,6 @@ public class RtfTotalPageNumber extends RtfField {
     protected void writeFieldInstContent(OutputStream result) throws IOException 
     {
     	result.write(ARABIC_TOTAL_PAGES);
-    }
-
-    /**
-     * Writes the field result content
-     * 
-     * @return An byte array containing "1".
-     * @throws IOException
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeFieldResultContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    protected byte[] writeFieldResultContent() throws IOException 
-    {
-        return "1".getBytes();
     }
 
     /**
@@ -154,5 +128,4 @@ public class RtfTotalPageNumber extends RtfField {
     {
     	out.write("1".getBytes());
     }
-    
 }

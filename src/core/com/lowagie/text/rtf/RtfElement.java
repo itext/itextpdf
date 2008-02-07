@@ -99,30 +99,9 @@ public abstract class RtfElement implements RtfBasicElement {
     }
 
     /**
-     * Returns the content of the RtfElement in a byte array.
-     *
-     * @return An empty byte array
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public abstract byte[] write();
-    
-    /**
      * Writes the element content to the given output stream.
      */    
-    public void writeContent(final OutputStream out) throws IOException
-    {
-    	try {
-        	byte[] content = write();
-			out.write(content);
-		} catch(OutOfMemoryError e) {
-			System.out.println(getClass());
-			throw(e);
-		} catch(RuntimeException e) {
-			System.out.println(getClass());
-			throw(e);
-		}
-    }        
+    public abstract void writeContent(final OutputStream out) throws IOException;
     
     /**
      * Sets the RtfDocument this RtfElement belongs to

@@ -52,7 +52,6 @@
 
 package com.lowagie.text.rtf.text;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -112,22 +111,6 @@ public class RtfTabGroup extends RtfAddableElement {
 		this.tabs.add(tab);
 	}
 	
-	/**
-	 * Combines the tab output form all grouped tabs.
-	 * 
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-	 */
-	public byte[] write() 
-	{
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-	}
     /**
      * Combines the tab output form all grouped tabs.
      */    
@@ -135,7 +118,6 @@ public class RtfTabGroup extends RtfAddableElement {
     {
     	for(int i = 0; i < this.tabs.size(); i++) {
     		RtfTab rt = (RtfTab) this.tabs.get(i);
-    		//.result.write((rt).write());
     		rt.writeContent(result);
     	}
     }        

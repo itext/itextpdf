@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.text;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -145,25 +144,6 @@ public class RtfPhrase extends RtfElement {
      * Write the content of this RtfPhrase. First resets to the paragraph defaults
      * then if the RtfPhrase is in a RtfCell a marker for this is written and finally
      * the RtfChunks of this RtfPhrase are written.
-     * 
-     * @return The content of this RtfPhrase
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    /**
-     * Write the content of this RtfPhrase. First resets to the paragraph defaults
-     * then if the RtfPhrase is in a RtfCell a marker for this is written and finally
-     * the RtfChunks of this RtfPhrase are written.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -178,7 +158,6 @@ public class RtfPhrase extends RtfElement {
         }
         for(int i = 0; i < chunks.size(); i++) {
         	RtfBasicElement rbe = (RtfBasicElement) chunks.get(i);
-            //.result.write((rbe).write());
         	rbe.writeContent(result);
         }
     }        

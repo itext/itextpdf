@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.document;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -163,35 +162,9 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
     
     /**
      * unused
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-    	return(new byte[0]);
-    }
-    /**
-     * unused
      */
     public void writeContent(final OutputStream out) throws IOException
     {    	
-    }
-    
-    /**
-     * Writes the page size / page margin definition
-     * 
-     * @return A byte array with the page size / page margin definition
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeDefinition() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeDefinition(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
     }
     
     /**
@@ -214,22 +187,6 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
         result.write((byte)'\n');    	
     }
     
-    /**
-     * Writes the definition part for a new section
-     * 
-     * @return A byte array containing the definition for a new section
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeSectionDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeSectionDefinition() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeSectionDefinition(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
     /**
      * Writes the definition part for a new section
      */

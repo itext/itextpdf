@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.document;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -96,25 +95,7 @@ public class RtfInfoGroup extends RtfElement {
     }
     
     /**
-     * Writes the RtfInfoGroup and its RtfInfoElement elements.
-     * 
-     * @return A byte array containing the group and its elements
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-			writeContent(result);
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-        return result.toByteArray();
-    }
-    
-    /**
-     * Writes the element content to the given output stream.
+     * Writes the RTF information group and its elements.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -122,7 +103,6 @@ public class RtfInfoGroup extends RtfElement {
 		result.write(INFO_GROUP);
 		for(int i = 0; i < infoElements.size(); i++) {
 			RtfInfoElement infoElement = (RtfInfoElement) infoElements.get(i);
-			//result.write(infoElement.write());
 			infoElement.writeContent(result);
 		}
 		result.write(CLOSE_GROUP);

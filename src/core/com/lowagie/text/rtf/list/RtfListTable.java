@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.list;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -125,35 +124,9 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
 
     /**
      * unused
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-    	return(new byte[0]);
-    }
-    /**
-     * unused
      */
     public void writeContent(final OutputStream out) throws IOException
     {    	
-    }
-    
-    /**
-     * Writes the list and list override tables.
-     * 
-     * @return A byte array with the list and list override tables.
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeDefinition() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeDefinition(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
     }
     
     /**
@@ -173,7 +146,6 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
             result.write(LIST_HYBRID);
             result.write("\n".getBytes());
             final RtfList rList = (RtfList) lists.get(i); 
-            //.result.write(rList.writeDefinition());
             rList.writeDefinition(result);
             result.write(LIST_ID);
             listIds[i] = document.getRandomInt();

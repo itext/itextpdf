@@ -92,16 +92,6 @@ public class RtfDirectContent extends RtfAddableElement {
 		this.directContent = directContent;
 	}
 	
-	/**
-	 * Writes the direct content.
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-	 */
-	public byte[] write() 
-	{
-		return this.directContent.getBytes();
-	}
-	
     /**
      * Writes the element content to the given output stream.
      */    
@@ -110,6 +100,4 @@ public class RtfDirectContent extends RtfAddableElement {
     	final byte[] contentBytes = this.directContent.getBytes();
    		out.write(contentBytes);
     }        
-	
-	
 }

@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.document;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -86,37 +85,11 @@ public class RtfCodePage extends RtfElement implements RtfExtendedElement {
 
     /**
      * unused
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-    	return(new byte[0]);
-    }
-    /**
-     * unused
      */
     public void writeContent(final OutputStream out) throws IOException
     {    	
     }
     
-    /**
-     * Writes the selected codepage to a byte array
-     *
-     * @return Byte array with the current codepage
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeDefinition() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeDefinition(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-
     /**
      * Writes the selected codepage
      */

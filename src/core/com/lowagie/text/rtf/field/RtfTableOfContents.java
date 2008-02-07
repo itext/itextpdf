@@ -94,18 +94,6 @@ public class RtfTableOfContents extends RtfField {
     /**
      * Writes the field instruction content
      * 
-     * @return A byte array containing with the field instructions
-     * @throws IOException
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeFieldInstContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    protected byte[] writeFieldInstContent() throws IOException 
-    {
-        return FIELD_INST.getBytes();
-    }
-    /**
-     * Writes the field instruction content
-     * 
      * @param result The <code>OutputStream</code> to write to.
      * @throws IOException on i/o errors.
      */ 
@@ -114,21 +102,6 @@ public class RtfTableOfContents extends RtfField {
     	result.write(FIELD_INST.getBytes());
     }
 
-    /**
-     * Writes the field result content
-     * 
-     * @return An byte array containing the default text
-     * @throws IOException
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeFieldResultContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    protected byte[] writeFieldResultContent() throws IOException 
-    {
-    	ByteArrayOutputStream out = new ByteArrayOutputStream(); 
-    	writeFieldResultContent(out);
-        return out.toByteArray();
-    }
-    
     /**
      * Writes the field result content
      * 

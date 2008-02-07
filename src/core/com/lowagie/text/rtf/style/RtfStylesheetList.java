@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.style;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -89,15 +88,6 @@ public class RtfStylesheetList extends RtfElement implements RtfExtendedElement 
         this.styleMap = new HashMap();
     }
 
-    /**
-     * unused
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-    	return(new byte[0]);
-    }
     /**
      * unused
      */
@@ -157,21 +147,6 @@ public class RtfStylesheetList extends RtfElement implements RtfExtendedElement 
     
     /**
      * Writes the definition of the stylesheet list.
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeDefinition() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeDefinition(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    
-    /**
-     * Writes the definition of the stylesheet list.
      */
     public void writeDefinition(final OutputStream result) throws IOException
     {
@@ -184,7 +159,6 @@ public class RtfStylesheetList extends RtfElement implements RtfExtendedElement 
         Iterator it = this.styleMap.values().iterator();
         while(it.hasNext()) {
         	RtfParagraphStyle rps = (RtfParagraphStyle)it.next();
-            //.result.write((rps).writeDefinition());
         	rps.writeDefinition(result);
         }
         result.write("}".getBytes());

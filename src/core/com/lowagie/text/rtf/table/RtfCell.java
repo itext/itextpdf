@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.table;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -291,24 +290,6 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     
     /**
      * Write the cell definition part of this RtfCell
-     * 
-     * @return A byte array with the cell definition
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeDefinition() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeDefinition(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        
-        return result.toByteArray();
-    }
-    
-    /**
-     * Write the cell definition part of this RtfCell
      */
     public void writeDefinition(final OutputStream result) throws IOException 
     {
@@ -329,7 +310,6 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                 result.write("\\clvertalt".getBytes());
                 break;
         }
-        //.result.write(this.borders.write());
         this.borders.writeContent(result);
 
         if(this.backgroundColor != null) {
@@ -366,24 +346,6 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     
     /**
      * Write the content of this RtfCell
-     * 
-     * @return A byte array with the content of this RtfCell
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() 
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        
-        return result.toByteArray();
-    }
-    /**
-     * Write the content of this RtfCell
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -399,7 +361,6 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                 if(rtfElement instanceof RtfParagraph) {
                     ((RtfParagraph) rtfElement).setKeepTogetherWithNext(this.parentRow.getParentTable().getTableFitToPage());
                 }
-                //.result.write(rtfElement.write());
                 rtfElement.writeContent(result);
                 if(rtfElement instanceof RtfParagraph && i < (this.content.size() - 1)) {
                     result.write(RtfParagraph.PARAGRAPH);
@@ -522,6 +483,15 @@ public class RtfCell extends Cell implements RtfExtendedElement {
         for(int i = 0; i < this.content.size(); i++) {
             ((RtfBasicElement) this.content.get(i)).setInHeader(inHeader);
         }
+    }
+    
+    /**
+     * Gets whether this <code>RtfCell</code> is in a header
+     * 
+     * @return <code>True</code> if this <code>RtfCell</code> is in a header, <code>false</code> otherwise
+     */
+    public boolean isInHeader() {
+        return this.inHeader;
     }
 
     /**

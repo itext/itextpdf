@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.headerfooter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -219,44 +218,22 @@ public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElemen
     
     /**
      * Write the content of this RtfHeaderFooterGroup.
-     * 
-     * @return A byte array with the content of this RtfHeaderFooterGroup
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() 
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    /**
-     * Write the content of this RtfHeaderFooterGroup.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
         if(this.mode == MODE_SINGLE) {
-            //result.write(headerAll.write());
         	headerAll.writeContent(result);
         } else if(this.mode == MODE_MULTIPLE) {
             if(headerFirst != null) {
-                //result.write(headerFirst.write());
             	headerFirst.writeContent(result);
             }
             if(headerLeft != null) {
-                //result.write(headerLeft.write());
                 headerLeft.writeContent(result);
             }
             if(headerRight != null) {
-                //result.write(headerRight.write());
                 headerRight.writeContent(result);
             }
             if(headerAll != null) {
-                //result.write(headerAll.write());
                 headerAll.writeContent(result);
             }
         }

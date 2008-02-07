@@ -128,15 +128,6 @@ public class RtfDocument extends RtfElement {
 
     /**
      * unused
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-    	return(new byte[0]);
-    }
-    /**
-     * unused
      */
     public void writeContent(final OutputStream out) throws IOException
     {    	
@@ -239,58 +230,6 @@ public class RtfDocument extends RtfElement {
      */
     public RtfDocumentHeader getDocumentHeader() {
         return this.documentHeader;
-    }
-    
-    /**
-     * Replaces special characters with their unicode values
-     * @param str The original <code>String</code>
-     * @param useHex indicated if the hexadecimal value has to be used
-     * @param softLineBreaks whether to use soft line breaks instead of default hard ones.
-     *
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #filterSpecialChar(OutputStream, String, boolean, boolean)}, scheduled for removal at or after 2.1.0
-     * @return The converted String
-     */
-    public String filterSpecialChar(String str, boolean useHex, boolean softLineBreaks) {
-        if(str == null) {
-            return "";
-        }
-        int length = str.length();
-        int z = 'z';
-        StringBuffer ret = new StringBuffer(length);
-        for (int i = 0; i < length; i++) {
-            char ch = str.charAt(i);
-
-            if (ch == '\\') {
-                ret.append("\\\\");
-            } else if (ch == '\n') {
-                if(softLineBreaks) {
-                    ret.append("\\line ");
-                } else {
-                    ret.append("\\par ");
-                }
-            } else if (ch == '\t') {
-                ret.append("\\tab ");
-            } else if ((ch) > z && this.documentSettings.isAlwaysUseUnicode()) {
-                if(useHex) {
-                    ret.append("\\\'").append(Long.toHexString(ch));
-                } else {
-                    ret.append("\\u").append((long) ch).append('?');
-                }
-            } else {
-                ret.append(ch);
-            }
-        }
-        String s = ret.toString();
-        if(s.indexOf("$newpage$") >= 0) {
-            String before = s.substring(0, s.indexOf("$newpage$"));
-            String after = s.substring(s.indexOf("$newpage$") + 9);
-            ret = new StringBuffer(before);
-            ret.append("\\page\\par ");
-            ret.append(after);
-            return ret.toString();
-        }
-        return s;
     }
     
     /**

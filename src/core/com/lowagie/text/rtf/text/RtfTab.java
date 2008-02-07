@@ -52,7 +52,6 @@
 
 package com.lowagie.text.rtf.text;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -119,21 +118,6 @@ public class RtfTab extends RtfAddableElement {
 		case TAB_DECIMAL_ALIGN: this.type = TAB_DECIMAL_ALIGN; break;
 		default: this.type = TAB_LEFT_ALIGN; break;
 		}
-	}
-	
-	/**
-	 * Writes the tab settings.
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-	 */
-	public byte[] write() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
 	}
 	
 	/**

@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.document;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -155,40 +154,15 @@ public class RtfDocumentHeader extends RtfElement {
     }
     
     /**
-     * Write the contents of the document header area.
-     * 
-     * @return A byte array with the contents of the document header area
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() {    	
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-		try {
-			writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-		}        
-		return result.toByteArray();
-    }   
-    /**
-     * Writes the element content to the given output stream.
+     * Writes the contents of the document header area.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
         try {
             // This is so that all color, font and similar information is processed once, before
             // the header section is written.
-            //.writeSectionDefinition();
             writeSectionDefinition(new RtfNilOutputStream());
             
-//            result.write(this.codePage.writeDefinition());
-//            result.write(this.fontList.writeDefinition());
-//            result.write(this.colorList.writeDefinition());
-//            result.write(this.stylesheetList.writeDefinition());
-//            result.write(this.listTable.writeDefinition());
-//            result.write(this.infoGroup.write());
-//            result.write(this.pageSetting.writeDefinition());
-
             this.codePage.writeDefinition(result);
             this.fontList.writeDefinition(result);
             this.colorList.writeDefinition(result);
@@ -198,26 +172,12 @@ public class RtfDocumentHeader extends RtfElement {
             this.infoGroup.writeContent(result);
             this.pageSetting.writeDefinition(result);
             
-            //.result.write(writeSectionDefinition());
             writeSectionDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
     }        
 
-    /**
-     * Writes the section definition data
-     * 
-     * @return A byte array with the section definition data
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeSectionDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeSectionDefinition()
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-       	writeSectionDefinition(result);
-        return result.toByteArray();
-    }
     /**
      * Writes the section definition data
      * @param result
@@ -237,11 +197,8 @@ public class RtfDocumentHeader extends RtfElement {
                 header.setHasFacingPages();
                 footer.setHasFacingPages();
             }
-            //.result.write(footer.write());
             footer.writeContent(result);
-            //.result.write(header.write());
             header.writeContent(result);
-            //.result.write(pageSetting.writeSectionDefinition());
             pageSetting.writeSectionDefinition(result);
         } catch(IOException ioe) {
             ioe.printStackTrace();

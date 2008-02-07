@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.field;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -98,22 +97,6 @@ public class RtfAnchor extends RtfField
     /**
      * Write the field instructions for this RtfAnchor. Sets the field
      * type to HYPERLINK and then writes the url.
-     * 
-     * @return The field instructions for this RtfAnchor
-     * @throws IOException
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeFieldInstContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    protected byte[] writeFieldInstContent() throws IOException
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        writeFieldInstContent(result);        
-        return result.toByteArray();
-    }
-
-    /**
-     * Write the field instructions for this RtfAnchor. Sets the field
-     * type to HYPERLINK and then writes the url.
      *
      * @param result The <code>OutputStream</code> to write to.
      * @throws IOException on i/o errors.
@@ -122,22 +105,7 @@ public class RtfAnchor extends RtfField
     {
         result.write(HYPERLINK);
         result.write(DELIMITER);
-        //.result.write(this.document.filterSpecialChar(url, true, true).getBytes());
         this.document.filterSpecialChar(result, url, true, true);
-    }
-    
-    /**
-     * Write the field result for this RtfAnchor. Writes the content
-     * of the RtfPhrase.
-     * 
-     * @return The field result for this RtfAnchor
-     * @throws IOException
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeFieldResultContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    protected byte[] writeFieldResultContent() throws IOException 
-    {
-        return content.write();
     }
     
     /**

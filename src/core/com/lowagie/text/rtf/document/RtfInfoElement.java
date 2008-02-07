@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.document;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.ParseException;
@@ -118,25 +117,7 @@ public class RtfInfoElement extends RtfElement {
     }
     
     /**
-     * Writes this RtfInfoElement
-     * 
-     * @return A byte array containing the RtfInfoElement data
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    
-    /**
-     * Writes the element content to the given output stream.
+     * Writes the content of one RTF information element.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {

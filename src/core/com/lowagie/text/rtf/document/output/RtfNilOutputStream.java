@@ -61,21 +61,39 @@ import java.io.OutputStream;
  */
 public final class RtfNilOutputStream extends OutputStream
 {
+    /**
+     * The number of bytes theoretically written is stored.
+     */
     private long size = 0;
     
+    /**
+     * Constructs a new <code>RtfNilOutputStream</code>.
+     */
     public RtfNilOutputStream()
     {           
     }
     
+    /**
+     * Gets the number of bytes that were written.
+     * 
+     * @return The number of bytes that were written.
+     */
     public long getSize()
     {
         return(size);
     }
     
+    /**
+     * Write an int. The size is incremented, but the actual data is thrown away.
+     */
     public void write(int b)
     {
         size++;
     }
+    
+    /**
+     * Write a <code>byte[]</code>. The size is incremented, but the actual data is thrown away.
+     */
     public void write(byte[] b, int off, int len)
     {
         if (b == null) {

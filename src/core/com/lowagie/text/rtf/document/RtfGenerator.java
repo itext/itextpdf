@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.document;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -82,25 +81,7 @@ public class RtfGenerator extends RtfElement {
     
     
     /**
-     * Writes the RtfGenerator.
-     * 
-     * @return A byte array containing the group
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-			writeContent(result);
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-        return result.toByteArray();
-    }
-    
-    /**
-     * Writes the element content to the given output stream.
+     * Writes the RTF generator group.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {

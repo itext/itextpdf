@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.text;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -81,23 +80,6 @@ public class RtfChapter extends RtfSection {
 
     /**
      * Writes the RtfChapter and its contents
-     * 
-     * @return A byte array containing the RtfChapter and its contents 
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    
-    /**
-     * Writes the RtfChapter and its contents
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -105,15 +87,12 @@ public class RtfChapter extends RtfSection {
             result.write("\\page".getBytes());
         }
         result.write("\\sectd".getBytes());
-        //.result.write(document.getDocumentHeader().writeSectionDefinition());
         document.getDocumentHeader().writeSectionDefinition(result);
         if(this.title != null) {
-            //.result.write(this.title.write());
             this.title.writeContent(result);
         }
         for(int i = 0; i < items.size(); i++) {
         	RtfBasicElement rbe = (RtfBasicElement)items.get(i);
-            //.result.write((rbe).write());
         	rbe.writeContent(result);
         }
         result.write("\\sect".getBytes());

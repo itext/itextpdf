@@ -52,7 +52,6 @@
 
 package com.lowagie.text.rtf.field;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -110,23 +109,6 @@ public class RtfTOCEntry extends RtfField {
     }
     
     /**
-     * Writes the content of the RtfTOCEntry
-     * 
-     * @return A byte array with the contents of the RtfTOCEntry
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    
-    /**
      * Writes the content of the <code>RtfTOCEntry</code>.
      * 
      * @param result The <code>OutputStream</code> to write to.
@@ -142,7 +124,6 @@ public class RtfTOCEntry extends RtfField {
             result.write(TOC_ENTRY_NO_PAGE_NUMBER);
         }
         result.write(DELIMITER);
-        //.result.write(this.document.filterSpecialChar(this.entry, true, false).getBytes());
         this.document.filterSpecialChar(result, this.entry, true, false);
         result.write(CLOSE_GROUP);
         result.write(TEXT_HIDDEN_OFF);
@@ -158,34 +139,12 @@ public class RtfTOCEntry extends RtfField {
     }
     
     /**
-     * UNUSED
-     * @return null
-     * @throws IOException never thrown
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeFieldInstContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    protected byte[] writeFieldInstContent() throws IOException 
-    {
-        return null;
-    }
-    /**
      * unused
      */
     protected void writeFieldInstContent(OutputStream out) throws IOException 
     {
     }
 
-    /**
-     * UNUSED
-     * @return null
-     * @throws IOException never thrown
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeFieldResultContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    protected byte[] writeFieldResultContent() throws IOException {
-        return null;
-    }
-    
     /**
      * unused
      */

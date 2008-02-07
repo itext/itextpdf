@@ -320,23 +320,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
 
     /**
      * Writes the font definition
-     *
-     * @return A byte array with the font definition
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeDefinition() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeDefinition(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    
-    /**
-     * Writes the font definition
      */
     public void writeDefinition(final OutputStream result) throws IOException
     {
@@ -344,7 +327,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
         result.write(FONT_CHARSET);
         result.write(intToByteArray(charset));
         result.write(DELIMITER);
-        //.result.write(document.filterSpecialChar(fontName, true, false).getBytes());
         document.filterSpecialChar(result, fontName, true, false);
     }
     
@@ -462,15 +444,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
         return result.toByteArray();
     }
 
-    /**
-     * Unused
-     * @return an empty byte array
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() {
-        return new byte[0];
-    }
     /**
      * unused
      */

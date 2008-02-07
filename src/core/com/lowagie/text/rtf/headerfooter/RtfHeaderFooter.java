@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.headerfooter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -294,23 +293,6 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
     
     /**
      * Writes the content of this RtfHeaderFooter
-     * 
-     * @return A byte array with the content of this RtfHeaderFooter
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() 
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    /**
-     * Writes the content of this RtfHeaderFooter
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -339,7 +321,6 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
         result.write(DELIMITER);
         for(int i = 0; i < this.content.length; i++) {
             if(this.content[i] instanceof RtfBasicElement) {
-                //result.write(((RtfBasicElement) this.content[i]).write());
             	RtfBasicElement rbe = (RtfBasicElement)this.content[i];
             	rbe.writeContent(result);
             }

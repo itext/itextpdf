@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.list;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -92,23 +91,6 @@ public class RtfListItem extends RtfParagraph {
     
     /**
      * Writes the content of this RtfListItem.
-     * 
-     * @return A byte array with the content of this RtfListItem.
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() 
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    /**
-     * Writes the content of this RtfListItem.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -128,7 +110,6 @@ public class RtfListItem extends RtfParagraph {
                 result.write(RtfParagraph.PARAGRAPH);
                 this.containsInnerList = true;
             }
-            //.result.write(rtfElement.write());
             rtfElement.writeContent(result);
             if(rtfElement instanceof RtfList) {
                 result.write(this.parentList.writeListBeginning());
@@ -137,23 +118,6 @@ public class RtfListItem extends RtfParagraph {
         }
     }        
 
-    /**
-     * Returns the definition of the first list contained in this RtfListItem or
-     * an empty byte array if no inner RtfLists exist.
-     * 
-     * @return The definition of the first inner RtfList or an empty byte array.
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeDefinition() {
-        for(int i = 0; i < chunks.size(); i++) {
-            RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
-            if(rtfElement instanceof RtfList) {
-                return ((RtfList) rtfElement).writeDefinition();
-            }
-        }
-        return new byte[0];
-    }
     /**
      * Writes the definition of the first element in this RtfListItem that is
      * an instanceof {@link RtfList} to the given stream.<br> 

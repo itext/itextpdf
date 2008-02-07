@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.graphic;
 
-import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,10 +91,6 @@ public class RtfImage extends RtfElement {
      * Constant for a png image
      */
     private static final byte[] PICTURE_PNG = "\\pngblip".getBytes();
-    /**
-     * Constant for a bmp image
-     */
-    private static final byte[] PICTURE_BMP = "\\dibitmap0".getBytes();
     /**
      * Constant for a wmf image
      */
@@ -252,6 +247,7 @@ public class RtfImage extends RtfElement {
     		if(++c == ':') c = 'a';
 		}
     }
+    
     /**
      * Writes the image data to the given buffer as hex encoded text.
      * 
@@ -273,6 +269,7 @@ public class RtfImage extends RtfElement {
 		}    	
    		if(cnt > 0) bab.write('\n');
     }
+    
     /**
      * Returns the image raw data size in bytes.
      * 
@@ -289,28 +286,9 @@ public class RtfImage extends RtfElement {
     
     /**
      * Writes the RtfImage content
-     * 
-     * @return the RtfImage content
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-    	final ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(Exception ioe) {
-            ioe.printStackTrace();
-        }
-
-        return(result.toByteArray());        
-    }
-    /**
-     * Writes the RtfImage content
      */ 
     public void writeContent(final OutputStream result) throws IOException
     {
-    	//new RuntimeException("info").printStackTrace();
     	
         if(this.topLevelElement) {
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);

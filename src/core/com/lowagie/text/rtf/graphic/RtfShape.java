@@ -1,6 +1,5 @@
 package com.lowagie.text.rtf.graphic;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -235,24 +234,6 @@ public class RtfShape extends RtfAddableElement {
     /**
      * Writes the RtfShape. Some settings are automatically translated into
      * or require other properties and these are set first.
-     * 
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-	public byte[] write() {
-		
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-	}
-	
-    /**
-     * Writes the RtfShape. Some settings are automatically translated into
-     * or require other properties and these are set first.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -276,7 +257,6 @@ public class RtfShape extends RtfAddableElement {
     	result.write("\\shp".getBytes());
     	result.write("\\shplid".getBytes());
     	result.write(intToByteArray(this.shapeNr));
-    	//.result.write(this.position.write());
     	this.position.writeContent(result);
     	switch(this.wrapping) {
     	case SHAPE_WRAP_NONE:
@@ -334,7 +314,6 @@ public class RtfShape extends RtfAddableElement {
     	Iterator it = this.properties.values().iterator();
     	while(it.hasNext()) {
     		RtfShapeProperty rsp = (RtfShapeProperty) it.next();
-    		//.result.write(rsp.write());
     		rsp.writeContent(result);
     	}
     	if(!this.shapeText.equals("")) {

@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.table;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -159,23 +158,6 @@ public class RtfTable extends RtfElement {
         this.tableFitToPage = table.isTableFitsPage();
     }
     
-    /**
-     * Writes the content of this RtfTable
-     * 
-     * @return A byte array with the content of this RtfTable
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() 
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
     /**
      * Writes the content of this RtfTable
      */    

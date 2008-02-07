@@ -51,7 +51,6 @@
 package com.lowagie.text.rtf.table;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
@@ -206,30 +205,12 @@ public class RtfBorderGroup extends RtfElement {
     
     /**
      * Writes the borders of this RtfBorderGroup
-     * 
-     * @return A byte array with the borders of this RtfBorderGroup
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() 
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }        
-        return result.toByteArray();
-    }
-    /**
-     * Writes the borders of this RtfBorderGroup
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
         Enumeration borderEnum = this.borders.keys();
         while(borderEnum.hasMoreElements()) {
         	RtfBorder rb = (RtfBorder)this.borders.get(borderEnum.nextElement());
-            //.result.write(rb.write());
         	rb.writeContent(result);
         }
     }        

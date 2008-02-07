@@ -166,10 +166,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * Constant for the old list number end
      */
     private static final byte[] LIST_NUMBER_END = ".".getBytes();
-    /**
-     * Constant for the old bulleted list 
-     */
-    private static final byte[] LIST_BULLET = "\\\'b7".getBytes();
     
     private static final int LIST_TYPE_BULLET = 0;
     private static final int LIST_TYPE_NUMBERED = 1;
@@ -314,33 +310,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     }
     
     /**
-     * @return a byte array
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeIndentations(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    private byte[] writeIndentations() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeIndentation(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    
-    /**
-     * Write the indentation values for this <code>RtfList</code>.
-     * 
-     * @param result The <code>OutputStream</code> to write to.
-     * @throws IOException On i/o errors.
-     * @deprecated As of iText 2.0.6, replaced by
-     * {@link #writeIndentations(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    private void writeIndentations(final OutputStream result) throws IOException {
-        writeIndentation(result);
-    }
-    
-    /**
      * Write the indentation values for this <code>RtfList</code>.
      * 
      * @param result The <code>OutputStream</code> to write to.
@@ -355,23 +324,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         result.write(intToByteArray(rightIndent));    	
     }
     
-    /**
-     * Writes the definition part of this list level
-     * 
-     * @return A byte array containing the definition of this list level
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeDefinition()
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeDefinition(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
     /**
      * Writes the definition part of this list level
      */
@@ -431,7 +383,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         } else {
             result.write(intToByteArray(fontBullet.getFontNumber()));
         }
-        //.result.write(writeIndentations());
         writeIndentation(result);
         result.write(LIST_LEVEL_SYMBOL_INDENT);
         result.write(intToByteArray(this.leftIndent));
@@ -441,16 +392,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             RtfElement rtfElement = (RtfElement) items.get(i);
             if(rtfElement instanceof RtfList) {
             	RtfList rl = (RtfList)rtfElement;
-                //.result.write(((RtfList) rtfElement).writeDefinition());
             	rl.writeDefinition(result);
                 break;
             } else if(rtfElement instanceof RtfListItem) {
             	RtfListItem rli = (RtfListItem) rtfElement;
-                //.byte[] data = rli.writeDefinition();
-                //.if(data.length > 0) {
-                //.    result.write(data);
-                //.    break;
-                //.}
             	if(rli.writeDefinition(result)) break;
             }
         }    	
@@ -484,7 +429,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
                     break;
             }
-            //.result.write(writeIndentations());
             writeIndentation(result);
             result.write(RtfFont.FONT_SIZE);
             result.write(intToByteArray(fontNumber.getFontSize() * 2));
@@ -520,25 +464,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     
     /**
      * Writes the content of the RtfList
-     * 
-     * @return A byte array containing the actual content of the RtfList
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()  
-    {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    
-    
-    /**
-     * Writes the content of the RtfList
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -562,7 +487,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 } else {
                     result.write(intToByteArray(fontBullet.getFontNumber()));
                 }
-                //.result.write(writeIndentations()); TODO Remove on deprecation
                 writeIndentation(result);
                 result.write(DELIMITER);
                 if(this.listType != LIST_TYPE_BULLET) {
@@ -579,14 +503,12 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 }
                 result.write(TAB);
                 result.write(CLOSE_GROUP);                
-                //result.write(rtfElement.write()); TODO Remove on deprecation
                 rtfElement.writeContent(result);
                 if(i < (items.size() - 1) || !this.inTable || this.listLevel > 0) { // TODO Fix no paragraph on last list item in tables
                     result.write(RtfParagraph.PARAGRAPH);
                 }
                 result.write("\n".getBytes());
             } else if(rtfElement instanceof RtfList) {
-                //result.write(rtfElement.write()); TODO Remove on deprecation
             	rtfElement.writeContent(result);
                 result.write("\n".getBytes());
             }

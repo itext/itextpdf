@@ -66,7 +66,6 @@ import com.lowagie.text.rtf.direct.RtfParser;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.document.RtfDocumentSettings;
 import com.lowagie.text.rtf.text.RtfNewPage;
-import com.lowagie.text.rtf.parser.*;
 
 /**
  * The RtfWriter allows the creation of rtf documents via the iText system
@@ -242,20 +241,6 @@ public class RtfWriter2 extends DocWriter {
     }
     
     /**
-     * Sets the rtf data cache style to use. Valid values are given in the 
-     * RtfDataCache class.
-     *  
-     * @param dataCacheStyle The style to use.
-     * @throws DocumentException If data has already been written into the data cache.
-     * @throws IOException If the disk cache could not be initialized.
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link com.lowagie.text.rtf.document.RtfDocumentSettings#setDataCacheStyle(int)} via {@link #getDocumentSettings()}, scheduled for removal at or after 2.1.0
-     */
-    public void setDataCacheStyle(int dataCacheStyle) {
-        this.rtfDoc.getDocumentSettings().setDataCacheStyle(dataCacheStyle);
-    }
-    
-    /**
      * Gets the RtfDocumentSettings that specify how the rtf document is generated.
      * 
      * @return The current RtfDocumentSettings.
@@ -280,6 +265,7 @@ public class RtfWriter2 extends DocWriter {
     	RtfParser rtfImport = new RtfParser();
     	rtfImport.importRtfDocument(documentSource, this.rtfDoc);
     }
+    
     /**
      * Adds the complete RTF document to the current RTF document being generated.
      * It will parse the font and color tables and correct the font and color references
@@ -353,6 +339,7 @@ public class RtfWriter2 extends DocWriter {
     	}
     	rtfImport.importRtfFragment(documentSource, this.rtfDoc, mappings);
     }
+    
 	/**
 	 * Converts an RTF document to any document that iText has a writer for.
      * Uses new RtfParser object.

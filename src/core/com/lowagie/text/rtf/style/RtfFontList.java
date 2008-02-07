@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.style;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -99,15 +98,6 @@ public class RtfFontList extends RtfElement implements RtfExtendedElement {
 
     /**
      * unused
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write()
-    {
-    	return(new byte[0]);
-    }
-    /**
-     * unused
      */
     public void writeContent(OutputStream out) throws IOException
     {	
@@ -139,23 +129,6 @@ public class RtfFontList extends RtfElement implements RtfExtendedElement {
 
     /**
      * Writes the definition of the font list
-     *
-     * @return A byte array with the definition of the font list
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeDefinition(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] writeDefinition() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeDefinition(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    
-    /**
-     * Writes the definition of the font list
      */
     public void writeDefinition(final OutputStream result) throws IOException 
     {
@@ -168,7 +141,6 @@ public class RtfFontList extends RtfElement implements RtfExtendedElement {
             result.write(FONT_NUMBER);
             result.write(intToByteArray(i));
             RtfFont rf = (RtfFont) fontList.get(i);
-            //.result.write((rf).writeDefinition());
             rf.writeDefinition(result);
             result.write(COMMA_DELIMITER);
             result.write(CLOSE_GROUP);

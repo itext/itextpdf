@@ -51,7 +51,6 @@
 package com.lowagie.text.rtf.text;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -136,23 +135,6 @@ public class RtfChunk extends RtfElement {
     /**
      * Writes the content of this RtfChunk. First the font information
      * is written, then the content, and then more font information
-     * 
-     * @return A byte array with the content of this RtfChunk
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-        	writeContent(result);
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
-    /**
-     * Writes the content of this RtfChunk. First the font information
-     * is written, then the content, and then more font information
      */ 
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -171,7 +153,6 @@ public class RtfChunk extends RtfElement {
             result.write(intToByteArray(this.background.getColorNumber()));
         }
         result.write(DELIMITER);
-       	//.result.write(document.filterSpecialChar(content, false, softLineBreaks || this.document.getDocumentSettings().isAlwaysGenerateSoftLinebreaks()).getBytes());
         document.filterSpecialChar(result, content, false, softLineBreaks || this.document.getDocumentSettings().isAlwaysGenerateSoftLinebreaks());
         
         if(superSubScript != 0) {

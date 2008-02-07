@@ -86,26 +86,16 @@ public interface RtfBasicElement {
     public static final double TWIPS_FACTOR = 20;
 
     /**
-     * Return the content of the Element in a byte array
-     * 
-     * @return The byte array containing the data
-     * @deprecated As of iText 2.0.6 or earlier, replaced by
-     * {@link #writeContent(OutputStream)}, scheduled for removal at or after 2.1.0
-     */
-    public byte[] write();
-    
-    /**
      * Writes the element content to the given output stream.
-     * This method replaces the {@link #write()} method which is now deprecated. 
      * 
-     * @param out
+     * @param out The <code>OutputStream</code> to write the content to
      */
     public void writeContent(OutputStream out) throws IOException;
     
     /**
      * Sets the RtfDocument this RtfElement belongs to
      * 
-     * @param doc The RtfDocument to use
+     * @param doc The @link{com.lowagie.text.rtf.document.RtfDocument} this <code>RtfElement</code> belongs to
      */
     public void setRtfDocument(RtfDocument doc);
     
