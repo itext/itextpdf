@@ -53,6 +53,7 @@ package com.lowagie.text.rtf;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.RtfElementInterface;
 import com.lowagie.text.rtf.document.RtfDocument;
 
 /**
@@ -63,7 +64,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
  */
-public interface RtfBasicElement {
+public interface RtfBasicElement extends RtfElementInterface {
     /**
      * Constant for the beginning of a rtf group
      */

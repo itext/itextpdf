@@ -301,7 +301,7 @@ public class Phrase extends ArrayList implements TextElementArray {
         if (o instanceof String) {
             return super.add(new Chunk((String) o, font));
         }
-        if (o instanceof com.lowagie.text.rtf.RtfBasicElement) {
+        if (o instanceof RtfElementInterface) {
         	return super.add(o);
         }
         try {
