@@ -36,6 +36,15 @@
     <target name="compile.examples" description="--> compiles the iText examples">
         <mkdir dir="${itext.bin.examples}" />
         <javac source="${itext.jdk.examples}" target="${itext.jdk.examples}" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
+		<exclude name="com/lowagie/examples/rtf/**"/>
+		<exclude name="com/lowagie/examples/fonts/styles/ExtraStyles.java"/>
+		<exclude name="com/lowagie/examples/general/HelloWorldMultiple.java"/>
+		<exclude name="com/lowagie/examples/general/webapp/HelloWorldServlet.java"/>
+		<exclude name="com/lowagie/examples/objects/tables/alternatives/TablePdfPTable.java"/>
+		<exclude name="com/lowagie/examples/fonts/styles/ExtraStyles.java"/>
+		<exclude name="com/lowagie/examples/general/HelloWorldMultiple.java"/>
+		<exclude name="com/lowagie/examples/general/webapp/HelloWorldServlet.java"/>
+		<exclude name="com/lowagie/examples/objects/tables/alternatives/TablePdfPTable.java"/>
         	<classpath refid="itext.examples.classpath"/>
     	</javac>
     </target>
@@ -132,7 +141,20 @@
     </target>
 
     <target name="test.rtf" depends="test.setup, jar.rtf" description="--> compiles and runs the iText rtf tests">
-        <javac source="${itext.jdk.test}" target="${itext.jdk.test}" srcdir="${itext.src.test}/rtf" destdir="${itext.bin.test}">
+        <mkdir dir="${itext.rtf.test}" />
+        <javac source="${itext.jdk.test}" target="${itext.jdk.test}" destdir="${itext.rtf.test}">
+		<src path="${itext.src.test}/rtf"/>
+		<src path="${itext.src.examples}"/>
+		<include name="com/lowagie/text/rtf/**"/>
+		<include name="com/lowagie/examples/rtf/**"/>
+		<include name="com/lowagie/examples/fonts/styles/ExtraStyles.java"/>
+		<include name="com/lowagie/examples/general/HelloWorldMultiple.java"/>
+		<include name="com/lowagie/examples/general/webapp/HelloWorldServlet.java"/>
+		<include name="com/lowagie/examples/objects/tables/alternatives/TablePdfPTable.java"/>
+		<include name="com/lowagie/examples/fonts/styles/ExtraStyles.java"/>
+		<include name="com/lowagie/examples/general/HelloWorldMultiple.java"/>
+		<include name="com/lowagie/examples/general/webapp/HelloWorldServlet.java"/>
+		<include name="com/lowagie/examples/objects/tables/alternatives/TablePdfPTable.java"/>
             <classpath>
                 <path refid="itext.test.classpath"/>
                 <pathelement location="${itext.rtf.jar}"/>
@@ -142,6 +164,7 @@
         <junit printsummary="yes" showoutput="no" filtertrace="no" haltonfailure="yes" dir="${itext.bin.data}">
             <classpath>
                 <path refid="itext.test.classpath"/>
+                <pathelement location="${itext.rtf.test}"/>
                 <pathelement location="${itext.rtf.jar}"/>
             </classpath>
             <batchtest fork="yes" todir="${itext.reports}/xml">

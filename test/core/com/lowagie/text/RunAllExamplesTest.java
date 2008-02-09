@@ -24,7 +24,6 @@ public class RunAllExamplesTest {
         r.testChunkExamples();
         r.testDirectContentExamples();
         r.testFontExamples();
-        r.testRtfExamples();
         
         r.testWindowsFonts();
     }
@@ -90,7 +89,6 @@ public class RunAllExamplesTest {
         runSingleTest(com.lowagie.examples.general.LandscapePortrait.class);
         runSingleTest(com.lowagie.examples.general.CustomPageSize.class);
         runSingleTest(com.lowagie.examples.general.HelloSystemOut.class);
-        runSingleTest(com.lowagie.examples.general.HelloWorldMultiple.class);
     }
 
     @Test
@@ -188,7 +186,6 @@ public class RunAllExamplesTest {
         runSingleTest(com.lowagie.examples.objects.tables.alternatives.TableWithImage.class);
         runSingleTest(com.lowagie.examples.objects.tables.alternatives.SpecificCells.class);
         runSingleTest(com.lowagie.examples.objects.tables.alternatives.LargeCell.class);
-        runSingleTest(com.lowagie.examples.objects.tables.alternatives.TablePdfPTable.class);
         runSingleTest(com.lowagie.examples.objects.tables.alternatives.OldTable.class);
         runSingleTest(com.lowagie.examples.objects.tables.alternatives.MyFirstTable.class);
         runSingleTest(com.lowagie.examples.objects.tables.alternatives.PaddingBorders.class);
@@ -288,7 +285,6 @@ public class RunAllExamplesTest {
         runSingleTest(com.lowagie.examples.fonts.styles.Vertical.class);
         runSingleTest(com.lowagie.examples.fonts.styles.FontStylePropagation.class);
         runSingleTest(com.lowagie.examples.fonts.styles.FixedFontWidth.class);
-        runSingleTest(com.lowagie.examples.fonts.styles.ExtraStyles.class);
         runSingleTest(com.lowagie.examples.fonts.styles.FontColor.class);
         runSingleTest(com.lowagie.examples.fonts.StandardType1Fonts.class);
         runSingleTest(com.lowagie.examples.fonts.FontFactoryType1Fonts.class);
@@ -309,34 +305,6 @@ public class RunAllExamplesTest {
             runSingleTest(com.lowagie.examples.fonts.ListEncodings.class);
             runSingleTest(com.lowagie.examples.fonts.UnicodeExample.class);
         }
-    }
-
-    @Test
-    public void testRtfExamples() {
-        runSingleTest(com.lowagie.examples.rtf.HelloWorld.class);
-        runSingleTest(com.lowagie.examples.rtf.extensions.hf.ExtendedHeaderFooter.class);
-        runSingleTest(com.lowagie.examples.rtf.extensions.hf.ChapterHeaderFooter.class);
-        runSingleTest(com.lowagie.examples.rtf.extensions.hf.MultipleHeaderFooter.class);
-        runSingleTest(com.lowagie.examples.rtf.extensions.table.ExtendedTableCell.class);
-        runSingleTest(com.lowagie.examples.rtf.extensions.font.ExtendedFontStyles.class);
-        runSingleTest(com.lowagie.examples.rtf.extensions.font.ExtendedFont.class);
-        runSingleTest(com.lowagie.examples.rtf.features.pagenumber.PageNumber.class);
-        runSingleTest(com.lowagie.examples.rtf.features.pagenumber.TotalPageNumber.class);
-        runSingleTest(com.lowagie.examples.rtf.features.shape.DrawingFreeform.class);
-        runSingleTest(com.lowagie.examples.rtf.features.shape.DrawingAnchor.class);
-        runSingleTest(com.lowagie.examples.rtf.features.shape.DrawingObjects.class);
-        runSingleTest(com.lowagie.examples.rtf.features.shape.DrawingText.class);
-        runSingleTest(com.lowagie.examples.rtf.features.shape.DrawingWrap.class);
-        runSingleTest(com.lowagie.examples.rtf.features.toc.TableOfContents.class);
-        runSingleTest(com.lowagie.examples.rtf.features.tabs.BasicTabs.class);
-        runSingleTest(com.lowagie.examples.rtf.features.tabs.TabGroups.class);
-        runSingleTest(com.lowagie.examples.rtf.features.styles.BasicStylesheets.class);
-        runSingleTest(com.lowagie.examples.rtf.features.styles.ChangingStylesheets.class);
-        runSingleTest(com.lowagie.examples.rtf.features.styles.ExtendingStylesheets.class);
-        runSingleTest(com.lowagie.examples.rtf.features.direct.SoftLineBreak.class);
-        runSingleTest(com.lowagie.examples.rtf.RtfTest.class);
-        runSingleTest(com.lowagie.examples.rtf.documentsettings.DocumentSettings.class);
-        runSingleTest(com.lowagie.examples.rtf.RtfTOCandCellborders.class);
     }
 
 }
