@@ -398,6 +398,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Gets whether this <code>RtfField</code> is in a table.
      * 
      * @return <code>True</code> if this <code>RtfField</code> is in a table, <code>false</code> otherwise
+     * @since 2.1.0
      */
     public boolean isInTable() {
         return this.inTable;
@@ -416,6 +417,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Gets whether this <code>RtfField</code> is in a header.
      * 
      * @return <code>True</code> if this <code>RtfField</code> is in a header, <code>false</code> otherwise
+     * @since 2.1.0
      */
     public boolean isInHeader() {
         return this.inHeader;

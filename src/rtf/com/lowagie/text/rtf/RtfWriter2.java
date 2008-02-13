@@ -301,6 +301,7 @@ public class RtfWriter2 extends DocWriter {
      * @param mappings The RtfImportMappings that contain font and color mappings to apply to the fragment.
      * @throws IOException On errors reading the RTF fragment.
      * @throws DocumentException On errors adding to this RTF fragment.
+     * @since 2.1.0
      */
     public void importRtfFragment(Reader documentSource, RtfImportMappings mappings) throws IOException, DocumentException {
         importRtfFragment(documentSource, mappings, null);

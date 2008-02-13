@@ -489,6 +489,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      * Gets whether this <code>RtfCell</code> is in a header
      * 
      * @return <code>True</code> if this <code>RtfCell</code> is in a header, <code>false</code> otherwise
+     * @since 2.1.0
      */
     public boolean isInHeader() {
         return this.inHeader;

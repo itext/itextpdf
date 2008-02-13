@@ -198,19 +198,19 @@
 		<!-- jdiff task split to have extra arguments for memory and classpath -->
 		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${itext.previous.version}"
-				sourcepath="${itext.previous.location}/src/core"
+				sourcepath="${itext.previous.location}/src/core:${itext.previous.location}/src/rtf"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
 		</javadoc>
 
 		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${releasenumber}"
-				sourcepath="${itext.src}/core"
+				sourcepath="${itext.src}/core:${itext.src}/rtf"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
 		</javadoc>
 
 		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
-				sourcepath="${itext.previous.location}/src/core"
+				sourcepath="${itext.previous.location}/src/core:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
 			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
 				<param name="-apiname" value="${itext.previous.version}"/>
@@ -221,7 +221,7 @@
 
 		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
-				sourcepath="${itext.src}/core"
+				sourcepath="${itext.src}/core:${itext.src}/rtf"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
 			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
 				<param name="-apiname" value="${releasenumber}"/>
