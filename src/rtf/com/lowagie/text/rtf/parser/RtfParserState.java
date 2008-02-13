@@ -50,8 +50,9 @@
 package com.lowagie.text.rtf.parser;
 
 import java.util.Stack;
-import com.lowagie.text.rtf.parser.ctrlwords.*;
-import com.lowagie.text.rtf.parser.destinations.*;
+
+import com.lowagie.text.rtf.parser.destinations.RtfDestination;
+import com.lowagie.text.rtf.parser.destinations.RtfDestinationNull;
 import com.lowagie.text.rtf.parser.properties.RtfProperty;
 
 /**

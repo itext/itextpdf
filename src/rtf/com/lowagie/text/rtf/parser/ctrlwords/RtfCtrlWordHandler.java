@@ -48,14 +48,9 @@
  */
 package com.lowagie.text.rtf.parser.ctrlwords; 
 
-import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.parser.RtfParser;
 import com.lowagie.text.rtf.parser.destinations.RtfDestination;
 import com.lowagie.text.rtf.parser.destinations.RtfDestinationMgr;
-import com.lowagie.text.rtf.parser.properties.RtfCtrlWordPropertyType;
-import com.lowagie.text.rtf.direct.RtfDirectContent;
-import java.util.*;
-import java.io.PushbackReader;
 
 /**
  * <code>RtfCtrlWordBase</code> is the base class for all

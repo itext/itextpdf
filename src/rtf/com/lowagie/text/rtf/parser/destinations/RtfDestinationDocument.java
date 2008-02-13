@@ -51,7 +51,6 @@ package com.lowagie.text.rtf.parser.destinations;
 
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Vector;
 
 import com.lowagie.text.Chunk;
@@ -65,7 +64,6 @@ import com.lowagie.text.rtf.document.*;
 import com.lowagie.text.rtf.parser.RtfParser;
 import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordData;
 import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordType;
-import com.lowagie.text.rtf.parser.properties.RtfCtrlWordPropertyType;
 import com.lowagie.text.rtf.parser.properties.RtfProperty;
 import com.lowagie.text.rtf.parser.properties.RtfPropertyListener;
 /**

@@ -53,16 +53,14 @@ package com.lowagie.text.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.pdf.PdfCopy.IndirectReferences;
-import com.lowagie.text.pdf.PdfCopy.RefKey;
-import java.security.MessageDigest;
-import java.util.Arrays;
 
 /**
  * PdfSmartCopy has the same functionality as PdfCopy,

@@ -50,13 +50,10 @@ package com.lowagie.text.rtf.parser.properties;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
 
 import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordData;
-import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordListener;
 
 /**
  * <code>RtfProperty</code> handles document, paragraph, etc. property values

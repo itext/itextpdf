@@ -49,7 +49,6 @@
 
 package com.lowagie.text.rtf.parser.ctrlwords;
 
-import com.lowagie.text.rtf.parser.properties.RtfCtrlWordPropertyType;
 
 /**
  * The control word and parameter information as parsed by the parser.

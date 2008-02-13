@@ -1,13 +1,13 @@
 package com.lowagie.text.rtf.graphic;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Image;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
 import com.lowagie.text.rtf.RtfAddableElement;
 
 /**

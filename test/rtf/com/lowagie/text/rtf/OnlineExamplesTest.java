@@ -4,7 +4,6 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 
-import java.io.File;
 import org.junit.Test;
 
 public class OnlineExamplesTest {
