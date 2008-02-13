@@ -57,7 +57,10 @@ import java.util.ArrayList;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfMapper;
-import com.lowagie.text.rtf.document.output.*;
+import com.lowagie.text.rtf.document.output.RtfDataCache;
+import com.lowagie.text.rtf.document.output.RtfDiskCache;
+import com.lowagie.text.rtf.document.output.RtfEfficientMemoryCache;
+import com.lowagie.text.rtf.document.output.RtfMemoryCache;
 import com.lowagie.text.rtf.graphic.RtfImage;
 
 /**

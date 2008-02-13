@@ -50,12 +50,13 @@
  
 package com.lowagie.text.rtf.parser.destinations;
 
+import com.lowagie.text.Element;
 import com.lowagie.text.rtf.parser.RtfImportMgr;
 import com.lowagie.text.rtf.parser.RtfParser;
 import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordData;
 import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordType;
-import com.lowagie.text.rtf.style.*;
-import com.lowagie.text.Element;
+import com.lowagie.text.rtf.style.RtfParagraphStyle;
+import com.lowagie.text.rtf.style.RtfStyleTypes;
 
 /**
  * <code>RtfDestinationStylesheetTable</code> handles data destined for the 

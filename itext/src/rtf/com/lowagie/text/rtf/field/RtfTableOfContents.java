@@ -52,7 +52,8 @@
 
 package com.lowagie.text.rtf.field;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import com.lowagie.text.Font;
 

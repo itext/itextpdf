@@ -49,11 +49,9 @@
  */
 package com.lowagie.text.rtf.parser.destinations;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.lowagie.text.rtf.parser.RtfParser;
-import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordListener;
 
 /**
  * <code>RtfDestinationMgr</code> manages destination objects for the parser

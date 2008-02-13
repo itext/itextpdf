@@ -54,14 +54,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Properties;
-import com.lowagie.text.ElementTags;
+
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
-import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.rtf.parser.RtfImportMgr;
 import com.lowagie.text.rtf.parser.RtfParser;
 import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordData;
-import com.lowagie.text.rtf.style.RtfFont;
 
 /**
  * <code>RtfDestinationFontTable</code> handles data destined for the font table destination

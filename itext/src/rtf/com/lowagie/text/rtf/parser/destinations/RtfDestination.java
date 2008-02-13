@@ -54,7 +54,6 @@ import java.util.Iterator;
 
 import com.lowagie.text.rtf.parser.RtfParser;
 import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordData;
-import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordListener;
 
  /**
   * <code>RtfDestination</code> is the base class for destinations according

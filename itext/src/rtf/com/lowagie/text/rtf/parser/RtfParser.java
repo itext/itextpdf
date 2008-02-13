@@ -50,20 +50,26 @@
 package com.lowagie.text.rtf.parser;
 
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PushbackReader;
-import java.io.BufferedReader;
 import java.io.Reader;
-import java.io.PrintStream;
-import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.EventListener;
+import java.util.Iterator;
+import java.util.Stack;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.List;
 import com.lowagie.text.rtf.direct.RtfDirectContent;
 import com.lowagie.text.rtf.document.RtfDocument;
-import com.lowagie.text.rtf.parser.ctrlwords.*;
-import com.lowagie.text.rtf.parser.destinations.*;
-import com.lowagie.text.List;
+import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordData;
+import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordListener;
+import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordMgr;
+import com.lowagie.text.rtf.parser.destinations.RtfDestination;
+import com.lowagie.text.rtf.parser.destinations.RtfDestinationMgr;
 
 /**
  * The RtfParser allows the importing of RTF documents or

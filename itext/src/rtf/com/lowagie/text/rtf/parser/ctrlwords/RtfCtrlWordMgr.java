@@ -50,18 +50,11 @@
 
 package com.lowagie.text.rtf.parser.ctrlwords;
 
-import com.lowagie.text.DocListener;
-import com.lowagie.text.rtf.direct.RtfDirectContent;
-import com.lowagie.text.rtf.parser.RtfParser;
-import com.lowagie.text.rtf.document.RtfDocument;
 import java.io.PushbackReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
+
+import com.lowagie.text.rtf.parser.RtfParser;
 
 /**
  * <code>RtfCtrlWordMgr</code> handles the dispatching of control words from
