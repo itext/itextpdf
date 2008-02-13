@@ -41,10 +41,6 @@
 		<exclude name="com/lowagie/examples/general/HelloWorldMultiple.java"/>
 		<exclude name="com/lowagie/examples/general/webapp/HelloWorldServlet.java"/>
 		<exclude name="com/lowagie/examples/objects/tables/alternatives/TablePdfPTable.java"/>
-		<exclude name="com/lowagie/examples/fonts/styles/ExtraStyles.java"/>
-		<exclude name="com/lowagie/examples/general/HelloWorldMultiple.java"/>
-		<exclude name="com/lowagie/examples/general/webapp/HelloWorldServlet.java"/>
-		<exclude name="com/lowagie/examples/objects/tables/alternatives/TablePdfPTable.java"/>
         	<classpath refid="itext.examples.classpath"/>
     	</javac>
     </target>
@@ -149,11 +145,6 @@
 		<include name="com/lowagie/examples/rtf/**"/>
 		<include name="com/lowagie/examples/fonts/styles/ExtraStyles.java"/>
 		<include name="com/lowagie/examples/general/HelloWorldMultiple.java"/>
-		<include name="com/lowagie/examples/general/webapp/HelloWorldServlet.java"/>
-		<include name="com/lowagie/examples/objects/tables/alternatives/TablePdfPTable.java"/>
-		<include name="com/lowagie/examples/fonts/styles/ExtraStyles.java"/>
-		<include name="com/lowagie/examples/general/HelloWorldMultiple.java"/>
-		<include name="com/lowagie/examples/general/webapp/HelloWorldServlet.java"/>
 		<include name="com/lowagie/examples/objects/tables/alternatives/TablePdfPTable.java"/>
             <classpath>
                 <path refid="itext.test.classpath"/>
