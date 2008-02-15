@@ -2024,8 +2024,15 @@ public class PdfWriter extends DocWriter implements
                 }
                 else
                     name = forcedName;
-                if (template.getType() == PdfTemplate.TYPE_IMPORTED)
+                if (template.getType() == PdfTemplate.TYPE_IMPORTED) {
+                    // If we got here from PdfCopy we'll have to fill importedPages
+                    PdfImportedPage ip = (PdfImportedPage)template;
+                    PdfReader r = ip.getPdfReaderInstance().getReader();
+                    if (!importedPages.containsKey(r)) {
+                        importedPages.put(r, ip.getPdfReaderInstance());
+                    }
                     template = null;
+                }
                 formXObjects.put(ref, new Object[]{name, template});
             }
             else
