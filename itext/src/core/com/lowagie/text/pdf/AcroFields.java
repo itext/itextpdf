@@ -597,6 +597,7 @@ public class AcroFields {
         //flags
         PdfNumber nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.F));
         flags = 0;
+        tx.setVisibility(BaseField.VISIBLE_BUT_DOES_NOT_PRINT);
         if (nfl != null) {
             flags = nfl.intValue();
             if ((flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) != 0)
@@ -605,8 +606,6 @@ public class AcroFields {
                 tx.setVisibility(BaseField.HIDDEN_BUT_PRINTABLE);
             else if ((flags & PdfFormField.FLAGS_PRINT) != 0)
                 tx.setVisibility(BaseField.VISIBLE);
-            else
-                tx.setVisibility(BaseField.VISIBLE_BUT_DOES_NOT_PRINT);
         }
         //multiline
         nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.FF));
