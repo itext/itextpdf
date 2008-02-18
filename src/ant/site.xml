@@ -70,6 +70,7 @@
             <link href="http://java.sun.com/j2se/1.4/docs/api/" />
         	<link href="http://www.bouncycastle.org/docs/docs1.4/" />
         	<header>&lt;a href="http://itext.ugent.be/itext-in-action/" target="_blank"&gt;&lt;img src="http://itext.ugent.be/img/lowagie_3d.jpg" border="0" /&gt;&lt;/a&gt;</header>
+			<footer>Hosted by &lt;a href="http://www.hostbasket.com/"&gt;Hostbasket&lt;/a&gt;</footer>
         </javadoc>
     </target>
 
