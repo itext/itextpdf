@@ -1462,6 +1462,11 @@ public class PdfGraphics2D extends Graphics2D {
                 image.setImageMask(msk);
             }
             cb.addImage(image, (float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
+            Object url = getRenderingHint(HyperLinkKey.KEY_INSTANCE);
+            if (url != null && !url.equals(HyperLinkKey.VALUE_HYPERLINKKEY_OFF)) {
+            	PdfAction action = new  PdfAction(url.toString());
+                cb.setAction(action, (float)mx[4], (float)mx[5], (float)(mx[0]+mx[4]), (float)(mx[3]+mx[5]));
+            }
         } catch (Exception ex) {
             throw new IllegalArgumentException();
         }
