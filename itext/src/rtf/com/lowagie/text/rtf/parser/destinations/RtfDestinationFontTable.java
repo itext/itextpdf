@@ -170,7 +170,7 @@ public final class RtfDestinationFontTable extends RtfDestination {
 	/**
 	 * Constructs a new RtfFontTableParser.
 	 * 
-	 * @param importHeader The RtfImportHeader to add font mappings to.
+	 * @param parser an RtfParser.
 	 * 
 	 * @since 2.0.8
 	 */

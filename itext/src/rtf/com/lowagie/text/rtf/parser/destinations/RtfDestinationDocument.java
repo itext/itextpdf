@@ -93,10 +93,10 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 	/**
 	 * Indicates the parser action. Import or Conversion.
 	 * 
-	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_UNIDENTIFIED
-	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_CONVERT
-	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FRAGMENT
-	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FULL
+	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_UNIDENTIFIED
+	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_CONVERT
+	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_IMPORT_FRAGMENT
+	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_IMPORT_FULL
 	 */
 	private int conversionType = 0;
 	
@@ -139,9 +139,7 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 	/**
 	 * Constructs a new <code>RtfDestinationDocument</code> using
 	 * the parameters to initialize the object.
-	 * @param rtfDoc The <code>RtfDocument</code> this works with.
-	 * @param doc The iText <code>Document</code> this works with.
-	 * @param type The type of conversion being done.
+	 * @param parser an RtfParser.
 	 */
 	public RtfDestinationDocument(RtfParser parser) {
 		super(parser);

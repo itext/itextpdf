@@ -87,12 +87,12 @@ public interface RtfDestinationListener extends EventListener {
 	public char[] afterCharacter(char[] ch);
 	/**
 	 * 
-	 * @return
+	 * @return true if all went well
 	 */
 	public boolean onOpenGroup();
 	/**
 	 * 
-	 * @return
+	 * @return true if all went well
 	 */
 	public boolean onCloseGroup();
 	

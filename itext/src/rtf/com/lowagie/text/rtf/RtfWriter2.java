@@ -268,15 +268,16 @@ public class RtfWriter2 extends DocWriter {
      * so that the imported RTF document retains its formattings.
      * Uses new RtfParser object.
      * 
+     * (author: Howard Shank)
+     * 
      * @param documentSource
-	 * @param eventListeners The array of event listeners. May be null
+	 * @param events The array of event listeners. May be null
      * @throws IOException
      * @throws DocumentException
      * 
      * @see com.lowagie.text.rtf.parser.RtfParser
      * @see com.lowagie.text.rtf.parser.RtfParser#importRtfDocument(Reader, RtfDocument)
      * @since 2.0.8
-     * @author Howard Shank
      */
     public void importRtfDocument(Reader documentSource, EventListener[] events ) throws IOException, DocumentException {
         if(!this.open) {
@@ -314,9 +315,11 @@ public class RtfWriter2 extends DocWriter {
      * known, they can be specified via the mappings parameter.
      * Uses new RtfParser object.
      * 
+     * (author: Howard Shank)
+     * 
      * @param documentSource The Reader to read the RTF fragment from.
      * @param mappings The RtfImportMappings that contain font and color mappings to apply to the fragment.
-	 * @param eventListeners The array of event listeners. May be null
+	 * @param events The array of event listeners. May be null
      * @throws IOException On errors reading the RTF fragment.
      * @throws DocumentException On errors adding to this RTF fragment.
      * 
@@ -324,7 +327,6 @@ public class RtfWriter2 extends DocWriter {
      * @see com.lowagie.text.rtf.parser.RtfParser
      * @see com.lowagie.text.rtf.parser.RtfParser#importRtfFragment(Reader, RtfDocument, com.lowagie.text.rtf.parser.RtfImportMappings)
      * @since 2.0.8
-     * @author Howard Shank
      */
     public void importRtfFragment(Reader documentSource, RtfImportMappings mappings, EventListener[] events ) throws IOException, DocumentException {
         if(!this.open) {
