@@ -1021,7 +1021,7 @@ public class RtfParser {
 	// accessors for destinations
 	/**
 	 * Set the current destination object for the current state.
-	 * @param dest The destination value to set.
+	 * @param destination The destination value to set.
 	 */
 	public boolean setCurrentDestination(String destination) {
 			RtfDestination dest = RtfDestinationMgr.getDestination(destination);
@@ -1044,7 +1044,7 @@ public class RtfParser {
 	/**
 	 * Get a destination from the map
 	 * 
-	 * @para destination The string destination.
+	 * @param destination The string destination.
 	 * @return The destination object from the map
 	 */
 	public RtfDestination getDestination(String destination) {
@@ -1336,7 +1336,7 @@ public class RtfParser {
 	/**
 	 * Helper method to determin if conversion is TYPE_CONVERT
 	 * @return true if TYPE_CONVERT, otherwise false
-	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_CONVERT
+	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_CONVERT
 	 */
 	public boolean isConvert() {
 		return (this.getConversionType() == RtfParser.TYPE_CONVERT);
@@ -1345,8 +1345,8 @@ public class RtfParser {
 	/**
 	 * Helper method to determin if conversion is TYPE_IMPORT_FULL or TYPE_IMPORT_FRAGMENT
 	 * @return true if TYPE_CONVERT, otherwise false
-	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FULL
-	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FRAGMENT
+	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_IMPORT_FULL
+	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_IMPORT_FRAGMENT
 	 */
 	public boolean isImport() {
 		return (isImportFull() || this.isImportFragment());
@@ -1354,7 +1354,7 @@ public class RtfParser {
 	/**
 	 * Helper method to determin if conversion is TYPE_IMPORT_FULL
 	 * @return true if TYPE_CONVERT, otherwise false
-	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FULL
+	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_IMPORT_FULL
 	 */
 	public boolean isImportFull() {
 		return (this.getConversionType() == RtfParser.TYPE_IMPORT_FULL);
@@ -1362,7 +1362,7 @@ public class RtfParser {
 	/**
 	 * Helper method to determin if conversion is TYPE_IMPORT_FRAGMENT
 	 * @return true if TYPE_CONVERT, otherwise false
-	 * @see com.lowagie.text.rtf.direct.RtfParser#TYPE_IMPORT_FRAGMENT
+	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_IMPORT_FRAGMENT
 	 */
 	public boolean isImportFragment() {
 		return (this.getConversionType() == RtfParser.TYPE_IMPORT_FRAGMENT);

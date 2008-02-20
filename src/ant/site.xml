@@ -15,6 +15,8 @@
 	    <pathelement location="${itext.bin}"/>
 	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
 	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/dom4j-1.6.1.jar"/>
+	    <pathelement path="${itext.lib}/pdf-renderer.jar"/>
 	</path>
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -66,9 +68,17 @@
 			<packageset dir="${itext.src}/core" defaultexcludes="yes">
       			<include name="com/lowagie/**" />
 		    </packageset>
+			<packageset dir="${itext.src}/rtf" defaultexcludes="yes">
+      			<include name="com/lowagie/**" />
+		    </packageset>
+			<packageset dir="${itext.src}/rups" defaultexcludes="yes">
+      			<include name="com/lowagie/**" />
+		    </packageset>
         	<classpath refid="itext.classpath"/>
             <link href="http://java.sun.com/j2se/1.4/docs/api/" />
         	<link href="http://www.bouncycastle.org/docs/docs1.4/" />
+        	<link href="http://www.dom4j.org/apidocs/" />
+        	<link href="https://pdf-renderer.dev.java.net/nonav/demos/latest/javadoc/" />
         	<header>&lt;a href="http://itext.ugent.be/itext-in-action/" target="_blank"&gt;&lt;img src="http://itext.ugent.be/img/lowagie_3d.jpg" border="0" /&gt;&lt;/a&gt;</header>
 			<footer>Hosted by &lt;a href="http://www.hostbasket.com/"&gt;Hostbasket&lt;/a&gt;</footer>
         </javadoc>

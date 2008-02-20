@@ -235,7 +235,7 @@ public abstract class RtfDestination {
 
 	/**
 	 * 
-	 * @return
+	 * @return true if all goes well
 	 */
 	protected  boolean onOpenGroup(){
 		RtfDestinationListener listener;
@@ -248,7 +248,7 @@ public abstract class RtfDestination {
 
 	/**
 	 * 
-	 * @return
+	 * @return true if all goes well
 	 */
 	protected  boolean onCloseGroup(){
 		RtfDestinationListener listener;

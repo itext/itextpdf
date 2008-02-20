@@ -142,7 +142,7 @@ public class RtfDestinationColorTable extends RtfDestination  {
 	/**
 	 * Constructs a new RtfColorTableParser.
 	 * 
-	 * @param importHeader The RtfImportHeader to add the color mappings to.
+	 * @param parser an RtfParser
 	 */
 	public RtfDestinationColorTable(RtfParser parser) {
 		super(parser);

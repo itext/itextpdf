@@ -323,7 +323,7 @@ public class RtfProperty {
 	 * Set the value of the property identified by the parameter.
 	 * 
 	 * @param propertyName The property name to set
-	 * @param propertyValue The object to set the property value to
+	 * @param propertyValueNew The object to set the property value to
 	 * @return <code>true</code> for handled or <code>false</code> if <code>propertyName</code> is <code>null</code>
 	 */
 	private boolean setProperty(String propertyName, int propertyValueNew) {
@@ -361,7 +361,7 @@ public class RtfProperty {
 	 * Set the value of the property identified by the parameter.
 	 * 
 	 * @param propertyName The property name to set
-	 * @param propertyValue The object to set the property value to
+	 * @param propertyValueNew The object to set the property value to
 	 * @return <code>true</code> for handled or <code>false</code> if <code>propertyName</code> is <code>null</code>
 	 */
 	private boolean setProperty(String propertyName, long propertyValueNew) {
