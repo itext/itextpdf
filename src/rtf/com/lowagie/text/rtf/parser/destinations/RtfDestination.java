@@ -180,7 +180,7 @@ public abstract class RtfDestination {
 		RtfDestinationListener listener;
 		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
             listener = (RtfDestinationListener) iterator.next();
-            listener.beforeCtrlWord(ctrlWordData);
+            listener.onCtrlWord(ctrlWordData);
         }
 		return null;
 	}
@@ -192,7 +192,7 @@ public abstract class RtfDestination {
 		RtfDestinationListener listener;
 		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
             listener = (RtfDestinationListener) iterator.next();
-            listener.beforeCtrlWord(ctrlWordData);
+            listener.afterCtrlWord(ctrlWordData);
         }
 		return null;
 	}
