@@ -368,7 +368,7 @@ public class RtfProperty {
 		if(propertyName == null) return false;
 		Object propertyValueOld = getProperty(propertyName);
 		if(propertyValueOld instanceof Long) {
-			int valueOld = ((Integer)propertyValueOld).intValue();
+			long valueOld = ((Long)propertyValueOld).longValue();
 			if (valueOld==propertyValueNew) return true;
 		} 
 		beforeChange(propertyName);
