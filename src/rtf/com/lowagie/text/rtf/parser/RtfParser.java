@@ -585,11 +585,11 @@ public class RtfParser {
 		
 		this.rtfKeywordMgr = new RtfCtrlWordMgr(this, this.pbReader);/////////DO NOT COMMENT OUT THIS LINE ///////////
 		
-		RtfCtrlWordListener listener;
+		Object listener;
 		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-            listener = (RtfCtrlWordListener) iterator.next();
+            listener = iterator.next();
             if(listener instanceof RtfCtrlWordListener) {
-                this.rtfKeywordMgr.addRtfCtrlWordListener(listener);    
+                this.rtfKeywordMgr.addRtfCtrlWordListener((RtfCtrlWordListener)listener);    
             }
         }
 //		endFree = Runtime.getRuntime().freeMemory();
@@ -1329,6 +1329,17 @@ public class RtfParser {
 	 * 			The number of binary bytes.
 	 */
 	public void setTokeniserStateBinary(int binaryCount) {
+		this.setTokeniserState(TOKENISER_BINARY);
+		this.binByteCount = binaryCount;
+		return;
+	}
+	/**
+	 * Sets the number of binary bytes.
+	 * 
+	 * @param binaryCount
+	 * 			The number of binary bytes.
+	 */
+	public void setTokeniserStateBinary(long binaryCount) {
 		this.setTokeniserState(TOKENISER_BINARY);
 		this.binByteCount = binaryCount;
 		return;
