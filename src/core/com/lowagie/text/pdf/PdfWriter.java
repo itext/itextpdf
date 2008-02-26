@@ -1019,6 +1019,13 @@ public class PdfWriter extends DocWriter implements
             page.put(PdfName.GROUP, group);
             group = null;
         }
+        else if (rgbTransparencyBlending) {
+            PdfDictionary pp = new PdfDictionary();
+            pp.put(PdfName.TYPE, PdfName.GROUP);
+            pp.put(PdfName.S, PdfName.TRANSPARENCY);
+            pp.put(PdfName.CS, PdfName.DEVICERGB);
+            page.put(PdfName.GROUP, pp);
+        }
         root.addPage(page);
         currentPageNumber++;
         return null;
@@ -2926,5 +2933,32 @@ public class PdfWriter extends DocWriter implements
      */
     public void setUserProperties(boolean userProperties) {
         this.userProperties = userProperties;
+    }
+
+    /**
+     * Holds value of property RGBTranparency.
+     */
+    private boolean rgbTransparencyBlending;
+
+    /**
+     * Gets the transparency blending colorspace.
+     * @return <code>true</code> if the transparency blending colorspace is RGB, <code>false</code>
+     * if it is the default blending colorspace
+     */
+    public boolean isRgbTransparencyBlending() {
+        return this.rgbTransparencyBlending;
+    }
+
+    /**
+     * Sets the transparency blending colorspace to RGB. The default blending colorspace is
+     * CMYK and will result in faded colors in the screen and in printing. Calling this method
+     * will return the RGB colors to what is expected. The RGB blending will be applied to all subsequent pages
+     * until other value is set.
+     * Note that this is a generic solution that may not work in all cases.
+     * @param rgbTransparencyBlending <code>true</code> to set the transparency blending colorspace to RGB, <code>false</code>
+     * to use the default blending colorspace
+     */
+    public void setRgbTransparencyBlending(boolean rgbTransparencyBlending) {
+        this.rgbTransparencyBlending = rgbTransparencyBlending;
     }
 }

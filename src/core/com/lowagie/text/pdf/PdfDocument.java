@@ -846,7 +846,12 @@ public class PdfDocument extends Document {
         	}
         	
         	// [M1]
-        	pageResources.addDefaultColorDiff(writer.getDefaultColorspace());        
+        	pageResources.addDefaultColorDiff(writer.getDefaultColorspace());
+            if (writer.isRgbTransparencyBlending()) {
+                PdfDictionary dcs = new PdfDictionary();
+                dcs.put(PdfName.CS, PdfName.DEVICERGB);
+                pageResources.addDefaultColorDiff(dcs);
+            }
         	PdfDictionary resources = pageResources.getResources();
         	
         	// we create the page dictionary
