@@ -2944,6 +2944,7 @@ public class PdfWriter extends DocWriter implements
      * Gets the transparency blending colorspace.
      * @return <code>true</code> if the transparency blending colorspace is RGB, <code>false</code>
      * if it is the default blending colorspace
+     * @since 2.1.0
      */
     public boolean isRgbTransparencyBlending() {
         return this.rgbTransparencyBlending;
@@ -2957,6 +2958,7 @@ public class PdfWriter extends DocWriter implements
      * Note that this is a generic solution that may not work in all cases.
      * @param rgbTransparencyBlending <code>true</code> to set the transparency blending colorspace to RGB, <code>false</code>
      * to use the default blending colorspace
+     * @since 2.1.0
      */
     public void setRgbTransparencyBlending(boolean rgbTransparencyBlending) {
         this.rgbTransparencyBlending = rgbTransparencyBlending;
