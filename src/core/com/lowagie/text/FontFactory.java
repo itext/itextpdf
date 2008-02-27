@@ -287,6 +287,7 @@ public class FontFactory {
  * @param	size	    the size of this font
  * @param	color	    the <CODE>Color</CODE> of this font.
  * @return the Font constructed based on the parameters
+ * @since 2.1.0
  */
     
     public static Font getFont(String fontname, float size, Color color) {

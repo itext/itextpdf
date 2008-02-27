@@ -406,9 +406,10 @@ public class FontFactoryImp {
  * Constructs a <CODE>Font</CODE>-object.
  *
  * @param	fontname    the name of the font
- * @param	encoding    the encoding of the font
  * @param	size	    the size of this font
+ * @param	color	    the <CODE>Color</CODE> of this font.
  * @return the Font constructed based on the parameters
+ * @since 2.1.0
  */
     
     public Font getFont(String fontname, float size, Color color) {
