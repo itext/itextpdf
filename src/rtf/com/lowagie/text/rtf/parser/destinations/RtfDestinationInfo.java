@@ -153,8 +153,8 @@ public class RtfDestinationInfo extends RtfDestination {
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleCharacter(char[])
 	 */
-	public boolean handleCharacter(char[] ch) {
-		this.text += ch[0];
+	public boolean handleCharacter(int ch) {
+		this.text += (char)ch;
 		return true;
 	}
 

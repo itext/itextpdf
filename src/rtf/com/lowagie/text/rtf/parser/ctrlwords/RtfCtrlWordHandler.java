@@ -217,7 +217,7 @@ public class RtfCtrlWordHandler implements Cloneable {
 		}
 
 		if(debug) {
-			printDebug("handleKeyword: [" + this.ctrlWordData.ctrlWord + "]");
+			printDebug("handleKeyword: [" + this.ctrlWordData.ctrlWord + "] param=" + ctrlWordDataIn.param);
 			RtfParser.outputDebug(this.rtfParser.getRtfDocument(), this.rtfParser.getLevel()+1, "RtfCtrlWordHandler debug Start: " + this.ctrlWordData.ctrlWord + " ");
 		}
 		if(this.ctrlWordData.ctrlWord.equals("*")) {
@@ -253,7 +253,9 @@ public class RtfCtrlWordHandler implements Cloneable {
 				// If there is a substitute character, process the character.
 				// If no substitute character, then provide special handling in the destination for the ctrl word. 
 				if(data != null) {
-					handled = dest.handleCharacter(data.toCharArray());
+					for(int idx=0; idx< data.length(); idx++) {
+						handled = dest.handleCharacter(data.charAt(idx));
+					}
 				} else {
 					handled = dest.handleControlWord(this.ctrlWordData);
 				}
@@ -263,12 +265,22 @@ public class RtfCtrlWordHandler implements Cloneable {
 		case RtfCtrlWordType.DESTINATION_EX:
 		case RtfCtrlWordType.DESTINATION:
 			// set the destination
+			int x=0;
+			if(this.ctrlWord == "shppict" || this.ctrlWord == "nonshppict") {
+				x++;
+			}
 			handled = this.rtfParser.setCurrentDestination(this.ctrlWord);
 			// let destination handle the ctrl word now.
 			dest = (RtfDestination)this.rtfParser.getCurrentDestination();
 			if(dest != null) {
-				handled = dest.handleControlWord(this.ctrlWordData);
+				if(dest.getNewTokeniserState() == RtfParser.TOKENISER_IGNORE_RESULT) {
+					handled = dest.handleControlWord(this.ctrlWordData);
+				}
+				else {
+					this.rtfParser.setTokeniserState(dest.getNewTokeniserState());
+				}
 			}
+
 			break;
 		}
 

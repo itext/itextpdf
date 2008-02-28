@@ -50,8 +50,12 @@
 package com.lowagie.text.rtf.parser;
 
 import java.awt.Color;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -62,6 +66,7 @@ import java.util.Iterator;
 import java.util.Stack;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.List;
 import com.lowagie.text.rtf.direct.RtfDirectContent;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -122,7 +127,7 @@ public class RtfParser {
 	/**
 	 * The pushback reader to read the input stream.
 	 */
-	private PushbackReader pbReader = null;
+	private PushbackInputStream pbReader = null;
 	/**
 	 * Conversion type. Identifies if we are doing in import or a convert.
 	 */
@@ -337,6 +342,10 @@ public class RtfParser {
 	 */
 	public static final int TOKENISER_HEX= 0x00000004;
 	/**
+	 * The RtfTokeniser ignore result
+	 */
+	public static final int TOKENISER_IGNORE_RESULT= 0x00000005;
+	/**
 	 * The RtfTokeniser is currently in error state
 	 */
 	public static final int TOKENISER_STATE_IN_ERROR =  0x80000000; // 1000 0000 0000 0000 0000 0000 0000 0000
@@ -458,14 +467,23 @@ public class RtfParser {
 	 * 		The RtfDocument to add the imported document to.
 	 * @throws IOException On I/O errors.
 	 */
-	public void importRtfDocument(Reader readerIn, RtfDocument rtfDoc) throws IOException {
+	public void importRtfDocument(InputStream readerIn, RtfDocument rtfDoc) throws IOException {
 		if(readerIn == null || rtfDoc == null) return;
 		this.init(TYPE_IMPORT_FULL, rtfDoc, readerIn, null);
 		this.setCurrentDestination(RtfDestinationMgr.DESTINATION_NULL);
 		startDate = new Date();
 		startTime = System.currentTimeMillis();
 		this.groupLevel = 0;
-		this.tokenise();
+		try {
+			this.tokenise();
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		endTime = System.currentTimeMillis();
 		endDate = new Date();
 	}
@@ -482,7 +500,7 @@ public class RtfParser {
 	 * @throws IOException 
 	 * 		On I/O errors.
 	 */
-	public void convertRtfDocument(Reader readerIn, Document doc) throws IOException {
+	public void convertRtfDocument(InputStream readerIn, Document doc) throws IOException {
 		if(readerIn == null || doc == null) return;
 		this.init(TYPE_CONVERT, null, readerIn, doc);
 		this.setCurrentDestination(RtfDestinationMgr.DESTINATION_DOCUMENT);
@@ -506,7 +524,7 @@ public class RtfParser {
 	 * @throws IOException 
 	 * 		On I/O errors.
 	 */
-	public void importRtfFragment(Reader readerIn, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException {
+	public void importRtfFragment(InputStream readerIn, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException {
 	//public void importRtfFragment2(Reader readerIn, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException {
 		if(readerIn == null || rtfDoc == null || importMappings==null) return;
 		this.init(TYPE_IMPORT_FRAGMENT, rtfDoc, readerIn, null);
@@ -551,7 +569,7 @@ public class RtfParser {
 	 * @param readerIn The input stream
 	 * @param doc The iText <code>Document</code>
 	 */
-	private void init(int type, RtfDocument rtfDoc, Reader readerIn, Document doc) {
+	private void init(int type, RtfDocument rtfDoc, InputStream readerIn, Document doc) {
 
 		init_stats();
 		// initialize reader to a PushbackReader
@@ -710,23 +728,29 @@ public class RtfParser {
 	 * @return
 	 * 		PushbackReader object
 	 */
-	private PushbackReader init_Reader(Reader readerIn) {
-		Reader newReader = readerIn;
-		// Initializing the reader as a BufferedReader 
-		// cut test processing time by approximately 50%
-		// default uses 8192 character buffer
-		if(!(newReader instanceof BufferedReader)) {
-			newReader = new BufferedReader(newReader);	// Since JDK1.1
-		}
-		// Initializing the reader as a PushbackReader is
-		// a requirement of the parser to be able to put back
-		// read ahead characters.
-		if(!(newReader instanceof PushbackReader)) {
-			newReader = new PushbackReader(newReader);	// Since JDK1.1
-		}
+	private PushbackInputStream init_Reader(InputStream readerIn) {
+//		Reader newReader = readerIn;
+//		// Initializing the reader as a BufferedReader 
+//		// cut test processing time by approximately 50%
+//		// default uses 8192 character buffer
+//		if(!(newReader instanceof BufferedReader)) {
+//			newReader = new BufferedReader(newReader);	// Since JDK1.1
+//		}
+//		// Initializing the reader as a PushbackReader is
+//		// a requirement of the parser to be able to put back
+//		// read ahead characters.
+//		if(!(newReader instanceof PushbackReader)) {
+//			newReader = new PushbackReader(newReader);	// Since JDK1.1
+//		}
 		
+		if(!(readerIn instanceof BufferedInputStream)) {
+			readerIn = new BufferedInputStream(readerIn);
+		}
+		if(!(readerIn instanceof PushbackInputStream)) {
+			readerIn = new PushbackInputStream(readerIn);
+		}
 		// return the proper reader object to the parser setup
-		return  (PushbackReader)newReader;
+		return  (PushbackInputStream)readerIn;
 	}
 	
 	/**
@@ -825,11 +849,24 @@ public class RtfParser {
 		
 		return result;
 	}
-	public static void outputDebug(RtfDocument rtfDoc, int groupLevel, String str) {
+	public static void outputDebug(Object doc, int groupLevel, String str) {
+		System.out.println(str);
+		if(doc == null) return;
 		if(groupLevel<0) groupLevel = 0;
 		char[] a; Arrays.fill(a= new char[groupLevel*2], ' ');
 		String spaces= new String(a);
-		rtfDoc.add(new RtfDirectContent("\n" + spaces + str));
+		if(doc instanceof RtfDocument) {
+			((RtfDocument)doc).add(new RtfDirectContent("\n" + spaces + str));
+		}
+		else
+			if(doc instanceof Document) {
+				try {
+					((Document)doc).add(new RtfDirectContent("\n" + spaces + str));
+				} catch (DocumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 	}
 	/**
 	 * Handles close group tokens. (})
@@ -892,7 +929,7 @@ public class RtfParser {
 		this.ctrlWordCount++; // stats
 
 		if(debugParser) {
-			RtfParser.outputDebug(this.rtfDoc, groupLevel, "DEBUG: handleCtrlWord=" + ctrlWordData.ctrlWord);
+			RtfParser.outputDebug(this.rtfDoc, groupLevel, "DEBUG: handleCtrlWord=" + ctrlWordData.ctrlWord + " param=[" + ctrlWordData.param + "]");
 		}
 
 		if (this.getTokeniserState() == TOKENISER_SKIP_GROUP) { 
@@ -929,7 +966,8 @@ public class RtfParser {
 	 * 		The text token to handle.
 	 * @return errOK if ok, other if an error occurred. 
 	 */
-	public int handleCharacter(char[] nextChar) {		
+//	public int handleCharacter(char[] nextChar) {		
+	public int handleCharacter(int nextChar) {		
 		this.characterCount++;	// stats
 
 		if (this.getTokeniserState() == TOKENISER_SKIP_GROUP) { 
@@ -1080,12 +1118,14 @@ public class RtfParser {
 	 */	
 	public void tokenise() throws IOException {
 		int errorCode = errOK;	// error code
-		char[] nextChar = new char[1]; // input variable
-		nextChar[0]=0;	// set to 0
+		int nextChar = 0;
+//		char[] nextChar = new char[1]; // input variable
+//		nextChar[0]=0;	// set to 0
 		this.setTokeniserState(TOKENISER_NORMAL);	// set initial tokeniser state
 		
 		
-		while(this.pbReader.read(nextChar) != -1) {
+//		while(this.pbReader.read(nextChar) != -1) {
+		while((nextChar = this.pbReader.read()) != -1) {
 			this.byteCount++;
 			
 	        if (this.getTokeniserState() == TOKENISER_BINARY)                      // if we're parsing binary data, handle it directly
@@ -1093,7 +1133,8 @@ public class RtfParser {
 	            if ((errorCode = parseChar(nextChar)) != errOK)
 	                return; 
 	        }  else {
-				switch(nextChar[0]) {
+//				switch(nextChar[0]) {
+				switch(nextChar) {
 					case '{':	// scope delimiter - Open
 						this.handleOpenGroup();
 						break;
@@ -1119,13 +1160,15 @@ public class RtfParser {
 						if(this.getTokeniserState() == TOKENISER_HEX) {
 							StringBuffer hexChars = new StringBuffer();
 							hexChars.append(nextChar);
-							if(pbReader.read(nextChar) == -1) {
+//							if(pbReader.read(nextChar) == -1) {
+							if((nextChar = pbReader.read()) == -1) {
 								return;
 							}
 							this.byteCount++;
 							hexChars.append(nextChar);
 	                    	try {
-								nextChar[0]=(char)Integer.parseInt(hexChars.toString(), 16);
+//								nextChar[0]=(char)Integer.parseInt(hexChars.toString(), 16);
+								nextChar=Integer.parseInt(hexChars.toString(), 16);
 							} catch (NumberFormatException e) {
 								return;
 							}
@@ -1152,12 +1195,13 @@ public class RtfParser {
 	
 	/**
 	 * Process the character and send it to the current destination.
-	 * @param ch
+	 * @param nextChar
 	 * 		The character to process
 	 * @return
 	 * 		Returns an error code or errOK if no error.
 	 */
-	private int parseChar(char[] ch) {
+//	private int parseChar(char[] ch) {
+	private int parseChar(int nextChar) {
 		// figure out where to put the character
 		// needs to handle group levels for parsing
 		// examples
@@ -1173,7 +1217,7 @@ public class RtfParser {
 	    	this.setTokeniserStateNormal();
 	    if (this.getTokeniserState() == TOKENISER_SKIP_BYTES && --binSkipByteCount <= 0)
 	    	this.setTokeniserStateNormal();
-	    return this.handleCharacter(ch);
+	    return this.handleCharacter(nextChar);
 	}
 	
 	/**
@@ -1185,11 +1229,13 @@ public class RtfParser {
 	 * @throws IOException
 	 * 		Catch any file read problem.
 	 */
-	private int parseCtrlWord(PushbackReader reader) throws IOException {
-		char[] nextChar = new char[1];
+	private int parseCtrlWord(PushbackInputStream reader) throws IOException {
+//		char[] nextChar = new char[1];
+		int nextChar = 0;
 		int result = errOK;
 		
-		if(reader.read(nextChar) == -1) {
+//		if(reader.read(nextChar) == -1) {
+		if((nextChar = reader.read()) == -1) {
 				return errEndOfFile;
 		}
 		this.byteCount++;
@@ -1198,8 +1244,10 @@ public class RtfParser {
 		StringBuffer parsedParam= new StringBuffer();
 		RtfCtrlWordData ctrlWordParam = new RtfCtrlWordData();
 		
-		if(!Character.isLetterOrDigit(nextChar[0])) {
-			parsedCtrlWord.append(nextChar[0]);
+//		if(!Character.isLetterOrDigit(nextChar[0])) {
+		if(!Character.isLetterOrDigit((char)nextChar)) {
+//			parsedCtrlWord.append(nextChar[0]);
+			parsedCtrlWord.append((char)nextChar);
 			ctrlWordParam.ctrlWord = parsedCtrlWord.toString();
 			result =  this.handleCtrlWord(ctrlWordParam);
 			lastCtrlWordParam = ctrlWordParam;
@@ -1210,39 +1258,49 @@ public class RtfParser {
 //			parsedCtrlWord.append(nextChar[0]);
 //		}
 		do {
-			parsedCtrlWord.append(nextChar[0]);
+//			parsedCtrlWord.append(nextChar[0]);
+			parsedCtrlWord.append((char)nextChar);
 			//TODO: catch EOF
-			reader.read(nextChar);
+//			reader.read(nextChar);
+			nextChar = reader.read();
 			this.byteCount++;
-		} while  (Character.isLetter(nextChar[0]));
+//		} while  (Character.isLetter(nextChar[0]));
+		} while  (Character.isLetter((char)nextChar));
 		
 		ctrlWordParam.ctrlWord = parsedCtrlWord.toString();
 
-		if(nextChar[0] == '-') {
+//		if(nextChar[0] == '-') {
+		if(nextChar == '-') {
 			ctrlWordParam.isNeg = true;
-			if(reader.read(nextChar) == -1) {
+//			if(reader.read(nextChar) == -1) {
+			if((nextChar = reader.read()) == -1) {
 					return errEndOfFile;
 			}
 			this.byteCount++;
 		}
 		
-		if(Character.isDigit(nextChar[0])) {
+//		if(Character.isDigit(nextChar[0])) {
+		if(Character.isDigit((char)nextChar)) {
 			ctrlWordParam.hasParam = true;
 //			for( ; Character.isDigit(nextChar[0]); reader.read(nextChar) ) {
 //				parsedParam.append(nextChar[0]);
 //			}
 			do {
-				parsedParam.append(nextChar[0]);
+//				parsedParam.append(nextChar[0]);
+				parsedParam.append((char)nextChar);
 				//TODO: catch EOF
-				reader.read(nextChar);
+//				reader.read(nextChar);
+				nextChar = reader.read();
 				this.byteCount++;
-			} while  (Character.isDigit(nextChar[0]));
-			
+//				} while  (Character.isDigit(nextChar[0]));
+				} while  (Character.isDigit((char)nextChar));
+						
 			ctrlWordParam.param = parsedParam.toString();
 		}
 		
 		// push this character back into the stream
-		if(nextChar[0] != ' ') { // || this.isImport() ) {
+//		if(nextChar[0] != ' ') { // || this.isImport() ) {
+		if(nextChar != ' ') { // || this.isImport() ) {
 			reader.unread(nextChar);
 		}
 		

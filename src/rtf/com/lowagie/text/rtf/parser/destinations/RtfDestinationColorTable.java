@@ -178,9 +178,9 @@ public class RtfDestinationColorTable extends RtfDestination  {
 		return true;
 	}
 	
-	public boolean handleCharacter(char[] ch) {
+	public boolean handleCharacter(int ch) {
 		// color elements end with a semicolon (;)
-		if(ch[0] == ';') {
+		if(ch == ';') {
 			this.processColor();
 		}
 		return true;

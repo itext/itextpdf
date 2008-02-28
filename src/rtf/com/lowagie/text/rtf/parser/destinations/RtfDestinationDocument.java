@@ -243,9 +243,9 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 		return true;
 	}
 	/* (non-Javadoc)
-	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleCharacter(char[])
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleCharacter(int)
 	 */
-	public boolean handleCharacter(char[] ch) {
+	public boolean handleCharacter(int ch) {
 		boolean result = true;
 		this.onCharacter(ch);	// event handler
 		
@@ -253,10 +253,10 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 			if(buffer.length() > 254) {
 				this.writeBuffer();
 			}
-			buffer.append(ch);
+			buffer.append((char)ch);
 		}
 		if(this.rtfParser.isConvert()) {
-			buffer.append(ch);
+			buffer.append((char)ch);
 		}
 		return result;
 	}

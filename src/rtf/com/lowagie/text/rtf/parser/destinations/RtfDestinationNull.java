@@ -122,6 +122,7 @@ public final class RtfDestinationNull extends RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleGroupEnd()
 	 */
 	public boolean handleCloseGroup() {
+		//this.rtfParser.setTokeniserStateNormal();
 		return true;
 	}
 
@@ -129,12 +130,13 @@ public final class RtfDestinationNull extends RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleGroupStart()
 	 */
 	public boolean handleOpenGroup() {
+		//this.rtfParser.setTokeniserStateSkipGroup();
 		return true;
 	}
 	/* (non-Javadoc)
 	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleCharacter(char[])
 	 */
-	public boolean handleCharacter(char[] ch) {
+	public boolean handleCharacter(int ch) {
 		return true;
 	}
 	/* (non-Javadoc)
@@ -147,4 +149,9 @@ public final class RtfDestinationNull extends RtfDestination {
 	public static String getName() {
 		return RtfDestinationNull.class.getName();
 	}
+	
+	public int getNewTokeniserState() {
+		return RtfParser.TOKENISER_SKIP_GROUP;
+	}
+
 }

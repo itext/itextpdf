@@ -50,6 +50,7 @@
  
 package com.lowagie.text.rtf.parser.destinations;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,8 +74,8 @@ import com.lowagie.text.rtf.graphic.*;
  * @since 2.0.8
  */
 public class RtfDestinationShppict extends RtfDestination {
-	private StringBuffer data = null;
-//	private ByteBuffer data = null;
+//	private StringBuffer data = null;
+	private ByteBuffer data = null;
 
 	private StringBuffer hexChars = new StringBuffer(0);
 	private StringBuffer buffer = new StringBuffer();
@@ -181,6 +182,8 @@ public class RtfDestinationShppict extends RtfDestination {
      */
     private static final int PIXEL_TWIPS_FACTOR = 15;
     
+	ByteArrayOutputStream dataOS = null;
+
     
 	public RtfDestinationShppict() {
 		super(null);
@@ -214,8 +217,10 @@ public class RtfDestinationShppict extends RtfDestination {
 			if(this.buffer.length()>0) {
 				writeBuffer();
 			}
-			if(this.data.length() > 0) {
+//			if(this.data.size() > 0) {
+			if(dataOS != null) {
 				addImage();
+				dataOS = null;
 			}
 			this.writeText("}");
 			return true;
@@ -224,55 +229,63 @@ public class RtfDestinationShppict extends RtfDestination {
 		}
 		return true;
 	}
+	
 	private boolean addImage() {
 		Image img = null;
+
 		try {
-				img = Image.getInstance(data.toString().getBytes());
+//			img = Image.getInstance(data.getBuffer());
+			img = Image.getInstance(dataOS.toByteArray());
+				//data=null;
 			} catch (BadElementException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				// log there was in unsupported image found. Continue to import/convert the document.
 				e.printStackTrace();
 			}
+			
 			if(img != null) {
+				
+				// DEBUG: Write test file to see what is in Image object.
+				FileOutputStream out =null;
 				try {
-					RtfImage rtfImage = new RtfImage(this.rtfParser.getRtfDocument(), img);
-					this.rtfParser.getRtfDocument().add(rtfImage);
-				} catch (DocumentException e1) {
-					// TODO Auto-generated catch block
+					out = new FileOutputStream("c:\\testOrig.png");
+//					out.write(data.getBuffer());
+					out.write(dataOS.toByteArray());
+					out.close();
+					out = new FileOutputStream("c:\\testNew.png");
+					out.write(img.getOriginalData());
+					out.close();
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-//				FileOutputStream out =null;
-//				try {
-//					out = new FileOutputStream("c:\\test.png");
-//					out.write(img.getOriginalData());
-//					out.close();
-//				} catch (FileNotFoundException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				} catch (IOException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
 
+				// set the image attributes
 				
-				//img.scaleAbsolute(this.desiredWidth.floatValue()/PIXEL_TWIPS_FACTOR, this.desiredHeight.floatValue()/PIXEL_TWIPS_FACTOR);
-				//img.scaleAbsolute(this.width.floatValue()/PIXEL_TWIPS_FACTOR, this.height.floatValue()/PIXEL_TWIPS_FACTOR);
-				//img.scalePercent(this.scaleX.floatValue(), this.scaleY.floatValue());
+				img.scaleAbsolute(this.desiredWidth.floatValue()/PIXEL_TWIPS_FACTOR, this.desiredHeight.floatValue()/PIXEL_TWIPS_FACTOR);
+				img.scaleAbsolute(this.width.floatValue()/PIXEL_TWIPS_FACTOR, this.height.floatValue()/PIXEL_TWIPS_FACTOR);
+				img.scalePercent(this.scaleX.floatValue(), this.scaleY.floatValue());
+//				img.setBorder(value);
 				
-//				try {
-//					this.rtfParser.getDocument().add(img);
-//				} catch (DocumentException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				try {
+					if(this.rtfParser.isImport()) {
+						RtfDocument rtfDoc = this.rtfParser.getRtfDocument();
+						RtfImage rtfImage = new RtfImage(rtfDoc, img);
+						rtfDoc.add(rtfImage);
+					}
+					if(this.rtfParser.isConvert()) {
+						this.rtfParser.getDocument().add(img);
+					}
+				} catch (DocumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
-			data = new StringBuffer();
 //			data = new ByteBuffer();
 			dataFormat = FORMAT_HEXADECIMAL;
 			return true;
@@ -302,16 +315,15 @@ public class RtfDestinationShppict extends RtfDestination {
 		return true;
 	}
 	/* (non-Javadoc)
-	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleCharacter(char[])
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleCharacter(int)
 	 */
-	public boolean handleCharacter(char[] ch) {
+	public boolean handleCharacter(int ch) {
 		
 		if(this.rtfParser.isImport()) {
 			if(buffer.length() > 254)
 				writeBuffer();
 		}
-		if(data == null) data = new StringBuffer();
-//		if(data == null) data = new ByteBuffer();
+		if(data == null) data = new ByteBuffer();
 		switch(dataFormat) {
 		case FORMAT_HEXADECIMAL:
 			hexChars.append(ch);
@@ -325,7 +337,17 @@ public class RtfDestinationShppict extends RtfDestination {
 			}
 			break;
 		case FORMAT_BINARY:
-			data.append(ch);
+			if (dataOS == null) { 
+				dataOS = new ByteArrayOutputStream();
+			}
+			// HGS - FIX ME IF PROBLEM!
+			dataOS.write((char)(ch));
+			// PNG signature should be.
+//			   (decimal)              137  80  78  71  13  10  26  10
+//			   (hexadecimal)           89  50  4e  47  0d  0a  1a  0a
+//			   (ASCII C notation)    \211   P   N   G  \r  \n \032 \n
+
+//			data.append(b1[0]);
 			binaryLength--;
 			if(binaryLength == 0) { dataFormat = FORMAT_HEXADECIMAL; }
 			break;
@@ -339,18 +361,20 @@ public class RtfDestinationShppict extends RtfDestination {
 		if(this.rtfParser.isImport()) {
 			skipCtrlWord = true;
 			if(ctrlWordData.ctrlWord.equals("shppict")) { result = true;}
-			if(ctrlWordData.ctrlWord.equals("nonshppict")) { skipCtrlWord = true; this.rtfParser.setTokeniserStateSkipGroup(); result = true;}
+			if(ctrlWordData.ctrlWord.equals("nonshppict")) {	// never gets here because this is a destination set to null
+				skipCtrlWord = true; this.rtfParser.setTokeniserStateSkipGroup(); result = true;
+				}
 			if(ctrlWordData.ctrlWord.equals("blipuid")) { skipCtrlWord = true; this.rtfParser.setTokeniserStateSkipGroup(); result = true;}
 			if(ctrlWordData.ctrlWord.equals("picprop")) { skipCtrlWord = true; this.rtfParser.setTokeniserStateSkipGroup(); result = true;}
 			if(ctrlWordData.ctrlWord.equals("pict")) { result = true;}
-			if(ctrlWordData.ctrlWord.equals("emfblip")) { result = true;}
-			if(ctrlWordData.ctrlWord.equals("pngblip")) { result = true;}
-			if(ctrlWordData.ctrlWord.equals("jepgblip")) { result = true;}
-			if(ctrlWordData.ctrlWord.equals("macpict")) { result = true;}
-			if(ctrlWordData.ctrlWord.equals("pmmetafile")) { result = true;}
-			if(ctrlWordData.ctrlWord.equals("wmetafile")) { result = true;}
-			if(ctrlWordData.ctrlWord.equals("dibitmap")) { result = true;}
-			if(ctrlWordData.ctrlWord.equals("wbitmap")) { result = true;}
+			if(ctrlWordData.ctrlWord.equals("emfblip")) { result = true; pictureType = Image.ORIGINAL_NONE;}
+			if(ctrlWordData.ctrlWord.equals("pngblip")) { result = true; pictureType = Image.ORIGINAL_PNG;}
+			if(ctrlWordData.ctrlWord.equals("jepgblip")) { result = true; pictureType = Image.ORIGINAL_JPEG;}
+			if(ctrlWordData.ctrlWord.equals("macpict")) { result = true; pictureType = Image.ORIGINAL_NONE;}
+			if(ctrlWordData.ctrlWord.equals("pmmetafile")) { result = true; pictureType = Image.ORIGINAL_NONE;}
+			if(ctrlWordData.ctrlWord.equals("wmetafile")) { result = true; pictureType = Image.ORIGINAL_WMF;}
+			if(ctrlWordData.ctrlWord.equals("dibitmap")) { result = true; pictureType = Image.ORIGINAL_NONE;}
+			if(ctrlWordData.ctrlWord.equals("wbitmap")) { result = true; pictureType = Image.ORIGINAL_BMP;}
 			/* bitmap information */
 			if(ctrlWordData.ctrlWord.equals("wbmbitspixel")) { result = true;}
 			if(ctrlWordData.ctrlWord.equals("wbmplanes")) { result = true;}
@@ -387,14 +411,14 @@ public class RtfDestinationShppict extends RtfDestination {
 		if(this.rtfParser.isConvert()) {
 			if(ctrlWordData.ctrlWord.equals("shppict")) { result = true;}
 			if(ctrlWordData.ctrlWord.equals("nonshppict")) { skipCtrlWord = true; this.rtfParser.setTokeniserStateSkipGroup(); result = true;}
-			if(ctrlWordData.ctrlWord.equals("blipuid")) { result = true;}
+			if(ctrlWordData.ctrlWord.equals("blipuid")) { result = true; this.rtfParser.setTokeniserStateSkipGroup(); result = true;}
 			if(ctrlWordData.ctrlWord.equals("pict")) { result = true;}
 			if(ctrlWordData.ctrlWord.equals("emfblip")) { result = true;}
 			if(ctrlWordData.ctrlWord.equals("pngblip")) { result = true;}
 			if(ctrlWordData.ctrlWord.equals("jepgblip")) { result = true;}
 			if(ctrlWordData.ctrlWord.equals("macpict")) { result = true;}
 			if(ctrlWordData.ctrlWord.equals("pmmetafile")) { result = true;}
-			if(ctrlWordData.ctrlWord.equals("wmetafile")) { result = true;}
+			if(ctrlWordData.ctrlWord.equals("wmetafile")) {  skipCtrlWord = true; this.rtfParser.setTokeniserStateSkipGroup(); result = true;}
 			if(ctrlWordData.ctrlWord.equals("dibitmap")) { result = true;}
 			if(ctrlWordData.ctrlWord.equals("wbitmap")) { result = true;}
 			/* bitmap information */

@@ -50,6 +50,8 @@
 
 package com.lowagie.text.rtf.parser.ctrlwords;
 
+import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.io.PushbackReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -67,7 +69,7 @@ public final class RtfCtrlWordMgr {
 	public static final boolean debug = false;
 	public static final boolean debugFound = false;
 	public static final boolean debugNotFound = true;
-	private PushbackReader reader = null;
+	private PushbackInputStream reader = null;
 	private RtfParser rtfParser = null;
 	private RtfCtrlWordMap ctrlWordMap = null;
 	
@@ -88,7 +90,7 @@ public final class RtfCtrlWordMgr {
 	 * @param rtfParser The parser object this manager works with.
 	 * @param reader the PushbackReader from the tokeniser.
 	 */
-	public RtfCtrlWordMgr(RtfParser rtfParser, PushbackReader reader) {
+	public RtfCtrlWordMgr(RtfParser rtfParser, PushbackInputStream reader) {
 		this.rtfParser = rtfParser;	// set the parser
 		this.reader = reader;	// set the reader value
 		ctrlWordMap = new RtfCtrlWordMap(rtfParser);
