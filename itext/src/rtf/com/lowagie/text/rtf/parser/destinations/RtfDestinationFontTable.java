@@ -202,7 +202,7 @@ public final class RtfDestinationFontTable extends RtfDestination {
 			this.importHeader = this.rtfParser.getImportManager();
 		}
 		this.setToDefaults();
-		if(importFonts == true) {
+		if(importFonts) {
 			importSystemFonts();
 		}
 	}
@@ -251,16 +251,16 @@ public final class RtfDestinationFontTable extends RtfDestination {
 	 * 
 	 * @since 2.0.8
 	 */
-	public boolean handleCharacter(char[] ch) {
+	public boolean handleCharacter(int ch) {
 		switch(this.state) {
 		case SETTING_NORMAL:
-			this.fontName += ch[0];
+			this.fontName += (char)ch;
 			break;
 		case SETTING_ALTERNATE:
-			this.falt += ch[0];
+			this.falt += (char)ch;
 			break;
 		case SETTING_PANOSE:
-			this.panose += ch[0];
+			this.panose += (char)ch;
 			break;
 		case SETTING_FONT_EMBED:
 			break;
@@ -469,8 +469,8 @@ public final class RtfDestinationFontTable extends RtfDestination {
 		if(fontName.length() == 0) return;
 		if(fontNr.length() == 0) return;
 		
-		if(fontName.length()>0 && fontName.indexOf(";") >= 0) {
-			fontName = fontName.substring(0,fontName.indexOf(";"));
+		if(fontName.length()>0 && fontName.indexOf(';') >= 0) {
+			fontName = fontName.substring(0,fontName.indexOf(';'));
 		}
 
 		if(this.rtfParser.isImport()) {
@@ -485,7 +485,7 @@ public final class RtfDestinationFontTable extends RtfDestination {
 	//					}
 	//				}
 	//			} else {
-					if(this.importHeader.importFont(this.fontNr, this.fontName, Integer.parseInt(this.charset)) == false) {
+					if(!this.importHeader.importFont(this.fontNr, this.fontName, Integer.parseInt(this.charset))) {
 						if(this.falt.length() > 0) {
 							this.importHeader.importFont(this.fontNr, this.falt, Integer.parseInt(this.charset));
 						}

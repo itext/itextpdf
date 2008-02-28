@@ -123,7 +123,7 @@ public abstract class RtfDestination {
 	 * Handle text for this destination
 	 * @return true if handled, false if not handled
 	 */
-	public abstract boolean handleCharacter(char[] ch);
+	public abstract boolean handleCharacter(int ch);
 	/**
 	 * Handle control word for this destination
 	 * @param ctrlWordData The control word and parameter information object
@@ -200,37 +200,37 @@ public abstract class RtfDestination {
 	/**
 	 * 
 	 */
-	protected  char[] beforeCharacter(char[] ch){
+	protected  int beforeCharacter(int ch){
 		RtfDestinationListener listener;
 		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
             listener = (RtfDestinationListener) iterator.next();
             listener.beforeCharacter(ch);
         }
-		return null;
+		return 0;
 	}
 
 	/**
 	 * 
 	 */
-	protected  char[] onCharacter(char[] ch){
+	protected  int onCharacter(int ch){
 		RtfDestinationListener listener;
 		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
             listener = (RtfDestinationListener) iterator.next();
             listener.onCharacter(ch);
         }
-		return null;
+		return 0;
 	}
 
 	/**
 	 * 
 	 */
-	protected  char[] afterCharacter(char[] ch){
+	protected  int afterCharacter(int ch){
 		RtfDestinationListener listener;
 		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
             listener = (RtfDestinationListener) iterator.next();
             listener.afterCharacter(ch);
         }
-		return null;
+		return 0;
 	}
 
 	/**
@@ -258,5 +258,8 @@ public abstract class RtfDestination {
         }
 		return true;
 	}
-
+	
+	public int getNewTokeniserState() {
+		return RtfParser.TOKENISER_IGNORE_RESULT;
+	}
 }

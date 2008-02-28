@@ -114,9 +114,9 @@ public class RtfDestinationListTable extends RtfDestination {
 		return true;
 	}
 	/* (non-Javadoc)
-	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleCharacter(char[])
+	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleCharacter(int)
 	 */
-	public boolean handleCharacter(char[] ch) {
+	public boolean handleCharacter(int ch) {
 		// TODO Auto-generated method stub
 		return true;
 	}

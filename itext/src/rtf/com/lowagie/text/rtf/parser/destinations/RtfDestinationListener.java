@@ -76,15 +76,15 @@ public interface RtfDestinationListener extends EventListener {
 	/**
 	 * 
 	 */
-	public char[] beforeCharacter(char[] ch);
+	public int beforeCharacter(int ch);
 	/**
 	 * 
 	 */
-	public char[] onCharacter(char[] ch);
+	public int onCharacter(int ch);
 	/**
 	 * 
 	 */
-	public char[] afterCharacter(char[] ch);
+	public int afterCharacter(int ch);
 	/**
 	 * 
 	 * @return true if all went well

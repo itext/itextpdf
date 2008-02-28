@@ -50,9 +50,10 @@
 
 package com.lowagie.text.rtf;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.util.EventListener;
 
 import com.lowagie.text.DocWriter;
@@ -257,8 +258,9 @@ public class RtfWriter2 extends DocWriter {
      * @param documentSource The Reader to read the RTF document from.
      * @throws IOException On errors reading the RTF document.
      * @throws DocumentException On errors adding to this RTF document.
+     * @since 2.1.0
      */
-    public void importRtfDocument(Reader documentSource) throws IOException, DocumentException {
+    public void importRtfDocument(FileInputStream documentSource) throws IOException, DocumentException {
         importRtfDocument(documentSource, null);
     }
     
@@ -275,11 +277,11 @@ public class RtfWriter2 extends DocWriter {
      * @throws IOException
      * @throws DocumentException
      * 
-     * @see com.lowagie.text.rtf.parser.RtfParser
-     * @see com.lowagie.text.rtf.parser.RtfParser#importRtfDocument(Reader, RtfDocument)
+     * @see RtfParser
+     * @see RtfParser#importRtfDocument(InputStream, RtfDocument)
      * @since 2.0.8
      */
-    public void importRtfDocument(Reader documentSource, EventListener[] events ) throws IOException, DocumentException {
+    public void importRtfDocument(FileInputStream documentSource, EventListener[] events ) throws IOException, DocumentException {
         if(!this.open) {
             throw new DocumentException("The document must be open to import RTF documents.");
         }
@@ -304,7 +306,7 @@ public class RtfWriter2 extends DocWriter {
      * @throws DocumentException On errors adding to this RTF fragment.
      * @since 2.1.0
      */
-    public void importRtfFragment(Reader documentSource, RtfImportMappings mappings) throws IOException, DocumentException {
+    public void importRtfFragment(FileInputStream documentSource, RtfImportMappings mappings) throws IOException, DocumentException {
         importRtfFragment(documentSource, mappings, null);
     }
     
@@ -323,12 +325,12 @@ public class RtfWriter2 extends DocWriter {
      * @throws IOException On errors reading the RTF fragment.
      * @throws DocumentException On errors adding to this RTF fragment.
      * 
-     * @see com.lowagie.text.rtf.parser.RtfImportMappings
-     * @see com.lowagie.text.rtf.parser.RtfParser
-     * @see com.lowagie.text.rtf.parser.RtfParser#importRtfFragment(Reader, RtfDocument, com.lowagie.text.rtf.parser.RtfImportMappings)
+     * @see RtfImportMappings
+     * @see RtfParser
+     * @see RtfParser#importRtfFragment(InputStream, RtfDocument, RtfImportMappings)
      * @since 2.0.8
      */
-    public void importRtfFragment(Reader documentSource, RtfImportMappings mappings, EventListener[] events ) throws IOException, DocumentException {
+    public void importRtfFragment(InputStream documentSource, RtfImportMappings mappings, EventListener[] events ) throws IOException, DocumentException {
         if(!this.open) {
             throw new DocumentException("The document must be open to import RTF fragments.");
         }
