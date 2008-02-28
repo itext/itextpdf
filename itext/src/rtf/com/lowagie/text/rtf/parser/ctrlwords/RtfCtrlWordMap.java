@@ -1123,7 +1123,9 @@ final class RtfCtrlWordMap {
 		ctrlWords.put("noline", new RtfCtrlWordHandler(rtfParser, "noline", 0, false, RtfCtrlWordType.FLAG, "\\", " ", null));
 		ctrlWords.put("nolnhtadjtbl", new RtfCtrlWordHandler(rtfParser, "nolnhtadjtbl", 0, false, RtfCtrlWordType.FLAG, "\\", " ", null));
 		ctrlWords.put("nonesttables", new RtfCtrlWordHandler(rtfParser, "nonesttables", 0, false, RtfCtrlWordType.DESTINATION, "\\", " ", "RtfDestinationDocument"));
-		ctrlWords.put("nonshppict", new RtfCtrlWordHandler(rtfParser, "nonshppict", 0, false, RtfCtrlWordType.FLAG, "\\", " ", "RtfDestinationShppict"));
+
+//		  new RtfCtrlWordHandler(rtfParser, "shppict", 0, false, RtfCtrlWordType.DESTINATION_EX, "\\*\\", " ", "RtfDestinationShppict" ));//"RtfDestinationShppict"));
+		ctrlWords.put("nonshppict", new RtfCtrlWordHandler(rtfParser, "nonshppict", 0, false, RtfCtrlWordType.DESTINATION, "\\", " ", "RtfDestinationNull"));// "RtfDestinationShppict"));
 		ctrlWords.put("nooverflow", new RtfCtrlWordHandler(rtfParser, "nooverflow", 0, false, RtfCtrlWordType.FLAG, "\\", " ", null));
 		ctrlWords.put("noproof", new RtfCtrlWordHandler(rtfParser, "noproof", 0, false, RtfCtrlWordType.FLAG, "\\", " ", null));
 		ctrlWords.put("noqfpromote", new RtfCtrlWordHandler(rtfParser, "noqfpromote", 0, false, RtfCtrlWordType.FLAG, "\\", " ", null));
