@@ -347,6 +347,7 @@ public class BidiLine {
         PdfChunk ck = null;
         float charWidth = 0;
         PdfChunk lastValidChunk = null;
+        boolean splitChar = false;
         for (; currentChar < totalTextLength; ++currentChar) {
             c = text[currentChar];
             ck = detailChunks[currentChar];
@@ -354,10 +355,13 @@ public class BidiLine {
             if (PdfChunk.noPrint(uniC))
                 continue;
             charWidth = ck.getCharWidth(c);
-            if (ck.isExtSplitCharacter(oldCurrentChar, currentChar, totalTextLength, text, detailChunks))
+            splitChar = ck.isExtSplitCharacter(oldCurrentChar, currentChar, totalTextLength, text, detailChunks);
+            if (splitChar && Character.isWhitespace(uniC))
                 lastSplit = currentChar;
             if (width - charWidth < 0)
                 break;
+            if (splitChar)
+                lastSplit = currentChar;
             width -= charWidth;
             lastValidChunk = ck;
         }
