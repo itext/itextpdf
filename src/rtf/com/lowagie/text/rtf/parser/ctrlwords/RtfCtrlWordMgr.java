@@ -50,9 +50,7 @@
 
 package com.lowagie.text.rtf.parser.ctrlwords;
 
-import java.io.InputStream;
 import java.io.PushbackInputStream;
-import java.io.PushbackReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 
