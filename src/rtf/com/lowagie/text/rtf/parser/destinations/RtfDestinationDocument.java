@@ -318,7 +318,7 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 			if(ctrlWordData.ctrlWord.equals("lastrow")) /*Last row of the table*/ { 	;}
 			if(ctrlWordData.ctrlWord.equals("row")) /*End of row*/ { tableLevel++;}
 			if(ctrlWordData.ctrlWord.equals("irow")) /*param  is the row index of this row.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("irowband")) /*param is the row index of the row, adjusted to account for header rows. A header row has a value of –1.*/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("irowband")) /*param is the row index of the row, adjusted to account for header rows. A header row has a value of -1.*/ { 	;}
 			if(ctrlWordData.ctrlWord.equals("tcelld")) /*Sets table cell defaults*/ { 	;}
 			if(ctrlWordData.ctrlWord.equals("nestcell")) /*Denotes the end of a nested cell.*/ { 	;}
 			if(ctrlWordData.ctrlWord.equals("nestrow")) /*Denotes the end of a nested row*/ { 	;}
@@ -331,7 +331,7 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 			if(ctrlWordData.ctrlWord.equals("clvmgf")) /*The first cell in a range of table cells to be vertically merged.*/ { 	;}
 			if(ctrlWordData.ctrlWord.equals("clvmrg")) /*Contents of the table cell are vertically merged with those of the preceding cell*/ { 	;}
 			/* TABLE: table row revision tracking */
-			if(ctrlWordData.ctrlWord.equals("trauth")) /*With revision tracking enabled, this control word identifies the author of changes to a table row’s properties. N refers to a value in the revision table*/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("trauth")) /*With revision tracking enabled, this control word identifies the author of changes to a table row's properties. N refers to a value in the revision table*/ { 	;}
 			if(ctrlWordData.ctrlWord.equals("trdate")) /*With revision tracking enabled, this control word identifies the date of a revision*/ { 	;}
 			/* TABLE: Autoformatting flags */
 			if(ctrlWordData.ctrlWord.equals("tbllkborder")) /*Flag sets table autoformat to format borders*/ { 	;}
