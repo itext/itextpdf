@@ -634,6 +634,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             float vf = Float.parseFloat(txt.substring(0, txt.length() - 1));
             return vf;
         }
+        if (txt.endsWith("px")) {
+            float vf = Float.parseFloat(txt.substring(0, txt.length() - 2));
+            return vf;
+        }
         int v = Integer.parseInt(txt);
         return (float)v / c * 100f;
     }
