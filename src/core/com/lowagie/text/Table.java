@@ -958,7 +958,7 @@ public class Table extends Rectangle implements LargeElement {
      * @param column
      * @return  dimension
      */
-    private Object getElement(int row, int column) {
+    public Object getElement(int row, int column) {
         return ((Row) rows.get(row)).getCell(column);
     }
     
