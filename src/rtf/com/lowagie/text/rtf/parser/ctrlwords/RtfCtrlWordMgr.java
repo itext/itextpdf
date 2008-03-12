@@ -144,7 +144,7 @@ public final class RtfCtrlWordMgr {
 					System.out.println("Keyword found:" +
 						" New:" + ctrlWordData.ctrlWord + 
 						" Param:" + ctrlWordData.param + 
-						" bParam=" + String.valueOf(ctrlWordData.hasParam));
+						" bParam=" + ctrlWordData.hasParam);
 				}
 			} else {
 				result = RtfParser.errCtrlWordNotFound;
@@ -153,7 +153,7 @@ public final class RtfCtrlWordMgr {
 					System.out.println("Keyword unknown:" + 
 						" New:" + ctrlWordData.ctrlWord + 
 						" Param:" + ctrlWordData.param + 
-						" bParam=" + String.valueOf(ctrlWordData.hasParam));
+						" bParam=" + ctrlWordData.hasParam);
 				}
 			}	
 		}

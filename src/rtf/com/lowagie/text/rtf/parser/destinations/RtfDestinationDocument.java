@@ -158,12 +158,12 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 	 */
 	protected void finalize() throws Throwable {
 		// TODO Auto-generated method stub
-		super.finalize();
 		if(this.rtfParser.isConvert()) {
 			this.rtfParser.getState().properties.removeRtfPropertyListener(this);
 		}
-
+		super.finalize();
 	}
+
 	public void setParser(RtfParser parser) {
 		this.rtfParser = parser;
 		this.rtfDoc = parser.getRtfDocument();
@@ -291,22 +291,22 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 		if(this.rtfParser.isConvert()) {
 			if(ctrlWordData.ctrlWord.equals("par")) { addParagraphToDocument(); }
 			// Set Font
-			if(ctrlWordData.ctrlWord.equals("f")) { ;}
+			if(ctrlWordData.ctrlWord.equals("f")) {}
 			
 			// color information
 			//colors
-			if(ctrlWordData.ctrlWord.equals("cb")) {;}
-			if(ctrlWordData.ctrlWord.equals("cf")) { ;}
+			if(ctrlWordData.ctrlWord.equals("cb")) {}
+			if(ctrlWordData.ctrlWord.equals("cf")) {}
 			//cells
-			if(ctrlWordData.ctrlWord.equals("clcbpat")) {;}
-			if(ctrlWordData.ctrlWord.equals("clcbpatraw")) {;}
-			if(ctrlWordData.ctrlWord.equals("clcfpat")) {;}
-			if(ctrlWordData.ctrlWord.equals("clcfpatraw")) { ;}
+			if(ctrlWordData.ctrlWord.equals("clcbpat")) {}
+			if(ctrlWordData.ctrlWord.equals("clcbpatraw")) {}
+			if(ctrlWordData.ctrlWord.equals("clcfpat")) {}
+			if(ctrlWordData.ctrlWord.equals("clcfpatraw")) {}
 			//table rows
-			if(ctrlWordData.ctrlWord.equals("trcfpat")) { ;}
-			if(ctrlWordData.ctrlWord.equals("trcbpat")) { ;}
+			if(ctrlWordData.ctrlWord.equals("trcfpat")) {}
+			if(ctrlWordData.ctrlWord.equals("trcbpat")) {}
 			//paragraph border
-			if(ctrlWordData.ctrlWord.equals("brdrcf")) { ;}
+			if(ctrlWordData.ctrlWord.equals("brdrcf")) {}
 			
 			/* TABLES */
 			if(ctrlWordData.ctrlWord.equals("trowd")) /*Beginning of row*/ { tableLevel++;}
@@ -315,206 +315,164 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 //				System.out.print("cell found");
 			}
 			if(ctrlWordData.ctrlWord.equals("row")) /*End of row*/ { tableLevel++;}
-			if(ctrlWordData.ctrlWord.equals("lastrow")) /*Last row of the table*/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("lastrow")) /*Last row of the table*/ {}
 			if(ctrlWordData.ctrlWord.equals("row")) /*End of row*/ { tableLevel++;}
-			if(ctrlWordData.ctrlWord.equals("irow")) /*param  is the row index of this row.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("irowband")) /*param is the row index of the row, adjusted to account for header rows. A header row has a value of -1.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tcelld")) /*Sets table cell defaults*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("nestcell")) /*Denotes the end of a nested cell.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("nestrow")) /*Denotes the end of a nested row*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("nesttableprops")) /*Defines the properties of a nested table. This is a destination control word*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("nonesttables")) /*Contains text for readers that do not understand nested tables. This destination should be ignored by readers that support nested tables.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trgaph")) /*Half the space between the cells of a table row in twips.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("cellx")) /*param Defines the right boundary of a table cell, including its half of the space between cells.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clmgf")) /*The first cell in a range of table cells to be merged.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clmrg")) /*Contents of the table cell are merged with those of the preceding cell*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clvmgf")) /*The first cell in a range of table cells to be vertically merged.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clvmrg")) /*Contents of the table cell are vertically merged with those of the preceding cell*/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("irow")) /*param  is the row index of this row.*/ {}
+			if(ctrlWordData.ctrlWord.equals("irowband")) /*param is the row index of the row, adjusted to account for header rows. A header row has a value of -1.*/ {}
+			if(ctrlWordData.ctrlWord.equals("tcelld")) /*Sets table cell defaults*/ {}
+			if(ctrlWordData.ctrlWord.equals("nestcell")) /*Denotes the end of a nested cell.*/ {}
+			if(ctrlWordData.ctrlWord.equals("nestrow")) /*Denotes the end of a nested row*/ {}
+			if(ctrlWordData.ctrlWord.equals("nesttableprops")) /*Defines the properties of a nested table. This is a destination control word*/ {}
+			if(ctrlWordData.ctrlWord.equals("nonesttables")) /*Contains text for readers that do not understand nested tables. This destination should be ignored by readers that support nested tables.*/ {}
+			if(ctrlWordData.ctrlWord.equals("trgaph")) /*Half the space between the cells of a table row in twips.*/ {}
+			if(ctrlWordData.ctrlWord.equals("cellx")) /*param Defines the right boundary of a table cell, including its half of the space between cells.*/ {}
+			if(ctrlWordData.ctrlWord.equals("clmgf")) /*The first cell in a range of table cells to be merged.*/ {}
+			if(ctrlWordData.ctrlWord.equals("clmrg")) /*Contents of the table cell are merged with those of the preceding cell*/ {}
+			if(ctrlWordData.ctrlWord.equals("clvmgf")) /*The first cell in a range of table cells to be vertically merged.*/ {}
+			if(ctrlWordData.ctrlWord.equals("clvmrg")) /*Contents of the table cell are vertically merged with those of the preceding cell*/ {}
 			/* TABLE: table row revision tracking */
-			if(ctrlWordData.ctrlWord.equals("trauth")) /*With revision tracking enabled, this control word identifies the author of changes to a table row's properties. N refers to a value in the revision table*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trdate")) /*With revision tracking enabled, this control word identifies the date of a revision*/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("trauth")) /*With revision tracking enabled, this control word identifies the author of changes to a table row's properties. N refers to a value in the revision table*/ {}
+			if(ctrlWordData.ctrlWord.equals("trdate")) /*With revision tracking enabled, this control word identifies the date of a revision*/ {}
 			/* TABLE: Autoformatting flags */
-			if(ctrlWordData.ctrlWord.equals("tbllkborder")) /*Flag sets table autoformat to format borders*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tbllkshading")) /*Flag sets table autoformat to affect shading.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tbllkfont")) /*Flag sets table autoformat to affect font*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tbllkcolor")) /*Flag sets table autoformat to affect color*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tbllkbestfit")) /*Flag sets table autoformat to apply best fit*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tbllkhdrrows")) /*Flag sets table autoformat to format the first (header) row*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tbllklastrow")) /*Flag sets table autoformat to format the last row.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tbllkhdrcols")) /*Flag sets table autoformat to format the first (header) column*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tbllklastcol")) /*Flag sets table autoformat to format the last column*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tbllknorowband")) /*Specifies row banding conditional formatting shall not be applied*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tbllknocolband")) /*Specifies column banding conditional formatting shall not be applied.*/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("tbllkborder")) /*Flag sets table autoformat to format borders*/ {}
+			if(ctrlWordData.ctrlWord.equals("tbllkshading")) /*Flag sets table autoformat to affect shading.*/ {}
+			if(ctrlWordData.ctrlWord.equals("tbllkfont")) /*Flag sets table autoformat to affect font*/ {}
+			if(ctrlWordData.ctrlWord.equals("tbllkcolor")) /*Flag sets table autoformat to affect color*/ {}
+			if(ctrlWordData.ctrlWord.equals("tbllkbestfit")) /*Flag sets table autoformat to apply best fit*/ {}
+			if(ctrlWordData.ctrlWord.equals("tbllkhdrrows")) /*Flag sets table autoformat to format the first (header) row*/ {}
+			if(ctrlWordData.ctrlWord.equals("tbllklastrow")) /*Flag sets table autoformat to format the last row.*/ {}
+			if(ctrlWordData.ctrlWord.equals("tbllkhdrcols")) /*Flag sets table autoformat to format the first (header) column*/ {}
+			if(ctrlWordData.ctrlWord.equals("tbllklastcol")) /*Flag sets table autoformat to format the last column*/ {}
+			if(ctrlWordData.ctrlWord.equals("tbllknorowband")) /*Specifies row banding conditional formatting shall not be applied*/ {}
+			if(ctrlWordData.ctrlWord.equals("tbllknocolband")) /*Specifies column banding conditional formatting shall not be applied.*/ {}
 			/* TABLE: Row Formatting */
-			if(ctrlWordData.ctrlWord.equals("taprtl")) /*Table direction is right to left*/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("taprtl")) /*Table direction is right to left*/ {}
 			if(ctrlWordData.ctrlWord.equals("trautofit")) /*param = AutoFit:
 0	No AutoFit (default).
 1	AutoFit is on for the row. Overridden by \clwWidthN and \trwWidthN in any table row.
-*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trhdr")) /*Table row header. This row should appear at the top of every page on which the current table appears*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trkeep")) /*Keep table row together. This row cannot be split by a page break. This property is assumed to be off unless the control word is present*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trkeepfollow")) /*Keep row in the same page as the following row.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trleft")) /*Position in twips of the leftmost edge of the table with respect to the left edge of its column.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trqc")) /*Centers a table row with respect to its containing column.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trql")) /*Left-justifies a table row with respect to its containing column.*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trqr")) /*Right-justifies a table row with respect to its containing column*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trrh")) /*Height of a table row in twips. When 0, the height is sufficient for all the text in the line; when positive, the height is guaranteed to be at least the specified height; when negative, the absolute value of the height is used, regardless of the height of the text in the line*/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trpaddb")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trpaddl")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trpaddr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trpaddt")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trpaddfb")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trpaddfl")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trpaddfr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trpaddft")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trspdl")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trspdt")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trspdb")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trspdr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trspdfl")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trspdft")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trspdfb")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trspdfr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trwWidth")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trftsWidth")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trwWidthB")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trftsWidthB")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trftsWidthB")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trwWidthA")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trftsWidthA")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tblind")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tblindtype")) /**/ { 	;}
+*/ {}
+			if(ctrlWordData.ctrlWord.equals("trhdr")) /*Table row header. This row should appear at the top of every page on which the current table appears*/ {}
+			if(ctrlWordData.ctrlWord.equals("trkeep")) /*Keep table row together. This row cannot be split by a page break. This property is assumed to be off unless the control word is present*/ {}
+			if(ctrlWordData.ctrlWord.equals("trkeepfollow")) /*Keep row in the same page as the following row.*/ {}
+			if(ctrlWordData.ctrlWord.equals("trleft")) /*Position in twips of the leftmost edge of the table with respect to the left edge of its column.*/ {}
+			if(ctrlWordData.ctrlWord.equals("trqc")) /*Centers a table row with respect to its containing column.*/ {}
+			if(ctrlWordData.ctrlWord.equals("trql")) /*Left-justifies a table row with respect to its containing column.*/ {}
+			if(ctrlWordData.ctrlWord.equals("trqr")) /*Right-justifies a table row with respect to its containing column*/ {}
+			if(ctrlWordData.ctrlWord.equals("trrh")) /*Height of a table row in twips. When 0, the height is sufficient for all the text in the line; when positive, the height is guaranteed to be at least the specified height; when negative, the absolute value of the height is used, regardless of the height of the text in the line*/ {}
+			if(ctrlWordData.ctrlWord.equals("trpaddb")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trpaddl")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trpaddr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trpaddt")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trpaddfb")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trpaddfl")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trpaddfr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trpaddft")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trspdl")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trspdt")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trspdb")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trspdr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trspdfl")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trspdft")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trspdfb")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trspdfr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trwWidth")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trftsWidth")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trwWidthB")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trftsWidthB")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trftsWidthB")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trwWidthA")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trftsWidthA")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tblind")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tblindtype")) /**/ {}
 			/*TABLE: Row shading and Background COlors*/
-			if(ctrlWordData.ctrlWord.equals("trcbpat")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trcfpat")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trpat")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trshdng")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgbdiag")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgcross")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgdcross")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgdkbdiag")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgdkcross")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgdkdcross")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgdkfdiag")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgdkhor")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgdkvert")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgfdiag")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbghoriz")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbgvert")) /**/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("trcbpat")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trcfpat")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trpat")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trshdng")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgbdiag")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgcross")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgdcross")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgdkbdiag")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgdkcross")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgdkdcross")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgdkfdiag")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgdkhor")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgdkvert")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgfdiag")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbghoriz")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbgvert")) /**/ {}
 			/* TABLE: Cell Formatting*/
-			if(ctrlWordData.ctrlWord.equals("clFitText")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clNoWrap")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clpadl")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clpadt")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clpadb")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clpadr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clpadfl")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clpadft")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clpadfb")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clpadfr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clwWidth")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clftsWidth")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clhidemark")) /**/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("clFitText")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clNoWrap")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clpadl")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clpadt")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clpadb")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clpadr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clpadfl")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clpadft")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clpadfb")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clpadfr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clwWidth")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clftsWidth")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clhidemark")) /**/ {}
 			/* TABLE: Compared Table Cells */
-			if(ctrlWordData.ctrlWord.equals("clins")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("cldel")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clmrgd")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clmrgdr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clsplit")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clsplitr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clinsauth")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clinsdttm")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("cldelauth")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("cldeldttm")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clmrgdauth")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clmrgddttm")) /**/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("clins")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("cldel")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clmrgd")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clmrgdr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clsplit")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clsplitr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clinsauth")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clinsdttm")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("cldelauth")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("cldeldttm")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clmrgdauth")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clmrgddttm")) /**/ {}
 			/*TABLE: Position Wrapped Tables (The following properties must be the same for all rows in the table.)*/
-			if(ctrlWordData.ctrlWord.equals("tdfrmtxtLeft")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tdfrmtxtRight")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tdfrmtxtTop")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tdfrmtxtBottom")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tabsnoovrlp")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tphcol")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tphmrg")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tphpg")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposnegx")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposnegy")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposx")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposxc")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposxi")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposxl")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposxo")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposxr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposy")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposyb")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposyc")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposyil")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposyin")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposyout")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tposyt")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tpvmrg")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tpvpara")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("tpvpg")) /**/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("tdfrmtxtLeft")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tdfrmtxtRight")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tdfrmtxtTop")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tdfrmtxtBottom")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tabsnoovrlp")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tphcol")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tphmrg")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tphpg")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposnegx")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposnegy")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposx")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposxc")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposxi")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposxl")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposxo")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposxr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposy")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposyb")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposyc")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposyil")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposyin")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposyout")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tposyt")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tpvmrg")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tpvpara")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("tpvpg")) /**/ {}
 			/* TABLE: Bidirectional Controls */
-			if(ctrlWordData.ctrlWord.equals("rtlrow")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("ltrrow")) /**/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("rtlrow")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("ltrrow")) /**/ {}
 			/* TABLE: Row Borders */
-			if(ctrlWordData.ctrlWord.equals("trbrdrt")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbrdrl")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbrdrb")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbrdrr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbrdrh")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("trbrdrv")) /**/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("trbrdrt")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbrdrl")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbrdrb")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbrdrr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbrdrh")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("trbrdrv")) /**/ {}
 			/* TABLE: Cell Borders */
-			if(ctrlWordData.ctrlWord.equals("brdrnil")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clbrdrb")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clbrdrt")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clbrdrl")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("clbrdrr")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("cldglu")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("cldgll")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
-			if(ctrlWordData.ctrlWord.equals("")) /**/ { 	;}
+			if(ctrlWordData.ctrlWord.equals("brdrnil")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clbrdrb")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clbrdrt")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clbrdrl")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("clbrdrr")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("cldglu")) /**/ {}
+			if(ctrlWordData.ctrlWord.equals("cldgll")) /**/ {}
 		}
 		if(ctrlWordData.ctrlWordType == RtfCtrlWordType.TOGGLE) {
 			this.rtfParser.getState().properties.toggleProperty(ctrlWordData);//ctrlWordData.specialHandler);
@@ -527,21 +485,21 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 		
 		switch(conversionType) {
 		case RtfParser.TYPE_IMPORT_FULL:
-			if(ignoreCtrlWordsForImport.contains(ctrlWordData.ctrlWord) == false) {
+			if(!ignoreCtrlWordsForImport.contains(ctrlWordData.ctrlWord)) {
 				writeBuffer();
 				writeText(ctrlWordData.toString());
 			}
 			result = true;
 			break;		
 		case RtfParser.TYPE_IMPORT_FRAGMENT:
-			if(ignoreCtrlWordsForImport.contains(ctrlWordData.ctrlWord) == false) {
+			if(!ignoreCtrlWordsForImport.contains(ctrlWordData.ctrlWord)) {
 				writeBuffer();
 				writeText(ctrlWordData.toString());
 			}
 			result = true;
 			break;
 		case RtfParser.TYPE_CONVERT:
-			if(ignoreCtrlWordsForImport.contains(ctrlWordData.ctrlWord) == false) {
+			if(!ignoreCtrlWordsForImport.contains(ctrlWordData.ctrlWord)) {
 			}
 			result = true;
 			break;
