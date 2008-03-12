@@ -251,7 +251,7 @@ public class RtfProperty {
 		
 		String propertyName = ctrlWordData.specialHandler;
 		
-		if(propertyName == null || propertyName == "") return false;
+		if(propertyName == null || propertyName.length() == 0) return false;
 		
 		Object propertyValue = getProperty(propertyName);
 		if(propertyValue == null) {

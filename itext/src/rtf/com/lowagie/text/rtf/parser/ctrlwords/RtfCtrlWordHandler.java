@@ -211,7 +211,7 @@ public class RtfCtrlWordHandler implements Cloneable {
 		this.ctrlWordData.ctrlWordType = this.ctrlWordType;
 		this.ctrlWordData.specialHandler = this.specialHandler;
 		
-		if(this.ctrlWordData.hasParam == false && this.passDefaultParameterValue == true) {
+		if(!this.ctrlWordData.hasParam && this.passDefaultParameterValue) {
 			this.ctrlWordData.hasParam = true;
 			this.ctrlWordData.param = Integer.toString(this.defaultParameterValue);
 		}
@@ -224,7 +224,7 @@ public class RtfCtrlWordHandler implements Cloneable {
 			return true;
 		}
 		
-		if(beforeControlWord() == false) {
+		if(!beforeControlWord()) {
 			return true;
 		}
 		
@@ -266,7 +266,7 @@ public class RtfCtrlWordHandler implements Cloneable {
 		case RtfCtrlWordType.DESTINATION:
 			// set the destination
 			int x=0;
-			if(this.ctrlWord == "shppict" || this.ctrlWord == "nonshppict") {
+			if("shppict".equals(this.ctrlWord) || "nonshppict".equals(this.ctrlWord)) {
 				x++;
 			}
 			handled = this.rtfParser.setCurrentDestination(this.ctrlWord);

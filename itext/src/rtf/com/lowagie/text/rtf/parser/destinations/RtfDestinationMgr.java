@@ -59,7 +59,7 @@ import com.lowagie.text.rtf.parser.RtfParser;
  * @author Howard Shank (hgshank@yahoo.com)
  * @since 2.0.8
  */
-public class RtfDestinationMgr {
+public final class RtfDestinationMgr {
 	/*
 	 * Destinations
 	 */
@@ -132,7 +132,7 @@ public class RtfDestinationMgr {
 		if(destinations.containsKey(destination)) {
 			dest = (RtfDestination)destinations.get(destination);
 		} else {
-			if(ignoreUnknownDestinations == true) {
+			if(ignoreUnknownDestinations) {
 				dest = (RtfDestination)destinations.get(DESTINATION_NULL);
 			} else {
 				dest = (RtfDestination)destinations.get(DESTINATION_DOCUMENT);
@@ -154,7 +154,7 @@ public class RtfDestinationMgr {
 			return true;
 		}
 		
-		Class value = null;;
+		Class value = null;
 	
 		try {
 			value = Class.forName(thisClass);

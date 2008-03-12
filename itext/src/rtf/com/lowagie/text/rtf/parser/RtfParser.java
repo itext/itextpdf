@@ -1351,7 +1351,6 @@ public class RtfParser {
 	 */
 	public void setTokeniserStateNormal() {
 		this.setTokeniserState(TOKENISER_NORMAL);
-		return;
 	}
 
 	/**
@@ -1361,7 +1360,6 @@ public class RtfParser {
 	public void setTokeniserStateSkipGroup() {
 		this.setTokeniserState(TOKENISER_SKIP_GROUP);
 		this.skipGroupLevel = this.groupLevel;
-		return;
 	}
 	
 	/**
@@ -1373,7 +1371,6 @@ public class RtfParser {
 	public void setTokeniserSkipBytes(long numberOfBytesToSkip) {
 		this.setTokeniserState(TOKENISER_SKIP_BYTES);
 		this.binSkipByteCount = numberOfBytesToSkip;
-		return;
 	}
 	
 	/**
@@ -1385,7 +1382,6 @@ public class RtfParser {
 	public void setTokeniserStateBinary(int binaryCount) {
 		this.setTokeniserState(TOKENISER_BINARY);
 		this.binByteCount = binaryCount;
-		return;
 	}
 	/**
 	 * Sets the number of binary bytes.
@@ -1396,7 +1392,6 @@ public class RtfParser {
 	public void setTokeniserStateBinary(long binaryCount) {
 		this.setTokeniserState(TOKENISER_BINARY);
 		this.binByteCount = binaryCount;
-		return;
 	}
 	/**
 	 * Helper method to determin if conversion is TYPE_CONVERT
