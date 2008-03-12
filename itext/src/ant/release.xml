@@ -28,12 +28,12 @@
 
 	<target name="src.zip" description="--> makes a zipfile with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
+		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.png, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
 	</target>
 	
 	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<tar compression="gzip" tarfile="${itext.dist}/src.tar.gz" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
+		<tar compression="gzip" tarfile="${itext.dist}/src.tar.gz" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.png, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
 	</target>
 	
 	<target name="src.jar" description="--> makes a jar file with the source code">
