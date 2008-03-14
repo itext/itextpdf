@@ -1825,8 +1825,9 @@ public class PdfReader implements PdfViewerPreferences {
             }
         }
         int r = 0;
-        if (state == 1)
-            throw new RuntimeException("Illegal length in ASCII85Decode.");
+        // We'll ignore the next two lines for the sake of perpetuating broken PDFs
+//        if (state == 1)
+//            throw new RuntimeException("Illegal length in ASCII85Decode.");
         if (state == 2) {
             r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85 + 85 * 85 * 85  + 85 * 85 + 85;
             out.write((byte)(r >> 24));
