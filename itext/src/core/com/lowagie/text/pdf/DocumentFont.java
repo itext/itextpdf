@@ -64,6 +64,7 @@ public class DocumentFont extends BaseFont {
     private PRIndirectReference refFont;
     private PdfDictionary font;
     private IntHashtable uni2byte = new IntHashtable();
+    private IntHashtable byte2uni = new IntHashtable();
     private float Ascender = 800;
     private float CapHeight = 700;
     private float Descender = -200;
@@ -293,8 +294,13 @@ public class DocumentFont extends BaseFont {
                             currentNumber = ((PdfNumber)obj).intValue();
                         else {
                             int c[] = GlyphList.nameToUnicode(PdfName.decodeName(((PdfName)obj).toString()));
-                            if (c != null && c.length > 0)
+                            if (c != null && c.length > 0) {
+                                if (byte2uni.containsKey(currentNumber)) {
+                                    uni2byte.remove(byte2uni.get(currentNumber));
+                                }
                                 uni2byte.put(c[0], currentNumber);
+                                byte2uni.put(currentNumber, c[0]);
+                            }
                             ++currentNumber;
                         }
                     }
@@ -381,12 +387,16 @@ public class DocumentFont extends BaseFont {
                 enc = MACROMAN;
             String cv = PdfEncodings.convertToString(b, enc);
             char arr[] = cv.toCharArray();
-            for (int k = 0; k < 256; ++k)
+            for (int k = 0; k < 256; ++k) {
                 uni2byte.put(arr[k], k);
+                byte2uni.put(k, arr[k]);
+            }
         }
         else {
-            for (int k = 0; k < 256; ++k)
+            for (int k = 0; k < 256; ++k) {
                 uni2byte.put(stdEnc[k], k);
+                byte2uni.put(k, stdEnc[k]);
+            }
         }
     }
     
