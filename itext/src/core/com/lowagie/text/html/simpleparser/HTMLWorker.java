@@ -529,7 +529,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         String content = str;
         if (isPRE) {
             if (currentParagraph == null)
-                currentParagraph = new Paragraph();
+                currentParagraph = FactoryProperties.createParagraph(cprops);
             currentParagraph.add(factoryProperties.createChunk(content, cprops));
             return;
         }
