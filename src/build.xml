@@ -63,13 +63,13 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rtf" />
 		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf14" />
-		<ant antfile="ant/release.xml" inheritAll="false" target="release.maven" />
 	</target>
 	
 	<target name="release-1.6" description="--> builds a release after you have exported the src and www module from CVS">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rups" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="release.rups" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf16" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.maven" />
 	</target>
 	
 	<target name="archive.src">
