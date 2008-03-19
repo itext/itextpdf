@@ -179,19 +179,19 @@
 		<mkdir dir="${itext.reports}/jdiff"/>
 
 		<!-- jdiff task split to have extra arguments for memory and classpath -->
-		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
+		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${itext.previous.version}"
 				sourcepath="${itext.previous.location}/core:${itext.previous.location}/rtf:${itext.previous.location}/rups"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 		</javadoc>
 
-		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
+		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${releasenumber}"
 				sourcepath="${itext.src}/core:${itext.src}/rtf:${itext.src}/rups"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 		</javadoc>
 
-		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
+		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
 				sourcepath="${itext.previous.location}/core:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
@@ -202,7 +202,7 @@
 			</doclet>
 		</javadoc>
 
-		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
+		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
 				sourcepath="${itext.src}/core:${itext.src}/rtf:${itext.src}/rups"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
@@ -213,7 +213,7 @@
 			</doclet>
 		</javadoc>
 
-		<javadoc private="true" source="1.4" maxmemory="128m"
+		<javadoc private="true" source="${itext.jdk.rups}" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
 				sourcefiles="${JDIFF_HOME}/Null.java" >
 			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
