@@ -19,7 +19,7 @@
 		<ant antfile="ant/release.xml" inheritAll="false" />
         <echo>release: making the all the files needed for a release (except tutorial)</echo>
     </target>
-
+	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Forwarding targetcalls to subscripts                             -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -28,34 +28,62 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile" />
 	</target>
 	
-	<target name="compile.debug">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.debug" />
-	</target>
-	
 	<target name="compile.rtf">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.rtf" />
 	</target>
 	
-	<target name="clean">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="clean" />
+	<target name="compile.rups">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.rups" />
 	</target>
 	
 	<target name="jar">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
 	</target>
 	
-	<target name="jar.debug">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.debug" />
-	</target>
-	
 	<target name="jar.rtf">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rtf" />
 	</target>
 	
-	<target name="sign.jar">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
+	<target name="jar.rups">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rups" />
+	</target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Make a new release after exporting the modules src/www from CVS  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+	<target name="clean">
+		<ant antfile="ant/release.xml" inheritAll="false" target="clean" />
 	</target>
 	
+	<target name="release-1.4" description="--> builds a release after you have exported the src and www module from CVS">
+		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
+		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rtf" />
+		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf14" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.maven" />
+	</target>
+	
+	<target name="release-1.6" description="--> builds a release after you have exported the src and www module from CVS">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rups" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.rups" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf16" />
+	</target>
+	
+	<target name="archive.src">
+		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
+	</target>
+	
+	<target name="asian.jar">
+		<ant antfile="ant/release.xml" inheritAll="false" target="asian.jar" />
+	</target>
+	
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Generate parts of the site                                       -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		
 	<target name="lowagie.com">
 		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 	</target>
@@ -74,32 +102,6 @@
 	
 	<target name="tutorial.tar.gz">
 		<ant antfile="ant/site.xml" inheritAll="false" target="tutorial.tar.gz" />
-	</target>
-	
-	<target name="archive.src">
-		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
-	</target>
-	
-	<target name="asian.jar">
-		<ant antfile="ant/release.xml" inheritAll="false" target="asian.jar" />
-	</target>
-	
-	<target name="release.rups">
-		<ant antfile="ant/rups.xml" inheritAll="false" target="release" />
-	</target>
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Make a new release after exporting the modules src/www from CVS  -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-	
-	<target name="release" description="--> builds a release after you have exported the src and www module from CVS">
-		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
-		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
-		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
-		<ant antfile="ant/compile.xml" inheritAll="false" target="sign.jar" />
-		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
-		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf" />
-		<ant antfile="ant/release.xml" inheritAll="false" target="release.maven" />
 	</target>
 	
 </project>

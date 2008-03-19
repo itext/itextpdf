@@ -17,11 +17,20 @@
 
     <target name="help" description="--> shows the help screen">
         <echo>MAKING A NEW RELEASE (release.xml)</echo>
+        <echo>ant clean: cleans up all the files that were generated</echo>
         <echo>archive.src: archiving the source (zip and tar.gz)</echo>
         <echo>asian.jar: creates a new version of iTextAsian.jar and iTextAsianCmaps.jar</echo>
         <echo />
 	</target>
+	
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Deleting all generated data                                      -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
+    <target name="clean" description="--> deletes all generated data">
+        <delete dir="${itext.build}" />
+    </target>
+	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Archiving the code                                               -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -47,15 +56,25 @@
     <!-- Making a release, ready for upload to SourceForge                -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
 	
-	<target name="release.sf" description="--> makes a complete iText release ready to publish on SourceForge">
+	<target name="release.sf14" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
 		<copy file="${itext.jar}" todir="${itext.dist}" overwrite="yes" />
 		<copy file="${itext.jar}" tofile="${itext.dist}/iText-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.jar}" tofile="${itext.sf}/iText-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.rtf.jar}" todir="${itext.dist}" overwrite="yes" />
+		<copy file="${itext.rtf.jar}" tofile="${itext.dist}/iText-rtf-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.rtf.jar}" tofile="${itext.sf}/iText-rtf-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/iText-src-${releasenumber}.zip" overwrite="yes"/>
 		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/iText-src-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/iText-docs-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.sf}/iText-${releasenumber}-sources.jar" overwrite="yes"/>
+	</target>
+	
+	<target name="release.sf16" description="--> makes a complete iText release ready to publish on SourceForge">
+		<mkdir dir="${itext.sf}"/>
+		<copy file="${itext.rups.jar}" todir="${itext.dist}" overwrite="yes" />
+		<copy file="${itext.rups.jar}" tofile="${itext.dist}/iText-rups-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.rups.jar}" tofile="${itext.sf}/iText-rups-${releasenumber}.jar" overwrite="yes"/>
 	</target>
 	
 	<target name="release.maven" description="--> makes a bundle ready to publish for Maven">
@@ -65,6 +84,8 @@
 		<replace file="${itext.maven}/pom.xml" token="bc.jdk" value="${bc.jdk}"/>
 		<replace file="${itext.maven}/pom.xml" token="bc.version" value="${bc.version}"/>
 		<copy file="${itext.dist}/iText-${releasenumber}.jar" tofile="${itext.maven}/itext-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.dist}/iText-rtf-${releasenumber}.jar" tofile="${itext.maven}/itext-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.dist}/iText-rups-${releasenumber}.jar" tofile="${itext.maven}/itext-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.maven}/itext-${releasenumber}-sources.jar" overwrite="yes"/>
 		<jar destfile="${itext.maven}/itext-${releasenumber}-javadoc.jar">
 			<fileset dir="${itext.docs}"/>
@@ -73,11 +94,99 @@
 			<fileset dir="${itext.maven}">
 				<include name="pom.xml" />
 				<include name="itext-${releasenumber}.jar" />
+				<include name="itext-rtf-${releasenumber}.jar" />
+				<include name="itext-rups-${releasenumber}.jar" />
 				<include name="itext-${releasenumber}-sources.jar" />
 				<include name="itext-${releasenumber}-javadoc.jar" />
 			</fileset>
 		</jar>
 	</target>
+    
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Releasing RUPS                                                   -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+	<target name="unsign.bcmail">
+        <mkdir dir="${itext.rups.jnlp}" />
+    	<mkdir dir="${itext.bin.temp}" />
+    	<unjar src="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar" dest="${itext.bin.temp}" />
+    	<jar destfile="${itext.rups.jnlp}/bcmail-${bc.jdk}-${bc.version}.jar" basedir="${itext.bin.temp}" includes="**/*.class" />
+    	<delete dir="${itext.bin.temp}" />
+	</target>
+
+	<target name="unsign.bcprov">
+        <mkdir dir="${itext.rups.jnlp}" />
+    	<mkdir dir="${itext.bin.temp}" />
+    	<unjar src="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" dest="${itext.bin.temp}" />
+    	<jar destfile="${itext.rups.jnlp}/bcprov-${bc.jdk}-${bc.version}.jar" basedir="${itext.bin.temp}" includes="**/*.class" />
+    	<delete dir="${itext.bin.temp}" />
+	</target>
+
+    <target name="check-keystore" >
+        <condition property="keystore-exists">
+            <available file="${itext.keystore.filename}" type="file"/>
+        </condition>
+    </target>
+ 
+    <target name="keystore" depends="check-keystore" unless="keystore-exists">
+        <genkey
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+            dname="${itext.keystore.dname}"
+        />
+    </target>
+ 
+    <target name="release.rups" depends="unsign.bcmail, unsign.bcprov, keystore">
+		<copy file="${itext.src}/jnlp/rups.jnlp" tofile="${itext.rups.jnlp}/rups.jnlp" overwrite="yes"/>
+		<copy file="${itext.rups.jar}" tofile="${itext.rups.jnlp}/iText-rups.jar" overwrite="yes"/>
+		<copy file="${itext.lib}/iText.jar" tofile="${itext.rups.jnlp}/iText.jar" overwrite="yes"/>
+		<copy file="${itext.lib}/dom4j-1.6.1.jar" tofile="${itext.rups.jnlp}/dom4j-1.6.1.jar" overwrite="yes"/>
+		<copy file="${itext.lib}/pdf-renderer.jar" tofile="${itext.rups.jnlp}/pdf-renderer.jar" overwrite="yes"/>
+        <signjar
+            jar="${itext.rups.jnlp}/bcmail-${bc.jdk}-${bc.version}.jar"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
+        <signjar
+            jar="${itext.rups.jnlp}/bcprov-${bc.jdk}-${bc.version}.jar"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
+        <signjar
+            jar="${itext.rups.jnlp}/dom4j-1.6.1.jar"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
+        <signjar
+            jar="${itext.rups.jnlp}/iText.jar"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
+        <signjar
+            jar="${itext.rups.jnlp}/iText-rups.jar"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
+        <signjar
+            jar="${itext.rups.jnlp}/pdf-renderer.jar"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
+    </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Making the jars with the Asian Fontfiles                         -->
