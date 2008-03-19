@@ -181,14 +181,14 @@
 		<!-- jdiff task split to have extra arguments for memory and classpath -->
 		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${itext.previous.version}"
-				sourcepath="${itext.previous.location}/src/core:${itext.previous.location}/src/rtf"
-				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
+				sourcepath="${itext.previous.location}/core:${itext.previous.location}/rtf:${itext.previous.location}/rups"
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 		</javadoc>
 
 		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${releasenumber}"
-				sourcepath="${itext.src}/core:${itext.src}/rtf"
-				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
+				sourcepath="${itext.src}/core:${itext.src}/rtf:${itext.src}/rups"
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 		</javadoc>
 
 		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
