@@ -522,7 +522,7 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 		setToDefaults();
 	}
 	/**
-	 * Write the string value to the destiation.
+	 * Write the string value to the destination.
 	 * Used for direct content
 	 * @param value
 	 */
@@ -569,7 +569,7 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 		
 		if(propertyName.startsWith(RtfProperty.CHARACTER)) {
 			// this is a character change,
-			// add a new chunck to the current paragraph using current character settings.
+			// add a new chunk to the current paragraph using current character settings.
 			Chunk chunk = new Chunk();
 			chunk.append(this.buffer.toString());
 			this.buffer = new StringBuffer(255);
