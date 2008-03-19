@@ -125,44 +125,4 @@ public class GreekList extends List {
 		return false;
 	}
 
-// deprecated methods
-	
-	/**
-	 * Translates a number to a letter(combination).
-	 * 1-26 correspond with a-z, 27 is aa, 28 is ab, and so on,
-	 * aaa comes right after zz.
-	 * @param index	a number greater than 0
-	 * @return	a String corresponding with the index.
-	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.GreekAlphabetFactory#getString(int, boolean)},
-	 * scheduled for removal at 2.1.0
-	 */
-	public static int[] getGreekValue(int index, boolean lowercase) {
-	   	byte[] result = GreekAlphabetFactory.getString(index, lowercase).getBytes();
-	   	int n = result.length;
-	   	int[] r = new int[n];
-	   	System.arraycopy(result, 0, r, 0, n);
-	   	return r;
-	 }
-
-	/**
-	 * set the greek-letters to lowercase otherwise to uppercase
-	 * 
-	 * @param greeklower
-	 * @deprecated As of iText 2.0.3, replaced by {@link #setLowercase(boolean)},
-	 * scheduled for removal at 2.1.0
-	 */
-	public void setGreekLower(boolean greeklower) {
-		setLowercase(greeklower);
-	}
-
-	/**
-	 * Checks if the list is greek-letter with lowercase
-	 *
-	 * @return	<CODE>true</CODE> if the greek-letter is lowercase, <CODE>false</CODE> otherwise.
-	 * @deprecated As of iText 2.0.3, replaced by {@link #isLowercase()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public boolean isGreekLower() {
-		return isLowercase();
-	}
 }

@@ -176,17 +176,6 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     }
     
     /**
-     * Constructs a RtfCell based upon certain Properties
-     * 
-     * @param properties The Properties for this RtfCell
-     */
-    public RtfCell(Properties properties) {
-        super(properties);
-        this.borders = new RtfBorderGroup();
-        verticalAlignment = ALIGN_MIDDLE;
-    }
-    
-    /**
      * Constructs a deleted RtfCell.
      * 
      * @param deleted Whether this RtfCell is actually deleted.

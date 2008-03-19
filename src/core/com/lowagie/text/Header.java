@@ -94,17 +94,5 @@ public class Header extends Meta {
     public String getName() {
         return name.toString();
     }
-    
-    // deprecated
-    
-    /**
-	 * Returns the name of the meta information.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getName()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public String name() {
-		return getName();
-	}
+
 }
