@@ -44,14 +44,6 @@
         	<classpath refid="itext.examples.classpath"/>
     	</javac>
     </target>
-    
-    <target name="jar">
-    	<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
-    </target>
-
-	<target name="jar.rtf">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rtf" />
-    </target>
 	
     <path id="itext.test.classpath">
         <pathelement location="${itext.jar}"/>
@@ -70,7 +62,7 @@
     <!-- Compiling and running the tests                                  -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <target name="test.setup" depends="jar, compile.examples" description="--> compiles and runs the iText tests">
+    <target name="test.setup" depends="compile.examples" description="--> compiles and runs the iText tests">
         <mkdir dir="${itext.bin.test}" />
     	
         <mkdir dir="${itext.bin.data}" />
@@ -136,7 +128,7 @@
         </junitreport>
     </target>
 
-    <target name="test.rtf" depends="test.setup, jar.rtf" description="--> compiles and runs the iText rtf tests">
+    <target name="test.rtf" depends="test.setup" description="--> compiles and runs the iText rtf tests">
         <mkdir dir="${itext.rtf.test}" />
         <javac source="${itext.jdk.test}" target="${itext.jdk.test}" destdir="${itext.rtf.test}">
 		<src path="${itext.src.test}/rtf"/>
