@@ -599,17 +599,4 @@ public class Annotation implements Element {
 		return true;
 	}
 
-	/**
-	 * Returns an <CODE>Annotation</CODE> that has been constructed taking in
-	 * account the value of some <VAR>attributes </VAR>.
-	 * 
-	 * @param attributes
-	 *            Some attributes
-	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getAnnotation(Properties)},
-	 * scheduled for removal at 2.1.0
-	 */
-	public Annotation(java.util.Properties attributes) {
-		this(com.lowagie.text.factories.ElementFactory.getAnnotation(attributes));
-	}
-
 }
