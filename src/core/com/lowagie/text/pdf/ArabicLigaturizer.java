@@ -46,8 +46,11 @@
  */
 package com.lowagie.text.pdf;
 
-/** Shape arabic characters. This code was converted from a C version
- * at www.pango.org.
+/**
+ * Shape arabic characters. This code was inspired by an LGPL'ed C library:
+ * Pango ( see http://www.pango.com/ ). Note that the code of this is the
+ * original work of Paulo Soares. Hence it is perfectly justifiable to distribute
+ * it under the MPL.
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */

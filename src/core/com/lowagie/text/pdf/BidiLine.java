@@ -310,7 +310,7 @@ public class BidiLine {
                 ++src;
             }
             int arabicWordSize = src - startArabicIdx;
-            int size = ArabicLigaturizer.arabic_shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize, arabicOptions /*PangoArabicShapping.ar_novowel PangoArabicShapping.ar_lig | PangoArabicShapping.ar_composedtashkeel*/);
+            int size = ArabicLigaturizer.arabic_shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize, arabicOptions);
             if (startArabicIdx != dest) {
                 for (int k = 0; k < size; ++k) {
                     detailChunks[dest] = detailChunks[startArabicIdx];
