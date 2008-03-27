@@ -184,7 +184,7 @@ public class PdfCell extends Rectangle {
         this.useDescender = cell.isUseDescender();
         this.useBorderPadding = cell.isUseBorderPadding();
 
-        // initialisation of some parameters
+        // initialization of some parameters
         PdfChunk chunk;
         Element element;
         PdfChunk overflow;
@@ -387,45 +387,15 @@ public class PdfCell extends Rectangle {
         }
     }
 
-    /**
-	 * Returns the lower left x-coordinaat.
-	 *
-	 * @return		the lower left x-coordinaat
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getLeft()},
-	 * scheduled for removal at 2.1.0
-	 */
-	
-	public float left() {
-		return getLeft();
-	}
-
-
-
-
 	/**
-     * Returns the lower left x-coordinaat.
+     * Returns the lower left x-coordinate.
      *
-     * @return		the lower left x-coordinaat
+     * @return		the lower left x-coordinate
      */
 
     public float getLeft() {
         return super.getLeft(cellspacing);
     }
-
-    /**
-	 * Returns the upper right x-coordinate.
-	 *
-	 * @return		the upper right x-coordinate
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getRight()},
-	 * scheduled for removal at or after 2.1.0
-	 */
-	
-	public float right() {
-		return getRight();
-	}
-
-
-
 
 	/**
      * Returns the upper right x-coordinate.
@@ -437,21 +407,6 @@ public class PdfCell extends Rectangle {
         return super.getRight(cellspacing);
     }
 
-    /**
-	 * Returns the upper right y-coordinate.
-	 *
-	 * @return		the upper right y-coordinate
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getTop()},
-	 * scheduled for removal at or after 2.1.0
-	 */
-	
-	public float top() {
-		return getTop();
-	}
-
-
-
-
 	/**
      * Returns the upper right y-coordinate.
      *
@@ -461,21 +416,6 @@ public class PdfCell extends Rectangle {
     public float getTop() {
         return super.getTop(cellspacing);
     }
-
-    /**
-	 * Returns the lower left y-coordinate.
-	 *
-	 * @return		the lower left y-coordinate
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getBottom()},
-	 * scheduled for removal at or after 2.1.0
-	 */
-	
-	public float bottom() {
-		return getBottom();
-	}
-
-
-
 
 	/**
      * Returns the lower left y-coordinate.
@@ -688,7 +628,7 @@ public class PdfCell extends Rectangle {
             return new ArrayList();
         }
         top = Math.min(getTop(), top);
-        // initialisations
+        // initializations
         Image image;
         float height;
         ArrayList result = new ArrayList();
@@ -727,10 +667,10 @@ public class PdfCell extends Rectangle {
     /**
      * Checks if the cell may be removed.
      * <P>
-     * Headers may allways be removed, even if they are drawn only partially:
+     * Headers may always be removed, even if they are drawn only partially:
      * they will be repeated on each following page anyway!
      *
-     * @return	<CODE>true</CODE> if all the lines are allready drawn; <CODE>false</CODE> otherwise.
+     * @return	<CODE>true</CODE> if all the lines are already drawn; <CODE>false</CODE> otherwise.
      */
 
     boolean mayBeRemoved() {
@@ -953,7 +893,7 @@ public class PdfCell extends Rectangle {
 
     /**
      * Sets the value of useBorderPadding.
-     * @param use adjust layour for borders if true
+     * @param use adjust layout for borders if true
      */
     public void setUseBorderPadding(boolean use) {
         useBorderPadding = use;

@@ -6,7 +6,7 @@
 
   RUPS JavaWebStart file
 -->
-<jnlp spec="1.1+" codebase="http://itext.ugent.be/library/rups/" href="rups.jnlp" version="$Id:  $">
+<jnlp spec="1.1+" codebase="http://itext.ugent.be/library/rups/" href="rups.jnlp" version="$Id$">
   <information>
     <title>iText RUPS</title>
     <vendor>lowagie.com</vendor>

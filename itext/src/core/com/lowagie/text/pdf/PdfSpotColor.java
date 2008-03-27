@@ -75,7 +75,7 @@ public class PdfSpotColor{
      *
      * @param		name		a String value
      * @param		tint		a tint value between 0 and 1
-     * @param		altcs		a altnative colorspace value
+     * @param		altcs		an alternative colorspace value
      */
     
     public PdfSpotColor(String name, float tint, Color altcs) {
@@ -94,7 +94,7 @@ public class PdfSpotColor{
     
     /**
      * Gets the alternative ColorSpace.
-     * @return a Colot
+     * @return a Color
      */
     public Color getAlternativeCS() {
         return altcs;

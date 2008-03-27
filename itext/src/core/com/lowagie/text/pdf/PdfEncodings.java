@@ -331,7 +331,7 @@ public class PdfEncodings {
     /** Loads a CJK cmap to the cache with the option of associating
      * sequences to the newline.
      * @param name the CJK cmap name
-     * @param newline the sequences to be replaced bi a newline in the resulting CID. See <CODE>CRLF_CID_NEWLINE</CODE>
+     * @param newline the sequences to be replaced by a newline in the resulting CID. See <CODE>CRLF_CID_NEWLINE</CODE>
      */    
     public static void loadCmap(String name, byte newline[][]) {
         try {

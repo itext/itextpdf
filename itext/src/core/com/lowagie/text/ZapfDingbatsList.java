@@ -48,7 +48,7 @@ package com.lowagie.text;
 
 /**
  * 
- * A special-version of <CODE>LIST</CODE> whitch use zapfdingbats-letters.
+ * A special-version of <CODE>LIST</CODE> which use zapfdingbats-letters.
  * 
  * @see com.lowagie.text.List
  * @author Michael Niedermair and Bruno Lowagie

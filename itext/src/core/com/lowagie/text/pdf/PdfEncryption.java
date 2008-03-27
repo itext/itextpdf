@@ -229,7 +229,7 @@ public class PdfEncryption {
 
 	/**
 	 * 
-	 * ownerKey, documentID must be setuped
+	 * ownerKey, documentID must be setup
 	 */
 	private void setupGlobalEncryptionKey(byte[] documentID, byte userPad[],
 			byte ownerKey[], int permissions) {
@@ -239,7 +239,7 @@ public class PdfEncryption {
 		// use variable keylength
 		mkey = new byte[keyLength / 8];
 
-		// fixed by ujihara in order to follow PDF refrence
+		// fixed by ujihara in order to follow PDF reference
 		md5.reset();
 		md5.update(userPad);
 		md5.update(ownerKey);
@@ -269,7 +269,7 @@ public class PdfEncryption {
 
 	/**
 	 * 
-	 * mkey must be setuped
+	 * mkey must be setup
 	 */
 	// use the revision to choose the setup method
 	private void setupUserKey() {
@@ -291,7 +291,7 @@ public class PdfEncryption {
 		}
 	}
 
-	// gets keylength and revision and uses revison to choose the initial values
+	// gets keylength and revision and uses revision to choose the initial values
 	// for permissions
 	public void setupAllKeys(byte userPassword[], byte ownerPassword[],
 			int permissions) {
@@ -300,7 +300,7 @@ public class PdfEncryption {
 		permissions |= (revision == STANDARD_ENCRYPTION_128 || revision == AES_128) ? 0xfffff0c0
 				: 0xffffffc0;
 		permissions &= 0xfffffffc;
-		// PDF refrence 3.5.2 Standard Security Handler, Algorithum 3.3-1
+		// PDF reference 3.5.2 Standard Security Handler, Algorithm 3.3-1
 		// If there is no owner password, use the user password instead.
 		byte userPad[] = padPassword(userPassword);
 		byte ownerPad[] = padPassword(ownerPassword);

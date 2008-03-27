@@ -271,12 +271,5 @@ public class MarkedSection extends MarkedObject {
 	public void setBookmarkTitle(String bookmarkTitle) {
 	  	((Section)element).setBookmarkTitle(bookmarkTitle);
 	}
-	   
-	/**
-	 * Gets the title of this MarkedSection.
-	 * @deprecated As of iText 2.0.8, replaced by {@link #getTitle()}, scheduled for removal at 2.2.0
-	 */
-	public MarkedObject title() {
-		return getTitle();
-	}
+
 }

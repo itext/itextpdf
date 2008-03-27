@@ -1,5 +1,5 @@
 /*
- * $Id: Jpeg2000.java 2752 2007-05-15 14:58:33Z blowagie $
+ * $Id$
  * $Name$
  *
  * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.

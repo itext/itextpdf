@@ -52,7 +52,7 @@ package com.lowagie.text;
 
 /**
  * This is an <CODE>Element</CODE> that contains
- * some userdefined meta information about the document.
+ * some user defined meta information about the document.
  * <P>
  * <B>Example:</B>
  * <BLOCKQUOTE><PRE>
@@ -94,17 +94,5 @@ public class Header extends Meta {
     public String getName() {
         return name.toString();
     }
-    
-    // deprecated
-    
-    /**
-	 * Returns the name of the meta information.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getName()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public String name() {
-		return getName();
-	}
+
 }

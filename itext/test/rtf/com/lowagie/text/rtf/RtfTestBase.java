@@ -1,5 +1,5 @@
 /*
- * $Id: RtfAddableElement.java 2996 2007-11-20 22:40:36Z hallm $
+ * $Id$
  * $Name$
  *
  * Copyright 2007 by Mark Hall
@@ -77,7 +77,7 @@ public class RtfTestBase extends TestCase {
     protected RtfDocument rtfDoc = null;
     
     /**
-     * Constructs a new <code>RtfTestBase</code>, initialising
+     * Constructs a new <code>RtfTestBase</code>, initializing
      * the <code>RtfDocument</code>.
      */
     public RtfTestBase() {

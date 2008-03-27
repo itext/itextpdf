@@ -72,7 +72,7 @@ import com.lowagie.text.pdf.PdfPTable;
  * <P>
  * The matrix of a table is not necessarily an m x n-matrix. It can contain holes
  * or cells that are bigger than the unit. Believe me or not, but it took some serious
- * thinking to make this as userfriendly as possible. I hope you wil find the result
+ * thinking to make this as user friendly as possible. I hope you will find the result
  * quite simple (I love simple solutions, especially for complex problems).
  * I didn't want it to be something as complex as the Java <CODE>GridBagLayout</CODE>.
  * <P>
@@ -488,7 +488,7 @@ public class Table extends Rectangle implements LargeElement {
     /**
      * Enables/disables automatic insertion of empty cells before table is rendered. (default = false)
      * As some people may want to create a table, fill only a couple of the cells and don't bother with
-     * investigating which empty ones need to be added, this default behaviour may be very welcome.
+     * investigating which empty ones need to be added, this default behavior may be very welcome.
      * Disabling is recommended to increase speed. (empty cells should be added through extra code then)
      *
      * @param       aDoAutoFill   enable/disable autofill
@@ -662,7 +662,7 @@ public class Table extends Rectangle implements LargeElement {
     
 	/**
 	 * Method to check if the Table should be converted to a PdfPTable or not.
-	 * @return false if the table should be handled the oldfashioned way.
+	 * @return false if the table should be handled the old fashioned way.
 	 */
 	public boolean isConvert2pdfptable() {
 		return convert2pdfptable;
@@ -845,7 +845,7 @@ public class Table extends Rectangle implements LargeElement {
     }
     
     /**
-     * Gives you the posibility to add columns.
+     * Gives you the possibility to add columns.
      *
      * @param   aColumns    the number of columns to add
      */
@@ -957,8 +957,9 @@ public class Table extends Rectangle implements LargeElement {
      * @param row
      * @param column
      * @return  dimension
+     * @since  2.1.0 (was made private in 2.0.3)
      */
-    private Object getElement(int row, int column) {
+    public Object getElement(int row, int column) {
         return ((Row) rows.get(row)).getCell(column);
     }
     
@@ -1208,7 +1209,7 @@ public class Table extends Rectangle implements LargeElement {
             
             int difx = ((rows.size() - aLocation.x) >  aCell.getRowspan()) ? aCell.getRowspan() : rows.size() - aLocation.x;
             int dify = ((columns - aLocation.y) >  aCell.getColspan()) ? aCell.getColspan() : columns - aLocation.y;
-            // no other content at cells targetted by rowspan/colspan
+            // no other content at cells targeted by rowspan/colspan
             for (int i=aLocation.x; i < (aLocation.x + difx); i++) {
                 for (int j=aLocation.y; j < (aLocation.y + dify); j++) {
                     if (((Row) rows.get(i)).isReserved(j)) {
@@ -1320,7 +1321,7 @@ public class Table extends Rectangle implements LargeElement {
      * @param       left            this is the position of the first border at the left (cellpadding not included)
      * @param       totalWidth      this is the space between the first border at the left
      *                                              and the last border at the right (cellpadding not included)
-     * @return      an array with borderpositions
+     * @return      an array with border positions
      */
     public float[] getWidths(float left, float totalWidth) {
         // for x columns, there are x+1 borders
@@ -1429,7 +1430,7 @@ public class Table extends Rectangle implements LargeElement {
 	}
 
 	/**
-	 * Sets the indicaction if the section was already added to
+	 * Sets the indication if the section was already added to
 	 * the document.
 	 * @since	iText2.0.8
 	 * @param notAddedYet
@@ -1466,247 +1467,6 @@ public class Table extends Rectangle implements LargeElement {
 	public void setComplete(boolean complete) {
 		this.complete = complete;
 	}
-    
-    // deprecated stuff
-    
-    /**
-     * Returns a <CODE>Table</CODE> that has been constructed taking in account
-     * the value of some <VAR>attributes</VAR>.
-     *
-     * @param    attributes        Some attributes
-     * @throws BadElementException 
-	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getTable(Properties)},
-	 * scheduled for removal at 2.1.0
-     */
-    public Table(java.util.Properties attributes) {
-        this(com.lowagie.text.factories.ElementFactory.getTable(attributes));
-    } 
-    
-    /**
-	 * Gets the number of columns.
-	 *
-	 * @return    a value
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getColumns()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public int columns() {
-		return getColumns();
-	}
-    
-    /**
-	 * Gets the horizontal alignment.
-	 *
-	 * @return  a value
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getAlignment()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public int alignment() {
-		return getAlignment();
-	}
-    
-    /**
-	 * Gets the cellpadding.
-	 *
-	 * @return  a value
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getPadding()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public float cellpadding() {
-		return getPadding();
-	}
-    
-    /**
-	 * Gets the cellspacing.
-	 *
-	 * @return  a value
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getSpacing()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public float cellspacing() {
-		return getSpacing();
-	}
-    
-    /**
-     * Sets the cellpadding.
-     *
-     * @param       value   the new value
-	 * @deprecated As of iText 2.0.3, replaced by {@link #setPadding(float)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setSpaceInsideCell(float value) {
-        cellpadding = value;
-    }
-    
-    /**
-     * Sets the cellspacing.
-     *
-     * @param       value   the new value
-	 * @deprecated As of iText 2.0.3, replaced by {@link #setSpacing(float)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setSpaceBetweenCells(float value) {
-        cellspacing = value;
-    }
-    
-    /**
-	 * Gets the last number of the rows that contain headers.
-	 *  
-	 * @return a rownumber
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getLastHeaderRow()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public int lastHeaderRow() {
-		return getLastHeaderRow();
-	}
-    
-    /**
-	 * Gets the table width (a percentage).
-	 *
-	 * @return      the table width
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getWidth()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public float widthPercentage() {
-		return getWidth();
-	}
-    
-    /**
-     * Sets the width of this table (in percentage of the available space).
-     *
-     * @param   width           the width
-	 * @deprecated As of iText 2.0.3, replaced by {@link #setWidth(float)} and {@link #setLocked(boolean)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setAbsWidth(String width) {
-    	setWidth(Float.parseFloat(width + "f"));
-        setLocked(true);
-    }
-    
-    /**
-     * Gets the table width (in pixels).
-     *
-     * @return  the table width
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getWidth()},
-	 * scheduled for removal at 2.1.0
-     */
-    public String absWidth() {
-    	if (isLocked())
-    		return String.valueOf(width);
-    	else
-    		return "";
-    }
-    
-    // setters for default cell
-    
-    /**
-     * Changes the border in the default layout of the <CODE>Cell</CODE>s
-     * added with method <CODE>addCell(String content)</CODE>.
-     *
-     * @param       value   the new border value
-	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setBorder(int)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setDefaultCellBorder(int value) {
-        defaultCell.setBorder(value);
-    }
-    
-    /**
-     * Changes the width of the borders in the default layout of the <CODE>Cell</CODE>s
-     * added with method <CODE>addCell(String content)</CODE>.
-     *
-     * @param       value   the new width
-	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setBorderWidth(float)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setDefaultCellBorderWidth(float value) {
-        defaultCell.setBorderWidth(value);
-    }
-    
-    /**
-     * Changes the bordercolor in the default layout of the <CODE>Cell</CODE>s
-     * added with method <CODE>addCell(String content)</CODE>.
-     *
-     * @param       color   the new color
-	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setBorderColor(Color)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setDefaultCellBorderColor(Color color) {
-        defaultCell.setBorderColor(color);
-    }
-    
-    /**
-     * Changes the backgroundcolor in the default layout of the <CODE>Cell</CODE>s
-     * added with method <CODE>addCell(String content)</CODE>.
-     *
-     * @param       color   the new color
-	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setBackgroundColor(Color)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setDefaultCellBackgroundColor(Color color) {
-        defaultCell.setBackgroundColor(color);
-    }
-    
-    /**
-     * Changes the grayfill in the default layout of the <CODE>Cell</CODE>s
-     * added with method <CODE>addCell(String content)</CODE>.
-     *
-     * @param       value   the new value
-	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setGrayFill(float)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setDefaultCellGrayFill(float value) {
-        if (value >= 0 && value <= 1) {
-            defaultCell.setGrayFill(value);
-        }
-    }
-    
-    /**
-     * Changes the horizontalAlignment in the default layout of the <CODE>Cell</CODE>s
-     * added with method <CODE>addCell(String content)</CODE>.
-     *
-     * @param       value   the new alignment value
-	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setHorizontalAlignment(int)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setDefaultHorizontalAlignment(int value) {
-        defaultCell.setHorizontalAlignment(value);
-    }
-    
-    /**
-     * Changes the verticalAlignment in the default layout of the <CODE>Cell</CODE>s
-     * added with method <CODE>addCell(String content)</CODE>.
-     *
-     * @param       value   the new alignment value
-	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setVerticalAlignment(int)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setDefaultVerticalAlignment(int value) {
-        defaultCell.setVerticalAlignment(value);
-    }
-    
-    /**
-     * Changes the rowspan in the default layout of the <CODE>Cell</CODE>s
-     * added with method <CODE>addCell(String content)</CODE>.
-     *
-     * @param       value   the new rowspan value
-	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setRowspan(int)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setDefaultRowspan(int value) {
-        defaultCell.setRowspan(value);
-    }
-    
-    /**
-     * Changes the colspan in the default layout of the <CODE>Cell</CODE>s
-     * added with method <CODE>addCell(String content)</CODE>.
-     *
-     * @param       value   the new colspan value
-	 * @deprecated As of iText 2.0.3, use {@link #getDefaultCell()} and {@link com.lowagie.text.Cell#setColspan(int)},
-	 * scheduled for removal at 2.1.0
-     */
-    public void setDefaultColspan(int value) {
-        defaultCell.setColspan(value);
-    }
     
     /**
      * Gets the default layout of the Table.

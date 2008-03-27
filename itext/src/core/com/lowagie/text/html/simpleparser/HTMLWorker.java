@@ -529,7 +529,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         String content = str;
         if (isPRE) {
             if (currentParagraph == null)
-                currentParagraph = new Paragraph();
+                currentParagraph = FactoryProperties.createParagraph(cprops);
             currentParagraph.add(factoryProperties.createChunk(content, cprops));
             return;
         }
@@ -632,6 +632,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             return -1;
         if (txt.endsWith("%")) {
             float vf = Float.parseFloat(txt.substring(0, txt.length() - 1));
+            return vf;
+        }
+        if (txt.endsWith("px")) {
+            float vf = Float.parseFloat(txt.substring(0, txt.length() - 2));
             return vf;
         }
         int v = Integer.parseInt(txt);

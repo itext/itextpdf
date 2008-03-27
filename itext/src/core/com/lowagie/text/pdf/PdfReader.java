@@ -1716,7 +1716,7 @@ public class PdfReader implements PdfViewerPreferences {
                     }
                     break;
                 default:
-                    // Error -- uknown filter type
+                    // Error -- unknown filter type
                     throw new RuntimeException("PNG filter unknown.");
             }
             try {
@@ -1825,8 +1825,9 @@ public class PdfReader implements PdfViewerPreferences {
             }
         }
         int r = 0;
-        if (state == 1)
-            throw new RuntimeException("Illegal length in ASCII85Decode.");
+        // We'll ignore the next two lines for the sake of perpetuating broken PDFs
+//        if (state == 1)
+//            throw new RuntimeException("Illegal length in ASCII85Decode.");
         if (state == 2) {
             r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85 + 85 * 85 * 85  + 85 * 85 + 85;
             out.write((byte)(r >> 24));
@@ -3340,7 +3341,7 @@ public class PdfReader implements PdfViewerPreferences {
     /**
      * Removes any usage rights that this PDF may have. Only Adobe can grant usage rights
      * and any PDF modification with iText will invalidate them. Invalidated usage rights may
-     * confuse Acrobat and it's advisabe to remove them altogether.
+     * confuse Acrobat and it's advisable to remove them altogether.
      */
     public void removeUsageRights() {
         PdfDictionary perms = (PdfDictionary)getPdfObject(catalog.get(PdfName.PERMS));
@@ -3358,7 +3359,7 @@ public class PdfReader implements PdfViewerPreferences {
      * <code>PdfSignatureAppearance.CERTIFIED_FORM_FILLING</code> and
      * <code>PdfSignatureAppearance.CERTIFIED_FORM_FILLING_AND_ANNOTATIONS</code>.
      * <p>
-     * No signature validation is made, use the methods availabe for that in <CODE>AcroFields</CODE>.
+     * No signature validation is made, use the methods available for that in <CODE>AcroFields</CODE>.
      * </p>
      * @return gets the certification level for this document
      */

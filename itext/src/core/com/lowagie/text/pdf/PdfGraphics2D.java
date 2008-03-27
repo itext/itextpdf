@@ -436,18 +436,24 @@ public class PdfGraphics2D extends Graphics2D {
             double width = 0;
             if (font.getSize2D() > 0) {
                 float scale = 1000 / font.getSize2D();
-                width = font.deriveFont(AffineTransform.getScaleInstance(scale, scale)).getStringBounds(s, getFontRenderContext()).getWidth() / scale;
+                Font derivedFont = font.deriveFont(AffineTransform.getScaleInstance(scale, scale));
+                width = derivedFont.getStringBounds(s, getFontRenderContext()).getWidth();
+                if (derivedFont.isTransformed())
+                    width /= scale;
             }
             // if the hyperlink flag is set add an action to the text
             Object url = getRenderingHint(HyperLinkKey.KEY_INSTANCE);
             if (url != null && !url.equals(HyperLinkKey.VALUE_HYPERLINKKEY_OFF))
             {
-            	float scale = 1000 / font.getSize2D();
-            	double height = font.deriveFont(AffineTransform.getScaleInstance(scale, scale)).getStringBounds(s, getFontRenderContext()).getHeight() / scale;
+                float scale = 1000 / font.getSize2D();
+                Font derivedFont = font.deriveFont(AffineTransform.getScaleInstance(scale, scale));
+                double height = derivedFont.getStringBounds(s, getFontRenderContext()).getHeight();
+                if (derivedFont.isTransformed())
+                    height /= scale;
                 double leftX = cb.getXTLM();
                 double leftY = cb.getYTLM();
                 PdfAction action = new  PdfAction(url.toString());
-				cb.setAction(action, (float)leftX, (float)leftY, (float)(leftX+width), (float)(leftY+height));
+                cb.setAction(action, (float)leftX, (float)leftY, (float)(leftX+width), (float)(leftY+height));
             }
             if (s.length() > 1) {
                 float adv = ((float)width - baseFont.getWidthPoint(s, fontSize)) / (s.length() - 1);
@@ -474,10 +480,12 @@ public class PdfGraphics2D extends Graphics2D {
                 int UnderlineThickness = 50;
                 //
                 double d = asPoints((double)UnderlineThickness, (int)fontSize);
+                Stroke savedStroke = originalStroke;
                 setStroke(new BasicStroke((float)d));
                 y = (float)((double)(y) + asPoints((double)(UnderlineThickness), (int)fontSize));
                 Line2D line = new Line2D.Double((double)x, (double)y, (double)(width+x), (double)y);
                 draw(line);
+                setStroke(savedStroke);
             }
         }
     }
@@ -1456,6 +1464,11 @@ public class PdfGraphics2D extends Graphics2D {
                 image.setImageMask(msk);
             }
             cb.addImage(image, (float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
+            Object url = getRenderingHint(HyperLinkKey.KEY_INSTANCE);
+            if (url != null && !url.equals(HyperLinkKey.VALUE_HYPERLINKKEY_OFF)) {
+            	PdfAction action = new  PdfAction(url.toString());
+                cb.setAction(action, (float)mx[4], (float)mx[5], (float)(mx[0]+mx[4]), (float)(mx[3]+mx[5]));
+            }
         } catch (Exception ex) {
             throw new IllegalArgumentException();
         }

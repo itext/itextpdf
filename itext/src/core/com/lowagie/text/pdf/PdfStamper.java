@@ -325,7 +325,7 @@ public class PdfStamper
      *  The permissions can be combined by ORing them.
      * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @param certs the public certificates to be used for the encryption
-     * @param permissions the user permissions for each of the certicates
+     * @param permissions the user permissions for each of the certificates
      * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
      * @throws DocumentException if the encryption was set too late
      */

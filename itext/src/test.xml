@@ -2,7 +2,7 @@
 
 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 <!-- iText, a JAVA - PDF library                                      -->
-<!-- $Id: site.xml 2991 2007-11-19 03:10:45Z xlv $                    -->
+<!-- $Id$                    -->
 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
 <project name="iText.test" default="help" basedir=".">
@@ -36,16 +36,13 @@
     <target name="compile.examples" description="--> compiles the iText examples">
         <mkdir dir="${itext.bin.examples}" />
         <javac source="${itext.jdk.examples}" target="${itext.jdk.examples}" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
+		<exclude name="com/lowagie/examples/rtf/**"/>
+		<exclude name="com/lowagie/examples/fonts/styles/ExtraStyles.java"/>
+		<exclude name="com/lowagie/examples/general/HelloWorldMultiple.java"/>
+		<exclude name="com/lowagie/examples/general/webapp/HelloWorldServlet.java"/>
+		<exclude name="com/lowagie/examples/objects/tables/alternatives/TablePdfPTable.java"/>
         	<classpath refid="itext.examples.classpath"/>
     	</javac>
-    </target>
-    
-    <target name="jar">
-    	<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
-    </target>
-
-	<target name="jar.rtf">
-		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rtf" />
     </target>
 	
     <path id="itext.test.classpath">
@@ -65,7 +62,7 @@
     <!-- Compiling and running the tests                                  -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <target name="test.setup" depends="jar, compile.examples" description="--> compiles and runs the iText tests">
+    <target name="test.setup" depends="compile.examples" description="--> compiles and runs the iText tests">
         <mkdir dir="${itext.bin.test}" />
     	
         <mkdir dir="${itext.bin.data}" />
@@ -131,8 +128,16 @@
         </junitreport>
     </target>
 
-    <target name="test.rtf" depends="test.setup, jar.rtf" description="--> compiles and runs the iText rtf tests">
-        <javac source="${itext.jdk.test}" target="${itext.jdk.test}" srcdir="${itext.src.test}/rtf" destdir="${itext.bin.test}">
+    <target name="test.rtf" depends="test.setup" description="--> compiles and runs the iText rtf tests">
+        <mkdir dir="${itext.rtf.test}" />
+        <javac source="${itext.jdk.test}" target="${itext.jdk.test}" destdir="${itext.rtf.test}">
+		<src path="${itext.src.test}/rtf"/>
+		<src path="${itext.src.examples}"/>
+		<include name="com/lowagie/text/rtf/**"/>
+		<include name="com/lowagie/examples/rtf/**"/>
+		<include name="com/lowagie/examples/fonts/styles/ExtraStyles.java"/>
+		<include name="com/lowagie/examples/general/HelloWorldMultiple.java"/>
+		<include name="com/lowagie/examples/objects/tables/alternatives/TablePdfPTable.java"/>
             <classpath>
                 <path refid="itext.test.classpath"/>
                 <pathelement location="${itext.rtf.jar}"/>
@@ -142,6 +147,7 @@
         <junit printsummary="yes" showoutput="no" filtertrace="no" haltonfailure="yes" dir="${itext.bin.data}">
             <classpath>
                 <path refid="itext.test.classpath"/>
+                <pathelement location="${itext.rtf.test}"/>
                 <pathelement location="${itext.rtf.jar}"/>
             </classpath>
             <batchtest fork="yes" todir="${itext.reports}/xml">
@@ -173,22 +179,22 @@
 		<mkdir dir="${itext.reports}/jdiff"/>
 
 		<!-- jdiff task split to have extra arguments for memory and classpath -->
-		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
+		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${itext.previous.version}"
-				sourcepath="${itext.previous.location}/src/core"
-				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
+				sourcepath="${itext.previous.location}/core:${itext.previous.location}/rtf:${itext.previous.location}/rups"
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 		</javadoc>
 
-		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
+		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${releasenumber}"
-				sourcepath="${itext.src}/core"
-				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
+				sourcepath="${itext.src}/core:${itext.src}/rtf:${itext.src}/rups"
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 		</javadoc>
 
-		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
+		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
-				sourcepath="${itext.previous.location}/src/core"
-				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
+				sourcepath="${itext.previous.location}/core:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
 				<param name="-apiname" value="${itext.previous.version}"/>
 				<param name="-baseURI" value="http://www.w3.org"/>
@@ -196,10 +202,10 @@
 			</doclet>
 		</javadoc>
 
-		<javadoc version="true" author="true" source="1.4" private="true" maxmemory="128m"
+		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
-				sourcepath="${itext.src}/core"
-				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" >
+				sourcepath="${itext.src}/core:${itext.src}/rtf:${itext.src}/rups"
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
 				<param name="-apiname" value="${releasenumber}"/>
 				<param name="-baseURI" value="http://www.w3.org"/>
@@ -207,7 +213,7 @@
 			</doclet>
 		</javadoc>
 
-		<javadoc private="true" source="1.4" maxmemory="128m"
+		<javadoc private="true" source="${itext.jdk.rups}" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
 				sourcefiles="${JDIFF_HOME}/Null.java" >
 			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">

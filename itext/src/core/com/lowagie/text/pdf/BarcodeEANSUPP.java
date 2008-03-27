@@ -91,7 +91,7 @@ public class BarcodeEANSUPP extends Barcode{
     }
     
     /** Places the barcode in a <CODE>PdfContentByte</CODE>. The
-     * barcode is always placed at coodinates (0, 0). Use the
+     * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
      * The bars and text are written in the following colors:<p>
      * <P><TABLE BORDER=1>

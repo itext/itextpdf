@@ -291,7 +291,7 @@ public class Paragraph extends Phrase {
     /**
      * Sets the variable leading. The resultant leading will be
      * multipliedLeading*maxFontSize where maxFontSize is the
-     * size of the bigest font in the line.
+     * size of the biggest font in the line.
      * @param multipliedLeading the variable leading
      */
     public void setMultipliedLeading(float multipliedLeading) {
@@ -302,7 +302,7 @@ public class Paragraph extends Phrase {
     /**
      * Sets the leading fixed and variable. The resultant leading will be
      * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
-     * size of the bigest font in the line.
+     * size of the biggest font in the line.
      * @param fixedLeading the fixed leading
      * @param multipliedLeading the variable leading
      */
@@ -469,50 +469,4 @@ public class Paragraph extends Phrase {
         this.extraParagraphSpace = extraParagraphSpace;
     }
 
-    // deprecated stuff
-    
-    /**
-     * Returns a <CODE>Paragraph</CODE> that has been constructed taking in account
-     * the value of some <VAR>attributes</VAR>.
-     *
-     * @param	attributes		Some attributes
-	 * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getParagraph(Properties)},
-	 * scheduled for removal at 2.1.0
-     */
-    public Paragraph(java.util.Properties attributes) {
-        this(com.lowagie.text.factories.ElementFactory.getParagraph(attributes));
-    }
-    
-    /**
-	 * Gets the alignment of this paragraph.
-	 *
-	 * @return	alignment
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getAlignment()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public int alignment() {
-		return getAlignment();
-	}
-    
-    /**
-	 * Gets the indentation of this paragraph on the left side.
-	 *
-	 * @return	the indentation
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentationLeft()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public float indentationLeft() {
-		return getIndentationLeft();
-	}
-    
-	/**
-	 * Gets the indentation of this paragraph on the right side.
-	 *
-	 * @return	the indentation
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getIndentationRight()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public float indentationRight() {
-		return getIndentationRight();
-	}
 }

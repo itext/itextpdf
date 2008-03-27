@@ -142,7 +142,7 @@ public class PdfWriter extends DocWriter implements
              * Constructs a cross-reference element for a PdfIndirectObject.
              * @param refnum
              * @param	offset		byte offset of the object
-             * @param	generation	generationnumber of the object
+             * @param	generation	generation number of the object
              */
             
             PdfCrossReference(int refnum, int offset, int generation) {
@@ -242,7 +242,7 @@ public class PdfWriter extends DocWriter implements
         /** array containing the cross-reference table of the normal objects. */
         private TreeSet xrefs;
         private int refnum;
-        /** the current byteposition in the body. */
+        /** the current byte position in the body. */
         private int position;
         private PdfWriter writer;
         private ByteBuffer index;
@@ -698,7 +698,7 @@ public class PdfWriter extends DocWriter implements
     /**
      * Use this method to get the direct content under for this document.
      * There is only one direct content, multiple calls to this method
-     * will allways retrieve the same object.
+     * will always retrieve the same object.
      * @return the direct content
      */
     
@@ -919,7 +919,7 @@ public class PdfWriter extends DocWriter implements
     protected int currentPageNumber = 1;
 
     /**
-     * Use this method to make sure the page tree has a lineair structure
+     * Use this method to make sure the page tree has a linear structure
      * (every leave is attached directly to the root).
      * Use this method to allow page reordering with method reorderPages.
      */    
@@ -1019,6 +1019,13 @@ public class PdfWriter extends DocWriter implements
             page.put(PdfName.GROUP, group);
             group = null;
         }
+        else if (rgbTransparencyBlending) {
+            PdfDictionary pp = new PdfDictionary();
+            pp.put(PdfName.TYPE, PdfName.GROUP);
+            pp.put(PdfName.S, PdfName.TRANSPARENCY);
+            pp.put(PdfName.CS, PdfName.DEVICERGB);
+            page.put(PdfName.GROUP, pp);
+        }
         root.addPage(page);
         currentPageNumber++;
         return null;
@@ -1029,7 +1036,7 @@ public class PdfWriter extends DocWriter implements
 /*
  * Page events are specific for iText, not for PDF.
  * Upon specific events (for instance when a page starts
- * or ends), the corresponing method in the page event
+ * or ends), the corresponding method in the page event
  * implementation that is added to the writer is invoked.
  */
     
@@ -1064,9 +1071,9 @@ public class PdfWriter extends DocWriter implements
         return pageEvent;
     }
     
-//	Open en Close method + method that create the PDF
+//	Open and Close methods + method that create the PDF
 
-    /** A number refering to the previous Cross-Reference Table. */
+    /** A number referring to the previous Cross-Reference Table. */
     protected int prevxref = 0;
     
     /**
@@ -1103,7 +1110,7 @@ public class PdfWriter extends DocWriter implements
      * <P>
      * The pages-tree is built and written to the outputstream.
      * A Catalog is constructed, as well as an Info-object,
-     * the referencetable is composed and everything is written
+     * the reference table is composed and everything is written
      * to the outputstream embedded in a Trailer.
      * @see com.lowagie.text.DocWriter#close()
      */
@@ -2024,8 +2031,15 @@ public class PdfWriter extends DocWriter implements
                 }
                 else
                     name = forcedName;
-                if (template.getType() == PdfTemplate.TYPE_IMPORTED)
+                if (template.getType() == PdfTemplate.TYPE_IMPORTED) {
+                    // If we got here from PdfCopy we'll have to fill importedPages
+                    PdfImportedPage ip = (PdfImportedPage)template;
+                    PdfReader r = ip.getPdfReaderInstance().getReader();
+                    if (!importedPages.containsKey(r)) {
+                        importedPages.put(r, ip.getPdfReaderInstance());
+                    }
                     template = null;
+                }
                 formXObjects.put(ref, new Object[]{name, template});
             }
             else
@@ -2101,9 +2115,9 @@ public class PdfWriter extends DocWriter implements
     
     /**
      * Use this method to gets the current document size. 
-     * This size only includes the data already writen
+     * This size only includes the data already written
      * to the output stream, it does not include templates or fonts.
-     * It is usefull if used with <CODE>freeReader()</CODE>
+     * It is useful if used with <CODE>freeReader()</CODE>
      * when concatenating many documents and an idea of
      * the current size is needed.
      * @return the approximate size without fonts or templates
@@ -2154,7 +2168,7 @@ public class PdfWriter extends DocWriter implements
     /** The patterns of this document */
     protected HashMap documentPatterns = new HashMap();
     
-    /** The patten number counter for the colors in the document. */
+    /** The pattern number counter for the colors in the document. */
     protected int patternNumber = 1;
     
     PdfName addSimplePattern(PdfPatternPainter painter) {
@@ -2919,5 +2933,34 @@ public class PdfWriter extends DocWriter implements
      */
     public void setUserProperties(boolean userProperties) {
         this.userProperties = userProperties;
+    }
+
+    /**
+     * Holds value of property RGBTranparency.
+     */
+    private boolean rgbTransparencyBlending;
+
+    /**
+     * Gets the transparency blending colorspace.
+     * @return <code>true</code> if the transparency blending colorspace is RGB, <code>false</code>
+     * if it is the default blending colorspace
+     * @since 2.1.0
+     */
+    public boolean isRgbTransparencyBlending() {
+        return this.rgbTransparencyBlending;
+    }
+
+    /**
+     * Sets the transparency blending colorspace to RGB. The default blending colorspace is
+     * CMYK and will result in faded colors in the screen and in printing. Calling this method
+     * will return the RGB colors to what is expected. The RGB blending will be applied to all subsequent pages
+     * until other value is set.
+     * Note that this is a generic solution that may not work in all cases.
+     * @param rgbTransparencyBlending <code>true</code> to set the transparency blending colorspace to RGB, <code>false</code>
+     * to use the default blending colorspace
+     * @since 2.1.0
+     */
+    public void setRgbTransparencyBlending(boolean rgbTransparencyBlending) {
+        this.rgbTransparencyBlending = rgbTransparencyBlending;
     }
 }

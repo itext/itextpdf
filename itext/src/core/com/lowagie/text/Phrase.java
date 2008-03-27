@@ -70,7 +70,7 @@ import java.util.Properties;
  * <STRONG>Phrase phrase1 = new Phrase("this is a phrase");</STRONG>
  * // In this example the leading is passed as a parameter
  * <STRONG>Phrase phrase2 = new Phrase(16, "this is a phrase with leading 16");</STRONG>
- * // When a Font is passed (explicitely or embedded in a chunk), the default leading = 1.5 * size of the font
+ * // When a Font is passed (explicitly or embedded in a chunk), the default leading = 1.5 * size of the font
  * <STRONG>Phrase phrase3 = new Phrase("this is a phrase with a red, normal font Courier, size 12", FontFactory.getFont(FontFactory.COURIER, 12, Font.NORMAL, new Color(255, 0, 0)));</STRONG>
  * <STRONG>Phrase phrase4 = new Phrase(new Chunk("this is a phrase"));</STRONG>
  * <STRONG>Phrase phrase5 = new Phrase(18, new Chunk("this is a phrase", FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLD, new Color(255, 0, 0)));</STRONG>
@@ -301,7 +301,7 @@ public class Phrase extends ArrayList implements TextElementArray {
         if (o instanceof String) {
             return super.add(new Chunk((String) o, font));
         }
-        if (o instanceof com.lowagie.text.rtf.RtfBasicElement) {
+        if (o instanceof RtfElementInterface) {
         	return super.add(o);
         }
         try {
@@ -551,58 +551,5 @@ public class Phrase extends ArrayList implements TextElementArray {
         }
     	return p;
     }
-    
-    // deprecated constructor and methods
-    
-    /**
-     * Returns a <CODE>Phrase</CODE> that has been constructed taking in account
-     * the value of some <VAR>attributes</VAR>.
-     *
-     * @param	attributes		Some attributes
-     * @deprecated As of iText 2.0.3, replaced by {@link com.lowagie.text.factories.ElementFactory#getPhrase(Properties)},
-	 * scheduled for removal at 2.1.0
-     */
-    public Phrase(Properties attributes) {
-        this(com.lowagie.text.factories.ElementFactory.getPhrase(attributes));
-    }
-    /**
-     * Gets the font of the first <CODE>Chunk</CODE> that appears in this <CODE>Phrase</CODE>.
-     *
-     * @return	a <CODE>Font</CODE>
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getFont()},
-	 * scheduled for removal at 2.1.0
-     */  
-    public Font font() {
-    	return getFont();
-    }    
-    /**
-     * Gets the leading of this phrase.
-     *
-     * @return	the linespacing
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getLeading()},
-	 * scheduled for removal at 2.1.0
-     */
-    public float leading() {
-    	return getLeading();
-    }
-    /**
-     * Checks you if the leading of this phrase is defined.
-     *
-     * @return	true if the leading is defined
-	 * @deprecated As of iText 2.0.3, replaced by {@link #hasLeading()},
-	 * scheduled for removal at 2.1.0
-     */
-    public boolean leadingDefined() {
-    	return hasLeading();
-    }
-    
-    /**
-	 * Returns the content as a String object.
-	 * This method differs from toString because toString will return an ArrayList with the toString value of the Chunks in this Phrase.
-	 * @deprecated As of iText 2.0.3, replaced by {@link #getContent()},
-	 * scheduled for removal at 2.1.0
-	 */
-	public String content() {
-		return getContent();
-	}
+
 }

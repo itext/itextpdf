@@ -1112,7 +1112,7 @@ public class PdfName extends PdfObject implements Comparable{
     /**
      * Constructs a new <CODE>PdfName</CODE>.
      * @param name the new name
-     * @param lengthCheck if <CODE>true</CODE> check the lenght validity, if <CODE>false</CODE> the name can
+     * @param lengthCheck if <CODE>true</CODE> check the length validity, if <CODE>false</CODE> the name can
      * have any length
      */
     

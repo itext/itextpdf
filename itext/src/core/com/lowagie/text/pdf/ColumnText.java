@@ -492,7 +492,7 @@ public class ColumnText {
     
     /**
      * Finds the intersection between the <CODE>yLine</CODE> and the column. It will
-     * set the <CODE>lineStatus</CODE> apropriatly.
+     * set the <CODE>lineStatus</CODE> appropriately.
      * @param wall the column to intersect
      * @return the x coordinate of the intersection
      */
@@ -514,7 +514,7 @@ public class ColumnText {
     
     /**
      * Finds the intersection between the <CODE>yLine</CODE> and the two
-     * column bounds. It will set the <CODE>lineStatus</CODE> apropriatly.
+     * column bounds. It will set the <CODE>lineStatus</CODE> appropriately.
      * @return a <CODE>float[2]</CODE>with the x coordinates of the intersection
      */
     protected float[] findLimitsOneLine() {
@@ -530,7 +530,7 @@ public class ColumnText {
     /**
      * Finds the intersection between the <CODE>yLine</CODE>,
      * the <CODE>yLine-leading</CODE>and the two
-     * column bounds. It will set the <CODE>lineStatus</CODE> apropriatly.
+     * column bounds. It will set the <CODE>lineStatus</CODE> appropriately.
      * @return a <CODE>float[4]</CODE>with the x coordinates of the intersection
      */
     protected float[] findLimitsTwoLines() {
@@ -635,7 +635,7 @@ public class ColumnText {
     /**
      * Sets the leading fixed and variable. The resultant leading will be
      * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
-     * size of the bigest font in the line.
+     * size of the biggest font in the line.
      * @param fixedLeading the fixed leading
      * @param multipliedLeading the variable leading
      */
@@ -755,7 +755,7 @@ public class ColumnText {
     
     /**
      * Outputs the lines to the document. The output can be simulated.
-     * @param simulate <CODE>true</CODE> to simulate the writting to the document
+     * @param simulate <CODE>true</CODE> to simulate the writing to the document
      * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
      * and/or <CODE>NO_MORE_COLUMN</CODE>
      * @throws DocumentException on error

@@ -112,7 +112,7 @@ public interface DocListener extends ElementListener {
     /**
      * Parameter that allows you to do margin mirroring (odd/even pages)
      * @param marginMirroring
-     * @return true if succesfull
+     * @return true if successful
      */
     public boolean setMarginMirroring(boolean marginMirroring); // [L6]
         

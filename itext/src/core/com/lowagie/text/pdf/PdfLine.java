@@ -78,7 +78,7 @@ public class PdfLine {
     /** The alignment of the line. */
     protected int alignment;
     
-    /** The heigth of the line. */
+    /** The height of the line. */
     protected float height;
     
     /** The listsymbol (if necessary). */
@@ -166,7 +166,7 @@ public class PdfLine {
                 addToLine(chunk);
                 return overflow;
             }
-            // if the chunck couldn't even be truncated, we add everything, so be it
+            // if the chunk couldn't even be truncated, we add everything, so be it
             else {
                 if (overflow != null)
                     addToLine(overflow);

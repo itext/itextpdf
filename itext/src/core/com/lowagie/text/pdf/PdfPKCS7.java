@@ -603,7 +603,7 @@ public class PdfPKCS7 {
      * @param keystore the <CODE>KeyStore</CODE>
      * @param crls the certificate revocation list or <CODE>null</CODE>
      * @param calendar the date or <CODE>null</CODE> for the current date
-     * @return <CODE>null</CODE> if the certificate chain could be validade or a
+     * @return <CODE>null</CODE> if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */    

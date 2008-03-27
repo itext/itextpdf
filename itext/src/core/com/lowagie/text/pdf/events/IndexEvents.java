@@ -217,7 +217,7 @@ public class IndexEvents extends PdfPageEventHelper {
 
     /**
      * Returns the sorted list with the entries and the collected page numbers.
-     * @return Returns the sorted list with the entries and teh collected page numbers.
+     * @return Returns the sorted list with the entries and the collected page numbers.
      */
     public List getSortedEntries() {
 
@@ -273,12 +273,12 @@ public class IndexEvents extends PdfPageEventHelper {
         private String tag;
 
         /**
-         * the lsit of all page numbers.
+         * the list of all page numbers.
          */
         private List pagenumbers = new ArrayList();
 
         /**
-         * the lsit of all tags.
+         * the list of all tags.
          */
         private List tags = new ArrayList();
 
@@ -330,8 +330,8 @@ public class IndexEvents extends PdfPageEventHelper {
         }
 
         /**
-         * Returns the pagenumer for this entry.
-         * @return Returns the pagenumer for this entry.
+         * Returns the pagenumber for this entry.
+         * @return Returns the pagenumber for this entry.
          */
         public int getPageNumber() {
             int rt = -1;
