@@ -66,12 +66,12 @@
 		<copy file="${itext.rtf.jar}" tofile="${itext.sf}/iText-rtf-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/iText-src-${releasenumber}.zip" overwrite="yes"/>
 		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/iText-src-${releasenumber}.tar.gz" overwrite="yes"/>
-		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/iText-docs-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.sf}/iText-${releasenumber}-sources.jar" overwrite="yes"/>
 	</target>
 	
 	<target name="release.sf16" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
+		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/iText-docs-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.rups.jar}" todir="${itext.dist}" overwrite="yes" />
 		<copy file="${itext.rups.jar}" tofile="${itext.dist}/iText-rups-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.rups.jar}" tofile="${itext.sf}/iText-rups-${releasenumber}.jar" overwrite="yes"/>
