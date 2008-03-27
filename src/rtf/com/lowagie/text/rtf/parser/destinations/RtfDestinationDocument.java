@@ -124,11 +124,13 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 			add("adeflang");
 			add("adeflangfe");
 		}
+        private static final long serialVersionUID = 1L;
 	};
 	private Vector ignoreCtrlWordsForConvert = new Vector()	{
 		{
 			add("rtf");
 		}
+        private static final long serialVersionUID = 1L;
 	};
 
 	private Paragraph iTextParagraph = null;

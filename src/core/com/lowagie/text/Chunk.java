@@ -54,8 +54,6 @@ import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Set;
 
 import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.pdf.PdfAction;

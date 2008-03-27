@@ -53,7 +53,6 @@ package com.lowagie.text;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Properties;
 
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
