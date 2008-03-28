@@ -859,7 +859,7 @@ public class HtmlWriter extends DocWriter {
                     write(HtmlTags.ROWSPAN, String.valueOf(cell.getRowspan()));
                 }
                 if (cell.getMaxLines() == 1) {
-                    write(HtmlTags.NOWRAP, String.valueOf(true));
+                	write(HtmlTags.STYLE, "white-space: nowrap;");
                 }
                 os.write(GT);
                 // contents
