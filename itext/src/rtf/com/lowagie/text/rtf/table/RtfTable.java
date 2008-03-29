@@ -60,6 +60,7 @@ import com.lowagie.text.Row;
 import com.lowagie.text.Table;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.style.RtfFont;
 import com.lowagie.text.rtf.text.RtfParagraph;
 
 
@@ -115,6 +116,10 @@ public class RtfTable extends RtfElement {
      * The number of header rows in this RtfTable
      */
     private int headerRows = 0;
+    /**
+     * The offset from the previous text
+     */
+    private int offset = -1;
     
     /**
      * Constructs a RtfTable based on a Table for a RtfDocument.
@@ -156,6 +161,9 @@ public class RtfTable extends RtfElement {
         this.headerRows = table.getLastHeaderRow();
         this.cellsFitToPage = table.isCellsFitPage();
         this.tableFitToPage = table.isTableFitsPage();
+        if(!Float.isNaN(table.getOffset())) {
+            this.offset = (int) (table.getOffset() * 2);
+        }
     }
     
     /**
@@ -164,6 +172,10 @@ public class RtfTable extends RtfElement {
     public void writeContent(final OutputStream result) throws IOException
     {
         if(!inHeader) {
+            if(this.offset != -1) {
+                result.write(RtfFont.FONT_SIZE);
+                result.write(intToByteArray(this.offset));
+            }
             result.write(RtfParagraph.PARAGRAPH);
         }
         
