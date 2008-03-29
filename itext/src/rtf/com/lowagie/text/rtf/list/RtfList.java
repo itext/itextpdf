@@ -302,10 +302,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             }
         }
         
-        if(this.listLevel == 0) {
-            correctIndentation();
-        }
-        
         fontNumber = new RtfFont(document, new Font(Font.TIMES_ROMAN, 10, Font.NORMAL, new Color(0, 0, 0)));
         if (list.getSymbol() != null && list.getSymbol().getFont() != null && !list.getSymbol().getContent().startsWith("-") && list.getSymbol().getContent().length() > 0) {
             // only set this to bullet symbol is not default
@@ -464,6 +460,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
+        if(this.listLevel == 0) {
+            correctIndentation();
+        }
+        
         result.write(OPEN_GROUP);
         int itemNr = 0;
         for(int i = 0; i < items.size(); i++) {
