@@ -53,8 +53,9 @@ package com.lowagie.text.rtf.table;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.rtf.RtfElement;
@@ -114,11 +115,10 @@ public class RtfBorderGroup extends RtfElement {
         this.borders = new Hashtable();
         this.borderType = borderType;
         if(borderGroup != null) {
-            Enumeration borderEnum = borderGroup.getBorders().keys();
-            while(borderEnum.hasMoreElements()) {
-                Integer borderPos = (Integer) borderEnum.nextElement();
-                RtfBorder border = (RtfBorder) borderGroup.getBorders().get(borderPos);
-                this.borders.put(borderPos, new RtfBorder(this.document, this.borderType, border));
+            Iterator it = borderGroup.getBorders().entrySet().iterator();
+            while(it.hasNext()) {
+                Map.Entry entry = (Map.Entry) it.next();
+                this.borders.put((Integer) entry.getKey(), new RtfBorder(this.document, this.borderType, (RtfBorder) entry.getValue()));
             }
         }
     }
@@ -208,11 +208,11 @@ public class RtfBorderGroup extends RtfElement {
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
-        Enumeration borderEnum = this.borders.keys();
-        while(borderEnum.hasMoreElements()) {
-        	RtfBorder rb = (RtfBorder)this.borders.get(borderEnum.nextElement());
-        	rb.writeContent(result);
+        Iterator it = this.borders.entrySet().iterator();
+        while(it.hasNext()) {
+            ((RtfBorder) ((Map.Entry) it.next()).getValue()).writeContent(result);
         }
+        System.out.println("Fred");
     }        
     
     /**
