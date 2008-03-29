@@ -206,6 +206,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      */
     private int listType = LIST_TYPE_BULLET;
     /**
+     * The number to start counting at
+     */
+    private int listStartAt = 1;
+    /**
      * The RtfFont for numbered lists
      */
     private RtfFont fontNumber;
@@ -268,6 +272,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             } else {
                 this.listType = LIST_TYPE_UPPER_LETTERS;
             }
+        }
+        this.listStartAt = list.getFirst() + 1;
+        if(this.listStartAt < 1) {
+            this.listStartAt = 1;
         }
         
         for(int i = 0; i < list.getItems().size(); i++) {
@@ -353,7 +361,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         result.write(LIST_LEVEL_ALIGNMENT_NEW);
         result.write(intToByteArray(0));
         result.write(LIST_LEVEL_START_AT);
-        result.write(intToByteArray(1));
+        result.write(intToByteArray(this.listStartAt));
         result.write(OPEN_GROUP);
         result.write(LIST_LEVEL_TEXT);
         if(this.listType != LIST_TYPE_BULLET) {
