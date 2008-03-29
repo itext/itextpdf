@@ -605,7 +605,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * from the parent RtfList. Also calls correctIndentation on all child RtfLists.
      */
     protected void correctIndentation() {
-        System.out.println(this + ": " + this.firstIndent + ", " + this.leftIndent);
         if(this.parentList != null) {
             this.leftIndent = this.leftIndent + this.parentList.getLeftIndent() + this.parentList.getFirstIndent();
         }
