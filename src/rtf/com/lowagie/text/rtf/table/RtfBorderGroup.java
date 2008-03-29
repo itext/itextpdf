@@ -212,7 +212,6 @@ public class RtfBorderGroup extends RtfElement {
         while(it.hasNext()) {
             ((RtfBorder) ((Map.Entry) it.next()).getValue()).writeContent(result);
         }
-        System.out.println("Fred");
     }        
     
     /**
