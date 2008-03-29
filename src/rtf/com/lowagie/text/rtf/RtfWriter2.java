@@ -272,7 +272,7 @@ public class RtfWriter2 extends DocWriter {
      * 
      * (author: Howard Shank)
      * 
-     * @param documentSource
+     * @param documentSource The InputStream to read the RTF document from.
 	 * @param events The array of event listeners. May be null
      * @throws IOException
      * @throws DocumentException
@@ -281,7 +281,7 @@ public class RtfWriter2 extends DocWriter {
      * @see RtfParser#importRtfDocument(InputStream, RtfDocument)
      * @since 2.0.8
      */
-    public void importRtfDocument(FileInputStream documentSource, EventListener[] events ) throws IOException, DocumentException {
+    public void importRtfDocument(InputStream documentSource, EventListener[] events ) throws IOException, DocumentException {
         if(!this.open) {
             throw new DocumentException("The document must be open to import RTF documents.");
         }
@@ -300,13 +300,13 @@ public class RtfWriter2 extends DocWriter {
      * are mapped to the default font and color. If the font and color mappings are
      * known, they can be specified via the mappings parameter.
      * 
-     * @param documentSource The Reader to read the RTF fragment from.
+     * @param documentSource The InputStream to read the RTF fragment from.
      * @param mappings The RtfImportMappings that contain font and color mappings to apply to the fragment.
      * @throws IOException On errors reading the RTF fragment.
      * @throws DocumentException On errors adding to this RTF fragment.
      * @since 2.1.0
      */
-    public void importRtfFragment(FileInputStream documentSource, RtfImportMappings mappings) throws IOException, DocumentException {
+    public void importRtfFragment(InputStream documentSource, RtfImportMappings mappings) throws IOException, DocumentException {
         importRtfFragment(documentSource, mappings, null);
     }
     
@@ -319,7 +319,7 @@ public class RtfWriter2 extends DocWriter {
      * 
      * (author: Howard Shank)
      * 
-     * @param documentSource The Reader to read the RTF fragment from.
+     * @param documentSource The InputStream to read the RTF fragment from.
      * @param mappings The RtfImportMappings that contain font and color mappings to apply to the fragment.
 	 * @param events The array of event listeners. May be null
      * @throws IOException On errors reading the RTF fragment.
