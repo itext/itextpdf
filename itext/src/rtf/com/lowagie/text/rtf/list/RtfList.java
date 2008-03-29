@@ -464,14 +464,15 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             correctIndentation();
         }
         
-        result.write(OPEN_GROUP);
+        if(!this.inTable) {
+            result.write(OPEN_GROUP);
+        }
+        
         int itemNr = 0;
         for(int i = 0; i < items.size(); i++) {
             RtfElement rtfElement = (RtfElement) items.get(i);
             if(rtfElement instanceof RtfListItem) {
                 itemNr++;
-                writeListBeginning(result);
-                writeListNumbers(result);
                 result.write(OPEN_GROUP);
                 result.write(LIST_TEXT);
                 result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
@@ -499,20 +500,26 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     this.document.filterSpecialChar(result, this.bulletCharacter, true, false);
                 }
                 result.write(TAB);
-                result.write(CLOSE_GROUP);                
+                result.write(CLOSE_GROUP);
+                if(i == 0) {
+                    writeListBeginning(result);
+                    writeListNumbers(result);
+                }
                 rtfElement.writeContent(result);
                 if(i < (items.size() - 1) || !this.inTable || this.listLevel > 0) { // TODO Fix no paragraph on last list item in tables
                     result.write(RtfParagraph.PARAGRAPH);
                 }
                 result.write("\n".getBytes());
             } else if(rtfElement instanceof RtfList) {
-            	rtfElement.writeContent(result);
+                rtfElement.writeContent(result);
+                writeListBeginning(result);
+                writeListNumbers(result);
                 result.write("\n".getBytes());
             }
         }
-        result.write(CLOSE_GROUP);
         
         if(!this.inTable) {
+            result.write(CLOSE_GROUP);
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
         }
     }        
