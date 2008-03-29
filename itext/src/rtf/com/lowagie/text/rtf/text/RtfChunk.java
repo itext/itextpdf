@@ -86,7 +86,7 @@ public class RtfChunk extends RtfElement {
     /**
      * Constant for background color.
      */
-    private static final byte[] HIGHLIGHT = "\\highlight".getBytes();
+    private static final byte[] BACKGROUND_COLOR = "\\chcbpat".getBytes();
 
     /**
      * The font of this RtfChunk
@@ -149,7 +149,7 @@ public class RtfChunk extends RtfElement {
             result.write(FONT_SUPERSCRIPT);
         }
         if(this.background != null) {
-            result.write(HIGHLIGHT);
+            result.write(BACKGROUND_COLOR);
             result.write(intToByteArray(this.background.getColorNumber()));
         }
         result.write(DELIMITER);
