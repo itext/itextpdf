@@ -94,10 +94,23 @@
 			<fileset dir="${itext.maven}">
 				<include name="pom.xml" />
 				<include name="itext-${releasenumber}.jar" />
-				<include name="itext-rtf-${releasenumber}.jar" />
-				<include name="itext-rups-${releasenumber}.jar" />
 				<include name="itext-${releasenumber}-sources.jar" />
 				<include name="itext-${releasenumber}-javadoc.jar" />
+			</fileset>
+		</jar>
+		<replace file="${itext.maven}/pom.xml" token="artifactId>itext" value="artifactId>itext-rtf"/>
+		<replace file="${itext.maven}/pom.xml" token="PDF library" value="PDF library (rtf package)"/>
+		<jar destfile="${itext.maven}/itext-rtf-${releasenumber}-bundle.jar">
+			<fileset dir="${itext.maven}">
+				<include name="pom.xml" />
+				<include name="itext-rtf-${releasenumber}.jar" />
+			</fileset>
+		</jar>
+		<replace file="${itext.maven}/pom.xml" token="rtf" value="rups"/>
+		<jar destfile="${itext.maven}/itext-rups-${releasenumber}-bundle.jar">
+			<fileset dir="${itext.maven}">
+				<include name="pom.xml" />
+				<include name="itext-rups-${releasenumber}.jar" />
 			</fileset>
 		</jar>
 	</target>
