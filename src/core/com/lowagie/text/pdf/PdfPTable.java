@@ -253,6 +253,7 @@ public class PdfPTable implements LargeElement{
         skipFirstHeader = sourceTable.skipFirstHeader;
         horizontalAlignment = sourceTable.horizontalAlignment;
         keepTogether = sourceTable.keepTogether;
+        complete = sourceTable.complete;
     }
 
     /** Sets the relative widths of the table.
