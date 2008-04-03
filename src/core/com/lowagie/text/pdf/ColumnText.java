@@ -1300,7 +1300,7 @@ public class ColumnText {
                     yTemp -= rowHeight;
                 }
                 if (k < table.size()) {
-                    if (table.isSplitRows() && (!table.isSplitLate() || (k == listIdx && firstPass))) {
+                	if (table.isSplitRows() && (!table.isSplitLate() || (k == listIdx && firstPass))) {
                         if (!splittedRow) {
                             splittedRow = true;
                             table = new PdfPTable(table);
@@ -1364,6 +1364,9 @@ public class ColumnText {
                         rowHeight = last.getMaxHeights();
                         last.setMaxHeights(yTemp - minY + rowHeight);
                         yTemp = minY;
+                    }
+                    if (k < table.size()) {
+                    	nt.setComplete(true);
                     }
                     if (canvases != null)
                         nt.writeSelectedRows(0, -1, x1, yLineWrite, canvases);
