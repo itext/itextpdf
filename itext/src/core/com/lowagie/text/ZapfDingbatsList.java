@@ -71,6 +71,7 @@ public class ZapfDingbatsList extends List {
 		this.zn = zn;
 		float fontsize = symbol.getFont().getSize();
 		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
+		postSymbol = " ";
 	}
 
 	/**
@@ -84,6 +85,7 @@ public class ZapfDingbatsList extends List {
 		this.zn = zn;
 		float fontsize = symbol.getFont().getSize();
 		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
+		postSymbol = " ";
 	}
 
 	/**
@@ -112,8 +114,9 @@ public class ZapfDingbatsList extends List {
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
-			Chunk chunk = new Chunk((char)zn, symbol.getFont());
-			chunk.append(" ");
+			Chunk chunk = new Chunk(preSymbol, symbol.getFont());
+			chunk.append(String.valueOf((char)zn));
+			chunk.append(postSymbol);
 			item.setListSymbol(chunk);
 			item.setIndentationLeft(symbolIndent, autoindent);
 			item.setIndentationRight(0);

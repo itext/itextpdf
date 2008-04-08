@@ -70,6 +70,7 @@ public class ZapfDingbatsNumberList extends List {
 		this.type = type;
 		float fontsize = symbol.getFont().getSize();
 		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
+		postSymbol = " ";
 	}
 
 	/**
@@ -82,6 +83,7 @@ public class ZapfDingbatsNumberList extends List {
 		this.type = type;
 		float fontsize = symbol.getFont().getSize();
 		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
+		postSymbol = " ";
 	}
 
 	/**
@@ -111,21 +113,21 @@ public class ZapfDingbatsNumberList extends List {
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
-			Chunk chunk;
+			Chunk chunk = new Chunk(preSymbol, symbol.getFont());
 			switch (type ) {
 				case 0:
-					chunk = new Chunk((char)(first + list.size() + 171), symbol.getFont());
+					chunk.append(String.valueOf((char)(first + list.size() + 171)));
 					break;
 				case 1:
-					chunk = new Chunk((char)(first + list.size() + 181), symbol.getFont());
+					chunk.append(String.valueOf((char)(first + list.size() + 181)));
 					break;
 				case 2:
-					chunk = new Chunk((char)(first + list.size() + 191), symbol.getFont());
+					chunk.append(String.valueOf((char)(first + list.size() + 191)));
 					break;
 				default:
-					chunk = new Chunk((char)(first + list.size() + 201), symbol.getFont());
+					chunk.append(String.valueOf((char)(first + list.size() + 201)));
 			}
-			chunk.append(" ");
+			chunk.append(postSymbol);
 			item.setListSymbol(chunk);
 			item.setIndentationLeft(symbolIndent, autoindent);
 			item.setIndentationRight(0);

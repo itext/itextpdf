@@ -137,6 +137,16 @@ public class List implements TextElementArray {
     protected int first = 1;
     /** This is the listsymbol of a list that is not numbered. */
     protected Chunk symbol = new Chunk("- ");
+    /**
+     * In case you are using numbered/lettered lists, this String is added before the number/letter.
+     * @since	iText 2.1.1
+     */
+    protected String preSymbol = "";
+    /**
+     * In case you are using numbered/lettered lists, this String is added after the number/letter.	
+     * @since	iText 2.1.1
+     */
+    protected String postSymbol = ". ";
     
     /** The indentation of this list on the left side. */
     protected float indentationLeft = 0;
@@ -262,13 +272,13 @@ public class List implements TextElementArray {
         if (o instanceof ListItem) {
             ListItem item = (ListItem) o;
             if (numbered || lettered) {
-                Chunk chunk;
+                Chunk chunk = new Chunk(preSymbol, symbol.getFont());
                 int index = first + list.size();
                 if ( lettered )
-                    chunk = new Chunk(RomanAlphabetFactory.getString(index, lowercase), symbol.getFont());
+                    chunk.append(RomanAlphabetFactory.getString(index, lowercase));
                 else
-                    chunk = new Chunk(String.valueOf(index), symbol.getFont());
-                chunk.append(". ");
+                    chunk.append(String.valueOf(index));
+                chunk.append(postSymbol);
                 item.setListSymbol(chunk);
             }
             else {
@@ -538,6 +548,42 @@ public class List implements TextElementArray {
 	 */
 	public boolean isNestable() {
 		return true;
+	}
+
+	/**
+	 * Returns the String that is after a number or letter in the list symbol.
+	 * @return	the String that is after a number or letter in the list symbol
+	 * @since	iText 2.1.1
+	 */
+	public String getPostSymbol() {
+		return postSymbol;
+	}
+
+	/**
+	 * Sets the String that has to be added after a number or letter in the list symbol.
+	 * @since	iText 2.1.1
+	 * @param	postSymbol the String that has to be added after a number or letter in the list symbol.
+	 */
+	public void setPostSymbol(String postSymbol) {
+		this.postSymbol = postSymbol;
+	}
+
+	/**
+	 * Returns the String that is before a number or letter in the list symbol.
+	 * @return	the String that is before a number or letter in the list symbol
+	 * @since	iText 2.1.1
+	 */
+	public String getPreSymbol() {
+		return preSymbol;
+	}
+
+	/**
+	 * Sets the String that has to be added before a number or letter in the list symbol.
+	 * @since	iText 2.1.1
+	 * @param	preSymbol the String that has to be added before a number or letter in the list symbol.
+	 */
+	public void setPreSymbol(String preSymbol) {
+		this.preSymbol = preSymbol;
 	}
 
 }

@@ -108,8 +108,9 @@ public class GreekList extends List {
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
-			Chunk chunk = new Chunk(GreekAlphabetFactory.getString(first + list.size(), lowercase), symbol.getFont());
-			chunk.append(". ");
+			Chunk chunk = new Chunk(preSymbol, symbol.getFont());
+			chunk.append(GreekAlphabetFactory.getString(first + list.size(), lowercase));
+			chunk.append(postSymbol);
 			item.setListSymbol(chunk);
 			item.setIndentationLeft(symbolIndent, autoindent);
 			item.setIndentationRight(0);
