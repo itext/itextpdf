@@ -97,8 +97,9 @@ public class RomanList extends List {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
 			Chunk chunk;
-			chunk = new Chunk(RomanNumberFactory.getString(first + list.size(), lowercase), symbol.getFont());
-			chunk.append(". ");
+			chunk = new Chunk(preSymbol, symbol.getFont());
+			chunk.append(RomanNumberFactory.getString(first + list.size(), lowercase));
+			chunk.append(postSymbol);
 			item.setListSymbol(chunk);
 			item.setIndentationLeft(symbolIndent, autoindent);
 			item.setIndentationRight(0);
