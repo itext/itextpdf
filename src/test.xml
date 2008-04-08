@@ -193,7 +193,7 @@
 
 		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
-				sourcepath="${itext.previous.location}/core:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"
+				sourcepath="${itext.previous.location}/core:${itext.src}/rtf:${itext.src}/rups"
 				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
 				<param name="-apiname" value="${itext.previous.version}"/>
