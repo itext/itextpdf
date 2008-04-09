@@ -119,6 +119,12 @@ public class PdfSmartCopy extends PdfCopy {
             iRef = new IndirectReferences(theRef);
             indirects.put(key, iRef);
         }
+        if (srcObj != null && srcObj.isDictionary()) {
+            PdfObject type = PdfReader.getPdfObjectRelease(((PdfDictionary)srcObj).get(PdfName.TYPE));
+            if (type != null && PdfName.PAGE.equals(type)) {
+                return theRef;
+            }
+        }
         iRef.setCopied();
 
         if (validStream) {
