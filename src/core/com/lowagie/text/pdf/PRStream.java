@@ -121,6 +121,7 @@ public class PRStream extends PdfStream {
      * 
      * @param data raw data, decrypted and uncompressed.
      * @param compress true if you want the stream to be compresssed.
+     * @since	iText 2.1.1
      */
     public void setData(byte[] data, boolean compress) {
         remove(PdfName.FILTER);
