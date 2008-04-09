@@ -176,13 +176,14 @@ class PdfStamperImp extends PdfWriter {
         }
         if (pdf.pageLabels != null)
             catalog.put(PdfName.PAGELABELS, pdf.pageLabels.getDictionary(this));
-        byte[] altMetadata = xmpMetadata;
-        if (altMetadata == null) {
-            PdfObject xmpo = PdfReader.getPdfObject(catalog.get(PdfName.METADATA));
-            if (xmpo != null && xmpo.isStream()) {
-                altMetadata = PdfReader.getStreamBytesRaw((PRStream)xmpo);
-                PdfReader.killIndirect(xmpo);
-            }
+        byte[] altMetadata = null;
+        PdfObject xmpo = PdfReader.getPdfObject(catalog.get(PdfName.METADATA));
+        if (xmpo != null && xmpo.isStream()) {
+            altMetadata = PdfReader.getStreamBytesRaw((PRStream)xmpo);
+            PdfReader.killIndirect(catalog.get(PdfName.METADATA));
+        }
+        if (xmpMetadata != null) {
+        	altMetadata = xmpMetadata;
         }
         // if there is XMP data to add: add it
         if (altMetadata != null) {
