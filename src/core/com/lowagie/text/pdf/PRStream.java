@@ -114,13 +114,18 @@ public class PRStream extends PdfStream {
         setLength(bytes.length);
     }
     
-    /**Sets the data associated with the stream
+    /**
+     * Sets the data associated with the stream, either compressed or
+     * uncompressed. Note that the data will never be compressed if
+     * Document.compress is set to false.
+     * 
      * @param data raw data, decrypted and uncompressed.
+     * @param compress true if you want the stream to be compresssed.
      */
-    public void setData(byte[] data) {
+    public void setData(byte[] data, boolean compress) {
         remove(PdfName.FILTER);
         this.offset = -1;
-        if (Document.compress) {
+        if (Document.compress && compress) {
             try {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 DeflaterOutputStream zip = new DeflaterOutputStream(stream);
@@ -136,6 +141,13 @@ public class PRStream extends PdfStream {
         else
             bytes = data;
         setLength(bytes.length);
+    }
+    
+    /**Sets the data associated with the stream
+     * @param data raw data, decrypted and uncompressed.
+     */
+    public void setData(byte[] data) {
+        setData(data, true);
     }
 
     public void setLength(int length) {
