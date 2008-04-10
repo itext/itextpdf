@@ -145,7 +145,6 @@ public class RtfDocument extends RtfElement {
         try {
             out.write(OPEN_GROUP);
             out.write(RtfDocument.RTF_DOCUMENT);
-            //out.write(documentHeader.write());
             this.documentHeader.writeContent(out);
             this.data.writeTo(out);
             out.write(CLOSE_GROUP);
@@ -266,41 +265,37 @@ public class RtfDocument extends RtfElement {
                 //allow return and tab only
                 if(c == '\n') {
                     out.write(softLineBreaks ? FSC_LINE : FSC_PAR);
-                } else
-                    if(c == '\t') {
-                        out.write(FSC_TAB);                 
+                } else if(c == '\t') {
+                    out.write(FSC_TAB);                 
+                } else {
+                    out.write('?');
+                }
+            } else if((c == '\\') || (c == '{') || (c == '}')) {
+                //escape
+                out.write(FSC_BACKSLASH);
+                out.write(c);
+            } else if((c == '$') && (len-k >= FSC_NEWPAGE.length) && subMatch(str, k, FSC_NEWPAGE)) {
+                out.write(FSC_PAGE_PAR);
+                k += FSC_NEWPAGE.length-1;
+            } else {
+                if((c > 0xff) || ((c > 'z') && alwaysUseUniCode)) {
+                    if(useHex && (c <= 0xff)) {
+                        //encode as 2 char hex string 
+                        out.write(FSC_HEX_PREFIX);
+                        out.write(RtfImage.byte2charLUT, c*2, 2);
                     } else {
+                        //encode as decimal, signed short value
+                        out.write(FSC_UNI_PREFIX);
+                        String s = Short.toString((short)c);
+                        for(int x = 0; x < s.length(); x++) {
+                            out.write(s.charAt(x));
+                        }
                         out.write('?');
                     }
-            } else 
-                if((c == '\\') || (c == '{') || (c == '}')) {
-                    //escape
-                    out.write(FSC_BACKSLASH);
+                } else {
                     out.write(c);
-                } else
-                    if((c == '$') && (len-k >= FSC_NEWPAGE.length) && subMatch(str, k, FSC_NEWPAGE)) {
-                        //"$newpage$" -> "\\page\\par "
-                        out.write(FSC_PAGE_PAR);
-                        k += FSC_NEWPAGE.length-1;
-                    } else {
-                        if((c > 0xff) || ((c > 'z') && alwaysUseUniCode)) {
-                            if(useHex && (c <= 0xff)) {
-                                //encode as 2 char hex string 
-                                out.write(FSC_HEX_PREFIX);
-                                out.write(RtfImage.byte2charLUT, c*2, 2);
-                            } else {
-                                //encode as decimal, signed short value
-                                out.write(FSC_UNI_PREFIX);
-                                String s = Short.toString((short)c);
-                                for(int x = 0; x < s.length(); x++) {
-                                    out.write(s.charAt(x));
-                                }
-                                out.write('?');
-                            }
-                        } else {
-                            out.write(c);
-                        }
-                    }
+                }
+            }
         }       
     }
     /**
