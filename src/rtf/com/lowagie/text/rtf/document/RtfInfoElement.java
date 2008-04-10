@@ -149,7 +149,7 @@ public class RtfInfoElement extends RtfElement {
         if(infoType == Meta.CREATIONDATE) {
             result.write(convertDate(content).getBytes());
         } else {
-            result.write(content.getBytes());
+            document.filterSpecialChar(result, content, false, false);
         }
         result.write(CLOSE_GROUP);
     }        
