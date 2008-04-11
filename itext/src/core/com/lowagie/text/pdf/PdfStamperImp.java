@@ -377,9 +377,11 @@ class PdfStamperImp extends PdfWriter {
             if (ps.over != null) {
                 out.append(' ');
                 out.append(PdfContents.RESTORESTATE);
+                ByteBuffer buf = ps.over.getInternalBuffer();
+                out.append(buf.getBuffer(), 0, ps.replacePoint);
                 out.append(PdfContents.SAVESTATE);
                 applyRotation(pageN, out);
-                out.append(ps.over.getInternalBuffer());
+                out.append(buf.getBuffer(), ps.replacePoint, buf.size() - ps.replacePoint);
                 out.append(PdfContents.RESTORESTATE);
                 stream = new PdfStream(out.toByteArray());
                 stream.flateCompress();
@@ -600,6 +602,34 @@ class PdfStamperImp extends PdfWriter {
                     pages.set(k, new Integer(p + 1));
             }
         }
+    }
+    
+    private static void moveRectangle(PdfDictionary dic2, PdfReader r, int pageImported, PdfName key, String name) {
+        Rectangle m = r.getBoxSize(pageImported, name);
+        if (m == null)
+            dic2.remove(key);
+        else
+            dic2.put(key, new PdfRectangle(m));
+    }
+    
+    void replacePage(PdfReader r, int pageImported, int pageReplaced) {
+        PdfDictionary pageN = reader.getPageN(pageReplaced);
+        if (pagesToContent.containsKey(pageN))
+            throw new IllegalStateException("This page cannot be replaced: new content was already added");
+        PdfImportedPage p = getImportedPage(r, pageImported);
+        PdfDictionary dic2 = reader.getPageNRelease(pageReplaced);
+        dic2.remove(PdfName.RESOURCES);
+        dic2.remove(PdfName.CONTENTS);
+        moveRectangle(dic2, r, pageImported, PdfName.MEDIABOX, "media");
+        moveRectangle(dic2, r, pageImported, PdfName.CROPBOX, "crop");
+        moveRectangle(dic2, r, pageImported, PdfName.TRIMBOX, "trim");
+        moveRectangle(dic2, r, pageImported, PdfName.ARTBOX, "art");
+        moveRectangle(dic2, r, pageImported, PdfName.BLEEDBOX, "bleed");
+        dic2.put(PdfName.ROTATE, new PdfNumber(r.getPageRotation(pageImported)));
+        PdfContentByte cb = getOverContent(pageReplaced);
+        cb.addTemplate(p, 0, 0);
+        PageStamp ps = (PageStamp)pagesToContent.get(pageN);
+        ps.replacePoint = ps.over.getInternalBuffer().size();
     }
     
     void insertPage(int pageNumber, Rectangle mediabox) {
@@ -1456,6 +1486,7 @@ class PdfStamperImp extends PdfWriter {
         StampContent under;
         StampContent over;
         PageResources pageResources;
+        int replacePoint = 0;
         
         PageStamp(PdfStamperImp stamper, PdfReader reader, PdfDictionary pageN) {
             this.pageN = pageN;
