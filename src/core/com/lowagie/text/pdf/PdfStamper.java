@@ -151,6 +151,7 @@ public class PdfStamper
      * @param r the <CODE>PdfReader</CODE> from where the new page will be imported
      * @param pageImported the page number of the imported page
      * @param pageReplaced the page to replace in this document
+     * @since iText 2.1.1
      */
     public void replacePage(PdfReader r, int pageImported, int pageReplaced) {
         stamper.replacePage(r, pageImported, pageReplaced);
