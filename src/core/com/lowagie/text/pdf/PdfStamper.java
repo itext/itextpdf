@@ -145,6 +145,18 @@ public class PdfStamper
     }
 
     /**
+     * Replaces a page from this document with a page from other document. Only the content
+     * is replaced not the fields and annotations. This method must be called before 
+     * getOverContent() or getUndercontent() are called for the same page.
+     * @param r the <CODE>PdfReader</CODE> from where the new page will be imported
+     * @param pageImported the page number of the imported page
+     * @param pageReplaced the page to replace in this document
+     */
+    public void replacePage(PdfReader r, int pageImported, int pageReplaced) {
+        stamper.replacePage(r, pageImported, pageReplaced);
+    }
+    
+    /**
      * Inserts a blank page. All the pages above and including <CODE>pageNumber</CODE> will
      * be shifted up. If <CODE>pageNumber</CODE> is bigger than the total number of pages
      * the new page will be the last one.
