@@ -58,8 +58,6 @@ public class IntegerArgument extends AbstractArgument {
      *            the name of the argument
      * @param description
      *            the description of the argument
-     * @param classname
-     *            the type of the argument
      */
     public IntegerArgument(AbstractTool tool, String name, String description) {
         super(tool, name, description, null);

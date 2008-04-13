@@ -159,7 +159,7 @@ public class DvdCover extends AbstractTool {
 
     /**
      *
-     * @see com.lowagie.toolbox.AbstractTool#valueHasChanged(com.lowagie.toolbox.arguments.StringArgument)
+     * @see com.lowagie.toolbox.AbstractTool#valueHasChanged(com.lowagie.toolbox.arguments.AbstractArgument)
      * @param arg StringArgument
      */
     public void valueHasChanged(AbstractArgument arg) {
