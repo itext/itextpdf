@@ -64,10 +64,6 @@ public class StringArgument extends AbstractArgument {
         super(tool, name, description, null);
     }
 
-    public void setValue(String value) {
-        super.setValue(value);
-    }
-
     /**
      *
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)

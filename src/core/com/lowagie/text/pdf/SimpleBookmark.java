@@ -105,7 +105,7 @@ import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
  * </ul>
  * @author Paulo Soares (psoares@consiste.pt)
  */
-public class SimpleBookmark implements SimpleXMLDocHandler {
+public final class SimpleBookmark implements SimpleXMLDocHandler {
     
     private ArrayList topList;
     private Stack attr = new Stack();

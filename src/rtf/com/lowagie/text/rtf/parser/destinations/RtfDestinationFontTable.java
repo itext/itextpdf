@@ -89,7 +89,7 @@ public final class RtfDestinationFontTable extends RtfDestination {
 	 * The \charset value
 	 */
 	private String charset = "";
-	private final String CHARSET_DEFAULT = "0";
+	private static final String CHARSET_DEFAULT = "0";
 	/**
 	 * The \fprq
 	 */
@@ -430,7 +430,7 @@ public final class RtfDestinationFontTable extends RtfDestination {
 	 */
 	public void setCharset(String charset) {
 		if(charset.length() == 0) {
-			charset = "0";
+			charset = CHARSET_DEFAULT;
 		}
 		this.charset = charset;
 	}
@@ -486,9 +486,9 @@ public final class RtfDestinationFontTable extends RtfDestination {
 	//					}
 	//				}
 	//			} else {
-					if(!this.importHeader.importFont(this.fontNr, this.fontName, Integer.parseInt(this.charset==""?CHARSET_DEFAULT:this.charset))) {
+					if(!this.importHeader.importFont(this.fontNr, this.fontName, Integer.parseInt("".equals(this.charset)?CHARSET_DEFAULT:this.charset))) {
 						if(this.falt.length() > 0) {
-							this.importHeader.importFont(this.fontNr, this.falt, Integer.parseInt(this.charset==""?CHARSET_DEFAULT:this.charset));
+							this.importHeader.importFont(this.fontNr, this.falt, Integer.parseInt("".equals(this.charset)?CHARSET_DEFAULT:this.charset));
 						}
 					}
 	//			}

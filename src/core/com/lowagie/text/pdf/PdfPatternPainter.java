@@ -54,7 +54,7 @@ import com.lowagie.text.Rectangle;
  * Implements the pattern.
  */
 
-public class PdfPatternPainter extends PdfTemplate {
+public final class PdfPatternPainter extends PdfTemplate {
     
     protected float xstep, ystep;
     protected boolean stencil = false;

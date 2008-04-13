@@ -100,7 +100,7 @@ import java.util.Stack;
  * </ul>
  * <p>
  */
-public class SimpleXMLParser {
+public final class SimpleXMLParser {
     /** possible states */
 	private final static int UNKNOWN = 0;
 	private final static int TEXT = 1;

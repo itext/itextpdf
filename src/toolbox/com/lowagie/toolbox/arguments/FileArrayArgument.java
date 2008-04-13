@@ -65,10 +65,6 @@ public class FileArrayArgument extends AbstractArgument {
         }
     }
 
-    public void setValue(File[] value) {
-        super.setValue(value);
-    }
-
     public void actionPerformed(ActionEvent e) {
         fileList1.setLocation(10, 10);
         fileList1.setVisible(true);
