@@ -72,6 +72,7 @@ import com.lowagie.text.rtf.style.RtfFont;
  * 
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Howard Shank (hgshank@yahoo.com)
+ * @since 2.1.0
  */
 public class RtfImportMgr {
     //TODO: Add list, stylesheet, info, etc. mappings

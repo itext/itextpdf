@@ -58,7 +58,7 @@ import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordData;
  * <code>RtfDestinationListTable</code> handles data destined for the List Table destination
  * 
  * @author Howard Shank (hgshank@yahoo.com)
- *
+ * @since 2.1.0
  */
 public class RtfDestinationListTable extends RtfDestination {
 	/**

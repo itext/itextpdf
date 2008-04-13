@@ -70,7 +70,7 @@ import com.lowagie.text.rtf.parser.properties.RtfPropertyListener;
  * <code>RtfDestinationDocument</code> handles data destined for the document destination
  * 
  * @author Howard Shank (hgshank@yahoo.com)
- *
+ * @since 2.1.0
  */
 public final class RtfDestinationDocument extends RtfDestination implements RtfPropertyListener {
 
