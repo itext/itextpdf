@@ -207,7 +207,7 @@ public class FileList
     for (RowContainer c: filevector) {
       sum += c.getPages();
     }
-    this.jLabel2.setText("" + sum);
+    this.jLabel2.setText(Integer.toString(sum));
   }
 
     public Vector<RowContainer> getFilevector() {
@@ -217,7 +217,7 @@ public class FileList
         StringBuffer sb=new StringBuffer();
        Vector<RowContainer> vec=getFilevector();
        for(RowContainer c: vec){
-           sb.append(c.getFile().getAbsolutePath()+"\n");
+           sb.append(c.getFile().getAbsolutePath()).append('\n');
        }
        return sb.toString();
     }

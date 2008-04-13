@@ -55,15 +55,15 @@ public class Add3D extends AbstractTool {
     }
 
     FileArgument destfile = null;
-    public static String PDF_NAME_3D = "3D";
-    public static String PDF_NAME_3DD = "3DD";
-    public static String PDF_NAME_3DV = "3DV";
-    public static String PDF_NAME_3DVIEW = "3DView";
-    public static String PDF_NAME_C2W = "C2W";
-    public static String PDF_NAME_IN = "IN";
-    public static String PDF_NAME_MS = "MS";
-    public static String PDF_NAME_U3D = "U3D";
-    public static String PDF_NAME_XN = "XN";
+    public static final String PDF_NAME_3D = "3D";
+    public static final String PDF_NAME_3DD = "3DD";
+    public static final String PDF_NAME_3DV = "3DV";
+    public static final String PDF_NAME_3DVIEW = "3DView";
+    public static final String PDF_NAME_C2W = "C2W";
+    public static final String PDF_NAME_IN = "IN";
+    public static final String PDF_NAME_MS = "MS";
+    public static final String PDF_NAME_U3D = "U3D";
+    public static final String PDF_NAME_XN = "XN";
 
     /**
      * This tool lets you add a embedded u3d 3d annotation to the first page of a document.
