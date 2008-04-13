@@ -73,8 +73,11 @@
 		<mkdir dir="${itext.sf}"/>
 		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/iText-docs-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.rups.jar}" todir="${itext.dist}" overwrite="yes" />
+		<copy file="${itext.toolbox.jar}" todir="${itext.dist}" overwrite="yes" />
 		<copy file="${itext.rups.jar}" tofile="${itext.dist}/iText-rups-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.rups.jar}" tofile="${itext.sf}/iText-rups-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.toolbox.jar}" tofile="${itext.dist}/iText-toolbox-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.toolbox.jar}" tofile="${itext.sf}/iText-toolbox-${releasenumber}.jar" overwrite="yes"/>
 	</target>
 	
 	<target name="release.maven" description="--> makes a bundle ready to publish for Maven">
@@ -86,6 +89,7 @@
 		<copy file="${itext.dist}/iText-${releasenumber}.jar" tofile="${itext.maven}/itext-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-rtf-${releasenumber}.jar" tofile="${itext.maven}/itext-rtf-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-rups-${releasenumber}.jar" tofile="${itext.maven}/itext-rups-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.dist}/iText-toolbox-${releasenumber}.jar" tofile="${itext.maven}/itext-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.maven}/itext-${releasenumber}-sources.jar" overwrite="yes"/>
 		<jar destfile="${itext.maven}/itext-${releasenumber}-javadoc.jar">
 			<fileset dir="${itext.docs}"/>
@@ -94,6 +98,7 @@
 			<fileset dir="${itext.maven}">
 				<include name="pom.xml" />
 				<include name="itext-${releasenumber}.jar" />
+				<include name="itext-toolbox-${releasenumber}.jar" />
 				<include name="itext-${releasenumber}-sources.jar" />
 				<include name="itext-${releasenumber}-javadoc.jar" />
 			</fileset>
@@ -116,22 +121,22 @@
 	</target>
     
 	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Releasing RUPS                                                   -->
+    <!-- Releasing the JNLP apps                                          -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 	
 	<target name="unsign.bcmail">
-        <mkdir dir="${itext.rups.jnlp}" />
+        <mkdir dir="${itext.jnlp}" />
     	<mkdir dir="${itext.bin.temp}" />
     	<unjar src="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar" dest="${itext.bin.temp}" />
-    	<jar destfile="${itext.rups.jnlp}/bcmail-${bc.jdk}-${bc.version}.jar" basedir="${itext.bin.temp}" includes="**/*.class" />
+    	<jar destfile="${itext.jnlp}/bcmail-${bc.jdk}-${bc.version}.jar" basedir="${itext.bin.temp}" includes="**/*.class" />
     	<delete dir="${itext.bin.temp}" />
 	</target>
 
 	<target name="unsign.bcprov">
-        <mkdir dir="${itext.rups.jnlp}" />
+        <mkdir dir="${itext.jnlp}" />
     	<mkdir dir="${itext.bin.temp}" />
     	<unjar src="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" dest="${itext.bin.temp}" />
-    	<jar destfile="${itext.rups.jnlp}/bcprov-${bc.jdk}-${bc.version}.jar" basedir="${itext.bin.temp}" includes="**/*.class" />
+    	<jar destfile="${itext.jnlp}/bcprov-${bc.jdk}-${bc.version}.jar" basedir="${itext.bin.temp}" includes="**/*.class" />
     	<delete dir="${itext.bin.temp}" />
 	</target>
 
@@ -151,49 +156,58 @@
         />
     </target>
  
-    <target name="release.rups" depends="unsign.bcmail, unsign.bcprov, keystore">
-		<copy file="${itext.src}/jnlp/rups.jnlp" tofile="${itext.rups.jnlp}/rups.jnlp" overwrite="yes"/>
-		<copy file="${itext.rups.jar}" tofile="${itext.rups.jnlp}/iText-rups.jar" overwrite="yes"/>
-		<copy file="${itext.lib}/iText.jar" tofile="${itext.rups.jnlp}/iText.jar" overwrite="yes"/>
-		<copy file="${itext.lib}/dom4j-1.6.1.jar" tofile="${itext.rups.jnlp}/dom4j-1.6.1.jar" overwrite="yes"/>
-		<copy file="${itext.lib}/pdf-renderer.jar" tofile="${itext.rups.jnlp}/pdf-renderer.jar" overwrite="yes"/>
+    <target name="release.jnlp" depends="unsign.bcmail, unsign.bcprov, keystore">
+		<copy file="${itext.src}/jnlp/rups.jnlp" tofile="${itext.jnlp}/rups.jnlp" overwrite="yes"/>
+		<copy file="${itext.src}/jnlp/toolbox.jnlp" tofile="${itext.jnlp}/toolbox.jnlp" overwrite="yes"/>
+		<copy file="${itext.rups.jar}" tofile="${itext.jnlp}/iText-rups.jar" overwrite="yes"/>
+		<copy file="${itext.toolbox.jar}" tofile="${itext.jnlp}/iText-toolbox.jar" overwrite="yes"/>
+		<copy file="${itext.lib}/iText.jar" tofile="${itext.jnlp}/iText.jar" overwrite="yes"/>
+		<copy file="${itext.lib}/dom4j-1.6.1.jar" tofile="${itext.jnlp}/dom4j-1.6.1.jar" overwrite="yes"/>
+		<copy file="${itext.lib}/pdf-renderer.jar" tofile="${itext.jnlp}/pdf-renderer.jar" overwrite="yes"/>
         <signjar
-            jar="${itext.rups.jnlp}/bcmail-${bc.jdk}-${bc.version}.jar"
+            jar="${itext.jnlp}/bcmail-${bc.jdk}-${bc.version}.jar"
             keystore="${itext.keystore.filename}"
             storepass="${itext.keystore.password}"
             alias="${itext.keystore.alias}"
             storetype="${itext.keystore.storetype}"
         />
         <signjar
-            jar="${itext.rups.jnlp}/bcprov-${bc.jdk}-${bc.version}.jar"
+            jar="${itext.jnlp}/bcprov-${bc.jdk}-${bc.version}.jar"
             keystore="${itext.keystore.filename}"
             storepass="${itext.keystore.password}"
             alias="${itext.keystore.alias}"
             storetype="${itext.keystore.storetype}"
         />
         <signjar
-            jar="${itext.rups.jnlp}/dom4j-1.6.1.jar"
+            jar="${itext.jnlp}/dom4j-1.6.1.jar"
             keystore="${itext.keystore.filename}"
             storepass="${itext.keystore.password}"
             alias="${itext.keystore.alias}"
             storetype="${itext.keystore.storetype}"
         />
         <signjar
-            jar="${itext.rups.jnlp}/iText.jar"
+            jar="${itext.jnlp}/iText.jar"
             keystore="${itext.keystore.filename}"
             storepass="${itext.keystore.password}"
             alias="${itext.keystore.alias}"
             storetype="${itext.keystore.storetype}"
         />
         <signjar
-            jar="${itext.rups.jnlp}/iText-rups.jar"
+            jar="${itext.jnlp}/iText-rups.jar"
             keystore="${itext.keystore.filename}"
             storepass="${itext.keystore.password}"
             alias="${itext.keystore.alias}"
             storetype="${itext.keystore.storetype}"
         />
         <signjar
-            jar="${itext.rups.jnlp}/pdf-renderer.jar"
+            jar="${itext.jnlp}/iText-toolbox.jar"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
+        <signjar
+            jar="${itext.jnlp}/pdf-renderer.jar"
             keystore="${itext.keystore.filename}"
             storepass="${itext.keystore.password}"
             alias="${itext.keystore.alias}"

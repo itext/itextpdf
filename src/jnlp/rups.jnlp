@@ -6,14 +6,14 @@
 
   RUPS JavaWebStart file
 -->
-<jnlp spec="1.1+" codebase="http://itext.ugent.be/library/rups/" href="rups.jnlp" version="$Id$">
+<jnlp spec="1.1+" codebase="http://www.1t3xt.com/jnlp/" href="rups.jnlp" version="$Id$">
   <information>
     <title>iText RUPS</title>
-    <vendor>lowagie.com</vendor>
-    <homepage href="http://www.lowagie.com/iText/"/>
+    <vendor>1T3XT BVBA</vendor>
+    <homepage href="http://1t3xt.com/products/rups.php"/>
     <description>A tool that allows you to read/update PDF syntax</description>
     <description kind="short">Reading / Updating PDF Syntax</description>
-    <icon href="http://itext.ugent.be/img/itexttoolbox.gif"/>
+    <icon href="http://www.1t3xt.com/img/logo.gif"/>
     <offline-allowed/>
     <shortcut online="true" >
       <!-- put a shortcut on the desktop -->
@@ -28,12 +28,12 @@
   <update check="always" policy="prompt-update"></update>
   <resources>
     <j2se version="1.5+" initial-heap-size="512m" max-heap-size="1024m"/>
-    <jar href="http://itext.ugent.be/library/rups/iText-rups.jar" main="true" download="eager"/>
-    <jar href="http://itext.ugent.be/library/rups/bcmail-jdk14-138.jar" main="false" download="eager"/>
-    <jar href="http://itext.ugent.be/library/rups/bcprov-jdk14-138.jar" main="false" download="eager"/>
-    <jar href="http://itext.ugent.be/library/rups/dom4j-1.6.1.jar" main="false" download="eager"/>
-    <jar href="http://itext.ugent.be/library/rups/iText.jar" main="false" download="eager"/>
-    <jar href="http://itext.ugent.be/library/rups/pdf-renderer.jar" main="false" download="eager"/>
+    <jar href="http://www.1t3xt.com/jnlp/iText-rups.jar" main="true" download="eager"/>
+    <jar href="http://www.1t3xt.com/jnlp/bcmail-jdk14-138.jar" main="false" download="eager"/>
+    <jar href="http://www.1t3xt.com/jnlp/bcprov-jdk14-138.jar" main="false" download="eager"/>
+    <jar href="http://www.1t3xt.com/jnlp/dom4j-1.6.1.jar" main="false" download="eager"/>
+    <jar href="http://www.1t3xt.com/jnlp/iText.jar" main="false" download="eager"/>
+    <jar href="http://www.1t3xt.com/jnlp/pdf-renderer.jar" main="false" download="eager"/>
   </resources>
   <application-desc main-class="com.lowagie.rups.Rups"/>
 </jnlp>

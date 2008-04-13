@@ -68,12 +68,12 @@ public class ToolboxAvailable {
 	        System.out.println(Document.getVersion() + " Toolbox error: headless display");
 	    } else
 		try {
-			Class c = Class.forName("com.lowagie.tools.Toolbox");
+			Class c = Class.forName("com.lowagie.toolbox.Toolbox");
 			Method toolboxMain = c.getMethod("main", new Class[] {args.getClass()});
 			toolboxMain.invoke(null, new Object[] {args} );
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
-					"You need the toolbox.jar with class com.lowagie.tools.Toolbox to use the iText Toolbox.",
+					"You need the iText-toolbox.jar with class com.lowagie.toolbox.Toolbox to use the iText Toolbox.",
 					Document.getVersion() + " Toolbox error",
 					JOptionPane.ERROR_MESSAGE);
 		}
