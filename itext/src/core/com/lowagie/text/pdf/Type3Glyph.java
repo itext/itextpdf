@@ -51,7 +51,7 @@ import com.lowagie.text.Image;
 /**
  * The content where Type3 glyphs are written to.
  */
-public class Type3Glyph extends PdfContentByte {
+public final class Type3Glyph extends PdfContentByte {
 
     private PageResources pageResources;
     private boolean colorized;

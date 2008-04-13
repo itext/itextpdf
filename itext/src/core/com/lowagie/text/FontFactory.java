@@ -64,7 +64,7 @@ import com.lowagie.text.pdf.BaseFont;
  * @author  Bruno Lowagie
  */
 
-public class FontFactory {
+public final class FontFactory {
     
 /** This is a possible value of a base 14 type 1 font */
     public static final String COURIER = BaseFont.COURIER;

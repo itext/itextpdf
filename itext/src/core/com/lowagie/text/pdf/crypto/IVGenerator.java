@@ -52,7 +52,7 @@ package com.lowagie.text.pdf.crypto;
  * An initialization vector generator for a CBC block encryption. It's a random generator based on ARCFOUR.
  * @author Paulo Soares (psoares@consiste.pt)
  */
-public class IVGenerator {
+public final class IVGenerator {
     
     private static ARCFOUREncryption arcfour;
     

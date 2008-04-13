@@ -58,7 +58,7 @@ import com.lowagie.text.DocumentException;
  * encrypted. All the content, links, outlines, etc, are kept.
  * It is also possible to change the info dictionary.
  */
-public class PdfEncryptor {
+public final class PdfEncryptor {
     
     private PdfEncryptor(){
     }

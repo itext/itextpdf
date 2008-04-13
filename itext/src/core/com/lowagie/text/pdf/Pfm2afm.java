@@ -149,7 +149,7 @@ import java.io.PrintWriter;
 /**
  * Converts a PFM file into an AFM file.
  */
-public class Pfm2afm {
+public final class Pfm2afm {
     private RandomAccessFileOrArray in;
     private PrintWriter out;
     
