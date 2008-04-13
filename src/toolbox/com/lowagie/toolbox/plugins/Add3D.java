@@ -258,7 +258,7 @@ public class Add3D extends AbstractTool {
     public void valueHasChanged(AbstractArgument arg) {
         if (internalFrame == null) {
             // if the internal frame is null, the tool was called from the
-            // commandline
+            // command line
             return;
         }
         if (destfile.getValue() == null &&

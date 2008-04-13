@@ -150,7 +150,7 @@ public class RemoveLaunchApplication
      */
     public void valueHasChanged(AbstractArgument arg) {
     if (internalFrame == null) {
-      // if the internal frame is null, the tool was called from the commandline
+      // if the internal frame is null, the tool was called from the command line
       return;
     }
     // represent the changes of the argument in the internal frame

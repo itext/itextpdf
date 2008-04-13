@@ -245,7 +245,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
     /**
      * Creates an Internal Frame.
      *
-     * @param name the name of the app
+     * @param name the name of the application
      * @throws InstantiationException
      * @throws IllegalAccessException
      * @throws ClassNotFoundException

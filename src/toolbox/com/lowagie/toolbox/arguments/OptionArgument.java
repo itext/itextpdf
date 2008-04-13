@@ -59,7 +59,7 @@ public class OptionArgument extends AbstractArgument {
         private Object value;
         /**
          * Constructs an entry.
-         * @param value the value of the entry (that wil be identical to the description)
+         * @param value the value of the entry (that will be identical to the description)
          */
         public Entry(Object value) {
             this.value = value;

@@ -61,7 +61,7 @@ public class Decrypt extends AbstractTool {
 
 
 	/**
-	 * Constructs an Decrypt object.
+	 * Constructs a Decrypt object.
 	 */
 	public Decrypt() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to decrypt", false, new PdfFilter()));
@@ -110,7 +110,7 @@ public class Decrypt extends AbstractTool {
      */
     public void valueHasChanged(AbstractArgument arg) {
 		if (internalFrame == null) {
-			// if the internal frame is null, the tool was called from the commandline
+			// if the internal frame is null, the tool was called from the command line
 			return;
 		}
 		// represent the changes of the argument in the internal frame

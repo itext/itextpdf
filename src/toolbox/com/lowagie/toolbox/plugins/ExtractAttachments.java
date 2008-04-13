@@ -153,14 +153,14 @@ public class ExtractAttachments extends AbstractTool {
     public void valueHasChanged(AbstractArgument arg) {
 		if (internalFrame == null) {
 			// if the internal frame is null, the tool was called from the
-			// commandline
+			// command line
 			return;
 		}
 		// represent the changes of the argument in the internal frame
 	}
 
     /**
-     * Extract the attachements of a PDF.
+     * Extract the attachments of a PDF.
      *
      * @param args String[]
      */
@@ -189,7 +189,7 @@ public class ExtractAttachments extends AbstractTool {
 	 * @param reader
 	 *            The object that reads the PDF document
 	 * @param filespec
-	 *            The dictonary containing the file specifications
+	 *            The dictionary containing the file specifications
 	 * @param outPath
 	 *            The path where the attachment has to be written
 	 * @throws IOException

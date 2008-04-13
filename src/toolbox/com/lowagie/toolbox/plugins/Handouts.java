@@ -55,7 +55,7 @@ import com.lowagie.toolbox.arguments.OptionArgument;
 import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
- * Generates a PDF file that is useable as Handout.
+ * Generates a PDF file that is usable as Handout.
  * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Handouts extends AbstractTool {
@@ -193,7 +193,7 @@ public class Handouts extends AbstractTool {
      */
     public void valueHasChanged(AbstractArgument arg) {
 		if (internalFrame == null) {
-			// if the internal frame is null, the tool was called from the commandline
+			// if the internal frame is null, the tool was called from the command line
 			return;
 		}
 		// represent the changes of the argument in the internal frame
@@ -201,7 +201,7 @@ public class Handouts extends AbstractTool {
 
 
     /**
-     * Converts a PDF file to a PDF file useable as Handout.
+     * Converts a PDF file to a PDF file usable as Handout.
      *
      * @param args String[]
      */

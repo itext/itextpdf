@@ -151,7 +151,7 @@ public class Divide extends AbstractTool {
     public void valueHasChanged(AbstractArgument arg) {
 		if (internalFrame == null) {
 			// if the internal frame is null, the tool was called from the
-			// commandline
+			// command line
 			return;
 		}
 		// represent the changes of the argument in the internal frame

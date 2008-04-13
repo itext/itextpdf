@@ -181,7 +181,7 @@ public class Watermarker extends AbstractTool {
     public void valueHasChanged(AbstractArgument arg) {
         if (internalFrame == null) {
             // if the internal frame is null, the tool was called from the
-            // commandline
+            // command line
             return;
         }
         if (destfile.getValue() == null &&
@@ -196,7 +196,7 @@ public class Watermarker extends AbstractTool {
     /**
      * This methods helps you running this tool as a standalone application.
      *
-     * <p>Call it like this from commandline:
+     * <p>Call it like this from command line:
      * java com.lowagie.tools.plugins.Watermarker input.pdf Draft 230 0.2 output.pdf
      *
      * <p>"input.pdf" is the input file name to be processed

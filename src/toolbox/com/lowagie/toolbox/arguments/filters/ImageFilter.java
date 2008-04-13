@@ -57,7 +57,7 @@ public class ImageFilter extends FileFilter {
 		IMAGES[7] = ".tiff";
 	}
 
-	/** array that enables you to filter on imagetypes. */
+	/** array that enables you to filter on image types. */
 	public boolean[] filter = new boolean[8];
 
 	/**
