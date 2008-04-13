@@ -48,6 +48,9 @@
  */
 package com.lowagie.text.rtf.parser.properties;
 
+/**
+ * @since 2.1.0
+ */
 public class RtfCtrlWordPropertyType {
 	public static final int UNIDENTIFIED = -1;
 	public static final int PROPERTY = 0;

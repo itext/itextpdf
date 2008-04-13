@@ -63,7 +63,7 @@ import com.lowagie.text.rtf.style.RtfStyleTypes;
  * Stylesheet Table destination
  * 
  * @author Howard Shank (hgshank@yahoo.com)
- *
+ * @since 2.1.0
  */
 public class RtfDestinationStylesheetTable extends RtfDestination {
 	private String styleName = "";

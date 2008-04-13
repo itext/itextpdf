@@ -1,5 +1,8 @@
 package com.lowagie.text.rtf.parser.exceptions;
 
+/**
+ * @since 2.1.0
+ */
 public class RtfUnknownCtrlWordException extends RtfParserException {
 
 	/**

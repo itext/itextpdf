@@ -64,6 +64,7 @@ import java.util.HashMap;
  * 
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Howard Shank (hgshank@yahoo.com)
+ * @since 2.1.0
  */
 public class RtfImportMappings {
 	/**
