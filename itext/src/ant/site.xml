@@ -74,6 +74,9 @@
 			<packageset dir="${itext.src}/rups" defaultexcludes="yes">
       			<include name="com/lowagie/**" />
 		    </packageset>
+			<packageset dir="${itext.src}/toolbox" defaultexcludes="yes">
+      			<include name="com/lowagie/**" />
+		    </packageset>
         	<classpath refid="itext.classpath"/>
             <link href="http://java.sun.com/j2se/1.4/docs/api/" />
         	<link href="http://www.bouncycastle.org/docs/docs1.4/" />

@@ -36,6 +36,10 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.rups" />
 	</target>
 	
+	<target name="compile.toolbox">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.toolbox" />
+	</target>
+	
 	<target name="jar">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
 	</target>
@@ -46,6 +50,10 @@
 	
 	<target name="jar.rups">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rups" />
+	</target>
+	
+	<target name="jar.toolbox">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.toolbox" />
 	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -67,7 +75,8 @@
 	<target name="release-1.6" description="--> builds a release after you have exported the src and www module from CVS">
 		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rups" />
-		<ant antfile="ant/release.xml" inheritAll="false" target="release.rups" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.toolbox" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.jnlp" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf16" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="release.maven" />
 	</target>

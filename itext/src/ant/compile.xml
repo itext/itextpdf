@@ -67,6 +67,17 @@
     		<classpath refid="itext.classpath"/>
     	</javac>
     </target>
+	
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Compiling the Toolbox code                                          -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="compile.toolbox" depends="compile" description="--> compiles the Toolbox code">
+        <mkdir dir="${itext.toolbox.bin}" />
+        <javac source="${itext.jdk.toolbox}" target="${itext.jdk.toolbox}" srcdir="${itext.toolbox.src}" destdir="${itext.toolbox.bin}">
+    		<classpath refid="itext.classpath"/>
+    	</javac>
+    </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Jarring the code                                                 -->
@@ -88,7 +99,7 @@
         <jar jarfile="${itext.jar}" basedir="${itext.bin}">
             <manifest>
                 <attribute name="Main-Class" value="com.lowagie.tools.ToolboxAvailable"/>
-                <attribute name="Class-Path" value="toolbox.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar"/>
+                <attribute name="Class-Path" value="iText-toolbox.jar iText-toolbox-${releasenumber}.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar"/>
             </manifest>
         </jar>
     </target>
@@ -120,7 +131,27 @@
 		<jar destfile="${itext.rups.jar}" basedir="${itext.rups.bin}" includes="**/*.class, **/*.png">
 		    <manifest>
                 <attribute name="Main-Class" value="com.lowagie.rups.Rups"/>
-                <attribute name="Class-Path" value="iText.jar pdf-renderer.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar dom4j-1.6.1.jar"/>
+                <attribute name="Class-Path" value="iText.jar iText-${releasenumber}.jar pdf-renderer.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar dom4j-1.6.1.jar"/>
+            </manifest>
+		</jar>
+	</target>
+    
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Making the jars for the Toolbox                                  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+	<target name="jar.toolbox" depends="compile.toolbox">
+        <copy todir="${itext.toolbox.bin}" overwrite="yes">
+            <fileset dir="${itext.toolbox.src}">
+                <include name="**/*.gif"/>
+                <include name="**/*.png"/>
+                <include name="**/*.txt"/>
+            </fileset>
+        </copy>
+		<jar destfile="${itext.toolbox.jar}" basedir="${itext.toolbox.bin}" includes="**/*.class, **/*.png, **/*.txt, **/*.gif">
+		    <manifest>
+                <attribute name="Main-Class" value="com.lowagie.toolbox.Toolbox"/>
+                <attribute name="Class-Path" value="iText.jar iText-${releasenumber}.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar"/>
             </manifest>
 		</jar>
 	</target>
