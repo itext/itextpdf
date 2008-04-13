@@ -9,6 +9,9 @@ import com.lowagie.toolbox.AbstractTool;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * @since 2.1.1 (imported from itexttoolbox project)
+ */
 public abstract class AbstractArgument implements ActionListener, PropertyChangeListener{
     public AbstractArgument() {
     }

@@ -58,6 +58,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
  * Converts a monospaced txt file to a PDF file.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Txt2Pdf extends AbstractTool {
 

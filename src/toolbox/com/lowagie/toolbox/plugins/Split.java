@@ -55,6 +55,7 @@ import com.lowagie.toolbox.swing.PdfInformationPanel;
 
 /**
  * This tool lets you split a PDF in two separate PDF files.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Split extends AbstractTool {
 

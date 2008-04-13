@@ -47,6 +47,7 @@ import com.lowagie.toolbox.arguments.filters.*;
 
 /**
  * This tool lets you take pages from an existing PDF and copy them in reverse order into a new PDF.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class ReversePages
     extends AbstractTool {

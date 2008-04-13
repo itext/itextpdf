@@ -39,6 +39,9 @@ import java.awt.event.ActionEvent;
 import com.lowagie.toolbox.AbstractTool;
 import com.lowagie.toolbox.swing.CustomDialog;
 
+/**
+ * @since 2.1.1 (imported from itexttoolbox project)
+ */
 public class FloatArgument extends AbstractArgument {
     public FloatArgument() {
         super();

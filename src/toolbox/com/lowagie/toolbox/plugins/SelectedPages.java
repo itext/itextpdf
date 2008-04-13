@@ -53,6 +53,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
  * This tool lets you select pages from an existing PDF and copy them into a new PDF.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class SelectedPages extends AbstractTool {
 

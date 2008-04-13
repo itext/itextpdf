@@ -59,6 +59,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
  * Converts a Tiff file to a PDF file.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Tiff2Pdf extends AbstractTool {
 

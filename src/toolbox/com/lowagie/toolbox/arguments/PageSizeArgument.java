@@ -48,6 +48,7 @@ import com.lowagie.toolbox.AbstractTool;
 
 /**
  * Argument that can be one of several options.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class PageSizeArgument extends OptionArgument {
 

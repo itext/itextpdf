@@ -63,6 +63,7 @@ import javax.swing.table.TableRowSorter;
 
 /**
  * JFrame that shows the plugin_versions of all the plugins.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Versions
     extends JFrame {

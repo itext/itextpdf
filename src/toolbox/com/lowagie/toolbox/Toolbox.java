@@ -48,6 +48,7 @@ import com.lowagie.tools.Executable;
 
 /**
  * This is a utility that allows you to use a number of iText tools.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
     /** A serial version ID */

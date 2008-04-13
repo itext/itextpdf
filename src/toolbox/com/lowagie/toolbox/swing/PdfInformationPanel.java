@@ -53,6 +53,7 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
 
 /**
  * Label for the FileChooser
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class PdfInformationPanel extends JPanel implements PropertyChangeListener {
 

@@ -60,6 +60,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
  * This is a simple tool that generates a cover for a DVD.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class DvdCover extends AbstractTool {
 

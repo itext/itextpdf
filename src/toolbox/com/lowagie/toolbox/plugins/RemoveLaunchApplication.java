@@ -53,6 +53,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
  * This tool copies an existing PDF and removes potentially dangerous code that launches an application.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class RemoveLaunchApplication
     extends AbstractTool {

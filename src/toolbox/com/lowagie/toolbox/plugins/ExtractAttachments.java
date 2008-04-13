@@ -59,6 +59,7 @@ import com.lowagie.toolbox.swing.PdfInformationPanel;
 
 /**
  * This tool lets you extract the attachments of a PDF.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class ExtractAttachments extends AbstractTool {
 

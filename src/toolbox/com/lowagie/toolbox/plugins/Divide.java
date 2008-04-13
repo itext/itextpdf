@@ -52,6 +52,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
  * This tool lets you generate a PDF that shows N pages on 1.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Divide extends AbstractTool {
 

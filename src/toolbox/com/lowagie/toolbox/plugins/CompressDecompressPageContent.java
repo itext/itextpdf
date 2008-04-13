@@ -50,6 +50,9 @@ import com.lowagie.toolbox.arguments.OptionArgument;
 import com.lowagie.toolbox.arguments.filters.PdfFilter;
 import com.lowagie.toolbox.swing.PdfInformationPanel;
 
+/**
+ * @since 2.1.1 (imported from itexttoolbox project)
+ */
 public class CompressDecompressPageContent extends AbstractTool {
 
 	static {

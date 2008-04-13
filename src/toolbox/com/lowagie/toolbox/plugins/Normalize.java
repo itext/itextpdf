@@ -38,6 +38,9 @@ import com.lowagie.toolbox.*;
 import com.lowagie.toolbox.arguments.*;
 import com.lowagie.toolbox.arguments.filters.*;
 
+/**
+ * @since 2.1.1 (imported from itexttoolbox project)
+ */
 public class Normalize
     extends AbstractTool {
 

@@ -51,6 +51,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
  * Allows you to decrypt an existing PDF file.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Decrypt extends AbstractTool {
 

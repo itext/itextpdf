@@ -44,6 +44,7 @@ import com.lowagie.toolbox.AbstractTool;
 
 /**
  * Argument that results in a set of "1" and "0" values.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class BitsetArgument extends AbstractArgument {
     /** These are the different options that can be true or false. */

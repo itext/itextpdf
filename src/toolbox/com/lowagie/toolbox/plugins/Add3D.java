@@ -47,6 +47,7 @@ import java.net.*;
 /**
  * This tool lets you add a embedded u3d 3d annotation to the first page of a document. Look for
  * sample files at http://u3d.svn.sourceforge.net/viewvc/u3d/trunk/Source/Samples/Data/
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Add3D extends AbstractTool {
     static {

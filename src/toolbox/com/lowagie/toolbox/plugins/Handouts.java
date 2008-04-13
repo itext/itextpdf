@@ -56,6 +56,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
  * Generates a PDF file that is useable as Handout.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Handouts extends AbstractTool {
 

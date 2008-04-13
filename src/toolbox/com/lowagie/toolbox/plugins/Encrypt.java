@@ -54,6 +54,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
  * Allows you to encrypt an existing PDF file.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class Encrypt extends AbstractTool {
 

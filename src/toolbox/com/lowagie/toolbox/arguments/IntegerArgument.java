@@ -42,6 +42,7 @@ import com.lowagie.toolbox.swing.CustomDialog;
 
 /**
  * This is an argument of one of the tools in the toolbox.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class IntegerArgument extends AbstractArgument {
 

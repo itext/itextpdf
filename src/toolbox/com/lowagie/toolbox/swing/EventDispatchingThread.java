@@ -34,6 +34,9 @@ package com.lowagie.toolbox.swing;
 
 import javax.swing.SwingUtilities;
 
+/**
+ * @since 2.1.1 (imported from itexttoolbox project)
+ */
 public abstract class EventDispatchingThread {
 
 	/**

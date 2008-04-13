@@ -47,6 +47,7 @@ import com.lowagie.toolbox.swing.PdfInformationPanel;
 
 /**
  * StringArgument class if the argument is a java.io.File.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class FileArgument extends AbstractArgument {
     /** a filter to put on the FileChooser. */

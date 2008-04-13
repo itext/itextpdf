@@ -60,6 +60,7 @@ import com.lowagie.text.pdf.BaseFont;
 
 /**
  * Converts the image files in a directory to a PDF file that acts as a photo album.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class PhotoAlbum extends AbstractTool {
 

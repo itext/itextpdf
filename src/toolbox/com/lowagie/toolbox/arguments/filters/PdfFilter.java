@@ -41,6 +41,7 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  * Filters PDF files in a JFileChooser.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class PdfFilter extends FileFilter {
 

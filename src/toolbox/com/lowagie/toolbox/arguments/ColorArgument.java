@@ -41,6 +41,9 @@ import javax.swing.JColorChooser;
 
 import com.lowagie.toolbox.AbstractTool;
 
+/**
+ * @since 2.1.1 (imported from itexttoolbox project)
+ */
 public class ColorArgument extends AbstractArgument {
     public ColorArgument() {
         super();

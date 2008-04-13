@@ -50,6 +50,7 @@ import com.lowagie.tools.Executable;
  *
  * @author not attributable
  * @version Id
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 

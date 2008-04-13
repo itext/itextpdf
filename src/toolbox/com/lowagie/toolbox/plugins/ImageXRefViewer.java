@@ -66,6 +66,7 @@ import com.lowagie.toolbox.swing.EventDispatchingThread;
 
 /**
  * Allows you to inspect the Image XObjects inside a PDF file.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class ImageXRefViewer extends AbstractTool {
 

@@ -44,6 +44,9 @@ import javax.swing.table.*;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.toolbox.ToolMenuItems;
 
+/**
+ * @since 2.1.1 (imported from itexttoolbox project)
+ */
 public class FileList
     extends JInternalFrame implements DropTargetListener, ToolMenuItems {
 

@@ -78,6 +78,7 @@ import com.lowagie.tools.Executable;
 
 /**
  * Allows you to generate an index file in HTML containing Bookmarks to an existing PDF file.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class HtmlBookmarks extends AbstractTool {
 

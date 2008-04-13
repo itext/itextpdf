@@ -55,6 +55,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 
 /**
  * Knits two TIFF files, one with the even pages and another with the odd pages, together.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class KnitTiff extends AbstractTool {
 

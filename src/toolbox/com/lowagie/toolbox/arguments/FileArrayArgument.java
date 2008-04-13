@@ -43,6 +43,9 @@ import com.lowagie.toolbox.AbstractTool;
 import com.lowagie.toolbox.swing.FileList;
 
 
+/**
+ * @since 2.1.1 (imported from itexttoolbox project)
+ */
 public class FileArrayArgument extends AbstractArgument {
     public FileArrayArgument() {
         super();

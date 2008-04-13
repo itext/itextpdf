@@ -46,6 +46,7 @@ import com.lowagie.toolbox.arguments.filters.ImageFilter;
 
 /**
  * StringArgument class if the argument is a com.lowagie.text.Image.
+ * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class ImageArgument extends AbstractArgument {
     /** a filter to put on the FileChooser. */
