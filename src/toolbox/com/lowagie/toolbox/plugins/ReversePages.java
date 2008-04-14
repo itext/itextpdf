@@ -107,7 +107,7 @@ public class ReversePages
       int pages = reader.getNumberOfPages();
       ArrayList<Integer> li = new ArrayList<Integer>();
       for (int i = pages; i > 0; i--) {
-        li.add(new Integer(i));
+        li.add(Integer.valueOf(i));
       }
       reader.selectPages(li);
 
