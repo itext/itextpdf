@@ -172,7 +172,7 @@ public class RtfShapeProperty extends RtfAddableElement {
      * @param value The boolean value to use.
      */
 	public RtfShapeProperty(String name, boolean value) {
-		this(name, new Boolean(value));
+		this(name, Boolean.valueOf(value));
 		this.type = PROPERTY_TYPE_BOOLEAN;
 	}
 	
