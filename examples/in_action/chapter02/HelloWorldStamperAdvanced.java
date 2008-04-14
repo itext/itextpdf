@@ -93,15 +93,14 @@ public class HelloWorldStamperAdvanced {
 		try {
 			PdfWriter.getInstance(document, new FileOutputStream(filename));
 			document.open();
-			Paragraph hello = new Paragraph(
-					"(English:) hello, "
-							+ "(Esperanto:) he, alo, saluton, (Latin:) heu, ave, "
-							+ "(French:) allô, (Italian:) ciao, (German:) hallo, he, heda, holla, "
-							+ "(Portuguese:) alô, olá, hei, psiu, bom día, (Dutch:) hallo, dag, "
-							+ "(Spanish:) ola, eh, (Catalan:) au, bah, eh, ep, "
-							+ "(Swedish:) hej, hejsan(Danish:) hallo, dav, davs, goddag, hej, "
-							+ "(Norwegian:) hei; morn, (Papiamento:) halo; hallo; kí tal, "
-							+ "(Faeroese:) halló, hoyr, (Turkish:) alo, merhaba, (Albanian:) tungjatjeta");
+			Paragraph hello = new Paragraph("(English:) hello, " +
+					"(Esperanto:) he, alo, saluton, (Latin:) heu, ave, " +
+					"(French:) all\u00f4, (Italian:) ciao, (German:) hallo, he, heda, holla, " +
+					"(Portuguese:) al\u00f4, ol\u00e1, hei, psiu, bom d\u00eda, (Dutch:) hallo, dag, " +
+					"(Spanish:) ola, eh, (Catalan:) au, bah, eh, ep, " +
+					"(Swedish:) hej, hejsan(Danish:) hallo, dav, davs, goddag, hej, " +
+					"(Norwegian:) hei; morn, (Papiamento:) halo; hallo; k\u00ed tal, " +
+					"(Faeroese:) hall\u00f3, hoyr, (Turkish:) alo, merhaba, (Albanian:) tungjatjeta");
 			Chapter universe = new Chapter("To the Universe:", 1);
 			Section section;
 			section = universe.addSection("to the World:");

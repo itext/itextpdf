@@ -31,6 +31,7 @@ public class HelloWorldAddMetadata {
 	 * @param args
 	 *            no arguments needed here
 	 */
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		System.out.println("Chapter 2: example HelloWorldAddMetadata");
 		System.out.println("-> Creates a PDF file, then reads it;");

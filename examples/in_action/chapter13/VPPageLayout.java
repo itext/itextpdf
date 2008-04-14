@@ -63,15 +63,14 @@ public class VPPageLayout {
 			writer6.setPdfVersion(PdfWriter.VERSION_1_5);
 			writer6.setViewerPreferences(PdfWriter.PageLayoutTwoPageRight);
 			document.open();
-			Paragraph hello = new Paragraph(
-					"(English:) hello, "
-							+ "(Esperanto:) he, alo, saluton, (Latin:) heu, ave, "
-							+ "(French:) allô, (Italian:) ciao, (German:) hallo, he, heda, holla, "
-							+ "(Portuguese:) alô, olá, hei, psiu, bom día, (Dutch:) hallo, dag, "
-							+ "(Spanish:) ola, eh, (Catalan:) au, bah, eh, ep, "
-							+ "(Swedish:) hej, hejsan(Danish:) hallo, dav, davs, goddag, hej, "
-							+ "(Norwegian:) hei; morn, (Papiamento:) halo; hallo; kí tal, "
-							+ "(Faeroese:) halló, hoyr, (Turkish:) alo, merhaba, (Albanian:) tungjatjeta");
+			Paragraph hello = new Paragraph("(English:) hello, " +
+					"(Esperanto:) he, alo, saluton, (Latin:) heu, ave, " +
+					"(French:) all\u00f4, (Italian:) ciao, (German:) hallo, he, heda, holla, " +
+					"(Portuguese:) al\u00f4, ol\u00e1, hei, psiu, bom d\u00eda, (Dutch:) hallo, dag, " +
+					"(Spanish:) ola, eh, (Catalan:) au, bah, eh, ep, " +
+					"(Swedish:) hej, hejsan(Danish:) hallo, dav, davs, goddag, hej, " +
+					"(Norwegian:) hei; morn, (Papiamento:) halo; hallo; k\u00ed tal, " +
+					"(Faeroese:) hall\u00f3, hoyr, (Turkish:) alo, merhaba, (Albanian:) tungjatjeta");
 			document.add(new Paragraph("1. To the Universe:"));
 			document.add(hello);
 			document.add(new Paragraph("2. to the World:"));

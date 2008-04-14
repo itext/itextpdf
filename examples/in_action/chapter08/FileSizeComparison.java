@@ -58,10 +58,10 @@ public class FileSizeComparison {
 			document3.open();
 			// step 4:
 			BaseFont bf_not_embedded = BaseFont.createFont(
-					"c:\\windows\\fonts\\comic.ttf", BaseFont.CP1252,
+					"c:/windows/fonts/comic.ttf", BaseFont.CP1252,
 					BaseFont.NOT_EMBEDDED);
 			BaseFont bf_embedded = BaseFont.createFont(
-					"c:\\windows\\fonts\\comic.ttf", BaseFont.CP1252,
+					"c:/windows/fonts/comic.ttf", BaseFont.CP1252,
 					BaseFont.EMBEDDED);
 			Font font_not_embedded = new Font(bf_not_embedded, 12);
 			Font font_embedded = new Font(bf_embedded, 12);

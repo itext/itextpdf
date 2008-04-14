@@ -53,7 +53,7 @@ public class Diacritics2 {
 			document.add(new Paragraph(
 					"Movie title: In Bed With Santa (Sweden)", font));
 			document.add(new Paragraph("directed by Kjell Sundvall", font));
-			document.add(new Paragraph("Tomten är far till alla barnen", font));
+			document.add(new Paragraph("Tomten \u00e4r far till alla barnen", font));
 			System.out.println(bf.getPostscriptFontName());
 			System.out.println("Width in arial.ttf: " + bf.getWidth('¨'));
 			bf.setCharAdvance('¨', -100);
