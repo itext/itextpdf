@@ -92,7 +92,7 @@ public class FoobarCityBatik {
 			PdfLayer streetlayer_en = new PdfLayer("English", writer);
 			streetlayer_en.setOn(true);
 			streetlayer_en.setLanguage("en", true);
-			PdfLayer streetlayer_fr = new PdfLayer("Français", writer);
+			PdfLayer streetlayer_fr = new PdfLayer("Fran\u00e7ais", writer);
 			streetlayer_fr.setOn(false);
 			streetlayer_fr.setLanguage("fr", false);
 			PdfLayer streetlayer_nl = new PdfLayer("Nederlands", writer);

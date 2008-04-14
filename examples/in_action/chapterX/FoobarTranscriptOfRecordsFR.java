@@ -63,7 +63,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			Font font = FontFactory.getFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED, 14);
 			Font smallFont = FontFactory.getFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED, 8);
 			Paragraph p;
-			p = new Paragraph("RELEVÉ DE NOTES", font);
+			p = new Paragraph("RELEV\u00c9 DE NOTES", font);
 			p.setAlignment(Element.ALIGN_CENTER);
 			document.add(p);
 			PdfPTable table;
@@ -78,7 +78,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			
 			PdfPCell cell;
 			// line 1
-			cell = new PdfPCell(new Paragraph("NOM DE L'ÉTABLISSEMENT D'ORIGINE:"));
+			cell = new PdfPCell(new Paragraph("NOM DE L'\u00c9TABLISSEMENT D'ORIGINE:"));
 			cell.setColspan(5);
 			cell.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(cell);
@@ -88,7 +88,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			cell.setColspan(3);
 			table.addCell(cell);
 			// line 2
-			cell = new PdfPCell(new Paragraph("Faculté/Département:"));
+			cell = new PdfPCell(new Paragraph("Facult\u00e9/D\u00e9partement:"));
 			cell.setColspan(5);
 			cell.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(cell);
@@ -98,7 +98,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			cell.setColspan(3);
 			table.addCell(cell);
 			// line 3
-			cell = new PdfPCell(new Paragraph("Coordonnateur ECTS départmental:"));
+			cell = new PdfPCell(new Paragraph("Coordonnateur ECTS d\u00e9partmental:"));
 			cell.setBorder(PdfPCell.NO_BORDER);
 			cell.setColspan(5);
 			table.addCell(cell);
@@ -142,7 +142,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			table.setWidths(w);
 			table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 			// line 1
-			cell = new PdfPCell(new Paragraph("NOM DE L'ÉTUDIANT(E):"));
+			cell = new PdfPCell(new Paragraph("NOM DE L'\u00c9TUDIANT(E):"));
 			cell.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(cell);
 			cell = new PdfPCell();
@@ -150,7 +150,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			cell.setColspan(2);
 			cell.setCellEvent(new FieldPositioningEvents(writer, "student_familyname"));
 			table.addCell(cell);
-			cell = new PdfPCell(new Paragraph("Prénom(s):"));
+			cell = new PdfPCell(new Paragraph("Pr\u00e9nom(s):"));
 			cell.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(cell);
 			cell = new PdfPCell();
@@ -182,7 +182,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			cell.setBorder(PdfPCell.NO_BORDER);
 			cell.setCellEvent(new FieldPositioningEvents(writer, "student_matriculation_date"));
 			table.addCell(cell);
-			cell = new PdfPCell(new Paragraph("Numéro d'inscription:"));
+			cell = new PdfPCell(new Paragraph("Num\u00e9ro d'inscription:"));
 			cell.setColspan(2);
 			cell.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(cell);
@@ -201,7 +201,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			table.setWidths(widths);
 			table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 			// line 1
-			cell = new PdfPCell(new Paragraph("NOM DE L'ÉTABLISSEMENT D'ACCUEIL:"));
+			cell = new PdfPCell(new Paragraph("NOM DE L'\u00c9TABLISSEMENT D'ACCUEIL:"));
 			cell.setColspan(5);
 			cell.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(cell);
@@ -211,7 +211,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			cell.setColspan(3);
 			table.addCell(cell);
 			// line 2
-			cell = new PdfPCell(new Paragraph("Faculté/Département:"));
+			cell = new PdfPCell(new Paragraph("Facult\u00e9/D\u00e9partement:"));
 			cell.setColspan(5);
 			cell.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(cell);
@@ -221,7 +221,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			cell.setColspan(3);
 			table.addCell(cell);
 			// line 3
-			cell = new PdfPCell(new Paragraph("Coordonnateur ECTS departmental:"));
+			cell = new PdfPCell(new Paragraph("Coordonnateur ECTS d\u00e9partmental:"));
 			cell.setBorder(PdfPCell.NO_BORDER);
 			cell.setColspan(5);
 			table.addCell(cell);
@@ -265,11 +265,11 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			table.setTableEvent(new FoobarLearningAgreement());
 			table.getDefaultCell().setBorder(PdfPCell.BOX);
 			table.addCell("Code du cours (1)");
-			table.addCell("Intitulé du cours");
-			table.addCell("Duréé du cours (2)");
+			table.addCell("Intitul\u00e9 du cours");
+			table.addCell("Dur\u00e9e du cours (2)");
 			table.addCell("Note locale (3)");
 			table.addCell("Note ECTS (4)");
-			table.addCell("Crédits ECTS (5)");
+			table.addCell("Cr\u00e9dits ECTS (5)");
 			for (int i = 0; i < 18; i++) {
 				cell = new PdfPCell();
 				cell.setFixedHeight(14);
@@ -335,7 +335,7 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			p.add(degree);
 			document.add(p);
 			document.add(Chunk.NEWLINE);
-			document.add(new Paragraph("Date          Signature du secrétair général/doyen/administratif           Cachet de l'établissement"));
+			document.add(new Paragraph("Date          Signature du secr\u00e9taire g\u00e9n\u00e9ral/doyen/administratif           Cachet de l'établissement"));
 			document.add(Chunk.NEWLINE);
 			document.add(Chunk.NEWLINE);
 			document.add(Chunk.NEWLINE);

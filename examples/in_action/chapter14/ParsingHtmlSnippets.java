@@ -48,7 +48,7 @@ public class ParsingHtmlSnippets {
 					"resources/in_action/chapter14/list.html"), styles);
 			for (int k = 0; k < objects.size(); ++k)
 				document.add((Element) objects.get(k));
-			FontFactory.register("c:\\windows\\fonts\\gara.ttf");
+			FontFactory.register("c:/windows/fonts/gara.ttf");
 			styles.loadTagStyle("li", "face", "garamond");
 			styles.loadTagStyle("span", "size", "8px");
 			objects = HTMLWorker.parseToList(new FileReader(

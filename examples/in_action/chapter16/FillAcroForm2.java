@@ -63,7 +63,7 @@ public class FillAcroForm2 {
 			float[] photograph = form.getFieldPositions("person.photograph");
 			Rectangle rect = new Rectangle(photograph[1], photograph[2],
 					photograph[3], photograph[4]);
-			Image laura = Image.getInstance("resources/in_action/chapter16/Laura.jpg");
+			Image laura = Image.getInstance("resources/in_action/chapter16/laura.jpg");
 			laura.scaleToFit(rect.getWidth(), rect.getHeight());
 			laura.setAbsolutePosition(photograph[1]
 					+ (rect.getWidth() - laura.getScaledWidth()) / 2, photograph[2]

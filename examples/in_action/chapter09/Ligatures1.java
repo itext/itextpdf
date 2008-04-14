@@ -54,7 +54,7 @@ public class Ligatures1 {
 					"Movie title: Love at First Hiccough (Denmark)", font));
 			document
 					.add(new Paragraph("directed by Tomas Villum Jensen", font));
-			document.add(new Paragraph("Kærlighed ved første hik", font));
+			document.add(new Paragraph("K\u00e6rlighed ved f\u00f8rste hik", font));
 			document.add(new Paragraph(
 					ligaturize("Kaerlighed ved f/orste hik"), font));
 		} catch (DocumentException de) {
@@ -70,10 +70,10 @@ public class Ligatures1 {
 	private static String ligaturize(String s) {
 		int pos;
 		while ((pos = s.indexOf("ae")) > -1) {
-			s = s.substring(0, pos) + 'æ' + s.substring(pos + 2);
+			s = s.substring(0, pos) + '\u00e6' + s.substring(pos + 2);
 		}
 		while ((pos = s.indexOf("/o")) > -1) {
-			s = s.substring(0, pos) + 'ø' + s.substring(pos + 2);
+			s = s.substring(0, pos) + '\u00f8' + s.substring(pos + 2);
 		}
 		return s;
 	}
