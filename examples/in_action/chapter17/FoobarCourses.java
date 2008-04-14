@@ -33,7 +33,7 @@ public class FoobarCourses extends HttpServlet {
 
 	private static final long serialVersionUID = -3820172470814287447L;
 	
-	String resource = "/home/itext/examples/results/in_action/chapter17/course_catalog_events.pdf";
+	String resource = "/home/itext/main/examples/results/in_action/chapter14/course_catalog_events.pdf";
 
 	/**
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)

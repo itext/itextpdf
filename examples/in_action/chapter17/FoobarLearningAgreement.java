@@ -66,7 +66,7 @@ public class FoobarLearningAgreement implements PdfPTableEvent {
 			// that listens to the document
 					document,
 					// and directs a PDF-stream to a file
-					new FileOutputStream("resources/in_action/chapter17/learning_agreement.pdf"));
+					new FileOutputStream("results/in_action/chapter17/learning_agreement.pdf"));
 
 			FieldPositioningEvents fpe = new FieldPositioningEvents();
 			writer.setPageEvent(fpe);
