@@ -50,7 +50,7 @@ public class TrueTypeCollections {
 					BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 			font = new Font(bf, 12);
 			System.out.println(bf.getClass().getName());
-			document.add(new Paragraph("Rashômon", font));
+			document.add(new Paragraph("Rash\u00f4mon", font));
 			document.add(new Paragraph("Directed by Akira Kurosawa", font));
 			document.add(new Paragraph("\u7f85\u751f\u9580", font));
 			String[] names = BaseFont

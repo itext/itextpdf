@@ -60,7 +60,7 @@ public class TrueTypeFontEncoding {
 			document.add(new Paragraph("Encoding: " + bf.getEncoding()));
 			font = new Font(bf, 12);
 			document
-					.add(new Paragraph("Un long dimanche de fiançailles", font));
+					.add(new Paragraph("Un long dimanche de fian\u00e7ailles", font));
 			document.add(Chunk.NEWLINE);
 
 			document.add(new Paragraph(
@@ -70,10 +70,8 @@ public class TrueTypeFontEncoding {
 					BaseFont.EMBEDDED);
 			document.add(new Paragraph("Encoding: " + bf.getEncoding()));
 			font = new Font(bf, 12);
-			byte[] noMansLand = { 'N', 'i', 'k', 'o', 'g', 'a', 'r',
-					(byte) 0x9A, 'n', 'j', 'a', ' ', 'z', 'e', 'm', 'l', 'j',
-					'a' };
-			document.add(new Paragraph(new String(noMansLand), font));
+			String noMansLand = "Nikogar\u0161nja zemlja";
+			document.add(new Paragraph(noMansLand, font));
 			document.add(Chunk.NEWLINE);
 
 			document.add(new Paragraph("Movie title: You I Love (Russia)"));

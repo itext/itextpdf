@@ -55,18 +55,18 @@ public class Diacritics2 {
 			document.add(new Paragraph("directed by Kjell Sundvall", font));
 			document.add(new Paragraph("Tomten \u00e4r far till alla barnen", font));
 			System.out.println(bf.getPostscriptFontName());
-			System.out.println("Width in arial.ttf: " + bf.getWidth('¨'));
-			bf.setCharAdvance('¨', -100);
+			System.out.println("Width in arial.ttf: " + bf.getWidth('\u00a8'));
+			bf.setCharAdvance('\u00a8', -100);
 			document
-					.add(new Paragraph("Tomten ¨ar far till alla barnen", font));
+					.add(new Paragraph("Tomten \u00a8ar far till alla barnen", font));
 			bf = BaseFont.createFont("c:/windows/fonts/cour.ttf",
 					BaseFont.CP1252, BaseFont.EMBEDDED);
 			System.out.println(bf.getPostscriptFontName());
-			System.out.println("Width in cour.ttf: " + bf.getWidth('¨'));
-			bf.setCharAdvance('¨', 0);
+			System.out.println("Width in cour.ttf: " + bf.getWidth('\u00a8'));
+			bf.setCharAdvance('\u00a8', 0);
 			font = new Font(bf, 12);
 			document
-					.add(new Paragraph("Tomten ¨ar far till alla barnen", font));
+					.add(new Paragraph("Tomten \u00a8ar far till alla barnen", font));
 		} catch (DocumentException de) {
 			System.err.println(de.getMessage());
 		} catch (IOException ioe) {
