@@ -331,11 +331,11 @@ public class FoobarTranscriptOfRecordsFR implements PdfPTableEvent {
 			document.add(Chunk.NEWLINE);
 			Chunk degree = new Chunk("                                                                                          ");
 			degree.setGenericTag("degree");
-			p = new Paragraph("Diplôme décerné: ");
+			p = new Paragraph("Dipl\u00f4me d\u00e9cern\u00e9: ");
 			p.add(degree);
 			document.add(p);
 			document.add(Chunk.NEWLINE);
-			document.add(new Paragraph("Date          Signature du secr\u00e9taire g\u00e9n\u00e9ral/doyen/administratif           Cachet de l'établissement"));
+			document.add(new Paragraph("Date          Signature du secr\u00e9taire g\u00e9n\u00e9ral/doyen/administratif           Cachet de l'\u00e9tablissement"));
 			document.add(Chunk.NEWLINE);
 			document.add(Chunk.NEWLINE);
 			document.add(Chunk.NEWLINE);
