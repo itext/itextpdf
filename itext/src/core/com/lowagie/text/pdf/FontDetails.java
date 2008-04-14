@@ -241,14 +241,14 @@ class FontDetails {
                         firstChar = 255;
                         lastChar = 255;
                     }
-                    baseFont.writeFont(writer, indirectReference, new Object[]{new Integer(firstChar), new Integer(lastChar), shortTag, new Boolean(subset)});
+                    baseFont.writeFont(writer, indirectReference, new Object[]{new Integer(firstChar), new Integer(lastChar), shortTag, Boolean.valueOf(subset)});
                     break;
                 }
                 case BaseFont.FONT_TYPE_CJK:
                     baseFont.writeFont(writer, indirectReference, new Object[]{cjkTag});
                     break;
                 case BaseFont.FONT_TYPE_TTUNI:
-                    baseFont.writeFont(writer, indirectReference, new Object[]{longTag, new Boolean(subset)});
+                    baseFont.writeFont(writer, indirectReference, new Object[]{longTag, Boolean.valueOf(subset)});
                     break;
             }
         }
