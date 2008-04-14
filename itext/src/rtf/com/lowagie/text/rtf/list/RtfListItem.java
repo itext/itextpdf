@@ -135,10 +135,10 @@ public class RtfListItem extends RtfParagraph {
             if(rtfElement instanceof RtfList) {
             	RtfList rl = (RtfList)rtfElement;
             	rl.writeDefinition(out);
-                return(true);
+                return true;
             }
         }
-        return(false);    	
+        return false;
     }
     
     /**

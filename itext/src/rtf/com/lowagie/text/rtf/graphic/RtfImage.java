@@ -225,7 +225,7 @@ public class RtfImage extends RtfElement {
                 }
             }
             
-            return(bab.toByteArrayArray());
+            return bab.toByteArrayArray();
             
         } catch(IOException ioe) {
             throw new DocumentException(ioe.getMessage());
@@ -281,7 +281,7 @@ public class RtfImage extends RtfElement {
     	for(int k = 0; k < imageData.length; k++) {
     		size += imageData[k].length;
     	}   
-    	return(size);
+    	return size;
     }
     
     /**
