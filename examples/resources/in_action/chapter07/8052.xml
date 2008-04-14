@@ -1,0 +1,51 @@
+<course>
+<title>Lucene</title>
+<specs>
+<coursenumber>8052</coursenumber>
+<programs><program>Graduate in Complementary Studies in Applied Informatics: Java Development for the Enterprise</program></programs>
+<a>30</a>
+<b>22.5</b>
+<c />
+<d>150</d>
+<e>5</e>
+<department>CSE02</department>
+<language>English</language>
+<lecturers>
+<lecturer inCharge="true">Erik Hatcher</lecturer>
+<lecturer>Otis Gospodnetic</lecturer>
+</lecturers>
+</specs>
+
+<tagline>Lucene is a gem in the open-source world--a highly scalable, fast search engine.</tagline>
+<description>
+This courses teaches you how to index your data,
+including types you definitely need to know such
+as MS Word, PDF, HTML, and XML. It introduces you
+to searching, sorting, filtering, and highlighting search results.<newline />
+Lucene powers search in surprising places--in discussion groups
+at Fortune 100 companies, in commercial issue trackers,
+in email search from Microsoft, in the Nutch web search engine
+(that scales to billions of pages). It is used by diverse
+companies including Akamai, Overture, Technorati, HotJobs,
+Epiphany, FedEx, Mayo Clinic, MIT, New Scientist Magazine, and many others.<newline />
+Adding search to your application can be easy. With many reusable examples
+and good advice on best practices.
+</description>
+<contents>
+<topic>How to integrate Lucene into your applications</topic>
+<topic>Ready-to-use framework for rich document handling</topic>
+<topic>Case studies including Nutch, TheServerSide, jGuru, etc.</topic>
+<topic>Lucene ports to Perl, Python, C#/.Net, and C++</topic>
+<topic>Sorting, filtering, term vectors, multiple, and remote index searching</topic>
+<topic>The new SpanQuery family, extending query parser, hit collecting</topic>
+<topic>Performance testing and tuning</topic>
+<topic>Lucene add-ons (hit highlighting, synonym lookup, and others)</topic>
+<topic>Foreword by Doug Cutting, the inventor of Lucene</topic>
+</contents>
+<book>
+<img src="8052.jpg" border="0" alt="Lucene in Action" align="Left" />
+Lucene in Action<newline/>
+Erik Hatcher and Otis Gospodnetic<newline/>
+(December 2004, 456 pages)<newline/>
+ISBN: 1932394281</book>
+</course>

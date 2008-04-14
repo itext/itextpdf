@@ -1,0 +1,23 @@
+<course>
+<title>Java Servlet Based Technology</title>
+<specs>
+	<coursenumber>8030</coursenumber>
+	<programs><program>Graduate in Complementary Studies in Applied Informatics: Java Development for the Enterprise</program></programs>
+	<a>37.5</a>
+	<b>22.5</b>
+	<c />
+	<d>120</d>
+	<e>4</e>
+	<department>CSE02</department>
+	<language>English</language>
+	<lecturers>
+		<lecturer inCharge="true">Alan Williamson</lecturer>
+	</lecturers>
+</specs>
+<book>
+<img src="8030.jpg" border="0" alt="Java Servlets by Example" align="Left" />
+Java Servlets by Example<newline/>
+Alan R. Williamson<newline/>
+(June 1999, 550 pages)<newline/>
+ISBN: 188477766X</book>
+</course>

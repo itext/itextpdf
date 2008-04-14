@@ -1,0 +1,43 @@
+<course>
+<title>POJOs: Plain Old Java Objects</title>
+<specs>
+	<coursenumber>8001</coursenumber>
+	<programs><program>Graduate in Complementary Studies in Applied Informatics: Java Development for the Enterprise</program></programs>
+	<a>37.5</a>
+	<b>22.5</b>
+	<c />
+	<d>180</d>
+	<e>6</e>
+	<department>CSE02</department>
+	<language>English</language>
+	<lecturers>
+		<lecturer inCharge="true">Chris Richardson</lecturer>
+	</lecturers>
+</specs>
+<tagline>Developing Enterprise Applications with Lightweight Frameworks.</tagline>
+<description>
+In the past, developers built enterprise Java applications using EJB
+technologies that are excessively complex and difficult to use. Often EJB
+introduced more problems than it solved. There is a major trend in the
+industry towards using simpler and easier technologies such as Hibernate,
+Spring, JDO, iBATIS and others, all of which allow the developer to work
+directly with the simpler Plain Old Java Objects or POJOs. Now EJB version 3
+solves the problems that gave EJB 2 a black eye--it too works with POJOs.<newline />
+In this course, we'll discover new, easier ways to develop enterprise Java
+applications and how to make key design decisions when developing
+business logic using POJOs, including how to organize and encapsulate the
+business logic, access the database, manage transactions, and handle
+database concurrency. The student will be able to successfully build
+lightweight applications that are easier to develop, test, and maintain.</description>
+<contents>
+	<topic>How to develop apps in the post EJB 2 world</topic>
+	<topic>How to leverage the strengths and work around the weaknesses of: JDO, Hibernate, and EJB 3</topic>
+	<topic>How to benefit by using aspects</topic>
+	<topic>How to do test-driven development with lightweight frameworks</topic>
+	<topic>How to accelerate the edit-compile-debug cycle</topic>
+</contents>
+<book>
+<img src="8001.jpg" border="0" alt="POJOs in Action" align="Left" />
+POJOs in Action<newline />by Chris Richardson<newline />(October 2005, 450 pages)<newline />
+ISBN: 1932394583</book>
+</course>

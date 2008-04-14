@@ -1,0 +1,46 @@
+<course>
+<title>The Tapestry Framework</title>
+<specs>
+<coursenumber>8041</coursenumber>
+<programs><program>Graduate in Complementary Studies in Applied Informatics: Java Development for the Enterprise</program></programs>
+<a>15</a>
+<b>15</b>
+<c />
+<d>90</d>
+<e>3</e>
+<department>CSE02</department>
+<language>English</language>
+<lecturers>
+<lecturer inCharge="true">Howard Lewis Ship</lecturer>
+<lecturer>Gavin King</lecturer>
+</lecturers>
+</specs>
+
+<tagline>Creating full-featured web apps by connecting framework components to economical amounts of application code.</tagline>
+<description>Many web development frustrations can be traced back to the underlying stateless
+HTTP protocol. Tapestry represents state and behavior as standard Java objects,
+methods and properties. That means state management and multithreading are handled
+by the framework, leaving you with just your application's business logic.
+Tapestry does more, you do less.<newline />
+Many simple examples show you how to tackle common tasks such as form
+validation, application localization, client-side scripting, and synchronization
+between browser and app server. More advanced topics including creation of new
+components and integration with J2EE are also discussed.
+</description>
+<contents>
+<topic>Tapestry's Component Object Model</topic>
+<topic>How to write new components</topic>
+<topic>How to configure third party components</topic>
+<topic>Dynamic JavaScript integration</topic>
+<topic>Form validation</topic>
+<topic>Tapestry/JSP integration</topic>
+<topic>Localization/internationalization</topic>
+<topic>J2EE integration</topic>
+</contents>
+<book>
+<img src="8041.jpg" border="0" alt="Tapestry in Action" align="Left" />
+Tapestry in Action<newline/>
+Howard M. Lewis Ship<newline/>
+(March 2004, 580 pages)<newline/>
+ISBN: 1932394117</book>
+</course>

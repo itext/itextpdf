@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="135cm" height="135cm" viewBox="0 0 13500 10500" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<title>The Map of Foobar City</title>
+<desc>paths that describe all the streets</desc>
+<defs>
+    <path id="s01" d="M 5076 6081 L 5905 5770" />
+    <path id="s02" d="M 5101 6645 L 5856 6673" />
+    <path id="s03" d="M 5425 7700 L 5972 7513" />
+    <path id="s04" d="M 5774 8413 L 6321 8113" />
+    <path id="s05" d="M 6219 8917 L 6734 8607" />
+    <path id="s06" d="M 4910 6881 L 5097 7672" />
+    <path id="s07" d="M 5605 6846 L 5704 7488" />
+    <path id="s08" d="M 4487 7033 L 4953 8543" />
+    <path id="s09" d="M 6533 5985 L 7521 5083" />
+    <path id="s10" d="M 8403 7636 L 9503 7016" />
+    <path id="s11" d="M 8078 6889 L 8396 6656" />
+    <path id="s12" d="M 7006 9330 L 7669 9055" />
+    <path id="s13" d="M 9271 8342 L 9849 8088" />
+    <path id="s14" d="M 8628 7897 L 8939 8321" />
+    <path id="s15" d="M 9553 7005 L 9719 7397" />
+    <path id="s16" d="M 10555 6712 L 10865 7220" />
+    <path id="s17" d="M 10364 5760 L 11028 4644" />
+    <path id="s18" d="M 9362 3460 L 10032 3777" />
+    <path id="s19" d="M 10992 1844 L 11775 1731" />
+    <path id="s20" d="M 8770 4144 L 8890 3629" />
+    <path id="s21" d="M 9186 4349 L 9306 3932" />
+    <path id="s22" d="M 8099 4969 L 8198 4490" />
+    <path id="s23" d="M 7888 4236 L 8522 4292" />
+    <path id="s24" d="M 6222 5132 L 6540 4751" />
+    <path id="s25" d="M 6547 4349 L 6738 4476" />
+    <path id="s26" d="M 6378 4384 L 6526 4207" />
+    <path id="s27" d="M 5658 5202 L 5799 4984" />
+    <path id="s28" d="M 5884 5153 L 6060 5280" />
+    <path id="s29" d="M 6568 4906 L 6745 5047" />
+    <path id="s30" d="M 6759 5298 L 6970 5015" />
+    <path id="s31" d="M 6893 6324 L 7161 6508" />
+    <path id="s32" d="M 8149 6282 L 8459 5957" />
+    <path id="s33" d="M 9144 6317 L 9383 6670" />
+    <path id="s34" d="M 8311 5604 L 8579 5696" />
+    <path id="s35" d="M 7246 4483 L 7780 5541" />
+    <path id="s36" d="M 7852 5809 L 7993 6218" />
+    <path id="s37" d="M 6554 7312 L 7260 7072" />
+    <path id="s38" d="M 6935 6712 L 7260 6726" />
+    <path id="s39" d="M 7295 7389 L 7563 7135" />
+    <path id="s40" d="M 6512 7143 L 6575 6881" />
+    <path id="s41" d="M 6625 6670 L 6738 6402" />
+    <path id="s42" d="M 6850 6211 L 6963 5978" />
+    <path id="s43" d="M 6925 6874 L 6984 7174" />
+    <path id="s44" d="M 7196 7594 L 7341 7816" />
+    <path id="s45" d="M 7238 7058 L 7288 6839" />
+    <path id="s46" d="M 7408 7651 L 7641 7474" />
+    <path id="s47" d="M 7648 7143 L 7718 7368" />
+    <path id="s48" d="M 7803 7347 L 7895 7220" />
+    <path id="s49" d="M 7852 7481 L 8008 7608" />
+    <path id="s50" d="M 8212 7404 L 8382 7241" />
+    <path id="s51" d="M 9031 6635 L 9327 6451" />
+    <path id="s52" d="M 8685 6381 L 8770 6134" />
+    <path id="s53" d="M 8389 6254 L 8530 6416" />
+    <path id="s54" d="M 7641 5858 L 7732 6056" />
+    <path id="s55" d="M 7351 6091 L 7535 6373" />
+    <path id="s56" d="M 7175 6239 L 7365 6416" />
+    <path id="s57" d="M 7373 5590 L 7641 5633" />
+    <path id="s58" d="M 7380 5971 L 7563 5851" />
+    <path id="s59" d="M 7344 5703 L 7358 5880" />
+    <path id="s60" d="M 7478 6218 L 7598 6105" />
+    <path id="s61" d="M 7323 6578 L 7450 6465" />
+    <path id="s62" d="M 7584 6296 L 7782 6196" />
+    <path id="s63" d="M 7648 6656 L 7831 6599" />
+    <path id="s64" d="M 7055 5696 L 7253 5936" />
+    <path id="s65" d="M 8156 5227 L 8247 5488" />
+</defs>
+<text font-size="50"><textPath xlink:href="#s01">Avenue Bernard Becue</textPath></text>
+<text font-size="50"><textPath xlink:href="#s02">Avenue Geert De Soete</textPath></text>
+<text font-size="50"><textPath xlink:href="#s03">Avenue Mario Maccarini</textPath></text>
+<text font-size="50"><textPath xlink:href="#s04">Avenue Luc Verschraegen</textPath></text>
+<text font-size="50"><textPath xlink:href="#s05">Avenue Jurgen Lust</textPath></text>
+<text font-size="50"><textPath xlink:href="#s06">Avenue Evelyne De Cordier</textPath></text>
+<text font-size="50"><textPath xlink:href="#s07">Avenue Robert Hoogewijs</textPath></text>
+<text font-size="80"><textPath xlink:href="#s08">Boulevard Paulo Soares</textPath></text>
+<text font-size="80"><textPath xlink:href="#s09">Périphérique du Nord</textPath></text>
+<text font-size="80"><textPath xlink:href="#s10">Périphérique du Sud</textPath></text>
+<text font-size="30"><textPath xlink:href="#s11">Alle du Chateau</textPath></text>
+<text font-size="80"><textPath xlink:href="#s13">Chemin de la côte</textPath></text>
+<text font-size="80"><textPath xlink:href="#s12">Foobar Plage</textPath></text>
+<text font-size="80"><textPath xlink:href="#s14">Bvd. Jago</textPath></text>
+<text font-size="30"><textPath xlink:href="#s15">Rue Carsten Hammer</textPath></text>
+<text font-size="50"><textPath xlink:href="#s16">Alle du Port</textPath></text>
+<text font-size="80"><textPath xlink:href="#s17">Chemin Leonard Rosenthol</textPath></text>
+<text font-size="80"><textPath xlink:href="#s18">Chemin Mark Hall</textPath></text>
+<text font-size="80"><textPath xlink:href="#s19">Route iText</textPath></text>
+<text font-size="25"><textPath xlink:href="#s20">Rue Godfried Verhamme</textPath></text>
+<text font-size="25"><textPath xlink:href="#s21">Rue Johan Brusselaers</textPath></text>
+<text font-size="25"><textPath xlink:href="#s22">Rue Michiel Masson</textPath></text>
+<text font-size="50"><textPath xlink:href="#s23">Av. de l'Industrie</textPath></text>
+<text font-size="50"><textPath xlink:href="#s24">Av. de l'Université</textPath></text>
+<text font-size="25"><textPath xlink:href="#s25">Rue Dirk De Meyer</textPath></text>
+<text font-size="25"><textPath xlink:href="#s26">Rue Firmin Mees</textPath></text>
+<text font-size="25"><textPath xlink:href="#s27">Rue Romain Vinckier</textPath></text>
+<text font-size="25"><textPath xlink:href="#s28">Rue Kris Lazeure</textPath></text>
+<text font-size="25"><textPath xlink:href="#s29">Rue Charles Vermeersch</textPath></text>
+<text font-size="25"><textPath xlink:href="#s30">Rue Bernard Sercu</textPath></text>
+<text font-size="30"><textPath xlink:href="#s31">Rue Kris Coolsaet</textPath></text>
+<text font-size="30"><textPath xlink:href="#s32">Rue Philip Tempelaere</textPath></text>
+<text font-size="25"><textPath xlink:href="#s33">Chemin de la gare de Foobar</textPath></text>
+<text font-size="25"><textPath xlink:href="#s34">Rue Java</textPath></text>
+<text font-size="80"><textPath xlink:href="#s35">Boulevard Ingeborg Willaert</textPath></text>
+<text font-size="80"><textPath xlink:href="#s36">Bvd. Inigo</textPath></text>
+<text font-size="30"><textPath xlink:href="#s37">Rue Jan Van Campenhout</textPath></text>
+<text font-size="30"><textPath xlink:href="#s38">Allée du film</textPath></text>
+<text font-size="30"><textPath xlink:href="#s39">Rue Aandi Inston</textPath></text>
+<text font-size="25"><textPath xlink:href="#s40">Rue Barry Klawans</textPath></text>
+<text font-size="25"><textPath xlink:href="#s41">Rue Stanley Wang</textPath></text>
+<text font-size="25"><textPath xlink:href="#s42">Rue Rudy Vansnick</textPath></text>
+<text font-size="25"><textPath xlink:href="#s43">Rue J. Dubrulle</textPath></text>
+<text font-size="25"><textPath xlink:href="#s44">Rue W. De Witte</textPath></text>
+<text font-size="25"><textPath xlink:href="#s45">Rue A. Gelders</textPath></text>
+<text font-size="25"><textPath xlink:href="#s46">Rue I. Huys</textPath></text>
+<text font-size="25"><textPath xlink:href="#s47">Rue Manning</textPath></text>
+<text font-size="25"><textPath xlink:href="#s48">Rue H. Jones</textPath></text>
+<text font-size="25"><textPath xlink:href="#s49">Rue M. Bace</textPath></text>
+<text font-size="25"><textPath xlink:href="#s50">Sentier du chateau</textPath></text>
+<text font-size="25"><textPath xlink:href="#s51">Rue Steve Appling</textPath></text>
+<text font-size="25"><textPath xlink:href="#s52">Rue Stuart Caborn</textPath></text>
+<text font-size="25"><textPath xlink:href="#s53">Rue Bill Ensley</textPath></text>
+<text font-size="25"><textPath xlink:href="#s54">Rue F. Peers</textPath></text>
+<text font-size="25"><textPath xlink:href="#s55">Rue K. Tegtmeyer</textPath></text>
+<text font-size="25"><textPath xlink:href="#s56">Rue K. Meuleman</textPath></text>
+<text font-size="25"><textPath xlink:href="#s57">Rue D. De Decker</textPath></text>
+<text font-size="25"><textPath xlink:href="#s58">Rue Patrick Debois</textPath></text>
+<text font-size="25"><textPath xlink:href="#s59">Rue Gert Dewit</textPath></text>
+<text font-size="25"><textPath xlink:href="#s60">Rue d'Ypres</textPath></text>
+<text font-size="25"><textPath xlink:href="#s61">Rue de Gand</textPath></text>
+<text font-size="25"><textPath xlink:href="#s62">Rue de l'Eglise</textPath></text>
+<text font-size="25"><textPath xlink:href="#s63">Allée des Livres</textPath></text>
+<text font-size="25"><textPath xlink:href="#s64">Rue Justin Lee</textPath></text>
+<text font-size="25"><textPath xlink:href="#s65">Rue Vineet Reynolds</textPath></text>
+</svg>

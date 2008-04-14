@@ -1,0 +1,11 @@
+<letter left="36" right="36" top="144" bottom="36">
+To: <mail /><newline />
+Ref: your website<newline />
+<newline />
+Hello <givenname />,<newline />
+<newline />
+I visited your web site a while ago (<website />), and I saw you added a link to iText, my free JAVA-PDF library. So I thought to myself, hey, I'm going to send Mr./Ms. <name /> a little mail to show my gratitude. If you want to, I can also add a link to your site on the iText links-page. Just let me know,<newline />
+<newline />
+kind regards,<newline />
+Bruno Lowagie
+</letter>

@@ -1,0 +1,52 @@
+<course>
+<title>Eclipse</title>
+<specs>
+	<coursenumber>8010</coursenumber>
+	<programs><program>Graduate in Complementary Studies in Applied Informatics: Java Development for the Enterprise</program></programs>
+	<a>15</a>
+	<b>15</b>
+	<c />
+	<d>90</d>
+	<e>3</e>
+	<department>CSE02</department>
+	<language>English</language>
+	<lecturers>
+		<lecturer inCharge="true">David Gallardo</lecturer>
+		<lecturer>Ed Burnette</lecturer>
+		<lecturer>Robert McGovern</lecturer>
+	</lecturers>
+</specs>
+<tagline>Eclipse is a new open-source, Java-based, extensible development platform
+designed for nothing in particular but everything in general.</tagline>
+<description>
+Because of its roots, Eclipse is currently most popular
+as a Java integrated development environment (IDE).
+Eclipse ships with plugins for writing and debugging Java code.
+Additional plugins for more advanced Java development,
+such as JSP/servlets, are available from third parties.<newline />
+This course offers realistic examples that demonstrate
+how to use Eclipse effectively to build, test and debug
+applications using the tools provided by Eclipse and
+other third-party open source plugins.
+The student will learn how to use plugin tools for
+using Eclipse in a team environment, including using Ant
+for more sophisticated build processes and CVS for source control.
+Plugin-ins for building web applications, using J2EE technologies,
+such as JSP/Servlets and EJB, are also discussed.
+</description>
+<contents>
+<topic>Getting started with the Eclipse Workbench: Perspectives, views and editors</topic>
+<topic>Working effectively with the Eclipse JDT</topic>
+<topic>Adding unit tests with JUnit, logging with log4j</topic>
+<topic>Team development with Ant and CVS</topic>
+<topic>Plugins for J2EE including the Sysdeo Tomcat plugin</topic>
+<topic>Developing Eclipse plugins</topic>
+<topic>Comprehensive Eclipse reference</topic>
+</contents>
+<book>
+<img src="8010.jpg" border="0" alt="Eclipse in Action" align="Left" />
+Eclipse in Action<newline/>
+by David Gallardo, Ed Burnette and Robert McGovern<newline/>
+(May 2003, 416 pages)<newline/>
+ISBN: 1930110960</book>
+</course>

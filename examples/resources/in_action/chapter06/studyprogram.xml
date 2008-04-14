@@ -1,0 +1,315 @@
+<studyprogram>
+  <faculty>Department of Computer Science and Engineering</faculty>
+  <program code="CSE_GCAI0101">Graduate in Complementary
+  Studies in Applied Informatics</program>
+  <option>Java Development for the Enterprise</option>
+  <group>
+    <title>GENERAL COURSES</title>
+    <unit>
+      <course>
+        <coursenumber>8001</coursenumber>
+        <title>POJOs: Plain Old Java Objects</title>
+        <semester>1</semester>
+        <pt>1</pt>
+        <department>CSE02</department>
+        <teacher>Chris Richardson</teacher>
+        <a>37.5</a>
+        <b>22.5</b>
+        <c />
+        <d count="true">180</d>
+        <e count="true">6</e>
+      </course>
+    </unit>
+    <unit>
+      <course>
+        <coursenumber>8002</coursenumber>
+        <title>Java Development with ANT</title>
+        <semester>2</semester>
+        <pt>1</pt>
+        <department>CSE02</department>
+        <teacher>Eric Hatcher</teacher>
+        <a>22.5</a>
+        <b>7.5</b>
+        <c />
+        <d count="true">90</d>
+        <e count="true">3</e>
+      </course>
+    </unit>
+    <unit>
+      <course>
+        <coursenumber>8003</coursenumber>
+        <title>Java Development with XDoclet</title>
+        <semester>2</semester>
+        <pt>1</pt>
+        <department>CSE02</department>
+        <teacher>Craig Walls</teacher>
+        <a>22.5</a>
+        <b>7.5</b>
+        <c />
+        <d count="true">90</d>
+        <e count="true">3</e>
+      </course>
+    </unit>
+  </group>
+  <group>
+    <title>CLUSTERS</title>
+    <unit>
+      <title>Integrated Development Environments; one course from the following list:</title>
+      <d count="true">90</d>
+      <e count="true">3</e>
+      <course>
+        <coursenumber>8010</coursenumber>
+        <title>Eclipse</title>
+        <semester>1</semester>
+        <pt>2</pt>
+        <department>CSE02</department>
+        <teacher>David Gallardo</teacher>
+        <a>15</a>
+        <b>15</b>
+        <c />
+        <d>90</d>
+        <e>3</e>
+      </course>
+      <course>
+        <coursenumber>8011</coursenumber>
+        <title>IntelliJ IDEA</title>
+        <semester>1</semester>
+        <pt>2</pt>
+        <department>CSE02</department>
+        <teacher>Duane K. Fields</teacher>
+        <a>15</a>
+        <b>15</b>
+        <c />
+        <d>90</d>
+        <e>3</e>
+      </course>
+    </unit>
+    <unit>
+      <title>Implementing the Database Layer; two courses from the following list:</title>
+      <d count="true">240</d>
+      <e count="true">8</e>
+      <course>
+        <coursenumber>8020</coursenumber>
+        <title>Implementing the database layer with Hibernate</title>
+        <semester>1</semester>
+        <pt>1</pt>
+        <department>CSE02</department>
+        <teacher>Christian Bauer</teacher>
+        <a>37.5</a>
+        <b>22.5</b>
+        <c />
+        <d>120</d>
+        <e>4</e>
+      </course>
+      <course>
+        <coursenumber>8021</coursenumber>
+        <title>Implementing the database layer with JDO</title>
+        <semester>1</semester>
+        <pt>1</pt>
+        <department>CSE02</department>
+        <teacher>N.N.</teacher>
+        <a>37.5</a>
+        <b>22.5</b>
+        <c />
+        <d>120</d>
+        <e>4</e>
+      </course>
+      <course>
+        <coursenumber>8022</coursenumber>
+        <title>Implementing the database layer with EJB Entity
+        Beans</title>
+        <semester>1</semester>
+        <pt>1</pt>
+        <department>CSE02</department>
+        <teacher>Ben Sullins</teacher>
+        <a>37.5</a>
+        <b>22.5</b>
+        <c />
+        <d>120</d>
+        <e>4</e>
+      </course>
+    </unit>
+    <unit>
+      <title>Implementing the Business Layer; two courses from the following list:</title>
+      <d count="true">240</d>
+      <e count="true">8</e>
+      <course>
+        <coursenumber>8030</coursenumber>
+        <title>Java Servlet based Technology</title>
+        <semester>2</semester>
+        <pt>1</pt>
+        <department>CSE02</department>
+        <teacher>Alan Williamson</teacher>
+        <a>37.5</a>
+        <b>22.5</b>
+        <c />
+        <d>120</d>
+        <e>4</e>
+      </course>
+      <course>
+        <coursenumber>8031</coursenumber>
+        <title>The Spring Framework</title>
+        <semester>2</semester>
+        <pt>1</pt>
+        <department>CSE02</department>
+        <teacher>Craig Walls</teacher>
+        <a>37.5</a>
+        <b>22.5</b>
+        <c />
+        <d>120</d>
+        <e>4</e>
+      </course>
+      <course>
+        <coursenumber>8032</coursenumber>
+        <title>AOP with AspectJ</title>
+        <semester>2</semester>
+        <pt>1</pt>
+        <department>CSE02</department>
+        <teacher>Ramnivas Laddad</teacher>
+        <a>37.5</a>
+        <b>22.5</b>
+        <c />
+        <d>120</d>
+        <e>4</e>
+      </course>
+      <course>
+        <coursenumber>8033</coursenumber>
+        <title>Java Rule-based Systems with JESS</title>
+        <semester>2</semester>
+        <pt>1</pt>
+        <department>CSE02</department>
+        <teacher>Ernest Friedman-Hill</teacher>
+        <a>37.5</a>
+        <b>22.5</b>
+        <c />
+        <d>120</d>
+        <e>4</e>
+      </course>
+    </unit>
+    <unit>
+      <title>Web FrameWorks; a total amount of 9 credits by combining two or
+      three of the following courses:</title>
+      <d count="true">270</d>
+      <e count="true">9</e>
+      <course>
+        <coursenumber>8040</coursenumber>
+        <title>The Webwork Framework</title>
+        <semester>2</semester>
+        <pt>2</pt>
+        <department>CSE02</department>
+        <teacher>Patrick Lightbody</teacher>
+        <a>15</a>
+        <b>15</b>
+        <c />
+        <d>90</d>
+        <e>3</e>
+      </course>
+      <course>
+        <coursenumber>8041</coursenumber>
+        <title>The Tapestry Framework</title>
+        <semester>2</semester>
+        <pt>2</pt>
+        <department>CSE02</department>
+        <teacher>Howard Lewis Ship</teacher>
+        <a>15</a>
+        <b>15</b>
+        <c />
+        <d>90</d>
+        <e>3</e>
+      </course>
+      <course>
+        <coursenumber>8042</coursenumber>
+        <title>Struts</title>
+        <semester>2</semester>
+        <pt>2</pt>
+        <department>CSE02</department>
+        <teacher>Ted Husted</teacher>
+        <a>15</a>
+        <b>15</b>
+        <c />
+        <d>90</d>
+        <e>3</e>
+      </course>
+      <course>
+        <coursenumber>8043</coursenumber>
+        <title>Java Server Faces</title>
+        <semester>2</semester>
+        <pt>2</pt>
+        <department>CSE02</department>
+        <teacher>Kito Mann</teacher>
+        <a>30</a>
+        <b>30</b>
+        <c />
+        <d>180</d>
+        <e>6</e>
+      </course>
+    </unit>
+  </group>
+  <group>
+    <title>ELECTIVE COURSES</title>
+    <unit>
+      <title>Subject to the Faculty's approval;
+      courses to be chosen from the study programs of the Technological University
+      of Foobar or one course from this list:</title>
+      <d count="true">150</d>
+      <e count="true">5</e>
+      <course>
+        <coursenumber>8050</coursenumber>
+        <title>Version Control with Subversion</title>
+        <semester>1</semester>
+        <pt>2</pt>
+        <department>CSE02</department>
+        <teacher>Jeffrey Machols</teacher>
+        <a>30.0</a>
+        <b>22.5</b>
+        <c />
+        <d>150</d>
+        <e>5</e>
+      </course>
+      <course>
+        <coursenumber>8051</coursenumber>
+        <title>Unit Testing with JUnit</title>
+        <semester>1</semester>
+        <pt>2</pt>
+        <department>CSE02</department>
+        <teacher>Ted Husted</teacher>
+        <a>30.0</a>
+        <b>22.5</b>
+        <c />
+        <d>150</d>
+        <e>5</e>
+      </course>
+      <course>
+        <coursenumber>8052</coursenumber>
+        <title>Lucene</title>
+        <semester>1</semester>
+        <pt>2</pt>
+        <department>CSE02</department>
+        <teacher>Erik Hatcher</teacher>
+        <a>30.0</a>
+        <b>22.5</b>
+        <c />
+        <d>150</d>
+        <e>5</e>
+      </course>
+    </unit>
+  </group>
+  <group>
+    <title>DISSERTATION</title>
+    <unit>
+      <course>
+        <coursenumber>N/A</coursenumber>
+        <title>A list of possible dissertation titles is distributed yearly.</title>
+        <semester>Y</semester>
+        <pt>2</pt>
+        <department />
+        <teacher />
+        <a />
+        <b />
+        <c>40</c>
+        <d count="true">450</d>
+        <e count="true">15</e>
+      </course>
+    </unit>
+  </group>
+</studyprogram>

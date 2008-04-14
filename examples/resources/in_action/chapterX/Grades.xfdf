@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
+<fields>
+  <field name="sending_institution">
+    <value>Ghent University</value>
+  </field>
+  <field name="sending_department">
+    <value>Engineering</value>
+  </field>
+  <field name="sending_coordinator">
+    <value>prof. E.C.T.S.</value>
+  </field>
+  <field name="sending_tel">
+    <value>01/234.56.78</value>
+  </field>
+  <field name="sending_fax">
+    <value>01/234.67.89</value>
+  </field>
+  <field name="sending_mail">
+    <value>ects@ugent.be</value>
+  </field>
+
+  <field name="receiving_institution">
+    <value>Technological University of Foobar</value>
+  </field>
+  <field name="receiving_department">
+    <value>Engineering</value>
+  </field>
+  <field name="receiving_coordinator">
+    <value>prof. Nema Problema</value>
+  </field>
+  <field name="receiving_tel">
+    <value>09/876.43.21</value>
+  </field>
+  <field name="receiving_fax">
+    <value>09/876.54.32</value>
+  </field>
+  <field name="receiving_mail">
+    <value>np@tu.foobar</value>
+  </field>
+
+  <field name="student_familyname">
+    <value>Lowagie</value>
+  </field>
+  <field name="student_firstname">
+    <value>Bruno M.L.W.</value>
+  </field>
+  <field name="student_birth">
+    <value>Ypres, June 10, 1970</value>
+  </field>
+  <field name="student_sex">
+    <value>male</value>
+  </field>
+  <field name="student_matriculation_date">
+    <value>08/08/1988</value>
+  </field>
+  <field name="student_matriculation_number">
+    <value>19880563</value>
+  </field>
+
+  <field name="course_code_0">
+    <value>8001</value>
+  </field>
+  <field name="course_title_0">
+    <value>POJOs: Plain Old Java Objects</value>
+  </field>
+  <field name="course_duration_0">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_0">
+    <value>15</value>
+  </field>
+  <field name="course_ectsgrade_0">
+    <value>C</value>
+  </field>
+  <field name="course_credits_0">
+    <value>6</value>
+  </field>
+
+  <field name="course_code_1">
+    <value>8002</value>
+  </field>
+  <field name="course_title_1">
+    <value>Java Development with ANT</value>
+  </field>
+  <field name="course_duration_1">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_1">
+    <value>19</value>
+  </field>
+  <field name="course_ectsgrade_1">
+    <value>A</value>
+  </field>
+  <field name="course_credits_1">
+    <value>3</value>
+  </field>
+
+  <field name="course_code_2">
+    <value>8003</value>
+  </field>
+  <field name="course_title_2">
+    <value>Java Development with XDoclet</value>
+  </field>
+  <field name="course_duration_2">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_2">
+    <value>17</value>
+  </field>
+  <field name="course_ectsgrade_2">
+    <value>B</value>
+  </field>
+  <field name="course_credits_2">
+    <value>3</value>
+  </field>
+
+  <field name="course_code_3">
+    <value>8010</value>
+  </field>
+  <field name="course_title_3">
+    <value>Eclipse</value>
+  </field>
+  <field name="course_duration_3">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_3">
+    <value>17</value>
+  </field>
+  <field name="course_ectsgrade_3">
+    <value>B</value>
+  </field>
+  <field name="course_credits_3">
+    <value>3</value>
+  </field>
+
+  <field name="course_code_4">
+    <value>8020</value>
+  </field>
+  <field name="course_title_4">
+    <value>Implementing the database layer with</value>
+  </field>
+  <field name="course_duration_4">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_4">
+    <value>18</value>
+  </field>
+  <field name="course_ectsgrade_4">
+    <value>A</value>
+  </field>
+  <field name="course_credits_4">
+    <value>4</value>
+  </field>
+
+  <field name="course_title_5">
+    <value>Hibernate</value>
+  </field>
+
+  <field name="course_code_6">
+    <value>8022</value>
+  </field>
+  <field name="course_title_6">
+    <value>Implementing the database layer with</value>
+  </field>
+  <field name="course_duration_6">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_6">
+    <value>16</value>
+  </field>
+  <field name="course_ectsgrade_6">
+    <value>A</value>
+  </field>
+  <field name="course_credits_6">
+    <value>4</value>
+  </field>
+
+  <field name="course_title_7">
+    <value>EJB Entity Beans</value>
+  </field>
+
+  <field name="course_code_8">
+    <value>8030</value>
+  </field>
+  <field name="course_title_8">
+    <value>Java Servlet Based Technology</value>
+  </field>
+  <field name="course_duration_8">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_8">
+    <value>19</value>
+  </field>
+  <field name="course_ectsgrade_8">
+    <value>A</value>
+  </field>
+  <field name="course_credits_8">
+    <value>4</value>
+  </field>
+
+  <field name="course_code_9">
+    <value>8031</value>
+  </field>
+  <field name="course_title_9">
+    <value>The Spring Framework</value>
+  </field>
+  <field name="course_duration_9">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_9">
+    <value>17</value>
+  </field>
+  <field name="course_ectsgrade_9">
+    <value>B</value>
+  </field>
+  <field name="course_credits_9">
+    <value>4</value>
+  </field>
+
+  <field name="course_code_10">
+    <value>8040</value>
+  </field>
+  <field name="course_title_10">
+    <value>The Webwork Framework</value>
+  </field>
+  <field name="course_duration_10">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_10">
+    <value>12</value>
+  </field>
+  <field name="course_ectsgrade_10">
+    <value>E</value>
+  </field>
+  <field name="course_credits_10">
+    <value>3</value>
+  </field>
+
+  <field name="course_code_11">
+    <value>8042</value>
+  </field>
+  <field name="course_title_11">
+    <value>Struts</value>
+  </field>
+  <field name="course_duration_11">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_11">
+    <value>14</value>
+  </field>
+  <field name="course_ectsgrade_11">
+    <value>C</value>
+  </field>
+  <field name="course_credits_11">
+    <value>3</value>
+  </field>
+
+  <field name="course_code_12">
+    <value>8043</value>
+  </field>
+  <field name="course_title_12">
+    <value>Java Server Faces</value>
+  </field>
+  <field name="course_duration_12">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_12">
+    <value>14</value>
+  </field>
+  <field name="course_ectsgrade_12">
+    <value>C</value>
+  </field>
+  <field name="course_credits_12">
+    <value>6</value>
+  </field>
+
+  <field name="course_code_13">
+    <value>8050</value>
+  </field>
+  <field name="course_title_13">
+    <value>Version Control with Subversion</value>
+  </field>
+  <field name="course_duration_13">
+    <value>1S</value>
+  </field>
+  <field name="course_localgrade_13">
+    <value>16</value>
+  </field>
+  <field name="course_ectsgrade_13">
+    <value>B</value>
+  </field>
+  <field name="course_credits_13">
+    <value>5</value>
+  </field>
+
+  <field name="course_code_14">
+    <value>2005-41</value>
+  </field>
+  <field name="course_title_14">
+    <value>Master Thesis: iText in Action</value>
+  </field>
+  <field name="course_duration_14">
+    <value>1Y</value>
+  </field>
+  <field name="course_localgrade_14">
+    <value>19</value>
+  </field>
+  <field name="course_ectsgrade_14">
+    <value>A</value>
+  </field>
+  <field name="course_credits_14">
+    <value>15</value>
+  </field>
+
+  <field name="total_credits">
+    <value>60</value>
+  </field>
+  <field name="degree">
+    <value>Graduate in Applied Informatics</value>
+  </field>
+</fields>
+<ids original="EA4505F892869862EB8DB36097352F70"
+modified="DBE35DB95B481876EC9CEF8D4846FCAC" />
+<f href="FoobarTranscriptOfRecords.pdf" />
+</xfdf>
+

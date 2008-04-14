@@ -1,0 +1,41 @@
+<course>
+<title>The Webwork Framework</title>
+<specs>
+<coursenumber>8040</coursenumber>
+<programs><program>Graduate in Complementary Studies in Applied Informatics: Java Development for the Enterprise</program></programs>
+<a>15</a>
+<b>15</b>
+<c />
+<d>90</d>
+<e>3</e>
+<department>CSE02</department>
+<language>English</language>
+<lecturers>
+<lecturer inCharge="true">Patrick Lightbody</lecturer>
+<lecturer>Jason Carreira</lecturer>
+</lecturers>
+</specs>
+
+<tagline>The WebWork framework implements a simple command/ business-logic and MVC design.</tagline>
+<description>
+Webwork provides out-of-the-box functionality developers need to build
+well-designed applications that are modular and reusable.<newline />
+Starting with "Hello World" the Webwork way, the course immerses the student
+in practical, how-to material. You will soon know how to configure WebWork
+and gradually and incrementally master the robust and powerful uses of the framework.
+</description>
+<contents>
+<topic>Handling data and displaying content with Expression Language and Tag Libraries</topic>
+<topic>Inversion of Control and WebWork actions</topic>
+<topic>VelocityType conversion and data validation</topic>
+<topic>Internationalization and component-oriented design</topic>
+<topic>Integration of web applications into the Hibernate persistence framework</topic>
+<topic>Webwork best practices and architecture</topic>
+</contents>
+<book>
+<img src="8040.jpg" border="0" alt="WebWork in Action" align="Left" />
+WebWork in Action<newline/>
+Patrick Lightbody and Jason Carreira Foreword by Rickard �berg<newline/>
+(September 2005, 400 pages)<newline/>
+ISBN: 1932394532</book>
+</course>

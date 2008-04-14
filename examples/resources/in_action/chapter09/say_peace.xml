@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pace>
+<message language="English" direction="LTR"><big>Say Peace in all languages!</big>
+The people of the world prefer peace to war and they deserve to have it.
+Bombs are not needed to solve international problems when they can be solved
+just as well with respect and communication.  The Internet Internationalization
+(I18N) community, which values diversity and human life everywhere, offers
+"Peace" in many languages as a small step in this direction.
+</message>
+<message language="Arabic" direction="RTL">
+<big>أنطقوا سلام بكل
+اللغات!</big>
+كل شععوب العالم تفصل السلام علي الحرب وكلها تستحق أن تنعم بع.
+إن القنابل لا تحل مشاكل العالم ويتم تحقيق ذلك فقط بالاحترام
+والتواصل.
+مجموعة تدويل الإنترنت (I18N) ، والتي تأخذ بعين
+التقدير الاختلافات الثقافية والعادات الحياتية
+بين الشعوب، فإنها تقدم "السلام" بلغات كثيرة، كخطوة متواضعة في هذا
+الاتجاه.
+</message>
+<message language="Hebrew" direction="RTL">
+<big>אמרו "שלום" בכל השפות!</big> אנשי העולם מעדיפים את השלום על-פני המלחמה והם
+ראויים לו. אין צורך בפצצות כדי לפתור בעיות בין-לאומיות, רק בכבוד
+ובהידברות. קהילת בינאום האינטרנט (I18N), אשר מוקירה רב-גוניות וחיי אדם
+בכל מקום, מושיטה יד ל"שלום" בשפות רבות כצעד קטן בכיוון זה.
+</message>
+</pace>

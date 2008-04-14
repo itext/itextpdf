@@ -1,0 +1,15 @@
+<course>
+<title>Implementing the database layer with JDO</title>
+<specs>
+	<coursenumber>8021</coursenumber>
+	<programs><program>Graduate in Complementary Studies in Applied Informatics: Java Development for the Enterprise</program></programs>
+	<a>37.5</a>
+	<b>22.5</b>
+	<c />
+	<d>120</d>
+	<e>4</e>
+	<department>CSE02</department>
+	<language>English</language>
+	<lecturers />
+</specs>
+</course>

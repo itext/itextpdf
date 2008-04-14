@@ -1,0 +1,55 @@
+<course>
+<title>Unit Testing with JUnit</title>
+<specs>
+<coursenumber>8051</coursenumber>
+<programs><program>Graduate in Complementary Studies in Applied Informatics: Java Development for the Enterprise</program></programs>
+<a>30</a>
+<b>22.5</b>
+<c />
+<d>150</d>
+<e>5</e>
+<department>CSE02</department>
+<language>English</language>
+<lecturers>
+<lecturer inCharge="true">Ted Husted</lecturer>
+<lecturer>Vincent Massol</lecturer>
+</lecturers>
+</specs>
+
+<tagline>Making your code green.</tagline>
+<description>Developers in the know are switching to a new testing strategy - unit
+testing - which interleaves coding and testing in an integrated way.
+This has proven to be a powerful combination that results in better
+designed software with fewer defects and faster delivery cycles.<newline />
+This course learns you how to benefit from this strategy using
+the popular open source testing framework, JUnit. It's a no fluff discussion
+of unit testing techniques and best practices. It gives examples
+of tough situations such as how to unit test EJBs, database applications,
+JSPs and Taglibs. It discusses unit testing of J2EE applications, and shows
+how to test in automated builds.
+</description>
+<contents>
+<topic>Testing in isolation with mock objects</topic>
+<topic>In-container testing with Cactus</topic>
+<topic>Automated builds with Ant and Maven</topic>
+<topic>Unit testing from within Eclipse</topic>
+<topic>Test Driven Development principles</topic>
+<topic>Unit testing
+<subtopics>
+<topic>Java apps</topic>
+<topic>Servlets</topic>
+<topic>JSP</topic>
+<topic>Taglibs</topic>
+<topic>Filters</topic>
+<topic>EJB</topic>
+<topic>DB apps</topic>
+</subtopics>
+</topic>
+</contents>
+<book>
+<img src="8051.jpg" border="0" alt="JUnit in Action" align="Left" />
+JUnit in Action<newline/>
+by Vincent Massol with Ted Husted<newline/>
+(November 2003, 384 pages)<newline/>
+ISBN: 1930110995</book><newline/>
+</course>
