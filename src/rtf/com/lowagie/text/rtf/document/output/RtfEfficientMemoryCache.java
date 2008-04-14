@@ -78,7 +78,7 @@ public class RtfEfficientMemoryCache implements RtfDataCache
      */
     public OutputStream getOutputStream()
     {
-        return(bab);
+        return bab;
     }
 
     /**

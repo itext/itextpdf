@@ -111,7 +111,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	 */
 	public long size()
 	{
-		return(size);
+		return size;
 	}
 	
 	private void flushBuffer()
@@ -284,7 +284,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 			off += src.length;
 		}
 		if(pos > 0) System.arraycopy(buffer, 0, r, off, pos);
-		return(r);
+		return r;
 	}
 
 	/**

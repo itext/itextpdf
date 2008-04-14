@@ -311,10 +311,10 @@ public class RtfDocument extends RtfElement {
     {
         for(int k = 0; k < m.length; k++) {
             if(str.charAt(soff++) != m[k]) {
-                return(false);
+                return false;
             }
         }
-        return(true);
+        return true;
     }
     
     /**

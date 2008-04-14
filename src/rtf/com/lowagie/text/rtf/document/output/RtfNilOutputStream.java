@@ -80,7 +80,7 @@ public final class RtfNilOutputStream extends OutputStream
      */
     public long getSize()
     {
-        return(size);
+        return size;
     }
     
     /**
