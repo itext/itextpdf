@@ -50,8 +50,9 @@
 package com.lowagie.text.rtf.parser.destinations;
 
 import java.awt.Color;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
@@ -106,32 +107,24 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 	 */
 	private int tableLevel = 0;
 	
-	private Vector ignoreCtrlWordsForImport = new Vector()	{
-		{
-			add("rtf");
-			add("ansicpg");
-			add("deff");
-			add("ansi");
-			add("mac");
-			add("pca");
-			add("pc");
-			add("stshfdbch");
-			add("stshfloch");
-			add("stshfhich");
-			add("stshfbi");
-			add("deflang");
-			add("deflangfe");
-			add("adeflang");
-			add("adeflangfe");
-		}
-        private static final long serialVersionUID = 1L;
-	};
-	private Vector ignoreCtrlWordsForConvert = new Vector()	{
-		{
-			add("rtf");
-		}
-        private static final long serialVersionUID = 1L;
-	};
+	private static final List IMPORT_IGNORED_CTRLWORDS = Arrays.asList(new String[]{
+		"rtf",
+		"ansicpg",
+		"deff",
+		"ansi",
+		"mac",
+		"pca",
+		"pc",
+		"stshfdbch",
+		"stshfloch",
+		"stshfhich",
+		"stshfbi",
+		"deflang",
+		"deflangfe",
+		"adeflang",
+		"adeflangfe"});
+
+	private static final List CONVERT_IGNORED_CTRLWORDS = Arrays.asList(new String[]{"rtf"});
 
 	private Paragraph iTextParagraph = null;
 	
@@ -487,21 +480,21 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 		
 		switch(conversionType) {
 		case RtfParser.TYPE_IMPORT_FULL:
-			if(!ignoreCtrlWordsForImport.contains(ctrlWordData.ctrlWord)) {
+			if(!IMPORT_IGNORED_CTRLWORDS.contains(ctrlWordData.ctrlWord)) {
 				writeBuffer();
 				writeText(ctrlWordData.toString());
 			}
 			result = true;
 			break;		
 		case RtfParser.TYPE_IMPORT_FRAGMENT:
-			if(!ignoreCtrlWordsForImport.contains(ctrlWordData.ctrlWord)) {
+			if(!IMPORT_IGNORED_CTRLWORDS.contains(ctrlWordData.ctrlWord)) {
 				writeBuffer();
 				writeText(ctrlWordData.toString());
 			}
 			result = true;
 			break;
 		case RtfParser.TYPE_CONVERT:
-			if(!ignoreCtrlWordsForImport.contains(ctrlWordData.ctrlWord)) {
+			if(!IMPORT_IGNORED_CTRLWORDS.contains(ctrlWordData.ctrlWord)) {
 			}
 			result = true;
 			break;
