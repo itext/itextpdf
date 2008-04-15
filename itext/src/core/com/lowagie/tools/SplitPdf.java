@@ -62,8 +62,9 @@ import com.lowagie.text.pdf.PdfWriter;
 /**
  * This class demonstrates how to split a PDF file using iText.
  * @author Bruno Lowagie
+ * @since 2.1.1 (renamed to follow Java naming conventions)
  */
-public class split_pdf extends java.lang.Object {
+public class SplitPdf extends java.lang.Object {
     
     /**
      * This class can be used to split an existing PDF file.

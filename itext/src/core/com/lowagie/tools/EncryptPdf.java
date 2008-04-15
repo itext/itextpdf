@@ -59,8 +59,9 @@ import com.lowagie.text.pdf.PdfWriter;
 /**
  * Encrypts a PDF document. It needs iText (http://www.lowagie.com/iText).
  * @author Paulo Soares (psoares@consiste.pt)
+ * @since 2.1.1 (renamed to follow Java naming conventions)
  */
-public class encrypt_pdf {
+public class EncryptPdf {
     
     private final static int INPUT_FILE = 0;
     private final static int OUTPUT_FILE = 1;
