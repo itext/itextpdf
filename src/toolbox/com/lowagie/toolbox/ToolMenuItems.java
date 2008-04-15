@@ -38,36 +38,36 @@ package com.lowagie.toolbox;
  * Keeps all the possible menuitems.
  * @since 2.1.1 (imported from itexttoolbox project)
  */
- public interface ToolMenuItems {
+public class ToolMenuItems {
 
 	/** An item in the menubar. */
-	String FILE = "File";
+	public static final String FILE = "File";
 	/** An item in the menubar. */
-	String CLOSE = "Close";
+	public static final String CLOSE = "Close";
 	/** An item in the menubar. */
-	String TOOLS = "Tools";
-        String FILELIST = "Filelist";
-        String VIEW = "View";
-        String RESET = "Reset";
+	public static final String TOOLS = "Tools";
+    public static final String FILELIST = "Filelist";
+    public static final String VIEW = "View";
+    public static final String RESET = "Reset";
 	/** An item in the menubar. */
-	String HELP = "Help";
+	public static final String HELP = "Help";
 	/** An item in the menubar. */
-	String VERSION = "Version";
+	public static final String VERSION = "Version";
 	/** An item in the menubar. */
-	String ABOUT = "About";
+	public static final String ABOUT = "About";
 	/** An item in the menubar. */
-	String TOOL = "Tool";
+	public static final String TOOL = "Tool";
 	/** An item in the menubar. */
-	String USAGE = "Usage";
+	public static final String USAGE = "Usage";
 	/** An item in the menubar. */
-	String ARGUMENTS = "Arguments";
+	public static final String ARGUMENTS = "Arguments";
 	/** An item in the menubar. */
-	String EXECUTE = "Execute";
+	public static final String EXECUTE = "Execute";
 	/** An item in the menubar. */
-	String EXECUTESHOW = "Execute+Open";
+	public static final String EXECUTESHOW = "Execute+Open";
 	/** An item in the menubar. */
-	String EXECUTEPRINT = "Execute+Printdialog";
+	public static final String EXECUTEPRINT = "Execute+Printdialog";
 	/** An item in the menubar. */
-	String EXECUTEPRINTSILENT = "Execute+Print";
+	public static final String EXECUTEPRINTSILENT = "Execute+Print";
 
 }

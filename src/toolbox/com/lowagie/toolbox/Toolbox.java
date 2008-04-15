@@ -50,7 +50,7 @@ import com.lowagie.tools.Executable;
  * This is a utility that allows you to use a number of iText tools.
  * @since 2.1.1 (imported from itexttoolbox project)
  */
-public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
+public class Toolbox extends JFrame implements ActionListener {
     /** A serial version ID */
     private static final long serialVersionUID = -3766198389452935073L;
     /** The DesktopPane of the toolbox. */
@@ -167,33 +167,33 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
         }
         toolmap = new Properties();
         JMenuBar menubar = new JMenuBar();
-        JMenu file = new JMenu(FILE);
+        JMenu file = new JMenu(ToolMenuItems.FILE);
         file.setMnemonic(KeyEvent.VK_T);
-        JMenuItem close = new JMenuItem(CLOSE);
+        JMenuItem close = new JMenuItem(ToolMenuItems.CLOSE);
         close.setMnemonic(KeyEvent.VK_C);
         close.addActionListener(this);
         file.add(close);
-        JMenu view = new JMenu(VIEW);
-        JMenuItem reset = new JMenuItem(RESET);
+        JMenu view = new JMenu(ToolMenuItems.VIEW);
+        JMenuItem reset = new JMenuItem(ToolMenuItems.RESET);
         reset.addActionListener(this);
         view.add(reset);
 //        JMenuItem filelist = new JMenuItem(FILELIST);
 //        filelist.addActionListener(this);
 //        view.add(filelist);
-        JMenu tools = new JMenu(TOOLS);
+        JMenu tools = new JMenu(ToolMenuItems.TOOLS);
 // Here one day should be the wizard to help you create a new beanshell script
 //        JMenuItem create = new JMenuItem(CREATE);
 //        create.addActionListener(this);
 //        tools.add(create);
         buildPluginMenuItems(new TreeMap<Object, Object>(p), tools);
-        JMenu help = new JMenu(HELP);
-        JMenuItem about = new JMenuItem(ABOUT);
+        JMenu help = new JMenu(ToolMenuItems.HELP);
+        JMenuItem about = new JMenuItem(ToolMenuItems.ABOUT);
 //        about.setIcon(new ImageIcon(Toolbox.class.getResource(
 //                "Help24.gif")));
         about.setMnemonic(KeyEvent.VK_A);
         about.addActionListener(this);
         help.add(about);
-        JMenuItem versions = new JMenuItem(VERSION);
+        JMenuItem versions = new JMenuItem(ToolMenuItems.VERSION);
 //        versions.setIcon(new ImageIcon(Toolbox.class.getResource(
 //                "About24.gif")));
         versions.addActionListener(this);
@@ -299,10 +299,10 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
      * @param evt ActionEvent
      */
     public void actionPerformed(ActionEvent evt) {
-        if (CLOSE.equals(evt.getActionCommand())) {
+        if (ToolMenuItems.CLOSE.equals(evt.getActionCommand())) {
             System.out.println("The Toolbox is closed.");
             System.exit(0);
-        } else if (ABOUT.equals(evt.getActionCommand())) {
+        } else if (ToolMenuItems.ABOUT.equals(evt.getActionCommand())) {
             System.out
                     .println("The iText Toolbox is part of iText, a Free Java-PDF Library.\nVisit http://itexttoolbox.sourceforge.net/ for more info.");
             try {
@@ -314,7 +314,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
                                 this,
                                 "The iText Toolbox is part of iText, a Free Java-PDF Library.\nVisit http://itexttoolbox.sourceforge.net/ for more info.");
             }
-        } else if (RESET.equals(evt.getActionCommand())) {
+        } else if (ToolMenuItems.RESET.equals(evt.getActionCommand())) {
             JInternalFrame[] framearray = desktop.getAllFrames();
             int xx = 0, yy = 0;
             for (int i = 0; i < framearray.length; i++) {
@@ -339,7 +339,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
                     }
                 }
             }
-        } else if (VERSION.equals(evt.getActionCommand())) {
+        } else if (ToolMenuItems.VERSION.equals(evt.getActionCommand())) {
             JFrame f = new Versions();
             centerFrame(f);
             f.setVisible(true);

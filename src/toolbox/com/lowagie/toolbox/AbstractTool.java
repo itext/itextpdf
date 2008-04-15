@@ -52,7 +52,7 @@ import com.lowagie.tools.Executable;
  * @version Id
  * @since 2.1.1 (imported from itexttoolbox project)
  */
-public abstract class AbstractTool implements ToolMenuItems, ActionListener {
+public abstract class AbstractTool implements ActionListener {
 
     /** An array with the plugin_versions of the tool. */
     public static ArrayList<String> versionsarray = new ArrayList<String>();
@@ -164,44 +164,44 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
      */
     public JMenuBar getMenubar() {
         menubar = new JMenuBar();
-        JMenu tool = new JMenu(TOOL);
+        JMenu tool = new JMenu(ToolMenuItems.TOOL);
         tool.setMnemonic(KeyEvent.VK_F);
-        JMenuItem usage = new JMenuItem(USAGE);
+        JMenuItem usage = new JMenuItem(ToolMenuItems.USAGE);
         usage.setMnemonic(KeyEvent.VK_U);
         usage.addActionListener(this);
         tool.add(usage);
-        JMenuItem args = new JMenuItem(ARGUMENTS);
+        JMenuItem args = new JMenuItem(ToolMenuItems.ARGUMENTS);
         args.setMnemonic(KeyEvent.VK_A);
         args.addActionListener(this);
         tool.add(args);
         if ((menuoptions & MENU_EXECUTE) > 0) {
-            JMenuItem execute = new JMenuItem(EXECUTE);
+            JMenuItem execute = new JMenuItem(ToolMenuItems.EXECUTE);
             execute.setMnemonic(KeyEvent.VK_E);
             execute.addActionListener(this);
             tool.add(execute);
         }
         if ((menuoptions & MENU_EXECUTE_SHOW) > 0) {
-            JMenuItem execute = new JMenuItem(EXECUTESHOW);
+            JMenuItem execute = new JMenuItem(ToolMenuItems.EXECUTESHOW);
             execute.addActionListener(this);
             tool.add(execute);
         }
         if ((menuoptions & MENU_EXECUTE_PRINT) > 0) {
-            JMenuItem execute = new JMenuItem(EXECUTEPRINT);
+            JMenuItem execute = new JMenuItem(ToolMenuItems.EXECUTEPRINT);
             execute.addActionListener(this);
             tool.add(execute);
         }
         if ((menuoptions & MENU_EXECUTE_PRINT_SILENT) > 0) {
-            JMenuItem execute = new JMenuItem(EXECUTEPRINTSILENT);
+            JMenuItem execute = new JMenuItem(ToolMenuItems.EXECUTEPRINTSILENT);
             execute.addActionListener(this);
             tool.add(execute);
         }
-        JMenuItem close = new JMenuItem(CLOSE);
+        JMenuItem close = new JMenuItem(ToolMenuItems.CLOSE);
         close.setMnemonic(KeyEvent.VK_C);
         close.addActionListener(this);
         tool.add(close);
         menubar.add(tool);
         if (!arguments.isEmpty()) {
-            JMenu params = new JMenu(ARGUMENTS);
+            JMenu params = new JMenu(ToolMenuItems.ARGUMENTS);
             tool.setMnemonic(KeyEvent.VK_T);
             JMenuItem item;
             for (AbstractArgument argument: arguments) {
@@ -258,21 +258,21 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
      * @param evt ActionEvent
      */
     public void actionPerformed(ActionEvent evt) {
-        if (CLOSE.equals(evt.getActionCommand())) {
+        if (ToolMenuItems.CLOSE.equals(evt.getActionCommand())) {
             System.out.println("=== " + getInternalFrame().getTitle() +
                                " CLOSED ===");
             internalFrame.dispose();
         }
-        if (USAGE.equals(evt.getActionCommand())) {
+        if (ToolMenuItems.USAGE.equals(evt.getActionCommand())) {
             JOptionPane.showMessageDialog(internalFrame, getUsage());
         }
-        if (ARGUMENTS.equals(evt.getActionCommand())) {
+        if (ToolMenuItems.ARGUMENTS.equals(evt.getActionCommand())) {
             JOptionPane.showMessageDialog(internalFrame, getArgs());
         }
-        if (EXECUTE.equals(evt.getActionCommand())) {
+        if (ToolMenuItems.EXECUTE.equals(evt.getActionCommand())) {
             this.execute();
         }
-        if (EXECUTESHOW.equals(evt.getActionCommand())) {
+        if (ToolMenuItems.EXECUTESHOW.equals(evt.getActionCommand())) {
             this.execute();
             try {
                 if (awtdesktop != null &&
@@ -285,7 +285,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
                 System.err.println(e.getMessage());
             }
         }
-        if (EXECUTEPRINT.equals(evt.getActionCommand())) {
+        if (ToolMenuItems.EXECUTEPRINT.equals(evt.getActionCommand())) {
             this.execute();
             try {
                 if (awtdesktop != null &&
@@ -298,7 +298,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
                 System.err.println(e.getMessage());
             }
         }
-        if (EXECUTEPRINTSILENT.equals(evt.getActionCommand())) {
+        if (ToolMenuItems.EXECUTEPRINTSILENT.equals(evt.getActionCommand())) {
             this.execute();
             try {
                 Executable.printDocumentSilent(getDestPathPDF());

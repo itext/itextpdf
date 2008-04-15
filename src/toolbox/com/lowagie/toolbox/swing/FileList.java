@@ -42,13 +42,12 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.toolbox.ToolMenuItems;
 
 /**
  * @since 2.1.1 (imported from itexttoolbox project)
  */
 public class FileList
-    extends JInternalFrame implements DropTargetListener, ToolMenuItems {
+    extends JInternalFrame implements DropTargetListener {
 
   private static final long serialVersionUID = -7238230038043975672L;
 
