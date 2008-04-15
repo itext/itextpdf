@@ -1208,14 +1208,9 @@ public abstract class BaseFont {
         }
         // Try to use Context Class Loader to load the properties file.
         try {
-            java.lang.reflect.Method getCCL =
-                Thread.class.getMethod("getContextClassLoader", new Class[0]);
-            if (getCCL != null) {
-                ClassLoader contextClassLoader =
-                    (ClassLoader)getCCL.invoke(Thread.currentThread(),
-                                               new Object[0]);
-                if (contextClassLoader != null)
-                    is = contextClassLoader.getResourceAsStream(key);
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                is = contextClassLoader.getResourceAsStream(key);
             }
         } catch (Throwable e) {}
 
