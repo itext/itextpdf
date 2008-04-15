@@ -2001,13 +2001,11 @@ public class PdfDocument extends Document {
      */
     int jsCounter;
     protected HashMap documentLevelJS = new HashMap();
-    protected DecimalFormat SIXTEEN_DIGITS;
+    protected static final DecimalFormat SIXTEEN_DIGITS = new DecimalFormat("0000000000000000");
     void addJavaScript(PdfAction js) {
         if (js.get(PdfName.JS) == null)
             throw new RuntimeException("Only JavaScript actions are allowed.");
         try {
-            if (SIXTEEN_DIGITS == null)
-                SIXTEEN_DIGITS = new DecimalFormat("0000000000000000");
             documentLevelJS.put(SIXTEEN_DIGITS.format(jsCounter++), writer.addToBody(js).getIndirectReference());
         }
         catch (IOException e) {
