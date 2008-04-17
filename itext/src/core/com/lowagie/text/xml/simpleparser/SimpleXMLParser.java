@@ -119,37 +119,37 @@ public final class SimpleXMLParser {
 	private final static int ATTRIBUTE_VALUE = 14;
     
 	/** the state stack */
-	protected Stack stack;
+	Stack stack;
 	/** The current character. */
-	protected int character = 0;
+	int character = 0;
 	/** The previous character. */
-	protected int previousCharacter = -1;
+	int previousCharacter = -1;
 	/** the line we are currently reading */
-	protected int lines = 1;
+	int lines = 1;
 	/** the column where the current character occurs */
-	protected int columns = 0;
+	int columns = 0;
 	/** was the last character equivalent to a newline? */
-	protected boolean eol = false;
+	boolean eol = false;
 	/** the current state */
-	protected int state;
+	int state;
 	/** Are we parsing HTML? */
-	protected boolean html;
+	boolean html;
 	/** current text (whatever is encountered between tags) */
-	protected StringBuffer text = new StringBuffer();
+	StringBuffer text = new StringBuffer();
 	/** current entity (whatever is encountered between & and ;) */
-	protected StringBuffer entity = new StringBuffer();
+	StringBuffer entity = new StringBuffer();
 	/** current tagname */
-	protected String tag = null;
+	String tag = null;
 	/** current attributes */
-	protected HashMap attributes = null;
+	HashMap attributes = null;
 	/** The handler to which we are going to forward document content */
-	protected SimpleXMLDocHandler doc;
+	SimpleXMLDocHandler doc;
 	/** The handler to which we are going to forward comments. */
-	protected SimpleXMLDocHandlerComment comment;
+	SimpleXMLDocHandlerComment comment;
 	/** Keeps track of the number of tags that are open. */
 	int nested = 0;
 	/** the quote character that was used to open the quote. */
-	protected int quoteCharacter = '"';
+	int quoteCharacter = '"';
 	/** the attribute key. */
 	String attributekey = null;
 	/** the attribute value. */

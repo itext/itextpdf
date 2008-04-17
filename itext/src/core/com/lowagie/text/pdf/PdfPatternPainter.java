@@ -56,9 +56,9 @@ import com.lowagie.text.Rectangle;
 
 public final class PdfPatternPainter extends PdfTemplate {
     
-    protected float xstep, ystep;
-    protected boolean stencil = false;
-    protected Color defaultColor;
+    float xstep, ystep;
+    boolean stencil = false;
+    Color defaultColor;
     
     /**
      *Creates a <CODE>PdfPattern</CODE>.
