@@ -880,7 +880,6 @@ public class PdfSignatureAppearance {
         AcroFields af = writer.getAcroFields();
         String name = getFieldName();
         boolean fieldExists = !(isInvisible() || isNewField());
-        int flags = PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_LOCKED;
         PdfIndirectReference refSig = writer.getPdfIndirectReference();
         writer.setSigFlags(3);
         if (fieldExists) {
@@ -890,8 +889,10 @@ public class PdfSignatureAppearance {
             widget.put(PdfName.P, writer.getPageReference(getPage()));
             widget.put(PdfName.V, refSig);
             PdfObject obj = PdfReader.getPdfObjectRelease(widget.get(PdfName.F));
+            int flags = 0;
             if (obj != null && obj.isNumber())
-                flags = ((PdfNumber)obj).intValue() | PdfAnnotation.FLAGS_LOCKED;
+                flags = ((PdfNumber)obj).intValue();
+            flags |= PdfAnnotation.FLAGS_LOCKED;
             widget.put(PdfName.F, new PdfNumber(flags));
             PdfDictionary ap = new PdfDictionary();
             ap.put(PdfName.N, getAppearance().getIndirectReference());
@@ -901,7 +902,7 @@ public class PdfSignatureAppearance {
             PdfFormField sigField = PdfFormField.createSignature(writer);
             sigField.setFieldName(name);
             sigField.put(PdfName.V, refSig);
-            sigField.setFlags(flags);
+            sigField.setFlags(PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_LOCKED);
 
             int pagen = getPage();
             if (!isInvisible())
