@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2007 by Howard Shank (hgshank@yahoo.com)
+ * Copyright 2008 by Howard Shank (hgshank@yahoo.com)
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -50,8 +50,14 @@
  
 package com.lowagie.text.rtf.document;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.rtf.RtfElement;
+
 /**
- * <code>RtfPassword</code> 
+ * <code>RtfProtection</code> 
  * <pre>
  * See ECMA Specification for WordprocessingML documentProtection element.
  * 
@@ -59,16 +65,97 @@ package com.lowagie.text.rtf.document;
  * Standard ECMA-376 1st Edition / December 2006
  * Office Open XML File Formats
  * </pre>
- * @author Howard Shank (hgshank@yahoo.com)
- *
  * @since 2.1.1
+ * @author Howard Shank (hgshank@yahoo.com)
  */
-public class RtfPassword {
+public final class RtfProtection {
+    /**
+     * Default for protection level. 
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+	static final public int LEVEL_NONE = 0x0000;
+	/**
+	 * REVPROT
+	 * Mutually exclusive
+	 * This document is protected for revisions. The user can edit the document, 
+	 * but revision marking cannot be disabled.
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+	 */
+	static final public int LEVEL_REVPROT = 0x0001; // protlevel0
+	/**
+	 * ANNNOTPROT
+	 * Mutually exclusive
+	 * This document is protected for comments (annotations).
+	 * The user cannot edit the document but can insert comments (annotations).
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+	 */
+	static final public int LEVEL_ANNOTPROT = 0x0002; // protlevel1
+	/**
+	 * FORMPROT
+	 * Mutually exclusive
+	 * Document is protected for forms.
+	 * see also \allprot (forms controlword)
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+	 */
+	static final public int LEVEL_FORMPROT = 0x0004; // protlevel2
+	/**
+	 * READPROT
+	 * Mutually exclusive but can be combined with ANNOTPROT for backward compatibility 
+	 * Document is protected for editing, except areas marked as exceptions by \protstart and\protend
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+	 */
+	static final public int LEVEL_READPROT = 0x0008; // protlevel3
+
 
 	/**
-	 * <code>initialCodeArray</code> Table from ECMA-376 Specification
+	 * STYLELOCK
+	 * 
+	 * The document contains styles and formatting restrictions.
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
 	 */
-	static private int initialCodeArray[] = { 
+	static final public int STYLELOCK = 0x0001;
+	/**
+	 * STYLELOCKENFORCED
+	 * 
+	 * The styles and formatting restrictions are being enforced.
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+	 */
+	static final public int STYLELOCKENFORCED = 0x0002;
+	/**
+	 * STYLELOCKBACKCOMP
+	 * 
+	 * Style lockdown backward compatibility flag, indicating we emitted protection 
+	 * keywords to get documents with styles and formatting restrictions to behave 
+	 * in a reasonable way when opened by older versions.
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+	 */
+	static final public int STYLELOCKBACKCOMP = 0x0004;
+	/**
+	 * STYLELOCKBACKCOMP
+	 * 
+	 * Allow AutoFormat to override styles and formatting restrictions.  When style 
+	 * protection is on, the user cannot add direct formatting.  This setting allows 
+	 * AutoFormat actions to apply direct formatting when needed.
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+	 */
+	static final public int AUTOFMTOVERRIDE = 0x0008;
+	
+	
+	/**
+	 * <code>initialCodeArray</code> Table from ECMA-376 Specification
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+	 */
+	static final private int initialCodeArray[] = { 
 			0xE1F0, 
 			0x1D0F, 
 			0xCC9C, 
@@ -89,8 +176,10 @@ public class RtfPassword {
 	
 	/**
 	 * <code>encryptionMatrix</code> Table from ECMA-376 Specification
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
 	 */
-	static private int encryptionMatrix [][] = {
+	static final private int encryptionMatrix [][] = {
 		/*              bit1    bit2    bit3    bit4    bit5    bit6    bit7   **bit8 is ignored** */
 		/* char 1  */ {0x1021, 0x2042, 0x4084, 0x8108, 0x1231, 0x2462, 0x48C4},
 		/* char 2  */ {0x3331, 0x6662, 0xCCC4, 0x89A9, 0x0373, 0x06E6, 0x0DCC},
@@ -110,7 +199,7 @@ public class RtfPassword {
 	};
 	
 	/**
-	 * <code>encrypt</code> generates the password hash from a clear text string.
+	 * <code>generateHash</code> generates the password hash from a clear text string.
 	 * 
 	 * @param pwd Clear text string input
 	 * @return hex encoded password hash
@@ -118,7 +207,7 @@ public class RtfPassword {
 	 * @author Howard Shank (hgshank@yahoo.com)
 	 * @since 2.1.1
 	 */
-	static public String encrypt(String pwd) {
+	static final public String generateHash(String pwd) {
 		String encryptedPwd="00000000";
 		String password = pwd;
 		
@@ -128,14 +217,15 @@ public class RtfPassword {
 			int hi=0;
 			int lo=0;
 
+			// Truncate the password to 15 characters.
+			if(password.length() > 15) {
+				password = password.substring(0,15);
+			}
+
 			// compute key's high-order word
 			// initialize to table value
 			hi = initialCodeArray[password.length()-1];
 			
-			// Truncate the password to 15 characters.
-			if(password.length() > 15) {
-				password = password.substring(0,14);
-			}
 			int fidx = 0;
 			int idxR = password.length()-1;
 			// process each character left to right.

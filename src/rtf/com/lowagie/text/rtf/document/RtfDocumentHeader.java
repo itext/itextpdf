@@ -116,6 +116,12 @@ public class RtfDocumentHeader extends RtfElement {
      */
     private RtfInfoGroup infoGroup = null;
     /**
+     * The protection settings
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    private RtfProtectionSetting protectionSetting = null;
+    /**
      * The page settings
      */
     private RtfPageSetting pageSetting = null;
@@ -147,6 +153,7 @@ public class RtfDocumentHeader extends RtfElement {
         this.listTable = new RtfListTable(this.document);
         this.stylesheetList = new RtfStylesheetList(this.document);
         this.infoGroup = new RtfInfoGroup(this.document);
+        this.protectionSetting = new RtfProtectionSetting(this.document);
         this.pageSetting = new RtfPageSetting(this.document);
         this.header = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_HEADER);
         this.footer = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_FOOTER);
@@ -170,6 +177,7 @@ public class RtfDocumentHeader extends RtfElement {
             this.listTable.writeDefinition(result);
             this.generator.writeContent(result);
             this.infoGroup.writeContent(result);
+            this.protectionSetting.writeDefinition(result);
             this.pageSetting.writeDefinition(result);
             
             writeSectionDefinition(result);
