@@ -547,8 +547,9 @@ public class PdfReader implements PdfViewerPreferences {
             readDocObjPartial();
             readPages();
         }
-        finally {
+        catch (IOException e) {
             try{tokens.close();}catch(Exception ee){}
+            throw e;
         }
     }
 
