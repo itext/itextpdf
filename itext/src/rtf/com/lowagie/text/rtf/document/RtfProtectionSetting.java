@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  * $Name$
  *
  * Copyright 2008 by Howard Shank
@@ -53,14 +53,13 @@ package com.lowagie.text.rtf.document;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.lowagie.text.Document;
 import com.lowagie.text.rtf.RtfElement;
 
 
 /**
  * The RtfProtectionSetting handles document protection elements 
  * 
- * @version $Id:$
+ * @version $Id$
  * @author Howard Shank (hgshank@yahoo.com)
  * @since 2.1.1 
  */

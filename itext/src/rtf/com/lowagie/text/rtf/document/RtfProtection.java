@@ -50,12 +50,6 @@
  
 package com.lowagie.text.rtf.document;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.rtf.RtfElement;
-
 /**
  * <code>RtfProtection</code> 
  * <pre>
@@ -256,7 +250,7 @@ public final class RtfProtection {
 				}
 			}
 			// Compute Key's low-order word
-			fidx = password.length()-1;;
+			fidx = password.length()-1;
 			lo = 0;
 			// low order word is computed in reverse.
 			for(;fidx>= 0; fidx--) {
