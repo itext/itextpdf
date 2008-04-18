@@ -310,7 +310,8 @@ public class BarcodePDF417 {
             }
             if ((v & ISBYTE) != 0) {
                 if ((ptr & 1) != 0) {
-                    dest[ptr++] = (mode & PUNCTUATION) != 0 ? PAL : PS;
+                    //add a padding word
+                    dest[ptr++] = PAL;
                     mode = (mode & PUNCTUATION) != 0 ? ALPHA : mode;
                 }
                 dest[ptr++] = BYTESHIFT;
