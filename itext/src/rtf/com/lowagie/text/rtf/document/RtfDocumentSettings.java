@@ -62,6 +62,7 @@ import com.lowagie.text.rtf.style.RtfParagraphStyle;
  * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
+ * @author Howard Shank (hgshank@yahoo.com)
  */
 public class RtfDocumentSettings {
 
@@ -97,6 +98,30 @@ public class RtfDocumentSettings {
      * Whether images should be written in order to mimick the PDF output. 
      */
     private boolean imagePDFConformance = true;
+    /**
+     * Document protection level
+     * @since 2.1.1
+	 * @author Howard Shank (hgshank@yahoo.com)
+     */
+    private int protectionLevel = RtfProtection.LEVEL_NONE;
+    /**
+     * Document protection level password hash.
+     * @since 2.1.1
+	 * @author Howard Shank (hgshank@yahoo.com)
+     */
+    private String protectionHash = null;
+    /**
+     * Document read password hash
+     * @since 2.1.1
+	 * @author Howard Shank (hgshank@yahoo.com)
+     */
+    private String writereservhash = null; //\*\writereservhash - not implemented
+    /**
+     * Document recommended to be opened in read only mode.
+     * @since 2.1.1
+	 * @author Howard Shank (hgshank@yahoo.com)
+     */
+    private boolean readOnlyRecommended = false;
     
     /**
      * Constructs a new RtfDocumentSettings object.
@@ -310,5 +335,199 @@ public class RtfDocumentSettings {
      */
     public void setOptionsForOpenOfficeOrg() {
         this.setOutputTableRowDefinitionAfter(false);
+    }
+    
+    /**
+     * @param level Document protecton level
+     * @param pwd Document password - clear text
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public boolean setProtection(int level, String pwd) {
+    	boolean result = false;
+    	if(this.protectionHash == null) {
+    		if(setProtectionLevel(level) == false) {
+    			result = false;
+    		}
+    		else
+    		{
+	    		protectionHash = RtfProtection.generateHash(pwd);
+	    		result = true;
+    		}
+    	}
+    	else {
+	    	if(this.protectionHash.equals(RtfProtection.generateHash(pwd))) {
+	    		if(setProtectionLevel(level) == false) {
+	    			result = false;
+	    		}
+	    		else
+	    		{
+		    		protectionHash = RtfProtection.generateHash(pwd);
+		    		result = true;
+	    		}
+	    	}
+    	}
+    	return result;
+    }
+    
+    /**
+     * @param pwd Document password - clear text
+     * @return true if document unprotected, false if protection is not removed.
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public boolean unprotectDocument(String pwd) {
+    	boolean result = false;
+    	if (this.protectionHash.equals(RtfProtection.generateHash(pwd))) {
+    		this.protectionLevel =  RtfProtection.LEVEL_NONE;
+    		this.protectionHash = null;
+    		result = true;
+    	}
+    	return result;
+    }
+    
+    /**
+     * @param level Document protection level
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public boolean setProtectionLevel(int level) {
+    	boolean result = false;
+    	switch(level) {
+    	case RtfProtection.LEVEL_NONE:
+    		if(this.protectionHash == null) {
+    			break;
+    		}
+    	case RtfProtection.LEVEL_ANNOTPROT:
+    	case RtfProtection.LEVEL_FORMPROT:
+    	case RtfProtection.LEVEL_REVPROT:
+    	case RtfProtection.LEVEL_READPROT:
+        	this.protectionLevel = level;
+        	result = true;
+        	break;
+   		default:
+    	}
+    	return result;
+    }
+    /**
+     * This function is not intended for general use. Please see 'public boolean setProtection(int level, String pwd)'
+     * @param pwd Password HASH to set the document password hash to.
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public void setPasswordHash(String pwd) {
+    	if(pwd != null && pwd.length() != 8) return;
+    	this.protectionHash = pwd;
+    }
+    /**
+     * Converts protection level from internal bitmap value to protlevel output value
+     * @return <pre>
+     * 0 = Revision protection
+     * 1 = Annotation/Comment protection
+     * 2 = Form protection
+     * 3 = Read only protection
+     * </pre>
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    private int convertProtectionLevel() {
+    	int level = 0;
+    	switch(this.protectionLevel) {
+    	case RtfProtection.LEVEL_NONE:
+    		break;
+    	case RtfProtection.LEVEL_REVPROT:
+    		level = 0;
+    		break;
+    	case RtfProtection.LEVEL_ANNOTPROT:
+    		level = 1;
+    		break;
+    	case RtfProtection.LEVEL_FORMPROT:
+    		level = 2;
+    		break;
+    	case RtfProtection.LEVEL_READPROT:
+    		level = 3;
+    		break;
+    	}
+    	return level;
+    	
+    }
+    /**
+     * @return RTF document protection level
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public int getProtectionLevelRaw() {
+    	return this.protectionLevel;
+    }
+    /**
+     * @return RTF document protection level
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public int getProtectionLevel() {
+    	return convertProtectionLevel();
+    }
+    /**
+     * @return RTF document protection level as a byte array (byte[])
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public byte[] getProtectionLevelBytes() {
+    	return Integer.toString(convertProtectionLevel()).getBytes();
+    }
+    /**
+     * @param oldPwd Old password - clear text
+     * @param newPwd New password - clear text
+     * @return true if password set, false if password not set
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public boolean setNewPassword(String oldPwd, String newPwd) {
+    	boolean result = false;
+    	if (this.protectionHash.equals(RtfProtection.generateHash(oldPwd))) {
+    		this.protectionHash = RtfProtection.generateHash(newPwd);
+    		result = true;
+    	}
+    	return result;
+    }
+    
+    /**
+     * Set the RTF flag that recommends the document be opened in read only mode.
+     * @param value true if the flag is to be set, false if it is NOT to be set
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public void setReadOnlyRecommended(boolean value) {
+    	this.readOnlyRecommended = value;
+    }
+    
+    /**
+     * Get the RTF flag that recommends if the the document should be opened in read only mode.
+     * @return true if flag is set, false if it is not set
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public boolean getReadOnlyRecommended() {
+    	return this.readOnlyRecommended;
+    }
+    
+    /**
+     * Determine if document has protection enabled.
+     * @return true if protection is enabled, false if it is not enabled
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public boolean isDocumentProtected() {
+    	return !(this.protectionHash == null);
+    }
+    
+    /**
+     * Obtain the password has as a byte array.
+     * @return The bytes of the password hash as a byte array (byte[])
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    public byte[] getProtectionHashBytes() {
+    	return this.protectionHash.getBytes();
     }
 }

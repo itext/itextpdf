@@ -63,6 +63,7 @@ import com.lowagie.text.rtf.RtfElement;
  * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
+ * @author Howard Shank (hgshank@yahoo.com)
  */
 public class RtfInfoGroup extends RtfElement {
     /**
@@ -70,6 +71,13 @@ public class RtfInfoGroup extends RtfElement {
      */
     private static final byte[] INFO_GROUP = "\\info".getBytes();
     
+    /**
+     * Constant for the password element
+     * @since 2.1.1
+     * @author Howard Shank (hgshank@yahoo.com)
+     */
+    private static final byte[] INFO_PASSWORD = "\\*\\password".getBytes();
+
     /**
      * The RtfInfoElements that belong to this RtfInfoGroup
      */
@@ -105,6 +113,16 @@ public class RtfInfoGroup extends RtfElement {
 			RtfInfoElement infoElement = (RtfInfoElement) infoElements.get(i);
 			infoElement.writeContent(result);
 		}
+		
+		// handle document protection
+    	if(document.getDocumentSettings().isDocumentProtected()) {
+	    	result.write(OPEN_GROUP);
+			result.write(INFO_PASSWORD);
+			result.write(DELIMITER);
+			result.write(document.getDocumentSettings().getProtectionHashBytes());
+			result.write(CLOSE_GROUP);
+    	}
+
 		result.write(CLOSE_GROUP);
 		result.write((byte) '\n');
     }        
