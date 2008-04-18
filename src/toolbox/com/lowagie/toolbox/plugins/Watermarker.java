@@ -1,5 +1,5 @@
 /*
- * $Id: Watermarker.java 112 2007-11-26 22:24:10Z chammer $
+ * $Id$
  * Copyright (c) 2005-2007 Bruno Lowagie, Carsten Hammer
  *
  * Permission is hereby granted, free of charge, to any person
@@ -62,7 +62,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 public class Watermarker extends AbstractTool {
 
     static {
-        addVersion("$Id: Watermarker.java 112 2007-11-26 22:24:10Z chammer $");
+        addVersion("$Id$");
     }
 
     FileArgument destfile = null;

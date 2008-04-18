@@ -1,5 +1,5 @@
 /*
- * $Id: EventDispatchingThread.java 49 2007-05-19 19:24:42Z chammer $
+ * $Id$
  * Copyright (c) 2007 Bruno Lowagie
  *
  * Permission is hereby granted, free of charge, to any person

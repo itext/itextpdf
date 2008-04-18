@@ -1,5 +1,5 @@
 /*
- * $Id: Concat.java 110 2007-09-28 20:51:28Z xlv $
+ * $Id$
  * Copyright (c) 2005-2007 Bruno Lowagie, Carsten Hammer, Paulo Soares
  *
  * Permission is hereby granted, free of charge, to any person
@@ -60,7 +60,7 @@ import com.lowagie.toolbox.arguments.filters.PdfFilter;
 public class Concat extends AbstractTool {
 
 	static {
-		addVersion("$Id: Concat.java 110 2007-09-28 20:51:28Z xlv $");
+		addVersion("$Id$");
 	}
 	/**
 	 * Constructs a Concat object.

@@ -1,5 +1,5 @@
 /*
- * $Id: RemoveLaunchApplication.java 110 2007-09-28 20:51:28Z xlv $
+ * $Id$
  * Copyright (c) 2005-2007 Bruno Lowagie
  *
  * Permission is hereby granted, free of charge, to any person
@@ -60,7 +60,7 @@ public class RemoveLaunchApplication
 
   static {
     addVersion(
-        "$Id: RemoveLaunchApplication.java 110 2007-09-28 20:51:28Z xlv $");
+        "$Id$");
   }
 
   /**

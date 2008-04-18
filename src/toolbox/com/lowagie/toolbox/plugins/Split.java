@@ -1,5 +1,5 @@
 /*
- * $Id: Split.java 115 2007-11-29 17:12:28Z xlv $
+ * $Id$
  * Copyright (c) 2005-2007 Bruno Lowagie, Carsten Hammer
  *
  * Permission is hereby granted, free of charge, to any person
@@ -60,7 +60,7 @@ import com.lowagie.toolbox.swing.PdfInformationPanel;
 public class Split extends AbstractTool {
 
 	static {
-		addVersion("$Id: Split.java 115 2007-11-29 17:12:28Z xlv $");
+		addVersion("$Id$");
 	}
 	/**
 	 * Constructs an Split object.

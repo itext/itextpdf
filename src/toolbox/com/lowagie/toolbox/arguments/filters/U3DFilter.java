@@ -1,5 +1,5 @@
 /*
- * $Id: U3DFilter.java 56 2007-05-22 22:07:21Z chammer $
+ * $Id$
  * Copyright (c) 2005-2007 Bruno Lowagie, Carsten Hammer
  *
  * Permission is hereby granted, free of charge, to any person

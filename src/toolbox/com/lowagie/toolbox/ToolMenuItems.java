@@ -1,5 +1,5 @@
 /*
- * $Id: ToolMenuItems.java 105 2007-09-24 20:09:31Z chammer $
+ * $Id$
  * Copyright (c) 2005-2007 Bruno Lowagie
  *
  * Permission is hereby granted, free of charge, to any person

@@ -1,5 +1,5 @@
 /*
- * $Id: PlaceHolderScript.java 106 2007-09-24 20:10:51Z chammer $
+ * $Id$
  * $Name:  $
  *
  * Copyright 2007 by Carsten Hammer.

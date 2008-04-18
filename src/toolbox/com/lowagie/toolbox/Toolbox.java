@@ -1,5 +1,5 @@
 /*
- * $Id: Toolbox.java 116 2007-11-29 17:13:01Z xlv $
+ * $Id$
  * Copyright (c) 2005-2007 Bruno Lowagie, Carsten Hammer
  *
  * Permission is hereby granted, free of charge, to any person

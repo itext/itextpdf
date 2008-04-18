@@ -1,5 +1,5 @@
 /*
- * $Id: RtfBasicElement.java 3126 2008-02-07 20:30:46Z hallm $
+ * $Id$
  * $Name$
  *
  * Copyright 2008 by Bruno Lowagie
