@@ -1,5 +1,5 @@
 # This is a list of tools that are available for the iText toolbox
-# $Id: tools.txt 66 2007-06-23 13:16:18Z chammer $
+# $Id$
 
 # Made by Bruno Lowagie:
 
