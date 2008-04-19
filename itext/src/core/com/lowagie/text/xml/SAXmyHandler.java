@@ -63,9 +63,6 @@ import com.lowagie.text.DocListener;
 
 public class SAXmyHandler extends SAXiTextHandler {
     
-/** This hashmap contains all the custom keys and peers. */
-    protected HashMap myTags;
-    
 /**
  * Constructs a new SAXiTextHandler that will translate all the events
  * triggered by the parser to actions on the <CODE>Document</CODE>-object.
@@ -75,8 +72,7 @@ public class SAXmyHandler extends SAXiTextHandler {
  */
     
     public SAXmyHandler(DocListener document, HashMap myTags) {
-        super(document);
-        this.myTags = myTags;
+        super(document, myTags);
     }
     
 /**
