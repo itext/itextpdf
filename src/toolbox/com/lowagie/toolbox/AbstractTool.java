@@ -49,7 +49,7 @@ import com.lowagie.tools.Executable;
  * Every iText tool has to extend this abstract class.
  *
  * @author not attributable
- * @version $Id
+ * @version $Id$
  * @since 2.1.1 (imported from itexttoolbox project)
  */
 public abstract class AbstractTool implements ActionListener {
