@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 18-mrt-2008 12:18:58 by Hibernate Tools 3.2.0.CR1 -->
+<hibernate-mapping>
+    <class name="classroom.festivaldatabase.DirectorName" table="DIRECTOR_NAME" schema="PUBLIC">
+        <id name="directorId" type="int">
+            <column name="DIRECTOR_ID" />
+            <generator class="assigned" />
+        </id>
+        <property name="name" type="string">
+            <column name="NAME" length="80" not-null="true" />
+        </property>
+        <set name="filmTitles" inverse="true" table="FILM_DIRECTOR">
+            <key>
+                <column name="DIRECTOR_ID" not-null="true" />
+            </key>
+            <many-to-many entity-name="classroom.festivaldatabase.FilmTitle">
+                <column name="FILM_ID" not-null="true" />
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>
