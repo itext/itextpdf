@@ -9,9 +9,10 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.lowagie.hibernate.MySessionFactory;
-import com.lowagie.hibernate.film.DirectorName;
-import com.lowagie.hibernate.film.FilmTitle;
+import classroom.database.MySessionFactory;
+import classroom.festivaldatabase.DirectorName;
+import classroom.festivaldatabase.FilmTitle;
+
 import com.lowagie.text.Anchor;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
