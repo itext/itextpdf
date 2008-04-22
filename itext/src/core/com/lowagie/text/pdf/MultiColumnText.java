@@ -275,13 +275,12 @@ public class MultiColumnText implements Element {
         boolean done = false;
         try {
             while (!done) {
-                if (nextY == AUTOMATIC) {
-                    nextY = document.getVerticalPosition(true); // RS - 07/07/2005 - - Get current doc writing position for top of columns on new page.
-                }
                 if (top == AUTOMATIC) {
                     top = document.getVerticalPosition(true); // RS - 07/07/2005 - Get current doc writing position for top of columns on new page.
                 }
-
+                else if (nextY == AUTOMATIC) {
+                    nextY = document.getVerticalPosition(true); // RS - 07/07/2005 - - Get current doc writing position for top of columns on new page.
+                }
                 ColumnDef currentDef = (ColumnDef) columnDefs.get(getCurrentColumn());
                 columnText.setYLine(top);
 
