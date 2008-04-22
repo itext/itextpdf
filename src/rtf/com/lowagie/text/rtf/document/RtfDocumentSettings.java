@@ -122,6 +122,12 @@ public class RtfDocumentSettings {
 	 * @author Howard Shank (hgshank@yahoo.com)
      */
     private boolean readOnlyRecommended = false;
+    /**
+     * Images are written as binary data and not hex encoded.
+     * @since 2.1.1
+     * @author Mark Hall (Mark.Hall@mail.room3b.eu)
+     */
+    private boolean imageWrittenAsBinary = true;
     
     /**
      * Constructs a new RtfDocumentSettings object.
@@ -409,6 +415,7 @@ public class RtfDocumentSettings {
     	}
     	return result;
     }
+    
     /**
      * This function is not intended for general use. Please see 'public boolean setProtection(int level, String pwd)'
      * @param pwd Password HASH to set the document password hash to.
@@ -419,6 +426,7 @@ public class RtfDocumentSettings {
     	if(pwd != null && pwd.length() != 8) return;
     	this.protectionHash = pwd;
     }
+    
     /**
      * Converts protection level from internal bitmap value to protlevel output value
      * @return <pre>
@@ -451,6 +459,7 @@ public class RtfDocumentSettings {
     	return level;
     	
     }
+    
     /**
      * @return RTF document protection level
      * @since 2.1.1
@@ -459,6 +468,7 @@ public class RtfDocumentSettings {
     public int getProtectionLevelRaw() {
     	return this.protectionLevel;
     }
+    
     /**
      * @return RTF document protection level
      * @since 2.1.1
@@ -467,6 +477,7 @@ public class RtfDocumentSettings {
     public int getProtectionLevel() {
     	return convertProtectionLevel();
     }
+    
     /**
      * @return RTF document protection level as a byte array (byte[])
      * @since 2.1.1
@@ -475,6 +486,7 @@ public class RtfDocumentSettings {
     public byte[] getProtectionLevelBytes() {
     	return Integer.toString(convertProtectionLevel()).getBytes();
     }
+    
     /**
      * @param oldPwd Old password - clear text
      * @param newPwd New password - clear text
@@ -529,5 +541,27 @@ public class RtfDocumentSettings {
      */
     public byte[] getProtectionHashBytes() {
     	return this.protectionHash.getBytes();
+    }
+
+    /**
+     * Set whether images are written as binary data or are hex encoded.
+     * 
+     * @param imageWrittenAsBinary <code>True</code> to write images as binary data, <code>false</code> for hex encoding.
+     * @since 2.1.1
+     * @author Mark Hall (Mark.Hall@mail.room3b.eu)
+     */
+    public void setImageWrittenAsBinary(boolean imageWrittenAsBinary) {
+        this.imageWrittenAsBinary = imageWrittenAsBinary;
+    }
+    
+    /**
+     * Gets whether images are written as binary data or are hex encoded. Defaults to <code>true</code>.
+     * 
+     * @since 2.1.1
+     * @return <code>True</code> if images are written as binary data, <code>false</code> if hex encoded.
+     * @author Mark Hall (Mark.Hall@mail.room3b.eu)
+     */
+    public boolean isImageWrittenAsBinary() {
+        return this.imageWrittenAsBinary;
     }
 }

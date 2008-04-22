@@ -350,7 +350,7 @@ public class RtfImage extends RtfElement {
             }
         }
 
-        if(true) {
+        if(this.document.getDocumentSettings().isImageWrittenAsBinary()) {
         	//binary
         	result.write('\n');
         	result.write(PICTURE_BINARY_DATA);
