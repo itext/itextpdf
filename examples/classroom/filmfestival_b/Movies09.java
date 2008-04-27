@@ -1,4 +1,4 @@
-package classroom.filmfestival_a;
+package classroom.filmfestival_b;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,12 +21,14 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfWriter;
 
-public class Movies07 {
+public class Movies09 {
 
-	public static final String RESULT = "results/classroom/filmfestival/movies07.pdf";
-	public final static Logger LOGGER = Logger.getLogger(Movies07.class.getName());
+
+	public static final String RESULT = "results/classroom/filmfestival/movies09.pdf";
+	public static final Logger LOGGER = Logger.getLogger(Movies09.class.getName());
 	
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
@@ -36,13 +38,19 @@ public class Movies07 {
 			// step 2
 			OutputStream os = new FileOutputStream(RESULT);
 			PdfWriter writer = PdfWriter.getInstance(document, os);
-			writer.setStrictImageSequence(true);
 			// step 3
 			document.open();
 			// step 4
 			Session session = (Session) MySessionFactory.currentSession();
 			Query q = session.createQuery("from FilmTitle order by title");
 			java.util.List<FilmTitle> results = q.list();
+			
+			ColumnText column = new ColumnText(writer.getDirectContent());
+			column.setSimpleColumn(document.left(), document.bottom(),
+					document.right(), document.top());
+			
+			float pos;
+			int status;
 			File f;
 			Image img;
 			Paragraph p;
@@ -53,7 +61,11 @@ public class Movies07 {
 				f = new File("resources/classroom/filmposters/" + movie.getFilmId() + ".jpg");
 				if (f.exists()) {
 					img = Image.getInstance(f.getPath());
-					document.add(img);
+					img.setWidthPercentage(0);
+					img.scaleToFit(72, 144);
+				}
+				else {
+					img = null;
 				}
 				p = new Paragraph(20);
 				c = new Chunk(movie.getTitle(), bold);
@@ -64,13 +76,30 @@ public class Movies07 {
 				c = new Chunk("IMDB");
 				c.setAnchor("http://www.imdb.com/title/tt" + movie.getImdb());
 				p.add(c);
-				document.add(p);
 				Set<DirectorName> directors = movie.getDirectorNames();
 				List list = new List();
 				for (DirectorName director : directors) {
 					list.add(director.getName());
 				}
-				document.add(list);
+				
+				if (img != null) column.addElement(img);
+				column.addElement(p);
+				column.addElement(list);
+				pos = column.getYLine();
+				status = column.go(true);
+				if (ColumnText.hasMoreText(status)) {
+					document.newPage();
+					column.setText(null);
+					column.setYLine(document.top());
+				}
+				else {
+					column.setYLine(pos);
+				}
+				if (img != null) column.addElement(img);
+				column.addElement(p);
+				column.addElement(list);
+				column.addElement(Chunk.NEWLINE);
+				column.go();
 			}
 			// step 5
 			document.close();

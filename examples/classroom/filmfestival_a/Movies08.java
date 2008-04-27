@@ -1,6 +1,5 @@
 package classroom.filmfestival_a;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,7 +49,6 @@ public class Movies08 {
 			Chunk c;
 			Font bold = new Font(Font.HELVETICA, 12, Font.BOLD);
 			Font italic = new Font(Font.HELVETICA, 12, Font.ITALIC);
-			Font white = new Font(Font.HELVETICA, 12, Font.BOLD | Font.ITALIC, Color.WHITE);
 			for (FilmTitle movie : results) {
 				f = new File("resources/classroom/filmposters/" + movie.getFilmId() + ".jpg");
 				if (f.exists()) {
@@ -64,7 +62,7 @@ public class Movies08 {
 				p.add(c);
 				c = new Chunk(" (" + movie.getYear() + ") ", italic);
 				p.add(c);
-				c = new Chunk("IMDB", white);
+				c = new Chunk("IMDB");
 				c.setAnchor("http://www.imdb.com/title/tt" + movie.getImdb());
 				p.add(c);
 				document.add(p);
