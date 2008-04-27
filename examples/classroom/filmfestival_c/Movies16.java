@@ -1,10 +1,18 @@
+/*
+ * This example was written by Bruno Lowagie, author of the book
+ * 'iText in Action' by Manning Publications (ISBN: 1932394796).
+ * You can use this example as inspiration for your own applications.
+ * The following license applies:
+ * http://www.1t3xt.com/about/copyright/index.php?page=MIT
+ */
+
 package classroom.filmfestival_c;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -48,19 +56,19 @@ public class Movies16 extends AbstractMovies {
 			java.util.List<Date> days = q.list();
 			java.util.List<FestivalScreening> screenings;
 			
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-			String date;
 			for (Date day : days) {
-				date = df.format(day);
-				if (!date.startsWith("2007")) continue;
+				GregorianCalendar gc = new GregorianCalendar();
+				gc.setTime(day);
+				if (gc.get(GregorianCalendar.YEAR) != YEAR) continue;
 				
 				table = new PdfPTable(new float[]{ 7, 1, 2, 1 });
-			    cell = new PdfPCell(new Phrase(date, NORMALWHITE));
+			    cell = new PdfPCell(new Phrase(day.toString(), NORMALWHITE));
 			    cell.setBackgroundColor(BLACK);
 			    cell.setColspan(4);
 			    table.addCell(cell);
 				
-				q = session.createQuery(String.format("from FestivalScreening where id.day='%s' order by id.time, id.place", date));
+				q = session.createQuery("from FestivalScreening where id.day=? order by id.time, id.place");
+				q.setDate(0, day);
 				screenings = q.list();
 				for (FestivalScreening screening : screenings) {
 					table.addCell(screening.getFilmTitle().getTitle());

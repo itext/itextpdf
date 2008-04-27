@@ -1,3 +1,11 @@
+/*
+ * This example was written by Bruno Lowagie, author of the book
+ * 'iText in Action' by Manning Publications (ISBN: 1932394796).
+ * You can use this example as inspiration for your own applications.
+ * The following license applies:
+ * http://www.1t3xt.com/about/copyright/index.php?page=MIT
+ */
+
 package classroom.intro;
 
 import java.io.FileOutputStream;
@@ -24,7 +32,6 @@ public class HelloWorld12 {
 			// step 4
 			Image image = Image.getInstance(IMAGE);
 			image.scaleToFit(595, 842);
-			System.out.println("w x h: " + image.getScaledWidth() + " x " + image.getScaledHeight());
 			image.setAbsolutePosition(0, 0);
 			document.add(image);
 		} catch (DocumentException de) {
