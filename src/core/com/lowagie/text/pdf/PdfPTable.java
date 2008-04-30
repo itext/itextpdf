@@ -685,6 +685,7 @@ public class PdfPTable implements LargeElement{
     /** Gets the height of the rows that constitute the header as defined by
      * <CODE>setFooterRows()</CODE>.
      * @return the height of the rows that constitute the footer
+     * @since 2.1.1
      */    
     public float getFooterHeight() {
         float total = 0;
