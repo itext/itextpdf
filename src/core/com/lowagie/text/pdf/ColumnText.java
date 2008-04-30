@@ -1253,22 +1253,33 @@ public class ColumnText {
                 }
             }
             else if (element.type() == Element.PTABLE) {
+            	// don't write anything in the current column if there's no more space available
                 if (yLine < minY || yLine > maxY)
                     return NO_MORE_COLUMN;
+                
+                // get the PdfPTable element
                 PdfPTable table = (PdfPTable)element;
+                
+                // we ignore tables without a body
                 if (table.size() <= table.getHeaderRows()) {
                     compositeElements.removeFirst();
                     continue;
                 }
+                
+                // offsets
                 float yTemp = yLine;
-                float yLineWrite = yLine;
                 if (!firstPass && listIdx == 0) {
                     yTemp -= table.spacingBefore();
-                    yLineWrite = yTemp;
                 }
-                currentLeading = 0;
-                if (yTemp < minY || yTemp > maxY)
+                float yLineWrite = yTemp;
+                
+                // don't write anything in the current column if there's no more space available
+                if (yTemp < minY || yTemp > maxY) {
                     return NO_MORE_COLUMN;
+                }
+                
+                // coordinates
+                currentLeading = 0;
                 float x1 = leftX;
                 float tableWidth;
                 if (table.isLockedWidth()) {
@@ -1279,10 +1290,20 @@ public class ColumnText {
                     tableWidth = rectangularWidth * table.getWidthPercentage() / 100f;
                     table.setTotalWidth(tableWidth);
                 }
-                int k;
-                boolean skipHeader = (!firstPass && table.isSkipFirstHeader() && listIdx <= table.getHeaderRows());
+                
+                // how many header rows are real header rows; how many are footer rows?
+                int headerRows = table.getHeaderRows();
+                int footerRows = table.getFooterRows();
+                if (footerRows > headerRows)
+                    footerRows = headerRows;
+                int realHeaderRows = headerRows - footerRows;
+                float headerHeight = table.getHeaderHeight();
+                float footerHeight = table.getFooterHeight();
+
+                // make sure the header and footer fit on the page
+                boolean skipHeader = (!firstPass && table.isSkipFirstHeader() && listIdx <= headerRows);
                 if (!skipHeader) {
-                    yTemp -= table.getHeaderHeight();
+                    yTemp -= headerHeight;
                     if (yTemp < minY || yTemp > maxY) {
                         if (firstPass) {
                             compositeElements.removeFirst();
@@ -1291,14 +1312,25 @@ public class ColumnText {
                         return NO_MORE_COLUMN;
                     }
                 }
-                if (listIdx < table.getHeaderRows())
-                    listIdx = table.getHeaderRows();
+                
+                // how many real rows (not header or footer rows) fit on a page?
+                int k;
+                if (listIdx < headerRows) {
+                    listIdx = headerRows;
+                }
+                if (!table.isComplete()) {
+                	yTemp -= footerHeight;
+                }
                 for (k = listIdx; k < table.size(); ++k) {
                     float rowHeight = table.getRowHeight(k);
                     if (yTemp - rowHeight < minY)
                         break;
                     yTemp -= rowHeight;
                 }
+                if (!table.isComplete()) {
+                	yTemp += footerHeight;
+                }
+                // either k is the first row that doesn't fit on the page (break);
                 if (k < table.size()) {
                 	if (table.isSplitRows() && (!table.isSplitLate() || (k == listIdx && firstPass))) {
                         if (!splittedRow) {
@@ -1306,14 +1338,15 @@ public class ColumnText {
                             table = new PdfPTable(table);
                             compositeElements.set(0, table);
                             ArrayList rows = table.getRows();
-                            for (int i = table.getHeaderRows(); i < listIdx; ++i)
+                            for (int i = headerRows; i < listIdx; ++i)
                                 rows.set(i, null);
                         }
                         float h = yTemp - minY;
                         PdfPRow newRow = table.getRow(k).splitRow(h);
                         if (newRow == null) {
-                            if (k == listIdx)
+                            if (k == listIdx) {
                                 return NO_MORE_COLUMN;
+                            }
                         }
                         else {
                             yTemp = minY;
@@ -1325,12 +1358,15 @@ public class ColumnText {
                         splittedRow = false;
                         continue;
                     }
-                    else if (k == listIdx && !firstPass && (!table.isSplitRows() || table.isSplitLate())) {
-                            return NO_MORE_COLUMN;
+                    else if (k == listIdx && !firstPass && (!table.isSplitRows() || table.isSplitLate()) && (table.getFooterRows() == 0 || table.isComplete())) {
+                        return NO_MORE_COLUMN;
                     }
                 }
+                // or k is the number of rows in the table (for loop was done).
                 firstPass = false;
+                // we draw the table (for real now)
                 if (!simulate) {
+                	// set the alignment
                     switch (table.getHorizontalAlignment()) {
                         case Element.ALIGN_LEFT:
                             break;
@@ -1340,24 +1376,36 @@ public class ColumnText {
                         default:
                             x1 += (rectangularWidth - tableWidth) / 2f;
                     }
-                    int realHeaderRows = table.getHeaderRows();
-                    int footerRows = table.getFooterRows();
-                    if (footerRows > realHeaderRows)
-                        footerRows = realHeaderRows;
-                    realHeaderRows -= footerRows;
+                    // copy the rows that fit on the page in a new table nt
                     PdfPTable nt = PdfPTable.shallowCopy(table);
                     ArrayList rows = table.getRows();
                     ArrayList sub = nt.getRows();
+                    
+                    // first we add the real header rows (if necessary)
                     if (!skipHeader) {
-                        for (int j = 0; j < realHeaderRows; ++j)
-                            sub.add(rows.get(j));
+                        for (int j = 0; j < realHeaderRows; ++j) {
+                        	PdfPRow headerRow = (PdfPRow)rows.get(j);
+                            sub.add(headerRow);
+                        }
                     }
-                    else
+                    else {
                         nt.setHeaderRows(footerRows);
-                    for (int j = listIdx; j < k; ++j)
+                    }
+                    // then we add the real content
+                    for (int j = listIdx; j < k; ++j) {
                         sub.add(rows.get(j));
-                    for (int j = 0; j < footerRows; ++j)
+                    }
+                    // if k < table.size(), we must indicate that the new table is complete;
+                    // otherwise no footers will be added (because iText thinks the table continues on the same page)
+                    if (k < table.size()) {
+                    	nt.setComplete(true);
+                    }
+                    // we add the footer rows if necessary (not for incomplete tables)
+                    for (int j = 0; j < footerRows && nt.isComplete(); ++j) {
                         sub.add(rows.get(j + realHeaderRows));
+                    }
+
+                    // we need a correction if the last row needs to be extended
                     float rowHeight = 0;
                     if (table.isExtendLastRow()) {
                         PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
@@ -1365,9 +1413,8 @@ public class ColumnText {
                         last.setMaxHeights(yTemp - minY + rowHeight);
                         yTemp = minY;
                     }
-                    if (k < table.size()) {
-                    	nt.setComplete(true);
-                    }
+                    
+                    // now we render the rows of the new table
                     if (canvases != null)
                         nt.writeSelectedRows(0, -1, x1, yLineWrite, canvases);
                     else
@@ -1377,9 +1424,13 @@ public class ColumnText {
                         last.setMaxHeights(rowHeight);
                     }
                 }
-                else if (table.isExtendLastRow() && minY > PdfPRow.BOTTOM_LIMIT)
+                else if (table.isExtendLastRow() && minY > PdfPRow.BOTTOM_LIMIT) {
                     yTemp = minY;
+                }
                 yLine = yTemp;
+                if (!(skipHeader || table.isComplete())) {
+                	yLine += footerHeight;
+                }
                 if (k >= table.size()) {
                     yLine -= table.spacingAfter();
                     compositeElements.removeFirst();
