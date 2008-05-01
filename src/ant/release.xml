@@ -161,7 +161,7 @@
 		<copy file="${itext.src}/jnlp/toolbox.jnlp" tofile="${itext.jnlp}/toolbox.jnlp" overwrite="yes"/>
 		<copy file="${itext.rups.jar}" tofile="${itext.jnlp}/iText-rups.jar" overwrite="yes"/>
 		<copy file="${itext.toolbox.jar}" tofile="${itext.jnlp}/iText-toolbox.jar" overwrite="yes"/>
-		<copy file="${itext.lib}/iText.jar" tofile="${itext.jnlp}/iText.jar" overwrite="yes"/>
+		<copy file="${itext.jar}" tofile="${itext.jnlp}/iText.jar" overwrite="yes"/>
 		<copy file="${itext.lib}/dom4j-1.6.1.jar" tofile="${itext.jnlp}/dom4j-1.6.1.jar" overwrite="yes"/>
 		<copy file="${itext.lib}/pdf-renderer.jar" tofile="${itext.jnlp}/pdf-renderer.jar" overwrite="yes"/>
         <signjar
