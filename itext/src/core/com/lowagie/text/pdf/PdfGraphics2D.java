@@ -1635,7 +1635,7 @@ public class PdfGraphics2D extends Graphics2D {
     public static class HyperLinkKey extends RenderingHints.Key
 	{
 	 	public static final HyperLinkKey KEY_INSTANCE = new HyperLinkKey(9999);
-	 	public static final Object VALUE_HYPERLINKKEY_OFF = new String("0");
+	 	public static final Object VALUE_HYPERLINKKEY_OFF = "0";
 	 	
 		protected HyperLinkKey(int arg0) {
 			super(arg0);

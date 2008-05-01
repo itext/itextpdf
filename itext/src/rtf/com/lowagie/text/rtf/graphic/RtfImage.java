@@ -225,7 +225,7 @@ public class RtfImage extends RtfElement {
                 }
             }
             
-            return(bab.toByteArrayArray());
+            return bab.toByteArrayArray();
             
         } catch(IOException ioe) {
             throw new DocumentException(ioe.getMessage());
@@ -281,7 +281,7 @@ public class RtfImage extends RtfElement {
     	for(int k = 0; k < imageData.length; k++) {
     		size += imageData[k].length;
     	}   
-    	return(size);
+    	return size;
     }
     
     /**
@@ -350,7 +350,7 @@ public class RtfImage extends RtfElement {
             }
         }
 
-        if(true) {
+        if(this.document.getDocumentSettings().isImageWrittenAsBinary()) {
         	//binary
         	result.write('\n');
         	result.write(PICTURE_BINARY_DATA);

@@ -272,4 +272,11 @@ public class MarkedSection extends MarkedObject {
 	  	((Section)element).setBookmarkTitle(bookmarkTitle);
 	}
 
+	/**
+	 * Adds a new page to the section.
+	 * @since	2.1.1
+	 */
+	public void newPage() {
+		((Section)element).newPage();
+	}
 }

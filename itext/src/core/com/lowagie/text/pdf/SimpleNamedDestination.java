@@ -67,7 +67,7 @@ import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
-public class SimpleNamedDestination implements SimpleXMLDocHandler {
+public final class SimpleNamedDestination implements SimpleXMLDocHandler {
     
     private HashMap xmlNames;
     private HashMap xmlLast;

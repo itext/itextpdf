@@ -667,4 +667,15 @@ public class PdfPRow {
 		split.calculateHeights();
 		return split;
 	}
+	
+	/**
+	 * Returns the array of cells in the row.
+	 * Please be extremely careful with this method.
+	 * Use the cells as read only objects.
+	 * @return	an array of cells
+	 * @since	2.1.1
+	 */
+	public PdfPCell[] getCells() {
+		return cells;
+	}
 }

@@ -409,10 +409,7 @@ public class RtfBorder extends RtfElement {
         this.borderType = borderType;
         this.borderPosition = borderPosition;
         this.borderStyle = borderStyle;
-        if(borderWidth > 2) {
-            borderWidth = 2;
-        }
-        this.borderWidth = (int) (borderWidth * TWIPS_FACTOR);
+        this.borderWidth = (int) Math.min((borderWidth * TWIPS_FACTOR), 75);
         if(this.borderWidth == 0) {
             this.borderStyle = BORDER_NONE;
         }

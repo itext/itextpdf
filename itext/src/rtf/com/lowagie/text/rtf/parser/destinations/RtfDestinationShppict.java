@@ -143,9 +143,9 @@ public class RtfDestinationShppict extends RtfDestination {
 	// picscaled - macpict setting
 	private Boolean scaled = null;
 	// picprop
-	private Boolean inlinePicture = new Boolean(false);
+	private Boolean inlinePicture = Boolean.FALSE;
 	// defshp
-	private Boolean wordArt = new Boolean(false);
+	private Boolean wordArt = Boolean.FALSE;
 	// piccroptN
 	private Integer cropTop = new Integer(0);
 	// piccropbN
@@ -487,8 +487,8 @@ public class RtfDestinationShppict extends RtfDestination {
 		this.scaleX = new Integer(100);
 		this.scaleY = new Integer(100);
 		this.scaled = null;
-		this.inlinePicture = new Boolean(false);
-		this.wordArt = new Boolean(false);
+		this.inlinePicture = Boolean.FALSE;
+		this.wordArt = Boolean.FALSE;
 		this.cropTop = new Integer(0);
 		this.cropBottom = new Integer(0);
 		this.cropLeft = new Integer(0);

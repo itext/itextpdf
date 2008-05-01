@@ -206,6 +206,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      */
     private int listType = LIST_TYPE_BULLET;
     /**
+     * The number to start counting at
+     */
+    private int listStartAt = 1;
+    /**
      * The RtfFont for numbered lists
      */
     private RtfFont fontNumber;
@@ -269,6 +273,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 this.listType = LIST_TYPE_UPPER_LETTERS;
             }
         }
+        this.listStartAt = list.getFirst() + 1;
+        if(this.listStartAt < 1) {
+            this.listStartAt = 1;
+        }
         
         for(int i = 0; i < list.getItems().size(); i++) {
             try {
@@ -292,10 +300,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             } catch(DocumentException de) {
                 de.printStackTrace();
             }
-        }
-        
-        if(this.listLevel == 0) {
-            correctIndentation();
         }
         
         fontNumber = new RtfFont(document, new Font(Font.TIMES_ROMAN, 10, Font.NORMAL, new Color(0, 0, 0)));
@@ -353,7 +357,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         result.write(LIST_LEVEL_ALIGNMENT_NEW);
         result.write(intToByteArray(0));
         result.write(LIST_LEVEL_START_AT);
-        result.write(intToByteArray(1));
+        result.write(intToByteArray(this.listStartAt));
         result.write(OPEN_GROUP);
         result.write(LIST_LEVEL_TEXT);
         if(this.listType != LIST_TYPE_BULLET) {
@@ -456,14 +460,19 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
-        result.write(OPEN_GROUP);
+        if(this.listLevel == 0) {
+            correctIndentation();
+        }
+        
+        if(!this.inTable) {
+            result.write(OPEN_GROUP);
+        }
+        
         int itemNr = 0;
         for(int i = 0; i < items.size(); i++) {
             RtfElement rtfElement = (RtfElement) items.get(i);
             if(rtfElement instanceof RtfListItem) {
                 itemNr++;
-                writeListBeginning(result);
-                writeListNumbers(result);
                 result.write(OPEN_GROUP);
                 result.write(LIST_TEXT);
                 result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
@@ -491,20 +500,26 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     this.document.filterSpecialChar(result, this.bulletCharacter, true, false);
                 }
                 result.write(TAB);
-                result.write(CLOSE_GROUP);                
+                result.write(CLOSE_GROUP);
+                if(i == 0) {
+                    writeListBeginning(result);
+                    writeListNumbers(result);
+                }
                 rtfElement.writeContent(result);
                 if(i < (items.size() - 1) || !this.inTable || this.listLevel > 0) { // TODO Fix no paragraph on last list item in tables
                     result.write(RtfParagraph.PARAGRAPH);
                 }
                 result.write("\n".getBytes());
             } else if(rtfElement instanceof RtfList) {
-            	rtfElement.writeContent(result);
+                rtfElement.writeContent(result);
+                writeListBeginning(result);
+                writeListNumbers(result);
                 result.write("\n".getBytes());
             }
         }
-        result.write(CLOSE_GROUP);
         
         if(!this.inTable) {
+            result.write(CLOSE_GROUP);
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
         }
     }        

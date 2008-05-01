@@ -253,6 +253,7 @@ public class PdfPTable implements LargeElement{
         skipFirstHeader = sourceTable.skipFirstHeader;
         horizontalAlignment = sourceTable.horizontalAlignment;
         keepTogether = sourceTable.keepTogether;
+        complete = sourceTable.complete;
     }
 
     /** Sets the relative widths of the table.
@@ -668,12 +669,29 @@ public class PdfPTable implements LargeElement{
     
     /** Gets the height of the rows that constitute the header as defined by
      * <CODE>setHeaderRows()</CODE>.
-     * @return the height of the rows that constitute the header
+     * @return the height of the rows that constitute the header and footer
      */    
     public float getHeaderHeight() {
         float total = 0;
         int size = Math.min(rows.size(), headerRows);
         for (int k = 0; k < size; ++k) {
+            PdfPRow row = (PdfPRow)rows.get(k);
+            if (row != null)
+                total += row.getMaxHeights();
+        }
+        return total;
+    }
+    
+    /** Gets the height of the rows that constitute the header as defined by
+     * <CODE>setFooterRows()</CODE>.
+     * @return the height of the rows that constitute the footer
+     * @since 2.1.1
+     */    
+    public float getFooterHeight() {
+        float total = 0;
+        int start = Math.min(0, headerRows - footerRows);
+        int size = Math.min(rows.size(), footerRows);
+        for (int k = start; k < size; ++k) {
             PdfPRow row = (PdfPRow)rows.get(k);
             if (row != null)
                 total += row.getMaxHeights();
@@ -716,6 +734,14 @@ public class PdfPTable implements LargeElement{
         totalHeight = 0;
         if (totalWidth > 0)
             totalHeight = getHeaderHeight();
+    }
+    
+    /** Returns the number of columns.
+     * @return	the number of columns.
+     * @since	2.1.1
+     */
+    public int getNumberOfColumns() {
+    	return relativeWidths.length;
     }
 
     /** Gets the number of the rows that constitute the header.

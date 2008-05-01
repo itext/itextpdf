@@ -62,8 +62,9 @@ import com.lowagie.text.pdf.SimpleBookmark;
 
 /**
  * Tool that can be used to concatenate existing PDF files.
+ * @since 2.1.1 (renamed to follow Java naming conventions)
  */
-public class concat_pdf {
+public class ConcatPdf {
     
     /**
      * This class can be used to concatenate existing PDF files.

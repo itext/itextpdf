@@ -141,6 +141,7 @@ public class SAXiTextHandler extends DefaultHandler {
         stack = new Stack();
     }
 
+    /** This hashmap contains all the custom keys and peers. */
     protected HashMap myTags;
 
     /**

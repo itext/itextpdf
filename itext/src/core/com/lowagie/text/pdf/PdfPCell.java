@@ -50,6 +50,8 @@
 
 package com.lowagie.text.pdf;
 
+import java.util.List;
+
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
@@ -137,12 +139,7 @@ public class PdfPCell extends Rectangle{
      * @param image the <CODE>Image</CODE>
      */
     public PdfPCell(Image image) {
-        super(0, 0, 0, 0);
-        borderWidth = 0.5f;
-        border = BOX;
-        column.addText(this.phrase = new Phrase(new Chunk(image, 0, 0)));
-        column.setLeading(0, 1);
-        setPadding(0);
+        this(image, false);
     }
     
     /** Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>.
@@ -721,6 +718,15 @@ public class PdfPCell extends Rectangle{
      */
     public ColumnText getColumn() {
         return column;
+    }
+    
+    /**
+     * Returns the list of composite elements of the column.
+     * @return	a List object.
+     * @since	2.1.1
+     */
+    public List getCompositeElements() {
+    	return getColumn().compositeElements;
     }
     
     /**

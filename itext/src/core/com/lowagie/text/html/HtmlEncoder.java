@@ -82,7 +82,7 @@ import com.lowagie.text.Element;
  * @author  mario.maccarini@ugent.be
  */
 
-public class HtmlEncoder {
+public final class HtmlEncoder {
     
     // membervariables
     

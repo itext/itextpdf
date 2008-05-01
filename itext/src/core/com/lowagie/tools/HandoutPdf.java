@@ -63,8 +63,9 @@ import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * Takes an existing PDF file and makes handouts.
+ * @since 2.1.1 (renamed to follow Java naming conventions)
  */
-public class handout_pdf extends java.lang.Object {
+public class HandoutPdf extends java.lang.Object {
     
 	/**
 	 * Makes handouts based on an existing PDF file.

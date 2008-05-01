@@ -54,8 +54,6 @@ import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Set;
 
 import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.pdf.PdfAction;
@@ -221,7 +219,7 @@ public class Chunk implements Element {
 			boolean changeLeading) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		setAttribute(IMAGE, new Object[] { image, new Float(offsetX),
-				new Float(offsetY), new Boolean(changeLeading) });
+				new Float(offsetY), Boolean.valueOf(changeLeading) });
 	}
 
 	// implementation of the Element-methods
