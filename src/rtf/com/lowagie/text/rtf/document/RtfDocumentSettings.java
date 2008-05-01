@@ -99,33 +99,33 @@ public class RtfDocumentSettings {
      */
     private boolean imagePDFConformance = true;
     /**
-     * Document protection level
+     * Document protection level.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @since 2.1.1
-	 * @author Howard Shank (hgshank@yahoo.com)
      */
     private int protectionLevel = RtfProtection.LEVEL_NONE;
     /**
      * Document protection level password hash.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @since 2.1.1
-	 * @author Howard Shank (hgshank@yahoo.com)
      */
     private String protectionHash = null;
     /**
-     * Document read password hash
+     * Document read password hash.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @since 2.1.1
-	 * @author Howard Shank (hgshank@yahoo.com)
      */
     private String writereservhash = null; //\*\writereservhash - not implemented
     /**
      * Document recommended to be opened in read only mode.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @since 2.1.1
-	 * @author Howard Shank (hgshank@yahoo.com)
      */
     private boolean readOnlyRecommended = false;
     /**
      * Images are written as binary data and not hex encoded.
+     * Author: Mark Hall (Mark.Hall@mail.room3b.eu)
      * @since 2.1.1
-     * @author Mark Hall (Mark.Hall@mail.room3b.eu)
      */
     private boolean imageWrittenAsBinary = true;
     
@@ -344,10 +344,10 @@ public class RtfDocumentSettings {
     }
     
     /**
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @param level Document protecton level
      * @param pwd Document password - clear text
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public boolean setProtection(int level, String pwd) {
     	boolean result = false;
@@ -377,10 +377,10 @@ public class RtfDocumentSettings {
     }
     
     /**
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @param pwd Document password - clear text
      * @return true if document unprotected, false if protection is not removed.
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public boolean unprotectDocument(String pwd) {
     	boolean result = false;
@@ -393,9 +393,9 @@ public class RtfDocumentSettings {
     }
     
     /**
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @param level Document protection level
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public boolean setProtectionLevel(int level) {
     	boolean result = false;
@@ -417,10 +417,10 @@ public class RtfDocumentSettings {
     }
     
     /**
-     * This function is not intended for general use. Please see 'public boolean setProtection(int level, String pwd)'
+     * This function is not intended for general use. Please see 'public boolean setProtection(int level, String pwd)'.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @param pwd Password HASH to set the document password hash to.
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public void setPasswordHash(String pwd) {
     	if(pwd != null && pwd.length() != 8) return;
@@ -428,7 +428,8 @@ public class RtfDocumentSettings {
     }
     
     /**
-     * Converts protection level from internal bitmap value to protlevel output value
+     * Converts protection level from internal bitmap value to protlevel output value.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @return <pre>
      * 0 = Revision protection
      * 1 = Annotation/Comment protection
@@ -436,7 +437,6 @@ public class RtfDocumentSettings {
      * 3 = Read only protection
      * </pre>
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     private int convertProtectionLevel() {
     	int level = 0;
@@ -461,38 +461,38 @@ public class RtfDocumentSettings {
     }
     
     /**
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @return RTF document protection level
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public int getProtectionLevelRaw() {
     	return this.protectionLevel;
     }
     
     /**
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @return RTF document protection level
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public int getProtectionLevel() {
     	return convertProtectionLevel();
     }
     
     /**
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @return RTF document protection level as a byte array (byte[])
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public byte[] getProtectionLevelBytes() {
     	return Integer.toString(convertProtectionLevel()).getBytes();
     }
     
     /**
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @param oldPwd Old password - clear text
      * @param newPwd New password - clear text
      * @return true if password set, false if password not set
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public boolean setNewPassword(String oldPwd, String newPwd) {
     	boolean result = false;
@@ -505,9 +505,9 @@ public class RtfDocumentSettings {
     
     /**
      * Set the RTF flag that recommends the document be opened in read only mode.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @param value true if the flag is to be set, false if it is NOT to be set
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public void setReadOnlyRecommended(boolean value) {
     	this.readOnlyRecommended = value;
@@ -515,9 +515,9 @@ public class RtfDocumentSettings {
     
     /**
      * Get the RTF flag that recommends if the the document should be opened in read only mode.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @return true if flag is set, false if it is not set
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public boolean getReadOnlyRecommended() {
     	return this.readOnlyRecommended;
@@ -525,9 +525,9 @@ public class RtfDocumentSettings {
     
     /**
      * Determine if document has protection enabled.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @return true if protection is enabled, false if it is not enabled
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public boolean isDocumentProtected() {
     	return !(this.protectionHash == null);
@@ -535,9 +535,9 @@ public class RtfDocumentSettings {
     
     /**
      * Obtain the password has as a byte array.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @return The bytes of the password hash as a byte array (byte[])
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     public byte[] getProtectionHashBytes() {
     	return this.protectionHash.getBytes();
@@ -545,10 +545,9 @@ public class RtfDocumentSettings {
 
     /**
      * Set whether images are written as binary data or are hex encoded.
-     * 
+     * Author: Mark Hall (Mark.Hall@mail.room3b.eu)
      * @param imageWrittenAsBinary <code>True</code> to write images as binary data, <code>false</code> for hex encoding.
      * @since 2.1.1
-     * @author Mark Hall (Mark.Hall@mail.room3b.eu)
      */
     public void setImageWrittenAsBinary(boolean imageWrittenAsBinary) {
         this.imageWrittenAsBinary = imageWrittenAsBinary;
@@ -556,10 +555,9 @@ public class RtfDocumentSettings {
     
     /**
      * Gets whether images are written as binary data or are hex encoded. Defaults to <code>true</code>.
-     * 
+     * Author: Mark Hall (Mark.Hall@mail.room3b.eu)
      * @since 2.1.1
      * @return <code>True</code> if images are written as binary data, <code>false</code> if hex encoded.
-     * @author Mark Hall (Mark.Hall@mail.room3b.eu)
      */
     public boolean isImageWrittenAsBinary() {
         return this.imageWrittenAsBinary;

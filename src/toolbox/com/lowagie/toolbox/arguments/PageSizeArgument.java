@@ -165,7 +165,6 @@ public class PageSizeArgument extends OptionArgument {
      * Returns a string representation of the object.
      *
      * @return a string representation of the object.
-     * @todo Implement this java.lang.Object method
      */
     public String toString() {
         return super.getValue().toString();

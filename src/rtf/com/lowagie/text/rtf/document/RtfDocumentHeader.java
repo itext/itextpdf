@@ -117,8 +117,8 @@ public class RtfDocumentHeader extends RtfElement {
     private RtfInfoGroup infoGroup = null;
     /**
      * The protection settings
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     private RtfProtectionSetting protectionSetting = null;
     /**

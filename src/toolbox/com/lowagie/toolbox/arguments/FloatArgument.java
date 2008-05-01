@@ -55,7 +55,6 @@ public class FloatArgument extends AbstractArgument {
      * Invoked when an action occurs.
      *
      * @param e ActionEvent
-     * @todo Implement this java.awt.event.ActionListener method
      */
     public void actionPerformed(ActionEvent e) {
         CustomDialog cd=new CustomDialog("Enter a value for " + name +
