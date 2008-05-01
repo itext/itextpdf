@@ -365,6 +365,18 @@ public abstract class BaseFont {
     }
     
     /**
+     * Creates a new font. This will always be the default Helvetica font (not embedded).
+     * This method is introduced because Helvetica is used in many examples.
+     * @return	a BaseFont object (Helvetica, Winansi, not embedded)
+     * @throws	IOException			This shouldn't occur ever
+     * @throws	DocumentException	This shouldn't occur ever
+     * @since	2.1.1 
+     */
+    public BaseFont createFont() throws DocumentException, IOException {
+    	return createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+    }
+    
+    /**
      * Creates a new font. This font can be one of the 14 built in types,
      * a Type1 font referred to by an AFM or PFM file, a TrueType font (simple or collection) or a CJK font from the
      * Adobe Asian Font Pack. TrueType fonts and CJK fonts can have an optional style modifier

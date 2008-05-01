@@ -1165,6 +1165,7 @@ public abstract class Image extends Rectangle {
 		float[] matrix = matrix();
 		scaledWidth = matrix[DX] - matrix[CX];
 		scaledHeight = matrix[DY] - matrix[CY];
+		setWidthPercentage(0);
 	}
 
 	/**
@@ -1178,6 +1179,7 @@ public abstract class Image extends Rectangle {
 		float[] matrix = matrix();
 		scaledWidth = matrix[DX] - matrix[CX];
 		scaledHeight = matrix[DY] - matrix[CY];
+		setWidthPercentage(0);
 	}
 
 	/**
@@ -1191,6 +1193,7 @@ public abstract class Image extends Rectangle {
 		float[] matrix = matrix();
 		scaledWidth = matrix[DX] - matrix[CX];
 		scaledHeight = matrix[DY] - matrix[CY];
+		setWidthPercentage(0);
 	}
 
 	/**
@@ -1217,6 +1220,7 @@ public abstract class Image extends Rectangle {
 		float[] matrix = matrix();
 		scaledWidth = matrix[DX] - matrix[CX];
 		scaledHeight = matrix[DY] - matrix[CY];
+		setWidthPercentage(0);
 	}
 
 	/**
@@ -1232,6 +1236,7 @@ public abstract class Image extends Rectangle {
 		float percentX = (fitWidth * 100) / getScaledWidth();
 		float percentY = (fitHeight * 100) / getScaledHeight();
 		scalePercent(percentX < percentY ? percentX : percentY);
+		setWidthPercentage(0);
 	}
 
 	/**

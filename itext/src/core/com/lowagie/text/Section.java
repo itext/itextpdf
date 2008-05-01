@@ -747,4 +747,11 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 		this.complete = complete;
 	}
 
+	/**
+	 * Adds a new page to the section.
+	 * @since	2.1.1
+	 */
+	public void newPage() {
+		this.add(Chunk.NEXTPAGE);
+	}
 }
