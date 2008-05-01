@@ -278,6 +278,7 @@ class PdfStamperImp extends PdfWriter {
                     newInfo.put(keyName, new PdfString(value, PdfObject.TEXT_UNICODE));
             }
         }
+        newInfo.put(PdfName.MODDATE, new PdfDate());
         if (append) {
             if (iInfo == null)
                 info = addToBody(newInfo, false).getIndirectReference();
@@ -285,8 +286,7 @@ class PdfStamperImp extends PdfWriter {
                 info = addToBody(newInfo, iInfo.getNumber(), false).getIndirectReference();
         }
         else {
-            if (!newInfo.getKeys().isEmpty())
-                info = addToBody(newInfo, false).getIndirectReference();
+            info = addToBody(newInfo, false).getIndirectReference();
         }
         // write the cross-reference table of the body
         body.writeCrossReferenceTable(os, root, info, encryption, fileID, prevxref);

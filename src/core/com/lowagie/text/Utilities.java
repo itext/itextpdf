@@ -182,4 +182,63 @@ public class Utilities {
 		}
 	}
 
+	/**
+	 * Measurement conversion from centimeters to points.
+	 * @param	value	a value in centimeters
+	 * @return	a value in points
+	 * @since	2.1.1
+	 */
+	public static final float cm2pt(float value) {
+	    return i2pt(cm2i(value));
+	}
+
+	/**
+	 * Measurement conversion from centimeters to inches.
+	 * @param	value	a value in centimeters
+	 * @return	a value in inches
+	 * @since	2.1.1
+	 */
+	public static final float cm2i(float value) {
+	    return value / 2.54f;
+	}
+
+	/**
+	 * Measurement conversion from points to centimeters.
+	 * @param	value	a value in points
+	 * @return	a value in centimeters
+	 * @since	2.1.1
+	 */
+	public static final float pt2cm(float value) {
+	    return i2cm(pt2i(value));
+	}
+
+	/**
+	 * Measurement conversion from points to inches.
+	 * @param	value	a value in points
+	 * @return	a value in inches
+	 * @since	2.1.1
+	 */
+	public static final float pt2i(float value) {
+	    return value / 72f;
+	}
+
+	/**
+	 * Measurement conversion from inches to centimeters.
+	 * @param	value	a value in inches
+	 * @return	a value in centimeters
+	 * @since	2.1.1
+	 */
+	public static final float i2cm(float value) {
+	    return value * 2.54f;
+	}
+
+	/**
+	 * Measurement conversion from inches to points.
+	 * @param	value	a value in inches
+	 * @return	a value in points
+	 * @since	2.1.1
+	 */
+	public static final float i2pt(float value) {
+	    return value * 72f;
+	}
 }

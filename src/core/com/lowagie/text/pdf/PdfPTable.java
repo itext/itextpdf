@@ -735,6 +735,14 @@ public class PdfPTable implements LargeElement{
         if (totalWidth > 0)
             totalHeight = getHeaderHeight();
     }
+    
+    /** Returns the number of columns.
+     * @return	the number of columns.
+     * @since	2.1.1
+     */
+    public int getNumberOfColumns() {
+    	return relativeWidths.length;
+    }
 
     /** Gets the number of the rows that constitute the header.
      * @return the number of the rows that constitute the header
