@@ -187,9 +187,10 @@ public class Utilities {
 	 * @param	value	a value in centimeters
 	 * @return	a value in points
 	 * @since	2.1.1
+	 * @deprecated use millimetersToPoints
 	 */
 	public static final float cm2pt(float value) {
-	    return i2pt(cm2i(value));
+	    return millimetersToPoints(value * 10f);
 	}
 
 	/**
@@ -197,9 +198,10 @@ public class Utilities {
 	 * @param	value	a value in centimeters
 	 * @return	a value in inches
 	 * @since	2.1.1
+	 * @deprecated use millimetersToInches
 	 */
 	public static final float cm2i(float value) {
-	    return value / 2.54f;
+	    return millimetersToPoints(value * 10f);
 	}
 
 	/**
@@ -207,9 +209,10 @@ public class Utilities {
 	 * @param	value	a value in points
 	 * @return	a value in centimeters
 	 * @since	2.1.1
+	 * @deprecated use pointsToMillimeters
 	 */
 	public static final float pt2cm(float value) {
-	    return i2cm(pt2i(value));
+	    return pointsToMillimeters(value) / 10f;
 	}
 
 	/**
@@ -217,9 +220,10 @@ public class Utilities {
 	 * @param	value	a value in points
 	 * @return	a value in inches
 	 * @since	2.1.1
+	 * @deprecated use pointsToInches
 	 */
 	public static final float pt2i(float value) {
-	    return value / 72f;
+	    return pointsToInches(value);
 	}
 
 	/**
@@ -227,9 +231,10 @@ public class Utilities {
 	 * @param	value	a value in inches
 	 * @return	a value in centimeters
 	 * @since	2.1.1
+	 * @deprecated use inchesToMillimeters
 	 */
 	public static final float i2cm(float value) {
-	    return value * 2.54f;
+	    return inchesToMillimeters(value) / 10;
 	}
 
 	/**
@@ -237,8 +242,69 @@ public class Utilities {
 	 * @param	value	a value in inches
 	 * @return	a value in points
 	 * @since	2.1.1
+	 * @deprecated use inchesToPoints
 	 */
 	public static final float i2pt(float value) {
+	    return inchesToPoints(value);
+	}
+
+	/**
+	 * Measurement conversion from millimeters to points.
+	 * @param	value	a value in millimeters
+	 * @return	a value in points
+	 * @since	2.1.2
+	 */
+	public static final float millimetersToPoints(float value) {
+	    return inchesToPoints(millimetersToInches(value));
+	}
+
+	/**
+	 * Measurement conversion from millimeters to inches.
+	 * @param	value	a value in millimeters
+	 * @return	a value in inches
+	 * @since	2.1.2
+	 */
+	public static final float millimetersToInches(float value) {
+	    return value / 25.4f;
+	}
+
+	/**
+	 * Measurement conversion from points to millimeters.
+	 * @param	value	a value in points
+	 * @return	a value in millimeters
+	 * @since	2.1.2
+	 */
+	public static final float pointsToMillimeters(float value) {
+	    return inchesToMillimeters(pointsToInches(value));
+	}
+
+	/**
+	 * Measurement conversion from points to inches.
+	 * @param	value	a value in points
+	 * @return	a value in inches
+	 * @since	2.1.2
+	 */
+	public static final float pointsToInches(float value) {
+	    return value / 72f;
+	}
+
+	/**
+	 * Measurement conversion from inches to millimeters.
+	 * @param	value	a value in inches
+	 * @return	a value in millimeters
+	 * @since	2.1.2
+	 */
+	public static final float inchesToMillimeters(float value) {
+	    return value * 25.4f;
+	}
+
+	/**
+	 * Measurement conversion from inches to points.
+	 * @param	value	a value in inches
+	 * @return	a value in points
+	 * @since	2.1.2
+	 */
+	public static final float inchesToPoints(float value) {
 	    return value * 72f;
 	}
 }
