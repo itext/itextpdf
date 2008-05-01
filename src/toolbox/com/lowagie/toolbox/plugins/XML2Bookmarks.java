@@ -111,7 +111,7 @@ public class XML2Bookmarks extends AbstractTool {
             reader.consolidateNamedDestinations();
             PdfStamper stamper = new PdfStamper(reader, new FileOutputStream((File)getValue("destfile")));
             stamper.setOutlines(bookmarks);
-            stamper.setViewerPreferences(reader.getSimpleViewerPreferences() | PdfWriter.PageModeUseOutlines);
+            stamper.setViewerPreferences(reader.getSimpleViewerPreferences() | PdfWriter.PAGE_MODE_USE_OUTLINES);
             stamper.close();
 		}
 		catch(Exception e) {

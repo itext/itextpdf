@@ -143,34 +143,34 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 		// to set the following viewer preferences with this method:
 		if ((preferences & viewerPreferencesMask) != 0) {
 			pageLayoutAndMode = ~viewerPreferencesMask & pageLayoutAndMode;
-			if ((preferences & PdfWriter.HideToolbar) != 0)
+			if ((preferences & PdfWriter.HIDE_TOOLBAR) != 0)
 				viewerPreferences.put(PdfName.HIDETOOLBAR, PdfBoolean.PDFTRUE);
-			if ((preferences & PdfWriter.HideMenubar) != 0)
+			if ((preferences & PdfWriter.HIDE_MENUBAR) != 0)
 				viewerPreferences.put(PdfName.HIDEMENUBAR, PdfBoolean.PDFTRUE);
-			if ((preferences & PdfWriter.HideWindowUI) != 0)
+			if ((preferences & PdfWriter.HIDE_WINDOW_UI) != 0)
 				viewerPreferences.put(PdfName.HIDEWINDOWUI, PdfBoolean.PDFTRUE);
-			if ((preferences & PdfWriter.FitWindow) != 0)
+			if ((preferences & PdfWriter.FIT_WINDOW) != 0)
 				viewerPreferences.put(PdfName.FITWINDOW, PdfBoolean.PDFTRUE);
-			if ((preferences & PdfWriter.CenterWindow) != 0)
+			if ((preferences & PdfWriter.CENTER_WINDOW) != 0)
 				viewerPreferences.put(PdfName.CENTERWINDOW, PdfBoolean.PDFTRUE);
-			if ((preferences & PdfWriter.DisplayDocTitle) != 0)
+			if ((preferences & PdfWriter.DISPLAY_DOC_TITLE) != 0)
 				viewerPreferences.put(PdfName.DISPLAYDOCTITLE, PdfBoolean.PDFTRUE);
 			
-			if ((preferences & PdfWriter.NonFullScreenPageModeUseNone) != 0)
+			if ((preferences & PdfWriter.NON_FULL_SCREEN_PAGE_MODE_USE_NONE) != 0)
 				viewerPreferences.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USENONE);
-			else if ((preferences & PdfWriter.NonFullScreenPageModeUseOutlines) != 0)
+			else if ((preferences & PdfWriter.NON_FULL_SCREEN_PAGE_MODE_USE_OUTLINES) != 0)
 				viewerPreferences.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USEOUTLINES);
-			else if ((preferences & PdfWriter.NonFullScreenPageModeUseThumbs) != 0)
+			else if ((preferences & PdfWriter.NON_FULL_SCREEN_PAGE_MODE_USE_THUMBS) != 0)
 				viewerPreferences.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USETHUMBS);
-			else if ((preferences & PdfWriter.NonFullScreenPageModeUseOC) != 0)
+			else if ((preferences & PdfWriter.NON_FULL_SCREEN_PAGE_MODE_USE_OC) != 0)
 				viewerPreferences.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USEOC);
 
-			if ((preferences & PdfWriter.DirectionL2R) != 0)
+			if ((preferences & PdfWriter.DIRECTION_L2R) != 0)
 				viewerPreferences.put(PdfName.DIRECTION, PdfName.L2R);
-			else if ((preferences & PdfWriter.DirectionR2L) != 0)
+			else if ((preferences & PdfWriter.DIRECTION_R2L) != 0)
 				viewerPreferences.put(PdfName.DIRECTION, PdfName.R2L);
 
-			if ((preferences & PdfWriter.PrintScalingNone) != 0)
+			if ((preferences & PdfWriter.PRINT_SCALING_NONE) != 0)
 				viewerPreferences.put(PdfName.PRINTSCALING, PdfName.NONE);			
 		}
 	}
@@ -272,32 +272,32 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 	public void addToCatalog(PdfDictionary catalog) {
 		// Page Layout
 		catalog.remove(PdfName.PAGELAYOUT);
-		if ((pageLayoutAndMode & PdfWriter.PageLayoutSinglePage) != 0)
+		if ((pageLayoutAndMode & PdfWriter.PAGE_LAYOUT_SINGLE_PAGE) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.SINGLEPAGE);
-		else if ((pageLayoutAndMode & PdfWriter.PageLayoutOneColumn) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PAGE_LAYOUT_ONE_COLUMN) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.ONECOLUMN);
-		else if ((pageLayoutAndMode & PdfWriter.PageLayoutTwoColumnLeft) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PAGE_LAYOUT_TWO_COLUMN_LEFT) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNLEFT);
-		else if ((pageLayoutAndMode & PdfWriter.PageLayoutTwoColumnRight) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PAGE_LAYOUT_TWO_COLUMN_RIGHT) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNRIGHT);
-		else if ((pageLayoutAndMode & PdfWriter.PageLayoutTwoPageLeft) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PAGE_LAYOUT_TWO_PAGE_LEFT) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.TWOPAGELEFT);
-		else if ((pageLayoutAndMode & PdfWriter.PageLayoutTwoPageRight) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PAGE_LAYOUT_TWO_PAGE_RIGHT) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.TWOPAGERIGHT);
 
 		// Page Mode
 		catalog.remove(PdfName.PAGEMODE);
-		if ((pageLayoutAndMode & PdfWriter.PageModeUseNone) != 0)
+		if ((pageLayoutAndMode & PdfWriter.PAGE_MODE_USE_NONE) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USENONE);
-		else if ((pageLayoutAndMode & PdfWriter.PageModeUseOutlines) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PAGE_MODE_USE_OUTLINES) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
-		else if ((pageLayoutAndMode & PdfWriter.PageModeUseThumbs) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PAGE_MODE_USE_THUMBS) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USETHUMBS);
-		else if ((pageLayoutAndMode & PdfWriter.PageModeFullScreen) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PAGE_MODE_FULL_SCREEN) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.FULLSCREEN);
-		else if ((pageLayoutAndMode & PdfWriter.PageModeUseOC) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PAGE_MODE_USE_OC) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USEOC);
-		else if ((pageLayoutAndMode & PdfWriter.PageModeUseAttachments) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PAGE_MODE_USE_ATTACHMENTS) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USEATTACHMENTS);
 
 		// viewer preferences (Table 8.1 of the PDF Reference)
@@ -316,32 +316,32 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 		if (obj != null && obj.isName()) {
 			name = (PdfName) obj;
 			if (name.equals(PdfName.SINGLEPAGE))
-				prefs |= PdfWriter.PageLayoutSinglePage;
+				prefs |= PdfWriter.PAGE_LAYOUT_SINGLE_PAGE;
 			else if (name.equals(PdfName.ONECOLUMN))
-				prefs |= PdfWriter.PageLayoutOneColumn;
+				prefs |= PdfWriter.PAGE_LAYOUT_ONE_COLUMN;
 			else if (name.equals(PdfName.TWOCOLUMNLEFT))
-				prefs |= PdfWriter.PageLayoutTwoColumnLeft;
+				prefs |= PdfWriter.PAGE_LAYOUT_TWO_COLUMN_LEFT;
 			else if (name.equals(PdfName.TWOCOLUMNRIGHT))
-				prefs |= PdfWriter.PageLayoutTwoColumnRight;
+				prefs |= PdfWriter.PAGE_LAYOUT_TWO_COLUMN_RIGHT;
 			else if (name.equals(PdfName.TWOPAGELEFT))
-				prefs |= PdfWriter.PageLayoutTwoPageLeft;
+				prefs |= PdfWriter.PAGE_LAYOUT_TWO_PAGE_LEFT;
 			else if (name.equals(PdfName.TWOPAGERIGHT))
-				prefs |= PdfWriter.PageLayoutTwoPageRight;
+				prefs |= PdfWriter.PAGE_LAYOUT_TWO_PAGE_RIGHT;
 		}
 		// page mode
 		obj = PdfReader.getPdfObjectRelease(catalog.get(PdfName.PAGEMODE));
 		if (obj != null && obj.isName()) {
 			name = (PdfName) obj;
 			if (name.equals(PdfName.USENONE))
-				prefs |= PdfWriter.PageModeUseNone;
+				prefs |= PdfWriter.PAGE_MODE_USE_NONE;
 			else if (name.equals(PdfName.USEOUTLINES))
-				prefs |= PdfWriter.PageModeUseOutlines;
+				prefs |= PdfWriter.PAGE_MODE_USE_OUTLINES;
 			else if (name.equals(PdfName.USETHUMBS))
-				prefs |= PdfWriter.PageModeUseThumbs;
+				prefs |= PdfWriter.PAGE_MODE_USE_THUMBS;
 			else if (name.equals(PdfName.USEOC))
-				prefs |= PdfWriter.PageModeUseOC;
+				prefs |= PdfWriter.PAGE_MODE_USE_OC;
 			else if (name.equals(PdfName.USEATTACHMENTS))
-				prefs |= PdfWriter.PageModeUseAttachments;
+				prefs |= PdfWriter.PAGE_MODE_USE_ATTACHMENTS;
 		}
 		// set page layout and page mode preferences
 		preferences.setViewerPreferences(prefs);
