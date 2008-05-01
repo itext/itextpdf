@@ -208,9 +208,9 @@ public class RtfBorderGroup extends RtfElement {
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
-        Iterator it = this.borders.entrySet().iterator();
+        Iterator it = this.borders.values().iterator();
         while(it.hasNext()) {
-            ((RtfBorder) ((Map.Entry) it.next()).getValue()).writeContent(result);
+            ((RtfBorder) it.next()).writeContent(result);
         }
     }        
     
