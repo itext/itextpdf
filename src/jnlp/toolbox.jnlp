@@ -13,7 +13,7 @@
     <homepage href="http://1t3xt.com/products/toolbox.php"/>
     <description>A FrameWork that can be used to plug in iText tools</description>
     <description kind="short">iText Toolbox</description>
-    <icon href="http://www.1t3xt.com/img/logo.gif"/>
+    <icon href="http://www.1t3xt.com/img/jnlplogo.gif"/>
     <offline-allowed/>
     <shortcut online="true" >
       <!-- put a shortcut on the desktop -->

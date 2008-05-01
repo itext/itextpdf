@@ -13,7 +13,7 @@
     <homepage href="http://1t3xt.com/products/rups.php"/>
     <description>A tool that allows you to read/update PDF syntax</description>
     <description kind="short">Reading / Updating PDF Syntax</description>
-    <icon href="http://www.1t3xt.com/img/logo.gif"/>
+    <icon href="http://www.1t3xt.com/img/jnlplogo.gif"/>
     <offline-allowed/>
     <shortcut online="true" >
       <!-- put a shortcut on the desktop -->
