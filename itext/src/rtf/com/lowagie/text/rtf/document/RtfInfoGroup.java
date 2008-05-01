@@ -72,9 +72,9 @@ public class RtfInfoGroup extends RtfElement {
     private static final byte[] INFO_GROUP = "\\info".getBytes();
     
     /**
-     * Constant for the password element
+     * Constant for the password element.
+     * Author: Howard Shank (hgshank@yahoo.com)
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
     private static final byte[] INFO_PASSWORD = "\\*\\password".getBytes();
 

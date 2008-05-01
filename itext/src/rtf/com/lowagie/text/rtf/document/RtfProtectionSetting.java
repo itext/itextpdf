@@ -67,55 +67,49 @@ public class RtfProtectionSetting extends RtfElement {
 	/**
 	 * Constant for Form protection controlword
 	 * Mutually exclusive
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#REVPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#ANNOTPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#READPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
-	 * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com) 
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#REVPROT
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#ANNOTPROT
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#READPROT
+	 * @since 2.1.1 
 	 */
     private static final byte[] FORMPROT = "\\formprot".getBytes();
 	/**
 	 * Constant for Revision protection controlword
 	 * Mutually exclusive
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#FORMPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#ANNOTPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#READPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#FORMPROT
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#ANNOTPROT
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#READPROT
 	 * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com) 
 	 */
     private static final byte[] REVPROT = "\\revprot".getBytes();
 	/**
 	 * Constant for Annotation/Comment protection controlword
 	 * Mutually exclusive
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#FORMPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#REVPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#READPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#FORMPROT
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#REVPROT
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#READPROT
 	 * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com) 
 	 */
     private static final byte[] ANNOTPROT = "\\annotprot".getBytes();
 	/**
 	 * Constant for read only rotection controlword
 	 * Mutually exclusive - exception, can be combined with ANNOTPROT
 	 * for backwards compatibility
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#FORMPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#REVPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
-	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#ANNOTPROT(com.lowagie.text.rtf.document.RtfProtectionSetting)
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#FORMPROT
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#REVPROT
+	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#ANNOTPROT
 	 * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com) 
 	 */
     private static final byte[] READPROT = "\\readprot".getBytes();
     
 	/**
 	 * Constant for protlevel controlword
 	 * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com) 
 	 */
     private static final byte[] PROTLEVEL = "\\protlevel".getBytes();
 	/**
 	 * Constant for enforceprot controlword
-	 * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com) 
+	 * @since 2.1.1 
 	 */
     private static final byte[] ENFORCEPROT = "\\enforceprot".getBytes();
     
@@ -124,7 +118,6 @@ public class RtfProtectionSetting extends RtfElement {
 	 * Implemented in Microsoft Word 2007.
 	 * 
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com) 
 	 */
     private static final byte[] READONLYRECOMMENDED = "\\readonlyrecommended".getBytes();
 
@@ -133,7 +126,6 @@ public class RtfProtectionSetting extends RtfElement {
      * 
      * @param doc The <code>RtfDocument</code> this <code>RtfProtectionSetting</code> belongs to
 	 * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com) 
      */
     public RtfProtectionSetting(RtfDocument doc) {
         super(doc);
@@ -142,7 +134,6 @@ public class RtfProtectionSetting extends RtfElement {
     /**
      * Writes the RTF protection control words
 	 * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com) 
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -151,7 +142,6 @@ public class RtfProtectionSetting extends RtfElement {
     /**
      * Writes the RTF protection control words
 	 * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com) 
     */    
     public void writeDefinition(final OutputStream result) throws IOException
     {

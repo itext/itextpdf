@@ -66,7 +66,6 @@ public final class RtfProtection {
     /**
      * Default for protection level. 
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
      */
 	static final public int LEVEL_NONE = 0x0000;
 	/**
@@ -75,7 +74,6 @@ public final class RtfProtection {
 	 * This document is protected for revisions. The user can edit the document, 
 	 * but revision marking cannot be disabled.
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
 	 */
 	static final public int LEVEL_REVPROT = 0x0001; // protlevel0
 	/**
@@ -84,7 +82,6 @@ public final class RtfProtection {
 	 * This document is protected for comments (annotations).
 	 * The user cannot edit the document but can insert comments (annotations).
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
 	 */
 	static final public int LEVEL_ANNOTPROT = 0x0002; // protlevel1
 	/**
@@ -93,7 +90,6 @@ public final class RtfProtection {
 	 * Document is protected for forms.
 	 * see also \allprot (forms controlword)
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
 	 */
 	static final public int LEVEL_FORMPROT = 0x0004; // protlevel2
 	/**
@@ -101,7 +97,6 @@ public final class RtfProtection {
 	 * Mutually exclusive but can be combined with ANNOTPROT for backward compatibility 
 	 * Document is protected for editing, except areas marked as exceptions by \protstart and\protend
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
 	 */
 	static final public int LEVEL_READPROT = 0x0008; // protlevel3
 
@@ -111,7 +106,6 @@ public final class RtfProtection {
 	 * 
 	 * The document contains styles and formatting restrictions.
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
 	 */
 	static final public int STYLELOCK = 0x0001;
 	/**
@@ -119,7 +113,6 @@ public final class RtfProtection {
 	 * 
 	 * The styles and formatting restrictions are being enforced.
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
 	 */
 	static final public int STYLELOCKENFORCED = 0x0002;
 	/**
@@ -129,7 +122,6 @@ public final class RtfProtection {
 	 * keywords to get documents with styles and formatting restrictions to behave 
 	 * in a reasonable way when opened by older versions.
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
 	 */
 	static final public int STYLELOCKBACKCOMP = 0x0004;
 	/**
@@ -139,7 +131,6 @@ public final class RtfProtection {
 	 * protection is on, the user cannot add direct formatting.  This setting allows 
 	 * AutoFormat actions to apply direct formatting when needed.
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
 	 */
 	static final public int AUTOFMTOVERRIDE = 0x0008;
 	
@@ -147,7 +138,6 @@ public final class RtfProtection {
 	/**
 	 * <code>initialCodeArray</code> Table from ECMA-376 Specification
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
 	 */
 	static final private int initialCodeArray[] = { 
 			0xE1F0, 
@@ -171,7 +161,6 @@ public final class RtfProtection {
 	/**
 	 * <code>encryptionMatrix</code> Table from ECMA-376 Specification
      * @since 2.1.1
-     * @author Howard Shank (hgshank@yahoo.com)
 	 */
 	static final private int encryptionMatrix [][] = {
 		/*              bit1    bit2    bit3    bit4    bit5    bit6    bit7   **bit8 is ignored** */
@@ -198,7 +187,6 @@ public final class RtfProtection {
 	 * @param pwd Clear text string input
 	 * @return hex encoded password hash
 	 * 
-	 * @author Howard Shank (hgshank@yahoo.com)
 	 * @since 2.1.1
 	 */
 	static final public String generateHash(String pwd) {
