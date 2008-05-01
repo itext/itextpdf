@@ -1358,65 +1358,228 @@ public class PdfWriter extends DocWriter implements
 
 	// page layout (section 13.1.1 of "iText in Action")
 	
-    /** A viewer preference */
-	public static final int PageLayoutSinglePage = 1;
-	/** A viewer preference */
-	public static final int PageLayoutOneColumn = 2;
-	/** A viewer preference */
-	public static final int PageLayoutTwoColumnLeft = 4;
-	/** A viewer preference */
-	public static final int PageLayoutTwoColumnRight = 8;
-	/** A viewer preference */
-	public static final int PageLayoutTwoPageLeft = 16;
-	/** A viewer preference */
-	public static final int PageLayoutTwoPageRight = 32;
+    /** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_LAYOUT_SINGLE_PAGE = 1;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_LAYOUT_ONE_COLUMN = 2;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_LAYOUT_TWO_COLUMN_LEFT = 4;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_LAYOUT_TWO_COLUMN_RIGHT = 8;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_LAYOUT_TWO_PAGE_LEFT = 16;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_LAYOUT_TWO_PAGE_RIGHT = 32;
 
 	// page mode (section 13.1.2 of "iText in Action")
 	
-	/** A viewer preference */
-	public static final int PageModeUseNone = 64;
-	/** A viewer preference */
-	public static final int PageModeUseOutlines = 128;
-	/** A viewer preference */
-	public static final int PageModeUseThumbs = 256;
-	/** A viewer preference */
-	public static final int PageModeFullScreen = 512;
-	/** A viewer preference */
-	public static final int PageModeUseOC = 1024;
-	/** A viewer preference */
-	public static final int PageModeUseAttachments = 2048;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_MODE_USE_NONE = 64;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_MODE_USE_OUTLINES = 128;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_MODE_USE_THUMBS = 256;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_MODE_FULL_SCREEN = 512;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_MODE_USE_OC = 1024;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PAGE_MODE_USE_ATTACHMENTS = 2048;
 	
 	// values for setting viewer preferences in iText versions older than 2.x
 	
-	/** A viewer preference */
-	public static final int HideToolbar = 1 << 12;
-	/** A viewer preference */
-	public static final int HideMenubar = 1 << 13;
-	/** A viewer preference */
-	public static final int HideWindowUI = 1 << 14;
-	/** A viewer preference */
-	public static final int FitWindow = 1 << 15;
-	/** A viewer preference */
-	public static final int CenterWindow = 1 << 16;
-	/** A viewer preference */
-	public static final int DisplayDocTitle = 1 << 17;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int HIDE_TOOLBAR = 1 << 12;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int HIDE_MENUBAR = 1 << 13;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int HIDE_WINDOW_UI = 1 << 14;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int FIT_WINDOW = 1 << 15;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int CENTER_WINDOW = 1 << 16;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int DISPLAY_DOC_TITLE = 1 << 17;
 
-	/** A viewer preference */
-	public static final int NonFullScreenPageModeUseNone = 1 << 18;
-	/** A viewer preference */
-	public static final int NonFullScreenPageModeUseOutlines = 1 << 19;
-	/** A viewer preference */
-	public static final int NonFullScreenPageModeUseThumbs = 1 << 20;
-	/** A viewer preference */
-	public static final int NonFullScreenPageModeUseOC = 1 << 21;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int NON_FULL_SCREEN_PAGE_MODE_USE_NONE = 1 << 18;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int NON_FULL_SCREEN_PAGE_MODE_USE_OUTLINES = 1 << 19;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int NON_FULL_SCREEN_PAGE_MODE_USE_THUMBS = 1 << 20;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int NON_FULL_SCREEN_PAGE_MODE_USE_OC = 1 << 21;
 
-	/** A viewer preference */
-	public static final int DirectionL2R = 1 << 22;
-	/** A viewer preference */
-	public static final int DirectionR2L = 1 << 23;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int DIRECTION_L2R = 1 << 22;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int DIRECTION_R2L = 1 << 23;
 
-	/** A viewer preference */
-	public static final int PrintScalingNone = 1 << 24;
+	/** A viewer preference
+	 * @since	2.1.2
+	 */
+	public static final int PRINT_SCALING_NONE = 1 << 24;
+	
+	
+	// page layout (section 13.1.1 of "iText in Action")
+	
+    /** A viewer preference
+     * @deprecated use PAGE_LAYOUT_SINGLE_PAGE instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageLayoutSinglePage = PAGE_LAYOUT_SINGLE_PAGE;
+	/** A viewer preference
+     * @deprecated use PAGE_LAYOUT_ONE_COLUMN instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageLayoutOneColumn = PAGE_LAYOUT_ONE_COLUMN;
+	/** A viewer preference
+     * @deprecated use PAGE_LAYOUT_TWO_COLUMN_LEFT instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageLayoutTwoColumnLeft = PAGE_LAYOUT_TWO_COLUMN_LEFT;
+	/** A viewer preference
+     * @deprecated use PAGE_LAYOUT_TWO_COLUMN_RIGHT instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageLayoutTwoColumnRight = PAGE_LAYOUT_TWO_COLUMN_RIGHT;
+	/** A viewer preference
+     * @deprecated use PAGE_LAYOUT_TWO_PAGE_LEFT instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageLayoutTwoPageLeft = PAGE_LAYOUT_TWO_PAGE_LEFT;
+	/** A viewer preference
+     * @deprecated use PAGE_LAYOUT_TWO_PAGE_RIGHT instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageLayoutTwoPageRight = PAGE_LAYOUT_TWO_PAGE_RIGHT;
+
+	// page mode (section 13.1.2 of "iText in Action")
+	
+	/** A viewer preference
+     * @deprecated use PAGE_MODE_USE_NONE instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageModeUseNone = PAGE_MODE_USE_NONE;
+	/** A viewer preference
+     * @deprecated use PAGE_MODE_USE_OUTLINES instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageModeUseOutlines = PAGE_MODE_USE_OUTLINES;
+	/** A viewer preference
+     * @deprecated use PAGE_MODE_USE_THUMBS instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageModeUseThumbs = PAGE_MODE_USE_THUMBS;
+	/** A viewer preference
+     * @deprecated use PAGE_MODE_USE_FULL_SCREEN instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageModeFullScreen = PAGE_MODE_FULL_SCREEN;
+	/** A viewer preference
+     * @deprecated use PAGE_MODE_USE_OC instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageModeUseOC = PAGE_MODE_USE_OC;
+	/** A viewer preference
+     * @deprecated use PAGE_MODE_USE_ATTACHMENTS instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PageModeUseAttachments = PAGE_MODE_USE_ATTACHMENTS;
+	
+	// values for setting viewer preferences in iText versions older than 2.x
+	
+	/** A viewer preference
+     * @deprecated use HIDE_TOOLBAR instead (scheduled for removal in 2.3.0)
+     */
+	public static final int HideToolbar = HIDE_TOOLBAR;
+	/** A viewer preference
+     * @deprecated use HIDE_MENUBAR instead (scheduled for removal in 2.3.0)
+     */
+	public static final int HideMenubar = HIDE_MENUBAR;
+	/** A viewer preference
+     * @deprecated use HIDE_WINDOW_UI instead (scheduled for removal in 2.3.0)
+     */
+	public static final int HideWindowUI = HIDE_WINDOW_UI;
+	/** A viewer preference
+     * @deprecated use FIT_WINDOW instead (scheduled for removal in 2.3.0)
+     */
+	public static final int FitWindow = FIT_WINDOW;
+	/** A viewer preference
+     * @deprecated use CENTER_WINDOW instead (scheduled for removal in 2.3.0)
+     */
+	public static final int CenterWindow = CENTER_WINDOW;
+	/** A viewer preference
+     * @deprecated use DISPLAY_DOC_TITLE instead (scheduled for removal in 2.3.0)
+     */
+	public static final int DisplayDocTitle = DISPLAY_DOC_TITLE;
+
+	/** A viewer preference
+     * @deprecated use NON_FULL_SCREEN_PAGE_MODE_USE_NONE instead (scheduled for removal in 2.3.0)
+     */
+	public static final int NonFullScreenPageModeUseNone = NON_FULL_SCREEN_PAGE_MODE_USE_NONE;
+	/** A viewer preference
+     * @deprecated use NON_FULL_SCREEN_PAGE_MODE_USE_OUTLINES instead (scheduled for removal in 2.3.0)
+     */
+	public static final int NonFullScreenPageModeUseOutlines = NON_FULL_SCREEN_PAGE_MODE_USE_OUTLINES;
+	/** A viewer preference
+     * @deprecated use NON_FULL_SCREEN_PAGE_MODE_USE_THUMBS instead (scheduled for removal in 2.3.0)
+     */
+	public static final int NonFullScreenPageModeUseThumbs = NON_FULL_SCREEN_PAGE_MODE_USE_THUMBS;
+	/** A viewer preference
+     * @deprecated use NON_FULL_SCREEN_PAGE_MODE_USE_OC instead (scheduled for removal in 2.3.0)
+     */
+	public static final int NonFullScreenPageModeUseOC = NON_FULL_SCREEN_PAGE_MODE_USE_OC;
+
+	/** A viewer preference
+     * @deprecated use DIRECTION_L2R instead (scheduled for removal in 2.3.0)
+     */
+	public static final int DirectionL2R = DIRECTION_L2R;
+	/** A viewer preference
+     * @deprecated use DIRECTION_R2L instead (scheduled for removal in 2.3.0)
+     */
+	public static final int DirectionR2L = DIRECTION_R2L;
+
+	/** A viewer preference
+     * @deprecated use PAGE_MODE_USE_NONE instead (scheduled for removal in 2.3.0)
+     */
+	public static final int PrintScalingNone = PRINT_SCALING_NONE;
 	
     /** @see com.lowagie.text.pdf.interfaces.PdfViewerPreferences#setViewerPreferences(int) */
     public void setViewerPreferences(int preferences) {
