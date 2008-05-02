@@ -62,6 +62,8 @@ import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.html.Markup;
 import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.HyphenationAuto;
+import com.lowagie.text.pdf.HyphenationEvent;
 
 /**
  *
@@ -84,6 +86,7 @@ public class FactoryProperties {
             ck.setTextRise(-size);
         else if (props.hasProperty("sup"))
             ck.setTextRise(size);
+        ck.setHyphenation(getHyphenation(props));
         return ck;
     }
     
@@ -120,6 +123,7 @@ public class FactoryProperties {
             else if (value.equalsIgnoreCase("justify"))
                 p.setAlignment(Element.ALIGN_JUSTIFIED);
         }
+        p.setHyphenation(getHyphenation(props));
         setParagraphLeading(p, (String)props.get("leading"));
         return p;
     }
@@ -134,6 +138,7 @@ public class FactoryProperties {
             else if (value.equalsIgnoreCase("justify"))
                 p.setAlignment(Element.ALIGN_JUSTIFIED);
         }
+        p.setHyphenation(getHyphenation(props));
         setParagraphLeading(p, props.getProperty("leading"));
         value = props.getProperty("before");
         if (value != null) {
@@ -202,6 +207,65 @@ public class FactoryProperties {
         if (encoding == null)
             encoding = BaseFont.WINANSI;
         return fontImp.getFont(face, encoding, true, size, style, color);
+    }
+
+    /**
+     * Gets a HyphenationEvent based on the hyphenation entry in ChainedProperties.
+     * @param	props	ChainedProperties
+     * @return	a HyphenationEvent
+     * @since	2.1.2
+     */
+    public static HyphenationEvent getHyphenation(ChainedProperties props) {
+        return getHyphenation(props.getProperty("hyphenation"));
+    }
+
+    /**
+     * Gets a HyphenationEvent based on the hyphenation entry in a HashMap.
+     * @param	props	a HashMap with properties
+     * @return	a HyphenationEvent
+     * @since	2.1.2
+     */
+    public static HyphenationEvent getHyphenation(HashMap props) {
+        return getHyphenation((String)props.get("hyphenation"));
+    }
+    
+    /**
+     * Gets a HyphenationEvent based on a String.
+     * For instance "en_UK,3,2" returns new HyphenationAuto("en", "UK", 3, 2);
+     * @param	a String, for instance "en_UK,2,2"
+     * @return	a HyphenationEvent
+     * @since	2.1.2
+     */
+    public static HyphenationEvent getHyphenation(String s) {
+    	if (s == null || s.length() == 0) {
+    		return null;
+    	}
+    	String lang = s;
+    	String country = null;
+    	int leftMin = 2;
+    	int rightMin = 2;
+    	
+    	int pos = s.indexOf('_');
+    	if (pos == -1) {
+        	return new HyphenationAuto(lang, country, leftMin, rightMin);
+    	}
+    	lang = s.substring(0, pos);
+    	country = s.substring(pos + 1);
+    	pos = country.indexOf(',');
+    	if (pos == -1) {
+        	return new HyphenationAuto(lang, country, leftMin, rightMin);
+    	}
+    	s = country.substring(pos + 1);
+    	country = country.substring(0, pos);
+    	pos = s.indexOf(',');
+    	if (pos == -1) {
+    		leftMin = Integer.parseInt(s);
+    	}
+    	else {
+    		leftMin = Integer.parseInt(s.substring(0, pos));
+    		rightMin = Integer.parseInt(s.substring(pos + 1));
+    	}	
+    	return new HyphenationAuto(lang, country, leftMin, rightMin);
     }
     
     public static void insertStyle(HashMap h) {
