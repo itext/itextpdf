@@ -372,7 +372,7 @@ public abstract class BaseFont {
      * @throws	DocumentException	This shouldn't occur ever
      * @since	2.1.1 
      */
-    public BaseFont createFont() throws DocumentException, IOException {
+    public static BaseFont createFont() throws DocumentException, IOException {
     	return createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
     }
     
