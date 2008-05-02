@@ -68,6 +68,7 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.TextElementArray;
+import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
@@ -89,6 +90,8 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     private HashMap interfaceProps;
     private FactoryProperties factoryProperties = new FactoryProperties();
     
+    private HyphenationEvent hyphenation = null;
+    
     /** Creates a new instance of HTMLWorker */
     public HTMLWorker(DocListener document) {
         this.document = document;
@@ -102,7 +105,25 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         return style;
     }
     
-    public void setInterfaceProps(HashMap interfaceProps) {
+    /**
+     * Getter for the hyphenation.
+	 * @return a HyphenationEvent instance
+	 * @since	2.1.2
+	 */
+	public HyphenationEvent getHyphenation() {
+		return hyphenation;
+	}
+
+	/**
+	 * Setter for the hyphenation.
+	 * @param hyphenation a HyphenationEvent instance
+	 * @since	2.1.2
+	 */
+	public void setHyphenation(HyphenationEvent hyphenation) {
+		this.hyphenation = hyphenation;
+	}
+
+	public void setInterfaceProps(HashMap interfaceProps) {
         this.interfaceProps = interfaceProps;
         FontFactoryImp ff = null;
         if (interfaceProps != null)
@@ -120,11 +141,16 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     }
     
     public static ArrayList parseToList(Reader reader, StyleSheet style) throws IOException {
-        return parseToList(reader, style, null);
+        return parseToList(reader, style, null, null);
     }
     
     public static ArrayList parseToList(Reader reader, StyleSheet style, HashMap interfaceProps) throws IOException {
+    	return parseToList(reader, style, interfaceProps, null);
+    }
+    
+    public static ArrayList parseToList(Reader reader, StyleSheet style, HashMap interfaceProps, HyphenationEvent hyphenation) throws IOException {
         HTMLWorker worker = new HTMLWorker(null);
+        worker.setHyphenation(hyphenation);
         if (style != null)
             worker.style = style;
         worker.document = worker;
@@ -168,15 +194,20 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             FactoryProperties.insertStyle(h);
             if (tag.equals("a")) {
                 cprops.addToChain(tag, h);
-                if (currentParagraph == null)
+                if (currentParagraph == null) {
                     currentParagraph = new Paragraph();
+                    currentParagraph.setHyphenation(hyphenation);
+                }
                 stack.push(currentParagraph);
                 currentParagraph = new Paragraph();
+                currentParagraph.setHyphenation(hyphenation);
                 return;
             }
             if (tag.equals("br")) {
-                if (currentParagraph == null)
+                if (currentParagraph == null) {
                     currentParagraph = new Paragraph();
+                    currentParagraph.setHyphenation(hyphenation);
+                }
                 currentParagraph.add(factoryProperties.createChunk("\n", cprops));
                 return;
             }
@@ -259,8 +290,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 }
                 else {
                     cprops.removeChain(tag);
-                    if (currentParagraph == null)
+                    if (currentParagraph == null) {
                         currentParagraph = FactoryProperties.createParagraph(cprops);
+                        currentParagraph.setHyphenation(hyphenation);
+                    }
                     currentParagraph.add(new Chunk(img, 0, 0));
                 }
                 return;
@@ -299,7 +332,9 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 skipText = false;
                 pendingLI = true;
                 cprops.addToChain(tag, h);
-                stack.push(FactoryProperties.createListItem(cprops));
+                ListItem item = FactoryProperties.createListItem(cprops);
+                item.setHyphenation(hyphenation);
+                stack.push(item);
                 return;
             }
             if (tag.equals("div") || tag.equals("body")) {
@@ -317,6 +352,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             if (tag.equals("p")) {
                 cprops.addToChain(tag, h);
                 currentParagraph = FactoryProperties.createParagraph(h);
+                currentParagraph.setHyphenation(hyphenation);
                 return;
             }
             if (tag.equals("tr")) {
@@ -365,8 +401,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 return;
             }
             if (tag.equals("a")) {
-                if (currentParagraph == null)
+                if (currentParagraph == null) {
                     currentParagraph = new Paragraph();
+                    currentParagraph.setHyphenation(hyphenation);
+                }
                 ALink i = null;
                 boolean skip = false;
                 if (interfaceProps != null) {
@@ -528,9 +566,13 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             return;
         String content = str;
         if (isPRE) {
-            if (currentParagraph == null)
+            if (currentParagraph == null) {
                 currentParagraph = FactoryProperties.createParagraph(cprops);
-            currentParagraph.add(factoryProperties.createChunk(content, cprops));
+                currentParagraph.setHyphenation(hyphenation);
+            }
+            Chunk chunk = factoryProperties.createChunk(content, cprops);
+            chunk.setHyphenation(hyphenation);
+            currentParagraph.add(chunk);
             return;
         }
         if (content.trim().length() == 0 && content.indexOf(' ') < 0) {
@@ -563,9 +605,13 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                         buf.append(character);
             }
         }
-        if (currentParagraph == null)
+        if (currentParagraph == null) {
             currentParagraph = FactoryProperties.createParagraph(cprops);
-        currentParagraph.add(factoryProperties.createChunk(buf.toString(), cprops));
+            currentParagraph.setHyphenation(hyphenation);
+        }
+        Chunk chunk = factoryProperties.createChunk(buf.toString(), cprops);
+        chunk.setHyphenation(hyphenation);
+        currentParagraph.add(chunk);
     }
     
     public boolean add(Element element) throws DocumentException {
