@@ -136,19 +136,19 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
         // super.handleStartingTags is replaced with handleStartingTags
         // suggestion by Vu Ngoc Tan/Hop
     	name = name.toLowerCase();
-        if (((HtmlTagMap) myTags).isHtml(name)) {
+        if (HtmlTagMap.isHtml(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap) myTags).isHead(name)) {
+        if (HtmlTagMap.isHead(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap) myTags).isTitle(name)) {
+        if (HtmlTagMap.isTitle(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap) myTags).isMeta(name)) {
+        if (HtmlTagMap.isMeta(name)) {
             // we look if we can change the body attributes
             String meta = null;
             String content = null;
@@ -166,12 +166,12 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
             }
             return;
         }
-        if (((HtmlTagMap) myTags).isLink(name)) {
+        if (HtmlTagMap.isLink(name)) {
             // we do nothing for the moment, in a later version we could extract
             // the style sheet
             return;
         }
-        if (((HtmlTagMap) myTags).isBody(name)) {
+        if (HtmlTagMap.isBody(name)) {
             // maybe we could extract some info about the document: color,
             // margins,...
             // but that's for a later version...
@@ -240,25 +240,25 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
                 throw new ExceptionConverter(e);
             }
         }
-        if (((HtmlTagMap) myTags).isHead(name)) {
+        if (HtmlTagMap.isHead(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap) myTags).isTitle(name)) {
+        if (HtmlTagMap.isTitle(name)) {
             if (currentChunk != null) {
                 bodyAttributes.put(ElementTags.TITLE, currentChunk.getContent());
             }
             return;
         }
-        if (((HtmlTagMap) myTags).isMeta(name)) {
+        if (HtmlTagMap.isMeta(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap) myTags).isLink(name)) {
+        if (HtmlTagMap.isLink(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap) myTags).isBody(name)) {
+        if (HtmlTagMap.isBody(name)) {
             // we do nothing
             return;
         }
