@@ -232,7 +232,7 @@ private static final long serialVersionUID = 5287430058473705350L;
  * @return true if tag is HTML or html
  */
     
-    public boolean isHtml(String tag) {
+    public static boolean isHtml(String tag) {
         return HtmlTags.HTML.equalsIgnoreCase(tag);
     }
     
@@ -242,7 +242,7 @@ private static final long serialVersionUID = 5287430058473705350L;
  * @return true if tag is HEAD or head
  */
     
-    public boolean isHead(String tag) {
+    public static boolean isHead(String tag) {
         return HtmlTags.HEAD.equalsIgnoreCase(tag);
     }
     
@@ -252,7 +252,7 @@ private static final long serialVersionUID = 5287430058473705350L;
  * @return true if tag is META or meta
  */
     
-    public boolean isMeta(String tag) {
+    public static boolean isMeta(String tag) {
         return HtmlTags.META.equalsIgnoreCase(tag);
     }
     
@@ -262,7 +262,7 @@ private static final long serialVersionUID = 5287430058473705350L;
  * @return true if tag is LINK or link
  */
     
-    public boolean isLink(String tag) {
+    public static boolean isLink(String tag) {
         return HtmlTags.LINK.equalsIgnoreCase(tag);
     }
     
@@ -272,7 +272,7 @@ private static final long serialVersionUID = 5287430058473705350L;
  * @return true if tag is TITLE or title
  */
     
-    public boolean isTitle(String tag) {
+    public static boolean isTitle(String tag) {
         return HtmlTags.TITLE.equalsIgnoreCase(tag);
     }
     
@@ -282,7 +282,7 @@ private static final long serialVersionUID = 5287430058473705350L;
  * @return true if tag is BODY or body
  */
     
-    public boolean isBody(String tag) {
+    public static boolean isBody(String tag) {
         return HtmlTags.BODY.equalsIgnoreCase(tag);
     }
     
@@ -291,7 +291,7 @@ private static final long serialVersionUID = 5287430058473705350L;
  * @param tag a tagvalue
  * @return true if tag is a HTML, HEAD, META, LINK or BODY tag (case insensitive)
  */
-    public boolean isSpecialTag(String tag) {
+    public static boolean isSpecialTag(String tag) {
         return isHtml(tag) || isHead(tag) || isMeta(tag) || isLink(tag) || isBody(tag);
     }
 }
