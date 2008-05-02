@@ -68,6 +68,7 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.TextElementArray;
+import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
@@ -101,8 +102,8 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     public StyleSheet getStyleSheet() {
         return style;
     }
-    
-    public void setInterfaceProps(HashMap interfaceProps) {
+
+	public void setInterfaceProps(HashMap interfaceProps) {
         this.interfaceProps = interfaceProps;
         FontFactoryImp ff = null;
         if (interfaceProps != null)
@@ -168,15 +169,17 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             FactoryProperties.insertStyle(h);
             if (tag.equals("a")) {
                 cprops.addToChain(tag, h);
-                if (currentParagraph == null)
+                if (currentParagraph == null) {
                     currentParagraph = new Paragraph();
+                }
                 stack.push(currentParagraph);
                 currentParagraph = new Paragraph();
                 return;
             }
             if (tag.equals("br")) {
-                if (currentParagraph == null)
+                if (currentParagraph == null) {
                     currentParagraph = new Paragraph();
+                }
                 currentParagraph.add(factoryProperties.createChunk("\n", cprops));
                 return;
             }
@@ -259,8 +262,9 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 }
                 else {
                     cprops.removeChain(tag);
-                    if (currentParagraph == null)
+                    if (currentParagraph == null) {
                         currentParagraph = FactoryProperties.createParagraph(cprops);
+                    }
                     currentParagraph.add(new Chunk(img, 0, 0));
                 }
                 return;
@@ -299,7 +303,8 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 skipText = false;
                 pendingLI = true;
                 cprops.addToChain(tag, h);
-                stack.push(FactoryProperties.createListItem(cprops));
+                ListItem item = FactoryProperties.createListItem(cprops);
+                stack.push(item);
                 return;
             }
             if (tag.equals("div") || tag.equals("body")) {
@@ -365,8 +370,9 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 return;
             }
             if (tag.equals("a")) {
-                if (currentParagraph == null)
+                if (currentParagraph == null) {
                     currentParagraph = new Paragraph();
+                }
                 ALink i = null;
                 boolean skip = false;
                 if (interfaceProps != null) {
@@ -528,9 +534,11 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             return;
         String content = str;
         if (isPRE) {
-            if (currentParagraph == null)
+            if (currentParagraph == null) {
                 currentParagraph = FactoryProperties.createParagraph(cprops);
-            currentParagraph.add(factoryProperties.createChunk(content, cprops));
+            }
+            Chunk chunk = factoryProperties.createChunk(content, cprops);
+            currentParagraph.add(chunk);
             return;
         }
         if (content.trim().length() == 0 && content.indexOf(' ') < 0) {
@@ -563,9 +571,11 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                         buf.append(character);
             }
         }
-        if (currentParagraph == null)
+        if (currentParagraph == null) {
             currentParagraph = FactoryProperties.createParagraph(cprops);
-        currentParagraph.add(factoryProperties.createChunk(buf.toString(), cprops));
+        }
+        Chunk chunk = factoryProperties.createChunk(buf.toString(), cprops);
+        currentParagraph.add(chunk);
     }
     
     public boolean add(Element element) throws DocumentException {

@@ -797,6 +797,15 @@ public class Chunk implements Element {
 	public boolean isNestable() {
 		return true;
 	}
+
+	/**
+     * Returns the hyphenation (if present).
+     * @since	2.1.2
+	 */
+    public HyphenationEvent getHyphenation() {
+        if (attributes == null) return null;
+        return (HyphenationEvent) attributes.get(Chunk.HYPHENATION);
+	}
 	
 	// keys used in PdfChunk
 	
