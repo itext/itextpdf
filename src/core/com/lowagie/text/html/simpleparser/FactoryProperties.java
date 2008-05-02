@@ -232,7 +232,7 @@ public class FactoryProperties {
     /**
      * Gets a HyphenationEvent based on a String.
      * For instance "en_UK,3,2" returns new HyphenationAuto("en", "UK", 3, 2);
-     * @param	a String, for instance "en_UK,2,2"
+     * @param	s a String, for instance "en_UK,2,2"
      * @return	a HyphenationEvent
      * @since	2.1.2
      */
