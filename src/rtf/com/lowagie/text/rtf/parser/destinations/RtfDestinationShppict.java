@@ -237,7 +237,6 @@ public class RtfDestinationShppict extends RtfDestination {
 			if (this.buffer.length() > 0) {
 				writeBuffer();
 			}
-			//			if(this.data.size() > 0) {
 			if (dataOS != null) {
 				addImage();
 				dataOS = null;
