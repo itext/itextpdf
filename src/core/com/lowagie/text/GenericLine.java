@@ -50,6 +50,7 @@ public class GenericLine extends PdfTemplate implements Element {
 	 * the line is rendered (change its color, dash pattern, thickness,...).
 	 * Or you can decide not to draw any line, but to use this object
 	 * to draw other stuff.
+	 * @since	2.1.2
 	 */
 	public GenericLine() {
 		super();
@@ -59,15 +60,17 @@ public class GenericLine extends PdfTemplate implements Element {
 	 * Gets the length of the line as a percentage of the available
 	 * page width. If 0 no line is drawn.
 	 * @return the widthPercentage
+	 * @since	2.1.2
 	 */
 	public float getWidthPercentage() {
 		return widthPercentage;
 	}
 
 	/**
-	 * Defines the length of the line as a percentage of the available
+	 * Sets the length of the line as a percentage of the available
 	 * page width. Set to 0 if you don't want to draw a line.
 	 * @param widthPercentage the widthPercentage to set
+	 * @since	2.1.2
 	 */
 	public void setWidthPercentage(float widthPercentage) {
 		this.widthPercentage = widthPercentage;
@@ -77,6 +80,7 @@ public class GenericLine extends PdfTemplate implements Element {
 	 * Returns the amount of vertical space that will be
 	 * consumed when drawing this object. 
 	 * @return a leading
+	 * @since	2.1.2
 	 */
 	public float getAdvanceY() {
 		return advanceY;
@@ -86,6 +90,7 @@ public class GenericLine extends PdfTemplate implements Element {
 	 * Sets the amount of vertical space that will be consumed
 	 * when drawing this object.
 	 * @param advanceY	a value for the height of this object.
+	 * @since	2.1.2
 	 */
 	public void setAdvanceY(float advanceY) {
 		this.advanceY = advanceY;
@@ -93,8 +98,9 @@ public class GenericLine extends PdfTemplate implements Element {
 
 	/**
 	 * Returns the minimum amount of vertical space
-	 * that will be consumed when drawing this object. 
-	 * @return a leading
+	 * that needs to be available before drawing this object. 
+	 * @return	the minimum space that needs to be available before drawing the line
+	 * @since	2.1.2
 	 */
 	public float getMinimumY() {
 		return minimumY;
@@ -102,8 +108,9 @@ public class GenericLine extends PdfTemplate implements Element {
 
 	/**
 	 * Sets the minimum amount of vertical space that
-	 * will be consumed when drawing this object.
-	 * @param advanceY	a value for the height of this object.
+	 * needs to be available before drawing this object.
+	 * @param minumumY	a minimum height that needs to be available before drawing this object
+	 * @since	2.1.2
 	 */
 	public void setMinimumY(float minimumY) {
 		this.minimumY = minimumY;
@@ -112,6 +119,7 @@ public class GenericLine extends PdfTemplate implements Element {
 	/**
 	 * Returns the vertical offset of the line.
 	 * @return the verticalOffset
+	 * @since	2.1.2
 	 */
 	public float getVerticalOffset() {
 		return verticalOffset;
@@ -120,6 +128,7 @@ public class GenericLine extends PdfTemplate implements Element {
 	/**
 	 * Sets the vertical offset of the line.
 	 * @param verticalOffset the verticalOffset to set
+	 * @since	2.1.2
 	 */
 	public void setVerticalOffset(float verticalOffset) {
 		this.verticalOffset = verticalOffset;
@@ -128,6 +137,7 @@ public class GenericLine extends PdfTemplate implements Element {
 	/**
 	 * Sets the horizontal alignment of the line.
 	 * @return the horizontalAlignment
+	 * @since	2.1.2
 	 */
 	public int getHorizontalAlignment() {
 		return horizontalAlignment;
@@ -136,27 +146,36 @@ public class GenericLine extends PdfTemplate implements Element {
 	/**
 	 * Gets the horizontal alignment of the line.
 	 * @param horizontalAlignment the horizontalAlignment to set
+	 * @since	2.1.2
 	 */
 	public void setHorizontalAlignment(int horizontalAlignment) {
 		this.horizontalAlignment = horizontalAlignment;
 	}
 
-	@Override
+	/**
+	 * @see com.lowagie.text.Element#getChunks()
+	 */
 	public ArrayList getChunks() {
 		return new ArrayList();
 	}
 
-	@Override
+	/**
+	 * @see com.lowagie.text.Element#isContent()
+	 */
 	public boolean isContent() {
 		return true;
 	}
 
-	@Override
+	/**
+	 * @see com.lowagie.text.Element#isNestable()
+	 */
 	public boolean isNestable() {
 		return false;
 	}
 
-	@Override
+	/**
+	 * @see com.lowagie.text.Element#process(ElementListener)
+	 */
 	public boolean process(ElementListener listener) {
 		try {
 			return listener.add(this);
@@ -165,7 +184,9 @@ public class GenericLine extends PdfTemplate implements Element {
 		}
 	}
 
-	@Override
+	/**
+	 * @see com.lowagie.text.Element#type()
+	 */
 	public int type() {
 		return Element.LINE;
 	}
