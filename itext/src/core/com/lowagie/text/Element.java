@@ -179,6 +179,9 @@ public interface Element {
 	
 	/** This is a possible type of <CODE>Element</CODE>. */
 	public static final int MARKED = 50;
+	
+	/** This is a possible type of <CODE>Element</CODE>. */
+	public static final int LINE = 60;
 
 	// static membervariables (alignment)
 
