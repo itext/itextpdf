@@ -196,8 +196,8 @@ public final class RtfProtection {
 		// if there is no password or the length is 0, then skip this and return "00000000" as default
 		// otherwise process the password
 		if(password != null && password.length() > 0) {
-			int hi=0;
-			int lo=0;
+			int hi=0;	// hi order word
+			int lo=0;	// lo order word
 
 			// Truncate the password to 15 characters.
 			if(password.length() > 15) {
@@ -208,13 +208,13 @@ public final class RtfProtection {
 			// initialize to table value
 			hi = initialCodeArray[password.length()-1];
 			
-			int fidx = 0;
-			int idxR = password.length()-1;
+			int idxF = 0;	// forward index
+			int idxR = password.length()-1; // reverse index
 			// process each character left to right.
 			// check each bit and if it is set, xor the hi word with 
 			// the table entry for the position in password and bit position.
-			for(; fidx<password.length(); fidx++,idxR--) {
-				int ch = password.charAt(fidx);
+			for(; idxF<password.length(); idxF++,idxR--) {
+				int ch = password.charAt(idxF);
 				if((ch & 0x0001)!= 0) {
 					hi = hi ^ encryptionMatrix[idxR][0];
 				}
@@ -238,11 +238,11 @@ public final class RtfProtection {
 				}
 			}
 			// Compute Key's low-order word
-			fidx = password.length()-1;
+			idxF = password.length()-1;
 			lo = 0;
 			// low order word is computed in reverse.
-			for(;fidx>= 0; fidx--) {
-				int ch = password.charAt(fidx);
+			for(;idxF>= 0; idxF--) {
+				int ch = password.charAt(idxF);
 				lo = (((lo >> 14) & 0x001) | (( lo << 1) & 0x7fff)) ^ ch;
 			}
 			// finally incorporate the password length into the low word and use value from formula
