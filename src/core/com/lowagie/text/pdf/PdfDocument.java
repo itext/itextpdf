@@ -71,6 +71,7 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
+import com.lowagie.text.GenericLine;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.MarkedObject;
@@ -353,6 +354,15 @@ public class PdfDocument extends Document {
     
     /** This represents the leading of the lines. */
     protected float leading = 0;
+    
+    /**
+     * Getter for the current leading.
+     * @return	the current leading
+     * @since	2.1.2
+     */
+    public float getLeading() {
+    	return leading;
+    }
     
     /** This represents the current alignment of the PDF Elements. */
     protected int alignment = Element.ALIGN_LEFT;
@@ -703,6 +713,56 @@ public class PdfDocument extends Document {
                     //carriageReturn(); suggestion by Marc Campforts
                     add((Image) element);
                     break;
+                }
+                case Element.LINE: {
+                	GenericLine line = (GenericLine)element;
+                	if (Float.isNaN(line.getAdvanceY())) {
+                		line.setAdvanceY(leading * 2f);
+                	}
+                	if (Float.isNaN(line.getVerticalOffset())) {
+                		line.setVerticalOffset(line.getAdvanceY() / 2f);
+                	}
+                	if (Float.isNaN(line.getMinimumY())) {
+                		line.setMinimumY(line.getAdvanceY() - line.getVerticalOffset());
+                	}
+                	PdfTemplate template = graphics.createTemplate(pageSize.getWidth(), pageSize.getHeight());
+                	template.setBoundingBox(new Rectangle(0, -pageSize.getHeight(), pageSize.getWidth(), pageSize.getHeight()));
+                	ensureNewLine();
+                	flushLines();
+                	if (currentHeight != 0 && indentTop() - currentHeight - line.getMinimumY() < indentBottom()) {
+                		newPage();
+                		currentHeight += line.getVerticalOffset();
+                		text.moveText(0, -line.getVerticalOffset());
+                	}
+                	else {
+                		currentHeight += line.getAdvanceY();
+                		text.moveText(0, -line.getAdvanceY());
+                	}
+                	template.setMatrix(1, 0, 0, 1, 0, indentTop() - currentHeight);
+                	template.add(line);
+                	if (line.getWidthPercentage() > 0) {
+                		float w = right() - left();
+                		float actualW = w * line.getWidthPercentage() / 100f;
+                		float offset = line.getVerticalOffset();
+                		switch(line.getHorizontalAlignment()) {
+                		case Element.ALIGN_LEFT:
+                			template.moveTo(left(), offset);
+                			template.lineTo(left() + actualW, offset);
+                			break;
+                		case Element.ALIGN_CENTER:
+                    		float remainingW = w - actualW;
+                			template.moveTo(left() + remainingW / 2, offset);
+                			template.lineTo(right() - remainingW / 2, offset);
+                			break;
+                		case Element.ALIGN_RIGHT:
+                			template.moveTo(right() - actualW, offset);
+                			template.lineTo(right(), offset);
+                			break;
+                		}
+            			template.stroke();
+                	}
+                	graphics.addTemplate(template, pageSize.getLeft(), pageSize.getBottom());
+                	break;
                 }
                 case Element.MARKED: {
                 	MarkedObject mo;
