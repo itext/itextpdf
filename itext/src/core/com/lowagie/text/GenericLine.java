@@ -159,7 +159,7 @@ public class GenericLine extends PdfTemplate implements Element {
 	/**
 	 * Sets the minimum amount of vertical space that
 	 * needs to be available before drawing this object.
-	 * @param minumumY	a minimum height that needs to be available before drawing this object
+	 * @param minimumY	a minimum height that needs to be available before drawing this object
 	 * @since	2.1.2
 	 */
 	public void setMinimumY(float minimumY) {
