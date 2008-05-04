@@ -112,7 +112,7 @@ public class PhotoAlbum extends AbstractTool {
             Document document = new Document();
             PdfWriter writer = PdfWriter.getInstance(document,
                     new FileOutputStream(pdf_file));
-            writer.setViewerPreferences(PdfWriter.PAGE_MODE_USE_THUMBS);
+            writer.setViewerPreferences(PdfWriter.PageModeUseThumbs);
             PdfPageLabels pageLabels = new PdfPageLabels();
             int dpiX, dpiY;
             float imgWidthPica, imgHeightPica;
