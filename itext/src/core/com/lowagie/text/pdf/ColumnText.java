@@ -63,6 +63,7 @@ import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.SimpleTable;
+import com.lowagie.text.ZeroHeight;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -442,7 +443,7 @@ public class ColumnText {
 				throw new IllegalArgumentException("Element not allowed.");
 			}
         }
-        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE)
+        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.ZEROHEIGHT)
             throw new IllegalArgumentException("Element not allowed.");
         if (!composite) {
             composite = true;
@@ -1447,6 +1448,13 @@ public class ColumnText {
                     return NO_MORE_COLUMN;
                 }
             }
+            else if (element.type() == Element.ZEROHEIGHT) {
+                if (!simulate) {
+                    ZeroHeight zh = (ZeroHeight)element;
+                    zh.draw(canvas, leftX, minY, rightX, maxY, yLine);
+                }
+                compositeElements.removeFirst();
+            }
             else
                 compositeElements.removeFirst();
         }
@@ -1488,6 +1496,14 @@ public class ColumnText {
      */
     public PdfContentByte[] getCanvases() {
         return canvases;
+    }
+    
+    /**
+     * Checks if the element has a height of 0.
+     * @return true or false
+     */
+    public boolean zeroHeightElement() {
+        return composite && !compositeElements.isEmpty() && ((Element)compositeElements.getFirst()).type() == Element.ZEROHEIGHT;
     }
     
     /**
