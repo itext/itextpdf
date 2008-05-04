@@ -50,6 +50,7 @@
 
 package com.lowagie.text.xml;
 
+import com.lowagie.text.LineSeparator;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -431,6 +432,23 @@ public class SAXiTextHandler extends DefaultHandler {
             return;
         }
 
+        if (ElementTags.HORIZONTALRULE.equals(name)) {
+            TextElementArray current;
+            LineSeparator hr = new LineSeparator(1.0f, 100.0f, null, Element.ALIGN_CENTER);
+            try {
+                current = (TextElementArray) stack.pop();
+                current.add(hr);
+                stack.push(current);
+            } catch (EmptyStackException ese) {
+                try {
+                    document.add(hr);
+                } catch (DocumentException de) {
+                    throw new ExceptionConverter(de);
+                }
+            }
+            return;
+        }
+        
         // documentroot
         if (isDocumentRoot(name)) {
             String key;

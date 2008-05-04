@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ZeroHeight;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -762,6 +763,12 @@ public class PdfDocument extends Document {
                 	}
                 	graphics.restoreState();
                 	break;
+                }
+                case Element.ZEROHEIGHT: {
+                    ZeroHeight zh = (ZeroHeight)element;
+                    zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight);
+                    pageEmpty = false;
+                    break;
                 }
                 case Element.MARKED: {
                 	MarkedObject mo;
