@@ -52,65 +52,64 @@ package com.lowagie.text;
 
 import java.util.ArrayList;
 
-import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
- * Draws a horizontal line at the current position. 
+ * Draws a horizontal line at the current position
+ * unless you set the width percentage to 0.
+ * You can also use this object to draw other shapes
+ * using PdfContentByte methods. By default he Y position
+ * of the origin of the coordinate system corresponds
+ * with the baseline of the next line.
+ *  
  * @since	2.1.2
  */
-public class GenericLine extends PdfTemplate implements Element {
+public class Separator extends PdfContentByte implements Element {
 
 	/**
 	 * Allows you to define the length of the line as a percentage
 	 * of the available page width.
-	 * @since	2.1.2
 	 */
 	protected float widthPercentage = 100;
 	/**
-	 * The height necessary to drawn the generic line (similar to a leading
-	 * in other objects). The default value is twice the current leading.
-	 * @since	2.1.2 
+	 * The height necessary to draw the separator (similar to a leading
+	 * in other objects). The default value is the value of the leading.
 	 */
 	protected float advanceY = Float.NaN;
 	/**
-	 * The minimum vertical space needed to draw this generic line (if
+	 * The minimum vertical space needed to draw the separator (if
 	 * there is less space, a newPage() will be triggered). Most of the
 	 * time minimumY will be equal to advanceY minus the offset.
 	 * Reason: you don't need the full height to draw a line at the end
 	 * of a page.
-	 * @since	2.1.2
 	 */
 	protected float minimumY = Float.NaN;
 	/**
 	 * The offset used when drawing the line. By default half of advanceY.
-	 * @since	2.1.2
 	 */
 	protected float verticalOffset = Float.NaN;
 	/**
 	 * The alignment of the line.
-	 * @since	2.1.2
 	 */
 	protected int horizontalAlignment = Element.ALIGN_CENTER;
 	
 	/**
-	 * Creates a generic line object.
+	 * Creates a separator object.
 	 * You can use this object as is to draw a line.
 	 * You can use super class methods to change the way
 	 * the line is rendered (change its color, dash pattern, thickness,...).
 	 * Or you can decide not to draw any line, but to use this object
 	 * to draw other stuff.
-	 * @since	2.1.2
 	 */
-	public GenericLine() {
-		super();
+	public Separator(PdfWriter writer) {
+		super(writer);
 	}
 
 	/**
 	 * Gets the length of the line as a percentage of the available
 	 * page width. If 0 no line is drawn.
 	 * @return the widthPercentage
-	 * @since	2.1.2
 	 */
 	public float getWidthPercentage() {
 		return widthPercentage;
@@ -120,7 +119,6 @@ public class GenericLine extends PdfTemplate implements Element {
 	 * Sets the length of the line as a percentage of the available
 	 * page width. Set to 0 if you don't want to draw a line.
 	 * @param widthPercentage the widthPercentage to set
-	 * @since	2.1.2
 	 */
 	public void setWidthPercentage(float widthPercentage) {
 		this.widthPercentage = widthPercentage;
@@ -128,9 +126,8 @@ public class GenericLine extends PdfTemplate implements Element {
 
 	/**
 	 * Returns the amount of vertical space that will be
-	 * consumed when drawing this object. 
+	 * consumed when drawing the separator. 
 	 * @return a leading
-	 * @since	2.1.2
 	 */
 	public float getAdvanceY() {
 		return advanceY;
@@ -138,9 +135,8 @@ public class GenericLine extends PdfTemplate implements Element {
 
 	/**
 	 * Sets the amount of vertical space that will be consumed
-	 * when drawing this object.
-	 * @param advanceY	a value for the height of this object.
-	 * @since	2.1.2
+	 * when drawing the separator.
+	 * @param advanceY	a value for the height of the separator.
 	 */
 	public void setAdvanceY(float advanceY) {
 		this.advanceY = advanceY;
@@ -148,9 +144,8 @@ public class GenericLine extends PdfTemplate implements Element {
 
 	/**
 	 * Returns the minimum amount of vertical space
-	 * that needs to be available before drawing this object. 
-	 * @return	the minimum space that needs to be available before drawing the line
-	 * @since	2.1.2
+	 * that needs to be available before drawing the separator. 
+	 * @return	the minimum space that needs to be available before drawing the separator.
 	 */
 	public float getMinimumY() {
 		return minimumY;
@@ -158,9 +153,8 @@ public class GenericLine extends PdfTemplate implements Element {
 
 	/**
 	 * Sets the minimum amount of vertical space that
-	 * needs to be available before drawing this object.
-	 * @param minimumY	a minimum height that needs to be available before drawing this object
-	 * @since	2.1.2
+	 * needs to be available before drawing the separator.
+	 * @param minimumY	a minimum height that needs to be available before drawing this object.
 	 */
 	public void setMinimumY(float minimumY) {
 		this.minimumY = minimumY;
@@ -169,7 +163,6 @@ public class GenericLine extends PdfTemplate implements Element {
 	/**
 	 * Returns the vertical offset of the line.
 	 * @return the verticalOffset
-	 * @since	2.1.2
 	 */
 	public float getVerticalOffset() {
 		return verticalOffset;
@@ -178,7 +171,6 @@ public class GenericLine extends PdfTemplate implements Element {
 	/**
 	 * Sets the vertical offset of the line.
 	 * @param verticalOffset the verticalOffset to set
-	 * @since	2.1.2
 	 */
 	public void setVerticalOffset(float verticalOffset) {
 		this.verticalOffset = verticalOffset;
@@ -187,7 +179,6 @@ public class GenericLine extends PdfTemplate implements Element {
 	/**
 	 * Sets the horizontal alignment of the line.
 	 * @return the horizontalAlignment
-	 * @since	2.1.2
 	 */
 	public int getHorizontalAlignment() {
 		return horizontalAlignment;
@@ -196,7 +187,6 @@ public class GenericLine extends PdfTemplate implements Element {
 	/**
 	 * Gets the horizontal alignment of the line.
 	 * @param horizontalAlignment the horizontalAlignment to set
-	 * @since	2.1.2
 	 */
 	public void setHorizontalAlignment(int horizontalAlignment) {
 		this.horizontalAlignment = horizontalAlignment;
