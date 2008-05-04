@@ -71,7 +71,7 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
-import com.lowagie.text.GenericLine;
+import com.lowagie.text.Separator;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.MarkedObject;
@@ -715,53 +715,52 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.LINE: {
-                	GenericLine line = (GenericLine)element;
-                	if (Float.isNaN(line.getAdvanceY())) {
-                		line.setAdvanceY(leading * 2f);
+                	Separator separator = (Separator)element;
+                	if (Float.isNaN(separator.getAdvanceY())) {
+                		separator.setAdvanceY(leading);
                 	}
-                	if (Float.isNaN(line.getVerticalOffset())) {
-                		line.setVerticalOffset(line.getAdvanceY() / 2f);
+                	if (Float.isNaN(separator.getVerticalOffset())) {
+                		separator.setVerticalOffset(separator.getAdvanceY() / 2f);
                 	}
-                	if (Float.isNaN(line.getMinimumY())) {
-                		line.setMinimumY(line.getAdvanceY() - line.getVerticalOffset());
+                	if (Float.isNaN(separator.getMinimumY())) {
+                		separator.setMinimumY(separator.getAdvanceY() - separator.getVerticalOffset());
                 	}
-                	PdfTemplate template = graphics.createTemplate(pageSize.getWidth(), pageSize.getHeight());
-                	template.setBoundingBox(new Rectangle(0, -pageSize.getHeight(), pageSize.getWidth(), pageSize.getHeight()));
                 	ensureNewLine();
                 	flushLines();
-                	if (currentHeight != 0 && indentTop() - currentHeight - line.getMinimumY() < indentBottom()) {
+                	if (currentHeight != 0 && indentTop() - currentHeight - separator.getMinimumY() < indentBottom()) {
                 		newPage();
-                		currentHeight += line.getVerticalOffset();
-                		text.moveText(0, -line.getVerticalOffset());
+                		currentHeight += separator.getVerticalOffset();
+                		text.moveText(0, -separator.getVerticalOffset());
                 	}
                 	else {
-                		currentHeight += line.getAdvanceY();
-                		text.moveText(0, -line.getAdvanceY());
+                		currentHeight += separator.getAdvanceY();
+                		text.moveText(0, -separator.getAdvanceY());
                 	}
-                	template.setMatrix(1, 0, 0, 1, 0, indentTop() - currentHeight);
-                	template.add(line);
-                	if (line.getWidthPercentage() > 0) {
+                	graphics.saveState();
+                	graphics.concatCTM(1, 0, 0, 1, 0, indentTop() - currentHeight);
+                	graphics.add(separator);
+                	if (separator.getWidthPercentage() > 0) {
                 		float w = right() - left();
-                		float actualW = w * line.getWidthPercentage() / 100f;
-                		float offset = line.getVerticalOffset();
-                		switch(line.getHorizontalAlignment()) {
+                		float actualW = w * separator.getWidthPercentage() / 100f;
+                		float offset = separator.getVerticalOffset();
+                		switch(separator.getHorizontalAlignment()) {
                 		case Element.ALIGN_LEFT:
-                			template.moveTo(left(), offset);
-                			template.lineTo(left() + actualW, offset);
+                			graphics.moveTo(left(), offset);
+                			graphics.lineTo(left() + actualW, offset);
                 			break;
                 		case Element.ALIGN_CENTER:
                     		float remainingW = w - actualW;
-                			template.moveTo(left() + remainingW / 2, offset);
-                			template.lineTo(right() - remainingW / 2, offset);
+                			graphics.moveTo(left() + remainingW / 2, offset);
+                			graphics.lineTo(right() - remainingW / 2, offset);
                 			break;
                 		case Element.ALIGN_RIGHT:
-                			template.moveTo(right() - actualW, offset);
-                			template.lineTo(right(), offset);
+                			graphics.moveTo(right() - actualW, offset);
+                			graphics.lineTo(right(), offset);
                 			break;
                 		}
-            			template.stroke();
+            			graphics.stroke();
                 	}
-                	graphics.addTemplate(template, pageSize.getLeft(), pageSize.getBottom());
+                	graphics.restoreState();
                 	break;
                 }
                 case Element.MARKED: {
