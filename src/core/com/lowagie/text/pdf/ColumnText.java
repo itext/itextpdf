@@ -63,7 +63,7 @@ import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.SimpleTable;
-import com.lowagie.text.ZeroHeight;
+import com.lowagie.text.VerticalPositionMark;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -443,7 +443,7 @@ public class ColumnText {
 				throw new IllegalArgumentException("Element not allowed.");
 			}
         }
-        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.ZEROHEIGHT)
+        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK)
             throw new IllegalArgumentException("Element not allowed.");
         if (!composite) {
             composite = true;
@@ -1448,10 +1448,10 @@ public class ColumnText {
                     return NO_MORE_COLUMN;
                 }
             }
-            else if (element.type() == Element.ZEROHEIGHT) {
+            else if (element.type() == Element.YMARK) {
                 if (!simulate) {
-                    ZeroHeight zh = (ZeroHeight)element;
-                    zh.draw(canvas, leftX, minY, rightX, maxY, yLine);
+                    VerticalPositionMark zh = (VerticalPositionMark)element;
+                    zh.draw(canvas, leftX, minY, rightX, maxY, yLine, currentLeading);
                 }
                 compositeElements.removeFirst();
             }
@@ -1503,7 +1503,7 @@ public class ColumnText {
      * @return true or false
      */
     public boolean zeroHeightElement() {
-        return composite && !compositeElements.isEmpty() && ((Element)compositeElements.getFirst()).type() == Element.ZEROHEIGHT;
+        return composite && !compositeElements.isEmpty() && ((Element)compositeElements.getFirst()).type() == Element.YMARK;
     }
     
     /**

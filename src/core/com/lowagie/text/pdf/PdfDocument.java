@@ -50,7 +50,7 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ZeroHeight;
+import com.lowagie.text.VerticalPositionMark;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -714,9 +714,9 @@ public class PdfDocument extends Document {
                     add((Image) element);
                     break;
                 }
-                case Element.ZEROHEIGHT: {
-                    ZeroHeight zh = (ZeroHeight)element;
-                    zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight);
+                case Element.YMARK: {
+                    VerticalPositionMark zh = (VerticalPositionMark)element;
+                    zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight, leading);
                     pageEmpty = false;
                     break;
                 }
