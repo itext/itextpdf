@@ -434,7 +434,7 @@ public class SAXiTextHandler extends DefaultHandler {
 
         if (ElementTags.HORIZONTALRULE.equals(name)) {
             TextElementArray current;
-            LineSeparator hr = new LineSeparator(1.0f, 100.0f, null, Element.ALIGN_CENTER);
+            LineSeparator hr = new LineSeparator(1.0f, 100.0f, null, Element.ALIGN_CENTER, 0);
             try {
                 current = (TextElementArray) stack.pop();
                 current.add(hr);
