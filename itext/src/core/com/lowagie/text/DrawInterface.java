@@ -2,7 +2,7 @@
  * $Name$
  * $Id: PdfDocument.java 3333 2008-05-05 09:16:50Z blowagie $
  *
- * Copyright 2008 by Bruno Lowagie
+ * Copyright 2008 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -50,52 +50,23 @@
 
 package com.lowagie.text;
 
-import java.util.ArrayList;
+import com.lowagie.text.pdf.PdfContentByte;
 
 /**
- * Abstract class implementing the Element interface, but not the DrawInterface.
- * You should subclass this class and implement the draw() method.
- * @since	2.1.2
+ * Interface for an Element that allows you to draw something at the current
+ * vertical position. Trivial implementations are LineSeparator and VerticalPositionMark.
+ * @since 2.1.2
  */
-
-public abstract class VerticalPositionMark implements DrawInterface, Element {
-
-    /**
-     * @see com.lowagie.text.Element#process(com.lowagie.text.ElementListener)
-     */
-    public boolean process(ElementListener listener) {
-		try {
-			return listener.add(this);
-		} catch (DocumentException e) {
-			return false;
-		}
-    }
-
-    /**
-     * @see com.lowagie.text.Element#type()
-     */
-    public int type() {
-        return Element.YMARK;
-    }
-
-    /**
-     * @see com.lowagie.text.Element#isContent()
-     */
-    public boolean isContent() {
-        return true;
-    }
-
-    /**
-     * @see com.lowagie.text.Element#isNestable()
-     */
-    public boolean isNestable() {
-        return false;
-    }
-
-    /**
-     * @see com.lowagie.text.Element#getChunks()
-     */
-    public ArrayList getChunks() {
-        return new ArrayList();
-    }
+public interface DrawInterface {
+	/**
+	 * Implement this method if you want to draw something at the current Y position
+	 * (for instance a line).
+	 * @param	canvas	the canvas on which you can draw
+	 * @param	llx		the x coordinate of the left page margin
+	 * @param	lly		the y coordinate of the bottom page margin
+	 * @param	urx		the x coordinate of the right page margin
+	 * @param	ury		the y coordinate of the top page margin
+	 * @param	y		the current y position on the page
+	 */
+    public void draw(PdfContentByte canvas, float llx, float lly, float urx, float ury, float y);    
 }
