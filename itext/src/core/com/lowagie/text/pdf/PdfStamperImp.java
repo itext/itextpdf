@@ -198,6 +198,21 @@ class PdfStamperImp extends PdfWriter {
         	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
         	markUsed(catalog);
         }
+        if (!documentOCG.isEmpty()) {
+        	fillOCProperties(false);
+        	PdfDictionary ocdict = catalog.getAsDict(PdfName.OCPROPERTIES);
+        	if (ocdict == null) {
+        		reader.getCatalog().put(PdfName.OCPROPERTIES, OCProperties);
+        	}
+        	else {
+        		ocdict.put(PdfName.OCGS, OCProperties.get(PdfName.OCGS));
+        		PdfDictionary ddict = ocdict.getAsDict(PdfName.D);
+        		ddict.put(PdfName.ORDER, OCProperties.getAsDict(PdfName.D).get(PdfName.ORDER));
+        		ddict.put(PdfName.RBGROUPS, OCProperties.getAsDict(PdfName.D).get(PdfName.RBGROUPS));
+        		ddict.put(PdfName.OFF, OCProperties.getAsDict(PdfName.D).get(PdfName.OFF));
+        		ddict.put(PdfName.AS, OCProperties.getAsDict(PdfName.D).get(PdfName.AS));
+            }
+        }
         PRIndirectReference iInfo = null;
         try {
             file.reOpen();
@@ -1478,6 +1493,122 @@ class PdfStamperImp extends PdfWriter {
 
     public PdfContentByte getDirectContent() {
         throw new UnsupportedOperationException("Use PdfStamper.getUnderContent() or PdfStamper.getOverContent()");
+    }
+    
+    /**
+     * Reads the OCProperties dictionary from the catalog of the existing document
+     * and fills the documentOCG, documentOCGorder, OCGRadioGroup and OCProperties
+     * variables in PdfWriter. Note that the original OCProperties of the existing
+     * document can contain more information.
+     * @since	2.1.2
+     */
+    protected void readOCProperties() {
+    	if (!documentOCG.isEmpty()) {
+    		return;
+    	}
+    	PdfDictionary dict = reader.getCatalog().getAsDict(PdfName.OCPROPERTIES);
+    	if (dict == null) {
+    		return;
+    	}
+    	PdfArray ocgs = dict.getAsArray(PdfName.OCGS);
+    	PdfIndirectReference ref;
+    	PdfLayer layer;
+    	HashMap ocgmap = new HashMap();
+    	for (Iterator i = ocgs.listIterator(); i.hasNext(); ) {
+    		ref = (PdfIndirectReference)i.next();
+    		layer = new PdfLayer(null);
+    		layer.setRef(ref);
+    		layer.setOnPanel(false);
+			layer.merge((PdfDictionary)PdfReader.getPdfObject(ref));
+    		ocgmap.put(ref.toString(), layer);
+    	}
+    	PdfDictionary d = dict.getAsDict(PdfName.D);
+    	PdfArray off = d.getAsArray(PdfName.OFF);
+    	if (off != null) {
+    		for (Iterator i = off.listIterator(); i.hasNext(); ) {
+    			ref = (PdfIndirectReference)i.next();
+    			layer = (PdfLayer)ocgmap.get(ref.toString());
+    			layer.setOn(false);
+    		}
+    	}
+    	PdfArray order = d.getAsArray(PdfName.ORDER);
+    	if (order != null) {
+    		addOrder(null, order, ocgmap);
+    	}
+    	documentOCG.addAll(ocgmap.values());
+    	OCGRadioGroup = d.getAsArray(PdfName.RBGROUPS);
+    }
+    
+    /**
+     * Recursive method to reconstruct the documentOCGorder variable in the writer.
+     * @param	parent	a parent PdfLayer (can be null)
+     * @param	arr		an array possibly containing children for the parent PdfLayer
+     * @param	ocgmap	a HashMap with indirect reference Strings as keys and PdfLayer objects as values.
+     * @since	2.1.2
+     */
+    private void addOrder(PdfLayer parent, PdfArray arr, Map ocgmap) {
+    	PdfObject obj;
+    	PdfLayer layer;
+    	for (int i = 0; i < arr.size(); i++) {
+    		obj = arr.getPdfObject(i);
+    		if (obj.isIndirect()) {
+    			layer = (PdfLayer)ocgmap.get(obj.toString());
+    			layer.setOnPanel(true);
+    			registerLayer(layer);
+    			if (parent != null) {
+    				parent.addChild(layer);
+    			}
+    			if (arr.size() > i + 1 && arr.getPdfObject(i + 1).isArray()) {
+    				i++;
+    				addOrder(layer, (PdfArray)arr.getPdfObject(i), ocgmap);
+    			}
+    		}
+    		else if (obj.isArray()) {
+    			ArrayList sub = ((PdfArray)obj).getArrayList();
+    			if (sub.size() == 0) return;
+    			obj = (PdfObject)sub.get(0);
+    			if (obj.isString()) {
+    				layer = new PdfLayer(sub.get(0).toString());
+    				layer.setOnPanel(true);
+    				registerLayer(layer);
+    				if (parent != null) {
+    					parent.addChild(layer);
+    				}
+    				PdfArray array = new PdfArray();
+    				for (Iterator j = sub.iterator(); j.hasNext(); ) {
+    					array.add((PdfObject)j.next());
+    				}
+    				addOrder(layer, array, ocgmap);
+    			}
+    			else {
+    				addOrder(parent, (PdfArray)obj, ocgmap);
+    			}
+    		}
+    	}
+    }
+    
+    /**
+     * Gets the PdfLayer objects in an existing document as a Map
+     * with the names/titles of the layers as keys.
+     * @return	a Map with all the PdfLayers in the document (and the name/title of the layer as key)
+     * @since	2.1.2
+     */
+    public Map getPdfLayers() {
+    	if (documentOCG.isEmpty()) {
+    		readOCProperties();
+    	}
+    	HashMap map = new HashMap();
+    	PdfLayer layer;
+    	for (Iterator i = documentOCG.iterator(); i.hasNext(); ) {
+    		layer = (PdfLayer)i.next();
+    		if (layer.getTitle() == null) {
+    			map.put(layer.getAsString(PdfName.NAME).toString(), layer);
+    		}
+    		else {
+    			map.put(layer.getTitle(), layer);
+    		}
+    	}
+    	return map;
     }
     
     static class PageStamp {

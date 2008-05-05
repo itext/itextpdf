@@ -2348,7 +2348,7 @@ public class PdfWriter extends DocWriter implements
         arras.add(as);
     }
     
-    private void fillOCProperties(boolean erase) {
+    protected void fillOCProperties(boolean erase) {
         if (OCProperties == null)
             OCProperties = new PdfOCProperties();
         if (erase) {
