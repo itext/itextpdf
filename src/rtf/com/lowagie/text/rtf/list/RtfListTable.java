@@ -66,6 +66,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Thomas Bickel (tmb99@inode.at)
+ * @author Howard Shank (hgshank@yahoo.com)
  */
 public class RtfListTable extends RtfElement implements RtfExtendedElement {
 
@@ -88,7 +89,7 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
     /**
      * Constant for the hybrid list
      */
-    private static final byte[] LIST_HYBRID = "\\hybrid".getBytes();
+    private static final byte[] LIST_HYBRID = "\\listhybrid".getBytes();
     /**
      * Constant for the list id
      */
