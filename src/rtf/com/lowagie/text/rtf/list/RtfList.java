@@ -273,7 +273,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 this.listType = LIST_TYPE_UPPER_LETTERS;
             }
         }
-        this.listStartAt = list.getFirst() + 1;
+        this.listStartAt = list.getFirst();// + 1;
         if(this.listStartAt < 1) {
             this.listStartAt = 1;
         }
