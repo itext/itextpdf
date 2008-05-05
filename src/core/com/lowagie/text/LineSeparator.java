@@ -52,14 +52,13 @@ package com.lowagie.text;
 
 import com.lowagie.text.pdf.PdfContentByte;
 import java.awt.Color;
-import java.util.ArrayList;
 
 /**
  * Element that draws a line.
  * @author	Paulo Soares
  * @since	2.1.2
  */
-public class LineSeparator implements Element, VerticalPositionMark {
+public class LineSeparator extends VerticalPositionMark {
     /** The thickness of the line. */
     private float lineWidth = 1;
     /** The width of the line as a percentage of the available page width. */
@@ -68,10 +67,14 @@ public class LineSeparator implements Element, VerticalPositionMark {
     private Color color;
     /** The alignment of the line. */
     private int alignment = Element.ALIGN_CENTER;
-    /** Another implementation of the VerticalPositionMark interface; its draw method will overrule LineSeparator.draw(). */
-    private VerticalPositionMark drawInterface;
+    /** Another implementation of the DrawInterface; its draw method will overrule LineSeparator.draw(). */
+    private DrawInterface drawInterface;
     /** The offset for the line. */
     private float offset = 0;
+    /** The actual advance caused by this separator. */
+    private float advanceY = 0;
+    /** The minimum advance necessary for this separator. */
+    private float minimumY = Float.NaN;
     
     /** Creates a new instance of the LineSeparator class.
      * @param lineWidth		the thickness of the line
@@ -90,10 +93,10 @@ public class LineSeparator implements Element, VerticalPositionMark {
 
     /**
      * Creates a new instance of the LineSeparator class.
-     * @param drawInterface	another implementation of the VerticalPositionMark interface that will overrule the LineSeparator's draw() method.
+     * @param drawInterface	an implementation of the DrawInterface that will overrule the LineSeparator's draw() method.
      * @param offset	an offset that will be passed to the draw method (added to the y value).
      */
-    public LineSeparator(VerticalPositionMark drawInterface, float offset) {
+    public LineSeparator(DrawInterface drawInterface, float offset) {
         this.drawInterface = drawInterface;
         this.offset = offset;
     }
@@ -106,50 +109,11 @@ public class LineSeparator implements Element, VerticalPositionMark {
     }
 
     /**
-     * @see com.lowagie.text.Element#process(com.lowagie.text.ElementListener)
+     * @see com.lowagie.text.DrawInterface#draw(com.lowagie.text.pdf.PdfContentByte, float, float, float, float, float, float)
      */
-    public boolean process(ElementListener listener) {
-		try {
-			return listener.add(this);
-		} catch (DocumentException e) {
-			return false;
-		}
-    }
-
-    /**
-     * @see com.lowagie.text.Element#type()
-     */
-    public int type() {
-        return Element.YMARK;
-    }
-
-    /**
-     * @see com.lowagie.text.Element#isContent()
-     */
-    public boolean isContent() {
-        return true;
-    }
-
-    /**
-     * @see com.lowagie.text.Element#isNestable()
-     */
-    public boolean isNestable() {
-        return false;
-    }
-
-    /**
-     * @see com.lowagie.text.Element#getChunks()
-     */
-    public ArrayList getChunks() {
-        return new ArrayList();
-    }
-
-    /**
-     * @see com.lowagie.text.VerticalPositionMark#draw(com.lowagie.text.pdf.PdfContentByte, float, float, float, float, float, float)
-     */
-    public void draw(PdfContentByte canvas, float llx, float lly, float urx, float ury, float y, float leading) {
+    public void draw(PdfContentByte canvas, float llx, float lly, float urx, float ury, float y) {
         if (drawInterface != null) {
-            drawInterface.draw(canvas, llx, lly, urx, ury, y + offset, leading);
+            drawInterface.draw(canvas, llx, lly, urx, ury, y + offset);
             return;
         }
         float w;
@@ -181,17 +145,17 @@ public class LineSeparator implements Element, VerticalPositionMark {
 
     /**
      * Getter for the interface with the overruling draw() method.
-     * @return	a VerticalPositionMark implementation
+     * @return	a DrawInterface implementation
      */
-    public VerticalPositionMark getDrawInterface() {
+    public DrawInterface getDrawInterface() {
         return drawInterface;
     }
 
     /**
      * Setter for the interface with the overruling draw() method.
-     * @param drawInterface a VerticalPositionMark implementation
+     * @param drawInterface a DrawInterface implementation
      */
-    public void setDrawInterface(VerticalPositionMark drawInterface) {
+    public void setDrawInterface(DrawInterface drawInterface) {
         this.drawInterface = drawInterface;
     }
 
@@ -275,5 +239,52 @@ public class LineSeparator implements Element, VerticalPositionMark {
      */
     public void setOffset(float offset) {
         this.offset = offset;
+    }
+
+	/**
+	 * Getter for the actual amount of vertical space taken by this separator.
+	 * @return the vertical advance
+	 */
+	public float getAdvanceY() {
+		return advanceY;
+	}
+
+	/**
+	 * Setter for the actual amount of vertical space taken by this separator.
+	 * @param advanceY the vertical advance
+	 */
+	public void setAdvanceY(float advanceY) {
+		this.advanceY = advanceY;
+	}
+
+	/**
+	 * Getter for the minimum vertical space needed to realize advanceY
+	 * (necessary to evaluate if a newPage() is necessary).
+	 * @return the minimum vertical advance
+	 */
+	public float getMinimumY() {
+		if (Float.isNaN(minimumY)) {
+			return getAdvanceY();
+		}
+		return minimumY;
+	}
+
+	/**
+	 * Setter for the minimum vertical space needed to realize advanceY
+	 * (necessary to evaluate if a newPage() is necessary).
+	 * @param minimumY the minimum vertical advance
+	 */
+	public void setMinimumY(float minimumY) {
+		this.minimumY = minimumY;
+	}
+
+    /**
+     * @see com.lowagie.text.Element#type()
+     */
+    public int type() {
+    	if (getAdvanceY() == 0) {
+    		return YMARK;
+    	}
+        return Element.LINE;
     }
 }

@@ -59,11 +59,12 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
+import com.lowagie.text.LineSeparator;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.SimpleTable;
-import com.lowagie.text.VerticalPositionMark;
+import com.lowagie.text.DrawInterface;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -443,7 +444,7 @@ public class ColumnText {
 				throw new IllegalArgumentException("Element not allowed.");
 			}
         }
-        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK)
+        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK && element.type() != Element.LINE)
             throw new IllegalArgumentException("Element not allowed.");
         if (!composite) {
             composite = true;
@@ -1448,10 +1449,20 @@ public class ColumnText {
                     return NO_MORE_COLUMN;
                 }
             }
+            else if (element.type() == Element.LINE) {
+            	LineSeparator separator = (LineSeparator)element;
+            	if (yLine - separator.getMinimumY() < minY)
+            		return NO_MORE_COLUMN;
+                if (!simulate) {
+                    separator.draw(canvas, leftX, minY, rightX, maxY, yLine);
+                }
+                yLine -= separator.getAdvanceY();
+                compositeElements.removeFirst();
+            }
             else if (element.type() == Element.YMARK) {
                 if (!simulate) {
-                    VerticalPositionMark zh = (VerticalPositionMark)element;
-                    zh.draw(canvas, leftX, minY, rightX, maxY, yLine, currentLeading);
+                    DrawInterface zh = (DrawInterface)element;
+                    zh.draw(canvas, leftX, minY, rightX, maxY, yLine);
                 }
                 compositeElements.removeFirst();
             }

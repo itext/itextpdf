@@ -50,7 +50,7 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.VerticalPositionMark;
+import com.lowagie.text.DrawInterface;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,6 +72,7 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
+import com.lowagie.text.LineSeparator;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.MarkedObject;
@@ -714,9 +715,21 @@ public class PdfDocument extends Document {
                     add((Image) element);
                     break;
                 }
+                case Element.LINE: {
+                	flushLines();
+                    LineSeparator separator = (LineSeparator)element;
+                    if (currentHeight != 0 && indentTop() - currentHeight - separator.getMinimumY() < indentBottom()) { 	 
+                        newPage();
+                    }
+                    separator.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight);
+                    currentHeight += separator.getAdvanceY(); 	 
+                    text.moveText(0, -separator.getAdvanceY());
+                    pageEmpty = false;
+                    break;
+                }
                 case Element.YMARK: {
-                    VerticalPositionMark zh = (VerticalPositionMark)element;
-                    zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight, leading);
+                    DrawInterface zh = (DrawInterface)element;
+                    zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight);
                     pageEmpty = false;
                     break;
                 }
