@@ -144,6 +144,15 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
     }
     
     /**
+     * Sets the <CODE>PdfIndirectReference</CODE> that represents this layer.
+     * This can only be done from PdfStamperImp.
+     * @param	ref	The reference to the OCG object
+     */
+    void setRef(PdfIndirectReference ref) {
+    	this.ref = ref;
+    }
+    
+    /**
      * Sets the name of this layer.
      * @param name the name of this layer
      */    

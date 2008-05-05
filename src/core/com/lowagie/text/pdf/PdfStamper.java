@@ -54,6 +54,7 @@ import java.io.OutputStream;
 import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
@@ -726,5 +727,15 @@ public class PdfStamper
     public static PdfStamper createSignature(PdfReader reader, OutputStream os, char pdfVersion, File tempFile) throws DocumentException, IOException 
     {
         return createSignature(reader, os, pdfVersion, tempFile, false);
+    }
+    
+    /**
+     * Gets the PdfLayer objects in an existing document as a Map
+     * with the names/titles of the layers as keys.
+     * @return	a Map with all the PdfLayers in the document (and the name/title of the layer as key)
+     * @since	2.1.2
+     */
+    public Map getPdfLayers() {
+    	return stamper.getPdfLayers();
     }
 }
