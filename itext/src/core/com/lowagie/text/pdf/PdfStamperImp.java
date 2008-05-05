@@ -1497,9 +1497,8 @@ class PdfStamperImp extends PdfWriter {
     
     /**
      * Reads the OCProperties dictionary from the catalog of the existing document
-     * and fills the documentOCG, documentOCGorder, OCGRadioGroup and OCProperties
-     * variables in PdfWriter. Note that the original OCProperties of the existing
-     * document can contain more information.
+     * and fills the documentOCG, documentOCGorder and OCGRadioGroup variables in PdfWriter.
+     * Note that the original OCProperties of the existing document can contain more information.
      * @since	2.1.2
      */
     protected void readOCProperties() {

@@ -72,7 +72,6 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
-import com.lowagie.text.Separator;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.MarkedObject;
@@ -714,55 +713,6 @@ public class PdfDocument extends Document {
                     //carriageReturn(); suggestion by Marc Campforts
                     add((Image) element);
                     break;
-                }
-                case Element.LINE: {
-                	Separator separator = (Separator)element;
-                	if (Float.isNaN(separator.getAdvanceY())) {
-                		separator.setAdvanceY(leading);
-                	}
-                	if (Float.isNaN(separator.getVerticalOffset())) {
-                		separator.setVerticalOffset(separator.getAdvanceY() / 2f);
-                	}
-                	if (Float.isNaN(separator.getMinimumY())) {
-                		separator.setMinimumY(separator.getAdvanceY() - separator.getVerticalOffset());
-                	}
-                	ensureNewLine();
-                	flushLines();
-                	if (currentHeight != 0 && indentTop() - currentHeight - separator.getMinimumY() < indentBottom()) {
-                		newPage();
-                		currentHeight += separator.getVerticalOffset();
-                		text.moveText(0, -separator.getVerticalOffset());
-                	}
-                	else {
-                		currentHeight += separator.getAdvanceY();
-                		text.moveText(0, -separator.getAdvanceY());
-                	}
-                	graphics.saveState();
-                	graphics.concatCTM(1, 0, 0, 1, 0, indentTop() - currentHeight);
-                	graphics.add(separator);
-                	if (separator.getWidthPercentage() > 0) {
-                		float w = right() - left();
-                		float actualW = w * separator.getWidthPercentage() / 100f;
-                		float offset = separator.getVerticalOffset();
-                		switch(separator.getHorizontalAlignment()) {
-                		case Element.ALIGN_LEFT:
-                			graphics.moveTo(left(), offset);
-                			graphics.lineTo(left() + actualW, offset);
-                			break;
-                		case Element.ALIGN_CENTER:
-                    		float remainingW = w - actualW;
-                			graphics.moveTo(left() + remainingW / 2, offset);
-                			graphics.lineTo(right() - remainingW / 2, offset);
-                			break;
-                		case Element.ALIGN_RIGHT:
-                			graphics.moveTo(right() - actualW, offset);
-                			graphics.lineTo(right(), offset);
-                			break;
-                		}
-            			graphics.stroke();
-                	}
-                	graphics.restoreState();
-                	break;
                 }
                 case Element.ZEROHEIGHT: {
                     ZeroHeight zh = (ZeroHeight)element;
