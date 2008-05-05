@@ -369,6 +369,17 @@ public final class FontFactory {
         return fontImp.registerDirectory(dir);
     }
 
+    /**
+     * Register all the fonts in a directory and possibly its subdirectories.
+     * @param dir the directory
+     * @param scanSubdirectories recursively scan subdirectories if <code>true</true>
+     * @return the number of fonts registered
+     * @since 2.1.2
+     */
+    public static int registerDirectory(String dir, boolean scanSubdirectories) {
+        return fontImp.registerDirectory(dir, scanSubdirectories);
+    }
+
     /** Register fonts in some probable directories. It usually works in Windows,
      * Linux and Solaris.
      * @return the number of fonts registered
