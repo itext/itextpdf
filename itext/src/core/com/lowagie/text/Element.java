@@ -183,7 +183,7 @@ public interface Element {
 	/** This is a possible type of <CODE>Element</CODE>.
 	 * @since 2.1.2
 	 */
-	public static final int ZEROHEIGHT = 55;
+	public static final int YMARK = 55;
 
 	// static membervariables (alignment)
 

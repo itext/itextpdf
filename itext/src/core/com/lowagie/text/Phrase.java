@@ -289,7 +289,7 @@ public class Phrase extends ArrayList implements TextElementArray {
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
             element.type() == Element.TABLE || // line added by David Freels
-            element.type() == Element.ZEROHEIGHT || 
+            element.type() == Element.YMARK || 
             element.type() == Element.MARKED) {
                 super.add(index, element);
             }
@@ -345,7 +345,7 @@ public class Phrase extends ArrayList implements TextElementArray {
                 case Element.PTABLE: // case added by mr. Karen Vardanyan
                 	// This will only work for PDF!!! Not for RTF/HTML
                 case Element.LIST:
-                case Element.ZEROHEIGHT:
+                case Element.YMARK:
                 	return super.add(o);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));
