@@ -115,6 +115,15 @@ public class PdfLine {
         this.line = new ArrayList();
     }
     
+    /**
+     * Creates a PdfLine object.
+     * @param left				the left offset
+     * @param remainingWidth	bigger than 0 if the line isn't completely filled
+     * @param alignment			the alignment of the line
+     * @param newlineSplit		was the line splitted (or does the paragraph end with this line)
+     * @param line				an array of PdfChunk objects
+     * @param isRTL				do you have to read the line from Right to Left?
+     */
     PdfLine(float left, float remainingWidth, int alignment, boolean newlineSplit, ArrayList line, boolean isRTL) {
         this.left = left;
         this.width = remainingWidth;
@@ -138,7 +147,7 @@ public class PdfLine {
     PdfChunk add(PdfChunk chunk) {
         // nothing happens if the chunk is null.
         if (chunk == null || chunk.toString().equals("")) {
-            return null;
+        	return null;
         }
         
         // we split the chunk to be added
@@ -414,6 +423,23 @@ public class PdfLine {
     
     boolean isRTL() {
         return isRTL;
+    }
+    
+    /**
+     * Gets the number of separators in the line.
+     * @return	the number of separators in the line
+     * @since	2.1.2
+     */
+    int getSeparatorCount() {
+    	int s = 0;
+    	PdfChunk ck;
+        for (Iterator i = line.iterator(); i.hasNext(); ) {
+        	ck = (PdfChunk)i.next();
+        	if (ck.isSeparator()) {
+        		s++;
+        	}
+        }
+        return s;
     }
     
     /**

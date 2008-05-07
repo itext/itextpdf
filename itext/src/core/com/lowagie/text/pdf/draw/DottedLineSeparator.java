@@ -2,7 +2,7 @@
  * $Name$
  * $Id: PdfDocument.java 3333 2008-05-05 09:16:50Z blowagie $
  *
- * Copyright 2008 by Paulo Soares.
+ * Copyright 2008 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -48,25 +48,47 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text;
+package com.lowagie.text.pdf.draw;
 
 import com.lowagie.text.pdf.PdfContentByte;
 
 /**
- * Interface for an Element that allows you to draw something at the current
- * vertical position. Trivial implementations are LineSeparator and VerticalPositionMark.
- * @since 2.1.2
+ * Element that draws a dotted line from left to right.
+ * Can be added directly to a document or column.
+ * Can also be used to create a separator chunk.
+ * @since	2.1.2 
  */
-public interface DrawInterface {
+public class DottedLineSeparator extends LineSeparator {
+
+	/** the gap between the dots. */
+	protected float gap = 5;
+	
 	/**
-	 * Implement this method if you want to draw something at the current Y position
-	 * (for instance a line).
-	 * @param	canvas	the canvas on which you can draw
-	 * @param	llx		the x coordinate of the left page margin
-	 * @param	lly		the y coordinate of the bottom page margin
-	 * @param	urx		the x coordinate of the right page margin
-	 * @param	ury		the y coordinate of the top page margin
-	 * @param	y		the current y position on the page
+	 * @see com.lowagie.text.pdf.draw.DrawInterface#draw(com.lowagie.text.pdf.PdfContentByte, float, float, float, float, float)
 	 */
-    public void draw(PdfContentByte canvas, float llx, float lly, float urx, float ury, float y);    
+	public void draw(PdfContentByte canvas, float llx, float lly, float urx, float ury, float y) {
+		canvas.saveState();
+		canvas.setLineWidth(lineWidth);
+		canvas.setLineCap(PdfContentByte.LINE_CAP_ROUND);
+		canvas.setLineDash(0, gap, gap / 2);
+        drawLine(canvas, llx, urx, y);
+		canvas.restoreState();
+	}
+
+	/**
+	 * Getter for the gap between the center of the dots of the dotted line.
+	 * @return	the gap between the center of the dots
+	 */
+	public float getGap() {
+		return gap;
+	}
+
+	/**
+	 * Setter for the gap between the center of the dots of the dotted line.
+	 * @param	gap	the gap between the center of the dots
+	 */
+	public void setGap(float gap) {
+		this.gap = gap;
+	}
+
 }

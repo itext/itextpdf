@@ -50,7 +50,6 @@
 
 package com.lowagie.text.xml;
 
-import com.lowagie.text.LineSeparator;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,6 +87,7 @@ import com.lowagie.text.TextElementArray;
 import com.lowagie.text.factories.ElementFactory;
 import com.lowagie.text.html.HtmlTagMap;
 import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.draw.LineSeparator;
 import com.lowagie.text.xml.simpleparser.EntitiesToSymbol;
 
 /**

@@ -48,35 +48,33 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text;
+package com.lowagie.text.pdf.draw;
 
+import com.lowagie.text.Element;
 import com.lowagie.text.pdf.PdfContentByte;
+
 import java.awt.Color;
 
 /**
- * Element that draws a line.
+ * Element that draws a solid line from left to right.
+ * Can be added directly to a document or column.
+ * Can also be used to create a separator chunk.
  * @author	Paulo Soares
  * @since	2.1.2
  */
 public class LineSeparator extends VerticalPositionMark {
+	
     /** The thickness of the line. */
-    private float lineWidth = 1;
+    protected float lineWidth = 1;
     /** The width of the line as a percentage of the available page width. */
-    private float percentage = 70;
+    protected float percentage = 100;
     /** The color of the line. */
-    private Color color;
+    protected Color color;
     /** The alignment of the line. */
-    private int alignment = Element.ALIGN_CENTER;
-    /** Another implementation of the DrawInterface; its draw method will overrule LineSeparator.draw(). */
-    private DrawInterface drawInterface;
-    /** The offset for the line. */
-    private float offset = 0;
-    /** The actual advance caused by this separator. */
-    private float advanceY = 0;
-    /** The minimum advance necessary for this separator. */
-    private float minimumY = Float.NaN;
+    protected int alignment = Element.ALIGN_CENTER;
     
-    /** Creates a new instance of the LineSeparator class.
+    /**
+     * Creates a new instance of the LineSeparator class.
      * @param lineWidth		the thickness of the line
      * @param percentage	the width of the line as a percentage of the available page width
      * @param color			the color of the line
@@ -92,73 +90,54 @@ public class LineSeparator extends VerticalPositionMark {
     }
 
     /**
-     * Creates a new instance of the LineSeparator class.
-     * @param drawInterface	an implementation of the DrawInterface that will overrule the LineSeparator's draw() method.
-     * @param offset	an offset that will be passed to the draw method (added to the y value).
-     */
-    public LineSeparator(DrawInterface drawInterface, float offset) {
-        this.drawInterface = drawInterface;
-        this.offset = offset;
-    }
-
-    /**
      * Creates a new instance of the LineSeparator class with
-     * default values: lineWidth 1 user unit, width 70%, centered with offset 0.
+     * default values: lineWidth 1 user unit, width 100%, centered with offset 0.
      */
     public LineSeparator() {
     }
 
     /**
-     * @see com.lowagie.text.DrawInterface#draw(com.lowagie.text.pdf.PdfContentByte, float, float, float, float, float, float)
+     * @see com.lowagie.text.pdf.draw.DrawInterface#draw(com.lowagie.text.pdf.PdfContentByte, float, float, float, float, float, float)
      */
     public void draw(PdfContentByte canvas, float llx, float lly, float urx, float ury, float y) {
-        if (drawInterface != null) {
-            drawInterface.draw(canvas, llx, lly, urx, ury, y + offset);
-            return;
-        }
-        float w;
+        canvas.saveState();
+        drawLine(canvas, llx, urx, y);
+        canvas.restoreState();
+    }
+
+    /**
+     * Draws a horizontal line.
+     * @param canvas	the canvas to draw on
+     * @param leftX		the left x coordinate
+     * @param rightX	the right x coordindate
+     * @param y			the y coordinate
+     */
+    public void drawLine(PdfContentByte canvas, float leftX, float rightX, float y) {
+    	float w;
         if (getPercentage() < 0)
             w = -getPercentage();
         else
-            w = (urx - llx) * getPercentage() / 100.0f;
+            w = (rightX - leftX) * getPercentage() / 100.0f;
         float s;
         switch (getAlignment()) {
             case Element.ALIGN_LEFT:
                 s = 0;
                 break;
             case Element.ALIGN_RIGHT:
-                s = urx - llx - w;
+                s = rightX - leftX - w;
                 break;
             default:
-                s = (urx - llx - w) / 2;
+                s = (rightX - leftX - w) / 2;
                 break;
         }
-        canvas.saveState();
         canvas.setLineWidth(getLineWidth());
         if (getColor() != null)
             canvas.setColorStroke(getColor());
-        canvas.moveTo(s + llx, y + offset);
-        canvas.lineTo(s + w + llx, y + offset);
+        canvas.moveTo(s + leftX, y + offset);
+        canvas.lineTo(s + w + leftX, y + offset);
         canvas.stroke();
-        canvas.restoreState();
-    }    
-
-    /**
-     * Getter for the interface with the overruling draw() method.
-     * @return	a DrawInterface implementation
-     */
-    public DrawInterface getDrawInterface() {
-        return drawInterface;
     }
-
-    /**
-     * Setter for the interface with the overruling draw() method.
-     * @param drawInterface a DrawInterface implementation
-     */
-    public void setDrawInterface(DrawInterface drawInterface) {
-        this.drawInterface = drawInterface;
-    }
-
+    
     /**
      * Getter for the line width.
      * @return	the thickness of the line that will be drawn.
@@ -221,70 +200,5 @@ public class LineSeparator extends VerticalPositionMark {
      */
     public void setAlignment(int align) {
         this.alignment = align;
-    }
-
-    /**
-     * Getter for the offset relative to the baseline of the current line.
-     * @return	an offset
-     */
-    public float getOffset() {
-        return offset;
-    }
-
-    /**
-     * Setter for the offset. The offset is relative to the current
-     * Y position. If you want to underline something, you have to
-     * choose a negative offset.
-     * @param offset	an offset
-     */
-    public void setOffset(float offset) {
-        this.offset = offset;
-    }
-
-	/**
-	 * Getter for the actual amount of vertical space taken by this separator.
-	 * @return the vertical advance
-	 */
-	public float getAdvanceY() {
-		return advanceY;
-	}
-
-	/**
-	 * Setter for the actual amount of vertical space taken by this separator.
-	 * @param advanceY the vertical advance
-	 */
-	public void setAdvanceY(float advanceY) {
-		this.advanceY = advanceY;
-	}
-
-	/**
-	 * Getter for the minimum vertical space needed to realize advanceY
-	 * (necessary to evaluate if a newPage() is necessary).
-	 * @return the minimum vertical advance
-	 */
-	public float getMinimumY() {
-		if (Float.isNaN(minimumY)) {
-			return getAdvanceY();
-		}
-		return minimumY;
-	}
-
-	/**
-	 * Setter for the minimum vertical space needed to realize advanceY
-	 * (necessary to evaluate if a newPage() is necessary).
-	 * @param minimumY the minimum vertical advance
-	 */
-	public void setMinimumY(float minimumY) {
-		this.minimumY = minimumY;
-	}
-
-    /**
-     * @see com.lowagie.text.Element#type()
-     */
-    public int type() {
-    	if (getAdvanceY() == 0) {
-    		return YMARK;
-    	}
-        return Element.LINE;
     }
 }
