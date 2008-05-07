@@ -181,73 +181,7 @@ public class Utilities {
 			size -= n;
 		}
 	}
-
-	/**
-	 * Measurement conversion from centimeters to points.
-	 * @param	value	a value in centimeters
-	 * @return	a value in points
-	 * @since	2.1.1
-	 * @deprecated use millimetersToPoints
-	 */
-	public static final float cm2pt(float value) {
-	    return millimetersToPoints(value * 10f);
-	}
-
-	/**
-	 * Measurement conversion from centimeters to inches.
-	 * @param	value	a value in centimeters
-	 * @return	a value in inches
-	 * @since	2.1.1
-	 * @deprecated use millimetersToInches
-	 */
-	public static final float cm2i(float value) {
-	    return millimetersToPoints(value * 10f);
-	}
-
-	/**
-	 * Measurement conversion from points to centimeters.
-	 * @param	value	a value in points
-	 * @return	a value in centimeters
-	 * @since	2.1.1
-	 * @deprecated use pointsToMillimeters
-	 */
-	public static final float pt2cm(float value) {
-	    return pointsToMillimeters(value) / 10f;
-	}
-
-	/**
-	 * Measurement conversion from points to inches.
-	 * @param	value	a value in points
-	 * @return	a value in inches
-	 * @since	2.1.1
-	 * @deprecated use pointsToInches
-	 */
-	public static final float pt2i(float value) {
-	    return pointsToInches(value);
-	}
-
-	/**
-	 * Measurement conversion from inches to centimeters.
-	 * @param	value	a value in inches
-	 * @return	a value in centimeters
-	 * @since	2.1.1
-	 * @deprecated use inchesToMillimeters
-	 */
-	public static final float i2cm(float value) {
-	    return inchesToMillimeters(value) / 10;
-	}
-
-	/**
-	 * Measurement conversion from inches to points.
-	 * @param	value	a value in inches
-	 * @return	a value in points
-	 * @since	2.1.1
-	 * @deprecated use inchesToPoints
-	 */
-	public static final float i2pt(float value) {
-	    return inchesToPoints(value);
-	}
-
+	
 	/**
 	 * Measurement conversion from millimeters to points.
 	 * @param	value	a value in millimeters
