@@ -57,7 +57,7 @@ import com.lowagie.text.Chunk;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class BidiLine {
-    
+	
     protected int runDirection;
     protected int pieceSize = 256;
     protected char text[] = new char[pieceSize];
@@ -88,7 +88,7 @@ public class BidiLine {
 //    protected ArabicShaping arabic = new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.LENGTH_GROW_SHRINK | ArabicShaping.TEXT_DIRECTION_LOGICAL);
     protected static final IntHashtable mirrorChars = new IntHashtable();
     protected int arabicOptions;
-
+    
     /** Creates new BidiLine */
     public BidiLine() {
     }
@@ -175,8 +175,9 @@ public class BidiLine {
 
         // remove trailing WS
         totalTextLength = trimRight(0, totalTextLength - 1) + 1;
-        if (totalTextLength == 0)
-            return true;
+        if (totalTextLength == 0) {
+        	return true;
+        }
         
         if (runDirection == PdfWriter.RUN_DIRECTION_LTR || runDirection == PdfWriter.RUN_DIRECTION_RTL) {
             if (orderLevels.length < totalTextLength) {
@@ -450,7 +451,7 @@ public class BidiLine {
             ck = detailChunks[idx];
             if (PdfChunk.noPrint(ck.getUnicodeEquivalent(c)))
                 continue;
-            if (ck.isImage()) {
+            if (ck.isImage() || ck.isSeparator()) {
                 if (buf.length() > 0) {
                     ar.add(new PdfChunk(buf.toString(), refCk));
                     buf = new StringBuffer();
@@ -465,7 +466,7 @@ public class BidiLine {
                     ar.add(new PdfChunk(buf.toString(), refCk));
                     buf = new StringBuffer();
                 }
-                if (!ck.isImage())
+                if (!(ck.isImage() || ck.isSeparator()))
                     buf.append(c);
                 refCk = ck;
             }

@@ -59,6 +59,7 @@ import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.pdf.PdfAction;
 import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.draw.DrawInterface;
 
 /**
  * This is the smallest significant part of text that can be added to a
@@ -86,7 +87,7 @@ public class Chunk implements Element {
 
 	// public static membervariables
 
-	/** The character stand in for an image. */
+	/** The character stand in for an image or a separator. */
 	public static final String OBJECT_REPLACEMENT_CHARACTER = "\ufffc";
 
 	/** This is a Chunk containing a newline. */
@@ -201,6 +202,22 @@ public class Chunk implements Element {
 		copyImage.setAbsolutePosition(Float.NaN, Float.NaN);
 		setAttribute(IMAGE, new Object[] { copyImage, new Float(offsetX),
 				new Float(offsetY), Boolean.FALSE });
+	}
+
+	/**
+	 * Key for drawInterface of the Separator.
+	 * @since	2.1.2
+	 */
+	public static final String SEPARATOR = "SEPARATOR";
+	
+	/**
+	 * Creates a separator Chunk.
+	 * @param	separator	the drawInterface to use to draw the separator.
+	 * @since	2.1.2
+	 */
+	public Chunk(DrawInterface separator) {
+		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
+		setAttribute(SEPARATOR, separator);
 	}
 
 	/**

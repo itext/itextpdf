@@ -96,6 +96,7 @@ public class PdfChunk implements SplitCharacter{
         keysAttributes.put(Chunk.PDFANNOTATION, null);
         keysAttributes.put(Chunk.SKEW, null);
         keysAttributes.put(Chunk.HSCALE, null);
+        keysAttributes.put(Chunk.SEPARATOR, null);
         keysNoStroke.put(Chunk.SUBSUPSCRIPT, null);
         keysNoStroke.put(Chunk.SPLITCHARACTER, null);
         keysNoStroke.put(Chunk.HYPHENATION, null);
@@ -629,6 +630,15 @@ public class PdfChunk implements SplitCharacter{
     boolean isStroked()
     {
         return (!attributes.isEmpty());
+    }
+    
+    /**
+     * Checks if this <CODE>PdfChunk</CODE> is a Separator Chunk.
+     * @return	true if this chunk is a separator.
+     * @since	2.1.2
+     */
+    boolean isSeparator() {
+    	return isAttribute(Chunk.SEPARATOR);
     }
     
 /**

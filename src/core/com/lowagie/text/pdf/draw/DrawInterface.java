@@ -48,13 +48,14 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text;
+package com.lowagie.text.pdf.draw;
 
 import com.lowagie.text.pdf.PdfContentByte;
 
 /**
  * Interface for an Element that allows you to draw something at the current
  * vertical position. Trivial implementations are LineSeparator and VerticalPositionMark.
+ * It is also used to define what has to be drawn by a separator chunk.
  * @since 2.1.2
  */
 public interface DrawInterface {

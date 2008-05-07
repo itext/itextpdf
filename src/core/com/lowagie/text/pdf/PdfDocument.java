@@ -50,7 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.DrawInterface;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,7 +71,6 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
-import com.lowagie.text.LineSeparator;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.MarkedObject;
@@ -85,6 +83,7 @@ import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.collection.PdfCollection;
+import com.lowagie.text.pdf.draw.DrawInterface;
 import com.lowagie.text.pdf.internal.PdfAnnotationsImp;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 import java.text.DecimalFormat;
@@ -715,18 +714,6 @@ public class PdfDocument extends Document {
                     add((Image) element);
                     break;
                 }
-                case Element.LINE: {
-                	flushLines();
-                    LineSeparator separator = (LineSeparator)element;
-                    if (currentHeight != 0 && indentTop() - currentHeight - separator.getMinimumY() < indentBottom()) { 	 
-                        newPage();
-                    }
-                    separator.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight);
-                    currentHeight += separator.getAdvanceY(); 	 
-                    text.moveText(0, -separator.getAdvanceY());
-                    pageEmpty = false;
-                    break;
-                }
                 case Element.YMARK: {
                     DrawInterface zh = (DrawInterface)element;
                     zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight);
@@ -1341,12 +1328,17 @@ public class PdfDocument extends Document {
         float lastHScale = Float.NaN;
         float baseWordSpacing = 0;
         float baseCharacterSpacing = 0;
+        float glueWidth = 0;
         
         numberOfSpaces = line.numberOfSpaces();
         lineLen = line.toString().length();
         // does the line need to be justified?
         isJustified = line.hasToBeJustified() && (numberOfSpaces != 0 || lineLen > 1);
-        if (isJustified) {
+        int separatorCount = line.getSeparatorCount();
+        if (separatorCount > 0) {
+        	glueWidth = line.widthLeft() / separatorCount;
+        }
+        else if (isJustified) {
             if (line.isNewlineSplit() && line.widthLeft() >= (lastBaseFactor * (ratio * numberOfSpaces + lineLen - 1))) {
                 if (line.isRTL()) {
                     text.moveText(line.widthLeft() - lastBaseFactor * (ratio * numberOfSpaces + lineLen - 1), 0);
@@ -1391,10 +1383,19 @@ public class PdfDocument extends Document {
                 if (isJustified) {
                     width = chunk.getWidthCorrected(baseCharacterSpacing, baseWordSpacing);
                 }
-                else
+                else {
                     width = chunk.width();
+                }
                 if (chunk.isStroked()) {
                     PdfChunk nextChunk = line.getChunk(chunkStrokeIdx + 1);
+                    if (chunk.isSeparator()) {
+                    	width = glueWidth;
+                        DrawInterface di = (DrawInterface)chunk.getAttribute(Chunk.SEPARATOR);
+                        float fontSize = chunk.font().size();
+                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
+                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+                        di.draw(graphics, xMarker, yMarker + descender, xMarker + width, ascender - descender, yMarker);
+                    }
                     if (chunk.isAttribute(Chunk.BACKGROUND)) {
                         float subtract = lastBaseFactor;
                         if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND))
@@ -1565,6 +1566,11 @@ public class PdfDocument extends Document {
                 text.setTextRise(rise);
             if (chunk.isImage()) {
                 adjustMatrix = true;
+            }
+            else if (chunk.isSeparator()) {
+            	PdfTextArray array = new PdfTextArray();
+            	array.add(-glueWidth * 1000f / chunk.font.size() / hScale);
+            	text.showText(array);
             }
             // If it is a CJK chunk or Unicode TTF we will have to simulate the
             // space adjustment.

@@ -184,10 +184,6 @@ public interface Element {
 	 * @since 2.1.2
 	 */
 	public static final int YMARK = 55;
-	/** This is a possible type of <CODE>Element</CODE>.
-	 * @since 2.1.2
-	 */
-	public static final int LINE = 56;
 
 	// static membervariables (alignment)
 
