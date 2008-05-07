@@ -68,6 +68,7 @@ import com.lowagie.text.pdf.GrayColor;
  * @see Table
  * @see Cell
  * @see HeaderFooter
+ * @since 2.1.2
  */
 
 public class RectangleReadOnly extends Rectangle {
