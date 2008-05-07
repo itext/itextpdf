@@ -2347,7 +2347,10 @@ public class PdfWriter extends DocWriter implements
         as.put(PdfName.OCGS, arr);
         arras.add(as);
     }
-    
+
+    /**
+     * @since 2.1.2
+     */
     protected void fillOCProperties(boolean erase) {
         if (OCProperties == null)
             OCProperties = new PdfOCProperties();
