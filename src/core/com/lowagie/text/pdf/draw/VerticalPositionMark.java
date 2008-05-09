@@ -52,6 +52,7 @@ package com.lowagie.text.pdf.draw;
 
 import java.util.ArrayList;
 
+import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ElementListener;
@@ -135,7 +136,9 @@ public class VerticalPositionMark implements DrawInterface, Element {
      * @see com.lowagie.text.Element#getChunks()
      */
     public ArrayList getChunks() {
-        return new ArrayList();
+    	ArrayList list = new ArrayList();
+    	list.add(new Chunk(this, true));
+        return list;
     }
 
     /**

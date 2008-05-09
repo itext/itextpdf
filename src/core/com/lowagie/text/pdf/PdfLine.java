@@ -118,14 +118,16 @@ public class PdfLine {
     /**
      * Creates a PdfLine object.
      * @param left				the left offset
+     * @param originalWidth		the original width of the line
      * @param remainingWidth	bigger than 0 if the line isn't completely filled
      * @param alignment			the alignment of the line
      * @param newlineSplit		was the line splitted (or does the paragraph end with this line)
      * @param line				an array of PdfChunk objects
      * @param isRTL				do you have to read the line from Right to Left?
      */
-    PdfLine(float left, float remainingWidth, int alignment, boolean newlineSplit, ArrayList line, boolean isRTL) {
+    PdfLine(float left, float originalWidth, float remainingWidth, int alignment, boolean newlineSplit, ArrayList line, boolean isRTL) {
         this.left = left;
+        this.originalWidth = originalWidth;
         this.width = remainingWidth;
         this.alignment = alignment;
         this.line = line;
@@ -435,7 +437,7 @@ public class PdfLine {
     	PdfChunk ck;
         for (Iterator i = line.iterator(); i.hasNext(); ) {
         	ck = (PdfChunk)i.next();
-        	if (ck.isSeparator()) {
+        	if (ck.isHorizontalSeparator()) {
         		s++;
         	}
         }

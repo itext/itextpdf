@@ -216,8 +216,18 @@ public class Chunk implements Element {
 	 * @since	2.1.2
 	 */
 	public Chunk(DrawInterface separator) {
+		this(separator, false);
+	}	
+	
+	/**
+	 * Creates a separator Chunk.
+	 * @param	separator	the drawInterface to use to draw the separator.
+	 * @param	vertical	true if this is a vertical separator
+	 * @since	2.1.2
+	 */
+	public Chunk(DrawInterface separator, boolean vertical) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
-		setAttribute(SEPARATOR, separator);
+		setAttribute(SEPARATOR, new Object[] {separator, new Boolean(vertical)});
 	}
 
 	/**
