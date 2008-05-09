@@ -335,7 +335,7 @@ public class BidiLine {
                 ArrayList ar = new ArrayList();
                 PdfChunk ck = new PdfChunk("", detailChunks[0]);
                 ar.add(ck);
-                return new PdfLine(0, 0, alignment, true, ar, isRTL);
+                return new PdfLine(0, 0, 0, alignment, true, ar, isRTL);
             }
         }
         float originalWidth = width;
@@ -369,16 +369,16 @@ public class BidiLine {
         if (lastValidChunk == null) {
             // not even a single char fit; must output the first char
             ++currentChar;
-            return new PdfLine(0, 0, alignment, false, createArrayOfPdfChunks(currentChar - 1, currentChar - 1), isRTL);
+            return new PdfLine(0, originalWidth, 0, alignment, false, createArrayOfPdfChunks(currentChar - 1, currentChar - 1), isRTL);
         }
         if (currentChar >= totalTextLength) {
             // there was more line than text
-            return new PdfLine(0, width, alignment, true, createArrayOfPdfChunks(oldCurrentChar, totalTextLength - 1), isRTL);
+            return new PdfLine(0, originalWidth, width, alignment, true, createArrayOfPdfChunks(oldCurrentChar, totalTextLength - 1), isRTL);
         }
         int newCurrentChar = trimRightEx(oldCurrentChar, currentChar - 1);
         if (newCurrentChar < oldCurrentChar) {
             // only WS
-            return new PdfLine(0, width, alignment, false, createArrayOfPdfChunks(oldCurrentChar, currentChar - 1), isRTL);
+            return new PdfLine(0, originalWidth, width, alignment, false, createArrayOfPdfChunks(oldCurrentChar, currentChar - 1), isRTL);
         }
         if (newCurrentChar == currentChar - 1) { // middle of word
             HyphenationEvent he = (HyphenationEvent)lastValidChunk.getAttribute(Chunk.HYPHENATION);
@@ -391,14 +391,14 @@ public class BidiLine {
                     if (pre.length() > 0) {
                         PdfChunk extra = new PdfChunk(pre, lastValidChunk);
                         currentChar = word[1] - post.length();
-                        return new PdfLine(0, testWidth - lastValidChunk.font().width(pre), alignment, false, createArrayOfPdfChunks(oldCurrentChar, word[0] - 1, extra), isRTL);
+                        return new PdfLine(0, originalWidth, testWidth - lastValidChunk.font().width(pre), alignment, false, createArrayOfPdfChunks(oldCurrentChar, word[0] - 1, extra), isRTL);
                     }
                 }
             }
         }
         if (lastSplit == -1 || lastSplit >= newCurrentChar) {
             // no split point or split point ahead of end
-            return new PdfLine(0, width + getWidth(newCurrentChar + 1, currentChar - 1), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
+            return new PdfLine(0, originalWidth, width + getWidth(newCurrentChar + 1, currentChar - 1), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
         }
         // standard split
         currentChar = lastSplit + 1;
@@ -407,7 +407,7 @@ public class BidiLine {
             // only WS again
             newCurrentChar = currentChar - 1;
         }
-        return new PdfLine(0, originalWidth - getWidth(oldCurrentChar, newCurrentChar), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
+        return new PdfLine(0, originalWidth, originalWidth - getWidth(oldCurrentChar, newCurrentChar), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
     }
     
     /** Gets the width of a range of characters.

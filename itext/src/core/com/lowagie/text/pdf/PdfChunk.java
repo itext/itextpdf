@@ -641,6 +641,19 @@ public class PdfChunk implements SplitCharacter{
     	return isAttribute(Chunk.SEPARATOR);
     }
     
+    /**
+     * Checks if this <CODE>PdfChunk</CODE> is a horizontal Separator Chunk.
+     * @return	true if this chunk is a horizontal separator.
+     * @since	2.1.2
+     */
+    boolean isHorizontalSeparator() {
+    	if (isAttribute(Chunk.SEPARATOR)) {
+    		Object[] o = (Object[])getAttribute(Chunk.SEPARATOR);
+    		return !((Boolean)o[1]).booleanValue();
+    	}
+    	return false;
+    }
+    
 /**
  * Checks if there is an image in the <CODE>PdfChunk</CODE>.
  * @return <CODE>true</CODE> if an image is present
