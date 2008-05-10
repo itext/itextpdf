@@ -51,7 +51,6 @@ package com.lowagie.text.pdf;
 import java.util.ArrayList;
 
 import com.lowagie.text.Chunk;
-import com.lowagie.text.pdf.draw.DrawInterface;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
