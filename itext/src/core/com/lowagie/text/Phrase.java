@@ -52,7 +52,6 @@ package com.lowagie.text;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import com.lowagie.text.pdf.HyphenationEvent;

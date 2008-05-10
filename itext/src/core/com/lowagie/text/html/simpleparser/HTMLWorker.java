@@ -68,7 +68,6 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.TextElementArray;
-import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.lowagie.text.xml.simpleparser.SimpleXMLParser;

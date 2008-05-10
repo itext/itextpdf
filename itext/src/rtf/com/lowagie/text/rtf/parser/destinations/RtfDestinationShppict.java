@@ -51,15 +51,12 @@
 package com.lowagie.text.rtf.parser.destinations;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
-import com.lowagie.text.pdf.ByteBuffer;
 import com.lowagie.text.rtf.direct.RtfDirectContent;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.graphic.RtfImage;
