@@ -370,10 +370,16 @@ public class PdfDocument extends Document {
     /** This is the current height of the document. */
     protected float currentHeight = 0;
     
-    /** Signals that onParagraph is valid (to avoid that a Chapter/Section title is treated as a Paragraph). */
+    /**
+     * Signals that onParagraph is valid (to avoid that a Chapter/Section title is treated as a Paragraph).
+     * @since 2.1.2
+     */
     protected boolean isSectionTitle = false;
     
-    /** Signals that the current leading has to be subtracted from a YMark object. */
+    /**
+     * Signals that the current leading has to be subtracted from a YMark object.
+     * @since 2.1.2
+     */
     protected int hasLeading = 0;
     
     /** The current active <CODE>PdfAction</CODE> when processing an <CODE>Anchor</CODE>. */
