@@ -229,7 +229,7 @@ public class Chunk implements Element {
 	 */
 	public Chunk(DrawInterface separator, boolean vertical) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
-		setAttribute(SEPARATOR, new Object[] {separator, new Boolean(vertical)});
+		setAttribute(SEPARATOR, new Object[] {separator, Boolean.valueOf(vertical)});
 	}
 
 	/**
@@ -242,7 +242,7 @@ public class Chunk implements Element {
 	 * Creates a tab Chunk.
      * Note that separator chunks can't be used in combination with tab chunks!
 	 * @param	separator	the drawInterface to use to draw the tab.
-	 * @param	tabPosition	an X coordinate that will be used as start postion for the next Chunk.
+	 * @param	tabPosition	an X coordinate that will be used as start position for the next Chunk.
 	 * @since	2.1.2
 	 */
 	public Chunk(DrawInterface separator, float tabPosition) {
@@ -253,7 +253,7 @@ public class Chunk implements Element {
 	 * Creates a tab Chunk.
      * Note that separator chunks can't be used in combination with tab chunks!
 	 * @param	separator	the drawInterface to use to draw the tab.
-	 * @param	tabPosition	an X coordinate that will be used as start postion for the next Chunk.
+	 * @param	tabPosition	an X coordinate that will be used as start position for the next Chunk.
 	 * @param	newline		if true, a newline will be added if the tabPosition has already been reached.
 	 * @since	2.1.2
 	 */
@@ -262,7 +262,7 @@ public class Chunk implements Element {
 		if (tabPosition < 0) {
 			throw new IllegalArgumentException("A tab position may not be lower than 0; yours is " + tabPosition);
 		}
-		setAttribute(TAB, new Object[] {separator, new Float(tabPosition), new Boolean(newline), new Float(0)});
+		setAttribute(TAB, new Object[] {separator, new Float(tabPosition), Boolean.valueOf(newline), new Float(0)});
 	}
 
 	/**

@@ -1564,7 +1564,7 @@ class PdfStamperImp extends PdfWriter {
     		}
     		else if (obj.isArray()) {
     			ArrayList sub = ((PdfArray)obj).getArrayList();
-    			if (sub.size() == 0) return;
+    			if (sub.isEmpty()) return;
     			obj = (PdfObject)sub.get(0);
     			if (obj.isString()) {
     				layer = new PdfLayer(sub.get(0).toString());
