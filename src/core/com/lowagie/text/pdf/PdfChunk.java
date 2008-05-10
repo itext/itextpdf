@@ -97,6 +97,7 @@ public class PdfChunk implements SplitCharacter{
         keysAttributes.put(Chunk.SKEW, null);
         keysAttributes.put(Chunk.HSCALE, null);
         keysAttributes.put(Chunk.SEPARATOR, null);
+        keysAttributes.put(Chunk.TAB, null);
         keysNoStroke.put(Chunk.SUBSUPSCRIPT, null);
         keysNoStroke.put(Chunk.SPLITCHARACTER, null);
         keysNoStroke.put(Chunk.HYPHENATION, null);
@@ -652,6 +653,27 @@ public class PdfChunk implements SplitCharacter{
     		return !((Boolean)o[1]).booleanValue();
     	}
     	return false;
+    }
+    
+    /**
+     * Checks if this <CODE>PdfChunk</CODE> is a tab Chunk.
+     * @return	true if this chunk is a separator.
+     * @since	2.1.2
+     */
+    boolean isTab() {
+    	return isAttribute(Chunk.TAB);
+    }
+    
+    /**
+     * Correction for the tab position based on the left starting position.
+     * @param	newValue	the new value for the left X.
+     * @since	2.1.2
+     */
+    void adjustLeft(float newValue) {
+    	Object[] o = (Object[])attributes.get(Chunk.TAB);
+    	if (o != null) {
+    		attributes.put(Chunk.TAB, new Object[]{o[0], o[1], o[2], new Float(newValue)});
+    	}
     }
     
 /**

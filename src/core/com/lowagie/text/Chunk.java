@@ -212,6 +212,7 @@ public class Chunk implements Element {
 	
 	/**
 	 * Creates a separator Chunk.
+     * Note that separator chunks can't be used in combination with tab chunks!
 	 * @param	separator	the drawInterface to use to draw the separator.
 	 * @since	2.1.2
 	 */
@@ -221,6 +222,7 @@ public class Chunk implements Element {
 	
 	/**
 	 * Creates a separator Chunk.
+     * Note that separator chunks can't be used in combination with tab chunks!
 	 * @param	separator	the drawInterface to use to draw the separator.
 	 * @param	vertical	true if this is a vertical separator
 	 * @since	2.1.2
@@ -228,6 +230,39 @@ public class Chunk implements Element {
 	public Chunk(DrawInterface separator, boolean vertical) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		setAttribute(SEPARATOR, new Object[] {separator, new Boolean(vertical)});
+	}
+
+	/**
+	 * Key for drawInterface of the tab.
+	 * @since	2.1.2
+	 */
+	public static final String TAB = "TAB";
+	
+	/**
+	 * Creates a tab Chunk.
+     * Note that separator chunks can't be used in combination with tab chunks!
+	 * @param	separator	the drawInterface to use to draw the tab.
+	 * @param	tabPosition	an X coordinate that will be used as start postion for the next Chunk.
+	 * @since	2.1.2
+	 */
+	public Chunk(DrawInterface separator, float tabPosition) {
+		this(separator, tabPosition, false);
+	}
+	
+	/**
+	 * Creates a tab Chunk.
+     * Note that separator chunks can't be used in combination with tab chunks!
+	 * @param	separator	the drawInterface to use to draw the tab.
+	 * @param	tabPosition	an X coordinate that will be used as start postion for the next Chunk.
+	 * @param	newline		if true, a newline will be added if the tabPosition has already been reached.
+	 * @since	2.1.2
+	 */
+	public Chunk(DrawInterface separator, float tabPosition, boolean newline) {
+		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
+		if (tabPosition < 0) {
+			throw new IllegalArgumentException("A tab position may not be lower than 0; yours is " + tabPosition);
+		}
+		setAttribute(TAB, new Object[] {separator, new Float(tabPosition), new Boolean(newline), new Float(0)});
 	}
 
 	/**
