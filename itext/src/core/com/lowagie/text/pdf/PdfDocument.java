@@ -1381,6 +1381,7 @@ public class PdfDocument extends Document {
         float baseXMarker = xMarker;
         float yMarker = text.getYTLM();
         boolean adjustMatrix = false;
+        float tabPosition = 0;
         
         // looping over all the chunks in 1 line
         for (Iterator j = line.iterator(); j.hasNext(); ) {
@@ -1412,6 +1413,20 @@ public class PdfDocument extends Document {
                         else {
                         	di.draw(graphics, xMarker, yMarker + descender, xMarker + width, ascender - descender, yMarker);
                         }
+                    }
+                    if (chunk.isTab()) {
+                    	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
+                        DrawInterface di = (DrawInterface)tab[0];
+                        tabPosition = (Float)tab[1] + (Float)tab[3];
+                        float fontSize = chunk.font().size();
+                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
+                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+                        if (tabPosition > xMarker) {
+                        	di.draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
+                        }
+                        float tmp = xMarker;
+                    	xMarker = tabPosition;
+                    	tabPosition = tmp;
                     }
                     if (chunk.isAttribute(Chunk.BACKGROUND)) {
                         float subtract = lastBaseFactor;
@@ -1587,6 +1602,11 @@ public class PdfDocument extends Document {
             else if (chunk.isHorizontalSeparator()) {
             	PdfTextArray array = new PdfTextArray();
             	array.add(-glueWidth * 1000f / chunk.font.size() / hScale);
+            	text.showText(array);
+            }
+            else if (chunk.isTab()) {
+            	PdfTextArray array = new PdfTextArray();
+            	array.add((tabPosition - xMarker) * 1000f / chunk.font.size() / hScale);
             	text.showText(array);
             }
             // If it is a CJK chunk or Unicode TTF we will have to simulate the

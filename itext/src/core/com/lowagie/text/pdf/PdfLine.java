@@ -157,16 +157,24 @@ public class PdfLine {
         newlineSplit = (chunk.isNewlineSplit() || overflow == null);
         //        if (chunk.isNewlineSplit() && alignment == Element.ALIGN_JUSTIFIED)
         //            alignment = Element.ALIGN_LEFT;
-        
-        
+        if (chunk.isTab()) {
+        	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
+    		float tabPosition = ((Float)tab[1]).floatValue();
+    		boolean newline = ((Boolean)tab[2]).booleanValue();
+    		if (newline && tabPosition < originalWidth - width) {
+    		    return chunk;
+    		}
+    		width = originalWidth - tabPosition;
+    		chunk.adjustLeft(left);
+            addToLine(chunk);
+        }
         // if the length of the chunk > 0 we add it to the line
-        if (chunk.length() > 0) {
+        else if (chunk.length() > 0) {
             if (overflow != null)
                 chunk.trimLastSpace();
             width -= chunk.width();
             addToLine(chunk);
         }
-        
         // if the length == 0 and there were no other chunks added to the line yet,
         // we risk to end up in an endless loop trying endlessly to add the same chunk
         else if (line.size() < 1) {
@@ -437,6 +445,9 @@ public class PdfLine {
     	PdfChunk ck;
         for (Iterator i = line.iterator(); i.hasNext(); ) {
         	ck = (PdfChunk)i.next();
+        	if (ck.isTab()) {
+        		return 0;
+        	}
         	if (ck.isHorizontalSeparator()) {
         		s++;
         	}

@@ -323,7 +323,7 @@ public class BidiLine {
         }
     }
        
-    public PdfLine processLine(float width, int alignment, int runDirection, int arabicOptions) {
+    public PdfLine processLine(float leftX, float width, int alignment, int runDirection, int arabicOptions) {
         this.arabicOptions = arabicOptions;
         save();
         boolean isRTL = (runDirection == PdfWriter.RUN_DIRECTION_RTL);
@@ -364,7 +364,17 @@ public class BidiLine {
             if (splitChar)
                 lastSplit = currentChar;
             width -= charWidth;
-            lastValidChunk = ck;
+        	lastValidChunk = ck;
+            if (ck.isTab()) {
+            	Object[] tab = (Object[])ck.getAttribute(Chunk.TAB);
+        		float tabPosition = ((Float)tab[1]).floatValue();
+        		boolean newLine = ((Boolean)tab[2]).booleanValue();
+        		if (newLine && tabPosition < originalWidth - width) {
+        			return new PdfLine(0, originalWidth, width, alignment, true, createArrayOfPdfChunks(oldCurrentChar, currentChar - 1), isRTL);
+        		}
+        		detailChunks[currentChar].adjustLeft(leftX);
+        		width = originalWidth - tabPosition;
+            }
         }
         if (lastValidChunk == null) {
             // not even a single char fit; must output the first char
@@ -451,7 +461,7 @@ public class BidiLine {
             ck = detailChunks[idx];
             if (PdfChunk.noPrint(ck.getUnicodeEquivalent(c)))
                 continue;
-            if (ck.isImage() || ck.isSeparator()) {
+            if (ck.isImage() || ck.isSeparator() || ck.isTab()) {
                 if (buf.length() > 0) {
                     ar.add(new PdfChunk(buf.toString(), refCk));
                     buf = new StringBuffer();
@@ -466,7 +476,7 @@ public class BidiLine {
                     ar.add(new PdfChunk(buf.toString(), refCk));
                     buf = new StringBuffer();
                 }
-                if (!(ck.isImage() || ck.isSeparator()))
+                if (!ck.isImage() && !ck.isSeparator() && !ck.isTab())
                     buf.append(c);
                 refCk = ck;
             }
