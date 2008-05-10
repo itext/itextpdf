@@ -51,9 +51,6 @@
 package com.lowagie.text;
 
 import java.awt.Color;
-import java.util.ArrayList;
-
-import com.lowagie.text.pdf.GrayColor;
 
 /**
  * A <CODE>RectangleReadOnly</CODE> is the representation of a geometric figure.
