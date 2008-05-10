@@ -1417,7 +1417,7 @@ public class PdfDocument extends Document {
                     if (chunk.isTab()) {
                     	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
                         DrawInterface di = (DrawInterface)tab[0];
-                        tabPosition = (Float)tab[1] + (Float)tab[3];
+                        tabPosition = ((Float)tab[1]).floatValue() + ((Float)tab[3]).floatValue();
                         float fontSize = chunk.font().size();
                         float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
                         float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
