@@ -1598,14 +1598,25 @@ class PdfStamperImp extends PdfWriter {
     	}
     	HashMap map = new HashMap();
     	PdfLayer layer;
+    	String key;
     	for (Iterator i = documentOCG.iterator(); i.hasNext(); ) {
     		layer = (PdfLayer)i.next();
     		if (layer.getTitle() == null) {
-    			map.put(layer.getAsString(PdfName.NAME).toString(), layer);
+    			key = layer.getAsString(PdfName.NAME).toString();
     		}
     		else {
-    			map.put(layer.getTitle(), layer);
+    			key = layer.getTitle();
     		}
+    		if (map.containsKey(key)) {
+    			int seq = 2;
+    			String tmp = key + "(" + seq + ")";
+    			while (map.containsKey(tmp)) {
+    				seq++;
+    				tmp = key + "(" + seq + ")";
+    			}
+    			key = tmp;
+    		}
+			map.put(key, layer);
     	}
     	return map;
     }
