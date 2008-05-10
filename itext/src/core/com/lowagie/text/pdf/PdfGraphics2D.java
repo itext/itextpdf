@@ -1613,7 +1613,7 @@ public class PdfGraphics2D extends Graphics2D {
     
     private synchronized void waitForImage(java.awt.Image image) {
         if (mediaTracker == null)
-            mediaTracker = new MediaTracker(new PdfGraphics2D.fakeComponent());
+            mediaTracker = new MediaTracker(new PdfGraphics2D.FakeComponent());
         mediaTracker.addImage(image, 0);
         try {
             mediaTracker.waitForID(0);
@@ -1624,7 +1624,7 @@ public class PdfGraphics2D extends Graphics2D {
         mediaTracker.removeImage(image);
     }
         
-    static private class fakeComponent extends Component {
+    static private class FakeComponent extends Component {
 
 		private static final long serialVersionUID = 6450197945596086638L;
     }
