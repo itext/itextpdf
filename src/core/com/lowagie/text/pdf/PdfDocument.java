@@ -377,10 +377,10 @@ public class PdfDocument extends Document {
     protected boolean isSectionTitle = false;
     
     /**
-     * Signals that the current leading has to be subtracted from a YMark object.
+     * Signals that the current leading has to be subtracted from a YMark object when positive.
      * @since 2.1.2
      */
-    protected int hasLeading = 0;
+    protected int leadingCount = 0;
     
     /** The current active <CODE>PdfAction</CODE> when processing an <CODE>Anchor</CODE>. */
     protected PdfAction anchorAction = null;
@@ -451,7 +451,7 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.ANCHOR: {
-                	hasLeading++;
+                	leadingCount++;
                     Anchor anchor = (Anchor) element;
                     String url = anchor.getReference();
                     leading = anchor.getLeading();
@@ -461,7 +461,7 @@ public class PdfDocument extends Document {
                     // we process the element
                     element.process(this);
                     anchorAction = null;
-                    hasLeading--;
+                    leadingCount--;
                     break;
                 }
                 case Element.ANNOTATION: {
@@ -478,16 +478,16 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.PHRASE: {
-                	hasLeading++;
+                	leadingCount++;
                     // we cast the element to a phrase and set the leading of the document
                     leading = ((Phrase) element).getLeading();
                     // we process the element
                     element.process(this);
-                    hasLeading--;
+                    leadingCount--;
                     break;
                 }
                 case Element.PARAGRAPH: {
-                	hasLeading++;
+                	leadingCount++;
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     addSpacing(paragraph.spacingBefore(), leading, paragraph.getFont());
@@ -539,7 +539,7 @@ public class PdfDocument extends Document {
                     indentation.indentLeft -= paragraph.getIndentationLeft();
                     indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
-                    hasLeading--;
+                    leadingCount--;
                     break;
                 }
                 case Element.SECTION:
@@ -621,7 +621,7 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.LISTITEM: {
-                	hasLeading++;
+                	leadingCount++;
                     // we cast the element to a ListItem
                     ListItem listItem = (ListItem) element;
                     
@@ -649,7 +649,7 @@ public class PdfDocument extends Document {
                     carriageReturn();
                     indentation.listIndentLeft -= listItem.getIndentationLeft();
                     indentation.indentRight -= listItem.getIndentationRight();
-                    hasLeading--;
+                    leadingCount--;
                     break;
                 }
                 case Element.RECTANGLE: {
@@ -732,7 +732,7 @@ public class PdfDocument extends Document {
                 }
                 case Element.YMARK: {
                     DrawInterface zh = (DrawInterface)element;
-                    zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight - (hasLeading > 0 ? leading : 0));
+                    zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight - (leadingCount > 0 ? leading : 0));
                     pageEmpty = false;
                     break;
                 }
