@@ -179,7 +179,7 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
         try {
             this.content = new Object[1];
             if(this.document != null) {
-                this.content[0] = this.document.getMapper().mapElement(par);
+                this.content[0] = this.document.getMapper().mapElement(par)[0];
                 ((RtfBasicElement) this.content[0]).setInHeader(true);
             } else {
                 this.content[0] = par;
@@ -205,7 +205,7 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
         for(int i = 0; i < this.content.length; i++) {
             if(this.content[i] instanceof Element) {
                 try {
-                    this.content[i] = this.document.getMapper().mapElement((Element) this.content[i]);
+                    this.content[i] = this.document.getMapper().mapElement((Element) this.content[i])[0];
                 } catch(DocumentException de) {
                     de.printStackTrace();
                 }
@@ -238,7 +238,7 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
         }
         try {
             this.content = new Object[1];
-            this.content[0] = doc.getMapper().mapElement(par);
+            this.content[0] = doc.getMapper().mapElement(par)[0];
             ((RtfBasicElement) this.content[0]).setInHeader(true);
         } catch(DocumentException de) {
             de.printStackTrace();
@@ -278,7 +278,7 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
             for(int i = 0; i < this.content.length; i++) {
                 try {
                     if(this.content[i] instanceof Element) {
-                        this.content[i] = this.document.getMapper().mapElement((Element) this.content[i]);
+                        this.content[i] = this.document.getMapper().mapElement((Element) this.content[i])[0];
                         ((RtfBasicElement) this.content[i]).setInHeader(true);
                     } else if(this.content[i] instanceof RtfBasicElement){
                         ((RtfBasicElement) this.content[i]).setRtfDocument(this.document);

@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:RtfMapper.java 3126 2008-02-07 20:30:46Z hallm $
  * $Name$
  *
  * Copyright 2003, 2004 by Mark Hall
@@ -50,6 +50,8 @@
 
 package com.lowagie.text.rtf;
 
+import java.util.ArrayList;
+
 import com.lowagie.text.Anchor;
 import com.lowagie.text.Annotation;
 import com.lowagie.text.Chapter;
@@ -79,6 +81,7 @@ import com.lowagie.text.rtf.text.RtfNewPage;
 import com.lowagie.text.rtf.text.RtfParagraph;
 import com.lowagie.text.rtf.text.RtfPhrase;
 import com.lowagie.text.rtf.text.RtfSection;
+import com.lowagie.text.rtf.text.RtfTab;
 
 
 /**
@@ -105,47 +108,59 @@ public class RtfMapper {
     }
     
     /**
-     * Takes an Element subclass and returns the correct RtfBasicElement
-     * subclass, that wraps the Element subclass.
+     * Takes an Element subclass and returns an array of RtfBasicElement
+     * subclasses, that contained the mapped RTF equivalent to the Element
+     * passed in.
      * 
      * @param element The Element to wrap
-     * @return A RtfBasicElement wrapping the Element
+     * @return An array of RtfBasicElement wrapping the Element
      * @throws DocumentException
      */
-    public RtfBasicElement mapElement(Element element) throws DocumentException {
-        RtfBasicElement rtfElement = null;
+    public RtfBasicElement[] mapElement(Element element) throws DocumentException {
+        ArrayList rtfElements = new ArrayList();
 
         if(element instanceof RtfBasicElement) {
-            rtfElement = (RtfBasicElement) element;
+            RtfBasicElement rtfElement = (RtfBasicElement) element;
             rtfElement.setRtfDocument(this.rtfDoc);
-            return rtfElement;
+            return new RtfBasicElement[]{rtfElement};
         }
         switch(element.type()) {
     		case Element.CHUNK:
-    		    if(((Chunk) element).getImage() != null) {
-                    rtfElement = new RtfImage(rtfDoc, ((Chunk) element).getImage());
-    		    } else if(((Chunk) element).hasAttributes() && ((Chunk) element).getAttributes().containsKey(Chunk.NEWPAGE)) {
-    		        rtfElement = new RtfNewPage(rtfDoc);
+    		    Chunk chunk = (Chunk) element;
+    		    if(chunk.hasAttributes()) {
+    		        if(chunk.getAttributes().containsKey(Chunk.IMAGE)) {
+    		            rtfElements.add(new RtfImage(rtfDoc, (Image) chunk.getAttributes().get(Chunk.IMAGE)));
+    		        } else if(chunk.getAttributes().containsKey(Chunk.NEWPAGE)) {
+    		            rtfElements.add(new RtfNewPage(rtfDoc));
+    		        } else if(chunk.getAttributes().containsKey(Chunk.TAB)) {
+                        Float tabPos = (Float) ((Object[]) chunk.getAttributes().get(Chunk.TAB))[1];
+                        RtfTab tab = new RtfTab(tabPos.floatValue(), RtfTab.TAB_LEFT_ALIGN);
+                        tab.setRtfDocument(rtfDoc);
+                        rtfElements.add(tab);
+                        rtfElements.add(new RtfChunk(rtfDoc, new Chunk("\t")));
+    		        } else {
+                        rtfElements.add(new RtfChunk(rtfDoc, (Chunk) element));
+    		        }
     		    } else {
-    		        rtfElement = new RtfChunk(rtfDoc, (Chunk) element);
+                    rtfElements.add(new RtfChunk(rtfDoc, (Chunk) element));
     		    }
     			break;
     		case Element.PHRASE:
-    		    rtfElement = new RtfPhrase(rtfDoc, (Phrase) element);
+    		    rtfElements.add(new RtfPhrase(rtfDoc, (Phrase) element));
     			break;
     		case Element.PARAGRAPH:
-    		    rtfElement = new RtfParagraph(rtfDoc, (Paragraph) element);
+    		    rtfElements.add(new RtfParagraph(rtfDoc, (Paragraph) element));
     			break;
     		case Element.ANCHOR:
-    			rtfElement = new RtfAnchor(rtfDoc, (Anchor) element);
+    			rtfElements.add(new RtfAnchor(rtfDoc, (Anchor) element));
     			break;
     		case Element.ANNOTATION:
-    		    rtfElement = new RtfAnnotation(rtfDoc, (Annotation) element);
+    		    rtfElements.add(new RtfAnnotation(rtfDoc, (Annotation) element));
     			break;
             case Element.IMGRAW:
             case Element.IMGTEMPLATE:
             case Element.JPEG:
-                rtfElement = new RtfImage(rtfDoc, (Image) element);
+                rtfElements.add(new RtfImage(rtfDoc, (Image) element));
             	break;
     		case Element.AUTHOR: 
     		case Element.SUBJECT:
@@ -153,30 +168,30 @@ public class RtfMapper {
     		case Element.TITLE:
     		case Element.PRODUCER:
     		case Element.CREATIONDATE:
-    		    rtfElement = new RtfInfoElement(rtfDoc, (Meta) element);
+    		    rtfElements.add(new RtfInfoElement(rtfDoc, (Meta) element));
     			break;
     		case Element.LIST:
-    		    rtfElement = new RtfList(rtfDoc, (List) element);
+    		    rtfElements.add(new RtfList(rtfDoc, (List) element));
     			break;
     		case Element.LISTITEM:
-    		    rtfElement = new RtfListItem(rtfDoc, (ListItem) element);
+    		    rtfElements.add(new RtfListItem(rtfDoc, (ListItem) element));
     			break;
     		case Element.SECTION:
-    		    rtfElement = new RtfSection(rtfDoc, (Section) element);
+    		    rtfElements.add(new RtfSection(rtfDoc, (Section) element));
     			break;
     		case Element.CHAPTER:
-    		    rtfElement = new RtfChapter(rtfDoc, (Chapter) element);
+    		    rtfElements.add(new RtfChapter(rtfDoc, (Chapter) element));
     			break;
     		case Element.TABLE:
     			try {
-    				rtfElement = new RtfTable(rtfDoc, (Table) element);
+    				rtfElements.add(new RtfTable(rtfDoc, (Table) element));
     			}
     			catch(ClassCastException e) {
-    				rtfElement = new RtfTable(rtfDoc, ((SimpleTable) element).createTable());
+    				rtfElements.add(new RtfTable(rtfDoc, ((SimpleTable) element).createTable()));
     			}
     			break;
         }
         
-        return rtfElement;
+        return (RtfBasicElement[]) rtfElements.toArray(new RtfBasicElement[0]);
     }
 }
