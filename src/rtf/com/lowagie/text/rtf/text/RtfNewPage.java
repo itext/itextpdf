@@ -61,7 +61,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfNewPage creates a new page. INTERNAL CLASS
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfNewPage extends RtfElement {

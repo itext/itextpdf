@@ -68,7 +68,7 @@ import com.lowagie.text.rtf.style.RtfFont;
  * The RtfPhrase contains multiple RtfChunks
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfPhrase extends RtfElement {

@@ -89,7 +89,7 @@ import com.lowagie.text.rtf.text.RtfTab;
  * and the corresponding com.lowagie.text.rtf.** classes.
  * 
  * @version $Version:$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  */
 public class RtfMapper {
 

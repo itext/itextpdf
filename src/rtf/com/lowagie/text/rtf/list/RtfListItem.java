@@ -65,7 +65,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * The RtfListItem acts as a wrapper for a ListItem.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfListItem extends RtfParagraph {

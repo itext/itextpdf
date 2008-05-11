@@ -66,7 +66,7 @@ import com.lowagie.text.Font;
  * displayed instead.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
  * @author Thomas Bickel (tmb99@inode.at)
  */

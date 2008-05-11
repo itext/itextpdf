@@ -72,7 +72,7 @@ import com.lowagie.text.rtf.text.RtfNewPage;
  * The RtfWriter allows the creation of rtf documents via the iText system
  *
  * Version: $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  */
 public class RtfWriter2 extends DocWriter {
     /**

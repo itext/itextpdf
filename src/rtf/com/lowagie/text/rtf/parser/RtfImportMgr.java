@@ -70,7 +70,7 @@ import com.lowagie.text.rtf.style.RtfFont;
  * It also handles other list based items that need mapping, for example
  * stylesheets and lists.
  * 
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Howard Shank (hgshank@yahoo.com)
  * @since 2.1.0
  */

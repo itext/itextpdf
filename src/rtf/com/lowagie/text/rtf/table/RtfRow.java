@@ -66,7 +66,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * INTERNAL USE ONLY
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Steffen Stundzig
  * @author Lorenz Maierhofer
  * @author Thomas Bickel (tmb99@inode.at)

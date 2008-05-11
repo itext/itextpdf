@@ -57,7 +57,7 @@ import java.io.OutputStream;
  * 
  * @version $Id$
  * @author Thomas Bickel (tmb99@inode.at)
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  */
 public final class RtfNilOutputStream extends OutputStream
 {

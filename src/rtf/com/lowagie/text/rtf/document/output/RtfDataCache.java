@@ -59,7 +59,7 @@ import java.io.OutputStream;
  * act as caches for the rtf document data.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public interface RtfDataCache 
