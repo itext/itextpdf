@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:RtfPageSetting.java 3126 2008-02-07 20:30:46Z hallm $
  * $Name:  $
  *
  * Copyright 2003, 2004 by Mark Hall
@@ -63,8 +63,8 @@ import com.lowagie.text.rtf.RtfExtendedElement;
  * The RtfPageSetting stores the page size / page margins for a RtfDocument.
  * INTERNAL CLASS - NOT TO BE USED DIRECTLY
  *  
- * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @version $Id:RtfPageSetting.java 3126 2008-02-07 20:30:46Z hallm $
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfPageSetting extends RtfElement implements RtfExtendedElement {

@@ -59,7 +59,7 @@ import java.io.OutputStream;
  * data in memory. Fast but memory intensive.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfMemoryCache implements RtfDataCache {

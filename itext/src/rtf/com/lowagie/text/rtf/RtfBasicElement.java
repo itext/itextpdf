@@ -61,7 +61,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * be added to the RtfWriter.
  *
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public interface RtfBasicElement extends RtfElementInterface {

@@ -60,7 +60,7 @@ import com.lowagie.text.rtf.style.RtfParagraphStyle;
  * RTF readers can't read the document or render it wrongly.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  * @author Howard Shank (hgshank@yahoo.com)
  */

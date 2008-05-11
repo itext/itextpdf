@@ -79,7 +79,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * list declaration and the list data.
  *  
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  * @author Felix Satyaputra (f_satyaputra@yahoo.co.uk)
  */

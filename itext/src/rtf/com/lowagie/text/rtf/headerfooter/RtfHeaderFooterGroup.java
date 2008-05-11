@@ -64,7 +64,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * of headers or footers.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElement {

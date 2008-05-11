@@ -62,7 +62,7 @@ import java.util.HashMap;
  * The font mappings are fontNr -&gt; fontName and the color
  * mappigns are colorNr -&gt; Color.
  * 
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Howard Shank (hgshank@yahoo.com)
  * @since 2.1.0
  */

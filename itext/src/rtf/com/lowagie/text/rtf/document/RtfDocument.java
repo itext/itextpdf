@@ -68,7 +68,7 @@ import com.lowagie.text.rtf.graphic.RtfImage;
  * INTERNAL CLASS - NOT TO BE USED DIRECTLY
  *
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Todd Bush [Tab support]
  * @author Thomas Bickel (tmb99@inode.at)
  */

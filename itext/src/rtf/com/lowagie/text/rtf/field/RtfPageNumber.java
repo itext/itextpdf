@@ -61,7 +61,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfPageNumber provides the page number field in rtf documents.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com)
  * @author Thomas Bickel (tmb99@inode.at)
  */

@@ -78,7 +78,7 @@ import com.lowagie.text.rtf.parser.destinations.RtfDestinationMgr;
  * font and color definitions corrected and then added to
  * the document being written.
  * 
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Howard Shank (hgshank@yahoo.com)
  * @since 2.0.8
  */

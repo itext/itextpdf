@@ -70,7 +70,7 @@ import com.lowagie.text.rtf.field.RtfTOCEntry;
  * INTERNAL CLASS
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfSection extends RtfElement {

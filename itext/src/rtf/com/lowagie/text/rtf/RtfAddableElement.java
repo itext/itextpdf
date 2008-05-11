@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:RtfAddableElement.java 3126 2008-02-07 20:30:46Z hallm $
  * $Name$
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
@@ -65,8 +65,8 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * and it also implements RtfBasicElement. It is an abstract class thus it
  * cannot be instantiated itself and has to be subclassed to be used.
  * 
- * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @version $Id:RtfAddableElement.java 3126 2008-02-07 20:30:46Z hallm $
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public abstract class RtfAddableElement extends Chunk implements RtfBasicElement {
