@@ -69,7 +69,7 @@ public class LineSeparator extends VerticalPositionMark {
     /** The width of the line as a percentage of the available page width. */
     protected float percentage = 100;
     /** The color of the line. */
-    protected Color color;
+    protected Color lineColor;
     /** The alignment of the line. */
     protected int alignment = Element.ALIGN_CENTER;
     
@@ -77,14 +77,14 @@ public class LineSeparator extends VerticalPositionMark {
      * Creates a new instance of the LineSeparator class.
      * @param lineWidth		the thickness of the line
      * @param percentage	the width of the line as a percentage of the available page width
-     * @param color			the color of the line
+     * @param lineColor			the color of the line
      * @param align			the alignment
      * @param offset		the offset of the line relative to the current baseline (negative = under the baseline)
      */
-    public LineSeparator(float lineWidth, float percentage, Color color, int align, float offset) {
+    public LineSeparator(float lineWidth, float percentage, Color lineColor, int align, float offset) {
         this.lineWidth = lineWidth;
         this.percentage = percentage;
-        this.color = color;
+        this.lineColor = lineColor;
         this.alignment = align;
         this.offset = offset;
     }
@@ -131,8 +131,8 @@ public class LineSeparator extends VerticalPositionMark {
                 break;
         }
         canvas.setLineWidth(getLineWidth());
-        if (getColor() != null)
-            canvas.setColorStroke(getColor());
+        if (getLineColor() != null)
+            canvas.setColorStroke(getLineColor());
         canvas.moveTo(s + leftX, y + offset);
         canvas.lineTo(s + w + leftX, y + offset);
         canvas.stroke();
@@ -174,16 +174,16 @@ public class LineSeparator extends VerticalPositionMark {
      * Getter for the color of the line that will be drawn.
      * @return	a color
      */
-    public Color getColor() {
-        return color;
+    public Color getLineColor() {
+        return lineColor;
     }
 
     /**
      * Setter for the color of the line that will be drawn.
      * @param color	a color
      */
-    public void setColor(Color color) {
-        this.color = color;
+    public void setLineColor(Color color) {
+        this.lineColor = color;
     }
 
     /**
