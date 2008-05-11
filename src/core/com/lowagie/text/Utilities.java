@@ -241,4 +241,43 @@ public class Utilities {
 	public static final float inchesToPoints(float value) {
 	    return value * 72f;
 	}
+    
+    public static boolean isSurrogateHigh(char c) {
+        return c >= '\ud800' && c <= '\udbff';
+    }
+
+    public static boolean isSurrogateLow(char c) {
+        return c >= '\udc00' && c <= '\udfff';
+    }
+
+    public static boolean isSurrogatePair(String text, int idx) {
+        if (idx < 0 || idx > text.length() - 2)
+            return false;
+        return isSurrogateHigh(text.charAt(idx)) && isSurrogateLow(text.charAt(idx + 1));
+    }
+
+    public static boolean isSurrogatePair(char[] text, int idx) {
+        if (idx < 0 || idx > text.length - 2)
+            return false;
+        return isSurrogateHigh(text[idx]) && isSurrogateLow(text[idx + 1]);
+    }
+
+    public static int convertToUtf32(char highSurrogate, char lowSurrogate) {
+         return (((highSurrogate - 0xd800) * 0x400) + (lowSurrogate - 0xdc00)) + 0x10000;
+    }
+
+    public static int convertToUtf32(char[] text, int idx) {
+         return (((text[idx] - 0xd800) * 0x400) + (text[idx + 1] - 0xdc00)) + 0x10000;
+    }
+
+    public static int convertToUtf32(String text, int idx) {
+         return (((text.charAt(idx) - 0xd800) * 0x400) + (text.charAt(idx + 1) - 0xdc00)) + 0x10000;
+    }
+
+    public static String convertFromUtf32(int codePoint) {
+        if (codePoint < 0x10000)
+            return Character.toString((char)codePoint);
+        codePoint -= 0x10000;
+        return new String(new char[]{(char)((codePoint / 0x400) + 0xd800), (char)((codePoint % 0x400) + 0xdc00)});
+    }
 }

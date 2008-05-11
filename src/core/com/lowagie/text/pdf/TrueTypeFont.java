@@ -192,6 +192,9 @@ class TrueTypeFont extends BaseFont {
      * units.
      */
     protected HashMap cmap31;
+
+    protected HashMap cmapExt;
+
     /** The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
      * are the glyph number for the first character and the lower 16 bits are the
@@ -801,6 +804,7 @@ class TrueTypeFont extends BaseFont {
         int map10 = 0;
         int map31 = 0;
         int map30 = 0;
+        int mapExt = 0;
         for (int k = 0; k < num_tables; ++k) {
             int platId = rf.readUnsignedShort();
             int platSpecId = rf.readUnsignedShort();
@@ -811,6 +815,9 @@ class TrueTypeFont extends BaseFont {
             }
             else if (platId == 3 && platSpecId == 1) {
                 map31 = offset;
+            }
+            else if (platId == 3 && platSpecId == 10) {
+                mapExt = offset;
             }
             if (platId == 1 && platSpecId == 0) {
                 map10 = offset;
@@ -845,6 +852,45 @@ class TrueTypeFont extends BaseFont {
                 cmap10 = readFormat4();
             }
         }
+        if (mapExt > 0) {
+            rf.seek(table_location[0] + mapExt);
+            int format = rf.readUnsignedShort();
+            switch (format) {
+                case 0:
+                    cmapExt = readFormat0();
+                    break;
+                case 4:
+                    cmapExt = readFormat4();
+                    break;
+                case 6:
+                    cmapExt = readFormat6();
+                    break;
+                case 12:
+                    cmapExt = readFormat12();
+                    break;
+            }
+        }
+    }
+
+    HashMap readFormat12() throws IOException {
+        HashMap h = new HashMap();
+        rf.skipBytes(2);
+        int table_lenght = rf.readInt();
+        rf.skipBytes(4);
+        int nGroups = rf.readInt();
+        for (int k = 0; k < nGroups; k++) {
+            int startCharCode = rf.readInt();
+            int endCharCode = rf.readInt();
+            int startGlyphID = rf.readInt();
+            for (int i = startCharCode; i <= endCharCode; i++) {
+                int[] r = new int[2];
+                r[0] = startGlyphID;
+                r[1] = getGlyphWidth(r[0]);
+                h.put(new Integer(i), r);
+                startGlyphID++;
+            }
+        }
+        return h;
     }
     
     /** The information in the maps of the table 'cmap' is coded in several formats.
@@ -972,7 +1018,7 @@ class TrueTypeFont extends BaseFont {
      * @param char2 the second char
      * @return the kerning to be applied
      */
-    public int getKerning(char char1, char char2) {
+    public int getKerning(int char1, int char2) {
         int metrics[] = getMetricsTT(char1);
         if (metrics == null)
             return 0;
@@ -991,14 +1037,7 @@ class TrueTypeFont extends BaseFont {
      * @return the width of the char
      */
     int getRawWidth(int c, String name) {
-        HashMap map = null;
-        if (name == null || cmap31 == null)
-            map = cmap10;
-        else
-            map = cmap31;
-        if (map == null)
-            return 0;
-        int metric[] = (int[])map.get(new Integer(c));
+        int[] metric = getMetricsTT(c);
         if (metric == null)
             return 0;
         return metric[1];
@@ -1337,6 +1376,8 @@ class TrueTypeFont extends BaseFont {
      * @return an <CODE>int</CODE> array with {glyph index, width}
      */    
     public int[] getMetricsTT(int c) {
+        if (cmapExt != null)
+            return (int[])cmapExt.get(new Integer(c));
         if (!fontSpecific && cmap31 != null) 
             return (int[])cmap31.get(new Integer(c));
         if (fontSpecific && cmap10 != null) 
@@ -1437,7 +1478,7 @@ class TrueTypeFont extends BaseFont {
      * @param kern the kerning to apply in normalized 1000 units
      * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
      */
-    public boolean setKerning(char char1, char char2, int kern) {
+    public boolean setKerning(int char1, int char2, int kern) {
         int metrics[] = getMetricsTT(char1);
         if (metrics == null)
             return false;

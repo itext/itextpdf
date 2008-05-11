@@ -56,6 +56,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Utilities;
+import com.lowagie.text.pdf.BaseFont.StreamFont;
 /** Represents a True Type font with Unicode encoding. All the character
  * in the font can be used directly by using the encoding Identity-H or
  * Identity-V. This is the only way to represent some character sets such
@@ -118,7 +120,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @param char1 the unicode <CODE>char</CODE> to get the width of
      * @return the width in normalized 1000 units
      */
-    public int getWidth(char char1) {
+    public int getWidth(int char1) {
         if (vertical)
             return 1000;
         if (fontSpecific) {
@@ -152,8 +154,14 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         }
         else {
             int len = text.length();
-            for (int k = 0; k < len; ++k)
-                total += getRawWidth(text.charAt(k), encoding);
+            for (int k = 0; k < len; ++k) {
+                if (Utilities.isSurrogatePair(text, k)) {
+                    total += getRawWidth(Utilities.convertToUtf32(text, k), encoding);
+                    ++k;
+                }
+                else
+                    total += getRawWidth(text.charAt(k), encoding);
+            }
         }
         return total;
     }
@@ -172,11 +180,11 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         "12 dict begin\n" +
         "begincmap\n" +
         "/CIDSystemInfo\n" +
-        "<< /Registry (Adobe)\n" +
-        "/Ordering (UCS)\n" +
+        "<< /Registry (TTX+0)\n" +
+        "/Ordering (T42UV)\n" +
         "/Supplement 0\n" +
         ">> def\n" +
-        "/CMapName /Adobe-Identity-UCS def\n" +
+        "/CMapName /TTX+0 def\n" +
         "/CMapType 2 def\n" +
         "1 begincodespacerange\n" +
         "<0000><FFFF>\n" +
@@ -206,13 +214,22 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         return stream;
     }
     
+    private static String toHex4(int n) {
+        String s = "0000" + Integer.toHexString(n);
+        return s.substring(s.length() - 4);
+    }
+    
     /** Gets an hex string in the format "&lt;HHHH&gt;".
      * @param n the number
      * @return the hex string
      */    
     static String toHex(int n) {
-        String s = Integer.toHexString(n);
-        return "<0000".substring(0, 5 - s.length()) + s + ">";
+        if (n < 0x10000)
+            return "<" + toHex4(n) + ">";
+        n -= 0x10000;
+        int high = (n / 0x400) + 0xd800;
+        int low = (n % 0x400) + 0xdc00;
+        return "[<" + toHex4(high) + toHex4(low) + ">]";
     }
     
     /** Generates the CIDFontTyte2 dictionary.
@@ -411,32 +428,42 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         return null;
     }
 
-    byte[] convertToBytes(char char1) {
+    byte[] convertToBytes(int char1) {
         return null;
     }
 
-    /**
-     * Checks if a character exists in this font.
-     * @param c the character to check
-     * @return <CODE>true</CODE> if the character has a glyph,
-     * <CODE>false</CODE> otherwise
-     */
-    public boolean charExists(char c) {
+    /** Gets the glyph index and metrics for a character.
+     * @param c the character
+     * @return an <CODE>int</CODE> array with {glyph index, width}
+     */    
+    public int[] getMetricsTT(int c) {
+        if (cmapExt != null)
+            return (int[])cmapExt.get(new Integer(c));
         HashMap map = null;
         if (fontSpecific)
             map = cmap10;
         else
             map = cmap31;
         if (map == null)
-            return false;
+            return null;
         if (fontSpecific) {
-            if ((c & 0xff00) == 0 || (c & 0xff00) == 0xf000)
-                return map.get(new Integer(c & 0xff)) != null;
+            if ((c & 0xffffff00) == 0 || (c & 0xffffff00) == 0xf000)
+                return (int[])map.get(new Integer(c & 0xff));
             else
-                return false;
+                return null;
         }
         else
-            return map.get(new Integer(c)) != null;
+            return (int[])map.get(new Integer(c));
+    }
+    
+    /**
+     * Checks if a character exists in this font.
+     * @param c the character to check
+     * @return <CODE>true</CODE> if the character has a glyph,
+     * <CODE>false</CODE> otherwise
+     */
+    public boolean charExists(int c) {
+        return getMetricsTT(c) != null;
     }
     
     /**
@@ -446,49 +473,18 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @return <CODE>true</CODE> if the advance was set,
      * <CODE>false</CODE> otherwise
      */
-    public boolean setCharAdvance(char c, int advance) {
-        HashMap map = null;
-        if (fontSpecific)
-            map = cmap10;
-        else
-            map = cmap31;
-        if (map == null)
-            return false;
-        int m[] = null;
-        if (fontSpecific) {
-            if ((c & 0xff00) == 0 || (c & 0xff00) == 0xf000)
-                m = (int[])map.get(new Integer(c & 0xff));
-            else
-                return false;
-        }
-        else
-            m = (int[])map.get(new Integer(c));
+    public boolean setCharAdvance(int c, int advance) {
+        int[] m = getMetricsTT(c);
         if (m == null)
             return false;
-        else
-            m[1] = advance;
+        m[1] = advance;
         return true;
     }
     
     public int[] getCharBBox(char c) {
         if (bboxes == null)
             return null;
-        HashMap map = null;
-        if (fontSpecific)
-            map = cmap10;
-        else
-            map = cmap31;
-        if (map == null)
-            return null;
-        int m[] = null;
-        if (fontSpecific) {
-            if ((c & 0xff00) == 0 || (c & 0xff00) == 0xf000)
-                m = (int[])map.get(new Integer(c & 0xff));
-            else
-                return null;
-        }
-        else
-            m = (int[])map.get(new Integer(c));
+        int[] m = getMetricsTT(c);
         if (m == null)
             return null;
         return bboxes[m[0]];

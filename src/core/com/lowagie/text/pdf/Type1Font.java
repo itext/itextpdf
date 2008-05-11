@@ -310,7 +310,7 @@ class Type1Font extends BaseFont
  * @param char2 the second char
  * @return the kerning to be applied
  */
-    public int getKerning(char char1, char char2)
+    public int getKerning(int char1, int char2)
     {
         String first = GlyphList.unicodeToName((int)char1);
         if (first == null)
@@ -779,7 +779,7 @@ class Type1Font extends BaseFont
      * @param kern the kerning to apply in normalized 1000 units
      * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
      */
-    public boolean setKerning(char char1, char char2, int kern) {
+    public boolean setKerning(int char1, int char2, int kern) {
         String first = GlyphList.unicodeToName((int)char1);
         if (first == null)
             return false;

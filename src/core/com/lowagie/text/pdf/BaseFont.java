@@ -717,7 +717,7 @@ public abstract class BaseFont {
      * @param char2 the second char
      * @return the kerning to be applied in normalized 1000 units
      */
-    public abstract int getKerning(char char1, char char2);
+    public abstract int getKerning(int char1, int char2);
 
     /**
      * Sets the kerning between two Unicode chars.
@@ -726,14 +726,14 @@ public abstract class BaseFont {
      * @param kern the kerning to apply in normalized 1000 units
      * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
      */
-    public abstract boolean setKerning(char char1, char char2, int kern);
+    public abstract boolean setKerning(int char1, int char2, int kern);
     
     /**
      * Gets the width of a <CODE>char</CODE> in normalized 1000 units.
      * @param char1 the unicode <CODE>char</CODE> to get the width of
      * @return the width in normalized 1000 units
      */
-    public int getWidth(char char1) {
+    public int getWidth(int char1) {
         if (fastWinansi) {
             if (char1 < 128 || (char1 >= 160 && char1 <= 255))
                 return widths[char1];
@@ -742,7 +742,7 @@ public abstract class BaseFont {
         }
         else {
             int total = 0;
-            byte mbytes[] = convertToBytes(char1);
+            byte mbytes[] = convertToBytes((char)char1);
             for (int k = 0; k < mbytes.length; ++k)
                 total += widths[0xff & mbytes[k]];
             return total;
@@ -870,7 +870,7 @@ public abstract class BaseFont {
      * @param fontSize the font size
      * @return the width in points
      */
-    public float getWidthPoint(char char1, float fontSize) {
+    public float getWidthPoint(int char1, float fontSize) {
         return getWidth(char1) * 0.001f * fontSize;
     }
     
@@ -909,16 +909,16 @@ public abstract class BaseFont {
      * @param char1 the <CODE>char</CODE> to be converted
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
      */
-    byte[] convertToBytes(char char1) {
+    byte[] convertToBytes(int char1) {
         if (directTextToByte)
-            return PdfEncodings.convertToBytes(char1, null);
+            return PdfEncodings.convertToBytes((char)char1, null);
         if (specialMap != null) {
-            if (specialMap.containsKey((int)char1))
-                return new byte[]{(byte)specialMap.get((int)char1)};
+            if (specialMap.containsKey(char1))
+                return new byte[]{(byte)specialMap.get(char1)};
             else
                 return new byte[0];
         }
-        return PdfEncodings.convertToBytes(char1, encoding);
+        return PdfEncodings.convertToBytes((char)char1, encoding);
     }
     
     /** Outputs to the writer the font dictionaries and streams.
@@ -1241,7 +1241,7 @@ public abstract class BaseFont {
      * @param c the CID code
      * @return the Unicode equivalent
      */    
-    public char getUnicodeEquivalent(char c) {
+    public int getUnicodeEquivalent(int c) {
         return c;
     }
     
@@ -1250,7 +1250,7 @@ public abstract class BaseFont {
      * @param c the Unicode
      * @return the CID equivalent
      */    
-    public char getCidCode(char c) {
+    public int getCidCode(int c) {
         return c;
     }
 
@@ -1265,7 +1265,7 @@ public abstract class BaseFont {
      * @return <CODE>true</CODE> if the character has a glyph,
      * <CODE>false</CODE> otherwise
      */    
-    public boolean charExists(char c) {
+    public boolean charExists(int c) {
         byte b[] = convertToBytes(c);
         return b.length > 0;
     }
@@ -1277,7 +1277,7 @@ public abstract class BaseFont {
      * @return <CODE>true</CODE> if the advance was set,
      * <CODE>false</CODE> otherwise
      */    
-    public boolean setCharAdvance(char c, int advance) {
+    public boolean setCharAdvance(int c, int advance) {
         byte b[] = convertToBytes(c);
         if (b.length == 0)
             return false;
@@ -1365,7 +1365,7 @@ public abstract class BaseFont {
      * @return an array of four floats with the bounding box in the format [llx,lly,urx,ury] or
      * <code>null</code>
      */    
-    public int[] getCharBBox(char c) {
+    public int[] getCharBBox(int c) {
         byte b[] = convertToBytes(c);
         if (b.length == 0)
             return null;

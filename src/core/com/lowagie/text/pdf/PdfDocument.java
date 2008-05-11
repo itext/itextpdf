@@ -1347,7 +1347,7 @@ public class PdfDocument extends Document {
         float glueWidth = 0;
         
         numberOfSpaces = line.numberOfSpaces();
-        lineLen = line.toString().length();
+        lineLen = line.GetLineLengthUtf32();
         // does the line need to be justified?
         isJustified = line.hasToBeJustified() && (numberOfSpaces != 0 || lineLen > 1);
         int separatorCount = line.getSeparatorCount();
@@ -1626,7 +1626,7 @@ public class PdfDocument extends Document {
                 String s = chunk.toString();
                 int idx = s.indexOf(' ');
                 if (idx < 0)
-                    text.showText(chunk.toString());
+                    text.showText(s);
                 else {
                     float spaceCorrection = - baseWordSpacing * 1000f / chunk.font.size() / hScale;
                     PdfTextArray textArray = new PdfTextArray(s.substring(0, idx));

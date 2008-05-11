@@ -371,6 +371,14 @@ public class PdfLine {
         return tmp.toString();
     }
     
+    public int GetLineLengthUtf32() {
+        int total = 0;
+        for (Iterator i = line.iterator(); i.hasNext();) {
+            total += ((PdfChunk)i.next()).lengthUtf32();
+        }
+        return total;
+    }
+    
     /**
      * Checks if a newline caused the line split.
      * @return <CODE>true</CODE> if a newline caused the line split
