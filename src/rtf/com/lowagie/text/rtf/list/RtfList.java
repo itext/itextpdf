@@ -287,16 +287,19 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 if(element instanceof ListItem) {
                     this.alignment = ((ListItem) element).getAlignment();
                 }
-                RtfBasicElement rtfElement = doc.getMapper().mapElement(element);
-                if(rtfElement instanceof RtfList) {
-                    ((RtfList) rtfElement).setListNumber(listNumber);
-                    ((RtfList) rtfElement).setListLevel(listLevel + 1);
-                    ((RtfList) rtfElement).setParent(this);
-                } else if(rtfElement instanceof RtfListItem) {
-                    ((RtfListItem) rtfElement).setParent(this);
-                    ((RtfListItem) rtfElement).inheritListSettings(listNumber, listLevel + 1);
+                RtfBasicElement[] rtfElements = doc.getMapper().mapElement(element);
+                for(int j = 0; j < rtfElements.length; j++) {
+                    RtfBasicElement rtfElement = rtfElements[j];
+                    if(rtfElement instanceof RtfList) {
+                        ((RtfList) rtfElement).setListNumber(listNumber);
+                        ((RtfList) rtfElement).setListLevel(listLevel + 1);
+                        ((RtfList) rtfElement).setParent(this);
+                    } else if(rtfElement instanceof RtfListItem) {
+                        ((RtfListItem) rtfElement).setParent(this);
+                        ((RtfListItem) rtfElement).inheritListSettings(listNumber, listLevel + 1);
+                    }
+                    items.add(rtfElement);
                 }
-                items.add(rtfElement);
             } catch(DocumentException de) {
                 de.printStackTrace();
             }

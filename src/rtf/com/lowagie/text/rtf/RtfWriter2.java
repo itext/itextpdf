@@ -184,9 +184,13 @@ public class RtfWriter2 extends DocWriter {
         if (pause) {
             return false;
         }
-        RtfBasicElement rtfElement = rtfDoc.getMapper().mapElement(element);
-        if(rtfElement != null) {
-            rtfDoc.add(rtfElement);
+        RtfBasicElement[] rtfElements = rtfDoc.getMapper().mapElement(element);
+        if(rtfElements.length != 0) {
+            for(int i = 0; i < rtfElements.length; i++) {
+                if(rtfElements[i] != null) {
+                    rtfDoc.add(rtfElements[i]);
+                }
+            }
             return true;
         } else {
             return false;

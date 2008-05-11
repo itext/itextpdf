@@ -246,9 +246,11 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                     }
                 } else {
                     if(container != null) {
-                        RtfBasicElement rtfElement = this.document.getMapper().mapElement(container);
-                        rtfElement.setInTable(true);
-                        this.content.add(rtfElement);
+                        RtfBasicElement[] rtfElements = this.document.getMapper().mapElement(container);
+                        for(int i = 0; i < rtfElements.length; i++) {
+                            rtfElements[i].setInTable(true);
+                            this.content.add(rtfElements[i]);
+                        }
                         container = null;
                     }
                     // if horizontal alignment is undefined overwrite
@@ -257,9 +259,11 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                         ((Paragraph) element).setAlignment(cell.getHorizontalAlignment());
                     }
 
-                    RtfBasicElement rtfElement = this.document.getMapper().mapElement(element);
-                    rtfElement.setInTable(true);
-                    this.content.add(rtfElement);
+                    RtfBasicElement[] rtfElements = this.document.getMapper().mapElement(element);
+                    for(int i = 0; i < rtfElements.length; i++) {
+                        rtfElements[i].setInTable(true);
+                        this.content.add(rtfElements[i]);
+                    }
                 }
             } catch(DocumentException de) {
                 de.printStackTrace();
@@ -267,9 +271,11 @@ public class RtfCell extends Cell implements RtfExtendedElement {
         }
         if(container != null) {
             try {
-                RtfBasicElement rtfElement = this.document.getMapper().mapElement(container);
-                rtfElement.setInTable(true);
-                this.content.add(rtfElement);
+                RtfBasicElement[] rtfElements = this.document.getMapper().mapElement(container);
+                for(int i = 0; i < rtfElements.length; i++) {
+                    rtfElements[i].setInTable(true);
+                    this.content.add(rtfElements[i]);
+                }
             } catch(DocumentException de) {
                 de.printStackTrace();
             }
