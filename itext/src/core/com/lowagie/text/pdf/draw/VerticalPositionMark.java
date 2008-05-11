@@ -96,7 +96,7 @@ public class VerticalPositionMark implements DrawInterface, Element {
 	 */
 	public void draw(PdfContentByte canvas, float llx, float lly, float urx, float ury, float y) {
 		if (drawInterface != null) {
-			draw(canvas, llx, lly, urx, ury, y + offset);
+			drawInterface.draw(canvas, llx, lly, urx, ury, y + offset);
 		}
 	}
 	
