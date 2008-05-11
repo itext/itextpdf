@@ -275,7 +275,7 @@ public class PdfChunk implements SplitCharacter{
      * @param c the CID code
      * @return the Unicode equivalent
      */    
-    public char getUnicodeEquivalent(char c) {
+    public int getUnicodeEquivalent(int c) {
         return baseFont.getUnicodeEquivalent(c);
     }
 
@@ -325,11 +325,12 @@ public class PdfChunk implements SplitCharacter{
         char valueArray[] = value.toCharArray();
         char character = 0;
         BaseFont ft = font.getFont();
+        boolean surrogate = false;
         if (ft.getFontType() == BaseFont.FONT_TYPE_CJK && ft.getUnicodeEquivalent(' ') != ' ') {
             while (currentPosition < length) {
                 // the width of every character is added to the currentWidth
                 char cidChar = valueArray[currentPosition];
-                character = ft.getUnicodeEquivalent(cidChar);
+                character = (char)ft.getUnicodeEquivalent(cidChar);
                 // if a newLine or carriageReturn is encountered
                 if (character == '\n') {
                     newlineSplit = true;
@@ -372,11 +373,17 @@ public class PdfChunk implements SplitCharacter{
                     PdfChunk pc = new PdfChunk(returnValue, this);
                     return pc;
                 }
-                currentWidth += font.width(character);
+                surrogate = Utilities.isSurrogatePair(valueArray, currentPosition);
+                if (surrogate)
+                    currentWidth += font.width(Utilities.convertToUtf32(valueArray[currentPosition], valueArray[currentPosition + 1]));
+                else
+                    currentWidth += font.width(character);
                 if (character == ' ') {
                     lastSpace = currentPosition + 1;
                     lastSpaceWidth = currentWidth;
                 }
+                if (surrogate)
+                    currentPosition++;
                 if (currentWidth > width)
                     break;
                 // if a split-character is encountered, the splitPosition is altered
@@ -455,13 +462,19 @@ public class PdfChunk implements SplitCharacter{
         // loop over all the characters of a string
         // or until the totalWidth is reached
         int length = value.length();
+        boolean surrogate = false;
         char character;
         while (currentPosition < length) {
             // the width of every character is added to the currentWidth
-            character = value.charAt(currentPosition);
-            currentWidth += font.width(character);
+            surrogate = Utilities.isSurrogatePair(value, currentPosition);
+            if (surrogate)
+                currentWidth += font.width(Utilities.convertToUtf32(value, currentPosition));
+            else
+                currentWidth += font.width(value.charAt(currentPosition));
             if (currentWidth > width)
                 break;
+            if (surrogate)
+                currentPosition++;
             currentPosition++;
         }
         
@@ -475,6 +488,8 @@ public class PdfChunk implements SplitCharacter{
         // we have to chop off minimum 1 character from the chunk
         if (currentPosition == 0) {
             currentPosition = 1;
+            if (surrogate)
+                ++currentPosition;
         }
         String returnValue = value.substring(currentPosition);
         value = value.substring(0, currentPosition);
@@ -775,6 +790,20 @@ public class PdfChunk implements SplitCharacter{
     int length() {
         return value.length();
     }
+    
+    int lengthUtf32() {
+        if (!encoding.equals(BaseFont.IDENTITY_H))
+            return value.length();
+        int total = 0;
+        int len = value.length();
+        for (int k = 0; k < len; ++k) {
+            if (Utilities.isSurrogateHigh(value.charAt(k)))
+                ++k;
+            ++total;
+        }
+        return total;
+    }
+
 /**
  * Checks if a character can be used to split a <CODE>PdfString</CODE>.
  * <P>
@@ -790,9 +819,9 @@ public class PdfChunk implements SplitCharacter{
     public boolean isSplitCharacter(int start, int current, int end, char[] cc, PdfChunk[] ck) {
         char c;
         if (ck == null)
-            c = cc[current];
+            c = (char)cc[current];
         else
-            c = ck[Math.min(current, ck.length - 1)].getUnicodeEquivalent(cc[current]);
+            c = (char)ck[Math.min(current, ck.length - 1)].getUnicodeEquivalent(cc[current]);
         if (c <= ' ' || c == '-' || c == '\u2010') {
             return true;
         }
@@ -834,13 +863,13 @@ public class PdfChunk implements SplitCharacter{
         return changeLeading;
     }
     
-    float getCharWidth(char c) {
+    float getCharWidth(int c) {
         if (noPrint(c))
             return 0;
         return font.width(c);
     }
     
-    public static boolean noPrint(char c) {
+    public static boolean noPrint(int c) {
         return ((c >= 0x200b && c <= 0x200f) || (c >= 0x202a && c <= 0x202e));
     }
     

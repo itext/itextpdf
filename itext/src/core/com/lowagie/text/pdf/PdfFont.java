@@ -151,7 +151,7 @@ class PdfFont implements Comparable {
      * @return		a width in Text Space
      */
     
-    float width(char character) {
+    float width(int character) {
         if (image == null)
             return font.getWidthPoint(character, size) * hScale;
         else

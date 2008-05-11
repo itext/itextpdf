@@ -51,6 +51,7 @@ package com.lowagie.text.pdf;
 import java.util.ArrayList;
 
 import com.lowagie.text.Chunk;
+import com.lowagie.text.Utilities;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
@@ -149,7 +150,7 @@ public class BidiLine {
             int len = s.length();
             for (; indexChunkChar < len; ++indexChunkChar) {
                 c = s.charAt(indexChunkChar);
-                uniC = bf.getUnicodeEquivalent(c);
+                uniC = (char)bf.getUnicodeEquivalent(c);
                 if (uniC == '\r' || uniC == '\n') {
                     // next condition is never true for CID
                     if (uniC == '\r' && indexChunkChar + 1 < len && s.charAt(indexChunkChar + 1) == '\n')
@@ -343,21 +344,27 @@ public class BidiLine {
         if (currentChar != 0)
             currentChar = trimLeftEx(currentChar, totalTextLength - 1);
         int oldCurrentChar = currentChar;
-        char c = 0;
-        char uniC = 0;
+        int uniC = 0;
         PdfChunk ck = null;
         float charWidth = 0;
         PdfChunk lastValidChunk = null;
         boolean splitChar = false;
+        boolean surrogate = false;
         for (; currentChar < totalTextLength; ++currentChar) {
-            c = text[currentChar];
             ck = detailChunks[currentChar];
-            uniC = ck.getUnicodeEquivalent(c);
+            surrogate = Utilities.isSurrogatePair(text, currentChar);
+            if (surrogate)
+                uniC = ck.getUnicodeEquivalent(Utilities.convertToUtf32(text, currentChar));
+            else
+                uniC = ck.getUnicodeEquivalent(text[currentChar]);
             if (PdfChunk.noPrint(uniC))
                 continue;
-            charWidth = ck.getCharWidth(c);
+            if (surrogate)
+                charWidth = ck.getCharWidth(uniC);
+            else
+                charWidth = ck.getCharWidth(text[currentChar]);
             splitChar = ck.isExtSplitCharacter(oldCurrentChar, currentChar, totalTextLength, text, detailChunks);
-            if (splitChar && Character.isWhitespace(uniC))
+            if (splitChar && Character.isWhitespace((char)uniC))
                 lastSplit = currentChar;
             if (width - charWidth < 0)
                 break;
@@ -375,10 +382,14 @@ public class BidiLine {
         		detailChunks[currentChar].adjustLeft(leftX);
         		width = originalWidth - tabPosition;
             }
+            if (surrogate)
+                ++currentChar;
         }
         if (lastValidChunk == null) {
             // not even a single char fit; must output the first char
             ++currentChar;
+            if (surrogate)
+                ++currentChar;
             return new PdfLine(0, originalWidth, 0, alignment, false, createArrayOfPdfChunks(currentChar - 1, currentChar - 1), isRTL);
         }
         if (currentChar >= totalTextLength) {
@@ -431,12 +442,18 @@ public class BidiLine {
         PdfChunk ck = null;
         float width = 0;
         for (; startIdx <= lastIdx; ++startIdx) {
-            c = text[startIdx];
-            ck = detailChunks[startIdx];
-            uniC = ck.getUnicodeEquivalent(c);
-            if (PdfChunk.noPrint(uniC))
-                continue;
-            width += detailChunks[startIdx].getCharWidth(c);
+            boolean surrogate = Utilities.isSurrogatePair(text, startIdx);
+            if (surrogate) {
+                width += detailChunks[startIdx].getCharWidth(Utilities.convertToUtf32(text, startIdx));
+                ++startIdx;
+            }
+            else {
+                c = text[startIdx];
+                ck = detailChunks[startIdx];
+                if (PdfChunk.noPrint(ck.getUnicodeEquivalent(c)))
+                    continue;
+                width += detailChunks[startIdx].getCharWidth(c);
+            }
         }
         return width;
     }
@@ -512,7 +529,7 @@ public class BidiLine {
         int idx = endIdx;
         char c;
         for (; idx >= startIdx; --idx) {
-            c = detailChunks[idx].getUnicodeEquivalent(text[idx]);
+            c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
             if (!isWS(c))
                 break;
         }
@@ -523,7 +540,7 @@ public class BidiLine {
         int idx = startIdx;
         char c;
         for (; idx <= endIdx; ++idx) {
-            c = detailChunks[idx].getUnicodeEquivalent(text[idx]);
+            c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
             if (!isWS(c))
                 break;
         }
@@ -534,7 +551,7 @@ public class BidiLine {
         int idx = endIdx;
         char c = 0;
         for (; idx >= startIdx; --idx) {
-            c = detailChunks[idx].getUnicodeEquivalent(text[idx]);
+            c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
             if (!isWS(c) && !PdfChunk.noPrint(c))
                 break;
         }
@@ -545,7 +562,7 @@ public class BidiLine {
         int idx = startIdx;
         char c = 0;
         for (; idx <= endIdx; ++idx) {
-            c = detailChunks[idx].getUnicodeEquivalent(text[idx]);
+            c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
             if (!isWS(c) && !PdfChunk.noPrint(c))
                 break;
         }

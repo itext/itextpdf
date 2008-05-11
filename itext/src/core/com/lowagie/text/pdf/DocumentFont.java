@@ -484,7 +484,7 @@ public class DocumentFont extends BaseFont {
      * @return the kerning to be applied
      *
      */
-    public int getKerning(char char1, char char2) {
+    public int getKerning(int char1, int char2) {
         return 0;
     }
     
@@ -531,7 +531,7 @@ public class DocumentFont extends BaseFont {
      * @param char1 the unicode <CODE>char</CODE> to get the width of
      * @return the width in normalized 1000 units
      */
-    public int getWidth(char char1) {
+    public int getWidth(int char1) {
         if (cjkMirror != null)
             return cjkMirror.getWidth(char1);
         else if (isType0) {
@@ -605,9 +605,9 @@ public class DocumentFont extends BaseFont {
         }
     }
     
-    byte[] convertToBytes(char char1) {
+    byte[] convertToBytes(int char1) {
         if (cjkMirror != null)
-            return PdfEncodings.convertToBytes(char1, CJKFont.CJK_ENCODING);
+            return PdfEncodings.convertToBytes((char)char1, CJKFont.CJK_ENCODING);
         else if (isType0) {
             int[] ws = (int[])metrics.get(new Integer((int)char1));
             if (ws != null) {
@@ -629,7 +629,7 @@ public class DocumentFont extends BaseFont {
         return refFont;
     }
     
-    public boolean charExists(char c) {
+    public boolean charExists(int c) {
         if (cjkMirror != null)
             return cjkMirror.charExists(c);
         else if (isType0) {
@@ -647,11 +647,11 @@ public class DocumentFont extends BaseFont {
     public void setPostscriptFontName(String name) {
     }
     
-    public boolean setKerning(char char1, char char2, int kern) {
+    public boolean setKerning(int char1, int char2, int kern) {
         return false;
     }
     
-    public int[] getCharBBox(char c) {
+    public int[] getCharBBox(int c) {
         return null;
     }
     

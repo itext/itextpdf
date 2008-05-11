@@ -54,6 +54,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Utilities;
 /** Each font in the document will have an instance of this class
  * where the characters used will be represented.
  *
@@ -193,14 +194,21 @@ class FontDetails {
                     }
                     else {
                         for (int k = 0; k < len; ++k) {
-                            char c = text.charAt(k);
-                            metrics = ttu.getMetricsTT(c);
+                            int val;
+                            if (Utilities.isSurrogatePair(text, k)) {
+                                val = Utilities.convertToUtf32(text, k);
+                                k++;
+                            }
+                            else {
+                                val = (int)text.charAt(k);
+                            }
+                            metrics = ttu.getMetricsTT(val);
                             if (metrics == null)
                                 continue;
                             int m0 = metrics[0];
                             Integer gl = new Integer(m0);
                             if (!longTag.containsKey(gl))
-                                longTag.put(gl, new int[]{m0, metrics[1], c});
+                                longTag.put(gl, new int[]{m0, metrics[1], val});
                             glyph[i++] = (char)m0;
                         }
                     }
