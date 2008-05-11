@@ -1,5 +1,5 @@
 /*
- * $Id: Rectangle.java 3178 2008-03-19 17:34:05Z blowagie $
+ * $Id$
  * $Name$
  *
  * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
