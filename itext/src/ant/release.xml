@@ -35,19 +35,40 @@
     <!-- Archiving the code                                               -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
+	<property name="src.types" value="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.png, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
+
 	<target name="src.zip" description="--> makes a zipfile with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.png, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
+		<zip zipfile="${itext.dist}/src.zip">
+			<zipfileset prefix="src" dir="${itext.src}" includes="${src.types}" />
+			<zipfileset prefix="lib" dir="${itext.lib}">
+				<include name="bcmail-${bc.jdk}-${bc.version}.jar" />
+				<include name="bcprov-${bc.jdk}-${bc.version}.jar" />
+				<!-- jars needed for RUPS -->
+				<include name="pdf-renderer.jar" />
+				<include name="dom4j-1.6.1.jar" />
+			</zipfileset>
+		</zip>
 	</target>
 	
 	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<tar compression="gzip" tarfile="${itext.dist}/src.tar.gz" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.png, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
+		<tar compression="gzip" tarfile="${itext.dist}/src.tar.gz">
+			<tarfileset prefix="src" dir="${itext.src}" includes="${src.types}" />
+			<tarfileset prefix="lib" dir="${itext.lib}">
+				<include name="bcmail-${bc.jdk}-${bc.version}.jar" />
+				<include name="bcprov-${bc.jdk}-${bc.version}.jar" />
+				<!-- jars needed for RUPS -->
+				<include name="pdf-renderer.jar" />
+				<include name="dom4j-1.6.1.jar" />
+			</tarfileset>
+		</tar>
+
 	</target>
 	
 	<target name="src.jar" description="--> makes a jar file with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<jar destfile="${itext.dist}/iText-${releasenumber}-sources.jar" basedir="${itext.src}" includes="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
+		<jar destfile="${itext.dist}/iText-${releasenumber}-sources.jar" basedir="${itext.src}" includes="${src.types}" />
 	</target>
 	
 	<target name="archive.src" depends="src.zip, src.tar.gz, src.jar" description="--> archives the source code" />
