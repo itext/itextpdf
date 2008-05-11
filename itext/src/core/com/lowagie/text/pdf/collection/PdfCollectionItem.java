@@ -39,7 +39,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	public void addItem(String key, PdfString value) {
 		PdfName fieldname = new PdfName(key);
 		PdfCollectionField field = (PdfCollectionField)schema.get(fieldname);
-		if (field.type == PdfCollectionField.TEXT) {
+		if (field.fieldType == PdfCollectionField.TEXT) {
 			put(fieldname, value);
 		}
 	}
@@ -51,7 +51,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	public void addItem(String key, PdfDate d) {
 		PdfName fieldname = new PdfName(key);
 		PdfCollectionField field = (PdfCollectionField)schema.get(fieldname);
-		if (field.type == PdfCollectionField.DATE) {
+		if (field.fieldType == PdfCollectionField.DATE) {
 			put(fieldname, d);
 		}
 	}
@@ -63,7 +63,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	public void addItem(String key, PdfNumber n) {
 		PdfName fieldname = new PdfName(key);
 		PdfCollectionField field = (PdfCollectionField)schema.get(fieldname);
-		if (field.type == PdfCollectionField.NUMBER) {
+		if (field.fieldType == PdfCollectionField.NUMBER) {
 			put(fieldname, n);
 		}
 	}

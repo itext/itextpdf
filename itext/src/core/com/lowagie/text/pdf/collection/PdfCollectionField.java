@@ -30,8 +30,11 @@ public class PdfCollectionField extends PdfDictionary {
 	/** A possible type of collection field. */
 	public static final int SIZE = 7;
 	
-	/** The type of the PDF collection field. */
-	protected int type;
+	/**
+	 * The type of the PDF collection field.
+	 * @since 2.1.2 (was called <code>type</code> previously)
+	 */
+	protected int fieldType;
 
 	/**
 	 * Creates a PdfCollectionField.
@@ -41,7 +44,7 @@ public class PdfCollectionField extends PdfDictionary {
 	public PdfCollectionField(String name, int type) {
 		super(PdfName.COLLECTIONFIELD);
 		put(PdfName.N, new PdfString(name, PdfObject.TEXT_UNICODE));
-		this.type = type;
+		this.fieldType = type;
 		switch(type) {
 		default:
 			put(PdfName.SUBTYPE, PdfName.S);
@@ -98,7 +101,7 @@ public class PdfCollectionField extends PdfDictionary {
 	 * Checks if the type of the field is suitable for a Collection Item.
 	 */
 	public boolean isCollectionItem() {
-		switch(type) {
+		switch(fieldType) {
 		case TEXT:
 		case DATE:
 		case NUMBER:
@@ -113,7 +116,7 @@ public class PdfCollectionField extends PdfDictionary {
 	 * @param v	value	the value that has to be changed into a PdfObject (PdfString, PdfDate or PdfNumber)	
 	 */
 	public PdfObject getValue(String v) {
-		switch(type) {
+		switch(fieldType) {
 		case TEXT:
 			return new PdfString(v, PdfObject.TEXT_UNICODE);
 		case DATE:
