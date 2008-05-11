@@ -84,7 +84,6 @@ import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERConstructedSet;
 import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERObject;
@@ -798,12 +797,12 @@ public class PdfPKCS7 {
             }
             
             // Create the set of Hash algorithms
-            DERConstructedSet digestAlgorithms = new DERConstructedSet();
+            ASN1EncodableVector digestAlgorithms = new ASN1EncodableVector();
             for(Iterator it = digestalgos.iterator(); it.hasNext();) {
                 ASN1EncodableVector algos = new ASN1EncodableVector();
                 algos.add(new DERObjectIdentifier((String)it.next()));
-                algos.add(new DERNull());
-                digestAlgorithms.addObject(new DERSequence(algos));
+                algos.add(DERNull.INSTANCE);
+                digestAlgorithms.add(new DERSequence(algos));
             }
             
             // Create the contentInfo.
@@ -883,7 +882,7 @@ public class PdfPKCS7 {
             // Finally build the body out of all the components above
             ASN1EncodableVector body = new ASN1EncodableVector();
             body.add(new DERInteger(version));
-            body.add(digestAlgorithms);
+            body.add(new DERSet(digestAlgorithms));
             body.add(contentinfo);
             body.add(new DERTaggedObject(false, 0, dercertificates));
             
