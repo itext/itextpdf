@@ -1,6 +1,5 @@
 /*
  * $Id:RtfElement.java 3126 2008-02-07 20:30:46Z hallm $
- * $Name:  $
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *

@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name:  $
  *
  * Adapted from an example in C# from Christian Neuhold
  * published on the itext mailing list by Paulo Soares at 16. April 2007.

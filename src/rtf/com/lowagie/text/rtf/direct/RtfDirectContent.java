@@ -1,6 +1,5 @@
 /**
  * $Id$
- * $Name$
  *
  * Copyright 2006 by Mark Hall
  *

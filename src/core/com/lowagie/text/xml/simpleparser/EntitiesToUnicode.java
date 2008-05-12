@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2003-2007 Paulo Soares and Bruno Lowagie.
  *

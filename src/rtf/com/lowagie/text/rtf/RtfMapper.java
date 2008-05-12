@@ -1,6 +1,5 @@
 /*
  * $Id:RtfMapper.java 3126 2008-02-07 20:30:46Z hallm $
- * $Name$
  *
  * Copyright 2003, 2004 by Mark Hall
  *
@@ -88,7 +87,7 @@ import com.lowagie.text.rtf.text.RtfTab;
  * The RtfMapper provides mappings between com.lowagie.text.* classes
  * and the corresponding com.lowagie.text.rtf.** classes.
  * 
- * @version $Revision:$
+ * @version $Revision$
  * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  */
 public class RtfMapper {

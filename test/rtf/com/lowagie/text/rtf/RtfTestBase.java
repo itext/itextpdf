@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2007 by Mark Hall
  *
@@ -65,7 +64,7 @@ import junit.framework.TestCase;
  * The <code>RtfTestBase</code> is a junit test case that provides
  * helper methods for the actual RTF test cases.
  * 
- * @version $Id:$
+ * @version $Id$
  * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @since 2.0.8
  */

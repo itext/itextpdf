@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2007 by Mark Hall
  *
@@ -61,7 +60,7 @@ import com.lowagie.text.rtf.RtfTestBase;
  * The <code>RtfCodePageTest</code> is a very simple junit test, that checks
  * that the <code>RtfCodePage</code> is producing the correct result.
  * 
- * @version $Id:$
+ * @version $Id$
  * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @see com.lowagie.text.rtf.document.RtfCodePage
  * @since 2.0.8
