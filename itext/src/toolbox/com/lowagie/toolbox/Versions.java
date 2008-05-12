@@ -160,14 +160,14 @@ public class Versions
         String dummy;
         switch (columnIndex) {
           case 0:
-            dummy = versionsarray.get(rowIndex).toString();
+            dummy = versionsarray.get(rowIndex);
             return dummy.split(".java")[0];
           case 1:
-            dummy = versionsarray.get(rowIndex).toString();
+            dummy = versionsarray.get(rowIndex);
             return dummy.split(" ")[1];
           case 2:
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            dummy = versionsarray.get(rowIndex).toString();
+            dummy = versionsarray.get(rowIndex);
             try {
               return df.parse(dummy.split(" ")[2] + " "
                               + dummy.split(" ")[3]);
@@ -176,7 +176,7 @@ public class Versions
               return null;
             }
             case 3:
-              dummy = versionsarray.get(rowIndex).toString();
+              dummy = versionsarray.get(rowIndex);
               return dummy.split(" ")[4];
 
         }
