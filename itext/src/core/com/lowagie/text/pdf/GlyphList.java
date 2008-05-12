@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001-2006 Paulo Soares
  *

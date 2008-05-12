@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2004 Paulo Soares and Alexandru Carstoiu
  *

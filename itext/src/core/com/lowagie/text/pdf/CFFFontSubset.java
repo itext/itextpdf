@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2004 Oren Manor and Ygal Blum
  *

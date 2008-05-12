@@ -1,5 +1,4 @@
 /*
- * $Name$
  * $Id$
  *
  * Copyright 2008 by Paulo Soares.
