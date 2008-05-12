@@ -57,7 +57,7 @@ import java.util.HashMap;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Utilities;
-import com.lowagie.text.pdf.BaseFont.StreamFont;
+
 /** Represents a True Type font with Unicode encoding. All the character
  * in the font can be used directly by using the encoding Identity-H or
  * Identity-V. This is the only way to represent some character sets such
