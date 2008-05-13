@@ -603,6 +603,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName LOCK = new PdfName("Lock");
     /** A name */
+    public static final PdfName LOCKED = new PdfName("Locked");
+    /** A name */
     public static final PdfName LZWDECODE = new PdfName("LZWDecode");
     /** A name */
     public static final PdfName M = new PdfName("M");
