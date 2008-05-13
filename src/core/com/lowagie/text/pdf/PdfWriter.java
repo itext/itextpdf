@@ -2316,7 +2316,7 @@ public class PdfWriter extends DocWriter implements
      * @param layer	the layer that needs to be added to the array of locked OCGs
      * @since	2.1.2
      */    
-    public void setLocked(PdfLayer layer) {
+    public void lockLayer(PdfLayer layer) {
         OCGLocked.add(layer.getRef());
     }
     
