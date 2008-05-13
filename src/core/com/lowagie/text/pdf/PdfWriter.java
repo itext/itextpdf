@@ -2274,7 +2274,7 @@ public class PdfWriter extends DocWriter implements
     protected ArrayList documentOCGorder = new ArrayList();
     protected PdfOCProperties OCProperties;
     protected PdfArray OCGRadioGroup = new PdfArray();
-    protected PdfArray OCGLockedGroup = new PdfArray();
+    protected PdfArray OCGLocked = new PdfArray();
     
     /**
      * Use this method to get the <B>Optional Content Properties Dictionary</B>.
@@ -2313,10 +2313,11 @@ public class PdfWriter extends DocWriter implements
      * The state of a locked group cannot be changed through the user interface
      * of a viewer application. Producers can use this entry to prevent the visibility
      * of content that depends on these groups from being changed by users.
-     * @param group the radio group
+     * @param layer	the layer that needs to be added to the array of locked OCGs
+     * @since	2.1.2
      */    
     public void setLocked(PdfLayer layer) {
-        OCGLockedGroup.add(layer.getRef());
+        OCGLocked.add(layer.getRef());
     }
     
     private static void getOCGOrder(PdfArray order, PdfLayer layer) {
@@ -2404,8 +2405,8 @@ public class PdfWriter extends DocWriter implements
             d.put(PdfName.OFF, gr);
         if (OCGRadioGroup.size() > 0)
             d.put(PdfName.RBGROUPS, OCGRadioGroup);
-        if (OCGLockedGroup.size() > 0)
-            d.put(PdfName.LOCKED, OCGLockedGroup);
+        if (OCGLocked.size() > 0)
+            d.put(PdfName.LOCKED, OCGLocked);
         addASEvent(PdfName.VIEW, PdfName.ZOOM);
         addASEvent(PdfName.VIEW, PdfName.VIEW);
         addASEvent(PdfName.PRINT, PdfName.PRINT);
