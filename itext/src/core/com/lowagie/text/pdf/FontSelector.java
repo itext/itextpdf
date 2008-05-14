@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.Utilities;
 
 /** Selects the appropriate fonts that contain the glyphs needed to
  * render text correctly. The fonts are checked in order until the 
@@ -100,21 +101,40 @@ public class FontSelector {
                 sb.append(c);
                 continue;
             }
-            for (int f = 0; f < fsize; ++f) {
-                font = (Font)fonts.get(f);
-                if (font.getBaseFont().charExists(c)) {
-                    if (lastidx == f)
-                        sb.append(c);
-                    else {
-                        if (sb.length() > 0 && lastidx != -1) {
-                            Chunk ck = new Chunk(sb.toString(), (Font)fonts.get(lastidx));
-                            ret.add(ck);
-                            sb.setLength(0);
+            if (Utilities.isSurrogatePair(cc, k)) {
+                int u = Utilities.convertToUtf32(cc, k);
+                for (int f = 0; f < fsize; ++f) {
+                    font = (Font)fonts.get(f);
+                    if (font.getBaseFont().charExists(u)) {
+                        if (lastidx != f) {
+                            if (sb.length() > 0 && lastidx != -1) {
+                                Chunk ck = new Chunk(sb.toString(), (Font)fonts.get(lastidx));
+                                ret.add(ck);
+                                sb.setLength(0);
+                            }
+                            lastidx = f;
                         }
                         sb.append(c);
-                        lastidx = f;
+                        sb.append(cc[++k]);
+                        break;
                     }
-                    break;
+                }
+            }
+            else {
+                for (int f = 0; f < fsize; ++f) {
+                    font = (Font)fonts.get(f);
+                    if (font.getBaseFont().charExists(c)) {
+                        if (lastidx != f) {
+                            if (sb.length() > 0 && lastidx != -1) {
+                                Chunk ck = new Chunk(sb.toString(), (Font)fonts.get(lastidx));
+                                ret.add(ck);
+                                sb.setLength(0);
+                            }
+                            lastidx = f;
+                        }
+                        sb.append(c);
+                        break;
+                    }
                 }
             }
         }

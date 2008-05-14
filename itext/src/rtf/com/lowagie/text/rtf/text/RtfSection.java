@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *
@@ -70,7 +69,7 @@ import com.lowagie.text.rtf.field.RtfTOCEntry;
  * INTERNAL CLASS
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfSection extends RtfElement {
@@ -97,7 +96,7 @@ public class RtfSection extends RtfElement {
         items = new ArrayList();
         try {
             if(section.getTitle() != null) {
-                this.title = (RtfParagraph) doc.getMapper().mapElement(section.getTitle());
+                this.title = (RtfParagraph) doc.getMapper().mapElement(section.getTitle())[0];
             }
             if(document.getAutogenerateTOCEntries()) {
                 StringBuffer titleText = new StringBuffer();
@@ -117,9 +116,11 @@ public class RtfSection extends RtfElement {
             Iterator iterator = section.iterator();
             while(iterator.hasNext()) {
                 Element element = (Element) iterator.next();
-                RtfBasicElement rtfElement = doc.getMapper().mapElement(element);
-                if(rtfElement != null) {
-                    items.add(rtfElement);
+                RtfBasicElement[] rtfElements = doc.getMapper().mapElement(element);
+                for(int i = 0; i < rtfElements.length; i++) {
+                    if(rtfElements[i] != null) {
+                        items.add(rtfElements[i]);
+                    }
                 }
             }
             

@@ -1,5 +1,4 @@
 /* $Id$
- * $Name$
  *
  * Copyright 2007 by Howard Shank (hgshank@yahoo.com)
  *

@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2005 Jose Hurtado <a href="mailto:jose.hurtado@gft.com">jose.hurtado@gft.com</a>
  * Parts Copyright 2005 Mark Hall
@@ -62,7 +61,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * 
  * @version $Id$
  * @author Jose Hurtado (jose.hurtado@gft.com)
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfTotalPageNumber extends RtfField {

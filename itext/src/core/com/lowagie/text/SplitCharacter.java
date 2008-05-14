@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001, 2002 by Paulo Soares
  *
@@ -71,7 +70,7 @@ public interface SplitCharacter {
      *    if (ck == null)
      *        c = cc[current];
      *    else
-     *        c = ck[Math.min(current, ck.length - 1)].getUnicodeEquivalent(cc[current]);
+     *        c = (char) ck[Math.min(current, ck.length - 1)].getUnicodeEquivalent(cc[current]);
      *    if (c <= ' ' || c == '-') {
      *        return true;
      *    }
@@ -88,7 +87,7 @@ public interface SplitCharacter {
      * @param end the upper limit of <CODE>cc</CODE> exclusive
      * @param cc an array of characters at least <CODE>end</CODE> sized
      * @param ck an array of <CODE>PdfChunk</CODE>. The main use is to be able to call
-     * {@link PdfChunk#getUnicodeEquivalent(char)}. It may be <CODE>null</CODE>
+     * {@link PdfChunk#getUnicodeEquivalent(int)}. It may be <CODE>null</CODE>
      * or shorter than <CODE>end</CODE>. If <CODE>null</CODE> no conversion takes place.
      * If shorter than <CODE>end</CODE> the last element is used
      * @return <CODE>true</CODE> if the character(s) can split a line

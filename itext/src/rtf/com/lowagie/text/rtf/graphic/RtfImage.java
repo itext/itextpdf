@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *
@@ -69,7 +68,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * The RtfImage contains one image. Supported image types are jpeg, png, wmf, bmp.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Paulo Soares
  * @author Thomas Bickel (tmb99@inode.at)
  */

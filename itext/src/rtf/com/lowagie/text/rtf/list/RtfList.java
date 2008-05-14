@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001, 2002, 2003, 2004, 2005 by Mark Hall
  *
@@ -79,7 +78,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * list declaration and the list data.
  *  
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  * @author Felix Satyaputra (f_satyaputra@yahoo.co.uk)
  */
@@ -273,7 +272,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 this.listType = LIST_TYPE_UPPER_LETTERS;
             }
         }
-        this.listStartAt = list.getFirst() + 1;
+        this.listStartAt = list.getFirst();// + 1;
         if(this.listStartAt < 1) {
             this.listStartAt = 1;
         }
@@ -287,16 +286,19 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 if(element instanceof ListItem) {
                     this.alignment = ((ListItem) element).getAlignment();
                 }
-                RtfBasicElement rtfElement = doc.getMapper().mapElement(element);
-                if(rtfElement instanceof RtfList) {
-                    ((RtfList) rtfElement).setListNumber(listNumber);
-                    ((RtfList) rtfElement).setListLevel(listLevel + 1);
-                    ((RtfList) rtfElement).setParent(this);
-                } else if(rtfElement instanceof RtfListItem) {
-                    ((RtfListItem) rtfElement).setParent(this);
-                    ((RtfListItem) rtfElement).inheritListSettings(listNumber, listLevel + 1);
+                RtfBasicElement[] rtfElements = doc.getMapper().mapElement(element);
+                for(int j = 0; j < rtfElements.length; j++) {
+                    RtfBasicElement rtfElement = rtfElements[j];
+                    if(rtfElement instanceof RtfList) {
+                        ((RtfList) rtfElement).setListNumber(listNumber);
+                        ((RtfList) rtfElement).setListLevel(listLevel + 1);
+                        ((RtfList) rtfElement).setParent(this);
+                    } else if(rtfElement instanceof RtfListItem) {
+                        ((RtfListItem) rtfElement).setParent(this);
+                        ((RtfListItem) rtfElement).inheritListSettings(listNumber, listLevel + 1);
+                    }
+                    items.add(rtfElement);
                 }
-                items.add(rtfElement);
             } catch(DocumentException de) {
                 de.printStackTrace();
             }

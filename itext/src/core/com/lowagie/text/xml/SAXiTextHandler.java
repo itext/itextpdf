@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name:  $
  *
  * Copyright 2001, 2002 by Bruno Lowagie.
  *
@@ -87,6 +86,7 @@ import com.lowagie.text.TextElementArray;
 import com.lowagie.text.factories.ElementFactory;
 import com.lowagie.text.html.HtmlTagMap;
 import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.draw.LineSeparator;
 import com.lowagie.text.xml.simpleparser.EntitiesToSymbol;
 
 /**
@@ -431,6 +431,23 @@ public class SAXiTextHandler extends DefaultHandler {
             return;
         }
 
+        if (ElementTags.HORIZONTALRULE.equals(name)) {
+            TextElementArray current;
+            LineSeparator hr = new LineSeparator(1.0f, 100.0f, null, Element.ALIGN_CENTER, 0);
+            try {
+                current = (TextElementArray) stack.pop();
+                current.add(hr);
+                stack.push(current);
+            } catch (EmptyStackException ese) {
+                try {
+                    document.add(hr);
+                } catch (DocumentException de) {
+                    throw new ExceptionConverter(de);
+                }
+            }
+            return;
+        }
+        
         // documentroot
         if (isDocumentRoot(name)) {
             String key;

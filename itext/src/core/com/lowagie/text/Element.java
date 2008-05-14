@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
  *
@@ -179,6 +178,11 @@ public interface Element {
 	
 	/** This is a possible type of <CODE>Element</CODE>. */
 	public static final int MARKED = 50;
+
+	/** This is a possible type of <CODE>Element</CODE>.
+	 * @since 2.1.2
+	 */
+	public static final int YMARK = 55;
 
 	// static membervariables (alignment)
 

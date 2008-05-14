@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2000, 2001, 2002 by Paulo Soares.
  *
@@ -203,7 +202,7 @@ class CJKFont extends BaseFont {
      * @param char1 the unicode <CODE>char</CODE> to get the width of
      * @return the width in normalized 1000 units
      */
-    public int getWidth(char char1) {
+    public int getWidth(int char1) {
         int c = (int)char1;
         if (!cidDirect)
             c = translationMap[c];
@@ -241,7 +240,7 @@ class CJKFont extends BaseFont {
         return 0;
     }
   
-    public int getKerning(char char1, char char2) {
+    public int getKerning(int char1, int char2) {
         return 0;
     }
 
@@ -596,13 +595,13 @@ class CJKFont extends BaseFont {
         return null;
     }
 
-    public char getUnicodeEquivalent(char c) {
+    public int getUnicodeEquivalent(int c) {
         if (cidDirect)
             return translationMap[c];
         return c;
     }
     
-    public char getCidCode(char c) {
+    public int getCidCode(int c) {
         if (cidDirect)
             return c;
         return translationMap[c];
@@ -621,7 +620,7 @@ class CJKFont extends BaseFont {
      * @return <CODE>true</CODE> if the character has a glyph,
      * <CODE>false</CODE> otherwise
      */
-    public boolean charExists(char c) {
+    public boolean charExists(int c) {
         return translationMap[c] != 0;
     }
     
@@ -632,7 +631,7 @@ class CJKFont extends BaseFont {
      * @return <CODE>true</CODE> if the advance was set,
      * <CODE>false</CODE> otherwise. Will always return <CODE>false</CODE>
      */
-    public boolean setCharAdvance(char c, int advance) {
+    public boolean setCharAdvance(int c, int advance) {
         return false;
     }
     
@@ -645,11 +644,11 @@ class CJKFont extends BaseFont {
         fontName = name;
     }   
     
-    public boolean setKerning(char char1, char char2, int kern) {
+    public boolean setKerning(int char1, int char2, int kern) {
         return false;
     }
     
-    public int[] getCharBBox(char c) {
+    public int[] getCharBBox(int c) {
         return null;
     }
     

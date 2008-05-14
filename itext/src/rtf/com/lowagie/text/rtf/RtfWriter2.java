@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *
@@ -72,7 +71,7 @@ import com.lowagie.text.rtf.text.RtfNewPage;
  * The RtfWriter allows the creation of rtf documents via the iText system
  *
  * Version: $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  */
 public class RtfWriter2 extends DocWriter {
     /**
@@ -184,9 +183,13 @@ public class RtfWriter2 extends DocWriter {
         if (pause) {
             return false;
         }
-        RtfBasicElement rtfElement = rtfDoc.getMapper().mapElement(element);
-        if(rtfElement != null) {
-            rtfDoc.add(rtfElement);
+        RtfBasicElement[] rtfElements = rtfDoc.getMapper().mapElement(element);
+        if(rtfElements.length != 0) {
+            for(int i = 0; i < rtfElements.length; i++) {
+                if(rtfElements[i] != null) {
+                    rtfDoc.add(rtfElements[i]);
+                }
+            }
             return true;
         } else {
             return false;

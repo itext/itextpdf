@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *
@@ -72,7 +71,7 @@ import com.lowagie.text.rtf.RtfAddableElement;
  * para.add("\tLeft aligned\tCentre aligned\t12,45\tRight aligned");</code>
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfTabGroup extends RtfAddableElement {

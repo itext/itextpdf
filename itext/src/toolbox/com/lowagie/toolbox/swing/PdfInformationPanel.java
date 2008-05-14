@@ -126,13 +126,13 @@ public class PdfInformationPanel extends JPanel implements PropertyChangeListene
 				}
 				if (pdfinfo.get("ModDate") != null) {
 					sb.append("ModDate= "
-							+ PdfDate.decode(pdfinfo.get("ModDate").toString())
+							+ PdfDate.decode(pdfinfo.get("ModDate"))
 									.getTime() + "<p>");
 				}
 				if (pdfinfo.get("CreationDate") != null) {
 					sb.append("CreationDate= "
 							+ PdfDate.decode(
-									pdfinfo.get("CreationDate").toString())
+									pdfinfo.get("CreationDate"))
 									.getTime() + "<p>");
 				}
 				sb.append("</html>");

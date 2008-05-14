@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001, 2002 by Paulo Soares.
  *
@@ -63,6 +62,7 @@ import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.SimpleTable;
+import com.lowagie.text.pdf.draw.DrawInterface;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -442,7 +442,7 @@ public class ColumnText {
 				throw new IllegalArgumentException("Element not allowed.");
 			}
         }
-        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE)
+        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK)
             throw new IllegalArgumentException("Element not allowed.");
         if (!composite) {
             composite = true;
@@ -810,7 +810,7 @@ public class ColumnText {
                     status = NO_MORE_TEXT;
                     break;
                 }
-                PdfLine line = bidiLine.processLine(rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
+                PdfLine line = bidiLine.processLine(leftX, rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
                 if (line == null) {
                     status = NO_MORE_TEXT;
                     break;
@@ -874,7 +874,7 @@ public class ColumnText {
                     text.beginText();
                     dirty = true;
                 }
-                PdfLine line = bidiLine.processLine(x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
+                PdfLine line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
                 if (line == null) {
                     status = NO_MORE_TEXT;
                     yLine = yTemp;
@@ -999,7 +999,7 @@ public class ColumnText {
         ColumnText ct = new ColumnText(null);
         ct.addText(phrase);
         ct.addWaitingPhrase();
-        PdfLine line = ct.bidiLine.processLine(20000, Element.ALIGN_LEFT, runDirection, arabicOptions);
+        PdfLine line = ct.bidiLine.processLine(0, 20000, Element.ALIGN_LEFT, runDirection, arabicOptions);
         if (line == null)
             return 0;
         else
@@ -1447,6 +1447,13 @@ public class ColumnText {
                     return NO_MORE_COLUMN;
                 }
             }
+            else if (element.type() == Element.YMARK) {
+                if (!simulate) {
+                    DrawInterface zh = (DrawInterface)element;
+                    zh.draw(canvas, leftX, minY, rightX, maxY, yLine);
+                }
+                compositeElements.removeFirst();
+            }
             else
                 compositeElements.removeFirst();
         }
@@ -1488,6 +1495,15 @@ public class ColumnText {
      */
     public PdfContentByte[] getCanvases() {
         return canvases;
+    }
+    
+    /**
+     * Checks if the element has a height of 0.
+     * @return true or false
+     * @since 2.1.2
+     */
+    public boolean zeroHeightElement() {
+        return composite && !compositeElements.isEmpty() && ((Element)compositeElements.getFirst()).type() == Element.YMARK;
     }
     
     /**

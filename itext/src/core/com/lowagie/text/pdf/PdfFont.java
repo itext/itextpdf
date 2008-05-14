@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
  *
@@ -151,7 +150,7 @@ class PdfFont implements Comparable {
      * @return		a width in Text Space
      */
     
-    float width(char character) {
+    float width(int character) {
         if (image == null)
             return font.getWidthPoint(character, size) * hScale;
         else

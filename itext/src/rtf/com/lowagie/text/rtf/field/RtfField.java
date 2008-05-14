@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2004 by Mark Hall
  * Uses code Copyright 2002
@@ -70,7 +69,7 @@ import com.lowagie.text.rtf.style.RtfFont;
  * RtfField class.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Dirk Weigenand (Dirk.Weigenand@smb-tec.com)
  * @author Thomas Bickel (tmb99@inode.at)
  */

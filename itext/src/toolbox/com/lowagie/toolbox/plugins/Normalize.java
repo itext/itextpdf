@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name:  $
  *
  * Copyright 2005 by Carsten Hammer.
  *

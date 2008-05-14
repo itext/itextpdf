@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2005 by Mark Hall
  *
@@ -65,7 +64,7 @@ import java.io.OutputStream;
  * memory (just disk space).
  * 
  * @version $Revision$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  */
 public class RtfDiskCache implements RtfDataCache {
 

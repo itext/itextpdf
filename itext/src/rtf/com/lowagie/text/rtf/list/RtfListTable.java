@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *
@@ -64,8 +63,9 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * the list and list override tables in the document header.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
+ * @author Howard Shank (hgshank@yahoo.com)
  */
 public class RtfListTable extends RtfElement implements RtfExtendedElement {
 
@@ -88,7 +88,7 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
     /**
      * Constant for the hybrid list
      */
-    private static final byte[] LIST_HYBRID = "\\hybrid".getBytes();
+    private static final byte[] LIST_HYBRID = "\\listhybrid".getBytes();
     /**
      * Constant for the list id
      */

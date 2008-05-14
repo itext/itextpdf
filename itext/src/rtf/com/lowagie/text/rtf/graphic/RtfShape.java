@@ -22,7 +22,7 @@ import com.lowagie.text.rtf.RtfAddableElement;
  * or 1 cm = 360000 EMU. 
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfShape extends RtfAddableElement {

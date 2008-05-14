@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright (c) 2001, 2002 Bruno Lowagie.
  *

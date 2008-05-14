@@ -170,7 +170,7 @@ public class Type3Font extends BaseFont {
         return new String[][]{{"4", "", "", "", ""}};
     }
     
-    public int getKerning(char char1, char char2) {
+    public int getKerning(int char1, int char2) {
         return 0;
     }
     
@@ -190,7 +190,7 @@ public class Type3Font extends BaseFont {
         return false;
     }
     
-    public boolean setKerning(char char1, char char2, int kern) {
+    public boolean setKerning(int char1, int char2, int kern) {
         return false;
     }
     
@@ -279,13 +279,13 @@ public class Type3Font extends BaseFont {
         return b2;
     }
     
-    byte[] convertToBytes(char char1) {
+    byte[] convertToBytes(int char1) {
         if (charExists(char1))
             return new byte[]{(byte)char1};
         else return new byte[0];
     }
     
-    public int getWidth(char char1) {
+    public int getWidth(int char1) {
         if (!widths3.containsKey(char1))
             throw new IllegalArgumentException("The char " + (int)char1 + " is not defined in a Type3 font");
         return widths3.get(char1);
@@ -299,11 +299,11 @@ public class Type3Font extends BaseFont {
         return total;
     }
     
-    public int[] getCharBBox(char c) {
+    public int[] getCharBBox(int c) {
         return null;
     }
     
-    public boolean charExists(char c) {
+    public boolean charExists(int c) {
         if (c > 0 && c < 256) {
             return usedSlot[c];
         } else {
@@ -311,7 +311,7 @@ public class Type3Font extends BaseFont {
         }
     }
     
-    public boolean setCharAdvance(char c, int advance) {
+    public boolean setCharAdvance(int c, int advance) {
         return false;
     }
     

@@ -1,5 +1,4 @@
 /*
- * $Name$
  * $Id$
  *
  * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
@@ -83,6 +82,7 @@ import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.collection.PdfCollection;
+import com.lowagie.text.pdf.draw.DrawInterface;
 import com.lowagie.text.pdf.internal.PdfAnnotationsImp;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 import java.text.DecimalFormat;
@@ -354,14 +354,32 @@ public class PdfDocument extends Document {
     /** This represents the leading of the lines. */
     protected float leading = 0;
     
+    /**
+     * Getter for the current leading.
+     * @return	the current leading
+     * @since	2.1.2
+     */
+    public float getLeading() {
+    	return leading;
+    }
+    
     /** This represents the current alignment of the PDF Elements. */
     protected int alignment = Element.ALIGN_LEFT;
     
     /** This is the current height of the document. */
     protected float currentHeight = 0;
     
-    /** Signals that onParagraph is valid (to avoid that a Chapter/Section title is treated as a Paragraph). */
-    protected boolean isParagraph = true;
+    /**
+     * Signals that onParagraph is valid (to avoid that a Chapter/Section title is treated as a Paragraph).
+     * @since 2.1.2
+     */
+    protected boolean isSectionTitle = false;
+    
+    /**
+     * Signals that the current leading has to be subtracted from a YMark object when positive.
+     * @since 2.1.2
+     */
+    protected int leadingCount = 0;
     
     /** The current active <CODE>PdfAction</CODE> when processing an <CODE>Anchor</CODE>. */
     protected PdfAction anchorAction = null;
@@ -432,6 +450,7 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.ANCHOR: {
+                	leadingCount++;
                     Anchor anchor = (Anchor) element;
                     String url = anchor.getReference();
                     leading = anchor.getLeading();
@@ -441,6 +460,7 @@ public class PdfDocument extends Document {
                     // we process the element
                     element.process(this);
                     anchorAction = null;
+                    leadingCount--;
                     break;
                 }
                 case Element.ANNOTATION: {
@@ -457,16 +477,18 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.PHRASE: {
+                	leadingCount++;
                     // we cast the element to a phrase and set the leading of the document
                     leading = ((Phrase) element).getLeading();
                     // we process the element
                     element.process(this);
+                    leadingCount--;
                     break;
                 }
                 case Element.PARAGRAPH: {
+                	leadingCount++;
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
-                    
                     addSpacing(paragraph.spacingBefore(), leading, paragraph.getFont());
                     
                     // we adjust the parameters of the document
@@ -483,7 +505,7 @@ public class PdfDocument extends Document {
                     carriageReturn();
      
                     PdfPageEvent pageEvent = writer.getPageEvent();
-                    if (pageEvent != null && isParagraph)
+                    if (pageEvent != null && !isSectionTitle)
                         pageEvent.onParagraph(writer, this, indentTop() - currentHeight);
                     
                     // if a paragraph has to be kept together, we wrap it in a table object
@@ -509,13 +531,14 @@ public class PdfDocument extends Document {
                         addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
                     }
 
-                    if (pageEvent != null && isParagraph)
+                    if (pageEvent != null && !isSectionTitle)
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
                     
                     alignment = Element.ALIGN_LEFT;
                     indentation.indentLeft -= paragraph.getIndentationLeft();
                     indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
+                    leadingCount--;
                     break;
                 }
                 case Element.SECTION:
@@ -559,9 +582,9 @@ public class PdfDocument extends Document {
                     
                     // the title of the section (if any has to be printed)
                     if (hasTitle) {
-                        isParagraph = false;
+                        isSectionTitle = true;
                         add(section.getTitle());
-                        isParagraph = true;
+                        isSectionTitle = false;
                     }
                     indentation.sectionIndentLeft += section.getIndentation();
                     // we process the section
@@ -597,6 +620,7 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.LISTITEM: {
+                	leadingCount++;
                     // we cast the element to a ListItem
                     ListItem listItem = (ListItem) element;
                     
@@ -624,6 +648,7 @@ public class PdfDocument extends Document {
                     carriageReturn();
                     indentation.listIndentLeft -= listItem.getIndentationLeft();
                     indentation.indentRight -= listItem.getIndentationRight();
+                    leadingCount--;
                     break;
                 }
                 case Element.RECTANGLE: {
@@ -702,6 +727,12 @@ public class PdfDocument extends Document {
                 case Element.IMGTEMPLATE: {
                     //carriageReturn(); suggestion by Marc Campforts
                     add((Image) element);
+                    break;
+                }
+                case Element.YMARK: {
+                    DrawInterface zh = (DrawInterface)element;
+                    zh.draw(graphics, indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight - (leadingCount > 0 ? leading : 0));
+                    pageEmpty = false;
                     break;
                 }
                 case Element.MARKED: {
@@ -1312,12 +1343,17 @@ public class PdfDocument extends Document {
         float lastHScale = Float.NaN;
         float baseWordSpacing = 0;
         float baseCharacterSpacing = 0;
+        float glueWidth = 0;
         
         numberOfSpaces = line.numberOfSpaces();
-        lineLen = line.toString().length();
+        lineLen = line.GetLineLengthUtf32();
         // does the line need to be justified?
         isJustified = line.hasToBeJustified() && (numberOfSpaces != 0 || lineLen > 1);
-        if (isJustified) {
+        int separatorCount = line.getSeparatorCount();
+        if (separatorCount > 0) {
+        	glueWidth = line.widthLeft() / separatorCount;
+        }
+        else if (isJustified) {
             if (line.isNewlineSplit() && line.widthLeft() >= (lastBaseFactor * (ratio * numberOfSpaces + lineLen - 1))) {
                 if (line.isRTL()) {
                     text.moveText(line.widthLeft() - lastBaseFactor * (ratio * numberOfSpaces + lineLen - 1), 0);
@@ -1350,6 +1386,7 @@ public class PdfDocument extends Document {
         float baseXMarker = xMarker;
         float yMarker = text.getYTLM();
         boolean adjustMatrix = false;
+        float tabPosition = 0;
         
         // looping over all the chunks in 1 line
         for (Iterator j = line.iterator(); j.hasNext(); ) {
@@ -1362,10 +1399,40 @@ public class PdfDocument extends Document {
                 if (isJustified) {
                     width = chunk.getWidthCorrected(baseCharacterSpacing, baseWordSpacing);
                 }
-                else
+                else {
                     width = chunk.width();
+                }
                 if (chunk.isStroked()) {
                     PdfChunk nextChunk = line.getChunk(chunkStrokeIdx + 1);
+                    if (chunk.isSeparator()) {
+                    	width = glueWidth;
+                    	Object[] sep = (Object[])chunk.getAttribute(Chunk.SEPARATOR);
+                        DrawInterface di = (DrawInterface)sep[0];
+                        Boolean vertical = (Boolean)sep[1];
+                        float fontSize = chunk.font().size();
+                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
+                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+                        if (vertical.booleanValue()) {
+                        	di.draw(graphics, baseXMarker, yMarker + descender, baseXMarker + line.getOriginalWidth(), ascender - descender, yMarker);     	
+                        }
+                        else {
+                        	di.draw(graphics, xMarker, yMarker + descender, xMarker + width, ascender - descender, yMarker);
+                        }
+                    }
+                    if (chunk.isTab()) {
+                    	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
+                        DrawInterface di = (DrawInterface)tab[0];
+                        tabPosition = ((Float)tab[1]).floatValue() + ((Float)tab[3]).floatValue();
+                        float fontSize = chunk.font().size();
+                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
+                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+                        if (tabPosition > xMarker) {
+                        	di.draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
+                        }
+                        float tmp = xMarker;
+                    	xMarker = tabPosition;
+                    	tabPosition = tmp;
+                    }
                     if (chunk.isAttribute(Chunk.BACKGROUND)) {
                         float subtract = lastBaseFactor;
                         if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND))
@@ -1537,6 +1604,16 @@ public class PdfDocument extends Document {
             if (chunk.isImage()) {
                 adjustMatrix = true;
             }
+            else if (chunk.isHorizontalSeparator()) {
+            	PdfTextArray array = new PdfTextArray();
+            	array.add(-glueWidth * 1000f / chunk.font.size() / hScale);
+            	text.showText(array);
+            }
+            else if (chunk.isTab()) {
+            	PdfTextArray array = new PdfTextArray();
+            	array.add((tabPosition - xMarker) * 1000f / chunk.font.size() / hScale);
+            	text.showText(array);
+            }
             // If it is a CJK chunk or Unicode TTF we will have to simulate the
             // space adjustment.
             else if (isJustified && numberOfSpaces > 0 && chunk.isSpecialEncoding()) {
@@ -1548,7 +1625,7 @@ public class PdfDocument extends Document {
                 String s = chunk.toString();
                 int idx = s.indexOf(' ');
                 if (idx < 0)
-                    text.showText(chunk.toString());
+                    text.showText(s);
                 else {
                     float spaceCorrection = - baseWordSpacing * 1000f / chunk.font.size() / hScale;
                     PdfTextArray textArray = new PdfTextArray(s.substring(0, idx));

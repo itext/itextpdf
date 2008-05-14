@@ -1358,7 +1358,7 @@ public class PdfWriter extends DocWriter implements
 
 	// page layout (section 13.1.1 of "iText in Action")
 	
-    /** A viewer preference */
+	/** A viewer preference */
 	public static final int PageLayoutSinglePage = 1;
 	/** A viewer preference */
 	public static final int PageLayoutOneColumn = 2;
@@ -2270,10 +2270,19 @@ public class PdfWriter extends DocWriter implements
     }
     
 //	[F13] Optional Content Groups    
+    /** A hashSet containing all the PdfLayer objects. */
     protected HashSet documentOCG = new HashSet();
+    /** An array list used to define the order of an OCG tree. */
     protected ArrayList documentOCGorder = new ArrayList();
+    /** The OCProperties in a catalog dictionary. */
     protected PdfOCProperties OCProperties;
+    /** The RBGroups array in an OCG dictionary */
     protected PdfArray OCGRadioGroup = new PdfArray();
+    /**
+     * The locked array in an OCG dictionary
+     * @since	2.1.2
+     */
+    protected PdfArray OCGLocked = new PdfArray();
     
     /**
      * Use this method to get the <B>Optional Content Properties Dictionary</B>.
@@ -2305,6 +2314,18 @@ public class PdfWriter extends DocWriter implements
         if (ar.size() == 0)
             return;
         OCGRadioGroup.add(ar);
+    }
+    
+    /**
+     * Use this method to lock an optional content group.
+     * The state of a locked group cannot be changed through the user interface
+     * of a viewer application. Producers can use this entry to prevent the visibility
+     * of content that depends on these groups from being changed by users.
+     * @param layer	the layer that needs to be added to the array of locked OCGs
+     * @since	2.1.2
+     */    
+    public void lockLayer(PdfLayer layer) {
+        OCGLocked.add(layer.getRef());
     }
     
     private static void getOCGOrder(PdfArray order, PdfLayer layer) {
@@ -2347,8 +2368,11 @@ public class PdfWriter extends DocWriter implements
         as.put(PdfName.OCGS, arr);
         arras.add(as);
     }
-    
-    private void fillOCProperties(boolean erase) {
+
+    /**
+     * @since 2.1.2
+     */
+    protected void fillOCProperties(boolean erase) {
         if (OCProperties == null)
             OCProperties = new PdfOCProperties();
         if (erase) {
@@ -2389,6 +2413,8 @@ public class PdfWriter extends DocWriter implements
             d.put(PdfName.OFF, gr);
         if (OCGRadioGroup.size() > 0)
             d.put(PdfName.RBGROUPS, OCGRadioGroup);
+        if (OCGLocked.size() > 0)
+            d.put(PdfName.LOCKED, OCGLocked);
         addASEvent(PdfName.VIEW, PdfName.ZOOM);
         addASEvent(PdfName.VIEW, PdfName.VIEW);
         addASEvent(PdfName.PRINT, PdfName.PRINT);

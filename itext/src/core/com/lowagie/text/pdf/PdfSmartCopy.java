@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2007 Michael Neuweiler and Bruno Lowagie
  *

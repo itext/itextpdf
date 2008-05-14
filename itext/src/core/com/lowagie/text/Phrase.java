@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name:  $
  *
  * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
  *
@@ -54,6 +53,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.lowagie.text.pdf.HyphenationEvent;
+
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
  * <P>
@@ -93,6 +94,11 @@ public class Phrase extends ArrayList implements TextElementArray {
     /** This is the font of this phrase. */
     protected Font font;
     
+    /** Null, unless the Phrase has to be hyphenated.
+     * @since	2.1.2
+     */
+    protected HyphenationEvent hyphenation = null;
+    
     // constructors
     
     /**
@@ -110,9 +116,10 @@ public class Phrase extends ArrayList implements TextElementArray {
         this.addAll(phrase);
         leading = phrase.getLeading();
         font = phrase.getFont();
+        setHyphenation(phrase.getHyphenation());
     }
-    
-    /**
+
+	/**
      * Constructs a <CODE>Phrase</CODE> with a certain leading.
      *
      * @param	leading		the leading
@@ -130,9 +137,10 @@ public class Phrase extends ArrayList implements TextElementArray {
     public Phrase(Chunk chunk) {
         super.add(chunk);
         font = chunk.getFont();
+        setHyphenation(chunk.getHyphenation());
     }
-    
-    /**
+
+	/**
      * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>
      * and a certain leading.
      *
@@ -143,6 +151,7 @@ public class Phrase extends ArrayList implements TextElementArray {
         this.leading = leading;
         super.add(chunk);
         font = chunk.getFont();
+        setHyphenation(chunk.getHyphenation());
     }
     
     /**
@@ -269,12 +278,16 @@ public class Phrase extends ArrayList implements TextElementArray {
                 if (!font.isStandardFont()) {
                     chunk.setFont(font.difference(chunk.getFont()));
                 }
+                if (hyphenation != null) {
+                	chunk.setHyphenation(hyphenation);
+                }
                 super.add(index, chunk);
             }
             else if (element.type() == Element.PHRASE ||
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
             element.type() == Element.TABLE || // line added by David Freels
+            element.type() == Element.YMARK || 
             element.type() == Element.MARKED) {
                 super.add(index, element);
             }
@@ -330,6 +343,7 @@ public class Phrase extends ArrayList implements TextElementArray {
                 case Element.PTABLE: // case added by mr. Karen Vardanyan
                 	// This will only work for PDF!!! Not for RTF/HTML
                 case Element.LIST:
+                case Element.YMARK:
                 	return super.add(o);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));
@@ -386,6 +400,9 @@ public class Phrase extends ArrayList implements TextElementArray {
         }
         Chunk newChunk = new Chunk(c, f);
         newChunk.setAttributes(chunk.getAttributes());
+        if (newChunk.getHyphenation() == null) {
+        	newChunk.setHyphenation(hyphenation);
+        }
         return super.add(newChunk);
     }
     
@@ -486,6 +503,24 @@ public class Phrase extends ArrayList implements TextElementArray {
         }
     }
     
+    /**
+     * Getter for the hyphenation settings.
+     * @return	a HyphenationEvent
+     * @since	2.1.2
+     */
+    public HyphenationEvent getHyphenation() {
+		return hyphenation;
+	}
+
+    /**
+     * Setter for the hyphenation.
+     * @param	hyphenation	a HyphenationEvent instance
+     * @since	2.1.2
+     */
+	public void setHyphenation(HyphenationEvent hyphenation) {
+		this.hyphenation = hyphenation;
+	}
+	
     // kept for historical reasons; people should use FontSelector
     // eligible for deprecation, but the methods are mentioned in the book p277.
     

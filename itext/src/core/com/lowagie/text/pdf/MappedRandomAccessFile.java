@@ -204,11 +204,11 @@ public class MappedRandomAccessFile {
             public Object run() {
                 Boolean success = Boolean.FALSE;
                 try {
-                    Method getCleanerMethod = buffer.getClass().getMethod("cleaner", null);
+                    Method getCleanerMethod = buffer.getClass().getMethod("cleaner", (Class[])null);
                     getCleanerMethod.setAccessible(true);
-                    Object cleaner = getCleanerMethod.invoke(buffer, null);
-                    Method clean = cleaner.getClass().getMethod("clean", null);
-                    clean.invoke(cleaner, null);
+                    Object cleaner = getCleanerMethod.invoke(buffer, (Object[])null);
+                    Method clean = cleaner.getClass().getMethod("clean", (Class[])null);
+                    clean.invoke(cleaner, (Object[])null);
                     success = Boolean.TRUE;
                 } catch (Exception e) {
                     // This really is a show stopper on windows

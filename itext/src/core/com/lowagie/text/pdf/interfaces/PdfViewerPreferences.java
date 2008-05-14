@@ -69,65 +69,65 @@ public interface PdfViewerPreferences {
      * <ul>
      * <li>The page layout to be used when the document is opened (choose one).
      *   <ul>
-     *   <li><b>PageLayoutSinglePage</b> - Display one page at a time. (default)
-     *   <li><b>PageLayoutOneColumn</b> - Display the pages in one column.
-     *   <li><b>PageLayoutTwoColumnLeft</b> - Display the pages in two columns, with
+     *   <li><b>PAGE_LAYOUT_SINGLE_PAGE</b> - Display one page at a time. (default)
+     *   <li><b>PAGE_LAYOUT_ONE_COLUMN</b> - Display the pages in one column.
+     *   <li><b>PAGE_LAYOUT_TWO_COLUMN_LEFT</b> - Display the pages in two columns, with
      *       oddnumbered pages on the left.
-     *   <li><b>PageLayoutTwoColumnRight</b> - Display the pages in two columns, with
+     *   <li><b>PAGE_LAYOUT_TWO_COLUMN_RIGHT</b> - Display the pages in two columns, with
      *       oddnumbered pages on the right.
-     *   <li><b>PageLayoutTwoPageLeft</b> - Display the pages two at a time, with
+     *   <li><b>PAGE_LAYOUT_TWO_PAGE_LEFT</b> - Display the pages two at a time, with
      *       oddnumbered pages on the left.
-     *   <li><b>PageLayoutTwoPageRight</b> - Display the pages two at a time, with
+     *   <li><b>PAGE_LAYOUT_TWO_PAGE_RIGHT</b> - Display the pages two at a time, with
      *       oddnumbered pages on the right.
      *   </ul>
      * <li>The page mode how the document should be displayed
      *     when opened (choose one).
      *   <ul>
-     *   <li><b>PageModeUseNone</b> - Neither document outline nor thumbnail images visible. (default)
-     *   <li><b>PageModeUseOutlines</b> - Document outline visible.
-     *   <li><b>PageModeUseThumbs</b> - Thumbnail images visible.
-     *   <li><b>PageModeFullScreen</b> - Full-screen mode, with no menu bar, window
+     *   <li><b>PAGE_MODE_USE_NONE</b> - Neither document outline nor thumbnail images visible. (default)
+     *   <li><b>PAGE_MODE_USE_OUTLINES</b> - Document outline visible.
+     *   <li><b>PAGE_MODE_USE_THUMBS</b> - Thumbnail images visible.
+     *   <li><b>PAGE_MODE_FULL_SCREEN</b> - Full-screen mode, with no menu bar, window
      *       controls, or any other window visible.
-     *   <li><b>PageModeUseOC</b> - Optional content group panel visible
-     *   <li><b>PageModeUseAttachments</b> - Attachments panel visible
+     *   <li><b>PAGE_MODE_USE_OC</b> - Optional content group panel visible
+     *   <li><b>PAGE_MODE_USE_ATTACHMENTS</b> - Attachments panel visible
      *   </ul>
      * </ul>
      * For backward compatibility these values are also supported,
      * but it's better to use method <code>addViewerPreference(key, value)</code>
      * if you want to change the following preferences:
      * <ul>
-     * <li><b>HideToolbar</b> - A flag specifying whether to hide the viewer application's tool
+     * <li><b>HIDE_TOOLBAR</b> - A flag specifying whether to hide the viewer application's tool
      *     bars when the document is active.
-     * <li><b>HideMenubar</b> - A flag specifying whether to hide the viewer application's
+     * <li><b>HIDE_MENUBAR</b> - A flag specifying whether to hide the viewer application's
      *     menu bar when the document is active.
-     * <li><b>HideWindowUI</b> - A flag specifying whether to hide user interface elements in
+     * <li><b>HIDE_WINDOW_UI</b> - A flag specifying whether to hide user interface elements in
      *     the document's window (such as scroll bars and navigation controls),
      *     leaving only the document's contents displayed.
-     * <li><b>FitWindow</b> - A flag specifying whether to resize the document's window to
+     * <li><b>FIT_WINDOW</b> - A flag specifying whether to resize the document's window to
      *     fit the size of the first displayed page.
-     * <li><b>CenterWindow</b> - A flag specifying whether to position the document's window
+     * <li><b>CENTER_WINDOW</b> - A flag specifying whether to position the document's window
      *     in the center of the screen.
-     * <li><b>DisplayDocTitle</b> - A flag specifying whether to display the document's title
+     * <li><b>DISPLAY_DOC_TITLE</b> - A flag specifying whether to display the document's title
      *     in the top bar.
      * <li>The predominant reading order for text. This entry has no direct effect on the
      *     document's contents or page numbering, but can be used to determine the relative
      *     positioning of pages when displayed side by side or printed <i>n-up</i> (choose one).
      *   <ul>
-     *   <li><b>DirectionL2R</b> - Left to right
-     *   <li><b>DirectionR2L</b> - Right to left (including vertical writing systems such as
+     *   <li><b>DIRECTION_L2R</b> - Left to right
+     *   <li><b>DIRECTION_R2L</b> - Right to left (including vertical writing systems such as
      *       Chinese, Japanese, and Korean)
      *   </ul>
      * <li>The document's page mode, specifying how to display the
      *     document on exiting full-screen mode. It is meaningful only
      *     if the page mode is <b>PageModeFullScreen</b> (choose one).
      *   <ul>
-     *   <li><b>NonFullScreenPageModeUseNone</b> - Neither document outline nor thumbnail images
+     *   <li><b>NON_FULL_SCREEN_PAGE_MODE_USE_NONE</b> - Neither document outline nor thumbnail images
      *       visible
-     *   <li><b>NonFullScreenPageModeUseOutlines</b> - Document outline visible
-     *   <li><b>NonFullScreenPageModeUseThumbs</b> - Thumbnail images visible
-     *   <li><b>NonFullScreenPageModeUseOC</b> - Optional content group panel visible
+     *   <li><b>NON_FULL_SCREEN_PAGE_MODE_USE_OUTLINES</b> - Document outline visible
+     *   <li><b>NON_FULL_SCREEN_PAGE_MODE_USE_THUMBS</b> - Thumbnail images visible
+     *   <li><b>NON_FULL_SCREEN_PAGE_MODE_USE_OC</b> - Optional content group panel visible
      *   </ul>
-     * <li><b>PrintScalingNone</b> - Indicates that the print dialog should reflect no page scaling.
+     * <li><b>PRINT_SCALING_NONE</b> - Indicates that the print dialog should reflect no page scaling.
      * </ul>
      * @param preferences the viewer preferences
 	 * @see PdfViewerPreferences#addViewerPreference

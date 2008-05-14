@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *
@@ -67,7 +66,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * or RtfTable.
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfBorderGroup extends RtfElement {
@@ -208,9 +207,9 @@ public class RtfBorderGroup extends RtfElement {
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
-        Iterator it = this.borders.entrySet().iterator();
+        Iterator it = this.borders.values().iterator();
         while(it.hasNext()) {
-            ((RtfBorder) ((Map.Entry) it.next()).getValue()).writeContent(result);
+            ((RtfBorder) it.next()).writeContent(result);
         }
     }        
     

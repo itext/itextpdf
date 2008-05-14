@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 1999-2006 Bruno Lowagie
  *
@@ -603,6 +602,10 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName LOCATION = new PdfName("Location");
     /** A name */
     public static final PdfName LOCK = new PdfName("Lock");
+    /** A name
+     * @since	2.1.2
+     */
+    public static final PdfName LOCKED = new PdfName("Locked");
     /** A name */
     public static final PdfName LZWDECODE = new PdfName("LZWDecode");
     /** A name */

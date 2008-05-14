@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *
@@ -68,7 +67,7 @@ import com.lowagie.text.rtf.style.RtfFont;
  * The RtfPhrase contains multiple RtfChunks
  * 
  * @version $Id$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Thomas Bickel (tmb99@inode.at)
  */
 public class RtfPhrase extends RtfElement {
@@ -134,7 +133,10 @@ public class RtfPhrase extends RtfElement {
                 ((Chunk) chunk).setFont(phraseFont.difference(((Chunk) chunk).getFont()));
             }
             try {
-                chunks.add(doc.getMapper().mapElement(chunk));
+                RtfBasicElement[] rtfElements = doc.getMapper().mapElement(chunk);
+                for(int j = 0; j < rtfElements.length; j++) {
+                    chunks.add(rtfElements[j]);
+                }
             } catch(DocumentException de) {
             }
         }

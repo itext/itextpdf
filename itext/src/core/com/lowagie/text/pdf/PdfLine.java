@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
  *
@@ -115,8 +114,19 @@ public class PdfLine {
         this.line = new ArrayList();
     }
     
-    PdfLine(float left, float remainingWidth, int alignment, boolean newlineSplit, ArrayList line, boolean isRTL) {
+    /**
+     * Creates a PdfLine object.
+     * @param left				the left offset
+     * @param originalWidth		the original width of the line
+     * @param remainingWidth	bigger than 0 if the line isn't completely filled
+     * @param alignment			the alignment of the line
+     * @param newlineSplit		was the line splitted (or does the paragraph end with this line)
+     * @param line				an array of PdfChunk objects
+     * @param isRTL				do you have to read the line from Right to Left?
+     */
+    PdfLine(float left, float originalWidth, float remainingWidth, int alignment, boolean newlineSplit, ArrayList line, boolean isRTL) {
         this.left = left;
+        this.originalWidth = originalWidth;
         this.width = remainingWidth;
         this.alignment = alignment;
         this.line = line;
@@ -138,7 +148,7 @@ public class PdfLine {
     PdfChunk add(PdfChunk chunk) {
         // nothing happens if the chunk is null.
         if (chunk == null || chunk.toString().equals("")) {
-            return null;
+        	return null;
         }
         
         // we split the chunk to be added
@@ -146,16 +156,24 @@ public class PdfLine {
         newlineSplit = (chunk.isNewlineSplit() || overflow == null);
         //        if (chunk.isNewlineSplit() && alignment == Element.ALIGN_JUSTIFIED)
         //            alignment = Element.ALIGN_LEFT;
-        
-        
+        if (chunk.isTab()) {
+        	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
+    		float tabPosition = ((Float)tab[1]).floatValue();
+    		boolean newline = ((Boolean)tab[2]).booleanValue();
+    		if (newline && tabPosition < originalWidth - width) {
+    		    return chunk;
+    		}
+    		width = originalWidth - tabPosition;
+    		chunk.adjustLeft(left);
+            addToLine(chunk);
+        }
         // if the length of the chunk > 0 we add it to the line
-        if (chunk.length() > 0) {
+        else if (chunk.length() > 0) {
             if (overflow != null)
                 chunk.trimLastSpace();
             width -= chunk.width();
             addToLine(chunk);
         }
-        
         // if the length == 0 and there were no other chunks added to the line yet,
         // we risk to end up in an endless loop trying endlessly to add the same chunk
         else if (line.size() < 1) {
@@ -353,6 +371,19 @@ public class PdfLine {
     }
     
     /**
+     * Returns the length of a line in UTF32 characters
+     * @return	the length in UTF32 characters
+     * @since	2.1.2
+     */
+    public int GetLineLengthUtf32() {
+        int total = 0;
+        for (Iterator i = line.iterator(); i.hasNext();) {
+            total += ((PdfChunk)i.next()).lengthUtf32();
+        }
+        return total;
+    }
+    
+    /**
      * Checks if a newline caused the line split.
      * @return <CODE>true</CODE> if a newline caused the line split
      */
@@ -414,6 +445,26 @@ public class PdfLine {
     
     boolean isRTL() {
         return isRTL;
+    }
+    
+    /**
+     * Gets the number of separators in the line.
+     * @return	the number of separators in the line
+     * @since	2.1.2
+     */
+    int getSeparatorCount() {
+    	int s = 0;
+    	PdfChunk ck;
+        for (Iterator i = line.iterator(); i.hasNext(); ) {
+        	ck = (PdfChunk)i.next();
+        	if (ck.isTab()) {
+        		return 0;
+        	}
+        	if (ck.isHorizontalSeparator()) {
+        		s++;
+        	}
+        }
+        return s;
     }
     
     /**
