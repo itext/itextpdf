@@ -34,7 +34,7 @@ public class FoxDogSplit implements SplitCharacter {
 		if (ck == null)
 			c = cc[current];
 		else
-			c = ck[Math.min(current, ck.length - 1)]
+			c = (char)ck[Math.min(current, ck.length - 1)]
 					.getUnicodeEquivalent(cc[current]);
 		return (c == '/' || c == ' ');
 	}
