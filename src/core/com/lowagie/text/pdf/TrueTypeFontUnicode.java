@@ -480,7 +480,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         return true;
     }
     
-    public int[] getCharBBox(char c) {
+    public int[] getCharBBox(int c) {
         if (bboxes == null)
             return null;
         int[] m = getMetricsTT(c);
