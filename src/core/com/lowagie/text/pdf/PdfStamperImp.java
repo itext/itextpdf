@@ -293,7 +293,8 @@ class PdfStamperImp extends PdfWriter {
                     newInfo.put(keyName, new PdfString(value, PdfObject.TEXT_UNICODE));
             }
         }
-        newInfo.put(PdfName.MODDATE, new PdfDate());
+        if (altMetadata != null) // hack because changing the modification data makes the XMP data inconsistent
+        	newInfo.put(PdfName.MODDATE, new PdfDate());
         if (append) {
             if (iInfo == null)
                 info = addToBody(newInfo, false).getIndirectReference();
