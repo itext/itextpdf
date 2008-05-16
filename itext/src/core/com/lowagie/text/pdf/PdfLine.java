@@ -370,6 +370,11 @@ public class PdfLine {
         return tmp.toString();
     }
     
+    /**
+     * Returns the length of a line in UTF32 characters
+     * @return	the length in UTF32 characters
+     * @since	2.1.2
+     */
     public int GetLineLengthUtf32() {
         int total = 0;
         for (Iterator i = line.iterator(); i.hasNext();) {
