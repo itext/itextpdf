@@ -2270,10 +2270,18 @@ public class PdfWriter extends DocWriter implements
     }
     
 //	[F13] Optional Content Groups    
+    /** A hashSet containing all the PdfLayer objects. */
     protected HashSet documentOCG = new HashSet();
+    /** An array list used to define the order of an OCG tree. */
     protected ArrayList documentOCGorder = new ArrayList();
+    /** The OCProperties in a catalog dictionary. */
     protected PdfOCProperties OCProperties;
+    /** The RBGroups array in an OCG dictionary */
     protected PdfArray OCGRadioGroup = new PdfArray();
+    /**
+     * The locked array in an OCG dictionary
+     * @since	2.1.2
+     */
     protected PdfArray OCGLocked = new PdfArray();
     
     /**
