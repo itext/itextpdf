@@ -293,7 +293,7 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 			catalog.put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
 		else if ((pageLayoutAndMode & PdfWriter.PageModeUseThumbs) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USETHUMBS);
-		else if ((pageLayoutAndMode & PdfWriter.PageModeUseAttachments) != 0)
+		else if ((pageLayoutAndMode & PdfWriter.PageModeFullScreen) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.FULLSCREEN);
 		else if ((pageLayoutAndMode & PdfWriter.PageModeUseOC) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USEOC);
