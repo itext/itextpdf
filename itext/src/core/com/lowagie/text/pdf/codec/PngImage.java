@@ -354,8 +354,8 @@ public class PngImage {
                 int dy = getInt(is);
                 int unit = is.read();
                 if (unit == 1) {
-                    dpiX = (int)((float)dx * 0.0254f + 0.5f);
-                    dpiY = (int)((float)dy * 0.0254f + 0.5f);
+                    dpiX = (int)(dx * 0.0254f + 0.5f);
+                    dpiY = (int)(dy * 0.0254f + 0.5f);
                 }
                 else {
                     if (dy != 0)
@@ -363,14 +363,14 @@ public class PngImage {
                 }
             }
             else if (cHRM.equals(marker)) {
-                xW = (float)getInt(is) / 100000f;
-                yW = (float)getInt(is) / 100000f;
-                xR = (float)getInt(is) / 100000f;
-                yR = (float)getInt(is) / 100000f;
-                xG = (float)getInt(is) / 100000f;
-                yG = (float)getInt(is) / 100000f;
-                xB = (float)getInt(is) / 100000f;
-                yB = (float)getInt(is) / 100000f;
+                xW = getInt(is) / 100000f;
+                yW = getInt(is) / 100000f;
+                xR = getInt(is) / 100000f;
+                yR = getInt(is) / 100000f;
+                xG = getInt(is) / 100000f;
+                yG = getInt(is) / 100000f;
+                xB = getInt(is) / 100000f;
+                yB = getInt(is) / 100000f;
                 hasCHRM = !(Math.abs(xW)<0.0001f||Math.abs(yW)<0.0001f||Math.abs(xR)<0.0001f||Math.abs(yR)<0.0001f||Math.abs(xG)<0.0001f||Math.abs(yG)<0.0001f||Math.abs(xB)<0.0001f||Math.abs(yB)<0.0001f);
             }
             else if (sRGB.equals(marker)) {
@@ -390,7 +390,7 @@ public class PngImage {
             else if (gAMA.equals(marker)) {
                 int gm = getInt(is);
                 if (gm != 0) {
-                    gamma = 100000f / (float)gm;
+                    gamma = 100000f / gm;
                     if (!hasCHRM) {
                         xW = 0.3127f;
                         yW = 0.329f;

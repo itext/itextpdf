@@ -163,7 +163,7 @@ public class MetaState {
                 if (style != MetaPen.PS_NULL) {
                     Color color = currentPen.getColor();
                     cb.setColorStroke(color);
-                    cb.setLineWidth(Math.abs((float)currentPen.getPenWidth() * scalingX / extentWx));
+                    cb.setLineWidth(Math.abs(currentPen.getPenWidth() * scalingX / extentWx));
                     switch (style) {
                         case MetaPen.PS_DASH:
                             cb.setLineDash(18, 6, 0);

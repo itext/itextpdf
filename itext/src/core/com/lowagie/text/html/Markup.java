@@ -340,7 +340,7 @@ public class Markup {
 	    if (s == null)
 	        return null;
 	    s = s.toLowerCase().trim();
-	    Color c = (Color)WebColors.getRGBColor(s);
+	    Color c = WebColors.getRGBColor(s);
 	    if (c != null)
 	        return c;
 	    try {

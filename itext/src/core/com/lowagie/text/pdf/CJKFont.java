@@ -203,7 +203,7 @@ class CJKFont extends BaseFont {
      * @return the width in normalized 1000 units
      */
     public int getWidth(int char1) {
-        int c = (int)char1;
+        int c = char1;
         if (!cidDirect)
             c = translationMap[c];
         int v;

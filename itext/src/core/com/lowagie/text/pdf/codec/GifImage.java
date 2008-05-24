@@ -451,7 +451,7 @@ public class GifImage {
                         }
                         bi = 0;
                     }
-                    datum += (((int) block[bi]) & 0xff) << bits;
+                    datum += (block[bi] & 0xff) << bits;
                     bits += 8;
                     bi++;
                     count--;
@@ -491,7 +491,7 @@ public class GifImage {
                     pixelStack[top++] = suffix[code];
                     code = prefix[code];
                 }
-                first = ((int) suffix[code]) & 0xff;
+                first = suffix[code] & 0xff;
                 
                 //  Add a new string to the string table,
                 

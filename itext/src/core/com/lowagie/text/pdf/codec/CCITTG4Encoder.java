@@ -229,7 +229,7 @@ public class CCITTG4Encoder {
          * Check partial byte on lhs.
          */
         if (bits > 0 && (n = (bs & 7)) != 0) {
-            span = oneruns[((int)bp[pos] << n) & 0xff];
+            span = oneruns[(bp[pos] << n) & 0xff];
             if (span > 8-n)		/* table value too generous */
                 span = 8-n;
             if (span > bits)	/* constrain span to bit range */
@@ -269,7 +269,7 @@ public class CCITTG4Encoder {
          * Check partial byte on lhs.
          */
         if (bits > 0 && (n = (bs & 7)) != 0) {
-            span = zeroruns[((int)bp[pos] << n) & 0xff];
+            span = zeroruns[(bp[pos] << n) & 0xff];
             if (span > 8-n)		/* table value too generous */
                 span = 8-n;
             if (span > bits)	/* constrain span to bit range */

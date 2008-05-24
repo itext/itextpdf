@@ -483,7 +483,7 @@ public class BarcodePDF417 {
             for (k = retLast; k >= 0; --k)
                 codewords[ret + k] *= 256;
             // add the digit
-            codewords[ret + retLast] += (int)text[ni] & 0xff;
+            codewords[ret + retLast] += text[ni] & 0xff;
             // propagate carry
             for (k = retLast; k > 0; --k) {
                 codewords[ret + k - 1] += codewords[ret + k] / 900;
@@ -503,7 +503,7 @@ public class BarcodePDF417 {
             size = length - k < 44 ? length - k : 6;
             if (size < 6) {
                 for (j = 0; j < size; ++j)
-                    codewords[cwPtr++] = (int)text[k + j] & 0xff;
+                    codewords[cwPtr++] = text[k + j] & 0xff;
             }
             else {
                 byteCompaction6(k);

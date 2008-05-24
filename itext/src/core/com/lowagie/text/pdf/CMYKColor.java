@@ -69,7 +69,7 @@ public class CMYKColor extends ExtendedColor {
      * @param intBlack
      */
     public CMYKColor(int intCyan, int intMagenta, int intYellow, int intBlack) {
-        this((float)intCyan / 255f, (float)intMagenta / 255f, (float)intYellow / 255f, (float)intBlack / 255f);
+        this(intCyan / 255f, intMagenta / 255f, intYellow / 255f, intBlack / 255f);
     }
 
     /**

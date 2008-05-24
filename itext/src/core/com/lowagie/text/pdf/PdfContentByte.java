@@ -1571,7 +1571,7 @@ public class PdfContentByte {
         content.append_i('(');
         for (int k = 0; k < b.length; ++k) {
             byte c = b[k];
-            switch ((int)c) {
+            switch (c) {
                 case '\r':
                     content.append("\\r");
                     break;

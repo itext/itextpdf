@@ -241,7 +241,7 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
             char c = cc[k];
             if (c < ' ') {
                 buf.append('\\');
-                String octal = "00" + Integer.toOctalString((int)c);
+                String octal = "00" + Integer.toOctalString(c);
                 buf.append(octal.substring(octal.length() - 3));
             }
             else if (c == '\\')
