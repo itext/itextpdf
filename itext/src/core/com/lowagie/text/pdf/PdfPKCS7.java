@@ -861,7 +861,7 @@ public class PdfPKCS7 {
                     v.add(new DERObjectIdentifier(ID_ADBE_REVOCATION));
                     ASN1EncodableVector v2 = new ASN1EncodableVector();
                     for (Iterator i = crls.iterator();i.hasNext();) {
-                        ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream((((X509CRL)i.next()).getEncoded())));
+                        ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream(((X509CRL)i.next()).getEncoded()));
                         v2.add(t.readObject());
                     }
                     v.add(new DERSet(new DERSequence(new DERTaggedObject(true, 0, new DERSequence(v2)))));
@@ -889,7 +889,7 @@ public class PdfPKCS7 {
             if (!crls.isEmpty()) {
                 v = new ASN1EncodableVector();
                 for (Iterator i = crls.iterator();i.hasNext();) {
-                    ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream((((X509CRL)i.next()).getEncoded())));
+                    ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream(((X509CRL)i.next()).getEncoded()));
                     v.add(t.readObject());
                 }
                 DERSet dercrls = new DERSet(v);
@@ -967,7 +967,7 @@ public class PdfPKCS7 {
                 v.add(new DERObjectIdentifier(ID_ADBE_REVOCATION));
                 ASN1EncodableVector v2 = new ASN1EncodableVector();
                 for (Iterator i = crls.iterator();i.hasNext();) {
-                    ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream((((X509CRL)i.next()).getEncoded())));
+                    ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream(((X509CRL)i.next()).getEncoded()));
                     v2.add(t.readObject());
                 }
                 v.add(new DERSet(new DERSequence(new DERTaggedObject(true, 0, new DERSequence(v2)))));

@@ -1300,9 +1300,9 @@ public class CFFFontSubset extends CFFFont {
         int currentStringsOffset = stringOffsets[stringOffsets.length-1]
         - stringsBaseOffset;
         //l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
-        currentStringsOffset += ("Adobe").length();
+        currentStringsOffset += "Adobe".length();
         OutputList.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
-        currentStringsOffset += ("Identity").length();
+        currentStringsOffset += "Identity".length();
         OutputList.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
         currentStringsOffset += fdFontName.length();
         OutputList.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));

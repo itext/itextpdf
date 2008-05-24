@@ -576,8 +576,8 @@ public class FontFactoryImp {
             }
             else if (path.toLowerCase().endsWith(".afm") || path.toLowerCase().endsWith(".pfm")) {
                 BaseFont bf = BaseFont.createFont(path, BaseFont.CP1252, false);
-                String fullName = (bf.getFullFontName()[0][3]).toLowerCase();
-                String familyName = (bf.getFamilyFontName()[0][3]).toLowerCase();
+                String fullName = bf.getFullFontName()[0][3].toLowerCase();
+                String familyName = bf.getFamilyFontName()[0][3].toLowerCase();
                 String psName = bf.getPostscriptFontName().toLowerCase();
                 registerFamily(familyName, fullName, null);
                 trueTypeFonts.setProperty(psName, path);

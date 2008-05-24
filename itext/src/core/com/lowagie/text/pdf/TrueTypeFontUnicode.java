@@ -377,7 +377,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
 			}
             if (subset || subsetRanges != null) {
                 CFFFontSubset cff = new CFFFontSubset(new RandomAccessFileOrArray(b),longTag);
-                b = cff.Process( (cff.getNames())[0] );
+                b = cff.Process(cff.getNames()[0]);
             }
 			pobj = new StreamFont(b, "CIDFontType0C");
 			obj = writer.addToBody(pobj);
