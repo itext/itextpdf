@@ -121,6 +121,8 @@ public class PdfAnnotation extends PdfDictionary {
     public static final int MARKUP_UNDERLINE = 1;
     /** attributevalue */
     public static final int MARKUP_STRIKEOUT = 2;
+    /** attributevalue */
+    public static final int MARKUP_SQUIGGLY = 3;
     
     protected PdfWriter writer;
     protected PdfIndirectReference reference;
@@ -369,12 +371,15 @@ public class PdfAnnotation extends PdfDictionary {
             case MARKUP_STRIKEOUT:
                 name = PdfName.STRIKEOUT;
                 break;
+            case MARKUP_SQUIGGLY:
+                name = PdfName.SQUIGGLY;
+                break;
         }
         annot.put(PdfName.SUBTYPE, name);
         annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         PdfArray array = new PdfArray();
         for (int k = 0; k < quadPoints.length; ++k)
-            array.add(new PdfNumber(quadPoints[k]));
+        	array.add(new PdfNumber(quadPoints[k]));
         annot.put(PdfName.QUADPOINTS, array);
         return annot;
     }

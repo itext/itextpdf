@@ -889,6 +889,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName SQUARE = new PdfName("Square");
     /** A name */
+    public static final PdfName SQUIGGLY = new PdfName("Squiggly");
+    /** A name */
     public static final PdfName ST = new PdfName("St");
     /** A name */
     public static final PdfName STAMP = new PdfName("Stamp");
