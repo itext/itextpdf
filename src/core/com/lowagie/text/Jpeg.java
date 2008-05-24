@@ -248,8 +248,8 @@ public class Jpeg extends Image {
                             dpiY = dy;
                         }
                         else if (units == 2) {
-                            dpiX = (int)((float)dx * 2.54f + 0.5f);
-                            dpiY = (int)((float)dy * 2.54f + 0.5f);
+                            dpiX = (int)(dx * 2.54f + 0.5f);
+                            dpiY = (int)(dy * 2.54f + 0.5f);
                         }
                         Utilities.skip(is, len - 2 - bcomp.length - 7);
                         continue;

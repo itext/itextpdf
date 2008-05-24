@@ -528,8 +528,7 @@ public class Chunk implements Element {
 			attributes = new HashMap();
 		Object obj[] = {
 				color,
-				new float[] { thickness, thicknessMul, yPosition, yPositionMul,
-						(float) cap } };
+				new float[] { thickness, thicknessMul, yPosition, yPositionMul, cap } };
 		Object unders[][] = Utilities.addToArray((Object[][]) attributes.get(UNDERLINE),
 				obj);
 		return setAttribute(UNDERLINE, unders);

@@ -315,7 +315,7 @@ public class SAXiTextHandler extends DefaultHandler {
             float widths[] = table.getProportionalWidths();
             for (int i = 0; i < widths.length; i++) {
                 if (widths[i] == 0) {
-                    widths[i] = 100.0f / (float) widths.length;
+                    widths[i] = 100.0f / widths.length;
                 }
             }
             try {

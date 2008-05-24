@@ -160,7 +160,7 @@ class FontDetails {
                 b = baseFont.convertToBytes(text);
                 int len = b.length;
                 for (int k = 0; k < len; ++k)
-                    shortTag[((int)b[k]) & 0xff] = 1;
+                    shortTag[b[k] & 0xff] = 1;
                 break;
             }
             case BaseFont.FONT_TYPE_CJK: {
@@ -199,7 +199,7 @@ class FontDetails {
                                 k++;
                             }
                             else {
-                                val = (int)text.charAt(k);
+                                val = text.charAt(k);
                             }
                             metrics = ttu.getMetricsTT(val);
                             if (metrics == null)

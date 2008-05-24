@@ -1155,14 +1155,14 @@ public class PdfName extends PdfObject implements Comparable{
                 case '/':
                 case '#':
                     pdfName.append('#');
-                    pdfName.append(Integer.toString((int) character, 16));
+                    pdfName.append(Integer.toString(character, 16));
                     break;
                 default:
                     if (character > 126 || character < 32) {
                         pdfName.append('#');
                         if (character < 16)
                             pdfName.append('0');
-                        pdfName.append(Integer.toString((int) character, 16));
+                        pdfName.append(Integer.toString(character, 16));
                     }
                     else
                         pdfName.append(character);

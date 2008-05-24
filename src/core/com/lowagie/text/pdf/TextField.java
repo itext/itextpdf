@@ -96,7 +96,7 @@ public class TextField extends BaseField {
             return false;
         char[] cc = text.toCharArray();
         for (int k = 0; k < cc.length; ++k) {
-            int c = (int)cc[k];
+            int c = cc[k];
             if (c >= 0x590 && c < 0x0780)
                 return true;
         }

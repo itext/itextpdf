@@ -311,10 +311,10 @@ class Type1Font extends BaseFont
  */
     public int getKerning(int char1, int char2)
     {
-        String first = GlyphList.unicodeToName((int)char1);
+        String first = GlyphList.unicodeToName(char1);
         if (first == null)
             return 0;
-        String second = GlyphList.unicodeToName((int)char2);
+        String second = GlyphList.unicodeToName(char2);
         if (second == null)
             return 0;
         Object obj[] = (Object[])KernPairs.get(first);
@@ -779,10 +779,10 @@ class Type1Font extends BaseFont
      * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
      */
     public boolean setKerning(int char1, int char2, int kern) {
-        String first = GlyphList.unicodeToName((int)char1);
+        String first = GlyphList.unicodeToName(char1);
         if (first == null)
             return false;
-        String second = GlyphList.unicodeToName((int)char2);
+        String second = GlyphList.unicodeToName(char2);
         if (second == null)
             return false;
         Object obj[] = (Object[])KernPairs.get(first);

@@ -118,7 +118,7 @@ public class NUp extends AbstractTool {
             	unitSize = new Rectangle(unitSize.getHeight() / 2, unitSize.getWidth());
             }
             int n = (int)Math.pow(2, pow2);
-            int r = (int)Math.pow(2, (int)pow2 / 2);
+            int r = (int)Math.pow(2, pow2 / 2);
             int c = n / r;
 			// step 1: creation of a document-object
 			Document document = new Document(newSize, 0, 0, 0, 0);

@@ -247,7 +247,7 @@ public class TernaryTree implements Cloneable, Serializable {
     public static int strcmp(String str, char[] a, int start) {
         int i, d, len = str.length();
         for (i = 0; i < len; i++) {
-            d = (int)str.charAt(i) - a[start + i];
+            d = str.charAt(i) - a[start + i];
             if (d != 0) {
                 return d;
             }
@@ -256,7 +256,7 @@ public class TernaryTree implements Cloneable, Serializable {
         }
         }
         if (a[start + i] != 0) {
-            return (int)-a[start + i];
+            return -a[start + i];
         }
         return 0;
 

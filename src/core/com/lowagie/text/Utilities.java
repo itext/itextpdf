@@ -125,8 +125,8 @@ public class Utilities {
 	                bf.append(c);
 	                continue;
 	            }
-	            int a0 = PRTokeniser.getHex((int)s[k + 1]);
-	            int a1 = PRTokeniser.getHex((int)s[k + 2]);
+	            int a0 = PRTokeniser.getHex(s[k + 1]);
+	            int a1 = PRTokeniser.getHex(s[k + 2]);
 	            if (a0 < 0 || a1 < 0) {
 	                bf.append(c);
 	                continue;

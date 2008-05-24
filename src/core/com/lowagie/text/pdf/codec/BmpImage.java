@@ -211,7 +211,7 @@ public class BmpImage {
         BmpImage bmp = new BmpImage(is, noHeader, size);
         try {
             Image img = bmp.getImage();
-            img.setDpi((int)((double)bmp.xPelsPerMeter * 0.0254 + 0.5), (int)((double)bmp.yPelsPerMeter * 0.0254 + 0.5));
+            img.setDpi((int)(bmp.xPelsPerMeter * 0.0254d + 0.5d), (int)(bmp.yPelsPerMeter * 0.0254d + 0.5d));
             img.setOriginalType(Image.ORIGINAL_BMP);
             return img;
         }
@@ -800,7 +800,7 @@ public class BmpImage {
     private Image read1Bit(int paletteEntries) throws IOException, BadElementException {
         byte bdata[] = new byte[((width + 7) / 8) * height];
         int padding = 0;
-        int bytesPerScanline = (int)Math.ceil((double)width/8.0);
+        int bytesPerScanline = (int)Math.ceil(width/8.0d);
         
         int remainder = bytesPerScanline % 4;
         if (remainder != 0) {
@@ -848,7 +848,7 @@ public class BmpImage {
         // Padding bytes at the end of each scanline
         int padding = 0;
         
-        int bytesPerScanline = (int)Math.ceil((double)width/2.0);
+        int bytesPerScanline = (int)Math.ceil(width/2.0d);
         int remainder = bytesPerScanline % 4;
         if (remainder != 0) {
             padding = 4 - remainder;
@@ -1275,7 +1275,7 @@ public class BmpImage {
         int b2 = readUnsignedByte(stream);
         int b3 = readUnsignedByte(stream);
         int b4 = readUnsignedByte(stream);
-        long l = (long)((b4 << 24) | (b3 << 16) | (b2 << 8) | b1);
+        long l = (b4 << 24) | (b3 << 16) | (b2 << 8) | b1;
         return l & 0xffffffff;
     }
     

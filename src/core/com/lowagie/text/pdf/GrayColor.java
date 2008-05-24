@@ -63,7 +63,7 @@ public class GrayColor extends ExtendedColor {
     public static final GrayColor GRAYWHITE = new GrayColor(1f);
 
     public GrayColor(int intGray) {
-        this((float)intGray / 255f);
+        this(intGray / 255f);
     }
 
     public GrayColor(float floatGray) {

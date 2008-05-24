@@ -35,7 +35,7 @@ public class PdfCollectionSort extends PdfDictionary {
 	 * @param ascending	true is the default, use false for descending order
 	 */
 	public void setSortOrder(boolean ascending) {
-		PdfObject o = (PdfObject)get(PdfName.S);
+		PdfObject o = get(PdfName.S);
 		if (o instanceof PdfName) {
 			put(PdfName.A, new PdfBoolean(ascending));
 		}
@@ -49,7 +49,7 @@ public class PdfCollectionSort extends PdfDictionary {
 	 * @param ascending	an array with every element corresponding with a name of a field.
 	 */
 	public void setSortOrder(boolean[] ascending) {
-		PdfObject o = (PdfObject)get(PdfName.S);
+		PdfObject o = get(PdfName.S);
 		if (o instanceof PdfArray) {
 			if (((PdfArray)o).size() != ascending.length) {
 				throw new IllegalArgumentException("The number of booleans in this array doesn't correspond with the number of fields.");

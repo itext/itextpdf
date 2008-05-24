@@ -635,15 +635,15 @@ public abstract class BaseFont {
                     char uni = (char)Integer.parseInt(tok.nextToken(), 16);
                     int orderK;
                     if (order.startsWith("'"))
-                        orderK = (int)order.charAt(1);
+                        orderK = order.charAt(1);
                     else
                         orderK = Integer.parseInt(order);
                     orderK %= 256;
-                    specialMap.put((int)uni, orderK);
+                    specialMap.put(uni, orderK);
                     differences[orderK] = name;
                     unicodeDifferences[orderK] = uni;
-                    widths[orderK] = getRawWidth((int)uni, name);
-                    charBBoxes[orderK] = getRawCharBBox((int)uni, name);
+                    widths[orderK] = getRawWidth(uni, name);
+                    charBBoxes[orderK] = getRawCharBBox(uni, name);
                 }
             }
             else {
@@ -690,13 +690,13 @@ public abstract class BaseFont {
                 else {
                     c = '?';
                 }
-                name = GlyphList.unicodeToName((int)c);
+                name = GlyphList.unicodeToName(c);
                 if (name == null)
                     name = notdef;
                 differences[k] = name;
                 unicodeDifferences[k] = c;
-                widths[k] = getRawWidth((int)c, name);
-                charBBoxes[k] = getRawCharBBox((int)c, name);
+                widths[k] = getRawWidth(c, name);
+                charBBoxes[k] = getRawCharBBox(c, name);
             }
         }
     }
@@ -817,7 +817,7 @@ public abstract class BaseFont {
  */
     public float getDescentPoint(String text, float fontSize)
     {
-        return (float)getDescent(text) * 0.001f * fontSize;
+        return getDescent(text) * 0.001f * fontSize;
     }
     
 /**
@@ -829,7 +829,7 @@ public abstract class BaseFont {
  */
     public float getAscentPoint(String text, float fontSize)
     {
-        return (float)getAscent(text) * 0.001f * fontSize;
+        return getAscent(text) * 0.001f * fontSize;
     }
 // ia>    
     
@@ -841,7 +841,7 @@ public abstract class BaseFont {
      * @return the width in points
      */
     public float getWidthPointKerned(String text, float fontSize) {
-        float size = (float)getWidth(text) * 0.001f * fontSize;
+        float size = getWidth(text) * 0.001f * fontSize;
         if (!hasKernPairs())
             return size;
         int len = text.length() - 1;
@@ -860,7 +860,7 @@ public abstract class BaseFont {
      * @return the width in points
      */
     public float getWidthPoint(String text, float fontSize) {
-        return (float)getWidth(text) * 0.001f * fontSize;
+        return getWidth(text) * 0.001f * fontSize;
     }
     
     /**
@@ -888,8 +888,8 @@ public abstract class BaseFont {
             int length = text.length();
             for (int k = 0; k < length; ++k) {
                 char c = text.charAt(k);
-                if (specialMap.containsKey((int)c))
-                    b[ptr++] = (byte)specialMap.get((int)c);
+                if (specialMap.containsKey(c))
+                    b[ptr++] = (byte)specialMap.get(c);
             }
             if (ptr < length) {
                 byte[] b2 = new byte[ptr];

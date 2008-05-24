@@ -94,8 +94,8 @@ public class PolylineShapeIterator implements PathIterator {
 			throw new NoSuchElementException("line iterator out of bounds");
 		}
 		int type = (index==0)?SEG_MOVETO:SEG_LINETO;
-		coords[0] = (double) poly.x[index];
-		coords[1] = (double) poly.y[index];
+		coords[0] = poly.x[index];
+		coords[1] = poly.y[index];
 		if (affine != null) {
 			affine.transform(coords, 0, coords, 0, 1);
 		}
@@ -125,8 +125,8 @@ public class PolylineShapeIterator implements PathIterator {
 			throw new NoSuchElementException("line iterator out of bounds");
 		}
 		int type = (index==0)?SEG_MOVETO:SEG_LINETO;
-		coords[0] = (float) poly.x[index];
-		coords[1] = (float) poly.y[index];
+		coords[0] = poly.x[index];
+		coords[1] = poly.y[index];
 		if (affine != null) {
 			affine.transform(coords, 0, coords, 0, 1);
 		}

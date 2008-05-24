@@ -1068,7 +1068,7 @@ public class CFFFont {
             seek(nameOffsets[j]);
             fonts[j].name = "";
             for (int k=nameOffsets[j]; k<nameOffsets[j+1]; k++) {
-                fonts[j].name += (char)getCard8();
+                fonts[j].name += getCard8();
             }
             //System.err.println("name["+j+"]=<"+fonts[j].name+">");
         }
