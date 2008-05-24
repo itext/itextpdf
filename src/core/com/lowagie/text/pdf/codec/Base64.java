@@ -993,11 +993,9 @@ public class Base64 {
         }   // end try
         catch( java.io.IOException e ) {
             e.printStackTrace();
-            obj = null;
         }   // end catch
         catch( java.lang.ClassNotFoundException e ) {
             e.printStackTrace();
-            obj = null;
         }   // end catch
         finally {
             try{ bais.close(); } catch( Exception e ){}
