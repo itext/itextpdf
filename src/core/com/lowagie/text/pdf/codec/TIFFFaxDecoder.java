@@ -1105,7 +1105,12 @@ public class TIFFFaxDecoder {
                         
                     }
                 } else {
-                    throw new RuntimeException("Invalid code encountered while decoding 2D group 4 compressed data.");
+                	//micah_tessler@yahoo.com
+                	//Microsoft TIFF renderers seem to treat unknown codes as line-breaks
+                	//That is, they give up on the current line and move on to the next one
+                	//set bitOffset to w to move on to the next scan line.
+                	bitOffset = w;
+                	updatePointer(7 - bits);
                 }
             }
             
