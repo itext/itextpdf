@@ -121,7 +121,10 @@ public class PdfAnnotation extends PdfDictionary {
     public static final int MARKUP_UNDERLINE = 1;
     /** attributevalue */
     public static final int MARKUP_STRIKEOUT = 2;
-    /** attributevalue */
+    /**
+     * attributevalue
+     * @since 2.1.3
+     */
     public static final int MARKUP_SQUIGGLY = 3;
     
     protected PdfWriter writer;
