@@ -598,10 +598,6 @@ public class ElementFactory {
 				return new Annotation(llx, lly, urx, ury, file, Integer.parseInt(page));
 			}
 		}
-		if (title == null)
-			title = "";
-		if (text == null)
-			text = "";
-		return new Annotation(title, text, llx, lly, urx, ury);
+		return new Annotation("", "", llx, lly, urx, ury);
 	}
 }
