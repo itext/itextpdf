@@ -206,7 +206,7 @@ public class RtfImage extends RtfElement {
                 	final InputStream imageIn = image.getUrl().openStream();
                     if(imageType == Image.ORIGINAL_WMF) { //remove the placeable header first
                     	for(int k = 0; k < WMF_PLACEABLE_HEADER_SIZE; k++) {
-							if(imageIn.read() < 0) throw(new EOFException("while removing wmf placeable header"));
+							if(imageIn.read() < 0) throw new EOFException("while removing wmf placeable header");
 						}
                     }
                     bab.write(imageIn);

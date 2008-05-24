@@ -445,7 +445,7 @@ public class TIFFDirectory extends Object implements Serializable {
      */
     public byte getFieldAsByte(int tag, int index) {
         Integer i = (Integer)fieldIndex.get(new Integer(tag));
-        byte [] b = (fields[i.intValue()]).getAsBytes();
+        byte [] b = fields[i.intValue()].getAsBytes();
         return b[index];
     }
     

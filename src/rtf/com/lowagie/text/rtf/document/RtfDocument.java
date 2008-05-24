@@ -170,7 +170,7 @@ public class RtfDocument extends RtfElement {
                 	this.data = new RtfDiskCache();
                 	break;
                 default:
-                	throw(new RuntimeException("unknown"));
+                	throw new RuntimeException("unknown");
             }
     		
         } catch(IOException ioe) {
@@ -246,7 +246,7 @@ public class RtfDocument extends RtfElement {
     public void filterSpecialChar(final OutputStream out, final String str, final boolean useHex, final boolean softLineBreaks) throws IOException
     {
         if(out == null) {
-            throw(new NullPointerException("null OutpuStream"));
+            throw new NullPointerException("null OutpuStream");
         }
 
         final boolean alwaysUseUniCode = this.documentSettings.isAlwaysUseUnicode();

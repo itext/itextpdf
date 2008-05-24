@@ -831,9 +831,9 @@ public class CFFFont {
             int currentStringsOffset = stringOffsets[stringOffsets.length-1]
             - stringsBaseOffset;
             //l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
-            currentStringsOffset += ("Adobe").length();
+            currentStringsOffset += "Adobe".length();
             l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
-            currentStringsOffset += ("Identity").length();
+            currentStringsOffset += "Identity".length();
             l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
             currentStringsOffset += fdFontName.length();
             l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
