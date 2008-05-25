@@ -58,6 +58,8 @@ import com.lowagie.text.rtf.document.output.RtfNilOutputStream;
 import com.lowagie.text.rtf.headerfooter.RtfHeaderFooter;
 import com.lowagie.text.rtf.headerfooter.RtfHeaderFooterGroup;
 import com.lowagie.text.rtf.list.RtfList;
+import com.lowagie.text.rtf.list.RtfList;
+import com.lowagie.text.rtf.list.RtfListTable;
 import com.lowagie.text.rtf.list.RtfListTable;
 import com.lowagie.text.rtf.style.RtfColor;
 import com.lowagie.text.rtf.style.RtfColorList;
@@ -233,15 +235,14 @@ public class RtfDocumentHeader extends RtfElement {
     }
     
     /**
-     * Gets the number of the specified RtfList
+     * Gets the number of the specified RtfList2
      * 
-     * @param list The RtfList for which to get the number
+     * @param list The RtfList2 for which to get the number
      * @return The number of the list
      */
     public int getListNumber(RtfList list) {
         return this.listTable.getListNumber(list);
     }
-    
     /**
      * Gets the RtfParagraphStyle with the given style name.
      * 
@@ -328,5 +329,13 @@ public class RtfDocumentHeader extends RtfElement {
         } else {
             return new RtfHeaderFooterGroup(this.document, type);
         }
+    }
+    /**
+     * Get the <code>RtfListTable</code> object.
+     * 
+     * @return the ListTable object.
+     */
+    public RtfListTable getListTable() {
+    	return this.listTable;
     }
 }

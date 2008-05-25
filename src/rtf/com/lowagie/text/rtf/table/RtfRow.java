@@ -281,7 +281,7 @@ public class RtfRow extends RtfElement {
      */
     private void writeRowDefinition(final OutputStream result) throws IOException {
         result.write(ROW_BEGIN);
-        result.write('\n');
+        this.document.outputDebugLinebreak(result);
         result.write(ROW_WIDTH_STYLE);
         result.write(ROW_WIDTH);
         result.write(intToByteArray(this.width));
@@ -332,7 +332,7 @@ public class RtfRow extends RtfElement {
         result.write(ROW_CELL_PADDING_LEFT_STYLE);
         result.write(ROW_CELL_PADDING_RIGHT_STYLE);
         
-        result.write('\n');
+        this.document.outputDebugLinebreak(result);
         
         for(int i = 0; i < this.cells.size(); i++) {
             RtfCell rtfCell = (RtfCell) this.cells.get(i);
@@ -359,7 +359,7 @@ public class RtfRow extends RtfElement {
         }
 
         result.write(ROW_END);
-        result.write("\n".getBytes());
+        this.document.outputDebugLinebreak(result);
     }        
     
     /**

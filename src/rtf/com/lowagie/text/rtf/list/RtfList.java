@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2001, 2002, 2003, 2004, 2005 by Mark Hall
+ * Copyright 2008 Howard Shank (hgshank@yahoo.com)
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -52,7 +52,11 @@ package com.lowagie.text.rtf.list;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
+
+import org.omg.CORBA.portable.ApplicationException;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
@@ -78,156 +82,128 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * list declaration and the list data.
  *  
  * @version $Id$
- * @author Mark Hall (Mark.Hall@mail.room3b.eu)
- * @author Thomas Bickel (tmb99@inode.at)
- * @author Felix Satyaputra (f_satyaputra@yahoo.co.uk)
+ * @author Howard Shank (hgshank@yahoo.com)
+ * @since 2.1.3
  */
 public class RtfList extends RtfElement implements RtfExtendedElement {
 
+
     /**
-     * Constant for list level
+     * Constant for the list number
      */
-    private static final byte[] LIST_LEVEL = "\\listlevel".getBytes();
+    public static final byte[] LIST_NUMBER = "\\ls".getBytes();
+
     /**
-     * Constant for list level style old
+     * Constant for the list
      */
-    private static final byte[] LIST_LEVEL_TYPE = "\\levelnfc".getBytes();
+    private static final byte[] LIST = "\\list".getBytes();
     /**
-     * Constant for list level style new
+     * Constant for the list id
      */
-    private static final byte[] LIST_LEVEL_TYPE_NEW = "\\levelnfcn".getBytes();
+    public static final byte[] LIST_ID = "\\listid".getBytes();
     /**
-     * Constant for list level alignment old
+     * Constant for the list template id
      */
-    private static final byte[] LIST_LEVEL_ALIGNMENT = "\\leveljc".getBytes();
+    private static final byte[] LIST_TEMPLATE_ID = "\\listtemplateid".getBytes();
     /**
-     * Constant for list level alignment new
+     * Constant for the simple list
      */
-    private static final byte[] LIST_LEVEL_ALIGNMENT_NEW = "\\leveljcn".getBytes();
+    private static final byte[] LIST_SIMPLE = "\\listsimple".getBytes();
     /**
-     * Constant for list level start at
+     * Constant for the hybrid list
      */
-    private static final byte[] LIST_LEVEL_START_AT = "\\levelstartat".getBytes();
+    private static final byte[] LIST_HYBRID = "\\listhybrid".getBytes();
     /**
-     * Constant for list level text
+     * Constant to indicate if the list restarts at each section. Word 7 compatiblity
      */
-    private static final byte[] LIST_LEVEL_TEXT = "\\leveltext".getBytes();
+    private static final byte[] LIST_RESTARTHDN = "\\listrestarthdn".getBytes();
     /**
-     * Constant for the beginning of the list level numbered style
+     * Constant for the name of this list
      */
-    private static final byte[] LIST_LEVEL_STYLE_NUMBERED_BEGIN = "\\\'02\\\'".getBytes();
+    private static final byte[] LIST_NAME = "\\listname".getBytes();
     /**
-     * Constant for the end of the list level numbered style
+     * Constant for the identifier of the style of this list. Mutually exclusive with \\liststylename
      */
-    private static final byte[] LIST_LEVEL_STYLE_NUMBERED_END = ".;".getBytes();
+    private static final byte[] LIST_STYLEID = "\\liststyleid".getBytes();
     /**
-     * Constant for the beginning of the list level bulleted style
+     * Constant for the identifier of the style of this list. Mutually exclusive with \\liststyleid
      */
-    private static final byte[] LIST_LEVEL_STYLE_BULLETED_BEGIN = "\\\'01".getBytes();
-    /**
-     * Constant for the end of the list level bulleted style
-     */
-    private static final byte[] LIST_LEVEL_STYLE_BULLETED_END = ";".getBytes();
-    /**
-     * Constant for the beginning of the list level numbers
-     */
-    private static final byte[] LIST_LEVEL_NUMBERS_BEGIN = "\\levelnumbers".getBytes();
-    /**
-     * Constant for the list level numbers
-     */
-    private static final byte[] LIST_LEVEL_NUMBERS_NUMBERED = "\\\'01".getBytes();
-    /**
-     * Constant for the end of the list level numbers
-     */
-    private static final byte[] LIST_LEVEL_NUMBERS_END = ";".getBytes();
-    /**
-     * Constant for the first indentation
-     */
-    private static final byte[] LIST_LEVEL_FIRST_INDENT = "\\fi".getBytes();
-    /**
-     * Constant for the symbol indentation
-     */
-    private static final byte[] LIST_LEVEL_SYMBOL_INDENT = "\\tx".getBytes();
+    private static final byte[] LIST_STYLENAME = "\\liststylename".getBytes();
+
+    // character properties
     /**
      * Constant for the list level value
      */
-    private static final byte[] LIST_LEVEL_NUMBER = "\\ilvl".getBytes();
-    /**
-     * Constant for a tab character
-     */
-    private static final byte[] TAB = "\\tab".getBytes();
-    /**
+    public static final byte[] LIST_LEVEL_NUMBER = "\\ilvl".getBytes();
+    
+    
+	/**
      * Constant for the old list text
      */
-    private static final byte[] LIST_TEXT = "\\listtext".getBytes();
+    public static final byte[] LIST_TEXT = "\\listtext".getBytes();
     /**
      * Constant for the old list number end
      */
-    private static final byte[] LIST_NUMBER_END = ".".getBytes();
+    public static final byte[] LIST_NUMBER_END = ".".getBytes();
     
-    private static final int LIST_TYPE_BULLET = 0;
-    private static final int LIST_TYPE_NUMBERED = 1;
-    private static final int LIST_TYPE_UPPER_LETTERS = 2;
-    private static final int LIST_TYPE_LOWER_LETTERS = 3;
-    private static final int LIST_TYPE_UPPER_ROMAN = 4;
-    private static final int LIST_TYPE_LOWER_ROMAN = 5;
+    
+
+    /**
+     * Constant for a tab character
+     */
+    public static final byte[] TAB = "\\tab".getBytes();
     
     /**
      * The subitems of this RtfList
      */
     private ArrayList items;
+    
+    private RtfList parentList = null;
     /**
-     * The level of this RtfList
+     * The list id
      */
-    private int listLevel = 0;
-    /**
-     * The first indentation of this RtfList
-     */
-    private int firstIndent = 0;
-    /**
-     * The left indentation of this RtfList
-     */
-    private int leftIndent = 0;
-    /**
-     * The right indentation of this RtfList
-     */
-    private int rightIndent = 0;
-    /**
-     * The symbol indentation of this RtfList
-     */
-    private int symbolIndent = 0;
+    private int listID = -1;
+    
+    public static final int LIST_TYPE_NORMAL = 0;				/*  Normal list type */
+    public static final int LIST_TYPE_SIMPLE = 1;				/*  Simple list type */
+    public static final int LIST_TYPE_HYBRID = 2;				/*  Hybrid list type */
+    private int listType = LIST_TYPE_HYBRID;
+    
     /**
      * The list number of this RtfList
      */
-    private int listNumber = 1;
+    private int listNumber = -1;
+
     /**
-     * Whether this RtfList is numbered
+     * The RtfList2 lists managed by this RtfListTable
      */
-    private int listType = LIST_TYPE_BULLET;
+    private ArrayList listLevels = null;;
+
+    private RtfList parent = null;
     /**
-     * The number to start counting at
+     * Constructs an empty RtfList object.
+     * 
+     * @param doc The RtfDocument this RtfList belongs to
      */
-    private int listStartAt = 1;
+    public RtfList() {
+    	super(null);
+        createDefaultLevels();
+    }
+    
+    public void setDocument(RtfDocument doc) {
+    	this.document = doc;
+    	
+    }
     /**
-     * The RtfFont for numbered lists
+     * Constructs an empty RtfList object.
+     * 
+     * @param doc The RtfDocument this RtfList belongs to
      */
-    private RtfFont fontNumber;
-    /**
-     * The RtfFont for bulleted lists
-     */
-    private RtfFont fontBullet;
-    /**
-     * The alignment of this RtfList
-     */
-    private int alignment = Element.ALIGN_LEFT;
-    /**
-     * The parent List in multi-level lists.
-     */
-    private RtfList parentList = null;
-    /**
-     * The text to use as the bullet character
-     */
-    private String bulletCharacter = "\u00b7"; 
+    public RtfList(RtfDocument doc) {
+        super(doc);
+        createDefaultLevels();
+    }
+
     
     /**
      * Constructs a new RtfList for the specified List.
@@ -236,98 +212,97 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * @param list The List this RtfList is based on
      */
     public RtfList(RtfDocument doc, List list) {
+        // setup the listlevels
+        // Then, setup the list data below
+        
+        // setup 1 listlevel if it's a simple list
+        // setup 9 if it's a regular list
+        // setup 9 if it's a hybrid list (default)
         super(doc);
+
+        createDefaultLevels();
         
-        this.listNumber = document.getDocumentHeader().getListNumber(this);
+        this.items = new ArrayList();		// list content
+        RtfListLevel ll = (RtfListLevel)this.listLevels.get(0);
         
-        this.items = new ArrayList();
+        // get the list number or create a new one adding it to the table
+        this.listNumber = document.getDocumentHeader().getListNumber(this); 
+        
         if(list.getSymbolIndent() > 0 && list.getIndentationLeft() > 0) {
-            this.firstIndent = (int) (list.getSymbolIndent() * RtfElement.TWIPS_FACTOR * -1);
-            this.leftIndent = (int) ((list.getIndentationLeft() + list.getSymbolIndent()) * RtfElement.TWIPS_FACTOR);
+            ll.setFirstIndent((int) (list.getSymbolIndent() * RtfElement.TWIPS_FACTOR * -1));
+            ll.setLeftIndent((int) ((list.getIndentationLeft() + list.getSymbolIndent()) * RtfElement.TWIPS_FACTOR));
         } else if(list.getSymbolIndent() > 0) {
-            this.firstIndent = (int) (list.getSymbolIndent() * RtfElement.TWIPS_FACTOR * -1);
-            this.leftIndent = (int) (list.getSymbolIndent() * RtfElement.TWIPS_FACTOR);
+        	ll.setFirstIndent((int) (list.getSymbolIndent() * RtfElement.TWIPS_FACTOR * -1));
+        	ll.setLeftIndent((int) (list.getSymbolIndent() * RtfElement.TWIPS_FACTOR));
         } else if(list.getIndentationLeft() > 0) {
-            this.firstIndent = 0;
-            this.leftIndent = (int) (list.getIndentationLeft() * RtfElement.TWIPS_FACTOR);
+        	ll.setFirstIndent(0);
+        	ll.setLeftIndent((int) (list.getIndentationLeft() * RtfElement.TWIPS_FACTOR));
         } else {
-            this.firstIndent = 0;
-            this.leftIndent = 0;
+        	ll.setFirstIndent(0);
+        	ll.setLeftIndent(0);
         }
-        this.rightIndent = (int) (list.getIndentationRight() * RtfElement.TWIPS_FACTOR);
-        this.symbolIndent = (int) ((list.getSymbolIndent() + list.getIndentationLeft()) * RtfElement.TWIPS_FACTOR);
+        ll.setRightIndent((int) (list.getIndentationRight() * RtfElement.TWIPS_FACTOR));
+        ll.setSymbolIndent((int) ((list.getSymbolIndent() + list.getIndentationLeft()) * RtfElement.TWIPS_FACTOR));
+        ll.correctIndentation();
+        ll.setTentative(false);
         
-        if(list instanceof RomanList) {
-            if(list.isLowercase()) {
-                this.listType = LIST_TYPE_LOWER_ROMAN;
-            } else {
-                this.listType = LIST_TYPE_UPPER_ROMAN;
-            }
-        } else if(list.isNumbered()) {
-            this.listType = LIST_TYPE_NUMBERED;
-        } else if(list.isLettered()) {
-            if(list.isLowercase()) {
-                this.listType = LIST_TYPE_LOWER_LETTERS;
-            } else {
-                this.listType = LIST_TYPE_UPPER_LETTERS;
-            }
-        }
-        this.listStartAt = list.getFirst();// + 1;
-        if(this.listStartAt < 1) {
-            this.listStartAt = 1;
-        }
+        if (list instanceof RomanList) {
+			if (list.isLowercase()) {
+				ll.setListType(RtfListLevel.LIST_TYPE_LOWER_ROMAN);
+			} else {
+				ll.setListType(RtfListLevel.LIST_TYPE_UPPER_ROMAN);
+			}
+		} else if (list.isNumbered()) {
+			ll.setListType(RtfListLevel.LIST_TYPE_NUMBERED);
+		} else if (list.isLettered()) {
+			if (list.isLowercase()) {
+				ll.setListType(RtfListLevel.LIST_TYPE_LOWER_LETTERS);
+			} else {
+				ll.setListType(RtfListLevel.LIST_TYPE_UPPER_LETTERS);
+			}
+		} 
+		else {
+			ll.setBulletCharacter(list.getPreSymbol() + list.getSymbol().getContent() + list.getPostSymbol());
+			ll.setListType(RtfListLevel.LIST_TYPE_BULLET);
+		}
         
+        // now setup the actual list contents.
         for(int i = 0; i < list.getItems().size(); i++) {
             try {
                 Element element = (Element) list.getItems().get(i);
+                
                 if(element.type() == Element.CHUNK) {
                     element = new ListItem((Chunk) element);
                 }
                 if(element instanceof ListItem) {
-                    this.alignment = ((ListItem) element).getAlignment();
+                    ll.setAlignment(((ListItem) element).getAlignment());
                 }
                 RtfBasicElement[] rtfElements = doc.getMapper().mapElement(element);
                 for(int j = 0; j < rtfElements.length; j++) {
                     RtfBasicElement rtfElement = rtfElements[j];
                     if(rtfElement instanceof RtfList) {
-                        ((RtfList) rtfElement).setListNumber(listNumber);
-                        ((RtfList) rtfElement).setListLevel(listLevel + 1);
                         ((RtfList) rtfElement).setParent(this);
                     } else if(rtfElement instanceof RtfListItem) {
-                        ((RtfListItem) rtfElement).setParent(this);
-                        ((RtfListItem) rtfElement).inheritListSettings(listNumber, listLevel + 1);
+                        ((RtfListItem) rtfElement).setParent(ll);
                     }
+                    ll.setFontNumber( new RtfFont(document, new Font(Font.TIMES_ROMAN, 10, Font.NORMAL, new Color(0, 0, 0))) );
+                    if (list.getSymbol() != null && list.getSymbol().getFont() != null && !list.getSymbol().getContent().startsWith("-") && list.getSymbol().getContent().length() > 0) {
+                        // only set this to bullet symbol is not default
+                        ll.setBulletFont( list.getSymbol().getFont());
+                        ll.setBulletCharacter(list.getSymbol().getContent().substring(0, 1));
+                    } else {
+                    	ll.setBulletFont(new Font(Font.SYMBOL, 10, Font.NORMAL, new Color(0, 0, 0)));
+                    } 
                     items.add(rtfElement);
                 }
+
             } catch(DocumentException de) {
                 de.printStackTrace();
             }
         }
-        
-        fontNumber = new RtfFont(document, new Font(Font.TIMES_ROMAN, 10, Font.NORMAL, new Color(0, 0, 0)));
-        if (list.getSymbol() != null && list.getSymbol().getFont() != null && !list.getSymbol().getContent().startsWith("-") && list.getSymbol().getContent().length() > 0) {
-            // only set this to bullet symbol is not default
-            this.fontBullet = new RtfFont(document, list.getSymbol().getFont());
-            this.bulletCharacter = list.getSymbol().getContent().substring(0, 1);
-        } else {
-            this.fontBullet = new RtfFont(document, new Font(Font.SYMBOL, 10, Font.NORMAL, new Color(0, 0, 0)));
-        }        
     }
     
-    /**
-     * Write the indentation values for this <code>RtfList</code>.
-     * 
-     * @param result The <code>OutputStream</code> to write to.
-     * @throws IOException On i/o errors.
-     */
-    private void writeIndentation(final OutputStream result) throws IOException {
-        result.write(LIST_LEVEL_FIRST_INDENT);
-        result.write(intToByteArray(firstIndent));
-        result.write(RtfParagraphStyle.INDENT_LEFT);
-        result.write(intToByteArray(leftIndent));
-        result.write(RtfParagraphStyle.INDENT_RIGHT);
-        result.write(intToByteArray(rightIndent));    	
-    }
+
     
     /**
      * Writes the definition part of this list level
@@ -335,64 +310,46 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     public void writeDefinition(final OutputStream result) throws IOException
     {
         result.write(OPEN_GROUP);
-        result.write(LIST_LEVEL);
-        result.write(LIST_LEVEL_TYPE);
+        result.write(LIST);
+        result.write(LIST_TEMPLATE_ID);
+        result.write(intToByteArray(document.getRandomInt()));
         switch(this.listType) {
-            case LIST_TYPE_BULLET        : result.write(intToByteArray(23)); break;
-            case LIST_TYPE_NUMBERED      : result.write(intToByteArray(0)); break;
-            case LIST_TYPE_UPPER_LETTERS : result.write(intToByteArray(3)); break;
-            case LIST_TYPE_LOWER_LETTERS : result.write(intToByteArray(4)); break;
-            case LIST_TYPE_UPPER_ROMAN   : result.write(intToByteArray(1)); break;
-            case LIST_TYPE_LOWER_ROMAN   : result.write(intToByteArray(2)); break;
+        case LIST_TYPE_NORMAL:
+        	break;
+        case LIST_TYPE_SIMPLE:
+            result.write(LIST_SIMPLE);
+            result.write(intToByteArray(1)); 
+        	break;
+        case LIST_TYPE_HYBRID:
+            result.write(LIST_HYBRID);
+        	break;
+    	default:
+    		break;
         }
-        result.write(LIST_LEVEL_TYPE_NEW);
-        switch(this.listType) {
-            case LIST_TYPE_BULLET        : result.write(intToByteArray(23)); break;
-            case LIST_TYPE_NUMBERED      : result.write(intToByteArray(0)); break;
-            case LIST_TYPE_UPPER_LETTERS : result.write(intToByteArray(3)); break;
-            case LIST_TYPE_LOWER_LETTERS : result.write(intToByteArray(4)); break;
-            case LIST_TYPE_UPPER_ROMAN   : result.write(intToByteArray(1)); break;
-            case LIST_TYPE_LOWER_ROMAN   : result.write(intToByteArray(2)); break;
+        // TODO: Figure out hybrid because multi-level hybrid does not work.
+        // Seems hybrid is mixed type all single level - Simple = single level
+        // SIMPLE1/HYRBID
+        // 1. Line 1
+        // 2. Line 2
+        // MULTI-LEVEL LISTS Are Simple0 - 9 levels (0-8) all single digit
+        // 1. Line 1
+        // 1.1. Line 1.1
+        // 1.2. Line 1.2
+        // 2. Line 2
+        
+        this.document.outputDebugLinebreak(result);
+         
+        // write the listlevels here
+        for(int i = 0; i<listLevels.size(); i++) {
+        	((RtfListLevel)listLevels.get(i)).writeDefinition(result);
+            this.document.outputDebugLinebreak(result);
         }
-        result.write(LIST_LEVEL_ALIGNMENT);
-        result.write(intToByteArray(0));
-        result.write(LIST_LEVEL_ALIGNMENT_NEW);
-        result.write(intToByteArray(0));
-        result.write(LIST_LEVEL_START_AT);
-        result.write(intToByteArray(this.listStartAt));
-        result.write(OPEN_GROUP);
-        result.write(LIST_LEVEL_TEXT);
-        if(this.listType != LIST_TYPE_BULLET) {
-            result.write(LIST_LEVEL_STYLE_NUMBERED_BEGIN);
-            if(listLevel < 10) {
-                result.write(intToByteArray(0));
-            }
-            result.write(intToByteArray(listLevel));
-            result.write(LIST_LEVEL_STYLE_NUMBERED_END);
-        } else {
-            result.write(LIST_LEVEL_STYLE_BULLETED_BEGIN);
-            this.document.filterSpecialChar(result, this.bulletCharacter, false, false);
-            result.write(LIST_LEVEL_STYLE_BULLETED_END);
-        }
+        
+        result.write(LIST_ID);
+        result.write(intToByteArray(this.listID));
         result.write(CLOSE_GROUP);
-        result.write(OPEN_GROUP);
-        result.write(LIST_LEVEL_NUMBERS_BEGIN);
-        if(this.listType != LIST_TYPE_BULLET) {
-            result.write(LIST_LEVEL_NUMBERS_NUMBERED);
-        }
-        result.write(LIST_LEVEL_NUMBERS_END);
-        result.write(CLOSE_GROUP);
-        result.write(RtfFontList.FONT_NUMBER);
-        if(this.listType != LIST_TYPE_BULLET) {
-            result.write(intToByteArray(fontNumber.getFontNumber()));
-        } else {
-            result.write(intToByteArray(fontBullet.getFontNumber()));
-        }
-        writeIndentation(result);
-        result.write(LIST_LEVEL_SYMBOL_INDENT);
-        result.write(intToByteArray(this.leftIndent));
-        result.write(CLOSE_GROUP);
-        result.write("\n".getBytes());
+        this.document.outputDebugLinebreak(result);
+
         for(int i = 0; i < items.size(); i++) {
             RtfElement rtfElement = (RtfElement) items.get(i);
             if(rtfElement instanceof RtfList) {
@@ -405,118 +362,47 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             }
         }    	
     }
-
-
-    /**
-     * Writes the initialization part of the RtfList
-     * 
-     * @param result The <code>OutputStream</code> to write to
-     * @throws IOException On i/o errors.
-     */
-    protected void writeListBeginning(final OutputStream result) throws IOException {
-        result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
-        if(this.inTable) {
-            result.write(RtfParagraph.IN_TABLE);
-        }
-        switch (this.alignment) {
-            case Element.ALIGN_LEFT:
-                result.write(RtfParagraphStyle.ALIGN_LEFT);
-                break;
-            case Element.ALIGN_RIGHT:
-                result.write(RtfParagraphStyle.ALIGN_RIGHT);
-                break;
-            case Element.ALIGN_CENTER:
-                result.write(RtfParagraphStyle.ALIGN_CENTER);
-                break;
-            case Element.ALIGN_JUSTIFIED:
-            case Element.ALIGN_JUSTIFIED_ALL:
-                result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
-                break;
-        }
-        writeIndentation(result);
-        result.write(RtfFont.FONT_SIZE);
-        result.write(intToByteArray(fontNumber.getFontSize() * 2));
-        if(this.symbolIndent > 0) {
-            result.write("\\tx".getBytes());
-            result.write(intToByteArray(this.leftIndent));
-        }
-    }
-
-    /**
-     * Writes only the list number and list level number.
-     * 
-     * @param result The <code>OutputStream</code> to write to
-     * @throws IOException On i/o errors.
-     */
-    protected void writeListNumbers(final OutputStream result) throws IOException {
-        result.write(RtfListTable.LIST_NUMBER);
-        result.write(intToByteArray(listNumber));
-        if(listLevel > 0) {
-            result.write(LIST_LEVEL_NUMBER);
-            result.write(intToByteArray(listLevel));
-        }
-    }
     
     /**
      * Writes the content of the RtfList
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
-        if(this.listLevel == 0) {
-            correctIndentation();
-        }
-        
         if(!this.inTable) {
             result.write(OPEN_GROUP);
         }
         
         int itemNr = 0;
         for(int i = 0; i < items.size(); i++) {
-            RtfElement rtfElement = (RtfElement) items.get(i);
-            if(rtfElement instanceof RtfListItem) {
+        	
+            RtfElement thisRtfElement = (RtfElement) items.get(i);
+           //thisRtfElement.writeContent(result);
+            if(thisRtfElement instanceof RtfListItem) {
                 itemNr++;
-                result.write(OPEN_GROUP);
-                result.write(LIST_TEXT);
-                result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
-                if(this.inTable) {
-                    result.write(RtfParagraph.IN_TABLE);
+            	RtfListItem rtfElement = (RtfListItem)thisRtfElement;
+            	RtfListLevel listLevel =  rtfElement.getParent();
+                if(listLevel.getListLevel() == 0) {
+                    correctIndentation();
                 }
-                result.write(RtfFontList.FONT_NUMBER);
-                if(this.listType != LIST_TYPE_BULLET) {
-                    result.write(intToByteArray(fontNumber.getFontNumber()));
-                } else {
-                    result.write(intToByteArray(fontBullet.getFontNumber()));
-                }
-                writeIndentation(result);
-                result.write(DELIMITER);
-                if(this.listType != LIST_TYPE_BULLET) {
-                    switch(this.listType) {
-                        case LIST_TYPE_NUMBERED      : result.write(intToByteArray(itemNr)); break;
-                        case LIST_TYPE_UPPER_LETTERS : result.write(RomanAlphabetFactory.getUpperCaseString(itemNr).getBytes()); break;
-                        case LIST_TYPE_LOWER_LETTERS : result.write(RomanAlphabetFactory.getLowerCaseString(itemNr).getBytes()); break;
-                        case LIST_TYPE_UPPER_ROMAN   : result.write(RomanNumberFactory.getUpperCaseString(itemNr).getBytes()); break;
-                        case LIST_TYPE_LOWER_ROMAN   : result.write(RomanNumberFactory.getLowerCaseString(itemNr).getBytes()); break;
-                    }
-                    result.write(LIST_NUMBER_END);
-                } else {
-                    this.document.filterSpecialChar(result, this.bulletCharacter, true, false);
-                }
-                result.write(TAB);
-                result.write(CLOSE_GROUP);
+                
                 if(i == 0) {
-                    writeListBeginning(result);
+                	listLevel.writeListBeginning(result);
                     writeListNumbers(result);
                 }
+
+                writeListTextBlock(result, itemNr, listLevel);
+                
                 rtfElement.writeContent(result);
-                if(i < (items.size() - 1) || !this.inTable || this.listLevel > 0) { // TODO Fix no paragraph on last list item in tables
+                
+                if(i < (items.size() - 1) || !this.inTable || listLevel.getListType() > 0) { // TODO Fix no paragraph on last list item in tables
                     result.write(RtfParagraph.PARAGRAPH);
                 }
-                result.write("\n".getBytes());
-            } else if(rtfElement instanceof RtfList) {
-                rtfElement.writeContent(result);
-                writeListBeginning(result);
+                this.document.outputDebugLinebreak(result);
+            } else if(thisRtfElement instanceof RtfList) {
+            	((RtfList)thisRtfElement).writeContent(result);
+//            	((RtfList2)thisRtfElement).writeListBeginning(result);
                 writeListNumbers(result);
-                result.write("\n".getBytes());
+                this.document.outputDebugLinebreak(result);
             }
         }
         
@@ -526,45 +412,66 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         }
     }        
     
-    /**
-     * Gets the list level of this RtfList
-     * 
-     * @return Returns the list level.
-     */
-    public int getListLevel() {
-        return listLevel;
-    }
-    
-    /**
-     * Sets the list level of this RtfList. A list level > 0 will
-     * unregister this RtfList from the RtfListTable
-     * 
-     * @param listLevel The list level to set.
-     */
-    public void setListLevel(int listLevel) {
-        this.listLevel = listLevel;
-        if(this.listLevel != 0) {
-            document.getDocumentHeader().freeListNumber(this);
-            for(int i = 0; i < this.items.size(); i++) {
-                if(this.items.get(i) instanceof RtfList) {
-                    ((RtfList) this.items.get(i)).setListNumber(this.listNumber);
-                    ((RtfList) this.items.get(i)).setListLevel(this.listLevel + 1);
-                }
-            }
-        } else {
-            this.listNumber = document.getDocumentHeader().getListNumber(this);
+    protected void writeListTextBlock(final OutputStream result, int itemNr, RtfListLevel listLevel) 
+    throws IOException {
+    	result.write(OPEN_GROUP);
+        result.write(RtfList.LIST_TEXT);
+        result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+        if(this.inTable) {
+            result.write(RtfParagraph.IN_TABLE);
         }
+        result.write(RtfFontList.FONT_NUMBER);
+        if(listLevel.getListType() != RtfListLevel.LIST_TYPE_BULLET) {
+            result.write(intToByteArray(listLevel.getFontNumber().getFontNumber()));
+        } else {
+            result.write(intToByteArray(listLevel.getFontBullet().getFontNumber()));
+        }
+        listLevel.writeIndentation(result);
+        result.write(DELIMITER);
+        if(listLevel.getListType() != RtfListLevel.LIST_TYPE_BULLET) {
+            switch(listLevel.getListType()) {
+                case RtfListLevel.LIST_TYPE_NUMBERED      : result.write(intToByteArray(itemNr)); break;
+                case RtfListLevel.LIST_TYPE_UPPER_LETTERS : result.write(RomanAlphabetFactory.getUpperCaseString(itemNr).getBytes()); break;
+                case RtfListLevel.LIST_TYPE_LOWER_LETTERS : result.write(RomanAlphabetFactory.getLowerCaseString(itemNr).getBytes()); break;
+                case RtfListLevel.LIST_TYPE_UPPER_ROMAN   : result.write(RomanNumberFactory.getUpperCaseString(itemNr).getBytes()); break;
+                case RtfListLevel.LIST_TYPE_LOWER_ROMAN   : result.write(RomanNumberFactory.getLowerCaseString(itemNr).getBytes()); break;
+            }
+            result.write(LIST_NUMBER_END);
+        } else {
+            this.document.filterSpecialChar(result, listLevel.getBulletCharacter(), true, false);
+        }
+        result.write(TAB);
+        result.write(CLOSE_GROUP);
     }
-    
+
     /**
-     * Sets the parent RtfList of this RtfList
+     * Writes only the list number and list level number.
      * 
-     * @param parent The parent RtfList to use.
+     * @param result The <code>OutputStream</code> to write to
+     * @throws IOException On i/o errors.
      */
-    protected void setParent(RtfList parent) {
-        this.parentList = parent;
+    protected void writeListNumbers(final OutputStream result) throws IOException {
+        result.write(RtfList.LIST_NUMBER);
+        result.write(intToByteArray(listNumber));
     }
-    
+    /**
+     * Create a default set of listlevels
+     */
+    protected void createDefaultLevels() {
+        this.listLevels = new ArrayList();	// listlevels
+        for(int i=0; i<=8; i++) {
+            // create a list level
+            RtfListLevel ll = new RtfListLevel(this.document);
+            ll.setListType(RtfListLevel.LIST_TYPE_NUMBERED);
+        	ll.setFirstIndent(0);
+        	ll.setLeftIndent(0);
+        	ll.setLevelTextNumber(i);
+            ll.setTentative(true);
+            ll.correctIndentation();
+            this.listLevels.add(ll);
+        }
+
+    }
     /**
      * Gets the id of this list
      * 
@@ -614,9 +521,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * from the parent RtfList. Also calls correctIndentation on all child RtfLists.
      */
     protected void correctIndentation() {
-        if(this.parentList != null) {
-            this.leftIndent = this.leftIndent + this.parentList.getLeftIndent() + this.parentList.getFirstIndent();
-        }
+    	// TODO: Fix
+//        if(this.parentList != null) {
+//            this.leftIndent = this.leftIndent + this.parentList.getLeftIndent() + this.parentList.getFirstIndent();
+//        }
         for(int i = 0; i < this.items.size(); i++) {
             if(this.items.get(i) instanceof RtfList) {
                 ((RtfList) this.items.get(i)).correctIndentation();
@@ -626,21 +534,74 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         }
     }
 
-    /**
-     * Get the left indentation of this RtfList.
-     * 
-     * @return The left indentation.
-     */
-    private int getLeftIndent() {
-        return this.leftIndent;
-    }
-    
-    /**
-     * Get the first line indentation of this RtfList.
-     * 
-     * @return The first line indentation.
-     */
-    private int getFirstIndent() {
-        return this.firstIndent;
-    }
+
+	/**
+	 * Set the list ID number
+	 * @param id
+	 */
+	public void setID(int id) {
+		this.listID = id;
+	}
+	/**
+	 * Get the list ID number
+	 * @return
+	 */
+	public int getID() {
+		return this.listID;
+	}
+	/**
+	 * set the parent list for nested lists
+	 * @param parent
+	 */
+	public void setParent(RtfList parent) {
+		this.parent = parent;
+	}
+	/**
+	 * Get the parent list for nested lists
+	 * @return
+	 */
+	public RtfList getParent() {
+		return this.parent;
+	}
+
+	/**
+	 * @return the listType
+	 * @see RtfList#LIST_TYPE_NORMAL
+	 * @see RtfList#LIST_TYPE_SIMPLE
+	 * @see RtfList#LIST_TYPE_HYBRID
+	 */
+	public int getListType() {
+		return listType;
+	}
+
+	/**
+	 * @param listType the listType to set
+	 * @see RtfList#LIST_TYPE_NORMAL
+	 * @see RtfList#LIST_TYPE_SIMPLE
+	 * @see RtfList#LIST_TYPE_HYBRID
+	 */
+	public void setListType(int listType) throws InvalidParameterException {
+		if(listType == LIST_TYPE_NORMAL || 
+				listType == LIST_TYPE_SIMPLE || 
+				listType == LIST_TYPE_HYBRID ) {
+			this.listType = listType;
+		}
+		else {
+			throw new InvalidParameterException("Invalid listType value.");
+		}
+	}
+
+	/**
+	 * @return the parentList
+	 */
+	public RtfList getParentList() {
+		return parentList;
+	}
+
+	/**
+	 * @param parentList the parentList to set
+	 */
+	public void setParentList(RtfList parentList) {
+		this.parentList = parentList;
+	}
 }

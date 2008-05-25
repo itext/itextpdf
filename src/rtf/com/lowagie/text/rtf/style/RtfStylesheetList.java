@@ -152,17 +152,13 @@ public class RtfStylesheetList extends RtfElement implements RtfExtendedElement 
         result.write("{".getBytes());
         result.write("\\stylesheet".getBytes());
         result.write(RtfBasicElement.DELIMITER);
-        if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
-            result.write("\n".getBytes());
-        }
+        this.document.outputDebugLinebreak(result);
         Iterator it = this.styleMap.values().iterator();
         while(it.hasNext()) {
         	RtfParagraphStyle rps = (RtfParagraphStyle)it.next();
         	rps.writeDefinition(result);
         }
         result.write("}".getBytes());
-        if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
-            result.write('\n');
-        }    	
+        this.document.outputDebugLinebreak(result);  	
     }
 }

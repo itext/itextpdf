@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2001, 2002, 2003, 2004 by Mark Hall
+ * Copyright 2008 Howard Shank (hgshank@yahoo.com)
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -59,40 +59,18 @@ import com.lowagie.text.rtf.document.RtfDocument;
 
 
 /**
- * The RtfListTable manages all RtfLists in one RtfDocument. It also generates
- * the list and list override tables in the document header.
+ * The RtfListTable2 manages all RtfList2 objects and list override table in one RtfDocument.
  * 
  * @version $Id$
- * @author Mark Hall (Mark.Hall@mail.room3b.eu)
- * @author Thomas Bickel (tmb99@inode.at)
  * @author Howard Shank (hgshank@yahoo.com)
+ * @since 2.1.3
  */
 public class RtfListTable extends RtfElement implements RtfExtendedElement {
-
-    /**
-     * Constant for the list number
-     */
-    protected static final byte[] LIST_NUMBER = "\\ls".getBytes();
     /**
      * Constant for the list table
      */
     private static final byte[] LIST_TABLE = "\\*\\listtable".getBytes();
-    /**
-     * Constant for the list
-     */
-    private static final byte[] LIST = "\\list".getBytes();
-    /**
-     * Constant for the list template id
-     */
-    private static final byte[] LIST_TEMPLATE_ID = "\\listtemplateid".getBytes();
-    /**
-     * Constant for the hybrid list
-     */
-    private static final byte[] LIST_HYBRID = "\\listhybrid".getBytes();
-    /**
-     * Constant for the list id
-     */
-    private static final byte[] LIST_ID = "\\listid".getBytes();
+
     /**
      * Constant for the list override table
      */
@@ -106,20 +84,26 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
      */
     private static final byte[] LIST_OVERRIDE_COUNT = "\\listoverridecount".getBytes();
     
+
     /**
-     * The RtfLists managed by this RtfListTable
+     * The RtfList2 lists managed by this RtfListTable
      */
     private ArrayList lists;
+    /**
+     * The RtfPictureList lists managed by this RtfListTable
+     */
+    private ArrayList picturelists;
     
     /**
-     * Constructs a RtfListTable for a RtfDocument
+     * Constructs a RtfListTable2 for a RtfDocument
      * 
-     * @param doc The RtfDocument this RtfListTable belongs to
+     * @param doc The RtfDocument this RtfListTable2 belongs to
      */
     public RtfListTable(RtfDocument doc) {
         super(doc);
         
         this.lists = new ArrayList();
+        this.picturelists = new ArrayList();
     }
 
     /**
@@ -134,52 +118,55 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
      */
     public void writeDefinition(final OutputStream result) throws IOException
     {
-        final int[] listIds = new int[lists.size()];
         result.write(OPEN_GROUP);
         result.write(LIST_TABLE);
-        result.write("\n".getBytes());
+        this.document.outputDebugLinebreak(result);
+        
+        for(int i = 0; i < picturelists.size(); i++) {
+        	RtfPictureList l = (RtfPictureList)picturelists.get(i);
+//        	l.setID(document.getRandomInt());
+        	l.writeDefinition(result);
+        	this.document.outputDebugLinebreak(result);
+        }
+
         for(int i = 0; i < lists.size(); i++) {
-            result.write(OPEN_GROUP);
-            result.write(LIST);
-            result.write(LIST_TEMPLATE_ID);
-            result.write(intToByteArray(document.getRandomInt()));
-            result.write(LIST_HYBRID);
-            result.write("\n".getBytes());
-            final RtfList rList = (RtfList) lists.get(i); 
-            rList.writeDefinition(result);
-            result.write(LIST_ID);
-            listIds[i] = document.getRandomInt();
-            result.write(intToByteArray(listIds[i]));
-            result.write(CLOSE_GROUP);
-            result.write("\n".getBytes());
+        	RtfList l = (RtfList)lists.get(i);
+        	l.setID(document.getRandomInt());
+        	l.writeDefinition(result);
+        	this.document.outputDebugLinebreak(result);
         }
         result.write(CLOSE_GROUP);
-        result.write("\n".getBytes());
+        this.document.outputDebugLinebreak(result);
+        
         result.write(OPEN_GROUP);
         result.write(LIST_OVERRIDE_TABLE);
-        result.write("\n".getBytes());
+        this.document.outputDebugLinebreak(result);
+        
+        // list override index values are 1-based, not 0.
+        // valid list override index values \ls are 1 to 2000.
+        // if there are more then 2000 lists, the result is undefined.
         for(int i = 0; i < lists.size(); i++) {
             result.write(OPEN_GROUP);
             result.write(LIST_OVERRIDE);
-            result.write(LIST_ID);
-            result.write(intToByteArray(listIds[i]));
+            result.write(RtfList.LIST_ID);
+            result.write(intToByteArray( ((RtfList) lists.get(i)).getID() ));
             result.write(LIST_OVERRIDE_COUNT);
-            result.write(intToByteArray(0));
-            result.write(LIST_NUMBER);
-            result.write(intToByteArray(((RtfList) lists.get(i)).getListNumber()));
+            result.write(intToByteArray(0));	// is this correct? Spec says valid values are 1 or 9.
+            result.write(RtfList.LIST_NUMBER);
+            result.write(intToByteArray( ((RtfList) lists.get(i)).getListNumber()) );
             result.write(CLOSE_GROUP);
-            result.write("\n".getBytes());
+            this.document.outputDebugLinebreak(result);
         }
         result.write(CLOSE_GROUP);
-        result.write("\n".getBytes());    	
+        this.document.outputDebugLinebreak(result);
     }
 
     /**
-     * Gets the id of the specified RtfList. If the RtfList is not yet in the
-     * list of RtfLists, then it is added.
+     * Gets the id of the specified RtfList2. If the RtfList2 is not yet in the
+     * list of RtfList2, then it is added.
      * 
-     * @param list The RtfList for which to get the id.
-     * @return The id of the RtfList.
+     * @param list The RtfList2 for which to get the id.
+     * @return The id of the RtfList2.
      */
     public int getListNumber(RtfList list) {
         if(lists.contains(list)) {
@@ -191,9 +178,9 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
     }
     
     /**
-     * Remove a RtfList from the list of RtfLists
+     * Remove a RtfList2 from the list of RtfList2
      * 
-     * @param list The RtfList to remove.
+     * @param list The RtfList2 to remove.
      */
     public void freeListNumber(RtfList list) {
         int i = lists.indexOf(list);

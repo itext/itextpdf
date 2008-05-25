@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2001, 2002, 2003, 2004, 2005 by Mark Hall
+ * Copyright 2008 by Howard Shank (hgshank@yahoo.com)
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -61,35 +61,35 @@ import com.lowagie.text.rtf.text.RtfParagraph;
 
 
 /**
- * The RtfListItem acts as a wrapper for a ListItem.
+ * The RtfListItem2 acts as a wrapper for a ListItem.
  * 
  * @version $Id$
- * @author Mark Hall (Mark.Hall@mail.room3b.eu)
- * @author Thomas Bickel (tmb99@inode.at)
+ * @author Howard Shank (hgshank@yahoo.com)
+ * @since 2.1.3
  */
 public class RtfListItem extends RtfParagraph {
 
     /**
-     * The RtfList this RtfListItem belongs to.
+     * The RtfList2 this RtfListItem belongs to.
      */
-    private RtfList parentList = null;
+    private RtfListLevel parentList = null;
     /**
-     * Whether this RtfListItem contains further RtfLists.
+     * Whether this RtfListItem2 contains further RtfLists.
      */
     private boolean containsInnerList = false;
     
     /**
-     * Constructs a RtfListItem for a ListItem belonging to a RtfDocument.
+     * Constructs a RtfListItem2 for a ListItem belonging to a RtfDocument.
      * 
      * @param doc The RtfDocument this RtfListItem belongs to.
-     * @param listItem The ListItem this RtfListItem is based on.
+     * @param listItem The ListItem2 this RtfListItem2 is based on.
      */
     public RtfListItem(RtfDocument doc, ListItem listItem) {
         super(doc, listItem);
     }
     
     /**
-     * Writes the content of this RtfListItem.
+     * Writes the content of this RtfListItem2.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -111,20 +111,30 @@ public class RtfListItem extends RtfParagraph {
             }
             rtfElement.writeContent(result);
             if(rtfElement instanceof RtfList) {
-                this.parentList.writeListBeginning(result);
-                result.write("\\tab".getBytes());
+                switch(this.parentList.getLevelFollowValue()) {
+                case RtfListLevel.LIST_LEVEL_FOLLOW_NOTHING:
+                	break;
+                case RtfListLevel.LIST_LEVEL_FOLLOW_TAB:
+                    this.parentList.writeListBeginning(result);
+                    result.write(RtfList.TAB);
+                    break;
+                case RtfListLevel.LIST_LEVEL_FOLLOW_SPACE:
+                    this.parentList.writeListBeginning(result);
+                    result.write(" ".getBytes());
+                    break;
+                }
             }
         }
     }        
 
     /**
-     * Writes the definition of the first element in this RtfListItem that is
+     * Writes the definition of the first element in this RtfListItem2 that is
      * an instanceof {@link RtfList} to the given stream.<br> 
      * If this item does not contain a {@link RtfList} element nothing is written
      * and the method returns <code>false</code>.
      * 
      * @param out destination stream
-     * @return <code>true</code> if a RtfList definition was written, <code>false</code> otherwise
+     * @return <code>true</code> if a RtfList2 definition was written, <code>false</code> otherwise
      * @throws IOException
      */
     public boolean writeDefinition(OutputStream out) throws IOException
@@ -140,9 +150,10 @@ public class RtfListItem extends RtfParagraph {
         return false;
     }
     
+    private int level=0;
     /**
-     * Inherit the list settings from the parent list to RtfLists that
-     * are contained in this RtfListItem.
+     * Inherit the list settings from the parent list to RtfList2s that
+     * are contained in this RtfListItem2.
      * 
      * @param listNumber The list number to inherit.
      * @param listLevel The list level to inherit.
@@ -152,15 +163,15 @@ public class RtfListItem extends RtfParagraph {
             RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
             if(rtfElement instanceof RtfList) {
                 ((RtfList) rtfElement).setListNumber(listNumber);
-                ((RtfList) rtfElement).setListLevel(listLevel);
-                ((RtfList) rtfElement).setParent(this.parentList);
+                setLevel(listLevel);
+//                ((RtfList2) rtfElement).setParent(this.parentList);
             }
         }
     }
         
     /**
-     * Correct the indentation of RtfLists in this RtfListItem by adding left/first line indentation
-     * from the parent RtfList. Also calls correctIndentation on all child RtfLists.
+     * Correct the indentation of RtfLists in this RtfListItem2 by adding left/first line indentation
+     * from the parent RtfList2. Also calls correctIndentation on all child RtfLists.
      */
     protected void correctIndentation() {
         for(int i = 0; i < chunks.size(); i++) {
@@ -172,20 +183,41 @@ public class RtfListItem extends RtfParagraph {
     }
     
     /**
-     * Set the parent RtfList.
+     * Set the parent RtfList2.
      * 
-     * @param parentList The parent RtfList to use.
+     * @param parentList The parent RtfList2 to use.
      */
-    public void setParent(RtfList parentList) {
+    public void setParent(RtfListLevel parentList) {
         this.parentList = parentList;
     }
-
     /**
-     * Gets whether this RtfListItem contains further RtfLists.
+     * Set the parent RtfList2.
      * 
-     * @return Whether this RtfListItem contains further RtfLists.
+     * @param parentList The parent RtfList2 to use.
+     */
+    public RtfListLevel getParent() {
+        return this.parentList;
+    }
+    /**
+     * Gets whether this RtfListItem2 contains further RtfLists.
+     * 
+     * @return Whether this RtfListItem2 contains further RtfLists.
      */
     public boolean isContainsInnerList() {
         return this.containsInnerList;
     }
+
+	/**
+	 * @return the level
+	 */
+	public int getLevel() {
+		return level;
+	}
+
+	/**
+	 * @param level the level to set
+	 */
+	public void setLevel(int level) {
+		this.level = level;
+	}
 }

@@ -183,7 +183,7 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
         result.write(intToByteArray(marginTop));
         result.write(MARGIN_BOTTOM);
         result.write(intToByteArray(marginBottom));
-        result.write((byte)'\n');    	
+        this.document.outputDebugLinebreak(result);    	
     }
     
     /**
@@ -197,13 +197,13 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
             result.write(intToByteArray(pageWidth));
             result.write(SECTION_PAGE_HEIGHT);
             result.write(intToByteArray(pageHeight));
-            result.write((byte)'\n');
+            this.document.outputDebugLinebreak(result);
         } else {
             result.write(SECTION_PAGE_WIDTH);
             result.write(intToByteArray(pageWidth));
             result.write(SECTION_PAGE_HEIGHT);
             result.write(intToByteArray(pageHeight));
-            result.write((byte)'\n');
+            this.document.outputDebugLinebreak(result);
         }
         result.write(SECTION_MARGIN_LEFT);
         result.write(intToByteArray(marginLeft));

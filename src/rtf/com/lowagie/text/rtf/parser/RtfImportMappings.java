@@ -117,7 +117,7 @@ public class RtfImportMappings {
 	 * @param listNr The List number.
 	 * @param list The List.
 	 */
-	public void addList(String listNr, Color list) {
+	public void addList(String listNr, String list) {
 		this.listMappings.put(listNr, list);
 	}
 	/**
@@ -126,7 +126,7 @@ public class RtfImportMappings {
 	 * @param stylesheetListNr The Stylesheet List number.
 	 * @param list The StylesheetList.
 	 */
-	public void addStylesheetList(String stylesheetListNr, Color list) {
+	public void addStylesheetList(String stylesheetListNr, String list) {
 		this.stylesheetListMappings.put(stylesheetListNr, list);
 	}	
 	

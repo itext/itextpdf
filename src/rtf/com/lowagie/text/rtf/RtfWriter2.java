@@ -288,7 +288,7 @@ public class RtfWriter2 extends DocWriter {
         if(!this.open) {
             throw new DocumentException("The document must be open to import RTF documents.");
         }
-    	RtfParser rtfImport = new RtfParser();
+    	RtfParser rtfImport = new RtfParser(this.document);
     	if(events != null) {
     		for(int idx=0;idx<events.length;idx++) {
         		rtfImport.addListener(events[idx]);
@@ -337,7 +337,7 @@ public class RtfWriter2 extends DocWriter {
         if(!this.open) {
             throw new DocumentException("The document must be open to import RTF fragments.");
         }
-    	RtfParser rtfImport = new RtfParser();
+    	RtfParser rtfImport = new RtfParser(this.document);
     	if(events != null) {
     		for(int idx=0;idx<events.length;idx++) {
         		rtfImport.addListener(events[idx]);

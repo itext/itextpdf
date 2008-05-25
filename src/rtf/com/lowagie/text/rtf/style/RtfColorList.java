@@ -131,7 +131,7 @@ public class RtfColorList extends RtfElement implements RtfExtendedElement {
             color.writeDefinition(result);
         }
         result.write(CLOSE_GROUP);
-        result.write((byte)'\n');    	
+        this.document.outputDebugLinebreak(result);    	
     }
     
 

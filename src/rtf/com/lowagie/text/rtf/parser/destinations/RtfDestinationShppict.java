@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import com.lowagie.text.BadElementException;
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.rtf.direct.RtfDirectContent;
@@ -198,7 +199,8 @@ public class RtfDestinationShppict extends RtfDestination {
 	 */
 	private static final int PIXEL_TWIPS_FACTOR = 15;
 
-	ByteArrayOutputStream dataOS = null;
+	// Image data for import and conversion functions.
+	private ByteArrayOutputStream dataOS = null;
 
 	public RtfDestinationShppict() {
 		super(null);
@@ -241,6 +243,10 @@ public class RtfDestinationShppict extends RtfDestination {
 			return true;
 		}
 		if (this.rtfParser.isConvert()) {
+			if (dataOS != null) {
+				addImage();
+				dataOS = null;
+			}
 		}
 		return true;
 	}
@@ -284,16 +290,16 @@ public class RtfDestinationShppict extends RtfDestination {
 					/ PIXEL_TWIPS_FACTOR);
 			img.scaleAbsolute(this.width.floatValue() / PIXEL_TWIPS_FACTOR,
 					this.height.floatValue() / PIXEL_TWIPS_FACTOR);
-			img
-					.scalePercent(this.scaleX.floatValue(), this.scaleY
-							.floatValue());
+			img.scalePercent(this.scaleX.floatValue(), this.scaleY.floatValue());
 			//				img.setBorder(value);
 
 			try {
 				if (this.rtfParser.isImport()) {
-					RtfDocument rtfDoc = this.rtfParser.getRtfDocument();
-					RtfImage rtfImage = new RtfImage(rtfDoc, img);
-					rtfDoc.add(rtfImage);
+					Document doc = this.rtfParser.getDocument();
+					doc.add(img);
+//					RtfDocument rtfDoc = this.rtfParser.getRtfDocument();
+//					RtfImage rtfImage = new RtfImage(rtfDoc, img);
+//					rtfDoc.add(rtfImage);
 				}
 				if (this.rtfParser.isConvert()) {
 					this.rtfParser.getDocument().add(img);
@@ -304,7 +310,6 @@ public class RtfDestinationShppict extends RtfDestination {
 			}
 		}
 
-		//			data = new ByteBuffer();
 		dataFormat = FORMAT_HEXADECIMAL;
 		return true;
 	}
