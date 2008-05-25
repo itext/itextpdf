@@ -67,7 +67,7 @@ import com.lowagie.text.rtf.style.RtfParagraphStyle;
 import com.lowagie.text.rtf.text.RtfParagraph;
 
 /**
- * The RtfListLevel2 is a listlevel object in a list.
+ * The RtfListLevel is a listlevel object in a list.
  * 
  * @version $Id$
  * @author Howard Shank (hgshank@yahoo.com)
