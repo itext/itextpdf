@@ -82,8 +82,8 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * list declaration and the list data.
  *  
  * @version $Id$
+ * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Howard Shank (hgshank@yahoo.com)
- * @since 2.1.3
  */
 public class RtfList extends RtfElement implements RtfExtendedElement {
 
