@@ -62,6 +62,7 @@ import com.lowagie.text.rtf.RtfTestBase;
  * 
  * @version $Id$
  * @author Mark Hall (Mark.Hall@mail.room3b.eu)
+ * @author Howard Shank (hgshank@yahoo.com)
  * @see com.lowagie.text.rtf.document.RtfCodePage
  * @since 2.0.8
  */
@@ -76,6 +77,6 @@ public class RtfCodePageTest extends RtfTestBase {
     public void testCodePage() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         (new RtfCodePage(this.rtfDoc)).writeDefinition(out);
-        assertEquals("\\ansi\\ansicpg1252\n", out);
+        assertEquals("\\ansi\\ansicpg1252", out);
     }
 }
