@@ -76,7 +76,7 @@ public class RtfDocumentSettings {
     /**
      * Whether to output the line breaks that make the rtf document source more readable.
      */
-    private boolean outputDebugLineBreaks = true;
+    private boolean outputDebugLineBreaks = false;
     /**
      * Whether to always generate soft linebreaks for \n in Chunks.
      */

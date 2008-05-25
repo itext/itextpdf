@@ -658,9 +658,7 @@ public class RtfParagraphStyle extends RtfFont {
         result.write(this.styleName.getBytes());
         result.write(";".getBytes());
         result.write("}".getBytes());
-        if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
-            result.write('\n');
-        }    	
+        this.document.outputDebugLinebreak(result);   	
     }
     
     /**

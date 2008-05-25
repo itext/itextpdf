@@ -450,6 +450,9 @@ public class RtfParser {
 	/** The <code>RtfCtrlWordListener</code>. */
     private ArrayList listeners = new ArrayList();
 
+    public RtfParser(Document doc) {
+    	this.document = doc;
+    }
 	/* *********
 	 *  READER *
 	 ***********/
@@ -464,7 +467,7 @@ public class RtfParser {
 	 */
 	public void importRtfDocument(InputStream readerIn, RtfDocument rtfDoc) throws IOException {
 		if(readerIn == null || rtfDoc == null) return;
-		this.init(TYPE_IMPORT_FULL, rtfDoc, readerIn, null);
+		this.init(TYPE_IMPORT_FULL, rtfDoc, readerIn, this.document);
 		this.setCurrentDestination(RtfDestinationMgr.DESTINATION_NULL);
 		startDate = new Date();
 		startTime = System.currentTimeMillis();

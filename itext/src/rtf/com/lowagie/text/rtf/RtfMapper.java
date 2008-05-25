@@ -71,6 +71,8 @@ import com.lowagie.text.rtf.document.RtfInfoElement;
 import com.lowagie.text.rtf.field.RtfAnchor;
 import com.lowagie.text.rtf.graphic.RtfImage;
 import com.lowagie.text.rtf.list.RtfList;
+import com.lowagie.text.rtf.list.RtfList;
+import com.lowagie.text.rtf.list.RtfListItem;
 import com.lowagie.text.rtf.list.RtfListItem;
 import com.lowagie.text.rtf.table.RtfTable;
 import com.lowagie.text.rtf.text.RtfAnnotation;
@@ -170,10 +172,10 @@ public class RtfMapper {
     		    rtfElements.add(new RtfInfoElement(rtfDoc, (Meta) element));
     			break;
     		case Element.LIST:
-    		    rtfElements.add(new RtfList(rtfDoc, (List) element));
+    		    rtfElements.add(new RtfList(rtfDoc, (List) element));	// TODO: Testing
     			break;
     		case Element.LISTITEM:
-    		    rtfElements.add(new RtfListItem(rtfDoc, (ListItem) element));
+    		    rtfElements.add(new RtfListItem(rtfDoc, (ListItem) element));	// TODO: Testing
     			break;
     		case Element.SECTION:
     		    rtfElements.add(new RtfSection(rtfDoc, (Section) element));

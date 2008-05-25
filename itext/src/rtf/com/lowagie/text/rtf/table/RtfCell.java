@@ -309,14 +309,14 @@ public class RtfCell extends Cell implements RtfExtendedElement {
             result.write("\\clcbpat".getBytes());
             result.write(intToByteArray(this.backgroundColor.getColorNumber()));
         }
-        result.write('\n');
+        this.document.outputDebugLinebreak(result);
         
         result.write("\\clftsWidth3".getBytes());
-        result.write('\n');
+        this.document.outputDebugLinebreak(result);
         
         result.write("\\clwWidth".getBytes());
         result.write(intToByteArray(this.cellWidth));
-        result.write('\n');
+        this.document.outputDebugLinebreak(result);
         
         if(this.cellPadding > 0) {
             result.write("\\clpadl".getBytes());

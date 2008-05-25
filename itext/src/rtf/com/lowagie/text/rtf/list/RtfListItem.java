@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2001, 2002, 2003, 2004, 2005 by Mark Hall
+ * Copyright 2008 by Howard Shank (hgshank@yahoo.com)
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -65,14 +65,14 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * 
  * @version $Id$
  * @author Mark Hall (Mark.Hall@mail.room3b.eu)
- * @author Thomas Bickel (tmb99@inode.at)
+ * @author Howard Shank (hgshank@yahoo.com)
  */
 public class RtfListItem extends RtfParagraph {
 
     /**
      * The RtfList this RtfListItem belongs to.
      */
-    private RtfList parentList = null;
+    private RtfListLevel parentList = null;
     /**
      * Whether this RtfListItem contains further RtfLists.
      */
@@ -111,8 +111,18 @@ public class RtfListItem extends RtfParagraph {
             }
             rtfElement.writeContent(result);
             if(rtfElement instanceof RtfList) {
-                this.parentList.writeListBeginning(result);
-                result.write("\\tab".getBytes());
+                switch(this.parentList.getLevelFollowValue()) {
+                case RtfListLevel.LIST_LEVEL_FOLLOW_NOTHING:
+                	break;
+                case RtfListLevel.LIST_LEVEL_FOLLOW_TAB:
+                    this.parentList.writeListBeginning(result);
+                    result.write(RtfList.TAB);
+                    break;
+                case RtfListLevel.LIST_LEVEL_FOLLOW_SPACE:
+                    this.parentList.writeListBeginning(result);
+                    result.write(" ".getBytes());
+                    break;
+                }
             }
         }
     }        
@@ -140,6 +150,7 @@ public class RtfListItem extends RtfParagraph {
         return false;
     }
     
+    private int level=0;
     /**
      * Inherit the list settings from the parent list to RtfLists that
      * are contained in this RtfListItem.
@@ -152,8 +163,8 @@ public class RtfListItem extends RtfParagraph {
             RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
             if(rtfElement instanceof RtfList) {
                 ((RtfList) rtfElement).setListNumber(listNumber);
-                ((RtfList) rtfElement).setListLevel(listLevel);
-                ((RtfList) rtfElement).setParent(this.parentList);
+                setLevel(listLevel);
+//                ((RtfList) rtfElement).setParent(this.parentList);
             }
         }
     }
@@ -176,10 +187,17 @@ public class RtfListItem extends RtfParagraph {
      * 
      * @param parentList The parent RtfList to use.
      */
-    public void setParent(RtfList parentList) {
+    public void setParent(RtfListLevel parentList) {
         this.parentList = parentList;
     }
-
+    /**
+     * Set the parent RtfList.
+     * 
+     * @return  The parent RtfList to use.
+     */
+    public RtfListLevel getParent() {
+        return this.parentList;
+    }
     /**
      * Gets whether this RtfListItem contains further RtfLists.
      * 
@@ -188,4 +206,18 @@ public class RtfListItem extends RtfParagraph {
     public boolean isContainsInnerList() {
         return this.containsInnerList;
     }
+
+	/**
+	 * @return the level
+	 */
+	public int getLevel() {
+		return level;
+	}
+
+	/**
+	 * @param level the level to set
+	 */
+	public void setLevel(int level) {
+		this.level = level;
+	}
 }

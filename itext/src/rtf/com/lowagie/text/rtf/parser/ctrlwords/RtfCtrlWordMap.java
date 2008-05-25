@@ -812,7 +812,8 @@ final class RtfCtrlWordMap {
 		ctrlWords.put("levelnfc", new RtfCtrlWordHandler(rtfParser, "levelnfc", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("levelnfcn", new RtfCtrlWordHandler(rtfParser, "levelnfcn", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("levelnorestart", new RtfCtrlWordHandler(rtfParser, "levelnorestart", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
-		ctrlWords.put("levelnumbers", new RtfCtrlWordHandler(rtfParser, "levelnumbers", 0, false, RtfCtrlWordType.DESTINATION, "\\", " ", "RtfDestinationNull"));
+		ctrlWords.put("levelnumbers", new RtfCtrlWordHandler(rtfParser, "levelnumbers", 0, false, RtfCtrlWordType.VALUE, "\\", " ", null));
+//		ctrlWords.put("levelnumbers", new RtfCtrlWordHandler(rtfParser, "levelnumbers", 0, false, RtfCtrlWordType.DESTINATION, "\\", " ", "RtfDestinationListTable"));
 		ctrlWords.put("levelold", new RtfCtrlWordHandler(rtfParser, "levelold", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("levelpicture", new RtfCtrlWordHandler(rtfParser, "levelpicture", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("levelprev", new RtfCtrlWordHandler(rtfParser, "levelprev", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
@@ -839,6 +840,7 @@ final class RtfCtrlWordMap {
 		ctrlWords.put("lisa", new RtfCtrlWordHandler(rtfParser, "lisa", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("lisb", new RtfCtrlWordHandler(rtfParser, "lisb", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("list", new RtfCtrlWordHandler(rtfParser, "list", 0, false, RtfCtrlWordType.VALUE, "\\", " ", null));
+		ctrlWords.put("listlevel", new RtfCtrlWordHandler(rtfParser, "listlevel", 0, false, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("listhybrid", new RtfCtrlWordHandler(rtfParser, "listhybrid", 0, false, RtfCtrlWordType.FLAG, "\\", " ", null));
 		ctrlWords.put("listid", new RtfCtrlWordHandler(rtfParser, "listid", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("listname", new RtfCtrlWordHandler(rtfParser, "listname", 0, false, RtfCtrlWordType.DESTINATION, "\\", " ", "RtfDestinationNull"));
@@ -855,7 +857,7 @@ final class RtfCtrlWordMap {
 		ctrlWords.put("liststylename", new RtfCtrlWordHandler(rtfParser, "liststylename", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("listtable", new RtfCtrlWordHandler(rtfParser, "listtable", 0, false, RtfCtrlWordType.DESTINATION_EX, "\\*\\", " ", "RtfDestinationListTable"));
 		ctrlWords.put("listtemplateid", new RtfCtrlWordHandler(rtfParser, "listtemplateid", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
-		ctrlWords.put("listtext", new RtfCtrlWordHandler(rtfParser, "listtext", 0, false, RtfCtrlWordType.DESTINATION, "\\", " ", "RtfDestinationDocument"));
+		ctrlWords.put("listtext", new RtfCtrlWordHandler(rtfParser, "listtext", 0, false, RtfCtrlWordType.DESTINATION, "\\", " ", "RtfDestinationNull"));	// ignore this because we understand 97-2007
 		ctrlWords.put("lnbrkrule", new RtfCtrlWordHandler(rtfParser, "lnbrkrule", 0, false, RtfCtrlWordType.FLAG, "\\", " ", null));
 		ctrlWords.put("lndscpsxn", new RtfCtrlWordHandler(rtfParser, "lndscpsxn", 0, false, RtfCtrlWordType.FLAG, "\\", " ", null));
 		ctrlWords.put("lnongrid", new RtfCtrlWordHandler(rtfParser, "lnongrid", 0, false, RtfCtrlWordType.FLAG, "\\", " ", null));

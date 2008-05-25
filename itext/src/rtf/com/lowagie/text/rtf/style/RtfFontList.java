@@ -145,7 +145,7 @@ public class RtfFontList extends RtfElement implements RtfExtendedElement {
             result.write(CLOSE_GROUP);
         }
         result.write(CLOSE_GROUP);
-        result.write((byte)'\n');    	
+        this.document.outputDebugLinebreak(result);    	
     }
     
 }

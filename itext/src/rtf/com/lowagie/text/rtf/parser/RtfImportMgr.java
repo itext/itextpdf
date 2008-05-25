@@ -232,7 +232,7 @@ public class RtfImportMgr {
 
         //if(rtfList != null){
         //rtfList.setRtfDocument(this.rtfDoc);
-        this.importStylesheetListMapping.put(listNr, Integer.toString(this.rtfDoc.getDocumentHeader().getListNumber(rtfList)));
+        this.importListMapping.put(listNr, Integer.toString(this.rtfDoc.getDocumentHeader().getListNumber(rtfList)));
 //      return true;
 //      } else {
 //      return false;
@@ -242,14 +242,14 @@ public class RtfImportMgr {
     /**
      * Performs the mapping from the original list number to the actual
      * list number in the resulting RTF document. If the list number was not
-     * seen during import (thus no mapping) then 0 is returned, guaranteeing
-     * that the list number is always valid.
+     * seen during import (thus no mapping) then -1 is returned. There is no
+     * guarentee of a valid list number.
      */
     public String mapListNr(String listNr) {
         if(this.importListMapping.containsKey(listNr)) {
             return (String) this.importListMapping.get(listNr);
         } else {
-            return "0";
+            return "-1";
         }
     }
 

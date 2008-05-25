@@ -89,7 +89,7 @@ public class RtfGenerator extends RtfElement {
 		result.write(DELIMITER);
 		result.write(Document.getVersion().getBytes());
 		result.write(CLOSE_GROUP);
-		result.write((byte) '\n');
+		this.document.outputDebugLinebreak(result);
     }        
     
 }

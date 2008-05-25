@@ -123,7 +123,7 @@ public class RtfInfoGroup extends RtfElement {
     	}
 
 		result.write(CLOSE_GROUP);
-		result.write((byte) '\n');
+		this.document.outputDebugLinebreak(result);
     }        
     
 }

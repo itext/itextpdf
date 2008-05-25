@@ -97,7 +97,7 @@ public class RtfCodePage extends RtfElement implements RtfExtendedElement {
         result.write(ANSI);
         result.write(ANSI_CODEPAGE);
         result.write(intToByteArray(1252));
-        result.write((byte)'\n');    	
+        this.document.outputDebugLinebreak(result);    	
     }
 
 }

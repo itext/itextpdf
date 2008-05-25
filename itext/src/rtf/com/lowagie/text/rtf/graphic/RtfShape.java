@@ -306,9 +306,7 @@ public class RtfShape extends RtfAddableElement {
     	if(this.inHeader) {
     		result.write("\\shpfhdr1".getBytes());
     	} 
-    	if(this.doc.getDocumentSettings().isOutputDebugLineBreaks()) {
-    		result.write('\n');
-    	}
+    	this.doc.outputDebugLinebreak(result);
     	result.write(OPEN_GROUP);
     	result.write("\\*\\shpinst".getBytes());
     	Iterator it = this.properties.values().iterator();
@@ -324,9 +322,7 @@ public class RtfShape extends RtfAddableElement {
     		result.write(CLOSE_GROUP);
     	}
     	result.write(CLOSE_GROUP);
-    	if(this.doc.getDocumentSettings().isOutputDebugLineBreaks()) {
-    		result.write('\n');
-    	}
+    	this.doc.outputDebugLinebreak(result);
     	result.write(CLOSE_GROUP);
 		
     }        

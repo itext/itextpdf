@@ -456,7 +456,7 @@ public class RtfBorder extends RtfElement {
             result.write(intToByteArray(this.borderWidth));
             result.write(BORDER_COLOR_NUMBER);
             result.write(intToByteArray(this.borderColor.getColorNumber()));
-            result.write('\n');
+            this.document.outputDebugLinebreak(result);
         } else if(this.borderType == CELL_BORDER) {
             switch(this.borderPosition) {
                 case LEFT_BORDER:
@@ -479,7 +479,7 @@ public class RtfBorder extends RtfElement {
             result.write(intToByteArray(this.borderWidth));
             result.write(BORDER_COLOR_NUMBER);
             result.write(intToByteArray(this.borderColor.getColorNumber()));
-            result.write('\n');
+            this.document.outputDebugLinebreak(result);
         }    	
     }
      
