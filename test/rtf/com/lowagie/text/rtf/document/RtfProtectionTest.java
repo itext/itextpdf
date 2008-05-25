@@ -61,15 +61,15 @@ import com.lowagie.text.rtf.RtfTestBase;
 import com.lowagie.text.rtf.document.RtfProtection;
 
 /**
- * The <code>RtfPasswordTest</code> is a very simple junit test, that checks
+ * The <code>RtfProtectionTest</code> is a very simple junit test, that checks
  * that the <code>RtfProtection</code> is producing the correct result.
  * 
  * @version $Id$
  * @author Howard Shank (hgshank@yahoo.com)
  * @see com.lowagie.text.rtf.document.RtfProtection
- * @since 2.1.1
+ * @since 2.1.3
  */
-public class RtfPasswordTest extends RtfTestBase {
+public class RtfProtectionTest extends RtfTestBase {
     /**
      * Tests that the <code>RtfProtection</code> generates the correct hash
      * for a normal 1 to 15 character password
