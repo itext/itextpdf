@@ -235,9 +235,9 @@ public class RtfDocumentHeader extends RtfElement {
     }
     
     /**
-     * Gets the number of the specified RtfList2
+     * Gets the number of the specified RtfList
      * 
-     * @param list The RtfList2 for which to get the number
+     * @param list The RtfList for which to get the number
      * @return The number of the list
      */
     public int getListNumber(RtfList list) {
