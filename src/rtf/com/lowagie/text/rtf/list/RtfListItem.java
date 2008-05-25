@@ -70,7 +70,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
 public class RtfListItem extends RtfParagraph {
 
     /**
-     * The RtfList2 this RtfListItem belongs to.
+     * The RtfList this RtfListItem belongs to.
      */
     private RtfListLevel parentList = null;
     /**
@@ -134,7 +134,7 @@ public class RtfListItem extends RtfParagraph {
      * and the method returns <code>false</code>.
      * 
      * @param out destination stream
-     * @return <code>true</code> if a RtfList2 definition was written, <code>false</code> otherwise
+     * @return <code>true</code> if a RtfList definition was written, <code>false</code> otherwise
      * @throws IOException
      */
     public boolean writeDefinition(OutputStream out) throws IOException
@@ -152,7 +152,7 @@ public class RtfListItem extends RtfParagraph {
     
     private int level=0;
     /**
-     * Inherit the list settings from the parent list to RtfList2s that
+     * Inherit the list settings from the parent list to RtfLists that
      * are contained in this RtfListItem2.
      * 
      * @param listNumber The list number to inherit.
@@ -164,14 +164,14 @@ public class RtfListItem extends RtfParagraph {
             if(rtfElement instanceof RtfList) {
                 ((RtfList) rtfElement).setListNumber(listNumber);
                 setLevel(listLevel);
-//                ((RtfList2) rtfElement).setParent(this.parentList);
+//                ((RtfList) rtfElement).setParent(this.parentList);
             }
         }
     }
         
     /**
      * Correct the indentation of RtfLists in this RtfListItem2 by adding left/first line indentation
-     * from the parent RtfList2. Also calls correctIndentation on all child RtfLists.
+     * from the parent RtfList. Also calls correctIndentation on all child RtfLists.
      */
     protected void correctIndentation() {
         for(int i = 0; i < chunks.size(); i++) {
@@ -183,17 +183,17 @@ public class RtfListItem extends RtfParagraph {
     }
     
     /**
-     * Set the parent RtfList2.
+     * Set the parent RtfList.
      * 
-     * @param parentList The parent RtfList2 to use.
+     * @param parentList The parent RtfList to use.
      */
     public void setParent(RtfListLevel parentList) {
         this.parentList = parentList;
     }
     /**
-     * Set the parent RtfList2.
+     * Set the parent RtfList.
      * 
-     * @param parentList The parent RtfList2 to use.
+     * @return  The parent RtfList to use.
      */
     public RtfListLevel getParent() {
         return this.parentList;

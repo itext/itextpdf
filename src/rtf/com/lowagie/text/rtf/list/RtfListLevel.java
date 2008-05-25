@@ -279,7 +279,7 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
     /**
      * Flag to indicate if the levellegal control word should be emitted.
      * true  if any list numbers from previous levels should be converted to Arabic numbers; 
-     * false if they should be left with the format specified by their own level’s definition.
+     * false if they should be left with the format specified by their own level definition.
      */
     private boolean isLegal = false;
     

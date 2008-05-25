@@ -182,21 +182,22 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     private RtfList parent = null;
     /**
      * Constructs an empty RtfList object.
-     * 
-     * @param doc The RtfDocument this RtfList belongs to
      */
     public RtfList() {
     	super(null);
         createDefaultLevels();
     }
     
+    /**
+     * Set the document.
+     * @param doc The RtfDocument
+     */
     public void setDocument(RtfDocument doc) {
     	this.document = doc;
     	
     }
     /**
      * Constructs an empty RtfList object.
-     * 
      * @param doc The RtfDocument this RtfList belongs to
      */
     public RtfList(RtfDocument doc) {
@@ -544,7 +545,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 	}
 	/**
 	 * Get the list ID number
-	 * @return
+	 * @return this list id
 	 */
 	public int getID() {
 		return this.listID;
@@ -558,7 +559,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 	}
 	/**
 	 * Get the parent list for nested lists
-	 * @return
+	 * @return parent for this object
 	 */
 	public RtfList getParent() {
 		return this.parent;
