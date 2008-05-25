@@ -49,9 +49,11 @@
 
 package com.lowagie.text.rtf.parser.destinations;
 
+import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.rtf.list.RtfList;
+import com.lowagie.text.rtf.list.RtfListLevel;
 import com.lowagie.text.rtf.list.RtfListTable;
 import com.lowagie.text.rtf.parser.RtfImportMgr;
 import com.lowagie.text.rtf.parser.RtfParser;
@@ -71,7 +73,10 @@ public class RtfDestinationListTable extends RtfDestination {
 	private RtfImportMgr importHeader = null;
 
 	private RtfList newList = null;
-
+	
+	private int currentLevel = -1;
+	private RtfListLevel currentListLevel = null;
+	
 	public RtfDestinationListTable() {
 		super(null);
 	}
@@ -110,7 +115,7 @@ public class RtfDestinationListTable extends RtfDestination {
 //		//newList.set
 //		// mylist.
 //		// this.rtfParser.setTokeniserStateSkipGroup();
-//		
+
 //		// may have to create an import mapping for lists because
 		// there may be existing lists in the document with a duplicate ID.
 		if (this.newList != null) {
@@ -127,137 +132,187 @@ public class RtfDestinationListTable extends RtfDestination {
 			skipCtrlWord = true;
 			if (ctrlWordData.ctrlWord.equals("listtable")) {
 				result = true;
+				
 			} else
-			/* Picture info for icons/images for lists */
-			if (ctrlWordData.ctrlWord.equals("listpicture"))/* DESTINATION */{
-				skipCtrlWord = true;
-				// this.rtfParser.setTokeniserStateSkipGroup();
-				result = true;
-			} else
-			/* list */
-			if (ctrlWordData.ctrlWord.equals("list")) /* DESTINATION */{
-				skipCtrlWord = true;
-				this.newList = new RtfList(this.rtfParser.getRtfDocument());
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("listtemplateid")) {	// List item
-				skipCtrlWord = true;
-				result = true;
-				// this gets set internally. Don't think it should be imported
-			} else if (ctrlWordData.ctrlWord.equals("listsimple")) {	// List item
-				skipCtrlWord = true;
-				result = true;
-				// this gets set internally. Don't think it should be imported
-			} else if (ctrlWordData.ctrlWord.equals("listhybrid")) {	// List item
-				skipCtrlWord = true;
-				result = true;
-				// this gets set internally. Don't think it should be imported
-			} else if (ctrlWordData.ctrlWord.equals("listrestarthdn")) {	// List item
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("listid")) {	// List item cannot be between -1 and -5
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("listname")) {// List item
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("liststyleid")) {// List item
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("liststylename")) {// List item
-				skipCtrlWord = true;
-				result = true;
-			} else
-			/* listlevel */
-			if (ctrlWordData.ctrlWord.equals("listlevel")) /* DESTINATION There are 1 or 9 listlevels per list */{
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levejcn")) { // listlevel item
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelstartat")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("lvltentative")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelold")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelprev")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelprevspace")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelspace")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelindent")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("leveltext")) {/* FIX */
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelnumbers")) {/* FIX */
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelfollow")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levellegal")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelnorestart")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("chrfmt")) {/* FIX */
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelpicture")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("li")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("fi")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("jclisttab")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("tx")) {
-				skipCtrlWord = true;
-				result = true;
-			} else
-			/* number */
-			if (ctrlWordData.ctrlWord.equals("levelnfc")) /* old style */ {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("levelnfcn")) /* new style takes priority over levelnfc.*/ {
-				skipCtrlWord = true;
-				result = true;
-			} else
-			/* justification */
-			if (ctrlWordData.ctrlWord.equals("leveljc")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("leveljcn")) {
-				skipCtrlWord = true;
-				result = true;
-			} else
-			/* level text */
-			if (ctrlWordData.ctrlWord.equals("leveltext")) {
-				skipCtrlWord = true;
-				result = true;
-			} else if (ctrlWordData.ctrlWord.equals("leveltemplateid")) {
-				skipCtrlWord = true;
-				result = true;
-			} else
-			/* levelnumber */
-			if (ctrlWordData.ctrlWord.equals("levelnumbers")) {
-				skipCtrlWord = true;
-				result = true;
-			}
+				/* Picture info for icons/images for lists */
+				if (ctrlWordData.ctrlWord.equals("listpicture"))/* DESTINATION */{
+					skipCtrlWord = true;
+					// this.rtfParser.setTokeniserStateSkipGroup();
+					result = true;
+				} else
+					/* list */
+					if (ctrlWordData.ctrlWord.equals("list")) /* DESTINATION */{
+						skipCtrlWord = true;
+						this.newList = new RtfList(this.rtfParser.getRtfDocument());
+						this.newList.setListType(RtfList.LIST_TYPE_NORMAL);	// set default
+						this.currentLevel = -1;
+						result = true;
+					} else if (ctrlWordData.ctrlWord.equals("listtemplateid")) /* // List item*/ {
+						// ignore this because it gets regenerated in every document
+						skipCtrlWord = true;
+						result = true;
+					} else if (ctrlWordData.ctrlWord.equals("listsimple")) /* // List item*/ {
+						// is value 0 or 1
+						if(ctrlWordData.hasParam && ctrlWordData.param == "1") {
+							this.newList.setListType(RtfList.LIST_TYPE_SIMPLE);
+						} else
+						{
+							this.newList.setListType(RtfList.LIST_TYPE_NORMAL);
+						}
+						skipCtrlWord = true;
+						result = true;
+						// this gets set internally. Don't think it should be imported
+					} else if (ctrlWordData.ctrlWord.equals("listhybrid")) /* // List item*/ {
+						this.newList.setListType(RtfList.LIST_TYPE_HYBRID);
+						skipCtrlWord = true;
+						result = true;
+						// this gets set internally. Don't think it should be imported
+					} else if (ctrlWordData.ctrlWord.equals("listrestarthdn")) /* // List item*/ {
+						skipCtrlWord = true;
+						result = true;
+					} else if (ctrlWordData.ctrlWord.equals("listid")) {	// List item cannot be between -1 and -5
+						// needs to be mapped for imports and is recreated
+						// we have the new id and the old id. Just add it to the mapping table here.
+						skipCtrlWord = true;
+						result = true;
+					} else if (ctrlWordData.ctrlWord.equals("listname"))/* // List item*/ {
+						this.newList.setName(ctrlWordData.param);
+						skipCtrlWord = true;
+						result = true;
+					} else if (ctrlWordData.ctrlWord.equals("liststyleid"))/* // List item*/ {
+						skipCtrlWord = true;
+						result = true;
+					} else if (ctrlWordData.ctrlWord.equals("liststylename"))/* // List item*/ {
+						skipCtrlWord = true;
+						result = true;
+					} else
+						/* listlevel */
+						if (ctrlWordData.ctrlWord.equals("listlevel")) /* DESTINATION There are 1 or 9 listlevels per list */{
+							this.currentLevel++;
+							this.currentListLevel = (RtfListLevel)this.newList.getListLevel(this.currentLevel);
+							this.currentListLevel.setTentative(false);
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("leveljc")) { // listlevel item justify
+							// this is the old number. Only use it if the current type is not set
+							if( this.currentListLevel.getAlignment()== RtfListLevel.LIST_TYPE_UNKNOWN) {
+								switch(ctrlWordData.intValue()) {
+								case 0:
+									this.currentListLevel.setAlignment(Element.ALIGN_LEFT);
+									break;
+								case 1:
+									this.currentListLevel.setAlignment(Element.ALIGN_CENTER);
+									break;
+								case 2:
+									this.currentListLevel.setAlignment(Element.ALIGN_RIGHT);
+									break;
+								}
+							}
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("leveljcn")) { // listlevel item
+							//justify
+							// if this exists, use it and it overrides the old setting
+							switch(ctrlWordData.intValue()) {
+							case 0:
+								this.currentListLevel.setAlignment(Element.ALIGN_LEFT);
+								break;
+							case 1:
+								this.currentListLevel.setAlignment(Element.ALIGN_CENTER);
+								break;
+							case 2:
+								this.currentListLevel.setAlignment(Element.ALIGN_RIGHT);
+								break;
+							}
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("levelstartat")) {
+							this.currentListLevel.setListStartAt(ctrlWordData.intValue());
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("lvltentative")) {
+							this.currentListLevel.setTentative(true);
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("levelold")) {
+							// old style. ignore
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("levelprev")) {
+							// old style. ignore
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("levelprevspace")) {
+							// old style. ignore
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("levelspace")) {
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("levelindent")) {
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("leveltext")) {/* FIX */
+							skipCtrlWord = true;
+							result = true;
+						}  else if (ctrlWordData.ctrlWord.equals("levelfollow")) {
+							this.currentListLevel.setLevelFollowValue(ctrlWordData.intValue());
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("levellegal")) {
+							this.currentListLevel.setLegal(ctrlWordData.param=="1"?true:false);
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("levelnorestart")) {
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("chrfmt")) {/* FIX */
+							// set an attribute pair
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("levelpicture")) {
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("li")) {
+							// set an attribute pair
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("fi")) {
+							// set an attribute pair
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("jclisttab")) {
+							// set an attribute pair
+							skipCtrlWord = true;
+							result = true;
+						} else if (ctrlWordData.ctrlWord.equals("tx")) {
+							// set an attribute pair
+							skipCtrlWord = true;
+							result = true;
+						} else
+							/* number */
+							if (ctrlWordData.ctrlWord.equals("levelnfc")) /* old style */ {
+								if( this.currentListLevel.getListType()== RtfListLevel.LIST_TYPE_UNKNOWN) {
+									this.currentListLevel.setListType(ctrlWordData.intValue()+RtfListLevel.LIST_TYPE_BASE);
+								}
+								skipCtrlWord = true;
+								result = true;
+							} else if (ctrlWordData.ctrlWord.equals("levelnfcn")) /* new style takes priority over levelnfc.*/ {
+								this.currentListLevel.setListType(ctrlWordData.intValue()+RtfListLevel.LIST_TYPE_BASE);
+								skipCtrlWord = true;
+								result = true;
+							} else
+									/* level text */
+									if (ctrlWordData.ctrlWord.equals("leveltemplateid")) {
+										// ignore. this value is regenerated in each document.
+										skipCtrlWord = true;
+										result = true;
+									} else
+										/* levelnumber */
+										if (ctrlWordData.ctrlWord.equals("levelnumbers")) {
+											skipCtrlWord = true;
+											result = true;
+										}
 		}
 
 		if (this.rtfParser.isConvert()) {
@@ -287,7 +342,7 @@ public class RtfDestinationListTable extends RtfDestination {
 				break;
 			default: // error because is should be an import or convert
 				result = false;
-				break;
+			break;
 			}
 		}
 
@@ -300,7 +355,9 @@ public class RtfDestinationListTable extends RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleGroupEnd()
 	 */
 	public boolean handleCloseGroup() {
-		// TODO Auto-generated method stub
+		if(this.newList != null) {
+			this.rtfParser.getRtfDocument().add(this.newList);
+		}
 		return true;
 	}
 

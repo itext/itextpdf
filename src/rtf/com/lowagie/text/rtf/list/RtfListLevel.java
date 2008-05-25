@@ -178,13 +178,13 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
     private static final byte[] LIST_LEVEL_PICTURE = "\\levelpicture".getBytes();
     
 
-    public static final int LIST_TYPE_BULLET = 0;
     public static final int LIST_TYPE_NUMBERED = 1;
     public static final int LIST_TYPE_UPPER_LETTERS = 2;
     public static final int LIST_TYPE_LOWER_LETTERS = 3;
     public static final int LIST_TYPE_UPPER_ROMAN = 4;
     public static final int LIST_TYPE_LOWER_ROMAN = 5;
 
+    public static final int LIST_TYPE_UNKNOWN = -1; 						/* BASE value to subtract to get RTF Value if above base*/
     public static final int LIST_TYPE_BASE = 1000; 						/* BASE value to subtract to get RTF Value if above base*/
     public static final int LIST_TYPE_ARABIC = 1000; 					/* 0 Arabic (1, 2, 3) */
     public static final int LIST_TYPE_UPPERCASE_ROMAN_NUMERAL = 1001;	/* 1 Uppercase Roman numeral (I, II, III) */
@@ -195,7 +195,7 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
     public static final int LIST_TYPE_CARDINAL_TEXT_NUMBER = 1006;		/* 6 Cardinal text number (One, Two Three)*/
     public static final int LIST_TYPE_ORDINAL_TEXT_NUMBER = 1007;		/* 7 Ordinal text number (First, Second, Third)*/
     public static final int LIST_TYPE_ARABIC_LEADING_ZERO = 1022;		/* 22	Arabic with leading zero (01, 02, 03, ..., 10, 11)*/
-    //public static final int LIST_TYPE_BULLET = 1023;					/* 23	Bullet (no number at all)*/
+    public static final int LIST_TYPE_BULLET = 1023;					/* 23	Bullet (no number at all)*/
     public static final int LIST_TYPE_NO_NUMBER = 1255;				/*  255	No number */
 /*
  
@@ -242,7 +242,7 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
     /**
      * Whether this RtfList is numbered
      */
-    private int listType = LIST_TYPE_BULLET;
+    private int listType = LIST_TYPE_UNKNOWN;
 
     /**
      * The text to use as the bullet character

@@ -170,6 +170,11 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     private int listType = LIST_TYPE_HYBRID;
     
     /**
+     * The name of the list if it exists 
+     */
+    private String name = null;
+    
+    /**
      * The list number of this RtfList
      */
     private int listNumber = -1;
@@ -194,6 +199,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      */
     public void setDocument(RtfDocument doc) {
     	this.document = doc;
+        // get the list number or create a new one adding it to the table
+        this.listNumber = document.getDocumentHeader().getListNumber(this); 
+
     	
     }
     /**
@@ -203,6 +211,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     public RtfList(RtfDocument doc) {
         super(doc);
         createDefaultLevels();
+        // get the list number or create a new one adding it to the table
+        this.listNumber = document.getDocumentHeader().getListNumber(this); 
+
     }
 
     
@@ -314,19 +325,27 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         result.write(LIST);
         result.write(LIST_TEMPLATE_ID);
         result.write(intToByteArray(document.getRandomInt()));
+
+        int levelsToWrite = -1;
+        
         switch(this.listType) {
         case LIST_TYPE_NORMAL:
+        	levelsToWrite = listLevels.size();
         	break;
         case LIST_TYPE_SIMPLE:
             result.write(LIST_SIMPLE);
             result.write(intToByteArray(1)); 
+        	levelsToWrite = 1;
         	break;
         case LIST_TYPE_HYBRID:
             result.write(LIST_HYBRID);
+        	levelsToWrite = listLevels.size();
         	break;
     	default:
     		break;
         }
+        this.document.outputDebugLinebreak(result);
+
         // TODO: Figure out hybrid because multi-level hybrid does not work.
         // Seems hybrid is mixed type all single level - Simple = single level
         // SIMPLE1/HYRBID
@@ -337,11 +356,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         // 1.1. Line 1.1
         // 1.2. Line 1.2
         // 2. Line 2
-        
-        this.document.outputDebugLinebreak(result);
          
         // write the listlevels here
-        for(int i = 0; i<listLevels.size(); i++) {
+        for(int i = 0; i<levelsToWrite; i++) {
         	((RtfListLevel)listLevels.get(i)).writeDefinition(result);
             this.document.outputDebugLinebreak(result);
         }
@@ -350,7 +367,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         result.write(intToByteArray(this.listID));
         result.write(CLOSE_GROUP);
         this.document.outputDebugLinebreak(result);
-
+        if(items != null) {
         for(int i = 0; i < items.size(); i++) {
             RtfElement rtfElement = (RtfElement) items.get(i);
             if(rtfElement instanceof RtfList) {
@@ -361,7 +378,8 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             	RtfListItem rli = (RtfListItem) rtfElement;
             	if(rli.writeDefinition(result)) break;
             }
-        }    	
+        }    
+        }
     }
     
     /**
@@ -374,6 +392,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         }
         
         int itemNr = 0;
+        if(items != null) {
         for(int i = 0; i < items.size(); i++) {
         	
             RtfElement thisRtfElement = (RtfElement) items.get(i);
@@ -406,7 +425,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 this.document.outputDebugLinebreak(result);
             }
         }
-        
+        }
         if(!this.inTable) {
             result.write(CLOSE_GROUP);
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
@@ -605,4 +624,29 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 	public void setParentList(RtfList parentList) {
 		this.parentList = parentList;
 	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+	/**
+	 * @return the list at the index
+	 */
+	public RtfListLevel getListLevel(int index) {
+		if(listLevels != null) {
+		return (RtfListLevel)this.listLevels.get(index);
+		}
+		else
+			return null;
+	}
+
 }
