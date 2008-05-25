@@ -61,7 +61,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
 
 
 /**
- * The RtfListItem2 acts as a wrapper for a ListItem.
+ * The RtfListItem acts as a wrapper for a ListItem.
  * 
  * @version $Id$
  * @author Howard Shank (hgshank@yahoo.com)
@@ -74,22 +74,22 @@ public class RtfListItem extends RtfParagraph {
      */
     private RtfListLevel parentList = null;
     /**
-     * Whether this RtfListItem2 contains further RtfLists.
+     * Whether this RtfListItem contains further RtfLists.
      */
     private boolean containsInnerList = false;
     
     /**
-     * Constructs a RtfListItem2 for a ListItem belonging to a RtfDocument.
+     * Constructs a RtfListItem for a ListItem belonging to a RtfDocument.
      * 
      * @param doc The RtfDocument this RtfListItem belongs to.
-     * @param listItem The ListItem2 this RtfListItem2 is based on.
+     * @param listItem The ListItem this RtfListItem is based on.
      */
     public RtfListItem(RtfDocument doc, ListItem listItem) {
         super(doc, listItem);
     }
     
     /**
-     * Writes the content of this RtfListItem2.
+     * Writes the content of this RtfListItem.
      */    
     public void writeContent(final OutputStream result) throws IOException
     {
@@ -128,7 +128,7 @@ public class RtfListItem extends RtfParagraph {
     }        
 
     /**
-     * Writes the definition of the first element in this RtfListItem2 that is
+     * Writes the definition of the first element in this RtfListItem that is
      * an instanceof {@link RtfList} to the given stream.<br> 
      * If this item does not contain a {@link RtfList} element nothing is written
      * and the method returns <code>false</code>.
@@ -153,7 +153,7 @@ public class RtfListItem extends RtfParagraph {
     private int level=0;
     /**
      * Inherit the list settings from the parent list to RtfLists that
-     * are contained in this RtfListItem2.
+     * are contained in this RtfListItem.
      * 
      * @param listNumber The list number to inherit.
      * @param listLevel The list level to inherit.
@@ -170,7 +170,7 @@ public class RtfListItem extends RtfParagraph {
     }
         
     /**
-     * Correct the indentation of RtfLists in this RtfListItem2 by adding left/first line indentation
+     * Correct the indentation of RtfLists in this RtfListItem by adding left/first line indentation
      * from the parent RtfList. Also calls correctIndentation on all child RtfLists.
      */
     protected void correctIndentation() {
@@ -199,9 +199,9 @@ public class RtfListItem extends RtfParagraph {
         return this.parentList;
     }
     /**
-     * Gets whether this RtfListItem2 contains further RtfLists.
+     * Gets whether this RtfListItem contains further RtfLists.
      * 
-     * @return Whether this RtfListItem2 contains further RtfLists.
+     * @return Whether this RtfListItem contains further RtfLists.
      */
     public boolean isContainsInnerList() {
         return this.containsInnerList;

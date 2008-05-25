@@ -175,7 +175,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     private int listNumber = -1;
 
     /**
-     * The RtfList2 lists managed by this RtfListTable
+     * The RtfList lists managed by this RtfListTable
      */
     private ArrayList listLevels = null;;
 
@@ -401,7 +401,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 this.document.outputDebugLinebreak(result);
             } else if(thisRtfElement instanceof RtfList) {
             	((RtfList)thisRtfElement).writeContent(result);
-//            	((RtfList2)thisRtfElement).writeListBeginning(result);
+//            	((RtfList)thisRtfElement).writeListBeginning(result);
                 writeListNumbers(result);
                 this.document.outputDebugLinebreak(result);
             }

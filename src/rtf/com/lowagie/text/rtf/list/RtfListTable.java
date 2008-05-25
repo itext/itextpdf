@@ -59,7 +59,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
 
 
 /**
- * The RtfListTable2 manages all RtfList2 objects and list override table in one RtfDocument.
+ * The RtfListTable manages all RtfList2 objects and list override table in one RtfDocument.
  * 
  * @version $Id$
  * @author Howard Shank (hgshank@yahoo.com)
@@ -86,7 +86,7 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
     
 
     /**
-     * The RtfList2 lists managed by this RtfListTable
+     * The RtfList lists managed by this RtfListTable
      */
     private ArrayList lists;
     /**
@@ -95,9 +95,9 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
     private ArrayList picturelists;
     
     /**
-     * Constructs a RtfListTable2 for a RtfDocument
+     * Constructs a RtfListTable for a RtfDocument
      * 
-     * @param doc The RtfDocument this RtfListTable2 belongs to
+     * @param doc The RtfDocument this RtfListTable belongs to
      */
     public RtfListTable(RtfDocument doc) {
         super(doc);
@@ -162,11 +162,11 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
     }
 
     /**
-     * Gets the id of the specified RtfList2. If the RtfList2 is not yet in the
-     * list of RtfList2, then it is added.
+     * Gets the id of the specified RtfList. If the RtfList is not yet in the
+     * list of RtfList, then it is added.
      * 
-     * @param list The RtfList2 for which to get the id.
-     * @return The id of the RtfList2.
+     * @param list The RtfList for which to get the id.
+     * @return The id of the RtfList.
      */
     public int getListNumber(RtfList list) {
         if(lists.contains(list)) {
@@ -178,9 +178,9 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
     }
     
     /**
-     * Remove a RtfList2 from the list of RtfList2
+     * Remove a RtfList from the list of RtfList
      * 
-     * @param list The RtfList2 to remove.
+     * @param list The RtfList to remove.
      */
     public void freeListNumber(RtfList list) {
         int i = lists.indexOf(list);

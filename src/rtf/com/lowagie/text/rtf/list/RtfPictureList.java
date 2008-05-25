@@ -88,7 +88,7 @@ public class RtfPictureList  extends RtfElement implements RtfExtendedElement {
 		// TODO Auto-generated method stub
 		result.write(OPEN_GROUP);
 		result.write(LIST_LEVEL_PICTURE);
-		// if there are elements, write the \shppictlsit here
+		// if there are elements, write the \shppictlist here
 		result.write(CLOSE_GROUP);
 	}
 
