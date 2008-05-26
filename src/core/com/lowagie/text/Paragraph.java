@@ -237,7 +237,7 @@ public class Paragraph extends Phrase {
         }
         else if (o instanceof Paragraph) {
             super.add(o);
-            super.add(Chunk.NEWLINE);
+            super.add(new Chunk("\n", font));
             return true;
         }
         return super.add(o);
