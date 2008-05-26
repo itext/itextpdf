@@ -929,6 +929,15 @@ public abstract class BaseFont {
      */
     abstract void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException;
     
+    /**
+     * Returns a PdfStream object with the full font program (if possible).
+     * This will throws an UnsupportedOperationException for some types of fonts,
+     * or return null if there is no font program available.
+     * @return	a PdfStream with the font program
+     * @since	2.1.2
+     */
+    abstract PdfStream getFontStream() throws IOException, DocumentException;
+    
     /** Gets the encoding used to convert <CODE>String</CODE> into <CODE>byte[]</CODE>.
      * @return the encoding name
      */

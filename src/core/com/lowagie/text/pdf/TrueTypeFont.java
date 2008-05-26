@@ -58,6 +58,7 @@ import java.util.Map;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.pdf.BaseFont.StreamFont;
 /** Reads a Truetype font
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -1315,6 +1316,37 @@ class TrueTypeFont extends BaseFont {
         }
         pobj = getFontBaseType(ind_font, subsetPrefix, firstChar, lastChar, shortTag);
         writer.addToBody(pobj, ref);
+    }
+
+    /**
+     * Returns a PdfStream object with the full font program.
+     * @return	a PdfStream with the font program
+     * @since	2.1.2
+     */
+    public PdfStream getFontStream() throws IOException, DocumentException {
+        if (cff) {
+            RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
+            byte b[] = new byte[cffLength];
+            try {
+                rf2.reOpen();
+                rf2.seek(cffOffset);
+                rf2.readFully(b);
+            }
+            finally {
+                try {
+                    rf2.close();
+                }
+                catch (Exception e) {
+                    // empty on purpose
+                }
+            }
+            return new StreamFont(b, "Type1C");
+        }
+        else {
+        	byte[] b = getFullFont();
+        	int lengths[] = new int[]{b.length};
+        	return new StreamFont(b, lengths);
+        }
     }
     
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values

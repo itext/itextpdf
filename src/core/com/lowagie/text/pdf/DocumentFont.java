@@ -525,6 +525,15 @@ public class DocumentFont extends BaseFont {
      */
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object[] params) throws DocumentException, IOException {
     }
+    
+    /**
+     * Always returns null.
+     * @return	null
+     * @since	2.1.2
+     */
+    public PdfStream getFontStream() {
+    	return null;
+    }
 
     /**
      * Gets the width of a <CODE>char</CODE> in normalized 1000 units.

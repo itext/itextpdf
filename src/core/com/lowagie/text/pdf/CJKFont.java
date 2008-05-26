@@ -315,6 +315,15 @@ class CJKFont extends BaseFont {
         pobj = getFontBaseType(ind_font);
         writer.addToBody(pobj, ref);
     }
+
+    /**
+     * Throws an UnsupportedOperationException. You can't get the FontStream of a CJK font.
+   	 * @throws	an UnsupportedOperationException
+     * @since	2.1.2
+     */
+    public PdfStream getFontStream() {
+    	throw new UnsupportedOperationException("This method is not supported for CJKFont. CJK fonts are never embedded.");
+    }
     
     private float getDescNumber(String name) {
         return Integer.parseInt((String)fontDesc.get(name));

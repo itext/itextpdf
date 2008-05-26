@@ -418,7 +418,32 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         pobj = getFontBaseType(ind_font, subsetPrefix, toUnicodeRef);
         writer.addToBody(pobj, ref);
     }
-
+    
+    /**
+     * Returns a PdfStream object with the full font program.
+     * @return	a PdfStream with the font program
+     * @since	2.1.2
+     */
+    public PdfStream getFontStream() throws IOException, DocumentException {
+    	if (cff) {
+			RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
+			byte b[] = new byte[cffLength];
+			try {
+				rf2.reOpen();
+				rf2.seek(cffOffset);
+				rf2.readFully(b);
+			} finally {
+				try {
+					rf2.close();
+				} catch (Exception e) {
+					// empty on purpose
+				}
+			}
+			return new StreamFont(b, "CIDFontType0C");
+        }
+    	return super.getFontStream();
+    }
+    
     /** A forbidden operation. Will throw a null pointer exception.
      * @param text the text
      * @return always <CODE>null</CODE>
