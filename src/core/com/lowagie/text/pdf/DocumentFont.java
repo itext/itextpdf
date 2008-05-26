@@ -529,7 +529,7 @@ public class DocumentFont extends BaseFont {
     /**
      * Always returns null.
      * @return	null
-     * @since	2.1.2
+     * @since	2.1.3
      */
     public PdfStream getFontStream() {
     	return null;

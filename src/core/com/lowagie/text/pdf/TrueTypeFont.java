@@ -1321,7 +1321,7 @@ class TrueTypeFont extends BaseFont {
     /**
      * Returns a PdfStream object with the full font program.
      * @return	a PdfStream with the font program
-     * @since	2.1.2
+     * @since	2.1.3
      */
     public PdfStream getFontStream() throws IOException, DocumentException {
         if (cff) {

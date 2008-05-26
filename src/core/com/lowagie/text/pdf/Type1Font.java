@@ -494,6 +494,7 @@ class Type1Font extends BaseFont
  * otherwise the font is read and output in a PdfStream object.
  * @return the PdfStream containing the font or <CODE>null</CODE>
  * @throws DocumentException if there is an error reading the font
+ * @since 2.1.3
  */
     public PdfStream getFontStream() throws DocumentException
     {

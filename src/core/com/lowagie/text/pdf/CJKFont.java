@@ -319,7 +319,7 @@ class CJKFont extends BaseFont {
     /**
      * Throws an UnsupportedOperationException. You can't get the FontStream of a CJK font.
    	 * @throws	an UnsupportedOperationException
-     * @since	2.1.2
+     * @since	2.1.3
      */
     public PdfStream getFontStream() {
     	throw new UnsupportedOperationException("This method is not supported for CJKFont. CJK fonts are never embedded.");

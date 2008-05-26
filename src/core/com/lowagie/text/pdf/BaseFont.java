@@ -934,7 +934,7 @@ public abstract class BaseFont {
      * This will throws an UnsupportedOperationException for some types of fonts,
      * or return null if there is no font program available.
      * @return	a PdfStream with the font program
-     * @since	2.1.2
+     * @since	2.1.3
      */
     abstract PdfStream getFontStream() throws IOException, DocumentException;
     
