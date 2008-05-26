@@ -125,13 +125,9 @@ public class RtfImportMgr {
      */
     public boolean importFont(String fontNr, String fontName) {
         RtfFont rtfFont = new RtfFont(fontName);
-        if(rtfFont != null){
-            rtfFont.setRtfDocument(this.rtfDoc);
-            this.importFontMapping.put(fontNr, Integer.toString(this.rtfDoc.getDocumentHeader().getFontNumber(rtfFont)));
-            return true;
-        } else {
-            return false;
-        }
+        rtfFont.setRtfDocument(this.rtfDoc);
+        this.importFontMapping.put(fontNr, Integer.toString(this.rtfDoc.getDocumentHeader().getFontNumber(rtfFont)));
+        return true;
     }
     /**
      * Imports a font. The font name is looked up in the RtfDocumentHeader and
@@ -145,13 +141,9 @@ public class RtfImportMgr {
         RtfFont rtfFont = new RtfFont(fontName);
         if(charset>= 0)
             rtfFont.setCharset(charset);
-        if(rtfFont != null){
             rtfFont.setRtfDocument(this.rtfDoc);
             this.importFontMapping.put(fontNr, Integer.toString(this.rtfDoc.getDocumentHeader().getFontNumber(rtfFont)));
             return true;
-        } else {
-            return false;
-        }
     }
     /**
      * Imports a font. The font name is looked up in the RtfDocumentHeader and
@@ -168,13 +160,9 @@ public class RtfImportMgr {
             rtfFont.setCharset(charset);
         if(fontFamily != null && fontFamily.length() > 0)
             rtfFont.setFamily(fontFamily);
-        if(rtfFont != null){
-            rtfFont.setRtfDocument(this.rtfDoc);
-            this.importFontMapping.put(fontNr, Integer.toString(this.rtfDoc.getDocumentHeader().getFontNumber(rtfFont)));
-            return true;
-        } else {
-            return false;
-        }
+        rtfFont.setRtfDocument(this.rtfDoc);
+        this.importFontMapping.put(fontNr, Integer.toString(this.rtfDoc.getDocumentHeader().getFontNumber(rtfFont)));
+        return true;
     }
     /**
      * Performs the mapping from the original font number to the actual
@@ -259,14 +247,10 @@ public class RtfImportMgr {
      */
     public boolean importStylesheetList(String listNr, List listIn) {
         RtfList rtfList = new RtfList(this.rtfDoc, listIn);
-
-        if(rtfList != null){
-            rtfList.setRtfDocument(this.rtfDoc);
-            //this.importStylesheetListMapping.put(listNr, Integer.toString(this.rtfDoc.getDocumentHeader().getRtfParagraphStyle(styleName)(rtfList)));
-            return true;
-        } else {
-            return false;
-        }
+        rtfList.setRtfDocument(this.rtfDoc);
+        // TODO HGS - Finish implementation of import
+        //this.importStylesheetListMapping.put(listNr, Integer.toString(this.rtfDoc.getDocumentHeader().getRtfParagraphStyle(styleName)(rtfList)));
+        return true;
     }
     /**
      * Performs the mapping from the original stylesheet number to the actual

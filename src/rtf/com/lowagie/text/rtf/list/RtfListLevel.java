@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:$
  *
  * Copyright 2008 by Howard Shank (hgshank@yahoo.com)
  *
@@ -65,7 +65,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
 /**
  * The RtfListLevel is a listlevel object in a list.
  * 
- * @version $Id$
+ * @version $Id:$
  * @author Howard Shank (hgshank@yahoo.com)
  * @since 2.1.3
  */
