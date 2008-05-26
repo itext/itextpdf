@@ -55,10 +55,8 @@ package com.lowagie.text.rtf.document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import com.lowagie.text.rtf.RtfTestBase;
-import com.lowagie.text.rtf.document.RtfProtection;
 
 /**
  * The <code>RtfProtectionTest</code> is a very simple junit test, that checks
