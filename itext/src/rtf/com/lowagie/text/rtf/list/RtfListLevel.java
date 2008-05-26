@@ -184,7 +184,7 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
     public static final int LIST_TYPE_UPPER_ROMAN = 4;
     public static final int LIST_TYPE_LOWER_ROMAN = 5;
 
-    public static final int LIST_TYPE_UNKNOWN = -1; 						/* BASE value to subtract to get RTF Value if above base*/
+    public static final int LIST_TYPE_UNKNOWN = -1; 					/* unkown type */
     public static final int LIST_TYPE_BASE = 1000; 						/* BASE value to subtract to get RTF Value if above base*/
     public static final int LIST_TYPE_ARABIC = 1000; 					/* 0 Arabic (1, 2, 3) */
     public static final int LIST_TYPE_UPPERCASE_ROMAN_NUMERAL = 1001;	/* 1 Uppercase Roman numeral (I, II, III) */
@@ -422,6 +422,11 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
             case LIST_TYPE_LOWERCASE_LETTER   	 : result.write(intToByteArray(7)); break;
             case LIST_TYPE_ARABIC_LEADING_ZERO   	 : result.write(intToByteArray(22)); break;
             case LIST_TYPE_NO_NUMBER   	 : result.write(intToByteArray(255)); break;
+            default:	// catch all for other unsupported types
+            	if(this.listType >= RtfListLevel.LIST_TYPE_BASE) {
+            		result.write(intToByteArray(this.listType - RtfListLevel.LIST_TYPE_BASE));
+            	}
+            break;
         }
         
         result.write(LIST_LEVEL_TYPE_NEW);
@@ -443,6 +448,11 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
             case LIST_TYPE_LOWERCASE_LETTER   	 : result.write(intToByteArray(7)); break;
             case LIST_TYPE_ARABIC_LEADING_ZERO   	 : result.write(intToByteArray(22)); break;
             case LIST_TYPE_NO_NUMBER   	 : result.write(intToByteArray(255)); break;
+            default:	// catch all for other unsupported types
+            	if(this.listType >= RtfListLevel.LIST_TYPE_BASE) {
+            		result.write(intToByteArray(this.listType - RtfListLevel.LIST_TYPE_BASE));
+            	}
+            break;
         }
         result.write(LIST_LEVEL_ALIGNMENT);
         result.write(intToByteArray(0));
