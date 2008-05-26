@@ -180,7 +180,7 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
     public static final int LIST_TYPE_UPPER_ROMAN = 4;
     public static final int LIST_TYPE_LOWER_ROMAN = 5;
 
-    public static final int LIST_TYPE_UNKNOWN = -1; 					/* unkown type */
+    public static final int LIST_TYPE_UNKNOWN = -1; 					/* unknown type */
     public static final int LIST_TYPE_BASE = 1000; 						/* BASE value to subtract to get RTF Value if above base*/
     public static final int LIST_TYPE_ARABIC = 1000; 					/* 0 Arabic (1, 2, 3) */
     public static final int LIST_TYPE_UPPERCASE_ROMAN_NUMERAL = 1001;	/* 1 Uppercase Roman numeral (I, II, III) */
@@ -380,20 +380,6 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
 	 */
 	public void setAlignment(int alignment) {
 		this.alignment = alignment;
-	}
-
-	public void setInHeader(boolean inHeader) {
-		super.setInHeader(inHeader);
-
-	}
-
-	public void setInTable(boolean inTable) {
-		super.setInTable(inHeader);
-
-	}
-
-	public void setRtfDocument(RtfDocument doc) {
-		super.setRtfDocument(doc);
 	}
 
 	public void writeDefinition(final OutputStream result) throws IOException {
