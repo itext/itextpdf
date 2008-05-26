@@ -332,6 +332,7 @@ public class RtfDocumentHeader extends RtfElement {
      * Get the <code>RtfListTable</code> object.
      * 
      * @return the ListTable object.
+     * @since 2.1.3
      */
     public RtfListTable getListTable() {
     	return this.listTable;
