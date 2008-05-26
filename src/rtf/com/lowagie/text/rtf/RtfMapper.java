@@ -71,8 +71,6 @@ import com.lowagie.text.rtf.document.RtfInfoElement;
 import com.lowagie.text.rtf.field.RtfAnchor;
 import com.lowagie.text.rtf.graphic.RtfImage;
 import com.lowagie.text.rtf.list.RtfList;
-import com.lowagie.text.rtf.list.RtfList;
-import com.lowagie.text.rtf.list.RtfListItem;
 import com.lowagie.text.rtf.list.RtfListItem;
 import com.lowagie.text.rtf.table.RtfTable;
 import com.lowagie.text.rtf.text.RtfAnnotation;

@@ -58,8 +58,6 @@ import com.lowagie.text.rtf.document.output.RtfNilOutputStream;
 import com.lowagie.text.rtf.headerfooter.RtfHeaderFooter;
 import com.lowagie.text.rtf.headerfooter.RtfHeaderFooterGroup;
 import com.lowagie.text.rtf.list.RtfList;
-import com.lowagie.text.rtf.list.RtfList;
-import com.lowagie.text.rtf.list.RtfListTable;
 import com.lowagie.text.rtf.list.RtfListTable;
 import com.lowagie.text.rtf.style.RtfColor;
 import com.lowagie.text.rtf.style.RtfColorList;

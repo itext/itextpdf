@@ -58,8 +58,6 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.rtf.direct.RtfDirectContent;
-import com.lowagie.text.rtf.document.RtfDocument;
-import com.lowagie.text.rtf.graphic.RtfImage;
 import com.lowagie.text.rtf.parser.RtfParser;
 import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordData;
 

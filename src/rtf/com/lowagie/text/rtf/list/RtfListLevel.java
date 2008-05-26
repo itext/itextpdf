@@ -54,11 +54,7 @@ import java.io.OutputStream;
 
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
-import com.lowagie.text.List;
-import com.lowagie.text.factories.RomanAlphabetFactory;
-import com.lowagie.text.factories.RomanNumberFactory;
 import com.lowagie.text.rtf.RtfElement;
-
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.style.RtfFont;
