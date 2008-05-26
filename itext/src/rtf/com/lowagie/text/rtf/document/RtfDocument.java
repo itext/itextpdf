@@ -70,6 +70,7 @@ import com.lowagie.text.rtf.graphic.RtfImage;
  * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Todd Bush [Tab support]
  * @author Thomas Bickel (tmb99@inode.at)
+ * @since 1.x
  */
 public class RtfDocument extends RtfElement {
     /**
@@ -359,6 +360,7 @@ public class RtfDocument extends RtfElement {
      * Helper method outputs linebreak in document if debugging is turned on.
      * @param result the OutputStream to write the linebreak to.
      * @throws IOException
+     * @since 2.1.3
      */
     final public void outputDebugLinebreak(final OutputStream result) throws IOException {
     	if(this.getDocumentSettings().isOutputDebugLineBreaks())

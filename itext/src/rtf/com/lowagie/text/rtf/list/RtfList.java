@@ -80,12 +80,14 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * @version $Id$
  * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Howard Shank (hgshank@yahoo.com)
+ * @since 2.1.3
  */
 public class RtfList extends RtfElement implements RtfExtendedElement {
 
 
     /**
      * Constant for the list number
+     * @since 2.1.3
      */
     public static final byte[] LIST_NUMBER = "\\ls".getBytes();
 
@@ -95,6 +97,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     private static final byte[] LIST = "\\list".getBytes();
     /**
      * Constant for the list id
+     * @since 2.1.3
      */
     public static final byte[] LIST_ID = "\\listid".getBytes();
     /**
@@ -129,16 +132,19 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     // character properties
     /**
      * Constant for the list level value
+     * @since 2.1.3
      */
     public static final byte[] LIST_LEVEL_NUMBER = "\\ilvl".getBytes();
     
     
 	/**
      * Constant for the old list text
+     * @since 2.1.3
      */
     public static final byte[] LIST_TEXT = "\\listtext".getBytes();
     /**
      * Constant for the old list number end
+     * @since 2.1.3
      */
     public static final byte[] LIST_NUMBER_END = ".".getBytes();
     
@@ -146,6 +152,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 
     /**
      * Constant for a tab character
+     * @since 2.1.3
      */
     public static final byte[] TAB = "\\tab".getBytes();
     
@@ -154,15 +161,37 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      */
     private ArrayList items;
     
+    /**
+     * The parent list if there is one.
+     */
     private RtfList parentList = null;
+
     /**
      * The list id
      */
     private int listID = -1;
     
+    /**
+     * List type of NORMAL - no control word
+     * @since 2.1.3
+     */
     public static final int LIST_TYPE_NORMAL = 0;				/*  Normal list type */
+    
+    /**
+     * List type of listsimple
+     * @since 2.1.3
+     */
     public static final int LIST_TYPE_SIMPLE = 1;				/*  Simple list type */
+    
+    /**
+     * List type of listhybrid
+     * @since 2.1.3
+     */
     public static final int LIST_TYPE_HYBRID = 2;				/*  Hybrid list type */
+    
+    /**
+     * This RtfList type
+     */
     private int listType = LIST_TYPE_HYBRID;
     
     /**
@@ -180,9 +209,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      */
     private ArrayList listLevels = null;;
 
-    private RtfList parent = null;
+    
     /**
      * Constructs an empty RtfList object.
+     * @since 2.1.3
      */
     public RtfList() {
     	super(null);
@@ -192,6 +222,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     /**
      * Set the document.
      * @param doc The RtfDocument
+     * @since 2.1.3
      */
     public void setDocument(RtfDocument doc) {
     	this.document = doc;
@@ -203,6 +234,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     /**
      * Constructs an empty RtfList object.
      * @param doc The RtfDocument this RtfList belongs to
+     * @since 2.1.3
      */
     public RtfList(RtfDocument doc) {
         super(doc);
@@ -218,6 +250,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * 
      * @param doc The RtfDocument this RtfList belongs to
      * @param list The List this RtfList is based on
+     * @since 2.1.3
      */
     public RtfList(RtfDocument doc, List list) {
         // setup the listlevels
@@ -289,7 +322,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 for(int j = 0; j < rtfElements.length; j++) {
                     RtfBasicElement rtfElement = rtfElements[j];
                     if(rtfElement instanceof RtfList) {
-                        ((RtfList) rtfElement).setParent(this);
+                        ((RtfList) rtfElement).setParentList(this);
                     } else if(rtfElement instanceof RtfListItem) {
                         ((RtfListItem) rtfElement).setParent(ll);
                     }
@@ -310,10 +343,11 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         }
     }
     
-
-    
     /**
      * Writes the definition part of this list level
+     * @param result
+     * @throws IOException
+     * @since 2.1.3
      */
     public void writeDefinition(final OutputStream result) throws IOException
     {
@@ -380,7 +414,8 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     
     /**
      * Writes the content of the RtfList
-     */    
+     * @since 2.1.3
+    */    
     public void writeContent(final OutputStream result) throws IOException
     {
         if(!this.inTable) {
@@ -427,7 +462,14 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
         }
     }        
-    
+    /**
+     * 
+     * @param result
+     * @param itemNr
+     * @param listLevel
+     * @throws IOException
+     * @since 2.1.3
+     */
     protected void writeListTextBlock(final OutputStream result, int itemNr, RtfListLevel listLevel) 
     throws IOException {
     	result.write(OPEN_GROUP);
@@ -465,6 +507,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * 
      * @param result The <code>OutputStream</code> to write to
      * @throws IOException On i/o errors.
+     * @since 2.1.3
      */
     protected void writeListNumbers(final OutputStream result) throws IOException {
         result.write(RtfList.LIST_NUMBER);
@@ -472,6 +515,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     }
     /**
      * Create a default set of listlevels
+     * @since 2.1.3
      */
     protected void createDefaultLevels() {
         this.listLevels = new ArrayList();	// listlevels
@@ -492,6 +536,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * Gets the id of this list
      * 
      * @return Returns the list number.
+     * @since 2.1.3
      */
     public int getListNumber() {
         return listNumber;
@@ -501,6 +546,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * Sets the id of this list
      * 
      * @param listNumber The list number to set.
+     * @since 2.1.3
      */
     public void setListNumber(int listNumber) {
         this.listNumber = listNumber;
@@ -511,6 +557,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * child elements.
      * 
      * @param inTable <code>True</code> if this RtfList is in a table, <code>false</code> otherwise
+     * @since 2.1.3
      */
     public void setInTable(boolean inTable) {
         super.setInTable(inTable);
@@ -524,6 +571,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * child elements.
      * 
      * @param inHeader <code>True</code> if this RtfList is in a header, <code>false</code> otherwise
+     * @since 2.1.3
      */
     public void setInHeader(boolean inHeader) {
         super.setInHeader(inHeader);
@@ -535,6 +583,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     /**
      * Correct the indentation of this RtfList by adding left/first line indentation
      * from the parent RtfList. Also calls correctIndentation on all child RtfLists.
+     * @since 2.1.3
      */
     protected void correctIndentation() {
     	// TODO: Fix
@@ -554,6 +603,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 	/**
 	 * Set the list ID number
 	 * @param id
+     * @since 2.1.3
 	 */
 	public void setID(int id) {
 		this.listID = id;
@@ -561,23 +611,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 	/**
 	 * Get the list ID number
 	 * @return this list id
+     * @since 2.1.3
 	 */
 	public int getID() {
 		return this.listID;
-	}
-	/**
-	 * set the parent list for nested lists
-	 * @param parent
-	 */
-	public void setParent(RtfList parent) {
-		this.parent = parent;
-	}
-	/**
-	 * Get the parent list for nested lists
-	 * @return parent for this object
-	 */
-	public RtfList getParent() {
-		return this.parent;
 	}
 
 	/**
@@ -585,6 +622,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 	 * @see RtfList#LIST_TYPE_NORMAL
 	 * @see RtfList#LIST_TYPE_SIMPLE
 	 * @see RtfList#LIST_TYPE_HYBRID
+     * @since 2.1.3
 	 */
 	public int getListType() {
 		return listType;
@@ -595,6 +633,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 	 * @see RtfList#LIST_TYPE_NORMAL
 	 * @see RtfList#LIST_TYPE_SIMPLE
 	 * @see RtfList#LIST_TYPE_HYBRID
+     * @since 2.1.3
 	 */
 	public void setListType(int listType) throws InvalidParameterException {
 		if(listType == LIST_TYPE_NORMAL || 
@@ -609,6 +648,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 
 	/**
 	 * @return the parentList
+     * @since 2.1.3
 	 */
 	public RtfList getParentList() {
 		return parentList;
@@ -616,6 +656,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 
 	/**
 	 * @param parentList the parentList to set
+     * @since 2.1.3
 	 */
 	public void setParentList(RtfList parentList) {
 		this.parentList = parentList;
@@ -623,6 +664,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 
 	/**
 	 * @return the name
+     * @since 2.1.3
 	 */
 	public String getName() {
 		return name;
@@ -630,12 +672,14 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 
 	/**
 	 * @param name the name to set
+     * @since 2.1.3
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 	/**
 	 * @return the list at the index
+     * @since 2.1.3
 	 */
 	public RtfListLevel getListLevel(int index) {
 		if(listLevels != null) {

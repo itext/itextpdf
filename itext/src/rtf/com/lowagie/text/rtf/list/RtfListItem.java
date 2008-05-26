@@ -66,6 +66,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * @version $Id$
  * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Howard Shank (hgshank@yahoo.com)
+ * @since 2.1.3
  */
 public class RtfListItem extends RtfParagraph {
 
@@ -194,6 +195,7 @@ public class RtfListItem extends RtfParagraph {
      * Set the parent RtfList.
      * 
      * @return  The parent RtfList to use.
+     * @since 2.1.3
      */
     public RtfListLevel getParent() {
         return this.parentList;
@@ -209,6 +211,7 @@ public class RtfListItem extends RtfParagraph {
 
 	/**
 	 * @return the level
+	 * @since 2.1.3
 	 */
 	public int getLevel() {
 		return level;
@@ -216,6 +219,7 @@ public class RtfListItem extends RtfParagraph {
 
 	/**
 	 * @param level the level to set
+     * @since 2.1.3
 	 */
 	public void setLevel(int level) {
 		this.level = level;
