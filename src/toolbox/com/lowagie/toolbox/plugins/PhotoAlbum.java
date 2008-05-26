@@ -152,22 +152,21 @@ public class PhotoAlbum extends AbstractTool {
                     }
                     img.setAbsolutePosition(0, 0);
                     document.add(img);
-                    if (caption != null) {
-                        BaseFont bf = BaseFont.createFont("Helvetica",
-                                BaseFont.WINANSI,
-                                false);
-                        PdfGState gs1 = new PdfGState();
-                        gs1.setBlendMode(PdfGState.BM_OVERLAY);
-                        PdfContentByte cb = writer.getDirectContent();
-                        cb.saveState();
-                        cb.setGState(gs1);
-                        cb.beginText();
-                        cb.setFontAndSize(bf, 40);
-                        cb.setTextMatrix(50, 50);
-                        cb.showText(caption);
-                        cb.endText();
-                        cb.restoreState();
-                    }
+
+                    BaseFont bf = BaseFont.createFont("Helvetica",
+                            BaseFont.WINANSI,
+                            false);
+                    PdfGState gs1 = new PdfGState();
+                    gs1.setBlendMode(PdfGState.BM_OVERLAY);
+                    PdfContentByte cb = writer.getDirectContent();
+                    cb.saveState();
+                    cb.setGState(gs1);
+                    cb.beginText();
+                    cb.setFontAndSize(bf, 40);
+                    cb.setTextMatrix(50, 50);
+                    cb.showText(caption);
+                    cb.endText();
+                    cb.restoreState();
 
                     label = image.getName();
                     if (label.lastIndexOf('.') > 0) {
