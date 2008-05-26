@@ -58,6 +58,7 @@ import java.util.Map;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.pdf.BaseFont.StreamFont;
 /** Reads a Truetype font
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -1252,22 +1253,7 @@ class TrueTypeFont extends BaseFont {
         String subsetPrefix = "";
         if (embedded) {
             if (cff) {
-                RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
-                byte b[] = new byte[cffLength];
-                try {
-                    rf2.reOpen();
-                    rf2.seek(cffOffset);
-                    rf2.readFully(b);
-                }
-                finally {
-                    try {
-                        rf2.close();
-                    }
-                    catch (Exception e) {
-                        // empty on purpose
-                    }
-                }
-                pobj = new StreamFont(b, "Type1C");
+                pobj = new StreamFont(readCffFont(), "Type1C");
                 obj = writer.addToBody(pobj);
                 ind_font = obj.getIndirectReference();
             }
@@ -1315,6 +1301,48 @@ class TrueTypeFont extends BaseFont {
         }
         pobj = getFontBaseType(ind_font, subsetPrefix, firstChar, lastChar, shortTag);
         writer.addToBody(pobj, ref);
+    }
+    
+    /**
+     * If this font file is using the Compact Font File Format, then this method
+     * will return the raw bytes needed for the font stream. If this method is
+     * ever made public: make sure to add a test if (cff == true).
+     * @return	a byte array
+     * @since	2.1.3
+     */
+    protected byte[] readCffFont() throws IOException {
+        RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
+        byte b[] = new byte[cffLength];
+        try {
+            rf2.reOpen();
+            rf2.seek(cffOffset);
+            rf2.readFully(b);
+        }
+        finally {
+            try {
+                rf2.close();
+            }
+            catch (Exception e) {
+                // empty on purpose
+            }
+        }
+    	return b;
+    }
+
+    /**
+     * Returns a PdfStream object with the full font program.
+     * @return	a PdfStream with the font program
+     * @since	2.1.3
+     */
+    public PdfStream getFullFontStream() throws IOException, DocumentException {
+        if (cff) {
+            return new StreamFont(readCffFont(), "Type1C");
+        }
+        else {
+        	byte[] b = getFullFont();
+        	int lengths[] = new int[]{b.length};
+        	return new StreamFont(b, lengths);
+        }
     }
     
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values

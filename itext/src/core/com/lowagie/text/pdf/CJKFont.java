@@ -315,6 +315,16 @@ class CJKFont extends BaseFont {
         pobj = getFontBaseType(ind_font);
         writer.addToBody(pobj, ref);
     }
+
+    /**
+     * You can't get the FontStream of a CJK font (CJK fonts are never embedded),
+     * so this method always returns null.
+   	 * @return	null
+     * @since	2.1.3
+     */
+    public PdfStream getFullFontStream() {
+    	return null;
+    }
     
     private float getDescNumber(String name) {
         return Integer.parseInt((String)fontDesc.get(name));

@@ -494,8 +494,9 @@ class Type1Font extends BaseFont
  * otherwise the font is read and output in a PdfStream object.
  * @return the PdfStream containing the font or <CODE>null</CODE>
  * @throws DocumentException if there is an error reading the font
+ * @since 2.1.3
  */
-    private PdfStream getFontStream() throws DocumentException
+    public PdfStream getFullFontStream() throws DocumentException
     {
         if (builtinFont || !embedded)
             return null;
@@ -658,7 +659,7 @@ class Type1Font extends BaseFont
         PdfIndirectReference ind_font = null;
         PdfObject pobj = null;
         PdfIndirectObject obj = null;
-        pobj = getFontStream();
+        pobj = getFullFontStream();
         if (pobj != null){
             obj = writer.addToBody(pobj);
             ind_font = obj.getIndirectReference();

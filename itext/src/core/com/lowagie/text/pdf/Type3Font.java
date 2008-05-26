@@ -262,6 +262,15 @@ public class Type3Font extends BaseFont {
         writer.addToBody(font, ref);
     }
     
+    /**
+     * Always returns null, because you can't get the FontStream of a Type3 font.
+   	 * @return	null
+     * @since	2.1.3
+     */
+    public PdfStream getFullFontStream() {
+    	return null;
+    }
+    
     
     byte[] convertToBytes(String text) {
         char[] cc = text.toCharArray();
