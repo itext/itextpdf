@@ -52,11 +52,8 @@ package com.lowagie.text.rtf.list;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-
-import org.omg.CORBA.portable.ApplicationException;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
@@ -73,7 +70,6 @@ import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.style.RtfFont;
 import com.lowagie.text.rtf.style.RtfFontList;
-import com.lowagie.text.rtf.style.RtfParagraphStyle;
 import com.lowagie.text.rtf.text.RtfParagraph;
 
 

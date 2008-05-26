@@ -50,11 +50,8 @@
 package com.lowagie.text.rtf.parser.destinations;
 
 import com.lowagie.text.Element;
-import com.lowagie.text.Image;
-import com.lowagie.text.List;
 import com.lowagie.text.rtf.list.RtfList;
 import com.lowagie.text.rtf.list.RtfListLevel;
-import com.lowagie.text.rtf.list.RtfListTable;
 import com.lowagie.text.rtf.parser.RtfImportMgr;
 import com.lowagie.text.rtf.parser.RtfParser;
 import com.lowagie.text.rtf.parser.ctrlwords.RtfCtrlWordData;
