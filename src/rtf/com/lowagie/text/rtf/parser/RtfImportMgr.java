@@ -60,7 +60,7 @@ import com.lowagie.text.rtf.style.RtfColor;
 import com.lowagie.text.rtf.style.RtfFont;
 
 /**
- * The RtfImportHeader stores the docment header information from
+ * The RtfImportHeader stores the document header information from
  * an RTF document that is being imported. Currently font and
  * color settings are stored. The RtfImportHeader maintains a mapping
  * from font and color numbers from the imported RTF document to
@@ -80,15 +80,15 @@ public class RtfImportMgr {
      */
     private HashMap importFontMapping = null;
     /**
-     * The HashMap storing the color number mapings.
+     * The HashMap storing the color number mappings.
      */
     private HashMap importColorMapping = null;
     /**
-     * The HashMap storing the Stylesheet List number mapings.
+     * The HashMap storing the Stylesheet List number mappings.
      */
     private HashMap importStylesheetListMapping = null;
     /**
-     * The HashMap storing the List number mapings.
+     * The HashMap storing the List number mappings.
      */
     private HashMap importListMapping = null;
     /**
@@ -139,7 +139,7 @@ public class RtfImportMgr {
      * 
      * @param fontNr The original font number.
      * @param fontName The font name to look up.
-     * @param charset The characterset to use for the font.
+     * @param charset The character set to use for the font.
      */
     public boolean importFont(String fontNr, String fontName, int charset) {
         RtfFont rtfFont = new RtfFont(fontName);
@@ -159,7 +159,7 @@ public class RtfImportMgr {
      * 
      * @param fontNr The original font number.
      * @param fontName The font name to look up.
-     * @param charset The characterset to use for the font.
+     * @param charset The character set to use for the font.
      */
     public boolean importFont(String fontNr, String fontName, String fontFamily, int charset) {
         RtfFont rtfFont = new RtfFont(fontName);
@@ -243,7 +243,7 @@ public class RtfImportMgr {
      * Performs the mapping from the original list number to the actual
      * list number in the resulting RTF document. If the list number was not
      * seen during import (thus no mapping) then -1 is returned. There is no
-     * guarentee of a valid list number.
+     * guarantee of a valid list number.
      */
     public String mapListNr(String listNr) {
         if(this.importListMapping.containsKey(listNr)) {
