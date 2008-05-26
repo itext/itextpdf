@@ -215,29 +215,21 @@ public class RtfImportMgr {
      * Imports a List value. The List number for the List defined
      * is determined and then the resulting mapping is added.
      */
-    public void importList(String listNr, List list) {
-        RtfList rtfList = new RtfList(this.rtfDoc, list);
-
-        //if(rtfList != null){
-        //rtfList.setRtfDocument(this.rtfDoc);
-        this.importListMapping.put(listNr, Integer.toString(this.rtfDoc.getDocumentHeader().getListNumber(rtfList)));
-//      return true;
-//      } else {
-//      return false;
-//      }
+    public void importList(String origListNr, String newListNr) {
+        this.importListMapping.put(origListNr, newListNr);
     }
 
     /**
      * Performs the mapping from the original list number to the actual
      * list number in the resulting RTF document. If the list number was not
-     * seen during import (thus no mapping) then -1 is returned. There is no
+     * seen during import (thus no mapping) then null is returned. There is no
      * guarantee of a valid list number.
      */
     public String mapListNr(String listNr) {
         if(this.importListMapping.containsKey(listNr)) {
             return (String) this.importListMapping.get(listNr);
         } else {
-            return "-1";
+            return null;
         }
     }
 

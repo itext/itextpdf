@@ -73,6 +73,8 @@ public class RtfDestinationListTable extends RtfDestination {
 	
 	private int currentLevel = -1;
 	private RtfListLevel currentListLevel = null;
+	private int currentListMappingNumber = 0;
+	private int currentSubGroupCount = 0;
 	
 	public RtfDestinationListTable() {
 		super(null);
@@ -95,6 +97,7 @@ public class RtfDestinationListTable extends RtfDestination {
 	 * @see com.lowagie.text.rtf.parser.destinations.RtfDestination#handleOpenNewGroup()
 	 */
 	public boolean handleOpeningSubGroup() {
+		this.currentSubGroupCount++;
 		return true;
 	}
 
@@ -129,6 +132,7 @@ public class RtfDestinationListTable extends RtfDestination {
 			skipCtrlWord = true;
 			if (ctrlWordData.ctrlWord.equals("listtable")) {
 				result = true;
+				this.currentListMappingNumber = 0;
 				
 			} else
 				/* Picture info for icons/images for lists */
@@ -143,6 +147,8 @@ public class RtfDestinationListTable extends RtfDestination {
 						this.newList = new RtfList(this.rtfParser.getRtfDocument());
 						this.newList.setListType(RtfList.LIST_TYPE_NORMAL);	// set default
 						this.currentLevel = -1;
+						this.currentListMappingNumber++;
+						this.currentSubGroupCount = 0;
 						result = true;
 					} else if (ctrlWordData.ctrlWord.equals("listtemplateid")) /* // List item*/ {
 						// ignore this because it gets regenerated in every document
@@ -352,7 +358,10 @@ public class RtfDestinationListTable extends RtfDestination {
 	 * @see com.lowagie.text.rtf.direct.RtfDestination#handleGroupEnd()
 	 */
 	public boolean handleCloseGroup() {
-		if(this.newList != null) {
+		this.currentSubGroupCount--;
+		if(this.newList != null && this.currentSubGroupCount == 0) {
+			this.importHeader.importList(Integer.toString(this.currentListMappingNumber), 
+					Integer.toString(this.newList.getListNumber()));
 			this.rtfParser.getRtfDocument().add(this.newList);
 		}
 		return true;
