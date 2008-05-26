@@ -772,7 +772,7 @@ public class RtfParser {
 		it = importMappings.getListMappings().keySet().iterator();
 		while(it.hasNext()) {
 			String listNr = (String) it.next();
-			this.importMgr.importList(listNr, (List) importMappings.getListMappings().get(listNr));
+			this.importMgr.importList(listNr, (String)importMappings.getListMappings().get(listNr));
 		}
 		it = importMappings.getStylesheetListMappings().keySet().iterator();
 		while(it.hasNext()) {

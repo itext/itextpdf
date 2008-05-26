@@ -278,6 +278,8 @@ public final class RtfDestinationDocument extends RtfDestination implements RtfP
 			if(ctrlWordData.ctrlWord.equals("trcbpat")) { ctrlWordData.param = this.rtfParser.getImportManager().mapColorNr(ctrlWordData.param);}
 			//paragraph border
 			if(ctrlWordData.ctrlWord.equals("brdrcf")) { ctrlWordData.param = this.rtfParser.getImportManager().mapColorNr(ctrlWordData.param);}
+			// map lists
+			if(ctrlWordData.ctrlWord.equals("ls")) { ctrlWordData.param = this.rtfParser.getImportManager().mapListNr(ctrlWordData.param);}
 		}
 		
 
