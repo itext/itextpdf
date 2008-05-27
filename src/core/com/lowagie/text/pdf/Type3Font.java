@@ -263,12 +263,12 @@ public class Type3Font extends BaseFont {
     }
     
     /**
-     * Throws an UnsupportedOperationException. You can't get the FontStream of a Type3 font.
-   	 * @throws	an UnsupportedOperationException
+     * Always returns null, because you can't get the FontStream of a Type3 font.
+   	 * @return	null
      * @since	2.1.3
      */
-    public PdfStream getFontStream() {
-    	throw new UnsupportedOperationException("This method is not supported for Type 3 Fonts.");
+    public PdfStream getFullFontStream() {
+    	return null;
     }
     
     

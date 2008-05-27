@@ -362,19 +362,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         }
         // sivan: cff
         if (cff) {
-			RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
-			byte b[] = new byte[cffLength];
-			try {
-				rf2.reOpen();
-				rf2.seek(cffOffset);
-				rf2.readFully(b);
-			} finally {
-				try {
-					rf2.close();
-				} catch (Exception e) {
-					// empty on purpose
-				}
-			}
+			byte b[] = readCffFont();
             if (subset || subsetRanges != null) {
                 CFFFontSubset cff = new CFFFontSubset(new RandomAccessFileOrArray(b),longTag);
                 b = cff.Process(cff.getNames()[0]);
@@ -424,24 +412,11 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @return	a PdfStream with the font program
      * @since	2.1.3
      */
-    public PdfStream getFontStream() throws IOException, DocumentException {
+    public PdfStream getFullFontStream() throws IOException, DocumentException {
     	if (cff) {
-			RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
-			byte b[] = new byte[cffLength];
-			try {
-				rf2.reOpen();
-				rf2.seek(cffOffset);
-				rf2.readFully(b);
-			} finally {
-				try {
-					rf2.close();
-				} catch (Exception e) {
-					// empty on purpose
-				}
-			}
-			return new StreamFont(b, "CIDFontType0C");
+			return new StreamFont(readCffFont(), "CIDFontType0C");
         }
-    	return super.getFontStream();
+    	return super.getFullFontStream();
     }
     
     /** A forbidden operation. Will throw a null pointer exception.

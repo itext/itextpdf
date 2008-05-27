@@ -531,7 +531,7 @@ public class DocumentFont extends BaseFont {
      * @return	null
      * @since	2.1.3
      */
-    public PdfStream getFontStream() {
+    public PdfStream getFullFontStream() {
     	return null;
     }
 

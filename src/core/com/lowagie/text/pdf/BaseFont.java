@@ -931,12 +931,12 @@ public abstract class BaseFont {
     
     /**
      * Returns a PdfStream object with the full font program (if possible).
-     * This will throws an UnsupportedOperationException for some types of fonts,
-     * or return null if there is no font program available.
+     * This method will return null for some types of fonts (CJKFont, Type3Font)
+     * or if there is no font program available (standard Type 1 fonts).
      * @return	a PdfStream with the font program
      * @since	2.1.3
      */
-    abstract PdfStream getFontStream() throws IOException, DocumentException;
+    abstract PdfStream getFullFontStream() throws IOException, DocumentException;
     
     /** Gets the encoding used to convert <CODE>String</CODE> into <CODE>byte[]</CODE>.
      * @return the encoding name
