@@ -678,34 +678,34 @@ public final class Pfm2afm {
         "W80",              /*   80    */
         "W81",              /*   81    */
         "quotesinglbase",   /*   82    */
-        "W83",              /*   83    */
+        "florin",           /*   83    */
         "quotedblbase",     /*   84    */
         "ellipsis",         /*   85    */
         "dagger",           /*   86    */
         "daggerdbl",        /*   87    */
-        "asciicircum",      /*   88    */
+        "circumflex",       /*   88    */
         "perthousand",      /*   89    */
         "Scaron",           /*   8A    */
         "guilsinglleft",    /*   8B    */
         "OE",               /*   8C    */
         "W8d",              /*   8D    */
-        "W8e",              /*   8E    */
+        "Zcaron",           /*   8E    */
         "W8f",              /*   8F    */
         "W90",              /*   90    */
         "quoteleft",        /*   91    */
         "quoteright",       /*   92    */
         "quotedblleft",     /*   93    */
         "quotedblright",    /*   94    */
-        "bullet1",          /*   95    */
+        "bullet",           /*   95    */
         "endash",           /*   96    */
         "emdash",           /*   97    */
-        "asciitilde",       /*   98    */
+        "tilde",            /*   98    */
         "trademark",        /*   99    */
         "scaron",           /*   9A    */
         "guilsinglright",   /*   9B    */
         "oe",               /*   9C    */
         "W9d",              /*   9D    */
-        "W9e",              /*   9E    */
+        "zcaron",           /*   9E    */
         "Ydieresis",        /*   9F    */
         "reqspace",         /*   A0    */
         "exclamdown",       /*   A1    */
@@ -722,7 +722,7 @@ public final class Pfm2afm {
         "logicalnot",       /*   AC    */
         "syllable",         /*   AD    */
         "registered",       /*   AE    */
-        "overbar",          /*   AF    */
+        "macron",           /*   AF    */
         "degree",           /*   B0    */
         "plusminus",        /*   B1    */
         "twosuperior",      /*   B2    */
