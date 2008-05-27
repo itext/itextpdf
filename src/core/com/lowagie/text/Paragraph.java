@@ -49,6 +49,8 @@
 
 package com.lowagie.text;
 
+import java.util.ArrayList;
+
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
  * <P>
@@ -237,7 +239,13 @@ public class Paragraph extends Phrase {
         }
         else if (o instanceof Paragraph) {
             super.add(o);
-            super.add(new Chunk("\n", ((Paragraph)o).getFont()));
+            if (size() > 0) {
+            	Chunk tmp = ((Chunk) getChunks().get(size() - 1));
+            	super.add(new Chunk("\n", tmp.getFont()));
+            }
+            else {
+            	super.add(Chunk.NEWLINE);
+            }
             return true;
         }
         return super.add(o);
