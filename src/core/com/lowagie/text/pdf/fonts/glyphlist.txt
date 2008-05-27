@@ -2665,8 +2665,8 @@ mpasquare;33AB
 mssquare;33B3
 msuperior;F6EF
 mturned;026F
-mu;00B5
 mu1;00B5
+mu;00B5
 muasquare;3382
 muchgreater;226B
 muchless;226A
