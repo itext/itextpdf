@@ -58,7 +58,7 @@ import java.util.Map;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.pdf.BaseFont.StreamFont;
+
 /** Reads a Truetype font
  *
  * @author Paulo Soares (psoares@consiste.pt)
