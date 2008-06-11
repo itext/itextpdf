@@ -13,11 +13,11 @@
 	<path id="itext.classpath">
 	    <pathelement location="${itext.bin}"/>
 		<!-- jars needed for iText (core) -->
-	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
-	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/${lib.bcmail}"/>
+	    <pathelement path="${itext.lib}/${lib.bcprov}"/>
 		<!-- jars needed for RUPS -->
-	    <pathelement path="${itext.lib}/pdf-renderer.jar"/>
-	    <pathelement path="${itext.lib}/dom4j-1.6.1.jar"/>
+	    <pathelement path="${itext.lib}/${lib.pdf-renderer}"/>
+	    <pathelement path="${itext.lib}/${lib.dom4j}"/>
 	</path>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -99,7 +99,7 @@
         <jar jarfile="${itext.jar}" basedir="${itext.bin}">
             <manifest>
                 <attribute name="Main-Class" value="com.lowagie.tools.ToolboxAvailable"/>
-                <attribute name="Class-Path" value="iText-toolbox.jar iText-toolbox-${releasenumber}.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar"/>
+                <attribute name="Class-Path" value="iText-toolbox.jar iText-toolbox-${releasenumber}.jar ${lib.bcmail} ${lib.bcprov}"/>
             </manifest>
         </jar>
     </target>
@@ -131,7 +131,7 @@
 		<jar destfile="${itext.rups.jar}" basedir="${itext.rups.bin}" includes="**/*.class, **/*.png">
 		    <manifest>
                 <attribute name="Main-Class" value="com.lowagie.rups.Rups"/>
-                <attribute name="Class-Path" value="iText.jar iText-${releasenumber}.jar pdf-renderer.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar dom4j-1.6.1.jar"/>
+                <attribute name="Class-Path" value="iText.jar iText-${releasenumber}.jar ${lib.pdf-renderer} ${lib.bcmail} ${lib.bcprov} ${lib.dom4j}"/>
             </manifest>
 		</jar>
 	</target>
@@ -151,7 +151,7 @@
 		<jar destfile="${itext.toolbox.jar}" basedir="${itext.toolbox.bin}" includes="**/*.class, **/*.png, **/*.txt, **/*.gif">
 		    <manifest>
                 <attribute name="Main-Class" value="com.lowagie.toolbox.Toolbox"/>
-                <attribute name="Class-Path" value="iText.jar iText-${releasenumber}.jar bcmail-${bc.jdk}-${bc.version}.jar bcprov-${bc.jdk}-${bc.version}.jar"/>
+                <attribute name="Class-Path" value="iText.jar iText-${releasenumber}.jar ${lib.bcmail} ${lib.bcprov}"/>
             </manifest>
 		</jar>
 	</target>
