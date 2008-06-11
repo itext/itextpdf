@@ -37,9 +37,9 @@
 
 	<property name="src.types" value="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.png, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
 
-	<target name="src.zip" description="--> makes a zipfile with the source code">
+	<target name="src-with-libs.zip" description="--> makes a zipfile with the source code and the libs">
 		<mkdir dir="${itext.dist}"/>
-		<zip zipfile="${itext.dist}/src.zip">
+		<zip zipfile="${itext.dist}/src-with-libs.zip">
 			<zipfileset prefix="src" dir="${itext.src}" includes="${src.types}" />
 			<zipfileset prefix="lib" dir="${itext.lib}">
 				<include name="bcmail-${bc.jdk}-${bc.version}.jar" />
@@ -51,9 +51,9 @@
 		</zip>
 	</target>
 	
-	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
+	<target name="src-with-libs.tar.gz" description="--> makes a tar.gz-file with the source code and the libs">
 		<mkdir dir="${itext.dist}"/>
-		<tar compression="gzip" tarfile="${itext.dist}/src.tar.gz">
+		<tar compression="gzip" tarfile="${itext.dist}/src-with-libs.tar.gz">
 			<tarfileset prefix="src" dir="${itext.src}" includes="${src.types}" />
 			<tarfileset prefix="lib" dir="${itext.lib}">
 				<include name="bcmail-${bc.jdk}-${bc.version}.jar" />
@@ -65,13 +65,27 @@
 		</tar>
 
 	</target>
-	
+
+	<target name="src.zip" description="--> makes a zipfile with the source code">
+		<mkdir dir="${itext.dist}"/>
+		<zip zipfile="${itext.dist}/src.zip">
+			<zipfileset prefix="src" dir="${itext.src}" includes="${src.types}" />
+		</zip>
+	</target>
+			
+	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
+		<mkdir dir="${itext.dist}"/>
+		<tar compression="gzip" tarfile="${itext.dist}/src.tar.gz">
+			<tarfileset prefix="src" dir="${itext.src}" includes="${src.types}" />
+		</tar>
+	</target>
+							
 	<target name="src.jar" description="--> makes a jar file with the source code">
 		<mkdir dir="${itext.dist}"/>
 		<jar destfile="${itext.dist}/iText-${releasenumber}-sources.jar" basedir="${itext.src}" includes="${src.types}" />
 	</target>
 	
-	<target name="archive.src" depends="src.zip, src.tar.gz, src.jar" description="--> archives the source code" />
+	<target name="archive.src" depends="src-with-libs.zip, src.zip, src-with-libs.tar.gz, src.tar.gz, src.jar" description="--> archives the source code" />
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Making a release, ready for upload to SourceForge                -->
