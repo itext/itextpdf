@@ -240,7 +240,10 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
 	{
 		ArrayList arr = dest.getArrayList();
 		StringBuffer s = new StringBuffer();
-		s.append(pages.get(getNumber((PdfIndirectReference)arr.get(0)))); //changed by ujihara 2004-06-13
+        if (((PdfObject)arr.get(0)).isNumber())
+            s.append(((PdfNumber)arr.get(0)).intValue());
+        else
+            s.append(pages.get(getNumber((PdfIndirectReference)arr.get(0)))); //changed by ujihara 2004-06-13
 		s.append(' ').append(arr.get(1).toString().substring(1));
 		for (int k = 2; k < arr.size(); ++k)
 			s.append(' ').append(arr.get(k).toString());
