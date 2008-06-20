@@ -806,6 +806,42 @@ public class AcroFields {
     }
 
     /**
+     * Gets the field values of a Choice field.
+     * @param name the fully qualified field name
+     * @return the field value
+     */    
+    public String[] getListSelection(String name) {
+    	String[] ret;
+    	String s = getField(name);
+    	if (s == null) {
+    		ret = new String[]{};
+    	}
+    	else {
+    		ret = new String[]{ s };
+    	}
+        Item item = (Item)fields.get(name);
+        if (item == null)
+            return ret;
+        //PdfName type = (PdfName)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.FT));
+        //if (!PdfName.CH.equals(type)) {
+        //	return ret;
+        //}
+        PdfArray values = (PdfArray)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.I));
+        if (values == null)
+            return ret;
+        ret = new String[values.size()];
+        String[] options = getListOptionExport(name);
+        PdfNumber n;
+        int idx = 0;
+        for (Iterator i = values.listIterator(); i.hasNext(); ) {
+        	n = (PdfNumber)i.next();
+        	ret[idx++] = options[n.intValue()];
+        }
+        return ret;
+    }
+
+    
+    /**
      * Sets a field property. Valid property names are:
      * <p>
      * <ul>
