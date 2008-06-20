@@ -809,6 +809,7 @@ public class AcroFields {
      * Gets the field values of a Choice field.
      * @param name the fully qualified field name
      * @return the field value
+     * @since 2.1.3
      */    
     public String[] getListSelection(String name) {
     	String[] ret;
