@@ -64,7 +64,7 @@ public class DocumentFont extends BaseFont {
     private PRIndirectReference refFont;
     private PdfDictionary font;
     private IntHashtable uni2byte = new IntHashtable();
-    private IntHashtable byte2uni = new IntHashtable();
+    private IntHashtable diffmap;
     private float Ascender = 800;
     private float CapHeight = 700;
     private float Descender = -200;
@@ -286,6 +286,7 @@ public class DocumentFont extends BaseFont {
                     fillEncoding((PdfName)enc);
                 PdfArray diffs = (PdfArray)PdfReader.getPdfObject(encDic.get(PdfName.DIFFERENCES));
                 if (diffs != null) {
+                    diffmap = new IntHashtable();
                     ArrayList dif = diffs.getArrayList();
                     int currentNumber = 0;
                     for (int k = 0; k < dif.size(); ++k) {
@@ -295,11 +296,8 @@ public class DocumentFont extends BaseFont {
                         else {
                             int c[] = GlyphList.nameToUnicode(PdfName.decodeName(((PdfName)obj).toString()));
                             if (c != null && c.length > 0) {
-                                if (byte2uni.containsKey(currentNumber)) {
-                                    uni2byte.remove(byte2uni.get(currentNumber));
-                                }
                                 uni2byte.put(c[0], currentNumber);
-                                byte2uni.put(currentNumber, c[0]);
+                                diffmap.put(c[0], currentNumber);
                             }
                             ++currentNumber;
                         }
@@ -322,6 +320,14 @@ public class DocumentFont extends BaseFont {
             for (int k = 0; k < e.length; ++k) {
                 int n = uni2byte.get(e[k]);
                 widths[n] = bf.getRawWidth(n, GlyphList.unicodeToName(e[k]));
+            }
+            if (diffmap != null) { //widths for diffmap must override existing ones
+                e = diffmap.toOrderedKeys();
+                for (int k = 0; k < e.length; ++k) {
+                    int n = diffmap.get(e[k]);
+                    widths[n] = bf.getRawWidth(n, GlyphList.unicodeToName(e[k]));
+                }
+                diffmap = null;
             }
             Ascender = bf.getFontDescriptor(ASCENT, 1000);
             CapHeight = bf.getFontDescriptor(CAPHEIGHT, 1000);
@@ -389,13 +395,11 @@ public class DocumentFont extends BaseFont {
             char arr[] = cv.toCharArray();
             for (int k = 0; k < 256; ++k) {
                 uni2byte.put(arr[k], k);
-                byte2uni.put(k, arr[k]);
             }
         }
         else {
             for (int k = 0; k < 256; ++k) {
                 uni2byte.put(stdEnc[k], k);
-                byte2uni.put(k, stdEnc[k]);
             }
         }
     }
