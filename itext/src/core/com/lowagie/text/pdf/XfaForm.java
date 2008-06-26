@@ -129,8 +129,11 @@ public class XfaForm {
         DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
         fact.setNamespaceAware(true);
         DocumentBuilder db = fact.newDocumentBuilder();
-        domDocument = db.parse(new ByteArrayInputStream(bout.toByteArray()));
+        domDocument = db.parse(new ByteArrayInputStream(bout.toByteArray()));   
         Node n = domDocument.getFirstChild();
+        while (n.getChildNodes().getLength() == 0) {
+        	n = n.getNextSibling();
+        }
         n = n.getFirstChild();
         while (n != null) {
             if (n.getNodeType() == Node.ELEMENT_NODE) {
