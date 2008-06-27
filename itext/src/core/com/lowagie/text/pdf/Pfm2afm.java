@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2005-2007 Paulo Soares
+ * Copyright 1991 Ken Borgendale
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.

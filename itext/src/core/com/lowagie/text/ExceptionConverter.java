@@ -3,6 +3,8 @@
  * Read http://www.javaspecialists.co.za/archive/newsletter.do?issue=033&print=yes&locale=en_US
  * "This material from The Java(tm) Specialists' Newsletter by Maximum Solutions (South Africa).
  * Please contact Maximum Solutions  for more information."
+ * 
+ * Copyright (C) 2001 Dr. Heinz M. Kabutz
  */
 
 /*
