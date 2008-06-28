@@ -563,8 +563,12 @@ public class PngImage {
             if (bpc == 16)
                 bpc = 8;
             Image img;
-            if (image != null)
-                img = Image.getInstance(width, height, components, bpc, image);
+            if (image != null) {
+                if (colorType == 3)
+                    img = new ImgRaw(width, height, components, bpc, image);
+                else
+                    img = Image.getInstance(width, height, components, bpc, image);
+            }
             else {
                 img = new ImgRaw(width, height, components, bpc, idat.toByteArray());
                 img.setDeflated(true);
