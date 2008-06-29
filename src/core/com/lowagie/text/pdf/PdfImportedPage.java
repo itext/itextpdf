@@ -67,6 +67,7 @@ public class PdfImportedPage extends com.lowagie.text.pdf.PdfTemplate {
         this.pageNumber = pageNumber;
         thisReference = writer.getPdfIndirectReference();
         bBox = readerInstance.getReader().getPageSize(pageNumber);
+        setMatrix(1, 0, 0, 1, -bBox.getLeft(), -bBox.getBottom());
         type = TYPE_IMPORTED;
     }
 
