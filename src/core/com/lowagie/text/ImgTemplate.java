@@ -88,4 +88,16 @@ public class ImgTemplate extends Image {
         plainWidth = getWidth();
         plainHeight = getHeight();
     }
+    
+    /**
+	 * Returns the transformation matrix of the image.
+	 * 
+	 * @return an array [AX, AY, BX, BY, CX, CY, DX, DY]
+	 */
+	public float[] matrix() {
+		float[] matrix = super.matrix();
+		matrix[CX] -= this.getTemplateData().getBoundingBox().getLeft();
+		matrix[CY] -= this.getTemplateData().getBoundingBox().getBottom();
+		return matrix;
+	}
 }
