@@ -88,4 +88,5 @@ public class ImgTemplate extends Image {
         plainWidth = getWidth();
         plainHeight = getHeight();
     }
+	
 }
