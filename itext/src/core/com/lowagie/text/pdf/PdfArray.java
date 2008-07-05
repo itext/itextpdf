@@ -109,6 +109,19 @@ public class PdfArray extends PdfObject {
         add(values);
     }
     
+    /**
+     * Constructs a PdfArray with the elements of an ArrayList.
+     * Throws a ClassCastException if the ArrayList contains something
+     * that isn't a PdfObject.
+     * @param	l 	an ArrayList with PdfObjects
+     * @since 2.1.3
+     */
+    public PdfArray(ArrayList l) {
+        this();
+        for (Iterator i = l.iterator(); i.hasNext(); )
+        	add((PdfObject)i.next());
+    }
+    
 /**
  * Constructs an <CODE>PdfArray</CODE>-object, containing all the <CODE>PdfObject</CODE>s in a given <CODE>PdfArray</CODE>.
  *
