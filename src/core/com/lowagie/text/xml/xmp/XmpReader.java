@@ -61,6 +61,12 @@ import org.xml.sax.SAXException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.xml.XmlDomWriter;
 
+/**
+ * Reads an XMP stream into an org.w3c.dom.Document objects.
+ * Allows you to replace the contents of a specific tag.
+ * @since 2.1.3
+ */
+
 public class XmpReader {
 
     private org.w3c.dom.Document domDocument;
