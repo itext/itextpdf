@@ -61,6 +61,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
+import com.lowagie.text.xml.xmp.XmpReader;
 
 class PdfStamperImp extends PdfWriter {
     HashMap readers2intrefs = new HashMap();
@@ -186,8 +187,12 @@ class PdfStamperImp extends PdfWriter {
         	altMetadata = xmpMetadata;
         }
         // if there is XMP data to add: add it
+        PdfString date = new PdfDate();
         if (altMetadata != null) {
-        	PdfStream xmp = new PdfStream(altMetadata);
+        	XmpReader xmpr = new XmpReader(altMetadata);
+        	xmpr.replace("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.toString());
+        	xmpr.replace("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.toString());
+        	PdfStream xmp = new PdfStream(xmpr.serializeDoc());
         	xmp.put(PdfName.TYPE, PdfName.METADATA);
         	xmp.put(PdfName.SUBTYPE, PdfName.XML);
             if (crypto != null && !crypto.isMetadataEncrypted()) {
@@ -195,8 +200,13 @@ class PdfStamperImp extends PdfWriter {
                 ar.add(PdfName.CRYPT);
                 xmp.put(PdfName.FILTER, ar);
             }
-        	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
-        	markUsed(catalog);
+            if (append && xmpo != null) {
+            	body.add(xmp, xmpo.getIndRef());
+            }
+            else {
+            	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
+            	markUsed(catalog);
+            }
         }
         if (!documentOCG.isEmpty()) {
         	fillOCProperties(false);
@@ -293,8 +303,7 @@ class PdfStamperImp extends PdfWriter {
                     newInfo.put(keyName, new PdfString(value, PdfObject.TEXT_UNICODE));
             }
         }
-        if (altMetadata == null) // hack because changing the modification data makes the XMP data inconsistent
-        	newInfo.put(PdfName.MODDATE, new PdfDate());
+        newInfo.put(PdfName.MODDATE, date);
         if (append) {
             if (iInfo == null)
                 info = addToBody(newInfo, false).getIndirectReference();
