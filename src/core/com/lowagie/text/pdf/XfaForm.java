@@ -74,19 +74,35 @@ import com.lowagie.text.xml.XmlDomWriter;
 public class XfaForm {
 
     private Xml2SomTemplate templateSom;
+    private Node templateNode;
     private Xml2SomDatasets datasetsSom;
+    private Node datasetsNode;
     private AcroFieldsSearch acroFieldsSom;
     private PdfReader reader;
     private boolean xfaPresent;
     private org.w3c.dom.Document domDocument;
     private boolean changed;
-    private Node datasetsNode;
     public static final String XFA_DATA_SCHEMA = "http://www.xfa.org/schema/xfa-data/1.0/";
     
     /**
      * An empty constructor to build on.
      */
     public XfaForm() {
+    }
+    
+    /**
+     * Return the XFA Object, could be an array, could be a Stream.
+     * Returns null f no XFA Object is present.
+     * @param	reader	a PdfReader instance
+     * @return	the XFA object
+     * @since	2.1.3
+     */
+    public static PdfObject getXfaObject(PdfReader reader) {
+    	PdfDictionary af = (PdfDictionary)PdfReader.getPdfObjectRelease(reader.getCatalog().get(PdfName.ACROFORM));
+        if (af == null) {
+            return null;
+        }
+        return PdfReader.getPdfObjectRelease(af.get(PdfName.XFA));
     }
     
     /**
@@ -99,15 +115,10 @@ public class XfaForm {
      */
     public XfaForm(PdfReader reader) throws IOException, ParserConfigurationException, SAXException {
         this.reader = reader;
-        PdfDictionary af = (PdfDictionary)PdfReader.getPdfObjectRelease(reader.getCatalog().get(PdfName.ACROFORM));
-        if (af == null) {
-            xfaPresent = false;
-            return;
-        }
-        PdfObject xfa = PdfReader.getPdfObjectRelease(af.get(PdfName.XFA));
+        PdfObject xfa = getXfaObject(reader);
         if (xfa == null) {
-            xfaPresent = false;
-            return;
+        	xfaPresent = false;
+        	return;
         }
         xfaPresent = true;
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -139,6 +150,7 @@ public class XfaForm {
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 String s = n.getLocalName();
                 if (s.equals("template")) {
+                	templateNode = n;
                     templateSom = new Xml2SomTemplate(n);
                 }
                 else if (s.equals("datasets")) {
@@ -157,13 +169,40 @@ public class XfaForm {
      * @param writer the writer
      * @throws java.io.IOException on error
      */
-    public static void setXfa(byte[] xfaData, PdfReader reader, PdfWriter writer) throws IOException {
+    public static void setXfa(XfaForm form, PdfReader reader, PdfWriter writer) throws IOException {
         PdfDictionary af = (PdfDictionary)PdfReader.getPdfObjectRelease(reader.getCatalog().get(PdfName.ACROFORM));
         if (af == null) {
             return;
         }
+        PdfObject xfa = getXfaObject(reader);
+        if (xfa.isArray()) {
+        	ArrayList ar = ((PdfArray)xfa).getArrayList();
+            int t = -1;
+            int d = -1;
+            for (int k = 0; k < ar.size(); k += 2) {
+                PdfString s = (PdfString)ar.get(k);
+                if ("template".equals(s.toString())) {
+                	t = k + 1;
+                }
+                if ("datasets".equals(s.toString())) {
+                	d = k + 1;
+                }
+            }
+            if (t > -1 && d > -1) {
+                reader.killXref((PdfIndirectReference)ar.get(t));
+                reader.killXref((PdfIndirectReference)ar.get(d));
+                PdfStream tStream = new PdfStream(serializeDoc(form.templateNode));
+                tStream.flateCompress();
+                ar.set(t, writer.addToBody(tStream).getIndirectReference());
+                PdfStream dStream = new PdfStream(serializeDoc(form.datasetsNode));
+                dStream.flateCompress();
+                ar.set(d, writer.addToBody(dStream).getIndirectReference());
+                af.put(PdfName.XFA, new PdfArray(ar));
+            	return;
+            }
+        }
         reader.killXref(af.get(PdfName.XFA));
-        PdfStream str = new PdfStream(xfaData);
+        PdfStream str = new PdfStream(serializeDoc(form.domDocument));
         str.flateCompress();
         PdfIndirectReference ref = writer.addToBody(str).getIndirectReference();
         af.put(PdfName.XFA, ref);
@@ -175,7 +214,7 @@ public class XfaForm {
      * @throws java.io.IOException on error
      */
     public void setXfa(PdfWriter writer) throws IOException {
-        setXfa(serializeDoc(domDocument), reader, writer);
+        setXfa(this, reader, writer);
     }
 
     /**
