@@ -296,7 +296,7 @@ public class PdfWriter extends DocWriter implements
             int first = index.size();
             index.append(streamObjects);
             PdfStream stream = new PdfStream(index.toByteArray());
-            stream.flateCompress();
+            stream.flateCompress(writer.getCompressionLevel());
             stream.put(PdfName.TYPE, PdfName.OBJSTM);
             stream.put(PdfName.N, new PdfNumber(numObj));
             stream.put(PdfName.FIRST, new PdfNumber(first));
@@ -465,7 +465,7 @@ public class PdfWriter extends DocWriter implements
                 }
                 PdfStream xr = new PdfStream(buf.toByteArray());
                 buf = null;
-                xr.flateCompress();
+                xr.flateCompress(writer.getCompressionLevel());
                 xr.put(PdfName.SIZE, new PdfNumber(size()));
                 xr.put(PdfName.ROOT, root);
                 if (info != null) {
@@ -1208,7 +1208,7 @@ public class PdfWriter extends DocWriter implements
             if (template != null && template.getIndirectReference() instanceof PRIndirectReference)
                 continue;
             if (template != null && template.getType() == PdfTemplate.TYPE_TEMPLATE) {
-                addToBody(template.getFormXObject(), template.getIndirectReference());
+                addToBody(template.getFormXObject(compressionLevel), template.getIndirectReference());
             }
         }
         // [F5] add all the dependencies in the imported pages
@@ -1225,7 +1225,7 @@ public class PdfWriter extends DocWriter implements
         // [F7] add the pattern
         for (Iterator it = documentPatterns.keySet().iterator(); it.hasNext();) {
             PdfPatternPainter pat = (PdfPatternPainter)it.next();
-            addToBody(pat.getPattern(), pat.getIndirectReference());
+            addToBody(pat.getPattern(compressionLevel), pat.getIndirectReference());
         }
         // [F8] add the shading patterns
         for (Iterator it = documentShadingPatterns.keySet().iterator(); it.hasNext();) {
@@ -1719,7 +1719,7 @@ public class PdfWriter extends DocWriter implements
             out.put(PdfName.INFO, new PdfString(info, PdfObject.TEXT_UNICODE));
         if (destOutputProfile != null) {
             PdfStream stream = new PdfStream(destOutputProfile);
-            stream.flateCompress();
+            stream.flateCompress(compressionLevel);
             out.put(PdfName.DESTOUTPUTPROFILE, addToBody(stream).getIndirectReference());
         }
         out.put(PdfName.S, PdfName.GTS_PDFX);
@@ -1966,6 +1966,33 @@ public class PdfWriter extends DocWriter implements
         setAtLeastPdfVersion(VERSION_1_5);
     }
     
+    /**
+     * The compression level of the content streams.
+     * @since	2.1.3
+     */
+    protected int compressionLevel = -1;
+
+	/**
+	 * Returns the compression level used for streams written by this writer.
+	 * @return the compression level (0 = best speed, 9 = best compression, -1 is default)
+	 * @since	2.1.3
+	 */
+	public int getCompressionLevel() {
+		return compressionLevel;
+	}
+
+	/**
+	 * Sets the compression level to be used for streams written by this writer.
+	 * @param compression_level a value between 0 (best speed) and 9 (best compression)
+	 * @since	2.1.3
+	 */
+	public void setCompressionLevel(int compressionLevel) {
+		if (compressionLevel < -1 || compressionLevel > 9)
+			this.compressionLevel = -1;
+		else
+			this.compressionLevel = compressionLevel;
+	}
+    
 //	[F3] adding fonts
     
     /** The fonts of this document */
@@ -2068,7 +2095,7 @@ public class PdfWriter extends DocWriter implements
         if (template.getIndirectReference() instanceof PRIndirectReference)
             return;
         if (template.getType() == PdfTemplate.TYPE_TEMPLATE) {
-            addToBody(template.getFormXObject(), template.getIndirectReference());
+            addToBody(template.getFormXObject(compressionLevel), template.getIndirectReference());
             objs[1] = null;
         }
     }
@@ -2839,7 +2866,7 @@ public class PdfWriter extends DocWriter implements
                 }
                 PdfImage i = new PdfImage(image, "img" + images.size(), maskRef);
                 if (image.hasICCProfile()) {
-                    PdfICCBased icc = new PdfICCBased(image.getICCProfile());
+                    PdfICCBased icc = new PdfICCBased(image.getICCProfile(), image.getCompressionLevel());
                     PdfIndirectReference iccRef = add(icc);
                     PdfArray iccArray = new PdfArray();
                     iccArray.add(PdfName.ICCBASED);

@@ -303,7 +303,7 @@ public class PdfAction extends PdfDictionary {
             try {
                 byte b[] = PdfEncodings.convertToBytes(code, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING);
                 PdfStream stream = new PdfStream(b);
-                stream.flateCompress();
+                stream.flateCompress(writer.getCompressionLevel());
                 js.put(PdfName.JS, writer.addToBody(stream).getIndirectReference());
             }
             catch (Exception e) {

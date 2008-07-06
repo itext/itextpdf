@@ -57,8 +57,15 @@ import com.lowagie.text.ExceptionConverter;
  */
 
 public class PdfICCBased extends PdfStream {
-    
-    public PdfICCBased(ICC_Profile profile) {
+
+    /**
+     * Creates an ICC stream.
+     *
+     * @param	compressionLevel	the compressionLevel
+     *
+     * @since	2.1.3	(replacing the constructor without param compressionLevel)
+     */
+    public PdfICCBased(ICC_Profile profile, int compressionLevel) {
         super();
         try {
             int numberOfComponents = profile.getNumComponents();
@@ -77,7 +84,7 @@ public class PdfICCBased extends PdfStream {
             }
             put(PdfName.N, new PdfNumber(numberOfComponents));
             bytes = profile.getData();
-            flateCompress();
+            flateCompress(compressionLevel);
         } catch (Exception e) {
             throw new ExceptionConverter(e);
         }

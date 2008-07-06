@@ -1997,6 +1997,14 @@ public class PdfReader implements PdfViewerPreferences {
      * @param pageNum the page number. 1 is the first
      */
     public void setPageContent(int pageNum, byte content[]) {
+    	setPageContent(pageNum, content, -1);
+    }
+    /** Sets the contents of the page.
+     * @param content the new page content
+     * @param pageNum the page number. 1 is the first
+     * @since	2.1.3	(the method already existed without param compressionLevel)
+     */
+    public void setPageContent(int pageNum, byte content[], int compressionLevel) {
         PdfDictionary page = getPageN(pageNum);
         if (page == null)
             return;
@@ -2008,7 +2016,7 @@ public class PdfReader implements PdfViewerPreferences {
             freeXref = xrefObj.size() - 1;
         }
         page.put(PdfName.CONTENTS, new PRIndirectReference(this, freeXref));
-        xrefObj.set(freeXref, new PRStream(this, content));
+        xrefObj.set(freeXref, new PRStream(this, content, compressionLevel));
     }
 
     /** Get the content from a stream applying the required filters.

@@ -176,8 +176,16 @@ public class PdfStream extends PdfDictionary {
     /**
      * Compresses the stream.
      */
-    
     public void flateCompress() {
+    	flateCompress(-1);
+    }
+    
+    /**
+     * Compresses the stream.
+	 * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
+	 * @since	2.1.3
+     */
+    public void flateCompress(int compressionLevel) {
         if (!Document.compress)
             return;
         // check if the flateCompress-method has already been
@@ -206,7 +214,7 @@ public class PdfStream extends PdfDictionary {
         try {
             // compress
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            DeflaterOutputStream zip = new DeflaterOutputStream(stream);
+            DeflaterOutputStream zip = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
             if (streamBytes != null)
                 streamBytes.writeTo(zip);
             else

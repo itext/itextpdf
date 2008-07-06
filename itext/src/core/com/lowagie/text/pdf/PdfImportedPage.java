@@ -116,9 +116,16 @@ public class PdfImportedPage extends com.lowagie.text.pdf.PdfTemplate {
         throwError();
         return null;
     }
-    
-    PdfStream getFormXObject() throws IOException {
-         return readerInstance.getFormXObject(pageNumber);
+
+    /**
+     * Gets the stream representing this page.
+     *
+     * @param	compressionLevel	the compressionLevel
+     * @return the stream representing this page
+     * @since	2.1.3	(replacing the method without param compressionLevel)
+     */
+    PdfStream getFormXObject(int compressionLevel) throws IOException {
+         return readerInstance.getFormXObject(pageNumber, compressionLevel);
     }
     
     public void setColorFill(PdfSpotColor sp, float tint) {

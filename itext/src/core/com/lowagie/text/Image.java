@@ -199,6 +199,12 @@ public abstract class Image extends Rectangle {
 
 	/** This is the original height of the image taking rotation into account. */
 	protected float scaledHeight;
+	
+    /**
+     * The compression level of the content streams.
+     * @since	2.1.3
+     */
+    protected int compressionLevel = -1;
 
 	/** an iText attributed unique id for this image. */
 	protected Long mySerialId = getSerialId();
@@ -1936,4 +1942,25 @@ public abstract class Image extends Rectangle {
 		this.transparency = transparency;
 	}
 
+
+	/**
+	 * Returns the compression level used for images written as a compressed stream.
+	 * @return the compression level (0 = best speed, 9 = best compression, -1 is default)
+     * @since	2.1.3
+	 */
+	public int getCompressionLevel() {
+		return compressionLevel;
+	}
+
+	/**
+	 * Sets the compression level to be used if the image is written as a compressed stream.
+	 * @param compression_level a value between 0 (best speed) and 9 (best compression)
+     * @since	2.1.3
+	 */
+	public void setCompressionLevel(int compressionLevel) {
+		if (compressionLevel < -1 || compressionLevel > 9)
+			this.compressionLevel = -1;
+		else
+			this.compressionLevel = compressionLevel;
+	}
 }

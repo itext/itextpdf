@@ -529,7 +529,7 @@ class Type1Font extends BaseFont
                     size -= got;
                 }
             }
-            return new StreamFont(st, lengths);
+            return new StreamFont(st, lengths, compressionLevel);
         }
         catch (Exception e) {
             throw new DocumentException(e);
