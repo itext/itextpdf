@@ -82,7 +82,7 @@ public class PdfFunction {
         int bitsPerSample, int order, float encode[], float decode[], byte stream[]) {
         PdfFunction func = new PdfFunction(writer);
         func.dictionary = new PdfStream(stream);
-        ((PdfStream)func.dictionary).flateCompress();
+        ((PdfStream)func.dictionary).flateCompress(writer.getCompressionLevel());
         func.dictionary.put(PdfName.FUNCTIONTYPE, new PdfNumber(0));
         func.dictionary.put(PdfName.DOMAIN, new PdfArray(domain));
         func.dictionary.put(PdfName.RANGE, new PdfArray(range));
@@ -134,7 +134,7 @@ public class PdfFunction {
             b[k] = (byte)postscript.charAt(k);
         PdfFunction func = new PdfFunction(writer);
         func.dictionary = new PdfStream(b);
-        ((PdfStream)func.dictionary).flateCompress();
+        ((PdfStream)func.dictionary).flateCompress(writer.getCompressionLevel());
         func.dictionary.put(PdfName.FUNCTIONTYPE, new PdfNumber(4));
         func.dictionary.put(PdfName.DOMAIN, new PdfArray(domain));
         func.dictionary.put(PdfName.RANGE, new PdfArray(range));

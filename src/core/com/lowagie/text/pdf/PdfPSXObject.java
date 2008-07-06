@@ -69,15 +69,17 @@ public class PdfPSXObject extends PdfTemplate {
     /**
      * Gets the stream representing this object.
      *
-     * @return the stream representing this object
+     * @param	compressionLevel	the compressionLevel
+     * @return the stream representing this template
+     * @since	2.1.3	(replacing the method without param compressionLevel)
      * @throws IOException
      */
     
-    PdfStream getFormXObject() throws IOException {
+    PdfStream getFormXObject(int compressionLevel) throws IOException {
         PdfStream s = new PdfStream(content.toByteArray());
         s.put(PdfName.TYPE, PdfName.XOBJECT);
         s.put(PdfName.SUBTYPE, PdfName.PS);
-        s.flateCompress();
+        s.flateCompress(compressionLevel);
         return s;
     }
         

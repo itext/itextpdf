@@ -259,6 +259,12 @@ public abstract class BaseFont {
 /** true if the font is to be embedded in the PDF */
     protected boolean embedded;
     
+    /**
+     * The compression level for the font stream.
+     * @since	2.1.3
+     */
+    protected int compressionLevel = -1;
+    
 /**
  * true if the font must use it's built in encoding. In that case the
  * <CODE>encoding</CODE> is only used to map a char to the position inside
@@ -321,16 +327,18 @@ public abstract class BaseFont {
          * a PdfStream.
          * @param contents the content of the stream
          * @param lengths an array of int that describes the several lengths of each part of the font
+         * @param compressionLevel	the compression level of the Stream
          * @throws DocumentException error in the stream compression
+         * @since	2.1.3 (replaces the constructor without param compressionLevel)
          */
-        public StreamFont(byte contents[], int lengths[]) throws DocumentException {
+        public StreamFont(byte contents[], int lengths[], int compressionLevel) throws DocumentException {
             try {
                 bytes = contents;
                 put(PdfName.LENGTH, new PdfNumber(bytes.length));
                 for (int k = 0; k < lengths.length; ++k) {
                     put(new PdfName("Length" + (k + 1)), new PdfNumber(lengths[k]));
                 }
-                flateCompress();
+                flateCompress(compressionLevel);
             }
             catch (Exception e) {
                 throw new DocumentException(e);
@@ -341,15 +349,17 @@ public abstract class BaseFont {
          * Generates the PDF stream for a font.
          * @param contents the content of a stream
          * @param subType the subtype of the font.
-         * @throws DocumentException
+		 * @param compressionLevel	the compression level of the Stream
+         * @throws DocumentException error in the stream compression
+         * @since	2.1.3 (replaces the constructor without param compressionLevel)
          */
-        public StreamFont(byte contents[], String subType) throws DocumentException {
+        public StreamFont(byte contents[], String subType, int compressionLevel) throws DocumentException {
             try {
                 bytes = contents;
                 put(PdfName.LENGTH, new PdfNumber(bytes.length));
                 if (subType != null)
                     put(PdfName.SUBTYPE, new PdfName(subType));
-                flateCompress();
+                flateCompress(compressionLevel);
             }
             catch (Exception e) {
                 throw new DocumentException(e);
@@ -1415,4 +1425,25 @@ public abstract class BaseFont {
             subsetRanges = new ArrayList();
         subsetRanges.add(range);
     }
+    
+	/**
+	 * Returns the compression level used for the font streams.
+	 * @return the compression level (0 = best speed, 9 = best compression, -1 is default)
+	 * @since 2.1.3
+	 */
+	public int getCompressionLevel() {
+		return compressionLevel;
+	}
+
+	/**
+	 * Sets the compression level to be used for the font streams.
+	 * @param compression_level a value between 0 (best speed) and 9 (best compression)
+	 * @since 2.1.3
+	 */
+	public void setCompressionLevel(int compressionLevel) {
+		if (compressionLevel < -1 || compressionLevel > 9)
+			this.compressionLevel = -1;
+		else
+			this.compressionLevel = compressionLevel;
+	}
 }

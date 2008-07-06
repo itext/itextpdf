@@ -598,7 +598,7 @@ public class PdfCopy extends PdfWriter {
             if (over != null)
                 out.append(PdfContents.SAVESTATE);
             PdfStream stream = new PdfStream(out.toByteArray());
-            stream.flateCompress();
+            stream.flateCompress(cstp.getCompressionLevel());
             PdfIndirectReference ref1 = cstp.addToBody(stream).getIndirectReference();
             ar.addFirst(ref1);
             out.reset();
@@ -610,7 +610,7 @@ public class PdfCopy extends PdfWriter {
                 out.append(over.getInternalBuffer());
                 out.append(PdfContents.RESTORESTATE);
                 stream = new PdfStream(out.toByteArray());
-                stream.flateCompress();
+                stream.flateCompress(cstp.getCompressionLevel());
                 ar.add(cstp.addToBody(stream).getIndirectReference());
             }
             pageN.put(PdfName.RESOURCES, pageResources.getResources());

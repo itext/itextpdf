@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
 import com.lowagie.text.Document;
@@ -91,14 +92,26 @@ public class PRStream extends PdfStream {
         this.reader = reader;
         this.offset = offset;
     }
-    
+
     public PRStream(PdfReader reader, byte conts[]) {
+    	this(reader, conts, -1);
+    }
+
+    /**
+     * Creates a new PDF stream object that will replace a stream
+     * in a existing PDF file.
+     * @param	reader	the reader that holds the existing PDF
+     * @param	conts	the new content
+     * @param	compressionLevel	the compression level for the content
+     * @since	2.1.3 (replacing the existing constructor without param compressionLevel)
+     */
+    public PRStream(PdfReader reader, byte[] conts, int compressionLevel) {
         this.reader = reader;
         this.offset = -1;
         if (Document.compress) {
             try {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                DeflaterOutputStream zip = new DeflaterOutputStream(stream);
+                DeflaterOutputStream zip = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
                 zip.write(conts);
                 zip.close();
                 bytes = stream.toByteArray();
@@ -123,12 +136,26 @@ public class PRStream extends PdfStream {
      * @since	iText 2.1.1
      */
     public void setData(byte[] data, boolean compress) {
+    	setData(data, compress, -1);
+    }
+    
+    /**
+     * Sets the data associated with the stream, either compressed or
+     * uncompressed. Note that the data will never be compressed if
+     * Document.compress is set to false.
+     * 
+     * @param data raw data, decrypted and uncompressed.
+     * @param compress true if you want the stream to be compresssed.
+     * @param compressionLevel	a value between -1 and 9 (ignored if compress == false)
+     * @since	iText 2.1.3
+     */
+    public void setData(byte[] data, boolean compress, int compressionLevel) {
         remove(PdfName.FILTER);
         this.offset = -1;
         if (Document.compress && compress) {
             try {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                DeflaterOutputStream zip = new DeflaterOutputStream(stream);
+                DeflaterOutputStream zip = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
                 zip.write(data);
                 zip.close();
                 bytes = stream.toByteArray();
@@ -147,7 +174,7 @@ public class PRStream extends PdfStream {
      * @param data raw data, decrypted and uncompressed.
      */
     public void setData(byte[] data) {
-        setData(data, true);
+        setData(data, true, -1);
     }
 
     public void setLength(int length) {

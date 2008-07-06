@@ -1253,7 +1253,7 @@ class TrueTypeFont extends BaseFont {
         String subsetPrefix = "";
         if (embedded) {
             if (cff) {
-                pobj = new StreamFont(readCffFont(), "Type1C");
+                pobj = new StreamFont(readCffFont(), "Type1C", compressionLevel);
                 obj = writer.addToBody(pobj);
                 ind_font = obj.getIndirectReference();
             }
@@ -1289,7 +1289,7 @@ class TrueTypeFont extends BaseFont {
                     b = getFullFont();
                 }
                 int lengths[] = new int[]{b.length};
-                pobj = new StreamFont(b, lengths);
+                pobj = new StreamFont(b, lengths, compressionLevel);
                 obj = writer.addToBody(pobj);
                 ind_font = obj.getIndirectReference();
             }
@@ -1336,12 +1336,12 @@ class TrueTypeFont extends BaseFont {
      */
     public PdfStream getFullFontStream() throws IOException, DocumentException {
         if (cff) {
-            return new StreamFont(readCffFont(), "Type1C");
+            return new StreamFont(readCffFont(), "Type1C", compressionLevel);
         }
         else {
         	byte[] b = getFullFont();
         	int lengths[] = new int[]{b.length};
-        	return new StreamFont(b, lengths);
+        	return new StreamFont(b, lengths, compressionLevel);
         }
     }
     

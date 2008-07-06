@@ -396,7 +396,7 @@ class PdfStamperImp extends PdfWriter {
             if (ps.over != null)
                 out.append(PdfContents.SAVESTATE);
             PdfStream stream = new PdfStream(out.toByteArray());
-            stream.flateCompress();
+            stream.flateCompress(compressionLevel);
             ar.addFirst(addToBody(stream).getIndirectReference());
             out.reset();
             if (ps.over != null) {
@@ -409,7 +409,7 @@ class PdfStamperImp extends PdfWriter {
                 out.append(buf.getBuffer(), ps.replacePoint, buf.size() - ps.replacePoint);
                 out.append(PdfContents.RESTORESTATE);
                 stream = new PdfStream(out.toByteArray());
-                stream.flateCompress();
+                stream.flateCompress(compressionLevel);
                 ar.add(addToBody(stream).getIndirectReference());
             }
             alterResources(ps);

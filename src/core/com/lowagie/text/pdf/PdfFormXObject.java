@@ -66,18 +66,15 @@ public class PdfFormXObject extends PdfStream {
 /** This is the 1 - matrix. */
     public static final PdfLiteral MATRIX = new PdfLiteral("[1 0 0 1 0 0]");
     
-    // membervariables
-    
-    
-    // constructor
-    
 /**
  * Constructs a <CODE>PdfFormXObject</CODE>-object.
  *
- * @param		template		the template
+ * @param	template			the template
+ * @param	compressionLevel	the compression level for the stream
+ * @since	2.1.3 (Replacing the existing constructor with param compressionLevel)
  */
     
-    PdfFormXObject(PdfTemplate template) // throws BadPdfFormatException
+    PdfFormXObject(PdfTemplate template, int compressionLevel) // throws BadPdfFormatException
     {
         super();
         put(PdfName.TYPE, PdfName.XOBJECT);
@@ -96,7 +93,7 @@ public class PdfFormXObject extends PdfStream {
             put(PdfName.MATRIX, matrix);
         bytes = template.toPdf(null);
         put(PdfName.LENGTH, new PdfNumber(bytes.length));
-        flateCompress();
+        flateCompress(compressionLevel);
     }
     
 }

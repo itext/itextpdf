@@ -239,7 +239,7 @@ public class Type3Font extends BaseFont {
             diffs.add(n);
             Type3Glyph glyph = (Type3Glyph)char2glyph.get(new Integer(c2));
             PdfStream stream = new PdfStream(glyph.toPdf(null));
-            stream.flateCompress();
+            stream.flateCompress(compressionLevel);
             PdfIndirectReference refp = writer.addToBody(stream).getIndirectReference();
             charprocs.put(n, refp);
         }

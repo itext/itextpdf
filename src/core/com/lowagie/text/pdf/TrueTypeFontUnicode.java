@@ -209,7 +209,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         "end end\n");
         String s = buf.toString();
         PdfStream stream = new PdfStream(PdfEncodings.convertToBytes(s, null));
-        stream.flateCompress();
+        stream.flateCompress(compressionLevel);
         return stream;
     }
     
@@ -356,7 +356,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
                     bt[v / 8] |= rotbits[v % 8];
                 }
                 stream = new PdfStream(bt);
-                stream.flateCompress();
+                stream.flateCompress(compressionLevel);
             }
             cidset = writer.addToBody(stream).getIndirectReference();
         }
@@ -367,7 +367,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
                 CFFFontSubset cff = new CFFFontSubset(new RandomAccessFileOrArray(b),longTag);
                 b = cff.Process(cff.getNames()[0]);
             }
-			pobj = new StreamFont(b, "CIDFontType0C");
+			pobj = new StreamFont(b, "CIDFontType0C", compressionLevel);
 			obj = writer.addToBody(pobj);
 			ind_font = obj.getIndirectReference();
         } else {
@@ -380,7 +380,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
                 b = getFullFont();
             }
             int lengths[] = new int[]{b.length};
-            pobj = new StreamFont(b, lengths);
+            pobj = new StreamFont(b, lengths, compressionLevel);
             obj = writer.addToBody(pobj);
             ind_font = obj.getIndirectReference();
         }
@@ -414,7 +414,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      */
     public PdfStream getFullFontStream() throws IOException, DocumentException {
     	if (cff) {
-			return new StreamFont(readCffFont(), "CIDFontType0C");
+			return new StreamFont(readCffFont(), "CIDFontType0C", compressionLevel);
         }
     	return super.getFullFontStream();
     }

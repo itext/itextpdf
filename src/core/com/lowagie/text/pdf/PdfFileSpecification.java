@@ -130,6 +130,27 @@ public class PdfFileSpecification extends PdfDictionary {
      * @return the file specification
      */    
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], boolean compress, String mimeType, PdfDictionary fileParameter) throws IOException {
+    	return fileEmbedded(writer, filePath, fileDisplay, fileStore, compress, null, null, writer.getCompressionLevel());
+    }
+    
+    /**
+     * Creates a file specification with the file embedded. The file may
+     * come from the file system or from a byte array.
+     * @param writer the <CODE>PdfWriter</CODE>
+     * @param filePath the file path
+     * @param fileDisplay the file information that is presented to the user
+     * @param fileStore the byte array with the file. If it is not <CODE>null</CODE>
+     * it takes precedence over <CODE>filePath</CODE>
+     * @param compress sets the compression on the data. Multimedia content will benefit little
+     * from compression
+     * @param mimeType the optional mimeType
+     * @param fileParameter the optional extra file parameters such as the creation or modification date
+     * @param compressionLevel the level of compression
+     * @throws IOException on error
+     * @return the file specification
+     * @since	2.1.3
+     */    
+    public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], boolean compress, String mimeType, PdfDictionary fileParameter, int compressionLevel) throws IOException {
         PdfFileSpecification fs = new PdfFileSpecification();
         fs.writer = writer;
         fs.put(PdfName.F, new PdfString(fileDisplay));
@@ -161,7 +182,7 @@ public class PdfFileSpecification extends PdfDictionary {
                 stream = new PdfStream(fileStore);
             stream.put(PdfName.TYPE, PdfName.EMBEDDEDFILE);
             if (compress)
-                stream.flateCompress();
+                stream.flateCompress(compressionLevel);
             stream.put(PdfName.PARAMS, refFileLength);
             if (mimeType != null)
                 stream.put(PdfName.SUBTYPE, new PdfName(mimeType));

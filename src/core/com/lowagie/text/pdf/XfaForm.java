@@ -192,10 +192,10 @@ public class XfaForm {
                 reader.killXref((PdfIndirectReference)ar.get(t));
                 reader.killXref((PdfIndirectReference)ar.get(d));
                 PdfStream tStream = new PdfStream(serializeDoc(form.templateNode));
-                tStream.flateCompress();
+                tStream.flateCompress(writer.getCompressionLevel());
                 ar.set(t, writer.addToBody(tStream).getIndirectReference());
                 PdfStream dStream = new PdfStream(serializeDoc(form.datasetsNode));
-                dStream.flateCompress();
+                dStream.flateCompress(writer.getCompressionLevel());
                 ar.set(d, writer.addToBody(dStream).getIndirectReference());
                 af.put(PdfName.XFA, new PdfArray(ar));
             	return;
@@ -203,7 +203,7 @@ public class XfaForm {
         }
         reader.killXref(af.get(PdfName.XFA));
         PdfStream str = new PdfStream(serializeDoc(form.domDocument));
-        str.flateCompress();
+        str.flateCompress(writer.getCompressionLevel());
         PdfIndirectReference ref = writer.addToBody(str).getIndirectReference();
         af.put(PdfName.XFA, ref);
     }
