@@ -272,7 +272,9 @@ public class Markup {
 	/** a CSS value for text decoration */
 	public static final String CSS_VALUE_UNDERLINE = "underline";
 
-	/** a default value for font-size */
+	/** a default value for font-size 
+     * @since 2.1.3
+     */
 	public static final float DEFAULT_FONT_SIZE = 12f;
 
 	/**

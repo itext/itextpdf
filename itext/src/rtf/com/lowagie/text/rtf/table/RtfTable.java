@@ -97,6 +97,7 @@ public class RtfTable extends RtfElement {
      * The cell spacing
      */
     private float cellSpacing = 0;
+    
     /**
      * The border style of this RtfTable 
      */
@@ -139,10 +140,10 @@ public class RtfTable extends RtfElement {
      * 
      * @param doc The RtfDocument this RtfTable belongs to
      * @param table The PdfPTable that this RtfTable wraps
+     * @since 2.1.3
      */
     public RtfTable(RtfDocument doc, PdfPTable table) {
         super(doc);
-        //table.complete();
         importTable(table);
     }
     /**

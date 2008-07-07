@@ -333,6 +333,8 @@ public class HtmlTags {
 	/** This is a possible HTML attribute. */
 	public static final String STYLESHEET = "stylesheet";
 
-	/** This is a possible HTML attribute for auto-formated */
+	/** This is a possible HTML attribute for auto-formated 
+     * @since 2.1.3
+     */
 	public static final String PRE = "pre";
 }
