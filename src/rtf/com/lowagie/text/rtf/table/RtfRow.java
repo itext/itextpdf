@@ -206,6 +206,7 @@ public class RtfRow extends RtfElement {
      * @param rtfTable The RtfTable this RtfRow belongs to
      * @param row The Row this RtfRow is based on
      * @param rowNumber The number of this row
+     * @since 2.1.3
      */
     protected RtfRow(RtfDocument doc, RtfTable rtfTable, PdfPRow row, int rowNumber) {
         super(doc);
