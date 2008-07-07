@@ -57,6 +57,8 @@ import java.util.Iterator;
 import com.lowagie.text.Element;
 import com.lowagie.text.Row;
 import com.lowagie.text.Table;
+import com.lowagie.text.pdf.PdfPRow;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.style.RtfFont;
@@ -131,7 +133,18 @@ public class RtfTable extends RtfElement {
         table.complete();
         importTable(table);
     }
-    
+
+    /**
+     * Constructs a RtfTable based on a PdfTable for a RtfDocument.
+     * 
+     * @param doc The RtfDocument this RtfTable belongs to
+     * @param table The PdfPTable that this RtfTable wraps
+     */
+    public RtfTable(RtfDocument doc, PdfPTable table) {
+        super(doc);
+        //table.complete();
+        importTable(table);
+    }
     /**
      * Imports the rows and settings from the Table into this
      * RtfTable.
@@ -163,6 +176,54 @@ public class RtfTable extends RtfElement {
         if(!Float.isNaN(table.getOffset())) {
             this.offset = (int) (table.getOffset() * 2);
         }
+    }
+
+    /**
+     * Imports the rows and settings from the Table into this
+     * RtfTable.
+     * 
+     * @param table The source PdfPTable
+     * @since 2.1.3
+     */
+    private void importTable(PdfPTable table) {
+        this.rows = new ArrayList();
+        this.tableWidthPercent = table.getWidthPercentage();
+//        this.tableWidthPercent = table.getWidth();
+        this.proportionalWidths = table.getAbsoluteWidths();
+//        this.proportionalWidths = table.getProportionalWidths();
+        this.cellPadding = (float) (table.spacingAfter() * TWIPS_FACTOR);
+//        this.cellPadding = (float) (table.getPadding() * TWIPS_FACTOR);
+        this.cellSpacing = (float) (table.spacingAfter() * TWIPS_FACTOR);
+//        this.cellSpacing = (float) (table.getSpacing() * TWIPS_FACTOR);
+//        this.borders = new RtfBorderGroup(this.document, RtfBorder.ROW_BORDER, table.getBorder(), table.getBorderWidth(), table.getBorderColor());
+//        this.borders = new RtfBorderGroup(this.document, RtfBorder.ROW_BORDER, table.getBorder(), table.getBorderWidth(), table.getBorderColor());
+        this.alignment = table.getHorizontalAlignment();
+//        this.alignment = table.getAlignment();
+        
+        int i = 0;
+        Iterator rowIterator = table.getRows().iterator();
+//        Iterator rowIterator = table.iterator();
+        while(rowIterator.hasNext()) {
+            this.rows.add(new RtfRow(this.document, this, (PdfPRow) rowIterator.next(), i));
+            i++;
+        }
+        for(i = 0; i < this.rows.size(); i++) {
+            ((RtfRow) this.rows.get(i)).handleCellSpanning();
+            ((RtfRow) this.rows.get(i)).cleanRow();
+        }
+        
+        this.headerRows = table.getHeaderRows();
+//        this.headerRows = table.getLastHeaderRow();
+        this.cellsFitToPage = table.getKeepTogether();
+//        this.cellsFitToPage = table.isCellsFitPage();
+        this.tableFitToPage = table.getKeepTogether();
+//        this.tableFitToPage = table.isTableFitsPage();
+//        if(!Float.isNaN(table.getOffset())) {
+//            this.offset = (int) (table.getOffset() * 2);
+//        }
+//        if(!Float.isNaN(table.getOffset())) {
+//            this.offset = (int) (table.getOffset() * 2);
+//        }
     }
     
     /**
