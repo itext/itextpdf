@@ -147,6 +147,28 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     private boolean deleted = false;
 
     /**
+     * Whether to use generic padding or individual 
+     * padding values (cellPaddingLeft, cellPaddingTop, cellPaddingBottom, cellPaddingRight)
+     */
+    private boolean usePadding = false;
+    /*
+     * Cell padding left
+     */
+    private float cellPaddingLeft = 0;
+    /*
+     * Cell padding top
+     */
+    private float cellPaddingTop = 0;
+    /*
+     * Cell padding bottom
+     */
+    private float cellPaddingBottom = 0;
+    /*
+     * Cell padding right
+     */
+    private float cellPaddingRight = 0;
+
+    /**
      * Constructs an empty RtfCell
      */
     public RtfCell() {
@@ -417,16 +439,17 @@ public class RtfCell extends Cell implements RtfExtendedElement {
         // does it have table info?
         PdfPTable table = cell.getTable();
         if(table != null) {
-            try {
-				RtfBasicElement[] rtfElements = this.document.getMapper().mapElement(table);
-				for (int i = 0; i < rtfElements.length; i++) {
-					rtfElements[i].setInTable(true);
-					this.content.add(rtfElements[i]);
-				}
-			} catch (DocumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	this.add(table);
+//            try {
+//				RtfBasicElement[] rtfElements = this.document.getMapper().mapElement(table);
+//				for (int i = 0; i < rtfElements.length; i++) {
+//					rtfElements[i].setInTable(true);
+//					this.content.add(rtfElements[i]);
+//				}
+//			} catch (DocumentException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
         }
 
     }
