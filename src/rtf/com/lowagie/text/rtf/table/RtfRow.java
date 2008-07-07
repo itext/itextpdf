@@ -56,6 +56,8 @@ import java.util.ArrayList;
 import com.lowagie.text.Cell;
 import com.lowagie.text.Element;
 import com.lowagie.text.Row;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPRow;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 
@@ -196,7 +198,23 @@ public class RtfRow extends RtfElement {
         this.rowNumber = rowNumber;
         importRow(row);
     }
+
+    /**
+     * Constructs a RtfRow for a Row.
+     * 
+     * @param doc The RtfDocument this RtfRow belongs to
+     * @param rtfTable The RtfTable this RtfRow belongs to
+     * @param row The Row this RtfRow is based on
+     * @param rowNumber The number of this row
+     */
+    protected RtfRow(RtfDocument doc, RtfTable rtfTable, PdfPRow row, int rowNumber) {
+        super(doc);
+        this.parentTable = rtfTable;
+        this.rowNumber = rowNumber;
+        importRow(row);
+    }
     
+
     /**
      * Imports a Row and copies all settings
      * 
@@ -220,7 +238,31 @@ public class RtfRow extends RtfElement {
             this.cells.add(rtfCell);
         }
     }
-    
+    /**
+     * Imports a PdfPRow and copies all settings
+     * 
+     * @param row The PdfPRow to import
+     * @since 2.1.3
+     */
+    private void importRow(PdfPRow row) {
+        this.cells = new ArrayList();
+        this.width = this.document.getDocumentHeader().getPageSetting().getPageWidth() - this.document.getDocumentHeader().getPageSetting().getMarginLeft() - this.document.getDocumentHeader().getPageSetting().getMarginRight();
+        this.width = (int) (this.width * this.parentTable.getTableWidthPercent() / 100);
+        
+        int cellRight = 0;
+        int cellWidth = 0;
+        PdfPCell[] cells = row.getCells();
+        for(int i = 0; i < cells.length; i++) {
+            cellWidth = (int) (this.width * this.parentTable.getProportionalWidths()[i] / 100);
+            cellRight = cellRight + cellWidth;
+            
+            PdfPCell cell = (PdfPCell) cells[i];
+            RtfCell rtfCell = new RtfCell(this.document, this, cell);
+            rtfCell.setCellRight(cellRight);
+            rtfCell.setCellWidth(cellWidth);
+            this.cells.add(rtfCell);
+        }
+    }
     /**
      * Performs a second pass over all cells to handle cell row/column spanning.
      */
@@ -307,8 +349,10 @@ public class RtfRow extends RtfElement {
                 break;
         }
         result.write(ROW_GRAPH);
-        
-        this.parentTable.getBorders().writeContent(result);
+        RtfBorderGroup borders =this.parentTable.getBorders();
+        if(borders != null) {
+        	borders.writeContent(result);
+        }
         
         if(this.parentTable.getCellSpacing() > 0) {
             result.write(ROW_CELL_SPACING_LEFT);

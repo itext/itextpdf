@@ -511,7 +511,7 @@ public class PdfPCell extends Rectangle{
      * Getter for property table.
      * @return Value of property table.
      */
-    PdfPTable getTable() {
+    public PdfPTable getTable() {
         return table;
     }
     

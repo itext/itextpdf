@@ -66,6 +66,7 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.document.RtfInfoElement;
 import com.lowagie.text.rtf.field.RtfAnchor;
@@ -184,6 +185,14 @@ public class RtfMapper {
     		case Element.TABLE:
     			try {
     				rtfElements.add(new RtfTable(rtfDoc, (Table) element));
+    			}
+    			catch(ClassCastException e) {
+    				rtfElements.add(new RtfTable(rtfDoc, ((SimpleTable) element).createTable()));
+    			}
+    			break;
+    		case Element.PTABLE:
+    			try {
+    				rtfElements.add(new RtfTable(rtfDoc, (PdfPTable) element));
     			}
     			catch(ClassCastException e) {
     				rtfElements.add(new RtfTable(rtfDoc, ((SimpleTable) element).createTable()));
