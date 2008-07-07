@@ -681,7 +681,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * 
 	 * This method is replace with Markup.lengthParse
 	 * @deprecated
-	 * @see com.lowagie.text.html.Markup.java#lengthParse
+	 * @see com.lowagie.text.html.Markup.java#parseLength
 	 * @param txt
 	 * @param c
 	 * @return float value of length
