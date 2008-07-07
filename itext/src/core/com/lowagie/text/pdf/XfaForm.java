@@ -164,7 +164,7 @@ public class XfaForm {
     
     /**
      * Sets the XFA key from a byte array. The old XFA is erased.
-     * @param xfaData the data
+     * @param form the data
      * @param reader the reader
      * @param writer the writer
      * @throws java.io.IOException on error

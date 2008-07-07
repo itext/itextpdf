@@ -1983,7 +1983,7 @@ public class PdfWriter extends DocWriter implements
 
 	/**
 	 * Sets the compression level to be used for streams written by this writer.
-	 * @param compression_level a value between 0 (best speed) and 9 (best compression)
+	 * @param compressionLevel a value between 0 (best speed) and 9 (best compression)
 	 * @since	2.1.3
 	 */
 	public void setCompressionLevel(int compressionLevel) {

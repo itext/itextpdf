@@ -1954,7 +1954,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the compression level to be used if the image is written as a compressed stream.
-	 * @param compression_level a value between 0 (best speed) and 9 (best compression)
+	 * @param compressionLevel a value between 0 (best speed) and 9 (best compression)
      * @since	2.1.3
 	 */
 	public void setCompressionLevel(int compressionLevel) {
