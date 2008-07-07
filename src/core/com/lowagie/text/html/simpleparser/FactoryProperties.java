@@ -323,10 +323,10 @@ public class FactoryProperties {
 
 	/**
 	 * New method contributed by Lubos Strapko
-	 * @author Howard Shank
-	 * @since 2.1.3
 	 * @param h
 	 * @param cprops
+	 * @author Howard Shank
+	 * @since 2.1.3
 	 */
 	public static void insertStyle(HashMap h, ChainedProperties cprops) {
 		String style = (String) h.get("style");

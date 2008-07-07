@@ -684,7 +684,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @see com.lowagie.text.html.Markup.java#lengthParse
 	 * @param txt
 	 * @param c
-	 * @return
+	 * @return float value of length
 	 */
 	private static float lengthParse(String txt, int c) {
 		if (txt == null)
