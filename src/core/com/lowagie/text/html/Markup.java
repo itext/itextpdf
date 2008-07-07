@@ -42,6 +42,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
  * details.
  *
+ * Contributions by:
+ * Lubos Strapko
+ * 
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
@@ -53,15 +56,14 @@ import java.awt.Color;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-
 /**
  * A class that contains all the possible tagnames and their attributes.
  */
 
 public class Markup {
-	
+
 	// iText specific
-	
+
 	/** the key for any tag */
 	public static final String ITEXT_TAG = "tag";
 
@@ -69,7 +71,7 @@ public class Markup {
 
 	/** the markup for the body part of a file */
 	public static final String HTML_TAG_BODY = "body";
-	
+
 	/** The DIV tag. */
 	public static final String HTML_TAG_DIV = "div";
 
@@ -109,10 +111,10 @@ public class Markup {
 	public static final String HTML_ATTR_CSS_ID = "id";
 
 	// HTML values
-	
+
 	/** This is a possible value for the language attribute (SCRIPT tag). */
 	public static final String HTML_VALUE_JAVASCRIPT = "text/javascript";
-	
+
 	/** This is a possible HTML attribute for the LINK tag. */
 	public static final String HTML_VALUE_CSS = "text/css";
 
@@ -210,7 +212,10 @@ public class Markup {
 
 	// CSS values
 
-	/** value for the CSS tag for adding a page break when the document is printed */
+	/**
+	 * value for the CSS tag for adding a page break when the document is
+	 * printed
+	 */
 	public static final String CSS_VALUE_ALWAYS = "always";
 
 	/** A possible value for the DISPLAY key */
@@ -224,7 +229,7 @@ public class Markup {
 
 	/** A possible value for the DISPLAY key */
 	public static final String CSS_VALUE_INLINE = "inline";
-	
+
 	/** a CSS value for text font style */
 	public static final String CSS_VALUE_ITALIC = "italic";
 
@@ -233,7 +238,7 @@ public class Markup {
 
 	/** A possible value for the DISPLAY key */
 	public static final String CSS_VALUE_LISTITEM = "list-item";
-	
+
 	/** a CSS value */
 	public static final String CSS_VALUE_NONE = "none";
 
@@ -267,6 +272,9 @@ public class Markup {
 	/** a CSS value for text decoration */
 	public static final String CSS_VALUE_UNDERLINE = "underline";
 
+	/** a default value for font-size */
+	public static final float DEFAULT_FONT_SIZE = 12f;
+
 	/**
 	 * Parses a length.
 	 * 
@@ -275,8 +283,11 @@ public class Markup {
 	 *            number and a unit.
 	 * @return a float
 	 */
-	
+
 	public static float parseLength(String string) {
+		// TODO: Evaluate the effect of this.
+		// It may change the default behavour of the methd if this is changed.
+		// return parseLength(string, Markup.DEFAULT_FONT_SIZE);
 		int pos = 0;
 		int length = string.length();
 		boolean ok = true;
@@ -328,6 +339,74 @@ public class Markup {
 	}
 
 	/**
+	 * New method contributed by: Lubos Strapko
+	 * 
+	 * @author
+	 * @since 2.1.3
+	 */
+	public static float parseLength(String string, float actualFontSize) {
+		if (string == null)
+			return 0f;
+		int pos = 0;
+		int length = string.length();
+		boolean ok = true;
+		while (ok && pos < length) {
+			switch (string.charAt(pos)) {
+			case '+':
+			case '-':
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+			case '.':
+				pos++;
+				break;
+			default:
+				ok = false;
+			}
+		}
+		if (pos == 0)
+			return 0f;
+		if (pos == length)
+			return Float.parseFloat(string + "f");
+		float f = Float.parseFloat(string.substring(0, pos) + "f");
+		string = string.substring(pos);
+		// inches
+		if (string.startsWith("in")) {
+			return f * 72f;
+		}
+		// centimeters
+		if (string.startsWith("cm")) {
+			return (f / 2.54f) * 72f;
+		}
+		// millimeters
+		if (string.startsWith("mm")) {
+			return (f / 25.4f) * 72f;
+		}
+		// picas
+		if (string.startsWith("pc")) {
+			return f * 12f;
+		}
+		// 1em is equal to the current font size
+		if (string.startsWith("em")) {
+			return f * actualFontSize;
+		}
+		// one ex is the x-height of a font (x-height is usually about half the
+		// font-size)
+		if (string.startsWith("ex")) {
+			return f * actualFontSize / 2;
+		}
+		// default: we assume the length was measured in points
+		return f;
+	}
+
+	/**
 	 * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>
 	 * Color</CODE>.
 	 * 
@@ -335,50 +414,48 @@ public class Markup {
 	 *            the <CODE>Color</CODE> that has to be converted.
 	 * @return the HTML representation of this <COLOR>Color </COLOR>
 	 */
-	
+
 	public static Color decodeColor(String s) {
-	    if (s == null)
-	        return null;
-	    s = s.toLowerCase().trim();
-	    Color c = WebColors.getRGBColor(s);
-	    if (c != null)
-	        return c;
-	    try {
-	        if (s.startsWith("#")) {
-	            if (s.length() == 4)
-	                s = "#" + s.substring(1, 2) + s.substring(1, 2)
-	                    + s.substring(2, 3) + s.substring(2, 3) 
-	                    + s.substring(3, 4) + s.substring(3, 4);
-	            if (s.length() == 7)
-	                return new Color(Integer.parseInt(s.substring(1), 16));
-	        }
-	        else if (s.startsWith("rgb")) {
-	            StringTokenizer tk = new StringTokenizer(s.substring(3), " \t\r\n\f(),");
-	            int[] cc = new int [3];
-	            for (int k = 0; k < 3; ++k) {
-	                if (!tk.hasMoreTokens())
-	                    return null;
-	                String t = tk.nextToken();
-	                float n;
-	                if (t.endsWith("%")) {
-	                    n = Float.parseFloat(t.substring(0, t.length() - 1));
-	                    n = n * 255f / 100f;
-	                }
-	                else
-	                    n = Float.parseFloat(t);
-	                int ni = (int)n;
-	                if (ni > 255)
-	                    ni = 255;
-	                else if (ni < 0)
-	                    ni = 0;
-	                cc[k] = ni;
-	            }
-	            return new Color(cc[0], cc[1], cc[2]);
-	        }
-	    }
-	    catch (Exception e) {
-	    }
-	    return null;
+		if (s == null)
+			return null;
+		s = s.toLowerCase().trim();
+		Color c = WebColors.getRGBColor(s);
+		if (c != null)
+			return c;
+		try {
+			if (s.startsWith("#")) {
+				if (s.length() == 4)
+					s = "#" + s.substring(1, 2) + s.substring(1, 2)
+							+ s.substring(2, 3) + s.substring(2, 3)
+							+ s.substring(3, 4) + s.substring(3, 4);
+				if (s.length() == 7)
+					return new Color(Integer.parseInt(s.substring(1), 16));
+			} else if (s.startsWith("rgb")) {
+				StringTokenizer tk = new StringTokenizer(s.substring(3),
+						" \t\r\n\f(),");
+				int[] cc = new int[3];
+				for (int k = 0; k < 3; ++k) {
+					if (!tk.hasMoreTokens())
+						return null;
+					String t = tk.nextToken();
+					float n;
+					if (t.endsWith("%")) {
+						n = Float.parseFloat(t.substring(0, t.length() - 1));
+						n = n * 255f / 100f;
+					} else
+						n = Float.parseFloat(t);
+					int ni = (int) n;
+					if (ni > 255)
+						ni = 255;
+					else if (ni < 0)
+						ni = 0;
+					cc[k] = ni;
+				}
+				return new Color(cc[0], cc[1], cc[2]);
+			}
+		} catch (Exception e) {
+		}
+		return null;
 	}
 
 	/**
