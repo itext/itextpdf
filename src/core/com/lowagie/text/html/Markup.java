@@ -341,7 +341,6 @@ public class Markup {
 	/**
 	 * New method contributed by: Lubos Strapko
 	 * 
-	 * @author Howard Shank
 	 * @since 2.1.3
 	 */
 	public static float parseLength(String string, float actualFontSize) {
