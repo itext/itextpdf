@@ -69,6 +69,7 @@ import com.lowagie.text.pdf.PdfNumber;
 import com.lowagie.text.pdf.PdfOCG;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStream;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
@@ -204,7 +205,7 @@ public abstract class Image extends Rectangle {
      * The compression level of the content streams.
      * @since	2.1.3
      */
-    protected int compressionLevel = -1;
+    protected int compressionLevel = PdfStream.DEFAULT_COMPRESSION;
 
 	/** an iText attributed unique id for this image. */
 	protected Long mySerialId = getSerialId();
@@ -1958,8 +1959,8 @@ public abstract class Image extends Rectangle {
      * @since	2.1.3
 	 */
 	public void setCompressionLevel(int compressionLevel) {
-		if (compressionLevel < -1 || compressionLevel > 9)
-			this.compressionLevel = -1;
+		if (compressionLevel < PdfStream.NO_COMPRESSION || compressionLevel > PdfStream.BEST_COMPRESSION)
+			this.compressionLevel = PdfStream.DEFAULT_COMPRESSION;
 		else
 			this.compressionLevel = compressionLevel;
 	}

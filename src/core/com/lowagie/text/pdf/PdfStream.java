@@ -85,9 +85,36 @@ import java.util.ArrayList;
 public class PdfStream extends PdfDictionary {
     
     // membervariables
-    
+
+	/**
+	 * A possible compression level.
+	 * @since	2.1.3
+	 */
+	public static final int DEFAULT_COMPRESSION = -1;
+	/**
+	 * A possible compression level.
+	 * @since	2.1.3
+	 */
+	public static final int NO_COMPRESSION = 0;
+	/**
+	 * A possible compression level.
+	 * @since	2.1.3
+	 */
+	public static final int BEST_SPEED = 1;
+	/**
+	 * A possible compression level.
+	 * @since	2.1.3
+	 */
+	public static final int BEST_COMPRESSION = 9;
+	
+	
 /** is the stream compressed? */
     protected boolean compressed = false;
+    /**
+     * The level of compression.
+     * @since	2.1.3
+     */
+    protected int compressionLevel = NO_COMPRESSION;
     
     protected ByteArrayOutputStream streamBytes = null;
     protected InputStream inputStream;
@@ -177,7 +204,7 @@ public class PdfStream extends PdfDictionary {
      * Compresses the stream.
      */
     public void flateCompress() {
-    	flateCompress(-1);
+    	flateCompress(DEFAULT_COMPRESSION);
     }
     
     /**
@@ -192,6 +219,7 @@ public class PdfStream extends PdfDictionary {
         if (compressed) {
             return;
         }
+    	this.compressionLevel = compressionLevel;
         if (inputStream != null) {
             compressed = true;
             return;
@@ -292,7 +320,7 @@ public class PdfStream extends PdfDictionary {
             if (crypto != null)
                 fout = ose = crypto.getEncryptionStream(fout);
             if (compressed)    
-                fout = def = new DeflaterOutputStream(fout, new Deflater(Deflater.BEST_COMPRESSION), 0x8000);
+                fout = def = new DeflaterOutputStream(fout, new Deflater(compressionLevel), 0x8000);
             
             byte buf[] = new byte[4192];
             while (true) {

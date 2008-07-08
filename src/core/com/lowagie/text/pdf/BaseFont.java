@@ -263,7 +263,7 @@ public abstract class BaseFont {
      * The compression level for the font stream.
      * @since	2.1.3
      */
-    protected int compressionLevel = -1;
+    protected int compressionLevel = PdfStream.DEFAULT_COMPRESSION;
     
 /**
  * true if the font must use it's built in encoding. In that case the
@@ -1441,8 +1441,8 @@ public abstract class BaseFont {
 	 * @since 2.1.3
 	 */
 	public void setCompressionLevel(int compressionLevel) {
-		if (compressionLevel < -1 || compressionLevel > 9)
-			this.compressionLevel = -1;
+		if (compressionLevel < PdfStream.NO_COMPRESSION || compressionLevel > PdfStream.BEST_COMPRESSION)
+			this.compressionLevel = PdfStream.DEFAULT_COMPRESSION;
 		else
 			this.compressionLevel = compressionLevel;
 	}
