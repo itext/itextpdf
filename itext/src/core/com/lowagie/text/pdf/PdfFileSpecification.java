@@ -93,7 +93,24 @@ public class PdfFileSpecification extends PdfDictionary {
      * @return the file specification
      */    
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[]) throws IOException {
-        return fileEmbedded(writer, filePath, fileDisplay, fileStore, true);
+        return fileEmbedded(writer, filePath, fileDisplay, fileStore, PdfStream.BEST_COMPRESSION);
+    }
+
+    /**
+     * Creates a file specification with the file embedded. The file may
+     * come from the file system or from a byte array. The data is flate compressed.
+     * @param writer the <CODE>PdfWriter</CODE>
+     * @param filePath the file path
+     * @param fileDisplay the file information that is presented to the user
+     * @param fileStore the byte array with the file. If it is not <CODE>null</CODE>
+     * @param compressionLevel	the compression level to be used for compressing the file
+     * it takes precedence over <CODE>filePath</CODE>
+     * @throws IOException on error
+     * @return the file specification
+     * @since	2.1.3
+     */    
+    public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], int compressionLevel) throws IOException {
+        return fileEmbedded(writer, filePath, fileDisplay, fileStore, null, null, compressionLevel);
     }
     
     
@@ -111,7 +128,7 @@ public class PdfFileSpecification extends PdfDictionary {
      * @return the file specification
      */    
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], boolean compress) throws IOException {
-        return fileEmbedded(writer, filePath, fileDisplay, fileStore, compress, null, null);
+        return fileEmbedded(writer, filePath, fileDisplay, fileStore, null, null, compress ? PdfStream.BEST_COMPRESSION : PdfStream.NO_COMPRESSION);
     }
     
     /**
@@ -130,7 +147,7 @@ public class PdfFileSpecification extends PdfDictionary {
      * @return the file specification
      */    
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], boolean compress, String mimeType, PdfDictionary fileParameter) throws IOException {
-    	return fileEmbedded(writer, filePath, fileDisplay, fileStore, compress, null, null, writer.getCompressionLevel());
+    	return fileEmbedded(writer, filePath, fileDisplay, fileStore, null, null, compress ? PdfStream.BEST_COMPRESSION : PdfStream.NO_COMPRESSION);
     }
     
     /**
@@ -141,8 +158,6 @@ public class PdfFileSpecification extends PdfDictionary {
      * @param fileDisplay the file information that is presented to the user
      * @param fileStore the byte array with the file. If it is not <CODE>null</CODE>
      * it takes precedence over <CODE>filePath</CODE>
-     * @param compress sets the compression on the data. Multimedia content will benefit little
-     * from compression
      * @param mimeType the optional mimeType
      * @param fileParameter the optional extra file parameters such as the creation or modification date
      * @param compressionLevel the level of compression
@@ -150,7 +165,7 @@ public class PdfFileSpecification extends PdfDictionary {
      * @return the file specification
      * @since	2.1.3
      */    
-    public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], boolean compress, String mimeType, PdfDictionary fileParameter, int compressionLevel) throws IOException {
+    public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], String mimeType, PdfDictionary fileParameter, int compressionLevel) throws IOException {
         PdfFileSpecification fs = new PdfFileSpecification();
         fs.writer = writer;
         fs.put(PdfName.F, new PdfString(fileDisplay));
@@ -181,8 +196,7 @@ public class PdfFileSpecification extends PdfDictionary {
             else
                 stream = new PdfStream(fileStore);
             stream.put(PdfName.TYPE, PdfName.EMBEDDEDFILE);
-            if (compress)
-                stream.flateCompress(compressionLevel);
+            stream.flateCompress(compressionLevel);
             stream.put(PdfName.PARAMS, refFileLength);
             if (mimeType != null)
                 stream.put(PdfName.SUBTYPE, new PdfName(mimeType));

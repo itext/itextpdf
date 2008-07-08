@@ -73,6 +73,7 @@ public class PRStream extends PdfStream {
         offset = stream.offset;
         length = stream.length;
         compressed = stream.compressed;
+        compressionLevel = stream.compressionLevel;
         streamBytes = stream.streamBytes;
         bytes = stream.bytes;
         objNum = stream.objNum;
@@ -94,7 +95,7 @@ public class PRStream extends PdfStream {
     }
 
     public PRStream(PdfReader reader, byte conts[]) {
-    	this(reader, conts, -1);
+    	this(reader, conts, DEFAULT_COMPRESSION);
     }
 
     /**
@@ -136,7 +137,7 @@ public class PRStream extends PdfStream {
      * @since	iText 2.1.1
      */
     public void setData(byte[] data, boolean compress) {
-    	setData(data, compress, -1);
+    	setData(data, compress, DEFAULT_COMPRESSION);
     }
     
     /**
@@ -159,6 +160,7 @@ public class PRStream extends PdfStream {
                 zip.write(data);
                 zip.close();
                 bytes = stream.toByteArray();
+                this.compressionLevel = compressionLevel;
             }
             catch (IOException ioe) {
                 throw new ExceptionConverter(ioe);
@@ -174,7 +176,7 @@ public class PRStream extends PdfStream {
      * @param data raw data, decrypted and uncompressed.
      */
     public void setData(byte[] data) {
-        setData(data, true, -1);
+        setData(data, true);
     }
 
     public void setLength(int length) {

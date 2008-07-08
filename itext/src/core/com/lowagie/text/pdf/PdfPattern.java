@@ -61,7 +61,7 @@ public class PdfPattern extends PdfStream {
 	 * @param	painter	a pattern painter instance
 	 */
 	PdfPattern(PdfPatternPainter painter) {
-		this(painter, -1);
+		this(painter, DEFAULT_COMPRESSION);
 	}
 
 	/**
