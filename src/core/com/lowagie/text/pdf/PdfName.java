@@ -357,6 +357,10 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName EF = new PdfName("EF");
     /** A name */
+    public static final PdfName EFF = new PdfName("EFF");
+    /** A name */
+    public static final PdfName EFOPEN = new PdfName("EFOpen");
+    /** A name */
     public static final PdfName EMBEDDEDFILE = new PdfName("EmbeddedFile");
     /** A name */
     public static final PdfName EMBEDDEDFILES = new PdfName("EmbeddedFiles");

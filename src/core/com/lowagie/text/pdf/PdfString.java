@@ -140,7 +140,7 @@ public class PdfString extends PdfObject {
         PdfEncryption crypto = null;
         if (writer != null)
             crypto = writer.getEncryption();
-        if (crypto != null) {
+        if (crypto != null && !crypto.isEmbeddedFilesOnly()) {
             b = crypto.encryptByteArray(b);
         }
         if (hexWriting) {

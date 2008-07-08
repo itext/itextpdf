@@ -227,7 +227,7 @@ public class PRStream extends PdfStream {
         put(PdfName.LENGTH, objLen);
         os.write(STARTSTREAM);
         if (length > 0) {
-            if (crypto != null)
+            if (crypto != null && !crypto.isEmbeddedFilesOnly())
                 b = crypto.encryptByteArray(b);
             os.write(b);
         }

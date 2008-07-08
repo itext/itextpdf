@@ -317,7 +317,7 @@ public class PdfStream extends PdfDictionary {
             OutputStreamCounter osc = new OutputStreamCounter(os);
             OutputStreamEncryption ose = null;
             OutputStream fout = osc;
-            if (crypto != null)
+            if (crypto != null && !crypto.isEmbeddedFilesOnly())
                 fout = ose = crypto.getEncryptionStream(fout);
             if (compressed)    
                 fout = def = new DeflaterOutputStream(fout, new Deflater(compressionLevel), 0x8000);
@@ -337,13 +337,7 @@ public class PdfStream extends PdfDictionary {
             inputStreamLength = osc.getCounter();
         }
         else {
-            if (crypto == null) {
-                if (streamBytes != null)
-                    streamBytes.writeTo(os);
-                else
-                    os.write(bytes);
-            }
-            else {
+            if (crypto != null && !crypto.isEmbeddedFilesOnly()) {
                 byte b[];
                 if (streamBytes != null) {
                     b = crypto.encryptByteArray(streamBytes.toByteArray());
@@ -352,6 +346,12 @@ public class PdfStream extends PdfDictionary {
                     b = crypto.encryptByteArray(bytes);
                 }
                 os.write(b);
+            }
+            else {
+                if (streamBytes != null)
+                    streamBytes.writeTo(os);
+                else
+                    os.write(bytes);
             }
         }
         os.write(ENDSTREAM);
