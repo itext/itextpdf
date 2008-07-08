@@ -1783,6 +1783,11 @@ public class PdfWriter extends DocWriter implements
     static final int ENCRYPTION_MASK = 7;
     /** Add this to the mode to keep the metadata in clear text */
     public static final int DO_NOT_ENCRYPT_METADATA = 8;
+    /**
+     * Add this to the mode to keep encrypt only the embedded files.
+     * @since 2.1.3
+     */
+    public static final int EMBEDDED_FILES_ONLY = 24;
     
 	// permissions
 	
