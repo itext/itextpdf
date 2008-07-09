@@ -54,6 +54,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -69,8 +70,12 @@ import com.lowagie.text.xml.XmlDomWriter;
 
 public class XmpReader {
 
-    private org.w3c.dom.Document domDocument;
+    private Document domDocument;
     
+    /**
+     * Constructs an XMP reader
+     * @param	bytes	the XMP content
+     */
 	public XmpReader(byte[] bytes) {
         try {
             DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
@@ -87,15 +92,42 @@ public class XmpReader {
 		}
 	}
 	
+	/**
+	 * Replaces the content of a tag.
+	 * @param	namespaceURI	the URI of the namespace
+	 * @param	localName		the tag name
+	 * @param	value			the new content for the tag
+	 */
 	public void replace(String namespaceURI, String localName, String value) {
 		NodeList nodes = domDocument.getElementsByTagNameNS(namespaceURI, localName);
 		Node node;
 		for (int i = 0; i < nodes.getLength(); i++) {
 			node = nodes.item(i);
-			node.setTextContent(value);
+			setNodeText(domDocument, node, value);
 		}
-	}
+	}    
 	
+    /**
+     * Sets the text of this node. All the child's node are deleted and a new
+     * child text node is created.
+     * @param domDocument the <CODE>Document</CODE> that contains the node
+     * @param n the <CODE>Node</CODE> to add the text to
+     * @param value the text to add
+     */
+    public boolean setNodeText(Document domDocument, Node n, String value) {
+        if (n == null)
+            return false;
+        Node nc = null;
+        while ((nc = n.getFirstChild()) != null) {
+            n.removeChild(nc);
+        }
+        n.appendChild(domDocument.createTextNode(value));
+        return true;
+    }
+	
+    /**
+     * Writes the document to a byte array.
+     */
 	public byte[] serializeDoc() throws IOException {
 		XmlDomWriter xw = new XmlDomWriter();
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
