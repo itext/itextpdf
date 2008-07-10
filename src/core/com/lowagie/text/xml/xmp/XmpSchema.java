@@ -56,7 +56,9 @@ import java.util.Properties;
  * Abstract superclass of the XmpSchemas supported by iText.
  */
 public abstract class XmpSchema extends Properties {
-	
+
+	private static final long serialVersionUID = -176374295948945272L;
+
 	/** the namesspace */
 	protected String xmlns;
 	
