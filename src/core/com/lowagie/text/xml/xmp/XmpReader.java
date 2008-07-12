@@ -72,6 +72,10 @@ public class XmpReader {
 
     private Document domDocument;
     
+    /**
+     * Constructs an XMP reader
+     * @param	bytes	the XMP content
+     */
 	public XmpReader(byte[] bytes) {
         try {
             DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
@@ -88,6 +92,12 @@ public class XmpReader {
 		}
 	}
 	
+	/**
+	 * Replaces the content of a tag.
+	 * @param	namespaceURI	the URI of the namespace
+	 * @param	localName		the tag name
+	 * @param	value			the new content for the tag
+	 */
 	public void replace(String namespaceURI, String localName, String value) {
 		NodeList nodes = domDocument.getElementsByTagNameNS(namespaceURI, localName);
 		Node node;
@@ -100,8 +110,9 @@ public class XmpReader {
     /**
      * Sets the text of this node. All the child's node are deleted and a new
      * child text node is created.
+     * @param domDocument the <CODE>Document</CODE> that contains the node
      * @param n the <CODE>Node</CODE> to add the text to
-     * @param text the text to add
+     * @param value the text to add
      */
     public boolean setNodeText(Document domDocument, Node n, String value) {
         if (n == null)
@@ -114,6 +125,9 @@ public class XmpReader {
         return true;
     }
 	
+    /**
+     * Writes the document to a byte array.
+     */
 	public byte[] serializeDoc() throws IOException {
 		XmlDomWriter xw = new XmlDomWriter();
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
