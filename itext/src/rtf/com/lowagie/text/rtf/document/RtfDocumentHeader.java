@@ -241,7 +241,6 @@ public class RtfDocumentHeader extends RtfElement {
     public int getListNumber(RtfList list) {
         return this.listTable.getListNumber(list);
     }
-    
     /**
      * Gets the RtfParagraphStyle with the given style name.
      * 
@@ -328,5 +327,14 @@ public class RtfDocumentHeader extends RtfElement {
         } else {
             return new RtfHeaderFooterGroup(this.document, type);
         }
+    }
+    /**
+     * Get the <code>RtfListTable</code> object.
+     * 
+     * @return the ListTable object.
+     * @since 2.1.3
+     */
+    public RtfListTable getListTable() {
+    	return this.listTable;
     }
 }

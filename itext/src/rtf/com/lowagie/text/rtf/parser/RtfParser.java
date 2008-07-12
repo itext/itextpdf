@@ -450,6 +450,9 @@ public class RtfParser {
 	/** The <code>RtfCtrlWordListener</code>. */
     private ArrayList listeners = new ArrayList();
 
+    public RtfParser(Document doc) {
+    	this.document = doc;
+    }
 	/* *********
 	 *  READER *
 	 ***********/
@@ -464,7 +467,7 @@ public class RtfParser {
 	 */
 	public void importRtfDocument(InputStream readerIn, RtfDocument rtfDoc) throws IOException {
 		if(readerIn == null || rtfDoc == null) return;
-		this.init(TYPE_IMPORT_FULL, rtfDoc, readerIn, null);
+		this.init(TYPE_IMPORT_FULL, rtfDoc, readerIn, this.document);
 		this.setCurrentDestination(RtfDestinationMgr.DESTINATION_NULL);
 		startDate = new Date();
 		startTime = System.currentTimeMillis();
@@ -769,7 +772,7 @@ public class RtfParser {
 		it = importMappings.getListMappings().keySet().iterator();
 		while(it.hasNext()) {
 			String listNr = (String) it.next();
-			this.importMgr.importList(listNr, (List) importMappings.getListMappings().get(listNr));
+			this.importMgr.importList(listNr, (String)importMappings.getListMappings().get(listNr));
 		}
 		it = importMappings.getStylesheetListMappings().keySet().iterator();
 		while(it.hasNext()) {
@@ -805,7 +808,7 @@ public class RtfParser {
 			this.groupSkippedCount++;
 		}
 	
-		RtfDestination dest = (RtfDestination)this.getCurrentDestination();
+		RtfDestination dest = this.getCurrentDestination();
 		boolean handled = false;
 		
 		if(dest != null) {
@@ -824,7 +827,7 @@ public class RtfParser {
 		// do not set this true until after the state is pushed
 		// otherwise it inserts a { where one does not belong.
 		this.currentState.newGroup = true;
-		dest = (RtfDestination)this.getCurrentDestination();
+		dest = this.getCurrentDestination();
 		
 		if(debugParser) {
 			RtfParser.outputDebug(this.rtfDoc, groupLevel, "DEBUG: handleOpenGroup()");
@@ -881,7 +884,7 @@ public class RtfParser {
 				RtfParser.outputDebug(this.rtfDoc, groupLevel, "DEBUG: destination=" + this.getCurrentDestination().toString());
 				RtfParser.outputDebug(this.rtfDoc, groupLevel, "");
 			}
-			RtfDestination dest = (RtfDestination)this.getCurrentDestination();
+			RtfDestination dest = this.getCurrentDestination();
 			boolean handled = false;
 			
 			if(dest != null) {
@@ -971,7 +974,7 @@ public class RtfParser {
 
 		boolean handled = false;
 
-		RtfDestination dest = (RtfDestination)this.getCurrentDestination();
+		RtfDestination dest = this.getCurrentDestination();
 		if(dest != null) {
 			handled = dest.handleCharacter(nextChar);
 		}
@@ -1182,7 +1185,7 @@ public class RtfParser {
 //	        if(groupLevel < 0 && this.isConvert()) return; //return errStackUnderflow;
 	        
 		}// end while(reader.read(nextChar) != -1)
-		RtfDestination dest = (RtfDestination)this.getCurrentDestination();
+		RtfDestination dest = this.getCurrentDestination();
 		if(dest != null) {
 			dest.closeDestination();
 		}

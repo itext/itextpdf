@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2001, 2002 Paulo Soares
+ * Copyright 2002 by Phillip Pan
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -61,9 +61,9 @@ public class SpotColor extends ExtendedColor {
 
     public SpotColor(PdfSpotColor spot, float tint) {
         super(TYPE_SEPARATION,
-            ((float)spot.getAlternativeCS().getRed() / 255f - 1f) * tint + 1,
-            ((float)spot.getAlternativeCS().getGreen() / 255f - 1f) * tint + 1,
-            ((float)spot.getAlternativeCS().getBlue() / 255f - 1f) * tint + 1);
+            (spot.getAlternativeCS().getRed() / 255f - 1f) * tint + 1,
+            (spot.getAlternativeCS().getGreen() / 255f - 1f) * tint + 1,
+            (spot.getAlternativeCS().getBlue() / 255f - 1f) * tint + 1);
         this.spot = spot;
         this.tint = tint;
     }

@@ -110,8 +110,14 @@ class PdfReaderInstance {
         return obj;
     }
     
-    
-    PdfStream getFormXObject(int pageNumber) throws IOException {
+    /**
+     * Gets the content stream of a page as a PdfStream object.
+     * @param	pageNumber			the page of which you want the stream
+     * @param	compressionLevel	the compression level you want to apply to the stream
+     * @return	a PdfStream object
+     * @since	2.1.3 (the method already existed without param compressionLevel)
+     */
+    PdfStream getFormXObject(int pageNumber, int compressionLevel) throws IOException {
         PdfDictionary page = reader.getPageNRelease(pageNumber);
         PdfObject contents = PdfReader.getPdfObjectRelease(page.get(PdfName.CONTENTS));
         PdfDictionary dic = new PdfDictionary();
@@ -140,7 +146,7 @@ class PdfReaderInstance {
             stream = new PRStream((PRStream)contents, dic);
         }
         else {
-            stream = new PRStream(reader, bout);
+            stream = new PRStream(reader, bout, compressionLevel);
             stream.putAll(dic);
         }
         return stream;
@@ -166,7 +172,7 @@ class PdfReaderInstance {
             file.reOpen();
             for (Iterator it = importedPages.values().iterator(); it.hasNext();) {
                 PdfImportedPage ip = (PdfImportedPage)it.next();
-                writer.addToBody(ip.getFormXObject(), ip.getIndirectReference());
+                writer.addToBody(ip.getFormXObject(writer.getCompressionLevel()), ip.getIndirectReference());
             }
             writeAllVisited();
         }

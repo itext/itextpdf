@@ -231,14 +231,14 @@ public class RtfCtrlWordHandler implements Cloneable {
 		case RtfCtrlWordType.FLAG:
 		case RtfCtrlWordType.TOGGLE:
 		case RtfCtrlWordType.VALUE:
-			dest = (RtfDestination)this.rtfParser.getCurrentDestination();
+			dest = this.rtfParser.getCurrentDestination();
 			if(dest != null) {
 				handled = dest.handleControlWord(this.ctrlWordData);
 			}
 			break;
 		
 		case RtfCtrlWordType.SYMBOL:
-			dest = (RtfDestination)this.rtfParser.getCurrentDestination();
+			dest = this.rtfParser.getCurrentDestination();
 			if(dest != null) {
 				String data = null;
 				// if doing an import, then put the control word in the output stream through the character handler
@@ -270,7 +270,7 @@ public class RtfCtrlWordHandler implements Cloneable {
 			}
 			handled = this.rtfParser.setCurrentDestination(this.ctrlWord);
 			// let destination handle the ctrl word now.
-			dest = (RtfDestination)this.rtfParser.getCurrentDestination();
+			dest = this.rtfParser.getCurrentDestination();
 			if(dest != null) {
 				if(dest.getNewTokeniserState() == RtfParser.TOKENISER_IGNORE_RESULT) {
 					handled = dest.handleControlWord(this.ctrlWordData);

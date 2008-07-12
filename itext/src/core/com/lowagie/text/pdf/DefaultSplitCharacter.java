@@ -1,5 +1,5 @@
 /*
- * $Id: PdfChunk.java 3379 2008-05-14 08:27:34Z blowagie $
+ * $Id$
  *
  * Copyright 2008 Bruno Lowagie and Xavier Le Vourch
  *
@@ -100,7 +100,7 @@ public class DefaultSplitCharacter implements SplitCharacter {
      */
     protected char getCurrentCharacter(int current, char[] cc, PdfChunk[] ck) {
     	if (ck == null) {
-    		return (char)cc[current];
+    		return cc[current];
     	}
     	return (char)ck[Math.min(current, ck.length - 1)].getUnicodeEquivalent(cc[current]);
     }

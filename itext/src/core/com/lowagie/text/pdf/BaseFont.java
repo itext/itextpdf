@@ -259,6 +259,12 @@ public abstract class BaseFont {
 /** true if the font is to be embedded in the PDF */
     protected boolean embedded;
     
+    /**
+     * The compression level for the font stream.
+     * @since	2.1.3
+     */
+    protected int compressionLevel = PdfStream.DEFAULT_COMPRESSION;
+    
 /**
  * true if the font must use it's built in encoding. In that case the
  * <CODE>encoding</CODE> is only used to map a char to the position inside
@@ -321,16 +327,18 @@ public abstract class BaseFont {
          * a PdfStream.
          * @param contents the content of the stream
          * @param lengths an array of int that describes the several lengths of each part of the font
+         * @param compressionLevel	the compression level of the Stream
          * @throws DocumentException error in the stream compression
+         * @since	2.1.3 (replaces the constructor without param compressionLevel)
          */
-        public StreamFont(byte contents[], int lengths[]) throws DocumentException {
+        public StreamFont(byte contents[], int lengths[], int compressionLevel) throws DocumentException {
             try {
                 bytes = contents;
                 put(PdfName.LENGTH, new PdfNumber(bytes.length));
                 for (int k = 0; k < lengths.length; ++k) {
                     put(new PdfName("Length" + (k + 1)), new PdfNumber(lengths[k]));
                 }
-                flateCompress();
+                flateCompress(compressionLevel);
             }
             catch (Exception e) {
                 throw new DocumentException(e);
@@ -341,15 +349,17 @@ public abstract class BaseFont {
          * Generates the PDF stream for a font.
          * @param contents the content of a stream
          * @param subType the subtype of the font.
-         * @throws DocumentException
+		 * @param compressionLevel	the compression level of the Stream
+         * @throws DocumentException error in the stream compression
+         * @since	2.1.3 (replaces the constructor without param compressionLevel)
          */
-        public StreamFont(byte contents[], String subType) throws DocumentException {
+        public StreamFont(byte contents[], String subType, int compressionLevel) throws DocumentException {
             try {
                 bytes = contents;
                 put(PdfName.LENGTH, new PdfNumber(bytes.length));
                 if (subType != null)
                     put(PdfName.SUBTYPE, new PdfName(subType));
-                flateCompress();
+                flateCompress(compressionLevel);
             }
             catch (Exception e) {
                 throw new DocumentException(e);
@@ -635,15 +645,15 @@ public abstract class BaseFont {
                     char uni = (char)Integer.parseInt(tok.nextToken(), 16);
                     int orderK;
                     if (order.startsWith("'"))
-                        orderK = (int)order.charAt(1);
+                        orderK = order.charAt(1);
                     else
                         orderK = Integer.parseInt(order);
                     orderK %= 256;
-                    specialMap.put((int)uni, orderK);
+                    specialMap.put(uni, orderK);
                     differences[orderK] = name;
                     unicodeDifferences[orderK] = uni;
-                    widths[orderK] = getRawWidth((int)uni, name);
-                    charBBoxes[orderK] = getRawCharBBox((int)uni, name);
+                    widths[orderK] = getRawWidth(uni, name);
+                    charBBoxes[orderK] = getRawCharBBox(uni, name);
                 }
             }
             else {
@@ -690,13 +700,13 @@ public abstract class BaseFont {
                 else {
                     c = '?';
                 }
-                name = GlyphList.unicodeToName((int)c);
+                name = GlyphList.unicodeToName(c);
                 if (name == null)
                     name = notdef;
                 differences[k] = name;
                 unicodeDifferences[k] = c;
-                widths[k] = getRawWidth((int)c, name);
-                charBBoxes[k] = getRawCharBBox((int)c, name);
+                widths[k] = getRawWidth(c, name);
+                charBBoxes[k] = getRawCharBBox(c, name);
             }
         }
     }
@@ -817,7 +827,7 @@ public abstract class BaseFont {
  */
     public float getDescentPoint(String text, float fontSize)
     {
-        return (float)getDescent(text) * 0.001f * fontSize;
+        return getDescent(text) * 0.001f * fontSize;
     }
     
 /**
@@ -829,7 +839,7 @@ public abstract class BaseFont {
  */
     public float getAscentPoint(String text, float fontSize)
     {
-        return (float)getAscent(text) * 0.001f * fontSize;
+        return getAscent(text) * 0.001f * fontSize;
     }
 // ia>    
     
@@ -841,7 +851,7 @@ public abstract class BaseFont {
      * @return the width in points
      */
     public float getWidthPointKerned(String text, float fontSize) {
-        float size = (float)getWidth(text) * 0.001f * fontSize;
+        float size = getWidth(text) * 0.001f * fontSize;
         if (!hasKernPairs())
             return size;
         int len = text.length() - 1;
@@ -860,7 +870,7 @@ public abstract class BaseFont {
      * @return the width in points
      */
     public float getWidthPoint(String text, float fontSize) {
-        return (float)getWidth(text) * 0.001f * fontSize;
+        return getWidth(text) * 0.001f * fontSize;
     }
     
     /**
@@ -888,8 +898,8 @@ public abstract class BaseFont {
             int length = text.length();
             for (int k = 0; k < length; ++k) {
                 char c = text.charAt(k);
-                if (specialMap.containsKey((int)c))
-                    b[ptr++] = (byte)specialMap.get((int)c);
+                if (specialMap.containsKey(c))
+                    b[ptr++] = (byte)specialMap.get(c);
             }
             if (ptr < length) {
                 byte[] b2 = new byte[ptr];
@@ -928,6 +938,15 @@ public abstract class BaseFont {
      * @throws DocumentException error in generating the object
      */
     abstract void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException;
+    
+    /**
+     * Returns a PdfStream object with the full font program (if possible).
+     * This method will return null for some types of fonts (CJKFont, Type3Font)
+     * or if there is no font program available (standard Type 1 fonts).
+     * @return	a PdfStream with the font program
+     * @since	2.1.3
+     */
+    abstract PdfStream getFullFontStream() throws IOException, DocumentException;
     
     /** Gets the encoding used to convert <CODE>String</CODE> into <CODE>byte[]</CODE>.
      * @return the encoding name
@@ -1406,4 +1425,25 @@ public abstract class BaseFont {
             subsetRanges = new ArrayList();
         subsetRanges.add(range);
     }
+    
+	/**
+	 * Returns the compression level used for the font streams.
+	 * @return the compression level (0 = best speed, 9 = best compression, -1 is default)
+	 * @since 2.1.3
+	 */
+	public int getCompressionLevel() {
+		return compressionLevel;
+	}
+
+	/**
+	 * Sets the compression level to be used for the font streams.
+	 * @param compressionLevel a value between 0 (best speed) and 9 (best compression)
+	 * @since 2.1.3
+	 */
+	public void setCompressionLevel(int compressionLevel) {
+		if (compressionLevel < PdfStream.NO_COMPRESSION || compressionLevel > PdfStream.BEST_COMPRESSION)
+			this.compressionLevel = PdfStream.DEFAULT_COMPRESSION;
+		else
+			this.compressionLevel = compressionLevel;
+	}
 }

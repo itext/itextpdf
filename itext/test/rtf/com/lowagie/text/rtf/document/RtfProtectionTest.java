@@ -1,7 +1,8 @@
 /*
  * $Id$
+ * $Name$
  *
- * Copyright 2001, 2002, 2003, 2004 by Mark Hall
+ * Copyright 2008 by Howard Shank
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -18,6 +19,9 @@
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
  * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * Co-Developer of the code is Mark Hall. Portions created by the Co-Developer are
+ * Copyright (C) 2006 by Mark Hall. All Rights Reserved
+ * Copyright (C) 2007, 2008 by Howard Shank. All Rights Reserved
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -47,92 +51,64 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.rtf.style;
+package com.lowagie.text.rtf.document;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
 
-import com.lowagie.text.rtf.RtfElement;
-import com.lowagie.text.rtf.RtfExtendedElement;
-import com.lowagie.text.rtf.document.RtfDocument;
-
+import com.lowagie.text.rtf.RtfTestBase;
 
 /**
- * The RtfColorList stores all colors that appear in the document. Black
- * and White are always added
+ * The <code>RtfProtectionTest</code> is a very simple junit test, that checks
+ * that the <code>RtfProtection</code> is producing the correct result.
  * 
  * @version $Id$
- * @author Mark Hall (Mark.Hall@mail.room3b.eu)
- * @author Thomas Bickel (tmb99@inode.at)
+ * @author Howard Shank (hgshank@yahoo.com)
+ * @see com.lowagie.text.rtf.document.RtfProtection
+ * @since 2.1.3
  */
-public class RtfColorList extends RtfElement implements RtfExtendedElement {
+public class RtfProtectionTest extends RtfTestBase {
+    /**
+     * Tests that the <code>RtfProtection</code> generates the correct hash
+     * for a normal 1 to 15 character password
+     * @throws IOException On I/O errors
+     */
+    public void testPasswordNormal() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(RtfProtection.generateHash("apple").getBytes());
+        assertEquals("acc6b84a", out);
+    }
 
     /**
-     * Constant for the beginning of the color table
+     * Tests that the <code>RtfProtection</code> generates the correct hash
+     * for a null password
+     * @throws IOException On I/O errors
      */
-    private static final byte[] COLOR_TABLE = "\\colortbl".getBytes();
-    
-    /**
-     * ArrayList containing all colors of this RtfColorList
-     */
-    ArrayList colorList = new ArrayList();
-    
-    /**
-     * Constructs a new RtfColorList for the RtfDocument. Will add the default
-     * black and white colors.
-     * 
-     * @param doc The RtfDocument this RtfColorList belongs to
-     */
-    public RtfColorList(RtfDocument doc) {
-        super(doc);
-        colorList.add(new RtfColor(doc, 0, 0, 0, 0));
-        colorList.add(new RtfColor(doc, 255, 255, 255, 1));
+    public void testPasswordNull() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(RtfProtection.generateHash(null).getBytes());
+        assertEquals("00000000", out);
     }
-    
-    /**
-     * Returns the index of the given RtfColor in the color list. If the RtfColor
-     * is not in the list of colors, then it is added.
-     * 
-     * @param color The RtfColor for which to get the index
-     * @return The index of the RtfColor
-     */
-    public int getColorNumber(RtfColor color) {
-        int colorIndex = -1;
-        for(int i = 0; i < colorList.size(); i++) {
-            if(colorList.get(i).equals(color)) {
-                colorIndex = i;
-            }
-        }
-        if(colorIndex == -1) {
-            colorIndex = colorList.size();
-            colorList.add(color);
-        }
-        return colorIndex;
-    }
-    
-    /**
-     * unused
-     */
-    public void writeContent(final OutputStream out) throws IOException
-    {    	
-    }
-    
-    /**
-     * Write the definition part of the color list. Calls the writeDefinition
-     * methods of the RtfColors in the color list. 
-     */
-    public void writeDefinition(final OutputStream result) throws IOException
-    {
-        result.write(OPEN_GROUP);
-        result.write(COLOR_TABLE);
-        for(int i = 0; i < colorList.size(); i++) {
-            RtfColor color = (RtfColor) colorList.get(i);
-            color.writeDefinition(result);
-        }
-        result.write(CLOSE_GROUP);
-        this.document.outputDebugLinebreak(result);    	
-    }
-    
 
+    /**
+     * Tests that the <code>RtfProtection</code> generates the correct hash
+     * for an empty password
+     * @throws IOException On I/O errors
+     */
+    public void testPasswordEmpty() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(RtfProtection.generateHash("").getBytes());
+        assertEquals("00000000", out);
+    }
+
+    /**
+     * Tests that the <code>RtfProtection</code> generates the correct hash
+     * for a long password (>15 characters)
+     * @throws IOException On I/O errors
+     */
+    public void testPasswordLong() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(RtfProtection.generateHash("0123456789ABCDEFHIJKLMNOP").getBytes());
+        assertEquals("fab7c3b6", out);
+    }
 }

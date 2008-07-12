@@ -791,7 +791,7 @@ public class PdfChunk {
     }
     
     int lengthUtf32() {
-        if (!encoding.equals(BaseFont.IDENTITY_H))
+        if (!BaseFont.IDENTITY_H.equals(encoding))
             return value.length();
         int total = 0;
         int len = value.length();

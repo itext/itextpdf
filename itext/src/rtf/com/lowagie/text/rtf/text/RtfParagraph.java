@@ -166,9 +166,7 @@ public class RtfParagraph extends RtfPhrase {
         if(!inTable) {
             result.write(PARAGRAPH);
         }
-        if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
-            result.write('\n');
-        }
+        this.document.outputDebugLinebreak(result);
     }        
     
     /**

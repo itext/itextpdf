@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * Copyright 2007 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -125,8 +125,8 @@ public class Utilities {
 	                bf.append(c);
 	                continue;
 	            }
-	            int a0 = PRTokeniser.getHex((int)s[k + 1]);
-	            int a1 = PRTokeniser.getHex((int)s[k + 2]);
+	            int a0 = PRTokeniser.getHex(s[k + 1]);
+	            int a1 = PRTokeniser.getHex(s[k + 2]);
 	            if (a0 < 0 || a1 < 0) {
 	                bf.append(c);
 	                continue;

@@ -51,6 +51,7 @@ package com.lowagie.text.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
 import com.lowagie.text.DocWriter;
@@ -89,7 +90,8 @@ class PdfContents extends PdfStream {
             if (Document.compress)
             {
                 compressed = true;
-                out = new DeflaterOutputStream(streamBytes);
+                compressionLevel = text.getPdfWriter().getCompressionLevel();
+                out = new DeflaterOutputStream(streamBytes, new Deflater(compressionLevel));
             }
             else
                 out = streamBytes;

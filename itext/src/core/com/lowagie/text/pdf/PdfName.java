@@ -356,6 +356,12 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName EARLYCHANGE = new PdfName("EarlyChange");
     /** A name */
     public static final PdfName EF = new PdfName("EF");
+    /** A name
+     * @since	2.1.3 */
+    public static final PdfName EFF = new PdfName("EFF");
+    /** A name
+     * @since	2.1.3 */
+    public static final PdfName EFOPEN = new PdfName("EFOpen");
     /** A name */
     public static final PdfName EMBEDDEDFILE = new PdfName("EmbeddedFile");
     /** A name */
@@ -888,6 +894,11 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName SPLIT = new PdfName("Split");
     /** A name */
     public static final PdfName SQUARE = new PdfName("Square");
+    /**
+     * A name
+     * @since 2.1.3
+     */
+    public static final PdfName SQUIGGLY = new PdfName("Squiggly");
     /** A name */
     public static final PdfName ST = new PdfName("St");
     /** A name */
@@ -1150,14 +1161,14 @@ public class PdfName extends PdfObject implements Comparable{
                 case '/':
                 case '#':
                     pdfName.append('#');
-                    pdfName.append(Integer.toString((int) character, 16));
+                    pdfName.append(Integer.toString(character, 16));
                     break;
                 default:
                     if (character > 126 || character < 32) {
                         pdfName.append('#');
                         if (character < 16)
                             pdfName.append('0');
-                        pdfName.append(Integer.toString((int) character, 16));
+                        pdfName.append(Integer.toString(character, 16));
                     }
                     else
                         pdfName.append(character);

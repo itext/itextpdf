@@ -152,6 +152,7 @@ public class RandomAccessFileOrArray implements DataInput {
                 break;
             out.write(b, 0, read);
         }
+        out.close();
         return out.toByteArray();
     }
 

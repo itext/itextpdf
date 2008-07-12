@@ -70,6 +70,7 @@ import com.lowagie.text.rtf.graphic.RtfImage;
  * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @author Todd Bush [Tab support]
  * @author Thomas Bickel (tmb99@inode.at)
+ * @since 1.x
  */
 public class RtfDocument extends RtfElement {
     /**
@@ -170,7 +171,7 @@ public class RtfDocument extends RtfElement {
                 	this.data = new RtfDiskCache();
                 	break;
                 default:
-                	throw(new RuntimeException("unknown"));
+                	throw new RuntimeException("unknown");
             }
     		
         } catch(IOException ioe) {
@@ -212,13 +213,15 @@ public class RtfDocument extends RtfElement {
     
     /**
      * Generates a random integer that is unique with respect to the document.
-     * 
+     * Will not return a number between -1 and -5 because some values in that range are invalid.
      * @return A random int
      */
     public int getRandomInt() {
         Integer newInt = null;
         do {
-            newInt = new Integer((int) (Math.random() * Integer.MAX_VALUE));
+//        	do {
+        		newInt = new Integer((int) (Math.random() * Integer.MAX_VALUE));
+//        	} while(newInt.intValue() <= -1 && newInt.intValue() >= -5);
         } while(this.previousRandomInts.contains(newInt));
         this.previousRandomInts.add(newInt);
         return newInt.intValue();
@@ -246,7 +249,7 @@ public class RtfDocument extends RtfElement {
     public void filterSpecialChar(final OutputStream out, final String str, final boolean useHex, final boolean softLineBreaks) throws IOException
     {
         if(out == null) {
-            throw(new NullPointerException("null OutpuStream"));
+            throw new NullPointerException("null OutpuStream");
         }
 
         final boolean alwaysUseUniCode = this.documentSettings.isAlwaysUseUnicode();
@@ -351,5 +354,18 @@ public class RtfDocument extends RtfElement {
      */
     public RtfBasicElement getLastElementWritten() {
         return this.lastElementWritten;
+    }
+    
+    /**
+     * Helper method outputs linebreak in document if debugging is turned on.
+     * @param result the OutputStream to write the linebreak to.
+     * @throws IOException
+     * @since 2.1.3
+     */
+    final public void outputDebugLinebreak(final OutputStream result) throws IOException {
+    	if(this.getDocumentSettings().isOutputDebugLineBreaks())
+        {
+        	result.write('\n');
+        }
     }
 }

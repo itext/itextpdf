@@ -209,7 +209,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         "end end\n");
         String s = buf.toString();
         PdfStream stream = new PdfStream(PdfEncodings.convertToBytes(s, null));
-        stream.flateCompress();
+        stream.flateCompress(compressionLevel);
         return stream;
     }
     
@@ -356,30 +356,18 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
                     bt[v / 8] |= rotbits[v % 8];
                 }
                 stream = new PdfStream(bt);
-                stream.flateCompress();
+                stream.flateCompress(compressionLevel);
             }
             cidset = writer.addToBody(stream).getIndirectReference();
         }
         // sivan: cff
         if (cff) {
-			RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
-			byte b[] = new byte[cffLength];
-			try {
-				rf2.reOpen();
-				rf2.seek(cffOffset);
-				rf2.readFully(b);
-			} finally {
-				try {
-					rf2.close();
-				} catch (Exception e) {
-					// empty on purpose
-				}
-			}
+			byte b[] = readCffFont();
             if (subset || subsetRanges != null) {
                 CFFFontSubset cff = new CFFFontSubset(new RandomAccessFileOrArray(b),longTag);
-                b = cff.Process( (cff.getNames())[0] );
+                b = cff.Process(cff.getNames()[0]);
             }
-			pobj = new StreamFont(b, "CIDFontType0C");
+			pobj = new StreamFont(b, "CIDFontType0C", compressionLevel);
 			obj = writer.addToBody(pobj);
 			ind_font = obj.getIndirectReference();
         } else {
@@ -392,7 +380,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
                 b = getFullFont();
             }
             int lengths[] = new int[]{b.length};
-            pobj = new StreamFont(b, lengths);
+            pobj = new StreamFont(b, lengths, compressionLevel);
             obj = writer.addToBody(pobj);
             ind_font = obj.getIndirectReference();
         }
@@ -418,7 +406,19 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         pobj = getFontBaseType(ind_font, subsetPrefix, toUnicodeRef);
         writer.addToBody(pobj, ref);
     }
-
+    
+    /**
+     * Returns a PdfStream object with the full font program.
+     * @return	a PdfStream with the font program
+     * @since	2.1.3
+     */
+    public PdfStream getFullFontStream() throws IOException, DocumentException {
+    	if (cff) {
+			return new StreamFont(readCffFont(), "CIDFontType0C", compressionLevel);
+        }
+    	return super.getFullFontStream();
+    }
+    
     /** A forbidden operation. Will throw a null pointer exception.
      * @param text the text
      * @return always <CODE>null</CODE>
@@ -480,7 +480,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         return true;
     }
     
-    public int[] getCharBBox(char c) {
+    public int[] getCharBBox(int c) {
         if (bboxes == null)
             return null;
         int[] m = getMetricsTT(c);

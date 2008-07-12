@@ -124,6 +124,12 @@ public class PdfEncryption {
 	private int keyLength;
 
 	private boolean encryptMetadata;
+	
+	/**
+	 * Indicates if the encryption is only necessary for embedded files.
+	 * @since 2.1.3
+	 */
+	private boolean embeddedFilesOnly;
 
 	private int cryptoMode;
 
@@ -147,20 +153,24 @@ public class PdfEncryption {
 		revision = enc.revision;
 		keyLength = enc.keyLength;
 		encryptMetadata = enc.encryptMetadata;
+		embeddedFilesOnly = enc.embeddedFilesOnly;
 		publicKeyHandler = enc.publicKeyHandler;
 	}
 
 	public void setCryptoMode(int mode, int kl) {
 		cryptoMode = mode;
 		encryptMetadata = (mode & PdfWriter.DO_NOT_ENCRYPT_METADATA) == 0;
+		embeddedFilesOnly = (mode & PdfWriter.EMBEDDED_FILES_ONLY) != 0;
 		mode &= PdfWriter.ENCRYPTION_MASK;
 		switch (mode) {
 		case PdfWriter.STANDARD_ENCRYPTION_40:
 			encryptMetadata = true;
+			embeddedFilesOnly = false;
 			keyLength = 40;
 			revision = STANDARD_ENCRYPTION_40;
 			break;
 		case PdfWriter.STANDARD_ENCRYPTION_128:
+			embeddedFilesOnly = false;
 			if (kl > 0)
 				keyLength = kl;
 			else
@@ -182,6 +192,15 @@ public class PdfEncryption {
 
 	public boolean isMetadataEncrypted() {
 		return encryptMetadata;
+	}
+
+	/**
+	 * Indicates if only the embedded files have to be encrypted.
+	 * @return	if true only the embedded files will be encrypted
+	 * @since	2.1.3
+	 */
+	public boolean isEmbeddedFilesOnly() {
+		return embeddedFilesOnly;
 	}
 
 	/**
@@ -432,9 +451,15 @@ public class PdfEncryption {
 					stdcf.put(PdfName.CFM, PdfName.V2);
 				PdfDictionary cf = new PdfDictionary();
 				cf.put(PdfName.DEFAULTCRYPTFILER, stdcf);
-				dic.put(PdfName.CF, cf);
-				dic.put(PdfName.STRF, PdfName.DEFAULTCRYPTFILER);
-				dic.put(PdfName.STMF, PdfName.DEFAULTCRYPTFILER);
+				dic.put(PdfName.CF, cf);if (embeddedFilesOnly) {
+					dic.put(PdfName.EFF, PdfName.DEFAULTCRYPTFILER);
+					dic.put(PdfName.STRF, PdfName.IDENTITY);
+					dic.put(PdfName.STMF, PdfName.IDENTITY);
+				}
+				else {
+					dic.put(PdfName.STRF, PdfName.DEFAULTCRYPTFILER);
+					dic.put(PdfName.STMF, PdfName.DEFAULTCRYPTFILER);
+				}
 			}
 
 			MessageDigest md = null;
@@ -480,7 +505,17 @@ public class PdfEncryption {
 				dic.put(PdfName.LENGTH, new PdfNumber(128));
 				PdfDictionary stdcf = new PdfDictionary();
 				stdcf.put(PdfName.LENGTH, new PdfNumber(16));
-				stdcf.put(PdfName.AUTHEVENT, PdfName.DOCOPEN);
+				if (embeddedFilesOnly) {
+					stdcf.put(PdfName.AUTHEVENT, PdfName.EFOPEN);
+					dic.put(PdfName.EFF, PdfName.STDCF);
+					dic.put(PdfName.STRF, PdfName.IDENTITY);
+					dic.put(PdfName.STMF, PdfName.IDENTITY);
+				}
+				else {
+					stdcf.put(PdfName.AUTHEVENT, PdfName.DOCOPEN);
+					dic.put(PdfName.STRF, PdfName.STDCF);
+					dic.put(PdfName.STMF, PdfName.STDCF);
+				}
 				if (revision == AES_128)
 					stdcf.put(PdfName.CFM, PdfName.AESV2);
 				else
@@ -488,8 +523,6 @@ public class PdfEncryption {
 				PdfDictionary cf = new PdfDictionary();
 				cf.put(PdfName.STDCF, stdcf);
 				dic.put(PdfName.CF, cf);
-				dic.put(PdfName.STRF, PdfName.STDCF);
-				dic.put(PdfName.STMF, PdfName.STDCF);
 			}
 		}
 

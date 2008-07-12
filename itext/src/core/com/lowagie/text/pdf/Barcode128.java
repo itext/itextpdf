@@ -394,7 +394,7 @@ public class Barcode128 extends Barcode{
             if (ucc)
                 out += FNC1_INDEX;
             String out2 = getPackedRawDigits(text, index, 2);
-            index += (int)out2.charAt(0);
+            index += out2.charAt(0);
             out += out2.substring(1);
         }
         else if (c < ' ') {
@@ -423,7 +423,7 @@ public class Barcode128 extends Barcode{
                             currentCode = START_C;
                             out += CODE_AB_TO_C;
                             String out2 = getPackedRawDigits(text, index, 4);
-                            index += (int)out2.charAt(0);
+                            index += out2.charAt(0);
                             out += out2.substring(1);
                         }
                         else {
@@ -448,7 +448,7 @@ public class Barcode128 extends Barcode{
                             currentCode = START_C;
                             out += CODE_AB_TO_C;
                             String out2 = getPackedRawDigits(text, index, 4);
-                            index += (int)out2.charAt(0);
+                            index += out2.charAt(0);
                             out += out2.substring(1);
                         }
                         else {
@@ -470,7 +470,7 @@ public class Barcode128 extends Barcode{
                     {
                         if (isNextDigits(text, index, 2)) {
                             String out2 = getPackedRawDigits(text, index, 2);
-                            index += (int)out2.charAt(0);
+                            index += out2.charAt(0);
                             out += out2.substring(1);
                         }
                         else {

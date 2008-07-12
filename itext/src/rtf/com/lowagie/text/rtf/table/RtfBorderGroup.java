@@ -117,7 +117,7 @@ public class RtfBorderGroup extends RtfElement {
             Iterator it = borderGroup.getBorders().entrySet().iterator();
             while(it.hasNext()) {
                 Map.Entry entry = (Map.Entry) it.next();
-                this.borders.put((Integer) entry.getKey(), new RtfBorder(this.document, this.borderType, (RtfBorder) entry.getValue()));
+                this.borders.put(entry.getKey(), new RtfBorder(this.document, this.borderType, (RtfBorder) entry.getValue()));
             }
         }
     }

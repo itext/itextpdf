@@ -60,7 +60,7 @@ import com.lowagie.text.rtf.style.RtfColor;
 import com.lowagie.text.rtf.style.RtfFont;
 
 /**
- * The RtfImportHeader stores the docment header information from
+ * The RtfImportHeader stores the document header information from
  * an RTF document that is being imported. Currently font and
  * color settings are stored. The RtfImportHeader maintains a mapping
  * from font and color numbers from the imported RTF document to
@@ -80,15 +80,15 @@ public class RtfImportMgr {
      */
     private HashMap importFontMapping = null;
     /**
-     * The HashMap storing the color number mapings.
+     * The HashMap storing the color number mappings.
      */
     private HashMap importColorMapping = null;
     /**
-     * The HashMap storing the Stylesheet List number mapings.
+     * The HashMap storing the Stylesheet List number mappings.
      */
     private HashMap importStylesheetListMapping = null;
     /**
-     * The HashMap storing the List number mapings.
+     * The HashMap storing the List number mappings.
      */
     private HashMap importListMapping = null;
     /**
@@ -125,13 +125,9 @@ public class RtfImportMgr {
      */
     public boolean importFont(String fontNr, String fontName) {
         RtfFont rtfFont = new RtfFont(fontName);
-        if(rtfFont != null){
-            rtfFont.setRtfDocument(this.rtfDoc);
-            this.importFontMapping.put(fontNr, Integer.toString(this.rtfDoc.getDocumentHeader().getFontNumber(rtfFont)));
-            return true;
-        } else {
-            return false;
-        }
+        rtfFont.setRtfDocument(this.rtfDoc);
+        this.importFontMapping.put(fontNr, Integer.toString(this.rtfDoc.getDocumentHeader().getFontNumber(rtfFont)));
+        return true;
     }
     /**
      * Imports a font. The font name is looked up in the RtfDocumentHeader and
@@ -139,19 +135,15 @@ public class RtfImportMgr {
      * 
      * @param fontNr The original font number.
      * @param fontName The font name to look up.
-     * @param charset The characterset to use for the font.
+     * @param charset The character set to use for the font.
      */
     public boolean importFont(String fontNr, String fontName, int charset) {
         RtfFont rtfFont = new RtfFont(fontName);
         if(charset>= 0)
             rtfFont.setCharset(charset);
-        if(rtfFont != null){
             rtfFont.setRtfDocument(this.rtfDoc);
             this.importFontMapping.put(fontNr, Integer.toString(this.rtfDoc.getDocumentHeader().getFontNumber(rtfFont)));
             return true;
-        } else {
-            return false;
-        }
     }
     /**
      * Imports a font. The font name is looked up in the RtfDocumentHeader and
@@ -159,7 +151,7 @@ public class RtfImportMgr {
      * 
      * @param fontNr The original font number.
      * @param fontName The font name to look up.
-     * @param charset The characterset to use for the font.
+     * @param charset The character set to use for the font.
      */
     public boolean importFont(String fontNr, String fontName, String fontFamily, int charset) {
         RtfFont rtfFont = new RtfFont(fontName);
@@ -168,13 +160,9 @@ public class RtfImportMgr {
             rtfFont.setCharset(charset);
         if(fontFamily != null && fontFamily.length() > 0)
             rtfFont.setFamily(fontFamily);
-        if(rtfFont != null){
-            rtfFont.setRtfDocument(this.rtfDoc);
-            this.importFontMapping.put(fontNr, Integer.toString(this.rtfDoc.getDocumentHeader().getFontNumber(rtfFont)));
-            return true;
-        } else {
-            return false;
-        }
+        rtfFont.setRtfDocument(this.rtfDoc);
+        this.importFontMapping.put(fontNr, Integer.toString(this.rtfDoc.getDocumentHeader().getFontNumber(rtfFont)));
+        return true;
     }
     /**
      * Performs the mapping from the original font number to the actual
@@ -227,29 +215,21 @@ public class RtfImportMgr {
      * Imports a List value. The List number for the List defined
      * is determined and then the resulting mapping is added.
      */
-    public void importList(String listNr, List list) {
-        RtfList rtfList = new RtfList(this.rtfDoc, list);
-
-        //if(rtfList != null){
-        //rtfList.setRtfDocument(this.rtfDoc);
-        this.importStylesheetListMapping.put(listNr, Integer.toString(this.rtfDoc.getDocumentHeader().getListNumber(rtfList)));
-//      return true;
-//      } else {
-//      return false;
-//      }
+    public void importList(String origListNr, String newListNr) {
+        this.importListMapping.put(origListNr, newListNr);
     }
 
     /**
      * Performs the mapping from the original list number to the actual
      * list number in the resulting RTF document. If the list number was not
-     * seen during import (thus no mapping) then 0 is returned, guaranteeing
-     * that the list number is always valid.
+     * seen during import (thus no mapping) then null is returned. There is no
+     * guarantee of a valid list number.
      */
     public String mapListNr(String listNr) {
         if(this.importListMapping.containsKey(listNr)) {
             return (String) this.importListMapping.get(listNr);
         } else {
-            return "0";
+            return null;
         }
     }
 
@@ -259,14 +239,10 @@ public class RtfImportMgr {
      */
     public boolean importStylesheetList(String listNr, List listIn) {
         RtfList rtfList = new RtfList(this.rtfDoc, listIn);
-
-        if(rtfList != null){
-            rtfList.setRtfDocument(this.rtfDoc);
-            //this.importStylesheetListMapping.put(listNr, Integer.toString(this.rtfDoc.getDocumentHeader().getRtfParagraphStyle(styleName)(rtfList)));
-            return true;
-        } else {
-            return false;
-        }
+        rtfList.setRtfDocument(this.rtfDoc);
+        // TODO HGS - Finish implementation of import
+        //this.importStylesheetListMapping.put(listNr, Integer.toString(this.rtfDoc.getDocumentHeader().getRtfParagraphStyle(styleName)(rtfList)));
+        return true;
     }
     /**
      * Performs the mapping from the original stylesheet number to the actual

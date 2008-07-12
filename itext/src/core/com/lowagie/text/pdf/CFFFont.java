@@ -831,9 +831,9 @@ public class CFFFont {
             int currentStringsOffset = stringOffsets[stringOffsets.length-1]
             - stringsBaseOffset;
             //l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
-            currentStringsOffset += ("Adobe").length();
+            currentStringsOffset += "Adobe".length();
             l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
-            currentStringsOffset += ("Identity").length();
+            currentStringsOffset += "Identity".length();
             l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
             currentStringsOffset += fdFontName.length();
             l.addLast(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
@@ -1068,7 +1068,7 @@ public class CFFFont {
             seek(nameOffsets[j]);
             fonts[j].name = "";
             for (int k=nameOffsets[j]; k<nameOffsets[j+1]; k++) {
-                fonts[j].name += (char)getCard8();
+                fonts[j].name += getCard8();
             }
             //System.err.println("name["+j+"]=<"+fonts[j].name+">");
         }

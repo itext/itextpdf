@@ -127,7 +127,7 @@ public class Type3Font extends BaseFont {
         if (c == 0 || c > 255)
             throw new IllegalArgumentException("The char " + (int)c + " doesn't belong in this Type3 font");
         usedSlot[c] = true;
-        Integer ck = new Integer((int)c);
+        Integer ck = new Integer(c);
         Type3Glyph glyph = (Type3Glyph)char2glyph.get(ck);
         if (glyph != null)
             return glyph;
@@ -239,7 +239,7 @@ public class Type3Font extends BaseFont {
             diffs.add(n);
             Type3Glyph glyph = (Type3Glyph)char2glyph.get(new Integer(c2));
             PdfStream stream = new PdfStream(glyph.toPdf(null));
-            stream.flateCompress();
+            stream.flateCompress(compressionLevel);
             PdfIndirectReference refp = writer.addToBody(stream).getIndirectReference();
             charprocs.put(n, refp);
         }
@@ -260,6 +260,15 @@ public class Type3Font extends BaseFont {
         if (pageResources.hasResources())
             font.put(PdfName.RESOURCES, writer.addToBody(pageResources.getResources()).getIndirectReference());
         writer.addToBody(font, ref);
+    }
+    
+    /**
+     * Always returns null, because you can't get the FontStream of a Type3 font.
+   	 * @return	null
+     * @since	2.1.3
+     */
+    public PdfStream getFullFontStream() {
+    	return null;
     }
     
     
@@ -287,7 +296,7 @@ public class Type3Font extends BaseFont {
     
     public int getWidth(int char1) {
         if (!widths3.containsKey(char1))
-            throw new IllegalArgumentException("The char " + (int)char1 + " is not defined in a Type3 font");
+            throw new IllegalArgumentException("The char " + char1 + " is not defined in a Type3 font");
         return widths3.get(char1);
     }
     

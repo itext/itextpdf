@@ -58,6 +58,7 @@ import java.util.Map;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
+
 /** Reads a Truetype font
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -489,7 +490,7 @@ class TrueTypeFont extends BaseFont {
         rf.seek(table_location[0] + 4);
         short mantissa = rf.readShort();
         int fraction = rf.readUnsignedShort();
-        italicAngle = (double)mantissa + (double)fraction / 16384.0;
+        italicAngle = mantissa + fraction / 16384.0d;
         underlinePosition = rf.readShort();
         underlineThickness = rf.readShort();
         isFixedPitch = rf.readInt() != 0;
@@ -1005,7 +1006,7 @@ class TrueTypeFont extends BaseFont {
                 rf.skipBytes(6);
                 for (int j = 0; j < nPairs; ++j) {
                     int pair = rf.readInt();
-                    int value = ((int)rf.readShort() * 1000) / head.unitsPerEm;
+                    int value = rf.readShort() * 1000 / head.unitsPerEm;
                     kerning.put(pair, value);
                 }
             }
@@ -1050,14 +1051,14 @@ class TrueTypeFont extends BaseFont {
      */
     protected PdfDictionary getFontDescriptor(PdfIndirectReference fontStream, String subsetPrefix, PdfIndirectReference cidset) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONTDESCRIPTOR);
-        dic.put(PdfName.ASCENT, new PdfNumber((int)os_2.sTypoAscender * 1000 / head.unitsPerEm));
-        dic.put(PdfName.CAPHEIGHT, new PdfNumber((int)os_2.sCapHeight * 1000 / head.unitsPerEm));
-        dic.put(PdfName.DESCENT, new PdfNumber((int)os_2.sTypoDescender * 1000 / head.unitsPerEm));
+        dic.put(PdfName.ASCENT, new PdfNumber(os_2.sTypoAscender * 1000 / head.unitsPerEm));
+        dic.put(PdfName.CAPHEIGHT, new PdfNumber(os_2.sCapHeight * 1000 / head.unitsPerEm));
+        dic.put(PdfName.DESCENT, new PdfNumber(os_2.sTypoDescender * 1000 / head.unitsPerEm));
         dic.put(PdfName.FONTBBOX, new PdfRectangle(
-        (int)head.xMin * 1000 / head.unitsPerEm,
-        (int)head.yMin * 1000 / head.unitsPerEm,
-        (int)head.xMax * 1000 / head.unitsPerEm,
-        (int)head.yMax * 1000 / head.unitsPerEm));
+        head.xMin * 1000 / head.unitsPerEm,
+        head.yMin * 1000 / head.unitsPerEm,
+        head.xMax * 1000 / head.unitsPerEm,
+        head.yMax * 1000 / head.unitsPerEm));
         if (cidset != null)
             dic.put(PdfName.CIDSET, cidset);
         if (cff) {
@@ -1252,22 +1253,7 @@ class TrueTypeFont extends BaseFont {
         String subsetPrefix = "";
         if (embedded) {
             if (cff) {
-                RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
-                byte b[] = new byte[cffLength];
-                try {
-                    rf2.reOpen();
-                    rf2.seek(cffOffset);
-                    rf2.readFully(b);
-                }
-                finally {
-                    try {
-                        rf2.close();
-                    }
-                    catch (Exception e) {
-                        // empty on purpose
-                    }
-                }
-                pobj = new StreamFont(b, "Type1C");
+                pobj = new StreamFont(readCffFont(), "Type1C", compressionLevel);
                 obj = writer.addToBody(pobj);
                 ind_font = obj.getIndirectReference();
             }
@@ -1303,7 +1289,7 @@ class TrueTypeFont extends BaseFont {
                     b = getFullFont();
                 }
                 int lengths[] = new int[]{b.length};
-                pobj = new StreamFont(b, lengths);
+                pobj = new StreamFont(b, lengths, compressionLevel);
                 obj = writer.addToBody(pobj);
                 ind_font = obj.getIndirectReference();
             }
@@ -1317,6 +1303,48 @@ class TrueTypeFont extends BaseFont {
         writer.addToBody(pobj, ref);
     }
     
+    /**
+     * If this font file is using the Compact Font File Format, then this method
+     * will return the raw bytes needed for the font stream. If this method is
+     * ever made public: make sure to add a test if (cff == true).
+     * @return	a byte array
+     * @since	2.1.3
+     */
+    protected byte[] readCffFont() throws IOException {
+        RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
+        byte b[] = new byte[cffLength];
+        try {
+            rf2.reOpen();
+            rf2.seek(cffOffset);
+            rf2.readFully(b);
+        }
+        finally {
+            try {
+                rf2.close();
+            }
+            catch (Exception e) {
+                // empty on purpose
+            }
+        }
+    	return b;
+    }
+
+    /**
+     * Returns a PdfStream object with the full font program.
+     * @return	a PdfStream with the font program
+     * @since	2.1.3
+     */
+    public PdfStream getFullFontStream() throws IOException, DocumentException {
+        if (cff) {
+            return new StreamFont(readCffFont(), "Type1C", compressionLevel);
+        }
+        else {
+        	byte[] b = getFullFont();
+        	int lengths[] = new int[]{b.length};
+        	return new StreamFont(b, lengths, compressionLevel);
+        }
+    }
+    
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
      * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
      * and <CODE>ITALICANGLE</CODE>.
@@ -1327,29 +1355,29 @@ class TrueTypeFont extends BaseFont {
     public float getFontDescriptor(int key, float fontSize) {
         switch (key) {
             case ASCENT:
-                return (float)os_2.sTypoAscender * fontSize / (float)head.unitsPerEm;
+                return os_2.sTypoAscender * fontSize / head.unitsPerEm;
             case CAPHEIGHT:
-                return (float)os_2.sCapHeight * fontSize / (float)head.unitsPerEm;
+                return os_2.sCapHeight * fontSize / head.unitsPerEm;
             case DESCENT:
-                return (float)os_2.sTypoDescender * fontSize / (float)head.unitsPerEm;
+                return os_2.sTypoDescender * fontSize / head.unitsPerEm;
             case ITALICANGLE:
                 return (float)italicAngle;
             case BBOXLLX:
-                return fontSize * (int)head.xMin / head.unitsPerEm;
+                return fontSize * head.xMin / head.unitsPerEm;
             case BBOXLLY:
-                return fontSize * (int)head.yMin / head.unitsPerEm;
+                return fontSize * head.yMin / head.unitsPerEm;
             case BBOXURX:
-                return fontSize * (int)head.xMax / head.unitsPerEm;
+                return fontSize * head.xMax / head.unitsPerEm;
             case BBOXURY:
-                return fontSize * (int)head.yMax / head.unitsPerEm;
+                return fontSize * head.yMax / head.unitsPerEm;
             case AWT_ASCENT:
-                return fontSize * (int)hhea.Ascender / head.unitsPerEm;
+                return fontSize * hhea.Ascender / head.unitsPerEm;
             case AWT_DESCENT:
-                return fontSize * (int)hhea.Descender / head.unitsPerEm;
+                return fontSize * hhea.Descender / head.unitsPerEm;
             case AWT_LEADING:
-                return fontSize * (int)hhea.LineGap / head.unitsPerEm;
+                return fontSize * hhea.LineGap / head.unitsPerEm;
             case AWT_MAXADVANCE:
-                return fontSize * (int)hhea.advanceWidthMax / head.unitsPerEm;
+                return fontSize * hhea.advanceWidthMax / head.unitsPerEm;
             case UNDERLINE_POSITION:
                 return (underlinePosition - underlineThickness / 2) * fontSize / head.unitsPerEm;
             case UNDERLINE_THICKNESS:
@@ -1399,7 +1427,7 @@ class TrueTypeFont extends BaseFont {
      * @return the code pages supported by the font
      */
     public String[] getCodePagesSupported() {
-        long cp = (((long)os_2.ulCodePageRange2) << 32) + ((long)os_2.ulCodePageRange1 & 0xffffffffL);
+        long cp = (((long)os_2.ulCodePageRange2) << 32) + (os_2.ulCodePageRange1 & 0xffffffffL);
         int count = 0;
         long bit = 1;
         for (int k = 0; k < 64; ++k) {

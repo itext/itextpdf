@@ -187,7 +187,7 @@ public class BarcodeCodabar extends Barcode{
         byte bars[] = getBarsCodabar(text);
         int wide = 0;
         for (int k = 0; k < bars.length; ++k) {
-            wide += (int)bars[k];
+            wide += bars[k];
         }
         int narrow = bars.length - wide;
         float fullWidth = x * (narrow + wide * n);
@@ -245,7 +245,7 @@ public class BarcodeCodabar extends Barcode{
         byte bars[] = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
         int wide = 0;
         for (int k = 0; k < bars.length; ++k) {
-            wide += (int)bars[k];
+            wide += bars[k];
         }
         int narrow = bars.length - wide;
         float fullWidth = x * (narrow + wide * n);
@@ -319,7 +319,7 @@ public class BarcodeCodabar extends Barcode{
         byte bars[] = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
         int wide = 0;
         for (int k = 0; k < bars.length; ++k) {
-            wide += (int)bars[k];
+            wide += bars[k];
         }
         int narrow = bars.length - wide;
         int fullWidth = narrow + wide * (int)n;

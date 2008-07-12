@@ -165,7 +165,7 @@ public class PdfImage extends PdfStream {
                     if (image.isDeflated())
                         put(PdfName.FILTER, PdfName.FLATEDECODE);
                     else {
-                        flateCompress();
+                        flateCompress(image.getCompressionLevel());
                     }
                 }
                 return;
@@ -276,6 +276,7 @@ public class PdfImage extends PdfStream {
     protected void importAll(PdfImage dup) {
         name = dup.name;
         compressed = dup.compressed;
+        compressionLevel = dup.compressionLevel;
         streamBytes = dup.streamBytes;
         bytes = dup.bytes;
         hashMap = dup.hashMap;

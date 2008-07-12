@@ -80,7 +80,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	 */
 	public RtfByteArrayBuffer(final int bufferSize)
 	{
-		if((bufferSize <= 0) || (bufferSize > 1<<30)) throw(new IllegalArgumentException("bufferSize "+bufferSize));
+		if((bufferSize <= 0) || (bufferSize > 1<<30)) throw new IllegalArgumentException("bufferSize "+bufferSize);
 		
 		int n = 1<<5;
 		while(n < bufferSize) {
@@ -120,7 +120,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	}
 	private void flushBuffer(final int reqSize)
 	{
-		if(reqSize < 0) throw(new IllegalArgumentException());
+		if(reqSize < 0) throw new IllegalArgumentException();
 		
 		if(pos == 0) return;
 
@@ -162,7 +162,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	 */
 	public void write(final byte[] src)
 	{
-		if(src == null) throw(new NullPointerException());
+		if(src == null) throw new NullPointerException();
 
 		if(src.length < buffer.length - pos) {
 			System.arraycopy(src, 0, buffer, pos, src.length);
@@ -181,7 +181,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	 */
 	public void write(final byte[] src, int off, int len)
 	{
-		if(src == null) throw(new NullPointerException());
+		if(src == null) throw new NullPointerException();
 		if((off < 0) || (off > src.length) || (len < 0) || ((off + len) > src.length) || ((off + len) < 0)) throw new IndexOutOfBoundsException();
 
 		writeLoop(src, off, len);		
@@ -209,7 +209,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	 */
 	public long write(final InputStream in) throws IOException
 	{
-		if(in == null) throw(new NullPointerException());
+		if(in == null) throw new NullPointerException();
 		
 		final long sizeStart = size;
 		while(true) {
@@ -229,7 +229,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	 */
 	public void append(final byte[] a)
 	{
-		if(a == null) throw(new NullPointerException());
+		if(a == null) throw new NullPointerException();
 		if(a.length == 0) return;
 		
 		if(a.length <= 8) {
@@ -250,7 +250,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	 */
 	public void append(final byte[][] a)
 	{
-		if(a == null) throw(new NullPointerException());
+		if(a == null) throw new NullPointerException();
 
 		for(int k = 0; k < a.length; k++) {
 			append(a[k]);
@@ -295,7 +295,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	 */
 	public void writeTo(final OutputStream out) throws IOException
 	{
-		if(out == null) throw(new NullPointerException());
+		if(out == null) throw new NullPointerException();
 		
 		final int n = arrays.size();
 		for(int k = 0; k < n; k++) {

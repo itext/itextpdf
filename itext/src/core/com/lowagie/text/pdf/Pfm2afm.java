@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2005-2007 Paulo Soares
+ * Copyright 1991 Ken Borgendale
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -496,32 +496,33 @@ public final class Pfm2afm {
 
     
     private boolean isMono;
-/*
+/**
  * Translate table from 1004 to psstd.  1004 is an extension of the
  * Windows translate table used in PM.
  */
     private int Win2PSStd[] = {
-        0,   0,   0,   0, 197, 198, 199,   0, 202,   0, 205, 206, 207,   0,   0,   0,
-        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-        32,  33,  34,  35,  36,  37,  38, 169,  40,  41,  42,  43,  44,  45,  46,  47,
-        48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,
-        64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,
-        80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95,
-        193,  97,  98,  99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
-        112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
-        0,   0, 184,   0, 185, 188, 178, 179,  94, 189,   0, 172, 234,   0,   0,   0,
-        0,  96,   0, 170, 186,   0, 177, 208, 126,   0,   0, 173, 250,   0,   0,   0,
-        0, 161, 162, 163, 168, 165,   0, 167, 200,   0, 227, 171,   0,   0,   0,   0,
-        0,   0,   0,   0, 194,   0, 182, 180, 203,   0, 235, 187,   0,   0,   0, 191,
-        0,   0,   0,   0,   0,   0, 225,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-        0,   0,   0,   0,   0,   0,   0,   0, 233,   0,   0,   0,   0,   0,   0, 251,
-        0,   0,   0,   0,   0,   0, 241,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-        0,   0,   0,   0,   0,   0,   0,   0, 249,   0,   0,   0,   0,   0,   0,   0
+        0,   0,   0,   0, 197, 198, 199,   0, 202,   0,   205, 206, 207, 0,   0,   0,   // 00
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   // 10
+        32,  33,  34,  35,  36,  37,  38, 169,  40,  41,  42,  43,  44,  45,  46,  47,  // 20
+        48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,  // 30
+        64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,  // 40
+        80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95,  // 50
+        193, 97,  98,  99,  100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, // 60
+        112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, // 70
+        0,   0,   184, 166, 185, 188, 178, 179, 195, 189, 0,   172, 234, 0,   0,   0,   // 80
+        0,   96,  0,   170, 186, 183, 177, 208, 196, 0,   0,   173, 250, 0,   0,   0,   // 90
+        0,   161, 162, 163, 168, 165, 0,   167, 200, 0,   227, 171, 0,   0,   0,   197, // A0
+        0,   0,   0,   0,   194, 0,   182, 180, 203, 0,   235, 187, 0,   0,   0,   191, // B0
+        0,   0,   0,   0,   0,   0,   225, 0,   0,   0,   0,   0,   0,   0,   0,   0,   // C0
+        0,   0,   0,   0,   0,   0,   0,   0,   233, 0,   0,   0,   0,   0,   0,   251, // D0
+        0,   0,   0,   0,   0,   0,   241, 0,   0,   0,   0,   0,   0,   0,   0,   0,   // E0
+        0,   0,   0,   0,   0,   0,   0,   0,   249, 0,   0,   0,   0,   0,   0,   0    // F0
     };
     
-/*
+/**
  *  Character class.  This is a minor attempt to overcome the problem that
  *  in the pfm file, all unused characters are given the width of space.
+ *  Note that this array isn't used in iText.
  */
     private int WinClass[] = {
         0, 0, 0, 0, 2, 2, 2, 0, 2, 0, 2, 2, 2, 0, 0, 0,   /* 00 */
@@ -542,7 +543,7 @@ public final class Pfm2afm {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1   /* f0 */
     };
     
-/*
+/**
  *  Windows character names.  Give a name to the used locations
  *  for when the all flag is specified.
  */
@@ -675,37 +676,37 @@ public final class Pfm2afm {
         "braceright",       /*   7D    */
         "asciitilde",       /*   7E    */
         "W7f",              /*   7F    */
-        "W80",              /*   80    */
+        "euro",             /*   80    */
         "W81",              /*   81    */
         "quotesinglbase",   /*   82    */
-        "W83",              /*   83    */
+        "florin",           /*   83    */
         "quotedblbase",     /*   84    */
         "ellipsis",         /*   85    */
         "dagger",           /*   86    */
         "daggerdbl",        /*   87    */
-        "asciicircum",      /*   88    */
+        "circumflex",       /*   88    */
         "perthousand",      /*   89    */
         "Scaron",           /*   8A    */
         "guilsinglleft",    /*   8B    */
         "OE",               /*   8C    */
         "W8d",              /*   8D    */
-        "W8e",              /*   8E    */
+        "Zcaron",           /*   8E    */
         "W8f",              /*   8F    */
         "W90",              /*   90    */
         "quoteleft",        /*   91    */
         "quoteright",       /*   92    */
         "quotedblleft",     /*   93    */
         "quotedblright",    /*   94    */
-        "bullet1",          /*   95    */
+        "bullet",           /*   95    */
         "endash",           /*   96    */
         "emdash",           /*   97    */
-        "asciitilde",       /*   98    */
+        "tilde",            /*   98    */
         "trademark",        /*   99    */
         "scaron",           /*   9A    */
         "guilsinglright",   /*   9B    */
         "oe",               /*   9C    */
         "W9d",              /*   9D    */
-        "W9e",              /*   9E    */
+        "zcaron",           /*   9E    */
         "Ydieresis",        /*   9F    */
         "reqspace",         /*   A0    */
         "exclamdown",       /*   A1    */
@@ -722,7 +723,7 @@ public final class Pfm2afm {
         "logicalnot",       /*   AC    */
         "syllable",         /*   AD    */
         "registered",       /*   AE    */
-        "overbar",          /*   AF    */
+        "macron",           /*   AF    */
         "degree",           /*   B0    */
         "plusminus",        /*   B1    */
         "twosuperior",      /*   B2    */
@@ -802,6 +803,6 @@ public final class Pfm2afm {
         "udieresis",        /*   FC    */
         "yacute",           /*   FD    */
         "thorn",            /*   FE    */
-        "ydieresis"        /*   FF    */
+        "ydieresis"         /*   FF    */
     };
 }

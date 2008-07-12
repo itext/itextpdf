@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2000, 2001, 2002 by Paulo Soares.
+ * Copyright 2008 Howard Shank (hgshank@yahoo.com)
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -47,46 +47,49 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text;
+package com.lowagie.text.rtf.list;
 
-import java.net.URL;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.rtf.RtfElement;
+import com.lowagie.text.rtf.RtfExtendedElement;
+import com.lowagie.text.rtf.document.RtfDocument;
+
 
 /**
- * PdfTemplate that has to be inserted into the document
- *
- * @see		Element
- * @see		Image
- *
- * @author  Paulo Soares
+ * The RtfPictureList2 manages the pictures for lists.
+ * 
+ * @version $Id$
+ * @author Howard Shank (hgshank@yahoo.com)
+ * @since 2.1.3
  */
-
-public class ImgTemplate extends Image {
-    
-    ImgTemplate(Image image) {
-        super(image);
-    }
-    
-    /** Creates an Image from a PdfTemplate.
-     *
-     * @param template the PdfTemplate
-     * @throws BadElementException on error
+public class RtfPictureList  extends RtfElement implements RtfExtendedElement {
+    /**
+     * Constant for determining which picture bullet from the \listpicture destination that should be applied.
      */
-    public ImgTemplate(PdfTemplate template) throws BadElementException{
-        super((URL)null);
-        if (template == null)
-            throw new BadElementException("The template can not be null.");
-        if (template.getType() == PdfTemplate.TYPE_PATTERN)
-            throw new BadElementException("A pattern can not be used as a template to create an image.");
-        type = IMGTEMPLATE;
-        scaledHeight = template.getHeight();
-        setTop(scaledHeight);
-        scaledWidth = template.getWidth();
-        setRight(scaledWidth);
-        setTemplateData(template);
-        plainWidth = getWidth();
-        plainHeight = getHeight();
-    }
-	
+    private static final byte[] LIST_LEVEL_PICTURE = "\\*\\listpicture".getBytes();
+
+	public RtfPictureList(RtfDocument doc) {
+		super(doc);
+	}
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.RtfElement#writeContent(java.io.OutputStream)
+	 */
+	public void writeContent(OutputStream out) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.lowagie.text.rtf.RtfExtendedElement#writeDefinition(java.io.OutputStream)
+	 */
+	public void writeDefinition(final OutputStream result) throws IOException {
+		// TODO Auto-generated method stub
+		result.write(OPEN_GROUP);
+		result.write(LIST_LEVEL_PICTURE);
+		// if there are elements, write the \shppictlist here
+		result.write(CLOSE_GROUP);
+	}
+
 }

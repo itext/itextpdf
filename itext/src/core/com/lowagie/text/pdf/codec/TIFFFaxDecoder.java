@@ -833,7 +833,7 @@ public class TIFFFaxDecoder {
                     entry = nextLesserThan8Bits(7);
                     
                     // Run these through the 2DCodes table
-                    entry = (int)(twoDCodes[entry] & 0xff);
+                    entry = twoDCodes[entry] & 0xff;
                     
                     // Get the code and the number of bits used up
                     code = (entry & 0x78) >>> 3;
@@ -978,7 +978,7 @@ public class TIFFFaxDecoder {
                 // Get the next seven bits
                 entry = nextLesserThan8Bits(7);
                 // Run these through the 2DCodes table
-                entry = (int)(twoDCodes[entry] & 0xff);
+                entry = twoDCodes[entry] & 0xff;
                 
                 // Get the code and the number of bits used up
                 code = (entry & 0x78) >>> 3;
@@ -1105,7 +1105,12 @@ public class TIFFFaxDecoder {
                         
                     }
                 } else {
-                    throw new RuntimeException("Invalid code encountered while decoding 2D group 4 compressed data.");
+                	//micah_tessler@yahoo.com
+                	//Microsoft TIFF renderers seem to treat unknown codes as line-breaks
+                	//That is, they give up on the current line and move on to the next one
+                	//set bitOffset to w to move on to the next scan line.
+                	bitOffset = w;
+                	updatePointer(7 - bits);
                 }
             }
             

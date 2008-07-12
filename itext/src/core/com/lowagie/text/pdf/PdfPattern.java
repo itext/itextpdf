@@ -1,4 +1,6 @@
 /*
+ * Copyright 2002 by Phillip Pan
+ * 
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.mozilla.org/MPL/
@@ -54,7 +56,21 @@ import com.lowagie.text.ExceptionConverter;
 
 public class PdfPattern extends PdfStream {
     
-    PdfPattern(PdfPatternPainter painter) {
+	/**
+	 * Creates a PdfPattern object.
+	 * @param	painter	a pattern painter instance
+	 */
+	PdfPattern(PdfPatternPainter painter) {
+		this(painter, DEFAULT_COMPRESSION);
+	}
+
+	/**
+	 * Creates a PdfPattern object.
+	 * @param	painter	a pattern painter instance
+	 * @param	compressionLevel the compressionLevel for the stream
+	 * @since	2.1.3
+	 */
+    PdfPattern(PdfPatternPainter painter, int compressionLevel) {
         super();
         PdfNumber one = new PdfNumber(1);
         PdfArray matrix = painter.getMatrix();
@@ -75,7 +91,7 @@ public class PdfPattern extends PdfStream {
         bytes = painter.toPdf(null);
         put(PdfName.LENGTH, new PdfNumber(bytes.length));
         try {
-            flateCompress();
+            flateCompress(compressionLevel);
         } catch (Exception e) {
             throw new ExceptionConverter(e);
         }

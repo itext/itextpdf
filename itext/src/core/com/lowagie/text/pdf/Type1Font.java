@@ -311,10 +311,10 @@ class Type1Font extends BaseFont
  */
     public int getKerning(int char1, int char2)
     {
-        String first = GlyphList.unicodeToName((int)char1);
+        String first = GlyphList.unicodeToName(char1);
         if (first == null)
             return 0;
-        String second = GlyphList.unicodeToName((int)char2);
+        String second = GlyphList.unicodeToName(char2);
         if (second == null)
             return 0;
         Object obj[] = (Object[])KernPairs.get(first);
@@ -494,8 +494,9 @@ class Type1Font extends BaseFont
  * otherwise the font is read and output in a PdfStream object.
  * @return the PdfStream containing the font or <CODE>null</CODE>
  * @throws DocumentException if there is an error reading the font
+ * @since 2.1.3
  */
-    private PdfStream getFontStream() throws DocumentException
+    public PdfStream getFullFontStream() throws DocumentException
     {
         if (builtinFont || !embedded)
             return null;
@@ -528,7 +529,7 @@ class Type1Font extends BaseFont
                     size -= got;
                 }
             }
-            return new StreamFont(st, lengths);
+            return new StreamFont(st, lengths, compressionLevel);
         }
         catch (Exception e) {
             throw new DocumentException(e);
@@ -658,7 +659,7 @@ class Type1Font extends BaseFont
         PdfIndirectReference ind_font = null;
         PdfObject pobj = null;
         PdfIndirectObject obj = null;
-        pobj = getFontStream();
+        pobj = getFullFontStream();
         if (pobj != null){
             obj = writer.addToBody(pobj);
             ind_font = obj.getIndirectReference();
@@ -779,10 +780,10 @@ class Type1Font extends BaseFont
      * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
      */
     public boolean setKerning(int char1, int char2, int kern) {
-        String first = GlyphList.unicodeToName((int)char1);
+        String first = GlyphList.unicodeToName(char1);
         if (first == null)
             return false;
-        String second = GlyphList.unicodeToName((int)char2);
+        String second = GlyphList.unicodeToName(char2);
         if (second == null)
             return false;
         Object obj[] = (Object[])KernPairs.get(first);

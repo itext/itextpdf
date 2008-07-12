@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright (C) 2002 Mark Thompson
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
  * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
- *
- * This module by Mark Thompson. Copyright (C) 2002 Mark Thompson
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -600,7 +598,7 @@ public class PdfCopy extends PdfWriter {
             if (over != null)
                 out.append(PdfContents.SAVESTATE);
             PdfStream stream = new PdfStream(out.toByteArray());
-            stream.flateCompress();
+            stream.flateCompress(cstp.getCompressionLevel());
             PdfIndirectReference ref1 = cstp.addToBody(stream).getIndirectReference();
             ar.addFirst(ref1);
             out.reset();
@@ -612,7 +610,7 @@ public class PdfCopy extends PdfWriter {
                 out.append(over.getInternalBuffer());
                 out.append(PdfContents.RESTORESTATE);
                 stream = new PdfStream(out.toByteArray());
-                stream.flateCompress();
+                stream.flateCompress(cstp.getCompressionLevel());
                 ar.add(cstp.addToBody(stream).getIndirectReference());
             }
             pageN.put(PdfName.RESOURCES, pageResources.getResources());

@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2001, 2002 by Bruno Lowagie.
+ * Copyright 2000 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -303,7 +303,7 @@ public class PdfAction extends PdfDictionary {
             try {
                 byte b[] = PdfEncodings.convertToBytes(code, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING);
                 PdfStream stream = new PdfStream(b);
-                stream.flateCompress();
+                stream.flateCompress(writer.getCompressionLevel());
                 js.put(PdfName.JS, writer.addToBody(stream).getIndirectReference());
             }
             catch (Exception e) {

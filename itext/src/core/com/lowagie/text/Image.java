@@ -69,6 +69,7 @@ import com.lowagie.text.pdf.PdfNumber;
 import com.lowagie.text.pdf.PdfOCG;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStream;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
@@ -199,6 +200,12 @@ public abstract class Image extends Rectangle {
 
 	/** This is the original height of the image taking rotation into account. */
 	protected float scaledHeight;
+	
+    /**
+     * The compression level of the content streams.
+     * @since	2.1.3
+     */
+    protected int compressionLevel = PdfStream.DEFAULT_COMPRESSION;
 
 	/** an iText attributed unique id for this image. */
 	protected Long mySerialId = getSerialId();
@@ -1936,4 +1943,25 @@ public abstract class Image extends Rectangle {
 		this.transparency = transparency;
 	}
 
+
+	/**
+	 * Returns the compression level used for images written as a compressed stream.
+	 * @return the compression level (0 = best speed, 9 = best compression, -1 is default)
+     * @since	2.1.3
+	 */
+	public int getCompressionLevel() {
+		return compressionLevel;
+	}
+
+	/**
+	 * Sets the compression level to be used if the image is written as a compressed stream.
+	 * @param compressionLevel a value between 0 (best speed) and 9 (best compression)
+     * @since	2.1.3
+	 */
+	public void setCompressionLevel(int compressionLevel) {
+		if (compressionLevel < PdfStream.NO_COMPRESSION || compressionLevel > PdfStream.BEST_COMPRESSION)
+			this.compressionLevel = PdfStream.DEFAULT_COMPRESSION;
+		else
+			this.compressionLevel = compressionLevel;
+	}
 }

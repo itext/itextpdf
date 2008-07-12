@@ -292,7 +292,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @return position and/or stroke thickness depending on the font size
      */
     public static double asPoints(double d, int i) {
-        return (d * (double)i) / (double)AFM_DIVISOR;
+        return d * i / AFM_DIVISOR;
     }
     /**
      * This routine goes through the attributes and sets the font
@@ -479,11 +479,11 @@ public class PdfGraphics2D extends Graphics2D {
                 //int UnderlinePosition = -100;
                 int UnderlineThickness = 50;
                 //
-                double d = asPoints((double)UnderlineThickness, (int)fontSize);
+                double d = asPoints(UnderlineThickness, (int)fontSize);
                 Stroke savedStroke = originalStroke;
                 setStroke(new BasicStroke((float)d));
-                y = (float)((double)(y) + asPoints((double)(UnderlineThickness), (int)fontSize));
-                Line2D line = new Line2D.Double((double)x, (double)y, (double)(width+x), (double)y);
+                y = (float)(y + asPoints(UnderlineThickness, (int)fontSize));
+                Line2D line = new Line2D.Double(x, y, width+x, y);
                 draw(line);
                 setStroke(savedStroke);
             }
@@ -517,7 +517,7 @@ public class PdfGraphics2D extends Graphics2D {
                 {
                     drawString(stringbuffer.toString(), x, y);
                     FontMetrics fontmetrics = getFontMetrics();
-                    x = (float)((double)x + fontmetrics.getStringBounds(stringbuffer.toString(), this).getWidth());
+                    x = (float)(x + fontmetrics.getStringBounds(stringbuffer.toString(), this).getWidth());
                     stringbuffer.delete(0, stringbuffer.length());
                 }
                 doAttributes(iter);
@@ -584,7 +584,7 @@ public class PdfGraphics2D extends Graphics2D {
 
 					Color c = (Color) realPaint;
 					paint = new Color(c.getRed(), c.getGreen(), c.getBlue(),
-							(int) ((float) c.getAlpha() * alpha));
+							(int) (c.getAlpha() * alpha));
 				}
 				return;
 			}
@@ -611,7 +611,7 @@ public class PdfGraphics2D extends Graphics2D {
 			
 			if (co.getRule() == 3) {
 				Color c = (Color) paint;
-				this.paint = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) ((float) c.getAlpha() * alpha));
+				this.paint = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha() * alpha));
 				realPaint = paint;
 			}
 		}
@@ -1086,7 +1086,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#drawLine(int, int, int, int)
      */
     public void drawLine(int x1, int y1, int x2, int y2) {
-        Line2D line = new Line2D.Double((double)x1, (double)y1, (double)x2, (double)y2);
+        Line2D line = new Line2D.Double(x1, y1, x2, y2);
         draw(line);
     }
     
@@ -1134,7 +1134,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#drawOval(int, int, int, int)
      */
     public void drawOval(int x, int y, int width, int height) {
-        Ellipse2D oval = new Ellipse2D.Float((float)x, (float)y, (float)width, (float)height);
+        Ellipse2D oval = new Ellipse2D.Float(x, y, width, height);
         draw(oval);
     }
     
@@ -1142,7 +1142,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#fillOval(int, int, int, int)
      */
     public void fillOval(int x, int y, int width, int height) {
-        Ellipse2D oval = new Ellipse2D.Float((float)x, (float)y, (float)width, (float)height);
+        Ellipse2D oval = new Ellipse2D.Float(x, y, width, height);
         fill(oval);
     }
     
@@ -1509,7 +1509,7 @@ public class PdfGraphics2D extends Graphics2D {
                     PdfGState gs = fillGState[alpha];
                     if (gs == null) {
                         gs = new PdfGState();
-                        gs.setFillOpacity((float)alpha / 255f);
+                        gs.setFillOpacity(alpha / 255f);
                         fillGState[alpha] = gs;
                     }
                     cb.setGState(gs);
@@ -1522,7 +1522,7 @@ public class PdfGraphics2D extends Graphics2D {
                     PdfGState gs = strokeGState[alpha];
                     if (gs == null) {
                         gs = new PdfGState();
-                        gs.setStrokeOpacity((float)alpha / 255f);
+                        gs.setStrokeOpacity(alpha / 255f);
                         strokeGState[alpha] = gs;
                     }
                     cb.setGState(gs);

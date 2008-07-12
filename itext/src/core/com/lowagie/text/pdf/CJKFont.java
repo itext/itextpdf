@@ -203,7 +203,7 @@ class CJKFont extends BaseFont {
      * @return the width in normalized 1000 units
      */
     public int getWidth(int char1) {
-        int c = (int)char1;
+        int c = char1;
         if (!cidDirect)
             c = translationMap[c];
         int v;
@@ -314,6 +314,16 @@ class CJKFont extends BaseFont {
         }
         pobj = getFontBaseType(ind_font);
         writer.addToBody(pobj, ref);
+    }
+
+    /**
+     * You can't get the FontStream of a CJK font (CJK fonts are never embedded),
+     * so this method always returns null.
+   	 * @return	null
+     * @since	2.1.3
+     */
+    public PdfStream getFullFontStream() {
+    	return null;
     }
     
     private float getDescNumber(String name) {

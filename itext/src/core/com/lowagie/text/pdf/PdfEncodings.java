@@ -401,7 +401,7 @@ public class PdfEncodings {
         int end = start + length;
         int currentPlane = 0;
         for (int k = start; k < end; ++k) {
-            int one = (int)seq[k] & 0xff;
+            int one = seq[k] & 0xff;
             char plane[] = planes[currentPlane];
             int cid = plane[one];
             if ((cid & 0x8000) == 0) {
@@ -506,7 +506,7 @@ public class PdfEncodings {
         int nextPlane = 0;
         for (int idx = 0; idx < size; ++idx) {
             char plane[] = (char[])planes.get(nextPlane);
-            int one = (int)seqs[idx] & 0xff;
+            int one = seqs[idx] & 0xff;
             char c = plane[one];
             if (c != 0 && (c & 0x8000) == 0)
                 throw new RuntimeException("Inconsistent mapping.");
@@ -518,7 +518,7 @@ public class PdfEncodings {
             nextPlane = c & 0x7fff;
         }
         char plane[] = (char[])planes.get(nextPlane);
-        int one = (int)seqs[size] & 0xff;
+        int one = seqs[size] & 0xff;
         char c = plane[one];
         if ((c & 0x8000) != 0)
             throw new RuntimeException("Inconsistent mapping.");
@@ -692,7 +692,7 @@ public class PdfEncodings {
             int len = cc.length;
             for (int k = 0; k < len; ++k) {
                 char c = cc[k];
-                byte v = (byte)translation.get((int)c);
+                byte v = (byte)translation.get(c);
                 if (v != 0)
                     b[ptr++] = v;
             }
@@ -704,7 +704,7 @@ public class PdfEncodings {
         }
         
         public byte[] charToByte(char char1, String encoding) {
-            byte v = (byte)translation.get((int)char1);
+            byte v = (byte)translation.get(char1);
             if (v != 0)
                 return new byte[]{v};
             else
@@ -751,12 +751,12 @@ public class PdfEncodings {
 
         static {
             for (int k = 0; k < table1.length; ++k) {
-                int v = (int)table1[k];
+                int v = table1[k];
                 if (v != 0)
                     t1.put(v, k + 32);
             }
             for (int k = 0; k < table2.length; ++k) {
-                int v = (int)table2[k];
+                int v = table2[k];
                 if (v != 0)
                     t2.put(v, k + 32);
             }

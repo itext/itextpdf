@@ -41,7 +41,10 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
  * details.
- *
+ * 
+ * Contributions by:
+ * Lubos Strapko
+ * 
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
@@ -435,7 +438,18 @@ public class ElementTags {
 	
 	/** a possible list attribute */
 	public static final String LOWERCASE = "lowercase";
-    
+   /**
+    * a possible list attribute
+    * @since 2.1.3
+    */
+   public static final String FACE = "face";
+
+   /** attribute of the image or iframe tag
+    * @since 2.1.3
+    */
+   public static final String SRC = "src";
+   
+   
     // methods
     
 	/**
