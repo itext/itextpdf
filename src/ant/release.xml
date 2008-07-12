@@ -100,7 +100,9 @@
 		<copy file="${itext.rtf.jar}" tofile="${itext.dist}/iText-rtf-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.rtf.jar}" tofile="${itext.sf}/iText-rtf-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/iText-src-${releasenumber}.zip" overwrite="yes"/>
+		<copy file="${itext.dist}/src-with-libs.zip" tofile="${itext.sf}/iText-src-with-libs-${releasenumber}.zip" overwrite="yes"/>
 		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/iText-src-${releasenumber}.tar.gz" overwrite="yes"/>
+		<copy file="${itext.dist}/src-with-libs.tar.gz" tofile="${itext.sf}/iText-src-with-libs-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.sf}/iText-${releasenumber}-sources.jar" overwrite="yes"/>
 	</target>
 	
