@@ -1,5 +1,5 @@
 /*
- * $Id: PdfEFStream.java 3425 2008-05-24 16:06:00Z blowagie $
+ * $Id$
  *
  * Copyright (c) 2008 by Bruno Lowagie
  *
