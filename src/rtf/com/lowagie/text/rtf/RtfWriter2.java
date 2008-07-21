@@ -266,7 +266,7 @@ public class RtfWriter2 extends DocWriter {
     public void importRtfDocument(FileInputStream documentSource) throws IOException, DocumentException {
         importRtfDocument(documentSource, null);
     }
-    
+ 
     /**
      * Adds the complete RTF document to the current RTF document being generated.
      * It will parse the font and color tables and correct the font and color references
@@ -344,5 +344,44 @@ public class RtfWriter2 extends DocWriter {
     		}
     	}
     	rtfImport.importRtfFragment(documentSource, this.rtfDoc, mappings);
+    }
+    
+    
+    /**
+     * Adds the complete RTF document to the current RTF element being generated.
+     * It will parse the font and color tables and correct the font and color references
+     * so that the imported RTF document retains its formattings.
+     * 
+     * @param elem The Element the RTF document is to be imported into.
+     * @param documentSource The Reader to read the RTF document from.
+     * @throws IOException On errors reading the RTF document.
+     * @throws DocumentException On errors adding to this RTF document.
+     * @since 2.1.4
+     */
+    public void importRtfDocumentIntoElement(Element elem, FileInputStream documentSource) throws IOException, DocumentException {
+    	importRtfDocumentIntoElement(elem, documentSource, null);
+    }
+    
+    /**
+     * Adds the complete RTF document to the current RTF element being generated.
+     * It will parse the font and color tables and correct the font and color references
+     * so that the imported RTF document retains its formattings.
+     * 
+     * @param elem The Element the RTF document is to be imported into.
+     * @param documentSource The Reader to read the RTF document from.
+     * @param events The event array for listeners.
+     * @throws IOException On errors reading the RTF document.
+     * @throws DocumentException On errors adding to this RTF document.
+     * @since 2.1.4
+     */
+    public void importRtfDocumentIntoElement(Element elem, FileInputStream documentSource, EventListener[] events) throws IOException, DocumentException {
+
+    	RtfParser rtfImport = new RtfParser(this.document);
+    	if(events != null) {
+    		for(int idx=0;idx<events.length;idx++) {
+        		rtfImport.addListener(events[idx]);
+    		}
+    	}
+//    	rtfImport.importRtfFragment(documentSource, this.rtfDoc, mappings);
     }
 }
