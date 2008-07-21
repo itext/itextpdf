@@ -306,6 +306,7 @@ public class RtfParser {
 	public static final int TYPE_CONVERT = 2;
 	/**
 	 * Conversion type to import a document into an element. i.e. Chapter, Section, Table Cell, etc.
+	 * @since 2.1.4
 	 */
 	public static final int TYPE_IMPORT_INTO_ELEMENT = 3;
 
