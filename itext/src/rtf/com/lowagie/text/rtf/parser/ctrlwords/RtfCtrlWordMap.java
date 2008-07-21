@@ -1563,7 +1563,7 @@ final class RtfCtrlWordMap {
 		ctrlWords.put("shplockanchor", new RtfCtrlWordHandler(rtfParser, "shplockanchor", 0, false, RtfCtrlWordType.FLAG, "\\", " ", null));
 		ctrlWords.put("shppict", new RtfCtrlWordHandler(rtfParser, "shppict", 0, false, RtfCtrlWordType.DESTINATION_EX, "\\*\\", " ", "RtfDestinationShppict" ));//"RtfDestinationShppict"));
 		ctrlWords.put("shpright", new RtfCtrlWordHandler(rtfParser, "shpright", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
-		ctrlWords.put("shprslt", new RtfCtrlWordHandler(rtfParser, "shprslt", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
+		ctrlWords.put("shprslt", new RtfCtrlWordHandler(rtfParser, "shprslt", 0, true, RtfCtrlWordType.DESTINATION, "\\", " ", "RtfDestinationNull"));
 		ctrlWords.put("shptop", new RtfCtrlWordHandler(rtfParser, "shptop", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("shptxt", new RtfCtrlWordHandler(rtfParser, "shptxt", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
 		ctrlWords.put("shpwr", new RtfCtrlWordHandler(rtfParser, "shpwr", 0, true, RtfCtrlWordType.VALUE, "\\", " ", null));
