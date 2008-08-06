@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.document;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfElement;
 
 
@@ -71,7 +72,7 @@ public class RtfProtectionSetting extends RtfElement {
 	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#READPROT
 	 * @since 2.1.1 
 	 */
-    private static final byte[] FORMPROT = "\\formprot".getBytes();
+    private static final byte[] FORMPROT = DocWriter.getISOBytes("\\formprot");
 	/**
 	 * Constant for Revision protection controlword
 	 * Mutually exclusive
@@ -80,7 +81,7 @@ public class RtfProtectionSetting extends RtfElement {
 	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#READPROT
 	 * @since 2.1.1
 	 */
-    private static final byte[] REVPROT = "\\revprot".getBytes();
+    private static final byte[] REVPROT = DocWriter.getISOBytes("\\revprot");
 	/**
 	 * Constant for Annotation/Comment protection controlword
 	 * Mutually exclusive
@@ -89,7 +90,7 @@ public class RtfProtectionSetting extends RtfElement {
 	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#READPROT
 	 * @since 2.1.1
 	 */
-    private static final byte[] ANNOTPROT = "\\annotprot".getBytes();
+    private static final byte[] ANNOTPROT = DocWriter.getISOBytes("\\annotprot");
 	/**
 	 * Constant for read only rotection controlword
 	 * Mutually exclusive - exception, can be combined with ANNOTPROT
@@ -99,18 +100,18 @@ public class RtfProtectionSetting extends RtfElement {
 	 * @see com.lowagie.text.rtf.document.RtfProtectionSetting#ANNOTPROT
 	 * @since 2.1.1
 	 */
-    private static final byte[] READPROT = "\\readprot".getBytes();
+    private static final byte[] READPROT = DocWriter.getISOBytes("\\readprot");
     
 	/**
 	 * Constant for protlevel controlword
 	 * @since 2.1.1
 	 */
-    private static final byte[] PROTLEVEL = "\\protlevel".getBytes();
+    private static final byte[] PROTLEVEL = DocWriter.getISOBytes("\\protlevel");
 	/**
 	 * Constant for enforceprot controlword
 	 * @since 2.1.1 
 	 */
-    private static final byte[] ENFORCEPROT = "\\enforceprot".getBytes();
+    private static final byte[] ENFORCEPROT = DocWriter.getISOBytes("\\enforceprot");
     
 	/**
 	 * Constant for enforceprot controlword.
@@ -118,7 +119,7 @@ public class RtfProtectionSetting extends RtfElement {
 	 * 
      * @since 2.1.1
 	 */
-    private static final byte[] READONLYRECOMMENDED = "\\readonlyrecommended".getBytes();
+    private static final byte[] READONLYRECOMMENDED = DocWriter.getISOBytes("\\readonlyrecommended");
 
     /**
      * Constructs a <code>RtfProtectionSetting</code> belonging to a RtfDocument

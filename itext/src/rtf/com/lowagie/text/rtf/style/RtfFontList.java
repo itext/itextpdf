@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -70,15 +71,15 @@ public class RtfFontList extends RtfElement implements RtfExtendedElement {
     /**
      * Constant for the default font
      */
-    private static final byte[] DEFAULT_FONT = "\\deff".getBytes();
+    private static final byte[] DEFAULT_FONT = DocWriter.getISOBytes("\\deff");
     /**
      * Constant for the font table
      */
-    private static final byte[] FONT_TABLE = "\\fonttbl".getBytes();
+    private static final byte[] FONT_TABLE = DocWriter.getISOBytes("\\fonttbl");
     /**
      * Constant for the font number
      */
-    public static final byte[] FONT_NUMBER = "\\f".getBytes();
+    public static final byte[] FONT_NUMBER = DocWriter.getISOBytes("\\f");
     
     /**
      * The list of fonts

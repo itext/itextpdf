@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.list;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -121,7 +122,7 @@ public class RtfListItem extends RtfParagraph {
                     break;
                 case RtfListLevel.LIST_LEVEL_FOLLOW_SPACE:
                     this.parentList.writeListBeginning(result);
-                    result.write(" ".getBytes());
+                    result.write(DocWriter.getISOBytes(" "));
                     break;
                 }
             }

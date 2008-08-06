@@ -3,6 +3,7 @@ package com.lowagie.text.rtf.graphic;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfAddableElement;
 
 /**
@@ -165,36 +166,36 @@ public class RtfShapePosition extends RtfAddableElement {
      */
     public void writeContent(final OutputStream result) throws IOException
     {    	
-    	result.write("\\shpleft".getBytes());
+    	result.write(DocWriter.getISOBytes("\\shpleft"));
     	result.write(intToByteArray(this.left));
-    	result.write("\\shptop".getBytes());
+    	result.write(DocWriter.getISOBytes("\\shptop"));
     	result.write(intToByteArray(this.top));
-    	result.write("\\shpright".getBytes());
+    	result.write(DocWriter.getISOBytes("\\shpright"));
     	result.write(intToByteArray(this.right));
-    	result.write("\\shpbottom".getBytes());
+    	result.write(DocWriter.getISOBytes("\\shpbottom"));
     	result.write(intToByteArray(this.bottom));
-    	result.write("\\shpz".getBytes());
+    	result.write(DocWriter.getISOBytes("\\shpz"));
     	result.write(intToByteArray(this.zOrder));
     	switch(this.xRelativePos) {
-    	case POSITION_X_RELATIVE_PAGE: result.write("\\shpbxpage".getBytes()); break;
-    	case POSITION_X_RELATIVE_MARGIN: result.write("\\shpbxmargin".getBytes()); break;
-    	case POSITION_X_RELATIVE_COLUMN: result.write("\\shpbxcolumn".getBytes()); break;
+    	case POSITION_X_RELATIVE_PAGE: result.write(DocWriter.getISOBytes("\\shpbxpage")); break;
+    	case POSITION_X_RELATIVE_MARGIN: result.write(DocWriter.getISOBytes("\\shpbxmargin")); break;
+    	case POSITION_X_RELATIVE_COLUMN: result.write(DocWriter.getISOBytes("\\shpbxcolumn")); break;
     	}
     	if(this.ignoreXRelative) {
-    		result.write("\\shpbxignore".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpbxignore"));
     	}
     	switch(this.yRelativePos) {
-    	case POSITION_Y_RELATIVE_PAGE: result.write("\\shpbypage".getBytes()); break;
-    	case POSITION_Y_RELATIVE_MARGIN: result.write("\\shpbymargin".getBytes()); break;
-    	case POSITION_Y_RELATIVE_PARAGRAPH: result.write("\\shpbypara".getBytes()); break;
+    	case POSITION_Y_RELATIVE_PAGE: result.write(DocWriter.getISOBytes("\\shpbypage")); break;
+    	case POSITION_Y_RELATIVE_MARGIN: result.write(DocWriter.getISOBytes("\\shpbymargin")); break;
+    	case POSITION_Y_RELATIVE_PARAGRAPH: result.write(DocWriter.getISOBytes("\\shpbypara")); break;
     	}
     	if(this.ignoreYRelative) {
-    		result.write("\\shpbyignore".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpbyignore"));
     	}
     	if(this.shapeBelowText) {
-    		result.write("\\shpfblwtxt1".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpfblwtxt1"));
     	} else {
-    		result.write("\\shpfblwtxt0".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpfblwtxt0"));
     	}
     }
 

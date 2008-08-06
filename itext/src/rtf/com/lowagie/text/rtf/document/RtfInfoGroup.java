@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfElement;
 
 
@@ -68,14 +69,14 @@ public class RtfInfoGroup extends RtfElement {
     /**
      * Information group starting tag
      */
-    private static final byte[] INFO_GROUP = "\\info".getBytes();
+    private static final byte[] INFO_GROUP = DocWriter.getISOBytes("\\info");
     
     /**
      * Constant for the password element.
      * Author: Howard Shank (hgshank@yahoo.com)
      * @since 2.1.1
      */
-    private static final byte[] INFO_PASSWORD = "\\*\\password".getBytes();
+    private static final byte[] INFO_PASSWORD = DocWriter.getISOBytes("\\*\\password");
 
     /**
      * The RtfInfoElements that belong to this RtfInfoGroup

@@ -82,6 +82,9 @@ final class RtfCtrlWordMap {
     public RtfCtrlWordHandler getCtrlWordHandler(String ctrlWord) {
     	try {
         	RtfCtrlWordHandler handler = null;
+        	if(ctrlWord == "cf") {
+        	 handler = null;
+        	}
         	if(ctrlWords.containsKey(ctrlWord)) {
         		// add 1 to known control words
         		return (RtfCtrlWordHandler)ctrlWords.get(ctrlWord);

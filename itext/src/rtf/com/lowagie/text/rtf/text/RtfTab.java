@@ -54,6 +54,7 @@ package com.lowagie.text.rtf.text;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfAddableElement;
 
 /**
@@ -125,11 +126,11 @@ public class RtfTab extends RtfAddableElement {
     public void writeContent(final OutputStream result) throws IOException
     {
     	switch(this.type) {
-    		case TAB_CENTER_ALIGN: result.write("\\tqc".getBytes()); break;
-    		case TAB_RIGHT_ALIGN: result.write("\\tqr".getBytes()); break;
-    		case TAB_DECIMAL_ALIGN: result.write("\\tqdec".getBytes()); break;
+    		case TAB_CENTER_ALIGN: result.write(DocWriter.getISOBytes("\\tqc")); break;
+    		case TAB_RIGHT_ALIGN: result.write(DocWriter.getISOBytes("\\tqr")); break;
+    		case TAB_DECIMAL_ALIGN: result.write(DocWriter.getISOBytes("\\tqdec")); break;
         }
-        result.write("\\tx".getBytes());
+        result.write(DocWriter.getISOBytes("\\tx"));
         result.write(intToByteArray(this.position));    	
     }
 	

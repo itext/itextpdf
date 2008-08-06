@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -71,7 +72,7 @@ public class RtfColorList extends RtfElement implements RtfExtendedElement {
     /**
      * Constant for the beginning of the color table
      */
-    private static final byte[] COLOR_TABLE = "\\colortbl".getBytes();
+    private static final byte[] COLOR_TABLE = DocWriter.getISOBytes("\\colortbl");
     
     /**
      * ArrayList containing all colors of this RtfColorList

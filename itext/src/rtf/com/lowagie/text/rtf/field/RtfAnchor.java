@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.lowagie.text.Anchor;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.text.RtfPhrase;
 
@@ -70,7 +71,7 @@ public class RtfAnchor extends RtfField
     /**
      * Constant for a hyperlink
      */
-    private static final byte[] HYPERLINK = "HYPERLINK".getBytes();
+    private static final byte[] HYPERLINK = DocWriter.getISOBytes("HYPERLINK");
     
     /**
      * The url of this RtfAnchor

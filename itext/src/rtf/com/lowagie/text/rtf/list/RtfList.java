@@ -56,11 +56,13 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
 import com.lowagie.text.Chunk;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
+import com.lowagie.text.Paragraph;
 import com.lowagie.text.RomanList;
 import com.lowagie.text.factories.RomanAlphabetFactory;
 import com.lowagie.text.factories.RomanNumberFactory;
@@ -89,64 +91,64 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * Constant for the list number
      * @since 2.1.3
      */
-    public static final byte[] LIST_NUMBER = "\\ls".getBytes();
+    public static final byte[] LIST_NUMBER = DocWriter.getISOBytes("\\ls");
 
     /**
      * Constant for the list
      */
-    private static final byte[] LIST = "\\list".getBytes();
+    private static final byte[] LIST = DocWriter.getISOBytes("\\list");
     /**
      * Constant for the list id
      * @since 2.1.3
      */
-    public static final byte[] LIST_ID = "\\listid".getBytes();
+    public static final byte[] LIST_ID = DocWriter.getISOBytes("\\listid");
     /**
      * Constant for the list template id
      */
-    private static final byte[] LIST_TEMPLATE_ID = "\\listtemplateid".getBytes();
+    private static final byte[] LIST_TEMPLATE_ID = DocWriter.getISOBytes("\\listtemplateid");
     /**
      * Constant for the simple list
      */
-    private static final byte[] LIST_SIMPLE = "\\listsimple".getBytes();
+    private static final byte[] LIST_SIMPLE = DocWriter.getISOBytes("\\listsimple");
     /**
      * Constant for the hybrid list
      */
-    private static final byte[] LIST_HYBRID = "\\listhybrid".getBytes();
+    private static final byte[] LIST_HYBRID = DocWriter.getISOBytes("\\listhybrid");
     /**
      * Constant to indicate if the list restarts at each section. Word 7 compatiblity
      */
-    private static final byte[] LIST_RESTARTHDN = "\\listrestarthdn".getBytes();
+    private static final byte[] LIST_RESTARTHDN = DocWriter.getISOBytes("\\listrestarthdn");
     /**
      * Constant for the name of this list
      */
-    private static final byte[] LIST_NAME = "\\listname".getBytes();
+    private static final byte[] LIST_NAME = DocWriter.getISOBytes("\\listname");
     /**
      * Constant for the identifier of the style of this list. Mutually exclusive with \\liststylename
      */
-    private static final byte[] LIST_STYLEID = "\\liststyleid".getBytes();
+    private static final byte[] LIST_STYLEID = DocWriter.getISOBytes("\\liststyleid");
     /**
      * Constant for the identifier of the style of this list. Mutually exclusive with \\liststyleid
      */
-    private static final byte[] LIST_STYLENAME = "\\liststylename".getBytes();
+    private static final byte[] LIST_STYLENAME = DocWriter.getISOBytes("\\liststylename");
 
     // character properties
     /**
      * Constant for the list level value
      * @since 2.1.3
      */
-    public static final byte[] LIST_LEVEL_NUMBER = "\\ilvl".getBytes();
+    public static final byte[] LIST_LEVEL_NUMBER = DocWriter.getISOBytes("\\ilvl");
     
     
 	/**
      * Constant for the old list text
      * @since 2.1.3
      */
-    public static final byte[] LIST_TEXT = "\\listtext".getBytes();
+    public static final byte[] LIST_TEXT = DocWriter.getISOBytes("\\listtext");
     /**
      * Constant for the old list number end
      * @since 2.1.3
      */
-    public static final byte[] LIST_NUMBER_END = ".".getBytes();
+    public static final byte[] LIST_NUMBER_END = DocWriter.getISOBytes(".");
     
     
 
@@ -154,7 +156,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * Constant for a tab character
      * @since 2.1.3
      */
-    public static final byte[] TAB = "\\tab".getBytes();
+    public static final byte[] TAB = DocWriter.getISOBytes("\\tab");
     
     /**
      * The subitems of this RtfList
@@ -303,6 +305,11 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 			}
 		} 
 		else {
+//			Paragraph p = new Paragraph();
+//			p.add(new Chunk(list.getPreSymbol()) );
+//			p.add(list.getSymbol());
+//			p.add(new Chunk(list.getPostSymbol()) );
+//			ll.setBulletChunk(list.getSymbol());
 			ll.setBulletCharacter(list.getPreSymbol() + list.getSymbol().getContent() + list.getPostSymbol());
 			ll.setListType(RtfListLevel.LIST_TYPE_BULLET);
 		}
@@ -331,7 +338,11 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                         // only set this to bullet symbol is not default
                         ll.setBulletFont( list.getSymbol().getFont());
                         ll.setBulletCharacter(list.getSymbol().getContent().substring(0, 1));
-                    } else {
+                    } else
+                	 if (list.getSymbol() != null && list.getSymbol().getFont() != null) {
+                     	ll.setBulletFont(list.getSymbol().getFont());
+                	 
+                	 } else {
                     	ll.setBulletFont(new Font(Font.SYMBOL, 10, Font.NORMAL, new Color(0, 0, 0)));
                     } 
                     items.add(rtfElement);
@@ -489,10 +500,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         if(listLevel.getListType() != RtfListLevel.LIST_TYPE_BULLET) {
             switch(listLevel.getListType()) {
                 case RtfListLevel.LIST_TYPE_NUMBERED      : result.write(intToByteArray(itemNr)); break;
-                case RtfListLevel.LIST_TYPE_UPPER_LETTERS : result.write(RomanAlphabetFactory.getUpperCaseString(itemNr).getBytes()); break;
-                case RtfListLevel.LIST_TYPE_LOWER_LETTERS : result.write(RomanAlphabetFactory.getLowerCaseString(itemNr).getBytes()); break;
-                case RtfListLevel.LIST_TYPE_UPPER_ROMAN   : result.write(RomanNumberFactory.getUpperCaseString(itemNr).getBytes()); break;
-                case RtfListLevel.LIST_TYPE_LOWER_ROMAN   : result.write(RomanNumberFactory.getLowerCaseString(itemNr).getBytes()); break;
+                case RtfListLevel.LIST_TYPE_UPPER_LETTERS : result.write(DocWriter.getISOBytes(RomanAlphabetFactory.getUpperCaseString(itemNr))); break;
+                case RtfListLevel.LIST_TYPE_LOWER_LETTERS : result.write(DocWriter.getISOBytes(RomanAlphabetFactory.getLowerCaseString(itemNr))); break;
+                case RtfListLevel.LIST_TYPE_UPPER_ROMAN   : result.write(DocWriter.getISOBytes(RomanNumberFactory.getUpperCaseString(itemNr))); break;
+                case RtfListLevel.LIST_TYPE_LOWER_ROMAN   : result.write(DocWriter.getISOBytes(RomanNumberFactory.getLowerCaseString(itemNr))); break;
             }
             result.write(LIST_NUMBER_END);
         } else {

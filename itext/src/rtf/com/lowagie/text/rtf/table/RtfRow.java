@@ -54,6 +54,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import com.lowagie.text.Cell;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Element;
 import com.lowagie.text.Row;
 import com.lowagie.text.pdf.PdfPCell;
@@ -77,95 +78,95 @@ public class RtfRow extends RtfElement {
     /**
      * Constant for the RtfRow beginning
      */
-    private static final byte[] ROW_BEGIN = "\\trowd".getBytes();
+    private static final byte[] ROW_BEGIN = DocWriter.getISOBytes("\\trowd");
     /**
      * Constant for the RtfRow width style
      */
-    private static final byte[] ROW_WIDTH_STYLE = "\\trftsWidth3".getBytes();
+    private static final byte[] ROW_WIDTH_STYLE = DocWriter.getISOBytes("\\trftsWidth3");
     /**
      * Constant for the RtfRow width
      */
-    private static final byte[] ROW_WIDTH = "\\trwWidth".getBytes();
+    private static final byte[] ROW_WIDTH = DocWriter.getISOBytes("\\trwWidth");
     /**
      * Constant to specify that this RtfRow are not to be broken across pages
      */
-    private static final byte[] ROW_KEEP_TOGETHER = "\\trkeep".getBytes();
+    private static final byte[] ROW_KEEP_TOGETHER = DocWriter.getISOBytes("\\trkeep");
     /**
      * Constant to specify that this is a header RtfRow
      */
-    private static final byte[] ROW_HEADER_ROW = "\\trhdr".getBytes();
+    private static final byte[] ROW_HEADER_ROW = DocWriter.getISOBytes("\\trhdr");
     /**
      * Constant for left alignment of this RtfRow
      */
-    private static final byte[] ROW_ALIGN_LEFT = "\\trql".getBytes();
+    private static final byte[] ROW_ALIGN_LEFT = DocWriter.getISOBytes("\\trql");
     /**
      * Constant for right alignment of this RtfRow
      */
-    private static final byte[] ROW_ALIGN_RIGHT = "\\trqr".getBytes();
+    private static final byte[] ROW_ALIGN_RIGHT = DocWriter.getISOBytes("\\trqr");
     /**
      * Constant for center alignment of this RtfRow
      */
-    private static final byte[] ROW_ALIGN_CENTER = "\\trqc".getBytes();
+    private static final byte[] ROW_ALIGN_CENTER = DocWriter.getISOBytes("\\trqc");
     /**
      * Constant for justified alignment of this RtfRow
      */
-    private static final byte[] ROW_ALIGN_JUSTIFIED = "\\trqj".getBytes();
+    private static final byte[] ROW_ALIGN_JUSTIFIED = DocWriter.getISOBytes("\\trqj");
     /**
      * Constant for the graph style of this RtfRow
      */
-    private static final byte[] ROW_GRAPH = "\\trgaph10".getBytes();
+    private static final byte[] ROW_GRAPH = DocWriter.getISOBytes("\\trgaph10");
     /**
      * Constant for the cell left spacing
      */
-    private static final byte[] ROW_CELL_SPACING_LEFT = "\\trspdl".getBytes();
+    private static final byte[] ROW_CELL_SPACING_LEFT = DocWriter.getISOBytes("\\trspdl");
     /**
      * Constant for the cell top spacing
      */
-    private static final byte[] ROW_CELL_SPACING_TOP = "\\trspdt".getBytes();
+    private static final byte[] ROW_CELL_SPACING_TOP = DocWriter.getISOBytes("\\trspdt");
     /**
      * Constant for the cell right spacing
      */
-    private static final byte[] ROW_CELL_SPACING_RIGHT = "\\trspdr".getBytes();
+    private static final byte[] ROW_CELL_SPACING_RIGHT = DocWriter.getISOBytes("\\trspdr");
     /**
      * Constant for the cell bottom spacing
      */
-    private static final byte[] ROW_CELL_SPACING_BOTTOM = "\\trspdb".getBytes();
+    private static final byte[] ROW_CELL_SPACING_BOTTOM = DocWriter.getISOBytes("\\trspdb");
     /**
      * Constant for the cell left spacing style
      */
-    private static final byte[] ROW_CELL_SPACING_LEFT_STYLE = "\\trspdfl3".getBytes();
+    private static final byte[] ROW_CELL_SPACING_LEFT_STYLE = DocWriter.getISOBytes("\\trspdfl3");
     /**
      * Constant for the cell top spacing style
      */
-    private static final byte[] ROW_CELL_SPACING_TOP_STYLE = "\\trspdft3".getBytes();
+    private static final byte[] ROW_CELL_SPACING_TOP_STYLE = DocWriter.getISOBytes("\\trspdft3");
     /**
      * Constant for the cell right spacing style
      */
-    private static final byte[] ROW_CELL_SPACING_RIGHT_STYLE = "\\trspdfr3".getBytes();
+    private static final byte[] ROW_CELL_SPACING_RIGHT_STYLE = DocWriter.getISOBytes("\\trspdfr3");
     /**
      * Constant for the cell bottom spacing style
      */
-    private static final byte[] ROW_CELL_SPACING_BOTTOM_STYLE = "\\trspdfb3".getBytes();
+    private static final byte[] ROW_CELL_SPACING_BOTTOM_STYLE = DocWriter.getISOBytes("\\trspdfb3");
     /**
      * Constant for the cell left padding
      */
-    private static final byte[] ROW_CELL_PADDING_LEFT = "\\trpaddl".getBytes();
+    private static final byte[] ROW_CELL_PADDING_LEFT = DocWriter.getISOBytes("\\trpaddl");
     /**
      * Constant for the cell right padding
      */
-    private static final byte[] ROW_CELL_PADDING_RIGHT = "\\trpaddr".getBytes();
+    private static final byte[] ROW_CELL_PADDING_RIGHT = DocWriter.getISOBytes("\\trpaddr");
     /**
      * Constant for the cell left padding style
      */
-    private static final byte[] ROW_CELL_PADDING_LEFT_STYLE = "\\trpaddfl3".getBytes();
+    private static final byte[] ROW_CELL_PADDING_LEFT_STYLE = DocWriter.getISOBytes("\\trpaddfl3");
     /**
      * Constant for the cell right padding style
      */
-    private static final byte[] ROW_CELL_PADDING_RIGHT_STYLE = "\\trpaddfr3".getBytes();
+    private static final byte[] ROW_CELL_PADDING_RIGHT_STYLE = DocWriter.getISOBytes("\\trpaddfr3");
     /**
      * Constant for the end of a row
      */
-    private static final byte[] ROW_END = "\\row".getBytes();
+    private static final byte[] ROW_END = DocWriter.getISOBytes("\\row");
 
     /**
      * The RtfTable this RtfRow belongs to

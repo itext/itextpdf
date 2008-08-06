@@ -52,6 +52,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.RtfBasicElement;
@@ -74,47 +75,47 @@ public class RtfParagraphStyle extends RtfFont {
     /**
      * Constant for left alignment
      */
-    public static final byte[] ALIGN_LEFT = "\\ql".getBytes();
+    public static final byte[] ALIGN_LEFT = DocWriter.getISOBytes("\\ql");
     /**
      * Constant for right alignment
      */
-    public static final byte[] ALIGN_RIGHT = "\\qr".getBytes();
+    public static final byte[] ALIGN_RIGHT = DocWriter.getISOBytes("\\qr");
     /**
      * Constant for center alignment
      */
-    public static final byte[] ALIGN_CENTER = "\\qc".getBytes();
+    public static final byte[] ALIGN_CENTER = DocWriter.getISOBytes("\\qc");
     /**
      * Constant for justified alignment
      */
-    public static final byte[] ALIGN_JUSTIFY = "\\qj".getBytes();
+    public static final byte[] ALIGN_JUSTIFY = DocWriter.getISOBytes("\\qj");
     /**
      * Constant for the first line indentation
      */
-    public static final byte[] FIRST_LINE_INDENT = "\\fi".getBytes();
+    public static final byte[] FIRST_LINE_INDENT = DocWriter.getISOBytes("\\fi");
     /**
      * Constant for left indentation
      */
-    public static final byte[] INDENT_LEFT = "\\li".getBytes();
+    public static final byte[] INDENT_LEFT = DocWriter.getISOBytes("\\li");
     /**
      * Constant for right indentation
      */
-    public static final byte[] INDENT_RIGHT = "\\ri".getBytes();
+    public static final byte[] INDENT_RIGHT = DocWriter.getISOBytes("\\ri");
     /**
      * Constant for keeping the paragraph together on one page
      */
-    public static final byte[] KEEP_TOGETHER = "\\keep".getBytes();
+    public static final byte[] KEEP_TOGETHER = DocWriter.getISOBytes("\\keep");
     /**
      * Constant for keeping the paragraph together with the next one on one page
      */
-    public static final byte[] KEEP_TOGETHER_WITH_NEXT = "\\keepn".getBytes();
+    public static final byte[] KEEP_TOGETHER_WITH_NEXT = DocWriter.getISOBytes("\\keepn");
     /**
      * Constant for the space after the paragraph.
      */
-    public static final byte[] SPACING_AFTER = "\\sa".getBytes();
+    public static final byte[] SPACING_AFTER = DocWriter.getISOBytes("\\sa");
     /**
      * Constant for the space before the paragraph.
      */
-    public static final byte[] SPACING_BEFORE = "\\sb".getBytes();
+    public static final byte[] SPACING_BEFORE = DocWriter.getISOBytes("\\sb");
 
     /**
      * The NORMAL/STANDARD style.
@@ -647,17 +648,17 @@ public class RtfParagraphStyle extends RtfFont {
      */
     public void writeDefinition(final OutputStream result) throws IOException 
     {
-        result.write("{".getBytes());
-        result.write("\\style".getBytes());
-        result.write("\\s".getBytes());
+        result.write(DocWriter.getISOBytes("{"));
+        result.write(DocWriter.getISOBytes("\\style"));
+        result.write(DocWriter.getISOBytes("\\s"));
         result.write(intToByteArray(this.styleNumber));
         result.write(RtfBasicElement.DELIMITER);
         writeParagraphSettings(result);
         super.writeBegin(result);
         result.write(RtfBasicElement.DELIMITER);
-        result.write(this.styleName.getBytes());
-        result.write(";".getBytes());
-        result.write("}".getBytes());
+        result.write(DocWriter.getISOBytes(this.styleName));
+        result.write(DocWriter.getISOBytes(";"));
+        result.write(DocWriter.getISOBytes("}"));
         this.document.outputDebugLinebreak(result);   	
     }
     
@@ -668,7 +669,7 @@ public class RtfParagraphStyle extends RtfFont {
      * @throws IOException On i/o errors.
      */
     public void writeBegin(final OutputStream result) throws IOException {
-        result.write("\\s".getBytes());
+        result.write(DocWriter.getISOBytes("\\s"));
         result.write(intToByteArray(this.styleNumber));
         writeParagraphSettings(result);
     }

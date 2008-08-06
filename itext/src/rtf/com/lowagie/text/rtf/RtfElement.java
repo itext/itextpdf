@@ -52,6 +52,7 @@ package com.lowagie.text.rtf;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.document.RtfDocument;
 
 /**
@@ -94,7 +95,7 @@ public abstract class RtfElement implements RtfBasicElement {
      */
     public byte[] intToByteArray(int i)
     {
-        return Integer.toString(i).getBytes();
+        return DocWriter.getISOBytes(Integer.toString(i));
     }
 
     /**

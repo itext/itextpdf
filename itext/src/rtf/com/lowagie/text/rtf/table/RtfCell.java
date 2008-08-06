@@ -56,6 +56,7 @@ import java.util.Iterator;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
@@ -333,22 +334,47 @@ public class RtfCell extends Cell implements RtfExtendedElement {
             return;
         }
         
+        // padding
+        this.cellPadding = (int) this.parentRow.getParentTable().getCellPadding();
+        this.cellPaddingBottom = cell.getPaddingBottom();
+        this.cellPaddingTop = cell.getPaddingTop();
+        this.cellPaddingRight = cell.getPaddingRight();
+        this.cellPaddingLeft = cell.getPaddingLeft();
+        
+        // BORDERS
+        this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, cell.getBorder(), cell.getBorderWidth(), cell.getBorderColor());
+
+        // border colors
+        this.border = cell.getBorder();
+        this.borderColor = cell.getBorderColor();
+        this.borderColorBottom = cell.getBorderColorBottom();
+        this.borderColorTop = cell.getBorderColorTop();
+        this.borderColorLeft = cell.getBorderColorLeft();
+        this.borderColorRight = cell.getBorderColorRight();
+        
+        // border widths
+        this.borderWidth = cell.getBorderWidth();
+        this.borderWidthBottom = cell.getBorderWidthBottom();
+        this.borderWidthTop = cell.getBorderWidthTop();
+        this.borderWidthLeft = cell.getBorderWidthLeft();
+        this.borderWidthRight = cell.getBorderWidthRight();
+        
+       
         this.colspan = cell.getColspan();
         this.rowspan = 1; //cell.getRowspan();
 //        if(cell.getRowspan() > 1) {
 //            this.mergeType = MERGE_VERT_PARENT;
 //        }
 
-        this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, cell.getBorder(), cell.getBorderWidth(), cell.getBorderColor());
         
         this.verticalAlignment = cell.getVerticalAlignment();
+        
         if(cell.getBackgroundColor() == null) {
             this.backgroundColor = new RtfColor(this.document, 255, 255, 255);
         } else {
             this.backgroundColor = new RtfColor(this.document, cell.getBackgroundColor());
         }
         
-        this.cellPadding = (int) this.parentRow.getParentTable().getCellPadding();
         
         // does it have column composite info?
         java.util.List compositeElements = cell.getCompositeElements();
@@ -458,52 +484,52 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     public void writeDefinition(final OutputStream result) throws IOException 
     {
         if(this.mergeType == MERGE_VERT_PARENT) {
-            result.write("\\clvmgf".getBytes());
+            result.write(DocWriter.getISOBytes("\\clvmgf"));
         } else if(this.mergeType == MERGE_VERT_CHILD) {
-            result.write("\\clvmrg".getBytes());
+            result.write(DocWriter.getISOBytes("\\clvmrg"));
         }
         switch (verticalAlignment) {
             case Element.ALIGN_BOTTOM:
-                result.write("\\clvertalb".getBytes());
+                result.write(DocWriter.getISOBytes("\\clvertalb"));
                 break;
             case Element.ALIGN_CENTER:
             case Element.ALIGN_MIDDLE:
-                result.write("\\clvertalc".getBytes());
+                result.write(DocWriter.getISOBytes("\\clvertalc"));
                 break;
             case Element.ALIGN_TOP:
-                result.write("\\clvertalt".getBytes());
+                result.write(DocWriter.getISOBytes("\\clvertalt"));
                 break;
         }
         this.borders.writeContent(result);
 
         if(this.backgroundColor != null) {
-            result.write("\\clcbpat".getBytes());
+            result.write(DocWriter.getISOBytes("\\clcbpat"));
             result.write(intToByteArray(this.backgroundColor.getColorNumber()));
         }
         this.document.outputDebugLinebreak(result);
         
-        result.write("\\clftsWidth3".getBytes());
+        result.write(DocWriter.getISOBytes("\\clftsWidth3"));
         this.document.outputDebugLinebreak(result);
         
-        result.write("\\clwWidth".getBytes());
+        result.write(DocWriter.getISOBytes("\\clwWidth"));
         result.write(intToByteArray(this.cellWidth));
         this.document.outputDebugLinebreak(result);
         
         if(this.cellPadding > 0) {
-            result.write("\\clpadl".getBytes());
+            result.write(DocWriter.getISOBytes("\\clpadl"));
             result.write(intToByteArray(this.cellPadding / 2));
-            result.write("\\clpadt".getBytes());
+            result.write(DocWriter.getISOBytes("\\clpadt"));
             result.write(intToByteArray(this.cellPadding / 2));
-            result.write("\\clpadr".getBytes());
+            result.write(DocWriter.getISOBytes("\\clpadr"));
             result.write(intToByteArray(this.cellPadding / 2));
-            result.write("\\clpadb".getBytes());
+            result.write(DocWriter.getISOBytes("\\clpadb"));
             result.write(intToByteArray(this.cellPadding / 2));
-            result.write("\\clpadfl3".getBytes());
-            result.write("\\clpadft3".getBytes());
-            result.write("\\clpadfr3".getBytes());
-            result.write("\\clpadfb3".getBytes());
+            result.write(DocWriter.getISOBytes("\\clpadfl3"));
+            result.write(DocWriter.getISOBytes("\\clpadft3"));
+            result.write(DocWriter.getISOBytes("\\clpadfr3"));
+            result.write(DocWriter.getISOBytes("\\clpadfb3"));
         }
-        result.write("\\cellx".getBytes());
+        result.write(DocWriter.getISOBytes("\\cellx"));
         result.write(intToByteArray(this.cellRight));
     }
 
@@ -531,7 +557,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                 }
             }
         }
-        result.write("\\cell".getBytes());
+        result.write(DocWriter.getISOBytes("\\cell"));
     }        
 
     /**
@@ -667,7 +693,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      * @return A byte array representing the integer
      */
     private byte[] intToByteArray(int i) {
-        return Integer.toString(i).getBytes();
+        return DocWriter.getISOBytes(Integer.toString(i));
     }
     
     /**

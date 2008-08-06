@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.document;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.output.RtfNilOutputStream;
@@ -80,11 +81,11 @@ public class RtfDocumentHeader extends RtfElement {
     /**
      * Constant for the title page
      */
-    private static final byte[] TITLE_PAGE = "\\titlepg".getBytes();
+    private static final byte[] TITLE_PAGE = DocWriter.getISOBytes("\\titlepg");
     /**
      * Constant for facing pages
      */
-    private static final byte[] FACING_PAGES = "\\facingp".getBytes();
+    private static final byte[] FACING_PAGES = DocWriter.getISOBytes("\\facingp");
     
     /**
      * The code page to use

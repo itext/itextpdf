@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.headerfooter;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.HeaderFooter;
@@ -102,35 +103,35 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
     /**
      * Constant for a header on all pages
      */
-    private static final byte[] HEADER_ALL = "\\header".getBytes();
+    private static final byte[] HEADER_ALL = DocWriter.getISOBytes("\\header");
     /**
      * Constant for a header on the first page
      */
-    private static final byte[] HEADER_FIRST = "\\headerf".getBytes();
+    private static final byte[] HEADER_FIRST = DocWriter.getISOBytes("\\headerf");
     /**
      * Constant for a header on all left hand pages
      */
-    private static final byte[] HEADER_LEFT = "\\headerl".getBytes();
+    private static final byte[] HEADER_LEFT = DocWriter.getISOBytes("\\headerl");
     /**
      * Constant for a header on all right hand pages
      */
-    private static final byte[] HEADER_RIGHT = "\\headerr".getBytes();
+    private static final byte[] HEADER_RIGHT = DocWriter.getISOBytes("\\headerr");
     /**
      * Constant for a footer on all pages
      */
-    private static final byte[] FOOTER_ALL = "\\footer".getBytes();
+    private static final byte[] FOOTER_ALL = DocWriter.getISOBytes("\\footer");
     /**
      * Constant for a footer on the first page
      */
-    private static final byte[] FOOTER_FIRST = "\\footerf".getBytes();
+    private static final byte[] FOOTER_FIRST = DocWriter.getISOBytes("\\footerf");
     /**
      * Constant for a footer on the left hand pages
      */
-    private static final byte[] FOOTER_LEFT = "\\footerl".getBytes();
+    private static final byte[] FOOTER_LEFT = DocWriter.getISOBytes("\\footerl");
     /**
      * Constant for a footer on the right hand pages
      */
-    private static final byte[] FOOTER_RIGHT = "\\footerr".getBytes();
+    private static final byte[] FOOTER_RIGHT = DocWriter.getISOBytes("\\footerr");
     
     /**
      * The RtfDocument this RtfHeaderFooter belongs to

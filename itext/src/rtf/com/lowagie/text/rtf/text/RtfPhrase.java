@@ -54,6 +54,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import com.lowagie.text.Chunk;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Phrase;
@@ -75,19 +76,19 @@ public class RtfPhrase extends RtfElement {
     /**
      * Constant for the resetting of the paragraph defaults
      */
-    public static final byte[] PARAGRAPH_DEFAULTS = "\\pard".getBytes();
+    public static final byte[] PARAGRAPH_DEFAULTS = DocWriter.getISOBytes("\\pard");
     /**
      * Constant for resetting of font settings to their defaults
      */
-    public static final byte[] PLAIN = "\\plain".getBytes();
+    public static final byte[] PLAIN = DocWriter.getISOBytes("\\plain");
     /**
      * Constant for phrase in a table indication
      */
-    public static final byte[] IN_TABLE = "\\intbl".getBytes();
+    public static final byte[] IN_TABLE = DocWriter.getISOBytes("\\intbl");
     /**
      * Constant for the line spacing.
      */
-    public static final byte[] LINE_SPACING = "\\sl".getBytes();
+    public static final byte[] LINE_SPACING = DocWriter.getISOBytes("\\sl");
     
     /**
      * ArrayList containing the RtfChunks of this RtfPhrase

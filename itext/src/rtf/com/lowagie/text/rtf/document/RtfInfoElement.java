@@ -55,6 +55,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Meta;
 import com.lowagie.text.rtf.RtfElement;
 
@@ -72,27 +73,27 @@ public class RtfInfoElement extends RtfElement {
     /**
      * Constant for the author element
      */
-    private static final byte[] INFO_AUTHOR = "\\author".getBytes();
+    private static final byte[] INFO_AUTHOR = DocWriter.getISOBytes("\\author");
     /**
      * Constant for the subject element
      */
-    private static final byte[] INFO_SUBJECT = "\\subject".getBytes();
+    private static final byte[] INFO_SUBJECT = DocWriter.getISOBytes("\\subject");
     /**
      * Constant for the keywords element
      */
-    private static final byte[] INFO_KEYWORDS = "\\keywords".getBytes();
+    private static final byte[] INFO_KEYWORDS = DocWriter.getISOBytes("\\keywords");
     /**
      * Constant for the title element
      */
-    private static final byte[] INFO_TITLE = "\\title".getBytes();
+    private static final byte[] INFO_TITLE = DocWriter.getISOBytes("\\title");
     /**
      * Constant for the producer element
      */
-    private static final byte[] INFO_PRODUCER = "\\operator".getBytes();
+    private static final byte[] INFO_PRODUCER = DocWriter.getISOBytes("\\operator");
     /**
      * Constant for the creationdate element
      */
-    private static final byte[] INFO_CREATION_DATE = "\\creationdate".getBytes();
+    private static final byte[] INFO_CREATION_DATE =DocWriter.getISOBytes( "\\creationdate");
 
     /**
      * The type of this RtfInfoElement. The values from Element.INFO_ELEMENT_NAME are used.
@@ -146,7 +147,7 @@ public class RtfInfoElement extends RtfElement {
         }
         result.write(DELIMITER);
         if(infoType == Meta.CREATIONDATE) {
-            result.write(convertDate(content).getBytes());
+            result.write(DocWriter.getISOBytes(convertDate(content)));
         } else {
             document.filterSpecialChar(result, content, false, false);
         }

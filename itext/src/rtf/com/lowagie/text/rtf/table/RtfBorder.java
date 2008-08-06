@@ -53,6 +53,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.style.RtfColor;
@@ -71,147 +72,147 @@ public class RtfBorder extends RtfElement {
     /**
      * Constant for the left row border
      */
-    protected static final byte[] ROW_BORDER_LEFT = "\\trbrdrl".getBytes();
+    protected static final byte[] ROW_BORDER_LEFT = DocWriter.getISOBytes("\\trbrdrl");
     /**
      * Constant for the top row border
      */
-    protected static final byte[] ROW_BORDER_TOP = "\\trbrdrt".getBytes();
+    protected static final byte[] ROW_BORDER_TOP = DocWriter.getISOBytes("\\trbrdrt");
     /**
      * Constant for the right row border
      */
-    protected static final byte[] ROW_BORDER_RIGHT = "\\trbrdrr".getBytes();
+    protected static final byte[] ROW_BORDER_RIGHT = DocWriter.getISOBytes("\\trbrdrr");
     /**
      * Constant for the bottom row border
      */
-    protected static final byte[] ROW_BORDER_BOTTOM = "\\trbrdrb".getBytes();
+    protected static final byte[] ROW_BORDER_BOTTOM = DocWriter.getISOBytes("\\trbrdrb");
     /**
      * Constant for the horizontal line
      */
-    protected static final byte[] ROW_BORDER_HORIZONTAL = "\\trbrdrh".getBytes();
+    protected static final byte[] ROW_BORDER_HORIZONTAL = DocWriter.getISOBytes("\\trbrdrh");
     /**
      * Constant for the vertical line
      */
-    protected static final byte[] ROW_BORDER_VERTICAL = "\\trbrdrv".getBytes();
+    protected static final byte[] ROW_BORDER_VERTICAL = DocWriter.getISOBytes("\\trbrdrv");
     /**
      * Constant for the left cell border
      */
-    protected static final byte[] CELL_BORDER_LEFT = "\\clbrdrl".getBytes();
+    protected static final byte[] CELL_BORDER_LEFT = DocWriter.getISOBytes("\\clbrdrl");
     /**
      * Constant for the top cell border
      */
-    protected static final byte[] CELL_BORDER_TOP = "\\clbrdrt".getBytes();
+    protected static final byte[] CELL_BORDER_TOP = DocWriter.getISOBytes("\\clbrdrt");
     /**
      * Constant for the right cell border
      */
-    protected static final byte[] CELL_BORDER_RIGHT = "\\clbrdrr".getBytes();
+    protected static final byte[] CELL_BORDER_RIGHT = DocWriter.getISOBytes("\\clbrdrr");
     /**
      * Constant for the bottom cell border
      */
-    protected static final byte[] CELL_BORDER_BOTTOM = "\\clbrdrb".getBytes();
+    protected static final byte[] CELL_BORDER_BOTTOM = DocWriter.getISOBytes("\\clbrdrb");
     /**
      * Constant for the border width
      */
-    protected static final byte[] BORDER_WIDTH = "\\brdrw".getBytes();
+    protected static final byte[] BORDER_WIDTH = DocWriter.getISOBytes("\\brdrw");
     /**
      * Constant for the border color number
      */
-    protected static final byte[] BORDER_COLOR_NUMBER = "\\brdrcf".getBytes();
+    protected static final byte[] BORDER_COLOR_NUMBER = DocWriter.getISOBytes("\\brdrcf");
     /**
      * Constant for the single border style
      */
-    protected static final byte[] BORDER_STYLE_SINGLE = "\\brdrs".getBytes();
+    protected static final byte[] BORDER_STYLE_SINGLE = DocWriter.getISOBytes("\\brdrs");
     /**
      * Constant for the double thick border style
      */
-    protected static final byte[] BORDER_STYLE_DOUBLE_THICK	= "\\brdrth".getBytes();
+    protected static final byte[] BORDER_STYLE_DOUBLE_THICK	= DocWriter.getISOBytes("\\brdrth");
     /**
      * Constant for the shadowed border style
      */
-    protected static final byte[] BORDER_STYLE_SHADOWED = "\\brdrsh".getBytes();
+    protected static final byte[] BORDER_STYLE_SHADOWED = DocWriter.getISOBytes("\\brdrsh");
     /**
      * Constant for the dotted border style
      */
-    protected static final byte[] BORDER_STYLE_DOTTED = "\\brdrdot".getBytes();
+    protected static final byte[] BORDER_STYLE_DOTTED = DocWriter.getISOBytes("\\brdrdot");
     /**
      * Constant for the dashed border style
      */
-    protected static final byte[] BORDER_STYLE_DASHED = "\\brdrdash".getBytes();
+    protected static final byte[] BORDER_STYLE_DASHED = DocWriter.getISOBytes("\\brdrdash");
     /**
      * Constant for the hairline border style
      */
-    protected static final byte[] BORDER_STYLE_HAIRLINE = "\\brdrhair".getBytes();
+    protected static final byte[] BORDER_STYLE_HAIRLINE = DocWriter.getISOBytes("\\brdrhair");
     /**
      * Constant for the double border style
      */
-    protected static final byte[] BORDER_STYLE_DOUBLE = "\\brdrdb".getBytes();
+    protected static final byte[] BORDER_STYLE_DOUBLE = DocWriter.getISOBytes("\\brdrdb");
     /**
      * Constant for the dot dash border style
      */
-    protected static final byte[] BORDER_STYLE_DOT_DASH = "\\brdrdashd".getBytes();
+    protected static final byte[] BORDER_STYLE_DOT_DASH = DocWriter.getISOBytes("\\brdrdashd");
     /**
      * Constant for the dot dot dash border style
      */
-    protected static final byte[] BORDER_STYLE_DOT_DOT_DASH	= "\\brdrdashdd".getBytes();
+    protected static final byte[] BORDER_STYLE_DOT_DOT_DASH	= DocWriter.getISOBytes("\\brdrdashdd");
     /**
      * Constant for the triple border style
      */
-    protected static final byte[] BORDER_STYLE_TRIPLE = "\\brdrtriple".getBytes();
+    protected static final byte[] BORDER_STYLE_TRIPLE = DocWriter.getISOBytes("\\brdrtriple");
     /**
      * Constant for the thick thin border style
      */
-    protected static final byte[] BORDER_STYLE_THICK_THIN = "\\brdrtnthsg".getBytes();
+    protected static final byte[] BORDER_STYLE_THICK_THIN = DocWriter.getISOBytes("\\brdrtnthsg");
     /**
      * Constant for the thin thick border style
      */
-    protected static final byte[] BORDER_STYLE_THIN_THICK = "\\brdrthtnsg".getBytes();
+    protected static final byte[] BORDER_STYLE_THIN_THICK = DocWriter.getISOBytes("\\brdrthtnsg");
     /**
      * Constant for the thin thick thin border style
      */
-    protected static final byte[] BORDER_STYLE_THIN_THICK_THIN = "\\brdrtnthtnsg".getBytes();
+    protected static final byte[] BORDER_STYLE_THIN_THICK_THIN = DocWriter.getISOBytes("\\brdrtnthtnsg");
     /**
      * Constant for the thick thin medium border style
      */
-    protected static final byte[] BORDER_STYLE_THICK_THIN_MED = "\\brdrtnthmg".getBytes();
+    protected static final byte[] BORDER_STYLE_THICK_THIN_MED = DocWriter.getISOBytes("\\brdrtnthmg");
     /**
      * Constant for the thin thick medium border style
      */
-    protected static final byte[] BORDER_STYLE_THIN_THICK_MED = "\\brdrthtnmg".getBytes();
+    protected static final byte[] BORDER_STYLE_THIN_THICK_MED = DocWriter.getISOBytes("\\brdrthtnmg");
     /**
      * Constant for the thin thick thin medium border style
      */
-    protected static final byte[] BORDER_STYLE_THIN_THICK_THIN_MED = "\\brdrtnthtnmg".getBytes();
+    protected static final byte[] BORDER_STYLE_THIN_THICK_THIN_MED = DocWriter.getISOBytes("\\brdrtnthtnmg");
     /**
      * Constant for the thick thin large border style
      */
-    protected static final byte[] BORDER_STYLE_THICK_THIN_LARGE = "\\brdrtnthlg".getBytes();
+    protected static final byte[] BORDER_STYLE_THICK_THIN_LARGE = DocWriter.getISOBytes("\\brdrtnthlg");
     /**
      * Constant for the thin thick large border style
      */
-    protected static final byte[] BORDER_STYLE_THIN_THICK_LARGE	= "\\brdrthtnlg".getBytes();
+    protected static final byte[] BORDER_STYLE_THIN_THICK_LARGE	= DocWriter.getISOBytes("\\brdrthtnlg");
     /**
      * Constant for the thin thick thin large border style
      */
-    protected static final byte[] BORDER_STYLE_THIN_THICK_THIN_LARGE = "\\brdrtnthtnlg".getBytes();
+    protected static final byte[] BORDER_STYLE_THIN_THICK_THIN_LARGE = DocWriter.getISOBytes("\\brdrtnthtnlg");
     /**
      * Constant for the wavy border style
      */
-    protected static final byte[] BORDER_STYLE_WAVY = "\\brdrwavy".getBytes();
+    protected static final byte[] BORDER_STYLE_WAVY = DocWriter.getISOBytes("\\brdrwavy");
     /**
      * Constant for the double wavy border style
      */
-    protected static final byte[] BORDER_STYLE_DOUBLE_WAVY = "\\brdrwavydb".getBytes();
+    protected static final byte[] BORDER_STYLE_DOUBLE_WAVY = DocWriter.getISOBytes("\\brdrwavydb");
     /**
      * Constant for the striped border style
      */
-    protected static final byte[] BORDER_STYLE_STRIPED = "\\brdrdashdotstr".getBytes();
+    protected static final byte[] BORDER_STYLE_STRIPED = DocWriter.getISOBytes("\\brdrdashdotstr");
     /**
      * Constant for the embossed border style
      */
-    protected static final byte[] BORDER_STYLE_EMBOSS = "\\brdremboss".getBytes();
+    protected static final byte[] BORDER_STYLE_EMBOSS = DocWriter.getISOBytes("\\brdremboss");
     /**
      * Constant for the engraved border style
      */
-    protected static final byte[] BORDER_STYLE_ENGRAVE = "\\brdrengrave".getBytes();
+    protected static final byte[] BORDER_STYLE_ENGRAVE = DocWriter.getISOBytes("\\brdrengrave");
 
     /**
      * Constant for a row border
