@@ -76,7 +76,7 @@ public class RtfProtectionTest extends RtfTestBase {
      */
     public void testPasswordNormal() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(RtfProtection.generateHash(DocWriter.getISOBytes("apple")));
+        out.write(DocWriter.getISOBytes(RtfProtection.generateHash("apple")));
         assertEquals("acc6b84a", out);
     }
 
