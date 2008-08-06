@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.field;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.document.RtfDocument;
 
@@ -69,7 +70,7 @@ public class RtfPageNumber extends RtfField {
     /**
      * Constant for the page number
      */
-    private static final byte[] PAGE_NUMBER = "PAGE".getBytes();
+    private static final byte[] PAGE_NUMBER = DocWriter.getISOBytes("PAGE");
     
     /**
      * Constructs a RtfPageNumber. This can be added anywhere to add a page number field.

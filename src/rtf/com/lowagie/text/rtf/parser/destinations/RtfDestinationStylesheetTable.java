@@ -195,6 +195,7 @@ public class RtfDestinationStylesheetTable extends RtfDestination {
 		
 		if(this.rtfParser.isImport()) {
 			// information
+			// start of a stylesheet element
 			if(ctrlWordData.ctrlWord.equals("s")) { }
 			if(ctrlWordData.ctrlWord.equals("cs")) {}
 			if(ctrlWordData.ctrlWord.equals("ds")) {}

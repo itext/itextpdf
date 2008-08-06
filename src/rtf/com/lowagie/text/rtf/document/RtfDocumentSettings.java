@@ -49,6 +49,7 @@
 
 package com.lowagie.text.rtf.document;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.document.output.RtfDataCache;
 import com.lowagie.text.rtf.style.RtfParagraphStyle;
 
@@ -483,7 +484,7 @@ public class RtfDocumentSettings {
      * @since 2.1.1
      */
     public byte[] getProtectionLevelBytes() {
-    	return Integer.toString(convertProtectionLevel()).getBytes();
+    	return DocWriter.getISOBytes(Integer.toString(convertProtectionLevel()));
     }
     
     /**
@@ -539,7 +540,7 @@ public class RtfDocumentSettings {
      * @since 2.1.1
      */
     public byte[] getProtectionHashBytes() {
-    	return this.protectionHash.getBytes();
+    	return DocWriter.getISOBytes(this.protectionHash);
     }
 
     /**

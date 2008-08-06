@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.text;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 
@@ -68,7 +69,7 @@ public class RtfNewPage extends RtfElement {
     /**
      * Constant for a new page
      */
-    public static final byte[] NEW_PAGE = "\\page".getBytes();
+    public static final byte[] NEW_PAGE = DocWriter.getISOBytes("\\page");
     
     /**
      * Constructs a RtfNewPage

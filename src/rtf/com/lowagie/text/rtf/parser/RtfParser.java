@@ -1272,7 +1272,6 @@ public class RtfParser {
 	 * 		Returns an error code or errOK if no error.
 	 * @since 2.1.3
 	 */
-//	private int parseChar(char[] ch) {
 	private int parseChar(int nextChar) {
 		// figure out where to put the character
 		// needs to handle group levels for parsing
@@ -1303,13 +1302,11 @@ public class RtfParser {
 	 * @since 2.1.3
 	 */
 	private int parseCtrlWord(PushbackInputStream reader) throws IOException {
-//		char[] nextChar = new char[1];
 		int nextChar = 0;
 		int result = errOK;
 		
-//		if(reader.read(nextChar) == -1) {
 		if((nextChar = reader.read()) == -1) {
-				return errEndOfFile;
+			return errEndOfFile;
 		}
 		this.byteCount++;
 
@@ -1317,9 +1314,7 @@ public class RtfParser {
 		StringBuffer parsedParam= new StringBuffer();
 		RtfCtrlWordData ctrlWordParam = new RtfCtrlWordData();
 		
-//		if(!Character.isLetterOrDigit(nextChar[0])) {
 		if(!Character.isLetterOrDigit((char)nextChar)) {
-//			parsedCtrlWord.append(nextChar[0]);
 			parsedCtrlWord.append((char)nextChar);
 			ctrlWordParam.ctrlWord = parsedCtrlWord.toString();
 			result =  this.handleCtrlWord(ctrlWordParam);
@@ -1327,53 +1322,38 @@ public class RtfParser {
 			return result;
 		}
 		
-//		for( ; Character.isLetter(nextChar[0]); reader.read(nextChar) ) {
-//			parsedCtrlWord.append(nextChar[0]);
-//		}
 		do {
-//			parsedCtrlWord.append(nextChar[0]);
 			parsedCtrlWord.append((char)nextChar);
 			//TODO: catch EOF
-//			reader.read(nextChar);
 			nextChar = reader.read();
 			this.byteCount++;
-//		} while  (Character.isLetter(nextChar[0]));
 		} while  (Character.isLetter((char)nextChar));
 		
 		ctrlWordParam.ctrlWord = parsedCtrlWord.toString();
 
-//		if(nextChar[0] == '-') {
 		if(nextChar == '-') {
 			ctrlWordParam.isNeg = true;
-//			if(reader.read(nextChar) == -1) {
 			if((nextChar = reader.read()) == -1) {
 					return errEndOfFile;
 			}
 			this.byteCount++;
 		}
 		
-//		if(Character.isDigit(nextChar[0])) {
+
 		if(Character.isDigit((char)nextChar)) {
 			ctrlWordParam.hasParam = true;
-//			for( ; Character.isDigit(nextChar[0]); reader.read(nextChar) ) {
-//				parsedParam.append(nextChar[0]);
-//			}
 			do {
-//				parsedParam.append(nextChar[0]);
 				parsedParam.append((char)nextChar);
 				//TODO: catch EOF
-//				reader.read(nextChar);
 				nextChar = reader.read();
 				this.byteCount++;
-//				} while  (Character.isDigit(nextChar[0]));
 				} while  (Character.isDigit((char)nextChar));
 						
 			ctrlWordParam.param = parsedParam.toString();
 		}
 		
 		// push this character back into the stream
-//		if(nextChar[0] != ' ') { // || this.isImport() ) {
-		if(nextChar != ' ') { // || this.isImport() ) {
+		if(nextChar != ' ') { 
 			reader.unread(nextChar);
 		}
 		
@@ -1382,9 +1362,9 @@ public class RtfParser {
 	//	    if(ctrlWordParam.ctrlWord.equals("proptype") && ctrlWordParam.param.equals("30")) {
 	//	    	System.out.print("Debug value found\n");
 	//	    }
-	//	    if(ctrlWordParam.ctrlWord.equals("panose") ) {
-	//	    	System.out.print("Debug value found\n");
-	//	    }
+//		    if(ctrlWordParam.ctrlWord.equals("cf") ) {
+//		    	System.out.print("Debug value found\n");
+//		    }
 	    }
 	    
 		result = this.handleCtrlWord(ctrlWordParam);

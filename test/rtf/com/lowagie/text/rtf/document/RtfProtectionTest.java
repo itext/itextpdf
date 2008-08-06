@@ -56,6 +56,7 @@ package com.lowagie.text.rtf.document;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfTestBase;
 
 /**
@@ -75,7 +76,7 @@ public class RtfProtectionTest extends RtfTestBase {
      */
     public void testPasswordNormal() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(RtfProtection.generateHash("apple").getBytes());
+        out.write(RtfProtection.generateHash(DocWriter.getISOBytes("apple")));
         assertEquals("acc6b84a", out);
     }
 
@@ -86,7 +87,7 @@ public class RtfProtectionTest extends RtfTestBase {
      */
     public void testPasswordNull() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(RtfProtection.generateHash(null).getBytes());
+        out.write(DocWriter.getISOBytes(RtfProtection.generateHash(null)));
         assertEquals("00000000", out);
     }
 
@@ -97,7 +98,7 @@ public class RtfProtectionTest extends RtfTestBase {
      */
     public void testPasswordEmpty() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(RtfProtection.generateHash("").getBytes());
+        out.write(DocWriter.getISOBytes(RtfProtection.generateHash("")));
         assertEquals("00000000", out);
     }
 
@@ -108,7 +109,7 @@ public class RtfProtectionTest extends RtfTestBase {
      */
     public void testPasswordLong() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(RtfProtection.generateHash("0123456789ABCDEFHIJKLMNOP").getBytes());
+        out.write(DocWriter.getISOBytes(RtfProtection.generateHash("0123456789ABCDEFHIJKLMNOP")));
         assertEquals("fab7c3b6", out);
     }
 }

@@ -53,6 +53,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -70,15 +71,15 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
     /**
      * Constant for RED value
      */
-    private static final byte[] COLOR_RED = "\\red".getBytes();
+    private static final byte[] COLOR_RED = DocWriter.getISOBytes("\\red");
     /**
      * Constant for GREEN value
      */
-    private static final byte[] COLOR_GREEN = "\\green".getBytes();
+    private static final byte[] COLOR_GREEN = DocWriter.getISOBytes("\\green");
     /**
      * Constant for BLUE value
      */
-    private static final byte[] COLOR_BLUE = "\\blue".getBytes();
+    private static final byte[] COLOR_BLUE = DocWriter.getISOBytes("\\blue");
     /**
      * Constant for the end of one color entry
      */
@@ -86,7 +87,7 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
     /**
      * Constant for the number of the color in the list of colors
      */
-    private static final byte[] COLOR_NUMBER = "\\cf".getBytes();
+    private static final byte[] COLOR_NUMBER = DocWriter.getISOBytes("\\cf");
 
     /**
      * The number of the color in the list of colors

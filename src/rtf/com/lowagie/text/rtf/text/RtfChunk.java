@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.lowagie.text.Chunk;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.style.RtfColor;
@@ -73,19 +74,19 @@ public class RtfChunk extends RtfElement {
     /**
      * Constant for the subscript flag
      */
-    private static final byte[] FONT_SUBSCRIPT = "\\sub".getBytes();
+    private static final byte[] FONT_SUBSCRIPT = DocWriter.getISOBytes("\\sub");
     /**
      * Constant for the superscript flag
      */
-    private static final byte[] FONT_SUPERSCRIPT = "\\super".getBytes();
+    private static final byte[] FONT_SUPERSCRIPT = DocWriter.getISOBytes("\\super");
     /**
      * Constant for the end of sub / superscript flag
      */
-    private static final byte[] FONT_END_SUPER_SUBSCRIPT = "\\nosupersub".getBytes();
+    private static final byte[] FONT_END_SUPER_SUBSCRIPT = DocWriter.getISOBytes("\\nosupersub");
     /**
      * Constant for background color.
      */
-    private static final byte[] BACKGROUND_COLOR = "\\chcbpat".getBytes();
+    private static final byte[] BACKGROUND_COLOR = DocWriter.getISOBytes("\\chcbpat");
 
     /**
      * The font of this RtfChunk

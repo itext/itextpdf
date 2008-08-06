@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.lowagie.text.Chapter;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 
@@ -83,9 +84,9 @@ public class RtfChapter extends RtfSection {
     public void writeContent(final OutputStream result) throws IOException
     {
         if(this.document.getLastElementWritten() != null && !(this.document.getLastElementWritten() instanceof RtfChapter)) {
-            result.write("\\page".getBytes());
+            result.write(DocWriter.getISOBytes("\\page"));
         }
-        result.write("\\sectd".getBytes());
+        result.write(DocWriter.getISOBytes("\\sectd"));
         document.getDocumentHeader().writeSectionDefinition(result);
         if(this.title != null) {
             this.title.writeContent(result);
@@ -94,7 +95,7 @@ public class RtfChapter extends RtfSection {
         	RtfBasicElement rbe = (RtfBasicElement)items.get(i);
         	rbe.writeContent(result);
         }
-        result.write("\\sect".getBytes());
+        result.write(DocWriter.getISOBytes("\\sect"));
     }        
     
 }

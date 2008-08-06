@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfMapper;
@@ -105,16 +106,16 @@ public class RtfDocument extends RtfElement {
     /**
      * Constant for the Rtf document start
      */
-    private static final byte[] RTF_DOCUMENT = "\\rtf1".getBytes();
+    private static final byte[] RTF_DOCUMENT = DocWriter.getISOBytes("\\rtf1");
 
-    private final static byte[] FSC_LINE = "\\line ".getBytes();
-    private final static byte[] FSC_PAR = "\\par ".getBytes();
-    private final static byte[] FSC_TAB = "\\tab ".getBytes();
-    private final static byte[] FSC_PAGE_PAR = "\\page\\par ".getBytes();
-    private final static byte[] FSC_NEWPAGE = "$newpage$".getBytes();
-    private final static byte[] FSC_BACKSLASH = "\\".getBytes();
-    private final static byte[] FSC_HEX_PREFIX = "\\\'".getBytes();
-    private final static byte[] FSC_UNI_PREFIX = "\\u".getBytes();
+    private final static byte[] FSC_LINE = DocWriter.getISOBytes("\\line ");
+    private final static byte[] FSC_PAR = DocWriter.getISOBytes("\\par ");
+    private final static byte[] FSC_TAB = DocWriter.getISOBytes("\\tab ");
+    private final static byte[] FSC_PAGE_PAR = DocWriter.getISOBytes("\\page\\par ");
+    private final static byte[] FSC_NEWPAGE = DocWriter.getISOBytes("$newpage$");
+    private final static byte[] FSC_BACKSLASH = DocWriter.getISOBytes("\\");
+    private final static byte[] FSC_HEX_PREFIX = DocWriter.getISOBytes("\\\'");
+    private final static byte[] FSC_UNI_PREFIX = DocWriter.getISOBytes("\\u");
     
     /**
      * The default constructor for a RtfDocument

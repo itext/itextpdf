@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.document;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.rtf.RtfElement;
 
@@ -67,7 +68,7 @@ public class RtfGenerator extends RtfElement {
     /**
      * Generator group starting tag
      */
-    private static final byte[] GENERATOR = "\\*\\generator".getBytes();
+    private static final byte[] GENERATOR = DocWriter.getISOBytes("\\*\\generator");
     
     /**
      * Constructs a <code>RtfGenerator</code> belonging to a RtfDocument
@@ -87,7 +88,7 @@ public class RtfGenerator extends RtfElement {
     	result.write(OPEN_GROUP);
 		result.write(GENERATOR);
 		result.write(DELIMITER);
-		result.write(Document.getVersion().getBytes());
+		result.write(DocWriter.getISOBytes(Document.getVersion()));
 		result.write(CLOSE_GROUP);
 		this.document.outputDebugLinebreak(result);
     }        

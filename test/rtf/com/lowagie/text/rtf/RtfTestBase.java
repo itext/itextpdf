@@ -56,6 +56,7 @@ import java.io.IOException;
 
 import org.junit.Assert;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.document.RtfDocument;
 
 import junit.framework.TestCase;
@@ -113,7 +114,7 @@ public class RtfTestBase extends TestCase {
      */
     public void testSelfSpecialChar() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write("\n\t".getBytes());
+        out.write(DocWriter.getISOBytes("\n\t"));
         assertEquals("\n\t", out);
     }
     
@@ -128,7 +129,7 @@ public class RtfTestBase extends TestCase {
             text.append(Character.toString((char) (Math.random() * 52)));
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(text.toString().getBytes());
+        out.write(DocWriter.getISOBytes(text.toString()));
         assertEquals(text.toString(), out);
     }
 }

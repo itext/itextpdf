@@ -52,11 +52,14 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.style.RtfColor;
 import com.lowagie.text.rtf.style.RtfFont;
 import com.lowagie.text.rtf.style.RtfFontList;
 import com.lowagie.text.rtf.style.RtfParagraphStyle;
@@ -73,105 +76,105 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
     /**
      * Constant for list level
      */
-    private static final byte[] LIST_LEVEL = "\\listlevel".getBytes();
+    private static final byte[] LIST_LEVEL = DocWriter.getISOBytes("\\listlevel");
     /**
      * Constant for list level
      */
-    private static final byte[] LIST_LEVEL_TEMPLATE_ID = "\\leveltemplateid".getBytes();
+    private static final byte[] LIST_LEVEL_TEMPLATE_ID = DocWriter.getISOBytes("\\leveltemplateid");
     /**
      * Constant for list level style old
      */
-    private static final byte[] LIST_LEVEL_TYPE = "\\levelnfc".getBytes();
+    private static final byte[] LIST_LEVEL_TYPE = DocWriter.getISOBytes("\\levelnfc");
     /**
      * Constant for list level style new
      */
-    private static final byte[] LIST_LEVEL_TYPE_NEW = "\\levelnfcn".getBytes();
+    private static final byte[] LIST_LEVEL_TYPE_NEW = DocWriter.getISOBytes("\\levelnfcn");
     /**
      * Constant for list level alignment old
      */
-    private static final byte[] LIST_LEVEL_ALIGNMENT = "\\leveljc".getBytes();
+    private static final byte[] LIST_LEVEL_ALIGNMENT = DocWriter.getISOBytes("\\leveljc");
     /**
      * Constant for list level alignment new
      */
-    private static final byte[] LIST_LEVEL_ALIGNMENT_NEW = "\\leveljcn".getBytes();
+    private static final byte[] LIST_LEVEL_ALIGNMENT_NEW = DocWriter.getISOBytes("\\leveljcn");
     /**
      * Constant for list level start at
      */
-    private static final byte[] LIST_LEVEL_START_AT = "\\levelstartat".getBytes();
+    private static final byte[] LIST_LEVEL_START_AT = DocWriter.getISOBytes("\\levelstartat");
     /**
      * Constant for list level text
      */
-    private static final byte[] LIST_LEVEL_TEXT = "\\leveltext".getBytes();
+    private static final byte[] LIST_LEVEL_TEXT = DocWriter.getISOBytes("\\leveltext");
     /**
      * Constant for the beginning of the list level numbered style
      */
-    private static final byte[] LIST_LEVEL_STYLE_NUMBERED_BEGIN = "\\\'02\\\'".getBytes();
+    private static final byte[] LIST_LEVEL_STYLE_NUMBERED_BEGIN = DocWriter.getISOBytes("\\\'02\\\'");
     /**
      * Constant for the end of the list level numbered style
      */
-    private static final byte[] LIST_LEVEL_STYLE_NUMBERED_END = ".;".getBytes();
+    private static final byte[] LIST_LEVEL_STYLE_NUMBERED_END = DocWriter.getISOBytes(".;");
     /**
      * Constant for the beginning of the list level bulleted style
      */
-    private static final byte[] LIST_LEVEL_STYLE_BULLETED_BEGIN = "\\\'01".getBytes();
+    private static final byte[] LIST_LEVEL_STYLE_BULLETED_BEGIN = DocWriter.getISOBytes("\\\'01");
     /**
      * Constant for the end of the list level bulleted style
      */
-    private static final byte[] LIST_LEVEL_STYLE_BULLETED_END = ";".getBytes();
+    private static final byte[] LIST_LEVEL_STYLE_BULLETED_END = DocWriter.getISOBytes(";");
     /**
      * Constant for the beginning of the list level numbers
      */
-    private static final byte[] LIST_LEVEL_NUMBERS_BEGIN = "\\levelnumbers".getBytes();
+    private static final byte[] LIST_LEVEL_NUMBERS_BEGIN = DocWriter.getISOBytes("\\levelnumbers");
     /**
      * Constant which specifies which character follows the level text
      */
-    private static final byte[] LIST_LEVEL_FOLOW = "\\levelfollow".getBytes();
+    private static final byte[] LIST_LEVEL_FOLOW = DocWriter.getISOBytes("\\levelfollow");
     /**
      * Constant which specifies the levelspace controlword
      */
-    private static final byte[] LIST_LEVEL_SPACE = "\\levelspace".getBytes();
+    private static final byte[] LIST_LEVEL_SPACE = DocWriter.getISOBytes("\\levelspace");
     /**
      * Constant which specifies the levelindent control word
      */
-    private static final byte[] LIST_LEVEL_INDENT = "\\levelindent".getBytes();
+    private static final byte[] LIST_LEVEL_INDENT = DocWriter.getISOBytes("\\levelindent");
     /**
      * Constant which specifies (1) if list numbers from previous levels should be converted
      * to Arabic numbers; (0) if they should be left with the format specified by their
      * own level's definition.
      */
-    private static final byte[] LIST_LEVEL_LEGAL = "\\levellegal".getBytes();
+    private static final byte[] LIST_LEVEL_LEGAL = DocWriter.getISOBytes("\\levellegal");
     /**
      * Constant which specifies 
      * (1) if this level does/does not restart its count each time a super ordinate level is incremented
      * (0) if this level does not restart its count each time a super ordinate level is incremented.
      */
-    private static final byte[] LIST_LEVEL_NO_RESTART = "\\levelnorestart".getBytes();
+    private static final byte[] LIST_LEVEL_NO_RESTART = DocWriter.getISOBytes("\\levelnorestart");
     /**
      * Constant for the list level numbers
      */
-    private static final byte[] LIST_LEVEL_NUMBERS_NUMBERED = "\\\'01".getBytes();
+    private static final byte[] LIST_LEVEL_NUMBERS_NUMBERED = DocWriter.getISOBytes("\\\'01");
     /**
      * Constant for the end of the list level numbers
      */
-    private static final byte[] LIST_LEVEL_NUMBERS_END = ";".getBytes();
+    private static final byte[] LIST_LEVEL_NUMBERS_END = DocWriter.getISOBytes(";");
     
     /**
      * Constant for the first indentation
      */
-    private static final byte[] LIST_LEVEL_FIRST_INDENT = "\\fi".getBytes();
+    private static final byte[] LIST_LEVEL_FIRST_INDENT = DocWriter.getISOBytes("\\fi");
     /**
      * Constant for the symbol indentation
      */
-    private static final byte[] LIST_LEVEL_SYMBOL_INDENT = "\\tx".getBytes();
+    private static final byte[] LIST_LEVEL_SYMBOL_INDENT = DocWriter.getISOBytes("\\tx");
     
     /**
      * Constant for the lvltentative control word
      */
-    private static final byte[] LIST_LEVEL_TENTATIVE = "\\lvltentative".getBytes();
+    private static final byte[] LIST_LEVEL_TENTATIVE = DocWriter.getISOBytes("\\lvltentative");
     /**
      * Constant for the levelpictureN control word
      */
-    private static final byte[] LIST_LEVEL_PICTURE = "\\levelpicture".getBytes();
+    private static final byte[] LIST_LEVEL_PICTURE = DocWriter.getISOBytes("\\levelpicture");
     
 
     public static final int LIST_TYPE_NUMBERED = 1;
@@ -244,6 +247,10 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
      * The text to use as the bullet character
      */
     private String bulletCharacter = "\u00b7"; 
+    /**
+     * @since 2.1.4
+     */
+    private Chunk bulletChunk = null;
     /**
      * The number to start counting at
      */
@@ -463,6 +470,10 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
         result.write(LIST_LEVEL_TEXT);
         result.write(LIST_LEVEL_TEMPLATE_ID);
         result.write(intToByteArray(this.templateID));
+        /* NEVER seperate the LEVELTEXT elements with a return in between 
+         * them or it will not fuction correctly!
+         */
+        // TODO Needs to be rewritten to support 1-9 levels, not just simple single level
         if(this.listType != LIST_TYPE_BULLET) {
             result.write(LIST_LEVEL_STYLE_NUMBERED_BEGIN);
             if(this.levelTextNumber < 10) {
@@ -492,7 +503,10 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
         } else {
             result.write(intToByteArray(fontBullet.getFontNumber()));
         }
-
+        result.write(DocWriter.getISOBytes("\\cf"));
+//        document.getDocumentHeader().getColorNumber(new RtfColor(this.document,this.getFontNumber().getColor()));
+        result.write(intToByteArray(document.getDocumentHeader().getColorNumber(new RtfColor(this.document,this.getFontNumber().getColor()))));
+            
         writeIndentation(result);
         result.write(CLOSE_GROUP);
         this.document.outputDebugLinebreak(result);
@@ -681,6 +695,14 @@ public class RtfListLevel extends RtfElement implements RtfExtendedElement {
 	 */
 	public void setBulletCharacter(String bulletCharacter) {
 		this.bulletCharacter = bulletCharacter;
+	}
+	/**
+	 * 
+	 * @param bulletCharacter
+	 * @since 2.1.4
+	 */
+	public void setBulletChunk(Chunk bulletCharacter) {
+		this.bulletChunk = bulletCharacter;
 	}
 	/**
 	 * @return the listType

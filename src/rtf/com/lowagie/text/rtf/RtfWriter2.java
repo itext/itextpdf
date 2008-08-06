@@ -382,6 +382,6 @@ public class RtfWriter2 extends DocWriter {
         		rtfImport.addListener(events[idx]);
     		}
     	}
-//    	rtfImport.importRtfFragment(documentSource, this.rtfDoc, mappings);
+    	rtfImport.importRtfDocumentIntoElement(elem, documentSource, rtfDoc);
     }
 }

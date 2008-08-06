@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.lowagie.text.Chunk;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
@@ -77,7 +78,7 @@ public class RtfParagraph extends RtfPhrase {
     /**
      * Constant for the end of a paragraph
      */
-    public static final byte[] PARAGRAPH = "\\par".getBytes();
+    public static final byte[] PARAGRAPH = DocWriter.getISOBytes("\\par");
     
     /**
      * An optional RtfParagraphStyle to use for styling.
@@ -152,7 +153,7 @@ public class RtfParagraph extends RtfPhrase {
         if(this.paragraphStyle != null) {
             this.paragraphStyle.writeBegin(result);
         }
-        result.write("\\plain".getBytes());
+        result.write(DocWriter.getISOBytes("\\plain"));
         
         for(int i = 0; i < chunks.size(); i++) {
         	RtfBasicElement rbe = (RtfBasicElement)chunks.get(i);
