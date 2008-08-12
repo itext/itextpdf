@@ -168,7 +168,6 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
     /** Creates a ToUnicode CMap to allow copy and paste from Acrobat.
      * @param metrics metrics[0] contains the glyph index and metrics[2]
      * contains the Unicode code
-     * @throws DocumentException on error
      * @return the stream representing this CMap or <CODE>null</CODE>
      */    
     private PdfStream getToUnicode(Object metrics[]) {

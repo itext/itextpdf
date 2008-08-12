@@ -82,7 +82,6 @@ public interface DocListener extends ElementListener {
      * Signals that an new page has to be started.
      *
      * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
-     * @throws	DocumentException	when a document isn't open yet, or has been closed
      */
         
     public boolean newPage(); // [L3]
