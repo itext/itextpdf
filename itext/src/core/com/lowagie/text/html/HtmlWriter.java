@@ -200,7 +200,6 @@ public class HtmlWriter extends DocWriter {
  * Signals that an new page has to be started.
  *
  * @return  <CODE>true</CODE> if this action succeeded, <CODE>false</CODE> if not.
- * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
     public boolean newPage() {
@@ -591,7 +590,6 @@ public class HtmlWriter extends DocWriter {
  * 
  * @param string a String to add to the HTML
  * @return  <CODE>true</CODE> if the string was added, <CODE>false</CODE> if not.
- * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
     public boolean add(String string) {

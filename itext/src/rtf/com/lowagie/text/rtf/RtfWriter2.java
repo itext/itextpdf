@@ -153,7 +153,6 @@ public class RtfWriter2 extends DocWriter {
 
     /**
      * Opens the RtfDocument
-     * @throws IOException 
      */
     public void open() {
     	super.open();

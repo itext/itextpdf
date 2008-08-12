@@ -157,7 +157,6 @@ public class Jpeg2000 extends Image {
     
     /**
      * This method checks if the image is a valid JPEG and processes some parameters.
-     * @throws BadElementException
      * @throws IOException
      */
     private void processParameters() throws IOException {

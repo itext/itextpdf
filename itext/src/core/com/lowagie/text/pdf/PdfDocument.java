@@ -314,7 +314,6 @@ public class PdfDocument extends Document {
     
     /**
      * Constructs a new PDF document.
-     * @throws DocumentException on error
      */
     public PdfDocument() {
         super();
@@ -833,7 +832,6 @@ public class PdfDocument extends Document {
      * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
      *
      * @return a <CODE>boolean</CODE>
-     * @throws DocumentException on error
      */ 
     public boolean newPage() {
         lastElementType = -1;
@@ -1196,7 +1194,6 @@ public class PdfDocument extends Document {
     /**
      * If the current line is not empty or null, it is added to the arraylist
      * of lines and a new empty line is added.
-     * @throws DocumentException on error
      */  
     protected void carriageReturn() {
         // the arraylist with lines may not be null

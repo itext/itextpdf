@@ -195,7 +195,6 @@ public abstract class DocWriter implements DocListener {
  * This does nothing. Has to be overridden if needed.
  *
  * @return  <CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
- * @throws  DocumentException when a document isn't open yet, or has been closed
  */
 
     public boolean newPage() {
