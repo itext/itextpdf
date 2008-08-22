@@ -424,11 +424,24 @@ public class PdfGraphics2D extends Graphics2D {
                     // Simulate a bold font.
                     float strokeWidth = font.getSize2D() * (weight.floatValue() - TextAttribute.WEIGHT_REGULAR.floatValue()) / 30f;
                     if (strokeWidth != 1) {
-                        cb.setTextRenderingMode(PdfContentByte.
-                            TEXT_RENDER_MODE_FILL_STROKE);
-                        cb.setLineWidth(strokeWidth);
-                        cb.setColorStroke(getColor());
-                        restoreTextRenderingMode = true;
+                        if(realPaint instanceof Color){
+                            cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
+                            cb.setLineWidth(strokeWidth);
+                            Color color = (Color)realPaint;
+                            int alpha = color.getAlpha();
+                            if (alpha != currentStrokeGState) {
+                                currentStrokeGState = alpha;
+                                PdfGState gs = strokeGState[alpha];
+                                if (gs == null) {
+                                    gs = new PdfGState();
+                                    gs.setStrokeOpacity(alpha / 255f);
+                                    strokeGState[alpha] = gs;
+                                }
+                                cb.setGState(gs);
+                            }
+                            cb.setColorStroke(color);
+                            restoreTextRenderingMode = true;
+                        }
                     }
                 }
             }
