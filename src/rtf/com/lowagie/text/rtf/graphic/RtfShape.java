@@ -211,6 +211,7 @@ public class RtfShape extends RtfAddableElement {
      * @param property The property to set for this RtfShape.
      */
 	public void setProperty(RtfShapeProperty property) {
+		property.setRtfDocument(this.doc);
         this.properties.put(property.getName(), property);
     }
     
