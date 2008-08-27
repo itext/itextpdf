@@ -314,6 +314,7 @@ public class RtfShape extends RtfAddableElement {
     	Iterator it = this.properties.values().iterator();
     	while(it.hasNext()) {
     		RtfShapeProperty rsp = (RtfShapeProperty) it.next();
+    		rsp.setRtfDocument(this.doc);
     		rsp.writeContent(result);
     	}
     	if(!this.shapeText.equals("")) {
