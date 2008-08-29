@@ -54,6 +54,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -2001,7 +2002,7 @@ public class PdfWriter extends DocWriter implements
 //	[F3] adding fonts
     
     /** The fonts of this document */
-    protected HashMap documentFonts = new HashMap();
+    protected LinkedHashMap documentFonts = new LinkedHashMap();
     
     /** The font number counter for the fonts in the document. */
     protected int fontNumber = 1;
