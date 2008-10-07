@@ -1564,7 +1564,11 @@ public class PdfReader implements PdfViewerPreferences {
                 int pos = tokens.getFilePointer();
                 // be careful in the trailer. May not be a "next" token.
                 if (tokens.nextToken() && tokens.getStringValue().equals("stream")) {
-                    int ch = tokens.read();
+                    //skip whitespaces
+                    int ch;
+                    do {
+                        ch = tokens.read();                        
+                    } while (ch == 32 || ch == 9 || ch == 0 || ch == 12);
                     if (ch != '\n')
                         ch = tokens.read();
                     if (ch != '\n')
