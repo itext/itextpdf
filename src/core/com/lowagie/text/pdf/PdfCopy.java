@@ -408,7 +408,6 @@ public class PdfCopy extends PdfWriter {
             }
             else
                 addFieldResources(theCat);
-            writeOutlines(theCat, false);
             return theCat;
         }
         catch (IOException e) {

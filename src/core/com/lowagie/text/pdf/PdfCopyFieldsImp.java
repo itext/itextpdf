@@ -534,7 +534,6 @@ class PdfCopyFieldsImp extends PdfWriter {
                 PdfIndirectReference ref = addToBody(form).getIndirectReference();
                 cat.put(PdfName.ACROFORM, ref);
             }
-            writeOutlines(cat, false);
             return cat;
         }
         catch (IOException e) {
