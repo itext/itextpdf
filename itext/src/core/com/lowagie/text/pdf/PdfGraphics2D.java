@@ -901,6 +901,7 @@ public class PdfGraphics2D extends Graphics2D {
      */
     public Graphics create() {
         PdfGraphics2D g2 = new PdfGraphics2D();
+        g2.rhints.putAll( this.rhints );
         g2.onlyShapes = this.onlyShapes;
         g2.transform = new AffineTransform(this.transform);
         g2.baseFonts = this.baseFonts;
