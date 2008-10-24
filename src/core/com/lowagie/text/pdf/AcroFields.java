@@ -1340,6 +1340,47 @@ public class AcroFields {
         return false;
     }
     
+    /**
+     * Sets different values in a list selection.
+     * No appearance is generated yet; nor does the code check if multiple select is allowed.
+     * @param	name	the name of the field
+     * @param	value	an array with values that need to be selected
+     * @return	true only if the field value was changed
+     * @since 2.1.4
+     */
+	public boolean setListSelection(String name, String[] value) throws IOException, DocumentException {
+        Item item = (Item)fields.get(name);
+        if (item == null)
+            return false;
+        PdfName type = (PdfName)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.FT));
+        if (!PdfName.CH.equals(type)) {
+        	return false;
+        }
+        String[] options = getListOptionExport(name);
+        PdfArray array = new PdfArray();
+        for (int i = 0; i < value.length; i++) {
+        	for (int j = 0; j < options.length; j++) {
+        		if (options[j].equals(value[i])) {
+        			array.add(new PdfNumber(j));
+        		}
+        	}
+        }
+        for (int idx = 0; idx < item.values.size(); ++idx) {
+            PdfDictionary valueDic = (PdfDictionary)item.values.get(idx);
+            valueDic.remove(PdfName.V);
+            valueDic.put(PdfName.I, array);
+            markUsed(valueDic);                
+            PdfDictionary merged = (PdfDictionary)item.merged.get(idx);
+            merged.put(PdfName.I, array);
+            merged.remove(PdfName.V);
+            PdfDictionary widget = (PdfDictionary)item.widgets.get(idx);
+            widget.remove(PdfName.AP);
+            merged.remove(PdfName.AP);
+            markUsed(widget);
+        }
+        return true;
+	}
+    
     boolean isInAP(PdfDictionary dic, PdfName check) {
         PdfDictionary appDic = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.AP));
         if (appDic == null)
@@ -2200,4 +2241,5 @@ public class AcroFields {
         }
         return true;
     }
+
 }
