@@ -743,11 +743,12 @@ public class PdfWriter extends DocWriter implements
             String name = (String) entry.getKey();
             Object obj[] = (Object[]) entry.getValue();
             PdfDestination destination = (PdfDestination)obj[2];
-            if (destination == null)
-                throw new RuntimeException("The name '" + name + "' has no local destination.");
             if (obj[1] == null)
                 obj[1] = getPdfIndirectReference();
-            addToBody(destination, (PdfIndirectReference)obj[1]);
+            if (destination == null)
+                addToBody(new PdfString("noname1234"), (PdfIndirectReference)obj[1]);
+            else
+                addToBody(destination, (PdfIndirectReference)obj[1]);
         }
     }
     
