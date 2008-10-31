@@ -411,6 +411,25 @@ public class PdfStamper
     }
 
     /**
+     * Adds an empty signature.
+     * @param name	the name of the signature
+     * @param page	the page number
+     * @param llx	lower left x coordinate of the signature's position
+     * @param lly	lower left y coordinate of the signature's position
+     * @param urx	upper right x coordinate of the signature's position
+     * @param ury	upper right y coordinate of the signature's position
+     * @return	a signature form field
+     */
+    public PdfFormField addSignature(String name, int page, float llx, float lly, float urx, float ury) {
+        PdfAcroForm acroForm = stamper.getAcroForm();
+        PdfFormField signature = PdfFormField.createSignature(stamper);
+        acroForm.setSignatureParams(signature, name, llx, lly, urx, ury);
+        acroForm.drawSignatureAppearences(signature, llx, lly, urx, ury);
+        addAnnotation(signature, page);
+        return signature;
+    }
+    
+    /**
      * Adds the comments present in an FDF file.
      * @param fdf the FDF file
      * @throws IOException on error
