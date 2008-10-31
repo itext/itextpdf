@@ -419,6 +419,7 @@ public class PdfStamper
      * @param urx	upper right x coordinate of the signature's position
      * @param ury	upper right y coordinate of the signature's position
      * @return	a signature form field
+     * @since	2.1.4
      */
     public PdfFormField addSignature(String name, int page, float llx, float lly, float urx, float ury) {
         PdfAcroForm acroForm = stamper.getAcroForm();
