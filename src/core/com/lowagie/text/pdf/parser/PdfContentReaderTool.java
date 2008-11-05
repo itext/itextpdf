@@ -51,6 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.lowagie.text.pdf.PdfDictionary;
@@ -75,7 +76,7 @@ public class PdfContentReaderTool {
     static public String getDictionaryDetail(PdfDictionary dic, int depth){
         StringBuilder builder = new StringBuilder();
         builder.append('(');
-        List<PdfName> subDictionaries = new ArrayList<PdfName>();
+        List subDictionaries = new ArrayList();
         for (Object keyo : dic.getKeys()) {
             PdfName key = (PdfName)keyo;
             PdfObject val = dic.getDirectObject(key);
@@ -88,7 +89,9 @@ public class PdfContentReaderTool {
         }
         builder.setLength(builder.length()-2);
         builder.append(')');
-        for (PdfName pdfSubDictionaryName : subDictionaries) {
+        PdfName pdfSubDictionaryName;
+        for (Iterator it = subDictionaries.iterator(); it.hasNext(); ) {
+        	pdfSubDictionaryName = (PdfName)it.next();
             builder.append('\n');
             for(int i = 0; i < depth+1; i++){
                 builder.append('\t');

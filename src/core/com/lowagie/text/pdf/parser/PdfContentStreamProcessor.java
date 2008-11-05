@@ -69,10 +69,10 @@ import com.lowagie.text.pdf.PdfString;
  */
 public abstract class PdfContentStreamProcessor {
 
-    private Map<String, ContentOperator> operators;
+    private Map operators;
     
     PdfDictionary resources;
-    Stack<GraphicsState> gsStack = new Stack<GraphicsState>();
+    Stack gsStack = new Stack();
     Matrix textMatrix;
     Matrix textLineMatrix;
     
@@ -120,11 +120,11 @@ public abstract class PdfContentStreamProcessor {
     }
     
     public GraphicsState gs(){
-        return gsStack.peek();
+        return (GraphicsState)gsStack.peek();
     }
     
     public void invokeOperator(PdfLiteral operator, ArrayList operands){
-        ContentOperator op = operators.get(operator.toString());
+        ContentOperator op = (ContentOperator)operators.get(operator.toString());
         if (op == null){
             //System.out.println("Skipping operator " + operator);
             return;
@@ -385,7 +385,7 @@ public abstract class PdfContentStreamProcessor {
     
     private static class PushGraphicsState implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
-            GraphicsState gs = processor.gsStack.peek();
+            GraphicsState gs = (GraphicsState) processor.gsStack.peek();
             GraphicsState copy = new GraphicsState(gs);
             processor.gsStack.push(copy);
         }
@@ -400,7 +400,8 @@ public abstract class PdfContentStreamProcessor {
             float e = ((PdfNumber)operands.get(4)).floatValue();
             float f = ((PdfNumber)operands.get(5)).floatValue();
             Matrix matrix = new Matrix(a, b, c, d, e, f);
-            processor.gsStack.peek().ctm = processor.gsStack.peek().ctm.multiply(matrix);
+            GraphicsState gs = (GraphicsState)processor.gsStack.peek();
+            gs.ctm = gs.ctm.multiply(matrix);
         }
     }
     
@@ -408,7 +409,7 @@ public abstract class PdfContentStreamProcessor {
     
     private static class PopGraphicsState implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
-            GraphicsState gs = processor.gsStack.pop();
+            GraphicsState gs = (GraphicsState) processor.gsStack.pop();
         }
     }
 
