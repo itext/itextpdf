@@ -908,6 +908,7 @@ public class PdfGraphics2D extends Graphics2D {
         g2.fontMapper = this.fontMapper;
         g2.paint = this.paint;
         g2.fillGState = this.fillGState;
+        g2.currentFillGState = this.currentFillGState;
         g2.strokeGState = this.strokeGState;
         g2.background = this.background;
         g2.mediaTracker = this.mediaTracker;
