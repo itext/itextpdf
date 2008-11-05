@@ -59,7 +59,10 @@ public class ChapterAutoNumber extends Chapter {
     // constant
     private static final long serialVersionUID = -9217457637987854167L;
 
-    /** Is the chapter number already set? */
+    /**
+     * Is the chapter number already set?
+     * @since	2.1.4
+     */
     protected boolean numberSet = false;
     
     /**
