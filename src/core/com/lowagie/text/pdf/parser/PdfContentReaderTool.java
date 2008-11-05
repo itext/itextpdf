@@ -66,14 +66,22 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  */
 public class PdfContentReaderTool {
 
-    public PdfContentReaderTool() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
+	/**
+	 * Shows the detail of a dictionary.
+	 * This is similar to the PdfLister functionality.
+	 * @param dic	the dictionary of which you want the detail
+	 * @return	a String representation of the dictionary
+	 */
     static public String getDictionaryDetail(PdfDictionary dic){
         return getDictionaryDetail(dic, 0);
     }
+    
+    /**
+     * Shows the detail of a dictionary.
+     * @param dic	the dictionary of which you want the detail
+     * @param depth	the depth of the current dictionary (for nested dictionaries)
+     * @return	a String representation of the dictionary
+     */
     static public String getDictionaryDetail(PdfDictionary dic, int depth){
         StringBuilder builder = new StringBuilder();
         builder.append('(');
@@ -105,8 +113,11 @@ public class PdfContentReaderTool {
         return builder.toString();
     }
     
-    
-    
+    /**
+     * Writes information about each page in a PDF file to the System.out.
+     * @param pdfFile	a File instance referring to a PDF file
+     * @throws IOException
+     */
     static public void listContentStream(File pdfFile) throws IOException {
         int maxPage = -1;    
         
@@ -150,6 +161,7 @@ public class PdfContentReaderTool {
 
     
     /**
+     * Writes information about each page in a PDF file to the System.out.
      * @param args
      */
     public static void main(String[] args) throws Exception {

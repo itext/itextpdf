@@ -49,20 +49,31 @@ package com.lowagie.text.pdf.parser;
 import java.util.Arrays;
 
 /**
+ * Keeps all the values of a 3 by 3 matrix
+ * and allows you to do some math with matrices.
  * @since	2.1.4
  */
 public class Matrix {
-
-    public static final int I11 = 0;   
-    public static final int I12 = 1;   
-    public static final int I13 = 2;   
-    public static final int I21 = 3;   
-    public static final int I22 = 4;   
-    public static final int I23 = 5;   
-    public static final int I31 = 6;   
-    public static final int I32 = 7;   
+	/** an array position referring to a specific value in the matrix. */
+    public static final int I11 = 0; 
+	/** an array position referring to a specific value in the matrix. */
+    public static final int I12 = 1; 
+	/** an array position referring to a specific value in the matrix. */
+    public static final int I13 = 2;
+	/** an array position referring to a specific value in the matrix. */ 
+    public static final int I21 = 3; 
+	/** an array position referring to a specific value in the matrix. */
+    public static final int I22 = 4;  
+	/** an array position referring to a specific value in the matrix. */
+    public static final int I23 = 5;  
+	/** an array position referring to a specific value in the matrix. */
+    public static final int I31 = 6;  
+	/** an array position referring to a specific value in the matrix. */
+    public static final int I32 = 7;  
+	/** an array position referring to a specific value in the matrix. */
     public static final int I33 = 8;   
     
+    /** the values inside the matrix (the identity matrix by default). */
     private final float[] vals = new float[]{
             1,0,0,
             0,1,0,
@@ -70,20 +81,19 @@ public class Matrix {
     };
     
     /**
-     * constructs a new Matrix with identity
+     * constructs a new Matrix with identity.
      */
     public Matrix() {
     }
 
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Matrix))
-            return false;
-        
-        return Arrays.equals(vals, ((Matrix)obj).vals);
-    }
-    
-    public int hashCode() {
-        return Arrays.hashCode(vals);
+    /**
+     * Constructs a matrix that represents translation
+     * @param tx
+     * @param ty
+     */
+    public Matrix(float tx, float ty){
+        vals[I31] = tx;
+        vals[I32] = ty;
     }
     
     /**
@@ -106,22 +116,21 @@ public class Matrix {
         vals[I32] = f;
         vals[I33] = 1;
     }
-
+    
     /**
-     * Constructs a matrix that represents translation
-     * @param tx
-     * @param ty
+     * Gets a specific value inside the matrix.
+     * @param	index	an array index corresponding with a value inside the matrix
+     * @return	the value at that specific position.
      */
-    public Matrix(float tx, float ty){
-        vals[I31] = tx;
-        vals[I32] = ty;
+    public float get(int index){
+        return vals[index];
     }
     
     /**
      * multiplies this matrix by 'b' and returns the result
      * See http://en.wikipedia.org/wiki/Matrix_multiplication
      * @param by The matrix to multiply by
-     * @return
+     * @return	the resulting matrix
      */
     public Matrix multiply(Matrix by){
         Matrix rslt = new Matrix();
@@ -142,11 +151,34 @@ public class Matrix {
         
         return rslt;
     }
-    
-    public float get(int index){
-        return vals[index];
+
+    /**
+     * Checks equality of matrices.
+     * @param obj	the other Matrix that needs to be compared with this matrix.
+     * @return	true if both matrices are equal
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Matrix))
+            return false;
+        
+        return Arrays.equals(vals, ((Matrix)obj).vals);
     }
     
+    /**
+     * Generates a hash code for this object.
+     * @return	the hash code of this object
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return Arrays.hashCode(vals);
+    }
+    
+    /**
+     * Generates a String representating of the matrix.
+     * @return	the values, delimited with tabs and newlines.
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return  vals[I11] + "\t" + vals[I12] + "\t" + vals[I13] + "\n" + 
                 vals[I21] + "\t" + vals[I22] + "\t" + vals[I13] + "\n" +

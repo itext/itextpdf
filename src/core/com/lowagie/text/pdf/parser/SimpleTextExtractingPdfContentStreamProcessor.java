@@ -47,22 +47,39 @@
 package com.lowagie.text.pdf.parser;
 
 /**
+ * A simple text extraction processor.
  * @since	2.1.4
  */
 public class SimpleTextExtractingPdfContentStreamProcessor extends PdfContentStreamProcessor {
 
+    /** keeps track of a text matrix. */
     Matrix lastTextLineMatrix = null;
+    /** keeps track of a text matrix. */
     Matrix lastEndingTextMatrix = null;
 
+    /** The StringBuilder used to write the resulting String. */
     StringBuilder result = new StringBuilder();
 
+    /**
+     * Creates a new text extraction processor.
+     */
     public SimpleTextExtractingPdfContentStreamProcessor() {
     }
 
+    /**
+     * Returns the result so far.
+     * @return	a String with the resulting text.
+     */
     public String getResultantText(){
         return result.toString();
     }
     
+    /**
+     * Writes text to the result.
+     * @param text	The text that needs to be displayed
+     * @param endingTextMatrix	a text matrix
+     * @see com.lowagie.text.pdf.parser.PdfContentStreamProcessor#displayText(java.lang.String, com.lowagie.text.pdf.parser.Matrix)
+     */
     public void displayText(String text, Matrix endingTextMatrix){
         boolean hardReturn = false;
         if (lastTextLineMatrix != null && lastTextLineMatrix.get(Matrix.I32) != textLineMatrix.get(Matrix.I32)){
