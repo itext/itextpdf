@@ -49,8 +49,6 @@
 
 package com.lowagie.text;
 
-import java.util.ArrayList;
-
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
  * <P>

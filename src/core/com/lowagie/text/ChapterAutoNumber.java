@@ -47,8 +47,6 @@
 
 package com.lowagie.text;
 
-import java.util.Iterator;
-
 /**
  * Chapter with auto numbering.
  *
