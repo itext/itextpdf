@@ -48,6 +48,7 @@ package com.lowagie.text.pdf.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
 
@@ -82,7 +83,7 @@ public abstract class PdfContentStreamProcessor {
     }
 
     private void populateOperators(){
-        operators = new HashMap<String, ContentOperator>();
+        operators = new HashMap();
         
         operators.put("q", new PushGraphicsState());
         operators.put("Q", new PopGraphicsState());
@@ -207,7 +208,8 @@ public abstract class PdfContentStreamProcessor {
             PdfArray array = (PdfArray)operands.get(0);
             ArrayList entries = array.getArrayList();
             float tj = 0;
-            for (Object entryObj : entries) {
+            for (Iterator i = entries.iterator(); i.hasNext(); ) {
+            	Object entryObj = i.next();
                 if (entryObj instanceof PdfString){
                     processor.displayPdfString((PdfString)entryObj, tj);
                     tj = 0;

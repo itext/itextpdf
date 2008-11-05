@@ -61,6 +61,7 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
 
 /**
+ * Tool that parses the content of a PDF document.
  * @since	2.1.4
  */
 public class PdfContentReaderTool {
@@ -77,8 +78,8 @@ public class PdfContentReaderTool {
         StringBuilder builder = new StringBuilder();
         builder.append('(');
         List subDictionaries = new ArrayList();
-        for (Object keyo : dic.getKeys()) {
-            PdfName key = (PdfName)keyo;
+        for (Iterator i = dic.getKeys().iterator(); i.hasNext(); ) {
+            PdfName key = (PdfName)i.next();
             PdfObject val = dic.getDirectObject(key);
             if (val.isDictionary())
                 subDictionaries.add(key);

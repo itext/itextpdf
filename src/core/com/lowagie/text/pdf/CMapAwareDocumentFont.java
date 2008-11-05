@@ -53,20 +53,29 @@ import com.lowagie.text.pdf.fonts.cmaps.CMap;
 import com.lowagie.text.pdf.fonts.cmaps.CMapParser;
 
 /**
+ * Implementation of DocumentFont used while parsing PDF streams.
  * @since 2.1.4
  */
 public class CMapAwareDocumentFont extends DocumentFont {
 
+	/** The font dictionary. */
     private PdfDictionary fontDic;
+    /** CMap instance. */
     private CMap cmap;
     
+    /**
+     * Creates an instance of a CMapAwareFont based on an indirect reference to a font.
+     * @param refFont	the indirect reference to a font
+     */
     public CMapAwareDocumentFont(PRIndirectReference refFont) {
         super(refFont);
         fontDic = (PdfDictionary)PdfReader.getPdfObjectRelease(refFont);
-        
         processToUni();
     }
 
+    /**
+     * Does some processing if the font dictionary indicates that the font is in unicode.
+     */
     private void processToUni(){
         
         PdfObject toUni = fontDic.get(PdfName.TOUNICODE);
@@ -84,6 +93,13 @@ public class CMapAwareDocumentFont extends DocumentFont {
 
     }
     
+    /**
+     * Encodes bytes to a String.
+     * @param bytes		the bytes from a stream
+     * @param offset	an offset
+     * @param len		a length
+     * @return	a String encoded taking into account if the bytes are in unicode or not.
+     */
     public String encode(byte[] bytes, int offset, int len){
             if (cmap != null){
                 if (len > bytes.length)
