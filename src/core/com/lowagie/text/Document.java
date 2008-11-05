@@ -263,8 +263,7 @@ public class Document implements DocListener {
         boolean success = false;
         DocListener listener;
         if (element instanceof ChapterAutoNumber) {
-        	chapternumber++;
-        	((ChapterAutoNumber)element).setChapterNumber(chapternumber);
+        	chapternumber = ((ChapterAutoNumber)element).setAutomaticNumber(chapternumber);
         }
 		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
             listener = (DocListener) iterator.next();

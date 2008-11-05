@@ -47,6 +47,8 @@
 
 package com.lowagie.text;
 
+import java.util.Iterator;
+
 /**
  * Chapter with auto numbering.
  *
@@ -57,6 +59,9 @@ public class ChapterAutoNumber extends Chapter {
     // constant
     private static final long serialVersionUID = -9217457637987854167L;
 
+    /** Is the chapter number already set? */
+    protected boolean numberSet = false;
+    
     /**
      * Create a new object.
      *
@@ -99,6 +104,19 @@ public class ChapterAutoNumber extends Chapter {
     		throw new IllegalStateException("This LargeElement has already been added to the Document.");
     	}
         return addSection(title, 2);
+    }
+    
+    /**
+     * Changes the Chapter number.
+     * @param	number	the new chapter number
+     */
+    public int setAutomaticNumber(int number) {
+    	if (!numberSet) {
+        	number++;
+        	super.setChapterNumber(number);
+        	numberSet = true;
+    	}
+		return number;
     }
 
 }
