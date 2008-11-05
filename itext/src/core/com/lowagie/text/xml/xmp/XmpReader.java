@@ -75,18 +75,17 @@ public class XmpReader {
     /**
      * Constructs an XMP reader
      * @param	bytes	the XMP content
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     * @throws SAXException 
      */
-	public XmpReader(byte[] bytes) {
-        try {
-            DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
-            fact.setNamespaceAware(true);
-            DocumentBuilder db = fact.newDocumentBuilder();
-            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-			domDocument = db.parse(bais);
-		} catch (SAXException e) {
-			throw new ExceptionConverter(e);
-		} catch (IOException e) {
-			throw new ExceptionConverter(e);
+	public XmpReader(byte[] bytes) throws SAXException, IOException {
+		try {
+	        DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+	        fact.setNamespaceAware(true);
+			DocumentBuilder db = fact.newDocumentBuilder();
+	        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+	        domDocument = db.parse(bais);
 		} catch (ParserConfigurationException e) {
 			throw new ExceptionConverter(e);
 		}
