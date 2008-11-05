@@ -75,7 +75,7 @@ public class XmpReader {
     /**
      * Constructs an XMP reader
      * @param	bytes	the XMP content
-     * @throws ParserConfigurationException 
+     * @throws ExceptionConverter 
      * @throws IOException 
      * @throws SAXException 
      */
