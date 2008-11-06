@@ -51,7 +51,9 @@ package com.lowagie.text.pdf;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Stack;
 
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
@@ -69,6 +71,11 @@ public class XfdfReader implements SimpleXMLDocHandler {
 
     // storage for the field list and their values
 	HashMap	fields;
+	/**
+	 * Storage for field values if there's more than one value for a field.
+	 * @since	2.1.4
+	 */
+	protected HashMap listFields;
 	
 	// storage for the path to referenced PDF, if any
 	String	fileSpec;
@@ -126,6 +133,17 @@ public class XfdfReader implements SimpleXMLDocHandler {
         	return field;
     }
     
+    /**
+     * Gets the field values for a list or <CODE>null</CODE> if the field does not
+     * exist or has no value defined.
+     * @param name the fully qualified field name
+     * @return the field values or <CODE>null</CODE>
+     * @since	2.1.4
+     */    
+    public List getListValues(String name) {
+        return (List)listFields.get(name);
+    }
+    
     /** Gets the PDF file specification contained in the FDF.
      * @return the PDF file specification contained in the FDF
      */    
@@ -153,6 +171,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
     		fileSpec = (String)h.get( "href" );
     	} else if ( tag.equals("fields") ) {
             fields = new HashMap();		// init it!
+            listFields = new HashMap();
     	} else if ( tag.equals("field") ) {
     		String	fName = (String) h.get( "name" );
     		fieldNames.push( fName );
@@ -172,8 +191,17 @@ public class XfdfReader implements SimpleXMLDocHandler {
             }
             if (fName.startsWith("."))
                 fName = fName.substring(1);
-            String	fVal = (String) fieldValues.pop();
-            fields.put( fName, fVal );
+            String fVal = (String) fieldValues.pop();
+            String old = (String) fields.put( fName, fVal );
+            if (old != null) {
+            	List l = (List) listFields.get(fName);
+            	if (l == null) {
+            		l = new ArrayList();
+            		l.add(old);
+            	}
+            	l.add(fVal);
+            	listFields.put(fName, l);
+            }
         }
         else if (tag.equals("field") ) {
             if (!fieldNames.isEmpty())
