@@ -57,8 +57,8 @@ public class SimpleTextExtractingPdfContentStreamProcessor extends PdfContentStr
     /** keeps track of a text matrix. */
     Matrix lastEndingTextMatrix = null;
 
-    /** The StringBuilder used to write the resulting String. */
-    StringBuilder result = null;
+    /** The StringBuffer used to write the resulting String. */
+    StringBuffer result = null;
 
     /**
      * Creates a new text extraction processor.
@@ -70,7 +70,7 @@ public class SimpleTextExtractingPdfContentStreamProcessor extends PdfContentStr
         super.reset();
         lastTextLineMatrix = null;
         lastEndingTextMatrix = null;
-        result = new StringBuilder();
+        result = new StringBuffer();
     }
     
     /**

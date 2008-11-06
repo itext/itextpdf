@@ -164,7 +164,7 @@ public abstract class PdfContentStreamProcessor {
      */
     private String encode(String in){
         byte[] bytes = in.getBytes();
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         
         for(int i = 0; i < bytes.length; i++){
             String rslt = gs().font.encode(bytes, i, 1);
@@ -245,15 +245,6 @@ public abstract class PdfContentStreamProcessor {
         
     }
     
-
-    /**
-     * A content operator implementation.
-     */
-    private static class TemplateOperation implements ContentOperator{
-        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
-            
-        }
-    }
 
     /**
      * A content operator implementation (TJ).
@@ -344,7 +335,6 @@ public abstract class PdfContentStreamProcessor {
             float d = ((PdfNumber)operands.get(3)).floatValue();
             float e = ((PdfNumber)operands.get(4)).floatValue();
             float f = ((PdfNumber)operands.get(5)).floatValue();
-            Matrix matrix = new Matrix(a, b, c, d, e, f);
             
             processor.textLineMatrix = new Matrix(a, b, c, d, e, f);
             processor.textMatrix = processor.textLineMatrix;
@@ -356,7 +346,6 @@ public abstract class PdfContentStreamProcessor {
      */
     private static class TextMoveStartNextLineWithLeading implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
-            float tx = ((PdfNumber)operands.get(0)).floatValue();
             float ty = ((PdfNumber)operands.get(1)).floatValue();
             
             ArrayList tlOperands = new ArrayList(1);
@@ -515,7 +504,7 @@ public abstract class PdfContentStreamProcessor {
      */
     private static class PopGraphicsState implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
-            GraphicsState gs = (GraphicsState) processor.gsStack.pop();
+            processor.gsStack.pop();
         }
     }
 
