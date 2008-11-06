@@ -746,7 +746,7 @@ public class PdfWriter extends DocWriter implements
             if (obj[1] == null)
                 obj[1] = getPdfIndirectReference();
             if (destination == null)
-                addToBody(new PdfString("noname1234"), (PdfIndirectReference)obj[1]);
+                addToBody(new PdfString("invalid_" + name), (PdfIndirectReference)obj[1]);
             else
                 addToBody(destination, (PdfIndirectReference)obj[1]);
         }
