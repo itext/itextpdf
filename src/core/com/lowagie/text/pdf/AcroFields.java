@@ -54,6 +54,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.w3c.dom.Node;
@@ -1154,8 +1155,7 @@ public class AcroFields {
      * @param xfdf the XFDF form
      * @throws IOException on error
      * @throws DocumentException on error
-     */
-    
+     */    
     public void setFields(XfdfReader xfdf) throws IOException, DocumentException {
         HashMap fd = xfdf.getFields();
         for (Iterator i = fd.keySet().iterator(); i.hasNext();) {
@@ -1163,6 +1163,9 @@ public class AcroFields {
             String v = xfdf.getFieldValue(f);
             if (v != null)
                 setField(f, v);
+            List l = xfdf.getListValues(f);
+            if (l != null)
+            	setListSelection(v, (String[])l.toArray());
         }
     }
 
