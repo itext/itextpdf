@@ -293,7 +293,7 @@ public class FactoryProperties {
 				if (ss.equals("bold") || ss.equals("700") || ss.equals("800")
 						|| ss.equals("900"))
 					h.put("b", null);
-			} else if (key.equals(Markup.CSS_KEY_FONTWEIGHT)) {
+			} else if (key.equals(Markup.CSS_VALUE_UNDERLINE)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				if (ss.equals("underline"))
 					h.put("u", null);
@@ -354,7 +354,7 @@ public class FactoryProperties {
 				if (ss.equals("bold") || ss.equals("700") || ss.equals("800")
 						|| ss.equals("900"))
 					h.put("b", null);
-			} else if (key.equals(Markup.CSS_KEY_FONTWEIGHT)) {
+			} else if (key.equals(Markup.CSS_VALUE_UNDERLINE)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				if (ss.equals("underline"))
 					h.put("u", null);
