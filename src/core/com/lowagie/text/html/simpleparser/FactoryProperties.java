@@ -293,9 +293,9 @@ public class FactoryProperties {
 				if (ss.equals("bold") || ss.equals("700") || ss.equals("800")
 						|| ss.equals("900"))
 					h.put("b", null);
-			} else if (key.equals(Markup.CSS_VALUE_UNDERLINE)) {
+			} else if (key.equals(Markup.CSS_KEY_TEXTDECORATION)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
-				if (ss.equals("underline"))
+				if (ss.equals(Markup.CSS_VALUE_UNDERLINE))
 					h.put("u", null);
 			} else if (key.equals(Markup.CSS_KEY_COLOR)) {
 				Color c = Markup.decodeColor(prop.getProperty(key));
@@ -354,9 +354,9 @@ public class FactoryProperties {
 				if (ss.equals("bold") || ss.equals("700") || ss.equals("800")
 						|| ss.equals("900"))
 					h.put("b", null);
-			} else if (key.equals(Markup.CSS_VALUE_UNDERLINE)) {
+			} else if (key.equals(Markup.CSS_KEY_TEXTDECORATION)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
-				if (ss.equals("underline"))
+				if (ss.equals(Markup.CSS_VALUE_UNDERLINE))
 					h.put("u", null);
 			} else if (key.equals(Markup.CSS_KEY_COLOR)) {
 				Color c = Markup.decodeColor(prop.getProperty(key));
