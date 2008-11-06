@@ -171,7 +171,13 @@ public class Matrix {
      * @see java.lang.Object#hashCode()
      */
     public int hashCode() {
-        return Arrays.hashCode(vals);
+        //return Arrays.hashCode(vals); // JDK 5 code, replaced with the following
+        
+        int result = 1;
+        for (int i = 0; i < vals.length; i++)
+            result = 31 * result + Float.floatToIntBits(vals[i]);
+
+        return result;
     }
     
     /**
