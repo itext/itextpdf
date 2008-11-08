@@ -84,6 +84,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     private HashMap tabOrder;
     private ArrayList calculationOrder = new ArrayList();
     private ArrayList calculationOrderRefs;
+    private boolean hasSignature;
     
     PdfCopyFieldsImp(OutputStream os) throws DocumentException {
         this(os, '\0');
@@ -336,6 +337,8 @@ class PdfCopyFieldsImp extends PdfWriter {
         tabOrder = new HashMap();
         calculationOrderRefs = new ArrayList(calculationOrder);
         form.put(PdfName.FIELDS, branchForm(fieldTree, null, ""));
+        if (hasSignature)
+            form.put(PdfName.SIGFLAGS, new PdfNumber(3));
         PdfArray co = new PdfArray();
         for (int k = 0; k < calculationOrderRefs.size(); ++k) {
             Object obj = calculationOrderRefs.get(k);
@@ -463,6 +466,8 @@ class PdfCopyFieldsImp extends PdfWriter {
                 PdfDictionary merged = (PdfDictionary)item.merged.get(0);
                 if (obj == null) {
                     PdfDictionary field = new PdfDictionary();
+                    if (PdfName.SIG.equals(merged.get(PdfName.FT)))
+                        hasSignature = true;
                     for (Iterator it = merged.getKeys().iterator(); it.hasNext();) {
                         PdfName key = (PdfName)it.next();
                         if (fieldKeys.containsKey(key))
