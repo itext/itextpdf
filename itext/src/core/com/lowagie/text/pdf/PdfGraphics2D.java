@@ -424,11 +424,24 @@ public class PdfGraphics2D extends Graphics2D {
                     // Simulate a bold font.
                     float strokeWidth = font.getSize2D() * (weight.floatValue() - TextAttribute.WEIGHT_REGULAR.floatValue()) / 30f;
                     if (strokeWidth != 1) {
-                        cb.setTextRenderingMode(PdfContentByte.
-                            TEXT_RENDER_MODE_FILL_STROKE);
-                        cb.setLineWidth(strokeWidth);
-                        cb.setColorStroke(getColor());
-                        restoreTextRenderingMode = true;
+                        if(realPaint instanceof Color){
+                            cb.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
+                            cb.setLineWidth(strokeWidth);
+                            Color color = (Color)realPaint;
+                            int alpha = color.getAlpha();
+                            if (alpha != currentStrokeGState) {
+                                currentStrokeGState = alpha;
+                                PdfGState gs = strokeGState[alpha];
+                                if (gs == null) {
+                                    gs = new PdfGState();
+                                    gs.setStrokeOpacity(alpha / 255f);
+                                    strokeGState[alpha] = gs;
+                                }
+                                cb.setGState(gs);
+                            }
+                            cb.setColorStroke(color);
+                            restoreTextRenderingMode = true;
+                        }
                     }
                 }
             }
@@ -888,12 +901,14 @@ public class PdfGraphics2D extends Graphics2D {
      */
     public Graphics create() {
         PdfGraphics2D g2 = new PdfGraphics2D();
+        g2.rhints.putAll( this.rhints );
         g2.onlyShapes = this.onlyShapes;
         g2.transform = new AffineTransform(this.transform);
         g2.baseFonts = this.baseFonts;
         g2.fontMapper = this.fontMapper;
         g2.paint = this.paint;
         g2.fillGState = this.fillGState;
+        g2.currentFillGState = this.currentFillGState;
         g2.strokeGState = this.strokeGState;
         g2.background = this.background;
         g2.mediaTracker = this.mediaTracker;

@@ -1,9 +1,5 @@
 /*
- * $Id$
- *
- * Copyright 2004 by Mark Hall
- * Uses code Copyright 2002
- *   Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
+ * Copyright 2008 by Kevin Day.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -16,16 +12,16 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2008 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2008 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -48,69 +44,58 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
-package com.lowagie.text.rtf.field;
+package com.lowagie.text.pdf.parser;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
-import com.lowagie.text.DocWriter;
-import com.lowagie.text.Font;
-
-
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.RandomAccessFileOrArray;
 
 /**
- * The RtfTableOfContents together with multiple RtfTOCEntry objects generates a table 
- * of contents. The table of contents will display no entries in the viewing program
- * and the user will have to update it first. A text to inform the user of this is
- * displayed instead.
- * 
- * @version $Id$
- * @author Mark Hall (Mark.Hall@mail.room3b.eu)
- * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
- * @author Thomas Bickel (tmb99@inode.at)
+ * Extracts text from a PDF file.
+ * @since	2.1.4
  */
-public class RtfTableOfContents extends RtfField {
+public class PdfTextExtractor {
 
-	/**
-	 * field inst content
-	 */
-	private final static String FIELD_INST = "TOC \\\\f \\\\h \\\\u \\\\o \"1-5\" ";
-    /**
-     * The default text to display
-     */
-    private String defaultText = "Table of Contents - Click to update";
+	/** The PdfReader that holds the PDF file. */
+    private final PdfReader reader;
+    /** The processor that will extract the text. */
+    private final SimpleTextExtractingPdfContentStreamProcessor extractionProcessor;
     
     /**
-     * Constructs a RtfTableOfContents. The default text is the text that is displayed
-     * before the user updates the table of contents
-     * 
-     * @param defaultText The default text to display
+     * Creates a new Text Extractor object.
+     * @param reader	the reader with the PDF
      */
-    public RtfTableOfContents(String defaultText) {
-        super(null, new Font());
-        this.defaultText = defaultText;
-    }
-    
-    /**
-     * Writes the field instruction content
-     * 
-     * @param result The <code>OutputStream</code> to write to.
-     * @throws IOException on i/o errors.
-     */ 
-    protected void writeFieldInstContent(final OutputStream result) throws IOException 
-    {
-    	result.write(DocWriter.getISOBytes(FIELD_INST));
+    public PdfTextExtractor(PdfReader reader) {
+        this.reader = reader;
+        extractionProcessor = new SimpleTextExtractingPdfContentStreamProcessor();
     }
 
     /**
-     * Writes the field result content
-     * 
-     * @param out The <code>OutputStream</code> to write to.
-     * @throws IOException on i/o errors.
+     * Gets the content stream of a page.
+     * @param pageNum	the page number of page you want get the content stream from
+     * @return	a byte array with the content stream of a page
+     * @throws IOException
      */
-    protected void writeFieldResultContent(final OutputStream out) throws IOException 
-    {
-    	document.filterSpecialChar(out, defaultText, true, true);
-    }    
+    private byte[] getContentBytesForPage(int pageNum) throws IOException {
+        RandomAccessFileOrArray f = reader.getSafeFile();
+        byte[] contentBytes = reader.getPageContent(pageNum, f);
+        f.close();
+        return contentBytes;
+    }
+    
+    /**
+     * Gets the text from a page.
+     * @param page	the page number of the page
+     * @return	a String with the content as plain text (without PDF syntax)
+     * @throws IOException
+     */
+    public String getTextFromPage(int page) throws IOException {
+        PdfDictionary pageDic = reader.getPageN(page);
+        PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
+        extractionProcessor.processContent(getContentBytesForPage(page), resourcesDic);        
+        return extractionProcessor.getResultantText();
+    }
 }

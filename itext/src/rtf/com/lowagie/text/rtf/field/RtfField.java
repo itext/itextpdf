@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.lowagie.text.Chunk;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -78,35 +79,35 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     /**
      * Constant for a rtf field
      */
-    private static final byte[] FIELD = "\\field".getBytes();
+    private static final byte[] FIELD = DocWriter.getISOBytes("\\field");
     /**
      * Constant for a dirty field
      */
-    private static final byte[] FIELD_DIRTY = "\\flddirty".getBytes();
+    private static final byte[] FIELD_DIRTY = DocWriter.getISOBytes("\\flddirty");
     /**
      * Constant for a private field
      */
-    private static final byte[] FIELD_PRIVATE = "\\fldpriv".getBytes();
+    private static final byte[] FIELD_PRIVATE = DocWriter.getISOBytes("\\fldpriv");
     /**
      * Constant for a locked field
      */
-    private static final byte[] FIELD_LOCKED = "\\fldlock".getBytes();
+    private static final byte[] FIELD_LOCKED = DocWriter.getISOBytes("\\fldlock");
     /**
      * Constant for a edited field
      */
-    private static final byte[] FIELD_EDIT = "\\fldedit".getBytes();
+    private static final byte[] FIELD_EDIT = DocWriter.getISOBytes("\\fldedit");
     /**
      * Constant for an alt field
      */
-    private static final byte[] FIELD_ALT = "\\fldalt".getBytes();
+    private static final byte[] FIELD_ALT = DocWriter.getISOBytes("\\fldalt");
     /**
      * Constant for the field instructions
      */
-    private static final byte[] FIELD_INSTRUCTIONS = "\\*\\fldinst".getBytes();
+    private static final byte[] FIELD_INSTRUCTIONS = DocWriter.getISOBytes("\\*\\fldinst");
     /**
      * Constant for the field result
      */
-    private static final byte[] FIELD_RESULT = "\\fldrslt".getBytes();
+    private static final byte[] FIELD_RESULT = DocWriter.getISOBytes("\\fldrslt");
 
     /**
      * Is the field dirty

@@ -53,6 +53,7 @@ package com.lowagie.text.rtf.field;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.document.RtfDocument;
 
@@ -69,7 +70,7 @@ public class RtfTotalPageNumber extends RtfField {
     /**
      * Constant for arabic total page numbers.
      */
-    private static final byte[] ARABIC_TOTAL_PAGES = "NUMPAGES \\\\* Arabic".getBytes();
+    private static final byte[] ARABIC_TOTAL_PAGES = DocWriter.getISOBytes("NUMPAGES \\\\* Arabic");
     
     /**
      * Constructs a RtfTotalPageNumber. This can be added anywhere to add a total number of pages field.
@@ -125,6 +126,6 @@ public class RtfTotalPageNumber extends RtfField {
      */
     protected void writeFieldResultContent(final OutputStream out) throws IOException 
     {
-    	out.write("1".getBytes());
+    	out.write(DocWriter.getISOBytes("1"));
     }
 }

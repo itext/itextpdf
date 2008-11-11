@@ -421,6 +421,7 @@ class CJKFont extends BaseFont {
             char c[] = new char[0x10000];
             for (int k = 0; k < 0x10000; ++k)
                 c[k] = (char)((is.read() << 8) + is.read());
+            is.close();
             return c;
         }
         catch (Exception e) {

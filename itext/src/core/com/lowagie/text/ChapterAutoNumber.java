@@ -58,6 +58,12 @@ public class ChapterAutoNumber extends Chapter {
     private static final long serialVersionUID = -9217457637987854167L;
 
     /**
+     * Is the chapter number already set?
+     * @since	2.1.4
+     */
+    protected boolean numberSet = false;
+    
+    /**
      * Create a new object.
      *
      * @param para     the Chapter title (as a <CODE>Paragraph</CODE>)
@@ -99,6 +105,20 @@ public class ChapterAutoNumber extends Chapter {
     		throw new IllegalStateException("This LargeElement has already been added to the Document.");
     	}
         return addSection(title, 2);
+    }
+    
+    /**
+     * Changes the Chapter number.
+     * @param	number	the new chapter number
+     * @since 2.1.4
+     */
+    public int setAutomaticNumber(int number) {
+    	if (!numberSet) {
+        	number++;
+        	super.setChapterNumber(number);
+        	numberSet = true;
+    	}
+		return number;
     }
 
 }

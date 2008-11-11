@@ -54,6 +54,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -742,11 +743,12 @@ public class PdfWriter extends DocWriter implements
             String name = (String) entry.getKey();
             Object obj[] = (Object[]) entry.getValue();
             PdfDestination destination = (PdfDestination)obj[2];
-            if (destination == null)
-                throw new RuntimeException("The name '" + name + "' has no local destination.");
             if (obj[1] == null)
                 obj[1] = getPdfIndirectReference();
-            addToBody(destination, (PdfIndirectReference)obj[1]);
+            if (destination == null)
+                addToBody(new PdfString("invalid_" + name), (PdfIndirectReference)obj[1]);
+            else
+                addToBody(destination, (PdfIndirectReference)obj[1]);
         }
     }
     
@@ -2001,7 +2003,7 @@ public class PdfWriter extends DocWriter implements
 //	[F3] adding fonts
     
     /** The fonts of this document */
-    protected HashMap documentFonts = new HashMap();
+    protected LinkedHashMap documentFonts = new LinkedHashMap();
     
     /** The font number counter for the fonts in the document. */
     protected int fontNumber = 1;

@@ -54,6 +54,7 @@ package com.lowagie.text.rtf.field;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Font;
 
 
@@ -72,19 +73,19 @@ public class RtfTOCEntry extends RtfField {
     /**
      * Constant for the beginning of hidden text
      */
-    private static final byte[] TEXT_HIDDEN_ON = "\\v".getBytes();
+    private static final byte[] TEXT_HIDDEN_ON = DocWriter.getISOBytes("\\v");
     /**
      * Constant for the end of hidden text
      */
-    private static final byte[] TEXT_HIDDEN_OFF = "\\v0".getBytes();
+    private static final byte[] TEXT_HIDDEN_OFF = DocWriter.getISOBytes("\\v0");
     /**
      * Constant for a TOC entry with page numbers
      */
-    private static final byte[] TOC_ENTRY_PAGE_NUMBER = "\\tc".getBytes();
+    private static final byte[] TOC_ENTRY_PAGE_NUMBER = DocWriter.getISOBytes("\\tc");
     /**
      * Constant for a TOC entry without page numbers
      */
-    private static final byte[] TOC_ENTRY_NO_PAGE_NUMBER = "\\tcn".getBytes();
+    private static final byte[] TOC_ENTRY_NO_PAGE_NUMBER = DocWriter.getISOBytes("\\tcn");
     
     /**
      * The entry text of this RtfTOCEntry

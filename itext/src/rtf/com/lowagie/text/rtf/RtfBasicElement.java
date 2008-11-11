@@ -52,6 +52,7 @@ package com.lowagie.text.rtf;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.RtfElementInterface;
 import com.lowagie.text.rtf.document.RtfDocument;
 
@@ -67,19 +68,19 @@ public interface RtfBasicElement extends RtfElementInterface {
     /**
      * Constant for the beginning of a rtf group
      */
-    public static final byte[] OPEN_GROUP = "{".getBytes();
+    public static final byte[] OPEN_GROUP = DocWriter.getISOBytes("{");
     /**
      * Constant for the end of an rtf group
      */
-    public static final byte[] CLOSE_GROUP = "}".getBytes();
+    public static final byte[] CLOSE_GROUP = DocWriter.getISOBytes("}");
     /**
      * Constant for a delimiter in rtf
      */
-    public static final byte[] DELIMITER = " ".getBytes();
+    public static final byte[] DELIMITER = DocWriter.getISOBytes(" ");
     /**
      * Constant for a comma delimiter in rtf
      */
-    public static final byte[] COMMA_DELIMITER = ";".getBytes();
+    public static final byte[] COMMA_DELIMITER = DocWriter.getISOBytes(";");
     /**
      * The factor to use for translating from iText to rtf measurements
      */

@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
@@ -237,25 +238,25 @@ public class RtfShapeProperty extends RtfAddableElement {
     public void writeContent(final OutputStream result) throws IOException
     {    	
     	result.write(OPEN_GROUP);
-    	result.write("\\sp".getBytes());
+    	result.write(DocWriter.getISOBytes("\\sp"));
     	result.write(OPEN_GROUP);
-    	result.write("\\sn".getBytes());
+    	result.write(DocWriter.getISOBytes("\\sn"));
     	result.write(DELIMITER);
-    	result.write(this.name.getBytes());
+    	result.write(DocWriter.getISOBytes(this.name));
     	result.write(CLOSE_GROUP);
     	result.write(OPEN_GROUP);
-    	result.write("\\sv".getBytes());
+    	result.write(DocWriter.getISOBytes("\\sv"));
     	result.write(DELIMITER);
     	switch(this.type) {
     	case PROPERTY_TYPE_LONG: 
     	case PROPERTY_TYPE_DOUBLE:
-    		result.write(this.value.toString().getBytes());
+    		result.write(DocWriter.getISOBytes(this.value.toString()));
     		break;
     	case PROPERTY_TYPE_BOOLEAN:
     		if(((Boolean) this.value).booleanValue()) {
-    			result.write("1".getBytes());
+    			result.write(DocWriter.getISOBytes("1"));
     		} else {
-    			result.write("0".getBytes());
+    			result.write(DocWriter.getISOBytes("0"));
     		}
     		break;
     	case PROPERTY_TYPE_COLOR:
@@ -265,7 +266,7 @@ public class RtfShapeProperty extends RtfAddableElement {
     	case PROPERTY_TYPE_ARRAY:
     	    if(this.value instanceof int[]) {
     	        int[] values = (int[]) this.value;
-    	        result.write("4;".getBytes());
+    	        result.write(DocWriter.getISOBytes("4;"));
     	        result.write(intToByteArray(values.length));
     	        result.write(COMMA_DELIMITER);
     	        for(int i = 0; i < values.length; i++) {
@@ -276,15 +277,15 @@ public class RtfShapeProperty extends RtfAddableElement {
     	        }
     	    } else if(this.value instanceof Point[]) {
     	        Point[] values = (Point[]) this.value;
-                result.write("8;".getBytes());
+                result.write(DocWriter.getISOBytes("8;"));
                 result.write(intToByteArray(values.length));
                 result.write(COMMA_DELIMITER);
                 for(int i = 0; i < values.length; i++) {
-                    result.write("(".getBytes());
+                    result.write(DocWriter.getISOBytes("("));
                     result.write(intToByteArray(values[i].x));
-                    result.write(",".getBytes());
+                    result.write(DocWriter.getISOBytes(","));
                     result.write(intToByteArray(values[i].y));
-                    result.write(")".getBytes());
+                    result.write(DocWriter.getISOBytes(")"));
                     if(i < values.length - 1) {
                         result.write(COMMA_DELIMITER);
                     }

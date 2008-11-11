@@ -75,18 +75,17 @@ public class XmpReader {
     /**
      * Constructs an XMP reader
      * @param	bytes	the XMP content
+     * @throws ExceptionConverter 
+     * @throws IOException 
+     * @throws SAXException 
      */
-	public XmpReader(byte[] bytes) {
-        try {
-            DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
-            fact.setNamespaceAware(true);
-            DocumentBuilder db = fact.newDocumentBuilder();
-            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-			domDocument = db.parse(bais);
-		} catch (SAXException e) {
-			throw new ExceptionConverter(e);
-		} catch (IOException e) {
-			throw new ExceptionConverter(e);
+	public XmpReader(byte[] bytes) throws SAXException, IOException {
+		try {
+	        DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+	        fact.setNamespaceAware(true);
+			DocumentBuilder db = fact.newDocumentBuilder();
+	        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+	        domDocument = db.parse(bais);
 		} catch (ParserConfigurationException e) {
 			throw new ExceptionConverter(e);
 		}
@@ -132,8 +131,15 @@ public class XmpReader {
 		XmlDomWriter xw = new XmlDomWriter();
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
         xw.setOutput(fout, null);
-        xw.setCanonical(false);
-        xw.write(domDocument);
+        Node first = domDocument.getFirstChild();
+        xw.write(first);
+        fout.write('\n');
+        xw.write(first.getNextSibling());
+        fout.flush();
+		for (int i = 0; i < 20; i++) {
+			fout.write(XmpWriter.EXTRASPACE.getBytes());
+		}
+        xw.write(domDocument.getLastChild());
         fout.close();
         return fout.toByteArray();
 	}

@@ -51,7 +51,7 @@ package com.lowagie.text.rtf.document;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 
@@ -67,11 +67,11 @@ public class RtfCodePage extends RtfElement implements RtfExtendedElement {
     /**
      * Constant for ansi encoded rtf documents
      */
-    private static final byte[] ANSI = "\\ansi".getBytes();
+    private static final byte[] ANSI = DocWriter.getISOBytes("\\ansi");
     /**
      * Constant for the ansi codepage
      */
-    private static final byte[] ANSI_CODEPAGE = "\\ansicpg".getBytes();
+    private static final byte[] ANSI_CODEPAGE = DocWriter.getISOBytes("\\ansicpg");
 
     /**
      * Construct an RtfCodePage

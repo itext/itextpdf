@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.lowagie.text.Chunk;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.document.RtfDocument;
 
@@ -125,7 +126,7 @@ public abstract class RtfAddableElement extends Chunk implements RtfBasicElement
      * @return A byte array representing the integer
      */
     public byte[] intToByteArray(int i) {
-        return Integer.toString(i).getBytes();
+        return DocWriter.getISOBytes(Integer.toString(i));
     }
     
     /**

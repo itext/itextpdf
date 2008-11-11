@@ -54,6 +54,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.xml.sax.SAXException;
+
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
@@ -154,7 +156,8 @@ class PdfStamperImp extends PdfWriter {
         if (flatFreeText)
         	flatFreeTextFields();
         addFieldResources();
-        PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM), reader.getCatalog());
+        PdfDictionary catalog = reader.getCatalog();
+        PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog());
         if (acroFields != null && acroFields.getXfa().isChanged()) {
             markUsed(acroForm);
             if (!flat)
@@ -164,14 +167,14 @@ class PdfStamperImp extends PdfWriter {
             if (acroForm != null) {
                 acroForm.put(PdfName.SIGFLAGS, new PdfNumber(sigFlags));
                 markUsed(acroForm);
+                markUsed(catalog);
             }
         }
         closed = true;
         addSharedObjectsToBody();
         setOutlines();
         setJavaScript();
-        addFileAttachments();
-        PdfDictionary catalog = reader.getCatalog();        	
+        addFileAttachments();    	
         if (openAction != null) {
             catalog.put(PdfName.OPENACTION, openAction);
         }
@@ -187,26 +190,35 @@ class PdfStamperImp extends PdfWriter {
         	altMetadata = xmpMetadata;
         }
         // if there is XMP data to add: add it
-        PdfString date = new PdfDate();
+        PdfDate date = new PdfDate();
         if (altMetadata != null) {
-        	XmpReader xmpr = new XmpReader(altMetadata);
-        	xmpr.replace("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.toString());
-        	xmpr.replace("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.toString());
-        	PdfStream xmp = new PdfStream(xmpr.serializeDoc());
+        	PdfStream xmp;
+        	try {
+        		XmpReader xmpr = new XmpReader(altMetadata);
+        		xmpr.replace("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate());
+        		xmpr.replace("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate());
+            	xmp = new PdfStream(xmpr.serializeDoc());
+        	}
+        	catch(SAXException e) {
+        		xmp = new PdfStream(altMetadata);
+        	}
+        	catch(IOException e) {
+        		xmp = new PdfStream(altMetadata);
+        	}
         	xmp.put(PdfName.TYPE, PdfName.METADATA);
         	xmp.put(PdfName.SUBTYPE, PdfName.XML);
-            if (crypto != null && !crypto.isMetadataEncrypted()) {
-                PdfArray ar = new PdfArray();
-                ar.add(PdfName.CRYPT);
-                xmp.put(PdfName.FILTER, ar);
-            }
-            if (append && xmpo != null) {
-            	body.add(xmp, xmpo.getIndRef());
-            }
-            else {
-            	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
-            	markUsed(catalog);
-            }
+        	if (crypto != null && !crypto.isMetadataEncrypted()) {
+        		PdfArray ar = new PdfArray();
+        		ar.add(PdfName.CRYPT);
+        		xmp.put(PdfName.FILTER, ar);
+        	}
+        	if (append && xmpo != null) {
+        		body.add(xmp, xmpo.getIndRef());
+        	}
+        	else {
+        		catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
+        		markUsed(catalog);
+        	}
         }
         if (!documentOCG.isEmpty()) {
         	fillOCProperties(false);

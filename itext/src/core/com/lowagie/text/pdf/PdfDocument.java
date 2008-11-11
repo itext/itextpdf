@@ -266,13 +266,17 @@ public class PdfDocument extends Document {
                         Map.Entry entry = (Map.Entry) i.next();
                         String name = (String) entry.getKey();
                         Object obj[] = (Object[]) entry.getValue();
+                        if (obj[2] == null) //no destination
+                            continue;
                         PdfIndirectReference ref = (PdfIndirectReference)obj[1];
                         ar.add(new PdfString(name, null));
                         ar.add(ref);
                     }
-                    PdfDictionary dests = new PdfDictionary();
-                    dests.put(PdfName.NAMES, ar);
-                    names.put(PdfName.DESTS, writer.addToBody(dests).getIndirectReference());
+                    if (ar.size() > 0) {
+                        PdfDictionary dests = new PdfDictionary();
+                        dests.put(PdfName.NAMES, ar);
+                        names.put(PdfName.DESTS, writer.addToBody(dests).getIndirectReference());
+                    }
                 }
                 if (!documentLevelJS.isEmpty()) {
                     PdfDictionary tree = PdfNameTree.writeTree(documentLevelJS, writer);
@@ -281,7 +285,8 @@ public class PdfDocument extends Document {
                 if (!documentFileAttachment.isEmpty()) {
                     names.put(PdfName.EMBEDDEDFILES, writer.addToBody(PdfNameTree.writeTree(documentFileAttachment, writer)).getIndirectReference());
                 }
-                put(PdfName.NAMES, writer.addToBody(names).getIndirectReference());
+                if (names.size() > 0)
+                    put(PdfName.NAMES, writer.addToBody(names).getIndirectReference());
             }
             catch (IOException e) {
                 throw new ExceptionConverter(e);
@@ -314,7 +319,6 @@ public class PdfDocument extends Document {
     
     /**
      * Constructs a new PDF document.
-     * @throws DocumentException on error
      */
     public PdfDocument() {
         super();
@@ -833,7 +837,6 @@ public class PdfDocument extends Document {
      * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
      *
      * @return a <CODE>boolean</CODE>
-     * @throws DocumentException on error
      */ 
     public boolean newPage() {
         lastElementType = -1;
@@ -1196,7 +1199,6 @@ public class PdfDocument extends Document {
     /**
      * If the current line is not empty or null, it is added to the arraylist
      * of lines and a new empty line is added.
-     * @throws DocumentException on error
      */  
     protected void carriageReturn() {
         // the arraylist with lines may not be null

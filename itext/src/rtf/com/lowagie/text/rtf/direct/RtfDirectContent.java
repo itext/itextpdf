@@ -51,6 +51,7 @@ package com.lowagie.text.rtf.direct;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfAddableElement;
 
 /**
@@ -96,7 +97,7 @@ public class RtfDirectContent extends RtfAddableElement {
      */    
     public void writeContent(final OutputStream out) throws IOException
     {
-    	final byte[] contentBytes = this.directContent.getBytes();
+    	final byte[] contentBytes = DocWriter.getISOBytes(this.directContent);
    		out.write(contentBytes);
     }        
 }

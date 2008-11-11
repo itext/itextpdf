@@ -103,7 +103,9 @@ public class DublinCoreSchema extends XmpSchema {
 	 * @param title
 	 */
 	public void addTitle(String title) {
-		setProperty(TITLE, title);
+		XmpArray array = new XmpArray(XmpArray.ALTERNATIVE);
+		array.add(title);
+		setProperty(TITLE, array);
 	}
 
 	/**
@@ -111,7 +113,9 @@ public class DublinCoreSchema extends XmpSchema {
 	 * @param desc
 	 */
 	public void addDescription(String desc) {
-		setProperty(DESCRIPTION, desc);
+		XmpArray array = new XmpArray(XmpArray.ALTERNATIVE);
+		array.add(desc);
+		setProperty(DESCRIPTION, array);
 	}
 
 	/**

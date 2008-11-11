@@ -1,7 +1,5 @@
 /*
- * $Id$
- *
- * Copyright 2004 by Mark Hall
+ * Copyright 2008 by Kevin Day.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -14,16 +12,16 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2008 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2008 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -46,78 +44,73 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.text.pdf;
 
-package com.lowagie.text.rtf.field;
-
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
-import com.lowagie.text.Anchor;
-import com.lowagie.text.DocWriter;
-import com.lowagie.text.rtf.document.RtfDocument;
-import com.lowagie.text.rtf.text.RtfPhrase;
-
+import com.lowagie.text.pdf.fonts.cmaps.CMap;
+import com.lowagie.text.pdf.fonts.cmaps.CMapParser;
 
 /**
- * The RtfAnchor is the RTF representation of an Anchor object.
- * 
- * @version $Id$
- * @author Mark Hall (Mark.Hall@mail.room3b.eu)
- * @author Werner Daehn (Werner.Daehn@BusinessObjects.com)
- * @author Thomas Bickel (tmb99@inode.at)
+ * Implementation of DocumentFont used while parsing PDF streams.
+ * @since 2.1.4
  */
-public class RtfAnchor extends RtfField 
-{
-    /**
-     * Constant for a hyperlink
-     */
-    private static final byte[] HYPERLINK = DocWriter.getISOBytes("HYPERLINK");
+public class CMapAwareDocumentFont extends DocumentFont {
+
+	/** The font dictionary. */
+    private PdfDictionary fontDic;
+    /** CMap instance. */
+    private CMap cmap;
     
     /**
-     * The url of this RtfAnchor
+     * Creates an instance of a CMapAwareFont based on an indirect reference to a font.
+     * @param refFont	the indirect reference to a font
      */
-    private String url = "";
-    /**
-     * The RtfPhrase to display for the url
-     */
-    private RtfPhrase content = null;
+    public CMapAwareDocumentFont(PRIndirectReference refFont) {
+        super(refFont);
+        fontDic = (PdfDictionary)PdfReader.getPdfObjectRelease(refFont);
+        processToUni();
+    }
 
     /**
-     * Constructs a RtfAnchor based on a RtfField
-     * 
-     * @param doc The RtfDocument this RtfAnchor belongs to
-     * @param anchor The Anchor this RtfAnchor is based on
+     * Does some processing if the font dictionary indicates that the font is in unicode.
      */
-    public RtfAnchor(RtfDocument doc, Anchor anchor) {
-        super(doc);
-        this.url = anchor.getReference();
-        this.content = new RtfPhrase(doc, anchor);
+    private void processToUni(){
+        
+        PdfObject toUni = fontDic.get(PdfName.TOUNICODE);
+
+        if (toUni == null)
+            return;
+        
+        try {
+            byte[] cmapBytes = PdfReader.getStreamBytes((PRStream)PdfReader.getPdfObjectRelease(toUni));
+            CMapParser cmapParser = new CMapParser();
+            cmap = cmapParser.parse(new ByteArrayInputStream(cmapBytes));
+        } catch (IOException e) {
+            throw new Error("Unable to obtain cmap - " + e.getMessage(), e);
+        }
+
     }
     
     /**
-     * Write the field instructions for this RtfAnchor. Sets the field
-     * type to HYPERLINK and then writes the url.
-     *
-     * @param result The <code>OutputStream</code> to write to.
-     * @throws IOException on i/o errors.
+     * Encodes bytes to a String.
+     * @param bytes		the bytes from a stream
+     * @param offset	an offset
+     * @param len		a length
+     * @return	a String encoded taking into account if the bytes are in unicode or not.
      */
-    protected void writeFieldInstContent(OutputStream result) throws IOException 
-    {
-        result.write(HYPERLINK);
-        result.write(DELIMITER);
-        this.document.filterSpecialChar(result, url, true, true);
+    public String encode(byte[] bytes, int offset, int len){
+            if (cmap != null){
+                if (len > bytes.length)
+                    System.out.println("Length problem...");
+                return cmap.lookup(bytes, offset, len);
+            }
+        
+            if (len == 1)
+                return new String(bytes, offset, 1);
+            
+            throw new Error("Multi-byte glyphs not implemented yet");
     }
-    
-    /**
-     * Write the field result for this RtfAnchor. Writes the content
-     * of the RtfPhrase.
-     * 
-     * @param result The <code>OutputStream</code> to write to.
-     * @throws IOException on i/o errors.
-     */
-    protected void writeFieldResultContent(OutputStream result) throws IOException 
-    {
-        content.writeContent(result);
-    }
-    
+
 }

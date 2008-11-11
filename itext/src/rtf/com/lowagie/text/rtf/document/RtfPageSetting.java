@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.document;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.rtf.RtfElement;
@@ -71,55 +72,55 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
     /**
      * Constant for the page height
      */
-    private static final byte[] PAGE_WIDTH = "\\paperw".getBytes();
+    private static final byte[] PAGE_WIDTH = DocWriter.getISOBytes("\\paperw");
     /**
      * Constant for the page width
      */
-    private static final byte[] PAGE_HEIGHT = "\\paperh".getBytes();
+    private static final byte[] PAGE_HEIGHT = DocWriter.getISOBytes("\\paperh");
     /**
      * Constant for the left margin
      */
-    private static final byte[] MARGIN_LEFT = "\\margl".getBytes();
+    private static final byte[] MARGIN_LEFT = DocWriter.getISOBytes("\\margl");
     /**
      * Constant for the right margin
      */
-    private static final byte[] MARGIN_RIGHT = "\\margr".getBytes();
+    private static final byte[] MARGIN_RIGHT = DocWriter.getISOBytes("\\margr");
     /**
      * Constant for the top margin
      */
-    private static final byte[] MARGIN_TOP = "\\margt".getBytes();
+    private static final byte[] MARGIN_TOP = DocWriter.getISOBytes("\\margt");
     /**
      * Constant for the bottom margin
      */
-    private static final byte[] MARGIN_BOTTOM = "\\margb".getBytes();
+    private static final byte[] MARGIN_BOTTOM = DocWriter.getISOBytes("\\margb");
     /**
      * Constant for landscape
      */
-    private static final byte[] LANDSCAPE = "\\lndscpsxn".getBytes();
+    private static final byte[] LANDSCAPE = DocWriter.getISOBytes("\\lndscpsxn");
     /**
      * Constant for the section page width
      */
-    private static final byte[] SECTION_PAGE_WIDTH = "\\pgwsxn".getBytes();
+    private static final byte[] SECTION_PAGE_WIDTH = DocWriter.getISOBytes("\\pgwsxn");
     /**
      * Constant for the section page height
      */
-    private static final byte[] SECTION_PAGE_HEIGHT = "\\pghsxn".getBytes();
+    private static final byte[] SECTION_PAGE_HEIGHT = DocWriter.getISOBytes("\\pghsxn");
     /**
      * Constant for the section left margin
      */
-    private static final byte[] SECTION_MARGIN_LEFT = "\\marglsxn".getBytes();
+    private static final byte[] SECTION_MARGIN_LEFT = DocWriter.getISOBytes("\\marglsxn");
     /**
      * Constant for the section right margin
      */
-    private static final byte[] SECTION_MARGIN_RIGHT = "\\margrsxn".getBytes();
+    private static final byte[] SECTION_MARGIN_RIGHT = DocWriter.getISOBytes("\\margrsxn");
     /**
      * Constant for the section top margin
      */
-    private static final byte[] SECTION_MARGIN_TOP = "\\margtsxn".getBytes();
+    private static final byte[] SECTION_MARGIN_TOP = DocWriter.getISOBytes("\\margtsxn");
     /**
      * Constant for the section bottom margin
      */
-    private static final byte[] SECTION_MARGIN_BOTTOM = "\\margbsxn".getBytes();
+    private static final byte[] SECTION_MARGIN_BOTTOM = DocWriter.getISOBytes("\\margbsxn");
     
     /**
      * The page width to use

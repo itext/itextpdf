@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -69,20 +70,20 @@ public class RtfListTable extends RtfElement implements RtfExtendedElement {
     /**
      * Constant for the list table
      */
-    private static final byte[] LIST_TABLE = "\\*\\listtable".getBytes();
+    private static final byte[] LIST_TABLE = DocWriter.getISOBytes("\\*\\listtable");
 
     /**
      * Constant for the list override table
      */
-    private static final byte[] LIST_OVERRIDE_TABLE = "\\*\\listoverridetable".getBytes();
+    private static final byte[] LIST_OVERRIDE_TABLE = DocWriter.getISOBytes("\\*\\listoverridetable");
     /**
      * Constant for the list override
      */
-    private static final byte[] LIST_OVERRIDE = "\\listoverride".getBytes();
+    private static final byte[] LIST_OVERRIDE = DocWriter.getISOBytes("\\listoverride");
     /**
      * Constant for the list override count
      */
-    private static final byte[] LIST_OVERRIDE_COUNT = "\\listoverridecount".getBytes();
+    private static final byte[] LIST_OVERRIDE_COUNT = DocWriter.getISOBytes("\\listoverridecount");
     
 
     /**

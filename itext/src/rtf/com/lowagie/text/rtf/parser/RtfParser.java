@@ -62,6 +62,7 @@ import java.util.Stack;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
 import com.lowagie.text.List;
 import com.lowagie.text.rtf.direct.RtfDirectContent;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -91,6 +92,11 @@ public class RtfParser {
 	private boolean logging = false;
 	private boolean logAppend = false;
 	
+	/**
+	 * The iText element to add the RTF document to.
+	 * @since 2.1.3
+	 */
+	private Element elem = null;
 	/**
 	 * The iText document to add the RTF document to.
 	 */
@@ -258,7 +264,7 @@ public class RtfParser {
 	/**
 	 * Currently a blipuid control word is being parsed.
 	 */
-	public static final int PARSER_IN_BLIPUID = PARSER_IN_DOCUMENT | 0x000013; //18
+	public static final int PARSER_IN_BLIPUID = PARSER_IN_DOCUMENT | 0x000013; //19
 
 	/* other states */
 	/**
@@ -298,6 +304,11 @@ public class RtfParser {
 	 * all the elements making it a different supported documents depending on the writer used.
 	 */
 	public static final int TYPE_CONVERT = 2;
+	/**
+	 * Conversion type to import a document into an element. i.e. Chapter, Section, Table Cell, etc.
+	 * @since 2.1.4
+	 */
+	public static final int TYPE_IMPORT_INTO_ELEMENT = 3;
 
 	
 	/**
@@ -449,7 +460,12 @@ public class RtfParser {
 	
 	/** The <code>RtfCtrlWordListener</code>. */
     private ArrayList listeners = new ArrayList();
-
+    
+	/**
+	 * Constructor 
+	 * @param doc
+	 * @since 2.1.3
+	 */
     public RtfParser(Document doc) {
     	this.document = doc;
     }
@@ -464,10 +480,11 @@ public class RtfParser {
 	 * @param rtfDoc 
 	 * 		The RtfDocument to add the imported document to.
 	 * @throws IOException On I/O errors.
+	 *  @since 2.1.3
 	 */
 	public void importRtfDocument(InputStream readerIn, RtfDocument rtfDoc) throws IOException {
 		if(readerIn == null || rtfDoc == null) return;
-		this.init(TYPE_IMPORT_FULL, rtfDoc, readerIn, this.document);
+		this.init(TYPE_IMPORT_FULL, rtfDoc, readerIn, this.document, null);
 		this.setCurrentDestination(RtfDestinationMgr.DESTINATION_NULL);
 		startDate = new Date();
 		startTime = System.currentTimeMillis();
@@ -485,7 +502,37 @@ public class RtfParser {
 		endTime = System.currentTimeMillis();
 		endDate = new Date();
 	}
-	
+	/**
+	 * Imports a complete RTF document into an Element, i.e. Chapter, section, Table Cell, etc.
+	 * 
+	 * @param elem The Element the document is to be imported into.
+	 * @param readerIn 
+	 * 		The Reader to read the RTF document from.
+	 * @param rtfDoc 
+	 * 		The RtfDocument to add the imported document to.
+	 * @throws IOException On I/O errors.
+	 * @since 2.1.4
+	 */
+	public void importRtfDocumentIntoElement(Element elem, InputStream readerIn, RtfDocument rtfDoc) throws IOException {
+		if(readerIn == null || rtfDoc == null || elem == null) return;
+		this.init(TYPE_IMPORT_INTO_ELEMENT, rtfDoc, readerIn, this.document, elem);
+		this.setCurrentDestination(RtfDestinationMgr.DESTINATION_NULL);
+		startDate = new Date();
+		startTime = System.currentTimeMillis();
+		this.groupLevel = 0;
+		try {
+			this.tokenise();
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		endTime = System.currentTimeMillis();
+		endDate = new Date();
+	}
 	/**
 	 * Converts an RTF document to an iText document.
 	 * 
@@ -497,10 +544,11 @@ public class RtfParser {
 	 * 		The iText document that the RTF file is to be added to.
 	 * @throws IOException 
 	 * 		On I/O errors.
+	 *  @since 2.1.3
 	 */
 	public void convertRtfDocument(InputStream readerIn, Document doc) throws IOException {
 		if(readerIn == null || doc == null) return;
-		this.init(TYPE_CONVERT, null, readerIn, doc);
+		this.init(TYPE_CONVERT, null, readerIn, doc, null);
 		this.setCurrentDestination(RtfDestinationMgr.DESTINATION_DOCUMENT);
 		startDate = new Date();
 		startTime = System.currentTimeMillis();
@@ -521,11 +569,12 @@ public class RtfParser {
 	 * 		The RtfImportMappings defining font and color mappings for the fragment.
 	 * @throws IOException 
 	 * 		On I/O errors.
+	 *   @since 2.1.3
 	 */
 	public void importRtfFragment(InputStream readerIn, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException {
 	//public void importRtfFragment2(Reader readerIn, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException {
 		if(readerIn == null || rtfDoc == null || importMappings==null) return;
-		this.init(TYPE_IMPORT_FRAGMENT, rtfDoc, readerIn, null);
+		this.init(TYPE_IMPORT_FRAGMENT, rtfDoc, readerIn, null, null);
 		this.handleImportMappings(importMappings);
 		this.setCurrentDestination(RtfDestinationMgr.DESTINATION_DOCUMENT);
 		this.groupLevel = 1;
@@ -544,6 +593,7 @@ public class RtfParser {
 	 *
 	 * @param listener
 	 *            the new EventListener.
+	 * @since 2.1.3
 	 */
 	public void addListener(EventListener listener) {
 		listeners.add(listener);
@@ -554,6 +604,7 @@ public class RtfParser {
 	 *
 	 * @param listener
 	 *            the EventListener that has to be removed.
+	 *  @since 2.1.3
 	 */
 	public void removeListener(EventListener listener) {
 		listeners.remove(listener);
@@ -566,8 +617,9 @@ public class RtfParser {
 	 * @param rtfDoc The <code>RtfDocument</code>
 	 * @param readerIn The input stream
 	 * @param doc The iText <code>Document</code>
+	 *   @since 2.1.3
 	 */
-	private void init(int type, RtfDocument rtfDoc, InputStream readerIn, Document doc) {
+	private void init(int type, RtfDocument rtfDoc, InputStream readerIn, Document doc, Element elem) {
 
 		init_stats();
 		// initialize reader to a PushbackReader
@@ -576,6 +628,7 @@ public class RtfParser {
 		this.conversionType = type;
 		this.rtfDoc = rtfDoc;
 		this.document = doc;
+		this.elem = elem;
 		this.currentState = new RtfParserState();
 		this.stackState = new Stack();
 		this.setParserState(PARSER_STARTSTOP);
@@ -699,6 +752,7 @@ public class RtfParser {
 	}
 	/**
 	 * Initialize the statistics values.
+	 * @since 2.1.3
 	 */
 	protected void init_stats() {
 		byteCount = 0;
@@ -725,6 +779,7 @@ public class RtfParser {
 	 * 		The Reader object for the input file.
 	 * @return
 	 * 		PushbackReader object
+	 * @since 2.1.3
 	 */
 	private PushbackInputStream init_Reader(InputStream readerIn) {
 //		Reader newReader = readerIn;
@@ -757,6 +812,7 @@ public class RtfParser {
 	 * 
 	 * @param importMappings 
 	 * 		The RtfImportMappings to import.
+	 * @since 2.1.3
 	 */
 	private void handleImportMappings(RtfImportMappings importMappings) {
 		Iterator it = importMappings.getFontMappings().keySet().iterator();
@@ -798,6 +854,7 @@ public class RtfParser {
 	 * Handles open group tokens. ({)
 	 * 
 	 * @return errOK if ok, other if an error occurred.
+	 * @since 2.1.3
 	 */
 	public int handleOpenGroup() {
 		int result = errOK;
@@ -869,7 +926,8 @@ public class RtfParser {
 	/**
 	 * Handles close group tokens. (})
 	 * 
-	 * @return errOK if ok, other if an error occurred. 
+	 * @return errOK if ok, other if an error occurred.
+	 * @since 2.1.3
 	 */
 	public int handleCloseGroup() {
 		int result = errOK;
@@ -921,6 +979,7 @@ public class RtfParser {
 	 * 
 	 * @param ctrlWordData The control word to handle.
 	 * @return errOK if ok, other if an error occurred.
+	 * @since 2.1.3
 	 */
 	public int handleCtrlWord(RtfCtrlWordData ctrlWordData) {
 		int result = errOK;
@@ -963,6 +1022,7 @@ public class RtfParser {
 	 * @param nextChar
 	 * 		The text token to handle.
 	 * @return errOK if ok, other if an error occurred. 
+	 * @since 2.1.3
 	 */
 //	public int handleCharacter(char[] nextChar) {		
 	public int handleCharacter(int nextChar) {		
@@ -987,6 +1047,7 @@ public class RtfParser {
 	 *
 	 * @return
 	 * 		The current RtfParserState state object.
+	 * @since 2.1.3
 	 */
 	public RtfParserState getState(){
 		return this.currentState;
@@ -997,6 +1058,7 @@ public class RtfParser {
 	 * 
 	 * @return 
 	 * 		The current state of the parser.
+	 * @since 2.1.3
 	 */
 	public int getParserState(){
 		return this.currentState.parserState;
@@ -1009,6 +1071,7 @@ public class RtfParser {
 	 * 		The new state for the parser
 	 * @return
 	 * 		The state of the parser.
+	 * @since 2.1.3
 	 */
 	public int setParserState(int newState){
 		this.currentState.parserState = newState;
@@ -1020,6 +1083,7 @@ public class RtfParser {
 	 * 
 	 * @return
 	 * 		The type of the conversion. Import or Convert.
+	 * @since 2.1.3
 	 */
 	public int getConversionType() {
 		return this.conversionType;
@@ -1029,6 +1093,7 @@ public class RtfParser {
 	 * Get the RTF Document object.
 	 * @return
 	 * 		Returns the object rtfDoc.
+	 * @since 2.1.3
 	 */
 	public RtfDocument getRtfDocument() {
 		return this.rtfDoc;
@@ -1038,6 +1103,7 @@ public class RtfParser {
 	 * Get the Document object.
 	 * @return
 	 * 		Returns the object rtfDoc.
+	 * @since 2.1.3
 	 */
 	public Document getDocument() {
 		return this.document;
@@ -1047,6 +1113,7 @@ public class RtfParser {
 	 * Get the RtfImportHeader object.
 	 * @return
 	 * 		Returns the object importHeader.
+	 * @since 2.1.3
 	 */
 	public RtfImportMgr getImportManager() {
 		return importMgr;
@@ -1058,6 +1125,7 @@ public class RtfParser {
 	/**
 	 * Set the current destination object for the current state.
 	 * @param destination The destination value to set.
+	 * @since 2.1.3
 	 */
 	public boolean setCurrentDestination(String destination) {
 			RtfDestination dest = RtfDestinationMgr.getDestination(destination);
@@ -1073,6 +1141,7 @@ public class RtfParser {
 	 * Get the current destination object.
 	 * 
 	 * @return The current state destination
+	 * @since 2.1.3
 	 */
 	public RtfDestination getCurrentDestination() {
 		return this.currentState.destination;
@@ -1082,6 +1151,7 @@ public class RtfParser {
 	 * 
 	 * @param destination The string destination.
 	 * @return The destination object from the map
+	 * @since 2.1.3
 	 */
 	public RtfDestination getDestination(String destination) {
 		return RtfDestinationMgr.getDestination(destination);
@@ -1091,6 +1161,7 @@ public class RtfParser {
 	 * Helper method to determine if this is a new group.
 	 * 
 	 * @return true if this is a new group, otherwise it returns false.
+	 * @since 2.1.3
 	 */
 	public boolean isNewGroup() {
 		return this.currentState.newGroup;
@@ -1099,6 +1170,7 @@ public class RtfParser {
 	 * Helper method to set the new group flag
 	 * @param value The boolean value to set the flag
 	 * @return The value of newGroup
+	 * @since 2.1.3
 	 */
 	public boolean setNewGroup(boolean value) {
 		this.currentState.newGroup = value;
@@ -1113,6 +1185,7 @@ public class RtfParser {
 	 * Read through the input file and parse the data stream into tokens.
 	 * 
 	 * @throws IOException on IO error.
+	 * @since 2.1.3
 	 */	
 	public void tokenise() throws IOException {
 		int errorCode = errOK;	// error code
@@ -1197,8 +1270,8 @@ public class RtfParser {
 	 * 		The character to process
 	 * @return
 	 * 		Returns an error code or errOK if no error.
+	 * @since 2.1.3
 	 */
-//	private int parseChar(char[] ch) {
 	private int parseChar(int nextChar) {
 		// figure out where to put the character
 		// needs to handle group levels for parsing
@@ -1226,15 +1299,14 @@ public class RtfParser {
 	 * 		Returns an error code or errOK if no error.
 	 * @throws IOException
 	 * 		Catch any file read problem.
+	 * @since 2.1.3
 	 */
 	private int parseCtrlWord(PushbackInputStream reader) throws IOException {
-//		char[] nextChar = new char[1];
 		int nextChar = 0;
 		int result = errOK;
 		
-//		if(reader.read(nextChar) == -1) {
 		if((nextChar = reader.read()) == -1) {
-				return errEndOfFile;
+			return errEndOfFile;
 		}
 		this.byteCount++;
 
@@ -1242,9 +1314,7 @@ public class RtfParser {
 		StringBuffer parsedParam= new StringBuffer();
 		RtfCtrlWordData ctrlWordParam = new RtfCtrlWordData();
 		
-//		if(!Character.isLetterOrDigit(nextChar[0])) {
 		if(!Character.isLetterOrDigit((char)nextChar)) {
-//			parsedCtrlWord.append(nextChar[0]);
 			parsedCtrlWord.append((char)nextChar);
 			ctrlWordParam.ctrlWord = parsedCtrlWord.toString();
 			result =  this.handleCtrlWord(ctrlWordParam);
@@ -1252,53 +1322,38 @@ public class RtfParser {
 			return result;
 		}
 		
-//		for( ; Character.isLetter(nextChar[0]); reader.read(nextChar) ) {
-//			parsedCtrlWord.append(nextChar[0]);
-//		}
 		do {
-//			parsedCtrlWord.append(nextChar[0]);
 			parsedCtrlWord.append((char)nextChar);
 			//TODO: catch EOF
-//			reader.read(nextChar);
 			nextChar = reader.read();
 			this.byteCount++;
-//		} while  (Character.isLetter(nextChar[0]));
 		} while  (Character.isLetter((char)nextChar));
 		
 		ctrlWordParam.ctrlWord = parsedCtrlWord.toString();
 
-//		if(nextChar[0] == '-') {
 		if(nextChar == '-') {
 			ctrlWordParam.isNeg = true;
-//			if(reader.read(nextChar) == -1) {
 			if((nextChar = reader.read()) == -1) {
 					return errEndOfFile;
 			}
 			this.byteCount++;
 		}
 		
-//		if(Character.isDigit(nextChar[0])) {
+
 		if(Character.isDigit((char)nextChar)) {
 			ctrlWordParam.hasParam = true;
-//			for( ; Character.isDigit(nextChar[0]); reader.read(nextChar) ) {
-//				parsedParam.append(nextChar[0]);
-//			}
 			do {
-//				parsedParam.append(nextChar[0]);
 				parsedParam.append((char)nextChar);
 				//TODO: catch EOF
-//				reader.read(nextChar);
 				nextChar = reader.read();
 				this.byteCount++;
-//				} while  (Character.isDigit(nextChar[0]));
 				} while  (Character.isDigit((char)nextChar));
 						
 			ctrlWordParam.param = parsedParam.toString();
 		}
 		
 		// push this character back into the stream
-//		if(nextChar[0] != ' ') { // || this.isImport() ) {
-		if(nextChar != ' ') { // || this.isImport() ) {
+		if(nextChar != ' ') { 
 			reader.unread(nextChar);
 		}
 		
@@ -1307,9 +1362,9 @@ public class RtfParser {
 	//	    if(ctrlWordParam.ctrlWord.equals("proptype") && ctrlWordParam.param.equals("30")) {
 	//	    	System.out.print("Debug value found\n");
 	//	    }
-	//	    if(ctrlWordParam.ctrlWord.equals("panose") ) {
-	//	    	System.out.print("Debug value found\n");
-	//	    }
+//		    if(ctrlWordParam.ctrlWord.equals("cf") ) {
+//		    	System.out.print("Debug value found\n");
+//		    }
 	    }
 	    
 		result = this.handleCtrlWord(ctrlWordParam);
@@ -1322,6 +1377,7 @@ public class RtfParser {
 	 * Set the current state of the tokeniser.
 	 * @param value The new state of the tokeniser.
 	 * @return The state of the tokeniser.
+	 * @since 2.1.3
 	 */
 	public int setTokeniserState(int value) {
 		this.currentState.tokeniserState = value;
@@ -1331,6 +1387,7 @@ public class RtfParser {
 	/**
 	 * Get the current state of the tokeniser.
 	 * @return The current state of the tokeniser.
+	 * @since 2.1.3
 	 */
 	public int getTokeniserState() {
 		return this.currentState.tokeniserState;
@@ -1341,6 +1398,7 @@ public class RtfParser {
 	 * 
 	 * @return
 	 * 		The current group level value.
+	 * @since 2.1.3
 	 */
 	public int getLevel() {
 		return this.groupLevel;
@@ -1350,6 +1408,7 @@ public class RtfParser {
 	/**
 	 * Set the tokeniser state to skip to the end of the group.
 	 * Sets the state to TOKENISER_SKIP_GROUP and skipGroupLevel to the current group level.
+	 * @since 2.1.3
 	 */
 	public void setTokeniserStateNormal() {
 		this.setTokeniserState(TOKENISER_NORMAL);
@@ -1358,6 +1417,7 @@ public class RtfParser {
 	/**
 	 * Set the tokeniser state to skip to the end of the group.
 	 * Sets the state to TOKENISER_SKIP_GROUP and skipGroupLevel to the current group level.
+	 * @since 2.1.3
 	 */
 	public void setTokeniserStateSkipGroup() {
 		this.setTokeniserState(TOKENISER_SKIP_GROUP);
@@ -1369,6 +1429,7 @@ public class RtfParser {
 	 * 
 	 * @param numberOfBytesToSkip
 	 * 			The numbere of bytes to skip in the file.
+	 * @since 2.1.3
 	 */
 	public void setTokeniserSkipBytes(long numberOfBytesToSkip) {
 		this.setTokeniserState(TOKENISER_SKIP_BYTES);
@@ -1380,6 +1441,7 @@ public class RtfParser {
 	 * 
 	 * @param binaryCount
 	 * 			The number of binary bytes.
+	 * @since 2.1.3
 	 */
 	public void setTokeniserStateBinary(int binaryCount) {
 		this.setTokeniserState(TOKENISER_BINARY);
@@ -1390,6 +1452,7 @@ public class RtfParser {
 	 * 
 	 * @param binaryCount
 	 * 			The number of binary bytes.
+	 * @since 2.1.3
 	 */
 	public void setTokeniserStateBinary(long binaryCount) {
 		this.setTokeniserState(TOKENISER_BINARY);
@@ -1399,6 +1462,7 @@ public class RtfParser {
 	 * Helper method to determin if conversion is TYPE_CONVERT
 	 * @return true if TYPE_CONVERT, otherwise false
 	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_CONVERT
+	 * @since 2.1.3
 	 */
 	public boolean isConvert() {
 		return (this.getConversionType() == RtfParser.TYPE_CONVERT);
@@ -1409,6 +1473,7 @@ public class RtfParser {
 	 * @return true if TYPE_CONVERT, otherwise false
 	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_IMPORT_FULL
 	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_IMPORT_FRAGMENT
+	 * @since 2.1.3
 	 */
 	public boolean isImport() {
 		return (isImportFull() || this.isImportFragment());
@@ -1417,6 +1482,7 @@ public class RtfParser {
 	 * Helper method to determin if conversion is TYPE_IMPORT_FULL
 	 * @return true if TYPE_CONVERT, otherwise false
 	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_IMPORT_FULL
+	 * @since 2.1.3
 	 */
 	public boolean isImportFull() {
 		return (this.getConversionType() == RtfParser.TYPE_IMPORT_FULL);
@@ -1425,6 +1491,7 @@ public class RtfParser {
 	 * Helper method to determin if conversion is TYPE_IMPORT_FRAGMENT
 	 * @return true if TYPE_CONVERT, otherwise false
 	 * @see com.lowagie.text.rtf.parser.RtfParser#TYPE_IMPORT_FRAGMENT
+	 * @since 2.1.3
 	 */
 	public boolean isImportFragment() {
 		return (this.getConversionType() == RtfParser.TYPE_IMPORT_FRAGMENT);
@@ -1432,6 +1499,7 @@ public class RtfParser {
 	/**
 	 * Helper method to indicate if this control word was a \* control word.
 	 * @return true if it was a \* control word, otherwise false
+	 * @since 2.1.3
 	 */
 	public boolean getExtendedDestination() {
 		return this.currentState.isExtendedDestination;
@@ -1440,6 +1508,7 @@ public class RtfParser {
 	 * Helper method to set the extended control word flag.
 	 * @param value Boolean to set the value to.
 	 * @return isExtendedDestination.
+	 * @since 2.1.3
 	 */
 	public boolean setExtendedDestination(boolean value) {
 		this.currentState.isExtendedDestination = value;
@@ -1450,6 +1519,7 @@ public class RtfParser {
 	 * Get the logfile name.
 	 * 
 	 * @return the logFile
+	 * @since 2.1.3
 	 */
 	public String getLogFile() {
 		return logFile;
@@ -1459,6 +1529,7 @@ public class RtfParser {
 	 * Set the logFile name
 	 * 
 	 * @param logFile the logFile to set
+	 * @since 2.1.3
 	 */
 	public void setLogFile(String logFile) {
 		this.logFile = logFile;
@@ -1467,6 +1538,7 @@ public class RtfParser {
 	 * Set the logFile name
 	 * 
 	 * @param logFile the logFile to set
+	 * @since 2.1.3
 	 */
 	public void setLogFile(String logFile, boolean logAppend) {
 		this.logFile = logFile;
@@ -1477,6 +1549,7 @@ public class RtfParser {
 	 * Get flag indicating if logging is on or off.
 	 * 
 	 * @return the logging
+	 * @since 2.1.3
 	 */
 	public boolean isLogging() {
 		return logging;
@@ -1485,6 +1558,7 @@ public class RtfParser {
 	/**
 	 * Set flag indicating if logging is on or off
 	 * @param logging <code>true</code> to turn on logging, <code>false</code> to turn off logging.
+	 * @since 2.1.3
 	 */
 	public void setLogging(boolean logging) {
 		this.logging = logging;
@@ -1492,6 +1566,7 @@ public class RtfParser {
 
 	/**
 	 * @return the logAppend
+	 * @since 2.1.3
 	 */
 	public boolean isLogAppend() {
 		return logAppend;
@@ -1499,6 +1574,7 @@ public class RtfParser {
 
 	/**
 	 * @param logAppend the logAppend to set
+	 * @since 2.1.3
 	 */
 	public void setLogAppend(boolean logAppend) {
 		this.logAppend = logAppend;

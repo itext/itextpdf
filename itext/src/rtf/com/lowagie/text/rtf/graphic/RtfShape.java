@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfAddableElement;
 
 /**
@@ -210,6 +211,7 @@ public class RtfShape extends RtfAddableElement {
      * @param property The property to set for this RtfShape.
      */
 	public void setProperty(RtfShapeProperty property) {
+		property.setRtfDocument(this.doc);
         this.properties.put(property.getName(), property);
     }
     
@@ -254,71 +256,72 @@ public class RtfShape extends RtfAddableElement {
 		}
     	
     	result.write(OPEN_GROUP);
-    	result.write("\\shp".getBytes());
-    	result.write("\\shplid".getBytes());
+    	result.write(DocWriter.getISOBytes("\\shp"));
+    	result.write(DocWriter.getISOBytes("\\shplid"));
     	result.write(intToByteArray(this.shapeNr));
     	this.position.writeContent(result);
     	switch(this.wrapping) {
     	case SHAPE_WRAP_NONE:
-    		result.write("\\shpwr3".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr3"));
     		break;
     	case SHAPE_WRAP_TOP_BOTTOM:
-    		result.write("\\shpwr1".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr1"));
     		break;
     	case SHAPE_WRAP_BOTH:
-    		result.write("\\shpwr2".getBytes());
-    		result.write("\\shpwrk0".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr2"));
+    		result.write(DocWriter.getISOBytes("\\shpwrk0"));
     		break;
     	case SHAPE_WRAP_LEFT:
-    		result.write("\\shpwr2".getBytes());
-    		result.write("\\shpwrk1".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr2"));
+    		result.write(DocWriter.getISOBytes("\\shpwrk1"));
     		break;
     	case SHAPE_WRAP_RIGHT:
-    		result.write("\\shpwr2".getBytes());
-    		result.write("\\shpwrk2".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr2"));
+    		result.write(DocWriter.getISOBytes("\\shpwrk2"));
     		break;
     	case SHAPE_WRAP_LARGEST:
-    		result.write("\\shpwr2".getBytes());
-    		result.write("\\shpwrk3".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr2"));
+    		result.write(DocWriter.getISOBytes("\\shpwrk3"));
     		break;
     	case SHAPE_WRAP_TIGHT_BOTH:
-    		result.write("\\shpwr4".getBytes());
-    		result.write("\\shpwrk0".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr4"));
+    		result.write(DocWriter.getISOBytes("\\shpwrk0"));
     		break;
     	case SHAPE_WRAP_TIGHT_LEFT:
-    		result.write("\\shpwr4".getBytes());
-    		result.write("\\shpwrk1".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr4"));
+    		result.write(DocWriter.getISOBytes("\\shpwrk1"));
     		break;
     	case SHAPE_WRAP_TIGHT_RIGHT:
-    		result.write("\\shpwr4".getBytes());
-    		result.write("\\shpwrk2".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr4"));
+    		result.write(DocWriter.getISOBytes("\\shpwrk2"));
     		break;
     	case SHAPE_WRAP_TIGHT_LARGEST:
-    		result.write("\\shpwr4".getBytes());
-    		result.write("\\shpwrk3".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr4"));
+    		result.write(DocWriter.getISOBytes("\\shpwrk3"));
     		break;
     	case SHAPE_WRAP_THROUGH:
-    		result.write("\\shpwr5".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr5"));
     		break;
     	default:
-    		result.write("\\shpwr3".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpwr3"));
     	}
     	if(this.inHeader) {
-    		result.write("\\shpfhdr1".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shpfhdr1"));
     	} 
     	this.doc.outputDebugLinebreak(result);
     	result.write(OPEN_GROUP);
-    	result.write("\\*\\shpinst".getBytes());
+    	result.write(DocWriter.getISOBytes("\\*\\shpinst"));
     	Iterator it = this.properties.values().iterator();
     	while(it.hasNext()) {
     		RtfShapeProperty rsp = (RtfShapeProperty) it.next();
+    		rsp.setRtfDocument(this.doc);
     		rsp.writeContent(result);
     	}
     	if(!this.shapeText.equals("")) {
     		result.write(OPEN_GROUP);
-    		result.write("\\shptxt".getBytes());
+    		result.write(DocWriter.getISOBytes("\\shptxt"));
     		result.write(DELIMITER);
-    		result.write(this.shapeText.getBytes());
+    		result.write(DocWriter.getISOBytes(this.shapeText));
     		result.write(CLOSE_GROUP);
     	}
     	result.write(CLOSE_GROUP);

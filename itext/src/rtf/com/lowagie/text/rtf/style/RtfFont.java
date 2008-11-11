@@ -53,6 +53,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -75,55 +76,55 @@ public class RtfFont extends Font implements RtfExtendedElement {
     /**
      * Constant for the font family to use ("froman")
      */
-    private static final byte[] FONT_FAMILY = "\\froman".getBytes();
+    private static final byte[] FONT_FAMILY = DocWriter.getISOBytes("\\froman");
     /**
      * Constant for the charset
      */
-    private static final byte[] FONT_CHARSET = "\\fcharset".getBytes();
+    private static final byte[] FONT_CHARSET = DocWriter.getISOBytes("\\fcharset");
     /**
      * Constant for the font size
      */
-    public static final byte[] FONT_SIZE = "\\fs".getBytes();
+    public static final byte[] FONT_SIZE = DocWriter.getISOBytes("\\fs");
     /**
      * Constant for the bold flag
      */
-    private static final byte[] FONT_BOLD = "\\b".getBytes();
+    private static final byte[] FONT_BOLD = DocWriter.getISOBytes("\\b");
     /**
      * Constant for the italic flag
      */
-    private static final byte[] FONT_ITALIC = "\\i".getBytes();
+    private static final byte[] FONT_ITALIC = DocWriter.getISOBytes("\\i");
     /**
      * Constant for the underline flag
      */
-    private static final byte[] FONT_UNDERLINE = "\\ul".getBytes();
+    private static final byte[] FONT_UNDERLINE = DocWriter.getISOBytes("\\ul");
     /**
      * Constant for the strikethrough flag
      */
-    private static final byte[] FONT_STRIKETHROUGH = "\\strike".getBytes();
+    private static final byte[] FONT_STRIKETHROUGH = DocWriter.getISOBytes("\\strike");
     /**
      * Constant for the double strikethrough flag
      */
-    private static final byte[] FONT_DOUBLE_STRIKETHROUGH = "\\striked".getBytes();
+    private static final byte[] FONT_DOUBLE_STRIKETHROUGH = DocWriter.getISOBytes("\\striked");
     /**
      * Constant for the shadow flag
      */
-    private static final byte[] FONT_SHADOW = "\\shad".getBytes();
+    private static final byte[] FONT_SHADOW = DocWriter.getISOBytes("\\shad");
     /**
      * Constant for the outline flag
      */
-    private static final byte[] FONT_OUTLINE = "\\outl".getBytes();
+    private static final byte[] FONT_OUTLINE = DocWriter.getISOBytes("\\outl");
     /**
      * Constant for the embossed flag
      */
-    private static final byte[] FONT_EMBOSSED = "\\embo".getBytes();
+    private static final byte[] FONT_EMBOSSED = DocWriter.getISOBytes("\\embo");
     /**
      * Constant for the engraved flag
      */
-    private static final byte[] FONT_ENGRAVED = "\\impr".getBytes();
+    private static final byte[] FONT_ENGRAVED = DocWriter.getISOBytes("\\impr");
     /**
      * Constant for hidden text flag
      */
-    private static final byte[] FONT_HIDDEN = "\\v".getBytes();
+    private static final byte[] FONT_HIDDEN = DocWriter.getISOBytes("\\v");
     
     /**
      * Constant for a plain font
@@ -305,6 +306,9 @@ public class RtfFont extends Font implements RtfExtendedElement {
             setSize(font.getSize());
             setStyle(font.getStyle());
             setColor(font.getColor());
+            if(document != null) {
+            	this.fontNumber = document.getDocumentHeader().getFontNumber(this);
+            }
         }
 
         if(this.fontName.equalsIgnoreCase("unknown")) {
@@ -658,7 +662,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      * @return A byte array representing the integer
      */
     protected byte[] intToByteArray(int i) {
-        return Integer.toString(i).getBytes();
+        return DocWriter.getISOBytes(Integer.toString(i));
     }
 
     /**

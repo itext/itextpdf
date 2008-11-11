@@ -269,7 +269,6 @@ public class Table extends Rectangle implements LargeElement {
     
     /**
      * Copy constructor (shallow copy).
-     * @throws BadElementException 
      */
     public Table(Table t) {
     	super(0, 0, 0, 0);

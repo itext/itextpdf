@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
@@ -77,51 +78,51 @@ public class RtfImage extends RtfElement {
     /**
      * Constant for the shape/picture group
      */
-    private static final byte[] PICTURE_GROUP = "\\*\\shppict".getBytes();
+    private static final byte[] PICTURE_GROUP = DocWriter.getISOBytes("\\*\\shppict");
     /**
      * Constant for a picture
      */
-    private static final byte[] PICTURE = "\\pict".getBytes();
+    private static final byte[] PICTURE = DocWriter.getISOBytes("\\pict");
     /**
      * Constant for a jpeg image
      */
-    private static final byte[] PICTURE_JPEG = "\\jpegblip".getBytes();
+    private static final byte[] PICTURE_JPEG = DocWriter.getISOBytes("\\jpegblip");
     /**
      * Constant for a png image
      */
-    private static final byte[] PICTURE_PNG = "\\pngblip".getBytes();
+    private static final byte[] PICTURE_PNG = DocWriter.getISOBytes("\\pngblip");
     /**
      * Constant for a wmf image
      */
-    private static final byte[] PICTURE_WMF = "\\wmetafile8".getBytes();
+    private static final byte[] PICTURE_WMF = DocWriter.getISOBytes("\\wmetafile8");
     /**
      * Constant for the picture width
      */
-    private static final byte[] PICTURE_WIDTH = "\\picw".getBytes();
+    private static final byte[] PICTURE_WIDTH = DocWriter.getISOBytes("\\picw");
     /**
      * Constant for the picture height
      */
-    private static final byte[] PICTURE_HEIGHT = "\\pich".getBytes();
+    private static final byte[] PICTURE_HEIGHT = DocWriter.getISOBytes("\\pich");
     /**
      * Constant for the picture width scale
      */
-    private static final byte[] PICTURE_SCALED_WIDTH = "\\picwgoal".getBytes();
+    private static final byte[] PICTURE_SCALED_WIDTH = DocWriter.getISOBytes("\\picwgoal");
     /**
      * Constant for the picture height scale
      */
-    private static final byte[] PICTURE_SCALED_HEIGHT = "\\pichgoal".getBytes();
+    private static final byte[] PICTURE_SCALED_HEIGHT = DocWriter.getISOBytes("\\pichgoal");
     /**
      * Constant for horizontal picture scaling
      */
-    private static final byte[] PICTURE_SCALE_X = "\\picscalex".getBytes();
+    private static final byte[] PICTURE_SCALE_X = DocWriter.getISOBytes("\\picscalex");
     /**
      * Constant for vertical picture scaling
      */
-    private static final byte[] PICTURE_SCALE_Y = "\\picscaley".getBytes();
+    private static final byte[] PICTURE_SCALE_Y = DocWriter.getISOBytes("\\picscaley");
     /**
      * "\bin" constant
      */
-    private static final byte[] PICTURE_BINARY_DATA = "\\bin".getBytes();
+    private static final byte[] PICTURE_BINARY_DATA = DocWriter.getISOBytes("\\bin");
     /**
      * Constant for converting pixels to twips
      */

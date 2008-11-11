@@ -54,6 +54,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
@@ -149,8 +150,8 @@ public class RtfStylesheetList extends RtfElement implements RtfExtendedElement 
      */
     public void writeDefinition(final OutputStream result) throws IOException
     {
-        result.write("{".getBytes());
-        result.write("\\stylesheet".getBytes());
+        result.write(DocWriter.getISOBytes("{"));
+        result.write(DocWriter.getISOBytes("\\stylesheet"));
         result.write(RtfBasicElement.DELIMITER);
         this.document.outputDebugLinebreak(result);
         Iterator it = this.styleMap.values().iterator();
@@ -158,7 +159,7 @@ public class RtfStylesheetList extends RtfElement implements RtfExtendedElement 
         	RtfParagraphStyle rps = (RtfParagraphStyle)it.next();
         	rps.writeDefinition(result);
         }
-        result.write("}".getBytes());
+        result.write(DocWriter.getISOBytes("}"));
         this.document.outputDebugLinebreak(result);  	
     }
 }
