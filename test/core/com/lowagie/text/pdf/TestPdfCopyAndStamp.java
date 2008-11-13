@@ -1,0 +1,165 @@
+/*
+ * Created on Oct 10, 2008
+ * (c) 2008 Trumpet, Inc.
+ *
+ */
+package com.lowagie.text.pdf;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import junit.framework.TestCase;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Document;
+
+/**
+ * @author kevin day, Trumpet, Inc.
+ */
+public class TestPdfCopyAndStamp extends TestCase {
+
+    File base = new File(".");
+    File[] in;
+    File stamp;
+    File out;
+    
+    private void createTempFile(String filename, String content) throws Exception{
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream(filename));
+        document.open();
+        
+        Chunk contentChunk = new Chunk(content);
+        document.add(contentChunk);
+        
+        document.close();
+    }
+    
+    private void cleanTempFiles(){
+        for (int i = 0; i < in.length; i++) {
+            File f = in[i];
+            
+            if (f.exists() && !f.delete())
+                fail("Unable to delete temp content " + f + " prior to running test");
+        }
+        
+        if (stamp.exists() && !stamp.delete())
+            fail("Unable to delete stamp file " + stamp + " prior to running test");
+        
+//        if (out.exists() && !out.delete())
+//            fail("Unable to delete output file " + out + " prior to running test");
+        
+    }
+    
+    protected void setUp() throws Exception {
+        
+        in = new File[]{
+                new File(base, "content1.pdf"),
+                new File(base, "content2.pdf"),
+                };
+        
+        stamp = new File(base, "Stamp.PDF");
+        out = new File(base, "test.pdf");
+
+        cleanTempFiles();
+        
+        createTempFile(in[0].getCanonicalPath(), "content 1");
+        createTempFile(in[1].getCanonicalPath(), "content 2");
+
+        createTempFile(stamp.getCanonicalPath(), "          This is a stamp");
+    }
+
+    protected void tearDown() throws Exception {
+        cleanTempFiles();
+    }
+
+    public void mergeAndStampPdf(boolean resetStampEachPage, File[] in, File out, File stamp) throws Exception {
+        Document document = new Document();
+        
+        PdfCopy writer = new PdfSmartCopy(document, new FileOutputStream(out));
+        
+        document.open();
+        
+        int stampPageNum = 1;
+
+        PdfReader stampReader = new PdfReader(stamp.getPath());
+        for (int inNum = 0; inNum < in.length; inNum++){
+            // create a reader for the input document
+            PdfReader documentReader = new PdfReader(in[inNum].getPath());
+            
+            for (int pageNum = 1; pageNum <= documentReader.getNumberOfPages(); pageNum++){
+            
+                // import a page from the main file
+                PdfImportedPage mainPage = writer.getImportedPage(documentReader, pageNum);
+        
+                // make a stamp from the page and get under content...
+                PdfCopy.PageStamp pageStamp = writer.createPageStamp(mainPage);
+         
+                // import a page from a file with the stamp...
+                if (resetStampEachPage)
+                    stampReader = new PdfReader(stamp.getPath());
+                PdfImportedPage stampPage = writer.getImportedPage(stampReader, stampPageNum++);
+        
+                // add the stamp template, update stamp, and add the page
+                pageStamp.getOverContent().addTemplate(stampPage, 0, 0);
+                pageStamp.alterContents();
+                writer.addPage(mainPage);
+                
+                if (stampPageNum > stampReader.getNumberOfPages())
+                    stampPageNum = 1;
+            }
+        }        
+        
+        writer.close(); 
+        document.close();
+    }
+    
+    protected void testXObject(int page, String xObjectName) throws Exception{
+        PdfReader reader = null;
+        RandomAccessFileOrArray raf = null;
+        raf = new RandomAccessFileOrArray(out.getCanonicalPath());
+        reader = new PdfReader(raf, null);
+        try{
+            PdfDictionary dictionary = reader.getPageN(page);
+            
+            PdfDictionary resources = (PdfDictionary)dictionary.get(PdfName.RESOURCES);
+            PdfDictionary xobject = (PdfDictionary)resources.get(PdfName.XOBJECT);
+            PdfObject directXObject = xobject.getDirectObject(new PdfName(xObjectName));
+            PdfObject indirectXObject = xobject.get(new PdfName(xObjectName));
+            
+            assertNotNull(indirectXObject);
+            assertNotNull(directXObject);
+        } finally {        
+            reader.close();
+        }
+        
+        
+    }
+    
+    public void testWithReloadingStampReader() throws Exception{
+        mergeAndStampPdf(true, in, out, stamp);
+
+        testXObject(2, "Xi1");
+        
+    }
+
+    public void testWithoutReloadingStampReader() throws Exception{
+        mergeAndStampPdf(false, in, out, stamp);
+
+        //openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
+        
+        testXObject(2, "Xi1");
+        
+    }
+
+    
+    private void openFile(File f) throws IOException{
+        String[] params = new String[]{
+                "rundll32",
+                "url.dll,FileProtocolHandler",
+                "\"" + f.getCanonicalPath() + "\""
+        };
+        Runtime.getRuntime().exec(params); 
+    }
+
+}
