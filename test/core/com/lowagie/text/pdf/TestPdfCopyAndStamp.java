@@ -22,15 +22,23 @@ public class TestPdfCopyAndStamp extends TestCase {
     File base = new File(".");
     File[] in;
     File stamp;
+    File multiPageStamp;
     File out;
     
-    private void createTempFile(String filename, String content) throws Exception{
+    private void createTempFile(String filename, String[] pageContents) throws Exception{
         Document document = new Document();
         PdfWriter.getInstance(document, new FileOutputStream(filename));
         document.open();
         
-        Chunk contentChunk = new Chunk(content);
-        document.add(contentChunk);
+        for (int i = 0; i < pageContents.length; i++) {
+            if (i != 0)
+                document.newPage();
+
+            String content = pageContents[i];
+            Chunk contentChunk = new Chunk(content);
+            document.add(contentChunk);
+        }
+        
         
         document.close();
     }
@@ -46,6 +54,9 @@ public class TestPdfCopyAndStamp extends TestCase {
         if (stamp.exists() && !stamp.delete())
             fail("Unable to delete stamp file " + stamp + " prior to running test");
         
+        if (multiPageStamp.exists() && !multiPageStamp.delete())
+            fail("Unable to delete multi stamp file " + multiPageStamp + " prior to running test");
+        
 //        if (out.exists() && !out.delete())
 //            fail("Unable to delete output file " + out + " prior to running test");
         
@@ -59,14 +70,16 @@ public class TestPdfCopyAndStamp extends TestCase {
                 };
         
         stamp = new File(base, "Stamp.PDF");
+        multiPageStamp = new File(base, "MultiStamp.PDF");
         out = new File(base, "test.pdf");
 
         cleanTempFiles();
         
-        createTempFile(in[0].getCanonicalPath(), "content 1");
-        createTempFile(in[1].getCanonicalPath(), "content 2");
+        createTempFile(in[0].getCanonicalPath(), new String[]{"content 1"});
+        createTempFile(in[1].getCanonicalPath(), new String[]{"content 2"});
 
-        createTempFile(stamp.getCanonicalPath(), "          This is a stamp");
+        createTempFile(stamp.getCanonicalPath(), new String[]{"          This is a stamp"});
+        createTempFile(multiPageStamp.getCanonicalPath(), new String[]{"          This is a stamp - page 1", "          This is a stamp - page 2"});
     }
 
     protected void tearDown() throws Exception {
@@ -114,7 +127,7 @@ public class TestPdfCopyAndStamp extends TestCase {
         document.close();
     }
     
-    protected void testXObject(int page, String xObjectName) throws Exception{
+    protected void testXObject(boolean shouldExist, int page, String xObjectName) throws Exception{
         PdfReader reader = null;
         RandomAccessFileOrArray raf = null;
         raf = new RandomAccessFileOrArray(out.getCanonicalPath());
@@ -127,8 +140,13 @@ public class TestPdfCopyAndStamp extends TestCase {
             PdfObject directXObject = xobject.getDirectObject(new PdfName(xObjectName));
             PdfObject indirectXObject = xobject.get(new PdfName(xObjectName));
             
-            assertNotNull(indirectXObject);
-            assertNotNull(directXObject);
+            if (shouldExist){
+                assertNotNull(indirectXObject);
+                assertNotNull(directXObject);
+            } else {
+                assertNull(indirectXObject);
+                assertNull(directXObject);
+            }
         } finally {        
             reader.close();
         }
@@ -139,7 +157,7 @@ public class TestPdfCopyAndStamp extends TestCase {
     public void testWithReloadingStampReader() throws Exception{
         mergeAndStampPdf(true, in, out, stamp);
 
-        testXObject(2, "Xi1");
+        testXObject(true, 2, "Xi1");
         
     }
 
@@ -148,7 +166,25 @@ public class TestPdfCopyAndStamp extends TestCase {
 
         //openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
         
-        testXObject(2, "Xi1");
+        testXObject(true, 2, "Xi1"); // if we are able to optimize iText so it re-uses the same XObject for multiple imports of the same page from the same PdfReader, then switch this to false
+        
+    }
+
+    public void testMultiPageStampWithoutReloadingStampReader() throws Exception{
+        mergeAndStampPdf(false, in, out, multiPageStamp);
+
+        openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
+        
+        testXObject(true, 2, "Xi1");
+        
+    }
+
+    public void testMultiPageStampWithReloadingStampReader() throws Exception{
+        mergeAndStampPdf(true, in, out, multiPageStamp);
+
+        openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
+        
+        testXObject(true, 2, "Xi1");
         
     }
 
