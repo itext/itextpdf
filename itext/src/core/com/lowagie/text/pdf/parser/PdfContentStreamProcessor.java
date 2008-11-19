@@ -74,13 +74,13 @@ public abstract class PdfContentStreamProcessor {
 	/** A map with all supported operators operators (PDF syntax). */
     private Map operators;
     /** Resources for the content stream. */
-    PdfDictionary resources;
+    private PdfDictionary resources;
     /** Stack keeping track of the graphics state. */
-    Stack gsStack = new Stack();
+    private Stack gsStack = new Stack();
     /** Text matrix. */
-    Matrix textMatrix;
+    private Matrix textMatrix;
     /** Text line matrix. */
-    Matrix textLineMatrix;
+    private Matrix textLineMatrix;
     
     /**
      * Creates a new PDF Content Stream Processor.
@@ -140,6 +140,24 @@ public abstract class PdfContentStreamProcessor {
      */
     public GraphicsState gs(){
         return (GraphicsState)gsStack.peek();
+    }
+    
+    /**
+     * Returns the current text matrix.
+     * @return	the text matrix
+     * @since 2.1.5
+     */
+    public Matrix getCurrentTextMatrix(){
+        return textMatrix;
+    }
+    
+    /**
+     * Returns the current line matrix.
+     * @return	the line matrix
+     * @since 2.1.5
+     */
+    public Matrix getCurrentTextLineMatrix(){
+        return textLineMatrix;
     }
     
     /**
