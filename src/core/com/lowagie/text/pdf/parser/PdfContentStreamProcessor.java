@@ -142,10 +142,20 @@ public abstract class PdfContentStreamProcessor {
         return (GraphicsState)gsStack.peek();
     }
     
+    /**
+     * Returns the current text matrix.
+     * @return	the text matrix
+     * @since 2.1.5
+     */
     public Matrix getCurrentTextMatrix(){
         return textMatrix;
     }
     
+    /**
+     * Returns the current line matrix.
+     * @return	the line matrix
+     * @since 2.1.5
+     */
     public Matrix getCurrentTextLineMatrix(){
         return textLineMatrix;
     }
