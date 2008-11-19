@@ -89,12 +89,12 @@ public class SimpleTextExtractingPdfContentStreamProcessor extends PdfContentStr
      */
     public void displayText(String text, Matrix endingTextMatrix){
         boolean hardReturn = false;
-        if (lastTextLineMatrix != null && lastTextLineMatrix.get(Matrix.I32) != textLineMatrix.get(Matrix.I32)){
+        if (lastTextLineMatrix != null && lastTextLineMatrix.get(Matrix.I32) != getCurrentTextLineMatrix().get(Matrix.I32)){
         //if (!textLineMatrix.equals(lastTextLineMatrix)){
             hardReturn = true;
         }
 
-        float currentX = textMatrix.get(Matrix.I31);
+        float currentX = getCurrentTextMatrix().get(Matrix.I31);
         if (hardReturn){
             //System.out.println("<Hard Return>");
             result.append('\n');
@@ -105,8 +105,8 @@ public class SimpleTextExtractingPdfContentStreamProcessor extends PdfContentStr
             
             float spaceGlyphWidth = gs().font.getWidth(' ')/1000f;
             float spaceWidth = (spaceGlyphWidth * gs().fontSize + gs().characterSpacing + gs().wordSpacing) * gs().horizontalScaling; // this is unscaled!!
-            Matrix scaled = new Matrix(spaceWidth, 0).multiply(textMatrix);
-            float scaledSpaceWidth = scaled.get(Matrix.I31) - textMatrix.get(Matrix.I31);
+            Matrix scaled = new Matrix(spaceWidth, 0).multiply(getCurrentTextMatrix());
+            float scaledSpaceWidth = scaled.get(Matrix.I31) - getCurrentTextMatrix().get(Matrix.I31);
             
             if (currentX - lastEndX > scaledSpaceWidth/2f ){
                 //System.out.println("<Implied space on text '" + text + "'> lastEndX=" + lastEndX + ", currentX=" + currentX + ", spaceWidth=" + spaceWidth);
@@ -120,7 +120,7 @@ public class SimpleTextExtractingPdfContentStreamProcessor extends PdfContentStr
         
         result.append(text);
 
-        lastTextLineMatrix = textLineMatrix;
+        lastTextLineMatrix = getCurrentTextLineMatrix();
         lastEndingTextMatrix = endingTextMatrix;
         
     }
