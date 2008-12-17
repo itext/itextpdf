@@ -772,8 +772,7 @@ public class PngImage {
                     dstX = xOffset;
                     for (srcX = 0; srcX < width; srcX++) {
                         int idx = out[srcX];
-                        if (idx < trans.length)
-                            v[0] = (trans[idx] == 0 ? 1 : 0);
+                        v[0] = ((idx < trans.length && trans[idx] == 0) ? 1 : 0);
                         setPixel(smask, v, 0, 1, dstX, y, 1, yStride);
                         dstX += step;
                     }
