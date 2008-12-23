@@ -135,7 +135,7 @@ public class PRStream extends PdfStream {
      * Document.compress is set to false.
      * 
      * @param data raw data, decrypted and uncompressed.
-     * @param compress true if you want the stream to be compresssed.
+     * @param compress true if you want the stream to be compressed.
      * @since	iText 2.1.1
      */
     public void setData(byte[] data, boolean compress) {
@@ -148,7 +148,7 @@ public class PRStream extends PdfStream {
      * Document.compress is set to false.
      * 
      * @param data raw data, decrypted and uncompressed.
-     * @param compress true if you want the stream to be compresssed.
+     * @param compress true if you want the stream to be compressed.
      * @param compressionLevel	a value between -1 and 9 (ignored if compress == false)
      * @since	iText 2.1.3
      */
