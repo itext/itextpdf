@@ -140,7 +140,9 @@ class PdfContents extends PdfStream {
                 secondContent.getInternalBuffer().writeTo(out);
             }
             out.close();
-            deflater.end();
+            if (deflater != null) {
+                deflater.end();
+            }
         }
         catch (Exception e) {
             throw new BadPdfFormatException(e.getMessage());
