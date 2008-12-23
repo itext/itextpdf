@@ -86,12 +86,14 @@ class PdfContents extends PdfStream {
         super();
         try {
             OutputStream out = null;
+            Deflater deflater = null;
             streamBytes = new ByteArrayOutputStream();
             if (Document.compress)
             {
                 compressed = true;
                 compressionLevel = text.getPdfWriter().getCompressionLevel();
-                out = new DeflaterOutputStream(streamBytes, new Deflater(compressionLevel));
+                deflater = new Deflater(compressionLevel);
+                out = new DeflaterOutputStream(streamBytes, deflater);
             }
             else
                 out = streamBytes;
@@ -138,6 +140,7 @@ class PdfContents extends PdfStream {
                 secondContent.getInternalBuffer().writeTo(out);
             }
             out.close();
+            deflater.end();
         }
         catch (Exception e) {
             throw new BadPdfFormatException(e.getMessage());

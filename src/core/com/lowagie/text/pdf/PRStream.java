@@ -112,9 +112,11 @@ public class PRStream extends PdfStream {
         if (Document.compress) {
             try {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                DeflaterOutputStream zip = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
+                Deflater deflater = new Deflater(compressionLevel);
+                DeflaterOutputStream zip = new DeflaterOutputStream(stream, deflater);
                 zip.write(conts);
                 zip.close();
+                deflater.end();
                 bytes = stream.toByteArray();
             }
             catch (IOException ioe) {
@@ -156,9 +158,11 @@ public class PRStream extends PdfStream {
         if (Document.compress && compress) {
             try {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                DeflaterOutputStream zip = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
+                Deflater deflater = new Deflater(compressionLevel);
+                DeflaterOutputStream zip = new DeflaterOutputStream(stream, deflater);
                 zip.write(data);
                 zip.close();
+                deflater.end();
                 bytes = stream.toByteArray();
                 this.compressionLevel = compressionLevel;
             }
