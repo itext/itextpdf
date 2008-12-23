@@ -112,9 +112,11 @@ public class PRStream extends PdfStream {
         if (Document.compress) {
             try {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                DeflaterOutputStream zip = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
+                Deflater deflater = new Deflater(compressionLevel);
+                DeflaterOutputStream zip = new DeflaterOutputStream(stream, deflater);
                 zip.write(conts);
                 zip.close();
+                deflater.end();
                 bytes = stream.toByteArray();
             }
             catch (IOException ioe) {
@@ -133,7 +135,7 @@ public class PRStream extends PdfStream {
      * Document.compress is set to false.
      * 
      * @param data raw data, decrypted and uncompressed.
-     * @param compress true if you want the stream to be compresssed.
+     * @param compress true if you want the stream to be compressed.
      * @since	iText 2.1.1
      */
     public void setData(byte[] data, boolean compress) {
@@ -146,7 +148,7 @@ public class PRStream extends PdfStream {
      * Document.compress is set to false.
      * 
      * @param data raw data, decrypted and uncompressed.
-     * @param compress true if you want the stream to be compresssed.
+     * @param compress true if you want the stream to be compressed.
      * @param compressionLevel	a value between -1 and 9 (ignored if compress == false)
      * @since	iText 2.1.3
      */
@@ -156,9 +158,11 @@ public class PRStream extends PdfStream {
         if (Document.compress && compress) {
             try {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                DeflaterOutputStream zip = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
+                Deflater deflater = new Deflater(compressionLevel);
+                DeflaterOutputStream zip = new DeflaterOutputStream(stream, deflater);
                 zip.write(data);
                 zip.close();
+                deflater.end();
                 bytes = stream.toByteArray();
                 this.compressionLevel = compressionLevel;
             }
