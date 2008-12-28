@@ -146,7 +146,7 @@ public abstract class BaseFont {
     /** java.awt.Font property */
     public static final int AWT_MAXADVANCE = 12;    
     /**
-     * The undeline position. Usually a negative value.
+     * The underline position. Usually a negative value.
      */
     public static final int UNDERLINE_POSITION = 13;
     /**
@@ -266,7 +266,7 @@ public abstract class BaseFont {
     protected int compressionLevel = PdfStream.DEFAULT_COMPRESSION;
     
 /**
- * true if the font must use it's built in encoding. In that case the
+ * true if the font must use its built in encoding. In that case the
  * <CODE>encoding</CODE> is only used to map a char to the position inside
  * the font, not to the expected char name.
  */
@@ -426,7 +426,7 @@ public abstract class BaseFont {
      * <PRE>
      * createFont(name, encoding, embedded, true, null, null);
      * </PRE>
-     * @param name the name of the font or it's location on file
+     * @param name the name of the font or its location on file
      * @param encoding the encoding to be applied to this font
      * @param embedded true if the font is to be embedded in the PDF
      * @return returns a new font. This font may come from the cache
@@ -474,7 +474,7 @@ public abstract class BaseFont {
      * <PRE>
      * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
      * </PRE>
-     * @param name the name of the font or it's location on file
+     * @param name the name of the font or its location on file
      * @param encoding the encoding to be applied to this font
      * @param embedded true if the font is to be embedded in the PDF
      * @param cached true if the font comes from the cache or is added to
@@ -527,7 +527,7 @@ public abstract class BaseFont {
      * <PRE>
      * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
      * </PRE>
-     * @param name the name of the font or it's location on file
+     * @param name the name of the font or its location on file
      * @param encoding the encoding to be applied to this font
      * @param embedded true if the font is to be embedded in the PDF
      * @param cached true if the font comes from the cache or is added to
@@ -760,7 +760,7 @@ public abstract class BaseFont {
     
     /**
      * Gets the width of a <CODE>String</CODE> in normalized 1000 units.
-     * @param text the <CODE>String</CODE> to get the witdth of
+     * @param text the <CODE>String</CODE> to get the width of
      * @return the width in normalized 1000 units
      */
     public int getWidth(String text) {
@@ -846,7 +846,7 @@ public abstract class BaseFont {
     /**
      * Gets the width of a <CODE>String</CODE> in points taking kerning
      * into account.
-     * @param text the <CODE>String</CODE> to get the witdth of
+     * @param text the <CODE>String</CODE> to get the width of
      * @param fontSize the font size
      * @return the width in points
      */
