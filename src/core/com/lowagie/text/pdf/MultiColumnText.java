@@ -195,7 +195,7 @@ public class MultiColumnText implements Element {
      */
     public void addColumn(float[] left, float[] right) {
         ColumnDef nextDef = new ColumnDef(left, right);
-        simple = nextDef.isSimple();
+        if (!nextDef.isSimple()) simple = false;
         columnDefs.add(nextDef);
     }
 
@@ -302,6 +302,7 @@ public class MultiColumnText implements Element {
                 if (currentDef.isSimple()) {
                     columnText.setSimpleColumn(left[2], left[3], right[0], right[1]);
                 } else {
+                	left[1] = documentY;
                     columnText.setColumns(left, right);
                 }
 
