@@ -146,7 +146,7 @@ public class SpecialSymbol {
             case 933:
                 return 'U'; // UPSILON
             case 934:
-                return 'J'; // PHI
+                return 'F'; // PHI
             case 935:
                 return 'C'; // CHI
             case 936:
