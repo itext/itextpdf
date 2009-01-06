@@ -302,7 +302,6 @@ public class MultiColumnText implements Element {
                 if (currentDef.isSimple()) {
                     columnText.setSimpleColumn(left[2], left[3], right[0], right[1]);
                 } else {
-                	left[1] = documentY;
                     columnText.setColumns(left, right);
                 }
 
