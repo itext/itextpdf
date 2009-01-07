@@ -364,6 +364,19 @@ public class PdfCopy extends PdfWriter {
     }
     
     /**
+     * Adds a blank page.
+     * @param	a page size
+     * @since	2.1.5
+     */
+    public void addPage(Rectangle rect, int rotation) {
+    	PdfRectangle mediabox = new PdfRectangle(rect, rotation);
+    	PageResources resources = new PageResources();
+    	PdfPage page = new PdfPage(mediabox, new HashMap(), resources.getResources(), 0);
+    	root.addPage(page);
+    	++currentPageNumber;
+    }
+    
+    /**
      * Copy the acroform for an input document. Note that you can only have one,
      * we make no effort to merge them.
      * @param reader The reader of the input file that is being copied
