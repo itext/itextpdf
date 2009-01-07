@@ -231,6 +231,26 @@ public class MultiColumnText implements Element {
     }
 
     /**
+     * Adds a <CODE>Phrase</CODE> to the current text array.
+     * Will not have any effect if addElement() was called before.
+     * @param phrase the text
+     * @since	2.1.5
+     */
+    public void addText(Phrase phrase) {
+    	columnText.addText(phrase);
+    }
+    
+    /**
+     * Adds a <CODE>Chunk</CODE> to the current text array.
+     * Will not have any effect if addElement() was called before.
+     * @param chunk the text
+     * @since	2.1.5
+     */
+    public void addText(Chunk chunk) {
+    	columnText.addText(chunk);
+    }
+    
+    /**
      * Add an element to be rendered in a column.
      * Note that you can only add a <CODE>Phrase</CODE>
      * or a <CODE>Chunk</CODE> if the columns are
