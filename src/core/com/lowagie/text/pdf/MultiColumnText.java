@@ -590,6 +590,7 @@ public class MultiColumnText implements Element {
 
         private float[] resolvePositions(float[] positions) {
             if (!isSimple()) {
+                positions[1] = top;
                 return positions;
             }
             if (top == AUTOMATIC) {
