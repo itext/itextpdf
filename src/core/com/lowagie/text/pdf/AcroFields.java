@@ -1165,7 +1165,7 @@ public class AcroFields {
                 setField(f, v);
             List l = xfdf.getListValues(f);
             if (l != null)
-            	setListSelection(v, (String[])l.toArray());
+            	setListSelection(v, (String[])l.toArray(new String[l.size()]));
         }
     }
 

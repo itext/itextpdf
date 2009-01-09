@@ -34,6 +34,10 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
     <target name="compile.examples" description="--> compiles the iText examples">
+        <ant antfile="build.xml">
+            <target name="jar"/>
+            <target name="jar.rtf"/>
+        </ant>
         <mkdir dir="${itext.bin.examples}" />
         <javac source="${itext.jdk.examples}" target="${itext.jdk.examples}" srcdir="${itext.src.examples}" destdir="${itext.bin.examples}">
 		<exclude name="com/lowagie/examples/rtf/**"/>
@@ -79,6 +83,9 @@
                 <include name="**/*.wmf"/>
                 <include name="**/*.xfdf"/>
                 <include name="**/*.xml"/>
+            </fileset>
+            <fileset dir="${itext.src.test}">
+                <include name="**/*.xfdf"/>
             </fileset>
         </copy>
     </target>
