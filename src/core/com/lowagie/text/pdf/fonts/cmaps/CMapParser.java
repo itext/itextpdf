@@ -44,7 +44,7 @@ import java.util.Map;
  * This will parser a CMap stream.
  *
  * @author <a href="mailto:ben@benlitchfield.com">Ben Litchfield</a>
- * @version $Revision: 1.6 $
+ * @version $Revision$
  * @since	2.1.4
  */
 public class CMapParser
