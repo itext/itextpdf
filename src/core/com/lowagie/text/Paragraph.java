@@ -238,7 +238,7 @@ public class Paragraph extends Phrase {
         else if (o instanceof Paragraph) {
             super.add(o);
             java.util.List chunks = getChunks();
-            if (chunks.size() > 0) {
+            if (!chunks.isEmpty()) {
             	Chunk tmp = ((Chunk) chunks.get(chunks.size() - 1));
             	super.add(new Chunk("\n", tmp.getFont()));
             }

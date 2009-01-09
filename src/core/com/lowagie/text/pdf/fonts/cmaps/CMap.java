@@ -64,7 +64,7 @@ public class CMap
      */
     public boolean hasOneByteMappings()
     {
-        return singleByteMappings.size() > 0;
+        return !singleByteMappings.isEmpty();
     }
     
     /**
@@ -74,7 +74,7 @@ public class CMap
      */
     public boolean hasTwoByteMappings()
     {
-        return doubleByteMappings.size() > 0;
+        return !doubleByteMappings.isEmpty();
     }
 
     /**
