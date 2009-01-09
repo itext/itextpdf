@@ -365,7 +365,8 @@ public class PdfCopy extends PdfWriter {
     
     /**
      * Adds a blank page.
-     * @param	a page size
+     * @param	rect The page dimension
+     * @param	rotation The rotation angle in degrees
      * @since	2.1.5
      */
     public void addPage(Rectangle rect, int rotation) {
