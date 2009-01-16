@@ -48,8 +48,10 @@ package com.lowagie.text.pdf.parser;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -114,11 +116,12 @@ public class PdfContentReaderTool {
     }
     
     /**
-     * Writes information about each page in a PDF file to the System.out.
+     * Writes information about each page in a PDF file to the specified output stream.
      * @param pdfFile	a File instance referring to a PDF file
+     * @param out       the output stream to send the content to
      * @throws IOException
      */
-    static public void listContentStream(File pdfFile) throws IOException {
+    static public void listContentStream(File pdfFile, PrintWriter out) throws IOException {
         int maxPage = -1;    
         
         PdfReader reader = new PdfReader(pdfFile.getCanonicalPath());
@@ -131,11 +134,11 @@ public class PdfContentReaderTool {
                 maxPageNum = maxPage;
             
             for (int pageNum = 1; pageNum <= maxPageNum; pageNum++){
-                System.out.println("==============Page " + pageNum + "====================");
-                System.out.println("- - - - - Dictionary - - - - - -");
+                out.println("==============Page " + pageNum + "====================");
+                out.println("- - - - - Dictionary - - - - - -");
                 PdfDictionary pageDictionary = reader.getPageN(pageNum);
-                System.out.println(getDictionaryDetail(pageDictionary));
-                System.out.println("- - - - - Content Stream - - - - - -");
+                out.println(getDictionaryDetail(pageDictionary));
+                out.println("- - - - - Content Stream - - - - - -");
                 RandomAccessFileOrArray f = reader.getSafeFile();
                 
                 byte[] contentBytes = reader.getPageContent(pageNum, f);
@@ -146,14 +149,18 @@ public class PdfContentReaderTool {
                 InputStream is = new ByteArrayInputStream(contentBytes);
                 int ch;
                 while ((ch = is.read()) != -1){
-                    System.out.print((char)ch);
+                    out.print((char)ch);
                 }
 
-                System.out.println("- - - - - Text Extraction - - - - - -");
+                out.println("- - - - - Text Extraction - - - - - -");
                 PdfTextExtractor extractor = new PdfTextExtractor(reader);
-                System.out.println(extractor.getTextFromPage(pageNum));
+                String extractedText = extractor.getTextFromPage(pageNum);
+                if (extractedText.length() != 0)
+                    out.println(extractedText);
+                else
+                    out.println("No text found on page " + pageNum);
                 
-                System.out.println();
+                out.println();
             }       
             
             
@@ -161,16 +168,34 @@ public class PdfContentReaderTool {
 
     
     /**
-     * Writes information about each page in a PDF file to the System.out.
+     * Writes information about each page in a PDF file to the specified file, or System.out.
      * @param args
      */
-    public static void main(String[] args) throws Exception {
-        if (args.length != 1){
-            System.out.println("Usage:  PdfContentReaderTool <pdf file path>");
-            return;
+    public static void main(String[] args) {
+        try{
+            if (args.length < 1 || args.length > 2){
+                System.out.println("Usage:  PdfContentReaderTool <pdf file> [output file]");
+                return;
+            }
+            
+            PrintWriter writer;
+            if (args.length == 1){
+                writer = new PrintWriter(System.out);
+            } else {
+                System.out.println("Writing PDF content to " + args[1]);
+                writer = new PrintWriter(new FileOutputStream(new File(args[1])));
+            }
+            
+            listContentStream(new File(args[0]), writer);
+            writer.flush();
+            
+            if (args.length != 1){
+                writer.close();
+                System.out.println("Finished writing content to " + args[1]);
+            }
+        } catch (Exception e){
+            e.printStackTrace(System.err);
         }
-        listContentStream(new File(args[0]));
-        
     }
 
 }
