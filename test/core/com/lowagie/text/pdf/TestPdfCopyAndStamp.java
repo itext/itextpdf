@@ -157,6 +157,7 @@ public class TestPdfCopyAndStamp extends TestCase {
     public void testWithReloadingStampReader() throws Exception{
         mergeAndStampPdf(true, in, out, stamp);
 
+        testXObject(true, 1, "Xi0");
         testXObject(true, 2, "Xi1");
         
     }
@@ -166,6 +167,7 @@ public class TestPdfCopyAndStamp extends TestCase {
 
         //openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
         
+        testXObject(true, 1, "Xi0");
         testXObject(true, 2, "Xi1"); // if we are able to optimize iText so it re-uses the same XObject for multiple imports of the same page from the same PdfReader, then switch this to false
         
     }
@@ -175,6 +177,7 @@ public class TestPdfCopyAndStamp extends TestCase {
 
         openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
         
+        testXObject(true, 1, "Xi0");
         testXObject(true, 2, "Xi1");
         
     }
@@ -182,8 +185,9 @@ public class TestPdfCopyAndStamp extends TestCase {
     public void testMultiPageStampWithReloadingStampReader() throws Exception{
         mergeAndStampPdf(true, in, out, multiPageStamp);
 
-        openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
+        // openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
         
+        testXObject(true, 1, "Xi0");
         testXObject(true, 2, "Xi1");
         
     }
