@@ -141,6 +141,14 @@ public class XfaForm {
         fact.setNamespaceAware(true);
         DocumentBuilder db = fact.newDocumentBuilder();
         domDocument = db.parse(new ByteArrayInputStream(bout.toByteArray()));   
+        extractNodes();
+    }
+    
+    /**
+     * Extracts the nodes from the domDocument.
+     * @since	2.1.5
+     */
+    private void extractNodes() {
         Node n = domDocument.getFirstChild();
         while (n.getChildNodes().getLength() == 0) {
         	n = n.getNextSibling();
@@ -355,6 +363,7 @@ public class XfaForm {
      */
     public void setDomDocument(org.w3c.dom.Document domDocument) {
         this.domDocument = domDocument;
+        extractNodes();
     }
 
     /**
