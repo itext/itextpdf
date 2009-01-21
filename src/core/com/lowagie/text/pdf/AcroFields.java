@@ -2003,6 +2003,7 @@ public class AcroFields {
     
     /**
      * Holds value of property fieldCache.
+     * @since	2.1.5	this used to be a HashMap
      */
     private Map fieldCache;
     
