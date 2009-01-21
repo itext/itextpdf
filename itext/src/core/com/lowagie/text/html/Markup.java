@@ -420,43 +420,12 @@ public class Markup {
 		if (s == null)
 			return null;
 		s = s.toLowerCase().trim();
-		Color c = WebColors.getRGBColor(s);
-		if (c != null)
-			return c;
 		try {
-			if (s.startsWith("#")) {
-				if (s.length() == 4)
-					s = "#" + s.substring(1, 2) + s.substring(1, 2)
-							+ s.substring(2, 3) + s.substring(2, 3)
-							+ s.substring(3, 4) + s.substring(3, 4);
-				if (s.length() == 7)
-					return new Color(Integer.parseInt(s.substring(1), 16));
-			} else if (s.startsWith("rgb")) {
-				StringTokenizer tk = new StringTokenizer(s.substring(3),
-						" \t\r\n\f(),");
-				int[] cc = new int[3];
-				for (int k = 0; k < 3; ++k) {
-					if (!tk.hasMoreTokens())
-						return null;
-					String t = tk.nextToken();
-					float n;
-					if (t.endsWith("%")) {
-						n = Float.parseFloat(t.substring(0, t.length() - 1));
-						n = n * 255f / 100f;
-					} else
-						n = Float.parseFloat(t);
-					int ni = (int) n;
-					if (ni > 255)
-						ni = 255;
-					else if (ni < 0)
-						ni = 0;
-					cc[k] = ni;
-				}
-				return new Color(cc[0], cc[1], cc[2]);
-			}
-		} catch (Exception e) {
+			return WebColors.getRGBColor(s);
 		}
-		return null;
+		catch(IllegalArgumentException iae) {
+			return null;
+		}
 	}
 
 	/**
