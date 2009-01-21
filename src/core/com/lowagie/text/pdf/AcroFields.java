@@ -1938,8 +1938,9 @@ public class AcroFields {
     /**
      * Gets the appearances cache.
      * @return the appearances cache
+     * @since	2.1.5	this method used to return a HashMap
      */
-    public HashMap getFieldCache() {
+    public Map getFieldCache() {
         return this.fieldCache;
     }
     
@@ -1965,9 +1966,10 @@ public class AcroFields {
      *    stp.close();
      * }
      * </pre>
-     * @param fieldCache an HasMap that will carry the cached appearances
+     * @param fieldCache a Map that will carry the cached appearances
+     * @since	2.1.5	this method used to take a HashMap as parameter
      */
-    public void setFieldCache(HashMap fieldCache) {
+    public void setFieldCache(Map fieldCache) {
         this.fieldCache = fieldCache;
     }
     
@@ -2002,7 +2004,7 @@ public class AcroFields {
     /**
      * Holds value of property fieldCache.
      */
-    private HashMap fieldCache;
+    private Map fieldCache;
     
     static {
         stdFieldFontNames.put("CoBO", new String[]{"Courier-BoldOblique"});
