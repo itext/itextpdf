@@ -156,7 +156,7 @@ class PdfCopyFieldsImp extends PdfWriter {
         return name;
     }
     
-    private void updateCalculationOrder(PdfReader reader) {
+    protected void updateCalculationOrder(PdfReader reader) {
         PdfDictionary catalog = reader.getCatalog();
         PdfDictionary acro = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM));
         if (acro == null)
@@ -363,6 +363,9 @@ class PdfCopyFieldsImp extends PdfWriter {
         }
     }
     
+    /**
+     * Creates the new PDF by merging the fields and forms.
+     */
     protected void closeIt() throws IOException {
         for (int k = 0; k < readers.size(); ++k) {
             ((PdfReader)readers.get(k)).removeFields();
@@ -560,24 +563,49 @@ class PdfCopyFieldsImp extends PdfWriter {
         return n;
     }
     
+    
+    /**
+     * Sets a reference to "visited" in the copy process.
+     * @param	ref	the reference that needs to be set to "visited"
+     * @return	true if the reference was set to visited
+     */
+    protected boolean setVisited(PRIndirectReference ref) {
+        IntHashtable refs = (IntHashtable)visited.get(ref.getReader());
+        if (refs != null)
+        	return (refs.put(ref.getNumber(), 1) != 0);
+        else
+        	return false;
+    }
+    
+    /**
+     * Checks if a reference has already been "visited" in the copy process.
+     * @param	ref	the reference that needs to be checked
+     * @return	true if the reference was already visited
+     */
+    protected boolean isVisited(PRIndirectReference ref) {
+        IntHashtable refs = (IntHashtable)visited.get(ref.getReader());
+        if (refs != null)
+        	return refs.containsKey(ref.getNumber());
+        else
+        	return false;
+    }
+    
     protected boolean isVisited(PdfReader reader, int number, int generation) {
         IntHashtable refs = (IntHashtable)readers2intrefs.get(reader);
         return refs.containsKey(number);
     }
     
-    protected boolean isVisited(PRIndirectReference ref) {
-        IntHashtable refs = (IntHashtable)visited.get(ref.getReader());
-        return refs.containsKey(ref.getNumber());
-    }
-    
-    protected boolean setVisited(PRIndirectReference ref) {
-        IntHashtable refs = (IntHashtable)visited.get(ref.getReader());
-        return (refs.put(ref.getNumber(), 1) != 0);
-    }
-    
+    /**
+     * Checks if a reference refers to a page object.
+     * @param	ref	the reference that needs to be checked
+     * @return	true is the reference refers to a page object.
+     */
     protected boolean isPage(PRIndirectReference ref) {
         IntHashtable refs = (IntHashtable)pages2intrefs.get(ref.getReader());
-        return refs.containsKey(ref.getNumber());
+        if (refs != null)
+        	return refs.containsKey(ref.getNumber());
+        else
+        	return false;
     }
 
     RandomAccessFileOrArray getReaderFile(PdfReader reader) {
