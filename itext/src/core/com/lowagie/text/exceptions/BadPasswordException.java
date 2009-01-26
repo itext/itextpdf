@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2009 Bruno Lowagie (inspired by Paulo Soares)
+ * Copyright 2007 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999-2009 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000-2009 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -47,60 +47,24 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.text.exceptions;
 
-import com.lowagie.text.DocumentException;
-import java.io.OutputStream;
-import java.util.HashMap;
+import java.io.IOException;
 
 /**
- * Allows you to add one (or more) existing PDF document(s)
- * and add the form(s) of (an)other PDF document(s).
- * @since 2.1.5
+ * Typed exception used when opening an existing PDF document.
+ * Gets thrown when the document isn't a valid PDF document.
+ * @since 2.1.5 It was written for iText 2.0.8, but moved to another package
  */
-class PdfCopyFormsImp extends PdfCopyFieldsImp {
+public class BadPasswordException extends IOException {
 
-    /**
-   * This sets up the output document 
-   * @param os The Outputstream pointing to the output document
-   * @throws DocumentException
-   */
-    PdfCopyFormsImp(OutputStream os) throws DocumentException {
-        super(os);
-    }
-    
-    /**
-     * This method feeds in the source document
-     * @param reader The PDF reader containing the source document
-     * @throws DocumentException
-     */
-    public void copyDocumentFields(PdfReader reader) throws DocumentException {
-    	if (!reader.isOpenedWithFullPermissions())
-            throw new IllegalArgumentException("PdfReader not opened with owner password");
-        if (readers2intrefs.containsKey(reader)) {
-            reader = new PdfReader(reader);
-        }
-        else {
-            if (reader.isTampered())
-                throw new DocumentException("The document was reused.");
-            reader.consolidateNamedDestinations();
-            reader.setTampered(true);
-        }
-        reader.shuffleSubsetNames();
-        readers2intrefs.put(reader, new IntHashtable());
-        fields.add(reader.getAcroFields());
-        updateCalculationOrder(reader);
-    }
+	/** Serial Version UID. */
+	private static final long serialVersionUID = -4333706268155063964L;
 
-    /**
-     * This merge fields is slightly different from the mergeFields method
-     * of PdfCopyFields.
-     */
-    void mergeFields() {
-        for (int k = 0; k < fields.size(); ++k) {
-            HashMap fd = ((AcroFields)fields.get(k)).getFields();
-            mergeWithMaster(fd);
-        }
-    }
-
+	/**
+	 * Creates an exception saying the user password was incorrect.
+	 */
+	public BadPasswordException(String message) {
+		super(message);
+	}
 }

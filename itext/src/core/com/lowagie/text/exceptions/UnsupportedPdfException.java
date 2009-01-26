@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2007 by Bruno Lowagie.
+ * Copyright 2009 Bruno Lowagie
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2009 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2009 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -47,22 +47,26 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
-
-import java.io.IOException;
-
+package com.lowagie.text.exceptions;
 /**
- * @since 2.0.8
+ * Typed exception used when opening an existing PDF document.
+ * Gets thrown when the document isn't a valid PDF document according to iText,
+ * but it's different from the InvalidPdfException in the sense that it may
+ * be an iText limitation (most of the times it isn't but you might have
+ * bumped into something that has been added to the PDF specs, but that isn't
+ * supported in iText yet).
+ * @since 2.1.5
  */
-public class BadPasswordException extends IOException {
+public class UnsupportedPdfException extends InvalidPdfException {
 
-	/** Serial Version UID. */
-	private static final long serialVersionUID = -4333706268155063964L;
+	/** a serial version UID */
+	private static final long serialVersionUID = 2180764250839096628L;
 
 	/**
-	 * Creates an exception saying the user password was incorrect.
+	 * Creates an instance of an UnsupportedPdfException.
+	 * @param	message	the reason why the document isn't a PDF document according to iText.
 	 */
-	public BadPasswordException() {
-		super("Bad user Password");
+	public UnsupportedPdfException(String message) {
+		super(message);
 	}
 }

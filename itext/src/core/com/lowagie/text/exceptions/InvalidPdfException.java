@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright 2009 Bruno Lowagie (inspired by Paulo Soares)
+ * Copyright 2009 Bruno Lowagie
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,60 +47,25 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.text.exceptions;
 
-import com.lowagie.text.DocumentException;
-import java.io.OutputStream;
-import java.util.HashMap;
+import java.io.IOException;
 
 /**
- * Allows you to add one (or more) existing PDF document(s)
- * and add the form(s) of (an)other PDF document(s).
+ * Typed exception used when opening an existing PDF document.
+ * Gets thrown when the document isn't a valid PDF document.
  * @since 2.1.5
  */
-class PdfCopyFormsImp extends PdfCopyFieldsImp {
+public class InvalidPdfException extends IOException {
 
-    /**
-   * This sets up the output document 
-   * @param os The Outputstream pointing to the output document
-   * @throws DocumentException
-   */
-    PdfCopyFormsImp(OutputStream os) throws DocumentException {
-        super(os);
-    }
-    
-    /**
-     * This method feeds in the source document
-     * @param reader The PDF reader containing the source document
-     * @throws DocumentException
-     */
-    public void copyDocumentFields(PdfReader reader) throws DocumentException {
-    	if (!reader.isOpenedWithFullPermissions())
-            throw new IllegalArgumentException("PdfReader not opened with owner password");
-        if (readers2intrefs.containsKey(reader)) {
-            reader = new PdfReader(reader);
-        }
-        else {
-            if (reader.isTampered())
-                throw new DocumentException("The document was reused.");
-            reader.consolidateNamedDestinations();
-            reader.setTampered(true);
-        }
-        reader.shuffleSubsetNames();
-        readers2intrefs.put(reader, new IntHashtable());
-        fields.add(reader.getAcroFields());
-        updateCalculationOrder(reader);
-    }
+	/** a serial version UID */
+	private static final long serialVersionUID = -2319614911517026938L;
 
-    /**
-     * This merge fields is slightly different from the mergeFields method
-     * of PdfCopyFields.
-     */
-    void mergeFields() {
-        for (int k = 0; k < fields.size(); ++k) {
-            HashMap fd = ((AcroFields)fields.get(k)).getFields();
-            mergeWithMaster(fd);
-        }
-    }
-
+	/**
+	 * Creates an instance of a NoPdfException.
+	 * @param	message	the reason why the document isn't a PDF document according to iText.
+	 */
+	public InvalidPdfException(String message) {
+		super(message);
+	}
 }

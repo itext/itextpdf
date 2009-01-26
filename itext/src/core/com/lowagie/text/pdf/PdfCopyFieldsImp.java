@@ -59,6 +59,7 @@ import java.util.StringTokenizer;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.exceptions.BadPasswordException;
 
 /**
  *
@@ -99,7 +100,7 @@ class PdfCopyFieldsImp extends PdfWriter {
         nd.addDocListener(pdf);
     }
     
-    void addDocument(PdfReader reader, List pagesToKeep) throws DocumentException {
+    void addDocument(PdfReader reader, List pagesToKeep) throws DocumentException, IOException {
         if (!readers2intrefs.containsKey(reader) && reader.isTampered())
             throw new DocumentException("The document was reused.");
         reader = new PdfReader(reader);        
@@ -110,9 +111,9 @@ class PdfCopyFieldsImp extends PdfWriter {
         addDocument(reader);
     }
     
-    void addDocument(PdfReader reader) throws DocumentException {
+    void addDocument(PdfReader reader) throws DocumentException, IOException {
         if (!reader.isOpenedWithFullPermissions())
-            throw new IllegalArgumentException("PdfReader not opened with owner password");
+            throw new BadPasswordException("PdfReader not opened with owner password");
         openDoc();
         if (readers2intrefs.containsKey(reader)) {
             reader = new PdfReader(reader);
@@ -156,6 +157,9 @@ class PdfCopyFieldsImp extends PdfWriter {
         return name;
     }
     
+    /**
+     * @since	2.1.5; before 2.1.5 the method was private
+     */
     protected void updateCalculationOrder(PdfReader reader) {
         PdfDictionary catalog = reader.getCatalog();
         PdfDictionary acro = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM));

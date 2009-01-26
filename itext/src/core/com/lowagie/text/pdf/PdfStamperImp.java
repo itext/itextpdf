@@ -60,6 +60,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.exceptions.BadPasswordException;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
@@ -103,7 +104,7 @@ class PdfStamperImp extends PdfWriter {
     PdfStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append) throws DocumentException, IOException {
         super(new PdfDocument(), os);
         if (!reader.isOpenedWithFullPermissions())
-            throw new IllegalArgumentException("PdfReader not opened with owner password");
+            throw new BadPasswordException("PdfReader not opened with owner password");
         if (reader.isTampered())
             throw new DocumentException("The original document was reused. Read it again from file.");
         reader.setTampered(true);

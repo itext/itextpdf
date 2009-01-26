@@ -46,6 +46,7 @@
  */
 package com.lowagie.text.pdf;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.security.cert.Certificate;
 import java.util.List;
@@ -90,7 +91,7 @@ public class PdfCopyFields
      * @param reader the PDF document
      * @throws DocumentException on error
      */    
-    public void addDocument(PdfReader reader) throws DocumentException {
+    public void addDocument(PdfReader reader) throws DocumentException, IOException {
         fc.addDocument(reader);
     }
     
@@ -102,7 +103,7 @@ public class PdfCopyFields
      * @param pagesToKeep the pages to keep
      * @throws DocumentException on error
      */    
-    public void addDocument(PdfReader reader, List pagesToKeep) throws DocumentException {
+    public void addDocument(PdfReader reader, List pagesToKeep) throws DocumentException, IOException {
         fc.addDocument(reader, pagesToKeep);
     }
 
@@ -114,7 +115,7 @@ public class PdfCopyFields
      * @param ranges the comma separated ranges as described in {@link SequenceList}
      * @throws DocumentException on error
      */    
-    public void addDocument(PdfReader reader, String ranges) throws DocumentException {
+    public void addDocument(PdfReader reader, String ranges) throws DocumentException, IOException {
         fc.addDocument(reader, SequenceList.expand(ranges, reader.getNumberOfPages()));
     }
 
