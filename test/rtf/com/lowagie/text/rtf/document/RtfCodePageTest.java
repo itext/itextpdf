@@ -54,6 +54,8 @@ package com.lowagie.text.rtf.document;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.junit.Test;
+
 import com.lowagie.text.rtf.RtfTestBase;
 
 /**
@@ -74,6 +76,7 @@ public class RtfCodePageTest extends RtfTestBase {
      * 
      * @throws IOException On I/O errors
      */
+    @Test
     public void testCodePage() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         (new RtfCodePage(this.rtfDoc)).writeDefinition(out);

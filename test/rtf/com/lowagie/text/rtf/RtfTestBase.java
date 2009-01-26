@@ -55,11 +55,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.document.RtfDocument;
-
-import junit.framework.TestCase;
 
 /**
  * The <code>RtfTestBase</code> is a junit test case that provides
@@ -69,7 +68,7 @@ import junit.framework.TestCase;
  * @author Mark Hall (Mark.Hall@mail.room3b.eu)
  * @since 2.0.8
  */
-public class RtfTestBase extends TestCase {
+public class RtfTestBase {
     
     /**
      * The <code>RtfDocument</code> to use for testing.
@@ -103,6 +102,7 @@ public class RtfTestBase extends TestCase {
      * 
      * @throws IOException On I/O errors.
      */
+    @Test
     public void testSelfEmpty() throws IOException {
         assertEquals("", new ByteArrayOutputStream());
     }
@@ -112,6 +112,7 @@ public class RtfTestBase extends TestCase {
      * 
      * @throws IOException On I/O errors.
      */
+    @Test
     public void testSelfSpecialChar() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(DocWriter.getISOBytes("\n\t"));
@@ -123,6 +124,7 @@ public class RtfTestBase extends TestCase {
      * 
      * @throws IOException On I/O errors.
      */
+    @Test
     public void testRandomText() throws IOException {
         StringBuffer text = new StringBuffer();
         for(int i = 0; i < 100; i++) {
