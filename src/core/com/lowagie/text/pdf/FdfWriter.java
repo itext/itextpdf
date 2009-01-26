@@ -238,6 +238,7 @@ public class FdfWriter {
      * @return <CODE>true</CODE> if the value was inserted,
      * <CODE>false</CODE> if the name is incompatible with
      * an existing field
+     * @since	2.1.5
      */
     public boolean setFieldAsAction(String field, PdfAction action) {
     	return setField(field, action);
