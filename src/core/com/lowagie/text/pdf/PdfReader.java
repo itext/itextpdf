@@ -72,6 +72,9 @@ import java.security.cert.Certificate;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.exceptions.BadPasswordException;
+import com.lowagie.text.exceptions.InvalidPdfException;
+import com.lowagie.text.exceptions.UnsupportedPdfException;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
@@ -495,7 +498,7 @@ public class PdfReader implements PdfViewerPreferences {
                     lastXref = -1;
                 }
                 catch (Exception ne) {
-                    throw new IOException("Rebuild failed: " + ne.getMessage() + "; Original message: " + e.getMessage());
+                    throw new InvalidPdfException("Rebuild failed: " + ne.getMessage() + "; Original message: " + e.getMessage());
                 }
             }
             try {
@@ -503,7 +506,7 @@ public class PdfReader implements PdfViewerPreferences {
             }
             catch (Exception ne) {
                 if (rebuilt || encryptionError)
-                    throw new IOException(ne.getMessage());
+                    throw new InvalidPdfException(ne.getMessage());
                 rebuilt = true;
                 encrypted = false;
                 rebuildXref();
@@ -540,7 +543,7 @@ public class PdfReader implements PdfViewerPreferences {
                     lastXref = -1;
                 }
                 catch (Exception ne) {
-                    throw new IOException("Rebuild failed: " + ne.getMessage() + "; Original message: " + e.getMessage());
+                    throw new InvalidPdfException("Rebuild failed: " + ne.getMessage() + "; Original message: " + e.getMessage());
                 }
             }
             readDocObjPartial();
@@ -607,36 +610,36 @@ public class PdfReader implements PdfViewerPreferences {
             oValue = com.lowagie.text.DocWriter.getISOBytes(s);
 
             o = enc.get(PdfName.R);
-            if (!o.isNumber()) throw new IOException("Illegal R value.");
+            if (!o.isNumber()) throw new InvalidPdfException("Illegal R value.");
             rValue = ((PdfNumber)o).intValue();
             if (rValue != 2 && rValue != 3 && rValue != 4)
-                throw new IOException("Unknown encryption type (" + rValue + ")");
+                throw new UnsupportedPdfException("Unknown encryption type (" + rValue + ")");
 
             o = enc.get(PdfName.P);
-            if (!o.isNumber()) throw new IOException("Illegal P value.");
+            if (!o.isNumber()) throw new InvalidPdfException("Illegal P value.");
             pValue = ((PdfNumber)o).intValue();
    
             if ( rValue == 3 ){
                 o = enc.get(PdfName.LENGTH);
                 if (!o.isNumber())
-                    throw new IOException("Illegal Length value.");
+                    throw new InvalidPdfException("Illegal Length value.");
                 lengthValue = ( (PdfNumber) o).intValue();
                 if (lengthValue > 128 || lengthValue < 40 || lengthValue % 8 != 0)
-                    throw new IOException("Illegal Length value.");
+                    throw new InvalidPdfException("Illegal Length value.");
                 cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
             }  else if (rValue == 4) {
                 PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
                 if (dic == null)
-                    throw new IOException("/CF not found (encryption)");
+                    throw new InvalidPdfException("/CF not found (encryption)");
                 dic = (PdfDictionary)dic.get(PdfName.STDCF);
                 if (dic == null)
-                    throw new IOException("/StdCF not found (encryption)");
+                    throw new InvalidPdfException("/StdCF not found (encryption)");
                 if (PdfName.V2.equals(dic.get(PdfName.CFM)))
                     cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
                 else if (PdfName.AESV2.equals(dic.get(PdfName.CFM)))
                     cryptoMode = PdfWriter.ENCRYPTION_AES_128;
                 else
-                    throw new IOException("No compatible encryption found");
+                    throw new UnsupportedPdfException("No compatible encryption found");
                 PdfObject em = enc.get(PdfName.ENCRYPTMETADATA);
                 if (em != null && em.toString().equals("false"))
                     cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
@@ -649,27 +652,27 @@ public class PdfReader implements PdfViewerPreferences {
             PdfArray recipients = null;
 
             o = enc.get(PdfName.V);
-            if (!o.isNumber()) throw new IOException("Illegal V value.");
+            if (!o.isNumber()) throw new InvalidPdfException("Illegal V value.");
             int vValue = ((PdfNumber)o).intValue();
             if (vValue != 1 && vValue != 2 && vValue != 4)
-                throw new IOException("Unknown encryption type V = " + rValue);
+                throw new UnsupportedPdfException("Unknown encryption type V = " + rValue);
 
             if ( vValue == 2 ){
                 o = enc.get(PdfName.LENGTH);
                 if (!o.isNumber())
-                    throw new IOException("Illegal Length value.");
+                    throw new InvalidPdfException("Illegal Length value.");
                 lengthValue = ( (PdfNumber) o).intValue();
                 if (lengthValue > 128 || lengthValue < 40 || lengthValue % 8 != 0)
-                    throw new IOException("Illegal Length value.");
+                    throw new InvalidPdfException("Illegal Length value.");
                 cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;                
                 recipients = (PdfArray)enc.get(PdfName.RECIPIENTS);                                
             } else if (vValue == 4) {
                 PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
                 if (dic == null)
-                    throw new IOException("/CF not found (encryption)");
+                    throw new InvalidPdfException("/CF not found (encryption)");
                 dic = (PdfDictionary)dic.get(PdfName.DEFAULTCRYPTFILER);
                 if (dic == null)
-                    throw new IOException("/DefaultCryptFilter not found (encryption)");
+                    throw new InvalidPdfException("/DefaultCryptFilter not found (encryption)");
                 if (PdfName.V2.equals(dic.get(PdfName.CFM)))
                 {
                     cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
@@ -681,7 +684,7 @@ public class PdfReader implements PdfViewerPreferences {
                     lengthValue = 128;
                 }
                 else
-                    throw new IOException("No compatible encryption found");
+                    throw new UnsupportedPdfException("No compatible encryption found");
                 PdfObject em = dic.get(PdfName.ENCRYPTMETADATA);
                 if (em != null && em.toString().equals("false"))
                     cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
@@ -722,7 +725,7 @@ public class PdfReader implements PdfViewerPreferences {
             
             if(!foundRecipient || envelopedData == null)
             {
-                throw new IOException("Bad certificate and key.");
+                throw new UnsupportedPdfException("Bad certificate and key.");
             }            
 
             MessageDigest md = null;
@@ -756,7 +759,7 @@ public class PdfReader implements PdfViewerPreferences {
                 //check by user password
                 decrypt.setupByUserPassword(documentID, password, oValue, pValue);
                 if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
-                    throw new BadPasswordException();
+                    throw new BadPasswordException("Bad user password");
                 }
             }
             else
@@ -1047,7 +1050,7 @@ public class PdfReader implements PdfViewerPreferences {
                 address = tokens.intValue() + first;
             }
             if (!ok)
-                throw new IOException("Error reading ObjStm");
+                throw new InvalidPdfException("Error reading ObjStm");
             tokens.seek(address);
             return readPRObject();
         }
@@ -1193,7 +1196,7 @@ public class PdfReader implements PdfViewerPreferences {
                 address[k] = tokens.intValue() + first;
             }
             if (!ok)
-                throw new IOException("Error reading ObjStm");
+                throw new InvalidPdfException("Error reading ObjStm");
             for (int k = 0; k < n; ++k) {
                 if (map.containsKey(k)) {
                     tokens.seek(address[k]);
@@ -1248,10 +1251,10 @@ public class PdfReader implements PdfViewerPreferences {
         tokens.seek(tokens.getStartxref());
         tokens.nextToken();
         if (!tokens.getStringValue().equals("startxref"))
-            throw new IOException("startxref not found.");
+            throw new InvalidPdfException("startxref not found.");
         tokens.nextToken();
         if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
-            throw new IOException("startxref is not followed by a number.");
+            throw new InvalidPdfException("startxref is not followed by a number.");
         int startxref = tokens.intValue();
         lastXref = startxref;
         eofPos = tokens.getFilePointer();
@@ -1512,7 +1515,7 @@ public class PdfReader implements PdfViewerPreferences {
             }
         }
         if (trailer == null)
-            throw new IOException("trailer not found.");
+            throw new InvalidPdfException("trailer not found.");
         xref = new int[top * 2];
         for (int k = 0; k < top; ++k) {
             int obj[] = xr[k];
@@ -2075,7 +2078,7 @@ public class PdfReader implements PdfViewerPreferences {
             else if (name.equals("/Crypt")) {
             }
             else
-                throw new IOException("The filter " + name + " is not supported.");
+                throw new UnsupportedPdfException("The filter " + name + " is not supported.");
         }
         return b;
     }

@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: BadPasswordException.java 3514 2008-06-27 09:26:36Z blowagie $
  *
  * Copyright 2007 by Bruno Lowagie.
  *
@@ -47,12 +47,14 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.text.exceptions;
 
 import java.io.IOException;
 
 /**
- * @since 2.0.8
+ * Typed exception used when opening an existing PDF document.
+ * Gets thrown when the document isn't a valid PDF document.
+ * @since 2.1.5 It was written for iText 2.0.8, but moved to another package
  */
 public class BadPasswordException extends IOException {
 
@@ -62,7 +64,7 @@ public class BadPasswordException extends IOException {
 	/**
 	 * Creates an exception saying the user password was incorrect.
 	 */
-	public BadPasswordException() {
-		super("Bad user Password");
+	public BadPasswordException(String message) {
+		super(message);
 	}
 }
