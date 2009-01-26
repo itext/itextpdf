@@ -1,5 +1,5 @@
 /*
- * $Id: PdfCopyForms.java $
+ * $Id$
  *
  * Copyright 2009 Holger Plankermann (inspired by Paulo Soares)
  *

@@ -1,5 +1,5 @@
 /*
- * $Id: UnsupportedPdfException.java $
+ * $Id$
  *
  * Copyright 2009 Bruno Lowagie
  *
