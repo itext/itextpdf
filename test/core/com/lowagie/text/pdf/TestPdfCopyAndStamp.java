@@ -5,11 +5,18 @@
  */
 package com.lowagie.text.pdf;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
@@ -17,7 +24,7 @@ import com.lowagie.text.Document;
 /**
  * @author kevin day, Trumpet, Inc.
  */
-public class TestPdfCopyAndStamp extends TestCase {
+public class TestPdfCopyAndStamp {
 
     File base = new File(".");
     File[] in;
@@ -62,7 +69,8 @@ public class TestPdfCopyAndStamp extends TestCase {
         
     }
     
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         
         in = new File[]{
                 new File(base, "content1.pdf"),
@@ -82,7 +90,8 @@ public class TestPdfCopyAndStamp extends TestCase {
         createTempFile(multiPageStamp.getCanonicalPath(), new String[]{"          This is a stamp - page 1", "          This is a stamp - page 2"});
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         cleanTempFiles();
     }
 
@@ -154,6 +163,7 @@ public class TestPdfCopyAndStamp extends TestCase {
         
     }
     
+    @Test
     public void testWithReloadingStampReader() throws Exception{
         mergeAndStampPdf(true, in, out, stamp);
 
@@ -162,6 +172,8 @@ public class TestPdfCopyAndStamp extends TestCase {
         
     }
 
+    @Ignore
+    @Test
     public void testWithoutReloadingStampReader() throws Exception{
         mergeAndStampPdf(false, in, out, stamp);
 
@@ -172,6 +184,8 @@ public class TestPdfCopyAndStamp extends TestCase {
         
     }
 
+    @Ignore
+    @Test
     public void testMultiPageStampWithoutReloadingStampReader() throws Exception{
         mergeAndStampPdf(false, in, out, multiPageStamp);
 
@@ -182,6 +196,7 @@ public class TestPdfCopyAndStamp extends TestCase {
         
     }
 
+    @Test
     public void testMultiPageStampWithReloadingStampReader() throws Exception{
         mergeAndStampPdf(true, in, out, multiPageStamp);
 

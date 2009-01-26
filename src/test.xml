@@ -100,7 +100,7 @@
             <classpath refid="itext.test.classpath" />
             <batchtest fork="yes" todir="${itext.reports}/xml">
                 <fileset dir="${itext.src.test}/core">
-                    <include name="**/*Test.java" />
+                    <include name="**/*.java" />
                 </fileset>
             </batchtest>
             <formatter type="xml" />
@@ -122,7 +122,7 @@
             <classpath refid="itext.test.classpath" />
             <batchtest fork="yes" todir="${itext.reports}/xml">
                 <fileset dir="${itext.src.test}/swing">
-                    <include name="**/*Test.java" />
+                    <include name="**/*.java" />
                 </fileset>
             </batchtest>
             <formatter type="xml" />
@@ -159,7 +159,7 @@
             </classpath>
             <batchtest fork="yes" todir="${itext.reports}/xml">
                 <fileset dir="${itext.src.test}/rtf">
-                    <include name="**/*Test.java" />
+                    <include name="**/*.java" />
                 </fileset>
             </batchtest>
             <formatter type="xml" />
