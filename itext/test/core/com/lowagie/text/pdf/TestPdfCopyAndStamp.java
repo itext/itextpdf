@@ -5,11 +5,17 @@
  */
 package com.lowagie.text.pdf;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
@@ -17,7 +23,7 @@ import com.lowagie.text.Document;
 /**
  * @author kevin day, Trumpet, Inc.
  */
-public class TestPdfCopyAndStamp extends TestCase {
+public class TestPdfCopyAndStamp {
 
     File base = new File(".");
     File[] in;
@@ -62,7 +68,8 @@ public class TestPdfCopyAndStamp extends TestCase {
         
     }
     
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         
         in = new File[]{
                 new File(base, "content1.pdf"),
@@ -82,7 +89,8 @@ public class TestPdfCopyAndStamp extends TestCase {
         createTempFile(multiPageStamp.getCanonicalPath(), new String[]{"          This is a stamp - page 1", "          This is a stamp - page 2"});
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         cleanTempFiles();
     }
 
@@ -154,6 +162,7 @@ public class TestPdfCopyAndStamp extends TestCase {
         
     }
     
+    @Test
     public void testWithReloadingStampReader() throws Exception{
         mergeAndStampPdf(true, in, out, stamp);
 
@@ -162,6 +171,8 @@ public class TestPdfCopyAndStamp extends TestCase {
         
     }
 
+    @Ignore
+    @Test
     public void testWithoutReloadingStampReader() throws Exception{
         mergeAndStampPdf(false, in, out, stamp);
 
@@ -172,16 +183,19 @@ public class TestPdfCopyAndStamp extends TestCase {
         
     }
 
+    @Ignore
+    @Test
     public void testMultiPageStampWithoutReloadingStampReader() throws Exception{
         mergeAndStampPdf(false, in, out, multiPageStamp);
 
-        openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
+        // openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
         
         testXObject(true, 1, "Xi0");
         testXObject(true, 2, "Xi1");
         
     }
 
+    @Test
     public void testMultiPageStampWithReloadingStampReader() throws Exception{
         mergeAndStampPdf(true, in, out, multiPageStamp);
 
@@ -193,13 +207,13 @@ public class TestPdfCopyAndStamp extends TestCase {
     }
 
     
-    private void openFile(File f) throws IOException{
-        String[] params = new String[]{
-                "rundll32",
-                "url.dll,FileProtocolHandler",
-                "\"" + f.getCanonicalPath() + "\""
-        };
-        Runtime.getRuntime().exec(params); 
-    }
+//    private void openFile(File f) throws IOException{
+//        String[] params = new String[]{
+//                "rundll32",
+//                "url.dll,FileProtocolHandler",
+//                "\"" + f.getCanonicalPath() + "\""
+//        };
+//        Runtime.getRuntime().exec(params); 
+//    }
 
 }
