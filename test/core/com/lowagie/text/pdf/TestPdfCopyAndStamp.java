@@ -11,7 +11,6 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -189,7 +188,7 @@ public class TestPdfCopyAndStamp {
     public void testMultiPageStampWithoutReloadingStampReader() throws Exception{
         mergeAndStampPdf(false, in, out, multiPageStamp);
 
-        openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
+        // openFile(out); // if you open the resultant PDF at this point and go to page 2, you will get a nice error message
         
         testXObject(true, 1, "Xi0");
         testXObject(true, 2, "Xi1");
@@ -208,13 +207,13 @@ public class TestPdfCopyAndStamp {
     }
 
     
-    private void openFile(File f) throws IOException{
-        String[] params = new String[]{
-                "rundll32",
-                "url.dll,FileProtocolHandler",
-                "\"" + f.getCanonicalPath() + "\""
-        };
-        Runtime.getRuntime().exec(params); 
-    }
+//    private void openFile(File f) throws IOException{
+//        String[] params = new String[]{
+//                "rundll32",
+//                "url.dll,FileProtocolHandler",
+//                "\"" + f.getCanonicalPath() + "\""
+//        };
+//        Runtime.getRuntime().exec(params); 
+//    }
 
 }
