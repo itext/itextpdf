@@ -759,6 +759,8 @@ public class PngImage {
                     int idx = out[srcX];
                     if (idx < trans.length)
                         v[0] = trans[idx];
+                    else
+                    	v[0] = 255; // Patrick Valsecchi
                     setPixel(smask, v, 0, 1, dstX, y, 8, yStride);
                     dstX += step;
                 }
