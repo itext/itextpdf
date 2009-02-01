@@ -112,7 +112,7 @@ public class JBIG2SegmentReader {
 	 * Inner class that holds information about a JBIG2 segment.
 	 * @since	2.1.5
 	 */
-	public static class Jbig2Segment implements Comparable {
+	public static class JBIG2Segment implements Comparable {
 
 		public final int segmentNumber;
 		public long dataLength = -1;
@@ -127,15 +127,15 @@ public class JBIG2SegmentReader {
 		public boolean page_association_size = false;
 		public int page_association_offset = -1;
 
-		public Jbig2Segment(int segment_number) {
+		public JBIG2Segment(int segment_number) {
 			this.segmentNumber = segment_number;
 		}
 
 		// for the globals treeset
 		public int compareTo(Object o) {
-			return this.compareTo((Jbig2Segment)o);
+			return this.compareTo((JBIG2Segment)o);
 		}
-		public int compareTo(Jbig2Segment s) {
+		public int compareTo(JBIG2Segment s) {
 			return this.segmentNumber - s.segmentNumber;
 		}
 
@@ -145,13 +145,13 @@ public class JBIG2SegmentReader {
 	 * Inner class that holds information about a JBIG2 page.
 	 * @since	2.1.5
 	 */
-	public static class Jbig2Page {
+	public static class JBIG2Page {
 		public final int page;
 		private final JBIG2SegmentReader sr;
 		private final SortedMap segs = new TreeMap();
 		public int pageBitmapWidth = -1;
 		public int pageBitmapHeight = -1;
-		public Jbig2Page(int page, JBIG2SegmentReader sr) {
+		public JBIG2Page(int page, JBIG2SegmentReader sr) {
 			this.page = page;
 			this.sr = sr;
 		}
@@ -167,7 +167,7 @@ public class JBIG2SegmentReader {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			for (Iterator i = segs.keySet().iterator(); i.hasNext();  ) {
 				Integer sn = (Integer) i.next();
-				Jbig2Segment s = (Jbig2Segment) segs.get(sn);
+				JBIG2Segment s = (JBIG2Segment) segs.get(sn);
 
 				// pdf reference 1.4, section 3.3.6 JBIG2Decode Filter
 				// D.3 Embedded organisation
@@ -196,7 +196,7 @@ public class JBIG2SegmentReader {
 			os.close();
 			return os.toByteArray();
 		}
-		public void addSegment(Jbig2Segment s) {
+		public void addSegment(JBIG2Segment s) {
 			segs.put(new Integer(s.segmentNumber), s);
 		}
 		
@@ -223,25 +223,25 @@ public class JBIG2SegmentReader {
 		if ( this.sequential ) {
 			// D.1
 			do {
-				Jbig2Segment tmp = readHeader();
+				JBIG2Segment tmp = readHeader();
 				readSegment(tmp);
 				segments.put(new Integer(tmp.segmentNumber), tmp);
 			} while ( this.ra.getFilePointer() < this.ra.length() );
 		} else {
 			// D.2
-			Jbig2Segment tmp;
+			JBIG2Segment tmp;
 			do {
 				tmp = readHeader();
 				segments.put(new Integer(tmp.segmentNumber), tmp);
 			} while ( tmp.type != END_OF_FILE );
 			Iterator segs = segments.keySet().iterator();
 			while ( segs.hasNext() ) {
-				readSegment((Jbig2Segment)segments.get(segs.next()));
+				readSegment((JBIG2Segment)segments.get(segs.next()));
 			}
 		}
 	}
 
-	void readSegment(Jbig2Segment s) throws IOException {
+	void readSegment(JBIG2Segment s) throws IOException {
 		int ptr = ra.getFilePointer();
 		
 		if ( s.dataLength == 0xffffffffl ) {
@@ -259,7 +259,7 @@ public class JBIG2SegmentReader {
 			int page_bitmap_width = ra.readInt();
 			int page_bitmap_height = ra.readInt();
 			ra.seek(last);
-			Jbig2Page p = (Jbig2Page)pages.get(new Integer(s.page));
+			JBIG2Page p = (JBIG2Page)pages.get(new Integer(s.page));
 			if ( p == null ) {
 				throw new IllegalStateException("referring to widht/height of page we havent seen yet? " + s.page);
 			}
@@ -269,11 +269,11 @@ public class JBIG2SegmentReader {
 		}
 	}
 
-	Jbig2Segment readHeader() throws IOException {
+	JBIG2Segment readHeader() throws IOException {
 		int ptr = ra.getFilePointer();
 		// 7.2.1
 		int segment_number = ra.readInt();
-		Jbig2Segment s = new Jbig2Segment(segment_number);
+		JBIG2Segment s = new JBIG2Segment(segment_number);
 
 		// 7.2.3
 		int segment_header_flags = ra.read();
@@ -349,10 +349,10 @@ public class JBIG2SegmentReader {
 		s.page_association_offset = page_association_offset;
 		
 		if ( segment_page_association > 0 && ! pages.containsKey(new Integer(segment_page_association)) ) {
-			pages.put(new Integer(segment_page_association), new Jbig2Page(segment_page_association, this));
+			pages.put(new Integer(segment_page_association), new JBIG2Page(segment_page_association, this));
 		}
 		if ( segment_page_association > 0 ) {
-			((Jbig2Page)pages.get(new Integer(segment_page_association))).addSegment(s);
+			((JBIG2Page)pages.get(new Integer(segment_page_association))).addSegment(s);
 		} else {
 			globals.add(s);
 		}
@@ -403,22 +403,22 @@ public class JBIG2SegmentReader {
 	}
 
 	public int getPageHeight(int i) {
-		return ((Jbig2Page)pages.get(new Integer(i))).pageBitmapHeight;
+		return ((JBIG2Page)pages.get(new Integer(i))).pageBitmapHeight;
 	}
 
 	public int getPageWidth(int i) {
-		return ((Jbig2Page)pages.get(new Integer(i))).pageBitmapWidth;
+		return ((JBIG2Page)pages.get(new Integer(i))).pageBitmapWidth;
 	}
 
-	public Jbig2Page getPage(int page) {
-		return (Jbig2Page)pages.get(new Integer(page));
+	public JBIG2Page getPage(int page) {
+		return (JBIG2Page)pages.get(new Integer(page));
 	}
 
 	public byte[] getGlobal(boolean for_embedding) {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try {
 			for (Iterator gitr = globals.iterator(); gitr.hasNext();) {
-				Jbig2Segment s = (Jbig2Segment)gitr.next();
+				JBIG2Segment s = (JBIG2Segment)gitr.next();
 				if ( for_embedding && 
 						( s.type == END_OF_FILE || s.type == END_OF_PAGE ) ) {
 					continue;

@@ -86,7 +86,7 @@ public class JBIG2Image {
 		try {
 			JBIG2SegmentReader sr = new JBIG2SegmentReader(ra);
 			sr.read();
-			JBIG2SegmentReader.Jbig2Page p = sr.getPage(page);
+			JBIG2SegmentReader.JBIG2Page p = sr.getPage(page);
 			Image img = new ImgJBIG2(p.pageBitmapWidth, p.pageBitmapHeight, p.getData(true), sr.getGlobal(true));
 			return img;
 		} catch (Exception e) {
