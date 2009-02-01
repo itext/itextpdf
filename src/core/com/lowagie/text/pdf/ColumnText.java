@@ -1112,7 +1112,7 @@ public class ColumnText {
                         compositeColumn.setSpaceCharRatio(spaceCharRatio);
                         compositeColumn.addText(para);
                         if (!firstPass) {
-                            yLine -= para.spacingBefore();
+                            yLine -= para.getSpacingBefore();
                         }
                         createHere = true;
                     }
@@ -1145,7 +1145,7 @@ public class ColumnText {
                 if ((status & NO_MORE_TEXT) != 0) {
                     compositeColumn = null;
                     compositeElements.removeFirst();
-                    yLine -= para.spacingAfter();
+                    yLine -= para.getSpacingAfter();
                 }
                 if ((status & NO_MORE_COLUMN) != 0) {
                     return NO_MORE_COLUMN;
@@ -1208,7 +1208,7 @@ public class ColumnText {
                         compositeColumn.setSpaceCharRatio(spaceCharRatio);
                         compositeColumn.addText(item);
                         if (!firstPass) {
-                            yLine -= item.spacingBefore();
+                            yLine -= item.getSpacingBefore();
                         }
                         createHere = true;
                     }
@@ -1246,7 +1246,7 @@ public class ColumnText {
                 if ((status & NO_MORE_TEXT) != 0) {
                     compositeColumn = null;
                     ++listIdx;
-                    yLine -= item.spacingAfter();
+                    yLine -= item.getSpacingAfter();
                 }
                 if ((status & NO_MORE_COLUMN) != 0) {
                     return NO_MORE_COLUMN;

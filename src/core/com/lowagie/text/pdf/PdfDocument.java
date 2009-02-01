@@ -493,7 +493,7 @@ public class PdfDocument extends Document {
                 	leadingCount++;
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
-                    addSpacing(paragraph.spacingBefore(), leading, paragraph.getFont());
+                    addSpacing(paragraph.getSpacingBefore(), leading, paragraph.getFont());
                     
                     // we adjust the parameters of the document
                     alignment = paragraph.getAlignment();
@@ -532,7 +532,7 @@ public class PdfDocument extends Document {
                     	line.setExtraIndent(paragraph.getFirstLineIndent());
                     	element.process(this);
                         carriageReturn();
-                        addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
+                        addSpacing(paragraph.getSpacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
                     }
 
                     if (pageEvent != null && !isSectionTitle)
@@ -628,7 +628,7 @@ public class PdfDocument extends Document {
                     // we cast the element to a ListItem
                     ListItem listItem = (ListItem) element;
                     
-                    addSpacing(listItem.spacingBefore(), leading, listItem.getFont());
+                    addSpacing(listItem.getSpacingBefore(), leading, listItem.getFont());
                    
                     // we adjust the document
                     alignment = listItem.getAlignment();
@@ -642,7 +642,7 @@ public class PdfDocument extends Document {
                     // we process the item
                     element.process(this);
 
-                    addSpacing(listItem.spacingAfter(), listItem.getTotalLeading(), listItem.getFont());
+                    addSpacing(listItem.getSpacingAfter(), listItem.getTotalLeading(), listItem.getFont());
                    
                     // if the last line is justified, it should be aligned to the left
                     if (line.hasToBeJustified()) {
