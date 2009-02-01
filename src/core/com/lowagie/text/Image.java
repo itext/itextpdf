@@ -76,7 +76,7 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
 import com.lowagie.text.pdf.codec.BmpImage;
 import com.lowagie.text.pdf.codec.CCITTG4Encoder;
 import com.lowagie.text.pdf.codec.GifImage;
-import com.lowagie.text.pdf.codec.JBIG2ImageTemp;
+import com.lowagie.text.pdf.codec.JBIG2Image;
 import com.lowagie.text.pdf.codec.PngImage;
 import com.lowagie.text.pdf.codec.TiffImage;
 
@@ -312,7 +312,7 @@ public abstract class Image extends Rectangle {
 			            ra = new RandomAccessFileOrArray(file);
 					} else
 						ra = new RandomAccessFileOrArray(url);
-					Image img = JBIG2ImageTemp.getJbig2Image(ra, 1);
+					Image img = JBIG2Image.getJbig2Image(ra, 1);
 					img.url = url;
 					return img;
 				} finally {
@@ -425,7 +425,7 @@ public abstract class Image extends Rectangle {
 					RandomAccessFileOrArray ra = null;
 					try {
 						ra = new RandomAccessFileOrArray(imgb);
-						Image img = JBIG2ImageTemp.getJbig2Image(ra, 1);
+						Image img = JBIG2Image.getJbig2Image(ra, 1);
 						if (img.getOriginalData() == null)
 							img.setOriginalData(imgb);
 						return img;

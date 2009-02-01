@@ -60,12 +60,12 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  * 
  * @since 2.1.5
  */
-public class JBIG2ImageTemp {
+public class JBIG2Image {
 
 	/** return a stream suitable for using as a /JBIG2Globals, or null if not applicable to the given jbig2. */
 	public static Object getGlobalSegment(RandomAccessFileOrArray ra ) {
 		try {
-			JBIG2SegmentReaderTemp sr = new JBIG2SegmentReaderTemp(ra);
+			JBIG2SegmentReader sr = new JBIG2SegmentReader(ra);
 			sr.read();
 			return sr.getGlobal(true);
 		} catch (Exception e) {
@@ -84,9 +84,9 @@ public class JBIG2ImageTemp {
             throw new IllegalArgumentException("The page number must be >= 1.");
 		
 		try {
-			JBIG2SegmentReaderTemp sr = new JBIG2SegmentReaderTemp(ra);
+			JBIG2SegmentReader sr = new JBIG2SegmentReader(ra);
 			sr.read();
-			JBIG2SegmentReaderTemp.Jbig2Page p = sr.getPage(page);
+			JBIG2SegmentReader.Jbig2Page p = sr.getPage(page);
 			Image img = new ImgJBIG2(p.pageBitmapWidth, p.pageBitmapHeight, p.getData(true), sr.getGlobal(true));
 			return img;
 		} catch (Exception e) {
@@ -97,7 +97,7 @@ public class JBIG2ImageTemp {
 	
 	public static int getNumberOfPages(RandomAccessFileOrArray ra) {
 		try {
-			JBIG2SegmentReaderTemp sr = new JBIG2SegmentReaderTemp(ra);
+			JBIG2SegmentReader sr = new JBIG2SegmentReader(ra);
 			sr.read();
 			return sr.numberOfPages();
 		} catch (Exception e) {

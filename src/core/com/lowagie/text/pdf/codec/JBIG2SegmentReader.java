@@ -73,7 +73,7 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  * @since 2.1.5
  */
 
-public class JBIG2SegmentReaderTemp {
+public class JBIG2SegmentReader {
 	
 	public static final int SYMBOL_DICTIONARY = 0; //see 7.4.2.                                               
 
@@ -145,11 +145,11 @@ public class JBIG2SegmentReaderTemp {
 	 */
 	public static class Jbig2Page {
 		public final int page;
-		private final JBIG2SegmentReaderTemp sr;
+		private final JBIG2SegmentReader sr;
 		private final SortedMap segs = new TreeMap();
 		public int pageBitmapWidth = -1;
 		public int pageBitmapHeight = -1;
-		public Jbig2Page(int page, JBIG2SegmentReaderTemp sr) {
+		public Jbig2Page(int page, JBIG2SegmentReader sr) {
 			this.page = page;
 			this.sr = sr;
 		}
@@ -200,7 +200,7 @@ public class JBIG2SegmentReaderTemp {
 		
 	}
 	
-	public JBIG2SegmentReaderTemp(RandomAccessFileOrArray ra ) throws IOException {
+	public JBIG2SegmentReader(RandomAccessFileOrArray ra ) throws IOException {
 		this.ra = ra;
 	}
 
