@@ -101,9 +101,11 @@ public class PdfImage extends PdfStream {
             put(PdfName.INTERPOLATE, PdfBoolean.PDFTRUE);
         InputStream is = null;
         try {
-            
+
+            System.err.println("Hier");
             // Raw Image data
             if (image.isImgRaw()) {
+                System.err.println("ook");
                 // will also have the CCITT parameters
                 int colorspace = image.getColorspace();
                 int transparency[] = image.getTransparency();
@@ -170,7 +172,6 @@ public class PdfImage extends PdfStream {
                 }
                 return;
             }
-            
             // GIF, JPEG or PNG
             String errorID;
             if (image.getRawData() == null){
@@ -229,6 +230,20 @@ public class PdfImage extends PdfStream {
                     streamBytes = new ByteArrayOutputStream();
                     transferBytes(is, streamBytes, -1);
                     break;
+                case Image.JBIG2:
+                	System.err.println("A");
+                    put(PdfName.FILTER, PdfName.JBIG2DECODE);
+                    put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
+                    put(PdfName.BITSPERCOMPONENT, new PdfNumber(1));
+                    if (image.getRawData() != null){
+                        bytes = image.getRawData();
+                        put(PdfName.LENGTH, new PdfNumber(bytes.length));
+                        return;
+                    }
+                	System.err.println("B");
+                    streamBytes = new ByteArrayOutputStream();
+                    transferBytes(is, streamBytes, -1);
+                	break;
                 default:
                     throw new BadPdfFormatException(errorID + " is an unknown Image format.");
             }

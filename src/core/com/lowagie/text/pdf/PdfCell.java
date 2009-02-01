@@ -210,6 +210,7 @@ public class PdfCell extends Rectangle {
             switch (element.type()) {
                 case Element.JPEG:
                 case Element.JPEG2000:
+                case Element.JBIG2:
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE:
                     addImage((Image) element, left, right, 0.4f * leading, alignment); //
