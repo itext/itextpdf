@@ -173,7 +173,10 @@ public interface Element {
 	/** This is a possible type of <CODE>Element</CODE>. */
 	public static final int IMGTEMPLATE = 35;
 
-	/** This is a possible type of <CODE>Element</CODE>. */
+	/**
+	 * This is a possible type of <CODE>Element</CODE>.
+	 * @since	2.1.5
+	 */
 	public static final int JBIG2 = 36;
 
 	/** This is a possible type of <CODE>Element</CODE>. */

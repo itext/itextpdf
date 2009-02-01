@@ -73,7 +73,7 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  * @since 2.1.5
  */
 
-public class Jbig2SegmentReader {
+public class JBIG2SegmentReaderTemp {
 	
 	public static final int SYMBOL_DICTIONARY = 0; //see 7.4.2.                                               
 
@@ -108,6 +108,9 @@ public class Jbig2SegmentReader {
 	private int number_of_pages = -1;
 	private boolean read = false;
 	
+	/**
+	 * Inner class that holds information about a JBIG2 segment.
+	 */
 	public static class Jbig2Segment implements Comparable {
 
 		public final int segmentNumber;
@@ -137,13 +140,16 @@ public class Jbig2SegmentReader {
 
 		
 	}
+	/**
+	 * Inner class that holds information about a JBIG2 page.
+	 */
 	public static class Jbig2Page {
 		public final int page;
-		private final Jbig2SegmentReader sr;
+		private final JBIG2SegmentReaderTemp sr;
 		private final SortedMap segs = new TreeMap();
 		public int pageBitmapWidth = -1;
 		public int pageBitmapHeight = -1;
-		public Jbig2Page(int page, Jbig2SegmentReader sr) {
+		public Jbig2Page(int page, JBIG2SegmentReaderTemp sr) {
 			this.page = page;
 			this.sr = sr;
 		}
@@ -152,7 +158,7 @@ public class Jbig2SegmentReader {
 		 * order, EMBEDDED organization, but i am putting the needed segments in SEQUENTIAL organization.
 		 * if for_embedding, skip the segment types that are known to be not for acrobat. 
 		 * @param for_embedding
-		 * @return
+		 * @return	a byte array
 		 * @throws IOException
 		 */
 		public byte[] getData(boolean for_embedding) throws IOException {
@@ -194,7 +200,7 @@ public class Jbig2SegmentReader {
 		
 	}
 	
-	public Jbig2SegmentReader(RandomAccessFileOrArray ra ) throws IOException {
+	public JBIG2SegmentReaderTemp(RandomAccessFileOrArray ra ) throws IOException {
 		this.ra = ra;
 	}
 

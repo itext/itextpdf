@@ -60,12 +60,12 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  * 
  * @since 2.1.5
  */
-public class Jbig2Image {
+public class JBIG2ImageTemp {
 
 	/** return a stream suitable for using as a /JBIG2Globals, or null if not applicable to the given jbig2. */
 	public static Object getGlobalSegment(RandomAccessFileOrArray ra ) {
 		try {
-			Jbig2SegmentReader sr = new Jbig2SegmentReader(ra);
+			JBIG2SegmentReaderTemp sr = new JBIG2SegmentReaderTemp(ra);
 			sr.read();
 			return sr.getGlobal(true);
 		} catch (Exception e) {
@@ -77,16 +77,16 @@ public class Jbig2Image {
 	 * not clear to me how to communicate what about the possibility of the globals.
 	 * @param ra
 	 * @param page
-	 * @return
+	 * @return	an Image object
 	 */
 	public static Image getJbig2Image(RandomAccessFileOrArray ra, int page) {
 		if (page < 1)
             throw new IllegalArgumentException("The page number must be >= 1.");
 		
 		try {
-			Jbig2SegmentReader sr = new Jbig2SegmentReader(ra);
+			JBIG2SegmentReaderTemp sr = new JBIG2SegmentReaderTemp(ra);
 			sr.read();
-			Jbig2SegmentReader.Jbig2Page p = sr.getPage(page);
+			JBIG2SegmentReaderTemp.Jbig2Page p = sr.getPage(page);
 			Image img = new ImgJBIG2(p.pageBitmapWidth, p.pageBitmapHeight, p.getData(true), sr.getGlobal(true));
 			return img;
 		} catch (Exception e) {
@@ -97,7 +97,7 @@ public class Jbig2Image {
 	
 	public static int getNumberOfPages(RandomAccessFileOrArray ra) {
 		try {
-			Jbig2SegmentReader sr = new Jbig2SegmentReader(ra);
+			JBIG2SegmentReaderTemp sr = new JBIG2SegmentReaderTemp(ra);
 			sr.read();
 			return sr.numberOfPages();
 		} catch (Exception e) {
