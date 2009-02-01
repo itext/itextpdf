@@ -727,6 +727,7 @@ public class PdfDocument extends Document {
                 }
                 case Element.JPEG:
                 case Element.JPEG2000:
+                case Element.JBIG2:
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE: {
                     //carriageReturn(); suggestion by Marc Campforts
