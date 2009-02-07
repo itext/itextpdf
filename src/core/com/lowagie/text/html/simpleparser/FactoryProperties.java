@@ -319,7 +319,10 @@ public class FactoryProperties {
 				float v = Markup.parseLength(prop.getProperty(key));
 				if (ss.endsWith("%")) {
 					h.put("leading", "0," + (v / 100));
-				} else {
+				} else if ("normal".equalsIgnoreCase(ss)) {
+					h.put("leading", "0,1.5");
+				}
+				else {
 					h.put("leading", v + ",0");
 				}
 			} else if (key.equals(Markup.CSS_KEY_TEXTALIGN)) {
@@ -387,9 +390,6 @@ public class FactoryProperties {
 				if (ss.endsWith("%")) {
 					h.put("leading", "0," + (v / 100));
 					return;
-				}
-				if (v != 0) {
-					h.put("leading", v + ",0");
 				}
 				if ("normal".equalsIgnoreCase(ss)) {
 					h.put("leading", "0,1.5");
