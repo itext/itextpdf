@@ -307,7 +307,7 @@ public class PdfAction extends PdfDictionary {
                 js.put(PdfName.JS, writer.addToBody(stream).getIndirectReference());
             }
             catch (Exception e) {
-                throw new ExceptionConverter(e);
+                js.put(PdfName.JS, new PdfString(code));
             }
         }
         return js;
