@@ -1769,7 +1769,6 @@ public class PdfDocument extends Document {
             int style = f.getStyle();
             style &= ~Font.UNDERLINE;
             style &= ~Font.STRIKETHRU;
-            f.setStyle(Font.UNDEFINED);
             f.setStyle(style);
         }
         Chunk space = new Chunk(" ", f);
