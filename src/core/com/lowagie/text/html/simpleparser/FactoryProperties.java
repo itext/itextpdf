@@ -271,6 +271,14 @@ public class FactoryProperties {
 		return new HyphenationAuto(lang, country, leftMin, rightMin);
 	}
 
+	/**
+	 * This method isn't used by iText, but you can use it to analyze
+	 * the value of a style attribute inside a HashMap.
+	 * The different elements of the style attribute are added to the
+	 * HashMap as key-value pairs.
+	 * @param	h	a HashMap that should have at least a key named
+	 * style. After this method is invoked, more keys could be added.
+	 */
 	public static void insertStyle(HashMap h) {
 		String style = (String) h.get("style");
 		if (style == null)
