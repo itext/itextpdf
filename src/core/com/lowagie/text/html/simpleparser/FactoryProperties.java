@@ -378,9 +378,16 @@ public class FactoryProperties {
 						actualFontSize);
 				if (ss.endsWith("%")) {
 					h.put("leading", "0," + (v / 100));
-				} else {
+					return;
+				}
+				if (v != 0) {
 					h.put("leading", v + ",0");
 				}
+				if ("normal".equalsIgnoreCase(ss)) {
+					h.put("leading", "0,1.5");
+					return;
+				}
+				h.put("leading", v + ",0");
 			} else if (key.equals(Markup.CSS_KEY_TEXTALIGN)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				h.put("align", ss);
