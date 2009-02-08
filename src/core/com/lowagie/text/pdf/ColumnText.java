@@ -815,12 +815,12 @@ public class ColumnText {
                     status = NO_MORE_TEXT;
                     break;
                 }
-                float maxSize = line.getMaxSizeSimple();
+                float[] maxSize = line.getMaxSize();
                 if (isUseAscender() && Float.isNaN(firstLineY)) {
                     currentLeading = line.getAscender();
                 }
                 else {
-                    currentLeading = fixedLeading + maxSize * multipliedLeading;
+                    currentLeading = Math.max(fixedLeading + maxSize[0] * multipliedLeading, maxSize[1]);
                 }
                 if (yLine > maxY || yLine - currentLeading < minY ) {
                     status = NO_MORE_COLUMN;
