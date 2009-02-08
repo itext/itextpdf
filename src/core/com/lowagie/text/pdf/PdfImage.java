@@ -101,11 +101,8 @@ public class PdfImage extends PdfStream {
             put(PdfName.INTERPOLATE, PdfBoolean.PDFTRUE);
         InputStream is = null;
         try {
-
-            System.err.println("Hier");
             // Raw Image data
             if (image.isImgRaw()) {
-                System.err.println("ook");
                 // will also have the CCITT parameters
                 int colorspace = image.getColorspace();
                 int transparency[] = image.getTransparency();
