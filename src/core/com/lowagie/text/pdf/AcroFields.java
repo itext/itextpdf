@@ -1619,13 +1619,18 @@ public class AcroFields {
 
     /** The field representations for retrieval and modification. */
     public static class Item {
+        //@since 2.1.5
         public static int WRITE_MERGED = 1;
+        //@since 2.1.5
         public static int WRITE_WIDGET = 2;
+        //@since 2.1.5
         public static int WRITE_VALUE = 4;
 
         /**
          * This function writes the given key/value pair to all the instances
          * of merged, widget, and/or value, depending on the writeFlags setting
+         *
+         * @since 2.1.5
          *
          * @param key        you'll never guess what this is for.
          * @param value      if value is null, the key will be removed
@@ -1656,6 +1661,7 @@ public class AcroFields {
 
         /**
          * Mark all the item dictionaries used matching the given flags
+         * @since 2.1.5
          * @param writeFlags WRITE_MERGED is ignored
          */
         public void markUsed( AcroFields parentFields, int writeFlags ) {
@@ -1673,88 +1679,179 @@ public class AcroFields {
 
         /** An array of <CODE>PdfDictionary</CODE> where the value tag /V
          * is present.
+         * @depricated (will remove 'public' in the future)
          */
         public ArrayList values = new ArrayList();
         /** An array of <CODE>PdfDictionary</CODE> with the widgets.
+         * @depricated (will remove 'public' in the future)
          */
         public ArrayList widgets = new ArrayList();
         /** An array of <CODE>PdfDictionary</CODE> with the widget references.
+         * @depricated (will remove 'public' in the future)
          */
         public ArrayList widget_refs = new ArrayList();
         /** An array of <CODE>PdfDictionary</CODE> with all the field
          * and widget tags merged.
+         * @depricated (will remove 'public' in the future)
          */
         public ArrayList merged = new ArrayList();
         /** An array of <CODE>Integer</CODE> with the page numbers where
          * the widgets are displayed.
+         * @depricated (will remove 'public' in the future)
          */
         public ArrayList page = new ArrayList();
         /** An array of <CODE>Integer</CODE> with the tab order of the field in the page.
+         * @depricated (will remove 'public' in the future)
          */
         public ArrayList tabOrder = new ArrayList();
 
-        // all the ArrayList members SHOULD be the same size.
+        /**
+         * Preferred method of determining the number of instances
+         * of a given field.
+         * @since 2.1.5
+         * @return number of instances
+         */
         public int size() {
             return values.size();
         }
 
-        void remove(int killMeh) {
-            values.remove(killMeh);
-            widgets.remove(killMeh);
-            widget_refs.remove(killMeh);
-            merged.remove(killMeh);
-            page.remove(killMeh);
-            tabOrder.remove(killMeh);
+        /**
+         * Remove the given instance from this item.  It is possible to
+         * remove all instances using this function.
+         * @since 2.1.5
+         * @param killIdx
+         */
+        void remove(int killIdx) {
+            values.remove(killIdx);
+            widgets.remove(killIdx);
+            widget_refs.remove(killIdx);
+            merged.remove(killIdx);
+            page.remove(killIdx);
+            tabOrder.remove(killIdx);
         }
 
+        /**
+         * Retrieve the value dictionary of the given instance
+         * @since 2.1.5
+         * @param idx instance index
+         * @return dictionary storing this instance's value.  It may be shared across instances.
+         */
         public PdfDictionary getValue(int idx) {
             return (PdfDictionary) values.get(idx);
         }
 
+        /**
+         * Add a value dict to this Item
+         * @since 2.1.5
+         * @param value new value dictionary
+         */
         void addValue(PdfDictionary value) {
             values.add(value);
         }
 
+        /**
+         * Retrieve the widget dictionary of the given instance
+         * @since 2.1.5
+         * @param idx instance index
+         * @return The dictionary found in the appropriate page's Annot array.
+         */
         public PdfDictionary getWidget(int idx) {
             return (PdfDictionary) widgets.get(idx);
         }
 
+        /**
+         * Add a widget dict to this Item
+         * @since 2.1.5
+         * @param widget
+         */
         void addWidget(PdfDictionary widget) {
             widgets.add(widget);
         }
 
+        /**
+         * Retrieve the reference to the given instance
+         * @since 2.1.5
+         * @param idx instance index
+         * @return
+         */
         public PdfIndirectReference getWidgetRef(int idx) {
             return (PdfIndirectReference) widget_refs.get(idx);
         }
 
+        /**
+         * Add a widget ref to this Item
+         * @since 2.1.5
+         * @param widgRef
+         */
         void addWidgetRef(PdfIndirectReference widgRef) {
             widget_refs.add(widgRef);
         }
 
+        /**
+         * Retrieve the merged dictionary for the given instance.  The merged
+         * dictionary contains all the keys present in parent fields, though they
+         * may have been overwritten (or modified?) by children.
+         * Example: a merged radio field dict will contain /V
+         * @since 2.1.5
+         * @param idx  instance index
+         * @return the merged dictionary for the given instance
+         */
         public PdfDictionary getMerged(int idx) {
             return (PdfDictionary) merged.get(idx);
         }
 
+        /**
+         * Adds a merged dictionary to this Item.
+         * @since 2.1.5
+         * @param mergeDict
+         */
         void addMerged(PdfDictionary mergeDict) {
             merged.add(mergeDict);
         }
 
+        /**
+         * Retrieve the page number of the given instance
+         * @since 2.1.5
+         * @param idx
+         * @return remember, pages are "1-indexed", not "0-indexed" like field instances.
+         */
         public Integer getPage(int idx) {
             return (Integer) page.get(idx);
         }
 
+        /**
+         * Adds a page to the current Item.
+         * @since 2.1.5
+         * @param pg
+         */
         void addPage(int pg) {
             page.add(new Integer(pg));
         }
 
+        /**
+         * forces a page value into the Item.
+         * @since 2.1.5
+         * @param idx
+         */
         void forcePage(int idx, int pg) {
             page.set(idx, new Integer( pg ));
         }
 
+        /**
+         *
+         * @since 2.1.5
+         * @param idx
+         * @return
+         */
         public Integer getTabOrder(int idx) {
             return (Integer) tabOrder.get(idx);
         }
 
+        /**
+         * Adds a tab order value to this Item.
+         * @since 2.1.5
+         * @param order
+         */
         void addTabOrder(int order) {
             tabOrder.add(new Integer(order));
         }
