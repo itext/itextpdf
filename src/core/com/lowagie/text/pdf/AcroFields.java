@@ -1619,16 +1619,25 @@ public class AcroFields {
 
     /** The field representations for retrieval and modification. */
     public static class Item {
-        //@since 2.1.5
+        /**
+         * <CODE>writeToAll</CODE> constant.
+         *  @since 2.1.5
+         */
         public static int WRITE_MERGED = 1;
-        //@since 2.1.5
+        /**
+         * <CODE>writeToAll</CODE> and <CODE>markUsed</CODE> constant.
+         *  @since 2.1.5
+         */
         public static int WRITE_WIDGET = 2;
-        //@since 2.1.5
+        /**
+         * <CODE>writeToAll</CODE> and <CODE>markUsed</CODE> constant.
+         *  @since 2.1.5
+         */
         public static int WRITE_VALUE = 4;
 
         /**
          * This function writes the given key/value pair to all the instances
-         * of merged, widget, and/or value, depending on the writeFlags setting
+         * of merged, widget, and/or value, depending on the <code>writeFlags</code> setting
          *
          * @since 2.1.5
          *
@@ -1679,29 +1688,29 @@ public class AcroFields {
 
         /** An array of <CODE>PdfDictionary</CODE> where the value tag /V
          * is present.
-         * @depricated (will remove 'public' in the future)
+         * @deprecated (will remove 'public' in the future)
          */
         public ArrayList values = new ArrayList();
         /** An array of <CODE>PdfDictionary</CODE> with the widgets.
-         * @depricated (will remove 'public' in the future)
+         * @deprecated (will remove 'public' in the future)
          */
         public ArrayList widgets = new ArrayList();
         /** An array of <CODE>PdfDictionary</CODE> with the widget references.
-         * @depricated (will remove 'public' in the future)
+         * @deprecated (will remove 'public' in the future)
          */
         public ArrayList widget_refs = new ArrayList();
         /** An array of <CODE>PdfDictionary</CODE> with all the field
          * and widget tags merged.
-         * @depricated (will remove 'public' in the future)
+         * @deprecated (will remove 'public' in the future)
          */
         public ArrayList merged = new ArrayList();
         /** An array of <CODE>Integer</CODE> with the page numbers where
          * the widgets are displayed.
-         * @depricated (will remove 'public' in the future)
+         * @deprecated (will remove 'public' in the future)
          */
         public ArrayList page = new ArrayList();
         /** An array of <CODE>Integer</CODE> with the tab order of the field in the page.
-         * @depricated (will remove 'public' in the future)
+         * @deprecated (will remove 'public' in the future)
          */
         public ArrayList tabOrder = new ArrayList();
 
@@ -1772,7 +1781,7 @@ public class AcroFields {
          * Retrieve the reference to the given instance
          * @since 2.1.5
          * @param idx instance index
-         * @return
+         * @return reference to the given field instance
          */
         public PdfIndirectReference getWidgetRef(int idx) {
             return (PdfIndirectReference) widget_refs.get(idx);
@@ -1841,7 +1850,7 @@ public class AcroFields {
          *
          * @since 2.1.5
          * @param idx
-         * @return
+         * @return tab index of the given field instance
          */
         public Integer getTabOrder(int idx) {
             return (Integer) tabOrder.get(idx);
