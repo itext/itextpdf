@@ -53,7 +53,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.pdf.collection.PdfTargetDictionary;
 
 /**
