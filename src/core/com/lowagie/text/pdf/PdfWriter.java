@@ -1771,7 +1771,7 @@ public class PdfWriter extends DocWriter implements
      */
     public boolean setOutputIntents(PdfReader reader, boolean checkExistence) throws IOException {
         PdfDictionary catalog = reader.getCatalog();
-        PdfArray outs = (PdfArray)PdfReader.getPdfObject(catalog.get(PdfName.OUTPUTINTENTS));
+        PdfArray outs = catalog.getAsArray(PdfName.OUTPUTINTENTS);
         if (outs == null)
             return false;
         ArrayList arr = outs.getArrayList();

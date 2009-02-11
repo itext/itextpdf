@@ -463,8 +463,8 @@ public class PushbuttonField extends BaseField {
             else if (iconReference != null) {
                 PdfDictionary dic = (PdfDictionary)PdfReader.getPdfObject(iconReference);
                 if (dic != null) {
-                    Rectangle r2 = PdfReader.getNormalizedRectangle((PdfArray)PdfReader.getPdfObject(dic.get(PdfName.BBOX)));
-                    matrix = (PdfArray)PdfReader.getPdfObject(dic.get(PdfName.MATRIX));
+                    Rectangle r2 = PdfReader.getNormalizedRectangle(dic.getAsArray(PdfName.BBOX));
+                    matrix = dic.getAsArray(PdfName.MATRIX);
                     haveIcon = true;
                     boundingBoxWidth = r2.getWidth();
                     boundingBoxHeight = r2.getHeight();
