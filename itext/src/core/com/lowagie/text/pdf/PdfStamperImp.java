@@ -538,10 +538,10 @@ class PdfStamperImp extends PdfWriter {
         if (readers2intrefs.containsKey(fdf))
             return;
         PdfDictionary catalog = fdf.getCatalog();
-        catalog = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.FDF));
+        catalog = catalog.getAsDict(PdfName.FDF);
         if (catalog == null)
             return;
-        PdfArray annots = (PdfArray)PdfReader.getPdfObject(catalog.get(PdfName.ANNOTS));
+        PdfArray annots = catalog.getAsArray(PdfName.ANNOTS);
         if (annots == null || annots.size() == 0)
             return;
         registerReader(fdf, false);
@@ -552,7 +552,7 @@ class PdfStamperImp extends PdfWriter {
         for (int k = 0; k < ar.size(); ++k) {
             PdfObject obj = (PdfObject)ar.get(k);
             PdfDictionary annot = (PdfDictionary)PdfReader.getPdfObject(obj);
-            PdfNumber page = (PdfNumber)PdfReader.getPdfObject(annot.get(PdfName.PAGE));
+            PdfNumber page = annot.getAsNumber(PdfName.PAGE);
             if (page == null || page.intValue() >= reader.getNumberOfPages())
                 continue;
             findAllObjects(fdf, obj, hits);
@@ -584,7 +584,7 @@ class PdfStamperImp extends PdfWriter {
         for (int k = 0; k < an.size(); ++k) {
             PdfObject obj = (PdfObject)an.get(k);
             PdfDictionary annot = (PdfDictionary)PdfReader.getPdfObject(obj);
-            PdfNumber page = (PdfNumber)PdfReader.getPdfObject(annot.get(PdfName.PAGE));
+            PdfNumber page = annot.getAsNumber(PdfName.PAGE);
             PdfDictionary dic = reader.getPageN(page.intValue() + 1);
             PdfArray annotsp = (PdfArray)PdfReader.getPdfObject(dic.get(PdfName.ANNOTS), dic);
             if (annotsp == null) {
@@ -729,7 +729,7 @@ class PdfStamperImp extends PdfWriter {
             markUsed(parent);
             PdfNumber count = (PdfNumber)PdfReader.getPdfObjectRelease(parent.get(PdfName.COUNT));
             parent.put(PdfName.COUNT, new PdfNumber(count.intValue() + 1));
-            parent = (PdfDictionary)PdfReader.getPdfObject(parent.get(PdfName.PARENT));
+            parent = parent.getAsDict(PdfName.PARENT);
         }
     }
     
@@ -803,12 +803,12 @@ class PdfStamperImp extends PdfWriter {
             AcroFields.Item item = (AcroFields.Item) entry.getValue();
             for (int k = 0; k < item.merged.size(); ++k) {
                 PdfDictionary merged = (PdfDictionary)item.merged.get(k);
-                PdfNumber ff = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.F));
+                PdfNumber ff = merged.getAsNumber(PdfName.F);
                 int flags = 0;
                 if (ff != null)
                     flags = ff.intValue();
                 int page = ((Integer)item.page.get(k)).intValue();
-                PdfDictionary appDic = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.AP));
+                PdfDictionary appDic = merged.getAsDict(PdfName.AP);
                 if (appDic != null && (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
                     PdfObject obj = appDic.get(PdfName.N);
                     PdfAppearance app = null;

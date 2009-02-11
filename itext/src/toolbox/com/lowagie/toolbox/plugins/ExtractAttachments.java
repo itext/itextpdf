@@ -108,11 +108,9 @@ public class ExtractAttachments extends AbstractTool {
 				outPath = "";
 			}
 			PdfDictionary catalog = reader.getCatalog();
-			PdfDictionary names = (PdfDictionary) PdfReader
-					.getPdfObject(catalog.get(PdfName.NAMES));
+			PdfDictionary names = catalog.getAsDict(PdfName.NAMES);
 			if (names != null) {
-				PdfDictionary embFiles = (PdfDictionary) PdfReader
-						.getPdfObject(names.get(new PdfName("EmbeddedFiles")));
+				PdfDictionary embFiles = names.getAsDict(new PdfName("EmbeddedFiles"));
 				if (embFiles != null) {
 				    HashMap<String, PdfObject> embMap = PdfNameTree.readTree(embFiles);
 					for (Iterator<PdfObject> i = embMap.values().iterator(); i.hasNext();) {
@@ -130,12 +128,10 @@ public class ExtractAttachments extends AbstractTool {
 				for (Iterator<PdfObject> i = annots.listIterator(); i.hasNext();) {
 					PdfDictionary annot = (PdfDictionary) PdfReader
 							.getPdfObject(i.next());
-					PdfName subType = (PdfName) PdfReader.getPdfObject(annot
-							.get(PdfName.SUBTYPE));
+					PdfName subType = annot.getAsName(PdfName.SUBTYPE);
 					if (!PdfName.FILEATTACHMENT.equals(subType))
 						continue;
-					PdfDictionary filespec = (PdfDictionary) PdfReader
-							.getPdfObject(annot.get(PdfName.FS));
+					PdfDictionary filespec = annot.getAsDict(PdfName.FS);
 					unpackFile(reader, filespec, outPath);
 				}
 			}
@@ -198,16 +194,13 @@ public class ExtractAttachments extends AbstractTool {
 			String outPath) throws IOException {
 		if (filespec == null)
 			return;
-		PdfName type = (PdfName) PdfReader.getPdfObject(filespec
-				.get(PdfName.TYPE));
+		PdfName type = filespec.getAsName(PdfName.TYPE);
 		if (!PdfName.F.equals(type) && !PdfName.FILESPEC.equals(type))
 			return;
-		PdfDictionary ef = (PdfDictionary) PdfReader.getPdfObject(filespec
-				.get(PdfName.EF));
+		PdfDictionary ef =filespec.getAsDict(PdfName.EF);
 		if (ef == null)
 			return;
-		PdfString fn = (PdfString) PdfReader.getPdfObject(filespec
-				.get(PdfName.F));
+		PdfString fn = filespec.getAsString(PdfName.F);
 		System.out.println("Unpacking file '" + fn + "' to " + outPath);
 		if (fn == null)
 			return;
