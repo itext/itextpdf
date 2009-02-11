@@ -51,7 +51,6 @@ package com.lowagie.text.pdf.codec;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.SortedMap;
 import java.util.SortedSet;

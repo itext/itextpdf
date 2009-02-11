@@ -1623,17 +1623,17 @@ public class AcroFields {
          * <CODE>writeToAll</CODE> constant.
          *  @since 2.1.5
          */
-        public static int WRITE_MERGED = 1;
+        public static final int WRITE_MERGED = 1;
         /**
          * <CODE>writeToAll</CODE> and <CODE>markUsed</CODE> constant.
          *  @since 2.1.5
          */
-        public static int WRITE_WIDGET = 2;
+        public static final int WRITE_WIDGET = 2;
         /**
          * <CODE>writeToAll</CODE> and <CODE>markUsed</CODE> constant.
          *  @since 2.1.5
          */
-        public static int WRITE_VALUE = 4;
+        public static final int WRITE_VALUE = 4;
 
         /**
          * This function writes the given key/value pair to all the instances
