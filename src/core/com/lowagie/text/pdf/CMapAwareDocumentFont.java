@@ -62,6 +62,8 @@ public class CMapAwareDocumentFont extends DocumentFont {
     private PdfDictionary fontDic;
     /** CMap instance. */
     private CMap cmap;
+    /** the width of a space for this font, in normalized 1000 point units */
+    private int spaceWidth;
     
     /**
      * Creates an instance of a CMapAwareFont based on an indirect reference to a font.
@@ -71,8 +73,41 @@ public class CMapAwareDocumentFont extends DocumentFont {
         super(refFont);
         fontDic = (PdfDictionary)PdfReader.getPdfObjectRelease(refFont);
         processToUni();
+        spaceWidth = super.getWidth(' ');
+        if (spaceWidth == 0){
+            spaceWidth = computeAverageWidth();
+        }
     }
 
+    /**
+     * For all widths of all glyphs, compute the average width in normalized 1000 point units.
+     * This is used to give some meaningful width in cases where we need an average font width 
+     * (such as if the width of a space isn't specified by a given font)
+     * @return the average width of all non-zero width glyphs in the font
+     */
+    private int computeAverageWidth(){
+        int count = 0;
+        int total = 0;
+        for(int i = 0; i < super.widths.length; i++){
+            if(super.widths[i] != 0){
+                total += super.widths[i];
+                count++;
+            }
+        }
+        return total/count;
+    }
+    
+    /**
+     * Override to allow special handling for fonts that don't specify width of space character
+     * @see com.lowagie.text.pdf.DocumentFont#getWidth(int)
+     */
+    public int getWidth(int char1) {
+        if (char1 == ' ')
+            return spaceWidth;
+        
+        return super.getWidth(char1);
+    }
+    
     /**
      * Does some processing if the font dictionary indicates that the font is in unicode.
      */
