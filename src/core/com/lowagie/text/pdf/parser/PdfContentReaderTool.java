@@ -114,6 +114,43 @@ public class PdfContentReaderTool {
         }
         return builder.toString();
     }
+
+    /**
+     * Writes information about a specific page from PdfReader to the specified output stream.
+     * @param reader    the PdfReader to read the page content from
+     * @param pageNum   the page number to read
+     * @param out       the output stream to send the content to
+     * @throws IOException
+     */
+    static public void listContentStreamForPage(PdfReader reader, int pageNum, PrintWriter out) throws IOException {
+        out.println("==============Page " + pageNum + "====================");
+        out.println("- - - - - Dictionary - - - - - -");
+        PdfDictionary pageDictionary = reader.getPageN(pageNum);
+        out.println(getDictionaryDetail(pageDictionary));
+        out.println("- - - - - Content Stream - - - - - -");
+        RandomAccessFileOrArray f = reader.getSafeFile();
+        
+        byte[] contentBytes = reader.getPageContent(pageNum, f);
+        f.close();
+
+        
+        InputStream is = new ByteArrayInputStream(contentBytes);
+        int ch;
+        while ((ch = is.read()) != -1){
+            out.print((char)ch);
+        }
+
+        out.println("- - - - - Text Extraction - - - - - -");
+        PdfTextExtractor extractor = new PdfTextExtractor(reader);
+        String extractedText = extractor.getTextFromPage(pageNum);
+        if (extractedText.length() != 0)
+            out.println(extractedText);
+        else
+            out.println("No text found on page " + pageNum);
+        
+        out.println();
+        
+    }
     
     /**
      * Writes information about each page in a PDF file to the specified output stream.
@@ -122,50 +159,28 @@ public class PdfContentReaderTool {
      * @throws IOException
      */
     static public void listContentStream(File pdfFile, PrintWriter out) throws IOException {
-        int maxPage = -1;    
-        
         PdfReader reader = new PdfReader(pdfFile.getCanonicalPath());
-
             
-            // look through the page content of each page and ensure that it does
-            // not have a BT command.
-            int maxPageNum = reader.getNumberOfPages();
-            if (maxPage != -1)
-                maxPageNum = maxPage;
-            
-            for (int pageNum = 1; pageNum <= maxPageNum; pageNum++){
-                out.println("==============Page " + pageNum + "====================");
-                out.println("- - - - - Dictionary - - - - - -");
-                PdfDictionary pageDictionary = reader.getPageN(pageNum);
-                out.println(getDictionaryDetail(pageDictionary));
-                out.println("- - - - - Content Stream - - - - - -");
-                RandomAccessFileOrArray f = reader.getSafeFile();
-                
-                byte[] contentBytes = reader.getPageContent(pageNum, f);
-                f.close();
-
-                
-                
-                InputStream is = new ByteArrayInputStream(contentBytes);
-                int ch;
-                while ((ch = is.read()) != -1){
-                    out.print((char)ch);
-                }
-
-                out.println("- - - - - Text Extraction - - - - - -");
-                PdfTextExtractor extractor = new PdfTextExtractor(reader);
-                String extractedText = extractor.getTextFromPage(pageNum);
-                if (extractedText.length() != 0)
-                    out.println(extractedText);
-                else
-                    out.println("No text found on page " + pageNum);
-                
-                out.println();
-            }       
-            
+        int maxPageNum = reader.getNumberOfPages();
+        
+        for (int pageNum = 1; pageNum <= maxPageNum; pageNum++){
+            listContentStreamForPage(reader, pageNum, out);
+        }       
             
     }
 
+    /**
+     * Writes information about the specified page in a PDF file to the specified output stream.
+     * @param pdfFile   a File instance referring to a PDF file
+     * @param pageNum   the page number to read
+     * @param out       the output stream to send the content to
+     * @throws IOException
+     */
+    static public void listContentStream(File pdfFile, int pageNum, PrintWriter out) throws IOException {
+        PdfReader reader = new PdfReader(pdfFile.getCanonicalPath());
+        
+        listContentStreamForPage(reader, pageNum, out);
+    }
     
     /**
      * Writes information about each page in a PDF file to the specified file, or System.out.
@@ -173,23 +188,32 @@ public class PdfContentReaderTool {
      */
     public static void main(String[] args) {
         try{
-            if (args.length < 1 || args.length > 2){
-                System.out.println("Usage:  PdfContentReaderTool <pdf file> [output file]");
+            if (args.length < 1 || args.length > 3){
+                System.out.println("Usage:  PdfContentReaderTool <pdf file> [<output file>|stdout] [<page num>]");
                 return;
             }
             
-            PrintWriter writer;
-            if (args.length == 1){
-                writer = new PrintWriter(System.out);
-            } else {
-                System.out.println("Writing PDF content to " + args[1]);
-                writer = new PrintWriter(new FileOutputStream(new File(args[1])));
+            PrintWriter writer = new PrintWriter(System.out);;
+            if (args.length >= 2){
+                if (args[1].compareToIgnoreCase("stdout") != 0){
+                    System.out.println("Writing PDF content to " + args[1]);
+                    writer = new PrintWriter(new FileOutputStream(new File(args[1])));
+                }
+            }
+
+            int pageNum = -1;
+            if (args.length >= 3){
+                pageNum = Integer.parseInt(args[2]);
             }
             
-            listContentStream(new File(args[0]), writer);
+            if (pageNum == -1){
+                listContentStream(new File(args[0]), writer);
+            } else {
+                listContentStream(new File(args[0]), pageNum, writer);
+            }
             writer.flush();
             
-            if (args.length != 1){
+            if (args.length >= 2){
                 writer.close();
                 System.out.println("Finished writing content to " + args[1]);
             }
