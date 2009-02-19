@@ -168,7 +168,7 @@ public class PdfLine {
             addToLine(chunk);
         }
         // if the length of the chunk > 0 we add it to the line
-        else if (chunk.length() > 0) {
+        else if (chunk.length() > 0 || chunk.isImage()) {
             if (overflow != null)
                 chunk.trimLastSpace();
             width -= chunk.width();
