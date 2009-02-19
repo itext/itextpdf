@@ -117,6 +117,7 @@ public class PdfContentReaderTool {
 
     /**
      * Writes information about a specific page from PdfReader to the specified output stream.
+     * @since 2.1.5
      * @param reader    the PdfReader to read the page content from
      * @param pageNum   the page number to read
      * @param out       the output stream to send the content to
@@ -154,6 +155,7 @@ public class PdfContentReaderTool {
     
     /**
      * Writes information about each page in a PDF file to the specified output stream.
+     * @since 2.1.5
      * @param pdfFile	a File instance referring to a PDF file
      * @param out       the output stream to send the content to
      * @throws IOException
@@ -171,6 +173,7 @@ public class PdfContentReaderTool {
 
     /**
      * Writes information about the specified page in a PDF file to the specified output stream.
+     * @since 2.1.5
      * @param pdfFile   a File instance referring to a PDF file
      * @param pageNum   the page number to read
      * @param out       the output stream to send the content to
