@@ -444,8 +444,7 @@ public class PdfCopy extends PdfWriter {
             PdfTemplate template = (PdfTemplate)it.next();
             PdfFormField.mergeResources(dr, (PdfDictionary)template.getResources());
         }
-        if (dr.get(PdfName.ENCODING) == null)
-            dr.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
+        // if (dr.get(PdfName.ENCODING) == null) dr.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
         PdfDictionary fonts = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
         if (fonts == null) {
             fonts = new PdfDictionary();
