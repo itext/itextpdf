@@ -196,7 +196,7 @@ public class PdfContentReaderTool {
                 return;
             }
             
-            PrintWriter writer = new PrintWriter(System.out);;
+            PrintWriter writer = new PrintWriter(System.out);
             if (args.length >= 2){
                 if (args[1].compareToIgnoreCase("stdout") != 0){
                     System.out.println("Writing PDF content to " + args[1]);
