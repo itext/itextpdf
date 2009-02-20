@@ -1,5 +1,5 @@
 /*
- * $Id: ImgJBIG2.java $
+ * $Id$
  *
  * Copyright 2009 by Nigel Kerr.
  *
