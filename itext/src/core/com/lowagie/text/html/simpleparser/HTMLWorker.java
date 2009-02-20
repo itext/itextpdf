@@ -75,6 +75,7 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.TextElementArray;
 import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.draw.LineSeparator;
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
 
@@ -203,6 +204,51 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				}
 				currentParagraph.add(factoryProperties
 						.createChunk("\n", cprops));
+				return;
+			}
+			if (tag.equals(HtmlTags.HORIZONTALRULE)) {
+				// Attempting to duplicate the behavior seen on Firefox with
+				// http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_hr_test
+				// where an initial break is only inserted when the preceding element doesn't
+				// end with a break, but a trailing break is always inserted.
+				boolean addLeadingBreak = true;
+				if (currentParagraph == null) {
+					currentParagraph = new Paragraph();
+					addLeadingBreak = false;
+				}
+				if (addLeadingBreak) { // Not a new paragraph
+					int numChunks = currentParagraph.getChunks().size();
+					if (numChunks == 0 ||
+							((Chunk)(currentParagraph.getChunks().get(numChunks - 1))).getContent().endsWith("\n"))
+						addLeadingBreak = false;
+				}
+				String align = (String) h.get("align");
+				int hrAlign = Element.ALIGN_CENTER;
+				if (align != null) {
+					if (align.equalsIgnoreCase("left"))
+						hrAlign = Element.ALIGN_LEFT; 
+					if (align.equalsIgnoreCase("right"))
+						hrAlign = Element.ALIGN_RIGHT;
+				}
+				String width = (String) h.get("width");
+				float hrWidth = 1;
+				if (width != null) {
+					float tmpWidth = Markup.parseLength(width, Markup.DEFAULT_FONT_SIZE);
+					if (tmpWidth > 0) hrWidth = tmpWidth;
+					if (!width.endsWith("%"))
+						hrWidth = 100; // Treat a pixel width as 100% for now.
+				}
+				String size = (String) h.get("size");
+				float hrSize = 1;
+				if (size != null) {
+					float tmpSize = Markup.parseLength(size, Markup.DEFAULT_FONT_SIZE);
+					if (tmpSize > 0)
+						hrSize = tmpSize;
+				}
+				if (addLeadingBreak)
+					currentParagraph.add(Chunk.NEWLINE);
+				currentParagraph.add(new LineSeparator(hrSize, hrWidth, null, hrAlign, currentParagraph.getLeading()/2));
+				currentParagraph.add(Chunk.NEWLINE);
 				return;
 			}
 			if (tag.equals(HtmlTags.CHUNK) || tag.equals(HtmlTags.SPAN)) {
@@ -667,7 +713,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	}
 
 	public static final String tagsSupportedString = "ol ul li a pre font span br p div body table td th tr i b u sub sup em strong s strike"
-			+ " h1 h2 h3 h4 h5 h6 img";
+			+ " h1 h2 h3 h4 h5 h6 img hr";
 
 	public static final HashMap tagsSupported = new HashMap();
 
