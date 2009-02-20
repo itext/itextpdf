@@ -287,7 +287,7 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName DECODEPARMS = new PdfName("DecodeParms");
     /** A name */
-    public static final PdfName DEFAULTCRYPTFILER = new PdfName("DefaultCryptFilter");
+    public static final PdfName DEFAULTCRYPTFILTER = new PdfName("DefaultCryptFilter");
     /** A name */
     public static final PdfName DEFAULTCMYK = new PdfName("DefaultCMYK");
     /** A name */
