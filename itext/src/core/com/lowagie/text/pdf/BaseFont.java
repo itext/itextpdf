@@ -1308,10 +1308,10 @@ public abstract class BaseFont {
         if (obj == null || !obj.isDictionary())
             return;
         PdfDictionary font = (PdfDictionary)obj;
-        PdfName subtype = (PdfName)PdfReader.getPdfObject(font.get(PdfName.SUBTYPE));
+        PdfName subtype = font.getAsName(PdfName.SUBTYPE);
         if (!PdfName.TYPE1.equals(subtype) && !PdfName.TRUETYPE.equals(subtype))
             return;
-        PdfName name = (PdfName)PdfReader.getPdfObject(font.get(PdfName.BASEFONT));
+        PdfName name = font.getAsName(PdfName.BASEFONT);
         fonts.add(new Object[]{PdfName.decodeName(name.toString()), fontRef});
         hits.put(fontRef.getNumber(), 1);
     }
@@ -1320,10 +1320,10 @@ public abstract class BaseFont {
         ++level;
         if (level > 50) // in case we have an endless loop
             return;
-        PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(page.get(PdfName.RESOURCES));
+        PdfDictionary resources = page.getAsDict(PdfName.RESOURCES);
         if (resources == null)
             return;
-        PdfDictionary font = (PdfDictionary)PdfReader.getPdfObject(resources.get(PdfName.FONT));
+        PdfDictionary font = resources.getAsDict(PdfName.FONT);
         if (font != null) {
             for (Iterator it = font.getKeys().iterator(); it.hasNext();) {
                 PdfObject ft = font.get((PdfName)it.next());        
@@ -1335,10 +1335,10 @@ public abstract class BaseFont {
                 addFont((PRIndirectReference)ft, hits, fonts);
             }
         }
-        PdfDictionary xobj = (PdfDictionary)PdfReader.getPdfObject(resources.get(PdfName.XOBJECT));
+        PdfDictionary xobj = resources.getAsDict(PdfName.XOBJECT);
         if (xobj != null) {
             for (Iterator it = xobj.getKeys().iterator(); it.hasNext();) {
-                recourseFonts((PdfDictionary)PdfReader.getPdfObject(xobj.get((PdfName)it.next())), hits, fonts, level);
+                recourseFonts(xobj.getAsDict((PdfName)it.next()), hits, fonts, level);
             }
         }
     }

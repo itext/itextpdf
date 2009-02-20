@@ -146,7 +146,7 @@ class PdfCopyFieldsImp extends PdfWriter {
             if (obj == null || obj.type() != PdfObject.DICTIONARY)
                 break;
             PdfDictionary dic = (PdfDictionary)obj;
-            PdfString t = (PdfString)PdfReader.getPdfObject(dic.get(PdfName.T));
+            PdfString t = dic.getAsString(PdfName.T);
             if (t != null) {
                 name = t.toUnicodeString()+ "." + name;
             }
@@ -162,10 +162,10 @@ class PdfCopyFieldsImp extends PdfWriter {
      */
     protected void updateCalculationOrder(PdfReader reader) {
         PdfDictionary catalog = reader.getCatalog();
-        PdfDictionary acro = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM));
+        PdfDictionary acro = catalog.getAsDict(PdfName.ACROFORM);
         if (acro == null)
             return;
-        PdfArray co = (PdfArray)PdfReader.getPdfObject(acro.get(PdfName.CO));
+        PdfArray co = acro.getAsArray(PdfName.CO);
         if (co == null || co.size() == 0)
             return;
         AcroFields af = reader.getAcroFields();
@@ -292,7 +292,7 @@ class PdfCopyFieldsImp extends PdfWriter {
                     dic.mergeDifferent((PdfDictionary)list.get(2));
                     int page = ((Integer)list.get(1)).intValue();
                     PdfDictionary pageDic = (PdfDictionary)pageDics.get(page - 1);
-                    PdfArray annots = (PdfArray)PdfReader.getPdfObject(pageDic.get(PdfName.ANNOTS));
+                    PdfArray annots = pageDic.getAsArray(PdfName.ANNOTS);
                     if (annots == null) {
                         annots = new PdfArray();
                         pageDic.put(PdfName.ANNOTS, annots);
@@ -306,7 +306,7 @@ class PdfCopyFieldsImp extends PdfWriter {
                     for (int k = 1; k < list.size(); k += 2) {
                         int page = ((Integer)list.get(k)).intValue();
                         PdfDictionary pageDic = (PdfDictionary)pageDics.get(page - 1);
-                        PdfArray annots = (PdfArray)PdfReader.getPdfObject(pageDic.get(PdfName.ANNOTS));
+                        PdfArray annots = pageDic.getAsArray(PdfName.ANNOTS);
                         if (annots == null) {
                             annots = new PdfArray();
                             pageDic.put(PdfName.ANNOTS, annots);

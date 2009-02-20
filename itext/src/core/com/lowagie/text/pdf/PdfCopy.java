@@ -445,7 +445,7 @@ public class PdfCopy extends PdfWriter {
             PdfFormField.mergeResources(dr, (PdfDictionary)template.getResources());
         }
         // if (dr.get(PdfName.ENCODING) == null) dr.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
-        PdfDictionary fonts = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
+        PdfDictionary fonts = dr.getAsDict(PdfName.FONT);
         if (fonts == null) {
             fonts = new PdfDictionary();
             dr.put(PdfName.FONT, fonts);
@@ -562,7 +562,7 @@ public class PdfCopy extends PdfWriter {
             if (under == null) {
                 if (pageResources == null) {
                     pageResources = new PageResources();
-                    PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(pageN.get(PdfName.RESOURCES));
+                    PdfDictionary resources = pageN.getAsDict(PdfName.RESOURCES);
                     pageResources.setOriginalResources(resources, cstp.namePtr);
                 }
                 under = new PdfCopy.StampContent(cstp, pageResources);
@@ -574,7 +574,7 @@ public class PdfCopy extends PdfWriter {
             if (over == null) {
                 if (pageResources == null) {
                     pageResources = new PageResources();
-                    PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(pageN.get(PdfName.RESOURCES));
+                    PdfDictionary resources = pageN.getAsDict(PdfName.RESOURCES);
                     pageResources.setOriginalResources(resources, cstp.namePtr);
                 }
                 over = new PdfCopy.StampContent(cstp, pageResources);
