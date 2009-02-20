@@ -81,7 +81,7 @@ class PdfResources extends PdfDictionary {
     void add(PdfName key, PdfDictionary resource) {
         if (resource.size() == 0)
             return;
-        PdfDictionary dic = (PdfDictionary)PdfReader.getPdfObject(get(key));
+        PdfDictionary dic = getAsDict(key);
         if (dic == null)
             put(key, resource);
         else

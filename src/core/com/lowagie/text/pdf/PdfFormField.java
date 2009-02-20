@@ -291,7 +291,7 @@ public class PdfFormField extends PdfAnnotation {
         PdfName target = null;
         for (int k = 0; k < mergeTarget.length; ++k) {
             target = mergeTarget[k];
-            PdfDictionary pdfDict = (PdfDictionary)PdfReader.getPdfObject(source.get(target));
+            PdfDictionary pdfDict = source.getAsDict(target);
             if ((dic = pdfDict) != null) {
                 if ((res = (PdfDictionary)PdfReader.getPdfObject(result.get(target), result)) == null) {
                     res = new PdfDictionary();

@@ -505,7 +505,7 @@ public class AcroFields {
     public void decodeGenericDictionary(PdfDictionary merged, BaseField tx) throws IOException, DocumentException {
         int flags = 0;
         // the text size and color
-        PdfString da = (PdfString)PdfReader.getPdfObject(merged.get(PdfName.DA));
+        PdfString da = merged.getAsString(PdfName.DA);
         if (da != null) {
             Object dab[] = splitDAelements(da.toUnicodeString());
             if (dab[DA_SIZE] != null)
@@ -513,9 +513,9 @@ public class AcroFields {
             if (dab[DA_COLOR] != null)
                 tx.setTextColor((Color)dab[DA_COLOR]);
             if (dab[DA_FONT] != null) {
-                PdfDictionary font = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.DR));
+                PdfDictionary font = merged.getAsDict(PdfName.DR);
                 if (font != null) {
-                    font = (PdfDictionary)PdfReader.getPdfObject(font.get(PdfName.FONT));
+                    font = font.getAsDict(PdfName.FONT);
                     if (font != null) {
                         PdfObject po = font.get(new PdfName((String)dab[DA_FONT]));
                         if (po != null && po.type() == PdfObject.INDIRECT) {
@@ -527,7 +527,7 @@ public class AcroFields {
                             if (porf == null) {
                                 if (!extensionFonts.containsKey(porkey)) {
                                     PdfDictionary fo = (PdfDictionary)PdfReader.getPdfObject(po);
-                                    PdfDictionary fd = (PdfDictionary)PdfReader.getPdfObject(fo.get(PdfName.FONTDESCRIPTOR));
+                                    PdfDictionary fd = fo.getAsDict(PdfName.FONTDESCRIPTOR);
                                     if (fd != null) {
                                         PRStream prs = (PRStream)PdfReader.getPdfObject(fd.get(PdfName.FONTFILE2));
                                         if (prs == null)
@@ -574,21 +574,21 @@ public class AcroFields {
             }
         }
         //rotation, border and background color
-        PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.MK));
+        PdfDictionary mk = merged.getAsDict(PdfName.MK);
         if (mk != null) {
-            PdfArray ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BC));
+            PdfArray ar = mk.getAsArray(PdfName.BC);
             Color border = getMKColor(ar);
             tx.setBorderColor(border);
             if (border != null)
                 tx.setBorderWidth(1);
-            ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BG));
+            ar = mk.getAsArray(PdfName.BG);
             tx.setBackgroundColor(getMKColor(ar));
-            PdfNumber rotation = (PdfNumber)PdfReader.getPdfObject(mk.get(PdfName.R));
+            PdfNumber rotation = mk.getAsNumber(PdfName.R);
             if (rotation != null)
                 tx.setRotation(rotation.intValue());
         }
         //flags
-        PdfNumber nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.F));
+        PdfNumber nfl = merged.getAsNumber(PdfName.F);
         flags = 0;
         tx.setVisibility(BaseField.VISIBLE_BUT_DOES_NOT_PRINT);
         if (nfl != null) {
@@ -601,20 +601,20 @@ public class AcroFields {
                 tx.setVisibility(BaseField.VISIBLE);
         }
         //multiline
-        nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.FF));
+        nfl = merged.getAsNumber(PdfName.FF);
         flags = 0;
         if (nfl != null)
             flags = nfl.intValue();
         tx.setOptions(flags);
         if ((flags & PdfFormField.FF_COMB) != 0) {
-            PdfNumber maxLen = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.MAXLEN));
+            PdfNumber maxLen = merged.getAsNumber(PdfName.MAXLEN);
             int len = 0;
             if (maxLen != null)
                 len = maxLen.intValue();
             tx.setMaxCharacterLength(len);
         }
         //alignment
-        nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.Q));
+        nfl = merged.getAsNumber(PdfName.Q);
         if (nfl != null) {
             if (nfl.intValue() == PdfFormField.Q_CENTER)
                 tx.setAlignment(Element.ALIGN_CENTER);
@@ -622,12 +622,12 @@ public class AcroFields {
                 tx.setAlignment(Element.ALIGN_RIGHT);
         }
         //border styles
-        PdfDictionary bs = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.BS));
+        PdfDictionary bs = merged.getAsDict(PdfName.BS);
         if (bs != null) {
-            PdfNumber w = (PdfNumber)PdfReader.getPdfObject(bs.get(PdfName.W));
+            PdfNumber w = bs.getAsNumber(PdfName.W);
             if (w != null)
                 tx.setBorderWidth(w.floatValue());
-            PdfName s = (PdfName)PdfReader.getPdfObject(bs.get(PdfName.S));
+            PdfName s = bs.getAsName(PdfName.S);
             if (PdfName.D.equals(s))
                 tx.setBorderStyle(PdfBorderDictionary.STYLE_DASHED);
             else if (PdfName.B.equals(s))
@@ -638,7 +638,7 @@ public class AcroFields {
                 tx.setBorderStyle(PdfBorderDictionary.STYLE_UNDERLINE);
         }
         else {
-            PdfArray bd = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.BORDER));
+            PdfArray bd = merged.getAsArray(PdfName.BORDER);
             if (bd != null) {
                 ArrayList ar = bd.getArrayList();
                 if (ar.size() >= 3)
@@ -659,7 +659,7 @@ public class AcroFields {
             tx.setSubstitutionFonts(substitutionFonts);
             decodeGenericDictionary(merged, tx);
             //rect
-            PdfArray rect = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.RECT));
+            PdfArray rect = merged.getAsArray(PdfName.RECT);
             Rectangle box = PdfReader.getNormalizedRectangle(rect);
             if (tx.getRotation() == 90 || tx.getRotation() == 270)
                 box = box.rotate();
@@ -671,16 +671,16 @@ public class AcroFields {
             tx = (TextField)fieldCache.get(fieldName);
             tx.setWriter(writer);
         }
-        PdfName fieldType = (PdfName)PdfReader.getPdfObject(merged.get(PdfName.FT));
+        PdfName fieldType = merged.getAsName(PdfName.FT);
         if (PdfName.TX.equals(fieldType)) {
             tx.setText(text);
             return tx.getAppearance();
         }
         if (!PdfName.CH.equals(fieldType))
             throw new DocumentException("An appearance was requested without a variable text field.");
-        PdfArray opt = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.OPT));
+        PdfArray opt = merged.getAsArray(PdfName.OPT);
         int flags = 0;
-        PdfNumber nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.FF));
+        PdfNumber nfl = merged.getAsNumber(PdfName.FF);
         if (nfl != null)
             flags = nfl.intValue();
         if ((flags & PdfFormField.FF_COMBO) != 0 && opt == null) {
@@ -884,21 +884,21 @@ public class AcroFields {
                                 if (psn == null) {
                                     psn = new PdfName(bf.getPostscriptFontName());
                                 }
-                                PdfDictionary fonts = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
+                                PdfDictionary fonts = dr.getAsDict(PdfName.FONT);
                                 if (fonts == null) {
                                     fonts = new PdfDictionary();
                                     dr.put(PdfName.FONT, fonts);
                                 }
                                 PdfIndirectReference fref = (PdfIndirectReference)fonts.get(psn);
-                                PdfDictionary top = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM));
+                                PdfDictionary top = reader.getCatalog().getAsDict(PdfName.ACROFORM);
                                 markUsed(top);
-                                dr = (PdfDictionary)PdfReader.getPdfObject(top.get(PdfName.DR));
+                                dr = top.getAsDict(PdfName.DR);
                                 if (dr == null) {
                                     dr = new PdfDictionary();
                                     top.put(PdfName.DR, dr);
                                 }
                                 markUsed(dr);
-                                PdfDictionary fontsTop = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
+                                PdfDictionary fontsTop = dr.getAsDict(PdfName.FONT);
                                 if (fontsTop == null) {
                                     fontsTop = new PdfDictionary();
                                     dr.put(PdfName.FONT, fontsTop);
@@ -1383,10 +1383,10 @@ public class AcroFields {
 	}
 
     boolean isInAP(PdfDictionary dic, PdfName check) {
-        PdfDictionary appDic = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.AP));
+        PdfDictionary appDic = dic.getAsDict(PdfName.AP);
         if (appDic == null)
             return false;
-        PdfDictionary NDic = (PdfDictionary)PdfReader.getPdfObject(appDic.get(PdfName.N));
+        PdfDictionary NDic = appDic.getAsDict(PdfName.N);
         return (NDic != null && NDic.get(check) != null);
     }
 
@@ -1610,7 +1610,7 @@ public class AcroFields {
      */
     public void setGenerateAppearances(boolean generateAppearances) {
         this.generateAppearances = generateAppearances;
-        PdfDictionary top = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM));
+        PdfDictionary top = reader.getCatalog().getAsDict(PdfName.ACROFORM);
         if (generateAppearances)
             top.remove(PdfName.NEEDAPPEARANCES);
         else
@@ -2044,17 +2044,17 @@ public class AcroFields {
         if (v == null)
             return null;
         try {
-            PdfName sub = (PdfName)PdfReader.getPdfObject(v.get(PdfName.SUBFILTER));
-            PdfString contents = (PdfString)PdfReader.getPdfObject(v.get(PdfName.CONTENTS));
+            PdfName sub = v.getAsName(PdfName.SUBFILTER);
+            PdfString contents = v.getAsString(PdfName.CONTENTS);
             PdfPKCS7 pk = null;
             if (sub.equals(PdfName.ADBE_X509_RSA_SHA1)) {
-                PdfString cert = (PdfString)PdfReader.getPdfObject(v.get(PdfName.CERT));
+                PdfString cert = v.getAsString(PdfName.CERT);
                 pk = new PdfPKCS7(contents.getOriginalBytes(), cert.getBytes(), provider);
             }
             else
                 pk = new PdfPKCS7(contents.getOriginalBytes(), provider);
             updateByteRange(pk, v);
-            PdfString str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.M));
+            PdfString str = v.getAsString(PdfName.M);
             if (str != null)
                 pk.setSignDate(PdfDate.decode(str.toString()));
             PdfObject obj = PdfReader.getPdfObject(v.get(PdfName.NAME));
@@ -2064,10 +2064,10 @@ public class AcroFields {
               else if(obj.isName())
                 pk.setSignName(PdfName.decodeName(obj.toString()));
             }
-            str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.REASON));
+            str = v.getAsString(PdfName.REASON);
             if (str != null)
                 pk.setReason(str.toUnicodeString());
-            str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.LOCATION));
+            str = v.getAsString(PdfName.LOCATION);
             if (str != null)
                 pk.setLocation(str.toUnicodeString());
             return pk;
@@ -2078,7 +2078,7 @@ public class AcroFields {
     }
 
     private void updateByteRange(PdfPKCS7 pkcs7, PdfDictionary v) {
-        PdfArray b = (PdfArray)PdfReader.getPdfObject(v.get(PdfName.BYTERANGE));
+        PdfArray b = v.getAsArray(PdfName.BYTERANGE);
         RandomAccessFileOrArray rf = reader.getSafeFile();
         try {
             rf.reOpen();

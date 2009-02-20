@@ -121,8 +121,7 @@ public class ExtractAttachments extends AbstractTool {
 				}
 			}
 			for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
-				PdfArray annots = (PdfArray) PdfReader.getPdfObject(reader
-						.getPageN(k).get(PdfName.ANNOTS));
+				PdfArray annots = reader.getPageN(k).getAsArray(PdfName.ANNOTS);
 				if (annots == null)
 					continue;
 				for (Iterator<PdfObject> i = annots.listIterator(); i.hasNext();) {

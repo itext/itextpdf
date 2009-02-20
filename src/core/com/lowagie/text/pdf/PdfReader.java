@@ -282,8 +282,8 @@ public class PdfReader implements PdfViewerPreferences {
         }
         this.pageRefs = new PageRefs(reader.pageRefs, this);
         this.trailer = (PdfDictionary)duplicatePdfObject(reader.trailer, this);
-        this.catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
-        this.rootPages = (PdfDictionary)getPdfObject(catalog.get(PdfName.PAGES));
+        this.catalog = trailer.getAsDict(PdfName.ROOT);
+        this.rootPages = catalog.getAsDict(PdfName.PAGES);
         this.fileLength = reader.fileLength;
         this.partial = reader.partial;
         this.hybridXref = reader.hybridXref;
@@ -349,7 +349,7 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     int getPageRotation(PdfDictionary page) {
-        PdfNumber rotate = (PdfNumber)getPdfObject(page.get(PdfName.ROTATE));
+        PdfNumber rotate = page.getAsNumber(PdfName.ROTATE);
         if (rotate == null)
             return 0;
         else {
@@ -397,7 +397,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @return the page
      */
     public Rectangle getPageSize(PdfDictionary page) {
-        PdfArray mediaBox = (PdfArray)getPdfObject(page.get(PdfName.MEDIABOX));
+        PdfArray mediaBox = page.getAsArray(PdfName.MEDIABOX);
         return getNormalizedRectangle(mediaBox);
     }
 
@@ -446,7 +446,7 @@ public class PdfReader implements PdfViewerPreferences {
      */
     public HashMap getInfo() {
         HashMap map = new HashMap();
-        PdfDictionary info = (PdfDictionary)getPdfObject(trailer.get(PdfName.INFO));
+        PdfDictionary info = trailer.getAsDict(PdfName.INFO);
         if (info == null)
             return map;
         for (Iterator it = info.getKeys().iterator(); it.hasNext();) {
@@ -580,7 +580,7 @@ public class PdfReader implements PdfViewerPreferences {
         String s;
         PdfObject o;
 
-        PdfArray documentIDs = (PdfArray)getPdfObject(trailer.get(PdfName.ID));
+        PdfArray documentIDs = trailer.getAsArray(PdfName.ID);
         byte documentID[] = null;
         if (documentIDs != null) {
             o = (PdfObject)documentIDs.getArrayList().get(0);
@@ -963,8 +963,8 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     protected void readPages() throws IOException {
-        catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
-        rootPages = (PdfDictionary)getPdfObject(catalog.get(PdfName.PAGES));
+        catalog = trailer.getAsDict(PdfName.ROOT);
+        rootPages = catalog.getAsDict(PdfName.PAGES);
         pageRefs = new PageRefs(this);
     }
 
@@ -1026,7 +1026,7 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     protected PdfObject readOneObjStm(PRStream stream, int idx) throws IOException {
-        int first = ((PdfNumber)getPdfObject(stream.get(PdfName.FIRST))).intValue();
+        int first = stream.getAsNumber(PdfName.FIRST).intValue();
         byte b[] = getStreamBytes(stream, tokens.getFile());
         PRTokeniser saveTokens = tokens;
         tokens = new PRTokeniser(b);
@@ -1170,8 +1170,8 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     protected void readObjStm(PRStream stream, IntHashtable map) throws IOException {
-        int first = ((PdfNumber)getPdfObject(stream.get(PdfName.FIRST))).intValue();
-        int n = ((PdfNumber)getPdfObject(stream.get(PdfName.N))).intValue();
+        int first = stream.getAsNumber(PdfName.FIRST).intValue();
+        int n = stream.getAsNumber(PdfName.N).intValue();
         byte b[] = getStreamBytes(stream, tokens.getFile());
         PRTokeniser saveTokens = tokens;
         tokens = new PRTokeniser(b);
@@ -2388,14 +2388,14 @@ public class PdfReader implements PdfViewerPreferences {
                 dic.put(PdfName.BASEFONT, newName);
                 setXrefPartialObject(k, dic);
                 ++total;
-                PdfDictionary fd = (PdfDictionary)getPdfObject(dic.get(PdfName.FONTDESCRIPTOR));
+                PdfDictionary fd = dic.getAsDict(PdfName.FONTDESCRIPTOR);
                 if (fd == null)
                     continue;
                 fd.put(PdfName.FONTNAME, newName);
             }
             else if (existsName(dic, PdfName.SUBTYPE, PdfName.TYPE0)) {
                 String s = getSubsetPrefix(dic);
-                PdfArray arr = (PdfArray)getPdfObject(dic.get(PdfName.DESCENDANTFONTS));
+                PdfArray arr = dic.getAsArray(PdfName.DESCENDANTFONTS);
                 if (arr == null)
                     continue;
                 ArrayList list = arr.getArrayList();
@@ -2412,7 +2412,7 @@ public class PdfReader implements PdfViewerPreferences {
                 PdfName newName = new PdfName(ns + sde.substring(7));
                 desc.put(PdfName.BASEFONT, newName);
                 ++total;
-                PdfDictionary fd = (PdfDictionary)getPdfObject(desc.get(PdfName.FONTDESCRIPTOR));
+                PdfDictionary fd = desc.getAsDict(PdfName.FONTDESCRIPTOR);
                 if (fd == null)
                     continue;
                 fd.put(PdfName.FONTNAME, newName);
@@ -2449,7 +2449,7 @@ public class PdfReader implements PdfViewerPreferences {
                 if (fd.get(PdfName.FONTFILE) == null && fd.get(PdfName.FONTFILE2) == null
                     && fd.get(PdfName.FONTFILE3) == null)
                     continue;
-                fd = (PdfDictionary)getPdfObject(dic.get(PdfName.FONTDESCRIPTOR));
+                fd = dic.getAsDict(PdfName.FONTDESCRIPTOR);
                 PdfName newName = new PdfName(ns);
                 dic.put(PdfName.BASEFONT, newName);
                 fd.put(PdfName.FONTNAME, newName);
@@ -2589,7 +2589,7 @@ public class PdfReader implements PdfViewerPreferences {
         pageRefs.resetReleasePage();
         for (int k = 1; k <= pageRefs.size(); ++k) {
             PdfDictionary page = pageRefs.getPageN(k);
-            PdfArray annots = (PdfArray)getPdfObject(page.get(PdfName.ANNOTS));
+            PdfArray annots = page.getAsArray(PdfName.ANNOTS);
             if (annots == null) {
                 pageRefs.releasePage(k);
                 continue;
@@ -2633,7 +2633,7 @@ public class PdfReader implements PdfViewerPreferences {
         ArrayList result = new ArrayList();
         PdfDictionary pageDic = pageRefs.getPageN(page);
         if (pageDic.get(PdfName.ANNOTS) != null) {
-            PdfArray annots = (PdfArray)getPdfObject(pageDic.get(PdfName.ANNOTS));
+            PdfArray annots = pageDic.getAsArray(PdfName.ANNOTS);
             ArrayList arr = annots.getArrayList();
             for (int j = 0; j < arr.size(); ++j) {
                 PdfDictionary annot = (PdfDictionary)getPdfObjectRelease((PdfObject)arr.get(j));
@@ -3230,7 +3230,7 @@ public class PdfReader implements PdfViewerPreferences {
 
         private void iteratePages(PRIndirectReference rpage) throws IOException {
             PdfDictionary page = (PdfDictionary)getPdfObject(rpage);
-            PdfArray kidsPR = (PdfArray)getPdfObject(page.get(PdfName.KIDS));
+            PdfArray kidsPR = page.getAsArray(PdfName.KIDS);
             if (kidsPR == null) {
                 page.put(PdfName.TYPE, PdfName.PAGE);
                 PdfDictionary dic = (PdfDictionary)pageInh.get(pageInh.size() - 1);
@@ -3360,7 +3360,7 @@ public class PdfReader implements PdfViewerPreferences {
      * confuse Acrobat and it's advisable to remove them altogether.
      */
     public void removeUsageRights() {
-        PdfDictionary perms = (PdfDictionary)getPdfObject(catalog.get(PdfName.PERMS));
+        PdfDictionary perms = catalog.getAsDict(PdfName.PERMS);
         if (perms == null)
             return;
         perms.remove(PdfName.UR);
@@ -3380,22 +3380,22 @@ public class PdfReader implements PdfViewerPreferences {
      * @return gets the certification level for this document
      */
     public int getCertificationLevel() {
-        PdfDictionary dic = (PdfDictionary)getPdfObject(catalog.get(PdfName.PERMS));
+        PdfDictionary dic = catalog.getAsDict(PdfName.PERMS);
         if (dic == null)
             return PdfSignatureAppearance.NOT_CERTIFIED;
-        dic = (PdfDictionary)getPdfObject(dic.get(PdfName.DOCMDP));
+        dic = dic.getAsDict(PdfName.DOCMDP);
         if (dic == null)
             return PdfSignatureAppearance.NOT_CERTIFIED;
-        PdfArray arr = (PdfArray)getPdfObject(dic.get(PdfName.REFERENCE));
+        PdfArray arr = dic.getAsArray(PdfName.REFERENCE);
         if (arr == null || arr.size() == 0)
             return PdfSignatureAppearance.NOT_CERTIFIED;
         dic = (PdfDictionary)getPdfObject((PdfObject)(arr.getArrayList().get(0)));
         if (dic == null)
             return PdfSignatureAppearance.NOT_CERTIFIED;
-        dic = (PdfDictionary)getPdfObject(dic.get(PdfName.TRANSFORMPARAMS));
+        dic = dic.getAsDict(PdfName.TRANSFORMPARAMS);
         if (dic == null)
             return PdfSignatureAppearance.NOT_CERTIFIED;
-        PdfNumber p = (PdfNumber)getPdfObject(dic.get(PdfName.P));
+        PdfNumber p = dic.getAsNumber(PdfName.P);
         if (p == null)
             return PdfSignatureAppearance.NOT_CERTIFIED;
         return p.intValue();

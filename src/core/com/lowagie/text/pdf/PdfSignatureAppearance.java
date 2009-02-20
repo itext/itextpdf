@@ -297,7 +297,7 @@ public class PdfSignatureAppearance {
         if (!PdfName.SIG.equals(PdfReader.getPdfObject(merged.get(PdfName.FT))))
             throw new IllegalArgumentException("The field " + fieldName + " is not a signature field.");
         this.fieldName = fieldName;
-        PdfArray r = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.RECT));
+        PdfArray r = merged.getAsArray(PdfName.RECT);
         ArrayList ar = r.getArrayList();
         float llx = ((PdfNumber)PdfReader.getPdfObject((PdfObject)ar.get(0))).floatValue();
         float lly = ((PdfNumber)PdfReader.getPdfObject((PdfObject)ar.get(1))).floatValue();

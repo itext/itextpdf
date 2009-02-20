@@ -115,8 +115,8 @@ public class DocumentFont extends BaseFont {
         this.refFont = refFont;
         fontType = FONT_TYPE_DOCUMENT;
         font = (PdfDictionary)PdfReader.getPdfObject(refFont);
-        fontName = PdfName.decodeName(((PdfName)PdfReader.getPdfObject(font.get(PdfName.BASEFONT))).toString());
-        PdfName subType = (PdfName)PdfReader.getPdfObject(font.get(PdfName.SUBTYPE));
+        fontName = PdfName.decodeName(font.getAsName(PdfName.BASEFONT).toString());
+        PdfName subType = font.getAsName(PdfName.SUBTYPE);
         if (PdfName.TYPE1.equals(subType) || PdfName.TRUETYPE.equals(subType))
             doType1TT();
         else {
@@ -132,7 +132,7 @@ public class DocumentFont extends BaseFont {
                     return;
                 }
             }
-            String enc = PdfName.decodeName(((PdfName)PdfReader.getPdfObject(font.get(PdfName.ENCODING))).toString());
+            String enc = PdfName.decodeName(font.getAsName(PdfName.ENCODING).toString());
             for (int k = 0; k < cjkEncs2.length; ++k) {
                 if (enc.startsWith(cjkEncs2[k])) {
                     try {
@@ -284,7 +284,7 @@ public class DocumentFont extends BaseFont {
                     fillEncoding(null);
                 else
                     fillEncoding((PdfName)enc);
-                PdfArray diffs = (PdfArray)PdfReader.getPdfObject(encDic.get(PdfName.DIFFERENCES));
+                PdfArray diffs = encDic.getAsArray(PdfName.DIFFERENCES);
                 if (diffs != null) {
                     diffmap = new IntHashtable();
                     ArrayList dif = diffs.getArrayList();
@@ -305,9 +305,9 @@ public class DocumentFont extends BaseFont {
                 }
             }
         }
-        PdfArray newWidths = (PdfArray)PdfReader.getPdfObject(font.get(PdfName.WIDTHS));
-        PdfNumber first = (PdfNumber)PdfReader.getPdfObject(font.get(PdfName.FIRSTCHAR));
-        PdfNumber last = (PdfNumber)PdfReader.getPdfObject(font.get(PdfName.LASTCHAR));
+        PdfArray newWidths = font.getAsArray(PdfName.WIDTHS);
+        PdfNumber first = font.getAsNumber(PdfName.FIRSTCHAR);
+        PdfNumber last = font.getAsNumber(PdfName.LASTCHAR);
         if (BuiltinFonts14.containsKey(fontName)) {
             BaseFont bf;
             try {
@@ -345,25 +345,25 @@ public class DocumentFont extends BaseFont {
                 widths[f + k] = ((PdfNumber)ar.get(k)).intValue();
             }
         }
-        fillFontDesc((PdfDictionary)PdfReader.getPdfObject(font.get(PdfName.FONTDESCRIPTOR)));
+        fillFontDesc(font.getAsDict(PdfName.FONTDESCRIPTOR));
     }
     
     private void fillFontDesc(PdfDictionary fontDesc) {
         if (fontDesc == null)
             return;
-        PdfNumber v = (PdfNumber)PdfReader.getPdfObject(fontDesc.get(PdfName.ASCENT));
+        PdfNumber v = fontDesc.getAsNumber(PdfName.ASCENT);
         if (v != null)
             Ascender = v.floatValue();
-        v = (PdfNumber)PdfReader.getPdfObject(fontDesc.get(PdfName.CAPHEIGHT));
+        v = fontDesc.getAsNumber(PdfName.CAPHEIGHT);
         if (v != null)
             CapHeight = v.floatValue();
-        v = (PdfNumber)PdfReader.getPdfObject(fontDesc.get(PdfName.DESCENT));
+        v = fontDesc.getAsNumber(PdfName.DESCENT);
         if (v != null)
             Descender = v.floatValue();
-        v = (PdfNumber)PdfReader.getPdfObject(fontDesc.get(PdfName.ITALICANGLE));
+        v = fontDesc.getAsNumber(PdfName.ITALICANGLE);
         if (v != null)
             ItalicAngle = v.floatValue();
-        PdfArray bbox = (PdfArray)PdfReader.getPdfObject(fontDesc.get(PdfName.FONTBBOX));
+        PdfArray bbox = fontDesc.getAsArray(PdfName.FONTBBOX);
         if (bbox != null) {
             ArrayList ar = bbox.getArrayList();
             llx = ((PdfNumber)ar.get(0)).floatValue();
