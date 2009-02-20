@@ -681,7 +681,7 @@ public class PdfReader implements PdfViewerPreferences {
                 PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
                 if (dic == null)
                     throw new InvalidPdfException("/CF not found (encryption)");
-                dic = (PdfDictionary)dic.get(PdfName.DEFAULTCRYPTFILER);
+                dic = (PdfDictionary)dic.get(PdfName.DEFAULTCRYPTFILTER);
                 if (dic == null)
                     throw new InvalidPdfException("/DefaultCryptFilter not found (encryption)");
                 if (PdfName.V2.equals(dic.get(PdfName.CFM))) {

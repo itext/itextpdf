@@ -450,15 +450,15 @@ public class PdfEncryption {
 				else
 					stdcf.put(PdfName.CFM, PdfName.V2);
 				PdfDictionary cf = new PdfDictionary();
-				cf.put(PdfName.DEFAULTCRYPTFILER, stdcf);
+				cf.put(PdfName.DEFAULTCRYPTFILTER, stdcf);
 				dic.put(PdfName.CF, cf);if (embeddedFilesOnly) {
-					dic.put(PdfName.EFF, PdfName.DEFAULTCRYPTFILER);
+					dic.put(PdfName.EFF, PdfName.DEFAULTCRYPTFILTER);
 					dic.put(PdfName.STRF, PdfName.IDENTITY);
 					dic.put(PdfName.STMF, PdfName.IDENTITY);
 				}
 				else {
-					dic.put(PdfName.STRF, PdfName.DEFAULTCRYPTFILER);
-					dic.put(PdfName.STMF, PdfName.DEFAULTCRYPTFILER);
+					dic.put(PdfName.STRF, PdfName.DEFAULTCRYPTFILTER);
+					dic.put(PdfName.STMF, PdfName.DEFAULTCRYPTFILTER);
 				}
 			}
 
