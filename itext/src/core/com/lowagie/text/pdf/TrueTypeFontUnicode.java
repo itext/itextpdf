@@ -79,7 +79,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
      */
-    TrueTypeFontUnicode(String ttFile, String enc, boolean emb, byte ttfAfm[]) throws DocumentException, IOException {
+    TrueTypeFontUnicode(String ttFile, String enc, boolean emb, byte ttfAfm[], boolean forceRead) throws DocumentException, IOException {
         String nameBase = getBaseName(ttFile);
         String ttcName = getTTCName(nameBase);
         if (nameBase.length() < ttFile.length()) {
@@ -93,7 +93,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             ttcIndex = nameBase.substring(ttcName.length() + 1);
         fontType = FONT_TYPE_TTUNI;
         if ((fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".otf") || fileName.toLowerCase().endsWith(".ttc")) && ((enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb)) {
-            process(ttfAfm);
+            process(ttfAfm, forceRead);
             if (os_2.fsType == 2)
                 throw new DocumentException(fileName + style + " cannot be embedded due to licensing restrictions.");
             // Sivan
