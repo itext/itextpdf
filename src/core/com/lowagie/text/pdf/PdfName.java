@@ -954,6 +954,11 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName SYMBOL = new PdfName("Symbol");
     /** A name */
     public static final PdfName T = new PdfName("T");
+    /**
+     * A name
+     * @since	2.1.5
+     */
+    public static final PdfName TABS = new PdfName("Tabs");
     /** A name */
     public static final PdfName TEXT = new PdfName("Text");
     /** A name */

@@ -892,7 +892,8 @@ public class PdfDocument extends Document {
         	// we create the page dictionary
         	
         	PdfPage page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
-
+        	page.put(PdfName.TABS, writer.getTabs());
+        	
         	// we complete the page dictionary
         	
             // [C9] if there is XMP data to add: add it
