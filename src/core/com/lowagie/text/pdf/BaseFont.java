@@ -674,14 +674,14 @@ public abstract class BaseFont {
                 return fontFound;
         }
         if (isBuiltinFonts14 || name.toLowerCase().endsWith(".afm") || name.toLowerCase().endsWith(".pfm")) {
-            fontBuilt = new Type1Font(name, encoding, embedded, ttfAfm, pfb);
+            fontBuilt = new Type1Font(name, encoding, embedded, ttfAfm, pfb, forceRead);
             fontBuilt.fastWinansi = encoding.equals(CP1252);
         }
         else if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().endsWith(".otf") || nameBase.toLowerCase().indexOf(".ttc,") > 0) {
             if (encoding.equals(IDENTITY_H) || encoding.equals(IDENTITY_V))
-                fontBuilt = new TrueTypeFontUnicode(name, encoding, embedded, ttfAfm);
+                fontBuilt = new TrueTypeFontUnicode(name, encoding, embedded, ttfAfm, forceRead);
             else {
-                fontBuilt = new TrueTypeFont(name, encoding, embedded, ttfAfm, forceRead);
+                fontBuilt = new TrueTypeFont(name, encoding, embedded, ttfAfm, false, forceRead);
                 fontBuilt.fastWinansi = encoding.equals(CP1252);
             }
         }
@@ -1168,7 +1168,7 @@ public abstract class BaseFont {
         String nameBase = getBaseName(name);
         BaseFont fontBuilt = null;
         if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().endsWith(".otf") || nameBase.toLowerCase().indexOf(".ttc,") > 0)
-            fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true);
+            fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true, false);
         else
             fontBuilt = createFont(name, encoding, false, false, ttfAfm, null);
         return fontBuilt.getFullFontName();
@@ -1186,7 +1186,7 @@ public abstract class BaseFont {
         String nameBase = getBaseName(name);
         BaseFont fontBuilt = null;
         if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().endsWith(".otf") || nameBase.toLowerCase().indexOf(".ttc,") > 0)
-            fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true);
+            fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true, false);
         else
             fontBuilt = createFont(name, encoding, false, false, ttfAfm, null);
         return new Object[]{fontBuilt.getPostscriptFontName(), fontBuilt.getFamilyFontName(), fontBuilt.getFullFontName()};
@@ -1205,7 +1205,7 @@ public abstract class BaseFont {
         String nameBase = getBaseName(name);
         BaseFont fontBuilt = null;
         if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().endsWith(".otf") || nameBase.toLowerCase().indexOf(".ttc,") > 0)
-            fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true);
+            fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true, false);
         else
             fontBuilt = createFont(name, encoding, false, false, ttfAfm, null);
         return fontBuilt.getAllNameEntries();
