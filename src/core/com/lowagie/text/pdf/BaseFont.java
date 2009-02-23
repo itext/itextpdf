@@ -539,6 +539,7 @@ public abstract class BaseFont {
      * is true, otherwise it will always be created new
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
+     * @since	iText 0.80
      */
     public static BaseFont createFont(String name, String encoding, boolean embedded, boolean cached, byte ttfAfm[], byte pfb[]) throws DocumentException, IOException {
         return createFont(name, encoding, embedded, cached, ttfAfm, pfb, false);
@@ -595,6 +596,7 @@ public abstract class BaseFont {
      * is true, otherwise it will always be created new
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
+     * @since	2.0.3
      */
     public static BaseFont createFont(String name, String encoding, boolean embedded, boolean cached, byte ttfAfm[], byte pfb[], boolean noThrow) throws DocumentException, IOException {
         return createFont(name, encoding, embedded, cached, ttfAfm, pfb, false, false);
