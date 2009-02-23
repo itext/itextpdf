@@ -3019,7 +3019,10 @@ public class PdfWriter extends DocWriter implements
     protected HashMap JBIG2Globals = new HashMap();
     /**
      * Gets an indirect reference to a JBIG2 Globals stream.
+     * Adds the stream if it hasn't already been added to the writer.
+	 * @param	a byte array that may already been added to the writer inside a stream object.
      * @throws IOException 
+     * @since	2.1.5
      */
     protected PdfIndirectReference getReferenceJBIG2Globals(byte[] content) {
     	if (content == null) return null;
