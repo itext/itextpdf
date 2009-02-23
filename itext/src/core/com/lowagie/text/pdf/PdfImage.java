@@ -228,7 +228,6 @@ public class PdfImage extends PdfStream {
                     transferBytes(is, streamBytes, -1);
                     break;
                 case Image.JBIG2:
-                	System.err.println("A");
                     put(PdfName.FILTER, PdfName.JBIG2DECODE);
                     put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
                     put(PdfName.BITSPERCOMPONENT, new PdfNumber(1));
@@ -237,7 +236,6 @@ public class PdfImage extends PdfStream {
                         put(PdfName.LENGTH, new PdfNumber(bytes.length));
                         return;
                     }
-                	System.err.println("B");
                     streamBytes = new ByteArrayOutputStream();
                     transferBytes(is, streamBytes, -1);
                 	break;
