@@ -55,6 +55,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.fonts.FontsResourceAnchor;
 
@@ -166,9 +167,10 @@ class Type1Font extends BaseFont
      * @param emb true if the font is to be embedded in the PDF
      * @throws DocumentException the AFM file is invalid
      * @throws IOException the AFM file could not be read
+     * @since	2.1.5
      */
-    Type1Font(String afmFile, String enc, boolean emb, byte ttfAfm[], byte pfb[]) throws DocumentException, IOException
-    {
+    Type1Font(String afmFile, String enc, boolean emb, byte ttfAfm[], byte pfb[], boolean forceRead)
+    	throws DocumentException, IOException {
         if (emb && ttfAfm != null && pfb == null)
             throw new DocumentException("Two byte arrays are needed if the Type1 font is embedded.");
         if (emb && ttfAfm != null)
@@ -229,7 +231,7 @@ class Type1Font extends BaseFont
         else if (afmFile.toLowerCase().endsWith(".afm")) {
             try {
                 if (ttfAfm == null)
-                    rf = new RandomAccessFileOrArray(afmFile);
+                    rf = new RandomAccessFileOrArray(afmFile, forceRead, Document.plainRandomAccess);
                 else
                     rf = new RandomAccessFileOrArray(ttfAfm);
                 process(rf);
@@ -249,7 +251,7 @@ class Type1Font extends BaseFont
             try {
                 ByteArrayOutputStream ba = new ByteArrayOutputStream();
                 if (ttfAfm == null)
-                    rf = new RandomAccessFileOrArray(afmFile);
+                    rf = new RandomAccessFileOrArray(afmFile, forceRead, Document.plainRandomAccess);
                 else
                     rf = new RandomAccessFileOrArray(ttfAfm);
                 Pfm2afm.convert(rf, ba);
@@ -504,7 +506,7 @@ class Type1Font extends BaseFont
         try {
             String filePfb = fileName.substring(0, fileName.length() - 3) + "pfb";
             if (pfb == null)
-                rf = new RandomAccessFileOrArray(filePfb);
+                rf = new RandomAccessFileOrArray(filePfb, true, Document.plainRandomAccess);
             else
                 rf = new RandomAccessFileOrArray(pfb);
             int fileLength = rf.length();
