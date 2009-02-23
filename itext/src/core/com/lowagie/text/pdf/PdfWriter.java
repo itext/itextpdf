@@ -922,6 +922,11 @@ public class PdfWriter extends DocWriter implements
     protected ArrayList pageReferences = new ArrayList();
     /** The current page number. */
     protected int currentPageNumber = 1;
+    /**
+     * The value of the Tabs entry in the page dictionary.
+     * @since	2.1.5
+     */
+    protected PdfName tabs = null;
 
     /**
      * Use this method to make sure the page tree has a linear structure
@@ -993,6 +998,23 @@ public class PdfWriter extends DocWriter implements
 
     public int getCurrentPageNumber() {
         return currentPageNumber;
+    }
+    
+    /**
+     * Sets the value for the Tabs entry in the page tree.
+     * @param	tabs	Can be PdfName.R, PdfName.C or PdfName.S
+     * @since	2.1.5
+     */
+    public void setTabs(PdfName tabs) {
+    	this.tabs = tabs;
+    }
+    
+    /**
+     * Returns the value to be used for the Tabs entry in the page tree.
+     * @since	2.1.5
+     */
+    public PdfName getTabs() {
+    	return tabs;
     }
 
     /**
@@ -2997,7 +3019,10 @@ public class PdfWriter extends DocWriter implements
     protected HashMap JBIG2Globals = new HashMap();
     /**
      * Gets an indirect reference to a JBIG2 Globals stream.
+     * Adds the stream if it hasn't already been added to the writer.
+	 * @param	a byte array that may already been added to the writer inside a stream object.
      * @throws IOException 
+     * @since	2.1.5
      */
     protected PdfIndirectReference getReferenceJBIG2Globals(byte[] content) {
     	if (content == null) return null;

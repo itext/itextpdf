@@ -373,6 +373,7 @@ public class PdfCopy extends PdfWriter {
     	PdfRectangle mediabox = new PdfRectangle(rect, rotation);
     	PageResources resources = new PageResources();
     	PdfPage page = new PdfPage(mediabox, new HashMap(), resources.getResources(), 0);
+    	page.put(PdfName.TABS, getTabs());
     	root.addPage(page);
     	++currentPageNumber;
     }
