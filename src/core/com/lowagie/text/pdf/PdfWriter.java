@@ -55,6 +55,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,6 +71,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
+import com.lowagie.text.ImgJBIG2;
 import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
@@ -2903,6 +2905,14 @@ public class PdfWriter extends DocWriter implements
                     maskRef = getImageReference(mname);
                 }
                 PdfImage i = new PdfImage(image, "img" + images.size(), maskRef);
+                if (image instanceof ImgJBIG2) {
+                	byte[] globals = ((ImgJBIG2)image).getGlobalBytes();
+                	if (globals != null) {
+                		PdfDictionary decodeparms = new PdfDictionary();
+                		decodeparms.put(PdfName.JBIG2GLOBALS, getReferenceJBIG2Globals(globals));
+                		i.put(PdfName.DECODEPARMS, decodeparms);
+                	}
+                }
                 if (image.hasICCProfile()) {
                     PdfICCBased icc = new PdfICCBased(image.getICCProfile(), image.getCompressionLevel());
                     PdfIndirectReference iccRef = add(icc);
@@ -2978,6 +2988,35 @@ public class PdfWriter extends DocWriter implements
             throw new ExceptionConverter(ioe);
         }
         return object.getIndirectReference();
+    }
+    
+    /**
+     * A HashSet with Stream objects containing JBIG2 Globals
+     * @since 2.1.5
+     */
+    protected HashMap JBIG2Globals = new HashMap();
+    /**
+     * Gets an indirect reference to a JBIG2 Globals stream.
+     * @throws IOException 
+     */
+    protected PdfIndirectReference getReferenceJBIG2Globals(byte[] content) {
+    	if (content == null) return null;
+    	PdfStream stream;
+    	for (Iterator i = JBIG2Globals.keySet().iterator(); i.hasNext(); ) {
+    		stream = (PdfStream)i.next();
+    		if (Arrays.equals(content, stream.getBytes())) {
+    			return (PdfIndirectReference)JBIG2Globals.get(stream);
+    		}
+    	}
+    	stream = new PdfStream(content);
+    	PdfIndirectObject ref;
+		try {
+			ref = addToBody(stream);
+		} catch (IOException e) {
+			return null;
+		}
+    	JBIG2Globals.put(stream, ref.getIndirectReference());
+    	return ref.getIndirectReference();
     }
 
 //	[M4] Old table functionality; do we still need it?

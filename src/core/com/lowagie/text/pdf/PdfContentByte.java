@@ -60,6 +60,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
+import com.lowagie.text.ImgJBIG2;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.internal.PdfAnnotationsImp;
 import com.lowagie.text.pdf.internal.PdfXConformanceImp;
@@ -1161,6 +1162,14 @@ public class PdfContentByte {
                 if (inlineImage) {
                     content.append("\nBI\n");
                     PdfImage pimage = new PdfImage(image, "", null);
+                    if (image instanceof ImgJBIG2) {
+                    	byte[] globals = ((ImgJBIG2)image).getGlobalBytes();
+                    	if (globals != null) {
+                    		PdfDictionary decodeparms = new PdfDictionary();
+                    		decodeparms.put(PdfName.JBIG2GLOBALS, writer.getReferenceJBIG2Globals(globals));
+                    		pimage.put(PdfName.DECODEPARMS, decodeparms);
+                    	}
+                    }
                     for (Iterator it = pimage.getKeys().iterator(); it.hasNext();) {
                         PdfName key = (PdfName)it.next();
                         PdfObject value = pimage.get(key);

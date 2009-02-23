@@ -62,21 +62,26 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  */
 public class JBIG2Image {
 
-	/** return a stream suitable for using as a /JBIG2Globals, or null if not applicable to the given jbig2. */
-	public static Object getGlobalSegment(RandomAccessFileOrArray ra ) {
+	/**
+	 * Gets a byte array that can be used as a /JBIG2Globals,
+	 * or null if not applicable to the given jbig2.
+	 * @param	ra	an random access file or array
+	 * @return	a byte array
+	 */
+	public static byte[] getGlobalSegment(RandomAccessFileOrArray ra ) {
 		try {
 			JBIG2SegmentReader sr = new JBIG2SegmentReader(ra);
 			sr.read();
 			return sr.getGlobal(true);
 		} catch (Exception e) {
-	        throw new ExceptionConverter(e);
+	        return null;
 	    }
 	}
 	
-	/** return an Image representing the given page.
-	 * not clear to me how to communicate what about the possibility of the globals.
-	 * @param ra
-	 * @param page
+	/**
+	 * returns an Image representing the given page.
+	 * @param ra	the file or array containing the image
+	 * @param page	the page number of the image
 	 * @return	an Image object
 	 */
 	public static Image getJbig2Image(RandomAccessFileOrArray ra, int page) {
@@ -94,7 +99,11 @@ public class JBIG2Image {
 	    }
 	}
 
-	
+	/***
+	 * Gets the number of pages in a JBIG2 image.
+	 * @param ra	a random acces file array containing a JBIG2 image
+	 * @return	the number of pages
+	 */
 	public static int getNumberOfPages(RandomAccessFileOrArray ra) {
 		try {
 			JBIG2SegmentReader sr = new JBIG2SegmentReader(ra);
