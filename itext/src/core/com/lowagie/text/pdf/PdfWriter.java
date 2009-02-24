@@ -3020,8 +3020,7 @@ public class PdfWriter extends DocWriter implements
     /**
      * Gets an indirect reference to a JBIG2 Globals stream.
      * Adds the stream if it hasn't already been added to the writer.
-	 * @param	a byte array that may already been added to the writer inside a stream object.
-     * @throws IOException 
+	 * @param	content a byte array that may already been added to the writer inside a stream object.
      * @since	2.1.5
      */
     protected PdfIndirectReference getReferenceJBIG2Globals(byte[] content) {
