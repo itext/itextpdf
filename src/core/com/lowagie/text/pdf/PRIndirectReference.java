@@ -48,16 +48,24 @@
  */
 
 package com.lowagie.text.pdf;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 
 public class PRIndirectReference extends PdfIndirectReference {
-    
+
     protected PdfReader reader;
     // membervariables
-    
+    /**
+     * Used when 'reader' is "non-partial", holding the entire PDF in memory.
+     * Otherwise, we stick to PdfIndirectReference's "reffedObj".
+     * @since 2.1.5
+     */
+    protected PdfObject hardReference;
+
     // constructors
-    
+
 /**
  * Constructs a <CODE>PdfIndirectReference</CODE>.
  *
@@ -65,27 +73,27 @@ public class PRIndirectReference extends PdfIndirectReference {
  * @param		number			the object number.
  * @param		generation		the generation number.
  */
-    
+
     PRIndirectReference(PdfReader reader, int number, int generation) {
         type = INDIRECT;
         this.number = number;
         this.generation = generation;
         this.reader = reader;
     }
-    
+
 /**
  * Constructs a <CODE>PdfIndirectReference</CODE>.
  *
  * @param		reader			a <CODE>PdfReader</CODE>
  * @param		number			the object number.
  */
-    
+
     PRIndirectReference(PdfReader reader, int number) {
         this(reader, number, 0);
     }
-    
+
     // methods
-    
+
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         int n = writer.getNewObjectNumber(reader, number, generation);
         os.write(PdfEncodings.convertToBytes(new StringBuffer().append(n).append(" 0 R").toString(), null));
@@ -94,9 +102,60 @@ public class PRIndirectReference extends PdfIndirectReference {
     public PdfReader getReader() {
         return reader;
     }
-    
+
     public void setNumber(int number, int generation) {
         this.number = number;
         this.generation = generation;
+        // blow out any previous internal object storage.
+        hardReference = null;
+        reffedObj = null;
+    }
+
+    /**
+     * Find the direct object for this reference.  It'll look up
+     * the correct one from its <code>PdfReader</code> if need be, but prefers to use
+     * the internally stored <code>PdfObject</code>.
+     * @return the direct object for this reference.
+     * @since 2.1.5
+     */
+    public PdfObject getDirectObject() {
+        PdfObject dirObj = getInternalObject();
+        if (dirObj == null) {
+            dirObj = reader.getPdfObject(number);
+            if (reader.isPartial()) {
+                // weak references are ignored for purposes of GC
+                reffedObj = new WeakReference(dirObj);
+                reader.releaseLastXrefPartial();
+                hardReference = null;
+            }
+            else {
+                reffedObj = null;
+                hardReference = dirObj;
+            }
+        }
+
+        return dirObj;
+    }
+
+    /**
+     * Sorts out the current reference from either of the two
+     * places it could be stored.
+     * @return a valid object reference if there's one to get
+     * @since 2.1.5
+     */
+    private PdfObject getInternalObject() {
+        if (hardReference == null && (reffedObj == null || reffedObj.get() == null)) {
+            return null;
+        }
+
+        return (hardReference != null) ? hardReference : (PdfObject) reffedObj.get();
+    }
+
+    /**
+     * Block alteration of a PRIndRef's direct object.
+     * @param obj ignored
+     * @since 2.1.5
+     */
+    public void setDirectObject( PdfObject obj) {
     }
 }
