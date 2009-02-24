@@ -431,8 +431,8 @@ class PdfCopyFieldsImp extends PdfWriter {
 
     void createWidgets(ArrayList list, AcroFields.Item item) {
         for (int k = 0; k < item.merged.size(); ++k) {
-            list.add(item.page.get(k));
-            PdfDictionary merged = (PdfDictionary)item.merged.get(k);
+            list.add(item.getPage(k));
+            PdfDictionary merged = (PdfDictionary)item.getMerged(k);
             PdfObject dr = merged.get(PdfName.DR);
             if (dr != null)
                 PdfFormField.mergeResources(resources, (PdfDictionary)PdfReader.getPdfObject(dr));
@@ -442,7 +442,7 @@ class PdfCopyFieldsImp extends PdfWriter {
                 if (widgetKeys.containsKey(key))
                     widget.put(key, merged.get(key));
             }
-            widget.put(iTextTag, new PdfNumber(((Integer)item.tabOrder.get(k)).intValue() + 1));
+            widget.put(iTextTag, new PdfNumber(((Integer)item.getTabOrder(k)).intValue() + 1));
             list.add(widget);
         }
     }
@@ -470,7 +470,7 @@ class PdfCopyFieldsImp extends PdfWriter {
             else {
                 if (obj instanceof HashMap)
                     return;
-                PdfDictionary merged = (PdfDictionary)item.merged.get(0);
+                PdfDictionary merged = (PdfDictionary)item.getMerged(0);
                 if (obj == null) {
                     PdfDictionary field = new PdfDictionary();
                     if (PdfName.SIG.equals(merged.get(PdfName.FT)))

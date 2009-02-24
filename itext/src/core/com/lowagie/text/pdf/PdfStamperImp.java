@@ -802,12 +802,12 @@ class PdfStamperImp extends PdfWriter {
                 continue;
             AcroFields.Item item = (AcroFields.Item) entry.getValue();
             for (int k = 0; k < item.merged.size(); ++k) {
-                PdfDictionary merged = (PdfDictionary)item.merged.get(k);
+                PdfDictionary merged = (PdfDictionary)item.getMerged(k);
                 PdfNumber ff = merged.getAsNumber(PdfName.F);
                 int flags = 0;
                 if (ff != null)
                     flags = ff.intValue();
-                int page = ((Integer)item.page.get(k)).intValue();
+                int page = ((Integer)item.getPage(k)).intValue();
                 PdfDictionary appDic = merged.getAsDict(PdfName.AP);
                 if (appDic != null && (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
                     PdfObject obj = appDic.get(PdfName.N);
@@ -855,7 +855,7 @@ class PdfStamperImp extends PdfWriter {
                     PdfObject ran = (PdfObject)ar.get(idx);
                     if (!ran.isIndirect())
                         continue;
-                    PdfObject ran2 = (PdfObject)item.widget_refs.get(k);
+                    PdfObject ran2 = (PdfObject)item.getWidgetRef(k);
                     if (!ran2.isIndirect())
                         continue;
                     if (((PRIndirectReference)ran).getNumber() == ((PRIndirectReference)ran2).getNumber()) {
