@@ -72,110 +72,110 @@ import java.io.OutputStream;
  */
 
 public abstract class PdfObject {
-    
+
     // static membervariables (all the possible types of a PdfObject)
-    
+
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int BOOLEAN = 1;
-    
+
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int NUMBER = 2;
-    
+
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int STRING = 3;
-    
+
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int NAME = 4;
-    
+
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int ARRAY = 5;
-    
+
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int DICTIONARY = 6;
-    
+
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int STREAM = 7;
 
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int NULL = 8;
-    
+
     /** a possible type of <CODE>PdfObject</CODE> */
-    public static final int INDIRECT = 10;    
+    public static final int INDIRECT = 10;
 
 /** This is an empty string used for the <CODE>PdfNull</CODE>-object and for an empty <CODE>PdfString</CODE>-object. */
     public static final String NOTHING = "";
-    
+
 /** This is the default encoding to be used for converting Strings into bytes and vice versa.
  * The default encoding is PdfDocEncoding.
  */
     public static final String TEXT_PDFDOCENCODING = "PDF";
-    
+
 /** This is the encoding to be used to output text in Unicode. */
     public static final String TEXT_UNICODE = "UnicodeBig";
-    
+
     // membervariables
-    
+
 /** the content of this <CODE>PdfObject</CODE> */
     protected byte[] bytes;
-    
+
 /** the type of this <CODE>PdfObject</CODE> */
     protected int type;
-    
+
     /**
      * Holds value of property indRef.
      */
-    protected PRIndirectReference indRef;
-    
+    protected PdfIndirectReference indRef;
+
     // constructors
-    
+
 /**
  * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> without any <VAR>content</VAR>.
  *
  * @param		type			type of the new <CODE>PdfObject</CODE>
  */
-    
+
     protected PdfObject(int type) {
         this.type = type;
     }
-    
+
 /**
  * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> with a certain <VAR>content</VAR>.
  *
  * @param		type			type of the new <CODE>PdfObject</CODE>
  * @param		content			content of the new <CODE>PdfObject</CODE> as a <CODE>String</CODE>.
  */
-    
+
     protected PdfObject(int type, String content) {
         this.type = type;
         bytes = PdfEncodings.convertToBytes(content, null);
     }
-    
+
 /**
  * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> with a certain <VAR>content</VAR>.
  *
  * @param		type			type of the new <CODE>PdfObject</CODE>
  * @param		bytes			content of the new <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>.
  */
-    
+
     protected PdfObject(int type, byte[] bytes) {
         this.bytes = bytes;
         this.type = type;
     }
-    
+
     // methods dealing with the content of this object
-    
+
 /**
  * Writes the PDF representation of this <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>s to the writer.
  * @param writer for backwards compatibility
  * @param os the outputstream to write the bytes to.
  * @throws IOException
  */
-    
+
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         if (bytes != null)
             os.write(bytes);
     }
-    
+
     /**
      * Gets the presentation of this object in a byte array
      * @return a byte array
@@ -191,7 +191,7 @@ public abstract class PdfObject {
     public boolean canBeInObjStm() {
         return (type >= 1 && type <= 6) || type == 8;
     }
-    
+
 /**
  * Returns the length of the PDF representation of the <CODE>PdfObject</CODE>.
  * <P>
@@ -204,24 +204,24 @@ public abstract class PdfObject {
  *
  * @return		a length
  */
-    
+
 //    public int pdfLength() {
 //        return toPdf(null).length;
 //    }
-    
+
 /**
  * Returns the <CODE>String</CODE>-representation of this <CODE>PdfObject</CODE>.
  *
  * @return		a <CODE>String</CODE>
  */
-    
+
     public String toString() {
         if (bytes == null)
             return super.toString();
         else
             return PdfEncodings.convertToString(bytes, null);
     }
-    
+
 /**
  * Returns the length of the actual content of the <CODE>PdfObject</CODE>.
  * <P>
@@ -235,109 +235,109 @@ public abstract class PdfObject {
  *
  * @return		a length
  */
-    
+
     public int length() {
         return toString().length();
     }
-    
+
 /**
  * Changes the content of this <CODE>PdfObject</CODE>.
  *
  * @param		content			the new content of this <CODE>PdfObject</CODE>
  */
-    
+
     protected void setContent(String content) {
         bytes = PdfEncodings.convertToBytes(content, null);
     }
-    
+
     // methods dealing with the type of this object
-    
+
 /**
  * Returns the type of this <CODE>PdfObject</CODE>.
  *
  * @return		a type
  */
-    
+
     public int type() {
         return type;
     }
-    
+
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfNull</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isNull() {
         return (this.type == NULL);
     }
-    
+
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfBoolean</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isBoolean() {
         return (this.type == BOOLEAN);
     }
-    
+
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfNumber</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isNumber() {
         return (this.type == NUMBER);
     }
-    
+
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfString</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isString() {
         return (this.type == STRING);
     }
-    
+
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfName</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isName() {
         return (this.type == NAME);
     }
-    
+
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfArray</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isArray() {
         return (this.type == ARRAY);
     }
-    
+
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfDictionary</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isDictionary() {
         return (this.type == DICTIONARY);
     }
-    
+
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfStream</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isStream() {
         return (this.type == STREAM);
     }
@@ -349,20 +349,30 @@ public abstract class PdfObject {
     public boolean isIndirect() {
         return (this.type == INDIRECT);
     }
-    
+
     /**
      * Getter for property indRef.
      * @return Value of property indRef.
      */
-    public PRIndirectReference getIndRef() {
-        return this.indRef;
+    public PdfIndirectReference getIndRef() {
+        return indRef;
     }
-    
+
     /**
      * Setter for property indRef.
      * @param indRef New value of property indRef.
      */
-    public void setIndRef(PRIndirectReference indRef) {
+    public void setIndRef(PdfIndirectReference indRef) {
         this.indRef = indRef;
+        indRef.setDirectObject( this );
+    }
+
+    /**
+     *  Simply here to be overridden by indirect references.
+     * @return this
+     * @since 2.1.5
+     */
+    public PdfObject getDirectObject() {
+        return this;
     }
 }
