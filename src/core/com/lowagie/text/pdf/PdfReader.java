@@ -135,12 +135,12 @@ public class PdfReader implements PdfViewerPreferences {
     private boolean partial;
 
     /**
-     * Whether or not this reader is a "full" read or
+     * Returns whether or not this reader is a "full" read or
      * a partial one.
-     * @return
+     * @return <code>true</code> if reader is a partial one
      * @since 2.1.5
      */
-    boolean isPartial() {
+    protected boolean isPartial() {
         return partial;
     }
 
