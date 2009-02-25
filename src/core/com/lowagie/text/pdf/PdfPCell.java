@@ -58,39 +58,40 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.events.PdfPCellEventForwarder;
 
-/** A cell in a PdfPTable.
+/**
+ * A cell in a PdfPTable.
  */
 
 public class PdfPCell extends Rectangle{
     
     private ColumnText column = new ColumnText(null);
     
-    /** Holds value of property verticalAlignment. */
+    /** Vertical alignment of the cell. */
     private int verticalAlignment = Element.ALIGN_TOP;
     
-    /** Holds value of property paddingLeft. */
+    /** Left padding of the cell. */
     private float paddingLeft = 2;
     
-    /** Holds value of property paddingLeft. */
+    /** Right padding of the cell. */
     private float paddingRight = 2;
     
-    /** Holds value of property paddingTop. */
+    /** Top padding of the cell. */
     private float paddingTop = 2;
     
-    /** Holds value of property paddingBottom. */
+    /** Bottom padding of the cell. */
     private float paddingBottom = 2;
     
-    /** Holds value of property fixedHeight. */
+    /** Fixed height of the cell. */
     private float fixedHeight = 0;
+    
+    /** Minimum height of the cell. */
+    private float minimumHeight;
     
     /** Holds value of property noWrap. */
     private boolean noWrap = false;
     
     /** Holds value of property table. */
     private PdfPTable table;
-    
-    /** Holds value of property minimumHeight. */
-    private float minimumHeight;
     
     /** Holds value of property colspan. */
     private int colspan = 1;
@@ -107,11 +108,17 @@ public class PdfPCell extends Rectangle{
     /** Increases padding to include border if true */
     private boolean useBorderPadding = false;
 
-
     /** The text in the cell. */
     protected Phrase phrase;
 
-    /** Constructs an empty <CODE>PdfPCell</CODE>.
+    /**
+     * The rotation of the cell. Possible values are
+     * 0, 90, 180 and 270.
+     */
+    private int rotation;
+
+    /**
+     * Constructs an empty <CODE>PdfPCell</CODE>.
      * The default padding is 2.
      */
     public PdfPCell() {
@@ -121,8 +128,10 @@ public class PdfPCell extends Rectangle{
         column.setLeading(0, 1);
     }
 
-    /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
+    /**
+     * Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
      * The default padding is 2.
+     * 
      * @param phrase the text
      */
     public PdfPCell(Phrase phrase) {
@@ -133,47 +142,52 @@ public class PdfPCell extends Rectangle{
         column.setLeading(0, 1);
     }
     
-    /** Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>.
+    /**
+     * Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>.
      * The default padding is 0.
+     * 
      * @param image the <CODE>Image</CODE>
      */
     public PdfPCell(Image image) {
         this(image, false);
     }
     
-    /** Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>.
+    /**
+     * Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>.
      * The default padding is 0.25 for a border width of 0.5.
+     * 
      * @param image the <CODE>Image</CODE>
      * @param fit <CODE>true</CODE> to fit the image to the cell
      */
     public PdfPCell(Image image, boolean fit) {
         super(0, 0, 0, 0);
+        borderWidth = 0.5f;
+        border = BOX;
         if (fit) {
-            borderWidth = 0.5f;
-            border = BOX;
             this.image = image;
             column.setLeading(0, 1);
             setPadding(borderWidth / 2);
         }
         else {
-            borderWidth = 0.5f;
-            border = BOX;
             column.addText(this.phrase = new Phrase(new Chunk(image, 0, 0)));
             column.setLeading(0, 1);
             setPadding(0);
         }
     }
     
-    /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>.
+    /**
+     * Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>.
      * This constructor allows nested tables.
      * The default padding is 0.
+     * 
      * @param table The <CODE>PdfPTable</CODE>
      */
     public PdfPCell(PdfPTable table) {
         this(table, null);
     }
     
-    /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>.
+    /**
+     * Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>.
      * This constructor allows nested tables.
      * 
      * @param table The <CODE>PdfPTable</CODE>
@@ -207,7 +221,9 @@ public class PdfPCell extends Rectangle{
         }
     }
     
-    /** Constructs a deep copy of a <CODE>PdfPCell</CODE>.
+    /**
+     * Constructs a deep copy of a <CODE>PdfPCell</CODE>.
+     * 
      * @param cell the <CODE>PdfPCell</CODE> to duplicate
      */
     public PdfPCell(PdfPCell cell) {
@@ -235,6 +251,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Adds an iText element to the cell.
+     * 
      * @param element
      */
     public void addElement(Element element) {
@@ -245,14 +262,18 @@ public class PdfPCell extends Rectangle{
         column.addElement(element);
     }
     
-    /** Gets the <CODE>Phrase</CODE> from this cell.
+    /**
+     * Gets the <CODE>Phrase</CODE> from this cell.
+     * 
      * @return the <CODE>Phrase</CODE>
      */
     public Phrase getPhrase() {
         return phrase;
     }
     
-    /** Sets the <CODE>Phrase</CODE> for this cell.
+    /**
+     * Sets the <CODE>Phrase</CODE> for this cell.
+     * 
      * @param phrase the <CODE>Phrase</CODE>
      */
     public void setPhrase(Phrase phrase) {
@@ -261,30 +282,38 @@ public class PdfPCell extends Rectangle{
         column.setText(this.phrase = phrase);
     }
     
-    /** Gets the horizontal alignment for the cell.
+    /**
+     * Gets the horizontal alignment for the cell.
+     * 
      * @return the horizontal alignment for the cell
      */
     public int getHorizontalAlignment() {
         return column.getAlignment();
     }
     
-    /** Sets the horizontal alignment for the cell. It could be
+    /**
+     * Sets the horizontal alignment for the cell. It could be
      * <CODE>Element.ALIGN_CENTER</CODE> for example.
+     * 
      * @param horizontalAlignment The horizontal alignment
      */
     public void setHorizontalAlignment(int horizontalAlignment) {
         column.setAlignment(horizontalAlignment);
     }
     
-    /** Gets the vertical alignment for the cell.
+    /**
+     * Gets the vertical alignment for the cell.
+     * 
      * @return the vertical alignment for the cell
      */
     public int getVerticalAlignment() {
         return verticalAlignment;
     }
     
-    /** Sets the vertical alignment for the cell. It could be
+    /**
+     * Sets the vertical alignment for the cell. It could be
      * <CODE>Element.ALIGN_MIDDLE</CODE> for example.
+     * 
      * @param verticalAlignment The vertical alignment
      */
     public void setVerticalAlignment(int verticalAlignment) {
@@ -293,12 +322,19 @@ public class PdfPCell extends Rectangle{
         this.verticalAlignment = verticalAlignment;
     }
     
-    /** Gets the effective left padding.  This will include
-     *  the left border width if {@link #isUseBorderPadding()} is true.
+    /**
+     * Gets the effective left padding.
+     * This will include the left border width if
+     * {@link #isUseBorderPadding()} is true.
+     * 
      * @return effective value of property paddingLeft.
      */
     public float getEffectivePaddingLeft() {
-        return paddingLeft + (isUseBorderPadding() ? (getBorderWidthLeft()/(isUseVariableBorders()?1f:2f)) : 0);
+    	if (isUseBorderPadding()) {
+    		float border = getBorderWidthLeft() / (isUseVariableBorders() ? 1f : 2f);
+    	    return paddingLeft + border;
+    	}
+    	return paddingLeft;
     }
     
     /**
@@ -310,22 +346,30 @@ public class PdfPCell extends Rectangle{
 
     /**
      * Setter for property paddingLeft.
+     * 
      * @param paddingLeft New value of property paddingLeft.
      */
     public void setPaddingLeft(float paddingLeft) {
         this.paddingLeft = paddingLeft;
     }
     
-    /** Gets the effective right padding.  This will include
-     *  the right border width if {@link #isUseBorderPadding()} is true.
+    /**
+     * Gets the effective right padding.  This will include
+     * the right border width if {@link #isUseBorderPadding()} is true.
+     * 
      * @return effective value of property paddingRight.
      */
     public float getEffectivePaddingRight() {
-        return paddingRight + (isUseBorderPadding() ? (getBorderWidthRight()/(isUseVariableBorders()?1f:2f)) : 0);
+    	if (isUseBorderPadding()) {
+    		float border = getBorderWidthRight() / (isUseVariableBorders() ? 1f : 2f);
+    		return paddingRight + border;
+    	}
+    	return paddingRight;
     }
     
     /**
      * Getter for property paddingRight.
+     * 
      * @return Value of property paddingRight.
      */
     public float getPaddingRight() {
@@ -334,22 +378,30 @@ public class PdfPCell extends Rectangle{
 
     /**
      * Setter for property paddingRight.
+     * 
      * @param paddingRight New value of property paddingRight.
      */
     public void setPaddingRight(float paddingRight) {
         this.paddingRight = paddingRight;
     }
     
-    /** Gets the effective top padding.  This will include
-     *  the top border width if {@link #isUseBorderPadding()} is true.
+    /** 
+     * Gets the effective top padding.  This will include
+     * the top border width if {@link #isUseBorderPadding()} is true.
+     * 
      * @return effective value of property paddingTop.
      */
     public float getEffectivePaddingTop() {
-        return paddingTop + (isUseBorderPadding() ? (getBorderWidthTop()/(isUseVariableBorders()?1f:2f)) : 0);
+    	if (isUseBorderPadding()) {
+    		float border = getBorderWidthTop()/(isUseVariableBorders()?1f:2f);
+    		return paddingTop + border;
+    	}
+        return paddingTop;
     }
     
     /**
      * Getter for property paddingTop.
+     * 
      * @return Value of property paddingTop.
      */
     public float getPaddingTop() {
@@ -358,22 +410,31 @@ public class PdfPCell extends Rectangle{
 
     /**
      * Setter for property paddingTop.
+     * 
      * @param paddingTop New value of property paddingTop.
      */
     public void setPaddingTop(float paddingTop) {
         this.paddingTop = paddingTop;
     }
     
-    /** Gets the effective bottom padding.  This will include
-     *  the bottom border width if {@link #isUseBorderPadding()} is true.
+    /**
+     * Gets the effective bottom padding.
+     * This will include  the bottom border width if
+     * {@link #isUseBorderPadding()} is true.
+     * 
      * @return effective value of property paddingBottom.
      */
     public float getEffectivePaddingBottom() {
-        return paddingBottom + (isUseBorderPadding() ? (getBorderWidthBottom()/(isUseVariableBorders()?1f:2f)) : 0);
+    	if (isUseBorderPadding()) {
+    		float border = getBorderWidthBottom()/(isUseVariableBorders()?1f:2f);
+    		return paddingBottom + border;
+    	}
+        return paddingBottom;
     }
     
     /**
      * Getter for property paddingBottom.
+     * 
      * @return Value of property paddingBottom.
      */
     public float getPaddingBottom() {
@@ -382,6 +443,7 @@ public class PdfPCell extends Rectangle{
 
     /**
      * Setter for property paddingBottom.
+     * 
      * @param paddingBottom New value of property paddingBottom.
      */
     public void setPaddingBottom(float paddingBottom) {
@@ -390,6 +452,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Sets the padding of the contents in the cell (space between content and border).
+     * 
      * @param padding
      */
     public void setPadding(float padding) {
@@ -401,6 +464,7 @@ public class PdfPCell extends Rectangle{
 
     /**
      * If true, then effective padding will include border widths
+     * 
      * @return true if effective padding includes border widths
      */
     public boolean isUseBorderPadding() {
@@ -409,6 +473,7 @@ public class PdfPCell extends Rectangle{
 
     /**
      * Adjusts effective padding to include border widths.
+     * 
      * @param use adjust effective padding if true
      */
     public void setUseBorderPadding(boolean use) {
@@ -416,9 +481,11 @@ public class PdfPCell extends Rectangle{
     }
 
     /**
-     * Sets the leading fixed and variable. The resultant leading will be
-     * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
-     * size of the biggest font in the line.
+     * Sets the leading fixed and variable. 
+     * The resultant leading will be:
+     * fixedLeading+multipliedLeading*maxFontSize
+     * where maxFontSize is the size of the biggest font in the line.
+     * 
      * @param fixedLeading the fixed leading
      * @param multipliedLeading the variable leading
      */
@@ -427,7 +494,8 @@ public class PdfPCell extends Rectangle{
     }
     
     /**
-     * Gets the fixed leading
+     * Gets the fixed leading.
+     * 
      * @return the leading
      */
     public float getLeading() {
@@ -435,7 +503,8 @@ public class PdfPCell extends Rectangle{
     }
     
     /**
-     * Gets the variable leading
+     * Gets the variable leading.
+     * 
      * @return the leading
      */
     public float getMultipliedLeading() {
@@ -444,6 +513,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Sets the first paragraph line indent.
+     * 
      * @param indent the indent
      */
     public void setIndent(float indent) {
@@ -452,6 +522,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Gets the first paragraph line indent.
+     * 
      * @return the indent
      */
     public float getIndent() {
@@ -460,6 +531,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Gets the extra space between paragraphs.
+     * 
      * @return the extra space between paragraphs
      */
     public float getExtraParagraphSpace() {
@@ -468,6 +540,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Sets the extra space between paragraphs.
+     * 
      * @param extraParagraphSpace the extra space between paragraphs
      */
     public void setExtraParagraphSpace(float extraParagraphSpace) {
@@ -475,24 +548,29 @@ public class PdfPCell extends Rectangle{
     }
     
     /**
-     * Getter for property fixedHeight.
-     * @return Value of property fixedHeight.
-     */
-    public float getFixedHeight() {
-        return fixedHeight;
-    }
-    
-    /**
-     * Setter for property fixedHeight.
+     * Set a fixed height for the cell.
+     * This will automatically unset minimumHeight, if set.
+     * 
      * @param fixedHeight New value of property fixedHeight.
      */
     public void setFixedHeight(float fixedHeight) {
         this.fixedHeight = fixedHeight;
         minimumHeight = 0;
     }
+    
+    /**
+     * Get the fixed height of the cell.
+     * 
+     * @return Value of property fixedHeight.
+     */
+    public float getFixedHeight() {
+        return fixedHeight;
+    }
 
     /**
      * Tells you whether the cell has a fixed height.
+     * 
+     * @return	true is a fixed height was set.
      * @since 2.1.5
      */
     public boolean hasFixedHeight() {
@@ -500,7 +578,38 @@ public class PdfPCell extends Rectangle{
     }
     
     /**
+     * Set a minimum height for the cell.
+     * This will automatically unset fixedHeight, if set.
+     * 
+     * @param minimumHeight New value of property minimumHeight.
+     */
+    public void setMinimumHeight(float minimumHeight) {
+        this.minimumHeight = minimumHeight;
+        fixedHeight = 0;
+    }
+    
+    /**
+     * Get the minimum height of the cell.
+     *
+     * @return Value of property minimumHeight.
+     */
+    public float getMinimumHeight() {
+        return minimumHeight;
+    }
+
+    /**
+     * Tells you whether the cell has a minimum height.
+     * 
+     * @return	true if a minimum height was set.
+     * @since 2.1.5
+     */
+    public boolean hasMinimumHeight() {
+    	return getMinimumHeight() > 0;
+    }
+    
+    /**
      * Getter for property noWrap.
+     * 
      * @return Value of property noWrap.
      */
     public boolean isNoWrap() {
@@ -509,6 +618,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Setter for property noWrap.
+     * 
      * @param noWrap New value of property noWrap.
      */
     public void setNoWrap(boolean noWrap) {
@@ -517,6 +627,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Getter for property table.
+     * 
      * @return Value of property table.
      * @since 2.x
      */
@@ -535,37 +646,18 @@ public class PdfPCell extends Rectangle{
         }
     }
     
-    /** Getter for property minimumHeight.
-     * @return Value of property minimumHeight.
-     */
-    public float getMinimumHeight() {
-        return minimumHeight;
-    }
-
     /**
-     * Tells you whether the cell has a minimum height.
-     * @since 2.1.5
-     */
-    public boolean hasMinimumHeight() {
-    	return getMinimumHeight() > 0;
-    }
-    
-    /** Setter for property minimumHeight.
-     * @param minimumHeight New value of property minimumHeight.
-     */
-    public void setMinimumHeight(float minimumHeight) {
-        this.minimumHeight = minimumHeight;
-        fixedHeight = 0;
-    }
-    
-    /** Getter for property colspan.
+     * Getter for property colspan.
+     * 
      * @return Value of property colspan.
      */
     public int getColspan() {
         return colspan;
     }
     
-    /** Setter for property colspan.
+    /**
+     * Setter for property colspan.
+     * 
      * @param colspan New value of property colspan.
      */
     public void setColspan(int colspan) {
@@ -574,6 +666,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Sets the following paragraph lines indent.
+     * 
      * @param indent the indent
      */
     public void setFollowingIndent(float indent) {
@@ -582,6 +675,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Gets the following paragraph lines indent.
+     * 
      * @return the indent
      */
     public float getFollowingIndent() {
@@ -590,6 +684,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Sets the right paragraph lines indent.
+     * 
      * @param indent the indent
      */
     public void setRightIndent(float indent) {
@@ -598,25 +693,29 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Gets the right paragraph lines indent.
+     * 
      * @return the indent
      */
     public float getRightIndent() {
         return column.getRightIndent();
     }
     
-    /** Gets the space/character extra spacing ratio for
-     * fully justified text.
+    /**
+     * Gets the space/character extra spacing ratio for fully justified text.
+     * 
      * @return the space/character extra spacing ratio
      */
     public float getSpaceCharRatio() {
         return column.getSpaceCharRatio();
     }
     
-    /** Sets the ratio between the extra word spacing and the extra character spacing
-     * when the text is fully justified.
-     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
-     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the extra character spacing
-     * will be zero.
+    /** Sets the ratio between the extra word spacing and the
+     * extra character spacing when the text is fully justified.
+     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more
+     * than extra character spacing.
+     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the
+     * extra character spacing will be zero.
+     * 
      * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
      */
     public void setSpaceCharRatio(float spaceCharRatio) {
@@ -624,7 +723,10 @@ public class PdfPCell extends Rectangle{
     }
     
     /**
-     * Sets the run direction of the text content in the cell (PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI, PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL).
+     * Sets the run direction of the text content in the cell.
+     * May be either of:
+     * PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI,
+     * PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
      * @param runDirection
      */
     public void setRunDirection(int runDirection) {
@@ -633,23 +735,28 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Gets the run direction of the text content in the cell
-     * @return One of the following values: PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI, PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
+     * 
+     * @return One of the following values:
+     * PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI,
+     * PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
      */
     public int getRunDirection() {
         return column.getRunDirection();
     }
     
-    /** Getter for property image.
+    /**
+     * Getter for property image.
+     * 
      * @return Value of property image.
-     *
      */
     public Image getImage() {
         return this.image;
     }
     
-    /** Setter for property image.
+    /**
+     * Setter for property image.
+     * 
      * @param image New value of property image.
-     *
      */
     public void setImage(Image image) {
         column.setText(null);
@@ -657,17 +764,19 @@ public class PdfPCell extends Rectangle{
         this.image = image;
     }
     
-    /** Gets the cell event for this cell.
+    /**
+     * Gets the cell event for this cell.
+     * 
      * @return the cell event
-     *
      */
     public PdfPCellEvent getCellEvent() {
         return this.cellEvent;
     }
     
-    /** Sets the cell event for this cell.
+    /**
+     * Sets the cell event for this cell.
+     * 
      * @param event the cell event
-     *
      */
     public void setCellEvent(PdfPCellEvent event) {
     	if (event == null) this.cellEvent = null;
@@ -681,29 +790,36 @@ public class PdfPCell extends Rectangle{
     	}
     }
     
-    /** Gets the arabic shaping options.
+    /**
+     * Gets the arabic shaping options.
+     * 
      * @return the arabic shaping options
      */
     public int getArabicOptions() {
         return column.getArabicOptions();
     }
     
-    /** Sets the arabic shaping options. The option can be AR_NOVOWEL,
-     * AR_COMPOSEDTASHKEEL and AR_LIG.
+    /** 
+     * Sets the arabic shaping options.
+     * The option can be AR_NOVOWEL, AR_COMPOSEDTASHKEEL and AR_LIG.
+     * 
      * @param arabicOptions the arabic shaping options
      */
     public void setArabicOptions(int arabicOptions) {
         column.setArabicOptions(arabicOptions);
     }
     
-    /** Gets state of first line height based on max ascender
+    /**
+     * Gets state of first line height based on max ascender
+     * 
      * @return true if an ascender is to be used.
      */
     public boolean isUseAscender() {
         return column.isUseAscender();
     }
 
-    /** Enables/ Disables adjustment of first line height based on max ascender.
+    /**
+     * Enables/ Disables adjustment of first line height based on max ascender.
      *
      * @param use adjust height if true
      */
@@ -712,17 +828,19 @@ public class PdfPCell extends Rectangle{
     }
 
 
-    /** Getter for property useDescender.
+    /**
+     * Getter for property useDescender.
+     * 
      * @return Value of property useDescender.
-     *
      */
     public boolean isUseDescender() {
         return this.useDescender;
     }
 
-    /** Setter for property useDescender.
+    /**
+     * Setter for property useDescender.
+     * 
      * @param useDescender New value of property useDescender.
-     *
      */
     public void setUseDescender(boolean useDescender) {
         this.useDescender = useDescender;
@@ -730,6 +848,7 @@ public class PdfPCell extends Rectangle{
 
     /**
      * Gets the ColumnText with the content of the cell.
+     * 
      * @return a columntext object
      */
     public ColumnText getColumn() {
@@ -738,6 +857,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Returns the list of composite elements of the column.
+     *
      * @return	a List object.
      * @since	2.1.1
      */
@@ -747,6 +867,7 @@ public class PdfPCell extends Rectangle{
     
     /**
      * Sets the columntext in the cell.
+     *
      * @param column
      */
     public void setColumn(ColumnText column) {
@@ -754,13 +875,8 @@ public class PdfPCell extends Rectangle{
     }
 
     /**
-     * The rotation of the cell. Possible values are
-     * 0, 90, 180 and 270.
-     */
-    private int rotation;
-
-    /**
      * Gets the rotation of the cell.
+     *
      * @return the rotation of the cell.
      */
     public int getRotation() {
@@ -768,14 +884,16 @@ public class PdfPCell extends Rectangle{
     }
 
     /**
-     * Sets the rotation of the cell. Possible values are
-     * 0, 90, 180 and 270.
+     * Sets the rotation of the cell. 
+     * Possible values are 0, 90, 180 and 270.
+     *
      * @param rotation the rotation of the cell
      */
     public void setRotation(int rotation) {
-        rotation %= 360;
         if (rotation < 0)
             rotation += 360;
+        else
+            rotation %= 360;
         if ((rotation % 90) != 0)
             throw new IllegalArgumentException("Rotation must be a multiple of 90.");
         this.rotation = rotation;
