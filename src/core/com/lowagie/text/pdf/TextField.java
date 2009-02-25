@@ -128,7 +128,13 @@ public class TextField extends BaseField {
         return phrase;
     }
     
-    private static String removeCRLF(String text) {
+    /**
+     * Removes CRLF from a <code>String</code>.
+     * 
+     * @param text
+     * @return String
+     */
+    public static String removeCRLF(String text) {
         if (text.indexOf('\n') >= 0 || text.indexOf('\r') >= 0) {
             char[] p = text.toCharArray();
             StringBuffer sb = new StringBuffer(p.length);
@@ -147,6 +153,20 @@ public class TextField extends BaseField {
             return sb.toString();
         }
         return text;
+    }
+    
+    /**
+     * Obfuscates a password <code>String</code>.
+     * Every character is replaced by an asterisk (*).
+     * 
+     * @param text 
+     * @return String
+     */
+    public static String obfuscatePassword(String text) {
+    	char[] pchar = new char[text.length()];
+    	for (int i = 0; i < text.length(); i++)
+    		pchar[i] = '*';
+    	return new String(pchar);
     }
     
     public PdfAppearance getAppearance() throws IOException, DocumentException {
@@ -174,12 +194,8 @@ public class TextField extends BaseField {
         app.newPath();
         Color fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
         String ptext = text; //fixed by Kazuya Ujihara (ujihara.jp)
-        if ((options & PASSWORD) != 0) { 
-            char[] pchar = new char[text.length()];
-            for (int i = 0; i < text.length(); i++)
-                pchar[i] = '*';
-            ptext = new String(pchar);
-        }
+        if ((options & PASSWORD) != 0)
+        	ptext = obfuscatePassword(text);
         int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
         if ((options & MULTILINE) == 0) {
             ptext = removeCRLF(text);
