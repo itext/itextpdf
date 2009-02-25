@@ -133,6 +133,7 @@ public class TextField extends BaseField {
      * 
      * @param text
      * @return String
+     * @since	2.1.5
      */
     public static String removeCRLF(String text) {
         if (text.indexOf('\n') >= 0 || text.indexOf('\r') >= 0) {
@@ -161,6 +162,7 @@ public class TextField extends BaseField {
      * 
      * @param text 
      * @return String
+     * @since	2.1.5
      */
     public static String obfuscatePassword(String text) {
     	char[] pchar = new char[text.length()];
