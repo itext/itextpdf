@@ -490,6 +490,14 @@ public class PdfPCell extends Rectangle{
         this.fixedHeight = fixedHeight;
         minimumHeight = 0;
     }
+
+    /**
+     * Tells you whether the cell has a fixed height.
+     * @since 2.1.5
+     */
+    public boolean hasFixedHeight() {
+    	return getFixedHeight() > 0;
+    }
     
     /**
      * Getter for property noWrap.
@@ -532,6 +540,14 @@ public class PdfPCell extends Rectangle{
      */
     public float getMinimumHeight() {
         return minimumHeight;
+    }
+
+    /**
+     * Tells you whether the cell has a minimum height.
+     * @since 2.1.5
+     */
+    public boolean hasMinimumHeight() {
+    	return getMinimumHeight() > 0;
     }
     
     /** Setter for property minimumHeight.
@@ -679,7 +695,7 @@ public class PdfPCell extends Rectangle{
     public void setArabicOptions(int arabicOptions) {
         column.setArabicOptions(arabicOptions);
     }
-
+    
     /** Gets state of first line height based on max ascender
      * @return true if an ascender is to be used.
      */
