@@ -712,6 +712,11 @@ public class PdfPTable implements LargeElement{
                 totalHeight -= row.getMaxHeights();
         }
         rows.remove(rowNumber);
+        if (rowNumber < headerRows) {
+        	--headerRows;
+        	if (rowNumber >= (headerRows - footerRows))
+        		--footerRows;
+        }
         return true;
     }
     
