@@ -58,7 +58,8 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 
-/** Supports text, combo and list fields generating the correct appearances.
+/**
+ * Supports text, combo and list fields generating the correct appearances.
  * All the option in the Acrobat GUI are supported in an easy to use API.
  * @author Paulo Soares (psoares@consiste.pt)
  */
@@ -81,7 +82,8 @@ public class TextField extends BaseField {
     private float extraMarginLeft;
     private float extraMarginTop;
     
-    /** Creates a new <CODE>TextField</CODE>.
+    /**
+     * Creates a new <CODE>TextField</CODE>.
      * @param writer the document <CODE>PdfWriter</CODE>
      * @param box the field location and dimensions
      * @param fieldName the field name. If <CODE>null</CODE> only the widget keys
@@ -104,9 +106,8 @@ public class TextField extends BaseField {
     }
     
     private static void changeFontSize(Phrase p, float size) {
-        for (int k = 0; k < p.size(); ++k) {
+        for (int k = 0; k < p.size(); ++k)
             ((Chunk)p.get(k)).getFont().setSize(size);
-        }
     }
     
     private Phrase composePhrase(String text, BaseFont ufont, Color color, float fontSize) {
@@ -119,9 +120,8 @@ public class TextField extends BaseField {
             if (extensionFont != null)
                 fs.addFont(new Font(extensionFont, fontSize, 0, color));
             if (substitutionFonts != null) {
-                for (int k = 0; k < substitutionFonts.size(); ++k) {
+                for (int k = 0; k < substitutionFonts.size(); ++k)
                     fs.addFont(new Font((BaseFont)substitutionFonts.get(k), fontSize, 0, color));
-                }
             }
             phrase = fs.process(text);
         }
@@ -169,6 +169,12 @@ public class TextField extends BaseField {
     	return new String(pchar);
     }
     
+    /**
+     * Get the <code>PdfAppearance</code> of a text or combo field
+     * @throws IOException on error
+     * @throws DocumentException on error
+     * @return A <code>PdfAppearance</code>
+     */
     public PdfAppearance getAppearance() throws IOException, DocumentException {
         PdfAppearance app = getBorderAppearance();
         app.beginVariableText();
@@ -176,33 +182,33 @@ public class TextField extends BaseField {
             app.endVariableText();
             return app;
         }
-        BaseFont ufont = getRealFont();
+        
         boolean borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
-        float h = box.getHeight() - borderWidth * 2;
+        float h = box.getHeight() - borderWidth * 2 - extraMarginTop;
         float bw2 = borderWidth;
         if (borderExtra) {
             h -= borderWidth * 2;
             bw2 *= 2;
         }
-        h -= extraMarginTop;
-        float offsetX = (borderExtra ? 2 * borderWidth : borderWidth);
-        offsetX = Math.max(offsetX, 1);
+        float offsetX = Math.max(bw2, 1);
         float offX = Math.min(bw2, offsetX);
         app.saveState();
         app.rectangle(offX, offX, box.getWidth() - 2 * offX, box.getHeight() - 2 * offX);
         app.clip();
         app.newPath();
-        Color fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
-        String ptext = text; //fixed by Kazuya Ujihara (ujihara.jp)
+        String ptext;
         if ((options & PASSWORD) != 0)
         	ptext = obfuscatePassword(text);
-        int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
-        if ((options & MULTILINE) == 0) {
+        else if ((options & MULTILINE) == 0)
             ptext = removeCRLF(text);
-        }
-        Phrase phrase = composePhrase(ptext, ufont, fcolor, fontSize);
+        else
+        	ptext = text; //fixed by Kazuya Ujihara (ujihara.jp)
+        BaseFont ufont = getRealFont();
+        Color fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
+        int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
+        float usize = fontSize;
+        Phrase phrase = composePhrase(ptext, ufont, fcolor, usize);
         if ((options & MULTILINE) != 0) {
-            float usize = fontSize;
             float width = box.getWidth() - 4 * offsetX - extraMarginLeft;
             float factor = ufont.getFontDescriptor(BaseFont.BBOXURY, 1) - ufont.getFontDescriptor(BaseFont.BBOXLLY, 1);
             ColumnText ct = new ColumnText(null);
@@ -225,9 +231,8 @@ public class TextField extends BaseField {
                             break;
                     }
                 }
-                if (usize < 4) {
+                if (usize < 4)
                     usize = 4;
-                }
             }
             changeFontSize(phrase, usize);
             ct.setCanvas(app);
@@ -241,7 +246,6 @@ public class TextField extends BaseField {
             ct.go();
         }
         else {
-            float usize = fontSize;
             if (usize == 0) {
                 float maxCalculatedSize = h / (ufont.getFontDescriptor(BaseFont.BBOXURX, 1) - ufont.getFontDescriptor(BaseFont.BBOXLLY, 1));
                 changeFontSize(phrase, 1);
@@ -249,9 +253,7 @@ public class TextField extends BaseField {
                 if (wd == 0)
                     usize = maxCalculatedSize;
                 else
-                    usize = (box.getWidth() - extraMarginLeft - 4 * offsetX) / wd;
-                if (usize > maxCalculatedSize)
-                    usize = maxCalculatedSize;
+                	usize = Math.min(maxCalculatedSize, (box.getWidth() - extraMarginLeft - 4 * offsetX) / wd);
                 if (usize < 4)
                     usize = 4;
             }
@@ -267,12 +269,10 @@ public class TextField extends BaseField {
             if ((options & COMB) != 0 && maxCharacterLength > 0) {
                 int textLen = Math.min(maxCharacterLength, ptext.length());
                 int position = 0;
-                if (alignment == Element.ALIGN_RIGHT) {
+                if (alignment == Element.ALIGN_RIGHT)
                     position = maxCharacterLength - textLen;
-                }
-                else if (alignment == Element.ALIGN_CENTER) {
+                else if (alignment == Element.ALIGN_CENTER)
                     position = (maxCharacterLength - textLen) / 2;
-                }
                 float step = (box.getWidth() - extraMarginLeft) / maxCharacterLength;
                 float start = step / 2 + position * step;
                 if (textColor == null)
@@ -296,14 +296,18 @@ public class TextField extends BaseField {
                 app.endText();
             }
             else {
-                if (alignment == Element.ALIGN_RIGHT) {
-                    ColumnText.showTextAligned(app, Element.ALIGN_RIGHT, phrase, extraMarginLeft + box.getWidth() - 2 * offsetX, offsetY - extraMarginTop, 0, rtl, 0);
-                }
-                else if (alignment == Element.ALIGN_CENTER) {
-                    ColumnText.showTextAligned(app, Element.ALIGN_CENTER, phrase, extraMarginLeft + box.getWidth() / 2, offsetY - extraMarginTop, 0, rtl, 0);
-                }
-                else
-                    ColumnText.showTextAligned(app, Element.ALIGN_LEFT, phrase, extraMarginLeft + 2 * offsetX, offsetY - extraMarginTop, 0, rtl, 0);
+            	float x;
+            	switch (alignment) {
+            	case Element.ALIGN_RIGHT:
+            		x = extraMarginLeft + box.getWidth() - (2 * offsetX);
+            		break;
+            	case Element.ALIGN_CENTER:
+            		x = extraMarginLeft + (box.getWidth() / 2);
+            		break;
+            	default:
+            		x = extraMarginLeft + (2 * offsetX);
+            	}
+            	ColumnText.showTextAligned(app, alignment, phrase, x, offsetY - extraMarginTop, 0, rtl, 0);
             }
         }
         app.restoreState();
@@ -311,6 +315,12 @@ public class TextField extends BaseField {
         return app;
     }
 
+    /**
+     * Get the <code>PdfAppearance</code> of a list field
+     * @throws IOException on error
+     * @throws DocumentException on error
+     * @return A <code>PdfAppearance</code>
+     */
     PdfAppearance getListAppearance() throws IOException, DocumentException {
         PdfAppearance app = getBorderAppearance();
         app.beginVariableText();
@@ -319,9 +329,8 @@ public class TextField extends BaseField {
             return app;
         }
         int topChoice = choiceSelection;
-        if (topChoice >= choices.length) {
+        if (topChoice >= choices.length)
             topChoice = choices.length - 1;
-        }
         if (topChoice < 0)
             topChoice = 0;
         BaseFont ufont = getRealFont();
@@ -330,9 +339,11 @@ public class TextField extends BaseField {
             usize = 12;
         boolean borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
         float h = box.getHeight() - borderWidth * 2;
-        if (borderExtra)
+        float offsetX = borderWidth;
+        if (borderExtra) {
             h -= borderWidth * 2;
-        float offsetX = (borderExtra ? 2 * borderWidth : borderWidth);
+            offsetX *= 2;
+        }
         float leading = ufont.getFontDescriptor(BaseFont.BBOXURY, usize) - ufont.getFontDescriptor(BaseFont.BBOXLLY, usize);
         int maxFit = (int)(h / leading) + 1;
         int first = 0;
@@ -370,7 +381,8 @@ public class TextField extends BaseField {
         return app;
     }
 
-    /** Gets a new text field.
+    /**
+     * Gets a new text field.
      * @throws IOException on error
      * @throws DocumentException on error
      * @return a new text field
@@ -445,7 +457,8 @@ public class TextField extends BaseField {
         return field;
     }
     
-    /** Gets a new combo field.
+    /**
+     * Gets a new combo field.
      * @throws IOException on error
      * @throws DocumentException on error
      * @return a new combo field
@@ -454,7 +467,8 @@ public class TextField extends BaseField {
         return getChoiceField(false);
     }
     
-    /** Gets a new list field.
+    /**
+     * Gets a new list field.
      * @throws IOException on error
      * @throws DocumentException on error
      * @return a new list field
@@ -471,7 +485,8 @@ public class TextField extends BaseField {
         int topChoice = choiceSelection;
         if (topChoice >= uchoices.length)
             topChoice = uchoices.length - 1;
-        if (text == null) text = ""; //fixed by Kazuya Ujihara (ujihara.jp)
+        if (text == null)
+        	text = ""; //fixed by Kazuya Ujihara (ujihara.jp)
         if (topChoice >= 0)
             text = uchoices[topChoice];
         if (topChoice < 0)
@@ -557,44 +572,48 @@ public class TextField extends BaseField {
         return field;
     }
     
-    /** Gets the default text.
+    /**
+     * Gets the default text.
      * @return the default text
      */
     public String getDefaultText() {
         return this.defaultText;
     }
     
-    /** Sets the default text. It is only meaningful for text fields.
+    /**
+     * Sets the default text. It is only meaningful for text fields.
      * @param defaultText the default text
      */
     public void setDefaultText(String defaultText) {
         this.defaultText = defaultText;
     }
     
-    /** Gets the choices to be presented to the user in list/combo
-     * fields.
+    /**
+     * Gets the choices to be presented to the user in list/combo fields.
      * @return the choices to be presented to the user
      */
     public String[] getChoices() {
         return this.choices;
     }
     
-    /** Sets the choices to be presented to the user in list/combo
-     * fields.
+    /**
+     * Sets the choices to be presented to the user in list/combo fields.
      * @param choices the choices to be presented to the user
      */
     public void setChoices(String[] choices) {
         this.choices = choices;
     }
     
-    /** Gets the export values in list/combo fields.
+    /**
+     * Gets the export values in list/combo fields.
      * @return the export values in list/combo fields
      */
     public String[] getChoiceExports() {
         return this.choiceExports;
     }
     
-    /** Sets the export values in list/combo fields. If this array
+    /**
+     * Sets the export values in list/combo fields. If this array
      * is <CODE>null</CODE> then the choice values will also be used
      * as the export values.
      * @param choiceExports the export values in list/combo fields
@@ -603,14 +622,16 @@ public class TextField extends BaseField {
         this.choiceExports = choiceExports;
     }
     
-    /** Gets the zero based index of the selected item.
+    /**
+     * Gets the zero based index of the selected item.
      * @return the zero based index of the selected item
      */
     public int getChoiceSelection() {
         return this.choiceSelection;
     }
     
-    /** Sets the zero based index of the selected item.
+    /**
+     * Sets the zero based index of the selected item.
      * @param choiceSelection the zero based index of the selected item
      */
     public void setChoiceSelection(int choiceSelection) {
