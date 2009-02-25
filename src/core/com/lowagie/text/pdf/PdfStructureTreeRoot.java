@@ -49,37 +49,40 @@
 package com.lowagie.text.pdf;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * The structure tree root corresponds to the highest hierarchy level in a tagged PDF.
  * @author Paulo Soares (psoares@consiste.pt)
  */
-public class PdfStructureTreeRoot extends PdfDictionary {
-    
+public class PdfStructureTreeRoot extends PdfStructureBase {
+
+    //private HashMap<Integer, PdfObject> parentTree = new HashMap<Integer, PdfObject>();
     private HashMap parentTree = new HashMap();
-    private PdfIndirectReference reference;
+    //private Map pageMCIDs<Integer, Integer> = new HashMap<Integer, Integer>();
+    private Map pageMCIDs = new HashMap();
+    private int nextMark = 0;
+    private PdfWriter writer;
 
     /**
-     * Holds value of property writer.
+     *
+     * @param writer a VALID PdfWriter.  Or else.
      */
-    private PdfWriter writer;
-    
-    /** Creates a new instance of PdfStructureTreeRoot */
     PdfStructureTreeRoot(PdfWriter writer) {
         super(PdfName.STRUCTTREEROOT);
+        if (writer == null) {
+            throw new NullPointerException( "PdfWriter param must not be null" );
+        }
         this.writer = writer;
-        reference = writer.getPdfIndirectReference();
+        setIndRef( writer.getPdfIndirectReference() );
     }
-    
+
     /**
      * Maps the user tags to the standard tags. The mapping will allow a standard application to make some sense of the tagged
      * document whatever the user tags may be.
      * @param used the user tag
      * @param standard the standard tag
-     */    
+     */
     public void mapRole(PdfName used, PdfName standard) {
         PdfDictionary rm = (PdfDictionary)get(PdfName.ROLEMAP);
         if (rm == null) {
@@ -88,33 +91,89 @@ public class PdfStructureTreeRoot extends PdfDictionary {
         }
         rm.put(used, standard);
     }
-    
+
     /**
      * Gets the writer.
-     * @return the writer
+     * @return You'll never guess.
+     * @since 2.1.5
      */
     public PdfWriter getWriter() {
-        return this.writer;
+        return writer;
     }
 
     /**
-     * Gets the reference this object will be written to.
-     * @return the reference this object will be written to
-     */    
-    public PdfIndirectReference getReference() {
-        return this.reference;
+     * returns the next Marked Content ID.
+     * @since 2.1.5
+     * @return the next top-level MCID
+     */
+    public int getNextMCID() {
+        return nextMark++;
     }
-    
-    void setPageMark(int page, PdfIndirectReference struc) {
-        Integer i = new Integer(page);
-        PdfArray ar = (PdfArray)parentTree.get(i);
-        if (ar == null) {
-            ar = new PdfArray();
-            parentTree.put(i, ar);
-        }
+
+
+    /**
+     * Sets the page's MCID.  "Pages" in the name is possessive, not plural.
+     * @param pageIdx That page thing we were just talking about.
+     * @param pageMCID  The MCID for the page...  Do try and keep up.
+     * @since 2.1.5
+     */
+    public void setPagesMCID( int pageIdx, int pageMCID ) {
+      Integer idxObj = new Integer( pageIdx );
+      if (!pageMCIDs.containsKey( idxObj )) {
+        pageMCIDs.put( idxObj, new Integer( pageMCID ) );
+        parentTree.put( idxObj, new PdfArray() );
+      }
+    }
+
+    /**
+     * will NPE if pageIdx is unknown
+     * @param pageIdx
+     * @return the MCID for the given page
+     * @since 2.1.5
+     */
+    public int getMCIDForPage( int pageIdx ) {
+      return ((Integer)pageMCIDs.get( new Integer( pageIdx ) )).intValue();
+      //return pageMCIDs.get( pageIdx );
+    }
+
+    /**
+     * retrieves the existing MCID for a given page.
+     * @param pageIdx
+     * @return the MCID for the given page
+     * @since 2.1.5
+     */
+    public Integer getMCIDForPage( Integer pageIdx ) {
+        return (Integer)pageMCIDs.get( pageIdx );
+    }
+
+    /**
+     * Adds a marked content item to the given page.  It returns the index
+     * into that page's marked content array... the MCID (which isn't a unique
+     * ID, and has no bearing on reading order)
+     * @param pageIdx durh
+     * @param struc An indirect reference to the *structure element*
+     * @return MCID (aka index) for the referenced StructureElement
+     * @since 2.1.5
+     */
+    public int setPageMark(int pageIdx, PdfIndirectReference struc) {
+        Integer i = (Integer)pageMCIDs.get( new Integer( pageIdx ) );
+        //Integer i = new Integer( pageMCIDs.get( pageIdx ) );
+        PdfArray ar = (PdfArray)parentTree.get( i );
         ar.add(struc);
+        return ar.size() - 1;
     }
-    
+
+    /**
+     * Adds a structure element that is not part of a content item (annots & such)
+     * @param objID
+     * @param strucRef
+     * @since 2.1.5
+     */
+    public void setObjMark( int objID, PdfIndirectReference strucRef) {
+      Integer i = new Integer( objID );
+      parentTree.put( i, strucRef );
+    }
+
     private void nodeProcess(PdfDictionary struc, PdfIndirectReference reference) throws IOException {
         PdfObject obj = struc.get(PdfName.K);
         if (obj != null && obj.isArray() && !((PdfObject)((PdfArray)obj).getArrayList().get(0)).isNumber()) {
@@ -122,25 +181,31 @@ public class PdfStructureTreeRoot extends PdfDictionary {
             ArrayList a = ar.getArrayList();
             for (int k = 0; k < a.size(); ++k) {
                 PdfStructureElement e = (PdfStructureElement)a.get(k);
-                a.set(k, e.getReference());
-                nodeProcess(e, e.getReference());
+                a.set(k, e.getIndRef());
+                nodeProcess(e, e.getIndRef());
             }
         }
         if (reference != null)
             writer.addToBody(struc, reference);
     }
-    
+
     void buildTree() throws IOException {
         HashMap numTree = new HashMap();
         for (Iterator it = parentTree.keySet().iterator(); it.hasNext();) {
             Integer i = (Integer)it.next();
-            PdfArray ar = (PdfArray)parentTree.get(i);
-            numTree.put(i, writer.addToBody(ar).getIndirectReference());
+            PdfObject obj = (PdfObject)parentTree.get( i );
+            if (obj.isIndirect()) {
+                numTree.put( i, obj );
+            } else {
+                numTree.put(i, writer.addToBody(obj).getIndirectReference());
+            }
         }
         PdfDictionary dicTree = PdfNumberTree.writeTree(numTree, writer);
         if (dicTree != null)
             put(PdfName.PARENTTREE, writer.addToBody(dicTree).getIndirectReference());
-        
-        nodeProcess(this, reference);
+
+        nodeProcess(this, getIndRef() );
+
+        put( PdfName.PARENTTREENEXTKEY, new PdfNumber( nextMark ) );
     }
 }

@@ -67,11 +67,11 @@ package com.lowagie.text.pdf;
  */
 
 public class PdfName extends PdfObject implements Comparable{
-    
+
     // static membervariables (a variety of standard names used in PDF)
-    
+
     /** A name */
-    public static final PdfName A = new PdfName("A");    
+    public static final PdfName A = new PdfName("A");
     /** A name */
     public static final PdfName AA = new PdfName("AA");
     /** A name */
@@ -697,6 +697,14 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName NUMS = new PdfName("Nums");
     /** A name */
     public static final PdfName O = new PdfName("O");
+    /** A name used with Document Structure
+     * @since 2.1.5
+     */
+    public static final PdfName OBJ = new PdfName("Obj");
+    /** a name used with Doucment Structure
+     * @since 2.1.5
+     */
+    public static final PdfName OBJR = new PdfName("OBJR");
     /** A name */
     public static final PdfName OBJSTM = new PdfName("ObjStm");
     /** A name */
@@ -765,6 +773,10 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName PARENT = new PdfName("Parent");
     /** A name */
     public static final PdfName PARENTTREE = new PdfName("ParentTree");
+    /** A name used in defining Document Structure.
+     * @since 2.1.5
+     */
+    public static final PdfName PARENTTREENEXTKEY = new PdfName( "ParentTreeNextKey" );
     /** A name */
     public static final PdfName PATTERN = new PdfName("Pattern");
     /** A name */
@@ -1125,11 +1137,11 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName ZAPFDINGBATS = new PdfName("ZapfDingbats");
     /** A name */
     public static final PdfName ZOOM = new PdfName("Zoom");
-    
+
     private int hash = 0;
-    
+
     // constructors
-    
+
 
     /**
      * Constructs a new <CODE>PdfName</CODE>. The name length will be checked.
@@ -1138,14 +1150,14 @@ public class PdfName extends PdfObject implements Comparable{
     public PdfName(String name) {
         this(name, true);
     }
-    
+
     /**
      * Constructs a new <CODE>PdfName</CODE>.
      * @param name the new name
      * @param lengthCheck if <CODE>true</CODE> check the length validity, if <CODE>false</CODE> the name can
      * have any length
      */
-    
+
     public PdfName(String name, boolean lengthCheck) {
         super(PdfObject.NAME);
         // The minimum number of characters in a name is 0, the maximum is 127 (the '/' not included)
@@ -1193,7 +1205,7 @@ public class PdfName extends PdfObject implements Comparable{
         }
         bytes = pdfName.toByteArray();
     }
-    
+
     /**
      * Constructs a PdfName.
      * @param bytes the byte representation of the name
@@ -1202,7 +1214,7 @@ public class PdfName extends PdfObject implements Comparable{
         super(PdfObject.NAME, bytes);
     }
     // methods
-    
+
     /**
      * Compares this object with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
@@ -1215,14 +1227,14 @@ public class PdfName extends PdfObject implements Comparable{
      */
     public int compareTo(Object object) {
         PdfName name = (PdfName) object;
-        
+
         byte myBytes[] = bytes;
         byte objBytes[] = name.bytes;
         int len = Math.min(myBytes.length, objBytes.length);
         for(int i=0; i<len; i++) {
             if(myBytes[i] > objBytes[i])
                 return 1;
-            
+
             if(myBytes[i] < objBytes[i])
                 return -1;
         }
@@ -1232,7 +1244,7 @@ public class PdfName extends PdfObject implements Comparable{
             return 1;
         return 0;
     }
-    
+
     /**
      * Indicates whether some other object is "equal to" this one.
      *
@@ -1247,7 +1259,7 @@ public class PdfName extends PdfObject implements Comparable{
             return compareTo(obj) == 0;
         return false;
     }
-    
+
     /**
      * Returns a hash code value for the object. This method is
      * supported for the benefit of hashtables such as those provided by
@@ -1260,14 +1272,14 @@ public class PdfName extends PdfObject implements Comparable{
         if (h == 0) {
             int ptr = 0;
             int len = bytes.length;
-            
+
             for (int i = 0; i < len; i++)
                 h = 31*h + (bytes[ptr++] & 0xff);
             hash = h;
         }
         return h;
     }
-    
+
     /** Decodes an escaped name in the form "/AB#20CD" into "AB CD".
      * @param name the name to decode
      * @return the decoded name
