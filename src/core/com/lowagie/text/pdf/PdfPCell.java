@@ -216,9 +216,8 @@ public class PdfPCell extends Rectangle{
         	useBorderPadding = style.useBorderPadding;
         	rotation = style.rotation;
         }
-        else {
+        else
         	setPadding(0);
-        }
     }
     
     /**
@@ -750,7 +749,7 @@ public class PdfPCell extends Rectangle{
      * @return Value of property image.
      */
     public Image getImage() {
-        return this.image;
+        return image;
     }
     
     /**
@@ -770,7 +769,7 @@ public class PdfPCell extends Rectangle{
      * @return the cell event
      */
     public PdfPCellEvent getCellEvent() {
-        return this.cellEvent;
+        return cellEvent;
     }
     
     /**
@@ -778,14 +777,17 @@ public class PdfPCell extends Rectangle{
      * 
      * @param event the cell event
      */
-    public void setCellEvent(PdfPCellEvent event) {
-    	if (event == null) this.cellEvent = null;
-    	else if (this.cellEvent == null) this.cellEvent = event;
-    	else if (this.cellEvent instanceof PdfPCellEventForwarder) ((PdfPCellEventForwarder)this.cellEvent).addCellEvent(event);
+    public void setCellEvent(PdfPCellEvent cellEvent) {
+    	if (cellEvent == null)
+    		this.cellEvent = null;
+    	else if (this.cellEvent == null)
+    		this.cellEvent = cellEvent;
+    	else if (this.cellEvent instanceof PdfPCellEventForwarder)
+    		((PdfPCellEventForwarder)this.cellEvent).addCellEvent(cellEvent);
     	else {
     		PdfPCellEventForwarder forward = new PdfPCellEventForwarder();
     		forward.addCellEvent(this.cellEvent);
-    		forward.addCellEvent(event);
+    		forward.addCellEvent(cellEvent);
     		this.cellEvent = forward;
     	}
     }
@@ -823,8 +825,8 @@ public class PdfPCell extends Rectangle{
      *
      * @param use adjust height if true
      */
-    public void setUseAscender(boolean use) {
-        column.setUseAscender(use);
+    public void setUseAscender(boolean useAscender) {
+        column.setUseAscender(useAscender);
     }
 
 
@@ -834,7 +836,7 @@ public class PdfPCell extends Rectangle{
      * @return Value of property useDescender.
      */
     public boolean isUseDescender() {
-        return this.useDescender;
+        return useDescender;
     }
 
     /**
@@ -880,7 +882,7 @@ public class PdfPCell extends Rectangle{
      * @return the rotation of the cell.
      */
     public int getRotation() {
-        return this.rotation;
+        return rotation;
     }
 
     /**
