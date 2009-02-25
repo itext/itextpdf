@@ -775,7 +775,7 @@ public class PdfPCell extends Rectangle{
     /**
      * Sets the cell event for this cell.
      * 
-     * @param event the cell event
+     * @param cellEvent the cell event
      */
     public void setCellEvent(PdfPCellEvent cellEvent) {
     	if (cellEvent == null)
@@ -823,7 +823,7 @@ public class PdfPCell extends Rectangle{
     /**
      * Enables/ Disables adjustment of first line height based on max ascender.
      *
-     * @param use adjust height if true
+     * @param useAscender adjust height if true
      */
     public void setUseAscender(boolean useAscender) {
         column.setUseAscender(useAscender);
