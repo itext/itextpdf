@@ -68,47 +68,47 @@ import java.util.ListIterator;
  */
 
 public class PdfArray extends PdfObject {
-    
+
     // membervariables
-    
+
 /** this is the actual array of PdfObjects */
     protected ArrayList arrayList;
-    
+
     // constructors
-    
+
 /**
  * Constructs an empty <CODE>PdfArray</CODE>-object.
  */
-    
+
     public PdfArray() {
         super(ARRAY);
         arrayList = new ArrayList();
     }
-    
+
 /**
  * Constructs an <CODE>PdfArray</CODE>-object, containing 1 <CODE>PdfObject</CODE>.
  *
  * @param	object		a <CODE>PdfObject</CODE> that has to be added to the array
  */
-    
+
     public PdfArray(PdfObject object) {
         super(ARRAY);
         arrayList = new ArrayList();
         arrayList.add(object);
     }
-    
+
     public PdfArray(float values[]) {
         super(ARRAY);
         arrayList = new ArrayList();
         add(values);
     }
-    
+
     public PdfArray(int values[]) {
         super(ARRAY);
         arrayList = new ArrayList();
         add(values);
     }
-    
+
     /**
      * Constructs a PdfArray with the elements of an ArrayList.
      * Throws a ClassCastException if the ArrayList contains something
@@ -121,24 +121,24 @@ public class PdfArray extends PdfObject {
         for (Iterator i = l.iterator(); i.hasNext(); )
         	add((PdfObject)i.next());
     }
-    
+
 /**
  * Constructs an <CODE>PdfArray</CODE>-object, containing all the <CODE>PdfObject</CODE>s in a given <CODE>PdfArray</CODE>.
  *
  * @param	array		a <CODE>PdfArray</CODE> that has to be added to the array
  */
-    
+
     public PdfArray(PdfArray array) {
         super(ARRAY);
-        arrayList = new ArrayList(array.getArrayList());
+        arrayList = new ArrayList(array.arrayList);
     }
-    
+
     // methods overriding some methods in PdfObject
-    
+
 /**
  * Returns the PDF representation of this <CODE>PdfArray</CODE>.
  */
-    
+
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         os.write('[');
 
@@ -162,52 +162,76 @@ public class PdfArray extends PdfObject {
         }
         os.write(']');
     }
-    
+
     // methods concerning the ArrayList-membervalue
-    
-/**
- * Returns an ArrayList containing <CODE>PdfObject</CODE>s.
- *
- * @return		an ArrayList
- */
-    
+
+
+    /**
+     * Overwrites a given location of the array, returning
+     * the previous value
+     * @param idx index to overwrite
+     * @param obj new value for the given index
+     * @return the previous value
+     * @since 2.1.5
+     */
+
+    public PdfObject set( int idx, PdfObject obj) {
+        return (PdfObject) arrayList.set( idx, obj );
+    }
+
+    /**
+     * Remove the given element from the array
+     * @param idx index of the element to be removed.
+     * @since 2.1.5
+     */
+
+    public PdfObject remove( int idx) {
+        return (PdfObject) arrayList.remove( idx );
+    }
+
+    /**
+     * Get the internal arrayList for this PdfArray.  Not Recommended.
+     * @deprecated
+     * @return the internal ArrayList.  Naughty Naughty.
+     */
+
     public ArrayList getArrayList() {
         return arrayList;
     }
-    
-/**
- * Returns the number of entries in the array.
- *
- * @return		the size of the ArrayList
- */
-    
+
+    /**
+     * Returns the number of entries in the array.
+     *
+     * @return		the size of the ArrayList
+     */
+
     public int size() {
         return arrayList.size();
     }
-    
+
 /**
  * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
  *
  * @param		object			<CODE>PdfObject</CODE> to add
  * @return		<CODE>true</CODE>
  */
-    
+
     public boolean add(PdfObject object) {
         return arrayList.add(object);
     }
-    
+
     public boolean add(float values[]) {
         for (int k = 0; k < values.length; ++k)
             arrayList.add(new PdfNumber(values[k]));
         return true;
     }
-    
+
     public boolean add(int values[]) {
         for (int k = 0; k < values.length; ++k)
             arrayList.add(new PdfNumber(values[k]));
         return true;
     }
-    
+
 /**
  * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
  * <P>
@@ -215,38 +239,38 @@ public class PdfArray extends PdfObject {
  *
  * @param		object			<CODE>PdfObject</CODE> to add
  */
-    
+
     public void addFirst(PdfObject object) {
         arrayList.add(0, object);
     }
-    
+
 /**
  * Checks if the <CODE>PdfArray</CODE> already contains a certain <CODE>PdfObject</CODE>.
  *
  * @param		object			<CODE>PdfObject</CODE> to check
  * @return		<CODE>true</CODE>
  */
-    
+
     public boolean contains(PdfObject object) {
         return arrayList.contains(object);
     }
-    
+
     public ListIterator listIterator() {
         return arrayList.listIterator();
     }
-    
+
     public String toString() {
     	return arrayList.toString();
     }
-    
+
     public PdfObject getPdfObject( int idx ) {
         return (PdfObject)arrayList.get(idx);
     }
-    
+
     public PdfObject getDirectObject( int idx ) {
         return PdfReader.getPdfObject(getPdfObject(idx));
     }
-    
+
     // more of the same like PdfDictionary. (MAS 2/17/06)
     public PdfDictionary getAsDict(int idx) {
         PdfDictionary dict = null;
@@ -255,7 +279,7 @@ public class PdfArray extends PdfObject {
             dict = (PdfDictionary) orig;
         return dict;
     }
-    
+
     public PdfArray getAsArray(int idx) {
         PdfArray array = null;
         PdfObject orig = getDirectObject(idx);
@@ -263,7 +287,7 @@ public class PdfArray extends PdfObject {
             array = (PdfArray) orig;
         return array;
     }
-    
+
     public PdfStream getAsStream(int idx) {
         PdfStream stream = null;
         PdfObject orig = getDirectObject(idx);
@@ -271,7 +295,7 @@ public class PdfArray extends PdfObject {
             stream = (PdfStream) orig;
         return stream;
     }
-    
+
     public PdfString getAsString(int idx) {
         PdfString string = null;
         PdfObject orig = getDirectObject(idx);
@@ -279,7 +303,7 @@ public class PdfArray extends PdfObject {
             string = (PdfString) orig;
         return string;
     }
-    
+
     public PdfNumber getAsNumber(int idx) {
         PdfNumber number = null;
         PdfObject orig = getDirectObject(idx);
@@ -287,7 +311,7 @@ public class PdfArray extends PdfObject {
             number = (PdfNumber) orig;
         return number;
     }
-    
+
     public PdfName getAsName(int idx) {
         PdfName name = null;
         PdfObject orig = getDirectObject(idx);
@@ -295,7 +319,7 @@ public class PdfArray extends PdfObject {
             name = (PdfName) orig;
         return name;
     }
-    
+
     public PdfBoolean getAsBoolean(int idx) {
         PdfBoolean bool = null;
         PdfObject orig = getDirectObject(idx);
@@ -303,7 +327,7 @@ public class PdfArray extends PdfObject {
             bool = (PdfBoolean) orig;
         return bool;
     }
-    
+
     public PdfIndirectReference getAsIndirectObject(int idx) {
         PdfIndirectReference ref = null;
         PdfObject orig = getPdfObject(idx); // not getDirect this time.
