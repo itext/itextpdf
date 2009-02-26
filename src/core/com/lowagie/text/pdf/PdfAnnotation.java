@@ -882,8 +882,8 @@ public class PdfAnnotation extends PdfDictionary {
     			float y = destination.getAsNumber(3).floatValue();
         		float xx = x * a + y * c + e;
         		float yy = x * b + y * d + f;
-        		destination.getArrayList().set(2, new PdfNumber(xx));
-        		destination.getArrayList().set(3, new PdfNumber(yy));
+        		destination.set(2, new PdfNumber(xx));
+        		destination.set(3, new PdfNumber(yy));
     		}
     	}
 
@@ -902,7 +902,7 @@ public class PdfAnnotation extends PdfDictionary {
     		PdfAnnotation annotation = new PdfAnnotation(writer, new Rectangle(llx, lly, urx, ury));
     		if (newPage != 0) {
     	        PdfIndirectReference ref = writer.getPageReference(newPage);
-    	        destination.getArrayList().set(0, ref);
+    	        destination.set(0, ref);
     		}
     		if (destination != null) annotation.put(PdfName.DEST, destination);
     		annotation.hashMap.putAll(parameters);

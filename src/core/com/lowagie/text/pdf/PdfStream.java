@@ -59,7 +59,6 @@ import java.util.zip.DeflaterOutputStream;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.ExceptionConverter;
-import java.util.ArrayList;
 
 /**
  * <CODE>PdfStream</CODE> is the Pdf stream object.
@@ -297,8 +296,8 @@ public class PdfStream extends PdfDictionary {
                 if (PdfName.CRYPT.equals(filter))
                     crypto = null;
                 else if (filter.isArray()) {
-                    ArrayList af = ((PdfArray)filter).getArrayList();
-                    if (!af.isEmpty() && PdfName.CRYPT.equals(af.get(0)))
+                    PdfArray a = (PdfArray)filter;
+                    if (!a.isEmpty() && PdfName.CRYPT.equals(a.getPdfObject(0)))
                         crypto = null;
                 }
             }

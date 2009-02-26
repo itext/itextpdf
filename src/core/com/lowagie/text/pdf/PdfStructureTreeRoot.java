@@ -49,7 +49,9 @@
 package com.lowagie.text.pdf;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * The structure tree root corresponds to the highest hierarchy level in a tagged PDF.
@@ -175,13 +177,11 @@ public class PdfStructureTreeRoot extends PdfStructureBase {
     }
 
     private void nodeProcess(PdfDictionary struc, PdfIndirectReference reference) throws IOException {
-        PdfObject obj = struc.get(PdfName.K);
-        if (obj != null && obj.isArray() && !((PdfObject)((PdfArray)obj).getArrayList().get(0)).isNumber()) {
-            PdfArray ar = (PdfArray)obj;
-            ArrayList a = ar.getArrayList();
-            for (int k = 0; k < a.size(); ++k) {
-                PdfStructureElement e = (PdfStructureElement)a.get(k);
-                a.set(k, e.getIndRef());
+        PdfArray ar = struc.getAsArray(PdfName.K);
+        if (ar != null && !ar.getPdfObject(0).isNumber()) {
+            for (int k = 0; k < ar.size(); ++k) {
+                PdfStructureElement e = (PdfStructureElement)ar.getPdfObject(k);
+                ar.set(k, e.getIndRef());
                 nodeProcess(e, e.getIndRef());
             }
         }

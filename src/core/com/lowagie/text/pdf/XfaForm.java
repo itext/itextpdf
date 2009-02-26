@@ -123,9 +123,9 @@ public class XfaForm {
         xfaPresent = true;
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         if (xfa.isArray()) {
-            ArrayList ar = ((PdfArray)xfa).getArrayList();
+            PdfArray ar = (PdfArray)xfa;
             for (int k = 1; k < ar.size(); k += 2) {
-                PdfObject ob = PdfReader.getPdfObject((PdfObject)ar.get(k));
+                PdfObject ob = ar.getDirectObject(k);
                 if (ob instanceof PRStream) {
                     byte[] b = PdfReader.getStreamBytes((PRStream)ob);
                     bout.write(b);
@@ -184,11 +184,11 @@ public class XfaForm {
         }
         PdfObject xfa = getXfaObject(reader);
         if (xfa.isArray()) {
-        	ArrayList ar = ((PdfArray)xfa).getArrayList();
+            PdfArray ar = (PdfArray)xfa;
             int t = -1;
             int d = -1;
             for (int k = 0; k < ar.size(); k += 2) {
-                PdfString s = (PdfString)ar.get(k);
+                PdfString s = ar.getAsString(k);
                 if ("template".equals(s.toString())) {
                 	t = k + 1;
                 }
@@ -197,8 +197,8 @@ public class XfaForm {
                 }
             }
             if (t > -1 && d > -1) {
-                reader.killXref((PdfIndirectReference)ar.get(t));
-                reader.killXref((PdfIndirectReference)ar.get(d));
+                reader.killXref(ar.getAsIndirectObject(t));
+                reader.killXref(ar.getAsIndirectObject(d));
                 PdfStream tStream = new PdfStream(serializeDoc(form.templateNode));
                 tStream.flateCompress(writer.getCompressionLevel());
                 ar.set(t, writer.addToBody(tStream).getIndirectReference());

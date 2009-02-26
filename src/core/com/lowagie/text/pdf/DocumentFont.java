@@ -47,7 +47,6 @@
 package com.lowagie.text.pdf;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.lowagie.text.DocumentException;
@@ -157,7 +156,7 @@ public class DocumentFont extends BaseFont {
         try {
             byte[] touni = PdfReader.getStreamBytes((PRStream)PdfReader.getPdfObjectRelease(font.get(PdfName.TOUNICODE)));
             PdfArray df = (PdfArray)PdfReader.getPdfObjectRelease(font.get(PdfName.DESCENDANTFONTS));
-            PdfDictionary cidft = (PdfDictionary)PdfReader.getPdfObjectRelease((PdfObject)df.getArrayList().get(0));
+            PdfDictionary cidft = (PdfDictionary)PdfReader.getPdfObjectRelease(df.getPdfObject(0));
             PdfNumber dwo = (PdfNumber)PdfReader.getPdfObjectRelease(cidft.get(PdfName.DW));
             int dw = 1000;
             if (dwo != null)
@@ -175,20 +174,19 @@ public class DocumentFont extends BaseFont {
         IntHashtable hh = new IntHashtable();
         if (ws == null)
             return hh;
-        ArrayList ar = ws.getArrayList();
-        for (int k = 0; k < ar.size(); ++k) {
-            int c1 = ((PdfNumber)PdfReader.getPdfObjectRelease((PdfObject)ar.get(k))).intValue();
-            PdfObject obj = PdfReader.getPdfObjectRelease((PdfObject)ar.get(++k));
+        for (int k = 0; k < ws.size(); ++k) {
+            int c1 = ((PdfNumber)PdfReader.getPdfObjectRelease(ws.getPdfObject(k))).intValue();
+            PdfObject obj = PdfReader.getPdfObjectRelease(ws.getPdfObject(++k));
             if (obj.isArray()) {
-                ArrayList ar2 = ((PdfArray)obj).getArrayList();
-                for (int j = 0; j < ar2.size(); ++j) {
-                    int c2 = ((PdfNumber)PdfReader.getPdfObjectRelease((PdfObject)ar2.get(j))).intValue();
+                PdfArray a2 = (PdfArray)obj;
+                for (int j = 0; j < a2.size(); ++j) {
+                    int c2 = ((PdfNumber)PdfReader.getPdfObjectRelease(a2.getPdfObject(j))).intValue();
                     hh.put(c1++, c2);
                 }
             }
             else {
                 int c2 = ((PdfNumber)obj).intValue();
-                int w = ((PdfNumber)PdfReader.getPdfObjectRelease((PdfObject)ar.get(++k))).intValue();
+                int w = ((PdfNumber)PdfReader.getPdfObjectRelease(ws.getPdfObject(++k))).intValue();
                 for (; c1 <= c2; ++c1)
                     hh.put(c1, w);
             }
@@ -246,9 +244,9 @@ public class DocumentFont extends BaseFont {
                                 }
                             }
                             else {
-                                ArrayList ar = ((PdfArray)ob2).getArrayList();
-                                for (int j = 0; j < ar.size(); ++j, ++cid1c) {
-                                    String uni = decodeString((PdfString)ar.get(j));
+                                PdfArray a = (PdfArray)ob2;
+                                for (int j = 0; j < a.size(); ++j, ++cid1c) {
+                                    String uni = decodeString(a.getAsString(j));
                                     if (uni.length() == 1) {
                                         int unic = uni.charAt(uni.length() - 1);
                                         int w = dw;
@@ -287,10 +285,9 @@ public class DocumentFont extends BaseFont {
                 PdfArray diffs = encDic.getAsArray(PdfName.DIFFERENCES);
                 if (diffs != null) {
                     diffmap = new IntHashtable();
-                    ArrayList dif = diffs.getArrayList();
                     int currentNumber = 0;
-                    for (int k = 0; k < dif.size(); ++k) {
-                        PdfObject obj = (PdfObject)dif.get(k);
+                    for (int k = 0; k < diffs.size(); ++k) {
+                        PdfObject obj = diffs.getPdfObject(k);
                         if (obj.isNumber())
                             currentNumber = ((PdfNumber)obj).intValue();
                         else {
@@ -340,9 +337,8 @@ public class DocumentFont extends BaseFont {
         }
         if (first != null && last != null && newWidths != null) {
             int f = first.intValue();
-            ArrayList ar = newWidths.getArrayList();
-            for (int k = 0; k < ar.size(); ++k) {
-                widths[f + k] = ((PdfNumber)ar.get(k)).intValue();
+            for (int k = 0; k < newWidths.size(); ++k) {
+                widths[f + k] = newWidths.getAsNumber(k).intValue();
             }
         }
         fillFontDesc(font.getAsDict(PdfName.FONTDESCRIPTOR));
@@ -365,11 +361,10 @@ public class DocumentFont extends BaseFont {
             ItalicAngle = v.floatValue();
         PdfArray bbox = fontDesc.getAsArray(PdfName.FONTBBOX);
         if (bbox != null) {
-            ArrayList ar = bbox.getArrayList();
-            llx = ((PdfNumber)ar.get(0)).floatValue();
-            lly = ((PdfNumber)ar.get(1)).floatValue();
-            urx = ((PdfNumber)ar.get(2)).floatValue();
-            ury = ((PdfNumber)ar.get(3)).floatValue();
+            llx = bbox.getAsNumber(0).floatValue();
+            lly = bbox.getAsNumber(1).floatValue();
+            urx = bbox.getAsNumber(2).floatValue();
+            ury = bbox.getAsNumber(3).floatValue();
             if (llx > urx) {
                 float t = llx;
                 llx = urx;

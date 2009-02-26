@@ -48,7 +48,6 @@ package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 /** Reads an FDF form and makes the fields available
  * @author Paulo Soares (psoares@consiste.pt)
@@ -112,18 +111,17 @@ public class FdfReader extends PdfReader {
     
     protected void kidNode(PdfDictionary merged, String name) {
         PdfArray kids = merged.getAsArray(PdfName.KIDS);
-        if (kids == null || kids.getArrayList().size() == 0) {
+        if (kids == null || kids.isEmpty()) {
             if (name.length() > 0)
                 name = name.substring(1);
             fields.put(name, merged);
         }
         else {
             merged.remove(PdfName.KIDS);
-            ArrayList ar = kids.getArrayList();
-            for (int k = 0; k < ar.size(); ++k) {
+            for (int k = 0; k < kids.size(); ++k) {
                 PdfDictionary dic = new PdfDictionary();
                 dic.merge(merged);
-                PdfDictionary newDic = (PdfDictionary)getPdfObject((PdfObject)ar.get(k));
+                PdfDictionary newDic = kids.getAsDict(k);
                 PdfString t = newDic.getAsString(PdfName.T);
                 String newName = name;
                 if (t != null)

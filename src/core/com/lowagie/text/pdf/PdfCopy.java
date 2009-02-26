@@ -260,7 +260,7 @@ public class PdfCopy extends PdfWriter {
     protected PdfArray copyArray(PdfArray in) throws IOException, BadPdfFormatException {
         PdfArray out = new PdfArray();
         
-        for (Iterator i = in.getArrayList().iterator(); i.hasNext();) {
+        for (Iterator i = in.listIterator(); i.hasNext();) {
             PdfObject value = (PdfObject)i.next();
             out.add(copyObject(value));
         }

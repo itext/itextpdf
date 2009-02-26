@@ -172,6 +172,7 @@ public class PdfArray extends PdfObject {
      * @param idx index to overwrite
      * @param obj new value for the given index
      * @return the previous value
+     * @throws IndexOutOfBoundsException
      * @since 2.1.5
      */
 
@@ -182,9 +183,9 @@ public class PdfArray extends PdfObject {
     /**
      * Remove the given element from the array
      * @param idx index of the element to be removed.
+     * @throws IndexOutOfBoundsException
      * @since 2.1.5
      */
-
     public PdfObject remove( int idx) {
         return (PdfObject) arrayList.remove( idx );
     }
@@ -209,6 +210,16 @@ public class PdfArray extends PdfObject {
         return arrayList.size();
     }
 
+    /**
+     * Returns <CODE>true</CODE> if the array is empty.
+     * 
+     * @return <CODE>true</CODE> if the array is empty
+     * @since 2.1.5
+     */
+    public boolean isEmpty() {
+        return arrayList.isEmpty();
+    }
+
 /**
  * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
  *
@@ -230,6 +241,20 @@ public class PdfArray extends PdfObject {
         for (int k = 0; k < values.length; ++k)
             arrayList.add(new PdfNumber(values[k]));
         return true;
+    }
+
+    /**
+     * Inserts the specified element at the specified position.
+     * Shifts the element currently at that position (if any) and
+     * any subsequent elements to the right (adds one to their indices).
+     *
+     * @param index index at which the specified element is to be inserted
+     * @param element element to be inserted
+     * @throws IndexOutOfBoundsException
+     * @since 2.1.5
+     */
+    public void add(int index, PdfObject element) {
+        arrayList.add(index, element);
     }
 
 /**

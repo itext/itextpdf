@@ -139,7 +139,7 @@ public class PRAcroForm extends PdfDictionary {
      * @param title the pathname of the field, up to this point or null
      */
     protected void iterateFields(PdfArray fieldlist, PRIndirectReference fieldDict, String title) {
-        for (Iterator it = fieldlist.getArrayList().iterator(); it.hasNext();) {
+        for (Iterator it = fieldlist.listIterator(); it.hasNext();) {
             PRIndirectReference ref = (PRIndirectReference)it.next();
             PdfDictionary dict = (PdfDictionary) PdfReader.getPdfObjectRelease(ref);
             

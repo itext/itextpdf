@@ -47,7 +47,6 @@
 package com.lowagie.text.pdf;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -135,16 +134,14 @@ public class PdfNumberTree {
     private static void iterateItems(PdfDictionary dic, HashMap items) {
         PdfArray nn = (PdfArray)PdfReader.getPdfObjectRelease(dic.get(PdfName.NUMS));
         if (nn != null) {
-            ArrayList arr = nn.getArrayList();
-            for (int k = 0; k < arr.size(); ++k) {
-                PdfNumber s = (PdfNumber)PdfReader.getPdfObjectRelease((PdfObject)arr.get(k++));
-                items.put(new Integer(s.intValue()), arr.get(k));
+            for (int k = 0; k < nn.size(); ++k) {
+                PdfNumber s = (PdfNumber)PdfReader.getPdfObjectRelease(nn.getPdfObject(k++));
+                items.put(new Integer(s.intValue()), nn.getPdfObject(k));
             }
         }
         else if ((nn = (PdfArray)PdfReader.getPdfObjectRelease(dic.get(PdfName.KIDS))) != null) {
-            ArrayList arr = nn.getArrayList();
-            for (int k = 0; k < arr.size(); ++k) {
-                PdfDictionary kid = (PdfDictionary)PdfReader.getPdfObjectRelease((PdfObject)arr.get(k));
+            for (int k = 0; k < nn.size(); ++k) {
+                PdfDictionary kid = (PdfDictionary)PdfReader.getPdfObjectRelease(nn.getPdfObject(k));
                 iterateItems(kid, items);
             }
         }
