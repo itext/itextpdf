@@ -279,7 +279,7 @@ public class FdfWriter {
             Map.Entry entry = (Map.Entry)it.next();
             String fn = (String)entry.getKey();
             AcroFields.Item item = (AcroFields.Item)entry.getValue();
-            PdfDictionary dic = (PdfDictionary)item.getMerged(0);
+            PdfDictionary dic = item.getMerged(0);
             PdfObject v = PdfReader.getPdfObjectRelease(dic.get(PdfName.V));
             if (v == null)
                 continue;

@@ -270,9 +270,8 @@ public abstract class PdfContentStreamProcessor {
     private static class ShowTextArray implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             PdfArray array = (PdfArray)operands.get(0);
-            ArrayList entries = array.getArrayList();
             float tj = 0;
-            for (Iterator i = entries.iterator(); i.hasNext(); ) {
+            for (Iterator i = array.listIterator(); i.hasNext(); ) {
             	Object entryObj = i.next();
                 if (entryObj instanceof PdfString){
                     processor.displayPdfString((PdfString)entryObj, tj);

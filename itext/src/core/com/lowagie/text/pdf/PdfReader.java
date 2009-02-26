@@ -486,11 +486,10 @@ public class PdfReader implements PdfViewerPreferences {
      * @return a normalized <CODE>Rectangle</CODE>
      */
     public static Rectangle getNormalizedRectangle(PdfArray box) {
-        ArrayList rect = box.getArrayList();
-        float llx = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(0))).floatValue();
-        float lly = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(1))).floatValue();
-        float urx = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(2))).floatValue();
-        float ury = ((PdfNumber)getPdfObjectRelease((PdfObject)rect.get(3))).floatValue();
+        float llx = ((PdfNumber)getPdfObjectRelease(box.getPdfObject(0))).floatValue();
+        float lly = ((PdfNumber)getPdfObjectRelease(box.getPdfObject(1))).floatValue();
+        float urx = ((PdfNumber)getPdfObjectRelease(box.getPdfObject(2))).floatValue();
+        float ury = ((PdfNumber)getPdfObjectRelease(box.getPdfObject(3))).floatValue();
         return new Rectangle(Math.min(llx, urx), Math.min(lly, ury),
         Math.max(llx, urx), Math.max(lly, ury));
     }
@@ -594,12 +593,12 @@ public class PdfReader implements PdfViewerPreferences {
         PdfArray documentIDs = trailer.getAsArray(PdfName.ID);
         byte documentID[] = null;
         if (documentIDs != null) {
-            o = (PdfObject)documentIDs.getArrayList().get(0);
+            o = documentIDs.getPdfObject(0);
             strings.remove(o);
             s = o.toString();
             documentID = com.lowagie.text.DocWriter.getISOBytes(s);
             if (documentIDs.size() > 1)
-                strings.remove(documentIDs.getArrayList().get(1));
+                strings.remove(documentIDs.getPdfObject(1));
         }
         // just in case we have a broken producer
         if (documentID == null)
@@ -715,7 +714,7 @@ public class PdfReader implements PdfViewerPreferences {
             	throw new UnsupportedPdfException("Unknown encryption type V = " + rValue);
             }
             for (int i = 0; i<recipients.size(); i++) {
-                PdfObject recipient = (PdfObject)recipients.getArrayList().get(i);
+                PdfObject recipient = recipients.getPdfObject(i);
                 strings.remove(recipient);
 
                 CMSEnvelopedData data = null;
@@ -748,7 +747,7 @@ public class PdfReader implements PdfViewerPreferences {
                 md = MessageDigest.getInstance("SHA-1");
                 md.update(envelopedData, 0, 20);
                 for (int i = 0; i<recipients.size(); i++) {
-                  byte[] encodedRecipient = ((PdfObject)recipients.getArrayList().get(i)).getBytes();
+                  byte[] encodedRecipient = recipients.getPdfObject(i).getBytes();
                   md.update(encodedRecipient);
                 }
                 if ((cryptoMode & PdfWriter.DO_NOT_ENCRYPT_METADATA) != 0)
@@ -1418,14 +1417,12 @@ public class PdfReader implements PdfViewerPreferences {
             objStmToOffset = new IntHashtable();
         byte b[] = getStreamBytes(stm, tokens.getFile());
         int bptr = 0;
-        ArrayList wa = w.getArrayList();
         int wc[] = new int[3];
         for (int k = 0; k < 3; ++k)
-            wc[k] = ((PdfNumber)wa.get(k)).intValue();
-        ArrayList sections = index.getArrayList();
-        for (int idx = 0; idx < sections.size(); idx += 2) {
-            int start = ((PdfNumber)sections.get(idx)).intValue();
-            int length = ((PdfNumber)sections.get(idx + 1)).intValue();
+            wc[k] = w.getAsNumber(k).intValue();
+        for (int idx = 0; idx < index.size(); idx += 2) {
+            int start = index.getAsNumber(idx).intValue();
+            int length = index.getAsNumber(idx + 1).intValue();
             ensureXrefSize((start + length) * 2);
             while (length-- > 0) {
                 int type = 1;
@@ -1951,15 +1948,14 @@ public class PdfReader implements PdfViewerPreferences {
         }
         else if (contents.isArray()) {
             PdfArray array = (PdfArray)contents;
-            ArrayList list = array.getArrayList();
             bout = new ByteArrayOutputStream();
-            for (int k = 0; k < list.size(); ++k) {
-                PdfObject item = getPdfObjectRelease((PdfObject)list.get(k));
+            for (int k = 0; k < array.size(); ++k) {
+                PdfObject item = getPdfObjectRelease(array.getPdfObject(k));
                 if (item == null || !item.isStream())
                     continue;
                 byte[] b = getStreamBytes((PRStream)item, file);
                 bout.write(b);
-                if (k != list.size() - 1)
+                if (k != array.size() - 1)
                     bout.write('\n');
             }
             return bout.toByteArray();
@@ -1999,9 +1995,9 @@ public class PdfReader implements PdfViewerPreferences {
                 break;
             }
             case PdfObject.ARRAY: {
-                ArrayList t = ((PdfArray)obj).getArrayList();
+                PdfArray t = (PdfArray)obj;
                 for (int i = 0; i < t.size(); ++i)
-                    killXref((PdfObject)t.get(i));
+                    killXref(t.getPdfObject(i));
                 break;
             }
             case PdfObject.STREAM:
@@ -2202,9 +2198,8 @@ public class PdfReader implements PdfViewerPreferences {
             }
             else if (contents.isArray()) {
                 PdfArray array = (PdfArray)contents;
-                ArrayList list = array.getArrayList();
-                for (int j = 0; j < list.size(); ++j) {
-                    PRIndirectReference ref = (PRIndirectReference)list.get(j);
+                for (int j = 0; j < array.size(); ++j) {
+                    PRIndirectReference ref = (PRIndirectReference)array.getPdfObject(j);
                     if (visited.containsKey(ref.getNumber())) {
                         // need to duplicate
                         newRefs.add(ref);
@@ -2412,10 +2407,9 @@ public class PdfReader implements PdfViewerPreferences {
                 PdfArray arr = dic.getAsArray(PdfName.DESCENDANTFONTS);
                 if (arr == null)
                     continue;
-                ArrayList list = arr.getArrayList();
-                if (list.isEmpty())
+                if (arr.isEmpty())
                     continue;
-                PdfDictionary desc = (PdfDictionary)getPdfObject((PdfObject)list.get(0));
+                PdfDictionary desc = arr.getAsDict(0);
                 String sde = getSubsetPrefix(desc);
                 if (sde == null)
                     continue;
@@ -2608,16 +2602,15 @@ public class PdfReader implements PdfViewerPreferences {
                 pageRefs.releasePage(k);
                 continue;
             }
-            ArrayList arr = annots.getArrayList();
-            for (int j = 0; j < arr.size(); ++j) {
-                PdfObject obj = getPdfObjectRelease((PdfObject)arr.get(j));
+            for (int j = 0; j < annots.size(); ++j) {
+                PdfObject obj = getPdfObjectRelease(annots.getPdfObject(j));
                 if (obj == null || !obj.isDictionary())
                     continue;
                 PdfDictionary annot = (PdfDictionary)obj;
                 if (PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE)))
-                    arr.remove(j--);
+                    annots.remove(j--);
             }
-            if (arr.isEmpty())
+            if (annots.isEmpty())
                 page.remove(PdfName.ANNOTS);
             else
                 pageRefs.releasePage(k);
@@ -2648,9 +2641,8 @@ public class PdfReader implements PdfViewerPreferences {
         PdfDictionary pageDic = pageRefs.getPageN(page);
         if (pageDic.get(PdfName.ANNOTS) != null) {
             PdfArray annots = pageDic.getAsArray(PdfName.ANNOTS);
-            ArrayList arr = annots.getArrayList();
-            for (int j = 0; j < arr.size(); ++j) {
-                PdfDictionary annot = (PdfDictionary)getPdfObjectRelease((PdfObject)arr.get(j));
+            for (int j = 0; j < annots.size(); ++j) {
+                PdfDictionary annot = (PdfDictionary)getPdfObjectRelease(annots.getPdfObject(j));
 
                 if (PdfName.LINK.equals(annot.get(PdfName.SUBTYPE))) {
                 	result.add(new PdfAnnotation.PdfImportedLink(annot));
@@ -2692,10 +2684,9 @@ public class PdfReader implements PdfViewerPreferences {
                 pageRefs.releasePage(k);
                 continue;
             }
-            ArrayList list = annots.getArrayList();
             boolean commitAnnots = false;
-            for (int an = 0; an < list.size(); ++an) {
-                PdfObject objRef = (PdfObject)list.get(an);
+            for (int an = 0; an < annots.size(); ++an) {
+                PdfObject objRef = annots.getPdfObject(an);
                 if (replaceNamedDestination(objRef, names) && !objRef.isIndirect())
                     commitAnnots = true;
             }
@@ -2734,9 +2725,8 @@ public class PdfReader implements PdfViewerPreferences {
                 return stream;
             }
             case PdfObject.ARRAY: {
-                ArrayList list = ((PdfArray)original).getArrayList();
                 PdfArray arr = new PdfArray();
-                for (Iterator it = list.iterator(); it.hasNext();) {
+                for (Iterator it = ((PdfArray)original).listIterator(); it.hasNext();) {
                     arr.add(duplicatePdfObject((PdfObject)it.next(), newReader));
                 }
                 return arr;
@@ -3263,12 +3253,11 @@ public class PdfReader implements PdfViewerPreferences {
             else {
                 page.put(PdfName.TYPE, PdfName.PAGES);
                 pushPageAttributes(page);
-                ArrayList kids = kidsPR.getArrayList();
-                for (int k = 0; k < kids.size(); ++k){
-                    PdfObject obj = (PdfObject)kids.get(k);
+                for (int k = 0; k < kidsPR.size(); ++k){
+                    PdfObject obj = kidsPR.getPdfObject(k);
                     if (!obj.isIndirect()) {
-                        while (k < kids.size())
-                            kids.remove(k);
+                        while (k < kidsPR.size())
+                            kidsPR.remove(k);
                         break;
                     }
                     iteratePages((PRIndirectReference)obj);
@@ -3403,7 +3392,7 @@ public class PdfReader implements PdfViewerPreferences {
         PdfArray arr = dic.getAsArray(PdfName.REFERENCE);
         if (arr == null || arr.size() == 0)
             return PdfSignatureAppearance.NOT_CERTIFIED;
-        dic = (PdfDictionary)getPdfObject((PdfObject)(arr.getArrayList().get(0)));
+        dic = arr.getAsDict(0);
         if (dic == null)
             return PdfSignatureAppearance.NOT_CERTIFIED;
         dic = dic.getAsDict(PdfName.TRANSFORMPARAMS);

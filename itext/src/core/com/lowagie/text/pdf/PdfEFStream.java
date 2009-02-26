@@ -52,7 +52,6 @@ package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
@@ -96,8 +95,8 @@ public class PdfEFStream extends PdfStream {
                 if (PdfName.CRYPT.equals(filter))
                     crypto = null;
                 else if (filter.isArray()) {
-                    ArrayList af = ((PdfArray)filter).getArrayList();
-                    if (!af.isEmpty() && PdfName.CRYPT.equals(af.get(0)))
+                    PdfArray a = (PdfArray)filter;
+                    if (!a.isEmpty() && PdfName.CRYPT.equals(a.getPdfObject(0)))
                         crypto = null;
                 }
             }

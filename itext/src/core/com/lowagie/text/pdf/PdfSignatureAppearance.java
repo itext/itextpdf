@@ -59,7 +59,6 @@ import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -293,19 +292,18 @@ public class PdfSignatureAppearance {
         AcroFields.Item item = af.getFieldItem(fieldName);
         if (item == null)
             throw new IllegalArgumentException("The field " + fieldName + " does not exist.");
-        PdfDictionary merged = (PdfDictionary)item.getMerged(0);
+        PdfDictionary merged = item.getMerged(0);
         if (!PdfName.SIG.equals(PdfReader.getPdfObject(merged.get(PdfName.FT))))
             throw new IllegalArgumentException("The field " + fieldName + " is not a signature field.");
         this.fieldName = fieldName;
         PdfArray r = merged.getAsArray(PdfName.RECT);
-        ArrayList ar = r.getArrayList();
-        float llx = ((PdfNumber)PdfReader.getPdfObject((PdfObject)ar.get(0))).floatValue();
-        float lly = ((PdfNumber)PdfReader.getPdfObject((PdfObject)ar.get(1))).floatValue();
-        float urx = ((PdfNumber)PdfReader.getPdfObject((PdfObject)ar.get(2))).floatValue();
-        float ury = ((PdfNumber)PdfReader.getPdfObject((PdfObject)ar.get(3))).floatValue();
+        float llx = r.getAsNumber(0).floatValue();
+        float lly = r.getAsNumber(1).floatValue();
+        float urx = r.getAsNumber(2).floatValue();
+        float ury = r.getAsNumber(3).floatValue();
         pageRect = new Rectangle(llx, lly, urx, ury);
         pageRect.normalize();
-        page = ((Integer)item.getPage(0)).intValue();
+        page = item.getPage(0).intValue();
         int rotation = writer.reader.getPageRotation(page);
         Rectangle pageSize = writer.reader.getPageSizeWithRotation(page);
         switch (rotation) {
@@ -883,7 +881,7 @@ public class PdfSignatureAppearance {
         PdfIndirectReference refSig = writer.getPdfIndirectReference();
         writer.setSigFlags(3);
         if (fieldExists) {
-            PdfDictionary widget = (PdfDictionary)af.getFieldItem(name).getWidget(0);
+            PdfDictionary widget = af.getFieldItem(name).getWidget(0);
             writer.markUsed(widget);
             widget.put(PdfName.P, writer.getPageReference(getPage()));
             widget.put(PdfName.V, refSig);

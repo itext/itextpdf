@@ -243,7 +243,7 @@ public class PdfXConformanceImp implements PdfXConformance {
                                 throw new PdfXConformanceException("Colorspace RGB is not allowed.");
                         }
                         else if (cs.isArray()) {
-                            if (PdfName.CALRGB.equals(((PdfArray)cs).getArrayList().get(0)))
+                            if (PdfName.CALRGB.equals(((PdfArray)cs).getPdfObject(0)))
                                 throw new PdfXConformanceException("Colorspace CalRGB is not allowed.");
                         }
                         break;

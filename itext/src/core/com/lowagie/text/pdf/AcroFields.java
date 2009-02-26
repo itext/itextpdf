@@ -640,10 +640,9 @@ public class AcroFields {
         else {
             PdfArray bd = merged.getAsArray(PdfName.BORDER);
             if (bd != null) {
-                ArrayList ar = bd.getArrayList();
-                if (ar.size() >= 3)
-                    tx.setBorderWidth(((PdfNumber)ar.get(2)).floatValue());
-                if (ar.size() >= 4)
+                if (bd.size() >= 3)
+                    tx.setBorderWidth(bd.getAsNumber(2).floatValue());
+                if (bd.size() >= 4)
                     tx.setBorderStyle(PdfBorderDictionary.STYLE_DASHED);
             }
         }
@@ -688,18 +687,17 @@ public class AcroFields {
             return tx.getAppearance();
         }
         if (opt != null) {
-            ArrayList op = opt.getArrayList();
-            String choices[] = new String[op.size()];
-            String choicesExp[] = new String[op.size()];
-            for (int k = 0; k < op.size(); ++k) {
-                PdfObject obj = (PdfObject)op.get(k);
+            String choices[] = new String[opt.size()];
+            String choicesExp[] = new String[opt.size()];
+            for (int k = 0; k < opt.size(); ++k) {
+                PdfObject obj = opt.getPdfObject(k);
                 if (obj.isString()) {
                     choices[k] = choicesExp[k] = ((PdfString)obj).toUnicodeString();
                 }
                 else {
-                    ArrayList opar = ((PdfArray)obj).getArrayList();
-                    choicesExp[k] = ((PdfString)opar.get(0)).toUnicodeString();
-                    choices[k] = ((PdfString)opar.get(1)).toUnicodeString();
+                    PdfArray a = (PdfArray) obj;
+                    choicesExp[k] = a.getAsString(0).toUnicodeString();
+                    choices[k] = a.getAsString(1).toUnicodeString();
                 }
             }
             if ((flags & PdfFormField.FF_COMBO) != 0) {
@@ -731,14 +729,13 @@ public class AcroFields {
     Color getMKColor(PdfArray ar) {
         if (ar == null)
             return null;
-        ArrayList cc = ar.getArrayList();
-        switch (cc.size()) {
+        switch (ar.size()) {
             case 1:
-                return new GrayColor(((PdfNumber)cc.get(0)).floatValue());
+                return new GrayColor(ar.getAsNumber(0).floatValue());
             case 3:
-                return new Color(ExtendedColor.normalize(((PdfNumber)cc.get(0)).floatValue()), ExtendedColor.normalize(((PdfNumber)cc.get(1)).floatValue()), ExtendedColor.normalize(((PdfNumber)cc.get(2)).floatValue()));
+                return new Color(ExtendedColor.normalize(ar.getAsNumber(0).floatValue()), ExtendedColor.normalize(ar.getAsNumber(1).floatValue()), ExtendedColor.normalize(ar.getAsNumber(2).floatValue()));
             case 4:
-                return new CMYKColor(((PdfNumber)cc.get(0)).floatValue(), ((PdfNumber)cc.get(1)).floatValue(), ((PdfNumber)cc.get(2)).floatValue(), ((PdfNumber)cc.get(3)).floatValue());
+                return new CMYKColor(ar.getAsNumber(0).floatValue(), ar.getAsNumber(1).floatValue(), ar.getAsNumber(2).floatValue(), ar.getAsNumber(3).floatValue());
             default:
                 return null;
         }
@@ -1495,18 +1492,17 @@ public class AcroFields {
     }
 
     private int removeRefFromArray(PdfArray array, PdfObject refo) {
-        ArrayList ar = array.getArrayList();
         if (refo == null || !refo.isIndirect())
-            return ar.size();
+            return array.size();
         PdfIndirectReference ref = (PdfIndirectReference)refo;
-        for (int j = 0; j < ar.size(); ++j) {
-            PdfObject obj = (PdfObject)ar.get(j);
+        for (int j = 0; j < array.size(); ++j) {
+            PdfObject obj = array.getPdfObject(j);
             if (!obj.isIndirect())
                 continue;
             if (((PdfIndirectReference)obj).getNumber() == ref.getNumber())
-                ar.remove(j--);
+                array.remove(j--);
         }
-        return ar.size();
+        return array.size();
     }
 
     /**
@@ -2083,10 +2079,9 @@ public class AcroFields {
         try {
             rf.reOpen();
             byte buf[] = new byte[8192];
-            ArrayList ar = b.getArrayList();
-            for (int k = 0; k < ar.size(); ++k) {
-                int start = ((PdfNumber)ar.get(k)).intValue();
-                int length = ((PdfNumber)ar.get(++k)).intValue();
+            for (int k = 0; k < b.size(); ++k) {
+                int start = b.getAsNumber(k).intValue();
+                int length = b.getAsNumber(++k).intValue();
                 rf.seek(start);
                 while (length > 0) {
                     int rd = rf.read(buf, 0, Math.min(length, buf.length));

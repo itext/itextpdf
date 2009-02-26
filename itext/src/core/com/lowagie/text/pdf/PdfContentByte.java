@@ -1179,12 +1179,12 @@ public class PdfContentByte {
                         content.append(s);
                         boolean check = true;
                         if (key.equals(PdfName.COLORSPACE) && value.isArray()) {
-                            ArrayList ar = ((PdfArray)value).getArrayList();
-                            if (ar.size() == 4
-                                && PdfName.INDEXED.equals(ar.get(0))
-                                && ((PdfObject)ar.get(1)).isName()
-                                && ((PdfObject)ar.get(2)).isNumber()
-                                && ((PdfObject)ar.get(3)).isString()
+                            PdfArray ar = (PdfArray)value;
+                            if (ar.size() == 4 
+                                && PdfName.INDEXED.equals(ar.getAsName(0)) 
+                                && ar.getPdfObject(1).isName()
+                                && ar.getPdfObject(2).isNumber()
+                                && ar.getPdfObject(3).isString()
                             ) {
                                 check = false;
                             }

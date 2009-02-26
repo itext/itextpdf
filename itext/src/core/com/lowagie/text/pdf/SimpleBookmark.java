@@ -121,12 +121,11 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
             PdfString title = (PdfString)PdfReader.getPdfObjectRelease(outline.get(PdfName.TITLE));
             map.put("Title", title.toUnicodeString());
             PdfArray color = (PdfArray)PdfReader.getPdfObjectRelease(outline.get(PdfName.C));
-            if (color != null && color.getArrayList().size() == 3) {
+            if (color != null && color.size() == 3) {
                 ByteBuffer out = new ByteBuffer();
-                ArrayList arr = color.getArrayList();
-                out.append(((PdfNumber)arr.get(0)).floatValue()).append(' ');
-                out.append(((PdfNumber)arr.get(1)).floatValue()).append(' ');
-                out.append(((PdfNumber)arr.get(2)).floatValue());
+                out.append(color.getAsNumber(0).floatValue()).append(' ');
+                out.append(color.getAsNumber(1).floatValue()).append(' ');
+                out.append(color.getAsNumber(2).floatValue());
                 map.put("Color", PdfEncodings.convertToString(out.toByteArray(), null));
             }
             PdfNumber style = (PdfNumber)PdfReader.getPdfObjectRelease(outline.get(PdfName.F));
@@ -170,12 +169,12 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
                                 else if (dest.isName())
                                     map.put("NamedN", PdfName.decodeName(dest.toString()));
                                 else if (dest.isArray()) {
-                                    ArrayList arr = ((PdfArray)dest).getArrayList();
+                                    PdfArray arr = (PdfArray)dest;
                                     StringBuffer s = new StringBuffer();
-                                    s.append(arr.get(0).toString());
-                                    s.append(' ').append(arr.get(1).toString());
+                                    s.append(arr.getPdfObject(0).toString());
+                                    s.append(' ').append(arr.getPdfObject(1).toString());
                                     for (int k = 2; k < arr.size(); ++k)
-                                        s.append(' ').append(arr.get(k).toString());
+                                        s.append(' ').append(arr.getPdfObject(k).toString());
                                     map.put("Page", s.toString());
                                 }
                             }
@@ -238,15 +237,15 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
 
 	private static String makeBookmarkParam(PdfArray dest, IntHashtable pages)
 	{
-		ArrayList arr = dest.getArrayList();
 		StringBuffer s = new StringBuffer();
-        if (((PdfObject)arr.get(0)).isNumber())
-            s.append(((PdfNumber)arr.get(0)).intValue() + 1);
+		PdfObject obj = dest.getPdfObject(0);
+        if (obj.isNumber())
+            s.append(((PdfNumber)obj).intValue() + 1);
         else
-            s.append(pages.get(getNumber((PdfIndirectReference)arr.get(0)))); //changed by ujihara 2004-06-13
-		s.append(' ').append(arr.get(1).toString().substring(1));
-		for (int k = 2; k < arr.size(); ++k)
-			s.append(' ').append(arr.get(k).toString());
+            s.append(pages.get(getNumber((PdfIndirectReference)obj))); //changed by ujihara 2004-06-13
+		s.append(' ').append(dest.getPdfObject(1).toString().substring(1));
+		for (int k = 2; k < dest.size(); ++k)
+			s.append(' ').append(dest.getPdfObject(k).toString());
 		return s.toString();
 	}
 	
@@ -262,7 +261,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
 		if (pdfObj.contains(PdfName.TYPE) && pdfObj.get(PdfName.TYPE).equals(PdfName.PAGES) && pdfObj.contains(PdfName.KIDS)) 
 		{
 			PdfArray kids = (PdfArray)pdfObj.get(PdfName.KIDS);
-			indirect = (PdfIndirectReference)kids.arrayList.get(0);
+			indirect = (PdfIndirectReference)kids.getPdfObject(0);
 		}
 		return indirect.getNumber();
 	}

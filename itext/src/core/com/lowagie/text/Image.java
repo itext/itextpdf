@@ -57,7 +57,6 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 
 import com.lowagie.text.pdf.PRIndirectReference;
 import com.lowagie.text.pdf.PdfArray;
@@ -1868,31 +1867,35 @@ public abstract class Image extends Rectangle {
     public void simplifyColorspace() {
         if (additional == null)
             return;
-        PdfObject value = additional.get(PdfName.COLORSPACE);
-        if (value == null || !value.isArray())
+        PdfArray value = additional.getAsArray(PdfName.COLORSPACE);
+        if (value == null)
             return;
         PdfObject cs = simplifyColorspace(value);
+        PdfObject newValue;
         if (cs.isName())
-            value = cs;
+            newValue = cs;
         else {
-            PdfObject first = (PdfObject)(((PdfArray)value).getArrayList().get(0));
+            newValue = value;
+            PdfName first = value.getAsName(0);
             if (PdfName.INDEXED.equals(first)) {
-                ArrayList array = ((PdfArray)value).getArrayList();
-                if (array.size() >= 2 && ((PdfObject)array.get(1)).isArray()) {
-                     array.set(1, simplifyColorspace((PdfObject)array.get(1)));
+                if (value.size() >= 2) {
+                    PdfArray second = value.getAsArray(1);
+                    if (second != null) {
+                        value.set(1, simplifyColorspace(second));
+                    }
                 }
             }
         }
-        additional.put(PdfName.COLORSPACE, value);
+        additional.put(PdfName.COLORSPACE, newValue);
     }
 	
 	/**
 	 * Gets a PDF Name from an array or returns the object that was passed.
 	 */
-    private PdfObject simplifyColorspace(PdfObject obj) {
-        if (obj == null || !obj.isArray())
+    private PdfObject simplifyColorspace(PdfArray obj) {
+        if (obj == null)
             return obj;
-        PdfObject first = (PdfObject)(((PdfArray)obj).getArrayList().get(0));
+        PdfName first = obj.getAsName(0);
         if (PdfName.CALGRAY.equals(first))
             return PdfName.DEVICEGRAY;
         else if (PdfName.CALRGB.equals(first))

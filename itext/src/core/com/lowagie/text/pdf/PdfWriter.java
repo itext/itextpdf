@@ -1798,10 +1798,9 @@ public class PdfWriter extends DocWriter implements
         PdfArray outs = catalog.getAsArray(PdfName.OUTPUTINTENTS);
         if (outs == null)
             return false;
-        ArrayList arr = outs.getArrayList();
-        if (arr.isEmpty())
+        if (outs.isEmpty())
             return false;
-        PdfDictionary out = (PdfDictionary)PdfReader.getPdfObject((PdfObject)arr.get(0));
+        PdfDictionary out = outs.getAsDict(0);
         PdfObject obj = PdfReader.getPdfObject(out.get(PdfName.S));
         if (obj == null || !PdfName.GTS_PDFX.equals(obj))
             return false;
@@ -2941,11 +2940,10 @@ public class PdfWriter extends DocWriter implements
                     PdfArray iccArray = new PdfArray();
                     iccArray.add(PdfName.ICCBASED);
                     iccArray.add(iccRef);
-                    PdfObject colorspace = i.get(PdfName.COLORSPACE);
-                    if (colorspace != null && colorspace.isArray()) {
-                        ArrayList ar = ((PdfArray)colorspace).getArrayList();
-                        if (ar.size() > 1 && PdfName.INDEXED.equals(ar.get(0)))
-                            ar.set(1, iccArray);
+                    PdfArray colorspace = i.getAsArray(PdfName.COLORSPACE);
+                    if (colorspace != null) {
+                        if (colorspace.size() > 1 && PdfName.INDEXED.equals(colorspace.getPdfObject(0)))
+                            colorspace.set(1, iccArray);
                         else
                             i.put(PdfName.COLORSPACE, iccArray);
                     }
