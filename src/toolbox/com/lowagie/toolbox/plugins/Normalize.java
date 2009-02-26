@@ -91,10 +91,9 @@ protected void createFrame() {
     PdfArray kidsPR = page.getAsArray(PdfName.KIDS);
 
     if (kidsPR == null) {
-      PdfArray arr = (PdfArray) page.get(PdfName.MEDIABOX);
-      ArrayList<PdfObject> arl = arr.getArrayList();
-      curwidth = Float.parseFloat(arl.get(2).toString());
-      curheight = Float.parseFloat(arl.get(3).toString());
+      PdfArray arr = page.getAsArray(PdfName.MEDIABOX);
+      curwidth = Float.parseFloat(arr.getPdfObject(2).toString());
+      curheight = Float.parseFloat(arr.getPdfObject(3).toString());
 
       PdfNumber rotation = page.getAsNumber(PdfName.ROTATE);
 
@@ -124,7 +123,7 @@ protected void createFrame() {
       if ( ( (pagecount + 1) % 2) == 0) {
         if ( (Math.abs(curwidth - width) > tolerancex) ||
             (Math.abs(curheight - height) > tolerancey)) {
-          Seitehinzufuegen(page, count_in_leaf, writer, arl);
+          Seitehinzufuegen(page, count_in_leaf, writer, arr);
           this.pagecountinsertedpages++;
         }
       }
@@ -144,11 +143,8 @@ protected void createFrame() {
     else {
       page.put(PdfName.TYPE, PdfName.PAGES);
 
-      ArrayList<PdfObject> kids = kidsPR.getArrayList();
-
-      for (int k = 0; k < kids.size(); ++k) {
-        PdfDictionary kid = (PdfDictionary) PdfReader.getPdfObject(
-                kids.get(k));
+      for (int k = 0; k < kidsPR.size(); ++k) {
+        PdfDictionary kid = kidsPR.getAsDict(k);
         iteratePages(kid, pdfreader, pageInh, k, writer);
       }
     }
@@ -156,13 +152,13 @@ protected void createFrame() {
 
   private void Seitehinzufuegen(PdfDictionary page, int count_in_leaf,
                                 PdfWriter writer,
-                                ArrayList<PdfObject> arl) throws IOException {
+                                PdfArray array) throws IOException {
     System.out.print("change!");
 
     PdfDictionary parent = page.getAsDict(PdfName.PARENT);
     PdfArray kids = parent.getAsArray(PdfName.KIDS);
     PdfIndirectReference ref = writer.getPdfIndirectReference();
-    kids.getArrayList().add(count_in_leaf, ref);
+    kids.add(count_in_leaf, ref);
 
     PdfDictionary newPage = new PdfDictionary(PdfName.PAGE);
     newPage.merge(lastpage);
@@ -182,8 +178,8 @@ protected void createFrame() {
 
     System.out.println("page:" + (pagecount + 1) + " nr in leaf:" +
                        count_in_leaf + " arl x:" +
-                       arl.get(0) + " y:" + arl.get(1) + " width:" + arl.get(2) +
-                       " height:" + arl.get(3));
+                       array.getPdfObject(0) + " y:" + array.getPdfObject(1) + " width:" + array.getPdfObject(2) +
+                       " height:" + array.getPdfObject(3));
   }
 
 /**
