@@ -195,10 +195,10 @@ public class PdfStructureElement extends PdfStructureBase {
         if (contains( PdfName.K) ) {
           PdfArray structIDs = null;
           PdfObject curKObj = get( PdfName.K );
-          if (curKObj == null) {
+          if (curKObj == null || curKObj.isNumber()) {
               structIDs = new PdfArray();
-
-              if (curKObj != null && curKObj.isNumber()) {
+              // it's a number
+              if (curKObj != null) {
                   structIDs.add( curKObj );
               }
               put( PdfName.K, structIDs );

@@ -952,6 +952,9 @@ public class PdfReader implements PdfViewerPreferences {
             return;
         if (!obj.isIndirect())
             return;
+        if (!(obj instanceof PRIndirectReference))
+            return;
+
         PRIndirectReference ref = (PRIndirectReference)obj;
         PdfReader reader = ref.getReader();
         if (reader.partial && reader.lastXrefPartial != -1 && reader.lastXrefPartial == ref.getNumber()) {

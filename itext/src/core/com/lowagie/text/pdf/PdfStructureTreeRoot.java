@@ -194,7 +194,8 @@ public class PdfStructureTreeRoot extends PdfStructureBase {
         for (Iterator it = parentTree.keySet().iterator(); it.hasNext();) {
             Integer i = (Integer)it.next();
             PdfObject obj = (PdfObject)parentTree.get( i );
-            if (obj.isIndirect()) {
+            // if (obj.isIndirect()) { Most nonPR PdfIndirectReferences have an object type of zero(?!), so isIndirect isn't a valid test.
+            if (obj instanceof PdfIndirectReference) {
                 numTree.put( i, obj );
             } else {
                 numTree.put(i, writer.addToBody(obj).getIndirectReference());
