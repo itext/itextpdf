@@ -768,7 +768,7 @@ public class PdfAnnotation extends PdfDictionary {
      */
     public void setMarkedObject(PdfStructureElement struc) {
         put(PdfName.STRUCTPARENT, new PdfNumber(struc.getMCID()));
-        struc.setMarkedObject( getIndirectReference(), writer.getCurrentPage());
+        struc.setMarkedObject( getIndRef(), writer.getCurrentPage());
     }
 
     /**
