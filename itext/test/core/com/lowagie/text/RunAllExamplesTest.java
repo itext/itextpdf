@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class RunAllExamplesTest {
 
-    public static void main(String args[]) throws Exception {       
+    public static void main(String args[]) throws Exception {
         RunAllExamplesTest r = new RunAllExamplesTest();
         r.testImageExamples();
 
@@ -24,7 +24,7 @@ public class RunAllExamplesTest {
         r.testChunkExamples();
         r.testDirectContentExamples();
         r.testFontExamples();
-        
+
         r.testWindowsFonts();
     }
 
@@ -47,6 +47,7 @@ public class RunAllExamplesTest {
         runSingleTest(com.lowagie.examples.forms.FormSignature.class);
         runSingleTest(com.lowagie.examples.forms.create.StudentCard.class);
         runSingleTest(com.lowagie.examples.forms.create.StudentCardForm.class);
+        runSingleTest(com.lowagie.examples.forms.create.StudentCardFormStructure.class);
         runSingleTest(com.lowagie.examples.forms.FormCombo.class);
         runSingleTest(com.lowagie.examples.forms.fill.FdfExample.class);
         runSingleTest(com.lowagie.examples.forms.fill.Register.class);
