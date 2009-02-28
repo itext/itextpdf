@@ -153,7 +153,7 @@ public class AcroFields {
         arrfds = null;
         for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
             PdfDictionary page = reader.getPageNRelease(k);
-            PdfArray annots = page.getAsArray(PdfName.ANNOTS);
+            PdfArray annots = (PdfArray)PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page);
             if (annots == null)
                 continue;
             for (int j = 0; j < annots.size(); ++j) {
