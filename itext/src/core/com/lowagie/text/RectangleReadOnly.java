@@ -55,9 +55,9 @@ import java.awt.Color;
  * A <CODE>RectangleReadOnly</CODE> is the representation of a geometric figure.
  * It's the same as a <CODE>Rectangle</CODE> but immutable.
  * Rectangles support constant width borders using
- * {@link #setBorderWidth(float)}and {@link #setBorder(int)}. They also
- * support borders that vary in width/color on each side using methods like
- * {@link #setBorderWidthLeft(float)}or
+ * {@link #setBorderWidth(float)}and {@link #setBorder(int)}.
+ * They also support borders that vary in width/color on each side using
+ * methods like {@link #setBorderWidthLeft(float)}or
  * {@link #setBorderColorLeft(java.awt.Color)}.
  * 
  * @see Element
@@ -69,20 +69,15 @@ import java.awt.Color;
 
 public class RectangleReadOnly extends Rectangle {
 
-
-	// constructors
+	// CONSTRUCTORS
 
 	/**
 	 * Constructs a <CODE>RectangleReadOnly</CODE> -object.
 	 * 
-	 * @param llx
-	 *            lower left x
-	 * @param lly
-	 *            lower left y
-	 * @param urx
-	 *            upper right x
-	 * @param ury
-	 *            upper right y
+	 * @param llx	lower left x
+	 * @param lly	lower left y
+	 * @param urx	upper right x
+	 * @param ury	upper right y
 	 */
 	public RectangleReadOnly(float llx, float lly, float urx, float ury) {
         super(llx, lly, urx, ury);
@@ -92,10 +87,8 @@ public class RectangleReadOnly extends Rectangle {
 	 * Constructs a <CODE>RectangleReadOnly</CODE> -object starting from the origin
 	 * (0, 0).
 	 * 
-	 * @param urx
-	 *            upper right x
-	 * @param ury
-	 *            upper right y
+	 * @param urx	upper right x
+	 * @param ury	upper right y
 	 */
 	public RectangleReadOnly(float urx, float ury) {
 		super(0, 0, urx, ury);
@@ -104,90 +97,116 @@ public class RectangleReadOnly extends Rectangle {
 	/**
 	 * Constructs a <CODE>RectangleReadOnly</CODE> -object.
 	 * 
-	 * @param rect
-	 *            another <CODE>Rectangle</CODE>
+	 * @param rect	another <CODE>Rectangle</CODE>
 	 */
 	public RectangleReadOnly(Rectangle rect) {
 		super(rect.llx, rect.lly, rect.urx, rect.ury);
 		super.cloneNonPositionParameters(rect);
 	}
 
+	/**
+	 * Throws an error because of the read only nature of this object. 
+	 */
     private void throwReadOnlyError() {
         throw new UnsupportedOperationException("RectangleReadOnly: this Rectangle is read only.");
     }
     
-	// methods to get/set the dimensions
+	// OVERWRITE METHODS SETTING THE DIMENSIONS:
 
 	/**
 	 * Sets the lower left x-coordinate.
 	 * 
-	 * @param value
-	 *            the new value
+	 * @param llx	the new value
 	 */
-	public void setLeft(float value) {
+	public void setLeft(float llx) {
 		throwReadOnlyError();
 	}
 
 	/**
 	 * Sets the upper right x-coordinate.
 	 * 
-	 * @param value
-	 *            the new value
+	 * @param urx	the new value
 	 */
 
-	public void setRight(float value) {
+	public void setRight(float urx) {
 		throwReadOnlyError();
 	}
 
 	/**
 	 * Sets the upper right y-coordinate.
 	 * 
-	 * @param value
-	 *            the new value
+	 * @param ury	the new value
 	 */
-	public void setTop(float value) {
+	public void setTop(float ury) {
 		throwReadOnlyError();
 	}
 
 	/**
 	 * Sets the lower left y-coordinate.
 	 * 
-	 * @param value
-	 *            the new value
+	 * @param lly	the new value
 	 */
-	public void setBottom(float value) {
+	public void setBottom(float lly) {
 		throwReadOnlyError();
 	}
 
 	/**
-	 * Switches lowerleft with upperright
+	 * Normalizes the rectangle.
+     * Switches lower left with upper right if necessary.
 	 */
 	public void normalize() {
 		throwReadOnlyError();
 	}
 
-	// border
+	// OVERWRITE METHODS SETTING THE BACKGROUND COLOR:
 
 	/**
-	 * Enables/Disables the border on the specified sides. The border is
-	 * specified as an integer bitwise combination of the constants: <CODE>
-	 * LEFT, RIGHT, TOP, BOTTOM</CODE>.
+	 * Sets the backgroundcolor of the rectangle.
+	 * 
+	 * @param value	the new value
+	 */
+	public void setBackgroundColor(Color value) {
+		throwReadOnlyError();
+	}
+
+	/**
+	 * Sets the grayscale of the rectangle.
+	 * 
+	 * @param value	the new value
+	 */
+	public void setGrayFill(float value) {
+		throwReadOnlyError();
+	}
+	
+	// OVERWRITE METHODS SETTING THE BORDER:
+
+	/**
+	 * Enables/Disables the border on the specified sides.
+	 * The border is specified as an integer bitwise combination of
+	 * the constants: <CODE>LEFT, RIGHT, TOP, BOTTOM</CODE>.
 	 * 
 	 * @see #enableBorderSide(int)
 	 * @see #disableBorderSide(int)
-	 * @param value
-	 *            the new value
+	 * @param border	the new value
 	 */
-	public void setBorder(int value) {
+	public void setBorder(int border) {
+		throwReadOnlyError();
+	}
+	
+	/**
+	 * Sets a parameter indicating if the rectangle has variable borders
+	 * 
+	 * @param useVariableBorders	indication if the rectangle has variable borders
+	 */
+	public void setUseVariableBorders(boolean useVariableBorders) {
 		throwReadOnlyError();
 	}
 
 	/**
 	 * Enables the border on the specified side.
 	 * 
-	 * @param side
-	 *            the side to enable. One of <CODE>LEFT, RIGHT, TOP, BOTTOM
-	 *            </CODE>
+	 * @param side	the side to enable.
+	 * One of <CODE>LEFT, RIGHT, TOP, BOTTOM</CODE>
 	 */
 	public void enableBorderSide(int side) {
 		throwReadOnlyError();
@@ -196,184 +215,133 @@ public class RectangleReadOnly extends Rectangle {
 	/**
 	 * Disables the border on the specified side.
 	 * 
-	 * @param side
-	 *            the side to disable. One of <CODE>LEFT, RIGHT, TOP, BOTTOM
-	 *            </CODE>
+	 * @param side	the side to disable.
+	 * One of <CODE>LEFT, RIGHT, TOP, BOTTOM</CODE>
 	 */
 	public void disableBorderSide(int side) {
 		throwReadOnlyError();
 	}
 
-	// borderwidth
+	// OVERWRITE METHODS SETTING THE BORDER WIDTH:
 
 	/**
 	 * Sets the borderwidth of the table.
 	 * 
-	 * @param value
-	 *            the new value
+	 * @param borderWidth	the new value
 	 */
 
-	public void setBorderWidth(float value) {
-		throwReadOnlyError();
-	}
-
-	// bordercolor
-
-	/**
-	 * Sets the color of the border.
-	 * 
-	 * @param value
-	 *            the new value
-	 */
-
-	public void setBorderColor(Color value) {
-		throwReadOnlyError();
-	}
-
-	// backgroundcolor
-
-	/**
-	 * Sets the backgroundcolor of the rectangle.
-	 * 
-	 * @param value
-	 *            the new value
-	 */
-
-	public void setBackgroundColor(Color value) {
+	public void setBorderWidth(float borderWidth) {
 		throwReadOnlyError();
 	}
 
 	/**
-	 * Sets the grayscale of the rectangle.
+	 * Sets the width of the left border
 	 * 
-	 * @param value
-	 *            the new value
-	 */
-	public void setGrayFill(float value) {
-		throwReadOnlyError();
-	}
-
-	// variable borders
-	
-	/**
-	 * Sets a parameter indicating if the rectangle has variable borders
-	 * 
-	 * @param useVariableBorders
-	 *            indication if the rectangle has variable borders
-	 */
-	public void setUseVariableBorders(boolean useVariableBorders) {
-		throwReadOnlyError();
-	}
-	
-	// variable border width
-
-	/**
-	 * Sets the width of a border
-	 * 
-	 * @param borderWidthLeft
-	 *            a width
+	 * @param borderWidthLeft	a width
 	 */
 	public void setBorderWidthLeft(float borderWidthLeft) {
 		throwReadOnlyError();
 	}
 
 	/**
-	 * Sets the width of a border
+	 * Sets the width of the right border
 	 * 
-	 * @param borderWidthRight
-	 *            a width
+	 * @param borderWidthRight	a width
 	 */
 	public void setBorderWidthRight(float borderWidthRight) {
 		throwReadOnlyError();
 	}
 
 	/**
-	 * Sets the width of a border
+	 * Sets the width of the top border
 	 * 
-	 * @param borderWidthTop
-	 *            a width
+	 * @param borderWidthTop	a width
 	 */
 	public void setBorderWidthTop(float borderWidthTop) {
 		throwReadOnlyError();
 	}
 
 	/**
-	 * Sets the width of a border
+	 * Sets the width of the bottom border
 	 * 
-	 * @param borderWidthBottom
-	 *            a width
+	 * @param borderWidthBottom	a width
 	 */
 	public void setBorderWidthBottom(float borderWidthBottom) {
 		throwReadOnlyError();
 	}
 
-	// variable border color
+	// METHODS TO GET/SET THE BORDER COLOR:
+
+	/**
+	 * Sets the color of the border.
+	 * 
+	 * @param norderColor	a <CODE>Color</CODE>
+	 */
+
+	public void setBorderColor(Color borderColor) {
+		throwReadOnlyError();
+	}
 	
 	/**
-	 * Sets the value of the border color
+	 * Sets the color of the left border.
 	 * 
-	 * @param value
-	 *            a color value
+	 * @param borderColorLeft	a <CODE>Color</CODE>
 	 */
-	public void setBorderColorLeft(Color value) {
+	public void setBorderColorLeft(Color borderColorLeft) {
 		throwReadOnlyError();
 	}
 
 	/**
-	 * Sets the value of the border color
+	 * Sets the color of the right border
 	 * 
-	 * @param value
-	 *            a color value
+	 * @param borderColorRight	a <CODE>Color</CODE>
 	 */
-	public void setBorderColorRight(Color value) {
+	public void setBorderColorRight(Color borderColorRight) {
 		throwReadOnlyError();
 	}
 
 	/**
-	 * Sets the value of the border color
+	 * Sets the color of the top border.
 	 * 
-	 * @param value
-	 *            a color value
+	 * @param borderColorTop	a <CODE>Color</CODE>
 	 */
-	public void setBorderColorTop(Color value) {
+	public void setBorderColorTop(Color borderColorTop) {
 		throwReadOnlyError();
 	}
 
 	/**
-	 * Sets the value of the border color
+	 * Sets the color of the bottom border.
 	 * 
-	 * @param value
-	 *            a color value
+	 * @param borderColorBottom	a <CODE>Color</CODE>
 	 */
-	public void setBorderColorBottom(Color value) {
+	public void setBorderColorBottom(Color borderColorBottom) {
 		throwReadOnlyError();
 	}
 
-	// special methods
+	// SPECIAL METHODS:
 
 	/**
-	 * Copies all of the parameters from a <CODE>Rectangle</CODE> object
-	 * except the position.
+	 * Copies each of the parameters, except the position, from a
+     * <CODE>Rectangle</CODE> object
 	 * 
-	 * @param rect
-	 *            <CODE>Rectangle</CODE> to copy from
+	 * @param rect	<CODE>Rectangle</CODE> to copy from
 	 */
 	public void cloneNonPositionParameters(Rectangle rect) {
 		throwReadOnlyError();
 	}
 
 	/**
-	 * Copies all of the parameters from a <CODE>Rectangle</CODE> object
-	 * except the position.
+	 * Copies each of the parameters, except the position, from a
+     * <CODE>Rectangle</CODE> object if the value is set there.
 	 * 
-	 * @param rect
-	 *            <CODE>Rectangle</CODE> to copy from
+	 * @param rect	<CODE>Rectangle</CODE> to copy from
 	 */
 	public void softCloneNonPositionParameters(Rectangle rect) {
 		throwReadOnlyError();
 	}
 	
 	/**
+	 * @return	String version of the most important rectangle properties
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {

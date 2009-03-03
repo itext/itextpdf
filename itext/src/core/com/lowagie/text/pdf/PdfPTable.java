@@ -60,7 +60,8 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.events.PdfPTableEventForwarder;
 
-/** This is a table that can be put at an absolute position but can also
+/**
+ * This is a table that can be put at an absolute position but can also
  * be added to the document as the class <CODE>Table</CODE>.
  * In the last case when crossing pages the table always break at full rows; if a
  * row is bigger than the page it is dropped silently to avoid infinite loops.
@@ -72,16 +73,23 @@ import com.lowagie.text.pdf.events.PdfPTableEventForwarder;
 
 public class PdfPTable implements LargeElement{
     
-    /** The index of the original <CODE>PdfcontentByte</CODE>.
+    /**
+     * The index of the original <CODE>PdfcontentByte</CODE>.
      */    
     public static final int BASECANVAS = 0;
-    /** The index of the duplicate <CODE>PdfContentByte</CODE> where the background will be drawn.
+    
+    /**
+     * The index of the duplicate <CODE>PdfContentByte</CODE> where the background will be drawn.
      */    
     public static final int BACKGROUNDCANVAS = 1;
-    /** The index of the duplicate <CODE>PdfContentByte</CODE> where the border lines will be drawn.
+    
+    /**
+     * The index of the duplicate <CODE>PdfContentByte</CODE> where the border lines will be drawn.
      */    
     public static final int LINECANVAS = 2;
-    /** The index of the duplicate <CODE>PdfContentByte</CODE> where the text will be drawn.
+    
+    /**
+     * The index of the duplicate <CODE>PdfContentByte</CODE> where the text will be drawn.
      */    
     public static final int TEXTCANVAS = 3;
     
@@ -95,16 +103,24 @@ public class PdfPTable implements LargeElement{
     protected float absoluteWidths[];
     protected PdfPTableEvent tableEvent;
     
-/** Holds value of property headerRows. */
+    /**
+     * Holds value of property headerRows.
+     */
     protected int headerRows;
     
-/** Holds value of property widthPercentage. */
+    /**
+     * Holds value of property widthPercentage.
+     */
     protected float widthPercentage = 80;
     
-/** Holds value of property horizontalAlignment. */
+    /**
+     * Holds value of property horizontalAlignment.
+     */
     private int horizontalAlignment = Element.ALIGN_CENTER;
     
-/** Holds value of property skipFirstHeader. */
+    /**
+     * Holds value of property skipFirstHeader.
+     */
     private boolean skipFirstHeader = false;
 
     protected boolean isColspan = false;
@@ -121,10 +137,14 @@ public class PdfPTable implements LargeElement{
      */
     private boolean splitRows = true;
     
-/** The spacing before the table. */
+    /**
+     * The spacing before the table.
+     */
     protected float spacingBefore;
     
-/** The spacing after the table. */
+    /**
+     * The spacing after the table.
+     */
     protected float spacingAfter;
     
     /**
@@ -150,6 +170,7 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Indicates if the PdfPTable is complete once added to the document.
+     * 
      * @since	iText 2.0.8
      */
     protected boolean complete = true;
@@ -162,7 +183,9 @@ public class PdfPTable implements LargeElement{
     protected PdfPTable() {
     }
     
-    /** Constructs a <CODE>PdfPTable</CODE> with the relative column widths.
+    /** 
+     * Constructs a <CODE>PdfPTable</CODE> with the relative column widths.
+     * 
      * @param relativeWidths the relative column widths
      */    
     public PdfPTable(float relativeWidths[]) {
@@ -178,7 +201,9 @@ public class PdfPTable implements LargeElement{
         keepTogether = false;
     }
     
-    /** Constructs a <CODE>PdfPTable</CODE> with <CODE>numColumns</CODE> columns.
+    /** 
+     * Constructs a <CODE>PdfPTable</CODE> with <CODE>numColumns</CODE> columns.
+     * 
      * @param numColumns the number of columns
      */    
     public PdfPTable(int numColumns) {
@@ -193,7 +218,9 @@ public class PdfPTable implements LargeElement{
         keepTogether = false;
     }
     
-    /** Constructs a copy of a <CODE>PdfPTable</CODE>.
+    /** 
+     * Constructs a copy of a <CODE>PdfPTable</CODE>.
+     * 
      * @param table the <CODE>PdfPTable</CODE> to be copied
      */    
     public PdfPTable(PdfPTable table) {
@@ -213,6 +240,7 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Makes a shallow copy of a table (format without content).
+     * 
      * @param table
      * @return a shallow copy of the table
      */
@@ -223,14 +251,15 @@ public class PdfPTable implements LargeElement{
     }
 
     /**
-     * Copies the format of the sourceTable without copying the content. 
+     * Copies the format of the sourceTable without copying the content.
+     *  
      * @param sourceTable
      */
     private void copyFormat(PdfPTable sourceTable) {
-        relativeWidths = new float[sourceTable.relativeWidths.length];
-        absoluteWidths = new float[sourceTable.relativeWidths.length];
-        System.arraycopy(sourceTable.relativeWidths, 0, relativeWidths, 0, relativeWidths.length);
-        System.arraycopy(sourceTable.absoluteWidths, 0, absoluteWidths, 0, relativeWidths.length);
+        relativeWidths = new float[sourceTable.getNumberOfColumns()];
+        absoluteWidths = new float[sourceTable.getNumberOfColumns()];
+        System.arraycopy(sourceTable.relativeWidths, 0, relativeWidths, 0, getNumberOfColumns());
+        System.arraycopy(sourceTable.absoluteWidths, 0, absoluteWidths, 0, getNumberOfColumns());
         totalWidth = sourceTable.totalWidth;
         totalHeight = sourceTable.totalHeight;
         currentRowIdx = 0;
@@ -255,23 +284,27 @@ public class PdfPTable implements LargeElement{
         complete = sourceTable.complete;
     }
 
-    /** Sets the relative widths of the table.
+    /**
+     * Sets the relative widths of the table.
+     * 
      * @param relativeWidths the relative widths of the table.
      * @throws DocumentException if the number of widths is different than the number
      * of columns
      */    
     public void setWidths(float relativeWidths[]) throws DocumentException {
-        if (relativeWidths.length != this.relativeWidths.length)
+        if (relativeWidths.length != getNumberOfColumns())
             throw new DocumentException("Wrong number of columns.");
         this.relativeWidths = new float[relativeWidths.length];
         System.arraycopy(relativeWidths, 0, this.relativeWidths, 0, relativeWidths.length);
         absoluteWidths = new float[relativeWidths.length];
         totalHeight = 0;
         calculateWidths();
-        calculateHeights();
+        calculateHeights(true);
     }
 
-    /** Sets the relative widths of the table.
+    /**
+     * Sets the relative widths of the table.
+     * 
      * @param relativeWidths the relative widths of the table.
      * @throws DocumentException if the number of widths is different than the number
      * of columns
@@ -287,15 +320,16 @@ public class PdfPTable implements LargeElement{
         if (totalWidth <= 0)
             return;
         float total = 0;
-        for (int k = 0; k < absoluteWidths.length; ++k) {
+        int numCols = getNumberOfColumns();
+        for (int k = 0; k < numCols; ++k)
             total += relativeWidths[k];
-        }
-        for (int k = 0; k < absoluteWidths.length; ++k) {
+        for (int k = 0; k < numCols; ++k)
             absoluteWidths[k] = totalWidth * relativeWidths[k] / total;
-        }
     }
     
-    /** Sets the full width of the table.
+    /**
+     * Sets the full width of the table.
+     * 
      * @param totalWidth the full width of the table.
      */    
     public void setTotalWidth(float totalWidth) {
@@ -304,16 +338,18 @@ public class PdfPTable implements LargeElement{
         this.totalWidth = totalWidth;
         totalHeight = 0;
         calculateWidths();
-        calculateHeights();
+        calculateHeights(true);
     }
 
-    /** Sets the full width of the table from the absolute column width.
+    /**
+     * Sets the full width of the table from the absolute column width.
+     * 
      * @param columnWidth the absolute width of each column
      * @throws DocumentException if the number of widths is different than the number
      * of columns
      */    
     public void setTotalWidth(float columnWidth[]) throws DocumentException {
-        if (columnWidth.length != this.relativeWidths.length)
+        if (columnWidth.length != getNumberOfColumns())
             throw new DocumentException("Wrong number of columns.");
         totalWidth = 0;
         for (int k = 0; k < columnWidth.length; ++k)
@@ -321,13 +357,15 @@ public class PdfPTable implements LargeElement{
         setWidths(columnWidth);
     }
 
-    /** Sets the percentage width of the table from the absolute column width.
+    /**
+     * Sets the percentage width of the table from the absolute column width.
+     * 
      * @param columnWidth the absolute width of each column
      * @param pageSize the page size
      * @throws DocumentException
      */    
     public void setWidthPercentage(float columnWidth[], Rectangle pageSize) throws DocumentException {
-        if (columnWidth.length != this.relativeWidths.length)
+        if (columnWidth.length != getNumberOfColumns())
             throw new IllegalArgumentException("Wrong number of columns.");
         float totalWidth = 0;
         for (int k = 0; k < columnWidth.length; ++k)
@@ -336,50 +374,62 @@ public class PdfPTable implements LargeElement{
         setWidths(columnWidth);
     }
 
-    /** Gets the full width of the table.
+    /**
+     * Gets the full width of the table.
+     * 
      * @return the full width of the table
      */    
     public float getTotalWidth() {
         return totalWidth;
     }
-
-    void calculateHeights() {
+    
+    /**
+     * Calculates the heights of the table.
+     * 
+     * @param	firsttime	if true, the heights of the rows will be recalculated.
+     * This takes time; normally the heights of the rows are already calcultated,
+     * so in most cases, it's save to use false as parameter.
+     * @return	the total height of the table. Note that it will be 0 if you didn't
+     * specify the width of the table with setTotalWidth().
+     * @since	2.1.5	added a parameter and a return type to an existing method,
+     * and made it public
+     */
+    public float calculateHeights(boolean firsttime) {
         if (totalWidth <= 0)
-            return;
+            return 0;
         totalHeight = 0;
         for (int k = 0; k < rows.size(); ++k) {
             PdfPRow row = (PdfPRow)rows.get(k);
             if (row != null) {
-                row.setWidths(absoluteWidths);
+            	if (firsttime)
+            		row.setWidths(absoluteWidths);
                 totalHeight += row.getMaxHeights();
             }
         }
+        return totalHeight;
     }
     
     /**
      * Calculates the heights of the table.
      */
     public void calculateHeightsFast() {
-        if (totalWidth <= 0)
-            return;
-        totalHeight = 0;
-        for (int k = 0; k < rows.size(); ++k) {
-            PdfPRow row = (PdfPRow)rows.get(k);
-            if (row != null)
-                totalHeight += row.getMaxHeights();
-        }
+        calculateHeights(false);
     }
     
-    /** Gets the default <CODE>PdfPCell</CODE> that will be used as
+    /**
+     * Gets the default <CODE>PdfPCell</CODE> that will be used as
      * reference for all the <CODE>addCell</CODE> methods except
      * <CODE>addCell(PdfPCell)</CODE>.
+     * 
      * @return default <CODE>PdfPCell</CODE>
      */    
     public PdfPCell getDefaultCell() {
         return defaultCell;
     }
     
-    /** Adds a cell element.
+    /**
+     * Adds a cell element.
+     * 
      * @param cell the cell element
      */    
     public void addCell(PdfPCell cell) {
@@ -396,8 +446,9 @@ public class PdfPTable implements LargeElement{
         currentRow[currentRowIdx] = ncell;
         currentRowIdx += colspan;
         if (currentRowIdx >= currentRow.length) {
+        	int numCols = getNumberOfColumns();
             if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
-                PdfPCell rtlRow[] = new PdfPCell[absoluteWidths.length];
+                PdfPCell rtlRow[] = new PdfPCell[numCols];
                 int rev = currentRow.length;
                 for (int k = 0; k < currentRow.length; ++k) {
                     PdfPCell rcell = currentRow[k];
@@ -414,12 +465,14 @@ public class PdfPTable implements LargeElement{
                 totalHeight += row.getMaxHeights();
             }
             rows.add(row);
-            currentRow = new PdfPCell[absoluteWidths.length];
+            currentRow = new PdfPCell[numCols];
             currentRowIdx = 0;
         }
     }
     
-    /** Adds a cell element.
+    /**
+     * Adds a cell element.
+     * 
      * @param text the text for the cell
      */    
     public void addCell(String text) {
@@ -428,6 +481,7 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Adds a nested table.
+     * 
      * @param table the table to be added to the cell
      */    
     public void addCell(PdfPTable table) {
@@ -438,7 +492,9 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Adds an Image as Cell.
-     * @param image the <CODE>Image</CODE> to add to the table. This image will fit in the cell
+     * 
+     * @param image the <CODE>Image</CODE> to add to the table.
+     * This image will fit in the cell
      */    
     public void addCell(Image image) {
         defaultCell.setImage(image);
@@ -448,6 +504,7 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Adds a cell element.
+     * 
      * @param phrase the <CODE>Phrase</CODE> to be added to the cell
      */    
     public void addCell(Phrase phrase) {
@@ -458,8 +515,8 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Writes the selected rows to the document.
-     * <P>
      * <CODE>canvases</CODE> is obtained from <CODE>beginWritingRows()</CODE>.
+     * 
      * @param rowStart the first row to be written, zero index
      * @param rowEnd the last row to be written + 1. If it is -1 all the
      * rows to the end are written
@@ -474,13 +531,13 @@ public class PdfPTable implements LargeElement{
         return writeSelectedRows(0, -1, rowStart, rowEnd, xPos, yPos, canvases);
     }
     
-    /** Writes the selected rows and columns to the document.
+    /**
+     * Writes the selected rows and columns to the document.
      * This method does not clip the columns; this is only important
      * if there are columns with colspan at boundaries.
-     * <P>
      * <CODE>canvases</CODE> is obtained from <CODE>beginWritingRows()</CODE>.
-     * <P>
      * The table event is only fired for complete rows.
+     * 
      * @param colStart the first column to be written, zero index
      * @param colEnd the last column to be written + 1. If it is -1 all the
      * columns to the end are written
@@ -490,27 +547,34 @@ public class PdfPTable implements LargeElement{
      * @param xPos the x write coordinate
      * @param yPos the y write coordinate
      * @param canvases an array of 4 <CODE>PdfContentByte</CODE> obtained from
-     * <CODE>beginWrittingRows()</CODE>
+     * <CODE>beginWritingRows()</CODE>
      * @return the y coordinate position of the bottom of the last row
      * @see #beginWritingRows(com.lowagie.text.pdf.PdfContentByte)
      */    
     public float writeSelectedRows(int colStart, int colEnd, int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte[] canvases) {
         if (totalWidth <= 0)
             throw new RuntimeException("The table width must be greater than zero.");
-        int size = rows.size();
-        if (rowEnd < 0)
-            rowEnd = size;
-        rowEnd = Math.min(rowEnd, size);
+        
+        int totalRows = rows.size();
         if (rowStart < 0)
             rowStart = 0;
+        if (rowEnd < 0)
+            rowEnd = totalRows;
+        else
+        	rowEnd = Math.min(rowEnd, totalRows);
         if (rowStart >= rowEnd)
             return yPos;
-        if (colEnd < 0)
-            colEnd = absoluteWidths.length;
-        colEnd = Math.min(colEnd, absoluteWidths.length);
+        
+        int totalCols = getNumberOfColumns();
         if (colStart < 0)
             colStart = 0;
-        colStart = Math.min(colStart, absoluteWidths.length);
+        else
+        	colStart = Math.min(colStart, totalCols);
+        if (colEnd < 0)
+            colEnd = totalCols;
+        else
+        	colEnd = Math.min(colEnd, totalCols);
+        
         float yPosStart = yPos;
         for (int k = rowStart; k < rowEnd; ++k) {
             PdfPRow row = (PdfPRow)rows.get(k);
@@ -519,7 +583,8 @@ public class PdfPTable implements LargeElement{
                 yPos -= row.getMaxHeights();
             }
         }
-        if (tableEvent != null && colStart == 0 && colEnd == absoluteWidths.length) {
+        
+        if (tableEvent != null && colStart == 0 && colEnd == totalCols) {
             float heights[] = new float[rowEnd - rowStart + 1];
             heights[0] = yPosStart;
             for (int k = rowStart; k < rowEnd; ++k) {
@@ -531,6 +596,7 @@ public class PdfPTable implements LargeElement{
             }
             tableEvent.tableLayout(this, getEventWidths(xPos, rowStart, rowEnd, headersInEvent), heights, headersInEvent ? headerRows : 0, rowStart, canvases);
         }
+        
         return yPos;
     }
     
@@ -551,14 +617,14 @@ public class PdfPTable implements LargeElement{
     }
     
     /**
-     * Writes the selected rows to the document.
+     * Writes the selected rows and columns to the document.
      * This method clips the columns; this is only important
      * if there are columns with colspan at boundaries.
-     * <P>
      * The table event is only fired for complete rows.
      * 
      * @param colStart the first column to be written, zero index
      * @param colEnd the last column to be written + 1. If it is -1 all the
+     * columns to the end are written
      * @param rowStart the first row to be written, zero index
      * @param rowEnd the last row to be written + 1. If it is -1 all the
      * rows to the end are written
@@ -569,36 +635,43 @@ public class PdfPTable implements LargeElement{
      * @return the y coordinate position of the bottom of the last row
      */    
     public float writeSelectedRows(int colStart, int colEnd, int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte canvas) {
-        if (colEnd < 0)
-            colEnd = absoluteWidths.length;
-        colEnd = Math.min(colEnd, absoluteWidths.length);
+        int totalCols = getNumberOfColumns();
         if (colStart < 0)
             colStart = 0;
-        colStart = Math.min(colStart, absoluteWidths.length);
-        if (colStart != 0 || colEnd != absoluteWidths.length) {
+        else
+        	colStart = Math.min(colStart, totalCols);
+        
+    	if (colEnd < 0)
+            colEnd = totalCols;
+    	else
+    		colEnd = Math.min(colEnd, totalCols);
+    	
+    	boolean clip = (colStart != 0 || colEnd != totalCols);
+    	
+        if (clip) {
             float w = 0;
             for (int k = colStart; k < colEnd; ++k)
                 w += absoluteWidths[k];
             canvas.saveState();
-            float lx = 0;
-            float rx = 0;
-            if (colStart == 0)
-                lx = 10000;
-            if (colEnd == absoluteWidths.length)
-                rx = 10000;
+            float lx = (colStart == 0) ? 10000 : 0;
+            float rx = (colEnd == totalCols) ? 10000 : 0;
             canvas.rectangle(xPos - lx, -10000, w + lx + rx, 20000);
             canvas.clip();
             canvas.newPath();
         }
+        
         PdfContentByte[] canvases = beginWritingRows(canvas);
         float y = writeSelectedRows(colStart, colEnd, rowStart, rowEnd, xPos, yPos, canvases);
         endWritingRows(canvases);
-        if (colStart != 0 || colEnd != absoluteWidths.length)
+        
+        if (clip)
             canvas.restoreState();
+        
         return y;
     }
     
-    /** Gets and initializes the 4 layers where the table is written to. The text or graphics are added to
+    /**
+     * Gets and initializes the 4 layers where the table is written to. The text or graphics are added to
      * one of the 4 <CODE>PdfContentByte</CODE> returned with the following order:<p>
      * <ul>
      * <li><CODE>PdfPtable.BASECANVAS</CODE> - the original <CODE>PdfContentByte</CODE>. Anything placed here
@@ -609,6 +682,7 @@ public class PdfPTable implements LargeElement{
      * will be over the table.
      * </ul><p>
      * The layers are placed in sequence on top of each other.
+     * 
      * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
      * be written to
      * @return an array of 4 <CODE>PdfContentByte</CODE>
@@ -623,7 +697,9 @@ public class PdfPTable implements LargeElement{
         };
     }
     
-    /** Finishes writing the table.
+    /**
+     * Finishes writing the table.
+     * 
      * @param canvases the array returned by <CODE>beginWritingRows()</CODE>
      */    
     public static void endWritingRows(PdfContentByte[] canvases) {
@@ -639,21 +715,27 @@ public class PdfPTable implements LargeElement{
         canvas.add(canvases[TEXTCANVAS]);
     }
     
-    /** Gets the number of rows in this table.
+    /**
+     * Gets the number of rows in this table.
+     * 
      * @return the number of rows in this table
      */    
     public int size() {
         return rows.size();
     }
     
-    /** Gets the total height of the table.
+    /**
+     * Gets the total height of the table.
+     * 
      * @return the total height of the table
      */    
     public float getTotalHeight() {
         return totalHeight;
     }
     
-    /** Gets the height of a particular row.
+    /**
+     * Gets the height of a particular row.
+     * 
      * @param idx the row index (starts at 0)
      * @return the height of a particular row
      */    
@@ -666,8 +748,10 @@ public class PdfPTable implements LargeElement{
         return row.getMaxHeights();
     }
     
-    /** Gets the height of the rows that constitute the header as defined by
+    /**
+     * Gets the height of the rows that constitute the header as defined by
      * <CODE>setHeaderRows()</CODE>.
+     * 
      * @return the height of the rows that constitute the header and footer
      */    
     public float getHeaderHeight() {
@@ -684,6 +768,7 @@ public class PdfPTable implements LargeElement{
     /**
      * Gets the height of the rows that constitute the footer as defined by
      * <CODE>setFooterRows()</CODE>.
+     * 
      * @return the height of the rows that constitute the footer
      * @since 2.1.1
      */    
@@ -699,14 +784,15 @@ public class PdfPTable implements LargeElement{
         return total;
     }
     
-    /** Deletes a row from the table.
+    /**
+     * Deletes a row from the table.
+     * 
      * @param rowNumber the row to be deleted
      * @return <CODE>true</CODE> if the row was deleted
      */    
     public boolean deleteRow(int rowNumber) {
-        if (rowNumber < 0 || rowNumber >= rows.size()) {
+        if (rowNumber < 0 || rowNumber >= rows.size())
             return false;
-        }
         if (totalWidth > 0) {
             PdfPRow row = (PdfPRow)rows.get(rowNumber);
             if (row != null)
@@ -721,7 +807,9 @@ public class PdfPTable implements LargeElement{
         return true;
     }
     
-    /** Deletes the last row in the table.
+    /**
+     * Deletes the last row in the table.
+     * 
      * @return <CODE>true</CODE> if the last row was deleted
      */    
     public boolean deleteLastRow() {
@@ -741,7 +829,9 @@ public class PdfPTable implements LargeElement{
             totalHeight = getHeaderHeight();
     }
     
-    /** Returns the number of columns.
+    /**
+     * Returns the number of columns.
+     * 
      * @return	the number of columns.
      * @since	2.1.1
      */
@@ -749,16 +839,20 @@ public class PdfPTable implements LargeElement{
     	return relativeWidths.length;
     }
 
-    /** Gets the number of the rows that constitute the header.
+    /**
+     * Gets the number of the rows that constitute the header.
+     * 
      * @return the number of the rows that constitute the header
      */
     public int getHeaderRows() {
         return headerRows;
     }
     
-    /** Sets the number of the top rows that constitute the header.
+    /**
+     * Sets the number of the top rows that constitute the header.
      * This header has only meaning if the table is added to <CODE>Document</CODE>
      * and the table crosses pages.
+     * 
      * @param headerRows the number of the top rows that constitute the header
      */
     public void setHeaderRows(int headerRows) {
@@ -817,31 +911,39 @@ public class PdfPTable implements LargeElement{
         }
     }
     
-    /** Gets the width percentage that the table will occupy in the page.
+    /**
+     * Gets the width percentage that the table will occupy in the page.
+     * 
      * @return the width percentage that the table will occupy in the page
      */
     public float getWidthPercentage() {
         return widthPercentage;
     }
     
-    /** Sets the width percentage that the table will occupy in the page.
+    /**
+     * Sets the width percentage that the table will occupy in the page.
+     *
      * @param widthPercentage the width percentage that the table will occupy in the page
      */
     public void setWidthPercentage(float widthPercentage) {
         this.widthPercentage = widthPercentage;
     }
     
-    /** Gets the horizontal alignment of the table relative to the page.
+    /**
+     * Gets the horizontal alignment of the table relative to the page.
+     * 
      * @return the horizontal alignment of the table relative to the page
      */
     public int getHorizontalAlignment() {
         return horizontalAlignment;
     }
     
-    /** Sets the horizontal alignment of the table relative to the page.
-     * It only has meaning if the width percentage is less than
-     * 100%.
-     * @param horizontalAlignment the horizontal alignment of the table relative to the page
+    /**
+     * Sets the horizontal alignment of the table relative to the page.
+     * It only has meaning if the width percentage is less than 100%.
+     *
+     * @param horizontalAlignment the horizontal alignment of the table
+     * relative to the page
      */
     public void setHorizontalAlignment(int horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
@@ -850,6 +952,7 @@ public class PdfPTable implements LargeElement{
     /**
      * Gets a row with a given index
      * (added by Jin-Hsia Yang).
+     * 
      * @param idx
      * @return the row at position idx
      */
@@ -859,6 +962,7 @@ public class PdfPTable implements LargeElement{
 
     /**
      * Gets an arraylist with all the rows in the table.
+     * 
      * @return an arraylist
      */
     public ArrayList getRows() {
@@ -869,9 +973,12 @@ public class PdfPTable implements LargeElement{
      * @param event the table event for this table
      */    
     public void setTableEvent(PdfPTableEvent event) {
-    	if (event == null) this.tableEvent = null;
-    	else if (this.tableEvent == null) this.tableEvent = event;
-    	else if (this.tableEvent instanceof PdfPTableEventForwarder) ((PdfPTableEventForwarder)this.tableEvent).addTableEvent(event);
+    	if (event == null)
+    		this.tableEvent = null;
+    	else if (this.tableEvent == null)
+    		this.tableEvent = event;
+    	else if (this.tableEvent instanceof PdfPTableEventForwarder)
+    		((PdfPTableEventForwarder)this.tableEvent).addTableEvent(event);
     	else {
     		PdfPTableEventForwarder forward = new PdfPTableEventForwarder();
     		forward.addTableEvent(this.tableEvent);
@@ -880,14 +987,18 @@ public class PdfPTable implements LargeElement{
     	}
     }
     
-    /** Gets the table event for this page.
+    /**
+     * Gets the table event for this page.
+     * 
      * @return the table event for this page
      */    
     public PdfPTableEvent getTableEvent() {
         return tableEvent;
     }
     
-    /** Gets the absolute sizes of each column width.
+    /**
+     * Gets the absolute sizes of each column width.
+     * 
      * @return he absolute sizes of each column width
      */    
     public float[] getAbsoluteWidths() {
@@ -920,9 +1031,10 @@ public class PdfPTable implements LargeElement{
             }
         }
         else {
-            float width[] = new float[absoluteWidths.length + 1];
+        	int numCols = getNumberOfColumns();
+            float width[] = new float[numCols + 1];
             width[0] = xPos;
-            for (int k = 0; k < absoluteWidths.length; ++k)
+            for (int k = 0; k < numCols; ++k)
                 width[k + 1] = width[k] + absoluteWidths[k];
             for (int k = 0; k < widths.length; ++k)
                 widths[k] = width;
@@ -931,15 +1043,19 @@ public class PdfPTable implements LargeElement{
     }
 
 
-    /** Getter for property skipFirstHeader.
+    /**
+     * Getter for property skipFirstHeader.
+     * 
      * @return Value of property skipFirstHeader.
      */
     public boolean isSkipFirstHeader() {
         return skipFirstHeader;
     }
     
-    /** Skips the printing of the first header. Used when printing
+    /**
+     * Skips the printing of the first header. Used when printing
      * tables in succession belonging to the same printed table aspect.
+     * 
      * @param skipFirstHeader New value of property skipFirstHeader.
      */
     public void setSkipFirstHeader(boolean skipFirstHeader) {
@@ -948,17 +1064,30 @@ public class PdfPTable implements LargeElement{
 
     /**
      * Sets the run direction of the contents of the table.
-     * @param runDirection
+     * 
+     * @param runDirection One of the following values:
+     * PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI,
+     * PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
      */
     public void setRunDirection(int runDirection) {
-        if (runDirection < PdfWriter.RUN_DIRECTION_DEFAULT || runDirection > PdfWriter.RUN_DIRECTION_RTL)
-            throw new RuntimeException("Invalid run direction: " + runDirection);
-        this.runDirection = runDirection;
+        switch (runDirection) {
+        	case PdfWriter.RUN_DIRECTION_DEFAULT:
+        	case PdfWriter.RUN_DIRECTION_NO_BIDI:
+        	case PdfWriter.RUN_DIRECTION_LTR:
+        	case PdfWriter.RUN_DIRECTION_RTL:
+        		this.runDirection = runDirection;
+        		break;
+        	default:
+        		throw new RuntimeException("Invalid run direction: " + runDirection);
+        }
     }
     
     /**
      * Returns the run direction of the contents in the table.
-     * @return One of the following values: PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI, PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
+     * 
+     * @return One of the following values:
+     * PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI,
+     * PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
      */
     public int getRunDirection() {
         return runDirection;
@@ -966,6 +1095,7 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Getter for property lockedWidth.
+     * 
      * @return Value of property lockedWidth.
      */
     public boolean isLockedWidth() {
@@ -974,6 +1104,7 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Uses the value in <CODE>setTotalWidth()</CODE> in <CODE>Document.add()</CODE>.
+     * 
      * @param lockedWidth <CODE>true</CODE> to use the value in <CODE>setTotalWidth()</CODE> in <CODE>Document.add()</CODE>
      */
     public void setLockedWidth(boolean lockedWidth) {
@@ -982,6 +1113,7 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Gets the split value.
+     * 
      * @return true to split; false otherwise
      */
     public boolean isSplitRows() {
@@ -992,63 +1124,62 @@ public class PdfPTable implements LargeElement{
      * When set the rows that won't fit in the page will be split. 
      * Note that it takes at least twice the memory to handle a split table row
      * than a normal table. <CODE>true</CODE> by default.
+     * 
      * @param splitRows true to split; false otherwise
      */
     public void setSplitRows(boolean splitRows) {
         this.splitRows = splitRows;
     }
     
-/**
- * Sets the spacing before this table.
- *
- * @param	spacing		the new spacing
- */
-    
+    /**
+     * Sets the spacing before this table.
+     *
+     * @param	spacing		the new spacing
+     */
     public void setSpacingBefore(float spacing) {
         this.spacingBefore = spacing;
     }
     
-/**
- * Sets the spacing after this table.
- *
- * @param	spacing		the new spacing
- */
-    
+    /**
+     * Sets the spacing after this table.
+     *
+     * @param	spacing		the new spacing
+     */
     public void setSpacingAfter(float spacing) {
         this.spacingAfter = spacing;
     }    
 
-/**
- * Gets the spacing before this table.
- *
- * @return	the spacing
- */
-    
+    /**
+     * Gets the spacing before this table.
+     *
+     * @return	the spacing
+     */
     public float spacingBefore() {
         return spacingBefore;
     }
     
-/**
- * Gets the spacing after this table.
- *
- * @return	the spacing
- */
-    
+    /**
+     * Gets the spacing after this table.
+     *
+     * @return	the spacing
+     */
     public float spacingAfter() {
         return spacingAfter;
     }    
     
     /**
-     *  Gets the value of the last row extension.
+     * Gets the value of the last row extension.
+     * 
      * @return true if the last row will extend; false otherwise
      */
     public boolean isExtendLastRow() {
-        return this.extendLastRow;
+        return extendLastRow;
     }
     
     /**
-     * When set the last row will be extended to fill all the remaining space to the
-     * bottom boundary.
+     * When set the last row will be extended to fill all the remaining space
+     * to the bottom boundary.
+     * 
      * @param extendLastRow true to extend the last row; false otherwise
      */
     public void setExtendLastRow(boolean extendLastRow) {
@@ -1057,14 +1188,16 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Gets the header status inclusion in PdfPTableEvent.
+     * 
      * @return true if the headers are included; false otherwise
      */
     public boolean isHeadersInEvent() {
-        return this.headersInEvent;
+        return headersInEvent;
     }
     
     /**
      * When set the PdfPTableEvent will include the headers.
+     * 
      * @param headersInEvent true to include the headers; false otherwise
      */
     public void setHeadersInEvent(boolean headersInEvent) {
@@ -1073,17 +1206,18 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Gets the property splitLate.
+     * 
      * @return the property splitLate
      */
     public boolean isSplitLate() {
-        return this.splitLate;
+        return splitLate;
     }
     
     /**
      * If true the row will only split if it's the first one in an empty page.
      * It's true by default.
-     *<p>
      * It's only meaningful if setSplitRows(true).
+     * 
      * @param splitLate the property value
      */
     public void setSplitLate(boolean splitLate) {
@@ -1095,18 +1229,25 @@ public class PdfPTable implements LargeElement{
      * new page if it doesn't fit on the current page. The default is to
      * split the table over multiple pages.
      *
-     * @param p_KeepTogether whether to try to keep the table on one page
+     * @param keepTogether whether to try to keep the table on one page
      */
-    public void setKeepTogether(boolean p_KeepTogether) {
-        keepTogether = p_KeepTogether;
+    public void setKeepTogether(boolean keepTogether) {
+        this.keepTogether = keepTogether;
     }
-     
+    
+    /**
+     * Getter for property keepTogether
+     * 
+     * @return true if it is tried to keep the table on one page;
+     * false otherwise
+     */
     public boolean getKeepTogether() {
         return keepTogether;
     }
     
     /**
      * Gets the number of rows in the footer.
+     * 
      * @return the number of rows in the footer
      */
     public int getFooterRows() {
@@ -1118,13 +1259,12 @@ public class PdfPTable implements LargeElement{
      * of footer rows are subtracted from the header rows. For
      * example, for a table with two header rows and one footer row the
      * code would be:
-     * <p>
-     * <PRE>
+     * <pre>
      * table.setHeaderRows(3);
      * table.setFooterRows(1);
-     * </PRE>
-     * <p>
+     * </pre>
      * Row 0 and 1 will be the header rows and row 2 will be the footer row.
+     * 
      * @param footerRows the number of rows to be used for the footer
      */
     public void setFooterRows(int footerRows) {
@@ -1134,8 +1274,9 @@ public class PdfPTable implements LargeElement{
     }
     
     /**
-     * Completes the current row with the default cell. An incomplete row will be dropped
-     * but calling this method will make sure that it will be present in the table.
+     * Completes the current row with the default cell. An incomplete row will
+     * be dropped but calling this method will make sure that it will be
+     * present in the table.
      */
     public void completeRow() {
         while (currentRowIdx > 0) {
