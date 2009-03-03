@@ -52,13 +52,14 @@ package com.lowagie.text.pdf;
 /**
  * <CODE>PdfName</CODE> is an object that can be used as a name in a PDF-file.
  * <P>
- * A name, like a string, is a sequence of characters. It must begin with a slash
- * followed by a sequence of ASCII characters in the range 32 through 136 except
- * %, (, ), [, ], &lt;, &gt;, {, }, / and #. Any character except 0x00 may be included
- * in a name by writing its twocharacter hex code, preceded by #. The maximum number
- * of characters in a name is 127.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.7'
- * section 3.2.4 (page 56-58).
+ * A name, like a string, is a sequence of characters.
+ * It must begin with a slash followed by a sequence of ASCII characters in
+ * the range 32 through 136 except %, (, ), [, ], &lt;, &gt;, {, }, / and #.
+ * Any character except 0x00 may be included in a name by writing its
+ * two character hex code, preceded by #. The maximum number of characters
+ * in a name is 127.<BR>
+ * This object is described in the 'Portable Document Format Reference Manual
+ * version 1.7' section 3.2.4 (page 56-58).
  * <P>
  *
  * @see		PdfObject
@@ -68,14 +69,17 @@ package com.lowagie.text.pdf;
 
 public class PdfName extends PdfObject implements Comparable{
 
-    // static membervariables (a variety of standard names used in PDF)
+    // CLASS CONSTANTS (a variety of standard names used in PDF))
 
     /** A name */
     public static final PdfName A = new PdfName("A");
     /** A name */
     public static final PdfName AA = new PdfName("AA");
-    /** A name */
-    public static final PdfName ABSOLUTECALORIMETRIC = new PdfName("AbsoluteColorimetric");
+    /**
+     * A name
+     * @since 2.1.5 renamed from ABSOLUTECALORIMETRIC
+     */
+    public static final PdfName ABSOLUTECOLORIMETRIC = new PdfName("AbsoluteColorimetric");
     /** A name */
     public static final PdfName AC = new PdfName("AC");
     /** A name */
@@ -212,7 +216,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName CIDFONTTYPE0 = new PdfName("CIDFontType0");
     /** A name */
     public static final PdfName CIDFONTTYPE2 = new PdfName("CIDFontType2");
-    /** A name
+    /**
+     * A name
      * @since 2.0.7
      */
     public static final PdfName CIDSET = new PdfName("CIDSet");
@@ -286,8 +291,10 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName DECODE = new PdfName("Decode");
     /** A name */
     public static final PdfName DECODEPARMS = new PdfName("DecodeParms");
-    /** A name
-     * @since	2.1.5 */
+    /**
+     * A name
+     * @since	2.1.5 renamed from DEFAULTCRYPTFILER
+     */
     public static final PdfName DEFAULTCRYPTFILTER = new PdfName("DefaultCryptFilter");
     /** A name */
     public static final PdfName DEFAULTCMYK = new PdfName("DefaultCMYK");
@@ -357,11 +364,15 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName EARLYCHANGE = new PdfName("EarlyChange");
     /** A name */
     public static final PdfName EF = new PdfName("EF");
-    /** A name
-     * @since	2.1.3 */
+    /**
+     * A name
+     * @since	2.1.3
+     */
     public static final PdfName EFF = new PdfName("EFF");
-    /** A name
-     * @since	2.1.3 */
+    /**
+     * A name
+     * @since	2.1.3
+     */
     public static final PdfName EFOPEN = new PdfName("EFOpen");
     /** A name */
     public static final PdfName EMBEDDEDFILE = new PdfName("EmbeddedFile");
@@ -505,9 +516,9 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName HELVETICA = new PdfName("Helvetica");
     /** A name of a base 14 type 1 font */
     public static final PdfName HELVETICA_BOLD = new PdfName("Helvetica-Bold");
-    /** This is a static PdfName PdfName of a base 14 type 1 font */
+    /** A name of a base 14 type 1 font */
     public static final PdfName HELVETICA_OBLIQUE = new PdfName("Helvetica-Oblique");
-    /** This is a static PdfName PdfName of a base 14 type 1 font */
+    /** A name of a base 14 type 1 font */
     public static final PdfName HELVETICA_BOLDOBLIQUE = new PdfName("Helvetica-BoldOblique");
     /** A name */
     public static final PdfName HID = new PdfName("Hid");
@@ -619,7 +630,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName LOCATION = new PdfName("Location");
     /** A name */
     public static final PdfName LOCK = new PdfName("Lock");
-    /** A name
+    /**
+     * A name
      * @since	2.1.2
      */
     public static final PdfName LOCKED = new PdfName("Locked");
@@ -697,11 +709,13 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName NUMS = new PdfName("Nums");
     /** A name */
     public static final PdfName O = new PdfName("O");
-    /** A name used with Document Structure
+    /**
+     * A name used with Document Structure
      * @since 2.1.5
      */
     public static final PdfName OBJ = new PdfName("Obj");
-    /** a name used with Doucment Structure
+    /**
+     * a name used with Doucment Structure
      * @since 2.1.5
      */
     public static final PdfName OBJR = new PdfName("OBJR");
@@ -773,7 +787,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName PARENT = new PdfName("Parent");
     /** A name */
     public static final PdfName PARENTTREE = new PdfName("ParentTree");
-    /** A name used in defining Document Structure.
+    /**
+     * A name used in defining Document Structure.
      * @since 2.1.5
      */
     public static final PdfName PARENTTREENEXTKEY = new PdfName( "ParentTreeNextKey" );
@@ -1138,13 +1153,15 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName ZOOM = new PdfName("Zoom");
 
+    // CLASS VARIABLES
+    
     private int hash = 0;
 
-    // constructors
-
+    // CONSTRUCTORS
 
     /**
      * Constructs a new <CODE>PdfName</CODE>. The name length will be checked.
+     * 
      * @param name the new name
      */
     public PdfName(String name) {
@@ -1154,88 +1171,49 @@ public class PdfName extends PdfObject implements Comparable{
     /**
      * Constructs a new <CODE>PdfName</CODE>.
      * @param name the new name
-     * @param lengthCheck if <CODE>true</CODE> check the length validity, if <CODE>false</CODE> the name can
-     * have any length
+     * @param lengthCheck if <CODE>true</CODE> check the length validity,
+     * if <CODE>false</CODE> the name can have any length
      */
-
     public PdfName(String name, boolean lengthCheck) {
         super(PdfObject.NAME);
         // The minimum number of characters in a name is 0, the maximum is 127 (the '/' not included)
         int length = name.length();
-        if (lengthCheck && length > 127) {
+        if (lengthCheck && length > 127)
             throw new IllegalArgumentException("The name '" + name + "' is too long (" + length + " characters).");
-        }
-        // The name has to be checked for illegal characters
-        // every special character has to be substituted
-        ByteBuffer pdfName = new ByteBuffer(length + 20);
-        pdfName.append('/');
-        char character;
-        char chars[] = name.toCharArray();
-        // loop over all the characters
-        for (int index = 0; index < length; index++) {
-            character = (char)(chars[index] & 0xff);
-            // special characters are escaped (reference manual p.39)
-            switch (character) {
-                case ' ':
-                case '%':
-                case '(':
-                case ')':
-                case '<':
-                case '>':
-                case '[':
-                case ']':
-                case '{':
-                case '}':
-                case '/':
-                case '#':
-                    pdfName.append('#');
-                    pdfName.append(Integer.toString(character, 16));
-                    break;
-                default:
-                    if (character > 126 || character < 32) {
-                        pdfName.append('#');
-                        if (character < 16)
-                            pdfName.append('0');
-                        pdfName.append(Integer.toString(character, 16));
-                    }
-                    else
-                        pdfName.append(character);
-                    break;
-            }
-        }
-        bytes = pdfName.toByteArray();
+        bytes = encodeName(name);
     }
 
     /**
      * Constructs a PdfName.
+     * 
      * @param bytes the byte representation of the name
      */
     public PdfName(byte bytes[]) {
         super(PdfObject.NAME, bytes);
     }
-    // methods
+    
+    // CLASS METHODS
 
     /**
-     * Compares this object with the specified object for order.  Returns a
-     * negative integer, zero, or a positive integer as this object is less
-     * than, equal to, or greater than the specified object.<p>
+     * Compares this object with the specified object for order.
+     * Returns a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.<p>
+     * 
      * @param object the Object to be compared.
      * @return a negative integer, zero, or a positive integer as this object
-     * 		is less than, equal to, or greater than the specified object.
+     * is less than, equal to, or greater than the specified object.
      * @throws ClassCastException if the specified object's type prevents it
-     *         from being compared to this Object.
+     * from being compared to this Object.
      */
     public int compareTo(Object object) {
         PdfName name = (PdfName) object;
-
         byte myBytes[] = bytes;
         byte objBytes[] = name.bytes;
         int len = Math.min(myBytes.length, objBytes.length);
-        for(int i=0; i<len; i++) {
-            if(myBytes[i] > objBytes[i])
+        for(int i = 0; i < len; i++) {
+            if (myBytes[i] > objBytes[i])
                 return 1;
-
-            if(myBytes[i] < objBytes[i])
+            if (myBytes[i] < objBytes[i])
                 return -1;
         }
         if (myBytes.length < objBytes.length)
@@ -1250,7 +1228,7 @@ public class PdfName extends PdfObject implements Comparable{
      *
      * @param   obj   the reference object with which to compare.
      * @return  <code>true</code> if this object is the same as the obj
-     *          argument; <code>false</code> otherwise.
+     * argument; <code>false</code> otherwise.
      */
     public boolean equals(Object obj) {
         if (this == obj)
@@ -1261,8 +1239,8 @@ public class PdfName extends PdfObject implements Comparable{
     }
 
     /**
-     * Returns a hash code value for the object. This method is
-     * supported for the benefit of hashtables such as those provided by
+     * Returns a hash code value for the object.
+     * This method is supported for the benefit of hashtables such as those provided by
      * <code>java.util.Hashtable</code>.
      *
      * @return  a hash code value for this object.
@@ -1272,15 +1250,62 @@ public class PdfName extends PdfObject implements Comparable{
         if (h == 0) {
             int ptr = 0;
             int len = bytes.length;
-
             for (int i = 0; i < len; i++)
                 h = 31*h + (bytes[ptr++] & 0xff);
             hash = h;
         }
         return h;
     }
+    
+    /**
+     * Encodes a plain name given in the unescaped form "AB CD" into "/AB#20CD".
+     * 
+     * @param name the name to encode
+     * @return the decoded name
+     */
+    public static byte[] encodeName(String name) {
+    	int length = name.length();
+    	ByteBuffer buf = new ByteBuffer(length + 20);
+    	buf.append('/');
+    	char c;
+    	char chars[] = name.toCharArray();
+    	for (int k = 0; k < length; k++) {
+    		c = (char)(chars[k] & 0xff);
+    		// Escape special characters
+    		switch (c) {
+    			case ' ':
+    			case '%':
+    			case '(':
+    			case ')':
+    			case '<':
+    			case '>':
+    			case '[':
+    			case ']':
+    			case '{':
+    			case '}':
+    			case '/':
+    			case '#':
+    				buf.append('#');
+    				buf.append(Integer.toString(c, 16));
+    				break;
+    			default:
+    				if (c >= 32 && c <= 126)
+    					buf.append(c);
+    				else {
+    					buf.append('#');
+    					if (c < 16)
+    						buf.append('0');
+    					buf.append(Integer.toString(c, 16));
+    				}
+    				break;
+    			}
+    		}
+    	return buf.toByteArray();
+    }
 
-    /** Decodes an escaped name in the form "/AB#20CD" into "AB CD".
+    /**
+     * Decodes an escaped name given in the form "/AB#20CD" into "AB CD".
+     * 
      * @param name the name to decode
      * @return the decoded name
      */
@@ -1291,7 +1316,9 @@ public class PdfName extends PdfObject implements Comparable{
             for (int k = 1; k < len; ++k) {
                 char c = name.charAt(k);
                 if (c == '#') {
-                    c = (char)((PRTokeniser.getHex(name.charAt(k + 1)) << 4) + PRTokeniser.getHex(name.charAt(k + 2)));
+                	char c1 = name.charAt(k + 1);
+                	char c2 = name.charAt(k + 2);
+                    c = (char)((PRTokeniser.getHex(c1) << 4) + PRTokeniser.getHex(c2));
                     k += 2;
                 }
                 buf.append(c);
