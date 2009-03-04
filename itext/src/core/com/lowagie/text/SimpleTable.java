@@ -246,18 +246,6 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 	}
 	
 	/**
-	 * @param rectangle
-	 * @param spacing
-	 * @return a rectangle
-	 */
-	public static SimpleTable getDimensionlessInstance(Rectangle rectangle, float spacing) {
-		SimpleTable event = new SimpleTable();
-		event.cloneNonPositionParameters(rectangle);
-		event.setCellspacing(spacing);
-		return event;
-	}
-	
-	/**
      * @see com.lowagie.text.pdf.PdfPTableEvent#tableLayout(com.lowagie.text.pdf.PdfPTable, float[][], float[], int, int, com.lowagie.text.pdf.PdfContentByte[])
  	 */
 	public void tableLayout(PdfPTable table, float[][] widths, float[] heights, int headerRows, int rowStart, PdfContentByte[] canvases) {
