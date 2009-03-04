@@ -1261,7 +1261,8 @@ public class PdfName extends PdfObject implements Comparable{
      * Encodes a plain name given in the unescaped form "AB CD" into "/AB#20CD".
      * 
      * @param name the name to encode
-     * @return the decoded name
+     * @return the encoded name
+     * @since	2.1.5
      */
     public static byte[] encodeName(String name) {
     	int length = name.length();

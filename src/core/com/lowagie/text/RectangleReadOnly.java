@@ -275,7 +275,7 @@ public class RectangleReadOnly extends Rectangle {
 	/**
 	 * Sets the color of the border.
 	 * 
-	 * @param norderColor	a <CODE>Color</CODE>
+	 * @param borderColor	a <CODE>Color</CODE>
 	 */
 
 	public void setBorderColor(Color borderColor) {
