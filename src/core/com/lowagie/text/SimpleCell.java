@@ -244,18 +244,6 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 		}
 		return cell;
 	}
-	
-	/**
-	 * @param rectangle
-	 * @param spacing
-	 * @return a rectangle
-	 */
-	public static SimpleCell getDimensionlessInstance(Rectangle rectangle, float spacing) {
-		SimpleCell event = new SimpleCell(CELL);
-		event.cloneNonPositionParameters(rectangle);
-		event.setSpacing(spacing * 2f);
-		return event;
-	}
 
 	/**
 	 * @see com.lowagie.text.pdf.PdfPCellEvent#cellLayout(com.lowagie.text.pdf.PdfPCell, com.lowagie.text.Rectangle, com.lowagie.text.pdf.PdfContentByte[])
