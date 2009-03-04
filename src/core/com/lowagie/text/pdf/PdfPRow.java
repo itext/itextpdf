@@ -204,86 +204,42 @@ public class PdfPRow {
 
 	/**
 	 * Writes the border and background of one cell in the row.
-	 * @param xPos
-	 * @param yPos
+	 * 
+	 * @param xPos The x-coordinate where the table starts on the canvas
+	 * @param yPos The y-coordinate where the table starts on the canvas
 	 * @param cell
 	 * @param canvases
 	 */
-	public void writeBorderAndBackground(float xPos, float yPos, PdfPCell cell,
-			PdfContentByte[] canvases) {
-		PdfContentByte lines = canvases[PdfPTable.LINECANVAS];
-		PdfContentByte backgr = canvases[PdfPTable.BACKGROUNDCANVAS];
-		// the coordinates of the border are retrieved
-		float x1 = cell.getLeft() + xPos;
-		float y2 = cell.getTop() + yPos;
-		float x2 = cell.getRight() + xPos;
-		float y1 = y2 - maxHeight;
-
-		// the backgroundcolor is set
+	public void writeBorderAndBackground(float xPos, float yPos, PdfPCell cell, PdfContentByte[] canvases) {
 		Color background = cell.getBackgroundColor();
-		if (background != null) {
-			backgr.setColorFill(background);
-			backgr.rectangle(x1, y1, x2 - x1, y2 - y1);
-			backgr.fill();
-        }
-		// if the element hasn't got any borders, nothing is added
-		if (cell.hasBorders()) {
-			if (cell.isUseVariableBorders()) {
-				Rectangle borderRect = new Rectangle(cell.getLeft() + xPos, cell
-						.getTop()
-						- maxHeight + yPos, cell.getRight() + xPos, cell.getTop()
-						+ yPos);
-				borderRect.cloneNonPositionParameters(cell);
-                borderRect.setBackgroundColor(null);
-				lines.rectangle(borderRect);
-			} else {
-				// the width is set to the width of the element
-				if (cell.getBorderWidth() != Rectangle.UNDEFINED) {
-					lines.setLineWidth(cell.getBorderWidth());
-				}
-				// the color is set to the color of the element
-				Color color = cell.getBorderColor();
-				if (color != null) {
-					lines.setColorStroke(color);
-				}
-
-				// if the box is a rectangle, it is added as a rectangle
-				if (cell.hasBorder(Rectangle.BOX)) {
-					lines.rectangle(x1, y1, x2 - x1, y2 - y1);
-				}
-				// if the border isn't a rectangle, the different sides are
-				// added apart
-				else {
-					if (cell.hasBorder(Rectangle.RIGHT)) {
-						lines.moveTo(x2, y1);
-						lines.lineTo(x2, y2);
-					}
-					if (cell.hasBorder(Rectangle.LEFT)) {
-						lines.moveTo(x1, y1);
-						lines.lineTo(x1, y2);
-					}
-					if (cell.hasBorder(Rectangle.BOTTOM)) {
-						lines.moveTo(x1, y1);
-						lines.lineTo(x2, y1);
-					}
-					if (cell.hasBorder(Rectangle.TOP)) {
-						lines.moveTo(x1, y2);
-						lines.lineTo(x2, y2);
-					}
-				}
-				lines.stroke();
-				if (color != null) {
-					lines.resetRGBColorStroke();
-				}
+		if (background != null || cell.hasBorders()) {
+			// Add xPos resp. yPos to the cell's coordinates for absolute coordinates
+			float right = cell.getRight() + xPos;
+			float top = cell.getTop() + yPos;
+			float left = cell.getLeft() + xPos;
+			float bottom = top - maxHeight;
+			if (background != null) {
+				PdfContentByte backgr = canvases[PdfPTable.BACKGROUNDCANVAS];
+				backgr.setColorFill(background);
+				backgr.rectangle(left, bottom, right - left, top - bottom);
+				backgr.fill();
+			}
+			if (cell.hasBorders()) {
+				Rectangle newRect = new Rectangle(left, bottom, right, top);
+				// Clone non-position parameters except for the background color
+				newRect.cloneNonPositionParameters(cell);
+				newRect.setBackgroundColor(null);
+				// Write the borders on the line canvas
+				PdfContentByte lineCanvas = canvases[PdfPTable.LINECANVAS];
+				lineCanvas.rectangle(newRect);
 			}
 		}
 	}
 
     private void saveAndRotateCanvases(PdfContentByte[] canvases, float a, float b, float c, float d, float e, float f) {
         int last = PdfPTable.TEXTCANVAS + 1;
-        if (canvasesPos == null) {
+        if (canvasesPos == null)
             canvasesPos = new int[last * 2];
-        }
         for (int k = 0; k < last; ++k) {
             ByteBuffer bb = canvases[k].getInternalBuffer();
             canvasesPos[k * 2] = bb.size();

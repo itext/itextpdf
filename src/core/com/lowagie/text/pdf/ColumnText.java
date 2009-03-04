@@ -833,90 +833,76 @@ public class ColumnText {
                 ratio = 0.001f;
         }
         float firstIndent = 0;
-        
+        PdfLine line;
+        float x1;
         int status = 0;
-        if (rectangularMode) {
-            for (;;) {
-                firstIndent = (lastWasNewline ? indent : followingIndent);
-                if (rectangularWidth <= firstIndent + rightIndent) {
-                    status = NO_MORE_COLUMN;
-                    if (bidiLine.isEmpty())
-                        status |= NO_MORE_TEXT;
-                    break;
-                }
-                if (bidiLine.isEmpty()) {
-                    status = NO_MORE_TEXT;
-                    break;
-                }
-                PdfLine line = bidiLine.processLine(leftX, rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
+        while(true) {
+        	firstIndent = (lastWasNewline ? indent : followingIndent); //
+        	if (rectangularMode) {
+        		if (rectangularWidth <= firstIndent + rightIndent) {
+        			status = NO_MORE_COLUMN;
+        			if (bidiLine.isEmpty())
+        				status |= NO_MORE_TEXT;
+        			break;
+        		}
+        		if (bidiLine.isEmpty()) {
+        			status = NO_MORE_TEXT;
+        			break;
+        		}
+                line = bidiLine.processLine(leftX, rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
                 if (line == null) {
-                    status = NO_MORE_TEXT;
-                    break;
+                	status = NO_MORE_TEXT;
+                	break;
                 }
                 float[] maxSize = line.getMaxSize();
-                if (isUseAscender() && Float.isNaN(firstLineY)) {
-                    currentLeading = line.getAscender();
-                }
-                else {
-                    currentLeading = Math.max(fixedLeading + maxSize[0] * multipliedLeading, maxSize[1]);
-                }
+                if (isUseAscender() && Float.isNaN(firstLineY))
+                	currentLeading = line.getAscender();
+                else
+                	currentLeading = Math.max(fixedLeading + maxSize[0] * multipliedLeading, maxSize[1]);
                 if (yLine > maxY || yLine - currentLeading < minY ) {
-                    status = NO_MORE_COLUMN;
-                    bidiLine.restore();
-                    break;
+                	status = NO_MORE_COLUMN;
+                	bidiLine.restore();
+                	break;
                 }
                 yLine -= currentLeading;
                 if (!simulate && !dirty) {
-                    text.beginText();
-                    dirty = true;
+                	text.beginText();
+                	dirty = true;
                 }
-                if (Float.isNaN(firstLineY)) {
-                    firstLineY = yLine;
-                }
+                if (Float.isNaN(firstLineY))
+                	firstLineY = yLine;
                 updateFilledWidth(rectangularWidth - line.widthLeft());
-                if (!simulate) {
-                    currentValues[0] = currentFont;
-                    text.setTextMatrix(leftX + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
-                    pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
-                    currentFont = (PdfFont)currentValues[0];
-                }
-                lastWasNewline = line.isNewlineSplit();
-                yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
-                ++linesWritten;
-                descender = line.getDescender();
-            }
-        }
-        else {
-            currentLeading = fixedLeading;
-            for (;;) {
-                firstIndent = (lastWasNewline ? indent : followingIndent);
-                float yTemp = yLine;
-                float xx[] = findLimitsTwoLines();
-                if (xx == null) {
-                    status = NO_MORE_COLUMN;
-                    if (bidiLine.isEmpty())
-                        status |= NO_MORE_TEXT;
-                    yLine = yTemp;
-                    break;
-                }
-                if (bidiLine.isEmpty()) {
-                    status = NO_MORE_TEXT;
-                    yLine = yTemp;
-                    break;
-                }
-                float x1 = Math.max(xx[0], xx[2]);
-                float x2 = Math.min(xx[1], xx[3]);
-                if (x2 - x1 <= firstIndent + rightIndent)
-                    continue;
-                if (!simulate && !dirty) {
-                    text.beginText();
-                    dirty = true;
-                }
-                PdfLine line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
-                if (line == null) {
-                    status = NO_MORE_TEXT;
-                    yLine = yTemp;
-                    break;
+                x1 = leftX;
+        	}
+            else {
+               	float yTemp = yLine;
+               	float xx[] = findLimitsTwoLines();
+               	if (xx == null) {
+               		status = NO_MORE_COLUMN;
+               		if (bidiLine.isEmpty())
+               			status |= NO_MORE_TEXT;
+               		yLine = yTemp;
+               		break;
+               	}
+               	if (bidiLine.isEmpty()) {
+               		status = NO_MORE_TEXT;
+               		yLine = yTemp;
+               		break;
+               	}
+               	x1 = Math.max(xx[0], xx[2]);
+                    float x2 = Math.min(xx[1], xx[3]);
+                    if (x2 - x1 <= firstIndent + rightIndent)
+                        continue;
+                    if (!simulate && !dirty) {
+                        text.beginText();
+                        dirty = true;
+                    }
+                    line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
+                    if (line == null) {
+                        status = NO_MORE_TEXT;
+                        yLine = yTemp;
+                        break;
+                    }
                 }
                 if (!simulate) {
                     currentValues[0] = currentFont;
@@ -929,7 +915,6 @@ public class ColumnText {
                 ++linesWritten;
                 descender = line.getDescender();
             }
-        }
         if (dirty) {
             text.endText();
             canvas.add(text);
@@ -939,6 +924,7 @@ public class ColumnText {
     
     /**
      * Sets the extra space between paragraphs.
+     * 
      * @return the extra space between paragraphs
      */
     public float getExtraParagraphSpace() {
@@ -947,6 +933,7 @@ public class ColumnText {
     
     /**
      * Sets the extra space between paragraphs.
+     * 
      * @param extraParagraphSpace the extra space between paragraphs
      */
     public void setExtraParagraphSpace(float extraParagraphSpace) {
@@ -954,34 +941,40 @@ public class ColumnText {
     }
     
     /**
-     * Clears the chunk array. A call to <CODE>go()</CODE> will always return
-     * NO_MORE_TEXT.
+     * Clears the chunk array.
+     * A call to <CODE>go()</CODE> will always return NO_MORE_TEXT.
      */
     public void clearChunks() {
         if (bidiLine != null)
             bidiLine.clearChunks();
     }
     
-    /** Gets the space/character extra spacing ratio for
-     * fully justified text.
+    /**
+     * Gets the space/character extra spacing ratio for fully justified text.
+     *
      * @return the space/character extra spacing ratio
      */    
     public float getSpaceCharRatio() {
         return spaceCharRatio;
     }
     
-    /** Sets the ratio between the extra word spacing and the extra character spacing
-     * when the text is fully justified.
-     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
-     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the extra character spacing
-     * will be zero.
+    /**
+     * Sets the ratio between the extra word spacing and the extra character
+     * spacing when the text is fully justified.
+     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more
+     * than extra character spacing.
+     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the
+     * extra character spacing will be zero.
+     * 
      * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
      */
     public void setSpaceCharRatio(float spaceCharRatio) {
         this.spaceCharRatio = spaceCharRatio;
     }
 
-    /** Sets the run direction. 
+    /**
+     * Sets the run direction. 
+     * 
      * @param runDirection the run direction
      */    
     public void setRunDirection(int runDirection) {
@@ -990,44 +983,56 @@ public class ColumnText {
         this.runDirection = runDirection;
     }
     
-    /** Gets the run direction.
+    /**
+     * Gets the run direction.
+     * 
      * @return the run direction
      */    
     public int getRunDirection() {
         return runDirection;
     }
     
-    /** Gets the number of lines written.
+    /**
+     * Gets the number of lines written.
+     * 
      * @return the number of lines written
      */
     public int getLinesWritten() {
         return this.linesWritten;
     }
     
-    /** Gets the arabic shaping options.
+    /**
+     * Gets the arabic shaping options.
+     * 
      * @return the arabic shaping options
      */
     public int getArabicOptions() {
         return this.arabicOptions;
     }
     
-    /** Sets the arabic shaping options. The option can be AR_NOVOWEL,
+    /**
+     * Sets the arabic shaping options. The option can be AR_NOVOWEL,
      * AR_COMPOSEDTASHKEEL and AR_LIG.
+     * 
      * @param arabicOptions the arabic shaping options
      */
     public void setArabicOptions(int arabicOptions) {
         this.arabicOptions = arabicOptions;
     }
     
-    /** Gets the biggest descender value of the last line written.
+    /**
+     * Gets the biggest descender value of the last line written.
+     * 
      * @return the biggest descender value of the last line written
      */    
     public float getDescender() {
         return descender;
     }
     
-    /** Gets the width that the line will occupy after writing.
+    /**
+     * Gets the width that the line will occupy after writing.
      * Only the width of the first line is returned.
+     * 
      * @param phrase the <CODE>Phrase</CODE> containing the line
      * @param runDirection the run direction
      * @param arabicOptions the options for the arabic shaping
@@ -1044,8 +1049,10 @@ public class ColumnText {
             return 20000 - line.widthLeft();
     }
     
-    /** Gets the width that the line will occupy after writing.
+    /**
+     * Gets the width that the line will occupy after writing.
      * Only the width of the first line is returned.
+     * 
      * @param phrase the <CODE>Phrase</CODE> containing the line
      * @return the width of the line
      */    
@@ -1053,7 +1060,9 @@ public class ColumnText {
         return getWidth(phrase, PdfWriter.RUN_DIRECTION_NO_BIDI, 0);
     }
     
-    /** Shows a line of text. Only the first line is written.
+    /**
+     * Shows a line of text. Only the first line is written.
+     * 
      * @param canvas where the text is to be written to
      * @param alignment the alignment. It is not influenced by the run direction
      * @param phrase the <CODE>Phrase</CODE> with the text
@@ -1069,26 +1078,37 @@ public class ColumnText {
             alignment = Element.ALIGN_LEFT;
         canvas.saveState();
         ColumnText ct = new ColumnText(canvas);
+        float lly = -1;
+        float ury = 2;
+        float llx;
+        float urx;
+        switch (alignment) {
+        	case Element.ALIGN_LEFT:
+        		llx = 0;
+        		urx = 20000;
+        		break;
+        	case Element.ALIGN_RIGHT:
+        		llx = -20000;
+        		urx = 0;
+        		break;
+        	default:
+        		llx = -20000;
+        		urx = 20000;
+        		break;
+        }
         if (rotation == 0) {
-            if (alignment == Element.ALIGN_LEFT)
-                ct.setSimpleColumn(phrase, x, y - 1, 20000 + x, y + 2, 2, alignment);
-            else if (alignment == Element.ALIGN_RIGHT)
-                ct.setSimpleColumn(phrase, x-20000, y-1, x, y+2, 2, alignment);
-            else
-                ct.setSimpleColumn(phrase, x-20000, y-1, x+20000, y+2, 2, alignment);
+        	llx += x;
+        	lly += y;
+        	urx += x;
+        	ury += y;
         }
         else {
             double alpha = rotation * Math.PI / 180.0;
             float cos = (float)Math.cos(alpha);
             float sin = (float)Math.sin(alpha);
             canvas.concatCTM(cos, sin, -sin, cos, x, y);
-            if (alignment == Element.ALIGN_LEFT)
-                ct.setSimpleColumn(phrase, 0, -1, 20000, 2, 2, alignment);
-            else if (alignment == Element.ALIGN_RIGHT)
-                ct.setSimpleColumn(phrase, -20000, -1, 0, 2, 2, alignment);
-            else
-                ct.setSimpleColumn(phrase, -20000, -1, 20000, 2, 2, alignment);
         }
+        ct.setSimpleColumn(phrase, llx, lly, urx, ury, 2, alignment);
         if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
             if (alignment == Element.ALIGN_LEFT)
                 alignment = Element.ALIGN_RIGHT;
