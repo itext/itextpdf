@@ -160,7 +160,7 @@ public class PngImage {
     private static final int PNG_FILTER_AVERAGE = 3;
     private static final int PNG_FILTER_PAETH = 4;
     private static final PdfName intents[] = {PdfName.PERCEPTUAL,
-        PdfName.RELATIVECALORIMETRIC,PdfName.SATURATION,PdfName.ABSOLUTECOLORIMETRIC};
+        PdfName.RELATIVECOLORIMETRIC,PdfName.SATURATION,PdfName.ABSOLUTECOLORIMETRIC};
     
     InputStream is;
     DataInputStream dataStream;
