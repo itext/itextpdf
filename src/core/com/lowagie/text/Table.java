@@ -1377,10 +1377,10 @@ public class Table extends Rectangle implements LargeElement {
     	pdfptable.setComplete(complete);
     	if (isNotAddedYet())
     		pdfptable.setSkipFirstHeader(true);
-    	SimpleTable evt = new SimpleTable();
-		evt.cloneNonPositionParameters(this);
-		evt.setCellspacing(cellspacing);
-    	pdfptable.setTableEvent(evt);
+    	SimpleTable t_evt = new SimpleTable();
+		t_evt.cloneNonPositionParameters(this);
+		t_evt.setCellspacing(cellspacing);
+    	pdfptable.setTableEvent(t_evt);
     	pdfptable.setHeaderRows(lastHeaderRow + 1);
     	pdfptable.setSplitLate(cellsFitPage);
     	pdfptable.setKeepTogether(tableFitsPage);
@@ -1408,10 +1408,10 @@ public class Table extends Rectangle implements LargeElement {
                 	else if (cell instanceof Cell) {
                 		pcell = ((Cell)cell).createPdfPCell();
                 		pcell.setPadding(cellpadding + cellspacing / 2f);
-                		SimpleCell evt = new SimpleCell(SimpleCell.CELL);
-                		evt.cloneNonPositionParameters((Cell)cell);
-                		evt.setSpacing(cellspacing * 2f);
-                        pcell.setCellEvent(evt);
+                		SimpleCell c_evt = new SimpleCell(SimpleCell.CELL);
+                		c_evt.cloneNonPositionParameters((Cell)cell);
+                		c_evt.setSpacing(cellspacing * 2f);
+                        pcell.setCellEvent(c_evt);
                 	}
                 	else {
                 		pcell = new PdfPCell();
