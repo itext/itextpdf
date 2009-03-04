@@ -655,7 +655,7 @@ public class PdfPTable implements LargeElement{
             canvas.saveState();
             float lx = (colStart == 0) ? 10000 : 0;
             float rx = (colEnd == totalCols) ? 10000 : 0;
-            canvas.rectangle(xPos - lx, -10000, w + lx + rx, 20000);
+            canvas.rectangle(xPos - lx, -10000, w + lx + rx, PdfPRow.RIGHT_LIMIT);
             canvas.clip();
             canvas.newPath();
         }

@@ -66,6 +66,8 @@ public class PdfPRow {
 
 	/** the bottom limit (bottom right y) */
 	public static final float BOTTOM_LIMIT = -(1 << 30);
+	/** the right limit */
+	public static final float RIGHT_LIMIT = 20000;
 
 	protected PdfPCell cells[];
 
@@ -160,13 +162,13 @@ public class PdfPRow {
                 	ColumnText ct = ColumnText.duplicate(cell.getColumn());
                 	float right, top, left, bottom;
                 	if (pivoted) {
-                		right = 20000;
+                		right = RIGHT_LIMIT;
                 		top = cell.getRight() - cell.getEffectivePaddingRight();
                 		left = 0;
                 		bottom = cell.getLeft() + cell.getEffectivePaddingLeft();
                 	}
                 	else {
-                		right = cell.isNoWrap() ? 20000 : cell.getRight() - cell.getEffectivePaddingRight();
+                		right = cell.isNoWrap() ? RIGHT_LIMIT : cell.getRight() - cell.getEffectivePaddingRight();
                 		top = cell.getTop() - cell.getEffectivePaddingTop();
                 		left = cell.getLeft() + cell.getEffectivePaddingLeft();
                 		bottom = cell.hasMinimumHeight() ? BOTTOM_LIMIT : (top + cell.getEffectivePaddingBottom() - cell.getFixedHeight());
@@ -437,18 +439,18 @@ public class PdfPRow {
                                 break;
                             case Element.ALIGN_RIGHT:
                             	if (cell.getRotation() == 180) {
-                            		rightLimit += 20000;
+                            		rightLimit += RIGHT_LIMIT;
                             	}
                             	else {
-                            		leftLimit -= 20000;
+                            		leftLimit -= RIGHT_LIMIT;
                             	}
                                 break;
                             default:
                             	if (cell.getRotation() == 180) {
-                            		leftLimit -= 20000;
+                            		leftLimit -= RIGHT_LIMIT;
                             	}
                             	else {
-                            		rightLimit += 20000;
+                            		rightLimit += RIGHT_LIMIT;
                             	}
                                 break;
                         }
@@ -584,7 +586,7 @@ public class PdfPRow {
 	                    y = setColumn(ct, bottom, left, top, right);
 	                    break;
 	                default:
-	                    y = setColumn(ct, left, bottom, cell.isNoWrap() ? 20000 : right, top);
+	                    y = setColumn(ct, left, bottom, cell.isNoWrap() ? RIGHT_LIMIT : right, top);
 	                    break;
 	            }
 	            int status;
