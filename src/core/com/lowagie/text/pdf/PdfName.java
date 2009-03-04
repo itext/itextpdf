@@ -868,8 +868,11 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName REGISTRY = new PdfName("Registry");
     /** A name */
     public static final PdfName REGISTRYNAME = new PdfName("RegistryName");
-    /** A name */
-    public static final PdfName RELATIVECALORIMETRIC = new PdfName("RelativeColorimetric");
+    /**
+     * A name
+     * @since	2.1.5 renamed from RELATIVECALORIMETRIC
+     */
+    public static final PdfName RELATIVECOLORIMETRIC = new PdfName("RelativeColorimetric");
     /** A name */
     public static final PdfName RENDITION = new PdfName("Rendition");
     /** A name */
