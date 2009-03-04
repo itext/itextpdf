@@ -66,7 +66,10 @@ public class PdfPRow {
 
 	/** the bottom limit (bottom right y) */
 	public static final float BOTTOM_LIMIT = -(1 << 30);
-	/** the right limit */
+	/**
+	 * the right limit
+	 * @since	2.1.5
+	 */
 	public static final float RIGHT_LIMIT = 20000;
 
 	protected PdfPCell cells[];
