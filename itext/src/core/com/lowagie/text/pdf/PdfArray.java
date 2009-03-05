@@ -66,31 +66,28 @@ import java.util.ListIterator;
  *
  * @see		PdfObject
  */
-
 public class PdfArray extends PdfObject {
 
     // membervariables
 
-/** this is the actual array of PdfObjects */
+	/** this is the actual array of PdfObjects */
     protected ArrayList arrayList;
 
     // constructors
 
-/**
- * Constructs an empty <CODE>PdfArray</CODE>-object.
- */
-
+    /**
+     * Constructs an empty <CODE>PdfArray</CODE>-object.
+     */
     public PdfArray() {
         super(ARRAY);
         arrayList = new ArrayList();
     }
 
-/**
- * Constructs an <CODE>PdfArray</CODE>-object, containing 1 <CODE>PdfObject</CODE>.
- *
- * @param	object		a <CODE>PdfObject</CODE> that has to be added to the array
- */
-
+    /**
+     * Constructs an <CODE>PdfArray</CODE>-object, containing 1 <CODE>PdfObject</CODE>.
+     *
+     * @param	object		a <CODE>PdfObject</CODE> that has to be added to the array
+     */
     public PdfArray(PdfObject object) {
         super(ARRAY);
         arrayList = new ArrayList();
@@ -122,12 +119,11 @@ public class PdfArray extends PdfObject {
         	add((PdfObject)i.next());
     }
 
-/**
- * Constructs an <CODE>PdfArray</CODE>-object, containing all the <CODE>PdfObject</CODE>s in a given <CODE>PdfArray</CODE>.
- *
- * @param	array		a <CODE>PdfArray</CODE> that has to be added to the array
- */
-
+    /**
+     * Constructs an <CODE>PdfArray</CODE>-object, containing all the <CODE>PdfObject</CODE>s in a given <CODE>PdfArray</CODE>.
+     *
+     * @param	array		a <CODE>PdfArray</CODE> that has to be added to the array
+     */
     public PdfArray(PdfArray array) {
         super(ARRAY);
         arrayList = new ArrayList(array.arrayList);
@@ -135,10 +131,9 @@ public class PdfArray extends PdfObject {
 
     // methods overriding some methods in PdfObject
 
-/**
- * Returns the PDF representation of this <CODE>PdfArray</CODE>.
- */
-
+    /**
+     * Returns the PDF representation of this <CODE>PdfArray</CODE>.
+     */
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         os.write('[');
 
@@ -175,7 +170,6 @@ public class PdfArray extends PdfObject {
      * @throws IndexOutOfBoundsException
      * @since 2.1.5
      */
-
     public PdfObject set( int idx, PdfObject obj) {
         return (PdfObject) arrayList.set( idx, obj );
     }
@@ -195,7 +189,6 @@ public class PdfArray extends PdfObject {
      * @deprecated
      * @return the internal ArrayList.  Naughty Naughty.
      */
-
     public ArrayList getArrayList() {
         return arrayList;
     }
@@ -205,7 +198,6 @@ public class PdfArray extends PdfObject {
      *
      * @return		the size of the ArrayList
      */
-
     public int size() {
         return arrayList.size();
     }
@@ -220,13 +212,12 @@ public class PdfArray extends PdfObject {
         return arrayList.isEmpty();
     }
 
-/**
- * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
- *
- * @param		object			<CODE>PdfObject</CODE> to add
- * @return		<CODE>true</CODE>
- */
-
+    /**
+     * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
+     *
+     * @param		object			<CODE>PdfObject</CODE> to add
+     * @return		<CODE>true</CODE>
+     */
     public boolean add(PdfObject object) {
         return arrayList.add(object);
     }
@@ -257,25 +248,23 @@ public class PdfArray extends PdfObject {
         arrayList.add(index, element);
     }
 
-/**
- * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
- * <P>
- * The newly added object will be the first element in the <CODE>ArrayList</CODE>.
- *
- * @param		object			<CODE>PdfObject</CODE> to add
- */
-
+    /**
+     * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
+     * <P>
+     * The newly added object will be the first element in the <CODE>ArrayList</CODE>.
+     *
+     * @param		object			<CODE>PdfObject</CODE> to add
+     */
     public void addFirst(PdfObject object) {
         arrayList.add(0, object);
     }
 
-/**
- * Checks if the <CODE>PdfArray</CODE> already contains a certain <CODE>PdfObject</CODE>.
- *
- * @param		object			<CODE>PdfObject</CODE> to check
- * @return		<CODE>true</CODE>
- */
-
+    /**
+     * Checks if the <CODE>PdfArray</CODE> already contains a certain <CODE>PdfObject</CODE>.
+     *
+     * @param		object			<CODE>PdfObject</CODE> to check
+     * @return		<CODE>true</CODE>
+     */
     public boolean contains(PdfObject object) {
         return arrayList.contains(object);
     }

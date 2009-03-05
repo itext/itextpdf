@@ -66,8 +66,10 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.codec.Base64;
 
-/** Query and change fields in existing documents either by method
+/**
+ * Query and change fields in existing documents either by method
  * calls or by FDF merging.
+ * 
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class AcroFields {
@@ -83,34 +85,42 @@ public class AcroFields {
     public static final int DA_COLOR = 2;
     private HashMap extensionFonts = new HashMap();
     private XfaForm xfa;
+    
     /**
      * A field type invalid or not found.
      */
     public static final int FIELD_TYPE_NONE = 0;
+    
     /**
      * A field type.
      */
     public static final int FIELD_TYPE_PUSHBUTTON = 1;
+    
     /**
      * A field type.
      */
     public static final int FIELD_TYPE_CHECKBOX = 2;
+    
     /**
      * A field type.
      */
     public static final int FIELD_TYPE_RADIOBUTTON = 3;
+    
     /**
      * A field type.
      */
     public static final int FIELD_TYPE_TEXT = 4;
+    
     /**
      * A field type.
      */
     public static final int FIELD_TYPE_LIST = 5;
+    
     /**
      * A field type.
      */
     public static final int FIELD_TYPE_COMBO = 6;
+    
     /**
      * A field type.
      */
@@ -208,10 +218,12 @@ public class AcroFields {
         }
     }
 
-    /** Gets the list of appearance names. Use it to get the names allowed
+    /**
+     * Gets the list of appearance names. Use it to get the names allowed
      * with radio and checkbox fields. If the /Opt key exists the values will
      * also be included. The name 'Off' may also be valid
      * even if not returned in the list.
+     * 
      * @param fieldName the fully qualified field name
      * @return the list of names or <CODE>null</CODE> if the field does not exist
      */
@@ -281,6 +293,7 @@ public class AcroFields {
      * Gets the list of export option values from fields of type list or combo.
      * If the field doesn't exist or the field type is not list or combo it will return
      * <CODE>null</CODE>.
+     * 
      * @param fieldName the field name
      * @return the list of export option values from fields of type list or combo
      */
@@ -292,6 +305,7 @@ public class AcroFields {
      * Gets the list of display option values from fields of type list or combo.
      * If the field doesn't exist or the field type is not list or combo it will return
      * <CODE>null</CODE>.
+     * 
      * @param fieldName the field name
      * @return the list of export option values from fields of type list or combo
      */
@@ -315,6 +329,7 @@ public class AcroFields {
      * af.setField("ComboBox", "b");
      * stp.close();
      * </PRE>
+     * 
      * @param fieldName the field name
      * @param exportValues the export values
      * @param displayValues the display values
@@ -359,6 +374,7 @@ public class AcroFields {
      * <p>
      * If the field does not exist or is invalid it returns
      * <CODE>FIELD_TYPE_NONE</CODE>.
+     * 
      * @param fieldName the field name
      * @return the field type
      */
@@ -400,6 +416,7 @@ public class AcroFields {
 
     /**
      * Export the fields as a FDF.
+     * 
      * @param writer the FDF writer
      */
     public void exportAsFdf(FdfWriter writer) {
@@ -421,6 +438,7 @@ public class AcroFields {
     /**
      * Renames a field. Only the last part of the name can be renamed. For example,
      * if the original field is "ab.cd.ef" only the "ef" part can be renamed.
+     * 
      * @param oldName the old field name
      * @param newName the new field name
      * @return <CODE>true</CODE> if the renaming was successful, <CODE>false</CODE>
@@ -741,7 +759,9 @@ public class AcroFields {
         }
     }
 
-    /** Gets the field value.
+    /**
+     * Gets the field value.
+     * 
      * @param name the fully qualified field name
      * @return the field value
      */
@@ -802,6 +822,7 @@ public class AcroFields {
 
     /**
      * Gets the field values of a Choice field.
+     * 
      * @param name the fully qualified field name
      * @return the field value
      * @since 2.1.3
@@ -849,6 +870,7 @@ public class AcroFields {
      * <li>bordercolor - sets the border color. The value for this entry is a <CODE>java.awt.Color</CODE>.
      *     If <code>null</code> removes the border.<br>
      * </ul>
+     * 
      * @param field the field name
      * @param name the property name
      * @param value the property value
@@ -1026,6 +1048,7 @@ public class AcroFields {
      * field dictionary. Bits equal to 1 cause the corresponding bits in Ff
      * to be set to 0.<br>
      * </ul>
+     * 
      * @param field the field name
      * @param name the property name
      * @param value the property value
@@ -1126,6 +1149,7 @@ public class AcroFields {
 
     /**
      * Merges an XML data structure into this form.
+     * 
      * @param n the top node of the data structure
      * @throws java.io.IOException on error
      * @throws com.lowagie.text.DocumentException o error
@@ -1139,7 +1163,9 @@ public class AcroFields {
         }
     }
 
-    /** Sets the fields by FDF merging.
+    /**
+     * Sets the fields by FDF merging.
+     * 
      * @param fdf the FDF form
      * @throws IOException on error
      * @throws DocumentException on error
@@ -1154,7 +1180,9 @@ public class AcroFields {
         }
     }
 
-    /** Sets the fields by XFDF merging.
+    /**
+     * Sets the fields by XFDF merging.
+     * 
      * @param xfdf the XFDF form
      * @throws IOException on error
      * @throws DocumentException on error
@@ -1190,7 +1218,9 @@ public class AcroFields {
         return setField(name, value, value);
     }
 
-    /** Sets the field value.
+    /**
+     * Sets the field value.
+     * 
      * @param name the fully qualified field name or the partial name in the case of XFA forms
      * @param value the field value
      * @throws IOException on error
@@ -1202,10 +1232,12 @@ public class AcroFields {
         return setField(name, value, null);
     }
 
-    /** Sets the field value and the display string. The display string
+    /**
+     * Sets the field value and the display string. The display string
      * is used to build the appearance in the cases where the value
      * is modified by Acrobat with JavaScript and the algorithm is
      * known.
+     * 
      * @param name the fully qualified field name or the partial name in the case of XFA forms
      * @param value the field value
      * @param display the string that is used for the appearance. If <CODE>null</CODE>
@@ -1350,6 +1382,7 @@ public class AcroFields {
     /**
      * Sets different values in a list selection.
      * No appearance is generated yet; nor does the code check if multiple select is allowed.
+     * 
      * @param	name	the name of the field
      * @param	value	an array with values that need to be selected
      * @return	true only if the field value was changed
@@ -1387,8 +1420,10 @@ public class AcroFields {
         return (NDic != null && NDic.get(check) != null);
     }
 
-    /** Gets all the fields. The fields are keyed by the fully qualified field name and
+    /**
+     * Gets all the fields. The fields are keyed by the fully qualified field name and
      * the value is an instance of <CODE>AcroFields.Item</CODE>.
+     * 
      * @return all the fields
      */
     public HashMap getFields() {
@@ -1397,6 +1432,7 @@ public class AcroFields {
 
     /**
      * Gets the field structure.
+     * 
      * @param name the name of the field
      * @return the field structure or <CODE>null</CODE> if the field
      * does not exist
@@ -1412,6 +1448,7 @@ public class AcroFields {
 
     /**
      * Gets the long XFA translated name.
+     * 
      * @param name the name of the field
      * @return the long field name
      */
@@ -1428,6 +1465,7 @@ public class AcroFields {
      * Gets the field box positions in the document. The return is an array of <CODE>float</CODE>
      * multiple of 5. For each of this groups the values are: [page, llx, lly, urx,
      * ury]. The coordinates have the page rotation in consideration.
+     * 
      * @param name the field name
      * @return the positions or <CODE>null</CODE> if field does not exist
      */
@@ -1507,6 +1545,7 @@ public class AcroFields {
 
     /**
      * Removes all the fields from <CODE>page</CODE>.
+     * 
      * @param page the page to remove the fields from
      * @return <CODE>true</CODE> if any field was removed, <CODE>false otherwise</CODE>
      */
@@ -1527,6 +1566,7 @@ public class AcroFields {
      * Removes a field from the document. If page equals -1 all the fields with this
      * <CODE>name</CODE> are removed from the document otherwise only the fields in
      * that particular page are removed.
+     * 
      * @param name the field name
      * @param page the page to remove the field from or -1 to remove it from all the pages
      * @return <CODE>true</CODE> if the field exists, <CODE>false otherwise</CODE>
@@ -1584,6 +1624,7 @@ public class AcroFields {
 
     /**
      * Removes a field from the document.
+     * 
      * @param name the field name
      * @return <CODE>true</CODE> if the field exists, <CODE>false otherwise</CODE>
      */
@@ -1591,17 +1632,21 @@ public class AcroFields {
         return removeField(name, -1);
     }
 
-    /** Gets the property generateAppearances.
+    /**
+     * Gets the property generateAppearances.
+     * 
      * @return the property generateAppearances
      */
     public boolean isGenerateAppearances() {
         return generateAppearances;
     }
 
-    /** Sets the option to generate appearances. Not generating appearances
+    /**
+     * Sets the option to generate appearances. Not generating appearances
      * will speed-up form filling but the results can be
      * unexpected in Acrobat. Don't use it unless your environment is well
      * controlled. The default is <CODE>true</CODE>.
+     * 
      * @param generateAppearances the option to generate appearances
      */
     public void setGenerateAppearances(boolean generateAppearances) {
@@ -1615,18 +1660,24 @@ public class AcroFields {
 
     /** The field representations for retrieval and modification. */
     public static class Item {
+    	
         /**
          * <CODE>writeToAll</CODE> constant.
+         * 
          *  @since 2.1.5
          */
         public static final int WRITE_MERGED = 1;
+        
         /**
          * <CODE>writeToAll</CODE> and <CODE>markUsed</CODE> constant.
+         * 
          *  @since 2.1.5
          */
         public static final int WRITE_WIDGET = 2;
+        
         /**
          * <CODE>writeToAll</CODE> and <CODE>markUsed</CODE> constant.
+         * 
          *  @since 2.1.5
          */
         public static final int WRITE_VALUE = 4;
@@ -1666,6 +1717,7 @@ public class AcroFields {
 
         /**
          * Mark all the item dictionaries used matching the given flags
+         * 
          * @since 2.1.5
          * @param writeFlags WRITE_MERGED is ignored
          */
@@ -1682,30 +1734,46 @@ public class AcroFields {
             }
         }
 
-        /** An array of <CODE>PdfDictionary</CODE> where the value tag /V
+        /**
+         * An array of <CODE>PdfDictionary</CODE> where the value tag /V
          * is present.
+         * 
          * @deprecated (will remove 'public' in the future)
          */
         public ArrayList values = new ArrayList();
-        /** An array of <CODE>PdfDictionary</CODE> with the widgets.
+        
+        /**
+         * An array of <CODE>PdfDictionary</CODE> with the widgets.
+         * 
          * @deprecated (will remove 'public' in the future)
          */
         public ArrayList widgets = new ArrayList();
-        /** An array of <CODE>PdfDictionary</CODE> with the widget references.
+        
+        /**
+         * An array of <CODE>PdfDictionary</CODE> with the widget references.
+         * 
          * @deprecated (will remove 'public' in the future)
          */
         public ArrayList widget_refs = new ArrayList();
-        /** An array of <CODE>PdfDictionary</CODE> with all the field
+        
+        /**
+         * An array of <CODE>PdfDictionary</CODE> with all the field
          * and widget tags merged.
+         * 
          * @deprecated (will remove 'public' in the future)
          */
         public ArrayList merged = new ArrayList();
-        /** An array of <CODE>Integer</CODE> with the page numbers where
+        
+        /**
+         * An array of <CODE>Integer</CODE> with the page numbers where
          * the widgets are displayed.
+         * 
          * @deprecated (will remove 'public' in the future)
          */
         public ArrayList page = new ArrayList();
-        /** An array of <CODE>Integer</CODE> with the tab order of the field in the page.
+        /**
+         * An array of <CODE>Integer</CODE> with the tab order of the field in the page.
+         * 
          * @deprecated (will remove 'public' in the future)
          */
         public ArrayList tabOrder = new ArrayList();
@@ -1713,6 +1781,7 @@ public class AcroFields {
         /**
          * Preferred method of determining the number of instances
          * of a given field.
+         * 
          * @since 2.1.5
          * @return number of instances
          */
@@ -1723,6 +1792,7 @@ public class AcroFields {
         /**
          * Remove the given instance from this item.  It is possible to
          * remove all instances using this function.
+         * 
          * @since 2.1.5
          * @param killIdx
          */
@@ -1737,6 +1807,7 @@ public class AcroFields {
 
         /**
          * Retrieve the value dictionary of the given instance
+         * 
          * @since 2.1.5
          * @param idx instance index
          * @return dictionary storing this instance's value.  It may be shared across instances.
@@ -1747,6 +1818,7 @@ public class AcroFields {
 
         /**
          * Add a value dict to this Item
+         * 
          * @since 2.1.5
          * @param value new value dictionary
          */
@@ -1756,6 +1828,7 @@ public class AcroFields {
 
         /**
          * Retrieve the widget dictionary of the given instance
+         * 
          * @since 2.1.5
          * @param idx instance index
          * @return The dictionary found in the appropriate page's Annot array.
@@ -1766,6 +1839,7 @@ public class AcroFields {
 
         /**
          * Add a widget dict to this Item
+         * 
          * @since 2.1.5
          * @param widget
          */
@@ -1775,6 +1849,7 @@ public class AcroFields {
 
         /**
          * Retrieve the reference to the given instance
+         * 
          * @since 2.1.5
          * @param idx instance index
          * @return reference to the given field instance
@@ -1785,6 +1860,7 @@ public class AcroFields {
 
         /**
          * Add a widget ref to this Item
+         * 
          * @since 2.1.5
          * @param widgRef
          */
@@ -1797,6 +1873,7 @@ public class AcroFields {
          * dictionary contains all the keys present in parent fields, though they
          * may have been overwritten (or modified?) by children.
          * Example: a merged radio field dict will contain /V
+         * 
          * @since 2.1.5
          * @param idx  instance index
          * @return the merged dictionary for the given instance
@@ -1807,6 +1884,7 @@ public class AcroFields {
 
         /**
          * Adds a merged dictionary to this Item.
+         * 
          * @since 2.1.5
          * @param mergeDict
          */
@@ -1816,6 +1894,7 @@ public class AcroFields {
 
         /**
          * Retrieve the page number of the given instance
+         * 
          * @since 2.1.5
          * @param idx
          * @return remember, pages are "1-indexed", not "0-indexed" like field instances.
@@ -1826,6 +1905,7 @@ public class AcroFields {
 
         /**
          * Adds a page to the current Item.
+         * 
          * @since 2.1.5
          * @param pg
          */
@@ -1835,6 +1915,7 @@ public class AcroFields {
 
         /**
          * forces a page value into the Item.
+         * 
          * @since 2.1.5
          * @param idx
          */
@@ -1843,7 +1924,8 @@ public class AcroFields {
         }
 
         /**
-         *
+         * Gets the tabOrder.
+         * 
          * @since 2.1.5
          * @param idx
          * @return tab index of the given field instance
@@ -1854,6 +1936,7 @@ public class AcroFields {
 
         /**
          * Adds a tab order value to this Item.
+         * 
          * @since 2.1.5
          * @param order
          */
@@ -1881,6 +1964,7 @@ public class AcroFields {
 
     /**
      * Gets the field names that have signatures and are signed.
+     * 
      * @return the field names that have signatures and are signed
      */
     public ArrayList getSignatureNames() {
@@ -1928,6 +2012,7 @@ public class AcroFields {
 
     /**
      * Gets the field names that have blank signatures.
+     * 
      * @return the field names that have blank signatures
      */
     public ArrayList getBlankSignatureNames() {
@@ -1948,6 +2033,7 @@ public class AcroFields {
 
     /**
      * Gets the signature dictionary, the one keyed by /V.
+     * 
      * @param name the field name
      * @return the signature dictionary keyed by /V or <CODE>null</CODE> if the field is not
      * a signature
@@ -1964,6 +2050,7 @@ public class AcroFields {
 
     /**
      * Checks is the signature covers the entire document or just part of it.
+     * 
      * @param name the signature field name
      * @return <CODE>true</CODE> if the signature covers the entire document,
      * <CODE>false</CODE> otherwise
@@ -2000,6 +2087,7 @@ public class AcroFields {
      *        System.out.println("Certificate failed: " + fails[1]);
      * }
      * </pre>
+     * 
      * @param name the signature field name
      * @return a <CODE>PdfPKCS7</CODE> class to continue the verification
      */
@@ -2031,6 +2119,7 @@ public class AcroFields {
      *        System.out.println("Certificate failed: " + fails[1]);
      * }
      * </pre>
+     * 
      * @param name the signature field name
      * @param provider the provider or <code>null</code> for the default provider
      * @return a <CODE>PdfPKCS7</CODE> class to continue the verification
@@ -2108,6 +2197,7 @@ public class AcroFields {
 
     /**
      * Gets the total number of revisions this document has.
+     * 
      * @return the total number of revisions
      */
     public int getTotalRevisions() {
@@ -2117,6 +2207,7 @@ public class AcroFields {
 
     /**
      * Gets this <CODE>field</CODE> revision.
+     * 
      * @param field the signature field name
      * @return the revision or zero if it's not a signature field
      */
@@ -2130,6 +2221,7 @@ public class AcroFields {
 
     /**
      * Extracts a revision from the document.
+     * 
      * @param field the signature field name
      * @return an <CODE>InputStream</CODE> covering the revision. Returns <CODE>null</CODE> if
      * it's not a signature field
@@ -2149,6 +2241,7 @@ public class AcroFields {
 
     /**
      * Gets the appearances cache.
+     * 
      * @return the appearances cache
      * @since	2.1.5	this method used to return a HashMap
      */
@@ -2178,6 +2271,7 @@ public class AcroFields {
      *    stp.close();
      * }
      * </pre>
+     * 
      * @param fieldCache a Map that will carry the cached appearances
      * @since	2.1.5	this method used to take a HashMap as parameter
      */
@@ -2187,6 +2281,7 @@ public class AcroFields {
 
     /**
      * Sets extra margins in text fields to better mimic the Acrobat layout.
+     * 
      * @param extraMarginLeft the extra margin left
      * @param extraMarginTop the extra margin top
      */
@@ -2198,6 +2293,7 @@ public class AcroFields {
     /**
      * Adds a substitution font to the list. The fonts in this list will be used if the original
      * font doesn't contain the needed glyphs.
+     * 
      * @param font the font
      */
     public void addSubstitutionFont(BaseFont font) {
@@ -2215,6 +2311,7 @@ public class AcroFields {
 
     /**
      * Holds value of property fieldCache.
+     * 
      * @since	2.1.5	this used to be a HashMap
      */
     private Map fieldCache;
@@ -2300,6 +2397,7 @@ public class AcroFields {
     /**
      * Gets the list of substitution fonts. The list is composed of <CODE>BaseFont</CODE> and can be <CODE>null</CODE>. The fonts in this list will be used if the original
      * font doesn't contain the needed glyphs.
+     * 
      * @return the list
      */
     public ArrayList getSubstitutionFonts() {
@@ -2309,6 +2407,7 @@ public class AcroFields {
     /**
      * Sets a list of substitution fonts. The list is composed of <CODE>BaseFont</CODE> and can also be <CODE>null</CODE>. The fonts in this list will be used if the original
      * font doesn't contain the needed glyphs.
+     * 
      * @param substitutionFonts the list
      */
     public void setSubstitutionFonts(ArrayList substitutionFonts) {
@@ -2317,6 +2416,7 @@ public class AcroFields {
 
     /**
      * Gets the XFA form processor.
+     * 
      * @return the XFA form processor
      */
     public XfaForm getXfa() {
@@ -2330,6 +2430,7 @@ public class AcroFields {
      * only the first one is used. This pushbutton can be changed and be used to replace
      * an existing one, with the same name or other name, as long is it is in the same document. To replace an existing pushbutton
      * call {@link #replacePushbuttonField(String,PdfFormField)}.
+     * 
      * @param field the field name that should be a pushbutton
      * @return a new pushbutton or <CODE>null</CODE> if the field is not a pushbutton
      */
@@ -2341,6 +2442,7 @@ public class AcroFields {
      * Creates a new pushbutton from an existing field. This pushbutton can be changed and be used to replace
      * an existing one, with the same name or other name, as long is it is in the same document. To replace an existing pushbutton
      * call {@link #replacePushbuttonField(String,PdfFormField,int)}.
+     * 
      * @param field the field name that should be a pushbutton
      * @param order the field order in fields with same name
      * @return a new pushbutton or <CODE>null</CODE> if the field is not a pushbutton
@@ -2412,6 +2514,7 @@ public class AcroFields {
      * Replaces the first field with a new pushbutton. The pushbutton can be created with
      * {@link #getNewPushbuttonFromField(String)} from the same document or it can be a
      * generic PdfFormField of the type pushbutton.
+     * 
      * @param field the field name
      * @param button the <CODE>PdfFormField</CODE> representing the pushbutton
      * @return <CODE>true</CODE> if the field was replaced, <CODE>false</CODE> if the field
@@ -2425,6 +2528,7 @@ public class AcroFields {
      * Replaces the designated field with a new pushbutton. The pushbutton can be created with
      * {@link #getNewPushbuttonFromField(String,int)} from the same document or it can be a
      * generic PdfFormField of the type pushbutton.
+     * 
      * @param field the field name
      * @param button the <CODE>PdfFormField</CODE> representing the pushbutton
      * @param order the field order in fields with same name
