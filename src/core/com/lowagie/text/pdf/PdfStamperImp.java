@@ -632,11 +632,10 @@ class PdfStamperImp extends PdfWriter {
         HashMap fields = acroFields.getFields();
         for (Iterator it = fields.values().iterator(); it.hasNext();) {
             AcroFields.Item item = (AcroFields.Item)it.next();
-            ArrayList pages = item.page;
-            for (int k = 0; k < pages.size(); ++k) {
-                int p = ((Integer)pages.get(k)).intValue();
+            for (int k = 0; k < item.size(); ++k) {
+                int p = item.getPage(k).intValue();
                 if (p >= page)
-                    pages.set(k, new Integer(p + 1));
+                    item.forcePage(k, p + 1);
             }
         }
     }
@@ -797,7 +796,7 @@ class PdfStamperImp extends PdfWriter {
             if (!partialFlattening.isEmpty() && !partialFlattening.contains(name))
                 continue;
             AcroFields.Item item = (AcroFields.Item) entry.getValue();
-            for (int k = 0; k < item.merged.size(); ++k) {
+            for (int k = 0; k < item.size(); ++k) {
                 PdfDictionary merged = item.getMerged(k);
                 PdfNumber ff = merged.getAsNumber(PdfName.F);
                 int flags = 0;
@@ -1159,7 +1158,7 @@ class PdfStamperImp extends PdfWriter {
                     }
                     PdfFormField field = (PdfFormField)annot;
                     if (field.getParent() == null)
-                        addDocumentField(field.getIndirectReference());
+                        addDocumentField(field.getIndRef());
                 }
                 if (annot.isAnnotation()) {
                     PdfObject pdfobj = PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
@@ -1171,7 +1170,7 @@ class PdfStamperImp extends PdfWriter {
                     }
                     else
                        annots = (PdfArray)pdfobj;
-                    annots.add(annot.getIndirectReference());
+                    annots.add(annot.getIndRef());
                     markUsed(annots);
                     if (!annot.isUsed()) {
                         PdfRectangle rect = (PdfRectangle)annot.get(PdfName.RECT);
@@ -1206,7 +1205,7 @@ class PdfStamperImp extends PdfWriter {
                 }
                 if (!annot.isUsed()) {
                     annot.setUsed();
-                    addToBody(annot, annot.getIndirectReference());
+                    addToBody(annot, annot.getIndRef());
                 }
             }
         }

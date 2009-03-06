@@ -421,14 +421,16 @@ class PdfCopyFieldsImp extends PdfWriter {
         if (pageOffset == 0)
             return;
         for (Iterator it = fd.values().iterator(); it.hasNext();) {
-            ArrayList page = ((AcroFields.Item)it.next()).page;
-            for (int k = 0; k < page.size(); ++k)
-                page.set(k, new Integer(((Integer)page.get(k)).intValue() + pageOffset));
+            AcroFields.Item item = (AcroFields.Item)it.next();
+            for (int k = 0; k < item.size(); ++k) {
+                int p = item.getPage(k).intValue();
+                item.forcePage(k, p + pageOffset);
+            }
         }
     }
 
     void createWidgets(ArrayList list, AcroFields.Item item) {
-        for (int k = 0; k < item.merged.size(); ++k) {
+        for (int k = 0; k < item.size(); ++k) {
             list.add(item.getPage(k));
             PdfDictionary merged = item.getMerged(k);
             PdfObject dr = merged.get(PdfName.DR);

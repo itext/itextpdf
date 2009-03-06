@@ -345,7 +345,7 @@ public class PdfAction extends PdfDictionary {
      * @return A Hide Action
      */
     public static PdfAction createHide(PdfAnnotation annot, boolean hide) {
-        return createHide(annot.getIndirectReference(), hide);
+        return createHide(annot.getIndRef(), hide);
     }
     
     /**
@@ -365,7 +365,7 @@ public class PdfAction extends PdfDictionary {
             if (obj instanceof String)
                 array.add(new PdfString((String)obj));
             else if (obj instanceof PdfAnnotation)
-                array.add(((PdfAnnotation)obj).getIndirectReference());
+                array.add(((PdfAnnotation)obj).getIndRef());
             else
                 throw new RuntimeException("The array must contain String or PdfAnnotation.");
         }

@@ -139,7 +139,7 @@ public class PdfAcroForm extends PdfDictionary {
      */
 
     public void addCalculationOrder(PdfFormField formField) {
-        calculationOrder.add(formField.getIndirectReference());
+        calculationOrder.add(formField.getIndRef());
     }
 
     /**

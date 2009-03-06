@@ -167,10 +167,10 @@ public class PdfAnnotationsImp {
                 }
                 PdfFormField field = (PdfFormField)dic;
                 if (field.getParent() == null)
-                    acroForm.addDocumentField(field.getIndirectReference());
+                    acroForm.addDocumentField(field.getIndRef());
             }
             if (dic.isAnnotation()) {
-                array.add(dic.getIndirectReference());
+                array.add(dic.getIndRef());
                 if (!dic.isUsed()) {
                     PdfRectangle rect = (PdfRectangle)dic.get(PdfName.RECT);
                     if (rect != null) {
@@ -203,7 +203,7 @@ public class PdfAnnotationsImp {
             if (!dic.isUsed()) {
                 dic.setUsed();
                 try {
-                    writer.addToBody(dic, dic.getIndirectReference());
+                    writer.addToBody(dic, dic.getIndRef());
                 }
                 catch (IOException e) {
                     throw new ExceptionConverter(e);
