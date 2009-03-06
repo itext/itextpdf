@@ -185,11 +185,11 @@ public class PdfDictionary extends PdfObject {
      * @param object the <CODE>PdfObject</CODE> to be associated with the
      *   <VAR>key</VAR> 
      */
-    public void put(PdfName key, PdfObject value) {
-        if (value == null || value.isNull())
+    public void put(PdfName key, PdfObject object) {
+        if (object == null || object.isNull())
             hashMap.remove(key);
         else
-            hashMap.put(key, value);
+            hashMap.put(key, object);
     }
     
     /**
@@ -254,7 +254,7 @@ public class PdfDictionary extends PdfObject {
      * This method will never return a <CODE>PdfIndirectReference</CODE>
      * object.  
      * 
-     * @param idx The index of the <CODE>PdfObject</CODE> to be returned
+     * @param key A key for the <CODE>PdfObject</CODE> to be returned
      * @return A direct <CODE>PdfObject</CODE> or <CODE>null</CODE> 
      */
     public PdfObject getDirectObject(PdfName key) {
