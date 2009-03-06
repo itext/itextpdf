@@ -53,64 +53,68 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * A <CODE>PdfString</CODE>-class is the PDF-equivalent of a JAVA-<CODE>String</CODE>-object.
+ * A <CODE>PdfString</CODE>-class is the PDF-equivalent of a
+ * JAVA-<CODE>String</CODE>-object.
  * <P>
- * A string is a sequence of characters delimited by parenthesis. If a string is too long
- * to be conveniently placed on a single line, it may be split across multiple lines by using
- * the backslash character (\) at the end of a line to indicate that the string continues
- * on the following line. Within a string, the backslash character is used as an escape to
- * specify unbalanced parenthesis, non-printing ASCII characters, and the backslash character
- * itself. Use of the \<I>ddd</I> escape sequence is the preferred way to represent characters
- * outside the printable ASCII character set.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.7'
- * section 3.2.3 (page 53-56).
+ * A string is a sequence of characters delimited by parenthesis.
+ * If a string is too long to be conveniently placed on a single line, it may
+ * be split across multiple lines by using the backslash character (\) at the
+ * end of a line to indicate that the string continues on the following line.
+ * Within a string, the backslash character is used as an escape to specify
+ * unbalanced parenthesis, non-printing ASCII characters, and the backslash
+ * character itself. Use of the \<I>ddd</I> escape sequence is the preferred
+ * way to represent characters outside the printable ASCII character set.<BR>
+ * This object is described in the 'Portable Document Format Reference Manual
+ * version 1.7' section 3.2.3 (page 53-56).
  *
- * @see		PdfObject
- * @see		BadPdfFormatException
+ * @see PdfObject
+ * @see BadPdfFormatException
  */
-
 public class PdfString extends PdfObject {
     
-    // membervariables
+    // CLASS VARIABLES
     
     /** The value of this object. */
     protected String value = NOTHING;
+    
     protected String originalValue = null;
     
     /** The encoding. */
     protected String encoding = TEXT_PDFDOCENCODING;
+    
     protected int objNum = 0;
+    
     protected int objGen = 0;
+    
     protected boolean hexWriting = false;
 
-    // constructors
+    // CONSTRUCTORS
     
     /**
      * Constructs an empty <CODE>PdfString</CODE>-object.
      */
-    
     public PdfString() {
         super(STRING);
     }
     
     /**
-     * Constructs a <CODE>PdfString</CODE>-object.
+     * Constructs a <CODE>PdfString</CODE>-object containing a string in the
+     * standard encoding <CODE>TEXT_PDFDOCENCODING</CODE>.
      *
-     * @param		value		the content of the string
+     * @param value    the content of the string
      */
-    
     public PdfString(String value) {
         super(STRING);
         this.value = value;
     }
     
     /**
-     * Constructs a <CODE>PdfString</CODE>-object.
+     * Constructs a <CODE>PdfString</CODE>-object containing a string in the
+     * specified encoding.
      *
-     * @param		value		the content of the string
-     * @param		encoding	an encoding
+     * @param value    the content of the string
+     * @param encoding an encoding
      */
-    
     public PdfString(String value, String encoding) {
         super(STRING);
         this.value = value;
@@ -120,9 +124,8 @@ public class PdfString extends PdfObject {
     /**
      * Constructs a <CODE>PdfString</CODE>-object.
      *
-     * @param		bytes	an array of <CODE>byte</CODE>
+     * @param bytes    an array of <CODE>byte</CODE>
      */
-    
     public PdfString(byte[] bytes) {
         super(STRING);
         value = PdfEncodings.convertToString(bytes, null);
@@ -132,17 +135,19 @@ public class PdfString extends PdfObject {
     // methods overriding some methods in PdfObject
     
     /**
-     * Returns the PDF representation of this <CODE>PdfString</CODE>.
+     * Writes the PDF representation of this <CODE>PdfString</CODE> as an array
+     * of <CODE>byte</CODE> to the specified <CODE>OutputStream</CODE>.
+     * 
+     * @param writer for backwards compatibility
+     * @param os The <CODE>OutputStream</CODE> to write the bytes to.
      */
-    
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         byte b[] = getBytes();
         PdfEncryption crypto = null;
         if (writer != null)
             crypto = writer.getEncryption();
-        if (crypto != null && !crypto.isEmbeddedFilesOnly()) {
+        if (crypto != null && !crypto.isEmbeddedFilesOnly())
             b = crypto.encryptByteArray(b);
-        }
         if (hexWriting) {
             ByteBuffer buf = new ByteBuffer();
             buf.append('<');
@@ -157,27 +162,32 @@ public class PdfString extends PdfObject {
     }
     
     /**
-     * Returns the <CODE>String</CODE> value of the <CODE>PdfString</CODE>-object.
+     * Returns the <CODE>String</CODE> value of this <CODE>PdfString</CODE>-object.
      *
-     * @return		a <CODE>String</CODE>
+     * @return A <CODE>String</CODE>
      */
-    
     public String toString() {
         return value;
+    }
+    
+    public byte[] getBytes() {
+        if (bytes == null) {
+            if (encoding != null && encoding.equals(TEXT_UNICODE) && PdfEncodings.isPdfDocEncoding(value))
+                bytes = PdfEncodings.convertToBytes(value, TEXT_PDFDOCENCODING);
+            else
+                bytes = PdfEncodings.convertToBytes(value, encoding);
+        }
+        return bytes;
     }
     
     // other methods
     
     /**
-     * Gets the encoding of this string.
+     * Returns the Unicode <CODE>String</CODE> value of this
+     * <CODE>PdfString</CODE>-object.
      *
-     * @return		a <CODE>String</CODE>
+     * @return A <CODE>String</CODE>
      */
-    
-    public String getEncoding() {
-        return encoding;
-    }
-    
     public String toUnicodeString() {
         if (encoding != null && encoding.length() != 0)
             return value;
@@ -188,11 +198,23 @@ public class PdfString extends PdfObject {
             return PdfEncodings.convertToString(bytes, PdfObject.TEXT_PDFDOCENCODING);
     }
     
+    /**
+     * Gets the encoding of this string.
+     *
+     * @return a <CODE>String</CODE>
+     */
+    public String getEncoding() {
+        return encoding;
+    }
+    
     void setObjNum(int objNum, int objGen) {
         this.objNum = objNum;
         this.objGen = objGen;
     }
     
+    /**
+     * Decrypt an encrypted <CODE>PdfString</CODE>
+     */
     void decrypt(PdfReader reader) {
         PdfEncryption decrypt = reader.getDecrypt();
         if (decrypt != null) {
@@ -204,16 +226,6 @@ public class PdfString extends PdfObject {
         }
     }
    
-    public byte[] getBytes() {
-        if (bytes == null) {
-            if (encoding != null && encoding.equals(TEXT_UNICODE) && PdfEncodings.isPdfDocEncoding(value))
-                bytes = PdfEncodings.convertToBytes(value, TEXT_PDFDOCENCODING);
-            else
-                bytes = PdfEncodings.convertToBytes(value, encoding);
-        }
-        return bytes;
-    }
-    
     public byte[] getOriginalBytes() {
         if (originalValue == null)
             return getBytes();
