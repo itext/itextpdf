@@ -159,9 +159,8 @@ public class PdfPRow {
 						- cell.getEffectivePaddingBottom() - refHeight);
 			}
 			else {
-				if (pivoted && cell.getFixedHeight() > 0) {
+				if (pivoted && cell.hasFixedHeight())
 					cell.setBottom(cell.getTop() - cell.getFixedHeight());
-				}
 				else {
 					ColumnText ct = ColumnText.duplicate(cell.getColumn());
 					float right, top, left, bottom;
@@ -183,9 +182,8 @@ public class PdfPRow {
 					} catch (DocumentException e) {
 						throw new ExceptionConverter(e);
 					}
-					if (pivoted) {
+					if (pivoted)
 						cell.setBottom(cell.getTop() - cell.getEffectivePaddingTop() - cell.getEffectivePaddingBottom() - ct.getFilledWidth());
-					}
 					else {
 						float yLine = ct.getYLine();
 						if (cell.isUseDescender())
