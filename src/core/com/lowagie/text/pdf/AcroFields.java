@@ -233,17 +233,18 @@ public class AcroFields {
             return null;
         HashMap names = new HashMap();
         PdfDictionary vals = fd.getValue(0);
-        PdfObject opts = vals.getDirectObject(PdfName.OPT);
         PdfString stringOpt = vals.getAsString( PdfName.OPT );
         if (stringOpt != null) {
-                names.put(((PdfString)opts).toUnicodeString(), null);
+        	names.put(stringOpt.toUnicodeString(), null);
         }
         else {
-            PdfArray arrayOpt = vals.getAsArray( PdfName.OPT );
-            for (int k = 0; k < arrayOpt.size(); ++k) {
-                PdfString valStr = arrayOpt.getAsString( k );
-                if (valStr != null)
-                    names.put(valStr.toUnicodeString(), null);
+            PdfArray arrayOpt = vals.getAsArray(PdfName.OPT);
+            if (arrayOpt != null) {
+            	for (int k = 0; k < arrayOpt.size(); ++k) {
+            		PdfString valStr = arrayOpt.getAsString( k );
+            		if (valStr != null)
+            			names.put(valStr.toUnicodeString(), null);
+            	}
             }
         }
         for (int k = 0; k < fd.size(); ++k) {
