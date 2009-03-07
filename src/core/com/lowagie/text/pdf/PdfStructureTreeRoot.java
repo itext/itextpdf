@@ -161,6 +161,10 @@ public class PdfStructureTreeRoot extends PdfStructureBase {
         Integer i = (Integer)pageMCIDs.get( new Integer( pageIdx ) );
         //Integer i = new Integer( pageMCIDs.get( pageIdx ) );
         PdfArray ar = (PdfArray)parentTree.get( i );
+        if (ar == null) {
+        	ar = new PdfArray();
+        	parentTree.put(new Integer(pageIdx), ar);
+        }
         ar.add(struc);
         return ar.size() - 1;
     }

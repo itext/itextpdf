@@ -188,7 +188,7 @@ public class PdfStructureElement extends PdfStructureBase {
      */
     public void setMarkedContent( PdfIndirectReference pageRef ) {
         checkKids();
-
+ 
         // if there's already a 'K', but checkKids didn't throw, then
         // this element is being used more than once.  Ergo, K is either a
         // PdfNumber, or an array.
@@ -211,6 +211,7 @@ public class PdfStructureElement extends PdfStructureBase {
         } else {
           // No existing 'k', so we can use a simple numeric value.
           put( PdfName.K,  new PdfNumber( getMCID() ) );
+          put(PdfName.PG, pageRef);
         }
     }
 
