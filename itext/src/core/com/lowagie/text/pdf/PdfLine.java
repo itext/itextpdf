@@ -458,8 +458,8 @@ public class PdfLine {
             if (!chunk.isImage()) {
                 normal_leading = Math.max(chunk.font().size(), normal_leading);
             }
-            else if (chunk.changeLeading()) {
-                image_leading = Math.max(chunk.getImage().getScaledHeight() + chunk.getImageOffsetY() , image_leading);
+            else {
+                image_leading = Math.max(chunk.getImage().getScaledHeight() + chunk.getImageOffsetY(), image_leading);
             }
         }
         return new float[]{normal_leading, image_leading};
