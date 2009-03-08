@@ -150,6 +150,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 				|| element.type() == Element.MARKED
 				|| element.type() == Element.JPEG
 				|| element.type() == Element.JPEG2000
+				|| element.type() == Element.JBIG2
 				|| element.type() == Element.IMGRAW
 				|| element.type() == Element.IMGTEMPLATE) {
 			content.add(element);
@@ -242,18 +243,6 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 			cell.addElement(element);
 		}
 		return cell;
-	}
-	
-	/**
-	 * @param rectangle
-	 * @param spacing
-	 * @return a rectangle
-	 */
-	public static SimpleCell getDimensionlessInstance(Rectangle rectangle, float spacing) {
-		SimpleCell event = new SimpleCell(CELL);
-		event.cloneNonPositionParameters(rectangle);
-		event.setSpacing(spacing * 2f);
-		return event;
 	}
 
 	/**

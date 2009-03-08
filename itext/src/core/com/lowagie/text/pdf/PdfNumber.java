@@ -54,26 +54,29 @@ package com.lowagie.text.pdf;
  * <P>
  * Integers may be specified by signed or unsigned constants. Reals may only be
  * in decimal format.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.7'
- * section 3.3.2 (page 52-53).
+ * This object is described in the 'Portable Document Format Reference Manual
+ * version 1.7' section 3.3.2 (page 52-53).
  *
  * @see		PdfObject
  * @see		BadPdfFormatException
  */
-
 public class PdfNumber extends PdfObject {
+
+    // CLASS VARIABLES
     
-/** actual value of this <CODE>PdfNumber</CODE>, represented as a <CODE>double</CODE> */
+    /**
+     * actual value of this <CODE>PdfNumber</CODE>, represented as a
+     * <CODE>double</CODE>
+     */
     private double value;
     
-    // constructors
+    // CONSTRUCTORS
     
-/**
- * Constructs a <CODE>PdfNumber</CODE>-object.
- *
- * @param		content			value of the new <CODE>PdfNumber</CODE>-object
- */
-    
+    /**
+     * Constructs a <CODE>PdfNumber</CODE>-object.
+     *
+     * @param content    value of the new <CODE>PdfNumber</CODE>-object
+     */
     public PdfNumber(String content) {
         super(NUMBER);
         try {
@@ -85,72 +88,71 @@ public class PdfNumber extends PdfObject {
         }
     }
     
-/**
- * Constructs a new INTEGER <CODE>PdfNumber</CODE>-object.
- *
- * @param		value				value of the new <CODE>PdfNumber</CODE>-object
- */
-    
+    /**
+     * Constructs a new <CODE>PdfNumber</CODE>-object of type integer.
+     *
+     * @param value    value of the new <CODE>PdfNumber</CODE>-object
+     */
     public PdfNumber(int value) {
         super(NUMBER);
         this.value = value;
         setContent(String.valueOf(value));
     }
     
-/**
- * Constructs a new REAL <CODE>PdfNumber</CODE>-object.
- *
- * @param		value				value of the new <CODE>PdfNumber</CODE>-object
- */
-    
+    /**
+     * Constructs a new <CODE>PdfNumber</CODE>-object of type real.
+     *
+     * @param value    value of the new <CODE>PdfNumber</CODE>-object
+     */
     public PdfNumber(double value) {
         super(NUMBER);
         this.value = value;
         setContent(ByteBuffer.formatDouble(value));
     }
     
-/**
- * Constructs a new REAL <CODE>PdfNumber</CODE>-object.
- *
- * @param		value				value of the new <CODE>PdfNumber</CODE>-object
- */
-    
+    /**
+     * Constructs a new <CODE>PdfNumber</CODE>-object of type real.
+     *
+     * @param value    value of the new <CODE>PdfNumber</CODE>-object
+     */
     public PdfNumber(float value) {
         this((double)value);
     }
     
     // methods returning the value of this object
     
-/**
- * Returns the primitive <CODE>int</CODE> value of this object.
- *
- * @return		a value
- */
-    
+    /**
+     * Returns the primitive <CODE>int</CODE> value of this object.
+     *
+     * @return The value as <CODE>int</CODE>
+     */
     public int intValue() {
         return (int) value;
     }
     
-/**
- * Returns the primitive <CODE>double</CODE> value of this object.
- *
- * @return		a value
- */
-    
+    /**
+     * Returns the primitive <CODE>double</CODE> value of this object.
+     *
+     * @return The value as <CODE>double</CODE>
+     */
     public double doubleValue() {
         return value;
     }
     
+    /**
+     * Returns the primitive <CODE>float</CODE> value of this object.
+     *
+     * @return The value as <CODE>float</CODE>
+     */
     public float floatValue() {
         return (float)value;
     }
     
     // other methods
     
-/**
- * Increments the value of the <CODE>PdfNumber</CODE>-object with 1.
- */
-    
+    /**
+     * Increments the value of the <CODE>PdfNumber</CODE>-object by 1.
+     */
     public void increment() {
         value += 1.0;
         setContent(ByteBuffer.formatDouble(value));

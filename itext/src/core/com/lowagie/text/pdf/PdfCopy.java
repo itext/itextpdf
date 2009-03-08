@@ -260,7 +260,7 @@ public class PdfCopy extends PdfWriter {
     protected PdfArray copyArray(PdfArray in) throws IOException, BadPdfFormatException {
         PdfArray out = new PdfArray();
         
-        for (Iterator i = in.getArrayList().iterator(); i.hasNext();) {
+        for (Iterator i = in.listIterator(); i.hasNext();) {
             PdfObject value = (PdfObject)i.next();
             out.add(copyObject(value));
         }
@@ -364,6 +364,21 @@ public class PdfCopy extends PdfWriter {
     }
     
     /**
+     * Adds a blank page.
+     * @param	rect The page dimension
+     * @param	rotation The rotation angle in degrees
+     * @since	2.1.5
+     */
+    public void addPage(Rectangle rect, int rotation) {
+    	PdfRectangle mediabox = new PdfRectangle(rect, rotation);
+    	PageResources resources = new PageResources();
+    	PdfPage page = new PdfPage(mediabox, new HashMap(), resources.getResources(), 0);
+    	page.put(PdfName.TABS, getTabs());
+    	root.addPage(page);
+    	++currentPageNumber;
+    }
+    
+    /**
      * Copy the acroform for an input document. Note that you can only have one,
      * we make no effort to merge them.
      * @param reader The reader of the input file that is being copied
@@ -430,9 +445,8 @@ public class PdfCopy extends PdfWriter {
             PdfTemplate template = (PdfTemplate)it.next();
             PdfFormField.mergeResources(dr, (PdfDictionary)template.getResources());
         }
-        if (dr.get(PdfName.ENCODING) == null)
-            dr.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
-        PdfDictionary fonts = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
+        // if (dr.get(PdfName.ENCODING) == null) dr.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
+        PdfDictionary fonts = dr.getAsDict(PdfName.FONT);
         if (fonts == null) {
             fonts = new PdfDictionary();
             dr.put(PdfName.FONT, fonts);
@@ -549,7 +563,7 @@ public class PdfCopy extends PdfWriter {
             if (under == null) {
                 if (pageResources == null) {
                     pageResources = new PageResources();
-                    PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(pageN.get(PdfName.RESOURCES));
+                    PdfDictionary resources = pageN.getAsDict(PdfName.RESOURCES);
                     pageResources.setOriginalResources(resources, cstp.namePtr);
                 }
                 under = new PdfCopy.StampContent(cstp, pageResources);
@@ -561,7 +575,7 @@ public class PdfCopy extends PdfWriter {
             if (over == null) {
                 if (pageResources == null) {
                     pageResources = new PageResources();
-                    PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(pageN.get(PdfName.RESOURCES));
+                    PdfDictionary resources = pageN.getAsDict(PdfName.RESOURCES);
                     pageResources.setOriginalResources(resources, cstp.namePtr);
                 }
                 over = new PdfCopy.StampContent(cstp, pageResources);
@@ -680,7 +694,7 @@ public class PdfCopy extends PdfWriter {
                         }
                         PdfFormField field = (PdfFormField)annot;
                         if (field.getParent() == null)
-                            addDocumentField(field.getIndirectReference());
+                            addDocumentField(field.getIndRef());
                     }
                     if (annot.isAnnotation()) {
                         PdfObject pdfobj = PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
@@ -691,7 +705,7 @@ public class PdfCopy extends PdfWriter {
                         }
                         else 
                             annots = (PdfArray)pdfobj;
-                        annots.add(annot.getIndirectReference());
+                        annots.add(annot.getIndRef());
                         if (!annot.isUsed()) {
                             PdfRectangle rect = (PdfRectangle)annot.get(PdfName.RECT);
                             if (rect != null && (rect.left() != 0 || rect.right() != 0 || rect.top() != 0 || rect.bottom() != 0)) {
@@ -725,7 +739,7 @@ public class PdfCopy extends PdfWriter {
                     }
                     if (!annot.isUsed()) {
                         annot.setUsed();
-                        cstp.addToBody(annot, annot.getIndirectReference());
+                        cstp.addToBody(annot, annot.getIndRef());
                     }
                 }
             }

@@ -228,6 +228,22 @@ public class FdfWriter {
         return setField(field, new PdfString(value, PdfObject.TEXT_UNICODE));
     }
     
+    /**
+     * Sets the field value as a <CODE>PDFAction</CODE>. 
+     * For example, this method allows setting a form submit button action using {@link PdfAction#createSubmitForm(String, Object[], int)}.
+     * This method creates an <CODE>A</CODE> entry for the specified field in the underlying FDF file.
+     * Method contributed by Philippe Laflamme (plaflamme)
+     * @param field the fully qualified field name
+     * @param action the field's action
+     * @return <CODE>true</CODE> if the value was inserted,
+     * <CODE>false</CODE> if the name is incompatible with
+     * an existing field
+     * @since	2.1.5
+     */
+    public boolean setFieldAsAction(String field, PdfAction action) {
+    	return setField(field, action);
+    }
+    
     /** Sets all the fields from this <CODE>FdfReader</CODE>
      * @param fdf the <CODE>FdfReader</CODE>
      */    
@@ -240,6 +256,10 @@ public class FdfWriter {
             PdfObject v = dic.get(PdfName.V);
             if (v != null) {
                 setField(key, v);
+            }
+            v = dic.get(PdfName.A); // (plaflamme)
+            if (v != null) {
+            	setField(key, v);
             }
         }
     }
@@ -259,7 +279,7 @@ public class FdfWriter {
             Map.Entry entry = (Map.Entry)it.next();
             String fn = (String)entry.getKey();
             AcroFields.Item item = (AcroFields.Item)entry.getValue();
-            PdfDictionary dic = (PdfDictionary)item.merged.get(0);
+            PdfDictionary dic = item.getMerged(0);
             PdfObject v = PdfReader.getPdfObjectRelease(dic.get(PdfName.V));
             if (v == null)
                 continue;
@@ -322,6 +342,9 @@ public class FdfWriter {
                 dic.put(PdfName.T, new PdfString(key, PdfObject.TEXT_UNICODE));
                 if (v instanceof HashMap) {
                     dic.put(PdfName.KIDS, calculate((HashMap)v));
+                }
+                else if(v instanceof PdfAction) {	// (plaflamme)
+                   	dic.put(PdfName.A, (PdfAction)v);
                 }
                 else {
                     dic.put(PdfName.V, (PdfObject)v);

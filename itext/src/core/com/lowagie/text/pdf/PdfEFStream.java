@@ -52,7 +52,6 @@ package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
@@ -96,8 +95,8 @@ public class PdfEFStream extends PdfStream {
                 if (PdfName.CRYPT.equals(filter))
                     crypto = null;
                 else if (filter.isArray()) {
-                    ArrayList af = ((PdfArray)filter).getArrayList();
-                    if (!af.isEmpty() && PdfName.CRYPT.equals(af.get(0)))
+                    PdfArray a = (PdfArray)filter;
+                    if (!a.isEmpty() && PdfName.CRYPT.equals(a.getPdfObject(0)))
                         crypto = null;
                 }
             }
@@ -135,8 +134,11 @@ public class PdfEFStream extends PdfStream {
             OutputStream fout = osc;
             if (crypto != null)
                 fout = ose = crypto.getEncryptionStream(fout);
-            if (compressed)    
-                fout = def = new DeflaterOutputStream(fout, new Deflater(compressionLevel), 0x8000);
+            Deflater deflater = null;
+            if (compressed) {
+                deflater = new Deflater(compressionLevel);
+                fout = def = new DeflaterOutputStream(fout, deflater, 0x8000);
+            }
             
             byte buf[] = new byte[4192];
             while (true) {
@@ -146,8 +148,10 @@ public class PdfEFStream extends PdfStream {
                 fout.write(buf, 0, n);
                 rawLength += n;
             }
-            if (def != null)
+            if (def != null) {
                 def.finish();
+                deflater.end();
+            }
             if (ose != null)
                 ose.finish();
             inputStreamLength = osc.getCounter();

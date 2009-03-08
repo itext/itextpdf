@@ -251,8 +251,14 @@ public class ColumnText {
     /** if true, first line height is adjusted so that the max ascender touches the top */
     private boolean useAscender = false;
 
+    /** Holds value of property filledWidth. */
+    private float filledWidth;
+
+    private boolean adjustFirstLine = true;
+    
     /**
      * Creates a <CODE>ColumnText</CODE>.
+     * 
      * @param canvas the place where the text will be written to. Can
      * be a template.
      */
@@ -260,7 +266,9 @@ public class ColumnText {
         this.canvas = canvas;
     }
     
-    /** Creates an independent duplicated of the instance <CODE>org</CODE>.
+    /**
+     * Creates an independent duplicated of the instance <CODE>org</CODE>.
+     * 
      * @param org the original <CODE>ColumnText</CODE>
      * @return the duplicated
      */    
@@ -270,7 +278,9 @@ public class ColumnText {
         return ct;
     }
     
-    /** Makes this instance an independent copy of <CODE>org</CODE>.
+    /**
+     * Makes this instance an independent copy of <CODE>org</CODE>.
+     * 
      * @param org the original <CODE>ColumnText</CODE>
      * @return itself
      */    
@@ -345,6 +355,7 @@ public class ColumnText {
     /**
      * Adds a <CODE>Phrase</CODE> to the current text array.
      * Will not have any effect if addElement() was called before.
+     * 
      * @param phrase the text
      */
     public void addText(Phrase phrase) {
@@ -363,6 +374,7 @@ public class ColumnText {
     /**
      * Replaces the current text array with this <CODE>Phrase</CODE>.
      * Anything added previously with addElement() is lost.
+     * 
      * @param phrase the text
      */
     public void setText(Phrase phrase) {
@@ -378,6 +390,7 @@ public class ColumnText {
     /**
      * Adds a <CODE>Chunk</CODE> to the current text array.
      * Will not have any effect if addElement() was called before.
+     * 
      * @param chunk the text
      */
     public void addText(Chunk chunk) {
@@ -392,6 +405,7 @@ public class ColumnText {
      * <CODE>Graphic</CODE>.
      * <p>
      * It removes all the text placed with <CODE>addText()</CODE>.
+     * 
      * @param element the <CODE>Element</CODE>
      */    
     public void addElement(Element element) {
@@ -459,6 +473,7 @@ public class ColumnText {
      * <p>
      * Each array element will contain a <CODE>float[4]</CODE> representing
      * the line x = ax + b.
+     * 
      * @param cLine the column array
      * @return the converted array
      */
@@ -493,6 +508,7 @@ public class ColumnText {
     /**
      * Finds the intersection between the <CODE>yLine</CODE> and the column. It will
      * set the <CODE>lineStatus</CODE> appropriately.
+     * 
      * @param wall the column to intersect
      * @return the x coordinate of the intersection
      */
@@ -515,6 +531,7 @@ public class ColumnText {
     /**
      * Finds the intersection between the <CODE>yLine</CODE> and the two
      * column bounds. It will set the <CODE>lineStatus</CODE> appropriately.
+     * 
      * @return a <CODE>float[2]</CODE>with the x coordinates of the intersection
      */
     protected float[] findLimitsOneLine() {
@@ -529,8 +546,9 @@ public class ColumnText {
     
     /**
      * Finds the intersection between the <CODE>yLine</CODE>,
-     * the <CODE>yLine-leading</CODE>and the two
-     * column bounds. It will set the <CODE>lineStatus</CODE> appropriately.
+     * the <CODE>yLine-leading</CODE>and the two column bounds.
+     * It will set the <CODE>lineStatus</CODE> appropriately.
+     * 
      * @return a <CODE>float[4]</CODE>with the x coordinates of the intersection
      */
     protected float[] findLimitsTwoLines() {
@@ -563,6 +581,7 @@ public class ColumnText {
      * Sets the columns bounds. Each column bound is described by a
      * <CODE>float[]</CODE> with the line points [x1,y1,x2,y2,...].
      * The array must have at least 4 elements.
+     * 
      * @param leftLine the left column bound
      * @param rightLine the right column bound
      */
@@ -577,6 +596,7 @@ public class ColumnText {
     
     /**
      * Simplified method for rectangular columns.
+     * 
      * @param phrase a <CODE>Phrase</CODE>
      * @param llx the lower left x corner
      * @param lly the lower left y corner
@@ -592,6 +612,7 @@ public class ColumnText {
     
     /**
      * Simplified method for rectangular columns.
+     * 
      * @param llx the lower left x corner
      * @param lly the lower left y corner
      * @param urx the upper right x corner
@@ -607,6 +628,7 @@ public class ColumnText {
     
     /**
      * Simplified method for rectangular columns.
+     * 
      * @param llx
      * @param lly
      * @param urx
@@ -623,8 +645,10 @@ public class ColumnText {
             rectangularWidth = 0;
         rectangularMode = true;
     }
+    
     /**
-     * Sets the leading to fixed
+     * Sets the leading to fixed.
+     * 
      * @param leading the leading
      */
     public void setLeading(float leading) {
@@ -636,6 +660,7 @@ public class ColumnText {
      * Sets the leading fixed and variable. The resultant leading will be
      * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
      * size of the biggest font in the line.
+     * 
      * @param fixedLeading the fixed leading
      * @param multipliedLeading the variable leading
      */
@@ -645,7 +670,8 @@ public class ColumnText {
     }
     
     /**
-     * Gets the fixed leading
+     * Gets the fixed leading.
+     * 
      * @return the leading
      */
     public float getLeading() {
@@ -653,7 +679,8 @@ public class ColumnText {
     }
     
     /**
-     * Gets the variable leading
+     * Gets the variable leading.
+     * 
      * @return the leading
      */
     public float getMultipliedLeading() {
@@ -662,6 +689,7 @@ public class ColumnText {
     
     /**
      * Sets the yLine. The line will be written to yLine-leading.
+     * 
      * @param yLine the yLine
      */
     public void setYLine(float yLine) {
@@ -670,6 +698,7 @@ public class ColumnText {
     
     /**
      * Gets the yLine.
+     * 
      * @return the yLine
      */
     public float getYLine() {
@@ -678,6 +707,7 @@ public class ColumnText {
     
     /**
      * Sets the alignment.
+     * 
      * @param alignment the alignment
      */
     public void setAlignment(int alignment) {
@@ -686,6 +716,7 @@ public class ColumnText {
     
     /**
      * Gets the alignment.
+     * 
      * @return the alignment
      */
     public int getAlignment() {
@@ -694,6 +725,7 @@ public class ColumnText {
     
     /**
      * Sets the first paragraph line indent.
+     * 
      * @param indent the indent
      */
     public void setIndent(float indent) {
@@ -703,6 +735,7 @@ public class ColumnText {
     
     /**
      * Gets the first paragraph line indent.
+     * 
      * @return the indent
      */
     public float getIndent() {
@@ -711,6 +744,7 @@ public class ColumnText {
     
     /**
      * Sets the following paragraph lines indent.
+     * 
      * @param indent the indent
      */
     public void setFollowingIndent(float indent) {
@@ -720,6 +754,7 @@ public class ColumnText {
     
     /**
      * Gets the following paragraph lines indent.
+     * 
      * @return the indent
      */
     public float getFollowingIndent() {
@@ -728,6 +763,7 @@ public class ColumnText {
     
     /**
      * Sets the right paragraph lines indent.
+     * 
      * @param indent the indent
      */
     public void setRightIndent(float indent) {
@@ -737,6 +773,7 @@ public class ColumnText {
     
     /**
      * Gets the right paragraph lines indent.
+     * 
      * @return the indent
      */
     public float getRightIndent() {
@@ -745,6 +782,7 @@ public class ColumnText {
     
     /**
      * Outputs the lines to the document. It is equivalent to <CODE>go(false)</CODE>.
+     * 
      * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
      * and/or <CODE>NO_MORE_COLUMN</CODE>
      * @throws DocumentException on error
@@ -795,90 +833,76 @@ public class ColumnText {
                 ratio = 0.001f;
         }
         float firstIndent = 0;
-        
+        PdfLine line;
+        float x1;
         int status = 0;
-        if (rectangularMode) {
-            for (;;) {
-                firstIndent = (lastWasNewline ? indent : followingIndent);
-                if (rectangularWidth <= firstIndent + rightIndent) {
-                    status = NO_MORE_COLUMN;
-                    if (bidiLine.isEmpty())
-                        status |= NO_MORE_TEXT;
-                    break;
-                }
-                if (bidiLine.isEmpty()) {
-                    status = NO_MORE_TEXT;
-                    break;
-                }
-                PdfLine line = bidiLine.processLine(leftX, rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
+        while(true) {
+        	firstIndent = (lastWasNewline ? indent : followingIndent); //
+        	if (rectangularMode) {
+        		if (rectangularWidth <= firstIndent + rightIndent) {
+        			status = NO_MORE_COLUMN;
+        			if (bidiLine.isEmpty())
+        				status |= NO_MORE_TEXT;
+        			break;
+        		}
+        		if (bidiLine.isEmpty()) {
+        			status = NO_MORE_TEXT;
+        			break;
+        		}
+                line = bidiLine.processLine(leftX, rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
                 if (line == null) {
-                    status = NO_MORE_TEXT;
-                    break;
+                	status = NO_MORE_TEXT;
+                	break;
                 }
-                float maxSize = line.getMaxSizeSimple();
-                if (isUseAscender() && Float.isNaN(firstLineY)) {
-                    currentLeading = line.getAscender();
-                }
-                else {
-                    currentLeading = fixedLeading + maxSize * multipliedLeading;
-                }
+                float[] maxSize = line.getMaxSize();
+                if (isUseAscender() && Float.isNaN(firstLineY))
+                	currentLeading = line.getAscender();
+                else
+                	currentLeading = Math.max(fixedLeading + maxSize[0] * multipliedLeading, maxSize[1]);
                 if (yLine > maxY || yLine - currentLeading < minY ) {
-                    status = NO_MORE_COLUMN;
-                    bidiLine.restore();
-                    break;
+                	status = NO_MORE_COLUMN;
+                	bidiLine.restore();
+                	break;
                 }
                 yLine -= currentLeading;
                 if (!simulate && !dirty) {
-                    text.beginText();
-                    dirty = true;
+                	text.beginText();
+                	dirty = true;
                 }
-                if (Float.isNaN(firstLineY)) {
-                    firstLineY = yLine;
-                }
+                if (Float.isNaN(firstLineY))
+                	firstLineY = yLine;
                 updateFilledWidth(rectangularWidth - line.widthLeft());
-                if (!simulate) {
-                    currentValues[0] = currentFont;
-                    text.setTextMatrix(leftX + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
-                    pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
-                    currentFont = (PdfFont)currentValues[0];
-                }
-                lastWasNewline = line.isNewlineSplit();
-                yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
-                ++linesWritten;
-                descender = line.getDescender();
-            }
-        }
-        else {
-            currentLeading = fixedLeading;
-            for (;;) {
-                firstIndent = (lastWasNewline ? indent : followingIndent);
-                float yTemp = yLine;
-                float xx[] = findLimitsTwoLines();
-                if (xx == null) {
-                    status = NO_MORE_COLUMN;
-                    if (bidiLine.isEmpty())
-                        status |= NO_MORE_TEXT;
-                    yLine = yTemp;
-                    break;
-                }
-                if (bidiLine.isEmpty()) {
-                    status = NO_MORE_TEXT;
-                    yLine = yTemp;
-                    break;
-                }
-                float x1 = Math.max(xx[0], xx[2]);
-                float x2 = Math.min(xx[1], xx[3]);
-                if (x2 - x1 <= firstIndent + rightIndent)
-                    continue;
-                if (!simulate && !dirty) {
-                    text.beginText();
-                    dirty = true;
-                }
-                PdfLine line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
-                if (line == null) {
-                    status = NO_MORE_TEXT;
-                    yLine = yTemp;
-                    break;
+                x1 = leftX;
+        	}
+            else {
+               	float yTemp = yLine;
+               	float xx[] = findLimitsTwoLines();
+               	if (xx == null) {
+               		status = NO_MORE_COLUMN;
+               		if (bidiLine.isEmpty())
+               			status |= NO_MORE_TEXT;
+               		yLine = yTemp;
+               		break;
+               	}
+               	if (bidiLine.isEmpty()) {
+               		status = NO_MORE_TEXT;
+               		yLine = yTemp;
+               		break;
+               	}
+               	x1 = Math.max(xx[0], xx[2]);
+                    float x2 = Math.min(xx[1], xx[3]);
+                    if (x2 - x1 <= firstIndent + rightIndent)
+                        continue;
+                    if (!simulate && !dirty) {
+                        text.beginText();
+                        dirty = true;
+                    }
+                    line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
+                    if (line == null) {
+                        status = NO_MORE_TEXT;
+                        yLine = yTemp;
+                        break;
+                    }
                 }
                 if (!simulate) {
                     currentValues[0] = currentFont;
@@ -891,7 +915,6 @@ public class ColumnText {
                 ++linesWritten;
                 descender = line.getDescender();
             }
-        }
         if (dirty) {
             text.endText();
             canvas.add(text);
@@ -901,6 +924,7 @@ public class ColumnText {
     
     /**
      * Sets the extra space between paragraphs.
+     * 
      * @return the extra space between paragraphs
      */
     public float getExtraParagraphSpace() {
@@ -909,6 +933,7 @@ public class ColumnText {
     
     /**
      * Sets the extra space between paragraphs.
+     * 
      * @param extraParagraphSpace the extra space between paragraphs
      */
     public void setExtraParagraphSpace(float extraParagraphSpace) {
@@ -916,34 +941,40 @@ public class ColumnText {
     }
     
     /**
-     * Clears the chunk array. A call to <CODE>go()</CODE> will always return
-     * NO_MORE_TEXT.
+     * Clears the chunk array.
+     * A call to <CODE>go()</CODE> will always return NO_MORE_TEXT.
      */
     public void clearChunks() {
         if (bidiLine != null)
             bidiLine.clearChunks();
     }
     
-    /** Gets the space/character extra spacing ratio for
-     * fully justified text.
+    /**
+     * Gets the space/character extra spacing ratio for fully justified text.
+     *
      * @return the space/character extra spacing ratio
      */    
     public float getSpaceCharRatio() {
         return spaceCharRatio;
     }
     
-    /** Sets the ratio between the extra word spacing and the extra character spacing
-     * when the text is fully justified.
-     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
-     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the extra character spacing
-     * will be zero.
+    /**
+     * Sets the ratio between the extra word spacing and the extra character
+     * spacing when the text is fully justified.
+     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more
+     * than extra character spacing.
+     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the
+     * extra character spacing will be zero.
+     * 
      * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
      */
     public void setSpaceCharRatio(float spaceCharRatio) {
         this.spaceCharRatio = spaceCharRatio;
     }
 
-    /** Sets the run direction. 
+    /**
+     * Sets the run direction. 
+     * 
      * @param runDirection the run direction
      */    
     public void setRunDirection(int runDirection) {
@@ -952,44 +983,56 @@ public class ColumnText {
         this.runDirection = runDirection;
     }
     
-    /** Gets the run direction.
+    /**
+     * Gets the run direction.
+     * 
      * @return the run direction
      */    
     public int getRunDirection() {
         return runDirection;
     }
     
-    /** Gets the number of lines written.
+    /**
+     * Gets the number of lines written.
+     * 
      * @return the number of lines written
      */
     public int getLinesWritten() {
         return this.linesWritten;
     }
     
-    /** Gets the arabic shaping options.
+    /**
+     * Gets the arabic shaping options.
+     * 
      * @return the arabic shaping options
      */
     public int getArabicOptions() {
         return this.arabicOptions;
     }
     
-    /** Sets the arabic shaping options. The option can be AR_NOVOWEL,
+    /**
+     * Sets the arabic shaping options. The option can be AR_NOVOWEL,
      * AR_COMPOSEDTASHKEEL and AR_LIG.
+     * 
      * @param arabicOptions the arabic shaping options
      */
     public void setArabicOptions(int arabicOptions) {
         this.arabicOptions = arabicOptions;
     }
     
-    /** Gets the biggest descender value of the last line written.
+    /**
+     * Gets the biggest descender value of the last line written.
+     * 
      * @return the biggest descender value of the last line written
      */    
     public float getDescender() {
         return descender;
     }
     
-    /** Gets the width that the line will occupy after writing.
+    /**
+     * Gets the width that the line will occupy after writing.
      * Only the width of the first line is returned.
+     * 
      * @param phrase the <CODE>Phrase</CODE> containing the line
      * @param runDirection the run direction
      * @param arabicOptions the options for the arabic shaping
@@ -1006,8 +1049,10 @@ public class ColumnText {
             return 20000 - line.widthLeft();
     }
     
-    /** Gets the width that the line will occupy after writing.
+    /**
+     * Gets the width that the line will occupy after writing.
      * Only the width of the first line is returned.
+     * 
      * @param phrase the <CODE>Phrase</CODE> containing the line
      * @return the width of the line
      */    
@@ -1015,7 +1060,9 @@ public class ColumnText {
         return getWidth(phrase, PdfWriter.RUN_DIRECTION_NO_BIDI, 0);
     }
     
-    /** Shows a line of text. Only the first line is written.
+    /**
+     * Shows a line of text. Only the first line is written.
+     * 
      * @param canvas where the text is to be written to
      * @param alignment the alignment. It is not influenced by the run direction
      * @param phrase the <CODE>Phrase</CODE> with the text
@@ -1031,26 +1078,37 @@ public class ColumnText {
             alignment = Element.ALIGN_LEFT;
         canvas.saveState();
         ColumnText ct = new ColumnText(canvas);
+        float lly = -1;
+        float ury = 2;
+        float llx;
+        float urx;
+        switch (alignment) {
+        	case Element.ALIGN_LEFT:
+        		llx = 0;
+        		urx = 20000;
+        		break;
+        	case Element.ALIGN_RIGHT:
+        		llx = -20000;
+        		urx = 0;
+        		break;
+        	default:
+        		llx = -20000;
+        		urx = 20000;
+        		break;
+        }
         if (rotation == 0) {
-            if (alignment == Element.ALIGN_LEFT)
-                ct.setSimpleColumn(phrase, x, y - 1, 20000 + x, y + 2, 2, alignment);
-            else if (alignment == Element.ALIGN_RIGHT)
-                ct.setSimpleColumn(phrase, x-20000, y-1, x, y+2, 2, alignment);
-            else
-                ct.setSimpleColumn(phrase, x-20000, y-1, x+20000, y+2, 2, alignment);
+        	llx += x;
+        	lly += y;
+        	urx += x;
+        	ury += y;
         }
         else {
             double alpha = rotation * Math.PI / 180.0;
             float cos = (float)Math.cos(alpha);
             float sin = (float)Math.sin(alpha);
             canvas.concatCTM(cos, sin, -sin, cos, x, y);
-            if (alignment == Element.ALIGN_LEFT)
-                ct.setSimpleColumn(phrase, 0, -1, 20000, 2, 2, alignment);
-            else if (alignment == Element.ALIGN_RIGHT)
-                ct.setSimpleColumn(phrase, -20000, -1, 0, 2, 2, alignment);
-            else
-                ct.setSimpleColumn(phrase, -20000, -1, 20000, 2, 2, alignment);
         }
+        ct.setSimpleColumn(phrase, llx, lly, urx, ury, 2, alignment);
         if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
             if (alignment == Element.ALIGN_LEFT)
                 alignment = Element.ALIGN_RIGHT;
@@ -1069,7 +1127,9 @@ public class ColumnText {
         canvas.restoreState();
     }
 
-    /** Shows a line of text. Only the first line is written.
+    /**
+     * Shows a line of text. Only the first line is written.
+     * 
      * @param canvas where the text is to be written to
      * @param alignment the alignment
      * @param phrase the <CODE>Phrase</CODE> with the text
@@ -1087,6 +1147,7 @@ public class ColumnText {
         linesWritten = 0;
         descender = 0;
         boolean firstPass = adjustFirstLine;
+        
         main_loop:
         while (true) {
             if (compositeElements.isEmpty())
@@ -1112,7 +1173,7 @@ public class ColumnText {
                         compositeColumn.setSpaceCharRatio(spaceCharRatio);
                         compositeColumn.addText(para);
                         if (!firstPass) {
-                            yLine -= para.spacingBefore();
+                            yLine -= para.getSpacingBefore();
                         }
                         createHere = true;
                     }
@@ -1145,7 +1206,7 @@ public class ColumnText {
                 if ((status & NO_MORE_TEXT) != 0) {
                     compositeColumn = null;
                     compositeElements.removeFirst();
-                    yLine -= para.spacingAfter();
+                    yLine -= para.getSpacingAfter();
                 }
                 if ((status & NO_MORE_COLUMN) != 0) {
                     return NO_MORE_COLUMN;
@@ -1208,7 +1269,7 @@ public class ColumnText {
                         compositeColumn.setSpaceCharRatio(spaceCharRatio);
                         compositeColumn.addText(item);
                         if (!firstPass) {
-                            yLine -= item.spacingBefore();
+                            yLine -= item.getSpacingBefore();
                         }
                         createHere = true;
                     }
@@ -1246,11 +1307,10 @@ public class ColumnText {
                 if ((status & NO_MORE_TEXT) != 0) {
                     compositeColumn = null;
                     ++listIdx;
-                    yLine -= item.spacingAfter();
+                    yLine -= item.getSpacingAfter();
                 }
-                if ((status & NO_MORE_COLUMN) != 0) {
+                if ((status & NO_MORE_COLUMN) != 0)
                     return NO_MORE_COLUMN;
-                }
             }
             else if (element.type() == Element.PTABLE) {
             	// don't write anything in the current column if there's no more space available
@@ -1268,15 +1328,13 @@ public class ColumnText {
                 
                 // offsets
                 float yTemp = yLine;
-                if (!firstPass && listIdx == 0) {
+                if (!firstPass && listIdx == 0)
                     yTemp -= table.spacingBefore();
-                }
                 float yLineWrite = yTemp;
                 
                 // don't write anything in the current column if there's no more space available
-                if (yTemp < minY || yTemp > maxY) {
+                if (yTemp < minY || yTemp > maxY)
                     return NO_MORE_COLUMN;
-                }
                 
                 // coordinates
                 currentLeading = 0;
@@ -1315,21 +1373,18 @@ public class ColumnText {
                 
                 // how many real rows (not header or footer rows) fit on a page?
                 int k;
-                if (listIdx < headerRows) {
+                if (listIdx < headerRows)
                     listIdx = headerRows;
-                }
-                if (!table.isComplete()) {
+                if (!table.isComplete())
                 	yTemp -= footerHeight;
-                }
                 for (k = listIdx; k < table.size(); ++k) {
                     float rowHeight = table.getRowHeight(k);
                     if (yTemp - rowHeight < minY)
                         break;
                     yTemp -= rowHeight;
                 }
-                if (!table.isComplete()) {
+                if (!table.isComplete())
                 	yTemp += footerHeight;
-                }
                 // either k is the first row that doesn't fit on the page (break);
                 if (k < table.size()) {
                 	if (table.isSplitRows() && (!table.isSplitLate() || (k == listIdx && firstPass))) {
@@ -1344,9 +1399,8 @@ public class ColumnText {
                         float h = yTemp - minY;
                         PdfPRow newRow = table.getRow(k).splitRow(h);
                         if (newRow == null) {
-                            if (k == listIdx) {
+                            if (k == listIdx)
                                 return NO_MORE_COLUMN;
-                            }
                         }
                         else {
                             yTemp = minY;
@@ -1358,9 +1412,8 @@ public class ColumnText {
                         splittedRow = false;
                         continue;
                     }
-                    else if (k == listIdx && !firstPass && (!table.isSplitRows() || table.isSplitLate()) && (table.getFooterRows() == 0 || table.isComplete())) {
+                    else if (k == listIdx && !firstPass && (!table.isSplitRows() || table.isSplitLate()) && (table.getFooterRows() == 0 || table.isComplete()))
                         return NO_MORE_COLUMN;
-                    }
                 }
                 // or k is the number of rows in the table (for loop was done).
                 firstPass = false;
@@ -1388,22 +1441,18 @@ public class ColumnText {
                             sub.add(headerRow);
                         }
                     }
-                    else {
+                    else
                         nt.setHeaderRows(footerRows);
-                    }
                     // then we add the real content
-                    for (int j = listIdx; j < k; ++j) {
+                    for (int j = listIdx; j < k; ++j)
                         sub.add(rows.get(j));
-                    }
                     // if k < table.size(), we must indicate that the new table is complete;
                     // otherwise no footers will be added (because iText thinks the table continues on the same page)
-                    if (k < table.size()) {
+                    if (k < table.size())
                     	nt.setComplete(true);
-                    }
                     // we add the footer rows if necessary (not for incomplete tables)
-                    for (int j = 0; j < footerRows && nt.isComplete(); ++j) {
+                    for (int j = 0; j < footerRows && nt.isComplete(); ++j)
                         sub.add(rows.get(j + realHeaderRows));
-                    }
 
                     // we need a correction if the last row needs to be extended
                     float rowHeight = 0;
@@ -1424,13 +1473,11 @@ public class ColumnText {
                         last.setMaxHeights(rowHeight);
                     }
                 }
-                else if (table.isExtendLastRow() && minY > PdfPRow.BOTTOM_LIMIT) {
+                else if (table.isExtendLastRow() && minY > PdfPRow.BOTTOM_LIMIT)
                     yTemp = minY;
-                }
                 yLine = yTemp;
-                if (!(skipHeader || table.isComplete())) {
+                if (!(skipHeader || table.isComplete()))
                 	yLine += footerHeight;
-                }
                 if (k >= table.size()) {
                     yLine -= table.spacingAfter();
                     compositeElements.removeFirst();
@@ -1461,6 +1508,8 @@ public class ColumnText {
     
     /**
      * Gets the canvas.
+     * If a set of four canvases exists, the TEXTCANVAS is returned.
+     * 
      * @return a PdfContentByte.
      */
     public PdfContentByte getCanvas() {
@@ -1469,6 +1518,8 @@ public class ColumnText {
     
     /**
      * Sets the canvas.
+     * If before a set of four canvases was set, it is being unset.
+     * 
      * @param canvas
      */
     public void setCanvas(PdfContentByte canvas) {
@@ -1480,6 +1531,7 @@ public class ColumnText {
     
     /**
      * Sets the canvases.
+     * 
      * @param canvases
      */
     public void setCanvases(PdfContentByte[] canvases) {
@@ -1491,6 +1543,7 @@ public class ColumnText {
     
     /**
      * Gets the canvases.
+     * 
      * @return an array of PdfContentByte
      */
     public PdfContentByte[] getCanvases() {
@@ -1499,6 +1552,7 @@ public class ColumnText {
     
     /**
      * Checks if the element has a height of 0.
+     * 
      * @return true or false
      * @since 2.1.2
      */
@@ -1508,6 +1562,7 @@ public class ColumnText {
     
     /**
      * Checks if UseAscender is enabled/disabled.
+     * 
      * @return true is the adjustment of the first line height is based on max ascender.
      */
     public boolean isUseAscender() {
@@ -1516,10 +1571,11 @@ public class ColumnText {
 
     /**
      * Enables/Disables adjustment of first line height based on max ascender.
-     * @param use enable adjustment if true
+     * 
+     * @param useAscender	enable adjustment if true
      */
-    public void setUseAscender(boolean use) {
-        useAscender = use;
+    public void setUseAscender(boolean useAscender) {
+        this.useAscender = useAscender;
     }
     
     /**
@@ -1530,31 +1586,27 @@ public class ColumnText {
     }
 
     /**
-     * Holds value of property filledWidth.
-     */
-    private float filledWidth;
-
-    /**
      * Gets the real width used by the largest line.
+     * 
      * @return the real width used by the largest line
      */
     public float getFilledWidth() {
-
         return this.filledWidth;
     }
 
     /**
-     * Sets the real width used by the largest line. Only used to set it
-     * to zero to start another measurement.
+     * Sets the real width used by the largest line.
+     * Only used to set it to zero to start another measurement.
+     *
      * @param filledWidth the real width used by the largest line
      */
     public void setFilledWidth(float filledWidth) {
-
         this.filledWidth = filledWidth;
     }
     
     /**
      * Replaces the <CODE>filledWidth</CODE> if greater than the existing one.
+     *
      * @param w the new <CODE>filledWidth</CODE> if greater than the existing one
      */
     public void updateFilledWidth(float w) {
@@ -1562,21 +1614,24 @@ public class ColumnText {
             filledWidth = w;
     }
 
-    private boolean adjustFirstLine = true;
 
     /**
      * Gets the first line adjustment property.
+     * 
      * @return the first line adjustment property.
      */
     public boolean isAdjustFirstLine() {
-        return this.adjustFirstLine;
+        return adjustFirstLine;
     }
 
     /**
-     * Sets the first line adjustment. Some objects have properties, like spacing before, that
-     * behave differently if the object is the first to be written after go() or not. The first line adjustment is 
-     * <CODE>true</CODE> by default but can be changed if several objects are to be placed one
-     * after the other in the same column calling go() several times.
+     * Sets the first line adjustment.
+     * Some objects have properties, like spacing before, that behave
+     * differently if the object is the first to be written after go() or not.
+     * The first line adjustment is <CODE>true</CODE> by default but can be
+     * changed if several objects are to be placed one after the other in the
+     * same column calling go() several times.
+     * 
      * @param adjustFirstLine <CODE>true</CODE> to adjust the first line, <CODE>false</CODE> otherwise
      */
     public void setAdjustFirstLine(boolean adjustFirstLine) {

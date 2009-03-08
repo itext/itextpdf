@@ -57,7 +57,6 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 
 import com.lowagie.text.pdf.PRIndirectReference;
 import com.lowagie.text.pdf.PdfArray;
@@ -76,6 +75,7 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
 import com.lowagie.text.pdf.codec.BmpImage;
 import com.lowagie.text.pdf.codec.CCITTG4Encoder;
 import com.lowagie.text.pdf.codec.GifImage;
+import com.lowagie.text.pdf.codec.JBIG2Image;
 import com.lowagie.text.pdf.codec.PngImage;
 import com.lowagie.text.pdf.codec.TiffImage;
 
@@ -160,6 +160,12 @@ public abstract class Image extends Rectangle {
 	/** type of image */
 	public static final int ORIGINAL_JPEG2000 = 8;
 
+	/**
+	 * type of image
+	 * @since	2.1.5
+	 */
+	public static final int ORIGINAL_JBIG2 = 9;
+	
     // member variables
 
 	/** The image type. */
@@ -244,6 +250,11 @@ public abstract class Image extends Rectangle {
 			int c2 = is.read();
 			int c3 = is.read();
 			int c4 = is.read();
+			// jbig2
+			int c5 = is.read();
+			int c6 = is.read();
+			int c7 = is.read();
+			int c8 = is.read();
 			is.close();
 
 			is = null;
@@ -289,6 +300,24 @@ public abstract class Image extends Rectangle {
 						ra.close();
 				}
 
+			}
+			if ( c1 == 0x97 && c2 == 'J' && c3 == 'B' && c4 == '2' &&
+					c5 == '\r' && c6 == '\n' && c7 == 0x1a && c8 == '\n' ) {
+				RandomAccessFileOrArray ra = null;
+				try {
+					if (url.getProtocol().equals("file")) {
+						String file = url.getFile();
+						file = Utilities.unEscapeURL(file);
+			            ra = new RandomAccessFileOrArray(file);
+					} else
+						ra = new RandomAccessFileOrArray(url);
+					Image img = JBIG2Image.getJbig2Image(ra, 1);
+					img.url = url;
+					return img;
+				} finally {
+						if (ra != null)
+							ra.close();
+				}
 			}
 			throw new IOException(url.toString()
 					+ " is not a recognized imageformat.");
@@ -375,6 +404,36 @@ public abstract class Image extends Rectangle {
 				}
 
 			}
+			if ( c1 == 0x97 && c2 == 'J' && c3 == 'B' && c4 == '2' ) {
+				is = new java.io.ByteArrayInputStream(imgb);
+				is.skip(4);
+				int c5 = is.read();
+				int c6 = is.read();
+				int c7 = is.read();
+				int c8 = is.read();
+				if ( c5 == '\r' && c6 == '\n' && c7 == 0x1a && c8 == '\n' ) {
+					int file_header_flags = is.read();
+					int number_of_pages = -1;
+					if ( (file_header_flags & 0x2) == 0x2 ) {
+						number_of_pages = (is.read() << 24) | (is.read() << 16) | (is.read() << 8) | is.read();
+					}
+					is.close();
+					// a jbig2 file with a file header.  the header is the only way we know here.                                                           
+					// embedded jbig2s don't have a header, have to create them by explicit use of Jbig2Image?
+					// nkerr, 2008-12-05  see also the getInstance(URL)
+					RandomAccessFileOrArray ra = null;
+					try {
+						ra = new RandomAccessFileOrArray(imgb);
+						Image img = JBIG2Image.getJbig2Image(ra, 1);
+						if (img.getOriginalData() == null)
+							img.setOriginalData(imgb);
+						return img;
+					} finally {
+						if (ra != null)
+							ra.close();
+					}
+				}
+			}
 			throw new IOException(
 					"The byte array is not a recognized imageformat.");
 		} finally {
@@ -406,6 +465,19 @@ public abstract class Image extends Rectangle {
 		return Image.getInstance(width, height, components, bpc, data, null);
 	}
 
+	/**
+	 * Creates a JBIG2 Image.
+	 * @param	width	the width of the image
+	 * @param	height	the height of the image
+	 * @param	data	the raw image data
+	 * @param	globals	JBIG2 globals
+	 * @since	2.1.5
+	 */
+	public static Image getInstance(int width, int height, byte[] data, byte[] globals) {
+		Image img = new ImgJBIG2(width, height, data, globals);
+		return img;
+	}
+	
 	/**
 	 * Creates an Image with CCITT G3 or G4 compression. It assumes that the
 	 * data bytes are already compressed.
@@ -1795,31 +1867,35 @@ public abstract class Image extends Rectangle {
     public void simplifyColorspace() {
         if (additional == null)
             return;
-        PdfObject value = additional.get(PdfName.COLORSPACE);
-        if (value == null || !value.isArray())
+        PdfArray value = additional.getAsArray(PdfName.COLORSPACE);
+        if (value == null)
             return;
         PdfObject cs = simplifyColorspace(value);
+        PdfObject newValue;
         if (cs.isName())
-            value = cs;
+            newValue = cs;
         else {
-            PdfObject first = (PdfObject)(((PdfArray)value).getArrayList().get(0));
+            newValue = value;
+            PdfName first = value.getAsName(0);
             if (PdfName.INDEXED.equals(first)) {
-                ArrayList array = ((PdfArray)value).getArrayList();
-                if (array.size() >= 2 && ((PdfObject)array.get(1)).isArray()) {
-                     array.set(1, simplifyColorspace((PdfObject)array.get(1)));
+                if (value.size() >= 2) {
+                    PdfArray second = value.getAsArray(1);
+                    if (second != null) {
+                        value.set(1, simplifyColorspace(second));
+                    }
                 }
             }
         }
-        additional.put(PdfName.COLORSPACE, value);
+        additional.put(PdfName.COLORSPACE, newValue);
     }
 	
 	/**
 	 * Gets a PDF Name from an array or returns the object that was passed.
 	 */
-    private PdfObject simplifyColorspace(PdfObject obj) {
-        if (obj == null || !obj.isArray())
+    private PdfObject simplifyColorspace(PdfArray obj) {
+        if (obj == null)
             return obj;
-        PdfObject first = (PdfObject)(((PdfArray)obj).getArrayList().get(0));
+        PdfName first = obj.getAsName(0);
         if (PdfName.CALGRAY.equals(first))
             return PdfName.DEVICEGRAY;
         else if (PdfName.CALRGB.equals(first))

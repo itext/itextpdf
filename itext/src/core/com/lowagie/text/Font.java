@@ -537,9 +537,7 @@ public class Font implements Comparable {
 	 *            the style.
 	 */
 	public void setStyle(int style) {
-		if (this.style == UNDEFINED)
-			this.style = NORMAL;
-		this.style |= style;
+		this.style = style;
 	}
 
 	/**

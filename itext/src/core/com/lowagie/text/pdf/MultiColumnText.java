@@ -195,7 +195,7 @@ public class MultiColumnText implements Element {
      */
     public void addColumn(float[] left, float[] right) {
         ColumnDef nextDef = new ColumnDef(left, right);
-        simple = nextDef.isSimple();
+        if (!nextDef.isSimple()) simple = false;
         columnDefs.add(nextDef);
     }
 
@@ -230,6 +230,26 @@ public class MultiColumnText implements Element {
         }
     }
 
+    /**
+     * Adds a <CODE>Phrase</CODE> to the current text array.
+     * Will not have any effect if addElement() was called before.
+     * @param phrase the text
+     * @since	2.1.5
+     */
+    public void addText(Phrase phrase) {
+    	columnText.addText(phrase);
+    }
+    
+    /**
+     * Adds a <CODE>Chunk</CODE> to the current text array.
+     * Will not have any effect if addElement() was called before.
+     * @param chunk the text
+     * @since	2.1.5
+     */
+    public void addText(Chunk chunk) {
+    	columnText.addText(chunk);
+    }
+    
     /**
      * Add an element to be rendered in a column.
      * Note that you can only add a <CODE>Phrase</CODE>
@@ -570,6 +590,7 @@ public class MultiColumnText implements Element {
 
         private float[] resolvePositions(float[] positions) {
             if (!isSimple()) {
+                positions[1] = top;
                 return positions;
             }
             if (top == AUTOMATIC) {

@@ -160,7 +160,7 @@ public class PngImage {
     private static final int PNG_FILTER_AVERAGE = 3;
     private static final int PNG_FILTER_PAETH = 4;
     private static final PdfName intents[] = {PdfName.PERCEPTUAL,
-        PdfName.RELATIVECALORIMETRIC,PdfName.SATURATION,PdfName.ABSOLUTECALORIMETRIC};
+        PdfName.RELATIVECOLORIMETRIC,PdfName.SATURATION,PdfName.ABSOLUTECOLORIMETRIC};
     
     InputStream is;
     DataInputStream dataStream;
@@ -759,6 +759,8 @@ public class PngImage {
                     int idx = out[srcX];
                     if (idx < trans.length)
                         v[0] = trans[idx];
+                    else
+                    	v[0] = 255; // Patrick Valsecchi
                     setPixel(smask, v, 0, 1, dstX, y, 8, yStride);
                     dstX += step;
                 }
@@ -772,8 +774,7 @@ public class PngImage {
                     dstX = xOffset;
                     for (srcX = 0; srcX < width; srcX++) {
                         int idx = out[srcX];
-                        if (idx < trans.length)
-                            v[0] = (trans[idx] == 0 ? 1 : 0);
+                        v[0] = ((idx < trans.length && trans[idx] == 0) ? 1 : 0);
                         setPixel(smask, v, 0, 1, dstX, y, 1, yStride);
                         dstX += step;
                     }

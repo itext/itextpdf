@@ -104,8 +104,8 @@ public class RtfParagraph extends RtfPhrase {
             this.paragraphStyle.setFirstLineIndent((int) (paragraph.getFirstLineIndent() * RtfElement.TWIPS_FACTOR));
             this.paragraphStyle.setIndentLeft((int) (paragraph.getIndentationLeft() * RtfElement.TWIPS_FACTOR));
             this.paragraphStyle.setIndentRight((int) (paragraph.getIndentationRight() * RtfElement.TWIPS_FACTOR));
-            this.paragraphStyle.setSpacingBefore((int) (paragraph.spacingBefore() * RtfElement.TWIPS_FACTOR));
-            this.paragraphStyle.setSpacingAfter((int) (paragraph.spacingAfter() * RtfElement.TWIPS_FACTOR));
+            this.paragraphStyle.setSpacingBefore((int) (paragraph.getSpacingBefore() * RtfElement.TWIPS_FACTOR));
+            this.paragraphStyle.setSpacingAfter((int) (paragraph.getSpacingAfter() * RtfElement.TWIPS_FACTOR));
             if(paragraph.hasLeading()) {
                 this.paragraphStyle.setLineLeading((int) (paragraph.getLeading() * RtfElement.TWIPS_FACTOR));
             }

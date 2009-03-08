@@ -56,6 +56,8 @@ package com.lowagie.text.rtf.document;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.junit.Test;
+
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfTestBase;
 
@@ -74,6 +76,7 @@ public class RtfProtectionTest extends RtfTestBase {
      * for a normal 1 to 15 character password
      * @throws IOException On I/O errors
      */
+    @Test
     public void testPasswordNormal() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(DocWriter.getISOBytes(RtfProtection.generateHash("apple")));
@@ -85,6 +88,7 @@ public class RtfProtectionTest extends RtfTestBase {
      * for a null password
      * @throws IOException On I/O errors
      */
+    @Test
     public void testPasswordNull() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(DocWriter.getISOBytes(RtfProtection.generateHash(null)));
@@ -96,6 +100,7 @@ public class RtfProtectionTest extends RtfTestBase {
      * for an empty password
      * @throws IOException On I/O errors
      */
+    @Test
     public void testPasswordEmpty() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(DocWriter.getISOBytes(RtfProtection.generateHash("")));
@@ -107,6 +112,7 @@ public class RtfProtectionTest extends RtfTestBase {
      * for a long password (>15 characters)
      * @throws IOException On I/O errors
      */
+    @Test
     public void testPasswordLong() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(DocWriter.getISOBytes(RtfProtection.generateHash("0123456789ABCDEFHIJKLMNOP")));

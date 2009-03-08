@@ -119,7 +119,7 @@ public class PdfLister {
     public void listArray(PdfArray array)
     {
         out.println('[');
-        for (Iterator i = array.getArrayList().iterator(); i.hasNext(); ) {
+        for (Iterator i = array.listIterator(); i.hasNext(); ) {
             PdfObject item = (PdfObject)i.next();
             listAnyObject(item);
         }
@@ -178,7 +178,7 @@ public class PdfLister {
             listStream((PRStream)obj, readerInst);
             break;
         case PdfObject.ARRAY:
-            for (Iterator i = ((PdfArray)obj).getArrayList().iterator(); i.hasNext();) {
+            for (Iterator i = ((PdfArray)obj).listIterator(); i.hasNext();) {
                 PdfObject o = PdfReader.getPdfObject((PdfObject)i.next());
                 listStream((PRStream)o, readerInst);
                 out.println("-----------");

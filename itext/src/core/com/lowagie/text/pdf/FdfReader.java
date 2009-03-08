@@ -48,7 +48,6 @@ package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 /** Reads an FDF form and makes the fields available
  * @author Paulo Soares (psoares@consiste.pt)
@@ -111,20 +110,19 @@ public class FdfReader extends PdfReader {
     }
     
     protected void kidNode(PdfDictionary merged, String name) {
-        PdfArray kids = (PdfArray)getPdfObject(merged.get(PdfName.KIDS));
-        if (kids == null || kids.getArrayList().size() == 0) {
+        PdfArray kids = merged.getAsArray(PdfName.KIDS);
+        if (kids == null || kids.isEmpty()) {
             if (name.length() > 0)
                 name = name.substring(1);
             fields.put(name, merged);
         }
         else {
             merged.remove(PdfName.KIDS);
-            ArrayList ar = kids.getArrayList();
-            for (int k = 0; k < ar.size(); ++k) {
+            for (int k = 0; k < kids.size(); ++k) {
                 PdfDictionary dic = new PdfDictionary();
                 dic.merge(merged);
-                PdfDictionary newDic = (PdfDictionary)getPdfObject((PdfObject)ar.get(k));
-                PdfString t = (PdfString)getPdfObject(newDic.get(PdfName.T));
+                PdfDictionary newDic = kids.getAsDict(k);
+                PdfString t = newDic.getAsString(PdfName.T);
                 String newName = name;
                 if (t != null)
                     newName += "." + t.toUnicodeString();
@@ -136,17 +134,17 @@ public class FdfReader extends PdfReader {
     }
     
     protected void readFields() {
-        catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
-        PdfDictionary fdf = (PdfDictionary)getPdfObject(catalog.get(PdfName.FDF));
+        catalog = trailer.getAsDict(PdfName.ROOT);
+        PdfDictionary fdf = catalog.getAsDict(PdfName.FDF);
         if (fdf == null)
             return;
-        PdfString fs = (PdfString)getPdfObject(fdf.get(PdfName.F));
+        PdfString fs = fdf.getAsString(PdfName.F);
         if (fs != null)
             fileSpec = fs.toUnicodeString();
-        PdfArray fld = (PdfArray)getPdfObject(fdf.get(PdfName.FIELDS));
+        PdfArray fld = fdf.getAsArray(PdfName.FIELDS);
         if (fld == null)
             return;
-        encoding = (PdfName)getPdfObject(fdf.get(PdfName.ENCODING));
+        encoding = fdf.getAsName(PdfName.ENCODING);
         PdfDictionary merged = new PdfDictionary();
         merged.put(PdfName.KIDS, fld);
         kidNode(merged, "");

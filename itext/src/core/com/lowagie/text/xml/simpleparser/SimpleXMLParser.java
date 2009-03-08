@@ -130,6 +130,13 @@ public final class SimpleXMLParser {
 	int columns = 0;
 	/** was the last character equivalent to a newline? */
 	boolean eol = false;
+	/**
+	 * A boolean indicating if the next character should be taken into account
+	 * if it's a space character. When nospace is false, the previous character
+	 * wasn't whitespace.
+	 * @since 2.1.5
+	 */
+	boolean nowhite = false;
 	/** the current state */
 	int state;
 	/** Are we parsing HTML? */
@@ -237,8 +244,14 @@ public final class SimpleXMLParser {
                     saveState(state);
                     entity.setLength(0);
                     state = ENTITY;
-                } else
+                } else if (Character.isWhitespace((char)character)) {
+                	if (nowhite)
+                		text.append((char)character);
+                	nowhite = false;
+                } else {
                     text.append((char)character);
+                    nowhite = true;
+                }
                 break;
             // we have just seen a < and are wondering what we are looking at
             // <foo>, </foo>, <!-- ... --->, etc.

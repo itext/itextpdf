@@ -53,7 +53,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -83,13 +82,13 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         HashMap names = fromNames ? reader.getNamedDestinationFromNames() : reader.getNamedDestinationFromStrings();
         for (Iterator it = names.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Map.Entry)it.next();
-            ArrayList arr = ((PdfArray)entry.getValue()).getArrayList();
+            PdfArray arr = (PdfArray)entry.getValue();
             StringBuffer s = new StringBuffer();
             try {
-                s.append(pages.get(((PdfIndirectReference)arr.get(0)).getNumber()));
-                s.append(' ').append(arr.get(1).toString().substring(1));
+                s.append(pages.get(arr.getAsIndirectObject(0).getNumber()));
+                s.append(' ').append(arr.getPdfObject(1).toString().substring(1));
                 for (int k = 2; k < arr.size(); ++k)
-                    s.append(' ').append(arr.get(k).toString());
+                    s.append(' ').append(arr.getPdfObject(k).toString());
                 entry.setValue(s.toString());
             }
             catch (Exception e) {

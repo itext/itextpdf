@@ -271,6 +271,14 @@ public class FactoryProperties {
 		return new HyphenationAuto(lang, country, leftMin, rightMin);
 	}
 
+	/**
+	 * This method isn't used by iText, but you can use it to analyze
+	 * the value of a style attribute inside a HashMap.
+	 * The different elements of the style attribute are added to the
+	 * HashMap as key-value pairs.
+	 * @param	h	a HashMap that should have at least a key named
+	 * style. After this method is invoked, more keys could be added.
+	 */
 	public static void insertStyle(HashMap h) {
 		String style = (String) h.get("style");
 		if (style == null)
@@ -311,7 +319,10 @@ public class FactoryProperties {
 				float v = Markup.parseLength(prop.getProperty(key));
 				if (ss.endsWith("%")) {
 					h.put("leading", "0," + (v / 100));
-				} else {
+				} else if ("normal".equalsIgnoreCase(ss)) {
+					h.put("leading", "0,1.5");
+				}
+				else {
 					h.put("leading", v + ",0");
 				}
 			} else if (key.equals(Markup.CSS_KEY_TEXTALIGN)) {
@@ -378,9 +389,13 @@ public class FactoryProperties {
 						actualFontSize);
 				if (ss.endsWith("%")) {
 					h.put("leading", "0," + (v / 100));
-				} else {
-					h.put("leading", v + ",0");
+					return;
 				}
+				if ("normal".equalsIgnoreCase(ss)) {
+					h.put("leading", "0,1.5");
+					return;
+				}
+				h.put("leading", v + ",0");
 			} else if (key.equals(Markup.CSS_KEY_TEXTALIGN)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				h.put("align", ss);

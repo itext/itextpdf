@@ -59,7 +59,6 @@ import java.util.zip.DeflaterOutputStream;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.ExceptionConverter;
-import java.util.ArrayList;
 
 /**
  * <CODE>PdfStream</CODE> is the Pdf stream object.
@@ -242,12 +241,14 @@ public class PdfStream extends PdfDictionary {
         try {
             // compress
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            DeflaterOutputStream zip = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
+            Deflater deflater = new Deflater(compressionLevel);
+            DeflaterOutputStream zip = new DeflaterOutputStream(stream, deflater);
             if (streamBytes != null)
                 streamBytes.writeTo(zip);
             else
                 zip.write(bytes);
             zip.close();
+            deflater.end();
             // update the object
             streamBytes = stream;
             bytes = null;
@@ -295,8 +296,8 @@ public class PdfStream extends PdfDictionary {
                 if (PdfName.CRYPT.equals(filter))
                     crypto = null;
                 else if (filter.isArray()) {
-                    ArrayList af = ((PdfArray)filter).getArrayList();
-                    if (!af.isEmpty() && PdfName.CRYPT.equals(af.get(0)))
+                    PdfArray a = (PdfArray)filter;
+                    if (!a.isEmpty() && PdfName.CRYPT.equals(a.getPdfObject(0)))
                         crypto = null;
                 }
             }
@@ -319,8 +320,11 @@ public class PdfStream extends PdfDictionary {
             OutputStream fout = osc;
             if (crypto != null && !crypto.isEmbeddedFilesOnly())
                 fout = ose = crypto.getEncryptionStream(fout);
-            if (compressed)    
-                fout = def = new DeflaterOutputStream(fout, new Deflater(compressionLevel), 0x8000);
+            Deflater deflater = null;
+            if (compressed) {
+                deflater = new Deflater(compressionLevel);
+                fout = def = new DeflaterOutputStream(fout, deflater, 0x8000);
+            }
             
             byte buf[] = new byte[4192];
             while (true) {
@@ -330,8 +334,10 @@ public class PdfStream extends PdfDictionary {
                 fout.write(buf, 0, n);
                 rawLength += n;
             }
-            if (def != null)
+            if (def != null) {
                 def.finish();
+                deflater.end();
+            }
             if (ose != null)
                 ose.finish();
             inputStreamLength = osc.getCounter();

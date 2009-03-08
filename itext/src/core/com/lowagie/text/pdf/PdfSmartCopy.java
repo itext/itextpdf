@@ -53,7 +53,6 @@ package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -188,9 +187,8 @@ public class PdfSmartCopy extends PdfCopy {
             bb.append("$A");
             if (level <= 0)
                 return;
-            ArrayList ar = array.getArrayList();
-            for (int k = 0; k < ar.size(); ++k) {
-                serObject((PdfObject)ar.get(k), level, bb);
+            for (int k = 0; k < array.size(); ++k) {
+                serObject(array.getPdfObject(k), level, bb);
             }
         }
         

@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 
@@ -346,10 +347,6 @@ class TrueTypeFont extends BaseFont {
     protected TrueTypeFont() {
     }
     
-    TrueTypeFont(String ttFile, String enc, boolean emb, byte ttfAfm[]) throws DocumentException, IOException {
-        this(ttFile, enc, emb, ttfAfm, false);
-    }
-    
     /** Creates a new TrueType font.
      * @param ttFile the location of the font on file. The file must end in '.ttf' or
      * '.ttc' but can have modifiers after the name
@@ -358,9 +355,10 @@ class TrueTypeFont extends BaseFont {
      * @param ttfAfm the font as a <CODE>byte</CODE> array
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
+     * @since	2.1.5
      */
-    TrueTypeFont(String ttFile, String enc, boolean emb, byte ttfAfm[], boolean justNames) throws DocumentException, IOException {
-        this.justNames = justNames;
+    TrueTypeFont(String ttFile, String enc, boolean emb, byte ttfAfm[], boolean justNames, boolean forceRead) throws DocumentException, IOException {
+    	this.justNames = justNames;
         String nameBase = getBaseName(ttFile);
         String ttcName = getTTCName(nameBase);
         if (nameBase.length() < ttFile.length()) {
@@ -374,7 +372,7 @@ class TrueTypeFont extends BaseFont {
         if (ttcName.length() < nameBase.length())
             ttcIndex = nameBase.substring(ttcName.length() + 1);
         if (fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".otf") || fileName.toLowerCase().endsWith(".ttc")) {
-            process(ttfAfm);
+            process(ttfAfm, forceRead);
             if (!justNames && embedded && os_2.fsType == 2)
                 throw new DocumentException(fileName + style + " cannot be embedded due to licensing restrictions.");
         }
@@ -624,13 +622,14 @@ class TrueTypeFont extends BaseFont {
      * @param ttfAfm the font as a <CODE>byte</CODE> array, possibly <CODE>null</CODE>
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
+     * @since	2.1.5
      */
-    void process(byte ttfAfm[]) throws DocumentException, IOException {
+    void process(byte ttfAfm[], boolean preload) throws DocumentException, IOException {
         tables = new HashMap();
         
         try {
             if (ttfAfm == null)
-                rf = new RandomAccessFileOrArray(fileName);
+                rf = new RandomAccessFileOrArray(fileName, preload, Document.plainRandomAccess);
             else
                 rf = new RandomAccessFileOrArray(ttfAfm);
             if (ttcIndex.length() > 0) {

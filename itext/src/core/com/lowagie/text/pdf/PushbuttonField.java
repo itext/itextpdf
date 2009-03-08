@@ -463,8 +463,8 @@ public class PushbuttonField extends BaseField {
             else if (iconReference != null) {
                 PdfDictionary dic = (PdfDictionary)PdfReader.getPdfObject(iconReference);
                 if (dic != null) {
-                    Rectangle r2 = PdfReader.getNormalizedRectangle((PdfArray)PdfReader.getPdfObject(dic.get(PdfName.BBOX)));
-                    matrix = (PdfArray)PdfReader.getPdfObject(dic.get(PdfName.MATRIX));
+                    Rectangle r2 = PdfReader.getNormalizedRectangle(dic.getAsArray(PdfName.BBOX));
+                    matrix = dic.getAsArray(PdfName.MATRIX);
                     haveIcon = true;
                     boundingBoxWidth = r2.getWidth();
                     boundingBoxHeight = r2.getHeight();
@@ -522,10 +522,10 @@ public class PushbuttonField extends BaseField {
                 float cox = 0;
                 float coy = 0;
                 if (matrix != null && matrix.size() == 6) {
-                    PdfNumber nm = (PdfNumber)PdfReader.getPdfObject((PdfObject)matrix.getArrayList().get(4));
+                    PdfNumber nm = matrix.getAsNumber(4);
                     if (nm != null)
                         cox = nm.floatValue();
-                    nm = (PdfNumber)PdfReader.getPdfObject((PdfObject)matrix.getArrayList().get(5));
+                    nm = matrix.getAsNumber(5);
                     if (nm != null)
                         coy = nm.floatValue();
                 }

@@ -168,7 +168,7 @@ public class PdfLine {
             addToLine(chunk);
         }
         // if the length of the chunk > 0 we add it to the line
-        else if (chunk.length() > 0) {
+        else if (chunk.length() > 0 || chunk.isImage()) {
             if (overflow != null)
                 chunk.trimLastSpace();
             width -= chunk.width();
@@ -424,15 +424,15 @@ public class PdfLine {
         return originalWidth;
     }
     
-    /**
+    /*
      * Gets the maximum size of all the fonts used in this line
      * including images.
      * @return maximum size of all the fonts used in this line
-     */
-    float getMaxSizeSimple() {
+     float getMaxSizeSimple() {
         float maxSize = 0;
+        PdfChunk chunk;
         for (int k = 0; k < line.size(); ++k) {
-            PdfChunk chunk = (PdfChunk)line.get(k);
+            chunk = (PdfChunk)line.get(k);
             if (!chunk.isImage()) {
                 maxSize = Math.max(chunk.font().size(), maxSize);
             }
@@ -441,6 +441,28 @@ public class PdfLine {
             }
         }
         return maxSize;
+    }*/
+    
+    /**
+     * Gets the difference between the "normal" leading and the maximum
+     * size (for instance when there are images in the chunk).
+     * @return	an extra leading for images
+     * @since	2.1.5
+     */
+    float[] getMaxSize() {
+    	float normal_leading = 0;
+    	float image_leading = -10000;
+        PdfChunk chunk;
+        for (int k = 0; k < line.size(); ++k) {
+            chunk = (PdfChunk)line.get(k);
+            if (!chunk.isImage()) {
+                normal_leading = Math.max(chunk.font().size(), normal_leading);
+            }
+            else {
+                image_leading = Math.max(chunk.getImage().getScaledHeight() + chunk.getImageOffsetY(), image_leading);
+            }
+        }
+        return new float[]{normal_leading, image_leading};
     }
     
     boolean isRTL() {

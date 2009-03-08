@@ -192,7 +192,7 @@ public class RtfDestinationListTable extends RtfDestination {
 						/* listlevel */
 						if (ctrlWordData.ctrlWord.equals("listlevel")) /* DESTINATION There are 1 or 9 listlevels per list */{
 							this.currentLevel++;
-							this.currentListLevel = (RtfListLevel)this.newList.getListLevel(this.currentLevel);
+							this.currentListLevel = this.newList.getListLevel(this.currentLevel);
 							this.currentListLevel.setTentative(false);
 							skipCtrlWord = true;
 							result = true;

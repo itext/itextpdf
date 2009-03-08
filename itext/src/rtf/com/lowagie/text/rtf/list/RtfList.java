@@ -62,7 +62,6 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
-import com.lowagie.text.Paragraph;
 import com.lowagie.text.RomanList;
 import com.lowagie.text.factories.RomanAlphabetFactory;
 import com.lowagie.text.factories.RomanNumberFactory;

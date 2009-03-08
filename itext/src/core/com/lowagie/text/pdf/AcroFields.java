@@ -66,8 +66,10 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.codec.Base64;
 
-/** Query and change fields in existing documents either by method
+/**
+ * Query and change fields in existing documents either by method
  * calls or by FDF merging.
+ * 
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class AcroFields {
@@ -83,50 +85,58 @@ public class AcroFields {
     public static final int DA_COLOR = 2;
     private HashMap extensionFonts = new HashMap();
     private XfaForm xfa;
+    
     /**
      * A field type invalid or not found.
-     */    
+     */
     public static final int FIELD_TYPE_NONE = 0;
+    
     /**
      * A field type.
-     */    
+     */
     public static final int FIELD_TYPE_PUSHBUTTON = 1;
+    
     /**
      * A field type.
-     */    
+     */
     public static final int FIELD_TYPE_CHECKBOX = 2;
+    
     /**
      * A field type.
-     */    
+     */
     public static final int FIELD_TYPE_RADIOBUTTON = 3;
+    
     /**
      * A field type.
-     */    
+     */
     public static final int FIELD_TYPE_TEXT = 4;
+    
     /**
      * A field type.
-     */    
+     */
     public static final int FIELD_TYPE_LIST = 5;
+    
     /**
      * A field type.
-     */    
+     */
     public static final int FIELD_TYPE_COMBO = 6;
+    
     /**
      * A field type.
-     */    
+     */
     public static final int FIELD_TYPE_SIGNATURE = 7;
-    
+
     private boolean lastWasString;
-    
+
     /** Holds value of property generateAppearances. */
     private boolean generateAppearances = true;
-    
+
     private HashMap localFonts = new HashMap();
-    
+
     private float extraMarginLeft;
     private float extraMarginTop;
     private ArrayList substitutionFonts;
-    
+
     AcroFields(PdfReader reader, PdfWriter writer) {
         this.reader = reader;
         this.writer = writer;
@@ -156,16 +166,14 @@ public class AcroFields {
             PdfArray annots = (PdfArray)PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page);
             if (annots == null)
                 continue;
-            ArrayList arr = annots.getArrayList();
-            for (int j = 0; j < arr.size(); ++j) {
-                PdfObject annoto = PdfReader.getPdfObject((PdfObject)arr.get(j), annots);
-                if (!(annoto instanceof PdfDictionary)) {
-                    PdfReader.releaseLastXrefPartial((PdfObject)arr.get(j));
+            for (int j = 0; j < annots.size(); ++j) {
+                PdfDictionary annot = annots.getAsDict(j);
+                if (annot == null) {
+                    PdfReader.releaseLastXrefPartial(annots.getAsIndirectObject(j));
                     continue;
                 }
-                PdfDictionary annot = (PdfDictionary)annoto;
-                if (!PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE))) {
-                    PdfReader.releaseLastXrefPartial((PdfObject)arr.get(j));
+                if (!PdfName.WIDGET.equals(annot.getAsName(PdfName.SUBTYPE))) {
+                    PdfReader.releaseLastXrefPartial(annots.getAsIndirectObject(j));
                     continue;
                 }
                 PdfDictionary widget = annot;
@@ -176,7 +184,7 @@ public class AcroFields {
                 PdfObject lastV = null;
                 while (annot != null) {
                     dic.mergeDifferent(annot);
-                    PdfString t = (PdfString)PdfReader.getPdfObject(annot.get(PdfName.T));
+                    PdfString t = annot.getAsString(PdfName.T);
                     if (t != null)
                         name = t.toUnicodeString() + "." + name;
                     if (lastV == null && annot.get(PdfName.V) != null)
@@ -186,7 +194,7 @@ public class AcroFields {
                         if (annot.get(PdfName.V) == null && lastV  != null)
                             value.put(PdfName.V, lastV);
                     }
-                    annot = (PdfDictionary)PdfReader.getPdfObject(annot.get(PdfName.PARENT), annot);
+                    annot = annot.getAsDict(PdfName.PARENT);
                 }
                 if (name.length() > 0)
                     name = name.substring(0, name.length() - 1);
@@ -196,56 +204,57 @@ public class AcroFields {
                     fields.put(name, item);
                 }
                 if (value == null)
-                    item.values.add(widget);
+                    item.addValue(widget);
                 else
-                    item.values.add(value);
-                item.widgets.add(widget);
-                item.widget_refs.add(arr.get(j)); // must be a reference
+                    item.addValue(value);
+                item.addWidget(widget);
+                item.addWidgetRef(annots.getAsIndirectObject(j)); // must be a reference
                 if (top != null)
                     dic.mergeDifferent(top);
-                item.merged.add(dic);
-                item.page.add(new Integer(k));
-                item.tabOrder.add(new Integer(j));
+                item.addMerged(dic);
+                item.addPage(k);
+                item.addTabOrder(j);
             }
         }
     }
-    
-    /** Gets the list of appearance names. Use it to get the names allowed
+
+    /**
+     * Gets the list of appearance names. Use it to get the names allowed
      * with radio and checkbox fields. If the /Opt key exists the values will
      * also be included. The name 'Off' may also be valid
      * even if not returned in the list.
+     * 
      * @param fieldName the fully qualified field name
      * @return the list of names or <CODE>null</CODE> if the field does not exist
-     */    
+     */
     public String[] getAppearanceStates(String fieldName) {
         Item fd = (Item)fields.get(fieldName);
         if (fd == null)
             return null;
         HashMap names = new HashMap();
-        PdfDictionary vals = (PdfDictionary)fd.values.get(0);
-        PdfObject opts = PdfReader.getPdfObject(vals.get(PdfName.OPT));
-        if (opts != null) {
-            if (opts.isString())
-                names.put(((PdfString)opts).toUnicodeString(), null);
-            else if (opts.isArray()) {
-                ArrayList list = ((PdfArray)opts).getArrayList();
-                for (int k = 0; k < list.size(); ++k) {
-                    PdfObject v = PdfReader.getPdfObject((PdfObject)list.get(k));
-                    if (v != null && v.isString())
-                        names.put(((PdfString)v).toUnicodeString(), null);
-                }
+        PdfDictionary vals = fd.getValue(0);
+        PdfString stringOpt = vals.getAsString( PdfName.OPT );
+        if (stringOpt != null) {
+        	names.put(stringOpt.toUnicodeString(), null);
+        }
+        else {
+            PdfArray arrayOpt = vals.getAsArray(PdfName.OPT);
+            if (arrayOpt != null) {
+            	for (int k = 0; k < arrayOpt.size(); ++k) {
+            		PdfString valStr = arrayOpt.getAsString( k );
+            		if (valStr != null)
+            			names.put(valStr.toUnicodeString(), null);
+            	}
             }
         }
-        ArrayList wd = fd.widgets;
-        for (int k = 0; k < wd.size(); ++k) {
-            PdfDictionary dic = (PdfDictionary)wd.get(k);
-            dic = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.AP));
+        for (int k = 0; k < fd.size(); ++k) {
+            PdfDictionary dic = fd.getWidget( k );
+            dic = dic.getAsDict(PdfName.AP);
             if (dic == null)
                 continue;
-            PdfObject ob = PdfReader.getPdfObject(dic.get(PdfName.N));
-            if (ob == null || !ob.isDictionary())
+            dic = dic.getAsDict(PdfName.N);
+            if (dic == null)
                 continue;
-            dic = (PdfDictionary)ob;
             for (Iterator it = dic.getKeys().iterator(); it.hasNext();) {
                 String name = PdfName.decodeName(((PdfName)it.next()).toString());
                 names.put(name, null);
@@ -254,22 +263,20 @@ public class AcroFields {
         String out[] = new String[names.size()];
         return (String[])names.keySet().toArray(out);
     }
-    
+
     private String[] getListOption(String fieldName, int idx) {
         Item fd = getFieldItem(fieldName);
         if (fd == null)
             return null;
-        PdfObject obj = PdfReader.getPdfObject(((PdfDictionary)fd.merged.get(0)).get(PdfName.OPT));
-        if (obj == null || !obj.isArray())
+        PdfArray ar = fd.getMerged(0).getAsArray(PdfName.OPT);
+        if (ar == null)
             return null;
-        PdfArray ar = (PdfArray)obj;
         String[] ret = new String[ar.size()];
-        ArrayList a = ar.getArrayList();
-        for (int k = 0; k < a.size(); ++k) {
-            obj = PdfReader.getPdfObject((PdfObject)a.get(k));
+        for (int k = 0; k < ar.size(); ++k) {
+            PdfObject obj = ar.getDirectObject( k );
             try {
                 if (obj.isArray()) {
-                    obj = (PdfObject)((PdfArray)obj).getArrayList().get(idx);
+                    obj = ((PdfArray)obj).getDirectObject(idx);
                 }
                 if (obj.isString())
                     ret[k] = ((PdfString)obj).toUnicodeString();
@@ -282,29 +289,31 @@ public class AcroFields {
         }
         return ret;
     }
-    
+
     /**
      * Gets the list of export option values from fields of type list or combo.
      * If the field doesn't exist or the field type is not list or combo it will return
      * <CODE>null</CODE>.
+     * 
      * @param fieldName the field name
      * @return the list of export option values from fields of type list or combo
-     */    
+     */
     public String[] getListOptionExport(String fieldName) {
         return getListOption(fieldName, 0);
     }
-    
+
     /**
      * Gets the list of display option values from fields of type list or combo.
      * If the field doesn't exist or the field type is not list or combo it will return
      * <CODE>null</CODE>.
+     * 
      * @param fieldName the field name
      * @return the list of export option values from fields of type list or combo
-     */    
+     */
     public String[] getListOptionDisplay(String fieldName) {
         return getListOption(fieldName, 1);
     }
-    
+
     /**
      * Sets the option list for fields of type list or combo. One of <CODE>exportValues</CODE>
      * or <CODE>displayValues</CODE> may be <CODE>null</CODE> but not both. This method will only
@@ -321,11 +330,12 @@ public class AcroFields {
      * af.setField("ComboBox", "b");
      * stp.close();
      * </PRE>
+     * 
      * @param fieldName the field name
      * @param exportValues the export values
      * @param displayValues the display values
      * @return <CODE>true</CODE> if the operation succeeded, <CODE>false</CODE> otherwise
-     */    
+     */
     public boolean setListOption(String fieldName, String[] exportValues, String[] displayValues) {
         if (exportValues == null && displayValues == null)
             return false;
@@ -353,12 +363,10 @@ public class AcroFields {
                 opt.add(a);
             }
         }
-        ((PdfDictionary)fd.values.get(0)).put(PdfName.OPT, opt);
-        for (int j = 0; j < fd.merged.size(); ++j)
-            ((PdfDictionary)fd.merged.get(j)).put(PdfName.OPT, opt);
+        fd.writeToAll( PdfName.OPT, opt, Item.WRITE_VALUE | Item.WRITE_MERGED );
         return true;
     }
-    
+
     /**
      * Gets the field type. The type can be one of: <CODE>FIELD_TYPE_PUSHBUTTON</CODE>,
      * <CODE>FIELD_TYPE_CHECKBOX</CODE>, <CODE>FIELD_TYPE_RADIOBUTTON</CODE>,
@@ -367,20 +375,23 @@ public class AcroFields {
      * <p>
      * If the field does not exist or is invalid it returns
      * <CODE>FIELD_TYPE_NONE</CODE>.
+     * 
      * @param fieldName the field name
      * @return the field type
-     */    
+     */
     public int getFieldType(String fieldName) {
         Item fd = getFieldItem(fieldName);
         if (fd == null)
             return FIELD_TYPE_NONE;
-        PdfObject type = PdfReader.getPdfObject(((PdfDictionary)fd.merged.get(0)).get(PdfName.FT));
+        PdfDictionary merged = fd.getMerged( 0 );
+        PdfName type = merged.getAsName(PdfName.FT);
         if (type == null)
             return FIELD_TYPE_NONE;
         int ff = 0;
-        PdfObject ffo = PdfReader.getPdfObject(((PdfDictionary)fd.merged.get(0)).get(PdfName.FF));
-        if (ffo != null && ffo.type() == PdfObject.NUMBER)
-            ff = ((PdfNumber)ffo).intValue();
+        PdfNumber ffo = merged.getAsNumber(PdfName.FF);
+        if (ffo != null) {
+            ff = ffo.intValue();
+        }
         if (PdfName.BTN.equals(type)) {
             if ((ff & PdfFormField.FF_PUSHBUTTON) != 0)
                 return FIELD_TYPE_PUSHBUTTON;
@@ -403,17 +414,18 @@ public class AcroFields {
         }
         return FIELD_TYPE_NONE;
     }
-    
+
     /**
      * Export the fields as a FDF.
+     * 
      * @param writer the FDF writer
-     */    
+     */
     public void exportAsFdf(FdfWriter writer) {
         for (Iterator it = fields.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Map.Entry)it.next();
             Item item = (Item)entry.getValue();
             String name = (String)entry.getKey();
-            PdfObject v = PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.V));
+            PdfObject v = item.getMerged(0).get(PdfName.V);
             if (v == null)
                 continue;
             String value = getField(name);
@@ -423,15 +435,16 @@ public class AcroFields {
                 writer.setFieldAsName(name, value);
         }
     }
-    
+
     /**
      * Renames a field. Only the last part of the name can be renamed. For example,
      * if the original field is "ab.cd.ef" only the "ef" part can be renamed.
+     * 
      * @param oldName the old field name
      * @param newName the new field name
      * @return <CODE>true</CODE> if the renaming was successful, <CODE>false</CODE>
      * otherwise
-     */    
+     */
     public boolean renameField(String oldName, String newName) {
         int idx1 = oldName.lastIndexOf('.') + 1;
         int idx2 = newName.lastIndexOf('.') + 1;
@@ -446,18 +459,16 @@ public class AcroFields {
             return false;
         newName = newName.substring(idx2);
         PdfString ss = new PdfString(newName, PdfObject.TEXT_UNICODE);
-        for (int k = 0; k < item.merged.size(); ++k) {
-            PdfDictionary dic = (PdfDictionary)item.values.get(k);
-            dic.put(PdfName.T, ss);
-            markUsed(dic);
-            dic = (PdfDictionary)item.merged.get(k);
-            dic.put(PdfName.T, ss);
-        }
+
+        item.writeToAll( PdfName.T, ss, Item.WRITE_VALUE | Item.WRITE_MERGED);
+        item.markUsed( this, Item.WRITE_VALUE );
+
         fields.remove(oldName);
         fields.put(newName, item);
+
         return true;
     }
-    
+
     public static Object[] splitDAelements(String da) {
         try {
             PRTokeniser tk = new PRTokeniser(PdfEncodings.convertToBytes(da, null));
@@ -509,11 +520,11 @@ public class AcroFields {
             throw new ExceptionConverter(ioe);
         }
     }
-    
+
     public void decodeGenericDictionary(PdfDictionary merged, BaseField tx) throws IOException, DocumentException {
         int flags = 0;
         // the text size and color
-        PdfString da = (PdfString)PdfReader.getPdfObject(merged.get(PdfName.DA));
+        PdfString da = merged.getAsString(PdfName.DA);
         if (da != null) {
             Object dab[] = splitDAelements(da.toUnicodeString());
             if (dab[DA_SIZE] != null)
@@ -521,9 +532,9 @@ public class AcroFields {
             if (dab[DA_COLOR] != null)
                 tx.setTextColor((Color)dab[DA_COLOR]);
             if (dab[DA_FONT] != null) {
-                PdfDictionary font = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.DR));
+                PdfDictionary font = merged.getAsDict(PdfName.DR);
                 if (font != null) {
-                    font = (PdfDictionary)PdfReader.getPdfObject(font.get(PdfName.FONT));
+                    font = font.getAsDict(PdfName.FONT);
                     if (font != null) {
                         PdfObject po = font.get(new PdfName((String)dab[DA_FONT]));
                         if (po != null && po.type() == PdfObject.INDIRECT) {
@@ -535,7 +546,7 @@ public class AcroFields {
                             if (porf == null) {
                                 if (!extensionFonts.containsKey(porkey)) {
                                     PdfDictionary fo = (PdfDictionary)PdfReader.getPdfObject(po);
-                                    PdfDictionary fd = (PdfDictionary)PdfReader.getPdfObject(fo.get(PdfName.FONTDESCRIPTOR));
+                                    PdfDictionary fd = fo.getAsDict(PdfName.FONTDESCRIPTOR);
                                     if (fd != null) {
                                         PRStream prs = (PRStream)PdfReader.getPdfObject(fd.get(PdfName.FONTFILE2));
                                         if (prs == null)
@@ -582,21 +593,21 @@ public class AcroFields {
             }
         }
         //rotation, border and background color
-        PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.MK));
+        PdfDictionary mk = merged.getAsDict(PdfName.MK);
         if (mk != null) {
-            PdfArray ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BC));
+            PdfArray ar = mk.getAsArray(PdfName.BC);
             Color border = getMKColor(ar);
             tx.setBorderColor(border);
             if (border != null)
                 tx.setBorderWidth(1);
-            ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BG));
+            ar = mk.getAsArray(PdfName.BG);
             tx.setBackgroundColor(getMKColor(ar));
-            PdfNumber rotation = (PdfNumber)PdfReader.getPdfObject(mk.get(PdfName.R));
+            PdfNumber rotation = mk.getAsNumber(PdfName.R);
             if (rotation != null)
                 tx.setRotation(rotation.intValue());
         }
         //flags
-        PdfNumber nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.F));
+        PdfNumber nfl = merged.getAsNumber(PdfName.F);
         flags = 0;
         tx.setVisibility(BaseField.VISIBLE_BUT_DOES_NOT_PRINT);
         if (nfl != null) {
@@ -609,20 +620,20 @@ public class AcroFields {
                 tx.setVisibility(BaseField.VISIBLE);
         }
         //multiline
-        nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.FF));
+        nfl = merged.getAsNumber(PdfName.FF);
         flags = 0;
         if (nfl != null)
             flags = nfl.intValue();
         tx.setOptions(flags);
         if ((flags & PdfFormField.FF_COMB) != 0) {
-            PdfNumber maxLen = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.MAXLEN));
+            PdfNumber maxLen = merged.getAsNumber(PdfName.MAXLEN);
             int len = 0;
             if (maxLen != null)
                 len = maxLen.intValue();
             tx.setMaxCharacterLength(len);
         }
         //alignment
-        nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.Q));
+        nfl = merged.getAsNumber(PdfName.Q);
         if (nfl != null) {
             if (nfl.intValue() == PdfFormField.Q_CENTER)
                 tx.setAlignment(Element.ALIGN_CENTER);
@@ -630,12 +641,12 @@ public class AcroFields {
                 tx.setAlignment(Element.ALIGN_RIGHT);
         }
         //border styles
-        PdfDictionary bs = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.BS));
+        PdfDictionary bs = merged.getAsDict(PdfName.BS);
         if (bs != null) {
-            PdfNumber w = (PdfNumber)PdfReader.getPdfObject(bs.get(PdfName.W));
+            PdfNumber w = bs.getAsNumber(PdfName.W);
             if (w != null)
                 tx.setBorderWidth(w.floatValue());
-            PdfName s = (PdfName)PdfReader.getPdfObject(bs.get(PdfName.S));
+            PdfName s = bs.getAsName(PdfName.S);
             if (PdfName.D.equals(s))
                 tx.setBorderStyle(PdfBorderDictionary.STYLE_DASHED);
             else if (PdfName.B.equals(s))
@@ -646,17 +657,16 @@ public class AcroFields {
                 tx.setBorderStyle(PdfBorderDictionary.STYLE_UNDERLINE);
         }
         else {
-            PdfArray bd = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.BORDER));
+            PdfArray bd = merged.getAsArray(PdfName.BORDER);
             if (bd != null) {
-                ArrayList ar = bd.getArrayList();
-                if (ar.size() >= 3)
-                    tx.setBorderWidth(((PdfNumber)ar.get(2)).floatValue());
-                if (ar.size() >= 4)
+                if (bd.size() >= 3)
+                    tx.setBorderWidth(bd.getAsNumber(2).floatValue());
+                if (bd.size() >= 4)
                     tx.setBorderStyle(PdfBorderDictionary.STYLE_DASHED);
             }
         }
     }
-    
+
     PdfAppearance getAppearance(PdfDictionary merged, String text, String fieldName) throws IOException, DocumentException {
         topFirst = 0;
         TextField tx = null;
@@ -667,7 +677,7 @@ public class AcroFields {
             tx.setSubstitutionFonts(substitutionFonts);
             decodeGenericDictionary(merged, tx);
             //rect
-            PdfArray rect = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.RECT));
+            PdfArray rect = merged.getAsArray(PdfName.RECT);
             Rectangle box = PdfReader.getNormalizedRectangle(rect);
             if (tx.getRotation() == 90 || tx.getRotation() == 270)
                 box = box.rotate();
@@ -679,16 +689,16 @@ public class AcroFields {
             tx = (TextField)fieldCache.get(fieldName);
             tx.setWriter(writer);
         }
-        PdfName fieldType = (PdfName)PdfReader.getPdfObject(merged.get(PdfName.FT));
+        PdfName fieldType = merged.getAsName(PdfName.FT);
         if (PdfName.TX.equals(fieldType)) {
             tx.setText(text);
             return tx.getAppearance();
         }
         if (!PdfName.CH.equals(fieldType))
             throw new DocumentException("An appearance was requested without a variable text field.");
-        PdfArray opt = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.OPT));
+        PdfArray opt = merged.getAsArray(PdfName.OPT);
         int flags = 0;
-        PdfNumber nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.FF));
+        PdfNumber nfl = merged.getAsNumber(PdfName.FF);
         if (nfl != null)
             flags = nfl.intValue();
         if ((flags & PdfFormField.FF_COMBO) != 0 && opt == null) {
@@ -696,18 +706,17 @@ public class AcroFields {
             return tx.getAppearance();
         }
         if (opt != null) {
-            ArrayList op = opt.getArrayList();
-            String choices[] = new String[op.size()];
-            String choicesExp[] = new String[op.size()];
-            for (int k = 0; k < op.size(); ++k) {
-                PdfObject obj = (PdfObject)op.get(k);
+            String choices[] = new String[opt.size()];
+            String choicesExp[] = new String[opt.size()];
+            for (int k = 0; k < opt.size(); ++k) {
+                PdfObject obj = opt.getPdfObject(k);
                 if (obj.isString()) {
                     choices[k] = choicesExp[k] = ((PdfString)obj).toUnicodeString();
                 }
                 else {
-                    ArrayList opar = ((PdfArray)obj).getArrayList();
-                    choicesExp[k] = ((PdfString)opar.get(0)).toUnicodeString();
-                    choices[k] = ((PdfString)opar.get(1)).toUnicodeString();
+                    PdfArray a = (PdfArray) obj;
+                    choicesExp[k] = a.getAsString(0).toUnicodeString();
+                    choices[k] = a.getAsString(1).toUnicodeString();
                 }
             }
             if ((flags & PdfFormField.FF_COMBO) != 0) {
@@ -735,27 +744,28 @@ public class AcroFields {
         topFirst = tx.getTopFirst();
         return app;
     }
-    
+
     Color getMKColor(PdfArray ar) {
         if (ar == null)
             return null;
-        ArrayList cc = ar.getArrayList();
-        switch (cc.size()) {
+        switch (ar.size()) {
             case 1:
-                return new GrayColor(((PdfNumber)cc.get(0)).floatValue());
+                return new GrayColor(ar.getAsNumber(0).floatValue());
             case 3:
-                return new Color(ExtendedColor.normalize(((PdfNumber)cc.get(0)).floatValue()), ExtendedColor.normalize(((PdfNumber)cc.get(1)).floatValue()), ExtendedColor.normalize(((PdfNumber)cc.get(2)).floatValue()));
+                return new Color(ExtendedColor.normalize(ar.getAsNumber(0).floatValue()), ExtendedColor.normalize(ar.getAsNumber(1).floatValue()), ExtendedColor.normalize(ar.getAsNumber(2).floatValue()));
             case 4:
-                return new CMYKColor(((PdfNumber)cc.get(0)).floatValue(), ((PdfNumber)cc.get(1)).floatValue(), ((PdfNumber)cc.get(2)).floatValue(), ((PdfNumber)cc.get(3)).floatValue());
+                return new CMYKColor(ar.getAsNumber(0).floatValue(), ar.getAsNumber(1).floatValue(), ar.getAsNumber(2).floatValue(), ar.getAsNumber(3).floatValue());
             default:
                 return null;
         }
     }
-    
-    /** Gets the field value.
+
+    /**
+     * Gets the field value.
+     * 
      * @param name the fully qualified field name
      * @return the field value
-     */    
+     */
     public String getField(String name) {
         if (xfa.isXfaPresent()) {
             name = xfa.findFieldName(name, this);
@@ -768,29 +778,32 @@ public class AcroFields {
         if (item == null)
             return null;
         lastWasString = false;
-        PdfObject v = PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.V));
-        if (v == null)
+        PdfDictionary mergedDict = item.getMerged( 0 );
+        PdfName valName = mergedDict.getAsName(PdfName.V);
+        PdfString valStr = mergedDict.getAsString(PdfName.V);
+        if (valName == null && valStr == null)
             return "";
-        PdfName type = (PdfName)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.FT));
+        PdfName type = mergedDict.getAsName(PdfName.FT);
         if (PdfName.BTN.equals(type)) {
-            PdfNumber ff = (PdfNumber)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.FF));
+            PdfNumber ff = mergedDict.getAsNumber(PdfName.FF);
             int flags = 0;
             if (ff != null)
                 flags = ff.intValue();
             if ((flags & PdfFormField.FF_PUSHBUTTON) != 0)
                 return "";
             String value = "";
-            if (v.isName())
-                value = PdfName.decodeName(v.toString());
-            else if (v.isString())
-                value = ((PdfString)v).toUnicodeString();
-            PdfObject opts = PdfReader.getPdfObject(((PdfDictionary)item.values.get(0)).get(PdfName.OPT));
-            if (opts != null && opts.isArray()) {
-                ArrayList list = ((PdfArray)opts).getArrayList();
+            if (valName != null)
+                value = PdfName.decodeName(valName.toString());
+            else if (valStr != null)
+                value = valStr.toUnicodeString();
+
+            // shouldn't opts be in 'mergedDict' as well?
+            PdfArray opts = item.getValue(0).getAsArray(PdfName.OPT);
+            if (opts != null) {
                 int idx = 0;
                 try {
                     idx = Integer.parseInt(value);
-                    PdfString ps = (PdfString)list.get(idx);
+                    PdfString ps = opts.getAsString(idx);
                     value = ps.toUnicodeString();
                     lastWasString = true;
                 }
@@ -799,19 +812,22 @@ public class AcroFields {
             }
             return value;
         }
-        if (v.isString()) {
+        if (valStr != null) {
             lastWasString = true;
-            return ((PdfString)v).toUnicodeString();
-        }
-        return PdfName.decodeName(v.toString());
+            return valStr.toUnicodeString();
+        } else if (valName != null) {
+            return PdfName.decodeName(valName.toString());
+        } else
+            return "";
     }
 
     /**
      * Gets the field values of a Choice field.
+     * 
      * @param name the fully qualified field name
      * @return the field value
      * @since 2.1.3
-     */    
+     */
     public String[] getListSelection(String name) {
     	String[] ret;
     	String s = getField(name);
@@ -828,7 +844,7 @@ public class AcroFields {
         //if (!PdfName.CH.equals(type)) {
         //	return ret;
         //}
-        PdfArray values = (PdfArray)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.I));
+        PdfArray values = item.getMerged(0).getAsArray(PdfName.I);
         if (values == null)
             return ret;
         ret = new String[values.size()];
@@ -842,7 +858,7 @@ public class AcroFields {
         return ret;
     }
 
-    
+
     /**
      * Sets a field property. Valid property names are:
      * <p>
@@ -855,13 +871,14 @@ public class AcroFields {
      * <li>bordercolor - sets the border color. The value for this entry is a <CODE>java.awt.Color</CODE>.
      *     If <code>null</code> removes the border.<br>
      * </ul>
+     * 
      * @param field the field name
      * @param name the property name
      * @param value the property value
      * @param inst an array of <CODE>int</CODE> indexing into <CODE>AcroField.Item.merged</CODE> elements to process.
      * Set to <CODE>null</CODE> to process all
      * @return <CODE>true</CODE> if the property exists, <CODE>false</CODE> otherwise
-     */    
+     */
     public boolean setFieldProperty(String field, String name, Object value, int inst[]) {
         if (writer == null)
             throw new RuntimeException("This AcroFields instance is read-only.");
@@ -870,11 +887,14 @@ public class AcroFields {
             if (item == null)
                 return false;
             InstHit hit = new InstHit(inst);
+            PdfDictionary merged;
+            PdfString da;
             if (name.equalsIgnoreCase("textfont")) {
-                for (int k = 0; k < item.merged.size(); ++k) {
+                for (int k = 0; k < item.size(); ++k) {
                     if (hit.isHit(k)) {
-                        PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DA));
-                        PdfDictionary dr = (PdfDictionary)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DR));
+                        merged = item.getMerged( k );
+                        da = merged.getAsString(PdfName.DA);
+                        PdfDictionary dr = merged.getAsDict(PdfName.DR);
                         if (da != null && dr != null) {
                             Object dao[] = splitDAelements(da.toUnicodeString());
                             PdfAppearance cb = new PdfAppearance();
@@ -884,21 +904,21 @@ public class AcroFields {
                                 if (psn == null) {
                                     psn = new PdfName(bf.getPostscriptFontName());
                                 }
-                                PdfDictionary fonts = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
+                                PdfDictionary fonts = dr.getAsDict(PdfName.FONT);
                                 if (fonts == null) {
                                     fonts = new PdfDictionary();
                                     dr.put(PdfName.FONT, fonts);
                                 }
                                 PdfIndirectReference fref = (PdfIndirectReference)fonts.get(psn);
-                                PdfDictionary top = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM));
+                                PdfDictionary top = reader.getCatalog().getAsDict(PdfName.ACROFORM);
                                 markUsed(top);
-                                dr = (PdfDictionary)PdfReader.getPdfObject(top.get(PdfName.DR));
+                                dr = top.getAsDict(PdfName.DR);
                                 if (dr == null) {
                                     dr = new PdfDictionary();
                                     top.put(PdfName.DR, dr);
                                 }
                                 markUsed(dr);
-                                PdfDictionary fontsTop = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
+                                PdfDictionary fontsTop = dr.getAsDict(PdfName.FONT);
                                 if (fontsTop == null) {
                                     fontsTop = new PdfDictionary();
                                     dr.put(PdfName.FONT, fontsTop);
@@ -927,18 +947,19 @@ public class AcroFields {
                                 if (dao[DA_COLOR] != null)
                                     cb.setColorFill((Color)dao[DA_COLOR]);
                                 PdfString s = new PdfString(cb.toString());
-                                ((PdfDictionary)item.merged.get(k)).put(PdfName.DA, s);
-                                ((PdfDictionary)item.widgets.get(k)).put(PdfName.DA, s);
-                                markUsed((PdfDictionary)item.widgets.get(k));
+                                item.getMerged(k).put(PdfName.DA, s);
+                                item.getWidget(k).put(PdfName.DA, s);
+                                markUsed(item.getWidget(k));
                             }
                         }
                     }
                 }
             }
             else if (name.equalsIgnoreCase("textcolor")) {
-                for (int k = 0; k < item.merged.size(); ++k) {
+                for (int k = 0; k < item.size(); ++k) {
                     if (hit.isHit(k)) {
-                        PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DA));
+                        merged = item.getMerged( k );
+                        da = merged.getAsString(PdfName.DA);
                         if (da != null) {
                             Object dao[] = splitDAelements(da.toUnicodeString());
                             PdfAppearance cb = new PdfAppearance();
@@ -947,18 +968,19 @@ public class AcroFields {
                                 buf.append(new PdfName((String)dao[DA_FONT]).getBytes()).append(' ').append(((Float)dao[DA_SIZE]).floatValue()).append(" Tf ");
                                 cb.setColorFill((Color)value);
                                 PdfString s = new PdfString(cb.toString());
-                                ((PdfDictionary)item.merged.get(k)).put(PdfName.DA, s);
-                                ((PdfDictionary)item.widgets.get(k)).put(PdfName.DA, s);
-                                markUsed((PdfDictionary)item.widgets.get(k));
+                                item.getMerged(k).put(PdfName.DA, s);
+                                item.getWidget(k).put(PdfName.DA, s);
+                                markUsed(item.getWidget(k));
                             }
                         }
                     }
                 }
             }
             else if (name.equalsIgnoreCase("textsize")) {
-                for (int k = 0; k < item.merged.size(); ++k) {
+                for (int k = 0; k < item.size(); ++k) {
                     if (hit.isHit(k)) {
-                        PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DA));
+                        merged = item.getMerged( k );
+                        da = merged.getAsString(PdfName.DA);
                         if (da != null) {
                             Object dao[] = splitDAelements(da.toUnicodeString());
                             PdfAppearance cb = new PdfAppearance();
@@ -968,9 +990,9 @@ public class AcroFields {
                                 if (dao[DA_COLOR] != null)
                                     cb.setColorFill((Color)dao[DA_COLOR]);
                                 PdfString s = new PdfString(cb.toString());
-                                ((PdfDictionary)item.merged.get(k)).put(PdfName.DA, s);
-                                ((PdfDictionary)item.widgets.get(k)).put(PdfName.DA, s);
-                                markUsed((PdfDictionary)item.widgets.get(k));
+                                item.getMerged(k).put(PdfName.DA, s);
+                                item.getWidget(k).put(PdfName.DA, s);
+                                markUsed(item.getWidget(k));
                             }
                         }
                     }
@@ -978,18 +1000,19 @@ public class AcroFields {
             }
             else if (name.equalsIgnoreCase("bgcolor") || name.equalsIgnoreCase("bordercolor")) {
                 PdfName dname = (name.equalsIgnoreCase("bgcolor") ? PdfName.BG : PdfName.BC);
-                for (int k = 0; k < item.merged.size(); ++k) {
+                for (int k = 0; k < item.size(); ++k) {
                     if (hit.isHit(k)) {
-                        PdfObject obj = PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.MK));
-                        markUsed(obj);
-                        PdfDictionary mk = (PdfDictionary)obj;
+                        merged = item.getMerged( k );
+                        PdfDictionary mk = merged.getAsDict(PdfName.MK);
                         if (mk == null) {
                             if (value == null)
                                 return true;
                             mk = new PdfDictionary();
-                            ((PdfDictionary)item.merged.get(k)).put(PdfName.MK, mk);
-                            ((PdfDictionary)item.widgets.get(k)).put(PdfName.MK, mk);
-                            markUsed((PdfDictionary)item.widgets.get(k));
+                            item.getMerged(k).put(PdfName.MK, mk);
+                            item.getWidget(k).put(PdfName.MK, mk);
+                            markUsed(item.getWidget(k));
+                        } else {
+                            markUsed( mk );
                         }
                         if (value == null)
                             mk.remove(dname);
@@ -1006,7 +1029,7 @@ public class AcroFields {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     /**
      * Sets a field property. Valid property names are:
      * <p>
@@ -1026,13 +1049,14 @@ public class AcroFields {
      * field dictionary. Bits equal to 1 cause the corresponding bits in Ff
      * to be set to 0.<br>
      * </ul>
+     * 
      * @param field the field name
      * @param name the property name
      * @param value the property value
      * @param inst an array of <CODE>int</CODE> indexing into <CODE>AcroField.Item.merged</CODE> elements to process.
      * Set to <CODE>null</CODE> to process all
      * @return <CODE>true</CODE> if the property exists, <CODE>false</CODE> otherwise
-     */    
+     */
     public boolean setFieldProperty(String field, String name, int value, int inst[]) {
         if (writer == null)
             throw new RuntimeException("This AcroFields instance is read-only.");
@@ -1042,77 +1066,80 @@ public class AcroFields {
         InstHit hit = new InstHit(inst);
         if (name.equalsIgnoreCase("flags")) {
             PdfNumber num = new PdfNumber(value);
-            for (int k = 0; k < item.merged.size(); ++k) {
+            for (int k = 0; k < item.size(); ++k) {
                 if (hit.isHit(k)) {
-                    ((PdfDictionary)item.merged.get(k)).put(PdfName.F, num);
-                    ((PdfDictionary)item.widgets.get(k)).put(PdfName.F, num);
-                    markUsed((PdfDictionary)item.widgets.get(k));
+                    item.getMerged(k).put(PdfName.F, num);
+                    item.getWidget(k).put(PdfName.F, num);
+                    markUsed(item.getWidget(k));
                 }
             }
         }
         else if (name.equalsIgnoreCase("setflags")) {
-            for (int k = 0; k < item.merged.size(); ++k) {
+            for (int k = 0; k < item.size(); ++k) {
                 if (hit.isHit(k)) {
-                    PdfNumber num = (PdfNumber)PdfReader.getPdfObject(((PdfDictionary)item.widgets.get(k)).get(PdfName.F));
+                    PdfNumber num = item.getWidget(k).getAsNumber(PdfName.F);
                     int val = 0;
                     if (num != null)
                         val = num.intValue();
                     num = new PdfNumber(val | value);
-                    ((PdfDictionary)item.merged.get(k)).put(PdfName.F, num);
-                    ((PdfDictionary)item.widgets.get(k)).put(PdfName.F, num);
-                    markUsed((PdfDictionary)item.widgets.get(k));
+                    item.getMerged(k).put(PdfName.F, num);
+                    item.getWidget(k).put(PdfName.F, num);
+                    markUsed(item.getWidget(k));
                 }
             }
         }
         else if (name.equalsIgnoreCase("clrflags")) {
-            for (int k = 0; k < item.merged.size(); ++k) {
+            for (int k = 0; k < item.size(); ++k) {
                 if (hit.isHit(k)) {
-                    PdfNumber num = (PdfNumber)PdfReader.getPdfObject(((PdfDictionary)item.widgets.get(k)).get(PdfName.F));
+                    PdfDictionary widget = item.getWidget( k );
+                    PdfNumber num = widget.getAsNumber(PdfName.F);
                     int val = 0;
                     if (num != null)
                         val = num.intValue();
                     num = new PdfNumber(val & (~value));
-                    ((PdfDictionary)item.merged.get(k)).put(PdfName.F, num);
-                    ((PdfDictionary)item.widgets.get(k)).put(PdfName.F, num);
-                    markUsed((PdfDictionary)item.widgets.get(k));
+                    item.getMerged(k).put(PdfName.F, num);
+                    widget.put(PdfName.F, num);
+                    markUsed(widget);
                 }
             }
         }
         else if (name.equalsIgnoreCase("fflags")) {
             PdfNumber num = new PdfNumber(value);
-            for (int k = 0; k < item.merged.size(); ++k) {
+            for (int k = 0; k < item.size(); ++k) {
                 if (hit.isHit(k)) {
-                    ((PdfDictionary)item.merged.get(k)).put(PdfName.FF, num);
-                    ((PdfDictionary)item.values.get(k)).put(PdfName.FF, num);
-                    markUsed((PdfDictionary)item.values.get(k));
+                    item.getMerged(k).put(PdfName.FF, num);
+                    item.getValue(k).put(PdfName.FF, num);
+                    markUsed(item.getValue(k));
                 }
             }
         }
         else if (name.equalsIgnoreCase("setfflags")) {
-            for (int k = 0; k < item.merged.size(); ++k) {
+            for (int k = 0; k < item.size(); ++k) {
                 if (hit.isHit(k)) {
-                    PdfNumber num = (PdfNumber)PdfReader.getPdfObject(((PdfDictionary)item.values.get(k)).get(PdfName.FF));
+                    PdfDictionary valDict = item.getValue( k );
+                    PdfNumber num = valDict.getAsNumber( PdfName.FF );
                     int val = 0;
                     if (num != null)
                         val = num.intValue();
                     num = new PdfNumber(val | value);
-                    ((PdfDictionary)item.merged.get(k)).put(PdfName.FF, num);
-                    ((PdfDictionary)item.values.get(k)).put(PdfName.FF, num);
-                    markUsed((PdfDictionary)item.values.get(k));
+                    item.getMerged(k).put(PdfName.FF, num);
+                    valDict.put(PdfName.FF, num);
+                    markUsed(valDict);
                 }
             }
         }
         else if (name.equalsIgnoreCase("clrfflags")) {
-            for (int k = 0; k < item.merged.size(); ++k) {
+            for (int k = 0; k < item.size(); ++k) {
                 if (hit.isHit(k)) {
-                    PdfNumber num = (PdfNumber)PdfReader.getPdfObject(((PdfDictionary)item.values.get(k)).get(PdfName.FF));
+                    PdfDictionary valDict = item.getValue( k );
+                    PdfNumber num = valDict.getAsNumber(PdfName.FF);
                     int val = 0;
                     if (num != null)
                         val = num.intValue();
                     num = new PdfNumber(val & (~value));
-                    ((PdfDictionary)item.merged.get(k)).put(PdfName.FF, num);
-                    ((PdfDictionary)item.values.get(k)).put(PdfName.FF, num);
-                    markUsed((PdfDictionary)item.values.get(k));
+                    item.getMerged(k).put(PdfName.FF, num);
+                    valDict.put(PdfName.FF, num);
+                    markUsed(valDict);
                 }
             }
         }
@@ -1120,9 +1147,10 @@ public class AcroFields {
             return false;
         return true;
     }
-    
+
     /**
      * Merges an XML data structure into this form.
+     * 
      * @param n the top node of the data structure
      * @throws java.io.IOException on error
      * @throws com.lowagie.text.DocumentException o error
@@ -1135,12 +1163,14 @@ public class AcroFields {
             setField(name, text);
         }
     }
-    
-    /** Sets the fields by FDF merging.
+
+    /**
+     * Sets the fields by FDF merging.
+     * 
      * @param fdf the FDF form
      * @throws IOException on error
      * @throws DocumentException on error
-     */    
+     */
     public void setFields(FdfReader fdf) throws IOException, DocumentException {
         HashMap fd = fdf.getFields();
         for (Iterator i = fd.keySet().iterator(); i.hasNext();) {
@@ -1150,12 +1180,14 @@ public class AcroFields {
                 setField(f, v);
         }
     }
-    
-    /** Sets the fields by XFDF merging.
+
+    /**
+     * Sets the fields by XFDF merging.
+     * 
      * @param xfdf the XFDF form
      * @throws IOException on error
      * @throws DocumentException on error
-     */    
+     */
     public void setFields(XfdfReader xfdf) throws IOException, DocumentException {
         HashMap fd = xfdf.getFields();
         for (Iterator i = fd.keySet().iterator(); i.hasNext();) {
@@ -1165,7 +1197,7 @@ public class AcroFields {
                 setField(f, v);
             List l = xfdf.getListValues(f);
             if (l != null)
-            	setListSelection(v, (String[])l.toArray());
+            	setListSelection(v, (String[])l.toArray(new String[l.size()]));
         }
     }
 
@@ -1175,34 +1207,38 @@ public class AcroFields {
      * for instance form.setFieldProperty("f", "bgcolor", Color.BLUE, null);
      * This won't have any effect, unless you use regenerateField("f") after changing
      * the property.
-     * 
+     *
      * @param name the fully qualified field name or the partial name in the case of XFA forms
      * @throws IOException on error
      * @throws DocumentException on error
      * @return <CODE>true</CODE> if the field was found and changed,
      * <CODE>false</CODE> otherwise
-     */    
+     */
     public boolean regenerateField(String name) throws IOException, DocumentException {
     	String value = getField(name);
         return setField(name, value, value);
     }
 
-    /** Sets the field value.
+    /**
+     * Sets the field value.
+     * 
      * @param name the fully qualified field name or the partial name in the case of XFA forms
      * @param value the field value
      * @throws IOException on error
      * @throws DocumentException on error
      * @return <CODE>true</CODE> if the field was found and changed,
      * <CODE>false</CODE> otherwise
-     */    
+     */
     public boolean setField(String name, String value) throws IOException, DocumentException {
         return setField(name, value, null);
     }
-    
-    /** Sets the field value and the display string. The display string
+
+    /**
+     * Sets the field value and the display string. The display string
      * is used to build the appearance in the cases where the value
      * is modified by Acrobat with JavaScript and the algorithm is
      * known.
+     * 
      * @param name the fully qualified field name or the partial name in the case of XFA forms
      * @param value the field value
      * @param display the string that is used for the appearance. If <CODE>null</CODE>
@@ -1211,7 +1247,7 @@ public class AcroFields {
      * <CODE>false</CODE> otherwise
      * @throws IOException on error
      * @throws DocumentException on error
-     */    
+     */
     public boolean setField(String name, String value, String display) throws IOException, DocumentException {
         if (writer == null)
             throw new DocumentException("This AcroFields instance is read-only.");
@@ -1229,9 +1265,10 @@ public class AcroFields {
         Item item = (Item)fields.get(name);
         if (item == null)
             return false;
-        PdfName type = (PdfName)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.FT));
+        PdfDictionary merged = item.getMerged( 0 );
+        PdfName type = merged.getAsName(PdfName.FT);
         if (PdfName.TX.equals(type)) {
-            PdfNumber maxLen = (PdfNumber)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.MAXLEN));
+            PdfNumber maxLen = merged.getAsNumber(PdfName.MAXLEN);
             int len = 0;
             if (maxLen != null)
                 len = maxLen.intValue();
@@ -1242,15 +1279,15 @@ public class AcroFields {
             display = value;
         if (PdfName.TX.equals(type) || PdfName.CH.equals(type)) {
             PdfString v = new PdfString(value, PdfObject.TEXT_UNICODE);
-            for (int idx = 0; idx < item.values.size(); ++idx) {
-                PdfDictionary valueDic = (PdfDictionary)item.values.get(idx);
+            for (int idx = 0; idx < item.size(); ++idx) {
+                PdfDictionary valueDic = item.getValue(idx);
                 valueDic.put(PdfName.V, v);
                 valueDic.remove(PdfName.I);
-                markUsed(valueDic);                
-                PdfDictionary merged = (PdfDictionary)item.merged.get(idx);
+                markUsed(valueDic);
+                merged = item.getMerged(idx);
                 merged.remove(PdfName.I);
                 merged.put(PdfName.V, v);
-                PdfDictionary widget = (PdfDictionary)item.widgets.get(idx);
+                PdfDictionary widget = item.getWidget(idx);
                 if (generateAppearances) {
                     PdfAppearance app = getAppearance(merged, display, name);
                     if (PdfName.CH.equals(type)) {
@@ -1258,7 +1295,7 @@ public class AcroFields {
                         widget.put(PdfName.TI, n);
                         merged.put(PdfName.TI, n);
                     }
-                    PdfDictionary appDic = (PdfDictionary)PdfReader.getPdfObject(widget.get(PdfName.AP));
+                    PdfDictionary appDic = widget.getAsDict(PdfName.AP);
                     if (appDic == null) {
                         appDic = new PdfDictionary();
                         widget.put(PdfName.AP, appDic);
@@ -1276,7 +1313,7 @@ public class AcroFields {
             return true;
         }
         else if (PdfName.BTN.equals(type)) {
-            PdfNumber ff = (PdfNumber)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.FF));
+            PdfNumber ff = item.getMerged(0).getAsNumber(PdfName.FF);
             int flags = 0;
             if (ff != null)
                 flags = ff.intValue();
@@ -1296,13 +1333,12 @@ public class AcroFields {
             }
             PdfName v = new PdfName(value);
             ArrayList lopt = new ArrayList();
-            PdfObject opts = PdfReader.getPdfObject(((PdfDictionary)item.values.get(0)).get(PdfName.OPT));
-            if (opts != null && opts.isArray()) {
-                ArrayList list = ((PdfArray)opts).getArrayList();
-                for (int k = 0; k < list.size(); ++k) {
-                    PdfObject vv = PdfReader.getPdfObject((PdfObject)list.get(k));
-                    if (vv != null && vv.isString())
-                        lopt.add(((PdfString)vv).toUnicodeString());
+            PdfArray opts = item.getValue(0).getAsArray(PdfName.OPT);
+            if (opts != null) {
+                for (int k = 0; k < opts.size(); ++k) {
+                    PdfString valStr = opts.getAsString(k);
+                    if (valStr != null)
+                        lopt.add(valStr.toUnicodeString());
                     else
                         lopt.add(null);
                 }
@@ -1315,17 +1351,18 @@ public class AcroFields {
             }
             else
                 vt = v;
-            for (int idx = 0; idx < item.values.size(); ++idx) {
-                PdfDictionary merged = (PdfDictionary)item.merged.get(idx);
-                PdfDictionary widget = (PdfDictionary)item.widgets.get(idx);
-                markUsed((PdfDictionary)item.values.get(idx));
+            for (int idx = 0; idx < item.size(); ++idx) {
+                merged = item.getMerged(idx);
+                PdfDictionary widget = item.getWidget(idx);
+                PdfDictionary valDict = item.getValue(idx);
+                markUsed(item.getValue(idx));
                 if (valt != null) {
                     PdfString ps = new PdfString(value, PdfObject.TEXT_UNICODE);
-                    ((PdfDictionary)item.values.get(idx)).put(PdfName.V, ps);
+                    valDict.put(PdfName.V, ps);
                     merged.put(PdfName.V, ps);
                 }
                 else {
-                    ((PdfDictionary)item.values.get(idx)).put(PdfName.V, v);
+                    valDict.put(PdfName.V, v);
                     merged.put(PdfName.V, v);
                 }
                 markUsed(widget);
@@ -1342,20 +1379,21 @@ public class AcroFields {
         }
         return false;
     }
-    
+
     /**
      * Sets different values in a list selection.
      * No appearance is generated yet; nor does the code check if multiple select is allowed.
+     * 
      * @param	name	the name of the field
      * @param	value	an array with values that need to be selected
      * @return	true only if the field value was changed
      * @since 2.1.4
      */
 	public boolean setListSelection(String name, String[] value) throws IOException, DocumentException {
-        Item item = (Item)fields.get(name);
+        Item item = getFieldItem(name);
         if (item == null)
             return false;
-        PdfName type = (PdfName)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.FT));
+        PdfName type = item.getMerged(0).getAsName(PdfName.FT);
         if (!PdfName.CH.equals(type)) {
         	return false;
         }
@@ -1368,44 +1406,38 @@ public class AcroFields {
         		}
         	}
         }
-        for (int idx = 0; idx < item.values.size(); ++idx) {
-            PdfDictionary valueDic = (PdfDictionary)item.values.get(idx);
-            valueDic.remove(PdfName.V);
-            valueDic.put(PdfName.I, array);
-            markUsed(valueDic);                
-            PdfDictionary merged = (PdfDictionary)item.merged.get(idx);
-            merged.put(PdfName.I, array);
-            merged.remove(PdfName.V);
-            PdfDictionary widget = (PdfDictionary)item.widgets.get(idx);
-            widget.remove(PdfName.AP);
-            merged.remove(PdfName.AP);
-            markUsed(widget);
-        }
+        item.writeToAll(PdfName.I, array, Item.WRITE_MERGED | Item.WRITE_VALUE);
+        item.writeToAll(PdfName.V, null, Item.WRITE_MERGED | Item.WRITE_VALUE);
+        item.writeToAll(PdfName.AP, null, Item.WRITE_MERGED | Item.WRITE_WIDGET);
+        item.markUsed( this, Item.WRITE_VALUE | Item.WRITE_WIDGET );
         return true;
 	}
-    
+
     boolean isInAP(PdfDictionary dic, PdfName check) {
-        PdfDictionary appDic = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.AP));
+        PdfDictionary appDic = dic.getAsDict(PdfName.AP);
         if (appDic == null)
             return false;
-        PdfDictionary NDic = (PdfDictionary)PdfReader.getPdfObject(appDic.get(PdfName.N));
+        PdfDictionary NDic = appDic.getAsDict(PdfName.N);
         return (NDic != null && NDic.get(check) != null);
     }
-    
-    /** Gets all the fields. The fields are keyed by the fully qualified field name and
+
+    /**
+     * Gets all the fields. The fields are keyed by the fully qualified field name and
      * the value is an instance of <CODE>AcroFields.Item</CODE>.
+     * 
      * @return all the fields
-     */    
+     */
     public HashMap getFields() {
         return fields;
     }
-    
+
     /**
      * Gets the field structure.
+     * 
      * @param name the name of the field
      * @return the field structure or <CODE>null</CODE> if the field
      * does not exist
-     */    
+     */
     public Item getFieldItem(String name) {
         if (xfa.isXfaPresent()) {
             name = xfa.findFieldName(name, this);
@@ -1414,12 +1446,13 @@ public class AcroFields {
         }
         return (Item)fields.get(name);
     }
-    
+
     /**
      * Gets the long XFA translated name.
+     * 
      * @param name the name of the field
      * @return the long field name
-     */    
+     */
     public String getTranslatedFieldName(String name) {
         if (xfa.isXfaPresent()) {
             String namex = xfa.findFieldName(name, this);
@@ -1428,28 +1461,29 @@ public class AcroFields {
         }
         return name;
     }
-    
+
     /**
      * Gets the field box positions in the document. The return is an array of <CODE>float</CODE>
      * multiple of 5. For each of this groups the values are: [page, llx, lly, urx,
      * ury]. The coordinates have the page rotation in consideration.
+     * 
      * @param name the field name
      * @return the positions or <CODE>null</CODE> if field does not exist
-     */    
+     */
     public float[] getFieldPositions(String name) {
         Item item = getFieldItem(name);
         if (item == null)
             return null;
-        float ret[] = new float[item.page.size() * 5];
+        float ret[] = new float[item.size() * 5];
         int ptr = 0;
-        for (int k = 0; k < item.page.size(); ++k) {
+        for (int k = 0; k < item.size(); ++k) {
             try {
-                PdfDictionary wd = (PdfDictionary)item.widgets.get(k);
-                PdfArray rect = (PdfArray)wd.get(PdfName.RECT);
+                PdfDictionary wd = item.getWidget(k);
+                PdfArray rect = wd.getAsArray(PdfName.RECT);
                 if (rect == null)
                     continue;
                 Rectangle r = PdfReader.getNormalizedRectangle(rect);
-                int page = ((Integer)item.page.get(k)).intValue();
+                int page = item.getPage(k).intValue();
                 int rotation = reader.getPageRotation(page);
                 ret[ptr++] = page;
                 if (rotation != 0) {
@@ -1495,27 +1529,27 @@ public class AcroFields {
         }
         return ret;
     }
-    
+
     private int removeRefFromArray(PdfArray array, PdfObject refo) {
-        ArrayList ar = array.getArrayList();
         if (refo == null || !refo.isIndirect())
-            return ar.size();
+            return array.size();
         PdfIndirectReference ref = (PdfIndirectReference)refo;
-        for (int j = 0; j < ar.size(); ++j) {
-            PdfObject obj = (PdfObject)ar.get(j);
+        for (int j = 0; j < array.size(); ++j) {
+            PdfObject obj = array.getPdfObject(j);
             if (!obj.isIndirect())
                 continue;
             if (((PdfIndirectReference)obj).getNumber() == ref.getNumber())
-                ar.remove(j--);
+                array.remove(j--);
         }
-        return ar.size();
+        return array.size();
     }
-    
+
     /**
      * Removes all the fields from <CODE>page</CODE>.
+     * 
      * @param page the page to remove the fields from
      * @return <CODE>true</CODE> if any field was removed, <CODE>false otherwise</CODE>
-     */    
+     */
     public boolean removeFieldsFromPage(int page) {
         if (page < 1)
             return false;
@@ -1528,34 +1562,35 @@ public class AcroFields {
         }
         return found;
     }
-    
+
     /**
      * Removes a field from the document. If page equals -1 all the fields with this
      * <CODE>name</CODE> are removed from the document otherwise only the fields in
      * that particular page are removed.
+     * 
      * @param name the field name
      * @param page the page to remove the field from or -1 to remove it from all the pages
      * @return <CODE>true</CODE> if the field exists, <CODE>false otherwise</CODE>
-     */    
+     */
     public boolean removeField(String name, int page) {
         Item item = getFieldItem(name);
         if (item == null)
             return false;
         PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM), reader.getCatalog());
-        
+
         if (acroForm == null)
             return false;
-        PdfArray arrayf = (PdfArray)PdfReader.getPdfObject(acroForm.get(PdfName.FIELDS), acroForm);
+        PdfArray arrayf = acroForm.getAsArray(PdfName.FIELDS);
         if (arrayf == null)
             return false;
-        for (int k = 0; k < item.widget_refs.size(); ++k) {
-            int pageV = ((Integer)item.page.get(k)).intValue();
+        for (int k = 0; k < item.size(); ++k) {
+            int pageV = item.getPage(k).intValue();
             if (page != -1 && page != pageV)
                 continue;
-            PdfIndirectReference ref = (PdfIndirectReference)item.widget_refs.get(k);
-            PdfDictionary wd = (PdfDictionary)PdfReader.getPdfObject(ref);
+            PdfIndirectReference ref = item.getWidgetRef(k);
+            PdfDictionary wd = item.getWidget( k );
             PdfDictionary pageDic = reader.getPageN(pageV);
-            PdfArray annots = (PdfArray)PdfReader.getPdfObject(pageDic.get(PdfName.ANNOTS), pageDic);
+            PdfArray annots = pageDic.getAsArray(PdfName.ANNOTS);
             if (annots != null) {
                 if (removeRefFromArray(annots, ref) == 0) {
                     pageDic.remove(PdfName.ANNOTS);
@@ -1566,9 +1601,9 @@ public class AcroFields {
             }
             PdfReader.killIndirect(ref);
             PdfIndirectReference kid = ref;
-            while ((ref = (PdfIndirectReference)wd.get(PdfName.PARENT)) != null) {
-                wd = (PdfDictionary)PdfReader.getPdfObject(ref);
-                PdfArray kids = (PdfArray)PdfReader.getPdfObject(wd.get(PdfName.KIDS));
+            while ((ref = wd.getAsIndirectObject(PdfName.PARENT)) != null) {
+                wd = wd.getAsDict( PdfName.PARENT );
+                PdfArray kids = wd.getAsArray(PdfName.KIDS);
                 if (removeRefFromArray(kids, kid) != 0)
                     break;
                 kid = ref;
@@ -1579,75 +1614,338 @@ public class AcroFields {
                 markUsed(arrayf);
             }
             if (page != -1) {
-                item.merged.remove(k);
-                item.page.remove(k);
-                item.values.remove(k);
-                item.widget_refs.remove(k);
-                item.widgets.remove(k);
+                item.remove( k );
                 --k;
             }
         }
-        if (page == -1 || item.merged.size() == 0)
+        if (page == -1 || item.size() == 0)
             fields.remove(name);
         return true;
     }
-    
+
     /**
      * Removes a field from the document.
+     * 
      * @param name the field name
      * @return <CODE>true</CODE> if the field exists, <CODE>false otherwise</CODE>
-     */    
+     */
     public boolean removeField(String name) {
         return removeField(name, -1);
     }
-    
-    /** Gets the property generateAppearances.
+
+    /**
+     * Gets the property generateAppearances.
+     * 
      * @return the property generateAppearances
      */
     public boolean isGenerateAppearances() {
-        return this.generateAppearances;
+        return generateAppearances;
     }
-    
-    /** Sets the option to generate appearances. Not generating appearances
+
+    /**
+     * Sets the option to generate appearances. Not generating appearances
      * will speed-up form filling but the results can be
      * unexpected in Acrobat. Don't use it unless your environment is well
      * controlled. The default is <CODE>true</CODE>.
+     * 
      * @param generateAppearances the option to generate appearances
      */
     public void setGenerateAppearances(boolean generateAppearances) {
         this.generateAppearances = generateAppearances;
-        PdfDictionary top = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM));
+        PdfDictionary top = reader.getCatalog().getAsDict(PdfName.ACROFORM);
         if (generateAppearances)
             top.remove(PdfName.NEEDAPPEARANCES);
         else
             top.put(PdfName.NEEDAPPEARANCES, PdfBoolean.PDFTRUE);
     }
-    
-    /** The field representations for retrieval and modification. */    
+
+    /** The field representations for retrieval and modification. */
     public static class Item {
-        /** An array of <CODE>PdfDictionary</CODE> where the value tag /V
+    	
+        /**
+         * <CODE>writeToAll</CODE> constant.
+         * 
+         *  @since 2.1.5
+         */
+        public static final int WRITE_MERGED = 1;
+        
+        /**
+         * <CODE>writeToAll</CODE> and <CODE>markUsed</CODE> constant.
+         * 
+         *  @since 2.1.5
+         */
+        public static final int WRITE_WIDGET = 2;
+        
+        /**
+         * <CODE>writeToAll</CODE> and <CODE>markUsed</CODE> constant.
+         * 
+         *  @since 2.1.5
+         */
+        public static final int WRITE_VALUE = 4;
+
+        /**
+         * This function writes the given key/value pair to all the instances
+         * of merged, widget, and/or value, depending on the <code>writeFlags</code> setting
+         *
+         * @since 2.1.5
+         *
+         * @param key        you'll never guess what this is for.
+         * @param value      if value is null, the key will be removed
+         * @param writeFlags ORed together WRITE_* flags
+         */
+        public void writeToAll(PdfName key, PdfObject value, int writeFlags) {
+            int i;
+            PdfDictionary curDict = null;
+            if ((writeFlags & WRITE_MERGED) != 0) {
+                for (i = 0; i < merged.size(); ++i) {
+                    curDict = getMerged(i);
+                    curDict.put(key, value);
+                }
+            }
+            if ((writeFlags & WRITE_WIDGET) != 0) {
+                for (i = 0; i < widgets.size(); ++i) {
+                    curDict = getWidget(i);
+                    curDict.put(key, value);
+                }
+            }
+            if ((writeFlags & WRITE_VALUE) != 0) {
+                for (i = 0; i < values.size(); ++i) {
+                    curDict = getValue(i);
+                    curDict.put(key, value);
+                }
+            }
+        }
+
+        /**
+         * Mark all the item dictionaries used matching the given flags
+         * 
+         * @since 2.1.5
+         * @param writeFlags WRITE_MERGED is ignored
+         */
+        public void markUsed( AcroFields parentFields, int writeFlags ) {
+            if ((writeFlags & WRITE_VALUE) != 0) {
+                for (int i = 0; i < size(); ++i) {
+                    parentFields.markUsed( getValue( i ) );
+                }
+            }
+            if ((writeFlags & WRITE_WIDGET) != 0) {
+                for (int i = 0; i < size(); ++i) {
+                    parentFields.markUsed(getWidget(i));
+                }
+            }
+        }
+
+        /**
+         * An array of <CODE>PdfDictionary</CODE> where the value tag /V
          * is present.
-         */        
+         * 
+         * @deprecated (will remove 'public' in the future)
+         */
         public ArrayList values = new ArrayList();
-        /** An array of <CODE>PdfDictionary</CODE> with the widgets.
-         */        
+        
+        /**
+         * An array of <CODE>PdfDictionary</CODE> with the widgets.
+         * 
+         * @deprecated (will remove 'public' in the future)
+         */
         public ArrayList widgets = new ArrayList();
-        /** An array of <CODE>PdfDictionary</CODE> with the widget references.
+        
+        /**
+         * An array of <CODE>PdfDictionary</CODE> with the widget references.
+         * 
+         * @deprecated (will remove 'public' in the future)
          */
         public ArrayList widget_refs = new ArrayList();
-        /** An array of <CODE>PdfDictionary</CODE> with all the field
+        
+        /**
+         * An array of <CODE>PdfDictionary</CODE> with all the field
          * and widget tags merged.
-         */        
+         * 
+         * @deprecated (will remove 'public' in the future)
+         */
         public ArrayList merged = new ArrayList();
-        /** An array of <CODE>Integer</CODE> with the page numbers where
+        
+        /**
+         * An array of <CODE>Integer</CODE> with the page numbers where
          * the widgets are displayed.
-         */        
+         * 
+         * @deprecated (will remove 'public' in the future)
+         */
         public ArrayList page = new ArrayList();
-        /** An array of <CODE>Integer</CODE> with the tab order of the field in the page.
-         */        
+        /**
+         * An array of <CODE>Integer</CODE> with the tab order of the field in the page.
+         * 
+         * @deprecated (will remove 'public' in the future)
+         */
         public ArrayList tabOrder = new ArrayList();
+
+        /**
+         * Preferred method of determining the number of instances
+         * of a given field.
+         * 
+         * @since 2.1.5
+         * @return number of instances
+         */
+        public int size() {
+            return values.size();
+        }
+
+        /**
+         * Remove the given instance from this item.  It is possible to
+         * remove all instances using this function.
+         * 
+         * @since 2.1.5
+         * @param killIdx
+         */
+        void remove(int killIdx) {
+            values.remove(killIdx);
+            widgets.remove(killIdx);
+            widget_refs.remove(killIdx);
+            merged.remove(killIdx);
+            page.remove(killIdx);
+            tabOrder.remove(killIdx);
+        }
+
+        /**
+         * Retrieve the value dictionary of the given instance
+         * 
+         * @since 2.1.5
+         * @param idx instance index
+         * @return dictionary storing this instance's value.  It may be shared across instances.
+         */
+        public PdfDictionary getValue(int idx) {
+            return (PdfDictionary) values.get(idx);
+        }
+
+        /**
+         * Add a value dict to this Item
+         * 
+         * @since 2.1.5
+         * @param value new value dictionary
+         */
+        void addValue(PdfDictionary value) {
+            values.add(value);
+        }
+
+        /**
+         * Retrieve the widget dictionary of the given instance
+         * 
+         * @since 2.1.5
+         * @param idx instance index
+         * @return The dictionary found in the appropriate page's Annot array.
+         */
+        public PdfDictionary getWidget(int idx) {
+            return (PdfDictionary) widgets.get(idx);
+        }
+
+        /**
+         * Add a widget dict to this Item
+         * 
+         * @since 2.1.5
+         * @param widget
+         */
+        void addWidget(PdfDictionary widget) {
+            widgets.add(widget);
+        }
+
+        /**
+         * Retrieve the reference to the given instance
+         * 
+         * @since 2.1.5
+         * @param idx instance index
+         * @return reference to the given field instance
+         */
+        public PdfIndirectReference getWidgetRef(int idx) {
+            return (PdfIndirectReference) widget_refs.get(idx);
+        }
+
+        /**
+         * Add a widget ref to this Item
+         * 
+         * @since 2.1.5
+         * @param widgRef
+         */
+        void addWidgetRef(PdfIndirectReference widgRef) {
+            widget_refs.add(widgRef);
+        }
+
+        /**
+         * Retrieve the merged dictionary for the given instance.  The merged
+         * dictionary contains all the keys present in parent fields, though they
+         * may have been overwritten (or modified?) by children.
+         * Example: a merged radio field dict will contain /V
+         * 
+         * @since 2.1.5
+         * @param idx  instance index
+         * @return the merged dictionary for the given instance
+         */
+        public PdfDictionary getMerged(int idx) {
+            return (PdfDictionary) merged.get(idx);
+        }
+
+        /**
+         * Adds a merged dictionary to this Item.
+         * 
+         * @since 2.1.5
+         * @param mergeDict
+         */
+        void addMerged(PdfDictionary mergeDict) {
+            merged.add(mergeDict);
+        }
+
+        /**
+         * Retrieve the page number of the given instance
+         * 
+         * @since 2.1.5
+         * @param idx
+         * @return remember, pages are "1-indexed", not "0-indexed" like field instances.
+         */
+        public Integer getPage(int idx) {
+            return (Integer) page.get(idx);
+        }
+
+        /**
+         * Adds a page to the current Item.
+         * 
+         * @since 2.1.5
+         * @param pg
+         */
+        void addPage(int pg) {
+            page.add(new Integer(pg));
+        }
+
+        /**
+         * forces a page value into the Item.
+         * 
+         * @since 2.1.5
+         * @param idx
+         */
+        void forcePage(int idx, int pg) {
+            page.set(idx, new Integer( pg ));
+        }
+
+        /**
+         * Gets the tabOrder.
+         * 
+         * @since 2.1.5
+         * @param idx
+         * @return tab index of the given field instance
+         */
+        public Integer getTabOrder(int idx) {
+            return (Integer) tabOrder.get(idx);
+        }
+
+        /**
+         * Adds a tab order value to this Item.
+         * 
+         * @since 2.1.5
+         * @param order
+         */
+        void addTabOrder(int order) {
+            tabOrder.add(new Integer(order));
+        }
     }
-    
+
     private static class InstHit {
         IntHashtable hits;
         public InstHit(int inst[]) {
@@ -1657,18 +1955,19 @@ public class AcroFields {
             for (int k = 0; k < inst.length; ++k)
                 hits.put(inst[k], 1);
         }
-        
+
         public boolean isHit(int n) {
             if (hits == null)
                 return true;
             return hits.containsKey(n);
         }
     }
-    
+
     /**
      * Gets the field names that have signatures and are signed.
+     * 
      * @return the field names that have signatures and are signed
-     */    
+     */
     public ArrayList getSignatureNames() {
         if (sigNames != null)
             return new ArrayList(sigNames.keySet());
@@ -1677,23 +1976,22 @@ public class AcroFields {
         for (Iterator it = fields.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Map.Entry)it.next();
             Item item = (Item)entry.getValue();
-            PdfDictionary merged = (PdfDictionary)item.merged.get(0);
+            PdfDictionary merged = item.getMerged(0);
             if (!PdfName.SIG.equals(merged.get(PdfName.FT)))
                 continue;
-            PdfObject vo = PdfReader.getPdfObject(merged.get(PdfName.V));
-            if (vo == null || vo.type() != PdfObject.DICTIONARY)
+            PdfDictionary v = merged.getAsDict(PdfName.V);
+            if (v == null)
                 continue;
-            PdfDictionary v = (PdfDictionary)vo;
-            PdfObject contents = v.get(PdfName.CONTENTS);
-            if (contents == null || contents.type() != PdfObject.STRING)
+            PdfString contents = v.getAsString(PdfName.CONTENTS);
+            if (contents == null)
                 continue;
-            PdfObject ro = v.get(PdfName.BYTERANGE);
-            if (ro == null || ro.type() != PdfObject.ARRAY)
+            PdfArray ro = v.getAsArray(PdfName.BYTERANGE);
+            if (ro == null)
                 continue;
-            ArrayList ra = ((PdfArray)ro).getArrayList();
-            if (ra.size() < 2)
+            int rangeSize = ro.size();
+            if (rangeSize < 2)
                 continue;
-            int length = ((PdfNumber)ra.get(ra.size() - 1)).intValue() + ((PdfNumber)ra.get(ra.size() - 2)).intValue();
+            int length = ro.getAsNumber(rangeSize - 1).intValue() + ro.getAsNumber(rangeSize - 2).intValue();
             sorter.add(new Object[]{entry.getKey(), new int[]{length, 0}});
         }
         Collections.sort(sorter, new AcroFields.SorterComparator());
@@ -1712,19 +2010,20 @@ public class AcroFields {
         }
         return new ArrayList(sigNames.keySet());
     }
-    
+
     /**
      * Gets the field names that have blank signatures.
+     * 
      * @return the field names that have blank signatures
-     */    
+     */
     public ArrayList getBlankSignatureNames() {
         getSignatureNames();
         ArrayList sigs = new ArrayList();
         for (Iterator it = fields.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Map.Entry)it.next();
             Item item = (Item)entry.getValue();
-            PdfDictionary merged = (PdfDictionary)item.merged.get(0);
-            if (!PdfName.SIG.equals(merged.get(PdfName.FT)))
+            PdfDictionary merged = item.getMerged(0);
+            if (!PdfName.SIG.equals(merged.getAsName(PdfName.FT)))
                 continue;
             if (sigNames.containsKey(entry.getKey()))
                 continue;
@@ -1732,29 +2031,31 @@ public class AcroFields {
         }
         return sigs;
     }
-    
+
     /**
      * Gets the signature dictionary, the one keyed by /V.
+     * 
      * @param name the field name
      * @return the signature dictionary keyed by /V or <CODE>null</CODE> if the field is not
      * a signature
-     */    
+     */
     public PdfDictionary getSignatureDictionary(String name) {
         getSignatureNames();
         name = getTranslatedFieldName(name);
         if (!sigNames.containsKey(name))
             return null;
         Item item = (Item)fields.get(name);
-        PdfDictionary merged = (PdfDictionary)item.merged.get(0);
-        return (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.V));
+        PdfDictionary merged = item.getMerged(0);
+        return merged.getAsDict(PdfName.V);
     }
-    
+
     /**
      * Checks is the signature covers the entire document or just part of it.
+     * 
      * @param name the signature field name
      * @return <CODE>true</CODE> if the signature covers the entire document,
      * <CODE>false</CODE> otherwise
-     */    
+     */
     public boolean signatureCoversWholeDocument(String name) {
         getSignatureNames();
         name = getTranslatedFieldName(name);
@@ -1762,7 +2063,7 @@ public class AcroFields {
             return false;
         return ((int[])sigNames.get(name))[0] == reader.getFileLength();
     }
-    
+
     /**
      * Verifies a signature. An example usage is:
      * <p>
@@ -1787,13 +2088,14 @@ public class AcroFields {
      *        System.out.println("Certificate failed: " + fails[1]);
      * }
      * </pre>
+     * 
      * @param name the signature field name
      * @return a <CODE>PdfPKCS7</CODE> class to continue the verification
-     */    
+     */
     public PdfPKCS7 verifySignature(String name) {
         return verifySignature(name, null);
     }
-    
+
     /**
      * Verifies a signature. An example usage is:
      * <p>
@@ -1818,26 +2120,27 @@ public class AcroFields {
      *        System.out.println("Certificate failed: " + fails[1]);
      * }
      * </pre>
+     * 
      * @param name the signature field name
      * @param provider the provider or <code>null</code> for the default provider
      * @return a <CODE>PdfPKCS7</CODE> class to continue the verification
-     */    
+     */
     public PdfPKCS7 verifySignature(String name, String provider) {
         PdfDictionary v = getSignatureDictionary(name);
         if (v == null)
             return null;
         try {
-            PdfName sub = (PdfName)PdfReader.getPdfObject(v.get(PdfName.SUBFILTER));
-            PdfString contents = (PdfString)PdfReader.getPdfObject(v.get(PdfName.CONTENTS));
+            PdfName sub = v.getAsName(PdfName.SUBFILTER);
+            PdfString contents = v.getAsString(PdfName.CONTENTS);
             PdfPKCS7 pk = null;
             if (sub.equals(PdfName.ADBE_X509_RSA_SHA1)) {
-                PdfString cert = (PdfString)PdfReader.getPdfObject(v.get(PdfName.CERT));
+                PdfString cert = v.getAsString(PdfName.CERT);
                 pk = new PdfPKCS7(contents.getOriginalBytes(), cert.getBytes(), provider);
             }
             else
                 pk = new PdfPKCS7(contents.getOriginalBytes(), provider);
             updateByteRange(pk, v);
-            PdfString str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.M));
+            PdfString str = v.getAsString(PdfName.M);
             if (str != null)
                 pk.setSignDate(PdfDate.decode(str.toString()));
             PdfObject obj = PdfReader.getPdfObject(v.get(PdfName.NAME));
@@ -1847,10 +2150,10 @@ public class AcroFields {
               else if(obj.isName())
                 pk.setSignName(PdfName.decodeName(obj.toString()));
             }
-            str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.REASON));
+            str = v.getAsString(PdfName.REASON);
             if (str != null)
                 pk.setReason(str.toUnicodeString());
-            str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.LOCATION));
+            str = v.getAsString(PdfName.LOCATION);
             if (str != null)
                 pk.setLocation(str.toUnicodeString());
             return pk;
@@ -1859,17 +2162,16 @@ public class AcroFields {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     private void updateByteRange(PdfPKCS7 pkcs7, PdfDictionary v) {
-        PdfArray b = (PdfArray)PdfReader.getPdfObject(v.get(PdfName.BYTERANGE));
+        PdfArray b = v.getAsArray(PdfName.BYTERANGE);
         RandomAccessFileOrArray rf = reader.getSafeFile();
         try {
             rf.reOpen();
             byte buf[] = new byte[8192];
-            ArrayList ar = b.getArrayList();
-            for (int k = 0; k < ar.size(); ++k) {
-                int start = ((PdfNumber)ar.get(k)).intValue();
-                int length = ((PdfNumber)ar.get(++k)).intValue();
+            for (int k = 0; k < b.size(); ++k) {
+                int start = b.getAsNumber(k).intValue();
+                int length = b.getAsNumber(++k).intValue();
                 rf.seek(start);
                 while (length > 0) {
                     int rd = rf.read(buf, 0, Math.min(length, buf.length));
@@ -1893,21 +2195,23 @@ public class AcroFields {
             return;
         ((PdfStamperImp)writer).markUsed(obj);
     }
-    
+
     /**
      * Gets the total number of revisions this document has.
+     * 
      * @return the total number of revisions
      */
     public int getTotalRevisions() {
         getSignatureNames();
         return this.totalRevisions;
     }
-    
+
     /**
      * Gets this <CODE>field</CODE> revision.
+     * 
      * @param field the signature field name
      * @return the revision or zero if it's not a signature field
-     */    
+     */
     public int getRevision(String field) {
         getSignatureNames();
         field = getTranslatedFieldName(field);
@@ -1915,14 +2219,15 @@ public class AcroFields {
             return 0;
         return ((int[])sigNames.get(field))[1];
     }
-    
+
     /**
      * Extracts a revision from the document.
+     * 
      * @param field the signature field name
      * @return an <CODE>InputStream</CODE> covering the revision. Returns <CODE>null</CODE> if
      * it's not a signature field
      * @throws IOException on error
-     */    
+     */
     public InputStream extractRevision(String field) throws IOException {
         getSignatureNames();
         field = getTranslatedFieldName(field);
@@ -1937,12 +2242,14 @@ public class AcroFields {
 
     /**
      * Gets the appearances cache.
+     * 
      * @return the appearances cache
+     * @since	2.1.5	this method used to return a HashMap
      */
-    public HashMap getFieldCache() {
+    public Map getFieldCache() {
         return this.fieldCache;
     }
-    
+
     /**
      * Sets a cache for field appearances. Parsing the existing PDF to
      * create a new TextField is time expensive. For those tasks that repeatedly
@@ -1965,25 +2272,29 @@ public class AcroFields {
      *    stp.close();
      * }
      * </pre>
-     * @param fieldCache an HasMap that will carry the cached appearances
+     * 
+     * @param fieldCache a Map that will carry the cached appearances
+     * @since	2.1.5	this method used to take a HashMap as parameter
      */
-    public void setFieldCache(HashMap fieldCache) {
+    public void setFieldCache(Map fieldCache) {
         this.fieldCache = fieldCache;
     }
-    
+
     /**
      * Sets extra margins in text fields to better mimic the Acrobat layout.
+     * 
      * @param extraMarginLeft the extra margin left
      * @param extraMarginTop the extra margin top
-     */    
+     */
     public void setExtraMargin(float extraMarginLeft, float extraMarginTop) {
         this.extraMarginLeft = extraMarginLeft;
         this.extraMarginTop = extraMarginTop;
     }
-    
+
     /**
      * Adds a substitution font to the list. The fonts in this list will be used if the original
      * font doesn't contain the needed glyphs.
+     * 
      * @param font the font
      */
     public void addSubstitutionFont(BaseFont font) {
@@ -1993,17 +2304,19 @@ public class AcroFields {
     }
 
     private static final HashMap stdFieldFontNames = new HashMap();
-    
+
     /**
      * Holds value of property totalRevisions.
      */
     private int totalRevisions;
-    
+
     /**
      * Holds value of property fieldCache.
+     * 
+     * @since	2.1.5	this used to be a HashMap
      */
-    private HashMap fieldCache;
-    
+    private Map fieldCache;
+
     static {
         stdFieldFontNames.put("CoBO", new String[]{"Courier-BoldOblique"});
         stdFieldFontNames.put("CoBo", new String[]{"Courier-Bold"});
@@ -2034,19 +2347,19 @@ public class AcroFields {
         private int length;
         private int rangePosition = 0;
         private boolean closed;
-        
+
         private RevisionStream(RandomAccessFileOrArray raf, int length) {
             this.raf = raf;
             this.length = length;
         }
-        
+
         public int read() throws IOException {
             int n = read(b);
             if (n != 1)
                 return -1;
             return b[0] & 0xff;
         }
-        
+
         public int read(byte[] b, int off, int len) throws IOException {
             if (b == null) {
                 throw new NullPointerException();
@@ -2065,7 +2378,7 @@ public class AcroFields {
             rangePosition += elen;
             return elen;
         }
-        
+
         public void close() throws IOException {
             if (!closed) {
                 raf.close();
@@ -2073,18 +2386,19 @@ public class AcroFields {
             }
         }
     }
-    
-    private static class SorterComparator implements Comparator {        
+
+    private static class SorterComparator implements Comparator {
         public int compare(Object o1, Object o2) {
             int n1 = ((int[])((Object[])o1)[1])[0];
             int n2 = ((int[])((Object[])o2)[1])[0];
             return n1 - n2;
-        }        
+        }
     }
 
     /**
      * Gets the list of substitution fonts. The list is composed of <CODE>BaseFont</CODE> and can be <CODE>null</CODE>. The fonts in this list will be used if the original
      * font doesn't contain the needed glyphs.
+     * 
      * @return the list
      */
     public ArrayList getSubstitutionFonts() {
@@ -2094,6 +2408,7 @@ public class AcroFields {
     /**
      * Sets a list of substitution fonts. The list is composed of <CODE>BaseFont</CODE> and can also be <CODE>null</CODE>. The fonts in this list will be used if the original
      * font doesn't contain the needed glyphs.
+     * 
      * @param substitutionFonts the list
      */
     public void setSubstitutionFonts(ArrayList substitutionFonts) {
@@ -2102,30 +2417,33 @@ public class AcroFields {
 
     /**
      * Gets the XFA form processor.
+     * 
      * @return the XFA form processor
      */
     public XfaForm getXfa() {
         return xfa;
     }
-    
+
     private static final PdfName[] buttonRemove = {PdfName.MK, PdfName.F , PdfName.FF , PdfName.Q , PdfName.BS , PdfName.BORDER};
-    
+
     /**
      * Creates a new pushbutton from an existing field. If there are several pushbuttons with the same name
-     * only the first one is used. This pushbutton can be changed and be used to replace 
+     * only the first one is used. This pushbutton can be changed and be used to replace
      * an existing one, with the same name or other name, as long is it is in the same document. To replace an existing pushbutton
      * call {@link #replacePushbuttonField(String,PdfFormField)}.
+     * 
      * @param field the field name that should be a pushbutton
      * @return a new pushbutton or <CODE>null</CODE> if the field is not a pushbutton
      */
     public PushbuttonField getNewPushbuttonFromField(String field) {
         return getNewPushbuttonFromField(field, 0);
     }
-    
+
     /**
-     * Creates a new pushbutton from an existing field. This pushbutton can be changed and be used to replace 
+     * Creates a new pushbutton from an existing field. This pushbutton can be changed and be used to replace
      * an existing one, with the same name or other name, as long is it is in the same document. To replace an existing pushbutton
      * call {@link #replacePushbuttonField(String,PdfFormField,int)}.
+     * 
      * @param field the field name that should be a pushbutton
      * @param order the field order in fields with same name
      * @return a new pushbutton or <CODE>null</CODE> if the field is not a pushbutton
@@ -2137,25 +2455,25 @@ public class AcroFields {
             if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
                 return null;
             Item item = getFieldItem(field);
-            if (order >= item.merged.size())
+            if (order >= item.size())
                 return null;
             int posi = order * 5;
             float[] pos = getFieldPositions(field);
             Rectangle box = new Rectangle(pos[posi + 1], pos[posi + 2], pos[posi + 3], pos[posi + 4]);
             PushbuttonField newButton = new PushbuttonField(writer, box, null);
-            PdfDictionary dic = (PdfDictionary)item.merged.get(order);
+            PdfDictionary dic = item.getMerged(order);
             decodeGenericDictionary(dic, newButton);
-            PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.MK));
+            PdfDictionary mk = dic.getAsDict(PdfName.MK);
             if (mk != null) {
-                PdfString text = (PdfString)PdfReader.getPdfObject(mk.get(PdfName.CA));
+                PdfString text = mk.getAsString(PdfName.CA);
                 if (text != null)
                     newButton.setText(text.toUnicodeString());
-                PdfNumber tp = (PdfNumber)PdfReader.getPdfObject(mk.get(PdfName.TP));
+                PdfNumber tp = mk.getAsNumber(PdfName.TP);
                 if (tp != null)
                     newButton.setLayout(tp.intValue() + 1);
-                PdfDictionary ifit = (PdfDictionary)PdfReader.getPdfObject(mk.get(PdfName.IF));
+                PdfDictionary ifit = mk.getAsDict(PdfName.IF);
                 if (ifit != null) {
-                    PdfName sw = (PdfName)PdfReader.getPdfObject(ifit.get(PdfName.SW));
+                    PdfName sw = ifit.getAsName(PdfName.SW);
                     if (sw != null) {
                         int scale = PushbuttonField.SCALE_ICON_ALWAYS;
                         if (sw.equals(PdfName.B))
@@ -2166,20 +2484,20 @@ public class AcroFields {
                             scale = PushbuttonField.SCALE_ICON_NEVER;
                         newButton.setScaleIcon(scale);
                     }
-                    sw = (PdfName)PdfReader.getPdfObject(ifit.get(PdfName.S));
+                    sw = ifit.getAsName(PdfName.S);
                     if (sw != null) {
                         if (sw.equals(PdfName.A))
                             newButton.setProportionalIcon(false);
                     }
-                    PdfArray aj = (PdfArray)PdfReader.getPdfObject(ifit.get(PdfName.A));
+                    PdfArray aj = ifit.getAsArray(PdfName.A);
                     if (aj != null && aj.size() == 2) {
-                        float left = ((PdfNumber)PdfReader.getPdfObject((PdfObject)aj.getArrayList().get(0))).floatValue();
-                        float bottom = ((PdfNumber)PdfReader.getPdfObject((PdfObject)aj.getArrayList().get(1))).floatValue();
+                        float left = aj.getAsNumber(0).floatValue();
+                        float bottom = aj.getAsNumber(1).floatValue();
                         newButton.setIconHorizontalAdjustment(left);
                         newButton.setIconVerticalAdjustment(bottom);
                     }
-                    PdfObject fb = PdfReader.getPdfObject(ifit.get(PdfName.FB));
-                    if (fb != null && fb.toString().equals("true"))
+                    PdfBoolean fb = ifit.getAsBoolean(PdfName.FB);
+                    if (fb != null && fb.booleanValue())
                         newButton.setIconFitToBounds(true);
                 }
                 PdfObject i = mk.get(PdfName.I);
@@ -2192,11 +2510,12 @@ public class AcroFields {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     /**
      * Replaces the first field with a new pushbutton. The pushbutton can be created with
      * {@link #getNewPushbuttonFromField(String)} from the same document or it can be a
      * generic PdfFormField of the type pushbutton.
+     * 
      * @param field the field name
      * @param button the <CODE>PdfFormField</CODE> representing the pushbutton
      * @return <CODE>true</CODE> if the field was replaced, <CODE>false</CODE> if the field
@@ -2205,11 +2524,12 @@ public class AcroFields {
     public boolean replacePushbuttonField(String field, PdfFormField button) {
         return replacePushbuttonField(field, button, 0);
     }
-    
+
     /**
      * Replaces the designated field with a new pushbutton. The pushbutton can be created with
      * {@link #getNewPushbuttonFromField(String,int)} from the same document or it can be a
      * generic PdfFormField of the type pushbutton.
+     * 
      * @param field the field name
      * @param button the <CODE>PdfFormField</CODE> representing the pushbutton
      * @param order the field order in fields with same name
@@ -2222,11 +2542,11 @@ public class AcroFields {
         if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
             return false;
         Item item = getFieldItem(field);
-        if (order >= item.merged.size())
+        if (order >= item.size())
             return false;
-        PdfDictionary merged = (PdfDictionary)item.merged.get(order);
-        PdfDictionary values = (PdfDictionary)item.values.get(order);
-        PdfDictionary widgets = (PdfDictionary)item.widgets.get(order);
+        PdfDictionary merged = item.getMerged(order);
+        PdfDictionary values = item.getValue(order);
+        PdfDictionary widgets = item.getWidget(order);
         for (int k = 0; k < buttonRemove.length; ++k) {
             merged.remove(buttonRemove[k]);
             values.remove(buttonRemove[k]);

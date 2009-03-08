@@ -64,9 +64,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.TextField;
 
 /**
- * Class for an index.
- * 
- * @author Michael Niedermair
+ * Class that can be used to position AcroForm fields.
  */
 public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCellEvent {
 
