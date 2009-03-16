@@ -230,6 +230,10 @@ class PdfStamperImp extends PdfWriter {
         	else {
         		ocdict.put(PdfName.OCGS, OCProperties.get(PdfName.OCGS));
         		PdfDictionary ddict = ocdict.getAsDict(PdfName.D);
+        		if (ddict == null) {
+        			ddict = new PdfDictionary();
+        			ocdict.put(PdfName.D, ddict);
+        		}
         		ddict.put(PdfName.ORDER, OCProperties.getAsDict(PdfName.D).get(PdfName.ORDER));
         		ddict.put(PdfName.RBGROUPS, OCProperties.getAsDict(PdfName.D).get(PdfName.RBGROUPS));
         		ddict.put(PdfName.OFF, OCProperties.getAsDict(PdfName.D).get(PdfName.OFF));
