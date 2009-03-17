@@ -56,6 +56,7 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
@@ -181,6 +182,45 @@ class PdfStamperImp extends PdfWriter {
         }
         if (pdf.pageLabels != null)
             catalog.put(PdfName.PAGELABELS, pdf.pageLabels.getDictionary(this));
+        // OCG
+        if (!documentOCG.isEmpty()) {
+        	fillOCProperties(false);
+        	PdfDictionary ocdict = catalog.getAsDict(PdfName.OCPROPERTIES);
+        	if (ocdict == null) {
+        		reader.getCatalog().put(PdfName.OCPROPERTIES, OCProperties);
+        	}
+        	else {
+        		ocdict.put(PdfName.OCGS, OCProperties.get(PdfName.OCGS));
+        		PdfDictionary ddict = ocdict.getAsDict(PdfName.D);
+        		if (ddict == null) {
+        			ddict = new PdfDictionary();
+        			ocdict.put(PdfName.D, ddict);
+        		}
+        		ddict.put(PdfName.ORDER, OCProperties.getAsDict(PdfName.D).get(PdfName.ORDER));
+        		ddict.put(PdfName.RBGROUPS, OCProperties.getAsDict(PdfName.D).get(PdfName.RBGROUPS));
+        		ddict.put(PdfName.OFF, OCProperties.getAsDict(PdfName.D).get(PdfName.OFF));
+        		ddict.put(PdfName.AS, OCProperties.getAsDict(PdfName.D).get(PdfName.AS));
+            }
+        }
+        // metadata
+        int skipInfo = -1;
+        PRIndirectReference iInfo = (PRIndirectReference)reader.trailer.get(PdfName.INFO);
+        PdfDictionary oldInfo = (PdfDictionary)PdfReader.getPdfObject(iInfo);
+        String producer = null;
+        if (iInfo != null)
+            skipInfo = iInfo.getNumber();
+        if (oldInfo != null)
+        	producer = oldInfo.getAsString(PdfName.PRODUCER).value;
+        if (!Document.getVersion().equals(producer)) {
+        	StringBuffer buf = new StringBuffer(Document.getVersion());
+        	if (producer != null) {
+        		buf.append(" (originally created with: ");
+        		buf.append(producer);
+        		buf.append(')');
+        	}
+        	producer = buf.toString();
+        }
+        // XMP
         byte[] altMetadata = null;
         PdfObject xmpo = PdfReader.getPdfObject(catalog.get(PdfName.METADATA));
         if (xmpo != null && xmpo.isStream()) {
@@ -196,7 +236,10 @@ class PdfStamperImp extends PdfWriter {
         	PdfStream xmp;
         	try {
         		XmpReader xmpr = new XmpReader(altMetadata);
-        		xmpr.replace("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate());
+        		if (!xmpr.replace("http://ns.adobe.com/pdf/1.3/", "Producer", producer))
+        			xmpr.add("rdf:Description", "http://ns.adobe.com/pdf/1.3/", "pdf:Producer", producer);
+        		if (!xmpr.replace("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate()))
+        			xmpr.add("rdf:Description", "http://ns.adobe.com/xap/1.0/", "xmp:ModifyDate", date.getW3CDate());
         		xmpr.replace("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate());
             	xmp = new PdfStream(xmpr.serializeDoc());
         	}
@@ -221,40 +264,16 @@ class PdfStamperImp extends PdfWriter {
         		markUsed(catalog);
         	}
         }
-        if (!documentOCG.isEmpty()) {
-        	fillOCProperties(false);
-        	PdfDictionary ocdict = catalog.getAsDict(PdfName.OCPROPERTIES);
-        	if (ocdict == null) {
-        		reader.getCatalog().put(PdfName.OCPROPERTIES, OCProperties);
-        	}
-        	else {
-        		ocdict.put(PdfName.OCGS, OCProperties.get(PdfName.OCGS));
-        		PdfDictionary ddict = ocdict.getAsDict(PdfName.D);
-        		if (ddict == null) {
-        			ddict = new PdfDictionary();
-        			ocdict.put(PdfName.D, ddict);
-        		}
-        		ddict.put(PdfName.ORDER, OCProperties.getAsDict(PdfName.D).get(PdfName.ORDER));
-        		ddict.put(PdfName.RBGROUPS, OCProperties.getAsDict(PdfName.D).get(PdfName.RBGROUPS));
-        		ddict.put(PdfName.OFF, OCProperties.getAsDict(PdfName.D).get(PdfName.OFF));
-        		ddict.put(PdfName.AS, OCProperties.getAsDict(PdfName.D).get(PdfName.AS));
-            }
-        }
-        PRIndirectReference iInfo = null;
         try {
             file.reOpen();
             alterContents();
-            iInfo = (PRIndirectReference)reader.trailer.get(PdfName.INFO);
-            int skip = -1;
-            if (iInfo != null)
-                skip = iInfo.getNumber();
             int rootN = ((PRIndirectReference)reader.trailer.get(PdfName.ROOT)).getNumber();
             if (append) {
                 int keys[] = marked.getKeys();
                 for (int k = 0; k < keys.length; ++k) {
                     int j = keys[k];
                     PdfObject obj = reader.getPdfObjectRelease(j);
-                    if (obj != null && skip != j && j < initialXrefSize) {
+                    if (obj != null && skipInfo != j && j < initialXrefSize) {
                         addToBody(obj, j, j != rootN);
                     }
                 }
@@ -268,7 +287,7 @@ class PdfStamperImp extends PdfWriter {
             else {
                 for (int k = 1; k < reader.getXrefSize(); ++k) {
                     PdfObject obj = reader.getPdfObjectRelease(k);
-                    if (obj != null && skip != k) {
+                    if (obj != null && skipInfo != k) {
                         addToBody(obj, getNewObjectNumber(reader, k, 0), k != rootN);
                     }
                 }
@@ -299,7 +318,6 @@ class PdfStamperImp extends PdfWriter {
         PRIndirectReference iRoot = (PRIndirectReference)reader.trailer.get(PdfName.ROOT);
         PdfIndirectReference root = new PdfIndirectReference(0, getNewObjectNumber(reader, iRoot.getNumber(), 0));
         PdfIndirectReference info = null;
-        PdfDictionary oldInfo = (PdfDictionary)PdfReader.getPdfObject(iInfo);
         PdfDictionary newInfo = new PdfDictionary();
         if (oldInfo != null) {
             for (Iterator i = oldInfo.getKeys().iterator(); i.hasNext();) {
@@ -321,6 +339,7 @@ class PdfStamperImp extends PdfWriter {
             }
         }
         newInfo.put(PdfName.MODDATE, date);
+        newInfo.put(PdfName.PRODUCER, new PdfString(producer));
         if (append) {
             if (iInfo == null)
                 info = addToBody(newInfo, false).getIndirectReference();
