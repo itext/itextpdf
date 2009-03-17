@@ -255,7 +255,7 @@ public class PdfPTable implements LargeElement{
      *  
      * @param sourceTable
      */
-    private void copyFormat(PdfPTable sourceTable) {
+    protected void copyFormat(PdfPTable sourceTable) {
         relativeWidths = new float[sourceTable.getNumberOfColumns()];
         absoluteWidths = new float[sourceTable.getNumberOfColumns()];
         System.arraycopy(sourceTable.relativeWidths, 0, relativeWidths, 0, getNumberOfColumns());
@@ -316,7 +316,7 @@ public class PdfPTable implements LargeElement{
         setWidths(tb);
     }
 
-    private void calculateWidths() {
+    protected void calculateWidths() {
         if (totalWidth <= 0)
             return;
         float total = 0;
