@@ -240,7 +240,10 @@ public class PdfPRow {
 		}
 	}
 
-    private void saveAndRotateCanvases(PdfContentByte[] canvases, float a, float b, float c, float d, float e, float f) {
+	/**
+	 * @since	2.1.6 private is now protected
+	 */
+    protected void saveAndRotateCanvases(PdfContentByte[] canvases, float a, float b, float c, float d, float e, float f) {
         int last = PdfPTable.TEXTCANVAS + 1;
         if (canvasesPos == null)
             canvasesPos = new int[last * 2];
@@ -252,8 +255,11 @@ public class PdfPRow {
             canvasesPos[k * 2 + 1] = bb.size();
         }
     }
-    
-    private void restoreCanvases(PdfContentByte[] canvases) {
+
+	/**
+	 * @since	2.1.6 private is now protected
+	 */
+    protected void restoreCanvases(PdfContentByte[] canvases) {
         int last = PdfPTable.TEXTCANVAS + 1;
         for (int k = 0; k < last; ++k) {
             ByteBuffer bb = canvases[k].getInternalBuffer();
@@ -263,8 +269,11 @@ public class PdfPRow {
                 bb.setSize(canvasesPos[k * 2]);
         }
     }
-    
-    private float setColumn(ColumnText ct, float left, float bottom, float right, float top) {
+
+	/**
+	 * @since	2.1.6 private is now protected
+	 */
+    protected float setColumn(ColumnText ct, float left, float bottom, float right, float top) {
         if (left > right)
             right = left;
         if (bottom > top)
