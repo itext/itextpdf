@@ -211,13 +211,13 @@ class PdfStamperImp extends PdfWriter {
             skipInfo = iInfo.getNumber();
         if (oldInfo != null)
         	producer = oldInfo.getAsString(PdfName.PRODUCER).value;
-        if (!Document.getVersion().equals(producer)) {
+        if (producer == null)
+        	producer = Document.getVersion();
+        else if (producer.indexOf(Document.getVersion()) != -1) {
         	StringBuffer buf = new StringBuffer(Document.getVersion());
-        	if (producer != null) {
-        		buf.append(" (originally created with: ");
-        		buf.append(producer);
-        		buf.append(')');
-        	}
+        	buf.append(" (originally created with: ");
+        	buf.append(producer);
+        	buf.append(')');
         	producer = buf.toString();
         }
         // XMP
