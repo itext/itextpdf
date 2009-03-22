@@ -59,7 +59,7 @@ public class PdfNameTree {
     private static final int leafSize = 64;
     
     /**
-     * Creates a name tree.
+     * Writes a name tree to a PdfWriter.
      * @param items the item of the name tree. The key is a <CODE>String</CODE>
      * and the value is a <CODE>PdfObject</CODE>. Note that although the
      * keys are strings only the lower byte is used and no check is made for chars
