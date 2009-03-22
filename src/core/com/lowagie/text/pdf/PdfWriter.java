@@ -834,6 +834,26 @@ public class PdfWriter extends DocWriter implements
         return iobj;
     }
 
+	
+    /**
+     * Adds an object to the PDF and returns an indirect reference.
+     * However, if the object already has an indirect reference,
+     * it won't be added a second time. Its original reference will
+     * be returned instead.
+     * @param	object	the object you want to add
+     * @return	an indirect reference to the object
+     * @throws IOException 
+     */
+    public PdfIndirectReference addPdfObject(PdfObject object)
+    	throws IOException {
+    	PdfIndirectReference ref = object.getIndRef();
+		if (object.getIndRef() == null) {
+			ref = addToBody(object).getIndirectReference();
+			object.setIndRef(ref);
+		}
+		return ref;
+    }
+
     /**
      * Use this to get an <CODE>PdfIndirectReference</CODE> for an object that
      * will be created in the future.
