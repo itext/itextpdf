@@ -102,7 +102,7 @@ public class RichMediaWindow extends PdfDictionary {
 	private PdfDictionary createDimensionDictionary(float d, float max, float min) {
 		PdfDictionary dict = new PdfDictionary();
 		dict.put(PdfName.DEFAULT, new PdfNumber(d));
-		dict.put(PdfName.MAX_LOWER_CASE, new PdfNumber(max));
+		dict.put(PdfName.MAX_CAMEL_CASE, new PdfNumber(max));
 		dict.put(PdfName.MIN_CAMEL_CASE, new PdfNumber(min));
 		return dict;
 	}
