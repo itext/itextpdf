@@ -70,11 +70,6 @@ package com.lowagie.text.pdf;
 public class PdfName extends PdfObject implements Comparable{
 
     // CLASS CONSTANTS (a variety of standard names used in PDF))
-	/**
-     * A name.
-     * @since 2.1.6
-     */
-    public static final PdfName _1_7 = new PdfName("1.7");
     /**
      * A name.
      * @since 2.1.6

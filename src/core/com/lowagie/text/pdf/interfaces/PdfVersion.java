@@ -90,7 +90,8 @@ public interface PdfVersion {
 	/**
 	 * Adds a developer extension to the Extensions dictionary
 	 * in the Catalog.
-	 * @param extensions	an extensions dictionary
+	 * @param extensions	an object that contains the extensions prefix and dictionary
+	 * @since	2.1.6
 	 */
 	public void addDeveloperExtension(PdfDeveloperExtension de);
 }
