@@ -70,7 +70,7 @@ package com.lowagie.text.pdf;
 public class PdfName extends PdfObject implements Comparable{
 
     // CLASS CONSTANTS (a variety of standard names used in PDF))
-	/**
+    /**
      * A name.
      * @since 2.1.6
      */
@@ -95,6 +95,11 @@ public class PdfName extends PdfObject implements Comparable{
      * @since 2.1.6
      */
     public static final PdfName ACTIVATION = new PdfName("Activation");
+    /**
+     * A name.
+     * @since 2.1.6
+     */
+    public static final PdfName ADBE = new PdfName("ADBE");
     /** A name */
     public static final PdfName ADBE_PKCS7_DETACHED = new PdfName("adbe.pkcs7.detached");
     /** A name */
@@ -169,6 +174,11 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName BASEENCODING = new PdfName("BaseEncoding");
     /** A name */
     public static final PdfName BASEFONT = new PdfName("BaseFont");
+    /**
+     * A name
+     * @since	2.1.6
+     */
+    public static final PdfName BASEVERSION = new PdfName("BaseVersion");
     /** A name */
     public static final PdfName BBOX = new PdfName("BBox");
     /** A name */
@@ -478,6 +488,16 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName ENDOFLINE = new PdfName("EndOfLine");
     /** A name */
     public static final PdfName EXTEND = new PdfName("Extend");
+    /**
+     * A name
+     * @since	2.1.6
+     */
+    public static final PdfName EXTENSIONS = new PdfName("Extensions");
+    /**
+     * A name
+     * @since	2.1.6
+     */
+    public static final PdfName EXTENSIONLEVEL = new PdfName("ExtensionLevel");
     /** A name */
     public static final PdfName EXTGSTATE = new PdfName("ExtGState");
     /** A name */

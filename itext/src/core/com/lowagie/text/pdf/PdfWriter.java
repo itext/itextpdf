@@ -1023,7 +1023,9 @@ public class PdfWriter extends DocWriter implements
 
     /**
      * Sets the value for the Tabs entry in the page tree.
-     * @param	tabs	Can be PdfName.R, PdfName.C or PdfName.S
+     * @param	tabs	Can be PdfName.R, PdfName.C or PdfName.S.
+     * Since the Adobe Extensions Level 3, it can also be PdfName.A
+     * or PdfName.W
      * @since	2.1.5
      */
     public void setTabs(PdfName tabs) {
@@ -1395,6 +1397,14 @@ public class PdfWriter extends DocWriter implements
 		pdf_version.setPdfVersion(version);
 	}
 
+	/**
+	 * @see com.lowagie.text.pdf.interfaces.PdfVersion#addDeveloperExtension(com.lowagie.text.pdf.PdfDeveloperExtension)
+	 * @since	2.1.6
+	 */
+	public void addDeveloperExtension(PdfDeveloperExtension de) {
+		pdf_version.addDeveloperExtension(de);
+	}
+	
 	/**
 	 * Returns the version information.
 	 */
