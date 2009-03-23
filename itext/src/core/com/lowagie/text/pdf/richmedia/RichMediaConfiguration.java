@@ -61,7 +61,6 @@ import com.lowagie.text.pdf.PdfString;
  * Configuration key in the RichMediaActivation dictionary specified
  * in the RichMediaSettings dictionary.
  * see ExtensionLevel 3 p88
- * @see	RichMediaSettings
  * @see RichMediaAnnotation
  * @see RichMediaInstance
  * @since	2.1.6

@@ -780,13 +780,16 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName MARKINFO = new PdfName("MarkInfo");
     /** A name */
     public static final PdfName MASK = new PdfName("Mask");
-    /** A name */
-    public static final PdfName MAX = new PdfName("max");
+    /**
+     * A name
+     * @since	2.1.6 renamed from MAX
+     */
+    public static final PdfName MAX_LOWER_CASE = new PdfName("max");
     /**
      * A name
      * @since	2.1.6
      */
-    public static final PdfName Max = new PdfName("Max");
+    public static final PdfName MAX_CAMEL_CASE = new PdfName("Max");
     /** A name */
     public static final PdfName MAXLEN = new PdfName("MaxLen");
     /** A name */
@@ -797,13 +800,16 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName MCR = new PdfName("MCR");
     /** A name */
     public static final PdfName METADATA = new PdfName("Metadata");
-    /** A name */
-    public static final PdfName MIN = new PdfName("min");
+    /**
+     * A name
+     * @since	2.1.6 renamed from MIN
+     */
+    public static final PdfName MIN_LOWER_CASE = new PdfName("min");
     /**
      * A name
      * @since	2.1.6
      */
-    public static final PdfName Min = new PdfName("Min");
+    public static final PdfName MIN_CAMEL_CASE = new PdfName("Min");
     /** A name */
     public static final PdfName MK = new PdfName("MK");
     /** A name */

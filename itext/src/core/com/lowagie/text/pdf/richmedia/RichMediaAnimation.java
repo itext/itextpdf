@@ -59,7 +59,7 @@ import com.lowagie.text.pdf.PdfNumber;
  * animations. It can also specify that keyframe animations be played
  * repeatedly.
  * See ExtensionLevel 3 p80
- * @see		RichMediaActiovation
+ * @see		RichMediaActivation
  * @since	2.1.6
  */
 public class RichMediaAnimation extends PdfDictionary {

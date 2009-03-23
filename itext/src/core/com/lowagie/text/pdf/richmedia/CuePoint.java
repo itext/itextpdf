@@ -105,7 +105,7 @@ public class CuePoint extends PdfDictionary {
 	 * Sets an action dictionary defining the action that is executed
 	 * if this cue point is triggered, meaning that the Flash content
 	 * reached the matching cue point during its playback.
-	 * @param	an action
+	 * @param	action	an action
 	 */
 	public void setAction(PdfObject action) {
 		if (action instanceof PdfDictionary || action instanceof PdfIndirectReference)

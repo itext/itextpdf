@@ -93,14 +93,14 @@ public class RichMediaActivation extends PdfDictionary {
 	 * present in this artwork.
 	 * @param	animation	a RichMediaAnimation dictionary
 	 */
-	public void setAnimation(RichMediaAnimation dict) {
-		put(PdfName.ANIMATION, dict);
+	public void setAnimation(RichMediaAnimation animation) {
+		put(PdfName.ANIMATION, animation);
 	}
 	
 	/**
 	 * Sets an indirect object reference to a 3D view dictionary
 	 * that shall also be referenced by the Views array within the
-	 * annotation’s RichMediaContent dictionary.
+	 * annotation's RichMediaContent dictionary.
 	 * @param	view	an indirect reference
 	 */
 	public void setView(PdfIndirectReference view) {
