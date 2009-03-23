@@ -49,6 +49,7 @@
 
 package com.lowagie.text.pdf.interfaces;
 
+import com.lowagie.text.pdf.PdfDeveloperExtension;
 import com.lowagie.text.pdf.PdfName;
 
 /**
@@ -86,4 +87,10 @@ public interface PdfVersion {
 	 * @param version	the PDF name that will be used for the Version key in the catalog
 	 */
 	public void setPdfVersion(PdfName version);
+	/**
+	 * Adds a developer extension to the Extensions dictionary
+	 * in the Catalog.
+	 * @param extensions	an extensions dictionary
+	 */
+	public void addDeveloperExtension(PdfDeveloperExtension de);
 }

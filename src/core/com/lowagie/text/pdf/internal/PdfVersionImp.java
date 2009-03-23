@@ -53,6 +53,7 @@ import java.io.IOException;
 
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.pdf.OutputStreamCounter;
+import com.lowagie.text.pdf.PdfDeveloperExtension;
 import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfWriter;
@@ -81,6 +82,8 @@ public class PdfVersionImp implements PdfVersion {
 	protected char header_version = PdfWriter.VERSION_1_4;
 	/** The version that will be written to the catalog. */
 	protected PdfName catalog_version = null;
+	/** The extensions dictionary. */
+	protected PdfDictionary extensions = null;
 	
 	/**
 	 * @see com.lowagie.text.pdf.interfaces.PdfVersion#setPdfVersion(char)
@@ -171,5 +174,30 @@ public class PdfVersionImp implements PdfVersion {
 		if(catalog_version != null) {
 			catalog.put(PdfName.VERSION, catalog_version);
 		}
+		if (extensions != null) {
+			catalog.put(PdfName.EXTENSIONS, extensions);
+		}
+	}
+
+	/**
+	 * @see com.lowagie.text.pdf.interfaces.PdfVersion#addDeveloperExtension(com.lowagie.text.pdf.PdfDeveloperExtension)
+	 * @since	2.1.6
+	 */
+	public void addDeveloperExtension(PdfDeveloperExtension de) {
+		if (extensions == null) {
+			extensions = new PdfDictionary();
+		}
+		else {
+			PdfDictionary extension = extensions.getAsDict(de.getPrefix());
+			if (extension != null) {
+				int diff = de.getBaseversion().compareTo(extension.getAsName(PdfName.BASEVERSION));
+				if (diff < 0)
+					return;
+				diff = de.getExtensionLevel() - extension.getAsNumber(PdfName.EXTENSIONLEVEL).intValue();
+				if (diff <= 0)
+					return;
+			}
+		}
+		extensions.put(de.getPrefix(), de.getDeveloperExtensions());
 	}
 }
