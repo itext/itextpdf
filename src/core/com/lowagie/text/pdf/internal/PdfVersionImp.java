@@ -82,7 +82,10 @@ public class PdfVersionImp implements PdfVersion {
 	protected char header_version = PdfWriter.VERSION_1_4;
 	/** The version that will be written to the catalog. */
 	protected PdfName catalog_version = null;
-	/** The extensions dictionary. */
+	/**
+	 * The extensions dictionary.
+	 * @since	2.1.6
+	 */
 	protected PdfDictionary extensions = null;
 	
 	/**
