@@ -843,6 +843,7 @@ public class PdfWriter extends DocWriter implements
      * @param	object	the object you want to add
      * @return	an indirect reference to the object
      * @throws IOException 
+     * @since	2.1.6
      */
     public PdfIndirectReference addPdfObject(PdfObject object)
     	throws IOException {

@@ -257,9 +257,9 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         if (min > 0)
-            dic.put(PdfName.MIN, new PdfNumber(min));
+            dic.put(PdfName.MIN_LOWER_CASE, new PdfNumber(min));
         if (max >= 0)
-            dic.put(PdfName.MAX, new PdfNumber(max));
+            dic.put(PdfName.MAX_LOWER_CASE, new PdfNumber(max));
         usage.put(PdfName.ZOOM, dic);
     }
 
