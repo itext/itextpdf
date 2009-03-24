@@ -631,7 +631,7 @@ public class PdfPRow {
 				if (fixHs[k] > 0)
 					cell.setFixedHeight(fixHs[k]);
 				else
-					cell.setMinimumHeight(minHs[k]);;
+					cell.setMinimumHeight(minHs[k]);
 			}
 			return null;
 		}

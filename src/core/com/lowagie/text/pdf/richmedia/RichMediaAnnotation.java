@@ -61,7 +61,6 @@ import com.lowagie.text.pdf.PdfFileSpecification;
 import com.lowagie.text.pdf.PdfIndirectReference;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfNameTree;
-import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
@@ -214,7 +213,7 @@ public class RichMediaAnnotation {
 	 */
 	public PdfAnnotation createAnnotation() throws IOException {
 		if (assetsmap != null) {
-			if (assetsmap.size() > 0) {
+			if (!assetsmap.isEmpty()) {
 				PdfDictionary assets = PdfNameTree.writeTree(assetsmap, writer);
 				richMediaContent.put(PdfName.ASSETS, writer.addToBody(assets).getIndirectReference());
 				writer.addToBody(richMediaContent, richMediaContent.getIndRef());
