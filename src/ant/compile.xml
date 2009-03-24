@@ -175,16 +175,4 @@
 	
     <target name="jar.debug"  depends="compile.debug, make.jar" description="--> makes a jarfile from the iText code" />
 
-    <!-- clover -->
-    <property name ="clover.jar" location="${clover.home}/lib/clover.jar" />
-    <property name="clover.license.path" value="clover2.license" />
-    <taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
-
-    <target name="with.clover">
-      <clover-setup initstring="${itext.build}/reports/clover/coverage.db">
-        <fileset dir="${itext.src}"/>
-        <fileset dir="${itext.rtf.src}"/>
-      </clover-setup>
-    </target>
-
 </project>

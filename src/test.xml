@@ -58,7 +58,6 @@
         <pathelement location="${jcommon.jar}"/>
         <pathelement location="${servlet.jar}"/>
         <pathelement location="${junit.jar}"/>
-        <pathelement location="${clover.jar}"/>
         <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
         <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
     </path>
@@ -256,15 +255,5 @@
 			</condition>
 		</fail>
 	</target>
-
-    <!-- clover -->
-    <property name ="clover.jar" location="${clover.home}/lib/clover.jar" />
-    <property name="clover.license.path" value="clover2.license" />
-    <taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
-
-    <target name="with.clover">
-      <clover-setup initstring="${itext.build}/reports/clover/coverage.db">
-      </clover-setup>
-    </target>
 
 </project>
