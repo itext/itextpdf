@@ -281,6 +281,11 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName CIDTOGIDMAP = new PdfName("CIDToGIDMap");
     /** A name */
     public static final PdfName CIRCLE = new PdfName("Circle");
+    /**
+     * A name.
+     * @since 2.1.6
+     */
+    public static final PdfName CMD = new PdfName("CMD");
     /** A name */
     public static final PdfName CO = new PdfName("CO");
     /** A name */
@@ -1123,6 +1128,11 @@ public class PdfName extends PdfObject implements Comparable{
      */
     public static final PdfName RICHMEDIAANIMATION = new PdfName("RichMediaAnimation");
     /**
+     * A name
+     * @since	2.1.6
+     */
+    public static final PdfName RICHMEDIACOMMAND = new PdfName("RichMediaCommand");
+    /**
      * A name.
      * @since 2.1.6
      */
@@ -1137,6 +1147,11 @@ public class PdfName extends PdfObject implements Comparable{
      * @since 2.1.6
      */
     public static final PdfName RICHMEDIADEACTIVATION = new PdfName("RichMediaDeactivation");
+    /**
+     * A name.
+     * @since 2.1.6
+     */
+    public static final PdfName RICHMEDIAEXECUTE = new PdfName("RichMediaExecute");
     /**
      * A name.
      * @since 2.1.6
@@ -1290,6 +1305,11 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName SYMBOL = new PdfName("Symbol");
     /** A name */
     public static final PdfName T = new PdfName("T");
+    /**
+     * A name
+     * @since	2.1.6
+     */
+    public static final PdfName TA = new PdfName("TA");
     /**
      * A name
      * @since	2.1.5
