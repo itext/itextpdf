@@ -101,7 +101,7 @@ public class InspectPDF extends AbstractTool {
 				System.out.println("Permissions: " + PdfEncryptor.getPermissionsVerbose(reader.getPermissions()));
 				System.out.println("128 bit? " + reader.is128Key());
 			}
-			System.out.println("Rebuilt? " + (!reader.isRebuilt()));
+			System.out.println("Rebuilt? " + reader.isRebuilt());
 			// Some metadata
 			System.out.println("=== Metadata ===");
 			HashMap<String, String> info = reader.getInfo();
