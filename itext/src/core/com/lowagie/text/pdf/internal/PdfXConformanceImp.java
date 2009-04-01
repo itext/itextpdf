@@ -227,7 +227,7 @@ public class PdfXConformanceImp implements PdfXConformance {
                 break;
             case PDFXKEY_FONT:
                 if (!((BaseFont)obj1).isEmbedded())
-                    throw new PdfXConformanceException("All the fonts must be embedded.");
+                    throw new PdfXConformanceException("All the fonts must be embedded. This one isn't: " + ((BaseFont)obj1).getPostscriptFontName());
                 break;
             case PDFXKEY_IMAGE:
                 PdfImage image = (PdfImage)obj1;
