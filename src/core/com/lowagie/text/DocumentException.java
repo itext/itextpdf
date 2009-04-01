@@ -63,18 +63,13 @@ public class DocumentException extends Exception {
 	
 	/** A serial version UID */
     private static final long serialVersionUID = -2191131489390840739L;
-    /**
-     * The original exception in case this exception wraps another exception.
-     * @since	2.1.6 changed from private to protected
-     */
-	protected Exception ex;
 
     /**
      * Creates a Document exception.
      * @param ex an exception that has to be turned into a DocumentException
      */
     public DocumentException(Exception ex) {
-        this.ex = ex;
+        super(ex);
     }
     
     // constructors
@@ -94,26 +89,13 @@ public class DocumentException extends Exception {
     public DocumentException(String message) {
         super(message);
     }
-    
-    /**
-     * Returns the original exception if DocumentException is used to wrap
-     * another exception.
-     * @return	the original exception
-     * @since	2.1.6
-     */
-    public Exception getEx() {
-    	return ex;
-    }
 
     /**
      * We print the message of the checked exception 
      * @return the error message
      */
     public String getMessage() {
-        if (ex == null)
-            return super.getMessage();
-        else
-            return ex.getMessage();
+        return super.getMessage();
     }
 
     /**
@@ -121,10 +103,7 @@ public class DocumentException extends Exception {
      * @return a localized message
      */
     public String getLocalizedMessage() {
-        if (ex == null)
-            return super.getLocalizedMessage();
-        else
-            return ex.getLocalizedMessage();
+        return super.getLocalizedMessage();
     }
 
     /**
@@ -132,10 +111,7 @@ public class DocumentException extends Exception {
      * @return the String version of the exception
      */
     public String toString() {
-        if (ex == null)
-            return super.toString();
-        else
-            return split(getClass().getName()) + ": " + ex;
+        return super.toString();
     }
 
     /** we have to override this as well */
@@ -149,14 +125,7 @@ public class DocumentException extends Exception {
      * @param s a printstream object
      */
     public void printStackTrace(java.io.PrintStream s) {
-        if (ex == null)
-            super.printStackTrace(s);
-        else {
-            synchronized (s) {
-                s.print(split(getClass().getName()) + ": ");
-                ex.printStackTrace(s);
-            }
-        }
+    	super.printStackTrace(s);
     }
 
     /**
@@ -164,14 +133,7 @@ public class DocumentException extends Exception {
      * @param s A PrintWriter object
      */
     public void printStackTrace(java.io.PrintWriter s) {
-        if (ex == null)
-            super.printStackTrace(s);
-        else {
-            synchronized (s) {
-                s.print(split(getClass().getName()) + ": ");
-                ex.printStackTrace(s);
-            }
-        }
+        super.printStackTrace(s);
     }
 
     /**
