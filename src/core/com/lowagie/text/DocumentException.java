@@ -60,8 +60,14 @@ package com.lowagie.text;
  */
 
 public class DocumentException extends Exception {
+	
+	/** A serial version UID */
     private static final long serialVersionUID = -2191131489390840739L;
-	private Exception ex;
+    /**
+     * The original exception in case this exception wraps another exception.
+     * @since	2.1.6 changed from private to protected
+     */
+	protected Exception ex;
 
     /**
      * Creates a Document exception.
@@ -87,6 +93,16 @@ public class DocumentException extends Exception {
      */
     public DocumentException(String message) {
         super(message);
+    }
+    
+    /**
+     * Returns the original exception if DocumentException is used to wrap
+     * another exception.
+     * @return	the original exception
+     * @since	2.1.6
+     */
+    public Exception getEx() {
+    	return ex;
     }
 
     /**
