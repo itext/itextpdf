@@ -588,6 +588,7 @@ public class ColumnText {
     public void setColumns(float leftLine[], float rightLine[]) {
         maxY = -10e20f;
         minY = 10e20f;
+        setYLine(Math.max(leftLine[1], leftLine[leftLine.length - 1]));
         rightWall = convertColumn(rightLine);
         leftWall = convertColumn(leftLine);
         rectangularWidth = -1;
