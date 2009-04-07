@@ -49,6 +49,10 @@
 
 package com.lowagie.text.pdf;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+
 /**
  * <CODE>PdfName</CODE> is an object that can be used as a name in a PDF-file.
  * <P>
@@ -100,6 +104,11 @@ public class PdfName extends PdfObject implements Comparable{
      * @since 2.1.6
      */
     public static final PdfName ADBE = new PdfName("ADBE");
+    /**
+     * a name used in PDF structure
+     * @since 2.1.6
+     */
+    public static final PdfName ACTUALTEXT = new PdfName("ActualText");
     /** A name */
     public static final PdfName ADBE_PKCS7_DETACHED = new PdfName("adbe.pkcs7.detached");
     /** A name */
@@ -1537,15 +1546,46 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName ZOOM = new PdfName("Zoom");
 
+    /**
+     * map strings to all known static names
+     * @since 2.1.6
+     */
+    public static Map staticNames;
+
+    /**
+     * Use reflection to cache all the static public final names so
+     * future <code>PdfName</code> additions don't have to be "added twice".
+     * A bit less efficient (around 50ms spent here on a 2.2ghz machine),
+     *  but Much Less error prone.
+     * @since 2.1.6
+     */
+
+    static {
+        Field fields[] = PdfName.class.getDeclaredFields();
+        staticNames = new HashMap( fields.length );
+        final int flags = Modifier.STATIC | Modifier.PUBLIC | Modifier.FINAL;
+        try {
+            for (int fldIdx = 0; fldIdx < fields.length; ++fldIdx) {
+                Field curFld = fields[fldIdx];
+                if ((curFld.getModifiers() & flags) == flags &&
+                    curFld.getType().equals( PdfName.class )) {
+                    PdfName name = (PdfName)curFld.get( null );
+                    staticNames.put( decodeName( name.toString() ), name );
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     // CLASS VARIABLES
-    
+
     private int hash = 0;
 
     // CONSTRUCTORS
 
     /**
      * Constructs a new <CODE>PdfName</CODE>. The name length will be checked.
-     * 
+     *
      * @param name the new name
      */
     public PdfName(String name) {
@@ -1569,20 +1609,20 @@ public class PdfName extends PdfObject implements Comparable{
 
     /**
      * Constructs a PdfName.
-     * 
+     *
      * @param bytes the byte representation of the name
      */
     public PdfName(byte bytes[]) {
         super(PdfObject.NAME, bytes);
     }
-    
+
     // CLASS METHODS
 
     /**
      * Compares this object with the specified object for order.
      * Returns a negative integer, zero, or a positive integer as this object
      * is less than, equal to, or greater than the specified object.<p>
-     * 
+     *
      * @param object the Object to be compared.
      * @return a negative integer, zero, or a positive integer as this object
      * is less than, equal to, or greater than the specified object.
@@ -1640,10 +1680,10 @@ public class PdfName extends PdfObject implements Comparable{
         }
         return h;
     }
-    
+
     /**
      * Encodes a plain name given in the unescaped form "AB CD" into "/AB#20CD".
-     * 
+     *
      * @param name the name to encode
      * @return the encoded name
      * @since	2.1.5
@@ -1690,7 +1730,7 @@ public class PdfName extends PdfObject implements Comparable{
 
     /**
      * Decodes an escaped name given in the form "/AB#20CD" into "AB CD".
-     * 
+     *
      * @param name the name to decode
      * @return the decoded name
      */

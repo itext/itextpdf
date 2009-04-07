@@ -832,20 +832,7 @@ public class PdfReader implements PdfViewerPreferences {
                 return null;
             }
             else {
-                if (ref.getReader().appendable) {
-                    switch (obj.type()) {
-                        case PdfObject.NULL:
-                            obj = new PdfNull();
-                            break;
-                        case PdfObject.BOOLEAN:
-                            obj = new PdfBoolean(((PdfBoolean)obj).booleanValue());
-                            break;
-                        case PdfObject.NAME:
-                            obj = new PdfName(obj.getBytes());
-                            break;
-                    }
-                    obj.setIndRef(ref);
-                }
+                obj.setIndRef(ref);
                 return obj;
             }
         }
@@ -1579,15 +1566,27 @@ public class PdfReader implements PdfViewerPreferences {
         return array;
     }
 
+    // Track how deeply nested the current object is, so
+    // we know when to return an individual null or boolean, or
+    // reuse one of the static ones.
+    private int readDepth = 0;
+
     protected PdfObject readPRObject() throws IOException {
         tokens.nextValidToken();
         int type = tokens.getTokenType();
         switch (type) {
             case PRTokeniser.TK_START_DIC: {
+                ++readDepth;
                 PdfDictionary dic = readDictionary();
+                --readDepth;
                 int pos = tokens.getFilePointer();
                 // be careful in the trailer. May not be a "next" token.
-                if (tokens.nextToken() && tokens.getStringValue().equals("stream")) {
+                boolean hasNext;
+                do {
+                    hasNext = tokens.nextToken();
+                } while (hasNext && tokens.getTokenType() == PRTokeniser.TK_COMMENT);
+
+                if (hasNext && tokens.getStringValue().equals("stream")) {
                     //skip whitespaces
                     int ch;
                     do {
@@ -1599,7 +1598,9 @@ public class PdfReader implements PdfViewerPreferences {
                         tokens.backOnePosition(ch);
                     PRStream stream = new PRStream(this, tokens.getFilePointer());
                     stream.putAll(dic);
+                    // crypto handling
                     stream.setObjNum(objNum, objGen);
+
                     return stream;
                 }
                 else {
@@ -1607,30 +1608,55 @@ public class PdfReader implements PdfViewerPreferences {
                     return dic;
                 }
             }
-            case PRTokeniser.TK_START_ARRAY:
-                return readArray();
+            case PRTokeniser.TK_START_ARRAY: {
+                ++readDepth;
+                PdfArray arr = readArray();
+                --readDepth;
+                return arr;
+            }
             case PRTokeniser.TK_NUMBER:
                 return new PdfNumber(tokens.getStringValue());
             case PRTokeniser.TK_STRING:
                 PdfString str = new PdfString(tokens.getStringValue(), null).setHexWriting(tokens.isHexString());
+                // crypto handling
                 str.setObjNum(objNum, objGen);
                 if (strings != null)
                     strings.add(str);
+
                 return str;
-            case PRTokeniser.TK_NAME:
-                return new PdfName(tokens.getStringValue(), false);
+            case PRTokeniser.TK_NAME: {
+                PdfName cachedName = (PdfName)PdfName.staticNames.get( tokens.getStringValue() );
+                if (readDepth > 0 && cachedName != null) {
+                    return cachedName;
+                } else {
+                    // an indirect name (how odd...), or a non-standard one
+                    return new PdfName(tokens.getStringValue(), false);
+                }
+            }
             case PRTokeniser.TK_REF:
                 int num = tokens.getReference();
                 PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());
                 return ref;
             default:
                 String sv = tokens.getStringValue();
-                if ("null".equals(sv))
+                if ("null".equals(sv)) {
+                    if (readDepth == 0) {
+                        return new PdfNull();
+                    } //else
                     return PdfNull.PDFNULL;
-                else if ("true".equals(sv))
+                }
+                else if ("true".equals(sv)) {
+                    if (readDepth == 0) {
+                        return new PdfBoolean( true );
+                    } //else
                     return PdfBoolean.PDFTRUE;
-                else if ("false".equals(sv))
+                }
+                else if ("false".equals(sv)) {
+                    if (readDepth == 0) {
+                        return new PdfBoolean( false );
+                    } //else
                     return PdfBoolean.PDFFALSE;
+                }
                 return new PdfLiteral(-type, tokens.getStringValue());
         }
     }
