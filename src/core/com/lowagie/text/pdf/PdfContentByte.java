@@ -1265,7 +1265,6 @@ public class PdfContentByte {
         if (!stateList.isEmpty()) {
             throw new IllegalPdfSyntaxException("Unbalanced save/restore state operators.");
         }
-        stateList.clear();
         state = new GraphicState();
     }
 
