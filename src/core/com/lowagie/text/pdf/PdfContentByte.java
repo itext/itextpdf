@@ -186,6 +186,9 @@ public class PdfContentByte {
     /** The separator between commands.
      */
     protected int separator = '\n';
+    
+    private int mcDepth = 0;
+    private boolean inText = false;
 
     private static HashMap abrev = new HashMap();
 
@@ -244,6 +247,7 @@ public class PdfContentByte {
      */
 
     public byte[] toPdf(PdfWriter writer) {
+    	sanityCheck();
         return content.toByteArray();
     }
 
@@ -1259,19 +1263,34 @@ public class PdfContentByte {
 
     /**
      * Makes this <CODE>PdfContentByte</CODE> empty.
+     * Calls <code>reset( true )</code>
      */
     public void reset() {
+        reset( true );
+    }
+
+    /**
+     * Makes this <CODE>PdfContentByte</CODE> empty.
+     * @param validateContent will call <code>sanityCheck()</code> if true.
+     * @since 2.1.6
+     */
+    public void reset( boolean validateContent ) {
         content.reset();
-        if (!stateList.isEmpty()) {
-            throw new IllegalPdfSyntaxException("Unbalanced save/restore state operators.");
+        if (validateContent) {
+        	sanityCheck();
         }
         state = new GraphicState();
     }
 
+    
     /**
      * Starts the writing of text.
      */
     public void beginText() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException("Unbalanced begin/end text operators." );
+    	}
+    	inText = true;
         state.xTLM = 0;
         state.yTLM = 0;
         content.append("BT").append_i(separator);
@@ -1281,6 +1300,10 @@ public class PdfContentByte {
      * Ends the writing of text and makes the current font invalid.
      */
     public void endText() {
+    	if (!inText) {
+    		throw new IllegalPdfSyntaxException("Unbalanced begin/end text operators." );
+    	}
+    	inText = false;
         content.append("ET").append_i(separator);
     }
 
@@ -2951,6 +2974,8 @@ public class PdfContentByte {
         if (layerDepth != null && !layerDepth.isEmpty()) {
             n = ((Integer)layerDepth.get(layerDepth.size() - 1)).intValue();
             layerDepth.remove(layerDepth.size() - 1);
+        } else {
+        	throw new IllegalPdfSyntaxException("Unbalanced layer operators." );
         }
         while (n-- > 0)
             content.append("EMC").append_i(separator);
@@ -2995,12 +3020,17 @@ public class PdfContentByte {
 
         int mark = struc.getMCID();
         content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
+        ++mcDepth;
     }
 
     /**
      * Ends a marked content sequence
      */
     public void endMarkedContentSequence() {
+    	if (mcDepth == 0) {
+    		throw new IllegalPdfSyntaxException("Unbalanced begin/end marked content operators." );
+    	}
+    	--mcDepth;
         content.append("EMC").append_i(separator);
     }
 
@@ -3037,6 +3067,7 @@ public class PdfContentByte {
             content.append(name.getBytes());
         }
         content.append(" BDC").append_i(separator);
+        ++mcDepth;
     }
 
     /**
@@ -3045,5 +3076,27 @@ public class PdfContentByte {
      */
     public void beginMarkedContentSequence(PdfName tag) {
         beginMarkedContentSequence(tag, null, false);
+    }
+    
+    /**
+     * Checks for any dangling state: Mismatched save/restore state, begin/end text,
+     * begin/end layer, or begin/end marked content sequence.
+     * If found, this function will throw.
+     * @since 2.1.6
+     * @throws IllegalPdfSyntaxException 
+     */
+    public void sanityCheck() {
+    	if (mcDepth != 0) {
+    		throw new IllegalPdfSyntaxException("Unbalanced marked content operators." );
+    	}
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException("Unbalanced begin/end text operators." );
+    	}
+    	if (layerDepth != null && !layerDepth.isEmpty()) {
+    		throw new IllegalPdfSyntaxException("Unbalanced layer operators." );
+    	}
+    	if (!stateList.isEmpty()) {
+    		throw new IllegalPdfSyntaxException("Unbalanced save/restore state operators." );
+    	}
     }
 }
