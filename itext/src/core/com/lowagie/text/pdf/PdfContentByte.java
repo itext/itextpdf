@@ -62,6 +62,7 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.ImgJBIG2;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.exceptions.IllegalPdfSyntaxException;
 import com.lowagie.text.pdf.internal.PdfAnnotationsImp;
 import com.lowagie.text.pdf.internal.PdfXConformanceImp;
 
@@ -1261,7 +1262,9 @@ public class PdfContentByte {
      */
     public void reset() {
         content.reset();
-        stateList.clear();
+        if (!stateList.isEmpty()) {
+            throw new IllegalPdfSyntaxException("Unbalanced save/restore state operators.");
+        }
         state = new GraphicState();
     }
 
@@ -1298,7 +1301,7 @@ public class PdfContentByte {
         content.append("Q").append_i(separator);
         int idx = stateList.size() - 1;
         if (idx < 0)
-            throw new RuntimeException("Unbalanced save/restore state operators.");
+            throw new IllegalPdfSyntaxException("Unbalanced save/restore state operators.");
         state = (GraphicState)stateList.get(idx);
         stateList.remove(idx);
     }
