@@ -67,6 +67,195 @@ public class PdfStructureElement extends PdfStructureBase {
     private Integer mcid; // marked content ID.
     private boolean hasPageMark = false;
 
+    // valid structType values
+    // Note that you can create new valid types by mapping arbitrary strings
+    // to a valid type using the PdfStructureTreeRoot.mapRole(...).
+
+    // grouping elements
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName DOCUMENT = new PdfName( "Document" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName PART = new PdfName( "Part" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName ARTICLE = new PdfName( "Art" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName SECTION = new PdfName( "Sect" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName DIV = new PdfName ( "Div" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName BLOCKQUOTE = new PdfName("BlockQuote");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName CAPTION = new PdfName("Caption");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName TOC = new PdfName("TOC");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName TOCITEM = new PdfName("TOCI");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName Index = new PdfName("Index");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName NONSTRUCT = new PdfName("NonStruct");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName PRIVATE = new PdfName("Private");
+
+
+    // block level structural elements
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName P = PdfName.P;
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName H = PdfName.H;
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName H1 = new PdfName( "H1" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName H2 = new PdfName("H2");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName H3 = new PdfName("H3");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName H4 = new PdfName("H4");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName H5 = new PdfName("H5");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName H6 = new PdfName("H6");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName L = PdfName.L;
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName LI = new PdfName("LI");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName Lbl = new PdfName("Lbl");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName LBODY = new PdfName("LBody");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName TABLE = new PdfName("Table");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName TABLEROW = new PdfName( "TR" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName TABLEHEADERCELL = new PdfName("TH");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName TABLECELL = new PdfName("TD");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName TABLEHEADER = new PdfName("THead");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName TABLEBODY = new PdfName("TBody");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName TABLEFOOTER = new PdfName("TFoot");
+
+    // inline structure elements
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName SPAN = new PdfName( "Span" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName QUOTE = new PdfName("Quote");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName NOTE = new PdfName("Note");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName REFERENCE = new PdfName("Reference");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName BIBENTRY = new PdfName("BibEntry");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName CODE = new PdfName("Code");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName LINK = new PdfName("Link");
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName ANNOT = PdfName.ANNOT;
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName RUBY = new PdfName( "Ruby" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName WARICHU = new PdfName("Warichu");
+
+    // illustration elements
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName FIGURE = new PdfName( "Figure" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName FORMULA = new PdfName( "Formula" );
+    /**
+     * @since 2.1.6
+     */
+    public static final PdfName FORM = PdfName.FORM;
+
     /**
      * Creates a new instance of PdfStructureElement.
      * @param parent the parent of this node
@@ -181,6 +370,39 @@ public class PdfStructureElement extends PdfStructureBase {
     }
 
     /**
+     * Set the structure title for this element
+     * @param title no-op if title is null
+     * @since 2.1.6
+     */
+    public void setStructTitle(String title) {
+        if (title != null) {
+            put(PdfName.T, new PdfString(title));
+        }
+    }
+
+    /**
+     * Sets the alternative text representation of the current element
+     * @param text
+     * @since 2.1.6
+     */
+    public void setStructAltText(String text) {
+        if (text != null) {
+            put(PdfName.ALT, new PdfString(text));
+        }
+    }
+
+    /**
+     * Sets the actual text value of the structure element in question.
+     * @param text
+     * @since 2.1.6
+     */
+    public void setStructActualText(String text) {
+        if (text != null) {
+            put(PdfName.ACTUALTEXT, new PdfString(text));
+        }
+    }
+
+    /**
      * sets this structure element to represent a particular section of marked content
      * within the page indicated by pageRef
      * @param pageRef the reference to a particular page
@@ -188,7 +410,7 @@ public class PdfStructureElement extends PdfStructureBase {
      */
     public void setMarkedContent( PdfIndirectReference pageRef ) {
         checkKids();
- 
+
         // if there's already a 'K', but checkKids didn't throw, then
         // this element is being used more than once.  Ergo, K is either a
         // PdfNumber, or an array.

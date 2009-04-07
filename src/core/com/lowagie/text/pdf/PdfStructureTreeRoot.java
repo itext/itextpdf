@@ -132,6 +132,7 @@ public class PdfStructureTreeRoot extends PdfStructureBase {
      * @param pageIdx
      * @return the MCID for the given page
      * @since 2.1.5
+     * @deprecated
      */
     public int getMCIDForPage( int pageIdx ) {
       return ((Integer)pageMCIDs.get( new Integer( pageIdx ) )).intValue();
@@ -141,7 +142,7 @@ public class PdfStructureTreeRoot extends PdfStructureBase {
     /**
      * retrieves the existing MCID for a given page.
      * @param pageIdx
-     * @return the MCID for the given page
+     * @return the MCID for the given page, or null
      * @since 2.1.5
      */
     public Integer getMCIDForPage( Integer pageIdx ) {
