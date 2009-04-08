@@ -102,7 +102,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
 			javaFont = Font.createFont(Font.TRUETYPE_FONT, is);
 		} catch (FontFormatException e) {
 			e.printStackTrace();
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		} finally {
 			is.close();
 		}
