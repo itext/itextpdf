@@ -814,7 +814,7 @@ public class PdfDocument extends Document {
             writeOutlines();
         }
         catch(Exception e) {
-            throw new ExceptionConverter(e);
+            throw ExceptionConverter.convertException(e);
         }
 
         writer.close();

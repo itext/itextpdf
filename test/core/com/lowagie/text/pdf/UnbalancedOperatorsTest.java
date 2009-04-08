@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.exceptions.IllegalPdfSyntaxException;
 
@@ -50,7 +49,7 @@ public class UnbalancedOperatorsTest {
         document.close();
     }
 
-    @Test(expected=ExceptionConverter.class) // FIXME: should be IllegalPdfSyntaxException
+    @Test(expected=IllegalPdfSyntaxException.class)
     public void testUnbalancedSaveStateOnClose() throws Exception {
         initializeDocument();
         writer.getDirectContent().saveState();
