@@ -57,8 +57,9 @@ import com.lowagie.text.pdf.PdfString;
 /**
  * the annotation handler specific to the target instance specified
  * by the TI key in the parent rich-media-execute action dictionary.
- * See table 8.45b in the Adobe 1.7 ExtensionLevel 3 document
- * @see		RichMediaExecute
+ * See table 8.45b in the Adobe 1.7 ExtensionLevel 3 document.
+ * See RichMediaExecute in the Adobe document.
+ * 
  * @since	2.1.6
  */
 public class RichMediaCommand extends PdfDictionary {
