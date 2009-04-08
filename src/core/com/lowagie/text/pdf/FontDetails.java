@@ -54,7 +54,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Utilities;
+
 /** Each font in the document will have an instance of this class
  * where the characters used will be represented.
  *
