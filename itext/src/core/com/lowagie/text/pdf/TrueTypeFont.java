@@ -671,7 +671,7 @@ class TrueTypeFont extends BaseFont {
                 readCMaps();
                 readKerning();
                 readBbox();
-                GlyphWidths = null;
+                // GlyphWidths = null;
             }
         }
         finally {
