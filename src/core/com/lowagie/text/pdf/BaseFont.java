@@ -48,10 +48,7 @@
  */
 
 package com.lowagie.text.pdf;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.font.FontRenderContext;
-import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
