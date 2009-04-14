@@ -99,9 +99,13 @@ import java.util.Iterator;
 public class Document implements DocListener {
     
     // membervariables
-    
+    /**
+     * This constant may only be changed by Paulo Soares and/or Bruno Lowagie.
+     * @since	2.1.6
+     */
+	private static final String ITEXT = "iText";
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-	private static final String ITEXT_VERSION = "iText 2.1.6_SNAPSHOT by 1T3XT";
+	private static final String ITEXT_VERSION = ITEXT + " 2.1.6_SNAPSHOT by 1T3XT";
     
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging
@@ -759,6 +763,16 @@ public class Document implements DocListener {
      */    
     public boolean isOpen() {
         return open;
+    }
+    
+	/**
+	 * Gets the product name.
+	 * This method may only be changed by Paulo Soares and/or Bruno Lowagie.
+     * @return the product name
+     * @since	2.1.6
+     */    
+    public static final String getProduct() {
+        return ITEXT;
     }
     
 	/**
