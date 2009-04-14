@@ -94,7 +94,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
                 count++;
             }
         }
-        return total/count;
+        return count != 0 ? total/count : 0;
     }
     
     /**
