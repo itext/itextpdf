@@ -49,7 +49,13 @@
 
 package com.lowagie.text.pdf;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -65,11 +71,25 @@ import com.lowagie.text.Utilities;
  */
 class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
     
-    /** <CODE>true</CODE> if the encoding is vertical.
+    /**
+     * <CODE>true</CODE> if the encoding is vertical.
      */    
     boolean vertical = false;
 
-    /** Creates a new TrueType font addressed by Unicode characters. The font
+    /**
+     * The corresponding Java font.
+     * @since	2.1.6
+     */
+    Font javaFont = null;
+    
+    /**
+     * The Font render context (java.awt).
+     * @since	2.1.6
+     */
+    FontRenderContext javaFontContext = null;
+    
+    /**
+     * Creates a new TrueType font addressed by Unicode characters. The font
      * will always be embedded.
      * @param ttFile the location of the font on file. The file must end in '.ttf'.
      * The modifiers after the name are ignored.
@@ -112,6 +132,48 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         else
             throw new DocumentException(fileName + " " + style + " is not a TTF font file.");
         vertical = enc.endsWith("V");
+    }
+    
+    /**
+     * Reads the Java font.
+     * @since	2.1.6
+     */
+    public boolean loadPlatformFont(String fontfile) throws IOException {
+    	boolean success;
+    	InputStream is = new FileInputStream(fontfile);
+		try {
+			readGlyphWidths();
+	    	javaFont = Font.createFont(Font.TRUETYPE_FONT, is);
+	        javaFontContext = new FontRenderContext(null, false, false);
+	        success = true;
+		} catch (FontFormatException e) {
+	        success = false;
+		} catch (DocumentException e) {
+			success = false;
+		} finally {
+			is.close();
+		}
+		return success;
+    }
+    
+    /**
+     * Checks if there's a Java font.
+     * @since	2.1.6
+     */
+    public boolean hasPlatformFont() {
+    	return javaFont != null && javaFontContext != null;
+    }
+    
+    /**
+     * Layout a String of text with java and return a vector of glyphs.
+     * @param text String of text to layout
+     * @return GlyphVector
+     * @since	2.1.6
+     */
+    public GlyphVector toGlyphs(String text) {
+    	if (hasPlatformFont())
+    		return javaFont.layoutGlyphVector(javaFontContext, text.toCharArray(), 0, text.length(), 0);
+    	return null;
     }
     
     /**
