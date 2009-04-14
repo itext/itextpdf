@@ -49,12 +49,11 @@
 
 package com.lowagie.text.pdf;
 
-import java.awt.font.GlyphVector;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 import com.lowagie.text.ExceptionConverter;
-
+import com.lowagie.text.Utilities;
 /** Each font in the document will have an instance of this class
  * where the characters used will be represented.
  *
@@ -193,20 +192,23 @@ class FontDetails {
                         }
                     }
                     else {
-                        GlyphVector vector = ttu.toGlyphs(text);
-                        int glyphs[] = vector.getGlyphCodes(0, vector.getNumGlyphs(), null);
-                        glyph = new char[glyphs.length];
-                        for (int k = 0; k < glyphs.length; k++) {
-                            int val = glyphs[k];
-                            if (val == 65535)
-                            	continue;
-                            int charIdx = vector.getGlyphCharIndex(k);
-                            int uchar = text.charAt(charIdx);
-                            Integer gl = new Integer(val);
-                            int width = ttu.getGlyphWidth(val);
+                        for (int k = 0; k < len; ++k) {
+                            int val;
+                            if (Utilities.isSurrogatePair(text, k)) {
+                                val = Utilities.convertToUtf32(text, k);
+                                k++;
+                            }
+                            else {
+                                val = text.charAt(k);
+                            }
+                            metrics = ttu.getMetricsTT(val);
+                            if (metrics == null)
+                                continue;
+                            int m0 = metrics[0];
+                            Integer gl = new Integer(m0);
                             if (!longTag.containsKey(gl))
-                                longTag.put(new Integer(val), new int[]{val, width, uchar});
-                            glyph[i++] = (char)val;
+                                longTag.put(gl, new int[]{m0, metrics[1], val});
+                            glyph[i++] = (char)m0;
                         }
                     }
                     String s = new String(glyph, 0, i);

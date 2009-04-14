@@ -49,13 +49,7 @@
 
 package com.lowagie.text.pdf;
 
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -71,20 +65,9 @@ import com.lowagie.text.Utilities;
  */
 class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
     
-    /**
-     * <CODE>true</CODE> if the encoding is vertical.
+    /** <CODE>true</CODE> if the encoding is vertical.
      */    
     boolean vertical = false;
-    /**
-     * The java.awt.Font object for this font.
-     * @since	2.1.6
-     */
-    Font javaFont;
-    /**
-     * The Font render context (java.awt).
-     * @since	2.1.6
-     */
-    FontRenderContext javaFontContext;
 
     /** Creates a new TrueType font addressed by Unicode characters. The font
      * will always be embedded.
@@ -97,17 +80,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @throws IOException the font file could not be read
      */
     TrueTypeFontUnicode(String ttFile, String enc, boolean emb, byte ttfAfm[], boolean forceRead) throws DocumentException, IOException {
-    	InputStream is = new FileInputStream(ttFile);
-        try {
-			javaFont = Font.createFont(Font.TRUETYPE_FONT, is);
-		} catch (FontFormatException e) {
-			e.printStackTrace();
-			throw new IOException(e.getMessage());
-		} finally {
-			is.close();
-		}
-		javaFontContext = new FontRenderContext(null, false, false);
-    	String nameBase = getBaseName(ttFile);
+        String nameBase = getBaseName(ttFile);
         String ttcName = getTTCName(nameBase);
         if (nameBase.length() < ttFile.length()) {
             style = ttFile.substring(nameBase.length());
@@ -513,16 +486,5 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         if (m == null)
             return null;
         return bboxes[m[0]];
-    }    
-    
-    /**
-     * Layout a String of text with java and return a vector of glyphs.
-     * @param text String of text to layout
-     * @return GlyphVector
-     * @since	2.1.6
-     */
-    public GlyphVector toGlyphs(String text) {
-    	return javaFont.layoutGlyphVector(javaFontContext, text.toCharArray(), 0, text.length(), 0);
     }
-  
 }
