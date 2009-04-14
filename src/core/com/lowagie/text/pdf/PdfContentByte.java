@@ -3081,9 +3081,13 @@ public class PdfContentByte {
     /**
      * Checks for any dangling state: Mismatched save/restore state, begin/end text,
      * begin/end layer, or begin/end marked content sequence.
-     * If found, this function will throw.
+     * If found, this function will throw.  This function is called automatically
+     * during a reset() (from Document.newPage() for example), and before writing 
+     * itself out in toPdf().
+     * One possible cause: not calling myPdfGraphics2D.dispose() will leave dangling
+     *                     saveState() calls.
      * @since 2.1.6
-     * @throws IllegalPdfSyntaxException 
+     * @throws IllegalPdfSyntaxException (a runtime exception)
      */
     public void sanityCheck() {
     	if (mcDepth != 0) {
