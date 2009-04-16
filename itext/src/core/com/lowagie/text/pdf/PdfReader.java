@@ -819,13 +819,13 @@ public class PdfReader implements PdfViewerPreferences {
         if (!obj.isIndirect())
             return obj;
         try {
-            PdfIndirectReference baseRef = (PdfIndirectReference)obj;
-            if (baseRef.getDirectObject() != null) {
-            	PdfObject o = baseRef.getDirectObject();
-            	o.setIndRef(baseRef);
+            PRIndirectReference ref = (PRIndirectReference)obj;
+            if (ref.getDirectObject() != null) {
+            	PdfObject o = ref.getDirectObject();
+            	o.setIndRef(ref);
+            	ref.getReader().lastXrefPartial = ref.getNumber();
                 return o;
             }
-            PRIndirectReference ref = (PRIndirectReference)obj;
             int idx = ref.getNumber();
             obj = ref.getReader().getPdfObject(idx);
             if (obj == null) {
