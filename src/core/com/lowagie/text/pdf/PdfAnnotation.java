@@ -908,5 +908,26 @@ public class PdfAnnotation extends PdfDictionary {
     		annotation.hashMap.putAll(parameters);
     		return annotation;
     	}
+    	
+    	/**
+    	 * Returns a String representation of the link.
+    	 * @return	a String representation of the imported link
+    	 * @since	2.1.6
+    	 */
+    	public String toString() {
+    		StringBuffer buf = new StringBuffer("Imported link: location [");
+    		buf.append(llx);
+    		buf.append(' ');
+    		buf.append(lly);
+    		buf.append(' ');
+    		buf.append(urx);
+    		buf.append(' ');
+    		buf.append(ury);
+    		buf.append("] destination ");
+    		buf.append(destination);
+    		buf.append(" parameters ");
+    		buf.append(parameters);
+    		return buf.toString();
+    	}
     }
 }
