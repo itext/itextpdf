@@ -147,7 +147,16 @@ public class PdfImportedPage extends com.lowagie.text.pdf.PdfTemplate {
         throwError();
     }
     
-    void throwError() {
+    /**
+     * Always throws an error. This operation is not allowed.
+     * @param group New value of property group.
+     * @since	2.1.6
+     */ 
+    public void setGroup(PdfTransparencyGroup group) {
+        throwError();
+	}
+
+	void throwError() {
         throw new RuntimeException("Content can not be added to a PdfImportedPage.");
     }
     
