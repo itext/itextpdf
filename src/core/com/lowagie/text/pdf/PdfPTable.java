@@ -438,17 +438,35 @@ public class PdfPTable implements LargeElement{
      */    
     public void addCell(PdfPCell cell) {
         PdfPCell ncell = new PdfPCell(cell);
+        
+        ncell.setRow(rows.size());
+        ncell.setParentTable(this);
+        
         int colspan = ncell.getColspan();
         colspan = Math.max(colspan, 1);
         colspan = Math.min(colspan, currentRow.length - currentRowIdx);
         ncell.setColspan(colspan);
+
         if (colspan != 1)
             isColspan = true;
         int rdir = ncell.getRunDirection();
         if (rdir == PdfWriter.RUN_DIRECTION_DEFAULT)
             ncell.setRunDirection(runDirection);
-        currentRow[currentRowIdx] = ncell;
-        currentRowIdx += colspan;
+        
+        int direction = 1;
+        if (runDirection == PdfWriter.RUN_DIRECTION_RTL)
+        	direction = -1;        		
+        while (rowSpanAbove(rows.size(), currentRowIdx))
+        	currentRowIdx += direction;
+        
+        // -vvvjpg
+        boolean cellAdded = false;
+        if (currentRowIdx < currentRow.length) {  
+	        currentRow[currentRowIdx] = ncell;
+	        currentRowIdx += colspan;
+	        cellAdded = true;
+        }
+
         if (currentRowIdx >= currentRow.length) {
         	int numCols = getNumberOfColumns();
             if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
@@ -472,7 +490,57 @@ public class PdfPTable implements LargeElement{
             currentRow = new PdfPCell[numCols];
             currentRowIdx = 0;
         }
+        
+        if (!cellAdded) {
+            currentRow[currentRowIdx] = ncell;
+            currentRowIdx += colspan;
+        }
     }
+    
+    /**
+     * Checks if there are rows above belonging to a rowspan.
+     * @param	currRow	the current row to check
+     * @param	currCol	the current column to check
+     * @return	true if there's a cell above that belongs to a rowspan
+     * @since	2.1.6
+     */
+    private boolean rowSpanAbove(int currRow, int currCol) {
+    	
+    	if ((currCol >= getNumberOfColumns()) 
+    			|| (currCol < 0) 
+    			|| (currRow == 0))
+    		return false;
+    	
+    	int row = currRow - 1;
+    	PdfPRow aboveRow = (PdfPRow)rows.get(row);
+    	PdfPCell aboveCell = (PdfPCell)aboveRow.getCells()[currCol];
+    	while ((aboveCell == null) && (row > 0)) {
+    		aboveRow  = (PdfPRow)rows.get(--row);
+    		aboveCell = (PdfPCell)aboveRow.getCells()[currCol];
+    	}
+    	
+    	int distance = currRow - row;
+
+    	if (aboveCell == null) {
+        	int col = currCol - 1;
+        	aboveCell = (PdfPCell)aboveRow.getCells()[col];
+        	while ((aboveCell == null) && (row > 0))
+        		aboveCell = (PdfPCell)aboveRow.getCells()[--col];
+        	return aboveCell != null && aboveCell.getRowspan() > distance;
+    	}
+    	
+    	if ((aboveCell.getRowspan() == 1) && (distance > 1)) {
+        	int col = currCol - 1;
+        	aboveRow = (PdfPRow)rows.get(row + 1);
+        	distance--;
+        	aboveCell = (PdfPCell)aboveRow.getCells()[col];
+        	while ((aboveCell == null) && (col > 0))
+        		aboveCell = (PdfPCell)aboveRow.getCells()[--col];
+    	}
+    	
+    	return aboveCell != null && aboveCell.getRowspan() > distance;
+    }
+	
     
     /**
      * Adds a cell element.

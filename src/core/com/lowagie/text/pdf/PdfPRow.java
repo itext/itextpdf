@@ -50,6 +50,7 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -124,6 +125,12 @@ public class PdfPRow {
 		calculated = false;
 		for (int k = 0; k < widths.length; ++k) {
 			PdfPCell cell = cells[k];
+			
+			if (cell == null) {
+				total += widths[k];
+				continue;
+			}
+			
 			cell.setLeft(total);
 			int last = k + cell.getColspan();
 			for (; k < last; ++k)
@@ -134,7 +141,7 @@ public class PdfPRow {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Calculates the heights of each cell in the row.
 	 * 
@@ -144,8 +151,10 @@ public class PdfPRow {
 		maxHeight = 0;
 		for (int k = 0; k < cells.length; ++k) {
 			PdfPCell cell = cells[k];
+			
 			if (cell == null)
 				continue;
+				
 			boolean pivoted = (cell.getRotation() == 90 || cell.getRotation() == 270);
 			Image img = cell.getImage();
 			if (img != null) {
@@ -199,7 +208,7 @@ public class PdfPRow {
 				height = cell.getFixedHeight();
 			else if (height < cell.getMinimumHeight())
 				height = cell.getMinimumHeight();
-			if (height > maxHeight)
+			if ((height > maxHeight) && (cell.getRowspan() == 1))
 				maxHeight = height;
 		}
 		calculated = true;
@@ -211,17 +220,22 @@ public class PdfPRow {
 	 * 
 	 * @param xPos The x-coordinate where the table starts on the canvas
 	 * @param yPos The y-coordinate where the table starts on the canvas
+	 * @param currentMaxHeight The height of the cell to be drawn.
 	 * @param cell
 	 * @param canvases
+	 * @since	2.1.6	extra parameter currentMaxHeight
 	 */
-	public void writeBorderAndBackground(float xPos, float yPos, PdfPCell cell, PdfContentByte[] canvases) {
+	public void writeBorderAndBackground(float xPos, float yPos, float currentMaxHeight, PdfPCell cell, PdfContentByte[] canvases) {
 		Color background = cell.getBackgroundColor();
 		if (background != null || cell.hasBorders()) {
 			// Add xPos resp. yPos to the cell's coordinates for absolute coordinates
 			float right = cell.getRight() + xPos;
 			float top = cell.getTop() + yPos;
 			float left = cell.getLeft() + xPos;
-			float bottom = top - maxHeight;
+			float bottom = top - currentMaxHeight;
+			
+			
+			
 			if (background != null) {
 				PdfContentByte backgr = canvases[PdfPTable.BACKGROUNDCANVAS];
 				backgr.setColorFill(background);
@@ -304,33 +318,53 @@ public class PdfPRow {
 			colStart = 0;
 		if (colStart >= colEnd)
 			return;
+		
 		int newStart;
 		for (newStart = colStart; newStart >= 0; --newStart) {
 			if (cells[newStart] != null)
 				break;
-			xPos -= widths[newStart - 1];
+			if (newStart > 0)
+				xPos -= widths[newStart - 1];
 		}
-		xPos -= cells[newStart].getLeft();
+		
+		if (newStart < 0)
+			newStart = 0;
+		if (cells[newStart] != null)
+			xPos -= cells[newStart].getLeft();
 		
 		for (int k = newStart; k < colEnd; ++k) {
 			PdfPCell cell = cells[k];
 			if (cell == null)
 				continue;
-			writeBorderAndBackground(xPos, yPos, cell, canvases);
+
+			float currentMaxHeight = maxHeight;
+			if (cell.getRowspan() > 1) {
+				ArrayList rows = cell.getParentTable().getRows();
+				for (int r = cell.getRow() + 1; r < (cell.getRow() + cell.getRowspan()) && (r < rows.size()); r++) {
+					PdfPRow row = (PdfPRow)rows.get(r);
+					currentMaxHeight += row.getMaxHeights();
+				}
+			}
+			
+			writeBorderAndBackground(xPos, yPos, currentMaxHeight, cell, canvases);
+
 			Image img = cell.getImage();
-			float tly = 0;
-			switch (cell.getVerticalAlignment()) {
-			case Element.ALIGN_BOTTOM:
-				tly = cell.getTop() + yPos - maxHeight + cell.getHeight()
-						- cell.getEffectivePaddingTop();
-				break;
-			case Element.ALIGN_MIDDLE:
-				tly = cell.getTop() + yPos + (cell.getHeight() - maxHeight) / 2
-						- cell.getEffectivePaddingTop();
-				break;
-			default:
-				tly = cell.getTop() + yPos - cell.getEffectivePaddingTop();
-				break;
+			
+			float tly = cell.getTop() + yPos - cell.getEffectivePaddingTop();
+			if (cell.getHeight() <= currentMaxHeight)
+			{
+				switch (cell.getVerticalAlignment()) {
+				case Element.ALIGN_BOTTOM:
+					tly = cell.getTop() + yPos - currentMaxHeight + cell.getHeight()
+							- cell.getEffectivePaddingTop();
+					break;
+				case Element.ALIGN_MIDDLE:
+					tly = cell.getTop() + yPos + (cell.getHeight() - currentMaxHeight) / 2
+							- cell.getEffectivePaddingTop();
+					break;
+				default:
+					break;
+				}
 			}
 			if (img != null) {
                 if (cell.getRotation() != 0) {
@@ -338,9 +372,9 @@ public class PdfPRow {
                     img.setRotation(img.getImageRotation() + (float)(cell.getRotation() * Math.PI / 180.0));
                 }
 				boolean vf = false;
-				if (cell.getHeight() > maxHeight) {
+				if (cell.getHeight() > currentMaxHeight) {
 					img.scalePercent(100);
-					float scale = (maxHeight - cell.getEffectivePaddingTop() - cell
+					float scale = (currentMaxHeight - cell.getEffectivePaddingTop() - cell
 							.getEffectivePaddingBottom())
 							/ img.getScaledHeight();
 					img.scalePercent(scale * 100);
@@ -376,7 +410,7 @@ public class PdfPRow {
 			} else {
                 // rotation sponsored by Connection GmbH
                 if (cell.getRotation() == 90 || cell.getRotation() == 270) {
-                    float netWidth = maxHeight - cell.getEffectivePaddingTop() - cell.getEffectivePaddingBottom();
+                    float netWidth = currentMaxHeight - cell.getEffectivePaddingTop() - cell.getEffectivePaddingBottom();
                     float netHeight = cell.getWidth() - cell.getEffectivePaddingLeft() - cell.getEffectivePaddingRight();
                     ColumnText ct = ColumnText.duplicate(cell.getColumn());
                     ct.setCanvases(canvases);
@@ -398,7 +432,7 @@ public class PdfPRow {
                         float pivotX;
                         float pivotY;
                         if (cell.getRotation() == 90) {
-                            pivotY = cell.getTop() + yPos - maxHeight + cell.getEffectivePaddingBottom();
+                            pivotY = cell.getTop() + yPos - currentMaxHeight + cell.getEffectivePaddingBottom();
                             switch (cell.getVerticalAlignment()) {
                             case Element.ALIGN_BOTTOM:
                                 pivotX = cell.getLeft() + xPos + cell.getWidth() - cell.getEffectivePaddingRight();
@@ -469,19 +503,19 @@ public class PdfPRow {
                     ColumnText ct = ColumnText.duplicate(cell.getColumn());
                     ct.setCanvases(canvases);
                     float bry = tly
-                            - (maxHeight /* cell.height() */
+                            - (currentMaxHeight
                             - cell.getEffectivePaddingTop() - cell.getEffectivePaddingBottom());
                     if (fixedHeight > 0) {
-                        if (cell.getHeight() > maxHeight) {
+                        if (cell.getHeight() > currentMaxHeight) {
                             tly = cell.getTop() + yPos - cell.getEffectivePaddingTop();
-                            bry = cell.getTop() + yPos - maxHeight + cell.getEffectivePaddingBottom();
+                            bry = cell.getTop() + yPos - currentMaxHeight + cell.getEffectivePaddingBottom();
                         }
                     }
                     if ((tly > bry || ct.zeroHeightElement()) && leftLimit < rightLimit) {
                         ct.setSimpleColumn(leftLimit, bry - 0.001f,	rightLimit, tly);
                         if (cell.getRotation() == 180) {
                             float shx = leftLimit + rightLimit;
-                            float shy = yPos + yPos - maxHeight + cell.getEffectivePaddingBottom() - cell.getEffectivePaddingTop();
+                            float shy = yPos + yPos - currentMaxHeight + cell.getEffectivePaddingBottom() - cell.getEffectivePaddingTop();
                             saveAndRotateCanvases(canvases, -1,0,0,-1,shx,shy);
                         }
                         try {
@@ -499,7 +533,7 @@ public class PdfPRow {
 			PdfPCellEvent evt = cell.getCellEvent();
 			if (evt != null) {
 				Rectangle rect = new Rectangle(cell.getLeft() + xPos, cell.getTop()
-						+ yPos - maxHeight, cell.getRight() + xPos, cell.getTop()
+						+ yPos - currentMaxHeight, cell.getRight() + xPos, cell.getTop()
 						+ yPos);
 				evt.cellLayout(cell, rect, canvases);
 			}

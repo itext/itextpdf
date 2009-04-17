@@ -93,8 +93,26 @@ public class PdfPCell extends Rectangle{
     /** Holds value of property table. */
     private PdfPTable table;
     
+    /**
+     * Holds value of property table.
+     * @since	2.1.6
+     */
+    private PdfPTable parentTable;
+
+    /**
+     * Holds value of property row.
+     * @since	2.1.6
+     */
+    private int row;
+
     /** Holds value of property colspan. */
     private int colspan = 1;
+
+    /**
+     * Holds value of property rowspan.
+     * @since	2.1.6
+     */
+    private int rowspan = 1;
     
     /** Holds value of property image. */
     private Image image;
@@ -211,6 +229,7 @@ public class PdfPCell extends Rectangle{
         	paddingTop = style.paddingTop;
         	paddingBottom = style.paddingBottom;
         	colspan = style.colspan;
+        	rowspan = style.rowspan;
         	cellEvent = style.cellEvent;
         	useDescender = style.useDescender;
         	useBorderPadding = style.useBorderPadding;
@@ -238,6 +257,7 @@ public class PdfPCell extends Rectangle{
         minimumHeight = cell.minimumHeight;
         noWrap = cell.noWrap;
         colspan = cell.colspan;
+        rowspan = cell.rowspan;
         if (cell.table != null)
             table = new PdfPTable(cell.table);
         image = Image.getInstance(cell.image);
@@ -646,6 +666,26 @@ public class PdfPCell extends Rectangle{
     }
     
     /**
+     * Getter for property parentTable.
+     * 
+     * @return Value of property parentTable.
+     * @since 2.1.6
+     */
+    public PdfPTable getParentTable() {
+        return parentTable;
+    }
+
+    /**
+     * Setter for property parentTable.
+     * 
+     * @param	parentTable Value of property parentTable.
+     * @since 2.1.6
+     */
+    void setParentTable(PdfPTable parentTable) {
+        this.parentTable = parentTable;
+    }
+
+    /**
      * Getter for property colspan.
      * 
      * @return Value of property colspan.
@@ -663,6 +703,46 @@ public class PdfPCell extends Rectangle{
         this.colspan = colspan;
     }
     
+    /**
+     * Getter for property rowspan.
+     * 
+     * @return Value of property rowspan.
+     * @since	2.1.6
+     */
+    public int getRowspan() {
+        return rowspan;
+    }
+    
+    /**
+     * Setter for property rowspan.
+     * 
+     * @param rowspan New value of property rowspan.
+     * @since	2.1.6
+     */
+    public void setRowspan(int rowspan) {
+        this.rowspan = rowspan;
+    }
+    
+    /**
+     * Getter for property row.
+     * 
+     * @return Value of property row.
+     * @since	2.1.6
+     */
+    public int getRow() {
+    	return row;
+    }
+    
+    /**
+     * Setter for property row.
+     * 
+     * @param colspan New value of property row.
+     * @since	2.1.6
+     */
+    void setRow(int row) {
+    	this.row = row;
+    }
+
     /**
      * Sets the following paragraph lines indent.
      * 

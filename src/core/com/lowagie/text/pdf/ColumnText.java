@@ -1406,6 +1406,14 @@ public class ColumnText {
                         else {
                             yTemp = minY;
                             table.getRows().add(++k, newRow);
+                            for (int r = (k + 1); r < table.getRows().size(); r++) {
+                            	PdfPRow row = (PdfPRow) table.getRow(r);
+                            	for (int c = 0; c < row.getCells().length; c++) {
+                            		PdfPCell cell = row.getCells()[c];
+                            		cell.setRow(r);
+                            	}                            		
+                            }
+                            	                            	
                         }
                     }
                     else if (!table.isSplitRows() && k == listIdx && firstPass) {
