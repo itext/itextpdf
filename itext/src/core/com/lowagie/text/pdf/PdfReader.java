@@ -3005,7 +3005,6 @@ public class PdfReader implements PdfViewerPreferences {
      * @param value	a value for the viewer preference
      * @see PdfViewerPreferences#addViewerPreference
      */
-
     public void addViewerPreference(PdfName key, PdfObject value) {
     	this.viewerPreferences.addViewerPreference(key, value);
         setViewerPreferences(this.viewerPreferences);
@@ -3016,6 +3015,8 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     /**
+     * Returns a bitset representing the PageMode and PageLayout viewer preferences.
+     * Doesn't return any information about the ViewerPreferences dictionary.
      * @return an int that contains the Viewer Preferences.
      */
     public int getSimpleViewerPreferences() {
