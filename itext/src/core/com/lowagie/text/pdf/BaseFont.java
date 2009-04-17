@@ -1561,22 +1561,4 @@ public abstract class BaseFont {
 		else
 			this.compressionLevel = compressionLevel;
 	}
-	
-    
-    /**
-     * Reads the Java font.
-     * @since	2.1.6
-     */
-    public boolean loadPlatformFont(String fontfile) throws IOException {
-    	return false;
-    }
-    
-    /**
-     * Checks if there's a Java font.
-     * @since	2.1.6
-     */
-    public boolean hasPlatformFont() {
-    	return false;
-    }
-    
 }
