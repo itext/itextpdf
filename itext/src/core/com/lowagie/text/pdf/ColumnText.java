@@ -1320,7 +1320,6 @@ public class ColumnText {
                 
                 // get the PdfPTable element
                 PdfPTable table = (PdfPTable)element;
-                
                 // we ignore tables without a body
                 if (table.size() <= table.getHeaderRows()) {
                     compositeElements.removeFirst();
@@ -1387,9 +1386,10 @@ public class ColumnText {
                 if (!table.isComplete())
                 	yTemp += footerHeight;
                 // either k is the first row that doesn't fit on the page (break);
+                PdfPRow rowspanRow = new PdfPRow(new PdfPCell[table.getNumberOfColumns()]);
                 if (k < table.size()) {
                 	if (table.isSplitRows() && (!table.isSplitLate() || (k == listIdx && firstPass))) {
-                        if (!splittedRow) {
+                		if (!splittedRow) {
                             splittedRow = true;
                             table = new PdfPTable(table);
                             compositeElements.set(0, table);
@@ -1398,14 +1398,14 @@ public class ColumnText {
                                 rows.set(i, null);
                         }
                         float h = yTemp - minY;
-                        PdfPRow newRow = table.getRow(k).splitRow(h);
+                        PdfPRow newRow = table.getRow(k).splitRow(table, k, h);
                         if (newRow == null) {
                             if (k == listIdx)
                                 return NO_MORE_COLUMN;
                         }
                         else {
                             yTemp = minY;
-                            table.getRows().add(++k, newRow);
+                            table.getRows().add(++k, newRow);	                            	
                         }
                     }
                     else if (!table.isSplitRows() && k == listIdx && firstPass) {
@@ -1432,33 +1432,31 @@ public class ColumnText {
                     }
                     // copy the rows that fit on the page in a new table nt
                     PdfPTable nt = PdfPTable.shallowCopy(table);
-                    ArrayList rows = table.getRows();
                     ArrayList sub = nt.getRows();
                     
                     // first we add the real header rows (if necessary)
                     if (!skipHeader) {
                         for (int j = 0; j < realHeaderRows; ++j) {
-                        	PdfPRow headerRow = (PdfPRow)rows.get(j);
+                        	PdfPRow headerRow = table.getRow(j);
                             sub.add(headerRow);
                         }
                     }
                     else
                         nt.setHeaderRows(footerRows);
                     // then we add the real content
-                    for (int j = listIdx; j < k; ++j)
-                        sub.add(rows.get(j));
+                    sub.addAll(table.getRows(listIdx, k));
                     // if k < table.size(), we must indicate that the new table is complete;
                     // otherwise no footers will be added (because iText thinks the table continues on the same page)
                     if (k < table.size())
                     	nt.setComplete(true);
                     // we add the footer rows if necessary (not for incomplete tables)
                     for (int j = 0; j < footerRows && nt.isComplete(); ++j)
-                        sub.add(rows.get(j + realHeaderRows));
+                        sub.add(table.getRow(j + realHeaderRows));
 
                     // we need a correction if the last row needs to be extended
                     float rowHeight = 0;
+                    PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
                     if (table.isExtendLastRow()) {
-                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
                         rowHeight = last.getMaxHeights();
                         last.setMaxHeights(yTemp - minY + rowHeight);
                         yTemp = minY;
@@ -1470,7 +1468,6 @@ public class ColumnText {
                     else
                         nt.writeSelectedRows(0, -1, x1, yLineWrite, canvas);
                     if (table.isExtendLastRow()) {
-                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
                         last.setMaxHeights(rowHeight);
                     }
                 }
@@ -1592,7 +1589,7 @@ public class ColumnText {
      * @return the real width used by the largest line
      */
     public float getFilledWidth() {
-        return this.filledWidth;
+        return filledWidth;
     }
 
     /**

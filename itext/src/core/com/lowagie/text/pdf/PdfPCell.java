@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 import java.util.List;
 
 import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.Phrase;
@@ -92,9 +93,15 @@ public class PdfPCell extends Rectangle{
     
     /** Holds value of property table. */
     private PdfPTable table;
-    
+
     /** Holds value of property colspan. */
     private int colspan = 1;
+
+    /**
+     * Holds value of property rowspan.
+     * @since	2.1.6
+     */
+    private int rowspan = 1;
     
     /** Holds value of property image. */
     private Image image;
@@ -211,6 +218,7 @@ public class PdfPCell extends Rectangle{
         	paddingTop = style.paddingTop;
         	paddingBottom = style.paddingBottom;
         	colspan = style.colspan;
+        	rowspan = style.rowspan;
         	cellEvent = style.cellEvent;
         	useDescender = style.useDescender;
         	useBorderPadding = style.useBorderPadding;
@@ -238,6 +246,7 @@ public class PdfPCell extends Rectangle{
         minimumHeight = cell.minimumHeight;
         noWrap = cell.noWrap;
         colspan = cell.colspan;
+        rowspan = cell.rowspan;
         if (cell.table != null)
             table = new PdfPTable(cell.table);
         image = Image.getInstance(cell.image);
@@ -644,7 +653,7 @@ public class PdfPCell extends Rectangle{
             table.setWidthPercentage(100);
         }
     }
-    
+
     /**
      * Getter for property colspan.
      * 
@@ -663,6 +672,26 @@ public class PdfPCell extends Rectangle{
         this.colspan = colspan;
     }
     
+    /**
+     * Getter for property rowspan.
+     * 
+     * @return Value of property rowspan.
+     * @since	2.1.6
+     */
+    public int getRowspan() {
+        return rowspan;
+    }
+    
+    /**
+     * Setter for property rowspan.
+     * 
+     * @param rowspan New value of property rowspan.
+     * @since	2.1.6
+     */
+    public void setRowspan(int rowspan) {
+        this.rowspan = rowspan;
+    }
+
     /**
      * Sets the following paragraph lines indent.
      * 
@@ -899,5 +928,23 @@ public class PdfPCell extends Rectangle{
         if ((rotation % 90) != 0)
             throw new IllegalArgumentException("Rotation must be a multiple of 90.");
         this.rotation = rotation;
+    }
+    
+    /**
+     * Consumes part of the content of the cell.
+     * @param	height	the hight of the part that has to be consumed
+     * @since	2.1.6
+     */
+    void consumeHeight(float height) {
+    	if (getRotation() != 90 && getRotation() != 270) {
+            float rightLimit = getRight() - getEffectivePaddingRight();
+            float leftLimit = getLeft() + getEffectivePaddingLeft();
+            float bry = height - getEffectivePaddingTop() - getEffectivePaddingBottom();
+            column.setSimpleColumn(leftLimit, bry + 0.001f,	rightLimit, 0);
+            try {
+				column.go(true);
+			} catch (DocumentException e) {
+			}
+        }
     }
 }
