@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import com.lowagie.text.*;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class PdfReaderTest {
@@ -20,6 +21,7 @@ public class PdfReaderTest {
         assertTrue("kept open", f.isOpen());
     }
 
+    @Ignore("validity of test needs to be resolved")
     @Test
     public void testGetLink() throws Exception {
 	PdfReader currentReader = new PdfReader("getLinkTest1.pdf");
