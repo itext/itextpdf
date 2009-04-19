@@ -266,6 +266,8 @@ public class PdfPCell extends Rectangle{
         column = ColumnText.duplicate(cell.column);
         useBorderPadding = cell.useBorderPadding;
         rotation = cell.rotation;
+        parentTable = cell.parentTable;
+        row = cell.row;
     }
     
     /**
