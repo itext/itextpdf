@@ -101,6 +101,12 @@ public class PdfPRow {
     
     private int[] canvasesPos;
 
+    /**
+     * Remaining space on a page caused by a table that is split.
+     * @since	2.1.6
+     */
+    protected float remaining = 0;
+    
 	/**
 	 * Constructs a new PdfPRow with the cells in the array that was passed
 	 * as a parameter.
@@ -339,6 +345,14 @@ public class PdfPRow {
         return top;
     }
     
+    /**
+     * If this row is the last one before being split,
+     * this method sets the remaining space that is left for the row.
+     */
+    protected void setRemainingSpace(float remaining) {
+    	this.remaining = remaining;
+    }
+    
 	/**
 	 * Writes a number of cells (not necessarily all cells).
 	 * 
@@ -379,12 +393,15 @@ public class PdfPRow {
 			PdfPCell cell = cells[k];
 			if (cell == null)
 				continue;
-
 			float currentMaxHeight = maxHeight;
-			if (rowspanHeight > maxHeight) {
+			if (cell.getRowspan() > 1) {
 				ArrayList rows = cell.getParentTable().getRows();
 				for (int r = cell.getRow() + 1; r < (cell.getRow() + cell.getRowspan()) && (r < rows.size()); r++) {
 					PdfPRow row = (PdfPRow)rows.get(r);
+					if (row.remaining > 0) {
+						currentMaxHeight += row.remaining;
+						break;
+					}
 					currentMaxHeight += row.getMaxHeights();
 				}
 			}
@@ -639,7 +656,6 @@ public class PdfPRow {
 	 * @param maxHeight the new maximum height
 	 */
 	public void setMaxHeights(float maxHeight) {
-		rowspanHeight = maxHeight;
 		this.maxHeight = maxHeight;
 	}
 

@@ -1389,6 +1389,7 @@ public class ColumnText {
                 	yTemp += footerHeight;
                 // either k is the first row that doesn't fit on the page (break);
                 if (k < table.size()) {
+                	table.getRow(k).setRemainingSpace(yTemp - minY);
                 	if (table.isSplitRows() && (!table.isSplitLate() || (k == listIdx && firstPass))) {
                 		if (!splittedRow) {
                             splittedRow = true;
@@ -1468,7 +1469,7 @@ public class ColumnText {
                     // we need a correction if the last row needs to be extended
                     float rowHeight = 0;
                     PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
-                    if (last.getRowspanHeight() > 0 || table.isExtendLastRow()) {
+                    if (table.isExtendLastRow()) {
                         rowHeight = last.getMaxHeights();
                         last.setMaxHeights(yTemp - minY + rowHeight);
                         yTemp = minY;
@@ -1479,7 +1480,7 @@ public class ColumnText {
                         nt.writeSelectedRows(0, -1, x1, yLineWrite, canvases);
                     else
                         nt.writeSelectedRows(0, -1, x1, yLineWrite, canvas);
-                    if (last.getRowspanHeight() > 0 || table.isExtendLastRow()) {
+                    if (table.isExtendLastRow()) {
                         last.setMaxHeights(rowHeight);
                     }
                 }
