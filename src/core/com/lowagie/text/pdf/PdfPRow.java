@@ -78,7 +78,25 @@ public class PdfPRow {
 	protected float widths[];
 
 	protected float maxHeight = 0;
+    
+    /**
+     * The table to which the cell was added.
+     * @since	2.1.6
+     */
+    protected PdfPTable parentTable;
 
+    /**
+     * The index of the row in the parentTable.
+     * @since	2.1.6
+     */
+    protected int index;
+    
+	/**
+	 * The total height of the rows belonging to the rowspan.
+	 * @since	2.1.6
+	 */
+	protected float rowspanHeight = 0;
+	
 	protected boolean calculated = false;
     
     private int[] canvasesPos;
@@ -92,6 +110,12 @@ public class PdfPRow {
 	public PdfPRow(PdfPCell cells[]) {
 		this.cells = cells;
 		widths = new float[cells.length];
+		for (int i = 0; i < cells.length; i++) {
+			if (cells[i] != null) {
+				parentTable = cells[i].getParentTable();
+				break;
+			}
+		}
 	}
 
 	/**
@@ -102,6 +126,8 @@ public class PdfPRow {
 	public PdfPRow(PdfPRow row) {
 		maxHeight = row.maxHeight;
 		calculated = row.calculated;
+		parentTable = row.parentTable;
+		index = row.index;
 		cells = new PdfPCell[row.cells.length];
 		for (int k = 0; k < cells.length; ++k) {
 			if (row.cells[k] != null)
@@ -149,67 +175,88 @@ public class PdfPRow {
 	 */
 	public float calculateHeights() {
 		maxHeight = 0;
+		rowspanHeight = 0;
+		int rowspan = 1;
 		for (int k = 0; k < cells.length; ++k) {
-			PdfPCell cell = cells[k];
 			
-			if (cell == null)
-				continue;
-				
-			boolean pivoted = (cell.getRotation() == 90 || cell.getRotation() == 270);
-			Image img = cell.getImage();
-			if (img != null) {
-				img.scalePercent(100);
-				float refWidth = pivoted ? img.getScaledHeight() : img.getScaledWidth();
-				float scale = (cell.getRight() - cell.getEffectivePaddingRight()
-	                    - cell.getEffectivePaddingLeft() - cell.getLeft()) / refWidth;
-				img.scalePercent(scale * 100);
-				float refHeight = pivoted ? img.getScaledWidth() : img.getScaledHeight();
-				cell.setBottom(cell.getTop() - cell.getEffectivePaddingTop()
-						- cell.getEffectivePaddingBottom() - refHeight);
-			}
-			else {
-				if (pivoted && cell.hasFixedHeight())
-					cell.setBottom(cell.getTop() - cell.getFixedHeight());
-				else {
-					ColumnText ct = ColumnText.duplicate(cell.getColumn());
-					float right, top, left, bottom;
-                	if (pivoted) {
-                		right = RIGHT_LIMIT;
-                		top = cell.getRight() - cell.getEffectivePaddingRight();
-                		left = 0;
-                		bottom = cell.getLeft() + cell.getEffectivePaddingLeft();
-                	}
-                	else {
-                		right = cell.isNoWrap() ? RIGHT_LIMIT : cell.getRight() - cell.getEffectivePaddingRight();
-                		top = cell.getTop() - cell.getEffectivePaddingTop();
-                		left = cell.getLeft() + cell.getEffectivePaddingLeft();
-                		bottom = cell.hasFixedHeight() ? top + cell.getEffectivePaddingBottom() - cell.getFixedHeight() : BOTTOM_LIMIT;
-                	}
-                	setColumn(ct, left, bottom, right, top);
-					try {
-						ct.go(true);
-					} catch (DocumentException e) {
-						throw new ExceptionConverter(e);
-					}
-					if (pivoted)
-						cell.setBottom(cell.getTop() - cell.getEffectivePaddingTop() - cell.getEffectivePaddingBottom() - ct.getFilledWidth());
-					else {
-						float yLine = ct.getYLine();
-						if (cell.isUseDescender())
-							yLine += ct.getDescender();
-						cell.setBottom(yLine - cell.getEffectivePaddingBottom());
-					}
+			PdfPCell cell = cells[k];
+			float height = 0;
+			
+			if (cell == null) {
+				float rowspanCorrection = 0;
+				int i = index;
+				while (parentTable.rowSpanAbove(i--, k)) {
+					rowspanCorrection += parentTable.getRowHeight(i);
+				}
+				PdfPRow tmpRow = parentTable.getRow(i + 1);
+				PdfPCell tmpCell = tmpRow.getCells()[k];
+				if (tmpCell.getRowspan() == index - i) {
+					height = tmpRow.rowspanHeight - rowspanCorrection;
+					if (height > maxHeight)
+						maxHeight = height;
 				}
 			}
-			float height = cell.getFixedHeight();
-			if (height <= 0)
-				height = cell.getHeight();
-			if (height < cell.getFixedHeight())
+			else {
+				rowspan = cell.getRowspan();
+				boolean pivoted = (cell.getRotation() == 90 || cell.getRotation() == 270);
+				Image img = cell.getImage();
+				if (img != null) {
+					img.scalePercent(100);
+					float refWidth = pivoted ? img.getScaledHeight() : img.getScaledWidth();
+					float scale = (cell.getRight() - cell.getEffectivePaddingRight()
+	                    - cell.getEffectivePaddingLeft() - cell.getLeft()) / refWidth;
+					img.scalePercent(scale * 100);
+					float refHeight = pivoted ? img.getScaledWidth() : img.getScaledHeight();
+					cell.setBottom(cell.getTop() - cell.getEffectivePaddingTop()
+						- cell.getEffectivePaddingBottom() - refHeight);
+				}
+				else {
+					if (pivoted && cell.hasFixedHeight())
+						cell.setBottom(cell.getTop() - cell.getFixedHeight());
+					else {
+						ColumnText ct = ColumnText.duplicate(cell.getColumn());
+						float right, top, left, bottom;
+						if (pivoted) {
+							right = RIGHT_LIMIT;
+							top = cell.getRight() - cell.getEffectivePaddingRight();
+							left = 0;
+							bottom = cell.getLeft() + cell.getEffectivePaddingLeft();
+						}
+						else {
+							right = cell.isNoWrap() ? RIGHT_LIMIT : cell.getRight() - cell.getEffectivePaddingRight();
+							top = cell.getTop() - cell.getEffectivePaddingTop();
+							left = cell.getLeft() + cell.getEffectivePaddingLeft();
+							bottom = cell.hasFixedHeight() ? top + cell.getEffectivePaddingBottom() - cell.getFixedHeight() : BOTTOM_LIMIT;
+						}
+						setColumn(ct, left, bottom, right, top);
+						try {
+							ct.go(true);
+						} catch (DocumentException e) {
+							throw new ExceptionConverter(e);
+						}
+						if (pivoted)
+							cell.setBottom(cell.getTop() - cell.getEffectivePaddingTop() - cell.getEffectivePaddingBottom() - ct.getFilledWidth());
+						else {
+							float yLine = ct.getYLine();
+							if (cell.isUseDescender())
+								yLine += ct.getDescender();
+							cell.setBottom(yLine - cell.getEffectivePaddingBottom());
+						}
+					}
+				}
 				height = cell.getFixedHeight();
-			else if (height < cell.getMinimumHeight())
-				height = cell.getMinimumHeight();
-			if ((height > maxHeight) && (cell.getRowspan() == 1))
-				maxHeight = height;
+				if (height <= 0)
+					height = cell.getHeight();
+				if (height < cell.getFixedHeight())
+					height = cell.getFixedHeight();
+				else if (height < cell.getMinimumHeight())
+					height = cell.getMinimumHeight();
+
+				if ((height > maxHeight) && (cell.getRowspan() == 1))
+					maxHeight = height;
+				else if ((height > rowspanHeight) && (cell.getRowspan() > 1))
+					rowspanHeight = height;
+			}
 		}
 		calculated = true;
 		return maxHeight;
@@ -541,6 +588,24 @@ public class PdfPRow {
 	}
 
 	/**
+	 * Gets the index of the row in the table.
+	 * @return	the index of the row in the table
+	 * @since	2.1.6
+	 */
+	public int getIndex() {
+		return index;
+	}
+	
+	/**
+	 * Sets the index of the row in the table.
+	 * @param	index	the index in the table
+	 * @since	2.1.6
+	 */
+	public void setIndex(int index) {
+		this.index = index;
+	}
+	
+	/**
 	 * Checks if the dimensions of the columns were calculated.
 	 * 
 	 * @return true if the dimensions of the columns were calculated
@@ -671,6 +736,7 @@ public class PdfPRow {
 		}
 		calculateHeights();
 		PdfPRow split = new PdfPRow(newCells);
+		split.setIndex(index);
 		split.widths = (float[]) widths.clone();
 		split.calculateHeights();
 		return split;

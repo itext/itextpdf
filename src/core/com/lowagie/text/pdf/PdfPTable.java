@@ -459,7 +459,6 @@ public class PdfPTable implements LargeElement{
         while (rowSpanAbove(rows.size(), currentRowIdx))
         	currentRowIdx += direction;
         
-        // -vvvjpg
         boolean cellAdded = false;
         if (currentRowIdx < currentRow.length) {  
 	        currentRow[currentRowIdx] = ncell;
@@ -482,6 +481,7 @@ public class PdfPTable implements LargeElement{
                 currentRow = rtlRow;
             }
             PdfPRow row = new PdfPRow(currentRow);
+            row.setIndex(rows.size());
             if (totalWidth > 0) {
                 row.setWidths(absoluteWidths);
                 totalHeight += row.getMaxHeights();
@@ -504,7 +504,7 @@ public class PdfPTable implements LargeElement{
      * @return	true if there's a cell above that belongs to a rowspan
      * @since	2.1.6
      */
-    private boolean rowSpanAbove(int currRow, int currCol) {
+    boolean rowSpanAbove(int currRow, int currCol) {
     	
     	if ((currCol >= getNumberOfColumns()) 
     			|| (currCol < 0) 

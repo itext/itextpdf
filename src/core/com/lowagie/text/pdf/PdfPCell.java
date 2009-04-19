@@ -94,16 +94,16 @@ public class PdfPCell extends Rectangle{
     private PdfPTable table;
     
     /**
-     * Holds value of property table.
+     * The table to which the cell was added.
      * @since	2.1.6
      */
-    private PdfPTable parentTable;
+    protected PdfPTable parentTable;
 
     /**
-     * Holds value of property row.
+     * The index of the row to which the cell was added.
      * @since	2.1.6
      */
-    private int row;
+    protected int row;
 
     /** Holds value of property colspan. */
     private int colspan = 1;

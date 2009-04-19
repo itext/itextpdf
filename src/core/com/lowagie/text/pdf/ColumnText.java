@@ -1600,7 +1600,7 @@ public class ColumnText {
      * @return the real width used by the largest line
      */
     public float getFilledWidth() {
-        return this.filledWidth;
+        return filledWidth;
     }
 
     /**
