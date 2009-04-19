@@ -606,6 +606,17 @@ public class PdfPRow {
 	}
 	
 	/**
+	 * Gets the height of the row with the additional rows in the same rowspan.
+	 * @return	the height of this row extended with the heights of the following rows in the same rowspan
+	 * @since	2.1.6
+	 */
+	public float getRowspanHeight() {
+		if (!calculated)
+			calculateHeights();
+		return rowspanHeight;
+	}
+	
+	/**
 	 * Checks if the dimensions of the columns were calculated.
 	 * 
 	 * @return true if the dimensions of the columns were calculated
