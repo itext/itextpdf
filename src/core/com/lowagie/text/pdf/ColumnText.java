@@ -1320,7 +1320,6 @@ public class ColumnText {
                 
                 // get the PdfPTable element
                 PdfPTable table = (PdfPTable)element;
-                
                 // we ignore tables without a body
                 if (table.size() <= table.getHeaderRows()) {
                     compositeElements.removeFirst();
@@ -1380,6 +1379,8 @@ public class ColumnText {
                 	yTemp -= footerHeight;
                 for (k = listIdx; k < table.size(); ++k) {
                     float rowHeight = table.getRowHeight(k);
+                    if (yTemp - table.getRowspanHeight(k) < minY)
+                        break;
                     if (yTemp - rowHeight < minY)
                         break;
                     yTemp -= rowHeight;
@@ -1389,7 +1390,7 @@ public class ColumnText {
                 // either k is the first row that doesn't fit on the page (break);
                 if (k < table.size()) {
                 	if (table.isSplitRows() && (!table.isSplitLate() || (k == listIdx && firstPass))) {
-                        if (!splittedRow) {
+                		if (!splittedRow) {
                             splittedRow = true;
                             table = new PdfPTable(table);
                             compositeElements.set(0, table);
@@ -1466,8 +1467,8 @@ public class ColumnText {
 
                     // we need a correction if the last row needs to be extended
                     float rowHeight = 0;
-                    if (table.isExtendLastRow()) {
-                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
+                    PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
+                    if (last.getRowspanHeight() > 0 || table.isExtendLastRow()) {
                         rowHeight = last.getMaxHeights();
                         last.setMaxHeights(yTemp - minY + rowHeight);
                         yTemp = minY;
@@ -1478,8 +1479,7 @@ public class ColumnText {
                         nt.writeSelectedRows(0, -1, x1, yLineWrite, canvases);
                     else
                         nt.writeSelectedRows(0, -1, x1, yLineWrite, canvas);
-                    if (table.isExtendLastRow()) {
-                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
+                    if (last.getRowspanHeight() > 0 || table.isExtendLastRow()) {
                         last.setMaxHeights(rowHeight);
                     }
                 }

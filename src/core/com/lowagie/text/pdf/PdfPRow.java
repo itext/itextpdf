@@ -176,12 +176,10 @@ public class PdfPRow {
 	public float calculateHeights() {
 		maxHeight = 0;
 		rowspanHeight = 0;
-		int rowspan = 1;
 		for (int k = 0; k < cells.length; ++k) {
 			
 			PdfPCell cell = cells[k];
 			float height = 0;
-			
 			if (cell == null) {
 				float rowspanCorrection = 0;
 				int i = index;
@@ -197,7 +195,6 @@ public class PdfPRow {
 				}
 			}
 			else {
-				rowspan = cell.getRowspan();
 				boolean pivoted = (cell.getRotation() == 90 || cell.getRotation() == 270);
 				Image img = cell.getImage();
 				if (img != null) {
@@ -251,7 +248,6 @@ public class PdfPRow {
 					height = cell.getFixedHeight();
 				else if (height < cell.getMinimumHeight())
 					height = cell.getMinimumHeight();
-
 				if ((height > maxHeight) && (cell.getRowspan() == 1))
 					maxHeight = height;
 				else if ((height > rowspanHeight) && (cell.getRowspan() > 1))
@@ -385,7 +381,7 @@ public class PdfPRow {
 				continue;
 
 			float currentMaxHeight = maxHeight;
-			if (cell.getRowspan() > 1) {
+			if (rowspanHeight > maxHeight) {
 				ArrayList rows = cell.getParentTable().getRows();
 				for (int r = cell.getRow() + 1; r < (cell.getRow() + cell.getRowspan()) && (r < rows.size()); r++) {
 					PdfPRow row = (PdfPRow)rows.get(r);
@@ -643,6 +639,7 @@ public class PdfPRow {
 	 * @param maxHeight the new maximum height
 	 */
 	public void setMaxHeights(float maxHeight) {
+		rowspanHeight = maxHeight;
 		this.maxHeight = maxHeight;
 	}
 
