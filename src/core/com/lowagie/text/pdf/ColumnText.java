@@ -1410,7 +1410,8 @@ public class ColumnText {
                             	PdfPRow row = (PdfPRow) table.getRow(r);
                             	for (int c = 0; c < row.getCells().length; c++) {
                             		PdfPCell cell = row.getCells()[c];
-                            		cell.setRow(r);
+                            		if (cell != null)
+                            			cell.setRow(r);
                             	}                            		
                             }
                             	                            	
