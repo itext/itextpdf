@@ -825,6 +825,7 @@ public class PdfPTable implements LargeElement{
      * 
      * @param idx the row index (starts at 0)
      * @return the height of a set of particular rows
+     * @since	2.1.6
      */
     public float getRowspanHeight(int idx) {
         if (totalWidth <= 0 || idx < 0 || idx >= rows.size())
