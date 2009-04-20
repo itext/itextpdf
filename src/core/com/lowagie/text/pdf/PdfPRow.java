@@ -192,12 +192,14 @@ public class PdfPRow {
 				while (parentTable.rowSpanAbove(i--, k)) {
 					rowspanCorrection += parentTable.getRowHeight(i);
 				}
-				PdfPRow tmpRow = parentTable.getRow(i + 1);
-				PdfPCell tmpCell = tmpRow.getCells()[k];
-				if (tmpCell != null && tmpCell.getRowspan() == index - i) {
-					height = tmpRow.rowspanHeight - rowspanCorrection;
-					if (height > maxHeight)
-						maxHeight = height;
+				if (i >= parentTable.size()) {
+					PdfPRow tmpRow = parentTable.getRow(i + 1);
+					PdfPCell tmpCell = tmpRow.getCells()[k];
+					if (tmpCell != null && tmpCell.getRowspan() == index - i) {
+						height = tmpRow.rowspanHeight - rowspanCorrection;
+						if (height > maxHeight)
+							maxHeight = height;
+					}
 				}
 			}
 			else {
