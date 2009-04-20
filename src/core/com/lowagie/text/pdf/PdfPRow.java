@@ -50,7 +50,6 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
-import java.util.ArrayList;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -116,12 +115,6 @@ public class PdfPRow {
 	public PdfPRow(PdfPCell cells[]) {
 		this.cells = cells;
 		widths = new float[cells.length];
-		for (int i = 0; i < cells.length; i++) {
-			if (cells[i] != null) {
-				parentTable = cells[i].getParentTable();
-				break;
-			}
-		}
 	}
 
 	/**
@@ -408,9 +401,10 @@ public class PdfPRow {
 				continue;
 			float currentMaxHeight = maxHeight;
 			if (cell.getRowspan() > 1) {
-				ArrayList rows = cell.getParentTable().getRows();
-				for (int r = cell.getRow() + 1; r < (cell.getRow() + cell.getRowspan()) && (r < rows.size()); r++) {
-					PdfPRow row = (PdfPRow)rows.get(r);
+				for (int r = index + 1;
+					r < (index + cell.getRowspan()) && (r < parentTable.size());
+					r++) {
+					PdfPRow row = parentTable.getRow(r);
 					if (row.remainingSpace > 0) {
 						currentMaxHeight += row.remainingSpace;
 						break;
@@ -775,6 +769,7 @@ public class PdfPRow {
 		calculateHeights();
 		PdfPRow split = new PdfPRow(newCells);
 		split.setIndex(index);
+		split.setParentTable(parentTable);
 		split.widths = (float[]) widths.clone();
 		split.calculateHeights();
 		return split;
@@ -791,4 +786,24 @@ public class PdfPRow {
 	public PdfPCell[] getCells() {
 		return cells;
 	}
+    
+    /**
+     * Getter for property parentTable.
+     * 
+     * @return Value of property parentTable.
+     * @since 2.1.6
+     */
+    public PdfPTable getParentTable() {
+        return parentTable;
+    }
+
+    /**
+     * Setter for property parentTable.
+     * 
+     * @param	parentTable Value of property parentTable.
+     * @since 2.1.6
+     */
+    void setParentTable(PdfPTable parentTable) {
+        this.parentTable = parentTable;
+    }
 }

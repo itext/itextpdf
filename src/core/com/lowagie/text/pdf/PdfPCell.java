@@ -92,18 +92,6 @@ public class PdfPCell extends Rectangle{
     
     /** Holds value of property table. */
     private PdfPTable table;
-    
-    /**
-     * The table to which the cell was added.
-     * @since	2.1.6
-     */
-    protected PdfPTable parentTable;
-
-    /**
-     * The index of the row to which the cell was added.
-     * @since	2.1.6
-     */
-    protected int row;
 
     /** Holds value of property colspan. */
     private int colspan = 1;
@@ -266,8 +254,6 @@ public class PdfPCell extends Rectangle{
         column = ColumnText.duplicate(cell.column);
         useBorderPadding = cell.useBorderPadding;
         rotation = cell.rotation;
-        parentTable = cell.parentTable;
-        row = cell.row;
     }
     
     /**
@@ -666,26 +652,6 @@ public class PdfPCell extends Rectangle{
             table.setWidthPercentage(100);
         }
     }
-    
-    /**
-     * Getter for property parentTable.
-     * 
-     * @return Value of property parentTable.
-     * @since 2.1.6
-     */
-    public PdfPTable getParentTable() {
-        return parentTable;
-    }
-
-    /**
-     * Setter for property parentTable.
-     * 
-     * @param	parentTable Value of property parentTable.
-     * @since 2.1.6
-     */
-    void setParentTable(PdfPTable parentTable) {
-        this.parentTable = parentTable;
-    }
 
     /**
      * Getter for property colspan.
@@ -723,26 +689,6 @@ public class PdfPCell extends Rectangle{
      */
     public void setRowspan(int rowspan) {
         this.rowspan = rowspan;
-    }
-    
-    /**
-     * Getter for property row.
-     * 
-     * @return Value of property row.
-     * @since	2.1.6
-     */
-    public int getRow() {
-    	return row;
-    }
-    
-    /**
-     * Setter for property row.
-     * 
-     * @param colspan New value of property row.
-     * @since	2.1.6
-     */
-    void setRow(int row) {
-    	this.row = row;
     }
 
     /**

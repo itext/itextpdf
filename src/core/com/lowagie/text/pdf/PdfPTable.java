@@ -439,9 +439,6 @@ public class PdfPTable implements LargeElement{
     public void addCell(PdfPCell cell) {
         PdfPCell ncell = new PdfPCell(cell);
         
-        ncell.setRow(rows.size());
-        ncell.setParentTable(this);
-        
         int colspan = ncell.getColspan();
         colspan = Math.max(colspan, 1);
         colspan = Math.min(colspan, currentRow.length - currentRowIdx);
@@ -482,6 +479,7 @@ public class PdfPTable implements LargeElement{
             }
             PdfPRow row = new PdfPRow(currentRow);
             row.setIndex(rows.size());
+            row.setParentTable(this);
             if (totalWidth > 0) {
                 row.setWidths(absoluteWidths);
                 totalHeight += row.getMaxHeights();
