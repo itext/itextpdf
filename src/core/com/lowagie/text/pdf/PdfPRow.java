@@ -192,7 +192,7 @@ public class PdfPRow {
 				while (parentTable.rowSpanAbove(i--, k)) {
 					rowspanCorrection += parentTable.getRowHeight(i);
 				}
-				if (i >= parentTable.size()) {
+				if (i < parentTable.size() - 1) {
 					PdfPRow tmpRow = parentTable.getRow(i + 1);
 					PdfPCell tmpCell = tmpRow.getCells()[k];
 					if (tmpCell != null && tmpCell.getRowspan() == index - i) {
