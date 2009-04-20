@@ -819,22 +819,6 @@ public class PdfPTable implements LargeElement{
     }
     
     /**
-     * Gets the height of a row belonging to a rowspan.
-     * 
-     * @param idx the row index (starts at 0)
-     * @return the height of a set of particular rows
-     * @since	2.1.6
-     */
-    public float getRowspanHeight(int idx) {
-        if (totalWidth <= 0 || idx < 0 || idx >= rows.size())
-            return 0;
-        PdfPRow row = (PdfPRow)rows.get(idx);
-        if (row == null)
-            return 0;
-        return row.getRowspanHeight();
-    }
-    
-    /**
      * Gets the height of the rows that constitute the header as defined by
      * <CODE>setHeaderRows()</CODE>.
      * 
