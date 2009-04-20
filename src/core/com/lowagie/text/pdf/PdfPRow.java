@@ -194,7 +194,7 @@ public class PdfPRow {
 				}
 				PdfPRow tmpRow = parentTable.getRow(i + 1);
 				PdfPCell tmpCell = tmpRow.getCells()[k];
-				if (tmpCell.getRowspan() == index - i) {
+				if (tmpCell != null && tmpCell.getRowspan() == index - i) {
 					height = tmpRow.rowspanHeight - rowspanCorrection;
 					if (height > maxHeight)
 						maxHeight = height;
