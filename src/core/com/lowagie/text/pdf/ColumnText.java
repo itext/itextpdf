@@ -1389,7 +1389,6 @@ public class ColumnText {
                 	yTemp += footerHeight;
                 // either k is the first row that doesn't fit on the page (break);
                 if (k < table.size()) {
-                	table.getRow(k).setRemainingSpace(yTemp - minY);
                 	if (table.isSplitRows() && (!table.isSplitLate() || (k == listIdx && firstPass))) {
                 		if (!splittedRow) {
                             splittedRow = true;
@@ -1434,28 +1433,26 @@ public class ColumnText {
                     }
                     // copy the rows that fit on the page in a new table nt
                     PdfPTable nt = PdfPTable.shallowCopy(table);
-                    ArrayList rows = table.getRows();
                     ArrayList sub = nt.getRows();
                     
                     // first we add the real header rows (if necessary)
                     if (!skipHeader) {
                         for (int j = 0; j < realHeaderRows; ++j) {
-                        	PdfPRow headerRow = (PdfPRow)rows.get(j);
+                        	PdfPRow headerRow = table.getRow(j);
                             sub.add(headerRow);
                         }
                     }
                     else
                         nt.setHeaderRows(footerRows);
                     // then we add the real content
-                    for (int j = listIdx; j < k; ++j)
-                        sub.add(rows.get(j));
+                    sub.addAll(table.getRows(listIdx, k, yTemp - minY));
                     // if k < table.size(), we must indicate that the new table is complete;
                     // otherwise no footers will be added (because iText thinks the table continues on the same page)
                     if (k < table.size())
                     	nt.setComplete(true);
                     // we add the footer rows if necessary (not for incomplete tables)
                     for (int j = 0; j < footerRows && nt.isComplete(); ++j)
-                        sub.add(rows.get(j + realHeaderRows));
+                        sub.add(table.getRow(j + realHeaderRows));
 
                     // we need a correction if the last row needs to be extended
                     float rowHeight = 0;

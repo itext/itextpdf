@@ -1038,6 +1038,22 @@ public class PdfPTable implements LargeElement{
     public ArrayList getRows() {
         return rows;
     }
+    
+    /**
+     * Gets an arraylist with a selection of rows.
+     * @return	a selection of rows
+     * @since	2.1.6
+     */
+    public ArrayList getRows(int start, int end, float remainingSpace) {
+    	ArrayList list = new ArrayList();
+    	if (start < 0 || end > size()) {
+    		return list;
+    	}
+    	for (int i = start; i < end; i++) {
+    		list.add(getRow(i));
+    	}
+    	return list;
+    }
 
     /** Sets the table event for this table.
      * @param event the table event for this table

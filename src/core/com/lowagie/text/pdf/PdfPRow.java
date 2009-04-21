@@ -99,12 +99,6 @@ public class PdfPRow {
 	protected boolean calculated = false;
     
     private int[] canvasesPos;
-
-    /**
-     * Remaining space on a page caused by a table that is split.
-     * @since	2.1.6
-     */
-    protected float remainingSpace = 0;
     
 	/**
 	 * Constructs a new PdfPRow with the cells in the array that was passed
@@ -340,25 +334,6 @@ public class PdfPRow {
         return top;
     }
     
-    /**
-     * If this row is the last one before being split,
-     * this method sets the remaining space that is left for the row.
-     * @param	remaining	the remaining space
-     * @since	2.1.6
-     */
-    protected void setRemainingSpace(float remaining) {
-    	this.remainingSpace = remaining;
-    }
-    
-    /**
-     * Gets the remaining space that is left to draw this cell.
-     * @return	space remaining to draw this cell
-     * @since	2.1.6
-     */
-    protected float getRemainingSpace() {
-    	return remainingSpace;
-    }
-    
 	/**
 	 * Writes a number of cells (not necessarily all cells).
 	 * 
@@ -400,15 +375,11 @@ public class PdfPRow {
 			if (cell == null)
 				continue;
 			float currentMaxHeight = maxHeight;
-			if (cell.getRowspan() > 1) {
+			if (cell.getRowspan() > 1 && rowspanHeight > maxHeight) {
 				for (int r = index + 1;
 					r < (index + cell.getRowspan()) && (r < parentTable.size());
 					r++) {
 					PdfPRow row = parentTable.getRow(r);
-					if (row.remainingSpace > 0) {
-						currentMaxHeight += row.remainingSpace;
-						break;
-					}
 					currentMaxHeight += row.getMaxHeights();
 				}
 			}
@@ -605,6 +576,7 @@ public class PdfPRow {
 				evt.cellLayout(cell, rect, canvases);
 			}
 		}
+		calculated = false;
 	}
 
 	/**
@@ -664,6 +636,7 @@ public class PdfPRow {
 	 */
 	public void setMaxHeights(float maxHeight) {
 		this.maxHeight = maxHeight;
+		rowspanHeight = maxHeight;
 	}
 
 	//end add
@@ -708,7 +681,6 @@ public class PdfPRow {
 			minHs[k] = cell.getMinimumHeight();
 			Image img = cell.getImage();
 			PdfPCell newCell = new PdfPCell(cell);
-			cell.setRowspan(1);
 			if (img != null) {
 				if (newHeight > cell.getEffectivePaddingBottom() + cell.getEffectivePaddingTop() + 2) {
 					newCell.setPhrase(null);
