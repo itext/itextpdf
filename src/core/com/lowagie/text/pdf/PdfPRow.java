@@ -75,26 +75,10 @@ public class PdfPRow {
 	protected PdfPCell cells[];
 
 	protected float widths[];
+	
+	protected float extraHeights[];
 
 	protected float maxHeight = 0;
-    
-    /**
-     * The table to which the cell was added.
-     * @since	2.1.6
-     */
-    protected PdfPTable parentTable;
-
-    /**
-     * The index of the row in the parentTable.
-     * @since	2.1.6
-     */
-    protected int index;
-    
-	/**
-	 * The total height of the rows belonging to the rowspan.
-	 * @since	2.1.6
-	 */
-	protected float rowspanHeight = 0;
 	
 	protected boolean calculated = false;
     
@@ -109,6 +93,7 @@ public class PdfPRow {
 	public PdfPRow(PdfPCell cells[]) {
 		this.cells = cells;
 		widths = new float[cells.length];
+		initExtraHeights();
 	}
 
 	/**
@@ -119,8 +104,6 @@ public class PdfPRow {
 	public PdfPRow(PdfPRow row) {
 		maxHeight = row.maxHeight;
 		calculated = row.calculated;
-		parentTable = row.parentTable;
-		index = row.index;
 		cells = new PdfPCell[row.cells.length];
 		for (int k = 0; k < cells.length; ++k) {
 			if (row.cells[k] != null)
@@ -128,6 +111,7 @@ public class PdfPRow {
 		}
 		widths = new float[cells.length];
 		System.arraycopy(row.widths, 0, widths, 0, cells.length);
+		initExtraHeights();
 	}
 
 	/**
@@ -160,6 +144,29 @@ public class PdfPRow {
 		}
 		return true;
 	}
+
+	/**
+	 * Initializes the extra heights array.
+	 * @since	2.1.6
+	 */
+	public void initExtraHeights() {
+		extraHeights = new float[cells.length];
+		for (int i = 0; i < extraHeights.length; i++) {
+			extraHeights[i] = 0;
+		}
+	}
+	
+	/**
+	 * Sets an extra height for a cell.
+	 * @param	cell	the index of the cell that needs an extra height
+	 * @param	height	the extra height
+	 * @since	2.1.6
+	 */
+	public void setExtraHeight(int cell, float height) {
+		if (cell < 0 || cell >= cells.length)
+			return;
+		extraHeights[cell] = height;
+	}
 	
 	/**
 	 * Calculates the heights of each cell in the row.
@@ -168,26 +175,11 @@ public class PdfPRow {
 	 */
 	public float calculateHeights() {
 		maxHeight = 0;
-		rowspanHeight = 0;
 		for (int k = 0; k < cells.length; ++k) {
-			
 			PdfPCell cell = cells[k];
 			float height = 0;
 			if (cell == null) {
-				float rowspanCorrection = 0;
-				int i = index;
-				while (parentTable.rowSpanAbove(i--, k)) {
-					rowspanCorrection += parentTable.getRowHeight(i);
-				}
-				if (i < parentTable.size() - 1) {
-					PdfPRow tmpRow = parentTable.getRow(i + 1);
-					PdfPCell tmpCell = tmpRow.getCells()[k];
-					if (tmpCell != null && tmpCell.getRowspan() == index - i) {
-						height = tmpRow.rowspanHeight - rowspanCorrection;
-						if (height > maxHeight)
-							maxHeight = height;
-					}
-				}
+				continue;
 			}
 			else {
 				boolean pivoted = (cell.getRotation() == 90 || cell.getRotation() == 270);
@@ -245,8 +237,6 @@ public class PdfPRow {
 					height = cell.getMinimumHeight();
 				if ((height > maxHeight) && (cell.getRowspan() == 1))
 					maxHeight = height;
-				else if ((height > rowspanHeight) && (cell.getRowspan() > 1))
-					rowspanHeight = height;
 			}
 		}
 		calculated = true;
@@ -271,8 +261,6 @@ public class PdfPRow {
 			float top = cell.getTop() + yPos;
 			float left = cell.getLeft() + xPos;
 			float bottom = top - currentMaxHeight;
-			
-			
 			
 			if (background != null) {
 				PdfContentByte backgr = canvases[PdfPTable.BACKGROUNDCANVAS];
@@ -374,15 +362,7 @@ public class PdfPRow {
 			PdfPCell cell = cells[k];
 			if (cell == null)
 				continue;
-			float currentMaxHeight = maxHeight;
-			if (cell.getRowspan() > 1 && rowspanHeight > maxHeight) {
-				for (int r = index + 1;
-					r < (index + cell.getRowspan()) && (r < parentTable.size());
-					r++) {
-					PdfPRow row = parentTable.getRow(r);
-					currentMaxHeight += row.getMaxHeights();
-				}
-			}
+			float currentMaxHeight = maxHeight + extraHeights[k];
 			
 			writeBorderAndBackground(xPos, yPos, currentMaxHeight, cell, canvases);
 
@@ -576,36 +556,6 @@ public class PdfPRow {
 				evt.cellLayout(cell, rect, canvases);
 			}
 		}
-		calculated = false;
-	}
-
-	/**
-	 * Gets the index of the row in the table.
-	 * @return	the index of the row in the table
-	 * @since	2.1.6
-	 */
-	public int getIndex() {
-		return index;
-	}
-	
-	/**
-	 * Sets the index of the row in the table.
-	 * @param	index	the index in the table
-	 * @since	2.1.6
-	 */
-	public void setIndex(int index) {
-		this.index = index;
-	}
-	
-	/**
-	 * Gets the height of the row with the additional rows in the same rowspan.
-	 * @return	the height of this row extended with the heights of the following rows in the same rowspan
-	 * @since	2.1.6
-	 */
-	public float getRowspanHeight() {
-		if (!calculated)
-			calculateHeights();
-		return rowspanHeight;
 	}
 	
 	/**
@@ -636,7 +586,6 @@ public class PdfPRow {
 	 */
 	public void setMaxHeights(float maxHeight) {
 		this.maxHeight = maxHeight;
-		rowspanHeight = maxHeight;
 	}
 
 	//end add
@@ -740,8 +689,6 @@ public class PdfPRow {
 		}
 		calculateHeights();
 		PdfPRow split = new PdfPRow(newCells);
-		split.setIndex(index);
-		split.setParentTable(parentTable);
 		split.widths = (float[]) widths.clone();
 		split.calculateHeights();
 		return split;
@@ -758,24 +705,4 @@ public class PdfPRow {
 	public PdfPCell[] getCells() {
 		return cells;
 	}
-    
-    /**
-     * Getter for property parentTable.
-     * 
-     * @return Value of property parentTable.
-     * @since 2.1.6
-     */
-    public PdfPTable getParentTable() {
-        return parentTable;
-    }
-
-    /**
-     * Setter for property parentTable.
-     * 
-     * @param	parentTable Value of property parentTable.
-     * @since 2.1.6
-     */
-    void setParentTable(PdfPTable parentTable) {
-        this.parentTable = parentTable;
-    }
 }

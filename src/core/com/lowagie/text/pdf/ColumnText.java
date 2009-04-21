@@ -1378,9 +1378,10 @@ public class ColumnText {
                 if (!table.isComplete())
                 	yTemp -= footerHeight;
                 for (k = listIdx; k < table.size(); ++k) {
+                	float rowspanHeight = table.getRowspanHeight(k);
+                	if (yTemp - rowspanHeight < minY)
+                		break;
                     float rowHeight = table.getRowHeight(k);
-                    if (yTemp - table.getRow(k).getRowspanHeight() < minY)
-                        break;
                     if (yTemp - rowHeight < minY)
                         break;
                     yTemp -= rowHeight;
@@ -1445,7 +1446,7 @@ public class ColumnText {
                     else
                         nt.setHeaderRows(footerRows);
                     // then we add the real content
-                    sub.addAll(table.getRows(listIdx, k, yTemp - minY));
+                    sub.addAll(table.getRows(listIdx, k));
                     // if k < table.size(), we must indicate that the new table is complete;
                     // otherwise no footers will be added (because iText thinks the table continues on the same page)
                     if (k < table.size())

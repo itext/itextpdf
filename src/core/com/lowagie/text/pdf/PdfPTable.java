@@ -478,8 +478,6 @@ public class PdfPTable implements LargeElement{
                 currentRow = rtlRow;
             }
             PdfPRow row = new PdfPRow(currentRow);
-            row.setIndex(rows.size());
-            row.setParentTable(this);
             if (totalWidth > 0) {
                 row.setWidths(absoluteWidths);
                 totalHeight += row.getMaxHeights();
@@ -819,6 +817,36 @@ public class PdfPTable implements LargeElement{
     }
     
     /**
+     * Gets the maximum height of a cell in a particular row (will only be different
+     * from getRowHeight is one of the cells in the row has a rowspan > 1).
+     * 
+     * @param idx the row index (starts at 0)
+     * @return the height of a particular row
+     */    
+    public float getRowspanHeight(int idx) {
+        if (totalWidth <= 0 || idx < 0 || idx >= rows.size())
+            return 0;
+        PdfPRow row = (PdfPRow)rows.get(idx);
+        if (row == null)
+            return 0;
+        float rowspanHeight = row.getMaxHeights();
+        PdfPCell[] cells = row.getCells();
+        PdfPCell cell;
+        for (int i = 0; i < cells.length; i++) {
+        	cell = cells[i];
+        	if (cell == null || cell.getRowspan() == 1)
+        		continue;
+        	float tmpHeight = 0;
+        	for (int j = 0; j < cell.getRowspan(); j++) {
+        		tmpHeight += getRowHeight(idx + j);
+        	}
+        	if (tmpHeight > rowspanHeight)
+        		rowspanHeight = tmpHeight;
+        }
+        return rowspanHeight;
+    }
+    
+    /**
      * Gets the height of the rows that constitute the header as defined by
      * <CODE>setHeaderRows()</CODE>.
      * 
@@ -1041,16 +1069,35 @@ public class PdfPTable implements LargeElement{
     
     /**
      * Gets an arraylist with a selection of rows.
+     * @param	start	the first row in the selection
+     * @param	end 	the first row that isn't part of the selection
      * @return	a selection of rows
      * @since	2.1.6
      */
-    public ArrayList getRows(int start, int end, float remainingSpace) {
+    public ArrayList getRows(int start, int end) {
     	ArrayList list = new ArrayList();
     	if (start < 0 || end > size()) {
     		return list;
     	}
+    	PdfPRow row;
+    	PdfPCell[] cells;
+    	PdfPCell cell;
     	for (int i = start; i < end; i++) {
-    		list.add(getRow(i));
+    		row = getRow(i);
+    		row.initExtraHeights();
+    		cells = row.getCells();
+    		for (int j = 0; j < cells.length; j++) {
+    			cell = cells[j];
+    			if (cell == null || cell.getRowspan() == 1)
+    				continue;
+    			int stop = Math.min(end, i + cell.getRowspan());
+    			float extra = 0;
+    			for (int k = i + 1; k < stop; k++) {
+    				extra += getRowHeight(k);
+    			}
+    			row.setExtraHeight(j, extra);
+    		}
+    		list.add(row);
     	}
     	return list;
     }
