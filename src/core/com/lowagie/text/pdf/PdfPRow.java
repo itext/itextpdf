@@ -617,15 +617,29 @@ public class PdfPRow {
 	 * @return the remainder row or null if the newHeight was so small that only
 	 * an empty row would result
 	 */
-	public PdfPRow splitRow(float newHeight) {
+	public PdfPRow splitRow(PdfPTable table, int rowIndex, float new_height) {
 		PdfPCell newCells[] = new PdfPCell[cells.length];
 		float fixHs[] = new float[cells.length];
 		float minHs[] = new float[cells.length];
 		boolean allEmpty = true;
 		for (int k = 0; k < cells.length; ++k) {
+			float newHeight = new_height;
 			PdfPCell cell = cells[k];
-			if (cell == null)
-				continue;
+			if (cell == null) {
+				if (table.rowSpanAbove(rowIndex, k)) {
+					while (table.rowSpanAbove(--rowIndex, k)) {
+						newHeight += table.getRowHeight(k);
+					}
+					PdfPRow row = table.getRow(rowIndex);
+					if (row != null)
+						cell = row.getCells()[k];
+					if (cell == null)
+						continue;
+				}
+				else {
+					continue;
+				}
+			}
 			fixHs[k] = cell.getFixedHeight();
 			minHs[k] = cell.getMinimumHeight();
 			Image img = cell.getImage();

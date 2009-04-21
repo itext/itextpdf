@@ -1398,7 +1398,7 @@ public class ColumnText {
                                 rows.set(i, null);
                         }
                         float h = yTemp - minY;
-                        PdfPRow newRow = table.getRow(k).splitRow(h);
+                        PdfPRow newRow = table.getRow(k).splitRow(table, k, h);
                         if (newRow == null) {
                             if (k == listIdx)
                                 return NO_MORE_COLUMN;

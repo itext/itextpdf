@@ -509,6 +509,8 @@ public class PdfPTable implements LargeElement{
     	
     	int row = currRow - 1;
     	PdfPRow aboveRow = (PdfPRow)rows.get(row);
+    	if (aboveRow == null)
+    		return false;
     	PdfPCell aboveCell = (PdfPCell)aboveRow.getCells()[currCol];
     	while ((aboveCell == null) && (row > 0)) {
     		aboveRow  = (PdfPRow)rows.get(--row);
@@ -1079,27 +1081,56 @@ public class PdfPTable implements LargeElement{
     	if (start < 0 || end > size()) {
     		return list;
     	}
-    	PdfPRow row;
-    	PdfPCell[] cells;
+    	PdfPRow firstRow = adjustCellsInRow(start, end);
+    	int colIndex = 0;
     	PdfPCell cell;
-    	for (int i = start; i < end; i++) {
-    		row = new PdfPRow(getRow(i));
-    		row.initExtraHeights();
-    		cells = row.getCells();
-    		for (int j = 0; j < cells.length; j++) {
-    			cell = cells[j];
-    			if (cell == null || cell.getRowspan() == 1)
-    				continue;
-    			int stop = Math.min(end, i + cell.getRowspan());
-    			float extra = 0;
-    			for (int k = i + 1; k < stop; k++) {
-    				extra += getRowHeight(k);
+    	while (colIndex < getNumberOfColumns()) {
+    		int rowIndex = start;
+    			while (rowSpanAbove(rowIndex--, colIndex)) {
+    			PdfPRow row = getRow(rowIndex);
+    			if (row != null) {
+    				PdfPCell replaceCell = row.getCells()[colIndex];
+    				firstRow.getCells()[colIndex] = replaceCell;
+    				if (replaceCell != null) {
+    					int extra = 0;
+    					int stop = Math.min(rowIndex + replaceCell.getRowspan(), end);
+    					for (int j = start + 1; j < stop; j++) {
+    						extra += getRowHeight(j);
+    					}
+    					firstRow.setExtraHeight(colIndex, extra);
+    				}
     			}
-    			row.setExtraHeight(j, extra);
     		}
-    		list.add(row);
+    		cell = firstRow.getCells()[colIndex];
+    		if (cell == null)
+    			colIndex++;
+    		else
+    			colIndex += cell.getColspan();
+    	}
+    	list.add(firstRow);
+    	for (int i = start + 1; i < end; i++) {
+    		list.add(adjustCellsInRow(i, end));
     	}
     	return list;
+    }
+    
+    public PdfPRow adjustCellsInRow(int idx, int end) {
+    	PdfPRow row = new PdfPRow(getRow(idx));
+		row.initExtraHeights();
+		PdfPCell cell;
+		PdfPCell[] cells = row.getCells();
+		for (int i = 0; i < cells.length; i++) {
+			cell = cells[i];
+			if (cell == null || cell.getRowspan() == 1)
+				continue;
+			int stop = Math.min(end, idx + cell.getRowspan());
+			float extra = 0;
+			for (int k = idx + 1; k < stop; k++) {
+				extra += getRowHeight(k);
+			}
+			row.setExtraHeight(i, extra);
+		}
+    	return row;
     }
 
     /** Sets the table event for this table.
