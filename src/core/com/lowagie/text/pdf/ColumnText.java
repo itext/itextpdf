@@ -1378,9 +1378,6 @@ public class ColumnText {
                 if (!table.isComplete())
                 	yTemp -= footerHeight;
                 for (k = listIdx; k < table.size(); ++k) {
-                	float rowspanHeight = table.getRowspanHeight(k);
-                	if (yTemp - rowspanHeight < minY)
-                		break;
                     float rowHeight = table.getRowHeight(k);
                     if (yTemp - rowHeight < minY)
                         break;
@@ -1389,6 +1386,7 @@ public class ColumnText {
                 if (!table.isComplete())
                 	yTemp += footerHeight;
                 // either k is the first row that doesn't fit on the page (break);
+                PdfPRow rowspanRow = new PdfPRow(new PdfPCell[table.getNumberOfColumns()]);
                 if (k < table.size()) {
                 	if (table.isSplitRows() && (!table.isSplitLate() || (k == listIdx && firstPass))) {
                 		if (!splittedRow) {

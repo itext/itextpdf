@@ -1083,7 +1083,7 @@ public class PdfPTable implements LargeElement{
     	PdfPCell[] cells;
     	PdfPCell cell;
     	for (int i = start; i < end; i++) {
-    		row = getRow(i);
+    		row = new PdfPRow(getRow(i));
     		row.initExtraHeights();
     		cells = row.getCells();
     		for (int j = 0; j < cells.length; j++) {
