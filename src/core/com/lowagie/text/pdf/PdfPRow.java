@@ -76,6 +76,10 @@ public class PdfPRow {
 
 	protected float widths[];
 	
+	/**
+	 * extra heights that needs to be added to a cell because of rowspans.
+	 * @since	2.1.6
+	 */
 	protected float extraHeights[];
 
 	protected float maxHeight = 0;
@@ -626,19 +630,20 @@ public class PdfPRow {
 			float newHeight = new_height;
 			PdfPCell cell = cells[k];
 			if (cell == null) {
-				if (table.rowSpanAbove(rowIndex, k)) {
-					while (table.rowSpanAbove(--rowIndex, k)) {
-						newHeight += table.getRowHeight(k);
+				int index = rowIndex;
+				if (table.rowSpanAbove(index, k)) {
+					newHeight += table.getRowHeight(index);
+					while (table.rowSpanAbove(--index, k)) {
+						newHeight += table.getRowHeight(index);
 					}
-					PdfPRow row = table.getRow(rowIndex);
-					if (row != null)
-						cell = row.getCells()[k];
-					if (cell == null)
-						continue;
+					PdfPRow row = table.getRow(index);
+					if (row != null && row.getCells()[k] != null) {
+						newCells[k] = new PdfPCell(row.getCells()[k]);
+						newCells[k].consumeHeight(newHeight);
+						newCells[k].setVerticalAlignment(PdfPCell.ALIGN_TOP);
+					}
 				}
-				else {
-					continue;
-				}
+				continue;
 			}
 			fixHs[k] = cell.getFixedHeight();
 			minHs[k] = cell.getMinimumHeight();

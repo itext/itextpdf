@@ -822,28 +822,23 @@ public class PdfPTable implements LargeElement{
      * Gets the maximum height of a cell in a particular row (will only be different
      * from getRowHeight is one of the cells in the row has a rowspan > 1).
      * 
-     * @param idx the row index (starts at 0)
-     * @return the height of a particular row
+     * @param	rowIndex	the row index
+     * @param	cellIndex	the cell index
+     * @return the height of a particular row including rowspan
+     * @since	2.1.6
      */    
-    public float getRowspanHeight(int idx) {
-        if (totalWidth <= 0 || idx < 0 || idx >= rows.size())
+    public float getRowspanHeight(int rowIndex, int cellIndex) {
+        if (totalWidth <= 0 || rowIndex < 0 || rowIndex >= rows.size())
             return 0;
-        PdfPRow row = (PdfPRow)rows.get(idx);
-        if (row == null)
+        PdfPRow row = (PdfPRow)rows.get(rowIndex);
+        if (row == null || cellIndex >= row.getCells().length)
             return 0;
-        float rowspanHeight = row.getMaxHeights();
-        PdfPCell[] cells = row.getCells();
-        PdfPCell cell;
-        for (int i = 0; i < cells.length; i++) {
-        	cell = cells[i];
-        	if (cell == null || cell.getRowspan() == 1)
-        		continue;
-        	float tmpHeight = 0;
-        	for (int j = 0; j < cell.getRowspan(); j++) {
-        		tmpHeight += getRowHeight(idx + j);
-        	}
-        	if (tmpHeight > rowspanHeight)
-        		rowspanHeight = tmpHeight;
+        PdfPCell cell = row.getCells()[cellIndex];
+        if (cell == null)
+        	return 0;
+        float rowspanHeight = 0;
+        for (int j = 0; j < cell.getRowspan(); j++) {
+        	rowspanHeight += getRowHeight(rowIndex + j);
         }
         return rowspanHeight;
     }
@@ -1086,18 +1081,21 @@ public class PdfPTable implements LargeElement{
     	PdfPCell cell;
     	while (colIndex < getNumberOfColumns()) {
     		int rowIndex = start;
-    			while (rowSpanAbove(rowIndex--, colIndex)) {
+    		while (rowSpanAbove(rowIndex--, colIndex)) {
     			PdfPRow row = getRow(rowIndex);
     			if (row != null) {
     				PdfPCell replaceCell = row.getCells()[colIndex];
-    				firstRow.getCells()[colIndex] = replaceCell;
     				if (replaceCell != null) {
-    					int extra = 0;
+        				firstRow.getCells()[colIndex] = new PdfPCell(replaceCell);
+    					float extra = 0;
     					int stop = Math.min(rowIndex + replaceCell.getRowspan(), end);
     					for (int j = start + 1; j < stop; j++) {
     						extra += getRowHeight(j);
     					}
     					firstRow.setExtraHeight(colIndex, extra);
+    					float diff = getRowspanHeight(rowIndex, colIndex)
+    						- getRowHeight(start) - extra;
+    					firstRow.getCells()[colIndex].consumeHeight(diff);
     				}
     			}
     		}
@@ -1114,8 +1112,14 @@ public class PdfPTable implements LargeElement{
     	return list;
     }
     
-    public PdfPRow adjustCellsInRow(int idx, int end) {
-    	PdfPRow row = new PdfPRow(getRow(idx));
+    /**
+     * Calculates the extra height needed in a row because of rowspans.
+     * @param	start	the index of the start row (the one to adjust)
+     * @param	end		the index of the end row on the page
+     * @since	2.1.6
+     */
+    protected PdfPRow adjustCellsInRow(int start, int end) {
+    	PdfPRow row = new PdfPRow(getRow(start));
 		row.initExtraHeights();
 		PdfPCell cell;
 		PdfPCell[] cells = row.getCells();
@@ -1123,9 +1127,9 @@ public class PdfPTable implements LargeElement{
 			cell = cells[i];
 			if (cell == null || cell.getRowspan() == 1)
 				continue;
-			int stop = Math.min(end, idx + cell.getRowspan());
+			int stop = Math.min(end, start + cell.getRowspan());
 			float extra = 0;
-			for (int k = idx + 1; k < stop; k++) {
+			for (int k = start + 1; k < stop; k++) {
 				extra += getRowHeight(k);
 			}
 			row.setExtraHeight(i, extra);
