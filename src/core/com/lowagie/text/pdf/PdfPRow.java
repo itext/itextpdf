@@ -641,6 +641,7 @@ public class PdfPRow {
 						newCells[k] = new PdfPCell(row.getCells()[k]);
 						newCells[k].consumeHeight(newHeight);
 						newCells[k].setVerticalAlignment(PdfPCell.ALIGN_TOP);
+						allEmpty = false;
 					}
 				}
 				continue;
