@@ -373,8 +373,7 @@ public class PdfPRow {
 			Image img = cell.getImage();
 			
 			float tly = cell.getTop() + yPos - cell.getEffectivePaddingTop();
-			if (cell.getHeight() <= currentMaxHeight)
-			{
+			if (cell.getHeight() <= currentMaxHeight) {
 				switch (cell.getVerticalAlignment()) {
 				case Element.ALIGN_BOTTOM:
 					tly = cell.getTop() + yPos - currentMaxHeight + cell.getHeight()
@@ -450,7 +449,7 @@ public class PdfPRow {
                             calcHeight -= ct.getDescender();
                         ct = ColumnText.duplicate(cell.getColumn());
                         ct.setCanvases(canvases);
-                        ct.setSimpleColumn(0, -0.001f, netWidth + 0.001f, calcHeight);
+                        ct.setSimpleColumn(-0.001f, -0.001f, netWidth + 0.001f, calcHeight);
                         float pivotX;
                         float pivotY;
                         if (cell.getRotation() == 90) {
