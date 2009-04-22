@@ -640,7 +640,7 @@ public class PdfPRow {
 					if (row != null && row.getCells()[k] != null) {
 						newCells[k] = new PdfPCell(row.getCells()[k]);
 						newCells[k].consumeHeight(newHeight);
-						newCells[k].setVerticalAlignment(PdfPCell.ALIGN_TOP);
+						newCells[k].setRowspan(row.getCells()[k].getRowspan() - rowIndex + index);
 						allEmpty = false;
 					}
 				}
