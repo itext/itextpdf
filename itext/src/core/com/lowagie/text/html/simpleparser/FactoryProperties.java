@@ -116,22 +116,6 @@ public class FactoryProperties {
 		}
 	}
 
-	public static Paragraph createParagraph(HashMap props) {
-		Paragraph p = new Paragraph();
-		String value = (String) props.get("align");
-		if (value != null) {
-			if (value.equalsIgnoreCase("center"))
-				p.setAlignment(Element.ALIGN_CENTER);
-			else if (value.equalsIgnoreCase("right"))
-				p.setAlignment(Element.ALIGN_RIGHT);
-			else if (value.equalsIgnoreCase("justify"))
-				p.setAlignment(Element.ALIGN_JUSTIFIED);
-		}
-		p.setHyphenation(getHyphenation(props));
-		setParagraphLeading(p, (String) props.get("leading"));
-		return p;
-	}
-
 	public static void createParagraph(Paragraph p, ChainedProperties props) {
 		String value = props.getProperty("align");
 		if (value != null) {
@@ -291,7 +275,7 @@ public class FactoryProperties {
 			} else if (key.equals(Markup.CSS_KEY_FONTSIZE)) {
 				h.put("size", Float.toString(Markup.parseLength(prop
 						.getProperty(key)))
-						+ "px");
+						+ "pt");
 			} else if (key.equals(Markup.CSS_KEY_FONTSTYLE)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				if (ss.equals("italic") || ss.equals("oblique"))
