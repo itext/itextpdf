@@ -391,7 +391,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				stack.push(item);
 				return;
 			}
-			if (tag.equals(HtmlTags.DIV) || tag.equals(HtmlTags.BODY)) {
+			if (tag.equals(HtmlTags.DIV) || tag.equals(HtmlTags.BODY) || tag.equals("p")) {
 				cprops.addToChain(tag, h);
 				return;
 			}
@@ -401,11 +401,6 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				}
 				cprops.addToChain(tag, h);
 				isPRE = true;
-				return;
-			}
-			if (tag.equals("p")) {
-				cprops.addToChain(tag, h);
-				currentParagraph = FactoryProperties.createParagraph(h);
 				return;
 			}
 			if (tag.equals("tr")) {
@@ -723,27 +718,4 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			tagsSupported.put(tok.nextToken(), null);
 	}
 
-	/**
-	 * 
-	 * This method is replace with Markup.lengthParse
-	 * @deprecated
-	 * @see com.lowagie.text.html.Markup#parseLength(String string)
-	 * @param txt
-	 * @param c
-	 * @return float value of length
-	 */
-	private static float lengthParse(String txt, int c) {
-		if (txt == null)
-			return -1;
-		if (txt.endsWith("%")) {
-			float vf = Float.parseFloat(txt.substring(0, txt.length() - 1));
-			return vf;
-		}
-		if (txt.endsWith("px")) {
-			float vf = Float.parseFloat(txt.substring(0, txt.length() - 2));
-			return vf;
-		}
-		int v = Integer.parseInt(txt);
-		return (float) v / c * 100f;
-	}
 }

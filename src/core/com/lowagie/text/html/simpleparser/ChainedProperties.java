@@ -89,7 +89,7 @@ public class ChainedProperties {
 		// adjust the font size
 		String value = (String) prop.get(ElementTags.SIZE);
 		if (value != null) {
-			if (value.endsWith("px")) {
+			if (value.endsWith("pt")) {
 				prop.put(ElementTags.SIZE, value.substring(0,
 						value.length() - 2));
 			} else {
