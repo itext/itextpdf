@@ -1375,7 +1375,7 @@ public class ColumnText {
                 int k;
                 if (listIdx < headerRows)
                     listIdx = headerRows;
-                if (!table.isComplete())
+                if (!table.isComplete() && !table.isSkipLastFooter())
                 	yTemp -= footerHeight;
                 for (k = listIdx; k < table.size(); ++k) {
                     float rowHeight = table.getRowHeight(k);
@@ -1383,10 +1383,9 @@ public class ColumnText {
                         break;
                     yTemp -= rowHeight;
                 }
-                if (!table.isComplete())
+                if (!table.isComplete() && !table.isSkipLastFooter())
                 	yTemp += footerHeight;
                 // either k is the first row that doesn't fit on the page (break);
-                PdfPRow rowspanRow = new PdfPRow(new PdfPCell[table.getNumberOfColumns()]);
                 if (k < table.size()) {
                 	if (table.isSplitRows() && (!table.isSplitLate() || (k == listIdx && firstPass))) {
                 		if (!splittedRow) {
@@ -1447,10 +1446,13 @@ public class ColumnText {
                     sub.addAll(table.getRows(listIdx, k));
                     // if k < table.size(), we must indicate that the new table is complete;
                     // otherwise no footers will be added (because iText thinks the table continues on the same page)
-                    if (k < table.size())
+                    boolean showFooter = !table.isSkipLastFooter();
+                    if (k < table.size()) {
                     	nt.setComplete(true);
+                    	showFooter = true;
+                    }
                     // we add the footer rows if necessary (not for incomplete tables)
-                    for (int j = 0; j < footerRows && nt.isComplete(); ++j)
+                    for (int j = 0; j < footerRows && nt.isComplete() && showFooter; ++j)
                         sub.add(table.getRow(j + realHeaderRows));
 
                     // we need a correction if the last row needs to be extended
