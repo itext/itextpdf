@@ -122,6 +122,11 @@ public class PdfPTable implements LargeElement{
      * Holds value of property skipFirstHeader.
      */
     private boolean skipFirstHeader = false;
+    /**
+     * Holds value of property skipLastFooter.
+     * @since	2.1.6
+     */
+    private boolean skipLastFooter = false;
 
     protected boolean isColspan = false;
     
@@ -280,6 +285,7 @@ public class PdfPTable implements LargeElement{
         widthPercentage = sourceTable.widthPercentage;
         splitLate = sourceTable.splitLate;
         skipFirstHeader = sourceTable.skipFirstHeader;
+        skipLastFooter = sourceTable.skipLastFooter;
         horizontalAlignment = sourceTable.horizontalAlignment;
         keepTogether = sourceTable.keepTogether;
         complete = sourceTable.complete;
@@ -1212,12 +1218,25 @@ public class PdfPTable implements LargeElement{
 
 
     /**
-     * Getter for property skipFirstHeader.
+     * Tells you if the first header needs to be skipped
+     * (for instance if the header says "continued from the previous page").
      * 
      * @return Value of property skipFirstHeader.
      */
     public boolean isSkipFirstHeader() {
         return skipFirstHeader;
+    }
+
+
+    /**
+     * Tells you if the last footer needs to be skipped
+     * (for instance if the footer says "continued on the next page")
+     * 
+     * @return Value of property skipLastFooter.
+     * @since	2.1.6
+     */
+    public boolean isSkipLastFooter() {
+        return skipLastFooter;
     }
     
     /**
@@ -1228,6 +1247,17 @@ public class PdfPTable implements LargeElement{
      */
     public void setSkipFirstHeader(boolean skipFirstHeader) {
         this.skipFirstHeader = skipFirstHeader;
+    }
+    
+    /**
+     * Skips the printing of the last footer. Used when printing
+     * tables in succession belonging to the same printed table aspect.
+     * 
+     * @param skipLastFooter New value of property skipLastFooter.
+     * @since	2.1.6
+     */
+    public void setSkipLastFooter(boolean skipLastFooter) {
+        this.skipLastFooter = skipLastFooter;
     }
 
     /**
