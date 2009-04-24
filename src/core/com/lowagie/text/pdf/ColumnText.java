@@ -1375,7 +1375,7 @@ public class ColumnText {
                 int k;
                 if (listIdx < headerRows)
                     listIdx = headerRows;
-                if (!table.isComplete() && !table.isSkipLastFooter())
+                if (!table.isComplete())
                 	yTemp -= footerHeight;
                 for (k = listIdx; k < table.size(); ++k) {
                     float rowHeight = table.getRowHeight(k);
@@ -1383,7 +1383,7 @@ public class ColumnText {
                         break;
                     yTemp -= rowHeight;
                 }
-                if (!table.isComplete() && !table.isSkipLastFooter())
+                if (!table.isComplete())
                 	yTemp += footerHeight;
                 // either k is the first row that doesn't fit on the page (break);
                 if (k < table.size()) {
