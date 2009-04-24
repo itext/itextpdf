@@ -80,8 +80,7 @@ public class PdfFormXObject extends PdfStream {
         put(PdfName.TYPE, PdfName.XOBJECT);
         put(PdfName.SUBTYPE, PdfName.FORM);
         put(PdfName.RESOURCES, template.getResources());
-        if (template.getBoundingBox() != null)
-        	put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
+        put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
         put(PdfName.FORMTYPE, ONE);
         if (template.getLayer() != null)
             put(PdfName.OC, template.getLayer().getRef());
