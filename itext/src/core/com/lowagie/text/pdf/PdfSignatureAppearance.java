@@ -381,6 +381,7 @@ public class PdfSignatureAppearance {
     public PdfTemplate getAppearance() throws DocumentException {
         if (isInvisible()) {
             PdfTemplate t = new PdfTemplate(writer);
+            t.setBoundingBox(new Rectangle(0, 0));
             writer.addDirectTemplateSimple(t, null);
             return t;
         }
