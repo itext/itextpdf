@@ -572,7 +572,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     public void setInTable(boolean inTable) {
         super.setInTable(inTable);
         for(int i = 0; i < this.items.size(); i++) {
-            ((RtfBasicElement) this.items.get(i)).setInTable(inTable);
+        	((RtfBasicElement) this.items.get(i)).setInTable(inTable);
+        }
+        for(int i = 0; i < this.listLevels.size(); i++) {
+        	((RtfListLevel) this.listLevels.get(i)).setInTable(inTable);
         }
     }
     
