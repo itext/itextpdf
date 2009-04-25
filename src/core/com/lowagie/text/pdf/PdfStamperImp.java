@@ -215,10 +215,9 @@ class PdfStamperImp extends PdfWriter {
         	producer = Document.getVersion();
         }
         else if (producer.indexOf(Document.getProduct()) == -1) {
-        	StringBuffer buf = new StringBuffer(Document.getVersion());
-        	buf.append(" (originally created with: ");
-        	buf.append(producer);
-        	buf.append(')');
+        	StringBuffer buf = new StringBuffer(producer);
+        	buf.append("; modified using ");
+        	buf.append(Document.getVersion());
         	producer = buf.toString();
         }
         // XMP
