@@ -71,34 +71,34 @@ import com.lowagie.text.DocWriter;
  */
 
 public class PdfIndirectObject {
-
+    
     // membervariables
-
+    
 /** The object number */
     protected int number;
-
+    
 /** the generation number */
     protected int generation = 0;
-
+    
     static final byte STARTOBJ[] = DocWriter.getISOBytes(" obj\n");
     static final byte ENDOBJ[] = DocWriter.getISOBytes("\nendobj\n");
     static final int SIZEOBJ = STARTOBJ.length + ENDOBJ.length;
     PdfObject object;
     PdfWriter writer;
-
+    
     // constructors
-
+    
 /**
  * Constructs a <CODE>PdfIndirectObject</CODE>.
  *
  * @param		number			the object number
  * @param		object			the direct object
  */
-
+    
     PdfIndirectObject(int number, PdfObject object, PdfWriter writer) {
         this(number, 0, object, writer);
     }
-
+    
     PdfIndirectObject(PdfIndirectReference ref, PdfObject object, PdfWriter writer) {
         this(ref.getNumber(),ref.getGeneration(),object,writer);
     }
@@ -109,7 +109,7 @@ public class PdfIndirectObject {
  * @param		generation		the generation number
  * @param		object			the direct object
  */
-
+    
     PdfIndirectObject(int number, int generation, PdfObject object, PdfWriter writer) {
         this.writer = writer;
         this.number = number;
@@ -122,37 +122,33 @@ public class PdfIndirectObject {
             crypto.setHashKey(number, generation);
         }
     }
-
+    
     // methods
-
+    
 /**
  * Return the length of this <CODE>PdfIndirectObject</CODE>.
  *
  * @return		the length of the PDF-representation of this indirect object.
  */
-
+    
 //    public int length() {
 //        if (isStream)
 //            return bytes.size() + SIZEOBJ + stream.getStreamLength(writer);
 //        else
 //            return bytes.size();
 //    }
-
-
+    
+    
 /**
  * Returns a <CODE>PdfIndirectReference</CODE> to this <CODE>PdfIndirectObject</CODE>.
  *
  * @return		a <CODE>PdfIndirectReference</CODE>
  */
-
+    
     public PdfIndirectReference getIndirectReference() {
-        PdfIndirectReference objRef = object.getIndRef();
-        if (objRef == null) {
-            object.setIndRef( new PdfIndirectReference(object.type(), number, generation) );
-        }
-        return object.getIndRef();
+        return new PdfIndirectReference(object.type(), number, generation);
     }
-
+    
 /**
  * Writes efficiently to a stream
  *

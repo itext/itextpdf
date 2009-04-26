@@ -311,11 +311,11 @@ public class PdfFormField extends PdfAnnotation {
     public void setUsed() {
         used = true;
         if (parent != null)
-            put(PdfName.PARENT, parent.getIndRef());
+            put(PdfName.PARENT, parent.getIndirectReference());
         if (kids != null) {
             PdfArray array = new PdfArray();
             for (int k = 0; k < kids.size(); ++k)
-                array.add(((PdfFormField)kids.get(k)).getIndRef());
+                array.add(((PdfFormField)kids.get(k)).getIndirectReference());
             put(PdfName.KIDS, array);
         }
         if (templates == null)

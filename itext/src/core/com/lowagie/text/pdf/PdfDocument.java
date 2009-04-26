@@ -943,13 +943,8 @@ public class PdfDocument extends Document {
         	}
 
         	// [F12] we add tag info
-        	if (writer.isTagged()) {
-                Integer pageIdx = new Integer( writer.getCurrentPageNumber() );
-                Integer pageID = writer.getStructureTreeRoot().getMCIDForPage( pageIdx );
-                if (pageID != null) {
-                    page.put(PdfName.STRUCTPARENTS, new PdfNumber(pageID.intValue()));
-                }
-            }
+        	if (writer.isTagged())
+        		page.put(PdfName.STRUCTPARENTS, new PdfNumber(writer.getCurrentPageNumber() - 1));
 
             if (text.size() > textEmptySize)
         		text.endText();
