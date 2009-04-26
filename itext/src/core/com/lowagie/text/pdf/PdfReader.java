@@ -504,10 +504,9 @@ public class PdfReader implements PdfViewerPreferences {
             try {
                 readDocObj();
             }
-            catch (BadPasswordException bpe) {
-            	throw bpe;
-            }
             catch (Exception e) {
+            	if (e instanceof BadPasswordException)
+            		throw new BadPasswordException(e.getMessage());
                 if (rebuilt || encryptionError)
                     throw new InvalidPdfException(e.getMessage());
                 rebuilt = true;
