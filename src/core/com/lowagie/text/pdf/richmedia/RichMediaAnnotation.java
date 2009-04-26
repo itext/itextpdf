@@ -158,7 +158,7 @@ public class RichMediaAnnotation {
 	/**
 	 * Adds a reference to an embedded file.
 	 * (Part of the RichMediaContent.)
-	 * @param	view	a view dictionary
+	 * @param	ref	a reference to a PdfFileSpecification
 	 */
 	public PdfIndirectReference addAsset(String name, PdfIndirectReference ref) throws IOException {
 		if (views == null)

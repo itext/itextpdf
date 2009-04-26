@@ -50,7 +50,6 @@
 package com.lowagie.text.pdf.richmedia;
 
 import com.lowagie.text.pdf.PdfAction;
-import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.PdfIndirectReference;
 import com.lowagie.text.pdf.PdfName;
 
