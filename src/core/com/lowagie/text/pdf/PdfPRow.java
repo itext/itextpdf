@@ -616,7 +616,7 @@ public class PdfPRow {
 	 * The returned row is the remainder. It will return null if the newHeight
 	 * was so small that only an empty row would result.
 	 * 
-	 * @param newHeight	the new height
+	 * @param new_height	the new height
 	 * @return the remainder row or null if the newHeight was so small that only
 	 * an empty row would result
 	 */
