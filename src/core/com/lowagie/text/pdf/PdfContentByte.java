@@ -3014,13 +3014,35 @@ public class PdfContentByte {
      * @param struc the tagging structure
      */
     public void beginMarkedContentSequence(PdfStructureElement struc) {
-        struc.setPageMark(writer.getPageNumber() - 1);
-
-        struc.setMarkedContent(writer.getCurrentPage());
-
-        int mark = struc.getMCID();
+        PdfObject obj = struc.get(PdfName.K);
+        int mark = pdf.getMarkPoint();
+        if (obj != null) {
+            PdfArray ar = null;
+            if (obj.isNumber()) {
+                ar = new PdfArray();
+                ar.add(obj);
+                struc.put(PdfName.K, ar);
+            }
+            else if (obj.isArray()) {
+                ar = (PdfArray)obj;
+                if (!(ar.getPdfObject(0)).isNumber())
+                    throw new IllegalArgumentException("The structure has kids.");
+            }
+            else
+                throw new IllegalArgumentException("Unknown object at /K " + obj.getClass().toString());
+            PdfDictionary dic = new PdfDictionary(PdfName.MCR);
+            dic.put(PdfName.PG, writer.getCurrentPage());
+            dic.put(PdfName.MCID, new PdfNumber(mark));
+            ar.add(dic);
+            struc.setPageMark(writer.getPageNumber() - 1, -1);
+        }
+        else {
+            struc.setPageMark(writer.getPageNumber() - 1, mark);
+            struc.put(PdfName.PG, writer.getCurrentPage());
+        }
+        pdf.incMarkPoint();
+        mcDepth++;
         content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
-        ++mcDepth;
     }
 
     /**

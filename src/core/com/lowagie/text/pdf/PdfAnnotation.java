@@ -128,7 +128,7 @@ public class PdfAnnotation extends PdfDictionary {
     public static final int MARKUP_SQUIGGLY = 3;
 
     protected PdfWriter writer;
-    //protected PdfIndirectReference reference;
+    protected PdfIndirectReference reference;
     protected HashMap templates;
     protected boolean form = false;
     protected boolean annotation = true;
@@ -202,7 +202,7 @@ public class PdfAnnotation extends PdfDictionary {
         ann.put (PdfName.F, new PdfNumber(FLAGS_PRINT));
         ann.put(PdfName.TYPE, PdfName.ANNOT);
         ann.setPage();
-        PdfIndirectReference ref = ann.getIndRef();
+        PdfIndirectReference ref = ann.getIndirectReference();
         PdfAction action = PdfAction.rendition(clipTitle,fs,mimeType, ref);
         PdfIndirectReference actionRef = writer.addToBody(action).getIndirectReference();
         // for play on display add trigger event
@@ -217,23 +217,14 @@ public class PdfAnnotation extends PdfDictionary {
     }
 
     /**
-     * @deprecated use getIndRef instead
+     * Returns an indirect reference to the annotation
      * @return the indirect reference
      */
     public PdfIndirectReference getIndirectReference() {
-        return getIndRef();
-    }
-
-    /**
-     * Override base class behavior.
-     * @since 2.1.5
-     * @return an indirect reference for this annotation
-     */
-    public PdfIndirectReference getIndRef() {
-        if (super.getIndRef() == null) {
-            setIndRef( writer.getPdfIndirectReference() );
+        if (reference == null) {
+        	return writer.getPdfIndirectReference();
         }
-        return super.getIndRef();
+        return reference;
     }
 
     /**
@@ -759,16 +750,6 @@ public class PdfAnnotation extends PdfDictionary {
      */
     public void setLayer(PdfOCG layer) {
         put(PdfName.OC, layer.getRef());
-    }
-
-    /**
-     * Set the structure element of this annotation.
-     * @since 2.1.5
-     * @param struc
-     */
-    public void setMarkedObject(PdfStructureElement struc) {
-        put(PdfName.STRUCTPARENT, new PdfNumber(struc.getMCID()));
-        struc.setMarkedObject( getIndRef(), writer.getCurrentPage());
     }
 
     /**

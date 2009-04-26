@@ -1181,7 +1181,7 @@ class PdfStamperImp extends PdfWriter {
                     }
                     PdfFormField field = (PdfFormField)annot;
                     if (field.getParent() == null)
-                        addDocumentField(field.getIndRef());
+                        addDocumentField(field.getIndirectReference());
                 }
                 if (annot.isAnnotation()) {
                     PdfObject pdfobj = PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
@@ -1193,7 +1193,7 @@ class PdfStamperImp extends PdfWriter {
                     }
                     else
                        annots = (PdfArray)pdfobj;
-                    annots.add(annot.getIndRef());
+                    annots.add(annot.getIndirectReference());
                     markUsed(annots);
                     if (!annot.isUsed()) {
                         PdfRectangle rect = (PdfRectangle)annot.get(PdfName.RECT);
@@ -1228,7 +1228,7 @@ class PdfStamperImp extends PdfWriter {
                 }
                 if (!annot.isUsed()) {
                     annot.setUsed();
-                    addToBody(annot, annot.getIndRef());
+                    addToBody(annot, annot.getIndirectReference());
                 }
             }
         }
@@ -1438,9 +1438,9 @@ class PdfStamperImp extends PdfWriter {
 
     protected void markUsed(PdfObject obj) {
         if (append && obj != null) {
-            PdfIndirectReference ref = null;
+            PRIndirectReference ref = null;
             if (obj.type() == PdfObject.INDIRECT)
-                ref = (PdfIndirectReference)obj;
+                ref = (PRIndirectReference)obj;
             else
                 ref = obj.getIndRef();
             if (ref != null)

@@ -134,16 +134,6 @@ public class PdfReader implements PdfViewerPreferences {
     private int lastXrefPartial = -1;
     private boolean partial;
 
-    /**
-     * Returns whether or not this reader is a "full" read or
-     * a partial one.
-     * @return <code>true</code> if reader is a partial one
-     * @since 2.1.5
-     */
-    protected boolean isPartial() {
-        return partial;
-    }
-
     private PRIndirectReference cryptoRef;
 	private PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
     private boolean encryptionError;
@@ -820,19 +810,27 @@ public class PdfReader implements PdfViewerPreferences {
             return obj;
         try {
             PRIndirectReference ref = (PRIndirectReference)obj;
-            if (ref.getDirectObject() != null) {
-            	PdfObject o = ref.getDirectObject();
-            	o.setIndRef(ref);
-            	ref.getReader().lastXrefPartial = ref.getNumber();
-                return o;
-            }
             int idx = ref.getNumber();
+            boolean appendable = ref.getReader().appendable;
             obj = ref.getReader().getPdfObject(idx);
             if (obj == null) {
                 return null;
             }
             else {
-                obj.setIndRef(ref);
+                if (appendable) {
+                    switch (obj.type()) {
+                        case PdfObject.NULL:
+                            obj = new PdfNull();
+                            break;
+                        case PdfObject.BOOLEAN:
+                            obj = new PdfBoolean(((PdfBoolean)obj).booleanValue());
+                            break;
+                        case PdfObject.NAME:
+                            obj = new PdfName(obj.getBytes());
+                            break;
+                    }
+                    obj.setIndRef(ref);
+                }
                 return obj;
             }
         }
@@ -865,7 +863,7 @@ public class PdfReader implements PdfViewerPreferences {
             return null;
         if (!obj.isIndirect()) {
             PRIndirectReference ref = null;
-            if (parent != null && (ref = (PRIndirectReference)parent.getIndRef()) != null && ref.getReader().isAppendable()) {
+            if (parent != null && (ref = parent.getIndRef()) != null && ref.getReader().isAppendable()) {
                 switch (obj.type()) {
                     case PdfObject.NULL:
                         obj = new PdfNull();

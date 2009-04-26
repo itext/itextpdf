@@ -47,7 +47,6 @@ public class RunAllExamplesTest {
         runSingleTest(com.lowagie.examples.forms.FormSignature.class);
         runSingleTest(com.lowagie.examples.forms.create.StudentCard.class);
         runSingleTest(com.lowagie.examples.forms.create.StudentCardForm.class);
-        runSingleTest(com.lowagie.examples.forms.create.StudentCardFormStructure.class);
         runSingleTest(com.lowagie.examples.forms.FormCombo.class);
         runSingleTest(com.lowagie.examples.forms.fill.FdfExample.class);
         runSingleTest(com.lowagie.examples.forms.fill.Register.class);

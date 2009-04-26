@@ -51,6 +51,7 @@ package com.lowagie.text.pdf.richmedia;
 
 import com.lowagie.text.pdf.PdfAction;
 import com.lowagie.text.pdf.PdfAnnotation;
+import com.lowagie.text.pdf.PdfIndirectReference;
 import com.lowagie.text.pdf.PdfName;
 
 /**
@@ -65,24 +66,24 @@ public class RichMediaExecuteAction extends PdfAction {
 
 	/**
 	 * Creates a RichMediaExecute action dictionary.
-	 * @param	annotation	a rich media annotation dictionary for
+	 * @param	ref	a reference to rich media annotation dictionary for
 	 * an annotation for which to execute the script command.
 	 * @param	command	the command name and arguments to be
 	 * executed when the rich-media-execute action is invoked.
 	 */
-	public RichMediaExecuteAction(PdfAnnotation annotation,
+	public RichMediaExecuteAction(PdfIndirectReference ref,
 			RichMediaCommand command) {
 		super();
 		put(PdfName.S, PdfName.RICHMEDIAEXECUTE);
-		put(PdfName.TA, annotation.getIndRef());
+		put(PdfName.TA, ref);
 		put(PdfName.CMD, command);
 	}
 	
 	/**
 	 * Sets the target instance for this action.
-	 * @param	instance	a RichMediaInstance
+	 * @param	ref	a reference to a RichMediaInstance
 	 */
-	public void setRichMediaInstance(RichMediaInstance instance) {
-		put(PdfName.TI, instance.getIndRef());
+	public void setRichMediaInstance(PdfIndirectReference ref) {
+		put(PdfName.TI, ref);
 	}
 }

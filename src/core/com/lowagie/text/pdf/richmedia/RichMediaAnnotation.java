@@ -150,7 +150,20 @@ public class RichMediaAnnotation {
 		if (assetsmap == null)
 			throw new IllegalPdfSyntaxException(
 				"You can't add assets to reused RichMediaContent.");
-		PdfIndirectReference ref = writer.addPdfObject(fs);
+		PdfIndirectReference ref = writer.addToBody(fs).getIndirectReference();
+		assetsmap.put(name, ref);
+		return ref;
+	}
+	
+	/**
+	 * Adds a reference to an embedded file.
+	 * (Part of the RichMediaContent.)
+	 * @param	view	a view dictionary
+	 */
+	public PdfIndirectReference addAsset(String name, PdfIndirectReference ref) throws IOException {
+		if (views == null)
+			throw new IllegalPdfSyntaxException(
+				"You can't add assets to reused RichMediaContent.");
 		assetsmap.put(name, ref);
 		return ref;
 	}
@@ -164,7 +177,20 @@ public class RichMediaAnnotation {
 		if (configurations == null)
 			throw new IllegalPdfSyntaxException(
 				"You can't add configurations to reused RichMediaContent.");
-		PdfIndirectReference ref = writer.addPdfObject(configuration);
+		PdfIndirectReference ref = writer.addToBody(configuration).getIndirectReference();
+		configurations.add(ref);
+		return ref;
+	}
+	
+	/**
+	 * Adds a reference to a RichMediaConfiguration.
+	 * (Part of the RichMediaContent.)
+	 * @param	ref		a reference to a RichMediaConfiguration
+	 */
+	public PdfIndirectReference addConfiguration(PdfIndirectReference ref) throws IOException {
+		if (configurations == null)
+			throw new IllegalPdfSyntaxException(
+				"You can't add configurations to reused RichMediaContent.");
 		configurations.add(ref);
 		return ref;
 	}
@@ -178,7 +204,20 @@ public class RichMediaAnnotation {
 		if (views == null)
 			throw new IllegalPdfSyntaxException(
 				"You can't add views to reused RichMediaContent.");
-		PdfIndirectReference ref = writer.addPdfObject(view);
+		PdfIndirectReference ref = writer.addToBody(view).getIndirectReference();
+		views.add(ref);
+		return ref;
+	}
+	
+	/**
+	 * Adds a reference to a view dictionary.
+	 * (Part of the RichMediaContent.)
+	 * @param	ref	a reference to a view dictionary
+	 */
+	public PdfIndirectReference addView(PdfIndirectReference ref) throws IOException {
+		if (views == null)
+			throw new IllegalPdfSyntaxException(
+				"You can't add views to reused RichMediaContent.");
 		views.add(ref);
 		return ref;
 	}

@@ -122,7 +122,7 @@ public abstract class PdfObject {
     protected int type;
 
     /** Holds the indirect reference. */
-    protected PdfIndirectReference indRef;
+    protected PRIndirectReference indRef;
 
     // CONSTRUCTORS
 
@@ -384,7 +384,7 @@ public abstract class PdfObject {
      * 
      * @return A <CODE>PdfIndirectReference</CODE>
      */
-    public PdfIndirectReference getIndRef() {
+    public PRIndirectReference getIndRef() {
         return indRef;
     }
 
@@ -393,18 +393,7 @@ public abstract class PdfObject {
      * 
      * @param indRef New value as a <CODE>PdfIndirectReference</CODE>
      */
-    public void setIndRef(PdfIndirectReference indRef) {
+    public void setIndRef(PRIndirectReference indRef) {
         this.indRef = indRef;
-        indRef.setDirectObject(this);
-    }
-
-    /**
-     * Simply here to be overridden by indirect references.
-     * 
-     * @return this
-     * @since 2.1.5
-     */
-    public PdfObject getDirectObject() {
-        return this;
     }
 }
