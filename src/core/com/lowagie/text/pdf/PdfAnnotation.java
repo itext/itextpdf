@@ -128,6 +128,10 @@ public class PdfAnnotation extends PdfDictionary {
     public static final int MARKUP_SQUIGGLY = 3;
 
     protected PdfWriter writer;
+    /**
+     * Reference to this annotation.
+     * @since	2.1.6; was removed in 2.1.5, but restored in 2.1.6
+     */
     protected PdfIndirectReference reference;
     protected HashMap templates;
     protected boolean form = false;
