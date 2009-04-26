@@ -1,5 +1,5 @@
 /*
- * $Id:  $
+ * $Id$
  *
  * Copyright 2009 by Bruno Lowagie.
  *
@@ -86,15 +86,17 @@ public class RichMediaAnnotation {
 	/** The annotation object */
 	protected PdfAnnotation annot;
 	/** the rich media content (can be reused for different annotations) */
-	protected PdfDictionary richMediaContent = new PdfDictionary(PdfName.RICHMEDIACONTENT);
+	protected PdfDictionary richMediaContent = null;
+	/** a reference to the RichMediaContent that can be reused. */
+	protected PdfIndirectReference richMediaContentReference = null;
 	/** the rich media settings (specific for this annotation) */
 	protected PdfDictionary richMediaSettings = new PdfDictionary(PdfName.RICHMEDIASETTINGS);
 	/** a map with the assets (will be used to construct a name tree.) */
-	protected HashMap assetsmap = new HashMap();
+	protected HashMap assetsmap = null;
 	/** an array with configurations (will be added to the RichMediaContent). */
-	protected PdfArray configurations = new PdfArray();
+	protected PdfArray configurations = null;
 	/** an array of views (will be added to the RichMediaContent) */
-	protected PdfArray views = new PdfArray();
+	protected PdfArray views = null;
 	
 	/**
 	 * Creates a RichMediaAnnotation.
@@ -105,10 +107,10 @@ public class RichMediaAnnotation {
 		this.writer = writer;
 		annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.RICHMEDIA);
-        richMediaContent.setIndRef(writer.getPdfIndirectReference());
-        annot.put(PdfName.RICHMEDIACONTENT, richMediaContent.getIndRef());
-        richMediaSettings.setIndRef(writer.getPdfIndirectReference());
-        annot.put(PdfName.RICHMEDIASETTINGS, richMediaSettings.getIndRef());
+        richMediaContent = new PdfDictionary(PdfName.RICHMEDIACONTENT);
+		assetsmap = new HashMap();
+		configurations = new PdfArray();
+		views = new PdfArray();
 	}
 
 	/**
@@ -119,26 +121,22 @@ public class RichMediaAnnotation {
 	 * @param	rect	the rectangle where the annotation will be added.
 	 * @param	richMediaContent	reused rich media content.
 	 */
-	public RichMediaAnnotation(PdfWriter writer, Rectangle rect, PdfDictionary richMediaContent) {
-		if (richMediaContent.getIndRef() == null)
-			throw new IllegalPdfSyntaxException(
-					"You can't create a RichMediaAnnotation using content that isn't present in the writer yet.");
+	public RichMediaAnnotation(PdfWriter writer, Rectangle rect, PdfIndirectReference richMediaContentReference) {
+		this.richMediaContentReference = richMediaContentReference;
+		richMediaContent = null;
 		this.writer = writer;
 		annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.RICHMEDIA);
-        assetsmap = null;
-        this.richMediaContent = richMediaContent;
-        annot.put(PdfName.RICHMEDIACONTENT, richMediaContent.getIndRef());
-        richMediaSettings.setIndRef(writer.getPdfIndirectReference());
-        annot.put(PdfName.RICHMEDIASETTINGS, richMediaSettings.getIndRef());
+		annot.put(PdfName.SUBTYPE, PdfName.RICHMEDIA);
 	}
 	
 	/**
-	 * Getter for the RichMediaContent.
+	 * Gets a reference to the RichMediaContent for reuse of the
+	 * rich media content. Returns null if the content hasn't been
+	 * added to the OutputStream yet.
 	 * @return	a PdfDictionary with RichMediaContent
 	 */
-	public PdfDictionary getRichMediaContent() {
-		return richMediaContent;
+	public PdfIndirectReference getRichMediaContentReference() {
+		return richMediaContentReference;
 	}
 
 	/**
@@ -163,7 +161,7 @@ public class RichMediaAnnotation {
 	 * @param	configuration	a configuration dictionary
 	 */
 	public PdfIndirectReference addConfiguration(RichMediaConfiguration configuration) throws IOException {
-		if (assetsmap == null)
+		if (configurations == null)
 			throw new IllegalPdfSyntaxException(
 				"You can't add configurations to reused RichMediaContent.");
 		PdfIndirectReference ref = writer.addPdfObject(configuration);
@@ -177,7 +175,7 @@ public class RichMediaAnnotation {
 	 * @param	view	a view dictionary
 	 */
 	public PdfIndirectReference addView(PdfDictionary view) throws IOException {
-		if (assetsmap == null)
+		if (views == null)
 			throw new IllegalPdfSyntaxException(
 				"You can't add views to reused RichMediaContent.");
 		PdfIndirectReference ref = writer.addPdfObject(view);
@@ -212,11 +210,10 @@ public class RichMediaAnnotation {
 	 * @return	a PdfAnnotation
 	 */
 	public PdfAnnotation createAnnotation() throws IOException {
-		if (assetsmap != null) {
+		if (richMediaContent != null) {
 			if (!assetsmap.isEmpty()) {
 				PdfDictionary assets = PdfNameTree.writeTree(assetsmap, writer);
 				richMediaContent.put(PdfName.ASSETS, writer.addToBody(assets).getIndirectReference());
-				writer.addToBody(richMediaContent, richMediaContent.getIndRef());
 			}
 			if (configurations.size() > 0) {
 				richMediaContent.put(PdfName.CONFIGURATION, writer.addToBody(configurations).getIndirectReference());
@@ -224,8 +221,10 @@ public class RichMediaAnnotation {
 			if (views.size() > 0) {
 				richMediaContent.put(PdfName.VIEWS, writer.addToBody(views).getIndirectReference());
 			}
+			richMediaContentReference = writer.addToBody(richMediaContent).getIndirectReference();
 		}
-		writer.addToBody(richMediaSettings, richMediaSettings.getIndRef());
+        annot.put(PdfName.RICHMEDIACONTENT, richMediaContentReference);
+        annot.put(PdfName.RICHMEDIASETTINGS, writer.addToBody(richMediaSettings).getIndirectReference());
 		return annot;
 	}
 }
