@@ -119,7 +119,7 @@ public class RichMediaAnnotation {
 	 * to a RichMediaAnnotation created like this will be ignored.
 	 * @param	writer	the PdfWriter to which the annotation will be added.
 	 * @param	rect	the rectangle where the annotation will be added.
-	 * @param	richMediaContent	reused rich media content.
+	 * @param	richMediaContentReference	reused rich media content.
 	 */
 	public RichMediaAnnotation(PdfWriter writer, Rectangle rect, PdfIndirectReference richMediaContentReference) {
 		this.richMediaContentReference = richMediaContentReference;
