@@ -226,7 +226,7 @@ public class PdfAnnotation extends PdfDictionary {
      */
     public PdfIndirectReference getIndirectReference() {
         if (reference == null) {
-        	return writer.getPdfIndirectReference();
+        	reference = writer.getPdfIndirectReference();
         }
         return reference;
     }
