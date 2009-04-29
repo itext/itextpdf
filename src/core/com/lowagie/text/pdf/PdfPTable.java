@@ -185,6 +185,12 @@ public class PdfPTable implements LargeElement{
      */
     private int footerRows;
     
+    /**
+     * Keeps track of the completeness of the current row.
+     * @since	2.1.6
+     */
+    protected boolean rowCompleted = true;
+    
     protected PdfPTable() {
     }
     
@@ -443,6 +449,7 @@ public class PdfPTable implements LargeElement{
      * @param cell the cell element
      */    
     public void addCell(PdfPCell cell) {
+    	rowCompleted = false;
         PdfPCell ncell = new PdfPCell(cell);
         
         int colspan = ncell.getColspan();
@@ -456,11 +463,7 @@ public class PdfPTable implements LargeElement{
         if (rdir == PdfWriter.RUN_DIRECTION_DEFAULT)
             ncell.setRunDirection(runDirection);
         
-        int direction = 1;
-        if (runDirection == PdfWriter.RUN_DIRECTION_RTL)
-        	direction = -1;        		
-        while (rowSpanAbove(rows.size(), currentRowIdx))
-        	currentRowIdx += direction;
+        skipColsWithRowspanAbove();
         
         boolean cellAdded = false;
         if (currentRowIdx < currentRow.length) {  
@@ -469,6 +472,8 @@ public class PdfPTable implements LargeElement{
 	        cellAdded = true;
         }
 
+        skipColsWithRowspanAbove();
+        
         if (currentRowIdx >= currentRow.length) {
         	int numCols = getNumberOfColumns();
             if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
@@ -491,12 +496,26 @@ public class PdfPTable implements LargeElement{
             rows.add(row);
             currentRow = new PdfPCell[numCols];
             currentRowIdx = 0;
+            rowCompleted = true;
         }
         
         if (!cellAdded) {
             currentRow[currentRowIdx] = ncell;
             currentRowIdx += colspan;
         }
+    }
+    
+    /**
+     * When updating the row index, cells with rowspan should be taken into account.
+     * This is what happens in this method.
+     * @since	2.1.6
+     */
+    private void skipColsWithRowspanAbove() {
+    	int direction = 1;
+    	if (runDirection == PdfWriter.RUN_DIRECTION_RTL)
+    		direction = -1;
+    	while (rowSpanAbove(rows.size(), currentRowIdx))
+    		currentRowIdx += direction;
     }
     
     /**
@@ -1477,7 +1496,7 @@ public class PdfPTable implements LargeElement{
      * present in the table.
      */
     public void completeRow() {
-        while (currentRowIdx > 0) {
+        while (!rowCompleted) {
             addCell(defaultCell);
         }
     }
