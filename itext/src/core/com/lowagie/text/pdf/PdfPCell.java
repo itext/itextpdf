@@ -936,15 +936,19 @@ public class PdfPCell extends Rectangle{
      * @since	2.1.6
      */
     void consumeHeight(float height) {
-    	if (getRotation() != 90 && getRotation() != 270) {
-            float rightLimit = getRight() - getEffectivePaddingRight();
-            float leftLimit = getLeft() + getEffectivePaddingLeft();
-            float bry = height - getEffectivePaddingTop() - getEffectivePaddingBottom();
+        float rightLimit = getRight() - getEffectivePaddingRight();
+        float leftLimit = getLeft() + getEffectivePaddingLeft();
+        float bry = height - getEffectivePaddingTop() - getEffectivePaddingBottom();
+        if (getRotation() != 90 && getRotation() != 270) {
             column.setSimpleColumn(leftLimit, bry + 0.001f,	rightLimit, 0);
-            try {
-				column.go(true);
-			} catch (DocumentException e) {
-			}
         }
+        else {
+        	column.setSimpleColumn(0, leftLimit, bry + 0.001f, rightLimit);
+        }
+        try {
+        	column.go(true);
+		} catch (DocumentException e) {
+			// do nothing
+		}
     }
 }
