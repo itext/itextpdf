@@ -1572,6 +1572,8 @@ class PdfStamperImp extends PdfWriter {
     	documentOCG.addAll(ocgmap.values());
     	OCGRadioGroup = d.getAsArray(PdfName.RBGROUPS);
     	OCGLocked = d.getAsArray(PdfName.LOCKED);
+    	if (OCGLocked == null)
+    		OCGLocked = new PdfArray();
     }
 
     /**
