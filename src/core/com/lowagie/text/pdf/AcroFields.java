@@ -779,10 +779,22 @@ public class AcroFields {
             return null;
         lastWasString = false;
         PdfDictionary mergedDict = item.getMerged( 0 );
-        PdfName valName = mergedDict.getAsName(PdfName.V);
-        PdfString valStr = mergedDict.getAsString(PdfName.V);
-        if (valName == null && valStr == null)
-            return "";
+
+        // Jose A. Rodríguez posted a fix to the mailing list (May 11, 2009)
+        // explaining that the value can also be a stream value
+        // the fix was made against an old iText version. Bruno adapted it.
+        PdfObject v = PdfReader.getPdfObject(mergedDict.get(PdfName.V));
+        if (v == null)
+        	return "";
+        if (v instanceof PRStream) {
+        	try {
+                byte[] valBytes = PdfReader.getStreamBytes((PRStream)v);
+                return new String(valBytes);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
         PdfName type = mergedDict.getAsName(PdfName.FT);
         if (PdfName.BTN.equals(type)) {
             PdfNumber ff = mergedDict.getAsNumber(PdfName.FF);
@@ -792,12 +804,10 @@ public class AcroFields {
             if ((flags & PdfFormField.FF_PUSHBUTTON) != 0)
                 return "";
             String value = "";
-            if (valName != null)
-                value = PdfName.decodeName(valName.toString());
-            else if (valStr != null)
-                value = valStr.toUnicodeString();
-
-            // shouldn't opts be in 'mergedDict' as well?
+            if (v instanceof PdfName)
+                value = PdfName.decodeName(v.toString());
+            else if (v instanceof PdfString)
+                value = ((PdfString)v).toUnicodeString();
             PdfArray opts = item.getValue(0).getAsArray(PdfName.OPT);
             if (opts != null) {
                 int idx = 0;
@@ -812,11 +822,11 @@ public class AcroFields {
             }
             return value;
         }
-        if (valStr != null) {
+        if (v instanceof PdfString) {
             lastWasString = true;
-            return valStr.toUnicodeString();
-        } else if (valName != null) {
-            return PdfName.decodeName(valName.toString());
+            return ((PdfString)v).toUnicodeString();
+        } else if (v instanceof PdfName) {
+            return PdfName.decodeName(v.toString());
         } else
             return "";
     }
