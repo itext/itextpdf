@@ -56,6 +56,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.exceptions.IllegalPdfSyntaxException;
 import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfDeveloperExtension;
 import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfFileSpecification;
 import com.lowagie.text.pdf.PdfIndirectReference;
@@ -262,6 +263,7 @@ public class RichMediaAnnotation {
 			}
 			richMediaContentReference = writer.addToBody(richMediaContent).getIndirectReference();
 		}
+		writer.addDeveloperExtension(PdfDeveloperExtension.ADOBE_1_7_EXTENSIONLEVEL3);
         annot.put(PdfName.RICHMEDIACONTENT, richMediaContentReference);
         annot.put(PdfName.RICHMEDIASETTINGS, writer.addToBody(richMediaSettings).getIndirectReference());
 		return annot;
