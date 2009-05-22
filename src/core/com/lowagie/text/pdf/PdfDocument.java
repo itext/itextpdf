@@ -2439,15 +2439,17 @@ public class PdfDocument extends Document {
      */
     void addPTable(PdfPTable ptable) throws DocumentException {
         ColumnText ct = new ColumnText(writer.getDirectContent());
+        // if the table prefers to be on a single page, and it wouldn't
+        //fit on the current page, start a new page.
+        if (ptable.getKeepTogether() && !fitsPage(ptable, 0f) && currentHeight > 0)  {
+        	newPage();
+        }
+        // add dummy paragraph if we aren't at the top of a page, so that
+        // spacingBefore will be taken into account by ColumnText
         if (currentHeight > 0) {
-            Paragraph p = new Paragraph();
-            p.setLeading(0);
-            ct.addElement(p);
-            // if the table prefers to be on a single page, and it wouldn't
-	        //fit on the current page, start a new page.
-	        if (ptable.getKeepTogether() && !fitsPage(ptable, 0f))  {
-	        	newPage();
-	        }
+	        Paragraph p = new Paragraph();
+	        p.setLeading(0);
+	        ct.addElement(p);
         }
         ct.addElement(ptable);
         boolean he = ptable.isHeadersInEvent();
@@ -2489,7 +2491,8 @@ public class PdfDocument extends Document {
     	}
         // ensuring that a new line has been started.
         ensureNewLine();
-        return table.getTotalHeight() <= indentTop() - currentHeight - indentBottom() - margin;
+        return table.getTotalHeight() + ((currentHeight > 0) ? table.spacingBefore() : 0f)
+        	<= indentTop() - currentHeight - indentBottom() - margin;
     }
 
 //	[M4'] Adding a Table
