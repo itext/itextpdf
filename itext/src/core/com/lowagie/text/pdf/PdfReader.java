@@ -2521,7 +2521,18 @@ public class PdfReader implements PdfViewerPreferences {
      * @return gets all the named destinations
      */
     public HashMap getNamedDestination() {
-        HashMap names = getNamedDestinationFromNames();
+    	return getNamedDestination(false);
+    }
+
+    /**
+     * Gets all the named destinations as an <CODE>HashMap</CODE>. The key is the name
+     * and the value is the destinations array.
+     * @param	keepNames	true if you want the keys to be real PdfNames instead of Strings
+     * @return gets all the named destinations
+     * @since	2.1.6
+     */
+    public HashMap getNamedDestination(boolean keepNames) {
+        HashMap names = getNamedDestinationFromNames(keepNames);
         names.putAll(getNamedDestinationFromStrings());
         return names;
     }
@@ -2532,6 +2543,17 @@ public class PdfReader implements PdfViewerPreferences {
      * @return gets the named destinations
      */
     public HashMap getNamedDestinationFromNames() {
+    	return getNamedDestinationFromNames(false);
+    }
+    
+    /**
+     * Gets the named destinations from the /Dests key in the catalog as an <CODE>HashMap</CODE>. The key is the name
+     * and the value is the destinations array.
+     * @param	keepNames	true if you want the keys to be real PdfNames instead of Strings
+     * @return gets the named destinations
+     * @since	2.1.6
+     */
+    public HashMap getNamedDestinationFromNames(boolean keepNames) {
         HashMap names = new HashMap();
         if (catalog.get(PdfName.DESTS) != null) {
             PdfDictionary dic = (PdfDictionary)getPdfObjectRelease(catalog.get(PdfName.DESTS));
@@ -2540,10 +2562,16 @@ public class PdfReader implements PdfViewerPreferences {
             Set keys = dic.getKeys();
             for (Iterator it = keys.iterator(); it.hasNext();) {
                 PdfName key = (PdfName)it.next();
-                String name = PdfName.decodeName(key.toString());
                 PdfArray arr = getNameArray(dic.get(key));
-                if (arr != null)
-                    names.put(name, arr);
+                if (arr == null)
+                	continue;
+                if (keepNames) {
+                	names.put(key, arr);
+                }
+                else {
+                	String name = PdfName.decodeName(key.toString());
+                	names.put(name, arr);
+                }
             }
         }
         return names;
@@ -2582,10 +2610,10 @@ public class PdfReader implements PdfViewerPreferences {
         releaseLastXrefPartial();
         if (obj != null && obj.isDictionary()) {
             PdfObject ob2 = getPdfObjectRelease(((PdfDictionary)obj).get(PdfName.DEST));
-            String name = null;
+            Object name = null;
             if (ob2 != null) {
                 if (ob2.isName())
-                    name = PdfName.decodeName(ob2.toString());
+                    name = ob2;
                 else if (ob2.isString())
                     name = ob2.toString();
                 PdfArray dest = (PdfArray)names.get(name);
@@ -2604,7 +2632,7 @@ public class PdfReader implements PdfViewerPreferences {
                     PdfObject ob3 = getPdfObjectRelease(dic.get(PdfName.D));
                     if (ob3 != null) {
                         if (ob3.isName())
-                            name = PdfName.decodeName(ob3.toString());
+                            name = ob3;
                         else if (ob3.isString())
                             name = ob3.toString();
                     }
@@ -2702,7 +2730,7 @@ public class PdfReader implements PdfViewerPreferences {
         if (consolidateNamedDestinations)
             return;
         consolidateNamedDestinations = true;
-        HashMap names = getNamedDestination();
+        HashMap names = getNamedDestination(true);
         if (names.isEmpty())
             return;
         for (int k = 1; k <= pageRefs.size(); ++k) {
