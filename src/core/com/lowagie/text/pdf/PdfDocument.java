@@ -366,6 +366,15 @@ public class PdfDocument extends Document {
     public float getLeading() {
     	return leading;
     }
+    
+    /**
+     * Setter for the current leading.
+     * @param	the leading
+     * @since	2.1.6
+     */
+    void setLeading(float leading) {
+    	this.leading = leading;
+    }
 
     /** This represents the current alignment of the PDF Elements. */
     protected int alignment = Element.ALIGN_LEFT;
