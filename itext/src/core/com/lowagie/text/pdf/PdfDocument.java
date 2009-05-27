@@ -1034,6 +1034,17 @@ public class PdfDocument extends Document {
         }
         return super.setMarginMirroring(MarginMirroring);
     }
+    
+    /**
+     * @see com.lowagie.text.DocListener#setMarginMirroring(boolean)
+     * @since	2.1.6
+     */
+    public boolean setMarginMirroringTopBottom(boolean MarginMirroringTopBottom) {
+        if (writer != null && writer.isPaused()) {
+            return false;
+        }
+        return super.setMarginMirroringTopBottom(MarginMirroringTopBottom);
+    }
 
 //	[L7] DocListener interface
 
@@ -2254,8 +2265,14 @@ public class PdfDocument extends Document {
             marginLeft = nextMarginLeft;
             marginRight = nextMarginRight;
         }
-        marginTop = nextMarginTop;
-        marginBottom = nextMarginBottom;
+    	if (marginMirroringTopBottom && (getPageNumber() & 1) == 0) {
+    		marginTop = nextMarginBottom;
+    		marginBottom = nextMarginTop;
+    	}
+    	else {
+    		marginTop = nextMarginTop;
+    		marginBottom = nextMarginBottom;
+    	}
     }
 
     /**
