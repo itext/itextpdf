@@ -477,4 +477,12 @@ public abstract class DocWriter implements DocListener {
         return false;
     }
     
+    /**
+     * @see com.lowagie.text.DocListener#setMarginMirroring(boolean)
+     * @since	2.1.6
+     */
+    public boolean setMarginMirroringTopBottom(boolean MarginMirroring) {
+        return false;
+    }
+    
 }

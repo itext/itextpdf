@@ -153,7 +153,14 @@ public class Document implements DocListener {
 	/** margin in y direction starting from the bottom */
     protected float marginBottom = 0;
     
+    /** mirroring of the left/right margins */
     protected boolean marginMirroring = false;
+    
+    /**
+     * mirroring of the top/bottom margins
+     * @since	2.1.6
+     */
+    protected boolean marginMirroringTopBottom = false;
     
 	/** Content of JavaScript onLoad function */
     protected String javaScript_onLoad = null;
@@ -863,7 +870,7 @@ public class Document implements DocListener {
     }
     
     /**
-     * Set the margin mirroring. It will mirror margins for odd/even pages.
+     * Set the margin mirroring. It will mirror right/left margins for odd/even pages.
      * <p>
      * Note: it will not work with {@link Table}.
 	 * 
@@ -877,6 +884,25 @@ public class Document implements DocListener {
 		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
             listener = (DocListener) iterator.next();
             listener.setMarginMirroring(marginMirroring);
+        }
+        return true;
+    }
+    
+    /**
+     * Set the margin mirroring. It will mirror top/bottom margins for odd/even pages.
+     * <p>
+     * Note: it will not work with {@link Table}.
+	 * 
+	 * @param marginMirroring
+	 *            <CODE>true</CODE> to mirror the margins
+     * @return always <CODE>true</CODE>
+     */    
+    public boolean setMarginMirroringTopBottom(boolean marginMirroringTopBottom) {
+        this.marginMirroringTopBottom = marginMirroringTopBottom;
+        DocListener listener;
+		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
+            listener = (DocListener) iterator.next();
+            listener.setMarginMirroringTopBottom(marginMirroringTopBottom);
         }
         return true;
     }

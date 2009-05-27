@@ -692,7 +692,15 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	}
 
 	public boolean setMarginMirroring(boolean marginMirroring) {
-		return true;
+		return false;
+	}
+
+	/**
+     * @see com.lowagie.text.DocListener#setMarginMirroring(boolean)
+	 * @since	2.1.6
+	 */
+	public boolean setMarginMirroringTopBottom(boolean marginMirroring) {
+		return false;
 	}
 
 	public boolean setMargins(float marginLeft, float marginRight,
