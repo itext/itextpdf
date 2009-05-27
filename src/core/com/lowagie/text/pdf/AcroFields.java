@@ -780,7 +780,7 @@ public class AcroFields {
         lastWasString = false;
         PdfDictionary mergedDict = item.getMerged( 0 );
 
-        // Jose A. Rodríguez posted a fix to the mailing list (May 11, 2009)
+        // Jose A. Rodriguez posted a fix to the mailing list (May 11, 2009)
         // explaining that the value can also be a stream value
         // the fix was made against an old iText version. Bruno adapted it.
         PdfObject v = PdfReader.getPdfObject(mergedDict.get(PdfName.V));

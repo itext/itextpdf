@@ -893,7 +893,7 @@ public class Document implements DocListener {
      * <p>
      * Note: it will not work with {@link Table}.
 	 * 
-	 * @param marginMirroring
+	 * @param marginMirroringTopBottom
 	 *            <CODE>true</CODE> to mirror the margins
      * @return always <CODE>true</CODE>
      * @since	2.1.6

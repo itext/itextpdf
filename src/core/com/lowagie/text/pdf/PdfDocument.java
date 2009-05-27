@@ -369,7 +369,7 @@ public class PdfDocument extends Document {
     
     /**
      * Setter for the current leading.
-     * @param	the leading
+     * @param	leading the current leading
      * @since	2.1.6
      */
     void setLeading(float leading) {
