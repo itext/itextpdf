@@ -94,11 +94,6 @@ public class MultiColumnText implements Element {
     private float top;
 
     /**
-     * used to store the y position of the bottom of the page
-     */
-    private float pageBottom;
-
-    /**
      * ColumnText object used to do all the real work.  This same object is used for all columns
      */
     private ColumnText columnText;
@@ -289,7 +284,6 @@ public class MultiColumnText implements Element {
             throw new DocumentException("MultiColumnText has no columns");
         }
         overflow = false;
-        pageBottom = document.bottom();
         float currentHeight = 0;
         boolean done = false;
         try {
@@ -448,9 +442,9 @@ public class MultiColumnText implements Element {
      */
     private float getColumnBottom() {
         if (desiredHeight == AUTOMATIC) {
-            return pageBottom;
+            return document.bottom();
         } else {
-            return Math.max(top - (desiredHeight - totalHeight), pageBottom);
+            return Math.max(top - (desiredHeight - totalHeight), document.bottom());
         }
     }
 
