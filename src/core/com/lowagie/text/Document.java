@@ -896,6 +896,7 @@ public class Document implements DocListener {
 	 * @param marginMirroring
 	 *            <CODE>true</CODE> to mirror the margins
      * @return always <CODE>true</CODE>
+     * @since	2.1.6
      */    
     public boolean setMarginMirroringTopBottom(boolean marginMirroringTopBottom) {
         this.marginMirroringTopBottom = marginMirroringTopBottom;
