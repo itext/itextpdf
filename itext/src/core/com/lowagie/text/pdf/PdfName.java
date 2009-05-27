@@ -798,6 +798,11 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName IRT = new PdfName("IRT");
     /** A name */
     public static final PdfName ITALICANGLE = new PdfName("ItalicAngle");
+    /**
+     * A name
+     * @since	2.1.6
+     */
+    public static final PdfName ITXT = new PdfName("ITXT");
     /** A name */
     public static final PdfName IX = new PdfName("IX");
     /** A name */
