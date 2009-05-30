@@ -254,16 +254,15 @@ public class PdfLine {
                     return left;
             }
         }
-        else {
+        else if (this.getSeparatorCount() == 0) {
             switch (alignment) {
                 case Element.ALIGN_RIGHT:
                     return left + width;
                 case Element.ALIGN_CENTER:
                     return left + (width / 2f);
-                default:
-                    return left;
             }
         }
+        return left;
     }
     
     /**
