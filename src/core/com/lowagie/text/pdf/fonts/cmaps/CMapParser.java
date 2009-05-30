@@ -378,7 +378,7 @@ public class CMapParser
     private void readUntilEndOfLine( InputStream is, StringBuffer buf ) throws IOException
     {
         int nextByte = is.read();
-        while( nextByte != -1 && nextByte != 0x0D && nextByte != 0x0D )
+        while( nextByte != -1 && nextByte != 0x0D && nextByte != 0x0A )
         {
             buf.append( (char)nextByte );
             nextByte = is.read();
