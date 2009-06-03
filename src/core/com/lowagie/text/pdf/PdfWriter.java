@@ -107,6 +107,12 @@ public class PdfWriter extends DocWriter implements
 	PdfRunDirection,
 	PdfAnnotations {
 
+	/**
+	 * The highest generation number possible.
+	 * @since	iText 2.1.6
+	 */
+	public static final int GENERATION_MAX = 65535;
+	
 // INNER CLASSES
 
     /**
@@ -192,7 +198,7 @@ public class PdfWriter extends DocWriter implements
                 StringBuffer gen = new StringBuffer("00000").append(generation);
                 gen.delete(0, gen.length() - 5);
 
-                off.append(' ').append(gen).append(generation == 65535 ? " f \n" : " n \n");
+                off.append(' ').append(gen).append(generation == GENERATION_MAX ? " f \n" : " n \n");
                 os.write(getISOBytes(off.toString()));
             }
 
@@ -262,7 +268,7 @@ public class PdfWriter extends DocWriter implements
          */
         PdfBody(PdfWriter writer) {
             xrefs = new TreeSet();
-            xrefs.add(new PdfCrossReference(0, 0, 65535));
+            xrefs.add(new PdfCrossReference(0, 0, GENERATION_MAX));
             position = writer.getOs().getCounter();
             refnum = 1;
             this.writer = writer;
@@ -343,7 +349,7 @@ public class PdfWriter extends DocWriter implements
 
         int getIndirectReferenceNumber() {
             int n = refnum++;
-            xrefs.add(new PdfCrossReference(n, 0, 65536));
+            xrefs.add(new PdfCrossReference(n, 0, GENERATION_MAX));
             return n;
         }
 
