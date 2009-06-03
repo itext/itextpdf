@@ -168,15 +168,15 @@ public class XmpReader {
 		XmlDomWriter xw = new XmlDomWriter();
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
         xw.setOutput(fout, null);
-        Node first = domDocument.getFirstChild();
-        xw.write(first);
-        fout.write('\n');
-        xw.write(first.getNextSibling());
+        NodeList xmpmeta = domDocument.getElementsByTagName("x:xmpmeta");
+        fout.write(XmpWriter.XPACKET_PI_BEGIN.getBytes("UTF-8"));
+        fout.flush();
+        xw.write(xmpmeta.item(0));
         fout.flush();
 		for (int i = 0; i < 20; i++) {
 			fout.write(XmpWriter.EXTRASPACE.getBytes());
 		}
-        xw.write(domDocument.getLastChild());
+        fout.write(XmpWriter.XPACKET_PI_END_W.getBytes());
         fout.close();
         return fout.toByteArray();
 	}
