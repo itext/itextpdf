@@ -19,6 +19,7 @@
 	    <pathelement location="${servlet.jar}"/>
 	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
 	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bctsp-${bc.jdk}-${bc.version}.jar"/>
 	</path>
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -60,6 +61,7 @@
         <pathelement location="${junit.jar}"/>
         <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
         <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
+        <pathelement path="${itext.lib}/bctsp-${bc.jdk}-${bc.version}.jar"/>
     </path>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -190,19 +192,19 @@
 		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${itext.previous.version}"
 				sourcepath="${itext.previous.location}/core:${itext.previous.location}/rtf:${itext.previous.location}/rups:${itext.previous.location}/toolbox"
-				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/bctsp-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 		</javadoc>
 
 		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff/${releasenumber}"
 				sourcepath="${itext.src}/core:${itext.src}/rtf:${itext.src}/rups:${itext.src}/toolbox"
-				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/bctsp-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 		</javadoc>
 
 		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
 				sourcepath="${itext.previous.location}/core:${itext.previous.location}/rtf:${itext.previous.location}/rups:${itext.previous.location}/toolbox"
-				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/bctsp-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
 				<param name="-apiname" value="${itext.previous.version}"/>
 				<param name="-baseURI" value="http://www.w3.org"/>
@@ -213,7 +215,7 @@
 		<javadoc version="true" author="true" source="${itext.jdk.rups}" private="true" maxmemory="128m"
 				destdir="${itext.reports}/jdiff"
 				sourcepath="${itext.src}/core:${itext.src}/rtf:${itext.src}/rups:${itext.src}/toolbox"
-				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
+				classpath="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar:${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar:${itext.lib}/bctsp-${bc.jdk}-${bc.version}.jar:${itext.lib}/pdf-renderer.jar:${itext.lib}/dom4j-1.6.1.jar" >
 			<doclet name="jdiff.JDiff" path="${JDIFF_HOME}/jdiff.jar:${JDIFF_HOME}/xerces.jar">
 				<param name="-apiname" value="${releasenumber}"/>
 				<param name="-baseURI" value="http://www.w3.org"/>

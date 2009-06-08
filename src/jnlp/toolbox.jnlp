@@ -32,6 +32,7 @@
     <jar href="http://www.1t3xt.com/jnlp/iText.jar" main="false" download="eager"/>
     <jar href="http://www.1t3xt.com/jnlp/bcmail-jdk14-138.jar" main="false" download="eager"/>
     <jar href="http://www.1t3xt.com/jnlp/bcprov-jdk14-138.jar" main="false" download="eager"/>
+    <jar href="http://www.1t3xt.com/jnlp/bctsp-jdk14-138.jar" main="false" download="eager"/>
   </resources>
   <application-desc main-class="com.lowagie.toolbox.Toolbox"/>
 </jnlp>

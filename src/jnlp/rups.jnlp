@@ -31,6 +31,7 @@
     <jar href="http://www.1t3xt.com/jnlp/iText-rups.jar" main="true" download="eager"/>
     <jar href="http://www.1t3xt.com/jnlp/bcmail-jdk14-138.jar" main="false" download="eager"/>
     <jar href="http://www.1t3xt.com/jnlp/bcprov-jdk14-138.jar" main="false" download="eager"/>
+    <jar href="http://www.1t3xt.com/jnlp/bctsp-jdk14-138.jar" main="false" download="eager"/>
     <jar href="http://www.1t3xt.com/jnlp/dom4j-1.6.1.jar" main="false" download="eager"/>
     <jar href="http://www.1t3xt.com/jnlp/iText.jar" main="false" download="eager"/>
     <jar href="http://www.1t3xt.com/jnlp/pdf-renderer.jar" main="false" download="eager"/>
