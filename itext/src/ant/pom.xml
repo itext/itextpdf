@@ -76,6 +76,11 @@
 			<artifactId>bcprov-bc.jdk</artifactId>
 			<version>bc.version</version>
 		</dependency>
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bctsp-bc.jdk</artifactId>
+			<version>bc.version</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

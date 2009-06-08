@@ -15,6 +15,7 @@
 	    <pathelement location="${itext.bin}"/>
 	    <pathelement path="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar"/>
 	    <pathelement path="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar"/>
+	    <pathelement path="${itext.lib}/bctsp-${bc.jdk}-${bc.version}.jar"/>
 	    <pathelement path="${itext.lib}/dom4j-1.6.1.jar"/>
 	    <pathelement path="${itext.lib}/pdf-renderer.jar"/>
 	</path>
