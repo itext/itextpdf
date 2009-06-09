@@ -1,5 +1,5 @@
 /*
- * $Id:  $
+ * $Id$
  *
  * Copyright 2009 Martin Brunecky
  *
