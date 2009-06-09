@@ -205,7 +205,7 @@ public class TSAClientBouncyCastle implements TSAClient {
             String userPassword = tsaUsername + ":" + tsaPassword;
             tsaConnection.setRequestProperty("Authorization", "Basic " +
                 new String(new sun.misc.BASE64Encoder().encode(userPassword.getBytes())));
-        };
+        }
         OutputStream out = tsaConnection.getOutputStream();
         out.write(requestBytes);
         out.close();
