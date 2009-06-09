@@ -225,6 +225,7 @@ public class PdfPKCS7 {
      * Gets the digest name for a certain id
      * @param oid	an id (for instance "1.2.840.113549.2.5")
      * @return	a digest name (for instance "MD5")
+     * @since	2.1.6
      */
     public static String getDigest(String oid) {
         String ret = (String)digestNames.get(oid);
@@ -238,6 +239,7 @@ public class PdfPKCS7 {
      * Gets the algorithm name for a certain id.
      * @param oid	an id (for instance "1.2.840.113549.1.1.1")
      * @return	an algorithm name (for instance "RSA")
+     * @since	2.1.6
      */
     public static String getAlgorithm(String oid) {
         String ret = (String)algorithmNames.get(oid);
@@ -1056,7 +1058,6 @@ public class PdfPKCS7 {
     /**
      * Gets the bytes for the PKCS7SignedData object.
      * @return the bytes for the PKCS7SignedData object
-     * @since	2.1.6
      */
     public byte[] getEncodedPKCS7() {
         return getEncodedPKCS7(null, null, null, null);
@@ -1081,6 +1082,7 @@ public class PdfPKCS7 {
      * @param signingTime the signing time in the authenticatedAttributes
      * @param tsaClient TSAClient - null or an optional time stamp authority client
      * @return byte[] the bytes for the PKCS7SignedData object
+     * @since	2.1.6
      */
     public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp) {
         try {
