@@ -168,9 +168,9 @@ public class XmpReader {
 		XmlDomWriter xw = new XmlDomWriter();
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
         xw.setOutput(fout, null);
-        NodeList xmpmeta = domDocument.getElementsByTagName("x:xmpmeta");
         fout.write(XmpWriter.XPACKET_PI_BEGIN.getBytes("UTF-8"));
         fout.flush();
+        NodeList xmpmeta = domDocument.getElementsByTagName("x:xmpmeta");
         xw.write(xmpmeta.item(0));
         fout.flush();
 		for (int i = 0; i < 20; i++) {
