@@ -221,6 +221,11 @@ public class PdfPKCS7 {
         allowedDigests.put("SHA-512", "2.16.840.1.101.3.4.2.3");
     }
     
+    /**
+     * Gets the digest name for a certain id
+     * @param oid	an id (for instance "1.2.840.113549.2.5")
+     * @return	a digest name (for instance "MD5")
+     */
     public static String getDigest(String oid) {
         String ret = (String)digestNames.get(oid);
         if (ret == null)
@@ -229,6 +234,11 @@ public class PdfPKCS7 {
             return ret;
     }
     
+    /**
+     * Gets the algorithm name for a certain id.
+     * @param oid	an id (for instance "1.2.840.113549.1.1.1")
+     * @return	an algorithm name (for instance "RSA")
+     */
     public static String getAlgorithm(String oid) {
         String ret = (String)algorithmNames.get(oid);
         if (ret == null)
@@ -240,11 +250,17 @@ public class PdfPKCS7 {
     /**
      * Gets the timestamp token if there is one.
      * @return the timestamp token or null
+     * @since	2.1.6
      */
     public TimeStampToken getTimeStampToken() {
     	return timeStampToken;
     }
     
+    /**
+     * Gets the timestamp date
+     * @return	a date
+     * @since	2.1.6
+     */
     public Calendar getTimeStampDate() {
         if (timeStampToken == null)
             return null;
@@ -287,6 +303,7 @@ public class PdfPKCS7 {
     /**
      * Gets the OCSP basic response if there is one.
      * @return the OCSP basic response or null
+     * @since	2.1.6
      */
     public BasicOCSPResp getOcsp() {
         return basicResp;
@@ -614,6 +631,7 @@ public class PdfPKCS7 {
      * Checks if the timestamp refers to this document.
      * @throws java.security.NoSuchAlgorithmException on error
      * @return true if it checks false otherwise
+     * @since	2.1.6
      */
     public boolean verifyTimestampImprint() throws NoSuchAlgorithmException {
         if (timeStampToken == null)
@@ -639,6 +657,7 @@ public class PdfPKCS7 {
      * Only the certificates used for the main signature will be returned, with
      * the signing certificate first.
      * @return the X.509 certificates associated with this PKCS#7 object
+     * @since	2.1.6
      */
     public Certificate[] getSignCertificateChain() {
         return (X509Certificate[])signCerts.toArray(new X509Certificate[signCerts.size()]);
@@ -858,6 +877,7 @@ public class PdfPKCS7 {
      * @param certificate the certificate
      * @return the URL or null
      * @throws CertificateParsingException on error
+     * @since	2.1.6
      */
     public static String getOCSPURL(X509Certificate certificate) throws CertificateParsingException {
         try {
@@ -890,6 +910,7 @@ public class PdfPKCS7 {
     /**
      * Checks if OCSP revocation refers to the document signing certificate.
      * @return true if it checks false otherwise
+     * @since	2.1.6
      */
     public boolean isRevocationValid() {
         if (basicResp == null)
@@ -1035,6 +1056,7 @@ public class PdfPKCS7 {
     /**
      * Gets the bytes for the PKCS7SignedData object.
      * @return the bytes for the PKCS7SignedData object
+     * @since	2.1.6
      */
     public byte[] getEncodedPKCS7() {
         return getEncodedPKCS7(null, null, null, null);
