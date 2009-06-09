@@ -270,7 +270,10 @@ public class XfaForm {
         if (items.containsKey(name))
             return name;
         if (acroFieldsSom == null) {
-            acroFieldsSom = new AcroFieldsSearch(items.keySet());
+        	if (items.isEmpty() && xfaPresent)
+        		acroFieldsSom = new AcroFieldsSearch(datasetsSom.getName2Node().keySet());
+        	else
+        		acroFieldsSom = new AcroFieldsSearch(items.keySet());
         }
         if (acroFieldsSom.getAcroShort2LongName().containsKey(name))
             return (String)acroFieldsSom.getAcroShort2LongName().get(name);
