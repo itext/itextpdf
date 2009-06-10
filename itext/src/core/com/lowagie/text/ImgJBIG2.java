@@ -106,7 +106,7 @@ public class ImgJBIG2 extends Image {
 				md.update(this.global);
 				this.globalHash = md.digest();
 			} catch (Exception e) {
-				e.printStackTrace();
+				//ignore
 			}
 			
 		}
