@@ -160,7 +160,6 @@ public class AcroFields {
         PdfArray arrfds = (PdfArray)PdfReader.getPdfObjectRelease(top.get(PdfName.FIELDS));
         if (arrfds == null || arrfds.size() == 0)
             return;
-        arrfds = null;
         for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
             PdfDictionary page = reader.getPageNRelease(k);
             PdfArray annots = (PdfArray)PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page);
@@ -215,6 +214,41 @@ public class AcroFields {
                 item.addPage(k);
                 item.addTabOrder(j);
             }
+        }
+        // some tools produce invisible signatures without an entry in the page annotation array
+        // look for a single level annotation
+        PdfNumber sigFlags = top.getAsNumber(PdfName.SIGFLAGS);
+        if (sigFlags == null || (sigFlags.intValue() & 1) != 1)
+            return;
+        for (int j = 0; j < arrfds.size(); ++j) {
+            PdfDictionary annot = arrfds.getAsDict(j);
+            if (annot == null) {
+                PdfReader.releaseLastXrefPartial(arrfds.getAsIndirectObject(j));
+                continue;
+            }
+            if (!PdfName.WIDGET.equals(annot.getAsName(PdfName.SUBTYPE))) {
+                PdfReader.releaseLastXrefPartial(arrfds.getAsIndirectObject(j));
+                continue;
+            }
+            PdfArray kids = (PdfArray)PdfReader.getPdfObjectRelease(annot.get(PdfName.KIDS));
+            if (kids != null)
+                continue;
+            PdfDictionary dic = new PdfDictionary();
+            dic.putAll(annot);
+            PdfString t = annot.getAsString(PdfName.T);
+            if (t == null)
+                continue;
+            String name = t.toUnicodeString();
+            if (fields.containsKey(name))
+                continue;
+            Item item = new Item();
+            fields.put(name, item);
+            item.addValue(dic);
+            item.addWidget(dic);
+            item.addWidgetRef(arrfds.getAsIndirectObject(j)); // must be a reference
+            item.addMerged(dic);
+            item.addPage(-1);
+            item.addTabOrder(-1);
         }
     }
 
