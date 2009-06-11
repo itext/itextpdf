@@ -875,6 +875,64 @@ public class PdfPKCS7 {
     }
 
     /**
+     * Verifies an OCSP response against a KeyStore.
+     * @param ocsp the OCSP response
+     * @param keystore the <CODE>KeyStore</CODE>
+     * @param provider the provider or <CODE>null</CODE> to use the BouncyCastle provider
+     * @return <CODE>true</CODE> is a certificate was found
+     */    
+    public static boolean verifyOcspCertificates(BasicOCSPResp ocsp, KeyStore keystore, String provider) {
+        if (provider == null)
+            provider = "BC";
+        try {
+            for (Enumeration aliases = keystore.aliases(); aliases.hasMoreElements();) {
+                try {
+                    String alias = (String)aliases.nextElement();
+                    if (!keystore.isCertificateEntry(alias))
+                        continue;
+                    X509Certificate certStoreX509 = (X509Certificate)keystore.getCertificate(alias);
+                    if (ocsp.verify(certStoreX509.getPublicKey(), provider))
+                        return true;
+                }
+                catch (Exception ex) {
+                }
+            }
+        }
+        catch (Exception e) {
+        }
+        return false;
+    }
+    
+    /**
+     * Verifies a timestamp against a KeyStore.
+     * @param ts the timestamp
+     * @param keystore the <CODE>KeyStore</CODE>
+     * @param provider the provider or <CODE>null</CODE> to use the BouncyCastle provider
+     * @return <CODE>true</CODE> is a certificate was found
+     */    
+    public static boolean verifyTimestampCertificates(TimeStampToken ts, KeyStore keystore, String provider) {
+        if (provider == null)
+            provider = "BC";
+        try {
+            for (Enumeration aliases = keystore.aliases(); aliases.hasMoreElements();) {
+                try {
+                    String alias = (String)aliases.nextElement();
+                    if (!keystore.isCertificateEntry(alias))
+                        continue;
+                    X509Certificate certStoreX509 = (X509Certificate)keystore.getCertificate(alias);
+                    ts.validate(certStoreX509, provider);
+                    return true;
+                }
+                catch (Exception ex) {
+                }
+            }
+        }
+        catch (Exception e) {
+        }
+        return false;
+    }
+    
+    /**
      * Retrieves the OCSP URL from the given certificate.
      * @param certificate the certificate
      * @return the URL or null
