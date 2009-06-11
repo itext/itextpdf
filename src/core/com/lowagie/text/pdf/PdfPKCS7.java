@@ -177,6 +177,9 @@ public class PdfPKCS7 {
         digestNames.put("2.16.840.1.101.3.4.2.1", "SHA256");
         digestNames.put("2.16.840.1.101.3.4.2.2", "SHA384");
         digestNames.put("2.16.840.1.101.3.4.2.3", "SHA512");
+        digestNames.put("1.3.36.3.2.2", "RIPEMD128");
+        digestNames.put("1.3.36.3.2.1", "RIPEMD160");
+        digestNames.put("1.3.36.3.2.3", "RIPEMD256");
         digestNames.put("1.2.840.113549.1.1.4", "MD5");
         digestNames.put("1.2.840.113549.1.1.2", "MD2");
         digestNames.put("1.2.840.113549.1.1.5", "SHA1");
@@ -191,6 +194,9 @@ public class PdfPKCS7 {
         digestNames.put("2.16.840.1.101.3.4.3.2", "SHA256");
         digestNames.put("2.16.840.1.101.3.4.3.3", "SHA384");
         digestNames.put("2.16.840.1.101.3.4.3.4", "SHA512");
+        digestNames.put("1.3.36.3.3.1.3", "RIPEMD128");
+        digestNames.put("1.3.36.3.3.1.2", "RIPEMD160");
+        digestNames.put("1.3.36.3.3.1.4", "RIPEMD256");
         
         algorithmNames.put("1.2.840.113549.1.1.1", "RSA");
         algorithmNames.put("1.2.840.10040.4.1", "DSA");
@@ -204,6 +210,9 @@ public class PdfPKCS7 {
         algorithmNames.put("1.2.840.10040.4.3", "DSA");
         algorithmNames.put("2.16.840.1.101.3.4.3.1", "DSA");
         algorithmNames.put("2.16.840.1.101.3.4.3.2", "DSA");
+        digestNames.put("1.3.36.3.3.1.3", "RSA");
+        digestNames.put("1.3.36.3.3.1.2", "RSA");
+        digestNames.put("1.3.36.3.3.1.4", "RSA");
         
         allowedDigests.put("MD5", "1.2.840.113549.2.5");
         allowedDigests.put("MD2", "1.2.840.113549.2.2");
@@ -219,6 +228,12 @@ public class PdfPKCS7 {
         allowedDigests.put("SHA-256", "2.16.840.1.101.3.4.2.1");
         allowedDigests.put("SHA-384", "2.16.840.1.101.3.4.2.2");
         allowedDigests.put("SHA-512", "2.16.840.1.101.3.4.2.3");
+        allowedDigests.put("RIPEMD128", "1.3.36.3.2.2");
+        allowedDigests.put("RIPEMD-128", "1.3.36.3.2.2");
+        allowedDigests.put("RIPEMD160", "1.3.36.3.2.1");
+        allowedDigests.put("RIPEMD-160", "1.3.36.3.2.1");
+        allowedDigests.put("RIPEMD256", "1.3.36.3.2.3");
+        allowedDigests.put("RIPEMD-256", "1.3.36.3.2.3");
     }
     
     /**
