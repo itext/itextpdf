@@ -895,6 +895,7 @@ public class PdfPKCS7 {
      * @param keystore the <CODE>KeyStore</CODE>
      * @param provider the provider or <CODE>null</CODE> to use the BouncyCastle provider
      * @return <CODE>true</CODE> is a certificate was found
+     * @since	2.1.6
      */    
     public static boolean verifyOcspCertificates(BasicOCSPResp ocsp, KeyStore keystore, String provider) {
         if (provider == null)
@@ -924,6 +925,7 @@ public class PdfPKCS7 {
      * @param keystore the <CODE>KeyStore</CODE>
      * @param provider the provider or <CODE>null</CODE> to use the BouncyCastle provider
      * @return <CODE>true</CODE> is a certificate was found
+     * @since	2.1.6
      */    
     public static boolean verifyTimestampCertificates(TimeStampToken ts, KeyStore keystore, String provider) {
         if (provider == null)
