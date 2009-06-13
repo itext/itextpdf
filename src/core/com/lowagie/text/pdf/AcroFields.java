@@ -825,7 +825,7 @@ public class AcroFields {
                 byte[] valBytes = PdfReader.getStreamBytes((PRStream)v);
                 return new String(valBytes);
             } catch (Exception e) {
-                e.printStackTrace();
+                return "";
             }
         }
         
