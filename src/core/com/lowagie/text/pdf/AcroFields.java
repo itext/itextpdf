@@ -821,12 +821,13 @@ public class AcroFields {
         if (v == null)
         	return "";
         if (v instanceof PRStream) {
-        	try {
-                byte[] valBytes = PdfReader.getStreamBytes((PRStream)v);
-                return new String(valBytes);
-            } catch (Exception e) {
-                return "";
-            }
+                byte[] valBytes;
+				try {
+					valBytes = PdfReader.getStreamBytes((PRStream)v);
+	                return new String(valBytes);
+				} catch (IOException e) {
+					throw new ExceptionConverter(e);
+				}
         }
         
         PdfName type = mergedDict.getAsName(PdfName.FT);
