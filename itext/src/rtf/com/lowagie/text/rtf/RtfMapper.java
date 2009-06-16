@@ -129,7 +129,7 @@ public class RtfMapper {
     		    Chunk chunk = (Chunk) element;
     		    if(chunk.hasAttributes()) {
     		        if(chunk.getAttributes().containsKey(Chunk.IMAGE)) {
-    		            rtfElements.add(new RtfImage(rtfDoc, (Image) chunk.getAttributes().get(Chunk.IMAGE)));
+    		            rtfElements.add(new RtfImage(rtfDoc, chunk.getImage()));
     		        } else if(chunk.getAttributes().containsKey(Chunk.NEWPAGE)) {
     		            rtfElements.add(new RtfNewPage(rtfDoc));
     		        } else if(chunk.getAttributes().containsKey(Chunk.TAB)) {

@@ -366,8 +366,12 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 					endElement(HtmlTags.LISTITEM);
 				skipText = true;
 				cprops.addToChain(tag, h);
-				com.lowagie.text.List list = new com.lowagie.text.List(false,
-						10);
+				com.lowagie.text.List list = new com.lowagie.text.List(false);
+				try{
+					list.setIndentationLeft(new Float(cprops.getProperty("indent")).floatValue());
+				}catch (Exception e) {
+					list.setAutoindent(true);
+				}
 				list.setListSymbol("\u2022");
 				stack.push(list);
 				return;
@@ -377,7 +381,12 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 					endElement(HtmlTags.LISTITEM);
 				skipText = true;
 				cprops.addToChain(tag, h);
-				com.lowagie.text.List list = new com.lowagie.text.List(true, 10);
+				com.lowagie.text.List list = new com.lowagie.text.List(true);
+				try{
+					list.setIndentationLeft(new Float(cprops.getProperty("indent")).floatValue());
+				}catch (Exception e) {
+					list.setAutoindent(true);
+				}
 				stack.push(list);
 				return;
 			}
@@ -391,7 +400,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				stack.push(item);
 				return;
 			}
-			if (tag.equals(HtmlTags.DIV) || tag.equals(HtmlTags.BODY)) {
+			if (tag.equals(HtmlTags.DIV) || tag.equals(HtmlTags.BODY) || tag.equals("p")) {
 				cprops.addToChain(tag, h);
 				return;
 			}
@@ -401,11 +410,6 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				}
 				cprops.addToChain(tag, h);
 				isPRE = true;
-				return;
-			}
-			if (tag.equals("p")) {
-				cprops.addToChain(tag, h);
-				currentParagraph = FactoryProperties.createParagraph(h);
 				return;
 			}
 			if (tag.equals("tr")) {
@@ -697,7 +701,15 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	}
 
 	public boolean setMarginMirroring(boolean marginMirroring) {
-		return true;
+		return false;
+	}
+
+	/**
+     * @see com.lowagie.text.DocListener#setMarginMirroring(boolean)
+	 * @since	2.1.6
+	 */
+	public boolean setMarginMirroringTopBottom(boolean marginMirroring) {
+		return false;
 	}
 
 	public boolean setMargins(float marginLeft, float marginRight,
@@ -723,27 +735,4 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			tagsSupported.put(tok.nextToken(), null);
 	}
 
-	/**
-	 * 
-	 * This method is replace with Markup.lengthParse
-	 * @deprecated
-	 * @see com.lowagie.text.html.Markup#parseLength(String string)
-	 * @param txt
-	 * @param c
-	 * @return float value of length
-	 */
-	private static float lengthParse(String txt, int c) {
-		if (txt == null)
-			return -1;
-		if (txt.endsWith("%")) {
-			float vf = Float.parseFloat(txt.substring(0, txt.length() - 1));
-			return vf;
-		}
-		if (txt.endsWith("px")) {
-			float vf = Float.parseFloat(txt.substring(0, txt.length() - 2));
-			return vf;
-		}
-		int v = Integer.parseInt(txt);
-		return (float) v / c * 100f;
-	}
 }

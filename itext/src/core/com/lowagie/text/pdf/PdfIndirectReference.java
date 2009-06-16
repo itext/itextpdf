@@ -49,8 +49,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.lang.ref.WeakReference;
-
 /**
  * <CODE>PdfIndirectReference</CODE> contains a reference to a <CODE>PdfIndirectObject</CODE>.
  * <P>
@@ -66,27 +64,21 @@ import java.lang.ref.WeakReference;
  */
 
 public class PdfIndirectReference extends PdfObject {
-
+    
     // membervariables
-
+    
 /** the object number */
     protected int number;
-
+    
 /** the generation number */
     protected int generation = 0;
-
-    /**
-     * This reference has no effect on GC.
-     * @since 2.1.5
-     */
-    protected WeakReference reffedObj;
-
+    
     // constructors
-
+    
     protected PdfIndirectReference() {
         super(0);
     }
-
+    
 /**
  * Constructs a <CODE>PdfIndirectReference</CODE>.
  *
@@ -94,68 +86,47 @@ public class PdfIndirectReference extends PdfObject {
  * @param		number			the object number.
  * @param		generation		the generation number.
  */
-
+    
     PdfIndirectReference(int type, int number, int generation) {
         super(0, new StringBuffer().append(number).append(" ").append(generation).append(" R").toString());
         this.number = number;
         this.generation = generation;
     }
-
+    
 /**
  * Constructs a <CODE>PdfIndirectReference</CODE>.
  *
  * @param		type			the type of the <CODE>PdfObject</CODE> that is referenced to
  * @param		number			the object number.
  */
-
+    
     PdfIndirectReference(int type, int number) {
         this(type, number, 0);
     }
-
+    
     // methods
-
+    
 /**
  * Returns the number of the object.
  *
  * @return		a number.
  */
-
+    
     public int getNumber() {
         return number;
     }
-
+    
 /**
  * Returns the generation of the object.
  *
  * @return		a number.
  */
-
+    
     public int getGeneration() {
         return generation;
     }
-
+    
     public String toString() {
     	return new StringBuffer().append(number).append(" ").append(generation).append(" R").toString();
-    }
-
-    /**
-     * No effort is made to check the validity of the mapping
-     * @param obj we'll take your word for it.
-     * @since 2.1.5
-     */
-    public void setDirectObject( PdfObject obj ) {
-        reffedObj = new WeakReference( obj );
-    }
-
-    /**
-     * The direct object of this reference.
-     * @return quite possibly null
-     * @since 2.1.5
-     */
-    public PdfObject getDirectObject() {
-        if (reffedObj != null) {
-            return (PdfObject) reffedObj.get();
-        }
-        return null;
     }
 }

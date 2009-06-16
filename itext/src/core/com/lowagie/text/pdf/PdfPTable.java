@@ -122,6 +122,11 @@ public class PdfPTable implements LargeElement{
      * Holds value of property skipFirstHeader.
      */
     private boolean skipFirstHeader = false;
+    /**
+     * Holds value of property skipLastFooter.
+     * @since	2.1.6
+     */
+    private boolean skipLastFooter = false;
 
     protected boolean isColspan = false;
     
@@ -179,6 +184,12 @@ public class PdfPTable implements LargeElement{
      * Holds value of property footerRows.
      */
     private int footerRows;
+    
+    /**
+     * Keeps track of the completeness of the current row.
+     * @since	2.1.6
+     */
+    protected boolean rowCompleted = true;
     
     protected PdfPTable() {
     }
@@ -254,8 +265,9 @@ public class PdfPTable implements LargeElement{
      * Copies the format of the sourceTable without copying the content.
      *  
      * @param sourceTable
-     */
-    private void copyFormat(PdfPTable sourceTable) {
+	 * @since	2.1.6 private is now protected
+	 */
+    protected void copyFormat(PdfPTable sourceTable) {
         relativeWidths = new float[sourceTable.getNumberOfColumns()];
         absoluteWidths = new float[sourceTable.getNumberOfColumns()];
         System.arraycopy(sourceTable.relativeWidths, 0, relativeWidths, 0, getNumberOfColumns());
@@ -279,6 +291,7 @@ public class PdfPTable implements LargeElement{
         widthPercentage = sourceTable.widthPercentage;
         splitLate = sourceTable.splitLate;
         skipFirstHeader = sourceTable.skipFirstHeader;
+        skipLastFooter = sourceTable.skipLastFooter;
         horizontalAlignment = sourceTable.horizontalAlignment;
         keepTogether = sourceTable.keepTogether;
         complete = sourceTable.complete;
@@ -316,7 +329,10 @@ public class PdfPTable implements LargeElement{
         setWidths(tb);
     }
 
-    private void calculateWidths() {
+	/**
+	 * @since	2.1.6 private is now protected
+	 */
+    protected void calculateWidths() {
         if (totalWidth <= 0)
             return;
         float total = 0;
@@ -433,18 +449,31 @@ public class PdfPTable implements LargeElement{
      * @param cell the cell element
      */    
     public void addCell(PdfPCell cell) {
+    	rowCompleted = false;
         PdfPCell ncell = new PdfPCell(cell);
+        
         int colspan = ncell.getColspan();
         colspan = Math.max(colspan, 1);
         colspan = Math.min(colspan, currentRow.length - currentRowIdx);
         ncell.setColspan(colspan);
+
         if (colspan != 1)
             isColspan = true;
         int rdir = ncell.getRunDirection();
         if (rdir == PdfWriter.RUN_DIRECTION_DEFAULT)
             ncell.setRunDirection(runDirection);
-        currentRow[currentRowIdx] = ncell;
-        currentRowIdx += colspan;
+        
+        skipColsWithRowspanAbove();
+        
+        boolean cellAdded = false;
+        if (currentRowIdx < currentRow.length) {  
+	        currentRow[currentRowIdx] = ncell;
+	        currentRowIdx += colspan;
+	        cellAdded = true;
+        }
+
+        skipColsWithRowspanAbove();
+        
         if (currentRowIdx >= currentRow.length) {
         	int numCols = getNumberOfColumns();
             if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
@@ -467,8 +496,74 @@ public class PdfPTable implements LargeElement{
             rows.add(row);
             currentRow = new PdfPCell[numCols];
             currentRowIdx = 0;
+            rowCompleted = true;
+        }
+        
+        if (!cellAdded) {
+            currentRow[currentRowIdx] = ncell;
+            currentRowIdx += colspan;
         }
     }
+    
+    /**
+     * When updating the row index, cells with rowspan should be taken into account.
+     * This is what happens in this method.
+     * @since	2.1.6
+     */
+    private void skipColsWithRowspanAbove() {
+    	int direction = 1;
+    	if (runDirection == PdfWriter.RUN_DIRECTION_RTL)
+    		direction = -1;
+    	while (rowSpanAbove(rows.size(), currentRowIdx))
+    		currentRowIdx += direction;
+    }
+    
+    /**
+     * Checks if there are rows above belonging to a rowspan.
+     * @param	currRow	the current row to check
+     * @param	currCol	the current column to check
+     * @return	true if there's a cell above that belongs to a rowspan
+     * @since	2.1.6
+     */
+    boolean rowSpanAbove(int currRow, int currCol) {
+    	
+    	if ((currCol >= getNumberOfColumns()) 
+    			|| (currCol < 0) 
+    			|| (currRow == 0))
+    		return false;
+    	
+    	int row = currRow - 1;
+    	PdfPRow aboveRow = (PdfPRow)rows.get(row);
+    	if (aboveRow == null)
+    		return false;
+    	PdfPCell aboveCell = (PdfPCell)aboveRow.getCells()[currCol];
+    	while ((aboveCell == null) && (row > 0)) {
+    		aboveRow  = (PdfPRow)rows.get(--row);
+    		aboveCell = (PdfPCell)aboveRow.getCells()[currCol];
+    	}
+    	
+    	int distance = currRow - row;
+
+    	if (aboveCell == null) {
+        	int col = currCol - 1;
+        	aboveCell = (PdfPCell)aboveRow.getCells()[col];
+        	while ((aboveCell == null) && (row > 0))
+        		aboveCell = (PdfPCell)aboveRow.getCells()[--col];
+        	return aboveCell != null && aboveCell.getRowspan() > distance;
+    	}
+    	
+    	if ((aboveCell.getRowspan() == 1) && (distance > 1)) {
+        	int col = currCol - 1;
+        	aboveRow = (PdfPRow)rows.get(row + 1);
+        	distance--;
+        	aboveCell = (PdfPCell)aboveRow.getCells()[col];
+        	while ((aboveCell == null) && (col > 0))
+        		aboveCell = (PdfPCell)aboveRow.getCells()[--col];
+    	}
+    	
+    	return aboveCell != null && aboveCell.getRowspan() > distance;
+    }
+	
     
     /**
      * Adds a cell element.
@@ -749,6 +844,31 @@ public class PdfPTable implements LargeElement{
     }
     
     /**
+     * Gets the maximum height of a cell in a particular row (will only be different
+     * from getRowHeight is one of the cells in the row has a rowspan > 1).
+     * 
+     * @param	rowIndex	the row index
+     * @param	cellIndex	the cell index
+     * @return the height of a particular row including rowspan
+     * @since	2.1.6
+     */    
+    public float getRowspanHeight(int rowIndex, int cellIndex) {
+        if (totalWidth <= 0 || rowIndex < 0 || rowIndex >= rows.size())
+            return 0;
+        PdfPRow row = (PdfPRow)rows.get(rowIndex);
+        if (row == null || cellIndex >= row.getCells().length)
+            return 0;
+        PdfPCell cell = row.getCells()[cellIndex];
+        if (cell == null)
+        	return 0;
+        float rowspanHeight = 0;
+        for (int j = 0; j < cell.getRowspan(); j++) {
+        	rowspanHeight += getRowHeight(rowIndex + j);
+        }
+        return rowspanHeight;
+    }
+    
+    /**
      * Gets the height of the rows that constitute the header as defined by
      * <CODE>setHeaderRows()</CODE>.
      * 
@@ -968,6 +1088,79 @@ public class PdfPTable implements LargeElement{
     public ArrayList getRows() {
         return rows;
     }
+    
+    /**
+     * Gets an arraylist with a selection of rows.
+     * @param	start	the first row in the selection
+     * @param	end 	the first row that isn't part of the selection
+     * @return	a selection of rows
+     * @since	2.1.6
+     */
+    public ArrayList getRows(int start, int end) {
+    	ArrayList list = new ArrayList();
+    	if (start < 0 || end > size()) {
+    		return list;
+    	}
+    	PdfPRow firstRow = adjustCellsInRow(start, end);
+    	int colIndex = 0;
+    	PdfPCell cell;
+    	while (colIndex < getNumberOfColumns()) {
+    		int rowIndex = start;
+    		while (rowSpanAbove(rowIndex--, colIndex)) {
+    			PdfPRow row = getRow(rowIndex);
+    			if (row != null) {
+    				PdfPCell replaceCell = row.getCells()[colIndex];
+    				if (replaceCell != null) {
+        				firstRow.getCells()[colIndex] = new PdfPCell(replaceCell);
+    					float extra = 0;
+    					int stop = Math.min(rowIndex + replaceCell.getRowspan(), end);
+    					for (int j = start + 1; j < stop; j++) {
+    						extra += getRowHeight(j);
+    					}
+    					firstRow.setExtraHeight(colIndex, extra);
+    					float diff = getRowspanHeight(rowIndex, colIndex)
+    						- getRowHeight(start) - extra;
+    					firstRow.getCells()[colIndex].consumeHeight(diff);
+    				}
+    			}
+    		}
+    		cell = firstRow.getCells()[colIndex];
+    		if (cell == null)
+    			colIndex++;
+    		else
+    			colIndex += cell.getColspan();
+    	}
+    	list.add(firstRow);
+    	for (int i = start + 1; i < end; i++) {
+    		list.add(adjustCellsInRow(i, end));
+    	}
+    	return list;
+    }
+    
+    /**
+     * Calculates the extra height needed in a row because of rowspans.
+     * @param	start	the index of the start row (the one to adjust)
+     * @param	end		the index of the end row on the page
+     * @since	2.1.6
+     */
+    protected PdfPRow adjustCellsInRow(int start, int end) {
+    	PdfPRow row = new PdfPRow(getRow(start));
+		row.initExtraHeights();
+		PdfPCell cell;
+		PdfPCell[] cells = row.getCells();
+		for (int i = 0; i < cells.length; i++) {
+			cell = cells[i];
+			if (cell == null || cell.getRowspan() == 1)
+				continue;
+			int stop = Math.min(end, start + cell.getRowspan());
+			float extra = 0;
+			for (int k = start + 1; k < stop; k++) {
+				extra += getRowHeight(k);
+			}
+			row.setExtraHeight(i, extra);
+		}
+    	return row;
+    }
 
     /** Sets the table event for this table.
      * @param event the table event for this table
@@ -1044,12 +1237,25 @@ public class PdfPTable implements LargeElement{
 
 
     /**
-     * Getter for property skipFirstHeader.
+     * Tells you if the first header needs to be skipped
+     * (for instance if the header says "continued from the previous page").
      * 
      * @return Value of property skipFirstHeader.
      */
     public boolean isSkipFirstHeader() {
         return skipFirstHeader;
+    }
+
+
+    /**
+     * Tells you if the last footer needs to be skipped
+     * (for instance if the footer says "continued on the next page")
+     * 
+     * @return Value of property skipLastFooter.
+     * @since	2.1.6
+     */
+    public boolean isSkipLastFooter() {
+        return skipLastFooter;
     }
     
     /**
@@ -1060,6 +1266,17 @@ public class PdfPTable implements LargeElement{
      */
     public void setSkipFirstHeader(boolean skipFirstHeader) {
         this.skipFirstHeader = skipFirstHeader;
+    }
+    
+    /**
+     * Skips the printing of the last footer. Used when printing
+     * tables in succession belonging to the same printed table aspect.
+     * 
+     * @param skipLastFooter New value of property skipLastFooter.
+     * @since	2.1.6
+     */
+    public void setSkipLastFooter(boolean skipLastFooter) {
+        this.skipLastFooter = skipLastFooter;
     }
 
     /**
@@ -1279,7 +1496,7 @@ public class PdfPTable implements LargeElement{
      * present in the table.
      */
     public void completeRow() {
-        while (currentRowIdx > 0) {
+        while (!rowCompleted) {
             addCell(defaultCell);
         }
     }

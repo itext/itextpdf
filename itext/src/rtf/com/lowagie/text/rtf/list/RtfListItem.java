@@ -103,6 +103,10 @@ public class RtfListItem extends RtfParagraph {
             result.write(RtfParagraphStyle.SPACING_AFTER);
             result.write(intToByteArray(this.paragraphStyle.getSpacingAfter()));
         }
+        if(this.paragraphStyle.getLineLeading() > 0) {
+        	result.write(RtfParagraph.LINE_SPACING);
+        	result.write(intToByteArray(this.paragraphStyle.getLineLeading()));
+        }
         for(int i = 0; i < chunks.size(); i++) {
             RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
             if(rtfElement instanceof RtfChunk) {

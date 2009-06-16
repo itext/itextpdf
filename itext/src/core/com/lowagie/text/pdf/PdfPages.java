@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 
@@ -146,6 +147,9 @@ public class PdfPages {
                     if ((p % leafSize) == 0)
                         nextParents.add(writer.getPdfIndirectReference());
                     top.put(PdfName.PARENT, (PdfIndirectReference)nextParents.get(p / leafSize));
+                }
+                else {
+                	top.put(PdfName.ITXT, new PdfString(Document.getRelease()));
                 }
                 writer.addToBody(top, (PdfIndirectReference)tParents.get(p));
             }

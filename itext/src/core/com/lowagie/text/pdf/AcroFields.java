@@ -160,7 +160,6 @@ public class AcroFields {
         PdfArray arrfds = (PdfArray)PdfReader.getPdfObjectRelease(top.get(PdfName.FIELDS));
         if (arrfds == null || arrfds.size() == 0)
             return;
-        arrfds = null;
         for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
             PdfDictionary page = reader.getPageNRelease(k);
             PdfArray annots = (PdfArray)PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page);
@@ -215,6 +214,41 @@ public class AcroFields {
                 item.addPage(k);
                 item.addTabOrder(j);
             }
+        }
+        // some tools produce invisible signatures without an entry in the page annotation array
+        // look for a single level annotation
+        PdfNumber sigFlags = top.getAsNumber(PdfName.SIGFLAGS);
+        if (sigFlags == null || (sigFlags.intValue() & 1) != 1)
+            return;
+        for (int j = 0; j < arrfds.size(); ++j) {
+            PdfDictionary annot = arrfds.getAsDict(j);
+            if (annot == null) {
+                PdfReader.releaseLastXrefPartial(arrfds.getAsIndirectObject(j));
+                continue;
+            }
+            if (!PdfName.WIDGET.equals(annot.getAsName(PdfName.SUBTYPE))) {
+                PdfReader.releaseLastXrefPartial(arrfds.getAsIndirectObject(j));
+                continue;
+            }
+            PdfArray kids = (PdfArray)PdfReader.getPdfObjectRelease(annot.get(PdfName.KIDS));
+            if (kids != null)
+                continue;
+            PdfDictionary dic = new PdfDictionary();
+            dic.putAll(annot);
+            PdfString t = annot.getAsString(PdfName.T);
+            if (t == null)
+                continue;
+            String name = t.toUnicodeString();
+            if (fields.containsKey(name))
+                continue;
+            Item item = new Item();
+            fields.put(name, item);
+            item.addValue(dic);
+            item.addWidget(dic);
+            item.addWidgetRef(arrfds.getAsIndirectObject(j)); // must be a reference
+            item.addMerged(dic);
+            item.addPage(-1);
+            item.addTabOrder(-1);
         }
     }
 
@@ -779,10 +813,23 @@ public class AcroFields {
             return null;
         lastWasString = false;
         PdfDictionary mergedDict = item.getMerged( 0 );
-        PdfName valName = mergedDict.getAsName(PdfName.V);
-        PdfString valStr = mergedDict.getAsString(PdfName.V);
-        if (valName == null && valStr == null)
-            return "";
+
+        // Jose A. Rodriguez posted a fix to the mailing list (May 11, 2009)
+        // explaining that the value can also be a stream value
+        // the fix was made against an old iText version. Bruno adapted it.
+        PdfObject v = PdfReader.getPdfObject(mergedDict.get(PdfName.V));
+        if (v == null)
+        	return "";
+        if (v instanceof PRStream) {
+                byte[] valBytes;
+				try {
+					valBytes = PdfReader.getStreamBytes((PRStream)v);
+	                return new String(valBytes);
+				} catch (IOException e) {
+					throw new ExceptionConverter(e);
+				}
+        }
+        
         PdfName type = mergedDict.getAsName(PdfName.FT);
         if (PdfName.BTN.equals(type)) {
             PdfNumber ff = mergedDict.getAsNumber(PdfName.FF);
@@ -792,12 +839,10 @@ public class AcroFields {
             if ((flags & PdfFormField.FF_PUSHBUTTON) != 0)
                 return "";
             String value = "";
-            if (valName != null)
-                value = PdfName.decodeName(valName.toString());
-            else if (valStr != null)
-                value = valStr.toUnicodeString();
-
-            // shouldn't opts be in 'mergedDict' as well?
+            if (v instanceof PdfName)
+                value = PdfName.decodeName(v.toString());
+            else if (v instanceof PdfString)
+                value = ((PdfString)v).toUnicodeString();
             PdfArray opts = item.getValue(0).getAsArray(PdfName.OPT);
             if (opts != null) {
                 int idx = 0;
@@ -812,11 +857,11 @@ public class AcroFields {
             }
             return value;
         }
-        if (valStr != null) {
+        if (v instanceof PdfString) {
             lastWasString = true;
-            return valStr.toUnicodeString();
-        } else if (valName != null) {
-            return PdfName.decodeName(valName.toString());
+            return ((PdfString)v).toUnicodeString();
+        } else if (v instanceof PdfName) {
+            return PdfName.decodeName(v.toString());
         } else
             return "";
     }

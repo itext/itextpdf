@@ -103,6 +103,7 @@ public class PdfFileSpecification extends PdfDictionary {
      * @param filePath the file path
      * @param fileDisplay the file information that is presented to the user
      * @param fileStore the byte array with the file. If it is not <CODE>null</CODE>
+     * it takes precedence over <CODE>filePath</CODE>
      * @param compressionLevel	the compression level to be used for compressing the file
      * it takes precedence over <CODE>filePath</CODE>
      * @throws IOException on error

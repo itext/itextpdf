@@ -44,6 +44,7 @@
 			<zipfileset prefix="lib" dir="${itext.lib}">
 				<include name="bcmail-${bc.jdk}-${bc.version}.jar" />
 				<include name="bcprov-${bc.jdk}-${bc.version}.jar" />
+				<include name="bctsp-${bc.jdk}-${bc.version}.jar" />
 				<!-- jars needed for RUPS -->
 				<include name="pdf-renderer.jar" />
 				<include name="dom4j-1.6.1.jar" />
@@ -58,6 +59,7 @@
 			<tarfileset prefix="lib" dir="${itext.lib}">
 				<include name="bcmail-${bc.jdk}-${bc.version}.jar" />
 				<include name="bcprov-${bc.jdk}-${bc.version}.jar" />
+				<include name="bctsp-${bc.jdk}-${bc.version}.jar" />
 				<!-- jars needed for RUPS -->
 				<include name="pdf-renderer.jar" />
 				<include name="dom4j-1.6.1.jar" />
@@ -177,6 +179,14 @@
     	<delete dir="${itext.bin.temp}" />
 	</target>
 
+	<target name="unsign.bctsp">
+        <mkdir dir="${itext.jnlp}" />
+    	<mkdir dir="${itext.bin.temp}" />
+    	<unjar src="${itext.lib}/bctsp-${bc.jdk}-${bc.version}.jar" dest="${itext.bin.temp}" />
+    	<jar destfile="${itext.jnlp}/bctsp-${bc.jdk}-${bc.version}.jar" basedir="${itext.bin.temp}" includes="**/*.class" />
+    	<delete dir="${itext.bin.temp}" />
+	</target>
+
     <target name="check-keystore" >
         <condition property="keystore-exists">
             <available file="${itext.keystore.filename}" type="file"/>
@@ -193,7 +203,7 @@
         />
     </target>
  
-    <target name="release.jnlp" depends="unsign.bcmail, unsign.bcprov, keystore">
+    <target name="release.jnlp" depends="unsign.bcmail, unsign.bcprov, unsign.bctsp, keystore">
 		<copy file="${itext.src}/jnlp/rups.jnlp" tofile="${itext.jnlp}/rups.jnlp" overwrite="yes"/>
 		<copy file="${itext.src}/jnlp/toolbox.jnlp" tofile="${itext.jnlp}/toolbox.jnlp" overwrite="yes"/>
 		<copy file="${itext.rups.jar}" tofile="${itext.jnlp}/iText-rups.jar" overwrite="yes"/>
@@ -210,6 +220,13 @@
         />
         <signjar
             jar="${itext.jnlp}/bcprov-${bc.jdk}-${bc.version}.jar"
+            keystore="${itext.keystore.filename}"
+            storepass="${itext.keystore.password}"
+            alias="${itext.keystore.alias}"
+            storetype="${itext.keystore.storetype}"
+        />
+        <signjar
+            jar="${itext.jnlp}/bctsp-${bc.jdk}-${bc.version}.jar"
             keystore="${itext.keystore.filename}"
             storepass="${itext.keystore.password}"
             alias="${itext.keystore.alias}"

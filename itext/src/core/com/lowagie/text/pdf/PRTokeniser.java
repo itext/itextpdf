@@ -278,18 +278,25 @@ public class PRTokeniser {
                 }
             }
         }
-        throwError("Unexpected end of file");
+        // if we hit here, the file is either corrupt (stream ended unexpectedly),
+        // or the last token ended exactly at the end of a stream.  This last
+        // case can occur inside an Object Stream.
     }
     
     public boolean nextToken() throws IOException {
-        StringBuffer outBuf = null;
-        stringValue = EMPTY;
         int ch = 0;
         do {
             ch = file.read();
         } while (ch != -1 && isWhitespace(ch));
         if (ch == -1)
             return false;
+
+        // Note:  We have to initialize stringValue here, after we've looked for the end of the stream,
+        // to ensure that we don't lose the value of a token that might end exactly at the end
+        // of the stream
+        StringBuffer outBuf = null;
+        stringValue = EMPTY;
+
         switch (ch) {
             case '[':
                 type = TK_START_ARRAY;

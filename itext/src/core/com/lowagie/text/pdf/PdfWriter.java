@@ -107,6 +107,12 @@ public class PdfWriter extends DocWriter implements
 	PdfRunDirection,
 	PdfAnnotations {
 
+	/**
+	 * The highest generation number possible.
+	 * @since	iText 2.1.6
+	 */
+	public static final int GENERATION_MAX = 65535;
+	
 // INNER CLASSES
 
     /**
@@ -192,7 +198,7 @@ public class PdfWriter extends DocWriter implements
                 StringBuffer gen = new StringBuffer("00000").append(generation);
                 gen.delete(0, gen.length() - 5);
 
-                off.append(' ').append(gen).append(generation == 65535 ? " f \n" : " n \n");
+                off.append(' ').append(gen).append(generation == GENERATION_MAX ? " f \n" : " n \n");
                 os.write(getISOBytes(off.toString()));
             }
 
@@ -262,7 +268,7 @@ public class PdfWriter extends DocWriter implements
          */
         PdfBody(PdfWriter writer) {
             xrefs = new TreeSet();
-            xrefs.add(new PdfCrossReference(0, 0, 65535));
+            xrefs.add(new PdfCrossReference(0, 0, GENERATION_MAX));
             position = writer.getOs().getCounter();
             refnum = 1;
             this.writer = writer;
@@ -343,7 +349,7 @@ public class PdfWriter extends DocWriter implements
 
         int getIndirectReferenceNumber() {
             int n = refnum++;
-            xrefs.add(new PdfCrossReference(n, 0, 65536));
+            xrefs.add(new PdfCrossReference(n, 0, GENERATION_MAX));
             return n;
         }
 
@@ -669,6 +675,19 @@ public class PdfWriter extends DocWriter implements
         return pdf.getVerticalPosition(ensureNewLine);
     }
 
+    /**
+     * Sets the initial leading for the PDF document.
+     * This has to be done before the document is opened.
+     * @param	leading	the initial leading
+     * @since	2.1.6
+     * @throws	DocumentException	if you try setting the leading after the document was opened.
+     */
+    public void setInitialLeading(float leading) throws DocumentException {
+    	if (open)
+    		throw new DocumentException("You can't set the initial leading if the document is already open.");
+    	pdf.setLeading(leading);
+    }
+    
 //	the PdfDirectContentByte instances
 
 /*
@@ -879,7 +898,7 @@ public class PdfWriter extends DocWriter implements
             catch (Exception e) {
                 throw new ExceptionConverter(e);
             }
-            catalog.put(PdfName.STRUCTTREEROOT, structureTreeRoot.getIndRef());
+            catalog.put(PdfName.STRUCTTREEROOT, structureTreeRoot.getReference());
             PdfDictionary mi = new PdfDictionary();
             mi.put(PdfName.MARKED, PdfBoolean.PDFTRUE);
             if (userProperties)
@@ -1002,7 +1021,9 @@ public class PdfWriter extends DocWriter implements
 
     /**
      * Sets the value for the Tabs entry in the page tree.
-     * @param	tabs	Can be PdfName.R, PdfName.C or PdfName.S
+     * @param	tabs	Can be PdfName.R, PdfName.C or PdfName.S.
+     * Since the Adobe Extensions Level 3, it can also be PdfName.A
+     * or PdfName.W
      * @since	2.1.5
      */
     public void setTabs(PdfName tabs) {
@@ -1374,6 +1395,14 @@ public class PdfWriter extends DocWriter implements
 		pdf_version.setPdfVersion(version);
 	}
 
+	/**
+	 * @see com.lowagie.text.pdf.interfaces.PdfVersion#addDeveloperExtension(com.lowagie.text.pdf.PdfDeveloperExtension)
+	 * @since	2.1.6
+	 */
+	public void addDeveloperExtension(PdfDeveloperExtension de) {
+		pdf_version.addDeveloperExtension(de);
+	}
+	
 	/**
 	 * Returns the version information.
 	 */

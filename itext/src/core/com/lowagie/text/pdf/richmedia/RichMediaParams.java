@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id:  $
  *
- * Copyright (C) 2009 Mark Storer
+ * Copyright 2009 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2009 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2009 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -47,64 +47,71 @@
  * http://www.lowagie.com/iText/
  */
 
+package com.lowagie.text.pdf.richmedia;
 
-package com.lowagie.text.pdf;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfString;
 
-/**********************************************************************
- *
- * The <code>PdfStructureBase</code> class, which handles basic common
- * functionality between PdfStructureElement and PdfStructureTreeRoot.
- *
- * Not for public consumption.
- *
- * @author mstorer
- * @since 2.1.5
- **********************************************************************/
+/**
+ * Dictionary containing parameters related to an active Flash subtype
+ * in a RichMediaInstance dictionary.
+ * See ExtensionLevel 3 p90
+ * @since	2.1.6
+ */
+public class RichMediaParams extends PdfDictionary {
 
-abstract class PdfStructureBase extends PdfDictionary {
-  protected PdfArray kids; // null till first call to addKid
-
-  public PdfStructureBase( PdfName dicType ) {
-    super( dicType );
-  }
-
-  /**
-   *  child class responsible for 'reference'
-   */
-  public PdfStructureBase() {
-  }
-
-  abstract protected PdfWriter getWriter();
-
-
-  /**
-   * Gets the reference this object will be written to.
-   *
-   * @return the reference this object will be written to
-   */
-  public PdfIndirectReference getIndRef() {
-    if (super.getIndRef() == null) {
-        setIndRef( getWriter().getPdfIndirectReference() );
-    }
-    return super.getIndRef();
-  }
-
-    /**
-     * Keep in mind that reading order is determined solely by the order in which
-     * kids are added... not by MCID.
-     * @param kid a structure element that will be a child of 'this'.
-     * @throws IllegalArgumentException if 'this' has a /k entry already that isn't for holding children
-     */
-  public void addKid( PdfStructureElement kid ) throws IllegalArgumentException {
-    if (kids == null) {
-      if (contains( PdfName.K )) {
-        throw new IllegalArgumentException( "this structure object already has a 'K' value" );
-      }
-      kids = new PdfArray();
-      put( PdfName.K, kids );
-    }
-
-    kids.add( kid );
-  }
+	/**
+	 * Creates a RichMediaParams object.
+	 */
+	public RichMediaParams() {
+		super(PdfName.RICHMEDIAPARAMS);
+	}
+	
+	/**
+	 * Sets a text string containing formatted name value pairs passed
+	 * to the Flash Player context when activated.
+	 * @param	flashVars	a String with the Flash variables
+	 */
+	public void setFlashVars(String flashVars) {
+		put(PdfName.FLASHVARS, new PdfString(flashVars));
+	}
+	
+	/**
+	 * Sets the binding.
+	 * @param	binding	possible values:
+	 * PdfName.NONE, PdfName.FOREGROUND, PdfName.BACKGROUND, PdfName.MATERIAL
+	 */
+	public void setBinding(PdfName binding) {
+		put(PdfName.BINDING, binding);
+	}
+	
+	/**
+	 * Stores the material name that content is to be bound to.
+	 * Required if Binding value is Material.
+	 * @param	bindingMaterialName	a material name
+	 */
+	public void setBindingMaterialName(PdfString bindingMaterialName) {
+		put(PdfName.BINDINGMATERIALNAME, bindingMaterialName);
+	}
+	
+	/**
+	 * Sets an array of CuePoint dictionaries containing points
+	 * in time within a Flash animation.
+	 * @param	cuePoints	a PdfArray with CuePoint objects
+	 */
+	public void setCuePoints(PdfArray cuePoints) {
+		put(PdfName.CUEPOINTS, cuePoints);
+	}
+	
+	/**
+	 * A text string used to store settings information associated
+	 * with a Flash RichMediaInstance. It is to be stored and loaded
+	 * by the scripting run time.
+	 * @param	settings	a PdfString
+	 */
+	public void setSettings(PdfString settings) {
+		put(PdfName.SETTINGS, settings);
+	}
 }
-

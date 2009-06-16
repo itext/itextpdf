@@ -65,7 +65,7 @@ public class PdfImportedPage extends com.lowagie.text.pdf.PdfTemplate {
     PdfImportedPage(PdfReaderInstance readerInstance, PdfWriter writer, int pageNumber) {
         this.readerInstance = readerInstance;
         this.pageNumber = pageNumber;
-        thisReference = writer.getPdfIndirectReference();
+        this.writer = writer;
         bBox = readerInstance.getReader().getPageSize(pageNumber);
         setMatrix(1, 0, 0, 1, -bBox.getLeft(), -bBox.getBottom());
         type = TYPE_IMPORTED;
@@ -147,7 +147,16 @@ public class PdfImportedPage extends com.lowagie.text.pdf.PdfTemplate {
         throwError();
     }
     
-    void throwError() {
+    /**
+     * Always throws an error. This operation is not allowed.
+     * @param group New value of property group.
+     * @since	2.1.6
+     */ 
+    public void setGroup(PdfTransparencyGroup group) {
+        throwError();
+	}
+
+	void throwError() {
         throw new RuntimeException("Content can not be added to a PdfImportedPage.");
     }
     

@@ -134,16 +134,6 @@ public class PdfReader implements PdfViewerPreferences {
     private int lastXrefPartial = -1;
     private boolean partial;
 
-    /**
-     * Returns whether or not this reader is a "full" read or
-     * a partial one.
-     * @return <code>true</code> if reader is a partial one
-     * @since 2.1.5
-     */
-    protected boolean isPartial() {
-        return partial;
-    }
-
     private PRIndirectReference cryptoRef;
 	private PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
     private boolean encryptionError;
@@ -514,9 +504,11 @@ public class PdfReader implements PdfViewerPreferences {
             try {
                 readDocObj();
             }
-            catch (Exception ne) {
+            catch (Exception e) {
+            	if (e instanceof BadPasswordException)
+            		throw new BadPasswordException(e.getMessage());
                 if (rebuilt || encryptionError)
-                    throw new InvalidPdfException(ne.getMessage());
+                    throw new InvalidPdfException(e.getMessage());
                 rebuilt = true;
                 encrypted = false;
                 rebuildXref();
@@ -816,20 +808,15 @@ public class PdfReader implements PdfViewerPreferences {
         if (!obj.isIndirect())
             return obj;
         try {
-            PdfIndirectReference baseRef = (PdfIndirectReference)obj;
-            if (baseRef.getDirectObject() != null) {
-            	PdfObject o = baseRef.getDirectObject();
-            	o.setIndRef(baseRef);
-                return o;
-            }
             PRIndirectReference ref = (PRIndirectReference)obj;
             int idx = ref.getNumber();
+            boolean appendable = ref.getReader().appendable;
             obj = ref.getReader().getPdfObject(idx);
             if (obj == null) {
                 return null;
             }
             else {
-                if (ref.getReader().appendable) {
+                if (appendable) {
                     switch (obj.type()) {
                         case PdfObject.NULL:
                             obj = new PdfNull();
@@ -875,7 +862,7 @@ public class PdfReader implements PdfViewerPreferences {
             return null;
         if (!obj.isIndirect()) {
             PRIndirectReference ref = null;
-            if (parent != null && (ref = (PRIndirectReference)parent.getIndRef()) != null && ref.getReader().isAppendable()) {
+            if (parent != null && (ref = parent.getIndRef()) != null && ref.getReader().isAppendable()) {
                 switch (obj.type()) {
                     case PdfObject.NULL:
                         obj = new PdfNull();
@@ -1323,7 +1310,7 @@ public class PdfReader implements PdfViewerPreferences {
                 pos = tokens.intValue();
                 tokens.nextValidToken();
                 gen = tokens.intValue();
-                if (pos == 0 && gen == 65535) {
+                if (pos == 0 && gen == PdfWriter.GENERATION_MAX) {
                     --start;
                     --end;
                 }
@@ -1576,15 +1563,27 @@ public class PdfReader implements PdfViewerPreferences {
         return array;
     }
 
+    // Track how deeply nested the current object is, so
+    // we know when to return an individual null or boolean, or
+    // reuse one of the static ones.
+    private int readDepth = 0;
+
     protected PdfObject readPRObject() throws IOException {
         tokens.nextValidToken();
         int type = tokens.getTokenType();
         switch (type) {
             case PRTokeniser.TK_START_DIC: {
+                ++readDepth;
                 PdfDictionary dic = readDictionary();
+                --readDepth;
                 int pos = tokens.getFilePointer();
                 // be careful in the trailer. May not be a "next" token.
-                if (tokens.nextToken() && tokens.getStringValue().equals("stream")) {
+                boolean hasNext;
+                do {
+                    hasNext = tokens.nextToken();
+                } while (hasNext && tokens.getTokenType() == PRTokeniser.TK_COMMENT);
+
+                if (hasNext && tokens.getStringValue().equals("stream")) {
                     //skip whitespaces
                     int ch;
                     do {
@@ -1596,7 +1595,9 @@ public class PdfReader implements PdfViewerPreferences {
                         tokens.backOnePosition(ch);
                     PRStream stream = new PRStream(this, tokens.getFilePointer());
                     stream.putAll(dic);
+                    // crypto handling
                     stream.setObjNum(objNum, objGen);
+
                     return stream;
                 }
                 else {
@@ -1604,30 +1605,55 @@ public class PdfReader implements PdfViewerPreferences {
                     return dic;
                 }
             }
-            case PRTokeniser.TK_START_ARRAY:
-                return readArray();
+            case PRTokeniser.TK_START_ARRAY: {
+                ++readDepth;
+                PdfArray arr = readArray();
+                --readDepth;
+                return arr;
+            }
             case PRTokeniser.TK_NUMBER:
                 return new PdfNumber(tokens.getStringValue());
             case PRTokeniser.TK_STRING:
                 PdfString str = new PdfString(tokens.getStringValue(), null).setHexWriting(tokens.isHexString());
+                // crypto handling
                 str.setObjNum(objNum, objGen);
                 if (strings != null)
                     strings.add(str);
+
                 return str;
-            case PRTokeniser.TK_NAME:
-                return new PdfName(tokens.getStringValue(), false);
+            case PRTokeniser.TK_NAME: {
+                PdfName cachedName = (PdfName)PdfName.staticNames.get( tokens.getStringValue() );
+                if (readDepth > 0 && cachedName != null) {
+                    return cachedName;
+                } else {
+                    // an indirect name (how odd...), or a non-standard one
+                    return new PdfName(tokens.getStringValue(), false);
+                }
+            }
             case PRTokeniser.TK_REF:
                 int num = tokens.getReference();
                 PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());
                 return ref;
             default:
                 String sv = tokens.getStringValue();
-                if ("null".equals(sv))
+                if ("null".equals(sv)) {
+                    if (readDepth == 0) {
+                        return new PdfNull();
+                    } //else
                     return PdfNull.PDFNULL;
-                else if ("true".equals(sv))
+                }
+                else if ("true".equals(sv)) {
+                    if (readDepth == 0) {
+                        return new PdfBoolean( true );
+                    } //else
                     return PdfBoolean.PDFTRUE;
-                else if ("false".equals(sv))
+                }
+                else if ("false".equals(sv)) {
+                    if (readDepth == 0) {
+                        return new PdfBoolean( false );
+                    } //else
                     return PdfBoolean.PDFFALSE;
+                }
                 return new PdfLiteral(-type, tokens.getStringValue());
         }
     }
@@ -2495,7 +2521,18 @@ public class PdfReader implements PdfViewerPreferences {
      * @return gets all the named destinations
      */
     public HashMap getNamedDestination() {
-        HashMap names = getNamedDestinationFromNames();
+    	return getNamedDestination(false);
+    }
+
+    /**
+     * Gets all the named destinations as an <CODE>HashMap</CODE>. The key is the name
+     * and the value is the destinations array.
+     * @param	keepNames	true if you want the keys to be real PdfNames instead of Strings
+     * @return gets all the named destinations
+     * @since	2.1.6
+     */
+    public HashMap getNamedDestination(boolean keepNames) {
+        HashMap names = getNamedDestinationFromNames(keepNames);
         names.putAll(getNamedDestinationFromStrings());
         return names;
     }
@@ -2506,6 +2543,17 @@ public class PdfReader implements PdfViewerPreferences {
      * @return gets the named destinations
      */
     public HashMap getNamedDestinationFromNames() {
+    	return getNamedDestinationFromNames(false);
+    }
+    
+    /**
+     * Gets the named destinations from the /Dests key in the catalog as an <CODE>HashMap</CODE>. The key is the name
+     * and the value is the destinations array.
+     * @param	keepNames	true if you want the keys to be real PdfNames instead of Strings
+     * @return gets the named destinations
+     * @since	2.1.6
+     */
+    public HashMap getNamedDestinationFromNames(boolean keepNames) {
         HashMap names = new HashMap();
         if (catalog.get(PdfName.DESTS) != null) {
             PdfDictionary dic = (PdfDictionary)getPdfObjectRelease(catalog.get(PdfName.DESTS));
@@ -2514,10 +2562,16 @@ public class PdfReader implements PdfViewerPreferences {
             Set keys = dic.getKeys();
             for (Iterator it = keys.iterator(); it.hasNext();) {
                 PdfName key = (PdfName)it.next();
-                String name = PdfName.decodeName(key.toString());
                 PdfArray arr = getNameArray(dic.get(key));
-                if (arr != null)
-                    names.put(name, arr);
+                if (arr == null)
+                	continue;
+                if (keepNames) {
+                	names.put(key, arr);
+                }
+                else {
+                	String name = PdfName.decodeName(key.toString());
+                	names.put(name, arr);
+                }
             }
         }
         return names;
@@ -2556,10 +2610,10 @@ public class PdfReader implements PdfViewerPreferences {
         releaseLastXrefPartial();
         if (obj != null && obj.isDictionary()) {
             PdfObject ob2 = getPdfObjectRelease(((PdfDictionary)obj).get(PdfName.DEST));
-            String name = null;
+            Object name = null;
             if (ob2 != null) {
                 if (ob2.isName())
-                    name = PdfName.decodeName(ob2.toString());
+                    name = ob2;
                 else if (ob2.isString())
                     name = ob2.toString();
                 PdfArray dest = (PdfArray)names.get(name);
@@ -2578,7 +2632,7 @@ public class PdfReader implements PdfViewerPreferences {
                     PdfObject ob3 = getPdfObjectRelease(dic.get(PdfName.D));
                     if (ob3 != null) {
                         if (ob3.isName())
-                            name = PdfName.decodeName(ob3.toString());
+                            name = ob3;
                         else if (ob3.isString())
                             name = ob3.toString();
                     }
@@ -2676,7 +2730,7 @@ public class PdfReader implements PdfViewerPreferences {
         if (consolidateNamedDestinations)
             return;
         consolidateNamedDestinations = true;
-        HashMap names = getNamedDestination();
+        HashMap names = getNamedDestination(true);
         if (names.isEmpty())
             return;
         for (int k = 1; k <= pageRefs.size(); ++k) {
@@ -2976,7 +3030,6 @@ public class PdfReader implements PdfViewerPreferences {
      * @param value	a value for the viewer preference
      * @see PdfViewerPreferences#addViewerPreference
      */
-
     public void addViewerPreference(PdfName key, PdfObject value) {
     	this.viewerPreferences.addViewerPreference(key, value);
         setViewerPreferences(this.viewerPreferences);
@@ -2987,6 +3040,8 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     /**
+     * Returns a bitset representing the PageMode and PageLayout viewer preferences.
+     * Doesn't return any information about the ViewerPreferences dictionary.
      * @return an int that contains the Viewer Preferences.
      */
     public int getSimpleViewerPreferences() {

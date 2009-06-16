@@ -99,9 +99,18 @@ import java.util.Iterator;
 public class Document implements DocListener {
     
     // membervariables
-    
+    /**
+     * This constant may only be changed by Paulo Soares and/or Bruno Lowagie.
+     * @since	2.1.6
+     */
+	private static final String ITEXT = "iText";
+    /**
+     * This constant may only be changed by Paulo Soares and/or Bruno Lowagie.
+     * @since	2.1.6
+     */
+	private static final String RELEASE = "2.1.6";
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-	private static final String ITEXT_VERSION = "iText 2.1.5 (by lowagie.com)";
+	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " by 1T3XT";
     
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging
@@ -144,7 +153,14 @@ public class Document implements DocListener {
 	/** margin in y direction starting from the bottom */
     protected float marginBottom = 0;
     
+    /** mirroring of the left/right margins */
     protected boolean marginMirroring = false;
+    
+    /**
+     * mirroring of the top/bottom margins
+     * @since	2.1.6
+     */
+    protected boolean marginMirroringTopBottom = false;
     
 	/** Content of JavaScript onLoad function */
     protected String javaScript_onLoad = null;
@@ -762,6 +778,26 @@ public class Document implements DocListener {
     }
     
 	/**
+	 * Gets the product name.
+	 * This method may only be changed by Paulo Soares and/or Bruno Lowagie.
+     * @return the product name
+     * @since	2.1.6
+     */    
+    public static final String getProduct() {
+        return ITEXT;
+    }
+    
+	/**
+	 * Gets the release number.
+	 * This method may only be changed by Paulo Soares and/or Bruno Lowagie.
+     * @return the product name
+     * @since	2.1.6
+     */    
+    public static final String getRelease() {
+        return RELEASE;
+    }
+    
+	/**
 	 * Gets the iText version.
 	 * This method may only be changed by Paulo Soares and/or Bruno Lowagie.
      * @return iText version
@@ -834,7 +870,7 @@ public class Document implements DocListener {
     }
     
     /**
-     * Set the margin mirroring. It will mirror margins for odd/even pages.
+     * Set the margin mirroring. It will mirror right/left margins for odd/even pages.
      * <p>
      * Note: it will not work with {@link Table}.
 	 * 
@@ -848,6 +884,26 @@ public class Document implements DocListener {
 		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
             listener = (DocListener) iterator.next();
             listener.setMarginMirroring(marginMirroring);
+        }
+        return true;
+    }
+    
+    /**
+     * Set the margin mirroring. It will mirror top/bottom margins for odd/even pages.
+     * <p>
+     * Note: it will not work with {@link Table}.
+	 * 
+	 * @param marginMirroringTopBottom
+	 *            <CODE>true</CODE> to mirror the margins
+     * @return always <CODE>true</CODE>
+     * @since	2.1.6
+     */    
+    public boolean setMarginMirroringTopBottom(boolean marginMirroringTopBottom) {
+        this.marginMirroringTopBottom = marginMirroringTopBottom;
+        DocListener listener;
+		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
+            listener = (DocListener) iterator.next();
+            listener.setMarginMirroringTopBottom(marginMirroringTopBottom);
         }
         return true;
     }

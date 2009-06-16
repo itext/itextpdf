@@ -332,8 +332,13 @@ public class Jpeg extends Image {
                 System.arraycopy(icc[k], 14, ficc, total, icc[k].length - 14);
                 total += icc[k].length - 14;
             }
-            ICC_Profile icc_prof = ICC_Profile.getInstance(ficc);
-            tagICC(icc_prof);
+            try {
+            	ICC_Profile icc_prof = ICC_Profile.getInstance(ficc);
+            	tagICC(icc_prof);
+            }
+            catch(IllegalArgumentException e) {
+            	// ignore ICC profile if it's invalid.
+            }
             icc = null;
         }
     }

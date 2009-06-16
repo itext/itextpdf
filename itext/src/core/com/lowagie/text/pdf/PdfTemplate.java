@@ -211,6 +211,10 @@ public class PdfTemplate extends PdfContentByte {
      */
     
     public PdfIndirectReference getIndirectReference() {
+    	// uncomment the null check as soon as we're sure all examples still work
+    	if (thisReference == null /* && writer != null */) {
+    		thisReference = writer.getPdfIndirectReference();
+    	}
         return thisReference;
     }
         

@@ -55,6 +55,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -96,15 +97,51 @@ public class XmpReader {
 	 * @param	namespaceURI	the URI of the namespace
 	 * @param	localName		the tag name
 	 * @param	value			the new content for the tag
+	 * @return	true if the content was successfully replaced
+	 * @since	2.1.6 the return type has changed from void to boolean
 	 */
-	public void replace(String namespaceURI, String localName, String value) {
+	public boolean replace(String namespaceURI, String localName, String value) {
 		NodeList nodes = domDocument.getElementsByTagNameNS(namespaceURI, localName);
 		Node node;
+		if (nodes.getLength() == 0)
+			return false;
 		for (int i = 0; i < nodes.getLength(); i++) {
 			node = nodes.item(i);
 			setNodeText(domDocument, node, value);
 		}
+		return true;
 	}    
+	
+	/**
+	 * Adds a tag.
+	 * @param	namespaceURI	the URI of the namespace
+	 * @param	parent			the tag name of the parent
+	 * @param	localName		the name of the tag to add
+	 * @param	value			the new content for the tag
+	 * @return	true if the content was successfully added
+	 * @since	2.1.6
+	 */
+	public boolean add(String parent, String namespaceURI, String localName, String value) {
+		NodeList nodes = domDocument.getElementsByTagName(parent);
+		if (nodes.getLength() == 0)
+			return false;
+		Node pNode;
+		Node node;
+		for (int i = 0; i < nodes.getLength(); i++) {
+			pNode = nodes.item(i);
+			NamedNodeMap attrs = pNode.getAttributes();
+			for (int j = 0; j < attrs.getLength(); j++) {
+				node = attrs.item(j);
+				if (namespaceURI.equals(node.getNodeValue())) {
+					node = domDocument.createElement(localName);
+					node.appendChild(domDocument.createTextNode(value));
+					pNode.appendChild(node);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	
     /**
      * Sets the text of this node. All the child's node are deleted and a new
@@ -131,15 +168,15 @@ public class XmpReader {
 		XmlDomWriter xw = new XmlDomWriter();
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
         xw.setOutput(fout, null);
-        Node first = domDocument.getFirstChild();
-        xw.write(first);
-        fout.write('\n');
-        xw.write(first.getNextSibling());
+        fout.write(XmpWriter.XPACKET_PI_BEGIN.getBytes("UTF-8"));
+        fout.flush();
+        NodeList xmpmeta = domDocument.getElementsByTagName("x:xmpmeta");
+        xw.write(xmpmeta.item(0));
         fout.flush();
 		for (int i = 0; i < 20; i++) {
 			fout.write(XmpWriter.EXTRASPACE.getBytes());
 		}
-        xw.write(domDocument.getLastChild());
+        fout.write(XmpWriter.XPACKET_PI_END_W.getBytes());
         fout.close();
         return fout.toByteArray();
 	}

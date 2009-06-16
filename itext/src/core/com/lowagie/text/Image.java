@@ -682,8 +682,8 @@ public abstract class Image extends Rectangle {
 						int alpha = (pixels[j] >> 24) & 0xff;
 						if (alpha == 0) {
 							transparency = new int[2];
-							transparency[0] = transparency[1] = ((pixels[j] & 0x888) != 0) ? 1
-									: 0;
+							/* bugfix by M.P. Liston, ASC, was: ... ? 1: 0; */
+							transparency[0] = transparency[1] = ((pixels[j] & 0x888) != 0) ? 0xff : 0;
 						}
 					}
 					if ((pixels[j] & 0x888) != 0)

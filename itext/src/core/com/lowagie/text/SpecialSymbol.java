@@ -196,7 +196,7 @@ public class SpecialSymbol {
             case 965:
                 return 'u'; // upsilon
             case 966:
-                return 'j'; // phi
+                return 'f'; // phi
             case 967:
                 return 'c'; // chi
             case 968:

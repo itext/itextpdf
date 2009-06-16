@@ -338,6 +338,8 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 				prefs |= PdfWriter.PageModeUseOutlines;
 			else if (name.equals(PdfName.USETHUMBS))
 				prefs |= PdfWriter.PageModeUseThumbs;
+			else if (name.equals(PdfName.FULLSCREEN))
+				prefs |= PdfWriter.PageModeFullScreen;
 			else if (name.equals(PdfName.USEOC))
 				prefs |= PdfWriter.PageModeUseOC;
 			else if (name.equals(PdfName.USEATTACHMENTS))

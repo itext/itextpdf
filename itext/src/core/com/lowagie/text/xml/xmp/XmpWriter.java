@@ -89,6 +89,24 @@ public class XmpWriter {
 	
 	/** The about string that goes into the rdf:Description tags. */
 	protected String about;
+
+	/**
+	 * Processing Instruction required at the start of an XMP stream
+	 * @since iText 2.1.6
+	 */
+	public static final String XPACKET_PI_BEGIN = "<?xpacket begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n";
+	
+	/**
+	 * Processing Instruction required at the end of an XMP stream for XMP streams that can be updated
+	 * @since iText 2.1.6
+	 */
+	public static final String XPACKET_PI_END_W = "<?xpacket end=\"w\"?>";
+	
+	/**
+	 * Processing Instruction required at the end of an XMP stream for XMP streams that are read only
+	 * @since iText 2.1.6
+	 */
+	public static final String XPACKET_PI_END_R = "<?xpacket end=\"r\"?>";
 	
 	/** The end attribute. */
 	protected char end = 'w';
@@ -103,7 +121,7 @@ public class XmpWriter {
 	public XmpWriter(OutputStream os, String utfEncoding, int extraSpace) throws IOException {
 		this.extraSpace = extraSpace;
 		writer = new OutputStreamWriter(os, utfEncoding);
-		writer.write("<?xpacket begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n");
+		writer.write(XPACKET_PI_BEGIN);
 		writer.write("<x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n");
 		writer.write("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n");
 		about = "";
@@ -171,7 +189,7 @@ public class XmpWriter {
 		for (int i = 0; i < extraSpace; i++) {
 			writer.write(EXTRASPACE);
 		}
-		writer.write("<?xpacket end=\"" + end + "\"?>");
+		writer.write(end == 'r' ? XPACKET_PI_END_R : XPACKET_PI_END_W);
 		writer.flush();
 		writer.close();
 	}

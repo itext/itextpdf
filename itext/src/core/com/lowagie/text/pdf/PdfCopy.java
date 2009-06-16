@@ -694,7 +694,7 @@ public class PdfCopy extends PdfWriter {
                         }
                         PdfFormField field = (PdfFormField)annot;
                         if (field.getParent() == null)
-                            addDocumentField(field.getIndRef());
+                            addDocumentField(field.getIndirectReference());
                     }
                     if (annot.isAnnotation()) {
                         PdfObject pdfobj = PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
@@ -705,7 +705,7 @@ public class PdfCopy extends PdfWriter {
                         }
                         else 
                             annots = (PdfArray)pdfobj;
-                        annots.add(annot.getIndRef());
+                        annots.add(annot.getIndirectReference());
                         if (!annot.isUsed()) {
                             PdfRectangle rect = (PdfRectangle)annot.get(PdfName.RECT);
                             if (rect != null && (rect.left() != 0 || rect.right() != 0 || rect.top() != 0 || rect.bottom() != 0)) {
@@ -739,7 +739,7 @@ public class PdfCopy extends PdfWriter {
                     }
                     if (!annot.isUsed()) {
                         annot.setUsed();
-                        cstp.addToBody(annot, annot.getIndRef());
+                        cstp.addToBody(annot, annot.getIndirectReference());
                     }
                 }
             }

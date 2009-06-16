@@ -278,7 +278,7 @@ public class Phrase extends ArrayList implements TextElementArray {
                 if (!font.isStandardFont()) {
                     chunk.setFont(font.difference(chunk.getFont()));
                 }
-                if (hyphenation != null) {
+                if (hyphenation != null && chunk.getHyphenation() == null && !chunk.isEmpty()) {
                 	chunk.setHyphenation(hyphenation);
                 }
                 super.add(index, chunk);
@@ -400,7 +400,7 @@ public class Phrase extends ArrayList implements TextElementArray {
         }
         Chunk newChunk = new Chunk(c, f);
         newChunk.setAttributes(chunk.getAttributes());
-        if (newChunk.getHyphenation() == null) {
+        if (hyphenation != null && newChunk.getHyphenation() == null && !newChunk.isEmpty()) {
         	newChunk.setHyphenation(hyphenation);
         }
         return super.add(newChunk);
