@@ -383,6 +383,9 @@ public class FactoryProperties {
 			} else if (key.equals(Markup.CSS_KEY_TEXTALIGN)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				h.put("align", ss);
+			} else if (key.equals(Markup.CSS_KEY_PADDINGLEFT)) {
+				String ss = prop.getProperty(key).trim().toLowerCase();
+				h.put("indent", Float.toString(Markup.parseLength(ss)));
 			}
 		}
 	}

@@ -366,8 +366,12 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 					endElement(HtmlTags.LISTITEM);
 				skipText = true;
 				cprops.addToChain(tag, h);
-				com.lowagie.text.List list = new com.lowagie.text.List(false,
-						10);
+				com.lowagie.text.List list = new com.lowagie.text.List(false);
+				try{
+					list.setIndentationLeft(new Float(cprops.getProperty("indent")).floatValue());
+				}catch (Exception e) {
+					list.setAutoindent(true);
+				}
 				list.setListSymbol("\u2022");
 				stack.push(list);
 				return;
@@ -377,7 +381,12 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 					endElement(HtmlTags.LISTITEM);
 				skipText = true;
 				cprops.addToChain(tag, h);
-				com.lowagie.text.List list = new com.lowagie.text.List(true, 10);
+				com.lowagie.text.List list = new com.lowagie.text.List(true);
+				try{
+					list.setIndentationLeft(new Float(cprops.getProperty("indent")).floatValue());
+				}catch (Exception e) {
+					list.setAutoindent(true);
+				}
 				stack.push(list);
 				return;
 			}
