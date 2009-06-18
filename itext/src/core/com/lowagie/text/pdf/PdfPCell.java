@@ -921,10 +921,9 @@ public class PdfPCell extends Rectangle{
      * @param rotation the rotation of the cell
      */
     public void setRotation(int rotation) {
+        rotation %= 360;
         if (rotation < 0)
             rotation += 360;
-        else
-            rotation %= 360;
         if ((rotation % 90) != 0)
             throw new IllegalArgumentException("Rotation must be a multiple of 90.");
         this.rotation = rotation;
