@@ -200,7 +200,7 @@ public class PdfSmartCopy extends PdfCopy {
                 throw new ExceptionConverter(e);
             }
             ByteBuffer bb = new ByteBuffer();
-            int level = 10;
+            int level = 100;
             serObject(str, level, bb);
             this.b = bb.toByteArray();
             md5 = null;
