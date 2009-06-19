@@ -54,6 +54,7 @@ import java.util.List;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
@@ -950,4 +951,63 @@ public class PdfPCell extends Rectangle{
 			// do nothing
 		}
     }
+	
+	/**
+	 * Returns the height of the cell.
+	 * @return	the height of the cell
+	 * @since	3.0.0
+	 */
+	public float getMaxHeight() {
+		boolean pivoted = (getRotation() == 90 || getRotation() == 270);
+		Image img = getImage();
+		if (img != null) {
+			img.scalePercent(100);
+			float refWidth = pivoted ? img.getScaledHeight() : img.getScaledWidth();
+			float scale = (getRight() - getEffectivePaddingRight()
+                    - getEffectivePaddingLeft() - getLeft()) / refWidth;
+			img.scalePercent(scale * 100);
+			float refHeight = pivoted ? img.getScaledWidth() : img.getScaledHeight();
+			setBottom(getTop() - getEffectivePaddingTop() - getEffectivePaddingBottom() - refHeight);
+		}
+		else {
+			if (pivoted && hasFixedHeight())
+				setBottom(getTop() - getFixedHeight());
+			else {
+				ColumnText ct = ColumnText.duplicate(getColumn());
+				float right, top, left, bottom;
+				if (pivoted) {
+					right = PdfPRow.RIGHT_LIMIT;
+					top = getRight() - getEffectivePaddingRight();
+					left = 0;
+					bottom = getLeft() + getEffectivePaddingLeft();
+				}
+				else {
+					right = isNoWrap() ? PdfPRow.RIGHT_LIMIT : getRight() - getEffectivePaddingRight();
+					top = getTop() - getEffectivePaddingTop();
+					left = getLeft() + getEffectivePaddingLeft();
+					bottom = hasFixedHeight() ? top + getEffectivePaddingBottom() - getFixedHeight() : PdfPRow.BOTTOM_LIMIT;
+				}
+				PdfPRow.setColumn(ct, left, bottom, right, top);
+				try {
+					ct.go(true);
+				} catch (DocumentException e) {
+					throw new ExceptionConverter(e);
+				}
+				if (pivoted)
+					setBottom(getTop() - getEffectivePaddingTop() - getEffectivePaddingBottom() - ct.getFilledWidth());
+				else {
+					float yLine = ct.getYLine();
+					if (isUseDescender())
+						yLine += ct.getDescender();
+					setBottom(yLine - getEffectivePaddingBottom());
+				}
+			}
+		}
+		float height = getHeight();
+		if (height < getFixedHeight())
+			height = getFixedHeight();
+		else if (height < getMinimumHeight())
+			height = getMinimumHeight();
+		return height;
+	}
 }
