@@ -186,59 +186,7 @@ public class PdfPRow {
 				continue;
 			}
 			else {
-				boolean pivoted = (cell.getRotation() == 90 || cell.getRotation() == 270);
-				Image img = cell.getImage();
-				if (img != null) {
-					img.scalePercent(100);
-					float refWidth = pivoted ? img.getScaledHeight() : img.getScaledWidth();
-					float scale = (cell.getRight() - cell.getEffectivePaddingRight()
-	                    - cell.getEffectivePaddingLeft() - cell.getLeft()) / refWidth;
-					img.scalePercent(scale * 100);
-					float refHeight = pivoted ? img.getScaledWidth() : img.getScaledHeight();
-					cell.setBottom(cell.getTop() - cell.getEffectivePaddingTop()
-						- cell.getEffectivePaddingBottom() - refHeight);
-				}
-				else {
-					if (pivoted && cell.hasFixedHeight())
-						cell.setBottom(cell.getTop() - cell.getFixedHeight());
-					else {
-						ColumnText ct = ColumnText.duplicate(cell.getColumn());
-						float right, top, left, bottom;
-						if (pivoted) {
-							right = RIGHT_LIMIT;
-							top = cell.getRight() - cell.getEffectivePaddingRight();
-							left = 0;
-							bottom = cell.getLeft() + cell.getEffectivePaddingLeft();
-						}
-						else {
-							right = cell.isNoWrap() ? RIGHT_LIMIT : cell.getRight() - cell.getEffectivePaddingRight();
-							top = cell.getTop() - cell.getEffectivePaddingTop();
-							left = cell.getLeft() + cell.getEffectivePaddingLeft();
-							bottom = cell.hasFixedHeight() ? top + cell.getEffectivePaddingBottom() - cell.getFixedHeight() : BOTTOM_LIMIT;
-						}
-						setColumn(ct, left, bottom, right, top);
-						try {
-							ct.go(true);
-						} catch (DocumentException e) {
-							throw new ExceptionConverter(e);
-						}
-						if (pivoted)
-							cell.setBottom(cell.getTop() - cell.getEffectivePaddingTop() - cell.getEffectivePaddingBottom() - ct.getFilledWidth());
-						else {
-							float yLine = ct.getYLine();
-							if (cell.isUseDescender())
-								yLine += ct.getDescender();
-							cell.setBottom(yLine - cell.getEffectivePaddingBottom());
-						}
-					}
-				}
-				height = cell.getFixedHeight();
-				if (height <= 0)
-					height = cell.getHeight();
-				if (height < cell.getFixedHeight())
-					height = cell.getFixedHeight();
-				else if (height < cell.getMinimumHeight())
-					height = cell.getMinimumHeight();
+				height = cell.getMaxHeight();
 				if ((height > maxHeight) && (cell.getRowspan() == 1))
 					maxHeight = height;
 			}
@@ -315,9 +263,9 @@ public class PdfPRow {
     }
 
 	/**
-	 * @since	2.1.6 private is now protected
+	 * @since	3.0.0 protected is now public static
 	 */
-    protected float setColumn(ColumnText ct, float left, float bottom, float right, float top) {
+    public static float setColumn(ColumnText ct, float left, float bottom, float right, float top) {
         if (left > right)
             right = left;
         if (bottom > top)

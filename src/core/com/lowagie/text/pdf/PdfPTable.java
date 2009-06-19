@@ -415,12 +415,7 @@ public class PdfPTable implements LargeElement{
             return 0;
         totalHeight = 0;
         for (int k = 0; k < rows.size(); ++k) {
-            PdfPRow row = (PdfPRow)rows.get(k);
-            if (row != null) {
-            	if (firsttime)
-            		row.setWidths(absoluteWidths);
-                totalHeight += row.getMaxHeights();
-            }
+        	totalHeight += getRowHeight(k, firsttime);
         }
         return totalHeight;
     }
@@ -827,7 +822,7 @@ public class PdfPTable implements LargeElement{
     public float getTotalHeight() {
         return totalHeight;
     }
-    
+
     /**
      * Gets the height of a particular row.
      * 
@@ -835,12 +830,49 @@ public class PdfPTable implements LargeElement{
      * @return the height of a particular row
      */    
     public float getRowHeight(int idx) {
+    	return getRowHeight(idx, false);
+    }
+    /**
+     * Gets the height of a particular row.
+     * 
+     * @param idx the row index (starts at 0)
+     * @param firsttime	is this the first time the row heigh is calculated?
+     * @return the height of a particular row
+     * @since	3.0.0
+     */    
+    public float getRowHeight(int idx, boolean firsttime) {
         if (totalWidth <= 0 || idx < 0 || idx >= rows.size())
             return 0;
         PdfPRow row = (PdfPRow)rows.get(idx);
         if (row == null)
             return 0;
-        return row.getMaxHeights();
+        if (firsttime)
+        	row.setWidths(absoluteWidths);
+        float height = row.getMaxHeights();
+        PdfPCell cell;
+        PdfPRow tmprow;
+        for (int i = 0; i < relativeWidths.length; i++) {
+        	if(!rowSpanAbove(idx, i))
+        		continue;
+        	int rs = 1;
+        	while (rowSpanAbove(idx - rs, i)) {
+        		rs++;
+        	}
+        	tmprow = (PdfPRow)rows.get(idx - rs);
+        	cell = tmprow.getCells()[i];
+        	float tmp = 0;
+        	if (cell.getRowspan() == rs + 1) {
+        		tmp = cell.getMaxHeight();
+        		while (rs > 0) {
+        			tmp -= getRowHeight(idx - rs);
+        			rs--;
+        		}
+        	}
+        	if (tmp > height)
+        		height = tmp;
+        }
+        row.setMaxHeights(height);
+        return height;
     }
     
     /**
