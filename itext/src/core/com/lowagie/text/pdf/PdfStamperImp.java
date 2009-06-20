@@ -207,13 +207,13 @@ class PdfStamperImp extends PdfWriter {
         }
         // metadata
         int skipInfo = -1;
-        PRIndirectReference iInfo = (PRIndirectReference)reader.trailer.get(PdfName.INFO);
+        PRIndirectReference iInfo = (PRIndirectReference)reader.getTrailer().get(PdfName.INFO);
         PdfDictionary oldInfo = (PdfDictionary)PdfReader.getPdfObject(iInfo);
         String producer = null;
         if (iInfo != null)
             skipInfo = iInfo.getNumber();
         if (oldInfo != null)
-        	producer = oldInfo.getAsString(PdfName.PRODUCER).value;
+        	producer = oldInfo.getAsString(PdfName.PRODUCER).toString();
         if (producer == null) {
         	producer = Document.getVersion();
         }
