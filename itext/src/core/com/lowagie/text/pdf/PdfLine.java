@@ -199,7 +199,7 @@ public class PdfLine {
     
     private void addToLine(PdfChunk chunk) {
         if (chunk.changeLeading && chunk.isImage()) {
-        	float f = chunk.getImage().getScaledHeight() + chunk.getImageOffsetY();
+        	float f = chunk.getImage().getScaledHeight() + chunk.getImageOffsetY() + chunk.getImage().getBorderWidthTop();
         	if (f > height) height = f;
         }
     	line.add(chunk);
