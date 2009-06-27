@@ -75,6 +75,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OutputStream;
@@ -87,11 +88,14 @@ import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERString;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.DERUTCTime;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.jce.provider.X509CRLParser;
@@ -210,9 +214,9 @@ public class PdfPKCS7 {
         algorithmNames.put("1.2.840.10040.4.3", "DSA");
         algorithmNames.put("2.16.840.1.101.3.4.3.1", "DSA");
         algorithmNames.put("2.16.840.1.101.3.4.3.2", "DSA");
-        digestNames.put("1.3.36.3.3.1.3", "RSA");
-        digestNames.put("1.3.36.3.3.1.2", "RSA");
-        digestNames.put("1.3.36.3.3.1.4", "RSA");
+        algorithmNames.put("1.3.36.3.3.1.3", "RSA");
+        algorithmNames.put("1.3.36.3.3.1.2", "RSA");
+        algorithmNames.put("1.3.36.3.3.1.4", "RSA");
         
         allowedDigests.put("MD5", "1.2.840.113549.2.5");
         allowedDigests.put("MD2", "1.2.840.113549.2.2");
@@ -459,19 +463,8 @@ public class PdfPKCS7 {
             next = 3;
             if (signerInfo.getObjectAt(next) instanceof ASN1TaggedObject) {
                 ASN1TaggedObject tagsig = (ASN1TaggedObject)signerInfo.getObjectAt(next);
-                ASN1Sequence sseq = (ASN1Sequence)tagsig.getObject();
-                ByteArrayOutputStream bOut = new ByteArrayOutputStream();            
-                ASN1OutputStream dout = new ASN1OutputStream(bOut);
-                try {
-                    ASN1EncodableVector attribute = new ASN1EncodableVector();
-                    for (int k = 0; k < sseq.size(); ++k) {
-                        attribute.add(sseq.getObjectAt(k));
-                    }
-                    dout.writeObject(new DERSet(attribute));
-                    dout.close();
-                }
-                catch (IOException ioe){}
-                sigAttr = bOut.toByteArray();
+                ASN1Set sseq = ASN1Set.getInstance(tagsig, false);
+                sigAttr = sseq.getEncoded(ASN1Encodable.DER);
 
                 for (int k = 0; k < sseq.size(); ++k) {
                     ASN1Sequence seq2 = (ASN1Sequence)sseq.getObjectAt(k);
@@ -499,16 +492,14 @@ public class PdfPKCS7 {
             digest = ((DEROctetString)signerInfo.getObjectAt(next++)).getOctets();
             if (next < signerInfo.size() && (signerInfo.getObjectAt(next) instanceof DERTaggedObject)) {
                 DERTaggedObject taggedObject = (DERTaggedObject) signerInfo.getObjectAt(next);
-                DERObject object = taggedObject.getObject();
-                if (object instanceof DERSequence) {
-                    DERSequence sequence = (DERSequence) object;
-                    DERObjectIdentifier oid = (DERObjectIdentifier)sequence.getObjectAt(0);
-                    if (PKCSObjectIdentifiers.id_aa_signatureTimeStampToken.getId().equals(oid.getId())) {
-                        ASN1Set attributeValues = ASN1Set.getInstance(sequence.getObjectAt(1));
-                        ASN1Sequence tokenSequence = ASN1Sequence.getInstance(attributeValues.getObjectAt(0));
-                        ContentInfo contentInfo = new ContentInfo(tokenSequence);
-                        this.timeStampToken = new TimeStampToken(contentInfo);
-                    }
+                ASN1Set unat = ASN1Set.getInstance(taggedObject, false);
+                AttributeTable attble = new AttributeTable(unat);
+                Attribute ts = attble.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
+                if (ts != null) {
+                    ASN1Set attributeValues = ts.getAttrValues();
+                    ASN1Sequence tokenSequence = ASN1Sequence.getInstance(attributeValues.getObjectAt(0));
+                    ContentInfo contentInfo = new ContentInfo(tokenSequence);
+                    this.timeStampToken = new TimeStampToken(contentInfo);
                 }
             }
             if (RSAdata != null || digestAttr != null) {
@@ -1349,13 +1340,7 @@ public class PdfPKCS7 {
      */    
     public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime, byte[] ocsp) {
         try {
-            ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
-            
-            ASN1OutputStream dout = new ASN1OutputStream(bOut);
-            dout.writeObject(getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp));
-            dout.close();
-            
-            return bOut.toByteArray();
+            return getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp).getEncoded(ASN1Encodable.DER);
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
