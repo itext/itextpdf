@@ -212,7 +212,7 @@ class PdfStamperImp extends PdfWriter {
         String producer = null;
         if (iInfo != null)
             skipInfo = iInfo.getNumber();
-        if (oldInfo != null)
+        if (oldInfo != null && oldInfo.get(PdfName.PRODUCER) != null)
         	producer = oldInfo.getAsString(PdfName.PRODUCER).toString();
         if (producer == null) {
         	producer = Document.getVersion();
