@@ -94,6 +94,8 @@ import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERString;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.DERUTCTime;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.jce.provider.X509CRLParser;
@@ -490,18 +492,14 @@ public class PdfPKCS7 {
             digest = ((DEROctetString)signerInfo.getObjectAt(next++)).getOctets();
             if (next < signerInfo.size() && (signerInfo.getObjectAt(next) instanceof DERTaggedObject)) {
                 DERTaggedObject taggedObject = (DERTaggedObject) signerInfo.getObjectAt(next);
-                DERObject object = taggedObject.getObject();
-                if (object instanceof DERSequence) {
-                    DERSequence sequence = (DERSequence) object;
-                    if (sequence.getObjectAt(0) instanceof DERSequence)
-                        sequence = (DERSequence)sequence.getObjectAt(0);
-                    DERObjectIdentifier oid = (DERObjectIdentifier)sequence.getObjectAt(0);
-                    if (PKCSObjectIdentifiers.id_aa_signatureTimeStampToken.getId().equals(oid.getId())) {
-                        ASN1Set attributeValues = ASN1Set.getInstance(sequence.getObjectAt(1));
-                        ASN1Sequence tokenSequence = ASN1Sequence.getInstance(attributeValues.getObjectAt(0));
-                        ContentInfo contentInfo = new ContentInfo(tokenSequence);
-                        this.timeStampToken = new TimeStampToken(contentInfo);
-                    }
+                ASN1Set unat = ASN1Set.getInstance(taggedObject, false);
+                AttributeTable attble = new AttributeTable(unat);
+                Attribute ts = attble.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
+                if (ts != null) {
+                    ASN1Set attributeValues = ts.getAttrValues();
+                    ASN1Sequence tokenSequence = ASN1Sequence.getInstance(attributeValues.getObjectAt(0));
+                    ContentInfo contentInfo = new ContentInfo(tokenSequence);
+                    this.timeStampToken = new TimeStampToken(contentInfo);
                 }
             }
             if (RSAdata != null || digestAttr != null) {
