@@ -397,7 +397,7 @@ public class PdfPRow {
                             calcHeight -= ct.getDescender();
                         ct = ColumnText.duplicate(cell.getColumn());
                         ct.setCanvases(canvases);
-                        ct.setSimpleColumn(-0.001f, -0.001f, netWidth + 0.001f, calcHeight);
+                        ct.setSimpleColumn(-0.003f, -0.001f, netWidth + 0.003f, calcHeight);
                         float pivotX;
                         float pivotY;
                         if (cell.getRotation() == 90) {
