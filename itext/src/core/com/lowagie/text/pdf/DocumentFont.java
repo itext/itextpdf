@@ -154,7 +154,7 @@ public class DocumentFont extends BaseFont {
     
     private void processType0(PdfDictionary font) {
         try {
-            byte[] touni = PdfReader.getStreamBytes((PRStream)PdfReader.getPdfObjectRelease(font.get(PdfName.TOUNICODE)));
+            PdfObject toUniObject = PdfReader.getPdfObjectRelease(font.get(PdfName.TOUNICODE));
             PdfArray df = (PdfArray)PdfReader.getPdfObjectRelease(font.get(PdfName.DESCENDANTFONTS));
             PdfDictionary cidft = (PdfDictionary)PdfReader.getPdfObjectRelease(df.getPdfObject(0));
             PdfNumber dwo = (PdfNumber)PdfReader.getPdfObjectRelease(cidft.get(PdfName.DW));
@@ -164,7 +164,10 @@ public class DocumentFont extends BaseFont {
             IntHashtable widths = readWidths((PdfArray)PdfReader.getPdfObjectRelease(cidft.get(PdfName.W)));
             PdfDictionary fontDesc = (PdfDictionary)PdfReader.getPdfObjectRelease(cidft.get(PdfName.FONTDESCRIPTOR));
             fillFontDesc(fontDesc);
-            fillMetrics(touni, widths, dw);
+            if (toUniObject != null){
+                fillMetrics(PdfReader.getStreamBytes((PRStream)toUniObject), widths, dw);
+            }
+            
         } catch (Exception e) {
             throw new ExceptionConverter(e);
         }
@@ -665,5 +668,14 @@ public class DocumentFont extends BaseFont {
     
     protected int[] getRawCharBBox(int c, String name) {
         return null;
+    }
+    
+    /**
+     * Exposes the unicode - > CID map that is constructed from the font's encoding
+     * @return the unicode to CID map
+     * @since 2.1.7
+     */
+    IntHashtable getUni2Byte(){
+        return uni2byte;
     }
 }

@@ -176,24 +176,15 @@ public abstract class PdfContentStreamProcessor {
     }
 
     /**
-     * Encodes a String based on the active font.
+     * Decodes a PdfString (which will contain glyph ids encoded in the font's encoding)
+     * based on the active font, and determine the unicode equivalent
      * @param in	the String that needs to be encoded
      * @return	the encoded String
+     * @since 2.1.7
      */
-    private String encode(String in){
+    private String decode(PdfString in){
         byte[] bytes = in.getBytes();
-        StringBuffer sb = new StringBuffer();
-        
-        for(int i = 0; i < bytes.length; i++){
-            String rslt = gs().font.encode(bytes, i, 1);
-            if (rslt == null){
-                rslt = gs().font.encode(bytes, i, 2);
-                i++;
-            }
-            sb.append(rslt);
-        }
-        
-        return sb.toString();
+        return gs().font.decode(bytes, 0, bytes.length);
     }
     
     /**
@@ -228,7 +219,7 @@ public abstract class PdfContentStreamProcessor {
      * @param tj		the text adjustment
      */
     public void displayPdfString(PdfString string, float tj){
-        String unicode = encode(string.toUnicodeString());
+        String unicode = decode(string);
         
         float width = getStringWidth(unicode, tj); // this is width in unscaled units - we have to normalize by the Tm scaling
 
