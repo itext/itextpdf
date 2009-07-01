@@ -174,7 +174,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
         }
 
         if (len == 1){
-            return new String(cidbyte2uni, bytes[offset], 1);
+            return new String(cidbyte2uni, 0xff & bytes[offset], 1);
         }
         
         throw new Error("Multi-byte glyphs not implemented yet");
