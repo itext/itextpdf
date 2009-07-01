@@ -666,4 +666,13 @@ public class DocumentFont extends BaseFont {
     protected int[] getRawCharBBox(int c, String name) {
         return null;
     }
+    
+    /**
+     * Exposes the unicode - > CID map that is constructed from the font's encoding
+     * @return the unicode to CID map
+     * @since 2.1.7
+     */
+    IntHashtable getUni2Byte(){
+        return uni2byte;
+    }
 }
