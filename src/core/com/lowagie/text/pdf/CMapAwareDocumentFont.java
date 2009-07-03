@@ -120,10 +120,16 @@ public class CMapAwareDocumentFont extends DocumentFont {
     private void processUni2Byte(){
         IntHashtable uni2byte = getUni2Byte();
         int e[] = uni2byte.toOrderedKeys();
-        cidbyte2uni = new char[e[e.length-1]]; // array must be as long as the largest cid index in uni2byte
+        
+        cidbyte2uni = new char[256];
         for (int k = 0; k < e.length; ++k) {
             int n = uni2byte.get(e[k]);
-            cidbyte2uni[n] = (char)e[k];
+            
+            // this is messy, messy - an encoding can have multiple unicode values mapping to the same cid - we are going to arbitrarily choose the first one
+            // what we really need to do is to parse the encoding, and handle the differences info ourselves.  This is a huge duplication of code of what is already
+            // being done in DocumentFont, so I really hate to go down that path without seriously thinking about a change in the organization of the Font class hierarchy
+            if (cidbyte2uni[n] == 0)
+                cidbyte2uni[n] = (char)e[k];
         }
     }
     
