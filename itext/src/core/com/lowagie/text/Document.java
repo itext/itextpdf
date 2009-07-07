@@ -108,7 +108,7 @@ public class Document implements DocListener {
      * This constant may only be changed by Paulo Soares and/or Bruno Lowagie.
      * @since	2.1.6
      */
-	private static final String RELEASE = "2.1.6";
+	private static final String RELEASE = "2.1.7";
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
 	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " by 1T3XT";
     
@@ -605,7 +605,7 @@ public class Document implements DocListener {
     
     public boolean addProducer() {
         try {
-            return add(new Meta(Element.PRODUCER, "iText by lowagie.com"));
+            return add(new Meta(Element.PRODUCER, getVersion()));
 		} catch (DocumentException de) {
             throw new ExceptionConverter(de);
         }
