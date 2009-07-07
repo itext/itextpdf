@@ -173,6 +173,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
     
     /**
      * Default font
+     * @since 2.1.7
      */
     public static final String DEFAULT_FONT = "Times New Roman";
 
