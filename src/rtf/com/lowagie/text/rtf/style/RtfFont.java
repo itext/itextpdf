@@ -170,11 +170,16 @@ public class RtfFont extends Font implements RtfExtendedElement {
      * Constant for a font that hides the actual text.
      */
     public static final int STYLE_HIDDEN = 512;
+    
+    /**
+     * Default font
+     */
+    public static final String DEFAULT_FONT = "Times New Roman";
 
     /**
      * The font name. Defaults to "Times New Roman"
      */
-    private String fontName = "Times New Roman";
+    private String fontName = DEFAULT_FONT;
     /**
      * The font size. Defaults to 10
      */
@@ -302,6 +307,10 @@ public class RtfFont extends Font implements RtfExtendedElement {
                     }
                 }
             }
+
+            if(this.fontName.equalsIgnoreCase("unknown")) {
+                this.fontName = DEFAULT_FONT;
+            }
             
             setSize(font.getSize());
             setStyle(font.getStyle());
@@ -309,10 +318,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
             if(document != null) {
             	this.fontNumber = document.getDocumentHeader().getFontNumber(this);
             }
-        }
-
-        if(this.fontName.equalsIgnoreCase("unknown")) {
-            return;
         }
 
         if(document != null) {
