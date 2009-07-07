@@ -469,8 +469,8 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         }
         if(!this.inTable) {
             result.write(CLOSE_GROUP);
-            result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
         }
+        result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
     }        
     /**
      * 
