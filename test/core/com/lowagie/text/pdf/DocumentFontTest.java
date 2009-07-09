@@ -20,10 +20,10 @@ import org.junit.Test;
  */
 public class DocumentFontTest {
 
-    private File resourceRoot;
+    private static File resourceRoot;
     
     @BeforeClass
-    public void setUpClass() throws Exception {
+    public static void setUpClass() throws Exception {
         resourceRoot = new File("test/core/com/lowagie/text/pdf");
     }
     
