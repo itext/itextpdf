@@ -327,7 +327,7 @@ public abstract class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             ArrayList tdoperands = new ArrayList(2);
             tdoperands.add(0, new PdfNumber(0));
-            tdoperands.add(1, new PdfNumber(processor.gs().leading));
+            tdoperands.add(1, new PdfNumber(-processor.gs().leading));
             processor.invokeOperator(new PdfLiteral("Td"), tdoperands);
         }
     }
