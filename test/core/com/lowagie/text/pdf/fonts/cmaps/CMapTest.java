@@ -39,5 +39,10 @@ public class CMapTest {
         checkInsertAndRetrieval(new byte[]{(byte)0x91}, "\u2018");
         checkInsertAndRetrieval(new byte[]{(byte)0x91, (byte)0x92}, "\u2018");
 
+        checkInsertAndRetrieval(new byte[]{(byte)0x20}, "\u2018");
+        checkInsertAndRetrieval(new byte[]{(byte)0x23, (byte)0x21}, "\u2018");
+        checkInsertAndRetrieval(new byte[]{(byte)0x22, (byte)0xf0}, "\u2018");
+        checkInsertAndRetrieval(new byte[]{(byte)0xf1, (byte)0x25}, "\u2018");
+
     }
 }
