@@ -49,7 +49,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.awt.font.GlyphVector;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
