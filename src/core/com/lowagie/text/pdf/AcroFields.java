@@ -1389,11 +1389,9 @@ public class AcroFields {
                 }
             }
             int vidx = lopt.indexOf(value);
-            PdfName valt = null;
             PdfName vt;
-            if (vidx >= 0) {
-                vt = valt = new PdfName(String.valueOf(vidx));
-            }
+            if (vidx >= 0)
+                vt = new PdfName(String.valueOf(vidx));
             else
                 vt = v;
             for (int idx = 0; idx < item.size(); ++idx) {
@@ -1401,15 +1399,8 @@ public class AcroFields {
                 PdfDictionary widget = item.getWidget(idx);
                 PdfDictionary valDict = item.getValue(idx);
                 markUsed(item.getValue(idx));
-                if (valt != null) {
-                    PdfString ps = new PdfString(value, PdfObject.TEXT_UNICODE);
-                    valDict.put(PdfName.V, ps);
-                    merged.put(PdfName.V, ps);
-                }
-                else {
-                    valDict.put(PdfName.V, v);
-                    merged.put(PdfName.V, v);
-                }
+                valDict.put(PdfName.V, vt);
+                merged.put(PdfName.V, vt);
                 markUsed(widget);
                 if (isInAP(widget,  vt)) {
                     merged.put(PdfName.AS, vt);
