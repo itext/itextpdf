@@ -1435,10 +1435,7 @@ public class ColumnText {
                     
                     // first we add the real header rows (if necessary)
                     if (!skipHeader) {
-                        for (int j = 0; j < realHeaderRows; ++j) {
-                        	PdfPRow headerRow = table.getRow(j);
-                            sub.add(headerRow);
-                        }
+                        sub.addAll(table.getRows(0, realHeaderRows));
                     }
                     else
                         nt.setHeaderRows(footerRows);
