@@ -96,31 +96,37 @@ public abstract class PdfContentStreamProcessor {
     private void populateOperators(){
         operators = new HashMap();
         
-        operators.put("q", new PushGraphicsState());
-        operators.put("Q", new PopGraphicsState());
-        operators.put("cm", new ModifyCurrentTransformationMatrix());
-        operators.put("gs", new ProcessGraphicsStateResource());
+        registerContentOperator("q", new PushGraphicsState());
+        registerContentOperator("Q", new PopGraphicsState());
+        registerContentOperator("cm", new ModifyCurrentTransformationMatrix());
+        registerContentOperator("gs", new ProcessGraphicsStateResource());
         
-        operators.put("Tc", new SetTextCharacterSpacing());
-        operators.put("Tw", new SetTextWordSpacing());
-        operators.put("Tz", new SetTextHorizontalScaling());
-        operators.put("TL", new SetTextLeading());
-        operators.put("Tf", new SetTextFont());
-        operators.put("Tr", new SetTextRenderMode());
-        operators.put("Ts", new SetTextRise());
+        registerContentOperator("Tc", new SetTextCharacterSpacing());
+        registerContentOperator("Tw", new SetTextWordSpacing());
+        registerContentOperator("Tz", new SetTextHorizontalScaling());
+        registerContentOperator("TL", new SetTextLeading());
+        registerContentOperator("Tf", new SetTextFont());
+        registerContentOperator("Tr", new SetTextRenderMode());
+        registerContentOperator("Ts", new SetTextRise());
         
-        operators.put("BT", new BeginText());
-        operators.put("ET", new EndText());
+        registerContentOperator("BT", new BeginText());
+        registerContentOperator("ET", new EndText());
 
-        operators.put("Td", new TextMoveStartNextLine());
-        operators.put("TD", new TextMoveStartNextLineWithLeading());
-        operators.put("Tm", new TextSetTextMatrix());
-        operators.put("T*", new TextMoveNextLine());
+        registerContentOperator("Td", new TextMoveStartNextLine());
+        registerContentOperator("TD", new TextMoveStartNextLineWithLeading());
+        registerContentOperator("Tm", new TextSetTextMatrix());
+        registerContentOperator("T*", new TextMoveNextLine());
         
-        operators.put("Tj", new ShowText());
-        operators.put("'", new MoveNextLineAndShowText());
-        operators.put("\"", new MoveNextLineAndShowTextWithSpacing());
-        operators.put("TJ", new ShowTextArray());
+        registerContentOperator("Tj", new ShowText());
+        registerContentOperator("'", new MoveNextLineAndShowText());
+        registerContentOperator("\"", new MoveNextLineAndShowTextWithSpacing());
+        registerContentOperator("TJ", new ShowTextArray());
+    }
+    
+    public void registerContentOperator(String operatorString, ContentOperator operator){
+        if (operators.containsKey(operatorString))
+            throw new IllegalArgumentException("Operator " + operatorString + " already registered");
+        operators.put(operatorString, operator);
     }
     
     /**
