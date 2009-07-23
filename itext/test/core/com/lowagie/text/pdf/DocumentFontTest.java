@@ -37,11 +37,10 @@ public class DocumentFontTest {
 
     @Test
     public void testConstructionForType0WithoutToUnicodeMap() throws Exception{
-        File testFile = new File(resourceRoot, "type0FontWithoutToUnicodeMap.pdf");
         int pageNum = 2;
         PdfName fontIdName = new PdfName("TT9");
         
-        RandomAccessFileOrArray f = new RandomAccessFileOrArray(testFile.getAbsolutePath());
+        RandomAccessFileOrArray f = new RandomAccessFileOrArray("type0FontWithoutToUnicodeMap.pdf");
         PdfReader reader = new PdfReader(f, null);
         
         PdfDictionary fontsDic = reader.getPageN(pageNum).getAsDict(PdfName.RESOURCES).getAsDict(PdfName.FONT);
