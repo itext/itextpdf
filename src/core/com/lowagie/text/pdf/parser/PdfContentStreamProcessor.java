@@ -123,6 +123,13 @@ public abstract class PdfContentStreamProcessor {
         registerContentOperator("TJ", new ShowTextArray());
     }
     
+    /**
+     * Registers a content operator that will be called when the specified operator string is encountered during content processing.
+     * Each operator may be registered only once (it is not legal to have multiple operators with the same operatorString)
+     * @param operatorString the operator id
+     * @param operator the operator that will receive notification when the operator is encountered
+     * @since 2.1.7
+     */
     public void registerContentOperator(String operatorString, ContentOperator operator){
         if (operators.containsKey(operatorString))
             throw new IllegalArgumentException("Operator " + operatorString + " already registered");
