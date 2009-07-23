@@ -55,7 +55,7 @@ public class PdfContentStreamProcessorTest
 
   private byte[] readDocument(final File file) throws IOException {
 
-    final InputStream inputStream = new FileInputStream(file);
+    final InputStream inputStream = new FileInputStream("yaxiststar.pdf");
 
     final ByteArrayOutputStream fileBytes = new ByteArrayOutputStream();
     final byte[] buffer = new byte[8192];
