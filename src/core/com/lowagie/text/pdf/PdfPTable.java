@@ -155,7 +155,7 @@ public class PdfPTable implements LargeElement{
     /**
      * Holds value of property extendLastRow.
      */
-    private boolean extendLastRow;
+    private boolean[] extendLastRow = { false, false };
     
     /**
      * Holds value of property headersInEvent.
@@ -840,7 +840,7 @@ public class PdfPTable implements LargeElement{
      * @param idx the row index (starts at 0)
      * @param firsttime	is this the first time the row heigh is calculated?
      * @return the height of a particular row
-     * @since	3.0.0
+     * @since	5.0.0
      */    
     public float getRowHeight(int idx, boolean firsttime) {
         if (totalWidth <= 0 || idx < 0 || idx >= rows.size())
@@ -1424,20 +1424,48 @@ public class PdfPTable implements LargeElement{
      * @return true if the last row will extend; false otherwise
      */
     public boolean isExtendLastRow() {
-        return extendLastRow;
+        return extendLastRow[0];
     }
     
     /**
-     * When set the last row will be extended to fill all the remaining space
-     * to the bottom boundary.
+     * When set the last row on every page will be extended to fill
+     * all the remaining space to the bottom boundary.
      * 
-     * @param extendLastRow true to extend the last row; false otherwise
+     * @param extendLastRows true to extend the last row; false otherwise
      */
-    public void setExtendLastRow(boolean extendLastRow) {
-        this.extendLastRow = extendLastRow;
+    public void setExtendLastRow(boolean extendLastRows) {
+        extendLastRow[0] = extendLastRows;
+		extendLastRow[1] = extendLastRows;
     }
     
     /**
+     * When set the last row on every page will be extended to fill
+     * all the remaining space to the bottom boundary; except maybe the
+     * final row.
+     * 
+     * @param extendLastRows true to extend the last row on each page; false otherwise
+     * @param extendFinalRow false if you don't want to extend the final row of the complete table
+	 */
+	public void setExtendLastRow(boolean extendLastRows, boolean extendFinalRow) {
+		extendLastRow[0] = extendLastRows;
+		extendLastRow[1] = extendFinalRow;
+	}
+	
+    /**
+     * Gets the value of the last row extension, taking into account
+     * if the final row is reached or not.
+     * 
+     * @return true if the last row will extend; false otherwise
+     * @since iText 5.0.0
+     */
+    public boolean isExtendLastRow(boolean newPageFollows) {
+    	if (newPageFollows) {
+            return extendLastRow[0];	
+    	}
+		return extendLastRow[1];
+    }
+
+	/**
      * Gets the header status inclusion in PdfPTableEvent.
      * 
      * @return true if the headers are included; false otherwise
