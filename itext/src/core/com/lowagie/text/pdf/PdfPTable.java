@@ -1445,6 +1445,7 @@ public class PdfPTable implements LargeElement{
      * 
      * @param extendLastRows true to extend the last row on each page; false otherwise
      * @param extendFinalRow false if you don't want to extend the final row of the complete table
+	 * @since iText 5.0.0
 	 */
 	public void setExtendLastRow(boolean extendLastRows, boolean extendFinalRow) {
 		extendLastRow[0] = extendLastRows;
