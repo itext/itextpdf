@@ -50,6 +50,7 @@
 package com.lowagie.text.pdf;
 
 import java.io.IOException;
+import com.lowagie.text.exceptions.InvalidPdfException;
 /**
  *
  * @author  Paulo Soares (psoares@consiste.pt)
@@ -190,7 +191,7 @@ public class PRTokeniser {
     }
     
     public void throwError(String error) throws IOException {
-        throw new IOException(error + " at file pointer " + file.getFilePointer());
+        throw new InvalidPdfException(error + " at file pointer " + file.getFilePointer());
     }
     
     public char checkPdfHeader() throws IOException {
@@ -198,7 +199,7 @@ public class PRTokeniser {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx < 0)
-            throw new IOException("PDF header signature not found.");
+            throw new InvalidPdfException("PDF header signature not found.");
         file.setStartOffset(idx);
         return str.charAt(idx + 7);
     }
@@ -208,7 +209,7 @@ public class PRTokeniser {
         String str = readString(1024);
         int idx = str.indexOf("%FDF-1.2");
         if (idx < 0)
-            throw new IOException("FDF header signature not found.");
+            throw new InvalidPdfException("FDF header signature not found.");
         file.setStartOffset(idx);
     }
 
@@ -219,7 +220,7 @@ public class PRTokeniser {
         String str = readString(1024);
         int idx = str.lastIndexOf("startxref");
         if (idx < 0)
-            throw new IOException("PDF startxref not found.");
+            throw new InvalidPdfException("PDF startxref not found.");
         return pos + idx;
     }
 
