@@ -88,7 +88,8 @@ public class RandomAccessFileOrArray implements DataInput {
         this.plainRandomAccess = plainRandomAccess;
         File file = new File(filename);
         if (!file.canRead()) {
-            if (filename.startsWith("file:/") || filename.startsWith("http://") || filename.startsWith("https://") || filename.startsWith("jar:")) {
+            if (filename.startsWith("file:/") || filename.startsWith("http://") 
+                    || filename.startsWith("https://") || filename.startsWith("jar:") || filename.startsWith("wsjar:")) {
                 InputStream is = new URL(filename).openStream();
                 try {
                     this.arrayIn = InputStreamToArray(is);
