@@ -1,0 +1,7 @@
+# default language English
+PRTokeniser.pdf.header.not.found=PDF header signature not found.
+PRTokeniser.fdf.header.not.found=FDF header signature not found.
+PRTokeniser.pdf.startxref.not.found=PDF startxref not found.
+PRTokeniser.throw.error={1} at file pointer {2}
+PRTokeniser.greaterthan.not.expected='>' not expected
+PRTokeniser.error.reading.string=Error reading string

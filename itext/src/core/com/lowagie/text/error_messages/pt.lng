@@ -1,0 +1,7 @@
+# Portuguese - Portugal
+PRTokeniser.pdf.header.not.found=Início de PDF não encontrado.
+PRTokeniser.fdf.header.not.found=Início de FDF não encontrado.
+PRTokeniser.pdf.startxref.not.found=startxref de PDF não encontrado.
+PRTokeniser.throw.error={1} na posição de ficheiro {2}
+PRTokeniser.greaterthan.not.expected='>' inesperado
+PRTokeniser.error.reading.string=Erro na leitura de string.
