@@ -850,7 +850,7 @@ public class PdfDocument extends Document {
      */
     public boolean newPage() {
         lastElementType = -1;
-        if (writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()))) {
+        if (isPageEmpty()) {
         	setNewPageSizeAndMargins();
             return false;
         }
@@ -2288,10 +2288,14 @@ public class PdfDocument extends Document {
 //	[U2] empty pages
 
     /** This checks if the page is empty. */
-    protected boolean pageEmpty = true;
+    private boolean pageEmpty = true;
 
     void setPageEmpty(boolean pageEmpty) {
         this.pageEmpty = pageEmpty;
+    }
+
+    boolean isPageEmpty() {
+        return writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()));
     }
 
 //	[U3] page actions
