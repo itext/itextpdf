@@ -2616,6 +2616,7 @@ public class PdfWriter extends DocWriter implements
     /**
      * Checks if a newPage() will actually generate a new page.
      * @return true if a new page will be generated, false otherwise
+     * @since 2.1.8
      */
     public boolean isPageEmpty() {
         return pdf.isPageEmpty();
