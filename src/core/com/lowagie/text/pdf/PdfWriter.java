@@ -2604,10 +2604,21 @@ public class PdfWriter extends DocWriter implements
      * Use this method to make sure a page is added,
      * even if it's empty. If you use setPageEmpty(false),
      * invoking newPage() after a blank page will add a newPage.
+     * setPageEmpty(true) won't have any effect.
      * @param pageEmpty the state
      */
     public void setPageEmpty(boolean pageEmpty) {
+        if (pageEmpty)
+            return;
         pdf.setPageEmpty(pageEmpty);
+    }
+
+    /**
+     * Checks if a newPage() will actually generate a new page.
+     * @return true if a new page will be generated, false otherwise
+     */
+    public boolean isPageEmpty() {
+        return pdf.isPageEmpty();
     }
 
 //  [U3] page actions (open and close)
