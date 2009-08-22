@@ -63,7 +63,7 @@ import java.util.HashMap;
  * normal property file. See en.lng for more information on the internal format.
  * @author Paulo Soares (psoares@glintt.com)
  */
-public class MessageLocalization {
+public final class MessageLocalization {
     private static HashMap defaultLanguage = new HashMap();
     private static HashMap currentLanguage;
     private static final String BASE_PATH = "com/lowagie/text/error_messages/";
