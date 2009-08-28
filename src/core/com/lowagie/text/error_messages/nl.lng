@@ -1,0 +1,7 @@
+# default language English
+PRTokeniser.pdf.header.not.found=PDF header niet gevonden.
+PRTokeniser.fdf.header.not.found=FDF header niet gevonden.
+PRTokeniser.pdf.startxref.not.found=PDF startxref niet gevonden.
+PRTokeniser.throw.error={1} bij file pointer {2}
+PRTokeniser.greaterthan.not.expected='>' op een onverwachte plaats
+PRTokeniser.error.reading.string=Fout bij het lezen van een string
