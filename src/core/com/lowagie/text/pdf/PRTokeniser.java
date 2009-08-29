@@ -192,7 +192,7 @@ public class PRTokeniser {
     }
     
     public void throwError(String error) throws IOException {
-        throw new InvalidPdfException(MessageLocalization.GetComposedMessage("PRTokeniser.throw.error", error, String.valueOf(file.getFilePointer())));
+        throw new InvalidPdfException(MessageLocalization.getComposedMessage("PRTokeniser.throw.error", error, String.valueOf(file.getFilePointer())));
     }
     
     public char checkPdfHeader() throws IOException {
@@ -200,7 +200,7 @@ public class PRTokeniser {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx < 0)
-            throw new InvalidPdfException(MessageLocalization.GetComposedMessage("PRTokeniser.pdf.header.not.found"));
+            throw new InvalidPdfException(MessageLocalization.getComposedMessage("PRTokeniser.pdf.header.not.found"));
         file.setStartOffset(idx);
         return str.charAt(idx + 7);
     }
@@ -210,7 +210,7 @@ public class PRTokeniser {
         String str = readString(1024);
         int idx = str.indexOf("%FDF-1.2");
         if (idx < 0)
-            throw new InvalidPdfException(MessageLocalization.GetComposedMessage("PRTokeniser.fdf.header.not.found"));
+            throw new InvalidPdfException(MessageLocalization.getComposedMessage("PRTokeniser.fdf.header.not.found"));
         file.setStartOffset(idx);
     }
 
@@ -221,7 +221,7 @@ public class PRTokeniser {
         String str = readString(1024);
         int idx = str.lastIndexOf("startxref");
         if (idx < 0)
-            throw new InvalidPdfException(MessageLocalization.GetComposedMessage("PRTokeniser.pdf.startxref.not.found"));
+            throw new InvalidPdfException(MessageLocalization.getComposedMessage("PRTokeniser.pdf.startxref.not.found"));
         return pos + idx;
     }
 
@@ -325,7 +325,7 @@ public class PRTokeniser {
             case '>':
                 ch = file.read();
                 if (ch != '>')
-                    throwError(MessageLocalization.GetComposedMessage("PRTokeniser.greaterthan.not.expected"));
+                    throwError(MessageLocalization.getComposedMessage("PRTokeniser.greaterthan.not.expected"));
                 type = TK_END_DIC;
                 break;
             case '<':
@@ -363,7 +363,7 @@ public class PRTokeniser {
                     v1 = file.read();
                 }
                 if (v1 < 0 || v2 < 0)
-                    throwError(MessageLocalization.GetComposedMessage("PRTokeniser.error.reading.string"));
+                    throwError(MessageLocalization.getComposedMessage("PRTokeniser.error.reading.string"));
                 break;
             }
             case '%':
@@ -463,7 +463,7 @@ public class PRTokeniser {
                     outBuf.append((char)ch);
                 }
                 if (ch == -1)
-                    throwError(MessageLocalization.GetComposedMessage("PRTokeniser.error.reading.string"));
+                    throwError(MessageLocalization.getComposedMessage("PRTokeniser.error.reading.string"));
                 break;
             }
             default:
