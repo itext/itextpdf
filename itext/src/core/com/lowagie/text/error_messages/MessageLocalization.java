@@ -73,7 +73,7 @@ public final class MessageLocalization {
 
     static {
         try {
-            defaultLanguage = GetLanguageMessages("en", null);
+            defaultLanguage = getLanguageMessages("en", null);
         } catch (Exception ex) {
             // do nothing
         }
@@ -86,7 +86,7 @@ public final class MessageLocalization {
      * @param key the key to the message
      * @return the message
      */
-    public static String GetMessage(String key) {
+    public static String getMessage(String key) {
         HashMap cl = currentLanguage;
         String val;
         if (cl != null) {
@@ -106,8 +106,8 @@ public final class MessageLocalization {
      * @param key the key to the message
      * @return the message
      */
-    public static String GetComposedMessage(String key) {
-        return GetComposedMessage(key, null, null);
+    public static String getComposedMessage(String key) {
+        return getComposedMessage(key, null, null);
     }
 
     /**
@@ -117,8 +117,8 @@ public final class MessageLocalization {
      * @param p1 the parameter
      * @return the message
      */
-    public static String GetComposedMessage(String key, Object p1) {
-        return GetComposedMessage(key, p1, null);
+    public static String getComposedMessage(String key, Object p1) {
+        return getComposedMessage(key, p1, null);
     }
 
     /**
@@ -129,8 +129,8 @@ public final class MessageLocalization {
      * @param p2 the parameter
      * @return the message
      */
-    public static String GetComposedMessage(String key, Object p1, Object p2) {
-        String msg = GetMessage(key);
+    public static String getComposedMessage(String key, Object p1, Object p2) {
+        String msg = getMessage(key);
         if (p1 != null) {
             msg = msg.replaceAll("\\{1\\}", p1.toString());
         }
@@ -149,8 +149,8 @@ public final class MessageLocalization {
      * @return true if the language was found, false otherwise
      * @throws IOException on error
      */
-    public static boolean SetLanguage(String language, String country) throws IOException {
-        HashMap lang = GetLanguageMessages(language, country);
+    public static boolean setLanguage(String language, String country) throws IOException {
+        HashMap lang = getLanguageMessages(language, country);
         if (lang == null)
             return false;
         currentLanguage = lang;
@@ -162,11 +162,11 @@ public final class MessageLocalization {
      * @param r the Reader
      * @throws IOException on error
      */
-    public static void SetMessages(Reader r) throws IOException {
-        currentLanguage = ReadLanguageStream(r);
+    public static void setMessages(Reader r) throws IOException {
+        currentLanguage = readLanguageStream(r);
     }
 
-    private static HashMap GetLanguageMessages(String language, String country) throws IOException {
+    private static HashMap getLanguageMessages(String language, String country) throws IOException {
         if (language == null)
             throw new IllegalArgumentException("The language cannot be null.");
         InputStream is = null;
@@ -178,13 +178,13 @@ public final class MessageLocalization {
                 file = language + ".lng";
             is = BaseFont.getResourceStream(BASE_PATH + file, new MessageLocalization().getClass().getClassLoader());
             if (is != null)
-                return ReadLanguageStream(is);
+                return readLanguageStream(is);
             if (country == null)
                 return null;
             file = language + ".lng";
             is = BaseFont.getResourceStream(BASE_PATH + file, new MessageLocalization().getClass().getClassLoader());
             if (is != null)
-                return ReadLanguageStream(is);
+                return readLanguageStream(is);
             else
                 return null;
         }
@@ -197,11 +197,11 @@ public final class MessageLocalization {
         }
     }
 
-    private static HashMap ReadLanguageStream(InputStream is) throws IOException {
-        return ReadLanguageStream(new InputStreamReader(is, "UTF-8"));
+    private static HashMap readLanguageStream(InputStream is) throws IOException {
+        return readLanguageStream(new InputStreamReader(is, "UTF-8"));
     }
 
-    private static HashMap ReadLanguageStream(Reader r) throws IOException {
+    private static HashMap readLanguageStream(Reader r) throws IOException {
         HashMap lang = new HashMap();
         BufferedReader br = new BufferedReader(r);
         String line;
