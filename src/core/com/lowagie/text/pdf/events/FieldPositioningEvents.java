@@ -48,6 +48,7 @@ package com.lowagie.text.pdf.events;
 
 import java.io.IOException;
 import java.util.HashMap;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -174,7 +175,7 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 	 * @see com.lowagie.text.pdf.PdfPCellEvent#cellLayout(com.lowagie.text.pdf.PdfPCell, com.lowagie.text.Rectangle, com.lowagie.text.pdf.PdfContentByte[])
 	 */
 	public void cellLayout(PdfPCell cell, Rectangle rect, PdfContentByte[] canvases) {
-		if (cellField == null || (fieldWriter == null && parent == null)) throw new ExceptionConverter(new IllegalArgumentException("You have used the wrong constructor for this FieldPositioningEvents class."));
+		if (cellField == null || (fieldWriter == null && parent == null)) throw new IllegalArgumentException(MessageLocalization.getComposedMessage("you.have.used.the.wrong.constructor.for.this.fieldpositioningevents.class"));
 		cellField.put(PdfName.RECT, new PdfRectangle(rect.getLeft(padding), rect.getBottom(padding), rect.getRight(padding), rect.getTop(padding)));
 		if (parent == null)
 			fieldWriter.addAnnotation(cellField);

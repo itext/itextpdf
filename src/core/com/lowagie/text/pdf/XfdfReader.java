@@ -55,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
@@ -160,7 +161,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
     {
         if ( !foundRoot ) {
             if (!tag.equals("xfdf"))
-                throw new RuntimeException("Root element is not Bookmark.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("root.element.is.not.bookmark"));
             else 
             	foundRoot = true;
         }

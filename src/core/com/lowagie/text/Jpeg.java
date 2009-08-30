@@ -53,6 +53,7 @@ import java.awt.color.ICC_Profile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 /**
  * An <CODE>Jpeg</CODE> is the representation of a graphic element (JPEG)
@@ -207,14 +208,14 @@ public class Jpeg extends Image {
                 errorID = "Byte array";
             }
             if (is.read() != 0xFF || is.read() != 0xD8)	{
-                throw new BadElementException(errorID + " is not a valid JPEG-file.");
+                throw new BadElementException(MessageLocalization.getComposedMessage("1.is.not.a.valid.jpeg.file", errorID));
             }
             boolean firstPass = true;
             int len;
             while (true) {
                 int v = is.read();
                 if (v < 0)
-                    throw new IOException("Premature EOF while reading JPG.");
+                    throw new IOException(MessageLocalization.getComposedMessage("premature.eof.while.reading.jpg"));
                 if (v == 0xFF) {
                     int marker = is.read();
                     if (firstPass && marker == M_APP0) {
@@ -227,7 +228,7 @@ public class Jpeg extends Image {
                         byte bcomp[] = new byte[JFIF_ID.length];
                         int r = is.read(bcomp);
                         if (r != bcomp.length)
-                            throw new BadElementException(errorID + " corrupted JFIF marker.");
+                            throw new BadElementException(MessageLocalization.getComposedMessage("1.corrupted.jfif.marker", errorID));
                         boolean found = true;
                         for (int k = 0; k < bcomp.length; ++k) {
                             if (bcomp[k] != JFIF_ID[k]) {
@@ -291,7 +292,7 @@ public class Jpeg extends Image {
                     if (markertype == VALID_MARKER) {
                         Utilities.skip(is, 2);
                         if (is.read() != 0x08) {
-                            throw new BadElementException(errorID + " must have 8 bits per component.");
+                            throw new BadElementException(MessageLocalization.getComposedMessage("1.must.have.8.bits.per.component", errorID));
                         }
                         scaledHeight = getShort(is);
                         setTop(scaledHeight);
@@ -302,7 +303,7 @@ public class Jpeg extends Image {
                         break;
                     }
                     else if (markertype == UNSUPPORTED_MARKER) {
-                        throw new BadElementException(errorID + ": unsupported JPEG marker: " + marker);
+                        throw new BadElementException(MessageLocalization.getComposedMessage("1.unsupported.jpeg.marker.2", errorID, String.valueOf(marker)));
                     }
                     else if (markertype != NOPARAM_MARKER) {
                         Utilities.skip(is, getShort(is) - 2);

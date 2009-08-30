@@ -50,6 +50,7 @@
 package com.lowagie.text.pdf;
 
 import java.util.ArrayList;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
@@ -263,7 +264,7 @@ public class MultiColumnText implements Element {
         } else if (element instanceof Chunk) {
             columnText.addText((Chunk) element);
         } else {
-            throw new DocumentException("Can't add " + element.getClass() + " to MultiColumnText with complex columns");
+            throw new DocumentException(MessageLocalization.getComposedMessage("can.t.add.1.to.multicolumntext.with.complex.columns", element.getClass()));
         }
     }
 
@@ -281,7 +282,7 @@ public class MultiColumnText implements Element {
         this.document = document;
         columnText.setCanvas(canvas);
         if (columnDefs.isEmpty()) {
-            throw new DocumentException("MultiColumnText has no columns");
+            throw new DocumentException(MessageLocalization.getComposedMessage("multicolumntext.has.no.columns"));
         }
         overflow = false;
         float currentHeight = 0;

@@ -1,5 +1,7 @@
 package com.lowagie.text.pdf.codec;
 
+import com.lowagie.text.error_messages.MessageLocalization;
+
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
  * <p>Homepage: <a href="http://iharder.net/base64">http://iharder.net/base64</a>.</p>
@@ -1347,7 +1349,7 @@ public class Base64 {
                     }   // end else if: also padded correctly
                     else {
                         // Must have broken out from above.
-                        throw new java.io.IOException( "Improperly padded Base64 input." );
+                        throw new java.io.IOException(MessageLocalization.getComposedMessage("improperly.padded.base64.input"));
                     }   // end
                     
                 }   // end else: decode
@@ -1381,7 +1383,7 @@ public class Base64 {
             // Else error
             else {
                 // When JDK1.4 is more accepted, use an assertion here.
-                throw new java.io.IOException( "Error in Base64 code reading stream." );
+                throw new java.io.IOException(MessageLocalization.getComposedMessage("error.in.base64.code.reading.stream"));
             }   // end else
         }   // end read
         
@@ -1546,7 +1548,7 @@ public class Base64 {
                     }   // end if: enough to output
                 }   // end if: meaningful base64 character
                 else if( decodabet[ theByte & 0x7f ] != WHITE_SPACE_ENC ) {
-                    throw new java.io.IOException( "Invalid character in Base64 data." );
+                    throw new java.io.IOException(MessageLocalization.getComposedMessage("invalid.character.in.base64.data"));
                 }   // end else: not white space either
             }   // end else: decoding
         }   // end write
@@ -1588,7 +1590,7 @@ public class Base64 {
                     position = 0;
                 }   // end if: encoding
                 else {
-                    throw new java.io.IOException( "Base64 input not properly padded." );
+                    throw new java.io.IOException(MessageLocalization.getComposedMessage("base64.input.not.properly.padded"));
                 }   // end else: decoding
             }   // end if: buffer partially full
             

@@ -47,6 +47,7 @@
 package com.lowagie.text.pdf;
 
 import java.util.ArrayList;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
@@ -88,7 +89,7 @@ public class FontSelector {
     public Phrase process(String text) {
         int fsize = fonts.size();
         if (fsize == 0)
-            throw new IndexOutOfBoundsException("No font is defined.");
+            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("no.font.is.defined"));
         char cc[] = text.toCharArray();
         int len = cc.length;
         StringBuffer sb = new StringBuffer();

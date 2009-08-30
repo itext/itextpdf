@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocumentException;
 
@@ -128,7 +129,7 @@ class CJKFont extends BaseFont {
         fontType = FONT_TYPE_CJK;
         String nameBase = getBaseName(fontName);
         if (!isCJKFont(nameBase, enc))
-            throw new DocumentException("Font '" + fontName + "' with '" + enc + "' encoding is not a CJK font.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("font.1.with.2.encoding.is.not.a.cjk.font", fontName, enc));
         if (nameBase.length() < fontName.length()) {
             style = fontName.substring(nameBase.length());
             fontName = nameBase;
@@ -145,7 +146,7 @@ class CJKFont extends BaseFont {
             if (c == null) {
                 c = readCMap(s);
                 if (c == null)
-                    throw new DocumentException("The cmap " + s + " does not exist as a resource.");
+                    throw new DocumentException(MessageLocalization.getComposedMessage("the.cmap.1.does.not.exist.as.a.resource", s));
                 c[CID_NEWLINE] = '\n';
                 allCMaps.put(s, c);
             }
@@ -156,7 +157,7 @@ class CJKFont extends BaseFont {
             if (c == null) {
                 String s = cjkEncodings.getProperty(enc);
                 if (s == null)
-                    throw new DocumentException("The resource cjkencodings.properties does not contain the encoding " + enc);
+                    throw new DocumentException(MessageLocalization.getComposedMessage("the.resource.cjkencodings.properties.does.not.contain.the.encoding.1", enc));
                 StringTokenizer tk = new StringTokenizer(s);
                 String nt = tk.nextToken();
                 c = (char[])allCMaps.get(nt);

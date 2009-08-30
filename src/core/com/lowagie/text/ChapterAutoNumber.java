@@ -47,6 +47,7 @@
 
 package com.lowagie.text;
 
+import com.lowagie.text.error_messages.MessageLocalization;
 /**
  * Chapter with auto numbering.
  *
@@ -89,7 +90,7 @@ public class ChapterAutoNumber extends Chapter {
      */
     public Section addSection(final String title) {
     	if (isAddedCompletely()) {
-    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
+    		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
         return addSection(title, 2);
     }
@@ -102,7 +103,7 @@ public class ChapterAutoNumber extends Chapter {
      */
     public Section addSection(final Paragraph title) {
     	if (isAddedCompletely()) {
-    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
+    		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
         return addSection(title, 2);
     }

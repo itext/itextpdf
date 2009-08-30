@@ -52,6 +52,7 @@ package com.lowagie.text.pdf.internal;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.NoSuchElementException;
+import com.lowagie.text.error_messages.MessageLocalization;
 /**
  * PathIterator for PolylineShape.
  * This class was originally written by wil - amristar.com.au
@@ -91,7 +92,7 @@ public class PolylineShapeIterator implements PathIterator {
 	 */
 	public int currentSegment(double[] coords) {
 		if (isDone()) {
-			throw new NoSuchElementException("line iterator out of bounds");
+			throw new NoSuchElementException(MessageLocalization.getComposedMessage("line.iterator.out.of.bounds"));
 		}
 		int type = (index==0)?SEG_MOVETO:SEG_LINETO;
 		coords[0] = poly.x[index];
@@ -122,7 +123,7 @@ public class PolylineShapeIterator implements PathIterator {
 	 */
 	public int currentSegment(float[] coords) {
 		if (isDone()) {
-			throw new NoSuchElementException("line iterator out of bounds");
+			throw new NoSuchElementException(MessageLocalization.getComposedMessage("line.iterator.out.of.bounds"));
 		}
 		int type = (index==0)?SEG_MOVETO:SEG_LINETO;
 		coords[0] = poly.x[index];

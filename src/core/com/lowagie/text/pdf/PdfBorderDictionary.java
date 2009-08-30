@@ -1,5 +1,6 @@
 /*
  * $Id$
+ * $Name$
  *
  * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
  *
@@ -49,6 +50,8 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.error_messages.MessageLocalization;
+
 /**
  * A <CODE>PdfBorderDictionary</CODE> define the appearance of a Border (Annotations).
  *
@@ -89,7 +92,7 @@ public class PdfBorderDictionary extends PdfDictionary {
                 put(PdfName.S, PdfName.U);
                 break;
             default:
-                throw new IllegalArgumentException("Invalid border style.");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.border.style"));
         }
     }
     

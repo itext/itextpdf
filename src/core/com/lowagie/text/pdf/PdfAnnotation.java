@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.HashMap;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Rectangle;
 /**
@@ -681,7 +682,7 @@ public class PdfAnnotation extends PdfDictionary {
             case ExtendedColor.TYPE_SEPARATION:
             case ExtendedColor.TYPE_PATTERN:
             case ExtendedColor.TYPE_SHADING:
-                throw new RuntimeException("Separations, patterns and shadings are not allowed in MK dictionary.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("separations.patterns.and.shadings.are.not.allowed.in.mk.dictionary"));
             default:
                 array.add(new PdfNumber(color.getRed() / 255f));
                 array.add(new PdfNumber(color.getGreen() / 255f));
@@ -823,7 +824,7 @@ public class PdfAnnotation extends PdfDictionary {
     		try {
     			destination = (PdfArray) parameters.remove(PdfName.DEST);
     		} catch (ClassCastException ex) {
-    			throw new IllegalArgumentException("You have to consolidate the named destinations of your reader.");
+    			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("you.have.to.consolidate.the.named.destinations.of.your.reader"));
     		}
     		if (destination != null) {
     			destination = new PdfArray(destination);
@@ -852,16 +853,16 @@ public class PdfAnnotation extends PdfDictionary {
     			PRIndirectReference pp = r.getPageOrigRef(i);
     			if (pp.getGeneration() == pr.getGeneration() && pp.getNumber() == pr.getNumber()) return i;
     		}
-    		throw new IllegalArgumentException("Page not found.");
+    		throw new IllegalArgumentException(MessageLocalization.getComposedMessage("page.not.found"));
     	}
 
     	public void setDestinationPage(int newPage) {
-    		if (!isInternal()) throw new IllegalArgumentException("Cannot change destination of external link");
+    		if (!isInternal()) throw new IllegalArgumentException(MessageLocalization.getComposedMessage("cannot.change.destination.of.external.link"));
     		this.newPage=newPage;
     	}
 
     	public void transformDestination(float a, float b, float c, float d, float e, float f) {
-    		if (!isInternal()) throw new IllegalArgumentException("Cannot change destination of external link");
+    		if (!isInternal()) throw new IllegalArgumentException(MessageLocalization.getComposedMessage("cannot.change.destination.of.external.link"));
     		if (destination.getAsName(1).equals(PdfName.XYZ)) {
     			float x = destination.getAsNumber(2).floatValue();
     			float y = destination.getAsNumber(3).floatValue();

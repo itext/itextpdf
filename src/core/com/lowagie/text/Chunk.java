@@ -53,6 +53,7 @@ import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.pdf.PdfAction;
@@ -259,7 +260,7 @@ public class Chunk implements Element {
 	public Chunk(DrawInterface separator, float tabPosition, boolean newline) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		if (tabPosition < 0) {
-			throw new IllegalArgumentException("A tab position may not be lower than 0; yours is " + tabPosition);
+			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabPosition)));
 		}
 		setAttribute(TAB, new Object[] {separator, new Float(tabPosition), Boolean.valueOf(newline), new Float(0)});
 	}

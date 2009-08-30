@@ -1,5 +1,6 @@
 /*
  * $Id$
+ * $Name$
  *
  * Copyright 2001, 2002 by Paulo Soares.
  *
@@ -51,6 +52,7 @@ package com.lowagie.text.pdf;
 
 import java.io.IOException;
 import java.util.HashMap;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocumentException;
 /** Enumerates all the fonts inside a True Type Collection.
@@ -79,7 +81,7 @@ class EnumerateTTC extends TrueTypeFont{
         try {
             String mainTag = readStandardString(4);
             if (!mainTag.equals("ttcf"))
-                throw new DocumentException(fileName + " is not a valid TTC file.");
+                throw new DocumentException(MessageLocalization.getComposedMessage("1.is.not.a.valid.ttc.file", fileName));
             rf.skipBytes(4);
             int dirCount = rf.readInt();
             names = new String[dirCount];
@@ -91,7 +93,7 @@ class EnumerateTTC extends TrueTypeFont{
                 directoryOffset = rf.readInt();
                 rf.seek(directoryOffset);
                 if (rf.readInt() != 0x00010000)
-                    throw new DocumentException(fileName + " is not a valid TTF file.");
+                    throw new DocumentException(MessageLocalization.getComposedMessage("1.is.not.a.valid.ttf.file", fileName));
                 int num_tables = rf.readUnsignedShort();
                 rf.skipBytes(6);
                 for (int k = 0; k < num_tables; ++k) {

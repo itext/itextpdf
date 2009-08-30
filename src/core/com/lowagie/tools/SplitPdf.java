@@ -1,5 +1,6 @@
 /*
  * $Id$
+ * $Name$
  *
  * Copyright 2002 by Bruno Lowagie
  *
@@ -50,6 +51,7 @@
 package com.lowagie.tools;
 
 import java.io.FileOutputStream;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -84,7 +86,7 @@ public class SplitPdf extends java.lang.Object {
 				System.out.println("There are " + n + " pages in the original file.");
                 
 				if (pagenumber < 2 || pagenumber > n) {
-					throw new DocumentException("You can't split this document at page " + pagenumber + "; there is no such page.");
+					throw new DocumentException(MessageLocalization.getComposedMessage("you.can.t.split.this.document.at.page.1.there.is.no.such.page", pagenumber));
 				}
                 
 				// step 1: creation of a document-object

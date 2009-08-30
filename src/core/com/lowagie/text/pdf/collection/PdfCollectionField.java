@@ -7,6 +7,7 @@ import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfNumber;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfString;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 /**
  * @author blowagie
@@ -124,6 +125,6 @@ public class PdfCollectionField extends PdfDictionary {
 		case NUMBER:
 			return new PdfNumber(v);
 		}
-		throw new IllegalArgumentException(v + " is not an acceptable value for the field " + get(PdfName.N).toString());
+		throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.is.not.an.acceptable.value.for.the.field.2", v, get(PdfName.N).toString()));
 	}
 }

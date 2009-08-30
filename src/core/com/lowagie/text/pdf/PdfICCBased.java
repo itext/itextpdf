@@ -47,6 +47,7 @@
 package com.lowagie.text.pdf;
 
 import java.awt.color.ICC_Profile;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.ExceptionConverter;
 
@@ -89,7 +90,7 @@ public class PdfICCBased extends PdfStream {
                     put(PdfName.ALTERNATE, PdfName.DEVICECMYK);
                     break;
                 default:
-                    throw new PdfException(numberOfComponents + " component(s) is not supported in PDF1.4");
+                    throw new PdfException(MessageLocalization.getComposedMessage("1.component.s.is.not.supported", numberOfComponents));
             }
             put(PdfName.N, new PdfNumber(numberOfComponents));
             bytes = profile.getData();

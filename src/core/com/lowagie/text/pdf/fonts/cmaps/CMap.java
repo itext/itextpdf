@@ -31,6 +31,7 @@
 package com.lowagie.text.pdf.fonts.cmaps;
 
 import java.io.IOException;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,7 +134,7 @@ public class CMap
         }
         else
         {
-            throw new IOException( "Mapping code should be 1 or two bytes and not " + src.length );
+            throw new IOException(MessageLocalization.getComposedMessage("mapping.code.should.be.1.or.two.bytes.and.not.1", src.length));
         }
     }
 

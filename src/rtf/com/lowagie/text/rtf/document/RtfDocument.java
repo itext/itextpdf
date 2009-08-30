@@ -52,6 +52,7 @@ package com.lowagie.text.rtf.document;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.rtf.RtfBasicElement;
@@ -172,7 +173,7 @@ public class RtfDocument extends RtfElement {
                 	this.data = new RtfDiskCache();
                 	break;
                 default:
-                	throw new RuntimeException("unknown");
+                	throw new RuntimeException(MessageLocalization.getComposedMessage("unknown"));
             }
     		
         } catch(IOException ioe) {
@@ -250,7 +251,7 @@ public class RtfDocument extends RtfElement {
     public void filterSpecialChar(final OutputStream out, final String str, final boolean useHex, final boolean softLineBreaks) throws IOException
     {
         if(out == null) {
-            throw new NullPointerException("null OutpuStream");
+            throw new NullPointerException(MessageLocalization.getComposedMessage("null.outpustream"));
         }
 
         final boolean alwaysUseUniCode = this.documentSettings.isAlwaysUseUnicode();

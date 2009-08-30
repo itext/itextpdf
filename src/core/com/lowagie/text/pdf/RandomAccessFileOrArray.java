@@ -61,6 +61,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import com.lowagie.text.error_messages.MessageLocalization;
 /** An implementation of a RandomAccessFile for input only
  * that accepts a file or a byte array as data source.
  *
@@ -102,7 +103,7 @@ public class RandomAccessFileOrArray implements DataInput {
             else {
                 InputStream is = BaseFont.getResourceStream(filename);
                 if (is == null)
-                    throw new IOException(filename + " not found as file or resource.");
+                    throw new IOException(MessageLocalization.getComposedMessage("1.not.found.as.file.or.resource", filename));
                 try {
                     this.arrayIn = InputStreamToArray(is);
                     return;

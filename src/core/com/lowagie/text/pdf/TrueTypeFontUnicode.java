@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Utilities;
@@ -97,11 +98,11 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         if ((fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".otf") || fileName.toLowerCase().endsWith(".ttc")) && ((enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb)) {
             process(ttfAfm, forceRead);
             if (os_2.fsType == 2)
-                throw new DocumentException(fileName + style + " cannot be embedded due to licensing restrictions.");
+                throw new DocumentException(MessageLocalization.getComposedMessage("1.cannot.be.embedded.due.to.licensing.restrictions", fileName + style));
             // Sivan
             if ((cmap31 == null && !fontSpecific) || (cmap10 == null && fontSpecific))
                 directTextToByte=true;
-                //throw new DocumentException(fileName + " " + style + " does not contain an usable cmap.");
+                //throw new DocumentException(MessageLocalization.getComposedMessage("1.2.does.not.contain.an.usable.cmap", fileName, style));
             if (fontSpecific) {
                 fontSpecific = false;
                 String tempEncoding = encoding;
@@ -112,7 +113,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             }
         }
         else
-            throw new DocumentException(fileName + " " + style + " is not a TTF font file.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("1.2.is.not.a.ttf.font.file", fileName, style));
         vertical = enc.endsWith("V");
     }
     

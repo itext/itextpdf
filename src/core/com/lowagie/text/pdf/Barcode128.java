@@ -51,6 +51,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.MemoryImageSource;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
@@ -383,7 +384,7 @@ public class Barcode128 extends Barcode{
         for (int k = 0; k < tLen; ++k) {
             c = text.charAt(k);
             if (c > 127 && c != FNC1)
-                throw new RuntimeException("There are illegal characters for barcode 128 in '" + text + "'.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("there.are.illegal.characters.for.barcode.128.in.1", text));
         }
         c = text.charAt(0);
         char currentCode = START_B;
@@ -738,14 +739,14 @@ public class Barcode128 extends Barcode{
             while (idx >= 0) {
                 int end = code.indexOf(')', idx);
                 if (end < 0)
-                    throw new IllegalArgumentException("Badly formed UCC string: " + code);
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("badly.formed.ucc.string.1", code));
                 String sai = code.substring(idx + 1, end);
                 if (sai.length() < 2)
-                    throw new IllegalArgumentException("AI too short: (" + sai + ")");
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("ai.too.short.1", sai));
                 int ai = Integer.parseInt(sai);
                 int len = ais.get(ai);
                 if (len == 0)
-                    throw new IllegalArgumentException("AI not found: (" + sai + ")");
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("ai.not.found.1", sai));
                 sai = String.valueOf(ai);
                 if (sai.length() == 1)
                     sai = "0" + sai;
@@ -757,7 +758,7 @@ public class Barcode128 extends Barcode{
                         ret += FNC1;
                 }
                 else if (next - end - 1 + sai.length() != len)
-                    throw new IllegalArgumentException("Invalid AI length: (" + sai + ")");
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.ai.length.1", sai));
             }
             super.setCode(ret);
         }

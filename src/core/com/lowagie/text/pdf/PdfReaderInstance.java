@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import com.lowagie.text.error_messages.MessageLocalization;
 /**
  * Instance of PdfReader in each output document.
  *
@@ -81,9 +82,9 @@ class PdfReaderInstance {
     
     PdfImportedPage getImportedPage(int pageNumber) {
         if (!reader.isOpenedWithFullPermissions())
-            throw new IllegalArgumentException("PdfReader not opened with owner password");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
         if (pageNumber < 1 || pageNumber > reader.getNumberOfPages())
-            throw new IllegalArgumentException("Invalid page number: " + pageNumber);
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.page.number.1", pageNumber));
         Integer i = new Integer(pageNumber);
         PdfImportedPage pageT = (PdfImportedPage)importedPages.get(i);
         if (pageT == null) {

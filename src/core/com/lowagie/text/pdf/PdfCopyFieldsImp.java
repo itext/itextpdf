@@ -55,6 +55,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -102,7 +103,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     
     void addDocument(PdfReader reader, List pagesToKeep) throws DocumentException, IOException {
         if (!readers2intrefs.containsKey(reader) && reader.isTampered())
-            throw new DocumentException("The document was reused.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("the.document.was.reused"));
         reader = new PdfReader(reader);        
         reader.selectPages(pagesToKeep);
         if (reader.getNumberOfPages() == 0)
@@ -113,14 +114,14 @@ class PdfCopyFieldsImp extends PdfWriter {
     
     void addDocument(PdfReader reader) throws DocumentException, IOException {
         if (!reader.isOpenedWithFullPermissions())
-            throw new BadPasswordException("PdfReader not opened with owner password");
+            throw new BadPasswordException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
         openDoc();
         if (readers2intrefs.containsKey(reader)) {
             reader = new PdfReader(reader);
         }
         else {
             if (reader.isTampered())
-                throw new DocumentException("The document was reused.");
+                throw new DocumentException(MessageLocalization.getComposedMessage("the.document.was.reused"));
             reader.consolidateNamedDestinations();
             reader.setTampered(true);
         }
@@ -228,7 +229,7 @@ class PdfCopyFieldsImp extends PdfWriter {
                 break;
             }
             case PdfObject.INDIRECT: {
-                throw new RuntimeException("Reference pointing to reference.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("reference.pointing.to.reference"));
             }
         }
     }

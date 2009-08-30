@@ -52,6 +52,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.MemoryImageSource;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
@@ -135,16 +136,16 @@ public class BarcodeCodabar extends Barcode{
         text = text.toUpperCase();
         int len = text.length();
         if (len < 2)
-            throw new IllegalArgumentException("Codabar must have at least a start and stop character.");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("codabar.must.have.at.least.a.start.and.stop.character"));
         if (CHARS.indexOf(text.charAt(0)) < START_STOP_IDX || CHARS.indexOf(text.charAt(len - 1)) < START_STOP_IDX)
-            throw new IllegalArgumentException("Codabar must have one of 'ABCD' as start/stop character.");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("codabar.must.have.one.of.abcd.as.start.stop.character"));
         byte bars[] = new byte[text.length() * 8 - 1];
         for (int k = 0; k < len; ++k) {
             int idx = CHARS.indexOf(text.charAt(k));
             if (idx >= START_STOP_IDX && k > 0 && k < len - 1)
-                throw new IllegalArgumentException("In codabar, start/stop characters are only allowed at the extremes.");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("in.codabar.start.stop.characters.are.only.allowed.at.the.extremes"));
             if (idx < 0)
-                throw new IllegalArgumentException("The character '" + text.charAt(k) + "' is illegal in codabar.");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.character.1.is.illegal.in.codabar", text.charAt(k)));
             System.arraycopy(BARS[idx], 0, bars, k * 8, 7);
         }
         return bars;

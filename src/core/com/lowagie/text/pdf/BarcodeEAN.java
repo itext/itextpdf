@@ -51,6 +51,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.MemoryImageSource;
 import java.util.Arrays;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Rectangle;
@@ -478,7 +479,7 @@ public class BarcodeEAN extends Barcode{
                 width = x * (4 + 5 * 7 + 4 * 2);
                 break;
             default:
-                throw new RuntimeException("Invalid code type.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.code.type"));
         }
         return new Rectangle(width, height);
     }
@@ -693,7 +694,7 @@ public class BarcodeEAN extends Barcode{
                 width = 4 + 5 * 7 + 4 * 2;
                 break;
             default:
-                throw new RuntimeException("Invalid code type.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.code.type"));
         }
 
         boolean print = true;

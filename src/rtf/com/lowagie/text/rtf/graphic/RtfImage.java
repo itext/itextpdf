@@ -53,6 +53,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
@@ -175,7 +176,7 @@ public class RtfImage extends RtfElement {
         imageType = image.getOriginalType();
         if (!(imageType == Image.ORIGINAL_JPEG || imageType == Image.ORIGINAL_BMP
                 || imageType == Image.ORIGINAL_PNG || imageType == Image.ORIGINAL_WMF || imageType == Image.ORIGINAL_GIF)) {
-            throw new DocumentException("Only BMP, PNG, WMF, GIF and JPEG images are supported by the RTF Writer");
+            throw new DocumentException(MessageLocalization.getComposedMessage("only.bmp.png.wmf.gif.and.jpeg.images.are.supported.by.the.rtf.writer"));
         }
         alignment = image.getAlignment();
         width = image.getWidth();
@@ -207,7 +208,7 @@ public class RtfImage extends RtfElement {
                 	final InputStream imageIn = image.getUrl().openStream();
                     if(imageType == Image.ORIGINAL_WMF) { //remove the placeable header first
                     	for(int k = 0; k < WMF_PLACEABLE_HEADER_SIZE; k++) {
-							if(imageIn.read() < 0) throw new EOFException("while removing wmf placeable header");
+							if(imageIn.read() < 0) throw new EOFException(MessageLocalization.getComposedMessage("while.removing.wmf.placeable.header"));
 						}
                     }
                     bab.write(imageIn);

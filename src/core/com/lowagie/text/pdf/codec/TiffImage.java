@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.util.zip.DataFormatException;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
@@ -117,11 +118,11 @@ public class TiffImage {
      */    
     public static Image getTiffImage(RandomAccessFileOrArray s, int page, boolean direct) {
         if (page < 1)
-            throw new IllegalArgumentException("The page number must be >= 1.");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.page.number.must.be.gt.eq.1"));
         try {
             TIFFDirectory dir = new TIFFDirectory(s, page - 1);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_TILEWIDTH))
-                throw new IllegalArgumentException("Tiles are not supported.");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("tiles.are.not.supported"));
             int compression = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
             switch (compression) {
                 case TIFFConstants.COMPRESSION_CCITTRLEW:
@@ -297,7 +298,7 @@ public class TiffImage {
                 case TIFFConstants.COMPRESSION_JPEG:
                     break;
                 default:
-                    throw new IllegalArgumentException("The compression " + compression + " is not supported.");
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.compression.1.is.not.supported", compression));
             }
             int photometric = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_PHOTOMETRIC);
             switch (photometric) {
@@ -309,7 +310,7 @@ public class TiffImage {
                     break;
                 default:
                     if (compression != TIFFConstants.COMPRESSION_OJPEG && compression != TIFFConstants.COMPRESSION_JPEG)
-                        throw new IllegalArgumentException("The photometric " + photometric + " is not supported.");
+                        throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.photometric.1.is.not.supported", photometric));
             }
             float rotation = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ORIENTATION)) {
@@ -323,9 +324,9 @@ public class TiffImage {
             }
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PLANARCONFIG)
                 && dir.getFieldAsLong(TIFFConstants.TIFFTAG_PLANARCONFIG) == TIFFConstants.PLANARCONFIG_SEPARATE)
-                throw new IllegalArgumentException("Planar images are not supported.");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("planar.images.are.not.supported"));
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_EXTRASAMPLES))
-                throw new IllegalArgumentException("Extra samples are not supported.");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("extra.samples.are.not.supported"));
             int samplePerPixel = 1;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL)) // 1,3,4
                 samplePerPixel = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL);
@@ -339,7 +340,7 @@ public class TiffImage {
                 case 8:
                     break;
                 default:
-                    throw new IllegalArgumentException("Bits per sample " + bitsPerSample + " is not supported.");
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("bits.per.sample.1.is.not.supported", bitsPerSample));
             }
             Image img = null;
 
@@ -373,10 +374,10 @@ public class TiffImage {
                 if (predictorField != null) {
                     predictor = predictorField.getAsInt(0);
                     if (predictor != 1 && predictor != 2) {
-                        throw new RuntimeException("Illegal value for Predictor in TIFF file."); 
+                        throw new RuntimeException(MessageLocalization.getComposedMessage("illegal.value.for.predictor.in.tiff.file"));
                     }
                     if (predictor == 2 && bitsPerSample != 8) {
-                        throw new RuntimeException(bitsPerSample + "-bit samples are not supported for Horizontal differencing Predictor.");
+                        throw new RuntimeException(MessageLocalization.getComposedMessage("1.bit.samples.are.not.supported.for.horizontal.differencing.predictor", bitsPerSample));
                     }
                 }
                 lzwDecoder = new TIFFLZWDecoder(w, predictor, 
@@ -400,7 +401,7 @@ public class TiffImage {
                 // is often missing
 
                 if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))) {
-                    throw new IOException("Missing tag(s) for OJPEG compression.");
+                    throw new IOException(MessageLocalization.getComposedMessage("missing.tag.s.for.ojpeg.compression"));
                 }
                 int jpegOffset = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFOFFSET);
                 int jpegLength = s.length() - jpegOffset;
@@ -420,7 +421,7 @@ public class TiffImage {
             } 
             else if (compression == TIFFConstants.COMPRESSION_JPEG) {
                 if (size.length > 1)
-                    throw new IOException("Compression JPEG is only supported with a single strip. This image has " + size.length + " strips.");
+                    throw new IOException(MessageLocalization.getComposedMessage("compression.jpeg.is.only.supported.with.a.single.strip.this.image.has.1.strips", size.length));
                 byte[] jpeg = new byte[(int)size[0]];
                 s.seek(offset[0]);
                 s.readFully(jpeg);

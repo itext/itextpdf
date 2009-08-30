@@ -50,6 +50,7 @@
 package com.lowagie.text.pdf;
 
 import com.lowagie.text.pdf.crypto.ARCFOUREncryption;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -182,7 +183,7 @@ public class PdfEncryption {
 			revision = AES_128;
 			break;
 		default:
-			throw new IllegalArgumentException("No valid encryption mode");
+			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("no.valid.encryption.mode"));
 		}
 	}
 

@@ -48,13 +48,13 @@
  */
 
 package com.lowagie.text.pdf;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocumentException;
 
@@ -693,7 +693,7 @@ public abstract class BaseFont {
         else if (noThrow)
             return null;
         else
-            throw new DocumentException("Font '" + name + "' with '" + encoding + "' is not recognized.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("font.1.with.2.is.not.recognized", name, encoding));
         if (cached) {
             synchronized (fontCache) {
                 fontFound = (BaseFont)fontCache.get(key);

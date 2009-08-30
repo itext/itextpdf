@@ -1,5 +1,6 @@
 /*
  * $Id$
+ * $Name$
  *
  * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
  *
@@ -50,6 +51,7 @@
 package com.lowagie.text;
 
 import java.lang.reflect.Field;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 /**
  * The <CODE>PageSize</CODE>-object contains a number of rectangles representing the most common paper sizes.
@@ -230,7 +232,7 @@ public class PageSize {
                 Field field = PageSize.class.getDeclaredField(name.toUpperCase());
                 return (Rectangle) field.get(null);
             } catch (Exception e) {
-                throw new RuntimeException("Can't find page size " + name);          
+                throw new RuntimeException(MessageLocalization.getComposedMessage("can.t.find.page.size.1", name));
             }
         }
         else {
@@ -239,7 +241,7 @@ public class PageSize {
         		String height = name.substring(pos + 1);
         		return new Rectangle(Float.parseFloat(width), Float.parseFloat(height));
         	} catch(Exception e) {
-        		throw new RuntimeException(name + " is not a valid page size format; " + e.getMessage());
+        		throw new RuntimeException(MessageLocalization.getComposedMessage("1.is.not.a.valid.page.size.format.2", name, e.getMessage()));
         	}
         }
     }

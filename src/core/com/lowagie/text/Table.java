@@ -56,6 +56,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -249,7 +250,7 @@ public class Table extends Rectangle implements LargeElement {
         
         // a table should have at least 1 column
         if (columns <= 0) {
-            throw new BadElementException("A table should have at least 1 column.");
+            throw new BadElementException(MessageLocalization.getComposedMessage("a.table.should.have.at.least.1.column"));
         }
         this.columns = columns;
         
@@ -555,7 +556,7 @@ public class Table extends Rectangle implements LargeElement {
      */
     public void setWidths(float[] widths) throws BadElementException {
         if (widths.length != columns) {
-            throw new BadElementException("Wrong number of columns.");
+            throw new BadElementException(MessageLocalization.getComposedMessage("wrong.number.of.columns"));
         }
         
         // The sum of all values is 100%
@@ -694,13 +695,14 @@ public class Table extends Rectangle implements LargeElement {
      * @throws BadElementException
      */
     public void addCell(Cell aCell, Point aLocation) throws BadElementException {
-        if (aCell == null) throw new NullPointerException("addCell - cell has null-value");
-        if (aLocation == null) throw new NullPointerException("addCell - point has null-value");
+        if (aCell == null) throw new NullPointerException(MessageLocalization.getComposedMessage("addcell.cell.has.null.value"));
+        if (aLocation == null) throw new NullPointerException(MessageLocalization.getComposedMessage("addcell.point.has.null.value"));
         if (aCell.isTable()) insertTable((Table)aCell.getElements().next(), aLocation);
         
-        if (aLocation.x < 0) throw new BadElementException("row coordinate of location must be >= 0");
-        if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
-        if (!isValidLocation(aCell, aLocation)) throw new BadElementException("Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.getColspan() + " and a rowspan of " + aCell.getRowspan() + " is illegal (beyond boundaries/overlapping).");
+        if (aLocation.x < 0) throw new BadElementException(MessageLocalization.getComposedMessage("row.coordinate.of.location.must.be.gt.eq.0"));
+        if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException(MessageLocalization.getComposedMessage("column.coordinate.of.location.must.be.gt.eq.0.and.lt.nr.of.columns"));
+        if (!isValidLocation(aCell, aLocation)) throw new BadElementException(MessageLocalization.getComposedMessage("adding.a.cell.at.the.location.1.2.with.a.colspan.of.3.and.a.rowspan.of.4.is.illegal.beyond.boundaries.overlapping", 
+                String.valueOf(aLocation.x), String.valueOf(aLocation.y), String.valueOf(aCell.getColspan()), String.valueOf(aCell.getRowspan())));
         
         if (aCell.getBorder() == UNDEFINED) aCell.setBorder(defaultCell.getBorder());
         aCell.fill();
@@ -793,7 +795,7 @@ public class Table extends Rectangle implements LargeElement {
      * @param   aTable      the table you want to insert
      */
     public void insertTable(Table aTable) {
-        if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
+        if (aTable == null) throw new NullPointerException(MessageLocalization.getComposedMessage("inserttable.table.has.null.value"));
         insertTable(aTable, curPosition);
     }
     
@@ -806,7 +808,7 @@ public class Table extends Rectangle implements LargeElement {
      * @param       column  The column where the <CODE>Cell</CODE> will be added
      */
     public void insertTable(Table aTable, int row, int column) {
-        if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
+        if (aTable == null) throw new NullPointerException(MessageLocalization.getComposedMessage("inserttable.table.has.null.value"));
         insertTable(aTable, new Point(row, column));
     }
     
@@ -819,13 +821,13 @@ public class Table extends Rectangle implements LargeElement {
      */
     public void insertTable(Table aTable, Point aLocation) {
         
-        if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
-        if (aLocation == null) throw new NullPointerException("insertTable - point has null-value");
+        if (aTable == null) throw new NullPointerException(MessageLocalization.getComposedMessage("inserttable.table.has.null.value"));
+        if (aLocation == null) throw new NullPointerException(MessageLocalization.getComposedMessage("inserttable.point.has.null.value"));
         mTableInserted = true;
         aTable.complete();
         
         if (aLocation.y > columns) {
-        	throw new IllegalArgumentException("insertTable -- wrong columnposition("+ aLocation.y + ") of location; max =" + columns);
+        	throw new IllegalArgumentException(MessageLocalization.getComposedMessage("inserttable.wrong.columnposition.1.of.location.max.eq.2", String.valueOf(aLocation.y), String.valueOf(columns)));
         }
         
         int rowCount = aLocation.x + 1 - rows.size();
@@ -1275,7 +1277,7 @@ public class Table extends Rectangle implements LargeElement {
             if ( !((Row) someRows.get(i)).reserve(aPosition.y, aCell.getColspan())) {
                 
                 // should be impossible to come here :-)
-                throw new RuntimeException("addCell - error in reserve");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("addcell.error.in.reserve"));
             }
         }
         row = (Row) someRows.get(aPosition.x);
@@ -1369,7 +1371,7 @@ public class Table extends Rectangle implements LargeElement {
      */
     public PdfPTable createPdfPTable() throws BadElementException {
     	if (!convert2pdfptable) {
-    		throw new BadElementException("No error, just an old style table");
+    		throw new BadElementException(MessageLocalization.getComposedMessage("no.error.just.an.old.style.table"));
     	}
         setAutoFillEmptyCells(true);
     	complete();

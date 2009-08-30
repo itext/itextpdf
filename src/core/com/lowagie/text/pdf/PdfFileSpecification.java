@@ -52,6 +52,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.pdf.collection.PdfCollectionItem;
 /** Specifies a file or an URL. The file can be extern or embedded.
@@ -189,7 +190,7 @@ public class PdfFileSpecification extends PdfDictionary {
                     else {
                         in = BaseFont.getResourceStream(filePath);
                         if (in == null)
-                            throw new IOException(filePath + " not found as file or resource.");
+                            throw new IOException(MessageLocalization.getComposedMessage("1.not.found.as.file.or.resource", filePath));
                     }
                 }
                 stream = new PdfEFStream(in, writer);

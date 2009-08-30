@@ -55,6 +55,7 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
@@ -268,9 +269,9 @@ public class PdfStamper
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
         if (stamper.isAppend())
-            throw new DocumentException("Append mode does not support changing the encryption status.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("append.mode.does.not.support.changing.the.encryption.status"));
         if (stamper.isContentWritten())
-            throw new DocumentException("Content was already written to the output.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("content.was.already.written.to.the.output"));
         stamper.setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? PdfWriter.STANDARD_ENCRYPTION_128 : PdfWriter.STANDARD_ENCRYPTION_40);
     }
 
@@ -289,9 +290,9 @@ public class PdfStamper
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType) throws DocumentException {
         if (stamper.isAppend())
-            throw new DocumentException("Append mode does not support changing the encryption status.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("append.mode.does.not.support.changing.the.encryption.status"));
         if (stamper.isContentWritten())
-            throw new DocumentException("Content was already written to the output.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("content.was.already.written.to.the.output"));
         stamper.setEncryption(userPassword, ownerPassword, permissions, encryptionType);
     }
 
@@ -345,9 +346,9 @@ public class PdfStamper
      */
      public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
         if (stamper.isAppend())
-            throw new DocumentException("Append mode does not support changing the encryption status.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("append.mode.does.not.support.changing.the.encryption.status"));
         if (stamper.isContentWritten())
-            throw new DocumentException("Content was already written to the output.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("content.was.already.written.to.the.output"));
         stamper.setEncryption(certs, permissions, encryptionType);
      }
      

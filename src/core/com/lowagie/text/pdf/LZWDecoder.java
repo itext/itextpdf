@@ -46,6 +46,7 @@
 package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.ExceptionConverter;
 /**
@@ -82,7 +83,7 @@ public class LZWDecoder {
     public void decode(byte data[], OutputStream uncompData) {
         
         if(data[0] == (byte)0x00 && data[1] == (byte)0x01) {
-            throw new RuntimeException("LZW flavour not supported.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("lzw.flavour.not.supported"));
         }
         
         initializeStringTable();

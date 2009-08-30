@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import org.xml.sax.SAXException;
 
@@ -105,16 +106,16 @@ class PdfStamperImp extends PdfWriter {
     PdfStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append) throws DocumentException, IOException {
         super(new PdfDocument(), os);
         if (!reader.isOpenedWithFullPermissions())
-            throw new BadPasswordException("PdfReader not opened with owner password");
+            throw new BadPasswordException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
         if (reader.isTampered())
-            throw new DocumentException("The original document was reused. Read it again from file.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("the.original.document.was.reused.read.it.again.from.file"));
         reader.setTampered(true);
         this.reader = reader;
         file = reader.getSafeFile();
         this.append = append;
         if (append) {
             if (reader.isRebuilt())
-                throw new DocumentException("Append mode requires a document without errors even if recovery was possible.");
+                throw new DocumentException(MessageLocalization.getComposedMessage("append.mode.requires.a.document.without.errors.even.if.recovery.was.possible"));
             if (reader.isEncrypted())
                 crypto = new PdfEncryption(reader.getDecrypt());
             pdf_version.setAppendmode(true);
@@ -677,7 +678,7 @@ class PdfStamperImp extends PdfWriter {
     void replacePage(PdfReader r, int pageImported, int pageReplaced) {
         PdfDictionary pageN = reader.getPageN(pageReplaced);
         if (pagesToContent.containsKey(pageN))
-            throw new IllegalStateException("This page cannot be replaced: new content was already added");
+            throw new IllegalStateException(MessageLocalization.getComposedMessage("this.page.cannot.be.replaced.new.content.was.already.added"));
         PdfImportedPage p = getImportedPage(r, pageImported);
         PdfDictionary dic2 = reader.getPageNRelease(pageReplaced);
         dic2.remove(PdfName.RESOURCES);
@@ -742,7 +743,7 @@ class PdfStamperImp extends PdfWriter {
                 }
             }
             if (len == kids.size())
-                throw new RuntimeException("Internal inconsistence.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("internal.inconsistence"));
             markUsed(kids);
             reader.pageRefs.insertPage(pageNumber, pref);
             correctAcroFieldPages(pageNumber);
@@ -794,7 +795,7 @@ class PdfStamperImp extends PdfWriter {
     boolean partialFormFlattening(String name) {
         getAcroFields();
         if (acroFields.getXfa().isXfaPresent())
-            throw new UnsupportedOperationException("Partial form flattening is not supported with XFA forms.");
+            throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("partial.form.flattening.is.not.supported.with.xfa.forms"));
         if (!acroFields.getFields().containsKey(name))
             return false;
         partialFlattening.add(name);
@@ -803,7 +804,7 @@ class PdfStamperImp extends PdfWriter {
 
     void flatFields() {
         if (append)
-            throw new IllegalArgumentException("Field flattening is not supported in append mode.");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("field.flattening.is.not.supported.in.append.mode"));
         getAcroFields();
         HashMap fields = acroFields.getFields();
         if (fieldsAdded && partialFlattening.isEmpty()) {
@@ -976,7 +977,7 @@ class PdfStamperImp extends PdfWriter {
     private void flatFreeTextFields()
 	{
 		if (append)
-			throw new IllegalArgumentException("FreeText flattening is not supported in append mode.");
+			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("freetext.flattening.is.not.supported.in.append.mode"));
 
 		for (int page = 1; page <= reader.getNumberOfPages(); ++page)
 		{
@@ -1070,7 +1071,7 @@ class PdfStamperImp extends PdfWriter {
     public PdfIndirectReference getPageReference(int page) {
         PdfIndirectReference ref = reader.getPageOrigRef(page);
         if (ref == null)
-            throw new IllegalArgumentException("Invalid page number " + page);
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.page.number.1", page));
         return ref;
     }
 
@@ -1078,7 +1079,7 @@ class PdfStamperImp extends PdfWriter {
      * @see com.lowagie.text.pdf.PdfWriter#addAnnotation(com.lowagie.text.pdf.PdfAnnotation)
      */
     public void addAnnotation(PdfAnnotation annot) {
-        throw new RuntimeException("Unsupported in this context. Use PdfStamper.addAnnotation()");
+        throw new RuntimeException(MessageLocalization.getComposedMessage("unsupported.in.this.context.use.pdfstamper.addannotation"));
     }
 
     void addDocumentField(PdfIndirectReference ref) {
@@ -1371,7 +1372,7 @@ class PdfStamperImp extends PdfWriter {
      * @see PdfStamper#setPageAction(PdfName, PdfAction, int)
      */
     public void setPageAction(PdfName actionType, PdfAction action) throws PdfException {
-        throw new UnsupportedOperationException("Use setPageAction(PdfName actionType, PdfAction action, int page)");
+        throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("use.setpageaction.pdfname.actiontype.pdfaction.action.int.page"));
     }
 
     /**
@@ -1384,7 +1385,7 @@ class PdfStamperImp extends PdfWriter {
      */
     void setPageAction(PdfName actionType, PdfAction action, int page) throws PdfException {
         if (!actionType.equals(PAGE_OPEN) && !actionType.equals(PAGE_CLOSE))
-            throw new PdfException("Invalid page additional action type: " + actionType.toString());
+            throw new PdfException(MessageLocalization.getComposedMessage("invalid.page.additional.action.type.1", actionType.toString()));
         PdfDictionary pg = reader.getPageN(page);
         PdfDictionary aa = (PdfDictionary)PdfReader.getPdfObject(pg.get(PdfName.AA), pg);
         if (aa == null) {
@@ -1401,7 +1402,7 @@ class PdfStamperImp extends PdfWriter {
      * @param seconds ignore
      */
     public void setDuration(int seconds) {
-        throw new UnsupportedOperationException("Use setPageAction(PdfName actionType, PdfAction action, int page)");
+        throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("use.setpageaction.pdfname.actiontype.pdfaction.action.int.page"));
     }
 
     /**
@@ -1409,7 +1410,7 @@ class PdfStamperImp extends PdfWriter {
      * @param transition ignore
      */
     public void setTransition(PdfTransition transition) {
-        throw new UnsupportedOperationException("Use setPageAction(PdfName actionType, PdfAction action, int page)");
+        throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("use.setpageaction.pdfname.actiontype.pdfaction.action.int.page"));
     }
 
     /**
@@ -1481,7 +1482,7 @@ class PdfStamperImp extends PdfWriter {
         actionType.equals(DID_SAVE) ||
         actionType.equals(WILL_PRINT) ||
         actionType.equals(DID_PRINT))) {
-            throw new PdfException("Invalid additional action type: " + actionType.toString());
+            throw new PdfException(MessageLocalization.getComposedMessage("invalid.additional.action.type.1", actionType.toString()));
         }
         PdfDictionary aa = reader.getCatalog().getAsDict(PdfName.AA);
         if (aa == null) {
@@ -1508,14 +1509,14 @@ class PdfStamperImp extends PdfWriter {
      * @see com.lowagie.text.pdf.PdfWriter#setOpenAction(java.lang.String)
      */
     public void setOpenAction(String name) {
-        throw new UnsupportedOperationException("Open actions by name are not supported.");
+        throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("open.actions.by.name.are.not.supported"));
     }
 
     /**
      * @see com.lowagie.text.pdf.PdfWriter#setThumbnail(com.lowagie.text.Image)
      */
     public void setThumbnail(com.lowagie.text.Image image) {
-        throw new UnsupportedOperationException("Use PdfStamper.setThumbnail().");
+        throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("use.pdfstamper.setthumbnail"));
     }
 
     void setThumbnail(Image image, int page) throws PdfException, DocumentException {
@@ -1527,11 +1528,11 @@ class PdfStamperImp extends PdfWriter {
     }
 
     public PdfContentByte getDirectContentUnder() {
-        throw new UnsupportedOperationException("Use PdfStamper.getUnderContent() or PdfStamper.getOverContent()");
+        throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("use.pdfstamper.getundercontent.or.pdfstamper.getovercontent"));
     }
 
     public PdfContentByte getDirectContent() {
-        throw new UnsupportedOperationException("Use PdfStamper.getUnderContent() or PdfStamper.getOverContent()");
+        throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("use.pdfstamper.getundercontent.or.pdfstamper.getovercontent"));
     }
 
     /**

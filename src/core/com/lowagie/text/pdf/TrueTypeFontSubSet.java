@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
@@ -238,7 +239,7 @@ class TrueTypeFontSubSet {
         rf.seek(directoryOffset);
         int id = rf.readInt();
         if (id != 0x00010000)
-            throw new DocumentException(fileName + " is not a true type file.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("1.is.not.a.true.type.file", fileName));
         int num_tables = rf.readUnsignedShort();
         rf.skipBytes(6);
         for (int k = 0; k < num_tables; ++k) {
@@ -255,12 +256,12 @@ class TrueTypeFontSubSet {
         int tableLocation[];
         tableLocation = (int[])tableDirectory.get("head");
         if (tableLocation == null)
-            throw new DocumentException("Table 'head' does not exist in " + fileName);
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.head.does.not.exist.in.1", fileName));
         rf.seek(tableLocation[TABLE_OFFSET] + HEAD_LOCA_FORMAT_OFFSET);
         locaShortTable = (rf.readUnsignedShort() == 0);
         tableLocation = (int[])tableDirectory.get("loca");
         if (tableLocation == null)
-            throw new DocumentException("Table 'loca' does not exist in " + fileName);
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.loca.does.not.exist.in.1", fileName));
         rf.seek(tableLocation[TABLE_OFFSET]);
         if (locaShortTable) {
             int entries = tableLocation[TABLE_LENGTH] / 2;
@@ -329,7 +330,7 @@ class TrueTypeFontSubSet {
         int tableLocation[];
         tableLocation = (int[])tableDirectory.get("glyf");
         if (tableLocation == null)
-            throw new DocumentException("Table 'glyf' does not exist in " + fileName);
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.glyf.does.not.exist.in.1", fileName));
         Integer glyph0 = new Integer(0);
         if (!glyphsUsed.containsKey(glyph0)) {
             glyphsUsed.put(glyph0, null);

@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.xml.simpleparser.IanaEncodings;
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
@@ -296,14 +297,14 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
             if (xmlLast == null && xmlNames != null)
                 return;
             else
-                throw new RuntimeException("Destination end tag out of place.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("destination.end.tag.out.of.place"));
         }
         if (!tag.equals("Name"))
-            throw new RuntimeException("Invalid end tag - " + tag);
+            throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.end.tag.1", tag));
         if (xmlLast == null || xmlNames == null)
-            throw new RuntimeException("Name end tag out of place.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("name.end.tag.out.of.place"));
         if (!xmlLast.containsKey("Page"))
-            throw new RuntimeException("Page attribute missing.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("page.attribute.missing"));
         xmlNames.put(unEscapeBinaryString((String)xmlLast.get("Name")), xmlLast.get("Page"));
         xmlLast = null;
     }
@@ -318,12 +319,12 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
                 return;
             }
             else
-                throw new RuntimeException("Root element is not Destination.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("root.element.is.not.destination"));
         }
         if (!tag.equals("Name"))
-            throw new RuntimeException("Tag " + tag + " not allowed.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("tag.1.not.allowed", tag));
         if (xmlLast != null)
-            throw new RuntimeException("Nested tags are not allowed.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("nested.tags.are.not.allowed"));
         xmlLast = new HashMap(h);
         xmlLast.put("Name", "");
     }

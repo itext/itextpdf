@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 import com.lowagie.text.DocumentException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 /**
  * Allows you to add one (or more) existing PDF document(s)
@@ -76,13 +77,13 @@ class PdfCopyFormsImp extends PdfCopyFieldsImp {
      */
     public void copyDocumentFields(PdfReader reader) throws DocumentException {
     	if (!reader.isOpenedWithFullPermissions())
-            throw new IllegalArgumentException("PdfReader not opened with owner password");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
         if (readers2intrefs.containsKey(reader)) {
             reader = new PdfReader(reader);
         }
         else {
             if (reader.isTampered())
-                throw new DocumentException("The document was reused.");
+                throw new DocumentException(MessageLocalization.getComposedMessage("the.document.was.reused"));
             reader.consolidateNamedDestinations();
             reader.setTampered(true);
         }

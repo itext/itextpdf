@@ -54,6 +54,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.ExceptionConverter;
 /** Supports fast encodings for winansi and PDFDocEncoding.
@@ -430,7 +431,7 @@ public class PdfEncodings {
         String fullName = BaseFont.RESOURCE_PATH + "cmaps/" + name;
         InputStream in = BaseFont.getResourceStream(fullName);
         if (in == null)
-            throw new IOException("The Cmap " + name + " was not found.");
+            throw new IOException(MessageLocalization.getComposedMessage("the.cmap.1.was.not.found", name));
         encodeStream(in, planes);
         in.close();
     }
@@ -509,7 +510,7 @@ public class PdfEncodings {
             int one = seqs[idx] & 0xff;
             char c = plane[one];
             if (c != 0 && (c & 0x8000) == 0)
-                throw new RuntimeException("Inconsistent mapping.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("inconsistent.mapping"));
             if (c == 0) {
                 planes.add(new char[256]);
                 c = (char)((planes.size() - 1) | 0x8000);
@@ -521,7 +522,7 @@ public class PdfEncodings {
         int one = seqs[size] & 0xff;
         char c = plane[one];
         if ((c & 0x8000) != 0)
-            throw new RuntimeException("Inconsistent mapping.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("inconsistent.mapping"));
         plane[one] = cid;
     }
 

@@ -50,6 +50,7 @@
 package com.lowagie.text.pdf;
 
 import java.util.List;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
@@ -926,7 +927,7 @@ public class PdfPCell extends Rectangle{
         if (rotation < 0)
             rotation += 360;
         if ((rotation % 90) != 0)
-            throw new IllegalArgumentException("Rotation must be a multiple of 90.");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("rotation.must.be.a.multiple.of.90"));
         this.rotation = rotation;
     }
     

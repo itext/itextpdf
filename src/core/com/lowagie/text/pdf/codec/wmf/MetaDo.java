@@ -1,5 +1,6 @@
 /*
  * $Id$
+ * $Name$
  *
  * Copyright 2001, 2002 Paulo Soares
  *
@@ -57,6 +58,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
@@ -151,7 +153,7 @@ public class MetaDo {
     
     public void readAll() throws IOException, DocumentException{
         if (in.readInt() != 0x9AC6CDD7) {
-            throw new DocumentException("Not a placeable windows metafile");
+            throw new DocumentException(MessageLocalization.getComposedMessage("not.a.placeable.windows.metafile"));
         }
         in.readWord();
         left = in.readShort();
@@ -680,7 +682,7 @@ public class MetaDo {
     
     public static byte[] wrapBMP(Image image) throws IOException {
         if (image.getOriginalType() != Image.ORIGINAL_BMP)
-            throw new IOException("Only BMP can be wrapped in WMF.");
+            throw new IOException(MessageLocalization.getComposedMessage("only.bmp.can.be.wrapped.in.wmf"));
         InputStream imgIn;
         byte data[] = null;
         if (image.getOriginalData() == null) {
