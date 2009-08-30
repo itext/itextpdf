@@ -50,6 +50,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
 
@@ -123,15 +124,13 @@ public class TIFFDirectory extends Object implements Serializable {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new
-            IllegalArgumentException("Bad endianness tag (not 0x4949 or 0x4d4d).");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("bad.endianness.tag.not.0x4949.or.0x4d4d"));
         }
         isBigEndian = (endian == 0x4d4d);
         
         int magic = readUnsignedShort(stream);
         if (magic != 42) {
-            throw new
-            IllegalArgumentException("Bad magic number, should be 42.");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("bad.magic.number.should.be.42"));
         }
         
         // Get the initial ifd offset as an unsigned int (using a long)
@@ -139,8 +138,7 @@ public class TIFFDirectory extends Object implements Serializable {
         
         for (int i = 0; i < directory; i++) {
             if (ifd_offset == 0L) {
-                throw new
-                IllegalArgumentException("Directory number too large.");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("directory.number.too.large"));
             }
             
             stream.seek(ifd_offset);
@@ -175,8 +173,7 @@ public class TIFFDirectory extends Object implements Serializable {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new
-            IllegalArgumentException("Bad endianness tag (not 0x4949 or 0x4d4d).");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("bad.endianness.tag.not.0x4949.or.0x4d4d"));
         }
         isBigEndian = (endian == 0x4d4d);
         
@@ -618,14 +615,12 @@ public class TIFFDirectory extends Object implements Serializable {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new
-            IllegalArgumentException("Bad endianness tag (not 0x4949 or 0x4d4d).");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("bad.endianness.tag.not.0x4949.or.0x4d4d"));
         }
         boolean isBigEndian = (endian == 0x4d4d);
         int magic = readUnsignedShort(stream, isBigEndian);
         if (magic != 42) {
-            throw new
-            IllegalArgumentException("Bad magic number, should be 42.");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("bad.magic.number.should.be.42"));
         }
         
         stream.seek(4L);

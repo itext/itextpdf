@@ -107,7 +107,7 @@ public final class MessageLocalization {
      * @return the message
      */
     public static String getComposedMessage(String key) {
-        return getComposedMessage(key, null, null);
+        return getComposedMessage(key, null, null, null, null);
     }
 
     /**
@@ -118,24 +118,68 @@ public final class MessageLocalization {
      * @return the message
      */
     public static String getComposedMessage(String key, Object p1) {
-        return getComposedMessage(key, p1, null);
+        return getComposedMessage(key, p1, null, null, null);
     }
 
     /**
-     * Get a message with two parameters. The parameters will replace the strings
-     * "{1}" and "{2}" found in the message.
+     * Get a message with one parameter. The parameter will replace the string
+     * "{1}" found in the message.
+     * @param key the key to the message
+     * @param p1 the parameter
+     * @return the message
+     */
+    public static String getComposedMessage(String key, int p1) {
+        return getComposedMessage(key, String.valueOf(p1), null, null, null);
+    }
+
+    /**
+     * Get a message with one parameter. The parameter will replace the string
+     * "{1}", "{2}" found in the message.
      * @param key the key to the message
      * @param p1 the parameter
      * @param p2 the parameter
      * @return the message
      */
     public static String getComposedMessage(String key, Object p1, Object p2) {
+        return getComposedMessage(key, p1, p2, null, null);
+    }
+
+    /**
+     * Get a message with one parameter. The parameter will replace the string
+     * "{1}", "{2}", "{3}" found in the message.
+     * @param key the key to the message
+     * @param p1 the parameter
+     * @param p2 the parameter
+     * @param p3 the parameter
+     * @return the message
+     */
+    public static String getComposedMessage(String key, Object p1, Object p2, Object p3) {
+        return getComposedMessage(key, p1, p2, p3, null);
+    }
+
+    /**
+     * Get a message with two parameters. The parameters will replace the strings
+     * "{1}", "{2}", "{3}", "{4}" found in the message.
+     * @param key the key to the message
+     * @param p1 the parameter
+     * @param p2 the parameter
+     * @param p3 the parameter
+     * @param p4 the parameter
+     * @return the message
+     */
+    public static String getComposedMessage(String key, Object p1, Object p2, Object p3, Object p4) {
         String msg = getMessage(key);
         if (p1 != null) {
             msg = msg.replaceAll("\\{1\\}", p1.toString());
         }
         if (p2 != null) {
             msg = msg.replaceAll("\\{2\\}", p2.toString());
+        }
+        if (p3 != null) {
+            msg = msg.replaceAll("\\{3\\}", p3.toString());
+        }
+        if (p4 != null) {
+            msg = msg.replaceAll("\\{4\\}", p4.toString());
         }
         return msg;
     }

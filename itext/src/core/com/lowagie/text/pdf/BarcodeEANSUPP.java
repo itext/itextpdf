@@ -46,6 +46,7 @@
  */
 package com.lowagie.text.pdf;
 import java.awt.Color;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Rectangle;
 
@@ -149,6 +150,6 @@ public class BarcodeEANSUPP extends Barcode{
      * @return the image
      */    
     public java.awt.Image createAwtImage(Color foreground, Color background) {
-        throw new UnsupportedOperationException("The two barcodes must be composed externally.");
+        throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("the.two.barcodes.must.be.composed.externally"));
     }    
 }

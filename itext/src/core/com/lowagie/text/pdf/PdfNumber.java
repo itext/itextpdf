@@ -49,6 +49,8 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.error_messages.MessageLocalization;
+
 /**
  * <CODE>PdfNumber</CODE> provides two types of numbers, integer and real.
  * <P>
@@ -84,7 +86,7 @@ public class PdfNumber extends PdfObject {
             setContent(content);
         }
         catch (NumberFormatException nfe){
-            throw new RuntimeException(content + " is not a valid number - " + nfe.toString());
+            throw new RuntimeException(MessageLocalization.getComposedMessage("1.is.not.a.valid.number.2", content, nfe.toString()));
         }
     }
     

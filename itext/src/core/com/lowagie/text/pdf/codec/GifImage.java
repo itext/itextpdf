@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
@@ -208,7 +209,7 @@ public class GifImage {
         readHeader();
         readContents();
         if (frames.isEmpty())
-            throw new IOException("The file does not contain any valid image.");
+            throw new IOException(MessageLocalization.getComposedMessage("the.file.does.not.contain.any.valid.image"));
     }
     
     /**
@@ -219,7 +220,7 @@ public class GifImage {
         for (int i = 0; i < 6; i++)
             id += (char)in.read();
         if (!id.startsWith("GIF8")) {
-            throw new IOException("Gif signature nor found.");
+            throw new IOException(MessageLocalization.getComposedMessage("gif.signature.nor.found"));
         }
         
         readLSD();

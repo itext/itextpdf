@@ -1,5 +1,6 @@
 /*
  * $Id$
+ * $Name$
  *
  * Copyright 2000, 2001, 2002 by Paulo Soares.
  *
@@ -51,6 +52,7 @@ package com.lowagie.text;
 
 import com.lowagie.text.pdf.codec.TIFFFaxDecoder;
 import java.net.URL;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 /**
  * CCITT Image data that has to be inserted into the document
@@ -85,7 +87,7 @@ public class ImgCCITT extends Image {
     public ImgCCITT(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data) throws BadElementException{
         super((URL)null);
         if (typeCCITT != CCITTG4 && typeCCITT != CCITTG3_1D && typeCCITT != CCITTG3_2D)
-            throw new BadElementException("The CCITT compression type must be CCITTG4, CCITTG3_1D or CCITTG3_2D");
+            throw new BadElementException(MessageLocalization.getComposedMessage("the.ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d"));
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
         type = IMGRAW;

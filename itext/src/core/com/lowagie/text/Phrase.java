@@ -52,6 +52,7 @@ package com.lowagie.text;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.pdf.HyphenationEvent;
 
@@ -296,7 +297,7 @@ public class Phrase extends ArrayList implements TextElementArray {
             }
         }
         catch(ClassCastException cce) {
-            throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
+            throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
     
@@ -350,7 +351,7 @@ public class Phrase extends ArrayList implements TextElementArray {
             }
         }
         catch(ClassCastException cce) {
-            throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
+            throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
     

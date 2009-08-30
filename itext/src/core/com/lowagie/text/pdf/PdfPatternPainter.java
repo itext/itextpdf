@@ -47,6 +47,7 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
@@ -397,6 +398,6 @@ public final class PdfPatternPainter extends PdfTemplate {
     
     void checkNoColor() {
         if (stencil)
-            throw new RuntimeException("Colors are not allowed in uncolored tile patterns.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("colors.are.not.allowed.in.uncolored.tile.patterns"));
     }
 }

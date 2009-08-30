@@ -47,6 +47,7 @@
 package com.lowagie.text.pdf;
 
 import java.io.IOException;
+import com.lowagie.text.error_messages.MessageLocalization;
 /** Implements the shading pattern dictionary.
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -100,7 +101,7 @@ public class PdfShadingPattern extends PdfDictionary {
     
     public void setMatrix(float matrix[]) {
         if (matrix.length != 6)
-            throw new RuntimeException("The matrix size must be 6.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("the.matrix.size.must.be.6"));
         this.matrix = matrix;
     }
     

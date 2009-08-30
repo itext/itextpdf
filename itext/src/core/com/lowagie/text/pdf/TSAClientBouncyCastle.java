@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 import java.io.*;
 import java.math.*;
 import java.net.*;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import org.bouncycastle.asn1.cmp.*;
 import org.bouncycastle.asn1.x509.*;
@@ -161,7 +162,7 @@ public class TSAClientBouncyCastle implements TSAClient {
             int value = (failure == null) ? 0 : failure.intValue();
             if (value != 0) {
                 // @todo: Translate value of 15 error codes defined by PKIFailureInfo to string
-                throw new Exception("Invalid TSA '" + tsaURL + "' response, code " + value);
+                throw new Exception(MessageLocalization.getComposedMessage("invalid.tsa.1.response.code.2", tsaURL, String.valueOf(value)));
             }
             // @todo: validate the time stap certificate chain (if we want
             //        assure we do not sign using an invalid timestamp).
@@ -169,7 +170,7 @@ public class TSAClientBouncyCastle implements TSAClient {
             // extract just the time stamp token (removes communication status info)
             TimeStampToken  tsToken = response.getTimeStampToken();
             if (tsToken == null) {
-                throw new Exception("TSA '" + tsaURL + "' failed to return time stamp token: " + response.getStatusString());
+                throw new Exception(MessageLocalization.getComposedMessage("tsa.1.failed.to.return.time.stamp.token.2", tsaURL, response.getStatusString()));
             }
             TimeStampTokenInfo info = tsToken.getTimeStampInfo(); // to view details
             byte[] encoded = tsToken.getEncoded();
@@ -181,7 +182,7 @@ public class TSAClientBouncyCastle implements TSAClient {
         } catch (Exception e) {
             throw e;
         } catch (Throwable t) {
-            throw new Exception("Failed to get TSA response from '" + tsaURL +"'", t);
+            throw new Exception(MessageLocalization.getComposedMessage("failed.to.get.tsa.response.from.1", tsaURL), t);
         }
     }
     

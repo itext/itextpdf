@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.pdf.CMapAwareDocumentFont;
@@ -139,7 +140,7 @@ public abstract class PdfContentStreamProcessor {
      */
     public void registerContentOperator(String operatorString, ContentOperator operator){
         if (operators.containsKey(operatorString))
-            throw new IllegalArgumentException("Operator " + operatorString + " already registered");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("operator.1.already.registered", operatorString));
         operators.put(operatorString, operator);
     }
     
@@ -510,10 +511,10 @@ public abstract class PdfContentStreamProcessor {
             PdfName dictionaryName = (PdfName)operands.get(0);
             PdfDictionary extGState = processor.resources.getAsDict(PdfName.EXTGSTATE);
             if (extGState == null)
-                throw new IllegalArgumentException("Resources do not contain ExtGState entry. Unable to process operator " + operator);
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("resources.do.not.contain.extgstate.entry.unable.to.process.operator.1", operator));
             PdfDictionary gsDic = extGState.getAsDict(dictionaryName);
             if (gsDic == null)
-                throw new IllegalArgumentException(dictionaryName + " is an unknown graphics state dictionary");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.is.an.unknown.graphics.state.dictionary", dictionaryName));
             
             // at this point, all we care about is the FONT entry in the GS dictionary
             PdfArray fontParameter = gsDic.getAsArray(PdfName.FONT);

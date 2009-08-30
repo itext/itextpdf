@@ -1,6 +1,7 @@
 package com.lowagie.text.pdf.collection;
 
 import java.util.Calendar;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.pdf.PdfDate;
 import com.lowagie.text.pdf.PdfDictionary;
@@ -109,7 +110,7 @@ public class PdfCollectionItem extends PdfDictionary {
 		PdfName fieldname = new PdfName(key);
 		PdfObject o = get(fieldname);
 		if (o == null)
-			throw new IllegalArgumentException("You must set a value before adding a prefix.");
+			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("you.must.set.a.value.before.adding.a.prefix"));
 		PdfDictionary dict = new PdfDictionary(PdfName.COLLECTIONSUBITEM);
 		dict.put(PdfName.D, o);
 		dict.put(PdfName.P, new PdfString(prefix, PdfObject.TEXT_UNICODE));

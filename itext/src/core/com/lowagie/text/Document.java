@@ -53,6 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 /**
  * A generic Document class.
@@ -269,12 +270,10 @@ public class Document implements DocListener {
     
     public boolean add(Element element) throws DocumentException {
         if (close) {
-			throw new DocumentException(
-				"The document has been closed. You can't add any Elements.");
+			throw new DocumentException(MessageLocalization.getComposedMessage("the.document.has.been.closed.you.can.t.add.any.elements"));
         }
 		if (!open && element.isContent()) {
-			throw new DocumentException(
-				"The document is not open yet; you can only add Meta information.");
+			throw new DocumentException(MessageLocalization.getComposedMessage("the.document.is.not.open.yet.you.can.only.add.meta.information"));
         }
         boolean success = false;
         DocListener listener;

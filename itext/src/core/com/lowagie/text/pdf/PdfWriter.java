@@ -64,6 +64,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.security.cert.Certificate;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
@@ -684,7 +685,7 @@ public class PdfWriter extends DocWriter implements
      */
     public void setInitialLeading(float leading) throws DocumentException {
     	if (open)
-    		throw new DocumentException("You can't set the initial leading if the document is already open.");
+    		throw new DocumentException(MessageLocalization.getComposedMessage("you.can.t.set.the.initial.leading.if.the.document.is.already.open"));
     	pdf.setLeading(leading);
     }
     
@@ -714,7 +715,7 @@ public class PdfWriter extends DocWriter implements
 
     public PdfContentByte getDirectContent() {
         if (!open)
-            throw new RuntimeException("The document is not open.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("the.document.is.not.open"));
         return directContent;
     }
 
@@ -727,7 +728,7 @@ public class PdfWriter extends DocWriter implements
 
     public PdfContentByte getDirectContentUnder() {
         if (!open)
-            throw new RuntimeException("The document is not open.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("the.document.is.not.open"));
         return directContentUnder;
     }
 
@@ -981,7 +982,7 @@ public class PdfWriter extends DocWriter implements
     public PdfIndirectReference getPageReference(int page) {
         --page;
         if (page < 0)
-            throw new IndexOutOfBoundsException("The page numbers start at 1.");
+            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("the.page.numbers.start.at.1"));
         PdfIndirectReference ref;
         if (page < pageReferences.size()) {
             ref = (PdfIndirectReference)pageReferences.get(page);
@@ -1052,7 +1053,7 @@ public class PdfWriter extends DocWriter implements
 
     PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException {
         if (!open) {
-            throw new PdfException("The document isn't open.");
+            throw new PdfException(MessageLocalization.getComposedMessage("the.document.isn.t.open"));
         }
         PdfIndirectObject object;
         try {
@@ -1619,7 +1620,7 @@ public class PdfWriter extends DocWriter implements
          actionType.equals(DID_SAVE) ||
          actionType.equals(WILL_PRINT) ||
          actionType.equals(DID_PRINT))) {
-             throw new DocumentException("Invalid additional action type: " + actionType.toString());
+             throw new DocumentException(MessageLocalization.getComposedMessage("invalid.additional.action.type.1", actionType.toString()));
          }
          pdf.addAdditionalAction(actionType, action);
      }
@@ -1730,9 +1731,9 @@ public class PdfWriter extends DocWriter implements
         if (pdfxConformance.getPDFXConformance() == pdfx)
             return;
         if (pdf.isOpen())
-            throw new PdfXConformanceException("PDFX conformance can only be set before opening the document.");
+            throw new PdfXConformanceException(MessageLocalization.getComposedMessage("pdfx.conformance.can.only.be.set.before.opening.the.document"));
         if (crypto != null)
-            throw new PdfXConformanceException("A PDFX conforming document cannot be encrypted.");
+            throw new PdfXConformanceException(MessageLocalization.getComposedMessage("a.pdfx.conforming.document.cannot.be.encrypted"));
         if (pdfx == PDFA1A || pdfx == PDFA1B)
             setPdfVersion(VERSION_1_4);
         else if (pdfx != PDFXNONE)
@@ -1956,7 +1957,7 @@ public class PdfWriter extends DocWriter implements
     /** @see com.lowagie.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(byte[], byte[], int, int) */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType) throws DocumentException {
         if (pdf.isOpen())
-            throw new DocumentException("Encryption can only be added before opening the document.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("encryption.can.only.be.added.before.opening.the.document"));
         crypto = new PdfEncryption();
         crypto.setCryptoMode(encryptionType, 0);
         crypto.setupAllKeys(userPassword, ownerPassword, permissions);
@@ -1965,7 +1966,7 @@ public class PdfWriter extends DocWriter implements
     /** @see com.lowagie.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(java.security.cert.Certificate[], int[], int) */
     public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
         if (pdf.isOpen())
-            throw new DocumentException("Encryption can only be added before opening the document.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("encryption.can.only.be.added.before.opening.the.document"));
         crypto = new PdfEncryption();
         if (certs != null) {
             for (int i=0; i < certs.length; i++) {
@@ -2364,7 +2365,7 @@ public class PdfWriter extends DocWriter implements
      */
     public void setTagged() {
         if (open)
-            throw new IllegalArgumentException("Tagging must be set before opening the document.");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("tagging.must.be.set.before.opening.the.document"));
         tagged = true;
     }
 
@@ -2554,7 +2555,7 @@ public class PdfWriter extends DocWriter implements
             }
         }
         else
-            throw new IllegalArgumentException("Only PdfLayer is accepted.");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("only.pdflayer.is.accepted"));
     }
 
 //  User methods to change aspects of the page
@@ -2632,7 +2633,7 @@ public class PdfWriter extends DocWriter implements
     /** @see com.lowagie.text.pdf.interfaces.PdfPageActions#setPageAction(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfAction) */
     public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException {
           if (!actionType.equals(PAGE_OPEN) && !actionType.equals(PAGE_CLOSE))
-              throw new DocumentException("Invalid page additional action type: " + actionType.toString());
+              throw new DocumentException(MessageLocalization.getComposedMessage("invalid.page.additional.action.type.1", actionType.toString()));
           pdf.setPageAction(actionType, action);
       }
 
@@ -2744,7 +2745,7 @@ public class PdfWriter extends DocWriter implements
      */
     public void setRunDirection(int runDirection) {
         if (runDirection < RUN_DIRECTION_NO_BIDI || runDirection > RUN_DIRECTION_RTL)
-            throw new RuntimeException("Invalid run direction: " + runDirection);
+            throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.run.direction.1", runDirection));
         this.runDirection = runDirection;
     }
 
@@ -2780,7 +2781,7 @@ public class PdfWriter extends DocWriter implements
      * @throws DocumentException on error
      */
      public void setUserunit(float userunit) throws DocumentException {
- 		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
+ 		if (userunit < 1f || userunit > 75000f) throw new DocumentException(MessageLocalization.getComposedMessage("userunit.should.be.a.value.between.1.and.75000"));
          this.userunit = userunit;
          setAtLeastPdfVersion(VERSION_1_6);
      }
@@ -2825,7 +2826,7 @@ public class PdfWriter extends DocWriter implements
     ColorDetails addSimplePatternColorspace(Color color) {
         int type = ExtendedColor.getType(color);
         if (type == ExtendedColor.TYPE_PATTERN || type == ExtendedColor.TYPE_SHADING)
-            throw new RuntimeException("An uncolored tile pattern can not have another pattern or shading as color.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("an.uncolored.tile.pattern.can.not.have.another.pattern.or.shading.as.color"));
         try {
             switch (type) {
                 case ExtendedColor.TYPE_RGB:
@@ -2865,7 +2866,7 @@ public class PdfWriter extends DocWriter implements
                     return patternDetails;
                 }
                 default:
-                    throw new RuntimeException("Invalid color type in PdfWriter.addSimplePatternColorspace().");
+                    throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.color.type.in.pdfwriter.addsimplepatterncolorspace"));
             }
         }
         catch (Exception e) {

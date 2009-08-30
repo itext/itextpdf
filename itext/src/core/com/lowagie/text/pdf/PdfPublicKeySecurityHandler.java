@@ -1,5 +1,6 @@
 /*
  * $Id$
+ * $Name$
  *
  * Copyright 2006 Paulo Soares
  *
@@ -149,55 +150,6 @@ public class PdfPublicKeySecurityHandler {
         recipients = new ArrayList();
     }
 
-
-    /* 
-     * Routine for decode output of PdfContentByte.escapeString(byte[] bytes).
-     * It should be moved to PdfContentByte. 
-     */
-     
-    static public byte[] unescapedString(byte[] bytes) throws BadPdfFormatException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-              
-        int index = 0;
-        
-        if (bytes[0] != '(' && bytes[bytes.length-1] != ')') throw new BadPdfFormatException("Expect '(' and ')' at begin and end of the string.");
-        
-        while (index < bytes.length) {
-            if (bytes[index] == '\\') {
-                index++;
-                switch (bytes[index]) {
-                case 'b':
-                    baos.write('\b');
-                    break;
-                case 'f':
-                    baos.write('\f');
-                    break;
-                case 't':
-                    baos.write('\t');
-                    break;
-                case 'n':
-                    baos.write('\n');
-                    break;
-                case 'r':
-                    baos.write('\r');
-                    break;
-                case '(':
-                        baos.write('(');
-                        break;
-                case ')':
-                        baos.write(')');
-                        break;                        
-                case '\\':
-                    baos.write('\\');
-                    break;
-                }
-            } else
-                baos.write(bytes[index]);
-            index++;
-        }
-        return baos.toByteArray();
-    }
-    
     public void addRecipient(PdfPublicKeyRecipient recipient) {
         recipients.add(recipient);
     }

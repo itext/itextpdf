@@ -48,6 +48,7 @@ package com.lowagie.text.pdf;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.pdf.fonts.cmaps.CMap;
 import com.lowagie.text.pdf.fonts.cmaps.CMapParser;
@@ -175,7 +176,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
     private String decodeSingleCID(byte[] bytes, int offset, int len){
         if (toUnicodeCmap != null){
             if (offset + len > bytes.length)
-                throw new ArrayIndexOutOfBoundsException("Invalid index: " + offset + len);
+                throw new ArrayIndexOutOfBoundsException(MessageLocalization.getComposedMessage("invalid.index.1", offset + len));
             return toUnicodeCmap.lookup(bytes, offset, len);
         }
 

@@ -53,6 +53,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Image;
 
@@ -240,7 +241,7 @@ public class PdfImage extends PdfStream {
                     transferBytes(is, streamBytes, -1);
                 	break;
                 default:
-                    throw new BadPdfFormatException(errorID + " is an unknown Image format.");
+                    throw new BadPdfFormatException(MessageLocalization.getComposedMessage("1.is.an.unknown.image.format", errorID));
             }
             put(PdfName.LENGTH, new PdfNumber(streamBytes.size()));
         }

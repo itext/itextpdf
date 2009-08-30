@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PushbackInputStream;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,8 +117,7 @@ public class CMapParser
                         }
                         else
                         {
-                            throw new IOException( "Error parsing CMap beginbfchar, expected{COSString " +
-                                                   "or COSName} and not " + nextToken );
+                            throw new IOException(MessageLocalization.getComposedMessage("error.parsing.cmap.beginbfchar.expected.cosstring.or.cosname.and.not.1", nextToken));
                         }
                     }
                 }
@@ -220,7 +220,7 @@ public class CMapParser
                 }
                 else
                 {
-                    throw new IOException( "Error: expected the end of a dictionary.");
+                    throw new IOException(MessageLocalization.getComposedMessage("error.expected.the.end.of.a.dictionary"));
                 }
                 break;
             }
@@ -281,8 +281,7 @@ public class CMapParser
                         }
                         else
                         {
-                            throw new IOException( "Error: expected hex character and not " + 
-                                (char)theNextByte + ":" + theNextByte );
+                            throw new IOException(MessageLocalization.getComposedMessage("error.expected.hex.character.and.not.char.thenextbyte.1", theNextByte));
                         }
                         intValue *= multiplyer;
                         if( multiplyer == 16 )

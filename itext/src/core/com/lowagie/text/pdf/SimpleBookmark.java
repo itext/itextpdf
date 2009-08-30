@@ -61,6 +61,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.xml.simpleparser.IanaEncodings;
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
@@ -696,10 +697,10 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
             if (attr.isEmpty())
                 return;
             else
-                throw new RuntimeException("Bookmark end tag out of place.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("bookmark.end.tag.out.of.place"));
         }
         if (!tag.equals("Title"))
-            throw new RuntimeException("Invalid end tag - " + tag);
+            throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.end.tag.1", tag));
         HashMap attributes = (HashMap)attr.pop();
         String title = (String)attributes.get("Title");
         attributes.put("Title",  title.trim());
@@ -732,10 +733,10 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
                 return;
             }
             else
-                throw new RuntimeException("Root element is not Bookmark: " + tag);
+                throw new RuntimeException(MessageLocalization.getComposedMessage("root.element.is.not.bookmark.1", tag));
         }
         if (!tag.equals("Title"))
-            throw new RuntimeException("Tag " + tag + " not allowed.");
+            throw new RuntimeException(MessageLocalization.getComposedMessage("tag.1.not.allowed", tag));
         HashMap attributes = new HashMap(h);
         attributes.put("Title", "");
         attributes.remove("Kids");

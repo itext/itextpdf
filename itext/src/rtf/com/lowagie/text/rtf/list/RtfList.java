@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocWriter;
@@ -655,7 +656,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 			this.listType = listType;
 		}
 		else {
-			throw new InvalidParameterException("Invalid listType value.");
+			throw new InvalidParameterException(MessageLocalization.getComposedMessage("invalid.listtype.value"));
 		}
 	}
 

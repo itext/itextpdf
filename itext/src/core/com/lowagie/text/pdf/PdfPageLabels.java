@@ -1,5 +1,6 @@
 /*
  * $Id$
+ * $Name$
  *
  * Copyright 2001, 2002 Paulo Soares
  *
@@ -52,6 +53,7 @@ package com.lowagie.text.pdf;
 import com.lowagie.text.ExceptionConverter;
 import java.io.IOException;
 import java.util.HashMap;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.factories.RomanAlphabetFactory;
 import com.lowagie.text.factories.RomanNumberFactory;
@@ -107,7 +109,7 @@ public class PdfPageLabels {
      */    
     public void addPageLabel(int page, int numberStyle, String text, int firstPage) {
         if (page < 1 || firstPage < 1)
-            throw new IllegalArgumentException("In a page label the page numbers must be greater or equal to 1.");
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("in.a.page.label.the.page.numbers.must.be.greater.or.equal.to.1"));
         PdfDictionary dic = new PdfDictionary();
         if (numberStyle >= 0 && numberStyle < numberingStyle.length)
             dic.put(PdfName.S, numberingStyle[numberStyle]);

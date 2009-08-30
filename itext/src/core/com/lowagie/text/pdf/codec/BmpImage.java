@@ -94,6 +94,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.ExceptionConverter;
@@ -252,8 +253,7 @@ public class BmpImage {
             // Start File Header
             if (!(readUnsignedByte(inputStream) == 'B' &&
             readUnsignedByte(inputStream) == 'M')) {
-                throw new
-                RuntimeException("Invalid magic value for BMP file.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.magic.value.for.bmp.file"));
             }
 
             // Read file size
@@ -789,7 +789,7 @@ public class BmpImage {
         while (bytesRead < sizeOfPalette) {
             int r = inputStream.read(palette, bytesRead, sizeOfPalette - bytesRead);
             if (r < 0) {
-                throw new RuntimeException("incomplete palette");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("incomplete.palette"));
             }
             bytesRead += r;
         }

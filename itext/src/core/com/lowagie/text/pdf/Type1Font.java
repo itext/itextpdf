@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -172,7 +173,7 @@ class Type1Font extends BaseFont
     Type1Font(String afmFile, String enc, boolean emb, byte ttfAfm[], byte pfb[], boolean forceRead)
     	throws DocumentException, IOException {
         if (emb && ttfAfm != null && pfb == null)
-            throw new DocumentException("Two byte arrays are needed if the Type1 font is embedded.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("two.byte.arrays.are.needed.if.the.type1.font.is.embedded"));
         if (emb && ttfAfm != null)
             this.pfb = pfb;
         encoding = enc;
@@ -190,7 +191,7 @@ class Type1Font extends BaseFont
                     resourceAnchor = new FontsResourceAnchor();
                 is = getResourceStream(RESOURCE_PATH + afmFile + ".afm", resourceAnchor.getClass().getClassLoader());
                 if (is == null) {
-                    String msg = afmFile + " not found as resource. (The *.afm files must exist as resources in the package com.lowagie.text.pdf.fonts)";
+                    String msg = MessageLocalization.getComposedMessage("1.not.found.as.resource", afmFile);
                     System.err.println(msg);
                     throw new DocumentException(msg);
                 }
@@ -271,7 +272,7 @@ class Type1Font extends BaseFont
             }
         }
         else
-            throw new DocumentException(afmFile + " is not an AFM or PFM font file.");
+            throw new DocumentException(MessageLocalization.getComposedMessage("1.is.not.an.afm.or.pfm.font.file", afmFile));
 
         EncodingScheme = EncodingScheme.trim();
         if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
@@ -391,7 +392,7 @@ class Type1Font extends BaseFont
             }
         }
         if (!isMetrics)
-            throw new DocumentException("Missing StartCharMetrics in " + fileName);
+            throw new DocumentException(MessageLocalization.getComposedMessage("missing.startcharmetrics.in.1", fileName));
         while ((line = rf.readLine()) != null)
         {
             StringTokenizer tok = new StringTokenizer(line);
@@ -434,7 +435,7 @@ class Type1Font extends BaseFont
             CharMetrics.put(N, metrics);
         }
         if (isMetrics)
-            throw new DocumentException("Missing EndCharMetrics in " + fileName);
+            throw new DocumentException(MessageLocalization.getComposedMessage("missing.endcharmetrics.in.1", fileName));
         if (!CharMetrics.containsKey("nonbreakingspace")) {
             Object[] space = (Object[])CharMetrics.get("space");
             if (space != null)
@@ -455,7 +456,7 @@ class Type1Font extends BaseFont
             }
         }
         if (!isMetrics)
-            throw new DocumentException("Missing EndFontMetrics in " + fileName);
+            throw new DocumentException(MessageLocalization.getComposedMessage("missing.endfontmetrics.in.1", fileName));
         while ((line = rf.readLine()) != null)
         {
             StringTokenizer tok = new StringTokenizer(line);
@@ -487,7 +488,7 @@ class Type1Font extends BaseFont
             }
         }
         if (isMetrics)
-            throw new DocumentException("Missing EndKernPairs in " + fileName);
+            throw new DocumentException(MessageLocalization.getComposedMessage("missing.endkernpairs.in.1", fileName));
         rf.close();
     }
     
@@ -515,9 +516,9 @@ class Type1Font extends BaseFont
             int bytePtr = 0;
             for (int k = 0; k < 3; ++k) {
                 if (rf.read() != 0x80)
-                    throw new DocumentException("Start marker missing in " + filePfb);
+                    throw new DocumentException(MessageLocalization.getComposedMessage("start.marker.missing.in.1", filePfb));
                 if (rf.read() != PFB_TYPES[k])
-                    throw new DocumentException("Incorrect segment type in " + filePfb);
+                    throw new DocumentException(MessageLocalization.getComposedMessage("incorrect.segment.type.in.1", filePfb));
                 int size = rf.read();
                 size += rf.read() << 8;
                 size += rf.read() << 16;
@@ -526,7 +527,7 @@ class Type1Font extends BaseFont
                 while (size != 0) {
                     int got = rf.read(st, bytePtr, size);
                     if (got < 0)
-                        throw new DocumentException("Premature end in " + filePfb);
+                        throw new DocumentException(MessageLocalization.getComposedMessage("premature.end.in.1", filePfb));
                     bytePtr += got;
                     size -= got;
                 }

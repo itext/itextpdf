@@ -57,6 +57,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Anchor;
 import com.lowagie.text.Annotation;
@@ -524,7 +525,7 @@ public class ElementFactory {
 
 		value = attributes.getProperty(ElementTags.URL);
 		if (value == null)
-			throw new MalformedURLException("The URL of the image is missing.");
+			throw new MalformedURLException(MessageLocalization.getComposedMessage("the.url.of.the.image.is.missing"));
 		Image image = Image.getInstance(value);
 
 		value = attributes.getProperty(ElementTags.ALIGN);

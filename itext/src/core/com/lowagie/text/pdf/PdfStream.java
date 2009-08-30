@@ -55,6 +55,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
@@ -185,9 +186,9 @@ public class PdfStream extends PdfDictionary {
      */
     public void writeLength() throws IOException {
         if (inputStream == null)
-            throw new UnsupportedOperationException("writeLength() can only be called in a contructed PdfStream(InputStream,PdfWriter).");
+            throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("writelength.can.only.be.called.in.a.contructed.pdfstream.inputstream.pdfwriter"));
         if (inputStreamLength == -1)
-            throw new IOException("writeLength() can only be called after output of the stream body.");
+            throw new IOException(MessageLocalization.getComposedMessage("writelength.can.only.be.called.after.output.of.the.stream.body"));
         writer.addToBody(new PdfNumber(inputStreamLength), ref, false);
     }
     
@@ -235,7 +236,7 @@ public class PdfStream extends PdfDictionary {
                     return;
             }
             else {
-                throw new RuntimeException("Stream could not be compressed: filter is not a name or array.");
+                throw new RuntimeException(MessageLocalization.getComposedMessage("stream.could.not.be.compressed.filter.is.not.a.name.or.array"));
             }
         }
         try {

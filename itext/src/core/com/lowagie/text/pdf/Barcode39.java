@@ -52,6 +52,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.MemoryImageSource;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
@@ -173,7 +174,7 @@ public class Barcode39 extends Barcode{
         for (int k = 0; k < text.length(); ++k) {
             int idx = CHARS.indexOf(text.charAt(k));
             if (idx < 0)
-                throw new IllegalArgumentException("The character '" + text.charAt(k) + "' is illegal in code 39.");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.character.1.is.illegal.in.code.39", text.charAt(k)));
             System.arraycopy(BARS[idx], 0, bars, k * 10, 9);
         }
         return bars;
@@ -189,7 +190,7 @@ public class Barcode39 extends Barcode{
         for (int k = 0; k < text.length(); ++k) {
             char c = text.charAt(k);
             if (c > 127)
-                throw new IllegalArgumentException("The character '" + c + "' is illegal in code 39 extended.");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.character.1.is.illegal.in.code.39.extended", c));
             char c1 = EXTENDED.charAt(c * 2);
             char c2 = EXTENDED.charAt(c * 2 + 1);
             if (c1 != ' ')
@@ -208,7 +209,7 @@ public class Barcode39 extends Barcode{
         for (int k = 0; k < text.length(); ++k) {
             int idx = CHARS.indexOf(text.charAt(k));
             if (idx < 0)
-                throw new IllegalArgumentException("The character '" + text.charAt(k) + "' is illegal in code 39.");
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.character.1.is.illegal.in.code.39", text.charAt(k)));
             chk += idx;
         }
         return CHARS.charAt(chk % 43);

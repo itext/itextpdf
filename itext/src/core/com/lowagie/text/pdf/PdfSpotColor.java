@@ -50,6 +50,7 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 /**
  * A <CODE>PdfSpotColor</CODE> defines a ColorSpace
@@ -117,7 +118,7 @@ public class PdfSpotColor{
                         new float[]{cmyk.getCyan(), cmyk.getMagenta(), cmyk.getYellow(), cmyk.getBlack()}, 1);
                     break;
                 default:
-                    throw new RuntimeException("Only RGB, Gray and CMYK are supported as alternative color spaces.");
+                    throw new RuntimeException(MessageLocalization.getComposedMessage("only.rgb.gray.and.cmyk.are.supported.as.alternative.color.spaces"));
             }
         }
         else {

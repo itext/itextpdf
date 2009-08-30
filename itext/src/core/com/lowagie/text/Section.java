@@ -1,5 +1,6 @@
 /*
  * $Id$
+ * $Name$
  *
  * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
  *
@@ -52,6 +53,7 @@ package com.lowagie.text;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 /**
  * A <CODE>Section</CODE> is a part of a <CODE>Document</CODE> containing
@@ -265,7 +267,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
      */
     public void add(int index, Object o) {
     	if (isAddedCompletely()) {
-    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
+    		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
         try {
             Element element = (Element) o;
@@ -273,11 +275,11 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
                 super.add(index, element);
             }
             else {
-                throw new ClassCastException("You can't add a " + element.getClass().getName() + " to a Section.");
+                throw new ClassCastException(MessageLocalization.getComposedMessage("you.can.t.add.a.1.to.a.section", element.getClass().getName()));
             }
         }
         catch(ClassCastException cce) {
-            throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
+            throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
     
@@ -291,7 +293,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
      */
     public boolean add(Object o) {
     	if (isAddedCompletely()) {
-    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
+    		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
         try {
             Element element = (Element) o;
@@ -310,11 +312,11 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
             	return super.add(o);
             }
             else {
-                throw new ClassCastException("You can't add a " + element.getClass().getName() + " to a Section.");
+                throw new ClassCastException(MessageLocalization.getComposedMessage("you.can.t.add.a.1.to.a.section", element.getClass().getName()));
             }
         }
         catch(ClassCastException cce) {
-            throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
+            throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
     
@@ -345,7 +347,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
      */
     public Section addSection(float indentation, Paragraph title, int numberDepth) {
     	if (isAddedCompletely()) {
-    		throw new IllegalStateException("This LargeElement has already been added to the Document.");
+    		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
         Section section = new Section(title, numberDepth);
         section.setIndentation(indentation);

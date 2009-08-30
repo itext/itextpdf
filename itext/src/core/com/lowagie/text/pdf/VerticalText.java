@@ -49,6 +49,7 @@ package com.lowagie.text.pdf;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Element;
@@ -224,7 +225,7 @@ public class VerticalText {
             graphics = text.getDuplicate();
         }
         else if (!simulate)
-            throw new NullPointerException("VerticalText.go with simulate==false and text==null.");
+            throw new NullPointerException(MessageLocalization.getComposedMessage("verticaltext.go.with.simulate.eq.eq.false.and.text.eq.eq.null"));
         int status = 0;
         for (;;) {
             if (maxLines <= 0) {

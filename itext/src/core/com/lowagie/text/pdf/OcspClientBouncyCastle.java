@@ -73,6 +73,7 @@ import org.bouncycastle.ocsp.OCSPReq;
 import org.bouncycastle.ocsp.OCSPReqGenerator;
 import org.bouncycastle.ocsp.OCSPResp;
 import org.bouncycastle.ocsp.SingleResp;
+import com.lowagie.text.error_messages.MessageLocalization;
 
 /**
  * OcspClient implementation using BouncyCastle.
@@ -150,14 +151,14 @@ public class OcspClientBouncyCastle implements OcspClient {
             dataOut.flush();
             dataOut.close();
             if (con.getResponseCode() / 100 != 2) {
-                throw new IOException("Invalid HTTP response");
+                throw new IOException(MessageLocalization.getComposedMessage("invalid.http.response.1", con.getResponseCode()));
             }
             //Get Response
             InputStream in = (InputStream) con.getContent();
             OCSPResp ocspResponse = new OCSPResp(in);
 
             if (ocspResponse.getStatus() != 0)
-                throw new IOException("Invalid status: " + ocspResponse.getStatus());
+                throw new IOException(MessageLocalization.getComposedMessage("invalid.status.1", ocspResponse.getStatus()));
             BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
             if (basicResponse != null) {
                 SingleResp[] responses = basicResponse.getResponses();
@@ -168,10 +169,10 @@ public class OcspClientBouncyCastle implements OcspClient {
                         return basicResponse.getEncoded();
                     }
                     else if (status instanceof org.bouncycastle.ocsp.RevokedStatus) {
-                        throw new IOException("OCSP Status is revoked!");
+                        throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.revoked"));
                     }
                     else {
-                        throw new IOException("OCSP Status is unknown!");
+                        throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.unknown"));
                     }
                 }
             }
