@@ -947,10 +947,11 @@ public class PdfContentByte {
         // the backgroundcolor is set
         Color background = rectangle.getBackgroundColor();
         if (background != null) {
+        	saveState();
             setColorFill(background);
             rectangle(x1, y1, x2 - x1, y2 - y1);
             fill();
-            resetRGBColorFill();
+            restoreState();
         }
 
         // if the element hasn't got any borders, nothing is added
