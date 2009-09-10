@@ -76,6 +76,9 @@ import com.lowagie.text.pdf.fonts.FontProvider;
  */
 public class FactoryProperties {
 
+	/**
+	 * @since	iText 5.0	This used to be a FontFactoryImp
+	 */
 	private FontProvider fontImp = FontFactory.getFontImp();
 
 	/** Creates a new instance of FactoryProperties */
