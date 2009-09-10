@@ -66,7 +66,6 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ElementTags;
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.FontFactoryImp;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
 import com.lowagie.text.ListItem;
@@ -76,6 +75,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.TextElementArray;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.draw.LineSeparator;
+import com.lowagie.text.pdf.fonts.FontProvider;
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
 
@@ -126,9 +126,9 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	public void setInterfaceProps(HashMap interfaceProps) {
 		this.interfaceProps = interfaceProps;
-		FontFactoryImp ff = null;
+		FontProvider ff = null;
 		if (interfaceProps != null)
-			ff = (FontFactoryImp) interfaceProps.get("font_factory");
+			ff = (FontProvider) interfaceProps.get("font_factory");
 		if (ff != null)
 			factoryProperties.setFontImp(ff);
 	}
