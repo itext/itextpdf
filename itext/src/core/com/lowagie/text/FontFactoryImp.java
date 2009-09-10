@@ -61,6 +61,7 @@ import java.util.Set;
 
 import com.lowagie.text.html.Markup;
 import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.fonts.FontProvider;
 
 /**
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
@@ -70,7 +71,7 @@ import com.lowagie.text.pdf.BaseFont;
  * @author  Bruno Lowagie
  */
 
-public class FontFactoryImp {
+public class FontFactoryImp implements FontProvider {
         
 /** This is a map of postscriptfontnames of True Type fonts and the path of their ttf- or ttc-file. */
     private Properties trueTypeFonts = new Properties();
