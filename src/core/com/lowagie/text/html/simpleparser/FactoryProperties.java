@@ -68,8 +68,7 @@ import com.lowagie.text.html.HtmlTags;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.HyphenationAuto;
 import com.lowagie.text.pdf.HyphenationEvent;
-import com.lowagie.text.pdf.fonts.FontProvider;
-
+import com.lowagie.text.FontProvider;
 /**
  *
  * @author  psoares

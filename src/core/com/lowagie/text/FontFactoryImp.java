@@ -61,7 +61,6 @@ import java.util.Set;
 
 import com.lowagie.text.html.Markup;
 import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.fonts.FontProvider;
 
 /**
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files

@@ -75,7 +75,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.TextElementArray;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.draw.LineSeparator;
-import com.lowagie.text.pdf.fonts.FontProvider;
+import com.lowagie.text.FontProvider;
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
 
