@@ -45,11 +45,9 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf.fonts;
+package com.lowagie.text;
 
 import java.awt.Color;
-
-import com.lowagie.text.Font;
 
 /**
  * These two methods are used by FactoryProperties (for HTMLWorker).
