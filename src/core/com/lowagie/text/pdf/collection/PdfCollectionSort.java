@@ -41,7 +41,7 @@ public class PdfCollectionSort extends PdfDictionary {
 			put(PdfName.A, new PdfBoolean(ascending));
 		}
 		else {
-			throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "you.have.to.define.a.boolean.array.for.this.collection.sort.dictionary"));
+			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("you.have.to.define.a.boolean.array.for.this.collection.sort.dictionary"));
 		}
 	}
 	
@@ -53,7 +53,7 @@ public class PdfCollectionSort extends PdfDictionary {
 		PdfObject o = get(PdfName.S);
 		if (o instanceof PdfArray) {
 			if (((PdfArray)o).size() != ascending.length) {
-				throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.number.of.booleans.in.this.array.doesn.t.correspond.with.the.number.of.fields"));
+				throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.number.of.booleans.in.this.array.doesn.t.correspond.with.the.number.of.fields"));
 			}
 			PdfArray array = new PdfArray();
 			for (int i = 0; i < ascending.length; i++) {
@@ -62,7 +62,7 @@ public class PdfCollectionSort extends PdfDictionary {
 			put(PdfName.A, array);
 		}
 		else {
-			throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "you.need.a.single.boolean.for.this.collection.sort.dictionary"));
+			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("you.need.a.single.boolean.for.this.collection.sort.dictionary"));
 		}
 	}
 	

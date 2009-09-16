@@ -225,7 +225,7 @@ public class VerticalText {
             graphics = text.getDuplicate();
         }
         else if (!simulate)
-            throw new NullPointerException(MessageLocalization.getComposedMessage(this.getClass(), "verticaltext.go.with.simulate.eq.eq.false.and.text.eq.eq.null"));
+            throw new NullPointerException(MessageLocalization.getComposedMessage("verticaltext.go.with.simulate.eq.eq.false.and.text.eq.eq.null"));
         int status = 0;
         for (;;) {
             if (maxLines <= 0) {

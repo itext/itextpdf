@@ -232,7 +232,7 @@ public class HtmlWriter extends DocWriter {
             return false;
         }
         if (open && !element.isContent()) {
-				throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.document.is.open.you.can.only.add.elements.with.content"));
+				throw new DocumentException(MessageLocalization.getComposedMessage("the.document.is.open.you.can.only.add.elements.with.content"));
         }
         try {
             switch(element.type()) {

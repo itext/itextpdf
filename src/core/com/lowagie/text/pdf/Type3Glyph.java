@@ -79,7 +79,7 @@ public final class Type3Glyph extends PdfContentByte {
 
     public void addImage(Image image, float a, float b, float c, float d, float e, float f, boolean inlineImage) throws DocumentException {
         if (!colorized && (!image.isMask() || !(image.getBpc() == 1 || image.getBpc() > 0xff)))
-            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "not.colorized.typed3.fonts.only.accept.mask.images"));
+            throw new DocumentException(MessageLocalization.getComposedMessage("not.colorized.typed3.fonts.only.accept.mask.images"));
         super.addImage(image, a, b, c, d, e, f, inlineImage);
     }
     

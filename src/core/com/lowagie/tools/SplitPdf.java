@@ -86,7 +86,7 @@ public class SplitPdf extends java.lang.Object {
 				System.out.println("There are " + n + " pages in the original file.");
                 
 				if (pagenumber < 2 || pagenumber > n) {
-					throw new DocumentException(MessageLocalization.getComposedMessage(SplitPdf.class, "you.can.t.split.this.document.at.page.1.there.is.no.such.page", pagenumber));
+					throw new DocumentException(MessageLocalization.getComposedMessage("you.can.t.split.this.document.at.page.1.there.is.no.such.page", pagenumber));
 				}
                 
 				// step 1: creation of a document-object

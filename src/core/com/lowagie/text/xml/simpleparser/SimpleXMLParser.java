@@ -204,7 +204,7 @@ public final class SimpleXMLParser {
 						flush();
 					doc.endDocument();
 				} else {
-					throwException(MessageLocalization.getComposedMessage(this.getClass(), "missing.end.tag"));
+					throwException(MessageLocalization.getComposedMessage("missing.end.tag"));
 				}
 				return;
 			}
@@ -327,7 +327,7 @@ public final class SimpleXMLParser {
             // and are looking for the final >.
 			case SINGLE_TAG:
                 if(character != '>')
-                    throwException(MessageLocalization.getComposedMessage(this.getClass(), "expected.gt.for.tag.lt.1.gt", tag));
+                    throwException(MessageLocalization.getComposedMessage("expected.gt.for.tag.lt.1.gt", tag));
 				doTag();
                 processTag(true);
                 processTag(false);
@@ -456,7 +456,7 @@ public final class SimpleXMLParser {
                     text.append((char)character);
                     state = ATTRIBUTE_KEY;
                 } else {
-                    throwException(MessageLocalization.getComposedMessage(this.getClass(), "error.in.attribute.processing"));
+                    throwException(MessageLocalization.getComposedMessage("error.in.attribute.processing"));
                 }
                 break;
                 
@@ -476,7 +476,7 @@ public final class SimpleXMLParser {
                     quoteCharacter = ' ';
                     state = QUOTE;
                 } else {
-                    throwException(MessageLocalization.getComposedMessage(this.getClass(), "error.in.attribute.processing"));
+                    throwException(MessageLocalization.getComposedMessage("error.in.attribute.processing"));
                 }
                 break;
             }
@@ -564,7 +564,7 @@ public final class SimpleXMLParser {
     }
     /** Throws an exception */
     private void throwException(String s) throws IOException {
-        throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "1.near.line.2.column.3", s, String.valueOf(lines), String.valueOf(columns)));
+        throw new IOException(MessageLocalization.getComposedMessage("1.near.line.2.column.3", s, String.valueOf(lines), String.valueOf(columns)));
     }
     
     /**
@@ -588,7 +588,7 @@ public final class SimpleXMLParser {
         byte b4[] = new byte[4];
         int count = in.read(b4);
         if (count != 4)
-            throw new IOException(MessageLocalization.getComposedMessage(SimpleXMLParser.class, "insufficient.length"));
+            throw new IOException(MessageLocalization.getComposedMessage("insufficient.length"));
         String encoding = getEncodingName(b4);
         String decl = null;
         if (encoding.equals("UTF-8")) {

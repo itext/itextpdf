@@ -139,7 +139,7 @@ public class ImgWMF extends Image {
             }
             InputMeta in = new InputMeta(is);
             if (in.readInt() != 0x9AC6CDD7)	{
-                throw new BadElementException(MessageLocalization.getComposedMessage(this.getClass(), "1.is.not.a.valid.placeable.windows.metafile", errorID));
+                throw new BadElementException(MessageLocalization.getComposedMessage("1.is.not.a.valid.placeable.windows.metafile", errorID));
             }
             in.readWord();
             int left = in.readShort();

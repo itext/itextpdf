@@ -177,7 +177,7 @@ public class PushbuttonField extends BaseField {
      */
     public void setLayout(int layout) {
         if (layout < LAYOUT_LABEL_ONLY || layout > LAYOUT_LABEL_OVER_ICON)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "layout.out.of.bounds"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("layout.out.of.bounds"));
         this.layout = layout;
     }
     

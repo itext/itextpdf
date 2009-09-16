@@ -561,7 +561,7 @@ public abstract class BaseField {
      */
     public void setRotation(int rotation) {
         if (rotation % 90 != 0)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "rotation.must.be.a.multiple.of.90"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("rotation.must.be.a.multiple.of.90"));
         rotation %= 360;
         if (rotation < 0)
             rotation += 360;

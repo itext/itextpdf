@@ -134,13 +134,13 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 		if (cellgroup) {
 			if (element instanceof SimpleCell) {
 				if(((SimpleCell)element).isCellgroup()) {
-					throw new BadElementException(MessageLocalization.getComposedMessage(this.getClass(), "you.can.t.add.one.row.to.another.row"));
+					throw new BadElementException(MessageLocalization.getComposedMessage("you.can.t.add.one.row.to.another.row"));
 				}
 				content.add(element);
 				return;
 			}
 			else {
-				throw new BadElementException(MessageLocalization.getComposedMessage(this.getClass(), "you.can.only.add.cells.to.rows.no.objects.of.type.1", element.getClass().getName()));
+				throw new BadElementException(MessageLocalization.getComposedMessage("you.can.only.add.cells.to.rows.no.objects.of.type.1", element.getClass().getName()));
 			}
 		}
 		if (element.type() == Element.PARAGRAPH
@@ -157,7 +157,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 			content.add(element);
 		}
 		else {
-			throw new BadElementException(MessageLocalization.getComposedMessage(this.getClass(), "you.can.t.add.an.element.of.type.1.to.a.simplecell", element.getClass().getName()));
+			throw new BadElementException(MessageLocalization.getComposedMessage("you.can.t.add.an.element.of.type.1.to.a.simplecell", element.getClass().getName()));
 		}
 	}
 	

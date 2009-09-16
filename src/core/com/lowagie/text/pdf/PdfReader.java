@@ -499,7 +499,7 @@ public class PdfReader implements PdfViewerPreferences {
                     lastXref = -1;
                 }
                 catch (Exception ne) {
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
                 }
             }
             try {
@@ -546,7 +546,7 @@ public class PdfReader implements PdfViewerPreferences {
                     lastXref = -1;
                 }
                 catch (Exception ne) {
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
                 }
             }
             readDocObjPartial();
@@ -613,12 +613,12 @@ public class PdfReader implements PdfViewerPreferences {
 
             o = enc.get(PdfName.P);
             if (!o.isNumber())
-            	throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "illegal.p.value"));
+            	throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.p.value"));
             pValue = ((PdfNumber)o).intValue();
 
             o = enc.get(PdfName.R);
             if (!o.isNumber())
-            	throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "illegal.r.value"));
+            	throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.r.value"));
             rValue = ((PdfNumber)o).intValue();
 
             switch (rValue) {
@@ -628,31 +628,31 @@ public class PdfReader implements PdfViewerPreferences {
             case 3:
                 o = enc.get(PdfName.LENGTH);
                 if (!o.isNumber())
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "illegal.length.value"));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.length.value"));
                 lengthValue = ( (PdfNumber) o).intValue();
                 if (lengthValue > 128 || lengthValue < 40 || lengthValue % 8 != 0)
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "illegal.length.value"));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.length.value"));
                 cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
                 break;
             case 4:
                 PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
                 if (dic == null)
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "cf.not.found.encryption"));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("cf.not.found.encryption"));
                 dic = (PdfDictionary)dic.get(PdfName.STDCF);
                 if (dic == null)
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "stdcf.not.found.encryption"));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("stdcf.not.found.encryption"));
                 if (PdfName.V2.equals(dic.get(PdfName.CFM)))
                     cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
                 else if (PdfName.AESV2.equals(dic.get(PdfName.CFM)))
                     cryptoMode = PdfWriter.ENCRYPTION_AES_128;
                 else
-                    throw new UnsupportedPdfException(MessageLocalization.getComposedMessage(this.getClass(), "no.compatible.encryption.found"));
+                    throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("no.compatible.encryption.found"));
                 PdfObject em = enc.get(PdfName.ENCRYPTMETADATA);
                 if (em != null && em.toString().equals("false"))
                     cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
                 break;
             default:
-            	throw new UnsupportedPdfException(MessageLocalization.getComposedMessage(this.getClass(), "unknown.encryption.type.r.eq.1", rValue));
+            	throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("unknown.encryption.type.r.eq.1", rValue));
             }
         }
         else if (filter.equals(PdfName.PUBSEC)) {
@@ -662,7 +662,7 @@ public class PdfReader implements PdfViewerPreferences {
 
             o = enc.get(PdfName.V);
             if (!o.isNumber())
-            	throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "illegal.v.value"));
+            	throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.v.value"));
             int vValue = ((PdfNumber)o).intValue();
             switch(vValue) {
             case 1:
@@ -673,20 +673,20 @@ public class PdfReader implements PdfViewerPreferences {
             case 2:
                 o = enc.get(PdfName.LENGTH);
                 if (!o.isNumber())
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "illegal.length.value"));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.length.value"));
                 lengthValue = ( (PdfNumber) o).intValue();
                 if (lengthValue > 128 || lengthValue < 40 || lengthValue % 8 != 0)
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "illegal.length.value"));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("illegal.length.value"));
                 cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
                 recipients = (PdfArray)enc.get(PdfName.RECIPIENTS);
                 break;
             case 4:
                 PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
                 if (dic == null)
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "cf.not.found.encryption"));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("cf.not.found.encryption"));
                 dic = (PdfDictionary)dic.get(PdfName.DEFAULTCRYPTFILTER);
                 if (dic == null)
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "defaultcryptfilter.not.found.encryption"));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("defaultcryptfilter.not.found.encryption"));
                 if (PdfName.V2.equals(dic.get(PdfName.CFM))) {
                     cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
                     lengthValue = 128;
@@ -696,7 +696,7 @@ public class PdfReader implements PdfViewerPreferences {
                     lengthValue = 128;
                 }
                 else
-                    throw new UnsupportedPdfException(MessageLocalization.getComposedMessage(this.getClass(), "no.compatible.encryption.found"));
+                    throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("no.compatible.encryption.found"));
                 PdfObject em = dic.get(PdfName.ENCRYPTMETADATA);
                 if (em != null && em.toString().equals("false"))
                     cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
@@ -704,7 +704,7 @@ public class PdfReader implements PdfViewerPreferences {
                 recipients = (PdfArray)dic.get(PdfName.RECIPIENTS);
                 break;
             default:
-            	throw new UnsupportedPdfException(MessageLocalization.getComposedMessage(this.getClass(), "unknown.encryption.type.v.eq.1", rValue));
+            	throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("unknown.encryption.type.v.eq.1", rValue));
             }
             for (int i = 0; i<recipients.size(); i++) {
                 PdfObject recipient = recipients.getPdfObject(i);
@@ -731,7 +731,7 @@ public class PdfReader implements PdfViewerPreferences {
             }
 
             if(!foundRecipient || envelopedData == null) {
-                throw new UnsupportedPdfException(MessageLocalization.getComposedMessage(this.getClass(), "bad.certificate.and.key"));
+                throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("bad.certificate.and.key"));
             }
 
             MessageDigest md = null;
@@ -763,7 +763,7 @@ public class PdfReader implements PdfViewerPreferences {
                 //check by user password
                 decrypt.setupByUserPassword(documentID, password, oValue, pValue);
                 if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
-                    throw new BadPasswordException(MessageLocalization.getComposedMessage(this.getClass(), "bad.user.password"));
+                    throw new BadPasswordException(MessageLocalization.getComposedMessage("bad.user.password"));
                 }
             }
             else
@@ -1001,15 +1001,15 @@ public class PdfReader implements PdfViewerPreferences {
         tokens.seek(pos);
         tokens.nextValidToken();
         if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
-            tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "invalid.object.number"));
+            tokens.throwError(MessageLocalization.getComposedMessage("invalid.object.number"));
         objNum = tokens.intValue();
         tokens.nextValidToken();
         if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
-            tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "invalid.generation.number"));
+            tokens.throwError(MessageLocalization.getComposedMessage("invalid.generation.number"));
         objGen = tokens.intValue();
         tokens.nextValidToken();
         if (!tokens.getStringValue().equals("obj"))
-            tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "token.obj.expected"));
+            tokens.throwError(MessageLocalization.getComposedMessage("token.obj.expected"));
         PdfObject obj;
         try {
             obj = readPRObject();
@@ -1058,7 +1058,7 @@ public class PdfReader implements PdfViewerPreferences {
                 address = tokens.intValue() + first;
             }
             if (!ok)
-                throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "error.reading.objstm"));
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("error.reading.objstm"));
             tokens.seek(address);
             return readPRObject();
         }
@@ -1090,15 +1090,15 @@ public class PdfReader implements PdfViewerPreferences {
             tokens.seek(pos);
             tokens.nextValidToken();
             if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
-                tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "invalid.object.number"));
+                tokens.throwError(MessageLocalization.getComposedMessage("invalid.object.number"));
             objNum = tokens.intValue();
             tokens.nextValidToken();
             if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
-                tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "invalid.generation.number"));
+                tokens.throwError(MessageLocalization.getComposedMessage("invalid.generation.number"));
             objGen = tokens.intValue();
             tokens.nextValidToken();
             if (!tokens.getStringValue().equals("obj"))
-                tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "token.obj.expected"));
+                tokens.throwError(MessageLocalization.getComposedMessage("token.obj.expected"));
             PdfObject obj;
             try {
                 obj = readPRObject();
@@ -1204,7 +1204,7 @@ public class PdfReader implements PdfViewerPreferences {
                 address[k] = tokens.intValue() + first;
             }
             if (!ok)
-                throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "error.reading.objstm"));
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("error.reading.objstm"));
             for (int k = 0; k < n; ++k) {
                 if (map.containsKey(k)) {
                     tokens.seek(address[k]);
@@ -1259,10 +1259,10 @@ public class PdfReader implements PdfViewerPreferences {
         tokens.seek(tokens.getStartxref());
         tokens.nextToken();
         if (!tokens.getStringValue().equals("startxref"))
-            throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "startxref.not.found"));
+            throw new InvalidPdfException(MessageLocalization.getComposedMessage("startxref.not.found"));
         tokens.nextToken();
         if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
-            throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "startxref.is.not.followed.by.a.number"));
+            throw new InvalidPdfException(MessageLocalization.getComposedMessage("startxref.is.not.followed.by.a.number"));
         int startxref = tokens.intValue();
         lastXref = startxref;
         eofPos = tokens.getFilePointer();
@@ -1289,7 +1289,7 @@ public class PdfReader implements PdfViewerPreferences {
     protected PdfDictionary readXrefSection() throws IOException {
         tokens.nextValidToken();
         if (!tokens.getStringValue().equals("xref"))
-            tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "xref.subsection.not.found"));
+            tokens.throwError(MessageLocalization.getComposedMessage("xref.subsection.not.found"));
         int start = 0;
         int end = 0;
         int pos = 0;
@@ -1299,11 +1299,11 @@ public class PdfReader implements PdfViewerPreferences {
             if (tokens.getStringValue().equals("trailer"))
                 break;
             if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
-                tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "object.number.of.the.first.object.in.this.xref.subsection.not.found"));
+                tokens.throwError(MessageLocalization.getComposedMessage("object.number.of.the.first.object.in.this.xref.subsection.not.found"));
             start = tokens.intValue();
             tokens.nextValidToken();
             if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
-                tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "number.of.entries.in.this.xref.subsection.not.found"));
+                tokens.throwError(MessageLocalization.getComposedMessage("number.of.entries.in.this.xref.subsection.not.found"));
             end = tokens.intValue() + start;
             if (start == 1) { // fix incorrect start number
                 int back = tokens.getFilePointer();
@@ -1337,7 +1337,7 @@ public class PdfReader implements PdfViewerPreferences {
                         xref[p] = -1;
                 }
                 else
-                    tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "invalid.cross.reference.entry.in.this.xref.subsection"));
+                    tokens.throwError(MessageLocalization.getComposedMessage("invalid.cross.reference.entry.in.this.xref.subsection"));
             }
         }
         PdfDictionary trailer = (PdfDictionary)readPRObject();
@@ -1521,7 +1521,7 @@ public class PdfReader implements PdfViewerPreferences {
             }
         }
         if (trailer == null)
-            throw new InvalidPdfException(MessageLocalization.getComposedMessage(this.getClass(), "trailer.not.found"));
+            throw new InvalidPdfException(MessageLocalization.getComposedMessage("trailer.not.found"));
         xref = new int[top * 2];
         for (int k = 0; k < top; ++k) {
             int obj[] = xr[k];
@@ -1537,14 +1537,14 @@ public class PdfReader implements PdfViewerPreferences {
             if (tokens.getTokenType() == PRTokeniser.TK_END_DIC)
                 break;
             if (tokens.getTokenType() != PRTokeniser.TK_NAME)
-                tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "dictionary.key.is.not.a.name"));
+                tokens.throwError(MessageLocalization.getComposedMessage("dictionary.key.is.not.a.name"));
             PdfName name = new PdfName(tokens.getStringValue(), false);
             PdfObject obj = readPRObject();
             int type = obj.type();
             if (-type == PRTokeniser.TK_END_DIC)
-                tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "unexpected.gt.gt"));
+                tokens.throwError(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
             if (-type == PRTokeniser.TK_END_ARRAY)
-                tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "unexpected"));
+                tokens.throwError(MessageLocalization.getComposedMessage("unexpected"));
             dic.put(name, obj);
         }
         return dic;
@@ -1558,7 +1558,7 @@ public class PdfReader implements PdfViewerPreferences {
             if (-type == PRTokeniser.TK_END_ARRAY)
                 break;
             if (-type == PRTokeniser.TK_END_DIC)
-                tokens.throwError(MessageLocalization.getComposedMessage(this.getClass(), "unexpected.gt.gt"));
+                tokens.throwError(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
             array.add(obj);
         }
         return array;
@@ -1768,7 +1768,7 @@ public class PdfReader implements PdfViewerPreferences {
                     break;
                 default:
                     // Error -- unknown filter type
-                    throw new RuntimeException(MessageLocalization.getComposedMessage(PdfReader.class, "png.filter.unknown"));
+                    throw new RuntimeException(MessageLocalization.getComposedMessage("png.filter.unknown"));
             }
             try {
                 fout.write(curr);
@@ -1827,7 +1827,7 @@ public class PdfReader implements PdfViewerPreferences {
                 continue;
             int n = PRTokeniser.getHex(ch);
             if (n == -1)
-                throw new RuntimeException(MessageLocalization.getComposedMessage(PdfReader.class, "illegal.character.in.asciihexdecode"));
+                throw new RuntimeException(MessageLocalization.getComposedMessage("illegal.character.in.asciihexdecode"));
             if (first)
                 n1 = n;
             else
@@ -1861,7 +1861,7 @@ public class PdfReader implements PdfViewerPreferences {
                 continue;
             }
             if (ch < '!' || ch > 'u')
-                throw new RuntimeException(MessageLocalization.getComposedMessage(PdfReader.class, "illegal.character.in.ascii85decode"));
+                throw new RuntimeException(MessageLocalization.getComposedMessage("illegal.character.in.ascii85decode"));
             chn[state] = ch - '!';
             ++state;
             if (state == 5) {
@@ -2122,7 +2122,7 @@ public class PdfReader implements PdfViewerPreferences {
             else if (name.equals("/Crypt")) {
             }
             else
-                throw new UnsupportedPdfException(MessageLocalization.getComposedMessage(PdfReader.class, "the.filter.1.is.not.supported", name));
+                throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("the.filter.1.is.not.supported", name));
         }
         return b;
     }

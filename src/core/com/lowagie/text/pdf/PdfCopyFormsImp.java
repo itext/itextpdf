@@ -77,13 +77,13 @@ class PdfCopyFormsImp extends PdfCopyFieldsImp {
      */
     public void copyDocumentFields(PdfReader reader) throws DocumentException {
     	if (!reader.isOpenedWithFullPermissions())
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "pdfreader.not.opened.with.owner.password"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
         if (readers2intrefs.containsKey(reader)) {
             reader = new PdfReader(reader);
         }
         else {
             if (reader.isTampered())
-                throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.document.was.reused"));
+                throw new DocumentException(MessageLocalization.getComposedMessage("the.document.was.reused"));
             reader.consolidateNamedDestinations();
             reader.setTampered(true);
         }

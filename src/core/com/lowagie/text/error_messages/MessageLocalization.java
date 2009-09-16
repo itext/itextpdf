@@ -86,9 +86,7 @@ public final class MessageLocalization {
      * @param key the key to the message
      * @return the message
      */
-    public static String getMessage(Class c, String key) {
-    	String classname = c.getName();
-    	key = classname.substring(classname.lastIndexOf('.') + 1) + "." + key;
+    public static String getMessage(String key) {
         HashMap cl = currentLanguage;
         String val;
         if (cl != null) {
@@ -108,8 +106,8 @@ public final class MessageLocalization {
      * @param key the key to the message
      * @return the message
      */
-    public static String getComposedMessage(Class c, String key) {
-        return getComposedMessage(c, key, null, null, null, null);
+    public static String getComposedMessage(String key) {
+        return getComposedMessage(key, null, null, null, null);
     }
 
     /**
@@ -119,8 +117,8 @@ public final class MessageLocalization {
      * @param p1 the parameter
      * @return the message
      */
-    public static String getComposedMessage(Class c, String key, Object p1) {
-        return getComposedMessage(c, key, p1, null, null, null);
+    public static String getComposedMessage(String key, Object p1) {
+        return getComposedMessage(key, p1, null, null, null);
     }
 
     /**
@@ -130,8 +128,8 @@ public final class MessageLocalization {
      * @param p1 the parameter
      * @return the message
      */
-    public static String getComposedMessage(Class c, String key, int p1) {
-        return getComposedMessage(c, key, String.valueOf(p1), null, null, null);
+    public static String getComposedMessage(String key, int p1) {
+        return getComposedMessage(key, String.valueOf(p1), null, null, null);
     }
 
     /**
@@ -142,8 +140,8 @@ public final class MessageLocalization {
      * @param p2 the parameter
      * @return the message
      */
-    public static String getComposedMessage(Class c, String key, Object p1, Object p2) {
-        return getComposedMessage(c, key, p1, p2, null, null);
+    public static String getComposedMessage(String key, Object p1, Object p2) {
+        return getComposedMessage(key, p1, p2, null, null);
     }
 
     /**
@@ -155,8 +153,8 @@ public final class MessageLocalization {
      * @param p3 the parameter
      * @return the message
      */
-    public static String getComposedMessage(Class c, String key, Object p1, Object p2, Object p3) {
-        return getComposedMessage(c, key, p1, p2, p3, null);
+    public static String getComposedMessage(String key, Object p1, Object p2, Object p3) {
+        return getComposedMessage(key, p1, p2, p3, null);
     }
 
     /**
@@ -169,8 +167,8 @@ public final class MessageLocalization {
      * @param p4 the parameter
      * @return the message
      */
-    public static String getComposedMessage(Class c, String key, Object p1, Object p2, Object p3, Object p4) {
-        String msg = getMessage(c, key);
+    public static String getComposedMessage(String key, Object p1, Object p2, Object p3, Object p4) {
+        String msg = getMessage(key);
         if (p1 != null) {
             msg = msg.replaceAll("\\{1\\}", p1.toString());
         }

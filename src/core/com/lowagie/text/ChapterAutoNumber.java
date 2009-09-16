@@ -90,7 +90,7 @@ public class ChapterAutoNumber extends Chapter {
      */
     public Section addSection(final String title) {
     	if (isAddedCompletely()) {
-    		throw new IllegalStateException(MessageLocalization.getComposedMessage(this.getClass(), "this.largeelement.has.already.been.added.to.the.document"));
+    		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
         return addSection(title, 2);
     }
@@ -103,7 +103,7 @@ public class ChapterAutoNumber extends Chapter {
      */
     public Section addSection(final Paragraph title) {
     	if (isAddedCompletely()) {
-    		throw new IllegalStateException(MessageLocalization.getComposedMessage(this.getClass(), "this.largeelement.has.already.been.added.to.the.document"));
+    		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
         return addSection(title, 2);
     }

@@ -656,7 +656,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
 			this.listType = listType;
 		}
 		else {
-			throw new InvalidParameterException(MessageLocalization.getComposedMessage(this.getClass(), "invalid.listtype.value"));
+			throw new InvalidParameterException(MessageLocalization.getComposedMessage("invalid.listtype.value"));
 		}
 	}
 

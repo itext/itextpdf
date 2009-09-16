@@ -217,7 +217,7 @@ public class PdfAction extends PdfDictionary {
                 put(PdfName.JS, new PdfString("this.print(true);\r"));
                 break;
             default:
-                throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "invalid.named.action"));
+                throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.named.action"));
         }
     }
     
@@ -368,7 +368,7 @@ public class PdfAction extends PdfDictionary {
             else if (obj instanceof PdfAnnotation)
                 array.add(((PdfAnnotation)obj).getIndirectReference());
             else
-                throw new RuntimeException(MessageLocalization.getComposedMessage(PdfAction.class, "the.array.must.contain.string.or.pdfannotation"));
+                throw new RuntimeException(MessageLocalization.getComposedMessage("the.array.must.contain.string.or.pdfannotation"));
         }
         return array;
     }
@@ -579,11 +579,11 @@ public class PdfAction extends PdfDictionary {
                 else if (s.equalsIgnoreCase("toggle"))
                     name = PdfName.TOGGLE;
                 else
-                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage(PdfAction.class, "a.string.1.was.passed.in.state.only.on.off.and.toggle.are.allowed", s));
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.string.1.was.passed.in.state.only.on.off.and.toggle.are.allowed", s));
                 a.add(name);
             }
             else
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(PdfAction.class, "invalid.type.was.passed.in.state.1", o.getClass().getName()));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.type.was.passed.in.state.1", o.getClass().getName()));
         }
         action.put(PdfName.STATE, a);
         if (!preserveRB)

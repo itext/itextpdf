@@ -435,7 +435,7 @@ public abstract class Image extends Rectangle {
 					}
 				}
 			}
-			throw new IOException(MessageLocalization.getComposedMessage(Image.class, "the.byte.array.is.not.a.recognized.imageformat"));
+			throw new IOException(MessageLocalization.getComposedMessage("the.byte.array.is.not.a.recognized.imageformat"));
 		} finally {
 			if (is != null) {
 				is.close();
@@ -540,7 +540,7 @@ public abstract class Image extends Rectangle {
 			int typeCCITT, int parameters, byte[] data, int transparency[])
 			throws BadElementException {
 		if (transparency != null && transparency.length != 2)
-			throw new BadElementException(MessageLocalization.getComposedMessage(Image.class, "transparency.length.must.be.equal.to.2.with.ccitt.images"));
+			throw new BadElementException(MessageLocalization.getComposedMessage("transparency.length.must.be.equal.to.2.with.ccitt.images"));
 		Image img = new ImgCCITT(width, height, reverseBits, typeCCITT,
 				parameters, data);
 		img.transparency = transparency;
@@ -571,7 +571,7 @@ public abstract class Image extends Rectangle {
 			int bpc, byte data[], int transparency[])
 			throws BadElementException {
 		if (transparency != null && transparency.length != components * 2)
-			throw new BadElementException(MessageLocalization.getComposedMessage(Image.class, "transparency.length.must.be.equal.to.componentes.2"));
+			throw new BadElementException(MessageLocalization.getComposedMessage("transparency.length.must.be.equal.to.componentes.2"));
 		if (components == 1 && bpc == 1) {
 			byte g4[] = CCITTG4Encoder.compress(data, width, height);
 			return Image.getInstance(width, height, false, Image.CCITTG4,
@@ -630,10 +630,10 @@ public abstract class Image extends Rectangle {
 		try {
 			pg.grabPixels();
 		} catch (InterruptedException e) {
-			throw new IOException(MessageLocalization.getComposedMessage(Image.class, "java.awt.image.interrupted.waiting.for.pixels"));
+			throw new IOException(MessageLocalization.getComposedMessage("java.awt.image.interrupted.waiting.for.pixels"));
 		}
 		if ((pg.getStatus() & java.awt.image.ImageObserver.ABORT) != 0) {
-			throw new IOException(MessageLocalization.getComposedMessage(Image.class, "java.awt.image.fetch.aborted.or.errored"));
+			throw new IOException(MessageLocalization.getComposedMessage("java.awt.image.fetch.aborted.or.errored"));
 		}
 		int w = pg.getWidth();
 		int h = pg.getHeight();
@@ -829,10 +829,10 @@ public abstract class Image extends Rectangle {
         try {
             pg.grabPixels();
         } catch (InterruptedException e) {
-            throw new IOException(MessageLocalization.getComposedMessage(Image.class, "java.awt.image.interrupted.waiting.for.pixels"));
+            throw new IOException(MessageLocalization.getComposedMessage("java.awt.image.interrupted.waiting.for.pixels"));
         }
         if ((pg.getStatus() & java.awt.image.ImageObserver.ABORT) != 0) {
-            throw new IOException(MessageLocalization.getComposedMessage(Image.class, "java.awt.image.fetch.aborted.or.errored"));
+            throw new IOException(MessageLocalization.getComposedMessage("java.awt.image.fetch.aborted.or.errored"));
         }
         int w = pg.getWidth();
         int h = pg.getHeight();
@@ -1926,7 +1926,7 @@ public abstract class Image extends Rectangle {
 	 */
 	public void makeMask() throws DocumentException {
 		if (!isMaskCandidate())
-			throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "this.image.can.not.be.an.image.mask"));
+			throw new DocumentException(MessageLocalization.getComposedMessage("this.image.can.not.be.an.image.mask"));
 		mask = true;
 	}
 
@@ -1963,9 +1963,9 @@ public abstract class Image extends Rectangle {
 	 */
 	public void setImageMask(Image mask) throws DocumentException {
 		if (this.mask)
-			throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "an.image.mask.cannot.contain.another.image.mask"));
+			throw new DocumentException(MessageLocalization.getComposedMessage("an.image.mask.cannot.contain.another.image.mask"));
 		if (!mask.mask)
-			throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.image.mask.is.not.a.mask.did.you.do.makemask"));
+			throw new DocumentException(MessageLocalization.getComposedMessage("the.image.mask.is.not.a.mask.did.you.do.makemask"));
 		imageMask = mask;
 		smask = (mask.bpc > 1 && mask.bpc <= 8);
 	}

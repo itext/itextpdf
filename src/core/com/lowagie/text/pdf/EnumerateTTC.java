@@ -81,7 +81,7 @@ class EnumerateTTC extends TrueTypeFont{
         try {
             String mainTag = readStandardString(4);
             if (!mainTag.equals("ttcf"))
-                throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "1.is.not.a.valid.ttc.file", fileName));
+                throw new DocumentException(MessageLocalization.getComposedMessage("1.is.not.a.valid.ttc.file", fileName));
             rf.skipBytes(4);
             int dirCount = rf.readInt();
             names = new String[dirCount];
@@ -93,7 +93,7 @@ class EnumerateTTC extends TrueTypeFont{
                 directoryOffset = rf.readInt();
                 rf.seek(directoryOffset);
                 if (rf.readInt() != 0x00010000)
-                    throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "1.is.not.a.valid.ttf.file", fileName));
+                    throw new DocumentException(MessageLocalization.getComposedMessage("1.is.not.a.valid.ttf.file", fileName));
                 int num_tables = rf.readUnsignedShort();
                 rf.skipBytes(6);
                 for (int k = 0; k < num_tables; ++k) {

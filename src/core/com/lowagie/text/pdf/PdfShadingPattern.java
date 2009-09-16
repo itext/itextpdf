@@ -101,7 +101,7 @@ public class PdfShadingPattern extends PdfDictionary {
     
     public void setMatrix(float matrix[]) {
         if (matrix.length != 6)
-            throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "the.matrix.size.must.be.6"));
+            throw new RuntimeException(MessageLocalization.getComposedMessage("the.matrix.size.must.be.6"));
         this.matrix = matrix;
     }
     

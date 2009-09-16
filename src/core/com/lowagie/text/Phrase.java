@@ -297,7 +297,7 @@ public class Phrase extends ArrayList implements TextElementArray {
             }
         }
         catch(ClassCastException cce) {
-            throw new ClassCastException(MessageLocalization.getComposedMessage(this.getClass(), "insertion.of.illegal.element.1", cce.getMessage()));
+            throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
     
@@ -351,7 +351,7 @@ public class Phrase extends ArrayList implements TextElementArray {
             }
         }
         catch(ClassCastException cce) {
-            throw new ClassCastException(MessageLocalization.getComposedMessage(this.getClass(), "insertion.of.illegal.element.1", cce.getMessage()));
+            throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
     

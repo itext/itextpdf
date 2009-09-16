@@ -83,7 +83,7 @@ public class LZWDecoder {
     public void decode(byte data[], OutputStream uncompData) {
         
         if(data[0] == (byte)0x00 && data[1] == (byte)0x01) {
-            throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "lzw.flavour.not.supported"));
+            throw new RuntimeException(MessageLocalization.getComposedMessage("lzw.flavour.not.supported"));
         }
         
         initializeStringTable();

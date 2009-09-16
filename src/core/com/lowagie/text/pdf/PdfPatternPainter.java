@@ -398,6 +398,6 @@ public final class PdfPatternPainter extends PdfTemplate {
     
     void checkNoColor() {
         if (stencil)
-            throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "colors.are.not.allowed.in.uncolored.tile.patterns"));
+            throw new RuntimeException(MessageLocalization.getComposedMessage("colors.are.not.allowed.in.uncolored.tile.patterns"));
     }
 }

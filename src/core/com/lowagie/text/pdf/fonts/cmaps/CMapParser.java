@@ -117,7 +117,7 @@ public class CMapParser
                         }
                         else
                         {
-                            throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "error.parsing.cmap.beginbfchar.expected.cosstring.or.cosname.and.not.1", nextToken));
+                            throw new IOException(MessageLocalization.getComposedMessage("error.parsing.cmap.beginbfchar.expected.cosstring.or.cosname.and.not.1", nextToken));
                         }
                     }
                 }
@@ -220,7 +220,7 @@ public class CMapParser
                 }
                 else
                 {
-                    throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "error.expected.the.end.of.a.dictionary"));
+                    throw new IOException(MessageLocalization.getComposedMessage("error.expected.the.end.of.a.dictionary"));
                 }
                 break;
             }
@@ -281,7 +281,7 @@ public class CMapParser
                         }
                         else
                         {
-                            throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "error.expected.hex.character.and.not.char.thenextbyte.1", theNextByte));
+                            throw new IOException(MessageLocalization.getComposedMessage("error.expected.hex.character.and.not.char.thenextbyte.1", theNextByte));
                         }
                         intValue *= multiplyer;
                         if( multiplyer == 16 )

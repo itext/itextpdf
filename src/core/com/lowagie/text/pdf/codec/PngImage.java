@@ -266,7 +266,7 @@ public class PngImage {
     void readPng() throws IOException {
         for (int i = 0; i < PNGID.length; i++) {
             if (PNGID[i] != is.read())	{
-                throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "file.is.not.a.valid.png"));
+                throw new IOException(MessageLocalization.getComposedMessage("file.is.not.a.valid.png"));
             }
         }
         byte buffer[] = new byte[TRANSFERSIZE];
@@ -274,7 +274,7 @@ public class PngImage {
             int len = getInt(is);
             String marker = getString(is);
             if (len < 0 || !checkMarker(marker))
-                throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "corrupted.png.file"));
+                throw new IOException(MessageLocalization.getComposedMessage("corrupted.png.file"));
             if (IDAT.equals(marker)) {
                 int size;
                 while (len != 0) {
@@ -416,7 +416,7 @@ public class PngImage {
                 while (len > 0) {
                     int r = is.read(icccom, p, len);
                     if (r < 0)
-                        throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "premature.end.of.file"));
+                        throw new IOException(MessageLocalization.getComposedMessage("premature.end.of.file"));
                     p += r;
                     len -= r;
                 }
@@ -703,7 +703,7 @@ public class PngImage {
                     break;
                 default:
                     // Error -- uknown filter type
-                    throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "png.filter.unknown"));
+                    throw new RuntimeException(MessageLocalization.getComposedMessage("png.filter.unknown"));
             }
             
             processPixels(curr, xOffset, xStep, dstY, passWidth);

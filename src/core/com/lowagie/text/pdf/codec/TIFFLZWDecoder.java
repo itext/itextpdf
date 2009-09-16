@@ -86,7 +86,7 @@ public class TIFFLZWDecoder {
     public byte[] decode(byte data[], byte uncompData[], int h) {
         
         if(data[0] == (byte)0x00 && data[1] == (byte)0x01) {
-            throw new UnsupportedOperationException(MessageLocalization.getComposedMessage(this.getClass(), "tiff.5.0.style.lzw.codes.are.not.supported"));
+            throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("tiff.5.0.style.lzw.codes.are.not.supported"));
         }
         
         initializeStringTable();

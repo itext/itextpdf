@@ -123,18 +123,18 @@ public class PdfContentParser {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
             if (!nextValidToken())
-                throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "unexpected.end.of.file"));
+                throw new IOException(MessageLocalization.getComposedMessage("unexpected.end.of.file"));
                 if (tokeniser.getTokenType() == PRTokeniser.TK_END_DIC)
                     break;
                 if (tokeniser.getTokenType() != PRTokeniser.TK_NAME)
-                    throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "dictionary.key.is.not.a.name"));
+                    throw new IOException(MessageLocalization.getComposedMessage("dictionary.key.is.not.a.name"));
                 PdfName name = new PdfName(tokeniser.getStringValue(), false);
                 PdfObject obj = readPRObject();
                 int type = obj.type();
                 if (-type == PRTokeniser.TK_END_DIC)
-                    throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "unexpected.gt.gt"));
+                    throw new IOException(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
                 if (-type == PRTokeniser.TK_END_ARRAY)
-                    throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "unexpected"));
+                    throw new IOException(MessageLocalization.getComposedMessage("unexpected"));
                 dic.put(name, obj);
         }
         return dic;
@@ -153,7 +153,7 @@ public class PdfContentParser {
             if (-type == PRTokeniser.TK_END_ARRAY)
                 break;
             if (-type == PRTokeniser.TK_END_DIC)
-                throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "unexpected.gt.gt"));
+                throw new IOException(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
             array.add(obj);
         }
         return array;

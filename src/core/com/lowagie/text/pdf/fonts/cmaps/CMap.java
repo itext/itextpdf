@@ -134,7 +134,7 @@ public class CMap
         }
         else
         {
-            throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "mapping.code.should.be.1.or.two.bytes.and.not.1", src.length));
+            throw new IOException(MessageLocalization.getComposedMessage("mapping.code.should.be.1.or.two.bytes.and.not.1", src.length));
         }
     }
 

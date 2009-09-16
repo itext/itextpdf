@@ -80,7 +80,7 @@ public class HandoutPdf extends java.lang.Object {
 			try {
 				int pages = Integer.parseInt(args[2]);
 				if (pages < 2 || pages > 8) {
-					throw new DocumentException(MessageLocalization.getComposedMessage(HandoutPdf.class, "you.can.t.have.1.pages.on.one.page.minimum.2.maximum.8", pages));
+					throw new DocumentException(MessageLocalization.getComposedMessage("you.can.t.have.1.pages.on.one.page.minimum.2.maximum.8", pages));
 				}
                 
 				float x1 = 30f;

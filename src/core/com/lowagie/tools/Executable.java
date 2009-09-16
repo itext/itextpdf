@@ -269,13 +269,13 @@ public class Executable {
 	               if (Runtime.getRuntime().exec(new String[] {"which", browsers[count]}).waitFor() == 0)
 	                  browser = browsers[count];
 	            if (browser == null)
-	               throw new Exception(MessageLocalization.getComposedMessage(Executable.class, "could.not.find.web.browser"));
+	               throw new Exception(MessageLocalization.getComposedMessage("could.not.find.web.browser"));
 	            else
 	               Runtime.getRuntime().exec(new String[] {browser, url});
 	            }
 	         }
 	      catch (Exception e) {
-	         throw new IOException(MessageLocalization.getComposedMessage(Executable.class, "error.attempting.to.launch.web.browser"));
+	         throw new IOException(MessageLocalization.getComposedMessage("error.attempting.to.launch.web.browser"));
 	      }
 	}
 

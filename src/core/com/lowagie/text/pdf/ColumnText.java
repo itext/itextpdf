@@ -454,11 +454,11 @@ public class ColumnText {
         	try {
 				element = ((SimpleTable)element).createPdfPTable();
 			} catch (DocumentException e) {
-				throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "element.not.allowed"));
+				throw new IllegalArgumentException(MessageLocalization.getComposedMessage("element.not.allowed"));
 			}
         }
         else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "element.not.allowed"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("element.not.allowed"));
         if (!composite) {
             composite = true;
             compositeElements = new LinkedList();
@@ -480,7 +480,7 @@ public class ColumnText {
      */
     protected ArrayList convertColumn(float cLine[]) {
         if (cLine.length < 4)
-            throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "no.valid.column.line.found"));
+            throw new RuntimeException(MessageLocalization.getComposedMessage("no.valid.column.line.found"));
         ArrayList cc = new ArrayList();
         for (int k = 0; k < cLine.length - 2; k += 2) {
             float x1 = cLine[k];
@@ -502,7 +502,7 @@ public class ColumnText {
             minY = Math.min(minY, r[0]);
         }
         if (cc.isEmpty())
-            throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "no.valid.column.line.found"));
+            throw new RuntimeException(MessageLocalization.getComposedMessage("no.valid.column.line.found"));
         return cc;
     }
     
@@ -827,7 +827,7 @@ public class ColumnText {
             text = canvas.getDuplicate();
         }
         else if (!simulate)
-            throw new NullPointerException(MessageLocalization.getComposedMessage(this.getClass(), "columntext.go.with.simulate.eq.eq.false.and.text.eq.eq.null"));
+            throw new NullPointerException(MessageLocalization.getComposedMessage("columntext.go.with.simulate.eq.eq.false.and.text.eq.eq.null"));
         if (!simulate) {
             if (ratio == GLOBAL_SPACE_CHAR_RATIO)
                 ratio = text.getPdfWriter().getSpaceCharRatio();
@@ -981,7 +981,7 @@ public class ColumnText {
      */    
     public void setRunDirection(int runDirection) {
         if (runDirection < PdfWriter.RUN_DIRECTION_DEFAULT || runDirection > PdfWriter.RUN_DIRECTION_RTL)
-            throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "invalid.run.direction.1", runDirection));
+            throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.run.direction.1", runDirection));
         this.runDirection = runDirection;
     }
     
@@ -1145,7 +1145,7 @@ public class ColumnText {
 
     protected int goComposite(boolean simulate) throws DocumentException {
         if (!rectangularMode)
-            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "irregular.columns.are.not.supported.in.composite.mode"));
+            throw new DocumentException(MessageLocalization.getComposedMessage("irregular.columns.are.not.supported.in.composite.mode"));
         linesWritten = 0;
         descender = 0;
         boolean firstPass = adjustFirstLine;

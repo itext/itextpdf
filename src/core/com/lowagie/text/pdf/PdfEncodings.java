@@ -431,7 +431,7 @@ public class PdfEncodings {
         String fullName = BaseFont.RESOURCE_PATH + "cmaps/" + name;
         InputStream in = BaseFont.getResourceStream(fullName);
         if (in == null)
-            throw new IOException(MessageLocalization.getComposedMessage(PdfEncodings.class, "the.cmap.1.was.not.found", name));
+            throw new IOException(MessageLocalization.getComposedMessage("the.cmap.1.was.not.found", name));
         encodeStream(in, planes);
         in.close();
     }
@@ -510,7 +510,7 @@ public class PdfEncodings {
             int one = seqs[idx] & 0xff;
             char c = plane[one];
             if (c != 0 && (c & 0x8000) == 0)
-                throw new RuntimeException(MessageLocalization.getComposedMessage(PdfEncodings.class, "inconsistent.mapping"));
+                throw new RuntimeException(MessageLocalization.getComposedMessage("inconsistent.mapping"));
             if (c == 0) {
                 planes.add(new char[256]);
                 c = (char)((planes.size() - 1) | 0x8000);
@@ -522,7 +522,7 @@ public class PdfEncodings {
         int one = seqs[size] & 0xff;
         char c = plane[one];
         if ((c & 0x8000) != 0)
-            throw new RuntimeException(MessageLocalization.getComposedMessage(PdfEncodings.class, "inconsistent.mapping"));
+            throw new RuntimeException(MessageLocalization.getComposedMessage("inconsistent.mapping"));
         plane[one] = cid;
     }
 

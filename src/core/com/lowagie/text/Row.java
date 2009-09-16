@@ -174,7 +174,7 @@ public class Row implements Element {
      */    
     void deleteColumn(int column) {
         if ((column >= columns) || (column < 0)) {
-            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "getcell.at.illegal.index.1", column));
+            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("getcell.at.illegal.index.1", column));
         }
         columns--;
         boolean newReserved[] = new boolean[columns];
@@ -221,9 +221,9 @@ public class Row implements Element {
      *                      or <CODE>-1</CODE> if the <CODE>Cell</CODE> couldn't be added.
      */
     int addElement(Object element, int column) {
-        if (element == null) throw new NullPointerException(MessageLocalization.getComposedMessage(this.getClass(), "addcell.null.argument"));
-        if ((column < 0) || (column > columns)) throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "addcell.illegal.column.argument"));
-        if ( !((getObjectID(element) == CELL) || (getObjectID(element) == TABLE)) ) throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "addcell.only.cells.or.tables.allowed"));
+        if (element == null) throw new NullPointerException(MessageLocalization.getComposedMessage("addcell.null.argument"));
+        if ((column < 0) || (column > columns)) throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("addcell.illegal.column.argument"));
+        if ( !((getObjectID(element) == CELL) || (getObjectID(element) == TABLE)) ) throw new IllegalArgumentException(MessageLocalization.getComposedMessage("addcell.only.cells.or.tables.allowed"));
         
         int lColspan = ( (Cell.class.isInstance(element)) ? ((Cell) element).getColspan() : 1);
         
@@ -244,7 +244,7 @@ public class Row implements Element {
      * @param   column  the position where to add the cell.
      */
     void setElement(Object aElement, int column) {
-        if (reserved[column]) throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "setelement.position.already.taken"));
+        if (reserved[column]) throw new IllegalArgumentException(MessageLocalization.getComposedMessage("setelement.position.already.taken"));
         
         cells[column] = aElement;
         if (aElement != null) {
@@ -271,7 +271,7 @@ public class Row implements Element {
      * @return  <CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
      */
     boolean reserve(int column, int size) {
-        if ((column < 0) || ((column + size) > columns)) throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "reserve.incorrect.column.size"));
+        if ((column < 0) || ((column + size) > columns)) throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("reserve.incorrect.column.size"));
         
         for(int i=column; i < column + size; i++)
         {
@@ -335,7 +335,7 @@ public class Row implements Element {
      */
     public Object getCell(int column) {
         if ((column < 0) || (column > columns)) {
-            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "getcell.at.illegal.index.1.max.is.2", String.valueOf(column), String.valueOf(columns)));
+            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("getcell.at.illegal.index.1.max.is.2", String.valueOf(column), String.valueOf(columns)));
         }
         return cells[column];
     }

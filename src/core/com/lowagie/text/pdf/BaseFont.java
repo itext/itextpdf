@@ -693,7 +693,7 @@ public abstract class BaseFont {
         else if (noThrow)
             return null;
         else
-            throw new DocumentException(MessageLocalization.getComposedMessage(BaseFont.class, "font.1.with.2.is.not.recognized", name, encoding));
+            throw new DocumentException(MessageLocalization.getComposedMessage("font.1.with.2.is.not.recognized", name, encoding));
         if (cached) {
             synchronized (fontCache) {
                 fontFound = (BaseFont)fontCache.get(key);

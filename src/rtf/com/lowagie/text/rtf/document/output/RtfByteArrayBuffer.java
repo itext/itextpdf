@@ -81,7 +81,7 @@ public final class RtfByteArrayBuffer extends OutputStream
 	 */
 	public RtfByteArrayBuffer(final int bufferSize)
 	{
-		if((bufferSize <= 0) || (bufferSize > 1<<30)) throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "buffersize.1", bufferSize));
+		if((bufferSize <= 0) || (bufferSize > 1<<30)) throw new IllegalArgumentException(MessageLocalization.getComposedMessage("buffersize.1", bufferSize));
 		
 		int n = 1<<5;
 		while(n < bufferSize) {

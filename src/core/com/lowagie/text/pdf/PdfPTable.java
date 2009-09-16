@@ -202,9 +202,9 @@ public class PdfPTable implements LargeElement{
      */    
     public PdfPTable(float relativeWidths[]) {
         if (relativeWidths == null)
-            throw new NullPointerException(MessageLocalization.getComposedMessage(this.getClass(), "the.widths.array.in.pdfptable.constructor.can.not.be.null"));
+            throw new NullPointerException(MessageLocalization.getComposedMessage("the.widths.array.in.pdfptable.constructor.can.not.be.null"));
         if (relativeWidths.length == 0)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.widths.array.in.pdfptable.constructor.can.not.have.zero.length"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.widths.array.in.pdfptable.constructor.can.not.have.zero.length"));
         this.relativeWidths = new float[relativeWidths.length];
         System.arraycopy(relativeWidths, 0, this.relativeWidths, 0, relativeWidths.length);
         absoluteWidths = new float[relativeWidths.length];
@@ -220,7 +220,7 @@ public class PdfPTable implements LargeElement{
      */    
     public PdfPTable(int numColumns) {
         if (numColumns <= 0)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.number.of.columns.in.pdfptable.constructor.must.be.greater.than.zero"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.number.of.columns.in.pdfptable.constructor.must.be.greater.than.zero"));
         relativeWidths = new float[numColumns];
         for (int k = 0; k < numColumns; ++k)
             relativeWidths[k] = 1;
@@ -307,7 +307,7 @@ public class PdfPTable implements LargeElement{
      */    
     public void setWidths(float relativeWidths[]) throws DocumentException {
         if (relativeWidths.length != getNumberOfColumns())
-            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "wrong.number.of.columns"));
+            throw new DocumentException(MessageLocalization.getComposedMessage("wrong.number.of.columns"));
         this.relativeWidths = new float[relativeWidths.length];
         System.arraycopy(relativeWidths, 0, this.relativeWidths, 0, relativeWidths.length);
         absoluteWidths = new float[relativeWidths.length];
@@ -367,7 +367,7 @@ public class PdfPTable implements LargeElement{
      */    
     public void setTotalWidth(float columnWidth[]) throws DocumentException {
         if (columnWidth.length != getNumberOfColumns())
-            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "wrong.number.of.columns"));
+            throw new DocumentException(MessageLocalization.getComposedMessage("wrong.number.of.columns"));
         totalWidth = 0;
         for (int k = 0; k < columnWidth.length; ++k)
             totalWidth += columnWidth[k];
@@ -383,7 +383,7 @@ public class PdfPTable implements LargeElement{
      */    
     public void setWidthPercentage(float columnWidth[], Rectangle pageSize) throws DocumentException {
         if (columnWidth.length != getNumberOfColumns())
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "wrong.number.of.columns"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("wrong.number.of.columns"));
         float totalWidth = 0;
         for (int k = 0; k < columnWidth.length; ++k)
             totalWidth += columnWidth[k];
@@ -646,7 +646,7 @@ public class PdfPTable implements LargeElement{
      */    
     public float writeSelectedRows(int colStart, int colEnd, int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte[] canvases) {
         if (totalWidth <= 0)
-            throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "the.table.width.must.be.greater.than.zero"));
+            throw new RuntimeException(MessageLocalization.getComposedMessage("the.table.width.must.be.greater.than.zero"));
         
         int totalRows = rows.size();
         if (rowStart < 0)
@@ -1330,7 +1330,7 @@ public class PdfPTable implements LargeElement{
         		this.runDirection = runDirection;
         		break;
         	default:
-        		throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "invalid.run.direction.1", runDirection));
+        		throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.run.direction.1", runDirection));
         }
     }
     

@@ -403,7 +403,7 @@ public class BarcodePDF417 {
             dest[ptr++] = PS;
         size = (ptr + fullBytes) / 2;
         if (size + cwPtr > MAX_DATA_CODEWORDS) {
-            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "the.text.is.too.big"));
+            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("the.text.is.too.big"));
         }
         length = ptr;
         ptr = 0;
@@ -457,7 +457,7 @@ public class BarcodePDF417 {
         else
             size = full + size / 3 + 1;
         if (size + cwPtr > MAX_DATA_CODEWORDS) {
-            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "the.text.is.too.big"));
+            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("the.text.is.too.big"));
         }
         length += start;
         for (k = start; k < length; k += 44) {
@@ -497,7 +497,7 @@ public class BarcodePDF417 {
         int k, j;
         int size = (length / 6) * 5 + (length % 6);
         if (size + cwPtr > MAX_DATA_CODEWORDS) {
-            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "the.text.is.too.big"));
+            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("the.text.is.too.big"));
         }
         length += start;
         for (k = start; k < length; k += 6) {
@@ -683,13 +683,13 @@ public class BarcodePDF417 {
     
     private void macroCodes() {
         if (macroSegmentId < 0) {
-            throw new IllegalStateException(MessageLocalization.getComposedMessage(this.getClass(), "macrosegmentid.must.be.gt.eq.0"));
+            throw new IllegalStateException(MessageLocalization.getComposedMessage("macrosegmentid.must.be.gt.eq.0"));
         }
         if (macroSegmentId >= macroSegmentCount) {
-            throw new IllegalStateException(MessageLocalization.getComposedMessage(this.getClass(), "macrosegmentid.must.be.lt.macrosemgentcount"));
+            throw new IllegalStateException(MessageLocalization.getComposedMessage("macrosegmentid.must.be.lt.macrosemgentcount"));
         }
         if (macroSegmentCount < 1) {
-            throw new IllegalStateException(MessageLocalization.getComposedMessage(this.getClass(), "macrosemgentcount.must.be.gt.0"));
+            throw new IllegalStateException(MessageLocalization.getComposedMessage("macrosemgentcount.must.be.gt.0"));
         }
 
         macroIndex = cwPtr;
@@ -771,14 +771,14 @@ public class BarcodePDF417 {
         int maxErr, lenErr, tot, pad;
         if ((options & PDF417_USE_RAW_CODEWORDS) != 0) {
             if (lenCodewords > MAX_DATA_CODEWORDS || lenCodewords < 1 || lenCodewords != codewords[0]) {
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "invalid.codeword.size"));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.codeword.size"));
             }
         }
         else {
             if (text == null)
-                throw new NullPointerException(MessageLocalization.getComposedMessage(this.getClass(), "text.cannot.be.null"));
+                throw new NullPointerException(MessageLocalization.getComposedMessage("text.cannot.be.null"));
             if (text.length > ABSOLUTE_MAX_TEXT_SIZE) {
-                throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "the.text.is.too.big"));
+                throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("the.text.is.too.big"));
             }
             segmentList = new SegmentList();
             breakString();
