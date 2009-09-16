@@ -267,7 +267,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
      */
     public void add(int index, Object o) {
     	if (isAddedCompletely()) {
-    		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
+    		throw new IllegalStateException(MessageLocalization.getComposedMessage(this.getClass(), "this.largeelement.has.already.been.added.to.the.document"));
     	}
         try {
             Element element = (Element) o;
@@ -275,11 +275,11 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
                 super.add(index, element);
             }
             else {
-                throw new ClassCastException(MessageLocalization.getComposedMessage("you.can.t.add.a.1.to.a.section", element.getClass().getName()));
+                throw new ClassCastException(MessageLocalization.getComposedMessage(this.getClass(), "you.can.t.add.a.1.to.a.section", element.getClass().getName()));
             }
         }
         catch(ClassCastException cce) {
-            throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
+            throw new ClassCastException(MessageLocalization.getComposedMessage(this.getClass(), "insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
     
@@ -293,7 +293,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
      */
     public boolean add(Object o) {
     	if (isAddedCompletely()) {
-    		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
+    		throw new IllegalStateException(MessageLocalization.getComposedMessage(this.getClass(), "this.largeelement.has.already.been.added.to.the.document"));
     	}
         try {
             Element element = (Element) o;
@@ -312,11 +312,11 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
             	return super.add(o);
             }
             else {
-                throw new ClassCastException(MessageLocalization.getComposedMessage("you.can.t.add.a.1.to.a.section", element.getClass().getName()));
+                throw new ClassCastException(MessageLocalization.getComposedMessage(this.getClass(), "you.can.t.add.a.1.to.a.section", element.getClass().getName()));
             }
         }
         catch(ClassCastException cce) {
-            throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
+            throw new ClassCastException(MessageLocalization.getComposedMessage(this.getClass(), "insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
     
@@ -347,7 +347,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
      */
     public Section addSection(float indentation, Paragraph title, int numberDepth) {
     	if (isAddedCompletely()) {
-    		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
+    		throw new IllegalStateException(MessageLocalization.getComposedMessage(this.getClass(), "this.largeelement.has.already.been.added.to.the.document"));
     	}
         Section section = new Section(title, numberDepth);
         section.setIndentation(indentation);

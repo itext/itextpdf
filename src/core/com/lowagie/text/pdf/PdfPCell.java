@@ -927,7 +927,7 @@ public class PdfPCell extends Rectangle{
         if (rotation < 0)
             rotation += 360;
         if ((rotation % 90) != 0)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("rotation.must.be.a.multiple.of.90"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "rotation.must.be.a.multiple.of.90"));
         this.rotation = rotation;
     }
     

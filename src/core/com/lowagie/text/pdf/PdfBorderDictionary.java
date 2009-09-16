@@ -92,7 +92,7 @@ public class PdfBorderDictionary extends PdfDictionary {
                 put(PdfName.S, PdfName.U);
                 break;
             default:
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.border.style"));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "invalid.border.style"));
         }
     }
     

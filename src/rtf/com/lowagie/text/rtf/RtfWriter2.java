@@ -286,7 +286,7 @@ public class RtfWriter2 extends DocWriter {
      */
     public void importRtfDocument(InputStream documentSource, EventListener[] events ) throws IOException, DocumentException {
         if(!this.open) {
-            throw new DocumentException(MessageLocalization.getComposedMessage("the.document.must.be.open.to.import.rtf.documents"));
+            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.document.must.be.open.to.import.rtf.documents"));
         }
     	RtfParser rtfImport = new RtfParser(this.document);
     	if(events != null) {
@@ -335,7 +335,7 @@ public class RtfWriter2 extends DocWriter {
      */
     public void importRtfFragment(InputStream documentSource, RtfImportMappings mappings, EventListener[] events ) throws IOException, DocumentException {
         if(!this.open) {
-            throw new DocumentException(MessageLocalization.getComposedMessage("the.document.must.be.open.to.import.rtf.fragments"));
+            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.document.must.be.open.to.import.rtf.fragments"));
         }
     	RtfParser rtfImport = new RtfParser(this.document);
     	if(events != null) {

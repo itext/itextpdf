@@ -232,7 +232,7 @@ public class PageSize {
                 Field field = PageSize.class.getDeclaredField(name.toUpperCase());
                 return (Rectangle) field.get(null);
             } catch (Exception e) {
-                throw new RuntimeException(MessageLocalization.getComposedMessage("can.t.find.page.size.1", name));
+                throw new RuntimeException(MessageLocalization.getComposedMessage(PageSize.class, "can.t.find.page.size.1", name));
             }
         }
         else {
@@ -241,7 +241,7 @@ public class PageSize {
         		String height = name.substring(pos + 1);
         		return new Rectangle(Float.parseFloat(width), Float.parseFloat(height));
         	} catch(Exception e) {
-        		throw new RuntimeException(MessageLocalization.getComposedMessage("1.is.not.a.valid.page.size.format.2", name, e.getMessage()));
+        		throw new RuntimeException(MessageLocalization.getComposedMessage(PageSize.class, "1.is.not.a.valid.page.size.format.2", name, e.getMessage()));
         	}
         }
     }

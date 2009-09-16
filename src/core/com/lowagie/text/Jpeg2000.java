@@ -145,14 +145,14 @@ public class Jpeg2000 extends Image {
         boxType = cio_read(4);
         if (boxLength == 1) {
             if (cio_read(4) != 0) {
-                throw new IOException(MessageLocalization.getComposedMessage("cannot.handle.box.sizes.higher.than.2.32"));
+                throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "cannot.handle.box.sizes.higher.than.2.32"));
             }
             boxLength = cio_read(4);
             if (boxLength == 0) 
-                throw new IOException(MessageLocalization.getComposedMessage("unsupported.box.size.eq.eq.0"));
+                throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "unsupported.box.size.eq.eq.0"));
         }
         else if (boxLength == 0) {
-            throw new IOException(MessageLocalization.getComposedMessage("unsupported.box.size.eq.eq.0"));
+            throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "unsupported.box.size.eq.eq.0"));
         }
     }
     
@@ -178,22 +178,22 @@ public class Jpeg2000 extends Image {
             if (boxLength == 0x0000000c) {
                 boxType = cio_read(4);
                 if (JP2_JP != boxType) {
-                    throw new IOException(MessageLocalization.getComposedMessage("expected.jp.marker"));
+                    throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "expected.jp.marker"));
                 }
                 if (0x0d0a870a != cio_read(4)) {
-                    throw new IOException(MessageLocalization.getComposedMessage("error.with.jp.marker"));
+                    throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "error.with.jp.marker"));
                 }
 
                 jp2_read_boxhdr();
                 if (JP2_FTYP != boxType) {
-                    throw new IOException(MessageLocalization.getComposedMessage("expected.ftyp.marker"));
+                    throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "expected.ftyp.marker"));
                 }
                 Utilities.skip(inp, boxLength - 8);
                 jp2_read_boxhdr();
                 do {
                     if (JP2_JP2H != boxType) {
                         if (boxType == JP2_JP2C) {
-                            throw new IOException(MessageLocalization.getComposedMessage("expected.jp2h.marker"));
+                            throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "expected.jp2h.marker"));
                         }
                         Utilities.skip(inp, boxLength - 8);
                         jp2_read_boxhdr();
@@ -201,7 +201,7 @@ public class Jpeg2000 extends Image {
                 } while(JP2_JP2H != boxType);
                 jp2_read_boxhdr();
                 if (JP2_IHDR != boxType) {
-                    throw new IOException(MessageLocalization.getComposedMessage("expected.ihdr.marker"));
+                    throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "expected.ihdr.marker"));
                 }
                 scaledHeight = cio_read(4);
                 setTop(scaledHeight);
@@ -224,7 +224,7 @@ public class Jpeg2000 extends Image {
                 setRight(scaledWidth);
             }
             else {
-                throw new IOException(MessageLocalization.getComposedMessage("not.a.valid.jpeg2000.file"));
+                throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "not.a.valid.jpeg2000.file"));
             }
         }
         finally {

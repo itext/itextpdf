@@ -103,7 +103,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     
     void addDocument(PdfReader reader, List pagesToKeep) throws DocumentException, IOException {
         if (!readers2intrefs.containsKey(reader) && reader.isTampered())
-            throw new DocumentException(MessageLocalization.getComposedMessage("the.document.was.reused"));
+            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.document.was.reused"));
         reader = new PdfReader(reader);        
         reader.selectPages(pagesToKeep);
         if (reader.getNumberOfPages() == 0)
@@ -114,14 +114,14 @@ class PdfCopyFieldsImp extends PdfWriter {
     
     void addDocument(PdfReader reader) throws DocumentException, IOException {
         if (!reader.isOpenedWithFullPermissions())
-            throw new BadPasswordException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
+            throw new BadPasswordException(MessageLocalization.getComposedMessage(this.getClass(), "pdfreader.not.opened.with.owner.password"));
         openDoc();
         if (readers2intrefs.containsKey(reader)) {
             reader = new PdfReader(reader);
         }
         else {
             if (reader.isTampered())
-                throw new DocumentException(MessageLocalization.getComposedMessage("the.document.was.reused"));
+                throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.document.was.reused"));
             reader.consolidateNamedDestinations();
             reader.setTampered(true);
         }
@@ -229,7 +229,7 @@ class PdfCopyFieldsImp extends PdfWriter {
                 break;
             }
             case PdfObject.INDIRECT: {
-                throw new RuntimeException(MessageLocalization.getComposedMessage("reference.pointing.to.reference"));
+                throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "reference.pointing.to.reference"));
             }
         }
     }

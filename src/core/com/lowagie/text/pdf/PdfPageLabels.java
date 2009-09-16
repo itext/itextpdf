@@ -109,7 +109,7 @@ public class PdfPageLabels {
      */    
     public void addPageLabel(int page, int numberStyle, String text, int firstPage) {
         if (page < 1 || firstPage < 1)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("in.a.page.label.the.page.numbers.must.be.greater.or.equal.to.1"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "in.a.page.label.the.page.numbers.must.be.greater.or.equal.to.1"));
         PdfDictionary dic = new PdfDictionary();
         if (numberStyle >= 0 && numberStyle < numberingStyle.length)
             dic.put(PdfName.S, numberingStyle[numberStyle]);

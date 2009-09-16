@@ -90,7 +90,7 @@ public class PdfICCBased extends PdfStream {
                     put(PdfName.ALTERNATE, PdfName.DEVICECMYK);
                     break;
                 default:
-                    throw new PdfException(MessageLocalization.getComposedMessage("1.component.s.is.not.supported", numberOfComponents));
+                    throw new PdfException(MessageLocalization.getComposedMessage(this.getClass(), "1.component.s.is.not.supported", numberOfComponents));
             }
             put(PdfName.N, new PdfNumber(numberOfComponents));
             bytes = profile.getData();

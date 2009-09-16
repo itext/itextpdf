@@ -103,7 +103,7 @@ public class RandomAccessFileOrArray implements DataInput {
             else {
                 InputStream is = BaseFont.getResourceStream(filename);
                 if (is == null)
-                    throw new IOException(MessageLocalization.getComposedMessage("1.not.found.as.file.or.resource", filename));
+                    throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "1.not.found.as.file.or.resource", filename));
                 try {
                     this.arrayIn = InputStreamToArray(is);
                     return;

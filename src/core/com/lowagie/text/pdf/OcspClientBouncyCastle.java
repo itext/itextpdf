@@ -151,14 +151,14 @@ public class OcspClientBouncyCastle implements OcspClient {
             dataOut.flush();
             dataOut.close();
             if (con.getResponseCode() / 100 != 2) {
-                throw new IOException(MessageLocalization.getComposedMessage("invalid.http.response.1", con.getResponseCode()));
+                throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "invalid.http.response.1", con.getResponseCode()));
             }
             //Get Response
             InputStream in = (InputStream) con.getContent();
             OCSPResp ocspResponse = new OCSPResp(in);
 
             if (ocspResponse.getStatus() != 0)
-                throw new IOException(MessageLocalization.getComposedMessage("invalid.status.1", ocspResponse.getStatus()));
+                throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "invalid.status.1", ocspResponse.getStatus()));
             BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
             if (basicResponse != null) {
                 SingleResp[] responses = basicResponse.getResponses();
@@ -169,10 +169,10 @@ public class OcspClientBouncyCastle implements OcspClient {
                         return basicResponse.getEncoded();
                     }
                     else if (status instanceof org.bouncycastle.ocsp.RevokedStatus) {
-                        throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.revoked"));
+                        throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "ocsp.status.is.revoked"));
                     }
                     else {
-                        throw new IOException(MessageLocalization.getComposedMessage("ocsp.status.is.unknown"));
+                        throw new IOException(MessageLocalization.getComposedMessage(this.getClass(), "ocsp.status.is.unknown"));
                     }
                 }
             }

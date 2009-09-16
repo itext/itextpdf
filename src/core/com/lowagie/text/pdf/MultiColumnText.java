@@ -264,7 +264,7 @@ public class MultiColumnText implements Element {
         } else if (element instanceof Chunk) {
             columnText.addText((Chunk) element);
         } else {
-            throw new DocumentException(MessageLocalization.getComposedMessage("can.t.add.1.to.multicolumntext.with.complex.columns", element.getClass()));
+            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "can.t.add.1.to.multicolumntext.with.complex.columns", element.getClass()));
         }
     }
 
@@ -282,7 +282,7 @@ public class MultiColumnText implements Element {
         this.document = document;
         columnText.setCanvas(canvas);
         if (columnDefs.isEmpty()) {
-            throw new DocumentException(MessageLocalization.getComposedMessage("multicolumntext.has.no.columns"));
+            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "multicolumntext.has.no.columns"));
         }
         overflow = false;
         float currentHeight = 0;

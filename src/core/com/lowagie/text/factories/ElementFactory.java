@@ -525,7 +525,7 @@ public class ElementFactory {
 
 		value = attributes.getProperty(ElementTags.URL);
 		if (value == null)
-			throw new MalformedURLException(MessageLocalization.getComposedMessage("the.url.of.the.image.is.missing"));
+			throw new MalformedURLException(MessageLocalization.getComposedMessage(ElementFactory.class, "the.url.of.the.image.is.missing"));
 		Image image = Image.getInstance(value);
 
 		value = attributes.getProperty(ElementTags.ALIGN);

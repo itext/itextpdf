@@ -115,16 +115,16 @@ public class PdfShading {
     }
     
     public static void throwColorSpaceError() {
-        throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tiling.or.shading.pattern.cannot.be.used.as.a.color.space.in.a.shading.pattern"));
+        throw new IllegalArgumentException(MessageLocalization.getComposedMessage(PdfShading.class, "a.tiling.or.shading.pattern.cannot.be.used.as.a.color.space.in.a.shading.pattern"));
     }
     
     public static void checkCompatibleColors(Color c1, Color c2) {
         int type1 = ExtendedColor.getType(c1);
         int type2 = ExtendedColor.getType(c2);
         if (type1 != type2)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("both.colors.must.be.of.the.same.type"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(PdfShading.class, "both.colors.must.be.of.the.same.type"));
         if (type1 == ExtendedColor.TYPE_SEPARATION && ((SpotColor)c1).getPdfSpotColor() != ((SpotColor)c2).getPdfSpotColor())
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.spot.color.must.be.the.same.only.the.tint.can.vary"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(PdfShading.class, "the.spot.color.must.be.the.same.only.the.tint.can.vary"));
         if (type1 == ExtendedColor.TYPE_PATTERN || type1 == ExtendedColor.TYPE_SHADING)
             throwColorSpaceError();
     }
@@ -247,7 +247,7 @@ public class PdfShading {
     
     public void setBBox(float[] bBox) {
         if (bBox.length != 4)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("bbox.must.be.a.4.element.array"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "bbox.must.be.a.4.element.array"));
         this.bBox = bBox;
     }
     

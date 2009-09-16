@@ -89,7 +89,7 @@ public class FontSelector {
     public Phrase process(String text) {
         int fsize = fonts.size();
         if (fsize == 0)
-            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("no.font.is.defined"));
+            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "no.font.is.defined"));
         char cc[] = text.toCharArray();
         int len = cc.length;
         StringBuffer sb = new StringBuffer();

@@ -697,10 +697,10 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
             if (attr.isEmpty())
                 return;
             else
-                throw new RuntimeException(MessageLocalization.getComposedMessage("bookmark.end.tag.out.of.place"));
+                throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "bookmark.end.tag.out.of.place"));
         }
         if (!tag.equals("Title"))
-            throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.end.tag.1", tag));
+            throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "invalid.end.tag.1", tag));
         HashMap attributes = (HashMap)attr.pop();
         String title = (String)attributes.get("Title");
         attributes.put("Title",  title.trim());
@@ -733,10 +733,10 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
                 return;
             }
             else
-                throw new RuntimeException(MessageLocalization.getComposedMessage("root.element.is.not.bookmark.1", tag));
+                throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "root.element.is.not.bookmark.1", tag));
         }
         if (!tag.equals("Title"))
-            throw new RuntimeException(MessageLocalization.getComposedMessage("tag.1.not.allowed", tag));
+            throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "tag.1.not.allowed", tag));
         HashMap attributes = new HashMap(h);
         attributes.put("Title", "");
         attributes.remove("Kids");

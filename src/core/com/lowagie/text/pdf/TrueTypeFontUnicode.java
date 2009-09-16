@@ -98,7 +98,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         if ((fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".otf") || fileName.toLowerCase().endsWith(".ttc")) && ((enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb)) {
             process(ttfAfm, forceRead);
             if (os_2.fsType == 2)
-                throw new DocumentException(MessageLocalization.getComposedMessage("1.cannot.be.embedded.due.to.licensing.restrictions", fileName + style));
+                throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "1.cannot.be.embedded.due.to.licensing.restrictions", fileName + style));
             // Sivan
             if ((cmap31 == null && !fontSpecific) || (cmap10 == null && fontSpecific))
                 directTextToByte=true;
@@ -113,7 +113,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             }
         }
         else
-            throw new DocumentException(MessageLocalization.getComposedMessage("1.2.is.not.a.ttf.font.file", fileName, style));
+            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "1.2.is.not.a.ttf.font.file", fileName, style));
         vertical = enc.endsWith("V");
     }
     

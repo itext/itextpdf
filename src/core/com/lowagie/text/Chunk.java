@@ -260,7 +260,7 @@ public class Chunk implements Element {
 	public Chunk(DrawInterface separator, float tabPosition, boolean newline) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		if (tabPosition < 0) {
-			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabPosition)));
+			throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabPosition)));
 		}
 		setAttribute(TAB, new Object[] {separator, new Float(tabPosition), Boolean.valueOf(newline), new Float(0)});
 	}

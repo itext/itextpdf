@@ -158,7 +158,7 @@ public class PdfImportedPage extends com.lowagie.text.pdf.PdfTemplate {
 	}
 
 	void throwError() {
-        throw new RuntimeException(MessageLocalization.getComposedMessage("content.can.not.be.added.to.a.pdfimportedpage"));
+        throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "content.can.not.be.added.to.a.pdfimportedpage"));
     }
     
     PdfReaderInstance getPdfReaderInstance() {

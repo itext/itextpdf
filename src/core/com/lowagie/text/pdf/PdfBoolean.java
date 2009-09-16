@@ -114,7 +114,7 @@ public class PdfBoolean extends PdfObject {
             this.value = false;
         }
         else {
-            throw new BadPdfFormatException(MessageLocalization.getComposedMessage("the.value.has.to.be.true.of.false.instead.of.1", value));
+            throw new BadPdfFormatException(MessageLocalization.getComposedMessage(this.getClass(), "the.value.has.to.be.true.of.false.instead.of.1", value));
         }
     }
     

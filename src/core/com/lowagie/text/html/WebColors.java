@@ -236,7 +236,7 @@ public class WebColors extends HashMap {
 				c[2] = Integer.parseInt(name.substring(5), 16);
 				return new Color(c[0], c[1], c[2], c[3]);
 			}
-			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("unknown.color.format.must.be.rgb.or.rrggbb"));
+			throw new IllegalArgumentException(MessageLocalization.getComposedMessage(WebColors.class, "unknown.color.format.must.be.rgb.or.rrggbb"));
 		}
         else if (name.startsWith("rgb(")) {
             StringTokenizer tok = new StringTokenizer(name, "rgb(), \t\r\n\f");

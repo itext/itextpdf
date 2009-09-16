@@ -173,7 +173,7 @@ public class RtfDocument extends RtfElement {
                 	this.data = new RtfDiskCache();
                 	break;
                 default:
-                	throw new RuntimeException(MessageLocalization.getComposedMessage("unknown"));
+                	throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "unknown"));
             }
     		
         } catch(IOException ioe) {
@@ -251,7 +251,7 @@ public class RtfDocument extends RtfElement {
     public void filterSpecialChar(final OutputStream out, final String str, final boolean useHex, final boolean softLineBreaks) throws IOException
     {
         if(out == null) {
-            throw new NullPointerException(MessageLocalization.getComposedMessage("null.outpustream"));
+            throw new NullPointerException(MessageLocalization.getComposedMessage(this.getClass(), "null.outpustream"));
         }
 
         final boolean alwaysUseUniCode = this.documentSettings.isAlwaysUseUnicode();

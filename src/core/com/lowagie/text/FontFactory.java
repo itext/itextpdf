@@ -442,7 +442,7 @@ public final class FontFactory {
      */    
     public static void setFontImp(FontFactoryImp fontImp) {
         if (fontImp == null)
-            throw new NullPointerException(MessageLocalization.getComposedMessage("fontfactoryimp.cannot.be.null"));
+            throw new NullPointerException(MessageLocalization.getComposedMessage(FontFactory.class, "fontfactoryimp.cannot.be.null"));
         FontFactory.fontImp = fontImp;
     }
 }

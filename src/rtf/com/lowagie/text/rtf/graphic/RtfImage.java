@@ -176,7 +176,7 @@ public class RtfImage extends RtfElement {
         imageType = image.getOriginalType();
         if (!(imageType == Image.ORIGINAL_JPEG || imageType == Image.ORIGINAL_BMP
                 || imageType == Image.ORIGINAL_PNG || imageType == Image.ORIGINAL_WMF || imageType == Image.ORIGINAL_GIF)) {
-            throw new DocumentException(MessageLocalization.getComposedMessage("only.bmp.png.wmf.gif.and.jpeg.images.are.supported.by.the.rtf.writer"));
+            throw new DocumentException(MessageLocalization.getComposedMessage(this.getClass(), "only.bmp.png.wmf.gif.and.jpeg.images.are.supported.by.the.rtf.writer"));
         }
         alignment = image.getAlignment();
         width = image.getWidth();
@@ -208,7 +208,7 @@ public class RtfImage extends RtfElement {
                 	final InputStream imageIn = image.getUrl().openStream();
                     if(imageType == Image.ORIGINAL_WMF) { //remove the placeable header first
                     	for(int k = 0; k < WMF_PLACEABLE_HEADER_SIZE; k++) {
-							if(imageIn.read() < 0) throw new EOFException(MessageLocalization.getComposedMessage("while.removing.wmf.placeable.header"));
+							if(imageIn.read() < 0) throw new EOFException(MessageLocalization.getComposedMessage(this.getClass(), "while.removing.wmf.placeable.header"));
 						}
                     }
                     bab.write(imageIn);

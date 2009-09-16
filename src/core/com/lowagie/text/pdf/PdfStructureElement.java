@@ -96,7 +96,7 @@ public class PdfStructureElement extends PdfDictionary {
         PdfObject kido = parent.get(PdfName.K);
         PdfArray kids = null;
         if (kido != null && !kido.isArray())
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.parent.has.already.another.function"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "the.parent.has.already.another.function"));
         if (kido == null) {
             kids = new PdfArray();
             parent.put(PdfName.K, kids);

@@ -118,11 +118,11 @@ public class TiffImage {
      */    
     public static Image getTiffImage(RandomAccessFileOrArray s, int page, boolean direct) {
         if (page < 1)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.page.number.must.be.gt.eq.1"));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage(TiffImage.class, "the.page.number.must.be.gt.eq.1"));
         try {
             TIFFDirectory dir = new TIFFDirectory(s, page - 1);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_TILEWIDTH))
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("tiles.are.not.supported"));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(TiffImage.class, "tiles.are.not.supported"));
             int compression = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
             switch (compression) {
                 case TIFFConstants.COMPRESSION_CCITTRLEW:
@@ -298,7 +298,7 @@ public class TiffImage {
                 case TIFFConstants.COMPRESSION_JPEG:
                     break;
                 default:
-                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.compression.1.is.not.supported", compression));
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage(TiffImage.class, "the.compression.1.is.not.supported", compression));
             }
             int photometric = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_PHOTOMETRIC);
             switch (photometric) {
@@ -310,7 +310,7 @@ public class TiffImage {
                     break;
                 default:
                     if (compression != TIFFConstants.COMPRESSION_OJPEG && compression != TIFFConstants.COMPRESSION_JPEG)
-                        throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.photometric.1.is.not.supported", photometric));
+                        throw new IllegalArgumentException(MessageLocalization.getComposedMessage(TiffImage.class, "the.photometric.1.is.not.supported", photometric));
             }
             float rotation = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ORIENTATION)) {
@@ -324,9 +324,9 @@ public class TiffImage {
             }
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PLANARCONFIG)
                 && dir.getFieldAsLong(TIFFConstants.TIFFTAG_PLANARCONFIG) == TIFFConstants.PLANARCONFIG_SEPARATE)
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("planar.images.are.not.supported"));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(TiffImage.class, "planar.images.are.not.supported"));
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_EXTRASAMPLES))
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("extra.samples.are.not.supported"));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(TiffImage.class, "extra.samples.are.not.supported"));
             int samplePerPixel = 1;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL)) // 1,3,4
                 samplePerPixel = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL);
@@ -340,7 +340,7 @@ public class TiffImage {
                 case 8:
                     break;
                 default:
-                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("bits.per.sample.1.is.not.supported", bitsPerSample));
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage(TiffImage.class, "bits.per.sample.1.is.not.supported", bitsPerSample));
             }
             Image img = null;
 
@@ -374,10 +374,10 @@ public class TiffImage {
                 if (predictorField != null) {
                     predictor = predictorField.getAsInt(0);
                     if (predictor != 1 && predictor != 2) {
-                        throw new RuntimeException(MessageLocalization.getComposedMessage("illegal.value.for.predictor.in.tiff.file"));
+                        throw new RuntimeException(MessageLocalization.getComposedMessage(TiffImage.class, "illegal.value.for.predictor.in.tiff.file"));
                     }
                     if (predictor == 2 && bitsPerSample != 8) {
-                        throw new RuntimeException(MessageLocalization.getComposedMessage("1.bit.samples.are.not.supported.for.horizontal.differencing.predictor", bitsPerSample));
+                        throw new RuntimeException(MessageLocalization.getComposedMessage(TiffImage.class, "1.bit.samples.are.not.supported.for.horizontal.differencing.predictor", bitsPerSample));
                     }
                 }
                 lzwDecoder = new TIFFLZWDecoder(w, predictor, 
@@ -401,7 +401,7 @@ public class TiffImage {
                 // is often missing
 
                 if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))) {
-                    throw new IOException(MessageLocalization.getComposedMessage("missing.tag.s.for.ojpeg.compression"));
+                    throw new IOException(MessageLocalization.getComposedMessage(TiffImage.class, "missing.tag.s.for.ojpeg.compression"));
                 }
                 int jpegOffset = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFOFFSET);
                 int jpegLength = s.length() - jpegOffset;
@@ -421,7 +421,7 @@ public class TiffImage {
             } 
             else if (compression == TIFFConstants.COMPRESSION_JPEG) {
                 if (size.length > 1)
-                    throw new IOException(MessageLocalization.getComposedMessage("compression.jpeg.is.only.supported.with.a.single.strip.this.image.has.1.strips", size.length));
+                    throw new IOException(MessageLocalization.getComposedMessage(TiffImage.class, "compression.jpeg.is.only.supported.with.a.single.strip.this.image.has.1.strips", size.length));
                 byte[] jpeg = new byte[(int)size[0]];
                 s.seek(offset[0]);
                 s.readFully(jpeg);

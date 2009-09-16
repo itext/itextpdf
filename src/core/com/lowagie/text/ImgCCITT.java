@@ -87,7 +87,7 @@ public class ImgCCITT extends Image {
     public ImgCCITT(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data) throws BadElementException{
         super((URL)null);
         if (typeCCITT != CCITTG4 && typeCCITT != CCITTG3_1D && typeCCITT != CCITTG3_2D)
-            throw new BadElementException(MessageLocalization.getComposedMessage("the.ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d"));
+            throw new BadElementException(MessageLocalization.getComposedMessage(this.getClass(), "the.ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d"));
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
         type = IMGRAW;

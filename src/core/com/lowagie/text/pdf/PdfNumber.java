@@ -86,7 +86,7 @@ public class PdfNumber extends PdfObject {
             setContent(content);
         }
         catch (NumberFormatException nfe){
-            throw new RuntimeException(MessageLocalization.getComposedMessage("1.is.not.a.valid.number.2", content, nfe.toString()));
+            throw new RuntimeException(MessageLocalization.getComposedMessage(this.getClass(), "1.is.not.a.valid.number.2", content, nfe.toString()));
         }
     }
     

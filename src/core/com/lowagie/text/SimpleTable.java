@@ -92,7 +92,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 	 */
 	public void addElement(SimpleCell element) throws BadElementException {
 		if(!element.isCellgroup()) {
-			throw new BadElementException(MessageLocalization.getComposedMessage("you.can.t.add.cells.to.a.table.directly.add.them.to.a.row.first"));
+			throw new BadElementException(MessageLocalization.getComposedMessage(this.getClass(), "you.can.t.add.cells.to.a.table.directly.add.them.to.a.row.first"));
 		}
 		content.add(element);
 	}
@@ -103,7 +103,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 	 * @throws BadElementException
 	 */
 	public Table createTable() throws BadElementException {
-		if (content.isEmpty()) throw new BadElementException(MessageLocalization.getComposedMessage("trying.to.create.a.table.without.rows"));
+		if (content.isEmpty()) throw new BadElementException(MessageLocalization.getComposedMessage(this.getClass(), "trying.to.create.a.table.without.rows"));
 		SimpleCell row = (SimpleCell)content.get(0);
 		SimpleCell cell;
 		int columns = 0;
@@ -173,7 +173,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 	 * @throws DocumentException
 	 */
 	public PdfPTable createPdfPTable() throws DocumentException {
-		if (content.isEmpty()) throw new BadElementException(MessageLocalization.getComposedMessage("trying.to.create.a.table.without.rows"));
+		if (content.isEmpty()) throw new BadElementException(MessageLocalization.getComposedMessage(this.getClass(), "trying.to.create.a.table.without.rows"));
 		SimpleCell row = (SimpleCell)content.get(0);
 		SimpleCell cell;
 		int columns = 0;

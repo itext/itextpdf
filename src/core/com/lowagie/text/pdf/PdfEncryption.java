@@ -183,7 +183,7 @@ public class PdfEncryption {
 			revision = AES_128;
 			break;
 		default:
-			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("no.valid.encryption.mode"));
+			throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "no.valid.encryption.mode"));
 		}
 	}
 

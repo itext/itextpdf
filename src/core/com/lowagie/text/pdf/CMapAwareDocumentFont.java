@@ -176,7 +176,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
     private String decodeSingleCID(byte[] bytes, int offset, int len){
         if (toUnicodeCmap != null){
             if (offset + len > bytes.length)
-                throw new ArrayIndexOutOfBoundsException(MessageLocalization.getComposedMessage("invalid.index.1", offset + len));
+                throw new ArrayIndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "invalid.index.1", offset + len));
             return toUnicodeCmap.lookup(bytes, offset, len);
         }
 

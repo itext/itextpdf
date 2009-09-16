@@ -570,7 +570,7 @@ public class ByteBuffer extends OutputStream {
     
     public void setSize(int size) {
         if (size > count || size < 0)
-            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("the.new.size.must.be.positive.and.lt.eq.of.the.current.size"));
+            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage(this.getClass(), "the.new.size.must.be.positive.and.lt.eq.of.the.current.size"));
         count = size;
     }
     

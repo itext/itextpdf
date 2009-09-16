@@ -385,15 +385,15 @@ public class PdfPKCS7 {
                 pkcs = din.readObject();
             }
             catch (IOException e) {
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("can.t.decode.pkcs7signeddata.object"));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "can.t.decode.pkcs7signeddata.object"));
             }
             if (!(pkcs instanceof ASN1Sequence)) {
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("not.a.valid.pkcs.7.object.not.a.sequence"));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "not.a.valid.pkcs.7.object.not.a.sequence"));
             }
             ASN1Sequence signedData = (ASN1Sequence)pkcs;
             DERObjectIdentifier objId = (DERObjectIdentifier)signedData.getObjectAt(0);
             if (!objId.getId().equals(ID_PKCS7_SIGNED_DATA))
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("not.a.valid.pkcs.7.object.not.signed.data"));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "not.a.valid.pkcs.7.object.not.signed.data"));
             ASN1Sequence content = (ASN1Sequence)((DERTaggedObject)signedData.getObjectAt(1)).getObject();
             // the positions that we care are:
             //     0 - version
@@ -436,7 +436,7 @@ public class PdfPKCS7 {
                 ++next;
             ASN1Set signerInfos = (ASN1Set)content.getObjectAt(next);
             if (signerInfos.size() != 1)
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("this.pkcs.7.object.has.multiple.signerinfos.only.one.is.supported.at.this.time"));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "this.pkcs.7.object.has.multiple.signerinfos.only.one.is.supported.at.this.time"));
             ASN1Sequence signerInfo = (ASN1Sequence)signerInfos.getObjectAt(0);
             // the positions that we care are
             //     0 - version
@@ -456,7 +456,7 @@ public class PdfPKCS7 {
                 }
             }
             if (signCert == null) {
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("can.t.find.signing.certificate.with.serial.1", serialNumber.toString(16)));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "can.t.find.signing.certificate.with.serial.1", serialNumber.toString(16)));
             }
             signCertificateChain();
             digestAlgorithm = ((DERObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(2)).getObjectAt(0)).getId();
@@ -485,7 +485,7 @@ public class PdfPKCS7 {
                     }
                 }
                 if (digestAttr == null)
-                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("authenticated.attribute.is.missing.the.digest"));
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "authenticated.attribute.is.missing.the.digest"));
                 ++next;
             }
             digestEncryptionAlgorithm = ((DERObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
@@ -541,7 +541,7 @@ public class PdfPKCS7 {
         
         digestAlgorithm = (String)allowedDigests.get(hashAlgorithm.toUpperCase());
         if (digestAlgorithm == null)
-            throw new NoSuchAlgorithmException(MessageLocalization.getComposedMessage("unknown.hash.algorithm.1", hashAlgorithm));
+            throw new NoSuchAlgorithmException(MessageLocalization.getComposedMessage(this.getClass(), "unknown.hash.algorithm.1", hashAlgorithm));
         
         version = signerversion = 1;
         certs = new ArrayList();
@@ -575,7 +575,7 @@ public class PdfPKCS7 {
                 digestEncryptionAlgorithm = ID_DSA;
             }
             else {
-                throw new NoSuchAlgorithmException(MessageLocalization.getComposedMessage("unknown.key.algorithm.1", digestEncryptionAlgorithm));
+                throw new NoSuchAlgorithmException(MessageLocalization.getComposedMessage(this.getClass(), "unknown.key.algorithm.1", digestEncryptionAlgorithm));
             }
         }
         if (hasRSAdata) {
@@ -1117,7 +1117,7 @@ public class PdfPKCS7 {
                 this.digestEncryptionAlgorithm = ID_DSA;
             }
             else
-                throw new ExceptionConverter(new NoSuchAlgorithmException(MessageLocalization.getComposedMessage("unknown.key.algorithm.1", digestEncryptionAlgorithm)));
+                throw new ExceptionConverter(new NoSuchAlgorithmException(MessageLocalization.getComposedMessage(this.getClass(), "unknown.key.algorithm.1", digestEncryptionAlgorithm)));
         }
     }
     
@@ -1591,7 +1591,7 @@ public class PdfPKCS7 {
                 int index = token.indexOf('=');
                 
                 if (index == -1) {
-                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("badly.formated.directory.string"));
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage(this.getClass(), "badly.formated.directory.string"));
                 }
                 
                 String id = token.substring(0, index).toUpperCase();
