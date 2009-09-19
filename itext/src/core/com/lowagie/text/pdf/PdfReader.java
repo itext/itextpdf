@@ -1544,7 +1544,7 @@ public class PdfReader implements PdfViewerPreferences {
             if (-type == PRTokeniser.TK_END_DIC)
                 tokens.throwError(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
             if (-type == PRTokeniser.TK_END_ARRAY)
-                tokens.throwError(MessageLocalization.getComposedMessage("unexpected"));
+                tokens.throwError(MessageLocalization.getComposedMessage("unexpected.close.bracket"));
             dic.put(name, obj);
         }
         return dic;

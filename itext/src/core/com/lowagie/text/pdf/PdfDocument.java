@@ -856,7 +856,7 @@ public class PdfDocument extends Document {
             return false;
         }
     	if (!open || close) {
-    		throw new RuntimeException(MessageLocalization.getComposedMessage("the.document.isn.t.open"));
+    		throw new RuntimeException(MessageLocalization.getComposedMessage("the.document.is.not.open"));
     	}
         PdfPageEvent pageEvent = writer.getPageEvent();
         if (pageEvent != null)
