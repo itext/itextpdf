@@ -68,10 +68,6 @@ public class SpotColor extends ExtendedColor {
         this.tint = tint;
     }
     
-    public SpotColor(PdfSpotColor spot) {
-        this(spot, spot.getTint());
-    }
-    
     public PdfSpotColor getPdfSpotColor() {
         return spot;
     }

@@ -60,9 +60,6 @@ import com.lowagie.text.error_messages.MessageLocalization;
 
 public class PdfSpotColor{
     
-/*	The tint value */
-    protected float tint;
-    
 /**	The color name */
     public PdfName name;
     
@@ -74,22 +71,12 @@ public class PdfSpotColor{
      * Constructs a new <CODE>PdfSpotColor</CODE>.
      *
      * @param		name		a String value
-     * @param		tint		a tint value between 0 and 1
      * @param		altcs		an alternative colorspace value
      */
     
-    public PdfSpotColor(String name, float tint, Color altcs) {
+    public PdfSpotColor(String name, Color altcs) {
         this.name = new PdfName(name);
-        this.tint = tint;
         this.altcs = altcs;
-    }
-    
-    /**
-     * Gets the tint of the SpotColor.
-     * @return a float
-     */
-    public float getTint() {
-        return tint;
     }
     
     /**
