@@ -245,6 +245,7 @@ public final class SimpleXMLParser {
                     saveState(state);
                     entity.setLength(0);
                     state = ENTITY;
+                    nowhite = true;
                 } else if (Character.isWhitespace((char)character)) {
                 	if (nowhite)
                 		text.append((char)character);
