@@ -787,6 +787,7 @@ public class SAXiTextHandler extends DefaultHandler {
                                     width.substring(0, width.length() - 1)
                                             + "f");
                             total += cellWidths[j];
+                            cellNulls[j] = false;
                         } catch (Exception e) {
                             // empty on purpose
                         }
