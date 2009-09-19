@@ -134,7 +134,7 @@ public class PdfContentParser {
                 if (-type == PRTokeniser.TK_END_DIC)
                     throw new IOException(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
                 if (-type == PRTokeniser.TK_END_ARRAY)
-                    throw new IOException(MessageLocalization.getComposedMessage("unexpected"));
+                    throw new IOException(MessageLocalization.getComposedMessage("unexpected.close.bracket"));
                 dic.put(name, obj);
         }
         return dic;

@@ -408,7 +408,7 @@ class TrueTypeFont extends BaseFont {
         int table_location[];
         table_location = (int[])tables.get("head");
         if (table_location == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.head.does.not.exist.in.1", fileName + style));
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "head", fileName + style));
         rf.seek(table_location[0] + 16);
         head.flags = rf.readUnsignedShort();
         head.unitsPerEm = rf.readUnsignedShort();
@@ -421,7 +421,7 @@ class TrueTypeFont extends BaseFont {
         
         table_location = (int[])tables.get("hhea");
         if (table_location == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.hhea.does.not.exist.1", fileName + style));
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "hhea", fileName + style));
         rf.seek(table_location[0] + 4);
         hhea.Ascender = rf.readShort();
         hhea.Descender = rf.readShort();
@@ -437,7 +437,7 @@ class TrueTypeFont extends BaseFont {
         
         table_location = (int[])tables.get("OS/2");
         if (table_location == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.os.2.does.not.exist.in.1", fileName + style));
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "OS/2", fileName + style));
         rf.seek(table_location[0]);
         int version = rf.readUnsignedShort();
         os_2.xAvgCharWidth = rf.readShort();
@@ -505,7 +505,7 @@ class TrueTypeFont extends BaseFont {
         int table_location[];
         table_location = (int[])tables.get("name");
         if (table_location == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.name.does.not.exist.in.1", fileName + style));
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "name", fileName + style));
         rf.seek(table_location[0] + 2);
         int numRecords = rf.readUnsignedShort();
         int startOfStorage = rf.readUnsignedShort();
@@ -537,7 +537,7 @@ class TrueTypeFont extends BaseFont {
         int table_location[];
         table_location = (int[])tables.get("name");
         if (table_location == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.name.does.not.exist.in.1", fileName + style));
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "name", fileName + style));
         rf.seek(table_location[0] + 2);
         int numRecords = rf.readUnsignedShort();
         int startOfStorage = rf.readUnsignedShort();
@@ -578,7 +578,7 @@ class TrueTypeFont extends BaseFont {
         int table_location[];
         table_location = (int[])tables.get("name");
         if (table_location == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.name.does.not.exist.in.1", fileName + style));
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "name", fileName + style));
         rf.seek(table_location[0] + 2);
         int numRecords = rf.readUnsignedShort();
         int startOfStorage = rf.readUnsignedShort();
@@ -726,7 +726,7 @@ class TrueTypeFont extends BaseFont {
         int table_location[];
         table_location = (int[])tables.get("hmtx");
         if (table_location == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.hmtx.does.not.exist.in.1", fileName + style));
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "hmtx", fileName + style));
         rf.seek(table_location[0]);
         GlyphWidths = new int[hhea.numberOfHMetrics];
         for (int k = 0; k < hhea.numberOfHMetrics; ++k) {
@@ -749,7 +749,7 @@ class TrueTypeFont extends BaseFont {
         int tableLocation[];
         tableLocation = (int[])tables.get("head");
         if (tableLocation == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.head.does.not.exist.in.1", fileName + style));
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "head", fileName + style));
         rf.seek(tableLocation[0] + TrueTypeFontSubSet.HEAD_LOCA_FORMAT_OFFSET);
         boolean locaShortTable = (rf.readUnsignedShort() == 0);
         tableLocation = (int[])tables.get("loca");
@@ -771,7 +771,7 @@ class TrueTypeFont extends BaseFont {
         }
         tableLocation = (int[])tables.get("glyf");
         if (tableLocation == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.glyf.does.not.exist.in.1", fileName + style));
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "glyf", fileName + style));
         int tableGlyphOffset = tableLocation[0];
         bboxes = new int[locaTable.length - 1][];
         for (int glyph = 0; glyph < locaTable.length - 1; ++glyph) {
@@ -796,7 +796,7 @@ class TrueTypeFont extends BaseFont {
         int table_location[];
         table_location = (int[])tables.get("cmap");
         if (table_location == null)
-            throw new DocumentException(MessageLocalization.getComposedMessage("table.cmap.does.not.exist.in.1", fileName + style));
+            throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "cmap", fileName + style));
         rf.seek(table_location[0]);
         rf.skipBytes(2);
         int num_tables = rf.readUnsignedShort();

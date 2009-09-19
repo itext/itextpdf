@@ -161,7 +161,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
     {
         if ( !foundRoot ) {
             if (!tag.equals("xfdf"))
-                throw new RuntimeException(MessageLocalization.getComposedMessage("root.element.is.not.bookmark"));
+                throw new RuntimeException(MessageLocalization.getComposedMessage("root.element.is.not.xfdf.1", tag));
             else 
             	foundRoot = true;
         }

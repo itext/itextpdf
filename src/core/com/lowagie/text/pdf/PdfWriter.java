@@ -982,7 +982,7 @@ public class PdfWriter extends DocWriter implements
     public PdfIndirectReference getPageReference(int page) {
         --page;
         if (page < 0)
-            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("the.page.numbers.start.at.1"));
+            throw new IndexOutOfBoundsException(MessageLocalization.getComposedMessage("the.page.number.must.be.gt.eq.1"));
         PdfIndirectReference ref;
         if (page < pageReferences.size()) {
             ref = (PdfIndirectReference)pageReferences.get(page);
@@ -1053,7 +1053,7 @@ public class PdfWriter extends DocWriter implements
 
     PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException {
         if (!open) {
-            throw new PdfException(MessageLocalization.getComposedMessage("the.document.isn.t.open"));
+            throw new PdfException(MessageLocalization.getComposedMessage("the.document.is.not.open"));
         }
         PdfIndirectObject object;
         try {
@@ -2866,7 +2866,7 @@ public class PdfWriter extends DocWriter implements
                     return patternDetails;
                 }
                 default:
-                    throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.color.type.in.pdfwriter.addsimplepatterncolorspace"));
+                    throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.color.type"));
             }
         }
         catch (Exception e) {
