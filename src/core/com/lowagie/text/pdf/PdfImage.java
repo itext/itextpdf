@@ -273,7 +273,7 @@ public class PdfImage extends PdfStream {
     static void transferBytes(InputStream in, OutputStream out, int len) throws IOException {
         byte buffer[] = new byte[TRANSFERSIZE];
         if (len < 0)
-            len = 0x7ffffff;
+            len = 0x7fff0000;
         int size;
         while (len != 0) {
             size = in.read(buffer, 0, Math.min(len, TRANSFERSIZE));
