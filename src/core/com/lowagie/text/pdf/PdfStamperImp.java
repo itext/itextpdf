@@ -1313,6 +1313,13 @@ class PdfStamperImp extends PdfWriter {
             old.put(nn, entry.getValue());
         }
         PdfDictionary tree = PdfNameTree.writeTree(old, this);
+        // Remove old EmbeddedFiles object if preset
+        PdfObject oldEmbeddedFiles = names.get(PdfName.EMBEDDEDFILES);
+        if (oldEmbeddedFiles != null) {
+            PdfReader.killIndirect(oldEmbeddedFiles);
+        }
+
+        // Add new EmbeddedFiles object
         names.put(PdfName.EMBEDDEDFILES, addToBody(tree).getIndirectReference());
     }
 
