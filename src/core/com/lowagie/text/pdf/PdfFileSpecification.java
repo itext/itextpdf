@@ -149,7 +149,7 @@ public class PdfFileSpecification extends PdfDictionary {
      * @return the file specification
      */    
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], boolean compress, String mimeType, PdfDictionary fileParameter) throws IOException {
-    	return fileEmbedded(writer, filePath, fileDisplay, fileStore, null, null, compress ? PdfStream.BEST_COMPRESSION : PdfStream.NO_COMPRESSION);
+    	return fileEmbedded(writer, filePath, fileDisplay, fileStore, mimeType, fileParameter, compress ? PdfStream.BEST_COMPRESSION : PdfStream.NO_COMPRESSION);
     }
     
     /**
@@ -175,10 +175,10 @@ public class PdfFileSpecification extends PdfDictionary {
         PdfEFStream stream;
         InputStream in = null;
         PdfIndirectReference ref;
-        PdfIndirectReference refFileLength;
+        PdfIndirectReference refFileLength = null;
         try {
-            refFileLength = writer.getPdfIndirectReference();
             if (fileStore == null) {
+                refFileLength = writer.getPdfIndirectReference();
                 File file = new File(filePath);
                 if (file.canRead()) {
                     in = new FileInputStream(filePath);
@@ -195,22 +195,32 @@ public class PdfFileSpecification extends PdfDictionary {
                 }
                 stream = new PdfEFStream(in, writer);
             }
-            else
+            else {
                 stream = new PdfEFStream(fileStore);
+            }
             stream.put(PdfName.TYPE, PdfName.EMBEDDEDFILE);
             stream.flateCompress(compressionLevel);
-            stream.put(PdfName.PARAMS, refFileLength);
+            PdfDictionary param = new PdfDictionary();
+            if (fileParameter != null) {
+                param.merge(fileParameter);
+            }
+
+            if (fileStore != null) {
+                param.put(PdfName.SIZE, new PdfNumber(stream.getRawLength()));
+                stream.put(PdfName.PARAMS, param);
+            }
+            else
+                stream.put(PdfName.PARAMS, refFileLength);
+
             if (mimeType != null)
                 stream.put(PdfName.SUBTYPE, new PdfName(mimeType));
+
             ref = writer.addToBody(stream).getIndirectReference();
             if (fileStore == null) {
                 stream.writeLength();
+                param.put(PdfName.SIZE, new PdfNumber(stream.getRawLength()));
+                writer.addToBody(param, refFileLength);
             }
-            PdfDictionary params = new PdfDictionary();
-            if (fileParameter != null)
-                params.merge(fileParameter);
-            params.put(PdfName.SIZE, new PdfNumber(stream.getRawLength()));
-            writer.addToBody(params, refFileLength);
         }
         finally {
             if (in != null)
