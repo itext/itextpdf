@@ -280,6 +280,11 @@ public class Jpeg extends Image {
                             if (app2.equals("ICC_PROFILE")) {
                                 int order = byteapp2[12] & 0xff;
                                 int count = byteapp2[13] & 0xff;
+                                // some jpeg producers don't know how to count to 1
+                                if (order < 1)
+                                    order = 1;
+                                if (count < 1)
+                                    count = 1;
                                 if (icc == null)
                                     icc = new byte[count][];
                                 icc[order - 1] = byteapp2;
