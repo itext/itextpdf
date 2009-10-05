@@ -1249,16 +1249,6 @@ public class PdfPKCS7 {
             body.add(contentinfo);
             body.add(new DERTaggedObject(false, 0, dercertificates));
             
-           if (!crls.isEmpty()) {
-                v = new ASN1EncodableVector();
-                for (Iterator i = crls.iterator();i.hasNext();) {
-                    ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream(((X509CRL)i.next()).getEncoded()));
-                    v.add(t.readObject());
-                }
-                DERSet dercrls = new DERSet(v);
-                body.add(new DERTaggedObject(false, 1, dercrls));
-            }
-            
             // Only allow one signerInfo
             body.add(new DERSet(new DERSequence(signerinfo)));
             
