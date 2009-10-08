@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ListIterator;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import com.lowagie.text.pdf.PRIndirectReference;
 import com.lowagie.text.pdf.PRStream;
 import com.lowagie.text.pdf.PdfArray;
@@ -19,28 +24,25 @@ import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.parser.Matrix;
-import com.lowagie.text.pdf.parser.PdfContentStreamProcessor;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class PdfContentStreamProcessorTest
 {
-  private DebugProcessor _processor;
+  private DebugRenderListener _renderListener;
 
-  private static File resourceRoot;
+  private File testFileRoot = new File(".");;
   
   @BeforeClass
   public static void setUpClass() throws Exception {
-      resourceRoot = new File("test/core/com/lowagie/text/pdf/parser");
   }
 
   @Before
   public void setUp() throws Exception{
-      _processor = new DebugProcessor();
+      // this is necessary b/c the ant build doesn't keep the PDF files in the same folder as it resides in the source.  This makes it tough to do unit testing from an IDE during development
+      String testFileRootPath = System.getenv("com.lowagie.testFileRoot");
+      if (testFileRootPath != null)
+          testFileRoot = new File(testFileRootPath);
+      
+      _renderListener = new DebugRenderListener();
   }
   
   // Replicates iText bug 2817030
@@ -48,14 +50,14 @@ public class PdfContentStreamProcessorTest
   public void testPositionAfterTstar()
     throws Exception
   {
-    final byte[] pdfBytes = readDocument(new File(resourceRoot, "yaxiststar.pdf"));
+    final byte[] pdfBytes = readDocument(new File(testFileRoot, "yaxiststar.pdf"));
     processBytes(pdfBytes, 1);
   }
 
 
   private byte[] readDocument(final File file) throws IOException {
 
-    final InputStream inputStream = new FileInputStream("yaxiststar.pdf");
+    final InputStream inputStream = new FileInputStream(file);
 
     final ByteArrayOutputStream fileBytes = new ByteArrayOutputStream();
     final byte[] buffer = new byte[8192];
@@ -86,7 +88,9 @@ public class PdfContentStreamProcessorTest
 
     final PdfObject contentObject = pageDictionary.get(PdfName.CONTENTS);
     final byte[] contentBytes = readContentBytes(contentObject);
-    _processor.processContent(contentBytes, resourceDictionary);
+    PdfContentStreamProcessor processor = new PdfContentStreamProcessor(_renderListener);
+    processor.processContent(contentBytes, resourceDictionary);
+    
   }
 
 
@@ -127,25 +131,24 @@ public class PdfContentStreamProcessorTest
   }
 
 
-  private class DebugProcessor
-    extends PdfContentStreamProcessor
+  private class DebugRenderListener
+    extends RenderListener
   {
     private float _lastY = Float.MAX_VALUE;
 
-
     @Override
-    public void displayText(
-        final String text,
-        final Matrix nextTextMatrix)
-    {
-      final float x = nextTextMatrix.get(Matrix.I31);
-      final float y = nextTextMatrix.get(Matrix.I32);
-      System.out.println("Display text: '" + text + "' (" + x + "," + y + ")");
-      if (y > _lastY){
-        Assert.fail("Text has jumped back up the page");
-      }
-      _lastY = y;
+    public void renderText(String text, GraphicsState gs, Matrix textMatrix, Matrix endingTextMatrix) {
+
+        final float x = textMatrix.get(Matrix.I31);
+        final float y = textMatrix.get(Matrix.I32);
+        System.out.println("Display text: '" + text + "' (" + x + "," + y + ")");
+        if (y > _lastY){
+          Assert.fail("Text has jumped back up the page");
+        }
+        _lastY = y;
+        
     }
+
   }
 
 }

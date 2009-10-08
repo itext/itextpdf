@@ -51,9 +51,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
-import com.lowagie.text.error_messages.MessageLocalization;
 
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.error_messages.MessageLocalization;
 import com.lowagie.text.pdf.CMapAwareDocumentFont;
 import com.lowagie.text.pdf.DocumentFont;
 import com.lowagie.text.pdf.PRIndirectReference;
@@ -70,7 +70,7 @@ import com.lowagie.text.pdf.PdfString;
  * Processor for a PDF content Stream.
  * @since	2.1.4
  */
-public abstract class PdfContentStreamProcessor {
+public class PdfContentStreamProcessor {
 
 	/** A map with all supported operators operators (PDF syntax). */
     private Map operators;
@@ -82,11 +82,17 @@ public abstract class PdfContentStreamProcessor {
     private Matrix textMatrix;
     /** Text line matrix. */
     private Matrix textLineMatrix;
+    /** A list of listeners that will be notified of render events */
+    final private RenderListener renderListener;
     
     /**
-     * Creates a new PDF Content Stream Processor.
+     * Creates a new PDF Content Stream Processor that will send it's output to the
+     * designated render listener.
+     * 
+     * @param renderListener the {@link RenderListener} that will receive rendering notifications
      */
-    public PdfContentStreamProcessor() {
+    public PdfContentStreamProcessor(RenderListener renderListener) {
+        this.renderListener = renderListener;
         populateOperators();
         reset();
     }
@@ -159,7 +165,7 @@ public abstract class PdfContentStreamProcessor {
      * Returns the current graphics state.
      * @return	the graphics state
      */
-    public GraphicsState gs(){
+    private GraphicsState gs(){
         return (GraphicsState)gsStack.peek();
     }
     
@@ -168,7 +174,7 @@ public abstract class PdfContentStreamProcessor {
      * @return	the text matrix
      * @since 2.1.5
      */
-    public Matrix getCurrentTextMatrix(){
+    private Matrix getCurrentTextMatrix(){
         return textMatrix;
     }
     
@@ -177,7 +183,7 @@ public abstract class PdfContentStreamProcessor {
      * @return	the line matrix
      * @since 2.1.5
      */
-    public Matrix getCurrentTextLineMatrix(){
+    private Matrix getCurrentTextLineMatrix(){
         return textLineMatrix;
     }
     
@@ -186,7 +192,7 @@ public abstract class PdfContentStreamProcessor {
      * @param operator	the PDF Syntax of the operator
      * @param operands	a list with operands
      */
-    public void invokeOperator(PdfLiteral operator, ArrayList operands){
+    private void invokeOperator(PdfLiteral operator, ArrayList operands){
         ContentOperator op = (ContentOperator)operators.get(operator.toString());
         if (op == null){
             //System.out.println("Skipping operator " + operator);
@@ -209,19 +215,12 @@ public abstract class PdfContentStreamProcessor {
     }
     
     /**
-     * Displays text.
-     * @param text	the text that needs to be displayed
-     * @param nextTextMatrix	a text matrix
-     */
-    abstract public void displayText(String text, Matrix nextTextMatrix);
-    
-    /**
      * Gets the width of a String.
      * @param string	the string that needs measuring
      * @param tj	text adjustment
      * @return	the width of a String
      */
-    public float getStringWidth(String string, float tj){
+    private float getStringWidth(String string, float tj){
         DocumentFont font = gs().font;
         char[] chars = string.toCharArray();
         float totalWidth = 0;
@@ -239,14 +238,14 @@ public abstract class PdfContentStreamProcessor {
      * @param string	the text to display
      * @param tj		the text adjustment
      */
-    public void displayPdfString(PdfString string, float tj){
+    private void displayPdfString(PdfString string, float tj){
         String unicode = decode(string);
         
         float width = getStringWidth(unicode, tj); // this is width in unscaled units - we have to normalize by the Tm scaling
 
         Matrix nextTextMatrix = new Matrix(width, 0).multiply(textMatrix);
 
-        displayText(unicode, nextTextMatrix);
+        renderListener.renderText(unicode, gs(), textMatrix, nextTextMatrix);
 
         textMatrix = nextTextMatrix;
     }
