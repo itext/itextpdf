@@ -61,8 +61,6 @@ public class PdfTextExtractor {
 
 	/** The PdfReader that holds the PDF file. */
     private final PdfReader reader;
-    /** The processor that will extract the text. */
-    private final SimpleTextExtractingPdfContentStreamProcessor extractionProcessor;
     
     /**
      * Creates a new Text Extractor object.
@@ -70,7 +68,6 @@ public class PdfTextExtractor {
      */
     public PdfTextExtractor(PdfReader reader) {
         this.reader = reader;
-        extractionProcessor = new SimpleTextExtractingPdfContentStreamProcessor();
     }
 
     /**
@@ -95,7 +92,10 @@ public class PdfTextExtractor {
     public String getTextFromPage(int page) throws IOException {
         PdfDictionary pageDic = reader.getPageN(page);
         PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
-        extractionProcessor.processContent(getContentBytesForPage(page), resourcesDic);        
-        return extractionProcessor.getResultantText();
+        
+        SimpleTextExtractingPdfContentRenderListener simpleRenderListener = new SimpleTextExtractingPdfContentRenderListener();
+        PdfContentStreamProcessor processor = new PdfContentStreamProcessor(simpleRenderListener);
+        processor.processContent(getContentBytesForPage(page), resourcesDic);        
+        return simpleRenderListener.getResultantText();
     }
 }
