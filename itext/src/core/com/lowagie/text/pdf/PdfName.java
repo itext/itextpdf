@@ -295,6 +295,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName CHARPROCS = new PdfName("CharProcs");
     /** A name */
+    public static final PdfName CHECKSUM = new PdfName("CheckSum");
+    /** A name */
     public static final PdfName CI = new PdfName("CI");
     /** A name */
     public static final PdfName CIDFONTTYPE0 = new PdfName("CIDFontType0");
@@ -461,6 +463,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName DISPLAYDOCTITLE = new PdfName("DisplayDocTitle");
     /** A name */
     public static final PdfName DIV = new PdfName("Div");
+    /** A name */
+    public static final PdfName DL = new PdfName("DL");
     /** A name */
     public static final PdfName DM = new PdfName("Dm");
     /** A name */
