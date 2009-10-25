@@ -495,7 +495,7 @@ public class PdfPKCS7 {
                 ASN1Set unat = ASN1Set.getInstance(taggedObject, false);
                 AttributeTable attble = new AttributeTable(unat);
                 Attribute ts = attble.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
-                if (ts != null) {
+                if (ts != null && ts.getAttrValues().size() > 0) {
                     ASN1Set attributeValues = ts.getAttrValues();
                     ASN1Sequence tokenSequence = ASN1Sequence.getInstance(attributeValues.getObjectAt(0));
                     ContentInfo contentInfo = new ContentInfo(tokenSequence);
