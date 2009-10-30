@@ -68,6 +68,7 @@ public class PRTokeniser {
     public static final int TK_END_DIC = 8;
     public static final int TK_REF = 9;
     public static final int TK_OTHER = 10;
+    public static final int TK_ENDOFFILE = 11;
     public static final boolean delims[] = {
         true,  true,  false, false, false, false, false, false, false, false,
         true,  true,  false, true,  true,  false, false, false, false, false,
@@ -290,8 +291,10 @@ public class PRTokeniser {
         do {
             ch = file.read();
         } while (ch != -1 && isWhitespace(ch));
-        if (ch == -1)
+        if (ch == -1){
+            type = TK_ENDOFFILE;
             return false;
+        }
 
         // Note:  We have to initialize stringValue here, after we've looked for the end of the stream,
         // to ensure that we don't lose the value of a token that might end exactly at the end
