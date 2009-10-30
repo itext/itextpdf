@@ -1635,6 +1635,8 @@ public class PdfReader implements PdfViewerPreferences {
                 int num = tokens.getReference();
                 PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());
                 return ref;
+            case PRTokeniser.TK_ENDOFFILE:
+                throw new IOException(MessageLocalization.getComposedMessage("unexpected.end.of.file"));
             default:
                 String sv = tokens.getStringValue();
                 if ("null".equals(sv)) {
