@@ -60,22 +60,28 @@ package com.lowagie.text.pdf.parser;
  * 
  * @since	2.1.5
  */
-public class SimpleTextExtractingPdfContentRenderListener extends RenderListener {
+public class SimpleTextExtractingPdfContentRenderListener implements TextProvidingRenderListener {
 
     /** keeps track of the Y position of the last rendered text */
-    private float lastYPos = 0f;
+    private float lastYPos;
     /** keeps track of the X position of the end of the last rendered text */
-    private float lastEndingXPos = 0f;
+    private float lastEndingXPos;
 
     /** used to store the resulting String. */
-    private final StringBuffer result = new StringBuffer();
+    private StringBuffer result;
 
     /**
      * Creates a new text extraction renderer.
      */
     public SimpleTextExtractingPdfContentRenderListener() {
+        reset();
     }
 
+    public void reset() {
+        lastYPos = 0f;
+        lastEndingXPos = 0f;
+        result = new StringBuffer();
+    }
     
     /**
      * Returns the result so far.
@@ -95,7 +101,7 @@ public class SimpleTextExtractingPdfContentRenderListener extends RenderListener
 
     /**
      * Captures text using a simplified algorithm for inserting hard returns and spaces
-     * @see com.lowagie.text.pdf.parser.RenderListener#renderText(java.lang.String, com.lowagie.text.pdf.parser.GraphicsState, com.lowagie.text.pdf.parser.Matrix, com.lowagie.text.pdf.parser.Matrix)
+     * @see com.lowagie.text.pdf.parser.AbstractRenderListener#renderText(java.lang.String, com.lowagie.text.pdf.parser.GraphicsState, com.lowagie.text.pdf.parser.Matrix, com.lowagie.text.pdf.parser.Matrix)
      */
     public void renderText(String text, GraphicsState gs, Matrix textMatrix, Matrix endingTextMatrix) {
         boolean firstRender = result.length() == 0;

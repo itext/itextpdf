@@ -62,14 +62,27 @@ public class PdfTextExtractor {
 	/** The PdfReader that holds the PDF file. */
     private final PdfReader reader;
     
+    /** The {@link TextProvidingRenderListener} that will receive render notifications and provide resultant text */
+    private final TextProvidingRenderListener renderListener;
+    
     /**
-     * Creates a new Text Extractor object.
+     * Creates a new Text Extractor object, using a {@link SimpleTextExtractingPdfContentRenderListener} as the render listener
      * @param reader	the reader with the PDF
      */
     public PdfTextExtractor(PdfReader reader) {
-        this.reader = reader;
+        this(reader, new SimpleTextExtractingPdfContentRenderListener());
     }
 
+    /**
+     * Creates a new Text Extractor object.
+     * @param reader    the reader with the PDF
+     * @param renderListener the render listener that will be used to analyze renderText operations and provide resultant text
+     */
+    public PdfTextExtractor(PdfReader reader, TextProvidingRenderListener renderListener) {
+        this.reader = reader;
+        this.renderListener = renderListener;
+    }
+    
     /**
      * Gets the content stream of a page.
      * @param pageNum	the page number of page you want get the content stream from
@@ -93,9 +106,9 @@ public class PdfTextExtractor {
         PdfDictionary pageDic = reader.getPageN(page);
         PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
         
-        SimpleTextExtractingPdfContentRenderListener simpleRenderListener = new SimpleTextExtractingPdfContentRenderListener();
-        PdfContentStreamProcessor processor = new PdfContentStreamProcessor(simpleRenderListener);
+        renderListener.reset();
+        PdfContentStreamProcessor processor = new PdfContentStreamProcessor(renderListener);
         processor.processContent(getContentBytesForPage(page), resourcesDic);        
-        return simpleRenderListener.getResultantText();
+        return renderListener.getResultantText();
     }
 }
