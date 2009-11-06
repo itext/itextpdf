@@ -215,25 +215,6 @@ public class PdfContentStreamProcessor {
     }
     
     /**
-     * Gets the width of a String.
-     * @param string	the string that needs measuring
-     * @param tj	text adjustment
-     * @return	the width of a String
-     */
-    private float getStringWidth(String string, float tj){
-        DocumentFont font = gs().font;
-        char[] chars = string.toCharArray();
-        float totalWidth = 0;
-        for (int i = 0; i < chars.length; i++) {
-            float w = font.getWidth(chars[i]) / 1000.0f;
-            float wordSpacing = chars[i] == 32 ? gs().wordSpacing : 0f;
-            totalWidth += ((w - tj/1000f) * gs().fontSize + gs().characterSpacing + wordSpacing) * gs().horizontalScaling;
-        }
-        
-        return totalWidth;
-    }
-    
-    /**
      * Displays text.
      * @param string	the text to display
      * @param tj		the text adjustment
@@ -241,13 +222,11 @@ public class PdfContentStreamProcessor {
     private void displayPdfString(PdfString string, float tj){
         String unicode = decode(string);
         
-        float width = getStringWidth(unicode, tj); // this is width in unscaled units - we have to normalize by the Tm scaling
+        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix, tj);
 
-        Matrix nextTextMatrix = new Matrix(width, 0).multiply(textMatrix);
+        renderListener.renderText(renderInfo);
 
-        renderListener.renderText(unicode, gs(), textMatrix, nextTextMatrix);
-
-        textMatrix = nextTextMatrix;
+        textMatrix = new Matrix(renderInfo.getUnscaledWidth(), 0).multiply(textMatrix);
     }
     
     /**
