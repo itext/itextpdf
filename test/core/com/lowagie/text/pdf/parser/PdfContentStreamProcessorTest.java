@@ -142,11 +142,11 @@ public class PdfContentStreamProcessorTest
     }
     
     @Override
-    public void renderText(String text, GraphicsState gs, Matrix textMatrix, Matrix endingTextMatrix) {
-
-        final float x = textMatrix.get(Matrix.I31);
-        final float y = textMatrix.get(Matrix.I32);
-        System.out.println("Display text: '" + text + "' (" + x + "," + y + ")");
+    public void renderText(TextRenderInfo renderInfo) {
+        Vector start = renderInfo.getStartPoint();
+        final float x = start.get(Vector.I1);
+        final float y = start.get(Vector.I2);
+        System.out.println("Display text: '" + renderInfo.getText() + "' (" + x + "," + y + ")");
         if (y > _lastY){
           Assert.fail("Text has jumped back up the page");
         }

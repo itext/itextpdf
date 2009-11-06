@@ -54,23 +54,23 @@ import java.util.Arrays;
  * @since	2.1.4
  */
 public class Matrix {
-	/** an array position referring to a specific value in the matrix. */
+    /** the row=1, col=1 position ('a') in the matrix. */
     public static final int I11 = 0; 
-	/** an array position referring to a specific value in the matrix. */
+    /** the row=1, col=2 position ('b') in the matrix. */
     public static final int I12 = 1; 
-	/** an array position referring to a specific value in the matrix. */
+    /** the row=1, col=3 position (always 0 for 2-D) in the matrix. */
     public static final int I13 = 2;
-	/** an array position referring to a specific value in the matrix. */ 
+    /** the row=2, col=1 position ('c') in the matrix. */
     public static final int I21 = 3; 
-	/** an array position referring to a specific value in the matrix. */
+    /** the row=2, col=2 position ('d') in the matrix. */
     public static final int I22 = 4;  
-	/** an array position referring to a specific value in the matrix. */
+    /** the row=2, col=3 position (always 0 for 2-D) in the matrix. */
     public static final int I23 = 5;  
-	/** an array position referring to a specific value in the matrix. */
+    /** the row=3, col=1 ('e', or X translation) position in the matrix. */
     public static final int I31 = 6;  
-	/** an array position referring to a specific value in the matrix. */
+	/** the row=3, col=2 ('f', or Y translation) position in the matrix. */
     public static final int I32 = 7;  
-	/** an array position referring to a specific value in the matrix. */
+	/** the row=3, col=3 position (always 1 for 2-D) in the matrix. */
     public static final int I33 = 8;   
     
     /** the values inside the matrix (the identity matrix by default). */
@@ -153,6 +153,31 @@ public class Matrix {
     }
 
     /**
+     * Subtracts a matrix from this matrix and returns the results
+     * @param arg the matrix to subtract from this matrix
+     * @return
+     */
+    public Matrix subtract(Matrix arg){
+        Matrix rslt = new Matrix();
+        
+        float[] a = vals;
+        float[] b = arg.vals;
+        float[] c = rslt.vals;
+        
+        c[I11] = a[I11]-b[I11];  
+        c[I12] = a[I12]-b[I12]; 
+        c[I13] = a[I13]-b[I13]; 
+        c[I21] = a[I21]-b[I21];  
+        c[I22] = a[I22]-b[I22]; 
+        c[I23] = a[I23]-b[I23]; 
+        c[I31] = a[I31]-b[I31];  
+        c[I32] = a[I32]-b[I32]; 
+        c[I33] = a[I33]-b[I33]; 
+
+        return rslt;
+    }
+    
+    /**
      * Checks equality of matrices.
      * @param obj	the other Matrix that needs to be compared with this matrix.
      * @return	true if both matrices are equal
@@ -181,7 +206,7 @@ public class Matrix {
     }
     
     /**
-     * Generates a String representating of the matrix.
+     * Generates a String representation of the matrix.
      * @return	the values, delimited with tabs and newlines.
      * @see java.lang.Object#toString()
      */

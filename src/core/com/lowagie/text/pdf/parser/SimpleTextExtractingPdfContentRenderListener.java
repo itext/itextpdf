@@ -67,6 +67,12 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
     /** keeps track of the X position of the end of the last rendered text */
     private float lastEndingXPos;
 
+    private Matrix lastTextLineMatrix;
+    
+    
+    private Vector lastStart;
+    private Vector lastEnd;
+    
     /** used to store the resulting String. */
     private StringBuffer result;
 
@@ -80,6 +86,7 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
     public void reset() {
         lastYPos = 0f;
         lastEndingXPos = 0f;
+        lastTextLineMatrix = null;
         result = new StringBuffer();
     }
     
@@ -103,43 +110,55 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
      * Captures text using a simplified algorithm for inserting hard returns and spaces
      * @see com.lowagie.text.pdf.parser.AbstractRenderListener#renderText(java.lang.String, com.lowagie.text.pdf.parser.GraphicsState, com.lowagie.text.pdf.parser.Matrix, com.lowagie.text.pdf.parser.Matrix)
      */
-    public void renderText(String text, GraphicsState gs, Matrix textMatrix, Matrix endingTextMatrix) {
+    public void renderText(TextRenderInfo renderInfo) {
         boolean firstRender = result.length() == 0;
         boolean hardReturn = false;
 
-        float x1 = textMatrix.get(Matrix.I31);
-        float x2 = endingTextMatrix.get(Matrix.I31);
-        int y1 = (int)textMatrix.get(Matrix.I32);
+        Vector start = renderInfo.getStartPoint();
+        Vector end = renderInfo.getEndPoint();
         
-        float sameLineThreshold = 0.1f; // technically, we should base this on the current font metrics
-        if (Math.abs(y1 - lastYPos) > sameLineThreshold && !firstRender)
-            hardReturn = true;
+        if (!firstRender){
+            Vector x0 = start;
+            Vector x1 = lastStart;
+            Vector x2 = lastEnd;
+            
+            // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
+            float dist = (x2.subtract(x1)).cross((x1.subtract(x0))).lengthSquared() / x2.subtract(x1).lengthSquared();
 
+            float sameLineThreshold = 1f; // technically, we should base this on the current font metrics
+            if (dist > sameLineThreshold)
+                hardReturn = true;
+            
+            // Note:  Technically, we should check both the start and end positions, in case the angle of the text changed without any displacement
+            // but this sort of thing probably doesn't happen much in reality, so we'll leave it alone for now
+        }
+        
         if (hardReturn){
-            //System.out.println("<Hard Return>");
+            //System.out.println("<< Hard Return >>");
             result.append('\n');
         } else if (!firstRender){
-            
-            float spaceGlyphWidth = gs.font.getWidth(' ')/1000f;
-            float spaceWidth = (spaceGlyphWidth * gs.fontSize + gs.characterSpacing + gs.wordSpacing) * gs.horizontalScaling; // this is unscaled!!
-            Matrix scaled = new Matrix(spaceWidth, 0).multiply(textMatrix);
-            float scaledSpaceWidth = scaled.get(Matrix.I31) - textMatrix.get(Matrix.I31);
-            
-            if (x1 - lastEndingXPos > scaledSpaceWidth/2f ){
-                //System.out.println("<Implied space on text '" + text + "'> lastEndingXPos=" + lastEndingXPos + ", x1=" + x1 + ", scaledSpaceWidth=" + scaledSpaceWidth);
+            Vector spacing = lastEnd.subtract(start);
+            if (spacing.length() > renderInfo.getSingleSpaceWidth()/2f){
                 result.append(' ');
             }
         } else {
-            //System.out.println("Displaying first string of content '" + text + "' :: currentX = " + currentX);
+            //System.out.println("Displaying first string of content '" + text + "' :: x1 = " + x1);
         }
         
-        // System.out.println("After displaying '" + text + "' :: Start at " + x1 + " end at " + x2);
-        
-        result.append(text);
+//        System.out.println("Render '" + renderInfo.getText() + "' at start:");
+//        System.out.println(start);
+//        System.out.println("end:");
+//        System.out.println(end);
+//        System.out.println();
 
-        lastYPos = y1;
-        lastEndingXPos = x2;
+        result.append(renderInfo.getText());
+
+        lastStart = start;
+        lastEnd = end;
         
+//        lastYPos = y1;
+//        lastEndingXPos = x2;
+//        lastTextLineMatrix = textLineMatrix;
     }
 
 }
