@@ -3095,11 +3095,16 @@ public class PdfReader implements PdfViewerPreferences {
 
     static class PageRefs {
         private PdfReader reader;
-        private IntHashtable refsp;
+        /** ArrayList with the indirect references to every page. Element 0 = page 1; 1 = page 2;... Not used for partial reading. */
         private ArrayList refsn;
-        private ArrayList pageInh;
-        private int lastPageRead = -1;
+        /** The number of pages, updated only in case of partial reading. */
         private int sizep;
+        /** intHashtable that does the same thing as refsn in case of partial reading: major difference: not all the pages are read. */
+        private IntHashtable refsp;
+        /** Page number of the last page that was read (partial reading only) */
+        private int lastPageRead = -1;
+        /** stack to which pages dictionaries are pushed to keep track of the current page attributes */
+        private ArrayList pageInh;
         private boolean keepPages;
 
         private PageRefs(PdfReader reader) throws IOException {
@@ -3179,7 +3184,8 @@ public class PdfReader implements PdfViewerPreferences {
             return ref;
         }
 
-        /** Gets the page reference to this page.
+        /**
+         * Gets the page reference to this page.
          * @param pageNum the page number. 1 is the first
          * @return the page reference
          */
@@ -3278,6 +3284,10 @@ public class PdfReader implements PdfViewerPreferences {
             }
         }
 
+        /**
+         * Adds a PdfDictionary to the pageInh stack to keep track of the page attributes.
+         * @param nodePages	a Pages dictionary
+         */
         private void pushPageAttributes(PdfDictionary nodePages) {
             PdfDictionary dic = new PdfDictionary();
             if (!pageInh.isEmpty()) {
@@ -3291,6 +3301,9 @@ public class PdfReader implements PdfViewerPreferences {
             pageInh.add(dic);
         }
 
+        /**
+         * Removes the last PdfDictionary that was pushed to the pageInh stack.
+         */
         private void popPageAttributes() {
             pageInh.remove(pageInh.size() - 1);
         }
@@ -3298,6 +3311,7 @@ public class PdfReader implements PdfViewerPreferences {
         private void iteratePages(PRIndirectReference rpage) throws IOException {
             PdfDictionary page = (PdfDictionary)getPdfObject(rpage);
             PdfArray kidsPR = page.getAsArray(PdfName.KIDS);
+            // reference to a leaf
             if (kidsPR == null) {
                 page.put(PdfName.TYPE, PdfName.PAGE);
                 PdfDictionary dic = (PdfDictionary)pageInh.get(pageInh.size() - 1);
@@ -3313,6 +3327,7 @@ public class PdfReader implements PdfViewerPreferences {
                 }
                 refsn.add(rpage);
             }
+            // reference to a branch
             else {
                 page.put(PdfName.TYPE, PdfName.PAGES);
                 pushPageAttributes(page);
