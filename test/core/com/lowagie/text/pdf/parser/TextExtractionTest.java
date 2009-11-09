@@ -6,7 +6,6 @@
 package com.lowagie.text.pdf.parser;
 
 
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -19,7 +18,6 @@ import org.junit.Test;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfReader;
@@ -54,11 +52,10 @@ public class TextExtractionTest {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, false, 2);
         PdfTextExtractor ex = new PdfTextExtractor(new PdfReader(bytes));
 
-        saveBytesToFile(bytes, new File("c:/temp/test.pdf"));
+        //saveBytesToFile(bytes, new File("c:/temp/test.pdf"));
         
         Assert.assertEquals(TEXT1 + " " + TEXT2, ex.getTextFromPage(1));
     }
-    
     
     @Test
     public void testUnRotatedText() throws Exception{
