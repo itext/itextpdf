@@ -58,6 +58,18 @@ public class TextExtractionTest {
     }
     
     @Test
+    public void testCoLinnearTextEndingWithSpaceCharacter() throws Exception{
+        // in this case, we shouldn't be inserting an extra space
+        TEXT1 = TEXT1 + " ";
+        byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, false, 2);
+        PdfTextExtractor ex = new PdfTextExtractor(new PdfReader(bytes));
+
+        //saveBytesToFile(bytes, new File("c:/temp/test.pdf"));
+        
+        Assert.assertEquals(TEXT1 + TEXT2, ex.getTextFromPage(1));
+        
+    }    
+    @Test
     public void testUnRotatedText() throws Exception{
         
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, true, -20);

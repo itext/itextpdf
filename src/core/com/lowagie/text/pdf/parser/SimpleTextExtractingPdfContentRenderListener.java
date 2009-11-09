@@ -125,7 +125,7 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
             // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
             float dist = (x2.subtract(x1)).cross((x1.subtract(x0))).lengthSquared() / x2.subtract(x1).lengthSquared();
 
-            float sameLineThreshold = 1f; // technically, we should base this on the current font metrics
+            float sameLineThreshold = 1f; // technically, we should base this on the current font metrics, but 1 pt seems to be sufficient for the time being
             if (dist > sameLineThreshold)
                 hardReturn = true;
             
@@ -136,29 +136,22 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
         if (hardReturn){
             //System.out.println("<< Hard Return >>");
             result.append('\n');
-        } else if (!firstRender){
-            Vector spacing = lastEnd.subtract(start);
-            if (spacing.length() > renderInfo.getSingleSpaceWidth()/2f){
-                result.append(' ');
+        } else if (!firstRender){ 
+            if (result.charAt(result.length()-1) != ' '){ // we only insert a blank space if the trailing character of the previous string wasn't a space
+                Vector spacing = lastEnd.subtract(start);
+                if (spacing.length() > renderInfo.getSingleSpaceWidth()/2f){
+                    result.append(' ');
+                }
             }
         } else {
             //System.out.println("Displaying first string of content '" + text + "' :: x1 = " + x1);
         }
         
-//        System.out.println("Render '" + renderInfo.getText() + "' at start:");
-//        System.out.println(start);
-//        System.out.println("end:");
-//        System.out.println(end);
-//        System.out.println();
-
         result.append(renderInfo.getText());
 
         lastStart = start;
         lastEnd = end;
         
-//        lastYPos = y1;
-//        lastEndingXPos = x2;
-//        lastTextLineMatrix = textLineMatrix;
     }
 
 }
