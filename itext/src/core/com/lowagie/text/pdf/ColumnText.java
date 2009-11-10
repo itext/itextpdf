@@ -1457,7 +1457,9 @@ public class ColumnText {
 
                     // we need a correction if the last row needs to be extended
                     float rowHeight = 0;
-                    PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
+                    int index = sub.size() - 1;
+                    if (showFooter) index -= footerRows;
+                    PdfPRow last = (PdfPRow)sub.get(index);
                     if (table.isExtendLastRow(newPageFollows)) {
                         rowHeight = last.getMaxHeights();
                         last.setMaxHeights(yTemp - minY + rowHeight);
