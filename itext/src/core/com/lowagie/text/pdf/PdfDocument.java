@@ -1582,6 +1582,10 @@ public class PdfDocument extends Document {
                             hScale = hs.floatValue();
                         text.setTextMatrix(hScale, b, c, 1, xMarker, yMarker);
                     }
+                    if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
+                    	Float cs = (Float) chunk.getAttribute(Chunk.CHAR_SPACING);
+						text.setCharacterSpacing(cs.floatValue());
+					}
                     if (chunk.isImage()) {
                         Image image = chunk.getImage();
                         float matrix[] = image.matrix();
@@ -1645,7 +1649,7 @@ public class PdfDocument extends Document {
                 if (hScale != lastHScale) {
                     lastHScale = hScale;
                     text.setWordSpacing(baseWordSpacing / hScale);
-                    text.setCharacterSpacing(baseCharacterSpacing / hScale);
+                    text.setCharacterSpacing(baseCharacterSpacing / hScale + text.getCharacterSpacing());
                 }
                 String s = chunk.toString();
                 int idx = s.indexOf(' ');
@@ -1669,7 +1673,7 @@ public class PdfDocument extends Document {
                 if (isJustified && hScale != lastHScale) {
                     lastHScale = hScale;
                     text.setWordSpacing(baseWordSpacing / hScale);
-                    text.setCharacterSpacing(baseCharacterSpacing / hScale);
+                    text.setCharacterSpacing(baseCharacterSpacing / hScale + text.getCharacterSpacing());
                 }
                 text.showText(chunk.toString());
             }
@@ -1687,6 +1691,9 @@ public class PdfDocument extends Document {
             if (chunk.isAttribute(Chunk.SKEW) || chunk.isAttribute(Chunk.HSCALE)) {
                 adjustMatrix = true;
                 text.setTextMatrix(xMarker, yMarker);
+            }
+            if (chunk.isAttribute(Chunk.CHAR_SPACING)) {
+				text.setCharacterSpacing(baseCharacterSpacing);
             }
         }
         if (isJustified) {

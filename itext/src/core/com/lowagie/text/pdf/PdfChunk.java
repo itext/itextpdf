@@ -97,6 +97,7 @@ public class PdfChunk {
         keysAttributes.put(Chunk.HSCALE, null);
         keysAttributes.put(Chunk.SEPARATOR, null);
         keysAttributes.put(Chunk.TAB, null);
+        keysAttributes.put(Chunk.CHAR_SPACING, null);
         keysNoStroke.put(Chunk.SUBSUPSCRIPT, null);
         keysNoStroke.put(Chunk.SPLITCHARACTER, null);
         keysNoStroke.put(Chunk.HYPHENATION, null);
@@ -341,7 +342,7 @@ public class PdfChunk {
                     PdfChunk pc = new PdfChunk(returnValue, this);
                     return pc;
                 }
-                currentWidth += font.width(cidChar);
+                currentWidth += getCharWidth(cidChar);
                 if (character == ' ') {
                     lastSpace = currentPosition + 1;
                     lastSpaceWidth = currentWidth;
@@ -374,9 +375,9 @@ public class PdfChunk {
                 }
                 surrogate = Utilities.isSurrogatePair(valueArray, currentPosition);
                 if (surrogate)
-                    currentWidth += font.width(Utilities.convertToUtf32(valueArray[currentPosition], valueArray[currentPosition + 1]));
+                    currentWidth += getCharWidth(Utilities.convertToUtf32(valueArray[currentPosition], valueArray[currentPosition + 1]));
                 else
-                    currentWidth += font.width(character);
+                    currentWidth += getCharWidth(character);
                 if (character == ' ') {
                     lastSpace = currentPosition + 1;
                     lastSpaceWidth = currentWidth;
@@ -467,9 +468,9 @@ public class PdfChunk {
             // the width of every character is added to the currentWidth
             surrogate = Utilities.isSurrogatePair(value, currentPosition);
             if (surrogate)
-                currentWidth += font.width(Utilities.convertToUtf32(value, currentPosition));
+                currentWidth += getCharWidth(Utilities.convertToUtf32(value, currentPosition));
             else
-                currentWidth += font.width(value.charAt(currentPosition));
+                currentWidth += getCharWidth(value.charAt(currentPosition));
             if (currentWidth > width)
                 break;
             if (surrogate)
@@ -525,6 +526,10 @@ public class PdfChunk {
  */
     
     float width() {
+        if (isAttribute(Chunk.CHAR_SPACING)) {
+        	Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
+            return font.width(value) + value.length() * cs.floatValue();
+		}
         return font.width(value);
     }
     
@@ -835,6 +840,10 @@ public class PdfChunk {
     float getCharWidth(int c) {
         if (noPrint(c))
             return 0;
+        if (isAttribute(Chunk.CHAR_SPACING)) {
+        	Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
+			return font.width(c) + cs.floatValue();
+		}
         return font.width(c);
     }
     
