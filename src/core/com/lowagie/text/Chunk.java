@@ -876,4 +876,31 @@ public class Chunk implements Element {
 	/** Key for encoding. */
 	public static final String ENCODING = "ENCODING";
 
+	/**
+	 * Key for character spacing.
+	 */
+	public static final String CHAR_SPACING = "CHAR_SPACING";
+
+	/**
+	 * Sets the character spacing.
+	 * 
+	 * @param charSpace the character spacing value
+	 * @return this <CODE>Chunk</CODE>
+	 */
+	public Chunk setCharacterSpacing(float charSpace) {
+		return setAttribute(CHAR_SPACING, new Float(charSpace));
+	}
+	
+	/**
+	 * Gets the character spacing.
+	 * 
+	 * @return a value in float
+	 */
+	public float getCharacterSpacing() {
+		if (attributes != null && attributes.containsKey(CHAR_SPACING)) {
+			Float f = (Float) attributes.get(CHAR_SPACING);
+			return f.floatValue();
+		}
+		return 0.0f;
+	}
 }
