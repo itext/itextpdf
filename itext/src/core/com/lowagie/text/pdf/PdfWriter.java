@@ -1497,6 +1497,43 @@ public class PdfWriter extends DocWriter implements
 
 //  [C5] named objects: named destinations, javascript, embedded files
 
+    /**
+     * Adds named destinations in bulk.
+     * Valid keys and values of the map can be found in the map
+     * that is created by SimpleNamedDestination.
+     * @param	map	a map with strings as keys for the names,
+     * 			and structured strings as values for the destinations
+     * @param	page_offset	number of pages that has to be added to
+     * 			the page numbers in the destinations (useful if you
+     *          use this method in combination with PdfCopy).
+     * @since	iText 5.0
+     */
+    public void addNamedDestinations(Map map, int page_offset) {
+    	Map.Entry entry;
+    	int page;
+    	String dest;
+    	PdfDestination destination;
+    	for (Iterator i = map.entrySet().iterator(); i.hasNext(); ) {
+    		entry = (Map.Entry)i.next();
+    		dest = (String)entry.getValue();
+    		page = Integer.parseInt(dest.substring(0, dest.indexOf(" ")));
+    		destination = new PdfDestination(dest.substring(dest.indexOf(" ") + 1));
+    		addNamedDestination((String)entry.getKey(), page + page_offset, destination);
+    	}
+    }
+    
+    /**
+     * Adds one named destination.
+     * @param	name	the name for the destination
+     * @param	page	the page number where you want to jump to
+     * @param	dest	an explicit destination
+     * @since	iText 5.0
+     */
+    public void addNamedDestination(String name, int page, PdfDestination dest) {
+    	dest.addPage(getPageReference(page));
+    	pdf.localDestination(name, dest);
+    }
+    
      /**
       * Use this method to add a JavaScript action at the document level.
       * When the document opens, all this JavaScript runs.

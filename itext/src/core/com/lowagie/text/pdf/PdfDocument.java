@@ -2092,7 +2092,7 @@ public class PdfDocument extends Document {
      * <CODE>false</CODE> if a local destination with the same name
      * already existed
      */
-    boolean localDestination(String name, PdfDestination destination) {
+    boolean localDestination(String name, PdfDestination destination) {;
         Object obj[] = (Object[])localDestinations.get(name);
         if (obj == null)
             obj = new Object[3];
@@ -2100,7 +2100,8 @@ public class PdfDocument extends Document {
             return false;
         obj[2] = destination;
         localDestinations.put(name, obj);
-        destination.addPage(writer.getCurrentPage());
+        if (!destination.hasPage())
+        	destination.addPage(writer.getCurrentPage());
         return true;
     }
 
