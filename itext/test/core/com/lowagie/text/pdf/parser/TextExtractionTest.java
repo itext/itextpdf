@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -100,7 +101,98 @@ public class TextExtractionTest {
         
     }
     
+    @Test
+    public void testWordSpacingCausedByExplicitGlyphPositioning() throws Exception{
+        byte[] bytes = createPdfWithArrayText(TEXT1, TEXT2, 250);
+        PdfTextExtractor ex = new PdfTextExtractor(new PdfReader(bytes));
+
+        Assert.assertEquals(TEXT1 + " " + TEXT2, ex.getTextFromPage(1));
+    }
     
+    
+    @Test
+    public void testWordSpacingCausedByExplicitGlyphPositioning2() throws Exception{
+        
+        byte[] bytes = createPdfWithArrayText("[(S)3.2(an)-255.0(D)13.0(i)8.3(e)-10.1(g)1.6(o)-247.5(C)2.4(h)5.8(ap)3.0(t)10.7(er)]TJ");
+        PdfTextExtractor ex = new PdfTextExtractor(new PdfReader(bytes));
+
+        Assert.assertEquals("San Diego Chapter", ex.getTextFromPage(1));
+    }
+    
+    
+    @Test
+    public void testTrailingSpace() throws Exception{
+        byte[] bytes = createPdfWithRotatedText(TEXT1 + " ", TEXT2, 0, false, 20);
+        PdfTextExtractor ex = new PdfTextExtractor(new PdfReader(bytes));
+
+        Assert.assertEquals(TEXT1 + " " + TEXT2, ex.getTextFromPage(1));
+    }
+
+    @Test
+    public void testLeadingSpace() throws Exception{
+        byte[] bytes = createPdfWithRotatedText(TEXT1, " " + TEXT2, 0, false, 20);
+        PdfTextExtractor ex = new PdfTextExtractor(new PdfReader(bytes));
+        
+        Assert.assertEquals(TEXT1 + " " + TEXT2, ex.getTextFromPage(1));
+    }
+    
+    private static byte[] createPdfWithArrayText(String directContentTj) throws Exception{
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+        final Document document = new Document();
+        PdfWriter writer = PdfWriter.getInstance(document, byteStream);
+        document.setPageSize(PageSize.LETTER);
+
+        document.open();
+
+        PdfContentByte cb = writer.getDirectContent();
+
+        BaseFont font = BaseFont.createFont();
+        
+        cb.transform(AffineTransform.getTranslateInstance(100, 500));
+        cb.beginText();
+        cb.setFontAndSize(font, 12);
+
+        cb.getInternalBuffer().append(directContentTj + "\n");
+        
+        cb.endText();
+        
+        document.close();
+
+        final byte[] pdfBytes = byteStream.toByteArray();
+
+        return pdfBytes;
+
+    }    
+    
+    private static byte[] createPdfWithArrayText(String text1, String text2, int spaceInPoints) throws Exception{
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+        final Document document = new Document();
+        PdfWriter writer = PdfWriter.getInstance(document, byteStream);
+        document.setPageSize(PageSize.LETTER);
+
+        document.open();
+
+        PdfContentByte cb = writer.getDirectContent();
+
+        BaseFont font = BaseFont.createFont();
+        
+        
+        cb.beginText();
+        cb.setFontAndSize(font, 12);
+
+        cb.getInternalBuffer().append("[(" + text1 + ")" + (-spaceInPoints) + "(" + text2 + ")]TJ\n");
+        
+        cb.endText();
+        
+        document.close();
+
+        final byte[] pdfBytes = byteStream.toByteArray();
+
+        return pdfBytes;
+
+    }
     
     private static byte[] createPdfWithRotatedText(String text1, String text2, float rotation, boolean moveTextToNextLine, float moveTextDelta) throws Exception {
 
