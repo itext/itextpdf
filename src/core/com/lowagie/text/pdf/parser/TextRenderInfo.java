@@ -59,7 +59,6 @@ import com.lowagie.text.pdf.DocumentFont;
 public class TextRenderInfo {
     private final String text;
     private final Matrix textToUserSpaceTransformMatrix;
-    private final float textAdjust;
     private final GraphicsState gs;
     
     /**
@@ -67,12 +66,10 @@ public class TextRenderInfo {
      * @param text the text that should be displayed
      * @param gs the graphics state (note: at this time, this is not immutable, so don't cache it)
      * @param textMatrix the text matrix at the time of the render operation
-     * @param textAdjust the local text adjustment to apply when rendering (see tj parameter) 
      */
-    TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix, float textAdjust) {
+    TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix) {
         this.text = text;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.ctm);
-        this.textAdjust = textAdjust;
         this.gs = gs;
     }
     
@@ -84,7 +81,7 @@ public class TextRenderInfo {
     }
 
     /**
-     * @return the unscaled width of the text
+     * @return the unscaled (i.e. in Text space) width of the text
      */
     public float getUnscaledWidth(){ 
         return getStringWidth(text); 
@@ -131,14 +128,13 @@ public class TextRenderInfo {
      * @return  the width of a String in text space units
      */
     private float getStringWidth(String string){
-        float tj = textAdjust;
         DocumentFont font = gs.font;
         char[] chars = string.toCharArray();
         float totalWidth = 0;
         for (int i = 0; i < chars.length; i++) {
             float w = font.getWidth(chars[i]) / 1000.0f;
             float wordSpacing = chars[i] == 32 ? gs.wordSpacing : 0f;
-            totalWidth += ((w - tj/1000f) * gs.fontSize + gs.characterSpacing + wordSpacing) * gs.horizontalScaling;
+            totalWidth += (w * gs.fontSize + gs.characterSpacing + wordSpacing) * gs.horizontalScaling;
         }
         
         return totalWidth;

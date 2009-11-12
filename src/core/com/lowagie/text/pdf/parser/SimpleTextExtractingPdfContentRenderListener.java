@@ -125,7 +125,7 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
             // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
             float dist = (x2.subtract(x1)).cross((x1.subtract(x0))).lengthSquared() / x2.subtract(x1).lengthSquared();
 
-            float sameLineThreshold = 1f; // technically, we should base this on the current font metrics, but 1 pt seems to be sufficient for the time being
+            float sameLineThreshold = 1f; // we should probably base this on the current font metrics, but 1 pt seems to be sufficient for the time being
             if (dist > sameLineThreshold)
                 hardReturn = true;
             
@@ -137,16 +137,18 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
             //System.out.println("<< Hard Return >>");
             result.append('\n');
         } else if (!firstRender){ 
-            if (result.charAt(result.length()-1) != ' '){ // we only insert a blank space if the trailing character of the previous string wasn't a space
-                Vector spacing = lastEnd.subtract(start);
-                if (spacing.length() > renderInfo.getSingleSpaceWidth()/2f){
+            if (result.charAt(result.length()-1) != ' ' && renderInfo.getText().charAt(0) != ' '){ // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
+                float spacing = lastEnd.subtract(start).length();
+                if (spacing > renderInfo.getSingleSpaceWidth()/2f){
                     result.append(' ');
+                    //System.out.println("Inserting implied space before '" + renderInfo.getText() + "'");
                 }
             }
         } else {
             //System.out.println("Displaying first string of content '" + text + "' :: x1 = " + x1);
         }
         
+        //System.out.println("[" + renderInfo.getStartPoint() + "]->[" + renderInfo.getEndPoint() + "] " + renderInfo.getText());
         result.append(renderInfo.getText());
 
         lastStart = start;

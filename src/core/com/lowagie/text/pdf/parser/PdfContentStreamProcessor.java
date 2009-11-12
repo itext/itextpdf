@@ -217,16 +217,25 @@ public class PdfContentStreamProcessor {
     /**
      * Displays text.
      * @param string	the text to display
-     * @param tj		the text adjustment
      */
-    private void displayPdfString(PdfString string, float tj){
+    private void displayPdfString(PdfString string){
         String unicode = decode(string);
         
-        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix, tj);
+        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix);
 
         renderListener.renderText(renderInfo);
 
         textMatrix = new Matrix(renderInfo.getUnscaledWidth(), 0).multiply(textMatrix);
+    }
+    
+    /**
+     * Adjusts the text matrix for the specified adjustment value (see TJ operator in the PDF spec for information)
+     * @param tj the text adjustment
+     */
+    private void applyTextAdjust(float tj){
+        float adjustBy = -tj/1000f * gs().fontSize * gs().horizontalScaling;
+        
+        textMatrix = new Matrix(adjustBy, 0).multiply(textMatrix);
     }
     
     /**
@@ -264,10 +273,11 @@ public class PdfContentStreamProcessor {
             for (Iterator i = array.listIterator(); i.hasNext(); ) {
             	Object entryObj = i.next();
                 if (entryObj instanceof PdfString){
-                    processor.displayPdfString((PdfString)entryObj, tj);
+                    processor.displayPdfString((PdfString)entryObj);
                     tj = 0;
                 } else {
                     tj = ((PdfNumber)entryObj).floatValue();
+                    processor.applyTextAdjust(tj);
                 }
             }
 
@@ -331,7 +341,7 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             PdfString string = (PdfString)operands.get(0);
             
-            processor.displayPdfString(string, 0);
+            processor.displayPdfString(string);
         }
     }
     
