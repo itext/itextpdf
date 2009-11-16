@@ -484,7 +484,7 @@ public class PdfDocument extends Document {
                     Annotation annot = (Annotation) element;
                     Rectangle rect = new Rectangle(0, 0);
                     if (line != null)
-                    	rect = new Rectangle(annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20));
+                    	rect = new Rectangle(annot.llx(indentRight() - line.widthLeft()), annot.ury(indentTop() - currentHeight - 20), annot.urx(indentRight() - line.widthLeft() + 20), annot.lly(indentTop() - currentHeight));
                     PdfAnnotation an = PdfAnnotationsImp.convertAnnotation(writer, annot, rect);
                     annotationsImp.addPlainAnnotation(an);
                     pageEmpty = false;
