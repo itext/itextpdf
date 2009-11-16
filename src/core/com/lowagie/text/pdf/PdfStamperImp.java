@@ -1208,10 +1208,10 @@ class PdfStamperImp extends PdfWriter {
                             switch (rotation) {
                                 case 90:
                                     annot.put(PdfName.RECT, new PdfRectangle(
-                                    pageSize.getTop() - rect.bottom(),
-                                    rect.left(),
                                     pageSize.getTop() - rect.top(),
-                                    rect.right()));
+                                    rect.right(),
+                                    pageSize.getTop() - rect.bottom(),
+                                    rect.left()));
                                     break;
                                 case 180:
                                     annot.put(PdfName.RECT, new PdfRectangle(
