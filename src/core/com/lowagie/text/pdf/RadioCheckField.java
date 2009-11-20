@@ -377,6 +377,7 @@ public class RadioCheckField extends BaseField {
             if ((options & REQUIRED) != 0)
                 field.setFieldFlags(PdfFormField.FF_REQUIRED);
             field.setValueAsName(checked ? onValue : "Off");
+            setCheckType(TYPE_CHECK);
         }
         if (text != null)
             field.setMKNormalCaption(text);
@@ -395,9 +396,13 @@ public class RadioCheckField extends BaseField {
         else
             da.setColorFill(textColor);
         field.setDefaultAppearanceString(da);
-        if (borderColor != null)
+        if (borderColor == null)
+    		field.setMKBorderColor(new GrayColor(0f));
+        else
             field.setMKBorderColor(borderColor);
-        if (backgroundColor != null)
+        if (backgroundColor == null)
+    		field.setMKBackgroundColor(new GrayColor(1f));
+        else
             field.setMKBackgroundColor(backgroundColor);
         switch (visibility) {
             case HIDDEN:
