@@ -377,6 +377,7 @@ public class RadioCheckField extends BaseField {
             if ((options & REQUIRED) != 0)
                 field.setFieldFlags(PdfFormField.FF_REQUIRED);
             field.setValueAsName(checked ? onValue : "Off");
+            setCheckType(TYPE_CHECK);
         }
         if (text != null)
             field.setMKNormalCaption(text);
