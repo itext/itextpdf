@@ -396,13 +396,9 @@ public class RadioCheckField extends BaseField {
         else
             da.setColorFill(textColor);
         field.setDefaultAppearanceString(da);
-        if (borderColor == null)
-    		field.setMKBorderColor(new GrayColor(0f));
-        else
+        if (borderColor != null)
             field.setMKBorderColor(borderColor);
-        if (backgroundColor == null)
-    		field.setMKBackgroundColor(new GrayColor(1f));
-        else
+        if (backgroundColor != null)
             field.setMKBackgroundColor(backgroundColor);
         switch (visibility) {
             case HIDDEN:
