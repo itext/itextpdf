@@ -75,7 +75,7 @@ public class TextField extends BaseField {
     private String[] choiceExports;
     
     /** Holds value of property choiceSelection. */
-    private int choiceSelection;
+    private ArrayList choiceSelections = new ArrayList();
     
     private int topFirst;
     
@@ -325,20 +325,18 @@ public class TextField extends BaseField {
      */
     PdfAppearance getListAppearance() throws IOException, DocumentException {
         PdfAppearance app = getBorderAppearance();
-        app.beginVariableText();
         if (choices == null || choices.length == 0) {
-            app.endVariableText();
             return app;
         }
-        int topChoice = choiceSelection;
-        if (topChoice >= choices.length)
-            topChoice = choices.length - 1;
-        if (topChoice < 0)
-            topChoice = 0;
+        app.beginVariableText();
+        
+        int topChoice = getTopChoice();
+
         BaseFont ufont = getRealFont();
         float usize = fontSize;
         if (usize == 0)
             usize = 12;
+
         boolean borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
         float h = box.getHeight() - borderWidth * 2;
         float offsetX = borderWidth;
@@ -346,17 +344,12 @@ public class TextField extends BaseField {
             h -= borderWidth * 2;
             offsetX *= 2;
         }
+        
         float leading = ufont.getFontDescriptor(BaseFont.BBOXURY, usize) - ufont.getFontDescriptor(BaseFont.BBOXLLY, usize);
         int maxFit = (int)(h / leading) + 1;
         int first = 0;
         int last = 0;
-        last = topChoice + maxFit / 2 + 1;
-        first = last - maxFit;
-        if (first < 0) {
-            last += first;
-            first = 0;
-        }
-//        first = topChoice;
+        first = topChoice;
         last = first + maxFit;
         if (last > choices.length)
             last = choices.length;
@@ -366,16 +359,28 @@ public class TextField extends BaseField {
         app.clip();
         app.newPath();
         Color fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
+        
+        
+        // background boxes for selected value[s]
         app.setColorFill(new Color(10, 36, 106));
-        app.rectangle(offsetX, offsetX + h - (topChoice - first + 1) * leading, box.getWidth() - 2 * offsetX, leading);
-        app.fill();
+        for (int curVal = 0; curVal < choiceSelections.size(); ++curVal) {
+        	int curChoice = ((Integer)choiceSelections.get( curVal )).intValue();
+        	// only draw selections within our display range... not strictly necessary with 
+        	// that clipping rect from above, but it certainly doesn't hurt either 
+        	if (curChoice >= first && curChoice <= last) {
+        		app.rectangle(offsetX, offsetX + h - (curChoice - first + 1) * leading, box.getWidth() - 2 * offsetX, leading);
+        		app.fill();
+        	}
+        }
         float xp = offsetX * 2;
         float yp = offsetX + h - ufont.getFontDescriptor(BaseFont.BBOXURY, usize);
         for (int idx = first; idx < last; ++idx, yp -= leading) {
             String ptext = choices[idx];
             int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
             ptext = removeCRLF(ptext);
-            Phrase phrase = composePhrase(ptext, ufont, (idx == topChoice) ? GrayColor.GRAYWHITE : fcolor, usize);
+            // highlight selected values against their (presumably) darker background
+            Color textCol = (choiceSelections.contains( new Integer( idx ))) ? GrayColor.GRAYWHITE : fcolor;
+            Phrase phrase = composePhrase(ptext, ufont, textCol, usize);
             ColumnText.showTextAligned(app, Element.ALIGN_LEFT, phrase, xp, yp, 0, rtl, 0);
         }
         app.restoreState();
@@ -478,23 +483,44 @@ public class TextField extends BaseField {
     public PdfFormField getListField() throws IOException, DocumentException {
         return getChoiceField(true);
     }
+    
+    private int getTopChoice() {
+    	if (choiceSelections == null || choiceSelections.size() ==0) {
+    		return 0;
+    	}
+    	
+    	Integer firstValue = (Integer)choiceSelections.get(0);
+    	
+    	if (firstValue == null) {
+    		return 0;
+    	}
+    	
+    	int topChoice = 0;
+    	if (choices != null) {
+    		topChoice = firstValue.intValue();
+    		topChoice = Math.min( topChoice, choices.length );
+    		topChoice = Math.max( 0, topChoice);
+    	} // else topChoice still 0
+    	return topChoice;
+    }
 
     protected PdfFormField getChoiceField(boolean isList) throws IOException, DocumentException {
         options &= (~MULTILINE) & (~COMB);
         String uchoices[] = choices;
         if (uchoices == null)
             uchoices = new String[0];
-        int topChoice = choiceSelection;
-        if (topChoice >= uchoices.length)
-            topChoice = uchoices.length - 1;
+
+        int topChoice = getTopChoice();
+
         if (text == null)
         	text = ""; //fixed by Kazuya Ujihara (ujihara.jp)
+
         if (topChoice >= 0)
             text = uchoices[topChoice];
-        if (topChoice < 0)
-            topChoice = 0;
+        
         PdfFormField field = null;
         String mix[][] = null;
+        
         if (choiceExports == null) {
             if (isList)
                 field = PdfFormField.createList(writer, uchoices, topChoice);
@@ -522,12 +548,19 @@ public class TextField extends BaseField {
             field.setFieldName(fieldName);
             if (uchoices.length > 0) {
                 if (mix != null) {
-                    field.setValueAsString(mix[topChoice][0]);
-                    field.setDefaultValueAsString(mix[topChoice][0]);
-                }
-                else {
-                    field.setValueAsString(text);
-                    field.setDefaultValueAsString(text);
+                	if (choiceSelections.size() < 2) {
+                		field.setValueAsString(mix[topChoice][0]);
+                		field.setDefaultValueAsString(mix[topChoice][0]);
+                	} else {
+                		writeMultipleValues( field, mix);
+                	}
+                } else {
+                	if (choiceSelections.size() < 2) {
+                		field.setValueAsString(text);
+                		field.setDefaultValueAsString(text);
+                	} else {
+                		writeMultipleValues( field, null );
+                	}
                 }
             }
             if ((options & READ_ONLY) != 0)
@@ -536,6 +569,9 @@ public class TextField extends BaseField {
                 field.setFieldFlags(PdfFormField.FF_REQUIRED);
             if ((options & DO_NOT_SPELL_CHECK) != 0)
                 field.setFieldFlags(PdfFormField.FF_DONOTSPELLCHECK);
+            if ((options & MULTISELECT) != 0) {
+            	field.setFieldFlags( PdfFormField.FF_MULTISELECT );
+            }
         }
         field.setBorderStyle(new PdfBorderDictionary(borderWidth, borderStyle, new PdfDashPattern(3)));
         PdfAppearance tp;
@@ -572,6 +608,24 @@ public class TextField extends BaseField {
                 break;
         }
         return field;
+    }
+
+    private void writeMultipleValues( PdfFormField field, String mix[][] ) {
+		PdfArray indexes = new PdfArray();
+		PdfArray values = new PdfArray();
+		for (int i = 0; i < choiceSelections.size(); ++i) {
+			int idx = ((Integer)choiceSelections.get( i )).intValue();
+			indexes.add( new PdfNumber( idx ) );
+			
+			if (mix != null) 
+				values.add( new PdfString( mix[idx][0] ) );
+			else if (choices != null)
+				values.add( new PdfString( choices[ idx ] ) );
+		}
+		
+		field.put( PdfName.V, values );
+		field.put( PdfName.I, indexes );
+
     }
     
     /**
@@ -629,15 +683,51 @@ public class TextField extends BaseField {
      * @return the zero based index of the selected item
      */
     public int getChoiceSelection() {
-        return this.choiceSelection;
+    	return getTopChoice();
     }
     
+    public ArrayList gteChoiceSelections() {
+    	return choiceSelections;
+    }
+
     /**
      * Sets the zero based index of the selected item.
      * @param choiceSelection the zero based index of the selected item
      */
     public void setChoiceSelection(int choiceSelection) {
-        this.choiceSelection = choiceSelection;
+        choiceSelections = new ArrayList();
+        choiceSelections.add( new Integer( choiceSelection ) );
+    }
+    
+    /**
+     * adds another (or a first I suppose) selection to a MULTISELECT list.
+     * This doesn't do anything unless this.options & MUTLISELECT != 0 
+     * @param selection new selection
+     */
+    public void addChoiceSelection( int selection) {
+    	if ((this.options & BaseField.MULTISELECT) != 0) {
+    		choiceSelections.add( new Integer( selection ) );
+    	}
+    }
+    
+    /**
+     * replaces the existing selections with the param. If this field isn't a MULTISELECT
+     * list, all but the first element will be removed.
+     * @param selections new selections.  If null, it clear()s the underlying ArrayList.
+     */
+    public void setChoiceSelections( ArrayList selections ) {
+    	if (selections != null) {
+    		choiceSelections = new ArrayList( selections );
+    		if (choiceSelections.size() > 1 && (options & BaseField.MULTISELECT) == 0 ) {
+    			// can't have multiple selections in a single-select field
+    			while (choiceSelections.size() > 1) {
+    				choiceSelections.remove( 1 );
+    			}
+    		}
+    		
+    	} else { 
+    		choiceSelections.clear();
+    	}
     }
     
     int getTopFirst() {

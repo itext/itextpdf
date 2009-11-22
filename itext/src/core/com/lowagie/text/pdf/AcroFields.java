@@ -702,8 +702,10 @@ public class AcroFields {
         }
     }
 
-    PdfAppearance getAppearance(PdfDictionary merged, String text, String fieldName) throws IOException, DocumentException {
+    PdfAppearance getAppearance(PdfDictionary merged, String values[], String fieldName) throws IOException, DocumentException {
         topFirst = 0;
+        String text = (values.length > 0) ? values[0] : null;
+        
         TextField tx = null;
         if (fieldCache == null || !fieldCache.containsKey(fieldName)) {
             tx = new TextField(writer, null, null);
@@ -726,7 +728,9 @@ public class AcroFields {
         }
         PdfName fieldType = merged.getAsName(PdfName.FT);
         if (PdfName.TX.equals(fieldType)) {
-            tx.setText(text);
+            if (values.length > 0 && values[0] != null) {
+                tx.setText(values[0]);
+            }
             return tx.getAppearance();
         }
         if (!PdfName.CH.equals(fieldType))
@@ -764,20 +768,29 @@ public class AcroFields {
                 tx.setText(text);
                 return tx.getAppearance();
             }
-            int idx = 0;
+            ArrayList indexes = new ArrayList();
             for (int k = 0; k < choicesExp.length; ++k) {
-                if (text.equals(choicesExp[k])) {
-                    idx = k;
-                    break;
-                }
+            	for (int j = 0; j < values.length; ++j) {
+            		String val = values[j];
+            		if (val != null && val.equals(choicesExp[k])) {
+            			indexes.add( new Integer( k ) );
+            			break;
+            		}
+            	}
             }
             tx.setChoices(choices);
             tx.setChoiceExports(choicesExp);
-            tx.setChoiceSelection(idx);
+            tx.setChoiceSelections( indexes );
         }
         PdfAppearance app = tx.getListAppearance();
         topFirst = tx.getTopFirst();
         return app;
+    }
+
+    PdfAppearance getAppearance(PdfDictionary merged, String text, String fieldName) throws IOException, DocumentException {
+      String valueArr[] = new String[1];
+      valueArr[0] = text;
+      return getAppearance( merged, valueArr, fieldName );
     }
 
     Color getMKColor(PdfArray ar) {
@@ -1430,7 +1443,8 @@ public class AcroFields {
         Item item = getFieldItem(name);
         if (item == null)
             return false;
-        PdfName type = item.getMerged(0).getAsName(PdfName.FT);
+        PdfDictionary merged = item.getMerged( 0 );
+        PdfName type = merged.getAsName(PdfName.FT);
         if (!PdfName.CH.equals(type)) {
         	return false;
         }
@@ -1440,12 +1454,26 @@ public class AcroFields {
         	for (int j = 0; j < options.length; j++) {
         		if (options[j].equals(value[i])) {
         			array.add(new PdfNumber(j));
+        			break;
         		}
         	}
         }
         item.writeToAll(PdfName.I, array, Item.WRITE_MERGED | Item.WRITE_VALUE);
-        item.writeToAll(PdfName.V, null, Item.WRITE_MERGED | Item.WRITE_VALUE);
-        item.writeToAll(PdfName.AP, null, Item.WRITE_MERGED | Item.WRITE_WIDGET);
+        
+        PdfArray vals = new PdfArray();
+        for (int i = 0; i < value.length; ++i) {
+        	vals.add( new PdfString( value[i] ) );
+        }
+        item.writeToAll(PdfName.V, vals, Item.WRITE_MERGED | Item.WRITE_VALUE);
+        
+        PdfAppearance app = getAppearance( merged, value, name ); 
+        
+        PdfDictionary apDic = new PdfDictionary();
+        apDic.put( PdfName.N, app.getIndirectReference() );
+        item.writeToAll(PdfName.AP, apDic, Item.WRITE_MERGED | Item.WRITE_WIDGET);
+        
+        writer.releaseTemplate( app );
+        
         item.markUsed( this, Item.WRITE_VALUE | Item.WRITE_WIDGET );
         return true;
 	}
