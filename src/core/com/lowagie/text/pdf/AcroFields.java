@@ -1461,8 +1461,8 @@ public class AcroFields {
         item.writeToAll(PdfName.I, array, Item.WRITE_MERGED | Item.WRITE_VALUE);
         
         PdfArray vals = new PdfArray();
-        for (String val : value) {
-        	vals.add( new PdfString( val ) );
+        for (int i = 0; i < value.length; ++i) {
+        	vals.add( new PdfString( value[i] ) );
         }
         item.writeToAll(PdfName.V, vals, Item.WRITE_MERGED | Item.WRITE_VALUE);
         
