@@ -773,7 +773,7 @@ public class AcroFields {
             	for (int j = 0; j < values.length; ++j) {
             		String val = values[j];
             		if (val != null && val.equals(choicesExp[k])) {
-            			indexes.add( k );
+            			indexes.add( new Integer( k ) );
             			break;
             		}
             	}
