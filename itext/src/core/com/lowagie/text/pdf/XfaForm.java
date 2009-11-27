@@ -51,7 +51,11 @@ package com.lowagie.text.pdf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EmptyStackException;
@@ -62,7 +66,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.lowagie.text.xml.XmlDomWriter;
@@ -1096,5 +1104,38 @@ public class XfaForm {
      */
     public Node getDatasetsNode() {
         return datasetsNode;
+    }
+    
+    public void fillXfaForm(File file) throws ParserConfigurationException, SAXException, IOException {
+		fillXfaForm(new FileInputStream(file));
+    }
+    
+    public void fillXfaForm(InputStream is) throws ParserConfigurationException, SAXException, IOException {
+    	fillXfaForm(new InputSource(is));
+    }
+		
+    
+    public void fillXfaForm(InputSource is) throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    	DocumentBuilder db = dbf.newDocumentBuilder();        		
+    	Document newdoc = db.parse(is);
+    	fillXfaForm(newdoc.getDocumentElement());
+    }
+    
+    /**
+     * Replaces the data under datasets/data.
+     * @since	iText 5.0.0
+     */
+    public void fillXfaForm(Node node) {
+		Node data = datasetsNode.getFirstChild();
+		NodeList list = data.getChildNodes();
+		if (list.getLength() == 0) {
+			data.appendChild(domDocument.importNode(node, true));
+		}
+		else {
+			data.replaceChild(domDocument.importNode(node, true), data.getFirstChild());
+		}
+        extractNodes();
+		setChanged(true);
     }
 }
