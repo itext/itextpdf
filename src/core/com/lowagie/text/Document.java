@@ -109,7 +109,7 @@ public class Document implements DocListener {
      * This constant may only be changed by Paulo Soares and/or Bruno Lowagie.
      * @since	2.1.6
      */
-	private static final String RELEASE = "5.0.0_SNAPSHOT";
+	private static final String RELEASE = "4.2.0";
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
 	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " by 1T3XT";
     
