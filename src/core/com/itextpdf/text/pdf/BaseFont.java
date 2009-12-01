@@ -228,7 +228,7 @@ public abstract class BaseFont {
     public static final boolean NOT_CACHED = false;
     
     /** The path to the font resources. */    
-    public static final String RESOURCE_PATH = "com/lowagie/text/pdf/fonts/";
+    public static final String RESOURCE_PATH = "com/itextpdf/text/pdf/fonts/";
     /** The fake CID code that represents a newline. */    
     public static final char CID_NEWLINE = '\u7fff';
     
