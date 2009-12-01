@@ -152,7 +152,7 @@ public class Matrix {
     /**
      * Subtracts a matrix from this matrix and returns the results
      * @param arg the matrix to subtract from this matrix
-     * @return
+     * @return a Matrix object
      */
     public Matrix subtract(Matrix arg){
         Matrix rslt = new Matrix();

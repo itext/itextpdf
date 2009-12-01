@@ -86,7 +86,7 @@ public class PdfContentStreamProcessor {
      * Creates a new PDF Content Stream Processor that will send it's output to the
      * designated render listener.
      * 
-     * @param renderListener the {@link AbstractRenderListener} that will receive rendering notifications
+     * @param renderListener the {@link RenderListener} that will receive rendering notifications
      */
     public PdfContentStreamProcessor(RenderListener renderListener) {
         this.renderListener = renderListener;

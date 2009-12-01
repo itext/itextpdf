@@ -94,18 +94,10 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
     public String getResultantText(){
         return result.toString();
     }
-    /**
-     * Writes text to the result.
-     * @param text  The text that needs to be displayed
-     * @param gs    The current graphics state, including the current font and various spacings needed to compute glyph widths
-     * @param renderInto The rectangle that the result will be rendered into
-     * @param spaceWidth The scaled width of a space character in the current font
-     * @see com.itextpdf.text.pdf.parser.RenderListener#renderText(String, GraphicsState, Rectangle)
-     */
 
     /**
      * Captures text using a simplified algorithm for inserting hard returns and spaces
-     * @see com.itextpdf.text.pdf.parser.AbstractRenderListener#renderText(java.lang.String, com.itextpdf.text.pdf.parser.GraphicsState, com.itextpdf.text.pdf.parser.Matrix, com.itextpdf.text.pdf.parser.Matrix)
+     * @param	renderInfo	render info
      */
     public void renderText(TextRenderInfo renderInfo) {
         boolean firstRender = result.length() == 0;

@@ -3,13 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.lowagie</groupId>
-	<artifactId>itext</artifactId>
+	<groupId>com.itextpdf</groupId>
+	<artifactId>itextpdf</artifactId>
 	<packaging>jar</packaging>
 	<name>iText, a Free Java-PDF library</name>
 	<version>releasenumber</version>
 	<description>iText, a free Java-PDF library</description>
-	<url>http://www.lowagie.com/iText/</url>
+	<url>http://www.itextpdf.com/</url>
 	<mailingLists>
 		<mailingList>
 			<name>iText Questions</name>
@@ -41,9 +41,14 @@
 			<email>psoares33@users.sourceforge.net</email>
 		</developer>
 		<developer>
-			<id>hallm</id>
-			<name>Mark Hall</name>
-			<email>hallm@users.sourceforge.net</email>
+			<id>mstorer</id>
+			<name>Mark Storer</name>
+			<email>mstorer3772@gmail.com</email>
+		</developer>
+		<developer>
+			<id>trumpetinc</id>
+			<name>Kevin Day</name>
+			<email>kevin@trumpetinc.com</email>
 		</developer>
 		<developer>
 			<id>xlv</id>
@@ -53,12 +58,8 @@
 	</developers>
 	<licenses>
 		<license>
-			<name>Mozilla Public License</name>
-			<url>http://www.mozilla.org/MPL/MPL-1.1.html</url>
-			<comments>
-				iText was originally published under the LGPLicense.
-				LGPL can be used as an alternative license for the MPL.
-			</comments>
+			<name>GNU Affero General Public License v3</name>
+			<url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
 		</license>
 	</licenses>
 	<scm>
@@ -88,13 +89,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>
-								com.lowagie.tools.ToolboxAvailable
-							</mainClass>
-						</manifest>
-					</archive>
+					<archive />
 				</configuration>
 			</plugin>
 		</plugins>
