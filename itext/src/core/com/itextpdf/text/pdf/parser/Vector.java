@@ -80,7 +80,7 @@ public class Vector {
     /**
      * Gets the value from a coordinate of the vector
      * @param index the index of the value to get (I1, I2 or I3)
-     * @return
+     * @return a coordinate value
      */
     public float get(int index){
         return vals[index];

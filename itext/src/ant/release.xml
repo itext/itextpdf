@@ -11,6 +11,16 @@
 	<property file="${user.home}/.ant.properties" />
 	<property file=".ant.properties" />
 	
+	<path id="itext.classpath">
+	    <pathelement location="${itext.bin}"/>
+		<!-- jars needed for iText (core) -->
+		<pathelement path="${itext.lib}/${lib.bcmail}"/>
+	    <pathelement path="${itext.lib}/${lib.bcprov}"/>
+	    <pathelement path="${itext.lib}/${lib.bctsp}"/>
+		<!-- jars needed for RUPS -->
+	    <pathelement path="${itext.lib}/${lib.dom4j}"/>
+	</path>
+	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Help                                                             -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -18,6 +28,7 @@
     <target name="help" description="--> shows the help screen">
         <echo>MAKING A NEW RELEASE (release.xml)</echo>
         <echo>ant clean: cleans up all the files that were generated</echo>
+        <echo>ant javadoc: creates the javadoc information</echo>
         <echo>archive.src: archiving the source (zip and tar.gz)</echo>
         <echo>asian.jar: creates a new version of iTextAsian.jar and iTextAsianCmaps.jar</echo>
         <echo />
@@ -31,11 +42,48 @@
         <delete dir="${itext.build}" />
     </target>
 	
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- Building the API documentation                                   -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+	<target name="javadoc" description="--> generates the complete documentation with javadoc">
+        <mkdir dir="${itext.docs}" />
+        <javadoc
+            destdir="${itext.docs}"
+            author="true" maxmemory="128m"
+            private="true">
+			<packageset dir="${itext.src}/core" defaultexcludes="yes">
+      			<include name="com/itextpdf/**" />
+		    </packageset>
+			<packageset dir="${itext.src}/rups" defaultexcludes="yes">
+      			<include name="com/itextpdf/**" />
+		    </packageset>
+        	<classpath refid="itext.classpath"/>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
+        	<link href="http://www.bouncycastle.org/docs/docs1.5/" />
+        	<link href="http://www.dom4j.org/apidocs/" />
+        	<header>&lt;a href="http://itextpdf.com/book/" target="_blank"&gt;&lt;img src="http://itextpdf.com/img/book/iia2.jpg" border="0" /&gt;&lt;/a&gt;</header>
+			<footer>Hosted by &lt;a href="http://www.hostbasket.com/"&gt;Hostbasket&lt;/a&gt;</footer>
+        </javadoc>
+    </target>
+	
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Building and archiving the API documentation                     -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="docs.tar.gz" depends="javadoc" description="--> makes a tar.gz-file with the complete javadoc documentation">
+        <mkdir dir="${itext.dist}" />
+        <mkdir dir="${itext.downloads}" />
+        <tar tarfile="${itext.downloads}/docs.tar" basedir="${itext.docs}" />
+        <gzip zipfile="${itext.dist}/docs.tar.gz" src="${itext.downloads}/docs.tar" />
+        <delete file="${itext.downloads}/docs.tar" />
+    </target>
+	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Archiving the code                                               -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-	<property name="src.types" value="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.png, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties, ant/.ant.test.properties" />
+	<property name="src.types" value="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.png, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties" />
 
 	<target name="src-with-libs.zip" description="--> makes a zipfile with the source code and the libs">
 		<mkdir dir="${itext.dist}"/>
@@ -45,13 +93,12 @@
 				<include name="bcmail-${bc.jdk}-${bc.version}.jar" />
 				<include name="bcprov-${bc.jdk}-${bc.version}.jar" />
 				<include name="bctsp-${bc.jdk}-${bc.version}.jar" />
-				<!-- jars needed for RUPS -->
-				<include name="pdf-renderer.jar" />
+				<!-- jar needed for RUPS -->
 				<include name="dom4j-1.6.1.jar" />
 			</zipfileset>
 		</zip>
 	</target>
-	
+
 	<target name="src-with-libs.tar.gz" description="--> makes a tar.gz-file with the source code and the libs">
 		<mkdir dir="${itext.dist}"/>
 		<tar compression="gzip" tarfile="${itext.dist}/src-with-libs.tar.gz">
@@ -60,12 +107,10 @@
 				<include name="bcmail-${bc.jdk}-${bc.version}.jar" />
 				<include name="bcprov-${bc.jdk}-${bc.version}.jar" />
 				<include name="bctsp-${bc.jdk}-${bc.version}.jar" />
-				<!-- jars needed for RUPS -->
-				<include name="pdf-renderer.jar" />
+				<!-- jar needed for RUPS -->
 				<include name="dom4j-1.6.1.jar" />
 			</tarfileset>
 		</tar>
-
 	</target>
 
 	<target name="src.zip" description="--> makes a zipfile with the source code">
@@ -74,14 +119,14 @@
 			<zipfileset prefix="src" dir="${itext.src}" includes="${src.types}" />
 		</zip>
 	</target>
-			
+
 	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
 		<mkdir dir="${itext.dist}"/>
 		<tar compression="gzip" tarfile="${itext.dist}/src.tar.gz">
 			<tarfileset prefix="src" dir="${itext.src}" includes="${src.types}" />
 		</tar>
 	</target>
-							
+
 	<target name="src.jar" description="--> makes a jar file with the source code">
 		<mkdir dir="${itext.dist}"/>
 		<jar destfile="${itext.dist}/iText-${releasenumber}-sources.jar" basedir="${itext.src}" includes="${src.types}" />
@@ -93,30 +138,20 @@
     <!-- Making a release, ready for upload to SourceForge                -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
 	
-	<target name="release.sf14" description="--> makes a complete iText release ready to publish on SourceForge">
+	<target name="release" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
 		<copy file="${itext.jar}" todir="${itext.dist}" overwrite="yes" />
 		<copy file="${itext.jar}" tofile="${itext.dist}/iText-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.jar}" tofile="${itext.sf}/iText-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.rtf.jar}" todir="${itext.dist}" overwrite="yes" />
-		<copy file="${itext.rtf.jar}" tofile="${itext.dist}/iText-rtf-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.rtf.jar}" tofile="${itext.sf}/iText-rtf-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/iText-src-${releasenumber}.zip" overwrite="yes"/>
 		<copy file="${itext.dist}/src-with-libs.zip" tofile="${itext.sf}/iText-src-with-libs-${releasenumber}.zip" overwrite="yes"/>
 		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/iText-src-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/src-with-libs.tar.gz" tofile="${itext.sf}/iText-src-with-libs-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.sf}/iText-${releasenumber}-sources.jar" overwrite="yes"/>
-	</target>
-	
-	<target name="release.sf16" description="--> makes a complete iText release ready to publish on SourceForge">
-		<mkdir dir="${itext.sf}"/>
 		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/iText-docs-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.rups.jar}" todir="${itext.dist}" overwrite="yes" />
-		<copy file="${itext.toolbox.jar}" todir="${itext.dist}" overwrite="yes" />
 		<copy file="${itext.rups.jar}" tofile="${itext.dist}/iText-rups-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.rups.jar}" tofile="${itext.sf}/iText-rups-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.toolbox.jar}" tofile="${itext.dist}/iText-toolbox-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.toolbox.jar}" tofile="${itext.sf}/iText-toolbox-${releasenumber}.jar" overwrite="yes"/>
 	</target>
 	
 	<target name="release.maven" description="--> makes a bundle ready to publish for Maven">
@@ -126,9 +161,7 @@
 		<replace file="${itext.maven}/pom.xml" token="bc.jdk" value="${bc.jdk}"/>
 		<replace file="${itext.maven}/pom.xml" token="bc.version" value="${bc.version}"/>
 		<copy file="${itext.dist}/iText-${releasenumber}.jar" tofile="${itext.maven}/itext-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.dist}/iText-rtf-${releasenumber}.jar" tofile="${itext.maven}/itext-rtf-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-rups-${releasenumber}.jar" tofile="${itext.maven}/itext-rups-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.dist}/iText-toolbox-${releasenumber}.jar" tofile="${itext.maven}/itext-toolbox-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.maven}/itext-${releasenumber}-sources.jar" overwrite="yes"/>
 		<jar destfile="${itext.maven}/itext-${releasenumber}-javadoc.jar">
 			<fileset dir="${itext.docs}"/>
@@ -137,144 +170,18 @@
 			<fileset dir="${itext.maven}">
 				<include name="pom.xml" />
 				<include name="itext-${releasenumber}.jar" />
-				<include name="itext-toolbox-${releasenumber}.jar" />
 				<include name="itext-${releasenumber}-sources.jar" />
 				<include name="itext-${releasenumber}-javadoc.jar" />
 			</fileset>
 		</jar>
-		<replace file="${itext.maven}/pom.xml" token="artifactId>itext" value="artifactId>itext-rtf"/>
-		<replace file="${itext.maven}/pom.xml" token="PDF library" value="PDF library (rtf package)"/>
-		<jar destfile="${itext.maven}/itext-rtf-${releasenumber}-bundle.jar">
-			<fileset dir="${itext.maven}">
-				<include name="pom.xml" />
-				<include name="itext-rtf-${releasenumber}.jar" />
-			</fileset>
-		</jar>
-		<replace file="${itext.maven}/pom.xml" token="rtf" value="rups"/>
-		<jar destfile="${itext.maven}/itext-rups-${releasenumber}-bundle.jar">
-			<fileset dir="${itext.maven}">
-				<include name="pom.xml" />
-				<include name="itext-rups-${releasenumber}.jar" />
-			</fileset>
-		</jar>
 	</target>
-    
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Releasing the JNLP apps                                          -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-	
-	<target name="unsign.bcmail">
-        <mkdir dir="${itext.jnlp}" />
-    	<mkdir dir="${itext.bin.temp}" />
-    	<unjar src="${itext.lib}/bcmail-${bc.jdk}-${bc.version}.jar" dest="${itext.bin.temp}" />
-    	<jar destfile="${itext.jnlp}/bcmail-${bc.jdk}-${bc.version}.jar" basedir="${itext.bin.temp}" includes="**/*.class" />
-    	<delete dir="${itext.bin.temp}" />
-	</target>
-
-	<target name="unsign.bcprov">
-        <mkdir dir="${itext.jnlp}" />
-    	<mkdir dir="${itext.bin.temp}" />
-    	<unjar src="${itext.lib}/bcprov-${bc.jdk}-${bc.version}.jar" dest="${itext.bin.temp}" />
-    	<jar destfile="${itext.jnlp}/bcprov-${bc.jdk}-${bc.version}.jar" basedir="${itext.bin.temp}" includes="**/*.class" />
-    	<delete dir="${itext.bin.temp}" />
-	</target>
-
-	<target name="unsign.bctsp">
-        <mkdir dir="${itext.jnlp}" />
-    	<mkdir dir="${itext.bin.temp}" />
-    	<unjar src="${itext.lib}/bctsp-${bc.jdk}-${bc.version}.jar" dest="${itext.bin.temp}" />
-    	<jar destfile="${itext.jnlp}/bctsp-${bc.jdk}-${bc.version}.jar" basedir="${itext.bin.temp}" includes="**/*.class" />
-    	<delete dir="${itext.bin.temp}" />
-	</target>
-
-    <target name="check-keystore" >
-        <condition property="keystore-exists">
-            <available file="${itext.keystore.filename}" type="file"/>
-        </condition>
-    </target>
- 
-    <target name="keystore" depends="check-keystore" unless="keystore-exists">
-        <genkey
-            keystore="${itext.keystore.filename}"
-            storepass="${itext.keystore.password}"
-            alias="${itext.keystore.alias}"
-            storetype="${itext.keystore.storetype}"
-            dname="${itext.keystore.dname}"
-        />
-    </target>
- 
-    <target name="release.jnlp" depends="unsign.bcmail, unsign.bcprov, unsign.bctsp, keystore">
-		<copy file="${itext.src}/jnlp/rups.jnlp" tofile="${itext.jnlp}/rups.jnlp" overwrite="yes"/>
-		<copy file="${itext.src}/jnlp/toolbox.jnlp" tofile="${itext.jnlp}/toolbox.jnlp" overwrite="yes"/>
-		<copy file="${itext.rups.jar}" tofile="${itext.jnlp}/iText-rups.jar" overwrite="yes"/>
-		<copy file="${itext.toolbox.jar}" tofile="${itext.jnlp}/iText-toolbox.jar" overwrite="yes"/>
-		<copy file="${itext.jar}" tofile="${itext.jnlp}/iText.jar" overwrite="yes"/>
-		<copy file="${itext.lib}/dom4j-1.6.1.jar" tofile="${itext.jnlp}/dom4j-1.6.1.jar" overwrite="yes"/>
-		<copy file="${itext.lib}/pdf-renderer.jar" tofile="${itext.jnlp}/pdf-renderer.jar" overwrite="yes"/>
-        <signjar
-            jar="${itext.jnlp}/bcmail-${bc.jdk}-${bc.version}.jar"
-            keystore="${itext.keystore.filename}"
-            storepass="${itext.keystore.password}"
-            alias="${itext.keystore.alias}"
-            storetype="${itext.keystore.storetype}"
-        />
-        <signjar
-            jar="${itext.jnlp}/bcprov-${bc.jdk}-${bc.version}.jar"
-            keystore="${itext.keystore.filename}"
-            storepass="${itext.keystore.password}"
-            alias="${itext.keystore.alias}"
-            storetype="${itext.keystore.storetype}"
-        />
-        <signjar
-            jar="${itext.jnlp}/bctsp-${bc.jdk}-${bc.version}.jar"
-            keystore="${itext.keystore.filename}"
-            storepass="${itext.keystore.password}"
-            alias="${itext.keystore.alias}"
-            storetype="${itext.keystore.storetype}"
-        />
-        <signjar
-            jar="${itext.jnlp}/dom4j-1.6.1.jar"
-            keystore="${itext.keystore.filename}"
-            storepass="${itext.keystore.password}"
-            alias="${itext.keystore.alias}"
-            storetype="${itext.keystore.storetype}"
-        />
-        <signjar
-            jar="${itext.jnlp}/iText.jar"
-            keystore="${itext.keystore.filename}"
-            storepass="${itext.keystore.password}"
-            alias="${itext.keystore.alias}"
-            storetype="${itext.keystore.storetype}"
-        />
-        <signjar
-            jar="${itext.jnlp}/iText-rups.jar"
-            keystore="${itext.keystore.filename}"
-            storepass="${itext.keystore.password}"
-            alias="${itext.keystore.alias}"
-            storetype="${itext.keystore.storetype}"
-        />
-        <signjar
-            jar="${itext.jnlp}/iText-toolbox.jar"
-            keystore="${itext.keystore.filename}"
-            storepass="${itext.keystore.password}"
-            alias="${itext.keystore.alias}"
-            storetype="${itext.keystore.storetype}"
-        />
-        <signjar
-            jar="${itext.jnlp}/pdf-renderer.jar"
-            keystore="${itext.keystore.filename}"
-            storepass="${itext.keystore.password}"
-            alias="${itext.keystore.alias}"
-            storetype="${itext.keystore.storetype}"
-        />
-    </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Making the jars with the Asian Fontfiles                         -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
 	<target name="asian.jar" description="--> makes iTextAsian.jar and iTextAsianCmaps.jar">
         <jar jarfile="${itext.lib}/iTextAsian.jar" basedir="${itext.src}/core" includes="**/*.cmap,**/*.properties,**/cmap_info.txt" />
-        <jar jarfile="${itext.lib}/iTextAsianCmaps.jar" basedir="${itext.src}/core" includes="com/lowagie/text/pdf/fonts/cmaps/**" />
+        <jar jarfile="${itext.lib}/iTextAsianCmaps.jar" basedir="${itext.src}/core" includes="com/itextpdf/text/pdf/fonts/cmaps/**" />
 	</target>
 
 </project>
