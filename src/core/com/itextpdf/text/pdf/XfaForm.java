@@ -47,7 +47,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -61,7 +60,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -159,11 +157,11 @@ public class XfaForm {
         while (n != null) {
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 String s = n.getLocalName();
-                if (s.equals("template")) {
+                if ("template".equals(s)) {
                 	templateNode = n;
                     templateSom = new Xml2SomTemplate(n);
                 }
-                else if (s.equals("datasets")) {
+                else if ("datasets".equals(s)) {
                     datasetsNode = n;
                     datasetsSom = new Xml2SomDatasets(n.getFirstChild());
                 }
@@ -524,6 +522,8 @@ public class XfaForm {
          * @return the escaped string
          */
         public static String escapeSom(String s) {
+        	if (s == null)
+        		return "";
             int idx = s.indexOf('.');
             if (idx < 0)
                 return s;
@@ -927,11 +927,11 @@ public class XfaForm {
             Node n = (Node)name2Node.get(s);
             if (n == null)
                 return null;
-            if (n.getLocalName().equals("exclGroup"))
+            if ("exclGroup".equals(n.getLocalName()))
                 return "exclGroup";
             Node ui = n.getFirstChild();
             while (ui != null) {
-                if (ui.getNodeType() == Node.ELEMENT_NODE && ui.getLocalName().equals("ui")) {
+                if (ui.getNodeType() == Node.ELEMENT_NODE && "ui".equals(ui.getLocalName())) {
                     break;
                 }
                 ui = ui.getNextSibling();
@@ -940,7 +940,7 @@ public class XfaForm {
                 return null;
             Node type = ui.getFirstChild();
             while (type != null) {
-                if (type.getNodeType() == Node.ELEMENT_NODE && !(type.getLocalName().equals("extras") && type.getLocalName().equals("picture"))) {
+                if (type.getNodeType() == Node.ELEMENT_NODE && !("extras".equals(type.getLocalName()) && "picture".equals(type.getLocalName()))) {
                     return type.getLocalName();
                 }
                 type = type.getNextSibling();
@@ -956,7 +956,7 @@ public class XfaForm {
             while (n2 != null) {
                 if (n2.getNodeType() == Node.ELEMENT_NODE) {
                     String s = n2.getLocalName();
-                    if (s.equals("subform")) {
+                    if ("subform".equals(s)) {
                         Node name = n2.getAttributes().getNamedItem("name");
                         String nn = "#subform";
                         boolean annon = true;
@@ -986,7 +986,7 @@ public class XfaForm {
                         --templateLevel;
                         stack.pop();
                     }
-                    else if (s.equals("field") || s.equals("exclGroup")) {
+                    else if ("field".equals(s) || "exclGroup".equals(s)) {
                         Node name = n2.getAttributes().getNamedItem("name");
                         if (name != null) {
                             String nn = escapeSom(name.getNodeValue());
@@ -1004,7 +1004,7 @@ public class XfaForm {
                             stack.pop();
                         }
                     }
-                    else if (!dynamicForm && templateLevel > 0 && s.equals("occur")) {
+                    else if (!dynamicForm && templateLevel > 0 && "occur".equals(s)) {
                         int initial = 1;
                         int min = 1;
                         int max = 1;
