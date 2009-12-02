@@ -46,9 +46,7 @@ package com.itextpdf.text.factories;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Anchor;
@@ -57,7 +55,6 @@ import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.ChapterAutoNumber;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.ElementTags;
-import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.List;
@@ -266,74 +263,6 @@ public class ElementFactory {
 		}
 
 		return list;
-	}
-
-	/**
-	 * Sets some Rectangle properties (for a Cell, Table,...).
-	 */
-	private static void setRectangleProperties(Rectangle rect,
-			Properties attributes) {
-		String value;
-		value = attributes.getProperty(ElementTags.BORDERWIDTH);
-		if (value != null) {
-			rect.setBorderWidth(Float.parseFloat(value + "f"));
-		}
-		int border = 0;
-		if (Utilities.checkTrueOrFalse(attributes, ElementTags.LEFT)) {
-			border |= Rectangle.LEFT;
-		}
-		if (Utilities.checkTrueOrFalse(attributes, ElementTags.RIGHT)) {
-			border |= Rectangle.RIGHT;
-		}
-		if (Utilities.checkTrueOrFalse(attributes, ElementTags.TOP)) {
-			border |= Rectangle.TOP;
-		}
-		if (Utilities.checkTrueOrFalse(attributes, ElementTags.BOTTOM)) {
-			border |= Rectangle.BOTTOM;
-		}
-		rect.setBorder(border);
-
-		String r = attributes.getProperty(ElementTags.RED);
-		String g = attributes.getProperty(ElementTags.GREEN);
-		String b = attributes.getProperty(ElementTags.BLUE);
-		if (r != null || g != null || b != null) {
-			int red = 0;
-			int green = 0;
-			int blue = 0;
-			if (r != null)
-				red = Integer.parseInt(r);
-			if (g != null)
-				green = Integer.parseInt(g);
-			if (b != null)
-				blue = Integer.parseInt(b);
-			rect.setBorderColor(new Color(red, green, blue));
-		} else {
-			rect.setBorderColor(Markup.decodeColor(attributes
-					.getProperty(ElementTags.BORDERCOLOR)));
-		}
-		r = (String) attributes.remove(ElementTags.BGRED);
-		g = (String) attributes.remove(ElementTags.BGGREEN);
-		b = (String) attributes.remove(ElementTags.BGBLUE);
-		value = attributes.getProperty(ElementTags.BACKGROUNDCOLOR);
-		if (r != null || g != null || b != null) {
-			int red = 0;
-			int green = 0;
-			int blue = 0;
-			if (r != null)
-				red = Integer.parseInt(r);
-			if (g != null)
-				green = Integer.parseInt(g);
-			if (b != null)
-				blue = Integer.parseInt(b);
-			rect.setBackgroundColor(new Color(red, green, blue));
-		} else if (value != null) {
-			rect.setBackgroundColor(Markup.decodeColor(value));
-		} else {
-			value = attributes.getProperty(ElementTags.GRAYFILL);
-			if (value != null) {
-				rect.setGrayFill(Float.parseFloat(value + "f"));
-			}
-		}
 	}
 
 	/**
