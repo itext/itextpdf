@@ -237,11 +237,15 @@ class PdfStamperImp extends PdfWriter {
         	PdfStream xmp;
         	try {
         		XmpReader xmpr = new XmpReader(altMetadata);
-        		if (!xmpr.replace("http://ns.adobe.com/pdf/1.3/", "Producer", producer))
+        		if (!(xmpr.replaceNode("http://ns.adobe.com/pdf/1.3/", "Producer", producer)
+        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/pdf/1.3/", "Producer", producer)))
         			xmpr.add("rdf:Description", "http://ns.adobe.com/pdf/1.3/", "pdf:Producer", producer);
-        		if (!xmpr.replace("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate()))
+        		if (!(xmpr.replaceNode("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate())
+        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate())))
         			xmpr.add("rdf:Description", "http://ns.adobe.com/xap/1.0/", "xmp:ModifyDate", date.getW3CDate());
-        		xmpr.replace("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate());
+        		if (!(xmpr.replaceNode("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate())
+        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate()))) {
+        		}
             	xmp = new PdfStream(xmpr.serializeDoc());
         	}
         	catch(SAXException e) {
