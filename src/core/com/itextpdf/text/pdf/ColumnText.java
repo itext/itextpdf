@@ -56,7 +56,6 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.SimpleTable;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 
 /**
@@ -443,13 +442,6 @@ public class ColumnText {
         }
         else if (element.type() == Element.PHRASE) {
         	element = new Paragraph((Phrase)element);
-        }
-        if (element instanceof SimpleTable) {
-        	try {
-				element = ((SimpleTable)element).createPdfPTable();
-			} catch (DocumentException e) {
-				throw new IllegalArgumentException(MessageLocalization.getComposedMessage("element.not.allowed"));
-			}
         }
         else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("element.not.allowed"));
