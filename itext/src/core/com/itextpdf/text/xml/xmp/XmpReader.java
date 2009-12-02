@@ -97,7 +97,7 @@ public class XmpReader {
 	 * @return	true if the content was successfully replaced
 	 * @since	2.1.6 the return type has changed from void to boolean
 	 */
-	public boolean replace(String namespaceURI, String localName, String value) {
+	public boolean replaceNode(String namespaceURI, String localName, String value) {
 		NodeList nodes = domDocument.getElementsByTagNameNS(namespaceURI, localName);
 		Node node;
 		if (nodes.getLength() == 0)
@@ -107,7 +107,32 @@ public class XmpReader {
 			setNodeText(domDocument, node, value);
 		}
 		return true;
-	}    
+	}
+
+	/**
+	 * Replaces the content of an attribute in the description tag.
+	 * @param	namespaceURI	the URI of the namespace
+	 * @param	localName		the tag name
+	 * @param	value			the new content for the tag
+	 * @return	true if the content was successfully replaced
+	 * @since	5.0.0 the return type has changed from void to boolean
+	 */
+	public boolean replaceDescriptionAttribute(String namespaceURI, String localName, String value) {
+		NodeList descNodes = domDocument.getElementsByTagNameNS("http://www.w3.org/1999/02/22-rdf-syntax-ns#","Description");
+		if(descNodes.getLength() == 0) {
+			return false;
+		}
+		Node node;
+		for(int i = 0; i < descNodes.getLength(); i++) {
+			node = descNodes.item(i);
+			Node attr = node.getAttributes().getNamedItemNS(namespaceURI, localName);
+			if(attr != null) {
+				attr.setNodeValue(value);
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * Adds a tag.
