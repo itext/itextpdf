@@ -69,7 +69,6 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.ImgJBIG2;
 import com.itextpdf.text.ImgWMF;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.Table;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
 import com.itextpdf.text.pdf.interfaces.PdfAnnotations;
@@ -3114,30 +3113,6 @@ public class PdfWriter extends DocWriter implements
         return ref.getIndirectReference();
     }
 
-//  [M4] Old table functionality; do we still need it?
-
-    /**
-     * Checks if a <CODE>Table</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
-     *
-     * @param   table   the table that has to be checked
-     * @param   margin  a certain margin
-     * @return  <CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
-     */
-
-    public boolean fitsPage(Table table, float margin) {
-        return pdf.bottom(table) > pdf.indentBottom() + margin;
-    }
-
-    /**
-     * Checks if a <CODE>Table</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
-     *
-     * @param   table  the table that has to be checked
-     * @return  <CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
-     */
-
-    public boolean fitsPage(Table table) {
-        return fitsPage(table, 0);
-    }
 //  [F12] tagged PDF
     /**
      * A flag indicating the presence of structure elements that contain user properties attributes.

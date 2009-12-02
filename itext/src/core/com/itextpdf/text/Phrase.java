@@ -281,7 +281,6 @@ public class Phrase extends ArrayList implements TextElementArray {
             else if (element.type() == Element.PHRASE ||
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
-            element.type() == Element.TABLE || // line added by David Freels
             element.type() == Element.YMARK || 
             element.type() == Element.MARKED) {
                 super.add(index, element);
@@ -334,9 +333,7 @@ public class Phrase extends ArrayList implements TextElementArray {
                 case Element.MARKED:
                 case Element.ANCHOR:
                 case Element.ANNOTATION:
-                case Element.TABLE: // case added by David Freels
                 case Element.PTABLE: // case added by mr. Karen Vardanyan
-                	// This will only work for PDF!!! Not for RTF/HTML
                 case Element.LIST:
                 case Element.YMARK:
                 	return super.add(o);

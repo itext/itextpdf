@@ -46,19 +46,15 @@ package com.itextpdf.text.factories;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.Annotation;
 import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.Cell;
 import com.itextpdf.text.ChapterAutoNumber;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.ElementTags;
-import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.List;
@@ -67,7 +63,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Section;
-import com.itextpdf.text.Table;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.html.Markup;
 
@@ -268,195 +263,6 @@ public class ElementFactory {
 		}
 
 		return list;
-	}
-
-	/**
-	 * Creates a Cell object based on a list of properties.
-	 * @param attributes
-	 * @return a Cell
-	 */
-	public static Cell getCell(Properties attributes) {
-		Cell cell = new Cell();
-		String value;
-
-		cell.setHorizontalAlignment(attributes
-				.getProperty(ElementTags.HORIZONTALALIGN));
-		cell.setVerticalAlignment(attributes
-				.getProperty(ElementTags.VERTICALALIGN));
-
-		value = attributes.getProperty(ElementTags.WIDTH);
-		if (value != null) {
-			cell.setWidth(value);
-		}
-		value = attributes.getProperty(ElementTags.COLSPAN);
-		if (value != null) {
-			cell.setColspan(Integer.parseInt(value));
-		}
-		value = attributes.getProperty(ElementTags.ROWSPAN);
-		if (value != null) {
-			cell.setRowspan(Integer.parseInt(value));
-		}
-		value = attributes.getProperty(ElementTags.LEADING);
-		if (value != null) {
-			cell.setLeading(Float.parseFloat(value + "f"));
-		}
-		cell.setHeader(Utilities.checkTrueOrFalse(attributes,
-				ElementTags.HEADER));
-		if (Utilities.checkTrueOrFalse(attributes, ElementTags.NOWRAP)) {
-			cell.setMaxLines(1);
-		}
-		setRectangleProperties(cell, attributes);
-		return cell;
-	}
-
-	/**
-	 * Creates an Table object based on a list of properties.
-	 * @param attributes
-	 * @return a Table
-	 */
-	public static Table getTable(Properties attributes) {
-		String value;
-		Table table;
-		try {
-
-			value = attributes.getProperty(ElementTags.WIDTHS);
-			if (value != null) {
-				StringTokenizer widthTokens = new StringTokenizer(value, ";");
-				ArrayList values = new ArrayList();
-				while (widthTokens.hasMoreTokens()) {
-					values.add(widthTokens.nextToken());
-				}
-				table = new Table(values.size());
-				float[] widths = new float[table.getColumns()];
-				for (int i = 0; i < values.size(); i++) {
-					value = (String) values.get(i);
-					widths[i] = Float.parseFloat(value + "f");
-				}
-				table.setWidths(widths);
-			} else {
-				value = attributes.getProperty(ElementTags.COLUMNS);
-				try {
-					table = new Table(Integer.parseInt(value));
-				} catch (Exception e) {
-					table = new Table(1);
-				}
-			}
-
-			table.setBorder(Table.BOX);
-			table.setBorderWidth(1);
-			table.getDefaultCell().setBorder(Table.BOX);
-
-			value = attributes.getProperty(ElementTags.LASTHEADERROW);
-			if (value != null) {
-				table.setLastHeaderRow(Integer.parseInt(value));
-			}
-			value = attributes.getProperty(ElementTags.ALIGN);
-			if (value != null) {
-				table.setAlignment(value);
-			}
-			value = attributes.getProperty(ElementTags.CELLSPACING);
-			if (value != null) {
-				table.setSpacing(Float.parseFloat(value + "f"));
-			}
-			value = attributes.getProperty(ElementTags.CELLPADDING);
-			if (value != null) {
-				table.setPadding(Float.parseFloat(value + "f"));
-			}
-			value = attributes.getProperty(ElementTags.OFFSET);
-			if (value != null) {
-				table.setOffset(Float.parseFloat(value + "f"));
-			}
-			value = attributes.getProperty(ElementTags.WIDTH);
-			if (value != null) {
-				if (value.endsWith("%"))
-					table.setWidth(Float.parseFloat(value.substring(0, value
-							.length() - 1)
-							+ "f"));
-				else {
-					table.setWidth(Float.parseFloat(value + "f"));
-					table.setLocked(true);
-				}
-			}
-			table.setTableFitsPage(Utilities.checkTrueOrFalse(attributes,
-					ElementTags.TABLEFITSPAGE));
-			table.setCellsFitPage(Utilities.checkTrueOrFalse(attributes,
-					ElementTags.CELLSFITPAGE));
-			table.setConvert2pdfptable(Utilities.checkTrueOrFalse(attributes,
-					ElementTags.CONVERT2PDFP));
-
-			setRectangleProperties(table, attributes);
-			return table;
-		} catch (BadElementException e) {
-			throw new ExceptionConverter(e);
-		}
-	}
-
-	/**
-	 * Sets some Rectangle properties (for a Cell, Table,...).
-	 */
-	private static void setRectangleProperties(Rectangle rect,
-			Properties attributes) {
-		String value;
-		value = attributes.getProperty(ElementTags.BORDERWIDTH);
-		if (value != null) {
-			rect.setBorderWidth(Float.parseFloat(value + "f"));
-		}
-		int border = 0;
-		if (Utilities.checkTrueOrFalse(attributes, ElementTags.LEFT)) {
-			border |= Rectangle.LEFT;
-		}
-		if (Utilities.checkTrueOrFalse(attributes, ElementTags.RIGHT)) {
-			border |= Rectangle.RIGHT;
-		}
-		if (Utilities.checkTrueOrFalse(attributes, ElementTags.TOP)) {
-			border |= Rectangle.TOP;
-		}
-		if (Utilities.checkTrueOrFalse(attributes, ElementTags.BOTTOM)) {
-			border |= Rectangle.BOTTOM;
-		}
-		rect.setBorder(border);
-
-		String r = attributes.getProperty(ElementTags.RED);
-		String g = attributes.getProperty(ElementTags.GREEN);
-		String b = attributes.getProperty(ElementTags.BLUE);
-		if (r != null || g != null || b != null) {
-			int red = 0;
-			int green = 0;
-			int blue = 0;
-			if (r != null)
-				red = Integer.parseInt(r);
-			if (g != null)
-				green = Integer.parseInt(g);
-			if (b != null)
-				blue = Integer.parseInt(b);
-			rect.setBorderColor(new Color(red, green, blue));
-		} else {
-			rect.setBorderColor(Markup.decodeColor(attributes
-					.getProperty(ElementTags.BORDERCOLOR)));
-		}
-		r = (String) attributes.remove(ElementTags.BGRED);
-		g = (String) attributes.remove(ElementTags.BGGREEN);
-		b = (String) attributes.remove(ElementTags.BGBLUE);
-		value = attributes.getProperty(ElementTags.BACKGROUNDCOLOR);
-		if (r != null || g != null || b != null) {
-			int red = 0;
-			int green = 0;
-			int blue = 0;
-			if (r != null)
-				red = Integer.parseInt(r);
-			if (g != null)
-				green = Integer.parseInt(g);
-			if (b != null)
-				blue = Integer.parseInt(b);
-			rect.setBackgroundColor(new Color(red, green, blue));
-		} else if (value != null) {
-			rect.setBackgroundColor(Markup.decodeColor(value));
-		} else {
-			value = attributes.getProperty(ElementTags.GRAYFILL);
-			if (value != null) {
-				rect.setGrayFill(Float.parseFloat(value + "f"));
-			}
-		}
 	}
 
 	/**

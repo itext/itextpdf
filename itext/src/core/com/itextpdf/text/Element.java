@@ -134,15 +134,6 @@ public interface Element {
 	// static membervariables (tables)
 
 	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int CELL = 20;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int ROW = 21;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int TABLE = 22;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
 	public static final int PTABLE = 23;
 
 	// static membervariables (annotations)
