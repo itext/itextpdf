@@ -149,7 +149,7 @@ public class AcroFields {
         }
         fill();
     }
-
+    
     void fill() {
         fields = new HashMap();
         PdfDictionary top = (PdfDictionary)PdfReader.getPdfObjectRelease(reader.getCatalog().get(PdfName.ACROFORM));
@@ -249,7 +249,7 @@ public class AcroFields {
             item.addTabOrder(-1);
         }
     }
-
+    
     /**
      * Gets the list of appearance names. Use it to get the names allowed
      * with radio and checkbox fields. If the /Opt key exists the values will
@@ -2484,6 +2484,21 @@ public class AcroFields {
      */
     public XfaForm getXfa() {
         return xfa;
+    }
+
+    /**
+     * Removes the XFA stream from the document.
+     */
+    public void removeXfa() {
+		PdfDictionary root = reader.getCatalog();
+		PdfDictionary acroform = root.getAsDict(PdfName.ACROFORM);
+		acroform.remove(PdfName.XFA);
+		try {
+			xfa = new XfaForm(reader);
+		}
+		catch(Exception e) {
+            throw new ExceptionConverter(e);
+		}
     }
 
     private static final PdfName[] buttonRemove = {PdfName.MK, PdfName.F , PdfName.FF , PdfName.Q , PdfName.BS , PdfName.BORDER};
