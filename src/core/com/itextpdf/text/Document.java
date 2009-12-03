@@ -105,7 +105,7 @@ public class Document implements DocListener {
      */
 	private static final String RELEASE = "5.0.0_SNAPSHOT";
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " by 1T3XT";
+	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " (c) 1T3XT BVBA";
     
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging

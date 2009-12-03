@@ -91,6 +91,7 @@ public class PdfICCBased extends PdfStream {
             }
             put(PdfName.N, new PdfNumber(numberOfComponents));
             bytes = profile.getData();
+            put(PdfName.LENGTH, new PdfNumber(bytes.length));
             flateCompress(compressionLevel);
         } catch (Exception e) {
             throw new ExceptionConverter(e);
