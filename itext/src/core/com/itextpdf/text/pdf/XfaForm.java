@@ -65,6 +65,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.xml.XmlDomWriter;
 
 /**
@@ -1100,20 +1101,27 @@ public class XfaForm {
         return datasetsNode;
     }
     
-    public void fillXfaForm(File file) throws ParserConfigurationException, SAXException, IOException {
+    public void fillXfaForm(File file) throws IOException {
 		fillXfaForm(new FileInputStream(file));
     }
     
-    public void fillXfaForm(InputStream is) throws ParserConfigurationException, SAXException, IOException {
+    public void fillXfaForm(InputStream is) throws IOException {
     	fillXfaForm(new InputSource(is));
     }
 		
     
-    public void fillXfaForm(InputSource is) throws ParserConfigurationException, SAXException, IOException {
+    public void fillXfaForm(InputSource is) throws IOException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    	DocumentBuilder db = dbf.newDocumentBuilder();        		
-    	Document newdoc = db.parse(is);
-    	fillXfaForm(newdoc.getDocumentElement());
+    	DocumentBuilder db;
+		try {
+			db = dbf.newDocumentBuilder();
+	    	Document newdoc = db.parse(is);
+	    	fillXfaForm(newdoc.getDocumentElement());
+		} catch (ParserConfigurationException e) {
+			throw new ExceptionConverter(e);
+		} catch (SAXException e) {
+			throw new ExceptionConverter(e);
+		} 
     }
     
     /**
