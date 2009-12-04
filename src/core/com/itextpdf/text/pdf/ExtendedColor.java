@@ -86,8 +86,20 @@ public abstract class ExtendedColor extends Color{
         super(normalize(red), normalize(green), normalize(blue));
         this.type = type;
     }
-    
     /**
+     * Constructs an extended color of a certain type and a certain color.
+     * @param type
+     * @param red
+     * @param green
+     * @param blue
+     * @param alpha
+     */
+    public ExtendedColor(int type, int red, int green, int blue, int alpha) {
+    	super(normalize((float)red / 0xFF), normalize((float)green / 0xFF), normalize((float)blue / 0xFF), normalize((float)alpha / 0xFF));
+		this.type = type;
+	}
+
+	/**
      * Gets the type of this color.
      * @return one of the types (see constants)
      */
