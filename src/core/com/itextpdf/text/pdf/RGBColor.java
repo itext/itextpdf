@@ -43,23 +43,21 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
-
 public class RGBColor extends ExtendedColor {
 
 	public static final RGBColor WHITE = new RGBColor(0xFF, 0xFF, 0xFF);
 	public static final RGBColor BLACK = new RGBColor(0x00, 0x00, 0x00);
-    public final static RGBColor LIGHT_GRAY = new RGBColor(192, 192, 192);
-    public final static RGBColor GRAY = new RGBColor(128, 128, 128);
-    public final static RGBColor DARK_GRAY  = new RGBColor(64, 64, 64);
-    public final static RGBColor RED = new RGBColor(0xFF, 0, 0);
-    public final static RGBColor PINK = new RGBColor(255, 175, 175);
-    public final static RGBColor ORANGE = new RGBColor(255, 200, 0);
-    public final static RGBColor YELLOW = new RGBColor(0xFF, 0xFF, 0);
-    public final static RGBColor GREEN	= new RGBColor(0, 0xFF, 0);
-    public final static RGBColor MAGENTA = new RGBColor(0xFF, 0, 0xFF);
-    public final static RGBColor CYAN = new RGBColor(0, 0xFF, 0xFF);
-    public final static RGBColor BLUE 	= new RGBColor(0, 0, 0xFF);
+    public final static RGBColor LIGHT_GRAY = new RGBColor(0xC0, 0xC0, 0xC0);
+    public final static RGBColor GRAY = new RGBColor(0x80, 0x80, 0x80);
+    public final static RGBColor DARK_GRAY  = new RGBColor(0x40, 0x40, 0x40);
+    public final static RGBColor RED = new RGBColor(0xFF, 0x00, 0x00);
+    public final static RGBColor PINK = new RGBColor(0xFF, 0xAF, 0xAF);
+    public final static RGBColor ORANGE = new RGBColor(0xFF, 0xC8, 0x00);
+    public final static RGBColor YELLOW = new RGBColor(0xFF, 0xFF, 0x00);
+    public final static RGBColor GREEN	= new RGBColor(0x00, 0xFF, 0x00);
+    public final static RGBColor MAGENTA = new RGBColor(0xFF, 0x00, 0xFF);
+    public final static RGBColor CYAN = new RGBColor(0x00, 0xFF, 0xFF);
+    public final static RGBColor BLUE 	= new RGBColor(0x00, 0x00, 0xFF);
 	
 	/**
 	 * Serial version UID
