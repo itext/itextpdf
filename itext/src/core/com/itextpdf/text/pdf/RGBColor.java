@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: CMYKColor.java 4113 2009-12-01 11:08:59Z blowagie $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -43,86 +43,49 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
-/**
- *
- * @author  Paulo Soares (psoares@consiste.pt)
- */
-public abstract class ExtendedColor extends Color{
+public class RGBColor extends ExtendedColor {
+
+	public static final RGBColor WHITE = new RGBColor(0xFF, 0xFF, 0xFF);
+	public static final RGBColor BLACK = new RGBColor(0x00, 0x00, 0x00);
+    public final static RGBColor LIGHT_GRAY = new RGBColor(0xC0, 0xC0, 0xC0);
+    public final static RGBColor GRAY = new RGBColor(0x80, 0x80, 0x80);
+    public final static RGBColor DARK_GRAY  = new RGBColor(0x40, 0x40, 0x40);
+    public final static RGBColor RED = new RGBColor(0xFF, 0x00, 0x00);
+    public final static RGBColor PINK = new RGBColor(0xFF, 0xAF, 0xAF);
+    public final static RGBColor ORANGE = new RGBColor(0xFF, 0xC8, 0x00);
+    public final static RGBColor YELLOW = new RGBColor(0xFF, 0xFF, 0x00);
+    public final static RGBColor GREEN	= new RGBColor(0x00, 0xFF, 0x00);
+    public final static RGBColor MAGENTA = new RGBColor(0xFF, 0x00, 0xFF);
+    public final static RGBColor CYAN = new RGBColor(0x00, 0xFF, 0xFF);
+    public final static RGBColor BLUE 	= new RGBColor(0x00, 0x00, 0xFF);
+	
+	/**
+	 * Serial version UID
+	 */
+	private static final long serialVersionUID = 2147468179887232813L;
     
-	private static final long serialVersionUID = 2722660170712380080L;
-	/** a type of extended color. */
-    public static final int TYPE_RGB = 0;
-    /** a type of extended color. */
-    public static final int TYPE_GRAY = 1;
-    /** a type of extended color. */
-    public static final int TYPE_CMYK = 2;
-    /** a type of extended color. */
-    public static final int TYPE_SEPARATION = 3;
-    /** a type of extended color. */
-    public static final int TYPE_PATTERN = 4;
-    /** a type of extended color. */
-    public static final int TYPE_SHADING = 5;
-    
-    protected int type;
+    /**
+     * Constructs an extended color of type RGB using int values
+     * @param red
+     * @param green
+     * @param blue
+     */
+    public RGBColor(int red, int green, int blue) {
+    	super(TYPE_RGB, (float)red / 0xFF,  (float)green / 0xFF, (float)blue / 0xFF);
+    }
 
     /**
-     * Constructs an extended color of a certain type.
-     * @param type
-     */
-    public ExtendedColor(int type) {
-        super(0, 0, 0);
-        this.type = type;
-    }
-    
-    /**
-     * Constructs an extended color of a certain type and a certain color.
-     * @param type
+     * Constructs an extended color of type RGB using floatvalues
      * @param red
      * @param green
      * @param blue
      */
-    public ExtendedColor(int type, float red, float green, float blue) {
-        super(normalize(red), normalize(green), normalize(blue));
-        this.type = type;
-    }
-    /**
-     * Constructs an extended color of a certain type and a certain color.
-     * @param type
-     * @param red
-     * @param green
-     * @param blue
-     * @param alpha
-     */
-    public ExtendedColor(int type, int red, int green, int blue, int alpha) {
-    	super(normalize((float)red / 0xFF), normalize((float)green / 0xFF), normalize((float)blue / 0xFF), normalize((float)alpha / 0xFF));
-		this.type = type;
+	public RGBColor(float red, float green, float blue) {
+    	super(TYPE_RGB, red,  green, blue);
 	}
 
-	/**
-     * Gets the type of this color.
-     * @return one of the types (see constants)
-     */
-    public int getType() {
-        return type;
-    }
-    
-    /**
-     * Gets the type of a given color.
-     * @param color
-     * @return one of the types (see constants)
-     */
-    public static int getType(Color color) {
-        if (color instanceof ExtendedColor)
-            return ((ExtendedColor)color).getType();
-        return TYPE_RGB;
-    }
+	public RGBColor(int red, int green, int blue, int alpha) {
+		super(TYPE_RGB, red, green, blue, alpha);
+	}
 
-    static final float normalize(float value) {
-        if (value < 0)
-            return 0;
-        if (value > 1)
-            return 1;
-        return value;
-    }
 }

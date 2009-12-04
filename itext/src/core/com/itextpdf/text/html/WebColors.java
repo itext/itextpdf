@@ -43,10 +43,10 @@
  */
 package com.itextpdf.text.html;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.RGBColor;
 
 /**
  * This class is a HashMap that contains the names of colors as a key and the
@@ -214,7 +214,7 @@ public class WebColors extends HashMap {
 	 * @throws IllegalArgumentException
 	 *             if the String isn't a know representation of a color.
 	 */
-	public static Color getRGBColor(String name)
+	public static RGBColor getRGBColor(String name)
 			throws IllegalArgumentException {
 		int[] c = { 0, 0, 0, 0 };
 		if (name.startsWith("#")) {
@@ -222,13 +222,13 @@ public class WebColors extends HashMap {
 				c[0] = Integer.parseInt(name.substring(1, 2), 16) * 16;
 				c[1] = Integer.parseInt(name.substring(2, 3), 16) * 16;
 				c[2] = Integer.parseInt(name.substring(3), 16) * 16;
-				return new Color(c[0], c[1], c[2], c[3]);
+				return new RGBColor(c[0], c[1], c[2], c[3]);
 			}
 			if (name.length() == 7) {
 				c[0] = Integer.parseInt(name.substring(1, 3), 16);
 				c[1] = Integer.parseInt(name.substring(3, 5), 16);
 				c[2] = Integer.parseInt(name.substring(5), 16);
-				return new Color(c[0], c[1], c[2], c[3]);
+				return new RGBColor(c[0], c[1], c[2], c[3]);
 			}
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("unknown.color.format.must.be.rgb.or.rrggbb"));
 		}
@@ -245,13 +245,13 @@ public class WebColors extends HashMap {
                 else if (c[k] > 255)
                     c[k] = 255;
             }
-            return new Color(c[0], c[1], c[2], c[3]);
+            return new RGBColor(c[0], c[1], c[2], c[3]);
         }
 		name = name.toLowerCase();
 		if (!NAMES.containsKey(name))
 			throw new IllegalArgumentException("Color '" + name
 					+ "' not found.");
 		c = (int[]) NAMES.get(name);
-		return new Color(c[0], c[1], c[2], c[3]);
+		return new RGBColor(c[0], c[1], c[2], c[3]);
 	}
 }
