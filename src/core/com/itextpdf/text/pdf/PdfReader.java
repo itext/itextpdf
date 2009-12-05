@@ -77,7 +77,7 @@ import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.RecipientInformation;
 
 /** Reads a PDF document.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  * @author Kazuya Ujihara
  */
 public class PdfReader implements PdfViewerPreferences {

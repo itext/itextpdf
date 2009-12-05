@@ -110,7 +110,7 @@ import com.itextpdf.text.pdf.PdfString;
  * <p>
  * It is based in the JAI codec.
  *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 public class BmpImage {
     

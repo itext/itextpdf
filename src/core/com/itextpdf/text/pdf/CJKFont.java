@@ -57,7 +57,7 @@ import com.itextpdf.text.DocumentException;
 /**
  * Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
  *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 
 class CJKFont extends BaseFont {

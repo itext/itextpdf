@@ -46,7 +46,7 @@ package com.itextpdf.text.pdf.fonts;
 /**
  * A class to facilitate the loading of resources
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class FontsResourceAnchor {
     

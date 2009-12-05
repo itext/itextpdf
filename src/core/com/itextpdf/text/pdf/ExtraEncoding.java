@@ -46,7 +46,7 @@ package com.itextpdf.text.pdf;
 /**
  * Classes implementing this interface can create custom encodings or
  * replace existing ones. It is used in the context of <code>PdfEncoding</code>.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public interface ExtraEncoding {
     

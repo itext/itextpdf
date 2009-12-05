@@ -66,7 +66,7 @@ import com.itextpdf.text.Rectangle;
  *code = "";
  * </pre>
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class BarcodeEAN extends Barcode{
         

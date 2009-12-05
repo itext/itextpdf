@@ -57,7 +57,7 @@ import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
  * Concatenates PDF documents including form fields. The rules for the form field
  * concatenation are the same as in Acrobat. All the documents are kept in memory unlike
  * PdfCopy.
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 public class PdfCopyFields
 	implements PdfViewerPreferences, PdfEncryptionSettings {

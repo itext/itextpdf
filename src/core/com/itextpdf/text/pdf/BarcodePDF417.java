@@ -57,7 +57,7 @@ import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
  * and variable sizes, automatic and manual error levels, raw codeword input,
  * codeword size optimization and bitmap inversion. The output can
  * be a CCITT G4 <CODE>Image</CODE> or a raw bitmap.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class BarcodePDF417 {
 

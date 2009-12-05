@@ -50,7 +50,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.DocumentException;
 /** Enumerates all the fonts inside a True Type Collection.
  *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 class EnumerateTTC extends TrueTypeFont{
 

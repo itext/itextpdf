@@ -50,7 +50,7 @@ import java.util.Iterator;
 
 /**
  * The structure tree root corresponds to the highest hierarchy level in a tagged PDF.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfStructureTreeRoot extends PdfDictionary {
     

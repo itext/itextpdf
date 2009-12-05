@@ -117,7 +117,7 @@ import com.itextpdf.text.pdf.PdfString;
  * <p>
  * It is based in part in the JAI codec.
  *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 public class PngImage {
 /** Some PNG specific values. */

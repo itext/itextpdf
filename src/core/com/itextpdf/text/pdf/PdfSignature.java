@@ -45,7 +45,7 @@ package com.itextpdf.text.pdf;
 
 /** Implements the signature dictionary.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfSignature extends PdfDictionary {
 

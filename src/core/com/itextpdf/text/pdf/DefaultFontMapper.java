@@ -49,7 +49,7 @@ import java.util.HashMap;
 
 import com.itextpdf.text.ExceptionConverter;
 /** Default class to map awt fonts to BaseFont.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 
 public class DefaultFontMapper implements FontMapper {

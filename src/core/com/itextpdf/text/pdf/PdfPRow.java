@@ -54,7 +54,7 @@ import com.itextpdf.text.Rectangle;
 /**
  * A row in a PdfPTable.
  * 
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfPRow {
 

@@ -50,7 +50,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * Instance of PdfReader in each output document.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 class PdfReaderInstance {
     static final PdfLiteral IDENTITYMATRIX = new PdfLiteral("[1 0 0 1 0 0]");

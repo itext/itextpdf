@@ -49,7 +49,7 @@ package com.itextpdf.text.pdf;
  * a list of all the optional content groups in the document, as well as information
  * about the default and alternate configurations for optional content.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfOCProperties extends PdfDictionary {
     

@@ -55,7 +55,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
 
 /** Common field variables.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public abstract class BaseField {
     

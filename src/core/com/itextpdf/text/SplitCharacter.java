@@ -47,7 +47,7 @@ import com.itextpdf.text.pdf.PdfChunk;
 
 /** Interface for customizing the split character.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 
 public interface SplitCharacter {

@@ -68,7 +68,7 @@ import com.itextpdf.text.pdf.codec.Base64;
  * Query and change fields in existing documents either by method
  * calls or by FDF merging.
  * 
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class AcroFields {
 

@@ -48,7 +48,7 @@ import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 public class PRTokeniser {
     

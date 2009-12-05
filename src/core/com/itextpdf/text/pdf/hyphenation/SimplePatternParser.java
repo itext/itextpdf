@@ -56,7 +56,7 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 
 /** Parses the xml hyphenation pattern.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class SimplePatternParser implements SimpleXMLDocHandler,
 		PatternConsumer {

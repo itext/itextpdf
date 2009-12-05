@@ -57,7 +57,7 @@ import com.itextpdf.text.Rectangle;
  *n = 8; // horizontal distance between the two barcodes
  * </pre>
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class BarcodeEANSUPP extends Barcode{
     

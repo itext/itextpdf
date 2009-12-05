@@ -51,7 +51,7 @@ import com.itextpdf.text.Rectangle;
  *<p>
  * Note: do not use Document.add() inside a page event.
  *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 
 public interface PdfPageEvent {

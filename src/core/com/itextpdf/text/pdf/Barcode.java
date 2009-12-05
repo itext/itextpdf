@@ -51,7 +51,7 @@ import com.itextpdf.text.Rectangle;
 /** Base class containing properties and methods common to all
  * barcode types.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public abstract class Barcode {
     /** A type of barcode */

@@ -64,7 +64,7 @@ import com.itextpdf.text.pdf.PdfString;
 
 /** Reads gif images of all types. All the images in a gif are read in the constructors
  * and can be retrieved with other methods.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class GifImage {
     

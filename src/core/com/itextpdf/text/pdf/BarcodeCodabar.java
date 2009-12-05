@@ -67,7 +67,7 @@ import com.itextpdf.text.Rectangle;
  *startStopText = false;
  * </pre>
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class BarcodeCodabar extends Barcode{
 

@@ -50,7 +50,7 @@ import com.itextpdf.text.Image;
 
 /** Represents an imported page.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfImportedPage extends com.itextpdf.text.pdf.PdfTemplate {
 

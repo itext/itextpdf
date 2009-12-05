@@ -50,7 +50,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * that can be made visible or invisible dynamically by users of viewer applications.
  * In iText they are referenced as layers.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfLayer extends PdfDictionary implements PdfOCG {
     protected PdfIndirectReference ref;

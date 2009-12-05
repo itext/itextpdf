@@ -53,7 +53,7 @@ import com.itextpdf.text.Utilities;
  * Each font in the document will have an instance of this class
  * where the characters used will be represented.
  *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 class FontDetails {
     

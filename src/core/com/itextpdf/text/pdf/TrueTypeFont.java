@@ -57,7 +57,7 @@ import com.itextpdf.text.ExceptionConverter;
 
 /** Reads a Truetype font
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 class TrueTypeFont extends BaseFont {
 

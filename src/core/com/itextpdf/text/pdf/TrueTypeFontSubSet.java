@@ -55,7 +55,7 @@ import com.itextpdf.text.ExceptionConverter;
 /** Subsets a True Type font by removing the unneeded glyphs from
  * the font.
  *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 class TrueTypeFontSubSet {
     static final String tableNamesSimple[] = {"cvt ", "fpgm", "glyf", "head",

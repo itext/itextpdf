@@ -63,7 +63,7 @@ import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
  * <P>
  * A PdfPTableEvent can be associated to the table to do custom drawing
  * when the table is rendered.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 
 public class PdfPTable implements LargeElement{

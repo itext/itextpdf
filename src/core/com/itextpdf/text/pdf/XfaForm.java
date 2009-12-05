@@ -70,7 +70,7 @@ import com.itextpdf.text.xml.XmlDomWriter;
 
 /**
  * Processes XFA forms.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class XfaForm {
 

@@ -76,7 +76,7 @@ import com.itextpdf.text.Rectangle;
  * writer.addAnnotation(ff);
  * document.close();
  * </PRE>
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PushbuttonField extends BaseField {
    

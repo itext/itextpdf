@@ -48,7 +48,7 @@ import java.io.IOException;
 import com.itextpdf.text.error_messages.MessageLocalization;
 /** Implements the shading dictionary (or stream).
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfShading {
 

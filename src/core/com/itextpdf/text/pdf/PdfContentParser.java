@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * Parses the page or template content.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfContentParser {
     
