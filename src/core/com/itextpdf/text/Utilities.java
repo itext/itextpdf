@@ -44,6 +44,7 @@
 package com.itextpdf.text;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -334,4 +335,27 @@ public class Utilities {
         codePoint -= 0x10000;
         return new String(new char[]{(char)((codePoint / 0x400) + 0xd800), (char)((codePoint % 0x400) + 0xdc00)});
     }
+    
+    /**
+     * Reads the contents of a file to a String.
+     * @param	path	the path to the file
+     * @return	a String with the contents of the file
+     * @since	iText 5.0.0
+     */
+	public static String readFileToString(String path) throws IOException {
+		return readFileToString(new File(path));
+	}
+    
+    /**
+     * Reads the contents of a file to a String.
+     * @param	file	a file
+     * @return	a String with the contents of the file
+     * @since	iText 5.0.0
+     */
+	public static String readFileToString(File file) throws IOException {
+		byte[] jsBytes = new byte[(int) file.length()];
+	    FileInputStream f = new FileInputStream(file);
+	    f.read(jsBytes);
+	    return new String(jsBytes);
+	}
 }
