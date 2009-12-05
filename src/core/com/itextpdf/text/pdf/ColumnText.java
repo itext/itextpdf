@@ -443,7 +443,7 @@ public class ColumnText {
         else if (element.type() == Element.PHRASE) {
         	element = new Paragraph((Phrase)element);
         }
-        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK)
+        if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("element.not.allowed"));
         if (!composite) {
             composite = true;
