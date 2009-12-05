@@ -56,7 +56,7 @@ import com.itextpdf.text.Utilities;
  * in the font can be used directly by using the encoding Identity-H or
  * Identity-V. This is the only way to represent some character sets such
  * as Thai.
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
     

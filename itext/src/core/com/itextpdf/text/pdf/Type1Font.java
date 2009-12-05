@@ -56,7 +56,7 @@ import com.itextpdf.text.pdf.fonts.FontsResourceAnchor;
 
 /** Reads a Type1 font
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 class Type1Font extends BaseFont
 {

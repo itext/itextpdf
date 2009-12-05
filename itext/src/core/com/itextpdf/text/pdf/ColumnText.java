@@ -80,7 +80,7 @@ import com.itextpdf.text.pdf.draw.DrawInterface;
  * Full bidirectional reordering is supported. If the run direction is
  * <CODE>PdfWriter.RUN_DIRECTION_RTL</CODE> the meaning of the horizontal
  * alignments and margins is mirrored.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 
 public class ColumnText {

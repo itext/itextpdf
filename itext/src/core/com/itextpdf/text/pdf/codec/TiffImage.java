@@ -61,7 +61,7 @@ import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /** Reads TIFF images
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class TiffImage {
     

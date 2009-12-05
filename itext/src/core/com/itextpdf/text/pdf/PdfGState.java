@@ -45,7 +45,7 @@ package com.itextpdf.text.pdf;
 
 /** The graphic state dictionary.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfGState extends PdfDictionary {
     /** A possible blend mode */

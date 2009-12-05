@@ -48,7 +48,7 @@ package com.itextpdf.text.pdf;
  * Pango ( see http://www.pango.com/ ). Note that the code of this class is
  * the original work of Paulo Soares.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class ArabicLigaturizer {
     

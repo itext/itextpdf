@@ -59,7 +59,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 /** An implementation of a RandomAccessFile for input only
  * that accepts a file or a byte array as data source.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class RandomAccessFileOrArray implements DataInput {
     

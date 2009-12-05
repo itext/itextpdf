@@ -57,7 +57,7 @@ import com.itextpdf.text.Utilities;
  * <p>
  * The built in fonts "Symbol" and "ZapfDingbats", if used, have a special encoding
  * to allow the characters to be referred by Unicode.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class FontSelector {
     

@@ -68,7 +68,7 @@ import com.itextpdf.text.Rectangle;
  *checksumText = false;
  * </pre>
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class BarcodeInter25 extends Barcode{
 

@@ -54,7 +54,7 @@ import java.util.Arrays;
 
 /** Page labels are used to identify each
  * page visually on the screen or in print.
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 public class PdfPageLabels {
 

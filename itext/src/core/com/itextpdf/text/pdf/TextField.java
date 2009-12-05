@@ -57,7 +57,7 @@ import com.itextpdf.text.Rectangle;
 /**
  * Supports text, combo and list fields generating the correct appearances.
  * All the option in the Acrobat GUI are supported in an easy to use API.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class TextField extends BaseField {
     

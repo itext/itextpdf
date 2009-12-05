@@ -68,7 +68,7 @@ import com.itextpdf.text.Rectangle;
  *extended = false;
  * </pre>
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class Barcode39 extends Barcode{
 

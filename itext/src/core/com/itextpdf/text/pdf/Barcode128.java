@@ -71,7 +71,7 @@ import com.itextpdf.text.Rectangle;
  * textAlignment = Element.ALIGN_CENTER;
  * codeType = CODE128;
  * </pre>
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class Barcode128 extends Barcode{
 

@@ -47,7 +47,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 /** Reads an FDF form and makes the fields available
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class FdfReader extends PdfReader {
     

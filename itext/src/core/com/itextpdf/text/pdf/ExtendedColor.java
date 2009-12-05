@@ -46,7 +46,7 @@ package com.itextpdf.text.pdf;
 import java.awt.Color;
 /**
  *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 public abstract class ExtendedColor extends Color{
     

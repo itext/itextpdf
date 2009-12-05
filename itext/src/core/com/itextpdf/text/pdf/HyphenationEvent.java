@@ -45,7 +45,7 @@ package com.itextpdf.text.pdf;
 
 /** Called by <code>Chunk</code> to hyphenate a word.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public interface HyphenationEvent {
 

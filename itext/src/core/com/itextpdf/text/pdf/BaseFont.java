@@ -55,7 +55,7 @@ import com.itextpdf.text.DocumentException;
 /**
  * Base class for the several font types supported
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 
 public abstract class BaseFont {

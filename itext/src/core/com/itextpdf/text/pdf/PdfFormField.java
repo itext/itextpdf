@@ -49,7 +49,7 @@ import com.itextpdf.text.Rectangle;
 
 /** Implements form fields.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfFormField extends PdfAnnotation {
 

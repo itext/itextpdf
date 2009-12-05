@@ -100,7 +100,7 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
  * <ul>
  * <li>"File" - "the_file_to_open_or_execute"
  * </ul>
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public final class SimpleBookmark implements SimpleXMLDocHandler {
     

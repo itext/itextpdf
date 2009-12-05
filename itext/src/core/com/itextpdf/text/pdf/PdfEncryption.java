@@ -56,7 +56,7 @@ import com.itextpdf.text.ExceptionConverter;
 
 /**
  * 
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  * @author Kazuya Ujihara
  */
 public class PdfEncryption {

@@ -46,7 +46,7 @@ package com.itextpdf.text.pdf;
 /**
  * The interface common to all layer types.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public interface PdfOCG {
 

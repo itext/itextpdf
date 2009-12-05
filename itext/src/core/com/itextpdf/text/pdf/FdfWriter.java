@@ -54,7 +54,7 @@ import java.util.StringTokenizer;
 import com.itextpdf.text.DocWriter;
 
 /** Writes an FDF form.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class FdfWriter {
     private static final byte[] HEADER_FDF = DocWriter.getISOBytes("%FDF-1.2\n%\u00e2\u00e3\u00cf\u00d3\n");

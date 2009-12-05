@@ -52,7 +52,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 
 /**
  * Creates an AES Cipher with CBC and padding PKCS5/7.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class AESCipher {
     private PaddedBufferedBlockCipher bp;

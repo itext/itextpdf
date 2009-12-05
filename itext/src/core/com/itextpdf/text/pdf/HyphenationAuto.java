@@ -50,7 +50,7 @@ import com.itextpdf.text.pdf.hyphenation.Hyphenator;
  * The hyphenator engine was taken from FOP and uses the TEX patterns. If a language
  * is not provided and a TEX pattern for it exists, it can be easily adapted.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class HyphenationAuto implements HyphenationEvent {
 

@@ -50,7 +50,7 @@ import com.itextpdf.text.Utilities;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class BidiLine {
 	

@@ -45,7 +45,7 @@ package com.itextpdf.text.pdf;
 
 /** Implements a shading pattern as a <code>Color</code>.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class ShadingColor extends ExtendedColor {
 

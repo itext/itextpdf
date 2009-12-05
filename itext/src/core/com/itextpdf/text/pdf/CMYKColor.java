@@ -45,7 +45,7 @@ package com.itextpdf.text.pdf;
 
 /**
  *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * @author  Paulo Soares
  */
 public class CMYKColor extends ExtendedColor {
 

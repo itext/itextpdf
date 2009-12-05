@@ -49,7 +49,7 @@ import java.util.HashMap;
 
 /**
  * Creates a name tree.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfNameTree {
     

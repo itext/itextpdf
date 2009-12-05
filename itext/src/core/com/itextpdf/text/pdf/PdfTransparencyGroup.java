@@ -45,7 +45,7 @@ package com.itextpdf.text.pdf;
 
 /** The transparency group dictionary.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfTransparencyGroup extends PdfDictionary {
     

@@ -62,7 +62,7 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 
 /**
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public final class SimpleNamedDestination implements SimpleXMLDocHandler {
     

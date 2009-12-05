@@ -71,7 +71,7 @@ import java.security.cert.Certificate;
  * <p>
  * It is also possible to change the field values and to
  * flatten them. New fields can be added but not flattened.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfStamper
 	implements PdfViewerPreferences, PdfEncryptionSettings {

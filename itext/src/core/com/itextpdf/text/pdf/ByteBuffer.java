@@ -55,7 +55,7 @@ import com.itextpdf.text.DocWriter;
 /**
  * Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
  * Floating point is converted to a format suitable to the PDF.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 
 public class ByteBuffer extends OutputStream {

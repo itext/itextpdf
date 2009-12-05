@@ -48,7 +48,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * This is a node in a document logical structure. It may contain a mark point or it may contain
  * other nodes.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfStructureElement extends PdfDictionary {
     

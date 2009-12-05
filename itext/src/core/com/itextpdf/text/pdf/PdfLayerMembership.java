@@ -53,7 +53,7 @@ import java.util.HashSet;
  * content group directly, but rather to an optional content membership dictionary
  * represented by this class.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfLayerMembership extends PdfDictionary implements PdfOCG {
     

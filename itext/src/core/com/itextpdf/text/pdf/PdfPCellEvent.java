@@ -46,7 +46,7 @@ package com.itextpdf.text.pdf;
 import com.itextpdf.text.Rectangle;
 
 /** An event called for a single cell.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public interface PdfPCellEvent {
     /** This method is called at the end of the cell rendering. The text or graphics are added to

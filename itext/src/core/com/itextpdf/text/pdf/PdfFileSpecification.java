@@ -53,7 +53,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.collection.PdfCollectionItem;
 /** Specifies a file or an URL. The file can be extern or embedded.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfFileSpecification extends PdfDictionary {
     protected PdfWriter writer;

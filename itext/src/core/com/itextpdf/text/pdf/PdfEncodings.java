@@ -56,7 +56,7 @@ import com.itextpdf.text.ExceptionConverter;
 /** Supports fast encodings for winansi and PDFDocEncoding.
  * Supports conversions from CJK encodings to CID.
  * Supports custom encodings.
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfEncodings {
     protected static final int CIDNONE = 0;

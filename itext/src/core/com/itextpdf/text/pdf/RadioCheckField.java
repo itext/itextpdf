@@ -90,7 +90,7 @@ import com.itextpdf.text.Rectangle;
  * writer.addAnnotation(ck);
  * document.close();
  * </PRE>
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class RadioCheckField extends BaseField {
 

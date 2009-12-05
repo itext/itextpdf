@@ -48,7 +48,7 @@ import java.io.IOException;
 import com.itextpdf.text.ExceptionConverter;
 /** Implements PDF functions.
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class PdfFunction {
     

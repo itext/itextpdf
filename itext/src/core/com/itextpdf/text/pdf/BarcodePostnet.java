@@ -58,7 +58,7 @@ import com.itextpdf.text.Rectangle;
  *codeType = POSTNET; // type of code
  * </pre>
  *
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares
  */
 public class BarcodePostnet extends Barcode{
 
