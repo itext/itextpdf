@@ -60,7 +60,6 @@ import java.util.ArrayList;
  * </OL>
  * 
  * @see Anchor
- * @see Cell
  * @see Chapter
  * @see Chunk
  * @see Header
@@ -72,9 +71,7 @@ import java.util.ArrayList;
  * @see Paragraph
  * @see Phrase
  * @see Rectangle
- * @see Row
  * @see Section
- * @see Table
  */
 
 public interface Element {

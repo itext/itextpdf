@@ -52,7 +52,6 @@ package com.itextpdf.text;
  * @see		ListItem
  * @see		Chapter
  * @see		Anchor
- * @see		Cell
  */
 
 public interface TextElementArray extends Element {
