@@ -42,7 +42,7 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf.codec;
-import java.awt.color.ICC_Profile;
+import com.itextpdf.text.pdf.ICC_Profile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.DataFormatException;

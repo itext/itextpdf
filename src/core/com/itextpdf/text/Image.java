@@ -44,7 +44,7 @@
 package com.itextpdf.text;
 
 import java.awt.Graphics2D;
-import java.awt.color.ICC_Profile;
+import com.itextpdf.text.pdf.ICC_Profile;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
