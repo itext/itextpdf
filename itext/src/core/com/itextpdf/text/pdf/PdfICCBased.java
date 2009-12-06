@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.color.ICC_Profile;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.ExceptionConverter;

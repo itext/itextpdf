@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text;
 
-import java.awt.color.ICC_Profile;
+import com.itextpdf.text.pdf.ICC_Profile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;

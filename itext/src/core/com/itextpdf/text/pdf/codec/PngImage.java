@@ -88,7 +88,7 @@
 
 package com.itextpdf.text.pdf.codec;
 
-import java.awt.color.ICC_Profile;
+import com.itextpdf.text.pdf.ICC_Profile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;

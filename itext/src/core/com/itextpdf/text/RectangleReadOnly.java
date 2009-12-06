@@ -53,7 +53,7 @@ import com.itextpdf.text.BaseColor;
  * {@link #setBorderWidth(float)}and {@link #setBorder(int)}.
  * They also support borders that vary in width/color on each side using
  * methods like {@link #setBorderWidthLeft(float)}or
- * {@link #setBorderColorLeft(java.awt.Color)}.
+ * {@link #setBorderColorLeft(BaseColor)}.
  * 
  * @see Element
  * @since 2.1.2
