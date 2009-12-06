@@ -37,7 +37,7 @@ public class Hyphenator {
     private HyphenationTree hyphenTree = null;
     private int remainCharCount = 2;
     private int pushCharCount = 2;
-    private static final String defaultHyphLocation = "com/lowagie/text/pdf/hyphenation/hyph/";
+    private static final String defaultHyphLocation = "com/itextpdf/text/pdf/hyphenation/hyph/";
    
     /** Holds value of property hyphenDir. */
     private static String hyphenDir = "";    
