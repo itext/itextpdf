@@ -58,8 +58,6 @@ import com.itextpdf.text.pdf.GrayColor;
  * {@link #setBorderColorLeft(java.awt.Color)}.
  * 
  * @see Element
- * @see Table
- * @see Cell
  * @see HeaderFooter
  */
 public class Rectangle implements Element {

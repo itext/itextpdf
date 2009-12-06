@@ -864,8 +864,6 @@ public class Document implements DocListener {
     
     /**
      * Set the margin mirroring. It will mirror right/left margins for odd/even pages.
-     * <p>
-     * Note: it will not work with {@link Table}.
 	 * 
 	 * @param marginMirroring
 	 *            <CODE>true</CODE> to mirror the margins
@@ -883,8 +881,6 @@ public class Document implements DocListener {
     
     /**
      * Set the margin mirroring. It will mirror top/bottom margins for odd/even pages.
-     * <p>
-     * Note: it will not work with {@link Table}.
 	 * 
 	 * @param marginMirroringTopBottom
 	 *            <CODE>true</CODE> to mirror the margins
