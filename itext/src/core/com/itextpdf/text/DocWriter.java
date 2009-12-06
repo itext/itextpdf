@@ -197,55 +197,7 @@ public abstract class DocWriter implements DocListener {
         }
         return true;
     }
-
-/**
- * Changes the header of this document.
- * <P>
- * This method should be overridden in the specific <CODE>DocWriter<CODE> classes
- * derived from this abstract class if they actually support the use of
- * headers.
- *
- * @param header    the new header
- */
-
-    public void setHeader(HeaderFooter header) {
-    }
-
-/**
- * Resets the header of this document.
- * <P>
- * This method should be overridden in the specific <CODE>DocWriter<CODE> classes
- * derived from this abstract class if they actually support the use of
- * headers.
- */
-
-    public void resetHeader() {
-    }
-
-/**
- * Changes the footer of this document.
- * <P>
- * This method should be overridden in the specific <CODE>DocWriter<CODE> classes
- * derived from this abstract class if they actually support the use of
- * footers.
- *
- * @param footer    the new footer
- */
-
-    public void setFooter(HeaderFooter footer) {
-    }
-
-/**
- * Resets the footer of this document.
- * <P>
- * This method should be overridden in the specific <CODE>DocWriter<CODE> classes
- * derived from this abstract class if they actually support the use of
- * footers.
- */
-
-    public void resetFooter() {
-    }
-
+    
 /**
  * Sets the page number to 0.
  * <P>

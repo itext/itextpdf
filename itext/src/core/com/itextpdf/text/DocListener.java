@@ -130,32 +130,4 @@ public interface DocListener extends ElementListener {
         
     public void resetPageCount(); // [L8]
 
-    /**
-     * Changes the header of this document.
-     *
-     * @param	header		the new header
-     */
-    
-    public void setHeader(HeaderFooter header); // [L9]
-    
-    /**
-     * Resets the header of this document.
-     */
-    
-    public void resetHeader(); // [L10]
-    
-    /**
-     * Changes the footer of this document.
-     *
-     * @param	footer		the new footer
-     */
-    
-    public void setFooter(HeaderFooter footer); // [L11]
-    
-    /**
-     * Resets the footer of this document.
-     */
-    
-    public void resetFooter(); // [L12]
-
 }

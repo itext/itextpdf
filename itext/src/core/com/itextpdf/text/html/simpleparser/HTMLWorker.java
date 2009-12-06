@@ -59,7 +59,6 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.HeaderFooter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
@@ -678,19 +677,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public void open() {
 	}
 
-	public void resetFooter() {
-	}
-
-	public void resetHeader() {
-	}
-
 	public void resetPageCount() {
-	}
-
-	public void setFooter(HeaderFooter footer) {
-	}
-
-	public void setHeader(HeaderFooter header) {
 	}
 
 	public boolean setMarginMirroring(boolean marginMirroring) {
