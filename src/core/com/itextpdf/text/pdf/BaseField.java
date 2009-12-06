@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,6 +52,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 
 /** Common field variables.
  * @author Paulo Soares
@@ -120,9 +120,9 @@ public abstract class BaseField {
 
     protected float borderWidth = BORDER_WIDTH_THIN;
     protected int borderStyle = PdfBorderDictionary.STYLE_SOLID;
-    protected Color borderColor;
-    protected Color backgroundColor;
-    protected Color textColor;
+    protected BaseColor borderColor;
+    protected BaseColor backgroundColor;
+    protected BaseColor textColor;
     protected BaseFont font;
     protected float fontSize = 0;
     protected int alignment = Element.ALIGN_LEFT;
@@ -208,9 +208,9 @@ public abstract class BaseField {
                 app.stroke();
             }
             // beveled
-            Color actual = backgroundColor;
+            BaseColor actual = backgroundColor;
             if (actual == null)
-                actual = Color.white;
+                actual = BaseColor.WHITE;
             app.setGrayFill(1);
             drawTopFrame(app);
             app.setColorFill(actual.darker());
@@ -428,7 +428,7 @@ public abstract class BaseField {
     /** Gets the border color.
      * @return the border color
      */
-    public Color getBorderColor() {
+    public BaseColor getBorderColor() {
         return this.borderColor;
     }
     
@@ -436,14 +436,14 @@ public abstract class BaseField {
      * the border.
      * @param borderColor the border color
      */
-    public void setBorderColor(Color borderColor) {
+    public void setBorderColor(BaseColor borderColor) {
         this.borderColor = borderColor;
     }
     
     /** Gets the background color.
      * @return the background color
      */
-    public Color getBackgroundColor() {
+    public BaseColor getBackgroundColor() {
         return this.backgroundColor;
     }
     
@@ -451,14 +451,14 @@ public abstract class BaseField {
      * transparent background.
      * @param backgroundColor the background color
      */
-    public void setBackgroundColor(Color backgroundColor) {
+    public void setBackgroundColor(BaseColor backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
     
     /** Gets the text color.
      * @return the text color
      */
-    public Color getTextColor() {
+    public BaseColor getTextColor() {
         return this.textColor;
     }
     
@@ -466,7 +466,7 @@ public abstract class BaseField {
      * will be black.
      * @param textColor the text color
      */
-    public void setTextColor(Color textColor) {
+    public void setTextColor(BaseColor textColor) {
         this.textColor = textColor;
     }
     

@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,6 +76,7 @@ import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
+import com.itextpdf.text.BaseColor;
 import java.text.DecimalFormat;
 
 /**
@@ -1312,7 +1312,7 @@ public class PdfDocument extends Document {
         // looping over all the chunks in 1 line
         for (Iterator j = line.iterator(); j.hasNext(); ) {
             chunk = (PdfChunk) j.next();
-            Color color = chunk.color();
+            BaseColor color = chunk.color();
             hScale = 1;
 
             if (chunkStrokeIdx <= lastChunkStroke) {
@@ -1364,7 +1364,7 @@ public class PdfDocument extends Document {
                         float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
                         float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
                         Object bgr[] = (Object[])chunk.getAttribute(Chunk.BACKGROUND);
-                        graphics.setColorFill((Color)bgr[0]);
+                        graphics.setColorFill((BaseColor)bgr[0]);
                         float extra[] = (float[])bgr[1];
                         graphics.rectangle(xMarker - extra[0],
                             yMarker + descender - extra[1] + chunk.getTextRise(),
@@ -1380,10 +1380,10 @@ public class PdfDocument extends Document {
                         if (nextChunk == null)
                             subtract += hangingCorrection;
                         Object unders[][] = (Object[][])chunk.getAttribute(Chunk.UNDERLINE);
-                        Color scolor = null;
+                        BaseColor scolor = null;
                         for (int k = 0; k < unders.length; ++k) {
                             Object obj[] = unders[k];
-                            scolor = (Color)obj[0];
+                            scolor = (BaseColor)obj[0];
                             float ps[] = (float[])obj[1];
                             if (scolor == null)
                                 scolor = color;
@@ -1503,7 +1503,7 @@ public class PdfDocument extends Document {
             Object textRender[] = (Object[])chunk.getAttribute(Chunk.TEXTRENDERMODE);
             int tr = 0;
             float strokeWidth = 1;
-            Color strokeColor = null;
+            BaseColor strokeColor = null;
             Float fr = (Float)chunk.getAttribute(Chunk.SUBSUPSCRIPT);
             if (textRender != null) {
                 tr = ((Integer)textRender[0]).intValue() & 3;
@@ -1513,7 +1513,7 @@ public class PdfDocument extends Document {
                     strokeWidth = ((Float)textRender[1]).floatValue();
                     if (strokeWidth != 1)
                         text.setLineWidth(strokeWidth);
-                    strokeColor = (Color)textRender[2];
+                    strokeColor = (BaseColor)textRender[2];
                     if (strokeColor == null)
                         strokeColor = color;
                     if (strokeColor != null)

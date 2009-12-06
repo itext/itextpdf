@@ -44,7 +44,6 @@
 package com.itextpdf.text.pdf;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.MemoryImageSource;
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -52,6 +51,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 
 /** Implements the code codabar. The default parameters are:
  * <pre>
@@ -228,7 +228,7 @@ public class BarcodeCodabar extends Barcode{
      * @param textColor the color of the text. It can be <CODE>null</CODE>
      * @return the dimensions the barcode occupies
      */    
-    public Rectangle placeBarcode(PdfContentByte cb, Color barColor, Color textColor) {
+    public Rectangle placeBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor) {
         String fullCode = code;
         if (generateChecksum && checksumText)
             fullCode = calculateChecksum(code);
@@ -302,7 +302,7 @@ public class BarcodeCodabar extends Barcode{
      * @param background the color of the background
      * @return the image
      */    
-    public java.awt.Image createAwtImage(Color foreground, Color background) {
+    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int f = foreground.getRGB();
         int g = background.getRGB();
         Canvas canvas = new Canvas();

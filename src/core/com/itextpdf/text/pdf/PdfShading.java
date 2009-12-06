@@ -43,9 +43,9 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
 import java.io.IOException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.BaseColor;
 /** Implements the shading dictionary (or stream).
  *
  * @author Paulo Soares
@@ -64,7 +64,7 @@ public class PdfShading {
     
     protected PdfIndirectReference shadingReference;
     
-    private Color cspace;
+    private BaseColor cspace;
     
     /** Holds value of property bBox. */
     protected float[] bBox;
@@ -77,7 +77,7 @@ public class PdfShading {
         this.writer = writer;
     }
     
-    protected void setColorSpace(Color color) {
+    protected void setColorSpace(BaseColor color) {
         cspace = color;
         int type = ExtendedColor.getType(color);
         PdfObject colorSpace = null;
@@ -107,7 +107,7 @@ public class PdfShading {
         shading.put(PdfName.COLORSPACE, colorSpace);
     }
     
-    public Color getColorSpace() {
+    public BaseColor getColorSpace() {
         return cspace;
     }
     
@@ -115,7 +115,7 @@ public class PdfShading {
         throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tiling.or.shading.pattern.cannot.be.used.as.a.color.space.in.a.shading.pattern"));
     }
     
-    public static void checkCompatibleColors(Color c1, Color c2) {
+    public static void checkCompatibleColors(BaseColor c1, BaseColor c2) {
         int type1 = ExtendedColor.getType(c1);
         int type2 = ExtendedColor.getType(c2);
         if (type1 != type2)
@@ -126,7 +126,7 @@ public class PdfShading {
             throwColorSpaceError();
     }
     
-    public static float[] getColorArray(Color color) {
+    public static float[] getColorArray(BaseColor color) {
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -147,7 +147,7 @@ public class PdfShading {
         return null;
     }
 
-    public static PdfShading type1(PdfWriter writer, Color colorSpace, float domain[], float tMatrix[], PdfFunction function) {
+    public static PdfShading type1(PdfWriter writer, BaseColor colorSpace, float domain[], float tMatrix[], PdfFunction function) {
         PdfShading sp = new PdfShading(writer);
         sp.shading = new PdfDictionary();
         sp.shadingType = 1;
@@ -161,7 +161,7 @@ public class PdfShading {
         return sp;
     }
     
-    public static PdfShading type2(PdfWriter writer, Color colorSpace, float coords[], float domain[], PdfFunction function, boolean extend[]) {
+    public static PdfShading type2(PdfWriter writer, BaseColor colorSpace, float coords[], float domain[], PdfFunction function, boolean extend[]) {
         PdfShading sp = new PdfShading(writer);
         sp.shading = new PdfDictionary();
         sp.shadingType = 2;
@@ -179,32 +179,32 @@ public class PdfShading {
         return sp;
     }
 
-    public static PdfShading type3(PdfWriter writer, Color colorSpace, float coords[], float domain[], PdfFunction function, boolean extend[]) {
+    public static PdfShading type3(PdfWriter writer, BaseColor colorSpace, float coords[], float domain[], PdfFunction function, boolean extend[]) {
         PdfShading sp = type2(writer, colorSpace, coords, domain, function, extend);
         sp.shadingType = 3;
         sp.shading.put(PdfName.SHADINGTYPE, new PdfNumber(sp.shadingType));
         return sp;
     }
     
-    public static PdfShading simpleAxial(PdfWriter writer, float x0, float y0, float x1, float y1, Color startColor, Color endColor, boolean extendStart, boolean extendEnd) {
+    public static PdfShading simpleAxial(PdfWriter writer, float x0, float y0, float x1, float y1, BaseColor startColor, BaseColor endColor, boolean extendStart, boolean extendEnd) {
         checkCompatibleColors(startColor, endColor);
         PdfFunction function = PdfFunction.type2(writer, new float[]{0, 1}, null, getColorArray(startColor),
             getColorArray(endColor), 1);
         return type2(writer, startColor, new float[]{x0, y0, x1, y1}, null, function, new boolean[]{extendStart, extendEnd});
     }
     
-    public static PdfShading simpleAxial(PdfWriter writer, float x0, float y0, float x1, float y1, Color startColor, Color endColor) {
+    public static PdfShading simpleAxial(PdfWriter writer, float x0, float y0, float x1, float y1, BaseColor startColor, BaseColor endColor) {
         return simpleAxial(writer, x0, y0, x1, y1, startColor, endColor, true, true);
     }
     
-    public static PdfShading simpleRadial(PdfWriter writer, float x0, float y0, float r0, float x1, float y1, float r1, Color startColor, Color endColor, boolean extendStart, boolean extendEnd) {
+    public static PdfShading simpleRadial(PdfWriter writer, float x0, float y0, float r0, float x1, float y1, float r1, BaseColor startColor, BaseColor endColor, boolean extendStart, boolean extendEnd) {
         checkCompatibleColors(startColor, endColor);
         PdfFunction function = PdfFunction.type2(writer, new float[]{0, 1}, null, getColorArray(startColor),
             getColorArray(endColor), 1);
         return type3(writer, startColor, new float[]{x0, y0, r0, x1, y1, r1}, null, function, new boolean[]{extendStart, extendEnd});
     }
 
-    public static PdfShading simpleRadial(PdfWriter writer, float x0, float y0, float r0, float x1, float y1, float r1, Color startColor, Color endColor) {
+    public static PdfShading simpleRadial(PdfWriter writer, float x0, float y0, float r0, float x1, float y1, float r1, BaseColor startColor, BaseColor endColor) {
         return simpleRadial(writer, x0, y0, r0, x1, y1, r1, startColor, endColor, true, true);
     }
 

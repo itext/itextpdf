@@ -46,11 +46,11 @@ package com.itextpdf.text.html;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.RGBColor;
+import com.itextpdf.text.BaseColor;
 
 /**
  * This class is a HashMap that contains the names of colors as a key and the
- * corresponding Color as value. (Source: Wikipedia
+ * corresponding BaseColor as value. (Source: Wikipedia
  * http://en.wikipedia.org/wiki/Web_colors )
  * 
  * @author blowagie
@@ -205,16 +205,16 @@ public class WebColors extends HashMap {
 	}
 
 	/**
-	 * Gives you a Color based on a name.
+	 * Gives you a BaseColor based on a name.
 	 * 
 	 * @param name
 	 *            a name such as black, violet, cornflowerblue or #RGB or #RRGGBB
      *            or rgb(R,G,B)
-	 * @return the corresponding Color object
+	 * @return the corresponding BaseColor object
 	 * @throws IllegalArgumentException
 	 *             if the String isn't a know representation of a color.
 	 */
-	public static RGBColor getRGBColor(String name)
+	public static BaseColor getRGBColor(String name)
 			throws IllegalArgumentException {
 		int[] c = { 0, 0, 0, 0 };
 		if (name.startsWith("#")) {
@@ -222,13 +222,13 @@ public class WebColors extends HashMap {
 				c[0] = Integer.parseInt(name.substring(1, 2), 16) * 16;
 				c[1] = Integer.parseInt(name.substring(2, 3), 16) * 16;
 				c[2] = Integer.parseInt(name.substring(3), 16) * 16;
-				return new RGBColor(c[0], c[1], c[2], c[3]);
+				return new BaseColor(c[0], c[1], c[2], c[3]);
 			}
 			if (name.length() == 7) {
 				c[0] = Integer.parseInt(name.substring(1, 3), 16);
 				c[1] = Integer.parseInt(name.substring(3, 5), 16);
 				c[2] = Integer.parseInt(name.substring(5), 16);
-				return new RGBColor(c[0], c[1], c[2], c[3]);
+				return new BaseColor(c[0], c[1], c[2], c[3]);
 			}
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("unknown.color.format.must.be.rgb.or.rrggbb"));
 		}
@@ -245,13 +245,13 @@ public class WebColors extends HashMap {
                 else if (c[k] > 255)
                     c[k] = 255;
             }
-            return new RGBColor(c[0], c[1], c[2], c[3]);
+            return new BaseColor(c[0], c[1], c[2], c[3]);
         }
 		name = name.toLowerCase();
 		if (!NAMES.containsKey(name))
 			throw new IllegalArgumentException("Color '" + name
 					+ "' not found.");
 		c = (int[]) NAMES.get(name);
-		return new RGBColor(c[0], c[1], c[2], c[3]);
+		return new BaseColor(c[0], c[1], c[2], c[3]);
 	}
 }

@@ -95,6 +95,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.itextpdf.text.pdf.internal.PolylineShape;
+import com.itextpdf.text.BaseColor;
 import java.util.Locale;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -433,7 +434,7 @@ public class PdfGraphics2D extends Graphics2D {
                                 }
                                 cb.setGState(gs);
                             }
-                            cb.setColorStroke(color);
+                            cb.setColorStroke(new BaseColor(color));
                             restoreTextRenderingMode = true;
                         }
                     }
@@ -1523,7 +1524,7 @@ public class PdfGraphics2D extends Graphics2D {
                     }
                     cb.setGState(gs);
                 }
-                cb.setColorFill(color);
+                cb.setColorFill(new BaseColor(color));
             }
             else {
                 if (alpha != currentStrokeGState) {
@@ -1536,7 +1537,7 @@ public class PdfGraphics2D extends Graphics2D {
                     }
                     cb.setGState(gs);
                 }
-                cb.setColorStroke(color);
+                cb.setColorStroke(new BaseColor(color));
             }
         }
         else if (paint instanceof GradientPaint) {
@@ -1547,7 +1548,7 @@ public class PdfGraphics2D extends Graphics2D {
             transform.transform(p2, p2);
             Color c1 = gp.getColor1();
             Color c2 = gp.getColor2();
-            PdfShading shading = PdfShading.simpleAxial(cb.getPdfWriter(), (float)p1.getX(), normalizeY((float)p1.getY()), (float)p2.getX(), normalizeY((float)p2.getY()), c1, c2);
+            PdfShading shading = PdfShading.simpleAxial(cb.getPdfWriter(), (float)p1.getX(), normalizeY((float)p1.getY()), (float)p2.getX(), normalizeY((float)p2.getY()), new BaseColor(c1), new BaseColor(c2));
             PdfShadingPattern pat = new PdfShadingPattern(shading);
             if (fill)
                 cb.setShadingFill(pat);
@@ -1575,9 +1576,9 @@ public class PdfGraphics2D extends Graphics2D {
                     cb.setPatternStroke(pattern);
             } catch (Exception ex) {
                 if (fill)
-                    cb.setColorFill(Color.gray);
+                    cb.setColorFill(BaseColor.GRAY);
                 else
-                    cb.setColorStroke(Color.gray);
+                    cb.setColorStroke(BaseColor.GRAY);
             }
         }
         else {
@@ -1613,9 +1614,9 @@ public class PdfGraphics2D extends Graphics2D {
                     cb.setPatternStroke(pattern);
             } catch (Exception ex) {
                 if (fill)
-                    cb.setColorFill(Color.gray);
+                    cb.setColorFill(BaseColor.GRAY);
                 else
-                    cb.setColorStroke(Color.gray);
+                    cb.setColorStroke(BaseColor.GRAY);
             }
         }
     }

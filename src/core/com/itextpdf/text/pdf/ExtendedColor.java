@@ -43,12 +43,13 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
+import com.itextpdf.text.BaseColor;
+
 /**
  *
  * @author  Paulo Soares
  */
-public abstract class ExtendedColor extends Color{
+public abstract class ExtendedColor extends BaseColor{
     
 	private static final long serialVersionUID = 2722660170712380080L;
 	/** a type of extended color. */
@@ -112,7 +113,7 @@ public abstract class ExtendedColor extends Color{
      * @param color
      * @return one of the types (see constants)
      */
-    public static int getType(Color color) {
+    public static int getType(BaseColor color) {
         if (color instanceof ExtendedColor)
             return ((ExtendedColor)color).getType();
         return TYPE_RGB;

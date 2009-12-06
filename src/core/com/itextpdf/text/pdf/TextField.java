@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -53,6 +52,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 
 /**
  * Supports text, combo and list fields generating the correct appearances.
@@ -106,7 +106,7 @@ public class TextField extends BaseField {
             ((Chunk)p.get(k)).getFont().setSize(size);
     }
     
-    private Phrase composePhrase(String text, BaseFont ufont, Color color, float fontSize) {
+    private Phrase composePhrase(String text, BaseFont ufont, BaseColor color, float fontSize) {
         Phrase phrase = null;
         if (extensionFont == null && (substitutionFonts == null || substitutionFonts.isEmpty()))
             phrase = new Phrase(new Chunk(text, new Font(ufont, fontSize, 0, color)));
@@ -202,7 +202,7 @@ public class TextField extends BaseField {
         else
         	ptext = text; //fixed by Kazuya Ujihara (ujihara.jp)
         BaseFont ufont = getRealFont();
-        Color fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
+        BaseColor fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
         int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
         float usize = fontSize;
         Phrase phrase = composePhrase(ptext, ufont, fcolor, usize);
@@ -354,11 +354,11 @@ public class TextField extends BaseField {
         app.rectangle(offsetX, offsetX, box.getWidth() - 2 * offsetX, box.getHeight() - 2 * offsetX);
         app.clip();
         app.newPath();
-        Color fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
+        BaseColor fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
         
         
         // background boxes for selected value[s]
-        app.setColorFill(new Color(10, 36, 106));
+        app.setColorFill(new BaseColor(10, 36, 106));
         for (int curVal = 0; curVal < choiceSelections.size(); ++curVal) {
         	int curChoice = ((Integer)choiceSelections.get( curVal )).intValue();
         	// only draw selections within our display range... not strictly necessary with 
@@ -375,7 +375,7 @@ public class TextField extends BaseField {
             int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
             ptext = removeCRLF(ptext);
             // highlight selected values against their (presumably) darker background
-            Color textCol = (choiceSelections.contains( new Integer( idx ))) ? GrayColor.GRAYWHITE : fcolor;
+            BaseColor textCol = (choiceSelections.contains( new Integer( idx ))) ? GrayColor.GRAYWHITE : fcolor;
             Phrase phrase = composePhrase(ptext, ufont, textCol, usize);
             ColumnText.showTextAligned(app, Element.ALIGN_LEFT, phrase, xp, yp, 0, rtl, 0);
         }

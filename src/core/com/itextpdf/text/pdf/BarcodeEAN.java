@@ -44,14 +44,13 @@
 package com.itextpdf.text.pdf;
 
 import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Image;
 import java.awt.image.MemoryImageSource;
 import java.util.Arrays;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 
 /** Generates barcodes in several formats: EAN13, EAN8, UPCA, UPCE,
  * supplemental 2 and 5. The default parameters are:
@@ -517,7 +516,7 @@ public class BarcodeEAN extends Barcode{
      * @param textColor the color of the text. It can be <CODE>null</CODE>
      * @return the dimensions the barcode occupies
      */    
-    public Rectangle placeBarcode(PdfContentByte cb, Color barColor, Color textColor) {
+    public Rectangle placeBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor) {
         Rectangle rect = getBarcodeSize();
         float barStartX = 0;
         float barStartY = 0;
@@ -658,7 +657,7 @@ public class BarcodeEAN extends Barcode{
      * @param background the color of the background
      * @return the image
      */    
-    public java.awt.Image createAwtImage(Color foreground, Color background) {
+    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int f = foreground.getRGB();
         int g = background.getRGB();
         Canvas canvas = new Canvas();
@@ -710,7 +709,7 @@ public class BarcodeEAN extends Barcode{
         for (int k = width; k < pix.length; k += width) {
             System.arraycopy(pix, 0, pix, k, width); 
         }
-        Image img = canvas.createImage(new MemoryImageSource(width, height, pix, 0, width));
+        java.awt.Image img = canvas.createImage(new MemoryImageSource(width, height, pix, 0, width));
         
         return img;
     }    

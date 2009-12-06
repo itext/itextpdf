@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -62,6 +61,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.codec.Base64;
 
 /**
@@ -529,7 +529,7 @@ public class AcroFields {
                             float red = new Float((String)stack.get(stack.size() - 3)).floatValue();
                             float green = new Float((String)stack.get(stack.size() - 2)).floatValue();
                             float blue = new Float((String)stack.get(stack.size() - 1)).floatValue();
-                            ret[DA_COLOR] = new Color(red, green, blue);
+                            ret[DA_COLOR] = new BaseColor(red, green, blue);
                         }
                     }
                     else if (operator.equals("k")) {
@@ -562,7 +562,7 @@ public class AcroFields {
             if (dab[DA_SIZE] != null)
                 tx.setFontSize(((Float)dab[DA_SIZE]).floatValue());
             if (dab[DA_COLOR] != null)
-                tx.setTextColor((Color)dab[DA_COLOR]);
+                tx.setTextColor((BaseColor)dab[DA_COLOR]);
             if (dab[DA_FONT] != null) {
                 PdfDictionary font = merged.getAsDict(PdfName.DR);
                 if (font != null) {
@@ -628,7 +628,7 @@ public class AcroFields {
         PdfDictionary mk = merged.getAsDict(PdfName.MK);
         if (mk != null) {
             PdfArray ar = mk.getAsArray(PdfName.BC);
-            Color border = getMKColor(ar);
+            BaseColor border = getMKColor(ar);
             tx.setBorderColor(border);
             if (border != null)
                 tx.setBorderWidth(1);
@@ -790,14 +790,14 @@ public class AcroFields {
       return getAppearance( merged, valueArr, fieldName );
     }
 
-    Color getMKColor(PdfArray ar) {
+    BaseColor getMKColor(PdfArray ar) {
         if (ar == null)
             return null;
         switch (ar.size()) {
             case 1:
                 return new GrayColor(ar.getAsNumber(0).floatValue());
             case 3:
-                return new Color(ExtendedColor.normalize(ar.getAsNumber(0).floatValue()), ExtendedColor.normalize(ar.getAsNumber(1).floatValue()), ExtendedColor.normalize(ar.getAsNumber(2).floatValue()));
+                return new BaseColor(ExtendedColor.normalize(ar.getAsNumber(0).floatValue()), ExtendedColor.normalize(ar.getAsNumber(1).floatValue()), ExtendedColor.normalize(ar.getAsNumber(2).floatValue()));
             case 4:
                 return new CMYKColor(ar.getAsNumber(0).floatValue(), ar.getAsNumber(1).floatValue(), ar.getAsNumber(2).floatValue(), ar.getAsNumber(3).floatValue());
             default:
@@ -920,9 +920,9 @@ public class AcroFields {
      * <p>
      * <ul>
      * <li>textfont - sets the text font. The value for this entry is a <CODE>BaseFont</CODE>.<br>
-     * <li>textcolor - sets the text color. The value for this entry is a <CODE>java.awt.Color</CODE>.<br>
+     * <li>textcolor - sets the text color. The value for this entry is a <CODE>java.awt.BaseColor</CODE>.<br>
      * <li>textsize - sets the text size. The value for this entry is a <CODE>Float</CODE>.
-     * <li>bgcolor - sets the background color. The value for this entry is a <CODE>java.awt.Color</CODE>.
+     * <li>bgcolor - sets the background color. The value for this entry is a <CODE>java.awt.BaseColor</CODE>.
      *     If <code>null</code> removes the background.<br>
      * <li>bordercolor - sets the border color. The value for this entry is a <CODE>java.awt.Color</CODE>.
      *     If <code>null</code> removes the border.<br>
@@ -1001,7 +1001,7 @@ public class AcroFields {
                                 ByteBuffer buf = cb.getInternalBuffer();
                                 buf.append(psn.getBytes()).append(' ').append(((Float)dao[DA_SIZE]).floatValue()).append(" Tf ");
                                 if (dao[DA_COLOR] != null)
-                                    cb.setColorFill((Color)dao[DA_COLOR]);
+                                    cb.setColorFill((BaseColor)dao[DA_COLOR]);
                                 PdfString s = new PdfString(cb.toString());
                                 item.getMerged(k).put(PdfName.DA, s);
                                 item.getWidget(k).put(PdfName.DA, s);
@@ -1022,7 +1022,7 @@ public class AcroFields {
                             if (dao[DA_FONT] != null) {
                                 ByteBuffer buf = cb.getInternalBuffer();
                                 buf.append(new PdfName((String)dao[DA_FONT]).getBytes()).append(' ').append(((Float)dao[DA_SIZE]).floatValue()).append(" Tf ");
-                                cb.setColorFill((Color)value);
+                                cb.setColorFill((BaseColor)value);
                                 PdfString s = new PdfString(cb.toString());
                                 item.getMerged(k).put(PdfName.DA, s);
                                 item.getWidget(k).put(PdfName.DA, s);
@@ -1044,7 +1044,7 @@ public class AcroFields {
                                 ByteBuffer buf = cb.getInternalBuffer();
                                 buf.append(new PdfName((String)dao[DA_FONT]).getBytes()).append(' ').append(((Float)value).floatValue()).append(" Tf ");
                                 if (dao[DA_COLOR] != null)
-                                    cb.setColorFill((Color)dao[DA_COLOR]);
+                                    cb.setColorFill((BaseColor)dao[DA_COLOR]);
                                 PdfString s = new PdfString(cb.toString());
                                 item.getMerged(k).put(PdfName.DA, s);
                                 item.getWidget(k).put(PdfName.DA, s);
@@ -1073,7 +1073,7 @@ public class AcroFields {
                         if (value == null)
                             mk.remove(dname);
                         else
-                            mk.put(dname, PdfFormField.getMKColor((Color)value));
+                            mk.put(dname, PdfFormField.getMKColor((BaseColor)value));
                     }
                 }
             }
@@ -1260,7 +1260,7 @@ public class AcroFields {
     /**
      * Regenerates the field appearance.
      * This is useful when you change a field property, but not its value,
-     * for instance form.setFieldProperty("f", "bgcolor", Color.BLUE, null);
+     * for instance form.setFieldProperty("f", "bgcolor", BaseColor.BLUE, null);
      * This won't have any effect, unless you use regenerateField("f") after changing
      * the property.
      *

@@ -42,9 +42,11 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.awt.Color;
+
+import com.itextpdf.text.BaseColor;
+
 /**
- * A <CODE>PdfColor</CODE> defines a Color (it's a <CODE>PdfArray</CODE> containing 3 values).
+ * A <CODE>PdfColor</CODE> defines a BaseColor (it's a <CODE>PdfArray</CODE> containing 3 values).
  *
  * @see		PdfDictionary
  */
@@ -67,7 +69,7 @@ class PdfColor extends PdfArray {
         add(new PdfNumber((double)(blue & 0xFF) / 0xFF));
     }
     
-    PdfColor(Color color) {
+    PdfColor(BaseColor color) {
         this(color.getRed(), color.getGreen(), color.getBlue());
     }
 }

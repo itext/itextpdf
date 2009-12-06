@@ -43,10 +43,9 @@
  */
 package com.itextpdf.text;
 
-import java.awt.Color;
-
 import com.itextpdf.text.html.Markup;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.BaseColor;
 
 /**
  * Contains all the specifications of a font: fontfamily, size, style and color.
@@ -56,7 +55,7 @@ import com.itextpdf.text.pdf.BaseFont;
  * <PRE>
  * 
  * Paragraph p = new Paragraph("This is a paragraph", <STRONG>new
- * Font(Font.HELVETICA, 18, Font.BOLDITALIC, new Color(0, 0, 255)) </STRONG>);
+ * Font(Font.HELVETICA, 18, Font.BOLDITALIC, new BaseColor(0, 0, 255)) </STRONG>);
  * 
  * </PRE>
  * 
@@ -122,7 +121,7 @@ public class Font implements Comparable {
 	private int style = UNDEFINED;
 
 	/** the value of the color. */
-	private Color color = null;
+	private BaseColor color = null;
 
 	/** the external font */
 	private BaseFont baseFont = null;
@@ -153,10 +152,10 @@ public class Font implements Comparable {
 	 * @param style
 	 *            the style of this font
 	 * @param color
-	 *            the <CODE>Color</CODE> of this font.
+	 *            the <CODE>BaseColor</CODE> of this font.
 	 */
 
-	public Font(int family, float size, int style, Color color) {
+	public Font(int family, float size, int style, BaseColor color) {
 		this.family = family;
 		this.size = size;
 		this.style = style;
@@ -173,10 +172,10 @@ public class Font implements Comparable {
 	 * @param style
 	 *            the style of this font
 	 * @param color
-	 *            the <CODE>Color</CODE> of this font.
+	 *            the <CODE>BaseColor</CODE> of this font.
 	 */
 
-	public Font(BaseFont bf, float size, int style, Color color) {
+	public Font(BaseFont bf, float size, int style, BaseColor color) {
 		this.baseFont = bf;
 		this.size = size;
 		this.style = style;
@@ -585,7 +584,7 @@ public class Font implements Comparable {
 	 * 
 	 * @return a color
 	 */
-	public Color getColor() {
+	public BaseColor getColor() {
 		return color;
 	}
 
@@ -596,7 +595,7 @@ public class Font implements Comparable {
 	 *            the new color of the font
 	 */
 
-	public void setColor(Color color) {
+	public void setColor(BaseColor color) {
 		this.color = color;
 	}
 
@@ -611,7 +610,7 @@ public class Font implements Comparable {
 	 *            the blue-value of the new color
 	 */
 	public void setColor(int red, int green, int blue) {
-		this.color = new Color(red, green, blue);
+		this.color = new BaseColor(red, green, blue);
 	}
 
 	// BASEFONT
@@ -759,7 +758,7 @@ public class Font implements Comparable {
 			dStyle = style1 | style2;
 		}
 		// color
-		Color dColor = font.color;
+		BaseColor dColor = font.color;
 		if (dColor == null) {
 			dColor = this.color;
 		}

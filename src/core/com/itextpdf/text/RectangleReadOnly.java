@@ -43,8 +43,8 @@
  */
 package com.itextpdf.text;
 
-import java.awt.Color;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.BaseColor;
 
 /**
  * A <CODE>RectangleReadOnly</CODE> is the representation of a geometric figure.
@@ -157,7 +157,7 @@ public class RectangleReadOnly extends Rectangle {
 	 * 
 	 * @param value	the new value
 	 */
-	public void setBackgroundColor(Color value) {
+	public void setBackgroundColor(BaseColor value) {
 		throwReadOnlyError();
 	}
 
@@ -267,46 +267,46 @@ public class RectangleReadOnly extends Rectangle {
 	/**
 	 * Sets the color of the border.
 	 * 
-	 * @param borderColor	a <CODE>Color</CODE>
+	 * @param borderColor	a <CODE>BaseColor</CODE>
 	 */
 
-	public void setBorderColor(Color borderColor) {
+	public void setBorderColor(BaseColor borderColor) {
 		throwReadOnlyError();
 	}
 	
 	/**
 	 * Sets the color of the left border.
 	 * 
-	 * @param borderColorLeft	a <CODE>Color</CODE>
+	 * @param borderColorLeft	a <CODE>BaseColor</CODE>
 	 */
-	public void setBorderColorLeft(Color borderColorLeft) {
+	public void setBorderColorLeft(BaseColor borderColorLeft) {
 		throwReadOnlyError();
 	}
 
 	/**
 	 * Sets the color of the right border
 	 * 
-	 * @param borderColorRight	a <CODE>Color</CODE>
+	 * @param borderColorRight	a <CODE>BaseColor</CODE>
 	 */
-	public void setBorderColorRight(Color borderColorRight) {
+	public void setBorderColorRight(BaseColor borderColorRight) {
 		throwReadOnlyError();
 	}
 
 	/**
 	 * Sets the color of the top border.
 	 * 
-	 * @param borderColorTop	a <CODE>Color</CODE>
+	 * @param borderColorTop	a <CODE>BaseColor</CODE>
 	 */
-	public void setBorderColorTop(Color borderColorTop) {
+	public void setBorderColorTop(BaseColor borderColorTop) {
 		throwReadOnlyError();
 	}
 
 	/**
 	 * Sets the color of the bottom border.
 	 * 
-	 * @param borderColorBottom	a <CODE>Color</CODE>
+	 * @param borderColorBottom	a <CODE>BaseColor</CODE>
 	 */
-	public void setBorderColorBottom(Color borderColorBottom) {
+	public void setBorderColorBottom(BaseColor borderColorBottom) {
 		throwReadOnlyError();
 	}
 

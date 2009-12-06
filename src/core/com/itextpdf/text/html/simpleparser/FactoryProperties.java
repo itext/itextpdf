@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.html.simpleparser;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
@@ -56,6 +55,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.html.Markup;
 import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.pdf.BaseFont;
@@ -185,7 +185,7 @@ public class FactoryProperties {
 		float size = 12;
 		if (value != null)
 			size = Float.parseFloat(value);
-		Color color = Markup.decodeColor(props.getProperty("color"));
+		BaseColor color = Markup.decodeColor(props.getProperty("color"));
 		String encoding = props.getProperty("encoding");
 		if (encoding == null)
 			encoding = BaseFont.WINANSI;
@@ -285,7 +285,7 @@ public class FactoryProperties {
 				if (ss.equals(Markup.CSS_VALUE_UNDERLINE))
 					h.put("u", null);
 			} else if (key.equals(Markup.CSS_KEY_COLOR)) {
-				Color c = Markup.decodeColor(prop.getProperty(key));
+				BaseColor c = Markup.decodeColor(prop.getProperty(key));
 				if (c != null) {
 					int hh = c.getRGB();
 					String hs = Integer.toHexString(hh);
@@ -349,7 +349,7 @@ public class FactoryProperties {
 				if (ss.equals(Markup.CSS_VALUE_UNDERLINE))
 					h.put("u", null);
 			} else if (key.equals(Markup.CSS_KEY_COLOR)) {
-				Color c = Markup.decodeColor(prop.getProperty(key));
+				BaseColor c = Markup.decodeColor(prop.getProperty(key));
 				if (c != null) {
 					int hh = c.getRGB();
 					String hs = Integer.toHexString(hh);

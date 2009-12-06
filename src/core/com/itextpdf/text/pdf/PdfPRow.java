@@ -43,13 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 
 /**
  * A row in a PdfPTable.
@@ -200,7 +199,7 @@ public class PdfPRow {
 	 * @since	2.1.6	extra parameter currentMaxHeight
 	 */
 	public void writeBorderAndBackground(float xPos, float yPos, float currentMaxHeight, PdfPCell cell, PdfContentByte[] canvases) {
-		Color background = cell.getBackgroundColor();
+		BaseColor background = cell.getBackgroundColor();
 		if (background != null || cell.hasBorders()) {
 			// Add xPos resp. yPos to the cell's coordinates for absolute coordinates
 			float right = cell.getRight() + xPos;

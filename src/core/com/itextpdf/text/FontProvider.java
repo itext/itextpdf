@@ -42,8 +42,7 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text;
-
-import java.awt.Color;
+import com.itextpdf.text.BaseColor;
 
 /**
  * These two methods are used by FactoryProperties (for HTMLWorker).
@@ -70,5 +69,5 @@ public interface FontProvider {
 	 * @param	color	    the <CODE>Color</CODE> of this font.
 	 * @return the Font constructed based on the parameters
 	 */
-	public Font getFont(String fontname, String encoding, boolean embedded, float size, int style, Color color);
+	public Font getFont(String fontname, String encoding, boolean embedded, float size, int style, BaseColor color);
 }

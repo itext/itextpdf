@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text;
 
-import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +53,7 @@ import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfAnnotation;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.draw.DrawInterface;
+import com.itextpdf.text.BaseColor;
 
 /**
  * This is the smallest significant part of text that can be added to a
@@ -69,7 +69,7 @@ import com.itextpdf.text.pdf.draw.DrawInterface;
  * <PRE>
  * 
  * <STRONG>Chunk chunk = new Chunk("Hello world",
- * FontFactory.getFont(FontFactory.COURIER, 20, Font.ITALIC, new Color(255, 0,
+ * FontFactory.getFont(FontFactory.COURIER, 20, Font.ITALIC, new BaseColor(255, 0,
  * 0))); </STRONG> document.add(chunk);
  * 
  * </PRE>
@@ -517,7 +517,7 @@ public class Chunk implements Element {
 	 *            and PdfContentByte.LINE_CAP_PROJECTING_SQUARE
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setUnderline(Color color, float thickness, float thicknessMul,
+	public Chunk setUnderline(BaseColor color, float thickness, float thicknessMul,
 			float yPosition, float yPositionMul, int cap) {
 		if (attributes == null)
 			attributes = new HashMap();
@@ -589,7 +589,7 @@ public class Chunk implements Element {
 	 *            the color of the background
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setBackground(Color color) {
+	public Chunk setBackground(BaseColor color) {
 		return setBackground(color, 0, 0, 0, 0);
 	}
 
@@ -608,7 +608,7 @@ public class Chunk implements Element {
 	 *            increase the size of the rectangle in the top
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setBackground(Color color, float extraLeft, float extraBottom,
+	public Chunk setBackground(BaseColor color, float extraLeft, float extraBottom,
 			float extraRight, float extraTop) {
 		return setAttribute(BACKGROUND, new Object[] { color,
 				new float[] { extraLeft, extraBottom, extraRight, extraTop } });
@@ -637,7 +637,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 	public Chunk setTextRenderMode(int mode, float strokeWidth,
-			Color strokeColor) {
+			BaseColor strokeColor) {
 		return setAttribute(TEXTRENDERMODE, new Object[] { new Integer(mode),
 				new Float(strokeWidth), strokeColor });
 	}

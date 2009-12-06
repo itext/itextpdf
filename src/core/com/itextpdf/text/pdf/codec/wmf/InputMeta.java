@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.codec.wmf;
 
-import java.awt.Color;
+import com.itextpdf.text.BaseColor;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -97,11 +97,11 @@ public class InputMeta {
         return length;
     }
     
-    public Color readColor() throws IOException{
+    public BaseColor readColor() throws IOException{
         int red = readByte();
         int green = readByte();
         int blue = readByte();
         readByte();
-        return new Color(red, green, blue);
+        return new BaseColor(red, green, blue);
     }
 }

@@ -42,7 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.print.PrinterJob;
 import java.util.ArrayList;
@@ -57,6 +56,7 @@ import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.ImgJBIG2;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
@@ -779,7 +779,7 @@ public class PdfContentByte {
         content.append(x).append(' ').append(y).append(' ').append(w).append(' ').append(h).append(" re").append_i(separator);
     }
 
-    private boolean compareColors(Color c1, Color c2) {
+    private boolean compareColors(BaseColor c1, BaseColor c2) {
         if (c1 == null && c2 == null)
             return true;
         if (c1 == null || c2 == null)
@@ -804,18 +804,18 @@ public class PdfContentByte {
         float wb = rect.getBorderWidthBottom();
         float wr = rect.getBorderWidthRight();
         float wl = rect.getBorderWidthLeft();
-        Color ct = rect.getBorderColorTop();
-        Color cb = rect.getBorderColorBottom();
-        Color cr = rect.getBorderColorRight();
-        Color cl = rect.getBorderColorLeft();
+        BaseColor ct = rect.getBorderColorTop();
+        BaseColor cb = rect.getBorderColorBottom();
+        BaseColor cr = rect.getBorderColorRight();
+        BaseColor cl = rect.getBorderColorLeft();
         saveState();
         setLineCap(PdfContentByte.LINE_CAP_BUTT);
         setLineJoin(PdfContentByte.LINE_JOIN_MITER);
         float clw = 0;
         boolean cdef = false;
-        Color ccol = null;
+        BaseColor ccol = null;
         boolean cdefi = false;
-        Color cfil = null;
+        BaseColor cfil = null;
         // draw top
         if (wt > 0) {
             setLineWidth(clw = wt);
@@ -939,7 +939,7 @@ public class PdfContentByte {
         float y2 = rectangle.getTop();
 
         // the backgroundcolor is set
-        Color background = rectangle.getBackgroundColor();
+        BaseColor background = rectangle.getBackgroundColor();
         if (background != null) {
         	saveState();
             setColorFill(background);
@@ -966,7 +966,7 @@ public class PdfContentByte {
             }
 
             // the color is set to the color of the element
-            Color color = rectangle.getBorderColor();
+            BaseColor color = rectangle.getBorderColor();
             if (color != null) {
                 setColorStroke(color);
             }
@@ -1938,7 +1938,7 @@ public class PdfContentByte {
      * @param color the default color. Can be <CODE>null</CODE>
      * @return the <CODE>PdfPatternPainter</CODE> where the pattern will be created
      */
-    public PdfPatternPainter createPattern(float width, float height, float xstep, float ystep, Color color) {
+    public PdfPatternPainter createPattern(float width, float height, float xstep, float ystep, BaseColor color) {
         checkWriter();
         if ( xstep == 0.0f || ystep == 0.0f )
             throw new RuntimeException(MessageLocalization.getComposedMessage("xstep.or.ystep.can.not.be.zero"));
@@ -1960,7 +1960,7 @@ public class PdfContentByte {
      * @param color the default color. Can be <CODE>null</CODE>
      * @return the <CODE>PdfPatternPainter</CODE> where the pattern will be created
      */
-    public PdfPatternPainter createPattern(float width, float height, Color color) {
+    public PdfPatternPainter createPattern(float width, float height, BaseColor color) {
         return createPattern(width, height, width, height, color);
     }
 
@@ -2177,7 +2177,7 @@ public class PdfContentByte {
      * <CODE>ExtendedColor</CODE>.
      * @param color the color
      */
-    public void setColorStroke(Color color) {
+    public void setColorStroke(BaseColor color) {
     	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
@@ -2214,7 +2214,7 @@ public class PdfContentByte {
      * <CODE>ExtendedColor</CODE>.
      * @param color the color
      */
-    public void setColorFill(Color color) {
+    public void setColorFill(BaseColor color) {
     	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
@@ -2295,7 +2295,7 @@ public class PdfContentByte {
      * @param color The color
      * @param tint the tint if it is a spot color, ignored otherwise
      */
-    void outputColorNumbers(Color color, float tint) {
+    void outputColorNumbers(BaseColor color, float tint) {
     	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
@@ -2327,7 +2327,7 @@ public class PdfContentByte {
      * @param p the pattern
      * @param color the color of the pattern
      */
-    public void setPatternFill(PdfPatternPainter p, Color color) {
+    public void setPatternFill(PdfPatternPainter p, BaseColor color) {
         if (ExtendedColor.getType(color) == ExtendedColor.TYPE_SEPARATION)
             setPatternFill(p, color, ((SpotColor)color).getTint());
         else
@@ -2339,7 +2339,7 @@ public class PdfContentByte {
      * @param color the color of the pattern
      * @param tint the tint if the color is a spot color, ignored otherwise
      */
-    public void setPatternFill(PdfPatternPainter p, Color color, float tint) {
+    public void setPatternFill(PdfPatternPainter p, BaseColor color, float tint) {
         checkWriter();
         if (!p.isStencil())
             throw new RuntimeException(MessageLocalization.getComposedMessage("an.uncolored.pattern.was.expected"));
@@ -2357,7 +2357,7 @@ public class PdfContentByte {
      * @param p the pattern
      * @param color the color of the pattern
      */
-    public void setPatternStroke(PdfPatternPainter p, Color color) {
+    public void setPatternStroke(PdfPatternPainter p, BaseColor color) {
         if (ExtendedColor.getType(color) == ExtendedColor.TYPE_SEPARATION)
             setPatternStroke(p, color, ((SpotColor)color).getTint());
         else
@@ -2369,7 +2369,7 @@ public class PdfContentByte {
      * @param color the color of the pattern
      * @param tint the tint if the color is a spot color, ignored otherwise
      */
-    public void setPatternStroke(PdfPatternPainter p, Color color, float tint) {
+    public void setPatternStroke(PdfPatternPainter p, BaseColor color, float tint) {
         checkWriter();
         if (!p.isStencil())
             throw new RuntimeException(MessageLocalization.getComposedMessage("an.uncolored.pattern.was.expected"));
@@ -2647,26 +2647,26 @@ public class PdfContentByte {
         // silver circle
         setLineWidth(1);
         setLineCap(1);
-        setColorStroke(new Color(0xC0, 0xC0, 0xC0));
+        setColorStroke(new BaseColor(0xC0, 0xC0, 0xC0));
         arc(llx + 1f, lly + 1f, urx - 1f, ury - 1f, 0f, 360f);
         stroke();
         // gray circle-segment
         setLineWidth(1);
         setLineCap(1);
-        setColorStroke(new Color(0xA0, 0xA0, 0xA0));
+        setColorStroke(new BaseColor(0xA0, 0xA0, 0xA0));
         arc(llx + 0.5f, lly + 0.5f, urx - 0.5f, ury - 0.5f, 45, 180);
         stroke();
         // black circle-segment
         setLineWidth(1);
         setLineCap(1);
-        setColorStroke(new Color(0x00, 0x00, 0x00));
+        setColorStroke(new BaseColor(0x00, 0x00, 0x00));
         arc(llx + 1.5f, lly + 1.5f, urx - 1.5f, ury - 1.5f, 45, 180);
         stroke();
         if (on) {
             // gray circle
             setLineWidth(1);
             setLineCap(1);
-            setColorFill(new Color(0x00, 0x00, 0x00));
+            setColorFill(new BaseColor(0x00, 0x00, 0x00));
             arc(llx + 4f, lly + 4f, urx - 4f, ury - 4f, 0, 360);
             fill();
         }
@@ -2683,7 +2683,7 @@ public class PdfContentByte {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
         if (lly > ury) { float y = lly; lly = ury; ury = y; }
         // silver rectangle not filled
-        setColorStroke(new Color(0xC0, 0xC0, 0xC0));
+        setColorStroke(new BaseColor(0xC0, 0xC0, 0xC0));
         setLineWidth(1);
         setLineCap(0);
         rectangle(llx, lly, urx - llx, ury - lly);
@@ -2691,11 +2691,11 @@ public class PdfContentByte {
         // white rectangle filled
         setLineWidth(1);
         setLineCap(0);
-        setColorFill(new Color(0xFF, 0xFF, 0xFF));
+        setColorFill(new BaseColor(0xFF, 0xFF, 0xFF));
         rectangle(llx + 0.5f, lly + 0.5f, urx - llx - 1f, ury -lly - 1f);
         fill();
         // silver lines
-        setColorStroke(new Color(0xC0, 0xC0, 0xC0));
+        setColorStroke(new BaseColor(0xC0, 0xC0, 0xC0));
         setLineWidth(1);
         setLineCap(0);
         moveTo(llx + 1f, lly + 1.5f);
@@ -2703,7 +2703,7 @@ public class PdfContentByte {
         lineTo(urx - 1.5f, ury - 1f);
         stroke();
         // gray lines
-        setColorStroke(new Color(0xA0, 0xA0, 0xA0));
+        setColorStroke(new BaseColor(0xA0, 0xA0, 0xA0));
         setLineWidth(1);
         setLineCap(0);
         moveTo(llx + 1f, lly + 1);
@@ -2711,7 +2711,7 @@ public class PdfContentByte {
         lineTo(urx - 1f, ury - 1f);
         stroke();
         // black lines
-        setColorStroke(new Color(0x00, 0x00, 0x00));
+        setColorStroke(new BaseColor(0x00, 0x00, 0x00));
         setLineWidth(1);
         setLineCap(0);
         moveTo(llx + 2f, lly + 2f);
@@ -2734,7 +2734,7 @@ public class PdfContentByte {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
         if (lly > ury) { float y = lly; lly = ury; ury = y; }
         // black rectangle not filled
-        setColorStroke(new Color(0x00, 0x00, 0x00));
+        setColorStroke(new BaseColor(0x00, 0x00, 0x00));
         setLineWidth(1);
         setLineCap(0);
         rectangle(llx, lly, urx - llx, ury - lly);
@@ -2742,11 +2742,11 @@ public class PdfContentByte {
         // silver rectangle filled
         setLineWidth(1);
         setLineCap(0);
-        setColorFill(new Color(0xC0, 0xC0, 0xC0));
+        setColorFill(new BaseColor(0xC0, 0xC0, 0xC0));
         rectangle(llx + 0.5f, lly + 0.5f, urx - llx - 1f, ury -lly - 1f);
         fill();
         // white lines
-        setColorStroke(new Color(0xFF, 0xFF, 0xFF));
+        setColorStroke(new BaseColor(0xFF, 0xFF, 0xFF));
         setLineWidth(1);
         setLineCap(0);
         moveTo(llx + 1f, lly + 1f);
@@ -2754,7 +2754,7 @@ public class PdfContentByte {
         lineTo(urx - 1f, ury - 1f);
         stroke();
         // dark grey lines
-        setColorStroke(new Color(0xA0, 0xA0, 0xA0));
+        setColorStroke(new BaseColor(0xA0, 0xA0, 0xA0));
         setLineWidth(1);
         setLineCap(0);
         moveTo(llx + 1f, lly + 1f);

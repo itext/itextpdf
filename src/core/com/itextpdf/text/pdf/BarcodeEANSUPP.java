@@ -42,10 +42,10 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.awt.Color;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 
 /** This class takes 2 barcodes, an EAN/UPC and a supplemental
  * and creates a single barcode with both combined in the
@@ -124,7 +124,7 @@ public class BarcodeEANSUPP extends Barcode{
      * @param textColor the color of the text. It can be <CODE>null</CODE>
      * @return the dimensions the barcode occupies
      */
-    public Rectangle placeBarcode(PdfContentByte cb, Color barColor, Color textColor) {
+    public Rectangle placeBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor) {
         if (supp.getFont() != null)
             supp.setBarHeight(ean.getBarHeight() + supp.getBaseline() - supp.getFont().getFontDescriptor(BaseFont.CAPHEIGHT, supp.getSize()));
         else
@@ -146,7 +146,7 @@ public class BarcodeEANSUPP extends Barcode{
      * @param background the color of the background
      * @return the image
      */    
-    public java.awt.Image createAwtImage(Color foreground, Color background) {
+    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("the.two.barcodes.must.be.composed.externally"));
     }    
 }

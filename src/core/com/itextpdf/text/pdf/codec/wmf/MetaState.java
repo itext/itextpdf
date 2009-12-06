@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.codec.wmf;
 
-import java.awt.Color;
+import com.itextpdf.text.BaseColor;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -73,8 +73,8 @@ public class MetaState {
     public MetaPen currentPen;
     public MetaBrush currentBrush;
     public MetaFont currentFont;
-    public Color currentBackgroundColor = Color.white;
-    public Color currentTextColor = Color.black;
+    public BaseColor currentBackgroundColor = BaseColor.WHITE;
+    public BaseColor currentTextColor = BaseColor.BLACK;
     public int backgroundMode = OPAQUE;
     public int polyFillMode = ALTERNATE;
     public int lineJoin = 1;
@@ -142,11 +142,11 @@ public class MetaState {
                 currentBrush = (MetaBrush)obj;
                 style = currentBrush.getStyle();
                 if (style == MetaBrush.BS_SOLID) {
-                    Color color = currentBrush.getColor();
+                    BaseColor color = currentBrush.getColor();
                     cb.setColorFill(color);
                 }
                 else if (style == MetaBrush.BS_HATCHED) {
-                    Color color = currentBackgroundColor;
+                    BaseColor color = currentBackgroundColor;
                     cb.setColorFill(color);
                 }
                 break;
@@ -155,7 +155,7 @@ public class MetaState {
                 currentPen = (MetaPen)obj;
                 style = currentPen.getStyle();
                 if (style != MetaPen.PS_NULL) {
-                    Color color = currentPen.getColor();
+                    BaseColor color = currentPen.getColor();
                     cb.setColorStroke(color);
                     cb.setLineWidth(Math.abs(currentPen.getPenWidth() * scalingX / extentWx));
                     switch (style) {
@@ -278,28 +278,28 @@ public class MetaState {
     /** Getter for property currentBackgroundColor.
      * @return Value of property currentBackgroundColor.
      */
-    public Color getCurrentBackgroundColor() {
+    public BaseColor getCurrentBackgroundColor() {
         return currentBackgroundColor;
     }
     
     /** Setter for property currentBackgroundColor.
      * @param currentBackgroundColor New value of property currentBackgroundColor.
      */
-    public void setCurrentBackgroundColor(Color currentBackgroundColor) {
+    public void setCurrentBackgroundColor(BaseColor currentBackgroundColor) {
         this.currentBackgroundColor = currentBackgroundColor;
     }
     
     /** Getter for property currentTextColor.
      * @return Value of property currentTextColor.
      */
-    public Color getCurrentTextColor() {
+    public BaseColor getCurrentTextColor() {
         return currentTextColor;
     }
     
     /** Setter for property currentTextColor.
      * @param currentTextColor New value of property currentTextColor.
      */
-    public void setCurrentTextColor(Color currentTextColor) {
+    public void setCurrentTextColor(BaseColor currentTextColor) {
         this.currentTextColor = currentTextColor;
     }
     

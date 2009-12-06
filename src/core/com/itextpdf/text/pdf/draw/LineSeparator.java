@@ -46,7 +46,7 @@ package com.itextpdf.text.pdf.draw;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.PdfContentByte;
 
-import java.awt.Color;
+import com.itextpdf.text.BaseColor;
 
 /**
  * Element that draws a solid line from left to right.
@@ -62,7 +62,7 @@ public class LineSeparator extends VerticalPositionMark {
     /** The width of the line as a percentage of the available page width. */
     protected float percentage = 100;
     /** The color of the line. */
-    protected Color lineColor;
+    protected BaseColor lineColor;
     /** The alignment of the line. */
     protected int alignment = Element.ALIGN_CENTER;
     
@@ -74,7 +74,7 @@ public class LineSeparator extends VerticalPositionMark {
      * @param align			the alignment
      * @param offset		the offset of the line relative to the current baseline (negative = under the baseline)
      */
-    public LineSeparator(float lineWidth, float percentage, Color lineColor, int align, float offset) {
+    public LineSeparator(float lineWidth, float percentage, BaseColor lineColor, int align, float offset) {
         this.lineWidth = lineWidth;
         this.percentage = percentage;
         this.lineColor = lineColor;
@@ -167,7 +167,7 @@ public class LineSeparator extends VerticalPositionMark {
      * Getter for the color of the line that will be drawn.
      * @return	a color
      */
-    public Color getLineColor() {
+    public BaseColor getLineColor() {
         return lineColor;
     }
 
@@ -175,7 +175,7 @@ public class LineSeparator extends VerticalPositionMark {
      * Setter for the color of the line that will be drawn.
      * @param color	a color
      */
-    public void setLineColor(Color color) {
+    public void setLineColor(BaseColor color) {
         this.lineColor = color;
     }
 
