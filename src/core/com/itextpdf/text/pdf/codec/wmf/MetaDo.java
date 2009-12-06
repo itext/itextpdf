@@ -42,7 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf.codec.wmf;
-import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -44,7 +44,6 @@
 package com.itextpdf.text.pdf.codec.wmf;
 
 import com.itextpdf.text.BaseColor;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Stack;
 
