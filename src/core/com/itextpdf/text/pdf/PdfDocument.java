@@ -63,7 +63,6 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.HeaderFooter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
@@ -1025,58 +1024,6 @@ public class PdfDocument extends Document {
         super.resetPageCount();
     }
 
-//	[L9] DocListener interface
-
-    /**
-     * Changes the header of this document.
-     *
-     * @param header the new header
-     */
-    public void setHeader(HeaderFooter header) {
-        if (writer != null && writer.isPaused()) {
-            return;
-        }
-        super.setHeader(header);
-    }
-
-//	[L10] DocListener interface
-
-    /**
-     * Resets the header of this document.
-     */
-    public void resetHeader() {
-        if (writer != null && writer.isPaused()) {
-            return;
-        }
-        super.resetHeader();
-    }
-
-//	[L11] DocListener interface
-
-    /**
-     * Changes the footer of this document.
-     *
-     * @param	footer		the new footer
-     */
-    public void setFooter(HeaderFooter footer) {
-        if (writer != null && writer.isPaused()) {
-            return;
-        }
-        super.setFooter(footer);
-    }
-
-//	[L12] DocListener interface
-
-    /**
-     * Resets the footer of this document.
-     */
-    public void resetFooter() {
-        if (writer != null && writer.isPaused()) {
-            return;
-        }
-        super.resetFooter();
-    }
-
 // DOCLISTENER METHODS END
 
     /** Signals that OnOpenDocument should be called. */
@@ -1122,11 +1069,8 @@ public class PdfDocument extends Document {
 
         float oldleading = leading;
         int oldAlignment = alignment;
-        // if there is a footer, the footer is added
-        doFooter();
         // we move to the left/top position of the page
         text.moveText(left(), top());
-        doHeader();
         pageEmpty = true;
         // if there is an image waiting to be drawn, draw it
         try {
@@ -2484,95 +2428,5 @@ public class PdfDocument extends Document {
         ensureNewLine();
         return table.getTotalHeight() + ((currentHeight > 0) ? table.spacingBefore() : 0f)
         	<= indentTop() - currentHeight - indentBottom() - margin;
-    }
-
-//	[M5] header/footer
-    protected void doFooter() throws DocumentException {
-    	if (footer == null) return;
-		// Begin added by Edgar Leonardo Prieto Perilla
-    	// Avoid footer indentation
-    	float tmpIndentLeft = indentation.indentLeft;
-    	float tmpIndentRight = indentation.indentRight;
-    	// Begin added: Bonf (Marc Schneider) 2003-07-29
-        float tmpListIndentLeft = indentation.listIndentLeft;
-        float tmpImageIndentLeft = indentation.imageIndentLeft;
-        float tmpImageIndentRight = indentation.imageIndentRight;
-        // End added: Bonf (Marc Schneider) 2003-07-29
-
-        indentation.indentLeft = indentation.indentRight = 0;
-        // Begin added: Bonf (Marc Schneider) 2003-07-29
-        indentation.listIndentLeft = 0;
-        indentation.imageIndentLeft = 0;
-        indentation.imageIndentRight = 0;
-        // End added: Bonf (Marc Schneider) 2003-07-29
-        // End Added by Edgar Leonardo Prieto Perilla
-        footer.setPageNumber(pageN);
-        leading = footer.paragraph().getTotalLeading();
-        add(footer.paragraph());
-        // adding the footer limits the height
-        indentation.indentBottom = currentHeight;
-        text.moveText(left(), indentBottom());
-        flushLines();
-        text.moveText(-left(), -bottom());
-        footer.setTop(bottom(currentHeight));
-        footer.setBottom(bottom() - (0.75f * leading));
-        footer.setLeft(left());
-        footer.setRight(right());
-        graphics.rectangle(footer);
-        indentation.indentBottom = currentHeight + leading * 2;
-        currentHeight = 0;
-        // Begin added by Edgar Leonardo Prieto Perilla
-        indentation.indentLeft = tmpIndentLeft;
-        indentation.indentRight = tmpIndentRight;
-        // Begin added: Bonf (Marc Schneider) 2003-07-29
-        indentation.listIndentLeft = tmpListIndentLeft;
-        indentation.imageIndentLeft = tmpImageIndentLeft;
-        indentation.imageIndentRight = tmpImageIndentRight;
-        // End added: Bonf (Marc Schneider) 2003-07-29
-        // End added by Edgar Leonardo Prieto Perilla
-    }
-
-    protected void doHeader() throws DocumentException {
-        // if there is a header, the header = added
-        if (header == null) return;
-		// Begin added by Edgar Leonardo Prieto Perilla
-		// Avoid header indentation
-		float tmpIndentLeft = indentation.indentLeft;
-		float tmpIndentRight = indentation.indentRight;
-        // Begin added: Bonf (Marc Schneider) 2003-07-29
-        float tmpListIndentLeft = indentation.listIndentLeft;
-        float tmpImageIndentLeft = indentation.imageIndentLeft;
-        float tmpImageIndentRight = indentation.imageIndentRight;
-        // End added: Bonf (Marc Schneider) 2003-07-29
-        indentation.indentLeft = indentation.indentRight = 0;
-        //  Added: Bonf
-        indentation.listIndentLeft = 0;
-        indentation.imageIndentLeft = 0;
-        indentation.imageIndentRight = 0;
-        // End added: Bonf
-        // Begin added by Edgar Leonardo Prieto Perilla
-		header.setPageNumber(pageN);
-        leading = header.paragraph().getTotalLeading();
-        text.moveText(0, leading);
-        add(header.paragraph());
-        newLine();
-        indentation.indentTop = currentHeight - leading;
-        header.setTop(top() + leading);
-        header.setBottom(indentTop() + leading * 2 / 3);
-        header.setLeft(left());
-        header.setRight(right());
-        graphics.rectangle(header);
-        flushLines();
-        currentHeight = 0;
-        // Begin added by Edgar Leonardo Prieto Perilla
-        // Restore indentation
-		indentation.indentLeft = tmpIndentLeft;
-		indentation.indentRight = tmpIndentRight;
-        // Begin added: Bonf (Marc Schneider) 2003-07-29
-        indentation.listIndentLeft = tmpListIndentLeft;
-        indentation.imageIndentLeft = tmpImageIndentLeft;
-        indentation.imageIndentRight = tmpImageIndentRight;
-        // End added: Bonf (Marc Schneider) 2003-07-29
-		// End Added by Edgar Leonardo Prieto Perilla
     }
 }

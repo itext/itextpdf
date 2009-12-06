@@ -56,7 +56,6 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * {@link #setBorderColorLeft(java.awt.Color)}.
  * 
  * @see Element
- * @see HeaderFooter
  * @since 2.1.2
  */
 

@@ -171,12 +171,6 @@ public class Document implements DocListener {
 	/** Current pagenumber */
     protected int pageN = 0;
     
-	/** This is the textual part of a Page; it can contain a header */
-    protected HeaderFooter header = null;
-    
-	/** This is the textual part of the footer */
-    protected HeaderFooter footer = null;
-    
     /** This is a chapter number in case ChapterAutoNumber is used. */
     protected int chapternumber = 0;
     
@@ -372,64 +366,6 @@ public class Document implements DocListener {
             listener.newPage();
         }
         return true;
-    }
-    
-	/**
- * Changes the header of this document.
- *
-	 * @param header
-	 *            the new header
- */
-    
-    public void setHeader(HeaderFooter header) {
-        this.header = header;
-        DocListener listener;
-		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-            listener = (DocListener) iterator.next();
-            listener.setHeader(header);
-        }
-    }
-    
-	/**
- * Resets the header of this document.
- */
-    
-    public void resetHeader() {
-        this.header = null;
-        DocListener listener;
-		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-            listener = (DocListener) iterator.next();
-            listener.resetHeader();
-        }
-    }
-    
-	/**
- * Changes the footer of this document.
- *
-	 * @param footer
-	 *            the new footer
- */
-    
-    public void setFooter(HeaderFooter footer) {
-        this.footer = footer;
-        DocListener listener;
-		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-            listener = (DocListener) iterator.next();
-            listener.setFooter(footer);
-        }
-    }
-    
-	/**
- * Resets the footer of this document.
- */
-    
-    public void resetFooter() {
-        this.footer = null;
-        DocListener listener;
-		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-            listener = (DocListener) iterator.next();
-            listener.resetFooter();
-        }
     }
     
 	/**
