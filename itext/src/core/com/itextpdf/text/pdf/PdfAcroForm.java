@@ -48,6 +48,7 @@ import java.util.Iterator;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 
 /**
  * Each PDF document can contain maximum 1 AcroForm.
@@ -704,8 +705,8 @@ public class PdfAcroForm extends PdfDictionary {
         field.setFieldName(name);
         field.setFlags(PdfAnnotation.FLAGS_PRINT);
         field.setPage();
-        field.setMKBorderColor(java.awt.Color.black);
-        field.setMKBackgroundColor(java.awt.Color.white);
+        field.setMKBorderColor(BaseColor.BLACK);
+        field.setMKBackgroundColor(BaseColor.WHITE);
     }
 
     /**

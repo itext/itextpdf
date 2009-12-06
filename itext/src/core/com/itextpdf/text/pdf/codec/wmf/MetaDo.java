@@ -42,7 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf.codec.wmf;
-import java.awt.Color;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -55,6 +54,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.codec.BmpImage;
@@ -520,7 +520,7 @@ public class MetaDo {
                     break;
                 case META_SETPIXEL:
                 {
-                    Color color = in.readColor();
+                    BaseColor color = in.readColor();
                     int y = in.readShort();
                     int x = in.readShort();
                     cb.saveState();
@@ -597,7 +597,7 @@ public class MetaDo {
             ty = -descender;
         else
             ty = -ury;
-        Color textColor;
+        BaseColor textColor;
         if (state.getBackgroundMode() == MetaState.OPAQUE) {
             textColor = state.getCurrentBackgroundColor();
             cb.setColorFill(textColor);

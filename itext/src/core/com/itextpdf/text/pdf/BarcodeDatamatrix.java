@@ -47,7 +47,6 @@ import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.image.MemoryImageSource;
 import java.util.Arrays;
 import java.io.UnsupportedEncodingException;
@@ -761,7 +760,7 @@ public class BarcodeDatamatrix {
      * @param background the color of the background
      * @return the image
      */    
-    public java.awt.Image createAwtImage(Color foreground, Color background) {
+    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         if (image == null)
             return null;
         int f = foreground.getRGB();

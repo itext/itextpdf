@@ -76,6 +76,7 @@ cannot.handle.box.sizes.higher.than.2.32=Cannot handle box sizes higher than 2^3
 cf.not.found.encryption=/CF not found (encryption)
 codabar.must.have.at.least.a.start.and.stop.character=Codabar must have at least a start and stop character.
 codabar.must.have.one.of.abcd.as.start.stop.character=Codabar must have one of 'ABCD' as start/stop character.
+color.value.outside.range.0.255=Color value outside range 0-255.
 colors.are.not.allowed.in.uncolored.tile.patterns=Colors are not allowed in uncolored tile patterns.
 colorspace.calrgb.is.not.allowed=Colorspace CalRGB is not allowed.
 colorspace.rgb.is.not.allowed=Colorspace RGB is not allowed.

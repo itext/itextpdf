@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
 import java.awt.color.ICC_Profile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -63,6 +62,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
@@ -2853,7 +2853,7 @@ public class PdfWriter extends DocWriter implements
     protected ColorDetails patternColorspaceGRAY;
     protected ColorDetails patternColorspaceCMYK;
 
-    ColorDetails addSimplePatternColorspace(Color color) {
+    ColorDetails addSimplePatternColorspace(BaseColor color) {
         int type = ExtendedColor.getType(color);
         if (type == ExtendedColor.TYPE_PATTERN || type == ExtendedColor.TYPE_SHADING)
             throw new RuntimeException(MessageLocalization.getComposedMessage("an.uncolored.tile.pattern.can.not.have.another.pattern.or.shading.as.color"));

@@ -43,12 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.HashMap;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 /**
  * A <CODE>PdfAnnotation</CODE> is a note that is associated with a page.
  *
@@ -553,7 +553,7 @@ public class PdfAnnotation extends PdfDictionary {
         put(PdfName.AS, new PdfName(state));
     }
 
-    public void setColor(Color color) {
+    public void setColor(BaseColor color) {
         put(PdfName.C, new PdfColor(color));
     }
 
@@ -657,7 +657,7 @@ public class PdfAnnotation extends PdfDictionary {
         getMK().put(PdfName.R, new PdfNumber(rotation));
     }
 
-    public static PdfArray getMKColor(Color color) {
+    public static PdfArray getMKColor(BaseColor color) {
         PdfArray array = new PdfArray();
         int type = ExtendedColor.getType(color);
         switch (type) {
@@ -685,14 +685,14 @@ public class PdfAnnotation extends PdfDictionary {
         return array;
     }
 
-    public void setMKBorderColor(Color color) {
+    public void setMKBorderColor(BaseColor color) {
         if (color == null)
             getMK().remove(PdfName.BC);
         else
             getMK().put(PdfName.BC, getMKColor(color));
     }
 
-    public void setMKBackgroundColor(Color color) {
+    public void setMKBackgroundColor(BaseColor color) {
         if (color == null)
             getMK().remove(PdfName.BG);
         else

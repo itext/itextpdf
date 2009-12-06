@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
@@ -58,7 +58,7 @@ public class PdfSpotColor{
     public PdfName name;
     
 /** The alternative color space */
-    public Color altcs;
+    public BaseColor altcs;
     // constructors
     
     /**
@@ -68,16 +68,16 @@ public class PdfSpotColor{
      * @param		altcs		an alternative colorspace value
      */
     
-    public PdfSpotColor(String name, Color altcs) {
+    public PdfSpotColor(String name, BaseColor altcs) {
         this.name = new PdfName(name);
         this.altcs = altcs;
     }
     
     /**
      * Gets the alternative ColorSpace.
-     * @return a Color
+     * @return a BaseColor
      */
-    public Color getAlternativeCS() {
+    public BaseColor getAlternativeCS() {
         return altcs;
     }
     

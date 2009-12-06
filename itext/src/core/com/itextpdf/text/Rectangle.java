@@ -43,10 +43,10 @@
  */
 package com.itextpdf.text;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 import com.itextpdf.text.pdf.GrayColor;
+import com.itextpdf.text.BaseColor;
 
 /**
  * A <CODE>Rectangle</CODE> is the representation of a geometric figure.
@@ -102,7 +102,7 @@ public class Rectangle implements Element {
 	protected int rotation = 0;
 
 	/** This is the color of the background of this rectangle. */
-	protected Color backgroundColor = null;
+	protected BaseColor backgroundColor = null;
 
 	/** This represents the status of the 4 sides of the rectangle. */
 	protected int border = UNDEFINED;
@@ -126,19 +126,19 @@ public class Rectangle implements Element {
 	protected float borderWidthBottom = UNDEFINED;
 
 	/** The color of the border of this rectangle. */
-	protected Color borderColor = null;
+	protected BaseColor borderColor = null;
 
 	/** The color of the left border of this rectangle. */
-	protected Color borderColorLeft = null;
+	protected BaseColor borderColorLeft = null;
 
 	/** The color of the right border of this rectangle. */
-	protected Color borderColorRight = null;
+	protected BaseColor borderColorRight = null;
 
 	/** The color of the top border of this rectangle. */
-	protected Color borderColorTop = null;
+	protected BaseColor borderColorTop = null;
 
 	/** The color of the bottom border of this rectangle. */
-	protected Color borderColorBottom = null;
+	protected BaseColor borderColorBottom = null;
 
 	// CONSTRUCTORS:
 
@@ -408,19 +408,19 @@ public class Rectangle implements Element {
 	/**
 	 * Gets the backgroundcolor.
 	 * 
-	 * @return a <CODE>Color</CODE>
+	 * @return a <CODE>BaseColor</CODE>
 	 */
-	public Color getBackgroundColor() {
+	public BaseColor getBackgroundColor() {
 		return backgroundColor;
 	}
 	
 	/**
 	 * Sets the backgroundcolor of the rectangle.
 	 * 
-	 * @param backgroundColor	a <CODE>Color</CODE>
+	 * @param backgroundColor	a <CODE>BaseColor</CODE>
 	 */
 
-	public void setBackgroundColor(Color backgroundColor) {
+	public void setBackgroundColor(BaseColor backgroundColor) {
 		this.backgroundColor = backgroundColor;
 	}
 
@@ -672,27 +672,27 @@ public class Rectangle implements Element {
 	/**
 	 * Gets the color of the border.
 	 * 
-	 * @return	a <CODE>Color</CODE>
+	 * @return	a <CODE>BaseColor</CODE>
 	 */
-	public Color getBorderColor() {
+	public BaseColor getBorderColor() {
 		return borderColor;
 	}
 	
 	/**
 	 * Sets the color of the border.
 	 * 
-	 * @param borderColor a <CODE>Color</CODE>
+	 * @param borderColor a <CODE>BaseColor</CODE>
 	 */
-	public void setBorderColor(Color borderColor) {
+	public void setBorderColor(BaseColor borderColor) {
 		this.borderColor = borderColor;
 	}
 	
 	/**
 	 * Gets the color of the left border.
 	 * 
-	 * @return a <CODE>Color</CODE>
+	 * @return a <CODE>BaseColor</CODE>
 	 */
-	public Color getBorderColorLeft() {
+	public BaseColor getBorderColorLeft() {
 		if (borderColorLeft == null)
 			return borderColor;
 		return borderColorLeft;
@@ -701,18 +701,18 @@ public class Rectangle implements Element {
 	/**
 	 * Sets the color of the left border.
 	 * 
-	 * @param borderColorLeft a <CODE>Color</CODE>
+	 * @param borderColorLeft a <CODE>BaseColor</CODE>
 	 */
-	public void setBorderColorLeft(Color borderColorLeft) {
+	public void setBorderColorLeft(BaseColor borderColorLeft) {
 		this.borderColorLeft = borderColorLeft;
 	}
 
 	/**
 	 * Gets the color of the right border.
 	 * 
-	 * @return a <CODE>Color</CODE>
+	 * @return a <CODE>BaseColor</CODE>
 	 */
-	public Color getBorderColorRight() {
+	public BaseColor getBorderColorRight() {
 		if (borderColorRight == null)
 			return borderColor;
 		return borderColorRight;
@@ -721,18 +721,18 @@ public class Rectangle implements Element {
 	/**
 	 * Sets the color of the right border.
 	 * 
-	 * @param borderColorRight a <CODE>Color</CODE>
+	 * @param borderColorRight a <CODE>BaseColor</CODE>
 	 */
-	public void setBorderColorRight(Color borderColorRight) {
+	public void setBorderColorRight(BaseColor borderColorRight) {
 		this.borderColorRight = borderColorRight;
 	}
 
 	/**
 	 * Gets the color of the top border.
 	 * 
-	 * @return a <CODE>Color</CODE>
+	 * @return a <CODE>BaseColor</CODE>
 	 */
-	public Color getBorderColorTop() {
+	public BaseColor getBorderColorTop() {
 		if (borderColorTop == null)
 			return borderColor;
 		return borderColorTop;
@@ -741,18 +741,18 @@ public class Rectangle implements Element {
 	/**
 	 * Sets the color of the top border.
 	 * 
-	 * @param borderColorTop a <CODE>Color</CODE>
+	 * @param borderColorTop a <CODE>BaseColor</CODE>
 	 */
-	public void setBorderColorTop(Color borderColorTop) {
+	public void setBorderColorTop(BaseColor borderColorTop) {
 		this.borderColorTop = borderColorTop;
 	}
 
 	/**
 	 * Gets the color of the bottom border.
 	 * 
-	 * @return a <CODE>Color</CODE>
+	 * @return a <CODE>BaseColor</CODE>
 	 */
-	public Color getBorderColorBottom() {
+	public BaseColor getBorderColorBottom() {
 		if (borderColorBottom == null)
 			return borderColor;
 		return borderColorBottom;
@@ -761,9 +761,9 @@ public class Rectangle implements Element {
 	/**
 	 * Sets the color of the bottom border.
 	 * 
-	 * @param borderColorBottom a <CODE>Color</CODE>
+	 * @param borderColorBottom a <CODE>BaseColor</CODE>
 	 */
-	public void setBorderColorBottom(Color borderColorBottom) {
+	public void setBorderColorBottom(BaseColor borderColorBottom) {
 		this.borderColorBottom = borderColorBottom;
 	}
 

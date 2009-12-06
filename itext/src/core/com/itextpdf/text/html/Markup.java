@@ -43,9 +43,9 @@
  */
 package com.itextpdf.text.html;
 
-import java.awt.Color;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import com.itextpdf.text.BaseColor;
 
 /**
  * A class that contains all the possible tagnames and their attributes.
@@ -399,15 +399,15 @@ public class Markup {
 	}
 
 	/**
-	 * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>
-	 * Color</CODE>.
+	 * Converts a <CODE>BaseColor</CODE> into a HTML representation of this <CODE>
+	 * BaseColor</CODE>.
 	 * 
 	 * @param s
-	 *            the <CODE>Color</CODE> that has to be converted.
-	 * @return the HTML representation of this <COLOR>Color </COLOR>
+	 *            the <CODE>BaseColor</CODE> that has to be converted.
+	 * @return the HTML representation of this <COLOR>BaseColor </COLOR>
 	 */
 
-	public static Color decodeColor(String s) {
+	public static BaseColor decodeColor(String s) {
 		if (s == null)
 			return null;
 		s = s.toLowerCase().trim();

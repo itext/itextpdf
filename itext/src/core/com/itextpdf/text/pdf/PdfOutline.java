@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -52,6 +51,7 @@ import java.util.Iterator;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.BaseColor;
 
 /**
  * <CODE>PdfOutline</CODE> is an object that represents a PDF outline entry.
@@ -94,7 +94,7 @@ public class PdfOutline extends PdfDictionary {
     private boolean open;
     
     /** Holds value of property color. */
-    private Color color;
+    private BaseColor color;
     
     /** Holds value of property style. */
     private int style = 0;
@@ -407,7 +407,7 @@ public class PdfOutline extends PdfDictionary {
      */
     
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
-        if (color != null && !color.equals(Color.black)) {
+        if (color != null && !color.equals(BaseColor.BLACK)) {
             put(PdfName.C, new PdfArray(new float[]{color.getRed()/255f,color.getGreen()/255f,color.getBlue()/255f}));
         }
         int flag = 0;
@@ -504,7 +504,7 @@ public class PdfOutline extends PdfDictionary {
      * @return Value of property color.
      *
      */
-    public Color getColor() {
+    public BaseColor getColor() {
         return this.color;
     }
     
@@ -512,7 +512,7 @@ public class PdfOutline extends PdfDictionary {
      * @param color New value of property color.
      *
      */
-    public void setColor(Color color) {
+    public void setColor(BaseColor color) {
         this.color = color;
     }
     

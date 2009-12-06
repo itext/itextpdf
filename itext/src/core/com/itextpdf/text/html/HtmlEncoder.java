@@ -43,9 +43,8 @@
  */
 package com.itextpdf.text.html;
 
-import java.awt.Color;
-
 import com.itextpdf.text.Element;
+import com.itextpdf.text.BaseColor;
 
 /**
  * This class converts a <CODE>String</CODE> to the HTML-format of a String.
@@ -148,13 +147,13 @@ public final class HtmlEncoder {
     }
     
 /**
- * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>Color</CODE>.
+ * Converts a <CODE>BaseColor</CODE> into a HTML representation of this <CODE>BaseColor</CODE>.
  *
- * @param	color	the <CODE>Color</CODE> that has to be converted.
- * @return	the HTML representation of this <COLOR>Color</COLOR>
+ * @param	color	the <CODE>BaseColor</CODE> that has to be converted.
+ * @return	the HTML representation of this <COLOR>BaseColor</COLOR>
  */
     
-    public static String encode(Color color) {
+    public static String encode(BaseColor color) {
         StringBuffer buffer = new StringBuffer("#");
         if (color.getRed() < 16) {
             buffer.append('0');

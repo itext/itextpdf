@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.internal;
 
-import java.awt.Color;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.pdf.BaseFont;
@@ -209,7 +209,7 @@ public class PdfXConformanceImp implements PdfXConformance {
                                     break;
                             }
                         }
-                        else if (obj1 instanceof Color)
+                        else if (obj1 instanceof BaseColor)
                             throw new PdfXConformanceException(MessageLocalization.getComposedMessage("colorspace.rgb.is.not.allowed"));
                         break;
                 }

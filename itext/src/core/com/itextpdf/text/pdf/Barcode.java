@@ -43,11 +43,10 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
-
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.BaseColor;
 /** Base class containing properties and methods common to all
  * barcode types.
  *
@@ -389,7 +388,7 @@ public abstract class Barcode {
      * @param textColor the color of the text. It can be <CODE>null</CODE>
      * @return the dimensions the barcode occupies
      */    
-    public abstract Rectangle placeBarcode(PdfContentByte cb, Color barColor, Color textColor);
+    public abstract Rectangle placeBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor);
     
     /** Creates a template with the barcode.
      * @param cb the <CODE>PdfContentByte</CODE> to create the template. It
@@ -397,9 +396,9 @@ public abstract class Barcode {
      * @param barColor the color of the bars. It can be <CODE>null</CODE>
      * @param textColor the color of the text. It can be <CODE>null</CODE>
      * @return the template
-     * @see #placeBarcode(PdfContentByte cb, Color barColor, Color textColor)
+     * @see #placeBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor)
      */    
-    public PdfTemplate createTemplateWithBarcode(PdfContentByte cb, Color barColor, Color textColor) {
+    public PdfTemplate createTemplateWithBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor) {
         PdfTemplate tp = cb.createTemplate(0, 0);
         Rectangle rect = placeBarcode(tp, barColor, textColor);
         tp.setBoundingBox(rect);
@@ -412,9 +411,9 @@ public abstract class Barcode {
      * @param barColor the color of the bars. It can be <CODE>null</CODE>
      * @param textColor the color of the text. It can be <CODE>null</CODE>
      * @return the <CODE>Image</CODE>
-     * @see #placeBarcode(PdfContentByte cb, Color barColor, Color textColor)
+     * @see #placeBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor)
      */    
-    public Image createImageWithBarcode(PdfContentByte cb, Color barColor, Color textColor) {
+    public Image createImageWithBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor) {
         try {
             return Image.getInstance(createTemplateWithBarcode(cb, barColor, textColor));
         }
@@ -429,7 +428,7 @@ public abstract class Barcode {
      * @param background the color of the background
      * @return the image
      */    
-    public abstract java.awt.Image createAwtImage(Color foreground, Color background);
+    public abstract java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background);
     
     /** Gets the amount of ink spreading.
      * @return the ink spreading

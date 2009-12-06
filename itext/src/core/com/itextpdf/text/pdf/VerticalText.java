@@ -42,7 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -50,6 +49,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.BaseColor;
 
 /** Writes text vertically. Note that the naming is done according
  * to horizontal text although it refers to vertical text.
@@ -264,7 +264,7 @@ public class VerticalText {
                 currentFont = chunk.font();
                 text.setFontAndSize(currentFont.getFont(), currentFont.size());
             }
-            Color color = chunk.color();
+            BaseColor color = chunk.color();
             if (color != null)
                 text.setColorFill(color);
             text.showText(chunk.toString());

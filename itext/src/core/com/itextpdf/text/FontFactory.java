@@ -43,10 +43,10 @@
  */
 package com.itextpdf.text;
 
-import java.awt.Color;
 import java.util.Properties;
 import java.util.Set;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.BaseColor;
 
 import com.itextpdf.text.pdf.BaseFont;
 
@@ -125,11 +125,11 @@ public final class FontFactory {
  * @param       embedded    true if the font is to be embedded in the PDF
  * @param	size	    the size of this font
  * @param	style	    the style of this font
- * @param	color	    the <CODE>Color</CODE> of this font.
+ * @param	color	    the <CODE>BaseColor</CODE> of this font.
  * @return the Font constructed based on the parameters
  */
     
-    public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style, Color color) {
+    public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style, BaseColor color) {
         return fontImp.getFont(fontname, encoding, embedded, size, style, color);
     }
     
@@ -141,13 +141,13 @@ public final class FontFactory {
  * @param       embedded    true if the font is to be embedded in the PDF
  * @param	size	    the size of this font
  * @param	style	    the style of this font
- * @param	color	    the <CODE>Color</CODE> of this font.
+ * @param	color	    the <CODE>BaseColor</CODE> of this font.
  * @param	cached 		true if the font comes from the cache or is added to
  * 				the cache if new, false if the font is always created new
  * @return the Font constructed based on the parameters
  */
     
-    public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style, Color color, boolean cached) {
+    public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style, BaseColor color, boolean cached) {
         return fontImp.getFont(fontname, encoding, embedded, size, style, color, cached);
     }
     
@@ -213,11 +213,11 @@ public final class FontFactory {
  * @param	encoding    the encoding of the font
  * @param	size	    the size of this font
  * @param	style	    the style of this font
- * @param	color	    the <CODE>Color</CODE> of this font.
+ * @param	color	    the <CODE>BaseColor</CODE> of this font.
  * @return the Font constructed based on the parameters
  */
     
-    public static Font getFont(String fontname, String encoding, float size, int style, Color color) {
+    public static Font getFont(String fontname, String encoding, float size, int style, BaseColor color) {
         return getFont(fontname, encoding, defaultEmbedding, size, style, color);
     }
     
@@ -266,11 +266,11 @@ public final class FontFactory {
  * @param	fontname    the name of the font
  * @param	size	    the size of this font
  * @param	style	    the style of this font
- * @param	color	    the <CODE>Color</CODE> of this font.
+ * @param	color	    the <CODE>BaseColor</CODE> of this font.
  * @return the Font constructed based on the parameters
  */
     
-    public static Font getFont(String fontname, float size, int style, Color color) {
+    public static Font getFont(String fontname, float size, int style, BaseColor color) {
         return getFont(fontname, defaultEncoding, defaultEmbedding, size, style, color);
     }
     
@@ -279,12 +279,12 @@ public final class FontFactory {
  *
  * @param	fontname    the name of the font
  * @param	size	    the size of this font
- * @param	color	    the <CODE>Color</CODE> of this font.
+ * @param	color	    the <CODE>BaseColor</CODE> of this font.
  * @return the Font constructed based on the parameters
  * @since 2.1.0
  */
     
-    public static Font getFont(String fontname, float size, Color color) {
+    public static Font getFont(String fontname, float size, BaseColor color) {
         return getFont(fontname, defaultEncoding, defaultEmbedding, size, Font.UNDEFINED, color);
     }
     

@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.factories;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Properties;
@@ -65,6 +64,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Section;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.html.Markup;
+import com.itextpdf.text.BaseColor;
 
 /**
  * This class is able to create Element objects based on a list of properties.

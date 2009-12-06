@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -53,12 +52,13 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.SplitCharacter;
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.BaseColor;
 
 /**
  * A <CODE>PdfChunk</CODE> is the PDF translation of a <CODE>Chunk</CODE>.
  * <P>
  * A <CODE>PdfChunk</CODE> is a <CODE>PdfString</CODE> in a certain
- * <CODE>PdfFont</CODE> and <CODE>Color</CODE>.
+ * <CODE>PdfFont</CODE> and <CODE>BaseColor</CODE>.
  *
  * @see		PdfString
  * @see		com.itextpdf.text.Chunk
@@ -125,7 +125,7 @@ public class PdfChunk {
  * Non metric attributes.
  * <P>
  * This attributes do not require the measurement of characters widths when rendering
- * such as Color.
+ * such as BaseColor.
  */
     protected HashMap noStroke = new HashMap();
     
@@ -506,11 +506,11 @@ public class PdfChunk {
 /**
  * Returns the color of this <CODE>Chunk</CODE>.
  *
- * @return	a <CODE>Color</CODE>
+ * @return	a <CODE>BaseColor</CODE>
  */
     
-    Color color() {
-        return (Color)noStroke.get(Chunk.COLOR);
+    BaseColor color() {
+        return (BaseColor)noStroke.get(Chunk.COLOR);
     }
     
 /**
