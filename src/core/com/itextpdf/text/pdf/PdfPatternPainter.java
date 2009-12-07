@@ -330,7 +330,7 @@ public final class PdfPatternPainter extends PdfTemplate {
     }
     
     /**
-     * @see com.itextpdf.text.pdf.PdfContentByte#setColorStroke(java.awt.Color)
+     * @see com.itextpdf.text.pdf.PdfContentByte#setColorStroke(com.itextpdf.text.BaseColor)
      */
     public void setColorStroke(BaseColor color) {
         checkNoColor();
@@ -338,7 +338,7 @@ public final class PdfPatternPainter extends PdfTemplate {
     }
     
     /**
-     * @see com.itextpdf.text.pdf.PdfContentByte#setColorFill(java.awt.BaseColor)
+     * @see com.itextpdf.text.pdf.PdfContentByte#setColorFill(com.itextpdf.text.BaseColor)
      */
     public void setColorFill(BaseColor color) {
         checkNoColor();
@@ -370,7 +370,7 @@ public final class PdfPatternPainter extends PdfTemplate {
     }
     
     /**
-     * @see com.itextpdf.text.pdf.PdfContentByte#setPatternFill(com.itextpdf.text.pdf.PdfPatternPainter, java.awt.Color, float)
+     * @see com.itextpdf.text.pdf.PdfContentByte#setPatternFill(com.itextpdf.text.pdf.PdfPatternPainter, com.itextpdf.text.BaseColor, float)
      */
     public void setPatternFill(PdfPatternPainter p, BaseColor color, float tint) {
         checkNoColor();
@@ -378,7 +378,7 @@ public final class PdfPatternPainter extends PdfTemplate {
     }
     
     /**
-     * @see com.itextpdf.text.pdf.PdfContentByte#setPatternStroke(com.itextpdf.text.pdf.PdfPatternPainter, java.awt.Color, float)
+     * @see com.itextpdf.text.pdf.PdfContentByte#setPatternStroke(com.itextpdf.text.pdf.PdfPatternPainter, com.itextpdf.text.BaseColor, float)
      */
     public void setPatternStroke(PdfPatternPainter p, BaseColor color, float tint) {
         checkNoColor();

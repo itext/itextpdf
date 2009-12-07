@@ -920,11 +920,11 @@ public class AcroFields {
      * <p>
      * <ul>
      * <li>textfont - sets the text font. The value for this entry is a <CODE>BaseFont</CODE>.<br>
-     * <li>textcolor - sets the text color. The value for this entry is a <CODE>java.awt.BaseColor</CODE>.<br>
+     * <li>textcolor - sets the text color. The value for this entry is a <CODE>BaseColor</CODE>.<br>
      * <li>textsize - sets the text size. The value for this entry is a <CODE>Float</CODE>.
-     * <li>bgcolor - sets the background color. The value for this entry is a <CODE>java.awt.BaseColor</CODE>.
+     * <li>bgcolor - sets the background color. The value for this entry is a <CODE>BaseColor</CODE>.
      *     If <code>null</code> removes the background.<br>
-     * <li>bordercolor - sets the border color. The value for this entry is a <CODE>java.awt.Color</CODE>.
+     * <li>bordercolor - sets the border color. The value for this entry is a <CODE>BaseColor</CODE>.
      *     If <code>null</code> removes the border.<br>
      * </ul>
      * 
