@@ -517,12 +517,10 @@ public class PdfPTable implements LargeElement{
      * @since	2.1.6
      */
     boolean rowSpanAbove(int currRow, int currCol) {
-    	
     	if ((currCol >= getNumberOfColumns()) 
     			|| (currCol < 0) 
     			|| (currRow == 0))
     		return false;
-    	
     	int row = currRow - 1;
     	PdfPRow aboveRow = (PdfPRow)rows.get(row);
     	if (aboveRow == null)
@@ -540,7 +538,7 @@ public class PdfPTable implements LargeElement{
     	if (aboveCell == null) {
         	int col = currCol - 1;
         	aboveCell = (PdfPCell)aboveRow.getCells()[col];
-        	while ((aboveCell == null) && (row > 0))
+        	while (aboveCell == null)
         		aboveCell = (PdfPCell)aboveRow.getCells()[--col];
         	return aboveCell != null && aboveCell.getRowspan() > distance;
     	}
