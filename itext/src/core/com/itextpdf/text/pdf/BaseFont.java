@@ -594,7 +594,7 @@ public abstract class BaseFont {
      * @since	2.0.3
      */
     public static BaseFont createFont(String name, String encoding, boolean embedded, boolean cached, byte ttfAfm[], byte pfb[], boolean noThrow) throws DocumentException, IOException {
-        return createFont(name, encoding, embedded, cached, ttfAfm, pfb, false, false);
+        return createFont(name, encoding, embedded, cached, ttfAfm, pfb, noThrow, false);
     }
     
     /** Creates a new font. This font can be one of the 14 built in types,
