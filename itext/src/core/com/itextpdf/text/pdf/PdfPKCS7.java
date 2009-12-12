@@ -1352,33 +1352,39 @@ public class PdfPKCS7 {
             v.add(new DERObjectIdentifier(ID_MESSAGE_DIGEST));
             v.add(new DERSet(new DEROctetString(secondDigest)));
             attribute.add(new DERSequence(v));
-            if (ocsp != null) {
+            if (ocsp != null || !crls.isEmpty()) {            	
                 v = new ASN1EncodableVector();
                 v.add(new DERObjectIdentifier(ID_ADBE_REVOCATION));
-                DEROctetString doctet = new DEROctetString(ocsp);
-                ASN1EncodableVector vo1 = new ASN1EncodableVector();
-                ASN1EncodableVector v2 = new ASN1EncodableVector();
-                v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
-                v2.add(doctet);
-                DEREnumerated den = new DEREnumerated(0);
-                ASN1EncodableVector v3 = new ASN1EncodableVector();
-                v3.add(den);
-                v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));
-                vo1.add(new DERSequence(v3));
-                v.add(new DERSet(new DERSequence(new DERTaggedObject(true, 1, new DERSequence(vo1)))));
+                
+                ASN1EncodableVector revocationV = new ASN1EncodableVector();
+                
+                if (!crls.isEmpty()) {
+                    ASN1EncodableVector v2 = new ASN1EncodableVector();
+                    for (Iterator i = crls.iterator();i.hasNext();) {
+                        ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream(((X509CRL)i.next()).getEncoded()));
+                        v2.add(t.readObject());
+                    }
+                    revocationV.add(new DERTaggedObject(true, 0, new DERSequence(v2)));
+                }
+                
+                if (ocsp != null) {
+	                DEROctetString doctet = new DEROctetString(ocsp);
+	                ASN1EncodableVector vo1 = new ASN1EncodableVector();
+	                ASN1EncodableVector v2 = new ASN1EncodableVector();
+	                v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
+	                v2.add(doctet);
+	                DEREnumerated den = new DEREnumerated(0);
+	                ASN1EncodableVector v3 = new ASN1EncodableVector();
+	                v3.add(den);
+	                v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));
+	                vo1.add(new DERSequence(v3));
+	                revocationV.add(new DERTaggedObject(true, 1, new DERSequence(vo1)));
+                }
+                
+                v.add(new DERSet(new DERSequence(revocationV)));
                 attribute.add(new DERSequence(v));
             }                
-            else if (!crls.isEmpty()) {
-                v = new ASN1EncodableVector();
-                v.add(new DERObjectIdentifier(ID_ADBE_REVOCATION));
-                ASN1EncodableVector v2 = new ASN1EncodableVector();
-                for (Iterator i = crls.iterator();i.hasNext();) {
-                    ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream(((X509CRL)i.next()).getEncoded()));
-                    v2.add(t.readObject());
-                }
-                v.add(new DERSet(new DERSequence(new DERTaggedObject(true, 0, new DERSequence(v2)))));
-                attribute.add(new DERSequence(v));
-            }
+            
             return new DERSet(attribute);
         }
         catch (Exception e) {
