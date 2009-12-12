@@ -66,6 +66,9 @@ public class IncCell implements TextElementArray {
         String value = props.getProperty("colspan");
         if (value != null)
             cell.setColspan(Integer.parseInt(value));
+        value = props.getProperty("rowspan");
+        if (value != null)
+            cell.setRowspan(Integer.parseInt(value));
         value = props.getProperty("align");
         if (tag.equals("th"))
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
