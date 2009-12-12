@@ -95,6 +95,7 @@ import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.jce.provider.X509CRLParser;
 import org.bouncycastle.jce.provider.X509CertParser;
 import com.itextpdf.text.ExceptionConverter;
@@ -437,23 +438,25 @@ public class PdfPKCS7 {
             ASN1Sequence signerInfo = (ASN1Sequence)signerInfos.getObjectAt(0);
             // the positions that we care are
             //     0 - version
-            //     1 - the signing certificate serial number
+            //     1 - the signing certificate issuer and serial number
             //     2 - the digest algorithm
             //     3 or 4 - digestEncryptionAlgorithm
             //     4 or 5 - encryptedDigest
             signerversion = ((DERInteger)signerInfo.getObjectAt(0)).getValue().intValue();
             // Get the signing certificate
             ASN1Sequence issuerAndSerialNumber = (ASN1Sequence)signerInfo.getObjectAt(1);
+            X509Principal issuer = new X509Principal(issuerAndSerialNumber.getObjectAt(0).getDERObject().getEncoded());
             BigInteger serialNumber = ((DERInteger)issuerAndSerialNumber.getObjectAt(1)).getValue();
             for (Iterator i = certs.iterator(); i.hasNext();) {
                 X509Certificate cert = (X509Certificate)i.next();
-                if (serialNumber.equals(cert.getSerialNumber())) {
+                if (issuer.equals(cert.getIssuerDN()) && serialNumber.equals(cert.getSerialNumber())) {
                     signCert = cert;
                     break;
                 }
             }
             if (signCert == null) {
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("can.t.find.signing.certificate.with.serial.1", serialNumber.toString(16)));
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("can.t.find.signing.certificate.with.serial.1",
+                    issuer.getName() + " / " + serialNumber.toString(16)));
             }
             signCertificateChain();
             digestAlgorithm = ((DERObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(2)).getObjectAt(0)).getId();
@@ -673,7 +676,7 @@ public class PdfPKCS7 {
         cc.add(signCert);
         ArrayList oc = new ArrayList(certs);
         for (int k = 0; k < oc.size(); ++k) {
-            if (signCert.getSerialNumber().equals(((X509Certificate)oc.get(k)).getSerialNumber())) {
+            if (signCert.equals(((X509Certificate)oc.get(k)))) {
                 oc.remove(k);
                 --k;
                 continue;
