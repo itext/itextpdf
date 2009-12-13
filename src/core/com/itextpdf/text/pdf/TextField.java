@@ -681,8 +681,14 @@ public class TextField extends BaseField {
     public int getChoiceSelection() {
     	return getTopChoice();
     }
-    
-    public ArrayList gteChoiceSelections() {
+
+    /**
+     * Gets the selected items.
+     * @return the selected items
+     *
+     * @since 5.0.1
+     */
+    public ArrayList getChoiceSelections() {
     	return choiceSelections;
     }
 
