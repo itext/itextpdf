@@ -1418,7 +1418,7 @@ public abstract class BaseFont {
             return;
         PdfDictionary font = (PdfDictionary)obj;
         PdfName subtype = font.getAsName(PdfName.SUBTYPE);
-        if (!PdfName.TYPE1.equals(subtype) && !PdfName.TRUETYPE.equals(subtype))
+        if (!PdfName.TYPE1.equals(subtype) && !PdfName.TRUETYPE.equals(subtype) && !PdfName.TYPE0.equals(subtype))
             return;
         PdfName name = font.getAsName(PdfName.BASEFONT);
         fonts.add(new Object[]{PdfName.decodeName(name.toString()), fontRef});
