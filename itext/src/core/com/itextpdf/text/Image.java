@@ -73,7 +73,6 @@ import com.itextpdf.text.pdf.codec.GifImage;
 import com.itextpdf.text.pdf.codec.JBIG2Image;
 import com.itextpdf.text.pdf.codec.PngImage;
 import com.itextpdf.text.pdf.codec.TiffImage;
-import com.itextpdf.text.BaseColor;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG

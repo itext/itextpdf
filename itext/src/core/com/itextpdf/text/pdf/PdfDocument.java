@@ -46,16 +46,13 @@ package com.itextpdf.text.pdf;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.Annotation;
-import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;

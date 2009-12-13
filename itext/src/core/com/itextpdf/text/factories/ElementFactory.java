@@ -60,11 +60,9 @@ import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Section;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.html.Markup;
-import com.itextpdf.text.BaseColor;
 
 /**
  * This class is able to create Element objects based on a list of properties.
