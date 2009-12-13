@@ -89,6 +89,11 @@ public class PdfSignatureAppearance {
      * The rendering mode is an image and the description
      */
     public static final int SignatureRenderGraphicAndDescription = 2;
+    
+    /**
+     * The rendering mode is just an image.
+     */
+    public static final int SignatureRenderGraphic = 3;
 
     /**
      * The self signed filter.
@@ -463,12 +468,22 @@ public class PdfSignatureAppearance {
                         rect.getHeight() / 2 - MARGIN);
                 }
             }
+            else if (render == SignatureRenderGraphic) {
+                if (signatureGraphic == null) {
+                    throw new IllegalStateException(MessageLocalization.getComposedMessage("a.signature.image.should.be.present.when.rendering.mode.is.graphic.only"));
+                }
+                signatureRect = new Rectangle(
+                        MARGIN,
+                        MARGIN,
+                        rect.getWidth() - MARGIN, // take all space available
+                        rect.getHeight() - MARGIN);
+            }
             else {
                 dataRect = new Rectangle(
-                    MARGIN, 
-                    MARGIN, 
-                    rect.getWidth() - MARGIN,
-                    rect.getHeight() * (1 - TOP_SECTION) - MARGIN);
+                        MARGIN,
+                        MARGIN,
+                        rect.getWidth() - MARGIN,
+                        rect.getHeight() * (1 - TOP_SECTION) - MARGIN);
             }
 
             if (render == SignatureRenderNameAndDescription) {
@@ -503,15 +518,38 @@ public class PdfSignatureAppearance {
                 ct2.addElement(p);
                 ct2.go();
             }
-            
-            if (size <= 0) {
-                Rectangle sr = new Rectangle(dataRect.getWidth(), dataRect.getHeight());
-                size = fitText(font, text, sr, 12, runDirection);
+            else if (render == SignatureRenderGraphic) {
+                ColumnText ct2 = new ColumnText(t);
+                ct2.setRunDirection(runDirection);
+                ct2.setSimpleColumn(signatureRect.getLeft(), signatureRect.getBottom(), signatureRect.getRight(), signatureRect.getTop(), 0, Element.ALIGN_RIGHT);
+
+                Image im = Image.getInstance(signatureGraphic);
+                im.scaleToFit(signatureRect.getWidth(), signatureRect.getHeight());
+
+                Paragraph p = new Paragraph();
+                // must calculate the point to draw from to make image appear in middle of column
+                float x = 0;
+                // experimentation found this magic number to counteract Adobe's signature graphic, which
+                // offsets the y co-ordinate by 15 units
+                float y = -im.getScaledHeight() + 15;
+
+                x = x + (signatureRect.getWidth() - im.getScaledWidth()) / 2;
+                y = y - (signatureRect.getHeight() - im.getScaledHeight()) / 2;
+                p.add(new Chunk(im, x, y, false));
+                ct2.addElement(p);
+                ct2.go();
             }
-            ColumnText ct = new ColumnText(t);
-            ct.setRunDirection(runDirection);
-            ct.setSimpleColumn(new Phrase(text, font), dataRect.getLeft(), dataRect.getBottom(), dataRect.getRight(), dataRect.getTop(), size, Element.ALIGN_LEFT);
-            ct.go();
+            
+            if(render != SignatureRenderGraphic) {
+            	if (size <= 0) {
+                    Rectangle sr = new Rectangle(dataRect.getWidth(), dataRect.getHeight());
+                    size = fitText(font, text, sr, 12, runDirection);
+                }
+                ColumnText ct = new ColumnText(t);
+                ct.setRunDirection(runDirection);
+                ct.setSimpleColumn(new Phrase(text, font), dataRect.getLeft(), dataRect.getBottom(), dataRect.getRight(), dataRect.getTop(), size, Element.ALIGN_LEFT);
+                ct.go();
+            }            
         }
         if (app[3] == null && !acro6Layers) {
             PdfTemplate t = app[3] = new PdfTemplate(writer);
