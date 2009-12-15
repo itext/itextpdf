@@ -61,7 +61,13 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
     <target name="jar" depends="compile" description="--> makes a jarfile from the iText code">
-        <mkdir dir="${itext.bin}/com/itextpdf/text/pdf/fonts" />
+    	<mkdir dir="${itext.bin}/com/itextpdf/text/error_messages" />
+    	<copy todir="${itext.bin}/com/itextpdf/text/error_messages" overwrite="yes">
+    	    <fileset dir="${itext.src}/core/com/itextpdf/text/error_messages">
+    	        <include name="**/*.lng"/>
+    	    </fileset>
+    	</copy>
+    	<mkdir dir="${itext.bin}/com/itextpdf/text/pdf/fonts" />
         <copy todir="${itext.bin}/com/itextpdf/text/pdf/fonts" overwrite="yes">
             <fileset dir="${itext.src}/core/com/itextpdf/text/pdf/fonts">
                 <include name="**/*.afm"/>
