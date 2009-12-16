@@ -169,6 +169,7 @@ public class FdfReader extends PdfReader {
      * @param name the fully qualified field name
      * @return the bytes of the file
      * @throws IOException 
+     * @since 5.0.1 
      */
     public byte[] getAttachedFile(String name) throws IOException {
     	PdfDictionary field = (PdfDictionary)fields.get(name);

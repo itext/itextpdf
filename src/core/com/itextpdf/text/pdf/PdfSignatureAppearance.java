@@ -92,6 +92,7 @@ public class PdfSignatureAppearance {
     
     /**
      * The rendering mode is just an image.
+     * @since 5.0.1
      */
     public static final int SignatureRenderGraphic = 3;
 
