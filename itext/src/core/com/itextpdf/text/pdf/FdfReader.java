@@ -164,7 +164,27 @@ public class FdfReader extends PdfReader {
         return (PdfDictionary)fields.get(name);
     }
     
-    /** Gets the field value or <CODE>null</CODE> if the field does not
+    /**
+     * Gets a byte[] containing a file that is embedded in the FDF.
+     * @param name the fully qualified field name
+     * @return the bytes of the file
+     * @throws IOException 
+     */
+    public byte[] getAttachedFile(String name) throws IOException {
+    	PdfDictionary field = (PdfDictionary)fields.get(name);
+    	if (field != null) {
+    		PdfIndirectReference ir = (PRIndirectReference)field.get(PdfName.V);
+    		PdfDictionary filespec = (PdfDictionary)getPdfObject(ir.getNumber());
+    		PdfDictionary ef = filespec.getAsDict(PdfName.EF);
+    		ir = (PRIndirectReference)ef.get(PdfName.F);
+    		PRStream stream = (PRStream)getPdfObject(ir.getNumber());
+    		return getStreamBytes(stream);
+    	}
+		return new byte[0];
+    }
+    
+    /**
+     * Gets the field value or <CODE>null</CODE> if the field does not
      * exist or has no value defined.
      * @param name the fully qualified field name
      * @return the field value or <CODE>null</CODE>
