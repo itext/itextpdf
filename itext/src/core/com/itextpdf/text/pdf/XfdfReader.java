@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +77,8 @@ public class XfdfReader implements SimpleXMLDocHandler {
 	// storage for the path to referenced PDF, if any
 	String	fileSpec;
 	
-   /** Reads an XFDF form.
+   /**
+    * Reads an XFDF form.
      * @param filename the file name of the form
      * @throws IOException on error
      */    
@@ -91,12 +93,23 @@ public class XfdfReader implements SimpleXMLDocHandler {
         }
     }
     
-    /** Reads an XFDF form.
+    /**
+     * Reads an XFDF form.
      * @param xfdfIn the byte array with the form
      * @throws IOException on error
      */    
     public XfdfReader(byte xfdfIn[]) throws IOException {
-        SimpleXMLParser.parse( this, new ByteArrayInputStream(xfdfIn));
+        this(new ByteArrayInputStream(xfdfIn));
+   }
+    
+    /**
+     * Reads an XFDF form.
+     * @param is an InputStream to read the form
+     * @throws IOException on error
+     * @since 5.0.1
+     */    
+    public XfdfReader(InputStream is) throws IOException {
+        SimpleXMLParser.parse( this, is);
    }
     
     /** Gets all the fields. The map is keyed by the fully qualified
