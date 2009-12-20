@@ -99,6 +99,9 @@ import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.jce.provider.X509CRLParser;
 import org.bouncycastle.jce.provider.X509CertParser;
 import com.itextpdf.text.ExceptionConverter;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.util.Date;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -328,6 +331,21 @@ public class PdfPKCS7 {
         return basicResp;
     }
     
+    private void findCRL(ASN1Sequence seq) throws IOException, CertificateException, CRLException {
+        try {
+            crls = new ArrayList();
+            for (int k = 0; k < seq.size(); ++k) {
+                ByteArrayInputStream ar = new ByteArrayInputStream(seq.getObjectAt(k).getDERObject().getDEREncoded());
+                CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                X509CRL crl = (X509CRL)cf.generateCRL(ar);
+                crls.add(crl);
+            }
+        }
+        catch (Exception ex) {
+            // ignore
+        }
+    }
+
     private void findOcsp(ASN1Sequence seq) throws IOException {
         basicResp = null;
         boolean ret = false;
@@ -413,13 +431,10 @@ public class PdfPKCS7 {
                 digestalgos.add(o.getId());
             }
 
-            // the certificates and crls
+            // the certificates
             X509CertParser cr = new X509CertParser();
             cr.engineInit(new ByteArrayInputStream(contentsKey));
             certs = cr.engineReadAll();
-            X509CRLParser cl = new X509CRLParser();
-            cl.engineInit(new ByteArrayInputStream(contentsKey));
-            crls = cl.engineReadAll();
 
             // the possible ID_PKCS7_DATA
             ASN1Sequence rsaData = (ASN1Sequence)content.getObjectAt(2);
@@ -477,10 +492,14 @@ public class PdfPKCS7 {
                         ASN1Sequence seqout = (ASN1Sequence)setout.getObjectAt(0);
                         for (int j = 0; j < seqout.size(); ++j) {
                             ASN1TaggedObject tg = (ASN1TaggedObject)seqout.getObjectAt(j);
-                            if (tg.getTagNo() != 1)
-                                continue;
-                            ASN1Sequence seqin = (ASN1Sequence)tg.getObject();
-                            findOcsp(seqin);
+                            if (tg.getTagNo() == 0) {
+                                ASN1Sequence seqin = (ASN1Sequence)tg.getObject();
+                                findCRL(seqin);
+                            }
+                            if (tg.getTagNo() == 1) {
+                                ASN1Sequence seqin = (ASN1Sequence)tg.getObject();
+                                findOcsp(seqin);
+                            }
                         }
                     }
                 }
