@@ -1,6 +1,7 @@
 package com.itextpdf.text.pdf;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import org.junit.Test;
 
@@ -18,11 +19,12 @@ public class AcroFieldsTest {
         singleTest("list_register.xfdf");
     }
     
-    private void singleTest(String xfdfFileName) throws Exception {
+    private void singleTest(String xfdfResourceName) throws Exception {
         // merging the FDF file
         PdfReader pdfreader = TestResourceUtils.getResourceAsPdfReader(this, "SimpleRegistrationForm.pdf");
         PdfStamper stamp = new PdfStamper(pdfreader, new ByteArrayOutputStream());
-        XfdfReader fdfreader = new XfdfReader(xfdfFileName);
+        File xfdfFile = TestResourceUtils.getResourceAsTempFile(this, xfdfResourceName);
+        XfdfReader fdfreader = new XfdfReader(xfdfFile.getAbsolutePath());
         AcroFields form = stamp.getAcroFields();
         form.setFields(fdfreader);
         stamp.close();
