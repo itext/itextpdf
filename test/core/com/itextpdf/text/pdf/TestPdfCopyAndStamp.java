@@ -9,8 +9,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -26,14 +29,17 @@ import com.itextpdf.text.Document;
 public class TestPdfCopyAndStamp {
 
     File base = new File(".");
-    File[] in;
-    File stamp;
-    File multiPageStamp;
-    File out;
+    String[] in;
+    Map<String, byte[]> pdfContent = new HashMap<String, byte[]>();
+    String out;
+    String stamp;
+    String multiPageStamp;
     
-    private void createTempFile(String filename, String[] pageContents) throws Exception{
+    private void createReader(String name, String[] pageContents) throws Exception{
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        
         Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream(filename));
+        PdfWriter.getInstance(document, baos);
         document.open();
         
         for (int i = 0; i < pageContents.length; i++) {
@@ -47,66 +53,48 @@ public class TestPdfCopyAndStamp {
         
         
         document.close();
+        
+        pdfContent.put(name, baos.toByteArray());
     }
-    
-    private void cleanTempFiles(){
-        for (int i = 0; i < in.length; i++) {
-            File f = in[i];
-            
-            if (f.exists() && !f.delete())
-                fail("Unable to delete temp content " + f + " prior to running test");
-        }
-        
-        if (stamp.exists() && !stamp.delete())
-            fail("Unable to delete stamp file " + stamp + " prior to running test");
-        
-        if (multiPageStamp.exists() && !multiPageStamp.delete())
-            fail("Unable to delete multi stamp file " + multiPageStamp + " prior to running test");
-        
-//        if (out.exists() && !out.delete())
-//            fail("Unable to delete output file " + out + " prior to running test");
-        
-    }
+
     
     @Before
     public void setUp() throws Exception {
         
-        in = new File[]{
-                new File(base, "content1.pdf"),
-                new File(base, "content2.pdf"),
+        in = new String[]{
+                "content1.pdf",
+                "content2.pdf",
                 };
         
-        stamp = new File(base, "Stamp.PDF");
-        multiPageStamp = new File(base, "MultiStamp.PDF");
-        out = new File(base, "test.pdf");
+        stamp = "Stamp.PDF";
+        multiPageStamp = "MultiStamp.PDF";
+        out = "TestOut.pdf";
 
-        cleanTempFiles();
-        
-        createTempFile(in[0].getCanonicalPath(), new String[]{"content 1"});
-        createTempFile(in[1].getCanonicalPath(), new String[]{"content 2"});
+        createReader(in[0], new String[]{"content 1"});
+        createReader(in[1], new String[]{"content 2"});
 
-        createTempFile(stamp.getCanonicalPath(), new String[]{"          This is a stamp"});
-        createTempFile(multiPageStamp.getCanonicalPath(), new String[]{"          This is a stamp - page 1", "          This is a stamp - page 2"});
+        createReader(stamp, new String[]{"          This is a stamp"});
+        createReader(multiPageStamp, new String[]{"          This is a stamp - page 1", "          This is a stamp - page 2"});
     }
 
     @After
     public void tearDown() throws Exception {
-        cleanTempFiles();
     }
 
-    public void mergeAndStampPdf(boolean resetStampEachPage, File[] in, File out, File stamp) throws Exception {
+    public void mergeAndStampPdf(boolean resetStampEachPage, String[] in, String out, String stamp) throws Exception {
         Document document = new Document();
         
-        PdfCopy writer = new PdfSmartCopy(document, new FileOutputStream(out));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfCopy writer = new PdfSmartCopy(document, baos);
         
         document.open();
         
         int stampPageNum = 1;
 
-        PdfReader stampReader = new PdfReader(stamp.getPath());
+        PdfReader stampReader = new PdfReader(pdfContent.get(stamp));
         for (int inNum = 0; inNum < in.length; inNum++){
             // create a reader for the input document
-            PdfReader documentReader = new PdfReader(in[inNum].getPath());
+            PdfReader documentReader = new PdfReader(pdfContent.get(in[inNum]));
             
             for (int pageNum = 1; pageNum <= documentReader.getNumberOfPages(); pageNum++){
             
@@ -118,7 +106,7 @@ public class TestPdfCopyAndStamp {
          
                 // import a page from a file with the stamp...
                 if (resetStampEachPage)
-                    stampReader = new PdfReader(stamp.getPath());
+                    stampReader = new PdfReader(pdfContent.get(stamp));
                 PdfImportedPage stampPage = writer.getImportedPage(stampReader, stampPageNum++);
         
                 // add the stamp template, update stamp, and add the page
@@ -133,12 +121,14 @@ public class TestPdfCopyAndStamp {
         
         writer.close(); 
         document.close();
+        
+        pdfContent.put(out, baos.toByteArray());
     }
     
     protected void testXObject(boolean shouldExist, int page, String xObjectName) throws Exception{
         PdfReader reader = null;
         RandomAccessFileOrArray raf = null;
-        raf = new RandomAccessFileOrArray(out.getCanonicalPath());
+        raf = new RandomAccessFileOrArray(pdfContent.get(out));
         reader = new PdfReader(raf, null);
         try{
             PdfDictionary dictionary = reader.getPageN(page);

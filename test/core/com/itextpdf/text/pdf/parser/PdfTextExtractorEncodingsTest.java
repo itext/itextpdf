@@ -103,7 +103,7 @@ public class PdfTextExtractorEncodingsTest
         byte[] pdfBytes = createPdf(font);
         
         if (false){
-            saveBytesToFile(pdfBytes, new File("test.pdf"));
+            saveBytesToFile(pdfBytes, new File("testout", "test.pdf"));
         }
 
         checkPdf(pdfBytes);
