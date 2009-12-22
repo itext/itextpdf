@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -78,7 +79,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
     /** contains the text accumulated so far for the current chunk */
     private StringBuffer chunkText;
     /** a summary of all found text */
-    private List<LocationOnPage> locationalResult;
+    private List locationalResult;
     /** whether the operation is the first render of the page */
     boolean firstRender;
 
@@ -125,7 +126,9 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
         
         StringBuilder sb = new StringBuilder();
         LocationOnPage lastLocation = null;
-        for (LocationOnPage location : locationalResult) {
+        for (Iterator iterator = locationalResult.iterator(); iterator.hasNext(); ) {
+            LocationOnPage location = (LocationOnPage) iterator.next();
+            
             if (lastLocation == null){
                 sb.append(location.text);
             } else {
