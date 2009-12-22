@@ -102,14 +102,12 @@ public class PdfContentStreamProcessorTest
   }
 
 
-  private class DebugRenderListener
-    implements RenderListener
+  private class DebugRenderListener implements TextRenderListener
   {
     private float _lastY = Float.MAX_VALUE;
 
     @Override
     public void reset() {
-        _lastY = Float.MAX_VALUE;
     }
     
     @Override
@@ -123,6 +121,13 @@ public class PdfContentStreamProcessorTest
         }
         _lastY = y;
         
+    }
+
+    public void beginTextBlock() {
+        _lastY = Float.MAX_VALUE;
+    }
+
+    public void endTextBlock() {
     }
 
   }

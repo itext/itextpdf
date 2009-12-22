@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: ImageRenderListener.java 3373 2009-12-21 16:21:24Z kd $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -40,25 +40,18 @@
  *
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
- */
-package com.itextpdf.text.pdf.parser;
+ */package com.itextpdf.text.pdf.parser;
 
-import java.util.ArrayList;
+ /**
+  * Callback interface for render operations during {@link PdfContentStreamProcessor} execution
+  * @since    5.0
+  */
+public interface ImageRenderListener extends RenderListener {
 
-import com.itextpdf.text.pdf.PdfLiteral;
-
-/**
- * Interface implemented by a series of content operators
- * @since 2.1.4
- */
-public interface ContentOperator {
     /**
-     * Invokes a content operator.
-     * @param processor	the processor that is dealing with the PDF content
-     * @param operator	the literal PDF syntax of the operator
-     * @param operands	the operands that come with the operator
-     * @throws any exception can be thrown - it will be re-packaged into a runtime exception and re-thrown by the {@link PdfContentStreamProcessor}
+     * Called when image should be rendered
+     * @param renderInfo information specifying what to render
      */
-    public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) throws Exception;
+    public void renderImage(ImageRenderInfo renderInfo);
 
 }

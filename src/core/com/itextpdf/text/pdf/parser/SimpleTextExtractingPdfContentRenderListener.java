@@ -59,14 +59,6 @@ package com.itextpdf.text.pdf.parser;
  */
 public class SimpleTextExtractingPdfContentRenderListener implements TextProvidingRenderListener {
 
-    /** keeps track of the Y position of the last rendered text */
-    private float lastYPos;
-    /** keeps track of the X position of the end of the last rendered text */
-    private float lastEndingXPos;
-
-    private Matrix lastTextLineMatrix;
-    
-    
     private Vector lastStart;
     private Vector lastEnd;
     
@@ -81,10 +73,13 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
     }
 
     public void reset() {
-        lastYPos = 0f;
-        lastEndingXPos = 0f;
-        lastTextLineMatrix = null;
         result = new StringBuffer();
+    }
+    
+    public void beginTextBlock() {
+    }
+
+    public void endTextBlock() {
     }
     
     /**
@@ -144,5 +139,6 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
         lastEnd = end;
         
     }
+
 
 }

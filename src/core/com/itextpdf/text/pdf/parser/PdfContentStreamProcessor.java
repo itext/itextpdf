@@ -43,9 +43,11 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -60,6 +62,8 @@ import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfLiteral;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfStream;
 import com.itextpdf.text.pdf.PdfString;
 
 /**
@@ -71,23 +75,37 @@ public class PdfContentStreamProcessor {
 	/** A map with all supported operators operators (PDF syntax). */
     private Map operators;
     /** Resources for the content stream. */
-    private PdfDictionary resources;
+    private ResourceDictionary resources;
     /** Stack keeping track of the graphics state. */
     private Stack gsStack = new Stack();
     /** Text matrix. */
     private Matrix textMatrix;
     /** Text line matrix. */
     private Matrix textLineMatrix;
-    /** A list of listeners that will be notified of render events */
+    /** Listener that will be notified of render events */
     final private RenderListener renderListener;
+    /** Convenience cast of {@link RenderListener} */
+    final private TextRenderListener textRenderListener;
+    /** Convenience cast of {@link RenderListener} */
+    final private ImageRenderListener imageRenderListener;
     
     /**
      * Creates a new PDF Content Stream Processor that will send it's output to the
      * designated render listener.
      * 
-     * @param renderListener the {@link RenderListener} that will receive rendering notifications
+     * @param renderListener the {@link TextRenderListener} that will receive rendering notifications
      */
     public PdfContentStreamProcessor(RenderListener renderListener) {
+        if (renderListener instanceof TextRenderListener)
+            textRenderListener = (TextRenderListener)renderListener;
+        else
+            textRenderListener = null;
+        
+        if (renderListener instanceof ImageRenderListener)
+            imageRenderListener = (ImageRenderListener)renderListener;
+        else
+            imageRenderListener = null;
+        
         this.renderListener = renderListener;
         populateOperators();
         reset();
@@ -131,6 +149,8 @@ public class PdfContentStreamProcessor {
         registerContentOperator("'", tickOperator);
         registerContentOperator("\"", new MoveNextLineAndShowTextWithSpacing(twOperator, tcOperator, tickOperator));
         registerContentOperator("TJ", new ShowTextArray());
+        
+        registerContentOperator("Do", new Do());
     }
     
     /**
@@ -154,7 +174,7 @@ public class PdfContentStreamProcessor {
         gsStack.add(new GraphicsState());
         textMatrix = null;
         textLineMatrix = null;
-        resources = null;
+        resources = new ResourceDictionary();
     }
     
     /**
@@ -188,7 +208,7 @@ public class PdfContentStreamProcessor {
      * @param operator	the PDF Syntax of the operator
      * @param operands	a list with operands
      */
-    private void invokeOperator(PdfLiteral operator, ArrayList operands){
+    private void invokeOperator(PdfLiteral operator, ArrayList operands) throws Exception{
         ContentOperator op = (ContentOperator)operators.get(operator.toString());
         if (op == null){
             //System.out.println("Skipping operator " + operator);
@@ -210,18 +230,107 @@ public class PdfContentStreamProcessor {
         return gs().font.decode(bytes, 0, bytes.length);
     }
     
+    private void beginText(){
+        if (textRenderListener == null) return;
+        textRenderListener.beginTextBlock();
+    }
+    
+    private void endText(){
+        if (textRenderListener == null) return;
+        textRenderListener.endTextBlock();
+    }
+    
     /**
      * Displays text.
      * @param string	the text to display
      */
     private void displayPdfString(PdfString string){
+        if (textRenderListener == null) return;
+        
         String unicode = decode(string);
         
         TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix);
 
-        renderListener.renderText(renderInfo);
+        textRenderListener.renderText(renderInfo);
 
         textMatrix = new Matrix(renderInfo.getUnscaledWidth(), 0).multiply(textMatrix);
+    }
+    
+    private static class ResourceDictionary extends PdfDictionary{
+        private List resourcesStack = new ArrayList();
+        public ResourceDictionary() {
+        }
+        
+        public void push(PdfDictionary resources){
+            resourcesStack.add(resources);
+        }
+        
+        public void pop(){
+            resourcesStack.remove(resourcesStack.size()-1);
+        }
+        
+        public PdfObject getDirectObject(PdfName key) {
+            for (int i = resourcesStack.size() - 1; i >= 0; i--){
+                PdfDictionary subResource = (PdfDictionary)resourcesStack.get(i);
+                if (subResource != null){
+                    PdfObject obj =  subResource.getDirectObject(key);
+                    if (obj != null) return obj;
+                }
+            }
+            return super.getDirectObject(key); // shouldn't be necessary, but just in case we've done something crazy
+        }
+    }
+    
+    /**
+     * Displays an XObject
+     * TODO we probably want to move the FORM XObject handling into the Do operator itself and
+     * keep this method as a pure callback method
+     * @param xobjectName
+     */
+    private void displayXObject(PdfName xobjectName) throws IOException {
+        
+        PdfDictionary xobjects = resources.getAsDict(PdfName.XOBJECT);
+        
+        PdfObject xobject = xobjects.getDirectObject(xobjectName);
+        
+        if (xobject.isStream()){
+            PdfStream stream = (PdfStream)xobject;
+            
+            PdfName subType = stream.getAsName(PdfName.SUBTYPE);
+            if (PdfName.FORM.equals(stream.getAsName(PdfName.SUBTYPE))){ // if this is a form xobject, process it as though it were a content stream
+                final PdfDictionary resources = stream.getAsDict(PdfName.RESOURCES);
+                
+                byte[] contentBytes = ContentByteUtils.getContentBytesFromContentObject(stream);
+                final PdfArray matrix = stream.getAsArray(PdfName.MATRIX);
+                
+                new PushGraphicsState().invoke(this, null, null);
+                
+                if (matrix != null){
+                    float a = ((PdfNumber)matrix.getAsNumber(0)).floatValue();
+                    float b = ((PdfNumber)matrix.getAsNumber(1)).floatValue();
+                    float c = ((PdfNumber)matrix.getAsNumber(2)).floatValue();
+                    float d = ((PdfNumber)matrix.getAsNumber(3)).floatValue();
+                    float e = ((PdfNumber)matrix.getAsNumber(4)).floatValue();
+                    float f = ((PdfNumber)matrix.getAsNumber(5)).floatValue();
+                    Matrix formMatrix = new Matrix(a, b, c, d, e, f);
+                    
+                    gs().ctm = gs().ctm.multiply(formMatrix);
+                }
+                
+                processContent(contentBytes, resources);
+                
+                new PopGraphicsState().invoke(this, null, null);
+            }
+            
+            if (PdfName.IMAGE.equals(subType)){
+                if (imageRenderListener == null) return;
+                
+                ImageRenderInfo renderInfo = new ImageRenderInfo(xobject, gs().ctm);
+                imageRenderListener.renderImage(renderInfo);
+            }
+            
+        }
+        
     }
     
     /**
@@ -241,8 +350,7 @@ public class PdfContentStreamProcessor {
      */
     public void processContent(byte[] contentBytes, PdfDictionary resources){
         
-        reset();
-        this.resources = resources;
+        this.resources.push(resources);
         try {
             PdfContentParser ps = new PdfContentParser(new PRTokeniser(contentBytes));
             ArrayList operands = new ArrayList();
@@ -255,10 +363,10 @@ public class PdfContentStreamProcessor {
         catch (Exception e) {
             throw new ExceptionConverter(e);
         }    
+        this.resources.pop();
         
     }
     
-
     /**
      * A content operator implementation (TJ).
      */
@@ -492,6 +600,7 @@ public class PdfContentStreamProcessor {
      */
     private static class ProcessGraphicsStateResource implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
+            
             PdfName dictionaryName = (PdfName)operands.get(0);
             PdfDictionary extGState = processor.resources.getAsDict(PdfName.EXTGSTATE);
             if (extGState == null)
@@ -556,6 +665,7 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             processor.textMatrix = new Matrix();
             processor.textLineMatrix = processor.textMatrix;
+            processor.beginText();
         }
     }
 
@@ -566,7 +676,17 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             processor.textMatrix = null;
             processor.textLineMatrix = null;
+            processor.endText();
         }
     }
     
+    /**
+     * A content operator implementation (Do).
+     */
+    private static class Do implements ContentOperator{
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) throws IOException {
+            PdfName xobjectName = (PdfName)operands.get(0);
+            processor.displayXObject(xobjectName);
+        }
+    }
 }
