@@ -1,5 +1,5 @@
 /*
- * $Id: Chapter.java 3373 2008-05-12 16:21:24Z xlv $
+ * $Id: TextRenderListener.java 3373 2008-05-12 16:21:24Z xlv $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -43,13 +43,26 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+
 /**
- * Defines an interface for {@link TextRenderListener}s that can return text
+ * Callback interface for render operations during {@link PdfContentStreamProcessor} execution
+ * @since    2.1.6
  */
-public interface TextProvidingRenderListener extends TextRenderListener {
+public interface TextRenderListener extends RenderListener {
+
     /**
-     * Returns the result so far.
-     * @return  a String with the resulting text.
+     * Called when text should be rendered
+     * @param renderInfo information specifying what to render
      */
-    public String getResultantText();
+    public void renderText(TextRenderInfo renderInfo);
+
+    /**
+     * Called when a new text block is beginning (i.e. BT)
+     */
+    public void beginTextBlock();
+    
+    /**
+     * Called when a text block has ended (i.e. ET)
+     */
+    public void endTextBlock();
 }

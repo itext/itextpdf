@@ -1,5 +1,5 @@
 /*
- * $Id: Chapter.java 3373 2008-05-12 16:21:24Z xlv $
+ * $Id: ImageRenderListener.java 3373 2009-12-21 16:21:24Z kd $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -40,16 +40,18 @@
  *
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
- */
-package com.itextpdf.text.pdf.parser;
+ */package com.itextpdf.text.pdf.parser;
 
-/**
- * Defines an interface for {@link TextRenderListener}s that can return text
- */
-public interface TextProvidingRenderListener extends TextRenderListener {
+ /**
+  * Callback interface for render operations during {@link PdfContentStreamProcessor} execution
+  * @since    5.0
+  */
+public interface ImageRenderListener extends RenderListener {
+
     /**
-     * Returns the result so far.
-     * @return  a String with the resulting text.
+     * Called when image should be rendered
+     * @param renderInfo information specifying what to render
      */
-    public String getResultantText();
+    public void renderImage(ImageRenderInfo renderInfo);
+
 }

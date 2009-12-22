@@ -57,7 +57,8 @@ public interface ContentOperator {
      * @param processor	the processor that is dealing with the PDF content
      * @param operator	the literal PDF syntax of the operator
      * @param operands	the operands that come with the operator
+     * @throws any exception can be thrown - it will be re-packaged into a runtime exception and re-thrown by the {@link PdfContentStreamProcessor}
      */
-    public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands);
+    public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) throws Exception;
 
 }
