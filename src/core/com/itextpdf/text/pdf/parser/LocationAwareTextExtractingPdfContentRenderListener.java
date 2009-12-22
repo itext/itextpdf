@@ -96,7 +96,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
      */
     public void reset() {
         beginTextBlock();
-        locationalResult = new ArrayList<LocationOnPage>();
+        locationalResult = new ArrayList();
     }
     /**
      * 
@@ -124,7 +124,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
         
         Collections.sort(locationalResult);
         
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         LocationOnPage lastLocation = null;
         for (Iterator iterator = locationalResult.iterator(); iterator.hasNext(); ) {
             LocationOnPage location = (LocationOnPage) iterator.next();
@@ -242,7 +242,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
     /**
      * Represents a chunk of text, it's orientation, and location relative to the orientation vector
      */
-    private static class LocationOnPage implements Comparable<LocationOnPage>{
+    private static class LocationOnPage implements Comparable{
         /** the text of the chunk */
         final String text;
         /** the magnitude of the orientation - this consists of just the Y component of the orientation vector
@@ -280,8 +280,9 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
          * with bigger Y values to sort to the top of the list)
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
-        public int compareTo(LocationOnPage rhs) {
-            
+        public int compareTo(Object obj) {
+
+            LocationOnPage rhs = (LocationOnPage)obj;
             int rslt;
             rslt = compareInts(orientationMagnitude, rhs.orientationMagnitude);
             if (rslt != 0) return rslt;
