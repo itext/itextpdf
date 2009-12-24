@@ -106,11 +106,9 @@ public class PdfContentStreamProcessorTest
   {
     private float _lastY = Float.MAX_VALUE;
 
-    @Override
     public void reset() {
     }
     
-    @Override
     public void renderText(TextRenderInfo renderInfo) {
         Vector start = renderInfo.getStartPoint();
         final float x = start.get(Vector.I1);
