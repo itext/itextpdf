@@ -9,6 +9,7 @@ import com.itextpdf.text.pdf.PdfObject;
 
 /**
  * @author kevin
+ * @since 5.0.1
  */
 public class ImageRenderInfo {
     private final PdfObject xobject;

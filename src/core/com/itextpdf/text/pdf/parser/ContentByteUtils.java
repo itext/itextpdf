@@ -17,6 +17,7 @@ import com.itextpdf.text.pdf.PdfReader;
 
 /**
  * @author kevin
+ * @since 5.0.1
  */
 public class ContentByteUtils {
     private ContentByteUtils() {

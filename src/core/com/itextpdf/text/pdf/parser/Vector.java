@@ -129,6 +129,7 @@ public class Vector {
     /**
      * Normalizes the vector (i.e. returns the unit vector in the same orientation as this vector)
      * @return the unit vector
+     * @since 5.0.1
      */
     public Vector normalize(){
         float l = this.length();
@@ -142,6 +143,7 @@ public class Vector {
      * Multiplies the vector by a scalar
      * @param by the scalar to multiply by
      * @return the result of the scalar multiplication
+     * @since 5.0.1
      */
     public Vector multiply(float by){
         float x = vals[I1] * by;
