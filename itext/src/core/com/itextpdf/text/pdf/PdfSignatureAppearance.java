@@ -76,25 +76,29 @@ import com.itextpdf.text.Rectangle;
  * This class takes care of the cryptographic options and appearances that form a signature.
  */
 public class PdfSignatureAppearance {
-    
+
     /**
-     * The rendering mode is just the description
-     */  
-    public static final int SignatureRenderDescription = 0;
-    /**
-     * The rendering mode is the name of the signer and the description
-     */
-    public static final int SignatureRenderNameAndDescription = 1;
-    /**
-     * The rendering mode is an image and the description
-     */
-    public static final int SignatureRenderGraphicAndDescription = 2;
-    
-    /**
-     * The rendering mode is just an image.
+     * Signature rendering modes
      * @since 5.0.1
      */
-    public static final int SignatureRenderGraphic = 3;
+    public enum RenderingMode {
+        /**
+         * The rendering mode is just the description.
+         */
+        DESCRIPTION,
+        /**
+         * The rendering mode is the name of the signer and the description, should be used with Acrobat 6 layer type.
+         */
+        NAME_AND_DESCRIPTION,
+        /**
+         * The rendering mode is an image and the description, should be used with Acrobat 6 layer type.
+         */
+        GRAPHIC_AND_DESCRIPTION,
+        /**
+         * The rendering mode is just an image.
+         */
+        GRAPHIC
+    }
 
     /**
      * The self signed filter.
@@ -155,25 +159,24 @@ public class PdfSignatureAppearance {
         fieldName = getNewSigName();
     }
     
-    private int render = SignatureRenderDescription;
+    private RenderingMode renderingMode = RenderingMode.DESCRIPTION;
 
     /**
     * Gets the rendering mode for this signature.
     * @return the rendering mode for this signature
+    * @since 5.0.1
     */    
-    public int getRender() {
-        return render;
+    public RenderingMode getRenderingMode() {
+        return renderingMode;
     }
 
     /**
      * Sets the rendering mode for this signature.
-     * The rendering modes can be the constants <CODE>SignatureRenderDescription</CODE>,
-     * <CODE>SignatureRenderNameAndDescription</CODE> or <CODE>SignatureRenderGraphicAndDescription</CODE>.
-     * The two last modes should be used with Acrobat 6 layer type.
-     * @param render the render mode
+     * @param renderingMode the rendering mode
+     * @since 5.0.1
      */    
-    public void setRender(int render) {
-        this.render = render;
+    public void setRenderingMode(RenderingMode renderingMode) {
+        this.renderingMode = renderingMode;
     }
 
     private Image signatureGraphic = null;
@@ -442,8 +445,8 @@ public class PdfSignatureAppearance {
             Rectangle dataRect = null;
             Rectangle signatureRect = null;
 
-            if (render == SignatureRenderNameAndDescription || 
-                (render == SignatureRenderGraphicAndDescription && this.signatureGraphic != null)) {
+            if (renderingMode == RenderingMode.NAME_AND_DESCRIPTION || 
+                (renderingMode == RenderingMode.GRAPHIC_AND_DESCRIPTION && this.signatureGraphic != null)) {
                 // origin is the bottom-left
                 signatureRect = new Rectangle(
                     MARGIN, 
@@ -469,7 +472,7 @@ public class PdfSignatureAppearance {
                         rect.getHeight() / 2 - MARGIN);
                 }
             }
-            else if (render == SignatureRenderGraphic) {
+            else if (renderingMode == RenderingMode.GRAPHIC) {
                 if (signatureGraphic == null) {
                     throw new IllegalStateException(MessageLocalization.getComposedMessage("a.signature.image.should.be.present.when.rendering.mode.is.graphic.only"));
                 }
@@ -487,7 +490,8 @@ public class PdfSignatureAppearance {
                         rect.getHeight() * (1 - TOP_SECTION) - MARGIN);
             }
 
-            if (render == SignatureRenderNameAndDescription) {
+            switch (renderingMode) {
+            case NAME_AND_DESCRIPTION:
                 String signedBy = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
                 Rectangle sr2 = new Rectangle(signatureRect.getWidth() - MARGIN, signatureRect.getHeight() - MARGIN );
                 float signedSize = fitText(font, signedBy, sr2, -1, runDirection);
@@ -497,9 +501,9 @@ public class PdfSignatureAppearance {
                 ct2.setSimpleColumn(new Phrase(signedBy, font), signatureRect.getLeft(), signatureRect.getBottom(), signatureRect.getRight(), signatureRect.getTop(), signedSize, Element.ALIGN_LEFT);
 
                 ct2.go();
-            }
-            else if (render == SignatureRenderGraphicAndDescription) {
-                ColumnText ct2 = new ColumnText(t);
+                break;
+            case GRAPHIC_AND_DESCRIPTION:
+                ct2 = new ColumnText(t);
                 ct2.setRunDirection(runDirection);
                 ct2.setSimpleColumn(signatureRect.getLeft(), signatureRect.getBottom(), signatureRect.getRight(), signatureRect.getTop(), 0, Element.ALIGN_RIGHT);
 
@@ -518,30 +522,32 @@ public class PdfSignatureAppearance {
                 p.add(new Chunk(im, x + (signatureRect.getWidth() - im.getScaledWidth()) / 2, y, false));
                 ct2.addElement(p);
                 ct2.go();
-            }
-            else if (render == SignatureRenderGraphic) {
-                ColumnText ct2 = new ColumnText(t);
+                break;
+            case GRAPHIC:
+                ct2 = new ColumnText(t);
                 ct2.setRunDirection(runDirection);
                 ct2.setSimpleColumn(signatureRect.getLeft(), signatureRect.getBottom(), signatureRect.getRight(), signatureRect.getTop(), 0, Element.ALIGN_RIGHT);
 
-                Image im = Image.getInstance(signatureGraphic);
+                im = Image.getInstance(signatureGraphic);
                 im.scaleToFit(signatureRect.getWidth(), signatureRect.getHeight());
 
-                Paragraph p = new Paragraph();
+                p = new Paragraph();
                 // must calculate the point to draw from to make image appear in middle of column
-                float x = 0;
+                x = 0;
                 // experimentation found this magic number to counteract Adobe's signature graphic, which
                 // offsets the y co-ordinate by 15 units
-                float y = -im.getScaledHeight() + 15;
+                y = -im.getScaledHeight() + 15;
 
                 x = x + (signatureRect.getWidth() - im.getScaledWidth()) / 2;
                 y = y - (signatureRect.getHeight() - im.getScaledHeight()) / 2;
                 p.add(new Chunk(im, x, y, false));
                 ct2.addElement(p);
                 ct2.go();
+                break;
+            default:
             }
             
-            if(render != SignatureRenderGraphic) {
+            if(renderingMode != RenderingMode.GRAPHIC) {
             	if (size <= 0) {
                     Rectangle sr = new Rectangle(dataRect.getWidth(), dataRect.getHeight());
                     size = fitText(font, text, sr, 12, runDirection);
