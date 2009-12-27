@@ -76,9 +76,15 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
         result = new StringBuffer();
     }
     
+    /**
+     * @since 5.0.1
+     */
     public void beginTextBlock() {
     }
 
+    /**
+     * @since 5.0.1
+     */
     public void endTextBlock() {
     }
     
