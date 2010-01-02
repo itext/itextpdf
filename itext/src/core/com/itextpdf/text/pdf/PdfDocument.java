@@ -254,10 +254,10 @@ public class PdfDocument extends Document {
                     for (Iterator i = localDestinations.entrySet().iterator(); i.hasNext();) {
                         Map.Entry entry = (Map.Entry) i.next();
                         String name = (String) entry.getKey();
-                        Object obj[] = (Object[]) entry.getValue();
-                        if (obj[2] == null) //no destination
+                        Destination dest = (Destination) entry.getValue();
+                        if (dest.destination == null) //no destination
                             continue;
-                        PdfIndirectReference ref = (PdfIndirectReference)obj[1];
+                        PdfIndirectReference ref = dest.reference;
                         ar.add(new PdfString(name, null));
                         ar.add(ref);
                     }
@@ -1959,19 +1959,19 @@ public class PdfDocument extends Document {
 
     PdfAction getLocalGotoAction(String name) {
         PdfAction action;
-        Object obj[] = (Object[])localDestinations.get(name);
-        if (obj == null)
-            obj = new Object[3];
-        if (obj[0] == null) {
-            if (obj[1] == null) {
-                obj[1] = writer.getPdfIndirectReference();
+        Destination dest = (Destination)localDestinations.get(name);
+        if (dest == null)
+            dest = new Destination();
+        if (dest.action == null) {
+            if (dest.reference == null) {
+                dest.reference = writer.getPdfIndirectReference();
             }
-            action = new PdfAction((PdfIndirectReference)obj[1]);
-            obj[0] = action;
-            localDestinations.put(name, obj);
+            action = new PdfAction(dest.reference);
+            dest.action = action;
+            localDestinations.put(name, dest);
         }
         else {
-            action = (PdfAction)obj[0];
+            action = dest.action;
         }
         return action;
     }
@@ -1986,13 +1986,13 @@ public class PdfDocument extends Document {
      * already existed
      */
     boolean localDestination(String name, PdfDestination destination) {
-        Object obj[] = (Object[])localDestinations.get(name);
-        if (obj == null)
-            obj = new Object[3];
-        if (obj[2] != null)
+        Destination dest = (Destination)localDestinations.get(name);
+        if (dest == null)
+            dest = new Destination();
+        if (dest.destination != null)
             return false;
-        obj[2] = destination;
-        localDestinations.put(name, obj);
+        dest.destination = destination;
+        localDestinations.put(name, dest);
         if (!destination.hasPage())
         	destination.addPage(writer.getCurrentPage());
         return true;
@@ -2425,5 +2425,14 @@ public class PdfDocument extends Document {
         ensureNewLine();
         return table.getTotalHeight() + ((currentHeight > 0) ? table.spacingBefore() : 0f)
         	<= indentTop() - currentHeight - indentBottom() - margin;
+    }
+
+    /**
+     * @since 5.0.1
+     */
+    public class Destination {
+        public PdfAction action;
+        public PdfIndirectReference reference;
+        public PdfDestination destination;
     }
 }

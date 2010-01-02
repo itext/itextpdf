@@ -748,22 +748,22 @@ public class PdfWriter extends DocWriter implements
 
     /**
      * Adds the local destinations to the body of the document.
-     * @param dest the <CODE>HashMap</CODE> containing the destinations
+     * @param desto the <CODE>HashMap</CODE> containing the destinations
      * @throws IOException on error
      */
 
-    void addLocalDestinations(TreeMap dest) throws IOException {
-        for (Iterator i = dest.entrySet().iterator(); i.hasNext();) {
+    void addLocalDestinations(TreeMap desto) throws IOException {
+        for (Iterator i = desto.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
             String name = (String) entry.getKey();
-            Object obj[] = (Object[]) entry.getValue();
-            PdfDestination destination = (PdfDestination)obj[2];
-            if (obj[1] == null)
-                obj[1] = getPdfIndirectReference();
+            PdfDocument.Destination dest = (PdfDocument.Destination) entry.getValue();
+            PdfDestination destination = dest.destination;
+            if (dest.reference == null)
+                dest.reference = getPdfIndirectReference();
             if (destination == null)
-                addToBody(new PdfString("invalid_" + name), (PdfIndirectReference)obj[1]);
+                addToBody(new PdfString("invalid_" + name), dest.reference);
             else
-                addToBody(destination, (PdfIndirectReference)obj[1]);
+                addToBody(destination, dest.reference);
         }
     }
 
