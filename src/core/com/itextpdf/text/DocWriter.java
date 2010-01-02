@@ -109,12 +109,12 @@ public abstract class DocWriter implements DocListener {
 
 /** Do we have to pause all writing actions? */
     protected boolean pause = false;
-    
+
 /** Closes the stream on document close */
     protected boolean closeStream = true;
 
     // constructor
-    
+
     protected DocWriter()  {
     }
 
@@ -137,7 +137,7 @@ public abstract class DocWriter implements DocListener {
  * <P>
  * This method should be overridden in the specific <CODE>DocWriter<CODE> classes
  * derived from this abstract class.
- * 
+ *
  * @param element A high level object to add
  * @return  <CODE>false</CODE>
  * @throws  DocumentException when a document isn't open yet, or has been closed
@@ -197,7 +197,7 @@ public abstract class DocWriter implements DocListener {
         }
         return true;
     }
-    
+
 /**
  * Sets the page number to 0.
  * <P>
@@ -265,13 +265,13 @@ public abstract class DocWriter implements DocListener {
     public void pause() {
         pause = true;
     }
-    
+
     /**
      * Checks if writing is paused.
      *
      * @return		<CODE>true</CODE> if writing temporarily has to be paused, <CODE>false</CODE> otherwise.
      */
-    
+
     public boolean isPaused() {
         return pause;
     }
@@ -390,7 +390,7 @@ public abstract class DocWriter implements DocListener {
     protected boolean writeMarkupAttributes(Properties markup)
     throws IOException {
     	if (markup == null) return false;
-    	Iterator attributeIterator = markup.keySet().iterator();
+    	Iterator<Object> attributeIterator = markup.keySet().iterator();
     	String name;
     	while (attributeIterator.hasNext()) {
     		name = String.valueOf(attributeIterator.next());
@@ -407,7 +407,7 @@ public abstract class DocWriter implements DocListener {
     public boolean isCloseStream() {
         return closeStream;
     }
-    
+
     /** Sets the close state of the stream after document close
      * @param closeStream true if the stream is closed on document close
      *
@@ -415,14 +415,14 @@ public abstract class DocWriter implements DocListener {
     public void setCloseStream(boolean closeStream) {
         this.closeStream = closeStream;
     }
-    
+
     /**
      * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
      */
     public boolean setMarginMirroring(boolean MarginMirroring) {
         return false;
     }
-    
+
     /**
      * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
      * @since	2.1.6
@@ -430,5 +430,5 @@ public abstract class DocWriter implements DocListener {
     public boolean setMarginMirroringTopBottom(boolean MarginMirroring) {
         return false;
     }
-    
+
 }

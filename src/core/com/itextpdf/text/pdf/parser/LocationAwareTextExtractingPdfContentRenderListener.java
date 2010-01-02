@@ -45,7 +45,6 @@ package com.itextpdf.text.pdf.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -67,7 +66,7 @@ import java.util.List;
  * <br>
  * This renderer also uses a simple strategy based on the font metrics to determine if
  * a blank space should be inserted into the output.
- * 
+ *
  * @since	5.0.0
  */
 public class LocationAwareTextExtractingPdfContentRenderListener implements TextProvidingRenderListener {
@@ -79,7 +78,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
     /** contains the text accumulated so far for the current chunk */
     private StringBuffer chunkText;
     /** a summary of all found text */
-    private List locationalResult;
+    private List<LocationOnPage> locationalResult;
     /** whether the operation is the first render of the page */
     boolean firstRender;
 
@@ -96,39 +95,39 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
      */
     public void reset() {
         beginTextBlock();
-        locationalResult = new ArrayList();
+        locationalResult = new ArrayList<LocationOnPage>();
     }
     /**
-     * 
+     *
      * @see com.itextpdf.text.pdf.parser.TextRenderListener#beginTextBlock()
      */
     public void beginTextBlock(){
         firstRender = true;
-        chunkText = new StringBuffer();        
+        chunkText = new StringBuffer();
     }
-    
+
     /**
-     * 
+     *
      * @see com.itextpdf.text.pdf.parser.TextRenderListener#endTextBlock()
      */
     public void endTextBlock(){
         if (!firstRender)
             captureChunk(chunkText.toString());
     }
-    
+
     /**
      * Returns the result so far.
      * @return	a String with the resulting text.
      */
     public String getResultantText(){
-        
+
         Collections.sort(locationalResult);
-        
+
         StringBuffer sb = new StringBuffer();
         LocationOnPage lastLocation = null;
-        for (Iterator iterator = locationalResult.iterator(); iterator.hasNext(); ) {
-            LocationOnPage location = (LocationOnPage) iterator.next();
-            
+        for (LocationOnPage locationOnPage : locationalResult) {
+            LocationOnPage location = locationOnPage;
+
             if (lastLocation == null){
                 sb.append(location.text);
             } else {
@@ -142,9 +141,9 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
             }
             lastLocation = location;
         }
-        
+
         return sb.toString();
-        
+
     }
 
     /**
@@ -156,24 +155,24 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
 
         Vector start = renderInfo.getStartPoint();
         Vector end = renderInfo.getEndPoint();
-        
+
         float singleSpaceWidth = renderInfo.getSingleSpaceWidth();
-        
+
         if (!firstRender){
             Vector x0 = start;
             Vector x1 = chunkStart;
             Vector x2 = chunkEnd;
-            
+
             // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
-            float dist = (x2.subtract(x1)).cross((x1.subtract(x0))).lengthSquared() / x2.subtract(x1).lengthSquared();
+            float dist = x2.subtract(x1).cross(x1.subtract(x0)).lengthSquared() / x2.subtract(x1).lengthSquared();
 
             float sameLineThreshold = 1f; // we should probably base this on the current font metrics, but 1 pt seems to be sufficient for the time being
             if (dist > sameLineThreshold){
                 newChunk = true;
             } else {
-                
+
                 Vector cross = start.subtract(chunkEnd).cross(chunkEnd.subtract(chunkStart));
-                
+
                 if (cross.length() <= 0.0001){ // parallel
                     // now check for anti-parallel or big spacing
                     float spacing = chunkEnd.subtract(start).length();
@@ -184,20 +183,20 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
                     } else {
                         newChunk = false;
                     }
-                    
+
                 } else { // not parallel
                     newChunk = true;
                 }
             }
-            
+
         }
-        
+
         if (newChunk){
             //System.out.println("<< Hard Return >>");
             captureChunk(chunkText.toString());
             chunkText.setLength(0);
             chunkStart = start;
-        } else if (!firstRender){ 
+        } else if (!firstRender){
             if (chunkText.charAt(chunkText.length()-1) != ' ' && renderInfo.getText().charAt(0) != ' '){ // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
                 float spacing = chunkEnd.subtract(start).length();
                 if (spacing > singleSpaceWidth/2f){
@@ -208,16 +207,16 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
         } else {
             //System.out.println("Displaying first string of content '" + text + "' :: x1 = " + x1);
         }
-        
+
         //System.out.println("[" + renderInfo.getStartPoint() + "]->[" + renderInfo.getEndPoint() + "] " + renderInfo.getText());
         chunkText.append(renderInfo.getText());
-        
+
         if (firstRender){
             chunkStart = start;
             firstRender = false;
         }
         chunkEnd = end;
-        
+
     }
 
     /**
@@ -226,23 +225,23 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
      * @param text
      */
     private void captureChunk(String text){
-        
+
         Vector orientationVector = chunkEnd.subtract(chunkStart).normalize();
         Vector origin = new Vector(0,0,1);
-        
+
         // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
-        float distPerp = (chunkStart.subtract(origin)).cross(orientationVector).length();
+        float distPerp = chunkStart.subtract(origin).cross(orientationVector).length();
 
         float distParallel = orientationVector.dot(chunkStart);
-        
+
         locationalResult.add(new LocationOnPage(text, (int)(orientationVector.get(Vector.I2)*1000), (int)distPerp, (int)distParallel));
-        
+
     }
-    
+
     /**
      * Represents a chunk of text, it's orientation, and location relative to the orientation vector
      */
-    private static class LocationOnPage implements Comparable{
+    private static class LocationOnPage implements Comparable<LocationOnPage>{
         /** the text of the chunk */
         final String text;
         /** the magnitude of the orientation - this consists of just the Y component of the orientation vector
@@ -254,7 +253,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
         final int distPerpendicular;
         /** parallel distance to the orientation unit vector (i.e. the X position in an unrotated coordinate system */
         final int distParallel;
-        
+
         public LocationOnPage(String string, int orientationMagnitude,
                 int distPerpindicular, int distParallel) {
             this.text = string;
@@ -272,7 +271,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
             if (distPerpendicular != as.distPerpendicular) return false;
             return true;
         }
-        
+
         /**
          * Compares based on orientation, perpendicular distance, then parallel distance
          * The perpendicular distance is compared using an inverse to account for the 0,0
@@ -280,22 +279,20 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
          * with bigger Y values to sort to the top of the list)
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
-        public int compareTo(Object obj) {
-
-            LocationOnPage rhs = (LocationOnPage)obj;
+        public int compareTo(LocationOnPage rhs) {
             int rslt;
             rslt = compareInts(orientationMagnitude, rhs.orientationMagnitude);
             if (rslt != 0) return rslt;
-            
+
             rslt = -compareInts(distPerpendicular, rhs.distPerpendicular);
             if (rslt != 0) return rslt;
-            
+
             rslt = compareInts(distParallel, rhs.distParallel);
             return rslt;
         }
 
         /**
-         * 
+         *
          * @param int1
          * @param int2
          * @return comparison of the two integers
@@ -303,9 +300,9 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
         private static int compareInts(int int1, int int2){
             return int1 == int2 ? 0 : int1 < int2 ? -1 : 1;
         }
-        
+
     }
-    
-    
-    
+
+
+
 }

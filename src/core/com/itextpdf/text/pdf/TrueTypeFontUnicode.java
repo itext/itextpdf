@@ -47,10 +47,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import com.itextpdf.text.error_messages.MessageLocalization;
+import java.util.HashSet;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 /** Represents a True Type font with Unicode encoding. All the character
  * in the font can be used directly by using the encoding Identity-H or
@@ -58,13 +59,13 @@ import com.itextpdf.text.Utilities;
  * as Thai.
  * @author  Paulo Soares
  */
-class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
-    
+class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
+
     /**
      * <CODE>true</CODE> if the encoding is vertical.
-     */    
+     */
     boolean vertical = false;
-    
+
     /**
      * Creates a new TrueType font addressed by Unicode characters. The font
      * will always be embedded.
@@ -89,12 +90,12 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         if (ttcName.length() < nameBase.length())
             ttcIndex = nameBase.substring(ttcName.length() + 1);
         fontType = FONT_TYPE_TTUNI;
-        if ((fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".otf") || fileName.toLowerCase().endsWith(".ttc")) && ((enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb)) {
+        if ((fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".otf") || fileName.toLowerCase().endsWith(".ttc")) && (enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb) {
             process(ttfAfm, forceRead);
             if (os_2.fsType == 2)
                 throw new DocumentException(MessageLocalization.getComposedMessage("1.cannot.be.embedded.due.to.licensing.restrictions", fileName + style));
             // Sivan
-            if ((cmap31 == null && !fontSpecific) || (cmap10 == null && fontSpecific))
+            if (cmap31 == null && !fontSpecific || cmap10 == null && fontSpecific)
                 directTextToByte=true;
                 //throw new DocumentException(MessageLocalization.getComposedMessage("1.2.does.not.contain.an.usable.cmap", fileName, style));
             if (fontSpecific) {
@@ -110,12 +111,13 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             throw new DocumentException(MessageLocalization.getComposedMessage("1.2.is.not.a.ttf.font.file", fileName, style));
         vertical = enc.endsWith("V");
     }
-    
+
     /**
      * Gets the width of a <CODE>char</CODE> in normalized 1000 units.
      * @param char1 the unicode <CODE>char</CODE> to get the width of
      * @return the width in normalized 1000 units
      */
+    @Override
     public int getWidth(int char1) {
         if (vertical)
             return 1000;
@@ -129,12 +131,13 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             return getRawWidth(char1, encoding);
         }
     }
-    
+
     /**
      * Gets the width of a <CODE>String</CODE> in normalized 1000 units.
      * @param text the <CODE>String</CODE> to get the width of
      * @return the width in normalized 1000 units
      */
+    @Override
     public int getWidth(String text) {
         if (vertical)
             return text.length() * 1000;
@@ -166,7 +169,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @param metrics metrics[0] contains the glyph index and metrics[2]
      * contains the Unicode code
      * @return the stream representing this CMap or <CODE>null</CODE>
-     */    
+     */
     private PdfStream getToUnicode(Object metrics[]) {
         if (metrics.length == 0)
             return null;
@@ -208,31 +211,31 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         stream.flateCompress(compressionLevel);
         return stream;
     }
-    
+
     private static String toHex4(int n) {
         String s = "0000" + Integer.toHexString(n);
         return s.substring(s.length() - 4);
     }
-    
+
     /** Gets an hex string in the format "&lt;HHHH&gt;".
      * @param n the number
      * @return the hex string
-     */    
+     */
     static String toHex(int n) {
         if (n < 0x10000)
             return "<" + toHex4(n) + ">";
         n -= 0x10000;
-        int high = (n / 0x400) + 0xd800;
-        int low = (n % 0x400) + 0xdc00;
+        int high = n / 0x400 + 0xd800;
+        int low = n % 0x400 + 0xdc00;
         return "[<" + toHex4(high) + toHex4(low) + ">]";
     }
-    
+
     /** Generates the CIDFontTyte2 dictionary.
      * @param fontDescriptor the indirect reference to the font descriptor
      * @param subsetPrefix the subset prefix
      * @param metrics the horizontal width metrics
      * @return a stream
-     */    
+     */
     private PdfDictionary getCIDFontType2(PdfIndirectReference fontDescriptor, String subsetPrefix, Object metrics[]) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         // sivan; cff
@@ -281,13 +284,13 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         }
         return dic;
     }
-    
+
     /** Generates the font dictionary.
      * @param descendant the descendant dictionary
      * @param subsetPrefix the subset prefix
      * @param toUnicode the ToUnicode stream
      * @return the stream
-     */    
+     */
     private PdfDictionary getFontBaseType(PdfIndirectReference descendant, String subsetPrefix, PdfIndirectReference toUnicode) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
 
@@ -302,7 +305,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         dic.put(PdfName.ENCODING, new PdfName(encoding));
         dic.put(PdfName.DESCENDANTFONTS, new PdfArray(descendant));
         if (toUnicode != null)
-            dic.put(PdfName.TOUNICODE, toUnicode);  
+            dic.put(PdfName.TOUNICODE, toUnicode);
         return dic;
     }
 
@@ -310,19 +313,19 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @param o1 the first element
      * @param o2 the second element
      * @return the comparison
-     */    
-    public int compare(Object o1, Object o2) {
-        int m1 = ((int[])o1)[0];
-        int m2 = ((int[])o2)[0];
+     */
+    public int compare(int[] o1, int[] o2) {
+        int m1 = o1[0];
+        int m2 = o2[0];
         if (m1 < m2)
             return -1;
         if (m1 == m2)
             return 0;
         return 1;
     }
-    
+
     private static final byte[] rotbits = {(byte)0x80,(byte)0x40,(byte)0x20,(byte)0x10,(byte)0x08,(byte)0x04,(byte)0x02,(byte)0x01};
-    
+
     /** Outputs to the writer the font dictionaries and streams.
      * @param writer the writer for this document
      * @param ref the font indirect reference
@@ -330,10 +333,12 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @throws IOException on error
      * @throws DocumentException error in generating the object
      */
+    @SuppressWarnings("unchecked")
+    @Override
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException {
-        HashMap longTag = (HashMap)params[0];
+        HashMap<Integer, int[]> longTag = (HashMap<Integer, int[]>)params[0];
         addRangeUni(longTag, true, subset);
-        Object metrics[] = longTag.values().toArray();
+        int metrics[][] = longTag.values().toArray(new int[0][]);
         Arrays.sort(metrics, this);
         PdfIndirectReference ind_font = null;
         PdfObject pobj = null;
@@ -345,10 +350,10 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
                 stream = new PdfStream(new byte[]{(byte)0x80});
             }
             else {
-                int top = ((int[])metrics[metrics.length - 1])[0];
+                int top = metrics[metrics.length - 1][0];
                 byte[] bt = new byte[top / 8 + 1];
                 for (int k = 0; k < metrics.length; ++k) {
-                    int v = ((int[])metrics[k])[0];
+                    int v = metrics[k][0];
                     bt[v / 8] |= rotbits[v % 8];
                 }
                 stream = new PdfStream(bt);
@@ -369,7 +374,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         } else {
             byte[] b;
             if (subset || directoryOffset != 0) {
-                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), longTag, directoryOffset, false, false);
+                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), new HashSet<Integer>(longTag.keySet()), directoryOffset, false, false);
                 b = sb.process();
             }
             else {
@@ -393,7 +398,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
 
         pobj = getToUnicode(metrics);
         PdfIndirectReference toUnicodeRef = null;
-        
+
         if (pobj != null) {
             obj = writer.addToBody(pobj);
             toUnicodeRef = obj.getIndirectReference();
@@ -402,27 +407,30 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         pobj = getFontBaseType(ind_font, subsetPrefix, toUnicodeRef);
         writer.addToBody(pobj, ref);
     }
-    
+
     /**
      * Returns a PdfStream object with the full font program.
      * @return	a PdfStream with the font program
      * @since	2.1.3
      */
+    @Override
     public PdfStream getFullFontStream() throws IOException, DocumentException {
     	if (cff) {
 			return new StreamFont(readCffFont(), "CIDFontType0C", compressionLevel);
         }
     	return super.getFullFontStream();
     }
-    
+
     /** A forbidden operation. Will throw a null pointer exception.
      * @param text the text
      * @return always <CODE>null</CODE>
-     */    
+     */
+    @Override
     byte[] convertToBytes(String text) {
         return null;
     }
 
+    @Override
     byte[] convertToBytes(int char1) {
         return null;
     }
@@ -430,11 +438,12 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
     /** Gets the glyph index and metrics for a character.
      * @param c the character
      * @return an <CODE>int</CODE> array with {glyph index, width}
-     */    
+     */
+    @Override
     public int[] getMetricsTT(int c) {
         if (cmapExt != null)
-            return (int[])cmapExt.get(new Integer(c));
-        HashMap map = null;
+            return cmapExt.get(new Integer(c));
+        HashMap<Integer, int[]> map = null;
         if (fontSpecific)
             map = cmap10;
         else
@@ -443,24 +452,25 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             return null;
         if (fontSpecific) {
             if ((c & 0xffffff00) == 0 || (c & 0xffffff00) == 0xf000)
-                return (int[])map.get(new Integer(c & 0xff));
+                return map.get(new Integer(c & 0xff));
             else
                 return null;
         }
         else
-            return (int[])map.get(new Integer(c));
+            return map.get(new Integer(c));
     }
-    
+
     /**
      * Checks if a character exists in this font.
      * @param c the character to check
      * @return <CODE>true</CODE> if the character has a glyph,
      * <CODE>false</CODE> otherwise
      */
+    @Override
     public boolean charExists(int c) {
         return getMetricsTT(c) != null;
     }
-    
+
     /**
      * Sets the character advance.
      * @param c the character
@@ -468,6 +478,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @return <CODE>true</CODE> if the advance was set,
      * <CODE>false</CODE> otherwise
      */
+    @Override
     public boolean setCharAdvance(int c, int advance) {
         int[] m = getMetricsTT(c);
         if (m == null)
@@ -475,7 +486,8 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         m[1] = advance;
         return true;
     }
-    
+
+    @Override
     public int[] getCharBBox(int c) {
         if (bboxes == null)
             return null;

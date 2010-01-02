@@ -37,9 +37,8 @@ public class PdfReaderTest {
                 ByteArrayOutputStream());
         document.open();
         document.newPage();
-        List links = currentReader.getLinks(1);
-        PdfAnnotation.PdfImportedLink link =
-            (PdfAnnotation.PdfImportedLink) links.get(0);
+        List<PdfAnnotation.PdfImportedLink> links = currentReader.getLinks(1);
+        PdfAnnotation.PdfImportedLink link = links.get(0);
         writer.addAnnotation(link.createAnnotation(writer));
         document.close();
     }

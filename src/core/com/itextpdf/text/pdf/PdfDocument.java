@@ -44,15 +44,16 @@
 package com.itextpdf.text.pdf;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.Annotation;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -69,12 +70,11 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Section;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
-import com.itextpdf.text.BaseColor;
-import java.text.DecimalFormat;
 
 /**
  * <CODE>PdfDocument</CODE> is the class that is used by <CODE>PdfWriter</CODE>
@@ -244,17 +244,16 @@ public class PdfDocument extends Document {
          * @param documentFileAttachment	the attached files
          * @param writer the writer the catalog applies to
          */
-        void addNames(TreeMap localDestinations, HashMap documentLevelJS, HashMap documentFileAttachment, PdfWriter writer) {
+        void addNames(TreeMap<String, Destination> localDestinations, HashMap<String, PdfObject> documentLevelJS, HashMap<String, PdfObject> documentFileAttachment, PdfWriter writer) {
             if (localDestinations.isEmpty() && documentLevelJS.isEmpty() && documentFileAttachment.isEmpty())
                 return;
             try {
                 PdfDictionary names = new PdfDictionary();
                 if (!localDestinations.isEmpty()) {
                     PdfArray ar = new PdfArray();
-                    for (Iterator i = localDestinations.entrySet().iterator(); i.hasNext();) {
-                        Map.Entry entry = (Map.Entry) i.next();
-                        String name = (String) entry.getKey();
-                        Destination dest = (Destination) entry.getValue();
+                    for (Map.Entry<String, Destination> entry : localDestinations.entrySet()) {
+                        String name = entry.getKey();
+                        Destination dest = entry.getValue();
                         if (dest.destination == null) //no destination
                             continue;
                         PdfIndirectReference ref = dest.reference;
@@ -355,7 +354,7 @@ public class PdfDocument extends Document {
     public float getLeading() {
     	return leading;
     }
-    
+
     /**
      * Setter for the current leading.
      * @param	leading the current leading
@@ -393,6 +392,7 @@ public class PdfDocument extends Document {
      * @return <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
      * @throws DocumentException when a document isn't open yet, or has been closed
      */
+    @Override
     public boolean add(Element element) throws DocumentException {
         if (writer != null && writer.isPaused()) {
             return false;
@@ -593,7 +593,7 @@ public class PdfDocument extends Document {
                     element.process(this);
                     flushLines();
                     // some parameters are set back to normal again
-                    indentation.sectionIndentLeft -= (section.getIndentationLeft() + section.getIndentation());
+                    indentation.sectionIndentLeft -= section.getIndentationLeft() + section.getIndentation();
                     indentation.sectionIndentRight -= section.getIndentationRight();
 
                     if (section.isComplete() && pageEvent != null)
@@ -729,6 +729,7 @@ public class PdfDocument extends Document {
      * You have to open the document before you can begin to add content
      * to the body of the document.
      */
+    @Override
     public void open() {
         if (!open) {
             super.open();
@@ -752,12 +753,13 @@ public class PdfDocument extends Document {
      * Once all the content has been written in the body, you have to close
      * the body. After that nothing can be written to the body anymore.
      */
+    @Override
     public void close() {
         if (close) {
             return;
         }
         try {
-        	boolean wasImage = (imageWait != null);
+        	boolean wasImage = imageWait != null;
             newPage();
             if (imageWait != null || wasImage) newPage();
             if (annotationsImp.hasUnusedAnnotations())
@@ -797,6 +799,7 @@ public class PdfDocument extends Document {
      *
      * @return a <CODE>boolean</CODE>
      */
+    @Override
     public boolean newPage() {
         lastElementType = -1;
         if (isPageEmpty()) {
@@ -930,6 +933,7 @@ public class PdfDocument extends Document {
      * @param pageSize the new pagesize
      * @return <CODE>true</CODE> if the page size was set
      */
+    @Override
     public boolean setPageSize(Rectangle pageSize) {
         if (writer != null && writer.isPaused()) {
             return false;
@@ -961,6 +965,7 @@ public class PdfDocument extends Document {
      * @param	marginBottom	the margin on the bottom
      * @return	a <CODE>boolean</CODE>
      */
+    @Override
     public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
         if (writer != null && writer.isPaused()) {
             return false;
@@ -977,17 +982,19 @@ public class PdfDocument extends Document {
     /**
      * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
      */
+    @Override
     public boolean setMarginMirroring(boolean MarginMirroring) {
         if (writer != null && writer.isPaused()) {
             return false;
         }
         return super.setMarginMirroring(MarginMirroring);
     }
-    
+
     /**
      * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
      * @since	2.1.6
      */
+    @Override
     public boolean setMarginMirroringTopBottom(boolean MarginMirroringTopBottom) {
         if (writer != null && writer.isPaused()) {
             return false;
@@ -1002,6 +1009,7 @@ public class PdfDocument extends Document {
      *
      * @param	pageN		the new page number
      */
+    @Override
     public void setPageCount(int pageN) {
         if (writer != null && writer.isPaused()) {
             return;
@@ -1014,6 +1022,7 @@ public class PdfDocument extends Document {
     /**
      * Sets the page number to 0.
      */
+    @Override
     public void resetPageCount() {
         if (writer != null && writer.isPaused()) {
             return;
@@ -1057,7 +1066,7 @@ public class PdfDocument extends Document {
         currentHeight = 0;
 
         // backgroundcolors, etc...
-        thisBoxSize = new HashMap(boxSize);
+        thisBoxSize = new HashMap<String, PdfRectangle>(boxSize);
         if (pageSize.getBackgroundColor() != null
         || pageSize.hasBorders()
         || pageSize.getBorderColor() != null) {
@@ -1096,7 +1105,7 @@ public class PdfDocument extends Document {
     /** The line that is currently being written. */
     protected PdfLine line = null;
     /** The lines that are written until now. */
-    protected ArrayList lines = new ArrayList();
+    protected ArrayList<PdfLine> lines = new ArrayList<PdfLine>();
 
     /**
      * Adds the current line to the list of lines and also adds an empty line.
@@ -1119,7 +1128,7 @@ public class PdfDocument extends Document {
     protected void carriageReturn() {
         // the arraylist with lines may not be null
         if (lines == null) {
-            lines = new ArrayList();
+            lines = new ArrayList<PdfLine>();
         }
         // If the current line is not null
         if (line != null) {
@@ -1169,8 +1178,8 @@ public class PdfDocument extends Document {
      */
     protected void ensureNewLine() {
       try {
-        if ((lastElementType == Element.PHRASE) ||
-            (lastElementType == Element.CHUNK)) {
+        if (lastElementType == Element.PHRASE ||
+            lastElementType == Element.CHUNK) {
           newLine();
           flushLines();
         }
@@ -1205,15 +1214,10 @@ public class PdfDocument extends Document {
         Object currentValues[] = new Object[2];
         PdfFont currentFont = null;
         float displacement = 0;
-        PdfLine l;
         Float lastBaseFactor = new Float(0);
         currentValues[1] = lastBaseFactor;
         // looping over all the lines
-        for (Iterator i = lines.iterator(); i.hasNext(); ) {
-
-            // this is a line in the loop
-            l = (PdfLine) i.next();
-
+        for (PdfLine l: lines) {
             float moveTextX = l.indentLeft() - indentLeft() + indentation.indentLeft + indentation.listIndentLeft + indentation.sectionIndentLeft;
             text.moveText(moveTextX, -l.height());
             // is the line preceded by a symbol?
@@ -1230,7 +1234,7 @@ public class PdfDocument extends Document {
             text.moveText(-moveTextX, 0);
 
         }
-        lines = new ArrayList();
+        lines = new ArrayList<PdfLine>();
         return displacement;
     }
 
@@ -1250,8 +1254,8 @@ public class PdfDocument extends Document {
      * @throws DocumentException on error
      */
     void writeLineToContent(PdfLine line, PdfContentByte text, PdfContentByte graphics, Object currentValues[], float ratio)  throws DocumentException {
-        PdfFont currentFont = (PdfFont)(currentValues[0]);
-        float lastBaseFactor = ((Float)(currentValues[1])).floatValue();
+        PdfFont currentFont = (PdfFont)currentValues[0];
+        float lastBaseFactor = ((Float)currentValues[1]).floatValue();
         PdfChunk chunk;
         int numberOfSpaces;
         int lineLen;
@@ -1272,7 +1276,7 @@ public class PdfDocument extends Document {
         	glueWidth = line.widthLeft() / separatorCount;
         }
         else if (isJustified) {
-            if (line.isNewlineSplit() && line.widthLeft() >= (lastBaseFactor * (ratio * numberOfSpaces + lineLen - 1))) {
+            if (line.isNewlineSplit() && line.widthLeft() >= lastBaseFactor * (ratio * numberOfSpaces + lineLen - 1)) {
                 if (line.isRTL()) {
                     text.moveText(line.widthLeft() - lastBaseFactor * (ratio * numberOfSpaces + lineLen - 1), 0);
                 }
@@ -1307,8 +1311,8 @@ public class PdfDocument extends Document {
         float tabPosition = 0;
 
         // looping over all the chunks in 1 line
-        for (Iterator j = line.iterator(); j.hasNext(); ) {
-            chunk = (PdfChunk) j.next();
+        for (Iterator<PdfChunk> j = line.iterator(); j.hasNext(); ) {
+            chunk = j.next();
             BaseColor color = chunk.color();
             hScale = 1;
 
@@ -1813,7 +1817,7 @@ public class PdfDocument extends Document {
      * Recursive method to update the count in the outlines.
      */
     void traverseOutlineCount(PdfOutline outline) {
-        ArrayList kids = outline.getKids();
+        ArrayList<PdfOutline> kids = outline.getKids();
         PdfOutline parent = outline.parent();
         if (kids.isEmpty()) {
             if (parent != null) {
@@ -1822,7 +1826,7 @@ public class PdfDocument extends Document {
         }
         else {
             for (int k = 0; k < kids.size(); ++k) {
-                traverseOutlineCount((PdfOutline)kids.get(k));
+                traverseOutlineCount(kids.get(k));
             }
             if (parent != null) {
                 if (outline.isOpen()) {
@@ -1853,22 +1857,22 @@ public class PdfDocument extends Document {
         outline.setIndirectReference(writer.getPdfIndirectReference());
         if (outline.parent() != null)
             outline.put(PdfName.PARENT, outline.parent().indirectReference());
-        ArrayList kids = outline.getKids();
+        ArrayList<PdfOutline> kids = outline.getKids();
         int size = kids.size();
         for (int k = 0; k < size; ++k)
-            outlineTree((PdfOutline)kids.get(k));
+            outlineTree(kids.get(k));
         for (int k = 0; k < size; ++k) {
             if (k > 0)
-                ((PdfOutline)kids.get(k)).put(PdfName.PREV, ((PdfOutline)kids.get(k - 1)).indirectReference());
+                kids.get(k).put(PdfName.PREV, kids.get(k - 1).indirectReference());
             if (k < size - 1)
-                ((PdfOutline)kids.get(k)).put(PdfName.NEXT, ((PdfOutline)kids.get(k + 1)).indirectReference());
+                kids.get(k).put(PdfName.NEXT, kids.get(k + 1).indirectReference());
         }
         if (size > 0) {
-            outline.put(PdfName.FIRST, ((PdfOutline)kids.get(0)).indirectReference());
-            outline.put(PdfName.LAST, ((PdfOutline)kids.get(size - 1)).indirectReference());
+            outline.put(PdfName.FIRST, kids.get(0).indirectReference());
+            outline.put(PdfName.LAST, kids.get(size - 1).indirectReference());
         }
         for (int k = 0; k < size; ++k) {
-            PdfOutline kid = (PdfOutline)kids.get(k);
+            PdfOutline kid = kids.get(k);
             writer.addToBody(kid, kid.indirectReference());
         }
     }
@@ -1952,14 +1956,13 @@ public class PdfDocument extends Document {
     }
 
     /**
-     * Stores the destinations keyed by name. Value is
-     * <CODE>Object[]{PdfAction,PdfIndirectReference,PdfDestintion}</CODE>.
+     * Stores the destinations keyed by name. Value is a <Code>Destination</Code>.
      */
-    protected TreeMap localDestinations = new TreeMap();
+    protected TreeMap<String, Destination> localDestinations = new TreeMap<String, Destination>();
 
     PdfAction getLocalGotoAction(String name) {
         PdfAction action;
-        Destination dest = (Destination)localDestinations.get(name);
+        Destination dest = localDestinations.get(name);
         if (dest == null)
             dest = new Destination();
         if (dest.action == null) {
@@ -1986,7 +1989,7 @@ public class PdfDocument extends Document {
      * already existed
      */
     boolean localDestination(String name, PdfDestination destination) {
-        Destination dest = (Destination)localDestinations.get(name);
+        Destination dest = localDestinations.get(name);
         if (dest == null)
             dest = new Destination();
         if (dest.destination != null)
@@ -2002,7 +2005,7 @@ public class PdfDocument extends Document {
      * Stores a list of document level JavaScript actions.
      */
     int jsCounter;
-    protected HashMap documentLevelJS = new HashMap();
+    protected HashMap<String, PdfObject> documentLevelJS = new HashMap<String, PdfObject>();
     protected static final DecimalFormat SIXTEEN_DIGITS = new DecimalFormat("0000000000000000");
     void addJavaScript(PdfAction js) {
         if (js.get(PdfName.JS) == null)
@@ -2025,11 +2028,11 @@ public class PdfDocument extends Document {
         }
     }
 
-    HashMap getDocumentLevelJS() {
+    HashMap<String, PdfObject> getDocumentLevelJS() {
     	return documentLevelJS;
     }
 
-    protected HashMap documentFileAttachment = new HashMap();
+    protected HashMap<String, PdfObject> documentFileAttachment = new HashMap<String, PdfObject>();
 
     void addFileAttachment(String description, PdfFileSpecification fs) throws IOException {
         if (description == null) {
@@ -2053,7 +2056,7 @@ public class PdfDocument extends Document {
         documentFileAttachment.put(fn, fs.getReference());
     }
 
-    HashMap getDocumentFileAttachment() {
+    HashMap<String, PdfObject> getDocumentFileAttachment() {
         return documentFileAttachment;
     }
 
@@ -2140,11 +2143,11 @@ public class PdfDocument extends Document {
     protected Rectangle nextPageSize = null;
 
     /** This is the size of the several boxes of the current Page. */
-    protected HashMap thisBoxSize = new HashMap();
+    protected HashMap<String, PdfRectangle> thisBoxSize = new HashMap<String, PdfRectangle>();
 
     /** This is the size of the several boxes that will be used in
      * the next page. */
-    protected HashMap boxSize = new HashMap();
+    protected HashMap<String, PdfRectangle> boxSize = new HashMap<String, PdfRectangle>();
 
     void setCropBoxSize(Rectangle crop) {
         setBoxSize("crop", crop);
@@ -2182,7 +2185,7 @@ public class PdfDocument extends Document {
      * @param boxName crop, trim, art or bleed
      */
     Rectangle getBoxSize(String boxName) {
-    	PdfRectangle r = (PdfRectangle)thisBoxSize.get(boxName);
+    	PdfRectangle r = thisBoxSize.get(boxName);
     	if (r != null) return r.getRectangle();
     	return null;
     }
@@ -2197,7 +2200,7 @@ public class PdfDocument extends Document {
     }
 
     boolean isPageEmpty() {
-        return writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()));
+        return writer == null || writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused());
     }
 
 //	[U3] page actions
@@ -2283,7 +2286,7 @@ public class PdfDocument extends Document {
 		if (line != null) {
 			tmpHeight += line.height();
 		}
-		if ((imageEnd > -1) && (tmpHeight > 0)) {
+		if (imageEnd > -1 && tmpHeight > 0) {
 			carriageReturn();
 			currentHeight += tmpHeight;
 		}
@@ -2334,7 +2337,7 @@ public class PdfDocument extends Document {
         float mt[] = image.matrix();
         float startPosition = indentLeft() - mt[4];
         if ((image.getAlignment() & Image.RIGHT) == Image.RIGHT) startPosition = indentRight() - image.getScaledWidth() - mt[4];
-        if ((image.getAlignment() & Image.MIDDLE) == Image.MIDDLE) startPosition = indentLeft() + ((indentRight() - indentLeft() - image.getScaledWidth()) / 2) - mt[4];
+        if ((image.getAlignment() & Image.MIDDLE) == Image.MIDDLE) startPosition = indentLeft() + (indentRight() - indentLeft() - image.getScaledWidth()) / 2 - mt[4];
         if (image.hasAbsoluteX()) startPosition = image.getAbsoluteX();
         if (textwrap) {
             if (imageEnd < 0 || imageEnd < currentHeight + image.getScaledHeight() + diff) {
@@ -2423,7 +2426,7 @@ public class PdfDocument extends Document {
     	}
         // ensuring that a new line has been started.
         ensureNewLine();
-        return table.getTotalHeight() + ((currentHeight > 0) ? table.spacingBefore() : 0f)
+        return table.getTotalHeight() + (currentHeight > 0 ? table.spacingBefore() : 0f)
         	<= indentTop() - currentHeight - indentBottom() - margin;
     }
 

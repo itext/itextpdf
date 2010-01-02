@@ -53,15 +53,15 @@ import com.itextpdf.text.Font;
  */
 
 public class EntitiesToSymbol {
-    
+
     /**
      * This is a map that contains all possible id values of the entity tag
      * that can be translated to a character in font Symbol.
      */
-    public static final HashMap map;
-    
+    public static final HashMap<String, Character> map;
+
     static {
-        map = new HashMap();
+        map = new HashMap<String, Character>();
         map.put("169", new Character((char)227));
         map.put("172", new Character((char)216));
         map.put("174", new Character((char)210));
@@ -337,7 +337,7 @@ public class EntitiesToSymbol {
         map.put("xi", new Character((char)120));
         map.put("zeta", new Character((char)122));
     }
-    
+
     /**
      * Gets a chunk with a symbol character.
      * @param e a symbol value (see Entities class: alfa is greek alfa,...)
@@ -357,7 +357,7 @@ public class EntitiesToSymbol {
         Font symbol = new Font(Font.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
         return new Chunk(String.valueOf(s), symbol);
     }
-    
+
     /**
      * Looks for the corresponding symbol in the font Symbol.
      *
@@ -365,7 +365,7 @@ public class EntitiesToSymbol {
      * @return	the corresponding character in font Symbol
      */
     public static char getCorrespondingSymbol(String name) {
-        Character symbol = (Character) map.get(name);
+        Character symbol = map.get(name);
         if (symbol == null) {
             return (char)0;
         }

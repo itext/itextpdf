@@ -43,10 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.DocumentException;
 import java.io.OutputStream;
 import java.util.HashMap;
+
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.AcroFields.Item;
 
 /**
  * Allows you to add one (or more) existing PDF document(s)
@@ -56,14 +58,14 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 class PdfCopyFormsImp extends PdfCopyFieldsImp {
 
     /**
-   * This sets up the output document 
+   * This sets up the output document
    * @param os The Outputstream pointing to the output document
    * @throws DocumentException
    */
     PdfCopyFormsImp(OutputStream os) throws DocumentException {
         super(os);
     }
-    
+
     /**
      * This method feeds in the source document
      * @param reader The PDF reader containing the source document
@@ -91,9 +93,10 @@ class PdfCopyFormsImp extends PdfCopyFieldsImp {
      * This merge fields is slightly different from the mergeFields method
      * of PdfCopyFields.
      */
+    @Override
     void mergeFields() {
         for (int k = 0; k < fields.size(); ++k) {
-            HashMap fd = ((AcroFields)fields.get(k)).getFields();
+            HashMap<String, Item> fd = (fields.get(k)).getFields();
             mergeWithMaster(fd);
         }
     }

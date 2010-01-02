@@ -44,6 +44,7 @@
 package com.itextpdf.text.pdf;
 
 import java.util.ArrayList;
+
 import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * An optional content group is a dictionary representing a collection of graphics
@@ -54,7 +55,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  */
 public class PdfLayer extends PdfDictionary implements PdfOCG {
     protected PdfIndirectReference ref;
-    protected ArrayList children;
+    protected ArrayList<PdfLayer> children;
     protected PdfLayer parent;
     protected String title;
 
@@ -62,23 +63,23 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
      * Holds value of property on.
      */
     private boolean on = true;
-    
+
     /**
      * Holds value of property onPanel.
      */
     private boolean onPanel = true;
-    
+
     PdfLayer(String title) {
         this.title = title;
     }
-    
+
     /**
      * Creates a title layer. A title layer is not really a layer but a collection of layers
      * under the same title heading.
      * @param title the title text
      * @param writer the <CODE>PdfWriter</CODE>
      * @return the title layer
-     */    
+     */
     public static PdfLayer createTitle(String title, PdfWriter writer) {
         if (title == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("title.cannot.be.null"));
@@ -90,56 +91,56 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
      * Creates a new layer.
      * @param name the name of the layer
      * @param writer the writer
-     */    
+     */
     public PdfLayer(String name, PdfWriter writer) {
         super(PdfName.OCG);
         setName(name);
         ref = writer.getPdfIndirectReference();
         writer.registerLayer(this);
     }
-    
+
     String getTitle() {
         return title;
     }
-    
+
     /**
      * Adds a child layer. Nested layers can only have one parent.
      * @param child the child layer
-     */    
+     */
     public void addChild(PdfLayer child) {
         if (child.parent != null)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.layer.1.already.has.a.parent", ((PdfString)child.get(PdfName.NAME)).toUnicodeString()));
         child.parent = this;
         if (children == null)
-            children = new ArrayList();
+            children = new ArrayList<PdfLayer>();
         children.add(child);
     }
 
-    
+
     /**
      * Gets the parent layer.
      * @return the parent layer or <CODE>null</CODE> if the layer has no parent
-     */    
+     */
     public PdfLayer getParent() {
         return parent;
     }
-    
+
     /**
      * Gets the children layers.
      * @return the children layers or <CODE>null</CODE> if the layer has no children
-     */    
-    public ArrayList getChildren() {
+     */
+    public ArrayList<PdfLayer> getChildren() {
         return children;
     }
-    
+
     /**
      * Gets the <CODE>PdfIndirectReference</CODE> that represents this layer.
      * @return the <CODE>PdfIndirectReference</CODE> that represents this layer
-     */    
+     */
     public PdfIndirectReference getRef() {
         return ref;
     }
-    
+
     /**
      * Sets the <CODE>PdfIndirectReference</CODE> that represents this layer.
      * This can only be done from PdfStamperImp.
@@ -149,23 +150,23 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
     void setRef(PdfIndirectReference ref) {
     	this.ref = ref;
     }
-    
+
     /**
      * Sets the name of this layer.
      * @param name the name of this layer
-     */    
+     */
     public void setName(String name) {
         put(PdfName.NAME, new PdfString(name, PdfObject.TEXT_UNICODE));
     }
-    
+
     /**
      * Gets the dictionary representing the layer. It just returns <CODE>this</CODE>.
      * @return the dictionary representing the layer
-     */    
+     */
     public PdfObject getPdfObject() {
         return this;
     }
-    
+
     /**
      * Gets the initial visibility of the layer.
      * @return the initial visibility of the layer
@@ -173,7 +174,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
     public boolean isOn() {
         return this.on;
     }
-    
+
     /**
      * Sets the initial visibility of the layer.
      * @param on the initial visibility of the layer
@@ -181,7 +182,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
     public void setOn(boolean on) {
         this.on = on;
     }
-    
+
     private PdfDictionary getUsage() {
         PdfDictionary usage = (PdfDictionary)get(PdfName.USAGE);
         if (usage == null) {
@@ -190,7 +191,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
         }
         return usage;
     }
-    
+
     /**
      * Used by the creating application to store application-specific
      * data associated with this optional content group.
@@ -199,7 +200,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
      * values include but are not limited to <B>Artwork</B>, for graphic-design or publishing
      * applications, and <B>Technical</B>, for technical designs such as building plans or
      * schematics
-     */    
+     */
     public void setCreatorInfo(String creator, String subtype) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
@@ -207,7 +208,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
         dic.put(PdfName.SUBTYPE, new PdfName(subtype));
         usage.put(PdfName.CREATORINFO, dic);
     }
-    
+
     /**
      * Specifies the language of the content controlled by this
      * optional content group
@@ -215,7 +216,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
      * (for example, <B>es-MX</B> represents Mexican Spanish)
      * @param preferred used by viewer applications when there is a partial match but no exact
      * match between the system language and the language strings in all usage dictionaries
-     */    
+     */
     public void setLanguage(String lang, boolean preferred) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
@@ -224,21 +225,21 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
             dic.put(PdfName.PREFERRED, PdfName.ON);
         usage.put(PdfName.LANGUAGE, dic);
     }
-    
+
     /**
      * Specifies the recommended state for content in this
      * group when the document (or part of it) is saved by a viewer application to a format
      * that does not support optional content (for example, an earlier version of
      * PDF or a raster image format).
      * @param export the export state
-     */    
+     */
     public void setExport(boolean export) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.EXPORTSTATE, export ? PdfName.ON : PdfName.OFF);
         usage.put(PdfName.EXPORT, dic);
     }
-    
+
     /**
      * Specifies a range of magnifications at which the content
      * in this optional content group is best viewed.
@@ -247,7 +248,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
      * @param max the maximum recommended magnification factor at which the group
      * should be ON. A negative value will set the largest possible magnification supported by the
      * viewer application
-     */    
+     */
     public void setZoom(float min, float max) {
         if (min <= 0 && max < 0)
             return;
@@ -267,7 +268,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
      * for example, <B>Trapping</B>, <B>PrintersMarks</B> and <B>Watermark</B>
      * @param printstate indicates that the group should be
      * set to that state when the document is printed from a viewer application
-     */    
+     */
     public void setPrint(String subtype, boolean printstate) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
@@ -280,14 +281,14 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
      * Indicates that the group should be set to that state when the
      * document is opened in a viewer application.
      * @param view the view state
-     */    
+     */
     public void setView(boolean view) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.VIEWSTATE, view ? PdfName.ON : PdfName.OFF);
         usage.put(PdfName.VIEW, dic);
     }
-    
+
     /**
      * Gets the layer visibility in Acrobat's layer panel
      * @return the layer visibility in Acrobat's layer panel
@@ -295,7 +296,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
     public boolean isOnPanel() {
         return this.onPanel;
     }
-    
+
     /**
      * Sets the visibility of the layer in Acrobat's layer panel. If <CODE>false</CODE>
      * the layer cannot be directly manipulated by the user. Note that any children layers will
@@ -305,5 +306,5 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
     public void setOnPanel(boolean onPanel) {
         this.onPanel = onPanel;
     }
-    
+
 }

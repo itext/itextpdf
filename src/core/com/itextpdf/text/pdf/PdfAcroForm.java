@@ -43,12 +43,11 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.BaseColor;
 
 /**
  * Each PDF document can contain maximum 1 AcroForm.
@@ -60,7 +59,7 @@ public class PdfAcroForm extends PdfDictionary {
 
 
     /** This is a map containing FieldTemplates. */
-    private HashMap fieldTemplates = new HashMap();
+    private HashSet<PdfTemplate> fieldTemplates = new HashSet<PdfTemplate>();
 
     /** This is an array containing DocumentFields. */
     private PdfArray documentFields = new PdfArray();
@@ -71,14 +70,14 @@ public class PdfAcroForm extends PdfDictionary {
     /** Contains the signature flags. */
     private int sigFlags = 0;
 
-    /** Creates new PdfAcroForm 
+    /** Creates new PdfAcroForm
      * @param writer
      */
     public PdfAcroForm(PdfWriter writer) {
         super();
         this.writer = writer;
     }
-    
+
     public void setNeedAppearances(boolean value) {
     	put(PdfName.NEEDAPPEARANCES, new PdfBoolean(value));
     }
@@ -88,8 +87,8 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ft
      */
 
-    public void addFieldTemplates(HashMap ft) {
-        fieldTemplates.putAll(ft);
+    public void addFieldTemplates(HashSet<PdfTemplate> ft) {
+        fieldTemplates.addAll(ft);
     }
 
     /**
@@ -115,8 +114,7 @@ public class PdfAcroForm extends PdfDictionary {
             put(PdfName.CO, calculationOrder);
         if (fieldTemplates.isEmpty()) return true;
         PdfDictionary dic = new PdfDictionary();
-        for (Iterator it = fieldTemplates.keySet().iterator(); it.hasNext();) {
-            PdfTemplate template = (PdfTemplate)it.next();
+        for (PdfTemplate template: fieldTemplates) {
             PdfFormField.mergeResources(dic, (PdfDictionary)template.getResources());
         }
         put(PdfName.DR, dic);
@@ -363,7 +361,7 @@ public class PdfAcroForm extends PdfDictionary {
         tp.beginText();
         tp.setFontAndSize(font, fontSize);
         tp.resetRGBColorFill();
-        tp.setTextMatrix(4, (ury - lly) / 2 - (fontSize * 0.3f));
+        tp.setTextMatrix(4, (ury - lly) / 2 - fontSize * 0.3f);
         tp.showText(text);
         tp.endText();
         tp.restoreState();
@@ -469,7 +467,7 @@ public class PdfAcroForm extends PdfDictionary {
         catch(Exception e) {
             throw new ExceptionConverter(e);
         }
-        float size = (ury - lly);
+        float size = ury - lly;
         PdfAppearance tpOn = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         PdfAppearance tp2 = (PdfAppearance)tpOn.getDuplicate();
         tp2.setFontAndSize(font, size);
@@ -480,7 +478,7 @@ public class PdfAcroForm extends PdfDictionary {
         tpOn.resetRGBColorFill();
         tpOn.beginText();
         tpOn.setFontAndSize(font, size);
-        tpOn.showTextAligned(PdfContentByte.ALIGN_CENTER, "4", (urx - llx) / 2, (ury - lly) / 2 - (size * 0.3f), 0);
+        tpOn.showTextAligned(PdfContentByte.ALIGN_CENTER, "4", (urx - llx) / 2, (ury - lly) / 2 - size * 0.3f, 0);
         tpOn.endText();
         tpOn.restoreState();
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, value, tpOn);
@@ -566,8 +564,8 @@ public class PdfAcroForm extends PdfDictionary {
         PdfFormField choice = PdfFormField.createList(writer, options, 0);
         setChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
         StringBuffer text = new StringBuffer();
-        for (int i = 0; i < options.length; i++) {
-            text.append(options[i]).append('\n');
+        for (String option : options) {
+            text.append(option).append('\n');
         }
         drawMultiLineOfText(choice, text.toString(), font, fontSize, llx, lly, urx, ury);
         addFormField(choice);
@@ -590,8 +588,8 @@ public class PdfAcroForm extends PdfDictionary {
         PdfFormField choice = PdfFormField.createList(writer, options, 0);
         setChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
         StringBuffer text = new StringBuffer();
-        for (int i = 0; i < options.length; i++) {
-            text.append(options[i][1]).append('\n');
+        for (String[] option : options) {
+            text.append(option[1]).append('\n');
         }
         drawMultiLineOfText(choice, text.toString(), font, fontSize, llx, lly, urx, ury);
         addFormField(choice);
@@ -639,9 +637,9 @@ public class PdfAcroForm extends PdfDictionary {
         PdfFormField choice = PdfFormField.createCombo(writer, editable, options, 0);
         setChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
         String value = null;
-        for (int i = 0; i < options.length; i++) {
-            if (options[i][0].equals(defaultValue)) {
-                value = options[i][1];
+        for (String[] option : options) {
+            if (option[0].equals(defaultValue)) {
+                value = option[1];
                 break;
             }
         }
@@ -682,7 +680,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ury
      * @return a PdfFormField
      */
-    public PdfFormField addSignature(String name, 
+    public PdfFormField addSignature(String name,
                     float llx, float lly, float urx, float ury) {
         PdfFormField signature = PdfFormField.createSignature(writer);
         setSignatureParams(signature, name, llx, lly, urx, ury);
@@ -690,7 +688,7 @@ public class PdfAcroForm extends PdfDictionary {
         addFormField(signature);
         return signature;
     }
-    
+
     /**
      * @param field
      * @param name
@@ -716,7 +714,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param urx
      * @param ury
      */
-    public void drawSignatureAppearences(PdfFormField field, 
+    public void drawSignatureAppearences(PdfFormField field,
                     float llx, float lly, float urx, float ury) {
         PdfAppearance tp = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         tp.setGrayFill(1.0f);

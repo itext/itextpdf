@@ -46,16 +46,16 @@ package com.itextpdf.text;
 import com.itextpdf.text.factories.RomanNumberFactory;
 
 /**
- * 
+ *
  * A special-version of <CODE>LIST</CODE> which use roman-letters.
- * 
+ *
  * @see com.itextpdf.text.List
  */
 
 public class RomanList extends List {
 
 // constructors
-	
+
 	/**
 	 * Initialization
 	 */
@@ -65,7 +65,7 @@ public class RomanList extends List {
 
 	/**
 	 * Initialization
-	 * 
+	 *
 	 * @param symbolIndent	indent
 	 */
 	public RomanList(int symbolIndent) {
@@ -73,8 +73,8 @@ public class RomanList extends List {
 	}
 
 	/**
-	 * Initialization 
-	 * @param	lowercase		roman-char in lowercase   
+	 * Initialization
+	 * @param	lowercase		roman-char in lowercase
 	 * @param 	symbolIndent	indent
 	 */
 	public RomanList(boolean lowercase, int symbolIndent) {
@@ -83,14 +83,15 @@ public class RomanList extends List {
 	}
 
 // overridden method
-	
+
 	/**
-	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
+	 * Adds an <CODE>Element</CODE> to the <CODE>List</CODE>.
 	 *
 	 * @param	o	the object to add.
 	 * @return true if adding the object succeeded
 	 */
-	public boolean add(Object o) {
+	@Override
+        public boolean add(Element o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
 			Chunk chunk;
@@ -106,8 +107,6 @@ public class RomanList extends List {
 			nested.setIndentationLeft(nested.getIndentationLeft() + symbolIndent);
 			first--;
 			return list.add(nested);
-		} else if (o instanceof String) {
-			return this.add(new ListItem((String) o));
 		}
 		return false;
 	}

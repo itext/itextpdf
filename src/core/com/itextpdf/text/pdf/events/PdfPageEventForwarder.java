@@ -44,7 +44,6 @@
 package com.itextpdf.text.pdf.events;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
@@ -62,28 +61,26 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class PdfPageEventForwarder implements PdfPageEvent {
 
 	/** ArrayList containing all the PageEvents that have to be executed. */
-	protected ArrayList events = new ArrayList();
-	
-	/** 
+	protected ArrayList<PdfPageEvent> events = new ArrayList<PdfPageEvent>();
+
+	/**
 	 * Add a page event to the forwarder.
 	 * @param event an event that has to be added to the forwarder.
 	 */
 	public void addPageEvent(PdfPageEvent event) {
 		events.add(event);
 	}
-	
+
 	/**
 	 * Called when the document is opened.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
 	 *            the document
 	 */
 	public void onOpenDocument(PdfWriter writer, Document document) {
-		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (PdfPageEvent event: events) {
 			event.onOpenDocument(writer, document);
 		}
 	}
@@ -93,16 +90,14 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 * <P>
 	 * Note that if even if a page is not written this method is still called.
 	 * It is preferable to use <CODE>onEndPage</CODE> to avoid infinite loops.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
 	 *            the document
 	 */
 	public void onStartPage(PdfWriter writer, Document document) {
-		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (PdfPageEvent event: events) {
 			event.onStartPage(writer, document);
 		}
 	}
@@ -110,16 +105,14 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	/**
 	 * Called when a page is finished, just before being written to the
 	 * document.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
 	 *            the document
 	 */
 	public void onEndPage(PdfWriter writer, Document document) {
-		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (PdfPageEvent event: events) {
 			event.onEndPage(writer, document);
 		}
 	}
@@ -129,16 +122,14 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 * <P>
 	 * Note that this method is called with the page number equal to the last
 	 * page plus one.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
 	 *            the document
 	 */
 	public void onCloseDocument(PdfWriter writer, Document document) {
-		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (PdfPageEvent event: events) {
 			event.onCloseDocument(writer, document);
 		}
 	}
@@ -149,7 +140,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 * <CODE>paragraphPosition</CODE> will hold the height at which the
 	 * paragraph will be written to. This is useful to insert bookmarks with
 	 * more control.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
@@ -159,9 +150,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 */
 	public void onParagraph(PdfWriter writer, Document document,
 			float paragraphPosition) {
-		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (PdfPageEvent event: events) {
 			event.onParagraph(writer, document, paragraphPosition);
 		}
 	}
@@ -171,7 +160,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 * <P>
 	 * <CODE>paragraphPosition</CODE> will hold the height of the end of the
 	 * paragraph.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
@@ -181,9 +170,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 */
 	public void onParagraphEnd(PdfWriter writer, Document document,
 			float paragraphPosition) {
-		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (PdfPageEvent event: events) {
 			event.onParagraphEnd(writer, document, paragraphPosition);
 		}
 	}
@@ -193,7 +180,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 * <P>
 	 * <CODE>position</CODE> will hold the height at which the chapter will be
 	 * written to.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
@@ -205,9 +192,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 */
 	public void onChapter(PdfWriter writer, Document document,
 			float paragraphPosition, Paragraph title) {
-		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (PdfPageEvent event: events) {
 			event.onChapter(writer, document, paragraphPosition, title);
 		}
 	}
@@ -216,7 +201,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 * Called when the end of a Chapter is reached.
 	 * <P>
 	 * <CODE>position</CODE> will hold the height of the end of the chapter.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
@@ -225,9 +210,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 *            the position of the end of the chapter.
 	 */
 	public void onChapterEnd(PdfWriter writer, Document document, float position) {
-		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (PdfPageEvent event: events) {
 			event.onChapterEnd(writer, document, position);
 		}
 	}
@@ -237,7 +220,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 * <P>
 	 * <CODE>position</CODE> will hold the height at which the section will be
 	 * written to.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
@@ -251,9 +234,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 */
 	public void onSection(PdfWriter writer, Document document,
 			float paragraphPosition, int depth, Paragraph title) {
-		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (PdfPageEvent event: events) {
 			event.onSection(writer, document, paragraphPosition, depth, title);
 		}
 	}
@@ -262,7 +243,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 * Called when the end of a Section is reached.
 	 * <P>
 	 * <CODE>position</CODE> will hold the height of the section end.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
@@ -271,9 +252,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 *            the position of the end of the section
 	 */
 	public void onSectionEnd(PdfWriter writer, Document document, float position) {
-		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (PdfPageEvent event: events) {
 			event.onSectionEnd(writer, document, position);
 		}
 	}
@@ -283,7 +262,7 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	 * <P>
 	 * It is useful to pinpoint the <CODE>Chunk</CODE> location to generate
 	 * bookmarks, for example.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> for this document
 	 * @param document
@@ -297,8 +276,8 @@ public class PdfPageEventForwarder implements PdfPageEvent {
 	public void onGenericTag(PdfWriter writer, Document document,
 			Rectangle rect, String text) {
 		PdfPageEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPageEvent)i.next();
+		for (Object element : events) {
+			event = (PdfPageEvent)element;
 			event.onGenericTag(writer, document, rect, text);
 		}
 	}

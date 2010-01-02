@@ -35,7 +35,7 @@ public class PdfContentStreamProcessorTest
   public void setUp() throws Exception{
       _renderListener = new DebugRenderListener();
   }
-  
+
   // Replicates iText bug 2817030
   @Test
   public void testPositionAfterTstar()
@@ -61,7 +61,7 @@ public class PdfContentStreamProcessorTest
     final byte[] contentBytes = readContentBytes(contentObject);
     PdfContentStreamProcessor processor = new PdfContentStreamProcessor(_renderListener);
     processor.processContent(contentBytes, resourceDictionary);
-    
+
   }
 
 
@@ -86,10 +86,10 @@ public class PdfContentStreamProcessorTest
         // processContent() resets state.
         final ByteArrayOutputStream allBytes = new ByteArrayOutputStream();
         final PdfArray contentArray = (PdfArray) contentObject;
-        final ListIterator iter = contentArray.listIterator();
+        final ListIterator<PdfObject> iter = contentArray.listIterator();
         while (iter.hasNext())
         {
-          final PdfObject element = (PdfObject) iter.next();
+          final PdfObject element = iter.next();
           allBytes.write(readContentBytes(element));
         }
         result = allBytes.toByteArray();
@@ -108,7 +108,7 @@ public class PdfContentStreamProcessorTest
 
     public void reset() {
     }
-    
+
     public void renderText(TextRenderInfo renderInfo) {
         Vector start = renderInfo.getStartPoint();
         final float x = start.get(Vector.I1);
@@ -118,7 +118,7 @@ public class PdfContentStreamProcessorTest
           Assert.fail("Text has jumped back up the page");
         }
         _lastY = y;
-        
+
     }
 
     public void beginTextBlock() {

@@ -45,24 +45,23 @@ package com.itextpdf.text;
 
 import com.itextpdf.text.html.Markup;
 import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.BaseColor;
 
 /**
  * Contains all the specifications of a font: fontfamily, size, style and color.
  * <P>
  * Example: <BLOCKQUOTE>
- * 
+ *
  * <PRE>
- * 
+ *
  * Paragraph p = new Paragraph("This is a paragraph", <STRONG>new
  * Font(Font.HELVETICA, 18, Font.BOLDITALIC, new BaseColor(0, 0, 255)) </STRONG>);
- * 
+ *
  * </PRE>
- * 
+ *
  * </BLOCKQUOTE>
  */
 
-public class Font implements Comparable {
+public class Font implements Comparable<Font> {
 
 	// static membervariables for the different families
 
@@ -130,7 +129,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Copy constructor of a Font
-	 * 
+	 *
 	 * @param other
 	 *            the font that has to be copied
 	 */
@@ -144,7 +143,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Constructs a Font.
-	 * 
+	 *
 	 * @param family
 	 *            the family to which this font belongs
 	 * @param size
@@ -164,7 +163,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Constructs a Font.
-	 * 
+	 *
 	 * @param bf
 	 *            the external font
 	 * @param size
@@ -184,7 +183,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Constructs a Font.
-	 * 
+	 *
 	 * @param bf
 	 *            the external font
 	 * @param size
@@ -198,7 +197,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Constructs a Font.
-	 * 
+	 *
 	 * @param bf
 	 *            the external font
 	 * @param size
@@ -210,7 +209,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Constructs a Font.
-	 * 
+	 *
 	 * @param bf
 	 *            the external font
 	 */
@@ -220,7 +219,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Constructs a Font.
-	 * 
+	 *
 	 * @param family
 	 *            the family to which this font belongs
 	 * @param size
@@ -235,7 +234,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Constructs a Font.
-	 * 
+	 *
 	 * @param family
 	 *            the family to which this font belongs
 	 * @param size
@@ -248,7 +247,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Constructs a Font.
-	 * 
+	 *
 	 * @param family
 	 *            the family to which this font belongs
 	 */
@@ -269,18 +268,16 @@ public class Font implements Comparable {
 
 	/**
 	 * Compares this <CODE>Font</CODE> with another
-	 * 
-	 * @param object
+	 *
+	 * @param font
 	 *            the other <CODE>Font</CODE>
 	 * @return a value
 	 */
-	public int compareTo(Object object) {
-		if (object == null) {
+	public int compareTo(Font font) {
+		if (font == null) {
 			return -1;
 		}
-		Font font;
 		try {
-			font = (Font) object;
 			if (baseFont != null && !baseFont.equals(font.getBaseFont())) {
 				return -2;
 			}
@@ -315,7 +312,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Gets the family of this font.
-	 * 
+	 *
 	 * @return the value of the family
 	 */
 	public int getFamily() {
@@ -324,7 +321,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Gets the familyname as a String.
-	 * 
+	 *
 	 * @return the familyname
 	 */
 	public String getFamilyname() {
@@ -343,15 +340,15 @@ public class Font implements Comparable {
 		default:
 			if (baseFont != null) {
 				String[][] names = baseFont.getFamilyFontName();
-				for (int i = 0; i < names.length; i++) {
-					if ("0".equals(names[i][2])) {
-						return names[i][3];
+				for (String[] name : names) {
+					if ("0".equals(name[2])) {
+						return name[3];
 					}
-					if ("1033".equals(names[i][2])) {
-						tmp = names[i][3];
+					if ("1033".equals(name[2])) {
+						tmp = name[3];
 					}
-					if ("".equals(names[i][2])) {
-						tmp = names[i][3];
+					if ("".equals(name[2])) {
+						tmp = name[3];
 					}
 				}
 			}
@@ -362,7 +359,7 @@ public class Font implements Comparable {
 	/**
 	 * Sets the family using a <CODE>String</CODE> ("Courier", "Helvetica",
 	 * "Times New Roman", "Symbol" or "ZapfDingbats").
-	 * 
+	 *
 	 * @param family
 	 *            A <CODE>String</CODE> representing a certain font-family.
 	 */
@@ -373,7 +370,7 @@ public class Font implements Comparable {
 	/**
 	 * Translates a <CODE>String</CODE> -value of a certain family into the
 	 * index that is used for this family in this class.
-	 * 
+	 *
 	 * @param family
 	 *            A <CODE>String</CODE> representing a certain font-family
 	 * @return the corresponding index
@@ -398,10 +395,10 @@ public class Font implements Comparable {
 	}
 
 	// SIZE
-	
+
 	/**
 	 * Gets the size of this font.
-	 * 
+	 *
 	 * @return a size
 	 */
 	public float getSize() {
@@ -411,7 +408,7 @@ public class Font implements Comparable {
 	/**
 	 * Gets the size that can be used with the calculated <CODE>BaseFont
 	 * </CODE>.
-	 * 
+	 *
 	 * @return the size that can be used with the calculated <CODE>BaseFont
 	 *         </CODE>
 	 */
@@ -425,7 +422,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Gets the leading that can be used with this font.
-	 * 
+	 *
 	 * @param linespacing
 	 *            a certain linespacing
 	 * @return the height of a line
@@ -436,7 +433,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Sets the size.
-	 * 
+	 *
 	 * @param size
 	 *            The new size of the font.
 	 */
@@ -445,10 +442,10 @@ public class Font implements Comparable {
 	}
 
 	// STYLE
-	
+
 	/**
 	 * Gets the style of this font.
-	 * 
+	 *
 	 * @return a size
 	 */
 	public int getStyle() {
@@ -458,7 +455,7 @@ public class Font implements Comparable {
 	/**
 	 * Gets the style that can be used with the calculated <CODE>BaseFont
 	 * </CODE>.
-	 * 
+	 *
 	 * @return the style that can be used with the calculated <CODE>BaseFont
 	 *         </CODE>
 	 */
@@ -472,12 +469,12 @@ public class Font implements Comparable {
 		if (family == SYMBOL || family == ZAPFDINGBATS)
 			return style;
 		else
-			return style & (~BOLDITALIC);
+			return style & ~BOLDITALIC;
 	}
 
 	/**
 	 * checks if this font is Bold.
-	 * 
+	 *
 	 * @return a <CODE>boolean</CODE>
 	 */
 	public boolean isBold() {
@@ -489,7 +486,7 @@ public class Font implements Comparable {
 
 	/**
 	 * checks if this font is italic.
-	 * 
+	 *
 	 * @return a <CODE>boolean</CODE>
 	 */
 	public boolean isItalic() {
@@ -501,7 +498,7 @@ public class Font implements Comparable {
 
 	/**
 	 * checks if this font is underlined.
-	 * 
+	 *
 	 * @return a <CODE>boolean</CODE>
 	 */
 	public boolean isUnderlined() {
@@ -513,7 +510,7 @@ public class Font implements Comparable {
 
 	/**
 	 * checks if the style of this font is STRIKETHRU.
-	 * 
+	 *
 	 * @return a <CODE>boolean</CODE>
 	 */
 	public boolean isStrikethru() {
@@ -525,7 +522,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Sets the style.
-	 * 
+	 *
 	 * @param style
 	 *            the style.
 	 */
@@ -536,7 +533,7 @@ public class Font implements Comparable {
 	/**
 	 * Sets the style using a <CODE>String</CODE> containing one of more of
 	 * the following values: normal, bold, italic, underline, strike.
-	 * 
+	 *
 	 * @param style
 	 *            A <CODE>String</CODE> representing a certain style.
 	 */
@@ -549,7 +546,7 @@ public class Font implements Comparable {
 	/**
 	 * Translates a <CODE>String</CODE> -value of a certain style into the
 	 * index value is used for this style in this class.
-	 * 
+	 *
 	 * @param style
 	 *            A <CODE>String</CODE>
 	 * @return the corresponding value
@@ -578,10 +575,10 @@ public class Font implements Comparable {
 	}
 
 	// COLOR
-	
+
 	/**
 	 * Gets the color of this font.
-	 * 
+	 *
 	 * @return a color
 	 */
 	public BaseColor getColor() {
@@ -590,7 +587,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Sets the color.
-	 * 
+	 *
 	 * @param color
 	 *            the new color of the font
 	 */
@@ -601,7 +598,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Sets the color.
-	 * 
+	 *
 	 * @param red
 	 *            the red-value of the new color
 	 * @param green
@@ -617,7 +614,7 @@ public class Font implements Comparable {
 
 	/**
 	 * Gets the <CODE>BaseFont</CODE> inside this object.
-	 * 
+	 *
 	 * @return the <CODE>BaseFont</CODE>
 	 */
 	public BaseFont getBaseFont() {
@@ -627,7 +624,7 @@ public class Font implements Comparable {
 	/**
 	 * Gets the <CODE>BaseFont</CODE> this class represents. For the built-in
 	 * fonts a <CODE>BaseFont</CODE> is calculated.
-	 * 
+	 *
 	 * @param specialEncoding
 	 *            <CODE>true</CODE> to use the special encoding for Symbol and
 	 *            ZapfDingbats, <CODE>false</CODE> to always use <CODE>Cp1252
@@ -715,26 +712,26 @@ public class Font implements Comparable {
 		}
 		return cfont;
 	}
-	
-	
+
+
 	// Helper methods
 
 	/**
 	 * Checks if the properties of this font are undefined or null.
 	 * <P>
 	 * If so, the standard should be used.
-	 * 
+	 *
 	 * @return a <CODE>boolean</CODE>
 	 */
 	public boolean isStandardFont() {
-		return (family == UNDEFINED && size == UNDEFINED && style == UNDEFINED
-				&& color == null && baseFont == null);
+		return family == UNDEFINED && size == UNDEFINED && style == UNDEFINED
+				&& color == null && baseFont == null;
 	}
 
 	/**
 	 * Replaces the attributes that are equal to <VAR>null</VAR> with the
 	 * attributes of a given font.
-	 * 
+	 *
 	 * @param font
 	 *            the font of a bigger element class
 	 * @return a <CODE>Font</CODE>

@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf.parser;
 import java.util.ArrayList;
 
 import com.itextpdf.text.pdf.PdfLiteral;
+import com.itextpdf.text.pdf.PdfObject;
 
 /**
  * Interface implemented by a series of content operators
@@ -59,6 +60,6 @@ public interface ContentOperator {
      * @param operands	the operands that come with the operator
      * @throws any exception can be thrown - it will be re-packaged into a runtime exception and re-thrown by the {@link PdfContentStreamProcessor}
      */
-    public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) throws Exception;
+    public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception;
 
 }

@@ -55,12 +55,12 @@ package com.itextpdf.text;
  */
 
 public interface TextElementArray extends Element {
-    
+
   /**
-   * Adds an object to the <CODE>TextElementArray</CODE>.
+   * Adds an element to the <CODE>TextElementArray</CODE>.
    *
-   * @param	o			an object that has to be added
+   * @param	element			an element that has to be added
    * @return	<CODE>true</CODE> if the addition succeeded; <CODE>false</CODE> otherwise
    */
-    public boolean add(Object o);
+    public boolean add(Element element);
 }

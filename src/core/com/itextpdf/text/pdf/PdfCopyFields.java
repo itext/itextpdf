@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.cert.Certificate;
+import java.util.HashMap;
 import java.util.List;
 
 import com.itextpdf.text.DocWriter;
@@ -61,37 +62,37 @@ import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
  */
 public class PdfCopyFields
 	implements PdfViewerPreferences, PdfEncryptionSettings {
-    
+
     private PdfCopyFieldsImp fc;
-    
+
     /**
      * Creates a new instance.
      * @param os the output stream
      * @throws DocumentException on error
-     */    
+     */
     public PdfCopyFields(OutputStream os) throws DocumentException {
         fc = new PdfCopyFieldsImp(os);
     }
-    
+
     /**
      * Creates a new instance.
      * @param os the output stream
      * @param pdfVersion the pdf version the output will have
      * @throws DocumentException on error
-     */    
+     */
     public PdfCopyFields(OutputStream os, char pdfVersion) throws DocumentException {
         fc = new PdfCopyFieldsImp(os, pdfVersion);
     }
-    
+
     /**
      * Concatenates a PDF document.
      * @param reader the PDF document
      * @throws DocumentException on error
-     */    
+     */
     public void addDocument(PdfReader reader) throws DocumentException, IOException {
         fc.addDocument(reader);
     }
-    
+
     /**
      * Concatenates a PDF document selecting the pages to keep. The pages are described as a
      * <CODE>List</CODE> of <CODE>Integer</CODE>. The page ordering can be changed but
@@ -99,8 +100,8 @@ public class PdfCopyFields
      * @param reader the PDF document
      * @param pagesToKeep the pages to keep
      * @throws DocumentException on error
-     */    
-    public void addDocument(PdfReader reader, List pagesToKeep) throws DocumentException, IOException {
+     */
+    public void addDocument(PdfReader reader, List<Integer> pagesToKeep) throws DocumentException, IOException {
         fc.addDocument(reader, pagesToKeep);
     }
 
@@ -111,7 +112,7 @@ public class PdfCopyFields
      * @param reader the PDF document
      * @param ranges the comma separated ranges as described in {@link SequenceList}
      * @throws DocumentException on error
-     */    
+     */
     public void addDocument(PdfReader reader, String ranges) throws DocumentException, IOException {
         fc.addDocument(reader, SequenceList.expand(ranges, reader.getNumberOfPages()));
     }
@@ -131,7 +132,7 @@ public class PdfCopyFields
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
     	fc.setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? PdfWriter.STANDARD_ENCRYPTION_128 : PdfWriter.STANDARD_ENCRYPTION_40);
     }
-    
+
     /**
      * Sets the encryption options for this document. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
@@ -148,10 +149,10 @@ public class PdfCopyFields
     public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
         setEncryption(DocWriter.getISOBytes(userPassword), DocWriter.getISOBytes(ownerPassword), permissions, strength);
     }
- 
+
     /**
      * Closes the output document.
-     */    
+     */
     public void close() {
         fc.close();
     }
@@ -159,7 +160,7 @@ public class PdfCopyFields
     /**
      * Opens the document. This is usually not needed as addDocument() will do it
      * automatically.
-     */    
+     */
     public void open() {
         fc.openDoc();
     }
@@ -167,7 +168,7 @@ public class PdfCopyFields
     /**
      * Adds JavaScript to the global document
      * @param js the JavaScript
-     */    
+     */
     public void addJavaScript(String js) {
         fc.addJavaScript(js, !PdfEncodings.isPdfDocEncoding(js));
     }
@@ -176,14 +177,14 @@ public class PdfCopyFields
      * Sets the bookmarks. The list structure is defined in
      * <CODE>SimpleBookmark#</CODE>.
      * @param outlines the bookmarks or <CODE>null</CODE> to remove any
-     */    
-    public void setOutlines(List outlines) {
+     */
+    public void setOutlines(List<HashMap<String, Object>> outlines) {
         fc.setOutlines(outlines);
     }
-    
+
     /** Gets the underlying PdfWriter.
      * @return the underlying PdfWriter
-     */    
+     */
     public PdfWriter getWriter() {
         return fc;
     }
@@ -195,7 +196,7 @@ public class PdfCopyFields
     public boolean isFullCompression() {
         return fc.isFullCompression();
     }
-    
+
     /**
      * Sets the document's compression to the new 1.5 mode with object streams and xref
      * streams. It can be set at any time but once set it can't be unset.
@@ -217,7 +218,7 @@ public class PdfCopyFields
 	 * @see com.itextpdf.text.pdf.interfaces.PdfViewerPreferences#addViewerPreference(com.itextpdf.text.pdf.PdfName, com.itextpdf.text.pdf.PdfObject)
 	 */
 	public void addViewerPreference(PdfName key, PdfObject value) {
-		fc.addViewerPreference(key, value);	
+		fc.addViewerPreference(key, value);
 	}
 
 	/**
@@ -232,5 +233,5 @@ public class PdfCopyFields
 	 */
 	public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
 		fc.setEncryption(certs, permissions, encryptionType);
-	}    
+	}
 }

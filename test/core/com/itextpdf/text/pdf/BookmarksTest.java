@@ -24,23 +24,24 @@ public class BookmarksTest {
 
         document.open();
         writer.setPageEvent(new PdfPageEventHelper() {
+            @Override
             public void onParagraph(PdfWriter writer, Document document, float position) {
                 PdfContentByte cb = writer.getDirectContent();
                 PdfDestination destination = new PdfDestination(PdfDestination.FITH, position);
                 new PdfOutline(cb.getRootOutline(), destination, TITLE);
-            }            
+            }
         });
         document.add(new Paragraph("Hello World"));
         document.close();
-        
+
         // read bookmark back
         PdfReader r = new PdfReader(baos.toByteArray());
 
-        List bookmarks = SimpleBookmark.getBookmark(r);
-        assertEquals("bookmark size", 1, bookmarks.size()); 
-        HashMap<String, Object> b = (HashMap<String, Object>)bookmarks.get(0);
+        List<HashMap<String, Object>> bookmarks = SimpleBookmark.getBookmark(r);
+        assertEquals("bookmark size", 1, bookmarks.size());
+        HashMap<String, Object> b = bookmarks.get(0);
         String title = (String) b.get("Title");
-        assertEquals("bookmark title", TITLE, title); 
+        assertEquals("bookmark title", TITLE, title);
     }
 
 }

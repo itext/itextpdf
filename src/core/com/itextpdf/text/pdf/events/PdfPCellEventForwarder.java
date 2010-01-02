@@ -44,7 +44,6 @@
 package com.itextpdf.text.pdf.events;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfContentByte;
@@ -61,9 +60,9 @@ import com.itextpdf.text.pdf.PdfPCellEvent;
 public class PdfPCellEventForwarder implements PdfPCellEvent {
 
 	/** ArrayList containing all the PageEvents that have to be executed. */
-	protected ArrayList events = new ArrayList();
-	
-	/** 
+	protected ArrayList<PdfPCellEvent> events = new ArrayList<PdfPCellEvent>();
+
+	/**
 	 * Add a page event to the forwarder.
 	 * @param event an event that has to be added to the forwarder.
 	 */
@@ -75,9 +74,7 @@ public class PdfPCellEventForwarder implements PdfPCellEvent {
 	 * @see com.itextpdf.text.pdf.PdfPCellEvent#cellLayout(com.itextpdf.text.pdf.PdfPCell, com.itextpdf.text.Rectangle, com.itextpdf.text.pdf.PdfContentByte[])
 	 */
 	public void cellLayout(PdfPCell cell, Rectangle position, PdfContentByte[] canvases) {
-		PdfPCellEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPCellEvent)i.next();
+		for (PdfPCellEvent event: events) {
 			event.cellLayout(cell, position, canvases);
 		}
 	}

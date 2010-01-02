@@ -43,14 +43,15 @@
  */
 package com.itextpdf.text.pdf;
 
+import java.awt.Canvas;
+import java.awt.image.MemoryImageSource;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Hashtable;
+
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
-import java.awt.Canvas;
-import java.awt.image.MemoryImageSource;
-import java.util.Arrays;
-import java.io.UnsupportedEncodingException;
-import java.util.Hashtable;
 
 /**
  * A DataMatrix 2D barcode generator.
@@ -155,7 +156,7 @@ public class BarcodeDatamatrix {
     private int width;
     private int ws;
     private int options;
-    
+
     /**
      * Creates an instance of this class.
      */
@@ -201,7 +202,7 @@ public class BarcodeDatamatrix {
                 for (xs = 0; xs < dm.width; xs += dm.widthSection) {
                     for (x = 1; x < dm.widthSection - 1; ++x) {
                         z = place[p++];
-                        if (z == 1 || (z > 1 && ((data[z/8-1] & 0xff) & (128 >> (z%8))) != 0))
+                        if (z == 1 || z > 1 && (data[z/8-1] & 0xff & 128 >> z%8) != 0)
                             setBit(x + xs + ws, y + ys + ws, xByte);
                     }
                 }
@@ -215,7 +216,7 @@ public class BarcodeDatamatrix {
             return;
         data[position++] = (byte)129;
         while (--count > 0) {
-            int t = 129 + (((position + 1) * 149) % 253) + 1;
+            int t = 129 + (position + 1) * 149 % 253 + 1;
             if (t > 254)
                 t -= 254;
             data[position++] = (byte)t;
@@ -225,7 +226,7 @@ public class BarcodeDatamatrix {
     private static boolean isDigit(int c) {
         return c >= '0' && c <= '9';
     }
-    
+
     private static int asciiEncodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength) {
         int ptrIn, ptrOut, c;
         ptrIn = textOffset;
@@ -274,7 +275,7 @@ public class BarcodeDatamatrix {
         k += textLength + dataOffset;
         for (j = dataOffset + 1; j < k; ++j) {
             c = data[j] & 0xff;
-            prn = ((149 * (j + 1)) % 255) + 1;
+            prn = 149 * (j + 1) % 255 + 1;
             tv = c + prn;
             if (tv > 255)
                 tv -= 256;
@@ -302,14 +303,14 @@ public class BarcodeDatamatrix {
             else {
                 x[ptrIn] = 100;
                 if (count >= 6)
-                    count -= (count / 3) * 3;
+                    count -= count / 3 * 3;
                 for (k = 0; k < count; ++k)
                     x[ptrIn - k - 1] = 100;
                 count = 0;
             }
         }
         if (count >= 6)
-            count -= (count / 3) * 3;
+            count -= count / 3 * 3;
         for (k = 0; k < count; ++k)
             x[ptrIn - k - 1] = 100;
         ptrIn = 0;
@@ -319,7 +320,7 @@ public class BarcodeDatamatrix {
             if (ptrOut >= dataLength)
                 break;
             if (c < 40) {
-                if (ptrIn == 0 || (ptrIn > 0 && x[ptrIn - 1] > 40))
+                if (ptrIn == 0 || ptrIn > 0 && x[ptrIn - 1] > 40)
                     data[dataOffset + ptrOut++] = (byte)238;
                 if (ptrOut + 2 > dataLength)
                     break;
@@ -344,10 +345,10 @@ public class BarcodeDatamatrix {
         c = 100;
         if (textLength > 0)
             c = x[textLength - 1];
-        if (ptrIn != textLength || (c < 40 && ptrOut >= dataLength))
+        if (ptrIn != textLength || c < 40 && ptrOut >= dataLength)
             return -1;
         if (c < 40)
-            data[dataOffset + ptrOut++] = (byte)(254);
+            data[dataOffset + ptrOut++] = (byte)254;
         return ptrOut;
     }
 
@@ -386,7 +387,7 @@ public class BarcodeDatamatrix {
             else {
                 if (!ascii) {
                     edi |= ('_' & 0x3f) << pedi;
-                    if (ptrOut + (3 - pedi / 8) > dataLength)
+                    if (ptrOut + 3 - pedi / 8 > dataLength)
                         break;
                     data[dataOffset + ptrOut++] = (byte)(edi >> 16);
                     if (pedi <= 12)
@@ -412,7 +413,7 @@ public class BarcodeDatamatrix {
             return -1;
         if (!ascii) {
             edi |= ('_' & 0x3f) << pedi;
-            if (ptrOut + (3 - pedi / 8) > dataLength)
+            if (ptrOut + 3 - pedi / 8 > dataLength)
                 return -1;
             data[dataOffset + ptrOut++] = (byte)(edi >> 16);
             if (pedi <= 12)
@@ -448,7 +449,7 @@ public class BarcodeDatamatrix {
         last0 = 0;
         last1 = 0;
         while (ptrIn < textLength) {
-            if ((encPtr % 3) == 0) {
+            if (encPtr % 3 == 0) {
                 last0 = ptrIn;
                 last1 = encPtr;
             }
@@ -475,7 +476,7 @@ public class BarcodeDatamatrix {
                 enc[encPtr++] = idx;
             }
         }
-        if ((encPtr % 3) != 0) {
+        if (encPtr % 3 != 0) {
             ptrIn = last0;
             encPtr = last1;
         }
@@ -606,15 +607,15 @@ public class BarcodeDatamatrix {
                     data[ptrOut++] = (byte)(eci + 1);
                 else if (eci < 16383) {
                     data[ptrOut++] = (byte)((eci - 127) / 254 + 128);
-                    data[ptrOut++] = (byte)(((eci - 127) % 254) + 1);
+                    data[ptrOut++] = (byte)((eci - 127) % 254 + 1);
                 }
                 else {
                     data[ptrOut++] = (byte)((eci - 16383) / 64516 + 192);
-                    data[ptrOut++] = (byte)((((eci - 16383) / 254) % 254) + 1);
-                    data[ptrOut++] = (byte)(((eci - 16383) % 254) + 1);
+                    data[ptrOut++] = (byte)((eci - 16383) / 254 % 254 + 1);
+                    data[ptrOut++] = (byte)((eci - 16383) % 254 + 1);
                 }
                 break;
-            case 's': 
+            case 's':
                 if (order != 1)
                     return -1;
                 if (ptrIn + 9 > textSize)
@@ -631,15 +632,15 @@ public class BarcodeDatamatrix {
                 if (fi < 0 || fn >= 64516)
                     return -1;
                 ptrIn += 5;
-                data[ptrOut++] = (byte)(233);
-                data[ptrOut++] = (byte)(((fn - 1) << 4) | (17 - ft));
+                data[ptrOut++] = (byte)233;
+                data[ptrOut++] = (byte)(fn - 1 << 4 | 17 - ft);
                 data[ptrOut++] = (byte)(fi / 254 + 1);
-                data[ptrOut++] = (byte)((fi % 254) + 1);
+                data[ptrOut++] = (byte)(fi % 254 + 1);
                 break;
             case 'p':
                 if (order != 1)
                     return -1;
-                data[ptrOut++] = (byte)(234);
+                data[ptrOut++] = (byte)234;
                 break;
             case 'm':
                 if (order != 1)
@@ -649,13 +650,13 @@ public class BarcodeDatamatrix {
                 c = text[textOffset + ptrIn++] &0xff;
                 if (c != '5' && c != '5')
                     return -1;
-                data[ptrOut++] = (byte)(234);
+                data[ptrOut++] = (byte)234;
                 data[ptrOut++] = (byte)(c == '5' ? 236 : 237);
                 break;
             case 'f':
-                if (order != 1 && (order != 2 || (text[textOffset] != 's' && text[textOffset] != 'm')))
+                if (order != 1 && (order != 2 || text[textOffset] != 's' && text[textOffset] != 'm'))
                     return -1;
-                data[ptrOut++] = (byte)(232);
+                data[ptrOut++] = (byte)232;
             }
         }
         return -1;
@@ -676,7 +677,7 @@ public class BarcodeDatamatrix {
         byte[] t = text.getBytes("iso-8859-1");
         return generate(t, 0, t.length);
     }
-    
+
     /**
      * Creates a barcode.
      * @param text the text
@@ -732,10 +733,10 @@ public class BarcodeDatamatrix {
         if ((options & DM_TEST) != 0) {
             return DM_NO_ERROR;
         }
-        image = new byte[(((dm.width + 2 * ws) + 7) / 8) * (dm.height + 2 * ws)];
+        image = new byte[(dm.width + 2 * ws + 7) / 8 * (dm.height + 2 * ws)];
         makePadding(data, e, dm.dataSize - e);
-        place = Placement.doPlacement(dm.height - (dm.height / dm.heightSection * 2), dm.width - (dm.width / dm.widthSection * 2));
-        full = dm.dataSize + ((dm.dataSize + 2) / dm.dataBlock) * dm.errorBlock;
+        place = Placement.doPlacement(dm.height - dm.height / dm.heightSection * 2, dm.width - dm.width / dm.widthSection * 2);
+        full = dm.dataSize + (dm.dataSize + 2) / dm.dataBlock * dm.errorBlock;
         ReedSolomon.generateECC(data, dm.dataSize, dm.dataBlock, dm.errorBlock);
         draw(data, full, dm);
         return DM_NO_ERROR;
@@ -745,21 +746,21 @@ public class BarcodeDatamatrix {
      * before calling this method is required.
      * @return the barcode <CODE>Image</CODE>
      * @throws BadElementException on error
-     */    
+     */
     public Image createImage() throws BadElementException {
         if (image == null)
             return null;
         byte g4[] = CCITTG4Encoder.compress(image, width + 2 * ws, height + 2 * ws);
         return Image.getInstance(width + 2 * ws, height + 2 * ws, false, Image.CCITTG4, 0, g4, null);
     }
-    
+
     /**
      * Creates a <CODE>java.awt.Image</CODE>. A successful call to the method <CODE>generate()</CODE>
      * before calling this method is required.
      * @param foreground the color of the bars
      * @param background the color of the background
      * @return the image
-     */    
+     */
     public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         if (image == null)
             return null;
@@ -775,7 +776,7 @@ public class BarcodeDatamatrix {
         for (int k = 0; k < h; ++k) {
             int p = k * stride;
             for (int j = 0; j < w; ++j) {
-                int b = image[p + (j / 8)] & 0xff;
+                int b = image[p + j / 8] & 0xff;
                 b <<= j % 8;
                 pix[ptr++] = (b & 0x80) == 0 ? g : f;
             }
@@ -783,7 +784,7 @@ public class BarcodeDatamatrix {
         java.awt.Image img = canvas.createImage(new MemoryImageSource(w, h, pix, 0, w));
         return img;
     }
-    
+
     private static class DmParams {
         DmParams(int height, int width, int heightSection, int widthSection, int dataSize, int dataBlock, int errorBlock) {
             this.height = height;
@@ -967,19 +968,19 @@ public class BarcodeDatamatrix {
     public void setOptions(int options) {
         this.options = options;
     }
-    
+
     static class Placement {
         private int nrow;
         private int ncol;
         private short[] array;
-        private static final Hashtable cache = new Hashtable();
+        private static final Hashtable<Integer, short[]> cache = new Hashtable<Integer, short[]>();
 
         private Placement() {
         }
-        
+
         static short[] doPlacement(int nrow, int ncol) {
             Integer key = new Integer(nrow * 1000 + ncol);
-            short[] pc = (short[])cache.get(key);
+            short[] pc = cache.get(key);
             if (pc != null)
                 return pc;
             Placement p = new Placement();
@@ -993,12 +994,12 @@ public class BarcodeDatamatrix {
 
         /* "module" places "chr+bit" with appropriate wrapping within array[] */
         private void module(int row, int col, int chr, int bit) {
-            if (row < 0) { row += nrow; col += 4 - ((nrow+4)%8); }
-            if (col < 0) { col += ncol; row += 4 - ((ncol+4)%8); }
+            if (row < 0) { row += nrow; col += 4 - (nrow+4)%8; }
+            if (col < 0) { col += ncol; row += 4 - (ncol+4)%8; }
             array[row*ncol+col] = (short)(8*chr + bit);
         }
         /* "utah" places the 8 bits of a utah-shaped symbol character in ECC200 */
-        private void utah(int row, int col, int chr) { 
+        private void utah(int row, int col, int chr) {
             module(row-2,col-2,chr,0);
             module(row-2,col-1,chr,1);
             module(row-1,col-2,chr,2);
@@ -1009,7 +1010,7 @@ public class BarcodeDatamatrix {
             module(row,col,chr,7);
         }
         /* "cornerN" places 8 bits of the four special corner cases in ECC200 */
-        private void corner1(int chr) { 
+        private void corner1(int chr) {
             module(nrow-1,0,chr,0);
             module(nrow-1,1,chr,1);
             module(nrow-1,2,chr,2);
@@ -1029,7 +1030,7 @@ public class BarcodeDatamatrix {
             module(0,ncol-1,chr,6);
             module(1,ncol-1,chr,7);
         }
-        private void corner3(int chr){ 
+        private void corner3(int chr){
             module(nrow-3,0,chr,0);
             module(nrow-2,0,chr,1);
             module(nrow-1,0,chr,2);
@@ -1058,34 +1059,34 @@ public class BarcodeDatamatrix {
             chr = 1; row = 4; col = 0;
             do {
                 /* repeatedly first check for one of the special corner cases, then... */
-                if ((row == nrow) && (col == 0)) corner1(chr++);
-                if ((row == nrow-2) && (col == 0) && (ncol%4 != 0)) corner2(chr++);
-                if ((row == nrow-2) && (col == 0) && (ncol%8 == 4)) corner3(chr++);
-                if ((row == nrow+4) && (col == 2) && (ncol%8 == 0)) corner4(chr++);
+                if (row == nrow && col == 0) corner1(chr++);
+                if (row == nrow-2 && col == 0 && ncol%4 != 0) corner2(chr++);
+                if (row == nrow-2 && col == 0 && ncol%8 == 4) corner3(chr++);
+                if (row == nrow+4 && col == 2 && ncol%8 == 0) corner4(chr++);
                 /* sweep upward diagonally, inserting successive characters,... */
                 do {
-                    if ((row < nrow) && (col >= 0) && array[row*ncol+col] == 0)
+                    if (row < nrow && col >= 0 && array[row*ncol+col] == 0)
                         utah(row,col,chr++);
                     row -= 2; col += 2;
-                } while ((row >= 0) && (col < ncol));
+                } while (row >= 0 && col < ncol);
                 row += 1; col += 3;
                 /* & then sweep downward diagonally, inserting successive characters,... */
 
                 do {
-                    if ((row >= 0) && (col < ncol) && array[row*ncol+col] == 0)
+                    if (row >= 0 && col < ncol && array[row*ncol+col] == 0)
                         utah(row,col,chr++);
                     row += 2; col -= 2;
-                } while ((row < nrow) && (col >= 0));
+                } while (row < nrow && col >= 0);
                 row += 3; col += 1;
                 /* ... until the entire array is scanned */
-            } while ((row < nrow) || (col < ncol));
+            } while (row < nrow || col < ncol);
             /* Lastly, if the lower righthand corner is untouched, fill in fixed pattern */
             if (array[nrow*ncol-1] == 0) {
                 array[nrow*ncol-1] = array[nrow*ncol-ncol-2] = 1;
             }
         }
     }
-    
+
     static class ReedSolomon {
 
         private static final int log[] = {
@@ -1255,7 +1256,7 @@ public class BarcodeDatamatrix {
             for (i=0; i<nd; i++) {
                 k = (ncout[0] ^ wd[i]) & 0xff;
                 for (j=0; j<nc; j++) {
-                    ncout[j] = (byte)(ncout[j+1] ^ (k == 0 ? 0 : (byte)alog[(log[k] + log[c[nc-j-1]]) % (255)]));
+                    ncout[j] = (byte)(ncout[j+1] ^ (k == 0 ? 0 : (byte)alog[(log[k] + log[c[nc-j-1]]) % 255]));
                 }
             }
         }

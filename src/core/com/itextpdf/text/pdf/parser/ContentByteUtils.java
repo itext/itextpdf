@@ -23,7 +23,7 @@ public class ContentByteUtils {
     private ContentByteUtils() {
         // TODO Auto-generated constructor stub
     }
-    
+
     /**
      * Gets the content bytes from a content object, which may be a reference
      * a stream or an array.
@@ -49,10 +49,10 @@ public class ContentByteUtils {
               // processContent() resets state.
               final ByteArrayOutputStream allBytes = new ByteArrayOutputStream();
               final PdfArray contentArray = (PdfArray) contentObject;
-              final ListIterator iter = contentArray.listIterator();
+              final ListIterator<PdfObject> iter = contentArray.listIterator();
               while (iter.hasNext())
               {
-                final PdfObject element = (PdfObject) iter.next();
+                final PdfObject element = iter.next();
                 allBytes.write(getContentBytesFromContentObject(element));
               }
               result = allBytes.toByteArray();
@@ -62,5 +62,5 @@ public class ContentByteUtils {
               throw new IllegalStateException(msg);
           }
           return result;
-        }    
+        }
 }

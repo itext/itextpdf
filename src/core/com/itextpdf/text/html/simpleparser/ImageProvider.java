@@ -43,10 +43,11 @@
  */
 package com.itextpdf.text.html.simpleparser;
 
-import com.itextpdf.text.DocListener;
-import com.itextpdf.text.Image;
 import java.util.HashMap;
 
+import com.itextpdf.text.DocListener;
+import com.itextpdf.text.Image;
+
 public interface ImageProvider {
-    Image getImage(String src, HashMap h, ChainedProperties cprops, DocListener doc);
+    Image getImage(String src, HashMap<String, String> h, ChainedProperties cprops, DocListener doc);
 }

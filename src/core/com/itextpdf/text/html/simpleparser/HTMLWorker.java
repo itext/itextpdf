@@ -48,32 +48,34 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import com.itextpdf.text.html.HtmlTags;
-import com.itextpdf.text.html.Markup;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.TextElementArray;
+import com.itextpdf.text.html.HtmlTags;
+import com.itextpdf.text.html.Markup;
+import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.draw.LineSeparator;
-import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
-	protected ArrayList objectList;
+	protected ArrayList<Element> objectList;
 
 	protected DocListener document;
 
@@ -81,7 +83,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	private ChainedProperties cprops = new ChainedProperties();
 
-	private Stack stack = new Stack();
+	private Stack<Element> stack = new Stack<Element>();
 
 	private boolean pendingTR = false;
 
@@ -93,11 +95,11 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	private boolean isPRE = false;
 
-	private Stack tableState = new Stack();
+	private Stack<boolean[]> tableState = new Stack<boolean[]>();
 
 	private boolean skipText = false;
 
-	private HashMap interfaceProps;
+	private HashMap<String, Object> interfaceProps;
 
 	private FactoryProperties factoryProperties = new FactoryProperties();
 
@@ -116,7 +118,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		return style;
 	}
 
-	public void setInterfaceProps(HashMap interfaceProps) {
+	public void setInterfaceProps(HashMap<String, Object> interfaceProps) {
 		this.interfaceProps = interfaceProps;
 		FontProvider ff = null;
 		if (interfaceProps != null)
@@ -125,7 +127,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			factoryProperties.setFontImp(ff);
 	}
 
-	public HashMap getInterfaceProps() {
+	public HashMap<String, Object> getInterfaceProps() {
 		return interfaceProps;
 	}
 
@@ -133,19 +135,19 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		SimpleXMLParser.parse(this, null, reader, true);
 	}
 
-	public static ArrayList parseToList(Reader reader, StyleSheet style)
+	public static ArrayList<Element> parseToList(Reader reader, StyleSheet style)
 			throws IOException {
 		return parseToList(reader, style, null);
 	}
 
-	public static ArrayList parseToList(Reader reader, StyleSheet style,
-			HashMap interfaceProps) throws IOException {
+	public static ArrayList<Element> parseToList(Reader reader, StyleSheet style,
+			HashMap<String, Object> interfaceProps) throws IOException {
 		HTMLWorker worker = new HTMLWorker(null);
 		if (style != null)
 			worker.style = style;
 		worker.document = worker;
 		worker.setInterfaceProps(interfaceProps);
-		worker.objectList = new ArrayList();
+		worker.objectList = new ArrayList<Element>();
 		worker.parse(reader);
 		return worker.objectList;
 	}
@@ -153,7 +155,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public void endDocument() {
 		try {
 			for (int k = 0; k < stack.size(); ++k)
-				document.add((Element) stack.elementAt(k));
+				document.add(stack.elementAt(k));
 			if (currentParagraph != null)
 				document.add(currentParagraph);
 			currentParagraph = null;
@@ -163,19 +165,20 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	}
 
 	public void startDocument() {
-		HashMap h = new HashMap();
+		HashMap<String, String> h = new HashMap<String, String>();
 		style.applyStyle("body", h);
 		cprops.addToChain("body", h);
 	}
 
-	public void startElement(String tag, HashMap h) {
-		if (!tagsSupported.containsKey(tag))
+    @SuppressWarnings("unchecked")
+    public void startElement(String tag, HashMap<String, String> h) {
+		if (!tagsSupported.contains(tag))
 			return;
 		try {
 			style.applyStyle(tag, h);
-			String follow = (String) FactoryProperties.followTags.get(tag);
+			String follow = FactoryProperties.followTags.get(tag);
 			if (follow != null) {
-				HashMap prop = new HashMap();
+				HashMap<String, String> prop = new HashMap<String, String>();
 				prop.put(follow, null);
 				cprops.addToChain(follow, prop);
 				return;
@@ -211,18 +214,18 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				if (addLeadingBreak) { // Not a new paragraph
 					int numChunks = currentParagraph.getChunks().size();
 					if (numChunks == 0 ||
-							((Chunk)(currentParagraph.getChunks().get(numChunks - 1))).getContent().endsWith("\n"))
+							currentParagraph.getChunks().get(numChunks - 1).getContent().endsWith("\n"))
 						addLeadingBreak = false;
 				}
-				String align = (String) h.get("align");
+				String align = h.get("align");
 				int hrAlign = Element.ALIGN_CENTER;
 				if (align != null) {
 					if (align.equalsIgnoreCase("left"))
-						hrAlign = Element.ALIGN_LEFT; 
+						hrAlign = Element.ALIGN_LEFT;
 					if (align.equalsIgnoreCase("right"))
 						hrAlign = Element.ALIGN_RIGHT;
 				}
-				String width = (String) h.get("width");
+				String width = h.get("width");
 				float hrWidth = 1;
 				if (width != null) {
 					float tmpWidth = Markup.parseLength(width, Markup.DEFAULT_FONT_SIZE);
@@ -230,7 +233,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 					if (!width.endsWith("%"))
 						hrWidth = 100; // Treat a pixel width as 100% for now.
 				}
-				String size = (String) h.get("size");
+				String size = h.get("size");
 				float hrSize = 1;
 				if (size != null) {
 					float tmpSize = Markup.parseLength(size, Markup.DEFAULT_FONT_SIZE);
@@ -248,7 +251,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				return;
 			}
 			if (tag.equals(HtmlTags.IMAGE)) {
-				String src = (String) h.get(ElementTags.SRC);
+				String src = h.get(ElementTags.SRC);
 				if (src == null)
 					return;
 				cprops.addToChain(tag, h);
@@ -259,10 +262,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 					if (ip != null)
 						img = ip.getImage(src, h, cprops, document);
 					if (img == null) {
-						HashMap images = (HashMap) interfaceProps
+						HashMap<String, Image> images = (HashMap<String, Image>) interfaceProps
 								.get("img_static");
 						if (images != null) {
-							Image tim = (Image) images.get(src);
+							Image tim = images.get(src);
 							if (tim != null)
 								img = Image.getInstance(tim);
 						} else {
@@ -286,9 +289,9 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 					}
 					img = Image.getInstance(src);
 				}
-				String align = (String) h.get("align");
-				String width = (String) h.get("width");
-				String height = (String) h.get("height");
+				String align = h.get("align");
+				String width = h.get("width");
+				String height = h.get("height");
 				String before = cprops.getProperty("before");
 				String after = cprops.getProperty("after");
 				if (before != null)
@@ -436,10 +439,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	}
 
 	public void endElement(String tag) {
-		if (!tagsSupported.containsKey(tag))
+		if (!tagsSupported.contains(tag))
 			return;
 		try {
-			String follow = (String) FactoryProperties.followTags.get(tag);
+			String follow = FactoryProperties.followTags.get(tag);
 			if (follow != null) {
 				cprops.removeChain(follow);
 				return;
@@ -461,10 +464,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				if (!skip) {
 					String href = cprops.getProperty("href");
 					if (href != null) {
-						ArrayList chunks = currentParagraph.getChunks();
+						ArrayList<Chunk> chunks = currentParagraph.getChunks();
 						int size = chunks.size();
 						for (int k = 0; k < size; ++k) {
-							Chunk ck = (Chunk) chunks.get(k);
+							Chunk ck = chunks.get(k);
 							ck.setAnchor(href);
 						}
 					}
@@ -484,7 +487,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				if (stack.empty())
 					document.add(currentParagraph);
 				else {
-					Object obj = stack.pop();
+					Element obj = stack.pop();
 					if (obj instanceof TextElementArray) {
 						TextElementArray current = (TextElementArray) obj;
 						current.add(currentParagraph);
@@ -501,13 +504,13 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				cprops.removeChain(tag);
 				if (stack.empty())
 					return;
-				Object obj = stack.pop();
+				Element obj = stack.pop();
 				if (!(obj instanceof com.itextpdf.text.List)) {
 					stack.push(obj);
 					return;
 				}
 				if (stack.empty())
-					document.add((Element) obj);
+					document.add(obj);
 				else
 					((TextElementArray) stack.peek()).add(obj);
 				return;
@@ -518,26 +521,26 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				cprops.removeChain(tag);
 				if (stack.empty())
 					return;
-				Object obj = stack.pop();
+				Element obj = stack.pop();
 				if (!(obj instanceof ListItem)) {
 					stack.push(obj);
 					return;
 				}
 				if (stack.empty()) {
-					document.add((Element) obj);
+					document.add(obj);
 					return;
 				}
-				Object list = stack.pop();
+				Element list = stack.pop();
 				if (!(list instanceof com.itextpdf.text.List)) {
 					stack.push(list);
 					return;
 				}
 				ListItem item = (ListItem) obj;
 				((com.itextpdf.text.List) list).add(item);
-				ArrayList cks = item.getChunks();
+				ArrayList<Chunk> cks = item.getChunks();
 				if (!cks.isEmpty())
 					item.getListSymbol()
-							.setFont(((Chunk) cks.get(0)).getFont());
+							.setFont(cks.get(0).getFont());
 				stack.push(list);
 				return;
 			}
@@ -570,7 +573,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 					document.add(tb);
 				else
 					((TextElementArray) stack.peek()).add(tb);
-				boolean state[] = (boolean[]) tableState.pop();
+				boolean state[] = tableState.pop();
 				pendingTR = state[0];
 				pendingTD = state[1];
 				skipText = false;
@@ -581,10 +584,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 					endElement("td");
 				pendingTR = false;
 				cprops.removeChain("tr");
-				ArrayList cells = new ArrayList();
+				ArrayList<PdfPCell> cells = new ArrayList<PdfPCell>();
 				IncTable table = null;
 				while (true) {
-					Object obj = stack.pop();
+					Element obj = stack.pop();
 					if (obj instanceof IncCell) {
 						cells.add(((IncCell) obj).getCell());
 					}
@@ -707,12 +710,12 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public static final String tagsSupportedString = "ol ul li a pre font span br p div body table td th tr i b u sub sup em strong s strike"
 			+ " h1 h2 h3 h4 h5 h6 img hr";
 
-	public static final HashMap tagsSupported = new HashMap();
+	public static final HashSet<String> tagsSupported = new HashSet<String>();
 
 	static {
 		StringTokenizer tok = new StringTokenizer(tagsSupportedString);
 		while (tok.hasMoreTokens())
-			tagsSupported.put(tok.nextToken(), null);
+			tagsSupported.add(tok.nextToken());
 	}
 
 }

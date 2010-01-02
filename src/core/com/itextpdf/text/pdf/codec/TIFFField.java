@@ -1,6 +1,6 @@
 /*
  * Copyright 2003-2008 by Paulo Soares.
- * 
+ *
  * This code was originally released in 2001 by SUN (see class
  * com.sun.media.imageio.plugins.tiff.TIFFField.java)
  * using the BSD license in a specific wording. In a mail dating from
@@ -8,40 +8,40 @@
  * to use the code under the following version of the BSD license:
  *
  * Copyright (c) 2006 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  */
 package com.itextpdf.text.pdf.codec;
 
@@ -63,7 +63,7 @@ import java.io.Serializable;
  *
  * @see TIFFDirectory
  */
-public class TIFFField extends Object implements Comparable, Serializable {
+public class TIFFField extends Object implements Comparable<TIFFField>, Serializable {
 
     private static final long serialVersionUID = 9088332901412823834L;
 
@@ -114,7 +114,7 @@ public class TIFFField extends Object implements Comparable, Serializable {
 
     /** The field data. */
     Object data;
-    
+
     /** The default constructor. */
     TIFFField() {}
 
@@ -247,7 +247,7 @@ public class TIFFField extends Object implements Comparable, Serializable {
     }
 
     /**
-     * Returns TIFF_FLOAT data as an array of floats. 
+     * Returns TIFF_FLOAT data as an array of floats.
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_FLOAT.
@@ -257,7 +257,7 @@ public class TIFFField extends Object implements Comparable, Serializable {
     }
 
     /**
-     * Returns TIFF_DOUBLE data as an array of doubles. 
+     * Returns TIFF_DOUBLE data as an array of doubles.
      *
      * <p> A ClassCastException will be thrown if the field is not
      * of type TIFF_DOUBLE.
@@ -347,7 +347,7 @@ public class TIFFField extends Object implements Comparable, Serializable {
             throw new ClassCastException();
         }
     }
-    
+
     /**
      * Returns data in any numerical format as a float.  Data in
      * TIFF_SRATIONAL or TIFF_RATIONAL format are evaluated by
@@ -468,15 +468,13 @@ public class TIFFField extends Object implements Comparable, Serializable {
      * with <code>equals()</code>.</b>
      *
      * @throws IllegalArgumentException if the parameter is <code>null</code>.
-     * @throws ClassCastException if the parameter is not a
-     *         <code>TIFFField</code>.
      */
-    public int compareTo(Object o) {
+    public int compareTo(TIFFField o) {
         if(o == null) {
             throw new IllegalArgumentException();
         }
 
-        int oTag = ((TIFFField)o).getTag();
+        int oTag = o.getTag();
 
         if(tag < oTag) {
             return -1;

@@ -46,13 +46,13 @@ package com.itextpdf.text.pdf;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.BaseColor;
 
 /**
  * Supports text, combo and list fields generating the correct appearances.
@@ -60,24 +60,24 @@ import com.itextpdf.text.BaseColor;
  * @author Paulo Soares
  */
 public class TextField extends BaseField {
-    
+
     /** Holds value of property defaultText. */
     private String defaultText;
-    
+
     /** Holds value of property choices. */
     private String[] choices;
-    
+
     /** Holds value of property choiceExports. */
     private String[] choiceExports;
-    
+
     /** Holds value of property choiceSelection. */
-    private ArrayList choiceSelections = new ArrayList();
-    
+    private ArrayList<Integer> choiceSelections = new ArrayList<Integer>();
+
     private int topFirst;
-    
+
     private float extraMarginLeft;
     private float extraMarginTop;
-    
+
     /**
      * Creates a new <CODE>TextField</CODE>.
      * @param writer the document <CODE>PdfWriter</CODE>
@@ -88,7 +88,7 @@ public class TextField extends BaseField {
     public TextField(PdfWriter writer, Rectangle box, String fieldName) {
         super(writer, box, fieldName);
     }
-    
+
     private static boolean checkRTL(String text) {
         if (text == null || text.length() == 0)
             return false;
@@ -100,12 +100,12 @@ public class TextField extends BaseField {
         }
         return false;
     }
-    
+
     private static void changeFontSize(Phrase p, float size) {
         for (int k = 0; k < p.size(); ++k)
             ((Chunk)p.get(k)).getFont().setSize(size);
     }
-    
+
     private Phrase composePhrase(String text, BaseFont ufont, BaseColor color, float fontSize) {
         Phrase phrase = null;
         if (extensionFont == null && (substitutionFonts == null || substitutionFonts.isEmpty()))
@@ -117,16 +117,16 @@ public class TextField extends BaseField {
                 fs.addFont(new Font(extensionFont, fontSize, 0, color));
             if (substitutionFonts != null) {
                 for (int k = 0; k < substitutionFonts.size(); ++k)
-                    fs.addFont(new Font((BaseFont)substitutionFonts.get(k), fontSize, 0, color));
+                    fs.addFont(new Font(substitutionFonts.get(k), fontSize, 0, color));
             }
             phrase = fs.process(text);
         }
         return phrase;
     }
-    
+
     /**
      * Removes CRLF from a <code>String</code>.
-     * 
+     *
      * @param text
      * @return String
      * @since	2.1.5
@@ -151,12 +151,12 @@ public class TextField extends BaseField {
         }
         return text;
     }
-    
+
     /**
      * Obfuscates a password <code>String</code>.
      * Every character is replaced by an asterisk (*).
-     * 
-     * @param text 
+     *
+     * @param text
      * @return String
      * @since	2.1.5
      */
@@ -166,7 +166,7 @@ public class TextField extends BaseField {
     		pchar[i] = '*';
     	return new String(pchar);
     }
-    
+
     /**
      * Get the <code>PdfAppearance</code> of a text or combo field
      * @throws IOException on error
@@ -180,7 +180,7 @@ public class TextField extends BaseField {
             app.endVariableText();
             return app;
         }
-        
+
         boolean borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
         float h = box.getHeight() - borderWidth * 2 - extraMarginTop;
         float bw2 = borderWidth;
@@ -202,7 +202,7 @@ public class TextField extends BaseField {
         else
         	ptext = text; //fixed by Kazuya Ujihara (ujihara.jp)
         BaseFont ufont = getRealFont();
-        BaseColor fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
+        BaseColor fcolor = textColor == null ? GrayColor.GRAYBLACK : textColor;
         int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
         float usize = fontSize;
         Phrase phrase = composePhrase(ptext, ufont, fcolor, usize);
@@ -256,7 +256,7 @@ public class TextField extends BaseField {
                     usize = 4;
             }
             changeFontSize(phrase, usize);
-            float offsetY = offX + ((box.getHeight() - 2*offX) - ufont.getFontDescriptor(BaseFont.ASCENT, usize)) / 2;
+            float offsetY = offX + (box.getHeight() - 2*offX - ufont.getFontDescriptor(BaseFont.ASCENT, usize)) / 2;
             if (offsetY < offX)
                 offsetY = offX;
             if (offsetY - offX < -ufont.getFontDescriptor(BaseFont.DESCENT, usize)) {
@@ -297,13 +297,13 @@ public class TextField extends BaseField {
             	float x;
             	switch (alignment) {
             	case Element.ALIGN_RIGHT:
-            		x = extraMarginLeft + box.getWidth() - (2 * offsetX);
+            		x = extraMarginLeft + box.getWidth() - 2 * offsetX;
             		break;
             	case Element.ALIGN_CENTER:
-            		x = extraMarginLeft + (box.getWidth() / 2);
+            		x = extraMarginLeft + box.getWidth() / 2;
             		break;
             	default:
-            		x = extraMarginLeft + (2 * offsetX);
+            		x = extraMarginLeft + 2 * offsetX;
             	}
             	ColumnText.showTextAligned(app, alignment, phrase, x, offsetY - extraMarginTop, 0, rtl, 0);
             }
@@ -325,7 +325,7 @@ public class TextField extends BaseField {
             return app;
         }
         app.beginVariableText();
-        
+
         int topChoice = getTopChoice();
 
         BaseFont ufont = getRealFont();
@@ -340,7 +340,7 @@ public class TextField extends BaseField {
             h -= borderWidth * 2;
             offsetX *= 2;
         }
-        
+
         float leading = ufont.getFontDescriptor(BaseFont.BBOXURY, usize) - ufont.getFontDescriptor(BaseFont.BBOXLLY, usize);
         int maxFit = (int)(h / leading) + 1;
         int first = 0;
@@ -354,15 +354,15 @@ public class TextField extends BaseField {
         app.rectangle(offsetX, offsetX, box.getWidth() - 2 * offsetX, box.getHeight() - 2 * offsetX);
         app.clip();
         app.newPath();
-        BaseColor fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
-        
-        
+        BaseColor fcolor = textColor == null ? GrayColor.GRAYBLACK : textColor;
+
+
         // background boxes for selected value[s]
         app.setColorFill(new BaseColor(10, 36, 106));
         for (int curVal = 0; curVal < choiceSelections.size(); ++curVal) {
-        	int curChoice = ((Integer)choiceSelections.get( curVal )).intValue();
-        	// only draw selections within our display range... not strictly necessary with 
-        	// that clipping rect from above, but it certainly doesn't hurt either 
+        	int curChoice = (choiceSelections.get( curVal )).intValue();
+        	// only draw selections within our display range... not strictly necessary with
+        	// that clipping rect from above, but it certainly doesn't hurt either
         	if (curChoice >= first && curChoice <= last) {
         		app.rectangle(offsetX, offsetX + h - (curChoice - first + 1) * leading, box.getWidth() - 2 * offsetX, leading);
         		app.fill();
@@ -375,7 +375,7 @@ public class TextField extends BaseField {
             int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
             ptext = removeCRLF(ptext);
             // highlight selected values against their (presumably) darker background
-            BaseColor textCol = (choiceSelections.contains( new Integer( idx ))) ? GrayColor.GRAYWHITE : fcolor;
+            BaseColor textCol = choiceSelections.contains( new Integer( idx )) ? GrayColor.GRAYWHITE : fcolor;
             Phrase phrase = composePhrase(ptext, ufont, textCol, usize);
             ColumnText.showTextAligned(app, Element.ALIGN_LEFT, phrase, xp, yp, 0, rtl, 0);
         }
@@ -389,7 +389,7 @@ public class TextField extends BaseField {
      * @throws IOException on error
      * @throws DocumentException on error
      * @return a new text field
-     */    
+     */
     public PdfFormField getTextField() throws IOException, DocumentException {
         if (maxCharacterLength <= 0)
             options &= ~COMB;
@@ -459,38 +459,38 @@ public class TextField extends BaseField {
         }
         return field;
     }
-    
+
     /**
      * Gets a new combo field.
      * @throws IOException on error
      * @throws DocumentException on error
      * @return a new combo field
-     */    
+     */
     public PdfFormField getComboField() throws IOException, DocumentException {
         return getChoiceField(false);
     }
-    
+
     /**
      * Gets a new list field.
      * @throws IOException on error
      * @throws DocumentException on error
      * @return a new list field
-     */    
+     */
     public PdfFormField getListField() throws IOException, DocumentException {
         return getChoiceField(true);
     }
-    
+
     private int getTopChoice() {
     	if (choiceSelections == null || choiceSelections.size() ==0) {
     		return 0;
     	}
-    	
-    	Integer firstValue = (Integer)choiceSelections.get(0);
-    	
+
+    	Integer firstValue = choiceSelections.get(0);
+
     	if (firstValue == null) {
     		return 0;
     	}
-    	
+
     	int topChoice = 0;
     	if (choices != null) {
     		topChoice = firstValue.intValue();
@@ -501,7 +501,7 @@ public class TextField extends BaseField {
     }
 
     protected PdfFormField getChoiceField(boolean isList) throws IOException, DocumentException {
-        options &= (~MULTILINE) & (~COMB);
+        options &= ~MULTILINE & ~COMB;
         String uchoices[] = choices;
         if (uchoices == null)
             uchoices = new String[0];
@@ -513,10 +513,10 @@ public class TextField extends BaseField {
 
         if (topChoice >= 0)
             text = uchoices[topChoice];
-        
+
         PdfFormField field = null;
         String mix[][] = null;
-        
+
         if (choiceExports == null) {
             if (isList)
                 field = PdfFormField.createList(writer, uchoices, topChoice);
@@ -610,20 +610,20 @@ public class TextField extends BaseField {
 		PdfArray indexes = new PdfArray();
 		PdfArray values = new PdfArray();
 		for (int i = 0; i < choiceSelections.size(); ++i) {
-			int idx = ((Integer)choiceSelections.get( i )).intValue();
+			int idx = (choiceSelections.get( i )).intValue();
 			indexes.add( new PdfNumber( idx ) );
-			
-			if (mix != null) 
+
+			if (mix != null)
 				values.add( new PdfString( mix[idx][0] ) );
 			else if (choices != null)
 				values.add( new PdfString( choices[ idx ] ) );
 		}
-		
+
 		field.put( PdfName.V, values );
 		field.put( PdfName.I, indexes );
 
     }
-    
+
     /**
      * Gets the default text.
      * @return the default text
@@ -631,7 +631,7 @@ public class TextField extends BaseField {
     public String getDefaultText() {
         return this.defaultText;
     }
-    
+
     /**
      * Sets the default text. It is only meaningful for text fields.
      * @param defaultText the default text
@@ -639,7 +639,7 @@ public class TextField extends BaseField {
     public void setDefaultText(String defaultText) {
         this.defaultText = defaultText;
     }
-    
+
     /**
      * Gets the choices to be presented to the user in list/combo fields.
      * @return the choices to be presented to the user
@@ -647,7 +647,7 @@ public class TextField extends BaseField {
     public String[] getChoices() {
         return this.choices;
     }
-    
+
     /**
      * Sets the choices to be presented to the user in list/combo fields.
      * @param choices the choices to be presented to the user
@@ -655,7 +655,7 @@ public class TextField extends BaseField {
     public void setChoices(String[] choices) {
         this.choices = choices;
     }
-    
+
     /**
      * Gets the export values in list/combo fields.
      * @return the export values in list/combo fields
@@ -663,7 +663,7 @@ public class TextField extends BaseField {
     public String[] getChoiceExports() {
         return this.choiceExports;
     }
-    
+
     /**
      * Sets the export values in list/combo fields. If this array
      * is <CODE>null</CODE> then the choice values will also be used
@@ -673,7 +673,7 @@ public class TextField extends BaseField {
     public void setChoiceExports(String[] choiceExports) {
         this.choiceExports = choiceExports;
     }
-    
+
     /**
      * Gets the zero based index of the selected item.
      * @return the zero based index of the selected item
@@ -688,7 +688,7 @@ public class TextField extends BaseField {
      *
      * @since 5.0.1
      */
-    public ArrayList getChoiceSelections() {
+    public ArrayList<Integer> getChoiceSelections() {
     	return choiceSelections;
     }
 
@@ -697,13 +697,13 @@ public class TextField extends BaseField {
      * @param choiceSelection the zero based index of the selected item
      */
     public void setChoiceSelection(int choiceSelection) {
-        choiceSelections = new ArrayList();
+        choiceSelections = new ArrayList<Integer>();
         choiceSelections.add( new Integer( choiceSelection ) );
     }
-    
+
     /**
      * adds another (or a first I suppose) selection to a MULTISELECT list.
-     * This doesn't do anything unless this.options & MUTLISELECT != 0 
+     * This doesn't do anything unless this.options & MUTLISELECT != 0
      * @param selection new selection
      */
     public void addChoiceSelection( int selection) {
@@ -711,36 +711,36 @@ public class TextField extends BaseField {
     		choiceSelections.add( new Integer( selection ) );
     	}
     }
-    
+
     /**
      * replaces the existing selections with the param. If this field isn't a MULTISELECT
      * list, all but the first element will be removed.
      * @param selections new selections.  If null, it clear()s the underlying ArrayList.
      */
-    public void setChoiceSelections( ArrayList selections ) {
+    public void setChoiceSelections( ArrayList<Integer> selections ) {
     	if (selections != null) {
-    		choiceSelections = new ArrayList( selections );
+    		choiceSelections = new ArrayList<Integer>( selections );
     		if (choiceSelections.size() > 1 && (options & BaseField.MULTISELECT) == 0 ) {
     			// can't have multiple selections in a single-select field
     			while (choiceSelections.size() > 1) {
     				choiceSelections.remove( 1 );
     			}
     		}
-    		
-    	} else { 
+
+    	} else {
     		choiceSelections.clear();
     	}
     }
-    
+
     int getTopFirst() {
         return topFirst;
     }
-    
+
     /**
      * Sets extra margins in text fields to better mimic the Acrobat layout.
      * @param extraMarginLeft the extra margin left
      * @param extraMarginTop the extra margin top
-     */    
+     */
     public void setExtraMargin(float extraMarginLeft, float extraMarginTop) {
         this.extraMarginLeft = extraMarginLeft;
         this.extraMarginTop = extraMarginTop;
@@ -749,14 +749,14 @@ public class TextField extends BaseField {
     /**
      * Holds value of property substitutionFonts.
      */
-    private ArrayList substitutionFonts;
+    private ArrayList<BaseFont> substitutionFonts;
 
     /**
      * Gets the list of substitution fonts. The list is composed of <CODE>BaseFont</CODE> and can be <CODE>null</CODE>. The fonts in this list will be used if the original
      * font doesn't contain the needed glyphs.
      * @return the list
      */
-    public ArrayList getSubstitutionFonts() {
+    public ArrayList<BaseFont> getSubstitutionFonts() {
         return this.substitutionFonts;
     }
 
@@ -765,7 +765,7 @@ public class TextField extends BaseField {
      * font doesn't contain the needed glyphs.
      * @param substitutionFonts the list
      */
-    public void setSubstitutionFonts(ArrayList substitutionFonts) {
+    public void setSubstitutionFonts(ArrayList<BaseFont> substitutionFonts) {
         this.substitutionFonts = substitutionFonts;
     }
 

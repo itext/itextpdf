@@ -49,17 +49,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
-import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.codec.BmpImage;
 
 public class MetaDo {
-    
+
     public static final int META_SETBKCOLOR            = 0x0201;
     public static final int META_SETBKMODE             = 0x0102;
     public static final int META_SETMAPMODE            = 0x0103;
@@ -142,7 +142,7 @@ public class MetaDo {
         this.cb = cb;
         this.in = new InputMeta(in);
     }
-    
+
     public void readAll() throws IOException, DocumentException{
         if (in.readInt() != 0x9AC6CDD7) {
             throw new DocumentException(MessageLocalization.getComposedMessage("not.a.placeable.windows.metafile"));
@@ -162,7 +162,7 @@ public class MetaDo {
         in.readInt();
         in.readWord();
         in.skip(18);
-        
+
         int tsize;
         int function;
         cb.setLineCap(1);
@@ -358,14 +358,14 @@ public class MetaDo {
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    ArrayList ar = PdfContentByte.bezierArc(l, b, r, t, arc1, arc2);
+                    ArrayList<float[]> ar = PdfContentByte.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
-                    float pt[] = (float [])ar.get(0);
+                    float pt[] = ar.get(0);
                     cb.moveTo(cx, cy);
                     cb.lineTo(pt[0], pt[1]);
                     for (int k = 0; k < ar.size(); ++k) {
-                        pt = (float [])ar.get(k);
+                        pt = ar.get(k);
                         cb.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
                     }
                     cb.lineTo(cx, cy);
@@ -391,15 +391,15 @@ public class MetaDo {
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    ArrayList ar = PdfContentByte.bezierArc(l, b, r, t, arc1, arc2);
+                    ArrayList<float[]> ar = PdfContentByte.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
-                    float pt[] = (float [])ar.get(0);
+                    float pt[] = ar.get(0);
                     cx = pt[0];
                     cy = pt[1];
                     cb.moveTo(cx, cy);
                     for (int k = 0; k < ar.size(); ++k) {
-                        pt = (float [])ar.get(k);
+                        pt = ar.get(k);
                         cb.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
                     }
                     cb.lineTo(cx, cy);
@@ -495,7 +495,7 @@ public class MetaDo {
                     catch (UnsupportedEncodingException e) {
                         s = new String(text, 0, k);
                     }
-                    count = (count + 1) & 0xfffe;
+                    count = count + 1 & 0xfffe;
                     in.skip(count - k);
                     int y = in.readShort();
                     int x = in.readShort();
@@ -543,7 +543,7 @@ public class MetaDo {
                     float destWidth = state.transformX(in.readShort()) - state.transformX(0);
                     float yDest = state.transformY(in.readShort());
                     float xDest = state.transformX(in.readShort());
-                    byte b[] = new byte[(tsize * 2) - (in.getLength() - lenMarker)];
+                    byte b[] = new byte[tsize * 2 - (in.getLength() - lenMarker)];
                     for (int k = 0; k < b.length; ++k)
                         b[k] = (byte)in.readByte();
                     try {
@@ -564,11 +564,11 @@ public class MetaDo {
                     break;
                 }
             }
-            in.skip((tsize * 2) - (in.getLength() - lenMarker));
+            in.skip(tsize * 2 - (in.getLength() - lenMarker));
         }
         state.cleanup(cb);
     }
-    
+
     public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) {
         MetaFont font = state.getCurrentFont();
         float refX = state.transformX(x);
@@ -620,13 +620,13 @@ public class MetaDo {
         }
         cb.restoreState();
     }
-    
+
     public boolean isNullStrokeFill(boolean isRectangle) {
         MetaPen pen = state.getCurrentPen();
         MetaBrush brush = state.getCurrentBrush();
-        boolean noPen = (pen.getStyle() == MetaPen.PS_NULL);
+        boolean noPen = pen.getStyle() == MetaPen.PS_NULL;
         int style = brush.getStyle();
-        boolean isBrush = (style == MetaBrush.BS_SOLID || (style == MetaBrush.BS_HATCHED && state.getBackgroundMode() == MetaState.OPAQUE));
+        boolean isBrush = style == MetaBrush.BS_SOLID || style == MetaBrush.BS_HATCHED && state.getBackgroundMode() == MetaState.OPAQUE;
         boolean result = noPen && !isBrush;
         if (!noPen) {
             if (isRectangle)
@@ -652,7 +652,7 @@ public class MetaDo {
             }
         }
         else {
-            boolean isBrush = (brushStyle == MetaBrush.BS_SOLID || (brushStyle == MetaBrush.BS_HATCHED && state.getBackgroundMode() == MetaState.OPAQUE));
+            boolean isBrush = brushStyle == MetaBrush.BS_SOLID || brushStyle == MetaBrush.BS_HATCHED && state.getBackgroundMode() == MetaState.OPAQUE;
             if (isBrush) {
                 if (state.getPolyFillMode() == MetaState.ALTERNATE)
                     cb.closePathEoFillStroke();
@@ -664,14 +664,14 @@ public class MetaDo {
             }
         }
     }
-    
+
     static float getArc(float xCenter, float yCenter, float xDot, float yDot) {
         double s = Math.atan2(yDot - yCenter, xDot - xCenter);
         if (s < 0)
             s += Math.PI * 2;
         return (float)(s / Math.PI * 180);
     }
-    
+
     public static byte[] wrapBMP(Image image) throws IOException {
         if (image.getOriginalType() != Image.ORIGINAL_BMP)
             throw new IOException(MessageLocalization.getComposedMessage("only.bmp.can.be.wrapped.in.wmf"));
@@ -688,13 +688,13 @@ public class MetaDo {
         }
         else
             data = image.getOriginalData();
-        int sizeBmpWords = (data.length - 14 + 1) >>> 1;
+        int sizeBmpWords = data.length - 14 + 1 >>> 1;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         // write metafile header
         writeWord(os, 1);
         writeWord(os, 9);
         writeWord(os, 0x0300);
-        writeDWord(os, 9 + 4 + 5 + 5 + (13 + sizeBmpWords) + 3); // total metafile size
+        writeDWord(os, 9 + 4 + 5 + 5 + 13 + sizeBmpWords + 3); // total metafile size
         writeWord(os, 1);
         writeDWord(os, 14 + sizeBmpWords); // max record size
         writeWord(os, 0);
@@ -751,11 +751,11 @@ public class MetaDo {
 
     public static void writeWord(OutputStream os, int v) throws IOException {
         os.write(v & 0xff);
-        os.write((v >>> 8) & 0xff);
+        os.write(v >>> 8 & 0xff);
     }
-    
+
     public static void writeDWord(OutputStream os, int v) throws IOException {
         writeWord(os, v & 0xffff);
-        writeWord(os, (v >>> 16) & 0xffff);
+        writeWord(os, v >>> 16 & 0xffff);
     }
 }

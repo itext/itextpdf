@@ -43,16 +43,17 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.HashMap;
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.ExceptionConverter;
-import java.io.InputStream;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 public class ICC_Profile {
     protected byte[] data;
     protected int numComponents;
-    private static HashMap cstags = new HashMap();
+    private static HashMap<String, Integer> cstags = new HashMap<String, Integer>();
 
     protected ICC_Profile() {
     }
@@ -64,8 +65,8 @@ public class ICC_Profile {
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.icc.profile"));
             ICC_Profile icc = new ICC_Profile();
             icc.data = data;
-            Object cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
-            icc.numComponents = (cs == null ? 0 : ((Integer)cs).intValue());
+            Integer cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
+            icc.numComponents = cs == null ? 0 : cs.intValue();
             return icc;
         }
         catch (Exception ex) {
@@ -88,8 +89,8 @@ public class ICC_Profile {
             if (head[36] != 0x61 || head[37] != 0x63
                 || head[38] != 0x73 || head[39] != 0x70)
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.icc.profile"));
-            remain = ((head[0] & 0xff) << 24) | ((head[1] & 0xff) << 16)
-                      | ((head[2] & 0xff) <<  8) | (head[3] & 0xff);
+            remain = (head[0] & 0xff) << 24 | (head[1] & 0xff) << 16
+                      | (head[2] & 0xff) <<  8 | head[3] & 0xff;
             byte[] icc = new byte[remain];
             System.arraycopy(head, 0, icc, 0, head.length);
             remain -= head.length;

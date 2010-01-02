@@ -44,12 +44,12 @@
 package com.itextpdf.text.pdf;
 import java.util.ArrayList;
 import java.util.Iterator;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Phrase;
-import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 /** Writes text vertically. Note that the naming is done according
  * to horizontal text although it refers to vertical text.
@@ -58,50 +58,50 @@ import com.itextpdf.text.BaseColor;
  */
 public class VerticalText {
 
-/** Signals that there are no more text available. */    
+/** Signals that there are no more text available. */
     public static final int NO_MORE_TEXT = 1;
-	
-/** Signals that there is no more column. */    
+
+/** Signals that there is no more column. */
     public static final int NO_MORE_COLUMN = 2;
 
-/** The chunks that form the text. */    
-    protected ArrayList chunks = new ArrayList();
+/** The chunks that form the text. */
+    protected ArrayList<PdfChunk> chunks = new ArrayList<PdfChunk>();
 
-    /** The <CODE>PdfContent</CODE> where the text will be written to. */    
+    /** The <CODE>PdfContent</CODE> where the text will be written to. */
     protected PdfContentByte text;
-    
+
     /** The column alignment. Default is left alignment. */
     protected int alignment = Element.ALIGN_LEFT;
 
     /** Marks the chunks to be eliminated when the line is written. */
     protected int currentChunkMarker = -1;
-    
+
     /** The chunk created by the splitting. */
     protected PdfChunk currentStandbyChunk;
-    
+
     /** The chunk created by the splitting. */
     protected String splittedChunkText;
 
     /** The leading
-     */    
+     */
     protected float leading;
-    
+
     /** The X coordinate.
-     */    
+     */
     protected float startX;
-    
+
     /** The Y coordinate.
-     */    
+     */
     protected float startY;
-    
+
     /** The maximum number of vertical lines.
-     */    
+     */
     protected int maxLines;
-    
+
     /** The height of the text.
-     */    
+     */
     protected float height;
-    
+
     /** Creates new VerticalText
      * @param text the place where the text will be written to. Can
      * be a template.
@@ -109,17 +109,17 @@ public class VerticalText {
     public VerticalText(PdfContentByte text) {
         this.text = text;
     }
-    
+
     /**
      * Adds a <CODE>Phrase</CODE> to the current text array.
      * @param phrase the text
      */
     public void addText(Phrase phrase) {
-        for (Iterator j = phrase.getChunks().iterator(); j.hasNext();) {
-            chunks.add(new PdfChunk((Chunk)j.next(), null));
+        for (Chunk c: phrase.getChunks()) {
+            chunks.add(new PdfChunk(c, null));
         }
     }
-    
+
     /**
      * Adds a <CODE>Chunk</CODE> to the current text array.
      * @param chunk the text
@@ -134,7 +134,7 @@ public class VerticalText {
      * @param height the height of the lines
      * @param maxLines the maximum number of lines
      * @param leading the separation between the lines
-     */    
+     */
     public void setVerticalLayout(float startX, float startY, float height, int maxLines, float leading) {
         this.startX = startX;
         this.startY = startY;
@@ -142,21 +142,21 @@ public class VerticalText {
         this.maxLines = maxLines;
         setLeading(leading);
     }
-    
+
     /** Sets the separation between the vertical lines.
      * @param leading the vertical line separation
-     */    
+     */
     public void setLeading(float leading) {
         this.leading = leading;
     }
 
     /** Gets the separation between the vertical lines.
      * @return the vertical line separation
-     */    
+     */
     public float getLeading() {
         return leading;
     }
-    
+
     /**
      * Creates a line from the chunk array.
      * @param width the width of the line
@@ -170,7 +170,7 @@ public class VerticalText {
         PdfLine line = new PdfLine(0, width, alignment, 0);
         String total;
         for (currentChunkMarker = 0; currentChunkMarker < chunks.size(); ++currentChunkMarker) {
-            PdfChunk original = (PdfChunk)(chunks.get(currentChunkMarker));
+            PdfChunk original = chunks.get(currentChunkMarker);
             total = original.toString();
             currentStandbyChunk = line.add(original);
             if (currentStandbyChunk != null) {
@@ -181,7 +181,7 @@ public class VerticalText {
         }
         return line;
     }
-    
+
     /**
      * Normalizes the list of chunks when the line is accepted.
      */
@@ -192,7 +192,7 @@ public class VerticalText {
             chunks.clear();
             return;
         }
-        PdfChunk split = (PdfChunk)(chunks.get(currentChunkMarker));
+        PdfChunk split = chunks.get(currentChunkMarker);
         split.setValue(splittedChunkText);
         chunks.set(currentChunkMarker, currentStandbyChunk);
         for (int j = currentChunkMarker - 1; j >= 0; --j)
@@ -207,7 +207,7 @@ public class VerticalText {
     public int go() {
         return go(false);
     }
-    
+
     /**
      * Outputs the lines to the document. The output can be simulated.
      * @param simulate <CODE>true</CODE> to simulate the writing to the document
@@ -253,13 +253,13 @@ public class VerticalText {
         }
         return status;
     }
-    
+
     void writeLine(PdfLine line, PdfContentByte text, PdfContentByte graphics) {
         PdfFont currentFont = null;
         PdfChunk chunk;
-        for (Iterator j = line.iterator(); j.hasNext(); ) {
-            chunk = (PdfChunk) j.next();
-            
+        for (Iterator<PdfChunk> j = line.iterator(); j.hasNext(); ) {
+            chunk = j.next();
+
             if (chunk.font().compareTo(currentFont) != 0) {
                 currentFont = chunk.font();
                 text.setFontAndSize(currentFont.getFont(), currentFont.size());
@@ -272,31 +272,31 @@ public class VerticalText {
                 text.resetRGBColorFill();
         }
     }
-    
+
     /** Sets the new text origin.
      * @param startX the X coordinate
      * @param startY the Y coordinate
-     */    
+     */
     public void setOrigin(float startX, float startY) {
         this.startX = startX;
         this.startY = startY;
     }
-    
+
     /** Gets the X coordinate where the next line will be written. This value will change
      * after each call to <code>go()</code>.
      * @return  the X coordinate
-     */    
+     */
     public float getOriginX() {
         return startX;
     }
 
     /** Gets the Y coordinate where the next line will be written.
      * @return  the Y coordinate
-     */    
+     */
     public float getOriginY() {
         return startY;
     }
-    
+
     /** Gets the maximum number of available lines. This value will change
      * after each call to <code>go()</code>.
      * @return Value of property maxLines.
@@ -304,28 +304,28 @@ public class VerticalText {
     public int getMaxLines() {
         return maxLines;
     }
-    
+
     /** Sets the maximum number of lines.
      * @param maxLines the maximum number of lines
      */
     public void setMaxLines(int maxLines) {
         this.maxLines = maxLines;
     }
-    
+
     /** Gets the height of the line
      * @return the height
      */
     public float getHeight() {
         return height;
     }
-    
+
     /** Sets the height of the line
      * @param height the new height
      */
     public void setHeight(float height) {
         this.height = height;
     }
-    
+
     /**
      * Sets the alignment.
      * @param alignment the alignment
@@ -333,7 +333,7 @@ public class VerticalText {
     public void setAlignment(int alignment) {
         this.alignment = alignment;
     }
-    
+
     /**
      * Gets the alignment.
      * @return the alignment

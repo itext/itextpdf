@@ -45,7 +45,9 @@ package com.itextpdf.text.pdf;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
@@ -66,7 +68,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * @see		BadPdfFormatException
  */
 
-public class PdfName extends PdfObject implements Comparable{
+public class PdfName extends PdfObject implements Comparable<PdfName> {
 
     // CLASS CONSTANTS (a variety of standard names used in PDF))
     /**
@@ -1054,7 +1056,7 @@ public class PdfName extends PdfObject implements Comparable{
      * @since 2.1.6
      */
     public static final PdfName OSCILLATING = new PdfName("Oscillating");
-    
+
     /** A name */
     public static final PdfName OUTLINES = new PdfName("Outlines");
     /** A name */
@@ -1502,7 +1504,7 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName TK = new PdfName("TK");
     /** A name */
-    public static final PdfName TM = new PdfName("TM"); 
+    public static final PdfName TM = new PdfName("TM");
     /**
      * A name
      * @since 2.1.6
@@ -1720,7 +1722,7 @@ public class PdfName extends PdfObject implements Comparable{
      * map strings to all known static names
      * @since 2.1.6
      */
-    public static Map staticNames;
+    public static Map<String, PdfName> staticNames;
 
     /**
      * Use reflection to cache all the static public final names so
@@ -1732,7 +1734,7 @@ public class PdfName extends PdfObject implements Comparable{
 
     static {
         Field fields[] = PdfName.class.getDeclaredFields();
-        staticNames = new HashMap( fields.length );
+        staticNames = new HashMap<String, PdfName>( fields.length );
         final int flags = Modifier.STATIC | Modifier.PUBLIC | Modifier.FINAL;
         try {
             for (int fldIdx = 0; fldIdx < fields.length; ++fldIdx) {
@@ -1793,14 +1795,13 @@ public class PdfName extends PdfObject implements Comparable{
      * Returns a negative integer, zero, or a positive integer as this object
      * is less than, equal to, or greater than the specified object.<p>
      *
-     * @param object the Object to be compared.
+     * @param name the PdfName to be compared.
      * @return a negative integer, zero, or a positive integer as this object
      * is less than, equal to, or greater than the specified object.
      * @throws ClassCastException if the specified object's type prevents it
      * from being compared to this Object.
      */
-    public int compareTo(Object object) {
-        PdfName name = (PdfName) object;
+    public int compareTo(PdfName name) {
         byte myBytes[] = bytes;
         byte objBytes[] = name.bytes;
         int len = Math.min(myBytes.length, objBytes.length);
@@ -1824,11 +1825,12 @@ public class PdfName extends PdfObject implements Comparable{
      * @return  <code>true</code> if this object is the same as the obj
      * argument; <code>false</code> otherwise.
      */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj instanceof PdfName)
-            return compareTo(obj) == 0;
+            return compareTo((PdfName)obj) == 0;
         return false;
     }
 
@@ -1839,6 +1841,7 @@ public class PdfName extends PdfObject implements Comparable{
      *
      * @return  a hash code value for this object.
      */
+    @Override
     public int hashCode() {
         int h = hash;
         if (h == 0) {

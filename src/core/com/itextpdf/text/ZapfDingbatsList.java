@@ -44,9 +44,9 @@
 package com.itextpdf.text;
 
 /**
- * 
+ *
  * A special-version of <CODE>LIST</CODE> which use zapfdingbats-letters.
- * 
+ *
  * @see com.itextpdf.text.List
  * @author Michael Niedermair and Bruno Lowagie
  */
@@ -60,7 +60,7 @@ public class ZapfDingbatsList extends List {
 
 	/**
 	 * Creates a ZapfDingbatsList
-	 * 
+	 *
 	 * @param zn a char-number
 	 */
 	public ZapfDingbatsList(int zn) {
@@ -73,7 +73,7 @@ public class ZapfDingbatsList extends List {
 
 	/**
 	 * Creates a ZapfDingbatsList
-	 * 
+	 *
 	 * @param zn a char-number
 	 * @param symbolIndent	indent
 	 */
@@ -86,7 +86,7 @@ public class ZapfDingbatsList extends List {
 	}
 
 	/**
-	 * set the char-number 
+	 * set the char-number
 	 * @param zn a char-number
 	 */
 	public void setCharNumber(int zn) {
@@ -103,12 +103,13 @@ public class ZapfDingbatsList extends List {
 	}
 
 	/**
-	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
+	 * Adds an <CODE>Element</CODE> to the <CODE>List</CODE>.
 	 *
 	 * @param	o	the object to add.
 	 * @return true if adding the object succeeded
 	 */
-	public boolean add(Object o) {
+	@Override
+	public boolean add(Element o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
 			Chunk chunk = new Chunk(preSymbol, symbol.getFont());
@@ -123,8 +124,6 @@ public class ZapfDingbatsList extends List {
 			nested.setIndentationLeft(nested.getIndentationLeft() + symbolIndent);
 			first--;
 			return list.add(nested);
-		} else if (o instanceof String) {
-			return this.add(new ListItem((String) o));
 		}
 		return false;
 	}

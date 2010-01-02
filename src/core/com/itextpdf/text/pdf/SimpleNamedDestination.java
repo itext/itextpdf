@@ -51,11 +51,10 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.xml.simpleparser.IanaEncodings;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
@@ -65,21 +64,21 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
  * @author Paulo Soares
  */
 public final class SimpleNamedDestination implements SimpleXMLDocHandler {
-    
-    private HashMap xmlNames;
-    private HashMap xmlLast;
+
+    private HashMap<String, String> xmlNames;
+    private HashMap<String, String> xmlLast;
 
     private SimpleNamedDestination() {
     }
-    
-    public static HashMap getNamedDestination(PdfReader reader, boolean fromNames) {
+
+    public static HashMap<String, String> getNamedDestination(PdfReader reader, boolean fromNames) {
         IntHashtable pages = new IntHashtable();
         int numPages = reader.getNumberOfPages();
         for (int k = 1; k <= numPages; ++k)
             pages.put(reader.getPageOrigRef(k).getNumber(), k);
-        HashMap names = fromNames ? reader.getNamedDestinationFromNames() : reader.getNamedDestinationFromStrings();
-        for (Iterator it = names.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry)it.next();
+        HashMap<String, PdfObject> names = fromNames ? reader.getNamedDestinationFromNames() : reader.getNamedDestinationFromStrings();
+        HashMap<String, String> n2 = new HashMap<String, String>(names.size());
+        for (Map.Entry<String, PdfObject> entry: names.entrySet()) {
             PdfArray arr = (PdfArray)entry.getValue();
             StringBuffer s = new StringBuffer();
             try {
@@ -87,15 +86,14 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
                 s.append(' ').append(arr.getPdfObject(1).toString().substring(1));
                 for (int k = 2; k < arr.size(); ++k)
                     s.append(' ').append(arr.getPdfObject(k).toString());
-                entry.setValue(s.toString());
+                n2.put(entry.getKey(), s.toString());
             }
             catch (Exception e) {
-                it.remove();
             }
         }
-        return names;
+        return n2;
     }
-    
+
     /**
      * Exports the destinations to XML. The DTD for this XML is:
      * <p>
@@ -113,13 +111,14 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>,
      * whatever the encoding
      * @throws IOException on error
+     * @since 5.0.1 (generic type in signature)
      */
-    public static void exportToXML(HashMap names, OutputStream out, String encoding, boolean onlyASCII) throws IOException {
+    public static void exportToXML(HashMap<String, String> names, OutputStream out, String encoding, boolean onlyASCII) throws IOException {
         String jenc = IanaEncodings.getJavaEncoding(encoding);
         Writer wrt = new BufferedWriter(new OutputStreamWriter(out, jenc));
         exportToXML(names, wrt, encoding, onlyASCII);
     }
-    
+
     /**
      * Exports the destinations to XML.
      * @param names the names
@@ -128,15 +127,15 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>,
      * whatever the encoding
      * @throws IOException on error
+     * @since 5.0.1 (generic type in signature)
      */
-    public static void exportToXML(HashMap names, Writer wrt, String encoding, boolean onlyASCII) throws IOException {
+    public static void exportToXML(HashMap<String, String> names, Writer wrt, String encoding, boolean onlyASCII) throws IOException {
         wrt.write("<?xml version=\"1.0\" encoding=\"");
         wrt.write(SimpleXMLParser.escapeXML(encoding, onlyASCII));
         wrt.write("\"?>\n<Destination>\n");
-        for (Iterator it = names.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry)it.next();
-            String key = (String)entry.getKey();
-            String value = (String)entry.getValue();
+        for (Map.Entry<String, String> entry: names.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
             wrt.write("  <Name Page=\"");
             wrt.write(SimpleXMLParser.escapeXML(value, onlyASCII));
             wrt.write("\">");
@@ -146,26 +145,26 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         wrt.write("</Destination>\n");
         wrt.flush();
     }
-    
+
     /**
      * Import the names from XML.
      * @param in the XML source. The stream is not closed
      * @throws IOException on error
      * @return the names
      */
-    public static HashMap importFromXML(InputStream in) throws IOException {
+    public static HashMap<String, String> importFromXML(InputStream in) throws IOException {
         SimpleNamedDestination names = new SimpleNamedDestination();
         SimpleXMLParser.parse(names, in);
         return names.xmlNames;
     }
-    
+
     /**
      * Import the names from XML.
      * @param in the XML source. The reader is not closed
      * @throws IOException on error
      * @return the names
      */
-    public static HashMap importFromXML(Reader in) throws IOException {
+    public static HashMap<String, String> importFromXML(Reader in) throws IOException {
         SimpleNamedDestination names = new SimpleNamedDestination();
         SimpleXMLParser.parse(names, in);
         return names.xmlNames;
@@ -195,41 +194,38 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         }
         return ar;
     }
-    
-    public static PdfDictionary outputNamedDestinationAsNames(HashMap names, PdfWriter writer) {
+
+    public static PdfDictionary outputNamedDestinationAsNames(HashMap<String, String> names, PdfWriter writer) {
         PdfDictionary dic = new PdfDictionary();
-        for (Iterator it = names.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry)it.next();
+        for (Map.Entry<String, String> entry: names.entrySet()) {
             try {
-                String key = (String)entry.getKey();
-                String value = (String)entry.getValue();
+                String key = entry.getKey();
+                String value = entry.getValue();
                 PdfArray ar = createDestinationArray(value, writer);
                 PdfName kn = new PdfName(key);
                 dic.put(kn, ar);
             }
             catch (Exception e) {
                 // empty on purpose
-            }            
+            }
         }
         return dic;
     }
-    
-    public static PdfDictionary outputNamedDestinationAsStrings(HashMap names, PdfWriter writer) throws IOException {
-        HashMap n2 = new HashMap(names);
-        for (Iterator it = n2.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry)it.next();
+
+    public static PdfDictionary outputNamedDestinationAsStrings(HashMap<String, String> names, PdfWriter writer) throws IOException {
+        HashMap<String, PdfObject> n2 = new HashMap<String, PdfObject>(names.size());
+        for (Map.Entry<String, String> entry: names.entrySet()) {
             try {
-                String value = (String)entry.getValue();
+                String value = entry.getValue();
                 PdfArray ar = createDestinationArray(value, writer);
-                entry.setValue(writer.addToBody(ar).getIndirectReference());
+                n2.put(entry.getKey(), writer.addToBody(ar).getIndirectReference());
             }
             catch (Exception e) {
-                it.remove();
             }
         }
         return PdfNameTree.writeTree(n2, writer);
     }
-    
+
     public static String escapeBinaryString(String s) {
         StringBuffer buf = new StringBuffer();
         char cc[] = s.toCharArray();
@@ -248,7 +244,7 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         }
         return buf.toString();
     }
-    
+
     public static String unEscapeBinaryString(String s) {
         StringBuffer buf = new StringBuffer();
         char cc[] = s.toCharArray();
@@ -285,10 +281,10 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         }
         return buf.toString();
     }
-    
+
     public void endDocument() {
     }
-    
+
     public void endElement(String tag) {
         if (tag.equals("Destination")) {
             if (xmlLast == null && xmlNames != null)
@@ -302,17 +298,17 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
             throw new RuntimeException(MessageLocalization.getComposedMessage("name.end.tag.out.of.place"));
         if (!xmlLast.containsKey("Page"))
             throw new RuntimeException(MessageLocalization.getComposedMessage("page.attribute.missing"));
-        xmlNames.put(unEscapeBinaryString((String)xmlLast.get("Name")), xmlLast.get("Page"));
+        xmlNames.put(unEscapeBinaryString(xmlLast.get("Name")), xmlLast.get("Page"));
         xmlLast = null;
     }
-    
+
     public void startDocument() {
     }
-    
-    public void startElement(String tag, HashMap h) {
+
+    public void startElement(String tag, HashMap<String, String> h) {
         if (xmlNames == null) {
             if (tag.equals("Destination")) {
-                xmlNames = new HashMap();
+                xmlNames = new HashMap<String, String>();
                 return;
             }
             else
@@ -322,15 +318,15 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
             throw new RuntimeException(MessageLocalization.getComposedMessage("tag.1.not.allowed", tag));
         if (xmlLast != null)
             throw new RuntimeException(MessageLocalization.getComposedMessage("nested.tags.are.not.allowed"));
-        xmlLast = new HashMap(h);
+        xmlLast = new HashMap<String, String>(h);
         xmlLast.put("Name", "");
     }
-    
+
     public void text(String str) {
         if (xmlLast == null)
             return;
-        String name = (String)xmlLast.get("Name");
+        String name = xmlLast.get("Name");
         name += str;
         xmlLast.put("Name", name);
-    }    
+    }
 }

@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.ExceptionConverter;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -55,6 +54,8 @@ import java.net.URL;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Vector;
+
+import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.x509.X509Extension;
@@ -67,6 +68,8 @@ import org.bouncycastle.ocsp.OCSPReq;
 import org.bouncycastle.ocsp.OCSPReqGenerator;
 import org.bouncycastle.ocsp.OCSPResp;
 import org.bouncycastle.ocsp.SingleResp;
+
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
@@ -81,7 +84,7 @@ public class OcspClientBouncyCastle implements OcspClient {
     private X509Certificate checkCert;
     /** OCSP URL */
     private String url;
-    
+
     /**
      * Creates an instance of an OcspClient that will be using BouncyCastle.
      * @param checkCert	the check certificate
@@ -93,7 +96,7 @@ public class OcspClientBouncyCastle implements OcspClient {
         this.rootCert = rootCert;
         this.url = url;
     }
-    
+
     /**
      * Generates an OCSP request using BouncyCastle.
      * @param issuerCert	certificate of the issues
@@ -105,27 +108,27 @@ public class OcspClientBouncyCastle implements OcspClient {
     private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber) throws OCSPException, IOException {
         //Add provider BC
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        
+
         // Generate the id for the certificate we are looking for
         CertificateID id = new CertificateID(CertificateID.HASH_SHA1, issuerCert, serialNumber);
-        
+
         // basic request generation with nonce
         OCSPReqGenerator gen = new OCSPReqGenerator();
-        
+
         gen.addRequest(id);
-        
+
         // create details for nonce extension
-        Vector oids = new Vector();
-        Vector values = new Vector();
-        
+        Vector<DERObjectIdentifier> oids = new Vector<DERObjectIdentifier>();
+        Vector<X509Extension> values = new Vector<X509Extension>();
+
         oids.add(OCSPObjectIdentifiers.id_pkix_ocsp_nonce);
         values.add(new X509Extension(false, new DEROctetString(new DEROctetString(PdfEncryption.createDocumentId()).getEncoded())));
-        
+
         gen.setRequestExtensions(new X509Extensions(oids, values));
-        
+
         return gen.generate();
     }
-    
+
     /**
      * @return 	a byte array
      * @see com.itextpdf.text.pdf.OcspClient#getEncoded()

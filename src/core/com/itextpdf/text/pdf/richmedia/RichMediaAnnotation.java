@@ -87,12 +87,12 @@ public class RichMediaAnnotation {
 	/** the rich media settings (specific for this annotation) */
 	protected PdfDictionary richMediaSettings = new PdfDictionary(PdfName.RICHMEDIASETTINGS);
 	/** a map with the assets (will be used to construct a name tree.) */
-	protected HashMap assetsmap = null;
+	protected HashMap<String, PdfIndirectReference> assetsmap = null;
 	/** an array with configurations (will be added to the RichMediaContent). */
 	protected PdfArray configurations = null;
 	/** an array of views (will be added to the RichMediaContent) */
 	protected PdfArray views = null;
-	
+
 	/**
 	 * Creates a RichMediaAnnotation.
 	 * @param	writer	the PdfWriter to which the annotation will be added.
@@ -103,7 +103,7 @@ public class RichMediaAnnotation {
 		annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.RICHMEDIA);
         richMediaContent = new PdfDictionary(PdfName.RICHMEDIACONTENT);
-		assetsmap = new HashMap();
+		assetsmap = new HashMap<String, PdfIndirectReference>();
 		configurations = new PdfArray();
 		views = new PdfArray();
 	}
@@ -123,7 +123,7 @@ public class RichMediaAnnotation {
 		annot = new PdfAnnotation(writer, rect);
 		annot.put(PdfName.SUBTYPE, PdfName.RICHMEDIA);
 	}
-	
+
 	/**
 	 * Gets a reference to the RichMediaContent for reuse of the
 	 * rich media content. Returns null if the content hasn't been
@@ -149,7 +149,7 @@ public class RichMediaAnnotation {
 		assetsmap.put(name, ref);
 		return ref;
 	}
-	
+
 	/**
 	 * Adds a reference to an embedded file.
 	 * (Part of the RichMediaContent.)
@@ -162,7 +162,7 @@ public class RichMediaAnnotation {
 		assetsmap.put(name, ref);
 		return ref;
 	}
-	
+
 	/**
 	 * Adds a RichMediaConfiguration.
 	 * (Part of the RichMediaContent.)
@@ -176,7 +176,7 @@ public class RichMediaAnnotation {
 		configurations.add(ref);
 		return ref;
 	}
-	
+
 	/**
 	 * Adds a reference to a RichMediaConfiguration.
 	 * (Part of the RichMediaContent.)
@@ -189,7 +189,7 @@ public class RichMediaAnnotation {
 		configurations.add(ref);
 		return ref;
 	}
-	
+
 	/**
 	 * Adds a view dictionary.
 	 * (Part of the RichMediaContent.)
@@ -203,7 +203,7 @@ public class RichMediaAnnotation {
 		views.add(ref);
 		return ref;
 	}
-	
+
 	/**
 	 * Adds a reference to a view dictionary.
 	 * (Part of the RichMediaContent.)
@@ -227,7 +227,7 @@ public class RichMediaAnnotation {
 	public void setActivation(RichMediaActivation richMediaActivation) {
 		richMediaSettings.put(PdfName.ACTIVATION, richMediaActivation);
 	}
-	
+
 	/**
 	 * Sets the RichMediaDeactivation dictionary specifying the condition
 	 * that causes deactivation of the annotation.
@@ -237,7 +237,7 @@ public class RichMediaAnnotation {
 	public void setDeactivation(RichMediaDeactivation richMediaDeactivation) {
 		richMediaSettings.put(PdfName.DEACTIVATION, richMediaDeactivation);
 	}
-	
+
 	/**
 	 * Creates the actual annotation and adds different elements to the
 	 * PdfWriter while doing so.

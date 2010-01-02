@@ -68,35 +68,35 @@ import java.util.ArrayList;
  */
 
 public class Chapter extends Section {
-    
+
     // constant
 	private static final long serialVersionUID = 1791000695779357361L;
-	
+
 	/**
 	 * Constructs a new <CODE>Chapter</CODE>.
 	 * @param	number		the Chapter number
      */
     public Chapter(int number) {
         super(null, 1);
-        numbers = new ArrayList();
+        numbers = new ArrayList<Integer>();
         numbers.add(new Integer(number));
         triggerNewPage = true;
     }
-	
+
 	/**
 	 * Constructs a new <CODE>Chapter</CODE>.
 	 *
 	 * @param	title		the Chapter title (as a <CODE>Paragraph</CODE>)
 	 * @param	number		the Chapter number
      */
-    
+
     public Chapter(Paragraph title, int number) {
         super(title, 1);
-        numbers = new ArrayList();
+        numbers = new ArrayList<Integer>();
         numbers.add(new Integer(number));
         triggerNewPage = true;
     }
-    
+
     /**
      * Constructs a new <CODE>Chapter</CODE>.
      *
@@ -106,14 +106,15 @@ public class Chapter extends Section {
     public Chapter(String title, int number) {
         this(new Paragraph(title), number);
     }
-    
+
     // implementation of the Element-methods
-    
+
     /**
      * Gets the type of the text element.
      *
      * @return	a type
      */
+    @Override
     public int type() {
         return Element.CHAPTER;
     }
@@ -122,7 +123,8 @@ public class Chapter extends Section {
 	 * @see com.itextpdf.text.Element#isNestable()
 	 * @since	iText 2.0.8
 	 */
-	public boolean isNestable() {
+	@Override
+    public boolean isNestable() {
 		return false;
 	}
 

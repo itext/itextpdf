@@ -56,22 +56,22 @@ import com.itextpdf.text.Utilities;
  * @author  Paulo Soares
  */
 class FontDetails {
-    
+
     /**
      * The indirect reference to this font
-     */    
+     */
     PdfIndirectReference indirectReference;
     /**
      * The font name that appears in the document body stream
-     */    
+     */
     PdfName fontName;
     /**
      * The font
-     */    
+     */
     BaseFont baseFont;
     /**
      * The font if it's an instance of <CODE>TrueTypeFontUnicode</CODE>
-     */    
+     */
     TrueTypeFontUnicode ttu;
     /**
      * The font if it's an instance of <CODE>CJKFont</CODE>
@@ -79,31 +79,31 @@ class FontDetails {
     CJKFont cjkFont;
     /**
      * The array used with single byte encodings
-     */    
+     */
     byte shortTag[];
     /**
      * The map used with double byte encodings. The key is Integer(glyph) and
      * the value is int[]{glyph, width, Unicode code}
-     */    
-    HashMap longTag;
+     */
+    HashMap<Integer, int[]> longTag;
     /**
      * IntHashtable with CIDs of CJK glyphs that are used in the text.
      */
     IntHashtable cjkTag;
     /**
      * The font type
-     */    
+     */
     int fontType;
     /**
      * <CODE>true</CODE> if the font is symbolic
-     */    
+     */
     boolean symbolic;
     /**
      * Indicates if only a subset of the glyphs and widths for that particular
      * encoding should be included in the document.
      */
     protected boolean subset = true;
-    
+
     /**
      * Each font used in a document has an instance of this class.
      * This class stores the characters used in the document and other
@@ -127,44 +127,44 @@ class FontDetails {
                 cjkFont = (CJKFont)baseFont;
                 break;
             case BaseFont.FONT_TYPE_TTUNI:
-                longTag = new HashMap();
+                longTag = new HashMap<Integer, int[]>();
                 ttu = (TrueTypeFontUnicode)baseFont;
                 symbolic = baseFont.isFontSpecific();
                 break;
         }
     }
-    
+
     /**
      * Gets the indirect reference to this font.
      * @return the indirect reference to this font
-     */    
+     */
     PdfIndirectReference getIndirectReference() {
         return indirectReference;
     }
-    
+
     /**
      * Gets the font name as it appears in the document body.
      * @return the font name
-     */    
+     */
     PdfName getFontName() {
         return fontName;
     }
-    
+
     /**
      * Gets the <CODE>BaseFont</CODE> of this font.
      * @return the <CODE>BaseFont</CODE> of this font
-     */    
+     */
     BaseFont getBaseFont() {
         return baseFont;
     }
-    
+
     /**
      * Converts the text into bytes to be placed in the document.
      * The conversion is done according to the font and the encoding and the characters
      * used are stored.
      * @param text the text to convert
      * @return the conversion
-     */    
+     */
     byte[] convertToBytes(String text) {
         byte b[] = null;
         switch (fontType) {
@@ -237,11 +237,11 @@ class FontDetails {
         }
         return b;
     }
-    
+
     /**
      * Writes the font definition to the document.
      * @param writer the <CODE>PdfWriter</CODE> of this document
-     */    
+     */
     void writeFont(PdfWriter writer) {
         try {
             switch (fontType) {
@@ -279,7 +279,7 @@ class FontDetails {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     /**
      * Indicates if all the glyphs and widths for that particular
      * encoding should be included in the document.
@@ -288,7 +288,7 @@ class FontDetails {
     public boolean isSubset() {
         return subset;
     }
-    
+
     /**
      * Indicates if all the glyphs and widths for that particular
      * encoding should be included in the document. Set to <CODE>false</CODE>
