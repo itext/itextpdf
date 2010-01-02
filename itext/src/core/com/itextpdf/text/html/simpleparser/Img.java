@@ -53,5 +53,5 @@ import com.itextpdf.text.Image;
  * @author  psoares
  */
 public interface Img {
-    boolean process(Image img, HashMap h, ChainedProperties cprops, DocListener doc);
+    boolean process(Image img, HashMap<String, String> h, ChainedProperties cprops, DocListener doc);
 }

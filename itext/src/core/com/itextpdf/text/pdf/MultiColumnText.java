@@ -44,7 +44,6 @@
 package com.itextpdf.text.pdf;
 
 import java.util.ArrayList;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
@@ -52,6 +51,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * Formats content into one or more columns bounded by a
@@ -96,7 +96,7 @@ public class MultiColumnText implements Element {
     /**
      * Array of <CODE>ColumnDef</CODE> objects used to define the columns
      */
-    private ArrayList columnDefs;
+    private ArrayList<ColumnDef> columnDefs;
 
     /**
      * true if all columns are simple (rectangular)
@@ -104,11 +104,11 @@ public class MultiColumnText implements Element {
     private boolean simple = true;
 
     private int currentColumn = 0;
-    
+
     private float nextY = AUTOMATIC;
-    
+
     private boolean columnsRightToLeft = false;
-    
+
     private PdfDocument document;
     /**
      * Default constructor.  Sets height to <CODE>AUTOMATIC</CODE>.
@@ -126,7 +126,7 @@ public class MultiColumnText implements Element {
      * @param height
      */
     public MultiColumnText(float height) {
-        columnDefs = new ArrayList();
+        columnDefs = new ArrayList<ColumnDef>();
         desiredHeight = height;
         top = AUTOMATIC;
         // canvas will be set later
@@ -142,7 +142,7 @@ public class MultiColumnText implements Element {
      * @param top
      */
     public MultiColumnText(float top, float height) {
-        columnDefs = new ArrayList();
+        columnDefs = new ArrayList<ColumnDef>();
         desiredHeight = height;
         this.top = top;
         nextY = top;
@@ -150,7 +150,7 @@ public class MultiColumnText implements Element {
         columnText = new ColumnText(null);
         totalHeight = 0f;
     }
-    
+
     /**
      * Indicates that all of the text did not fit in the
      * specified height. Note that isOverflow will return
@@ -213,7 +213,7 @@ public class MultiColumnText implements Element {
     public void addRegularColumns(float left, float right, float gutterWidth, int numColumns) {
         float currX = left;
         float width = right - left;
-        float colWidth = (width - (gutterWidth * (numColumns - 1))) / numColumns;
+        float colWidth = (width - gutterWidth * (numColumns - 1)) / numColumns;
         for (int i = 0; i < numColumns; i++) {
             addSimpleColumn(currX, currX + colWidth);
             currX += colWidth + gutterWidth;
@@ -229,7 +229,7 @@ public class MultiColumnText implements Element {
     public void addText(Phrase phrase) {
     	columnText.addText(phrase);
     }
-    
+
     /**
      * Adds a <CODE>Chunk</CODE> to the current text array.
      * Will not have any effect if addElement() was called before.
@@ -239,7 +239,7 @@ public class MultiColumnText implements Element {
     public void addText(Chunk chunk) {
     	columnText.addText(chunk);
     }
-    
+
     /**
      * Add an element to be rendered in a column.
      * Note that you can only add a <CODE>Phrase</CODE>
@@ -289,15 +289,15 @@ public class MultiColumnText implements Element {
                 else if (nextY == AUTOMATIC) {
                     nextY = document.getVerticalPosition(true); // RS - 07/07/2005 - - Get current doc writing position for top of columns on new page.
                 }
-                ColumnDef currentDef = (ColumnDef) columnDefs.get(getCurrentColumn());
+                ColumnDef currentDef = columnDefs.get(getCurrentColumn());
                 columnText.setYLine(top);
 
                 float[] left = currentDef.resolvePositions(Rectangle.LEFT);
                 float[] right = currentDef.resolvePositions(Rectangle.RIGHT);
                 if (document.isMarginMirroring() && document.getPageNumber() % 2 == 0){
                     float delta = document.rightMargin() - document.left();
-                    left = (float[])left.clone();
-                    right = (float[])right.clone();
+                    left = left.clone();
+                    right = right.clone();
                     for (int i = 0; i < left.length; i += 2) {
                         left[i] -= delta;
                     }
@@ -305,7 +305,7 @@ public class MultiColumnText implements Element {
                         right[i] -= delta;
                     }
                 }
-                
+
                 currentHeight = Math.max(currentHeight, getHeight(left, right));
 
                 if (currentDef.isSimple()) {
@@ -322,7 +322,7 @@ public class MultiColumnText implements Element {
                     top = nextY;
                 } else {  // check if we are done because of height
                     totalHeight += currentHeight;
-                    if ((desiredHeight != AUTOMATIC) && (totalHeight >= desiredHeight)) {
+                    if (desiredHeight != AUTOMATIC && totalHeight >= desiredHeight) {
                         overflow = true;
                         break;
                     } else {  // need to start new page and reset the columns
@@ -355,7 +355,7 @@ public class MultiColumnText implements Element {
             document.newPage();
         }
     }
-    
+
     /**
      * Figure out the height of a column from the border extents
      *
@@ -409,10 +409,10 @@ public class MultiColumnText implements Element {
      * @return	null
      */
 
-    public ArrayList getChunks() {
+    public ArrayList<Chunk> getChunks() {
         return null;
     }
-    
+
 	/**
 	 * @see com.itextpdf.text.Element#isContent()
 	 * @since	iText 2.0.8
@@ -447,7 +447,7 @@ public class MultiColumnText implements Element {
      * Moves the text insertion point to the beginning of the next column, issuing a page break if
      * needed.
      * @throws DocumentException on error
-     */    
+     */
     public void nextColumn() throws DocumentException {
         currentColumn = (currentColumn + 1) % columnDefs.size();
         top = nextY;
@@ -462,18 +462,18 @@ public class MultiColumnText implements Element {
      */
     public int getCurrentColumn() {
     	if (columnsRightToLeft) {
-    		return (columnDefs.size() - currentColumn - 1);
-    	} 
+    		return columnDefs.size() - currentColumn - 1;
+    	}
         return currentColumn;
     }
-    
+
     /**
      * Resets the current column.
      */
     public void resetCurrentColumn() {
     	currentColumn = 0;
     }
-    
+
     /**
      * Shifts the current column.
      * @return true if the current column has changed
@@ -485,7 +485,7 @@ public class MultiColumnText implements Element {
     	}
     	return false;
     }
-    
+
     /**
      * Sets the direction of the columns.
      * @param direction true = right2left; false = left2right
@@ -493,7 +493,7 @@ public class MultiColumnText implements Element {
     public void setColumnsRightToLeft(boolean direction) {
     	columnsRightToLeft = direction;
     }
-    
+
     /** Sets the ratio between the extra word spacing and the extra character spacing
      * when the text is fully justified.
      * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
@@ -505,13 +505,13 @@ public class MultiColumnText implements Element {
         columnText.setSpaceCharRatio(spaceCharRatio);
     }
 
-    /** Sets the run direction. 
+    /** Sets the run direction.
      * @param runDirection the run direction
-     */    
+     */
     public void setRunDirection(int runDirection) {
         columnText.setRunDirection(runDirection);
     }
-    
+
     /** Sets the arabic shaping options. The option can be AR_NOVOWEL,
      * AR_COMPOSEDTASHKEEL and AR_LIG.
      * @param arabicOptions the arabic shaping options
@@ -519,14 +519,14 @@ public class MultiColumnText implements Element {
     public void setArabicOptions(int arabicOptions) {
         columnText.setArabicOptions(arabicOptions);
     }
-    
+
     /** Sets the default alignment
      * @param alignment the default alignment
      */
     public void setAlignment(int alignment) {
         columnText.setAlignment(alignment);
     }
-    
+
     /**
      * Inner class used to define a column
      */
@@ -594,10 +594,10 @@ public class MultiColumnText implements Element {
 
         /**
          * Checks if column definition is a simple rectangle
-         * @return true if it is a simple column 
+         * @return true if it is a simple column
          */
         private boolean isSimple() {
-            return (left.length == 4 && right.length == 4) && (left[0] == left[2] && right[0] == right[2]);
+            return left.length == 4 && right.length == 4 && left[0] == left[2] && right[0] == right[2];
         }
 
     }

@@ -44,9 +44,9 @@
 package com.itextpdf.text;
 
 /**
- * 
+ *
  * A special-version of <CODE>LIST</CODE> which use zapfdingbats-numbers (1..10).
- * 
+ *
  * @see com.itextpdf.text.List
  * @author Michael Niedermair and Bruno Lowagie
  */
@@ -84,8 +84,8 @@ public class ZapfDingbatsNumberList extends List {
 	}
 
 	/**
-	 * set the type 
-	 * 
+	 * set the type
+	 *
 	 * @param type
 	 */
 	public void setType(int type) {
@@ -102,12 +102,13 @@ public class ZapfDingbatsNumberList extends List {
 	}
 
 	/**
-	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
+	 * Adds an <CODE>Element</CODE> to the <CODE>List</CODE>.
 	 *
 	 * @param	o	the object to add.
 	 * @return true if adding the object succeeded
 	 */
-	public boolean add(Object o) {
+	@Override
+        public boolean add(Element o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
 			Chunk chunk = new Chunk(preSymbol, symbol.getFont());
@@ -134,8 +135,6 @@ public class ZapfDingbatsNumberList extends List {
 			nested.setIndentationLeft(nested.getIndentationLeft() + symbolIndent);
 			first--;
 			return list.add(nested);
-		} else if (o instanceof String) {
-			return this.add(new ListItem((String) o));
 		}
 		return false;
 	}

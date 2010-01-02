@@ -50,7 +50,7 @@ public class LangAlt extends Properties {
 
 	/** A serial version id. */
 	private static final long serialVersionUID = 4396971487200843099L;
-	
+
 	/** Key for the default language. */
 	public static final String DEFAULT = "x-default";
 
@@ -86,10 +86,11 @@ public class LangAlt extends Properties {
 	/**
 	 * Creates a String that can be used in an XmpSchema.
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<rdf:Alt>");
-		for (Enumeration e = this.propertyNames(); e.hasMoreElements();) {
+		for (Enumeration<?> e = this.propertyNames(); e.hasMoreElements();) {
 			process(sb, e.nextElement());
 		}
 		sb.append("</rdf:Alt>");

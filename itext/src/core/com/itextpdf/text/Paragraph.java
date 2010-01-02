@@ -65,48 +65,48 @@ package com.itextpdf.text;
  */
 
 public class Paragraph extends Phrase {
-	
+
 	// constants
 	private static final long serialVersionUID = 7852314969733375514L;
-    
+
     // membervariables
-    
+
 	/** The alignment of the text. */
     protected int alignment = Element.ALIGN_UNDEFINED;
-    
+
     /** The text leading that is multiplied by the biggest font size in the line. */
     protected float multipliedLeading = 0;
-    
+
     /** The indentation of this paragraph on the left side. */
     protected float indentationLeft;
-    
+
     /** The indentation of this paragraph on the right side. */
     protected float indentationRight;
-    
+
     /** Holds value of property firstLineIndent. */
     private float firstLineIndent = 0;
-    
+
     /** The spacing before the paragraph. */
     protected float spacingBefore;
-    
+
     /** The spacing after the paragraph. */
     protected float spacingAfter;
-    
+
     /** Holds value of property extraParagraphSpace. */
     private float extraParagraphSpace = 0;
-    
+
     /** Does the paragraph has to be kept together on 1 page. */
     protected boolean keeptogether = false;
-    
+
     // constructors
-    
+
     /**
      * Constructs a <CODE>Paragraph</CODE>.
      */
     public Paragraph() {
         super();
     }
-    
+
     /**
      * Constructs a <CODE>Paragraph</CODE> with a certain leading.
      *
@@ -115,27 +115,27 @@ public class Paragraph extends Phrase {
     public Paragraph(float leading) {
         super(leading);
     }
-    
+
     /**
      * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>Chunk</CODE>.
      *
      * @param	chunk		a <CODE>Chunk</CODE>
-     */    
+     */
     public Paragraph(Chunk chunk) {
         super(chunk);
     }
-    
+
     /**
      * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>Chunk</CODE>
      * and a certain leading.
      *
      * @param	leading		the leading
      * @param	chunk		a <CODE>Chunk</CODE>
-     */    
+     */
     public Paragraph(float leading, Chunk chunk) {
         super(leading, chunk);
     }
-    
+
     /**
      * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>String</CODE>.
      *
@@ -144,7 +144,7 @@ public class Paragraph extends Phrase {
     public Paragraph(String string) {
         super(string);
     }
-    
+
     /**
      * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>String</CODE>
      * and a certain <CODE>Font</CODE>.
@@ -155,7 +155,7 @@ public class Paragraph extends Phrase {
     public Paragraph(String string, Font font) {
         super(string, font);
     }
-    
+
     /**
      * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>String</CODE>
      * and a certain leading.
@@ -166,7 +166,7 @@ public class Paragraph extends Phrase {
     public Paragraph(float leading, String string) {
         super(leading, string);
     }
-    
+
     /**
      * Constructs a <CODE>Paragraph</CODE> with a certain leading, <CODE>String</CODE>
      * and <CODE>Font</CODE>.
@@ -178,12 +178,12 @@ public class Paragraph extends Phrase {
     public Paragraph(float leading, String string, Font font) {
         super(leading, string, font);
     }
-    
+
     /**
      * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>Phrase</CODE>.
      *
      * @param	phrase		a <CODE>Phrase</CODE>
-     */    
+     */
     public Paragraph(Phrase phrase) {
         super(phrase);
         if (phrase instanceof Paragraph) {
@@ -198,27 +198,29 @@ public class Paragraph extends Phrase {
         	setExtraParagraphSpace(p.getExtraParagraphSpace());
         }
     }
-    
+
     // implementation of the Element-methods
-    
+
     /**
      * Gets the type of the text element.
      *
      * @return	a type
      */
+    @Override
     public int type() {
         return Element.PARAGRAPH;
     }
-    
+
     // methods
-    
+
     /**
-     * Adds an <CODE>Object</CODE> to the <CODE>Paragraph</CODE>.
+     * Adds an <CODE>Element</CODE> to the <CODE>Paragraph</CODE>.
      *
-     * @param	o   object		the object to add.
+     * @param	o the element to add.
      * @return true is adding the object succeeded
      */
-    public boolean add(Object o) {
+    @Override
+    public boolean add(Element o) {
         if (o instanceof List) {
             List list = (List) o;
             list.setIndentationLeft(list.getIndentationLeft() + indentationLeft);
@@ -231,9 +233,9 @@ public class Paragraph extends Phrase {
         }
         else if (o instanceof Paragraph) {
             super.add(o);
-            java.util.List chunks = getChunks();
+            java.util.List<Chunk> chunks = getChunks();
             if (!chunks.isEmpty()) {
-            	Chunk tmp = ((Chunk) chunks.get(chunks.size() - 1));
+            	Chunk tmp = chunks.get(chunks.size() - 1);
             	super.add(new Chunk("\n", tmp.getFont()));
             }
             else {
@@ -243,9 +245,9 @@ public class Paragraph extends Phrase {
         }
         return super.add(o);
     }
-    
+
     // setting the membervariables
-    
+
     /**
      * Sets the alignment of this paragraph.
      *
@@ -254,7 +256,7 @@ public class Paragraph extends Phrase {
     public void setAlignment(int alignment) {
         this.alignment = alignment;
     }
-    
+
     /**
      * Sets the alignment of this paragraph.
      *
@@ -279,15 +281,16 @@ public class Paragraph extends Phrase {
         }
         this.alignment = Element.ALIGN_LEFT;
     }
-    
+
     /**
      * @see com.itextpdf.text.Phrase#setLeading(float)
      */
+    @Override
     public void setLeading(float fixedLeading) {
         this.leading = fixedLeading;
         this.multipliedLeading = 0;
     }
-    
+
     /**
      * Sets the variable leading. The resultant leading will be
      * multipliedLeading*maxFontSize where maxFontSize is the
@@ -298,7 +301,7 @@ public class Paragraph extends Phrase {
         this.leading = 0;
         this.multipliedLeading = multipliedLeading;
     }
-    
+
     /**
      * Sets the leading fixed and variable. The resultant leading will be
      * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
@@ -310,7 +313,7 @@ public class Paragraph extends Phrase {
         this.leading = fixedLeading;
         this.multipliedLeading = multipliedLeading;
     }
-    
+
     /**
      * Sets the indentation of this paragraph on the left side.
      *
@@ -319,7 +322,7 @@ public class Paragraph extends Phrase {
     public void setIndentationLeft(float indentation) {
         this.indentationLeft = indentation;
     }
-    
+
     /**
      * Sets the indentation of this paragraph on the right side.
      *
@@ -328,7 +331,7 @@ public class Paragraph extends Phrase {
     public void setIndentationRight(float indentation) {
         this.indentationRight = indentation;
     }
-    
+
     /**
      * Setter for property firstLineIndent.
      * @param firstLineIndent New value of property firstLineIndent.
@@ -336,7 +339,7 @@ public class Paragraph extends Phrase {
     public void setFirstLineIndent(float firstLineIndent) {
         this.firstLineIndent = firstLineIndent;
     }
-    
+
     /**
      * Sets the spacing before this paragraph.
      *
@@ -345,7 +348,7 @@ public class Paragraph extends Phrase {
     public void setSpacingBefore(float spacing) {
         this.spacingBefore = spacing;
     }
-    
+
     /**
      * Sets the spacing after this paragraph.
      *
@@ -354,7 +357,7 @@ public class Paragraph extends Phrase {
     public void setSpacingAfter(float spacing) {
         this.spacingAfter = spacing;
     }
-    
+
     /**
      * Indicates that the paragraph has to be kept together on one page.
      *
@@ -363,7 +366,7 @@ public class Paragraph extends Phrase {
     public void setKeepTogether(boolean keeptogether) {
         this.keeptogether = keeptogether;
     }
-    
+
     /**
      * Checks if this paragraph has to be kept together on one page.
      *
@@ -383,7 +386,7 @@ public class Paragraph extends Phrase {
     public int getAlignment() {
         return alignment;
     }
-    
+
     /**
      * Gets the variable leading
      * @return the leading
@@ -391,7 +394,7 @@ public class Paragraph extends Phrase {
     public float getMultipliedLeading() {
         return multipliedLeading;
     }
-    
+
     /**
      * Gets the total leading.
      * This method is based on the assumption that the
@@ -426,7 +429,7 @@ public class Paragraph extends Phrase {
     public float getIndentationRight() {
         return indentationRight;
     }
-    
+
     /**
      * Getter for property firstLineIndent.
      * @return Value of property firstLineIndent.
@@ -434,7 +437,7 @@ public class Paragraph extends Phrase {
     public float getFirstLineIndent() {
         return this.firstLineIndent;
     }
-    
+
     /**
      * Gets the spacing before this paragraph.
      * @return	the spacing
@@ -442,8 +445,8 @@ public class Paragraph extends Phrase {
      */
     public float getSpacingBefore() {
     	return spacingBefore;
-    }    
-    
+    }
+
     /**
      * Gets the spacing after this paragraph.
      * @return	the spacing
@@ -451,8 +454,8 @@ public class Paragraph extends Phrase {
      */
     public float getSpacingAfter() {
     	return spacingAfter;
-    }  
-    
+    }
+
     /**
      * Getter for property extraParagraphSpace.
      * @return Value of property extraParagraphSpace.
@@ -460,7 +463,7 @@ public class Paragraph extends Phrase {
     public float getExtraParagraphSpace() {
         return this.extraParagraphSpace;
     }
-    
+
     /**
      * Setter for property extraParagraphSpace.
      * @param extraParagraphSpace New value of property extraParagraphSpace.
@@ -468,9 +471,9 @@ public class Paragraph extends Phrase {
     public void setExtraParagraphSpace(float extraParagraphSpace) {
         this.extraParagraphSpace = extraParagraphSpace;
     }
-    
+
     // scheduled for removal
-    
+
     /**
      * Gets the spacing before this paragraph.
      *
@@ -478,6 +481,7 @@ public class Paragraph extends Phrase {
      * @deprecated As of iText 2.1.5, replaced by {@link #getSpacingBefore()},
      * scheduled for removal at 2.3.0
      */
+    @Deprecated
     public float spacingBefore() {
         return getSpacingBefore();
     }
@@ -489,6 +493,7 @@ public class Paragraph extends Phrase {
      * @deprecated As of iText 2.1.5, replaced by {@link #getSpacingAfter()},
      * scheduled for removal at 2.3.0
      */
+    @Deprecated
     public float spacingAfter() {
         return spacingAfter;
     }

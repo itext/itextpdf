@@ -65,12 +65,12 @@ import com.itextpdf.text.ExceptionConverter;
 public class PdfSmartCopy extends PdfCopy {
 
 	/** the cache with the streams and references. */
-    private HashMap streamMap = null;
+    private HashMap<ByteStore, PdfIndirectReference> streamMap = null;
 
     /** Creates a PdfSmartCopy instance. */
     public PdfSmartCopy(Document document, OutputStream os) throws DocumentException {
         super(document, os);
-        this.streamMap = new HashMap();
+        this.streamMap = new HashMap<ByteStore, PdfIndirectReference>();
     }
     /**
      * Translate a PRIndirectReference to a PdfIndirectReference
@@ -78,12 +78,13 @@ public class PdfSmartCopy extends PdfCopy {
      * referenced object to the output file if it wasn't available
      * in the cache yet. If it's in the cache, the reference to
      * the already used stream is returned.
-     * 
+     *
      * NB: PRIndirectReferences (and PRIndirectObjects) really need to know what
      * file they came from, because each file has its own namespace. The translation
      * we do from their namespace to ours is *at best* heuristic, and guaranteed to
      * fail under some circumstances.
      */
+    @Override
     protected PdfIndirectReference copyIndirect(PRIndirectReference in) throws IOException, BadPdfFormatException {
         PdfObject srcObj = PdfReader.getPdfObjectRelease(in);
         ByteStore streamKey = null;
@@ -91,7 +92,7 @@ public class PdfSmartCopy extends PdfCopy {
         if (srcObj.isStream()) {
             streamKey = new ByteStore((PRStream)srcObj);
             validStream = true;
-            PdfIndirectReference streamRef = (PdfIndirectReference) streamMap.get(streamKey);
+            PdfIndirectReference streamRef = streamMap.get(streamKey);
             if (streamRef != null) {
                 return streamRef;
             }
@@ -99,7 +100,7 @@ public class PdfSmartCopy extends PdfCopy {
 
         PdfIndirectReference theRef;
         RefKey key = new RefKey(in);
-        IndirectReferences iRef = (IndirectReferences) indirects.get(key);
+        IndirectReferences iRef = indirects.get(key);
         if (iRef != null) {
             theRef = iRef.getRef();
             if (iRef.getCopied()) {
@@ -163,7 +164,7 @@ public class PdfSmartCopy extends PdfCopy {
             else
                 bb.append("$L").append(obj.toString());
         }
-        
+
         private void serDic(PdfDictionary dic, int level, ByteBuffer bb) throws IOException {
             bb.append("$D");
             if (level <= 0)
@@ -175,7 +176,7 @@ public class PdfSmartCopy extends PdfCopy {
                 serObject(dic.get((PdfName)keys[k]), level, bb);
             }
         }
-        
+
         private void serArray(PdfArray array, int level, ByteBuffer bb) throws IOException {
             bb.append("$A");
             if (level <= 0)
@@ -184,7 +185,7 @@ public class PdfSmartCopy extends PdfCopy {
                 serObject(array.getPdfObject(k), level, bb);
             }
         }
-        
+
         ByteStore(PRStream str) throws IOException {
             try {
                 md5 = MessageDigest.getInstance("MD5");
@@ -199,6 +200,7 @@ public class PdfSmartCopy extends PdfCopy {
             md5 = null;
         }
 
+        @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof ByteStore))
                 return false;
@@ -207,6 +209,7 @@ public class PdfSmartCopy extends PdfCopy {
             return Arrays.equals(b, ((ByteStore)obj).b);
         }
 
+        @Override
         public int hashCode() {
             if (hash == 0) {
                 int len = b.length;

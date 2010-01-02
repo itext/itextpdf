@@ -46,6 +46,7 @@ package com.itextpdf.text;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
@@ -74,7 +75,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Section extends ArrayList implements TextElementArray, LargeElement {
+public class Section extends ArrayList<Element> implements TextElementArray, LargeElement {
     // constant
 	/**
 	 * A possible number style. The default number style: "1.2.3."
@@ -86,76 +87,76 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 	 * @since	iText 2.0.8
 	 */
 	public static final int NUMBERSTYLE_DOTTED_WITHOUT_FINAL_DOT = 1;
-	
+
 	/** A serial version uid. */
 	private static final long serialVersionUID = 3324172577544748043L;
 
 	// member variables
-	
+
 	/** The title of this section. */
     protected Paragraph title;
-    
+
     /** The bookmark title if different from the content title */
     protected String bookmarkTitle;
 
     /** The number of sectionnumbers that has to be shown before the section title. */
     protected int numberDepth;
-    
+
     /**
      * The style for sectionnumbers.
      * @since	iText 2.0.8
      */
     protected int numberStyle = NUMBERSTYLE_DOTTED;
-    
+
     /** The indentation of this section on the left side. */
     protected float indentationLeft;
-    
+
     /** The indentation of this section on the right side. */
     protected float indentationRight;
-    
+
     /** The additional indentation of the content of this section. */
     protected float indentation;
-    
+
     /** false if the bookmark children are not visible */
     protected boolean bookmarkOpen = true;
-    
+
     /** true if the section has to trigger a new page */
     protected boolean triggerNewPage = false;
-    
+
     /** This is the number of subsections. */
     protected int subsections = 0;
-    
+
     /** This is the complete list of sectionnumbers of this section and the parents of this section. */
-    protected ArrayList numbers = null;
-    
+    protected ArrayList<Integer> numbers = null;
+
     /**
      * Indicates if the Section will be complete once added to the document.
      * @since	iText 2.0.8
      */
     protected boolean complete = true;
-    
+
     /**
      * Indicates if the Section was added completely to the document.
      * @since	iText 2.0.8
      */
     protected boolean addedCompletely = false;
-    
+
     /**
      * Indicates if this is the first time the section was added.
      * @since	iText 2.0.8
      */
     protected boolean notAddedYet = true;
-    
+
     // constructors
-    
+
     /**
      * Constructs a new <CODE>Section</CODE>.
-     */    
+     */
     protected Section() {
         title = new Paragraph();
         numberDepth = 1;
     }
-    
+
     /**
      * Constructs a new <CODE>Section</CODE>.
      *
@@ -166,9 +167,9 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
         this.numberDepth = numberDepth;
         this.title = title;
     }
-    
+
     // implementation of the Element-methods
-    
+
     /**
      * Processes the element by adding it (or the different parts) to an
      * <CODE>ElementListener</CODE>.
@@ -179,8 +180,8 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public boolean process(ElementListener listener) {
         try {
         	Element element;
-            for (Iterator i = iterator(); i.hasNext(); ) {
-            	element = (Element)i.next();
+            for (Object element2 : this) {
+            	element = (Element)element2;
                 listener.add(element);
             }
             return true;
@@ -189,16 +190,16 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
             return false;
         }
     }
-    
+
     /**
      * Gets the type of the text element.
      *
      * @return	a type
-     */    
+     */
     public int type() {
         return Element.SECTION;
     }
-    
+
     /**
      * Checks if this object is a <CODE>Chapter</CODE>.
      *
@@ -208,7 +209,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public boolean isChapter() {
         return type() == Element.CHAPTER;
     }
-    
+
     /**
      * Checks if this object is a <CODE>Section</CODE>.
      *
@@ -218,20 +219,20 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public boolean isSection() {
         return type() == Element.SECTION;
     }
-    
+
     /**
      * Gets all the chunks in this element.
      *
      * @return	an <CODE>ArrayList</CODE>
      */
-    public ArrayList getChunks() {
-        ArrayList tmp = new ArrayList();
-        for (Iterator i = iterator(); i.hasNext(); ) {
-            tmp.addAll(((Element) i.next()).getChunks());
+    public ArrayList<Chunk> getChunks() {
+        ArrayList<Chunk> tmp = new ArrayList<Chunk>();
+        for (Object element : this) {
+            tmp.addAll(((Element) element).getChunks());
         }
         return tmp;
     }
-	
+
 	/**
 	 * @see com.itextpdf.text.Element#isContent()
 	 * @since	iText 2.0.8
@@ -247,23 +248,24 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 	public boolean isNestable() {
 		return false;
 	}
-    
+
     // overriding some of the ArrayList-methods
-    
+
     /**
      * Adds a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
      * to this <CODE>Section</CODE>.
      *
      * @param	index	index at which the specified element is to be inserted
-     * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>=
+     * @param	element   	an element of type <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>=
      * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
+     * @since 5.0.1 (signature changed to use Element)
      */
-    public void add(int index, Object o) {
+    @Override
+    public void add(int index, Element element) {
     	if (isAddedCompletely()) {
     		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
         try {
-            Element element = (Element) o;
             if (element.isNestable()) {
                 super.add(index, element);
             }
@@ -275,34 +277,35 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
             throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
-    
+
     /**
      * Adds a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
      * to this <CODE>Section</CODE>.
      *
-     * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
+     * @param	element   an element of type <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
      * @return	a boolean
      * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or <CODE>Section</CODE>
+     * @since 5.0.1 (signature changed to use Element)
      */
-    public boolean add(Object o) {
+    @Override
+    public boolean add(Element element) {
     	if (isAddedCompletely()) {
     		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
         try {
-            Element element = (Element) o;
             if (element.type() == Element.SECTION) {
-                Section section = (Section) o;
+                Section section = (Section) element;
                 section.setNumbers(++subsections, numbers);
                 return super.add(section);
             }
-            else if (o instanceof MarkedSection && ((MarkedObject)o).element.type() == Element.SECTION) {
-            	MarkedSection mo = (MarkedSection)o;
+            else if (element instanceof MarkedSection && ((MarkedObject)element).element.type() == Element.SECTION) {
+            	MarkedSection mo = (MarkedSection)element;
             	Section section = (Section)mo.element;
             	section.setNumbers(++subsections, numbers);
             	return super.add(mo);
             }
             else if (element.isNestable()) {
-            	return super.add(o);
+            	return super.add(element);
             }
             else {
                 throw new ClassCastException(MessageLocalization.getComposedMessage("you.can.t.add.a.1.to.a.section", element.getClass().getName()));
@@ -312,7 +315,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
             throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
-    
+
     /**
      * Adds a collection of <CODE>Element</CODE>s
      * to this <CODE>Section</CODE>.
@@ -321,15 +324,16 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
      * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
      * @throws	ClassCastException if one of the objects isn't a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE>
      */
-    public boolean addAll(Collection collection) {
-        for (Iterator iterator = collection.iterator(); iterator.hasNext(); ) {
-            this.add(iterator.next());
+    @Override
+    public boolean addAll(Collection<? extends Element> collection) {
+        for (Element element : collection) {
+            this.add(element);
         }
         return true;
     }
-    
+
     // methods that return a Section
-    
+
     /**
      * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
      *
@@ -347,7 +351,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
         add(section);
         return section;
     }
-    
+
     /**
      * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
      *
@@ -358,7 +362,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public Section addSection(float indentation, Paragraph title) {
         return addSection(indentation, title, numberDepth + 1);
     }
-    
+
     /**
      * Creates a <CODE>Section</CODE>, add it to this <CODE>Section</CODE> and returns it.
      *
@@ -369,7 +373,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public Section addSection(Paragraph title, int numberDepth) {
         return addSection(0, title, numberDepth);
     }
-    
+
     /**
      * Adds a marked section. For use in class MarkedSection only!
      */
@@ -378,7 +382,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     	add(section);
     	return section;
     }
-    
+
     /**
      * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
      *
@@ -388,7 +392,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public Section addSection(Paragraph title) {
         return addSection(0, title, numberDepth + 1);
     }
-    
+
     /**
      * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
      *
@@ -400,7 +404,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public Section addSection(float indentation, String title, int numberDepth) {
         return addSection(indentation, new Paragraph(title), numberDepth);
     }
-    
+
     /**
      * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
      *
@@ -411,7 +415,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public Section addSection(String title, int numberDepth) {
         return addSection(new Paragraph(title), numberDepth);
     }
-    
+
     /**
      * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
      *
@@ -422,7 +426,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public Section addSection(float indentation, String title) {
         return addSection(indentation, new Paragraph(title));
     }
-    
+
     /**
      * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
      *
@@ -432,9 +436,9 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public Section addSection(String title) {
         return addSection(new Paragraph(title));
     }
-    
+
     // public methods
-    
+
     /**
      * Sets the title of this section.
      *
@@ -452,7 +456,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public Paragraph getTitle() {
         return constructTitle(title, numbers, numberDepth, numberStyle);
     }
-    
+
     /**
      * Constructs a Paragraph that will be used as title for a Section or Chapter.
      * @param	title	the title of the section
@@ -462,7 +466,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
      * @return	a Paragraph object
 	 * @since	iText 2.0.8
      */
-    public static Paragraph constructTitle(Paragraph title, ArrayList numbers, int numberDepth, int numberStyle) {
+    public static Paragraph constructTitle(Paragraph title, ArrayList<Integer> numbers, int numberDepth, int numberStyle) {
     	if (title == null) {
     		return null;
     	}
@@ -474,7 +478,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
         StringBuffer buf = new StringBuffer(" ");
         for (int i = 0; i < depth; i++) {
             buf.insert(0, ".");
-            buf.insert(0, ((Integer) numbers.get(i)).intValue());
+            buf.insert(0, numbers.get(i).intValue());
         }
         if (numberStyle == NUMBERSTYLE_DOTTED_WITHOUT_FINAL_DOT) {
         	buf.deleteCharAt(buf.length() - 2);
@@ -483,7 +487,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
         result.add(0, new Chunk(buf.toString(), title.getFont()));
         return result;
     }
-    
+
     /**
      * Sets the depth of the sectionnumbers that will be shown preceding the title.
      * <P>
@@ -496,7 +500,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public void setNumberDepth(int numberDepth) {
         this.numberDepth = numberDepth;
     }
-    
+
 	/**
      * Returns the numberdepth of this <CODE>Section</CODE>.
      *
@@ -515,7 +519,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 	public void setNumberStyle(int numberStyle) {
 		this.numberStyle = numberStyle;
 	}
-	
+
 	/**
 	 * Gets the style used for numbering sections.
 	 * @since	iText 2.0.8
@@ -524,7 +528,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 	public int getNumberStyle() {
 		return numberStyle;
 	}
-    
+
     /**
      * Sets the indentation of this <CODE>Section</CODE> on the left side.
      *
@@ -542,7 +546,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public float getIndentationLeft() {
         return indentationLeft;
     }
-    
+
     /**
      * Sets the indentation of this <CODE>Section</CODE> on the right side.
      *
@@ -560,7 +564,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public float getIndentationRight() {
         return indentationRight;
     }
-    
+
     /**
      * Sets the indentation of the content of this <CODE>Section</CODE>.
      *
@@ -578,7 +582,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public float getIndentation() {
         return indentation;
     }
-    
+
     /** Setter for property bookmarkOpen.
      * @param bookmarkOpen false if the bookmark children are not
      * visible.
@@ -586,7 +590,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public void setBookmarkOpen(boolean bookmarkOpen) {
         this.bookmarkOpen = bookmarkOpen;
     }
-    
+
     /**
      * Getter for property bookmarkOpen.
      * @return Value of property bookmarkOpen.
@@ -594,7 +598,7 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public boolean isBookmarkOpen() {
         return bookmarkOpen;
     }
-    
+
     /**
      * Setter for property triggerNewPage.
      * @param triggerNewPage true if a new page has to be triggered.
@@ -610,12 +614,12 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public boolean isTriggerNewPage() {
 		return triggerNewPage && notAddedYet;
 	}
-    
+
     /**
      * Sets the bookmark title. The bookmark title is the same as the section title but
      * can be changed with this method.
      * @param bookmarkTitle the bookmark title
-     */    
+     */
     public void setBookmarkTitle(String bookmarkTitle) {
         this.bookmarkTitle = bookmarkTitle;
     }
@@ -623,21 +627,21 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 	/**
      * Gets the bookmark title.
      * @return the bookmark title
-     */    
+     */
     public Paragraph getBookmarkTitle() {
         if (bookmarkTitle == null)
             return getTitle();
         else
             return new Paragraph(bookmarkTitle);
     }
-    
+
     /**
      * Changes the Chapter number.
      */
     public void setChapterNumber(int number) {
     	numbers.set(numbers.size() - 1, new Integer(number));
     	Object s;
-    	for (Iterator i = iterator(); i.hasNext(); ) {
+    	for (Iterator<Element> i = iterator(); i.hasNext(); ) {
     		s = i.next();
     		if (s instanceof Section) {
     			((Section)s).setChapterNumber(number);
@@ -653,17 +657,17 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
     public int getDepth() {
         return numbers.size();
     }
-    
+
     // private methods
-    
+
     /**
      * Sets the number of this section.
      *
      * @param	number		the number of this section
-     * @param	numbers		an <CODE>ArrayList</CODE>, containing the numbers of the Parent
+     * @param	numbers		an <CODE>ArrayList<Integer></CODE>, containing the numbers of the Parent
      */
-    private void setNumbers(int number, ArrayList numbers) {
-        this.numbers = new ArrayList();
+    private void setNumbers(int number, ArrayList<Integer> numbers) {
+        this.numbers = new ArrayList<Integer>();
         this.numbers.add(new Integer(number));
         this.numbers.addAll(numbers);
     }
@@ -686,21 +690,21 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 	public void setNotAddedYet(boolean notAddedYet) {
 		this.notAddedYet = notAddedYet;
 	}
-    
+
     /**
      * @since	iText 2.0.8
      */
     protected boolean isAddedCompletely() {
 		return addedCompletely;
 	}
-    
+
 	/**
      * @since	iText 2.0.8
 	 */
 	protected void setAddedCompletely(boolean addedCompletely) {
 		this.addedCompletely = addedCompletely;
 	}
-	
+
 	/**
 	 * @since	iText 2.0.8
 	 * @see com.itextpdf.text.LargeElement#flushContent()
@@ -709,8 +713,8 @@ public class Section extends ArrayList implements TextElementArray, LargeElement
 		setNotAddedYet(false);
 		title = null;
 		Element element;
-		for (Iterator i = iterator(); i.hasNext(); ) {
-			element = (Element)i.next();
+		for (Iterator<Element> i = iterator(); i.hasNext(); ) {
+			element = i.next();
 			if (element instanceof Section) {
 				Section s = (Section)element;
 				if (!s.isComplete() && size() == 1) {

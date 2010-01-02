@@ -65,12 +65,12 @@ public class VerticalPositionMark implements DrawInterface, Element {
 
     /** The offset for the line. */
     protected float offset = 0;
-	
+
 	/**
 	 * Creates a vertical position mark that won't draw anything unless
 	 * you define a DrawInterface.
 	 */
-	public VerticalPositionMark() {	
+	public VerticalPositionMark() {
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class VerticalPositionMark implements DrawInterface, Element {
 		this.drawInterface = drawInterface;
 		this.offset = offset;
 	}
-	
+
 	/**
 	 * @see com.itextpdf.text.pdf.draw.DrawInterface#draw(com.itextpdf.text.pdf.PdfContentByte, float, float, float, float, float)
 	 */
@@ -92,7 +92,7 @@ public class VerticalPositionMark implements DrawInterface, Element {
 			drawInterface.draw(canvas, llx, lly, urx, ury, y + offset);
 		}
 	}
-	
+
     /**
      * @see com.itextpdf.text.Element#process(com.itextpdf.text.ElementListener)
      */
@@ -128,8 +128,8 @@ public class VerticalPositionMark implements DrawInterface, Element {
     /**
      * @see com.itextpdf.text.Element#getChunks()
      */
-    public ArrayList getChunks() {
-    	ArrayList list = new ArrayList();
+    public ArrayList<Chunk> getChunks() {
+    	ArrayList<Chunk> list = new ArrayList<Chunk>();
     	list.add(new Chunk(this, true));
         return list;
     }

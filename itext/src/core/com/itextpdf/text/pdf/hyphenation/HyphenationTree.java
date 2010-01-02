@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,7 @@
  */
 
 /* $Id$ */
- 
+
 package com.itextpdf.text.pdf.hyphenation;
 
 import java.io.InputStream;
@@ -29,7 +29,7 @@ import java.util.HashMap;
  *
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
-public class HyphenationTree extends TernaryTree 
+public class HyphenationTree extends TernaryTree
             implements PatternConsumer {
 
     private static final long serialVersionUID = -7763254239309429432L;
@@ -42,7 +42,7 @@ public class HyphenationTree extends TernaryTree
     /**
      * This map stores hyphenation exceptions
      */
-    protected HashMap stoplist;
+    protected HashMap<String, ArrayList<Object>> stoplist;
 
     /**
      * This map stores the character classes
@@ -55,7 +55,7 @@ public class HyphenationTree extends TernaryTree
     private transient TernaryTree ivalues;
 
     public HyphenationTree() {
-        stoplist = new HashMap(23);    // usually a small table
+        stoplist = new HashMap<String, ArrayList<Object>>(23);    // usually a small table
         classmap = new TernaryTree();
         vspace = new ByteVector();
         vspace.alloc(1);    // this reserves index 0, which we don't use
@@ -77,7 +77,7 @@ public class HyphenationTree extends TernaryTree
         byte[] va = vspace.getArray();
         for (i = 0; i < n; i++) {
             int j = i >> 1;
-            byte v = (byte)((values.charAt(i) - '0' + 1) & 0x0f);
+            byte v = (byte)(values.charAt(i) - '0' + 1 & 0x0f);
             if ((i & 1) == 1) {
                 va[j + offset] = (byte)(va[j + offset] | v);
             } else {
@@ -203,9 +203,9 @@ public class HyphenationTree extends TernaryTree
                 if (hstrcmp(word, i, kv.getArray(), lo[p]) == 0) {
                     values = getValues(eq[p]);    // data pointer is in eq[]
                     int j = index;
-                    for (int k = 0; k < values.length; k++) {
-                        if (j < il.length && values[k] > il[j]) {
-                            il[j] = values[k];
+                    for (byte value : values) {
+                        if (j < il.length && value > il[j]) {
+                            il[j] = value;
                         }
                         j++;
                     }
@@ -230,9 +230,9 @@ public class HyphenationTree extends TernaryTree
                     if (sc[q] == 0) {
                         values = getValues(eq[q]);
                         int j = index;
-                        for (int k = 0; k < values.length; k++) {
-                            if (j < il.length && values[k] > il[j]) {
-                                il[j] = values[k];
+                        for (byte value : values) {
+                            if (j < il.length && value > il[j]) {
+                                il[j] = value;
                             }
                             j++;
                         }
@@ -318,7 +318,7 @@ public class HyphenationTree extends TernaryTree
             c[0] = w[offset + i - 1];
             int nc = classmap.find(c, 0);
             if (nc < 0) {    // found a non-letter character ...
-                if (i == (1 + iIgnoreAtBeginning)) {
+                if (i == 1 + iIgnoreAtBeginning) {
                     // ... before any letter character
                     iIgnoreAtBeginning ++;
                 } else {
@@ -335,7 +335,7 @@ public class HyphenationTree extends TernaryTree
             }
         }
         len = iLength;
-        if (len < (remainCharCount + pushCharCount)) {
+        if (len < remainCharCount + pushCharCount) {
             // word is too short to be hyphenated
             return null;
         }
@@ -346,7 +346,7 @@ public class HyphenationTree extends TernaryTree
         String sw = new String(word, 1, len);
         if (stoplist.containsKey(sw)) {
             // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no = null)
-            ArrayList hw = (ArrayList)stoplist.get(sw);
+            ArrayList<Object> hw = stoplist.get(sw);
             int j = 0;
             for (i = 0; i < hw.size(); i++) {
                 Object o = hw.get(i);
@@ -354,7 +354,7 @@ public class HyphenationTree extends TernaryTree
                 // result[k] = corresponding index(w)
                 if (o instanceof String) {
                     j += ((String)o).length();
-                    if (j >= remainCharCount && j < (len - pushCharCount)) {
+                    if (j >= remainCharCount && j < len - pushCharCount) {
                         result[k++] = j + iIgnoreAtBeginning;
                     }
                 }
@@ -374,8 +374,8 @@ public class HyphenationTree extends TernaryTree
             // i + 1 is index(word),
             // result[k] = corresponding index(w)
             for (i = 0; i < len; i++) {
-                if (((il[i + 1] & 1) == 1) && i >= remainCharCount
-                        && i <= (len - pushCharCount)) {
+                if ((il[i + 1] & 1) == 1 && i >= remainCharCount
+                        && i <= len - pushCharCount) {
                     result[k++] = i + iIgnoreAtBeginning;
                 }
             }
@@ -424,7 +424,7 @@ public class HyphenationTree extends TernaryTree
      * @param hyphenatedword a vector of alternating strings and
      * {@link Hyphen hyphen} objects.
      */
-    public void addException(String word, ArrayList hyphenatedword) {
+    public void addException(String word, ArrayList<Object> hyphenatedword) {
         stoplist.put(word, hyphenatedword);
     }
 
@@ -447,6 +447,7 @@ public class HyphenationTree extends TernaryTree
         insert(pattern, (char)k);
     }
 
+    @Override
     public void printStats() {
         System.out.println("Value space size = "
                            + Integer.toString(vspace.length()));

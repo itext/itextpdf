@@ -51,9 +51,9 @@ import java.util.StringTokenizer;
 import com.itextpdf.text.pdf.fonts.FontsResourceAnchor;
 
 public class GlyphList {
-    private static HashMap unicode2names = new HashMap();
-    private static HashMap names2unicode = new HashMap();
-        
+    private static HashMap<Integer, String> unicode2names = new HashMap<Integer, String>();
+    private static HashMap<String, int[]> names2unicode = new HashMap<String, int[]>();
+
     static {
         InputStream is = null;
         try {
@@ -106,12 +106,12 @@ public class GlyphList {
             }
         }
     }
-    
+
     public static int[] nameToUnicode(String name) {
-        return (int[])names2unicode.get(name);
+        return names2unicode.get(name);
     }
-    
+
     public static String unicodeToName(int num) {
-        return (String)unicode2names.get(new Integer(num));
+        return unicode2names.get(new Integer(num));
     }
 }

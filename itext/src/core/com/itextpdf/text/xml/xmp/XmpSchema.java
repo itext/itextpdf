@@ -55,8 +55,8 @@ public abstract class XmpSchema extends Properties {
 
 	/** the namesspace */
 	protected String xmlns;
-	
-	/** Constructs an XMP schema. 
+
+	/** Constructs an XMP schema.
 	 * @param xmlns
 	 */
 	public XmpSchema(String xmlns) {
@@ -67,9 +67,10 @@ public abstract class XmpSchema extends Properties {
 	 * The String representation of the contents.
 	 * @return a String representation.
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		StringBuffer buf = new StringBuffer();
-		for (Enumeration e = this.propertyNames(); e.hasMoreElements(); ) {
+		for (Enumeration<?> e = this.propertyNames(); e.hasMoreElements(); ) {
 			process(buf, e.nextElement());
 		}
 		return buf.toString();
@@ -93,8 +94,8 @@ public abstract class XmpSchema extends Properties {
 	 */
 	public String getXmlns() {
 		return xmlns;
-	}	
-	
+	}
+
 	/**
 	 * @param key
 	 * @param value
@@ -103,17 +104,18 @@ public abstract class XmpSchema extends Properties {
 	public Object addProperty(String key, String value) {
 		return this.setProperty(key, value);
 	}
-	
+
 	/**
 	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
 	 */
-	public Object setProperty(String key, String value) {
+	@Override
+    public Object setProperty(String key, String value) {
 		return super.setProperty(key, escape(value));
 	}
-	
+
 	/**
 	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 * @return the previous property (null if there wasn't one)
@@ -121,10 +123,10 @@ public abstract class XmpSchema extends Properties {
 	public Object setProperty(String key, XmpArray value) {
 		return super.setProperty(key, value.toString());
 	}
-	
+
 	/**
 	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 * @return the previous property (null if there wasn't one)
@@ -132,7 +134,7 @@ public abstract class XmpSchema extends Properties {
 	public Object setProperty(String key, LangAlt value) {
 		return super.setProperty(key, value.toString());
 	 }
-	
+
 	/**
 	 * @param content
 	 * @return an escaped string

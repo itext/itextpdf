@@ -50,9 +50,9 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
@@ -68,28 +68,28 @@ class CJKFont extends BaseFont {
     private static final int BRACKET = 1;
     private static final int SERIAL = 2;
     private static final int V1Y = 880;
-        
+
     static Properties cjkFonts = new Properties();
     static Properties cjkEncodings = new Properties();
-    static Hashtable allCMaps = new Hashtable();
-    static Hashtable allFonts = new Hashtable();
+    static Hashtable<String, char[]> allCMaps = new Hashtable<String, char[]>();
+    static Hashtable<String, HashMap<String, Object>> allFonts = new Hashtable<String, HashMap<String, Object>>();
     private static boolean propertiesLoaded = false;
-    
+
     /** The font name */
     private String fontName;
     /** The style modifier */
     private String style = "";
     /** The CMap name associated with this font */
     private String CMap;
-    
+
     private boolean cidDirect = false;
-    
+
     private char[] translationMap;
     private IntHashtable vMetrics;
     private IntHashtable hMetrics;
-    private HashMap fontDesc;
+    private HashMap<String, Object> fontDesc;
     private boolean vertical = false;
-    
+
     private static void loadProperties() {
         if (propertiesLoaded)
             return;
@@ -111,7 +111,7 @@ class CJKFont extends BaseFont {
             propertiesLoaded = true;
         }
     }
-    
+
     /** Creates a CJK font.
      * @param fontName the name of the font
      * @param enc the encoding of the font
@@ -136,7 +136,7 @@ class CJKFont extends BaseFont {
             cidDirect = true;
             String s = cjkFonts.getProperty(fontName);
             s = s.substring(0, s.indexOf('_'));
-            char c[] = (char[])allCMaps.get(s);
+            char c[] = allCMaps.get(s);
             if (c == null) {
                 c = readCMap(s);
                 if (c == null)
@@ -147,14 +147,14 @@ class CJKFont extends BaseFont {
             translationMap = c;
         }
         else {
-            char c[] = (char[])allCMaps.get(enc);
+            char c[] = allCMaps.get(enc);
             if (c == null) {
                 String s = cjkEncodings.getProperty(enc);
                 if (s == null)
                     throw new DocumentException(MessageLocalization.getComposedMessage("the.resource.cjkencodings.properties.does.not.contain.the.encoding.1", enc));
                 StringTokenizer tk = new StringTokenizer(s);
                 String nt = tk.nextToken();
-                c = (char[])allCMaps.get(nt);
+                c = allCMaps.get(nt);
                 if (c == null) {
                     c = readCMap(nt);
                     allCMaps.put(nt, c);
@@ -172,7 +172,7 @@ class CJKFont extends BaseFont {
             }
             translationMap = c;
         }
-        fontDesc = (HashMap)allFonts.get(fontName);
+        fontDesc = allFonts.get(fontName);
         if (fontDesc == null) {
             fontDesc = readFontProperties(fontName);
             allFonts.put(fontName, fontDesc);
@@ -180,7 +180,7 @@ class CJKFont extends BaseFont {
         hMetrics = (IntHashtable)fontDesc.get("W");
         vMetrics = (IntHashtable)fontDesc.get("W2");
     }
-    
+
     /** Checks if its a valid CJK font.
      * @param fontName the font name
      * @param enc the encoding
@@ -189,14 +189,15 @@ class CJKFont extends BaseFont {
     public static boolean isCJKFont(String fontName, String enc) {
         loadProperties();
         String encodings = cjkFonts.getProperty(fontName);
-        return (encodings != null && (enc.equals("Identity-H") || enc.equals("Identity-V") || encodings.indexOf("_" + enc + "_") >= 0));
+        return encodings != null && (enc.equals("Identity-H") || enc.equals("Identity-V") || encodings.indexOf("_" + enc + "_") >= 0);
     }
-        
+
     /**
      * Gets the width of a <CODE>char</CODE> in normalized 1000 units.
      * @param char1 the unicode <CODE>char</CODE> to get the width of
      * @return the width in normalized 1000 units
      */
+    @Override
     public int getWidth(int char1) {
         int c = char1;
         if (!cidDirect)
@@ -211,7 +212,8 @@ class CJKFont extends BaseFont {
         else
             return 1000;
     }
-    
+
+    @Override
     public int getWidth(String text) {
         int total = 0;
         for (int k = 0; k < text.length(); ++k) {
@@ -230,11 +232,13 @@ class CJKFont extends BaseFont {
         }
         return total;
     }
-    
+
+    @Override
     int getRawWidth(int c, String name) {
         return 0;
     }
-  
+
+    @Override
     public int getKerning(int char1, int char2) {
         return 0;
     }
@@ -254,7 +258,7 @@ class CJKFont extends BaseFont {
         dic.put(PdfName.STYLE, pdic);
         return dic;
     }
-    
+
     private PdfDictionary getCIDFont(PdfIndirectReference fontDescriptor, IntHashtable cjkTag) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, PdfName.CIDFONTTYPE0);
@@ -278,7 +282,7 @@ class CJKFont extends BaseFont {
         dic.put(PdfName.CIDSYSTEMINFO, cdic);
         return dic;
     }
-    
+
     private PdfDictionary getFontBaseType(PdfIndirectReference CIDFont) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, PdfName.TYPE0);
@@ -291,7 +295,8 @@ class CJKFont extends BaseFont {
         dic.put(PdfName.DESCENDANTFONTS, new PdfArray(CIDFont));
         return dic;
     }
-    
+
+    @Override
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException {
         IntHashtable cjkTag = (IntHashtable)params[0];
         PdfIndirectReference ind_font = null;
@@ -317,14 +322,15 @@ class CJKFont extends BaseFont {
    	 * @return	null
      * @since	2.1.3
      */
+    @Override
     public PdfStream getFullFontStream() {
     	return null;
     }
-    
+
     private float getDescNumber(String name) {
         return Integer.parseInt((String)fontDesc.get(name));
     }
-    
+
     private float getBBox(int idx) {
         String s = (String)fontDesc.get("FontBBox");
         StringTokenizer tk = new StringTokenizer(s, " []\r\n\t\f");
@@ -333,7 +339,7 @@ class CJKFont extends BaseFont {
             ret = tk.nextToken();
         return Integer.parseInt(ret);
     }
-    
+
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
      * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
      * and <CODE>ITALICANGLE</CODE>.
@@ -341,6 +347,7 @@ class CJKFont extends BaseFont {
      * @param fontSize the font size in points
      * @return the parameter in points
      */
+    @Override
     public float getFontDescriptor(int key, float fontSize) {
         switch (key) {
             case AWT_ASCENT:
@@ -368,11 +375,12 @@ class CJKFont extends BaseFont {
         }
         return 0;
     }
-    
+
+    @Override
     public String getPostscriptFontName() {
         return fontName;
     }
-    
+
     /** Gets the full name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -381,10 +389,11 @@ class CJKFont extends BaseFont {
      * font name}.
      * @return the full name of the font
      */
+    @Override
     public String[][] getFullFontName() {
         return new String[][]{{"", "", "", fontName}};
     }
-    
+
     /** Gets all the entries of the names-table. If it is a True Type font
      * each array element will have {Name ID, Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -393,10 +402,11 @@ class CJKFont extends BaseFont {
      * font name}.
      * @return the full name of the font
      */
+    @Override
     public String[][] getAllNameEntries() {
         return new String[][]{{"4", "", "", "", fontName}};
     }
-    
+
     /** Gets the family name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -405,10 +415,11 @@ class CJKFont extends BaseFont {
      * font name}.
      * @return the family name of the font
      */
+    @Override
     public String[][] getFamilyFontName() {
         return getFullFontName();
     }
-    
+
     static char[] readCMap(String name) {
         try {
             name = name + ".cmap";
@@ -424,7 +435,7 @@ class CJKFont extends BaseFont {
         }
         return null;
     }
-    
+
     static IntHashtable createMetric(String s) {
         IntHashtable h = new IntHashtable();
         StringTokenizer tk = new StringTokenizer(s);
@@ -434,7 +445,7 @@ class CJKFont extends BaseFont {
         }
         return h;
     }
-    
+
     static String convertToHCIDMetrics(int keys[], IntHashtable h) {
         if (keys.length == 0)
             return null;
@@ -515,7 +526,7 @@ class CJKFont extends BaseFont {
         }
         return buf.toString();
     }
-    
+
     static String convertToVCIDMetrics(int keys[], IntHashtable v, IntHashtable h) {
         if (keys.length == 0)
             return null;
@@ -574,8 +585,8 @@ class CJKFont extends BaseFont {
         buf.append(' ').append(lastCid).append(' ').append(-lastValue).append(' ').append(lastHValue / 2).append(' ').append(V1Y).append(" ]");
         return buf.toString();
     }
-    
-    static HashMap readFontProperties(String name) {
+
+    static HashMap<String, Object> readFontProperties(String name) {
         try {
             name += ".properties";
             InputStream is = getResourceStream(RESOURCE_PATH + name);
@@ -586,10 +597,10 @@ class CJKFont extends BaseFont {
             p.remove("W");
             IntHashtable W2 = createMetric(p.getProperty("W2"));
             p.remove("W2");
-            HashMap map = new HashMap();
-            for (Enumeration e = p.keys(); e.hasMoreElements();) {
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            for (Enumeration<Object> e = p.keys(); e.hasMoreElements();) {
                 Object obj = e.nextElement();
-                map.put(obj, p.getProperty((String)obj));
+                map.put((String)obj, p.getProperty((String)obj));
             }
             map.put("W", W);
             map.put("W2", W2);
@@ -601,35 +612,39 @@ class CJKFont extends BaseFont {
         return null;
     }
 
+    @Override
     public int getUnicodeEquivalent(int c) {
         if (cidDirect)
             return translationMap[c];
         return c;
     }
-    
+
+    @Override
     public int getCidCode(int c) {
         if (cidDirect)
             return c;
         return translationMap[c];
     }
-    
+
     /** Checks if the font has any kerning pairs.
      * @return always <CODE>false</CODE>
-     */    
+     */
+    @Override
     public boolean hasKernPairs() {
         return false;
     }
-    
+
     /**
      * Checks if a character exists in this font.
      * @param c the character to check
      * @return <CODE>true</CODE> if the character has a glyph,
      * <CODE>false</CODE> otherwise
      */
+    @Override
     public boolean charExists(int c) {
         return translationMap[c] != 0;
     }
-    
+
     /**
      * Sets the character advance.
      * @param c the character
@@ -637,27 +652,32 @@ class CJKFont extends BaseFont {
      * @return <CODE>true</CODE> if the advance was set,
      * <CODE>false</CODE> otherwise. Will always return <CODE>false</CODE>
      */
+    @Override
     public boolean setCharAdvance(int c, int advance) {
         return false;
     }
-    
+
     /**
      * Sets the font name that will appear in the pdf font dictionary.
      * Use with care as it can easily make a font unreadable if not embedded.
      * @param name the new font name
-     */    
+     */
+    @Override
     public void setPostscriptFontName(String name) {
         fontName = name;
-    }   
-    
+    }
+
+    @Override
     public boolean setKerning(int char1, int char2, int kern) {
         return false;
     }
-    
+
+    @Override
     public int[] getCharBBox(int c) {
         return null;
     }
-    
+
+    @Override
     protected int[] getRawCharBBox(int c, String name) {
         return null;
     }

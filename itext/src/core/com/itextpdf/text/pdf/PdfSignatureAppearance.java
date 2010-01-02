@@ -58,9 +58,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
@@ -71,6 +69,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * This class takes care of the cryptographic options and appearances that form a signature.
@@ -117,13 +116,13 @@ public class PdfSignatureAppearance {
     public static final int CERTIFIED_NO_CHANGES_ALLOWED = 1;
     public static final int CERTIFIED_FORM_FILLING = 2;
     public static final int CERTIFIED_FORM_FILLING_AND_ANNOTATIONS = 3;
-    
+
     private static final float TOP_SECTION = 0.3f;
     private static final float MARGIN = 2;
     private Rectangle rect;
     private Rectangle pageRect;
     private PdfTemplate app[] = new PdfTemplate[5];
-    private PdfTemplate frm; 
+    private PdfTemplate frm;
     private PdfStamperImp writer;
     private String layer2Text;
     private String reason;
@@ -151,21 +150,21 @@ public class PdfSignatureAppearance {
     private byte externalDigest[];
     private byte externalRSAdata[];
     private String digestEncryptionAlgorithm;
-    private HashMap exclusionLocations;
-        
+    private HashMap<PdfName, PdfLiteral> exclusionLocations;
+
     PdfSignatureAppearance(PdfStamperImp writer) {
         this.writer = writer;
         signDate = new GregorianCalendar();
         fieldName = getNewSigName();
     }
-    
+
     private RenderingMode renderingMode = RenderingMode.DESCRIPTION;
 
     /**
     * Gets the rendering mode for this signature.
     * @return the rendering mode for this signature
     * @since 5.0.1
-    */    
+    */
     public RenderingMode getRenderingMode() {
         return renderingMode;
     }
@@ -174,7 +173,7 @@ public class PdfSignatureAppearance {
      * Sets the rendering mode for this signature.
      * @param renderingMode the rendering mode
      * @since 5.0.1
-     */    
+     */
     public void setRenderingMode(RenderingMode renderingMode) {
         this.renderingMode = renderingMode;
     }
@@ -184,7 +183,7 @@ public class PdfSignatureAppearance {
     /**
     * Gets the Image object to render.
     * @return the image
-    */    
+    */
     public Image getSignatureGraphic() {
         return signatureGraphic;
     }
@@ -193,7 +192,7 @@ public class PdfSignatureAppearance {
      * Sets the Image object to render when Render is set to <CODE>SignatureRenderGraphicAndDescription</CODE>
      * @param signatureGraphic image rendered. If <CODE>null</CODE> the mode is defaulted
      * to <CODE>SignatureRenderDescription</CODE>
-     */    
+     */
     public void setSignatureGraphic(Image signatureGraphic) {
         this.signatureGraphic = signatureGraphic;
     }
@@ -202,73 +201,73 @@ public class PdfSignatureAppearance {
      * Sets the signature text identifying the signer.
      * @param text the signature text identifying the signer. If <CODE>null</CODE> or not set
      * a standard description will be used
-     */    
+     */
     public void setLayer2Text(String text) {
         layer2Text = text;
     }
-    
+
     /**
      * Gets the signature text identifying the signer if set by setLayer2Text().
      * @return the signature text identifying the signer
-     */    
+     */
     public String getLayer2Text() {
         return layer2Text;
     }
-    
+
     /**
      * Sets the text identifying the signature status.
      * @param text the text identifying the signature status. If <CODE>null</CODE> or not set
      * the description "Signature Not Verified" will be used
-     */    
+     */
     public void setLayer4Text(String text) {
         layer4Text = text;
     }
-    
+
     /**
      * Gets the text identifying the signature status if set by setLayer4Text().
      * @return the text identifying the signature status
-     */    
+     */
     public String getLayer4Text() {
         return layer4Text;
     }
-    
+
     /**
      * Gets the rectangle representing the signature dimensions.
      * @return the rectangle representing the signature dimensions. It may be <CODE>null</CODE>
      * or have zero width or height for invisible signatures
-     */    
+     */
     public Rectangle getRect() {
         return rect;
     }
-    
+
     /**
      * Gets the visibility status of the signature.
      * @return the visibility status of the signature
-     */    
+     */
     public boolean isInvisible() {
-        return (rect == null || rect.getWidth() == 0 || rect.getHeight() == 0);
+        return rect == null || rect.getWidth() == 0 || rect.getHeight() == 0;
     }
-    
+
     /**
      * Sets the cryptographic parameters.
      * @param privKey the private key
      * @param certChain the certificate chain
      * @param crlList the certificate revocation list. It may be <CODE>null</CODE>
      * @param filter the crytographic filter type. It can be SELF_SIGNED, VERISIGN_SIGNED or WINCER_SIGNED
-     */    
+     */
     public void setCrypto(PrivateKey privKey, Certificate[] certChain, CRL[] crlList, PdfName filter) {
         this.privKey = privKey;
         this.certChain = certChain;
         this.crlList = crlList;
         this.filter = filter;
     }
-    
+
     /**
      * Sets the signature to be visible. It creates a new visible signature field.
      * @param pageRect the position and dimension of the field in the page
      * @param page the page to place the field. The fist page is 1
      * @param fieldName the field name or <CODE>null</CODE> to generate automatically a new field name
-     */    
+     */
     public void setVisibleSignature(Rectangle pageRect, int page, String fieldName) {
         if (fieldName != null) {
             if (fieldName.indexOf('.') >= 0)
@@ -287,11 +286,11 @@ public class PdfSignatureAppearance {
         this.page = page;
         newField = true;
     }
-    
+
     /**
      * Sets the signature to be visible. An empty signature field with the same name must already exist.
      * @param fieldName the existing empty signature field name
-     */    
+     */
     public void setVisibleSignature(String fieldName) {
         AcroFields af = writer.getAcroFields();
         AcroFields.Item item = af.getFieldItem(fieldName);
@@ -338,7 +337,7 @@ public class PdfSignatureAppearance {
             pageRect.normalize();
         rect = new Rectangle(this.pageRect.getWidth(), this.pageRect.getHeight());
     }
-    
+
     /**
      * Gets a template layer to create a signature appearance. The layers can go from 0 to 4.
      * <p>
@@ -346,7 +345,7 @@ public class PdfSignatureAppearance {
      * for further details.
      * @param layer the layer
      * @return a template
-     */    
+     */
     public PdfTemplate getLayer(int layer) {
         if (layer < 0 || layer >= app.length)
             return null;
@@ -358,14 +357,14 @@ public class PdfSignatureAppearance {
         }
         return t;
     }
-    
+
     /**
      * Gets the template that aggregates all appearance layers. This corresponds to the /FRM resource.
      * <p>
      * Consult <A HREF="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</A>
      * for further details.
      * @return the template that aggregates all appearance layers
-     */    
+     */
     public PdfTemplate getTopLayer() {
         if (frm == null) {
             frm = new PdfTemplate(writer);
@@ -374,7 +373,7 @@ public class PdfSignatureAppearance {
         }
         return frm;
     }
-    
+
     /**
      * Gets the main appearance layer.
      * <p>
@@ -382,7 +381,7 @@ public class PdfSignatureAppearance {
      * for further details.
      * @return the main appearance layer
      * @throws DocumentException on error
-     */    
+     */
     public PdfTemplate getAppearance() throws DocumentException {
         if (isInvisible()) {
             PdfTemplate t = new PdfTemplate(writer);
@@ -445,29 +444,29 @@ public class PdfSignatureAppearance {
             Rectangle dataRect = null;
             Rectangle signatureRect = null;
 
-            if (renderingMode == RenderingMode.NAME_AND_DESCRIPTION || 
-                (renderingMode == RenderingMode.GRAPHIC_AND_DESCRIPTION && this.signatureGraphic != null)) {
+            if (renderingMode == RenderingMode.NAME_AND_DESCRIPTION ||
+                renderingMode == RenderingMode.GRAPHIC_AND_DESCRIPTION && this.signatureGraphic != null) {
                 // origin is the bottom-left
                 signatureRect = new Rectangle(
-                    MARGIN, 
-                    MARGIN, 
+                    MARGIN,
+                    MARGIN,
                     rect.getWidth() / 2 - MARGIN,
                     rect.getHeight() - MARGIN);
                 dataRect = new Rectangle(
-                    rect.getWidth() / 2 +  MARGIN / 2, 
-                    MARGIN, 
+                    rect.getWidth() / 2 +  MARGIN / 2,
+                    MARGIN,
                     rect.getWidth() - MARGIN / 2,
                     rect.getHeight() - MARGIN);
 
                 if (rect.getHeight() > rect.getWidth()) {
                     signatureRect = new Rectangle(
-                        MARGIN, 
-                        rect.getHeight() / 2, 
+                        MARGIN,
+                        rect.getHeight() / 2,
                         rect.getWidth() - MARGIN,
                         rect.getHeight());
                     dataRect = new Rectangle(
-                        MARGIN, 
-                        MARGIN, 
+                        MARGIN,
+                        MARGIN,
                         rect.getWidth() - MARGIN,
                         rect.getHeight() / 2 - MARGIN);
                 }
@@ -546,7 +545,7 @@ public class PdfSignatureAppearance {
                 break;
             default:
             }
-            
+
             if(renderingMode != RenderingMode.GRAPHIC) {
             	if (size <= 0) {
                     Rectangle sr = new Rectangle(dataRect.getWidth(), dataRect.getHeight());
@@ -556,7 +555,7 @@ public class PdfSignatureAppearance {
                 ct.setRunDirection(runDirection);
                 ct.setSimpleColumn(new Phrase(text, font), dataRect.getLeft(), dataRect.getBottom(), dataRect.getRight(), dataRect.getTop(), size, Element.ALIGN_LEFT);
                 ct.go();
-            }            
+            }
         }
         if (app[3] == null && !acro6Layers) {
             PdfTemplate t = app[3] = new PdfTemplate(writer);
@@ -620,7 +619,7 @@ public class PdfSignatureAppearance {
         napp.addTemplate(frm, 0, 0);
         return napp;
     }
-    
+
     /**
      * Fits the text to some rectangle adjusting the font size as needed.
      * @param font the font to use
@@ -629,7 +628,7 @@ public class PdfSignatureAppearance {
      * @param maxFontSize the maximum font size
      * @param runDirection the run direction
      * @return the calculated font size that makes the text fit
-     */    
+     */
     public static float fitText(Font font, String text, Rectangle rect, float maxFontSize, int runDirection) {
         try {
             ColumnText ct = null;
@@ -680,7 +679,7 @@ public class PdfSignatureAppearance {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     /**
      * Sets the digest/signature to an external calculated value.
      * @param digest the digest. This is the actual signature
@@ -688,7 +687,7 @@ public class PdfSignatureAppearance {
      * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the <CODE>digest</CODE>
      * is also <CODE>null</CODE>. If the <CODE>digest</CODE> is not <CODE>null</CODE>
      * then it may be "RSA" or "DSA"
-     */    
+     */
     public void setExternalDigest(byte digest[], byte RSAdata[], String digestEncryptionAlgorithm) {
         externalDigest = digest;
         externalRSAdata = RSAdata;
@@ -698,35 +697,35 @@ public class PdfSignatureAppearance {
     /**
      * Gets the signing reason.
      * @return the signing reason
-     */    
+     */
     public String getReason() {
         return this.reason;
     }
-    
+
     /**
      * Sets the signing reason.
      * @param reason the signing reason
-     */    
+     */
     public void setReason(String reason) {
         this.reason = reason;
     }
-    
+
     /**
      * Gets the signing location.
      * @return the signing location
-     */    
+     */
     public String getLocation() {
         return this.location;
     }
-    
+
     /**
      * Sets the signing location.
      * @param location the signing location
-     */    
+     */
     public void setLocation(String location) {
         this.location = location;
     }
-        
+
     /**
      * Returns the Cryptographic Service Provider that will sign the document.
      * @return provider the name of the provider, for example "SUN",
@@ -735,7 +734,7 @@ public class PdfSignatureAppearance {
     public String getProvider() {
         return this.provider;
     }
-    
+
     /**
      * Sets the Cryptographic Service Provider that will sign the document.
      *
@@ -745,112 +744,112 @@ public class PdfSignatureAppearance {
     public void setProvider(String provider) {
         this.provider = provider;
     }
-    
+
     /**
      * Gets the private key.
      * @return the private key
-     */    
+     */
     public java.security.PrivateKey getPrivKey() {
         return privKey;
     }
-    
+
     /**
      * Gets the certificate chain.
      * @return the certificate chain
-     */    
+     */
     public java.security.cert.Certificate[] getCertChain() {
         return this.certChain;
     }
-    
+
     /**
      * Gets the certificate revocation list.
      * @return the certificate revocation list
-     */    
+     */
     public java.security.cert.CRL[] getCrlList() {
         return this.crlList;
     }
-    
+
     /**
      * Gets the filter used to sign the document.
      * @return the filter used to sign the document
-     */    
+     */
     public com.itextpdf.text.pdf.PdfName getFilter() {
         return filter;
     }
-    
+
     /**
      * Checks if a new field was created.
      * @return <CODE>true</CODE> if a new field was created, <CODE>false</CODE> if signing
      * an existing field or if the signature is invisible
-     */    
+     */
     public boolean isNewField() {
         return this.newField;
     }
-    
+
     /**
      * Gets the page number of the field.
      * @return the page number of the field
-     */    
+     */
     public int getPage() {
         return page;
     }
-    
+
     /**
      * Gets the field name.
      * @return the field name
-     */    
+     */
     public java.lang.String getFieldName() {
         return fieldName;
     }
-    
+
     /**
      * Gets the rectangle that represent the position and dimension of the signature in the page.
      * @return the rectangle that represent the position and dimension of the signature in the page
-     */    
+     */
     public com.itextpdf.text.Rectangle getPageRect() {
         return pageRect;
     }
-    
+
     /**
      * Gets the signature date.
      * @return the signature date
-     */    
+     */
     public java.util.Calendar getSignDate() {
         return signDate;
     }
-    
+
     /**
      * Sets the signature date.
      * @param signDate the signature date
-     */    
+     */
     public void setSignDate(java.util.Calendar signDate) {
         this.signDate = signDate;
     }
-    
+
     com.itextpdf.text.pdf.ByteBuffer getSigout() {
         return sigout;
     }
-    
+
     void setSigout(com.itextpdf.text.pdf.ByteBuffer sigout) {
         this.sigout = sigout;
     }
-    
+
     java.io.OutputStream getOriginalout() {
         return originalout;
     }
-    
+
     void setOriginalout(java.io.OutputStream originalout) {
         this.originalout = originalout;
     }
-    
+
     /**
      * Gets the temporary file.
      * @return the temporary file or <CODE>null</CODE> is the document is created in memory
-     */    
+     */
     public java.io.File getTempFile() {
         return tempFile;
     }
-    
+
     void setTempFile(java.io.File tempFile) {
         this.tempFile = tempFile;
     }
@@ -858,7 +857,7 @@ public class PdfSignatureAppearance {
     /**
      * Gets a new signature fied name that doesn't clash with any existing name.
      * @return a new signature fied name
-     */    
+     */
     public String getNewSigName() {
         AcroFields af = writer.getAcroFields();
         String name = "Signature";
@@ -871,8 +870,8 @@ public class PdfSignatureAppearance {
                 continue;
             n1 += ".";
             found = true;
-            for (Iterator it = af.getFields().keySet().iterator(); it.hasNext();) {
-                String fn = (String)it.next();
+            for (Object element : af.getFields().keySet()) {
+                String fn = (String)element;
                 if (fn.startsWith(n1)) {
                     found = false;
                     break;
@@ -882,7 +881,7 @@ public class PdfSignatureAppearance {
         name += step;
         return name;
     }
-    
+
     /**
      * This is the first method to be called when using external signatures. The general sequence is:
      * preClose(), getDocumentBytes() and close().
@@ -892,7 +891,7 @@ public class PdfSignatureAppearance {
      * No external signatures are allowed if this method is called.
      * @throws IOException on error
      * @throws DocumentException on error
-     */    
+     */
     public void preClose() throws IOException, DocumentException {
         preClose(null);
     }
@@ -911,8 +910,8 @@ public class PdfSignatureAppearance {
      * <CODE>Integer</CODE>. At least the <CODE>PdfName.CONTENTS</CODE> must be present
      * @throws IOException on error
      * @throws DocumentException on error
-     */    
-    public void preClose(HashMap exclusionSizes) throws IOException, DocumentException {
+     */
+    public void preClose(HashMap<PdfName, Integer> exclusionSizes) throws IOException, DocumentException {
         if (preClosed)
             throw new DocumentException(MessageLocalization.getComposedMessage("document.already.pre.closed"));
         preClosed = true;
@@ -952,7 +951,7 @@ public class PdfSignatureAppearance {
             writer.addAnnotation(sigField, pagen);
         }
 
-        exclusionLocations = new HashMap();
+        exclusionLocations = new HashMap<PdfName, PdfLiteral>();
         if (cryptoDictionary == null) {
             if (PdfName.ADOBE_PPKLITE.equals(getFilter()))
                 sigStandard = new PdfSigGenericPKCS.PPKLite(getProvider());
@@ -989,10 +988,9 @@ public class PdfSignatureAppearance {
             PdfLiteral lit = new PdfLiteral(80);
             exclusionLocations.put(PdfName.BYTERANGE, lit);
             cryptoDictionary.put(PdfName.BYTERANGE, lit);
-            for (Iterator it = exclusionSizes.entrySet().iterator(); it.hasNext();) {
-                Map.Entry entry = (Map.Entry)it.next();
-                PdfName key = (PdfName)entry.getKey();
-                Integer v = (Integer)entry.getValue();
+            for (Map.Entry<PdfName, Integer> entry: exclusionSizes.entrySet()) {
+                PdfName key = entry.getKey();
+                Integer v = entry.getValue();
                 lit = new PdfLiteral(v.intValue());
                 exclusionLocations.put(key, lit);
                 cryptoDictionary.put(key, lit);
@@ -1010,13 +1008,12 @@ public class PdfSignatureAppearance {
              writer.reader.getCatalog().put(new PdfName("Perms"), docmdp);
         }
         writer.close(stamper.getMoreInfo());
-        
+
         range = new int[exclusionLocations.size() * 2];
-        int byteRangePosition = ((PdfLiteral)exclusionLocations.get(PdfName.BYTERANGE)).getPosition();
+        int byteRangePosition = exclusionLocations.get(PdfName.BYTERANGE).getPosition();
         exclusionLocations.remove(PdfName.BYTERANGE);
         int idx = 1;
-        for (Iterator it = exclusionLocations.values().iterator(); it.hasNext();) {
-            PdfLiteral lit = (PdfLiteral)it.next();
+        for (PdfLiteral lit: exclusionLocations.values()) {
             int n = lit.getPosition();
             range[idx++] = n;
             range[idx++] = lit.getPosLength() + n;
@@ -1024,7 +1021,7 @@ public class PdfSignatureAppearance {
         Arrays.sort(range, 1, range.length - 1);
         for (int k = 3; k < range.length - 2; k += 2)
             range[k] -= range[k - 1];
-        
+
         if (tempFile == null) {
             bout = sigout.getBuffer();
             boutLen = sigout.size();
@@ -1056,7 +1053,7 @@ public class PdfSignatureAppearance {
             }
         }
     }
-    
+
     /**
      * This is the last method to be called when using external signatures. The general sequence is:
      * preClose(), getDocumentBytes() and close().
@@ -1067,16 +1064,15 @@ public class PdfSignatureAppearance {
      * in {@link #preClose(HashMap)}
      * @throws DocumentException on error
      * @throws IOException on error
-     */    
+     */
     public void close(PdfDictionary update) throws IOException, DocumentException {
         try {
             if (!preClosed)
                 throw new DocumentException(MessageLocalization.getComposedMessage("preclose.must.be.called.first"));
             ByteBuffer bf = new ByteBuffer();
-            for (Iterator it = update.getKeys().iterator(); it.hasNext();) {
-                PdfName key = (PdfName)it.next();
+            for (PdfName key: update.getKeys()) {
                 PdfObject obj = update.get(key);
-                PdfLiteral lit = (PdfLiteral)exclusionLocations.get(key);
+                PdfLiteral lit = exclusionLocations.get(key);
                 if (lit == null)
                     throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.key.1.didn.t.reserve.space.in.preclose", key.toString()));
                 bf.reset();
@@ -1120,7 +1116,7 @@ public class PdfSignatureAppearance {
                 try{originalout.close();}catch(Exception e){}
         }
     }
-    
+
     private void addDocMDP(PdfDictionary crypto) {
         PdfDictionary reference = new PdfDictionary();
         PdfDictionary transformParams = new PdfDictionary();
@@ -1141,65 +1137,65 @@ public class PdfSignatureAppearance {
         types.add(reference);
         crypto.put(PdfName.REFERENCE, types);
     }
-    
+
     /**
      * Gets the document bytes that are hashable when using external signatures. The general sequence is:
      * preClose(), getRangeStream() and close().
      * <p>
      * @return the document bytes that are hashable
-     */    
+     */
     public InputStream getRangeStream() {
         return new PdfSignatureAppearance.RangeStream(raf, bout, range);
     }
-    
+
     /**
      * Gets the user made signature dictionary. This is the dictionary at the /V key.
      * @return the user made signature dictionary
-     */    
+     */
     public com.itextpdf.text.pdf.PdfDictionary getCryptoDictionary() {
         return cryptoDictionary;
     }
-    
+
     /**
      * Sets a user made signature dictionary. This is the dictionary at the /V key.
      * @param cryptoDictionary a user made signature dictionary
-     */    
+     */
     public void setCryptoDictionary(com.itextpdf.text.pdf.PdfDictionary cryptoDictionary) {
         this.cryptoDictionary = cryptoDictionary;
     }
-    
+
     /**
      * Gets the <CODE>PdfStamper</CODE> associated with this instance.
      * @return the <CODE>PdfStamper</CODE> associated with this instance
-     */    
+     */
     public com.itextpdf.text.pdf.PdfStamper getStamper() {
         return stamper;
     }
-    
+
     void setStamper(com.itextpdf.text.pdf.PdfStamper stamper) {
         this.stamper = stamper;
     }
-    
+
     /**
      * Checks if the document is in the process of closing.
      * @return <CODE>true</CODE> if the document is in the process of closing,
      * <CODE>false</CODE> otherwise
-     */    
+     */
     public boolean isPreClosed() {
         return preClosed;
     }
-    
+
     /**
      * Gets the instance of the standard signature dictionary. This instance
      * is only available after pre close.
      * <p>
      * The main use is to insert external signatures.
      * @return the instance of the standard signature dictionary
-     */    
+     */
     public com.itextpdf.text.pdf.PdfSigGenericPKCS getSigStandard() {
         return sigStandard;
     }
-    
+
     /**
      * Gets the signing contact.
      * @return the signing contact
@@ -1207,7 +1203,7 @@ public class PdfSignatureAppearance {
     public String getContact() {
         return this.contact;
     }
-    
+
     /**
      * Sets the signing contact.
      * @param contact the signing contact
@@ -1215,7 +1211,7 @@ public class PdfSignatureAppearance {
     public void setContact(String contact) {
         this.contact = contact;
     }
-    
+
     /**
      * Gets the n2 and n4 layer font.
      * @return the n2 and n4 layer font
@@ -1223,7 +1219,7 @@ public class PdfSignatureAppearance {
     public Font getLayer2Font() {
         return this.layer2Font;
     }
-    
+
     /**
      * Sets the n2 and n4 layer font. If the font size is zero, auto-fit will be used.
      * @param layer2Font the n2 and n4 font
@@ -1231,7 +1227,7 @@ public class PdfSignatureAppearance {
     public void setLayer2Font(Font layer2Font) {
         this.layer2Font = layer2Font;
     }
-    
+
     /**
      * Gets the Acrobat 6.0 layer mode.
      * @return the Acrobat 6.0 layer mode
@@ -1239,7 +1235,7 @@ public class PdfSignatureAppearance {
     public boolean isAcro6Layers() {
         return this.acro6Layers;
     }
-    
+
     /**
      * Acrobat 6.0 and higher recommends that only layer n2 and n4 be present. This method sets that mode.
      * @param acro6Layers if <code>true</code> only the layers n2 and n4 will be present
@@ -1247,23 +1243,23 @@ public class PdfSignatureAppearance {
     public void setAcro6Layers(boolean acro6Layers) {
         this.acro6Layers = acro6Layers;
     }
-    
-    /** Sets the run direction in the n2 and n4 layer. 
+
+    /** Sets the run direction in the n2 and n4 layer.
      * @param runDirection the run direction
-     */    
+     */
     public void setRunDirection(int runDirection) {
         if (runDirection < PdfWriter.RUN_DIRECTION_DEFAULT || runDirection > PdfWriter.RUN_DIRECTION_RTL)
             throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.run.direction.1", runDirection));
         this.runDirection = runDirection;
     }
-    
+
     /** Gets the run direction.
      * @return the run direction
-     */    
+     */
     public int getRunDirection() {
         return runDirection;
     }
-    
+
     /**
      * Getter for property signatureEvent.
      * @return Value of property signatureEvent.
@@ -1271,7 +1267,7 @@ public class PdfSignatureAppearance {
     public SignatureEvent getSignatureEvent() {
         return this.signatureEvent;
     }
-    
+
     /**
      * Sets the signature event to allow modification of the signature dictionary.
      * @param signatureEvent the signature event
@@ -1279,7 +1275,7 @@ public class PdfSignatureAppearance {
     public void setSignatureEvent(SignatureEvent signatureEvent) {
         this.signatureEvent = signatureEvent;
     }
-    
+
     /**
      * Gets the background image for the layer 2.
      * @return the background image for the layer 2
@@ -1287,7 +1283,7 @@ public class PdfSignatureAppearance {
     public Image getImage() {
         return this.image;
     }
-    
+
     /**
      * Sets the background image for the layer 2.
      * @param image the background image for the layer 2
@@ -1295,7 +1291,7 @@ public class PdfSignatureAppearance {
     public void setImage(Image image) {
         this.image = image;
     }
-    
+
     /**
      * Gets the scaling to be applied to the background image.
      * @return the scaling to be applied to the background image
@@ -1303,7 +1299,7 @@ public class PdfSignatureAppearance {
     public float getImageScale() {
         return this.imageScale;
     }
-    
+
     /**
      * Sets the scaling to be applied to the background image. If it's zero the image
      * will fully fill the rectangle. If it's less than zero the image will fill the rectangle but
@@ -1314,11 +1310,11 @@ public class PdfSignatureAppearance {
     public void setImageScale(float imageScale) {
         this.imageScale = imageScale;
     }
-    
+
     /**
      * Commands to draw a yellow question mark in a stream content
-     */    
-    public static final String questionMark = 
+     */
+    public static final String questionMark =
         "% DSUnknown\n" +
         "q\n" +
         "1 G\n" +
@@ -1361,81 +1357,83 @@ public class PdfSignatureAppearance {
         "282 240 170 -164 re\n" +
         "B\n" +
         "Q\n";
-    
+
     /**
      * Holds value of property contact.
      */
     private String contact;
-    
+
     /**
      * Holds value of property layer2Font.
      */
     private Font layer2Font;
-    
+
     /**
      * Holds value of property layer4Text.
      */
     private String layer4Text;
-    
+
     /**
      * Holds value of property acro6Layers.
      */
     private boolean acro6Layers;
-    
+
     /**
      * Holds value of property runDirection.
      */
     private int runDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
-    
+
     /**
      * Holds value of property signatureEvent.
      */
     private SignatureEvent signatureEvent;
-    
+
     /**
      * Holds value of property image.
      */
     private Image image;
-    
+
     /**
      * Holds value of property imageScale.
      */
     private float imageScale;
-    
+
     /**
      *
-     */    
+     */
     private static class RangeStream extends InputStream {
         private byte b[] = new byte[1];
         private RandomAccessFile raf;
         private byte bout[];
         private int range[];
         private int rangePosition = 0;
-        
+
         private RangeStream(RandomAccessFile raf, byte bout[], int range[]) {
             this.raf = raf;
             this.bout = bout;
             this.range = range;
         }
-        
+
         /**
          * @see java.io.InputStream#read()
          */
+        @Override
         public int read() throws IOException {
             int n = read(b);
             if (n != 1)
                 return -1;
             return b[0] & 0xff;
         }
-        
+
         /**
          * @see java.io.InputStream#read(byte[], int, int)
          */
+        @Override
         public int read(byte[] b, int off, int len) throws IOException {
             if (b == null) {
                 throw new NullPointerException();
-            } else if ((off < 0) || (off > b.length) || (len < 0) ||
-            ((off + len) > b.length) || ((off + len) < 0)) {
+            } else if (off < 0 || off > b.length || len < 0 ||
+            off + len > b.length || off + len < 0) {
                 throw new IndexOutOfBoundsException();
             } else if (len == 0) {
                 return 0;
@@ -1463,15 +1461,15 @@ public class PdfSignatureAppearance {
             return -1;
         }
     }
-    
+
     /**
      * An interface to retrieve the signature dictionary for modification.
-     */    
+     */
     public interface SignatureEvent {
         /**
          * Allows modification of the signature dictionary.
          * @param sig the signature dictionary
-         */        
+         */
         public void getSignatureDictionary(PdfDictionary sig);
     }
 

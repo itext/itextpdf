@@ -60,10 +60,10 @@ import java.security.PrivilegedAction;
  * Created on 6.9.2006
  */
 public class MappedRandomAccessFile {
-    
+
     private MappedByteBuffer mappedByteBuffer = null;
     private FileChannel channel = null;
-    
+
     /**
      * Constructs a new MappedRandomAccessFile instance
      * @param filename String
@@ -73,7 +73,7 @@ public class MappedRandomAccessFile {
      */
     public MappedRandomAccessFile(String filename, String mode)
     throws FileNotFoundException, IOException {
-        
+
         if (mode.equals("rw"))
             init(
                     new java.io.RandomAccessFile(filename, mode).getChannel(),
@@ -82,9 +82,9 @@ public class MappedRandomAccessFile {
             init(
                     new FileInputStream(filename).getChannel(),
                     FileChannel.MapMode.READ_ONLY);
-        
+
     }
-    
+
     /**
      * initializes the channel and mapped bytebuffer
      * @param channel FileChannel
@@ -93,7 +93,7 @@ public class MappedRandomAccessFile {
      */
     private void init(FileChannel channel, FileChannel.MapMode mapMode)
     throws IOException {
-        
+
         this.channel = channel;
         this.mappedByteBuffer = channel.map(mapMode, 0L, channel.size());
         mappedByteBuffer.load();
@@ -105,7 +105,7 @@ public class MappedRandomAccessFile {
     public FileChannel getChannel() {
     	return channel;
     }
-    
+
     /**
      * @see java.io.RandomAccessFile#read()
      * @return int next integer or -1 on EOF
@@ -114,13 +114,13 @@ public class MappedRandomAccessFile {
         try {
             byte b = mappedByteBuffer.get();
             int n = b & 0xff;
-            
+
             return n;
         } catch (BufferUnderflowException e) {
             return -1; // EOF
         }
     }
-    
+
     /**
      * @see java.io.RandomAccessFile#read(byte[], int, int)
      * @param bytes byte[]
@@ -140,7 +140,7 @@ public class MappedRandomAccessFile {
         mappedByteBuffer.get(bytes, off, len);
         return len;
     }
-    
+
     /**
      * @see java.io.RandomAccessFile#getFilePointer()
      * @return long
@@ -148,7 +148,7 @@ public class MappedRandomAccessFile {
     public long getFilePointer() {
         return mappedByteBuffer.position();
     }
-    
+
     /**
      * @see java.io.RandomAccessFile#seek(long)
      * @param pos long position
@@ -156,7 +156,7 @@ public class MappedRandomAccessFile {
     public void seek(long pos) {
         mappedByteBuffer.position((int) pos);
     }
-    
+
     /**
      * @see java.io.RandomAccessFile#length()
      * @return long length
@@ -164,7 +164,7 @@ public class MappedRandomAccessFile {
     public long length() {
         return mappedByteBuffer.limit();
     }
-    
+
     /**
      * @see java.io.RandomAccessFile#close()
      * Cleans the mapped bytebuffer and closes the channel
@@ -176,16 +176,17 @@ public class MappedRandomAccessFile {
             channel.close();
         channel = null;
     }
-    
+
     /**
      * invokes the close method
      * @see java.lang.Object#finalize()
      */
+    @Override
     protected void finalize() throws Throwable {
         close();
         super.finalize();
     }
-    
+
     /**
      * invokes the clean method on the ByteBuffer's cleaner
      * @param buffer ByteBuffer
@@ -194,15 +195,15 @@ public class MappedRandomAccessFile {
     public static boolean clean(final java.nio.ByteBuffer buffer) {
         if (buffer == null || !buffer.isDirect())
             return false;
-        
-        Boolean b = (Boolean) AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
+
+        Boolean b = (Boolean) AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+            public Boolean run() {
                 Boolean success = Boolean.FALSE;
                 try {
-                    Method getCleanerMethod = buffer.getClass().getMethod("cleaner", (Class[])null);
+                    Method getCleanerMethod = buffer.getClass().getMethod("cleaner", (Class<?>[])null);
                     getCleanerMethod.setAccessible(true);
                     Object cleaner = getCleanerMethod.invoke(buffer, (Object[])null);
-                    Method clean = cleaner.getClass().getMethod("clean", (Class[])null);
+                    Method clean = cleaner.getClass().getMethod("clean", (Class<?>[])null);
                     clean.invoke(cleaner, (Object[])null);
                     success = Boolean.TRUE;
                 } catch (Exception e) {
@@ -212,8 +213,8 @@ public class MappedRandomAccessFile {
                 return success;
             }
         });
-        
+
         return b.booleanValue();
     }
-    
+
 }

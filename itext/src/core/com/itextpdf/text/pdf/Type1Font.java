@@ -48,10 +48,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.StringTokenizer;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.fonts.FontsResourceAnchor;
 
 /** Reads a Type1 font
@@ -61,9 +61,9 @@ import com.itextpdf.text.pdf.fonts.FontsResourceAnchor;
 class Type1Font extends BaseFont
 {
     private static FontsResourceAnchor resourceAnchor;
-    
+
     /** The PFB file if the input was made with a <CODE>byte</CODE> array.
-     */    
+     */
     protected byte pfb[];
 /** The Postscript font name.
  */
@@ -129,20 +129,20 @@ class Type1Font extends BaseFont
 /** A variable.
  */
     private int StdVW = 80;
-    
+
 /** Represents the section CharMetrics in the AFM file. Each
  *  value of this array contains a <CODE>Object[4]</CODE> with an
  *  Integer, Integer, String and int[]. This is the code, width, name and char bbox.
  *  The key is the name of the char and also an Integer with the char number.
  */
-    private HashMap CharMetrics = new HashMap();
+    private HashMap<Object, Object[]> CharMetrics = new HashMap<Object, Object[]>();
 /** Represents the section KernPairs in the AFM file. The key is
  *  the name of the first character and the value is a <CODE>Object[]</CODE>
  *  with 2 elements for each kern pair. Position 0 is the name of
  *  the second character and position 1 is the kerning distance. This is
  *  repeated for all the pairs.
  */
-    private HashMap KernPairs = new HashMap();
+    private HashMap<String, Object[]> KernPairs = new HashMap<String, Object[]>();
 /** The file in use.
  */
     private String fileName;
@@ -153,7 +153,7 @@ class Type1Font extends BaseFont
  *  They have to appear in the PFB file in this sequence.
  */
     private static final int PFB_TYPES[] = {1, 2, 1};
-    
+
     /** Creates a new Type1 font.
      * @param ttfAfm the AFM file if the input is made with a <CODE>byte</CODE> array
      * @param pfb the PFB file if the input is made with a <CODE>byte</CODE> array
@@ -276,7 +276,7 @@ class Type1Font extends BaseFont
             PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
         createEncoding();
     }
-    
+
 /** Gets the width from the font according to the <CODE>name</CODE> or,
  * if the <CODE>name</CODE> is null, meaning it is a symbolic font,
  * the char <CODE>c</CODE>.
@@ -284,21 +284,22 @@ class Type1Font extends BaseFont
  * @param name the glyph name
  * @return the width of the char
  */
+    @Override
     int getRawWidth(int c, String name) {
         Object metrics[];
         if (name == null) { // font specific
-            metrics = (Object[])CharMetrics.get(new Integer(c));
+            metrics = CharMetrics.get(new Integer(c));
         }
         else {
             if (name.equals(".notdef"))
                 return 0;
-            metrics = (Object[])CharMetrics.get(name);
+            metrics = CharMetrics.get(name);
         }
         if (metrics != null)
-            return ((Integer)(metrics[1])).intValue();
+            return ((Integer)metrics[1]).intValue();
         return 0;
     }
-    
+
 /** Gets the kerning between two Unicode characters. The characters
  * are converted to names and this names are used to find the kerning
  * pairs in the <CODE>HashMap</CODE> <CODE>KernPairs</CODE>.
@@ -306,6 +307,7 @@ class Type1Font extends BaseFont
  * @param char2 the second char
  * @return the kerning to be applied
  */
+    @Override
     public int getKerning(int char1, int char2)
     {
         String first = GlyphList.unicodeToName(char1);
@@ -314,7 +316,7 @@ class Type1Font extends BaseFont
         String second = GlyphList.unicodeToName(char2);
         if (second == null)
             return 0;
-        Object obj[] = (Object[])KernPairs.get(first);
+        Object obj[] = KernPairs.get(first);
         if (obj == null)
             return 0;
         for (int k = 0; k < obj.length; k += 2) {
@@ -323,8 +325,8 @@ class Type1Font extends BaseFont
         }
         return 0;
     }
-    
-    
+
+
     /** Reads the font metrics
      * @param rf the AFM file
      * @throws DocumentException the AFM file is invalid
@@ -417,7 +419,7 @@ class Type1Font extends BaseFont
                 else if (ident.equals("N"))
                     N = tokc.nextToken();
                 else if (ident.equals("B")) {
-                    B = new int[]{Integer.parseInt(tokc.nextToken()), 
+                    B = new int[]{Integer.parseInt(tokc.nextToken()),
                                          Integer.parseInt(tokc.nextToken()),
                                          Integer.parseInt(tokc.nextToken()),
                                          Integer.parseInt(tokc.nextToken())};
@@ -431,7 +433,7 @@ class Type1Font extends BaseFont
         if (isMetrics)
             throw new DocumentException(MessageLocalization.getComposedMessage("missing.endcharmetrics.in.1", fileName));
         if (!CharMetrics.containsKey("nonbreakingspace")) {
-            Object[] space = (Object[])CharMetrics.get("space");
+            Object[] space = CharMetrics.get("space");
             if (space != null)
                 CharMetrics.put("nonbreakingspace", space);
         }
@@ -462,7 +464,7 @@ class Type1Font extends BaseFont
                 String first = tok.nextToken();
                 String second = tok.nextToken();
                 Integer width = new Integer((int)Float.parseFloat(tok.nextToken()));
-                Object relates[] = (Object[])KernPairs.get(first);
+                Object relates[] = KernPairs.get(first);
                 if (relates == null)
                     KernPairs.put(first, new Object[]{second, width});
                 else
@@ -485,7 +487,7 @@ class Type1Font extends BaseFont
             throw new DocumentException(MessageLocalization.getComposedMessage("missing.endkernpairs.in.1", fileName));
         rf.close();
     }
-    
+
 /** If the embedded flag is <CODE>false</CODE> or if the font is
  *  one of the 14 built in types, it returns <CODE>null</CODE>,
  * otherwise the font is read and output in a PdfStream object.
@@ -493,6 +495,7 @@ class Type1Font extends BaseFont
  * @throws DocumentException if there is an error reading the font
  * @since 2.1.3
  */
+    @Override
     public PdfStream getFullFontStream() throws DocumentException
     {
         if (builtinFont || !embedded)
@@ -542,7 +545,7 @@ class Type1Font extends BaseFont
             }
         }
     }
-    
+
 /** Generates the font descriptor for this font or <CODE>null</CODE> if it is
  * one of the 14 built in fonts.
  * @param fontStream the indirect reference to a PdfStream containing the font or <CODE>null</CODE>
@@ -573,10 +576,10 @@ class Type1Font extends BaseFont
         if (Weight.equals("Bold"))
             flags |= 262144;
         dic.put(PdfName.FLAGS, new PdfNumber(flags));
-        
+
         return dic;
     }
-    
+
     /** Generates the font dictionary for this font.
      * @return the PdfDictionary containing the font dictionary
      * @param firstChar the first valid character
@@ -602,7 +605,7 @@ class Type1Font extends BaseFont
             else {
                 PdfDictionary enc = new PdfDictionary(PdfName.ENCODING);
                 PdfArray dif = new PdfArray();
-                boolean gap = true;                
+                boolean gap = true;
                 for (int k = firstChar; k <= lastChar; ++k) {
                     if (shortTag[k] != 0) {
                         if (gap) {
@@ -634,7 +637,7 @@ class Type1Font extends BaseFont
             dic.put(PdfName.FONTDESCRIPTOR, fontDescriptor);
         return dic;
     }
-    
+
     /** Outputs to the writer the font dictionaries and streams.
      * @param writer the writer for this document
      * @param ref the font indirect reference
@@ -642,6 +645,7 @@ class Type1Font extends BaseFont
      * @throws IOException on error
      * @throws DocumentException error in generating the object
      */
+    @Override
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException {
         int firstChar = ((Integer)params[0]).intValue();
         int lastChar = ((Integer)params[1]).intValue();
@@ -669,7 +673,7 @@ class Type1Font extends BaseFont
         pobj = getFontBaseType(ind_font, firstChar, lastChar, shortTag);
         writer.addToBody(pobj, ref);
     }
-    
+
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
      * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>,
      * <CODE>ITALICANGLE</CODE>, <CODE>BBOXLLX</CODE>, <CODE>BBOXLLY</CODE>, <CODE>BBOXURX</CODE>
@@ -677,7 +681,8 @@ class Type1Font extends BaseFont
      * @param key the parameter to be extracted
      * @param fontSize the font size in points
      * @return the parameter in points
-     */    
+     */
+    @Override
     public float getFontDescriptor(int key, float fontSize) {
         switch (key) {
             case AWT_ASCENT:
@@ -709,14 +714,15 @@ class Type1Font extends BaseFont
         }
         return 0;
     }
-    
+
     /** Gets the postscript font name.
      * @return the postscript font name
      */
+    @Override
     public String getPostscriptFontName() {
         return FontName;
     }
-    
+
     /** Gets the full name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -725,10 +731,11 @@ class Type1Font extends BaseFont
      * font name}.
      * @return the full name of the font
      */
+    @Override
     public String[][] getFullFontName() {
         return new String[][]{{"", "", "", FullName}};
     }
-    
+
     /** Gets all the entries of the names-table. If it is a True Type font
      * each array element will have {Name ID, Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -737,10 +744,11 @@ class Type1Font extends BaseFont
      * font name}.
      * @return the full name of the font
      */
+    @Override
     public String[][] getAllNameEntries() {
         return new String[][]{{"4", "", "", "", FullName}};
     }
-    
+
     /** Gets the family name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -749,26 +757,29 @@ class Type1Font extends BaseFont
      * font name}.
      * @return the family name of the font
      */
+    @Override
     public String[][] getFamilyFontName() {
         return new String[][]{{"", "", "", FamilyName}};
     }
-    
+
     /** Checks if the font has any kerning pairs.
      * @return <CODE>true</CODE> if the font has any kerning pairs
-     */    
+     */
+    @Override
     public boolean hasKernPairs() {
         return !KernPairs.isEmpty();
     }
-    
+
     /**
      * Sets the font name that will appear in the pdf font dictionary.
      * Use with care as it can easily make a font unreadable if not embedded.
      * @param name the new font name
-     */    
+     */
+    @Override
     public void setPostscriptFontName(String name) {
         FontName = name;
     }
-    
+
     /**
      * Sets the kerning between two Unicode chars.
      * @param char1 the first char
@@ -776,6 +787,7 @@ class Type1Font extends BaseFont
      * @param kern the kerning to apply in normalized 1000 units
      * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
      */
+    @Override
     public boolean setKerning(int char1, int char2, int kern) {
         String first = GlyphList.unicodeToName(char1);
         if (first == null)
@@ -783,7 +795,7 @@ class Type1Font extends BaseFont
         String second = GlyphList.unicodeToName(char2);
         if (second == null)
             return false;
-        Object obj[] = (Object[])KernPairs.get(first);
+        Object obj[] = KernPairs.get(first);
         if (obj == null) {
             obj = new Object[]{second, new Integer(kern)};
             KernPairs.put(first, obj);
@@ -803,20 +815,21 @@ class Type1Font extends BaseFont
         KernPairs.put(first, obj2);
         return true;
     }
-    
+
+    @Override
     protected int[] getRawCharBBox(int c, String name) {
         Object metrics[];
         if (name == null) { // font specific
-            metrics = (Object[])CharMetrics.get(new Integer(c));
+            metrics = CharMetrics.get(new Integer(c));
         }
         else {
             if (name.equals(".notdef"))
                 return null;
-            metrics = (Object[])CharMetrics.get(name);
+            metrics = CharMetrics.get(name);
         }
         if (metrics != null)
-            return ((int[])(metrics[3]));
+            return (int[])metrics[3];
         return null;
     }
-    
+
 }

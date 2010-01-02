@@ -57,8 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.xml.simpleparser.IanaEncodings;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
@@ -103,18 +103,18 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
  * @author Paulo Soares
  */
 public final class SimpleBookmark implements SimpleXMLDocHandler {
-    
-    private ArrayList topList;
-    private Stack attr = new Stack();
-    
+
+    private ArrayList<HashMap<String, Object>> topList;
+    private Stack<HashMap<String, Object>> attr = new Stack<HashMap<String, Object>>();
+
     /** Creates a new instance of SimpleBookmark */
     private SimpleBookmark() {
     }
-    
-    private static List bookmarkDepth(PdfReader reader, PdfDictionary outline, IntHashtable pages) {
-        ArrayList list = new ArrayList();
+
+    private static List<HashMap<String, Object>> bookmarkDepth(PdfReader reader, PdfDictionary outline, IntHashtable pages) {
+        ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
         while (outline != null) {
-            HashMap map = new HashMap();
+            HashMap<String, Object> map = new HashMap<String, Object>();
             PdfString title = (PdfString)PdfReader.getPdfObjectRelease(outline.get(PdfName.TITLE));
             map.put("Title", title.toUnicodeString());
             PdfArray color = (PdfArray)PdfReader.getPdfObjectRelease(outline.get(PdfName.C));
@@ -134,7 +134,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
                 if ((f & 2) != 0)
                     s += "bold ";
                 s = s.trim();
-                if (s.length() != 0) 
+                if (s.length() != 0)
                     map.put("Style", s);
             }
             PdfNumber count = (PdfNumber)PdfReader.getPdfObjectRelease(outline.get(PdfName.COUNT));
@@ -220,14 +220,14 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
         }
         return list;
     }
-    
-	private static void mapGotoBookmark(HashMap map, PdfObject dest, IntHashtable pages) 
+
+	private static void mapGotoBookmark(HashMap<String, Object> map, PdfObject dest, IntHashtable pages)
 	{
 		if (dest.isString())
 			map.put("Named", dest.toString());
 		else if (dest.isName())
 			map.put("Named", PdfName.decodeName(dest.toString()));
-		else if (dest.isArray()) 
+		else if (dest.isArray())
 			map.put("Page", makeBookmarkParam((PdfArray)dest, pages)); //changed by ujihara 2004-06-13
 		map.put("Action", "GoTo");
 	}
@@ -245,32 +245,32 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
 			s.append(' ').append(dest.getPdfObject(k).toString());
 		return s.toString();
 	}
-	
+
 	/**
 	 * Gets number of indirect. If type of directed indirect is PAGES, it refers PAGE object through KIDS.
 	 * (Contributed by Kazuya Ujihara)
-	 * @param indirect 
+	 * @param indirect
 	 * 2004-06-13
 	 */
 	private static int getNumber(PdfIndirectReference indirect)
 	{
 		PdfDictionary pdfObj = (PdfDictionary)PdfReader.getPdfObjectRelease(indirect);
-		if (pdfObj.contains(PdfName.TYPE) && pdfObj.get(PdfName.TYPE).equals(PdfName.PAGES) && pdfObj.contains(PdfName.KIDS)) 
+		if (pdfObj.contains(PdfName.TYPE) && pdfObj.get(PdfName.TYPE).equals(PdfName.PAGES) && pdfObj.contains(PdfName.KIDS))
 		{
 			PdfArray kids = (PdfArray)pdfObj.get(PdfName.KIDS);
 			indirect = (PdfIndirectReference)kids.getPdfObject(0);
 		}
 		return indirect.getNumber();
 	}
-    
+
     /**
      * Gets a <CODE>List</CODE> with the bookmarks. It returns <CODE>null</CODE> if
      * the document doesn't have any bookmarks.
      * @param reader the document
      * @return a <CODE>List</CODE> with the bookmarks or <CODE>null</CODE> if the
      * document doesn't have any
-     */    
-    public static List getBookmark(PdfReader reader) {
+     */
+    public static List<HashMap<String, Object>> getBookmark(PdfReader reader) {
         PdfDictionary catalog = reader.getCatalog();
         PdfObject obj = PdfReader.getPdfObjectRelease(catalog.get(PdfName.OUTLINES));
         if (obj == null || !obj.isDictionary())
@@ -284,19 +284,20 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
         }
         return bookmarkDepth(reader, (PdfDictionary)PdfReader.getPdfObjectRelease(outlines.get(PdfName.FIRST)), pages);
     }
-    
+
     /**
      * Removes the bookmark entries for a number of page ranges. The page ranges
      * consists of a number of pairs with the start/end page range. The page numbers
      * are inclusive.
      * @param list the bookmarks
      * @param pageRange the page ranges, always in pairs.
-     */    
-    public static void eliminatePages(List list, int pageRange[]) {
+     */
+    @SuppressWarnings("unchecked")
+    public static void eliminatePages(List<HashMap<String, Object>> list, int pageRange[]) {
         if (list == null)
             return;
-        for (Iterator it = list.listIterator(); it.hasNext();) {
-            HashMap map = (HashMap)it.next();
+        for (Iterator<HashMap<String, Object>> it = list.listIterator(); it.hasNext();) {
+            HashMap<String, Object> map = it.next();
             boolean hit = false;
             if ("GoTo".equals(map.get("Action"))) {
                 String page = (String)map.get("Page");
@@ -317,7 +318,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
                     }
                 }
             }
-            List kids = (List)map.get("Kids");
+            List<HashMap<String, Object>> kids = (List<HashMap<String, Object>>)map.get("Kids");
             if (kids != null) {
                 eliminatePages(kids, pageRange);
                 if (kids.isEmpty()) {
@@ -336,7 +337,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
             }
         }
     }
-    
+
     /**
      * For the pages in range add the <CODE>pageShift</CODE> to the page number.
      * The page ranges
@@ -346,12 +347,13 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
      * @param pageShift the number to add to the pages in range
      * @param pageRange the page ranges, always in pairs. It can be <CODE>null</CODE>
      * to include all the pages
-     */    
-    public static void shiftPageNumbers(List list, int pageShift, int pageRange[]) {
+     */
+    @SuppressWarnings("unchecked")
+    public static void shiftPageNumbers(List<HashMap<String, Object>> list, int pageShift, int pageRange[]) {
         if (list == null)
             return;
-        for (Iterator it = list.listIterator(); it.hasNext();) {
-            HashMap map = (HashMap)it.next();
+        for (Iterator<HashMap<String, Object>> it = list.listIterator(); it.hasNext();) {
+            HashMap<String, Object> map = it.next();
             if ("GoTo".equals(map.get("Action"))) {
                 String page = (String)map.get("Page");
                 if (page != null) {
@@ -378,18 +380,18 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
                         if (idx < 0)
                             page = Integer.toString(pageNum + pageShift);
                         else
-                            page = (pageNum + pageShift) + page.substring(idx);
+                            page = pageNum + pageShift + page.substring(idx);
                     }
                     map.put("Page", page);
                 }
             }
-            List kids = (List)map.get("Kids");
+            List<HashMap<String, Object>> kids = (List<HashMap<String, Object>>)map.get("Kids");
             if (kids != null)
                 shiftPageNumbers(kids, pageShift, pageRange);
         }
     }
-    
-    static void createOutlineAction(PdfDictionary outline, HashMap map, PdfWriter writer, boolean namedAsNames) {
+
+    static void createOutlineAction(PdfDictionary outline, HashMap<String, Object> map, PdfWriter writer, boolean namedAsNames) {
         try {
             String action = (String)map.get("Action");
             if ("GoTo".equals(action)) {
@@ -493,16 +495,17 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
         }
     }
 
-    public static Object[] iterateOutlines(PdfWriter writer, PdfIndirectReference parent, List kids, boolean namedAsNames) throws IOException {
+    @SuppressWarnings("unchecked")
+    public static Object[] iterateOutlines(PdfWriter writer, PdfIndirectReference parent, List<HashMap<String, Object>> kids, boolean namedAsNames) throws IOException {
         PdfIndirectReference refs[] = new PdfIndirectReference[kids.size()];
         for (int k = 0; k < refs.length; ++k)
             refs[k] = writer.getPdfIndirectReference();
         int ptr = 0;
         int count = 0;
-        for (Iterator it = kids.listIterator(); it.hasNext(); ++ptr) {
-            HashMap map = (HashMap)it.next();
+        for (Iterator<HashMap<String, Object>> it = kids.listIterator(); it.hasNext(); ++ptr) {
+            HashMap<String, Object> map = it.next();
             Object lower[] = null;
-            List subKid = (List)map.get("Kids");
+            List<HashMap<String, Object>> subKid = (List<HashMap<String, Object>>)map.get("Kids");
             if (subKid != null && !subKid.isEmpty())
                 lower = iterateOutlines(writer, refs[ptr], subKid, namedAsNames);
             PdfDictionary outline = new PdfDictionary();
@@ -555,7 +558,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
         }
         return new Object[]{refs[0], refs[refs.length - 1], new Integer(count)};
     }
-    
+
     /**
      * Exports the bookmarks to XML. Only of use if the generation is to be include in
      * some other XML document.
@@ -565,26 +568,26 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>,
      * whatever the encoding
      * @throws IOException on error
+     * @since 5.0.1 (generic type in signature)
      */
-    public static void exportToXMLNode(List list, Writer out, int indent, boolean onlyASCII) throws IOException {
+    @SuppressWarnings("unchecked")
+    public static void exportToXMLNode(List<HashMap<String, Object>> list, Writer out, int indent, boolean onlyASCII) throws IOException {
         String dep = "";
         for (int k = 0; k < indent; ++k)
             dep += "  ";
-        for (Iterator it = list.iterator(); it.hasNext();) {
-            HashMap map = (HashMap)it.next();
+        for (HashMap<String, Object> map : list) {
             String title = null;
             out.write(dep);
             out.write("<Title ");
-            List kids = null;
-            for (Iterator e = map.entrySet().iterator(); e.hasNext();) {
-                Map.Entry entry = (Map.Entry) e.next();
-                String key = (String) entry.getKey();
+            List<HashMap<String, Object>> kids = null;
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                String key = entry.getKey();
                 if (key.equals("Title")) {
                     title = (String) entry.getValue();
                     continue;
                 }
                 else if (key.equals("Kids")) {
-                    kids = (List) entry.getValue();
+                    kids = (List<HashMap<String, Object>>) entry.getValue();
                     continue;
                 }
                 else {
@@ -609,7 +612,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
             out.write("</Title>\n");
         }
     }
-    
+
     /**
      * Exports the bookmarks to XML. The DTD for this XML is:
      * <p>
@@ -636,13 +639,14 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>,
      * whatever the encoding
      * @throws IOException on error
-     */    
-    public static void exportToXML(List list, OutputStream out, String encoding, boolean onlyASCII) throws IOException {
+     * @since 5.0.1 (generic type in signature)
+     */
+    public static void exportToXML(List<HashMap<String, Object>> list, OutputStream out, String encoding, boolean onlyASCII) throws IOException {
         String jenc = IanaEncodings.getJavaEncoding(encoding);
         Writer wrt = new BufferedWriter(new OutputStreamWriter(out, jenc));
         exportToXML(list, wrt, encoding, onlyASCII);
     }
-    
+
     /**
      * Exports the bookmarks to XML.
      * @param list the bookmarks
@@ -651,8 +655,9 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>,
      * whatever the encoding
      * @throws IOException on error
+     * @since 5.0.1 (generic type in signature)
      */
-    public static void exportToXML(List list, Writer wrt, String encoding, boolean onlyASCII) throws IOException {
+    public static void exportToXML(List<HashMap<String, Object>> list, Writer wrt, String encoding, boolean onlyASCII) throws IOException {
         wrt.write("<?xml version=\"1.0\" encoding=\"");
         wrt.write(SimpleXMLParser.escapeXML(encoding, onlyASCII));
         wrt.write("\"?>\n<Bookmark>\n");
@@ -660,34 +665,35 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
         wrt.write("</Bookmark>\n");
         wrt.flush();
     }
-    
+
     /**
      * Import the bookmarks from XML.
      * @param in the XML source. The stream is not closed
      * @throws IOException on error
      * @return the bookmarks
-     */    
-    public static List importFromXML(InputStream in) throws IOException {
+     */
+    public static List<HashMap<String, Object>> importFromXML(InputStream in) throws IOException {
         SimpleBookmark book = new SimpleBookmark();
         SimpleXMLParser.parse(book, in);
         return book.topList;
     }
-    
+
     /**
      * Import the bookmarks from XML.
      * @param in the XML source. The reader is not closed
      * @throws IOException on error
      * @return the bookmarks
      */
-    public static List importFromXML(Reader in) throws IOException {
+    public static List<HashMap<String, Object>> importFromXML(Reader in) throws IOException {
         SimpleBookmark book = new SimpleBookmark();
         SimpleXMLParser.parse(book, in);
         return book.topList;
     }
-    
+
     public void endDocument() {
     }
-    
+
+    @SuppressWarnings("unchecked")
     public void endElement(String tag) {
         if (tag.equals("Bookmark")) {
             if (attr.isEmpty())
@@ -697,7 +703,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
         }
         if (!tag.equals("Title"))
             throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.end.tag.1", tag));
-        HashMap attributes = (HashMap)attr.pop();
+        HashMap<String, Object> attributes = attr.pop();
         String title = (String)attributes.get("Title");
         attributes.put("Title",  title.trim());
         String named = (String)attributes.get("Named");
@@ -709,23 +715,23 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
         if (attr.isEmpty())
             topList.add(attributes);
         else {
-            HashMap parent = (HashMap)attr.peek();
-            List kids = (List)parent.get("Kids");
+            HashMap<String, Object> parent = attr.peek();
+            List<HashMap<String, Object>> kids = (List<HashMap<String, Object>>)parent.get("Kids");
             if (kids == null) {
-                kids = new ArrayList();
+                kids = new ArrayList<HashMap<String, Object>>();
                 parent.put("Kids", kids);
             }
             kids.add(attributes);
         }
     }
-    
+
     public void startDocument() {
     }
-    
-    public void startElement(String tag, HashMap h) {
+
+    public void startElement(String tag, HashMap<String, String> h) {
         if (topList == null) {
             if (tag.equals("Bookmark")) {
-                topList = new ArrayList();
+                topList = new ArrayList<HashMap<String, Object>>();
                 return;
             }
             else
@@ -733,18 +739,18 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
         }
         if (!tag.equals("Title"))
             throw new RuntimeException(MessageLocalization.getComposedMessage("tag.1.not.allowed", tag));
-        HashMap attributes = new HashMap(h);
+        HashMap<String, Object> attributes = new HashMap<String, Object>(h);
         attributes.put("Title", "");
         attributes.remove("Kids");
         attr.push(attributes);
     }
-    
+
     public void text(String str) {
         if (attr.isEmpty())
             return;
-        HashMap attributes = (HashMap)attr.peek();
+        HashMap<String, Object> attributes = attr.peek();
         String title = (String)attributes.get("Title");
         title += str;
         attributes.put("Title", title);
-    }    
+    }
 }

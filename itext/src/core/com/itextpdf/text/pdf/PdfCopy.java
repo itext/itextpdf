@@ -45,14 +45,15 @@ package com.itextpdf.text.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Rectangle;
-import java.util.ArrayList;
 
 /**
  * Make copies of PDF documents. Documents can be edited after reading and
@@ -76,8 +77,8 @@ public class PdfCopy extends PdfWriter {
         boolean getCopied() { return hasCopied; }
         PdfIndirectReference getRef() { return theRef; }
     };
-    protected HashMap indirects;
-    protected HashMap indirectMap;
+    protected HashMap<RefKey, IndirectReferences> indirects;
+    protected HashMap<PdfReader, HashMap<RefKey, IndirectReferences>> indirectMap;
     protected int currentObjectNum = 1;
     protected PdfReader reader;
     protected PdfIndirectReference acroForm;
@@ -85,8 +86,8 @@ public class PdfCopy extends PdfWriter {
     /** Holds value of property rotateContents. */
     private boolean rotateContents = true;
     protected PdfArray fieldArray;
-    protected HashMap fieldTemplates;
-    
+    protected HashSet<PdfTemplate> fieldTemplates;
+
     /**
      * A key to allow us to hash indirect references
      */
@@ -105,19 +106,22 @@ public class PdfCopy extends PdfWriter {
             num = ref.getNumber();
             gen = ref.getGeneration();
         }
+        @Override
         public int hashCode() {
             return (gen<<16)+num;
         }
+        @Override
         public boolean equals(Object o) {
             if (!(o instanceof RefKey)) return false;
             RefKey other = (RefKey)o;
             return this.gen == other.gen && this.num == other.num;
         }
+        @Override
         public String toString() {
             return Integer.toString(num) + ' ' + gen;
         }
     }
-    
+
     /**
      * Constructor
      * @param document
@@ -127,7 +131,7 @@ public class PdfCopy extends PdfWriter {
         super(new PdfDocument(), os);
         document.addDocListener(pdf);
         pdf.addWriter(this);
-        indirectMap = new HashMap();
+        indirectMap = new HashMap<PdfReader, HashMap<RefKey, IndirectReferences>>();
     }
 
     /** Getter for property rotateContents.
@@ -137,7 +141,7 @@ public class PdfCopy extends PdfWriter {
     public boolean isRotateContents() {
         return this.rotateContents;
     }
-    
+
     /** Setter for property rotateContents.
      * @param rotateContents New value of property rotateContents.
      *
@@ -152,6 +156,7 @@ public class PdfCopy extends PdfWriter {
      * @param pageNumber which page to get
      * @return the page
      */
+    @Override
     public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
         if (currentPdfReaderInstance != null) {
             if (currentPdfReaderInstance.getReader() != reader) {
@@ -168,10 +173,10 @@ public class PdfCopy extends PdfWriter {
         else {
             currentPdfReaderInstance = reader.getPdfReaderInstance(this);
         }
-        return currentPdfReaderInstance.getImportedPage(pageNumber);            
+        return currentPdfReaderInstance.getImportedPage(pageNumber);
     }
-    
-    
+
+
     /**
      * Translate a PRIndirectReference to a PdfIndirectReference
      * In addition, translates the object numbers, and copies the
@@ -184,7 +189,7 @@ public class PdfCopy extends PdfWriter {
     protected PdfIndirectReference copyIndirect(PRIndirectReference in) throws IOException, BadPdfFormatException {
         PdfIndirectReference theRef;
         RefKey key = new RefKey(in);
-        IndirectReferences iRef = (IndirectReferences)indirects.get(key);
+        IndirectReferences iRef = indirects.get(key);
         if (iRef != null) {
             theRef = iRef.getRef();
             if (iRef.getCopied()) {
@@ -208,7 +213,7 @@ public class PdfCopy extends PdfWriter {
         addToBody(obj, theRef);
         return theRef;
     }
-    
+
     /**
      * Translate a PRDictionary to a PdfDictionary. Also translate all of the
      * objects contained in it.
@@ -217,9 +222,9 @@ public class PdfCopy extends PdfWriter {
     throws IOException, BadPdfFormatException {
         PdfDictionary out = new PdfDictionary();
         PdfObject type = PdfReader.getPdfObjectRelease(in.get(PdfName.TYPE));
-        
-        for (Iterator it = in.getKeys().iterator(); it.hasNext();) {
-            PdfName key = (PdfName)it.next();
+
+        for (Object element : in.getKeys()) {
+            PdfName key = (PdfName)element;
             PdfObject value = in.get(key);
             //	    System.out.println("Copy " + key);
             if (type != null && PdfName.PAGE.equals(type)) {
@@ -231,37 +236,37 @@ public class PdfCopy extends PdfWriter {
         }
         return out;
     }
-    
+
     /**
      * Translate a PRStream to a PdfStream. The data part copies itself.
      */
     protected PdfStream copyStream(PRStream in) throws IOException, BadPdfFormatException {
         PRStream out = new PRStream(in, null);
-        
-        for (Iterator it = in.getKeys().iterator(); it.hasNext();) {
-            PdfName key = (PdfName) it.next();
+
+        for (Object element : in.getKeys()) {
+            PdfName key = (PdfName) element;
             PdfObject value = in.get(key);
             out.put(key, copyObject(value));
         }
-        
+
         return out;
     }
-    
-    
+
+
     /**
      * Translate a PRArray to a PdfArray. Also translate all of the objects contained
      * in it
      */
     protected PdfArray copyArray(PdfArray in) throws IOException, BadPdfFormatException {
         PdfArray out = new PdfArray();
-        
-        for (Iterator i = in.listIterator(); i.hasNext();) {
-            PdfObject value = (PdfObject)i.next();
+
+        for (Iterator<PdfObject> i = in.listIterator(); i.hasNext();) {
+            PdfObject value = i.next();
             out.add(copyObject(value));
         }
         return out;
     }
-    
+
     /**
      * Translate a PR-object to a Pdf-object
      */
@@ -298,7 +303,7 @@ public class PdfCopy extends PdfWriter {
                 return null;
         }
     }
-    
+
     /**
      * convenience method. Given an imported page, set our "globals"
      */
@@ -309,15 +314,15 @@ public class PdfCopy extends PdfWriter {
         setFromReader(reader);
         return pageNum;
     }
-    
+
     /**
      * convenience method. Given a reader, set our "globals"
      */
     protected void setFromReader(PdfReader reader) {
         this.reader = reader;
-        indirects = (HashMap)indirectMap.get(reader);
+        indirects = indirectMap.get(reader);
         if (indirects == null) {
-            indirects = new HashMap();
+            indirects = new HashMap<RefKey, IndirectReferences>();
             indirectMap.put(reader,indirects);
             PdfDictionary catalog = reader.getCatalog();
             PRIndirectReference ref = null;
@@ -336,13 +341,13 @@ public class PdfCopy extends PdfWriter {
      */
     public void addPage(PdfImportedPage iPage) throws IOException, BadPdfFormatException {
         int pageNum = setFromIPage(iPage);
-        
+
         PdfDictionary thePage = reader.getPageN(pageNum);
         PRIndirectReference origRef = reader.getPageOrigRef(pageNum);
         reader.releasePage(pageNum);
         RefKey key = new RefKey(origRef);
         PdfIndirectReference pageRef;
-        IndirectReferences iRef = (IndirectReferences)indirects.get(key);
+        IndirectReferences iRef = indirects.get(key);
         if (iRef != null && !iRef.getCopied()) {
             pageReferences.add(iRef.getRef());
             iRef.setCopied();
@@ -357,7 +362,7 @@ public class PdfCopy extends PdfWriter {
         root.addPage(newPage);
         ++currentPageNumber;
     }
-    
+
     /**
      * Adds a blank page.
      * @param	rect The page dimension
@@ -367,12 +372,12 @@ public class PdfCopy extends PdfWriter {
     public void addPage(Rectangle rect, int rotation) {
     	PdfRectangle mediabox = new PdfRectangle(rect, rotation);
     	PageResources resources = new PageResources();
-    	PdfPage page = new PdfPage(mediabox, new HashMap(), resources.getResources(), 0);
+    	PdfPage page = new PdfPage(mediabox, new HashMap<String, PdfRectangle>(), resources.getResources(), 0);
     	page.put(PdfName.TABS, getTabs());
     	root.addPage(page);
     	++currentPageNumber;
     }
-    
+
     /**
      * Copy the acroform for an input document. Note that you can only have one,
      * we make no effort to merge them.
@@ -381,7 +386,7 @@ public class PdfCopy extends PdfWriter {
      */
     public void copyAcroForm(PdfReader reader) throws IOException, BadPdfFormatException {
         setFromReader(reader);
-        
+
         PdfDictionary catalog = reader.getCatalog();
         PRIndirectReference hisRef = null;
         PdfObject o = catalog.get(PdfName.ACROFORM);
@@ -390,7 +395,7 @@ public class PdfCopy extends PdfWriter {
         if (hisRef == null) return; // bugfix by John Englar
         RefKey key = new RefKey(hisRef);
         PdfIndirectReference myRef;
-        IndirectReferences iRef = (IndirectReferences)indirects.get(key);
+        IndirectReferences iRef = indirects.get(key);
         if (iRef != null) {
             acroForm = myRef = iRef.getRef();
         }
@@ -405,11 +410,12 @@ public class PdfCopy extends PdfWriter {
             addToBody(theForm, myRef);
         }
     }
-    
+
     /*
      * the getCatalog method is part of PdfWriter.
      * we wrap this so that we can extend it
      */
+    @Override
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj) {
         try {
             PdfDictionary theCat = pdf.getCatalog(rootObj);
@@ -424,7 +430,7 @@ public class PdfCopy extends PdfWriter {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     private void addFieldResources(PdfDictionary catalog) throws IOException {
         if (fieldArray == null)
             return;
@@ -436,8 +442,7 @@ public class PdfCopy extends PdfWriter {
             return;
         PdfDictionary dr = new PdfDictionary();
         acroForm.put(PdfName.DR, dr);
-        for (Iterator it = fieldTemplates.keySet().iterator(); it.hasNext();) {
-            PdfTemplate template = (PdfTemplate)it.next();
+        for (PdfTemplate template: fieldTemplates) {
             PdfFormField.mergeResources(dr, (PdfDictionary)template.getResources());
         }
         // if (dr.get(PdfName.ENCODING) == null) dr.put(PdfName.ENCODING, PdfName.WIN_ANSI_ENCODING);
@@ -462,7 +467,7 @@ public class PdfCopy extends PdfWriter {
             fonts.put(PdfName.ZADB, addToBody(dic).getIndirectReference());
         }
     }
-    
+
     /**
      * Signals that the <CODE>Document</CODE> was closed and that no other
      * <CODE>Elements</CODE> will be added.
@@ -472,7 +477,8 @@ public class PdfCopy extends PdfWriter {
      * the reference table is composed and everything is written
      * to the outputstream embedded in a Trailer.
      */
-    
+
+    @Override
     public void close() {
         if (open) {
             PdfReaderInstance ri = currentPdfReaderInstance;
@@ -490,9 +496,12 @@ public class PdfCopy extends PdfWriter {
         }
     }
     public PdfIndirectReference add(PdfOutline outline) { return null; }
+    @Override
     public void addAnnotation(PdfAnnotation annot) {  }
+    @Override
     PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException { return null; }
 
+    @Override
     public void freeReader(PdfReader reader) throws IOException {
         indirectMap.remove(reader);
         if (currentPdfReaderInstance != null) {
@@ -508,7 +517,7 @@ public class PdfCopy extends PdfWriter {
             }
         }
     }
-    
+
     /**
      * Create a page stamp. New content and annotations, including new fields, are allowed.
      * The fields added cannot have parents in another pages. This method modifies the PdfReader instance.<p>
@@ -538,22 +547,22 @@ public class PdfCopy extends PdfWriter {
         PdfDictionary pageN = reader.getPageN(pageNum);
         return new PageStamp(reader, pageN, this);
     }
-    
+
     public static class PageStamp {
-        
+
         PdfDictionary pageN;
         PdfCopy.StampContent under;
         PdfCopy.StampContent over;
         PageResources pageResources;
         PdfReader reader;
         PdfCopy cstp;
-        
+
         PageStamp(PdfReader reader, PdfDictionary pageN, PdfCopy cstp) {
             this.pageN = pageN;
             this.reader = reader;
             this.cstp = cstp;
         }
-        
+
         public PdfContentByte getUnderContent(){
             if (under == null) {
                 if (pageResources == null) {
@@ -565,7 +574,7 @@ public class PdfCopy extends PdfWriter {
             }
             return under;
         }
-        
+
         public PdfContentByte getOverContent(){
             if (over == null) {
                 if (pageResources == null) {
@@ -577,7 +586,7 @@ public class PdfCopy extends PdfWriter {
             }
             return over;
         }
-        
+
         public void alterContents() throws IOException {
             if (over == null && under == null)
                 return;
@@ -623,7 +632,7 @@ public class PdfCopy extends PdfWriter {
             }
             pageN.put(PdfName.RESOURCES, pageResources.getResources());
         }
-        
+
         void applyRotation(PdfDictionary pageN, ByteBuffer out) {
             if (!cstp.rotateContents)
                 return;
@@ -650,42 +659,42 @@ public class PdfCopy extends PdfWriter {
                     break;
             }
         }
-        
+
         private void addDocumentField(PdfIndirectReference ref) {
             if (cstp.fieldArray == null)
                 cstp.fieldArray = new PdfArray();
             cstp.fieldArray.add(ref);
         }
 
-        private void expandFields(PdfFormField field, ArrayList allAnnots) {
+        private void expandFields(PdfFormField field, ArrayList<PdfAnnotation> allAnnots) {
             allAnnots.add(field);
-            ArrayList kids = field.getKids();
+            ArrayList<PdfFormField> kids = field.getKids();
             if (kids != null) {
                 for (int k = 0; k < kids.size(); ++k)
-                    expandFields((PdfFormField)kids.get(k), allAnnots);
+                    expandFields(kids.get(k), allAnnots);
             }
         }
 
         public void addAnnotation(PdfAnnotation annot) {
             try {
-                ArrayList allAnnots = new ArrayList();
+                ArrayList<PdfAnnotation> allAnnots = new ArrayList<PdfAnnotation>();
                 if (annot.isForm()) {
                     PdfFormField field = (PdfFormField)annot;
                     if (field.getParent() != null)
                         return;
                     expandFields(field, allAnnots);
                     if (cstp.fieldTemplates == null)
-                        cstp.fieldTemplates = new HashMap();
+                        cstp.fieldTemplates = new HashSet<PdfTemplate>();
                 }
                 else
                     allAnnots.add(annot);
                 for (int k = 0; k < allAnnots.size(); ++k) {
-                    annot = (PdfAnnotation)allAnnots.get(k);
+                    annot = allAnnots.get(k);
                     if (annot.isForm()) {
                         if (!annot.isUsed()) {
-                            HashMap templates = annot.getTemplates();
+                            HashSet<PdfTemplate> templates = annot.getTemplates();
                             if (templates != null)
-                                cstp.fieldTemplates.putAll(templates);
+                                cstp.fieldTemplates.addAll(templates);
                         }
                         PdfFormField field = (PdfFormField)annot;
                         if (field.getParent() == null)
@@ -698,7 +707,7 @@ public class PdfCopy extends PdfWriter {
                             annots = new PdfArray();
                             pageN.put(PdfName.ANNOTS, annots);
                         }
-                        else 
+                        else
                             annots = (PdfArray)pdfobj;
                         annots.add(annot.getIndirectReference());
                         if (!annot.isUsed()) {
@@ -743,26 +752,28 @@ public class PdfCopy extends PdfWriter {
             }
         }
     }
-    
+
     public static class StampContent extends PdfContentByte {
         PageResources pageResources;
-        
+
         /** Creates a new instance of StampContent */
         StampContent(PdfWriter writer, PageResources pageResources) {
             super(writer);
             this.pageResources = pageResources;
         }
-        
+
         /**
          * Gets a duplicate of this <CODE>PdfContentByte</CODE>. All
          * the members are copied by reference but the buffer stays different.
          *
          * @return a copy of this <CODE>PdfContentByte</CODE>
          */
+        @Override
         public PdfContentByte getDuplicate() {
             return new PdfCopy.StampContent(writer, pageResources);
         }
-        
+
+        @Override
         PageResources getPageResources() {
             return pageResources;
         }
