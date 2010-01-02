@@ -2427,6 +2427,9 @@ public class PdfDocument extends Document {
         	<= indentTop() - currentHeight - indentBottom() - margin;
     }
 
+    /**
+     * @since 5.0.1
+     */
     public class Destination {
         public PdfAction action;
         public PdfIndirectReference reference;

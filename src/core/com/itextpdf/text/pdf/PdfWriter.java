@@ -748,7 +748,7 @@ public class PdfWriter extends DocWriter implements
 
     /**
      * Adds the local destinations to the body of the document.
-     * @param dest the <CODE>HashMap</CODE> containing the destinations
+     * @param desto the <CODE>HashMap</CODE> containing the destinations
      * @throws IOException on error
      */
 
