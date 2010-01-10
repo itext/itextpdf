@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -121,6 +122,8 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
      */
     public String getResultantText(){
 
+        //dumpState();
+        
         Collections.sort(locationalResult);
 
         StringBuffer sb = new StringBuffer();
@@ -146,6 +149,21 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
 
     }
 
+    /** Used for debugging only */
+    private void dumpState(){
+        for (Iterator iterator = locationalResult.iterator(); iterator.hasNext(); ) {
+            LocationOnPage location = (LocationOnPage) iterator.next();
+            
+            System.out.println("Text: " + location.text);
+            System.out.println("orientationMagnitude: " + location.orientationMagnitude);
+            System.out.println("distParallel: " + location.distParallel);
+            System.out.println("distPerpendicular: " + location.distPerpendicular);
+            
+            System.out.println();
+        }
+        
+    }
+    
     /**
      * Captures text using a relatively advanced algorithm for determining text chunks and spaces
      * @param	renderInfo	render info
@@ -230,12 +248,16 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
         Vector origin = new Vector(0,0,1);
 
         // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
-        float distPerp = chunkStart.subtract(origin).cross(orientationVector).length();
+        // the two vectors we are crossing are in the same plane, so the result will be purely
+        // in the z-axis (out of plane) direction, so we just take the I3 component of the result
+        float distPerp = (chunkStart.subtract(origin)).cross(orientationVector).get(Vector.I3);
 
         float distParallel = orientationVector.dot(chunkStart);
 
         locationalResult.add(new LocationOnPage(text, (int)(orientationVector.get(Vector.I2)*1000), (int)distPerp, (int)distParallel));
 
+        System.out.println("Text " + text + " @ " + chunkStart);
+        System.out.println("Perp vector = " + (chunkStart.subtract(origin)).cross(orientationVector));
     }
 
     /**
@@ -274,9 +296,6 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
 
         /**
          * Compares based on orientation, perpendicular distance, then parallel distance
-         * The perpendicular distance is compared using an inverse to account for the 0,0
-         * location of user space being the lower left hand corner (i.e. we want chunks
-         * with bigger Y values to sort to the top of the list)
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
         public int compareTo(LocationOnPage rhs) {
@@ -284,9 +303,10 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
             rslt = compareInts(orientationMagnitude, rhs.orientationMagnitude);
             if (rslt != 0) return rslt;
 
-            rslt = -compareInts(distPerpendicular, rhs.distPerpendicular);
+            rslt = compareInts(distPerpendicular, rhs.distPerpendicular);
             if (rslt != 0) return rslt;
 
+            
             rslt = compareInts(distParallel, rhs.distParallel);
             return rslt;
         }
