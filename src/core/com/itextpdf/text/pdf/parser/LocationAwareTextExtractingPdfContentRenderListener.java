@@ -256,8 +256,6 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
 
         locationalResult.add(new LocationOnPage(text, (int)(orientationVector.get(Vector.I2)*1000), (int)distPerp, (int)distParallel));
 
-        System.out.println("Text " + text + " @ " + chunkStart);
-        System.out.println("Perp vector = " + (chunkStart.subtract(origin)).cross(orientationVector));
     }
 
     /**
