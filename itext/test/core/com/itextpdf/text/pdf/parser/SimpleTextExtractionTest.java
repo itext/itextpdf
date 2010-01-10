@@ -8,8 +8,6 @@ package com.itextpdf.text.pdf.parser;
 
 import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -94,9 +92,20 @@ public class SimpleTextExtractionTest {
         PdfTextExtractor ex = new PdfTextExtractor(new PdfReader(bytes), createRenderListenerForTest());
 
         Assert.assertEquals(TEXT1 + "\n" + TEXT2, ex.getTextFromPage(1));
-        
+
     }
     
+    @Test
+    public void testRotatedText2() throws Exception{
+        
+        byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 90, true, -20);
+        //TestResourceUtils.saveBytesToFile(bytes, new File("C:/temp/out.pdf"));
+        PdfTextExtractor ex = new PdfTextExtractor(new PdfReader(bytes), createRenderListenerForTest());
+
+        Assert.assertEquals(TEXT1 + "\n" + TEXT2, ex.getTextFromPage(1));
+
+    }
+
     @Test
     public void testPartiallyRotatedText() throws Exception{
         
@@ -285,17 +294,4 @@ public class SimpleTextExtractionTest {
         return pdfBytes;
     }
   
-  
-  /**
-   * Used for testing only if we need to open the PDF itself
-   * @param bytes
-   * @param file
-   * @throws Exception
-   */
-  protected void saveBytesToFile(byte[] bytes, File file) throws Exception{
-      final FileOutputStream outputStream = new FileOutputStream(file);
-      outputStream.write(bytes);
-      outputStream.close();
-      System.out.println("PDF dumped to " + file.getAbsolutePath());
-  }    
 }
