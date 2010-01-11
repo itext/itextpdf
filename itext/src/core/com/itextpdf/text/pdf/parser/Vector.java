@@ -198,4 +198,13 @@ public class Vector {
     public String toString() {
         return vals[I1]+","+vals[I2]+","+vals[I3];
     }
+    
+    /**
+     * @since 5.0.1
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        Vector rhs = (Vector)obj;
+        return rhs.vals[I1] == vals[I1] && rhs.vals[I2] == vals[I2] && rhs.vals[I3] == vals[I3];
+    }
 }

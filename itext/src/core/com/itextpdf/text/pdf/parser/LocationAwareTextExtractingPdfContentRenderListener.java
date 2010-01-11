@@ -72,6 +72,9 @@ import java.util.List;
  */
 public class LocationAwareTextExtractingPdfContentRenderListener implements TextProvidingRenderListener {
 
+    /** set to true for debugging */
+    static boolean DUMP_STATE = false;
+    
     /** the starting point of the current line of text */
     private Vector chunkStart;
     /** the most recent ending point of the current chunk of text */
@@ -122,7 +125,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
      */
     public String getResultantText(){
 
-        //dumpState();
+        if (DUMP_STATE) dumpState();
         
         Collections.sort(locationalResult);
 
@@ -154,10 +157,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
         for (Iterator iterator = locationalResult.iterator(); iterator.hasNext(); ) {
             LocationOnPage location = (LocationOnPage) iterator.next();
             
-            System.out.println("Text: " + location.text);
-            System.out.println("orientationMagnitude: " + location.orientationMagnitude);
-            System.out.println("distParallel: " + location.distParallel);
-            System.out.println("distPerpendicular: " + location.distPerpendicular);
+            location.printDiagnostics();
             
             System.out.println();
         }
@@ -244,17 +244,8 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
      */
     private void captureChunk(String text){
 
-        Vector orientationVector = chunkEnd.subtract(chunkStart).normalize();
-        Vector origin = new Vector(0,0,1);
-
-        // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
-        // the two vectors we are crossing are in the same plane, so the result will be purely
-        // in the z-axis (out of plane) direction, so we just take the I3 component of the result
-        float distPerp = (chunkStart.subtract(origin)).cross(orientationVector).get(Vector.I3);
-
-        float distParallel = orientationVector.dot(chunkStart);
-
-        locationalResult.add(new LocationOnPage(text, (int)(orientationVector.get(Vector.I2)*1000), (int)distPerp, (int)distParallel));
+        LocationOnPage location = new LocationOnPage(text, chunkStart, chunkEnd);
+        locationalResult.add(location);
 
     }
 
@@ -264,6 +255,12 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
     private static class LocationOnPage implements Comparable<LocationOnPage>{
         /** the text of the chunk */
         final String text;
+        /** the starting location of the chunk */
+        final Vector startLocation;
+        /** the ending location of the chunk */
+        final Vector endLocation;
+        /** unit vector in the orientation of the chunk */
+        final Vector orientationVector;
         /** the magnitude of the orientation - this consists of just the Y component of the orientation vector
          *  this seems to work for now, but we may need to move to a different mechanism once we run into
          *  PDFs with different text orientation (This is just not an area that's been tested yet)
@@ -274,14 +271,31 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
         /** parallel distance to the orientation unit vector (i.e. the X position in an unrotated coordinate system */
         final int distParallel;
 
-        public LocationOnPage(String string, int orientationMagnitude,
-                int distPerpindicular, int distParallel) {
+        public LocationOnPage(String string, Vector startLocation, Vector endLocation) {
             this.text = string;
-            this.orientationMagnitude = orientationMagnitude;
-            this.distPerpendicular = distPerpindicular;
-            this.distParallel = distParallel;
+            this.startLocation = startLocation;
+            this.endLocation = endLocation;
+            
+            orientationVector = endLocation.subtract(startLocation).normalize();
+            this.orientationMagnitude = (int)(orientationVector.get(Vector.I2)*1000);
+
+            // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
+            // the two vectors we are crossing are in the same plane, so the result will be purely
+            // in the z-axis (out of plane) direction, so we just take the I3 component of the result
+            Vector origin = new Vector(0,0,1);
+            distPerpendicular = (int)(startLocation.subtract(origin)).cross(orientationVector).get(Vector.I3);
+
+            distParallel = (int)orientationVector.dot(startLocation);
+            
         }
 
+        private void printDiagnostics(){
+            System.out.println("Text (@" + startLocation + " -> " + endLocation + "): " + text);
+            System.out.println("orientationMagnitude: " + orientationMagnitude);
+            System.out.println("distPerpendicular: " + distPerpendicular);
+            System.out.println("distParallel: " + distParallel);
+        }
+        
         /**
          * @param as the location to compare to
          * @return true is this location is on the the same line as the other

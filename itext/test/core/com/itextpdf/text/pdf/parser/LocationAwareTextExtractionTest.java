@@ -6,7 +6,9 @@
 package com.itextpdf.text.pdf.parser;
 
 
+import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -14,13 +16,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.testutils.TestResourceUtils;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
@@ -103,6 +108,63 @@ public class LocationAwareTextExtractionTest extends SimpleTextExtractionTest{
         Assert.assertEquals("A\nB\nC\nD", text);
     }
 
+    @Test
+    public void testExtractXObjectTextWithRotation() throws Exception {
+        //LocationAwareTextExtractingPdfContentRenderListener.DUMP_STATE = true;
+        String text1 = "X";
+        byte[] content = createPdfWithRotatedXObject(text1);
+        //TestResourceUtils.saveBytesToFile(content, new File("C:/temp/out.pdf"));
+        PdfReader r = new PdfReader(content);
+        
+        PdfTextExtractor ex = new PdfTextExtractor(r, createRenderListenerForTest());
+        String text = ex.getTextFromPage(1);
+        Assert.assertEquals("A\nB\nX\nC", text);
+    }
+
+    private byte[] createPdfWithRotatedXObject(String xobjectText) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Document doc = new Document();
+        PdfWriter writer = PdfWriter.getInstance(doc, baos);
+        writer.setCompressionLevel(0);
+        doc.open();
+
+        doc.add(new Paragraph("A"));
+        doc.add(new Paragraph("B"));
+        
+        boolean rotate = true;
+        
+        PdfTemplate template = writer.getDirectContent().createTemplate(20, 100);
+        template.setColorStroke(BaseColor.GREEN);
+        template.rectangle(0, 0, template.getWidth(), template.getHeight());
+        template.stroke();
+        AffineTransform tx = new AffineTransform();
+        if (rotate){
+            tx.translate(0, template.getHeight());
+            tx.rotate(-90/180f*Math.PI);
+        }
+        template.transform(tx);
+        template.beginText();
+        template.setFontAndSize(BaseFont.createFont(), 12);
+        if (rotate)
+            template.moveText(0, template.getWidth()-12);
+        else
+            template.moveText(0, template.getHeight()-12);
+        template.showText(xobjectText);
+
+        template.endText();
+        
+        Image xobjectImage = Image.getInstance(template);
+        if (rotate)
+            xobjectImage.setRotationDegrees(90);
+        doc.add(xobjectImage);
+        
+        doc.add(new Paragraph("C"));
+        
+        doc.close();
+        
+        return baos.toByteArray();
+    }    
+    
     private byte[] createSimplePdf(Rectangle pageSize, final String... text) throws Exception{
             final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
