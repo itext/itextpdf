@@ -119,6 +119,9 @@ public final class TestResourceUtils {
         final FileOutputStream outputStream = new FileOutputStream(file);
         outputStream.write(bytes);
         outputStream.close();
-        System.out.println("PDF dumped to " + file.getAbsolutePath());
+        System.out.println("PDF dumped to " + file.getAbsolutePath() + " by the following calls:");
+        for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+            System.out.println("\t" + e);
+        }
     }      
 }

@@ -8,12 +8,14 @@ package com.itextpdf.text.pdf.parser;
 
 import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.testutils.TestResourceUtils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
@@ -153,8 +155,9 @@ public class SimpleTextExtractionTest {
     
     @Test
     public void testExtractXObjectText() throws Exception {
-        String text1 = "Some XObject text";
-        PdfReader r = createPdfWithXObject(text1);
+        String text1 = "X";
+        byte[] content = createPdfWithXObject(text1);
+        PdfReader r = new PdfReader(content);
         
         PdfTextExtractor ex = new PdfTextExtractor(r, createRenderListenerForTest());
         String text = ex.getTextFromPage(1);
@@ -163,15 +166,15 @@ public class SimpleTextExtractionTest {
     
 
     
-    private PdfReader createPdfWithXObject(String xobjectText) throws Exception {
+    byte[] createPdfWithXObject(String xobjectText) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document doc = new Document();
         PdfWriter writer = PdfWriter.getInstance(doc, baos);
         writer.setCompressionLevel(0);
         doc.open();
 
-        doc.add(new Paragraph("First Paragraph"));
-        doc.add(new Paragraph("Second Paragraph"));
+        doc.add(new Paragraph("A"));
+        doc.add(new Paragraph("B"));
         
         PdfTemplate template = writer.getDirectContent().createTemplate(100, 100);
         
@@ -186,11 +189,11 @@ public class SimpleTextExtractionTest {
         
         doc.add(xobjectImage);
         
+        doc.add(new Paragraph("C"));
+        
         doc.close();
         
-        //System.out.println(baos.toString());
-        
-        return new PdfReader(baos.toByteArray());
+        return baos.toByteArray();
     }    
     
     private static byte[] createPdfWithArrayText(String directContentTj) throws Exception{

@@ -315,7 +315,7 @@ public class PdfContentStreamProcessor {
                     float f = matrix.getAsNumber(5).floatValue();
                     Matrix formMatrix = new Matrix(a, b, c, d, e, f);
 
-                    gs().ctm = gs().ctm.multiply(formMatrix);
+                    gs().ctm = formMatrix.multiply(gs().ctm);
                 }
 
                 processContent(contentBytes, resources);
@@ -646,7 +646,7 @@ public class PdfContentStreamProcessor {
             float f = ((PdfNumber)operands.get(5)).floatValue();
             Matrix matrix = new Matrix(a, b, c, d, e, f);
             GraphicsState gs = processor.gsStack.peek();
-            gs.ctm = gs.ctm.multiply(matrix);
+            gs.ctm = matrix.multiply(gs.ctm);
         }
     }
 

@@ -198,4 +198,9 @@ public class Vector {
     public String toString() {
         return vals[I1]+","+vals[I2]+","+vals[I3];
     }
+    
+    public boolean equals(Object obj) {
+        Vector rhs = (Vector)obj;
+        return rhs.vals[I1] == vals[I1] && rhs.vals[I2] == vals[I2] && rhs.vals[I3] == vals[I3];
+    }
 }
