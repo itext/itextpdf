@@ -64,11 +64,13 @@ public class PdfTextExtractor {
     private final TextProvidingRenderListener renderListener;
     
     /**
-     * Creates a new Text Extractor object, using a {@link SimpleTextExtractingPdfContentRenderListener} as the render listener
+     * Creates a new Text Extractor object, using the most current algorithm for text
+     * extraction (currently {@link LocationAwareTextExtractingPdfContentRenderListener}) as the render listener
+  
      * @param reader	the reader with the PDF
      */
     public PdfTextExtractor(PdfReader reader) {
-        this(reader, new SimpleTextExtractingPdfContentRenderListener());
+        this(reader, new LocationAwareTextExtractingPdfContentRenderListener());
     }
 
     /**
