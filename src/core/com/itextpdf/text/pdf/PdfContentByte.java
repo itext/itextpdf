@@ -1127,7 +1127,7 @@ public class PdfContentByte {
         addImage(image, a, b, c, d, e, f, false);
     }
     
-    /*
+    /**
      * adds an image with the given matrix.
      * @param image image to add
      * @param transform transform to apply to the template prior to adding it.
@@ -1537,7 +1537,7 @@ public class PdfContentByte {
         .append(x).append_i(' ').append(y).append(" Tm").append_i(separator);
     }
 
-    /*
+    /**
      * Changes the text matrix.
      * <P>
      * @param transform overwrite the current text matrix with this one
@@ -1795,7 +1795,7 @@ public class PdfContentByte {
         content.append(d).append(' ').append(e).append(' ').append(f).append(" cm").append_i(separator);
     }
     
-    /*
+    /**
      * Concatenate a matrix to the current transformation matrix.
      * @param transform added to the Current Transformation Matrix
      * @since 5.0.1
@@ -2085,7 +2085,8 @@ public class PdfContentByte {
         content.append(f).append(" cm ");
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
     }
-    /*
+    
+    /**
      * adds a template with the given matrix.
      * @param template template to add
      * @param transform transform to apply to the template prior to adding it.
