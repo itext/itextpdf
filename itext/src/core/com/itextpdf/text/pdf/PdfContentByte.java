@@ -1126,6 +1126,19 @@ public class PdfContentByte {
     public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
         addImage(image, a, b, c, d, e, f, false);
     }
+    
+    /**
+     * adds an image with the given matrix.
+     * @param image image to add
+     * @param transform transform to apply to the template prior to adding it.
+     * @since 5.0.1
+     */
+    public void addImage(Image image, AffineTransform transform) throws DocumentException {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	addImage( image, (float)matrix[0], (float)matrix[1], (float)matrix[2], 
+    			  (float)matrix[3], (float)matrix[4],(float) matrix[5], false );
+    }
 
     /**
      * Adds an <CODE>Image</CODE> to the page. The positioning of the <CODE>Image</CODE>
@@ -1525,6 +1538,18 @@ public class PdfContentByte {
     }
 
     /**
+     * Changes the text matrix.
+     * <P>
+     * @param transform overwrite the current text matrix with this one
+     * @since 5.0.1
+     */
+    public void setTextMatrix(AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	setTextMatrix((float)matrix[0], (float)matrix[1], (float)matrix[2], 
+    			      (float)matrix[3], (float)matrix[4], (float)matrix[5] );
+    }
+    /**
      * Changes the text matrix. The first four parameters are {1,0,0,1}.
      * <P>
      * Remark: this operation also initializes the current point position.</P>
@@ -1768,6 +1793,18 @@ public class PdfContentByte {
     public void concatCTM(float a, float b, float c, float d, float e, float f) {
         content.append(a).append(' ').append(b).append(' ').append(c).append(' ');
         content.append(d).append(' ').append(e).append(' ').append(f).append(" cm").append_i(separator);
+    }
+    
+    /**
+     * Concatenate a matrix to the current transformation matrix.
+     * @param transform added to the Current Transformation Matrix
+     * @since 5.0.1
+     */
+    public void concatCTM(AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	concatCTM( (float)matrix[0], (float)matrix[1], (float)matrix[2], 
+    			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
     }
 
     /**
@@ -2047,6 +2084,20 @@ public class PdfContentByte {
         content.append(e).append(' ');
         content.append(f).append(" cm ");
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
+    }
+    
+    /**
+     * adds a template with the given matrix.
+     * @param template template to add
+     * @param transform transform to apply to the template prior to adding it.
+     * @since 5.0.1
+     */
+    public void addTemplate(PdfTemplate template, AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	addTemplate( template, (float)matrix[0], (float)matrix[1], (float)matrix[2], 
+    			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
+
     }
 
     void addTemplateReference(PdfIndirectReference template, PdfName name, float a, float b, float c, float d, float e, float f) {
