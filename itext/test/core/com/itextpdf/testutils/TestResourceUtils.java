@@ -7,6 +7,7 @@ package com.itextpdf.testutils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -59,11 +60,16 @@ public final class TestResourceUtils {
     }
     
     public static File getResourceAsTempFile(Object context, String resourceName) throws IOException{
-        File f = File.createTempFile(TESTPREFIX, ".pdf");
-        f.deleteOnExit();
         
         InputStream is = getResourceAsStream(context, resourceName);
         
+        return writeStreamToTempFile(is);
+    }
+    
+    private static File writeStreamToTempFile(InputStream is) throws IOException{
+        File f = File.createTempFile(TESTPREFIX, ".pdf");
+        f.deleteOnExit();
+
         final OutputStream os = new BufferedOutputStream(new FileOutputStream(f));
 
         try{
@@ -74,6 +80,7 @@ public final class TestResourceUtils {
         }
         
         return f;
+        
     }
     
     public static PdfReader getResourceAsPdfReader(Object context, String resourceName) throws IOException{
@@ -123,5 +130,31 @@ public final class TestResourceUtils {
         for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
             System.out.println("\t" + e);
         }
-    }      
+    }     
+    
+    /**
+     * Opens the specified bytes using the PDF handler of the workstation.
+     * Right now, this is implemented only for win32
+     * @param bytes
+     * @throws IOException
+     */
+    public static void openBytesAsPdf(byte[] bytes) throws IOException{
+        File f = writeStreamToTempFile(new ByteArrayInputStream(bytes));
+        
+        String osName = System.getProperty("os.name");
+        if (osName.toLowerCase().indexOf("win") >= 0){
+            String[] params = new String[]{
+                    "rundll32",
+                    "url.dll,FileProtocolHandler",
+                    "\"" + f.getCanonicalPath() + "\""
+            };
+            Runtime.getRuntime().exec(params);
+            try {
+                Thread.sleep(500); // give it time to launch before test ends and file gets deleted
+            } catch (InterruptedException e) {
+            } 
+        } else {
+            System.err.println("openBytesAsPdf not supported on platform " + osName);
+        }
+    }
 }
