@@ -523,6 +523,9 @@ public class PdfChunk {
         	Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
             return font.width(value) + value.length() * cs.floatValue();
 		}
+        if (isAttribute(Chunk.SEPARATOR)) {
+        	return 0;
+        }
         return font.width(value);
     }
 
