@@ -146,5 +146,14 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
         
     }
 
+    /**
+     * no-op method - this renderer isn't interested in image events
+     * @see com.itextpdf.text.pdf.parser.RenderListener#renderImage(com.itextpdf.text.pdf.parser.ImageRenderInfo)
+     * @since 5.0.1
+     */
+    public void renderImage(ImageRenderInfo renderInfo) {
+        // do nothing - we aren't tracking images in this renderer
+    }
+
 
 }

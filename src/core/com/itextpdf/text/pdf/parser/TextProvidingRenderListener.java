@@ -46,7 +46,7 @@ package com.itextpdf.text.pdf.parser;
 /**
  * Defines an interface for {@link TextRenderListener}s that can return text
  */
-public interface TextProvidingRenderListener extends TextRenderListener {
+public interface TextProvidingRenderListener extends RenderListener {
     /**
      * Returns the result so far.
      * @return  a String with the resulting text.

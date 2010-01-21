@@ -102,7 +102,7 @@ public class PdfContentStreamProcessorTest
   }
 
 
-  private class DebugRenderListener implements TextRenderListener
+  private class DebugRenderListener implements RenderListener
   {
     private float _lastY = Float.MAX_VALUE;
 
@@ -126,6 +126,9 @@ public class PdfContentStreamProcessorTest
     }
 
     public void endTextBlock() {
+    }
+
+    public void renderImage(ImageRenderInfo renderInfo) {
     }
 
   }
