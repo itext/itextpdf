@@ -82,18 +82,6 @@ public class PdfTextExtractor {
         this.renderListener = renderListener;
     }
     
-    /**
-     * Gets the content bytes of a page.
-     * @param pageNum	the page number of page you want get the content stream from
-     * @return	a byte array with the effective content stream of a page
-     * @throws IOException
-     */
-    private byte[] getContentBytesForPage(int pageNum) throws IOException {
-        final PdfDictionary pageDictionary = reader.getPageN(pageNum);
-        final PdfObject contentObject = pageDictionary.get(PdfName.CONTENTS);
-        final byte[] contentBytes = ContentByteUtils.getContentBytesFromContentObject(contentObject);
-        return contentBytes;
-    }
     
 
     
@@ -109,7 +97,7 @@ public class PdfTextExtractor {
         
         renderListener.reset();
         PdfContentStreamProcessor processor = new PdfContentStreamProcessor(renderListener);
-        processor.processContent(getContentBytesForPage(page), resourcesDic);        
+        processor.processContent(ContentByteUtils.getContentBytesForPage(reader, page), resourcesDic);        
         return renderListener.getResultantText();
     }
 }

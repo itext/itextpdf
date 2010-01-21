@@ -107,6 +107,24 @@ public class TextRenderInfo {
     }
     
     /**
+     * @return the text render mode that should be used for the text.  From the
+     * PDF specification, this means:
+     * <ul>
+     *   <li>0 = Fill text</li>
+     *   <li>1 = Stroke text</li>
+     *   <li>2 = Fill, then stroke text</li>
+     *   <li>3 = Invisible</li>
+     *   <li>4 = Fill text and add to path for clipping</li>
+     *   <li>5 = Stroke text and add to path for clipping</li>
+     *   <li>6 = Fill, then stroke text and add to path for clipping</li>
+     *   <li>7 = Add text to padd for clipping</li>
+     * </ul>
+     */
+    public int getTextRenderMode(){
+        return gs.renderMode;
+    }
+    
+    /**
      * Calculates the width of a space character.  If the font does not define
      * a width for a standard space character \u0020, we also attempt to use
      * the width of \u00A0 (a non-breaking space in many fonts)
@@ -136,4 +154,5 @@ public class TextRenderInfo {
         
         return totalWidth;
     }    
+    
 }

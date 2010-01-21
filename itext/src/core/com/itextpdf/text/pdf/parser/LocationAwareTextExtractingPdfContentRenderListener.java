@@ -335,6 +335,15 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
 
     }
 
+    /**
+     * no-op method - this renderer isn't interested in image events
+     * @see com.itextpdf.text.pdf.parser.RenderListener#renderImage(com.itextpdf.text.pdf.parser.ImageRenderInfo)
+     * @since 5.0.1
+     */
+    public void renderImage(ImageRenderInfo renderInfo) {
+        // do nothing
+    }
+
 
 
 }

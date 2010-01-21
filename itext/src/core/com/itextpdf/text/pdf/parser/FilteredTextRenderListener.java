@@ -48,57 +48,19 @@ package com.itextpdf.text.pdf.parser;
  * @since 5.0.1
  */
 
-public class FilteredTextRenderListener implements TextProvidingRenderListener {
+public class FilteredTextRenderListener extends FilteredRenderListener implements TextProvidingRenderListener {
 
     /** The delegate that will receive the text render operation if the filters all pass */
     private final TextProvidingRenderListener delegate;
-    /** The filters to be applied */
-    private final TextRenderFilter[] filters;
 
     /**
      * Construction
      * @param delegate the delegate {@link TextRenderListener} that will receive filtered text operations
      * @param filters the filter(s) to apply
      */
-    public FilteredTextRenderListener(TextProvidingRenderListener delegate, TextRenderFilter... filters) {
+    public FilteredTextRenderListener(TextProvidingRenderListener delegate, RenderFilter... filters) {
+        super(delegate, filters);
         this.delegate = delegate;
-        this.filters = filters;
-    }
-
-    /**
-     * Applies filters, then delegates to the delegate if all filters pass
-     * @see com.itextpdf.text.pdf.parser.TextRenderListener#renderText(com.itextpdf.text.pdf.parser.TextRenderInfo)
-     */
-    public void renderText(TextRenderInfo renderInfo) {
-        for (TextRenderFilter filter : filters) {
-            if (!filter.allowText(renderInfo))
-                return;
-        }
-        delegate.renderText(renderInfo);
-    }
-
-    /**
-     * This class delegates this call
-     * @see com.itextpdf.text.pdf.parser.TextRenderListener#beginTextBlock()
-     */
-    public void beginTextBlock() {
-        delegate.beginTextBlock();
-    }
-
-    /**
-     * This class delegates this call
-     * @see com.itextpdf.text.pdf.parser.TextRenderListener#endTextBlock()
-     */
-    public void endTextBlock() {
-        delegate.endTextBlock();
-    }
-
-    /**
-     * This class delegates this call
-     * @see com.itextpdf.text.pdf.parser.RenderListener#reset()
-     */
-    public void reset() {
-        delegate.reset();
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * $Id: TextRenderListener.java 3373 2008-05-12 16:21:24Z xlv $
+ * $Id: GraphicsState.java 4113 2009-12-01 11:08:59Z blowagie $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -45,24 +45,26 @@ package com.itextpdf.text.pdf.parser;
 
 
 /**
- * Callback interface for render operations during {@link PdfContentStreamProcessor} execution
- * @since    2.1.6
+ * Interface for defining filters for use with {@link FilteredRenderListener}
+ * @since 5.0.1
  */
-public interface TextRenderListener extends RenderListener {
+public abstract class RenderFilter {
 
     /**
-     * Called when text should be rendered
-     * @param renderInfo information specifying what to render
+     * @param renderInfo
+     * @return true if the text render operation should be performed
      */
-    public void renderText(TextRenderInfo renderInfo);
-
-    /**
-     * Called when a new text block is beginning (i.e. BT)
-     */
-    public void beginTextBlock();
+    public boolean allowText(TextRenderInfo renderInfo){
+        return true;
+    }
     
     /**
-     * Called when a text block has ended (i.e. ET)
+     * 
+     * @param renderInfo
+     * @return true is the image render operation should be performed
      */
-    public void endTextBlock();
+    public boolean allowImage(ImageRenderInfo renderInfo){
+        return true;
+    }
+
 }

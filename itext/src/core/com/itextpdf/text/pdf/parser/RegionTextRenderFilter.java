@@ -47,10 +47,10 @@ import java.awt.Rectangle;
 
 
 /**
- * A {@link TextRenderFilter} that only allows text within a specified rectangular region
+ * A {@link RenderFilter} that only allows text within a specified rectangular region
  * @since 5.0.1
  */
-public class RegionTextRenderFilter implements TextRenderFilter {
+public class RegionTextRenderFilter extends RenderFilter {
 
     /** the region to allow text from */
     private final Rectangle filterRect;
@@ -64,7 +64,7 @@ public class RegionTextRenderFilter implements TextRenderFilter {
     }
 
     /** 
-     * @see com.itextpdf.text.pdf.parser.TextRenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
+     * @see com.itextpdf.text.pdf.parser.RenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
      */
     public boolean allowText(TextRenderInfo renderInfo){
         Vector startPoint = renderInfo.getStartPoint();
@@ -77,4 +77,6 @@ public class RegionTextRenderFilter implements TextRenderFilter {
         
         return filterRect.intersectsLine(x1, y1, x2, y2);
     }
+
+
 }

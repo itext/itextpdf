@@ -43,17 +43,75 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-
 /**
- * Interface for defining filters for use with {@link FilteredTextRenderListener}
+ * A text render listener that filters text operations before passing them on to a delegate
  * @since 5.0.1
  */
-public interface TextRenderFilter {
+
+public class FilteredRenderListener implements RenderListener {
+
+    /** The delegate that will receive the text render operation if the filters all pass */
+    private final RenderListener delegate;
+    /** The filters to be applied */
+    private final RenderFilter[] filters;
 
     /**
-     * @param renderInfo
-     * @return true if the text render operation should be performed
+     * Construction
+     * @param delegate the delegate {@link RenderListener} that will receive filtered text operations
+     * @param filters the filter(s) to apply
      */
-    public boolean allowText(TextRenderInfo renderInfo);
+    public FilteredRenderListener(RenderListener delegate, RenderFilter... filters) {
+        this.delegate = delegate;
+        this.filters = filters;
+    }
+
+    /**
+     * Applies filters, then delegates to the delegate if all filters pass
+     * @see com.itextpdf.text.pdf.parser.TextRenderListener#renderText(com.itextpdf.text.pdf.parser.TextRenderInfo)
+     */
+    public void renderText(TextRenderInfo renderInfo) {
+        for (RenderFilter filter : filters) {
+            if (!filter.allowText(renderInfo))
+                return;
+        }
+        delegate.renderText(renderInfo);
+    }
+
+    /**
+     * This class delegates this call
+     * @see com.itextpdf.text.pdf.parser.TextRenderListener#beginTextBlock()
+     */
+    public void beginTextBlock() {
+        delegate.beginTextBlock();
+    }
+
+    /**
+     * This class delegates this call
+     * @see com.itextpdf.text.pdf.parser.TextRenderListener#endTextBlock()
+     */
+    public void endTextBlock() {
+        delegate.endTextBlock();
+    }
+
+    /**
+     * This class delegates this call
+     * @see com.itextpdf.text.pdf.parser.RenderListener#reset()
+     */
+    public void reset() {
+        delegate.reset();
+    }
+
+    /**
+     * Applies filters, then delegates to the delegate if all filters pass
+     * @see com.itextpdf.text.pdf.parser.RenderListener#renderImage(com.itextpdf.text.pdf.parser.ImageRenderInfo)
+     * @since 5.0.1
+     */
+    public void renderImage(ImageRenderInfo renderInfo) {
+        for (RenderFilter filter : filters) {
+            if (!filter.allowImage(renderInfo))
+                return;
+        }
+        delegate.renderImage(renderInfo);
+    }
 
 }

@@ -72,8 +72,10 @@ import com.itextpdf.text.pdf.PdfString;
  */
 public class PdfContentStreamProcessor {
 
+    public static final String DEFAULTOPERATOR = "DefaultOperator";
+    
 	/** A map with all supported operators operators (PDF syntax). */
-    private Map<String, ContentOperator> operators;
+    final private Map<String, ContentOperator> operators;
     /** Resources for the content stream. */
     private ResourceDictionary resources;
     /** Stack keeping track of the graphics state. */
@@ -84,10 +86,8 @@ public class PdfContentStreamProcessor {
     private Matrix textLineMatrix;
     /** Listener that will be notified of render events */
     final private RenderListener renderListener;
-    /** Convenience cast of {@link RenderListener} */
-    final private TextRenderListener textRenderListener;
-    /** Convenience cast of {@link RenderListener} */
-    final private ImageRenderListener imageRenderListener;
+    /** A map with all supported XObject handlers */
+    final private Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
 
     /**
      * Creates a new PDF Content Stream Processor that will send it's output to the
@@ -96,27 +96,41 @@ public class PdfContentStreamProcessor {
      * @param renderListener the {@link TextRenderListener} that will receive rendering notifications
      */
     public PdfContentStreamProcessor(RenderListener renderListener) {
-        if (renderListener instanceof TextRenderListener)
-            textRenderListener = (TextRenderListener)renderListener;
-        else
-            textRenderListener = null;
-
-        if (renderListener instanceof ImageRenderListener)
-            imageRenderListener = (ImageRenderListener)renderListener;
-        else
-            imageRenderListener = null;
-
         this.renderListener = renderListener;
+        operators = new HashMap<String, ContentOperator>();
         populateOperators();
+        xobjectDoHandlers = new HashMap<PdfName, XObjectDoHandler>();
+        populateXObjectDoHandlers();
         reset();
     }
 
+    private void populateXObjectDoHandlers(){
+        registerXObjectDoHandler(PdfName.DEFAULT, new IgnoreXObjectDoHandler());
+        registerXObjectDoHandler(PdfName.FORM, new FormXObjectDoHandler());
+        registerXObjectDoHandler(PdfName.IMAGE, new ImageXObjectDoHandler());       
+    }
+    
+    /**
+     * Registers a Do handler that will be called when Do for the provided XObject subtype is encountered during content processing.
+     * <br>
+     * If you register a handler, it is a very good idea to pass the call on to the existing registered handler (returned by this call), otherwise you
+     * may inadvertently change the internal behavior of the processor.
+     * @param xobjectSubType the XObject subtype this handler will process, or PdfName.DEFAULT for a catch-all handler
+     * @param handler the handler that will receive notification when the Do operator for the specified subtype is encountered
+     * @return the existing registered handler, if any
+     * @since 5.0.1
+     */
+    public XObjectDoHandler registerXObjectDoHandler(PdfName xobjectSubType, XObjectDoHandler handler){
+        return xobjectDoHandlers.put(xobjectSubType, handler);
+    }
+    
     /**
      * Loads all the supported graphics and text state operators in a map.
      */
     private void populateOperators(){
-        operators = new HashMap<String, ContentOperator>();
 
+        registerContentOperator(DEFAULTOPERATOR, new IgnoreOperatorContentOperator());
+        
         registerContentOperator("q", new PushGraphicsState());
         registerContentOperator("Q", new PopGraphicsState());
         registerContentOperator("cm", new ModifyCurrentTransformationMatrix());
@@ -155,15 +169,16 @@ public class PdfContentStreamProcessor {
 
     /**
      * Registers a content operator that will be called when the specified operator string is encountered during content processing.
-     * Each operator may be registered only once (it is not legal to have multiple operators with the same operatorString)
-     * @param operatorString the operator id
+     * <br>
+     * If you register an operator, it is a very good idea to pass the call on to the existing registered operator (returned by this call), otherwise you
+     * may inadvertently change the internal behavior of the processor.
+     * @param operatorString the operator id, or DEFAULTOPERATOR for a catch-all operator
      * @param operator the operator that will receive notification when the operator is encountered
+     * @return the existing registered operator, if any
      * @since 2.1.7
      */
-    public void registerContentOperator(String operatorString, ContentOperator operator){
-        if (operators.containsKey(operatorString))
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("operator.1.already.registered", operatorString));
-        operators.put(operatorString, operator);
+    public ContentOperator registerContentOperator(String operatorString, ContentOperator operator){
+        return operators.put(operatorString, operator);
     }
 
     /**
@@ -210,10 +225,8 @@ public class PdfContentStreamProcessor {
      */
     private void invokeOperator(PdfLiteral operator, ArrayList<PdfObject> operands) throws Exception{
         ContentOperator op = operators.get(operator.toString());
-        if (op == null){
-            //System.out.println("Skipping operator " + operator);
-            return;
-        }
+        if (op == null)
+            op = operators.get(DEFAULTOPERATOR);
 
         op.invoke(this, operator, operands);
     }
@@ -230,14 +243,18 @@ public class PdfContentStreamProcessor {
         return gs().font.decode(bytes, 0, bytes.length);
     }
 
+    /**
+     * Used to trigger beginTextBlock on the renderListener
+     */
     private void beginText(){
-        if (textRenderListener == null) return;
-        textRenderListener.beginTextBlock();
+        renderListener.beginTextBlock();
     }
 
+    /**
+     * Used to trigger endTextBlock on the renderListener
+     */
     private void endText(){
-        if (textRenderListener == null) return;
-        textRenderListener.endTextBlock();
+        renderListener.endTextBlock();
     }
 
     /**
@@ -245,93 +262,39 @@ public class PdfContentStreamProcessor {
      * @param string	the text to display
      */
     private void displayPdfString(PdfString string){
-        if (textRenderListener == null) return;
 
         String unicode = decode(string);
 
         TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix);
 
-        textRenderListener.renderText(renderInfo);
+        renderListener.renderText(renderInfo);
 
         textMatrix = new Matrix(renderInfo.getUnscaledWidth(), 0).multiply(textMatrix);
     }
 
-    private static class ResourceDictionary extends PdfDictionary{
-        private List<PdfDictionary> resourcesStack = new ArrayList<PdfDictionary>();
-        public ResourceDictionary() {
-        }
 
-        public void push(PdfDictionary resources){
-            resourcesStack.add(resources);
-        }
 
-        public void pop(){
-            resourcesStack.remove(resourcesStack.size()-1);
-        }
 
-        @Override
-        public PdfObject getDirectObject(PdfName key) {
-            for (int i = resourcesStack.size() - 1; i >= 0; i--){
-                PdfDictionary subResource = resourcesStack.get(i);
-                if (subResource != null){
-                    PdfObject obj =  subResource.getDirectObject(key);
-                    if (obj != null) return obj;
-                }
-            }
-            return super.getDirectObject(key); // shouldn't be necessary, but just in case we've done something crazy
-        }
-    }
-
+    
     /**
-     * Displays an XObject
-     * TODO we probably want to move the FORM XObject handling into the Do operator itself and
-     * keep this method as a pure callback method
-     * @param xobjectName
+     * Displays an XObject using the registered handler for this XObject's subtype
+     * @param xobjectName the name of the XObject to retrieve from the resource dictionary
      */
     private void displayXObject(PdfName xobjectName) throws IOException {
-
         PdfDictionary xobjects = resources.getAsDict(PdfName.XOBJECT);
-
         PdfObject xobject = xobjects.getDirectObject(xobjectName);
-
+        PdfStream xobjectStream = (PdfStream)xobject;
+        
+        PdfName subType = xobjectStream.getAsName(PdfName.SUBTYPE);
         if (xobject.isStream()){
-            PdfStream stream = (PdfStream)xobject;
-
-            PdfName subType = stream.getAsName(PdfName.SUBTYPE);
-            if (PdfName.FORM.equals(stream.getAsName(PdfName.SUBTYPE))){ // if this is a form xobject, process it as though it were a content stream
-                final PdfDictionary resources = stream.getAsDict(PdfName.RESOURCES);
-
-                byte[] contentBytes = ContentByteUtils.getContentBytesFromContentObject(stream);
-                final PdfArray matrix = stream.getAsArray(PdfName.MATRIX);
-
-                new PushGraphicsState().invoke(this, null, null);
-
-                if (matrix != null){
-                    float a = matrix.getAsNumber(0).floatValue();
-                    float b = matrix.getAsNumber(1).floatValue();
-                    float c = matrix.getAsNumber(2).floatValue();
-                    float d = matrix.getAsNumber(3).floatValue();
-                    float e = matrix.getAsNumber(4).floatValue();
-                    float f = matrix.getAsNumber(5).floatValue();
-                    Matrix formMatrix = new Matrix(a, b, c, d, e, f);
-
-                    gs().ctm = formMatrix.multiply(gs().ctm);
-                }
-
-                processContent(contentBytes, resources);
-
-                new PopGraphicsState().invoke(this, null, null);
-            }
-
-            if (PdfName.IMAGE.equals(subType)){
-                if (imageRenderListener == null) return;
-
-                ImageRenderInfo renderInfo = new ImageRenderInfo(xobject, gs().ctm);
-                imageRenderListener.renderImage(renderInfo);
-            }
-
+            XObjectDoHandler handler = xobjectDoHandlers.get(subType);
+            if (handler == null)
+                handler = xobjectDoHandlers.get(PdfName.DEFAULT);
+            handler.handleXObject(this, xobjectStream);
+        } else {
+            throw new IllegalStateException(MessageLocalization.getComposedMessage("XObject.1.is.not.a.stream", xobjectName));
         }
-
+        
     }
 
     /**
@@ -368,6 +331,46 @@ public class PdfContentStreamProcessor {
 
     }
 
+    
+    
+    /**
+     * A resource dictionary that allows stack-like behavior to support resource dictionary inheritance
+     */
+    private static class ResourceDictionary extends PdfDictionary{
+        private List<PdfDictionary> resourcesStack = new ArrayList<PdfDictionary>();
+        public ResourceDictionary() {
+        }
+
+        public void push(PdfDictionary resources){
+            resourcesStack.add(resources);
+        }
+
+        public void pop(){
+            resourcesStack.remove(resourcesStack.size()-1);
+        }
+
+        @Override
+        public PdfObject getDirectObject(PdfName key) {
+            for (int i = resourcesStack.size() - 1; i >= 0; i--){
+                PdfDictionary subResource = resourcesStack.get(i);
+                if (subResource != null){
+                    PdfObject obj =  subResource.getDirectObject(key);
+                    if (obj != null) return obj;
+                }
+            }
+            return super.getDirectObject(key); // shouldn't be necessary, but just in case we've done something crazy
+        }
+    }
+    
+    /**
+     * A content operator implementation (TJ).
+     */
+    private static class IgnoreOperatorContentOperator implements ContentOperator{
+        public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands){
+            // ignore the operator
+        }
+    }
+    
     /**
      * A content operator implementation (TJ).
      */
@@ -690,4 +693,66 @@ public class PdfContentStreamProcessor {
             processor.displayXObject(xobjectName);
         }
     }
+    
+    /**
+     * An XObject subtype handler for FORM
+     */
+    private static class FormXObjectDoHandler implements XObjectDoHandler{
+
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream) {
+            
+            final PdfDictionary resources = stream.getAsDict(PdfName.RESOURCES);
+
+            // we read the content bytes up here so if it fails we don't leave the graphics state stack corrupted
+            // this is probably not necessary (if we fail on this, probably the entire content stream processing
+            // operation should be rejected
+            byte[] contentBytes;
+            try {
+                contentBytes = ContentByteUtils.getContentBytesFromContentObject(stream);
+            } catch (IOException e1) {
+                throw new ExceptionConverter(e1);
+            }
+            final PdfArray matrix = stream.getAsArray(PdfName.MATRIX);
+
+            new PushGraphicsState().invoke(processor, null, null);
+
+            if (matrix != null){
+                float a = matrix.getAsNumber(0).floatValue();
+                float b = matrix.getAsNumber(1).floatValue();
+                float c = matrix.getAsNumber(2).floatValue();
+                float d = matrix.getAsNumber(3).floatValue();
+                float e = matrix.getAsNumber(4).floatValue();
+                float f = matrix.getAsNumber(5).floatValue();
+                Matrix formMatrix = new Matrix(a, b, c, d, e, f);
+
+                processor.gs().ctm = formMatrix.multiply(processor.gs().ctm);
+            }
+
+            processor.processContent(contentBytes, resources);
+
+            new PopGraphicsState().invoke(processor, null, null);
+            
+        }
+        
+    }
+    
+    /**
+     * An XObject subtype handler for IMAGE
+     */
+    private static class ImageXObjectDoHandler implements XObjectDoHandler{
+
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream) {
+            ImageRenderInfo renderInfo = new ImageRenderInfo(xobjectStream, processor.gs().ctm);
+            processor.renderListener.renderImage(renderInfo);
+        }
+    }
+    
+    /**
+     * An XObject subtype handler that does nothing
+     */
+    private static class IgnoreXObjectDoHandler implements XObjectDoHandler{
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream) {
+            // ignore XObject subtype
+        }
+    }    
 }
