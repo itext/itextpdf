@@ -49,7 +49,6 @@ import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * Extracts text from a PDF file.
@@ -90,15 +89,10 @@ public class PdfTextExtractor {
      * @throws IOException
      */
     private byte[] getContentBytesForPage(int pageNum) throws IOException {
-        RandomAccessFileOrArray f = reader.getSafeFile();
-        try{
-            final PdfDictionary pageDictionary = reader.getPageN(pageNum);
-            final PdfObject contentObject = pageDictionary.get(PdfName.CONTENTS);
-            final byte[] contentBytes = ContentByteUtils.getContentBytesFromContentObject(contentObject);
-            return contentBytes;
-        } finally {    
-            f.close();
-        }
+        final PdfDictionary pageDictionary = reader.getPageN(pageNum);
+        final PdfObject contentObject = pageDictionary.get(PdfName.CONTENTS);
+        final byte[] contentBytes = ContentByteUtils.getContentBytesFromContentObject(contentObject);
+        return contentBytes;
     }
     
 
