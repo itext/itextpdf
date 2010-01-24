@@ -253,7 +253,7 @@ public class PdfSignatureAppearance {
      * @param privKey the private key
      * @param certChain the certificate chain
      * @param crlList the certificate revocation list. It may be <CODE>null</CODE>
-     * @param filter the crytographic filter type. It can be SELF_SIGNED, VERISIGN_SIGNED or WINCER_SIGNED
+     * @param filter the cryptographic filter type. It can be SELF_SIGNED, VERISIGN_SIGNED or WINCER_SIGNED
      */
     public void setCrypto(PrivateKey privKey, Certificate[] certChain, CRL[] crlList, PdfName filter) {
         this.privKey = privKey;
@@ -1237,8 +1237,8 @@ public class PdfSignatureAppearance {
     }
 
     /**
-     * Acrobat 6.0 and higher recommends that only layer n2 and n4 be present. This method sets that mode.
-     * @param acro6Layers if <code>true</code> only the layers n2 and n4 will be present
+     * Acrobat 6.0 and higher recommends that only layer n0 and n2 be present. This method sets that mode.
+     * @param acro6Layers if <code>true</code> only the layers n0 and n2 will be present
      */
     public void setAcro6Layers(boolean acro6Layers) {
         this.acro6Layers = acro6Layers;
