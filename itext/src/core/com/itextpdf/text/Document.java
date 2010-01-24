@@ -290,9 +290,7 @@ public class Document implements DocListener {
 		if (!close) {
             open = true;
         }
-        DocListener listener;
-		for (Object element : listeners) {
-            listener = (DocListener) element;
+		for (DocListener listener : listeners) {
             listener.setPageSize(pageSize);
 			listener.setMargins(marginLeft, marginRight, marginTop,
 					marginBottom);
@@ -310,9 +308,7 @@ public class Document implements DocListener {
 
     public boolean setPageSize(Rectangle pageSize) {
         this.pageSize = pageSize;
-        DocListener listener;
-		for (Object element : listeners) {
-            listener = (DocListener) element;
+		for (DocListener listener : listeners) {
             listener.setPageSize(pageSize);
         }
         return true;
@@ -338,9 +334,7 @@ public class Document implements DocListener {
         this.marginRight = marginRight;
         this.marginTop = marginTop;
         this.marginBottom = marginBottom;
-        DocListener listener;
-		for (Object element : listeners) {
-            listener = (DocListener) element;
+		for (DocListener listener : listeners) {
 			listener.setMargins(marginLeft, marginRight, marginTop,
 					marginBottom);
         }
@@ -411,9 +405,7 @@ public class Document implements DocListener {
             open = false;
             close = true;
         }
-        DocListener listener;
-		for (Object element : listeners) {
-            listener = (DocListener) element;
+		for (DocListener listener : listeners) {
             listener.close();
         }
     }
