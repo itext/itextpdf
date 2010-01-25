@@ -575,7 +575,7 @@ public class PdfContentStreamProcessor {
     private static class SetTextHorizontalScaling implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands) {
             PdfNumber scale = (PdfNumber)operands.get(0);
-            processor.gs().horizontalScaling = scale.floatValue();
+            processor.gs().horizontalScaling = scale.floatValue()/100f;
         }
     }
 
