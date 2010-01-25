@@ -220,8 +220,8 @@ public class List implements TextElementArray {
      */
     public boolean process(ElementListener listener) {
         try {
-            for (Object element : list) {
-                listener.add((Element) element);
+            for (Element element : list) {
+                listener.add(element);
             }
             return true;
         }

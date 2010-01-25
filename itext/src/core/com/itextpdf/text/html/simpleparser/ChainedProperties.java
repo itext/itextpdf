@@ -131,7 +131,7 @@ public class ChainedProperties {
 
 	public void removeChain(String key) {
 		for (int k = chain.size() - 1; k >= 0; --k) {
-			if (key.equals(chain.get(k))) {
+			if (key.equals(chain.get(k).key)) {
 				chain.remove(k);
 				return;
 			}
