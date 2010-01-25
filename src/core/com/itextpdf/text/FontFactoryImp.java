@@ -263,10 +263,6 @@ public class FontFactoryImp implements FontProvider {
                     color = Markup.decodeColor(value);
                 }
                 attributes.putAll(styleAttributes);
-                for (Enumeration<Object> e = styleAttributes.keys(); e.hasMoreElements();) {
-                    Object o = e.nextElement();
-                    attributes.put(o, styleAttributes.get(o));
-                }
             }
         }
         if ((value = attributes.getProperty(ElementTags.ENCODING)) != null) {
