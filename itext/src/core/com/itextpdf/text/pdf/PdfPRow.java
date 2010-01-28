@@ -633,7 +633,7 @@ public class PdfPRow {
 				allEmpty = (allEmpty && thisEmpty);
 			}
 			newCells[k] = newCell;
-			cell.setFixedHeight(newHeight);
+			cell.setFixedHeight(newHeight - cell.getEffectivePaddingBottom());
 		}
 		if (allEmpty) {
 			for (int k = 0; k < cells.length; ++k) {
