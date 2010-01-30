@@ -464,10 +464,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				if (!skip) {
 					String href = cprops.getProperty("href");
 					if (href != null) {
-						ArrayList<Chunk> chunks = currentParagraph.getChunks();
-						int size = chunks.size();
-						for (int k = 0; k < size; ++k) {
-							Chunk ck = chunks.get(k);
+						for (Chunk ck : currentParagraph.getChunks()) {
 							ck.setAnchor(href);
 						}
 					}
