@@ -71,7 +71,10 @@ import com.itextpdf.text.pdf.PdfString;
  * @since	2.1.4
  */
 public class PdfContentStreamProcessor {
-	/** Default operator */
+	/**
+	 * Default operator
+	 * @since 5.0.1
+	 */
     public static final String DEFAULTOPERATOR = "DefaultOperator";
     
 	/** A map with all supported operators operators (PDF syntax). */
@@ -93,7 +96,7 @@ public class PdfContentStreamProcessor {
      * Creates a new PDF Content Stream Processor that will send it's output to the
      * designated render listener.
      *
-     * @param renderListener the {@link TextRenderListener} that will receive rendering notifications
+     * @param renderListener the {@link RenderListener} that will receive rendering notifications
      */
     public PdfContentStreamProcessor(RenderListener renderListener) {
         this.renderListener = renderListener;
