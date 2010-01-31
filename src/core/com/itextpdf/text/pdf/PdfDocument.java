@@ -1314,6 +1314,9 @@ public class PdfDocument extends Document {
         for (Iterator<PdfChunk> j = line.iterator(); j.hasNext(); ) {
             chunk = j.next();
             BaseColor color = chunk.color();
+            float fontSize = chunk.font().size();
+            float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
+            float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
             hScale = 1;
 
             if (chunkStrokeIdx <= lastChunkStroke) {
@@ -1331,9 +1334,6 @@ public class PdfDocument extends Document {
                     	Object[] sep = (Object[])chunk.getAttribute(Chunk.SEPARATOR);
                         DrawInterface di = (DrawInterface)sep[0];
                         Boolean vertical = (Boolean)sep[1];
-                        float fontSize = chunk.font().size();
-                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
-                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
                         if (vertical.booleanValue()) {
                         	di.draw(graphics, baseXMarker, yMarker + descender, baseXMarker + line.getOriginalWidth(), ascender - descender, yMarker);
                         }
@@ -1345,9 +1345,6 @@ public class PdfDocument extends Document {
                     	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
                         DrawInterface di = (DrawInterface)tab[0];
                         tabPosition = ((Float)tab[1]).floatValue() + ((Float)tab[3]).floatValue();
-                        float fontSize = chunk.font().size();
-                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
-                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
                         if (tabPosition > xMarker) {
                         	di.draw(graphics, xMarker, yMarker + descender, tabPosition, ascender - descender, yMarker);
                         }
@@ -1361,9 +1358,6 @@ public class PdfDocument extends Document {
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
-                        float fontSize = chunk.font().size();
-                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
-                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
                         Object bgr[] = (Object[])chunk.getAttribute(Chunk.BACKGROUND);
                         graphics.setColorFill((BaseColor)bgr[0]);
                         float extra[] = (float[])bgr[1];
@@ -1390,9 +1384,8 @@ public class PdfDocument extends Document {
                                 scolor = color;
                             if (scolor != null)
                                 graphics.setColorStroke(scolor);
-                            float fsize = chunk.font().size();
-                            graphics.setLineWidth(ps[0] + fsize * ps[1]);
-                            float shift = ps[2] + fsize * ps[3];
+                            graphics.setLineWidth(ps[0] + fontSize * ps[1]);
+                            float shift = ps[2] + fontSize * ps[3];
                             int cap2 = (int)ps[4];
                             if (cap2 != 0)
                                 graphics.setLineCap(cap2);
@@ -1412,7 +1405,7 @@ public class PdfDocument extends Document {
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
-                        text.addAnnotation(new PdfAnnotation(writer, xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size(), (PdfAction)chunk.getAttribute(Chunk.ACTION)));
+                        text.addAnnotation(new PdfAnnotation(writer, xMarker, yMarker + descender + chunk.getTextRise(), xMarker + width - subtract, yMarker + ascender + chunk.getTextRise(), (PdfAction)chunk.getAttribute(Chunk.ACTION)));
                     }
                     if (chunk.isAttribute(Chunk.REMOTEGOTO)) {
                         float subtract = lastBaseFactor;
@@ -1423,9 +1416,9 @@ public class PdfDocument extends Document {
                         Object obj[] = (Object[])chunk.getAttribute(Chunk.REMOTEGOTO);
                         String filename = (String)obj[0];
                         if (obj[1] instanceof String)
-                            remoteGoto(filename, (String)obj[1], xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size());
+                        	remoteGoto(filename, (String)obj[1], xMarker, yMarker + descender + chunk.getTextRise(), xMarker + width - subtract, yMarker + ascender + chunk.getTextRise());
                         else
-                            remoteGoto(filename, ((Integer)obj[1]).intValue(), xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size());
+                        	remoteGoto(filename, ((Integer)obj[1]).intValue(), xMarker, yMarker + descender + chunk.getTextRise(), xMarker + width - subtract, yMarker + ascender + chunk.getTextRise());
                     }
                     if (chunk.isAttribute(Chunk.LOCALGOTO)) {
                         float subtract = lastBaseFactor;
@@ -1433,7 +1426,7 @@ public class PdfDocument extends Document {
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
-                        localGoto((String)chunk.getAttribute(Chunk.LOCALGOTO), xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size());
+                        localGoto((String)chunk.getAttribute(Chunk.LOCALGOTO), xMarker, yMarker, xMarker + width - subtract, yMarker + fontSize);
                     }
                     if (chunk.isAttribute(Chunk.LOCALDESTINATION)) {
                         float subtract = lastBaseFactor;
@@ -1441,7 +1434,7 @@ public class PdfDocument extends Document {
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
-                        localDestination((String)chunk.getAttribute(Chunk.LOCALDESTINATION), new PdfDestination(PdfDestination.XYZ, xMarker, yMarker + chunk.font().size(), 0));
+                        localDestination((String)chunk.getAttribute(Chunk.LOCALDESTINATION), new PdfDestination(PdfDestination.XYZ, xMarker, yMarker + fontSize, 0));
                     }
                     if (chunk.isAttribute(Chunk.GENERICTAG)) {
                         float subtract = lastBaseFactor;
@@ -1449,7 +1442,7 @@ public class PdfDocument extends Document {
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
-                        Rectangle rect = new Rectangle(xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size());
+                        Rectangle rect = new Rectangle(xMarker, yMarker, xMarker + width - subtract, yMarker + fontSize);
                         PdfPageEvent pev = writer.getPageEvent();
                         if (pev != null)
                             pev.onGenericTag(writer, this, rect, (String)chunk.getAttribute(Chunk.GENERICTAG));
@@ -1460,9 +1453,6 @@ public class PdfDocument extends Document {
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
-                        float fontSize = chunk.font().size();
-                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
-                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
                         PdfAnnotation annot = PdfFormField.shallowDuplicate((PdfAnnotation)chunk.getAttribute(Chunk.PDFANNOTATION));
                         annot.put(PdfName.RECT, new PdfRectangle(xMarker, yMarker + descender, xMarker + width - subtract, yMarker + ascender));
                         text.addAnnotation(annot);
