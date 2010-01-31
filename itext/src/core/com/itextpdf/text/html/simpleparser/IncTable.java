@@ -95,9 +95,8 @@ public class IncTable implements Element {
         if (rows.isEmpty())
             return new PdfPTable(1);
         int ncol = 0;
-        ArrayList<PdfPCell> c0 = rows.get(0);
-        for (int k = 0; k < c0.size(); ++k) {
-            ncol += c0.get(k).getColspan();
+        for (PdfPCell pc : rows.get(0)) {
+            ncol += pc.getColspan();
         }
         PdfPTable table = new PdfPTable(ncol);
         String width = props.get("width");
@@ -111,10 +110,9 @@ public class IncTable implements Element {
                 table.setLockedWidth(true);
             }
         }
-        for (int row = 0; row < rows.size(); ++row) {
-            ArrayList<PdfPCell> col = rows.get(row);
-            for (int k = 0; k < col.size(); ++k) {
-                table.addCell(col.get(k));
+        for (ArrayList<PdfPCell> col : rows) {
+            for (PdfPCell pc : col) {
+                table.addCell(pc);
             }
         }
         return table;
