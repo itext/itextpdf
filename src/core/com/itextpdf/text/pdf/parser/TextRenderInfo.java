@@ -50,7 +50,7 @@ import com.itextpdf.text.pdf.DocumentFont;
  * to display/evaluate text render operations.
  * <br><br>
  * This is passed between the {@link PdfContentStreamProcessor} and 
- * {@link TextRenderListener} objects as text rendering operations are
+ * {@link RenderListener} objects as text rendering operations are
  * discovered
  */
 public class TextRenderInfo {

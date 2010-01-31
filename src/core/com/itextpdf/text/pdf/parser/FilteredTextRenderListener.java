@@ -55,7 +55,7 @@ public class FilteredTextRenderListener extends FilteredRenderListener implement
 
     /**
      * Construction
-     * @param delegate the delegate {@link TextRenderListener} that will receive filtered text operations
+     * @param delegate the delegate {@link RenderListener} that will receive filtered text operations
      * @param filters the filter(s) to apply
      */
     public FilteredTextRenderListener(TextProvidingRenderListener delegate, RenderFilter... filters) {
