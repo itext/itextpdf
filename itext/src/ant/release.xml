@@ -160,18 +160,17 @@
 		<replace file="${itext.maven}/pom.xml" token="releasenumber" value="${releasenumber}"/>
 		<replace file="${itext.maven}/pom.xml" token="bc.jdk" value="${bc.jdk}"/>
 		<replace file="${itext.maven}/pom.xml" token="bc.version" value="${bc.version}"/>
-		<copy file="${itext.dist}/iText-${releasenumber}.jar" tofile="${itext.maven}/itext-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.dist}/iText-rups-${releasenumber}.jar" tofile="${itext.maven}/itext-rups-${releasenumber}.jar" overwrite="yes"/>
-		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.maven}/itext-${releasenumber}-sources.jar" overwrite="yes"/>
-		<jar destfile="${itext.maven}/itext-${releasenumber}-javadoc.jar">
+		<copy file="${itext.dist}/iText-${releasenumber}.jar" tofile="${itext.maven}/itextpdf-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.dist}/iText-${releasenumber}-sources.jar" tofile="${itext.maven}/itextpdf-${releasenumber}-sources.jar" overwrite="yes"/>
+		<jar destfile="${itext.maven}/itextpdf-${releasenumber}-javadoc.jar">
 			<fileset dir="${itext.docs}"/>
 		</jar>
-		<jar destfile="${itext.maven}/itext-${releasenumber}-bundle.jar">
+		<jar destfile="${itext.maven}/itextpdf-${releasenumber}-bundle.jar">
 			<fileset dir="${itext.maven}">
 				<include name="pom.xml" />
-				<include name="itext-${releasenumber}.jar" />
-				<include name="itext-${releasenumber}-sources.jar" />
-				<include name="itext-${releasenumber}-javadoc.jar" />
+				<include name="itextpdf-${releasenumber}.jar" />
+				<include name="itextpdf-${releasenumber}-sources.jar" />
+				<include name="itextpdf-${releasenumber}-javadoc.jar" />
 			</fileset>
 		</jar>
 	</target>
