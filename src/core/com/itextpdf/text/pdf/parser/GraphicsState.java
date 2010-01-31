@@ -105,4 +105,94 @@ public class GraphicsState {
         rise = source.rise;
         knockout = source.knockout;
     }
+
+	/**
+	 * Getter for the current transformation matrix
+	 * @return the ctm
+	 * @since iText 5.0.1
+	 */
+	public Matrix getCtm() {
+		return ctm;
+	}
+
+	/**
+	 * Getter for the character spacing.
+	 * @return the character spacing
+	 * @since iText 5.0.1
+	 */
+	public float getCharacterSpacing() {
+		return characterSpacing;
+	}
+
+	/**
+	 * Getter for the word spacing
+	 * @return the word spacing
+	 * @since iText 5.0.1
+	 */
+	public float getWordSpacing() {
+		return wordSpacing;
+	}
+
+	/**
+	 * Getter for the horizontal scaling
+	 * @return the horizontal scaling
+	 * @since iText 5.0.1
+	 */
+	public float getHorizontalScaling() {
+		return horizontalScaling;
+	}
+
+	/**
+	 * Getter for the leading
+	 * @return the leading
+	 * @since iText 5.0.1
+	 */
+	public float getLeading() {
+		return leading;
+	}
+
+	/**
+	 * Getter for the font
+	 * @return the font
+	 * @since iText 5.0.1
+	 */
+	public CMapAwareDocumentFont getFont() {
+		return font;
+	}
+
+	/**
+	 * Getter for the font size
+	 * @return the font size
+	 * @since iText 5.0.1
+	 */
+	public float getFontSize() {
+		return fontSize;
+	}
+
+	/**
+	 * Getter for the render mode
+	 * @return the renderMode
+	 * @since iText 5.0.1
+	 */
+	public int getRenderMode() {
+		return renderMode;
+	}
+
+	/**
+	 * Getter for text rise
+	 * @return the text rise
+	 * @since iText 5.0.1
+	 */
+	public float getRise() {
+		return rise;
+	}
+
+	/**
+	 * Getter for knockout
+	 * @return the knockout
+	 * @since iText 5.0.1
+	 */
+	public boolean isKnockout() {
+		return knockout;
+	}
 }
