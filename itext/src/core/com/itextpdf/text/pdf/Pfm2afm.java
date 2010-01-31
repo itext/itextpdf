@@ -353,7 +353,7 @@ public final class Pfm2afm {
         out.print("\nXHeight");
         outval(xheight);
         out.print("\nDescender");
-        outval(descender);
+        outval(-descender);
         out.print("\nAscender");
         outval(ascender);
         out.print('\n');

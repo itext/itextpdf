@@ -520,7 +520,7 @@ public class PdfLine {
 /**
  * Gets the biggest descender for all the fonts used
  * in this line.  Note that this is a negative number.
- * @return maximum size of all the ascenders used in this line
+ * @return maximum size of all the descenders used in this line
  */
     public float getDescender() {
         float descender = 0;
