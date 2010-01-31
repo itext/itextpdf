@@ -90,9 +90,9 @@
 		<zip zipfile="${itext.dist}/src-with-libs.zip">
 			<zipfileset prefix="src" dir="${itext.src}" includes="${src.types}" />
 			<zipfileset prefix="lib" dir="${itext.lib}">
-				<include name="bcmail-${bc.jdk}-${bc.version}.jar" />
-				<include name="bcprov-${bc.jdk}-${bc.version}.jar" />
-				<include name="bctsp-${bc.jdk}-${bc.version}.jar" />
+				<include name="bcmail-${bc.jdk}-1${bc.version}.jar" />
+				<include name="bcprov-${bc.jdk}-1${bc.version}.jar" />
+				<include name="bctsp-${bc.jdk}-1${bc.version}.jar" />
 				<!-- jar needed for RUPS -->
 				<include name="dom4j-1.6.1.jar" />
 			</zipfileset>
@@ -104,9 +104,9 @@
 		<tar compression="gzip" tarfile="${itext.dist}/src-with-libs.tar.gz">
 			<tarfileset prefix="src" dir="${itext.src}" includes="${src.types}" />
 			<tarfileset prefix="lib" dir="${itext.lib}">
-				<include name="bcmail-${bc.jdk}-${bc.version}.jar" />
-				<include name="bcprov-${bc.jdk}-${bc.version}.jar" />
-				<include name="bctsp-${bc.jdk}-${bc.version}.jar" />
+				<include name="bcmail-${bc.jdk}-1${bc.version}.jar" />
+				<include name="bcprov-${bc.jdk}-1${bc.version}.jar" />
+				<include name="bctsp-${bc.jdk}-1${bc.version}.jar" />
 				<!-- jar needed for RUPS -->
 				<include name="dom4j-1.6.1.jar" />
 			</tarfileset>
