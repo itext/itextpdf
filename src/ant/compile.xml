@@ -39,7 +39,7 @@
 
     <target name="compile" description="--> compiles the iText code">
         <mkdir dir="${itext.bin}" />
-        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}/core" destdir="${itext.bin}">
+        <javac debug="yes" source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}/core" destdir="${itext.bin}">
     	<classpath refid="itext.classpath"/>
     	</javac>
     </target>
@@ -51,7 +51,7 @@
 
     <target name="compile.rups" depends="compile" description="--> compiles the RUPS code">
         <mkdir dir="${itext.rups.bin}" />
-        <javac source="${itext.jdk.rups}" target="${itext.jdk.rups}" srcdir="${itext.rups.src}" destdir="${itext.rups.bin}">
+        <javac debug="yes" source="${itext.jdk.rups}" target="${itext.jdk.rups}" srcdir="${itext.rups.src}" destdir="${itext.rups.bin}">
     		<classpath refid="itext.classpath"/>
     	</javac>
     </target>
