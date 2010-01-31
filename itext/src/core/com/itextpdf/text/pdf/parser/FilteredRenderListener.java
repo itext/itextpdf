@@ -67,7 +67,8 @@ public class FilteredRenderListener implements RenderListener {
 
     /**
      * Applies filters, then delegates to the delegate if all filters pass
-     * @see com.itextpdf.text.pdf.parser.TextRenderListener#renderText(com.itextpdf.text.pdf.parser.TextRenderInfo)
+     * @param renderInfo contains info to render text
+     * @see com.itextpdf.text.pdf.parser.RenderListener#renderText(com.itextpdf.text.pdf.parser.TextRenderInfo)
      */
     public void renderText(TextRenderInfo renderInfo) {
         for (RenderFilter filter : filters) {
@@ -79,7 +80,7 @@ public class FilteredRenderListener implements RenderListener {
 
     /**
      * This class delegates this call
-     * @see com.itextpdf.text.pdf.parser.TextRenderListener#beginTextBlock()
+     * @see com.itextpdf.text.pdf.parser.RenderListener#beginTextBlock()
      */
     public void beginTextBlock() {
         delegate.beginTextBlock();
@@ -87,7 +88,7 @@ public class FilteredRenderListener implements RenderListener {
 
     /**
      * This class delegates this call
-     * @see com.itextpdf.text.pdf.parser.TextRenderListener#endTextBlock()
+     * @see com.itextpdf.text.pdf.parser.RenderListener#endTextBlock()
      */
     public void endTextBlock() {
         delegate.endTextBlock();

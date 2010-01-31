@@ -102,7 +102,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
     }
     /**
      *
-     * @see com.itextpdf.text.pdf.parser.TextRenderListener#beginTextBlock()
+     * @see com.itextpdf.text.pdf.parser.RenderListener#beginTextBlock()
      */
     public void beginTextBlock(){
         firstRender = true;
@@ -111,7 +111,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
 
     /**
      *
-     * @see com.itextpdf.text.pdf.parser.TextRenderListener#endTextBlock()
+     * @see com.itextpdf.text.pdf.parser.RenderListener#endTextBlock()
      */
     public void endTextBlock(){
         if (!firstRender)
