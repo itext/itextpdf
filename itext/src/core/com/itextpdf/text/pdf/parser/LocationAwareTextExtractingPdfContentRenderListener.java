@@ -45,7 +45,6 @@ package com.itextpdf.text.pdf.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -154,11 +153,8 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
 
     /** Used for debugging only */
     private void dumpState(){
-        for (Iterator iterator = locationalResult.iterator(); iterator.hasNext(); ) {
-            LocationOnPage location = (LocationOnPage) iterator.next();
-            
+        for (LocationOnPage location : locationalResult) {
             location.printDiagnostics();
-            
             System.out.println();
         }
         

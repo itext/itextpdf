@@ -119,6 +119,7 @@ public class TextRenderInfo {
      *   <li>6 = Fill, then stroke text and add to path for clipping</li>
      *   <li>7 = Add text to padd for clipping</li>
      * </ul>
+     * @since iText 5.0.1
      */
     public int getTextRenderMode(){
         return gs.renderMode;
