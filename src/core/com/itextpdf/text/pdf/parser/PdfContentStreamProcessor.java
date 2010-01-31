@@ -71,7 +71,7 @@ import com.itextpdf.text.pdf.PdfString;
  * @since	2.1.4
  */
 public class PdfContentStreamProcessor {
-
+	/** Default operator */
     public static final String DEFAULTOPERATOR = "DefaultOperator";
     
 	/** A map with all supported operators operators (PDF syntax). */
@@ -198,24 +198,6 @@ public class PdfContentStreamProcessor {
      */
     private GraphicsState gs(){
         return gsStack.peek();
-    }
-
-    /**
-     * Returns the current text matrix.
-     * @return	the text matrix
-     * @since 2.1.5
-     */
-    private Matrix getCurrentTextMatrix(){
-        return textMatrix;
-    }
-
-    /**
-     * Returns the current line matrix.
-     * @return	the line matrix
-     * @since 2.1.5
-     */
-    private Matrix getCurrentTextLineMatrix(){
-        return textLineMatrix;
     }
 
     /**

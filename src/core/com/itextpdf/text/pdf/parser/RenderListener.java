@@ -55,6 +55,7 @@ public interface RenderListener {
 
     /**
      * Called when a new text block is beginning (i.e. BT)
+     * @since iText 5.0.1
      */
     public void beginTextBlock();
 
@@ -67,12 +68,14 @@ public interface RenderListener {
     
     /**
      * Called when a text block has ended (i.e. ET)
+     * @since iText 5.0.1
      */
     public void endTextBlock();
 
     /**
      * Called when image should be rendered
      * @param renderInfo information specifying what to render
+     * @since iText 5.0.1
      */
     public void renderImage(ImageRenderInfo renderInfo);
 
