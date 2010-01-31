@@ -53,7 +53,8 @@
 		<developer>
 			<id>xlv</id>
 			<name>Xavier Le Vourch</name>
-			<email>xlv@users.sourceforge.net</email>
+			<email>xavier.levourch@xlv-labs.com</email>
+			<url>http://www.xlv-labs.com</url>
 		</developer>
 	</developers>
 	<licenses>
