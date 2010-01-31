@@ -70,17 +70,17 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcmail-bc.jdk</artifactId>
-			<version>bc.version</version>
+			<version>1.bc.version</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-bc.jdk</artifactId>
-			<version>bc.version</version>
+			<version>1.bc.version</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bctsp-bc.jdk</artifactId>
-			<version>bc.version</version>
+			<version>1.bc.version</version>
 		</dependency>
 	</dependencies>
 	<build>
