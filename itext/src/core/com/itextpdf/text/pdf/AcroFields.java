@@ -63,6 +63,7 @@ import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.codec.Base64;
 
 /**
@@ -507,9 +508,9 @@ public class AcroFields {
             ArrayList<String> stack = new ArrayList<String>();
             Object ret[] = new Object[3];
             while (tk.nextToken()) {
-                if (tk.getTokenType() == PRTokeniser.TK_COMMENT)
+                if (tk.getTokenType() == TokenType.COMMENT)
                     continue;
-                if (tk.getTokenType() == PRTokeniser.TK_OTHER) {
+                if (tk.getTokenType() == TokenType.OTHER) {
                     String operator = tk.getStringValue();
                     if (operator.equals("Tf")) {
                         if (stack.size() >= 2) {
