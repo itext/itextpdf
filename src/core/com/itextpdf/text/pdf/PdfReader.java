@@ -73,6 +73,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
+import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 
@@ -996,11 +997,11 @@ public class PdfReader implements PdfViewerPreferences {
             return null;
         tokens.seek(pos);
         tokens.nextValidToken();
-        if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+        if (tokens.getTokenType() != TokenType.NUMBER)
             tokens.throwError(MessageLocalization.getComposedMessage("invalid.object.number"));
         objNum = tokens.intValue();
         tokens.nextValidToken();
-        if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+        if (tokens.getTokenType() != TokenType.NUMBER)
             tokens.throwError(MessageLocalization.getComposedMessage("invalid.generation.number"));
         objGen = tokens.intValue();
         tokens.nextValidToken();
@@ -1040,14 +1041,14 @@ public class PdfReader implements PdfViewerPreferences {
                 ok = tokens.nextToken();
                 if (!ok)
                     break;
-                if (tokens.getTokenType() != PRTokeniser.TK_NUMBER) {
+                if (tokens.getTokenType() != TokenType.NUMBER) {
                     ok = false;
                     break;
                 }
                 ok = tokens.nextToken();
                 if (!ok)
                     break;
-                if (tokens.getTokenType() != PRTokeniser.TK_NUMBER) {
+                if (tokens.getTokenType() != TokenType.NUMBER) {
                     ok = false;
                     break;
                 }
@@ -1085,11 +1086,11 @@ public class PdfReader implements PdfViewerPreferences {
                 continue;
             tokens.seek(pos);
             tokens.nextValidToken();
-            if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+            if (tokens.getTokenType() != TokenType.NUMBER)
                 tokens.throwError(MessageLocalization.getComposedMessage("invalid.object.number"));
             objNum = tokens.intValue();
             tokens.nextValidToken();
-            if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+            if (tokens.getTokenType() != TokenType.NUMBER)
                 tokens.throwError(MessageLocalization.getComposedMessage("invalid.generation.number"));
             objGen = tokens.intValue();
             tokens.nextValidToken();
@@ -1184,7 +1185,7 @@ public class PdfReader implements PdfViewerPreferences {
                 ok = tokens.nextToken();
                 if (!ok)
                     break;
-                if (tokens.getTokenType() != PRTokeniser.TK_NUMBER) {
+                if (tokens.getTokenType() != TokenType.NUMBER) {
                     ok = false;
                     break;
                 }
@@ -1192,7 +1193,7 @@ public class PdfReader implements PdfViewerPreferences {
                 ok = tokens.nextToken();
                 if (!ok)
                     break;
-                if (tokens.getTokenType() != PRTokeniser.TK_NUMBER) {
+                if (tokens.getTokenType() != TokenType.NUMBER) {
                     ok = false;
                     break;
                 }
@@ -1256,7 +1257,7 @@ public class PdfReader implements PdfViewerPreferences {
         if (!tokens.getStringValue().equals("startxref"))
             throw new InvalidPdfException(MessageLocalization.getComposedMessage("startxref.not.found"));
         tokens.nextToken();
-        if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+        if (tokens.getTokenType() != TokenType.NUMBER)
             throw new InvalidPdfException(MessageLocalization.getComposedMessage("startxref.is.not.followed.by.a.number"));
         int startxref = tokens.intValue();
         lastXref = startxref;
@@ -1293,11 +1294,11 @@ public class PdfReader implements PdfViewerPreferences {
             tokens.nextValidToken();
             if (tokens.getStringValue().equals("trailer"))
                 break;
-            if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+            if (tokens.getTokenType() != TokenType.NUMBER)
                 tokens.throwError(MessageLocalization.getComposedMessage("object.number.of.the.first.object.in.this.xref.subsection.not.found"));
             start = tokens.intValue();
             tokens.nextValidToken();
-            if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+            if (tokens.getTokenType() != TokenType.NUMBER)
                 tokens.throwError(MessageLocalization.getComposedMessage("number.of.entries.in.this.xref.subsection.not.found"));
             end = tokens.intValue() + start;
             if (start == 1) { // fix incorrect start number
@@ -1359,10 +1360,10 @@ public class PdfReader implements PdfViewerPreferences {
         int thisStream = 0;
         if (!tokens.nextToken())
             return false;
-        if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+        if (tokens.getTokenType() != TokenType.NUMBER)
             return false;
         thisStream = tokens.intValue();
-        if (!tokens.nextToken() || tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+        if (!tokens.nextToken() || tokens.getTokenType() != TokenType.NUMBER)
             return false;
         if (!tokens.nextToken() || !tokens.getStringValue().equals("obj"))
             return false;
@@ -1529,16 +1530,16 @@ public class PdfReader implements PdfViewerPreferences {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
             tokens.nextValidToken();
-            if (tokens.getTokenType() == PRTokeniser.TK_END_DIC)
+            if (tokens.getTokenType() == TokenType.END_DIC)
                 break;
-            if (tokens.getTokenType() != PRTokeniser.TK_NAME)
+            if (tokens.getTokenType() != TokenType.NAME)
                 tokens.throwError(MessageLocalization.getComposedMessage("dictionary.key.is.not.a.name"));
             PdfName name = new PdfName(tokens.getStringValue(), false);
             PdfObject obj = readPRObject();
             int type = obj.type();
-            if (-type == PRTokeniser.TK_END_DIC)
+            if (-type == TokenType.END_DIC.ordinal())
                 tokens.throwError(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
-            if (-type == PRTokeniser.TK_END_ARRAY)
+            if (-type == TokenType.END_ARRAY.ordinal())
                 tokens.throwError(MessageLocalization.getComposedMessage("unexpected.close.bracket"));
             dic.put(name, obj);
         }
@@ -1550,9 +1551,9 @@ public class PdfReader implements PdfViewerPreferences {
         while (true) {
             PdfObject obj = readPRObject();
             int type = obj.type();
-            if (-type == PRTokeniser.TK_END_ARRAY)
+            if (-type == TokenType.END_ARRAY.ordinal())
                 break;
-            if (-type == PRTokeniser.TK_END_DIC)
+            if (-type == TokenType.END_DIC.ordinal())
                 tokens.throwError(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
             array.add(obj);
         }
@@ -1566,9 +1567,9 @@ public class PdfReader implements PdfViewerPreferences {
 
     protected PdfObject readPRObject() throws IOException {
         tokens.nextValidToken();
-        int type = tokens.getTokenType();
+        TokenType type = tokens.getTokenType();
         switch (type) {
-            case PRTokeniser.TK_START_DIC: {
+            case START_DIC: {
                 ++readDepth;
                 PdfDictionary dic = readDictionary();
                 --readDepth;
@@ -1577,7 +1578,7 @@ public class PdfReader implements PdfViewerPreferences {
                 boolean hasNext;
                 do {
                     hasNext = tokens.nextToken();
-                } while (hasNext && tokens.getTokenType() == PRTokeniser.TK_COMMENT);
+                } while (hasNext && tokens.getTokenType() == TokenType.COMMENT);
 
                 if (hasNext && tokens.getStringValue().equals("stream")) {
                     //skip whitespaces
@@ -1601,15 +1602,15 @@ public class PdfReader implements PdfViewerPreferences {
                     return dic;
                 }
             }
-            case PRTokeniser.TK_START_ARRAY: {
+            case START_ARRAY: {
                 ++readDepth;
                 PdfArray arr = readArray();
                 --readDepth;
                 return arr;
             }
-            case PRTokeniser.TK_NUMBER:
+            case NUMBER:
                 return new PdfNumber(tokens.getStringValue());
-            case PRTokeniser.TK_STRING:
+            case STRING:
                 PdfString str = new PdfString(tokens.getStringValue(), null).setHexWriting(tokens.isHexString());
                 // crypto handling
                 str.setObjNum(objNum, objGen);
@@ -1617,7 +1618,7 @@ public class PdfReader implements PdfViewerPreferences {
                     strings.add(str);
 
                 return str;
-            case PRTokeniser.TK_NAME: {
+            case NAME: {
                 PdfName cachedName = PdfName.staticNames.get( tokens.getStringValue() );
                 if (readDepth > 0 && cachedName != null) {
                     return cachedName;
@@ -1626,11 +1627,11 @@ public class PdfReader implements PdfViewerPreferences {
                     return new PdfName(tokens.getStringValue(), false);
                 }
             }
-            case PRTokeniser.TK_REF:
+            case REF:
                 int num = tokens.getReference();
                 PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());
                 return ref;
-            case PRTokeniser.TK_ENDOFFILE:
+            case ENDOFFILE:
                 throw new IOException(MessageLocalization.getComposedMessage("unexpected.end.of.file"));
             default:
                 String sv = tokens.getStringValue();
@@ -1652,7 +1653,7 @@ public class PdfReader implements PdfViewerPreferences {
                     } //else
                     return PdfBoolean.PDFFALSE;
                 }
-                return new PdfLiteral(-type, tokens.getStringValue());
+                return new PdfLiteral(-type.ordinal(), tokens.getStringValue());
         }
     }
 

@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 /**
  * Parses the page or template content.
  * @author Paulo Soares
@@ -119,16 +120,16 @@ public class PdfContentParser {
         while (true) {
             if (!nextValidToken())
                 throw new IOException(MessageLocalization.getComposedMessage("unexpected.end.of.file"));
-                if (tokeniser.getTokenType() == PRTokeniser.TK_END_DIC)
+                if (tokeniser.getTokenType() == TokenType.END_DIC)
                     break;
-                if (tokeniser.getTokenType() != PRTokeniser.TK_NAME)
+                if (tokeniser.getTokenType() != TokenType.NAME)
                     throw new IOException(MessageLocalization.getComposedMessage("dictionary.key.is.not.a.name"));
                 PdfName name = new PdfName(tokeniser.getStringValue(), false);
                 PdfObject obj = readPRObject();
                 int type = obj.type();
-                if (-type == PRTokeniser.TK_END_DIC)
+                if (-type == TokenType.END_DIC.ordinal())
                     throw new IOException(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
-                if (-type == PRTokeniser.TK_END_ARRAY)
+                if (-type == TokenType.END_ARRAY.ordinal())
                     throw new IOException(MessageLocalization.getComposedMessage("unexpected.close.bracket"));
                 dic.put(name, obj);
         }
@@ -145,9 +146,9 @@ public class PdfContentParser {
         while (true) {
             PdfObject obj = readPRObject();
             int type = obj.type();
-            if (-type == PRTokeniser.TK_END_ARRAY)
+            if (-type == TokenType.END_ARRAY.ordinal())
                 break;
-            if (-type == PRTokeniser.TK_END_DIC)
+            if (-type == TokenType.END_DIC.ordinal())
                 throw new IOException(MessageLocalization.getComposedMessage("unexpected.gt.gt"));
             array.add(obj);
         }
@@ -162,25 +163,25 @@ public class PdfContentParser {
     public PdfObject readPRObject() throws IOException {
         if (!nextValidToken())
             return null;
-        int type = tokeniser.getTokenType();
+        TokenType type = tokeniser.getTokenType();
         switch (type) {
-            case PRTokeniser.TK_START_DIC: {
+            case START_DIC: {
                 PdfDictionary dic = readDictionary();
                 return dic;
             }
-            case PRTokeniser.TK_START_ARRAY:
+            case START_ARRAY:
                 return readArray();
-            case PRTokeniser.TK_STRING:
+            case STRING:
                 PdfString str = new PdfString(tokeniser.getStringValue(), null).setHexWriting(tokeniser.isHexString());
                 return str;
-            case PRTokeniser.TK_NAME:
+            case NAME:
                 return new PdfName(tokeniser.getStringValue(), false);
-            case PRTokeniser.TK_NUMBER:
+            case NUMBER:
                 return new PdfNumber(tokeniser.getStringValue());
-            case PRTokeniser.TK_OTHER:
+            case OTHER:
                 return new PdfLiteral(COMMAND_TYPE, tokeniser.getStringValue());
             default:
-                return new PdfLiteral(-type, tokeniser.getStringValue());
+                return new PdfLiteral(-type.ordinal(), tokeniser.getStringValue());
         }
     }
 
@@ -191,7 +192,7 @@ public class PdfContentParser {
      */
     public boolean nextValidToken() throws IOException {
         while (tokeniser.nextToken()) {
-            if (tokeniser.getTokenType() == PRTokeniser.TK_COMMENT)
+            if (tokeniser.getTokenType() == TokenType.COMMENT)
                 continue;
             return true;
         }
