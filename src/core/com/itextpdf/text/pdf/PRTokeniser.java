@@ -51,7 +51,11 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * @author  Paulo Soares
  */
 public class PRTokeniser {
-    
+
+    /**
+     * Enum representing the possible token types
+     * @since 5.0.1
+     */ 
     public enum TokenType {
         NUMBER,
         STRING,
