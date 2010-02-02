@@ -148,7 +148,8 @@ public class Font implements Comparable<Font> {
 	 * @param style
 	 *            the style of this font
 	 * @param color
-	 *            the <CODE>BaseColor</CODE> of this font.
+	 *            the <CODE>BaseColor</CODE> of this font.µ
+	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
 	public Font(FontFamily family, float size, int style, BaseColor color) {
@@ -223,6 +224,7 @@ public class Font implements Comparable<Font> {
 	 *            the size of this font
 	 * @param style
 	 *            the style of this font
+	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
 	public Font(FontFamily family, float size, int style) {
@@ -236,6 +238,7 @@ public class Font implements Comparable<Font> {
 	 *            the family to which this font belongs
 	 * @param size
 	 *            the size of this font
+	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
 	public Font(FontFamily family, float size) {
@@ -247,6 +250,7 @@ public class Font implements Comparable<Font> {
 	 *
 	 * @param family
 	 *            the family to which this font belongs
+	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
 	public Font(FontFamily family) {
