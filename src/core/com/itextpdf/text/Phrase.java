@@ -46,6 +46,7 @@ package com.itextpdf.text;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.HyphenationEvent;
 
@@ -564,7 +565,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
     	Phrase p = new Phrase(true);
     	p.setLeading(leading);
     	p.font = font;
-    	if (font.getFamily() != Font.SYMBOL && font.getFamily() != Font.ZAPFDINGBATS && font.getBaseFont() == null) {
+    	if (font.getFamily() != FontFamily.SYMBOL && font.getFamily() != FontFamily.ZAPFDINGBATS && font.getBaseFont() == null) {
             int index;
             while((index = SpecialSymbol.index(string)) > -1) {
                 if (index > 0) {
@@ -572,7 +573,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
                     p.add(new Chunk(firstPart, font));
                     string = string.substring(index);
                 }
-                Font symbol = new Font(Font.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
+                Font symbol = new Font(FontFamily.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
                 StringBuffer buf = new StringBuffer();
                 buf.append(SpecialSymbol.getCorrespondingSymbol(string.charAt(0)));
                 string = string.substring(1);
