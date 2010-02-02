@@ -18,6 +18,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -99,7 +100,7 @@ public class PdfTextExtractorEncodingsTest
     @Test
     public void testStandardFont() throws Exception
     {
-        Font font = new Font(Font.TIMES_ROMAN, 12);
+        Font font = new Font(FontFamily.TIMES_ROMAN, 12);
         byte[] pdfBytes = createPdf(font);
         
         if (false){

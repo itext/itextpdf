@@ -47,6 +47,7 @@ import java.util.HashMap;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
 
 /**
  * This class contains entities that can be used in an entity tag.
@@ -354,7 +355,7 @@ public class EntitiesToSymbol {
                 return new Chunk(e, font);
             }
         }
-        Font symbol = new Font(Font.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
+        Font symbol = new Font(FontFamily.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
         return new Chunk(String.valueOf(s), symbol);
     }
 

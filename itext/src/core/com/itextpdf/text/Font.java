@@ -63,22 +63,19 @@ import com.itextpdf.text.pdf.BaseFont;
 
 public class Font implements Comparable<Font> {
 
-	// static membervariables for the different families
-
-	/** a possible value of a font family. */
-	public static final int COURIER = 0;
-
-	/** a possible value of a font family. */
-	public static final int HELVETICA = 1;
-
-	/** a possible value of a font family. */
-	public static final int TIMES_ROMAN = 2;
-
-	/** a possible value of a font family. */
-	public static final int SYMBOL = 3;
-
-	/** a possible value of a font family. */
-	public static final int ZAPFDINGBATS = 4;
+    /**
+     * Enum describing the font family
+     * 
+     * @since 5.0.1
+     */
+    public enum FontFamily {
+        COURIER,
+        HELVETICA,
+        TIMES_ROMAN,
+        SYMBOL,
+        ZAPFDINGBATS,
+        UNDEFINED
+    }
 
 	// static membervariables for the different styles
 
@@ -111,7 +108,7 @@ public class Font implements Comparable<Font> {
 	// membervariables
 
 	/** the value of the fontfamily. */
-	private int family = UNDEFINED;
+	private FontFamily family = FontFamily.UNDEFINED;
 
 	/** the value of the fontsize. */
 	private float size = UNDEFINED;
@@ -152,9 +149,10 @@ public class Font implements Comparable<Font> {
 	 *            the style of this font
 	 * @param color
 	 *            the <CODE>BaseColor</CODE> of this font.
+	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
-	public Font(int family, float size, int style, BaseColor color) {
+	public Font(FontFamily family, float size, int style, BaseColor color) {
 		this.family = family;
 		this.size = size;
 		this.style = style;
@@ -226,9 +224,10 @@ public class Font implements Comparable<Font> {
 	 *            the size of this font
 	 * @param style
 	 *            the style of this font
+	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
-	public Font(int family, float size, int style) {
+	public Font(FontFamily family, float size, int style) {
 		this(family, size, style, null);
 	}
 
@@ -239,9 +238,10 @@ public class Font implements Comparable<Font> {
 	 *            the family to which this font belongs
 	 * @param size
 	 *            the size of this font
+	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
-	public Font(int family, float size) {
+	public Font(FontFamily family, float size) {
 		this(family, size, UNDEFINED, null);
 	}
 
@@ -250,9 +250,10 @@ public class Font implements Comparable<Font> {
 	 *
 	 * @param family
 	 *            the family to which this font belongs
+	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
-	public Font(int family) {
+	public Font(FontFamily family) {
 		this(family, UNDEFINED, UNDEFINED, null);
 	}
 
@@ -261,7 +262,7 @@ public class Font implements Comparable<Font> {
 	 */
 
 	public Font() {
-		this(UNDEFINED, UNDEFINED, UNDEFINED, null);
+		this(FontFamily.UNDEFINED, UNDEFINED, UNDEFINED, null);
 	}
 
 	// implementation of the Comparable interface
@@ -315,7 +316,7 @@ public class Font implements Comparable<Font> {
 	 *
 	 * @return the value of the family
 	 */
-	public int getFamily() {
+	public FontFamily getFamily() {
 		return family;
 	}
 
@@ -327,15 +328,15 @@ public class Font implements Comparable<Font> {
 	public String getFamilyname() {
 		String tmp = "unknown";
 		switch (getFamily()) {
-		case Font.COURIER:
+		case COURIER:
 			return FontFactory.COURIER;
-		case Font.HELVETICA:
+		case HELVETICA:
 			return FontFactory.HELVETICA;
-		case Font.TIMES_ROMAN:
+		case TIMES_ROMAN:
 			return FontFactory.TIMES_ROMAN;
-		case Font.SYMBOL:
+		case SYMBOL:
 			return FontFactory.SYMBOL;
-		case Font.ZAPFDINGBATS:
+		case ZAPFDINGBATS:
 			return FontFactory.ZAPFDINGBATS;
 		default:
 			if (baseFont != null) {
@@ -364,34 +365,36 @@ public class Font implements Comparable<Font> {
 	 *            A <CODE>String</CODE> representing a certain font-family.
 	 */
 	public void setFamily(String family) {
-		this.family = getFamilyIndex(family);
+		this.family = getFamily(family);
 	}
 
 	/**
 	 * Translates a <CODE>String</CODE> -value of a certain family into the
-	 * index that is used for this family in this class.
+	 * FontFamily enum that is used for this family in this class.
 	 *
 	 * @param family
 	 *            A <CODE>String</CODE> representing a certain font-family
-	 * @return the corresponding index
+	 * @return the corresponding FontFamily
+	 * 
+	 * @since 5.0.1
 	 */
-	public static int getFamilyIndex(String family) {
+	public static FontFamily getFamily(String family) {
 		if (family.equalsIgnoreCase(FontFactory.COURIER)) {
-			return COURIER;
+			return FontFamily.COURIER;
 		}
 		if (family.equalsIgnoreCase(FontFactory.HELVETICA)) {
-			return HELVETICA;
+			return FontFamily.HELVETICA;
 		}
 		if (family.equalsIgnoreCase(FontFactory.TIMES_ROMAN)) {
-			return TIMES_ROMAN;
+			return FontFamily.TIMES_ROMAN;
 		}
 		if (family.equalsIgnoreCase(FontFactory.SYMBOL)) {
-			return SYMBOL;
+			return FontFamily.SYMBOL;
 		}
 		if (family.equalsIgnoreCase(FontFactory.ZAPFDINGBATS)) {
-			return ZAPFDINGBATS;
+			return FontFamily.ZAPFDINGBATS;
 		}
-		return UNDEFINED;
+		return FontFamily.UNDEFINED;
 	}
 
 	// SIZE
@@ -466,7 +469,7 @@ public class Font implements Comparable<Font> {
 		}
 		if (baseFont != null)
 			return style;
-		if (family == SYMBOL || family == ZAPFDINGBATS)
+		if (family == FontFamily.SYMBOL || family == FontFamily.ZAPFDINGBATS)
 			return style;
 		else
 			return style & ~BOLDITALIC;
@@ -687,7 +690,7 @@ public class Font implements Comparable<Font> {
 				encoding = BaseFont.ZAPFDINGBATS;
 			break;
 		default:
-		case Font.HELVETICA:
+		case HELVETICA:
 			switch (style & BOLDITALIC) {
 			case BOLD:
 				fontName = BaseFont.HELVETICA_BOLD;
@@ -724,7 +727,7 @@ public class Font implements Comparable<Font> {
 	 * @return a <CODE>boolean</CODE>
 	 */
 	public boolean isStandardFont() {
-		return family == UNDEFINED && size == UNDEFINED && style == UNDEFINED
+		return family == FontFamily.UNDEFINED && size == UNDEFINED && style == UNDEFINED
 				&& color == null && baseFont == null;
 	}
 
@@ -763,7 +766,7 @@ public class Font implements Comparable<Font> {
 		if (font.baseFont != null) {
 			return new Font(font.baseFont, dSize, dStyle, dColor);
 		}
-		if (font.getFamily() != UNDEFINED) {
+		if (font.getFamily() != FontFamily.UNDEFINED) {
 			return new Font(font.family, dSize, dStyle, dColor);
 		}
 		if (this.baseFont != null) {

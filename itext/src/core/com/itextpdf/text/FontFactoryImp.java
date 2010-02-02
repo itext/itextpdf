@@ -46,11 +46,11 @@ package com.itextpdf.text;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Set;
 
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.html.Markup;
 import com.itextpdf.text.pdf.BaseFont;
 
@@ -159,7 +159,7 @@ public class FontFactoryImp implements FontProvider {
      * @return the Font constructed based on the parameters
      */
     public Font getFont(String fontname, String encoding, boolean embedded, float size, int style, BaseColor color, boolean cached) {
-    	if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
+    	if (fontname == null) return new Font(FontFamily.UNDEFINED, size, style, color);
         String lowercasefontname = fontname.toLowerCase();
         ArrayList<String> tmp = fontFamilies.get(lowercasefontname);
         if (tmp != null) {
@@ -195,7 +195,7 @@ public class FontFactoryImp implements FontProvider {
                 // the font is a true type font or an unknown font
                 fontname = trueTypeFonts.get(fontname.toLowerCase());
                 // the font is not registered as truetype font
-                if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
+                if (fontname == null) return new Font(FontFamily.UNDEFINED, size, style, color);
                 // the font is registered as truetype font
                 basefont = BaseFont.createFont(fontname, encoding, embedded, cached, null, null);
             }
@@ -206,11 +206,11 @@ public class FontFactoryImp implements FontProvider {
         }
         catch(IOException ioe) {
             // the font is registered as a true type font, but the path was wrong
-            return new Font(Font.UNDEFINED, size, style, color);
+            return new Font(FontFamily.UNDEFINED, size, style, color);
         }
         catch(NullPointerException npe) {
             // null was entered as fontname and/or encoding
-            return new Font(Font.UNDEFINED, size, style, color);
+            return new Font(FontFamily.UNDEFINED, size, style, color);
         }
         return new Font(basefont, size, style, color);
     }
