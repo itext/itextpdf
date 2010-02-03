@@ -148,7 +148,7 @@ public class Font implements Comparable<Font> {
 	 * @param style
 	 *            the style of this font
 	 * @param color
-	 *            the <CODE>BaseColor</CODE> of this font.µ
+	 *            the <CODE>BaseColor</CODE> of this font.
 	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
