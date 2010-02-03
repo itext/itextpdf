@@ -1,5 +1,5 @@
 /*
- * $Id: Chapter.java 3373 2008-05-12 16:21:24Z xlv $
+ * $Id: GraphicsState.java 4113 2009-12-01 11:08:59Z blowagie $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -44,10 +44,20 @@
 package com.itextpdf.text.pdf.parser;
 
 /**
- * Callback interface for render operations during {@link PdfContentStreamProcessor} execution
- * @since    2.1.6
+ * A callback interface that receives notificaitons from the {@link PdfContentStreamProcessor}
+ * as various render operations are required.
+ * <br>
+ * Important:  This interface may be converted to an abstract base class in the future
+ * to allow for adding additional render calls as the content stream processor is enhanced
+ * @since 5.0
  */
 public interface RenderListener {
+
+    /**
+     * Called when a new text block is beginning (i.e. BT)
+     * @since iText 5.0.1
+     */
+    public void beginTextBlock();
 
     /**
      * Called when text should be rendered
@@ -55,8 +65,23 @@ public interface RenderListener {
      */
     public void renderText(TextRenderInfo renderInfo);
 
+    
+    /**
+     * Called when a text block has ended (i.e. ET)
+     * @since iText 5.0.1
+     */
+    public void endTextBlock();
+
+    /**
+     * Called when image should be rendered
+     * @param renderInfo information specifying what to render
+     * @since iText 5.0.1
+     */
+    public void renderImage(ImageRenderInfo renderInfo);
+
     /**
      * Resets the internal state of the RenderListener
      */
     public void reset();
+
 }

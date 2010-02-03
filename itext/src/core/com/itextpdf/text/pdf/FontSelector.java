@@ -44,15 +44,15 @@
 package com.itextpdf.text.pdf;
 
 import java.util.ArrayList;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 /** Selects the appropriate fonts that contain the glyphs needed to
- * render text correctly. The fonts are checked in order until the 
+ * render text correctly. The fonts are checked in order until the
  * character is found.
  * <p>
  * The built in fonts "Symbol" and "ZapfDingbats", if used, have a special encoding
@@ -60,13 +60,13 @@ import com.itextpdf.text.Utilities;
  * @author Paulo Soares
  */
 public class FontSelector {
-    
-    protected ArrayList fonts = new ArrayList();
+
+    protected ArrayList<Font> fonts = new ArrayList<Font>();
 
     /**
      * Adds a <CODE>Font</CODE> to be searched for valid characters.
      * @param font the <CODE>Font</CODE>
-     */    
+     */
     public void addFont(Font font) {
         if (font.getBaseFont() != null) {
             fonts.add(font);
@@ -76,13 +76,13 @@ public class FontSelector {
         Font f2 = new Font(bf, font.getSize(), font.getCalculatedStyle(), font.getColor());
         fonts.add(f2);
     }
-    
+
     /**
      * Process the text so that it will render with a combination of fonts
      * if needed.
      * @param text the text
      * @return a <CODE>Phrase</CODE> with one or more chunks
-     */    
+     */
     public Phrase process(String text) {
         int fsize = fonts.size();
         if (fsize == 0)
@@ -102,11 +102,11 @@ public class FontSelector {
             if (Utilities.isSurrogatePair(cc, k)) {
                 int u = Utilities.convertToUtf32(cc, k);
                 for (int f = 0; f < fsize; ++f) {
-                    font = (Font)fonts.get(f);
+                    font = fonts.get(f);
                     if (font.getBaseFont().charExists(u)) {
                         if (lastidx != f) {
                             if (sb.length() > 0 && lastidx != -1) {
-                                Chunk ck = new Chunk(sb.toString(), (Font)fonts.get(lastidx));
+                                Chunk ck = new Chunk(sb.toString(), fonts.get(lastidx));
                                 ret.add(ck);
                                 sb.setLength(0);
                             }
@@ -120,11 +120,11 @@ public class FontSelector {
             }
             else {
                 for (int f = 0; f < fsize; ++f) {
-                    font = (Font)fonts.get(f);
+                    font = fonts.get(f);
                     if (font.getBaseFont().charExists(c)) {
                         if (lastidx != f) {
                             if (sb.length() > 0 && lastidx != -1) {
-                                Chunk ck = new Chunk(sb.toString(), (Font)fonts.get(lastidx));
+                                Chunk ck = new Chunk(sb.toString(), fonts.get(lastidx));
                                 ret.add(ck);
                                 sb.setLength(0);
                             }
@@ -137,7 +137,7 @@ public class FontSelector {
             }
         }
         if (sb.length() > 0) {
-            Chunk ck = new Chunk(sb.toString(), (Font)fonts.get(lastidx == -1 ? 0 : lastidx));
+            Chunk ck = new Chunk(sb.toString(), fonts.get(lastidx == -1 ? 0 : lastidx));
             ret.add(ck);
         }
         return ret;

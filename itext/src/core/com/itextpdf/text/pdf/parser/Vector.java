@@ -127,6 +127,32 @@ public class Vector {
     }
     
     /**
+     * Normalizes the vector (i.e. returns the unit vector in the same orientation as this vector)
+     * @return the unit vector
+     * @since 5.0.1
+     */
+    public Vector normalize(){
+        float l = this.length();
+        float x = vals[I1]/l;
+        float y = vals[I2]/l;
+        float z = vals[I3]/l;
+        return new Vector(x, y, z);
+    }
+
+    /**
+     * Multiplies the vector by a scalar
+     * @param by the scalar to multiply by
+     * @return the result of the scalar multiplication
+     * @since 5.0.1
+     */
+    public Vector multiply(float by){
+        float x = vals[I1] * by;
+        float y = vals[I2] * by;
+        float z = vals[I3] * by;
+        return new Vector(x, y, z);
+    }
+    
+    /**
      * Computes the dot product of this vector with the specified vector
      * @param with the vector to dot product this vector with
      * @return the dot product
@@ -137,12 +163,12 @@ public class Vector {
     
     /**
      * Computes the length of this vector
-     * 
+     * <br>
      * <b>Note:</b> If you are working with raw vectors from PDF, be careful - 
      * the Z axis will generally be set to 1.  If you want to compute the
      * length of a vector, subtract it from the origin first (this will set
      * the Z axis to 0).
-     * 
+     * <br>
      * For example: 
      * <code>aVector.subtract(originVector).length();</code>
      *  
@@ -171,5 +197,14 @@ public class Vector {
      */
     public String toString() {
         return vals[I1]+","+vals[I2]+","+vals[I3];
+    }
+    
+    /**
+     * @since 5.0.1
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        Vector rhs = (Vector)obj;
+        return rhs.vals[I1] == vals[I1] && rhs.vals[I2] == vals[I2] && rhs.vals[I3] == vals[I3];
     }
 }

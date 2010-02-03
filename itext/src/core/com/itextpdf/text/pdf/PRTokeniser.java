@@ -51,18 +51,25 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * @author  Paulo Soares
  */
 public class PRTokeniser {
+
+    /**
+     * Enum representing the possible token types
+     * @since 5.0.1
+     */ 
+    public enum TokenType {
+        NUMBER,
+        STRING,
+        NAME,
+        COMMENT,
+        START_ARRAY,
+        END_ARRAY,
+        START_DIC,
+        END_DIC,
+        REF,
+        OTHER,
+        ENDOFFILE
+    }
     
-    public static final int TK_NUMBER = 1;
-    public static final int TK_STRING = 2;
-    public static final int TK_NAME = 3;
-    public static final int TK_COMMENT = 4;
-    public static final int TK_START_ARRAY = 5;
-    public static final int TK_END_ARRAY = 6;
-    public static final int TK_START_DIC = 7;
-    public static final int TK_END_DIC = 8;
-    public static final int TK_REF = 9;
-    public static final int TK_OTHER = 10;
-    public static final int TK_ENDOFFILE = 11;
     public static final boolean delims[] = {
         true,  true,  false, false, false, false, false, false, false, false,
         true,  true,  false, true,  true,  false, false, false, false, false,
@@ -95,7 +102,7 @@ public class PRTokeniser {
 
     
     protected RandomAccessFileOrArray file;
-    protected int type;
+    protected TokenType type;
     protected String stringValue;
     protected int reference;
     protected int generation;
@@ -165,7 +172,7 @@ public class PRTokeniser {
         return delims[ch + 1];
     }
 
-    public int getTokenType() {
+    public TokenType getTokenType() {
         return type;
     }
     
@@ -236,12 +243,12 @@ public class PRTokeniser {
         String n2 = null;
         int ptr = 0;
         while (nextToken()) {
-            if (type == TK_COMMENT)
+            if (type == TokenType.COMMENT)
                 continue;
             switch (level) {
                 case 0:
                 {
-                    if (type != TK_NUMBER)
+                    if (type != TokenType.NUMBER)
                         return;
                     ptr = file.getFilePointer();
                     n1 = stringValue;
@@ -250,9 +257,9 @@ public class PRTokeniser {
                 }
                 case 1:
                 {
-                    if (type != TK_NUMBER) {
+                    if (type != TokenType.NUMBER) {
                         file.seek(ptr);
-                        type = TK_NUMBER;
+                        type = TokenType.NUMBER;
                         stringValue = n1;
                         return;
                     }
@@ -262,13 +269,13 @@ public class PRTokeniser {
                 }
                 default:
                 {
-                    if (type != TK_OTHER || !stringValue.equals("R")) {
+                    if (type != TokenType.OTHER || !stringValue.equals("R")) {
                         file.seek(ptr);
-                        type = TK_NUMBER;
+                        type = TokenType.NUMBER;
                         stringValue = n1;
                         return;
                     }
-                    type = TK_REF;
+                    type = TokenType.REF;
                     reference = Integer.parseInt(n1);
                     generation = Integer.parseInt(n2);
                     return;
@@ -286,7 +293,7 @@ public class PRTokeniser {
             ch = file.read();
         } while (ch != -1 && isWhitespace(ch));
         if (ch == -1){
-            type = TK_ENDOFFILE;
+            type = TokenType.ENDOFFILE;
             return false;
         }
 
@@ -298,15 +305,15 @@ public class PRTokeniser {
 
         switch (ch) {
             case '[':
-                type = TK_START_ARRAY;
+                type = TokenType.START_ARRAY;
                 break;
             case ']':
-                type = TK_END_ARRAY;
+                type = TokenType.END_ARRAY;
                 break;
             case '/':
             {
                 outBuf = new StringBuffer();
-                type = TK_NAME;
+                type = TokenType.NAME;
                 while (true) {
                     ch = file.read();
                     if (delims[ch + 1])
@@ -323,17 +330,17 @@ public class PRTokeniser {
                 ch = file.read();
                 if (ch != '>')
                     throwError(MessageLocalization.getComposedMessage("greaterthan.not.expected"));
-                type = TK_END_DIC;
+                type = TokenType.END_DIC;
                 break;
             case '<':
             {
                 int v1 = file.read();
                 if (v1 == '<') {
-                    type = TK_START_DIC;
+                    type = TokenType.START_DIC;
                     break;
                 }
                 outBuf = new StringBuffer();
-                type = TK_STRING;
+                type = TokenType.STRING;
                 hexString = true;
                 int v2 = 0;
                 while (true) {
@@ -364,7 +371,7 @@ public class PRTokeniser {
                 break;
             }
             case '%':
-                type = TK_COMMENT;
+                type = TokenType.COMMENT;
                 do {
                     ch = file.read();
                 } while (ch != -1 && ch != '\r' && ch != '\n');
@@ -372,7 +379,7 @@ public class PRTokeniser {
             case '(':
             {
                 outBuf = new StringBuffer();
-                type = TK_STRING;
+                type = TokenType.STRING;
                 hexString = false;
                 int nesting = 0;
                 while (true) {
@@ -467,14 +474,14 @@ public class PRTokeniser {
             {
                 outBuf = new StringBuffer();
                 if (ch == '-' || ch == '+' || ch == '.' || (ch >= '0' && ch <= '9')) {
-                    type = TK_NUMBER;
+                    type = TokenType.NUMBER;
                     do {
                         outBuf.append((char)ch);
                         ch = file.read();
                     } while (ch != -1 && ((ch >= '0' && ch <= '9') || ch == '.'));
                 }
                 else {
-                    type = TK_OTHER;
+                    type = TokenType.OTHER;
                     do {
                         outBuf.append((char)ch);
                         ch = file.read();
@@ -564,10 +571,10 @@ public class PRTokeniser {
             PRTokeniser tk = new PRTokeniser(line);
             int num = 0;
             int gen = 0;
-            if (!tk.nextToken() || tk.getTokenType() != TK_NUMBER)
+            if (!tk.nextToken() || tk.getTokenType() != TokenType.NUMBER)
                 return null;
             num = tk.intValue();
-            if (!tk.nextToken() || tk.getTokenType() != TK_NUMBER)
+            if (!tk.nextToken() || tk.getTokenType() != TokenType.NUMBER)
                 return null;
             gen = tk.intValue();
             if (!tk.nextToken())

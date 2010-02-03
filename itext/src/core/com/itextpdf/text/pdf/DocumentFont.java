@@ -55,7 +55,7 @@ import com.itextpdf.text.ExceptionConverter;
  */
 public class DocumentFont extends BaseFont {
     // code, [glyph, width]
-    private HashMap metrics = new HashMap();
+    private HashMap<Integer, int[]> metrics = new HashMap<Integer, int[]>();
     private String fontName;
     private PRIndirectReference refFont;
     private PdfDictionary font;
@@ -70,22 +70,22 @@ public class DocumentFont extends BaseFont {
     private float urx = 100;
     private float ury = 900;
     private boolean isType0 = false;
-    
+
     private BaseFont cjkMirror;
-    
+
     private static String cjkNames[] = {"HeiseiMin-W3", "HeiseiKakuGo-W5", "STSong-Light", "MHei-Medium",
         "MSung-Light", "HYGoThic-Medium", "HYSMyeongJo-Medium", "MSungStd-Light", "STSongStd-Light",
         "HYSMyeongJoStd-Medium", "KozMinPro-Regular"};
-        
+
     private static String cjkEncs[] = {"UniJIS-UCS2-H", "UniJIS-UCS2-H", "UniGB-UCS2-H", "UniCNS-UCS2-H",
         "UniCNS-UCS2-H", "UniKS-UCS2-H", "UniKS-UCS2-H", "UniCNS-UCS2-H", "UniGB-UCS2-H",
         "UniKS-UCS2-H", "UniJIS-UCS2-H"};
-        
+
     private static String cjkNames2[] = {"MSungStd-Light", "STSongStd-Light", "HYSMyeongJoStd-Medium", "KozMinPro-Regular"};
-        
+
     private static String cjkEncs2[] = {"UniCNS-UCS2-H", "UniGB-UCS2-H", "UniKS-UCS2-H", "UniJIS-UCS2-H",
         "UniCNS-UTF16-H", "UniGB-UTF16-H", "UniKS-UTF16-H", "UniJIS-UTF16-H"};
-        
+
     private static final int stdEnc[] = {
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -148,7 +148,7 @@ public class DocumentFont extends BaseFont {
             }
         }
     }
-    
+
     private void processType0(PdfDictionary font) {
         try {
             PdfObject toUniObject = PdfReader.getPdfObjectRelease(font.get(PdfName.TOUNICODE));
@@ -164,12 +164,12 @@ public class DocumentFont extends BaseFont {
             if (toUniObject != null){
                 fillMetrics(PdfReader.getStreamBytes((PRStream)toUniObject), widths, dw);
             }
-            
+
         } catch (Exception e) {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     private IntHashtable readWidths(PdfArray ws) {
         IntHashtable hh = new IntHashtable();
         if (ws == null)
@@ -193,14 +193,14 @@ public class DocumentFont extends BaseFont {
         }
         return hh;
     }
-    
+
     private String decodeString(PdfString ps) {
         if (ps.isHexWriting())
             return PdfEncodings.convertToString(ps.getBytes(), "UnicodeBigUnmarked");
         else
             return ps.toUnicodeString();
     }
-    
+
     private void fillMetrics(byte[] touni, IntHashtable widths, int dw) {
         try {
             PdfContentParser ps = new PdfContentParser(new PRTokeniser(touni));
@@ -256,7 +256,7 @@ public class DocumentFont extends BaseFont {
                                     }
                                 }
                             }
-                        }                        
+                        }
                     }
                 }
                 else
@@ -267,7 +267,7 @@ public class DocumentFont extends BaseFont {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     private void doType1TT() {
         PdfObject enc = PdfReader.getPdfObject(font.get(PdfName.ENCODING));
         if (enc == null)
@@ -343,7 +343,7 @@ public class DocumentFont extends BaseFont {
         }
         fillFontDesc(font.getAsDict(PdfName.FONTDESCRIPTOR));
     }
-    
+
     private void fillFontDesc(PdfDictionary fontDesc) {
         if (fontDesc == null)
             return;
@@ -377,7 +377,7 @@ public class DocumentFont extends BaseFont {
             }
         }
     }
-    
+
     private void fillEncoding(PdfName encoding) {
         if (PdfName.MAC_ROMAN_ENCODING.equals(encoding) || PdfName.WIN_ANSI_ENCODING.equals(encoding)) {
             byte b[] = new byte[256];
@@ -398,7 +398,7 @@ public class DocumentFont extends BaseFont {
             }
         }
     }
-    
+
     /** Gets the family name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -408,10 +408,11 @@ public class DocumentFont extends BaseFont {
      * @return the family name of the font
      *
      */
+    @Override
     public String[][] getFamilyFontName() {
         return getFullFontName();
     }
-    
+
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
      * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>,
      * <CODE>ITALICANGLE</CODE>, <CODE>BBOXLLX</CODE>, <CODE>BBOXLLY</CODE>, <CODE>BBOXURX</CODE>
@@ -421,6 +422,7 @@ public class DocumentFont extends BaseFont {
      * @return the parameter in points
      *
      */
+    @Override
     public float getFontDescriptor(int key, float fontSize) {
         if (cjkMirror != null)
             return cjkMirror.getFontDescriptor(key, fontSize);
@@ -450,7 +452,7 @@ public class DocumentFont extends BaseFont {
         }
         return 0;
     }
-    
+
     /** Gets the full name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -460,10 +462,11 @@ public class DocumentFont extends BaseFont {
      * @return the full name of the font
      *
      */
+    @Override
     public String[][] getFullFontName() {
         return new String[][]{{"", "", "", fontName}};
     }
-    
+
     /** Gets all the entries of the names-table. If it is a True Type font
      * each array element will have {Name ID, Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -473,6 +476,7 @@ public class DocumentFont extends BaseFont {
      * @return the full name of the font
      * @since 2.0.8
      */
+    @Override
     public String[][] getAllNameEntries() {
         return new String[][]{{"4", "", "", "", fontName}};
     }
@@ -483,18 +487,20 @@ public class DocumentFont extends BaseFont {
      * @return the kerning to be applied
      *
      */
+    @Override
     public int getKerning(int char1, int char2) {
         return 0;
     }
-    
+
     /** Gets the postscript font name.
      * @return the postscript font name
      *
      */
+    @Override
     public String getPostscriptFontName() {
         return fontName;
     }
-    
+
     /** Gets the width from the font according to the Unicode char <CODE>c</CODE>
      * or the <CODE>name</CODE>. If the <CODE>name</CODE> is null it's a symbolic font.
      * @param c the unicode char
@@ -502,18 +508,20 @@ public class DocumentFont extends BaseFont {
      * @return the width of the char
      *
      */
+    @Override
     int getRawWidth(int c, String name) {
         return 0;
     }
-    
+
     /** Checks if the font has any kerning pairs.
      * @return <CODE>true</CODE> if the font has any kerning pairs
      *
      */
+    @Override
     public boolean hasKernPairs() {
         return false;
     }
-    
+
     /** Outputs to the writer the font dictionaries and streams.
      * @param writer the writer for this document
      * @param ref the font indirect reference
@@ -522,14 +530,16 @@ public class DocumentFont extends BaseFont {
      * @throws DocumentException error in generating the object
      *
      */
+    @Override
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object[] params) throws DocumentException, IOException {
     }
-    
+
     /**
      * Always returns null.
      * @return	null
      * @since	2.1.3
      */
+    @Override
     public PdfStream getFullFontStream() {
     	return null;
     }
@@ -539,11 +549,12 @@ public class DocumentFont extends BaseFont {
      * @param char1 the unicode <CODE>char</CODE> to get the width of
      * @return the width in normalized 1000 units
      */
+    @Override
     public int getWidth(int char1) {
         if (cjkMirror != null)
             return cjkMirror.getWidth(char1);
         else if (isType0) {
-            int[] ws = (int[])metrics.get(new Integer(char1));
+            int[] ws = metrics.get(new Integer(char1));
             if (ws != null)
                 return ws[1];
             else
@@ -552,7 +563,8 @@ public class DocumentFont extends BaseFont {
         else
             return super.getWidth(char1);
     }
-    
+
+    @Override
     public int getWidth(String text) {
         if (cjkMirror != null)
             return cjkMirror.getWidth(text);
@@ -561,7 +573,7 @@ public class DocumentFont extends BaseFont {
             int len = chars.length;
             int total = 0;
             for (int k = 0; k < len; ++k) {
-                int[] ws = (int[])metrics.get(new Integer(chars[k]));
+                int[] ws = metrics.get(new Integer(chars[k]));
                 if (ws != null)
                     total += ws[1];
             }
@@ -570,7 +582,8 @@ public class DocumentFont extends BaseFont {
         else
             return super.getWidth(text);
     }
-    
+
+    @Override
     byte[] convertToBytes(String text) {
         if (cjkMirror != null)
             return PdfEncodings.convertToBytes(text, CJKFont.CJK_ENCODING);
@@ -580,11 +593,11 @@ public class DocumentFont extends BaseFont {
             byte[] b = new byte[len * 2];
             int bptr = 0;
             for (int k = 0; k < len; ++k) {
-                int[] ws = (int[])metrics.get(new Integer(chars[k]));
+                int[] ws = metrics.get(new Integer(chars[k]));
                 if (ws != null) {
                     int g = ws[0];
                     b[bptr++] = (byte)(g / 256);
-                    b[bptr++] = (byte)(g);
+                    b[bptr++] = (byte)g;
                 }
             }
             if (bptr == b.length)
@@ -612,15 +625,16 @@ public class DocumentFont extends BaseFont {
             }
         }
     }
-    
+
+    @Override
     byte[] convertToBytes(int char1) {
         if (cjkMirror != null)
             return PdfEncodings.convertToBytes((char)char1, CJKFont.CJK_ENCODING);
         else if (isType0) {
-            int[] ws = (int[])metrics.get(new Integer(char1));
+            int[] ws = metrics.get(new Integer(char1));
             if (ws != null) {
                 int g = ws[0];
-                return new byte[]{(byte)(g / 256), (byte)(g)};
+                return new byte[]{(byte)(g / 256), (byte)g};
             }
             else
                 return new byte[0];
@@ -632,11 +646,12 @@ public class DocumentFont extends BaseFont {
                 return new byte[0];
         }
     }
-    
+
     PdfIndirectReference getIndirectReference() {
         return refFont;
     }
-    
+
+    @Override
     public boolean charExists(int c) {
         if (cjkMirror != null)
             return cjkMirror.charExists(c);
@@ -646,27 +661,31 @@ public class DocumentFont extends BaseFont {
         else
             return super.charExists(c);
     }
-    
+
     /**
      * Sets the font name that will appear in the pdf font dictionary.
      * It does nothing in this case as the font is already in the document.
      * @param name the new font name
-     */    
+     */
+    @Override
     public void setPostscriptFontName(String name) {
     }
-    
+
+    @Override
     public boolean setKerning(int char1, int char2, int kern) {
         return false;
     }
-    
+
+    @Override
     public int[] getCharBBox(int c) {
         return null;
     }
-    
+
+    @Override
     protected int[] getRawCharBBox(int c, String name) {
         return null;
     }
-    
+
     /**
      * Exposes the unicode - > CID map that is constructed from the font's encoding
      * @return the unicode to CID map

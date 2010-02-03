@@ -51,8 +51,8 @@ import com.itextpdf.text.Rectangle;
  */
 
 public class PdfAppearance extends PdfTemplate {
-    
-    public static final HashMap stdFieldFontNames = new HashMap();
+
+    public static final HashMap<String, PdfName> stdFieldFontNames = new HashMap<String, PdfName>();
     static {
         stdFieldFontNames.put("Courier-BoldOblique", new PdfName("CoBO"));
         stdFieldFontNames.put("Courier-Bold", new PdfName("CoBo"));
@@ -80,31 +80,31 @@ public class PdfAppearance extends PdfTemplate {
         stdFieldFontNames.put("HYSMyeongJoStd-Medium", new PdfName("HySm"));
         stdFieldFontNames.put("KozMinPro-Regular", new PdfName("KaMi"));
     }
-    
+
     /**
      *Creates a <CODE>PdfAppearance</CODE>.
      */
-    
+
     PdfAppearance() {
         super();
         separator = ' ';
     }
-    
+
     PdfAppearance(PdfIndirectReference iref) {
         thisReference = iref;
     }
-    
+
     /**
      * Creates new PdfTemplate
      *
      * @param wr the <CODE>PdfWriter</CODE>
      */
-    
+
     PdfAppearance(PdfWriter wr) {
         super(wr);
         separator = ' ';
     }
-    
+
     /**
      * Creates a new appearance to be used with form fields.
      *
@@ -116,7 +116,7 @@ public class PdfAppearance extends PdfTemplate {
     public static PdfAppearance createAppearance(PdfWriter writer, float width, float height) {
         return createAppearance(writer, width, height, null);
     }
-    
+
     static PdfAppearance createAppearance(PdfWriter writer, float width, float height, PdfName forcedName) {
         PdfAppearance template = new PdfAppearance(writer);
         template.setWidth(width);
@@ -131,6 +131,7 @@ public class PdfAppearance extends PdfTemplate {
      * @param bf the font
      * @param size the font size in points
      */
+    @Override
     public void setFontAndSize(BaseFont bf, float size) {
         checkWriter();
         state.size = size;
@@ -139,7 +140,7 @@ public class PdfAppearance extends PdfTemplate {
         }
         else
             state.fontDetails = writer.addSimple(bf);
-        PdfName psn = (PdfName)stdFieldFontNames.get(bf.getPostscriptFontName());
+        PdfName psn = stdFieldFontNames.get(bf.getPostscriptFontName());
         if (psn == null) {
             if (bf.isSubset() && bf.getFontType() == BaseFont.FONT_TYPE_TTUNI)
                 psn = state.fontDetails.getFontName();
@@ -154,6 +155,7 @@ public class PdfAppearance extends PdfTemplate {
         content.append(psn.getBytes()).append(' ').append(size).append(" Tf").append_i(separator);
     }
 
+    @Override
     public PdfContentByte getDuplicate() {
         PdfAppearance tpl = new PdfAppearance();
         tpl.writer = writer;

@@ -45,10 +45,11 @@ package com.itextpdf.text.pdf;
 
 import java.io.IOException;
 import java.util.HashMap;
-import com.itextpdf.text.error_messages.MessageLocalization;
+import java.util.HashSet;
 
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * A <CODE>PdfAnnotation</CODE> is a note that is associated with a page.
  *
@@ -128,7 +129,7 @@ public class PdfAnnotation extends PdfDictionary {
      * @since	2.1.6; was removed in 2.1.5, but restored in 2.1.6
      */
     protected PdfIndirectReference reference;
-    protected HashMap templates;
+    protected HashSet<PdfTemplate> templates;
     protected boolean form = false;
     protected boolean annotation = true;
 
@@ -520,8 +521,8 @@ public class PdfAnnotation extends PdfDictionary {
         if (!form)
             return;
         if (templates == null)
-            templates = new HashMap();
-        templates.put(template, null);
+            templates = new HashSet<PdfTemplate>();
+        templates.add(template);
     }
 
     public void setAppearance(PdfName ap, String state, PdfTemplate template) {
@@ -541,8 +542,8 @@ public class PdfAnnotation extends PdfDictionary {
         if (!form)
             return;
         if (templates == null)
-            templates = new HashMap();
-        templates.put(template, null);
+            templates = new HashSet<PdfTemplate>();
+        templates.add(template);
     }
 
     public void setAppearanceState(String state) {
@@ -598,7 +599,7 @@ public class PdfAnnotation extends PdfDictionary {
         used = true;
     }
 
-    public HashMap getTemplates() {
+    public HashSet<PdfTemplate> getTemplates() {
         return templates;
     }
 
@@ -809,7 +810,7 @@ public class PdfAnnotation extends PdfDictionary {
      */
     public static class PdfImportedLink {
     	float llx, lly, urx, ury;
-    	HashMap parameters = new HashMap();
+    	HashMap<PdfName, PdfObject> parameters = new HashMap<PdfName, PdfObject>();
     	PdfArray destination = null;
     	int newPage=0;
 
@@ -888,13 +889,14 @@ public class PdfAnnotation extends PdfDictionary {
     		annotation.hashMap.putAll(parameters);
     		return annotation;
     	}
-    	
+
     	/**
     	 * Returns a String representation of the link.
     	 * @return	a String representation of the imported link
     	 * @since	2.1.6
     	 */
-    	public String toString() {
+    	@Override
+        public String toString() {
     		StringBuffer buf = new StringBuffer("Imported link: location [");
     		buf.append(llx);
     		buf.append(' ');

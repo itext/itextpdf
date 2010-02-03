@@ -45,6 +45,7 @@ package com.itextpdf.text.html.simpleparser;
 
 import java.util.ArrayList;
 
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
 import com.itextpdf.text.Phrase;
@@ -56,16 +57,19 @@ import com.itextpdf.text.pdf.PdfPCell;
  * @author  psoares
  */
 public class IncCell implements TextElementArray {
-    
-    private ArrayList chunks = new ArrayList();
+
+    private ArrayList<Chunk> chunks = new ArrayList<Chunk>();
     private PdfPCell cell;
-    
+
     /** Creates a new instance of IncCell */
     public IncCell(String tag, ChainedProperties props) {
         cell = new PdfPCell((Phrase)null);
         String value = props.getProperty("colspan");
         if (value != null)
             cell.setColspan(Integer.parseInt(value));
+        value = props.getProperty("rowspan");
+        if (value != null)
+            cell.setRowspan(Integer.parseInt(value));
         value = props.getProperty("align");
         if (tag.equals("th"))
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -99,30 +103,28 @@ public class IncCell implements TextElementArray {
         value = props.getProperty("bgcolor");
         cell.setBackgroundColor(Markup.decodeColor(value));
     }
-    
-    public boolean add(Object o) {
-        if (!(o instanceof Element))
-            return false;
-        cell.addElement((Element)o);
+
+    public boolean add(Element o) {
+        cell.addElement(o);
         return true;
     }
-    
-    public ArrayList getChunks() {
+
+    public ArrayList<Chunk> getChunks() {
         return chunks;
     }
-    
+
     public boolean process(ElementListener listener) {
         return true;
     }
-    
+
     public int type() {
         return Element.RECTANGLE;
     }
-    
+
     public PdfPCell getCell() {
         return cell;
-    }  
-    
+    }
+
 	/**
 	 * @see com.itextpdf.text.Element#isContent()
 	 * @since	iText 2.0.8
@@ -137,5 +139,5 @@ public class IncCell implements TextElementArray {
 	 */
 	public boolean isNestable() {
 		return true;
-	}  
+	}
 }

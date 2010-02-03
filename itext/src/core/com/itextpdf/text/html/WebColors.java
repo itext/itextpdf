@@ -45,18 +45,19 @@ package com.itextpdf.text.html;
 
 import java.util.HashMap;
 import java.util.StringTokenizer;
-import com.itextpdf.text.error_messages.MessageLocalization;
+
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * This class is a HashMap that contains the names of colors as a key and the
  * corresponding BaseColor as value. (Source: Wikipedia
  * http://en.wikipedia.org/wiki/Web_colors )
- * 
+ *
  * @author blowagie
  */
-public class WebColors extends HashMap {
-    
+public class WebColors extends HashMap<String, int[]> {
+
 	private static final long serialVersionUID = 3542523100813372896L;
 	/** HashMap containing all the names and corresponding color values. */
 	public static final WebColors NAMES = new WebColors();
@@ -206,7 +207,7 @@ public class WebColors extends HashMap {
 
 	/**
 	 * Gives you a BaseColor based on a name.
-	 * 
+	 *
 	 * @param name
 	 *            a name such as black, violet, cornflowerblue or #RGB or #RRGGBB
      *            or rgb(R,G,B)
@@ -251,7 +252,7 @@ public class WebColors extends HashMap {
 		if (!NAMES.containsKey(name))
 			throw new IllegalArgumentException("Color '" + name
 					+ "' not found.");
-		c = (int[]) NAMES.get(name);
+		c = NAMES.get(name);
 		return new BaseColor(c[0], c[1], c[2], c[3]);
 	}
 }

@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.Font.FontFamily;
+
 /**
  * This class contains the symbols that correspond with special symbols.
  * <P>
@@ -86,7 +88,7 @@ public class SpecialSymbol {
         if (greek == ' ') {
             return new Chunk(String.valueOf(c), font);
         }
-        Font symbol = new Font(Font.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
+        Font symbol = new Font(FontFamily.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
         String s = String.valueOf(greek);
         return new Chunk(s, symbol);
     }

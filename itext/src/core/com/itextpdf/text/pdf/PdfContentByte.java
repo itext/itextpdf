@@ -46,17 +46,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.print.PrinterJob;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Annotation;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.ImgJBIG2;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
@@ -173,19 +172,19 @@ public class PdfContentByte {
     protected GraphicState state = new GraphicState();
 
     /** The list were we save/restore the state */
-    protected ArrayList stateList = new ArrayList();
+    protected ArrayList<GraphicState> stateList = new ArrayList<GraphicState>();
 
     /** The list were we save/restore the layer depth */
-    protected ArrayList layerDepth;
+    protected ArrayList<Integer> layerDepth;
 
     /** The separator between commands.
      */
     protected int separator = '\n';
-    
+
     private int mcDepth = 0;
     private boolean inText = false;
 
-    private static HashMap abrev = new HashMap();
+    private static HashMap<PdfName, String> abrev = new HashMap<PdfName, String>();
 
     static {
         abrev.put(PdfName.BITSPERCOMPONENT, "/BPC ");
@@ -223,6 +222,7 @@ public class PdfContentByte {
      * @return      a <CODE>String</CODE>
      */
 
+    @Override
     public String toString() {
         return content.toString();
     }
@@ -1126,6 +1126,19 @@ public class PdfContentByte {
     public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
         addImage(image, a, b, c, d, e, f, false);
     }
+    
+    /**
+     * adds an image with the given matrix.
+     * @param image image to add
+     * @param transform transform to apply to the template prior to adding it.
+     * @since 5.0.1
+     */
+    public void addImage(Image image, AffineTransform transform) throws DocumentException {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	addImage( image, (float)matrix[0], (float)matrix[1], (float)matrix[2], 
+    			  (float)matrix[3], (float)matrix[4],(float) matrix[5], false );
+    }
 
     /**
      * Adds an <CODE>Image</CODE> to the page. The positioning of the <CODE>Image</CODE>
@@ -1171,18 +1184,18 @@ public class PdfContentByte {
                     		pimage.put(PdfName.DECODEPARMS, decodeparms);
                     	}
                     }
-                    for (Iterator it = pimage.getKeys().iterator(); it.hasNext();) {
-                        PdfName key = (PdfName)it.next();
+                    for (Object element : pimage.getKeys()) {
+                        PdfName key = (PdfName)element;
                         PdfObject value = pimage.get(key);
-                        String s = (String)abrev.get(key);
+                        String s = abrev.get(key);
                         if (s == null)
                             continue;
                         content.append(s);
                         boolean check = true;
                         if (key.equals(PdfName.COLORSPACE) && value.isArray()) {
                             PdfArray ar = (PdfArray)value;
-                            if (ar.size() == 4 
-                                && PdfName.INDEXED.equals(ar.getAsName(0)) 
+                            if (ar.size() == 4
+                                && PdfName.INDEXED.equals(ar.getAsName(0))
                                 && ar.getPdfObject(1).isName()
                                 && ar.getPdfObject(2).isNumber()
                                 && ar.getPdfObject(3).isString()
@@ -1278,7 +1291,7 @@ public class PdfContentByte {
         state = new GraphicState();
     }
 
-    
+
     /**
      * Starts the writing of text.
      */
@@ -1321,7 +1334,7 @@ public class PdfContentByte {
         int idx = stateList.size() - 1;
         if (idx < 0)
             throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.save.restore.state.operators"));
-        state = (GraphicState)stateList.get(idx);
+        state = stateList.get(idx);
         stateList.remove(idx);
     }
 
@@ -1525,6 +1538,18 @@ public class PdfContentByte {
     }
 
     /**
+     * Changes the text matrix.
+     * <P>
+     * @param transform overwrite the current text matrix with this one
+     * @since 5.0.1
+     */
+    public void setTextMatrix(AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	setTextMatrix((float)matrix[0], (float)matrix[1], (float)matrix[2], 
+    			      (float)matrix[3], (float)matrix[4], (float)matrix[5] );
+    }
+    /**
      * Changes the text matrix. The first four parameters are {1,0,0,1}.
      * <P>
      * Remark: this operation also initializes the current point position.</P>
@@ -1676,13 +1701,13 @@ public class PdfContentByte {
 
         int ft = bf.getFontType();
         if (state.wordSpace != 0.0f && (ft == BaseFont.FONT_TYPE_T1 || ft == BaseFont.FONT_TYPE_TT || ft == BaseFont.FONT_TYPE_T3)) {
-            for (int i = 0; i < (text.length() -1); i++) {
+            for (int i = 0; i < text.length() -1; i++) {
                 if (text.charAt(i) == ' ')
                     w += state.wordSpace;
             }
         }
         if (state.scale != 100.0)
-            w = (w * state.scale) / 100.0f;
+            w = w * state.scale / 100.0f;
 
         //System.out.println("String width = " + Float.toString(w));
         return w;
@@ -1769,6 +1794,18 @@ public class PdfContentByte {
         content.append(a).append(' ').append(b).append(' ').append(c).append(' ');
         content.append(d).append(' ').append(e).append(' ').append(f).append(" cm").append_i(separator);
     }
+    
+    /**
+     * Concatenate a matrix to the current transformation matrix.
+     * @param transform added to the Current Transformation Matrix
+     * @since 5.0.1
+     */
+    public void concatCTM(AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	concatCTM( (float)matrix[0], (float)matrix[1], (float)matrix[2], 
+    			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
+    }
 
     /**
      * Generates an array of bezier curves to draw an arc.
@@ -1794,7 +1831,7 @@ public class PdfContentByte {
      * @param extent angle extent in degrees
      * @return a list of float[] with the bezier curves
      */
-    public static ArrayList bezierArc(float x1, float y1, float x2, float y2, float startAng, float extent) {
+    public static ArrayList<float[]> bezierArc(float x1, float y1, float x2, float y2, float startAng, float extent) {
         float tmp;
         if (x1 > x2) {
             tmp = x1;
@@ -1814,7 +1851,7 @@ public class PdfContentByte {
             Nfrag = 1;
         }
         else {
-            Nfrag = (int)(Math.ceil(Math.abs(extent)/90f));
+            Nfrag = (int)Math.ceil(Math.abs(extent)/90f);
             fragAngle = extent / Nfrag;
         }
         float x_cen = (x1+x2)/2f;
@@ -1822,8 +1859,8 @@ public class PdfContentByte {
         float rx = (x2-x1)/2f;
         float ry = (y2-y1)/2f;
         float halfAng = (float)(fragAngle * Math.PI / 360.);
-        float kappa = (float)(Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng)));
-        ArrayList pointList = new ArrayList();
+        float kappa = (float)Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng));
+        ArrayList<float[]> pointList = new ArrayList<float[]>();
         for (int i = 0; i < Nfrag; ++i) {
             float theta0 = (float)((startAng + i*fragAngle) * Math.PI / 180.);
             float theta1 = (float)((startAng + (i+1)*fragAngle) * Math.PI / 180.);
@@ -1868,13 +1905,13 @@ public class PdfContentByte {
      * @param extent angle extent in degrees
      */
     public void arc(float x1, float y1, float x2, float y2, float startAng, float extent) {
-        ArrayList ar = bezierArc(x1, y1, x2, y2, startAng, extent);
+        ArrayList<float[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty())
             return;
-        float pt[] = (float [])ar.get(0);
+        float pt[] = ar.get(0);
         moveTo(pt[0], pt[1]);
         for (int k = 0; k < ar.size(); ++k) {
-            pt = (float [])ar.get(k);
+            pt = ar.get(k);
             curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
         }
     }
@@ -2047,6 +2084,20 @@ public class PdfContentByte {
         content.append(e).append(' ');
         content.append(f).append(" cm ");
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
+    }
+    
+    /**
+     * adds a template with the given matrix.
+     * @param template template to add
+     * @param transform transform to apply to the template prior to adding it.
+     * @since 5.0.1
+     */
+    public void addTemplate(PdfTemplate template, AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	addTemplate( template, (float)matrix[0], (float)matrix[1], (float)matrix[2], 
+    			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
+
     }
 
     void addTemplateReference(PdfIndirectReference template, PdfName name, float a, float b, float c, float d, float e, float f) {
@@ -2300,11 +2351,11 @@ public class PdfContentByte {
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_RGB:
-                content.append((float)(color.getRed()) / 0xFF);
+                content.append((float)color.getRed() / 0xFF);
                 content.append(' ');
-                content.append((float)(color.getGreen()) / 0xFF);
+                content.append((float)color.getGreen() / 0xFF);
                 content.append(' ');
-                content.append((float)(color.getBlue()) / 0xFF);
+                content.append((float)color.getBlue() / 0xFF);
                 break;
             case ExtendedColor.TYPE_GRAY:
                 content.append(((GrayColor)color).getGray());
@@ -2465,7 +2516,7 @@ public class PdfContentByte {
         if (state.fontDetails == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("font.and.size.must.be.set.before.writing.any.text"));
         content.append("[");
-        ArrayList arrayList = text.getArrayList();
+        ArrayList<Object> arrayList = text.getArrayList();
         boolean lastWasNumber = false;
         for (int k = 0; k < arrayList.size(); ++k) {
             Object obj = arrayList.get(k);
@@ -2934,10 +2985,10 @@ public class PdfContentByte {
      * @param layer the layer
      */
     public void beginLayer(PdfOCG layer) {
-        if ((layer instanceof PdfLayer) && ((PdfLayer)layer).getTitle() != null)
+        if (layer instanceof PdfLayer && ((PdfLayer)layer).getTitle() != null)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.title.is.not.a.layer"));
         if (layerDepth == null)
-            layerDepth = new ArrayList();
+            layerDepth = new ArrayList<Integer>();
         if (layer instanceof PdfLayerMembership) {
             layerDepth.add(new Integer(1));
             beginLayer2(layer);
@@ -2968,7 +3019,7 @@ public class PdfContentByte {
     public void endLayer() {
         int n = 1;
         if (layerDepth != null && !layerDepth.isEmpty()) {
-            n = ((Integer)layerDepth.get(layerDepth.size() - 1)).intValue();
+            n = layerDepth.get(layerDepth.size() - 1).intValue();
             layerDepth.remove(layerDepth.size() - 1);
         } else {
         	throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.layer.operators"));
@@ -3021,7 +3072,7 @@ public class PdfContentByte {
             }
             else if (obj.isArray()) {
                 ar = (PdfArray)obj;
-                if (!(ar.getPdfObject(0)).isNumber())
+                if (!ar.getPdfObject(0).isNumber())
                     throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.structure.has.kids"));
             }
             else
@@ -3095,12 +3146,12 @@ public class PdfContentByte {
     public void beginMarkedContentSequence(PdfName tag) {
         beginMarkedContentSequence(tag, null, false);
     }
-    
+
     /**
      * Checks for any dangling state: Mismatched save/restore state, begin/end text,
      * begin/end layer, or begin/end marked content sequence.
      * If found, this function will throw.  This function is called automatically
-     * during a reset() (from Document.newPage() for example), and before writing 
+     * during a reset() (from Document.newPage() for example), and before writing
      * itself out in toPdf().
      * One possible cause: not calling myPdfGraphics2D.dispose() will leave dangling
      *                     saveState() calls.

@@ -5,25 +5,25 @@
  * reusing methods that were written by Paulo Soares.
  * Instead of being a hashtable that stores objects with an int as key,
  * it stores int values with an int as key.
- * 
+ *
  * This is the original license of the original class IntHashMap:
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
- * Note: originally released under the GNU LGPL v2.1, 
+ *
+ * Note: originally released under the GNU LGPL v2.1,
  * but rereleased by the original author under the ASF license (above).
  */
 
@@ -32,6 +32,7 @@ package com.itextpdf.text.pdf;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /***
@@ -293,7 +294,7 @@ public class IntHashtable implements Cloneable {
             tab = table;
             index = (hash & 0x7FFFFFFF) % tab.length;
         }
- 
+
          // Creates the new entry.
          Entry e = new Entry(hash, key, value, tab[index]);
          tab[index] = e;
@@ -342,7 +343,7 @@ public class IntHashtable implements Cloneable {
         }
         count = 0;
 	}
-    
+
     /***
      * <p>Innerclass that acts as a datastructure to create a new entry in the
      * table.</p>
@@ -367,7 +368,7 @@ public class IntHashtable implements Cloneable {
             this.value = value;
             this.next = next;
         }
-        
+
         // extra methods for inner class Entry by Paulo
         public int getKey() {
         	return key;
@@ -375,18 +376,19 @@ public class IntHashtable implements Cloneable {
         public int getValue() {
         	return value;
         }
+        @Override
         protected Object clone() {
-        	Entry entry = new Entry(hash, key, value, (next != null) ? (Entry)next.clone() : null);
+        	Entry entry = new Entry(hash, key, value, next != null ? (Entry)next.clone() : null);
         	return entry;
         }
     }
-    
+
     // extra inner class by Paulo
-    static class IntHashtableIterator implements Iterator {
+    static class IntHashtableIterator implements Iterator<Entry> {
         int index;
         Entry table[];
         Entry entry;
-        
+
         IntHashtableIterator(Entry table[]) {
         	this.table = table;
         	this.index = table.length;
@@ -402,10 +404,10 @@ public class IntHashtable implements Cloneable {
         	}
         	return false;
         }
-        
-        public Object next() {
+
+        public Entry next() {
             if (entry == null) {
-                while ((index-- > 0) && ((entry = table[index]) == null));
+                while (index-- > 0 && (entry = table[index]) == null);
             }
             if (entry != null) {
             	Entry e = entry;
@@ -418,19 +420,19 @@ public class IntHashtable implements Cloneable {
         	throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("remove.not.supported"));
         }
     }
-    
+
 // extra methods by Paulo Soares:
 
-    public Iterator getEntryIterator() {
+    public Iterator<Entry> getEntryIterator() {
         return new IntHashtableIterator(table);
     }
-    
+
     public int[] toOrderedKeys() {
     	int res[] = getKeys();
     	Arrays.sort(res);
     	return res;
     }
-    
+
     public int[] getKeys() {
     	int res[] = new int[count];
     	int ptr = 0;
@@ -438,7 +440,7 @@ public class IntHashtable implements Cloneable {
     	Entry entry = null;
     	while (true) {
     		if (entry == null)
-    			while ((index-- > 0) && ((entry = table[index]) == null));
+    			while (index-- > 0 && (entry = table[index]) == null);
     		if (entry == null)
     			break;
     		Entry e = entry;
@@ -447,24 +449,25 @@ public class IntHashtable implements Cloneable {
     	}
     	return res;
     }
-    
+
     public int getOneKey() {
     	if (count == 0)
     		return 0;
     	int index = table.length;
     	Entry entry = null;
-    	while ((index-- > 0) && ((entry = table[index]) == null));
+    	while (index-- > 0 && (entry = table[index]) == null);
     	if (entry == null)
     		return 0;
     	return entry.key;
     }
-    
+
+    @Override
     public Object clone() {
     	try {
     		IntHashtable t = (IntHashtable)super.clone();
     		t.table = new Entry[table.length];
     		for (int i = table.length ; i-- > 0 ; ) {
-    			t.table[i] = (table[i] != null)
+    			t.table[i] = table[i] != null
     			? (Entry)table[i].clone() : null;
     		}
     		return t;

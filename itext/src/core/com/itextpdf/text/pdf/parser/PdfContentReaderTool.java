@@ -50,7 +50,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.itextpdf.text.pdf.PdfDictionary;
@@ -74,7 +73,7 @@ public class PdfContentReaderTool {
     static public String getDictionaryDetail(PdfDictionary dic){
         return getDictionaryDetail(dic, 0);
     }
-    
+
     /**
      * Shows the detail of a dictionary.
      * @param dic	the dictionary of which you want the detail
@@ -84,9 +83,8 @@ public class PdfContentReaderTool {
     static public String getDictionaryDetail(PdfDictionary dic, int depth){
         StringBuffer builder = new StringBuffer();
         builder.append('(');
-        List subDictionaries = new ArrayList();
-        for (Iterator i = dic.getKeys().iterator(); i.hasNext(); ) {
-            PdfName key = (PdfName)i.next();
+        List<PdfName> subDictionaries = new ArrayList<PdfName>();
+        for (PdfName key: dic.getKeys()) {
             PdfObject val = dic.getDirectObject(key);
             if (val.isDictionary())
                 subDictionaries.add(key);
@@ -97,9 +95,7 @@ public class PdfContentReaderTool {
         }
         builder.setLength(builder.length()-2);
         builder.append(')');
-        PdfName pdfSubDictionaryName;
-        for (Iterator it = subDictionaries.iterator(); it.hasNext(); ) {
-        	pdfSubDictionaryName = (PdfName)it.next();
+        for (PdfName pdfSubDictionaryName: subDictionaries) {
             builder.append('\n');
             for(int i = 0; i < depth+1; i++){
                 builder.append('\t');
@@ -127,11 +123,11 @@ public class PdfContentReaderTool {
         out.println(getDictionaryDetail(pageDictionary));
         out.println("- - - - - Content Stream - - - - - -");
         RandomAccessFileOrArray f = reader.getSafeFile();
-        
+
         byte[] contentBytes = reader.getPageContent(pageNum, f);
         f.close();
 
-        
+
         InputStream is = new ByteArrayInputStream(contentBytes);
         int ch;
         while ((ch = is.read()) != -1){
@@ -139,17 +135,17 @@ public class PdfContentReaderTool {
         }
 
         out.println("- - - - - Text Extraction - - - - - -");
-        PdfTextExtractor extractor = new PdfTextExtractor(reader, new SimpleTextExtractingPdfContentRenderListener());
+        PdfTextExtractor extractor = new PdfTextExtractor(reader, new LocationAwareTextExtractingPdfContentRenderListener());
         String extractedText = extractor.getTextFromPage(pageNum);
         if (extractedText.length() != 0)
             out.println(extractedText);
         else
             out.println("No text found on page " + pageNum);
-        
+
         out.println();
-        
+
     }
-    
+
     /**
      * Writes information about each page in a PDF file to the specified output stream.
      * @since 2.1.5
@@ -159,13 +155,13 @@ public class PdfContentReaderTool {
      */
     static public void listContentStream(File pdfFile, PrintWriter out) throws IOException {
         PdfReader reader = new PdfReader(pdfFile.getCanonicalPath());
-            
+
         int maxPageNum = reader.getNumberOfPages();
-        
+
         for (int pageNum = 1; pageNum <= maxPageNum; pageNum++){
             listContentStreamForPage(reader, pageNum, out);
-        }       
-            
+        }
+
     }
 
     /**
@@ -178,10 +174,10 @@ public class PdfContentReaderTool {
      */
     static public void listContentStream(File pdfFile, int pageNum, PrintWriter out) throws IOException {
         PdfReader reader = new PdfReader(pdfFile.getCanonicalPath());
-        
+
         listContentStreamForPage(reader, pageNum, out);
     }
-    
+
     /**
      * Writes information about each page in a PDF file to the specified file, or System.out.
      * @param args
@@ -192,7 +188,7 @@ public class PdfContentReaderTool {
                 System.out.println("Usage:  PdfContentReaderTool <pdf file> [<output file>|stdout] [<page num>]");
                 return;
             }
-            
+
             PrintWriter writer = new PrintWriter(System.out);
             if (args.length >= 2){
                 if (args[1].compareToIgnoreCase("stdout") != 0){
@@ -205,14 +201,14 @@ public class PdfContentReaderTool {
             if (args.length >= 3){
                 pageNum = Integer.parseInt(args[2]);
             }
-            
+
             if (pageNum == -1){
                 listContentStream(new File(args[0]), writer);
             } else {
                 listContentStream(new File(args[0]), pageNum, writer);
             }
             writer.flush();
-            
+
             if (args.length >= 2){
                 writer.close();
                 System.out.println("Finished writing content to " + args[1]);

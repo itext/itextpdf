@@ -43,14 +43,14 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.ExceptionConverter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.factories.RomanAlphabetFactory;
 import com.itextpdf.text.factories.RomanNumberFactory;
-import java.util.Arrays;
 
 /** Page labels are used to identify each
  * page visually on the screen or in print.
@@ -59,38 +59,38 @@ import java.util.Arrays;
 public class PdfPageLabels {
 
     /** Logical pages will have the form 1,2,3,...
-     */    
+     */
     public static final int DECIMAL_ARABIC_NUMERALS = 0;
     /** Logical pages will have the form I,II,III,IV,...
-     */    
+     */
     public static final int UPPERCASE_ROMAN_NUMERALS = 1;
     /** Logical pages will have the form i,ii,iii,iv,...
-     */    
+     */
     public static final int LOWERCASE_ROMAN_NUMERALS = 2;
     /** Logical pages will have the form of uppercase letters
      * (A to Z for the first 26 pages, AA to ZZ for the next 26, and so on)
-     */    
+     */
     public static final int UPPERCASE_LETTERS = 3;
     /** Logical pages will have the form of uppercase letters
      * (a to z for the first 26 pages, aa to zz for the next 26, and so on)
-     */    
+     */
     public static final int LOWERCASE_LETTERS = 4;
     /** No logical page numbers are generated but fixed text may
      * still exist
-     */    
+     */
     public static final int EMPTY = 5;
     /** Dictionary values to set the logical page styles
-     */    
+     */
     static PdfName numberingStyle[] = new PdfName[]{PdfName.D, PdfName.R,
                 new PdfName("r"), PdfName.A, new PdfName("a")};
     /** The sequence of logical pages. Will contain at least a value for page 1
-     */    
-    private HashMap map;
-    
+     */
+    private HashMap<Integer, PdfDictionary> map;
+
     /** Creates a new PdfPageLabel with a default logical page 1
      */
     public PdfPageLabels() {
-        map = new HashMap();
+        map = new HashMap<Integer, PdfDictionary>();
         addPageLabel(1, DECIMAL_ARABIC_NUMERALS, null, 1);
     }
 
@@ -99,7 +99,7 @@ public class PdfPageLabels {
      * @param numberStyle the numbering style such as LOWERCASE_ROMAN_NUMERALS
      * @param text the text to prefix the number. Can be <CODE>null</CODE> or empty
      * @param firstPage the first logical page number
-     */    
+     */
     public void addPageLabel(int page, int numberStyle, String text, int firstPage) {
         if (page < 1 || firstPage < 1)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("in.a.page.label.the.page.numbers.must.be.greater.or.equal.to.1"));
@@ -118,29 +118,29 @@ public class PdfPageLabels {
      * @param page the real page to start the numbering. First page is 1
      * @param numberStyle the numbering style such as LOWERCASE_ROMAN_NUMERALS
      * @param text the text to prefix the number. Can be <CODE>null</CODE> or empty
-     */    
+     */
     public void addPageLabel(int page, int numberStyle, String text) {
         addPageLabel(page, numberStyle, text, 1);
     }
-    
+
     /** Adds or replaces a page label. There is no text prefix and the first
      * logical page has the default of 1.
      * @param page the real page to start the numbering. First page is 1
      * @param numberStyle the numbering style such as LOWERCASE_ROMAN_NUMERALS
-     */    
+     */
     public void addPageLabel(int page, int numberStyle) {
         addPageLabel(page, numberStyle, null, 1);
     }
-    
+
     /** Adds or replaces a page label.
      */
     public void addPageLabel(PdfPageLabelFormat format) {
         addPageLabel(format.physicalPage, format.numberStyle, format.prefix, format.logicalPage);
     }
-    
+
     /** Removes a page label. The first page label can not be removed, only changed.
      * @param page the real page to remove
-     */    
+     */
     public void removePageLabel(int page) {
         if (page <= 1)
             return;
@@ -149,7 +149,7 @@ public class PdfPageLabels {
 
     /** Gets the page label dictionary to insert into the document.
      * @return the page label dictionary
-     */    
+     */
     PdfDictionary getDictionary(PdfWriter writer) {
         try {
             return PdfNumberTree.writeTree(map, writer);
@@ -158,25 +158,25 @@ public class PdfPageLabels {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     /**
      * Retrieves the page labels from a PDF as an array of String objects.
      * @param reader a PdfReader object that has the page labels you want to retrieve
      * @return	a String array or <code>null</code> if no page labels are present
      */
     public static String[] getPageLabels(PdfReader reader) {
-    	
+
 		int n = reader.getNumberOfPages();
-		
+
     	PdfDictionary dict = reader.getCatalog();
 		PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObjectRelease(dict.get(PdfName.PAGELABELS));
         if (labels == null)
             return null;
-		
+
 		String[] labelstrings = new String[n];
-		
-		HashMap numberTree = PdfNumberTree.readTree(labels);
-		
+
+		HashMap<Integer, PdfObject> numberTree = PdfNumberTree.readTree(labels);
+
 		int pagecount = 1;
 		Integer current;
 		String prefix = "";
@@ -184,7 +184,7 @@ public class PdfPageLabels {
 		for (int i = 0; i < n; i++) {
 			current = new Integer(i);
 			if (numberTree.containsKey(current)) {
-				PdfDictionary d = (PdfDictionary)PdfReader.getPdfObjectRelease((PdfObject)numberTree.get(current));
+				PdfDictionary d = (PdfDictionary)PdfReader.getPdfObjectRelease(numberTree.get(current));
 				if (d.contains(PdfName.ST)) {
 					pagecount = ((PdfNumber)d.get(PdfName.ST)).intValue();
 				}
@@ -219,7 +219,7 @@ public class PdfPageLabels {
 		}
 		return labelstrings;
     }
-    
+
     /**
      * Retrieves the page labels from a PDF as an array of {@link PdfPageLabelFormat} objects.
      * @param reader a PdfReader object that has the page labels you want to retrieve
@@ -229,11 +229,11 @@ public class PdfPageLabels {
     public static PdfPageLabelFormat[] getPageLabelFormats(PdfReader reader) {
         PdfDictionary dict = reader.getCatalog();
         PdfDictionary labels = (PdfDictionary)PdfReader.getPdfObjectRelease(dict.get(PdfName.PAGELABELS));
-        if (labels == null) 
+        if (labels == null)
             return null;
-        HashMap numberTree = PdfNumberTree.readTree(labels);
+        HashMap<Integer, PdfObject> numberTree = PdfNumberTree.readTree(labels);
         Integer numbers[] = new Integer[numberTree.size()];
-        numbers = (Integer[])numberTree.keySet().toArray(numbers);
+        numbers = numberTree.keySet().toArray(numbers);
         Arrays.sort(numbers);
         PdfPageLabelFormat[] formats = new PdfPageLabelFormat[numberTree.size()];
         String prefix;
@@ -241,7 +241,7 @@ public class PdfPageLabels {
         int pagecount;
         for (int k = 0; k < numbers.length; ++k) {
             Integer key = numbers[k];
-            PdfDictionary d = (PdfDictionary)PdfReader.getPdfObjectRelease((PdfObject)numberTree.get(key));
+            PdfDictionary d = (PdfDictionary)PdfReader.getPdfObjectRelease(numberTree.get(key));
             if (d.contains(PdfName.ST)) {
                 pagecount = ((PdfNumber)d.get(PdfName.ST)).intValue();
             } else {
@@ -270,12 +270,12 @@ public class PdfPageLabels {
     }
 
     public static class PdfPageLabelFormat {
-        
+
         public int physicalPage;
         public int numberStyle;
         public String prefix;
         public int logicalPage;
-        
+
         /** Creates a page label format.
          * @param physicalPage the real page to start the numbering. First page is 1
          * @param numberStyle the numbering style such as LOWERCASE_ROMAN_NUMERALS

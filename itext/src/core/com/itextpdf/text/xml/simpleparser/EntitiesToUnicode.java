@@ -50,11 +50,11 @@ import java.util.HashMap;
  */
 
 public class EntitiesToUnicode {
-    
+
     /**
      * This is a map that contains the names of entities and their unicode value.
      */
-    public static final HashMap map = new HashMap();
+    public static final HashMap<String, Character> map = new HashMap<String, Character>();
     static {
         map.put("nbsp", new Character('\u00a0')); // no-break space = non-breaking space, U+00A0 ISOnum
         map.put("iexcl", new Character('\u00a1')); // inverted exclamation mark, U+00A1 ISOnum
@@ -237,7 +237,7 @@ public class EntitiesToUnicode {
         // be used for 'is implied by' as ISOtech suggests
         map.put("uArr", new Character('\u21d1')); // upwards double arrow, U+21D1 ISOamsa
         map.put("rArr", new Character('\u21d2')); // rightwards double arrow, U+21D2 ISOtech
-        // ISO 10646 does not say this is the 'implies' character but does not have 
+        // ISO 10646 does not say this is the 'implies' character but does not have
         // another character with this function so ?
         // rArr can be used for 'implies' as ISOtech suggests
         map.put("dArr", new Character('\u21d3')); // downwards double arrow, U+21D3 ISOamsa
@@ -281,7 +281,7 @@ public class EntitiesToUnicode {
         map.put("ge", new Character('\u2265')); // greater-than or equal to, U+2265 ISOtech
         map.put("sub", new Character('\u2282')); // subset of, U+2282 ISOtech
         map.put("sup", new Character('\u2283')); // superset of, U+2283 ISOtech
-        // note that nsup, 'not a superset of, U+2283' is not covered by the Symbol 
+        // note that nsup, 'not a superset of, U+2283' is not covered by the Symbol
         // font encoding and is not included. Should it be, for symmetry?
         // It is in ISOamsn
         map.put("nsub", new Character('\u2284')); // not a subset of, U+2284 ISOamsn
@@ -298,10 +298,10 @@ public class EntitiesToUnicode {
         map.put("lfloor", new Character('\u230a')); // left floor = apl downstile, U+230A ISOamsc
         map.put("rfloor", new Character('\u230b')); // right floor, U+230B ISOamsc
         map.put("lang", new Character('\u2329')); // left-pointing angle bracket = bra, U+2329 ISOtech
-        // lang is NOT the same character as U+003C 'less than' 
+        // lang is NOT the same character as U+003C 'less than'
         // or U+2039 'single left-pointing angle quotation mark'
         map.put("rang", new Character('\u232a')); // right-pointing angle bracket = ket, U+232A ISOtech
-        // rang is NOT the same character as U+003E 'greater than' 
+        // rang is NOT the same character as U+003E 'greater than'
         // or U+203A 'single right-pointing angle quotation mark'
         // Geometric Shapes
         map.put("loz", new Character('\u25ca')); // lozenge, U+25CA ISOpub
@@ -352,7 +352,7 @@ public class EntitiesToUnicode {
         // rsaquo is proposed but not yet ISO standardized
         map.put("euro", new Character('\u20ac')); // euro sign, U+20AC NEW
     }
-    
+
 
     /**
      * Translates an entity to a unicode character.
@@ -377,13 +377,13 @@ public class EntitiesToUnicode {
     			return '\0';
     		}
     	}
-    	Character c = (Character)map.get(name);
+    	Character c = map.get(name);
         if (c == null)
             return '\0';
         else
             return c.charValue();
     }
-    
+
     /**
      * Translates a String with entities (&...;) to a String without entities,
      * replacing the entity with the right (unicode) character.
@@ -391,7 +391,7 @@ public class EntitiesToUnicode {
     public static String decodeString(String s) {
     	int pos_amp = s.indexOf('&');
     	if (pos_amp == -1) return s;
-    	
+
     	int pos_sc;
     	int pos_a;
     	StringBuffer buf = new StringBuffer(s.substring(0, pos_amp));

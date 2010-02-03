@@ -44,7 +44,6 @@
 package com.itextpdf.text.pdf.events;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -60,9 +59,9 @@ import com.itextpdf.text.pdf.PdfPTableEvent;
 public class PdfPTableEventForwarder implements PdfPTableEvent {
 
 	/** ArrayList containing all the PageEvents that have to be executed. */
-	protected ArrayList events = new ArrayList();
-	
-	/** 
+	protected ArrayList<PdfPTableEvent> events = new ArrayList<PdfPTableEvent>();
+
+	/**
 	 * Add a page event to the forwarder.
 	 * @param event an event that has to be added to the forwarder.
 	 */
@@ -74,9 +73,7 @@ public class PdfPTableEventForwarder implements PdfPTableEvent {
 	 * @see com.itextpdf.text.pdf.PdfPTableEvent#tableLayout(com.itextpdf.text.pdf.PdfPTable, float[][], float[], int, int, com.itextpdf.text.pdf.PdfContentByte[])
 	 */
 	public void tableLayout(PdfPTable table, float[][] widths, float[] heights, int headerRows, int rowStart, PdfContentByte[] canvases) {
-		PdfPTableEvent event;
-		for (Iterator i = events.iterator(); i.hasNext(); ) {
-			event = (PdfPTableEvent)i.next();
+		for (PdfPTableEvent event: events) {
 			event.tableLayout(table, widths, heights, headerRows, rowStart, canvases);
 		}
 	}

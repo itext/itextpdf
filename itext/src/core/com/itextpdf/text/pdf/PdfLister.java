@@ -92,10 +92,8 @@ public class PdfLister {
     public void listDict(PdfDictionary dictionary)
     {
         out.println("<<");
-        PdfName key;
         PdfObject value;
-        for (Iterator i = dictionary.getKeys().iterator(); i.hasNext(); ) {
-            key = (PdfName) i.next();
+        for (PdfName key: dictionary.getKeys()) {
             value = dictionary.get(key);
             out.print(key.toString());
             out.print(' ');
@@ -111,8 +109,8 @@ public class PdfLister {
     public void listArray(PdfArray array)
     {
         out.println('[');
-        for (Iterator i = array.listIterator(); i.hasNext(); ) {
-            PdfObject item = (PdfObject)i.next();
+        for (Iterator<PdfObject> i = array.listIterator(); i.hasNext(); ) {
+            PdfObject item = i.next();
             listAnyObject(item);
         }
         out.println(']');
@@ -170,8 +168,8 @@ public class PdfLister {
             listStream((PRStream)obj, readerInst);
             break;
         case PdfObject.ARRAY:
-            for (Iterator i = ((PdfArray)obj).listIterator(); i.hasNext();) {
-                PdfObject o = PdfReader.getPdfObject((PdfObject)i.next());
+            for (Iterator<PdfObject> i = ((PdfArray)obj).listIterator(); i.hasNext();) {
+                PdfObject o = PdfReader.getPdfObject(i.next());
                 listStream((PRStream)o, readerInst);
                 out.println("-----------");
             }

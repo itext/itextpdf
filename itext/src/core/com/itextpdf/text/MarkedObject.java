@@ -61,27 +61,27 @@ public class MarkedObject implements Element {
 
 	/** Contains extra markupAttributes */
 	protected Properties markupAttributes = new Properties();
-	    
+
 	/**
 	 * This constructor is for internal use only.
 	 */
 	protected MarkedObject() {
 		element = null;
 	}
-	
+
 	/**
 	 * Creates a MarkedObject.
 	 */
 	public MarkedObject(Element element) {
 		this.element = element;
 	}
-	
+
     /**
      * Gets all the chunks in this element.
      *
      * @return  an <CODE>ArrayList</CODE>
      */
-	public ArrayList getChunks() {
+	public ArrayList<Chunk> getChunks() {
 		return element.getChunks();
 	}
 
@@ -100,7 +100,7 @@ public class MarkedObject implements Element {
             return false;
         }
 	}
-	
+
     /**
      * Gets the type of the text element.
      *
@@ -109,7 +109,7 @@ public class MarkedObject implements Element {
 	public int type() {
 		return MARKED;
 	}
-	
+
 	/**
 	 * @see com.itextpdf.text.Element#isContent()
 	 * @since	iText 2.0.8
@@ -133,7 +133,7 @@ public class MarkedObject implements Element {
 	public Properties getMarkupAttributes() {
 		return markupAttributes;
 	}
-	
+
 	/**
 	 * Adds one markup attribute.
 	 */

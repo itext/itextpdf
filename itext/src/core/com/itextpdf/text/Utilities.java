@@ -65,18 +65,18 @@ public class Utilities {
 
 	/**
 	 * Gets the keys of a Hashtable
-	 * 
+	 *
 	 * @param table
 	 *            a Hashtable
 	 * @return the keyset of a Hashtable (or an empty set if table is null)
 	 */
-	public static Set getKeySet(Hashtable table) {
-		return (table == null) ? Collections.EMPTY_SET : table.keySet();
+	public static <K, V>  Set<K> getKeySet(Hashtable<K, V> table) {
+		return table == null ? Collections.<K>emptySet() : table.keySet();
 	}
 
 	/**
 	 * Utility method to extend an array.
-	 * 
+	 *
 	 * @param original
 	 *            the original array or <CODE>null</CODE>
 	 * @param item
@@ -110,7 +110,7 @@ public class Utilities {
 	 * Unescapes an URL. All the "%xx" are replaced by the 'xx' hex char value.
 	 * @param src the url to unescape
 	 * @return the unescaped value
-	 */    
+	 */
 	public static String unEscapeURL(String src) {
 	    StringBuffer bf = new StringBuffer();
 	    char[] s = src.toCharArray();
@@ -141,7 +141,7 @@ public class Utilities {
 	 * <P>
 	 * This method makes the conversion of this library from the JAVA 2 platform
 	 * to a JDK1.1.x-version easier.
-	 * 
+	 *
 	 * @param filename
 	 *            a given filename
 	 * @return a valid URL
@@ -160,7 +160,7 @@ public class Utilities {
 	 * This method is an alternative for the <CODE>InputStream.skip()</CODE>
 	 * -method that doesn't seem to work properly for big values of <CODE>size
 	 * </CODE>.
-	 * 
+	 *
 	 * @param is
 	 *            the <CODE>InputStream</CODE>
 	 * @param size
@@ -176,7 +176,7 @@ public class Utilities {
 			size -= n;
 		}
 	}
-	
+
 	/**
 	 * Measurement conversion from millimeters to points.
 	 * @param	value	a value in millimeters
@@ -236,7 +236,7 @@ public class Utilities {
 	public static final float inchesToPoints(float value) {
 	    return value * 72f;
 	}
-    
+
     /**
      * Check if the value of a character belongs to a certain interval
      * that indicates it's the higher part of a surrogate pair.
@@ -298,7 +298,7 @@ public class Utilities {
      * @since	2.1.2
      */
     public static int convertToUtf32(char highSurrogate, char lowSurrogate) {
-         return (((highSurrogate - 0xd800) * 0x400) + (lowSurrogate - 0xdc00)) + 0x10000;
+         return (highSurrogate - 0xd800) * 0x400 + lowSurrogate - 0xdc00 + 0x10000;
     }
 
     /**
@@ -309,7 +309,7 @@ public class Utilities {
      * @since	2.1.2
      */
     public static int convertToUtf32(char[] text, int idx) {
-         return (((text[idx] - 0xd800) * 0x400) + (text[idx + 1] - 0xdc00)) + 0x10000;
+         return (text[idx] - 0xd800) * 0x400 + text[idx + 1] - 0xdc00 + 0x10000;
     }
 
     /**
@@ -320,7 +320,7 @@ public class Utilities {
      * @since	2.1.2
      */
     public static int convertToUtf32(String text, int idx) {
-         return (((text.charAt(idx) - 0xd800) * 0x400) + (text.charAt(idx + 1) - 0xdc00)) + 0x10000;
+         return (text.charAt(idx) - 0xd800) * 0x400 + text.charAt(idx + 1) - 0xdc00 + 0x10000;
     }
 
     /**
@@ -333,9 +333,9 @@ public class Utilities {
         if (codePoint < 0x10000)
             return Character.toString((char)codePoint);
         codePoint -= 0x10000;
-        return new String(new char[]{(char)((codePoint / 0x400) + 0xd800), (char)((codePoint % 0x400) + 0xdc00)});
+        return new String(new char[]{(char)(codePoint / 0x400 + 0xd800), (char)(codePoint % 0x400 + 0xdc00)});
     }
-    
+
     /**
      * Reads the contents of a file to a String.
      * @param	path	the path to the file
@@ -345,7 +345,7 @@ public class Utilities {
 	public static String readFileToString(String path) throws IOException {
 		return readFileToString(new File(path));
 	}
-    
+
     /**
      * Reads the contents of a file to a String.
      * @param	file	a file

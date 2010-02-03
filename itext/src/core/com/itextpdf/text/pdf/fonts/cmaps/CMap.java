@@ -31,12 +31,12 @@
 package com.itextpdf.text.pdf.fonts.cmaps;
 
 import java.io.IOException;
-import com.itextpdf.text.error_messages.MessageLocalization;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * This class represents a CMap file.
@@ -46,9 +46,9 @@ import java.util.Map;
  */
 public class CMap
 {
-    private List codeSpaceRanges = new ArrayList();
-    private Map singleByteMappings = new HashMap();
-    private Map doubleByteMappings = new HashMap();
+    private List<CodespaceRange> codeSpaceRanges = new ArrayList<CodespaceRange>();
+    private Map<Integer, String> singleByteMappings = new HashMap<Integer, String>();
+    private Map<Integer, String> doubleByteMappings = new HashMap<Integer, String>();
 
     /**
      * Creates a new instance of CMap.
@@ -57,20 +57,20 @@ public class CMap
     {
         //default constructor
     }
-    
+
     /**
      * This will tell if this cmap has any one byte mappings.
-     * 
+     *
      * @return true If there are any one byte mappings, false otherwise.
      */
     public boolean hasOneByteMappings()
     {
         return !singleByteMappings.isEmpty();
     }
-    
+
     /**
      * This will tell if this cmap has any two byte mappings.
-     * 
+     *
      * @return true If there are any two byte mappings, false otherwise.
      */
     public boolean hasTwoByteMappings()
@@ -94,9 +94,9 @@ public class CMap
         Integer key = null;
         if( length == 1 )
         {
-            
+
             key = new Integer( code[offset] & 0xff );
-            result = (String)singleByteMappings.get( key );
+            result = singleByteMappings.get( key );
         }
         else if( length == 2 )
         {
@@ -105,7 +105,7 @@ public class CMap
             intKey += code[offset+1] & 0xff;
             key = new Integer( intKey );
 
-            result = (String)doubleByteMappings.get( key );
+            result = doubleByteMappings.get( key );
         }
 
         return result;
@@ -129,7 +129,7 @@ public class CMap
         {
             int intSrc = src[0]&0xFF;
             intSrc <<= 8;
-            intSrc |= (src[1]&0xFF);
+            intSrc |= src[1]&0xFF;
             doubleByteMappings.put( new Integer( intSrc), dest );
         }
         else
@@ -154,7 +154,7 @@ public class CMap
      *
      * @return Value of property codeSpaceRanges.
      */
-    public List getCodeSpaceRanges()
+    public List<CodespaceRange> getCodeSpaceRanges()
     {
         return codeSpaceRanges;
     }

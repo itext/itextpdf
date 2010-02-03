@@ -46,7 +46,7 @@ package com.itextpdf.text.pdf.internal;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 
 import com.itextpdf.text.Annotation;
 import com.itextpdf.text.ExceptionConverter;
@@ -61,6 +61,7 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfRectangle;
 import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class PdfAnnotationsImp {
@@ -74,26 +75,26 @@ public class PdfAnnotationsImp {
      * This is the array containing the references to annotations
      * that were added to the document.
      */
-    protected ArrayList annotations;
-    
+    protected ArrayList<PdfAnnotation> annotations;
+
     /**
      * This is an array containing references to some delayed annotations
      * (that were added for a page that doesn't exist yet).
      */
-    protected ArrayList delayedAnnotations = new ArrayList();
-    
-    
+    protected ArrayList<PdfAnnotation> delayedAnnotations = new ArrayList<PdfAnnotation>();
+
+
     public PdfAnnotationsImp(PdfWriter writer) {
     	acroForm = new PdfAcroForm(writer);
     }
-    
+
     /**
      * Checks if the AcroForm is valid.
      */
     public boolean hasValidAcroForm() {
     	return acroForm.isValid();
     }
-    
+
     /**
      * Gets the AcroForm object.
      * @return the PdfAcroform object of the PdfDocument
@@ -101,15 +102,15 @@ public class PdfAnnotationsImp {
     public PdfAcroForm getAcroForm() {
         return acroForm;
     }
-    
+
     public void setSigFlags(int f) {
         acroForm.setSigFlags(f);
     }
-    
+
     public void addCalculationOrder(PdfFormField formField) {
         acroForm.addCalculationOrder(formField);
     }
-    
+
     public void addAnnotation(PdfAnnotation annot) {
         if (annot.isForm()) {
             PdfFormField field = (PdfFormField)annot;
@@ -119,35 +120,35 @@ public class PdfAnnotationsImp {
         else
             annotations.add(annot);
     }
-    
+
     public void addPlainAnnotation(PdfAnnotation annot) {
     	annotations.add(annot);
     }
-    
+
     void addFormFieldRaw(PdfFormField field) {
         annotations.add(field);
-        ArrayList kids = field.getKids();
+        ArrayList<PdfFormField> kids = field.getKids();
         if (kids != null) {
             for (int k = 0; k < kids.size(); ++k)
-                addFormFieldRaw((PdfFormField)kids.get(k));
+                addFormFieldRaw(kids.get(k));
         }
     }
-    
+
     public boolean hasUnusedAnnotations() {
     	return !annotations.isEmpty();
     }
 
     public void resetAnnotations() {
         annotations = delayedAnnotations;
-        delayedAnnotations = new ArrayList();
+        delayedAnnotations = new ArrayList<PdfAnnotation>();
     }
-    
+
     public PdfArray rotateAnnotations(PdfWriter writer, Rectangle pageSize) {
         PdfArray array = new PdfArray();
         int rotation = pageSize.getRotation() % 360;
         int currentPage = writer.getCurrentPageNumber();
         for (int k = 0; k < annotations.size(); ++k) {
-            PdfAnnotation dic = (PdfAnnotation)annotations.get(k);
+            PdfAnnotation dic = annotations.get(k);
             int page = dic.getPlaceInPage();
             if (page > currentPage) {
                 delayedAnnotations.add(dic);
@@ -155,7 +156,7 @@ public class PdfAnnotationsImp {
             }
             if (dic.isForm()) {
                 if (!dic.isUsed()) {
-                    HashMap templates = dic.getTemplates();
+                    HashSet<PdfTemplate> templates = dic.getTemplates();
                     if (templates != null)
                         acroForm.addFieldTemplates(templates);
                 }
@@ -206,7 +207,7 @@ public class PdfAnnotationsImp {
         }
         return array;
     }
-    
+
     public static PdfAnnotation convertAnnotation(PdfWriter writer, Annotation annot, Rectangle defaultRect) throws IOException {
         switch(annot.annotationType()) {
            case Annotation.URL_NET:

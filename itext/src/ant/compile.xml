@@ -39,7 +39,7 @@
 
     <target name="compile" description="--> compiles the iText code">
         <mkdir dir="${itext.bin}" />
-        <javac source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}/core" destdir="${itext.bin}">
+        <javac debug="yes" source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}/core" destdir="${itext.bin}">
     	<classpath refid="itext.classpath"/>
     	</javac>
     </target>
@@ -51,7 +51,7 @@
 
     <target name="compile.rups" depends="compile" description="--> compiles the RUPS code">
         <mkdir dir="${itext.rups.bin}" />
-        <javac source="${itext.jdk.rups}" target="${itext.jdk.rups}" srcdir="${itext.rups.src}" destdir="${itext.rups.bin}">
+        <javac debug="yes" source="${itext.jdk.rups}" target="${itext.jdk.rups}" srcdir="${itext.rups.src}" destdir="${itext.rups.bin}">
     		<classpath refid="itext.classpath"/>
     	</javac>
     </target>
@@ -61,7 +61,13 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
     <target name="jar" depends="compile" description="--> makes a jarfile from the iText code">
-        <mkdir dir="${itext.bin}/com/itextpdf/text/pdf/fonts" />
+    	<mkdir dir="${itext.bin}/com/itextpdf/text/error_messages" />
+    	<copy todir="${itext.bin}/com/itextpdf/text/error_messages" overwrite="yes">
+    	    <fileset dir="${itext.src}/core/com/itextpdf/text/error_messages">
+    	        <include name="**/*.lng"/>
+    	    </fileset>
+    	</copy>
+    	<mkdir dir="${itext.bin}/com/itextpdf/text/pdf/fonts" />
         <copy todir="${itext.bin}/com/itextpdf/text/pdf/fonts" overwrite="yes">
             <fileset dir="${itext.src}/core/com/itextpdf/text/pdf/fonts">
                 <include name="**/*.afm"/>

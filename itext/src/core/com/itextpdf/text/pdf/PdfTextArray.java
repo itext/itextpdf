@@ -56,8 +56,8 @@ import java.util.ArrayList;
  */
 
 public class PdfTextArray{
-    ArrayList arrayList = new ArrayList();
-    
+    ArrayList<Object> arrayList = new ArrayList<Object>();
+
     // To emit a more efficient array, we consolidate
     // repeated numbers or strings into single array entries.
     // "add( 50 ); add( -50 );" will REMOVE the combined zero from the array.
@@ -65,15 +65,15 @@ public class PdfTextArray{
     // --Mark Storer, May 12, 2008
     private String lastStr;
     private Float lastNum;
-    
+
     // constructors
     public PdfTextArray(String str) {
         add(str);
     }
-    
+
     public PdfTextArray() {
     }
-    
+
     /**
      * Adds a <CODE>PdfNumber</CODE> to the <CODE>PdfArray</CODE>.
      *
@@ -82,7 +82,7 @@ public class PdfTextArray{
     public void add(PdfNumber number) {
         add((float) number.doubleValue());
     }
-    
+
     public void add(float number) {
         if (number != 0) {
             if (lastNum != null) {
@@ -96,12 +96,12 @@ public class PdfTextArray{
                 lastNum = new Float(number);
                 arrayList.add(lastNum);
             }
-            
+
             lastStr = null;
         }
         // adding zero doesn't modify the TextArray at all
     }
-    
+
     public void add(String str) {
         if (str.length() > 0) {
             if (lastStr != null) {
@@ -115,11 +115,11 @@ public class PdfTextArray{
         }
         // adding an empty string doesn't modify the TextArray at all
     }
-    
-    ArrayList getArrayList() {
+
+    ArrayList<Object> getArrayList() {
         return arrayList;
     }
-    
+
     private void replaceLast(Object obj) {
         // deliberately throw the IndexOutOfBoundsException if we screw up.
         arrayList.set(arrayList.size() - 1, obj);

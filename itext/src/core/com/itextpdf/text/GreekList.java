@@ -46,16 +46,16 @@ package com.itextpdf.text;
 import com.itextpdf.text.factories.GreekAlphabetFactory;
 
 /**
- * 
+ *
  * A special-version of <CODE>LIST</CODE> which use greek-letters.
- * 
+ *
  * @see com.itextpdf.text.List
  */
 
 public class GreekList extends List {
 
 // constructors
-	
+
 	/**
 	 * Initialization
 	 */
@@ -65,7 +65,7 @@ public class GreekList extends List {
 	}
 	/**
 	 * Initialization
-	 * 
+	 *
 	 * @param symbolIndent	indent
 	 */
 	public GreekList(int symbolIndent) {
@@ -74,8 +74,8 @@ public class GreekList extends List {
 	}
 
 	/**
-	 * Initialization 
-	 * @param	greeklower		greek-char in lowercase   
+	 * Initialization
+	 * @param	greeklower		greek-char in lowercase
 	 * @param 	symbolIndent	indent
 	 */
 	public GreekList(boolean greeklower, int symbolIndent) {
@@ -85,7 +85,7 @@ public class GreekList extends List {
 	}
 
 // helper method
-	
+
 	/**
 	 * change the font to SYMBOL
 	 */
@@ -95,14 +95,15 @@ public class GreekList extends List {
 	}
 
 // overridden method
-	
+
 	/**
-	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
+	 * Adds an <CODE>Element</CODE> to the <CODE>List</CODE>.
 	 *
 	 * @param	o	the object to add.
 	 * @return true if adding the object succeeded
 	 */
-	public boolean add(Object o) {
+	@Override
+        public boolean add(Element o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
 			Chunk chunk = new Chunk(preSymbol, symbol.getFont());
@@ -117,8 +118,6 @@ public class GreekList extends List {
 			nested.setIndentationLeft(nested.getIndentationLeft() + symbolIndent);
 			first--;
 			return list.add(nested);
-		} else if (o instanceof String) {
-			return this.add(new ListItem((String) o));
 		}
 		return false;
 	}
