@@ -75,6 +75,7 @@ public class PdfImage extends PdfStream {
     
     public PdfImage(Image image, String name, PdfIndirectReference maskRef) throws BadPdfFormatException {
         super();
+        if (name == null) name = "";
         this.name = new PdfName(name);
         put(PdfName.TYPE, PdfName.XOBJECT);
         put(PdfName.SUBTYPE, PdfName.IMAGE);
