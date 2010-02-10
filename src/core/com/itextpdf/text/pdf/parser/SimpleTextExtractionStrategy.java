@@ -57,7 +57,7 @@ package com.itextpdf.text.pdf.parser;
  * 
  * @since	2.1.5
  */
-public class SimpleTextExtractingPdfContentRenderListener implements TextProvidingRenderListener {
+public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
 
     private Vector lastStart;
     private Vector lastEnd;
@@ -68,7 +68,7 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
     /**
      * Creates a new text extraction renderer.
      */
-    public SimpleTextExtractingPdfContentRenderListener() {
+    public SimpleTextExtractionStrategy() {
         reset();
     }
 

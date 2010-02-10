@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -67,9 +68,9 @@ import java.util.List;
  * This renderer also uses a simple strategy based on the font metrics to determine if
  * a blank space should be inserted into the output.
  *
- * @since	5.0.0
+ * @since	5.0.2
  */
-public class LocationAwareTextExtractingPdfContentRenderListener implements TextProvidingRenderListener {
+public class LocationTextExtractionStrategy implements TextExtractionStrategy {
 
     /** set to true for debugging */
     static boolean DUMP_STATE = false;
@@ -88,7 +89,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
     /**
      * Creates a new text extraction renderer.
      */
-    public LocationAwareTextExtractingPdfContentRenderListener() {
+    public LocationTextExtractionStrategy() {
         reset();
     }
 
@@ -102,7 +103,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
     }
     /**
      *
-     * @see com.itextpdf.text.pdf.parser.RenderListener#beginTextBlock()
+     * @see com.itextpdf.text.pdf.parser.TextRenderListener#beginTextBlock()
      */
     public void beginTextBlock(){
         firstRender = true;
@@ -111,7 +112,7 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
 
     /**
      *
-     * @see com.itextpdf.text.pdf.parser.RenderListener#endTextBlock()
+     * @see com.itextpdf.text.pdf.parser.TextRenderListener#endTextBlock()
      */
     public void endTextBlock(){
         if (!firstRender)
@@ -153,8 +154,11 @@ public class LocationAwareTextExtractingPdfContentRenderListener implements Text
 
     /** Used for debugging only */
     private void dumpState(){
-        for (LocationOnPage location : locationalResult) {
+        for (Iterator iterator = locationalResult.iterator(); iterator.hasNext(); ) {
+            LocationOnPage location = (LocationOnPage) iterator.next();
+            
             location.printDiagnostics();
+            
             System.out.println();
         }
         

@@ -58,17 +58,17 @@ public class PdfTextExtractor {
 	/** The PdfReader that holds the PDF file. */
     private final PdfReader reader;
     
-    /** The {@link TextProvidingRenderListener} that will receive render notifications and provide resultant text */
-    private final TextProvidingRenderListener renderListener;
+    /** The {@link TextExtractionStrategy} that will receive render notifications and provide resultant text */
+    private final TextExtractionStrategy renderListener;
     
     /**
      * Creates a new Text Extractor object, using the most current algorithm for text
-     * extraction (currently {@link LocationAwareTextExtractingPdfContentRenderListener}) as the render listener
+     * extraction (currently {@link LocationTextExtractionStrategy}) as the render listener
   
      * @param reader	the reader with the PDF
      */
     public PdfTextExtractor(PdfReader reader) {
-        this(reader, new LocationAwareTextExtractingPdfContentRenderListener());
+        this(reader, new LocationTextExtractionStrategy());
     }
 
     /**
@@ -76,7 +76,7 @@ public class PdfTextExtractor {
      * @param reader    the reader with the PDF
      * @param renderListener the render listener that will be used to analyze renderText operations and provide resultant text
      */
-    public PdfTextExtractor(PdfReader reader, TextProvidingRenderListener renderListener) {
+    public PdfTextExtractor(PdfReader reader, TextExtractionStrategy renderListener) {
         this.reader = reader;
         this.renderListener = renderListener;
     }
