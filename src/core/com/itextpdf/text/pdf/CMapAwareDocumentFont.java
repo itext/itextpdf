@@ -105,7 +105,8 @@ public class CMapAwareDocumentFont extends DocumentFont {
                 CMapParser cmapParser = new CMapParser();
                 toUnicodeCmap = cmapParser.parse(new ByteArrayInputStream(touni));
             } catch (IOException e) {
-                throw new Error("Unable to process ToUnicode map - " + e.getMessage(), e);
+                // technically, we should log this or provide some sort of feedback... but sometimes the cmap will be junk, but it's still possible to get text, so we don't want to throw an exception
+                //throw new IllegalStateException("Unable to process ToUnicode map - " + e.getMessage(), e);
             }
         }
     }
@@ -196,7 +197,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
         StringBuffer sb = new StringBuffer(); // it's a shame we can't make this StringBuilder
         for(int i = offset; i < offset + len; i++){
             String rslt = decodeSingleCID(cidbytes, i, 1);
-            if (rslt == null){
+            if (rslt == null && i < offset + len - 1){
                 rslt = decodeSingleCID(cidbytes, i, 2);
                 i++;
             }
