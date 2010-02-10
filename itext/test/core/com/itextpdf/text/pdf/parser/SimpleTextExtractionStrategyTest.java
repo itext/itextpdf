@@ -29,7 +29,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 /**
  * @author kevin
  */
-public class SimpleTextExtractionTest {
+public class SimpleTextExtractionStrategyTest {
 
     String TEXT1 = "TEXT1 TEXT1";
     String TEXT2 = "TEXT2 TEXT2";
@@ -42,8 +42,8 @@ public class SimpleTextExtractionTest {
     public void tearDown() throws Exception {
     }
     
-    public TextProvidingRenderListener createRenderListenerForTest(){
-        return new SimpleTextExtractingPdfContentRenderListener();
+    public TextExtractionStrategy createRenderListenerForTest(){
+        return new SimpleTextExtractionStrategy();
     }
     
     @Test

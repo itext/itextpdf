@@ -31,7 +31,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 /**
  * @author kevin
  */
-public class LocationAwareTextExtractionTest extends SimpleTextExtractionTest{
+public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStrategyTest{
 
     @Override
     @Before
@@ -44,8 +44,8 @@ public class LocationAwareTextExtractionTest extends SimpleTextExtractionTest{
     }
 
     @Override
-    public TextProvidingRenderListener createRenderListenerForTest() {
-        return new LocationAwareTextExtractingPdfContentRenderListener();
+    public TextExtractionStrategy createRenderListenerForTest() {
+        return new LocationTextExtractionStrategy();
     }
     
     @Test

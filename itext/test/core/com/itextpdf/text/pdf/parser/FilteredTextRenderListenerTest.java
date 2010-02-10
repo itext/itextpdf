@@ -49,7 +49,7 @@ public class FilteredTextRenderListenerTest {
     
     private boolean textIsInRectangle(PdfReader reader, String text, Rectangle rect) throws Exception{
         
-        FilteredTextRenderListener filterListener = new FilteredTextRenderListener(new LocationAwareTextExtractingPdfContentRenderListener(), new RegionTextRenderFilter(rect) );
+        FilteredTextRenderListener filterListener = new FilteredTextRenderListener(new LocationTextExtractionStrategy(), new RegionTextRenderFilter(rect) );
         
         PdfTextExtractor e = new PdfTextExtractor(reader, filterListener);
         
