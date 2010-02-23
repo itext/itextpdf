@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -301,10 +302,48 @@ public class PdfContentStreamProcessor {
 
         this.resources.push(resources);
         try {
-            PdfContentParser ps = new PdfContentParser(new PRTokeniser(contentBytes));
+            PRTokeniser tokeniser = new PRTokeniser(contentBytes);
+            PdfContentParser ps = new PdfContentParser(tokeniser);
             ArrayList<PdfObject> operands = new ArrayList<PdfObject>();
             while (ps.parse(operands).size() > 0){
                 PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
+                
+                // special handling for embedded images.  If we hit an ID operator, we need
+                // to skip all content until we reach an EI operator.  The following algorithm
+                // has one potential issue: what if the image stream contains EI ?  How can we
+                // differentiate between that and the actual closing operator?
+                if ("ID".equals(operator.toString())){
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    int ch;
+                    int found = 0;
+                    while ((ch = tokeniser.read()) != -1){
+                        if (found == 0 && ch == 'E'){
+                            found++;
+                        } else if (found == 1 && ch == 'I'){ 
+                            found++;
+                        } else if (found == 2 && Character.isWhitespace(ch)){
+                            operands = new ArrayList<PdfObject>();
+                            operands.add(new PdfLiteral("ID"));
+                            invokeOperator((PdfLiteral)operands.get(operands.size()-1), operands);
+                            
+                            // we should probably eventually do something to make the accumulated image content stream available
+                            
+                            operands = new ArrayList<PdfObject>();
+                            operands.add(new PdfLiteral("EI"));
+                            invokeOperator((PdfLiteral)operands.get(operands.size()-1), operands);
+                            
+                            break;
+                        } else {
+                            if (found > 0)
+                                baos.write('E');
+                            if (found > 1)
+                                baos.write('I');
+                            
+                            baos.write(ch);
+                            found = 0;
+                        }
+                    }
+                }
                 invokeOperator(operator, operands);
             }
 
