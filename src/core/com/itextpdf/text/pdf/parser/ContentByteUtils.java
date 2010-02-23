@@ -115,6 +115,9 @@ public class ContentByteUtils {
     public static byte[] getContentBytesForPage(PdfReader reader, int pageNum) throws IOException {
         final PdfDictionary pageDictionary = reader.getPageN(pageNum);
         final PdfObject contentObject = pageDictionary.get(PdfName.CONTENTS);
+        if (contentObject == null)
+            return new byte[0];
+        
         final byte[] contentBytes = ContentByteUtils.getContentBytesFromContentObject(contentObject);
         return contentBytes;
     }
