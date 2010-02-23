@@ -127,6 +127,7 @@ public class PdfContentReaderTool {
         byte[] contentBytes = reader.getPageContent(pageNum, f);
         f.close();
 
+        out.flush();
 
         InputStream is = new ByteArrayInputStream(contentBytes);
         int ch;
@@ -134,6 +135,8 @@ public class PdfContentReaderTool {
             out.print((char)ch);
         }
 
+        out.flush();
+        
         out.println("- - - - - Text Extraction - - - - - -");
         PdfTextExtractor extractor = new PdfTextExtractor(reader, new LocationTextExtractionStrategy());
         String extractedText = extractor.getTextFromPage(pageNum);
