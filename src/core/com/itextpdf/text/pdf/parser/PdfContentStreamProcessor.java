@@ -317,7 +317,6 @@ public class PdfContentStreamProcessor {
                     int ch;
                     int found = 0;
                     while ((ch = tokeniser.read()) != -1){
-                        System.out.println((char)ch);
                         if (found == 0 && ch == 'E'){
                             found++;
                         } else if (found == 1 && ch == 'I'){ 
