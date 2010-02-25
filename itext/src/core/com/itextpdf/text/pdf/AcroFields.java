@@ -1800,51 +1800,45 @@ public class AcroFields {
          * An array of <CODE>PdfDictionary</CODE> where the value tag /V
          * is present.
          *
-         * @deprecated (will remove 'public' in the future)
+         * @since 5.0.2 public is now protected
          */
-        @Deprecated
-        public ArrayList<PdfDictionary> values = new ArrayList<PdfDictionary>();
+        protected ArrayList<PdfDictionary> values = new ArrayList<PdfDictionary>();
 
         /**
          * An array of <CODE>PdfDictionary</CODE> with the widgets.
          *
-         * @deprecated (will remove 'public' in the future)
+         * @since 5.0.2 public is now protected
          */
-        @Deprecated
-        public ArrayList<PdfDictionary> widgets = new ArrayList<PdfDictionary>();
+        protected ArrayList<PdfDictionary> widgets = new ArrayList<PdfDictionary>();
 
         /**
          * An array of <CODE>PdfDictionary</CODE> with the widget references.
          *
-         * @deprecated (will remove 'public' in the future)
+         * @since 5.0.2 public is now protected
          */
-        @Deprecated
-        public ArrayList<PdfIndirectReference> widget_refs = new ArrayList<PdfIndirectReference>();
+        protected ArrayList<PdfIndirectReference> widget_refs = new ArrayList<PdfIndirectReference>();
 
         /**
          * An array of <CODE>PdfDictionary</CODE> with all the field
          * and widget tags merged.
          *
-         * @deprecated (will remove 'public' in the future)
+         * @since 5.0.2 public is now protected
          */
-        @Deprecated
-        public ArrayList<PdfDictionary> merged = new ArrayList<PdfDictionary>();
+        protected ArrayList<PdfDictionary> merged = new ArrayList<PdfDictionary>();
 
         /**
          * An array of <CODE>Integer</CODE> with the page numbers where
          * the widgets are displayed.
          *
-         * @deprecated (will remove 'public' in the future)
+         * @since 5.0.2 public is now protected
          */
-        @Deprecated
-        public ArrayList<Integer> page = new ArrayList<Integer>();
+        protected ArrayList<Integer> page = new ArrayList<Integer>();
         /**
          * An array of <CODE>Integer</CODE> with the tab order of the field in the page.
          *
-         * @deprecated (will remove 'public' in the future)
+         * @since 5.0.2 public is now protected
          */
-        @Deprecated
-        public ArrayList<Integer> tabOrder = new ArrayList<Integer>();
+        protected ArrayList<Integer> tabOrder = new ArrayList<Integer>();
 
         /**
          * Preferred method of determining the number of instances
