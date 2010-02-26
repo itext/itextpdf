@@ -309,19 +309,27 @@ public class PdfContentStreamProcessor {
                 PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
                 
                 // special handling for embedded images.  If we hit an ID operator, we need
-                // to skip all content until we reach an EI operator.  The following algorithm
-                // has one potential issue: what if the image stream contains EI ?  How can we
-                // differentiate between that and the actual closing operator?
+                // to skip all content until we reach an EI operator surrounded by whitespace.
+                // The following algorithm has one potential issue: what if the image stream 
+                // contains <ws>EI<ws> ?
+                // it sounds like we would have to actually decode the content stream, which
+                // I'd rather avoid right now.
                 if ("ID".equals(operator.toString())){
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ByteArrayOutputStream accumulated = new ByteArrayOutputStream();
                     int ch;
                     int found = 0;
                     while ((ch = tokeniser.read()) != -1){
-                        if (found == 0 && ch == 'E'){
+                        if (found == 0 && PRTokeniser.isWhitespace(ch)){
                             found++;
-                        } else if (found == 1 && ch == 'I'){ 
+                            accumulated.write(ch);
+                        } else if (found == 1 && ch == 'E'){
                             found++;
-                        } else if (found == 2 && Character.isWhitespace(ch)){
+                            accumulated.write(ch);
+                        } else if (found == 2 && ch == 'I'){ 
+                            found++;
+                            accumulated.write(ch);
+                        } else if (found == 3 && PRTokeniser.isWhitespace(ch)){
                             operands = new ArrayList<PdfObject>();
                             operands.add(new PdfLiteral("ID"));
                             invokeOperator((PdfLiteral)operands.get(operands.size()-1), operands);
@@ -334,10 +342,8 @@ public class PdfContentStreamProcessor {
                             
                             break;
                         } else {
-                            if (found > 0)
-                                baos.write('E');
-                            if (found > 1)
-                                baos.write('I');
+                            baos.write(accumulated.toByteArray());
+                            accumulated.reset();
                             
                             baos.write(ch);
                             found = 0;
