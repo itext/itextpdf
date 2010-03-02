@@ -233,10 +233,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             //System.out.println("Displaying first string of content '" + text + "' :: x1 = " + x1);
         }
 
-        if (renderInfo.getText().equals("W")){
-            System.out.println();
-        }
-        System.out.println("[" + renderInfo.getStartPoint() + "]->[" + renderInfo.getEndPoint() + "] " + renderInfo.getText());
+        //System.out.println("[" + renderInfo.getStartPoint() + "]->[" + renderInfo.getEndPoint() + "] " + renderInfo.getText());
         chunkText.append(renderInfo.getText());
 
         if (firstRender){
