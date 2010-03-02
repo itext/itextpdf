@@ -8,7 +8,6 @@ package com.itextpdf.text.pdf.parser;
 
 import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -26,6 +25,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfTemplate;
+import com.itextpdf.text.pdf.PdfTextArray;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
@@ -121,6 +121,54 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         Assert.assertEquals("A\nB\nX\nC", text);
     }
 
+    @Test
+    public void testNegativeCharacterSpacing() throws Exception{
+        byte[] content = createPdfWithNegativeCharSpacing("W", 200, "A");
+        //TestResourceUtils.openBytesAsPdf(content);
+        PdfReader r= new PdfReader(content);
+        PdfTextExtractor ex = new PdfTextExtractor(r, createRenderListenerForTest());
+        String text = ex.getTextFromPage(1);
+        Assert.assertEquals("WA", text);
+    }
+    
+    @Test
+    public void testSanityCheckOnVectorMath(){
+        Vector start = new Vector(0, 0, 1);
+        Vector end = new Vector(1, 0, 1);
+        Vector antiparallelStart = new Vector(0.9f, 0, 1);
+        Vector parallelStart = new Vector(1.1f, 0, 1);
+        
+        float rsltAntiParallel = antiparallelStart.subtract(end).dot(end.subtract(start).normalize());
+        Assert.assertEquals(-0.1f, rsltAntiParallel, 0.0001);
+        
+        float rsltParallel = parallelStart.subtract(end).dot(end.subtract(start).normalize());
+        Assert.assertEquals(0.1f, rsltParallel, 0.0001);
+
+    }
+    
+    private byte[] createPdfWithNegativeCharSpacing(String str1, float charSpacing, String str2) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Document doc = new Document();
+        PdfWriter writer = PdfWriter.getInstance(doc, baos);
+        writer.setCompressionLevel(0);
+        doc.open();
+        
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.beginText();
+        canvas.setFontAndSize(BaseFont.createFont(), 12);
+        canvas.moveText(45, doc.getPageSize().getHeight() - 45);
+        PdfTextArray ta = new PdfTextArray();
+        ta.add(str1);
+        ta.add(charSpacing);
+        ta.add(str2);
+        canvas.showText(ta);
+        canvas.endText();
+        
+        doc.close();
+        
+        return baos.toByteArray();
+    }
+    
     private byte[] createPdfWithRotatedXObject(String xobjectText) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document doc = new Document();

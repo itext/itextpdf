@@ -175,8 +175,15 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         Vector end = renderInfo.getEndPoint();
 
         float singleSpaceWidth = renderInfo.getSingleSpaceWidth();
+        
+        Vector lastUnitVector = null;
+        float distFromLastChunkEnd = 0;
 
         if (!firstRender){
+            lastUnitVector = chunkEnd.subtract(chunkStart).normalize();
+            distFromLastChunkEnd = start.subtract(chunkEnd).dot(lastUnitVector);
+
+            
             Vector x0 = start;
             Vector x1 = chunkStart;
             Vector x2 = chunkEnd;
@@ -193,10 +200,11 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
 
                 if (cross.length() <= 0.0001){ // parallel
                     // now check for anti-parallel or big spacing
-                    float spacing = chunkEnd.subtract(start).length();
-                    if (spacing < -singleSpaceWidth){
+                    //float spacing = chunkEnd.subtract(start).length();
+                    
+                    if (distFromLastChunkEnd < -singleSpaceWidth){
                         newChunk = true;
-                    } else if (spacing > singleSpaceWidth*4){
+                    } else if (distFromLastChunkEnd > singleSpaceWidth*4){
                         newChunk = true;
                     } else {
                         newChunk = false;
@@ -216,8 +224,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             chunkStart = start;
         } else if (!firstRender){
             if (chunkText.charAt(chunkText.length()-1) != ' ' && renderInfo.getText().charAt(0) != ' '){ // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
-                float spacing = chunkEnd.subtract(start).length();
-                if (spacing > singleSpaceWidth/2f){
+                if (distFromLastChunkEnd > singleSpaceWidth/2f){
                     chunkText.append(' ');
                     //System.out.println("Inserting implied space before '" + renderInfo.getText() + "'");
                 }
@@ -226,7 +233,10 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             //System.out.println("Displaying first string of content '" + text + "' :: x1 = " + x1);
         }
 
-        //System.out.println("[" + renderInfo.getStartPoint() + "]->[" + renderInfo.getEndPoint() + "] " + renderInfo.getText());
+        if (renderInfo.getText().equals("W")){
+            System.out.println();
+        }
+        System.out.println("[" + renderInfo.getStartPoint() + "]->[" + renderInfo.getEndPoint() + "] " + renderInfo.getText());
         chunkText.append(renderInfo.getText());
 
         if (firstRender){
