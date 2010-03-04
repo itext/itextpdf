@@ -60,19 +60,21 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
     
     @Test
     public void testXPosition() throws Exception{
-        PdfReader r = createPdfWithOverlappingTextHorizontal(new String[]{"A", "B", "C", "D"}, new String[]{"AA", "BB", "CC", "DD"});
+        byte[] content = createPdfWithOverlappingTextHorizontal(new String[]{"A", "B", "C", "D"}, new String[]{"AA", "BB", "CC", "DD"});
+        PdfReader r = new PdfReader(content);
 
+        //TestResourceUtils.openBytesAsPdf(content);
+        
         PdfTextExtractor ex = new PdfTextExtractor(r, createRenderListenerForTest());
         String text = ex.getTextFromPage(1);
         
-//        Assert.assertEquals("A AA B BB C CC D DD", text);
-        Assert.assertEquals("A\tAA\tB\tBB\tC\tCC\tD\tDD", text);
+        Assert.assertEquals("A AA B BB C CC D DD", text);
+//        Assert.assertEquals("A\tAA\tB\tBB\tC\tCC\tD\tDD", text);
     }
 
     @Test
     public void testRotatedPage() throws Exception{
         byte[] bytes = createSimplePdf(PageSize.LETTER.rotate(), "A\nB\nC\nD");
-        //TestResourceUtils.saveBytesToFile(bytes, new File("C:/temp/out.pdf"));
 
         PdfReader r = new PdfReader(bytes);
         
@@ -231,7 +233,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
             return pdfBytes;
     }
     
-    private PdfReader createPdfWithOverlappingTextHorizontal(String[] text1, String[] text2) throws Exception{
+    protected byte[] createPdfWithOverlappingTextHorizontal(String[] text1, String[] text2) throws Exception{
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document doc = new Document();
         PdfWriter writer = PdfWriter.getInstance(doc, baos);
@@ -263,7 +265,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         doc.close();
         
         
-        return new PdfReader(baos.toByteArray());
+        return baos.toByteArray();
         
     }    
     

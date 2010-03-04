@@ -71,7 +71,7 @@ public class SimpleTextExtractionStrategyTest {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, false, 2);
         PdfTextExtractor ex = new PdfTextExtractor(new PdfReader(bytes), createRenderListenerForTest());
 
-        //saveBytesToFile(bytes, new File("c:/temp/test.pdf"));
+        //TestResourceUtils.openBytesAsPdf(bytes);
         
         Assert.assertEquals(TEXT1 + TEXT2, ex.getTextFromPage(1));
         
