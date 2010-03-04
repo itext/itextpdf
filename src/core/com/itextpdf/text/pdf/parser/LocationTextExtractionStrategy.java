@@ -60,31 +60,21 @@ import java.util.List;
  * This renderer keeps track of the orientation and distance (both perpendicular
  * and parallel) to the unit vector of the orientation.  Text is ordered by
  * orientation, then perpendicular, then parallel distance.  Text with the same
- * perpendicular distance, but different parallel distance is separated by tab characters.
- * <br>
- * If text is relatively close to each other on the same line (within 4 space widths), the text
- * is kept together (separated with a single space).
+ * perpendicular distance, but different parallel distance is treated as being on
+ * the same line.
  * <br>
  * This renderer also uses a simple strategy based on the font metrics to determine if
  * a blank space should be inserted into the output.
  *
- * @since	5.0.2
+ * @since   5.0.2
  */
 public class LocationTextExtractionStrategy implements TextExtractionStrategy {
 
     /** set to true for debugging */
     static boolean DUMP_STATE = false;
     
-    /** the starting point of the current line of text */
-    private Vector chunkStart;
-    /** the most recent ending point of the current chunk of text */
-    private Vector chunkEnd;
-    /** contains the text accumulated so far for the current chunk */
-    private StringBuffer chunkText;
     /** a summary of all found text */
-    private List<LocationOnPage> locationalResult;
-    /** whether the operation is the first render of the page */
-    boolean firstRender;
+    private List<TextChunk> locationalResult;
 
     /**
      * Creates a new text extraction renderer.
@@ -98,16 +88,13 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      * @see com.itextpdf.text.pdf.parser.RenderListener#reset()
      */
     public void reset() {
-        beginTextBlock();
-        locationalResult = new ArrayList<LocationOnPage>();
+        locationalResult = new ArrayList<TextChunk>();
     }
     /**
      *
      * @see com.itextpdf.text.pdf.parser.TextRenderListener#beginTextBlock()
      */
     public void beginTextBlock(){
-        firstRender = true;
-        chunkText = new StringBuffer();
     }
 
     /**
@@ -115,13 +102,11 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      * @see com.itextpdf.text.pdf.parser.TextRenderListener#endTextBlock()
      */
     public void endTextBlock(){
-        if (!firstRender)
-            captureChunk(chunkText.toString());
     }
 
     /**
      * Returns the result so far.
-     * @return	a String with the resulting text.
+     * @return  a String with the resulting text.
      */
     public String getResultantText(){
 
@@ -130,22 +115,29 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         Collections.sort(locationalResult);
 
         StringBuffer sb = new StringBuffer();
-        LocationOnPage lastLocation = null;
-        for (LocationOnPage locationOnPage : locationalResult) {
-            LocationOnPage location = locationOnPage;
+        TextChunk lastChunk = null;
+        for (TextChunk chunk : locationalResult) {
 
-            if (lastLocation == null){
-                sb.append(location.text);
+            if (lastChunk == null){
+                sb.append(chunk.text);
             } else {
-                if (location.sameLine(lastLocation)){
-                    sb.append('\t');
-                    sb.append(location.text);
+                if (chunk.sameLine(lastChunk)){
+                    float dist = chunk.distanceFromEndOf(lastChunk);
+                    
+                    if (dist < -chunk.charSpaceWidth)
+                        sb.append(' ');
+
+                    // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
+                    else if (dist > chunk.charSpaceWidth/2.0f && chunk.text.charAt(0) != ' ' && lastChunk.text.charAt(lastChunk.text.length()-1) != ' ')
+                        sb.append(' ');
+
+                    sb.append(chunk.text);
                 } else {
                     sb.append('\n');
-                    sb.append(location.text);
+                    sb.append(chunk.text);
                 }
             }
-            lastLocation = location;
+            lastChunk = chunk;
         }
 
         return sb.toString();
@@ -155,7 +147,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     /** Used for debugging only */
     private void dumpState(){
         for (Iterator iterator = locationalResult.iterator(); iterator.hasNext(); ) {
-            LocationOnPage location = (LocationOnPage) iterator.next();
+            TextChunk location = (TextChunk) iterator.next();
             
             location.printDiagnostics();
             
@@ -165,101 +157,20 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     }
     
     /**
-     * Captures text using a relatively advanced algorithm for determining text chunks and spaces
-     * @param	renderInfo	render info
+     * 
+     * @see com.itextpdf.text.pdf.parser.RenderListener#renderText(com.itextpdf.text.pdf.parser.TextRenderInfo)
      */
     public void renderText(TextRenderInfo renderInfo) {
-        boolean newChunk = false;
-
-        Vector start = renderInfo.getStartPoint();
-        Vector end = renderInfo.getEndPoint();
-
-        float singleSpaceWidth = renderInfo.getSingleSpaceWidth();
-        
-        Vector lastUnitVector = null;
-        float distFromLastChunkEnd = 0;
-
-        if (!firstRender){
-            lastUnitVector = chunkEnd.subtract(chunkStart).normalize();
-            distFromLastChunkEnd = start.subtract(chunkEnd).dot(lastUnitVector);
-
-            
-            Vector x0 = start;
-            Vector x1 = chunkStart;
-            Vector x2 = chunkEnd;
-
-            // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
-            float dist = x2.subtract(x1).cross(x1.subtract(x0)).lengthSquared() / x2.subtract(x1).lengthSquared();
-
-            float sameLineThreshold = 1f; // we should probably base this on the current font metrics, but 1 pt seems to be sufficient for the time being
-            if (dist > sameLineThreshold){
-                newChunk = true;
-            } else {
-
-                Vector cross = start.subtract(chunkEnd).cross(chunkEnd.subtract(chunkStart));
-
-                if (cross.length() <= 0.0001){ // parallel
-                    // now check for anti-parallel or big spacing
-                    //float spacing = chunkEnd.subtract(start).length();
-                    
-                    if (distFromLastChunkEnd < -singleSpaceWidth){
-                        newChunk = true;
-                    } else if (distFromLastChunkEnd > singleSpaceWidth*4){
-                        newChunk = true;
-                    } else {
-                        newChunk = false;
-                    }
-
-                } else { // not parallel
-                    newChunk = true;
-                }
-            }
-
-        }
-
-        if (newChunk){
-            //System.out.println("<< Hard Return >>");
-            captureChunk(chunkText.toString());
-            chunkText.setLength(0);
-            chunkStart = start;
-        } else if (!firstRender){
-            if (chunkText.charAt(chunkText.length()-1) != ' ' && renderInfo.getText().charAt(0) != ' '){ // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
-                if (distFromLastChunkEnd > singleSpaceWidth/2f){
-                    chunkText.append(' ');
-                    //System.out.println("Inserting implied space before '" + renderInfo.getText() + "'");
-                }
-            }
-        } else {
-            //System.out.println("Displaying first string of content '" + text + "' :: x1 = " + x1);
-        }
-
-        //System.out.println("[" + renderInfo.getStartPoint() + "]->[" + renderInfo.getEndPoint() + "] " + renderInfo.getText());
-        chunkText.append(renderInfo.getText());
-
-        if (firstRender){
-            chunkStart = start;
-            firstRender = false;
-        }
-        chunkEnd = end;
-
+        TextChunk location = new TextChunk(renderInfo.getText(), renderInfo.getStartPoint(), renderInfo.getEndPoint(), renderInfo.getSingleSpaceWidth());
+        locationalResult.add(location);        
     }
+    
 
-    /**
-     * Captures the specified text as a single, cohesive chunk of text
-     * using the current line start and end information
-     * @param text
-     */
-    private void captureChunk(String text){
-
-        LocationOnPage location = new LocationOnPage(text, chunkStart, chunkEnd);
-        locationalResult.add(location);
-
-    }
 
     /**
      * Represents a chunk of text, it's orientation, and location relative to the orientation vector
      */
-    private static class LocationOnPage implements Comparable<LocationOnPage>{
+    private static class TextChunk implements Comparable<TextChunk>{
         /** the text of the chunk */
         final String text;
         /** the starting location of the chunk */
@@ -268,23 +179,26 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         final Vector endLocation;
         /** unit vector in the orientation of the chunk */
         final Vector orientationVector;
-        /** the magnitude of the orientation - this consists of just the Y component of the orientation vector
-         *  this seems to work for now, but we may need to move to a different mechanism once we run into
-         *  PDFs with different text orientation (This is just not an area that's been tested yet)
-         */
+        /** the orientation as a scalar for quick sorting */
         final int orientationMagnitude;
-        /** perpendicular distance to the orientation unit vector (i.e. the Y position in an unrotated coordinate system) */
+        /** perpendicular distance to the orientation unit vector (i.e. the Y position in an unrotated coordinate system)
+         * we round to the nearest integer to handle the fuzziness of comparing floats */
         final int distPerpendicular;
-        /** parallel distance to the orientation unit vector (i.e. the X position in an unrotated coordinate system */
-        final int distParallel;
-
-        public LocationOnPage(String string, Vector startLocation, Vector endLocation) {
+        /** distance of the start of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system) */
+        final float distParallelStart;
+        /** distance of the end of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system) */
+        final float distParallelEnd;
+        /** the width of a single space character in the font of the chunk */
+        final float charSpaceWidth;
+        
+        public TextChunk(String string, Vector startLocation, Vector endLocation, float charSpaceWidth) {
             this.text = string;
             this.startLocation = startLocation;
             this.endLocation = endLocation;
+            this.charSpaceWidth = charSpaceWidth;
             
             orientationVector = endLocation.subtract(startLocation).normalize();
-            this.orientationMagnitude = (int)(orientationVector.get(Vector.I2)*1000);
+            orientationMagnitude = (int)(Math.atan2(orientationVector.get(Vector.I2), orientationVector.get(Vector.I1))*1000);
 
             // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
             // the two vectors we are crossing are in the same plane, so the result will be purely
@@ -292,32 +206,47 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             Vector origin = new Vector(0,0,1);
             distPerpendicular = (int)(startLocation.subtract(origin)).cross(orientationVector).get(Vector.I3);
 
-            distParallel = (int)orientationVector.dot(startLocation);
-            
+            distParallelStart = orientationVector.dot(startLocation);
+            distParallelEnd = orientationVector.dot(endLocation);
         }
 
         private void printDiagnostics(){
             System.out.println("Text (@" + startLocation + " -> " + endLocation + "): " + text);
             System.out.println("orientationMagnitude: " + orientationMagnitude);
             System.out.println("distPerpendicular: " + distPerpendicular);
-            System.out.println("distParallel: " + distParallel);
+            System.out.println("distParallel: " + distParallelStart);
         }
         
         /**
          * @param as the location to compare to
          * @return true is this location is on the the same line as the other
          */
-        public boolean sameLine(LocationOnPage as){
+        public boolean sameLine(TextChunk as){
             if (orientationMagnitude != as.orientationMagnitude) return false;
             if (distPerpendicular != as.distPerpendicular) return false;
             return true;
         }
 
         /**
+         * Computes the distance between the end of 'other' and the beginning of this chunk
+         * in the direction of this chunk's orientation vector.  Note that it's a bad idea
+         * to call this for chunks that aren't on the same line and orientation, but we don't
+         * explicitly check for that condition for performance reasons.
+         * @param other
+         * @return the number of spaces between the end of 'other' and the beginning of this chunk
+         */
+        public float distanceFromEndOf(TextChunk other){
+            float distance = distParallelStart - other.distParallelEnd;
+            return distance;
+        }
+        
+        /**
          * Compares based on orientation, perpendicular distance, then parallel distance
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
-        public int compareTo(LocationOnPage rhs) {
+        public int compareTo(TextChunk rhs) {
+            if (this == rhs) return 0; // not really needed, but just in case
+            
             int rslt;
             rslt = compareInts(orientationMagnitude, rhs.orientationMagnitude);
             if (rslt != 0) return rslt;
@@ -325,8 +254,11 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             rslt = compareInts(distPerpendicular, rhs.distPerpendicular);
             if (rslt != 0) return rslt;
 
-            
-            rslt = compareInts(distParallel, rhs.distParallel);
+            // note: it's never safe to check floating point numbers for equality, and if two chunks
+            // are truly right on top of each other, which one comes first or second just doesn't matter
+            // so we arbitrarily choose this way.
+            rslt = distParallelStart < rhs.distParallelStart ? -1 : 1;
+
             return rslt;
         }
 
@@ -340,6 +272,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             return int1 == int2 ? 0 : int1 < int2 ? -1 : 1;
         }
 
+        
     }
 
     /**
