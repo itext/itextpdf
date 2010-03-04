@@ -110,6 +110,12 @@ public class PdfContentReaderTool {
         return builder.toString();
     }
 
+    /**
+     * Displays a summary of the entries in the XObject dictionary for the stream
+     * @param resourceDic the resource dictionary for the stream
+     * @return a string with the summary of the entries
+     * @throws IOException
+     */
     static public String getXObjectDetail(PdfDictionary resourceDic) throws IOException {
         StringBuilder sb = new StringBuilder();
         
@@ -118,17 +124,20 @@ public class PdfContentReaderTool {
         for (PdfName entryName : xobjects.getKeys()) {
             PdfStream xobjectStream = xobjects.getAsStream(entryName);
             
-            sb.append("------ " + entryName + " - subtype = " + xobjectStream.get(PdfName.SUBTYPE) + " = " + xobjectStream.getAsNumber(PdfName.LENGTH) + " bytes.  Content follows... ------\n");
+            sb.append("------ " + entryName + " - subtype = " + xobjectStream.get(PdfName.SUBTYPE) + " = " + xobjectStream.getAsNumber(PdfName.LENGTH) + " bytes ------\n");
             
-            byte[] contentBytes = ContentByteUtils.getContentBytesFromContentObject(xobjectStream);
+            if (!xobjectStream.get(PdfName.SUBTYPE).equals(PdfName.IMAGE)){
             
-            InputStream is = new ByteArrayInputStream(contentBytes);
-            int ch;
-            while ((ch = is.read()) != -1){
-                sb.append((char)ch);
+                byte[] contentBytes = ContentByteUtils.getContentBytesFromContentObject(xobjectStream);
+                
+                InputStream is = new ByteArrayInputStream(contentBytes);
+                int ch;
+                while ((ch = is.read()) != -1){
+                    sb.append((char)ch);
+                }
+    
+                sb.append("------ " + entryName + " - subtype = " + xobjectStream.get(PdfName.SUBTYPE) + "End of Content" + "------\n");
             }
-
-            sb.append("------ " + entryName + " - subtype = " + xobjectStream.get(PdfName.SUBTYPE) + "End of Content" + "------\n");
         }
        
         return sb.toString();
