@@ -249,7 +249,7 @@ public class PdfContentByte {
     // methods to add graphical content
 
     /**
-     * Adds the content of another <CODE>PdfContent</CODE>-object to this object.
+     * Adds the content of another <CODE>PdfContentByte</CODE>-object to this object.
      *
      * @param       other       another <CODE>PdfByteContent</CODE>-object
      */
