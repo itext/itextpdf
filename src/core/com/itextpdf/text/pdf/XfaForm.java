@@ -774,6 +774,8 @@ public class XfaForm {
             org.w3c.dom.Document doc = n.getOwnerDocument();
             Node n2 = null;
             n = n.getFirstChild();
+            while (n.getNodeType() != Node.ELEMENT_NODE)
+                n = n.getNextSibling();
             for (int k = 0; k < stack.size(); ++k) {
                 String part = stack.get(k);
                 int idx = part.lastIndexOf('[');
