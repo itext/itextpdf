@@ -146,7 +146,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
 
     /** Used for debugging only */
     private void dumpState(){
-        for (Iterator iterator = locationalResult.iterator(); iterator.hasNext(); ) {
+        for (Iterator<TextChunk> iterator = locationalResult.iterator(); iterator.hasNext(); ) {
             TextChunk location = (TextChunk) iterator.next();
             
             location.printDiagnostics();
