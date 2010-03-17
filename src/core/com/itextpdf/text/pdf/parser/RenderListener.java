@@ -44,7 +44,7 @@
 package com.itextpdf.text.pdf.parser;
 
 /**
- * A callback interface that receives notificaitons from the {@link PdfContentStreamProcessor}
+ * A callback interface that receives notifications from the {@link PdfContentStreamProcessor}
  * as various render operations are required.
  * <br>
  * Important:  This interface may be converted to an abstract base class in the future
