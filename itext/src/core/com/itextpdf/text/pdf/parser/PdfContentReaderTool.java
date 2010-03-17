@@ -119,7 +119,8 @@ public class PdfContentReaderTool {
         StringBuilder sb = new StringBuilder();
         
         PdfDictionary xobjects = resourceDic.getAsDict(PdfName.XOBJECT);
-        
+        if (xobjects == null)
+        	return "No XObjects";
         for (PdfName entryName : xobjects.getKeys()) {
             PdfStream xobjectStream = xobjects.getAsStream(entryName);
             
