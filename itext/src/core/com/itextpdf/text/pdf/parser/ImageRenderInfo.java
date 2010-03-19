@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfObject;
 
 /**
@@ -52,10 +53,12 @@ import com.itextpdf.text.pdf.PdfObject;
 public class ImageRenderInfo {
     private final PdfObject xobject;
     private final Matrix ctm;
+    private final PdfIndirectReference ref;
     
-    public ImageRenderInfo(PdfObject xobject, Matrix ctm) {
+    public ImageRenderInfo(PdfObject xobject, Matrix ctm, PdfIndirectReference ref) {
         this.xobject = xobject;
         this.ctm = ctm;
+        this.ref = ref;
     }
 
     /**
@@ -72,5 +75,7 @@ public class ImageRenderInfo {
         return new Vector(0, 0, 1).cross(ctm); 
     }
     
-
+    public PdfIndirectReference getRef() {
+    	return ref;
+    }
 }
