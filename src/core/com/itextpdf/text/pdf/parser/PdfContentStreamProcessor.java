@@ -60,6 +60,7 @@ import com.itextpdf.text.pdf.PRTokeniser;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfContentParser;
 import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfLiteral;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
@@ -276,7 +277,7 @@ public class PdfContentStreamProcessor {
             XObjectDoHandler handler = xobjectDoHandlers.get(subType);
             if (handler == null)
                 handler = xobjectDoHandlers.get(PdfName.DEFAULT);
-            handler.handleXObject(this, xobjectStream);
+            handler.handleXObject(this, xobjectStream, xobjects.getAsIndirectObject(xobjectName));
         } else {
             throw new IllegalStateException(MessageLocalization.getComposedMessage("XObject.1.is.not.a.stream", xobjectName));
         }
@@ -729,7 +730,7 @@ public class PdfContentStreamProcessor {
      */
     private static class FormXObjectDoHandler implements XObjectDoHandler{
 
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream) {
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref) {
             
             final PdfDictionary resources = stream.getAsDict(PdfName.RESOURCES);
 
@@ -771,8 +772,8 @@ public class PdfContentStreamProcessor {
      */
     private static class ImageXObjectDoHandler implements XObjectDoHandler{
 
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream) {
-            ImageRenderInfo renderInfo = new ImageRenderInfo(xobjectStream, processor.gs().ctm);
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
+            ImageRenderInfo renderInfo = new ImageRenderInfo(xobjectStream, processor.gs().ctm, ref);
             processor.renderListener.renderImage(renderInfo);
         }
     }
@@ -781,7 +782,7 @@ public class PdfContentStreamProcessor {
      * An XObject subtype handler that does nothing
      */
     private static class IgnoreXObjectDoHandler implements XObjectDoHandler{
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream) {
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
             // ignore XObject subtype
         }
     }    
