@@ -1428,13 +1428,15 @@ public abstract class BaseFont {
         ++level;
         if (level > 50) // in case we have an endless loop
             return;
+        if (page == null)
+            return;
         PdfDictionary resources = page.getAsDict(PdfName.RESOURCES);
         if (resources == null)
             return;
         PdfDictionary font = resources.getAsDict(PdfName.FONT);
         if (font != null) {
-            for (Object element : font.getKeys()) {
-                PdfObject ft = font.get((PdfName)element);
+            for (PdfName key : font.getKeys()) {
+                PdfObject ft = font.get(key);
                 if (ft == null || !ft.isIndirect())
                     continue;
                 int hit = ((PRIndirectReference)ft).getNumber();
@@ -1445,8 +1447,8 @@ public abstract class BaseFont {
         }
         PdfDictionary xobj = resources.getAsDict(PdfName.XOBJECT);
         if (xobj != null) {
-            for (Object element : xobj.getKeys()) {
-                recourseFonts(xobj.getAsDict((PdfName)element), hits, fonts, level);
+            for (PdfName key : xobj.getKeys()) {
+                recourseFonts(xobj.getAsDict(key), hits, fonts, level);
             }
         }
     }
