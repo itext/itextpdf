@@ -305,6 +305,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
      * One of more users for whom this optional content group is primarily intended.
      * @param type should be /Ind, /Ttl, or /Org
      * @param names one or more names
+     * @since 5.0.2
      */
     public void setUser(PdfName type, String... names) {
         PdfDictionary usage = getUsage();
