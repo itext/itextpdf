@@ -427,6 +427,7 @@ public class PdfPTable implements LargeElement{
     /**
      * Changes the number of columns. Any existing rows will be deleted.
      * @param the new number of columns
+     * @since 5.0.2
      */
     public void resetColumnCount(int newColCount) {
         if (newColCount <= 0)

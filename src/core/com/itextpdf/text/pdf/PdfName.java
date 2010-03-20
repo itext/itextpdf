@@ -132,6 +132,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName ALTERNATE = new PdfName("Alternate");
     /**
      * A name.
+     * @since 5.0.2
+     */
+    public static final PdfName AND = new PdfName("And");
+    /**
+     * A name.
      * @since 2.1.6
      */
     public static final PdfName ANIMATION = new PdfName("Animation");
@@ -995,6 +1000,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      */
     public static final PdfName NONSTRUCT = new PdfName("NonStruct");
     /**
+     * A name.
+     * @since 5.0.2
+     */
+    public static final PdfName NOT = new PdfName("Not");
+    /**
      * A name
      * @since 2.1.6
      */
@@ -1047,6 +1057,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName OPM = new PdfName("OPM");
     /** A name */
     public static final PdfName OPT = new PdfName("Opt");
+    /**
+     * A name.
+     * @since 5.0.2
+     */
+    public static final PdfName OR = new PdfName("Or");
     /** A name */
     public static final PdfName ORDER = new PdfName("Order");
     /** A name */
@@ -1613,6 +1628,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName VALIGN = new PdfName("VAlign");
+    /**
+     * A name.
+     * @since 5.0.2
+     */
+    public static final PdfName VE = new PdfName("VE");
     /** A name */
     public static final PdfName VERISIGN_PPKVS = new PdfName("VeriSign.PPKVS");
     /** A name */
