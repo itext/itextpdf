@@ -291,26 +291,27 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
     
     /**
      * Indicates that the group contains a pagination artifact.
-     * @param pe one of the following names: /HF, /FG, /BG, or /L
+     * @param pe one of the following names: "HF" (Header Footer),
+     * "FG" (Foreground), "BG" (Background), or "L" (Logo).
      * @since 5.0.2
      */
-    public void setPageElement(PdfName pe) {
+    public void setPageElement(String pe) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
-        dic.put(PdfName.SUBTYPE, pe);
+        dic.put(PdfName.SUBTYPE, new PdfName(pe));
         usage.put(PdfName.PAGEELEMENT, dic);
     }
     
     /**
      * One of more users for whom this optional content group is primarily intended.
-     * @param type should be /Ind, /Ttl, or /Org
+     * @param type should be "Ind" (Individual), "Ttl" (Title), or "Org" (Organization).
      * @param names one or more names
      * @since 5.0.2
      */
-    public void setUser(PdfName type, String... names) {
+    public void setUser(String type, String... names) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
-        dic.put(PdfName.TYPE, type);
+        dic.put(PdfName.TYPE, new PdfName(type));
         PdfArray arr = new PdfArray();
         for (String s : names)
         	arr.add(new PdfString(s, PdfObject.TEXT_UNICODE));
