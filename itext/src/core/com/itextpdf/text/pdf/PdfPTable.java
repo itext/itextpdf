@@ -423,6 +423,23 @@ public class PdfPTable implements LargeElement{
         calculateHeights(false);
     }
 
+
+    /**
+     * Changes the number of columns. Any existing rows will be deleted.
+     * @param the new number of columns
+     */
+    public void resetColumnCount(int newColCount) {
+        if (newColCount <= 0)
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.number.of.columns.in.pdfptable.constructor.must.be.greater.than.zero"));
+        relativeWidths = new float[newColCount];
+        for (int k = 0; k < newColCount; ++k)
+            relativeWidths[k] = 1;
+        absoluteWidths = new float[relativeWidths.length];
+        calculateWidths();
+        currentRow = new PdfPCell[absoluteWidths.length];
+        totalHeight = 0;
+    }
+
     /**
      * Gets the default <CODE>PdfPCell</CODE> that will be used as
      * reference for all the <CODE>addCell</CODE> methods except
