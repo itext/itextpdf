@@ -66,7 +66,6 @@ public class PdfTextExtractor {
      * extraction (currently {@link LocationTextExtractionStrategy}) as the render listener
   
      * @param reader	the reader with the PDF
-     * @since 5.0.2
      */
     public PdfTextExtractor(PdfReader reader) {
         this(reader, new LocationTextExtractionStrategy());
@@ -76,6 +75,7 @@ public class PdfTextExtractor {
      * Creates a new Text Extractor object.
      * @param reader    the reader with the PDF
      * @param renderListener the render listener that will be used to analyze renderText operations and provide resultant text
+     * @since 5.0.2
      */
     public PdfTextExtractor(PdfReader reader, TextExtractionStrategy renderListener) {
         this.reader = reader;
