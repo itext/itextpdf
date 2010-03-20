@@ -66,6 +66,7 @@ public class PdfTextExtractor {
      * extraction (currently {@link LocationTextExtractionStrategy}) as the render listener
   
      * @param reader	the reader with the PDF
+     * @since 5.0.2
      */
     public PdfTextExtractor(PdfReader reader) {
         this(reader, new LocationTextExtractionStrategy());

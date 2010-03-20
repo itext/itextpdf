@@ -114,6 +114,7 @@ public class PdfContentReaderTool {
      * @param resourceDic the resource dictionary for the stream
      * @return a string with the summary of the entries
      * @throws IOException
+     * @since 5.0.2
      */
     static public String getXObjectDetail(PdfDictionary resourceDic) throws IOException {
         StringBuilder sb = new StringBuilder();
