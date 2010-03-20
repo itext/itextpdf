@@ -2518,8 +2518,7 @@ public class PdfContentByte {
         content.append("[");
         ArrayList<Object> arrayList = text.getArrayList();
         boolean lastWasNumber = false;
-        for (int k = 0; k < arrayList.size(); ++k) {
-            Object obj = arrayList.get(k);
+        for (Object obj : arrayList) {
             if (obj instanceof String) {
                 showText2((String)obj);
                 lastWasNumber = false;
