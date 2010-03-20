@@ -74,7 +74,11 @@ public class ImageRenderInfo {
     public Vector getStartPoint(){ 
         return new Vector(0, 0, 1).cross(ctm); 
     }
-    
+
+    /**
+     * @return an indirect reference to the image
+     * @since 5.0.2
+     */
     public PdfIndirectReference getRef() {
     	return ref;
     }

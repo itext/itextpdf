@@ -150,6 +150,7 @@ illegal.r.value=Illegal R value.
 illegal.type.value.at.1.2=illegal type value at {1}: {2}
 illegal.v.value=Illegal V value.
 illegal.value.for.predictor.in.tiff.file=Illegal value for Predictor in TIFF file.
+illegal.ve.value=Illegal VE value.
 improperly.padded.base64.input=Improperly padded Base64 input.
 in.a.page.label.the.page.numbers.must.be.greater.or.equal.to.1=In a page label the page numbers must be greater or equal to 1.
 in.codabar.start.stop.characters.are.only.allowed.at.the.extremes=In codabar, start/stop characters are only allowed at the extremes.
