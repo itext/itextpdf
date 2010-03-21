@@ -1448,7 +1448,9 @@ public abstract class BaseFont {
         PdfDictionary xobj = resources.getAsDict(PdfName.XOBJECT);
         if (xobj != null) {
             for (PdfName key : xobj.getKeys()) {
-                recourseFonts(xobj.getAsDict(key), hits, fonts, level);
+                PdfObject po = xobj.getDirectObject(key);
+                if (po instanceof PdfDictionary)
+                    recourseFonts((PdfDictionary)po, hits, fonts, level);
             }
         }
     }
