@@ -78,6 +78,24 @@ public class TextRenderInfo {
     }
 
     /**
+     * Getter for the text rendering matrix.
+     * @return the combined transformation matrix
+     * @since 5.0.2
+     */
+    public Matrix getTextToUserSpaceTransformMatrix() {
+		return textToUserSpaceTransformMatrix;
+	}
+
+    /**
+     * Getter for the graphics state.
+     * @return a GraphicsState object containing info about the font, spacing, leading,...
+     * @since 5.0.2
+     */
+	public GraphicsState getGs() {
+		return gs;
+	}
+
+	/**
      * @return the unscaled (i.e. in Text space) width of the text
      */
     public float getUnscaledWidth(){ 
@@ -154,6 +172,6 @@ public class TextRenderInfo {
         }
         
         return totalWidth;
-    }    
+    }
     
 }
