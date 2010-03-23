@@ -93,6 +93,16 @@ public class PdfContentStreamProcessor {
     final private RenderListener renderListener;
     /** A map with all supported XObject handlers */
     final private Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
+    /**
+     * The current MCID (marked content).
+     * @since 5.0.2
+     */
+    private int mcid = -1;
+    /**
+     * Counts the number of times BDC or BMC has been encountered withou EMC.
+     * @since 5.0.2
+     */
+    private int mc = 0;
 
     /**
      * Creates a new PDF Content Stream Processor that will send it's output to the
@@ -154,6 +164,9 @@ public class PdfContentStreamProcessor {
 
         registerContentOperator("BT", new BeginText());
         registerContentOperator("ET", new EndText());
+        registerContentOperator("BMC", new BeginMarkedContent());
+        registerContentOperator("BDC", new BeginMarkedContentDictionary());
+        registerContentOperator("EMC", new EndMarkedContent());
 
         TextMoveStartNextLine tdOperator = new TextMoveStartNextLine();
         registerContentOperator("Td", tdOperator);
@@ -219,6 +232,32 @@ public class PdfContentStreamProcessor {
     }
 
     /**
+     * If the parameter is a PdfDictionary containing the MCID key,
+     * the current mcid is changed.
+     * @param o a marked content dictionary
+     * @since 5.0.2
+     */
+    private void updateMcid(PdfObject o) {
+    	if (o == null) return;
+    	if (o instanceof PdfDictionary) {
+    		PdfNumber id = ((PdfDictionary)o).getAsNumber(PdfName.MCID);
+    		if (id != null)
+    			mcid = id.intValue();
+    	}
+    }
+   
+    /**
+     * Keeps track of the BMC, BDC and EMC operators.
+     * Sets mcid to -1 if EMC is encountered.
+     * @param i will be +1 or -1
+     * @since 5.0.2
+     */
+    private void updateMarkedContent(int i) {
+    	mc += i;
+    	if (mc == 0) mcid = -1;
+    }
+    
+    /**
      * Decodes a PdfString (which will contain glyph ids encoded in the font's encoding)
      * based on the active font, and determine the unicode equivalent
      * @param in	the String that needs to be encoded
@@ -252,7 +291,7 @@ public class PdfContentStreamProcessor {
 
         String unicode = decode(string);
 
-        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix);
+        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix, mcid);
 
         renderListener.renderText(renderInfo);
 
@@ -394,7 +433,7 @@ public class PdfContentStreamProcessor {
     }
     
     /**
-     * A content operator implementation (TJ).
+     * A content operator implementation (unregistered).
      */
     private static class IgnoreOperatorContentOperator implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands){
@@ -715,6 +754,47 @@ public class PdfContentStreamProcessor {
         }
     }
 
+    /**
+     * A content operator implementation (BMC).
+     * @since 5.0.2
+     */
+    private static class BeginMarkedContent implements ContentOperator{
+
+		public void invoke(PdfContentStreamProcessor processor,
+				PdfLiteral operator, ArrayList<PdfObject> operands)
+				throws Exception {
+			processor.updateMarkedContent(1);
+		}
+    	
+    }
+
+    /**
+     * A content operator implementation (BDC).
+     * @since 5.0.2
+     */
+    private static class BeginMarkedContentDictionary implements ContentOperator{
+
+		public void invoke(PdfContentStreamProcessor processor,
+				PdfLiteral operator, ArrayList<PdfObject> operands)
+				throws Exception {
+			processor.updateMcid(operands.get(1));
+			processor.updateMarkedContent(1);
+		}
+    	
+    }
+
+    /**
+     * A content operator implementation (BMC).
+     * @since 5.0.2
+     */
+    private static class EndMarkedContent implements ContentOperator{
+		public void invoke(PdfContentStreamProcessor processor,
+				PdfLiteral operator, ArrayList<PdfObject> operands)
+				throws Exception {
+			processor.updateMarkedContent(-1);
+		}
+    }
+    
     /**
      * A content operator implementation (Do).
      */

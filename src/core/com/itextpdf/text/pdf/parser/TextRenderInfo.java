@@ -57,6 +57,7 @@ public class TextRenderInfo {
     private final String text;
     private final Matrix textToUserSpaceTransformMatrix;
     private final GraphicsState gs;
+    private final int mcid;
     
     /**
      * Creates a new TextRenderInfo object
@@ -64,10 +65,11 @@ public class TextRenderInfo {
      * @param gs the graphics state (note: at this time, this is not immutable, so don't cache it)
      * @param textMatrix the text matrix at the time of the render operation
      */
-    TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix) {
+    TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix, int mcid) {
         this.text = text;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.ctm);
         this.gs = gs;
+        this.mcid = mcid;
     }
     
     /**
@@ -93,6 +95,15 @@ public class TextRenderInfo {
      */
 	public GraphicsState getGs() {
 		return gs;
+	}
+	
+	/**
+	 * Getter for the mcid in case the text belongs to a marked content sequence.
+	 * @return an mcid
+	 * @since 5.0.2
+	 */
+	public int getMcid() {
+		return mcid;
 	}
 
 	/**
