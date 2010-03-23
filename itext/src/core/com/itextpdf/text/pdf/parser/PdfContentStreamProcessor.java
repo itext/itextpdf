@@ -853,7 +853,7 @@ public class PdfContentStreamProcessor {
     private static class ImageXObjectDoHandler implements XObjectDoHandler{
 
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
-            ImageRenderInfo renderInfo = new ImageRenderInfo(xobjectStream, processor.gs().ctm, ref);
+            ImageRenderInfo renderInfo = new ImageRenderInfo(processor.gs().ctm, ref);
             processor.renderListener.renderImage(renderInfo);
         }
     }
