@@ -99,7 +99,7 @@ public class PdfContentStreamProcessor {
      */
     private int mcid = -1;
     /**
-     * Counts the number of times BDC or BMC has been encountered withou EMC.
+     * Counts the number of times BDC or BMC has been encountered without EMC.
      * @since 5.0.2
      */
     private int mc = 0;
