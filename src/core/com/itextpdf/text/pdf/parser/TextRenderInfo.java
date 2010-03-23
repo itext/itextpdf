@@ -96,7 +96,7 @@ public class TextRenderInfo {
 	public GraphicsState getGs() {
 		return gs;
 	}
-	
+
 	/**
 	 * Getter for the mcid in case the text belongs to a marked content sequence.
 	 * @return an mcid
@@ -109,7 +109,7 @@ public class TextRenderInfo {
 	/**
      * @return the unscaled (i.e. in Text space) width of the text
      */
-    public float getUnscaledWidth(){ 
+    float getUnscaledWidth(){ 
         return getStringWidth(text); 
     }
     
