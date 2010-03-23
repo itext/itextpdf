@@ -43,7 +43,9 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfIndirectReference;
+import com.itextpdf.text.pdf.PdfReader;
 
 /**
  * @author kevin
@@ -56,6 +58,16 @@ public class ImageRenderInfo {
     public ImageRenderInfo(Matrix ctm, PdfIndirectReference ref) {
         this.ctm = ctm;
         this.ref = ref;
+    }
+    
+    /**
+     * Gets an object containing the image dictionary and bytes.
+     * @return an object containing the image dictionary and byte[]
+     * @since 5.0.2
+     */
+    public PdfImageObject getImage() {
+		PRStream stream = (PRStream)PdfReader.getPdfObject(ref);
+		return new PdfImageObject(stream);
     }
     
     /**
