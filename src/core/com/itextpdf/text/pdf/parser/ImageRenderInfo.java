@@ -44,28 +44,18 @@
 package com.itextpdf.text.pdf.parser;
 
 import com.itextpdf.text.pdf.PdfIndirectReference;
-import com.itextpdf.text.pdf.PdfObject;
 
 /**
  * @author kevin
  * @since 5.0.1
  */
 public class ImageRenderInfo {
-    private final PdfObject xobject;
     private final Matrix ctm;
     private final PdfIndirectReference ref;
     
-    public ImageRenderInfo(PdfObject xobject, Matrix ctm, PdfIndirectReference ref) {
-        this.xobject = xobject;
+    public ImageRenderInfo(Matrix ctm, PdfIndirectReference ref) {
         this.ctm = ctm;
         this.ref = ref;
-    }
-
-    /**
-     * @return the XObject itself
-     */
-    public PdfObject getXObject(){
-        return xobject;
     }
     
     /**
