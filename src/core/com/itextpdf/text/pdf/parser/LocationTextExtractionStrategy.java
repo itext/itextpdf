@@ -161,7 +161,8 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      * @see com.itextpdf.text.pdf.parser.RenderListener#renderText(com.itextpdf.text.pdf.parser.TextRenderInfo)
      */
     public void renderText(TextRenderInfo renderInfo) {
-        TextChunk location = new TextChunk(renderInfo.getText(), renderInfo.getStartPoint(), renderInfo.getEndPoint(), renderInfo.getSingleSpaceWidth());
+    	LineSegment segment = renderInfo.getLineSegment();
+        TextChunk location = new TextChunk(renderInfo.getText(), segment.getStartPoint(), segment.getEndPoint(), renderInfo.getSingleSpaceWidth());
         locationalResult.add(location);        
     }
     

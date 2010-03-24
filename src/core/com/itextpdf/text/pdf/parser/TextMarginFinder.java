@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.Rectangle;
 
 /**
  * Allows you to find the rectangle that contains all the text in a page.
@@ -78,37 +78,17 @@ public class TextMarginFinder implements RenderListener {
 	 * @see com.itextpdf.text.pdf.parser.RenderListener#renderText(com.itextpdf.text.pdf.parser.TextRenderInfo)
 	 */
 	public void renderText(TextRenderInfo renderInfo) {
-		// looking for the left margin
-		llx = Math.min(llx, renderInfo.getStartPoint().get(Vector.I1));
-		llx = Math.min(llx, renderInfo.getEndPoint().get(Vector.I1));
-		// looking for the bottom margin
-		float descent = getAscentDescent(renderInfo, false);
-		lly = Math.min(lly, renderInfo.getStartPoint().get(Vector.I2) + descent);
-		lly = Math.min(lly, renderInfo.getEndPoint().get(Vector.I2) + descent);
-		// looking for the right margin
-		urx = Math.max(urx, renderInfo.getStartPoint().get(Vector.I1));
-		urx = Math.max(urx, renderInfo.getEndPoint().get(Vector.I1));
-		// looking for the top margin
-		float ascent = getAscentDescent(renderInfo, true);
-		ury = Math.max(ury, renderInfo.getStartPoint().get(Vector.I2) + ascent);
-		ury = Math.max(ury, renderInfo.getEndPoint().get(Vector.I2) + ascent);
+		LineSegment lower = renderInfo.getLineSegment(TextRenderInfo.LinePos.DESCENT);
+		LineSegment upper = renderInfo.getLineSegment(TextRenderInfo.LinePos.ASCENT);
+		Rectangle rectangle = new Rectangle(
+				lower.getStartPoint().get(Vector.I1), lower.getStartPoint().get(Vector.I2),
+				upper.getEndPoint().get(Vector.I1), upper.getEndPoint().get(Vector.I2));
+		rectangle.normalize();
+		llx = Math.min(llx, rectangle.getLeft());
+		lly = Math.min(lly, rectangle.getBottom());
+		urx = Math.max(urx, rectangle.getRight());
+		ury = Math.max(ury, rectangle.getTop());
 	}
-	
-    /**
-     * Helper method to compute the ascent or the descent.
-     * @param ri The TextRenderInfo
-     * @param ascent returns the ascent if true; returns the descent if false.
-     * @param start returns the ascent or descent for the starting point if true.
-     * @return
-     */
-    private float getAscentDescent(TextRenderInfo ri, boolean ascent) {
-    	GraphicsState gs = ri.getGs();
-    	Matrix matrix = ri.getTextToUserSpaceTransformMatrix();
-    	int key = ascent ? BaseFont.ASCENT : BaseFont.DESCENT;
-    	float tmp = gs.getFont().getFontDescriptor(key, gs.getFontSize());
-    	Vector vector = new Vector(0, tmp, 1);
-    	return vector.cross(matrix).get(Vector.I2) - matrix.get(Matrix.I32);
-    }
 
 	/**
 	 * Getter for the left margin.

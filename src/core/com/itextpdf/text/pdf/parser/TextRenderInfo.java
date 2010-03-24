@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.DocumentFont;
 
 /**
@@ -54,6 +55,12 @@ import com.itextpdf.text.pdf.DocumentFont;
  * discovered
  */
 public class TextRenderInfo {
+	/**
+	 * Enum with possible parameter for getLineSegment.
+	 * @since 5.0.2
+	 */
+	public enum LinePos {BASELINE , ASCENT, DESCENT};
+	
     private final String text;
     private final Matrix textToUserSpaceTransformMatrix;
     private final GraphicsState gs;
@@ -80,24 +87,6 @@ public class TextRenderInfo {
         return text; 
     }
 
-    /**
-     * Getter for the text rendering matrix.
-     * @return the combined transformation matrix
-     * @since 5.0.2
-     */
-    public Matrix getTextToUserSpaceTransformMatrix() {
-		return textToUserSpaceTransformMatrix;
-	}
-
-    /**
-     * Getter for the graphics state.
-     * @return a GraphicsState object containing info about the font, spacing, leading,...
-     * @since 5.0.2
-     */
-	public GraphicsState getGs() {
-		return gs;
-	}
-
 	/**
 	 * Getter for the mcid in case the text belongs to a marked content sequence.
 	 * @return an mcid
@@ -115,25 +104,69 @@ public class TextRenderInfo {
     }
     
     /**
+     * Gets an object containing the start and end vector of the base line.
+     * @return a line segment
+     * @since 5.0.2
+     */
+    public LineSegment getLineSegment() {
+    	return getLineSegment(LinePos.BASELINE);
+    }
+
+    
+    /**
+     * Gets an object containing the start and end vector of the base line,
+     * ascent or descent.
+     * @param one of the following values: LinePos.ASCENT, LinePos.DESCENT, LinePos.BASELINE
+     * @return a line segment
+     * @since 5.0.2
+     */
+    public LineSegment getLineSegment(LinePos i) {
+    	float diff = 0;
+    	if (i == LinePos.ASCENT)
+    		diff = gs.getFont().getFontDescriptor(BaseFont.ASCENT, gs.getFontSize());
+    	else if (i == LinePos.DESCENT)
+    		diff = gs.getFont().getFontDescriptor(BaseFont.DESCENT, gs.getFontSize());
+    	return new LineSegment(getStartPoint(diff), getEndPoint(diff));
+    }
+
+    /**
+     * Returns the font size of the string.
+     * @return a font size
+     * @since 5.0.2
+     */
+    public float getFontSize() {
+    	return new Vector(0, gs.getFontSize(), 1).cross(textToUserSpaceTransformMatrix).subtract(getStartPoint(0)).length();
+    }
+
+    /**
+     * Gets the PS font name of the text.
+     * @return a font name
+     * @since 5.0.2
+     */
+    public String getPostscriptFontName() {
+    	return gs.getFont().getPostscriptFontName();
+    }
+    
+    /**
      * @return a vector in User space representing the start point of the text
      */
-    public Vector getStartPoint(){ 
-        return new Vector(0, 0, 1).cross(textToUserSpaceTransformMatrix); 
+    private Vector getStartPoint(float diff){ 
+        return new Vector(0, diff, 1).cross(textToUserSpaceTransformMatrix); 
     }
     
     /**
      * @return a vector in User space representing the end point of the text (i.e. the 
      * starting point of the text plus the width of the text, transformed by the applicable transformation matrices)
      */
-    public Vector getEndPoint(){ 
-        return new Vector(getUnscaledWidth(), 0, 1).cross(textToUserSpaceTransformMatrix); 
+    private Vector getEndPoint(float diff){ 
+        return new Vector(getUnscaledWidth(), diff, 1).cross(textToUserSpaceTransformMatrix); 
     }
     
     /**
      * @return The width, in user space units, of a single space character in the current font
      */
     public float getSingleSpaceWidth(){
-        return new Vector(getUnscaledFontSpaceWidth(), 0, 1).cross(textToUserSpaceTransformMatrix).subtract(getStartPoint()).length();
+        return new Vector(getUnscaledFontSpaceWidth(), 0, 1).cross(textToUserSpaceTransformMatrix).subtract(getStartPoint(0)).length();
     }
     
     /**
