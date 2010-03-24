@@ -104,7 +104,7 @@ public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
         boolean firstRender = result.length() == 0;
         boolean hardReturn = false;
 
-        LineSegment segment = renderInfo.getLineSegment();
+        LineSegment segment = renderInfo.getBaseline();
         Vector start = segment.getStartPoint();
         Vector end = segment.getEndPoint();
         
