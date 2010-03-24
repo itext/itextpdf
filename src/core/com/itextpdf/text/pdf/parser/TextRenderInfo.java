@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import java.awt.Rectangle;
+
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.DocumentFont;
 
@@ -104,69 +106,82 @@ public class TextRenderInfo {
     }
     
     /**
-     * Gets an object containing the start and end vector of the base line.
-     * @return a line segment
+     * Gets the baseline for the text (i.e. the line that the text 'sits' on)
+     * @return the baseline line segment
      * @since 5.0.2
      */
-    public LineSegment getLineSegment() {
-    	return getLineSegment(LinePos.BASELINE);
-    }
-
-    
-    /**
-     * Gets an object containing the start and end vector of the base line,
-     * ascent or descent.
-     * @param one of the following values: LinePos.ASCENT, LinePos.DESCENT, LinePos.BASELINE
-     * @return a line segment
-     * @since 5.0.2
-     */
-    public LineSegment getLineSegment(LinePos i) {
-    	float diff = 0;
-    	if (i == LinePos.ASCENT)
-    		diff = gs.getFont().getFontDescriptor(BaseFont.ASCENT, gs.getFontSize());
-    	else if (i == LinePos.DESCENT)
-    		diff = gs.getFont().getFontDescriptor(BaseFont.DESCENT, gs.getFontSize());
-    	return new LineSegment(getStartPoint(diff), getEndPoint(diff));
-    }
-
-    /**
-     * Returns the font size of the string.
-     * @return a font size
-     * @since 5.0.2
-     */
-    public float getFontSize() {
-    	return new Vector(0, gs.getFontSize(), 1).cross(textToUserSpaceTransformMatrix).subtract(getStartPoint(0)).length();
-    }
-
-    /**
-     * Gets the PS font name of the text.
-     * @return a font name
-     * @since 5.0.2
-     */
-    public String getPostscriptFontName() {
-    	return gs.getFont().getPostscriptFontName();
+    public LineSegment getBaseline(){
+        return getUnscaledBaselineWithOffset(0).transformBy(textToUserSpaceTransformMatrix);
     }
     
     /**
-     * @return a vector in User space representing the start point of the text
+     * Gets the ascentline for the text (i.e. the line that represents the topmost extent that a string of the current font could have)
+     * @return the ascentline line segment
+     * @since 5.0.2
      */
-    private Vector getStartPoint(float diff){ 
-        return new Vector(0, diff, 1).cross(textToUserSpaceTransformMatrix); 
+    public LineSegment getAscentLine(){
+        float ascent = gs.getFont().getFontDescriptor(BaseFont.ASCENT, gs.getFontSize());
+        return getUnscaledBaselineWithOffset(ascent).transformBy(textToUserSpaceTransformMatrix);
     }
     
     /**
-     * @return a vector in User space representing the end point of the text (i.e. the 
-     * starting point of the text plus the width of the text, transformed by the applicable transformation matrices)
+     * Gets the descentline for the text (i.e. the line that represents the bottom most extent that a string of the current font could have)
+     * @return the descentline line segment
+     * @since 5.0.2
      */
-    private Vector getEndPoint(float diff){ 
-        return new Vector(getUnscaledWidth(), diff, 1).cross(textToUserSpaceTransformMatrix); 
+    public LineSegment getDescentLine(){
+        // per getFontDescription() API, descent is returned as a negative number, so we apply that as a normal vertical offset
+        float descent = gs.getFont().getFontDescriptor(BaseFont.DESCENT, gs.getFontSize());
+        return getUnscaledBaselineWithOffset(descent).transformBy(textToUserSpaceTransformMatrix);
     }
+    
+    private LineSegment getUnscaledBaselineWithOffset(float yOffset){
+        return new LineSegment(new Vector(0, yOffset, 1), new Vector(getUnscaledWidth(), yOffset, 1));
+    }
+
+// KD - removing - use getAscentLine and getDescentLine instead    
+//    /**
+//     * Gets an object containing the start and end vector of the base line,
+//     * ascent or descent.
+//     * @param one of the following values: LinePos.ASCENT, LinePos.DESCENT, LinePos.BASELINE
+//     * @return a line segment
+//     * @since 5.0.2
+//     */
+//    public LineSegment getLineSegment(LinePos i) {
+//    	float diff = 0;
+//    	if (i == LinePos.ASCENT)
+//    		diff = gs.getFont().getFontDescriptor(BaseFont.ASCENT, gs.getFontSize());
+//    	else if (i == LinePos.DESCENT)
+//    		diff = gs.getFont().getFontDescriptor(BaseFont.DESCENT, gs.getFontSize());
+//    	return new LineSegment(getStartPoint(diff), getEndPoint(diff));
+//    }
+
+// KD - removing these for now - if we need access to the font, let's just have a getFont() method    
+//    /**
+//     * Returns the font size of the string.
+//     * @return a font size
+//     * @since 5.0.2
+//     */
+//    public float getFontSize() {
+//    	return new Vector(0, gs.getFontSize(), 1).cross(textToUserSpaceTransformMatrix).subtract(getStartPoint(0)).length();
+//    }
+//
+//    /**
+//     * Gets the PS font name of the text.
+//     * @return a font name
+//     * @since 5.0.2
+//     */
+//    public String getPostscriptFontName() {
+//    	return gs.getFont().getPostscriptFontName();
+//    }
     
     /**
      * @return The width, in user space units, of a single space character in the current font
      */
     public float getSingleSpaceWidth(){
-        return new Vector(getUnscaledFontSpaceWidth(), 0, 1).cross(textToUserSpaceTransformMatrix).subtract(getStartPoint(0)).length();
+        LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(getUnscaledFontSpaceWidth(), 0, 1));
+        LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
+        return userSpace.getLength();
     }
     
     /**

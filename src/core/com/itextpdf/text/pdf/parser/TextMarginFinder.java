@@ -43,29 +43,21 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import java.awt.geom.Rectangle2D;
+
 /**
  * Allows you to find the rectangle that contains all the text in a page.
  * @since 5.0.2
  */
 public class TextMarginFinder implements RenderListener {
-	/** The left margin. */
-	protected float llx = Float.MAX_VALUE;
-	/** The bottom margin. */
-	protected float lly = Float.MAX_VALUE;
-	/** The right margin. */
-	protected float urx = Float.MIN_VALUE;
-	/** The top margin. */
-	protected float ury = Float.MIN_VALUE;
-
+    private Rectangle2D.Float textRectangle = null;
+    
 	/**
 	 * Resets all margin values.
 	 * @see com.itextpdf.text.pdf.parser.RenderListener#reset()
 	 */
 	public void reset() {
-		llx = Float.MAX_VALUE;
-		lly = Float.MAX_VALUE;
-		urx = Float.MIN_VALUE;
-		ury = Float.MIN_VALUE;
+	    textRectangle = null;
 	}
 
 	/**
@@ -76,52 +68,45 @@ public class TextMarginFinder implements RenderListener {
 	 * @see com.itextpdf.text.pdf.parser.RenderListener#renderText(com.itextpdf.text.pdf.parser.TextRenderInfo)
 	 */
 	public void renderText(TextRenderInfo renderInfo) {
-		LineSegment lower = renderInfo.getLineSegment(TextRenderInfo.LinePos.DESCENT);
-		LineSegment upper = renderInfo.getLineSegment(TextRenderInfo.LinePos.ASCENT);
-		float tmp1 = Math.min(lower.getStartPoint().get(Vector.I1), lower.getEndPoint().get(Vector.I1));
-		float tmp2 = Math.min(upper.getStartPoint().get(Vector.I1), upper.getEndPoint().get(Vector.I1));
-		llx = Math.min(llx, Math.min(tmp1, tmp2));
-		tmp1 = Math.min(lower.getStartPoint().get(Vector.I2), lower.getEndPoint().get(Vector.I2));
-		tmp2 = Math.min(upper.getStartPoint().get(Vector.I2), upper.getEndPoint().get(Vector.I2));
-		lly = Math.min(lly, Math.min(tmp1, tmp2));
-		tmp1 = Math.max(lower.getStartPoint().get(Vector.I1), lower.getEndPoint().get(Vector.I1));
-		tmp2 = Math.max(upper.getStartPoint().get(Vector.I1), upper.getEndPoint().get(Vector.I1));
-		urx = Math.max(urx, Math.max(tmp1, tmp2));
-		tmp1 = Math.max(lower.getStartPoint().get(Vector.I2), lower.getEndPoint().get(Vector.I2));
-		tmp2 = Math.max(upper.getStartPoint().get(Vector.I2), upper.getEndPoint().get(Vector.I2));
-		ury = Math.max(ury, Math.max(tmp1, tmp2));
+		if (textRectangle == null)
+		    textRectangle = renderInfo.getDescentLine().getBoundingRectange();
+		else
+		    textRectangle.add(renderInfo.getDescentLine().getBoundingRectange());
+		
+		textRectangle.add(renderInfo.getAscentLine().getBoundingRectange());
+
 	}
 
 	/**
 	 * Getter for the left margin.
-	 * @return the left margin
+	 * @return the X position of the left margin
 	 */
 	public float getLlx() {
-		return llx;
+	    return textRectangle.x;
 	}
 
 	/**
 	 * Getter for the bottom margin.
-	 * @return the bottom margin
+	 * @return the Y position of the bottom margin
 	 */
 	public float getLly() {
-		return lly;
+        return textRectangle.y;
 	}
 
 	/**
 	 * Getter for the right margin.
-	 * @return the right margin
+	 * @return the X position of the right margin
 	 */
 	public float getUrx() {
-		return urx;
+		return textRectangle.x + textRectangle.width;
 	}
 
 	/**
 	 * Getter for the top margin.
-	 * @return the top margin
+	 * @return the Y position of the top margin
 	 */
 	public float getUry() {
-		return ury;
+		return textRectangle.y + textRectangle.height;
 	}
 
 	/**
@@ -129,7 +114,7 @@ public class TextMarginFinder implements RenderListener {
 	 * @return a width
 	 */
 	public float getWidth() {
-		return urx - llx;
+		return textRectangle.width;
 	}
 	
 	/**
@@ -137,24 +122,27 @@ public class TextMarginFinder implements RenderListener {
 	 * @return a height
 	 */
 	public float getHeight() {
-		return ury - lly;
+		return textRectangle.height;
 	}
 	
 	/**
 	 * @see com.itextpdf.text.pdf.parser.RenderListener#beginTextBlock()
 	 */
 	public void beginTextBlock() {
+        // do nothing
 	}
 
 	/**
 	 * @see com.itextpdf.text.pdf.parser.RenderListener#endTextBlock()
 	 */
 	public void endTextBlock() {
+        // do nothing
 	}
 
 	/**
 	 * @see com.itextpdf.text.pdf.parser.RenderListener#renderImage(com.itextpdf.text.pdf.parser.ImageRenderInfo)
 	 */
 	public void renderImage(ImageRenderInfo renderInfo) {
+	    // do nothing
 	}
 }
