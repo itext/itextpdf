@@ -1,9 +1,9 @@
 /*
- * $Id: GraphicsState.java 4113 2009-12-01 11:08:59Z blowagie $
+ * $Id: ContentOperator.java 4242 2010-01-02 23:22:20Z xlv $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
- * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
+ * Authors: Bruno Lowagie, Kevin Day, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
@@ -43,41 +43,38 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.awt.Rectangle;
-
-
 /**
- * A {@link RenderFilter} that only allows text within a specified rectangular region
- * @since 5.0.1
+ * @since 5.0.2
  */
-public class RegionTextRenderFilter extends RenderFilter {
+public class LineSegment {
 
-    /** the region to allow text from */
-    private final Rectangle filterRect;
-    
-    /**
-     * Constructs a filter
-     * @param filterRect the rectangle to filter text against.  Note that this is a java.awt.Rectangle !
-     */
-    public RegionTextRenderFilter(Rectangle filterRect) {
-        this.filterRect = filterRect;
-    }
+	/** Start vector of the segment. */
+	protected Vector startPoint;
+	/** End vector of the segment. */
+	protected Vector endPoint;
+	
+	/**
+	 * Creates a new line segment.
+	 * @param startPoint the start point of a line segment.
+	 * @param endPoint the end point of a line segment.
+	 */
+	public LineSegment(Vector startPoint, Vector endPoint) {
+		this.startPoint = startPoint;
+		this.endPoint = endPoint;
+	}
 
-    /** 
-     * @see com.itextpdf.text.pdf.parser.RenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
-     */
-    public boolean allowText(TextRenderInfo renderInfo){
-    	LineSegment segment = renderInfo.getLineSegment();
-        Vector startPoint = segment.getStartPoint();
-        Vector endPoint = segment.getEndPoint();
-        
-        float x1 = startPoint.get(Vector.I1);
-        float y1 = startPoint.get(Vector.I2);
-        float x2 = endPoint.get(Vector.I1);
-        float y2 = endPoint.get(Vector.I2);
-        
-        return filterRect.intersectsLine(x1, y1, x2, y2);
-    }
+	/**
+	 * @return the start point
+	 */
+	public Vector getStartPoint() {
+		return startPoint;
+	}
 
-
+	/**
+	 * @return the end point
+	 */
+	public Vector getEndPoint() {
+		return endPoint;
+	}
+	
 }
