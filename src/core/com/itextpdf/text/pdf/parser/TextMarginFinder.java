@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import com.itextpdf.text.Rectangle;
-
 /**
  * Allows you to find the rectangle that contains all the text in a page.
  * @since 5.0.2
@@ -80,14 +78,18 @@ public class TextMarginFinder implements RenderListener {
 	public void renderText(TextRenderInfo renderInfo) {
 		LineSegment lower = renderInfo.getLineSegment(TextRenderInfo.LinePos.DESCENT);
 		LineSegment upper = renderInfo.getLineSegment(TextRenderInfo.LinePos.ASCENT);
-		Rectangle rectangle = new Rectangle(
-				lower.getStartPoint().get(Vector.I1), lower.getStartPoint().get(Vector.I2),
-				upper.getEndPoint().get(Vector.I1), upper.getEndPoint().get(Vector.I2));
-		rectangle.normalize();
-		llx = Math.min(llx, rectangle.getLeft());
-		lly = Math.min(lly, rectangle.getBottom());
-		urx = Math.max(urx, rectangle.getRight());
-		ury = Math.max(ury, rectangle.getTop());
+		float tmp1 = Math.min(lower.getStartPoint().get(Vector.I1), lower.getEndPoint().get(Vector.I1));
+		float tmp2 = Math.min(upper.getStartPoint().get(Vector.I1), upper.getEndPoint().get(Vector.I1));
+		llx = Math.min(llx, Math.min(tmp1, tmp2));
+		tmp1 = Math.min(lower.getStartPoint().get(Vector.I2), lower.getEndPoint().get(Vector.I2));
+		tmp2 = Math.min(upper.getStartPoint().get(Vector.I2), upper.getEndPoint().get(Vector.I2));
+		lly = Math.min(lly, Math.min(tmp1, tmp2));
+		tmp1 = Math.max(lower.getStartPoint().get(Vector.I1), lower.getEndPoint().get(Vector.I1));
+		tmp2 = Math.max(upper.getStartPoint().get(Vector.I1), upper.getEndPoint().get(Vector.I1));
+		urx = Math.max(urx, Math.max(tmp1, tmp2));
+		tmp1 = Math.max(lower.getStartPoint().get(Vector.I2), lower.getEndPoint().get(Vector.I2));
+		tmp2 = Math.max(upper.getStartPoint().get(Vector.I2), upper.getEndPoint().get(Vector.I2));
+		ury = Math.max(ury, Math.max(tmp1, tmp2));
 	}
 
 	/**
