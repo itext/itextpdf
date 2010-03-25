@@ -97,7 +97,7 @@ public class PdfContentStreamProcessor {
      * A stack containing marked content info.
      * @since 5.0.2
      */
-    private Stack<PdfObject> markedcontent = new Stack<PdfObject>();
+    private Stack<MarkedContentInfo> markedContentStack = new Stack<MarkedContentInfo>();
 
     /**
      * Creates a new PDF Content Stream Processor that will send it's output to the
@@ -227,39 +227,21 @@ public class PdfContentStreamProcessor {
     }
 
     /**
-     * If the parameter is a PdfDictionary containing the MCID key,
-     * the current mcid is changed.
-     * @param o a marked content dictionary
+     * Add to the marked content stack
+     * @param tag the tag of the marked content
+     * @param dict the PdfDictionary associated with the marked content
      * @since 5.0.2
      */
-    private void updateMcid(PdfName tag, PdfDictionary dict) {
-    	markedcontent.push(tag);
-    	markedcontent.push(dict);
+    private void beginMarkedContent(PdfName tag, PdfDictionary dict) {
+    	markedContentStack.push(new MarkedContentInfo(tag, dict));
     }
    
     /**
-     * Keeps track of the BMC, BDC and EMC operators.
-     * Sets mcid to -1 if EMC is encountered.
-     * @param i will be +1 or -1
+     * Remove the latest marked content from the stack.  Keeps track of the BMC, BDC and EMC operators.
      * @since 5.0.2
      */
     private void endMarkedContent() {
-    	markedcontent.pop();
-    	markedcontent.pop();
-    }
-    
-    /**
-     * Returns an array containing pairs of PdfName and PdfDictionary objects.
-     * The names are tags of marked content, the dictionaries contain properties
-     * of the marked content.
-     * @since 5.0.2
-     */
-    private PdfArray getMarkedContent() {
-    	PdfArray array = new PdfArray();
-    	for (PdfObject o : markedcontent) {
-    		array.add(o);
-    	}
-    	return array;
+    	markedContentStack.pop();
     }
     
     /**
@@ -296,7 +278,7 @@ public class PdfContentStreamProcessor {
 
         String unicode = decode(string);
 
-        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix, getMarkedContent());
+        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix, markedContentStack);
 
         renderListener.renderText(renderInfo);
 
@@ -768,7 +750,7 @@ public class PdfContentStreamProcessor {
 		public void invoke(PdfContentStreamProcessor processor,
 				PdfLiteral operator, ArrayList<PdfObject> operands)
 				throws Exception {
-			processor.updateMcid((PdfName)operands.get(0), new PdfDictionary());
+			processor.beginMarkedContent((PdfName)operands.get(0), new PdfDictionary());
 		}
     	
     }
@@ -782,7 +764,7 @@ public class PdfContentStreamProcessor {
 		public void invoke(PdfContentStreamProcessor processor,
 				PdfLiteral operator, ArrayList<PdfObject> operands)
 				throws Exception {
-			processor.updateMcid((PdfName)operands.get(0), (PdfDictionary)operands.get(1));
+			processor.beginMarkedContent((PdfName)operands.get(0), (PdfDictionary)operands.get(1));
 		}
     	
     }
