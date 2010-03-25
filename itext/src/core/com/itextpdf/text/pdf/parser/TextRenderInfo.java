@@ -43,14 +43,11 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.CMapAwareDocumentFont;
 import com.itextpdf.text.pdf.DocumentFont;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfString;
 
 /**
  * Provides information and calculations needed by render listeners
@@ -69,7 +66,7 @@ public class TextRenderInfo {
      * Array containing marked content info for the text.
      * @since 5.0.2
      */
-    private final PdfArray markedcontent;
+    private final Collection<MarkedContentInfo> markedContentInfos;
     
     /**
      * Creates a new TextRenderInfo object
@@ -78,23 +75,17 @@ public class TextRenderInfo {
      * @param textMatrix the text matrix at the time of the render operation
      * @param mcid the id of the marked content sequence, if any
      */
-    TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix, PdfArray markedContent) {
+    TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix, Collection<MarkedContentInfo> markedContentInfo) {
         this.text = text;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.ctm);
         this.gs = gs;
-        this.markedcontent = markedContent;
+        this.markedContentInfos = new ArrayList<MarkedContentInfo>(markedContentInfo);
     }
     
     /**
      * @return the text to render
      */
     public String getText(){ 
-    	if (markedcontent.size() > 0) {
-    		PdfDictionary dict = markedcontent.getAsDict(markedcontent.size() - 1);
-    		PdfString actualtext = dict.getAsString(PdfName.ACTUALTEXT);
-    		if (actualtext != null)
-    			return actualtext.toString();
-    	}
         return text; 
     }
 
@@ -106,17 +97,12 @@ public class TextRenderInfo {
 	 * @since 5.0.2
 	 */
 	public boolean hasMcid(int mcid) {
-		int n = markedcontent.size();
-		PdfDictionary dict;
-		PdfNumber id;
-		for (int i = 1; i < n; ) {
-			dict = markedcontent.getAsDict(i);
-			id = dict.getAsNumber(PdfName.MCID);
-			if (id != null && id.intValue() == mcid) {
-				return true;
-			}
-			i += 2;
-		}
+		for (MarkedContentInfo info : markedContentInfos) {
+            if (info.hasMcid())
+                if(info.getMcid() == mcid)
+                    return true;
+        }
+
 		return false;
 	}
 
@@ -166,7 +152,7 @@ public class TextRenderInfo {
 	 * @return the font
 	 * @since iText 5.0.2
 	 */
-	public CMapAwareDocumentFont getFont() {
+	public DocumentFont getFont() {
 		return gs.getFont();
 	}
     
