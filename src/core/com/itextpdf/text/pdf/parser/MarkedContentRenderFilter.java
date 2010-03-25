@@ -64,7 +64,7 @@ public class MarkedContentRenderFilter extends RenderFilter {
      * @see com.itextpdf.text.pdf.parser.RenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
      */
     public boolean allowText(TextRenderInfo renderInfo){
-        return renderInfo.getMcid() == mcid;
+        return renderInfo.hasMcid(mcid);
     }
 
 

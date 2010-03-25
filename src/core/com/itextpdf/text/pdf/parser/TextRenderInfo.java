@@ -43,10 +43,14 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.awt.Rectangle;
-
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.CMapAwareDocumentFont;
 import com.itextpdf.text.pdf.DocumentFont;
+import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfNumber;
+import com.itextpdf.text.pdf.PdfString;
 
 /**
  * Provides information and calculations needed by render listeners
@@ -57,16 +61,15 @@ import com.itextpdf.text.pdf.DocumentFont;
  * discovered
  */
 public class TextRenderInfo {
-	/**
-	 * Enum with possible parameter for getLineSegment.
-	 * @since 5.0.2
-	 */
-	public enum LinePos {BASELINE , ASCENT, DESCENT};
 	
     private final String text;
     private final Matrix textToUserSpaceTransformMatrix;
     private final GraphicsState gs;
-    private final int mcid;
+    /**
+     * Array containing marked content info for the text.
+     * @since 5.0.2
+     */
+    private final PdfArray markedcontent;
     
     /**
      * Creates a new TextRenderInfo object
@@ -75,27 +78,46 @@ public class TextRenderInfo {
      * @param textMatrix the text matrix at the time of the render operation
      * @param mcid the id of the marked content sequence, if any
      */
-    TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix, int mcid) {
+    TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix, PdfArray markedContent) {
         this.text = text;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.ctm);
         this.gs = gs;
-        this.mcid = mcid;
+        this.markedcontent = markedContent;
     }
     
     /**
      * @return the text to render
      */
     public String getText(){ 
+    	if (markedcontent.size() > 0) {
+    		PdfDictionary dict = markedcontent.getAsDict(markedcontent.size() - 1);
+    		PdfString actualtext = dict.getAsString(PdfName.ACTUALTEXT);
+    		if (actualtext != null)
+    			return actualtext.toString();
+    	}
         return text; 
     }
 
 	/**
-	 * Getter for the mcid in case the text belongs to a marked content sequence.
-	 * @return an mcid
+	 * Checks if the text belongs to a marked content sequence
+	 * with a given mcid.
+	 * @param mcid a marked content id
+	 * @return true if the text is marked with this id
 	 * @since 5.0.2
 	 */
-	public int getMcid() {
-		return mcid;
+	public boolean hasMcid(int mcid) {
+		int n = markedcontent.size();
+		PdfDictionary dict;
+		PdfNumber id;
+		for (int i = 1; i < n; ) {
+			dict = markedcontent.getAsDict(i);
+			id = dict.getAsNumber(PdfName.MCID);
+			if (id != null && id.intValue() == mcid) {
+				return true;
+			}
+			i += 2;
+		}
+		return false;
 	}
 
 	/**
@@ -139,41 +161,14 @@ public class TextRenderInfo {
         return new LineSegment(new Vector(0, yOffset, 1), new Vector(getUnscaledWidth(), yOffset, 1));
     }
 
-// KD - removing - use getAscentLine and getDescentLine instead    
-//    /**
-//     * Gets an object containing the start and end vector of the base line,
-//     * ascent or descent.
-//     * @param one of the following values: LinePos.ASCENT, LinePos.DESCENT, LinePos.BASELINE
-//     * @return a line segment
-//     * @since 5.0.2
-//     */
-//    public LineSegment getLineSegment(LinePos i) {
-//    	float diff = 0;
-//    	if (i == LinePos.ASCENT)
-//    		diff = gs.getFont().getFontDescriptor(BaseFont.ASCENT, gs.getFontSize());
-//    	else if (i == LinePos.DESCENT)
-//    		diff = gs.getFont().getFontDescriptor(BaseFont.DESCENT, gs.getFontSize());
-//    	return new LineSegment(getStartPoint(diff), getEndPoint(diff));
-//    }
-
-// KD - removing these for now - if we need access to the font, let's just have a getFont() method    
-//    /**
-//     * Returns the font size of the string.
-//     * @return a font size
-//     * @since 5.0.2
-//     */
-//    public float getFontSize() {
-//    	return new Vector(0, gs.getFontSize(), 1).cross(textToUserSpaceTransformMatrix).subtract(getStartPoint(0)).length();
-//    }
-//
-//    /**
-//     * Gets the PS font name of the text.
-//     * @return a font name
-//     * @since 5.0.2
-//     */
-//    public String getPostscriptFontName() {
-//    	return gs.getFont().getPostscriptFontName();
-//    }
+	/**
+	 * Getter for the font
+	 * @return the font
+	 * @since iText 5.0.2
+	 */
+	public CMapAwareDocumentFont getFont() {
+		return gs.getFont();
+	}
     
     /**
      * @return The width, in user space units, of a single space character in the current font
