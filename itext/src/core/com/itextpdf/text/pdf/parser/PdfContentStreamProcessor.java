@@ -94,15 +94,10 @@ public class PdfContentStreamProcessor {
     /** A map with all supported XObject handlers */
     final private Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
     /**
-     * The current MCID (marked content).
+     * A stack containing marked content info.
      * @since 5.0.2
      */
-    private int mcid = -1;
-    /**
-     * Counts the number of times BDC or BMC has been encountered without EMC.
-     * @since 5.0.2
-     */
-    private int mc = 0;
+    private Stack<PdfObject> markedcontent = new Stack<PdfObject>();
 
     /**
      * Creates a new PDF Content Stream Processor that will send it's output to the
@@ -237,13 +232,9 @@ public class PdfContentStreamProcessor {
      * @param o a marked content dictionary
      * @since 5.0.2
      */
-    private void updateMcid(PdfObject o) {
-    	if (o == null) return;
-    	if (o instanceof PdfDictionary) {
-    		PdfNumber id = ((PdfDictionary)o).getAsNumber(PdfName.MCID);
-    		if (id != null)
-    			mcid = id.intValue();
-    	}
+    private void updateMcid(PdfName tag, PdfDictionary dict) {
+    	markedcontent.push(tag);
+    	markedcontent.push(dict);
     }
    
     /**
@@ -252,9 +243,23 @@ public class PdfContentStreamProcessor {
      * @param i will be +1 or -1
      * @since 5.0.2
      */
-    private void updateMarkedContent(int i) {
-    	mc += i;
-    	if (mc == 0) mcid = -1;
+    private void endMarkedContent() {
+    	markedcontent.pop();
+    	markedcontent.pop();
+    }
+    
+    /**
+     * Returns an array containing pairs of PdfName and PdfDictionary objects.
+     * The names are tags of marked content, the dictionaries contain properties
+     * of the marked content.
+     * @since 5.0.2
+     */
+    private PdfArray getMarkedContent() {
+    	PdfArray array = new PdfArray();
+    	for (PdfObject o : markedcontent) {
+    		array.add(o);
+    	}
+    	return array;
     }
     
     /**
@@ -291,7 +296,7 @@ public class PdfContentStreamProcessor {
 
         String unicode = decode(string);
 
-        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix, mcid);
+        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix, getMarkedContent());
 
         renderListener.renderText(renderInfo);
 
@@ -763,7 +768,7 @@ public class PdfContentStreamProcessor {
 		public void invoke(PdfContentStreamProcessor processor,
 				PdfLiteral operator, ArrayList<PdfObject> operands)
 				throws Exception {
-			processor.updateMarkedContent(1);
+			processor.updateMcid((PdfName)operands.get(0), new PdfDictionary());
 		}
     	
     }
@@ -777,8 +782,7 @@ public class PdfContentStreamProcessor {
 		public void invoke(PdfContentStreamProcessor processor,
 				PdfLiteral operator, ArrayList<PdfObject> operands)
 				throws Exception {
-			processor.updateMcid(operands.get(1));
-			processor.updateMarkedContent(1);
+			processor.updateMcid((PdfName)operands.get(0), (PdfDictionary)operands.get(1));
 		}
     	
     }
@@ -791,7 +795,7 @@ public class PdfContentStreamProcessor {
 		public void invoke(PdfContentStreamProcessor processor,
 				PdfLiteral operator, ArrayList<PdfObject> operands)
 				throws Exception {
-			processor.updateMarkedContent(-1);
+			processor.endMarkedContent();
 		}
     }
     
