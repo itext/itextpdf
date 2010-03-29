@@ -764,9 +764,19 @@ public class PdfContentStreamProcessor {
 		public void invoke(PdfContentStreamProcessor processor,
 				PdfLiteral operator, ArrayList<PdfObject> operands)
 				throws Exception {
-			processor.beginMarkedContent((PdfName)operands.get(0), (PdfDictionary)operands.get(1));
+		    
+		    PdfObject properties = operands.get(1);
+		    
+			processor.beginMarkedContent((PdfName)operands.get(0), getPropertiesDictionary(properties, processor.resources));
 		}
     	
+		private PdfDictionary getPropertiesDictionary(PdfObject operand1, ResourceDictionary resources){
+            if (operand1.isDictionary())
+                return (PdfDictionary)operand1;
+
+            PdfName dictionaryName = ((PdfName)operand1);
+            return resources.getAsDict(dictionaryName);
+		}
     }
 
     /**
