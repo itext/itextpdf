@@ -95,14 +95,6 @@ public class FilteredRenderListener implements RenderListener {
     }
 
     /**
-     * This class delegates this call
-     * @see com.itextpdf.text.pdf.parser.RenderListener#reset()
-     */
-    public void reset() {
-        delegate.reset();
-    }
-
-    /**
      * Applies filters, then delegates to the delegate if all filters pass
      * @see com.itextpdf.text.pdf.parser.RenderListener#renderImage(com.itextpdf.text.pdf.parser.ImageRenderInfo)
      * @since 5.0.1

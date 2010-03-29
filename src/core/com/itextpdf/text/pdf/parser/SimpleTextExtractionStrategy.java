@@ -63,19 +63,14 @@ public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
     private Vector lastEnd;
     
     /** used to store the resulting String. */
-    private StringBuffer result;
+    private final StringBuffer result = new StringBuffer();;
 
     /**
      * Creates a new text extraction renderer.
      */
     public SimpleTextExtractionStrategy() {
-        reset();
     }
 
-    public void reset() {
-        result = new StringBuffer();
-    }
-    
     /**
      * @since 5.0.1
      */

@@ -74,22 +74,14 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     static boolean DUMP_STATE = false;
     
     /** a summary of all found text */
-    private List<TextChunk> locationalResult;
+    private final List<TextChunk> locationalResult = new ArrayList<TextChunk>();
 
     /**
      * Creates a new text extraction renderer.
      */
     public LocationTextExtractionStrategy() {
-        reset();
     }
 
-    /**
-     * Resets the internal state
-     * @see com.itextpdf.text.pdf.parser.RenderListener#reset()
-     */
-    public void reset() {
-        locationalResult = new ArrayList<TextChunk>();
-    }
     /**
      *
      * @see com.itextpdf.text.pdf.parser.TextRenderListener#beginTextBlock()

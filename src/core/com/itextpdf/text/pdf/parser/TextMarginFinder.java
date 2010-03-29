@@ -53,14 +53,6 @@ public class TextMarginFinder implements RenderListener {
     private Rectangle2D.Float textRectangle = null;
     
 	/**
-	 * Resets all margin values.
-	 * @see com.itextpdf.text.pdf.parser.RenderListener#reset()
-	 */
-	public void reset() {
-	    textRectangle = null;
-	}
-
-	/**
 	 * Method invokes by the PdfContentStreamProcessor.
 	 * Passes a TextRenderInfo for every text chunk that is encountered.
 	 * We'll use this object to obtain coordinates.

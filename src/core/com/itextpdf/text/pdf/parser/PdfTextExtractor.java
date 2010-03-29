@@ -45,59 +45,40 @@ package com.itextpdf.text.pdf.parser;
 
 import java.io.IOException;
 
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
 
 /**
  * Extracts text from a PDF file.
  * @since	2.1.4
  */
-public class PdfTextExtractor {
-
-	/** The PdfReader that holds the PDF file. */
-    private final PdfReader reader;
-    
-    /** The {@link TextExtractionStrategy} that will receive render notifications and provide resultant text */
-    private final TextExtractionStrategy renderListener;
-    
-    /**
-     * Creates a new Text Extractor object, using the most current algorithm for text
-     * extraction (currently {@link LocationTextExtractionStrategy}) as the render listener
-  
-     * @param reader	the reader with the PDF
-     */
-    public PdfTextExtractor(PdfReader reader) {
-        this(reader, new LocationTextExtractionStrategy());
-    }
+public final class PdfTextExtractor {
 
     /**
-     * Creates a new Text Extractor object.
-     * @param reader    the reader with the PDF
-     * @param renderListener the render listener that will be used to analyze renderText operations and provide resultant text
-     * @since 5.0.2
+     * Extract text from a specified page using an extraction strategy.
+     * @param reader the reader to extract text from
+     * @param pageNumber the page to extract text from
+     * @param strategy the strategy to use for extracting text
+     * @return the extracted text
+     * @throws IOException if any operation fails while reading from the provided PdfReader
      */
-    public PdfTextExtractor(PdfReader reader, TextExtractionStrategy renderListener) {
-        this.reader = reader;
-        this.renderListener = renderListener;
-    }
-    
-    
-
-    
-    /**
-     * Gets the text from a page.
-     * @param page	the page number of the page
-     * @return	a String with the content as plain text (without PDF syntax)
-     * @throws IOException
-     */
-    public String getTextFromPage(int page) throws IOException {
-        PdfDictionary pageDic = reader.getPageN(page);
-        PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
+    public static String getTextFromPage(PdfReader reader, int pageNumber, TextExtractionStrategy strategy) throws IOException{
+        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+        return parser.processContent(pageNumber, strategy).getResultantText();
         
-        renderListener.reset();
-        PdfContentStreamProcessor processor = new PdfContentStreamProcessor(renderListener);
-        processor.processContent(ContentByteUtils.getContentBytesForPage(reader, page), resourcesDic);        
-        return renderListener.getResultantText();
     }
+    
+    /**
+     * Extract text from a specified page using the default strategy.
+     * <p><strong>Note:</strong> the default strategy is subject to change.  If using a specific strategy
+     * is important, use {@link PdfTextExtractor#getTextFromPage(PdfReader, int, TextExtractionStrategy)}
+     * @param reader the reader to extract text from
+     * @param pageNumber the page to extract text from
+     * @return the extracted text
+     * @throws IOException if any operation fails while reading from the provided PdfReader
+     */
+    public static String getTextFromPage(PdfReader reader, int pageNumber) throws IOException{
+        return getTextFromPage(reader, pageNumber, new LocationTextExtractionStrategy());
+        
+    }
+
 }

@@ -79,9 +79,5 @@ public interface RenderListener {
      */
     public void renderImage(ImageRenderInfo renderInfo);
 
-    /**
-     * Resets the internal state of the RenderListener
-     */
-    public void reset();
 
 }
