@@ -178,8 +178,7 @@ public class PdfContentReaderTool {
         out.flush();
         
         out.println("- - - - - Text Extraction - - - - - -");
-        PdfTextExtractor extractor = new PdfTextExtractor(reader, new LocationTextExtractionStrategy());
-        String extractedText = extractor.getTextFromPage(pageNum);
+        String extractedText = PdfTextExtractor.getTextFromPage(reader, pageNum, new LocationTextExtractionStrategy());
         if (extractedText.length() != 0)
             out.println(extractedText);
         else

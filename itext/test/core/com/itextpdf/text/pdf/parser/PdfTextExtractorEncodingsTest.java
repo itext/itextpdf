@@ -147,11 +147,10 @@ public class PdfTextExtractorEncodingsTest
     private void checkPdf(final byte[] pdfBytes) throws Exception {
 
       final PdfReader pdfReader = new PdfReader(pdfBytes);
-      final PdfTextExtractor textExtractor = new PdfTextExtractor(pdfReader);
       // Characters from http://unicode.org/charts/PDF/U0000.pdf
-      Assert.assertEquals(TEXT1, textExtractor.getTextFromPage(1));
+      Assert.assertEquals(TEXT1, PdfTextExtractor.getTextFromPage(pdfReader, 1));
       // Characters from http://unicode.org/charts/PDF/U0080.pdf
-      Assert.assertEquals(TEXT2, textExtractor.getTextFromPage(2));
+      Assert.assertEquals(TEXT2, PdfTextExtractor.getTextFromPage(pdfReader, 2));
     }
 
   }

@@ -48,14 +48,10 @@ public class TextMarginFinderTest {
         byte[] content = createPdf(rToDraw);
         //TestResourceUtils.openBytesAsPdf(content);
         
-        PdfReader r= new PdfReader(content);
         TextMarginFinder finder = new TextMarginFinder();
-        PdfDictionary pageDic = r.getPageN(1);
-        PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
-        finder.reset();
-        PdfContentStreamProcessor processor = new PdfContentStreamProcessor(finder);
-        processor.processContent(ContentByteUtils.getContentBytesForPage(r, 1), resourcesDic);
 
+        new PdfReaderContentParser(new PdfReader(content)).processContent(1, finder);
+        
         Assert.assertEquals(1.42f*72f, finder.getLlx(), 0.01f);
         Assert.assertEquals(7.42f*72f, finder.getUrx(), 0.01f);
         Assert.assertEquals(2.42f*72f, finder.getLly(), 0.01f);

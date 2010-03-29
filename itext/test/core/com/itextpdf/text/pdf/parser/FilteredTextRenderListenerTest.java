@@ -51,9 +51,7 @@ public class FilteredTextRenderListenerTest {
         
         FilteredTextRenderListener filterListener = new FilteredTextRenderListener(new LocationTextExtractionStrategy(), new RegionTextRenderFilter(rect) );
         
-        PdfTextExtractor e = new PdfTextExtractor(reader, filterListener);
-        
-        String extractedText = e.getTextFromPage(1);
+        String extractedText = PdfTextExtractor.getTextFromPage(reader, 1, filterListener);
         
         return extractedText.equals(text);
     }
