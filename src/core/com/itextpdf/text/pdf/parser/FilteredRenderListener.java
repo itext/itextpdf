@@ -107,12 +107,4 @@ public class FilteredRenderListener implements RenderListener {
         delegate.renderImage(renderInfo);
     }
 
-	/**
-	 * Sets the page number for the delegate.
-	 * @see com.itextpdf.text.pdf.parser.TextExtractionStrategy#setPageNumber(int)
-	 */
-	public void setPageNumber(int pagenumber) {
-		delegate.setPageNumber(pagenumber);
-	}
-
 }

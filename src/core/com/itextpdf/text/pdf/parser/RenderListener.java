@@ -79,10 +79,5 @@ public interface RenderListener {
      */
     public void renderImage(ImageRenderInfo renderInfo);
 
-    /**
-     * Sets the page number.
-     * @since 5.0.2
-     */
-    public void setPageNumber(int pagenumber);
 
 }

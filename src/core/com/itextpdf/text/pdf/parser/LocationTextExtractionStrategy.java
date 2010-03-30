@@ -77,12 +77,6 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     private final List<TextChunk> locationalResult = new ArrayList<TextChunk>();
 
     /**
-     * The current page number
-     * @since 5.0.2
-     */
-    private int pagenumber = 0;
-    
-    /**
      * Creates a new text extraction renderer.
      */
     public LocationTextExtractionStrategy() {
@@ -160,7 +154,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      */
     public void renderText(TextRenderInfo renderInfo) {
     	LineSegment segment = renderInfo.getBaseline();
-        TextChunk location = new TextChunk(pagenumber, renderInfo.getText(), segment.getStartPoint(), segment.getEndPoint(), renderInfo.getSingleSpaceWidth());
+        TextChunk location = new TextChunk(renderInfo.getText(), segment.getStartPoint(), segment.getEndPoint(), renderInfo.getSingleSpaceWidth());
         locationalResult.add(location);        
     }
     
@@ -170,8 +164,6 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      * Represents a chunk of text, it's orientation, and location relative to the orientation vector
      */
     private static class TextChunk implements Comparable<TextChunk>{
-        /** the text of the chunk */
-        final int pagenumber;
         /** the text of the chunk */
         final String text;
         /** the starting location of the chunk */
@@ -192,9 +184,8 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         /** the width of a single space character in the font of the chunk */
         final float charSpaceWidth;
         
-        public TextChunk(int pagenumber, String string, Vector startLocation, Vector endLocation, float charSpaceWidth) {
-            this.pagenumber = pagenumber;
-        	this.text = string;
+        public TextChunk(String string, Vector startLocation, Vector endLocation, float charSpaceWidth) {
+            this.text = string;
             this.startLocation = startLocation;
             this.endLocation = endLocation;
             this.charSpaceWidth = charSpaceWidth;
@@ -250,9 +241,6 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             if (this == rhs) return 0; // not really needed, but just in case
             
             int rslt;
-            rslt = compareInts(pagenumber, rhs.pagenumber);
-            if (rslt != 0) return rslt;
-            
             rslt = compareInts(orientationMagnitude, rhs.orientationMagnitude);
             if (rslt != 0) return rslt;
 
@@ -288,14 +276,6 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     public void renderImage(ImageRenderInfo renderInfo) {
         // do nothing
     }
-
-	/**
-	 * @see com.itextpdf.text.pdf.parser.TextExtractionStrategy#setPageNumber(int)
-	 * @since 5.0.2
-	 */
-	public void setPageNumber(int pagenumber) {
-		this.pagenumber = pagenumber;
-	}
 
 
 
