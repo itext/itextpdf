@@ -75,9 +75,9 @@ class PdfReaderInstance {
         return reader;
     }
 
-    PdfImportedPage getImportedPage(int pageNumber) {
-        if (!reader.isOpenedWithFullPermissions())
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
+    PdfImportedPage getImportedPage(int pageNumber) {        
+//        if (!reader.isOpenedWithFullPermissions())
+//            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
         if (pageNumber < 1 || pageNumber > reader.getNumberOfPages())
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.page.number.1", pageNumber));
         Integer i = new Integer(pageNumber);
