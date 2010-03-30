@@ -35,7 +35,7 @@ public class PdfReaderContentParser {
     public <E extends RenderListener> E processContent(int pageNumber, E renderListener) throws IOException{
         PdfDictionary pageDic = reader.getPageN(pageNumber);
         PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
-        
+        renderListener.setPageNumber(pageNumber);
         PdfContentStreamProcessor processor = new PdfContentStreamProcessor(renderListener);
         processor.processContent(ContentByteUtils.getContentBytesForPage(reader, pageNumber), resourcesDic);        
         return renderListener;

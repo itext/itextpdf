@@ -151,5 +151,13 @@ public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
         // do nothing - we aren't tracking images in this renderer
     }
 
+	/**
+	 * @see com.itextpdf.text.pdf.parser.TextExtractionStrategy#setPageNumber(int)
+	 * @since 5.0.2
+	 */
+	public void setPageNumber(int pagenumber) {
+		// do nothing - we aren't interested in page numbers in this strategy
+	}
+
 
 }
