@@ -83,15 +83,13 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     }
 
     /**
-     *
-     * @see com.itextpdf.text.pdf.parser.TextRenderListener#beginTextBlock()
+     * @see com.itextpdf.text.pdf.parser.RenderListener#beginTextBlock()
      */
     public void beginTextBlock(){
     }
 
     /**
-     *
-     * @see com.itextpdf.text.pdf.parser.TextRenderListener#endTextBlock()
+     * @see com.itextpdf.text.pdf.parser.RenderListener#endTextBlock()
      */
     public void endTextBlock(){
     }

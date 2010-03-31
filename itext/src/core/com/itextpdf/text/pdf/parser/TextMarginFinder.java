@@ -56,7 +56,6 @@ public class TextMarginFinder implements RenderListener {
 	 * Method invokes by the PdfContentStreamProcessor.
 	 * Passes a TextRenderInfo for every text chunk that is encountered.
 	 * We'll use this object to obtain coordinates.
-	 * @return TextRenderInfo object containing information about the text.
 	 * @see com.itextpdf.text.pdf.parser.RenderListener#renderText(com.itextpdf.text.pdf.parser.TextRenderInfo)
 	 */
 	public void renderText(TextRenderInfo renderInfo) {

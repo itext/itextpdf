@@ -60,6 +60,7 @@ public final class PdfTextExtractor {
      * @param strategy the strategy to use for extracting text
      * @return the extracted text
      * @throws IOException if any operation fails while reading from the provided PdfReader
+     * @since 5.0.2
      */
     public static String getTextFromPage(PdfReader reader, int pageNumber, TextExtractionStrategy strategy) throws IOException{
         PdfReaderContentParser parser = new PdfReaderContentParser(reader);
@@ -75,10 +76,10 @@ public final class PdfTextExtractor {
      * @param pageNumber the page to extract text from
      * @return the extracted text
      * @throws IOException if any operation fails while reading from the provided PdfReader
+     * @since 5.0.2
      */
     public static String getTextFromPage(PdfReader reader, int pageNumber) throws IOException{
         return getTextFromPage(reader, pageNumber, new LocationTextExtractionStrategy());
-        
     }
 
 }

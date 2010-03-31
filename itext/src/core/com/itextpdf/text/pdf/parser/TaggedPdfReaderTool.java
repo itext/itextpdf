@@ -71,10 +71,10 @@ public class TaggedPdfReaderTool {
 	/**
 	 * Parses a string with structured content.
 	 * 
-	 * @param filename
-	 *            the name of the PDF file
-	 * @param xml
-	 *            the name of the resulting xml file
+	 * @param reader
+	 *            the PdfReader that has access to the PDF file
+	 * @param os
+	 *            the OutputStream to which the resulting xml will be written
 	 */
 	public void convertToXml(PdfReader reader, OutputStream os)
 			throws IOException {

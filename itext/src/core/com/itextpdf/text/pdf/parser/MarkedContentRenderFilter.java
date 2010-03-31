@@ -54,7 +54,7 @@ public class MarkedContentRenderFilter extends RenderFilter {
 	
     /**
      * Constructs a filter
-     * @param mcidthe MCID to match
+     * @param mcid the MCID to match
      */
     public MarkedContentRenderFilter(int mcid) {
         this.mcid = mcid;
