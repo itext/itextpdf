@@ -83,6 +83,12 @@ import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
  */
 public class PdfReader implements PdfViewerPreferences {
 
+	/**
+	 * The iText developers are not responsible if you decide to change the
+	 * value of this static parameter.
+	 */
+	public static boolean unethicalreading = false;
+	
     static final PdfName pageInhCandidates[] = {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
     };
@@ -3563,7 +3569,7 @@ public class PdfReader implements PdfViewerPreferences {
      * <CODE>false</CODE> if the document was opened with the user password
      */
     public final boolean isOpenedWithFullPermissions() {
-        return !encrypted || ownerPasswordUsed;
+        return !encrypted || ownerPasswordUsed || unethicalreading;
     }
 
     public int getCryptoMode() {
