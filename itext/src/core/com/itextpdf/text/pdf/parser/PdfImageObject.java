@@ -50,13 +50,11 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
@@ -95,6 +93,15 @@ public class PdfImageObject {
 	}
 	
 	/**
+	 * Returns an entry from the image dictionary.
+	 * @param a key
+	 * @return the value
+	 */
+	public PdfObject get(PdfName key) {
+		return dictionary.get(key);
+	}
+	
+	/**
 	 * Returns the image dictionary.
 	 * @return the dictionary
 	 */
@@ -109,71 +116,15 @@ public class PdfImageObject {
 	public byte[] getStreamBytes() {
 		return streamBytes;
 	}
-
-	/**
-	 * Extracts the image to a file
-	 * @param filename the filename for the image without the extension
-	 * @throws IOException
-	 */
-	public void extractImage(String filename) throws IOException {
-		if (streamBytes == null)
-			throw new IOException(MessageLocalization.getComposedMessage("the.byte.array.is.not.a.recognized.imageformat"));
+	
+	public BufferedImage getAwtImage() throws IOException {
 		PdfName filter = dictionary.getAsName(PdfName.FILTER);
 		if (PdfName.DCTDECODE.equals(filter)) {
-			extractRaw(new FileOutputStream(filename + ".jpg"));
+			return ImageIO.read(new ByteArrayInputStream(streamBytes));
 		}
-		else if (PdfName.FLATEDECODE.equals(filter)) {
-			extractToImage(new FileOutputStream(filename + ".png"), "png");
+		if (!PdfName.FLATEDECODE.equals(filter)) {
+			return null;
 		}
-		else if (PdfName.JPXDECODE.equals(filter)) {
-			extractRaw(new FileOutputStream(filename + ".jp2"));
-		}
-		else {
-			// not supported yet
-		}
-	}
-	
-	/**
-	 * Writes the image to an OutputStream.
-	 * @param os the output stream
-	 * @throws IOException
-	 */
-	public void extractImage(OutputStream os) throws IOException {
-		if (streamBytes == null)
-			throw new IOException(MessageLocalization.getComposedMessage("the.byte.array.is.not.a.recognized.imageformat"));
-		PdfName filter = dictionary.getAsName(PdfName.FILTER);
-		if (PdfName.DCTDECODE.equals(filter)) {
-			extractRaw(os);
-		}
-		else if (PdfName.FLATEDECODE.equals(filter)) {
-			extractToImage(os, "png");
-		}
-		else if (PdfName.JPXDECODE.equals(filter)) {
-			extractRaw(os);
-		}
-		else {
-			// not supported yet
-		}
-	}
-	
-	/**
-	 * Writes the raw bytes to an OutputStream
-	 * @param os the OutputStream
-	 * @throws IOException
-	 */
-	protected void extractRaw(OutputStream os) throws IOException {
-		os.write(streamBytes);
-		os.flush();
-		os.close();
-	}
-	
-	/**
-	 * Writes the bytes to an image.
-	 * @param os the OutputStream
-	 * @param imagetype the image type, for instance "png"
-	 * @throws IOException
-	 */
-	protected void extractToImage(OutputStream os, String imagetype) throws IOException {
 		BufferedImage bi = null;
 		DataBuffer db = new DataBufferByte(streamBytes, streamBytes.length);
 		int width = dictionary.getAsNumber(PdfName.WIDTH).intValue();
@@ -218,8 +169,6 @@ public class PdfImageObject {
 				}
 			} 
 		}
-		if (bi != null) {
-			ImageIO.write(bi, imagetype, os);
-		}
+		return bi;
 	}
 }
