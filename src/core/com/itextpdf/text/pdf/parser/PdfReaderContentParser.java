@@ -14,6 +14,7 @@ import com.itextpdf.text.pdf.PdfReader;
 /**
  * A utility class that makes it cleaner to process content from pages of a PdfReader
  * through a specified RenderListener.
+ * @since 5.0.2
  */
 public class PdfReaderContentParser {
     /** the reader this parser will process */
