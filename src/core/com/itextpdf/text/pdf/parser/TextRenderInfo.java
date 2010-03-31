@@ -73,7 +73,7 @@ public class TextRenderInfo {
      * @param text the text that should be displayed
      * @param gs the graphics state (note: at this time, this is not immutable, so don't cache it)
      * @param textMatrix the text matrix at the time of the render operation
-     * @param mcid the id of the marked content sequence, if any
+     * @param markedContentInfo the marked content sequence, if available
      */
     TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix, Collection<MarkedContentInfo> markedContentInfo) {
         this.text = text;

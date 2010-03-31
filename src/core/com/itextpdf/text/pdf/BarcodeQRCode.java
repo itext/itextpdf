@@ -58,6 +58,7 @@ import java.util.Map;
 /**
  * A QRCode implementation based on the zxing code.
  * @author Paulo Soares
+ * @since 5.0.2
  */
 public class BarcodeQRCode {
     ByteMatrix bm;

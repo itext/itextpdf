@@ -21,7 +21,6 @@ package com.itextpdf.text.pdf.qrcode;
  * error correction level.</p>
  *
  * @author Sean Owen
- * @see DataMask
  * @see ErrorCorrectionLevel
  */
 final class FormatInformation {
