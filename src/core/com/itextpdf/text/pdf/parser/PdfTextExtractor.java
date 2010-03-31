@@ -53,6 +53,12 @@ import com.itextpdf.text.pdf.PdfReader;
  */
 public final class PdfTextExtractor {
 
+	/**
+	 * This class only contains static methods.
+	 */
+	private PdfTextExtractor()  {
+	}
+	
     /**
      * Extract text from a specified page using an extraction strategy.
      * @param reader the reader to extract text from

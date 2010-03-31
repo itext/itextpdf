@@ -86,6 +86,7 @@ public class PdfReader implements PdfViewerPreferences {
 	/**
 	 * The iText developers are not responsible if you decide to change the
 	 * value of this static parameter.
+	 * @since 5.0.2
 	 */
 	public static boolean unethicalreading = false;
 	
