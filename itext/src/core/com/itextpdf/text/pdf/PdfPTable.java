@@ -529,6 +529,20 @@ public class PdfPTable implements LargeElement{
     }
 
     /**
+     * Added by timmo3.  This will return the correct cell taking it's cellspan into account
+     */
+    PdfPCell cellAt(int row, int col) {
+        PdfPCell[] cells = rows.get(row).getCells();
+        for (int i = 0; i < cells.length; i++) {
+            if (cells[i] != null) {
+                if (col >= i && col < (i + cells[i].getColspan())) {
+                    return cells[i];
+                }
+            }
+        }
+        return null;
+    }
+    /**
      * Checks if there are rows above belonging to a rowspan.
      * @param	currRow	the current row to check
      * @param	currCol	the current column to check
@@ -544,23 +558,15 @@ public class PdfPTable implements LargeElement{
     	PdfPRow aboveRow = rows.get(row);
     	if (aboveRow == null)
     		return false;
-    	PdfPCell aboveCell = aboveRow.getCells()[currCol];
+    	PdfPCell aboveCell = cellAt(row, currCol);
     	while (aboveCell == null && row > 0) {
     		aboveRow  = rows.get(--row);
     		if (aboveRow == null)
     			return false;
-    		aboveCell = aboveRow.getCells()[currCol];
+    		aboveCell = cellAt(row, currCol);
     	}
 
     	int distance = currRow - row;
-
-    	if (aboveCell == null) {
-        	int col = currCol - 1;
-        	aboveCell = aboveRow.getCells()[col];
-        	while (aboveCell == null && col > 0)
-        		aboveCell = aboveRow.getCells()[--col];
-        	return aboveCell != null && aboveCell.getRowspan() > distance;
-    	}
 
     	if (aboveCell.getRowspan() == 1 && distance > 1) {
         	int col = currCol - 1;
