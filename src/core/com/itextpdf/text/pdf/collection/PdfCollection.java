@@ -55,6 +55,8 @@ public class PdfCollection extends PdfDictionary {
 	public static final int TILE = 1;
 	/** A type of PDF Collection */
 	public static final int HIDDEN = 2;
+	/** A type of PDF Collection */
+	public static final int CUSTOM = 3;
 	
 	/**
 	 * Constructs a PDF Collection.
@@ -68,6 +70,9 @@ public class PdfCollection extends PdfDictionary {
 			break;
 		case HIDDEN:
 			put(PdfName.VIEW, PdfName.H);
+			break;
+		case CUSTOM:
+			put(PdfName.VIEW, PdfName.C);
 			break;
 		default:
 			put(PdfName.VIEW, PdfName.D);
