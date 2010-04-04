@@ -45,6 +45,7 @@ package com.itextpdf.text.html;
 
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.HashMap;
 import com.itextpdf.text.BaseColor;
 
 /**
@@ -268,6 +269,18 @@ public class Markup {
      */
 	public static final float DEFAULT_FONT_SIZE = 12f;
 
+    private static HashMap<String,Float> sizes = new HashMap<String,Float>();
+
+    static {
+        sizes.put("xx-small", new Float(4));
+        sizes.put("x-small", new Float(6));
+        sizes.put("small", new Float(8));
+        sizes.put("medium", new Float(10));
+        sizes.put("large", new Float(13));
+        sizes.put("x-large", new Float(18));
+        sizes.put("xx-large", new Float(26));
+    }
+
 	/**
 	 * Parses a length.
 	 * 
@@ -278,57 +291,7 @@ public class Markup {
 	 */
 
 	public static float parseLength(String string) {
-		// TODO: Evaluate the effect of this.
-		// It may change the default behavour of the methd if this is changed.
-		// return parseLength(string, Markup.DEFAULT_FONT_SIZE);
-		int pos = 0;
-		int length = string.length();
-		boolean ok = true;
-		while (ok && pos < length) {
-			switch (string.charAt(pos)) {
-			case '+':
-			case '-':
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			case '8':
-			case '9':
-			case '.':
-				pos++;
-				break;
-			default:
-				ok = false;
-			}
-		}
-		if (pos == 0)
-			return 0f;
-		if (pos == length)
-			return Float.parseFloat(string + "f");
-		float f = Float.parseFloat(string.substring(0, pos) + "f");
-		string = string.substring(pos);
-		// inches
-		if (string.startsWith("in")) {
-			return f * 72f;
-		}
-		// centimeters
-		if (string.startsWith("cm")) {
-			return (f / 2.54f) * 72f;
-		}
-		// millimeters
-		if (string.startsWith("mm")) {
-			return (f / 25.4f) * 72f;
-		}
-		// picas
-		if (string.startsWith("pc")) {
-			return f * 12f;
-		}
-		// default: we assume the length was measured in points
-		return f;
+		return parseLength(string, Markup.DEFAULT_FONT_SIZE);
 	}
 
 	/**
@@ -339,6 +302,9 @@ public class Markup {
 	public static float parseLength(String string, float actualFontSize) {
 		if (string == null)
 			return 0f;
+        Float fl = sizes.get(string.toLowerCase());
+        if (fl != null)
+            return fl.floatValue();
 		int pos = 0;
 		int length = string.length();
 		boolean ok = true;
