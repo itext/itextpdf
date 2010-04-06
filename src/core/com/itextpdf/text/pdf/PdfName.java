@@ -1180,6 +1180,16 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName PO = new PdfName("PO");
+    /**
+     * A name.
+     * @since 5.0.2
+     */
+    public static final PdfName POLYGON = new PdfName("Polygon");
+    /**
+     * A name.
+     * @since 5.0.2
+     */
+    public static final PdfName POLYLINE = new PdfName("Polyline");
     /** A name */
     public static final PdfName POPUP = new PdfName("Popup");
     /**
@@ -1667,6 +1677,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName VERISIGN_PPKVS = new PdfName("VeriSign.PPKVS");
     /** A name */
 	public static final PdfName VERSION = new PdfName("Version");
+    /**
+     * A name.
+     * @since 5.0.2
+     */
+    public static final PdfName VERTICES = new PdfName("Vertices");
     /**
      * A name.
      * @since 2.1.6
