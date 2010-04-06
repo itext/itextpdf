@@ -171,6 +171,16 @@ public abstract class BaseFont {
      * The recommended vertical offset from the baseline for superscripts for this font.
      */
     public static final int SUPERSCRIPT_OFFSET = 20;
+    /**
+     * The weight class of the font, as defined by the font author
+     * @since 5.0.2
+     */
+    public static final int WEIGHT_CLASS = 21;
+    /**
+     * The width class of the font, as defined by the font author
+     * @since 5.0.2
+     */
+    public static final int WIDTH_CLASS = 22;
     /** The font is Type 1.
      */
     public static final int FONT_TYPE_T1 = 0;
