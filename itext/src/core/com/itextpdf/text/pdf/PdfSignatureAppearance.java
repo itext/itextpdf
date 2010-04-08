@@ -86,11 +86,11 @@ public class PdfSignatureAppearance {
          */
         DESCRIPTION,
         /**
-         * The rendering mode is the name of the signer and the description, should be used with Acrobat 6 layer type.
+         * The rendering mode is the name of the signer and the description.
          */
         NAME_AND_DESCRIPTION,
         /**
-         * The rendering mode is an image and the description, should be used with Acrobat 6 layer type.
+         * The rendering mode is an image and the description.
          */
         GRAPHIC_AND_DESCRIPTION,
         /**
@@ -189,9 +189,10 @@ public class PdfSignatureAppearance {
     }
 
     /**
-     * Sets the Image object to render when Render is set to <CODE>SignatureRenderGraphicAndDescription</CODE>
+     * Sets the Image object to render when Render is set to <CODE>RenderingMode.GRAPHIC</CODE>
+     * or <CODE>RenderingMode.GRAPHIC_AND_DESCRIPTION</CODE>.
      * @param signatureGraphic image rendered. If <CODE>null</CODE> the mode is defaulted
-     * to <CODE>SignatureRenderDescription</CODE>
+     * to <CODE>RenderingMode.DESCRIPTION</CODE>
      */
     public void setSignatureGraphic(Image signatureGraphic) {
         this.signatureGraphic = signatureGraphic;
