@@ -148,8 +148,6 @@ public class PdfLine {
         // we split the chunk to be added
         PdfChunk overflow = chunk.split(width);
         newlineSplit = chunk.isNewlineSplit() || overflow == null;
-        //        if (chunk.isNewlineSplit() && alignment == Element.ALIGN_JUSTIFIED)
-        //            alignment = Element.ALIGN_LEFT;
         if (chunk.isTab()) {
         	Object[] tab = (Object[])chunk.getAttribute(Chunk.TAB);
     		float tabPosition = ((Float)tab[1]).floatValue();
@@ -248,7 +246,7 @@ public class PdfLine {
                     return left;
             }
         }
-        else if (this.getSeparatorCount() == 0) {
+        else if (this.getSeparatorCount() <= 0) {
             switch (alignment) {
                 case Element.ALIGN_RIGHT:
                     return left + width;
@@ -465,6 +463,7 @@ public class PdfLine {
 
     /**
      * Gets the number of separators in the line.
+     * Returns -1 if there's a tab in the line.
      * @return	the number of separators in the line
      * @since	2.1.2
      */
@@ -474,7 +473,7 @@ public class PdfLine {
         for (Object element : line) {
         	ck = (PdfChunk)element;
         	if (ck.isTab()) {
-        		return 0;
+        		return -1;
         	}
         	if (ck.isHorizontalSeparator()) {
         		s++;
