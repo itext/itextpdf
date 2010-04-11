@@ -483,7 +483,7 @@ public class PdfAnnotation extends PdfDictionary {
      * @param vertices an array with the vertices of the polygon or -line
      * @since 5.0.2
      */
-    public static PdfAnnotation CreatePolygonPolyline(
+    public static PdfAnnotation createPolygonPolyline(
         PdfWriter writer, Rectangle rect, String contents, boolean polygon, PdfArray vertices) {
     	PdfAnnotation annot = new PdfAnnotation(writer, rect);
     	if (polygon)
