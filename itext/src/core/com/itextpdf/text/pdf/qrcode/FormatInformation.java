@@ -22,6 +22,7 @@ package com.itextpdf.text.pdf.qrcode;
  *
  * @author Sean Owen
  * @see ErrorCorrectionLevel
+ * @since 5.0.2
  */
 final class FormatInformation {
 

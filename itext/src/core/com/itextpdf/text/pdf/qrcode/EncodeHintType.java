@@ -20,6 +20,7 @@ package com.itextpdf.text.pdf.qrcode;
  * These are a set of hints that you may pass to Writers to specify their behavior.
  *
  * @author dswitkin@google.com (Daniel Switkin)
+ * @since 5.0.2
  */
 public final class EncodeHintType {
 

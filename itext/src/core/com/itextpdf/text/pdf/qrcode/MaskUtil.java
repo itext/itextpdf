@@ -19,6 +19,7 @@ package com.itextpdf.text.pdf.qrcode;
 /**
  * @author satorux@google.com (Satoru Takabayashi) - creator
  * @author dswitkin@google.com (Daniel Switkin) - ported from C++
+ * @since 5.0.2
  */
 public final class MaskUtil {
 

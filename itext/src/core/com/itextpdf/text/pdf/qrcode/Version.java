@@ -20,6 +20,7 @@ package com.itextpdf.text.pdf.qrcode;
  * See ISO 18004:2006 Annex D
  *
  * @author Sean Owen
+ * @since 5.0.2
  */
 public final class Version {
 

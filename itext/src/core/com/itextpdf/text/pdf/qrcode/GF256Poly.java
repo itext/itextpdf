@@ -24,6 +24,7 @@ package com.itextpdf.text.pdf.qrcode;
  * port of his C++ Reed-Solomon implementation.</p>
  *
  * @author Sean Owen
+ * @since 5.0.2
  */
 final class GF256Poly {
 

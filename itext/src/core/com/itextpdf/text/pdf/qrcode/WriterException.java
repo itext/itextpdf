@@ -21,15 +21,21 @@ package com.itextpdf.text.pdf.qrcode;
  * the Writer framework.
  *
  * @author dswitkin@google.com (Daniel Switkin)
+ * @since 5.0.2
  */
 public final class WriterException extends Exception {
 
-  public WriterException() {
-    super();
-  }
-
-  public WriterException(String message) {
-    super(message);
-  }
+	/**
+	 * A serial version UID.
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public WriterException() {
+		super();
+	}
+	
+	public WriterException(String message) {
+		super(message);
+	}
 
 }

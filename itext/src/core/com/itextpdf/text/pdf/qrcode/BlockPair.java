@@ -15,7 +15,9 @@
  */
 
 package com.itextpdf.text.pdf.qrcode;
-
+/**
+ * @since 5.0.2
+ */
 final class BlockPair {
 
   private final ByteArray dataBytes;

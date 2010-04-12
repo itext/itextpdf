@@ -25,6 +25,7 @@ package com.itextpdf.text.pdf.qrcode;
  * Only the bottom 8 bits are really used.</p>
  *
  * @author Sean Owen
+ * @since 5.0.2
  */
 public final class GF256 {
 

@@ -30,6 +30,7 @@ package com.itextpdf.text.pdf.qrcode;
  *
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
+ * @since 5.0.2
  */
 public final class BitMatrix {
 

@@ -24,6 +24,7 @@ package com.itextpdf.text.pdf.qrcode;
  * -1, 0, and 1, I'm going to use less memory and go with bytes.
  *
  * @author dswitkin@google.com (Daniel Switkin)
+ * @since 5.0.2
  */
 public final class ByteMatrix {
 
