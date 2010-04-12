@@ -21,6 +21,7 @@ package com.itextpdf.text.pdf.qrcode;
  * data can be encoded to bits in the QR code standard.</p>
  *
  * @author Sean Owen
+ * @since 5.0.2
  */
 public final class Mode {
 

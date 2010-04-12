@@ -23,6 +23,7 @@ import java.util.Map;
  * This object renders a QR Code as a ByteMatrix 2D array of greyscale values.
  *
  * @author dswitkin@google.com (Daniel Switkin)
+ * @since 5.0.2
  */
 public final class QRCodeWriter {
 

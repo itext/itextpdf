@@ -94,7 +94,7 @@ public class PdfImageObject {
 	
 	/**
 	 * Returns an entry from the image dictionary.
-	 * @param a key
+	 * @param key a key
 	 * @return the value
 	 */
 	public PdfObject get(PdfName key) {

@@ -20,6 +20,7 @@ package com.itextpdf.text.pdf.qrcode;
  * This class implements an array of unsigned bytes.
  *
  * @author dswitkin@google.com (Daniel Switkin)
+ * @since 5.0.2
  */
 public final class ByteArray {
 

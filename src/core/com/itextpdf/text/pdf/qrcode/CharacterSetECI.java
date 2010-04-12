@@ -23,6 +23,7 @@ import java.util.HashMap;
  * of ISO 18004.
  *
  * @author Sean Owen
+ * @since 5.0.2
  */
 public final class CharacterSetECI {
 

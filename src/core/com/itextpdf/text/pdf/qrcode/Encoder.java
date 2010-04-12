@@ -23,6 +23,7 @@ import java.util.ArrayList;
 /**
  * @author satorux@google.com (Satoru Takabayashi) - creator
  * @author dswitkin@google.com (Daniel Switkin) - ported from C++
+ * @since 5.0.2
  */
 public final class Encoder {
 

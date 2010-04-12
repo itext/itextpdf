@@ -23,6 +23,7 @@ import java.util.ArrayList;
  *
  * @author Sean Owen
  * @author William Rucklidge
+ * @since 5.0.2
  */
 public final class ReedSolomonEncoder {
 

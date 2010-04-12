@@ -20,6 +20,7 @@ package com.itextpdf.text.pdf.qrcode;
  * <p>A simple, fast array of bits, represented compactly by an array of ints internally.</p>
  *
  * @author Sean Owen
+ * @since 5.0.2
  */
 public final class BitArray {
 
