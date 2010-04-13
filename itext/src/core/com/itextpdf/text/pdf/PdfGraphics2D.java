@@ -149,7 +149,7 @@ public class PdfGraphics2D extends Graphics2D {
 
     private boolean kid = false;
 
-    private Graphics2D dg2 = new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB).createGraphics();
+    private Graphics2D dg2;
 
     private boolean onlyShapes = false;
 
@@ -162,8 +162,8 @@ public class PdfGraphics2D extends Graphics2D {
     // Added by Jurij Bilas
     protected boolean underline;          // indicates if the font style is underlined
 
-    protected PdfGState fillGState[] = new PdfGState[256];
-    protected PdfGState strokeGState[] = new PdfGState[256];
+    protected PdfGState fillGState[];
+    protected PdfGState strokeGState[];
     protected int currentFillGState = 255;
     protected int currentStrokeGState = 255;
 
@@ -180,11 +180,23 @@ public class PdfGraphics2D extends Graphics2D {
 
 	// Added by Alexej Suchov
 	private Paint realPaint;
-
+	
+	/**
+	 * Method that creates a Graphics2D object.
+	 * Contributed by Peter Harvey: he moved code from the constructor to a separate method
+	 * @since 5.0.2
+	 */
+	private Graphics2D getDG2() {
+		if (dg2 == null) {
+			dg2 = new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB).createGraphics();		
+			dg2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+			setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+			setRenderingHint(HyperLinkKey.KEY_INSTANCE, HyperLinkKey.VALUE_HYPERLINKKEY_OFF);
+		}
+		return dg2;
+	}
+	
     private PdfGraphics2D() {
-        dg2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        setRenderingHint(HyperLinkKey.KEY_INSTANCE, HyperLinkKey.VALUE_HYPERLINKKEY_OFF);
     }
 
     /**
@@ -193,9 +205,8 @@ public class PdfGraphics2D extends Graphics2D {
      */
     PdfGraphics2D(PdfContentByte cb, float width, float height, FontMapper fontMapper, boolean onlyShapes, boolean convertImagesToJPEG, float quality) {
         super();
-        dg2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        setRenderingHint(HyperLinkKey.KEY_INSTANCE, HyperLinkKey.VALUE_HYPERLINKKEY_OFF);
+        this.fillGState = new PdfGState[256];
+        this.strokeGState = new PdfGState[256];
         this.convertImagesToJPEG = convertImagesToJPEG;
         this.jpegQuality = quality;
         this.onlyShapes = onlyShapes;
@@ -589,7 +600,7 @@ public class PdfGraphics2D extends Graphics2D {
      */
     @Override
     public GraphicsConfiguration getDeviceConfiguration() {
-        return dg2.getDeviceConfiguration();
+        return getDG2().getDeviceConfiguration();
     }
 
     /**
@@ -1058,7 +1069,7 @@ public class PdfGraphics2D extends Graphics2D {
      */
     @Override
     public FontMetrics getFontMetrics(Font f) {
-        return dg2.getFontMetrics(f);
+        return getDG2().getFontMetrics(f);
     }
 
     /**
@@ -1356,8 +1367,10 @@ public class PdfGraphics2D extends Graphics2D {
             disposeCalled = true;
             cb.restoreState();
             cb.restoreState();
-            dg2.dispose();
-            dg2 = null;
+            if (dg2 != null) {
+            	dg2.dispose();
+            	dg2 = null;
+            }
             if (kids != null) {
                 ByteBuffer buf = new ByteBuffer();
                 internalDispose(buf);
@@ -1379,8 +1392,10 @@ public class PdfGraphics2D extends Graphics2D {
                 g2.cb.restoreState();
                 g2.cb.restoreState();
                 buf.append(buf2.getBuffer(), last, pos - last);
-                g2.dg2.dispose();
-                g2.dg2 = null;
+                if (g2.dg2 != null) {
+                	g2.dg2.dispose();
+                	g2.dg2 = null;
+                }
                 g2.internalDispose(buf);
                 last = pos;
             }
@@ -1419,9 +1434,19 @@ public class PdfGraphics2D extends Graphics2D {
         else
             points = s.getPathIterator(transform);
         float[] coords = new float[6];
+        double[] dcoords = new double[6];
         while(!points.isDone()) {
             ++traces;
-            int segtype = points.currentSegment(coords);
+            // Added by Peter Harvey (start)
+            int segtype = points.currentSegment(dcoords);
+            int numpoints = (segtype == PathIterator.SEG_CLOSE ? 0
+            		: (segtype == PathIterator.SEG_QUADTO ? 2
+            				: (segtype == PathIterator.SEG_CUBICTO ? 3
+            						: 1)));
+            for (int i = 0; i < numpoints * 2; i++) {
+            	coords[i] = (float) dcoords[i];
+            }
+            // Added by Peter Harvey (end)
             normalizeY(coords);
             switch(segtype) {
                 case PathIterator.SEG_CLOSE:

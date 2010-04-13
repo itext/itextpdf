@@ -171,6 +171,16 @@ public abstract class BaseFont {
      * The recommended vertical offset from the baseline for superscripts for this font.
      */
     public static final int SUPERSCRIPT_OFFSET = 20;
+    /**
+     * The weight class of the font, as defined by the font author
+     * @since 5.0.2
+     */
+    public static final int WEIGHT_CLASS = 21;
+    /**
+     * The width class of the font, as defined by the font author
+     * @since 5.0.2
+     */
+    public static final int WIDTH_CLASS = 22;
     /** The font is Type 1.
      */
     public static final int FONT_TYPE_T1 = 0;
@@ -1428,13 +1438,15 @@ public abstract class BaseFont {
         ++level;
         if (level > 50) // in case we have an endless loop
             return;
+        if (page == null)
+            return;
         PdfDictionary resources = page.getAsDict(PdfName.RESOURCES);
         if (resources == null)
             return;
         PdfDictionary font = resources.getAsDict(PdfName.FONT);
         if (font != null) {
-            for (Object element : font.getKeys()) {
-                PdfObject ft = font.get((PdfName)element);
+            for (PdfName key : font.getKeys()) {
+                PdfObject ft = font.get(key);
                 if (ft == null || !ft.isIndirect())
                     continue;
                 int hit = ((PRIndirectReference)ft).getNumber();
@@ -1445,8 +1457,10 @@ public abstract class BaseFont {
         }
         PdfDictionary xobj = resources.getAsDict(PdfName.XOBJECT);
         if (xobj != null) {
-            for (Object element : xobj.getKeys()) {
-                recourseFonts(xobj.getAsDict((PdfName)element), hits, fonts, level);
+            for (PdfName key : xobj.getKeys()) {
+                PdfObject po = xobj.getDirectObject(key);
+                if (po instanceof PdfDictionary)
+                    recourseFonts((PdfDictionary)po, hits, fonts, level);
             }
         }
     }

@@ -43,26 +43,31 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PRStream;
+import com.itextpdf.text.pdf.PdfIndirectReference;
+import com.itextpdf.text.pdf.PdfReader;
 
 /**
  * @author kevin
  * @since 5.0.1
  */
 public class ImageRenderInfo {
-    private final PdfObject xobject;
     private final Matrix ctm;
+    private final PdfIndirectReference ref;
     
-    public ImageRenderInfo(PdfObject xobject, Matrix ctm) {
-        this.xobject = xobject;
+    public ImageRenderInfo(Matrix ctm, PdfIndirectReference ref) {
         this.ctm = ctm;
+        this.ref = ref;
     }
-
+    
     /**
-     * @return the XObject itself
+     * Gets an object containing the image dictionary and bytes.
+     * @return an object containing the image dictionary and byte[]
+     * @since 5.0.2
      */
-    public PdfObject getXObject(){
-        return xobject;
+    public PdfImageObject getImage() {
+		PRStream stream = (PRStream)PdfReader.getPdfObject(ref);
+		return new PdfImageObject(stream);
     }
     
     /**
@@ -71,6 +76,12 @@ public class ImageRenderInfo {
     public Vector getStartPoint(){ 
         return new Vector(0, 0, 1).cross(ctm); 
     }
-    
 
+    /**
+     * @return an indirect reference to the image
+     * @since 5.0.2
+     */
+    public PdfIndirectReference getRef() {
+    	return ref;
+    }
 }

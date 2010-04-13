@@ -57,7 +57,7 @@ import com.itextpdf.text.pdf.AcroFields.Item;
  * @author Paulo Soares
  */
 public class FdfWriter {
-    private static final byte[] HEADER_FDF = DocWriter.getISOBytes("%FDF-1.2\n%\u00e2\u00e3\u00cf\u00d3\n");
+    private static final byte[] HEADER_FDF = DocWriter.getISOBytes("%FDF-1.4\n%\u00e2\u00e3\u00cf\u00d3\n");
     HashMap<String, Object> fields = new HashMap<String, Object>();
 
     /** The PDF file associated with the FDF. */

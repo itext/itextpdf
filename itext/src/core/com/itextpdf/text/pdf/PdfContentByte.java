@@ -249,7 +249,7 @@ public class PdfContentByte {
     // methods to add graphical content
 
     /**
-     * Adds the content of another <CODE>PdfContent</CODE>-object to this object.
+     * Adds the content of another <CODE>PdfContentByte</CODE>-object to this object.
      *
      * @param       other       another <CODE>PdfByteContent</CODE>-object
      */
@@ -2518,8 +2518,7 @@ public class PdfContentByte {
         content.append("[");
         ArrayList<Object> arrayList = text.getArrayList();
         boolean lastWasNumber = false;
-        for (int k = 0; k < arrayList.size(); ++k) {
-            Object obj = arrayList.get(k);
+        for (Object obj : arrayList) {
             if (obj instanceof String) {
                 showText2((String)obj);
                 lastWasNumber = false;

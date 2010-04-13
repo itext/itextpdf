@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 import com.itextpdf.text.pdf.PdfReader;
 
@@ -127,10 +128,18 @@ public final class TestResourceUtils {
         outputStream.write(bytes);
         outputStream.close();
         System.out.println("PDF dumped to " + file.getAbsolutePath() + " by the following calls:");
+        dumpCurrentStackTrace(System.out);
+    }     
+
+    /**
+     * Used to track down which tests are still doing things that should really be done only in development
+     * @param out
+     */
+    private static void dumpCurrentStackTrace(PrintStream out){
         for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
             System.out.println("\t" + e);
         }
-    }     
+    }
     
     /**
      * Opens the specified bytes using the PDF handler of the workstation.
@@ -153,6 +162,10 @@ public final class TestResourceUtils {
                 Thread.sleep(500); // give it time to launch before test ends and file gets deleted
             } catch (InterruptedException e) {
             } 
+            
+            System.out.println("PDF opened for viewing by the following calls: ");
+            dumpCurrentStackTrace(System.out);
+
         } else {
             System.err.println("openBytesAsPdf not supported on platform " + osName);
         }

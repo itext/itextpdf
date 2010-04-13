@@ -474,6 +474,27 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
 
+    /**
+     * Creates a polygon or -line annotation
+     * @param writer the PdfWriter
+     * @param rect the annotation position
+     * @param contents the textual content of the annotation
+     * @param polygon if true, the we're creating a polygon annotation, if false, a polyline
+     * @param vertices an array with the vertices of the polygon or -line
+     * @since 5.0.2
+     */
+    public static PdfAnnotation createPolygonPolyline(
+        PdfWriter writer, Rectangle rect, String contents, boolean polygon, PdfArray vertices) {
+    	PdfAnnotation annot = new PdfAnnotation(writer, rect);
+    	if (polygon)
+    		annot.put(PdfName.SUBTYPE, PdfName.POLYGON);
+    	else
+    		annot.put(PdfName.SUBTYPE, PdfName.POLYLINE);
+    	annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
+    	annot.put(PdfName.VERTICES, new PdfArray(vertices));
+        return annot;
+    }
+    
     public void setDefaultAppearanceString(PdfContentByte cb) {
         byte b[] = cb.getInternalBuffer().toByteArray();
         int len = b.length;

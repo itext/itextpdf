@@ -75,7 +75,10 @@ public class PdfImage extends PdfStream {
     
     public PdfImage(Image image, String name, PdfIndirectReference maskRef) throws BadPdfFormatException {
         super();
-        this.name = new PdfName(name);
+        if (name == null) 
+        	generateImgResName( image );
+        else
+        	this.name = new PdfName(name);
         put(PdfName.TYPE, PdfName.XOBJECT);
         put(PdfName.SUBTYPE, PdfName.IMAGE);
         put(PdfName.WIDTH, new PdfNumber(image.getWidth()));
@@ -285,5 +288,14 @@ public class PdfImage extends PdfStream {
         streamBytes = dup.streamBytes;
         bytes = dup.bytes;
         hashMap = dup.hashMap;
+    }
+    
+    /**
+     * Called when no resource name is provided in our constructor.  This generates a 
+     * name that is required to be unique within a given resource dictionary.
+     * @since 5.0.1
+     */
+    private void generateImgResName( Image img ) {
+    	name = new PdfName( "img" + Long.toHexString( img.getMySerialId() ) );
     }
 }

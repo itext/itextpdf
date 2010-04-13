@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 
 /**
@@ -53,13 +53,13 @@ import java.awt.Rectangle;
 public class RegionTextRenderFilter extends RenderFilter {
 
     /** the region to allow text from */
-    private final Rectangle filterRect;
+    private final Rectangle2D filterRect;
     
     /**
      * Constructs a filter
      * @param filterRect the rectangle to filter text against.  Note that this is a java.awt.Rectangle !
      */
-    public RegionTextRenderFilter(Rectangle filterRect) {
+    public RegionTextRenderFilter(Rectangle2D filterRect) {
         this.filterRect = filterRect;
     }
 
@@ -67,8 +67,9 @@ public class RegionTextRenderFilter extends RenderFilter {
      * @see com.itextpdf.text.pdf.parser.RenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
      */
     public boolean allowText(TextRenderInfo renderInfo){
-        Vector startPoint = renderInfo.getStartPoint();
-        Vector endPoint = renderInfo.getEndPoint();
+    	LineSegment segment = renderInfo.getBaseline();
+        Vector startPoint = segment.getStartPoint();
+        Vector endPoint = segment.getEndPoint();
         
         float x1 = startPoint.get(Vector.I1);
         float y1 = startPoint.get(Vector.I2);

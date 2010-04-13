@@ -228,6 +228,15 @@ public class PdfDictionary extends PdfObject {
     }
 
     /**
+     * Removes all the <CODE>PdfObject</CODE>s and its <VAR>key</VAR>s from the
+     * <CODE>PdfDictionary</CODE>.
+     * @since 5.0.2
+     */
+    public void clear() {
+        hashMap.clear();
+    }
+
+    /**
      * Returns the <CODE>PdfObject</CODE> associated to the specified
      * <VAR>key</VAR>.
      *

@@ -1,5 +1,5 @@
 /*
- * $Id: Chapter.java 3373 2008-05-12 16:21:24Z xlv $
+ * $Id: GraphicsState.java 4113 2009-12-01 11:08:59Z blowagie $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -44,12 +44,28 @@
 package com.itextpdf.text.pdf.parser;
 
 /**
- * Defines an interface for {@link RenderListener}s that can return text
+ * A {@link RenderFilter} that only allows text within a specified marked content sequence.
+ * @since 5.0.2
  */
-public interface TextProvidingRenderListener extends RenderListener {
+public class MarkedContentRenderFilter extends RenderFilter {
+    
+	/** The MCID to match. */
+	private int mcid;
+	
     /**
-     * Returns the result so far.
-     * @return  a String with the resulting text.
+     * Constructs a filter
+     * @param mcid the MCID to match
      */
-    public String getResultantText();
+    public MarkedContentRenderFilter(int mcid) {
+        this.mcid = mcid;
+    }
+
+    /** 
+     * @see com.itextpdf.text.pdf.parser.RenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
+     */
+    public boolean allowText(TextRenderInfo renderInfo){
+        return renderInfo.hasMcid(mcid);
+    }
+
+
 }

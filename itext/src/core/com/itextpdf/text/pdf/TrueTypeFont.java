@@ -1421,6 +1421,10 @@ class TrueTypeFont extends BaseFont {
                 return os_2.ySuperscriptYSize * fontSize / head.unitsPerEm;
             case SUPERSCRIPT_OFFSET:
                 return os_2.ySuperscriptYOffset * fontSize / head.unitsPerEm;
+            case WEIGHT_CLASS:
+                return os_2.usWeightClass;
+            case WIDTH_CLASS:
+                return os_2.usWidthClass;
         }
         return 0;
     }

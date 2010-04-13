@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfStream;
 
 /**
@@ -50,5 +51,5 @@ import com.itextpdf.text.pdf.PdfStream;
  * @since iText 5.0.1
  */
 public interface XObjectDoHandler {
-    public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream);
+    public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref);
 }

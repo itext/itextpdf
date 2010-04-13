@@ -56,6 +56,7 @@ import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStream;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
@@ -109,6 +110,41 @@ public class PdfContentReaderTool {
     }
 
     /**
+     * Displays a summary of the entries in the XObject dictionary for the stream
+     * @param resourceDic the resource dictionary for the stream
+     * @return a string with the summary of the entries
+     * @throws IOException
+     * @since 5.0.2
+     */
+    static public String getXObjectDetail(PdfDictionary resourceDic) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        
+        PdfDictionary xobjects = resourceDic.getAsDict(PdfName.XOBJECT);
+        if (xobjects == null)
+        	return "No XObjects";
+        for (PdfName entryName : xobjects.getKeys()) {
+            PdfStream xobjectStream = xobjects.getAsStream(entryName);
+            
+            sb.append("------ " + entryName + " - subtype = " + xobjectStream.get(PdfName.SUBTYPE) + " = " + xobjectStream.getAsNumber(PdfName.LENGTH) + " bytes ------\n");
+            
+            if (!xobjectStream.get(PdfName.SUBTYPE).equals(PdfName.IMAGE)){
+            
+                byte[] contentBytes = ContentByteUtils.getContentBytesFromContentObject(xobjectStream);
+                
+                InputStream is = new ByteArrayInputStream(contentBytes);
+                int ch;
+                while ((ch = is.read()) != -1){
+                    sb.append((char)ch);
+                }
+    
+                sb.append("------ " + entryName + " - subtype = " + xobjectStream.get(PdfName.SUBTYPE) + "End of Content" + "------\n");
+            }
+        }
+       
+        return sb.toString();
+    }
+    
+    /**
      * Writes information about a specific page from PdfReader to the specified output stream.
      * @since 2.1.5
      * @param reader    the PdfReader to read the page content from
@@ -121,12 +157,17 @@ public class PdfContentReaderTool {
         out.println("- - - - - Dictionary - - - - - -");
         PdfDictionary pageDictionary = reader.getPageN(pageNum);
         out.println(getDictionaryDetail(pageDictionary));
+
+        out.println("- - - - - XObject Summary - - - - - -");
+        out.println(getXObjectDetail(pageDictionary.getAsDict(PdfName.RESOURCES)));
+        
         out.println("- - - - - Content Stream - - - - - -");
         RandomAccessFileOrArray f = reader.getSafeFile();
 
         byte[] contentBytes = reader.getPageContent(pageNum, f);
         f.close();
 
+        out.flush();
 
         InputStream is = new ByteArrayInputStream(contentBytes);
         int ch;
@@ -134,9 +175,10 @@ public class PdfContentReaderTool {
             out.print((char)ch);
         }
 
+        out.flush();
+        
         out.println("- - - - - Text Extraction - - - - - -");
-        PdfTextExtractor extractor = new PdfTextExtractor(reader, new LocationAwareTextExtractingPdfContentRenderListener());
-        String extractedText = extractor.getTextFromPage(pageNum);
+        String extractedText = PdfTextExtractor.getTextFromPage(reader, pageNum, new LocationTextExtractionStrategy());
         if (extractedText.length() != 0)
             out.println(extractedText);
         else

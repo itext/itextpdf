@@ -57,25 +57,20 @@ package com.itextpdf.text.pdf.parser;
  * 
  * @since	2.1.5
  */
-public class SimpleTextExtractingPdfContentRenderListener implements TextProvidingRenderListener {
+public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
 
     private Vector lastStart;
     private Vector lastEnd;
     
     /** used to store the resulting String. */
-    private StringBuffer result;
+    private final StringBuffer result = new StringBuffer();;
 
     /**
      * Creates a new text extraction renderer.
      */
-    public SimpleTextExtractingPdfContentRenderListener() {
-        reset();
+    public SimpleTextExtractionStrategy() {
     }
 
-    public void reset() {
-        result = new StringBuffer();
-    }
-    
     /**
      * @since 5.0.1
      */
@@ -104,8 +99,9 @@ public class SimpleTextExtractingPdfContentRenderListener implements TextProvidi
         boolean firstRender = result.length() == 0;
         boolean hardReturn = false;
 
-        Vector start = renderInfo.getStartPoint();
-        Vector end = renderInfo.getEndPoint();
+        LineSegment segment = renderInfo.getBaseline();
+        Vector start = segment.getStartPoint();
+        Vector end = segment.getEndPoint();
         
         if (!firstRender){
             Vector x0 = start;

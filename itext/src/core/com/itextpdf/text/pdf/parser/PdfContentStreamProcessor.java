@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ import com.itextpdf.text.pdf.PRTokeniser;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfContentParser;
 import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfLiteral;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
@@ -91,6 +93,11 @@ public class PdfContentStreamProcessor {
     final private RenderListener renderListener;
     /** A map with all supported XObject handlers */
     final private Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
+    /**
+     * A stack containing marked content info.
+     * @since 5.0.2
+     */
+    private Stack<MarkedContentInfo> markedContentStack = new Stack<MarkedContentInfo>();
 
     /**
      * Creates a new PDF Content Stream Processor that will send it's output to the
@@ -152,6 +159,9 @@ public class PdfContentStreamProcessor {
 
         registerContentOperator("BT", new BeginText());
         registerContentOperator("ET", new EndText());
+        registerContentOperator("BMC", new BeginMarkedContent());
+        registerContentOperator("BDC", new BeginMarkedContentDictionary());
+        registerContentOperator("EMC", new EndMarkedContent());
 
         TextMoveStartNextLine tdOperator = new TextMoveStartNextLine();
         registerContentOperator("Td", tdOperator);
@@ -217,6 +227,24 @@ public class PdfContentStreamProcessor {
     }
 
     /**
+     * Add to the marked content stack
+     * @param tag the tag of the marked content
+     * @param dict the PdfDictionary associated with the marked content
+     * @since 5.0.2
+     */
+    private void beginMarkedContent(PdfName tag, PdfDictionary dict) {
+    	markedContentStack.push(new MarkedContentInfo(tag, dict));
+    }
+   
+    /**
+     * Remove the latest marked content from the stack.  Keeps track of the BMC, BDC and EMC operators.
+     * @since 5.0.2
+     */
+    private void endMarkedContent() {
+    	markedContentStack.pop();
+    }
+    
+    /**
      * Decodes a PdfString (which will contain glyph ids encoded in the font's encoding)
      * based on the active font, and determine the unicode equivalent
      * @param in	the String that needs to be encoded
@@ -250,7 +278,7 @@ public class PdfContentStreamProcessor {
 
         String unicode = decode(string);
 
-        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix);
+        TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix, markedContentStack);
 
         renderListener.renderText(renderInfo);
 
@@ -275,7 +303,7 @@ public class PdfContentStreamProcessor {
             XObjectDoHandler handler = xobjectDoHandlers.get(subType);
             if (handler == null)
                 handler = xobjectDoHandlers.get(PdfName.DEFAULT);
-            handler.handleXObject(this, xobjectStream);
+            handler.handleXObject(this, xobjectStream, xobjects.getAsIndirectObject(xobjectName));
         } else {
             throw new IllegalStateException(MessageLocalization.getComposedMessage("XObject.1.is.not.a.stream", xobjectName));
         }
@@ -301,10 +329,54 @@ public class PdfContentStreamProcessor {
 
         this.resources.push(resources);
         try {
-            PdfContentParser ps = new PdfContentParser(new PRTokeniser(contentBytes));
+            PRTokeniser tokeniser = new PRTokeniser(contentBytes);
+            PdfContentParser ps = new PdfContentParser(tokeniser);
             ArrayList<PdfObject> operands = new ArrayList<PdfObject>();
             while (ps.parse(operands).size() > 0){
                 PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
+                
+                // special handling for embedded images.  If we hit an ID operator, we need
+                // to skip all content until we reach an EI operator surrounded by whitespace.
+                // The following algorithm has one potential issue: what if the image stream 
+                // contains <ws>EI<ws> ?
+                // it sounds like we would have to actually decode the content stream, which
+                // I'd rather avoid right now.
+                if ("ID".equals(operator.toString())){
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ByteArrayOutputStream accumulated = new ByteArrayOutputStream();
+                    int ch;
+                    int found = 0;
+                    while ((ch = tokeniser.read()) != -1){
+                        if (found == 0 && PRTokeniser.isWhitespace(ch)){
+                            found++;
+                            accumulated.write(ch);
+                        } else if (found == 1 && ch == 'E'){
+                            found++;
+                            accumulated.write(ch);
+                        } else if (found == 2 && ch == 'I'){ 
+                            found++;
+                            accumulated.write(ch);
+                        } else if (found == 3 && PRTokeniser.isWhitespace(ch)){
+                            operands = new ArrayList<PdfObject>();
+                            operands.add(new PdfLiteral("ID"));
+                            invokeOperator((PdfLiteral)operands.get(operands.size()-1), operands);
+                            
+                            // we should probably eventually do something to make the accumulated image content stream available
+                            
+                            operands = new ArrayList<PdfObject>();
+                            operands.add(new PdfLiteral("EI"));
+                            invokeOperator((PdfLiteral)operands.get(operands.size()-1), operands);
+                            
+                            break;
+                        } else {
+                            baos.write(accumulated.toByteArray());
+                            accumulated.reset();
+                            
+                            baos.write(ch);
+                            found = 0;
+                        }
+                    }
+                }
                 invokeOperator(operator, operands);
             }
 
@@ -348,7 +420,7 @@ public class PdfContentStreamProcessor {
     }
     
     /**
-     * A content operator implementation (TJ).
+     * A content operator implementation (unregistered).
      */
     private static class IgnoreOperatorContentOperator implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList<PdfObject> operands){
@@ -670,6 +742,56 @@ public class PdfContentStreamProcessor {
     }
 
     /**
+     * A content operator implementation (BMC).
+     * @since 5.0.2
+     */
+    private static class BeginMarkedContent implements ContentOperator{
+
+		public void invoke(PdfContentStreamProcessor processor,
+				PdfLiteral operator, ArrayList<PdfObject> operands)
+				throws Exception {
+			processor.beginMarkedContent((PdfName)operands.get(0), new PdfDictionary());
+		}
+    	
+    }
+
+    /**
+     * A content operator implementation (BDC).
+     * @since 5.0.2
+     */
+    private static class BeginMarkedContentDictionary implements ContentOperator{
+
+		public void invoke(PdfContentStreamProcessor processor,
+				PdfLiteral operator, ArrayList<PdfObject> operands)
+				throws Exception {
+		    
+		    PdfObject properties = operands.get(1);
+		    
+			processor.beginMarkedContent((PdfName)operands.get(0), getPropertiesDictionary(properties, processor.resources));
+		}
+    	
+		private PdfDictionary getPropertiesDictionary(PdfObject operand1, ResourceDictionary resources){
+            if (operand1.isDictionary())
+                return (PdfDictionary)operand1;
+
+            PdfName dictionaryName = ((PdfName)operand1);
+            return resources.getAsDict(dictionaryName);
+		}
+    }
+
+    /**
+     * A content operator implementation (BMC).
+     * @since 5.0.2
+     */
+    private static class EndMarkedContent implements ContentOperator{
+		public void invoke(PdfContentStreamProcessor processor,
+				PdfLiteral operator, ArrayList<PdfObject> operands)
+				throws Exception {
+			processor.endMarkedContent();
+		}
+    }
+    
+    /**
      * A content operator implementation (Do).
      */
     private static class Do implements ContentOperator{
@@ -684,7 +806,7 @@ public class PdfContentStreamProcessor {
      */
     private static class FormXObjectDoHandler implements XObjectDoHandler{
 
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream) {
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref) {
             
             final PdfDictionary resources = stream.getAsDict(PdfName.RESOURCES);
 
@@ -726,8 +848,8 @@ public class PdfContentStreamProcessor {
      */
     private static class ImageXObjectDoHandler implements XObjectDoHandler{
 
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream) {
-            ImageRenderInfo renderInfo = new ImageRenderInfo(xobjectStream, processor.gs().ctm);
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
+            ImageRenderInfo renderInfo = new ImageRenderInfo(processor.gs().ctm, ref);
             processor.renderListener.renderImage(renderInfo);
         }
     }
@@ -736,7 +858,7 @@ public class PdfContentStreamProcessor {
      * An XObject subtype handler that does nothing
      */
     private static class IgnoreXObjectDoHandler implements XObjectDoHandler{
-        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream) {
+        public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
             // ignore XObject subtype
         }
     }    

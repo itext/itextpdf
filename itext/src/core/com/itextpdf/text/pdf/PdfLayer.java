@@ -288,6 +288,36 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
         dic.put(PdfName.VIEWSTATE, view ? PdfName.ON : PdfName.OFF);
         usage.put(PdfName.VIEW, dic);
     }
+    
+    /**
+     * Indicates that the group contains a pagination artifact.
+     * @param pe one of the following names: "HF" (Header Footer),
+     * "FG" (Foreground), "BG" (Background), or "L" (Logo).
+     * @since 5.0.2
+     */
+    public void setPageElement(String pe) {
+        PdfDictionary usage = getUsage();
+        PdfDictionary dic = new PdfDictionary();
+        dic.put(PdfName.SUBTYPE, new PdfName(pe));
+        usage.put(PdfName.PAGEELEMENT, dic);
+    }
+    
+    /**
+     * One of more users for whom this optional content group is primarily intended.
+     * @param type should be "Ind" (Individual), "Ttl" (Title), or "Org" (Organization).
+     * @param names one or more names
+     * @since 5.0.2
+     */
+    public void setUser(String type, String... names) {
+        PdfDictionary usage = getUsage();
+        PdfDictionary dic = new PdfDictionary();
+        dic.put(PdfName.TYPE, new PdfName(type));
+        PdfArray arr = new PdfArray();
+        for (String s : names)
+        	arr.add(new PdfString(s, PdfObject.TEXT_UNICODE));
+        usage.put(PdfName.NAME, arr);
+        usage.put(PdfName.USER, dic);
+    }
 
     /**
      * Gets the layer visibility in Acrobat's layer panel

@@ -1275,7 +1275,7 @@ public class PdfDocument extends Document {
         if (separatorCount > 0) {
         	glueWidth = line.widthLeft() / separatorCount;
         }
-        else if (isJustified) {
+        else if (isJustified && separatorCount == 0) {
             if (line.isNewlineSplit() && line.widthLeft() >= lastBaseFactor * (ratio * numberOfSpaces + lineLen - 1)) {
                 if (line.isRTL()) {
                     text.moveText(line.widthLeft() - lastBaseFactor * (ratio * numberOfSpaces + lineLen - 1), 0);

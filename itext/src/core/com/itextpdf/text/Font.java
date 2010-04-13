@@ -54,7 +54,7 @@ import com.itextpdf.text.pdf.BaseFont;
  * <PRE>
  *
  * Paragraph p = new Paragraph("This is a paragraph", <STRONG>new
- * Font(Font.HELVETICA, 18, Font.BOLDITALIC, new BaseColor(0, 0, 255)) </STRONG>);
+ * Font(FontFamily.HELVETICA, 18, Font.BOLDITALIC, new BaseColor(0, 0, 255)) </STRONG>);
  *
  * </PRE>
  *
