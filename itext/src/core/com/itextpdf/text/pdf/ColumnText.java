@@ -1148,7 +1148,6 @@ public class ColumnText {
                     boolean createHere = false;
                     if (compositeColumn == null) {
                         compositeColumn = new ColumnText(canvas);
-                        compositeColumn.setUseAscender(firstPass ? useAscender : false);
                         compositeColumn.setAlignment(para.getAlignment());
                         compositeColumn.setIndent(para.getIndentationLeft() + para.getFirstLineIndent());
                         compositeColumn.setExtraParagraphSpace(para.getExtraParagraphSpace());
@@ -1164,6 +1163,7 @@ public class ColumnText {
                         }
                         createHere = true;
                     }
+                    compositeColumn.setUseAscender(firstPass ? useAscender : false);
                     compositeColumn.leftX = leftX;
                     compositeColumn.rightX = rightX;
                     compositeColumn.yLine = yLine;
