@@ -34,4 +34,10 @@ public class MatrixTest {
         Matrix rslt = m1.multiply(m2);
         Assert.assertEquals(shouldBe, rslt);
     }
+    
+    @Test
+    public void testDeterminant(){
+        Matrix m = new Matrix(2, 3, 4, 5, 6, 7);
+        Assert.assertEquals(-2f, m.getDeterminant(), .001f);
+    }
 }
