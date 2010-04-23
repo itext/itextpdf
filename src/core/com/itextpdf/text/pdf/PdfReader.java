@@ -513,7 +513,6 @@ public class PdfReader implements PdfViewerPreferences {
             		throw new BadPasswordException(e.getMessage());
                 if (rebuilt || encryptionError)
                     throw new InvalidPdfException(e.getMessage());
-                e.printStackTrace();
                 rebuilt = true;
                 encrypted = false;
                 rebuildXref();
@@ -1183,7 +1182,6 @@ public class PdfReader implements PdfViewerPreferences {
         int first = stream.getAsNumber(PdfName.FIRST).intValue();
         int n = stream.getAsNumber(PdfName.N).intValue();
         byte b[] = getStreamBytes(stream, tokens.getFile());
-        System.out.println(new String(b));
         PRTokeniser saveTokens = tokens;
         tokens = new PRTokeniser(b);
         try {
@@ -1207,7 +1205,6 @@ public class PdfReader implements PdfViewerPreferences {
                     break;
                 }
                 address[k] = tokens.intValue() + first;
-                System.out.println(String.format("%s: object %s address %s", k, objNumber[k], address[k]));
             }
             if (!ok)
                 throw new InvalidPdfException(MessageLocalization.getComposedMessage("error.reading.objstm"));
