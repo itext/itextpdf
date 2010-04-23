@@ -1211,7 +1211,15 @@ public class PdfReader implements PdfViewerPreferences {
             for (int k = 0; k < n; ++k) {
                 if (map.containsKey(k)) {
                     tokens.seek(address[k]);
-                    PdfObject obj = readPRObject();
+                    tokens.nextToken();
+                    PdfObject obj;
+                    if (tokens.getTokenType() == PRTokeniser.TokenType.NUMBER) {
+                    	obj = new PdfNumber(tokens.getStringValue());
+                    }
+                    else {
+                    	tokens.seek(address[k]);
+                    	obj = readPRObject();
+                    }
                     xrefObj.set(objNumber[k], obj);
                 }
             }
