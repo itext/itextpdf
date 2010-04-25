@@ -74,6 +74,8 @@ import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
+import com.itextpdf.text.pdf.codec.TIFFConstants;
+import com.itextpdf.text.pdf.codec.TIFFFaxDecoder;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 
@@ -2109,10 +2111,10 @@ public class PdfReader implements PdfViewerPreferences {
             else if (dpo.isArray())
                 dp = ((PdfArray)dpo).getArrayList();
         }
-        String name;
+        PdfName name;
         for (int j = 0; j < filters.size(); ++j) {
-            name = ((PdfName)getPdfObjectRelease(filters.get(j))).toString();
-            if (name.equals("/FlateDecode") || name.equals("/Fl")) {
+            name = (PdfName)getPdfObjectRelease(filters.get(j));
+            if (PdfName.FLATEDECODE.equals(name) || PdfName.FL.equals(name)) {
                 b = FlateDecode(b);
                 PdfObject dicParam = null;
                 if (j < dp.size()) {
@@ -2120,11 +2122,11 @@ public class PdfReader implements PdfViewerPreferences {
                     b = decodePredictor(b, dicParam);
                 }
             }
-            else if (name.equals("/ASCIIHexDecode") || name.equals("/AHx"))
+            else if (PdfName.ASCIIHEXDECODE.equals(name) || PdfName.AHX.equals(name))
                 b = ASCIIHexDecode(b);
-            else if (name.equals("/ASCII85Decode") || name.equals("/A85"))
+            else if (PdfName.ASCII85DECODE.equals(name) || PdfName.A85.equals(name))
                 b = ASCII85Decode(b);
-            else if (name.equals("/LZWDecode")) {
+            else if (PdfName.LZWDECODE.equals(name)) {
                 b = LZWDecode(b);
                 PdfObject dicParam = null;
                 if (j < dp.size()) {
@@ -2132,7 +2134,64 @@ public class PdfReader implements PdfViewerPreferences {
                     b = decodePredictor(b, dicParam);
                 }
             }
-            else if (name.equals("/Crypt")) {
+            else if (PdfName.CCITTFAXDECODE.equals(name)) {
+                PdfNumber wn = (PdfNumber)getPdfObjectRelease(stream.get(PdfName.WIDTH));
+                PdfNumber hn = (PdfNumber)getPdfObjectRelease(stream.get(PdfName.HEIGHT));
+                if (wn == null || hn == null)
+                    throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("filter.ccittfaxdecode.is.only.supported.for.images"));
+                int width = wn.intValue();
+                int height = hn.intValue();
+                PdfDictionary param = null;
+                if (j < dp.size()) {
+                    PdfObject objParam = getPdfObjectRelease((PdfObject)dp.get(j));
+                    if (objParam != null && (objParam instanceof PdfDictionary))
+                        param = (PdfDictionary)objParam;
+                }
+                int k = 0;
+                boolean blackIs1 = false;
+                boolean byteAlign = false;
+                if (param != null) {
+                    PdfNumber kn = param.getAsNumber(PdfName.K);
+                    if (kn != null)
+                        k = kn.intValue();
+                    PdfBoolean bo = param.getAsBoolean(PdfName.BLACKIS1);
+                    if (bo != null)
+                        blackIs1 = bo.booleanValue();
+                    bo = param.getAsBoolean(PdfName.ENCODEDBYTEALIGN);
+                    if (bo != null)
+                        byteAlign = bo.booleanValue();
+                }
+                byte[] outBuf = new byte[(width + 7) / 8 * height];
+                TIFFFaxDecoder decoder = new TIFFFaxDecoder(1, width, height);
+                if (k == 0 || k > 0) {
+                    int tiffT4Options = k > 0 ? TIFFConstants.GROUP3OPT_2DENCODING : 0;
+                    tiffT4Options |= byteAlign ? TIFFConstants.GROUP3OPT_FILLBITS : 0;
+                    try {
+                        decoder.decode2D(outBuf, b, 0, height, tiffT4Options);
+                    }
+                    catch (Exception e) {
+                        // let's flip the fill bits and try again...
+                        tiffT4Options ^= TIFFConstants.GROUP3OPT_FILLBITS;
+                        try {
+                            decoder.decode2D(outBuf, b, 0, height, tiffT4Options);
+                        }
+                        catch (Exception ex2) {
+                            throw new IOException(e.getMessage(), e);
+                        }
+                    }
+                }
+                else {
+                    decoder.decodeT6(outBuf, b, 0, height, 0);
+                }
+                if (!blackIs1) {
+                    int len = outBuf.length;
+                    for (int t = 0; t < len; ++t) {
+                        outBuf[t] ^= 0xff;
+                    }
+                }
+                b = outBuf;
+            }
+            else if (PdfName.CRYPT.equals(name)) {
             }
             else
                 throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("the.filter.1.is.not.supported", name));

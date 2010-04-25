@@ -126,6 +126,7 @@ file.header.flags.bits.2.7.not.0=file header flags bits 2-7 not 0
 file.header.idstring.not.good.at.byte.1=file header idstring not good at byte {1}
 file.is.not.a.valid.png=File is not a valid PNG.
 file.position.0.cross.reference.entry.in.this.xref.subsection=File position 0 cross-reference entry in this xref subsection
+filter.ccittfaxdecode.is.only.supported.for.images=Filter CCITTFaxDecode is only supported for images
 first.scanline.must.be.1d.encoded=First scanline must be 1D encoded.
 font.1.with.2.encoding.is.not.a.cjk.font=Font '{1}' with '{2}' encoding is not a CJK font.
 font.1.with.2.is.not.recognized=Font '{1}' with '{2}' is not recognized.
