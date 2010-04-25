@@ -1252,8 +1252,9 @@ public class PdfDocument extends Document {
      * @param currentValues the current font and extra spacing values
      * @param ratio
      * @throws DocumentException on error
+     * @since 5.0.3 returns a float instead of void
      */
-    void writeLineToContent(PdfLine line, PdfContentByte text, PdfContentByte graphics, Object currentValues[], float ratio)  throws DocumentException {
+    float writeLineToContent(PdfLine line, PdfContentByte text, PdfContentByte graphics, Object currentValues[], float ratio)  throws DocumentException {
         PdfFont currentFont = (PdfFont)currentValues[0];
         float lastBaseFactor = ((Float)currentValues[1]).floatValue();
         PdfChunk chunk;
@@ -1266,9 +1267,9 @@ public class PdfDocument extends Document {
         float baseWordSpacing = 0;
         float baseCharacterSpacing = 0;
         float glueWidth = 0;
-
+        float lastX = text.getXTLM() + line.getOriginalWidth();
         numberOfSpaces = line.numberOfSpaces();
-        lineLen = line.GetLineLengthUtf32();
+        lineLen = line.getLineLengthUtf32();
         // does the line need to be justified?
         isJustified = line.hasToBeJustified() && (numberOfSpaces != 0 || lineLen > 1);
         int separatorCount = line.getSeparatorCount();
@@ -1300,6 +1301,9 @@ public class PdfDocument extends Document {
                 baseCharacterSpacing = baseFactor;
                 lastBaseFactor = baseFactor;
             }
+        }
+        else if (line.alignment == Element.ALIGN_LEFT || line.alignment == Element.ALIGN_UNDEFINED) {
+        	lastX -= line.widthLeft();
         }
 
         int lastChunkStroke = line.getLastStrokeChunk();
@@ -1593,6 +1597,7 @@ public class PdfDocument extends Document {
             text.moveText(baseXMarker - text.getXTLM(), 0);
         currentValues[0] = currentFont;
         currentValues[1] = new Float(lastBaseFactor);
+        return lastX;
     }
 
     protected Indentation indentation = new Indentation();

@@ -365,9 +365,9 @@ public class PdfLine {
     /**
      * Returns the length of a line in UTF32 characters
      * @return	the length in UTF32 characters
-     * @since	2.1.2
+     * @since	2.1.2; Get changed into get in 5.0.2
      */
-    public int GetLineLengthUtf32() {
+    public int getLineLengthUtf32() {
         int total = 0;
         for (Object element : line) {
             total += ((PdfChunk)element).lengthUtf32();

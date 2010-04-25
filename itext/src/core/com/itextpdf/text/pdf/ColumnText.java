@@ -179,6 +179,12 @@ public class ColumnText {
 
     /** The current y line location. Text will be written at this line minus the leading. */
     protected float yLine;
+    
+    /**
+     * The X position after the last line that has been written.
+     * @since 5.0.3
+     */
+    protected float lastX;
 
     /** The leading for the current line. */
     protected float currentLeading = 16;
@@ -793,6 +799,7 @@ public class ColumnText {
             return NO_MORE_TEXT;
         descender = 0;
         linesWritten = 0;
+        lastX = 0;
         boolean dirty = false;
         float ratio = spaceCharRatio;
         Object currentValues[] = new Object[2];
@@ -894,7 +901,7 @@ public class ColumnText {
                 if (!simulate) {
                     currentValues[0] = currentFont;
                     text.setTextMatrix(x1 + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
-                    pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
+                    lastX = pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
                     currentFont = (PdfFont)currentValues[0];
                 }
                 lastWasNewline = line.isNewlineSplit();
@@ -986,6 +993,15 @@ public class ColumnText {
      */
     public int getLinesWritten() {
         return this.linesWritten;
+    }
+    
+    /**
+     * Gets the X position of the end of the last line that has been written
+     * (will not work in simulation mode!).
+     * @since 5.0.3
+     */
+    public float getLastX() {
+    	return lastX;
     }
 
     /**
@@ -1173,6 +1189,7 @@ public class ColumnText {
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = para.getKeepTogether() && createHere && !firstPass;
                     status = compositeColumn.go(simulate || keepCandidate && keep == 0);
+                    lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
                         compositeColumn = null;
@@ -1269,6 +1286,7 @@ public class ColumnText {
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = item.getKeepTogether() && createHere && !firstPass;
                     status = compositeColumn.go(simulate || keepCandidate && keep == 0);
+                    lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
                         compositeColumn = null;
