@@ -2176,7 +2176,7 @@ public class PdfReader implements PdfViewerPreferences {
                             decoder.decode2D(outBuf, b, 0, height, tiffT4Options);
                         }
                         catch (Exception ex2) {
-                            throw new IOException(e.getMessage(), e);
+                            throw new IOException(e.getMessage());
                         }
                     }
                 }
