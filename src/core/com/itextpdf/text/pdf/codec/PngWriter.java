@@ -50,7 +50,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.DeflaterOutputStream;
 
-
+/**
+ * Writes a PNG image.
+ *
+ * @author  Paulo Soares
+ * @since 5.0.3
+ */
 public class PngWriter {
     private static final byte[] PNG_SIGNTURE = {(byte)137, 80, 78, 71, 13, 10, 26, 10};
 
