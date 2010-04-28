@@ -1189,6 +1189,7 @@ public class ColumnText {
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = para.getKeepTogether() && createHere && !firstPass;
                     status = compositeColumn.go(simulate || keepCandidate && keep == 0);
+                    lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
                         compositeColumn = null;
@@ -1285,6 +1286,7 @@ public class ColumnText {
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = item.getKeepTogether() && createHere && !firstPass;
                     status = compositeColumn.go(simulate || keepCandidate && keep == 0);
+                    lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
                         compositeColumn = null;
