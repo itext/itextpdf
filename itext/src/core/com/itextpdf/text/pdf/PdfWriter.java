@@ -1167,6 +1167,9 @@ public class PdfWriter extends DocWriter implements
             pdf.close();
             try {
                 addSharedObjectsToBody();
+                for (PdfOCG layer : documentOCG) {
+                    addToBody(layer.getPdfObject(), layer.getRef());
+                }
                 // add the root to the body
                 PdfIndirectReference rootRef = root.writePageTree();
                 // make the catalog-object and add it to the body
@@ -1293,10 +1296,6 @@ public class PdfWriter extends DocWriter implements
             else if (prop instanceof PdfDictionary && !(prop instanceof PdfLayer)){
                 addToBody((PdfDictionary)prop, (PdfIndirectReference)obj[1]);
             }
-        }
-        // [F13] add the OCG layers
-        for (PdfOCG layer : documentOCG) {
-            addToBody(layer.getPdfObject(), layer.getRef());
         }
     }
 
