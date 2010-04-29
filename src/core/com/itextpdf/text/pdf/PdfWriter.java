@@ -2239,14 +2239,26 @@ public class PdfWriter extends DocWriter implements
      * @return the template representing the imported page
      */
     public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
+        return getPdfReaderInstance(reader).getImportedPage(pageNumber);
+    }
+
+    /**
+     * Returns the PdfReaderInstance associated with the specified reader.
+     * Multiple calls with the same reader object will return the same
+     * PdfReaderInstance.
+     * @param reader the PDF reader that you want an instance for
+     * @return the instance for the provided reader
+     * @since 5.0.3
+     */
+    protected PdfReaderInstance getPdfReaderInstance(PdfReader reader){
         PdfReaderInstance inst = importedPages.get(reader);
         if (inst == null) {
             inst = reader.getPdfReaderInstance(this);
             importedPages.put(reader, inst);
         }
-        return inst.getImportedPage(pageNumber);
+        return inst;
     }
-
+    
     /**
      * Use this method to writes the reader to the document
      * and free the memory used by it.
