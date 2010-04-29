@@ -516,6 +516,7 @@ public class PdfCopy extends PdfWriter {
                 currentPdfReaderInstance = null;
             }
         }
+        super.freeReader(reader);
     }
 
     /**
