@@ -167,11 +167,11 @@ public class PdfCopy extends PdfWriter {
                 catch (IOException ioe) {
                     // empty on purpose
                 }
-                currentPdfReaderInstance = reader.getPdfReaderInstance(this);
+                currentPdfReaderInstance = super.getPdfReaderInstance(reader);
             }
         }
         else {
-            currentPdfReaderInstance = reader.getPdfReaderInstance(this);
+            currentPdfReaderInstance = super.getPdfReaderInstance(reader);
         }
         return currentPdfReaderInstance.getImportedPage(pageNumber);
     }
@@ -516,6 +516,7 @@ public class PdfCopy extends PdfWriter {
                 currentPdfReaderInstance = null;
             }
         }
+        super.freeReader(reader);
     }
 
     /**

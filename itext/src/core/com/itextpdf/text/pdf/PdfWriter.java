@@ -1258,7 +1258,7 @@ public class PdfWriter extends DocWriter implements
             }
         }
         // [F5] add all the dependencies in the imported pages
-        for (PdfReaderInstance element : importedPages.values()) {
+        for (PdfReaderInstance element : readerInstances.values()) {
             currentPdfReaderInstance= element;
             currentPdfReaderInstance.writeAllPages();
         }
@@ -2187,8 +2187,8 @@ public class PdfWriter extends DocWriter implements
                     // If we got here from PdfCopy we'll have to fill importedPages
                     PdfImportedPage ip = (PdfImportedPage)template;
                     PdfReader r = ip.getPdfReaderInstance().getReader();
-                    if (!importedPages.containsKey(r)) {
-                        importedPages.put(r, ip.getPdfReaderInstance());
+                    if (!readerInstances.containsKey(r)) {
+                        readerInstances.put(r, ip.getPdfReaderInstance());
                     }
                     template = null;
                 }
@@ -2227,7 +2227,7 @@ public class PdfWriter extends DocWriter implements
 
 //  [F5] adding pages imported form other PDF documents
 
-    protected HashMap<PdfReader, PdfReaderInstance> importedPages = new HashMap<PdfReader, PdfReaderInstance>();
+    protected HashMap<PdfReader, PdfReaderInstance> readerInstances = new HashMap<PdfReader, PdfReaderInstance>();
 
     /**
      * Use this method to get a page from other PDF document.
@@ -2239,14 +2239,26 @@ public class PdfWriter extends DocWriter implements
      * @return the template representing the imported page
      */
     public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
-        PdfReaderInstance inst = importedPages.get(reader);
-        if (inst == null) {
-            inst = reader.getPdfReaderInstance(this);
-            importedPages.put(reader, inst);
-        }
-        return inst.getImportedPage(pageNumber);
+        return getPdfReaderInstance(reader).getImportedPage(pageNumber);
     }
 
+    /**
+     * Returns the PdfReaderInstance associated with the specified reader.
+     * Multiple calls with the same reader object will return the same
+     * PdfReaderInstance.
+     * @param reader the PDF reader that you want an instance for
+     * @return the instance for the provided reader
+     * @since 5.0.3
+     */
+    protected PdfReaderInstance getPdfReaderInstance(PdfReader reader){
+        PdfReaderInstance inst = readerInstances.get(reader);
+        if (inst == null) {
+            inst = reader.getPdfReaderInstance(this);
+            readerInstances.put(reader, inst);
+        }
+        return inst;
+    }
+    
     /**
      * Use this method to writes the reader to the document
      * and free the memory used by it.
@@ -2257,12 +2269,12 @@ public class PdfWriter extends DocWriter implements
      * @throws IOException on error
      */
     public void freeReader(PdfReader reader) throws IOException {
-        currentPdfReaderInstance = importedPages.get(reader);
+        currentPdfReaderInstance = readerInstances.get(reader);
         if (currentPdfReaderInstance == null)
             return;
         currentPdfReaderInstance.writeAllPages();
         currentPdfReaderInstance = null;
-        importedPages.remove(reader);
+        readerInstances.remove(reader);
     }
 
     /**
