@@ -227,7 +227,10 @@ public class PdfImageObject {
         return ms.toByteArray();
     }
 
-    public BufferedImage getAwtImage() throws IOException {
+    /**
+     * @since 5.0.3 renamed from getAwtImage()
+     */
+    public BufferedImage getBufferedImage() throws IOException {
         byte[] img = getImageAsBytes();
         if (img == null)
             return null;
