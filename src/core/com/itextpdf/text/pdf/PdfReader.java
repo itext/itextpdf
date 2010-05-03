@@ -1066,7 +1066,17 @@ public class PdfReader implements PdfViewerPreferences {
             if (!ok)
                 throw new InvalidPdfException(MessageLocalization.getComposedMessage("error.reading.objstm"));
             tokens.seek(address);
-            return readPRObject();
+            tokens.nextToken();
+            PdfObject obj;
+            if (tokens.getTokenType() == PRTokeniser.TokenType.NUMBER) {
+                obj = new PdfNumber(tokens.getStringValue());
+            }
+            else {
+                tokens.seek(address);
+                obj = readPRObject();
+            }
+            return obj;
+            //return readPRObject();
         }
         finally {
             tokens = saveTokens;
