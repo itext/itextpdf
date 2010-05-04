@@ -1051,10 +1051,6 @@ public class PdfDocument extends Document {
 
         writer.resetContent();
         graphics = new PdfContentByte(writer);
-        text = new PdfContentByte(writer);
-        text.reset();
-        text.beginText();
-        textEmptySize = text.size();
 
     	markPoint = 0;
         setNewPageSizeAndMargins();
@@ -1075,8 +1071,6 @@ public class PdfDocument extends Document {
 
         float oldleading = leading;
         int oldAlignment = alignment;
-        // we move to the left/top position of the page
-        text.moveText(left(), top());
         pageEmpty = true;
         // if there is an image waiting to be drawn, draw it
         try {
@@ -2173,6 +2167,12 @@ public class PdfDocument extends Document {
     		marginTop = nextMarginTop;
     		marginBottom = nextMarginBottom;
     	}
+        text = new PdfContentByte(writer);
+        text.reset();
+        text.beginText();
+        textEmptySize = text.size();
+        // we move to the left/top position of the page
+        text.moveText(left(), top());
     }
 
     /**
