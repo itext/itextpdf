@@ -62,7 +62,7 @@
             <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
         	<link href="http://www.bouncycastle.org/docs/docs1.5/" />
         	<header>&lt;a href="http://itextpdf.com/book/" target="_blank"&gt;&lt;img src="http://itextpdf.com/img/book/iia2.jpg" border="0" /&gt;&lt;/a&gt;</header>
-			<footer>Hosted by &lt;a href="http://www.hostbasket.com/"&gt;Hostbasket&lt;/a&gt;</footer>
+			<footer>Hosted by &lt;a href="http://www.openminds.be/"&gt;openminds&lt;/a&gt;</footer>
         </javadoc>
     </target>
 	
