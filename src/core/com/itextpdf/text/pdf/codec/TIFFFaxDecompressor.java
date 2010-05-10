@@ -688,7 +688,6 @@ public class TIFFFaxDecompressor {
 
                     updatePointer(4 - bits);
                 } else if (bits == 0) {     // ERROR
-                    warning("Error 0");
                     ++fails;
                     // XXX return?
                 } else if (bits == 15) {    // EOL
@@ -696,8 +695,6 @@ public class TIFFFaxDecompressor {
                     // Instead of throwing an exception, assume that the
                     // EOL was premature; emit a warning and return.
                     //
-                    warning("Premature EOL in white run of line " 
-                            + ": read " + bitOffset + " of " + w + " expected pixels.");
                     ++fails;
                     return;
                 } else {
@@ -722,7 +719,6 @@ public class TIFFFaxDecompressor {
                 if (isWhite
                         && runLength != 0 && runLength % 64 == 0
                         && nextNBits(8) != 0x35) {
-                    warning("Missing zero white run length terminating code!");
                     ++fails;
                     updatePointer(8);
                 }
@@ -768,9 +764,6 @@ public class TIFFFaxDecompressor {
                         // Instead of throwing an exception, assume that the
                         // EOL was premature; emit a warning and return.
                         //
-                        warning("Premature EOL in black run of line "
-                                 + ": read " + bitOffset + " of " + w
-                                + " expected pixels.");
                         ++fails;
                         return;
                     } else {
@@ -816,7 +809,6 @@ public class TIFFFaxDecompressor {
                 if (!isWhite
                         && runLength != 0 && runLength % 64 == 0
                         && nextNBits(10) != 0x37) {
-                    warning("Missing zero black run length terminating code!");
                     ++fails;
                     updatePointer(10);
                 }
@@ -844,7 +836,6 @@ public class TIFFFaxDecompressor {
         // The data should start with an EOL code
         int next12 = nextNBits(12);
         if (next12 != 1) {
-            warning("T.4 compressed data should begin with EOL.");
             ++fails;
         }
         updatePointer(12);
@@ -876,8 +867,6 @@ public class TIFFFaxDecompressor {
             try {
                 modeFlag = findNextLine();
             } catch (Exception eofe) {
-                warning("Input exhausted before EOL found at line "
-                        + (lines) + ": read 0 of " + w + " expected pixels.");
                 ++fails;
                 break;
             }
@@ -966,10 +955,6 @@ public class TIFFFaxDecompressor {
 
                         updatePointer(7 - bits);
                     } else {
-                        warning("Unknown coding mode encountered at line "
-                                + (lines) + ": read " + bitOffset + " of " + w
-                                + " expected pixels.");
-
                         ++fails;
                         // Find the next one-dimensionally encoded line.
                         int numLinesTested = 0;
@@ -978,9 +963,6 @@ public class TIFFFaxDecompressor {
                                 modeFlag = findNextLine();
                                 numLinesTested++;
                             } catch (Exception eofe) {
-                                warning("Sync loss at line "
-                                        + (lines) + ": read "
-                                        + lines + " of " + height + " lines.");
                                 return;
                             }
                         }
@@ -1073,8 +1055,6 @@ public class TIFFFaxDecompressor {
                     if (!isWhite) {
                         if (b2 > w) {
                             b2 = w;
-                            warning("Decoded row " + (lines)
-                                    + " too long; ignoring extra samples.");
                         }
                         setToBlack(bitOffset, b2 - bitOffset);
                     }
@@ -1097,8 +1077,6 @@ public class TIFFFaxDecompressor {
                         number = decodeBlackCodeWord();
                         if (number > w - bitOffset) {
                             number = w - bitOffset;
-                            warning("Decoded row " + (lines)
-                                    + " too long; ignoring extra samples.");
                         }
                         setToBlack(bitOffset, number);
                         bitOffset += number;
@@ -1108,8 +1086,6 @@ public class TIFFFaxDecompressor {
                         number = decodeBlackCodeWord();
                         if (number > w - bitOffset) {
                             number = w - bitOffset;
-                            warning("Decoded row " + (lines)
-                                    + " too long; ignoring extra samples.");
                         }
                         setToBlack(bitOffset, number);
                         bitOffset += number;
@@ -1130,8 +1106,6 @@ public class TIFFFaxDecompressor {
                     if (!isWhite) {
                         if (a1 > w) {
                             a1 = w;
-                            warning("Decoded row " + (lines)
-                                    + " too long; ignoring extra samples.");
                         }
                         setToBlack(bitOffset, a1 - bitOffset);
                     }
@@ -1141,12 +1115,6 @@ public class TIFFFaxDecompressor {
                     updatePointer(7 - bits);
                 } else if (code == 11) {
                     int entranceCode = nextLesserThan8Bits(3);
-                    if (entranceCode != 7) {
-                        String msg =
-                                "Unsupported entrance code " + entranceCode
-                                + " for extension mode at line " + (lines) + ".";
-                        warning(msg);
-                    }
 
                     int zeros = 0;
                     boolean exit = false;
@@ -1210,11 +1178,6 @@ public class TIFFFaxDecompressor {
                         }
 
                     }
-                } else {
-                    String msg =
-                            "Unknown coding mode encountered at line "
-                            + (lines) + ".";
-                    warning(msg);
                 }
             } // while bitOffset < w
 
@@ -1568,12 +1531,5 @@ public class TIFFFaxDecompressor {
         } else {
             bitPointer = i;
         }
-    }
-
-    // Forward warning message to reader
-    private void warning(String msg) {
-//        if(this.reader instanceof TIFFImageReader) {
-//            ((TIFFImageReader)reader).forwardWarningMessage(msg);
-//        }
     }
 }
