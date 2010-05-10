@@ -75,7 +75,7 @@ import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.codec.TIFFConstants;
-import com.itextpdf.text.pdf.codec.TIFFFaxDecoder;
+import com.itextpdf.text.pdf.codec.TIFFFaxDecompressor;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 
@@ -2172,26 +2172,25 @@ public class PdfReader implements PdfViewerPreferences {
                         byteAlign = bo.booleanValue();
                 }
                 byte[] outBuf = new byte[(width + 7) / 8 * height];
-                TIFFFaxDecoder decoder = new TIFFFaxDecoder(1, width, height);
+                TIFFFaxDecompressor decoder = new TIFFFaxDecompressor();
                 if (k == 0 || k > 0) {
                     int tiffT4Options = k > 0 ? TIFFConstants.GROUP3OPT_2DENCODING : 0;
                     tiffT4Options |= byteAlign ? TIFFConstants.GROUP3OPT_FILLBITS : 0;
-                    try {
-                        decoder.decode2D(outBuf, b, 0, height, tiffT4Options);
-                    }
-                    catch (Exception e) {
-                        // let's flip the fill bits and try again...
-                        tiffT4Options ^= TIFFConstants.GROUP3OPT_FILLBITS;
-                        try {
-                            decoder.decode2D(outBuf, b, 0, height, tiffT4Options);
-                        }
-                        catch (Exception ex2) {
-                            throw new IOException(e.getMessage());
+                    decoder.SetOptions(1, TIFFConstants.COMPRESSION_CCITTFAX3, tiffT4Options, 0);
+                    decoder.decodeRaw(outBuf, b, width, height);
+                    if (decoder.fails > 0) {
+                        byte[] outBuf2 = new byte[(width + 7) / 8 * height];
+                        int oldFails = decoder.fails;
+                        decoder.SetOptions(1, TIFFConstants.COMPRESSION_CCITTRLE, tiffT4Options, 0);
+                        decoder.decodeRaw(outBuf2, b, width, height);
+                        if (decoder.fails < oldFails) {
+                            outBuf = outBuf2;
                         }
                     }
                 }
                 else {
-                    decoder.decodeT6(outBuf, b, 0, height, 0);
+                    decoder.SetOptions(1, TIFFConstants.COMPRESSION_CCITTFAX4, 0, 0);
+                    decoder.decodeRaw(outBuf, b, width, height);
                 }
                 if (!blackIs1) {
                     int len = outBuf.length;
