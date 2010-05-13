@@ -43,8 +43,8 @@
  * use in the design, construction, operation or maintenance of any 
  * nuclear facility. 
  *
- * $Revision: 1.15 $
- * $Date: 2007/08/31 23:17:28 $
+ * $Revision$
+ * $Date$
  * $State: Exp $
  */
 package com.itextpdf.text.pdf.codec;

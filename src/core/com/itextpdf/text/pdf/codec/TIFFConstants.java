@@ -153,6 +153,8 @@ public class TIFFConstants {
     public static final int TIFFTAG_ARTIST = 315;	/* creator of image */
     public static final int TIFFTAG_HOSTCOMPUTER = 316;	/* machine where created */
     public static final int TIFFTAG_PREDICTOR = 317;	/* prediction scheme w/ LZW */
+    public static final int     PREDICTOR_NONE = 1;
+    public static final int     PREDICTOR_HORIZONTAL_DIFFERENCING = 2;
     public static final int TIFFTAG_WHITEPOINT = 318;	/* image white point */
     public static final int TIFFTAG_PRIMARYCHROMATICITIES = 319;	/* !primary chromaticities */
     public static final int TIFFTAG_COLORMAP = 320;	/* RGB map for pallette image */
