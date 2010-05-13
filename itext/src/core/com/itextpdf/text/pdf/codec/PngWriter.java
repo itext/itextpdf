@@ -1,5 +1,5 @@
 /*
- * $Id: PngWriter.cs 159 2010-04-19 21:57:13Z psoares33 $
+ * $Id$
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA

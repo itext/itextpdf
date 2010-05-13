@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import com.itextpdf.text.Document;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -57,6 +58,8 @@ import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.codec.PngWriter;
+import com.itextpdf.text.pdf.codec.TIFFConstants;
+import com.itextpdf.text.pdf.codec.TiffWriter;
 import java.io.ByteArrayOutputStream;
 
 /**
@@ -82,6 +85,7 @@ public class PdfImageObject {
     public static final String TYPE_PNG = "png";
     public static final String TYPE_JPG = "jpg";
     public static final String TYPE_JP2 = "jp2";
+    public static final String TYPE_TIF = "tif";
 
     protected String fileType;
 
@@ -212,9 +216,51 @@ public class PdfImageObject {
         icc = null;
         stride = 0;
         findColorspace(colorspace, true);
-        if (pngColorType < 0)
-            return null;
         ByteArrayOutputStream ms = new ByteArrayOutputStream();
+        if (pngColorType < 0) {
+            if (bpc != 8)
+                return null;
+            if (PdfName.DEVICECMYK.equals(colorspace)) {
+            }
+            else if (colorspace instanceof PdfArray) {
+                PdfArray ca = (PdfArray)colorspace;
+                PdfObject tyca = ca.getDirectObject(0);
+                if (!PdfName.ICCBASED.equals(tyca))
+                    return null;
+                PRStream pr = (PRStream)ca.getDirectObject(1);
+                int n = pr.getAsNumber(PdfName.N).intValue();
+                if (n != 4) {
+                    return null;
+                }
+                icc = PdfReader.getStreamBytes(pr);
+            }
+            else
+                return null;
+            stride = 4 * width;
+            TiffWriter wr = new TiffWriter();
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL, 4));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_BITSPERSAMPLE, new int[]{8,8,8,8}));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_PHOTOMETRIC, TIFFConstants.PHOTOMETRIC_SEPARATED));
+            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_IMAGEWIDTH, width));
+            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_IMAGELENGTH, height));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_COMPRESSION, TIFFConstants.COMPRESSION_LZW));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_PREDICTOR, TIFFConstants.PREDICTOR_HORIZONTAL_DIFFERENCING));
+            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP, height));
+            wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_XRESOLUTION, new int[]{300,1}));
+            wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_YRESOLUTION, new int[]{300,1}));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_RESOLUTIONUNIT, TIFFConstants.RESUNIT_INCH));
+            wr.addField(new TiffWriter.FieldAscii(TIFFConstants.TIFFTAG_SOFTWARE, Document.getVersion()));
+            ByteArrayOutputStream comp = new ByteArrayOutputStream();
+            TiffWriter.compressLZW(comp, 2, streamBytes, height, 4, stride);
+            byte[] buf = comp.toByteArray();
+            wr.addField(new TiffWriter.FieldImage(buf));
+            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_STRIPBYTECOUNTS, buf.length));
+            if (icc != null)
+                wr.addField(new TiffWriter.FieldUndefined(TIFFConstants.TIFFTAG_ICCPROFILE, icc));
+            wr.writeFile(ms);
+            fileType = TYPE_TIF;
+            return ms.toByteArray();
+        }
         PngWriter png = new PngWriter(ms);
         png.writeHeader(width, height, pngBitDepth, pngColorType);
         if (icc != null)
