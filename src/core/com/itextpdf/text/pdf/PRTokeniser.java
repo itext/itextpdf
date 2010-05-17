@@ -210,7 +210,7 @@ public class PRTokeniser {
     public void checkFdfHeader() throws IOException {
         file.setStartOffset(0);
         String str = readString(1024);
-        int idx = str.indexOf("%FDF-1.2");
+        int idx = str.indexOf("%FDF-");
         if (idx < 0)
             throw new InvalidPdfException(MessageLocalization.getComposedMessage("fdf.header.not.found"));
         file.setStartOffset(idx);
