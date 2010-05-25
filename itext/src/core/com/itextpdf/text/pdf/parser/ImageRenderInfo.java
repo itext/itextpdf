@@ -44,20 +44,47 @@
 package com.itextpdf.text.pdf.parser;
 
 import com.itextpdf.text.pdf.PRStream;
+import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfReader;
 
 /**
- * @author kevin
+ * Represents image data from a PDF
  * @since 5.0.1
  */
 public class ImageRenderInfo {
+    /** The coordinate transformation matrix that was in effect when the image was rendered */
     private final Matrix ctm;
+    /** A reference to the image XObject */
     private final PdfIndirectReference ref;
     
-    public ImageRenderInfo(Matrix ctm, PdfIndirectReference ref) {
+    private ImageRenderInfo(Matrix ctm, PdfIndirectReference ref) {
         this.ctm = ctm;
         this.ref = ref;
+    }
+    
+    /**
+     * Create an ImageRenderInfo object based on an XObject (this is the most common way of including an image in PDF)
+     * @param ctm the coordinate transformation matrix at the time the image is rendered
+     * @param ref a reference to the image XObject
+     * @return the ImageRenderInfo representing the rendered XObject
+     * @since 5.0.1
+     */
+    public static ImageRenderInfo createForXObject(Matrix ctm, PdfIndirectReference ref){
+        return new ImageRenderInfo(ctm, ref);
+    }
+    
+    /**
+     * Create an ImageRenderInfo object based on embedded image data.  This is nowhere near completely thought through
+     * and really just acts as a placeholder.
+     * @param ctm the coordinate transformation matrix at the time the image is rendered
+     * @param imageDictionary a dictionary containing parameters of the embedded image (note that the key/value pairs of this dictionary can have abbreviations in them)
+     * @param streamBytes the bytes of the image data
+     * @return the ImageRenderInfo representing the rendered embedded image
+     * @since 5.0.1
+     */
+    protected static ImageRenderInfo createdForEmbeddedImage(Matrix ctm, PdfDictionary imageDictionary, byte[] streamBytes){
+        return new ImageRenderInfo(ctm, null);
     }
     
     /**
