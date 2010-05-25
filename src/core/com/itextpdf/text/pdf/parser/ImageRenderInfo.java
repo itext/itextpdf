@@ -68,6 +68,7 @@ public class ImageRenderInfo {
      * @param ctm the coordinate transformation matrix at the time the image is rendered
      * @param ref a reference to the image XObject
      * @return the ImageRenderInfo representing the rendered XObject
+     * @since 5.0.1
      */
     public static ImageRenderInfo createForXObject(Matrix ctm, PdfIndirectReference ref){
         return new ImageRenderInfo(ctm, ref);
@@ -80,6 +81,7 @@ public class ImageRenderInfo {
      * @param imageDictionary a dictionary containing parameters of the embedded image (note that the key/value pairs of this dictionary can have abbreviations in them)
      * @param streamBytes the bytes of the image data
      * @return the ImageRenderInfo representing the rendered embedded image
+     * @since 5.0.1
      */
     protected static ImageRenderInfo createdForEmbeddedImage(Matrix ctm, PdfDictionary imageDictionary, byte[] streamBytes){
         return new ImageRenderInfo(ctm, null);
