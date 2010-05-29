@@ -2187,6 +2187,8 @@ public class AcroFields {
             PdfPKCS7 pk = null;
             if (sub.equals(PdfName.ADBE_X509_RSA_SHA1)) {
                 PdfString cert = v.getAsString(PdfName.CERT);
+                if (cert == null)
+                    cert = v.getAsArray(PdfName.CERT).getAsString(0);
                 pk = new PdfPKCS7(contents.getOriginalBytes(), cert.getBytes(), provider);
             }
             else
