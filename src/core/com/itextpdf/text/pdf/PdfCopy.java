@@ -173,6 +173,7 @@ public class PdfCopy extends PdfWriter {
         else {
             currentPdfReaderInstance = super.getPdfReaderInstance(reader);
         }
+        currentPdfReaderInstance.setOutputToPdf(false);
         return currentPdfReaderInstance.getImportedPage(pageNumber);
     }
 
