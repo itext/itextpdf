@@ -85,6 +85,7 @@ public class TiffWriter {
 
     /**
      * Inner class class containing information about a field.
+     * @since 5.0.3
      */
     public abstract static class FieldBase {
         private int tag;
@@ -137,6 +138,7 @@ public class TiffWriter {
 
     /**
      * Inner class containing info about a field.
+     * @since 5.0.3
      */
     public static class FieldShort extends FieldBase {
         public FieldShort(int tag, int value) {
@@ -159,6 +161,7 @@ public class TiffWriter {
 
     /**
      * Inner class containing info about a field.
+     * @since 5.0.3
      */
     public static class FieldLong extends FieldBase {
         public FieldLong(int tag, int value) {
@@ -185,6 +188,7 @@ public class TiffWriter {
 
     /**
      * Inner class containing info about a field.
+     * @since 5.0.3
      */
     public static class FieldRational extends FieldBase {
         public FieldRational(int tag, int[] value) {
@@ -210,6 +214,7 @@ public class TiffWriter {
 
     /**
      * Inner class containing info about a field.
+     * @since 5.0.3
      */
     public static class FieldByte extends FieldBase {
         public FieldByte(int tag, byte[] values) {
@@ -220,6 +225,7 @@ public class TiffWriter {
 
     /**
      * Inner class containing info about a field.
+     * @since 5.0.3
      */
     public static class FieldUndefined extends FieldBase {
         public FieldUndefined(int tag, byte[] values) {
@@ -230,6 +236,7 @@ public class TiffWriter {
 
     /**
      * Inner class containing info about a field.
+     * @since 5.0.3
      */
     public static class FieldImage extends FieldBase {
         public FieldImage(byte[] values) {
@@ -240,6 +247,7 @@ public class TiffWriter {
 
     /**
      * Inner class containing info about an ASCII field.
+     * @since 5.0.3
      */
     public static class FieldAscii extends FieldBase {
         public FieldAscii(int tag, String values) {
