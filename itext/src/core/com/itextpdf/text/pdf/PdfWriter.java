@@ -2228,6 +2228,10 @@ public class PdfWriter extends DocWriter implements
 
 //  [F5] adding pages imported form other PDF documents
 
+    /**
+     * Instances of PdfReader/PdfReaderInstance that are used to import pages.
+     * @since 5.0.3
+     */
     protected HashMap<PdfReader, PdfReaderInstance> readerInstances = new HashMap<PdfReader, PdfReaderInstance>();
 
     /**

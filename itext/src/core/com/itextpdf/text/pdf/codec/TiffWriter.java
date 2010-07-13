@@ -47,8 +47,8 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.util.TreeMap;
 /**
- *
- * @author psoares
+ * Exports images as TIFF.
+ * @since 5.0.3
  */
 public class TiffWriter {
     private TreeMap<Integer,FieldBase> ifd = new TreeMap<Integer,FieldBase>();
@@ -83,6 +83,10 @@ public class TiffWriter {
         }
     }
 
+    /**
+     * Inner class class containing information about a field.
+     * @since 5.0.3
+     */
     public abstract static class FieldBase {
         private int tag;
         private int fieldType;
@@ -132,6 +136,10 @@ public class TiffWriter {
         }
     }
 
+    /**
+     * Inner class containing info about a field.
+     * @since 5.0.3
+     */
     public static class FieldShort extends FieldBase {
         public FieldShort(int tag, int value) {
             super(tag, 3, 1);
@@ -151,6 +159,10 @@ public class TiffWriter {
         }
     }
 
+    /**
+     * Inner class containing info about a field.
+     * @since 5.0.3
+     */
     public static class FieldLong extends FieldBase {
         public FieldLong(int tag, int value) {
             super(tag, 4, 1);
@@ -174,6 +186,10 @@ public class TiffWriter {
         }
     }
 
+    /**
+     * Inner class containing info about a field.
+     * @since 5.0.3
+     */
     public static class FieldRational extends FieldBase {
         public FieldRational(int tag, int[] value) {
             this(tag, new int[][]{value});
@@ -196,6 +212,10 @@ public class TiffWriter {
         }
     }
 
+    /**
+     * Inner class containing info about a field.
+     * @since 5.0.3
+     */
     public static class FieldByte extends FieldBase {
         public FieldByte(int tag, byte[] values) {
             super(tag, 1, values.length);
@@ -203,6 +223,10 @@ public class TiffWriter {
         }
     }
 
+    /**
+     * Inner class containing info about a field.
+     * @since 5.0.3
+     */
     public static class FieldUndefined extends FieldBase {
         public FieldUndefined(int tag, byte[] values) {
             super(tag, 7, values.length);
@@ -210,6 +234,10 @@ public class TiffWriter {
         }
     }
 
+    /**
+     * Inner class containing info about a field.
+     * @since 5.0.3
+     */
     public static class FieldImage extends FieldBase {
         public FieldImage(byte[] values) {
             super(TIFFConstants.TIFFTAG_STRIPOFFSETS, 4, 1);
@@ -217,6 +245,10 @@ public class TiffWriter {
         }
     }
 
+    /**
+     * Inner class containing info about an ASCII field.
+     * @since 5.0.3
+     */
     public static class FieldAscii extends FieldBase {
         public FieldAscii(int tag, String values) {
             super(tag, 2, values.getBytes().length + 1);

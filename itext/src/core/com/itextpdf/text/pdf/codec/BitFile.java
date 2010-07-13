@@ -56,7 +56,8 @@ import java.io.OutputStream;
  * Came from GIFEncoder initially.
  * Modified - to allow for output compressed data without the block counts
  * which breakup the compressed data stream for GIF.
- **/
+ * @since 5.0.2
+ */
 public class BitFile
 {
     OutputStream output_;
