@@ -210,9 +210,18 @@ public class DocumentFont extends BaseFont {
             PdfContentParser ps = new PdfContentParser(new PRTokeniser(touni));
             PdfObject ob = null;
             PdfObject last = null;
-            while ((ob = ps.readPRObject()) != null) {
+            boolean notFound = true;
+            int nestLevel = 0;
+            while ((notFound || nestLevel > 0) && (ob = ps.readPRObject()) != null) {
                 if (ob.type() == PdfContentParser.COMMAND_TYPE) {
-                    if (ob.toString().equals("beginbfchar")) {
+                	if (ob.toString().equals("begin")) {
+                		notFound = false;
+                		nestLevel++;
+                	}
+                	else if (ob.toString().equals("end")) {
+                		nestLevel--;
+                	}
+                	else if (ob.toString().equals("beginbfchar")) {
                         int n = ((PdfNumber)last).intValue();
                         for (int k = 0; k < n; ++k) {
                             String cid = decodeString((PdfString)ps.readPRObject());
