@@ -47,6 +47,9 @@ package com.itextpdf.text.pdf.codec;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
 
+/**
+ * Class that can decode TIFF files.
+ */
 public class TIFFFaxDecoder {
     
     private int bitPointer, bytePointer;

@@ -56,7 +56,8 @@ import java.io.OutputStream;
 /**
  * Modified from original LZWCompressor to change interface to passing a
  * buffer of data to be compressed.
- **/
+ * @since 5.0.2
+ */
 public class LZWCompressor
 {
     /** base underlying code size of data being compressed 8 for TIFF, 1 to 8 for GIF **/

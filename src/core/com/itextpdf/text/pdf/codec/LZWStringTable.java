@@ -59,7 +59,8 @@ import java.io.PrintStream;
  * <code>expandCode</code> added by Robin Luiten
  * The strLen_ table to give quick access to the lenght of an expanded
  * code for use by the <code>expandCode</code> method added by Robin.
- **/
+ * @since 5.0.2
+ */
 public class LZWStringTable
 {
     /** codesize + Reserved Codes */
@@ -97,10 +98,10 @@ public class LZWStringTable
     }
 
     /**
-	 * @param index value of -1 indicates no predecessor [used in initialisation]
+	 * @param index value of -1 indicates no predecessor [used in initialization]
 	 * @param b the byte [character] to add to the string store which follows
 	 * the predecessor string specified the index.
-	 * @return 0xFFFF if no space in table left for addition of predecesor
+	 * @return 0xFFFF if no space in table left for addition of predecessor
 	 * index and byte b. Else return the code allocated for combination index + b.
 	 **/
     public int AddCharString(short index, byte b)
@@ -178,17 +179,17 @@ public class LZWStringTable
     }
 
     /**
-	 * If expanded data doesnt fit into array only what will fit is written
+	 * If expanded data doesn't fit into array only what will fit is written
 	 * to buf and the return value indicates how much of the expanded code has
 	 * been written to the buf. The next call to expandCode() should be with 
 	 * the same code and have the skip parameter set the negated value of the 
-	 * previous return. Succesive negative return values should be negated and
+	 * previous return. Successive negative return values should be negated and
 	 * added together for next skip parameter value with same code.
 	 *
 	 * @param buf buffer to place expanded data into
 	 * @param offset offset to place expanded data
 	 * @param code the code to expand to the byte array it represents.
-	 * PRECONDITION This code must allready be in the LZSS
+	 * PRECONDITION This code must already be in the LZSS
 	 * @param skipHead is the number of bytes at the start of the expanded code to 
 	 * be skipped before data is written to buf. It is possible that skipHead is
 	 * equal to codeLen.
