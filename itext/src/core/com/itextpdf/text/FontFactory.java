@@ -329,7 +329,7 @@ public final class FontFactory {
      * @param fullName the font name
      * @param path the font path
      */
-    public void registerFamily(String familyName, String fullName, String path) {
+    public static void registerFamily(String familyName, String fullName, String path) {
         fontImp.registerFamily(familyName, fullName, path);
     }
 
