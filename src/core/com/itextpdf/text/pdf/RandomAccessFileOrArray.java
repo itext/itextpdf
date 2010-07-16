@@ -79,6 +79,13 @@ public class RandomAccessFileOrArray implements DataInput {
     	this(filename, false, Document.plainRandomAccess);
     }
     
+    /**
+     * Constructs a new RandomAccessFileOrArrayObject
+     * @param filename the file to open (can be a file system file or one of hte following url strings: file://, http://, https://, jar:, wsjar:
+     * @param forceRead if true, the entire file will be read into memory
+     * @param plainRandomAccess if true, a regular RandomAccessFile is used to access the file contents.  If false, a memory mapped file will be used, unless the file cannot be mapped into memory, in which case regular RandomAccessFile will be used
+     * @throws IOException if there is a failure opening or reading the file
+     */
     public RandomAccessFileOrArray(String filename, boolean forceRead, boolean plainRandomAccess) throws IOException {
         this.plainRandomAccess = plainRandomAccess;
         File file = new File(filename);
@@ -119,12 +126,38 @@ public class RandomAccessFileOrArray implements DataInput {
         	return;
         }
         this.filename = filename;
-        if (plainRandomAccess)
+        if (plainRandomAccess){
             trf = new RandomAccessFile(filename, "r");
-        else
-            rf = new MappedRandomAccessFile(filename, "r");
+        }else{
+            try{
+                rf = new MappedRandomAccessFile(filename, "r");
+            } catch (IOException e){
+                if (exceptionIsMapFailureException(e)){
+                    this.plainRandomAccess = true;
+                    trf = new RandomAccessFile(filename, "r");
+                } else {
+                    throw e;
+                }
+            }
+        }
     }
 
+    /**
+     * Utility method that determines whether a given IOException is the result
+     * of a failure to map a memory mapped file.  It would be better if the runtime
+     * provided a special exception for this case, but it doesn't, so we have to rely
+     * on parsing the exception message.
+     * @param e the exception to check
+     * @return true if the exception was the result of a failure to map a memory mapped file
+     * @since 5.0.3
+     */
+    private static boolean exceptionIsMapFailureException(IOException e){
+        if (e.getMessage().indexOf("Map failed") >= 0)
+            return true;
+
+        return false;
+    }
+    
     public RandomAccessFileOrArray(URL url) throws IOException {
         InputStream is = url.openStream();
         try {
