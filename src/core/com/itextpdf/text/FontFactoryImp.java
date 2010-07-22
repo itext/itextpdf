@@ -645,10 +645,11 @@ public class FontFactoryImp implements FontProvider {
      */
     public int registerDirectories() {
         int count = 0;
-        count += registerDirectory("c:/windows/fonts");
-        count += registerDirectory("c:/winnt/fonts");
-        count += registerDirectory("d:/windows/fonts");
-        count += registerDirectory("d:/winnt/fonts");
+        String windir = System.getenv("windir");
+        String fileseparator = System.getProperty("file.separator");
+        if (windir != null && fileseparator != null) {
+        	count += registerDirectory(windir + fileseparator + "fonts");
+        }
         count += registerDirectory("/usr/share/X11/fonts", true);
         count += registerDirectory("/usr/X/lib/X11/fonts", true);
         count += registerDirectory("/usr/openwin/lib/X11/fonts", true);
