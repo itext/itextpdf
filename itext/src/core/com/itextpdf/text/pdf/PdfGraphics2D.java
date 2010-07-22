@@ -161,6 +161,9 @@ public class PdfGraphics2D extends Graphics2D {
 
     // Added by Jurij Bilas
     protected boolean underline;          // indicates if the font style is underlined
+    // Added by Peter Severin
+    /** @since 5.0.3 */
+    protected boolean strikethrough;
 
     protected PdfGState fillGState[];
     protected PdfGState strokeGState[];
@@ -321,6 +324,7 @@ public class PdfGraphics2D extends Graphics2D {
     @SuppressWarnings("unchecked")
     protected void doAttributes(AttributedCharacterIterator iter) {
         underline = false;
+        strikethrough = false;
         for (AttributedCharacterIterator.Attribute attribute: iter.getAttributes().keySet()) {
             if (!(attribute instanceof TextAttribute))
                 continue;
@@ -332,6 +336,10 @@ public class PdfGraphics2D extends Graphics2D {
             else if(textattribute.equals(TextAttribute.UNDERLINE)) {
                 if(iter.getAttributes().get(textattribute) == TextAttribute.UNDERLINE_ON)
                     underline = true;
+            }
+            else if(textattribute.equals(TextAttribute.STRIKETHROUGH)) {
+            	if(iter.getAttributes().get(textattribute) == TextAttribute.STRIKETHROUGH_ON)
+            		strikethrough = true;
             }
             else if(textattribute.equals(TextAttribute.SIZE)) {
                 Object obj = iter.getAttributes().get(textattribute);
@@ -505,8 +513,7 @@ public class PdfGraphics2D extends Graphics2D {
 
             cb.endText();
             setTransform(at);
-            if(underline)
-            {
+            if(underline) {
                 // These two are supposed to be taken from the .AFM file
                 //int UnderlinePosition = -100;
                 int UnderlineThickness = 50;
@@ -518,6 +525,20 @@ public class PdfGraphics2D extends Graphics2D {
                 Line2D line = new Line2D.Double(x, y, width+x, y);
                 draw(line);
                 setStroke(savedStroke);
+            }
+            if(strikethrough) {
+            	// These two are supposed to be taken from the .AFM file
+            	int StrikethroughThickness = 50;
+            	int StrikethroughPosition = 350;
+            	//
+            	double d = asPoints(StrikethroughThickness, (int)fontSize);
+            	double p = asPoints(StrikethroughPosition, (int)fontSize);
+            	Stroke savedStroke = originalStroke;
+            	setStroke(new BasicStroke((float)d));
+            	y = (float)(y + asPoints(StrikethroughThickness, (int)fontSize));
+            	Line2D line = new Line2D.Double(x, y-p, width+x, y-p);
+            	draw(line);
+            	setStroke(savedStroke);
             }
         }
     }
@@ -561,6 +582,7 @@ public class PdfGraphics2D extends Graphics2D {
 
         drawString(stringbuffer.toString(), x, y);
         underline = false;
+        strikethrough = false;
     }
 
     /**
