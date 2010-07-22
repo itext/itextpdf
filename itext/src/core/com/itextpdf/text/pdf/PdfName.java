@@ -78,6 +78,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName _3D = new PdfName("3D");
     /** A name */
     public static final PdfName A = new PdfName("A");
+    /**
+     * A name
+     * @since 5.0.3
+     */
+    public static final PdfName A85 = new PdfName("A85");
     /** A name */
     public static final PdfName AA = new PdfName("AA");
     /**
@@ -122,6 +127,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName ADOBE_PPKMS = new PdfName("Adobe.PPKMS");
     /** A name */
     public static final PdfName AESV2 = new PdfName("AESV2");
+    /**
+     * A name
+     * @since 5.0.3
+     */
+    public static final PdfName AHX = new PdfName("AHx");
     /** A name */
     public static final PdfName AIS = new PdfName("AIS");
     /** A name */
@@ -613,6 +623,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName FITBV = new PdfName("FitBV");
     /** A name */
     public static final PdfName FITWINDOW = new PdfName("FitWindow");
+    /**
+     * A name
+     * @since 5.0.3
+     */
+    public static final PdfName FL = new PdfName("Fl");
     /** A name */
     public static final PdfName FLAGS = new PdfName("Flags");
     /**

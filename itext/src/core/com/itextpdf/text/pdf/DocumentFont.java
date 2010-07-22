@@ -111,7 +111,8 @@ public class DocumentFont extends BaseFont {
         this.refFont = refFont;
         fontType = FONT_TYPE_DOCUMENT;
         font = (PdfDictionary)PdfReader.getPdfObject(refFont);
-        fontName = PdfName.decodeName(font.getAsName(PdfName.BASEFONT).toString());
+        PdfName baseFont = font.getAsName(PdfName.BASEFONT);
+        fontName = baseFont != null ? PdfName.decodeName(baseFont.toString()) : "Unspecified Font Name";
         PdfName subType = font.getAsName(PdfName.SUBTYPE);
         if (PdfName.TYPE1.equals(subType) || PdfName.TRUETYPE.equals(subType))
             doType1TT();
@@ -128,23 +129,26 @@ public class DocumentFont extends BaseFont {
                     return;
                 }
             }
-            String enc = PdfName.decodeName(font.getAsName(PdfName.ENCODING).toString());
-            for (int k = 0; k < cjkEncs2.length; ++k) {
-                if (enc.startsWith(cjkEncs2[k])) {
-                    try {
-                        if (k > 3)
-                            k -= 4;
-                        cjkMirror = BaseFont.createFont(cjkNames2[k], cjkEncs2[k], false);
+            PdfName encodingName = font.getAsName(PdfName.ENCODING);
+            if (encodingName != null){
+                String enc = PdfName.decodeName(encodingName.toString());
+                for (int k = 0; k < cjkEncs2.length; ++k) {
+                    if (enc.startsWith(cjkEncs2[k])) {
+                        try {
+                            if (k > 3)
+                                k -= 4;
+                            cjkMirror = BaseFont.createFont(cjkNames2[k], cjkEncs2[k], false);
+                        }
+                        catch (Exception e) {
+                            throw new ExceptionConverter(e);
+                        }
+                        return;
                     }
-                    catch (Exception e) {
-                        throw new ExceptionConverter(e);
-                    }
-                    return;
                 }
-            }
-            if (PdfName.TYPE0.equals(subType) && enc.equals("Identity-H")) {
-                processType0(font);
-                isType0 = true;
+                if (PdfName.TYPE0.equals(subType) && enc.equals("Identity-H")) {
+                    processType0(font);
+                    isType0 = true;
+                }
             }
         }
     }
@@ -206,9 +210,18 @@ public class DocumentFont extends BaseFont {
             PdfContentParser ps = new PdfContentParser(new PRTokeniser(touni));
             PdfObject ob = null;
             PdfObject last = null;
-            while ((ob = ps.readPRObject()) != null) {
+            boolean notFound = true;
+            int nestLevel = 0;
+            while ((notFound || nestLevel > 0) && (ob = ps.readPRObject()) != null) {
                 if (ob.type() == PdfContentParser.COMMAND_TYPE) {
-                    if (ob.toString().equals("beginbfchar")) {
+                	if (ob.toString().equals("begin")) {
+                		notFound = false;
+                		nestLevel++;
+                	}
+                	else if (ob.toString().equals("end")) {
+                		nestLevel--;
+                	}
+                	else if (ob.toString().equals("beginbfchar")) {
                         int n = ((PdfNumber)last).intValue();
                         for (int k = 0; k < n; ++k) {
                             String cid = decodeString((PdfString)ps.readPRObject());

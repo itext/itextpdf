@@ -981,7 +981,7 @@ public class PdfPCell extends Rectangle{
 					right = isNoWrap() ? PdfPRow.RIGHT_LIMIT : getRight() - getEffectivePaddingRight();
 					top = getTop() - getEffectivePaddingTop();
 					left = getLeft() + getEffectivePaddingLeft();
-					bottom = hasFixedHeight() ? top + getEffectivePaddingBottom() - getFixedHeight() : PdfPRow.BOTTOM_LIMIT;
+					bottom = hasFixedHeight() ? getTop() + getEffectivePaddingBottom() - getFixedHeight() : PdfPRow.BOTTOM_LIMIT;
 				}
 				PdfPRow.setColumn(ct, left, bottom, right, top);
 				try {

@@ -48,6 +48,7 @@ import java.util.Arrays;
 /**
  * Keeps all the values of a 3 by 3 matrix
  * and allows you to do some math with matrices.
+ * 
  * @since	2.1.4
  */
 public class Matrix {
@@ -70,7 +71,12 @@ public class Matrix {
 	/** the row=3, col=3 position (always 1 for 2-D) in the matrix. */
     public static final int I33 = 8;   
     
-    /** the values inside the matrix (the identity matrix by default). */
+    /** the values inside the matrix (the identity matrix by default). 
+     * <p>For reference, the indeces are as follows:<p>
+     * I11 I12 I13<p>
+     * I21 I22 I23<p>
+     * I31 I32 I33<p>
+     */
     private final float[] vals = new float[]{
             1,0,0,
             0,1,0,
@@ -116,6 +122,12 @@ public class Matrix {
     
     /**
      * Gets a specific value inside the matrix.
+     * 
+     * <p>For reference, the indeces are as follows:<p>
+     * I11 I12 I13<p>
+     * I21 I22 I23<p>
+     * I31 I32 I33<p>
+     * 
      * @param	index	an array index corresponding with a value inside the matrix
      * @return	the value at that specific position.
      */
@@ -172,6 +184,23 @@ public class Matrix {
         c[I33] = a[I33]-b[I33]; 
 
         return rslt;
+    }
+    
+    /**
+     * Computes the determinant of the matrix.
+     * @return the determinant of the matrix
+     * @since 5.0.3
+     */
+    public float getDeterminant(){
+        // ref http://en.wikipedia.org/wiki/Determinant   
+        // note that in PDF, I13 and I23 are always 0 and I33 is always 1
+        // so this could be simplified/faster
+        return    vals[I11] * vals[I22] * vals[I33] 
+                + vals[I12] * vals[I23] * vals[I31]
+                + vals[I13] * vals[I21] * vals[I32]
+                - vals[I11] * vals[I23] * vals[I32]
+                - vals[I12] * vals[I21] * vals[I33]
+                - vals[I13] * vals[I22] * vals[I31];
     }
     
     /**

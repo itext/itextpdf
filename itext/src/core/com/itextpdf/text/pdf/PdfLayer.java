@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -91,11 +92,15 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
      * Creates a new layer.
      * @param name the name of the layer
      * @param writer the writer
+     * @throws IOException 
      */
-    public PdfLayer(String name, PdfWriter writer) {
+    public PdfLayer(String name, PdfWriter writer) throws IOException {
         super(PdfName.OCG);
         setName(name);
-        ref = writer.getPdfIndirectReference();
+        if (writer instanceof PdfStamperImp)
+        	ref = writer.addToBody(this).getIndirectReference();
+        else
+        	ref = writer.getPdfIndirectReference();
         writer.registerLayer(this);
     }
 

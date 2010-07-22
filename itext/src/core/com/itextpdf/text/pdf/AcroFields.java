@@ -51,6 +51,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -153,7 +154,7 @@ public class AcroFields {
     }
 
     void fill() {
-        fields = new HashMap<String, Item>();
+        fields = new LinkedHashMap<String, Item>();
         PdfDictionary top = (PdfDictionary)PdfReader.getPdfObjectRelease(reader.getCatalog().get(PdfName.ACROFORM));
         if (top == null)
             return;
@@ -2187,6 +2188,8 @@ public class AcroFields {
             PdfPKCS7 pk = null;
             if (sub.equals(PdfName.ADBE_X509_RSA_SHA1)) {
                 PdfString cert = v.getAsString(PdfName.CERT);
+                if (cert == null)
+                    cert = v.getAsArray(PdfName.CERT).getAsString(0);
                 pk = new PdfPKCS7(contents.getOriginalBytes(), cert.getBytes(), provider);
             }
             else

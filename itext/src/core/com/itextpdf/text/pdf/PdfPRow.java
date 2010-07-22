@@ -609,7 +609,7 @@ public class PdfPRow {
 	                    y = setColumn(ct, bottom, left, top, right);
 	                    break;
 	                default:
-	                    y = setColumn(ct, left, bottom, cell.isNoWrap() ? RIGHT_LIMIT : right, top);
+	                    y = setColumn(ct, left, bottom + 0.001f, cell.isNoWrap() ? RIGHT_LIMIT : right, top);
 	                    break;
 	            }
 	            int status;

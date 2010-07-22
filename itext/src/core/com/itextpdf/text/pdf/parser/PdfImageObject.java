@@ -43,13 +43,8 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import com.itextpdf.text.Document;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.IndexColorModel;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
@@ -61,6 +56,11 @@ import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.codec.PngWriter;
+import com.itextpdf.text.pdf.codec.TIFFConstants;
+import com.itextpdf.text.pdf.codec.TiffWriter;
+import java.io.ByteArrayOutputStream;
 
 /**
  * An object that contains an image dictionary and image bytes.
@@ -73,6 +73,25 @@ public class PdfImageObject {
 	/** The image bytes. */
 	protected byte[] streamBytes;
 	
+    private int pngColorType = -1;
+    private int pngBitDepth;
+    private int width;
+    private int height;
+    private int bpc;
+    private byte[] palette;
+    private byte[] icc;
+    private int stride;
+    private boolean  decoded;
+    public static final String TYPE_PNG = "png";
+    public static final String TYPE_JPG = "jpg";
+    public static final String TYPE_JP2 = "jp2";
+    public static final String TYPE_TIF = "tif";
+
+    protected String fileType;
+
+    public String getFileType() {
+        return fileType;
+    }
 	/**
 	 * Creates a PdfImage object.
 	 * @param stream a PRStream
@@ -80,16 +99,16 @@ public class PdfImageObject {
 	 */
 	public PdfImageObject(PRStream stream) {
 		this.dictionary = stream;
-		try {
-			if (PdfName.FLATEDECODE.equals(dictionary.getAsName(PdfName.FILTER)))
-				streamBytes = PdfReader.getStreamBytes(stream);
-			// else if other filter (not supported yet)
-			else
-				streamBytes = PdfReader.getStreamBytesRaw(stream);
-		}
-		catch(IOException ioe) {
-			streamBytes = null;
-		}
+        try {
+            streamBytes = PdfReader.getStreamBytes(stream);
+            decoded = true;
+        }
+        catch (Exception e) {
+            try {
+                streamBytes = PdfReader.getStreamBytesRaw(stream);
+            }
+            catch (Exception e2) {}
+        }
 	}
 	
 	/**
@@ -117,58 +136,150 @@ public class PdfImageObject {
 		return streamBytes;
 	}
 	
-	public BufferedImage getAwtImage() throws IOException {
-		PdfName filter = dictionary.getAsName(PdfName.FILTER);
-		if (PdfName.DCTDECODE.equals(filter)) {
-			return ImageIO.read(new ByteArrayInputStream(streamBytes));
-		}
-		if (!PdfName.FLATEDECODE.equals(filter)) {
-			return null;
-		}
-		BufferedImage bi = null;
-		DataBuffer db = new DataBufferByte(streamBytes, streamBytes.length);
-		int width = dictionary.getAsNumber(PdfName.WIDTH).intValue();
-		int height = dictionary.getAsNumber(PdfName.HEIGHT).intValue();
-		WritableRaster raster;
-		int bpc = dictionary.getAsNumber(PdfName.BITSPERCOMPONENT).intValue();
-		switch(bpc) {
-		case 1:
-			raster = Raster.createPackedRaster( db, width, height, 1, null );
-			bi = new BufferedImage( width, height, BufferedImage.TYPE_BYTE_BINARY );
-			bi.setData( raster );
-			break;
-		default:
-			PdfObject colorspace = dictionary.getDirectObject(PdfName.COLORSPACE);
-			if (PdfName.DEVICERGB.equals(colorspace)) {
-				if (width * height == streamBytes.length) {
-					bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED );
-					raster = Raster.createPackedRaster(db, width, height, bpc, null);
-					bi.setData(raster);
-				}
-				else {
-					bi = new BufferedImage( width, height, BufferedImage.TYPE_INT_RGB );
-					raster = Raster.createInterleavedRaster(db, width, height,
-							width * 3, 3, new int[]{0, 1, 2}, null );
-					bi.setData(raster);
-				}
-			}
-			else if (colorspace instanceof PdfArray) {
-				PdfArray colorspacearray = (PdfArray) colorspace;
-				if (PdfName.INDEXED.equals(colorspacearray.getAsName(0))) {
-					int hival = colorspacearray.getAsNumber(2).intValue();
-					byte[] index = colorspacearray.getDirectObject(3).getBytes();
-					raster = Raster.createPackedRaster( db, width, height, bpc, null );
-					ColorModel cm = new IndexColorModel(bpc, hival + 1, index, 0, false);
-					bi = new BufferedImage(cm, raster, false, null);
-				}
-				else {
-					bi = new BufferedImage( width, height, BufferedImage.TYPE_INT_RGB );
-					raster = Raster.createInterleavedRaster(db, width, height,
-							width * 3, 3, new int[]{0, 1, 2}, null );
-					bi.setData(raster);
-				}
-			} 
-		}
-		return bi;
-	}
+    private void findColorspace(PdfObject colorspace, boolean allowIndexed) throws IOException {
+        if (PdfName.DEVICEGRAY.equals(colorspace)) {
+            stride = (width * bpc + 7) / 8;
+            pngColorType = 0;
+        }
+        else if (PdfName.DEVICERGB.equals(colorspace)) {
+            if (bpc == 8 || bpc == 16) {
+                stride = (width * bpc * 3 + 7) / 8;
+                pngColorType = 2;
+            }
+        }
+        else if (colorspace instanceof PdfArray) {
+            PdfArray ca = (PdfArray)colorspace;
+            PdfObject tyca = ca.getDirectObject(0);
+            if (PdfName.CALGRAY.equals(tyca)) {
+                stride = (width * bpc + 7) / 8;
+                pngColorType = 0;
+            }
+            else if (PdfName.CALRGB.equals(tyca)) {
+                if (bpc == 8 || bpc == 16) {
+                    stride = (width * bpc * 3 + 7) / 8;
+                    pngColorType = 2;
+                }
+            }
+            else if (PdfName.ICCBASED.equals(tyca)) {
+                PRStream pr = (PRStream)ca.getDirectObject(1);
+                int n = pr.getAsNumber(PdfName.N).intValue();
+                if (n == 1) {
+                    stride = (width * bpc + 7) / 8;
+                    pngColorType = 0;
+                    icc = PdfReader.getStreamBytes(pr);
+                }
+                else if (n == 3) {
+                    stride = (width * bpc * 3 + 7) / 8;
+                    pngColorType = 2;
+                    icc = PdfReader.getStreamBytes(pr);
+                }
+            }
+            else if (allowIndexed && PdfName.INDEXED.equals(tyca)) {
+                findColorspace(ca.getDirectObject(1), false);
+                if (pngColorType == 2) {
+                    PdfObject id2 = ca.getDirectObject(3);
+                    if (id2 instanceof PdfString) {
+                        palette = ((PdfString)id2).getBytes();
+                    }
+                    else if (id2 instanceof PRStream) {
+                        palette = PdfReader.getStreamBytes(((PRStream)id2));
+                    }
+                    stride = (width * bpc + 7) / 8;
+                    pngColorType = 3;
+                }
+            }
+        }
+    }
+
+    public byte[] getImageAsBytes() throws IOException {
+        if (streamBytes == null)
+            return null;
+        if (!decoded) {
+            PdfName filter = dictionary.getAsName(PdfName.FILTER);
+            if (PdfName.DCTDECODE.equals(filter)) {
+                fileType = TYPE_JPG;
+                return streamBytes;
+            }
+            else if (PdfName.JPXDECODE.equals(filter)) {
+                fileType = TYPE_JP2;
+                return streamBytes;
+            }
+            return null;
+        }
+        pngColorType = -1;
+        width = dictionary.getAsNumber(PdfName.WIDTH).intValue();
+        height = dictionary.getAsNumber(PdfName.HEIGHT).intValue();
+        bpc = dictionary.getAsNumber(PdfName.BITSPERCOMPONENT).intValue();
+        pngBitDepth = bpc;
+        PdfObject colorspace = dictionary.getDirectObject(PdfName.COLORSPACE);
+        palette = null;
+        icc = null;
+        stride = 0;
+        findColorspace(colorspace, true);
+        ByteArrayOutputStream ms = new ByteArrayOutputStream();
+        if (pngColorType < 0) {
+            if (bpc != 8)
+                return null;
+            if (PdfName.DEVICECMYK.equals(colorspace)) {
+            }
+            else if (colorspace instanceof PdfArray) {
+                PdfArray ca = (PdfArray)colorspace;
+                PdfObject tyca = ca.getDirectObject(0);
+                if (!PdfName.ICCBASED.equals(tyca))
+                    return null;
+                PRStream pr = (PRStream)ca.getDirectObject(1);
+                int n = pr.getAsNumber(PdfName.N).intValue();
+                if (n != 4) {
+                    return null;
+                }
+                icc = PdfReader.getStreamBytes(pr);
+            }
+            else
+                return null;
+            stride = 4 * width;
+            TiffWriter wr = new TiffWriter();
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL, 4));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_BITSPERSAMPLE, new int[]{8,8,8,8}));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_PHOTOMETRIC, TIFFConstants.PHOTOMETRIC_SEPARATED));
+            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_IMAGEWIDTH, width));
+            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_IMAGELENGTH, height));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_COMPRESSION, TIFFConstants.COMPRESSION_LZW));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_PREDICTOR, TIFFConstants.PREDICTOR_HORIZONTAL_DIFFERENCING));
+            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP, height));
+            wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_XRESOLUTION, new int[]{300,1}));
+            wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_YRESOLUTION, new int[]{300,1}));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_RESOLUTIONUNIT, TIFFConstants.RESUNIT_INCH));
+            wr.addField(new TiffWriter.FieldAscii(TIFFConstants.TIFFTAG_SOFTWARE, Document.getVersion()));
+            ByteArrayOutputStream comp = new ByteArrayOutputStream();
+            TiffWriter.compressLZW(comp, 2, streamBytes, height, 4, stride);
+            byte[] buf = comp.toByteArray();
+            wr.addField(new TiffWriter.FieldImage(buf));
+            wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_STRIPBYTECOUNTS, buf.length));
+            if (icc != null)
+                wr.addField(new TiffWriter.FieldUndefined(TIFFConstants.TIFFTAG_ICCPROFILE, icc));
+            wr.writeFile(ms);
+            fileType = TYPE_TIF;
+            return ms.toByteArray();
+        }
+        PngWriter png = new PngWriter(ms);
+        png.writeHeader(width, height, pngBitDepth, pngColorType);
+        if (icc != null)
+            png.writeIccProfile(icc);
+        if (palette != null)
+            png.writePalette(palette);
+        png.writeData(streamBytes, stride);
+        png.writeEnd();
+        fileType = TYPE_PNG;
+        return ms.toByteArray();
+    }
+
+    /**
+     * @since 5.0.3 renamed from getAwtImage()
+     */
+    public BufferedImage getBufferedImage() throws IOException {
+        byte[] img = getImageAsBytes();
+        if (img == null)
+            return null;
+        return ImageIO.read(new ByteArrayInputStream(img));
+    }
 }

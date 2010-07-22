@@ -63,6 +63,7 @@ class PdfReaderInstance {
     PdfWriter writer;
     HashSet<Integer> visited = new HashSet<Integer>();
     ArrayList<Integer> nextRound = new ArrayList<Integer>();
+    private boolean outputToPdf = true;
 
     PdfReaderInstance(PdfReader reader, PdfWriter writer) {
         this.reader = reader;
@@ -75,7 +76,7 @@ class PdfReaderInstance {
         return reader;
     }
 
-    PdfImportedPage getImportedPage(int pageNumber) {        
+    PdfImportedPage getImportedPage(int pageNumber) {
         if (!reader.isOpenedWithFullPermissions())
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
         if (pageNumber < 1 || pageNumber > reader.getNumberOfPages())
@@ -181,5 +182,24 @@ class PdfReaderInstance {
                 //Empty on purpose
             }
         }
+    }
+
+    /** Checks if this instance is to be written to the pdf
+     * as a XObject.
+     * @return the outputToPdf
+     * @since	iText 5.0.3
+     */
+    boolean isOutputToPdf() {
+        return outputToPdf;
+    }
+
+    /** Determinates if this instance will be written to the pdf
+     * as a XObject. It is generally set to false by PdfCopy to avoid
+     * duplication of objects.
+     * @param outputToPdf true to write, false not to write
+     * @since	iText 5.0.3
+     */
+    void setOutputToPdf(boolean outputToPdf) {
+        this.outputToPdf = outputToPdf;
     }
 }
