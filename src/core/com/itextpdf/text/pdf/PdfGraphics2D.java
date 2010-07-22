@@ -162,6 +162,7 @@ public class PdfGraphics2D extends Graphics2D {
     // Added by Jurij Bilas
     protected boolean underline;          // indicates if the font style is underlined
     // Added by Peter Severin
+    /** @since 5.0.3 */
     protected boolean strikethrough;
 
     protected PdfGState fillGState[];
