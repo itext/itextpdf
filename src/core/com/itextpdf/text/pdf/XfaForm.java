@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -266,7 +267,7 @@ public class XfaForm {
      * @return the complete name or <CODE>null</CODE> if not found
      */
     public String findFieldName(String name, AcroFields af) {
-        HashMap<String, AcroFields.Item> items = af.getFields();
+        Map<String, AcroFields.Item> items = af.getFields();
         if (items.containsKey(name))
             return name;
         if (acroFieldsSom == null) {

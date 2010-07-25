@@ -659,7 +659,7 @@ class PdfStamperImp extends PdfWriter {
             return;
         if (page > reader.getNumberOfPages())
             return;
-        HashMap<String, Item> fields = acroFields.getFields();
+        Map<String, Item> fields = acroFields.getFields();
         for (AcroFields.Item item: fields.values()) {
             for (int k = 0; k < item.size(); ++k) {
                 int p = item.getPage(k).intValue();
@@ -808,7 +808,7 @@ class PdfStamperImp extends PdfWriter {
         if (append)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("field.flattening.is.not.supported.in.append.mode"));
         getAcroFields();
-        HashMap<String, Item> fields = acroFields.getFields();
+        Map<String, Item> fields = acroFields.getFields();
         if (fieldsAdded && partialFlattening.isEmpty()) {
             for (String s: fields.keySet()) {
                 partialFlattening.add(s);

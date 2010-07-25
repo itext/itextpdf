@@ -44,7 +44,7 @@
 package com.itextpdf.text.pdf;
 
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -96,7 +96,7 @@ class PdfCopyFormsImp extends PdfCopyFieldsImp {
     @Override
     void mergeFields() {
         for (int k = 0; k < fields.size(); ++k) {
-            HashMap<String, Item> fd = (fields.get(k)).getFields();
+            Map<String, Item> fd = (fields.get(k)).getFields();
             mergeWithMaster(fd);
         }
     }
