@@ -51,7 +51,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +76,7 @@ public class AcroFields {
 
     PdfReader reader;
     PdfWriter writer;
-    HashMap<String, Item> fields;
+    Map<String, Item> fields;
     private int topFirst;
     private HashMap<String, int[]> sigNames;
     private boolean append;
@@ -154,7 +153,7 @@ public class AcroFields {
     }
 
     void fill() {
-        fields = new LinkedHashMap<String, Item>();
+        fields = new HashMap<String, Item>();
         PdfDictionary top = (PdfDictionary)PdfReader.getPdfObjectRelease(reader.getCatalog().get(PdfName.ACROFORM));
         if (top == null)
             return;
@@ -1489,7 +1488,7 @@ public class AcroFields {
      *
      * @return all the fields
      */
-    public HashMap<String, Item> getFields() {
+    public Map<String, Item> getFields() {
         return fields;
     }
 
