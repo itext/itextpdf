@@ -105,6 +105,14 @@ public class ImageRenderInfo {
     }
 
     /**
+     * @return The coordinate transformation matrix active when this image was rendered.  Coordinates are in User space.
+     * @since 5.0.3
+     */
+    public Matrix getImageCTM(){
+        return ctm;
+    }
+    
+    /**
      * @return the size of the image, in User space units
      * @since 5.0.3
      */
