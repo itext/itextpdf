@@ -94,6 +94,7 @@ public class ContentByteUtils {
                 {
                     final PdfObject element = iter.next();
                     allBytes.write(getContentBytesFromContentObject(element));
+                    allBytes.write((byte)' ');
                 }
                 result = allBytes.toByteArray();
                 break;
