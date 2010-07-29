@@ -71,10 +71,6 @@ public final class InlineImageUtils {
             super(message);
         }
 
-        public InlineImageParseException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
     }
     
     /**
