@@ -57,6 +57,7 @@ import com.itextpdf.text.pdf.PdfObject;
 
 /**
  * Utility methods to help with processing of inline images
+ * @since 5.0.4
  */
 public final class InlineImageUtils {
     private InlineImageUtils(){}
@@ -64,6 +65,7 @@ public final class InlineImageUtils {
     /**
      * Simple class in case users need to differentiate an exception from processing
      * inline images vs other exceptions 
+     * @since 5.0.4
      */
     public static class InlineImageParseException extends IOException{
         
