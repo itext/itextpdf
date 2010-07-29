@@ -57,6 +57,8 @@ public class ImageRenderInfo {
     private final Matrix ctm;
     /** A reference to the image XObject */
     private final PdfIndirectReference ref;
+    /** the image object to be rendered, if it has been parsed already.  Null otherwise. */
+    private PdfImageObject imageObject = null;
     
     private ImageRenderInfo(Matrix ctm, PdfIndirectReference ref) {
         this.ctm = ctm;
@@ -83,8 +85,10 @@ public class ImageRenderInfo {
      * @return the ImageRenderInfo representing the rendered embedded image
      * @since 5.0.1
      */
-    protected static ImageRenderInfo createdForEmbeddedImage(Matrix ctm, PdfDictionary imageDictionary, byte[] streamBytes){
-        return new ImageRenderInfo(ctm, null);
+    protected static ImageRenderInfo createdForEmbeddedImage(Matrix ctm, PdfImageObject imageObject){
+        ImageRenderInfo renderInfo = new ImageRenderInfo(ctm, null);
+        renderInfo.imageObject = imageObject;
+        return renderInfo;
     }
     
     /**
@@ -93,8 +97,16 @@ public class ImageRenderInfo {
      * @since 5.0.2
      */
     public PdfImageObject getImage() {
-		PRStream stream = (PRStream)PdfReader.getPdfObject(ref);
-		return new PdfImageObject(stream);
+        prepareImageObject();
+        return imageObject;
+    }
+    
+    private void prepareImageObject(){
+        if (imageObject != null)
+            return;
+        
+        PRStream stream = (PRStream)PdfReader.getPdfObject(ref);
+        imageObject = new PdfImageObject(stream);        
     }
     
     /**

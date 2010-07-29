@@ -112,6 +112,18 @@ public class PdfImageObject {
 	}
 	
 	/**
+	 * Creats a PdfImage object using an explicitly provided dictionary and image bytes
+	 * @param dictionary the dictionary for the image
+	 * @param samples the samples
+	 * @since 5.0.3
+	 */
+	public PdfImageObject(PdfDictionary dictionary, byte[] samples){
+	    this.dictionary = dictionary;
+	    this.streamBytes = samples;
+	    decoded = false;
+	}
+	
+	/**
 	 * Returns an entry from the image dictionary.
 	 * @param key a key
 	 * @return the value
