@@ -107,29 +107,6 @@ public class PdfContentStreamProcessor {
         inlineImageEntryAbbreviationMap.put(new PdfName("W"), PdfName.WIDTH);
     }
     
-    private static Map<PdfName, PdfName> inlineImageColorSpaceAbbreviationMap;
-    {
-        inlineImageColorSpaceAbbreviationMap = new HashMap<PdfName, PdfName>();
-        
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("G"), PdfName.DEVICEGRAY);
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("RGB"), PdfName.DEVICERGB);
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("CMYK"), PdfName.DEVICECMYK);
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("I"), PdfName.INDEXED);
-    }
-    
-    private static Map<PdfName, PdfName> inlineImageFilterAbbreviationMap;
-    {
-        inlineImageColorSpaceAbbreviationMap = new HashMap<PdfName, PdfName>();
-        
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("AHx"), PdfName.ASCIIHEXDECODE);
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("A85"), PdfName.ASCII85DECODE);
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("LZW"), PdfName.LZWDECODE);
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("Fl"), PdfName.FLATEDECODE);
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("RL"), PdfName.RUNLENGTHDECODE);
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("CCF"), PdfName.CCITTFAXDECODE);
-        inlineImageColorSpaceAbbreviationMap.put(new PdfName("DCT"), PdfName.DCTDECODE);
-    }
-    
 	/** A map with all supported operators operators (PDF syntax). */
     final private Map<String, ContentOperator> operators;
     /** Resources for the content stream. */
@@ -389,9 +366,9 @@ public class PdfContentStreamProcessor {
             while (ps.parse(operands).size() > 0){
                 PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
                 if ("BI".equals(operator.toString())){
+                    // we don't call invokeOperator for embedded images - this is one area of the PDF spec that is particularly nasty and inconsistent
                     ImageRenderInfo renderInfo = ImageRenderInfo.createdForEmbeddedImage(gs().ctm, InlineImageUtils.parseInlineImage(ps));
                     renderListener.renderImage(renderInfo);
-                    // we don't call invokeOperator for embedded images - this is one area of the PDF spec that is particularly nasty and inconsistent
                 } else {
                     invokeOperator(operator, operands);
                 }
