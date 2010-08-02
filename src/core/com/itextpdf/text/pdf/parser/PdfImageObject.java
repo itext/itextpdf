@@ -43,13 +43,15 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import com.itextpdf.text.Document;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
@@ -60,7 +62,6 @@ import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.codec.PngWriter;
 import com.itextpdf.text.pdf.codec.TIFFConstants;
 import com.itextpdf.text.pdf.codec.TiffWriter;
-import java.io.ByteArrayOutputStream;
 
 /**
  * An object that contains an image dictionary and image bytes.
@@ -69,9 +70,9 @@ import java.io.ByteArrayOutputStream;
 public class PdfImageObject {
 
 	/** The image dictionary. */
-	protected PdfDictionary dictionary;
-	/** The image bytes. */
-	protected byte[] streamBytes;
+	private PdfDictionary dictionary;
+	/** The decoded image bytes (after applying filters), or the raw image bytes if unable to decode */
+	private byte[] streamBytes;
 	
     private int pngColorType = -1;
     private int pngBitDepth;
@@ -97,18 +98,8 @@ public class PdfImageObject {
 	 * @param stream a PRStream
 	 * @throws IOException
 	 */
-	public PdfImageObject(PRStream stream) {
-		this.dictionary = stream;
-        try {
-            streamBytes = PdfReader.getStreamBytes(stream);
-            decoded = true;
-        }
-        catch (Exception e) {
-            try {
-                streamBytes = PdfReader.getStreamBytesRaw(stream);
-            }
-            catch (Exception e2) {}
-        }
+	protected PdfImageObject(PRStream stream) throws IOException {
+		this(stream, PdfReader.getStreamBytesRaw(stream));
 	}
 	
 	/**
@@ -117,10 +108,16 @@ public class PdfImageObject {
 	 * @param samples the samples
 	 * @since 5.0.3
 	 */
-	public PdfImageObject(PdfDictionary dictionary, byte[] samples){
+	protected PdfImageObject(PdfDictionary dictionary, byte[] samples) throws IOException {
 	    this.dictionary = dictionary;
-	    this.streamBytes = samples;
-	    decoded = false;
+	    try{
+	        streamBytes = PdfReader.decodeBytes(samples, dictionary);
+	        decoded = true;
+	    } catch (UnsupportedPdfException e){
+	        // it's possible that the filter type was jpx or jpg, in which case we can still use the streams as-is, so we'll just hold onto the samples
+            streamBytes = samples;
+	        decoded = false;
+	    }
 	}
 	
 	/**
@@ -207,7 +204,17 @@ public class PdfImageObject {
         if (streamBytes == null)
             return null;
         if (!decoded) {
+            // if the stream hasn't been decoded, check to see if it is a single stage JPG or JPX encoded stream.  If it is,
+            // then we can just use stream as-is
             PdfName filter = dictionary.getAsName(PdfName.FILTER);
+            if (filter == null){
+                PdfArray filterArray = dictionary.getAsArray(PdfName.FILTER);
+                if (filterArray.size() == 1){
+                    filter = filterArray.getAsName(0);
+                } else {
+                    throw new UnsupportedPdfException("Multi-stage filters not supported here (" + filterArray + ")");
+                }
+            }
             if (PdfName.DCTDECODE.equals(filter)) {
                 fileType = TYPE_JPG;
                 return streamBytes;
@@ -216,7 +223,7 @@ public class PdfImageObject {
                 fileType = TYPE_JP2;
                 return streamBytes;
             }
-            return null;
+            throw new UnsupportedPdfException("Unsupported stream filter " + filter);
         }
         pngColorType = -1;
         width = dictionary.getAsNumber(PdfName.WIDTH).intValue();

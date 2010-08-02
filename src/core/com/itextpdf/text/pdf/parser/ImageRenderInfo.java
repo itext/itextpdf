@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import java.io.IOException;
+
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfIndirectReference;
@@ -97,11 +99,15 @@ public class ImageRenderInfo {
      * @since 5.0.2
      */
     public PdfImageObject getImage() {
-        prepareImageObject();
-        return imageObject;
+        try {
+            prepareImageObject();
+            return imageObject;
+        } catch (IOException e) {
+            return null;
+        }
     }
     
-    private void prepareImageObject(){
+    private void prepareImageObject() throws IOException{
         if (imageObject != null)
             return;
         
