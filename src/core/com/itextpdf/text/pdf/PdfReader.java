@@ -2095,15 +2095,16 @@ public class PdfReader implements PdfViewerPreferences {
         xrefObj.set(freeXref, new PRStream(this, content, compressionLevel));
     }
 
-    /** Get the content from a stream applying the required filters.
-     * @param stream the stream
-     * @param file the location where the stream is
-     * @throws IOException on error
-     * @return the stream content
+    /**
+     * Decode a byte[] applying the filters specified in the provided dictionary.
+     * @param b the bytes to decode
+     * @param streamDictionary the dictionary that contains filter information
+     * @return the decoded bytes
+     * @throws IOException if there are any problems decoding the bytes
      */
-    public static byte[] getStreamBytes(PRStream stream, RandomAccessFileOrArray file) throws IOException {
-        PdfObject filter = getPdfObjectRelease(stream.get(PdfName.FILTER));
-        byte[] b = getStreamBytesRaw(stream, file);
+    public static byte[] decodeBytes(byte[] b, PdfDictionary streamDictionary) throws IOException {
+        PdfObject filter = getPdfObjectRelease(streamDictionary.get(PdfName.FILTER));
+
         ArrayList<PdfObject> filters = new ArrayList<PdfObject>();
         if (filter != null) {
             if (filter.isName())
@@ -2112,9 +2113,9 @@ public class PdfReader implements PdfViewerPreferences {
                 filters = ((PdfArray)filter).getArrayList();
         }
         ArrayList<PdfObject> dp = new ArrayList<PdfObject>();
-        PdfObject dpo = getPdfObjectRelease(stream.get(PdfName.DECODEPARMS));
+        PdfObject dpo = getPdfObjectRelease(streamDictionary.get(PdfName.DECODEPARMS));
         if (dpo == null || !dpo.isDictionary() && !dpo.isArray())
-            dpo = getPdfObjectRelease(stream.get(PdfName.DP));
+            dpo = getPdfObjectRelease(streamDictionary.get(PdfName.DP));
         if (dpo != null) {
             if (dpo.isDictionary())
                 dp.add(dpo);
@@ -2145,8 +2146,8 @@ public class PdfReader implements PdfViewerPreferences {
                 }
             }
             else if (PdfName.CCITTFAXDECODE.equals(name)) {
-                PdfNumber wn = (PdfNumber)getPdfObjectRelease(stream.get(PdfName.WIDTH));
-                PdfNumber hn = (PdfNumber)getPdfObjectRelease(stream.get(PdfName.HEIGHT));
+                PdfNumber wn = (PdfNumber)getPdfObjectRelease(streamDictionary.get(PdfName.WIDTH));
+                PdfNumber hn = (PdfNumber)getPdfObjectRelease(streamDictionary.get(PdfName.HEIGHT));
                 if (wn == null || hn == null)
                     throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("filter.ccittfaxdecode.is.only.supported.for.images"));
                 int width = wn.intValue();
@@ -2206,6 +2207,17 @@ public class PdfReader implements PdfViewerPreferences {
                 throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("the.filter.1.is.not.supported", name));
         }
         return b;
+    }
+    
+    /** Get the content from a stream applying the required filters.
+     * @param stream the stream
+     * @param file the location where the stream is
+     * @throws IOException on error
+     * @return the stream content
+     */
+    public static byte[] getStreamBytes(PRStream stream, RandomAccessFileOrArray file) throws IOException {
+        byte[] b = getStreamBytesRaw(stream, file);
+        return decodeBytes(b, stream);
     }
 
     /** Get the content from a stream applying the required filters.
