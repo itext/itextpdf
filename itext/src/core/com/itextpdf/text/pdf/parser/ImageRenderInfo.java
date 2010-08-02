@@ -79,11 +79,10 @@ public class ImageRenderInfo {
     }
     
     /**
-     * Create an ImageRenderInfo object based on embedded image data.  This is nowhere near completely thought through
+     * Create an ImageRenderInfo object based on inline image data.  This is nowhere near completely thought through
      * and really just acts as a placeholder.
      * @param ctm the coordinate transformation matrix at the time the image is rendered
-     * @param imageDictionary a dictionary containing parameters of the embedded image (note that the key/value pairs of this dictionary can have abbreviations in them)
-     * @param streamBytes the bytes of the image data
+     * @param imageObject the image object representing the inline image
      * @return the ImageRenderInfo representing the rendered embedded image
      * @since 5.0.1
      */

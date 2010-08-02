@@ -2101,6 +2101,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @param streamDictionary the dictionary that contains filter information
      * @return the decoded bytes
      * @throws IOException if there are any problems decoding the bytes
+     * @since 5.0.4
      */
     public static byte[] decodeBytes(byte[] b, PdfDictionary streamDictionary) throws IOException {
         PdfObject filter = getPdfObjectRelease(streamDictionary.get(PdfName.FILTER));
