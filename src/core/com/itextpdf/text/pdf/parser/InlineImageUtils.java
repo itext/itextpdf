@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.itextpdf.text.pdf.PRTokeniser;
+import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfContentParser;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
@@ -152,7 +153,7 @@ public final class InlineImageUtils {
     
     /**
      * Parses the next inline image dictionary from the parser.  The parser must be positioned immediately following the EI operator.
-     * The parser will be left with position immediately following the ID operator that ends the inline image dictionary.
+     * The parser will be left with position immediately following the whitespace character that follows the ID operator that ends the inline image dictionary.
      * @param ps the parser to extract the embedded image information from
      * @return the dictionary for the inline image, with any abbreviations converted to regular image dictionary keys and values
      * @throws IOException if the parse fails
@@ -171,6 +172,10 @@ public final class InlineImageUtils {
             dictionary.put(resolvedKey, getAlternateValue(resolvedKey, value));
         }
 
+        int ch = ps.getTokeniser().read();
+        if (!PRTokeniser.isWhitespace(ch))
+            throw new IOException("Unexpected character " + ch + " found after ID in inline image");
+        
         return dictionary;
     }
     
@@ -182,9 +187,19 @@ public final class InlineImageUtils {
      */
     private static PdfObject getAlternateValue(PdfName key, PdfObject value){
         if (key == PdfName.FILTER){
-            PdfName altValue = inlineImageFilterAbbreviationMap.get(value);
-            if (altValue != null)
-                return altValue;
+            if (value instanceof PdfName){
+                PdfName altValue = inlineImageFilterAbbreviationMap.get(value);
+                if (altValue != null)
+                    return altValue;
+            } else if (value instanceof PdfArray){
+                PdfArray array = ((PdfArray)value);
+                PdfArray altArray = new PdfArray();
+                int count = array.size();
+                for(int i = 0; i < count; i++){
+                    altArray.add(getAlternateValue(key, array.getPdfObject(i)));
+                }
+                return altArray;
+            }
         } else if (key == PdfName.COLORSPACE){
             PdfName altValue = inlineImageColorSpaceAbbreviationMap.get(value);
             if (altValue != null)
