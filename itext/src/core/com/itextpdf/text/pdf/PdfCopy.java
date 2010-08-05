@@ -173,7 +173,8 @@ public class PdfCopy extends PdfWriter {
         else {
             currentPdfReaderInstance = super.getPdfReaderInstance(reader);
         }
-        currentPdfReaderInstance.setOutputToPdf(false);
+        //temporarily removed - this line currently causes some unit tests to fail (/iText/test/core/com/itextpdf/text/pdf/TestPdfCopyAndStamp.java)
+        //currentPdfReaderInstance.setOutputToPdf(false);
         return currentPdfReaderInstance.getImportedPage(pageNumber);
     }
 
