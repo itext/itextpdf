@@ -56,6 +56,9 @@ public class PdfCopyTest {
         PdfReader targetR = new PdfReader(out.toByteArray());
         int destinationXRefCount = targetR.getXrefSize();
         
+//        TestResourceUtils.saveBytesToFile(createImagePdf(), new File("./source.pdf"));
+//        TestResourceUtils.saveBytesToFile(out.toByteArray(), new File("./result.pdf"));
+        
         Assert.assertEquals(sourceXRefCount, destinationXRefCount);
         
     }
