@@ -2298,7 +2298,10 @@ public class PdfWriter extends DocWriter implements
     protected PdfReaderInstance currentPdfReaderInstance;
 
     protected int getNewObjectNumber(PdfReader reader, int number, int generation) {
-        return currentPdfReaderInstance.getNewObjectNumber(number, generation);
+        if (currentPdfReaderInstance == null) {
+        	currentPdfReaderInstance = getPdfReaderInstance(reader);
+        }
+    	return currentPdfReaderInstance.getNewObjectNumber(number, generation);
     }
 
     RandomAccessFileOrArray getReaderFile(PdfReader reader) {
