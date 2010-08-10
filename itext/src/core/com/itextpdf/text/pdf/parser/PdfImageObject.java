@@ -98,7 +98,7 @@ public class PdfImageObject {
 	 * @param stream a PRStream
 	 * @throws IOException
 	 */
-	protected PdfImageObject(PRStream stream) throws IOException {
+	public PdfImageObject(PRStream stream) throws IOException {
 		this(stream, PdfReader.getStreamBytesRaw(stream));
 	}
 	
