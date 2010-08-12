@@ -1260,8 +1260,7 @@ public class PdfWriter extends DocWriter implements
         // [F5] add all the dependencies in the imported pages
         for (PdfReaderInstance element : readerInstances.values()) {
             currentPdfReaderInstance= element;
-            if (currentPdfReaderInstance.isOutputToPdf())
-                currentPdfReaderInstance.writeAllPages();
+            currentPdfReaderInstance.writeAllPages();
         }
         currentPdfReaderInstance = null;
         // [F6] add the spotcolors
