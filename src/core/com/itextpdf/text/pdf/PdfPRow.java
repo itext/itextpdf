@@ -609,7 +609,7 @@ public class PdfPRow {
 	                    y = setColumn(ct, bottom, left, top, right);
 	                    break;
 	                default:
-	                    y = setColumn(ct, left, bottom + 0.001f, cell.isNoWrap() ? RIGHT_LIMIT : right, top);
+	                    y = setColumn(ct, left, bottom + 0.00001f, cell.isNoWrap() ? RIGHT_LIMIT : right, top);
 	                    break;
 	            }
 	            int status;
@@ -633,7 +633,7 @@ public class PdfPRow {
 				allEmpty = (allEmpty && thisEmpty);
 			}
 			newCells[k] = newCell;
-			cell.setFixedHeight(newHeight);
+            cell.setFixedHeight(newHeight);
 		}
 		if (allEmpty) {
 			for (int k = 0; k < cells.length; ++k) {
