@@ -78,35 +78,7 @@ public class PdfContentStreamProcessor {
 	 * @since 5.0.1
 	 */
     public static final String DEFAULTOPERATOR = "DefaultOperator";
-    
-    private static Map<PdfName, PdfName> inlineImageEntryAbbreviationMap;
-    { // static initializer
-        inlineImageEntryAbbreviationMap = new HashMap<PdfName, PdfName>();
-
-        // allowed entries - just pass these through
-        inlineImageEntryAbbreviationMap.put(PdfName.BITSPERCOMPONENT, PdfName.BITSPERCOMPONENT);
-        inlineImageEntryAbbreviationMap.put(PdfName.COLORSPACE, PdfName.COLORSPACE);
-        inlineImageEntryAbbreviationMap.put(PdfName.DECODE, PdfName.DECODE);
-        inlineImageEntryAbbreviationMap.put(PdfName.DECODEPARMS, PdfName.DECODEPARMS);
-        inlineImageEntryAbbreviationMap.put(PdfName.FILTER, PdfName.FILTER);
-        inlineImageEntryAbbreviationMap.put(PdfName.HEIGHT, PdfName.HEIGHT);
-        inlineImageEntryAbbreviationMap.put(PdfName.IMAGEMASK, PdfName.IMAGEMASK);
-        inlineImageEntryAbbreviationMap.put(PdfName.INTENT, PdfName.INTENT);
-        inlineImageEntryAbbreviationMap.put(PdfName.INTERPOLATE, PdfName.INTERPOLATE);
-        inlineImageEntryAbbreviationMap.put(PdfName.WIDTH, PdfName.WIDTH);
-
-        // abbreviations - transform these to corresponding correct values
-        inlineImageEntryAbbreviationMap.put(new PdfName("BPC"), PdfName.BITSPERCOMPONENT);
-        inlineImageEntryAbbreviationMap.put(new PdfName("CS"), PdfName.COLORSPACE);
-        inlineImageEntryAbbreviationMap.put(new PdfName("D"), PdfName.DECODE);
-        inlineImageEntryAbbreviationMap.put(new PdfName("DP"), PdfName.DECODEPARMS);
-        inlineImageEntryAbbreviationMap.put(new PdfName("F"), PdfName.FILTER);
-        inlineImageEntryAbbreviationMap.put(new PdfName("H"), PdfName.HEIGHT);
-        inlineImageEntryAbbreviationMap.put(new PdfName("IM"), PdfName.IMAGEMASK);
-        inlineImageEntryAbbreviationMap.put(new PdfName("I"), PdfName.INTERPOLATE);
-        inlineImageEntryAbbreviationMap.put(new PdfName("W"), PdfName.WIDTH);
-    }
-    
+        
 	/** A map with all supported operators operators (PDF syntax). */
     final private Map<String, ContentOperator> operators;
     /** Resources for the content stream. */
