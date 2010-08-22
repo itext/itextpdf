@@ -158,7 +158,7 @@ public class TestPdfCopyAndStamp {
 
     }
 
-    @Ignore
+    
     @Test
     public void testWithoutReloadingStampReader() throws Exception{
         mergeAndStampPdf(false, in, out, stamp);
@@ -170,7 +170,7 @@ public class TestPdfCopyAndStamp {
 
     }
 
-    @Ignore
+    
     @Test
     public void testMultiPageStampWithoutReloadingStampReader() throws Exception{
         mergeAndStampPdf(false, in, out, multiPageStamp);

@@ -414,7 +414,7 @@ class PdfCopyFieldsImp extends PdfWriter {
         pdf.close();
     }
 
-    void addPageOffsetToField(HashMap<String, AcroFields.Item> fd, int pageOffset) {
+    void addPageOffsetToField(Map<String, AcroFields.Item> fd, int pageOffset) {
         if (pageOffset == 0)
             return;
         for (AcroFields.Item item: fd.values()) {
@@ -514,7 +514,7 @@ class PdfCopyFieldsImp extends PdfWriter {
         }
     }
 
-    void mergeWithMaster(HashMap<String, Item> fd) {
+    void mergeWithMaster(Map<String, Item> fd) {
         for (Map.Entry<String, Item> entry: fd.entrySet()) {
             String name = entry.getKey();
             mergeField(name, entry.getValue());
@@ -524,7 +524,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     void mergeFields() {
         int pageOffset = 0;
         for (int k = 0; k < fields.size(); ++k) {
-            HashMap<String, Item> fd = fields.get(k).getFields();
+            Map<String, Item> fd = fields.get(k).getFields();
             addPageOffsetToField(fd, pageOffset);
             mergeWithMaster(fd);
             pageOffset += readers.get(k).getNumberOfPages();

@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text.pdf.parser;
 
+import java.io.IOException;
+
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfIndirectReference;
@@ -57,6 +59,8 @@ public class ImageRenderInfo {
     private final Matrix ctm;
     /** A reference to the image XObject */
     private final PdfIndirectReference ref;
+    /** the image object to be rendered, if it has been parsed already.  Null otherwise. */
+    private PdfImageObject imageObject = null;
     
     private ImageRenderInfo(Matrix ctm, PdfIndirectReference ref) {
         this.ctm = ctm;
@@ -75,16 +79,17 @@ public class ImageRenderInfo {
     }
     
     /**
-     * Create an ImageRenderInfo object based on embedded image data.  This is nowhere near completely thought through
+     * Create an ImageRenderInfo object based on inline image data.  This is nowhere near completely thought through
      * and really just acts as a placeholder.
      * @param ctm the coordinate transformation matrix at the time the image is rendered
-     * @param imageDictionary a dictionary containing parameters of the embedded image (note that the key/value pairs of this dictionary can have abbreviations in them)
-     * @param streamBytes the bytes of the image data
+     * @param imageObject the image object representing the inline image
      * @return the ImageRenderInfo representing the rendered embedded image
      * @since 5.0.1
      */
-    protected static ImageRenderInfo createdForEmbeddedImage(Matrix ctm, PdfDictionary imageDictionary, byte[] streamBytes){
-        return new ImageRenderInfo(ctm, null);
+    protected static ImageRenderInfo createdForEmbeddedImage(Matrix ctm, PdfImageObject imageObject){
+        ImageRenderInfo renderInfo = new ImageRenderInfo(ctm, null);
+        renderInfo.imageObject = imageObject;
+        return renderInfo;
     }
     
     /**
@@ -93,8 +98,20 @@ public class ImageRenderInfo {
      * @since 5.0.2
      */
     public PdfImageObject getImage() {
-		PRStream stream = (PRStream)PdfReader.getPdfObject(ref);
-		return new PdfImageObject(stream);
+        try {
+            prepareImageObject();
+            return imageObject;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+    
+    private void prepareImageObject() throws IOException{
+        if (imageObject != null)
+            return;
+        
+        PRStream stream = (PRStream)PdfReader.getPdfObject(ref);
+        imageObject = new PdfImageObject(stream);        
     }
     
     /**
@@ -104,6 +121,14 @@ public class ImageRenderInfo {
         return new Vector(0, 0, 1).cross(ctm); 
     }
 
+    /**
+     * @return The coordinate transformation matrix active when this image was rendered.  Coordinates are in User space.
+     * @since 5.0.3
+     */
+    public Matrix getImageCTM(){
+        return ctm;
+    }
+    
     /**
      * @return the size of the image, in User space units
      * @since 5.0.3

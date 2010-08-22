@@ -78,7 +78,7 @@ public class PdfContentStreamProcessor {
 	 * @since 5.0.1
 	 */
     public static final String DEFAULTOPERATOR = "DefaultOperator";
-    
+        
 	/** A map with all supported operators operators (PDF syntax). */
     final private Map<String, ContentOperator> operators;
     /** Resources for the content stream. */
@@ -319,75 +319,9 @@ public class PdfContentStreamProcessor {
         textMatrix = new Matrix(adjustBy, 0).multiply(textMatrix);
     }
 
-    /**
-     * Simple class to track embedded image information
-     * @since 5.0.1
-     */
-    private static class EmbeddedImageInfo{
-        byte[] imageData;
-        PdfDictionary embeddedImageDictionary = new PdfDictionary();
-    }
+
     
-    /**
-     * Parses the next embedded (inline) image from the parser
-     * @param ps the parser to extract the embedded image information from
-     * @return information about the parsed embedded (inline) image
-     * @throws IOException
-     * @since 5.0.1
-     */
-    private EmbeddedImageInfo parseEmbeddedImage(PdfContentParser ps) throws IOException{
-        // by the time we get to here, we have already parsed the BI operator
-        EmbeddedImageInfo info = new EmbeddedImageInfo();
-        
-        
-        for(PdfObject key = ps.readPRObject(); key != null && !"ID".equals(key.toString()); key = ps.readPRObject()){
-            PdfObject value = ps.readPRObject();
-            info.embeddedImageDictionary.put((PdfName)key, value);
-        }
-        
-        // special handling for embedded images.  If we hit an ID operator, we need
-        // to skip all content until we reach an EI operator surrounded by whitespace.
-        // The following algorithm has one potential issue: what if the image stream 
-        // contains <ws>EI<ws> ?
-        // it sounds like we would have to actually decode the content stream, which
-        // I'd rather avoid right now.
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ByteArrayOutputStream accumulated = new ByteArrayOutputStream();
-        int ch;
-        int found = 0;
-        PRTokeniser tokeniser = ps.getTokeniser();
-        
-        while ((ch = tokeniser.read()) != -1){
-            if (found == 0 && PRTokeniser.isWhitespace(ch)){
-                found++;
-                accumulated.write(ch);
-            } else if (found == 1 && ch == 'E'){
-                found++;
-                accumulated.write(ch);
-            } else if (found == 1 && PRTokeniser.isWhitespace(ch)){
-                // this clause is needed if we have a white space character that is part of the image data
-                // followed by a whitespace character that precedes the EI operator.  In this case, we need
-                // to flush the first whitespace, then treat the current whitespace as the first potential
-                // character for the end of stream check.  Note that we don't increment 'found' here.
-                baos.write(accumulated.toByteArray());
-                accumulated.reset();
-                accumulated.write(ch);
-            } else if (found == 2 && ch == 'I'){ 
-                found++;
-                accumulated.write(ch);
-            } else if (found == 3 && PRTokeniser.isWhitespace(ch)){
-                info.imageData = baos.toByteArray();
-                return info;
-            } else {
-                baos.write(accumulated.toByteArray());
-                accumulated.reset();
-                
-                baos.write(ch);
-                found = 0;
-            }
-        }
-        throw new IOException("Could not find image data or EI");
-    }
+
     
     /**
      * Processes PDF syntax
@@ -404,10 +338,9 @@ public class PdfContentStreamProcessor {
             while (ps.parse(operands).size() > 0){
                 PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
                 if ("BI".equals(operator.toString())){
-                    EmbeddedImageInfo embeddedImageInfo = parseEmbeddedImage(ps);
-                    ImageRenderInfo renderInfo = ImageRenderInfo.createdForEmbeddedImage(gs().ctm, embeddedImageInfo.embeddedImageDictionary, embeddedImageInfo.imageData);
-                    renderListener.renderImage(renderInfo);
                     // we don't call invokeOperator for embedded images - this is one area of the PDF spec that is particularly nasty and inconsistent
+                    ImageRenderInfo renderInfo = ImageRenderInfo.createdForEmbeddedImage(gs().ctm, InlineImageUtils.parseInlineImage(ps));
+                    renderListener.renderImage(renderInfo);
                 } else {
                     invokeOperator(operator, operands);
                 }

@@ -56,6 +56,11 @@ public class PdfImportedPage extends com.itextpdf.text.pdf.PdfTemplate {
 
     PdfReaderInstance readerInstance;
     int pageNumber;
+    /**
+     * True if the imported page has been copied to a writer.
+     * @since iText 5.0.4
+     */
+    protected boolean toCopy = true;
     
     PdfImportedPage(PdfReaderInstance readerInstance, PdfWriter writer, int pageNumber) {
         this.readerInstance = readerInstance;
@@ -158,4 +163,21 @@ public class PdfImportedPage extends com.itextpdf.text.pdf.PdfTemplate {
     PdfReaderInstance getPdfReaderInstance() {
         return readerInstance;
     }
+
+	/**
+	 * Checks if the page has to be copied.
+	 * @return true if the page has to be copied.
+	 * @since iText 5.0.4
+	 */
+	public boolean isToCopy() {
+		return toCopy;
+	}
+
+	/**
+	 * Indicate that the resources of the imported page have been copied.
+	 * @since iText 5.0.4
+	 */
+	public void setCopied() {
+		toCopy = false;
+	}
 }

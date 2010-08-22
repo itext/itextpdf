@@ -1260,8 +1260,7 @@ public class PdfWriter extends DocWriter implements
         // [F5] add all the dependencies in the imported pages
         for (PdfReaderInstance element : readerInstances.values()) {
             currentPdfReaderInstance= element;
-            if (currentPdfReaderInstance.isOutputToPdf())
-                currentPdfReaderInstance.writeAllPages();
+            currentPdfReaderInstance.writeAllPages();
         }
         currentPdfReaderInstance = null;
         // [F6] add the spotcolors
@@ -2298,7 +2297,10 @@ public class PdfWriter extends DocWriter implements
     protected PdfReaderInstance currentPdfReaderInstance;
 
     protected int getNewObjectNumber(PdfReader reader, int number, int generation) {
-        return currentPdfReaderInstance.getNewObjectNumber(number, generation);
+        if (currentPdfReaderInstance == null) {
+        	currentPdfReaderInstance = getPdfReaderInstance(reader);
+        }
+    	return currentPdfReaderInstance.getNewObjectNumber(number, generation);
     }
 
     RandomAccessFileOrArray getReaderFile(PdfReader reader) {
