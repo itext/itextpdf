@@ -82,7 +82,7 @@
     <!-- Archiving the code                                               -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-	<property name="src.types" value="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.png, **/*.afm, **/*.html, **/*.xml, ant/.ant.properties" />
+	<property name="src.types" value="**/*.java, **/*.ps, **/*.txt, **/*.gif, **/*.png, **/*.afm, **/*.html, **/*.xml, **/*.lng, ant/.ant.properties" />
 
 	<target name="src-with-libs.zip" description="--> makes a zipfile with the source code and the libs">
 		<mkdir dir="${itext.dist}"/>
