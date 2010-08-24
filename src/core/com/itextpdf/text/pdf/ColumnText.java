@@ -826,6 +826,13 @@ public class ColumnText {
             else if (ratio < 0.001f)
                 ratio = 0.001f;
         }
+        if (!rectangularMode) {
+        	float max = 0;
+        	for (PdfChunk c : bidiLine.chunks) {
+        		max = Math.max(max, c.font.size());
+        	}
+        	currentLeading = fixedLeading + max * multipliedLeading;
+        }
         float firstIndent = 0;
         PdfLine line;
         float x1;
@@ -869,7 +876,7 @@ public class ColumnText {
                 x1 = leftX;
         	}
             else {
-               	float yTemp = yLine;
+               	float yTemp = yLine - currentLeading;
                	float xx[] = findLimitsTwoLines();
                	if (xx == null) {
                		status = NO_MORE_COLUMN;
@@ -884,31 +891,31 @@ public class ColumnText {
                		break;
                	}
                	x1 = Math.max(xx[0], xx[2]);
-                    float x2 = Math.min(xx[1], xx[3]);
-                    if (x2 - x1 <= firstIndent + rightIndent)
-                        continue;
-                    if (!simulate && !dirty) {
-                        text.beginText();
-                        dirty = true;
-                    }
-                    line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
-                    if (line == null) {
-                        status = NO_MORE_TEXT;
-                        yLine = yTemp;
-                        break;
-                    }
+                float x2 = Math.min(xx[1], xx[3]);
+                if (x2 - x1 <= firstIndent + rightIndent)
+                    continue;
+                if (!simulate && !dirty) {
+                    text.beginText();
+                    dirty = true;
                 }
-                if (!simulate) {
-                    currentValues[0] = currentFont;
-                    text.setTextMatrix(x1 + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
-                    lastX = pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
-                    currentFont = (PdfFont)currentValues[0];
+                line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
+                if (line == null) {
+                    status = NO_MORE_TEXT;
+                    yLine = yTemp;
+                    break;
                 }
-                lastWasNewline = line.isNewlineSplit();
-                yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
-                ++linesWritten;
-                descender = line.getDescender();
             }
+            if (!simulate) {
+                currentValues[0] = currentFont;
+                text.setTextMatrix(x1 + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
+                lastX = pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
+                currentFont = (PdfFont)currentValues[0];
+            }
+            lastWasNewline = line.isNewlineSplit();
+            yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
+            ++linesWritten;
+            descender = line.getDescender();
+        }
         if (dirty) {
             text.endText();
             canvas.add(text);
