@@ -322,8 +322,9 @@ public class TiffImage {
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PLANARCONFIG)
                 && dir.getFieldAsLong(TIFFConstants.TIFFTAG_PLANARCONFIG) == TIFFConstants.PLANARCONFIG_SEPARATE)
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("planar.images.are.not.supported"));
+            int extraSamples = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_EXTRASAMPLES))
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("extra.samples.are.not.supported"));
+                extraSamples = 1;
             int samplePerPixel = 1;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL)) // 1,3,4
                 samplePerPixel = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL);
@@ -378,11 +379,18 @@ public class TiffImage {
                     }
                 }
                 lzwDecoder = new TIFFLZWDecoder(w, predictor, 
-                                                samplePerPixel); 
+                                                samplePerPixel);
             }
             int rowsLeft = h;
             ByteArrayOutputStream stream = null;
+            ByteArrayOutputStream mstream = null;
             DeflaterOutputStream zip = null;
+            DeflaterOutputStream mzip = null;
+            if (extraSamples > 0) {
+                mstream = new ByteArrayOutputStream();
+                mzip = new DeflaterOutputStream(mstream);
+            }
+
             CCITTG4Encoder g4 = null;
             if (bitsPerSample == 1 && samplePerPixel == 1) {
                 g4 = new CCITTG4Encoder(w);
@@ -454,7 +462,10 @@ public class TiffImage {
                         g4.fax4Encode(outBuf, height);
                     }
                     else {
-                        zip.write(outBuf);
+                        if (extraSamples > 0)
+                            ProcessExtraSamples(zip, mzip, outBuf, samplePerPixel, bitsPerSample, w, height);
+                        else
+                            zip.write(outBuf);
                     }
                     rowsLeft -= rowsStrip;
                 }
@@ -464,7 +475,7 @@ public class TiffImage {
                 }
                 else {
                     zip.close();
-                    img = Image.getInstance(w, h, samplePerPixel, bitsPerSample, stream.toByteArray());
+                    img = Image.getInstance(w, h, samplePerPixel - extraSamples, bitsPerSample, stream.toByteArray());
                     img.setDeflated(true);
                 }
             }
@@ -474,7 +485,7 @@ public class TiffImage {
                     try {
                         TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
                         ICC_Profile icc_prof = ICC_Profile.getInstance(fd.getAsBytes());
-                        if (samplePerPixel == icc_prof.getNumComponents())
+                        if (samplePerPixel - extraSamples == icc_prof.getNumComponents())
                             img.tagICC(icc_prof);
                     }
                     catch (RuntimeException e) {
@@ -507,13 +518,40 @@ public class TiffImage {
                 img.setInverted(true);
             if (rotation != 0)
                 img.setInitialRotation(rotation);
+            if (extraSamples > 0) {
+                mzip.close();
+                Image mimg = Image.getInstance(w, h, 1, bitsPerSample, mstream.toByteArray());
+                mimg.makeMask();
+                mimg.setDeflated(true);
+                img.setImageMask(mimg);
+            }
             return img;
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
         }
     }
-    
+
+    static Image ProcessExtraSamples(DeflaterOutputStream zip, DeflaterOutputStream mzip, byte[] outBuf, int samplePerPixel, int bitsPerSample, int width, int height) throws IOException {
+        if (bitsPerSample == 8) {
+            byte[] mask = new byte[width * height];
+            int mptr = 0;
+            int optr = 0;
+            int total = width * height * samplePerPixel;
+            for (int k = 0; k < total; k += samplePerPixel) {
+                for (int s = 0; s < samplePerPixel - 1; ++s) {
+                    outBuf[optr++] = outBuf[k + s];
+                }
+                mask[mptr++] = outBuf[k + samplePerPixel - 1];
+            }
+            zip.write(outBuf, 0, optr);
+            mzip.write(mask, 0, mptr);
+        }
+        else
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("extra.samples.are.not.supported"));
+        return null;
+    }
+
     static long[] getArrayLongShort(TIFFDirectory dir, int tag) {
         TIFFField field = dir.getField(tag);
         if (field == null)
