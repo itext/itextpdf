@@ -1131,7 +1131,20 @@ public class XfaForm {
      * @since	iText 5.0.0
      */
     public void fillXfaForm(Node node) {
-		Node data = datasetsNode.getFirstChild();
+        NodeList allChilds = datasetsNode.getChildNodes();
+        int len = allChilds.getLength();
+        Node data = null;
+        for (int k = 0; k < len; ++k) {
+            Node n = allChilds.item(k);
+            if (n.getNodeType() == Node.ELEMENT_NODE && n.getLocalName().equals("data") && XFA_DATA_SCHEMA.equals(n.getNamespaceURI())) {
+                data = n;
+                break;
+            }
+        }
+        if (data == null) {
+            data = datasetsNode.getOwnerDocument().createElementNS(XFA_DATA_SCHEMA, "xfa:data");
+            datasetsNode.appendChild(data);
+        }
 		NodeList list = data.getChildNodes();
 		if (list.getLength() == 0) {
 			data.appendChild(domDocument.importNode(node, true));
