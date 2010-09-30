@@ -156,7 +156,6 @@ public class ExceptionConverter extends RuntimeException {
      * @return a Throwable
      */
     public Throwable fillInStackTrace() {
-        ex.fillInStackTrace();
         return this;
     }
 }
