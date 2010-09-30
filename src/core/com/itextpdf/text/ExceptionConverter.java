@@ -69,6 +69,7 @@ public class ExceptionConverter extends RuntimeException {
      * @param ex the exception that has to be turned into a RuntimeException
      */
     public ExceptionConverter(Exception ex) {
+        super(ex);
         this.ex = ex;
         prefix = (ex instanceof RuntimeException) ? "" : "ExceptionConverter: ";
     }
@@ -155,6 +156,7 @@ public class ExceptionConverter extends RuntimeException {
      * @return a Throwable
      */
     public Throwable fillInStackTrace() {
+        ex.fillInStackTrace();
         return this;
     }
 }
