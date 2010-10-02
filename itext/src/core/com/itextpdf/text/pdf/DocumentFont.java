@@ -707,4 +707,13 @@ public class DocumentFont extends BaseFont {
     IntHashtable getUni2Byte(){
         return uni2byte;
     }
+
+    /**
+     * Gets the difference map
+     * @return the difference map
+     * @since 5.0.5
+     */
+    IntHashtable getDiffmap() {
+        return diffmap;
+    }
 }

@@ -130,6 +130,15 @@ public class CMapAwareDocumentFont extends DocumentFont {
             if (cidbyte2uni[n] == 0)
                 cidbyte2uni[n] = (char)e[k];
         }
+        IntHashtable diffmap = getDiffmap();
+        if (diffmap != null) {
+            // the difference array overrides the existing encoding
+            e = diffmap.toOrderedKeys();
+            for (int k = 0; k < e.length; ++k) {
+                int n = diffmap.get(e[k]);
+                cidbyte2uni[n] = (char)e[k];
+            }
+        }
     }
     
 
