@@ -641,12 +641,12 @@ public class PdfPKCS7 {
         if (verified)
             return verifyResult;
         if (sigAttr != null) {
+        	final byte [] msgDigestBytes = messageDigest.digest();
+        	boolean verifyRSAdata = true;
             sig.update(sigAttr);
-            if (RSAdata != null) {
-                byte msd[] = messageDigest.digest();
-                messageDigest.update(msd);
-            }
-            verifyResult = Arrays.equals(messageDigest.digest(), digestAttr) && sig.verify(digest);
+            if (RSAdata != null)
+                verifyRSAdata = Arrays.equals(msgDigestBytes, RSAdata);
+            verifyResult = Arrays.equals(msgDigestBytes, digestAttr) && sig.verify(digest) && verifyRSAdata;
         }
         else {
             if (RSAdata != null)
