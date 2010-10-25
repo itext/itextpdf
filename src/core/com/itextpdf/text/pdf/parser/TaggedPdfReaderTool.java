@@ -203,7 +203,7 @@ public class TaggedPdfReaderTool {
             }
             else {
                 if (!nameMiddle)
-                    c = '_';
+                    c = '-';
             }
             sb.append(c);
         }
