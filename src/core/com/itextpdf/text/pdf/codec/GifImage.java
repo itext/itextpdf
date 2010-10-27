@@ -260,13 +260,9 @@ public class GifImage {
         blockSize = in.read();
         if (blockSize <= 0)
             return blockSize = 0;
-        for (int k = 0; k < blockSize; ++k) {
-            int v = in.read();
-            if (v < 0) {
-                return blockSize = k;
-            }
-            block[k] = (byte)v;
-        }
+
+        blockSize = in.read(block, 0, blockSize);
+
         return blockSize;
     }
 
