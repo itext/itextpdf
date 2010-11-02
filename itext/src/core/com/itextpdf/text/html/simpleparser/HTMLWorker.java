@@ -79,10 +79,18 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	protected DocListener document;
 
+	/**
+	 * Keeps the content of the current paragraph
+	 * @since iText 5.0.6 (private => protected)
+	 */
 	protected Paragraph currentParagraph;
 
 	private ChainedProperties cprops = new ChainedProperties();
 
+	/**
+	 * Stack with the Elements that already have been processed.
+	 * @since iText 5.0.6 (private => protected)
+	 */
 	protected Stack<Element> stack = new Stack<Element>();
 
 	private boolean pendingTR = false;
@@ -97,6 +105,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	private Stack<boolean[]> tableState = new Stack<boolean[]>();
 
+	/**
+	 * Indicates if text needs to be skipped.
+	 * @since iText 5.0.6 (private => protected)
+	 */
 	protected boolean skipText = false;
 
 	private HashMap<String, Object> interfaceProps;
@@ -342,7 +354,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 						currentParagraph = FactoryProperties
 								.createParagraph(cprops);
 					}
-					currentParagraph.add(new Chunk(img, 0, 0));
+					currentParagraph.add(new Chunk(img, 0, 0, true));
 				}
 				return;
 			}
