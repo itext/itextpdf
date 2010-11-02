@@ -83,6 +83,7 @@ import java.util.HashMap;
 import java.util.Stack;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.html.HtmlTags;
 
 /**
  * A simple XML and HTML parser.  This parser is, like the SAX parser,
@@ -558,6 +559,12 @@ public final class SimpleXMLParser {
     		doc.startElement(tag,attributes);
     	}
     	else {
+    		if(html) {
+    			// White spaces following new lines need to be ignored in HTML
+    			if(HtmlTags.isNewLineTag(tag)) {
+    				nowhite = false;
+    			}
+    		}
             nested--;
             doc.endElement(tag);
     	}

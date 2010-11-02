@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.html;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A class that contains all the possible tagnames and their attributes.
  */
@@ -328,4 +331,25 @@ public class HtmlTags {
      * @since 2.1.3
      */
 	public static final String PRE = "pre";
+	
+	/**
+	 * Set containing tags that trigger a new line.
+	 * @since iText 5.0.6
+	 */
+	private static final Set<String> newLineTags = new HashSet<String>();
+	static {
+		// Following list are the basic html tags that force new lines
+		// List may be extended as we discover them
+		newLineTags.add(PARAGRAPH);
+		newLineTags.add("blockquote");
+		newLineTags.add("br");
+	}	
+	
+	/**
+	 * Returns true if the tag causes a new line like p, br etc.
+	 * @since iText 5.0.6
+	 */
+	public static boolean isNewLineTag(String tag) {
+		return newLineTags.contains(tag);
+	}
 }
