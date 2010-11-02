@@ -83,6 +83,7 @@ import java.util.HashMap;
 import java.util.Stack;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.html.HtmlTags;
 
 /**
  * A simple XML and HTML parser.  This parser is, like the SAX parser,

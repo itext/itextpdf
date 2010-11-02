@@ -334,6 +334,7 @@ public class HtmlTags {
 	
 	/**
 	 * Set containing tags that trigger a new line.
+	 * @since iText 5.0.6
 	 */
 	private static final Set<String> newLineTags = new HashSet<String>();
 	static {
@@ -346,6 +347,7 @@ public class HtmlTags {
 	
 	/**
 	 * Returns true if the tag causes a new line like p, br etc.
+	 * @since iText 5.0.6
 	 */
 	public static boolean isNewLineTag(String tag) {
 		return newLineTags.contains(tag);
