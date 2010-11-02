@@ -164,7 +164,7 @@ public class FactoryProperties {
 		//  defined more recently in our ChainedProperties.  One solution would go like this: 
 		//    Map all our supported style attributes to the 'normal' tag name, so we could   
 		//    look everything up under that one tag, retrieving the most current value.
-		if (face == null || face.isEmpty()) {
+		if (face == null || face.trim().length() == 0) {
 			face = props.getProperty(Markup.CSS_KEY_FONTFAMILY);
 		}
 
@@ -182,7 +182,7 @@ public class FactoryProperties {
 		}
 		int style = 0;
 		String textDec = props.getProperty(Markup.CSS_KEY_TEXTDECORATION);
-		if (textDec != null && !textDec.isEmpty()) {
+		if (textDec != null && textDec.trim().length() != 0) {
 		  if (Markup.CSS_VALUE_UNDERLINE.equals(textDec)) {
 		    style |= Font.UNDERLINE;
 		  } else if (Markup.CSS_VALUE_LINETHROUGH.equals(textDec)) {
