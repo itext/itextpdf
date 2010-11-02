@@ -1124,21 +1124,21 @@ public class PdfDocument extends Document {
         if (lines == null) {
             lines = new ArrayList<PdfLine>();
         }
-        // If the current line is not null
-        if (line != null) {
+        // If the current line is not null or empty
+        if (line != null && line.size() > 0) {
             // we check if the end of the page is reached (bugfix by Francois Gravel)
-            if (currentHeight + line.height() + leading < indentTop() - indentBottom()) {
-                // if so nonempty lines are added and the height is augmented
-                if (line.size() > 0) {
-                    currentHeight += line.height();
-                    lines.add(line);
-                    pageEmpty = false;
-                }
+            if (currentHeight + line.height() + leading > indentTop() - indentBottom()) {
+            	// if the end of the line is reached, we start a newPage which will flush existing lines
+            	// then move to next page but before then we need to exclude the current one that does not fit
+            	// After the new page we add the current line back in
+            	PdfLine overflowLine = line;
+            	line = null;
+            	newPage();
+            	line = overflowLine;
             }
-            // if the end of the line is reached, we start a new page
-            else {
-                newPage();
-            }
+            currentHeight += line.height();
+            lines.add(line);
+            pageEmpty = false;
         }
         if (imageEnd > -1 && currentHeight > imageEnd) {
             imageEnd = -1;
