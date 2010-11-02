@@ -558,6 +558,12 @@ public final class SimpleXMLParser {
     		doc.startElement(tag,attributes);
     	}
     	else {
+    		if(html) {
+    			// White spaces following new lines need to be ignored in HTML
+    			if(HtmlTags.isNewLineTag(tag)) {
+    				nowhite = false;
+    			}
+    		}
             nested--;
             doc.endElement(tag);
     	}
