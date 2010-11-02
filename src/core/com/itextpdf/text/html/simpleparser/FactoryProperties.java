@@ -143,6 +143,13 @@ public class FactoryProperties {
 			} catch (Exception e) {
 			}
 		}
+		value = props.getProperty("indent");
+		if (value != null) {
+			try {
+				p.setIndentationLeft(Float.parseFloat(value));
+			} catch (Exception e) {
+			}
+		}
 	}
 
 	public static Paragraph createParagraph(ChainedProperties props) {
