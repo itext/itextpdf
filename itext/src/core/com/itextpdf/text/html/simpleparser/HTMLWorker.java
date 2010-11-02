@@ -367,7 +367,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				}catch (Exception e) {
 					list.setAutoindent(true);
 				}
-				list.setListSymbol("\u2022");
+				list.setListSymbol("\u2022 ");
 				stack.push(list);
 				return;
 			}
