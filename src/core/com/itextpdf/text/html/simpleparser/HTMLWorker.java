@@ -342,7 +342,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 						currentParagraph = FactoryProperties
 								.createParagraph(cprops);
 					}
-					currentParagraph.add(new Chunk(img, 0, 0));
+					currentParagraph.add(new Chunk(img, 0, 0, true));
 				}
 				return;
 			}
