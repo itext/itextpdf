@@ -75,6 +75,7 @@ import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.codec.TIFFConstants;
+import com.itextpdf.text.pdf.codec.TIFFFaxDecoder;
 import com.itextpdf.text.pdf.codec.TIFFFaxDecompressor;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
@@ -2191,8 +2192,8 @@ public class PdfReader implements PdfViewerPreferences {
                     }
                 }
                 else {
-                    decoder.SetOptions(1, TIFFConstants.COMPRESSION_CCITTFAX4, 0, 0);
-                    decoder.decodeRaw(outBuf, b, width, height);
+                    TIFFFaxDecoder deca = new TIFFFaxDecoder(1, width, height);
+                    deca.decodeT6(outBuf, b, 0, height, 0);
                 }
                 if (!blackIs1) {
                     int len = outBuf.length;

@@ -159,6 +159,15 @@ public class FactoryProperties {
 
 	public Font getFont(ChainedProperties props) {
 		String face = props.getProperty(ElementTags.FACE);
+		// try again, under the CSS key.  
+		//ISSUE: If both are present, we always go with face, even if font-family was  
+		//  defined more recently in our ChainedProperties.  One solution would go like this: 
+		//    Map all our supported style attributes to the 'normal' tag name, so we could   
+		//    look everything up under that one tag, retrieving the most current value.
+		if (face == null || face.trim().length() == 0) {
+			face = props.getProperty(Markup.CSS_KEY_FONTFAMILY);
+		}
+
 		if (face != null) {
 			StringTokenizer tok = new StringTokenizer(face, ",");
 			while (tok.hasMoreTokens()) {
@@ -172,6 +181,15 @@ public class FactoryProperties {
 			}
 		}
 		int style = 0;
+		String textDec = props.getProperty(Markup.CSS_KEY_TEXTDECORATION);
+		if (textDec != null && textDec.trim().length() != 0) {
+		  if (Markup.CSS_VALUE_UNDERLINE.equals(textDec)) {
+		    style |= Font.UNDERLINE;
+		  } else if (Markup.CSS_VALUE_LINETHROUGH.equals(textDec)) {
+		    style |= Font.STRIKETHRU;
+		  }
+		}
+		
 		if (props.hasProperty(HtmlTags.I))
 			style |= Font.ITALIC;
 		if (props.hasProperty(HtmlTags.B))

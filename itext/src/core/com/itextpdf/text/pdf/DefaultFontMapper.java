@@ -258,6 +258,34 @@ public class DefaultFontMapper implements FontMapper {
         aliases.put((String)allNames[0], main);
     }
 
+    /** Inserts one font file into the map. The encoding
+     * will be <CODE>BaseFont.CP1252</CODE> but can be
+     * changed later.
+     * @param file the file to insert
+     * @return the number of files inserted
+     * @since 5.0.5
+     */
+    public int insertFile(File file) {
+        String name = file.getPath().toLowerCase();
+        try {
+            if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".afm")) {
+                Object allNames[] = BaseFont.getAllFontNames(file.getPath(), BaseFont.CP1252, null);
+                insertNames(allNames, file.getPath());
+                return 1;
+            } else if (name.endsWith(".ttc")) {
+                String ttcs[] = BaseFont.enumerateTTCNames(file.getPath());
+                for (int j = 0; j < ttcs.length; ++j) {
+                    String nt = file.getPath() + "," + j;
+                    Object allNames[] = BaseFont.getAllFontNames(nt, BaseFont.CP1252, null);
+                    insertNames(allNames, nt);
+                }
+                return 1;
+            }
+        } catch (Exception e) {
+        }
+        return 0;
+    }
+
     /** Inserts all the fonts recognized by iText in the
      * <CODE>directory</CODE> into the map. The encoding
      * will be <CODE>BaseFont.CP1252</CODE> but can be
@@ -271,29 +299,10 @@ public class DefaultFontMapper implements FontMapper {
             return 0;
         File files[] = file.listFiles();
         if (files == null)
-        	return 0;
+            return 0;
         int count = 0;
         for (int k = 0; k < files.length; ++k) {
-            file = files[k];
-            String name = file.getPath().toLowerCase();
-            try {
-                if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".afm")) {
-                    Object allNames[] = BaseFont.getAllFontNames(file.getPath(), BaseFont.CP1252, null);
-                    insertNames(allNames, file.getPath());
-                    ++count;
-                }
-                else if (name.endsWith(".ttc")) {
-                    String ttcs[] = BaseFont.enumerateTTCNames(file.getPath());
-                    for (int j = 0; j < ttcs.length; ++j) {
-                        String nt = file.getPath() + "," + j;
-                        Object allNames[] = BaseFont.getAllFontNames(nt, BaseFont.CP1252, null);
-                        insertNames(allNames, nt);
-                    }
-                    ++count;
-                }
-            }
-            catch (Exception e) {
-            }
+            count += insertFile(files[k]);
         }
         return count;
     }

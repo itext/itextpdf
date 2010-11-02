@@ -399,7 +399,7 @@ public class PdfOutline extends PdfDictionary {
     /**
      * Returns the PDF representation of this <CODE>PdfOutline</CODE>.
      *
-     * @param writer the encryption information
+     * @param writer the PdfWriter
      * @param os
      * @throws IOException
      */

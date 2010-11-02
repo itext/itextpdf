@@ -2018,6 +2018,38 @@ public class AcroFields {
     }
 
     /**
+     * Clears a signed field.
+     * @param name the field name
+     * @return true if the field was signed, false if the field was not signed or not found
+     * @since 5.0.5
+     */
+    public boolean clearSignatureField(String name) {
+        sigNames = null;
+        getSignatureNames();
+        if (!sigNames.containsKey(name))
+            return false;
+        Item sig = fields.get(name);
+        sig.markUsed(this, Item.WRITE_VALUE | Item.WRITE_WIDGET);
+        int n = sig.size();
+        for (int k = 0; k < n; ++k) {
+            clearSigDic(sig.getMerged(k));
+            clearSigDic(sig.getWidget(k));
+            clearSigDic(sig.getValue(k));
+        }
+        return true;
+    }
+
+    private static void clearSigDic(PdfDictionary dic) {
+        dic.remove(PdfName.AP);
+        dic.remove(PdfName.AS);
+        dic.remove(PdfName.V);
+        dic.remove(PdfName.DV);
+        dic.remove(PdfName.SV);
+        dic.remove(PdfName.FF);
+        dic.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
+    }
+
+    /**
      * Gets the field names that have signatures and are signed.
      *
      * @return the field names that have signatures and are signed

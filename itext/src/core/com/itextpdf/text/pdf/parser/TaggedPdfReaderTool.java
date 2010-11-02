@@ -55,6 +55,8 @@ import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 
 /**
  * Converts a tagged PDF document into an XML file.
@@ -75,11 +77,15 @@ public class TaggedPdfReaderTool {
 	 *            the PdfReader that has access to the PDF file
 	 * @param os
 	 *            the OutputStream to which the resulting xml will be written
+	 * @param charset
+	 *            the charset to encode the data
+     * @since 5.0.5
 	 */
-	public void convertToXml(PdfReader reader, OutputStream os)
+	public void convertToXml(PdfReader reader, OutputStream os, String charset)
 			throws IOException {
 		this.reader = reader;
-		out = new PrintWriter(os);
+        OutputStreamWriter outs = new OutputStreamWriter(os, charset);
+		out = new PrintWriter(outs);
 		// get the StructTreeRoot from the root object
 		PdfDictionary catalog = reader.getCatalog();
 		PdfDictionary struct = catalog.getAsDict(PdfName.STRUCTTREEROOT);
@@ -90,6 +96,20 @@ public class TaggedPdfReaderTool {
 	}
 
 	/**
+	 * Parses a string with structured content. The output is done using the
+     * current charset.
+	 *
+	 * @param reader
+	 *            the PdfReader that has access to the PDF file
+	 * @param os
+	 *            the OutputStream to which the resulting xml will be written
+	 */
+	public void convertToXml(PdfReader reader, OutputStream os)
+			throws IOException {
+        convertToXml(reader, os, Charset.defaultCharset().name());
+    }
+
+    /**
 	 * Inspects a child of a structured element. This can be an array or a
 	 * dictionary.
 	 * 
@@ -133,13 +153,14 @@ public class TaggedPdfReaderTool {
 			return;
 		PdfName s = k.getAsName(PdfName.S);
 		if (s != null) {
-			String tag = s.toString().substring(1);
+            String tagN = PdfName.decodeName(s.toString());
+			String tag = fixTagName(tagN);
 			out.print("<");
 			out.print(tag);
 			out.print(">");
 			PdfDictionary dict = k.getAsDict(PdfName.PG);
 			if (dict != null)
-				parseTag(tag, k.getDirectObject(PdfName.K), dict);
+				parseTag(tagN, k.getDirectObject(PdfName.K), dict);
 			inspectChild(k.get(PdfName.K));
 			out.print("</");
 			out.print(tag);
@@ -147,6 +168,47 @@ public class TaggedPdfReaderTool {
 		} else
 			inspectChild(k.get(PdfName.K));
 	}
+
+    private static String fixTagName(String tag) {
+        StringBuilder sb = new StringBuilder();
+        for (int k = 0; k < tag.length(); ++k) {
+            char c = tag.charAt(k);
+            boolean nameStart =
+                c == ':'
+                || (c >= 'A' && c <= 'Z')
+                || c == '_'
+                || (c >= 'a' && c <= 'z')
+                || (c >= '\u00c0' && c <= '\u00d6')
+                || (c >= '\u00d8' && c <= '\u00f6')
+                || (c >= '\u00f8' && c <= '\u02ff')
+                || (c >= '\u0370' && c <= '\u037d')
+                || (c >= '\u037f' && c <= '\u1fff')
+                || (c >= '\u200c' && c <= '\u200d')
+                || (c >= '\u2070' && c <= '\u218f')
+                || (c >= '\u2c00' && c <= '\u2fef')
+                || (c >= '\u3001' && c <= '\ud7ff')
+                || (c >= '\uf900' && c <= '\ufdcf')
+                || (c >= '\ufdf0' && c <= '\ufffd');
+            boolean nameMiddle =
+                c == '-'
+                || c == '.'
+                || (c >= '0' && c <= '9')
+                || c == '\u00b7'
+                || (c >= '\u0300' && c <= '\u036f')
+                || (c >= '\u203f' && c <= '\u2040')
+                || nameStart;
+            if (k == 0) {
+                if (!nameStart)
+                    c = '_';
+            }
+            else {
+                if (!nameMiddle)
+                    c = '-';
+            }
+            sb.append(c);
+        }
+        return sb.toString();
+    }
 
 	/**
 	 * Searches for a tag in a page.

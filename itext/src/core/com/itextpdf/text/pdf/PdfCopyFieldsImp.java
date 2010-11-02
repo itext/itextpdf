@@ -643,6 +643,7 @@ class PdfCopyFieldsImp extends PdfWriter {
         widgetKeys.put(PdfName.MK, one);
         widgetKeys.put(PdfName.DA, one);
         widgetKeys.put(PdfName.Q, one);
+        widgetKeys.put(PdfName.P, one);
         fieldKeys.put(PdfName.AA, one);
         fieldKeys.put(PdfName.FT, one);
         fieldKeys.put(PdfName.TU, one);
