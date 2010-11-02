@@ -79,11 +79,11 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	protected DocListener document;
 
-	private Paragraph currentParagraph;
+	protected Paragraph currentParagraph;
 
 	private ChainedProperties cprops = new ChainedProperties();
 
-	private Stack<Element> stack = new Stack<Element>();
+	protected Stack<Element> stack = new Stack<Element>();
 
 	private boolean pendingTR = false;
 
@@ -97,7 +97,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	private Stack<boolean[]> tableState = new Stack<boolean[]>();
 
-	private boolean skipText = false;
+	protected boolean skipText = false;
 
 	private HashMap<String, Object> interfaceProps;
 
