@@ -1475,6 +1475,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName STRF = new PdfName("StrF");
     /** A name */
     public static final PdfName STRIKEOUT = new PdfName("StrikeOut");
+    /**
+     * A name.
+     * @since iText 5.0.6
+     */
+    public static final PdfName STRUCTELEM = new PdfName("StructElem");
     /** A name */
     public static final PdfName STRUCTPARENT = new PdfName("StructParent");
     /** A name */
