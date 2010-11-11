@@ -206,29 +206,52 @@ public class WebColors extends HashMap<String, int[]> {
 	}
 
 	/**
+	 * A web color string without the leading # will be 3 or 6 characters long
+	 * and all those characters will be hex digits.
+	 * NOTE: colStr must be all lower case or the current hex letter test will fail.
+	 * @param colStr A non-null, lower case string that might describe an RGB color in hex.
+	 * @return Is this a web color hex string without the leading #?
+	 * @since 5.0.6
+	 */
+	private static boolean missingHashColorFormat(String colStr) {
+	    int len = colStr.length();
+	    if (len == 3 || len == 6) {
+	        // and it just contains hex chars 0-9, a-f, A-F
+	        String match = "[0-9a-f]{" + len + "}";
+	        return colStr.matches(match);
+	    }
+	    return false;
+	}
+	
+	/**
 	 * Gives you a BaseColor based on a name.
 	 *
 	 * @param name
 	 *            a name such as black, violet, cornflowerblue or #RGB or #RRGGBB
-     *            or rgb(R,G,B)
-	 * @return the corresponding BaseColor object
+     *            or RGB or RRGGBB or rgb(R,G,B)
+	 * @return the corresponding BaseColor object.  Never returns null.
 	 * @throws IllegalArgumentException
 	 *             if the String isn't a know representation of a color.
 	 */
 	public static BaseColor getRGBColor(String name)
 			throws IllegalArgumentException {
 		int[] c = { 0, 0, 0, 0 };
-		if (name.startsWith("#")) {
-			if (name.length() == 4) {
-				c[0] = Integer.parseInt(name.substring(1, 2), 16) * 16;
-				c[1] = Integer.parseInt(name.substring(2, 3), 16) * 16;
-				c[2] = Integer.parseInt(name.substring(3), 16) * 16;
+		name = name.toLowerCase();
+		boolean colorStrWithoutHash = missingHashColorFormat(name); 
+		if (name.startsWith("#") || colorStrWithoutHash) {
+		    if (!colorStrWithoutHash) {
+		        name = name.substring(1); // lop off the # to unify hex parsing.
+		    }
+			if (name.length() == 3) {
+				c[0] = Integer.parseInt(name.substring(0, 1), 16) * 16;
+				c[1] = Integer.parseInt(name.substring(1, 2), 16) * 16;
+				c[2] = Integer.parseInt(name.substring(2), 16) * 16;
 				return new BaseColor(c[0], c[1], c[2], c[3]);
 			}
-			if (name.length() == 7) {
-				c[0] = Integer.parseInt(name.substring(1, 3), 16);
-				c[1] = Integer.parseInt(name.substring(3, 5), 16);
-				c[2] = Integer.parseInt(name.substring(5), 16);
+			if (name.length() == 6) {
+				c[0] = Integer.parseInt(name.substring(0, 2), 16);
+				c[1] = Integer.parseInt(name.substring(2, 4), 16);
+				c[2] = Integer.parseInt(name.substring(4), 16);
 				return new BaseColor(c[0], c[1], c[2], c[3]);
 			}
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("unknown.color.format.must.be.rgb.or.rrggbb"));
@@ -248,8 +271,9 @@ public class WebColors extends HashMap<String, int[]> {
             }
             return new BaseColor(c[0], c[1], c[2], c[3]);
         }
-		name = name.toLowerCase();
+
 		if (!NAMES.containsKey(name))
+			// TODO localize this error message.
 			throw new IllegalArgumentException("Color '" + name
 					+ "' not found.");
 		c = NAMES.get(name);
