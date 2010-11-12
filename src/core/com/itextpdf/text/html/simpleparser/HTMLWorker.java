@@ -437,12 +437,14 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				return;
 			}
 			if (tag.equals("table")) {
-				cprops.addToChain("table", h);
 				IncTable table = new IncTable(h);
 				stack.push(table);
 				tableState.push(new boolean[] { pendingTR, pendingTD });
 				pendingTR = pendingTD = false;
 				skipText = true;
+				// Table alignment should not affect children elements, thus remove
+				h.remove("align");
+				cprops.addToChain("table", h);
 				return;
 			}
 		} catch (Exception e) {
