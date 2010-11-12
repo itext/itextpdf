@@ -1491,7 +1491,13 @@ public class ColumnText {
                 if (!(skipHeader || table.isComplete()))
                 	yLine += footerHeight;
                 if (k >= table.size()) {
-                    yLine -= table.spacingAfter();
+                	// Use up space no more than left
+                	if(yLine - table.spacingAfter() < minY) {
+                		yLine = minY;
+                	}
+                	else {
+                		yLine -= table.spacingAfter();
+                	}
                     compositeElements.removeFirst();
                     splittedRow = false;
                     listIdx = 0;
