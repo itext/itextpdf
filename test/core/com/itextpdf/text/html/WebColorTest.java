@@ -19,7 +19,7 @@ public class WebColorTest {
 		};
 		// TODO webColor creates colors with a zero alpha channel (save "transparent"), BaseColor's
 		// 3-param constructor creates them with a 0xFF alpha channel.  Which is right?!
-		BaseColor testCol = new BaseColor(0x80, 0x80, 0x80, 0x00);
+		BaseColor testCol = new BaseColor(0x80, 0x80, 0x80);
 		for (String colStr : colors) {
 			BaseColor curCol = WebColors.getRGBColor(colStr);
 			assertTrue(dumpColor(testCol) + "!=" + dumpColor(curCol), testCol.equals(curCol));
