@@ -92,7 +92,15 @@
                 <include name="**/*.png"/>
             </fileset>
         </copy>
-		<jar destfile="${itext.rups.jar}" basedir="${itext.rups.bin}" includes="**/*.class, **/*.png" />
+		<jar destfile="${itext.rups.jar}" basedir="${itext.rups.bin}" includes="**/*.class, **/*.png">
+		    <manifest>
+		      <attribute name="Main-Class"
+		            value="com.itextpdf.rups.Rups"/>
+			  <attribute name="Class-Path"
+			        value="iText.jar dom4j-1.6.1.jar bcmail-jdk14-138.jar bcprov-jdk14-138.jar"/>
+		    </manifest>
+
+		</jar>
 	</target>
     
 </project>

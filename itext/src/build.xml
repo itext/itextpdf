@@ -13,6 +13,7 @@
 
 	<target name="jar">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rups" />
 	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
