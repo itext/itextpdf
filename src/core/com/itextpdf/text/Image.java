@@ -926,6 +926,7 @@ public abstract class Image extends Rectangle {
 		this.spacingAfter = image.spacingAfter;
 
 		this.widthPercentage = image.widthPercentage;
+		this.scaleToFitLineWhenOverflow = image.scaleToFitLineWhenOverflow;
 		this.annotation = image.annotation;
 		this.layer = image.layer;
 		this.interpolation = image.interpolation;
@@ -1550,6 +1551,33 @@ public abstract class Image extends Rectangle {
 		this.widthPercentage = widthPercentage;
 	}
 
+	// scaling the image to the available width (or not)
+
+	/**
+	 * Indicates if the image should be scaled to fit the line
+	 * when the image exceeds the available width.
+	 * @since iText 5.0.6
+	 */
+	protected boolean scaleToFitLineWhenOverflow;
+
+	/**
+	 * Gets the value of scaleToFitLineWhenOverflow.
+	 * @return true if the image size has to scale to the available width
+	 * @since iText 5.0.6
+	 */
+	public boolean isScaleToFitLineWhenOverflow() {
+		return scaleToFitLineWhenOverflow;
+	}
+
+	/**
+	 * Sets the value of scaleToFitLineWhenOverflow
+	 * @param scaleToFitLineWhenOverflow true if you want the image to scale to the available width
+	 * @since iText 5.0.6
+	 */
+	public void setScaleToFitLineWhenOverflow(boolean scaleToFitLineWhenOverflow) {
+		this.scaleToFitLineWhenOverflow = scaleToFitLineWhenOverflow;
+	}
+	
     // annotation
 
 	/** if the annotation is not null the image will be clickable. */
