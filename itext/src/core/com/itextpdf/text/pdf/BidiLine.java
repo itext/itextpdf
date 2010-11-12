@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf;
 import java.util.ArrayList;
 
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.Utilities;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
@@ -361,6 +362,18 @@ public class BidiLine {
             splitChar = ck.isExtSplitCharacter(oldCurrentChar, currentChar, totalTextLength, text, detailChunks);
             if (splitChar && Character.isWhitespace((char)uniC))
                 lastSplit = currentChar;
+            if (width - charWidth < 0) {
+            	// If the chunk is an image and it is the first one in line, check if resize requested
+            	// If so, resize to fit the current line width
+            	if (lastValidChunk == null && ck.isImage()) {
+            		Image img = ck.getImage();
+            		if (img.isScaleToFitLineWhenOverflow()) {
+            			float scalePercent = width / img.getWidth() * 100;
+            			img.scalePercent(scalePercent);
+            			charWidth = width;
+            		}
+            	}
+            }
             if (width - charWidth < 0)
                 break;
             if (splitChar)
