@@ -60,6 +60,7 @@ public class IncCell implements TextElementArray {
 
     private ArrayList<Chunk> chunks = new ArrayList<Chunk>();
     private PdfPCell cell;
+    private Float width;
 
     /** Creates a new instance of IncCell */
     public IncCell(String tag, ChainedProperties props) {
@@ -102,6 +103,10 @@ public class IncCell implements TextElementArray {
         cell.setUseDescender(true);
         value = props.getProperty("bgcolor");
         cell.setBackgroundColor(Markup.decodeColor(value));
+        value = props.getProperty("width");
+        if (value != null) {
+            width = new Float(value.replace("%", ""));
+        }
     }
 
     public boolean add(Element o) {
@@ -140,4 +145,13 @@ public class IncCell implements TextElementArray {
 	public boolean isNestable() {
 		return true;
 	}
+
+    public Float getWidth() {
+        return width;
+    }
+
+    public void setWidth(Float width) {
+        this.width = width;
+    }
+
 }
