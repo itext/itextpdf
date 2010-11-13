@@ -62,6 +62,13 @@ public class IncTable implements Element {
     private HashMap<String, String> props = new HashMap<String, String>();
     private ArrayList<ArrayList<PdfPCell>> rows = new ArrayList<ArrayList<PdfPCell>>();
     private ArrayList<PdfPCell> cols;
+    
+    /**
+     * Array containing the widths of the columns.
+     * @since iText 5.0.6
+     */
+    private float[] colWidths;
+
     /** Creates a new instance of IncTable */
     public IncTable(HashMap<String, String> props) {
         this.props.putAll(props);
@@ -90,6 +97,14 @@ public class IncTable implements Element {
 
     public ArrayList<ArrayList<PdfPCell>> getRows() {
         return rows;
+    }
+
+    /**
+     * Setter for the column widths
+     * @since iText 5.0.6
+     */
+    public void setColWidths(float[] colWidths) {
+        this.colWidths = colWidths;
     }
 
     public PdfPTable buildTable() {
@@ -125,6 +140,12 @@ public class IncTable implements Element {
                 table.addCell(pc);
             }
         }
+		try {
+			if (colWidths != null)
+				table.setWidths(colWidths);
+		} catch (Exception e) {
+			// fail silently
+		}
         return table;
     }
 

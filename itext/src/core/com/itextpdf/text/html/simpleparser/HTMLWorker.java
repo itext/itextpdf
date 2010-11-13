@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
@@ -596,11 +597,26 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				pendingTR = false;
 				cprops.removeChain("tr");
 				ArrayList<PdfPCell> cells = new ArrayList<PdfPCell>();
+                ArrayList<Float> cellWidths = new ArrayList<Float>();
+                boolean percentage = false;
+                float width;
+                float totalWidth = 0;
+                int zeroWidth = 0;
 				IncTable table = null;
 				while (true) {
 					Element obj = stack.pop();
 					if (obj instanceof IncCell) {
-						cells.add(((IncCell) obj).getCell());
+                        IncCell cell = (IncCell)obj;
+                        width = cell.getWidth();
+                        cellWidths.add(new Float(width));
+                        percentage |= cell.isPercentage();
+                        if (width == 0) {
+                        	zeroWidth++;
+                        }
+                        else {
+                        	totalWidth += width;
+                        }
+                        cells.add(cell.getCell());
 					}
 					if (obj instanceof IncTable) {
 						table = (IncTable) obj;
@@ -608,7 +624,20 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 					}
 				}
 				table.addCols(cells);
-				table.endRow();
+                if (cellWidths.size() > 0) {
+                    // cells come off the stack in reverse, naturally
+                	totalWidth = 100 - totalWidth;
+                    Collections.reverse(cellWidths);
+                    float[] widths = new float[cellWidths.size()];
+                    for (int i = 0; i < widths.length; i++) {
+                        widths[i] = cellWidths.get(i).floatValue();
+                        if (widths[i] == 0 && percentage && zeroWidth > 0) {
+                        	widths[i] = totalWidth / zeroWidth;
+                        }
+                    }
+                    table.setColWidths(widths);
+                }
+                table.endRow();
 				stack.push(table);
 				skipText = true;
 				return;

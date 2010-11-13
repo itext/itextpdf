@@ -60,6 +60,16 @@ public class IncCell implements TextElementArray {
 
     private ArrayList<Chunk> chunks = new ArrayList<Chunk>();
     private PdfPCell cell;
+    /**
+     * The width of the cell.
+     * @since iText 5.0.6
+     */
+    private float width;
+    /**
+     * Indicates if the width is a percentage.
+     * @since iText 5.0.6
+     */
+    private boolean percentage;
 
     /** Creates a new instance of IncCell */
     public IncCell(String tag, ChainedProperties props) {
@@ -102,6 +112,14 @@ public class IncCell implements TextElementArray {
         cell.setUseDescender(true);
         value = props.getProperty("bgcolor");
         cell.setBackgroundColor(Markup.decodeColor(value));
+        value = props.getProperty("width").trim();
+        if (value != null) {
+        	if (value.endsWith("%")) {
+        		percentage = true;
+        		value = value.substring(0, value.length() - 1);
+        	}
+            width = Float.parseFloat(value);
+        }
     }
 
     public boolean add(Element o) {
@@ -140,4 +158,23 @@ public class IncCell implements TextElementArray {
 	public boolean isNestable() {
 		return true;
 	}
+
+    /**
+     * Getter for the cell width
+     * @return the width
+     * @since iText 5.0.6
+     */
+    public float getWidth() {
+        return width;
+    }
+
+    /**
+     * Getter for percentage
+     * @return true if the width is a percentage
+     * @since iText 5.0.6
+     */
+    public boolean isPercentage() {
+        return percentage;
+    }
+
 }
