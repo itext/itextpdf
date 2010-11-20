@@ -1475,6 +1475,13 @@ public class ColumnText {
                         last.setMaxHeights(yTemp - minY + rowHeight);
                         yTemp = minY;
                     }
+                    if (newPageFollows) {
+                        // newPageFollows indicate that this table is being split
+                        PdfPTableEvent tableEvent = table.getTableEvent();
+                        if (tableEvent instanceof PdfPTableEventSplit) {
+                            ((PdfPTableEventSplit)tableEvent).splitTable(table);
+                        }
+                    }
 
                     // now we render the rows of the new table
                     if (canvases != null)

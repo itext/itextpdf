@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
@@ -41,52 +39,19 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf.events;
-
-import java.util.ArrayList;
-
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPTableEvent;
-import com.itextpdf.text.pdf.PdfPTableEventSplit;
+package com.itextpdf.text.pdf;
 
 /**
- * If you want to add more than one page event to a PdfPTable,
- * you have to construct a PdfPTableEventForwarder, add the
- * different events to this object and add the forwarder to
- * the PdfWriter.
+ * Signals that a table will continue in the next page.
+ * 
+ * @since 5.0.6
  */
-
-public class PdfPTableEventForwarder implements PdfPTableEventSplit {
-
-	/** ArrayList containing all the PageEvents that have to be executed. */
-	protected ArrayList<PdfPTableEvent> events = new ArrayList<PdfPTableEvent>();
-
-	/**
-	 * Add a page event to the forwarder.
-	 * @param event an event that has to be added to the forwarder.
-	 */
-	public void addTableEvent(PdfPTableEvent event) {
-		events.add(event);
-	}
-
-	/**
-	 * @see com.itextpdf.text.pdf.PdfPTableEvent#tableLayout(com.itextpdf.text.pdf.PdfPTable, float[][], float[], int, int, com.itextpdf.text.pdf.PdfContentByte[])
-	 */
-	public void tableLayout(PdfPTable table, float[][] widths, float[] heights, int headerRows, int rowStart, PdfContentByte[] canvases) {
-		for (PdfPTableEvent event: events) {
-			event.tableLayout(table, widths, heights, headerRows, rowStart, canvases);
-		}
-	}
-
+public interface PdfPTableEventSplit extends PdfPTableEvent {
     /**
-     * @see com.itextpdf.text.pdf.PdfPTableEventSplit#splitTable(com.itextpdf.text.pdf.PdfPTable)
-	 * @since iText 5.0.6
+     * This method is called to indicate that table is being split. It's called
+     * before the <CODE>tableLayout</CODE> method and before the table is drawn.
+     *
+     * @param table the <CODE>PdfPTable</CODE> in use
      */
-    public void splitTable(PdfPTable table) {
-		for (PdfPTableEvent event: events) {
-			if (event instanceof PdfPTableEventSplit)
-                ((PdfPTableEventSplit)event).splitTable(table);
-		}
-    }
+    public void splitTable(PdfPTable table);
 }
