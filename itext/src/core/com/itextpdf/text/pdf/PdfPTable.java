@@ -59,8 +59,6 @@ import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
 /**
  * This is a table that can be put at an absolute position but can also
  * be added to the document as the class <CODE>Table</CODE>.
- * In the last case when crossing pages the table always break at full rows; if a
- * row is bigger than the page it is dropped silently to avoid infinite loops.
  * <P>
  * A PdfPTableEvent can be associated to the table to do custom drawing
  * when the table is rendered.
