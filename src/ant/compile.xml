@@ -97,7 +97,7 @@
 		      <attribute name="Main-Class"
 		            value="com.itextpdf.rups.Rups"/>
 			  <attribute name="Class-Path"
-			        value="iText.jar dom4j-1.6.1.jar"/>
+			        value="iText.jar dom4j-1.6.1.jar bcmail-jdk14-138.jar bcprov-jdk14-138.jar"/>
 		    </manifest>
 
 		</jar>
