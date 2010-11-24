@@ -2398,8 +2398,7 @@ public class PdfDocument extends Document {
             else
                 loop = 0;
             if (loop == 3) {
-                add(new Paragraph("ERROR: Infinite table loop"));
-                break;
+            	throw new DocumentException(MessageLocalization.getComposedMessage("infinite.table.loop"));
             }
             newPage();
         }
