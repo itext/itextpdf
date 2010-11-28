@@ -112,8 +112,9 @@ public class IncCell implements TextElementArray {
         cell.setUseDescender(true);
         value = props.getProperty("bgcolor");
         cell.setBackgroundColor(Markup.decodeColor(value));
-        value = props.getProperty("width").trim();
+        value = props.getProperty("width");
         if (value != null) {
+            value = value.trim();
         	if (value.endsWith("%")) {
         		percentage = true;
         		value = value.substring(0, value.length() - 1);
