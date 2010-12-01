@@ -79,7 +79,6 @@ public class CMapParser
     {
         PushbackInputStream cmapStream = new PushbackInputStream( input );
         CMap result = new CMap();
-        Object previousToken = null;
         Object token = null;
         while( (token = parseNextToken( cmapStream )) != null )
         {
@@ -88,10 +87,12 @@ public class CMapParser
                 Operator op = (Operator)token;
                 if( op.op.equals( BEGIN_CODESPACE_RANGE ) )
                 {
-                    Number cosCount = (Number)previousToken;
-                    for( int j=0; j<cosCount.intValue(); j++ )
+                    while (true)
                     {
-                        byte[] startRange = (byte[])parseNextToken( cmapStream );
+                        Object nx = parseNextToken( cmapStream );
+                        if (nx instanceof Operator && ((Operator)nx).op.equals("endcodespacerange"))
+                            break;
+                        byte[] startRange = (byte[])nx;
                         byte[] endRange = (byte[])parseNextToken( cmapStream );
                         CodespaceRange range = new CodespaceRange();
                         range.setStart( startRange );
@@ -101,10 +102,12 @@ public class CMapParser
                 }
                 else if( op.op.equals( BEGIN_BASE_FONT_CHAR ) )
                 {
-                    Number cosCount = (Number)previousToken;
-                    for( int j=0; j<cosCount.intValue(); j++ )
+                    while (true)
                     {
-                        byte[] inputCode = (byte[])parseNextToken( cmapStream );
+                        Object nx = parseNextToken( cmapStream );
+                        if (nx instanceof Operator && ((Operator)nx).op.equals("endbfchar"))
+                            break;
+                        byte[] inputCode = (byte[])nx;
                         Object nextToken = parseNextToken( cmapStream );
                         if( nextToken instanceof byte[] )
                         {
@@ -124,11 +127,12 @@ public class CMapParser
                 }
                else if( op.op.equals( BEGIN_BASE_FONT_RANGE ) )
                 {
-                    Number cosCount = (Number)previousToken;
-
-                    for( int j=0; j<cosCount.intValue(); j++ )
+                    while (true)
                     {
-                        byte[] startCode = (byte[])parseNextToken( cmapStream );
+                        Object nx = parseNextToken( cmapStream );
+                        if (nx instanceof Operator && ((Operator)nx).op.equals("endbfrange"))
+                            break;
+                        byte[] startCode = (byte[])nx;
                         byte[] endCode = (byte[])parseNextToken( cmapStream );
                         Object nextToken = parseNextToken( cmapStream );
                         List<byte[]> array = null;
@@ -173,7 +177,6 @@ public class CMapParser
                     }
                 }
             }
-            previousToken = token;
         }
         return result;
     }
