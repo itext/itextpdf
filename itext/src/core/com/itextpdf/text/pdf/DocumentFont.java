@@ -209,7 +209,6 @@ public class DocumentFont extends BaseFont {
         try {
             PdfContentParser ps = new PdfContentParser(new PRTokeniser(touni));
             PdfObject ob = null;
-            PdfObject last = null;
             boolean notFound = true;
             int nestLevel = 0;
             while ((notFound || nestLevel > 0) && (ob = ps.readPRObject()) != null) {
@@ -222,9 +221,11 @@ public class DocumentFont extends BaseFont {
                 		nestLevel--;
                 	}
                 	else if (ob.toString().equals("beginbfchar")) {
-                        int n = ((PdfNumber)last).intValue();
-                        for (int k = 0; k < n; ++k) {
-                            String cid = decodeString((PdfString)ps.readPRObject());
+                        while (true) {
+                            PdfObject nx = ps.readPRObject();
+                            if (nx.toString().equals("endbfchar"))
+                                break;
+                            String cid = decodeString((PdfString)nx);
                             String uni = decodeString((PdfString)ps.readPRObject());
                             if (uni.length() == 1) {
                                 int cidc = cid.charAt(0);
@@ -237,9 +238,11 @@ public class DocumentFont extends BaseFont {
                         }
                     }
                     else if (ob.toString().equals("beginbfrange")) {
-                        int n = ((PdfNumber)last).intValue();
-                        for (int k = 0; k < n; ++k) {
-                            String cid1 = decodeString((PdfString)ps.readPRObject());
+                        while (true) {
+                            PdfObject nx = ps.readPRObject();
+                            if (nx.toString().equals("endbfrange"))
+                                break;
+                            String cid1 = decodeString((PdfString)nx);
                             String cid2 = decodeString((PdfString)ps.readPRObject());
                             int cid1c = cid1.charAt(0);
                             int cid2c = cid2.charAt(0);
@@ -272,8 +275,6 @@ public class DocumentFont extends BaseFont {
                         }
                     }
                 }
-                else
-                    last = ob;
             }
         }
         catch (Exception e) {
