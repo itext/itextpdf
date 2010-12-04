@@ -2022,6 +2022,56 @@ public class PdfReader implements PdfViewerPreferences {
             return new byte[0];
     }
 
+    /** Gets the content from the page dictionary.
+     * @param page the page dictionary
+     * @throws IOException on error
+     * @return the content
+     * @since 5.0.6
+     */
+    public static byte[] getPageContent(PdfDictionary page) throws IOException{
+        if (page == null)
+            return null;
+        RandomAccessFileOrArray rf = null;
+        try {
+            PdfObject contents = getPdfObjectRelease(page.get(PdfName.CONTENTS));
+            if (contents == null)
+                return new byte[0];
+            if (contents.isStream()) {
+                if (rf == null) {
+                    rf = ((PRStream)contents).getReader().getSafeFile();
+                    rf.reOpen();
+                }
+                return getStreamBytes((PRStream)contents, rf);
+            }
+            else if (contents.isArray()) {
+                PdfArray array = (PdfArray)contents;
+                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                for (int k = 0; k < array.size(); ++k) {
+                    PdfObject item = getPdfObjectRelease(array.getPdfObject(k));
+                    if (item == null || !item.isStream())
+                        continue;
+                    if (rf == null) {
+                        rf = ((PRStream)item).getReader().getSafeFile();
+                        rf.reOpen();
+                    }
+                    byte[] b = getStreamBytes((PRStream)item, rf);
+                    bout.write(b);
+                    if (k != array.size() - 1)
+                        bout.write('\n');
+                }
+                return bout.toByteArray();
+            }
+            else
+                return new byte[0];
+        }
+        finally {
+            try {
+                if (rf != null)
+                    rf.close();
+            }catch(Exception e){}
+        }
+    }
+
     /** Gets the contents of the page.
      * @param pageNum the page number. 1 is the first
      * @throws IOException on error
