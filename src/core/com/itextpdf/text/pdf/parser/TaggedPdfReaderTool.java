@@ -161,12 +161,12 @@ public class TaggedPdfReaderTool {
 			PdfDictionary dict = k.getAsDict(PdfName.PG);
 			if (dict != null)
 				parseTag(tagN, k.getDirectObject(PdfName.K), dict);
-			inspectChild(k.get(PdfName.K));
+			inspectChild(k.getDirectObject(PdfName.K));
 			out.print("</");
 			out.print(tag);
 			out.println(">");
 		} else
-			inspectChild(k.get(PdfName.K));
+			inspectChild(k.getDirectObject(PdfName.K));
 	}
 
     private static String fixTagName(String tag) {
@@ -223,7 +223,6 @@ public class TaggedPdfReaderTool {
 	 */
 	public void parseTag(String tag, PdfObject object, PdfDictionary page)
 			throws IOException {
-		PRStream stream = (PRStream) page.getAsStream(PdfName.CONTENTS);
 		// if the identifier is a number, we can extract the content right away
 		if (object instanceof PdfNumber) {
 			PdfNumber mcid = (PdfNumber) object;
@@ -233,7 +232,7 @@ public class TaggedPdfReaderTool {
 					strategy, filter);
 			PdfContentStreamProcessor processor = new PdfContentStreamProcessor(
 					listener);
-			processor.processContent(PdfReader.getStreamBytes(stream), page
+			processor.processContent(PdfReader.getPageContent(page), page
 					.getAsDict(PdfName.RESOURCES));
 			out.print(SimpleXMLParser.escapeXML(listener.getResultantText(), true));
 		}
