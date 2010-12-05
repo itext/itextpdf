@@ -94,6 +94,12 @@ public class PdfContentStreamProcessor {
     /** A map with all supported XObject handlers */
     final private Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
     /**
+     * The font cache.
+     * @since 5.0.6
+     */
+    /**  */
+    final private Map<Integer,CMapAwareDocumentFont> cachedFonts = new HashMap<Integer, CMapAwareDocumentFont>();
+    /**
      * A stack containing marked content info.
      * @since 5.0.2
      */
@@ -133,7 +139,23 @@ public class PdfContentStreamProcessor {
     public XObjectDoHandler registerXObjectDoHandler(PdfName xobjectSubType, XObjectDoHandler handler){
         return xobjectDoHandlers.put(xobjectSubType, handler);
     }
-    
+
+    /**
+     * Gets the font pointed to by the indirect reference. The font may have been cached.
+     * @param ind the indirect reference ponting to the font
+     * @return the font
+     * @since 5.0.6
+     */
+    public CMapAwareDocumentFont getFont(PRIndirectReference ind) {
+        Integer n = new Integer(ind.getNumber());
+        CMapAwareDocumentFont font = cachedFonts.get(n);
+        if (font == null) {
+            font = new CMapAwareDocumentFont(ind);
+            cachedFonts.put(n, font);
+        }
+        return font;
+    }
+
     /**
      * Loads all the supported graphics and text state operators in a map.
      */
@@ -329,7 +351,6 @@ public class PdfContentStreamProcessor {
      * @param resources		the resources that come with the content stream
      */
     public void processContent(byte[] contentBytes, PdfDictionary resources){
-
         this.resources.push(resources);
         try {
             PRTokeniser tokeniser = new PRTokeniser(contentBytes);
@@ -554,7 +575,7 @@ public class PdfContentStreamProcessor {
             float size = ((PdfNumber)operands.get(1)).floatValue();
 
             PdfDictionary fontsDictionary = processor.resources.getAsDict(PdfName.FONT);
-            CMapAwareDocumentFont font = new CMapAwareDocumentFont((PRIndirectReference)fontsDictionary.get(fontResourceName));
+            CMapAwareDocumentFont font = processor.getFont((PRIndirectReference)fontsDictionary.get(fontResourceName));
 
             processor.gs().font = font;
             processor.gs().fontSize = size;
@@ -639,7 +660,7 @@ public class PdfContentStreamProcessor {
             // at this point, all we care about is the FONT entry in the GS dictionary
             PdfArray fontParameter = gsDic.getAsArray(PdfName.FONT);
             if (fontParameter != null){
-                CMapAwareDocumentFont font = new CMapAwareDocumentFont((PRIndirectReference)fontParameter.getPdfObject(0));
+                CMapAwareDocumentFont font = processor.getFont((PRIndirectReference)fontParameter.getPdfObject(0));
                 float size = fontParameter.getAsNumber(1).floatValue();
 
                 processor.gs().font = font;
