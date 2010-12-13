@@ -351,7 +351,7 @@ class PdfStamperImp extends PdfWriter {
             }
         }
         newInfo.put(PdfName.MODDATE, date);
-        newInfo.put(PdfName.PRODUCER, new PdfString(producer));
+        newInfo.put(PdfName.PRODUCER, new PdfString(producer, PdfObject.TEXT_UNICODE));
         if (append) {
             if (iInfo == null)
                 info = addToBody(newInfo, false).getIndirectReference();
