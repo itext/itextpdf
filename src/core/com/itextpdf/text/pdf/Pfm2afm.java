@@ -172,6 +172,7 @@ public final class Pfm2afm {
         p.out.flush();
     }
     
+    /*
     public static void main(String[] args) {
         try {
             RandomAccessFileOrArray in = new RandomAccessFileOrArray(args[0]);
@@ -184,6 +185,7 @@ public final class Pfm2afm {
             e.printStackTrace();
         }
     }
+    */
     
     private String readString(int n) throws IOException {
         byte b[] = new byte[n];

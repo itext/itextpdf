@@ -486,7 +486,6 @@ public class CMapParser
      * @param args Some command line arguments.
      *
      * @throws Exception If there is an error parsing the file.
-     */
     public static void main( String[] args ) throws Exception
     {
         if( args.length != 1 )
@@ -498,4 +497,5 @@ public class CMapParser
         CMap result = parser.parse( new FileInputStream( args[0] ) );
         System.out.println( "Result:" + result );
     }
+     */
 }

@@ -112,13 +112,4 @@ public class RomanAlphabetFactory {
 			return getUpperCaseString(index);
 		}
 	}
-	
-	/**
-	 * Test this class using this main method.
-	 */
-	public static void main(String[] args) {
-		for (int i = 1; i < 32000; i++) {
-			System.out.println(getString(i));
-		}
-	}
 }

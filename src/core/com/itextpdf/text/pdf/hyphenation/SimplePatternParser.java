@@ -274,7 +274,7 @@ public class SimplePatternParser implements SimpleXMLDocHandler,
 	public void addPattern(String p, String v) {
 		System.out.println("pattern: " + p + " : " + v);
 	}
-
+	/*
 	public static void main(String[] args) throws Exception {
 		try {
 			if (args.length > 0) {
@@ -285,4 +285,5 @@ public class SimplePatternParser implements SimpleXMLDocHandler,
 			e.printStackTrace();
 		}
 	}
+	*/
 }
