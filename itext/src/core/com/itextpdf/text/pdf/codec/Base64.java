@@ -415,7 +415,6 @@ public class Base64 {
      * Encodes or decodes two files from the command line;
      * <strong>feel free to delete this method (in fact you probably should)
      * if you're embedding this code into a larger program.</strong>
-     */
     public final static void main( String[] args ) {
         if( args.length < 3 ){
             usage("Not enough arguments.");
@@ -435,6 +434,7 @@ public class Base64 {
             }   // end else
         }   // end else
     }   // end main
+     */
     
     /**
      * Prints command line usage.
