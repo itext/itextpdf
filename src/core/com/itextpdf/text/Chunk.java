@@ -638,7 +638,7 @@ public class Chunk implements Element {
 	 */
 	public Chunk setTextRenderMode(int mode, float strokeWidth,
 			BaseColor strokeColor) {
-		return setAttribute(TEXTRENDERMODE, new Object[] { new Integer(mode),
+		return setAttribute(TEXTRENDERMODE, new Object[] { Integer.valueOf(mode),
 				new Float(strokeWidth), strokeColor });
 	}
 
@@ -700,7 +700,7 @@ public class Chunk implements Element {
 
 	public Chunk setRemoteGoto(String filename, int page) {
 		return setAttribute(REMOTEGOTO, new Object[] { filename,
-				new Integer(page) });
+				Integer.valueOf(page) });
 	}
 
 	/** Key for local goto. */

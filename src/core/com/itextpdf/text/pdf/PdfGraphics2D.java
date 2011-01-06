@@ -1005,7 +1005,7 @@ public class PdfGraphics2D extends Graphics2D {
         g2.kid = true;
         if (this.kids == null)
             this.kids = new ArrayList<Kid>();
-        this.kids.add(new Kid(new Integer(cb.getInternalBuffer().size()), g2));
+        this.kids.add(new Kid(cb.getInternalBuffer().size(), g2));
         return g2;
     }
 

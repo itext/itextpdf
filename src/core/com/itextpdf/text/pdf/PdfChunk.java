@@ -202,7 +202,7 @@ public class PdfChunk {
         else {
             // bold simulation
             if ((style & Font.BOLD) != 0)
-                attributes.put(Chunk.TEXTRENDERMODE, new Object[]{new Integer(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE), new Float(size / 30f), null});
+                attributes.put(Chunk.TEXTRENDERMODE, new Object[]{Integer.valueOf(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE), new Float(size / 30f), null});
             // italic simulation
             if ((style & Font.ITALIC) != 0)
                 attributes.put(Chunk.SKEW, new float[]{0, ITALIC_ANGLE});

@@ -281,8 +281,8 @@ public class BmpImage {
         int planes = readWord(inputStream);
         bitsPerPixel = readWord(inputStream);
 
-        properties.put("color_planes", new Integer(planes));
-        properties.put("bits_per_pixel", new Integer(bitsPerPixel));
+        properties.put("color_planes", Integer.valueOf(planes));
+        properties.put("bits_per_pixel", Integer.valueOf(bitsPerPixel));
 
         // As BMP always has 3 rgb bands, except for Version 5,
         // which is bgra
@@ -378,17 +378,17 @@ public class BmpImage {
                             redMask = 0x7C00;
                             greenMask = 0x3E0;
                             blueMask = 0x1F;
-                            properties.put("red_mask", new Integer(redMask));
-                            properties.put("green_mask", new Integer(greenMask));
-                            properties.put("blue_mask", new Integer(blueMask));
+                            properties.put("red_mask", Integer.valueOf(redMask));
+                            properties.put("green_mask", Integer.valueOf(greenMask));
+                            properties.put("blue_mask", Integer.valueOf(blueMask));
                         } else if (bitsPerPixel == 32) {
                             imageType = VERSION_3_NT_32_BIT;
                             redMask   = 0x00FF0000;
                             greenMask = 0x0000FF00;
                             blueMask  = 0x000000FF;
-                            properties.put("red_mask", new Integer(redMask));
-                            properties.put("green_mask", new Integer(greenMask));
-                            properties.put("blue_mask", new Integer(blueMask));
+                            properties.put("red_mask", Integer.valueOf(redMask));
+                            properties.put("green_mask", Integer.valueOf(greenMask));
+                            properties.put("blue_mask", Integer.valueOf(blueMask));
                         }
 
                         // Read in the palette
@@ -429,9 +429,9 @@ public class BmpImage {
                         greenMask = (int)readDWord(inputStream);
                         blueMask = (int)readDWord(inputStream);
 
-                        properties.put("red_mask", new Integer(redMask));
-                        properties.put("green_mask", new Integer(greenMask));
-                        properties.put("blue_mask", new Integer(blueMask));
+                        properties.put("red_mask", Integer.valueOf(redMask));
+                        properties.put("green_mask", Integer.valueOf(greenMask));
+                        properties.put("blue_mask", Integer.valueOf(blueMask));
 
                         if (colorsUsed != 0) {
                             // there is a palette
@@ -495,10 +495,10 @@ public class BmpImage {
                     }
                 }
 
-                properties.put("red_mask", new Integer(redMask));
-                properties.put("green_mask", new Integer(greenMask));
-                properties.put("blue_mask", new Integer(blueMask));
-                properties.put("alpha_mask", new Integer(alphaMask));
+                properties.put("red_mask", Integer.valueOf(redMask));
+                properties.put("green_mask", Integer.valueOf(greenMask));
+                properties.put("blue_mask", Integer.valueOf(blueMask));
+                properties.put("alpha_mask", Integer.valueOf(alphaMask));
 
                 // Read in the palette
                 int numberOfEntries = (int)((bitmapOffset-14-size) / 4);
@@ -526,15 +526,15 @@ public class BmpImage {
                     case LCS_CALIBRATED_RGB:
                         // All the new fields are valid only for this case
                         properties.put("color_space", "LCS_CALIBRATED_RGB");
-                        properties.put("redX", new Integer(redX));
-                        properties.put("redY", new Integer(redY));
-                        properties.put("redZ", new Integer(redZ));
-                        properties.put("greenX", new Integer(greenX));
-                        properties.put("greenY", new Integer(greenY));
-                        properties.put("greenZ", new Integer(greenZ));
-                        properties.put("blueX", new Integer(blueX));
-                        properties.put("blueY", new Integer(blueY));
-                        properties.put("blueZ", new Integer(blueZ));
+                        properties.put("redX", Integer.valueOf(redX));
+                        properties.put("redY", Integer.valueOf(redY));
+                        properties.put("redZ", Integer.valueOf(redZ));
+                        properties.put("greenX", Integer.valueOf(greenX));
+                        properties.put("greenY", Integer.valueOf(greenY));
+                        properties.put("greenZ", Integer.valueOf(greenZ));
+                        properties.put("blueX", Integer.valueOf(blueX));
+                        properties.put("blueY", Integer.valueOf(blueY));
+                        properties.put("blueZ", Integer.valueOf(blueZ));
                         properties.put("gamma_red", new Long(gammaRed));
                         properties.put("gamma_green", new Long(gammaGreen));
                         properties.put("gamma_blue", new Long(gammaBlue));

@@ -268,7 +268,7 @@ public class CFFFont {
 
         if (count==0) {
             offsets[0] = -1;
-            nextIndexOffset += 2;
+            nextIndexOffset += 2; // TODO death store to local var .. should this be this.nextIndexOffset ?
             return offsets;
         }
 
@@ -304,21 +304,21 @@ public class CFFFont {
             char b0 = getCard8();
             if (b0 == 29) {
                 int item = getInt();
-                args[arg_count] = new Integer(item);
+                args[arg_count] = Integer.valueOf(item);
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
             }
             if (b0 == 28) {
                 short item = getShort();
-                args[arg_count] = new Integer(item);
+                args[arg_count] = Integer.valueOf(item);
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
             }
             if (b0 >= 32 && b0 <= 246) {
                 byte item = (byte) (b0-139);
-                args[arg_count] = new Integer(item);
+                args[arg_count] = Integer.valueOf(item);
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
@@ -326,7 +326,7 @@ public class CFFFont {
             if (b0 >= 247 && b0 <= 250) {
                 char b1 = getCard8();
                 short item = (short) ((b0-247)*256+b1+108);
-                args[arg_count] = new Integer(item);
+                args[arg_count] = Integer.valueOf(item);
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
@@ -334,13 +334,13 @@ public class CFFFont {
             if (b0 >= 251 && b0 <= 254) {
                 char b1 = getCard8();
                 short item = (short) (-(b0-251)*256-b1-108);
-                args[arg_count] = new Integer(item);
+                args[arg_count] = Integer.valueOf(item);
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
             }
             if (b0 == 30) {
-                String item = "";
+                StringBuilder item = new StringBuilder("");
                 boolean done = false;
                 char buffer = 0;
                 byte avail = 0;
@@ -351,22 +351,22 @@ public class CFFFont {
                     if (avail==1) { nibble = buffer / 16; avail--; }
                     if (avail==2) { nibble = buffer % 16; avail--; }
                     switch (nibble) {
-                        case 0xa: item += "." ; break;
-                        case 0xb: item += "E" ; break;
-                        case 0xc: item += "E-"; break;
-                        case 0xe: item += "-" ; break;
+                        case 0xa: item.append(".") ; break;
+                        case 0xb: item.append("E") ; break;
+                        case 0xc: item.append("E-"); break;
+                        case 0xe: item.append("-") ; break;
                         case 0xf: done=true   ; break;
                         default:
                             if (nibble >= 0 && nibble <= 9)
-                                item += String.valueOf(nibble);
+                            	item.append(String.valueOf(nibble));
                             else {
-                                item += "<NIBBLE ERROR: " + nibble + '>';
+                                item.append("<NIBBLE ERROR: ").append(nibble).append('>');
                                 done = true;
                             }
                             break;
                     }
                 }
-                args[arg_count] = item;
+                args[arg_count] = item.toString();
                 arg_count++;
                 //System.err.println(" real=["+item+"]");
                 continue;

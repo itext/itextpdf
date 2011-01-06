@@ -80,7 +80,7 @@ class PdfReaderInstance {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
         if (pageNumber < 1 || pageNumber > reader.getNumberOfPages())
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.page.number.1", pageNumber));
-        Integer i = new Integer(pageNumber);
+        Integer i = Integer.valueOf(pageNumber);
         PdfImportedPage pageT = importedPages.get(i);
         if (pageT == null) {
             pageT = new PdfImportedPage(this, writer, pageNumber);
@@ -92,7 +92,7 @@ class PdfReaderInstance {
     int getNewObjectNumber(int number, int generation) {
         if (myXref[number] == 0) {
             myXref[number] = writer.getIndirectReferenceNumber();
-            nextRound.add(new Integer(number));
+            nextRound.add(Integer.valueOf(number));
         }
         return myXref[number];
     }
@@ -129,7 +129,7 @@ class PdfReaderInstance {
         dic.put(PdfName.RESOURCES, PdfReader.getPdfObjectRelease(page.get(PdfName.RESOURCES)));
         dic.put(PdfName.TYPE, PdfName.XOBJECT);
         dic.put(PdfName.SUBTYPE, PdfName.FORM);
-        PdfImportedPage impPage = importedPages.get(new Integer(pageNumber));
+        PdfImportedPage impPage = importedPages.get(Integer.valueOf(pageNumber));
         dic.put(PdfName.BBOX, new PdfRectangle(impPage.getBoundingBox()));
         PdfArray matrix = impPage.getMatrix();
         if (matrix == null)

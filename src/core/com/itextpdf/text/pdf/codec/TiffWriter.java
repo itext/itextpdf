@@ -54,7 +54,7 @@ public class TiffWriter {
     private TreeMap<Integer,FieldBase> ifd = new TreeMap<Integer,FieldBase>();
 
     public void addField(FieldBase field) {
-        ifd.put(new Integer(field.getTag()), field);
+        ifd.put(Integer.valueOf(field.getTag()), field);
     }
 
     public int getIfdSize() {

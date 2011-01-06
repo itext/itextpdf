@@ -1110,9 +1110,9 @@ public abstract class BaseFont {
      * @return the subset prefix
      */
     public static String createSubsetPrefix() {
-        String s = "";
+        StringBuilder s = new StringBuilder("");
         for (int k = 0; k < 6; ++k)
-            s += (char)(Math.random() * 26 + 'A');
+            s.append((char)(Math.random() * 26 + 'A'));
         return s + "+";
     }
 

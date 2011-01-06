@@ -213,10 +213,10 @@ public class GifImage {
      * Reads GIF file header information.
      */
     protected void readHeader() throws IOException {
-        String id = "";
+        StringBuilder id = new StringBuilder("");
         for (int i = 0; i < 6; i++)
-            id += (char)in.read();
-        if (!id.startsWith("GIF8")) {
+            id.append((char)in.read());
+        if (!id.toString().startsWith("GIF8")) {
             throw new IOException(MessageLocalization.getComposedMessage("gif.signature.nor.found"));
         }
 

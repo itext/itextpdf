@@ -375,7 +375,7 @@ public class TextField extends BaseField {
             int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
             ptext = removeCRLF(ptext);
             // highlight selected values against their (presumably) darker background
-            BaseColor textCol = choiceSelections.contains( new Integer( idx )) ? GrayColor.GRAYWHITE : fcolor;
+            BaseColor textCol = choiceSelections.contains( Integer.valueOf( idx )) ? GrayColor.GRAYWHITE : fcolor;
             Phrase phrase = composePhrase(ptext, ufont, textCol, usize);
             ColumnText.showTextAligned(app, Element.ALIGN_LEFT, phrase, xp, yp, 0, rtl, 0);
         }
@@ -698,7 +698,7 @@ public class TextField extends BaseField {
      */
     public void setChoiceSelection(int choiceSelection) {
         choiceSelections = new ArrayList<Integer>();
-        choiceSelections.add( new Integer( choiceSelection ) );
+        choiceSelections.add( Integer.valueOf( choiceSelection ) );
     }
 
     /**
@@ -708,7 +708,7 @@ public class TextField extends BaseField {
      */
     public void addChoiceSelection( int selection) {
     	if ((this.options & BaseField.MULTISELECT) != 0) {
-    		choiceSelections.add( new Integer( selection ) );
+    		choiceSelections.add( Integer.valueOf( selection ) );
     	}
     }
 

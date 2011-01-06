@@ -1240,7 +1240,7 @@ public class ColumnText {
                         else ++count;
                     }
                     else if (obj instanceof com.itextpdf.text.List) {
-                        stack.push(new Object[]{list, new Integer(k), new Float(listIndentation)});
+                        stack.push(new Object[]{list, Integer.valueOf(k), new Float(listIndentation)});
                         list = (com.itextpdf.text.List)obj;
                         items = list.getItems();
                         listIndentation += list.getIndentationLeft();

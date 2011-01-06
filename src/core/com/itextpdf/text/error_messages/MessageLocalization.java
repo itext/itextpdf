@@ -230,7 +230,9 @@ public final class MessageLocalization {
         }
         finally {
             try {
-                is.close();
+                if (null != is){
+                	is.close();
+                }
             } catch (Exception exx) {
             }
             // do nothing
