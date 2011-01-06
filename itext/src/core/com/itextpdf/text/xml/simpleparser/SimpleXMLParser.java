@@ -499,7 +499,7 @@ public final class SimpleXMLParser {
      * @param	s	a state to add to the stack
      */
     private void saveState(int s) {
-    	stack.push(new Integer(s));
+    	stack.push(Integer.valueOf(s));
     }
     /**
      * Flushes the text that is currently in the buffer.

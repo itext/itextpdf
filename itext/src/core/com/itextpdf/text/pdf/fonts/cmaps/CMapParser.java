@@ -361,7 +361,7 @@ public class CMapParser
                 }
                 else
                 {
-                    retval = new Integer( buffer.toString() );
+                    retval = Integer.valueOf( buffer.toString() );
                 }
                 break;
             }

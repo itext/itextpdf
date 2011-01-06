@@ -326,7 +326,7 @@ class TrueTypeFontSubSet {
         tableLocation = tableDirectory.get("glyf");
         if (tableLocation == null)
             throw new DocumentException(MessageLocalization.getComposedMessage("table.1.does.not.exist.in.2", "glyf", fileName));
-        Integer glyph0 = new Integer(0);
+        Integer glyph0 = Integer.valueOf(0);
         if (!glyphsUsed.contains(glyph0)) {
             glyphsUsed.add(glyph0);
             glyphsInList.add(glyph0);
@@ -349,7 +349,7 @@ class TrueTypeFontSubSet {
         rf.skipBytes(8);
         for(;;) {
             int flags = rf.readUnsignedShort();
-            Integer cGlyph = new Integer(rf.readUnsignedShort());
+            Integer cGlyph = Integer.valueOf(rf.readUnsignedShort());
             if (!glyphsUsed.contains(cGlyph)) {
                 glyphsUsed.add(cGlyph);
                 glyphsInList.add(cGlyph);

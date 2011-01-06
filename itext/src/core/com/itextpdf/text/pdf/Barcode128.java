@@ -343,20 +343,20 @@ public class Barcode128 extends Barcode{
      * @return the packed digits, two digits per character
      */    
     static String getPackedRawDigits(String text, int textIndex, int numDigits) {
-        String out = "";
+        StringBuilder out = new StringBuilder("");
         int start = textIndex;
         while (numDigits > 0) {
             if (text.charAt(textIndex) == FNC1) {
-                out += FNC1_INDEX;
+                out.append(FNC1_INDEX);
                 ++textIndex;
                 continue;
             }
             numDigits -= 2;
             int c1 = text.charAt(textIndex++) - '0';
             int c2 = text.charAt(textIndex++) - '0';
-            out += (char)(c1 * 10 + c2);
+            out.append((char)(c1 * 10 + c2));
         }
-        return (char)(textIndex - start) + out;
+        return (char)(textIndex - start) + out.toString();
     }
     
     /** Converts the human readable text to the characters needed to
@@ -730,7 +730,7 @@ public class Barcode128 extends Barcode{
     public void setCode(String code) {
         if (getCodeType() == Barcode128.CODE128_UCC && code.startsWith("(")) {
             int idx = 0;
-            String ret = "";
+            StringBuilder ret = new StringBuilder("");
             while (idx >= 0) {
                 int end = code.indexOf(')', idx);
                 if (end < 0)
@@ -747,15 +747,15 @@ public class Barcode128 extends Barcode{
                     sai = "0" + sai;
                 idx = code.indexOf('(', end);
                 int next = (idx < 0 ? code.length() : idx);
-                ret += sai + code.substring(end + 1, next);
+                ret.append(sai).append(code.substring(end + 1, next));
                 if (len < 0) {
                     if (idx >= 0)
-                        ret += FNC1;
+                        ret.append(FNC1);
                 }
                 else if (next - end - 1 + sai.length() != len)
                     throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.ai.length.1", sai));
             }
-            super.setCode(ret);
+            super.setCode(ret.toString());
         }
         else
             super.setCode(code);

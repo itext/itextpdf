@@ -110,7 +110,7 @@ public class PdfPageLabels {
             dic.put(PdfName.P, new PdfString(text, PdfObject.TEXT_UNICODE));
         if (firstPage != 1)
             dic.put(PdfName.ST, new PdfNumber(firstPage));
-        map.put(new Integer(page - 1), dic);
+        map.put(Integer.valueOf(page - 1), dic);
     }
 
     /** Adds or replaces a page label. The first logical page has the default
@@ -144,7 +144,7 @@ public class PdfPageLabels {
     public void removePageLabel(int page) {
         if (page <= 1)
             return;
-        map.remove(new Integer(page - 1));
+        map.remove(Integer.valueOf(page - 1));
     }
 
     /** Gets the page label dictionary to insert into the document.
@@ -182,7 +182,7 @@ public class PdfPageLabels {
 		String prefix = "";
 		char type = 'D';
 		for (int i = 0; i < n; i++) {
-			current = new Integer(i);
+			current = Integer.valueOf(i);
 			if (numberTree.containsKey(current)) {
 				PdfDictionary d = (PdfDictionary)PdfReader.getPdfObjectRelease(numberTree.get(current));
 				if (d.contains(PdfName.ST)) {

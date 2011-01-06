@@ -327,7 +327,7 @@ public class CFFFontSubset extends CFFFont {
 			// Pop the glyph's FD
 			int FD = FDSelect[glyph];
 			// Put the FD index into the FDArrayUsed HashMap
-			FDArrayUsed.add(new Integer(FD));
+			FDArrayUsed.add(Integer.valueOf(FD));
 		}
 	}
 
@@ -661,8 +661,8 @@ public class CFFFontSubset extends CFFFont {
             		// If the subr isn't in the HashMap -> Put in
         			if (!hSubr.containsKey(new Integer (Subr)))
             		{
-            			hSubr.put(new Integer(Subr),null);
-            			lSubr.add(new Integer(Subr));
+            			hSubr.put(Integer.valueOf(Subr),null);
+            			lSubr.add(Integer.valueOf(Subr));
             		}
         			CalcHints(LSubrsOffsets[Subr],LSubrsOffsets[Subr+1],LBias,GBias,LSubrsOffsets);
         			seek(pos);
@@ -679,8 +679,8 @@ public class CFFFontSubset extends CFFFont {
 	        		// If the subr isn't in the HashMap -> Put in
 	        		if (!hGSubrsUsed.containsKey(new Integer (Subr)))
 	        		{
-	        			hGSubrsUsed.put(new Integer(Subr),null);
-	        			lGSubrsUsed.add(new Integer(Subr));
+	        			hGSubrsUsed.put(Integer.valueOf(Subr),null);
+	        			lGSubrsUsed.add(Integer.valueOf(Subr));
 	        		}
 	        		CalcHints(gsubrOffsets[Subr],gsubrOffsets[Subr+1],LBias,GBias,LSubrsOffsets);
 	        		seek(pos);
@@ -803,27 +803,27 @@ public class CFFFontSubset extends CFFFont {
             {
             	int first = getCard8();
             	int second = getCard8();
-            	args[arg_count] = new Integer(first<<8 | second);
+            	args[arg_count] = Integer.valueOf(first<<8 | second);
             	arg_count++;
             	continue;
             }
             if (b0 >= 32 && b0 <= 246) // The byte read is the byte;
             {
-            	args[arg_count] = new Integer(b0 - 139);
+            	args[arg_count] = Integer.valueOf(b0 - 139);
             	arg_count++;
             	continue;
             }
             if (b0 >= 247 && b0 <= 250) // The byte read and the next byte constitute a short int
             {
             	int w = getCard8();
-            	args[arg_count] = new Integer((b0-247)*256 + w + 108);
+            	args[arg_count] = Integer.valueOf((b0-247)*256 + w + 108);
             	arg_count++;
             	continue;
             }
             if (b0 >= 251 && b0 <= 254)// Same as above except negative
             {
             	int w = getCard8();
-            	args[arg_count] = new Integer(-(b0-251)*256 - w - 108);
+            	args[arg_count] = Integer.valueOf(-(b0-251)*256 - w - 108);
             	arg_count++;
             	continue;
             }
@@ -833,7 +833,7 @@ public class CFFFontSubset extends CFFFont {
             	int second = getCard8();
             	int third = getCard8();
             	int fourth = getCard8();
-            	args[arg_count] = new Integer(first<<24 | second<<16 | third<<8 | fourth);
+            	args[arg_count] = Integer.valueOf(first<<24 | second<<16 | third<<8 | fourth);
             	arg_count++;
             	continue;
             }
@@ -941,7 +941,7 @@ public class CFFFontSubset extends CFFFont {
 			NewOffsets[i] = Offset;
 			// If the object in the offset is also present in the used
 			// HashMap then increment the offset var by its size
-			if (Used.containsKey(new Integer(i))) {
+			if (Used.containsKey(Integer.valueOf(i))) {
 				Offset += Offsets[i+1] - Offsets[i];
 			} else {
 				// Else the same offset is kept in i+1.

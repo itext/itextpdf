@@ -149,7 +149,7 @@ public abstract class BaseField {
 
     static {
         fieldKeys.putAll(PdfCopyFieldsImp.fieldKeys);
-        fieldKeys.put(PdfName.T, new Integer(1));
+        fieldKeys.put(PdfName.T, Integer.valueOf(1));
     }
     /** Creates a new <CODE>TextField</CODE>.
      * @param writer the document <CODE>PdfWriter</CODE>

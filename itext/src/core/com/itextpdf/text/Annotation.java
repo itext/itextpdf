@@ -332,7 +332,7 @@ public class Annotation implements Element {
 		this(llx, lly, urx, ury);
 		annotationtype = FILE_PAGE;
 		annotationAttributes.put(FILE, file);
-		annotationAttributes.put(PAGE, new Integer(page));
+		annotationAttributes.put(PAGE, Integer.valueOf(page));
 	}
 
 	/**
@@ -352,7 +352,7 @@ public class Annotation implements Element {
 	public Annotation(float llx, float lly, float urx, float ury, int named) {
 		this(llx, lly, urx, ury);
 		annotationtype = NAMED_DEST;
-		annotationAttributes.put(NAMED, new Integer(named));
+		annotationAttributes.put(NAMED, Integer.valueOf(named));
 	}
 
 	/**

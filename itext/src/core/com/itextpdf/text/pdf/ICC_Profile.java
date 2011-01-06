@@ -133,30 +133,30 @@ public class ICC_Profile {
     }
 
     static {
-        cstags.put("XYZ ", new Integer(3));
-        cstags.put("Lab ", new Integer(3));
-        cstags.put("Luv ", new Integer(3));
-        cstags.put("YCbr", new Integer(3));
-        cstags.put("Yxy ", new Integer(3));
-        cstags.put("RGB ", new Integer(3));
-        cstags.put("GRAY", new Integer(1));
-        cstags.put("HSV ", new Integer(3));
-        cstags.put("HLS ", new Integer(3));
-        cstags.put("CMYK", new Integer(4));
-        cstags.put("CMY ", new Integer(3));
-        cstags.put("2CLR", new Integer(2));
-        cstags.put("3CLR", new Integer(3));
-        cstags.put("4CLR", new Integer(4));
-        cstags.put("5CLR", new Integer(5));
-        cstags.put("6CLR", new Integer(6));
-        cstags.put("7CLR", new Integer(7));
-        cstags.put("8CLR", new Integer(8));
-        cstags.put("9CLR", new Integer(9));
-        cstags.put("ACLR", new Integer(10));
-        cstags.put("BCLR", new Integer(11));
-        cstags.put("CCLR", new Integer(12));
-        cstags.put("DCLR", new Integer(13));
-        cstags.put("ECLR", new Integer(14));
-        cstags.put("FCLR", new Integer(15));
+        cstags.put("XYZ ", Integer.valueOf(3));
+        cstags.put("Lab ", Integer.valueOf(3));
+        cstags.put("Luv ", Integer.valueOf(3));
+        cstags.put("YCbr", Integer.valueOf(3));
+        cstags.put("Yxy ", Integer.valueOf(3));
+        cstags.put("RGB ", Integer.valueOf(3));
+        cstags.put("GRAY", Integer.valueOf(1));
+        cstags.put("HSV ", Integer.valueOf(3));
+        cstags.put("HLS ", Integer.valueOf(3));
+        cstags.put("CMYK", Integer.valueOf(4));
+        cstags.put("CMY ", Integer.valueOf(3));
+        cstags.put("2CLR", Integer.valueOf(2));
+        cstags.put("3CLR", Integer.valueOf(3));
+        cstags.put("4CLR", Integer.valueOf(4));
+        cstags.put("5CLR", Integer.valueOf(5));
+        cstags.put("6CLR", Integer.valueOf(6));
+        cstags.put("7CLR", Integer.valueOf(7));
+        cstags.put("8CLR", Integer.valueOf(8));
+        cstags.put("9CLR", Integer.valueOf(9));
+        cstags.put("ACLR", Integer.valueOf(10));
+        cstags.put("BCLR", Integer.valueOf(11));
+        cstags.put("CCLR", Integer.valueOf(12));
+        cstags.put("DCLR", Integer.valueOf(13));
+        cstags.put("ECLR", Integer.valueOf(14));
+        cstags.put("FCLR", Integer.valueOf(15));
     }
 }
