@@ -97,28 +97,10 @@ public final class MessageLocalization {
         return "No message found for " + key;
     }
 
-    /**
-     * Get a message without parameters.
-     * @param key the key to the message
-     * @return the message
-     */
-    public static String getComposedMessage(String key) {
-        return getComposedMessage(key, null, null, null, null);
-    }
+   
 
     /**
-     * Get a message with one parameter. The parameter will replace the string
-     * "{1}" found in the message.
-     * @param key the key to the message
-     * @param p1 the parameter
-     * @return the message
-     */
-    public static String getComposedMessage(String key, Object p1) {
-        return getComposedMessage(key, p1, null, null, null);
-    }
-
-    /**
-     * Get a message with one parameter. The parameter will replace the string
+     * Get a message with one parameter as an primitive int. The parameter will replace the string
      * "{1}" found in the message.
      * @param key the key to the message
      * @param p1 the parameter
@@ -128,58 +110,30 @@ public final class MessageLocalization {
         return getComposedMessage(key, String.valueOf(p1), null, null, null);
     }
 
-    /**
-     * Get a message with one parameter. The parameter will replace the string
-     * "{1}", "{2}" found in the message.
-     * @param key the key to the message
-     * @param p1 the parameter
-     * @param p2 the parameter
-     * @return the message
-     */
-    public static String getComposedMessage(String key, Object p1, Object p2) {
-        return getComposedMessage(key, p1, p2, null, null);
-    }
-
-    /**
-     * Get a message with one parameter. The parameter will replace the string
-     * "{1}", "{2}", "{3}" found in the message.
-     * @param key the key to the message
-     * @param p1 the parameter
-     * @param p2 the parameter
-     * @param p3 the parameter
-     * @return the message
-     */
-    public static String getComposedMessage(String key, Object p1, Object p2, Object p3) {
-        return getComposedMessage(key, p1, p2, p3, null);
-    }
-
-    /**
-     * Get a message with two parameters. The parameters will replace the strings
-     * "{1}", "{2}", "{3}", "{4}" found in the message.
-     * @param key the key to the message
-     * @param p1 the parameter
-     * @param p2 the parameter
-     * @param p3 the parameter
-     * @param p4 the parameter
-     * @return the message
-     */
-    public static String getComposedMessage(String key, Object p1, Object p2, Object p3, Object p4) {
-        String msg = getMessage(key);
-        if (p1 != null) {
-            msg = msg.replaceAll("\\{1\\}", p1.toString());
-        }
-        if (p2 != null) {
-            msg = msg.replaceAll("\\{2\\}", p2.toString());
-        }
-        if (p3 != null) {
-            msg = msg.replaceAll("\\{3\\}", p3.toString());
-        }
-        if (p4 != null) {
-            msg = msg.replaceAll("\\{4\\}", p4.toString());
-        }
-        return msg;
-    }
-
+	/**
+	 * Get a message with param.length parameters or none if param is null. In
+	 * the message the "{1}", "{2}" to "{lenght of param array}" are replaced
+	 * with the object.toString of the param array. (with param[0] being "{1}")
+	 * 
+	 * @param key
+	 *            the key to the message
+	 * @param param array of parameter objects, (toString is used to add it to the message)
+	 * @return the message
+	 */
+	public static String getComposedMessage(final String key, final Object... param) {
+		String msg = getMessage(key);
+		if (null != param) {
+			int i = 1;
+			for (Object o : param) {
+				if (null != o) {
+					msg = msg.replaceAll("\\{" + i + "\\}", o.toString());
+				}
+				i++;
+			}
+		}
+		return msg;
+	}
+	
     /**
      * Sets the language to be used globally for the error messages. The language
      * is a two letter lowercase country designation like "en" or "pt". The country
