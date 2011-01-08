@@ -758,7 +758,7 @@ public class Barcode128 extends Barcode{
             super.setCode(ret.toString());
         }
         else
-            super.setCode(code.toString());
+            super.setCode(code);
     }
     
     static {
