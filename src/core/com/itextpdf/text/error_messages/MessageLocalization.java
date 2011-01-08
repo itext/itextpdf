@@ -115,6 +115,8 @@ public final class MessageLocalization {
 	 * the message the "{1}", "{2}" to "{lenght of param array}" are replaced
 	 * with the object.toString of the param array. (with param[0] being "{1}")
 	 * 
+	 * @since 20110108
+	 * @author redlab_b
 	 * @param key
 	 *            the key to the message
 	 * @param param array of parameter objects, (toString is used to add it to the message)
