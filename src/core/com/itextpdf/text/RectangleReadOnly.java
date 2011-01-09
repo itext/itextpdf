@@ -76,7 +76,21 @@ public class RectangleReadOnly extends Rectangle {
 	}
 
 	/**
-	 * Constructs a <CODE>RectangleReadOnly</CODE> -object starting from the origin
+	 * Constructs a <CODE>RectangleReadOnly</CODE> -object.
+	 * 
+	 * @param llx	lower left x
+	 * @param lly	lower left y
+	 * @param urx	upper right x
+	 * @param ury	upper right y
+	 * @param rotation	the rotation of the Rectangle (0, 90, 180, 270)
+	 * @since iText 5.0.6
+	 */
+	public RectangleReadOnly(float llx, float lly, float urx, float ury, int rotation) {
+        super(llx, lly, urx, ury, rotation);
+	}
+
+	/**
+	 * Constructs a <CODE>RectangleReadOnly</CODE>-object starting from the origin
 	 * (0, 0).
 	 * 
 	 * @param urx	upper right x
@@ -84,6 +98,18 @@ public class RectangleReadOnly extends Rectangle {
 	 */
 	public RectangleReadOnly(float urx, float ury) {
 		super(0, 0, urx, ury);
+	}
+
+	/**
+	 * Constructs a <CODE>RectangleReadOnly</CODE>-object starting from the origin
+	 * (0, 0) and with a specific rotation (valid values are 0, 90, 180, 270).
+	 * 
+	 * @param urx	upper right x
+	 * @param ury	upper right y
+	 * @since iText 5.0.6
+	 */
+	public RectangleReadOnly(float urx, float ury, int rotation) {
+		super(0, 0, urx, ury, rotation);
 	}
 
 	/**
