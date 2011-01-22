@@ -129,7 +129,16 @@ public class RectangleReadOnly extends Rectangle {
         throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("rectanglereadonly.this.rectangle.is.read.only"));
     }
     
-	// OVERWRITE METHODS SETTING THE DIMENSIONS:
+	/**
+	 * Sets the rotation of the rectangle. Valid values are 0, 90, 180, and 270.
+	 * @param rotation the new rotation value
+	 * @since iText 5.0.6
+	 */
+	public void setRotation(int rotation) {
+        throwReadOnlyError();
+    }
+
+    // OVERWRITE METHODS SETTING THE DIMENSIONS:
 
 	/**
 	 * Sets the lower left x-coordinate.
