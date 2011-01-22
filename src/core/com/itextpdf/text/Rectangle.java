@@ -423,16 +423,15 @@ public class Rectangle implements Element {
 	 * @since iText 5.0.6
 	 */
 	public void setRotation(int rotation) {
-		rotation %= 360;
-		switch (rotation) {
+		this.rotation = rotation % 360;
+		switch (this.rotation) {
 		case 90:
-			this.rotation = 90;
 		case 180:
-			this.rotation = 180;
 		case 270:
-			this.rotation = 270;
+            break;
+        default:
+			this.rotation = 0;
 		}
-		this.rotation = 0;
 	}
 
 	/**
