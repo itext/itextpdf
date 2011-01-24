@@ -76,6 +76,18 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
+	/**
+	 * Key used to store the image provider in the providers map.
+	 * @since 5.0.6
+	 */
+	public static final String IMG_PROVIDER = "img_provider";
+	
+	/**
+	 * Key used to store the font provider in the providers map.
+	 * @since 5.0.6
+	 */
+	public static final String FONT_PROVIDER = "font_factory";
+	
 	protected ArrayList<Element> objectList;
 
 	protected DocListener document;
@@ -135,7 +147,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		this.interfaceProps = interfaceProps;
 		FontProvider ff = null;
 		if (interfaceProps != null)
-			ff = (FontProvider) interfaceProps.get("font_factory");
+			ff = (FontProvider) interfaceProps.get(FONT_PROVIDER);
 		if (ff != null)
 			factoryProperties.setFontImp(ff);
 	}
@@ -271,7 +283,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				Image img = null;
 				if (interfaceProps != null) {
 					ImageProvider ip = (ImageProvider) interfaceProps
-							.get("img_provider");
+							.get(IMG_PROVIDER);
 					if (ip != null)
 						img = ip.getImage(src, h, cprops, document);
 					if (img == null) {
