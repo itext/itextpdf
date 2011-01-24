@@ -17,11 +17,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import org.junit.Ignore;
+
 import com.itextpdf.text.pdf.PdfReader;
 
 /**
  * @author kevin
  */
+@Ignore
 public final class TestResourceUtils {
 
     private static final String TESTPREFIX = "itexttest_";
