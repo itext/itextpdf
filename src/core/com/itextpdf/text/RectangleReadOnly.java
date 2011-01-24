@@ -86,7 +86,8 @@ public class RectangleReadOnly extends Rectangle {
 	 * @since iText 5.0.6
 	 */
 	public RectangleReadOnly(float llx, float lly, float urx, float ury, int rotation) {
-        super(llx, lly, urx, ury, rotation);
+        super(llx, lly, urx, ury);
+        super.setRotation(rotation);
 	}
 
 	/**
@@ -109,7 +110,8 @@ public class RectangleReadOnly extends Rectangle {
 	 * @since iText 5.0.6
 	 */
 	public RectangleReadOnly(float urx, float ury, int rotation) {
-		super(0, 0, urx, ury, rotation);
+		super(0, 0, urx, ury);
+		super.setRotation(rotation);
 	}
 
 	/**
