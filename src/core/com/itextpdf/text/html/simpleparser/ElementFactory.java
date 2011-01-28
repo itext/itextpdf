@@ -43,15 +43,21 @@
  */
 package com.itextpdf.text.html.simpleparser;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.DocListener;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.FontProvider;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.html.HtmlTags;
@@ -366,5 +372,71 @@ public class ElementFactory {
 		// alignment
 		int align = ElementTags.alignmentValue(attrs.get("align"));
 		return new LineSeparator(lineWidth, percentage, lineColor, align, offset);
+	}
+	
+	public Image createImage(
+			String src,
+			HashMap<String, String> attrs,
+			ChainedProperties chain,
+			DocListener document,
+			ImageProvider img_provider,
+			HashMap<String, Image> img_store,
+			String img_baseurl) throws DocumentException, IOException {
+		Image img = null;
+		// getting the image using an image provider
+		if (img_provider != null)
+			img = img_provider.getImage(src, attrs, chain, document);
+		// getting the image from an image store
+		if (img == null && img_store != null) {
+			Image tim = img_store.get(src);
+			if (tim != null)
+				img = Image.getInstance(tim);
+		}
+		if (img != null)
+			return img;
+		// introducing a base url
+		// relative src references only
+		if (!src.startsWith("http") && img_baseurl != null) {
+			src = img_baseurl + src;
+		}
+		else if (img == null && !src.startsWith("http")) {
+			String path = chain.getProperty("image_path");
+			if (path == null)
+				path = "";
+			src = new File(path, src).getPath();
+		}
+		img = Image.getInstance(src);
+		if (img == null)
+			return null;
+		
+		float actualFontSize = Markup.parseLength(
+			chain.getProperty(ElementTags.SIZE),
+			Markup.DEFAULT_FONT_SIZE);
+		if (actualFontSize <= 0f)
+			actualFontSize = Markup.DEFAULT_FONT_SIZE;
+		String width = attrs.get("width");
+		float widthInPoints = Markup.parseLength(width, actualFontSize);
+		String height = attrs.get("height");
+		float heightInPoints = Markup.parseLength(height, actualFontSize);
+		if (widthInPoints > 0 && heightInPoints > 0) {
+			img.scaleAbsolute(widthInPoints, heightInPoints);
+		} else if (widthInPoints > 0) {
+			heightInPoints = img.getHeight() * widthInPoints
+					/ img.getWidth();
+			img.scaleAbsolute(widthInPoints, heightInPoints);
+		} else if (heightInPoints > 0) {
+			widthInPoints = img.getWidth() * heightInPoints
+					/ img.getHeight();
+			img.scaleAbsolute(widthInPoints, heightInPoints);
+		}
+		
+		String before = chain.getProperty("before");
+		if (before != null)
+			img.setSpacingBefore(Float.parseFloat(before));
+		String after = chain.getProperty("after");
+		if (after != null)
+			img.setSpacingAfter(Float.parseFloat(after));
+		img.setWidthPercentage(0);
+		return img;
 	}
 }
