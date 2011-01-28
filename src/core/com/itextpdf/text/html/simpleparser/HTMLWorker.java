@@ -80,19 +80,29 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
-	/** Overview of all the tags that are supported. */
+	/**
+	 * Overview of all the tags that are supported.
+	 * @since 5.0.6 (renamed)
+	 */
 	public static final String SUPPORTED_TAGS =
 		"ol ul li a pre font span br p div body" +
 		" table td th tr" +
 		" i b u sub sup em strong s strike" +
 		" h1 h2 h3 h4 h5 h6 img hr";
-	/** Set with all the tags that are supported. */
+	/**
+	 * Set with all the tags that are supported.
+	 * @since 5.0.6 (renamed)
+	 */
 	public static final Set<String> TAGS_SUPPORTED = new HashSet<String>();
 	static {
 		StringTokenizer tok = new StringTokenizer(SUPPORTED_TAGS);
 		while (tok.hasMoreTokens())
 			TAGS_SUPPORTED.add(tok.nextToken());
 	}
+	/**
+	 * Mapping of tags that define a font style.
+	 * @since 5.0.6 (renamed)
+	 */
 	public static final Map<String, String> FONTSTYLETAGS;
 	static {
 		FONTSTYLETAGS = new HashMap<String, String>();
@@ -243,6 +253,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	/**
 	 * Getter for the providers
 	 * @return a Map containing providers
+	 * @since 5.0.6 (renamed)
 	 */
 	public Map<String, Object> getProviders() {
 		return providers;

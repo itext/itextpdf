@@ -48,7 +48,6 @@ import java.util.StringTokenizer;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
@@ -66,6 +65,7 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
  * based on tags and their properties.
  * @author blowagie
  * @author psoares
+ * @since 5.0.6 (renamed)
  */
 public class ElementFactory {
 

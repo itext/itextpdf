@@ -55,7 +55,10 @@ import com.itextpdf.text.ElementTags;
  */
 public class ChainedProperties {
 
-	/** A series of predefined font sizes. */
+	/**
+	 * A series of predefined font sizes.
+	 * @since 5.0.6 (renamed)
+	 */
 	public final static int FONTSIZES[] = { 8, 10, 12, 14, 18, 24, 36 };
 
 	/**
@@ -147,6 +150,7 @@ public class ChainedProperties {
 	 * If the properties contain a font size, the size may need to
 	 * be adjusted based on font sizes higher in the hierarchy.
 	 * @param	attrs the attributes that may have to be updated
+	 * @since 5.0.6 (renamed)
 	 */
 	protected void adjustFontSize(HashMap<String, String> attrs) {
 		// fetch the font size

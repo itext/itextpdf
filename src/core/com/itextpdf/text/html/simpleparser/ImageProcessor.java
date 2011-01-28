@@ -49,8 +49,10 @@ import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Image;
 
 /**
- *
- * @author  psoares
+ * Implement this interface to process images and
+ * to indicate if the image needs to be added or
+ * skipped.
+ * @since 5.0.6 (renamed)
  */
 public interface ImageProcessor {
     boolean process(Image img, HashMap<String, String> attrs, ChainedProperties chain, DocListener doc);

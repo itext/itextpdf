@@ -60,6 +60,7 @@ import com.itextpdf.text.pdf.PdfPTable;
  * We use a TableWrapper because PdfPTable is rather complex
  * to put on the HTMLWorker stack.
  * @author  psoares
+ * @since 5.0.6 (renamed)
  */
 public class TableWrapper implements Element {
 	/**
