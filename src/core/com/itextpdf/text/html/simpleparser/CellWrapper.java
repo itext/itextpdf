@@ -57,6 +57,7 @@ import com.itextpdf.text.pdf.PdfPCell;
  * We use a CellWrapper because we need some extra info
  * that isn't available in PdfPCell.
  * @author  psoares
+ * @since 5.0.6 (renamed)
  */
 public class CellWrapper implements TextElementArray {
 	

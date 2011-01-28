@@ -47,6 +47,7 @@ import com.itextpdf.text.Paragraph;
 /**
  *
  * @author  psoares
+ * @since 5.0.6 (renamed)
  */
 public interface LinkProvider {
     boolean process(Paragraph current, ChainedProperties attrs);
