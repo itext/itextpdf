@@ -105,6 +105,44 @@ public class Utilities {
 	public static boolean checkTrueOrFalse(Properties attributes, String key) {
 		return "true".equalsIgnoreCase(attributes.getProperty(key));
 	}
+	
+	/**
+	 * Helper class that reduces the white space in a String
+	 * @param content content containing whitespace
+	 * @return the content without all unnecessary whitespace
+	 */
+	public static String eliminateWhiteSpace(String content) {
+		// multiple spaces are reduced to one,
+		// newlines are treated as spaces,
+		// tabs, carriage returns are ignored.
+		StringBuffer buf = new StringBuffer();
+		int len = content.length();
+		char character;
+		boolean newline = false;
+		for (int i = 0; i < len; i++) {
+			switch (character = content.charAt(i)) {
+			case ' ':
+				if (!newline) {
+					buf.append(character);
+				}
+				break;
+			case '\n':
+				if (i > 0) {
+					newline = true;
+					buf.append(' ');
+				}
+				break;
+			case '\r':
+				break;
+			case '\t':
+				break;
+			default:
+				newline = false;
+				buf.append(character);
+			}
+		}
+		return buf.toString();
+	}
 
 	/**
 	 * Unescapes an URL. All the "%xx" are replaced by the 'xx' hex char value.

@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: IncCell.java 4635 2010-11-28 17:38:03Z psoares33 $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -52,37 +52,68 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.TextElementArray;
 import com.itextpdf.text.html.Markup;
 import com.itextpdf.text.pdf.PdfPCell;
-/**
- *
- * @author  psoares
- */
-public class IncCell implements TextElementArray {
 
-    private ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+/**
+ * We use a CellWrapper because we need some extra info
+ * that isn't available in PdfPCell.
+ * @author  psoares
+ * @since 5.0.6 (renamed)
+ */
+public class CellWrapper implements TextElementArray {
+	
+	/** The cell that is wrapped in this stub. */
     private PdfPCell cell;
+    
     /**
      * The width of the cell.
      * @since iText 5.0.6
      */
     private float width;
+    
     /**
      * Indicates if the width is a percentage.
      * @since iText 5.0.6
      */
     private boolean percentage;
 
-    /** Creates a new instance of IncCell */
-    public IncCell(String tag, ChainedProperties props) {
-        cell = new PdfPCell((Phrase)null);
-        String value = props.getProperty("colspan");
+    /**
+     * Creates a new instance of IncCell.
+     * @param	cell	the cell that is wrapped in this object.
+     * @param	chain	properties such as width
+     * @since	5.0.6
+     */
+    public CellWrapper(String tag, AttributeChain chain) {
+        this.cell = createPdfPCell(tag, chain);
+    	String value = chain.getProperty("width");
+        if (value != null) {
+            value = value.trim();
+        	if (value.endsWith("%")) {
+        		percentage = true;
+        		value = value.substring(0, value.length() - 1);
+        	}
+            width = Float.parseFloat(value);
+        }
+    }
+    
+    /**
+     * Creates a PdfPCell element based on a tag and its properties.
+     * @param	tag		a cell tag
+     * @param	chain	the hierarchy chain
+     */
+	public PdfPCell createPdfPCell(String tag, AttributeChain chain) {
+		PdfPCell cell = new PdfPCell((Phrase)null);
+        // colspan
+		String value = chain.getProperty("colspan");
         if (value != null)
             cell.setColspan(Integer.parseInt(value));
-        value = props.getProperty("rowspan");
+        // rowspan
+        value = chain.getProperty("rowspan");
         if (value != null)
             cell.setRowspan(Integer.parseInt(value));
-        value = props.getProperty("align");
+        // horizonatl alignment
         if (tag.equals("th"))
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        value = chain.getProperty("align");
         if (value != null) {
             if ("center".equalsIgnoreCase(value))
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -93,7 +124,8 @@ public class IncCell implements TextElementArray {
             else if ("justify".equalsIgnoreCase(value))
                 cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
         }
-        value = props.getProperty("valign");
+        // vertical alignment
+        value = chain.getProperty("valign");
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         if (value != null) {
             if ("top".equalsIgnoreCase(value))
@@ -101,65 +133,31 @@ public class IncCell implements TextElementArray {
             else if ("bottom".equalsIgnoreCase(value))
                 cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
         }
-        value = props.getProperty("border");
+        // border
+        value = chain.getProperty("border");
         float border = 0;
         if (value != null)
             border = Float.parseFloat(value);
         cell.setBorderWidth(border);
-        value = props.getProperty("cellpadding");
+        // cellpadding
+        value = chain.getProperty("cellpadding");
         if (value != null)
             cell.setPadding(Float.parseFloat(value));
         cell.setUseDescender(true);
-        value = props.getProperty("bgcolor");
+        // background color
+        value = chain.getProperty("bgcolor");
         cell.setBackgroundColor(Markup.decodeColor(value));
-        value = props.getProperty("width");
-        if (value != null) {
-            value = value.trim();
-        	if (value.endsWith("%")) {
-        		percentage = true;
-        		value = value.substring(0, value.length() - 1);
-        	}
-            width = Float.parseFloat(value);
-        }
-    }
+        return cell;
+	}
 
-    public boolean add(Element o) {
-        cell.addElement(o);
-        return true;
-    }
-
-    public ArrayList<Chunk> getChunks() {
-        return chunks;
-    }
-
-    public boolean process(ElementListener listener) {
-        return true;
-    }
-
-    public int type() {
-        return Element.RECTANGLE;
-    }
-
+    /**
+     * Returns the PdfPCell.
+     * @return the PdfPCell
+     */
     public PdfPCell getCell() {
         return cell;
     }
-
-	/**
-	 * @see com.itextpdf.text.Element#isContent()
-	 * @since	iText 2.0.8
-	 */
-	public boolean isContent() {
-		return true;
-	}
-
-	/**
-	 * @see com.itextpdf.text.Element#isNestable()
-	 * @since	iText 2.0.8
-	 */
-	public boolean isNestable() {
-		return true;
-	}
-
+	
     /**
      * Getter for the cell width
      * @return the width
@@ -178,4 +176,49 @@ public class IncCell implements TextElementArray {
         return percentage;
     }
 
+    /**
+     * Implements the add method of the TextElementArray interface.
+     * @param	o	an element that needs to be added to the cell.
+     */
+    public boolean add(Element o) {
+        cell.addElement(o);
+        return true;
+    }
+
+    // these Element methods are irrelevant for a table stub.
+    
+    /**
+     * @since 5.0.1
+     */
+    public ArrayList<Chunk> getChunks() {
+        return null;
+    }
+
+    /**
+     * @since 5.0.1
+     */
+    public boolean isContent() {
+        return false;
+    }
+
+    /**
+     * @since 5.0.1
+     */
+    public boolean isNestable() {
+        return false;
+    }
+
+    /**
+     * @since 5.0.1
+     */
+    public boolean process(ElementListener listener) {
+        return false;
+    }
+
+    /**
+     * @since 5.0.1
+     */
+    public int type() {
+        return 0;
+    }
 }

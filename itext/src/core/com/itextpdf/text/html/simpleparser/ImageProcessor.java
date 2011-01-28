@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: Img.java 4242 2010-01-02 23:22:20Z xlv $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -43,15 +43,26 @@
  */
 package com.itextpdf.text.html.simpleparser;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Image;
 
 /**
- *
- * @author  psoares
+ * Implement this interface to process images and
+ * to indicate if the image needs to be added or
+ * skipped.
+ * @since 5.0.6 (renamed)
  */
-public interface Img {
-    boolean process(Image img, HashMap<String, String> h, ChainedProperties cprops, DocListener doc);
+public interface ImageProcessor {
+    /**
+     * Allows you to (pre)process the image before (or instead of)
+     * adding it to the DocListener with HTMLWorker.
+     * @param img	the Image object
+     * @param attrs	attributes of the image
+     * @param chain	hierarchy of attributes
+     * @param doc	the DocListener to which the Image needs to be added
+     * @return	false if you still want HTMLWorker to add the Image
+     */
+    boolean process(Image img, Map<String, String> attrs, AttributeChain chain, DocListener doc);
 }
