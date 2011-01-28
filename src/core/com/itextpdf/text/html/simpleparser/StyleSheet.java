@@ -44,64 +44,115 @@
 package com.itextpdf.text.html.simpleparser;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.itextpdf.text.html.Markup;
 
 public class StyleSheet {
+	
+	/**
+	 * Map storing tags and their corresponding styles.
+	 * @since 5.0.6 (changed HashMap => Map)
+	 */
+	protected Map<String, Map<String, String>> tagMap = new HashMap<String, Map<String, String>>();
+	
+	/**
+	 * Map storing possible names of the "class" attribute
+	 * and their corresponding styles.
+	 * @since 5.0.6 (changed HashMap => Map)
+	 */
+	protected Map<String, Map<String, String>> classMap = new HashMap<String, Map<String, String>>();
 
-	public HashMap<String, HashMap<String, String>> classMap = new HashMap<String, HashMap<String, String>>();
-
-	public HashMap<String, HashMap<String, String>> tagMap = new HashMap<String, HashMap<String, String>>();
-
-	/** Creates a new instance of StyleSheet */
+	/**
+	 * Creates a new instance of StyleSheet
+	 */
 	public StyleSheet() {
 	}
 
-	public void applyStyle(String tag, HashMap<String, String> props) {
-		HashMap<String, String> map = tagMap.get(tag.toLowerCase());
-		if (map != null) {
-			HashMap<String, String> temp = new HashMap<String, String>(map);
-			temp.putAll(props);
-			props.putAll(temp);
+	/**
+	 * Associates a Map containing styles with a tag.
+	 * @param	tag		the name of the HTML/XML tag
+	 * @param	attrs	a map containing styles
+	 */
+	public void loadTagStyle(String tag, Map<String, String> attrs) {
+		tagMap.put(tag.toLowerCase(), attrs);
+	}
+
+	/**
+	 * Adds an extra style key-value pair to the styles Map
+	 * of a specific tag
+	 * @param	tag		the name of the HTML/XML tag
+	 * @param	key		the key specifying a specific style
+	 * @param	value	the value defining the style
+	 */
+	public void loadTagStyle(String tag, String key, String value) {
+		tag = tag.toLowerCase();
+		Map<String, String> styles = tagMap.get(tag);
+		if (styles == null) {
+			styles = new HashMap<String, String>();
+			tagMap.put(tag, styles);
 		}
-		String cm = props.get(Markup.HTML_ATTR_CSS_CLASS);
+		styles.put(key, value);
+	}
+
+	/**
+	 * Associates a Map containing styles with a class name.
+	 * @param	className	the value of the class attribute
+	 * @param	attrs		a map containing styles
+	 */
+	public void loadStyle(String className, HashMap<String, String> attrs) {
+		classMap.put(className.toLowerCase(), attrs);
+	}
+
+	/**
+	 * Adds an extra style key-value pair to the styles Map
+	 * of a specific tag
+	 * @param	classsName	the name of the HTML/XML tag
+	 * @param	key			the key specifying a specific style
+	 * @param	value		the value defining the style
+	 */
+	public void loadStyle(String className, String key, String value) {
+		className = className.toLowerCase();
+		Map<String, String> styles = classMap.get(className);
+		if (styles == null) {
+			styles = new HashMap<String, String>();
+			classMap.put(className, styles);
+		}
+		styles.put(key, value);
+	}
+
+	/**
+	 * Resolves the styles based on the tag name and the value
+	 * of the class attribute.
+	 * @param	tag		the tag that needs to be resolved
+	 * @param	attrs	existing style map that will be updated
+	 */
+	public void applyStyle(String tag, HashMap<String, String> attrs) {
+		// first fetch the styles corresponding with the tag name
+		Map<String, String> map = tagMap.get(tag.toLowerCase());
+		if (map != null) {
+			// create a new map with properties
+			Map<String, String> temp = new HashMap<String, String>(map);
+			// override with the existing properties
+			temp.putAll(attrs);
+			// update the existing properties
+			attrs.putAll(temp);
+		}
+		// look for the class attribute
+		String cm = attrs.get(Markup.HTML_ATTR_CSS_CLASS);
 		if (cm == null)
 			return;
+		// fetch the styles corresponding with the class attribute
 		map = classMap.get(cm.toLowerCase());
 		if (map == null)
 			return;
-		props.remove(Markup.HTML_ATTR_CSS_CLASS);
-		HashMap<String, String> temp = new HashMap<String, String>(map);
-		temp.putAll(props);
-		props.putAll(temp);
+		// remove the class attribute from the properties
+		attrs.remove(Markup.HTML_ATTR_CSS_CLASS);
+		// create a map with the styles corresponding with the class value
+		Map<String, String> temp = new HashMap<String, String>(map);
+		// override with the existing properties
+		temp.putAll(attrs);
+		// update the properties
+		attrs.putAll(temp);
 	}
-
-	public void loadStyle(String style, HashMap<String, String> props) {
-		classMap.put(style.toLowerCase(), props);
-	}
-
-	public void loadStyle(String style, String key, String value) {
-		style = style.toLowerCase();
-		HashMap<String, String> props = classMap.get(style);
-		if (props == null) {
-			props = new HashMap<String, String>();
-			classMap.put(style, props);
-		}
-		props.put(key, value);
-	}
-
-	public void loadTagStyle(String tag, HashMap<String, String> props) {
-		tagMap.put(tag.toLowerCase(), props);
-	}
-
-	public void loadTagStyle(String tag, String key, String value) {
-		tag = tag.toLowerCase();
-		HashMap<String, String> props = tagMap.get(tag);
-		if (props == null) {
-			props = new HashMap<String, String>();
-			tagMap.put(tag, props);
-		}
-		props.put(key, value);
-	}
-
 }

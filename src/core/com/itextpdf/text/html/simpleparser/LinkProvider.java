@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: ALink.java 4113 2009-12-01 11:08:59Z blowagie $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -43,11 +43,11 @@
  */
 package com.itextpdf.text.html.simpleparser;
 
-import java.util.Map;
-
-import com.itextpdf.text.DocListener;
-import com.itextpdf.text.Image;
-
-public interface ImageProvider {
-    Image getImage(String src, Map<String, String> attrs, ChainedProperties chain, DocListener doc);
+import com.itextpdf.text.Paragraph;
+/**
+ *
+ * @author  psoares
+ */
+public interface LinkProvider {
+    boolean process(Paragraph current, ChainedProperties attrs);
 }

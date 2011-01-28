@@ -45,96 +45,156 @@ package com.itextpdf.text.html.simpleparser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.itextpdf.text.ElementTags;
 
+/**
+ * Stores the hierarchy of tags along with the properties of each tag.
+ */
 public class ChainedProperties {
 
-	public final static int fontSizes[] = { 8, 10, 12, 14, 18, 24, 36 };
+	/** A series of predefined font sizes. */
+	public final static int FONTSIZES[] = { 8, 10, 12, 14, 18, 24, 36 };
 
+	/**
+	 * Class that stores the info about one tag in the chain.
+	 */
 	private static final class ChainedProperty {
-	    final String key;
-	    final HashMap<String, String> property;
-	    ChainedProperty(String key, HashMap<String, String> property) {
-	    this.key = key;
-	    this.property = property;
+		/** A possible tag */
+	    final String tag;
+	    /** The styles corresponding with the tag */
+	    final Map<String, String> attrs;
+	    /**
+	     * Constructs a chained property.
+	     * @param	tag		an XML/HTML tag
+	     * @param	attrs	the tag's attributes
+	     */
+	    ChainedProperty(String tag, Map<String, String> attrs) {
+	    	this.tag = tag;
+	    	this.attrs = attrs;
 	    }
 	}
 
-	public ArrayList<ChainedProperty> chain = new ArrayList<ChainedProperty>();
+	/** A list of chained properties representing the tag hierarchy. */
+	public List<ChainedProperty> chain = new ArrayList<ChainedProperty>();
 
 	/** Creates a new instance of ChainedProperties */
 	public ChainedProperties() {
 	}
 
+	/**
+	 * Walks through the hierarchy (bottom-up) looking for
+	 * a property key. Returns a value as soon as a match
+	 * is found or null if the key can't be found.
+	 * @param	key	the key of the property
+	 * @return	the value of the property
+	 */
 	public String getProperty(String key) {
-    		for (int k = chain.size() - 1; k >= 0; --k) {
-                        ChainedProperty p = chain.get(k);
-                        HashMap<String, String> prop = p.property;
-                        String ret = prop.get(key);
+		for (int k = chain.size() - 1; k >= 0; --k) {
+			ChainedProperty p = chain.get(k);
+			Map<String, String> attrs = p.attrs;
+			String ret = attrs.get(key);
 			if (ret != null)
 				return ret;
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Walks through the hierarchy (bottom-up) looking for
+	 * a property key. Returns true as soon as a match is
+	 * found or false if the key can't be found.
+	 * @param	key	the key of the property
+	 * @return	true if the key is found
+	 */
 	public boolean hasProperty(String key) {
 		for (int k = chain.size() - 1; k >= 0; --k) {
-		        ChainedProperty p = chain.get(k);
-                        HashMap<String, String> prop = p.property;
-			if (prop.containsKey(key))
+			ChainedProperty p = chain.get(k);
+			Map<String, String> attrs = p.attrs;
+			if (attrs.containsKey(key))
 				return true;
 		}
 		return false;
 	}
 
-	public void addToChain(String key, HashMap<String, String> prop) {
-		// adjust the font size
-		String value = prop.get(ElementTags.SIZE);
-		if (value != null) {
-			if (value.endsWith("pt")) {
-				prop.put(ElementTags.SIZE, value.substring(0,
-						value.length() - 2));
-			} else {
-				int s = 0;
-				if (value.startsWith("+") || value.startsWith("-")) {
-					String old = getProperty("basefontsize");
-					if (old == null)
-						old = "12";
-					float f = Float.parseFloat(old);
-					int c = (int) f;
-					for (int k = fontSizes.length - 1; k >= 0; --k) {
-						if (c >= fontSizes[k]) {
-							s = k;
-							break;
-						}
-					}
-					int inc = Integer.parseInt(value.startsWith("+") ? value
-							.substring(1) : value);
-					s += inc;
-				} else {
-					try {
-						s = Integer.parseInt(value) - 1;
-					} catch (NumberFormatException nfe) {
-						s = 0;
-					}
-				}
-				if (s < 0)
-					s = 0;
-				else if (s >= fontSizes.length)
-					s = fontSizes.length - 1;
-				prop.put(ElementTags.SIZE, Integer.toString(fontSizes[s]));
-			}
-		}
-		chain.add(new ChainedProperty(key, prop));
+	/**
+	 * Adds a tag and its corresponding properties to the chain.
+	 * @param tag	the tags that needs to be added to the chain
+	 * @param attrs	the tag's attributes
+	 */
+	public void addToChain(String tag, HashMap<String, String> attrs) {
+		this.adjustFontSize(attrs);
+		chain.add(new ChainedProperty(tag, attrs));
 	}
 
-	public void removeChain(String key) {
+	/**
+	 * Walks through the hierarchy (bottom-up) and removes the
+	 * first occurrence of a tag that is encountered.
+	 * @param	tag	the tag that needs to be removed
+	 */
+	public void removeChain(String tag) {
 		for (int k = chain.size() - 1; k >= 0; --k) {
-			if (key.equals(chain.get(k).key)) {
+			if (tag.equals(chain.get(k).tag)) {
 				chain.remove(k);
 				return;
 			}
 		}
+	}
+	
+	/**
+	 * If the properties contain a font size, the size may need to
+	 * be adjusted based on font sizes higher in the hierarchy.
+	 * @param	attrs the attributes that may have to be updated
+	 */
+	protected void adjustFontSize(HashMap<String, String> attrs) {
+		// fetch the font size
+		String value = attrs.get(ElementTags.SIZE);
+		// do nothing if the font size isn't defined
+		if (value == null)
+			return;
+		// the font is defined as a real size: remove "pt"
+		if (value.endsWith("pt")) {
+			attrs.put(ElementTags.SIZE,
+				value.substring(0, value.length() - 2));
+			return;
+		}
+		// the font is expressed as an index in a series of predefined font sizes
+		int sIndex = 0;
+		// the font is defined as a relative size
+		if (value.startsWith("+") || value.startsWith("-")) {
+			// fetch the previous value
+			String old = getProperty("basefontsize");
+			if (old == null)
+				old = "12";
+			int c = (int)Float.parseFloat(old);
+			// look for the nearest font size in the predefined series
+			for (int k = FONTSIZES.length - 1; k >= 0; --k) {
+				if (c >= FONTSIZES[k]) {
+					sIndex = k;
+					break;
+				}
+			}
+			// retrieve the difference
+			int diff =
+				Integer.parseInt(value.startsWith("+") ?
+					value.substring(1) : value);
+			// apply the difference
+			sIndex += diff;
+		}
+		// the font is defined as an index
+		else {
+			try {
+				sIndex = Integer.parseInt(value) - 1;
+			} catch (NumberFormatException nfe) {
+				sIndex = 0;
+			}
+		}
+		if (sIndex < 0)
+			sIndex = 0;
+		else if (sIndex >= FONTSIZES.length)
+			sIndex = FONTSIZES.length - 1;
+		attrs.put(ElementTags.SIZE, Integer.toString(FONTSIZES[sIndex]));
 	}
 }

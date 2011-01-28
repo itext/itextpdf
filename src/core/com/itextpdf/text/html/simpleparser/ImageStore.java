@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: ImageProvider.java 4242 2010-01-02 23:22:20Z xlv $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -43,11 +43,16 @@
  */
 package com.itextpdf.text.html.simpleparser;
 
-import java.util.Map;
+import java.util.HashMap;
 
-import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Image;
 
-public interface ImageProvider {
-    Image getImage(String src, Map<String, String> attrs, ChainedProperties chain, DocListener doc);
+/**
+ * @since 5.0.6
+ */
+public class ImageStore extends HashMap<String, Image> {
+
+	/** Serial version UID. */
+	private static final long serialVersionUID = -148924031490995024L;
+
 }

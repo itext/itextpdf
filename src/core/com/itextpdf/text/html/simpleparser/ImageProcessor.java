@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: Img.java 4242 2010-01-02 23:22:20Z xlv $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -43,11 +43,15 @@
  */
 package com.itextpdf.text.html.simpleparser;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Image;
 
-public interface ImageProvider {
-    Image getImage(String src, Map<String, String> attrs, ChainedProperties chain, DocListener doc);
+/**
+ *
+ * @author  psoares
+ */
+public interface ImageProcessor {
+    boolean process(Image img, HashMap<String, String> attrs, ChainedProperties chain, DocListener doc);
 }
