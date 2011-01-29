@@ -1,3 +1,46 @@
+/*
+ * $Id: HTMLWorker.java 4666 2011-01-29 12:53:09Z blowagie $
+ *
+ * This file is part of the iText project.
+ * Copyright (c) 1998-2010 1T3XT BVBA
+ * Authors: Bruno Lowagie, Paulo Soares, et al.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License version 3
+ * as published by the Free Software Foundation with the addition of the
+ * following permission added to Section 15 as permitted in Section 7(a):
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
+ * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses or write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA, 02110-1301 USA, or download the license from the following URL:
+ * http://itextpdf.com/terms-of-use/
+ *
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public License,
+ * you must retain the producer line in every PDF that is created or manipulated
+ * using iText.
+ *
+ * You can be released from the requirements of the license by purchasing
+ * a commercial license. Buying such a license is mandatory as soon as you
+ * develop commercial activities involving the iText software without
+ * disclosing the source code of your own applications.
+ * These activities include: offering paid services to customers as an ASP,
+ * serving PDFs on the fly in a web application, shipping iText with a closed
+ * source product.
+ *
+ * For more information, please contact iText Software Corp. at this
+ * address: sales@itextpdf.com
+ */
 package com.itextpdf.text.html.simpleparser;
 
 import java.io.IOException;
@@ -9,12 +52,52 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.html.HtmlTags;
 
-public abstract class SupportedTags {
+/**
+ * This class maps tags such as div and span to their corresponding
+ * TagProcessor classes.
+ * @since 5.0.6
+ */
+public class SupportedTags extends HashMap<String, TagProcessor> {
 
-	public static TagProcessor get(String tag) {
-		return TAGS.get(tag);
+	/**
+	 * Creates a Map containing supported tags.
+	 */
+	public SupportedTags() {
+		super();
+		put("a", A);
+		put("b", EM_STRONG_STRIKE_SUP_SUP);
+		put("body", DIV);
+		put("br", BR);
+		put("div", DIV);
+		put("em", EM_STRONG_STRIKE_SUP_SUP);
+		put("font", SPAN);
+		put("h1", H);
+		put("h2", H);
+		put("h3", H);
+		put("h4", H);
+		put("h5", H);
+		put("h6", H);
+		put("hr", HR);
+		put("i", EM_STRONG_STRIKE_SUP_SUP);
+		put("img", IMG);
+		put("li", LI);
+		put("ol", UL_OL);
+		put("p", DIV);
+		put("pre", PRE);
+		put("s", EM_STRONG_STRIKE_SUP_SUP);
+		put("span", SPAN);
+		put("strike", EM_STRONG_STRIKE_SUP_SUP);
+		put("strong", EM_STRONG_STRIKE_SUP_SUP);
+		put("sub", EM_STRONG_STRIKE_SUP_SUP);
+		put("sup", EM_STRONG_STRIKE_SUP_SUP);
+		put("table", TABLE);
+		put("td", TD);
+		put("th", TD);
+		put("tr", TR);
+		put("u", EM_STRONG_STRIKE_SUP_SUP);
+		put("ul", UL_OL);
 	}
-
+	
 	/**
 	 * Object that processes the following tags:
 	 * i, em, b, strong, s, strike, u, sup, sub
@@ -366,40 +449,6 @@ public abstract class SupportedTags {
 		
 	};
 	
-	public static final Map<String, TagProcessor> TAGS;
-	static {
-		TAGS = new HashMap<String, TagProcessor>();
-		TAGS.put("a", A);
-		TAGS.put("b", EM_STRONG_STRIKE_SUP_SUP);
-		TAGS.put("body", DIV);
-		TAGS.put("br", BR);
-		TAGS.put("div", DIV);
-		TAGS.put("em", EM_STRONG_STRIKE_SUP_SUP);
-		TAGS.put("font", SPAN);
-		TAGS.put("h1", H);
-		TAGS.put("h2", H);
-		TAGS.put("h3", H);
-		TAGS.put("h4", H);
-		TAGS.put("h5", H);
-		TAGS.put("h6", H);
-		TAGS.put("hr", HR);
-		TAGS.put("i", EM_STRONG_STRIKE_SUP_SUP);
-		TAGS.put("img", IMG);
-		TAGS.put("li", LI);
-		TAGS.put("ol", UL_OL);
-		TAGS.put("p", DIV);
-		TAGS.put("pre", PRE);
-		TAGS.put("s", EM_STRONG_STRIKE_SUP_SUP);
-		TAGS.put("span", SPAN);
-		TAGS.put("strike", EM_STRONG_STRIKE_SUP_SUP);
-		TAGS.put("strong", EM_STRONG_STRIKE_SUP_SUP);
-		TAGS.put("sub", EM_STRONG_STRIKE_SUP_SUP);
-		TAGS.put("sup", EM_STRONG_STRIKE_SUP_SUP);
-		TAGS.put("table", TABLE);
-		TAGS.put("td", TD);
-		TAGS.put("th", TD);
-		TAGS.put("tr", TR);
-		TAGS.put("u", EM_STRONG_STRIKE_SUP_SUP);
-		TAGS.put("ul", UL_OL);
-	}
+	/** Serial version UID. */
+	private static final long serialVersionUID = -959260811961222824L;
 }
