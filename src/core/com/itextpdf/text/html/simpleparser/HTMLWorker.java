@@ -751,6 +751,11 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		}
 	}
 
+	/**
+	 * Adds the current paragraph (if any) to the stack (if existing);
+	 * or to the Document.
+	 * @since 5.0.6
+	 */
 	protected void updateStack() throws DocumentException {
 		if (currentParagraph != null) {
 			if (stack.empty())
