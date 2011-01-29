@@ -443,7 +443,7 @@ public class ElementFactory {
 	
 	public List createList(String tag, AttributeChain chain) {
 		List list;
-		if ("ol".equalsIgnoreCase(tag)) {
+		if ("ul".equalsIgnoreCase(tag)) {
 			list = new List(List.UNORDERED);
 			list.setListSymbol("\u2022 ");
 		}

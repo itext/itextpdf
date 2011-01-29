@@ -233,6 +233,17 @@ public class ListItem extends Paragraph {
     		setIndentationLeft(indentation);
     	}
     }
+
+    /**
+     * Changes the font of the list symbol to the font of the first chunk
+     * in the list item.
+     * @since 5.0.6
+     */
+    public void adjustListSymbolFont() {
+		java.util.List<Chunk> cks = getChunks();
+		if (!cks.isEmpty() && symbol != null)
+			symbol.setFont(cks.get(0).getFont());
+    }
     
     // methods to retrieve information
 

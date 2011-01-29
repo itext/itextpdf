@@ -186,7 +186,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		StyleSheet.resolveStyleAttribute(attrs, chain);
 		// process the tag
 		try {
-			htmlTag.startElement(this, tag, attrs, chain);
+			htmlTag.startElement(this, tag, attrs);
 		} catch (DocumentException e) {
 			throw new ExceptionConverter(e);
 		} catch (IOException e) {
@@ -224,7 +224,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		}
 		// process the tag
 		try {
-			htmlTag.endElement(this, tag, chain);
+			htmlTag.endElement(this, tag);
 		} catch (DocumentException e) {
 			throw new ExceptionConverter(e);
 		}
@@ -301,6 +301,25 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public void pushToStack(Element element) {
 		if (element != null)
 			stack.push(element);
+	}
+	
+	/**
+	 * Updates the chain with a new tag and new attributes.
+	 * @param tag	the new tag
+	 * @param attrs	the corresponding attributes
+	 * @since 5.0.6
+	 */
+	public void updateChain(String tag, Map<String, String> attrs) {
+		chain.addToChain(tag, attrs);
+	}
+	
+	/**
+	 * Updates the chain by removing a tag.
+	 * @param tag	the new tag
+	 * @since 5.0.6
+	 */
+	public void updateChain(String tag) {
+		chain.removeChain(tag);
 	}
 	
 	// providers that help find resources such as images and fonts
@@ -436,12 +455,22 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		return img;
 	}
 	
+	/**
+	 * Creates a Cell.
+	 * @param tag	the tag
+	 * @return	a CellWrapper object
+	 * @since 5.0.6
+	 */
+	public CellWrapper createCell(String tag) {
+		return new CellWrapper(tag, chain);
+	}
+	
 	// processing objects
 	
 	/**
 	 * Adds a link to the current paragraph.
 	 */
-	public void addLink() {
+	public void processLink() {
 		if (currentParagraph == null) {
 			currentParagraph = new Paragraph();
 		}
@@ -461,10 +490,15 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		tmp.add(new Phrase(currentParagraph));
 		currentParagraph = tmp;
 	}
-	
 
-	
-	public void addList() throws DocumentException {
+	/**
+	 * Fetches the List from the Stack and adds it to
+	 * the TextElementArray on top of the Stack,
+	 * or to the Document if the Stack is empty. 
+	 * @throws DocumentException
+	 * @since 5.0.6
+	 */
+	public void processList() throws DocumentException {
 		if (stack.empty())
 			return;
 		Element obj = stack.pop();
@@ -478,7 +512,12 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			((TextElementArray) stack.peek()).add(obj);
 	}
 	
-	public void addListItem() throws DocumentException {
+	/**
+	 * Looks for the List object on the Stack,
+	 * and adds the ListItem to the List.
+	 * @throws DocumentException
+	 */
+	public void processListItem() throws DocumentException {
 		if (stack.empty())
 			return;
 		Element obj = stack.pop();
@@ -490,48 +529,48 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			document.add(obj);
 			return;
 		}
+		ListItem item = (ListItem) obj;
 		Element list = stack.pop();
 		if (!(list instanceof com.itextpdf.text.List)) {
 			stack.push(list);
 			return;
 		}
-		ListItem item = (ListItem) obj;
 		((com.itextpdf.text.List) list).add(item);
-		ArrayList<Chunk> cks = item.getChunks();
-		if (!cks.isEmpty())
-			item.getListSymbol()
-					.setFont(cks.get(0).getFont());
+		item.adjustListSymbolFont();
 		stack.push(list);
 	}
 	
-	public void addImage(Image img, Map<String, String> attrs) throws DocumentException {
+	/**
+	 * Processes an Image.
+	 * @param img
+	 * @param attrs
+	 * @throws DocumentException
+	 * @since	5.0.6
+	 */
+	public void processImage(Image img, Map<String, String> attrs) throws DocumentException {
 		ImageProcessor processor = (ImageProcessor)providers.get(HTMLWorker.IMG_PROCESSOR);
-		boolean skip = false;
-		if (processor != null)
-			skip = processor.process(img, attrs, chain, document);
-		if (!skip) {
+		if (processor == null || !processor.process(img, attrs, chain, document)) {
 			String align = attrs.get("align");
 			if (align != null) {
 				carriageReturn();
-				int ralign = Image.MIDDLE;
-				if (align.equalsIgnoreCase("left"))
-					ralign = Image.LEFT;
-				else if (align.equalsIgnoreCase("right"))
-					ralign = Image.RIGHT;
-				img.setAlignment(ralign);	
-				document.add(img);
-			} else {
-				if (currentParagraph == null) {
-					currentParagraph = createParagraph();
-				}
-				currentParagraph.add(new Chunk(img, 0, 0, true));
+			}
+			if (currentParagraph == null) {
+				currentParagraph = createParagraph();
+			}
+			currentParagraph.add(new Chunk(img, 0, 0, true));
+			currentParagraph.setAlignment(ElementTags.alignmentValue(align));
+			if (align != null) {
+				carriageReturn();
 			}
 		}
 	}
 	
-	
-	public void addTable() throws DocumentException{
-
+	/**
+	 * Processes the Table.
+	 * @throws DocumentException
+	 * @since 5.0.6
+	 */
+	public void processTable() throws DocumentException{
 		TableWrapper table = (TableWrapper) stack.pop();
 		PdfPTable tb = table.createTable();
 		tb.setSplitRows(true);
@@ -539,13 +578,13 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			document.add(tb);
 		else
 			((TextElementArray) stack.peek()).add(tb);
-		boolean state[] = tableState.pop();
-		pendingTR = state[0];
-		pendingTD = state[1];
-		skipText = false;
 	}
 	
-	public void addRow() {
+	/**
+	 * Gets the TableWrapper from the Stack and adds a new row.
+	 * @since 5.0.6
+	 */
+	public void processRow() {
 		ArrayList<PdfPCell> row = new ArrayList<PdfPCell>();
         ArrayList<Float> cellWidths = new ArrayList<Float>();
         boolean percentage = false;
@@ -588,7 +627,6 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             table.setColWidths(widths);
         }
 		stack.push(table);
-		skipText = true;
 	}
 
 	// state variables and methods
@@ -619,6 +657,12 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	
 	public void pushTableState() {
 		tableState.push(new boolean[] { pendingTR, pendingTD });
+	}
+	
+	public void popTableState() {
+		boolean[] state = (boolean[]) tableState.pop();
+		pendingTR = state[0];
+		pendingTD = state[1];
 	}
 
 	/**

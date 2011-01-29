@@ -55,5 +55,14 @@ import com.itextpdf.text.Image;
  * @since 5.0.6 (renamed)
  */
 public interface ImageProcessor {
+    /**
+     * Allows you to (pre)process the image before (or instead of)
+     * adding it to the DocListener with HTMLWorker.
+     * @param img	the Image object
+     * @param attrs	attributes of the image
+     * @param chain	hierarchy of attributes
+     * @param doc	the DocListener to which the Image needs to be added
+     * @return	false if you still want HTMLWorker to add the Image
+     */
     boolean process(Image img, Map<String, String> attrs, AttributeChain chain, DocListener doc);
 }
