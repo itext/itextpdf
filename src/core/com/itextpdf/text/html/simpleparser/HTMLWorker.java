@@ -174,14 +174,27 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	protected boolean skipText = false;
 
 
-	protected SupportedTags tags = new SupportedTags();
+	protected Map<String, TagProcessor> tags = new SupportedTags();
 	
 	/**
 	 * Creates a new instance of HTMLWorker
 	 * @param document A class that implements <CODE>DocListener</CODE>
 	 */
 	public HTMLWorker(DocListener document) {
+		this(document, null, null);
+	}
+	
+	/**
+	 * Creates a new instance of HTMLWorker
+	 * @param document	A class that implements <CODE>DocListener</CODE>
+	 * @param tags		A map containing the supported tags
+	 * @param style		A StyleSheet
+	 * @since 5.0.6
+	 */
+	public HTMLWorker(DocListener document, Map<String, TagProcessor> tags, StyleSheet style) {
 		this.document = document;
+		setSupportedTags(tags);
+		setStyleSheet(style);
 	}
 
 	/**
@@ -191,6 +204,12 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 */
 	public void parse(Reader reader) throws IOException {
 		SimpleXMLParser.parse(this, null, reader, true);
+	}
+	
+	public void setSupportedTags(Map<String, TagProcessor> tags) {
+		if (tags == null)
+			tags = new SupportedTags();
+		this.tags = tags;
 	}
 	
 	/**
@@ -224,6 +243,8 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param style the StyleSheet
 	 */
 	public void setStyleSheet(StyleSheet style) {
+		if (style == null)
+			style = new StyleSheet();
 		this.style = style;
 	}
 
@@ -638,51 +659,6 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		this.skipText = skipText;
 	}
 
-	public boolean add(Element element) throws DocumentException {
-		objectList.add(element);
-		return true;
-	}
-
-	public void clearTextWrap() throws DocumentException {
-	}
-
-	public void close() {
-	}
-
-	public boolean newPage() {
-		return true;
-	}
-
-	public void open() {
-	}
-
-	public void resetPageCount() {
-	}
-
-	public boolean setMarginMirroring(boolean marginMirroring) {
-		return false;
-	}
-
-	/**
-     * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
-	 * @since	2.1.6
-	 */
-	public boolean setMarginMirroringTopBottom(boolean marginMirroring) {
-		return false;
-	}
-
-	public boolean setMargins(float marginLeft, float marginRight,
-			float marginTop, float marginBottom) {
-		return true;
-	}
-
-	public void setPageCount(int pageN) {
-	}
-
-	public boolean setPageSize(Rectangle pageSize) {
-		return true;
-	}
-
 
 
 
@@ -761,24 +737,114 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	}
 
 
+	/**
+	 * Parses an HTML source to a List of Element objects
+	 * @param reader	the HTML source
+	 * @param style		a StyleSheet object
+	 * @return a List of Element objects
+	 * @throws IOException
+	 */
 	public static List<Element> parseToList(Reader reader, StyleSheet style)
 			throws IOException {
 		return parseToList(reader, style, null);
 	}
 
+	/**
+	 * Parses an HTML source to a List of Element objects
+	 * @param reader	the HTML source
+	 * @param style		a StyleSheet object
+	 * @param providers	map containing classes with extra info
+	 * @return a List of Element objects
+	 * @throws IOException
+	 */
 	public static List<Element> parseToList(Reader reader, StyleSheet style,
-			HashMap<String, Object> interfaceProps) throws IOException {
-		HTMLWorker worker = new HTMLWorker(null);
-		if (style != null)
-			worker.style = style;
+			HashMap<String, Object> providers) throws IOException {
+		return parseToList(reader, style, null, providers);
+	}
+	
+	public static List<Element> parseToList(Reader reader, StyleSheet style,
+			Map<String, TagProcessor> tags, HashMap<String, Object> providers) throws IOException {
+		HTMLWorker worker = new HTMLWorker(null, tags, style);
 		worker.document = worker;
-		worker.setProviders(interfaceProps);
+		worker.setProviders(providers);
 		worker.objectList = new ArrayList<Element>();
 		worker.parse(reader);
 		return worker.objectList;
 	}
+	
+	// DocListener interface
 
+	/**
+	 * @see com.itextpdf.text.ElementListener#add(com.itextpdf.text.Element)
+	 */
+	public boolean add(Element element) throws DocumentException {
+		objectList.add(element);
+		return true;
+	}
 
+	/**
+	 * @see com.itextpdf.text.DocListener#close()
+	 */
+	public void close() {
+	}
+
+	/**
+	 * @see com.itextpdf.text.DocListener#newPage()
+	 */
+	public boolean newPage() {
+		return true;
+	}
+
+	/**
+	 * @see com.itextpdf.text.DocListener#open()
+	 */
+	public void open() {
+	}
+
+	/**
+	 * @see com.itextpdf.text.DocListener#resetPageCount()
+	 */
+	public void resetPageCount() {
+	}
+
+	/**
+	 * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
+	 */
+	public boolean setMarginMirroring(boolean marginMirroring) {
+		return false;
+	}
+
+	/**
+     * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
+	 * @since	2.1.6
+	 */
+	public boolean setMarginMirroringTopBottom(boolean marginMirroring) {
+		return false;
+	}
+
+	/**
+	 * @see com.itextpdf.text.DocListener#setMargins(float, float, float, float)
+	 */
+	public boolean setMargins(float marginLeft, float marginRight,
+			float marginTop, float marginBottom) {
+		return true;
+	}
+
+	/**
+	 * @see com.itextpdf.text.DocListener#setPageCount(int)
+	 */
+	public void setPageCount(int pageN) {
+	}
+
+	/**
+	 * @see com.itextpdf.text.DocListener#setPageSize(com.itextpdf.text.Rectangle)
+	 */
+	public boolean setPageSize(Rectangle pageSize) {
+		return true;
+	}
+
+	// deprecated methods
+	
 	/**
 	 * Sets the providers.
 	 * @deprecated use setProviders() instead
@@ -793,4 +859,5 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public Map<String, Object> getInterfaceProps() {
 		return providers;
 	}
+
 }
