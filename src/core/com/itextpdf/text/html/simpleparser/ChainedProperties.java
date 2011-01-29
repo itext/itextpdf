@@ -44,7 +44,6 @@
 package com.itextpdf.text.html.simpleparser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -125,11 +124,11 @@ public class ChainedProperties {
 	/**
 	 * Adds a tag and its corresponding properties to the chain.
 	 * @param tag	the tags that needs to be added to the chain
-	 * @param attrs	the tag's attributes
+	 * @param props	the tag's attributes
 	 */
-	public void addToChain(String tag, HashMap<String, String> attrs) {
-		this.adjustFontSize(attrs);
-		chain.add(new ChainedProperty(tag, attrs));
+	public void addToChain(String tag, Map<String, String> props) {
+		this.adjustFontSize(props);
+		chain.add(new ChainedProperty(tag, props));
 	}
 
 	/**
@@ -152,7 +151,7 @@ public class ChainedProperties {
 	 * @param	attrs the attributes that may have to be updated
 	 * @since 5.0.6 (renamed)
 	 */
-	protected void adjustFontSize(HashMap<String, String> attrs) {
+	protected void adjustFontSize(Map<String, String> attrs) {
 		// fetch the font size
 		String value = attrs.get(ElementTags.SIZE);
 		// do nothing if the font size isn't defined

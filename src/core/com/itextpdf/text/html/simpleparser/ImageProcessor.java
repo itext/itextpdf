@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.html.simpleparser;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Image;
@@ -55,5 +55,5 @@ import com.itextpdf.text.Image;
  * @since 5.0.6 (renamed)
  */
 public interface ImageProcessor {
-    boolean process(Image img, HashMap<String, String> attrs, ChainedProperties chain, DocListener doc);
+    boolean process(Image img, Map<String, String> attrs, ChainedProperties chain, DocListener doc);
 }

@@ -70,7 +70,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.TextElementArray;
-import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.Markup;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -97,23 +96,6 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		StringTokenizer tok = new StringTokenizer(SUPPORTED_TAGS);
 		while (tok.hasMoreTokens())
 			TAGS_SUPPORTED.add(tok.nextToken());
-	}
-	/**
-	 * Mapping of tags that define a font style.
-	 * @since 5.0.6 (renamed)
-	 */
-	public static final Map<String, String> FONTSTYLETAGS;
-	static {
-		FONTSTYLETAGS = new HashMap<String, String>();
-		FONTSTYLETAGS.put("i", "i");
-		FONTSTYLETAGS.put("b", "b");
-		FONTSTYLETAGS.put("u", "u");
-		FONTSTYLETAGS.put("sub", "sub");
-		FONTSTYLETAGS.put("sup", "sup");
-		FONTSTYLETAGS.put("em", "i");
-		FONTSTYLETAGS.put("strong", "b");
-		FONTSTYLETAGS.put("s", "s");
-		FONTSTYLETAGS.put("strike", "s");
 	}
 	
 	/**
@@ -291,203 +273,20 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
      * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#startElement(java.lang.String, java.util.HashMap)
      */
     public void startElement(String tag, HashMap<String, String> attrs) {
-		if (!TAGS_SUPPORTED.contains(tag))
+		TagProcessor htmlTag = SupportedTags.get(tag);
+		if (htmlTag == null) {
 			return;
+		}
+		// apply the styles to attrs
+		style.applyStyle(tag, attrs);
+		// deal with the style attribute
+		resolveStyleAttribute(attrs, chain);
+		// process the tag
 		try {
-			// apply the styles to attrs
-			style.applyStyle(tag, attrs);
-			// deal with i, em, b, string, u, s, strike, sub, sup tags
-			String fontstyletag = FONTSTYLETAGS.get(tag);
-			if (fontstyletag != null) {
-				HashMap<String, String> props = new HashMap<String, String>();
-				props.put(fontstyletag, null);
-				chain.addToChain(fontstyletag, props);
-				return;
-			}
-			// deal with the style attribute
-			resolveStyleAttribute(attrs, chain);
-			// a-tag
-			if (tag.equals(HtmlTags.ANCHOR)) {
-				chain.addToChain(tag, attrs);
-				if (currentParagraph == null) {
-					currentParagraph = new Paragraph();
-				}
-				stack.push(currentParagraph);
-				currentParagraph = new Paragraph();
-				return;
-			}
-			// br-tag
-			if (tag.equals(HtmlTags.NEWLINE)) {
-				if (currentParagraph == null) {
-					currentParagraph = new Paragraph();
-				}
-				currentParagraph.add(factory.createChunk("\n", chain));
-				return;
-			}
-			// hr
-			if (tag.equals(HtmlTags.HORIZONTALRULE)) {
-				// Attempting to duplicate the behavior seen on Firefox with
-				// http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_hr_test
-				// where an initial break is only inserted when the preceding element doesn't
-				// end with a break, but a trailing break is always inserted.
-				boolean addLeadingBreak = true;
-				if (currentParagraph == null) {
-					currentParagraph = new Paragraph();
-					addLeadingBreak = false;
-				}
-				if (addLeadingBreak) { // Not a new paragraph
-					int numChunks = currentParagraph.getChunks().size();
-					if (numChunks == 0 ||
-							currentParagraph.getChunks().get(numChunks - 1).getContent().endsWith("\n"))
-						addLeadingBreak = false;
-				}
-				if (addLeadingBreak)
-					currentParagraph.add(Chunk.NEWLINE);
-				currentParagraph.add(factory.createLineSeparator(attrs, currentParagraph.getLeading()/2));
-				currentParagraph.add(Chunk.NEWLINE);
-				return;
-			}
-			// font or span tag
-			if (tag.equals(HtmlTags.CHUNK) || tag.equals(HtmlTags.SPAN)) {
-				chain.addToChain(tag, attrs);
-				return;
-			}
-			// img tag
-			if (tag.equals(HtmlTags.IMAGE)) {
-				String src = attrs.get(ElementTags.SRC);
-				if (src == null)
-					return;
-				chain.addToChain(tag, attrs);
-				Image img = factory.createImage(
-						src, attrs, chain, document,
-						(ImageProvider)providers.get(IMG_PROVIDER),
-						(ImageStore)providers.get(IMG_STORE),
-						(String)providers.get(IMG_BASEURL));
-				ImageProcessor processor = (ImageProcessor)providers.get(IMG_PROCESSOR);
-				boolean skip = false;
-				if (processor != null)
-					skip = processor.process(img, attrs, chain, document);
-				if (!skip) {
-					String align = attrs.get("align");
-					if (align != null) {
-						updateStack();
-						int ralign = Image.MIDDLE;
-						if (align.equalsIgnoreCase("left"))
-							ralign = Image.LEFT;
-						else if (align.equalsIgnoreCase("right"))
-							ralign = Image.RIGHT;
-						img.setAlignment(ralign);	
-						document.add(img);
-						chain.removeChain(tag);
-					} else {
-						chain.removeChain(tag);
-						if (currentParagraph == null) {
-							currentParagraph = factory.createParagraph(chain);
-						}
-						currentParagraph.add(new Chunk(img, 0, 0, true));
-					}
-					return;
-				}
-			}
-			updateStack();
-			// headers
-			if (tag.equals("h1") || tag.equals("h2") || tag.equals("h3")
-					|| tag.equals("h4") || tag.equals("h5") || tag.equals("h6")) {
-				if (!attrs.containsKey(ElementTags.SIZE)) {
-					int v = 7 - Integer.parseInt(tag.substring(1));
-					attrs.put(ElementTags.SIZE, Integer.toString(v));
-				}
-				chain.addToChain(tag, attrs);
-				return;
-			}
-			// ul tag
-			if (tag.equals(HtmlTags.UNORDEREDLIST)) {
-				if (pendingLI)
-					endElement(HtmlTags.LISTITEM);
-				skipText = true;
-				chain.addToChain(tag, attrs);
-				com.itextpdf.text.List list = new com.itextpdf.text.List(false);
-				try{
-					list.setIndentationLeft(new Float(chain.getProperty("indent")).floatValue());
-				}catch (Exception e) {
-					list.setAutoindent(true);
-				}
-				list.setListSymbol("\u2022 ");
-				stack.push(list);
-				return;
-			}
-			// ol tag
-			if (tag.equals(HtmlTags.ORDEREDLIST)) {
-				if (pendingLI)
-					endElement(HtmlTags.LISTITEM);
-				skipText = true;
-				chain.addToChain(tag, attrs);
-				com.itextpdf.text.List list = new com.itextpdf.text.List(true);
-				try{
-					list.setIndentationLeft(new Float(chain.getProperty("indent")).floatValue());
-				}catch (Exception e) {
-					list.setAutoindent(true);
-				}
-				stack.push(list);
-				return;
-			}
-			// li tag
-			if (tag.equals(HtmlTags.LISTITEM)) {
-				if (pendingLI)
-					endElement(HtmlTags.LISTITEM);
-				skipText = false;
-				pendingLI = true;
-				chain.addToChain(tag, attrs);
-				ListItem item = factory.createListItem(chain);
-				stack.push(item);
-				return;
-			}
-			// p body or div tag
-			if (tag.equals(HtmlTags.DIV) || tag.equals(HtmlTags.BODY) || tag.equals("p")) {
-				chain.addToChain(tag, attrs);
-				return;
-			}
-			// pre tag
-			if (tag.equals(HtmlTags.PRE)) {
-				if (!attrs.containsKey(ElementTags.FACE)) {
-					attrs.put(ElementTags.FACE, "Courier");
-				}
-				chain.addToChain(tag, attrs);
-				isPRE = true;
-				return;
-			}
-			// tr tag
-			if (tag.equals("tr")) {
-				if (pendingTR)
-					endElement("tr");
-				skipText = true;
-				pendingTR = true;
-				chain.addToChain("tr", attrs);
-				return;
-			}
-			// td or th tag
-			if (tag.equals("td") || tag.equals("th")) {
-				if (pendingTD)
-					endElement(tag);
-				skipText = false;
-				pendingTD = true;
-				chain.addToChain("td", attrs);
-				stack.push(new CellWrapper(tag, chain));
-				return;
-			}
-			// table
-			if (tag.equals("table")) {
-				TableWrapper table = new TableWrapper(attrs);
-				stack.push(table);
-				tableState.push(new boolean[] { pendingTR, pendingTD });
-				pendingTR = pendingTD = false;
-				skipText = true;
-				// Table alignment should not affect children elements, thus remove
-				attrs.remove("align");
-				chain.addToChain("table", attrs);
-				return;
-			}
-		} catch (Exception e) {
+			htmlTag.startElement(this, tag, attrs);
+		} catch (DocumentException e) {
+			throw new ExceptionConverter(e);
+		} catch (IOException e) {
 			throw new ExceptionConverter(e);
 		}
 	}
@@ -550,186 +349,14 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#endElement(java.lang.String)
 	 */
 	public void endElement(String tag) {
-		if (!TAGS_SUPPORTED.contains(tag))
+		TagProcessor htmlTag = SupportedTags.get(tag);
+		if (htmlTag == null) {
 			return;
+		}
+		// process the tag
 		try {
-			String follow = FONTSTYLETAGS.get(tag);
-			if (follow != null) {
-				chain.removeChain(follow);
-				return;
-			}
-			if (tag.equals("font") || tag.equals("span")) {
-				chain.removeChain(tag);
-				return;
-			}
-			if (tag.equals("a")) {
-				if (currentParagraph == null) {
-					currentParagraph = new Paragraph();
-				}
-				boolean skip = false;
-				LinkProvider i = (LinkProvider) providers.get(LINK_PROVIDER);
-				if (i != null)
-					skip = i.process(currentParagraph, chain);
-				if (!skip) {
-					String href = chain.getProperty("href");
-					if (href != null) {
-						for (Chunk ck : currentParagraph.getChunks()) {
-							ck.setAnchor(href);
-						}
-					}
-				}
-				Paragraph tmp = (Paragraph) stack.pop();
-				Phrase tmp2 = new Phrase();
-				tmp2.add(currentParagraph);
-				tmp.add(tmp2);
-				currentParagraph = tmp;
-				chain.removeChain("a");
-				return;
-			}
-			if (tag.equals("br")) {
-				return;
-			}
-			updateStack();
-			if (tag.equals(HtmlTags.UNORDEREDLIST)
-					|| tag.equals(HtmlTags.ORDEREDLIST)) {
-				if (pendingLI)
-					endElement(HtmlTags.LISTITEM);
-				skipText = false;
-				chain.removeChain(tag);
-				if (stack.empty())
-					return;
-				Element obj = stack.pop();
-				if (!(obj instanceof com.itextpdf.text.List)) {
-					stack.push(obj);
-					return;
-				}
-				if (stack.empty())
-					document.add(obj);
-				else
-					((TextElementArray) stack.peek()).add(obj);
-				return;
-			}
-			if (tag.equals(HtmlTags.LISTITEM)) {
-				pendingLI = false;
-				skipText = true;
-				chain.removeChain(tag);
-				if (stack.empty())
-					return;
-				Element obj = stack.pop();
-				if (!(obj instanceof ListItem)) {
-					stack.push(obj);
-					return;
-				}
-				if (stack.empty()) {
-					document.add(obj);
-					return;
-				}
-				Element list = stack.pop();
-				if (!(list instanceof com.itextpdf.text.List)) {
-					stack.push(list);
-					return;
-				}
-				ListItem item = (ListItem) obj;
-				((com.itextpdf.text.List) list).add(item);
-				ArrayList<Chunk> cks = item.getChunks();
-				if (!cks.isEmpty())
-					item.getListSymbol()
-							.setFont(cks.get(0).getFont());
-				stack.push(list);
-				return;
-			}
-			if (tag.equals("div") || tag.equals("body")) {
-				chain.removeChain(tag);
-				return;
-			}
-			if (tag.equals(HtmlTags.PRE)) {
-				chain.removeChain(tag);
-				isPRE = false;
-				return;
-			}
-			if (tag.equals("p")) {
-				chain.removeChain(tag);
-				return;
-			}
-			if (tag.equals("h1") || tag.equals("h2") || tag.equals("h3")
-					|| tag.equals("h4") || tag.equals("h5") || tag.equals("h6")) {
-				chain.removeChain(tag);
-				return;
-			}
-			if (tag.equals("table")) {
-				if (pendingTR)
-					endElement("tr");
-				chain.removeChain("table");
-				TableWrapper table = (TableWrapper) stack.pop();
-				PdfPTable tb = table.createTable();
-				tb.setSplitRows(true);
-				if (stack.empty())
-					document.add(tb);
-				else
-					((TextElementArray) stack.peek()).add(tb);
-				boolean state[] = tableState.pop();
-				pendingTR = state[0];
-				pendingTD = state[1];
-				skipText = false;
-				return;
-			}
-			if (tag.equals("tr")) {
-				if (pendingTD)
-					endElement("td");
-				pendingTR = false;
-				chain.removeChain("tr");
-				ArrayList<PdfPCell> row = new ArrayList<PdfPCell>();
-                ArrayList<Float> cellWidths = new ArrayList<Float>();
-                boolean percentage = false;
-                float width;
-                float totalWidth = 0;
-                int zeroWidth = 0;
-				TableWrapper table = null;
-				while (true) {
-					Element obj = stack.pop();
-					if (obj instanceof CellWrapper) {
-                        CellWrapper cell = (CellWrapper)obj;
-                        width = cell.getWidth();
-                        cellWidths.add(new Float(width));
-                        percentage |= cell.isPercentage();
-                        if (width == 0) {
-                        	zeroWidth++;
-                        }
-                        else {
-                        	totalWidth += width;
-                        }
-                        row.add(cell.getCell());
-					}
-					if (obj instanceof TableWrapper) {
-						table = (TableWrapper) obj;
-						break;
-					}
-				}
-                table.addRow(row);
-                if (cellWidths.size() > 0) {
-                    // cells come off the stack in reverse, naturally
-                	totalWidth = 100 - totalWidth;
-                    Collections.reverse(cellWidths);
-                    float[] widths = new float[cellWidths.size()];
-                    for (int i = 0; i < widths.length; i++) {
-                        widths[i] = cellWidths.get(i).floatValue();
-                        if (widths[i] == 0 && percentage && zeroWidth > 0) {
-                        	widths[i] = totalWidth / zeroWidth;
-                        }
-                    }
-                    table.setColWidths(widths);
-                }
-				stack.push(table);
-				skipText = true;
-				return;
-			}
-			if (tag.equals("td") || tag.equals("th")) {
-				pendingTD = false;
-				chain.removeChain("td");
-				skipText = true;
-				return;
-			}
-		} catch (Exception e) {
+			htmlTag.endElement(this, tag);
+		} catch (DocumentException e) {
 			throw new ExceptionConverter(e);
 		}
 	}
@@ -751,12 +378,208 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		}
 	}
 
+	public boolean isStackEmpty() {
+		return stack.empty();
+	}
+	
+	public boolean updateParagraph() {
+		if (currentParagraph == null) {
+			currentParagraph = new Paragraph();
+			return true;
+		}
+		return false;
+	}
+	
+	public void addLineSeparator(Map<String, String> attrs) {
+		// Attempting to duplicate the behavior seen on Firefox with
+		// http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_hr_test
+		// where an initial break is only inserted when the preceding element doesn't
+		// end with a break, but a trailing break is always inserted.
+		if (!updateParagraph()) {
+			int numChunks = currentParagraph.getChunks().size();
+			if (numChunks > 0 &&
+				!currentParagraph.getChunks().get(numChunks - 1).getContent().endsWith("\n")) {
+				newLine();
+			}
+		}
+		currentParagraph.add(factory.createLineSeparator(attrs, currentParagraph.getLeading()/2));
+		newLine();
+	}
+	
+	/**
+	 */
+	public void pushParagraph() {
+		updateParagraph();
+		stack.push(currentParagraph);
+		currentParagraph = new Paragraph();
+	}
+	
+	public void pushToStack(Element element) {
+		stack.push(element);
+	}
+	
+	public void mergeParagraph() {
+		Paragraph tmp = (Paragraph) stack.pop();
+		Phrase tmp2 = new Phrase();
+		tmp2.add(currentParagraph);
+		tmp.add(tmp2);
+		currentParagraph = tmp;
+	}
+	
+	public Element createList(String tag) {
+		return factory.createList(tag, chain);
+	}
+	public Element createListItem() {
+		return factory.createListItem(chain);
+	}
+	
+	public void createImage(String tag, Map<String, String> attrs) throws DocumentException, IOException {
+		String src = attrs.get(ElementTags.SRC);
+		if (src == null)
+			return;
+		 updateChain(tag, attrs);
+		Image img = factory.createImage(
+				src, attrs, chain, document,
+				(ImageProvider)providers.get(IMG_PROVIDER),
+				(ImageStore)providers.get(IMG_STORE),
+				(String)providers.get(IMG_BASEURL));
+		ImageProcessor processor = (ImageProcessor)getProvider(HTMLWorker.IMG_PROCESSOR);
+		boolean skip = false;
+		if (processor != null)
+			skip = processor.process(img, attrs, chain, document);
+		if (!skip) {
+			String align = attrs.get("align");
+			if (align != null) {
+				addParagraph();
+				int ralign = Image.MIDDLE;
+				if (align.equalsIgnoreCase("left"))
+					ralign = Image.LEFT;
+				else if (align.equalsIgnoreCase("right"))
+					ralign = Image.RIGHT;
+				img.setAlignment(ralign);	
+				document.add(img);
+				chain.removeChain(tag);
+			} else {
+				chain.removeChain(tag);
+				if (currentParagraph == null) {
+					currentParagraph = factory.createParagraph(chain);
+				}
+				currentParagraph.add(new Chunk(img, 0, 0, true));
+			}
+		}
+	}
+	
+	public void newLine() {
+		currentParagraph.add(factory.createChunk("\n", chain));
+	}
+	
+	public void addList() throws DocumentException {
+		if (isStackEmpty())
+			return;
+		Element obj = stack.pop();
+		if (!(obj instanceof com.itextpdf.text.List)) {
+			stack.push(obj);
+			return;
+		}
+		if (stack.empty())
+			document.add(obj);
+		else
+			((TextElementArray) stack.peek()).add(obj);
+	}
+	
+	public void addListItem() throws DocumentException {
+		if (stack.empty())
+			return;
+		Element obj = stack.pop();
+		if (!(obj instanceof ListItem)) {
+			stack.push(obj);
+			return;
+		}
+		if (stack.empty()) {
+			document.add(obj);
+			return;
+		}
+		Element list = stack.pop();
+		if (!(list instanceof com.itextpdf.text.List)) {
+			stack.push(list);
+			return;
+		}
+		ListItem item = (ListItem) obj;
+		((com.itextpdf.text.List) list).add(item);
+		ArrayList<Chunk> cks = item.getChunks();
+		if (!cks.isEmpty())
+			item.getListSymbol()
+					.setFont(cks.get(0).getFont());
+		stack.push(list);
+	}
+	
+	public void addTable() throws DocumentException{
+
+		TableWrapper table = (TableWrapper) stack.pop();
+		PdfPTable tb = table.createTable();
+		tb.setSplitRows(true);
+		if (stack.empty())
+			document.add(tb);
+		else
+			((TextElementArray) stack.peek()).add(tb);
+		boolean state[] = tableState.pop();
+		pendingTR = state[0];
+		pendingTD = state[1];
+		skipText = false;
+	}
+	
+	public void addRow() {
+		ArrayList<PdfPCell> row = new ArrayList<PdfPCell>();
+        ArrayList<Float> cellWidths = new ArrayList<Float>();
+        boolean percentage = false;
+        float width;
+        float totalWidth = 0;
+        int zeroWidth = 0;
+		TableWrapper table = null;
+		while (true) {
+			Element obj = stack.pop();
+			if (obj instanceof CellWrapper) {
+                CellWrapper cell = (CellWrapper)obj;
+                width = cell.getWidth();
+                cellWidths.add(new Float(width));
+                percentage |= cell.isPercentage();
+                if (width == 0) {
+                	zeroWidth++;
+                }
+                else {
+                	totalWidth += width;
+                }
+                row.add(cell.getCell());
+			}
+			if (obj instanceof TableWrapper) {
+				table = (TableWrapper) obj;
+				break;
+			}
+		}
+        table.addRow(row);
+        if (cellWidths.size() > 0) {
+            // cells come off the stack in reverse, naturally
+        	totalWidth = 100 - totalWidth;
+            Collections.reverse(cellWidths);
+            float[] widths = new float[cellWidths.size()];
+            for (int i = 0; i < widths.length; i++) {
+                widths[i] = cellWidths.get(i).floatValue();
+                if (widths[i] == 0 && percentage && zeroWidth > 0) {
+                	widths[i] = totalWidth / zeroWidth;
+                }
+            }
+            table.setColWidths(widths);
+        }
+		stack.push(table);
+		skipText = true;
+	}
+	
 	/**
 	 * Adds the current paragraph (if any) to the stack (if existing);
 	 * or to the Document.
 	 * @since 5.0.6
 	 */
-	protected void updateStack() throws DocumentException {
+	public void addParagraph() throws DocumentException {
 		if (currentParagraph != null) {
 			if (stack.empty())
 				document.add(currentParagraph);
@@ -772,6 +595,72 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		currentParagraph = null;
 	}
 	
+	/**
+	 */
+	public void updateChain(String tag, Map<String, String> attrs) {
+		chain.addToChain(tag, attrs);
+	}
+	
+	public void updateChain(String tag) {
+		chain.removeChain(tag);
+	}
+	
+	public Object getProvider(String key) {
+		return providers.get(key);
+	}
+	
+	public Paragraph getCurrentParagraph() {
+		return currentParagraph;
+	}
+	
+	public ChainedProperties getChain() {
+		return chain;
+	}
+	
+	public boolean isPendingTR() {
+		return pendingTR;
+	}
+
+	public void setPendingTR(boolean pendingTR) {
+		this.pendingTR = pendingTR;
+	}
+
+	public boolean isPendingTD() {
+		return pendingTD;
+	}
+
+	public void setPendingTD(boolean pendingTD) {
+		this.pendingTD = pendingTD;
+	}
+
+	public void pushTableState() {
+		tableState.push(new boolean[] { pendingTR, pendingTD });
+	}
+	
+	public boolean isPendingLI() {
+		return pendingLI;
+	}
+
+	public void setPendingLI(boolean pendingLI) {
+		this.pendingLI = pendingLI;
+	}
+
+	public boolean isPRE() {
+		return isPRE;
+	}
+
+	public void setPRE(boolean isPRE) {
+		this.isPRE = isPRE;
+	}
+
+	public boolean isSkipText() {
+		return skipText;
+	}
+
+	public void setSkipText(boolean skipText) {
+		this.skipText = skipText;
+	}
+
 	public boolean add(Element element) throws DocumentException {
 		objectList.add(element);
 		return true;

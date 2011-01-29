@@ -58,6 +58,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.html.HtmlTags;
@@ -376,7 +377,7 @@ public class ElementFactory {
 	
 	public Image createImage(
 			String src,
-			HashMap<String, String> attrs,
+			Map<String, String> attrs,
 			ChainedProperties chain,
 			DocListener document,
 			ImageProvider img_provider,
@@ -438,5 +439,22 @@ public class ElementFactory {
 			img.setSpacingAfter(Float.parseFloat(after));
 		img.setWidthPercentage(0);
 		return img;
+	}
+	
+	public List createList(String tag, ChainedProperties chain) {
+		List list;
+		if ("ol".equalsIgnoreCase(tag)) {
+			list = new List(List.UNORDERED);
+			list.setListSymbol("\u2022 ");
+		}
+		else {
+			list = new List(List.ORDERED);
+		}
+		try{
+			list.setIndentationLeft(new Float(chain.getProperty("indent")).floatValue());
+		}catch (Exception e) {
+			list.setAutoindent(true);
+		}
+		return list;
 	}
 }
