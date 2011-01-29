@@ -47,7 +47,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.html.HtmlTags;
@@ -106,18 +105,18 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) {
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) {
 			tag = mapTag(tag);
 			attrs = new HashMap<String, String>();
 			attrs.put(tag, null);
-			worker.updateChain(tag, attrs);
+			chain.addToChain(tag, attrs);;
 		}
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) {
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) {
 			tag = mapTag(tag);
-			worker.updateChain(tag);
+			chain.removeChain(tag);
 		}
 		/**
 		 * Maps em to i, strong to b, and strike to s.
@@ -144,29 +143,16 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) {
-			worker.updateChain(tag, attrs);
-			worker.pushParagraph();
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) {
+			chain.addToChain(tag, attrs);;
+			worker.flushContent();
 		}
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) {
-			worker.updateParagraph();
-			boolean skip = false;
-			LinkProvider i = (LinkProvider) worker.getProvider(HTMLWorker.LINK_PROVIDER);
-			if (i != null)
-				skip = i.process(worker.getCurrentParagraph(), worker.getChain());
-			if (!skip) {
-				String href = worker.getChain().getProperty("href");
-				if (href != null) {
-					for (Chunk ck : worker.getCurrentParagraph().getChunks()) {
-						ck.setAnchor(href);
-					}
-				}
-			}
-			worker.mergeParagraph();
-			worker.updateChain("a");
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) {
+			worker.addLink();
+			chain.removeChain(tag);
 		}
 	};
 	
@@ -177,14 +163,13 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) {
-			worker.updateParagraph();
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) {
 			worker.newLine();
 		}
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) {
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) {
 		}
 		
 	};
@@ -194,24 +179,24 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
-			worker.addParagraph();
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			if (worker.isPendingLI())
 				worker.endElement(HtmlTags.LISTITEM);
 			worker.setSkipText(true);
-			worker.updateChain(tag, attrs);
+			chain.addToChain(tag, attrs);;
 			worker.pushToStack(worker.createList(tag));
 		}
 
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
-			worker.addParagraph();
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			if (worker.isPendingLI())
 				worker.endElement(HtmlTags.LISTITEM);
 			worker.setSkipText(false);
-			worker.updateChain(tag);
+			chain.removeChain(tag);
 			worker.addList();
 		}
 		
@@ -219,11 +204,12 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 	
 	public static final TagProcessor HR = new TagProcessor(){
 
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) {
-			worker.addLineSeparator(attrs);
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
+			worker.pushToStack(worker.createLineSeparator(attrs));
 		}
 
-		public void endElement(HTMLWorker worker, String tag) {
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) {
 		}
 		
 	};
@@ -233,15 +219,15 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) {
-			worker.updateChain(tag, attrs);
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) {
+			chain.addToChain(tag, attrs);;
 		}
 
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) {
-			worker.updateChain(tag);
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) {
+			chain.removeChain(tag);
 		}
 		
 	};
@@ -251,21 +237,21 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
-			worker.addParagraph();
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			if (!attrs.containsKey(ElementTags.SIZE)) {
 				int v = 7 - Integer.parseInt(tag.substring(1));
 				attrs.put(ElementTags.SIZE, Integer.toString(v));
 			}
-			worker.updateChain(tag, attrs);
+			chain.addToChain(tag, attrs);
 		}
 
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
-			worker.addParagraph();
-			worker.updateChain(tag);
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
+			chain.removeChain(tag);
 		}
 		
 	};
@@ -275,25 +261,25 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
-			worker.addParagraph();
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			if (worker.isPendingLI())
 				worker.endElement(HtmlTags.LISTITEM);
 			worker.setSkipText(false);
 			worker.setPendingLI(true);
-			worker.updateChain(tag, attrs);
+			chain.addToChain(tag, attrs);
 			worker.pushToStack(worker.createListItem());
 		}
 
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
-			worker.addParagraph();
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 
 			worker.setPendingLI(false);
 			worker.setSkipText(true);
-			worker.updateChain(tag);
+			chain.removeChain(tag);
 			worker.addListItem();
 		}
 		
@@ -304,22 +290,22 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
-			worker.addParagraph();
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			if (!attrs.containsKey(ElementTags.FACE)) {
 				attrs.put(ElementTags.FACE, "Courier");
 			}
-			worker.updateChain(tag, attrs);
-			worker.setPRE(true);
+			chain.addToChain(tag, attrs);
+			worker.setInsidePRE(true);
 		}
 
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
-			worker.addParagraph();
-			worker.updateChain(tag);
-			worker.setPRE(false);
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
+			chain.removeChain(tag);
+			worker.setInsidePRE(false);
 		}
 		
 	};
@@ -329,17 +315,17 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
-			worker.addParagraph();
-			worker.updateChain(tag, attrs);
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
+			chain.addToChain(tag, attrs);
 		}
 
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
-			worker.addParagraph();
-			worker.updateChain(tag);
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
+			chain.removeChain(tag);
 		}
 		
 	};
@@ -351,8 +337,8 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		 * @throws DocumentException 
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
-			worker.addParagraph();
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			TableWrapper table = new TableWrapper(attrs);
 			worker.pushToStack(table);
 			worker.pushTableState();
@@ -361,17 +347,17 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 			worker.setSkipText(true);
 			// Table alignment should not affect children elements, thus remove
 			attrs.remove("align");
-			worker.updateChain(tag, attrs);
+			chain.addToChain(tag, attrs);
 		}
 
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
-			worker.addParagraph();
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			if (worker.isPendingTR())
 				worker.endElement("tr");
-			worker.updateChain("table");
+			chain.removeChain(tag);
 			worker.addTable();
 		}
 		
@@ -382,24 +368,24 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		 * @throws DocumentException 
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
-			worker.addParagraph();
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			if (worker.isPendingTR())
 				worker.endElement(tag);
 			worker.setSkipText(true);
 			worker.setPendingTR(true);
-			worker.updateChain(tag, attrs);
+			chain.addToChain(tag, attrs);
 		}
 
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
-			worker.addParagraph();
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			if (worker.isPendingTD())
 				worker.endElement("td");
 			worker.setPendingTR(false);
-			worker.updateChain(tag);
+			chain.removeChain(tag);
 			worker.addRow();
 		}
 		
@@ -410,23 +396,23 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		 * @throws DocumentException 
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
-			worker.addParagraph();
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			if (worker.isPendingTD())
 				worker.endElement(tag);
 			worker.setSkipText(false);
 			worker.setPendingTD(true);
-			worker.updateChain("td", attrs);
-			worker.pushToStack(new CellWrapper(tag, worker.getChain()));
+			chain.addToChain("td", attrs);
+			worker.pushToStack(new CellWrapper(tag, chain));
 		}
 
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
-			worker.addParagraph();
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) throws DocumentException {
+			worker.carriageReturn();
 			worker.setPendingTD(false);
-			worker.updateChain("td");
+			chain.removeChain("td");
 			worker.setSkipText(true);
 		}
 		
@@ -437,14 +423,16 @@ public class SupportedTags extends HashMap<String, TagProcessor> {
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
-		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException, IOException {
-			worker.createImage(tag, attrs);		
+		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException, IOException {
+			chain.addToChain(tag, attrs);
+			worker.addImage(worker.createImage(attrs), attrs);
+			chain.removeChain(tag);
 		}
 
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.SupportedTags#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
-		public void endElement(HTMLWorker worker, String tag) {
+		public void endElement(HTMLWorker worker, String tag, AttributeChain chain) {
 		}
 		
 	};

@@ -111,7 +111,7 @@ public class ElementFactory {
 	 * @param	chain	chain of properties
 	 * @return	an iText Font object
 	 */
-	public Font getFont(ChainedProperties chain) {
+	public Font getFont(AttributeChain chain) {
 		
 		// [1] font name
 		
@@ -191,7 +191,7 @@ public class ElementFactory {
 	 * @param chain the hierarchy chain
 	 * @return a Chunk
 	 */
-	public Chunk createChunk(String content, ChainedProperties chain) {
+	public Chunk createChunk(String content, AttributeChain chain) {
 		Font font = getFont(chain);
 		Chunk ck = new Chunk(content, font);
 		if (chain.hasProperty("sub"))
@@ -208,7 +208,7 @@ public class ElementFactory {
 	 * @param	chain	the hierarchy chain
 	 * @return	a Paragraph without any content
 	 */
-	public Paragraph createParagraph(ChainedProperties chain) {
+	public Paragraph createParagraph(AttributeChain chain) {
 		Paragraph paragraph = new Paragraph();
 		updateElement(paragraph, chain);
 		return paragraph;
@@ -220,7 +220,7 @@ public class ElementFactory {
 	 * @param	chain	the hierarchy chain
 	 * @return	a ListItem without any content
 	 */
-	public ListItem createListItem(ChainedProperties chain) {
+	public ListItem createListItem(AttributeChain chain) {
 		ListItem item = new ListItem();
 		updateElement(item, chain);
 		return item;
@@ -232,7 +232,7 @@ public class ElementFactory {
 	 * @param paragraph
 	 * @param chain
 	 */
-	protected void updateElement(Paragraph paragraph, ChainedProperties chain) {
+	protected void updateElement(Paragraph paragraph, AttributeChain chain) {
 		// Alignment
 		String value = chain.getProperty("align");
 		paragraph.setAlignment(ElementTags.alignmentValue(value));
@@ -312,7 +312,7 @@ public class ElementFactory {
 	 * @return	a HyphenationEvent
 	 * @since	2.1.2
 	 */
-	public HyphenationEvent getHyphenation(ChainedProperties chain) {
+	public HyphenationEvent getHyphenation(AttributeChain chain) {
 		String value = chain.getProperty("hyphenation");
 		// no hyphenation defined
 		if (value == null || value.length() == 0) {
@@ -378,7 +378,7 @@ public class ElementFactory {
 	public Image createImage(
 			String src,
 			Map<String, String> attrs,
-			ChainedProperties chain,
+			AttributeChain chain,
 			DocListener document,
 			ImageProvider img_provider,
 			HashMap<String, Image> img_store,
@@ -441,7 +441,7 @@ public class ElementFactory {
 		return img;
 	}
 	
-	public List createList(String tag, ChainedProperties chain) {
+	public List createList(String tag, AttributeChain chain) {
 		List list;
 		if ("ol".equalsIgnoreCase(tag)) {
 			list = new List(List.UNORDERED);

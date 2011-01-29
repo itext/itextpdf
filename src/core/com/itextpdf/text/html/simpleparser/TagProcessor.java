@@ -63,7 +63,7 @@ public interface TagProcessor {
 	 * @throws DocumentException
 	 * @throws IOException
 	 */
-	public abstract void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException, IOException;
+	public abstract void startElement(HTMLWorker worker, String tag, Map<String, String> attrs, AttributeChain chain) throws DocumentException, IOException;
 	
 	/**
 	 * Implement this class to tell the HTMLWorker what to do
@@ -72,5 +72,5 @@ public interface TagProcessor {
 	 * @param tag		the tag that was encountered
 	 * @throws DocumentException
 	 */
-	public abstract void endElement(HTMLWorker worker, String tag) throws DocumentException;
+	public abstract void endElement(HTMLWorker worker, String tag, AttributeChain chain) throws DocumentException;
 }

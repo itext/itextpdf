@@ -55,5 +55,5 @@ import com.itextpdf.text.Image;
  * @since 5.0.6 (renamed)
  */
 public interface ImageProcessor {
-    boolean process(Image img, Map<String, String> attrs, ChainedProperties chain, DocListener doc);
+    boolean process(Image img, Map<String, String> attrs, AttributeChain chain, DocListener doc);
 }

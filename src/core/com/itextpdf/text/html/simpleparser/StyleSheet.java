@@ -45,7 +45,10 @@ package com.itextpdf.text.html.simpleparser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.html.Markup;
 
 public class StyleSheet {
@@ -154,5 +157,79 @@ public class StyleSheet {
 		temp.putAll(attrs);
 		// update the properties
 		attrs.putAll(temp);
+	}
+
+	/**
+	 * Method contributed by Lubos Strapko
+	 * @param h
+	 * @param chain
+	 * @since 2.1.3
+	 */
+	public static void resolveStyleAttribute(Map<String, String> h, AttributeChain chain) {
+		String style = h.get("style");
+		if (style == null)
+			return;
+		Properties prop = Markup.parseAttributes(style);
+		for (Object element : prop.keySet()) {
+			String key = (String) element;
+			if (key.equals(Markup.CSS_KEY_FONTFAMILY)) {
+				h.put(ElementTags.FACE, prop.getProperty(key));
+			} else if (key.equals(Markup.CSS_KEY_FONTSIZE)) {
+				float actualFontSize = Markup.parseLength(chain
+						.getProperty(ElementTags.SIZE),
+						Markup.DEFAULT_FONT_SIZE);
+				if (actualFontSize <= 0f)
+					actualFontSize = Markup.DEFAULT_FONT_SIZE;
+				h.put(ElementTags.SIZE, Float.toString(Markup.parseLength(prop
+						.getProperty(key), actualFontSize))
+						+ "pt");
+			} else if (key.equals(Markup.CSS_KEY_FONTSTYLE)) {
+				String ss = prop.getProperty(key).trim().toLowerCase();
+				if (ss.equals("italic") || ss.equals("oblique"))
+					h.put("i", null);
+			} else if (key.equals(Markup.CSS_KEY_FONTWEIGHT)) {
+				String ss = prop.getProperty(key).trim().toLowerCase();
+				if (ss.equals("bold") || ss.equals("700") || ss.equals("800")
+						|| ss.equals("900"))
+					h.put("b", null);
+			} else if (key.equals(Markup.CSS_KEY_TEXTDECORATION)) {
+				String ss = prop.getProperty(key).trim().toLowerCase();
+				if (ss.equals(Markup.CSS_VALUE_UNDERLINE))
+					h.put("u", null);
+			} else if (key.equals(Markup.CSS_KEY_COLOR)) {
+				BaseColor c = Markup.decodeColor(prop.getProperty(key));
+				if (c != null) {
+					int hh = c.getRGB();
+					String hs = Integer.toHexString(hh);
+					hs = "000000" + hs;
+					hs = "#" + hs.substring(hs.length() - 6);
+					h.put("color", hs);
+				}
+			} else if (key.equals(Markup.CSS_KEY_LINEHEIGHT)) {
+				String ss = prop.getProperty(key).trim();
+				float actualFontSize = Markup.parseLength(chain
+						.getProperty(ElementTags.SIZE),
+						Markup.DEFAULT_FONT_SIZE);
+				if (actualFontSize <= 0f)
+					actualFontSize = Markup.DEFAULT_FONT_SIZE;
+				float v = Markup.parseLength(prop.getProperty(key),
+						actualFontSize);
+				if (ss.endsWith("%")) {
+					h.put("leading", "0," + v / 100);
+					return;
+				}
+				if ("normal".equalsIgnoreCase(ss)) {
+					h.put("leading", "0,1.5");
+					return;
+				}
+				h.put("leading", v + ",0");
+			} else if (key.equals(Markup.CSS_KEY_TEXTALIGN)) {
+				String ss = prop.getProperty(key).trim().toLowerCase();
+				h.put("align", ss);
+			} else if (key.equals(Markup.CSS_KEY_PADDINGLEFT)) {
+				String ss = prop.getProperty(key).trim().toLowerCase();
+				h.put("indent", Float.toString(Markup.parseLength(ss)));
+			}
+		}
 	}
 }
