@@ -64,5 +64,5 @@ public interface ImageProcessor {
      * @param doc	the DocListener to which the Image needs to be added
      * @return	false if you still want HTMLWorker to add the Image
      */
-    boolean process(Image img, Map<String, String> attrs, AttributeChain chain, DocListener doc);
+    boolean process(Image img, Map<String, String> attrs, ChainedProperties chain, DocListener doc);
 }

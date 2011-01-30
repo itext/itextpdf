@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text;
 
-import com.itextpdf.text.html.Markup;
+import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.pdf.BaseFont;
 
 /**
@@ -556,22 +556,22 @@ public class Font implements Comparable<Font> {
 	 */
 	public static int getStyleValue(String style) {
 		int s = 0;
-		if (style.indexOf(Markup.CSS_VALUE_NORMAL) != -1) {
+		if (style.indexOf(HtmlTags.NORMAL) != -1) {
 			s |= NORMAL;
 		}
-		if (style.indexOf(Markup.CSS_VALUE_BOLD) != -1) {
+		if (style.indexOf(HtmlTags.BOLD) != -1) {
 			s |= BOLD;
 		}
-		if (style.indexOf(Markup.CSS_VALUE_ITALIC) != -1) {
+		if (style.indexOf(HtmlTags.ITALIC) != -1) {
 			s |= ITALIC;
 		}
-		if (style.indexOf(Markup.CSS_VALUE_OBLIQUE) != -1) {
+		if (style.indexOf(HtmlTags.OBLIQUE) != -1) {
 			s |= ITALIC;
 		}
-		if (style.indexOf(Markup.CSS_VALUE_UNDERLINE) != -1) {
+		if (style.indexOf(HtmlTags.UNDERLINE) != -1) {
 			s |= UNDERLINE;
 		}
-		if (style.indexOf(Markup.CSS_VALUE_LINETHROUGH) != -1) {
+		if (style.indexOf(HtmlTags.LINETHROUGH) != -1) {
 			s |= STRIKETHRU;
 		}
 		return s;

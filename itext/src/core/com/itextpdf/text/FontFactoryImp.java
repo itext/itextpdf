@@ -51,6 +51,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.Markup;
 import com.itextpdf.text.pdf.BaseFont;
 
@@ -230,14 +231,14 @@ public class FontFactoryImp implements FontProvider {
         float size = Font.UNDEFINED;
         int style = Font.NORMAL;
         BaseColor color = null;
-        String value = attributes.getProperty(Markup.HTML_ATTR_STYLE);
+        String value = attributes.getProperty(HtmlTags.STYLE);
         if (value != null && value.length() > 0) {
             Properties styleAttributes = Markup.parseAttributes(value);
             if (styleAttributes.isEmpty()) {
-                attributes.put(Markup.HTML_ATTR_STYLE, value);
+                attributes.put(HtmlTags.STYLE, value);
             }
             else {
-                fontname = styleAttributes.getProperty(Markup.CSS_KEY_FONTFAMILY);
+                fontname = styleAttributes.getProperty(HtmlTags.FONTFAMILY);
                 if (fontname != null) {
                     String tmp;
                     while (fontname.indexOf(',') != -1) {
@@ -250,16 +251,16 @@ public class FontFactoryImp implements FontProvider {
                         }
                     }
                 }
-                if ((value = styleAttributes.getProperty(Markup.CSS_KEY_FONTSIZE)) != null) {
+                if ((value = styleAttributes.getProperty(HtmlTags.FONTSIZE)) != null) {
                     size = Markup.parseLength(value);
                 }
-                if ((value = styleAttributes.getProperty(Markup.CSS_KEY_FONTWEIGHT)) != null) {
+                if ((value = styleAttributes.getProperty(HtmlTags.FONTWEIGHT)) != null) {
                     style |= Font.getStyleValue(value);
                 }
-                if ((value = styleAttributes.getProperty(Markup.CSS_KEY_FONTSTYLE)) != null) {
+                if ((value = styleAttributes.getProperty(HtmlTags.FONTSTYLE)) != null) {
                     style |= Font.getStyleValue(value);
                 }
-                if ((value = styleAttributes.getProperty(Markup.CSS_KEY_COLOR)) != null) {
+                if ((value = styleAttributes.getProperty(HtmlTags.COLOR)) != null) {
                     color = Markup.decodeColor(value);
                 }
                 attributes.putAll(styleAttributes);
@@ -277,7 +278,7 @@ public class FontFactoryImp implements FontProvider {
         if ((value = attributes.getProperty(ElementTags.SIZE)) != null) {
             size = Markup.parseLength(value);
         }
-        if ((value = attributes.getProperty(Markup.HTML_ATTR_STYLE)) != null) {
+        if ((value = attributes.getProperty(HtmlTags.STYLE)) != null) {
             style |= Font.getStyleValue(value);
         }
         if ((value = attributes.getProperty(ElementTags.STYLE)) != null) {

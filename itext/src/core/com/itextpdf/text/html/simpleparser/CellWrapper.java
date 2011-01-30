@@ -82,7 +82,7 @@ public class CellWrapper implements TextElementArray {
      * @param	chain	properties such as width
      * @since	5.0.6
      */
-    public CellWrapper(String tag, AttributeChain chain) {
+    public CellWrapper(String tag, ChainedProperties chain) {
         this.cell = createPdfPCell(tag, chain);
     	String value = chain.getProperty("width");
         if (value != null) {
@@ -100,7 +100,7 @@ public class CellWrapper implements TextElementArray {
      * @param	tag		a cell tag
      * @param	chain	the hierarchy chain
      */
-	public PdfPCell createPdfPCell(String tag, AttributeChain chain) {
+	public PdfPCell createPdfPCell(String tag, ChainedProperties chain) {
 		PdfPCell cell = new PdfPCell((Phrase)null);
         // colspan
 		String value = chain.getProperty("colspan");

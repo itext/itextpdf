@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.html;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.itextpdf.text.Element;
 import com.itextpdf.text.BaseColor;
 
@@ -77,33 +80,35 @@ import com.itextpdf.text.BaseColor;
 public final class HtmlEncoder {
     
     // membervariables
-    
-/** List with the HTML translation of all the characters. */
-    private static final String[] htmlCode = new String[256];
+    /**
+     * List with the HTML translation of all the characters.
+     * @since 5.0.6 (renamed from htmlCode)
+     */
+    private static final String[] HTML_CODE = new String[256];
     
     static {
         for (int i = 0; i < 10; i++) {
-            htmlCode[i] = "&#00" + i + ";";
+            HTML_CODE[i] = "&#00" + i + ";";
         }
         
         for (int i = 10; i < 32; i++) {
-            htmlCode[i] = "&#0" + i + ";";
+            HTML_CODE[i] = "&#0" + i + ";";
         }
         
         for (int i = 32; i < 128; i++) {
-            htmlCode[i] = String.valueOf((char)i);
+            HTML_CODE[i] = String.valueOf((char)i);
         }
         
         // Special characters
-        htmlCode['\t'] = "\t";
-        htmlCode['\n'] = "<" + HtmlTags.NEWLINE + " />\n";
-        htmlCode['\"'] = "&quot;"; // double quote
-        htmlCode['&'] = "&amp;"; // ampersand
-        htmlCode['<'] = "&lt;"; // lower than
-        htmlCode['>'] = "&gt;"; // greater than
+        HTML_CODE['\t'] = "\t";
+        HTML_CODE['\n'] = "<br />\n";
+        HTML_CODE['\"'] = "&quot;"; // double quote
+        HTML_CODE['&'] = "&amp;"; // ampersand
+        HTML_CODE['<'] = "&lt;"; // lower than
+        HTML_CODE['>'] = "&gt;"; // greater than
         
         for (int i = 128; i < 256; i++) {
-            htmlCode[i] = "&#" + i + ";";
+            HTML_CODE[i] = "&#" + i + ";";
         }
     }
     
@@ -136,7 +141,7 @@ public final class HtmlEncoder {
             character = string.charAt(i);
             // the Htmlcode of these characters are added to a StringBuffer one by one
             if (character < 256) {
-                buffer.append(htmlCode[character]);
+                buffer.append(HTML_CODE[character]);
             }
             else {
                 // Improvement posted by Joachim Eyrich
@@ -169,7 +174,31 @@ public final class HtmlEncoder {
         buffer.append(Integer.toString(color.getBlue(), 16));
         return buffer.toString();
     }
-    
+
+
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_LEFT = "Left";
+
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_CENTER = "Center";
+
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_RIGHT = "Right";
+
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_JUSTIFIED = "Justify";
+
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_TOP = "Top";
+
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_MIDDLE = "Middle";
+
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_BOTTOM = "Bottom";
+
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_BASELINE = "Baseline";
 /**
  * Translates the alignment value.
  *
@@ -180,24 +209,45 @@ public final class HtmlEncoder {
     public static String getAlignment(int alignment) {
         switch(alignment) {
             case Element.ALIGN_LEFT:
-                return HtmlTags.ALIGN_LEFT;
+                return ALIGN_LEFT;
             case Element.ALIGN_CENTER:
-                return HtmlTags.ALIGN_CENTER;
+                return ALIGN_CENTER;
             case Element.ALIGN_RIGHT:
-                return HtmlTags.ALIGN_RIGHT;
+                return ALIGN_RIGHT;
             case Element.ALIGN_JUSTIFIED:
             case Element.ALIGN_JUSTIFIED_ALL:
-                return HtmlTags.ALIGN_JUSTIFIED;
+                return ALIGN_JUSTIFIED;
             case Element.ALIGN_TOP:
-                return HtmlTags.ALIGN_TOP;
+                return ALIGN_TOP;
             case Element.ALIGN_MIDDLE:
-                return HtmlTags.ALIGN_MIDDLE;
+                return ALIGN_MIDDLE;
             case Element.ALIGN_BOTTOM:
-                return HtmlTags.ALIGN_BOTTOM;
+                return ALIGN_BOTTOM;
             case Element.ALIGN_BASELINE:
-                return HtmlTags.ALIGN_BASELINE;
+                return ALIGN_BASELINE;
                 default:
                     return "";
         }
     }
+    
+	/**
+	 * Set containing tags that trigger a new line.
+	 * @since iText 5.0.6
+	 */
+	private static final Set<String> newLineTags = new HashSet<String>();
+	static {
+		// Following list are the basic html tags that force new lines
+		// List may be extended as we discover them
+		newLineTags.add("p");
+		newLineTags.add("blockquote");
+		newLineTags.add("br");
+	}	
+	
+	/**
+	 * Returns true if the tag causes a new line like p, br etc.
+	 * @since iText 5.0.6
+	 */
+	public static boolean isNewLineTag(String tag) {
+		return newLineTags.contains(tag);
+	}
 }

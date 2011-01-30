@@ -52,7 +52,7 @@ import com.itextpdf.text.DocumentException;
  * Interface that needs to be implemented by every tag that is supported by HTMLWorker.
  * @since 5.0.6
  */
-public interface TagProcessor {
+public interface HTMLTagProcessor {
 	
 	/**
 	 * Implement this class to tell the HTMLWorker what to do

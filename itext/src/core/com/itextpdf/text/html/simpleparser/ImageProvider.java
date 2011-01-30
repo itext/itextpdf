@@ -49,5 +49,5 @@ import com.itextpdf.text.DocListener;
 import com.itextpdf.text.Image;
 
 public interface ImageProvider {
-    Image getImage(String src, Map<String, String> attrs, AttributeChain chain, DocListener doc);
+    Image getImage(String src, Map<String, String> attrs, ChainedProperties chain, DocListener doc);
 }

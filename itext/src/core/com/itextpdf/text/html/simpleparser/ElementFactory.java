@@ -75,6 +75,8 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
  * @since 5.0.6 (renamed)
  */
 public class ElementFactory {
+	
+
 
 	/**
 	 * The font provider that will be used to fetch fonts.
@@ -111,7 +113,7 @@ public class ElementFactory {
 	 * @param	chain	chain of properties
 	 * @return	an iText Font object
 	 */
-	public Font getFont(AttributeChain chain) {
+	public Font getFont(ChainedProperties chain) {
 		
 		// [1] font name
 		
@@ -122,7 +124,7 @@ public class ElementFactory {
 		//    Map all our supported style attributes to the 'normal' tag name, so we could   
 		//    look everything up under that one tag, retrieving the most current value.
 		if (face == null || face.trim().length() == 0) {
-			face = chain.getProperty(Markup.CSS_KEY_FONTFAMILY);
+			face = chain.getProperty(HtmlTags.FONTFAMILY);
 		}
 		// if the font consists of a comma separated list,
 		// take the first font that is registered
@@ -156,25 +158,25 @@ public class ElementFactory {
 		int style = 0;
 		
 		// text-decoration
-		String decoration = chain.getProperty(Markup.CSS_KEY_TEXTDECORATION);
+		String decoration = chain.getProperty(HtmlTags.TEXTDECORATION);
 		if (decoration != null && decoration.trim().length() != 0) {
-		  if (Markup.CSS_VALUE_UNDERLINE.equals(decoration)) {
+		  if (HtmlTags.UNDERLINE.equals(decoration)) {
 		    style |= Font.UNDERLINE;
-		  } else if (Markup.CSS_VALUE_LINETHROUGH.equals(decoration)) {
+		  } else if (HtmlTags.LINETHROUGH.equals(decoration)) {
 		    style |= Font.STRIKETHRU;
 		  }
 		}
 		// italic
-		if (chain.hasProperty(HtmlTags.I))
+		if (chain.hasProperty("i"))
 			style |= Font.ITALIC;
 		// bold
-		if (chain.hasProperty(HtmlTags.B))
+		if (chain.hasProperty("b"))
 			style |= Font.BOLD;
 		// underline
-		if (chain.hasProperty(HtmlTags.U))
+		if (chain.hasProperty("u"))
 			style |= Font.UNDERLINE;
 		// strikethru
-		if (chain.hasProperty(HtmlTags.S))
+		if (chain.hasProperty("s"))
 			style |= Font.STRIKETHRU;
 		
 		// [6] Color
@@ -191,7 +193,7 @@ public class ElementFactory {
 	 * @param chain the hierarchy chain
 	 * @return a Chunk
 	 */
-	public Chunk createChunk(String content, AttributeChain chain) {
+	public Chunk createChunk(String content, ChainedProperties chain) {
 		Font font = getFont(chain);
 		Chunk ck = new Chunk(content, font);
 		if (chain.hasProperty("sub"))
@@ -208,7 +210,7 @@ public class ElementFactory {
 	 * @param	chain	the hierarchy chain
 	 * @return	a Paragraph without any content
 	 */
-	public Paragraph createParagraph(AttributeChain chain) {
+	public Paragraph createParagraph(ChainedProperties chain) {
 		Paragraph paragraph = new Paragraph();
 		updateElement(paragraph, chain);
 		return paragraph;
@@ -220,7 +222,7 @@ public class ElementFactory {
 	 * @param	chain	the hierarchy chain
 	 * @return	a ListItem without any content
 	 */
-	public ListItem createListItem(AttributeChain chain) {
+	public ListItem createListItem(ChainedProperties chain) {
 		ListItem item = new ListItem();
 		updateElement(item, chain);
 		return item;
@@ -232,7 +234,7 @@ public class ElementFactory {
 	 * @param paragraph
 	 * @param chain
 	 */
-	protected void updateElement(Paragraph paragraph, AttributeChain chain) {
+	protected void updateElement(Paragraph paragraph, ChainedProperties chain) {
 		// Alignment
 		String value = chain.getProperty("align");
 		paragraph.setAlignment(ElementTags.alignmentValue(value));
@@ -312,7 +314,7 @@ public class ElementFactory {
 	 * @return	a HyphenationEvent
 	 * @since	2.1.2
 	 */
-	public HyphenationEvent getHyphenation(AttributeChain chain) {
+	public HyphenationEvent getHyphenation(ChainedProperties chain) {
 		String value = chain.getProperty("hyphenation");
 		// no hyphenation defined
 		if (value == null || value.length() == 0) {
@@ -378,7 +380,7 @@ public class ElementFactory {
 	public Image createImage(
 			String src,
 			Map<String, String> attrs,
-			AttributeChain chain,
+			ChainedProperties chain,
 			DocListener document,
 			ImageProvider img_provider,
 			HashMap<String, Image> img_store,
@@ -441,7 +443,7 @@ public class ElementFactory {
 		return img;
 	}
 	
-	public List createList(String tag, AttributeChain chain) {
+	public List createList(String tag, ChainedProperties chain) {
 		List list;
 		if ("ul".equalsIgnoreCase(tag)) {
 			list = new List(List.UNORDERED);

@@ -49,6 +49,7 @@ import java.util.Properties;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ElementTags;
+import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.Markup;
 
 public class StyleSheet {
@@ -142,7 +143,7 @@ public class StyleSheet {
 			attrs.putAll(temp);
 		}
 		// look for the class attribute
-		String cm = attrs.get(Markup.HTML_ATTR_CSS_CLASS);
+		String cm = attrs.get(HtmlTags.CLASS);
 		if (cm == null)
 			return;
 		// fetch the styles corresponding with the class attribute
@@ -150,7 +151,7 @@ public class StyleSheet {
 		if (map == null)
 			return;
 		// remove the class attribute from the properties
-		attrs.remove(Markup.HTML_ATTR_CSS_CLASS);
+		attrs.remove(HtmlTags.CLASS);
 		// create a map with the styles corresponding with the class value
 		Map<String, String> temp = new HashMap<String, String>(map);
 		// override with the existing properties
@@ -165,16 +166,16 @@ public class StyleSheet {
 	 * @param chain
 	 * @since 2.1.3
 	 */
-	public static void resolveStyleAttribute(Map<String, String> h, AttributeChain chain) {
-		String style = h.get("style");
+	public static void resolveStyleAttribute(Map<String, String> h, ChainedProperties chain) {
+		String style = h.get(HtmlTags.STYLE);
 		if (style == null)
 			return;
 		Properties prop = Markup.parseAttributes(style);
 		for (Object element : prop.keySet()) {
 			String key = (String) element;
-			if (key.equals(Markup.CSS_KEY_FONTFAMILY)) {
+			if (key.equals(HtmlTags.FONTFAMILY)) {
 				h.put(ElementTags.FACE, prop.getProperty(key));
-			} else if (key.equals(Markup.CSS_KEY_FONTSIZE)) {
+			} else if (key.equals(HtmlTags.FONTSIZE)) {
 				float actualFontSize = Markup.parseLength(chain
 						.getProperty(ElementTags.SIZE),
 						Markup.DEFAULT_FONT_SIZE);
@@ -183,20 +184,20 @@ public class StyleSheet {
 				h.put(ElementTags.SIZE, Float.toString(Markup.parseLength(prop
 						.getProperty(key), actualFontSize))
 						+ "pt");
-			} else if (key.equals(Markup.CSS_KEY_FONTSTYLE)) {
+			} else if (key.equals(HtmlTags.FONTSTYLE)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				if (ss.equals("italic") || ss.equals("oblique"))
 					h.put("i", null);
-			} else if (key.equals(Markup.CSS_KEY_FONTWEIGHT)) {
+			} else if (key.equals(HtmlTags.FONTWEIGHT)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				if (ss.equals("bold") || ss.equals("700") || ss.equals("800")
 						|| ss.equals("900"))
 					h.put("b", null);
-			} else if (key.equals(Markup.CSS_KEY_TEXTDECORATION)) {
+			} else if (key.equals(HtmlTags.TEXTDECORATION)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
-				if (ss.equals(Markup.CSS_VALUE_UNDERLINE))
+				if (ss.equals(HtmlTags.UNDERLINE))
 					h.put("u", null);
-			} else if (key.equals(Markup.CSS_KEY_COLOR)) {
+			} else if (key.equals(HtmlTags.COLOR)) {
 				BaseColor c = Markup.decodeColor(prop.getProperty(key));
 				if (c != null) {
 					int hh = c.getRGB();
@@ -205,7 +206,7 @@ public class StyleSheet {
 					hs = "#" + hs.substring(hs.length() - 6);
 					h.put("color", hs);
 				}
-			} else if (key.equals(Markup.CSS_KEY_LINEHEIGHT)) {
+			} else if (key.equals(HtmlTags.LINEHEIGHT)) {
 				String ss = prop.getProperty(key).trim();
 				float actualFontSize = Markup.parseLength(chain
 						.getProperty(ElementTags.SIZE),
@@ -223,10 +224,10 @@ public class StyleSheet {
 					return;
 				}
 				h.put("leading", v + ",0");
-			} else if (key.equals(Markup.CSS_KEY_TEXTALIGN)) {
+			} else if (key.equals(HtmlTags.TEXTALIGN)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				h.put("align", ss);
-			} else if (key.equals(Markup.CSS_KEY_PADDINGLEFT)) {
+			} else if (key.equals(HtmlTags.PADDINGLEFT)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				h.put("indent", Float.toString(Markup.parseLength(ss)));
 			}
