@@ -120,7 +120,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 */
 	public void setSupportedTags(Map<String, HTMLTagProcessor> tags) {
 		if (tags == null)
-			tags = new HTMLProcessors();
+			tags = new HTMLTagProcessors();
 		this.tags = tags;
 	}
 	
