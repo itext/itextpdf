@@ -56,7 +56,6 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.Image;
@@ -65,6 +64,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.TextElementArray;
+import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -444,7 +444,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @since 5.0.6
 	 */
 	public Image createImage(Map<String, String> attrs) throws DocumentException, IOException {
-		String src = attrs.get(ElementTags.SRC);
+		String src = attrs.get(HtmlTags.SRC);
 		if (src == null)
 			return null;
 		Image img = factory.createImage(
@@ -558,7 +558,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				currentParagraph = createParagraph();
 			}
 			currentParagraph.add(new Chunk(img, 0, 0, true));
-			currentParagraph.setAlignment(ElementTags.alignmentValue(align));
+			currentParagraph.setAlignment(HtmlUtilities.alignmentValue(align));
 			if (align != null) {
 				carriageReturn();
 			}

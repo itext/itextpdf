@@ -53,7 +53,6 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.FontProvider;
@@ -117,7 +116,7 @@ public class ElementFactory {
 		
 		// [1] font name
 		
-		String face = chain.getProperty(ElementTags.FACE);
+		String face = chain.getProperty(HtmlTags.FACE);
 		// try again, under the CSS key.  
 		//ISSUE: If both are present, we always go with face, even if font-family was  
 		//  defined more recently in our ChainedProperties.  One solution would go like this: 
@@ -149,7 +148,7 @@ public class ElementFactory {
 		// [3] embedded
 		
 		// [4] font size
-		String value = chain.getProperty(ElementTags.SIZE);
+		String value = chain.getProperty(HtmlTags.SIZE);
 		float size = 12;
 		if (value != null)
 			size = Float.parseFloat(value);
@@ -237,7 +236,7 @@ public class ElementFactory {
 	protected void updateElement(Paragraph paragraph, ChainedProperties chain) {
 		// Alignment
 		String value = chain.getProperty("align");
-		paragraph.setAlignment(ElementTags.alignmentValue(value));
+		paragraph.setAlignment(HtmlUtilities.alignmentValue(value));
 		// hyphenation
 		paragraph.setHyphenation(getHyphenation(chain));
 		// leading
@@ -373,7 +372,7 @@ public class ElementFactory {
 		// line color
 		BaseColor lineColor = null;
 		// alignment
-		int align = ElementTags.alignmentValue(attrs.get("align"));
+		int align = HtmlUtilities.alignmentValue(attrs.get("align"));
 		return new LineSeparator(lineWidth, percentage, lineColor, align, offset);
 	}
 	
@@ -413,7 +412,7 @@ public class ElementFactory {
 			return null;
 		
 		float actualFontSize = HtmlUtilities.parseLength(
-			chain.getProperty(ElementTags.SIZE),
+			chain.getProperty(HtmlTags.SIZE),
 			HtmlUtilities.DEFAULT_FONT_SIZE);
 		if (actualFontSize <= 0f)
 			actualFontSize = HtmlUtilities.DEFAULT_FONT_SIZE;

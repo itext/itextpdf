@@ -48,7 +48,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.html.HtmlTags;
 
 /**
@@ -239,9 +238,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		 */
 		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
 			worker.carriageReturn();
-			if (!attrs.containsKey(ElementTags.SIZE)) {
+			if (!attrs.containsKey(HtmlTags.SIZE)) {
 				int v = 7 - Integer.parseInt(tag.substring(1));
-				attrs.put(ElementTags.SIZE, Integer.toString(v));
+				attrs.put(HtmlTags.SIZE, Integer.toString(v));
 			}
 			worker.updateChain(tag, attrs);
 		}
@@ -292,8 +291,8 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		 */
 		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
 			worker.carriageReturn();
-			if (!attrs.containsKey(ElementTags.FACE)) {
-				attrs.put(ElementTags.FACE, "Courier");
+			if (!attrs.containsKey(HtmlTags.FACE)) {
+				attrs.put(HtmlTags.FACE, "Courier");
 			}
 			worker.updateChain(tag, attrs);
 			worker.setInsidePRE(true);

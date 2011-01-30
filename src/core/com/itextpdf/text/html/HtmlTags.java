@@ -49,72 +49,106 @@ package com.itextpdf.text.html;
  */
 public class HtmlTags {
 
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String A = "a";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String B = "b";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String BODY = "body";
-	/** This is used for inline css style information */
+	/** name of a tag */
+	public static final String BLOCKQUOTE = "blockquote";
+	/** name of a tag */
 	public static final String BR = "br";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String DIV = "div";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String EM = "em";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String FONT = "font";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String H1 = "h1";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String H2 = "h2";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String H3 = "h3";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String H4 = "h4";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String H5 = "h5";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String H6 = "h6";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String HR = "hr";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String I = "i";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String IMG = "img";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String LI = "li";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String OL = "ol";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String P = "p";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String PRE = "pre";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String S = "s";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String SPAN = "span";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String STRIKE = "strike";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String STRONG = "strong";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String SUB = "sub";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String SUP = "sup";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String TABLE = "table";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String TD = "td";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String TH = "th";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String TR = "tr";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String U = "u";
-	/** This is used for inline css style information */
+	/** name of a tag */
 	public static final String UL = "ul";
-	
+
 	// attributes
+	
+	/** name of an attribute */
+	public static final String COLSPAN = "colspan";
+	/** name of an attribute */
+	public static final String FACE = "face";
+	/** name of an attribute */
+	public static final String SIZE = "size";
+	/** name of an attribute */
+	public static final String SRC = "src";
+	
+	// attribute values
+	
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_LEFT = "left";
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_CENTER = "center";
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_RIGHT = "right";
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_JUSTIFY = "justify";
+    /** the possible value of an alignment attribute */
+    public static final String ALIGN_JUSTIFIED_ALL = "JustifyAll";
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_TOP = "top";
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_MIDDLE = "middle";
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_BOTTOM = "bottom";
+	/** the possible value of an alignment attribute */
+	public static final String ALIGN_BASELINE = "baseline";
+	
+	// CSS
 	
 	/** This is used for inline css style information */
 	public static final String STYLE = "style";
@@ -153,6 +187,4 @@ public class HtmlTags {
 	/** a CSS value for text decoration */
 	public static final String UNDERLINE = "underline";
 
-	// attribute values
-	
 }

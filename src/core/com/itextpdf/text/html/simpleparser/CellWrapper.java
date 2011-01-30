@@ -50,6 +50,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.TextElementArray;
+import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.PdfPCell;
 
@@ -103,7 +104,7 @@ public class CellWrapper implements TextElementArray {
 	public PdfPCell createPdfPCell(String tag, ChainedProperties chain) {
 		PdfPCell cell = new PdfPCell((Phrase)null);
         // colspan
-		String value = chain.getProperty("colspan");
+		String value = chain.getProperty(HtmlTags.COLSPAN);
         if (value != null)
             cell.setColspan(Integer.parseInt(value));
         // rowspan

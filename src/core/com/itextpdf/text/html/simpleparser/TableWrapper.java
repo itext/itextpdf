@@ -52,7 +52,7 @@ import java.util.Map;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
-import com.itextpdf.text.ElementTags;
+import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 
@@ -138,7 +138,7 @@ public class TableWrapper implements Element {
         String alignment = styles.get("align");
         int align = Element.ALIGN_LEFT;
         if (alignment != null) {
-        	align = ElementTags.alignmentValue(alignment);
+        	align = HtmlUtilities.alignmentValue(alignment);
         }
         table.setHorizontalAlignment(align);
         // column widths
