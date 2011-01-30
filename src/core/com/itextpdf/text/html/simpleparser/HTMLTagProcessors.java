@@ -124,12 +124,12 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		 * @return the mapped tag
 		 */
 		private String mapTag(String tag) {
-			if ("em".equalsIgnoreCase(tag))
-				return "i";
-			if ("strong".equalsIgnoreCase(tag))
-				return "b";
-			if ("strike".equalsIgnoreCase(tag))
-				return "s";
+			if (HtmlTags.EM.equalsIgnoreCase(tag))
+				return HtmlTags.I;
+			if (HtmlTags.STRONG.equalsIgnoreCase(tag))
+				return HtmlTags.B;
+			if (HtmlTags.STRIKE.equalsIgnoreCase(tag))
+				return HtmlTags.S;
 			return tag;
 		}
 		
@@ -181,7 +181,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
 			worker.carriageReturn();
 			if (worker.isPendingLI())
-				worker.endElement("li");
+				worker.endElement(HtmlTags.LI);
 			worker.setSkipText(true);
 			worker.updateChain(tag, attrs);;
 			worker.pushToStack(worker.createList(tag));
@@ -193,7 +193,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
 			worker.carriageReturn();
 			if (worker.isPendingLI())
-				worker.endElement("li");
+				worker.endElement(HtmlTags.LI);
 			worker.setSkipText(false);
 			worker.updateChain(tag);
 			worker.processList();
@@ -275,7 +275,6 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		 */
 		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
 			worker.carriageReturn();
-
 			worker.setPendingLI(false);
 			worker.setSkipText(true);
 			worker.updateChain(tag);
@@ -345,7 +344,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.setPendingTR(false);
 			worker.setSkipText(true);
 			// Table alignment should not affect children elements, thus remove
-			attrs.remove("align");
+			attrs.remove(HtmlTags.ALIGN);
 			worker.updateChain(tag, attrs);
 		}
 
@@ -355,7 +354,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
 			worker.carriageReturn();
 			if (worker.isPendingTR())
-				worker.endElement("tr");
+				worker.endElement(HtmlTags.TR);
 			worker.updateChain(tag);
 			worker.processTable();
 			worker.popTableState();
@@ -384,7 +383,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
 			worker.carriageReturn();
 			if (worker.isPendingTD())
-				worker.endElement("td");
+				worker.endElement(HtmlTags.TD);
 			worker.setPendingTR(false);
 			worker.updateChain(tag);
 			worker.processRow();
@@ -404,7 +403,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 				worker.endElement(tag);
 			worker.setSkipText(false);
 			worker.setPendingTD(true);
-			worker.updateChain("td", attrs);
+			worker.updateChain(HtmlTags.TD, attrs);
 			worker.pushToStack(worker.createCell(tag));
 		}
 
@@ -414,7 +413,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		public void endElement(HTMLWorker worker, String tag) throws DocumentException {
 			worker.carriageReturn();
 			worker.setPendingTD(false);
-			worker.updateChain("td");
+			worker.updateChain(HtmlTags.TD);
 			worker.setSkipText(true);
 		}
 		

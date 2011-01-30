@@ -141,7 +141,7 @@ public class ElementFactory {
 		}
 		
 		// [2] encoding
-		String encoding = chain.getProperty("encoding");
+		String encoding = chain.getProperty(HtmlTags.ENCODING);
 		if (encoding == null)
 			encoding = BaseFont.WINANSI;
 		
@@ -166,20 +166,20 @@ public class ElementFactory {
 		  }
 		}
 		// italic
-		if (chain.hasProperty("i"))
+		if (chain.hasProperty(HtmlTags.I))
 			style |= Font.ITALIC;
 		// bold
-		if (chain.hasProperty("b"))
+		if (chain.hasProperty(HtmlTags.B))
 			style |= Font.BOLD;
 		// underline
-		if (chain.hasProperty("u"))
+		if (chain.hasProperty(HtmlTags.U))
 			style |= Font.UNDERLINE;
 		// strikethru
-		if (chain.hasProperty("s"))
+		if (chain.hasProperty(HtmlTags.S))
 			style |= Font.STRIKETHRU;
 		
 		// [6] Color
-		BaseColor color = HtmlUtilities.decodeColor(chain.getProperty("color"));
+		BaseColor color = HtmlUtilities.decodeColor(chain.getProperty(HtmlTags.COLOR));
 		
 		// Get the font object from the provider
 		return provider.getFont(face, encoding, true, size, style, color);
@@ -195,9 +195,9 @@ public class ElementFactory {
 	public Chunk createChunk(String content, ChainedProperties chain) {
 		Font font = getFont(chain);
 		Chunk ck = new Chunk(content, font);
-		if (chain.hasProperty("sub"))
+		if (chain.hasProperty(HtmlTags.SUB))
 			ck.setTextRise(-font.getSize() / 2);
-		else if (chain.hasProperty("sup"))
+		else if (chain.hasProperty(HtmlTags.SUP))
 			ck.setTextRise(font.getSize() / 2);
 		ck.setHyphenation(getHyphenation(chain));
 		return ck;
@@ -235,14 +235,14 @@ public class ElementFactory {
 	 */
 	protected void updateElement(Paragraph paragraph, ChainedProperties chain) {
 		// Alignment
-		String value = chain.getProperty("align");
+		String value = chain.getProperty(HtmlTags.ALIGN);
 		paragraph.setAlignment(HtmlUtilities.alignmentValue(value));
 		// hyphenation
 		paragraph.setHyphenation(getHyphenation(chain));
 		// leading
-		setParagraphLeading(paragraph, chain.getProperty("leading"));
+		setParagraphLeading(paragraph, chain.getProperty(HtmlTags.LEADING));
 		// spacing before
-		value = chain.getProperty("before");
+		value = chain.getProperty(HtmlTags.AFTER);
 		if (value != null) {
 			try {
 				paragraph.setSpacingBefore(Float.parseFloat(value));
@@ -250,7 +250,7 @@ public class ElementFactory {
 			}
 		}
 		// spacing after
-		value = chain.getProperty("after");
+		value = chain.getProperty(HtmlTags.AFTER);
 		if (value != null) {
 			try {
 				paragraph.setSpacingAfter(Float.parseFloat(value));
@@ -258,7 +258,7 @@ public class ElementFactory {
 			}
 		}
 		// extra paragraph space
-		value = chain.getProperty("extraparaspace");
+		value = chain.getProperty(HtmlTags.EXTRAPARASPACE);
 		if (value != null) {
 			try {
 				paragraph.setExtraParagraphSpace(Float.parseFloat(value));
@@ -266,7 +266,7 @@ public class ElementFactory {
 			}
 		}
 		// indentation
-		value = chain.getProperty("indent");
+		value = chain.getProperty(HtmlTags.INDENT);
 		if (value != null) {
 			try {
 				paragraph.setIndentationLeft(Float.parseFloat(value));
@@ -314,7 +314,7 @@ public class ElementFactory {
 	 * @since	2.1.2
 	 */
 	public HyphenationEvent getHyphenation(ChainedProperties chain) {
-		String value = chain.getProperty("hyphenation");
+		String value = chain.getProperty(HtmlTags.HYPHENATION);
 		// no hyphenation defined
 		if (value == null || value.length() == 0) {
 			return null;
@@ -354,14 +354,14 @@ public class ElementFactory {
 	public LineSeparator createLineSeparator(Map<String, String> attrs, float offset) {
 		// line thickness
 		float lineWidth = 1;
-		String size = attrs.get("size");
+		String size = attrs.get(HtmlTags.SIZE);
 		if (size != null) {
 			float tmpSize = HtmlUtilities.parseLength(size, HtmlUtilities.DEFAULT_FONT_SIZE);
 			if (tmpSize > 0)
 				lineWidth = tmpSize;
 		}
 		// width percentage
-		String width = attrs.get("width");
+		String width = attrs.get(HtmlTags.WIDTH);
 		float percentage = 100;
 		if (width != null) {
 			float tmpWidth = HtmlUtilities.parseLength(width, HtmlUtilities.DEFAULT_FONT_SIZE);
@@ -372,7 +372,7 @@ public class ElementFactory {
 		// line color
 		BaseColor lineColor = null;
 		// alignment
-		int align = HtmlUtilities.alignmentValue(attrs.get("align"));
+		int align = HtmlUtilities.alignmentValue(attrs.get(HtmlTags.ALIGN));
 		return new LineSeparator(lineWidth, percentage, lineColor, align, offset);
 	}
 	
@@ -402,7 +402,7 @@ public class ElementFactory {
 			src = img_baseurl + src;
 		}
 		else if (img == null && !src.startsWith("http")) {
-			String path = chain.getProperty("image_path");
+			String path = chain.getProperty(HtmlTags.IMAGEPATH);
 			if (path == null)
 				path = "";
 			src = new File(path, src).getPath();
@@ -416,9 +416,9 @@ public class ElementFactory {
 			HtmlUtilities.DEFAULT_FONT_SIZE);
 		if (actualFontSize <= 0f)
 			actualFontSize = HtmlUtilities.DEFAULT_FONT_SIZE;
-		String width = attrs.get("width");
+		String width = attrs.get(HtmlTags.WIDTH);
 		float widthInPoints = HtmlUtilities.parseLength(width, actualFontSize);
-		String height = attrs.get("height");
+		String height = attrs.get(HtmlTags.HEIGHT);
 		float heightInPoints = HtmlUtilities.parseLength(height, actualFontSize);
 		if (widthInPoints > 0 && heightInPoints > 0) {
 			img.scaleAbsolute(widthInPoints, heightInPoints);
@@ -432,10 +432,10 @@ public class ElementFactory {
 			img.scaleAbsolute(widthInPoints, heightInPoints);
 		}
 		
-		String before = chain.getProperty("before");
+		String before = chain.getProperty(HtmlTags.BEFORE);
 		if (before != null)
 			img.setSpacingBefore(Float.parseFloat(before));
-		String after = chain.getProperty("after");
+		String after = chain.getProperty(HtmlTags.AFTER);
 		if (after != null)
 			img.setSpacingAfter(Float.parseFloat(after));
 		img.setWidthPercentage(0);
@@ -452,7 +452,7 @@ public class ElementFactory {
 			list = new List(List.ORDERED);
 		}
 		try{
-			list.setIndentationLeft(new Float(chain.getProperty("indent")).floatValue());
+			list.setIndentationLeft(new Float(chain.getProperty(HtmlTags.INDENT)).floatValue());
 		}catch (Exception e) {
 			list.setAutoindent(true);
 		}

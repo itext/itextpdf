@@ -49,6 +49,8 @@ package com.itextpdf.text.html;
  */
 public class HtmlTags {
 
+	// tag names
+	
 	/** name of a tag */
 	public static final String A = "a";
 	/** name of a tag */
@@ -116,19 +118,49 @@ public class HtmlTags {
 	/** name of a tag */
 	public static final String UL = "ul";
 
-	// attributes
-	
+	// attributes (some are not real HTML attributes!)
+
+	/** name of an attribute */
+	public static final String ALIGN = "align";
+	/** name of an attribute */
+	public static final String BGCOLOR = "bgcolor";
+	/** name of an attribute */
+	public static final String BORDER = "border";
+	/** name of an attribute */
+	public static final String CELLPADDING = "cellpadding";
 	/** name of an attribute */
 	public static final String COLSPAN = "colspan";
 	/** name of an attribute */
+	public static final String EXTRAPARASPACE = "extraparaspace";
+	/** name of an attribute */
+	public static final String ENCODING = "encoding";
+	/** name of an attribute */
 	public static final String FACE = "face";
+	/** name of an attribute */
+	public static final String HEIGHT = "height";
+	/** name of an attribute */
+	public static final String HREF = "href";
+	/** name of an attribute */
+	public static final String HYPHENATION = "hyphenation";
+	/** name of an attribute */
+	public static final String INDENT = "indent";
+	/** name of an attribute */
+	public static final String IMAGEPATH = "image_path";
+	/** name of an attribute */
+	public static final String LEADING = "leading";
+	/** name of an attribute */
+	public static final String ROWSPAN = "rowspan";
 	/** name of an attribute */
 	public static final String SIZE = "size";
 	/** name of an attribute */
 	public static final String SRC = "src";
+	/** name of an attribute */
+	public static final String VALIGN = "valign";
+	/** name of an attribute */
+	public static final String WIDTH = "width";
 	
 	// attribute values
-	
+
 	/** the possible value of an alignment attribute */
 	public static final String ALIGN_LEFT = "left";
 	/** the possible value of an alignment attribute */
@@ -187,4 +219,8 @@ public class HtmlTags {
 	/** a CSS value for text decoration */
 	public static final String UNDERLINE = "underline";
 
+	/** a possible attribute */
+	public static final String AFTER = "after";
+	/** a possible attribute */
+	public static final String BEFORE = "before";
 }
