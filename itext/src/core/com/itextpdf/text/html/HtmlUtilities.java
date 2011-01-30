@@ -47,6 +47,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.HashMap;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Element;
 
 /**
  * A class that contains all the possible tagnames and their attributes.
@@ -323,5 +324,43 @@ public class HtmlUtilities {
 		else if (sIndex >= FONTSIZES.length)
 			sIndex = FONTSIZES.length - 1;
 		return FONTSIZES[sIndex];
+	}
+
+	/**
+	 * Translates a String value to an alignment value.
+	 * (written by Norman Richards, integrated into iText by Bruno)
+	 * @param	alignment a String (one of the ALIGN_ constants of this class)
+	 * @return	an alignment value (one of the ALIGN_ constants of the Element interface) 
+	 */
+	public static int alignmentValue(String alignment) {
+		if (alignment == null) return Element.ALIGN_UNDEFINED;
+	    if (HtmlTags.ALIGN_CENTER.equalsIgnoreCase(alignment)) {
+	        return Element.ALIGN_CENTER;
+	    }
+	    if (HtmlTags.ALIGN_LEFT.equalsIgnoreCase(alignment)) {
+	        return Element.ALIGN_LEFT;
+	    }
+	    if (HtmlTags.ALIGN_RIGHT.equalsIgnoreCase(alignment)) {
+	        return Element.ALIGN_RIGHT;
+	    }
+	    if (HtmlTags.ALIGN_JUSTIFY.equalsIgnoreCase(alignment)) {
+	        return Element.ALIGN_JUSTIFIED;
+	    }
+	    if (HtmlTags.ALIGN_JUSTIFIED_ALL.equalsIgnoreCase(alignment)) {
+	        return Element.ALIGN_JUSTIFIED_ALL;
+	    }
+	    if (HtmlTags.ALIGN_TOP.equalsIgnoreCase(alignment)) {
+	        return Element.ALIGN_TOP;
+	    }
+	    if (HtmlTags.ALIGN_MIDDLE.equalsIgnoreCase(alignment)) {
+	        return Element.ALIGN_MIDDLE;
+	    }
+	    if (HtmlTags.ALIGN_BOTTOM.equalsIgnoreCase(alignment)) {
+	        return Element.ALIGN_BOTTOM;
+	    }
+	    if (HtmlTags.ALIGN_BASELINE.equalsIgnoreCase(alignment)) {
+	        return Element.ALIGN_BASELINE;
+	    }
+	    return Element.ALIGN_UNDEFINED;
 	}
 }

@@ -258,31 +258,6 @@ public class Paragraph extends Phrase {
     }
 
     /**
-     * Sets the alignment of this paragraph.
-     *
-     * @param	alignment		the new alignment as a <CODE>String</CODE>
-     */
-    public void setAlignment(String alignment) {
-        if (ElementTags.ALIGN_CENTER.equalsIgnoreCase(alignment)) {
-            this.alignment = Element.ALIGN_CENTER;
-            return;
-        }
-        if (ElementTags.ALIGN_RIGHT.equalsIgnoreCase(alignment)) {
-            this.alignment = Element.ALIGN_RIGHT;
-            return;
-        }
-        if (ElementTags.ALIGN_JUSTIFIED.equalsIgnoreCase(alignment)) {
-            this.alignment = Element.ALIGN_JUSTIFIED;
-            return;
-        }
-        if (ElementTags.ALIGN_JUSTIFIED_ALL.equalsIgnoreCase(alignment)) {
-            this.alignment = Element.ALIGN_JUSTIFIED_ALL;
-            return;
-        }
-        this.alignment = Element.ALIGN_LEFT;
-    }
-
-    /**
      * @see com.itextpdf.text.Phrase#setLeading(float)
      */
     @Override

@@ -48,7 +48,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.HtmlUtilities;
 
@@ -174,14 +173,14 @@ public class StyleSheet {
 		for (Object element : prop.keySet()) {
 			String key = (String) element;
 			if (key.equals(HtmlTags.FONTFAMILY)) {
-				h.put(ElementTags.FACE, prop.getProperty(key));
+				h.put(HtmlTags.FACE, prop.getProperty(key));
 			} else if (key.equals(HtmlTags.FONTSIZE)) {
 				float actualFontSize = HtmlUtilities.parseLength(chain
-						.getProperty(ElementTags.SIZE),
+						.getProperty(HtmlTags.SIZE),
 						HtmlUtilities.DEFAULT_FONT_SIZE);
 				if (actualFontSize <= 0f)
 					actualFontSize = HtmlUtilities.DEFAULT_FONT_SIZE;
-				h.put(ElementTags.SIZE, Float.toString(HtmlUtilities.parseLength(prop
+				h.put(HtmlTags.SIZE, Float.toString(HtmlUtilities.parseLength(prop
 						.getProperty(key), actualFontSize))
 						+ "pt");
 			} else if (key.equals(HtmlTags.FONTSTYLE)) {
@@ -209,7 +208,7 @@ public class StyleSheet {
 			} else if (key.equals(HtmlTags.LINEHEIGHT)) {
 				String ss = prop.getProperty(key).trim();
 				float actualFontSize = HtmlUtilities.parseLength(chain
-						.getProperty(ElementTags.SIZE),
+						.getProperty(HtmlTags.SIZE),
 						HtmlUtilities.DEFAULT_FONT_SIZE);
 				if (actualFontSize <= 0f)
 					actualFontSize = HtmlUtilities.DEFAULT_FONT_SIZE;

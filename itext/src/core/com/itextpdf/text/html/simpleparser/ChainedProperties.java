@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.itextpdf.text.ElementTags;
+import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.HtmlUtilities;
 
 /**
@@ -149,17 +149,17 @@ public class ChainedProperties {
 	 */
 	protected void adjustFontSize(Map<String, String> attrs) {
 		// fetch the font size
-		String value = attrs.get(ElementTags.SIZE);
+		String value = attrs.get(HtmlTags.SIZE);
 		// do nothing if the font size isn't defined
 		if (value == null)
 			return;
 		// the font is defined as a real size: remove "pt"
 		if (value.endsWith("pt")) {
-			attrs.put(ElementTags.SIZE,
+			attrs.put(HtmlTags.SIZE,
 				value.substring(0, value.length() - 2));
 			return;
 		}
 		String old = getProperty("basefontsize");
-		attrs.put(ElementTags.SIZE, Integer.toString(HtmlUtilities.getIndexedFontSize(value, old)));
+		attrs.put(HtmlTags.SIZE, Integer.toString(HtmlUtilities.getIndexedFontSize(value, old)));
 	}
 }

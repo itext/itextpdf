@@ -112,26 +112,14 @@ public final class HtmlEncoder {
         }
     }
     
-    
-    // constructors
-    
-/**
- * This class will never be constructed.
- * <P>
- * HtmlEncoder only contains static methods.
- */
-    
-    private HtmlEncoder () { }
-    
     // methods
     
-/**
- * Converts a <CODE>String</CODE> to the HTML-format of this <CODE>String</CODE>.
- *
- * @param	string	The <CODE>String</CODE> to convert
- * @return	a <CODE>String</CODE>
- */
-    
+    /**
+     * Converts a <CODE>String</CODE> to the HTML-format of this <CODE>String</CODE>.
+     *
+     * @param	string	The <CODE>String</CODE> to convert
+     * @return	a <CODE>String</CODE>
+     */
     public static String encode(String string) {
         int n = string.length();
         char character;
@@ -151,13 +139,12 @@ public final class HtmlEncoder {
         return buffer.toString();
     }
     
-/**
- * Converts a <CODE>BaseColor</CODE> into a HTML representation of this <CODE>BaseColor</CODE>.
- *
- * @param	color	the <CODE>BaseColor</CODE> that has to be converted.
- * @return	the HTML representation of this <COLOR>BaseColor</COLOR>
- */
-    
+    /**
+     * Converts a <CODE>BaseColor</CODE> into a HTML representation of this <CODE>BaseColor</CODE>.
+     *
+     * @param	color	the <CODE>BaseColor</CODE> that has to be converted.
+     * @return	the HTML representation of this <COLOR>BaseColor</COLOR>
+     */
     public static String encode(BaseColor color) {
         StringBuffer buffer = new StringBuffer("#");
         if (color.getRed() < 16) {
@@ -175,56 +162,31 @@ public final class HtmlEncoder {
         return buffer.toString();
     }
 
-
-	/** the possible value of an alignment attribute */
-	public static final String ALIGN_LEFT = "Left";
-
-	/** the possible value of an alignment attribute */
-	public static final String ALIGN_CENTER = "Center";
-
-	/** the possible value of an alignment attribute */
-	public static final String ALIGN_RIGHT = "Right";
-
-	/** the possible value of an alignment attribute */
-	public static final String ALIGN_JUSTIFIED = "Justify";
-
-	/** the possible value of an alignment attribute */
-	public static final String ALIGN_TOP = "Top";
-
-	/** the possible value of an alignment attribute */
-	public static final String ALIGN_MIDDLE = "Middle";
-
-	/** the possible value of an alignment attribute */
-	public static final String ALIGN_BOTTOM = "Bottom";
-
-	/** the possible value of an alignment attribute */
-	public static final String ALIGN_BASELINE = "Baseline";
-/**
- * Translates the alignment value.
- *
- * @param   alignment   the alignment value
- * @return  the translated value
- */
-    
+    /**
+     * Translates the alignment value.
+     *
+     * @param   alignment   the alignment value
+     * @return  the translated value
+     */
     public static String getAlignment(int alignment) {
         switch(alignment) {
             case Element.ALIGN_LEFT:
-                return ALIGN_LEFT;
+                return HtmlTags.ALIGN_LEFT;
             case Element.ALIGN_CENTER:
-                return ALIGN_CENTER;
+                return HtmlTags.ALIGN_CENTER;
             case Element.ALIGN_RIGHT:
-                return ALIGN_RIGHT;
+                return HtmlTags.ALIGN_RIGHT;
             case Element.ALIGN_JUSTIFIED:
             case Element.ALIGN_JUSTIFIED_ALL:
-                return ALIGN_JUSTIFIED;
+                return HtmlTags.ALIGN_JUSTIFY;
             case Element.ALIGN_TOP:
-                return ALIGN_TOP;
+                return HtmlTags.ALIGN_TOP;
             case Element.ALIGN_MIDDLE:
-                return ALIGN_MIDDLE;
+                return HtmlTags.ALIGN_MIDDLE;
             case Element.ALIGN_BOTTOM:
-                return ALIGN_BOTTOM;
+                return HtmlTags.ALIGN_BOTTOM;
             case Element.ALIGN_BASELINE:
-                return ALIGN_BASELINE;
+                return HtmlTags.ALIGN_BASELINE;
                 default:
                     return "";
         }
@@ -234,13 +196,13 @@ public final class HtmlEncoder {
 	 * Set containing tags that trigger a new line.
 	 * @since iText 5.0.6
 	 */
-	private static final Set<String> newLineTags = new HashSet<String>();
+	private static final Set<String> NEWLINETAGS = new HashSet<String>();
 	static {
 		// Following list are the basic html tags that force new lines
 		// List may be extended as we discover them
-		newLineTags.add("p");
-		newLineTags.add("blockquote");
-		newLineTags.add("br");
+		NEWLINETAGS.add(HtmlTags.P);
+		NEWLINETAGS.add(HtmlTags.BLOCKQUOTE);
+		NEWLINETAGS.add(HtmlTags.BR);
 	}	
 	
 	/**
@@ -248,6 +210,6 @@ public final class HtmlEncoder {
 	 * @since iText 5.0.6
 	 */
 	public static boolean isNewLineTag(String tag) {
-		return newLineTags.contains(tag);
+		return NEWLINETAGS.contains(tag);
 	}
 }
