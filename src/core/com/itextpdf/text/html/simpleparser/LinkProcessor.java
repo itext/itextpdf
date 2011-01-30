@@ -56,5 +56,5 @@ public interface LinkProcessor {
      * @param attrs		the attributes
      * @return	false if the Paragraph no longer needs processing
      */
-    boolean process(Paragraph current, AttributeChain attrs);
+    boolean process(Paragraph current, ChainedProperties attrs);
 }

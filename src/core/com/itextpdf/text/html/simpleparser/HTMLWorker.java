@@ -65,7 +65,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.TextElementArray;
-import com.itextpdf.text.Utilities;
+import com.itextpdf.text.html.Markup;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.draw.LineSeparator;
@@ -87,7 +87,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * The map with all the supported tags.
 	 * @since 5.0.6
 	 */
-	protected Map<String, TagProcessor> tags;
+	protected Map<String, HTMLTagProcessor> tags;
 
 	/** The object defining all the styles. */
 	private StyleSheet style = new StyleSheet();
@@ -107,7 +107,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param style		A StyleSheet
 	 * @since 5.0.6
 	 */
-	public HTMLWorker(DocListener document, Map<String, TagProcessor> tags, StyleSheet style) {
+	public HTMLWorker(DocListener document, Map<String, HTMLTagProcessor> tags, StyleSheet style) {
 		this.document = document;
 		setSupportedTags(tags);
 		setStyleSheet(style);
@@ -118,9 +118,9 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param tags
 	 * @since 5.0.6
 	 */
-	public void setSupportedTags(Map<String, TagProcessor> tags) {
+	public void setSupportedTags(Map<String, HTMLTagProcessor> tags) {
 		if (tags == null)
-			tags = new SupportedTags();
+			tags = new HTMLProcessors();
 		this.tags = tags;
 	}
 	
@@ -161,7 +161,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * The current hierarchy chain of tags.
 	 * @since 5.0.6
 	 */
-	private AttributeChain chain = new AttributeChain();
+	private ChainedProperties chain = new ChainedProperties();
 
 	/**
 	 * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#startDocument()
@@ -176,7 +176,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
      * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#startElement(java.lang.String, java.util.HashMap)
      */
     public void startElement(String tag, HashMap<String, String> attrs) {
-		TagProcessor htmlTag = tags.get(tag);
+		HTMLTagProcessor htmlTag = tags.get(tag);
 		if (htmlTag == null) {
 			return;
 		}
@@ -208,7 +208,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			if (content.trim().length() == 0 && content.indexOf(' ') < 0) {
 				return;
 			}
-			content = Utilities.eliminateWhiteSpace(content);
+			content = Markup.eliminateWhiteSpace(content);
 		}
 		Chunk chunk = createChunk(content);
 		currentParagraph.add(chunk);
@@ -218,7 +218,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#endElement(java.lang.String)
 	 */
 	public void endElement(String tag) {
-		TagProcessor htmlTag = tags.get(tag);
+		HTMLTagProcessor htmlTag = tags.get(tag);
 		if (htmlTag == null) {
 			return;
 		}
@@ -775,7 +775,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @throws IOException
 	 */
 	public static List<Element> parseToList(Reader reader, StyleSheet style,
-			Map<String, TagProcessor> tags, HashMap<String, Object> providers) throws IOException {
+			Map<String, HTMLTagProcessor> tags, HashMap<String, Object> providers) throws IOException {
 		HTMLWorker worker = new HTMLWorker(null, tags, style);
 		worker.document = worker;
 		worker.setProviders(providers);

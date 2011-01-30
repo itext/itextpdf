@@ -62,6 +62,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Section;
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.Markup;
 
 /**
@@ -109,7 +110,7 @@ public class ElementFactory {
 		if (value != null) {
 			chunk.setTextRise(Float.parseFloat(value + "f"));
 		}
-		value = attributes.getProperty(Markup.CSS_KEY_VERTICALALIGN);
+		value = attributes.getProperty(HtmlTags.VERTICALALIGN);
 		if (value != null && value.endsWith("%")) {
 			float p = Float.parseFloat(value.substring(0, value.length() - 1)
 					+ "f") / 100f;
@@ -139,7 +140,7 @@ public class ElementFactory {
 		if (value != null) {
 			phrase.setLeading(Float.parseFloat(value + "f"));
 		}
-		value = attributes.getProperty(Markup.CSS_KEY_LINEHEIGHT);
+		value = attributes.getProperty(HtmlTags.LINEHEIGHT);
 		if (value != null) {
 			phrase.setLeading(Markup.parseLength(value,
 					Markup.DEFAULT_FONT_SIZE));

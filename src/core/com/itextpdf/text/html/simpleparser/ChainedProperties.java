@@ -48,18 +48,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.ElementTags;
+import com.itextpdf.text.html.Markup;
 
 /**
- * Stores the hierarchy of tags along with the properties of each tag.
+ * Stores the hierarchy of tags along with the attributes of each tag.
  * @since 5.0.6 renamed from ChainedProperties
  */
-public class AttributeChain {
-
-	/**
-	 * A series of predefined font sizes.
-	 * @since 5.0.6 (renamed)
-	 */
-	public final static int FONTSIZES[] = { 8, 10, 12, 14, 18, 24, 36 };
+public class ChainedProperties {
 
 	/**
 	 * Class that stores the info about one tag in the chain.
@@ -84,7 +79,7 @@ public class AttributeChain {
 	public List<TagAttributes> chain = new ArrayList<TagAttributes>();
 
 	/** Creates a new instance of ChainedProperties */
-	public AttributeChain() {
+	public ChainedProperties() {
 	}
 
 	/**
@@ -164,41 +159,7 @@ public class AttributeChain {
 				value.substring(0, value.length() - 2));
 			return;
 		}
-		// the font is expressed as an index in a series of predefined font sizes
-		int sIndex = 0;
-		// the font is defined as a relative size
-		if (value.startsWith("+") || value.startsWith("-")) {
-			// fetch the previous value
-			String old = getProperty("basefontsize");
-			if (old == null)
-				old = "12";
-			int c = (int)Float.parseFloat(old);
-			// look for the nearest font size in the predefined series
-			for (int k = FONTSIZES.length - 1; k >= 0; --k) {
-				if (c >= FONTSIZES[k]) {
-					sIndex = k;
-					break;
-				}
-			}
-			// retrieve the difference
-			int diff =
-				Integer.parseInt(value.startsWith("+") ?
-					value.substring(1) : value);
-			// apply the difference
-			sIndex += diff;
-		}
-		// the font is defined as an index
-		else {
-			try {
-				sIndex = Integer.parseInt(value) - 1;
-			} catch (NumberFormatException nfe) {
-				sIndex = 0;
-			}
-		}
-		if (sIndex < 0)
-			sIndex = 0;
-		else if (sIndex >= FONTSIZES.length)
-			sIndex = FONTSIZES.length - 1;
-		attrs.put(ElementTags.SIZE, Integer.toString(FONTSIZES[sIndex]));
+		String old = getProperty("basefontsize");
+		attrs.put(ElementTags.SIZE, Integer.toString(Markup.getIndexedFontSize(value, old)));
 	}
 }

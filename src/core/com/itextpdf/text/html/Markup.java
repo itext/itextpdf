@@ -54,223 +54,13 @@ import com.itextpdf.text.BaseColor;
 
 public class Markup {
 
-	// iText specific
-
-	/** the key for any tag */
-	public static final String ITEXT_TAG = "tag";
-
-	// HTML tags
-
-	/** the markup for the body part of a file */
-	public static final String HTML_TAG_BODY = "body";
-
-	/** The DIV tag. */
-	public static final String HTML_TAG_DIV = "div";
-
-	/** This is a possible HTML-tag. */
-	public static final String HTML_TAG_LINK = "link";
-
-	/** The SPAN tag. */
-	public static final String HTML_TAG_SPAN = "span";
-
-	// HTML attributes
-
-	/** the height attribute. */
-	public static final String HTML_ATTR_HEIGHT = "height";
-
-	/** the hyperlink reference attribute. */
-	public static final String HTML_ATTR_HREF = "href";
-
-	/** This is a possible HTML attribute for the LINK tag. */
-	public static final String HTML_ATTR_REL = "rel";
-
-	/** This is used for inline css style information */
-	public static final String HTML_ATTR_STYLE = "style";
-
-	/** This is a possible HTML attribute for the LINK tag. */
-	public static final String HTML_ATTR_TYPE = "type";
-
-	/** This is a possible HTML attribute. */
-	public static final String HTML_ATTR_STYLESHEET = "stylesheet";
-
-	/** the width attribute. */
-	public static final String HTML_ATTR_WIDTH = "width";
-
-	/** attribute for specifying externally defined CSS class */
-	public static final String HTML_ATTR_CSS_CLASS = "class";
-
-	/** The ID attribute. */
-	public static final String HTML_ATTR_CSS_ID = "id";
-
-	// HTML values
-
-	/** This is a possible value for the language attribute (SCRIPT tag). */
-	public static final String HTML_VALUE_JAVASCRIPT = "text/javascript";
-
-	/** This is a possible HTML attribute for the LINK tag. */
-	public static final String HTML_VALUE_CSS = "text/css";
-
-	// CSS keys
-
-	/** the CSS tag for background color */
-	public static final String CSS_KEY_BGCOLOR = "background-color";
-
-	/** the CSS tag for text color */
-	public static final String CSS_KEY_COLOR = "color";
-
-	/** CSS key that indicate the way something has to be displayed */
-	public static final String CSS_KEY_DISPLAY = "display";
-
-	/** the CSS tag for the font family */
-	public static final String CSS_KEY_FONTFAMILY = "font-family";
-
-	/** the CSS tag for the font size */
-	public static final String CSS_KEY_FONTSIZE = "font-size";
-
-	/** the CSS tag for the font style */
-	public static final String CSS_KEY_FONTSTYLE = "font-style";
-
-	/** the CSS tag for the font weight */
-	public static final String CSS_KEY_FONTWEIGHT = "font-weight";
-
-	/** the CSS tag for text decorations */
-	public static final String CSS_KEY_LINEHEIGHT = "line-height";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_MARGIN = "margin";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_MARGINLEFT = "margin-left";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_MARGINRIGHT = "margin-right";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_MARGINTOP = "margin-top";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_MARGINBOTTOM = "margin-bottom";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_PADDING = "padding";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_PADDINGLEFT = "padding-left";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_PADDINGRIGHT = "padding-right";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_PADDINGTOP = "padding-top";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_PADDINGBOTTOM = "padding-bottom";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_BORDERCOLOR = "border-color";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_BORDERWIDTH = "border-width";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_BORDERWIDTHLEFT = "border-left-width";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_BORDERWIDTHRIGHT = "border-right-width";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_BORDERWIDTHTOP = "border-top-width";
-
-	/** the CSS tag for the margin of an object */
-	public static final String CSS_KEY_BORDERWIDTHBOTTOM = "border-bottom-width";
-
-	/** the CSS tag for adding a page break when the document is printed */
-	public static final String CSS_KEY_PAGE_BREAK_AFTER = "page-break-after";
-
-	/** the CSS tag for adding a page break when the document is printed */
-	public static final String CSS_KEY_PAGE_BREAK_BEFORE = "page-break-before";
-
-	/** the CSS tag for the horizontal alignment of an object */
-	public static final String CSS_KEY_TEXTALIGN = "text-align";
-
-	/** the CSS tag for text decorations */
-	public static final String CSS_KEY_TEXTDECORATION = "text-decoration";
-
-	/** the CSS tag for text decorations */
-	public static final String CSS_KEY_VERTICALALIGN = "vertical-align";
-
-	/** the CSS tag for the visibility of objects */
-	public static final String CSS_KEY_VISIBILITY = "visibility";
-
-	// CSS values
-
 	/**
-	 * value for the CSS tag for adding a page break when the document is
-	 * printed
-	 */
-	public static final String CSS_VALUE_ALWAYS = "always";
-
-	/** A possible value for the DISPLAY key */
-	public static final String CSS_VALUE_BLOCK = "block";
-
-	/** a CSS value for text font weight */
-	public static final String CSS_VALUE_BOLD = "bold";
-
-	/** the value if you want to hide objects. */
-	public static final String CSS_VALUE_HIDDEN = "hidden";
-
-	/** A possible value for the DISPLAY key */
-	public static final String CSS_VALUE_INLINE = "inline";
-
-	/** a CSS value for text font style */
-	public static final String CSS_VALUE_ITALIC = "italic";
-
-	/** a CSS value for text decoration */
-	public static final String CSS_VALUE_LINETHROUGH = "line-through";
-
-	/** A possible value for the DISPLAY key */
-	public static final String CSS_VALUE_LISTITEM = "list-item";
-
-	/** a CSS value */
-	public static final String CSS_VALUE_NONE = "none";
-
-	/** a CSS value */
-	public static final String CSS_VALUE_NORMAL = "normal";
-
-	/** a CSS value for text font style */
-	public static final String CSS_VALUE_OBLIQUE = "oblique";
-
-	/** A possible value for the DISPLAY key */
-	public static final String CSS_VALUE_TABLE = "table";
-
-	/** A possible value for the DISPLAY key */
-	public static final String CSS_VALUE_TABLEROW = "table-row";
-
-	/** A possible value for the DISPLAY key */
-	public static final String CSS_VALUE_TABLECELL = "table-cell";
-
-	/** the CSS value for a horizontal alignment of an object */
-	public static final String CSS_VALUE_TEXTALIGNLEFT = "left";
-
-	/** the CSS value for a horizontal alignment of an object */
-	public static final String CSS_VALUE_TEXTALIGNRIGHT = "right";
-
-	/** the CSS value for a horizontal alignment of an object */
-	public static final String CSS_VALUE_TEXTALIGNCENTER = "center";
-
-	/** the CSS value for a horizontal alignment of an object */
-	public static final String CSS_VALUE_TEXTALIGNJUSTIFY = "justify";
-
-	/** a CSS value for text decoration */
-	public static final String CSS_VALUE_UNDERLINE = "underline";
-
-	/** a default value for font-size 
+	 * a default value for font-size 
      * @since 2.1.3
      */
 	public static final float DEFAULT_FONT_SIZE = 12f;
 
     private static HashMap<String,Float> sizes = new HashMap<String,Float>();
-
     static {
         sizes.put("xx-small", new Float(4));
         sizes.put("x-small", new Float(6));
@@ -446,5 +236,92 @@ public class Markup {
 		result.append(string.substring(pos));
 		return result.toString();
 	}
+	
+	/**
+	 * Helper class that reduces the white space in a String
+	 * @param content content containing whitespace
+	 * @return the content without all unnecessary whitespace
+	 */
+	public static String eliminateWhiteSpace(String content) {
+		// multiple spaces are reduced to one,
+		// newlines are treated as spaces,
+		// tabs, carriage returns are ignored.
+		StringBuffer buf = new StringBuffer();
+		int len = content.length();
+		char character;
+		boolean newline = false;
+		for (int i = 0; i < len; i++) {
+			switch (character = content.charAt(i)) {
+			case ' ':
+				if (!newline) {
+					buf.append(character);
+				}
+				break;
+			case '\n':
+				if (i > 0) {
+					newline = true;
+					buf.append(' ');
+				}
+				break;
+			case '\r':
+				break;
+			case '\t':
+				break;
+			default:
+				newline = false;
+				buf.append(character);
+			}
+		}
+		return buf.toString();
+	}
 
+	/**
+	 * A series of predefined font sizes.
+	 * @since 5.0.6 (renamed)
+	 */
+	public final static int FONTSIZES[] = { 8, 10, 12, 14, 18, 24, 36 };
+	
+	/**
+	 * Picks a font size from a series of predefined font sizes.
+	 * @param value		the new value of a font, expressed as an index
+	 * @param previous	the previous value of the font size
+	 * @return	a new font size.
+	 */
+	public static int getIndexedFontSize(String value, String previous) {
+		// the font is expressed as an index in a series of predefined font sizes
+		int sIndex = 0;
+		// the font is defined as a relative size
+		if (value.startsWith("+") || value.startsWith("-")) {
+			// fetch the previous value
+			if (previous == null)
+				previous = "12";
+			int c = (int)Float.parseFloat(previous);
+			// look for the nearest font size in the predefined series
+			for (int k = FONTSIZES.length - 1; k >= 0; --k) {
+				if (c >= FONTSIZES[k]) {
+					sIndex = k;
+					break;
+				}
+			}
+			// retrieve the difference
+			int diff =
+				Integer.parseInt(value.startsWith("+") ?
+					value.substring(1) : value);
+			// apply the difference
+			sIndex += diff;
+		}
+		// the font is defined as an index
+		else {
+			try {
+				sIndex = Integer.parseInt(value) - 1;
+			} catch (NumberFormatException nfe) {
+				sIndex = 0;
+			}
+		}
+		if (sIndex < 0)
+			sIndex = 0;
+		else if (sIndex >= FONTSIZES.length)
+			sIndex = FONTSIZES.length - 1;
+		return FONTSIZES[sIndex];
+	}
 }
