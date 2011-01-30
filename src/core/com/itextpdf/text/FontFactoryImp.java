@@ -52,7 +52,7 @@ import java.util.Set;
 
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.html.HtmlTags;
-import com.itextpdf.text.html.Markup;
+import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.BaseFont;
 
 /**
@@ -233,7 +233,7 @@ public class FontFactoryImp implements FontProvider {
         BaseColor color = null;
         String value = attributes.getProperty(HtmlTags.STYLE);
         if (value != null && value.length() > 0) {
-            Properties styleAttributes = Markup.parseAttributes(value);
+            Properties styleAttributes = HtmlUtilities.parseAttributes(value);
             if (styleAttributes.isEmpty()) {
                 attributes.put(HtmlTags.STYLE, value);
             }
@@ -252,7 +252,7 @@ public class FontFactoryImp implements FontProvider {
                     }
                 }
                 if ((value = styleAttributes.getProperty(HtmlTags.FONTSIZE)) != null) {
-                    size = Markup.parseLength(value);
+                    size = HtmlUtilities.parseLength(value);
                 }
                 if ((value = styleAttributes.getProperty(HtmlTags.FONTWEIGHT)) != null) {
                     style |= Font.getStyleValue(value);
@@ -261,7 +261,7 @@ public class FontFactoryImp implements FontProvider {
                     style |= Font.getStyleValue(value);
                 }
                 if ((value = styleAttributes.getProperty(HtmlTags.COLOR)) != null) {
-                    color = Markup.decodeColor(value);
+                    color = HtmlUtilities.decodeColor(value);
                 }
                 attributes.putAll(styleAttributes);
             }
@@ -276,7 +276,7 @@ public class FontFactoryImp implements FontProvider {
             fontname = value;
         }
         if ((value = attributes.getProperty(ElementTags.SIZE)) != null) {
-            size = Markup.parseLength(value);
+            size = HtmlUtilities.parseLength(value);
         }
         if ((value = attributes.getProperty(HtmlTags.STYLE)) != null) {
             style |= Font.getStyleValue(value);
@@ -297,7 +297,7 @@ public class FontFactoryImp implements FontProvider {
             color = new BaseColor(red, green, blue);
         }
         else if ((value = attributes.getProperty(ElementTags.COLOR)) != null) {
-            color = Markup.decodeColor(value);
+            color = HtmlUtilities.decodeColor(value);
         }
         if (fontname == null) {
             return getFont(null, encoding, embedded, size, style, color);
