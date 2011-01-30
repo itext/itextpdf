@@ -444,7 +444,7 @@ public class ElementFactory {
 	
 	public List createList(String tag, ChainedProperties chain) {
 		List list;
-		if ("ul".equalsIgnoreCase(tag)) {
+		if (HtmlTags.UL.equalsIgnoreCase(tag)) {
 			list = new List(List.UNORDERED);
 			list.setListSymbol("\u2022 ");
 		}

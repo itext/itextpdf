@@ -203,7 +203,7 @@ public class StyleSheet {
 					String hs = Integer.toHexString(hh);
 					hs = "000000" + hs;
 					hs = "#" + hs.substring(hs.length() - 6);
-					h.put("color", hs);
+					h.put(HtmlTags.COLOR, hs);
 				}
 			} else if (key.equals(HtmlTags.LINEHEIGHT)) {
 				String ss = prop.getProperty(key).trim();
