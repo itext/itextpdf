@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.ElementTags;
-import com.itextpdf.text.html.Markup;
+import com.itextpdf.text.html.HtmlUtilities;
 
 /**
  * Stores the hierarchy of tags along with the attributes of each tag.
@@ -160,6 +160,6 @@ public class ChainedProperties {
 			return;
 		}
 		String old = getProperty("basefontsize");
-		attrs.put(ElementTags.SIZE, Integer.toString(Markup.getIndexedFontSize(value, old)));
+		attrs.put(ElementTags.SIZE, Integer.toString(HtmlUtilities.getIndexedFontSize(value, old)));
 	}
 }

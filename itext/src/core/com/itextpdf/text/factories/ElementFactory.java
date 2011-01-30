@@ -63,7 +63,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Section;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.html.HtmlTags;
-import com.itextpdf.text.html.Markup;
+import com.itextpdf.text.html.HtmlUtilities;
 
 /**
  * This class is able to create Element objects based on a list of properties.
@@ -122,7 +122,7 @@ public class ElementFactory {
 		}
 		value = attributes.getProperty(ElementTags.BACKGROUNDCOLOR);
 		if (value != null) {
-			chunk.setBackground(Markup.decodeColor(value));
+			chunk.setBackground(HtmlUtilities.decodeColor(value));
 		}
 		return chunk;
 	}
@@ -142,8 +142,8 @@ public class ElementFactory {
 		}
 		value = attributes.getProperty(HtmlTags.LINEHEIGHT);
 		if (value != null) {
-			phrase.setLeading(Markup.parseLength(value,
-					Markup.DEFAULT_FONT_SIZE));
+			phrase.setLeading(HtmlUtilities.parseLength(value,
+					HtmlUtilities.DEFAULT_FONT_SIZE));
 		}
 		value = attributes.getProperty(ElementTags.ITEXT);
 		if (value != null) {

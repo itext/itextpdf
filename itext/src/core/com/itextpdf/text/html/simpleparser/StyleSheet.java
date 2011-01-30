@@ -50,7 +50,7 @@ import java.util.Properties;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.html.HtmlTags;
-import com.itextpdf.text.html.Markup;
+import com.itextpdf.text.html.HtmlUtilities;
 
 public class StyleSheet {
 	
@@ -170,18 +170,18 @@ public class StyleSheet {
 		String style = h.get(HtmlTags.STYLE);
 		if (style == null)
 			return;
-		Properties prop = Markup.parseAttributes(style);
+		Properties prop = HtmlUtilities.parseAttributes(style);
 		for (Object element : prop.keySet()) {
 			String key = (String) element;
 			if (key.equals(HtmlTags.FONTFAMILY)) {
 				h.put(ElementTags.FACE, prop.getProperty(key));
 			} else if (key.equals(HtmlTags.FONTSIZE)) {
-				float actualFontSize = Markup.parseLength(chain
+				float actualFontSize = HtmlUtilities.parseLength(chain
 						.getProperty(ElementTags.SIZE),
-						Markup.DEFAULT_FONT_SIZE);
+						HtmlUtilities.DEFAULT_FONT_SIZE);
 				if (actualFontSize <= 0f)
-					actualFontSize = Markup.DEFAULT_FONT_SIZE;
-				h.put(ElementTags.SIZE, Float.toString(Markup.parseLength(prop
+					actualFontSize = HtmlUtilities.DEFAULT_FONT_SIZE;
+				h.put(ElementTags.SIZE, Float.toString(HtmlUtilities.parseLength(prop
 						.getProperty(key), actualFontSize))
 						+ "pt");
 			} else if (key.equals(HtmlTags.FONTSTYLE)) {
@@ -198,7 +198,7 @@ public class StyleSheet {
 				if (ss.equals(HtmlTags.UNDERLINE))
 					h.put("u", null);
 			} else if (key.equals(HtmlTags.COLOR)) {
-				BaseColor c = Markup.decodeColor(prop.getProperty(key));
+				BaseColor c = HtmlUtilities.decodeColor(prop.getProperty(key));
 				if (c != null) {
 					int hh = c.getRGB();
 					String hs = Integer.toHexString(hh);
@@ -208,12 +208,12 @@ public class StyleSheet {
 				}
 			} else if (key.equals(HtmlTags.LINEHEIGHT)) {
 				String ss = prop.getProperty(key).trim();
-				float actualFontSize = Markup.parseLength(chain
+				float actualFontSize = HtmlUtilities.parseLength(chain
 						.getProperty(ElementTags.SIZE),
-						Markup.DEFAULT_FONT_SIZE);
+						HtmlUtilities.DEFAULT_FONT_SIZE);
 				if (actualFontSize <= 0f)
-					actualFontSize = Markup.DEFAULT_FONT_SIZE;
-				float v = Markup.parseLength(prop.getProperty(key),
+					actualFontSize = HtmlUtilities.DEFAULT_FONT_SIZE;
+				float v = HtmlUtilities.parseLength(prop.getProperty(key),
 						actualFontSize);
 				if (ss.endsWith("%")) {
 					h.put("leading", "0," + v / 100);
@@ -229,7 +229,7 @@ public class StyleSheet {
 				h.put("align", ss);
 			} else if (key.equals(HtmlTags.PADDINGLEFT)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
-				h.put("indent", Float.toString(Markup.parseLength(ss)));
+				h.put("indent", Float.toString(HtmlUtilities.parseLength(ss)));
 			}
 		}
 	}

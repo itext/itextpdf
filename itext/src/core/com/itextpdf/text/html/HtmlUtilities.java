@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: Markup.java 4672 2011-01-30 10:38:33Z blowagie $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -52,7 +52,7 @@ import com.itextpdf.text.BaseColor;
  * A class that contains all the possible tagnames and their attributes.
  */
 
-public class Markup {
+public class HtmlUtilities {
 
 	/**
 	 * a default value for font-size 
@@ -81,7 +81,7 @@ public class Markup {
 	 */
 
 	public static float parseLength(String string) {
-		return parseLength(string, Markup.DEFAULT_FONT_SIZE);
+		return parseLength(string, DEFAULT_FONT_SIZE);
 	}
 
 	/**

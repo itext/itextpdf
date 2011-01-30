@@ -62,7 +62,7 @@ import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.html.HtmlTags;
-import com.itextpdf.text.html.Markup;
+import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.HyphenationAuto;
 import com.itextpdf.text.pdf.HyphenationEvent;
@@ -180,7 +180,7 @@ public class ElementFactory {
 			style |= Font.STRIKETHRU;
 		
 		// [6] Color
-		BaseColor color = Markup.decodeColor(chain.getProperty("color"));
+		BaseColor color = HtmlUtilities.decodeColor(chain.getProperty("color"));
 		
 		// Get the font object from the provider
 		return provider.getFont(face, encoding, true, size, style, color);
@@ -357,7 +357,7 @@ public class ElementFactory {
 		float lineWidth = 1;
 		String size = attrs.get("size");
 		if (size != null) {
-			float tmpSize = Markup.parseLength(size, Markup.DEFAULT_FONT_SIZE);
+			float tmpSize = HtmlUtilities.parseLength(size, HtmlUtilities.DEFAULT_FONT_SIZE);
 			if (tmpSize > 0)
 				lineWidth = tmpSize;
 		}
@@ -365,7 +365,7 @@ public class ElementFactory {
 		String width = attrs.get("width");
 		float percentage = 100;
 		if (width != null) {
-			float tmpWidth = Markup.parseLength(width, Markup.DEFAULT_FONT_SIZE);
+			float tmpWidth = HtmlUtilities.parseLength(width, HtmlUtilities.DEFAULT_FONT_SIZE);
 			if (tmpWidth > 0) percentage = tmpWidth;
 			if (!width.endsWith("%"))
 				percentage = 100; // Treat a pixel width as 100% for now.
@@ -412,15 +412,15 @@ public class ElementFactory {
 		if (img == null)
 			return null;
 		
-		float actualFontSize = Markup.parseLength(
+		float actualFontSize = HtmlUtilities.parseLength(
 			chain.getProperty(ElementTags.SIZE),
-			Markup.DEFAULT_FONT_SIZE);
+			HtmlUtilities.DEFAULT_FONT_SIZE);
 		if (actualFontSize <= 0f)
-			actualFontSize = Markup.DEFAULT_FONT_SIZE;
+			actualFontSize = HtmlUtilities.DEFAULT_FONT_SIZE;
 		String width = attrs.get("width");
-		float widthInPoints = Markup.parseLength(width, actualFontSize);
+		float widthInPoints = HtmlUtilities.parseLength(width, actualFontSize);
 		String height = attrs.get("height");
-		float heightInPoints = Markup.parseLength(height, actualFontSize);
+		float heightInPoints = HtmlUtilities.parseLength(height, actualFontSize);
 		if (widthInPoints > 0 && heightInPoints > 0) {
 			img.scaleAbsolute(widthInPoints, heightInPoints);
 		} else if (widthInPoints > 0) {

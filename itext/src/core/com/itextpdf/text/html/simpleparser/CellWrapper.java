@@ -50,7 +50,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.TextElementArray;
-import com.itextpdf.text.html.Markup;
+import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.PdfPCell;
 
 /**
@@ -146,7 +146,7 @@ public class CellWrapper implements TextElementArray {
         cell.setUseDescender(true);
         // background color
         value = chain.getProperty("bgcolor");
-        cell.setBackgroundColor(Markup.decodeColor(value));
+        cell.setBackgroundColor(HtmlUtilities.decodeColor(value));
         return cell;
 	}
 
