@@ -159,7 +159,7 @@ public class ChainedProperties {
 				value.substring(0, value.length() - 2));
 			return;
 		}
-		String old = getProperty("basefontsize");
+		String old = getProperty(HtmlTags.SIZE);
 		attrs.put(HtmlTags.SIZE, Integer.toString(HtmlUtilities.getIndexedFontSize(value, old)));
 	}
 }

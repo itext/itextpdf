@@ -52,6 +52,7 @@ import java.util.Map;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
+import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -123,7 +124,7 @@ public class TableWrapper implements Element {
         }
         PdfPTable table = new PdfPTable(ncol);
         // table width
-        String width = styles.get("width");
+        String width = styles.get(HtmlTags.WIDTH);
         if (width == null)
             table.setWidthPercentage(100);
         else {
@@ -135,7 +136,7 @@ public class TableWrapper implements Element {
             }
         }
         // horizontal alignment
-        String alignment = styles.get("align");
+        String alignment = styles.get(HtmlTags.ALIGN);
         int align = Element.ALIGN_LEFT;
         if (alignment != null) {
         	align = HtmlUtilities.alignmentValue(alignment);

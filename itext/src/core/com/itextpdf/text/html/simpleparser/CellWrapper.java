@@ -85,7 +85,7 @@ public class CellWrapper implements TextElementArray {
      */
     public CellWrapper(String tag, ChainedProperties chain) {
         this.cell = createPdfPCell(tag, chain);
-    	String value = chain.getProperty("width");
+    	String value = chain.getProperty(HtmlTags.WIDTH);
         if (value != null) {
             value = value.trim();
         	if (value.endsWith("%")) {
@@ -108,45 +108,35 @@ public class CellWrapper implements TextElementArray {
         if (value != null)
             cell.setColspan(Integer.parseInt(value));
         // rowspan
-        value = chain.getProperty("rowspan");
+        value = chain.getProperty(HtmlTags.ROWSPAN);
         if (value != null)
             cell.setRowspan(Integer.parseInt(value));
-        // horizonatl alignment
-        if (tag.equals("th"))
+        // horizontal alignment
+        if (tag.equals(HtmlTags.TH))
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        value = chain.getProperty("align");
+        value = chain.getProperty(HtmlTags.ALIGN);
         if (value != null) {
-            if ("center".equalsIgnoreCase(value))
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            else if ("right".equalsIgnoreCase(value))
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            else if ("left".equalsIgnoreCase(value))
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            else if ("justify".equalsIgnoreCase(value))
-                cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+            cell.setHorizontalAlignment(HtmlUtilities.alignmentValue(value));
         }
         // vertical alignment
-        value = chain.getProperty("valign");
+        value = chain.getProperty(HtmlTags.VALIGN);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         if (value != null) {
-            if ("top".equalsIgnoreCase(value))
-                cell.setVerticalAlignment(Element.ALIGN_TOP);
-            else if ("bottom".equalsIgnoreCase(value))
-                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+            cell.setVerticalAlignment(HtmlUtilities.alignmentValue(value));
         }
         // border
-        value = chain.getProperty("border");
+        value = chain.getProperty(HtmlTags.BORDER);
         float border = 0;
         if (value != null)
             border = Float.parseFloat(value);
         cell.setBorderWidth(border);
         // cellpadding
-        value = chain.getProperty("cellpadding");
+        value = chain.getProperty(HtmlTags.CELLPADDING);
         if (value != null)
             cell.setPadding(Float.parseFloat(value));
         cell.setUseDescender(true);
         // background color
-        value = chain.getProperty("bgcolor");
+        value = chain.getProperty(HtmlTags.BGCOLOR);
         cell.setBackgroundColor(HtmlUtilities.decodeColor(value));
         return cell;
 	}

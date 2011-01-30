@@ -168,8 +168,8 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 */
 	public void startDocument() {
 		HashMap<String, String> attrs = new HashMap<String, String>();
-		style.applyStyle("body", attrs);
-		chain.addToChain("body", attrs);
+		style.applyStyle(HtmlTags.BODY, attrs);
+		chain.addToChain(HtmlTags.BODY, attrs);
 	}
 
     /**
@@ -478,7 +478,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		LinkProcessor i = (LinkProcessor) providers.get(HTMLWorker.LINK_PROVIDER);
 		if (i == null || !i.process(currentParagraph, chain)) {
 			// sets an Anchor for all the Chunks in the current paragraph
-			String href = chain.getProperty("href");
+			String href = chain.getProperty(HtmlTags.HREF);
 			if (href != null) {
 				for (Chunk ck : currentParagraph.getChunks()) {
 					ck.setAnchor(href);
@@ -550,7 +550,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public void processImage(Image img, Map<String, String> attrs) throws DocumentException {
 		ImageProcessor processor = (ImageProcessor)providers.get(HTMLWorker.IMG_PROCESSOR);
 		if (processor == null || !processor.process(img, attrs, chain, document)) {
-			String align = attrs.get("align");
+			String align = attrs.get(HtmlTags.ALIGN);
 			if (align != null) {
 				carriageReturn();
 			}

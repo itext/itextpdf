@@ -185,17 +185,17 @@ public class StyleSheet {
 						+ "pt");
 			} else if (key.equals(HtmlTags.FONTSTYLE)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
-				if (ss.equals("italic") || ss.equals("oblique"))
-					h.put("i", null);
+				if (ss.equals(HtmlTags.ITALIC) || ss.equals(HtmlTags.OBLIQUE))
+					h.put(HtmlTags.I, null);
 			} else if (key.equals(HtmlTags.FONTWEIGHT)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
-				if (ss.equals("bold") || ss.equals("700") || ss.equals("800")
+				if (ss.equals(HtmlTags.BOLD) || ss.equals("700") || ss.equals("800")
 						|| ss.equals("900"))
-					h.put("b", null);
+					h.put(HtmlTags.B, null);
 			} else if (key.equals(HtmlTags.TEXTDECORATION)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
 				if (ss.equals(HtmlTags.UNDERLINE))
-					h.put("u", null);
+					h.put(HtmlTags.U, null);
 			} else if (key.equals(HtmlTags.COLOR)) {
 				BaseColor c = HtmlUtilities.decodeColor(prop.getProperty(key));
 				if (c != null) {
@@ -203,7 +203,7 @@ public class StyleSheet {
 					String hs = Integer.toHexString(hh);
 					hs = "000000" + hs;
 					hs = "#" + hs.substring(hs.length() - 6);
-					h.put("color", hs);
+					h.put(HtmlTags.COLOR, hs);
 				}
 			} else if (key.equals(HtmlTags.LINEHEIGHT)) {
 				String ss = prop.getProperty(key).trim();
@@ -215,20 +215,20 @@ public class StyleSheet {
 				float v = HtmlUtilities.parseLength(prop.getProperty(key),
 						actualFontSize);
 				if (ss.endsWith("%")) {
-					h.put("leading", "0," + v / 100);
+					h.put(HtmlTags.LEADING, "0," + v / 100);
 					return;
 				}
-				if ("normal".equalsIgnoreCase(ss)) {
-					h.put("leading", "0,1.5");
+				if (HtmlTags.NORMAL.equalsIgnoreCase(ss)) {
+					h.put(HtmlTags.LEADING, "0,1.5");
 					return;
 				}
-				h.put("leading", v + ",0");
+				h.put(HtmlTags.LEADING, v + ",0");
 			} else if (key.equals(HtmlTags.TEXTALIGN)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
-				h.put("align", ss);
+				h.put(HtmlTags.ALIGN, ss);
 			} else if (key.equals(HtmlTags.PADDINGLEFT)) {
 				String ss = prop.getProperty(key).trim().toLowerCase();
-				h.put("indent", Float.toString(HtmlUtilities.parseLength(ss)));
+				h.put(HtmlTags.INDENT, Float.toString(HtmlUtilities.parseLength(ss)));
 			}
 		}
 	}
