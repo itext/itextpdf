@@ -77,6 +77,12 @@ import com.itextpdf.text.BaseColor;
 
 public final class HtmlEncoder {
     
+	/**
+	 * This class will never be constructed.
+	 */
+	private HtmlEncoder() {
+	}
+	
     // membervariables
     /**
      * List with the HTML translation of all the characters.
