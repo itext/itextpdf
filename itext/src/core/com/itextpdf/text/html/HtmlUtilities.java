@@ -50,7 +50,8 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
 
 /**
- * A class that contains all the possible tagnames and their attributes.
+ * A class that contains some utilities to parse HTML attributes and content.
+ * @since 5.0.6 (some of these methods used to be in the Markup class)
  */
 
 public class HtmlUtilities {

@@ -68,25 +68,46 @@ public class Meta implements Element {
     /** This is the content of the Meta-information. */
     private StringBuffer content;
 
-	/** the possible value of an alignment attribute */
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
 	public static final String UNKNOWN = "unknown";
 
-	/** attribute of the root tag */
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
 	public static final String PRODUCER = "producer";
 
-	/** attribute of the root tag */
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
 	public static final String CREATIONDATE = "creationdate";
 
-	/** attribute of the root tag */
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
 	public static final String AUTHOR = "author";
 
-	/** attribute of the root tag */
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
 	public static final String KEYWORDS = "keywords";
 
-	/** attribute of the root tag */
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
 	public static final String SUBJECT = "subject";
 
-	/** attribute of the root and annotation tag (also a special tag within a chapter or section) */
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
 	public static final String TITLE = "title";
 
     // constructors
