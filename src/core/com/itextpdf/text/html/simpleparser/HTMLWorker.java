@@ -469,6 +469,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	
 	/**
 	 * Adds a link to the current paragraph.
+	 * @since 5.0.6
 	 */
 	public void processLink() {
 		if (currentParagraph == null) {
@@ -516,6 +517,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * Looks for the List object on the Stack,
 	 * and adds the ListItem to the List.
 	 * @throws DocumentException
+	 * @since 5.0.6
 	 */
 	public void processListItem() throws DocumentException {
 		if (stack.empty())
@@ -655,10 +657,20 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 */
 	protected boolean skipText = false;
 	
+	/**
+	 * Pushes the values of pendingTR and pendingTD
+	 * to a state stack.
+	 * @since 5.0.6
+	 */
 	public void pushTableState() {
 		tableState.push(new boolean[] { pendingTR, pendingTD });
 	}
-	
+
+	/**
+	 * Pops the values of pendingTR and pendingTD
+	 * from a state stack.
+	 * @since 5.0.6
+	 */
 	public void popTableState() {
 		boolean[] state = (boolean[]) tableState.pop();
 		pendingTR = state[0];
@@ -667,6 +679,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/**
 	 * @return the pendingTR
+	 * @since 5.0.6
 	 */
 	public boolean isPendingTR() {
 		return pendingTR;
@@ -674,6 +687,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/**
 	 * @param pendingTR the pendingTR to set
+	 * @since 5.0.6
 	 */
 	public void setPendingTR(boolean pendingTR) {
 		this.pendingTR = pendingTR;
@@ -681,6 +695,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/**
 	 * @return the pendingTD
+	 * @since 5.0.6
 	 */
 	public boolean isPendingTD() {
 		return pendingTD;
@@ -688,6 +703,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/**
 	 * @param pendingTD the pendingTD to set
+	 * @since 5.0.6
 	 */
 	public void setPendingTD(boolean pendingTD) {
 		this.pendingTD = pendingTD;
@@ -695,6 +711,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/**
 	 * @return the pendingLI
+	 * @since 5.0.6
 	 */
 	public boolean isPendingLI() {
 		return pendingLI;
@@ -702,6 +719,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/**
 	 * @param pendingLI the pendingLI to set
+	 * @since 5.0.6
 	 */
 	public void setPendingLI(boolean pendingLI) {
 		this.pendingLI = pendingLI;
@@ -709,6 +727,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/**
 	 * @return the insidePRE
+	 * @since 5.0.6
 	 */
 	public boolean isInsidePRE() {
 		return insidePRE;
@@ -716,6 +735,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/**
 	 * @param insidePRE the insidePRE to set
+	 * @since 5.0.6
 	 */
 	public void setInsidePRE(boolean insidePRE) {
 		this.insidePRE = insidePRE;
@@ -723,6 +743,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/**
 	 * @return the skipText
+	 * @since 5.0.6
 	 */
 	public boolean isSkipText() {
 		return skipText;
@@ -730,6 +751,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/**
 	 * @param skipText the skipText to set
+	 * @since 5.0.6
 	 */
 	public void setSkipText(boolean skipText) {
 		this.skipText = skipText;
@@ -773,6 +795,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param providers	map containing classes with extra info
 	 * @return a List of Element objects
 	 * @throws IOException
+	 * @since 5.0.6
 	 */
 	public static List<Element> parseToList(Reader reader, StyleSheet style,
 			Map<String, HTMLTagProcessor> tags, HashMap<String, Object> providers) throws IOException {
