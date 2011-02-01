@@ -60,7 +60,7 @@ public class EntitiesToSymbol {
      * This is a map that contains all possible id values of the entity tag
      * that can be translated to a character in font Symbol.
      */
-    public static final Map<String, Character> MAP;
+    private static final Map<String, Character> MAP;
 
     static {
         MAP = new HashMap<String, Character>();
