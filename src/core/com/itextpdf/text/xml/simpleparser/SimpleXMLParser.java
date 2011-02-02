@@ -83,10 +83,12 @@ import java.util.HashMap;
 import java.util.Stack;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.html.HtmlEncoder;
+import com.itextpdf.text.xml.XMLUtil;
+import com.itextpdf.text.xml.simpleparser.handler.HTMLNewLineHandler;
+import com.itextpdf.text.xml.simpleparser.handler.NeverNewLineHandler;
 
 /**
- * A simple XML and HTML parser.  This parser is, like the SAX parser,
+ * A simple XML.  This parser is, like the SAX parser,
  * an event based parser, but with much less functionality.
  * <p>
  * The parser can:
@@ -120,57 +122,62 @@ public final class SimpleXMLParser {
 	private final static int ATTRIBUTE_VALUE = 14;
 
 	/** the state stack */
-	Stack<Integer> stack;
+	protected Stack<Integer> stack;
 	/** The current character. */
-	int character = 0;
+	protected int character = 0;
 	/** The previous character. */
-	int previousCharacter = -1;
+	protected int previousCharacter = -1;
 	/** the line we are currently reading */
-	int lines = 1;
+	protected int lines = 1;
 	/** the column where the current character occurs */
-	int columns = 0;
+	protected int columns = 0;
 	/** was the last character equivalent to a newline? */
-	boolean eol = false;
+	protected boolean eol = false;
 	/**
 	 * A boolean indicating if the next character should be taken into account
 	 * if it's a space character. When nospace is false, the previous character
 	 * wasn't whitespace.
 	 * @since 2.1.5
 	 */
-	boolean nowhite = false;
+	protected boolean nowhite = false;
 	/** the current state */
-	int state;
+	protected int state;
 	/** Are we parsing HTML? */
-	boolean html;
+	protected boolean html;
 	/** current text (whatever is encountered between tags) */
-	StringBuffer text = new StringBuffer();
+	protected StringBuffer text = new StringBuffer();
 	/** current entity (whatever is encountered between & and ;) */
-	StringBuffer entity = new StringBuffer();
+	protected StringBuffer entity = new StringBuffer();
 	/** current tagname */
-	String tag = null;
+	protected String tag = null;
 	/** current attributes */
-	HashMap<String, String> attributes = null;
+	protected HashMap<String, String> attributes = null;
 	/** The handler to which we are going to forward document content */
-	SimpleXMLDocHandler doc;
+	protected SimpleXMLDocHandler doc;
 	/** The handler to which we are going to forward comments. */
-	SimpleXMLDocHandlerComment comment;
+	protected SimpleXMLDocHandlerComment comment;
 	/** Keeps track of the number of tags that are open. */
-	int nested = 0;
+	protected int nested = 0;
 	/** the quote character that was used to open the quote. */
-	int quoteCharacter = '"';
+	protected int quoteCharacter = '"';
 	/** the attribute key. */
-	String attributekey = null;
+	protected String attributekey = null;
 	/** the attribute value. */
-	String attributevalue = null;
-
+	protected String attributevalue = null;
+	protected NewLineHandler newLineHandler;
 	/**
 	 * Creates a Simple XML parser object.
 	 * Call go(BufferedReader) immediately after creation.
 	 */
-    private SimpleXMLParser(SimpleXMLDocHandler doc, SimpleXMLDocHandlerComment comment, boolean html) {
+    private SimpleXMLParser(final SimpleXMLDocHandler doc, final SimpleXMLDocHandlerComment comment, final boolean html) {
     	this.doc = doc;
     	this.comment = comment;
     	this.html = html;
+    	if (html) {
+    		this.newLineHandler = new HTMLNewLineHandler();
+    	} else {
+    		this.newLineHandler = new NeverNewLineHandler();
+    	}
     	stack = new Stack<Integer>();
     	state = html ? TEXT : UNKNOWN;
     }
@@ -179,7 +186,7 @@ public final class SimpleXMLParser {
      * Does the actual parsing. Perform this immediately
      * after creating the parser object.
      */
-    private void go(Reader r) throws IOException {
+    private void go(final Reader r) throws IOException {
         BufferedReader reader;
         if (r instanceof BufferedReader)
             reader = (BufferedReader)r;
@@ -498,7 +505,7 @@ public final class SimpleXMLParser {
      * Adds a state to the stack.
      * @param	s	a state to add to the stack
      */
-    private void saveState(int s) {
+    private void saveState(final int s) {
     	stack.push(Integer.valueOf(s));
     }
     /**
@@ -553,24 +560,22 @@ public final class SimpleXMLParser {
      * processes the tag.
      * @param start	if true we are dealing with a tag that has just been opened; if false we are closing a tag.
      */
-    private void processTag(boolean start) {
+    private void processTag(final boolean start) {
     	if (start) {
     		nested++;
     		doc.startElement(tag,attributes);
     	}
     	else {
-    		if(html) {
-    			// White spaces following new lines need to be ignored in HTML
-    			if(HtmlEncoder.isNewLineTag(tag)) {
-    				nowhite = false;
-    			}
-    		}
+			// White spaces following new lines need to be ignored in HTML
+			if(newLineHandler.isNewLineTag(tag)) {
+				nowhite = false;
+			}
             nested--;
             doc.endElement(tag);
     	}
     }
     /** Throws an exception */
-    private void throwException(String s) throws IOException {
+    private void throwException(final String s) throws IOException {
         throw new IOException(MessageLocalization.getComposedMessage("1.near.line.2.column.3", s, String.valueOf(lines), String.valueOf(columns)));
     }
 
@@ -580,7 +585,7 @@ public final class SimpleXMLParser {
      * @param r the document. The encoding is already resolved. The reader is not closed
      * @throws IOException on error
      */
-    public static void parse(SimpleXMLDocHandler doc, SimpleXMLDocHandlerComment comment, Reader r, boolean html) throws IOException {
+    public static void parse(final SimpleXMLDocHandler doc, final SimpleXMLDocHandlerComment comment, final Reader r, final boolean html) throws IOException {
     	SimpleXMLParser parser = new SimpleXMLParser(doc, comment, html);
     	parser.go(r);
     }
@@ -591,12 +596,12 @@ public final class SimpleXMLParser {
      * @param in the document. The encoding is deduced from the stream. The stream is not closed
      * @throws IOException on error
      */
-    public static void parse(SimpleXMLDocHandler doc, InputStream in) throws IOException {
+    public static void parse(final SimpleXMLDocHandler doc, final InputStream in) throws IOException {
         byte b4[] = new byte[4];
         int count = in.read(b4);
         if (count != 4)
             throw new IOException(MessageLocalization.getComposedMessage("insufficient.length"));
-        String encoding = getEncodingName(b4);
+        String encoding = XMLUtil.getInstance().getEncodingName(b4);
         String decl = null;
         if (encoding.equals("UTF-8")) {
             StringBuffer sb = new StringBuffer();
@@ -626,7 +631,7 @@ public final class SimpleXMLParser {
         parse(doc, new InputStreamReader(in, IanaEncodings.getJavaEncoding(encoding)));
     }
 
-    private static String getDeclaredEncoding(String decl) {
+    private static String getDeclaredEncoding(final String decl) {
         if (decl == null)
             return null;
         int idx = decl.indexOf("encoding");
@@ -651,119 +656,30 @@ public final class SimpleXMLParser {
         return null;
     }
 
-    public static void parse(SimpleXMLDocHandler doc,Reader r) throws IOException {
+    /**
+     * @param doc
+     * @param r
+     * @throws IOException
+     */
+    public static void parse(final SimpleXMLDocHandler doc,final Reader r) throws IOException {
         parse(doc, null, r, false);
     }
 
-    /**
-     * Escapes a string with the appropriated XML codes.
-     * @param s the string to be escaped
-     * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>
-     * @return the escaped string
-     */
-    public static String escapeXML(String s, boolean onlyASCII) {
-        char cc[] = s.toCharArray();
-        int len = cc.length;
-        StringBuffer sb = new StringBuffer();
-        for (int k = 0; k < len; ++k) {
-            int c = cc[k];
-            switch (c) {
-                case '<':
-                    sb.append("&lt;");
-                    break;
-                case '>':
-                    sb.append("&gt;");
-                    break;
-                case '&':
-                    sb.append("&amp;");
-                    break;
-                case '"':
-                    sb.append("&quot;");
-                    break;
-                case '\'':
-                    sb.append("&apos;");
-                    break;
-                default:
-                	if (c == 0x9 || c == 0xA || c == 0xD
-                		|| c >= 0x20 && c <= 0xD7FF
-                		|| c >= 0xE000 && c <= 0xFFFD
-                		|| c >= 0x10000 && c <= 0x10FFFF) {
-                		if (onlyASCII && c > 127)
-                			sb.append("&#").append(c).append(';');
-                		else
-                			sb.append((char)c);
-                	}
-            }
-        }
-        return sb.toString();
-    }
-    /**
-     * Returns the IANA encoding name that is auto-detected from
-     * the bytes specified, with the endian-ness of that encoding where appropriate.
-     * (method found in org.apache.xerces.impl.XMLEntityManager, originally published
-     * by the Apache Software Foundation under the Apache Software License; now being
-     * used in iText under the MPL)
-     * @param b4    The first four bytes of the input.
-     * @return an IANA-encoding string
-     */
-    private static String getEncodingName(byte[] b4) {
+	/**
+	 * Escapes a string with the appropriated XML codes.
+	 *
+	 * @param s
+	 *            the string to be escaped
+	 * @param onlyASCII
+	 *            codes above 127 will always be escaped with &amp;#nn; if
+	 *            <CODE>true</CODE>
+	 * @return the escaped string
+	 * @deprecated moved to {@link XMLUtil#escapeXML(String, boolean)}, left
+	 *             here for the sake of backwards compatibility
+	 */
+	@Deprecated
+	public static String escapeXML(final String s, final boolean onlyASCII) {
+		return XMLUtil.getInstance().escapeXML(s, onlyASCII);
+	}
 
-        // UTF-16, with BOM
-        int b0 = b4[0] & 0xFF;
-        int b1 = b4[1] & 0xFF;
-        if (b0 == 0xFE && b1 == 0xFF) {
-            // UTF-16, big-endian
-            return "UTF-16BE";
-        }
-        if (b0 == 0xFF && b1 == 0xFE) {
-            // UTF-16, little-endian
-            return "UTF-16LE";
-        }
-
-        // UTF-8 with a BOM
-        int b2 = b4[2] & 0xFF;
-        if (b0 == 0xEF && b1 == 0xBB && b2 == 0xBF) {
-            return "UTF-8";
-        }
-
-        // other encodings
-        int b3 = b4[3] & 0xFF;
-        if (b0 == 0x00 && b1 == 0x00 && b2 == 0x00 && b3 == 0x3C) {
-            // UCS-4, big endian (1234)
-            return "ISO-10646-UCS-4";
-        }
-        if (b0 == 0x3C && b1 == 0x00 && b2 == 0x00 && b3 == 0x00) {
-            // UCS-4, little endian (4321)
-            return "ISO-10646-UCS-4";
-        }
-        if (b0 == 0x00 && b1 == 0x00 && b2 == 0x3C && b3 == 0x00) {
-            // UCS-4, unusual octet order (2143)
-            // REVISIT: What should this be?
-            return "ISO-10646-UCS-4";
-        }
-        if (b0 == 0x00 && b1 == 0x3C && b2 == 0x00 && b3 == 0x00) {
-            // UCS-4, unusual octet order (3412)
-            // REVISIT: What should this be?
-            return "ISO-10646-UCS-4";
-        }
-        if (b0 == 0x00 && b1 == 0x3C && b2 == 0x00 && b3 == 0x3F) {
-            // UTF-16, big-endian, no BOM
-            // (or could turn out to be UCS-2...
-            // REVISIT: What should this be?
-            return "UTF-16BE";
-        }
-        if (b0 == 0x3C && b1 == 0x00 && b2 == 0x3F && b3 == 0x00) {
-            // UTF-16, little-endian, no BOM
-            // (or could turn out to be UCS-2...
-            return "UTF-16LE";
-        }
-        if (b0 == 0x4C && b1 == 0x6F && b2 == 0xA7 && b3 == 0x94) {
-            // EBCDIC
-            // a la xerces1, return CP037 instead of EBCDIC here
-            return "CP037";
-        }
-
-        // default encoding
-        return "UTF-8";
-    }
 }
