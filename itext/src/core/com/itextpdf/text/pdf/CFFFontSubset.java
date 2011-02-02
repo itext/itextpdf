@@ -659,7 +659,7 @@ public class CFFFontSubset extends CFFFont {
             		// Calc the index of the Subrs
             		int Subr = ((Integer)TopElement).intValue() + LBias;
             		// If the subr isn't in the HashMap -> Put in
-        			if (!hSubr.containsKey(new Integer (Subr)))
+        			if (!hSubr.containsKey(Integer.valueOf (Subr)))
             		{
             			hSubr.put(Integer.valueOf(Subr),null);
             			lSubr.add(Integer.valueOf(Subr));
@@ -677,7 +677,7 @@ public class CFFFontSubset extends CFFFont {
 	        		// Calc the index of the Subrs
 	        		int Subr = ((Integer)TopElement).intValue() + GBias;
 	        		// If the subr isn't in the HashMap -> Put in
-	        		if (!hGSubrsUsed.containsKey(new Integer (Subr)))
+	        		if (!hGSubrsUsed.containsKey(Integer.valueOf (Subr)))
 	        		{
 	        			hGSubrsUsed.put(Integer.valueOf(Subr),null);
 	        			lGSubrsUsed.add(Integer.valueOf(Subr));
@@ -1433,7 +1433,7 @@ public class CFFFontSubset extends CFFFont {
 	    // Else do nothing
 	    // At the end of each object mark its ending (Even if wasn't written)
 		for (int k=0; k<fonts[Font].FDArrayOffsets.length-1; k++) {
-			if (FDArrayUsed.contains(new Integer (k)))
+			if (FDArrayUsed.contains(Integer.valueOf(k)))
 			{
 				// Goto beginning of objects
 	            seek(fonts[Font].FDArrayOffsets[k]);
@@ -1485,7 +1485,7 @@ public class CFFFontSubset extends CFFFont {
 	    // Else do nothing
 		for (int i=0;i<fonts[Font].fdprivateOffsets.length;i++)
 		{
-			if (FDArrayUsed.contains(new Integer (i)))
+			if (FDArrayUsed.contains(Integer.valueOf(i)))
 			{
 				// Mark beginning
 		        OutputList.addLast(new MarkerItem(fdPrivate[i]));
