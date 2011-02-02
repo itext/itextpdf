@@ -122,49 +122,49 @@ public final class SimpleXMLParser {
 	private final static int ATTRIBUTE_VALUE = 14;
 
 	/** the state stack */
-	protected Stack<Integer> stack;
+	private final Stack<Integer> stack;
 	/** The current character. */
-	protected int character = 0;
+	private int character = 0;
 	/** The previous character. */
-	protected int previousCharacter = -1;
+	private int previousCharacter = -1;
 	/** the line we are currently reading */
-	protected int lines = 1;
+	private int lines = 1;
 	/** the column where the current character occurs */
-	protected int columns = 0;
+	private int columns = 0;
 	/** was the last character equivalent to a newline? */
-	protected boolean eol = false;
+	private boolean eol = false;
 	/**
 	 * A boolean indicating if the next character should be taken into account
 	 * if it's a space character. When nospace is false, the previous character
 	 * wasn't whitespace.
 	 * @since 2.1.5
 	 */
-	protected boolean nowhite = false;
+	private boolean nowhite = false;
 	/** the current state */
-	protected int state;
+	private int state;
 	/** Are we parsing HTML? */
-	protected boolean html;
+	private final boolean html;
 	/** current text (whatever is encountered between tags) */
-	protected StringBuffer text = new StringBuffer();
+	private final StringBuffer text = new StringBuffer();
 	/** current entity (whatever is encountered between & and ;) */
-	protected StringBuffer entity = new StringBuffer();
+	private final StringBuffer entity = new StringBuffer();
 	/** current tagname */
-	protected String tag = null;
+	private String tag = null;
 	/** current attributes */
-	protected HashMap<String, String> attributes = null;
+	private HashMap<String, String> attributes = null;
 	/** The handler to which we are going to forward document content */
-	protected SimpleXMLDocHandler doc;
+	private final  SimpleXMLDocHandler doc;
 	/** The handler to which we are going to forward comments. */
-	protected SimpleXMLDocHandlerComment comment;
+	private final  SimpleXMLDocHandlerComment comment;
 	/** Keeps track of the number of tags that are open. */
-	protected int nested = 0;
+	private  int nested = 0;
 	/** the quote character that was used to open the quote. */
-	protected int quoteCharacter = '"';
+	private  int quoteCharacter = '"';
 	/** the attribute key. */
-	protected String attributekey = null;
+	private  String attributekey = null;
 	/** the attribute value. */
-	protected String attributevalue = null;
-	protected NewLineHandler newLineHandler;
+	private  String attributevalue = null;
+	private  NewLineHandler newLineHandler;
 	/**
 	 * Creates a Simple XML parser object.
 	 * Call go(BufferedReader) immediately after creation.
