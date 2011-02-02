@@ -78,13 +78,13 @@ public class PdfContentStreamProcessor {
 	 * @since 5.0.1
 	 */
     public static final String DEFAULTOPERATOR = "DefaultOperator";
-        
+
 	/** A map with all supported operators operators (PDF syntax). */
     final private Map<String, ContentOperator> operators;
     /** Resources for the content stream. */
     private ResourceDictionary resources;
     /** Stack keeping track of the graphics state. */
-    private Stack<GraphicsState> gsStack = new Stack<GraphicsState>();
+    private final Stack<GraphicsState> gsStack = new Stack<GraphicsState>();
     /** Text matrix. */
     private Matrix textMatrix;
     /** Text line matrix. */
@@ -103,7 +103,7 @@ public class PdfContentStreamProcessor {
      * A stack containing marked content info.
      * @since 5.0.2
      */
-    private Stack<MarkedContentInfo> markedContentStack = new Stack<MarkedContentInfo>();
+    private final Stack<MarkedContentInfo> markedContentStack = new Stack<MarkedContentInfo>();
 
     /**
      * Creates a new PDF Content Stream Processor that will send it's output to the
@@ -123,9 +123,9 @@ public class PdfContentStreamProcessor {
     private void populateXObjectDoHandlers(){
         registerXObjectDoHandler(PdfName.DEFAULT, new IgnoreXObjectDoHandler());
         registerXObjectDoHandler(PdfName.FORM, new FormXObjectDoHandler());
-        registerXObjectDoHandler(PdfName.IMAGE, new ImageXObjectDoHandler());       
+        registerXObjectDoHandler(PdfName.IMAGE, new ImageXObjectDoHandler());
     }
-    
+
     /**
      * Registers a Do handler that will be called when Do for the provided XObject subtype is encountered during content processing.
      * <br>
@@ -147,7 +147,7 @@ public class PdfContentStreamProcessor {
      * @since 5.0.6
      */
     public CMapAwareDocumentFont getFont(PRIndirectReference ind) {
-        Integer n = new Integer(ind.getNumber());
+        Integer n = Integer.valueOf(ind.getNumber());
         CMapAwareDocumentFont font = cachedFonts.get(n);
         if (font == null) {
             font = new CMapAwareDocumentFont(ind);
@@ -162,7 +162,7 @@ public class PdfContentStreamProcessor {
     private void populateOperators(){
 
         registerContentOperator(DEFAULTOPERATOR, new IgnoreOperatorContentOperator());
-        
+
         registerContentOperator("q", new PushGraphicsState());
         registerContentOperator("Q", new PopGraphicsState());
         registerContentOperator("cm", new ModifyCurrentTransformationMatrix());
@@ -256,7 +256,7 @@ public class PdfContentStreamProcessor {
     private void beginMarkedContent(PdfName tag, PdfDictionary dict) {
     	markedContentStack.push(new MarkedContentInfo(tag, dict));
     }
-   
+
     /**
      * Remove the latest marked content from the stack.  Keeps track of the BMC, BDC and EMC operators.
      * @since 5.0.2
@@ -264,7 +264,7 @@ public class PdfContentStreamProcessor {
     private void endMarkedContent() {
     	markedContentStack.pop();
     }
-    
+
     /**
      * Decodes a PdfString (which will contain glyph ids encoded in the font's encoding)
      * based on the active font, and determine the unicode equivalent
@@ -309,7 +309,7 @@ public class PdfContentStreamProcessor {
 
 
 
-    
+
     /**
      * Displays an XObject using the registered handler for this XObject's subtype
      * @param xobjectName the name of the XObject to retrieve from the resource dictionary
@@ -318,7 +318,7 @@ public class PdfContentStreamProcessor {
         PdfDictionary xobjects = resources.getAsDict(PdfName.XOBJECT);
         PdfObject xobject = xobjects.getDirectObject(xobjectName);
         PdfStream xobjectStream = (PdfStream)xobject;
-        
+
         PdfName subType = xobjectStream.getAsName(PdfName.SUBTYPE);
         if (xobject.isStream()){
             XObjectDoHandler handler = xobjectDoHandlers.get(subType);
@@ -328,7 +328,7 @@ public class PdfContentStreamProcessor {
         } else {
             throw new IllegalStateException(MessageLocalization.getComposedMessage("XObject.1.is.not.a.stream", xobjectName));
         }
-        
+
     }
 
     /**
@@ -342,9 +342,9 @@ public class PdfContentStreamProcessor {
     }
 
 
-    
 
-    
+
+
     /**
      * Processes PDF syntax
      * @param contentBytes	the bytes of a content stream
@@ -375,13 +375,13 @@ public class PdfContentStreamProcessor {
 
     }
 
-    
-    
+
+
     /**
      * A resource dictionary that allows stack-like behavior to support resource dictionary inheritance
      */
     private static class ResourceDictionary extends PdfDictionary{
-        private List<PdfDictionary> resourcesStack = new ArrayList<PdfDictionary>();
+        private final List<PdfDictionary> resourcesStack = new ArrayList<PdfDictionary>();
         public ResourceDictionary() {
         }
 
@@ -405,7 +405,7 @@ public class PdfContentStreamProcessor {
             return super.getDirectObject(key); // shouldn't be necessary, but just in case we've done something crazy
         }
     }
-    
+
     /**
      * A content operator implementation (unregistered).
      */
@@ -414,7 +414,7 @@ public class PdfContentStreamProcessor {
             // ignore the operator
         }
     }
-    
+
     /**
      * A content operator implementation (TJ).
      */
@@ -739,7 +739,7 @@ public class PdfContentStreamProcessor {
 				throws Exception {
 			processor.beginMarkedContent((PdfName)operands.get(0), new PdfDictionary());
 		}
-    	
+
     }
 
     /**
@@ -751,12 +751,12 @@ public class PdfContentStreamProcessor {
 		public void invoke(PdfContentStreamProcessor processor,
 				PdfLiteral operator, ArrayList<PdfObject> operands)
 				throws Exception {
-		    
+
 		    PdfObject properties = operands.get(1);
-		    
+
 			processor.beginMarkedContent((PdfName)operands.get(0), getPropertiesDictionary(properties, processor.resources));
 		}
-    	
+
 		private PdfDictionary getPropertiesDictionary(PdfObject operand1, ResourceDictionary resources){
             if (operand1.isDictionary())
                 return (PdfDictionary)operand1;
@@ -777,7 +777,7 @@ public class PdfContentStreamProcessor {
 			processor.endMarkedContent();
 		}
     }
-    
+
     /**
      * A content operator implementation (Do).
      */
@@ -787,14 +787,14 @@ public class PdfContentStreamProcessor {
             processor.displayXObject(xobjectName);
         }
     }
-    
+
     /**
      * An XObject subtype handler for FORM
      */
     private static class FormXObjectDoHandler implements XObjectDoHandler{
 
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference ref) {
-            
+
             final PdfDictionary resources = stream.getAsDict(PdfName.RESOURCES);
 
             // we read the content bytes up here so if it fails we don't leave the graphics state stack corrupted
@@ -825,11 +825,11 @@ public class PdfContentStreamProcessor {
             processor.processContent(contentBytes, resources);
 
             new PopGraphicsState().invoke(processor, null, null);
-            
+
         }
-        
+
     }
-    
+
     /**
      * An XObject subtype handler for IMAGE
      */
@@ -840,7 +840,7 @@ public class PdfContentStreamProcessor {
             processor.renderListener.renderImage(renderInfo);
         }
     }
-    
+
     /**
      * An XObject subtype handler that does nothing
      */
@@ -848,5 +848,5 @@ public class PdfContentStreamProcessor {
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
             // ignore XObject subtype
         }
-    }    
+    }
 }

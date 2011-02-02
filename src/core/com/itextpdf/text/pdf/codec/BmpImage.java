@@ -352,10 +352,10 @@ public class BmpImage {
                     break;
             }
 
-            properties.put("x_pixels_per_meter", new Long(xPelsPerMeter));
-            properties.put("y_pixels_per_meter", new Long(yPelsPerMeter));
-            properties.put("colors_used", new Long(colorsUsed));
-            properties.put("colors_important", new Long(colorsImportant));
+            properties.put("x_pixels_per_meter", Long.valueOf(xPelsPerMeter));
+            properties.put("y_pixels_per_meter", Long.valueOf(yPelsPerMeter));
+            properties.put("colors_used", Long.valueOf(colorsUsed));
+            properties.put("colors_important", Long.valueOf(colorsImportant));
 
             if (size == 40) {
                 // Windows 3.x and Windows NT
@@ -535,9 +535,9 @@ public class BmpImage {
                         properties.put("blueX", Integer.valueOf(blueX));
                         properties.put("blueY", Integer.valueOf(blueY));
                         properties.put("blueZ", Integer.valueOf(blueZ));
-                        properties.put("gamma_red", new Long(gammaRed));
-                        properties.put("gamma_green", new Long(gammaGreen));
-                        properties.put("gamma_blue", new Long(gammaBlue));
+                        properties.put("gamma_red", Long.valueOf(gammaRed));
+                        properties.put("gamma_green", Long.valueOf(gammaGreen));
+                        properties.put("gamma_blue", Long.valueOf(gammaBlue));
 
                         // break;
                         throw new

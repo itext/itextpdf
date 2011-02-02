@@ -1355,7 +1355,7 @@ public abstract class Image extends Rectangle {
 	/** Creates a new serial id. */
 	static protected synchronized Long getSerialId() {
 		++serialId;
-		return new Long(serialId);
+		return Long.valueOf(serialId);
 	}
 
 	/**
@@ -1577,7 +1577,7 @@ public abstract class Image extends Rectangle {
 	public void setScaleToFitLineWhenOverflow(boolean scaleToFitLineWhenOverflow) {
 		this.scaleToFitLineWhenOverflow = scaleToFitLineWhenOverflow;
 	}
-	
+
     // annotation
 
 	/** if the annotation is not null the image will be clickable. */

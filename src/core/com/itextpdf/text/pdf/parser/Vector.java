@@ -201,7 +201,10 @@ public class Vector {
 	public String toString() {
         return vals[I1]+","+vals[I2]+","+vals[I3];
     }
-
+   /**
+    * Calculates the hashcode using the values.
+    * @since 5.0.6
+    */
     @Override
 	public int hashCode() {
 		final int prime = 31;
@@ -209,7 +212,10 @@ public class Vector {
 		result = prime * result + Arrays.hashCode(vals);
 		return result;
 	}
-
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
