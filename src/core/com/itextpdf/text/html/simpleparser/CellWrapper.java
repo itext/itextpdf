@@ -79,7 +79,7 @@ public class CellWrapper implements TextElementArray {
 
     /**
      * Creates a new instance of IncCell.
-     * @param	cell	the cell that is wrapped in this object.
+     * @param	tag		the cell that is wrapped in this object.
      * @param	chain	properties such as width
      * @since	5.0.6
      */

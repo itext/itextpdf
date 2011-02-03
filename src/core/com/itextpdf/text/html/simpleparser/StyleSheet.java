@@ -110,7 +110,7 @@ public class StyleSheet {
 	/**
 	 * Adds an extra style key-value pair to the styles Map
 	 * of a specific tag
-	 * @param	classsName	the name of the HTML/XML tag
+	 * @param	className	the name of the HTML/XML tag
 	 * @param	key			the key specifying a specific style
 	 * @param	value		the value defining the style
 	 */
