@@ -56,7 +56,7 @@ import com.itextpdf.text.html.HtmlTags;
  * @since 5.0.6
  */
 public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
-	
+
 	/**
 	 * Creates a Map containing supported tags.
 	 */
@@ -95,7 +95,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		put(HtmlTags.U, EM_STRONG_STRIKE_SUP_SUP);
 		put(HtmlTags.UL, UL_OL);
 	}
-	
+
 	/**
 	 * Object that processes the following tags:
 	 * i, em, b, strong, s, strike, u, sup, sub
@@ -132,9 +132,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 				return HtmlTags.S;
 			return tag;
 		}
-		
+
 	};
-	
+
 	/**
 	 * Object that processes the a tag.
 	 */
@@ -143,7 +143,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		 * @see com.itextpdf.text.html.simpleparser.HTMLTagProcessors#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
 		 */
 		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) {
-			worker.updateChain(tag, attrs);;
+			worker.updateChain(tag, attrs);
 			worker.flushContent();
 		}
 		/**
@@ -154,7 +154,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.updateChain(tag);
 		}
 	};
-	
+
 	/**
 	 * Object that processes the br tag.
 	 */
@@ -170,9 +170,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		 */
 		public void endElement(HTMLWorker worker, String tag) {
 		}
-		
+
 	};
-	
+
 	public static final HTMLTagProcessor UL_OL = new HTMLTagProcessor(){
 
 		/**
@@ -198,9 +198,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.updateChain(tag);
 			worker.processList();
 		}
-		
+
 	};
-	
+
 	public static final HTMLTagProcessor HR = new HTMLTagProcessor(){
 
 		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
@@ -210,9 +210,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 
 		public void endElement(HTMLWorker worker, String tag) {
 		}
-		
+
 	};
-	
+
 	public static final HTMLTagProcessor SPAN = new HTMLTagProcessor(){
 
 		/**
@@ -228,9 +228,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		public void endElement(HTMLWorker worker, String tag) {
 			worker.updateChain(tag);
 		}
-		
+
 	};
-	
+
 	public static final HTMLTagProcessor H = new HTMLTagProcessor(){
 
 		/**
@@ -252,9 +252,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.carriageReturn();
 			worker.updateChain(tag);
 		}
-		
+
 	};
-	
+
 	public static final HTMLTagProcessor LI = new HTMLTagProcessor(){
 
 		/**
@@ -280,7 +280,7 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.updateChain(tag);
 			worker.processListItem();
 		}
-		
+
 	};
 
 	public static final HTMLTagProcessor PRE = new HTMLTagProcessor(){
@@ -305,9 +305,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.updateChain(tag);
 			worker.setInsidePRE(false);
 		}
-		
+
 	};
-	
+
 	public static final HTMLTagProcessor DIV = new HTMLTagProcessor(){
 
 		/**
@@ -325,14 +325,14 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.carriageReturn();
 			worker.updateChain(tag);
 		}
-		
+
 	};
-	
+
 
 	public static final HTMLTagProcessor TABLE = new HTMLTagProcessor(){
 
 		/**
-		 * @throws DocumentException 
+		 * @throws DocumentException
 		 * @see com.itextpdf.text.html.simpleparser.HTMLTagProcessors#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
 		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
@@ -360,12 +360,12 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.popTableState();
 			worker.setSkipText(false);
 		}
-		
+
 	};
 	public static final HTMLTagProcessor TR = new HTMLTagProcessor(){
 
 		/**
-		 * @throws DocumentException 
+		 * @throws DocumentException
 		 * @see com.itextpdf.text.html.simpleparser.HTMLTagProcessors#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
 		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
@@ -389,12 +389,12 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.processRow();
 			worker.setSkipText(true);
 		}
-		
+
 	};
 	public static final HTMLTagProcessor TD = new HTMLTagProcessor(){
 
 		/**
-		 * @throws DocumentException 
+		 * @throws DocumentException
 		 * @see com.itextpdf.text.html.simpleparser.HTMLTagProcessors#startElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String, java.util.Map)
 		 */
 		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException {
@@ -416,9 +416,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.updateChain(HtmlTags.TD);
 			worker.setSkipText(true);
 		}
-		
+
 	};
-	
+
 	public static final HTMLTagProcessor IMG = new HTMLTagProcessor(){
 
 		/**
@@ -435,9 +435,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		 */
 		public void endElement(HTMLWorker worker, String tag) {
 		}
-		
+
 	};
-	
+
 	/** Serial version UID. */
 	private static final long serialVersionUID = -959260811961222824L;
 }

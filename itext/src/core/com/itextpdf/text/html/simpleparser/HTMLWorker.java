@@ -82,7 +82,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * HTMLWorker instance strong the objects in a List
 	 */
 	protected DocListener document;
-	
+
 	/**
 	 * The map with all the supported tags.
 	 * @since 5.0.6
@@ -91,7 +91,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
 	/** The object defining all the styles. */
 	private StyleSheet style = new StyleSheet();
-	
+
 	/**
 	 * Creates a new instance of HTMLWorker
 	 * @param document A class that implements <CODE>DocListener</CODE>
@@ -99,7 +99,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public HTMLWorker(DocListener document) {
 		this(document, null, null);
 	}
-	
+
 	/**
 	 * Creates a new instance of HTMLWorker
 	 * @param document	A class that implements <CODE>DocListener</CODE>
@@ -112,7 +112,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		setSupportedTags(tags);
 		setStyleSheet(style);
 	}
-	
+
 	/**
 	 * Sets the map with supported tags.
 	 * @param tags
@@ -123,7 +123,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			tags = new HTMLTagProcessors();
 		this.tags = tags;
 	}
-	
+
 	/**
 	 * Setter for the StyleSheet
 	 * @param style the StyleSheet
@@ -156,12 +156,12 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @since iText 5.0.6 (private => protected)
 	 */
 	protected Paragraph currentParagraph;
-	
+
 	/**
 	 * The current hierarchy chain of tags.
 	 * @since 5.0.6
 	 */
-	private ChainedProperties chain = new ChainedProperties();
+	private final ChainedProperties chain = new ChainedProperties();
 
 	/**
 	 * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#startDocument()
@@ -259,7 +259,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		}
 		currentParagraph.add(createChunk("\n"));
 	}
-	
+
 	/**
 	 * Flushes the current paragraph, indicating that we're starting
 	 * a new block.
@@ -282,7 +282,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		}
 		currentParagraph = null;
 	}
-	
+
 	/**
 	 * Stacks the current paragraph, indicating that we're starting
 	 * a new span.
@@ -292,7 +292,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		pushToStack(currentParagraph);
 		currentParagraph = new Paragraph();
 	}
-	
+
 	/**
 	 * Pushes an element to the Stack.
 	 * @param element
@@ -302,7 +302,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		if (element != null)
 			stack.push(element);
 	}
-	
+
 	/**
 	 * Updates the chain with a new tag and new attributes.
 	 * @param tag	the new tag
@@ -312,7 +312,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public void updateChain(String tag, Map<String, String> attrs) {
 		chain.addToChain(tag, attrs);
 	}
-	
+
 	/**
 	 * Updates the chain by removing a tag.
 	 * @param tag	the new tag
@@ -321,21 +321,21 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public void updateChain(String tag) {
 		chain.removeChain(tag);
 	}
-	
+
 	// providers that help find resources such as images and fonts
-	
+
 	/**
 	 * Key used to store the image provider in the providers map.
 	 * @since 5.0.6
 	 */
 	public static final String IMG_PROVIDER = "img_provider";
-	
+
 	/**
 	 * Key used to store the image processor in the providers map.
 	 * @since 5.0.6
 	 */
 	public static final String IMG_PROCESSOR = "img_interface";
-	
+
 	/**
 	 * Key used to store the image store in the providers map.
 	 * @since 5.0.6
@@ -347,13 +347,13 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @since 5.0.6
 	 */
 	public static final String IMG_BASEURL = "img_baseurl";
-	
+
 	/**
 	 * Key used to store the font provider in the providers map.
 	 * @since 5.0.6
 	 */
 	public static final String FONT_PROVIDER = "font_factory";
-	
+
 	/**
 	 * Key used to store the link provider in the providers map.
 	 * @since 5.0.6
@@ -382,14 +382,14 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		if (ff != null)
 			factory.setFontProvider(ff);
 	}
-	
+
 	// factory that helps create objects
-	
+
 	/**
 	 * Factory that is able to create iText Element objects.
 	 * @since 5.0.6
 	 */
-	private ElementFactory factory = new ElementFactory();
+	private final ElementFactory factory = new ElementFactory();
 
 	/**
 	 * Creates a Chunk using the factory.
@@ -434,7 +434,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public LineSeparator createLineSeparator(Map<String, String> attrs) {
 		return factory.createLineSeparator(attrs, currentParagraph.getLeading()/2);
 	}
-	
+
 	/**
 	 * Creates an Image object.
 	 * @param attrs properties of the Image
@@ -454,7 +454,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				(String)providers.get(IMG_BASEURL));
 		return img;
 	}
-	
+
 	/**
 	 * Creates a Cell.
 	 * @param tag	the tag
@@ -464,9 +464,9 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	public CellWrapper createCell(String tag) {
 		return new CellWrapper(tag, chain);
 	}
-	
+
 	// processing objects
-	
+
 	/**
 	 * Adds a link to the current paragraph.
 	 * @since 5.0.6
@@ -487,15 +487,21 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			}
 		}
 		// a link should be added to the current paragraph as a phrase
-		Paragraph tmp = (Paragraph) stack.pop();
-		tmp.add(new Phrase(currentParagraph));
-		currentParagraph = tmp;
+		if (stack.isEmpty()) {
+			// no paragraph to add too, 'a' tag is first element
+			Paragraph tmp = new Paragraph(new Phrase(currentParagraph));
+			currentParagraph = tmp;
+		} else {
+			Paragraph tmp = (Paragraph) stack.pop();
+			tmp.add(new Phrase(currentParagraph));
+			currentParagraph = tmp;
+		}
 	}
 
 	/**
 	 * Fetches the List from the Stack and adds it to
 	 * the TextElementArray on top of the Stack,
-	 * or to the Document if the Stack is empty. 
+	 * or to the Document if the Stack is empty.
 	 * @throws DocumentException
 	 * @since 5.0.6
 	 */
@@ -512,7 +518,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		else
 			((TextElementArray) stack.peek()).add(obj);
 	}
-	
+
 	/**
 	 * Looks for the List object on the Stack,
 	 * and adds the ListItem to the List.
@@ -541,7 +547,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		item.adjustListSymbolFont();
 		stack.push(list);
 	}
-	
+
 	/**
 	 * Processes an Image.
 	 * @param img
@@ -566,7 +572,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Processes the Table.
 	 * @throws DocumentException
@@ -581,7 +587,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		else
 			((TextElementArray) stack.peek()).add(tb);
 	}
-	
+
 	/**
 	 * Gets the TableWrapper from the Stack and adds a new row.
 	 * @since 5.0.6
@@ -632,10 +638,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	}
 
 	// state variables and methods
-	
+
 	/** Stack to keep track of table tags. */
-	private Stack<boolean[]> tableState = new Stack<boolean[]>();
-	
+	private final Stack<boolean[]> tableState = new Stack<boolean[]>();
+
 	/** Boolean to keep track of TR tags. */
 	private boolean pendingTR = false;
 
@@ -656,7 +662,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @since iText 5.0.6 (private => protected)
 	 */
 	protected boolean skipText = false;
-	
+
 	/**
 	 * Pushes the values of pendingTR and pendingTD
 	 * to a state stack.
@@ -672,7 +678,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @since 5.0.6
 	 */
 	public void popTableState() {
-		boolean[] state = (boolean[]) tableState.pop();
+		boolean[] state = tableState.pop();
 		pendingTR = state[0];
 		pendingTD = state[1];
 	}
@@ -758,10 +764,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	}
 
 	// static methods to parse HTML to a List of Element objects.
-	
+
 	/** The resulting list of elements. */
 	protected List<Element> objectList;
-	
+
 	/**
 	 * Parses an HTML source to a List of Element objects
 	 * @param reader	the HTML source
@@ -786,7 +792,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 			HashMap<String, Object> providers) throws IOException {
 		return parseToList(reader, style, null, providers);
 	}
-	
+
 	/**
 	 * Parses an HTML source to a List of Element objects
 	 * @param reader	the HTML source
@@ -806,7 +812,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		worker.parse(reader);
 		return worker.objectList;
 	}
-	
+
 	// DocListener interface
 
 	/**
@@ -879,11 +885,12 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	}
 
 	// deprecated methods
-	
+
 	/**
 	 * Sets the providers.
 	 * @deprecated use setProviders() instead
 	 */
+	@Deprecated
 	public void setInterfaceProps(HashMap<String, Object> providers) {
 		setProviders(providers);
 	}
@@ -891,6 +898,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * Gets the providers
 	 * @deprecated use getProviders() instead
 	 */
+	@Deprecated
 	public Map<String, Object> getInterfaceProps() {
 		return providers;
 	}
