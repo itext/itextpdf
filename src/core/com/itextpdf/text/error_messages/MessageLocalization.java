@@ -62,7 +62,7 @@ import com.itextpdf.text.pdf.BaseFont;
 public final class MessageLocalization {
     private static HashMap<String, String> defaultLanguage = new HashMap<String, String>();
     private static HashMap<String, String> currentLanguage;
-    private static final String BASE_PATH = "com/itextpdf/text/error_messages/";
+    private static final String BASE_PATH = "l10n/error/";
 
     private MessageLocalization() {
     }
@@ -97,7 +97,7 @@ public final class MessageLocalization {
         return "No message found for " + key;
     }
 
-   
+
 
     /**
      * Get a message with one parameter as an primitive int. The parameter will replace the string
@@ -114,9 +114,8 @@ public final class MessageLocalization {
 	 * Get a message with param.length parameters or none if param is null. In
 	 * the message the "{1}", "{2}" to "{lenght of param array}" are replaced
 	 * with the object.toString of the param array. (with param[0] being "{1}")
-	 * 
+	 *
 	 * @since iText 5.0.6
-	 * @author redlab_b
 	 * @param key
 	 *            the key to the message
 	 * @param param array of parameter objects, (toString is used to add it to the message)
@@ -135,7 +134,7 @@ public final class MessageLocalization {
 		}
 		return msg;
 	}
-	
+
     /**
      * Sets the language to be used globally for the error messages. The language
      * is a two letter lowercase country designation like "en" or "pt". The country

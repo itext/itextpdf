@@ -24,7 +24,7 @@ public class HtmlWorkerWhitSpaceTest {
 		List<Element> parseToList = HTMLWorker
 		.parseToList(
 				new StringReader(
-						"<p> This   is a  Simple Snippet  </i></p>"),
+						"<p> This   is a  Simple Snippet  </p>"),
 						null);
 		Element e = parseToList.get(0);
 		assertEquals(e.getClass(), Paragraph.class);
