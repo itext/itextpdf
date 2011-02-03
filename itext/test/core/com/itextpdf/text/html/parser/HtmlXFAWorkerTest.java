@@ -58,16 +58,15 @@ public class HtmlXFAWorkerTest {
 	 */
 	@Test
 	public void simpleSnippet() throws IOException, DocumentException {
-		if (false) { // TODO still working on it, disabled for sake of hudson
 			HashMap<String, Object> providers = new HashMap<String, Object>();
-			providers.put(HTMLWorker.LINK_PROVIDER, new LinkProcessor() {
-
-				public boolean process(Paragraph current,
-						ChainedProperties attrs) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-			});
+//			providers.put(HTMLWorker.LINK_PROVIDER, new LinkProcessor() {
+//
+//				public boolean process(Paragraph current,
+//						ChainedProperties attrs) {
+//					// TODO Auto-generated method stub
+//					return false;
+//				}
+//			});
 			List<Element> parseToList = HTMLWorker.parseToList(
 					new StringReader(snippet.toString()), null, providers);
 			Document d = new Document(PageSize.A4);
@@ -83,7 +82,11 @@ public class HtmlXFAWorkerTest {
 				}
 			}
 			d.close();
-		}
+
+	}
+
+	@Test
+	public void dummy() {
 
 	}
 
