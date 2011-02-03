@@ -1,4 +1,4 @@
-package com.itextpdf.text.error_messsages;
+package com.itextpdf.text.error_messsage;
 
 import junit.framework.Assert;
 

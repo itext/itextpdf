@@ -84,10 +84,10 @@
 		</copy>
 	</target>
 	<target name="test" depends="compile.all" description="Going to run tests">
-		<junit haltonfailure="yes">
+		<junit haltonfailure="no" printsummary="yes">
 			<formatter type="plain" usefile="false" />
 			<classpath refid="test.classpath" />
-			<batchtest>
+			<batchtest fork="no">
 				<fileset dir="${itext.src}/../test/core">
 					<include name="**/*Test*.java" />
 				</fileset>
