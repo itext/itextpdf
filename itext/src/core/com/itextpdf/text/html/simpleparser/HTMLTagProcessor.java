@@ -1,8 +1,8 @@
 /*
- * $Id$
+ * $Id: HTMLWorker.java 4666 2011-01-29 12:53:09Z blowagie $
  *
  * This file is part of the iText project.
- * Copyright (c) 1998-2009 1T3XT BVBA
+ * Copyright (c) 1998-2010 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,15 +43,34 @@
  */
 package com.itextpdf.text.html.simpleparser;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.Map;
 
-import com.itextpdf.text.DocListener;
-import com.itextpdf.text.Image;
+import com.itextpdf.text.DocumentException;
 
 /**
- *
- * @author  psoares
+ * Interface that needs to be implemented by every tag that is supported by HTMLWorker.
+ * @since 5.0.6
  */
-public interface Img {
-    boolean process(Image img, HashMap<String, String> h, ChainedProperties cprops, DocListener doc);
+public interface HTMLTagProcessor {
+	
+	/**
+	 * Implement this class to tell the HTMLWorker what to do
+	 * when an open tag is encountered.
+	 * @param worker	the HTMLWorker
+	 * @param tag		the tag that was encountered
+	 * @param attrs		the current attributes of the tag
+	 * @throws DocumentException
+	 * @throws IOException
+	 */
+	public abstract void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) throws DocumentException, IOException;
+	
+	/**
+	 * Implement this class to tell the HTMLWorker what to do
+	 * when an close tag is encountered.
+	 * @param worker	the HTMLWorker
+	 * @param tag		the tag that was encountered
+	 * @throws DocumentException
+	 */
+	public abstract void endElement(HTMLWorker worker, String tag) throws DocumentException;
 }

@@ -639,7 +639,7 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
      * Changes the Chapter number.
      */
     public void setChapterNumber(int number) {
-    	numbers.set(numbers.size() - 1, new Integer(number));
+    	numbers.set(numbers.size() - 1, Integer.valueOf(number));
     	Object s;
     	for (Iterator<Element> i = iterator(); i.hasNext(); ) {
     		s = i.next();
@@ -668,7 +668,7 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
      */
     private void setNumbers(int number, ArrayList<Integer> numbers) {
         this.numbers = new ArrayList<Integer>();
-        this.numbers.add(new Integer(number));
+        this.numbers.add(Integer.valueOf(number));
         this.numbers.addAll(numbers);
     }
 

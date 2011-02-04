@@ -133,7 +133,7 @@ public class PdfNumberTree {
         if (nn != null) {
             for (int k = 0; k < nn.size(); ++k) {
                 PdfNumber s = (PdfNumber)PdfReader.getPdfObjectRelease(nn.getPdfObject(k++));
-                items.put(new Integer(s.intValue()), nn.getPdfObject(k));
+                items.put(Integer.valueOf(s.intValue()), nn.getPdfObject(k));
             }
         }
         else if ((nn = (PdfArray)PdfReader.getPdfObjectRelease(dic.get(PdfName.KIDS))) != null) {

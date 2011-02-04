@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text;
 
-import com.itextpdf.text.html.Markup;
 import com.itextpdf.text.pdf.BaseFont;
 
 /**
@@ -63,19 +62,46 @@ import com.itextpdf.text.pdf.BaseFont;
 
 public class Font implements Comparable<Font> {
 
-    /**
-     * Enum describing the font family
-     * 
-     * @since 5.0.1
-     */
-    public enum FontFamily {
-        COURIER,
-        HELVETICA,
-        TIMES_ROMAN,
-        SYMBOL,
-        ZAPFDINGBATS,
-        UNDEFINED
-    }
+	/**
+	 * Enum describing the font family
+	 *
+	 * @since 5.0.1
+	 */
+	public enum FontFamily {
+		COURIER,
+		HELVETICA,
+		TIMES_ROMAN,
+		SYMBOL,
+		ZAPFDINGBATS,
+		UNDEFINED
+	}
+
+	/**
+	 * FontStyle.
+	 *
+	 * @author Balder
+	 * @since 5.0.6
+	 */
+	public enum FontStyle {
+		// Created to get rid of dependency of HtmlTags
+		NORMAL("normal"), BOLD("bold"), ITALIC("italic"), OBLIQUE("oblique"), UNDERLINE(
+				"underline"), LINETHROUGH("line-through");
+
+		private String code;
+
+		private FontStyle(final String code) {
+			this.code = code;
+		}
+
+		/**
+		 * @return a string, the text value of this style.
+		 * @since 5.0.6
+		 */
+		public String getValue() {
+			return code;
+		}
+
+	}
 
 	// static membervariables for the different styles
 
@@ -130,7 +156,7 @@ public class Font implements Comparable<Font> {
 	 * @param other
 	 *            the font that has to be copied
 	 */
-	public Font(Font other) {
+	public Font(final Font other) {
 		this.family = other.family;
 		this.size = other.size;
 		this.style = other.style;
@@ -152,7 +178,7 @@ public class Font implements Comparable<Font> {
 	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
-	public Font(FontFamily family, float size, int style, BaseColor color) {
+	public Font(final FontFamily family, final float size, final int style, final BaseColor color) {
 		this.family = family;
 		this.size = size;
 		this.style = style;
@@ -172,7 +198,7 @@ public class Font implements Comparable<Font> {
 	 *            the <CODE>BaseColor</CODE> of this font.
 	 */
 
-	public Font(BaseFont bf, float size, int style, BaseColor color) {
+	public Font(final BaseFont bf, final float size, final int style, final BaseColor color) {
 		this.baseFont = bf;
 		this.size = size;
 		this.style = style;
@@ -189,7 +215,7 @@ public class Font implements Comparable<Font> {
 	 * @param style
 	 *            the style of this font
 	 */
-	public Font(BaseFont bf, float size, int style) {
+	public Font(final BaseFont bf, final float size, final int style) {
 		this(bf, size, style, null);
 	}
 
@@ -201,7 +227,7 @@ public class Font implements Comparable<Font> {
 	 * @param size
 	 *            the size of this font
 	 */
-	public Font(BaseFont bf, float size) {
+	public Font(final BaseFont bf, final float size) {
 		this(bf, size, UNDEFINED, null);
 	}
 
@@ -211,7 +237,7 @@ public class Font implements Comparable<Font> {
 	 * @param bf
 	 *            the external font
 	 */
-	public Font(BaseFont bf) {
+	public Font(final BaseFont bf) {
 		this(bf, UNDEFINED, UNDEFINED, null);
 	}
 
@@ -227,7 +253,7 @@ public class Font implements Comparable<Font> {
 	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
-	public Font(FontFamily family, float size, int style) {
+	public Font(final FontFamily family, final float size, final int style) {
 		this(family, size, style, null);
 	}
 
@@ -241,7 +267,7 @@ public class Font implements Comparable<Font> {
 	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
-	public Font(FontFamily family, float size) {
+	public Font(final FontFamily family, final float size) {
 		this(family, size, UNDEFINED, null);
 	}
 
@@ -253,7 +279,7 @@ public class Font implements Comparable<Font> {
 	 * @since iText 5.0.1 (first parameter has been replaced with enum)
 	 */
 
-	public Font(FontFamily family) {
+	public Font(final FontFamily family) {
 		this(family, UNDEFINED, UNDEFINED, null);
 	}
 
@@ -274,11 +300,12 @@ public class Font implements Comparable<Font> {
 	 *            the other <CODE>Font</CODE>
 	 * @return a value
 	 */
-	public int compareTo(Font font) {
+	public int compareTo(final Font font) {
 		if (font == null) {
 			return -1;
 		}
 		try {
+			// FIXME using equals but equals not implemented!
 			if (baseFont != null && !baseFont.equals(font.getBaseFont())) {
 				return -2;
 			}
@@ -364,7 +391,7 @@ public class Font implements Comparable<Font> {
 	 * @param family
 	 *            A <CODE>String</CODE> representing a certain font-family.
 	 */
-	public void setFamily(String family) {
+	public void setFamily(final String family) {
 		this.family = getFamily(family);
 	}
 
@@ -375,10 +402,10 @@ public class Font implements Comparable<Font> {
 	 * @param family
 	 *            A <CODE>String</CODE> representing a certain font-family
 	 * @return the corresponding FontFamily
-	 * 
+	 *
 	 * @since 5.0.1
 	 */
-	public static FontFamily getFamily(String family) {
+	public static FontFamily getFamily(final String family) {
 		if (family.equalsIgnoreCase(FontFactory.COURIER)) {
 			return FontFamily.COURIER;
 		}
@@ -430,7 +457,7 @@ public class Font implements Comparable<Font> {
 	 *            a certain linespacing
 	 * @return the height of a line
 	 */
-	public float getCalculatedLeading(float linespacing) {
+	public float getCalculatedLeading(final float linespacing) {
 		return linespacing * getCalculatedSize();
 	}
 
@@ -440,7 +467,7 @@ public class Font implements Comparable<Font> {
 	 * @param size
 	 *            The new size of the font.
 	 */
-	public void setSize(float size) {
+	public void setSize(final float size) {
 		this.size = size;
 	}
 
@@ -529,49 +556,50 @@ public class Font implements Comparable<Font> {
 	 * @param style
 	 *            the style.
 	 */
-	public void setStyle(int style) {
+	public void setStyle(final int style) {
 		this.style = style;
 	}
 
 	/**
-	 * Sets the style using a <CODE>String</CODE> containing one of more of
-	 * the following values: normal, bold, italic, underline, strike.
+	 * Sets the style using a <CODE>String</CODE> containing one or more of the
+	 * following values: normal, bold, italic, oblique, underline, line-through
 	 *
 	 * @param style
 	 *            A <CODE>String</CODE> representing a certain style.
 	 */
-	public void setStyle(String style) {
+	public void setStyle(final String style) {
 		if (this.style == UNDEFINED)
 			this.style = NORMAL;
 		this.style |= getStyleValue(style);
 	}
 
 	/**
-	 * Translates a <CODE>String</CODE> -value of a certain style into the
-	 * index value is used for this style in this class.
+	 * Translates a <CODE>String</CODE> -value of a certain style into the index
+	 * value is used for this style in this class. Supported styles are in
+	 * {@link FontStyle} values are checked on {@link FontStyle#getValue()}
 	 *
 	 * @param style
 	 *            A <CODE>String</CODE>
 	 * @return the corresponding value
 	 */
-	public static int getStyleValue(String style) {
+	public static int getStyleValue(final String style) {
 		int s = 0;
-		if (style.indexOf(Markup.CSS_VALUE_NORMAL) != -1) {
+		if (style.indexOf(FontStyle.NORMAL.getValue()) != -1) {
 			s |= NORMAL;
 		}
-		if (style.indexOf(Markup.CSS_VALUE_BOLD) != -1) {
+		if (style.indexOf(FontStyle.BOLD.getValue()) != -1) {
 			s |= BOLD;
 		}
-		if (style.indexOf(Markup.CSS_VALUE_ITALIC) != -1) {
+		if (style.indexOf(FontStyle.ITALIC.getValue()) != -1) {
 			s |= ITALIC;
 		}
-		if (style.indexOf(Markup.CSS_VALUE_OBLIQUE) != -1) {
+		if (style.indexOf(FontStyle.OBLIQUE.getValue()) != -1) {
 			s |= ITALIC;
 		}
-		if (style.indexOf(Markup.CSS_VALUE_UNDERLINE) != -1) {
+		if (style.indexOf(FontStyle.UNDERLINE.getValue()) != -1) {
 			s |= UNDERLINE;
 		}
-		if (style.indexOf(Markup.CSS_VALUE_LINETHROUGH) != -1) {
+		if (style.indexOf(FontStyle.LINETHROUGH.getValue()) != -1) {
 			s |= STRIKETHRU;
 		}
 		return s;
@@ -595,7 +623,7 @@ public class Font implements Comparable<Font> {
 	 *            the new color of the font
 	 */
 
-	public void setColor(BaseColor color) {
+	public void setColor(final BaseColor color) {
 		this.color = color;
 	}
 
@@ -609,7 +637,7 @@ public class Font implements Comparable<Font> {
 	 * @param blue
 	 *            the blue-value of the new color
 	 */
-	public void setColor(int red, int green, int blue) {
+	public void setColor(final int red, final int green, final int blue) {
 		this.color = new BaseColor(red, green, blue);
 	}
 
@@ -634,7 +662,7 @@ public class Font implements Comparable<Font> {
 	 *            </CODE>
 	 * @return the <CODE>BaseFont</CODE> this class represents
 	 */
-	public BaseFont getCalculatedBaseFont(boolean specialEncoding) {
+	public BaseFont getCalculatedBaseFont(final boolean specialEncoding) {
 		if (baseFont != null)
 			return baseFont;
 		int style = this.style;
@@ -657,7 +685,7 @@ public class Font implements Comparable<Font> {
 				fontName = BaseFont.COURIER_BOLDOBLIQUE;
 				break;
 			default:
-				//case NORMAL:
+				// case NORMAL:
 				fontName = BaseFont.COURIER;
 				break;
 			}
@@ -716,7 +744,6 @@ public class Font implements Comparable<Font> {
 		return cfont;
 	}
 
-
 	// Helper methods
 
 	/**
@@ -727,8 +754,8 @@ public class Font implements Comparable<Font> {
 	 * @return a <CODE>boolean</CODE>
 	 */
 	public boolean isStandardFont() {
-		return family == FontFamily.UNDEFINED && size == UNDEFINED && style == UNDEFINED
-				&& color == null && baseFont == null;
+		return family == FontFamily.UNDEFINED && size == UNDEFINED
+				&& style == UNDEFINED && color == null && baseFont == null;
 	}
 
 	/**
@@ -739,8 +766,9 @@ public class Font implements Comparable<Font> {
 	 *            the font of a bigger element class
 	 * @return a <CODE>Font</CODE>
 	 */
-	public Font difference(Font font) {
-		if (font == null) return this;
+	public Font difference(final Font font) {
+		if (font == null)
+			return this;
 		// size
 		float dSize = font.size;
 		if (dSize == UNDEFINED) {

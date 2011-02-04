@@ -351,7 +351,7 @@ class PdfStamperImp extends PdfWriter {
             }
         }
         newInfo.put(PdfName.MODDATE, date);
-        newInfo.put(PdfName.PRODUCER, new PdfString(producer));
+        newInfo.put(PdfName.PRODUCER, new PdfString(producer, PdfObject.TEXT_UNICODE));
         if (append) {
             if (iInfo == null)
                 info = addToBody(newInfo, false).getIndirectReference();
@@ -1314,12 +1314,12 @@ class PdfStamperImp extends PdfWriter {
         for (Map.Entry<String, PdfObject> entry: fs.entrySet()) {
             String name = entry.getKey();
             int k = 0;
-            String nn = name;
-            while (old.containsKey(nn)) {
+            StringBuilder nn = new StringBuilder(name);
+            while (old.containsKey(nn.toString())) {
                 ++k;
-                nn += " " + k;
+                nn.append(" ").append(k);
             }
-            old.put(nn, entry.getValue());
+            old.put(nn.toString(), entry.getValue());
         }
         PdfDictionary tree = PdfNameTree.writeTree(old, this);
         // Remove old EmbeddedFiles object if preset
@@ -1604,6 +1604,8 @@ class PdfStamperImp extends PdfWriter {
     	}
     	documentOCG.addAll(ocgmap.values());
     	OCGRadioGroup = d.getAsArray(PdfName.RBGROUPS);
+    	if (OCGRadioGroup == null)
+    		OCGRadioGroup = new PdfArray();
     	OCGLocked = d.getAsArray(PdfName.LOCKED);
     	if (OCGLocked == null)
     		OCGLocked = new PdfArray();

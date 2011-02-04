@@ -68,6 +68,11 @@ public class PdfFormField extends PdfAnnotation {
     public static final int FF_DONOTSCROLL = 8388608;
     public static final int FF_COMB = 16777216;
     public static final int FF_RADIOSINUNISON = 1 << 25;
+    /**
+     * Allows text fields to support rich text.
+     * @since 5.0.6
+     */
+    public static final int FF_RICHTEXT = 1 << 26;
     public static final int Q_LEFT = 0;
     public static final int Q_CENTER = 1;
     public static final int Q_RIGHT = 2;
@@ -231,6 +236,11 @@ public class PdfFormField extends PdfAnnotation {
         return kids;
     }
 
+    /**
+     * ORs together the given flags with the current /Ff value.  
+     * @param flags flags to be added.
+     * @return the old flag value
+     */
     public int setFieldFlags(int flags) {
         PdfNumber obj = (PdfNumber)get(PdfName.FF);
         int old;
@@ -254,6 +264,19 @@ public class PdfFormField extends PdfAnnotation {
     public void setValue(PdfSignature sig) {
         put(PdfName.V, sig);
     }
+    
+    /**
+     * Sets the rich value for this field.  
+     * It is suggested that the regular value of this field be set to an 
+     * equivalent value.  Rich text values are only supported since PDF 1.5,
+     * and require that the FF_RV flag be set.  See PDF Reference chapter 
+     * 12.7.3.4 for details.
+     * @param rv HTML markup for the rich value of this field
+     * @since 5.0.6
+     */
+    public void setRichValue(String rv) {
+    	put(PdfName.RV, new PdfString( rv ));
+    }
 
     public void setDefaultValueAsString(String s) {
         put(PdfName.DV, new PdfString(s, PdfObject.TEXT_UNICODE));
@@ -268,14 +291,26 @@ public class PdfFormField extends PdfAnnotation {
             put(PdfName.T, new PdfString(s, PdfObject.TEXT_UNICODE));
     }
 
+    /**
+     * The "user name" is the text shown as a tool.
+     * @param s user name.
+     */
     public void setUserName(String s) {
         put(PdfName.TU, new PdfString(s, PdfObject.TEXT_UNICODE));
     }
 
+    /**
+     * The mapping name is the name this field uses when submitting form data.
+     * @param s
+     */
     public void setMappingName(String s) {
         put(PdfName.TM, new PdfString(s, PdfObject.TEXT_UNICODE));
     }
 
+    /**
+     * Sets text alginment for this field
+     * @param v  one of the Q_* contstants
+     */
     public void setQuadding(int v) {
         put(PdfName.Q, new PdfNumber(v));
     }

@@ -68,6 +68,48 @@ public class Meta implements Element {
     /** This is the content of the Meta-information. */
     private StringBuffer content;
 
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
+	public static final String UNKNOWN = "unknown";
+
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
+	public static final String PRODUCER = "producer";
+
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
+	public static final String CREATIONDATE = "creationdate";
+
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
+	public static final String AUTHOR = "author";
+
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
+	public static final String KEYWORDS = "keywords";
+
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
+	public static final String SUBJECT = "subject";
+
+	/**
+	 * The possible value of an alignment attribute.
+	 * @since 5.0.6 (moved from ElementTags)
+	 */
+	public static final String TITLE = "title";
+
     // constructors
 
     /**
@@ -176,19 +218,19 @@ public class Meta implements Element {
     public String getName() {
         switch (type) {
             case Element.SUBJECT:
-                return ElementTags.SUBJECT;
+                return Meta.SUBJECT;
             case Element.KEYWORDS:
-                return ElementTags.KEYWORDS;
+                return Meta.KEYWORDS;
             case Element.AUTHOR:
-                return ElementTags.AUTHOR;
+                return Meta.AUTHOR;
             case Element.TITLE:
-                return ElementTags.TITLE;
+                return Meta.TITLE;
             case Element.PRODUCER:
-                return ElementTags.PRODUCER;
+                return Meta.PRODUCER;
             case Element.CREATIONDATE:
-                return ElementTags.CREATIONDATE;
+                return Meta.CREATIONDATE;
                 default:
-                    return ElementTags.UNKNOWN;
+                    return Meta.UNKNOWN;
         }
     }
 
@@ -199,22 +241,22 @@ public class Meta implements Element {
      * @return	the Element value corresponding with the given tag
      */
     public static int getType(String tag) {
-        if (ElementTags.SUBJECT.equals(tag)) {
+        if (Meta.SUBJECT.equals(tag)) {
             return Element.SUBJECT;
         }
-        if (ElementTags.KEYWORDS.equals(tag)) {
+        if (Meta.KEYWORDS.equals(tag)) {
             return Element.KEYWORDS;
         }
-        if (ElementTags.AUTHOR.equals(tag)) {
+        if (Meta.AUTHOR.equals(tag)) {
             return Element.AUTHOR;
         }
-        if (ElementTags.TITLE.equals(tag)) {
+        if (Meta.TITLE.equals(tag)) {
             return Element.TITLE;
         }
-        if (ElementTags.PRODUCER.equals(tag)) {
+        if (Meta.PRODUCER.equals(tag)) {
             return Element.PRODUCER;
         }
-        if (ElementTags.CREATIONDATE.equals(tag)) {
+        if (Meta.CREATIONDATE.equals(tag)) {
             return Element.CREATIONDATE;
         }
         return Element.HEADER;

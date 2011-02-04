@@ -155,6 +155,21 @@ public class Rectangle implements Element {
 		this.urx = urx;
 		this.ury = ury;
 	}
+	
+	/**
+	 * Constructs a <CODE>Rectangle</CODE>-object.
+	 *
+	 * @param llx	lower left x
+	 * @param lly	lower left y
+	 * @param urx	upper right x
+	 * @param ury	upper right y
+	 * @param rotation the rotation (0, 90, 180, or 270)
+	 * @since iText 5.0.6
+	 */
+	public Rectangle(float llx, float lly, float urx, float ury, int rotation) {
+		this(0, 0, urx, ury);
+		setRotation(rotation);
+	}
 
 	/**
 	 * Constructs a <CODE>Rectangle</CODE> -object starting from the origin
@@ -165,6 +180,19 @@ public class Rectangle implements Element {
 	 */
 	public Rectangle(float urx, float ury) {
 		this(0, 0, urx, ury);
+	}
+
+	/**
+	 * Constructs a <CODE>Rectangle</CODE>-object starting from the origin
+	 * (0, 0) and with a specific rotation (valid values are 0, 90, 180, 270).
+	 *
+	 * @param urx	upper right x
+	 * @param ury	upper right y
+	 * @param rotation the rotation of the rectangle
+	 * @since iText 5.0.6
+	 */
+	public Rectangle(float urx, float ury, int rotation) {
+		this(0, 0, urx, ury, rotation);
 	}
 
 	/**
@@ -388,6 +416,23 @@ public class Rectangle implements Element {
 	public int getRotation() {
 		return rotation;
 	}
+	
+	/**
+	 * Sets the rotation of the rectangle. Valid values are 0, 90, 180, and 270.
+	 * @param rotation the new rotation value
+	 * @since iText 5.0.6
+	 */
+	public void setRotation(int rotation) {
+		this.rotation = rotation % 360;
+		switch (this.rotation) {
+		case 90:
+		case 180:
+		case 270:
+            break;
+        default:
+			this.rotation = 0;
+		}
+	}
 
 	/**
 	 * Rotates the rectangle.
@@ -397,8 +442,7 @@ public class Rectangle implements Element {
 	 */
 	public Rectangle rotate() {
 		Rectangle rect = new Rectangle(lly, llx, ury, urx);
-		rect.rotation = rotation + 90;
-		rect.rotation %= 360;
+		rect.setRotation(rotation + 90);
 		return rect;
 	}
 

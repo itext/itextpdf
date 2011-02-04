@@ -105,11 +105,11 @@ public class PdfImage extends PdfStream {
                 int colorspace = image.getColorspace();
                 int transparency[] = image.getTransparency();
                 if (transparency != null && !image.isMask() && maskRef == null) {
-                    String s = "[";
+                    StringBuilder s = new StringBuilder("[");
                     for (int k = 0; k < transparency.length; ++k)
-                        s += transparency[k] + " ";
-                    s += "]";
-                    put(PdfName.MASK, new PdfLiteral(s));
+                        s.append(transparency[k]).append(" ");
+                    s.append("]");
+                    put(PdfName.MASK, new PdfLiteral(s.toString()));
                 }
                 bytes = image.getRawData();
                 put(PdfName.LENGTH, new PdfNumber(bytes.length));

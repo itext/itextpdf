@@ -153,19 +153,6 @@ public final class FontFactory {
 /**
  * Constructs a <CODE>Font</CODE>-object.
  *
- * @param   attributes  the attributes of a <CODE>Font</CODE> object.
- * @return the Font constructed based on the attributes
- */
-
-    public static Font getFont(Properties attributes) {
-        fontImp.defaultEmbedding = defaultEmbedding;
-        fontImp.defaultEncoding = defaultEncoding;
-        return fontImp.getFont(attributes);
-    }
-
-/**
- * Constructs a <CODE>Font</CODE>-object.
- *
  * @param	fontname    the name of the font
  * @param	encoding    the encoding of the font
  * @param       embedded    true if the font is to be embedded in the PDF

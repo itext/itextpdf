@@ -1470,7 +1470,7 @@ public class PdfReader implements PdfViewerPreferences {
                                 objStmToOffset.put(field2, 0);
                             }
                             else {
-                                Integer on = new Integer(field2);
+                                Integer on = Integer.valueOf(field2);
                                 IntHashtable seq = objStmMark.get(on);
                                 if (seq == null) {
                                     seq = new IntHashtable();
@@ -2020,6 +2020,56 @@ public class PdfReader implements PdfViewerPreferences {
         }
         else
             return new byte[0];
+    }
+
+    /** Gets the content from the page dictionary.
+     * @param page the page dictionary
+     * @throws IOException on error
+     * @return the content
+     * @since 5.0.6
+     */
+    public static byte[] getPageContent(PdfDictionary page) throws IOException{
+        if (page == null)
+            return null;
+        RandomAccessFileOrArray rf = null;
+        try {
+            PdfObject contents = getPdfObjectRelease(page.get(PdfName.CONTENTS));
+            if (contents == null)
+                return new byte[0];
+            if (contents.isStream()) {
+                if (rf == null) {
+                    rf = ((PRStream)contents).getReader().getSafeFile();
+                    rf.reOpen();
+                }
+                return getStreamBytes((PRStream)contents, rf);
+            }
+            else if (contents.isArray()) {
+                PdfArray array = (PdfArray)contents;
+                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                for (int k = 0; k < array.size(); ++k) {
+                    PdfObject item = getPdfObjectRelease(array.getPdfObject(k));
+                    if (item == null || !item.isStream())
+                        continue;
+                    if (rf == null) {
+                        rf = ((PRStream)item).getReader().getSafeFile();
+                        rf.reOpen();
+                    }
+                    byte[] b = getStreamBytes((PRStream)item, rf);
+                    bout.write(b);
+                    if (k != array.size() - 1)
+                        bout.write('\n');
+                }
+                return bout.toByteArray();
+            }
+            else
+                return new byte[0];
+        }
+        finally {
+            try {
+                if (rf != null)
+                    rf.close();
+            }catch(Exception e){}
+        }
     }
 
     /** Gets the contents of the page.
@@ -3046,9 +3096,9 @@ public class PdfReader implements PdfViewerPreferences {
                         }
                     }
                     if (objs == null)
-                        state.push(new Object[]{ar, new Integer(k + 1)});
+                        state.push(new Object[]{ar, Integer.valueOf(k + 1)});
                     else {
-                        objs[1] = new Integer(k + 1);
+                        objs[1] = Integer.valueOf(k + 1);
                         state.push(objs);
                     }
                     state.push(v);
@@ -3067,9 +3117,9 @@ public class PdfReader implements PdfViewerPreferences {
                         }
                     }
                     if (objs == null)
-                        state.push(new Object[]{keys, dic, new Integer(k + 1)});
+                        state.push(new Object[]{keys, dic, Integer.valueOf(k + 1)});
                     else {
-                        objs[2] = new Integer(k + 1);
+                        objs[2] = Integer.valueOf(k + 1);
                         state.push(objs);
                     }
                     state.push(v);

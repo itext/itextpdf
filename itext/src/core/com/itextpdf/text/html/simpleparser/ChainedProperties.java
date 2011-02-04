@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: ChainedProperties.java 4666 2011-01-29 12:53:09Z blowagie $
  *
  * This file is part of the iText project.
  * Copyright (c) 1998-2009 1T3XT BVBA
@@ -44,97 +44,122 @@
 package com.itextpdf.text.html.simpleparser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.itextpdf.text.ElementTags;
+import com.itextpdf.text.html.HtmlTags;
+import com.itextpdf.text.html.HtmlUtilities;
 
+/**
+ * Stores the hierarchy of tags along with the attributes of each tag.
+ * @since 5.0.6 renamed from ChainedProperties
+ */
 public class ChainedProperties {
 
-	public final static int fontSizes[] = { 8, 10, 12, 14, 18, 24, 36 };
-
-	private static final class ChainedProperty {
-	    final String key;
-	    final HashMap<String, String> property;
-	    ChainedProperty(String key, HashMap<String, String> property) {
-	    this.key = key;
-	    this.property = property;
+	/**
+	 * Class that stores the info about one tag in the chain.
+	 */
+	private static final class TagAttributes {
+		/** A possible tag */
+	    final String tag;
+	    /** The styles corresponding with the tag */
+	    final Map<String, String> attrs;
+	    /**
+	     * Constructs a chained property.
+	     * @param	tag		an XML/HTML tag
+	     * @param	attrs	the tag's attributes
+	     */
+	    TagAttributes(String tag, Map<String, String> attrs) {
+	    	this.tag = tag;
+	    	this.attrs = attrs;
 	    }
 	}
 
-	public ArrayList<ChainedProperty> chain = new ArrayList<ChainedProperty>();
+	/** A list of chained properties representing the tag hierarchy. */
+	public List<TagAttributes> chain = new ArrayList<TagAttributes>();
 
 	/** Creates a new instance of ChainedProperties */
 	public ChainedProperties() {
 	}
 
+	/**
+	 * Walks through the hierarchy (bottom-up) looking for
+	 * a property key. Returns a value as soon as a match
+	 * is found or null if the key can't be found.
+	 * @param	key	the key of the property
+	 * @return	the value of the property
+	 */
 	public String getProperty(String key) {
-    		for (int k = chain.size() - 1; k >= 0; --k) {
-                        ChainedProperty p = chain.get(k);
-                        HashMap<String, String> prop = p.property;
-                        String ret = prop.get(key);
+		for (int k = chain.size() - 1; k >= 0; --k) {
+			TagAttributes p = chain.get(k);
+			Map<String, String> attrs = p.attrs;
+			String ret = attrs.get(key);
 			if (ret != null)
 				return ret;
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Walks through the hierarchy (bottom-up) looking for
+	 * a property key. Returns true as soon as a match is
+	 * found or false if the key can't be found.
+	 * @param	key	the key of the property
+	 * @return	true if the key is found
+	 */
 	public boolean hasProperty(String key) {
 		for (int k = chain.size() - 1; k >= 0; --k) {
-		        ChainedProperty p = chain.get(k);
-                        HashMap<String, String> prop = p.property;
-			if (prop.containsKey(key))
+			TagAttributes p = chain.get(k);
+			Map<String, String> attrs = p.attrs;
+			if (attrs.containsKey(key))
 				return true;
 		}
 		return false;
 	}
 
-	public void addToChain(String key, HashMap<String, String> prop) {
-		// adjust the font size
-		String value = prop.get(ElementTags.SIZE);
-		if (value != null) {
-			if (value.endsWith("pt")) {
-				prop.put(ElementTags.SIZE, value.substring(0,
-						value.length() - 2));
-			} else {
-				int s = 0;
-				if (value.startsWith("+") || value.startsWith("-")) {
-					String old = getProperty("basefontsize");
-					if (old == null)
-						old = "12";
-					float f = Float.parseFloat(old);
-					int c = (int) f;
-					for (int k = fontSizes.length - 1; k >= 0; --k) {
-						if (c >= fontSizes[k]) {
-							s = k;
-							break;
-						}
-					}
-					int inc = Integer.parseInt(value.startsWith("+") ? value
-							.substring(1) : value);
-					s += inc;
-				} else {
-					try {
-						s = Integer.parseInt(value) - 1;
-					} catch (NumberFormatException nfe) {
-						s = 0;
-					}
-				}
-				if (s < 0)
-					s = 0;
-				else if (s >= fontSizes.length)
-					s = fontSizes.length - 1;
-				prop.put(ElementTags.SIZE, Integer.toString(fontSizes[s]));
-			}
-		}
-		chain.add(new ChainedProperty(key, prop));
+	/**
+	 * Adds a tag and its corresponding properties to the chain.
+	 * @param tag	the tags that needs to be added to the chain
+	 * @param props	the tag's attributes
+	 */
+	public void addToChain(String tag, Map<String, String> props) {
+		this.adjustFontSize(props);
+		chain.add(new TagAttributes(tag, props));
 	}
 
-	public void removeChain(String key) {
+	/**
+	 * Walks through the hierarchy (bottom-up) and removes the
+	 * first occurrence of a tag that is encountered.
+	 * @param	tag	the tag that needs to be removed
+	 */
+	public void removeChain(String tag) {
 		for (int k = chain.size() - 1; k >= 0; --k) {
-			if (key.equals(chain.get(k).key)) {
+			if (tag.equals(chain.get(k).tag)) {
 				chain.remove(k);
 				return;
 			}
 		}
+	}
+	
+	/**
+	 * If the properties contain a font size, the size may need to
+	 * be adjusted based on font sizes higher in the hierarchy.
+	 * @param	attrs the attributes that may have to be updated
+	 * @since 5.0.6 (renamed)
+	 */
+	protected void adjustFontSize(Map<String, String> attrs) {
+		// fetch the font size
+		String value = attrs.get(HtmlTags.SIZE);
+		// do nothing if the font size isn't defined
+		if (value == null)
+			return;
+		// the font is defined as a real size: remove "pt"
+		if (value.endsWith("pt")) {
+			attrs.put(HtmlTags.SIZE,
+				value.substring(0, value.length() - 2));
+			return;
+		}
+		String old = getProperty(HtmlTags.SIZE);
+		attrs.put(HtmlTags.SIZE, Integer.toString(HtmlUtilities.getIndexedFontSize(value, old)));
 	}
 }

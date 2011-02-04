@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.html;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.itextpdf.text.Element;
 import com.itextpdf.text.BaseColor;
 
@@ -70,63 +73,57 @@ import com.itextpdf.text.BaseColor;
  *    String htmlPresentation = HtmlEncoder.encode("Marie-Th&#233;r&#232;se S&#248;rensen");
  * </PRE></BLOCKQUOTE><P>
  * for more info: see O'Reilly; "HTML: The Definitive Guide" (page 164)
- *
- * @author  mario.maccarini@ugent.be
  */
 
 public final class HtmlEncoder {
     
+	/**
+	 * This class will never be constructed.
+	 */
+	private HtmlEncoder() {
+	}
+	
     // membervariables
-    
-/** List with the HTML translation of all the characters. */
-    private static final String[] htmlCode = new String[256];
+    /**
+     * List with the HTML translation of all the characters.
+     * @since 5.0.6 (renamed from htmlCode)
+     */
+    private static final String[] HTML_CODE = new String[256];
     
     static {
         for (int i = 0; i < 10; i++) {
-            htmlCode[i] = "&#00" + i + ";";
+            HTML_CODE[i] = "&#00" + i + ";";
         }
         
         for (int i = 10; i < 32; i++) {
-            htmlCode[i] = "&#0" + i + ";";
+            HTML_CODE[i] = "&#0" + i + ";";
         }
         
         for (int i = 32; i < 128; i++) {
-            htmlCode[i] = String.valueOf((char)i);
+            HTML_CODE[i] = String.valueOf((char)i);
         }
         
         // Special characters
-        htmlCode['\t'] = "\t";
-        htmlCode['\n'] = "<" + HtmlTags.NEWLINE + " />\n";
-        htmlCode['\"'] = "&quot;"; // double quote
-        htmlCode['&'] = "&amp;"; // ampersand
-        htmlCode['<'] = "&lt;"; // lower than
-        htmlCode['>'] = "&gt;"; // greater than
+        HTML_CODE['\t'] = "\t";
+        HTML_CODE['\n'] = "<br />\n";
+        HTML_CODE['\"'] = "&quot;"; // double quote
+        HTML_CODE['&'] = "&amp;"; // ampersand
+        HTML_CODE['<'] = "&lt;"; // lower than
+        HTML_CODE['>'] = "&gt;"; // greater than
         
         for (int i = 128; i < 256; i++) {
-            htmlCode[i] = "&#" + i + ";";
+            HTML_CODE[i] = "&#" + i + ";";
         }
     }
     
-    
-    // constructors
-    
-/**
- * This class will never be constructed.
- * <P>
- * HtmlEncoder only contains static methods.
- */
-    
-    private HtmlEncoder () { }
-    
     // methods
     
-/**
- * Converts a <CODE>String</CODE> to the HTML-format of this <CODE>String</CODE>.
- *
- * @param	string	The <CODE>String</CODE> to convert
- * @return	a <CODE>String</CODE>
- */
-    
+    /**
+     * Converts a <CODE>String</CODE> to the HTML-format of this <CODE>String</CODE>.
+     *
+     * @param	string	The <CODE>String</CODE> to convert
+     * @return	a <CODE>String</CODE>
+     */
     public static String encode(String string) {
         int n = string.length();
         char character;
@@ -136,7 +133,7 @@ public final class HtmlEncoder {
             character = string.charAt(i);
             // the Htmlcode of these characters are added to a StringBuffer one by one
             if (character < 256) {
-                buffer.append(htmlCode[character]);
+                buffer.append(HTML_CODE[character]);
             }
             else {
                 // Improvement posted by Joachim Eyrich
@@ -146,13 +143,12 @@ public final class HtmlEncoder {
         return buffer.toString();
     }
     
-/**
- * Converts a <CODE>BaseColor</CODE> into a HTML representation of this <CODE>BaseColor</CODE>.
- *
- * @param	color	the <CODE>BaseColor</CODE> that has to be converted.
- * @return	the HTML representation of this <COLOR>BaseColor</COLOR>
- */
-    
+    /**
+     * Converts a <CODE>BaseColor</CODE> into a HTML representation of this <CODE>BaseColor</CODE>.
+     *
+     * @param	color	the <CODE>BaseColor</CODE> that has to be converted.
+     * @return	the HTML representation of this <COLOR>BaseColor</COLOR>
+     */
     public static String encode(BaseColor color) {
         StringBuffer buffer = new StringBuffer("#");
         if (color.getRed() < 16) {
@@ -169,14 +165,13 @@ public final class HtmlEncoder {
         buffer.append(Integer.toString(color.getBlue(), 16));
         return buffer.toString();
     }
-    
-/**
- * Translates the alignment value.
- *
- * @param   alignment   the alignment value
- * @return  the translated value
- */
-    
+
+    /**
+     * Translates the alignment value.
+     *
+     * @param   alignment   the alignment value
+     * @return  the translated value
+     */
     public static String getAlignment(int alignment) {
         switch(alignment) {
             case Element.ALIGN_LEFT:
@@ -187,7 +182,7 @@ public final class HtmlEncoder {
                 return HtmlTags.ALIGN_RIGHT;
             case Element.ALIGN_JUSTIFIED:
             case Element.ALIGN_JUSTIFIED_ALL:
-                return HtmlTags.ALIGN_JUSTIFIED;
+                return HtmlTags.ALIGN_JUSTIFY;
             case Element.ALIGN_TOP:
                 return HtmlTags.ALIGN_TOP;
             case Element.ALIGN_MIDDLE:
@@ -200,4 +195,25 @@ public final class HtmlEncoder {
                     return "";
         }
     }
+    
+	/**
+	 * Set containing tags that trigger a new line.
+	 * @since iText 5.0.6
+	 */
+	private static final Set<String> NEWLINETAGS = new HashSet<String>();
+	static {
+		// Following list are the basic html tags that force new lines
+		// List may be extended as we discover them
+		NEWLINETAGS.add(HtmlTags.P);
+		NEWLINETAGS.add(HtmlTags.BLOCKQUOTE);
+		NEWLINETAGS.add(HtmlTags.BR);
+	}	
+	
+	/**
+	 * Returns true if the tag causes a new line like p, br etc.
+	 * @since iText 5.0.6
+	 */
+	public static boolean isNewLineTag(String tag) {
+		return NEWLINETAGS.contains(tag);
+	}
 }

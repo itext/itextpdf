@@ -48,6 +48,7 @@ import java.util.Iterator;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.ListItem;
 
 /**
@@ -191,7 +192,9 @@ public class PdfLine {
 
     private void addToLine(PdfChunk chunk) {
         if (chunk.changeLeading && chunk.isImage()) {
-        	float f = chunk.getImage().getScaledHeight() + chunk.getImageOffsetY() + chunk.getImage().getBorderWidthTop();
+        	Image img = chunk.getImage();
+        	float f = img.getScaledHeight() + chunk.getImageOffsetY()
+        		+ img.getBorderWidthTop() + img.getSpacingBefore();
         	if (f > height) height = f;
         }
     	line.add(chunk);
@@ -451,7 +454,9 @@ public class PdfLine {
                 normal_leading = Math.max(chunk.font().size(), normal_leading);
             }
             else {
-                image_leading = Math.max(chunk.getImage().getScaledHeight() + chunk.getImageOffsetY(), image_leading);
+            	Image img = chunk.getImage();
+            	float height = img.getScaledHeight() + chunk.getImageOffsetY() + img.getSpacingBefore();
+            	image_leading = Math.max(height, image_leading);
             }
         }
         return new float[]{normal_leading, image_leading};

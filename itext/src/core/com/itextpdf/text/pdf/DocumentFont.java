@@ -209,7 +209,6 @@ public class DocumentFont extends BaseFont {
         try {
             PdfContentParser ps = new PdfContentParser(new PRTokeniser(touni));
             PdfObject ob = null;
-            PdfObject last = null;
             boolean notFound = true;
             int nestLevel = 0;
             while ((notFound || nestLevel > 0) && (ob = ps.readPRObject()) != null) {
@@ -222,9 +221,11 @@ public class DocumentFont extends BaseFont {
                 		nestLevel--;
                 	}
                 	else if (ob.toString().equals("beginbfchar")) {
-                        int n = ((PdfNumber)last).intValue();
-                        for (int k = 0; k < n; ++k) {
-                            String cid = decodeString((PdfString)ps.readPRObject());
+                        while (true) {
+                            PdfObject nx = ps.readPRObject();
+                            if (nx.toString().equals("endbfchar"))
+                                break;
+                            String cid = decodeString((PdfString)nx);
                             String uni = decodeString((PdfString)ps.readPRObject());
                             if (uni.length() == 1) {
                                 int cidc = cid.charAt(0);
@@ -232,14 +233,16 @@ public class DocumentFont extends BaseFont {
                                 int w = dw;
                                 if (widths.containsKey(cidc))
                                     w = widths.get(cidc);
-                                metrics.put(new Integer(unic), new int[]{cidc, w});
+                                metrics.put(Integer.valueOf(unic), new int[]{cidc, w});
                             }
                         }
                     }
                     else if (ob.toString().equals("beginbfrange")) {
-                        int n = ((PdfNumber)last).intValue();
-                        for (int k = 0; k < n; ++k) {
-                            String cid1 = decodeString((PdfString)ps.readPRObject());
+                        while (true) {
+                            PdfObject nx = ps.readPRObject();
+                            if (nx.toString().equals("endbfrange"))
+                                break;
+                            String cid1 = decodeString((PdfString)nx);
                             String cid2 = decodeString((PdfString)ps.readPRObject());
                             int cid1c = cid1.charAt(0);
                             int cid2c = cid2.charAt(0);
@@ -252,7 +255,7 @@ public class DocumentFont extends BaseFont {
                                         int w = dw;
                                         if (widths.containsKey(cid1c))
                                             w = widths.get(cid1c);
-                                        metrics.put(new Integer(unic), new int[]{cid1c, w});
+                                        metrics.put(Integer.valueOf(unic), new int[]{cid1c, w});
                                     }
                                 }
                             }
@@ -265,15 +268,13 @@ public class DocumentFont extends BaseFont {
                                         int w = dw;
                                         if (widths.containsKey(cid1c))
                                             w = widths.get(cid1c);
-                                        metrics.put(new Integer(unic), new int[]{cid1c, w});
+                                        metrics.put(Integer.valueOf(unic), new int[]{cid1c, w});
                                     }
                                 }
                             }
                         }
                     }
                 }
-                else
-                    last = ob;
             }
         }
         catch (Exception e) {
@@ -567,7 +568,7 @@ public class DocumentFont extends BaseFont {
         if (cjkMirror != null)
             return cjkMirror.getWidth(char1);
         else if (isType0) {
-            int[] ws = metrics.get(new Integer(char1));
+            int[] ws = metrics.get(Integer.valueOf(char1));
             if (ws != null)
                 return ws[1];
             else
@@ -586,7 +587,7 @@ public class DocumentFont extends BaseFont {
             int len = chars.length;
             int total = 0;
             for (int k = 0; k < len; ++k) {
-                int[] ws = metrics.get(new Integer(chars[k]));
+                int[] ws = metrics.get(Integer.valueOf(chars[k]));
                 if (ws != null)
                     total += ws[1];
             }
@@ -606,7 +607,7 @@ public class DocumentFont extends BaseFont {
             byte[] b = new byte[len * 2];
             int bptr = 0;
             for (int k = 0; k < len; ++k) {
-                int[] ws = metrics.get(new Integer(chars[k]));
+                int[] ws = metrics.get(Integer.valueOf(chars[k]));
                 if (ws != null) {
                     int g = ws[0];
                     b[bptr++] = (byte)(g / 256);
@@ -644,7 +645,7 @@ public class DocumentFont extends BaseFont {
         if (cjkMirror != null)
             return PdfEncodings.convertToBytes((char)char1, CJKFont.CJK_ENCODING);
         else if (isType0) {
-            int[] ws = metrics.get(new Integer(char1));
+            int[] ws = metrics.get(Integer.valueOf(char1));
             if (ws != null) {
                 int g = ws[0];
                 return new byte[]{(byte)(g / 256), (byte)g};
@@ -669,7 +670,7 @@ public class DocumentFont extends BaseFont {
         if (cjkMirror != null)
             return cjkMirror.charExists(c);
         else if (isType0) {
-            return metrics.containsKey(new Integer(c));
+            return metrics.containsKey(Integer.valueOf(c));
         }
         else
             return super.charExists(c);

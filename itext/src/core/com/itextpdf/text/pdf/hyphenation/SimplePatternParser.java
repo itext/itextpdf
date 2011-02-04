@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf.hyphenation;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -51,7 +50,6 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 
@@ -230,7 +228,7 @@ public class SimplePatternParser implements SimpleXMLDocHandler,
 			if (token.length() > 0) {
 				exception.add(token.toString());
 			}
-			exception.add(new Hyphen(h.get(HtmlTags.PRE), h
+			exception.add(new Hyphen(h.get("pre"), h
 					.get("no"), h.get("post")));
 			currElement = ELEM_HYPHEN;
 		}
@@ -274,7 +272,7 @@ public class SimplePatternParser implements SimpleXMLDocHandler,
 	public void addPattern(String p, String v) {
 		System.out.println("pattern: " + p + " : " + v);
 	}
-
+	/*
 	public static void main(String[] args) throws Exception {
 		try {
 			if (args.length > 0) {
@@ -285,4 +283,5 @@ public class SimplePatternParser implements SimpleXMLDocHandler,
 			e.printStackTrace();
 		}
 	}
+	*/
 }

@@ -13,6 +13,7 @@
 
 	<target name="jar">
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rups" />
 	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -24,6 +25,9 @@
 	</target>
 
 	<target name="release" description="--> builds a release after you have exported the src and www module from CVS">
+		<antcall target="clean" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="test" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="cleanbin" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.rups" />
@@ -48,4 +52,7 @@
 		<ant antfile="ant/release.xml" inheritAll="false" target="docs.tar.gz" />
 	</target>
 
+	<target name="test">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="test"/>
+	</target>
 </project>

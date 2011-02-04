@@ -574,7 +574,7 @@ public class AcroFields {
                             PRIndirectReference por = (PRIndirectReference)po;
                             BaseFont bp = new DocumentFont((PRIndirectReference)po);
                             tx.setFont(bp);
-                            Integer porkey = new Integer(por.getNumber());
+                            Integer porkey = Integer.valueOf(por.getNumber());
                             BaseFont porf = extensionFonts.get(porkey);
                             if (porf == null) {
                                 if (!extensionFonts.containsKey(porkey)) {
@@ -771,7 +771,7 @@ public class AcroFields {
             	for (int j = 0; j < values.length; ++j) {
             		String val = values[j];
             		if (val != null && val.equals(choicesExp[k])) {
-            			indexes.add( new Integer( k ) );
+            			indexes.add( Integer.valueOf( k ) );
             			break;
             		}
             	}
@@ -806,6 +806,32 @@ public class AcroFields {
         }
     }
 
+    /**
+     * Retrieve the rich value for the given field
+     * @param name
+     * @return The rich value if present, or null.
+     * @since 5.0.6
+     */
+    public String getFieldRichValue(String name) {
+    	if (xfa.isXfaPresent()) {
+    		return null;
+    	}
+
+    	Item item = fields.get(name);
+    	if (item == null) { 
+    		return null;
+    	}
+
+    	PdfDictionary merged = item.getMerged(0);
+    	PdfString rich = merged.getAsString(PdfName.RV);
+    	
+    	String markup = null;
+    	if (rich != null) {
+    		markup = rich.toString();
+    	}
+
+    	return markup;
+    }
     /**
      * Gets the field value.
      *
@@ -1286,6 +1312,49 @@ public class AcroFields {
      */
     public boolean setField(String name, String value) throws IOException, DocumentException {
         return setField(name, value, null);
+    }
+    
+    /**
+     * Sets the rich value for the given field.  See <a href="http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/PDF32000_2008.pdf">PDF Reference</a> chapter 
+     * 12.7.3.4 (Rich Text) and 12.7.4.3 (Text Fields) for further details.
+     * @param name  Field name
+     * @param richValue html markup 
+     * @return success/failure (will fail if the field isn't found, isn't a text field, or doesn't support rich text)
+     * @throws DocumentException
+     * @since 5.0.6
+     */
+    public boolean setFieldRichValue(String name, String richValue) throws DocumentException {
+        if (writer == null) {
+        	// can't set field values: fail
+            throw new DocumentException(MessageLocalization.getComposedMessage("this.acrofields.instance.is.read.only"));
+        }
+
+    	AcroFields.Item item = getFieldItem(name);
+    	if (item == null) {
+    		// can't find the field: fail.
+    		return false;
+    	}
+    	
+    	if (getFieldType(name) != FIELD_TYPE_TEXT) {
+    		// field isn't a text field: fail
+    		return false;
+    	}
+    	
+    	PdfDictionary merged = item.getMerged(0);
+    	PdfNumber ffNum = merged.getAsNumber(PdfName.FF);
+    	int flagVal = 0;
+    	if (ffNum != null) {
+    		flagVal = ffNum.intValue();
+    	}
+    	if ((flagVal | PdfFormField.FF_RICHTEXT) == 0) {
+    		// text field doesn't support rich text: fail
+    		return false;
+    	}
+    	
+    	PdfString richString = new PdfString(richValue);
+    	item.writeToAll(PdfName.RV, richString, Item.WRITE_MERGED | Item.WRITE_VALUE);
+    	
+    	return true;
     }
 
     /**
@@ -1965,7 +2034,7 @@ public class AcroFields {
          * @param pg
          */
         void addPage(int pg) {
-            page.add(new Integer(pg));
+            page.add(Integer.valueOf(pg));
         }
 
         /**
@@ -1975,7 +2044,7 @@ public class AcroFields {
          * @param idx
          */
         void forcePage(int idx, int pg) {
-            page.set(idx, new Integer( pg ));
+            page.set(idx, Integer.valueOf( pg ));
         }
 
         /**
@@ -1996,7 +2065,7 @@ public class AcroFields {
          * @param order
          */
         void addTabOrder(int order) {
-            tabOrder.add(new Integer(order));
+            tabOrder.add(Integer.valueOf(order));
         }
     }
 

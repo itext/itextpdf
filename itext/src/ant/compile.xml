@@ -9,90 +9,128 @@
 	<property file="local.properties" />
 	<property file="${user.home}/.ant.properties" />
 	<property file=".ant.properties" />
-	
+
 	<path id="itext.classpath">
-	    <pathelement location="${itext.bin}"/>
+		<pathelement location="${itext.bin}" />
 		<!-- jars needed for iText (core) -->
-		<pathelement path="${itext.lib}/${lib.bcmail}"/>
-	    <pathelement path="${itext.lib}/${lib.bcprov}"/>
-	    <pathelement path="${itext.lib}/${lib.bctsp}"/>
+		<pathelement path="${itext.lib}/${lib.bcmail}" />
+		<pathelement path="${itext.lib}/${lib.bcprov}" />
+		<pathelement path="${itext.lib}/${lib.bctsp}" />
 		<!-- jars needed for RUPS -->
-	    <pathelement path="${itext.lib}/${lib.dom4j}"/>
+		<pathelement path="${itext.lib}/${lib.dom4j}" />
 	</path>
 
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Help                                                             -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- Help                                                             -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <target name="help" description="--> shows the help screen">
-        <echo>COMPILING AND JARRING THE CODE (compile.xml)</echo>
-        <echo>ant compile: compiles iText (core)</echo>
-        <echo>ant compile.rups: compiles iText RUPS</echo>
-        <echo>ant jar: compiles and jars iText</echo>
-        <echo>ant jar.rups: compiles and jars iText RUPS</echo>
-        <echo />
+	<target name="help" description="--> shows the help screen">
+		<echo>COMPILING AND JARRING THE CODE (compile.xml)</echo>
+		<echo>ant compile: compiles iText (core)</echo>
+		<echo>ant compile.rups: compiles iText RUPS</echo>
+		<echo>ant jar: compiles and jars iText</echo>
+		<echo>ant jar.rups: compiles and jars iText RUPS</echo>
+		<echo />
 	</target>
 
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Compiling the code                                               -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- Compiling the code                                               -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <target name="compile" description="--> compiles the iText code">
-        <mkdir dir="${itext.bin}" />
-        <javac debug="yes" source="${itext.jdk.core}" target="${itext.jdk.core}" srcdir="${itext.src}/core" destdir="${itext.bin}">
-    	<classpath refid="itext.classpath"/>
-    	</javac>
-    </target>
+	<target name="compile" description="--> compiles the iText code">
+		<mkdir dir="${itext.bin}" />
+		<javac debug="yes" source="${itext.jdk.core}" target="${itext.jdk.core}" destdir="${itext.bin}">
+			<classpath refid="itext.classpath" />
+			<src path="${itext.src}/core" />
+			<src path="${itext.src}/resources" />
+		</javac>
+	</target>
 
-	
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Compiling the RUPS code                                          -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <target name="compile.rups" depends="compile" description="--> compiles the RUPS code">
-        <mkdir dir="${itext.rups.bin}" />
-        <javac debug="yes" source="${itext.jdk.rups}" target="${itext.jdk.rups}" srcdir="${itext.rups.src}" destdir="${itext.rups.bin}">
-    		<classpath refid="itext.classpath"/>
-    	</javac>
-    </target>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- Compiling the RUPS code                                          -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Jarring the code                                                 -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<target name="compile.rups" depends="compile" description="--> compiles the RUPS code">
+		<mkdir dir="${itext.rups.bin}" />
+		<javac debug="yes" source="${itext.jdk.rups}" target="${itext.jdk.rups}" srcdir="${itext.rups.src}" destdir="${itext.rups.bin}">
+			<classpath refid="itext.classpath" />
+		</javac>
+	</target>
 
-    <target name="jar" depends="compile" description="--> makes a jarfile from the iText code">
-    	<mkdir dir="${itext.bin}/com/itextpdf/text/error_messages" />
-    	<copy todir="${itext.bin}/com/itextpdf/text/error_messages" overwrite="yes">
-    	    <fileset dir="${itext.src}/core/com/itextpdf/text/error_messages">
-    	        <include name="**/*.lng"/>
-    	    </fileset>
-    	</copy>
-    	<mkdir dir="${itext.bin}/com/itextpdf/text/pdf/fonts" />
-        <copy todir="${itext.bin}/com/itextpdf/text/pdf/fonts" overwrite="yes">
-            <fileset dir="${itext.src}/core/com/itextpdf/text/pdf/fonts">
-                <include name="**/*.afm"/>
-                <include name="**/*.html"/>
-            </fileset>
-        </copy>
-        <copy todir="${itext.bin}/com/itextpdf/text/" overwrite="yes">
-            <fileset dir="${itext.src}/core/com/itextpdf/text/">
-                <include name="**/*.txt"/>
-            </fileset>
-        </copy>
-        <jar jarfile="${itext.jar}" basedir="${itext.bin}" />
-    </target>
 
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Making the jars for RUPS                                         -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- Testing the code !-->
+	<path id="test.classpath">
+		<pathelement location="${itext.bin}" />
+		<pathelement path="${itext.lib}/${lib.bcmail}" />
+		<pathelement path="${itext.lib}/${lib.bcprov}" />
+		<pathelement path="${itext.lib}/${lib.bctsp}" />
+		<pathelement path="${itext.lib}/${lib.dom4j}" />
+		<pathelement path="${itext.lib}/junit-4.4.jar" />
+		<pathelement path="${itext.lib}/ant-junit.jar" />
+	</path>
+	<target name="compile.all" description="--> compiles the iText code and tests">
+		<mkdir dir="${itext.bin}" />
+		<javac debug="yes" source="${itext.jdk.core}" target="${itext.jdk.core}" destdir="${itext.bin}">
+			<classpath refid="test.classpath" />
+			<src path="${itext.src}/core" />
+			<src path="${itext.src}/resources" />
+			<src path="${itext.src}/../test/core" />
+			<src path="${itext.src}/../test/resources" />
+		</javac>
+		<copy todir="${itext.bin}">
+			<fileset dir="${itext.src}/../test/resources" />
+			<fileset dir="${itext.src}/resources" />
+		</copy>
+	</target>
+	<target name="test" depends="compile.all" description="Going to run tests">
+		<junit haltonfailure="no" printsummary="yes">
+			<formatter type="plain" usefile="false" />
+			<classpath refid="test.classpath" />
+			<batchtest fork="no">
+				<fileset dir="${itext.src}/../test/core">
+					<include name="**/*Test*.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	<target name="cleanbin" description="cleaning bin folder">
+		<delete dir="${itext.bin}" />
+	</target>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- Jarring the code                                                 -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+	<target name="jar" depends="compile" description="--> makes a jarfile from the iText code">
+		<mkdir dir="${itext.bin}" />
+		<copy todir="${itext.bin}" overwrite="yes" includeemptydirs="yes">
+			<fileset dir="${itext.src}/resources">
+				<include name="**/*.lng" />
+				<include name="**/*.afm" />
+				<include name="**/*.html" />
+				<include name="**/*.txt" />
+			</fileset>
+		</copy>
+		<jar jarfile="${itext.jar}" basedir="${itext.bin}" />
+	</target>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- Making the jars for RUPS                                         -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
 	<target name="jar.rups" depends="compile.rups">
-        <copy todir="${itext.rups.bin}" overwrite="yes">
-            <fileset dir="${itext.rups.src}">
-                <include name="**/*.png"/>
-            </fileset>
-        </copy>
-		<jar destfile="${itext.rups.jar}" basedir="${itext.rups.bin}" includes="**/*.class, **/*.png" />
+		<copy todir="${itext.rups.bin}" overwrite="yes">
+			<fileset dir="${itext.rups.src}">
+				<include name="**/*.png" />
+			</fileset>
+		</copy>
+		<jar destfile="${itext.rups.jar}" basedir="${itext.rups.bin}" includes="**/*.class, **/*.png">
+			<manifest>
+				<attribute name="Main-Class" value="com.itextpdf.rups.Rups" />
+				<attribute name="Class-Path" value="iText.jar dom4j-1.6.1.jar bcmail-jdk14-138.jar bcprov-jdk14-138.jar" />
+			</manifest>
+
+		</jar>
 	</target>
-    
+
 </project>

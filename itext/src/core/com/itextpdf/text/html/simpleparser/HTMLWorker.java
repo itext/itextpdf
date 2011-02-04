@@ -43,20 +43,19 @@
  */
 package com.itextpdf.text.html.simpleparser;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
-import java.util.StringTokenizer;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocListener;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.ElementTags;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.Image;
@@ -66,7 +65,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.TextElementArray;
 import com.itextpdf.text.html.HtmlTags;
-import com.itextpdf.text.html.Markup;
+import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.draw.LineSeparator;
@@ -75,87 +74,171 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
-	protected ArrayList<Element> objectList;
-
+	/**
+	 * DocListener that will listen to the Elements
+	 * produced by parsing the HTML.
+	 * This can be a com.lowagie.text.Document adding
+	 * the elements to a Document directly, or an
+	 * HTMLWorker instance strong the objects in a List
+	 */
 	protected DocListener document;
 
-	private Paragraph currentParagraph;
+	/**
+	 * The map with all the supported tags.
+	 * @since 5.0.6
+	 */
+	protected Map<String, HTMLTagProcessor> tags;
 
-	private ChainedProperties cprops = new ChainedProperties();
-
-	private Stack<Element> stack = new Stack<Element>();
-
-	private boolean pendingTR = false;
-
-	private boolean pendingTD = false;
-
-	private boolean pendingLI = false;
-
+	/** The object defining all the styles. */
 	private StyleSheet style = new StyleSheet();
 
-	private boolean isPRE = false;
-
-	private Stack<boolean[]> tableState = new Stack<boolean[]>();
-
-	private boolean skipText = false;
-
-	private HashMap<String, Object> interfaceProps;
-
-	private FactoryProperties factoryProperties = new FactoryProperties();
-
-	/** Creates a new instance of HTMLWorker
+	/**
+	 * Creates a new instance of HTMLWorker
 	 * @param document A class that implements <CODE>DocListener</CODE>
-	 * */
+	 */
 	public HTMLWorker(DocListener document) {
-		this.document = document;
+		this(document, null, null);
 	}
 
+	/**
+	 * Creates a new instance of HTMLWorker
+	 * @param document	A class that implements <CODE>DocListener</CODE>
+	 * @param tags		A map containing the supported tags
+	 * @param style		A StyleSheet
+	 * @since 5.0.6
+	 */
+	public HTMLWorker(DocListener document, Map<String, HTMLTagProcessor> tags, StyleSheet style) {
+		this.document = document;
+		setSupportedTags(tags);
+		setStyleSheet(style);
+	}
+
+	/**
+	 * Sets the map with supported tags.
+	 * @param tags
+	 * @since 5.0.6
+	 */
+	public void setSupportedTags(Map<String, HTMLTagProcessor> tags) {
+		if (tags == null)
+			tags = new HTMLTagProcessors();
+		this.tags = tags;
+	}
+
+	/**
+	 * Setter for the StyleSheet
+	 * @param style the StyleSheet
+	 */
 	public void setStyleSheet(StyleSheet style) {
+		if (style == null)
+			style = new StyleSheet();
 		this.style = style;
 	}
 
-	public StyleSheet getStyleSheet() {
-		return style;
-	}
-
-	public void setInterfaceProps(HashMap<String, Object> interfaceProps) {
-		this.interfaceProps = interfaceProps;
-		FontProvider ff = null;
-		if (interfaceProps != null)
-			ff = (FontProvider) interfaceProps.get("font_factory");
-		if (ff != null)
-			factoryProperties.setFontImp(ff);
-	}
-
-	public HashMap<String, Object> getInterfaceProps() {
-		return interfaceProps;
-	}
-
+	/**
+	 * Parses content read from a java.io.Reader object.
+	 * @param reader	the content
+	 * @throws IOException
+	 */
 	public void parse(Reader reader) throws IOException {
 		SimpleXMLParser.parse(this, null, reader, true);
 	}
 
-	public static ArrayList<Element> parseToList(Reader reader, StyleSheet style)
-			throws IOException {
-		return parseToList(reader, style, null);
+	// state machine
+
+	/**
+	 * Stack with the Elements that already have been processed.
+	 * @since iText 5.0.6 (private => protected)
+	 */
+	protected Stack<Element> stack = new Stack<Element>();
+
+	/**
+	 * Keeps the content of the current paragraph
+	 * @since iText 5.0.6 (private => protected)
+	 */
+	protected Paragraph currentParagraph;
+
+	/**
+	 * The current hierarchy chain of tags.
+	 * @since 5.0.6
+	 */
+	private final ChainedProperties chain = new ChainedProperties();
+
+	/**
+	 * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#startDocument()
+	 */
+	public void startDocument() {
+		HashMap<String, String> attrs = new HashMap<String, String>();
+		style.applyStyle(HtmlTags.BODY, attrs);
+		chain.addToChain(HtmlTags.BODY, attrs);
 	}
 
-	public static ArrayList<Element> parseToList(Reader reader, StyleSheet style,
-			HashMap<String, Object> interfaceProps) throws IOException {
-		HTMLWorker worker = new HTMLWorker(null);
-		if (style != null)
-			worker.style = style;
-		worker.document = worker;
-		worker.setInterfaceProps(interfaceProps);
-		worker.objectList = new ArrayList<Element>();
-		worker.parse(reader);
-		return worker.objectList;
+    /**
+     * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#startElement(java.lang.String, java.util.HashMap)
+     */
+    public void startElement(String tag, HashMap<String, String> attrs) {
+		HTMLTagProcessor htmlTag = tags.get(tag);
+		if (htmlTag == null) {
+			return;
+		}
+		// apply the styles to attrs
+		style.applyStyle(tag, attrs);
+		// deal with the style attribute
+		StyleSheet.resolveStyleAttribute(attrs, chain);
+		// process the tag
+		try {
+			htmlTag.startElement(this, tag, attrs);
+		} catch (DocumentException e) {
+			throw new ExceptionConverter(e);
+		} catch (IOException e) {
+			throw new ExceptionConverter(e);
+		}
 	}
 
+	/**
+	 * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#text(java.lang.String)
+	 */
+	public void text(String content) {
+		if (skipText)
+			return;
+		if (currentParagraph == null) {
+			currentParagraph = createParagraph();
+		}
+		if (!insidePRE) {
+			// newlines and carriage returns are ignored
+			if (content.trim().length() == 0 && content.indexOf(' ') < 0) {
+				return;
+			}
+			content = HtmlUtilities.eliminateWhiteSpace(content);
+		}
+		Chunk chunk = createChunk(content);
+		currentParagraph.add(chunk);
+	}
+
+	/**
+	 * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#endElement(java.lang.String)
+	 */
+	public void endElement(String tag) {
+		HTMLTagProcessor htmlTag = tags.get(tag);
+		if (htmlTag == null) {
+			return;
+		}
+		// process the tag
+		try {
+			htmlTag.endElement(this, tag);
+		} catch (DocumentException e) {
+			throw new ExceptionConverter(e);
+		}
+	}
+
+	/**
+	 * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#endDocument()
+	 */
 	public void endDocument() {
 		try {
+			// flush the stack
 			for (int k = 0; k < stack.size(); ++k)
 				document.add(stack.elementAt(k));
+			// add current paragraph
 			if (currentParagraph != null)
 				document.add(currentParagraph);
 			currentParagraph = null;
@@ -164,522 +247,610 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		}
 	}
 
-	public void startDocument() {
-		HashMap<String, String> h = new HashMap<String, String>();
-		style.applyStyle("body", h);
-		cprops.addToChain("body", h);
-	}
+	// stack and current paragraph operations
 
-    @SuppressWarnings("unchecked")
-    public void startElement(String tag, HashMap<String, String> h) {
-		if (!tagsSupported.contains(tag))
-			return;
-		try {
-			style.applyStyle(tag, h);
-			String follow = FactoryProperties.followTags.get(tag);
-			if (follow != null) {
-				HashMap<String, String> prop = new HashMap<String, String>();
-				prop.put(follow, null);
-				cprops.addToChain(follow, prop);
-				return;
-			}
-			FactoryProperties.insertStyle(h, cprops);
-			if (tag.equals(HtmlTags.ANCHOR)) {
-				cprops.addToChain(tag, h);
-				if (currentParagraph == null) {
-					currentParagraph = new Paragraph();
-				}
-				stack.push(currentParagraph);
-				currentParagraph = new Paragraph();
-				return;
-			}
-			if (tag.equals(HtmlTags.NEWLINE)) {
-				if (currentParagraph == null) {
-					currentParagraph = new Paragraph();
-				}
-				currentParagraph.add(factoryProperties
-						.createChunk("\n", cprops));
-				return;
-			}
-			if (tag.equals(HtmlTags.HORIZONTALRULE)) {
-				// Attempting to duplicate the behavior seen on Firefox with
-				// http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_hr_test
-				// where an initial break is only inserted when the preceding element doesn't
-				// end with a break, but a trailing break is always inserted.
-				boolean addLeadingBreak = true;
-				if (currentParagraph == null) {
-					currentParagraph = new Paragraph();
-					addLeadingBreak = false;
-				}
-				if (addLeadingBreak) { // Not a new paragraph
-					int numChunks = currentParagraph.getChunks().size();
-					if (numChunks == 0 ||
-							currentParagraph.getChunks().get(numChunks - 1).getContent().endsWith("\n"))
-						addLeadingBreak = false;
-				}
-				String align = h.get("align");
-				int hrAlign = Element.ALIGN_CENTER;
-				if (align != null) {
-					if (align.equalsIgnoreCase("left"))
-						hrAlign = Element.ALIGN_LEFT;
-					if (align.equalsIgnoreCase("right"))
-						hrAlign = Element.ALIGN_RIGHT;
-				}
-				String width = h.get("width");
-				float hrWidth = 1;
-				if (width != null) {
-					float tmpWidth = Markup.parseLength(width, Markup.DEFAULT_FONT_SIZE);
-					if (tmpWidth > 0) hrWidth = tmpWidth;
-					if (!width.endsWith("%"))
-						hrWidth = 100; // Treat a pixel width as 100% for now.
-				}
-				String size = h.get("size");
-				float hrSize = 1;
-				if (size != null) {
-					float tmpSize = Markup.parseLength(size, Markup.DEFAULT_FONT_SIZE);
-					if (tmpSize > 0)
-						hrSize = tmpSize;
-				}
-				if (addLeadingBreak)
-					currentParagraph.add(Chunk.NEWLINE);
-				currentParagraph.add(new LineSeparator(hrSize, hrWidth, null, hrAlign, currentParagraph.getLeading()/2));
-				currentParagraph.add(Chunk.NEWLINE);
-				return;
-			}
-			if (tag.equals(HtmlTags.CHUNK) || tag.equals(HtmlTags.SPAN)) {
-				cprops.addToChain(tag, h);
-				return;
-			}
-			if (tag.equals(HtmlTags.IMAGE)) {
-				String src = h.get(ElementTags.SRC);
-				if (src == null)
-					return;
-				cprops.addToChain(tag, h);
-				Image img = null;
-				if (interfaceProps != null) {
-					ImageProvider ip = (ImageProvider) interfaceProps
-							.get("img_provider");
-					if (ip != null)
-						img = ip.getImage(src, h, cprops, document);
-					if (img == null) {
-						HashMap<String, Image> images = (HashMap<String, Image>) interfaceProps
-								.get("img_static");
-						if (images != null) {
-							Image tim = images.get(src);
-							if (tim != null)
-								img = Image.getInstance(tim);
-						} else {
-							if (!src.startsWith("http")) { // relative src references only
-								String baseurl = (String) interfaceProps
-										.get("img_baseurl");
-								if (baseurl != null) {
-									src = baseurl + src;
-									img = Image.getInstance(src);
-								}
-							}
-						}
-					}
-				}
-				if (img == null) {
-					if (!src.startsWith("http")) {
-						String path = cprops.getProperty("image_path");
-						if (path == null)
-							path = "";
-						src = new File(path, src).getPath();
-					}
-					img = Image.getInstance(src);
-				}
-				String align = h.get("align");
-				String width = h.get("width");
-				String height = h.get("height");
-				String before = cprops.getProperty("before");
-				String after = cprops.getProperty("after");
-				if (before != null)
-					img.setSpacingBefore(Float.parseFloat(before));
-				if (after != null)
-					img.setSpacingAfter(Float.parseFloat(after));
-				float actualFontSize = Markup.parseLength(cprops
-						.getProperty(ElementTags.SIZE),
-						Markup.DEFAULT_FONT_SIZE);
-				if (actualFontSize <= 0f)
-					actualFontSize = Markup.DEFAULT_FONT_SIZE;
-				float widthInPoints = Markup.parseLength(width, actualFontSize);
-				float heightInPoints = Markup.parseLength(height,
-						actualFontSize);
-				if (widthInPoints > 0 && heightInPoints > 0) {
-					img.scaleAbsolute(widthInPoints, heightInPoints);
-				} else if (widthInPoints > 0) {
-					heightInPoints = img.getHeight() * widthInPoints
-							/ img.getWidth();
-					img.scaleAbsolute(widthInPoints, heightInPoints);
-				} else if (heightInPoints > 0) {
-					widthInPoints = img.getWidth() * heightInPoints
-							/ img.getHeight();
-					img.scaleAbsolute(widthInPoints, heightInPoints);
-				}
-				img.setWidthPercentage(0);
-				if (align != null) {
-					endElement("p");
-					int ralign = Image.MIDDLE;
-					if (align.equalsIgnoreCase("left"))
-						ralign = Image.LEFT;
-					else if (align.equalsIgnoreCase("right"))
-						ralign = Image.RIGHT;
-					img.setAlignment(ralign);
-					Img i = null;
-					boolean skip = false;
-					if (interfaceProps != null) {
-						i = (Img) interfaceProps.get("img_interface");
-						if (i != null)
-							skip = i.process(img, h, cprops, document);
-					}
-					if (!skip)
-						document.add(img);
-					cprops.removeChain(tag);
-				} else {
-					cprops.removeChain(tag);
-					if (currentParagraph == null) {
-						currentParagraph = FactoryProperties
-								.createParagraph(cprops);
-					}
-					currentParagraph.add(new Chunk(img, 0, 0));
-				}
-				return;
-			}
-			endElement("p");
-			if (tag.equals("h1") || tag.equals("h2") || tag.equals("h3")
-					|| tag.equals("h4") || tag.equals("h5") || tag.equals("h6")) {
-				if (!h.containsKey(ElementTags.SIZE)) {
-					int v = 7 - Integer.parseInt(tag.substring(1));
-					h.put(ElementTags.SIZE, Integer.toString(v));
-				}
-				cprops.addToChain(tag, h);
-				return;
-			}
-			if (tag.equals(HtmlTags.UNORDEREDLIST)) {
-				if (pendingLI)
-					endElement(HtmlTags.LISTITEM);
-				skipText = true;
-				cprops.addToChain(tag, h);
-				com.itextpdf.text.List list = new com.itextpdf.text.List(false);
-				try{
-					list.setIndentationLeft(new Float(cprops.getProperty("indent")).floatValue());
-				}catch (Exception e) {
-					list.setAutoindent(true);
-				}
-				list.setListSymbol("\u2022");
-				stack.push(list);
-				return;
-			}
-			if (tag.equals(HtmlTags.ORDEREDLIST)) {
-				if (pendingLI)
-					endElement(HtmlTags.LISTITEM);
-				skipText = true;
-				cprops.addToChain(tag, h);
-				com.itextpdf.text.List list = new com.itextpdf.text.List(true);
-				try{
-					list.setIndentationLeft(new Float(cprops.getProperty("indent")).floatValue());
-				}catch (Exception e) {
-					list.setAutoindent(true);
-				}
-				stack.push(list);
-				return;
-			}
-			if (tag.equals(HtmlTags.LISTITEM)) {
-				if (pendingLI)
-					endElement(HtmlTags.LISTITEM);
-				skipText = false;
-				pendingLI = true;
-				cprops.addToChain(tag, h);
-				ListItem item = FactoryProperties.createListItem(cprops);
-				stack.push(item);
-				return;
-			}
-			if (tag.equals(HtmlTags.DIV) || tag.equals(HtmlTags.BODY) || tag.equals("p")) {
-				cprops.addToChain(tag, h);
-				return;
-			}
-			if (tag.equals(HtmlTags.PRE)) {
-				if (!h.containsKey(ElementTags.FACE)) {
-					h.put(ElementTags.FACE, "Courier");
-				}
-				cprops.addToChain(tag, h);
-				isPRE = true;
-				return;
-			}
-			if (tag.equals("tr")) {
-				if (pendingTR)
-					endElement("tr");
-				skipText = true;
-				pendingTR = true;
-				cprops.addToChain("tr", h);
-				return;
-			}
-			if (tag.equals("td") || tag.equals("th")) {
-				if (pendingTD)
-					endElement(tag);
-				skipText = false;
-				pendingTD = true;
-				cprops.addToChain("td", h);
-				stack.push(new IncCell(tag, cprops));
-				return;
-			}
-			if (tag.equals("table")) {
-				cprops.addToChain("table", h);
-				IncTable table = new IncTable(h);
-				stack.push(table);
-				tableState.push(new boolean[] { pendingTR, pendingTD });
-				pendingTR = pendingTD = false;
-				skipText = true;
-				return;
-			}
-		} catch (Exception e) {
-			throw new ExceptionConverter(e);
-		}
-	}
-
-	public void endElement(String tag) {
-		if (!tagsSupported.contains(tag))
-			return;
-		try {
-			String follow = FactoryProperties.followTags.get(tag);
-			if (follow != null) {
-				cprops.removeChain(follow);
-				return;
-			}
-			if (tag.equals("font") || tag.equals("span")) {
-				cprops.removeChain(tag);
-				return;
-			}
-			if (tag.equals("a")) {
-				if (currentParagraph == null) {
-					currentParagraph = new Paragraph();
-				}
-				boolean skip = false;
-				if (interfaceProps != null) {
-					ALink i = (ALink) interfaceProps.get("alink_interface");
-					if (i != null)
-						skip = i.process(currentParagraph, cprops);
-				}
-				if (!skip) {
-					String href = cprops.getProperty("href");
-					if (href != null) {
-						for (Chunk ck : currentParagraph.getChunks()) {
-							ck.setAnchor(href);
-						}
-					}
-				}
-				Paragraph tmp = (Paragraph) stack.pop();
-				Phrase tmp2 = new Phrase();
-				tmp2.add(currentParagraph);
-				tmp.add(tmp2);
-				currentParagraph = tmp;
-				cprops.removeChain("a");
-				return;
-			}
-			if (tag.equals("br")) {
-				return;
-			}
-			if (currentParagraph != null) {
-				if (stack.empty())
-					document.add(currentParagraph);
-				else {
-					Element obj = stack.pop();
-					if (obj instanceof TextElementArray) {
-						TextElementArray current = (TextElementArray) obj;
-						current.add(currentParagraph);
-					}
-					stack.push(obj);
-				}
-			}
-			currentParagraph = null;
-			if (tag.equals(HtmlTags.UNORDEREDLIST)
-					|| tag.equals(HtmlTags.ORDEREDLIST)) {
-				if (pendingLI)
-					endElement(HtmlTags.LISTITEM);
-				skipText = false;
-				cprops.removeChain(tag);
-				if (stack.empty())
-					return;
-				Element obj = stack.pop();
-				if (!(obj instanceof com.itextpdf.text.List)) {
-					stack.push(obj);
-					return;
-				}
-				if (stack.empty())
-					document.add(obj);
-				else
-					((TextElementArray) stack.peek()).add(obj);
-				return;
-			}
-			if (tag.equals(HtmlTags.LISTITEM)) {
-				pendingLI = false;
-				skipText = true;
-				cprops.removeChain(tag);
-				if (stack.empty())
-					return;
-				Element obj = stack.pop();
-				if (!(obj instanceof ListItem)) {
-					stack.push(obj);
-					return;
-				}
-				if (stack.empty()) {
-					document.add(obj);
-					return;
-				}
-				Element list = stack.pop();
-				if (!(list instanceof com.itextpdf.text.List)) {
-					stack.push(list);
-					return;
-				}
-				ListItem item = (ListItem) obj;
-				((com.itextpdf.text.List) list).add(item);
-				ArrayList<Chunk> cks = item.getChunks();
-				if (!cks.isEmpty())
-					item.getListSymbol()
-							.setFont(cks.get(0).getFont());
-				stack.push(list);
-				return;
-			}
-			if (tag.equals("div") || tag.equals("body")) {
-				cprops.removeChain(tag);
-				return;
-			}
-			if (tag.equals(HtmlTags.PRE)) {
-				cprops.removeChain(tag);
-				isPRE = false;
-				return;
-			}
-			if (tag.equals("p")) {
-				cprops.removeChain(tag);
-				return;
-			}
-			if (tag.equals("h1") || tag.equals("h2") || tag.equals("h3")
-					|| tag.equals("h4") || tag.equals("h5") || tag.equals("h6")) {
-				cprops.removeChain(tag);
-				return;
-			}
-			if (tag.equals("table")) {
-				if (pendingTR)
-					endElement("tr");
-				cprops.removeChain("table");
-				IncTable table = (IncTable) stack.pop();
-				PdfPTable tb = table.buildTable();
-				tb.setSplitRows(true);
-				if (stack.empty())
-					document.add(tb);
-				else
-					((TextElementArray) stack.peek()).add(tb);
-				boolean state[] = tableState.pop();
-				pendingTR = state[0];
-				pendingTD = state[1];
-				skipText = false;
-				return;
-			}
-			if (tag.equals("tr")) {
-				if (pendingTD)
-					endElement("td");
-				pendingTR = false;
-				cprops.removeChain("tr");
-				ArrayList<PdfPCell> cells = new ArrayList<PdfPCell>();
-				IncTable table = null;
-				while (true) {
-					Element obj = stack.pop();
-					if (obj instanceof IncCell) {
-						cells.add(((IncCell) obj).getCell());
-					}
-					if (obj instanceof IncTable) {
-						table = (IncTable) obj;
-						break;
-					}
-				}
-				table.addCols(cells);
-				table.endRow();
-				stack.push(table);
-				skipText = true;
-				return;
-			}
-			if (tag.equals("td") || tag.equals("th")) {
-				pendingTD = false;
-				cprops.removeChain("td");
-				skipText = true;
-				return;
-			}
-		} catch (Exception e) {
-			throw new ExceptionConverter(e);
-		}
-	}
-
-	public void text(String str) {
-		if (skipText)
-			return;
-		String content = str;
-		if (isPRE) {
-			if (currentParagraph == null) {
-				currentParagraph = FactoryProperties.createParagraph(cprops);
-			}
-			Chunk chunk = factoryProperties.createChunk(content, cprops);
-			currentParagraph.add(chunk);
-			return;
-		}
-		if (content.trim().length() == 0 && content.indexOf(' ') < 0) {
-			return;
-		}
-
-		StringBuffer buf = new StringBuffer();
-		int len = content.length();
-		char character;
-		boolean newline = false;
-		for (int i = 0; i < len; i++) {
-			switch (character = content.charAt(i)) {
-			case ' ':
-				if (!newline) {
-					buf.append(character);
-				}
-				break;
-			case '\n':
-				if (i > 0) {
-					newline = true;
-					buf.append(' ');
-				}
-				break;
-			case '\r':
-				break;
-			case '\t':
-				break;
-			default:
-				newline = false;
-				buf.append(character);
-			}
-		}
+	/**
+	 * Adds a new line to the currentParagraph.
+	 * @since 5.0.6
+	 */
+	public void newLine() {
 		if (currentParagraph == null) {
-			currentParagraph = FactoryProperties.createParagraph(cprops);
+			currentParagraph = new Paragraph();
 		}
-		Chunk chunk = factoryProperties.createChunk(buf.toString(), cprops);
-		currentParagraph.add(chunk);
+		currentParagraph.add(createChunk("\n"));
 	}
 
+	/**
+	 * Flushes the current paragraph, indicating that we're starting
+	 * a new block.
+	 * If the stack is empty, the paragraph is added to the document.
+	 * Otherwise the Paragraph is added to the stack.
+	 * @since 5.0.6
+	 */
+	public void carriageReturn() throws DocumentException {
+		if (currentParagraph == null)
+			return;
+		if (stack.empty())
+			document.add(currentParagraph);
+		else {
+			Element obj = stack.pop();
+			if (obj instanceof TextElementArray) {
+				TextElementArray current = (TextElementArray) obj;
+				current.add(currentParagraph);
+			}
+			stack.push(obj);
+		}
+		currentParagraph = null;
+	}
+
+	/**
+	 * Stacks the current paragraph, indicating that we're starting
+	 * a new span.
+	 * @since 5.0.6
+	 */
+	public void flushContent() {
+		pushToStack(currentParagraph);
+		currentParagraph = new Paragraph();
+	}
+
+	/**
+	 * Pushes an element to the Stack.
+	 * @param element
+	 * @since 5.0.6
+	 */
+	public void pushToStack(Element element) {
+		if (element != null)
+			stack.push(element);
+	}
+
+	/**
+	 * Updates the chain with a new tag and new attributes.
+	 * @param tag	the new tag
+	 * @param attrs	the corresponding attributes
+	 * @since 5.0.6
+	 */
+	public void updateChain(String tag, Map<String, String> attrs) {
+		chain.addToChain(tag, attrs);
+	}
+
+	/**
+	 * Updates the chain by removing a tag.
+	 * @param tag	the new tag
+	 * @since 5.0.6
+	 */
+	public void updateChain(String tag) {
+		chain.removeChain(tag);
+	}
+
+	// providers that help find resources such as images and fonts
+
+	/**
+	 * Key used to store the image provider in the providers map.
+	 * @since 5.0.6
+	 */
+	public static final String IMG_PROVIDER = "img_provider";
+
+	/**
+	 * Key used to store the image processor in the providers map.
+	 * @since 5.0.6
+	 */
+	public static final String IMG_PROCESSOR = "img_interface";
+
+	/**
+	 * Key used to store the image store in the providers map.
+	 * @since 5.0.6
+	 */
+	public static final String IMG_STORE = "img_static";
+
+	/**
+	 * Key used to store the image baseurl provider in the providers map.
+	 * @since 5.0.6
+	 */
+	public static final String IMG_BASEURL = "img_baseurl";
+
+	/**
+	 * Key used to store the font provider in the providers map.
+	 * @since 5.0.6
+	 */
+	public static final String FONT_PROVIDER = "font_factory";
+
+	/**
+	 * Key used to store the link provider in the providers map.
+	 * @since 5.0.6
+	 */
+	public static final String LINK_PROVIDER = "alink_interface";
+
+	/**
+	 * Map containing providers such as a FontProvider or ImageProvider.
+	 * @since 5.0.6 (renamed from interfaceProps)
+	 */
+	private Map<String, Object> providers = new HashMap<String, Object>();
+
+	/**
+	 * Setter for the providers.
+	 * If a FontProvider is added, the ElementFactory is updated.
+	 * @param providers a Map with different providers
+	 * @since 5.0.6
+	 */
+	public void setProviders(Map<String, Object> providers) {
+		if (providers == null)
+			return;
+		this.providers = providers;
+		FontProvider ff = null;
+		if (providers != null)
+			ff = (FontProvider) providers.get(FONT_PROVIDER);
+		if (ff != null)
+			factory.setFontProvider(ff);
+	}
+
+	// factory that helps create objects
+
+	/**
+	 * Factory that is able to create iText Element objects.
+	 * @since 5.0.6
+	 */
+	private final ElementFactory factory = new ElementFactory();
+
+	/**
+	 * Creates a Chunk using the factory.
+	 * @param content	the content of the chunk
+	 * @return	a Chunk with content
+	 * @since 5.0.6
+	 */
+	public Chunk createChunk(String content) {
+		return factory.createChunk(content, chain);
+	}
+	/**
+	 * Creates a Paragraph using the factory.
+	 * @return	a Paragraph without any content
+	 * @since 5.0.6
+	 */
+	public Paragraph createParagraph() {
+		return factory.createParagraph(chain);
+	}
+	/**
+	 * Creates a List object.
+	 * @param tag should be "ol" or "ul"
+	 * @return	a List object
+	 * @since 5.0.6
+	 */
+	public com.itextpdf.text.List createList(String tag) {
+		return factory.createList(tag, chain);
+	}
+	/**
+	 * Creates a ListItem object.
+	 * @return a ListItem object
+	 * @since 5.0.6
+	 */
+	public ListItem createListItem() {
+		return factory.createListItem(chain);
+	}
+	/**
+	 * Creates a LineSeparator object.
+	 * @param attrs	properties of the LineSeparator
+	 * @return a LineSeparator object
+	 * @since 5.0.6
+	 */
+	public LineSeparator createLineSeparator(Map<String, String> attrs) {
+		return factory.createLineSeparator(attrs, currentParagraph.getLeading()/2);
+	}
+
+	/**
+	 * Creates an Image object.
+	 * @param attrs properties of the Image
+	 * @return an Image object (or null if the Image couldn't be found)
+	 * @throws DocumentException
+	 * @throws IOException
+	 * @since 5.0.6
+	 */
+	public Image createImage(Map<String, String> attrs) throws DocumentException, IOException {
+		String src = attrs.get(HtmlTags.SRC);
+		if (src == null)
+			return null;
+		Image img = factory.createImage(
+				src, attrs, chain, document,
+				(ImageProvider)providers.get(IMG_PROVIDER),
+				(ImageStore)providers.get(IMG_STORE),
+				(String)providers.get(IMG_BASEURL));
+		return img;
+	}
+
+	/**
+	 * Creates a Cell.
+	 * @param tag	the tag
+	 * @return	a CellWrapper object
+	 * @since 5.0.6
+	 */
+	public CellWrapper createCell(String tag) {
+		return new CellWrapper(tag, chain);
+	}
+
+	// processing objects
+
+	/**
+	 * Adds a link to the current paragraph.
+	 * @since 5.0.6
+	 */
+	public void processLink() {
+		if (currentParagraph == null) {
+			currentParagraph = new Paragraph();
+		}
+		// The link provider allows you to do additional processing
+		LinkProcessor i = (LinkProcessor) providers.get(HTMLWorker.LINK_PROVIDER);
+		if (i == null || !i.process(currentParagraph, chain)) {
+			// sets an Anchor for all the Chunks in the current paragraph
+			String href = chain.getProperty(HtmlTags.HREF);
+			if (href != null) {
+				for (Chunk ck : currentParagraph.getChunks()) {
+					ck.setAnchor(href);
+				}
+			}
+		}
+		// a link should be added to the current paragraph as a phrase
+		if (stack.isEmpty()) {
+			// no paragraph to add too, 'a' tag is first element
+			Paragraph tmp = new Paragraph(new Phrase(currentParagraph));
+			currentParagraph = tmp;
+		} else {
+			Paragraph tmp = (Paragraph) stack.pop();
+			tmp.add(new Phrase(currentParagraph));
+			currentParagraph = tmp;
+		}
+	}
+
+	/**
+	 * Fetches the List from the Stack and adds it to
+	 * the TextElementArray on top of the Stack,
+	 * or to the Document if the Stack is empty.
+	 * @throws DocumentException
+	 * @since 5.0.6
+	 */
+	public void processList() throws DocumentException {
+		if (stack.empty())
+			return;
+		Element obj = stack.pop();
+		if (!(obj instanceof com.itextpdf.text.List)) {
+			stack.push(obj);
+			return;
+		}
+		if (stack.empty())
+			document.add(obj);
+		else
+			((TextElementArray) stack.peek()).add(obj);
+	}
+
+	/**
+	 * Looks for the List object on the Stack,
+	 * and adds the ListItem to the List.
+	 * @throws DocumentException
+	 * @since 5.0.6
+	 */
+	public void processListItem() throws DocumentException {
+		if (stack.empty())
+			return;
+		Element obj = stack.pop();
+		if (!(obj instanceof ListItem)) {
+			stack.push(obj);
+			return;
+		}
+		if (stack.empty()) {
+			document.add(obj);
+			return;
+		}
+		ListItem item = (ListItem) obj;
+		Element list = stack.pop();
+		if (!(list instanceof com.itextpdf.text.List)) {
+			stack.push(list);
+			return;
+		}
+		((com.itextpdf.text.List) list).add(item);
+		item.adjustListSymbolFont();
+		stack.push(list);
+	}
+
+	/**
+	 * Processes an Image.
+	 * @param img
+	 * @param attrs
+	 * @throws DocumentException
+	 * @since	5.0.6
+	 */
+	public void processImage(Image img, Map<String, String> attrs) throws DocumentException {
+		ImageProcessor processor = (ImageProcessor)providers.get(HTMLWorker.IMG_PROCESSOR);
+		if (processor == null || !processor.process(img, attrs, chain, document)) {
+			String align = attrs.get(HtmlTags.ALIGN);
+			if (align != null) {
+				carriageReturn();
+			}
+			if (currentParagraph == null) {
+				currentParagraph = createParagraph();
+			}
+			currentParagraph.add(new Chunk(img, 0, 0, true));
+			currentParagraph.setAlignment(HtmlUtilities.alignmentValue(align));
+			if (align != null) {
+				carriageReturn();
+			}
+		}
+	}
+
+	/**
+	 * Processes the Table.
+	 * @throws DocumentException
+	 * @since 5.0.6
+	 */
+	public void processTable() throws DocumentException{
+		TableWrapper table = (TableWrapper) stack.pop();
+		PdfPTable tb = table.createTable();
+		tb.setSplitRows(true);
+		if (stack.empty())
+			document.add(tb);
+		else
+			((TextElementArray) stack.peek()).add(tb);
+	}
+
+	/**
+	 * Gets the TableWrapper from the Stack and adds a new row.
+	 * @since 5.0.6
+	 */
+	public void processRow() {
+		ArrayList<PdfPCell> row = new ArrayList<PdfPCell>();
+        ArrayList<Float> cellWidths = new ArrayList<Float>();
+        boolean percentage = false;
+        float width;
+        float totalWidth = 0;
+        int zeroWidth = 0;
+		TableWrapper table = null;
+		while (true) {
+			Element obj = stack.pop();
+			if (obj instanceof CellWrapper) {
+                CellWrapper cell = (CellWrapper)obj;
+                width = cell.getWidth();
+                cellWidths.add(new Float(width));
+                percentage |= cell.isPercentage();
+                if (width == 0) {
+                	zeroWidth++;
+                }
+                else {
+                	totalWidth += width;
+                }
+                row.add(cell.getCell());
+			}
+			if (obj instanceof TableWrapper) {
+				table = (TableWrapper) obj;
+				break;
+			}
+		}
+        table.addRow(row);
+        if (cellWidths.size() > 0) {
+            // cells come off the stack in reverse, naturally
+        	totalWidth = 100 - totalWidth;
+            Collections.reverse(cellWidths);
+            float[] widths = new float[cellWidths.size()];
+            for (int i = 0; i < widths.length; i++) {
+                widths[i] = cellWidths.get(i).floatValue();
+                if (widths[i] == 0 && percentage && zeroWidth > 0) {
+                	widths[i] = totalWidth / zeroWidth;
+                }
+            }
+            table.setColWidths(widths);
+        }
+		stack.push(table);
+	}
+
+	// state variables and methods
+
+	/** Stack to keep track of table tags. */
+	private final Stack<boolean[]> tableState = new Stack<boolean[]>();
+
+	/** Boolean to keep track of TR tags. */
+	private boolean pendingTR = false;
+
+	/** Boolean to keep track of TD and TH tags */
+	private boolean pendingTD = false;
+
+	/** Boolean to keep track of LI tags */
+	private boolean pendingLI = false;
+
+	/**
+	 * Boolean to keep track of PRE tags
+	 * @since 5.0.6 renamed from isPRE
+	 */
+	private boolean insidePRE = false;
+
+	/**
+	 * Indicates if text needs to be skipped.
+	 * @since iText 5.0.6 (private => protected)
+	 */
+	protected boolean skipText = false;
+
+	/**
+	 * Pushes the values of pendingTR and pendingTD
+	 * to a state stack.
+	 * @since 5.0.6
+	 */
+	public void pushTableState() {
+		tableState.push(new boolean[] { pendingTR, pendingTD });
+	}
+
+	/**
+	 * Pops the values of pendingTR and pendingTD
+	 * from a state stack.
+	 * @since 5.0.6
+	 */
+	public void popTableState() {
+		boolean[] state = tableState.pop();
+		pendingTR = state[0];
+		pendingTD = state[1];
+	}
+
+	/**
+	 * @return the pendingTR
+	 * @since 5.0.6
+	 */
+	public boolean isPendingTR() {
+		return pendingTR;
+	}
+
+	/**
+	 * @param pendingTR the pendingTR to set
+	 * @since 5.0.6
+	 */
+	public void setPendingTR(boolean pendingTR) {
+		this.pendingTR = pendingTR;
+	}
+
+	/**
+	 * @return the pendingTD
+	 * @since 5.0.6
+	 */
+	public boolean isPendingTD() {
+		return pendingTD;
+	}
+
+	/**
+	 * @param pendingTD the pendingTD to set
+	 * @since 5.0.6
+	 */
+	public void setPendingTD(boolean pendingTD) {
+		this.pendingTD = pendingTD;
+	}
+
+	/**
+	 * @return the pendingLI
+	 * @since 5.0.6
+	 */
+	public boolean isPendingLI() {
+		return pendingLI;
+	}
+
+	/**
+	 * @param pendingLI the pendingLI to set
+	 * @since 5.0.6
+	 */
+	public void setPendingLI(boolean pendingLI) {
+		this.pendingLI = pendingLI;
+	}
+
+	/**
+	 * @return the insidePRE
+	 * @since 5.0.6
+	 */
+	public boolean isInsidePRE() {
+		return insidePRE;
+	}
+
+	/**
+	 * @param insidePRE the insidePRE to set
+	 * @since 5.0.6
+	 */
+	public void setInsidePRE(boolean insidePRE) {
+		this.insidePRE = insidePRE;
+	}
+
+	/**
+	 * @return the skipText
+	 * @since 5.0.6
+	 */
+	public boolean isSkipText() {
+		return skipText;
+	}
+
+	/**
+	 * @param skipText the skipText to set
+	 * @since 5.0.6
+	 */
+	public void setSkipText(boolean skipText) {
+		this.skipText = skipText;
+	}
+
+	// static methods to parse HTML to a List of Element objects.
+
+	/** The resulting list of elements. */
+	protected List<Element> objectList;
+
+	/**
+	 * Parses an HTML source to a List of Element objects
+	 * @param reader	the HTML source
+	 * @param style		a StyleSheet object
+	 * @return a List of Element objects
+	 * @throws IOException
+	 */
+	public static List<Element> parseToList(Reader reader, StyleSheet style)
+			throws IOException {
+		return parseToList(reader, style, null);
+	}
+
+	/**
+	 * Parses an HTML source to a List of Element objects
+	 * @param reader	the HTML source
+	 * @param style		a StyleSheet object
+	 * @param providers	map containing classes with extra info
+	 * @return a List of Element objects
+	 * @throws IOException
+	 */
+	public static List<Element> parseToList(Reader reader, StyleSheet style,
+			HashMap<String, Object> providers) throws IOException {
+		return parseToList(reader, style, null, providers);
+	}
+
+	/**
+	 * Parses an HTML source to a List of Element objects
+	 * @param reader	the HTML source
+	 * @param style		a StyleSheet object
+	 * @param tags		a map containing supported tags and their processors
+	 * @param providers	map containing classes with extra info
+	 * @return a List of Element objects
+	 * @throws IOException
+	 * @since 5.0.6
+	 */
+	public static List<Element> parseToList(Reader reader, StyleSheet style,
+			Map<String, HTMLTagProcessor> tags, HashMap<String, Object> providers) throws IOException {
+		HTMLWorker worker = new HTMLWorker(null, tags, style);
+		worker.document = worker;
+		worker.setProviders(providers);
+		worker.objectList = new ArrayList<Element>();
+		worker.parse(reader);
+		return worker.objectList;
+	}
+
+	// DocListener interface
+
+	/**
+	 * @see com.itextpdf.text.ElementListener#add(com.itextpdf.text.Element)
+	 */
 	public boolean add(Element element) throws DocumentException {
 		objectList.add(element);
 		return true;
 	}
 
-	public void clearTextWrap() throws DocumentException {
-	}
-
+	/**
+	 * @see com.itextpdf.text.DocListener#close()
+	 */
 	public void close() {
 	}
 
+	/**
+	 * @see com.itextpdf.text.DocListener#newPage()
+	 */
 	public boolean newPage() {
 		return true;
 	}
 
+	/**
+	 * @see com.itextpdf.text.DocListener#open()
+	 */
 	public void open() {
 	}
 
+	/**
+	 * @see com.itextpdf.text.DocListener#resetPageCount()
+	 */
 	public void resetPageCount() {
 	}
 
+	/**
+	 * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
+	 */
 	public boolean setMarginMirroring(boolean marginMirroring) {
 		return false;
 	}
@@ -692,27 +863,44 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 		return false;
 	}
 
+	/**
+	 * @see com.itextpdf.text.DocListener#setMargins(float, float, float, float)
+	 */
 	public boolean setMargins(float marginLeft, float marginRight,
 			float marginTop, float marginBottom) {
 		return true;
 	}
 
+	/**
+	 * @see com.itextpdf.text.DocListener#setPageCount(int)
+	 */
 	public void setPageCount(int pageN) {
 	}
 
+	/**
+	 * @see com.itextpdf.text.DocListener#setPageSize(com.itextpdf.text.Rectangle)
+	 */
 	public boolean setPageSize(Rectangle pageSize) {
 		return true;
 	}
 
-	public static final String tagsSupportedString = "ol ul li a pre font span br p div body table td th tr i b u sub sup em strong s strike"
-			+ " h1 h2 h3 h4 h5 h6 img hr";
+	// deprecated methods
 
-	public static final HashSet<String> tagsSupported = new HashSet<String>();
-
-	static {
-		StringTokenizer tok = new StringTokenizer(tagsSupportedString);
-		while (tok.hasMoreTokens())
-			tagsSupported.add(tok.nextToken());
+	/**
+	 * Sets the providers.
+	 * @deprecated use setProviders() instead
+	 */
+	@Deprecated
+	public void setInterfaceProps(HashMap<String, Object> providers) {
+		setProviders(providers);
+	}
+	/**
+	 * Gets the providers
+	 * @deprecated use getProviders() instead
+	 */
+	@Deprecated
+	public Map<String, Object> getInterfaceProps() {
+		return providers;
 	}
 
 }
