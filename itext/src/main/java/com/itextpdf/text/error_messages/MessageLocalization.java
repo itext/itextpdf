@@ -62,7 +62,7 @@ import com.itextpdf.text.pdf.BaseFont;
 public final class MessageLocalization {
     private static HashMap<String, String> defaultLanguage = new HashMap<String, String>();
     private static HashMap<String, String> currentLanguage;
-    private static final String BASE_PATH = "l10n/error/";
+    private static final String BASE_PATH = "com/itextpdf/text/l10n/error/";
 
     private MessageLocalization() {
     }
