@@ -603,7 +603,7 @@ public final class SimpleXMLParser {
         int count = in.read(b4);
         if (count != 4)
             throw new IOException(MessageLocalization.getComposedMessage("insufficient.length"));
-        String encoding = XMLUtil.getInstance().getEncodingName(b4);
+        String encoding = XMLUtil.getEncodingName(b4);
         String decl = null;
         if (encoding.equals("UTF-8")) {
             StringBuffer sb = new StringBuffer();
@@ -681,7 +681,7 @@ public final class SimpleXMLParser {
 	 */
 	@Deprecated
 	public static String escapeXML(final String s, final boolean onlyASCII) {
-		return XMLUtil.getInstance().escapeXML(s, onlyASCII);
+		return XMLUtil.escapeXML(s, onlyASCII);
 	}
 
 }

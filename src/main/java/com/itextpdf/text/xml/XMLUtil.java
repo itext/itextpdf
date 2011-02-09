@@ -11,19 +11,6 @@ package com.itextpdf.text.xml;
  */
 public class XMLUtil {
 
-	private static XMLUtil myself;
-
-	/**
-	 * Creates, if needed, and returns an instance of XMLUtil.
-	 * @return XMLUtil
-	 */
-	public static synchronized XMLUtil getInstance() {
-		if (myself == null) {
-			myself = new XMLUtil();
-		}
-		return myself;
-	}
-
 	 /**
      * Escapes a string with the appropriated XML codes.
      * @param s the string to be escaped
@@ -31,7 +18,7 @@ public class XMLUtil {
      * @return the escaped string
      * @since 5.0.6
      */
-    public String escapeXML(final String s, final boolean onlyASCII) {
+    public static String escapeXML(final String s, final boolean onlyASCII) {
         char cc[] = s.toCharArray();
         int len = cc.length;
         StringBuffer sb = new StringBuffer();
@@ -78,7 +65,7 @@ public class XMLUtil {
      * @return an IANA-encoding string
      * @since 5.0.6
      */
-    public String getEncodingName(final byte[] b4) {
+    public static String getEncodingName(final byte[] b4) {
 
         // UTF-16, with BOM
         int b0 = b4[0] & 0xFF;
