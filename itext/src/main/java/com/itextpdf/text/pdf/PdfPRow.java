@@ -266,7 +266,7 @@ public class PdfPRow {
         ct.setSimpleColumn(left, bottom, right, top);
         return top;
     }
-    
+
 	/**
 	 * Writes a number of cells (not necessarily all cells).
 	 * 
@@ -277,8 +277,11 @@ public class PdfPRow {
 	 * If -1, all the columns to the end are written.
 	 * @param	xPos The x-coordinate where the table starts on the canvas
 	 * @param	yPos The y-coordinate where the table starts on the canvas
+	 * @param	reusable if set to false, the content in the cells is "consumed";
+	 * if true, you can reuse the cells, the row, the parent table as many times you want.
+	 * @since 5.1.0 added the reusable parameter
 	 */
-	public void writeCells(int colStart, int colEnd, float xPos, float yPos, PdfContentByte[] canvases) {
+	public void writeCells(int colStart, int colEnd, float xPos, float yPos, PdfContentByte[] canvases, boolean reusable) {
 		if (!calculated)
 			calculateHeights();
 		if (colEnd < 0)
@@ -462,7 +465,11 @@ public class PdfPRow {
                                 break;
                         }
                     }
-                    ColumnText ct = ColumnText.duplicate(cell.getColumn());
+                    ColumnText ct;
+                    if (reusable)
+                    	ct = ColumnText.duplicate(cell.getColumn());
+                    else
+                    	ct = cell.getColumn();
                     ct.setCanvases(canvases);
                     float bry = tly
                             - (currentMaxHeight
@@ -551,6 +558,19 @@ public class PdfPRow {
 		}
 		return width;
 	}
+	
+	/**
+	 * Copies the content of one row to this row.
+	 * Don't do this if the rows have a different number of cells.
+	 * @param copy	the row that needs to be copied
+	 * @since 5.1.0
+	 */
+	public void copyContent(PdfPRow copy) {
+		for (int i = 0; i < cells.length; ++i) {
+			if (cells[i] != null)
+				cells[i].setColumn(copy.getCells()[i].getColumn());
+		}
+	}
 
 	/**
 	 * Splits a row to newHeight.
@@ -609,7 +629,7 @@ public class PdfPRow {
 	                    y = setColumn(ct, bottom, left, top, right);
 	                    break;
 	                default:
-	                    y = setColumn(ct, left, bottom, cell.isNoWrap() ? RIGHT_LIMIT : right, top);
+	                    y = setColumn(ct, left, bottom + 0.00001f, cell.isNoWrap() ? RIGHT_LIMIT : right, top);
 	                    break;
 	            }
 	            int status;
