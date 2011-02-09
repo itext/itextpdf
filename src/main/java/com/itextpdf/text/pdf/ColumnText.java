@@ -1485,9 +1485,13 @@ public class ColumnText {
 
                     // now we render the rows of the new table
                     if (canvases != null)
-                        nt.writeSelectedRows(0, -1, x1, yLineWrite, canvases);
+                        nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvases, false);
                     else
-                        nt.writeSelectedRows(0, -1, x1, yLineWrite, canvas);
+                        nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvas, false);
+                    if (splittedRow && table.size() > k) {
+                       	PdfPRow splitted = table.getRows().get(k);
+                    	splitted.copyContent(nt.getRow(nt.size() - 1));
+                    }
                     if (table.isExtendLastRow(newPageFollows)) {
                         last.setMaxHeights(rowHeight);
                     }

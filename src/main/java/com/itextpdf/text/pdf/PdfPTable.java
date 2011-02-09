@@ -661,6 +661,33 @@ public class PdfPTable implements LargeElement{
      * @see #beginWritingRows(com.itextpdf.text.pdf.PdfContentByte)
      */
     public float writeSelectedRows(int colStart, int colEnd, int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte[] canvases) {
+    	return writeSelectedRows(colStart, colEnd, rowStart, rowEnd, xPos, yPos, canvases, true);
+    }
+    
+    /**
+     * Writes the selected rows and columns to the document.
+     * This method does not clip the columns; this is only important
+     * if there are columns with colspan at boundaries.
+     * <CODE>canvases</CODE> is obtained from <CODE>beginWritingRows()</CODE>.
+     * The table event is only fired for complete rows.
+     *
+     * @param colStart the first column to be written, zero index
+     * @param colEnd the last column to be written + 1. If it is -1 all the
+     * columns to the end are written
+     * @param rowStart the first row to be written, zero index
+     * @param rowEnd the last row to be written + 1. If it is -1 all the
+     * rows to the end are written
+     * @param xPos the x write coordinate
+     * @param yPos the y write coordinate
+     * @param canvases an array of 4 <CODE>PdfContentByte</CODE> obtained from
+     * <CODE>beginWritingRows()</CODE>
+     * @param	reusable if set to false, the content in the cells is "consumed";
+	 * if true, you can reuse the cells, the row, the parent table as many times you want.
+     * @return the y coordinate position of the bottom of the last row
+     * @see #beginWritingRows(com.itextpdf.text.pdf.PdfContentByte)
+     * @since 5.1.0 added the reusable parameter
+     */
+    public float writeSelectedRows(int colStart, int colEnd, int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte[] canvases, boolean reusable) {
         if (totalWidth <= 0)
             throw new RuntimeException(MessageLocalization.getComposedMessage("the.table.width.must.be.greater.than.zero"));
 
@@ -688,7 +715,7 @@ public class PdfPTable implements LargeElement{
         for (int k = rowStart; k < rowEnd; ++k) {
             PdfPRow row = rows.get(k);
             if (row != null) {
-                row.writeCells(colStart, colEnd, xPos, yPos, canvases);
+                row.writeCells(colStart, colEnd, xPos, yPos, canvases, reusable);
                 yPos -= row.getMaxHeights();
             }
         }
@@ -744,6 +771,32 @@ public class PdfPTable implements LargeElement{
      * @return the y coordinate position of the bottom of the last row
      */
     public float writeSelectedRows(int colStart, int colEnd, int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte canvas) {
+    	return writeSelectedRows(colStart, colEnd, rowStart, rowEnd, xPos, yPos, canvas, true);
+    }
+
+
+    /**
+     * Writes the selected rows and columns to the document.
+     * This method clips the columns; this is only important
+     * if there are columns with colspan at boundaries.
+     * The table event is only fired for complete rows.
+     *
+     * @param colStart the first column to be written, zero index
+     * @param colEnd the last column to be written + 1. If it is -1 all the
+     * columns to the end are written
+     * @param rowStart the first row to be written, zero index
+     * @param rowEnd the last row to be written + 1. If it is -1 all the
+     * rows to the end are written
+     * @param xPos the x write coordinate
+     * @param yPos the y write coordinate
+     * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
+     * be written to	 
+     * @param	reusable if set to false, the content in the cells is "consumed";
+	 * if true, you can reuse the cells, the row, the parent table as many times you want.
+     * @return the y coordinate position of the bottom of the last row
+     * @since 5.1.0 added the reusable parameter
+     */
+    public float writeSelectedRows(int colStart, int colEnd, int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte canvas, boolean reusable) {
         int totalCols = getNumberOfColumns();
         if (colStart < 0)
             colStart = 0;
@@ -770,7 +823,7 @@ public class PdfPTable implements LargeElement{
         }
 
         PdfContentByte[] canvases = beginWritingRows(canvas);
-        float y = writeSelectedRows(colStart, colEnd, rowStart, rowEnd, xPos, yPos, canvases);
+        float y = writeSelectedRows(colStart, colEnd, rowStart, rowEnd, xPos, yPos, canvases, reusable);
         endWritingRows(canvases);
 
         if (clip)
