@@ -1462,8 +1462,11 @@ public class ColumnText {
                     	newPageFollows = true;
                     }
                     // we add the footer rows if necessary (not for incomplete tables)
-                    for (int j = 0; j < footerRows && nt.isComplete() && showFooter; ++j)
-                        sub.add(table.getRow(j + realHeaderRows));
+                    int fr = 0;
+                    for (int j = 0; j < footerRows && nt.isComplete() && showFooter; ++j) {
+                    	fr++;
+                        sub.add(new PdfPRow(table.getRow(j + realHeaderRows)));
+                    }
 
                     // we need a correction if the last row needs to be extended
                     float rowHeight = 0;
@@ -1489,7 +1492,7 @@ public class ColumnText {
                     else
                         nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvas, false);
                     if (splittedRow && table.size() > k) {
-                       	PdfPRow splitted = table.getRows().get(k);
+                       	PdfPRow splitted = table.getRows().get(k - fr);
                     	splitted.copyContent(nt.getRow(nt.size() - 1));
                     }
                     if (table.isExtendLastRow(newPageFollows)) {
