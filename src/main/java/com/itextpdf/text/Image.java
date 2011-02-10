@@ -614,7 +614,8 @@ public abstract class Image extends Rectangle {
 
 		if(image instanceof BufferedImage){
 			BufferedImage bi = (BufferedImage) image;
-			if(bi.getType()==BufferedImage.TYPE_BYTE_BINARY) {
+			if(bi.getType()==BufferedImage.TYPE_BYTE_BINARY
+				&& bi.getColorModel().getPixelSize() == 1) {
 				forceBW=true;
 			}
 		}
