@@ -127,7 +127,7 @@ public final class MessageLocalization {
 			int i = 1;
 			for (Object o : param) {
 				if (null != o) {
-					msg = msg.replaceAll("\\{" + i + "\\}", o.toString());
+					msg = msg.replace("{" + i + "}", o.toString());
 				}
 				i++;
 			}
