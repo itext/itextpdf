@@ -172,7 +172,7 @@ public class HyphenationTree extends TernaryTree
      * at index an update interletter values. In other words, it
      * does something like:</p>
      * <code>
-     * for(i=0; i<patterns.length; i++) {
+     * for(i=0; i &lt; patterns.length; i++) {
      * if ( word.substring(index).startsWidth(patterns[i]) )
      * update_interletter_values(patterns[i]);
      * }
