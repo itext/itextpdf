@@ -48,6 +48,9 @@ import java.util.HashMap;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.pdf.fonts.cmaps.CMap;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapParser;
+import java.io.ByteArrayInputStream;
 
 /**
  *
@@ -298,6 +301,7 @@ public class DocumentFont extends BaseFont {
                     fillEncoding((PdfName)enc);
                 PdfArray diffs = encDic.getAsArray(PdfName.DIFFERENCES);
                 if (diffs != null) {
+                    CMap toUnicode = null;
                     diffmap = new IntHashtable();
                     int currentNumber = 0;
                     for (int k = 0; k < diffs.size(); ++k) {
@@ -309,6 +313,19 @@ public class DocumentFont extends BaseFont {
                             if (c != null && c.length > 0) {
                                 uni2byte.put(c[0], currentNumber);
                                 diffmap.put(c[0], currentNumber);
+                            }
+                            else {
+                                if (toUnicode == null) {
+                                    toUnicode = processToUnicode();
+                                    if (toUnicode == null) {
+                                        toUnicode = new CMap();
+                                    }
+                                }
+                                final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
+                                if ((unicode != null) && (unicode.length() == 1)) {
+                                    this.uni2byte.put(unicode.charAt(0), currentNumber);
+                                    this.diffmap.put(unicode.charAt(0), currentNumber);
+                                }
                             }
                             ++currentNumber;
                         }
@@ -356,6 +373,20 @@ public class DocumentFont extends BaseFont {
             }
         }
         fillFontDesc(font.getAsDict(PdfName.FONTDESCRIPTOR));
+    }
+
+    private CMap processToUnicode() {
+        CMap cmapRet = null;
+        PdfObject toUni = PdfReader.getPdfObject(this.font.get(PdfName.TOUNICODE));
+        if (toUni != null) {
+            try {
+                byte[] touni = PdfReader.getStreamBytes((PRStream) PdfReader.getPdfObjectRelease(toUni));
+                CMapParser cmapParser = new CMapParser();
+                cmapRet = cmapParser.parse(new ByteArrayInputStream(touni));
+            } catch (Exception e) {
+            }
+        }
+        return cmapRet;
     }
 
     private void fillFontDesc(PdfDictionary fontDesc) {
