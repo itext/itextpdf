@@ -64,8 +64,8 @@ public class BaseColor {
     public static final BaseColor CYAN = new BaseColor(0, 255, 255);
     public static final BaseColor BLUE = new BaseColor(0, 0, 255);
     private static final double FACTOR = 0.7;
-    private int value;
-    
+    private final int value;
+
     public BaseColor(int red, int green, int blue, int alpha) {
         validate(red);
         validate(green);
@@ -141,10 +141,12 @@ public class BaseColor {
                 Math.max((int) (getBlue() * FACTOR), 0));
     }
 
+    @Override
     public boolean equals(Object obj) {
         return obj instanceof BaseColor && ((BaseColor) obj).value == this.value;
     }
 
+    @Override
     public int hashCode() {
         return value;
     }
@@ -153,5 +155,13 @@ public class BaseColor {
     private static void validate(int value) {
         if (value < 0 || value > 255)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("color.value.outside.range.0.255"));
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Color value["+value+"]";
     }
 }

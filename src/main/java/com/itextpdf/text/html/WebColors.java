@@ -222,7 +222,7 @@ public class WebColors extends HashMap<String, int[]> {
 	    }
 	    return false;
 	}
-	
+
 	/**
 	 * Gives you a BaseColor based on a name.
 	 *
@@ -237,15 +237,18 @@ public class WebColors extends HashMap<String, int[]> {
 			throws IllegalArgumentException {
 		int[] c = { 0, 0, 0, 255 };
 		name = name.toLowerCase();
-		boolean colorStrWithoutHash = missingHashColorFormat(name); 
+		boolean colorStrWithoutHash = missingHashColorFormat(name);
 		if (name.startsWith("#") || colorStrWithoutHash) {
 		    if (!colorStrWithoutHash) {
 		        name = name.substring(1); // lop off the # to unify hex parsing.
 		    }
 			if (name.length() == 3) {
-				c[0] = Integer.parseInt(name.substring(0, 1), 16) * 16;
-				c[1] = Integer.parseInt(name.substring(1, 2), 16) * 16;
-				c[2] = Integer.parseInt(name.substring(2), 16) * 16;
+			    String s = name.substring(0, 1);
+				c[0] = Integer.parseInt(s+s, 16);
+				String s2 = name.substring(1, 2);
+                c[1] = Integer.parseInt(s2+s2, 16);
+				String s3 = name.substring(2);
+                c[2] = Integer.parseInt(s3+s3, 16);
 				return new BaseColor(c[0], c[1], c[2], c[3]);
 			}
 			if (name.length() == 6) {
