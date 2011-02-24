@@ -98,7 +98,7 @@ public class Document implements DocListener {
      * This constant may only be changed by Paulo Soares and/or Bruno Lowagie.
      * @since	2.1.6
      */
-	private static final String ITEXT = "iText";
+	private static final String ITEXT = "iText\u00ae";
     /**
      * This constant may only be changed by Paulo Soares and/or Bruno Lowagie.
      * @since	2.1.6
