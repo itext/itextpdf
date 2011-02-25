@@ -1,7 +1,7 @@
 /*
  * $Id: FactoryProperties.java 4610 2010-11-02 17:28:50Z blowagie $
  *
- * This file is part of the iText project.
+ * This file is part of the iText (R) project.
  * Copyright (c) 1998-2009 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *

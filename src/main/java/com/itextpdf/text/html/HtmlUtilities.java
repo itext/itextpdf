@@ -1,7 +1,7 @@
 /*
  * $Id: Markup.java 4672 2011-01-30 10:38:33Z blowagie $
  *
- * This file is part of the iText project.
+ * This file is part of the iText (R) project.
  * Copyright (c) 1998-2009 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *

@@ -1,7 +1,7 @@
 /*
  * $Id: RichMediaCommand.java 3851 2009-04-08 23:33:34Z xlv $
  *
- * This file is part of the iText project.
+ * This file is part of the iText (R) project.
  * Copyright (c) 1998-2009 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
