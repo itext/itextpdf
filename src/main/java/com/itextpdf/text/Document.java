@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2009 1T3XT BVBA
+ * Copyright (c) 1998-2011 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -105,7 +105,7 @@ public class Document implements DocListener {
      */
 	private static final String RELEASE = "5.1.0_SNAPSHOT";
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " (c) 1T3XT BVBA";
+	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " \u00a92000-2011 1T3XT BVBA";
 
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging

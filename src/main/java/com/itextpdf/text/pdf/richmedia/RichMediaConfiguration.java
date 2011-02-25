@@ -2,7 +2,7 @@
  * $Id: RichMediaConfiguration.java 3821 2009-03-25 10:33:52Z blowagie $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2009 1T3XT BVBA
+ * Copyright (c) 1998-2011 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify

@@ -1,8 +1,8 @@
 /*
- * $Id: ContentOperator.java 4242 2010-01-02 23:22:20Z xlv $
+ * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2009 1T3XT BVBA
+ * Copyright (c) 1998-2011 1T3XT BVBA
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
