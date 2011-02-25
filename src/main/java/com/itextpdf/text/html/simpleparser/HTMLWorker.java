@@ -626,13 +626,19 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         	totalWidth = 100 - totalWidth;
             Collections.reverse(cellWidths);
             float[] widths = new float[cellWidths.size()];
+            boolean hasZero = false;
             for (int i = 0; i < widths.length; i++) {
                 widths[i] = cellWidths.get(i).floatValue();
                 if (widths[i] == 0 && percentage && zeroWidth > 0) {
                 	widths[i] = totalWidth / zeroWidth;
                 }
+                if (widths[i] == 0) {
+                    hasZero = true;
+                    break;
+                }
             }
-            table.setColWidths(widths);
+            if (!hasZero)
+                table.setColWidths(widths);
         }
 		stack.push(table);
 	}
