@@ -345,6 +345,9 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 			worker.setSkipText(true);
 			// Table alignment should not affect children elements, thus remove
 			attrs.remove(HtmlTags.ALIGN);
+            // In case this is a nested table reset colspan and rowspan
+			attrs.put(HtmlTags.COLSPAN, "1");
+			attrs.put(HtmlTags.ROWSPAN, "1");
 			worker.updateChain(tag, attrs);
 		}
 
