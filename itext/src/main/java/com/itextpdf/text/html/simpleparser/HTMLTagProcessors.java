@@ -106,9 +106,8 @@ public class HTMLTagProcessors extends HashMap<String, HTMLTagProcessor> {
 		 */
 		public void startElement(HTMLWorker worker, String tag, Map<String, String> attrs) {
 			tag = mapTag(tag);
-			attrs = new HashMap<String, String>();
 			attrs.put(tag, null);
-			worker.updateChain(tag, attrs);;
+			worker.updateChain(tag, attrs);
 		}
 		/**
 		 * @see com.itextpdf.text.html.simpleparser.HTMLTagProcessors#endElement(com.itextpdf.text.html.simpleparser.HTMLWorker, java.lang.String)
