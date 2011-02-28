@@ -105,7 +105,7 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 public final class SimpleBookmark implements SimpleXMLDocHandler {
 
     private ArrayList<HashMap<String, Object>> topList;
-    private Stack<HashMap<String, Object>> attr = new Stack<HashMap<String, Object>>();
+    private final Stack<HashMap<String, Object>> attr = new Stack<HashMap<String, Object>>();
 
     /** Creates a new instance of SimpleBookmark */
     private SimpleBookmark() {
@@ -728,7 +728,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
     public void startDocument() {
     }
 
-    public void startElement(String tag, HashMap<String, String> h) {
+    public void startElement(String tag, Map<String, String> h) {
         if (topList == null) {
             if (tag.equals("Bookmark")) {
                 topList = new ArrayList<HashMap<String, Object>>();

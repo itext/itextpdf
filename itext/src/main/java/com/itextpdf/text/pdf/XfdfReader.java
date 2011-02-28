@@ -50,6 +50,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -63,8 +64,8 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 public class XfdfReader implements SimpleXMLDocHandler {
 	// stuff used during parsing to handle state
 	private boolean foundRoot = false;
-    private Stack<String> fieldNames = new Stack<String>();
-    private Stack<String> fieldValues = new Stack<String>();
+    private final Stack<String> fieldNames = new Stack<String>();
+    private final Stack<String> fieldValues = new Stack<String>();
 
     // storage for the field list and their values
 	HashMap<String, String>	fields;
@@ -165,7 +166,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
      * @param tag the tag name
      * @param h the tag's attributes
      */
-    public void startElement(String tag, HashMap<String, String> h)
+    public void startElement(String tag, Map<String, String> h)
     {
         if ( !foundRoot ) {
             if (!tag.equals("xfdf"))

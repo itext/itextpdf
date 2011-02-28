@@ -52,13 +52,13 @@ import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.HtmlUtilities;
 
 public class StyleSheet {
-	
+
 	/**
 	 * Map storing tags and their corresponding styles.
 	 * @since 5.0.6 (changed HashMap => Map)
 	 */
 	protected Map<String, Map<String, String>> tagMap = new HashMap<String, Map<String, String>>();
-	
+
 	/**
 	 * Map storing possible names of the "class" attribute
 	 * and their corresponding styles.
@@ -130,7 +130,7 @@ public class StyleSheet {
 	 * @param	tag		the tag that needs to be resolved
 	 * @param	attrs	existing style map that will be updated
 	 */
-	public void applyStyle(String tag, HashMap<String, String> attrs) {
+	public void applyStyle(String tag, Map<String, String> attrs) {
 		// first fetch the styles corresponding with the tag name
 		Map<String, String> map = tagMap.get(tag.toLowerCase());
 		if (map != null) {

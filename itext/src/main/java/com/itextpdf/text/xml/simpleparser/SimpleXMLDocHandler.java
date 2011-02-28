@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.xml.simpleparser;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The handler for the events fired by <CODE>SimpleXMLParser</CODE>.
@@ -55,7 +55,7 @@ public interface SimpleXMLDocHandler {
      * @param tag the tag name
      * @param h the tag's attributes
      */
-    public void startElement(String tag, HashMap<String, String> h);
+    public void startElement(String tag, Map<String, String> h);
     /**
      * Called when an end tag is found.
      * @param tag the tag name
