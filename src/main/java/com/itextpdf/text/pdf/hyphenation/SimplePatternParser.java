@@ -46,7 +46,7 @@ package com.itextpdf.text.pdf.hyphenation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.itextpdf.text.ExceptionConverter;
@@ -211,7 +211,7 @@ public class SimplePatternParser implements SimpleXMLDocHandler,
 	public void startDocument() {
 	}
 
-	public void startElement(String tag, HashMap<String, String> h) {
+	public void startElement(String tag, Map<String, String> h) {
 		if (tag.equals("hyphen-char")) {
 			String hh = h.get("value");
 			if (hh != null && hh.length() == 1) {
