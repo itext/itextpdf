@@ -1138,13 +1138,13 @@ public class CFFFont {
                     fonts[j].charsetOffset = ((Integer)args[0]).intValue();
 
                 }
-                else if (key=="Encoding"){
-                    int encOffset = ((Integer)args[0]).intValue();
-                    if (encOffset > 0) {
-                        fonts[j].encodingOffset = encOffset;
-                        ReadEncoding(fonts[j].encodingOffset);
-                    }
-                }
+//                else if (key=="Encoding"){
+//                    int encOffset = ((Integer)args[0]).intValue();
+//                    if (encOffset > 0) {
+//                        fonts[j].encodingOffset = encOffset;
+//                        ReadEncoding(fonts[j].encodingOffset);
+//                    }
+//                }
                 else if (key=="CharStrings") {
                     fonts[j].charstringsOffset = ((Integer)args[0]).intValue();
                     //System.err.println("charstrings "+fonts[j].charstringsOffset);
