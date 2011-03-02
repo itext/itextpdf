@@ -122,8 +122,11 @@ public class Document implements DocListener {
     /** Scales the WMF font size. The default value is 0.86. */
     public static float wmfFontCorrection = 0.86f;
 
-	/** The DocListener. */
-    private ArrayList<DocListener> listeners = new ArrayList<DocListener>();
+	/**
+	 * The DocListener.
+	 * @since iText 5.1.0 changed from private to protected
+	 */
+    protected ArrayList<DocListener> listeners = new ArrayList<DocListener>();
 
 	/** Is the document open or not? */
     protected boolean open;
