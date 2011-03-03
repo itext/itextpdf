@@ -176,4 +176,11 @@ class PdfFont implements Comparable<PdfFont> {
     void setHorizontalScaling(float hScale) {
         this.hScale = hScale;
     }
+    /**
+     * Getter for the horizontal scaling.
+     * @since iText 5.1.0
+     */
+    float getHorizontalScaling() {
+    	return hScale;
+    }
 }
