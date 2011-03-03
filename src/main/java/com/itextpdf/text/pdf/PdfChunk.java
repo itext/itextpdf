@@ -843,7 +843,7 @@ public class PdfChunk {
             return 0;
         if (isAttribute(Chunk.CHAR_SPACING)) {
         	Float cs = (Float) getAttribute(Chunk.CHAR_SPACING);
-			return font.width(c) + cs.floatValue();
+			return font.width(c) + cs.floatValue() * font.getHorizontalScaling();
 		}
         return font.width(c);
     }
