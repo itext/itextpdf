@@ -1184,13 +1184,13 @@ public class CFFFont {
 
                 for (int k=0; k<fdarrayOffsets.length-1; k++) {
                     seek(fdarrayOffsets[k]);
-                    while (getPosition() < fdarrayOffsets[k+1])
+                    while (getPosition() < fdarrayOffsets[k+1]) {
                         getDictItem();
-                    if (key=="Private") {
-                        fonts[j].fdprivateLengths[k]  = ((Integer)args[0]).intValue();
-                        fonts[j].fdprivateOffsets[k]  = ((Integer)args[1]).intValue();
+                        if (key=="Private") {
+                            fonts[j].fdprivateLengths[k]  = ((Integer)args[0]).intValue();
+                            fonts[j].fdprivateOffsets[k]  = ((Integer)args[1]).intValue();
+                        }
                     }
-
                 }
             }
         }
