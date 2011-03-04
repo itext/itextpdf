@@ -1433,8 +1433,8 @@ public class CFFFontSubset extends CFFFont {
 	    // Else do nothing
 	    // At the end of each object mark its ending (Even if wasn't written)
 		for (int k=0; k<fonts[Font].FDArrayOffsets.length-1; k++) {
-			if (FDArrayUsed.contains(Integer.valueOf(k)))
-			{
+//			if (FDArrayUsed.contains(Integer.valueOf(k)))
+//			{
 				// Goto beginning of objects
 	            seek(fonts[Font].FDArrayOffsets[k]);
 	            while (getPosition() < fonts[Font].FDArrayOffsets[k+1])
@@ -1464,7 +1464,7 @@ public class CFFFontSubset extends CFFFont {
 	            	else  // other than private
 	            		OutputList.addLast(new RangeItem(buf,p1,p2-p1));
 	            }
-			}
+//			}
             // Mark the ending of the object (even if wasn't written)
             OutputList.addLast(new IndexMarkerItem(fdOffsets[k],fdArrayBase));
         }
@@ -1485,8 +1485,8 @@ public class CFFFontSubset extends CFFFont {
 	    // Else do nothing
 		for (int i=0;i<fonts[Font].fdprivateOffsets.length;i++)
 		{
-			if (FDArrayUsed.contains(Integer.valueOf(i)))
-			{
+//			if (FDArrayUsed.contains(Integer.valueOf(i)))
+//			{
 				// Mark beginning
 		        OutputList.addLast(new MarkerItem(fdPrivate[i]));
 		        fdPrivateBase[i] = new IndexBaseItem();
@@ -1509,7 +1509,7 @@ public class CFFFontSubset extends CFFFont {
 	            	else
 	            		OutputList.addLast(new RangeItem(buf,p1,p2-p1));
 	            }
-			}
+//			}
 		}
 	}
 
