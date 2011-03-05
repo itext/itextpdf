@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Interface for a text element.
@@ -324,7 +324,7 @@ public interface Element {
 	 * @return an <CODE>ArrayList</CODE>
 	 */
 
-	public ArrayList<Chunk> getChunks();
+	public List<Chunk> getChunks();
 
 	/**
 	 * Gets the content of the text element.

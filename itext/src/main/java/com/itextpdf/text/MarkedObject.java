@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -72,7 +72,7 @@ public class MarkedObject implements Element {
 	/**
 	 * Creates a MarkedObject.
 	 */
-	public MarkedObject(Element element) {
+	public MarkedObject(final Element element) {
 		this.element = element;
 	}
 
@@ -81,7 +81,7 @@ public class MarkedObject implements Element {
      *
      * @return  an <CODE>ArrayList</CODE>
      */
-	public ArrayList<Chunk> getChunks() {
+	public List<Chunk> getChunks() {
 		return element.getChunks();
 	}
 
@@ -92,7 +92,7 @@ public class MarkedObject implements Element {
      * @param       listener        an <CODE>ElementListener</CODE>
      * @return <CODE>true</CODE> if the element was processed successfully
      */
-	public boolean process(ElementListener listener) {
+	public boolean process(final ElementListener listener) {
         try {
             return listener.add(element);
         }
@@ -137,7 +137,7 @@ public class MarkedObject implements Element {
 	/**
 	 * Adds one markup attribute.
 	 */
-	public void setMarkupAttribute(String key, String value) {
+	public void setMarkupAttribute(final String key, final String value) {
 		markupAttributes.setProperty(key, value);
 	}
 
