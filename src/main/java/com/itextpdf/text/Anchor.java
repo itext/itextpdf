@@ -46,6 +46,7 @@ package com.itextpdf.text;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
 
 /**
@@ -93,7 +94,7 @@ public class Anchor extends Phrase {
      * @param	leading		the leading
      */
 
-    public Anchor(float leading) {
+    public Anchor(final float leading) {
         super(leading);
     }
 
@@ -102,7 +103,7 @@ public class Anchor extends Phrase {
      *
      * @param	chunk		a <CODE>Chunk</CODE>
      */
-    public Anchor(Chunk chunk) {
+    public Anchor(final Chunk chunk) {
         super(chunk);
     }
 
@@ -111,7 +112,7 @@ public class Anchor extends Phrase {
      *
      * @param	string		a <CODE>String</CODE>
      */
-    public Anchor(String string) {
+    public Anchor(final String string) {
         super(string);
     }
 
@@ -122,7 +123,7 @@ public class Anchor extends Phrase {
      * @param	string		a <CODE>String</CODE>
      * @param	font		a <CODE>Font</CODE>
      */
-    public Anchor(String string, Font font) {
+    public Anchor(final String string, final Font font) {
         super(string, font);
     }
 
@@ -133,7 +134,7 @@ public class Anchor extends Phrase {
      * @param	leading		the leading
      * @param	chunk		a <CODE>Chunk</CODE>
      */
-    public Anchor(float leading, Chunk chunk) {
+    public Anchor(final float leading, final Chunk chunk) {
         super(leading, chunk);
     }
 
@@ -144,7 +145,7 @@ public class Anchor extends Phrase {
      * @param	leading		the leading
      * @param	string		a <CODE>String</CODE>
      */
-    public Anchor(float leading, String string) {
+    public Anchor(final float leading, final String string) {
         super(leading, string);
     }
 
@@ -156,7 +157,7 @@ public class Anchor extends Phrase {
      * @param	string		a <CODE>String</CODE>
      * @param	font		a <CODE>Font</CODE>
      */
-    public Anchor(float leading, String string, Font font) {
+    public Anchor(final float leading, final String string, final Font font) {
         super(leading, string, font);
     }
 
@@ -165,7 +166,7 @@ public class Anchor extends Phrase {
      *
      * @param	phrase		a <CODE>Phrase</CODE>
      */
-    public Anchor(Phrase phrase) {
+    public Anchor(final Phrase phrase) {
     	super(phrase);
     	if (phrase instanceof Anchor) {
     		Anchor a = (Anchor) phrase;
@@ -184,7 +185,7 @@ public class Anchor extends Phrase {
      * @return	<CODE>true</CODE> if the element was processed successfully
      */
     @Override
-    public boolean process(ElementListener listener) {
+    public boolean process(final ElementListener listener) {
         try {
             Chunk chunk;
             Iterator<Chunk> i = getChunks().iterator();
@@ -214,8 +215,8 @@ public class Anchor extends Phrase {
      * @return	an <CODE>ArrayList</CODE>
      */
     @Override
-    public ArrayList<Chunk> getChunks() {
-        ArrayList<Chunk> tmp = new ArrayList<Chunk>();
+    public List<Chunk> getChunks() {
+    	List<Chunk> tmp = new ArrayList<Chunk>();
         Chunk chunk;
         Iterator<Element> i = iterator();
         boolean localDestination = reference != null && reference.startsWith("#");
@@ -253,7 +254,7 @@ public class Anchor extends Phrase {
      *
      * @param	name		a new name
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -262,7 +263,7 @@ public class Anchor extends Phrase {
      *
      * @param	reference		a new reference
      */
-    public void setReference(String reference) {
+    public void setReference(final String reference) {
         this.reference = reference;
     }
 

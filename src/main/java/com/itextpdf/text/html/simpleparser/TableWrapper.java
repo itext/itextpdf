@@ -68,12 +68,12 @@ public class TableWrapper implements Element {
 	 * The styles that need to be applied to the table
 	 * @since 5.0.6 renamed from props
 	 */
-    private Map<String, String> styles = new HashMap<String, String>();
+    private final Map<String, String> styles = new HashMap<String, String>();
     /**
      * Nested list containing the PdfPCell elements that are part of this table.
      */
-    private List<List<PdfPCell>> rows = new ArrayList<List<PdfPCell>>();
-    
+    private final List<List<PdfPCell>> rows = new ArrayList<List<PdfPCell>>();
+
     /**
      * Array containing the widths of the columns.
      * @since iText 5.0.6
@@ -84,7 +84,7 @@ public class TableWrapper implements Element {
      * Creates a new instance of IncTable.
      * @param	attrs	a Map containing attributes
      */
-    public TableWrapper(Map<String, String> attrs) {
+    public TableWrapper(final Map<String, String> attrs) {
         this.styles.putAll(attrs);
     }
 
@@ -104,7 +104,7 @@ public class TableWrapper implements Element {
      * Setter for the column widths
      * @since iText 5.0.6
      */
-    public void setColWidths(float[] colWidths) {
+    public void setColWidths(final float[] colWidths) {
         this.colWidths = colWidths;
     }
 
@@ -159,11 +159,11 @@ public class TableWrapper implements Element {
     }
 
     // these Element methods are irrelevant for a table stub.
-    
+
     /**
      * @since 5.0.1
      */
-    public ArrayList<Chunk> getChunks() {
+    public List<Chunk> getChunks() {
         return null;
     }
 
@@ -184,7 +184,7 @@ public class TableWrapper implements Element {
     /**
      * @since 5.0.1
      */
-    public boolean process(ElementListener listener) {
+    public boolean process(final ElementListener listener) {
         return false;
     }
 

@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text;
 
+import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -63,10 +64,10 @@ public class Meta implements Element {
     // membervariables
 
 	/** This is the type of Meta-information this object contains. */
-    private int type;
+    private final int type;
 
     /** This is the content of the Meta-information. */
-    private StringBuffer content;
+    private final StringBuffer content;
 
 	/**
 	 * The possible value of an alignment attribute.
@@ -118,7 +119,7 @@ public class Meta implements Element {
      * @param	type		the type of meta-information
      * @param	content		the content
      */
-    Meta(int type, String content) {
+    Meta(final int type, final String content) {
         this.type = type;
         this.content = new StringBuffer(content);
     }
@@ -129,7 +130,7 @@ public class Meta implements Element {
      * @param	tag		    the tagname of the meta-information
      * @param	content		the content
      */
-    public Meta(String tag, String content) {
+    public Meta(final String tag, final String content) {
         this.type = Meta.getType(tag);
         this.content = new StringBuffer(content);
     }
@@ -143,7 +144,7 @@ public class Meta implements Element {
      * @param	listener		the <CODE>ElementListener</CODE>
      * @return	<CODE>true</CODE> if the element was processed successfully
      */
-    public boolean process(ElementListener listener) {
+    public boolean process(final ElementListener listener) {
         try {
             return listener.add(this);
         }
@@ -166,7 +167,7 @@ public class Meta implements Element {
      *
      * @return	an <CODE>ArrayList</CODE>
      */
-    public ArrayList<Chunk> getChunks() {
+    public List<Chunk> getChunks() {
         return new ArrayList<Chunk>();
     }
 
@@ -194,7 +195,7 @@ public class Meta implements Element {
      * @param	string      a <CODE>String</CODE>
      * @return	a <CODE>StringBuffer</CODE>
      */
-    public StringBuffer append(String string) {
+    public StringBuffer append(final String string) {
         return content.append(string);
     }
 
@@ -240,7 +241,7 @@ public class Meta implements Element {
      * @param tag iText tag for meta information
      * @return	the Element value corresponding with the given tag
      */
-    public static int getType(String tag) {
+    public static int getType(final String tag) {
         if (Meta.SUBJECT.equals(tag)) {
             return Element.SUBJECT;
         }

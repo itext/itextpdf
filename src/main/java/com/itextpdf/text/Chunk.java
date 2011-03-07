@@ -44,6 +44,7 @@
 package com.itextpdf.text;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -117,7 +118,7 @@ public class Chunk implements Element {
      * A <CODE>Chunk</CODE> copy constructor.
      * @param ck the <CODE>Chunk</CODE> to be copied
      */
-    public Chunk(Chunk ck) {
+    public Chunk(final Chunk ck) {
         if (ck.content != null) {
             content = new StringBuffer(ck.content.toString());
         }
@@ -138,7 +139,7 @@ public class Chunk implements Element {
 	 * @param font
 	 *            the font
 	 */
-	public Chunk(String content, Font font) {
+	public Chunk(final String content, final Font font) {
 		this.content = new StringBuffer(content);
 		this.font = font;
 	}
@@ -150,7 +151,7 @@ public class Chunk implements Element {
 	 * @param content
 	 *            the content
 	 */
-	public Chunk(String content) {
+	public Chunk(final String content) {
 		this(content, new Font());
 	}
 
@@ -162,7 +163,7 @@ public class Chunk implements Element {
 	 * @param font
 	 *            the font
 	 */
-	public Chunk(char c, Font font) {
+	public Chunk(final char c, final Font font) {
 		this.content = new StringBuffer();
 		this.content.append(c);
 		this.font = font;
@@ -175,7 +176,7 @@ public class Chunk implements Element {
 	 * @param c
 	 *            the content
 	 */
-	public Chunk(char c) {
+	public Chunk(final char c) {
 		this(c, new Font());
 	}
 
@@ -189,7 +190,7 @@ public class Chunk implements Element {
 	 * @param offsetY
 	 *            the image offset in the y direction
 	 */
-	public Chunk(Image image, float offsetX, float offsetY) {
+	public Chunk(final Image image, final float offsetX, final float offsetY) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		Image copyImage = Image.getInstance(image);
 		copyImage.setAbsolutePosition(Float.NaN, Float.NaN);
@@ -209,7 +210,7 @@ public class Chunk implements Element {
 	 * @param	separator	the drawInterface to use to draw the separator.
 	 * @since	2.1.2
 	 */
-	public Chunk(DrawInterface separator) {
+	public Chunk(final DrawInterface separator) {
 		this(separator, false);
 	}
 
@@ -220,7 +221,7 @@ public class Chunk implements Element {
 	 * @param	vertical	true if this is a vertical separator
 	 * @since	2.1.2
 	 */
-	public Chunk(DrawInterface separator, boolean vertical) {
+	public Chunk(final DrawInterface separator, final boolean vertical) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		setAttribute(SEPARATOR, new Object[] {separator, Boolean.valueOf(vertical)});
 	}
@@ -238,7 +239,7 @@ public class Chunk implements Element {
 	 * @param	tabPosition	an X coordinate that will be used as start position for the next Chunk.
 	 * @since	2.1.2
 	 */
-	public Chunk(DrawInterface separator, float tabPosition) {
+	public Chunk(final DrawInterface separator, final float tabPosition) {
 		this(separator, tabPosition, false);
 	}
 
@@ -250,7 +251,7 @@ public class Chunk implements Element {
 	 * @param	newline		if true, a newline will be added if the tabPosition has already been reached.
 	 * @since	2.1.2
 	 */
-	public Chunk(DrawInterface separator, float tabPosition, boolean newline) {
+	public Chunk(final DrawInterface separator, final float tabPosition, final boolean newline) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		if (tabPosition < 0) {
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabPosition)));
@@ -270,8 +271,8 @@ public class Chunk implements Element {
 	 * @param changeLeading
 	 *            true if the leading has to be adapted to the image
 	 */
-	public Chunk(Image image, float offsetX, float offsetY,
-			boolean changeLeading) {
+	public Chunk(final Image image, final float offsetX, final float offsetY,
+			final boolean changeLeading) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		setAttribute(IMAGE, new Object[] { image, new Float(offsetX),
 				new Float(offsetY), Boolean.valueOf(changeLeading) });
@@ -287,7 +288,7 @@ public class Chunk implements Element {
 	 *            an <CODE>ElementListener</CODE>
 	 * @return <CODE>true</CODE> if the element was processed successfully
 	 */
-	public boolean process(ElementListener listener) {
+	public boolean process(final ElementListener listener) {
 		try {
 			return listener.add(this);
 		} catch (DocumentException de) {
@@ -309,8 +310,8 @@ public class Chunk implements Element {
 	 *
 	 * @return an <CODE>ArrayList</CODE>
 	 */
-	public ArrayList<Chunk> getChunks() {
-		ArrayList<Chunk> tmp = new ArrayList<Chunk>();
+	public List<Chunk> getChunks() {
+		List<Chunk> tmp = new ArrayList<Chunk>();
 		tmp.add(this);
 		return tmp;
 	}
@@ -324,7 +325,7 @@ public class Chunk implements Element {
 	 *            <CODE>String</CODE>
 	 * @return a <CODE>StringBuffer</CODE>
 	 */
-	public StringBuffer append(String string) {
+	public StringBuffer append(final String string) {
 		return content.append(string);
 	}
 
@@ -334,7 +335,7 @@ public class Chunk implements Element {
 	 * @param font
 	 *            a <CODE>Font</CODE>
 	 */
-	public void setFont(Font font) {
+	public void setFont(final Font font) {
 		this.font = font;
 	}
 
@@ -422,7 +423,7 @@ public class Chunk implements Element {
 	 * Sets the attributes all at once.
 	 * @param	attributes	the attributes of a Chunk
 	 */
-	public void setAttributes(HashMap<String, Object> attributes) {
+	public void setAttributes(final HashMap<String, Object> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -436,7 +437,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 
-	private Chunk setAttribute(String name, Object obj) {
+	private Chunk setAttribute(final String name, final Object obj) {
 		if (attributes == null)
 			attributes = new HashMap<String, Object>();
 		attributes.put(name, obj);
@@ -456,7 +457,7 @@ public class Chunk implements Element {
 	 *            the horizontal scaling factor
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setHorizontalScaling(float scale) {
+	public Chunk setHorizontalScaling(final float scale) {
 		return setAttribute(HSCALE, new Float(scale));
 	}
 
@@ -489,7 +490,7 @@ public class Chunk implements Element {
 	 *            the absolute y position relative to the baseline
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setUnderline(float thickness, float yPosition) {
+	public Chunk setUnderline(final float thickness, final float yPosition) {
 		return setUnderline(null, thickness, 0f, yPosition, 0f,
 				PdfContentByte.LINE_CAP_BUTT);
 	}
@@ -517,8 +518,8 @@ public class Chunk implements Element {
 	 *            and PdfContentByte.LINE_CAP_PROJECTING_SQUARE
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setUnderline(BaseColor color, float thickness, float thicknessMul,
-			float yPosition, float yPositionMul, int cap) {
+	public Chunk setUnderline(final BaseColor color, final float thickness, final float thicknessMul,
+			final float yPosition, final float yPositionMul, final int cap) {
 		if (attributes == null)
 			attributes = new HashMap<String, Object>();
 		Object obj[] = {
@@ -543,7 +544,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 
-	public Chunk setTextRise(float rise) {
+	public Chunk setTextRise(final float rise) {
 		return setAttribute(SUBSUPSCRIPT, new Float(rise));
 	}
 
@@ -589,7 +590,7 @@ public class Chunk implements Element {
 	 *            the color of the background
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setBackground(BaseColor color) {
+	public Chunk setBackground(final BaseColor color) {
 		return setBackground(color, 0, 0, 0, 0);
 	}
 
@@ -608,8 +609,8 @@ public class Chunk implements Element {
 	 *            increase the size of the rectangle in the top
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setBackground(BaseColor color, float extraLeft, float extraBottom,
-			float extraRight, float extraTop) {
+	public Chunk setBackground(final BaseColor color, final float extraLeft, final float extraBottom,
+			final float extraRight, final float extraTop) {
 		return setAttribute(BACKGROUND, new Object[] { color,
 				new float[] { extraLeft, extraBottom, extraRight, extraTop } });
 	}
@@ -636,8 +637,8 @@ public class Chunk implements Element {
 	 *            color
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setTextRenderMode(int mode, float strokeWidth,
-			BaseColor strokeColor) {
+	public Chunk setTextRenderMode(final int mode, final float strokeWidth,
+			final BaseColor strokeColor) {
 		return setAttribute(TEXTRENDERMODE, new Object[] { Integer.valueOf(mode),
 				new Float(strokeWidth), strokeColor });
 	}
@@ -653,7 +654,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 
-	public Chunk setSplitCharacter(SplitCharacter splitCharacter) {
+	public Chunk setSplitCharacter(final SplitCharacter splitCharacter) {
 		return setAttribute(SPLITCHARACTER, splitCharacter);
 	}
 
@@ -667,7 +668,7 @@ public class Chunk implements Element {
 	 *            the hyphenation engine
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setHyphenation(HyphenationEvent hyphenation) {
+	public Chunk setHyphenation(final HyphenationEvent hyphenation) {
 		return setAttribute(HYPHENATION, hyphenation);
 	}
 
@@ -684,7 +685,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 
-	public Chunk setRemoteGoto(String filename, String name) {
+	public Chunk setRemoteGoto(final String filename, final String name) {
 		return setAttribute(REMOTEGOTO, new Object[] { filename, name });
 	}
 
@@ -698,7 +699,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 
-	public Chunk setRemoteGoto(String filename, int page) {
+	public Chunk setRemoteGoto(final String filename, final int page) {
 		return setAttribute(REMOTEGOTO, new Object[] { filename,
 				Integer.valueOf(page) });
 	}
@@ -716,7 +717,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 
-	public Chunk setLocalGoto(String name) {
+	public Chunk setLocalGoto(final String name) {
 		return setAttribute(LOCALGOTO, name);
 	}
 
@@ -730,7 +731,7 @@ public class Chunk implements Element {
 	 *            the name for this destination
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setLocalDestination(String name) {
+	public Chunk setLocalDestination(final String name) {
 		return setAttribute(LOCALDESTINATION, name);
 	}
 
@@ -747,7 +748,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 
-	public Chunk setGenericTag(String text) {
+	public Chunk setGenericTag(final String text) {
 		return setAttribute(GENERICTAG, text);
 	}
 
@@ -782,7 +783,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 
-	public Chunk setAction(PdfAction action) {
+	public Chunk setAction(final PdfAction action) {
 		return setAttribute(ACTION, action);
 	}
 
@@ -794,7 +795,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 
-	public Chunk setAnchor(URL url) {
+	public Chunk setAnchor(final URL url) {
 		return setAttribute(ACTION, new PdfAction(url.toExternalForm()));
 	}
 
@@ -806,7 +807,7 @@ public class Chunk implements Element {
 	 * @return this <CODE>Chunk</CODE>
 	 */
 
-	public Chunk setAnchor(String url) {
+	public Chunk setAnchor(final String url) {
 		return setAttribute(ACTION, new PdfAction(url));
 	}
 
@@ -833,7 +834,7 @@ public class Chunk implements Element {
 	 *            the annotation
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setAnnotation(PdfAnnotation annotation) {
+	public Chunk setAnnotation(final PdfAnnotation annotation) {
 		return setAttribute(PDFANNOTATION, annotation);
 	}
 
@@ -881,7 +882,7 @@ public class Chunk implements Element {
 	 * @param charSpace the character spacing value
 	 * @return this <CODE>Chunk</CODE>
 	 */
-	public Chunk setCharacterSpacing(float charSpace) {
+	public Chunk setCharacterSpacing(final float charSpace) {
 		return setAttribute(CHAR_SPACING, new Float(charSpace));
 	}
 

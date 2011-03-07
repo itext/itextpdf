@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.draw;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import com.itextpdf.text.Chunk;
@@ -79,7 +80,7 @@ public class VerticalPositionMark implements DrawInterface, Element {
 	 * @param	drawInterface	the drawInterface for this vertical position mark.
 	 * @param	offset			the offset for this vertical position mark.
 	 */
-	public VerticalPositionMark(DrawInterface drawInterface, float offset) {
+	public VerticalPositionMark(final DrawInterface drawInterface, final float offset) {
 		this.drawInterface = drawInterface;
 		this.offset = offset;
 	}
@@ -87,7 +88,7 @@ public class VerticalPositionMark implements DrawInterface, Element {
 	/**
 	 * @see com.itextpdf.text.pdf.draw.DrawInterface#draw(com.itextpdf.text.pdf.PdfContentByte, float, float, float, float, float)
 	 */
-	public void draw(PdfContentByte canvas, float llx, float lly, float urx, float ury, float y) {
+	public void draw(final PdfContentByte canvas, final float llx, final float lly, final float urx, final float ury, final float y) {
 		if (drawInterface != null) {
 			drawInterface.draw(canvas, llx, lly, urx, ury, y + offset);
 		}
@@ -96,7 +97,7 @@ public class VerticalPositionMark implements DrawInterface, Element {
     /**
      * @see com.itextpdf.text.Element#process(com.itextpdf.text.ElementListener)
      */
-    public boolean process(ElementListener listener) {
+    public boolean process(final ElementListener listener) {
 		try {
 			return listener.add(this);
 		} catch (DocumentException e) {
@@ -128,8 +129,8 @@ public class VerticalPositionMark implements DrawInterface, Element {
     /**
      * @see com.itextpdf.text.Element#getChunks()
      */
-    public ArrayList<Chunk> getChunks() {
-    	ArrayList<Chunk> list = new ArrayList<Chunk>();
+    public List<Chunk> getChunks() {
+    	List<Chunk> list = new ArrayList<Chunk>();
     	list.add(new Chunk(this, true));
         return list;
     }
@@ -146,7 +147,7 @@ public class VerticalPositionMark implements DrawInterface, Element {
      * Setter for the interface with the overruling draw() method.
      * @param drawInterface a DrawInterface implementation
      */
-    public void setDrawInterface(DrawInterface drawInterface) {
+    public void setDrawInterface(final DrawInterface drawInterface) {
         this.drawInterface = drawInterface;
     }
 
@@ -164,7 +165,7 @@ public class VerticalPositionMark implements DrawInterface, Element {
      * choose a negative offset.
      * @param offset	an offset
      */
-    public void setOffset(float offset) {
+    public void setOffset(final float offset) {
         this.offset = offset;
     }
 }

@@ -106,7 +106,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
     /**
      * Copy constructor for <CODE>Phrase</CODE>.
      */
-    public Phrase(Phrase phrase) {
+    public Phrase(final Phrase phrase) {
         super();
         this.addAll(phrase);
         leading = phrase.getLeading();
@@ -119,7 +119,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      *
      * @param	leading		the leading
      */
-    public Phrase(float leading) {
+    public Phrase(final float leading) {
         this.leading = leading;
         font = new Font();
     }
@@ -129,7 +129,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      *
      * @param	chunk		a <CODE>Chunk</CODE>
      */
-    public Phrase(Chunk chunk) {
+    public Phrase(final Chunk chunk) {
         super.add(chunk);
         font = chunk.getFont();
         setHyphenation(chunk.getHyphenation());
@@ -142,7 +142,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param	leading	the leading
      * @param	chunk		a <CODE>Chunk</CODE>
      */
-    public Phrase(float leading, Chunk chunk) {
+    public Phrase(final float leading, final Chunk chunk) {
         this.leading = leading;
         super.add(chunk);
         font = chunk.getFont();
@@ -154,7 +154,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      *
      * @param	string		a <CODE>String</CODE>
      */
-    public Phrase(String string) {
+    public Phrase(final String string) {
         this(Float.NaN, string, new Font());
     }
 
@@ -164,7 +164,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param	string		a <CODE>String</CODE>
      * @param	font		a <CODE>Font</CODE>
      */
-    public Phrase(String string, Font font) {
+    public Phrase(final String string, final Font font) {
         this(Float.NaN, string, font);
     }
 
@@ -174,7 +174,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param	leading	the leading
      * @param	string		a <CODE>String</CODE>
      */
-    public Phrase(float leading, String string) {
+    public Phrase(final float leading, final String string) {
         this(leading, string, new Font());
     }
 
@@ -186,7 +186,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param	string		a <CODE>String</CODE>
      * @param	font		a <CODE>Font</CODE>
      */
-    public Phrase(float leading, String string, Font font) {
+    public Phrase(final float leading, final String string, final Font font) {
         this.leading = leading;
         this.font = font;
     	/* bugfix by August Detlefsen */
@@ -204,7 +204,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param	listener	an <CODE>ElementListener</CODE>
      * @return	<CODE>true</CODE> if the element was processed successfully
      */
-    public boolean process(ElementListener listener) {
+    public boolean process(final ElementListener listener) {
         try {
             for (Object element : this) {
                 listener.add((Element) element);
@@ -230,8 +230,8 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      *
      * @return	an <CODE>ArrayList</CODE>
      */
-    public ArrayList<Chunk> getChunks() {
-        ArrayList<Chunk> tmp = new ArrayList<Chunk>();
+    public java.util.List<Chunk> getChunks() {
+    	java.util.List<Chunk> tmp = new ArrayList<Chunk>();
         for (Element element : this) {
             tmp.addAll(element.getChunks());
         }
@@ -266,7 +266,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @since 5.0.1 (signature changed to use Element)
      */
     @Override
-    public void add(int index, Element element) {
+    public void add(final int index, final Element element) {
     	if (element == null) return;
         try {
             if (element.type() == Element.CHUNK) {
@@ -302,7 +302,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @return  a boolean
      * @since 5.0.1
      */
-    public boolean add(String s) {
+    public boolean add(final String s) {
 	if (s == null) {
             return false;
         }
@@ -319,7 +319,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @since 5.0.1 (signature changed to use Element)
      */
     @Override
-    public boolean add(Element element) {
+    public boolean add(final Element element) {
         if (element == null) return false;
         try {
             switch(element.type()) {
@@ -365,7 +365,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
      */
     @Override
-    public boolean addAll(Collection<? extends Element> collection) {
+    public boolean addAll(final Collection<? extends Element> collection) {
         for (Element e: collection) {
             this.add(e);
         }
@@ -380,7 +380,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param chunk a Chunk to add to the Phrase
      * @return true if adding the Chunk succeeded
      */
-    protected boolean addChunk(Chunk chunk) {
+    protected boolean addChunk(final Chunk chunk) {
     	Font f = chunk.getFont();
     	String c = chunk.getContent();
         if (font != null && !font.isStandardFont()) {
@@ -414,7 +414,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      *
      * @param	object		the object to add.
      */
-    protected void addSpecial(Element object) {
+    protected void addSpecial(final Element object) {
         super.add(object);
     }
 
@@ -426,7 +426,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param	leading		the new leading
      */
 
-    public void setLeading(float leading) {
+    public void setLeading(final float leading) {
         this.leading = leading;
     }
 
@@ -434,7 +434,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * Sets the main font of this phrase.
      * @param font	the new font
      */
-    public void setFont(Font font) {
+    public void setFont(final Font font) {
     	this.font = font;
     }
 
@@ -521,7 +521,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param	hyphenation	a HyphenationEvent instance
      * @since	2.1.2
      */
-	public void setHyphenation(HyphenationEvent hyphenation) {
+	public void setHyphenation(final HyphenationEvent hyphenation) {
 		this.hyphenation = hyphenation;
 	}
 
@@ -532,7 +532,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * Constructs a Phrase that can be used in the static getInstance() method.
      * @param	dummy	a dummy parameter
      */
-    private Phrase(boolean dummy) {
+    private Phrase(final boolean dummy) {
     }
 
     /**
@@ -540,7 +540,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param string
      * @return a newly constructed Phrase
      */
-    public static final Phrase getInstance(String string) {
+    public static final Phrase getInstance(final String string) {
     	return getInstance(16, string, new Font());
     }
 
@@ -550,7 +550,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param string
      * @return a newly constructed Phrase
      */
-    public static final Phrase getInstance(int leading, String string) {
+    public static final Phrase getInstance(final int leading, final String string) {
     	return getInstance(leading, string, new Font());
     }
 
@@ -561,7 +561,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @param font
      * @return a newly constructed Phrase
      */
-    public static final Phrase getInstance(int leading, String string, Font font) {
+    public static final Phrase getInstance(final int leading, String string, final Font font) {
     	Phrase p = new Phrase(true);
     	p.setLeading(leading);
     	p.font = font;
