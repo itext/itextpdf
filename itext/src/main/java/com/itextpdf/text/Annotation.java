@@ -44,6 +44,7 @@
 package com.itextpdf.text;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -164,7 +165,7 @@ public class Annotation implements Element {
 	 * @param ury
 	 *            upper right y coordinate
 	 */
-	private Annotation(float llx, float lly, float urx, float ury) {
+	private Annotation(final float llx, final float lly, final float urx, final float ury) {
 		this.llx = llx;
 		this.lly = lly;
 		this.urx = urx;
@@ -174,7 +175,7 @@ public class Annotation implements Element {
 	/**
 	 * Copy constructor.
 	 */
-    public Annotation(Annotation an) {
+    public Annotation(final Annotation an) {
         annotationtype = an.annotationtype;
         annotationAttributes = an.annotationAttributes;
         llx = an.llx;
@@ -192,7 +193,7 @@ public class Annotation implements Element {
 	 * @param text
 	 *            the content of the annotation
 	 */
-	public Annotation(String title, String text) {
+	public Annotation(final String title, final String text) {
 		annotationtype = TEXT;
 		annotationAttributes.put(TITLE, title);
 		annotationAttributes.put(CONTENT, text);
@@ -215,8 +216,8 @@ public class Annotation implements Element {
 	 * @param ury
 	 *            the upper right y-value
 	 */
-	public Annotation(String title, String text, float llx, float lly,
-			float urx, float ury) {
+	public Annotation(final String title, final String text, final float llx, final float lly,
+			final float urx, final float ury) {
 		this(llx, lly, urx, ury);
 		annotationtype = TEXT;
 		annotationAttributes.put(TITLE, title);
@@ -237,7 +238,7 @@ public class Annotation implements Element {
 	 * @param url
 	 *            the external reference
 	 */
-	public Annotation(float llx, float lly, float urx, float ury, URL url) {
+	public Annotation(final float llx, final float lly, final float urx, final float ury, final URL url) {
 		this(llx, lly, urx, ury);
 		annotationtype = URL_NET;
 		annotationAttributes.put(URL, url);
@@ -257,7 +258,7 @@ public class Annotation implements Element {
 	 * @param url
 	 *            the external reference
 	 */
-	public Annotation(float llx, float lly, float urx, float ury, String url) {
+	public Annotation(final float llx, final float lly, final float urx, final float ury, final String url) {
 		this(llx, lly, urx, ury);
 		annotationtype = URL_AS_STRING;
 		annotationAttributes.put(FILE, url);
@@ -279,8 +280,8 @@ public class Annotation implements Element {
 	 * @param dest
 	 *            the destination in this file
 	 */
-	public Annotation(float llx, float lly, float urx, float ury, String file,
-			String dest) {
+	public Annotation(final float llx, final float lly, final float urx, final float ury, final String file,
+			final String dest) {
 		this(llx, lly, urx, ury);
 		annotationtype = FILE_DEST;
 		annotationAttributes.put(FILE, file);
@@ -301,8 +302,8 @@ public class Annotation implements Element {
 	 * @param showOnDisplay
 	 *            if true play on display of the page
 	 */
-	public Annotation(float llx, float lly, float urx, float ury,
-			String moviePath, String mimeType, boolean showOnDisplay) {
+	public Annotation(final float llx, final float lly, final float urx, final float ury,
+			final String moviePath, final String mimeType, final boolean showOnDisplay) {
 		this(llx, lly, urx, ury);
 		annotationtype = SCREEN;
 		annotationAttributes.put(FILE, moviePath);
@@ -327,8 +328,8 @@ public class Annotation implements Element {
 	 * @param page
 	 *            a page number in this file
 	 */
-	public Annotation(float llx, float lly, float urx, float ury, String file,
-			int page) {
+	public Annotation(final float llx, final float lly, final float urx, final float ury, final String file,
+			final int page) {
 		this(llx, lly, urx, ury);
 		annotationtype = FILE_PAGE;
 		annotationAttributes.put(FILE, file);
@@ -349,7 +350,7 @@ public class Annotation implements Element {
 	 * @param named
 	 *            a named destination in this file
 	 */
-	public Annotation(float llx, float lly, float urx, float ury, int named) {
+	public Annotation(final float llx, final float lly, final float urx, final float ury, final int named) {
 		this(llx, lly, urx, ury);
 		annotationtype = NAMED_DEST;
 		annotationAttributes.put(NAMED, Integer.valueOf(named));
@@ -375,9 +376,9 @@ public class Annotation implements Element {
 	 * @param defaultdir
 	 *            the default directory to run this application in
 	 */
-	public Annotation(float llx, float lly, float urx, float ury,
-			String application, String parameters, String operation,
-			String defaultdir) {
+	public Annotation(final float llx, final float lly, final float urx, final float ury,
+			final String application, final String parameters, final String operation,
+			final String defaultdir) {
 		this(llx, lly, urx, ury);
 		annotationtype = LAUNCH;
 		annotationAttributes.put(APPLICATION, application);
@@ -405,7 +406,7 @@ public class Annotation implements Element {
 	 *            an <CODE>ElementListener</CODE>
 	 * @return <CODE>true</CODE> if the element was processed successfully
 	 */
-	public boolean process(ElementListener listener) {
+	public boolean process(final ElementListener listener) {
 		try {
 			return listener.add(this);
 		} catch (DocumentException de) {
@@ -419,7 +420,7 @@ public class Annotation implements Element {
 	 * @return an <CODE>ArrayList</CODE>
 	 */
 
-	public ArrayList<Chunk> getChunks() {
+	public List<Chunk> getChunks() {
 		return new ArrayList<Chunk>();
 	}
 
@@ -437,7 +438,7 @@ public class Annotation implements Element {
 	 * @param ury
 	 *            the upper right y-value
 	 */
-	public void setDimensions(float llx, float lly, float urx, float ury) {
+	public void setDimensions(final float llx, final float lly, final float urx, final float ury) {
 		this.llx = llx;
 		this.lly = lly;
 		this.urx = urx;
@@ -489,7 +490,7 @@ public class Annotation implements Element {
 	 *            the default value
 	 * @return a value
 	 */
-	public float llx(float def) {
+	public float llx(final float def) {
 		if (Float.isNaN(llx))
 			return def;
 		return llx;
@@ -502,7 +503,7 @@ public class Annotation implements Element {
 	 *            the default value
 	 * @return a value
 	 */
-	public float lly(float def) {
+	public float lly(final float def) {
 		if (Float.isNaN(lly))
 			return def;
 		return lly;
@@ -515,7 +516,7 @@ public class Annotation implements Element {
 	 *            the default value
 	 * @return a value
 	 */
-	public float urx(float def) {
+	public float urx(final float def) {
 		if (Float.isNaN(urx))
 			return def;
 		return urx;
@@ -528,7 +529,7 @@ public class Annotation implements Element {
 	 *            the default value
 	 * @return a value
 	 */
-	public float ury(float def) {
+	public float ury(final float def) {
 		if (Float.isNaN(ury))
 			return def;
 		return ury;
