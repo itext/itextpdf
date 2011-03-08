@@ -253,10 +253,25 @@ public final class SimpleXMLParser {
                     entity.setLength(0);
                     state = ENTITY;
                     nowhite = true;
+                } else if (character == ' ') {
+                	if (html && nowhite) {
+                		text.append(' ');
+                		nowhite = false;
+                	} else {
+                		if (nowhite){
+                			text.append((char)character);
+                		}
+                		nowhite = false;
+                	}
                 } else if (Character.isWhitespace((char)character)) {
-                	if (nowhite)
-                		text.append((char)character);
-                	nowhite = false;
+                	if (html) {
+                		// totally ignore other whitespace
+                	} else {
+                		if (nowhite){
+                			text.append((char)character);
+                		}
+                		nowhite = false;
+                	}
                 } else {
                     text.append((char)character);
                     nowhite = true;
