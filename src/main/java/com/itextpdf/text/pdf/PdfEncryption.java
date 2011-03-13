@@ -53,6 +53,8 @@ import java.security.MessageDigest;
 import java.security.cert.Certificate;
 
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.pdf.crypto.AESCipherCBCnoPad;
+import com.itextpdf.text.pdf.crypto.IVGenerator;
 import java.security.DigestException;
 
 /**
@@ -67,6 +69,8 @@ public class PdfEncryption {
 	public static final int STANDARD_ENCRYPTION_128 = 3;
 
 	public static final int AES_128 = 4;
+
+	public static final int AES_256 = 5;
 
 	private static final byte[] pad = { (byte) 0x28, (byte) 0xBF, (byte) 0x4E,
 			(byte) 0x5E, (byte) 0x4E, (byte) 0x75, (byte) 0x8A, (byte) 0x41,
@@ -89,7 +93,7 @@ public class PdfEncryption {
 	int keySize;
 
 	/** The global encryption key */
-	byte mkey[];
+	byte mkey[] = new byte[0];
 
 	/** Work area to prepare the object/generation bytes */
 	byte extra[] = new byte[5];
@@ -102,6 +106,10 @@ public class PdfEncryption {
 
 	/** The encryption key for the user */
 	byte userKey[] = new byte[32];
+
+    byte[] oeKey;
+    byte[] ueKey;
+    byte[] perms;
 
 	/** The public key security handler for certificate encryption */
 	protected PdfPublicKeySecurityHandler publicKeyHandler = null;
@@ -140,6 +148,9 @@ public class PdfEncryption {
 
 	public PdfEncryption(PdfEncryption enc) {
 		this();
+        if (enc.key != null)
+            key = (byte[]) enc.key.clone();
+        keySize = enc.keySize;
 		mkey = (byte[]) enc.mkey.clone();
 		ownerKey = (byte[]) enc.ownerKey.clone();
 		userKey = (byte[]) enc.userKey.clone();
@@ -177,6 +188,11 @@ public class PdfEncryption {
 			keyLength = 128;
 			revision = AES_128;
 			break;
+		case PdfWriter.ENCRYPTION_AES_256:
+			keyLength = 256;
+            keySize = 32;
+			revision = AES_256;
+			break;
 		default:
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("no.valid.encryption.mode"));
 		}
@@ -189,6 +205,10 @@ public class PdfEncryption {
 	public boolean isMetadataEncrypted() {
 		return encryptMetadata;
 	}
+
+    public int getPermissions() {
+        return permissions;
+    }
 
 	/**
 	 * Indicates if only the embedded files have to be encrypted.
@@ -312,18 +332,142 @@ public class PdfEncryption {
 			int permissions) {
 		if (ownerPassword == null || ownerPassword.length == 0)
 			ownerPassword = md5.digest(createDocumentId());
-		permissions |= (revision == STANDARD_ENCRYPTION_128 || revision == AES_128) ? 0xfffff0c0
+		permissions |= (revision == STANDARD_ENCRYPTION_128 || revision == AES_128 || revision == AES_256) ? 0xfffff0c0
 				: 0xffffffc0;
 		permissions &= 0xfffffffc;
-		// PDF reference 3.5.2 Standard Security Handler, Algorithm 3.3-1
-		// If there is no owner password, use the user password instead.
-		byte userPad[] = padPassword(userPassword);
-		byte ownerPad[] = padPassword(ownerPassword);
+        this.permissions = permissions;
+        if (revision == AES_256) {
+            try {
+                if (userPassword == null)
+                    userPassword = new byte[0];
+                documentID = createDocumentId();
+                byte[] uvs = IVGenerator.getIV(8);
+                byte[] uks = IVGenerator.getIV(8);
+                key = IVGenerator.getIV(32);
+                // Algorithm 3.8.1
+                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                md.update(userPassword, 0, Math.min(userPassword.length, 127));
+                md.update(uvs);
+                userKey = new byte[48];
+                md.digest(userKey, 0, 32);
+                System.arraycopy(uvs, 0, userKey, 32, 8);
+                System.arraycopy(uks, 0, userKey, 40, 8);
+                // Algorithm 3.8.2
+                md.update(userPassword, 0, Math.min(userPassword.length, 127));
+                md.update(uks);
+                AESCipherCBCnoPad ac = new AESCipherCBCnoPad(true, md.digest());
+                ueKey = ac.processBlock(key, 0, key.length);
+                // Algorithm 3.9.1
+                byte[] ovs = IVGenerator.getIV(8);
+                byte[] oks = IVGenerator.getIV(8);
+                md.update(ownerPassword, 0, Math.min(ownerPassword.length, 127));
+                md.update(ovs);
+                md.update(userKey);
+                ownerKey = new byte[48];
+                md.digest(ownerKey, 0, 32);
+                System.arraycopy(ovs, 0, ownerKey, 32, 8);
+                System.arraycopy(oks, 0, ownerKey, 40, 8);
+                // Algorithm 3.9.2
+                md.update(ownerPassword, 0, Math.min(ownerPassword.length, 127));
+                md.update(oks);
+                md.update(userKey);
+                ac = new AESCipherCBCnoPad(true, md.digest());
+                oeKey = ac.processBlock(key, 0, key.length);
+                // Algorithm 3.10
+                byte[] permsp = IVGenerator.getIV(16);
+                permsp[0] = (byte)permissions;
+                permsp[1] = (byte)(permissions >> 8);
+                permsp[2] = (byte)(permissions >> 16);
+                permsp[3] = (byte)(permissions >> 24);
+                permsp[4] = (byte)(255);
+                permsp[5] = (byte)(255);
+                permsp[6] = (byte)(255);
+                permsp[7] = (byte)(255);
+                permsp[8] = encryptMetadata ? (byte)'T' : (byte)'F';
+                permsp[9] = (byte)'a';
+                permsp[10] = (byte)'d';
+                permsp[11] = (byte)'b';
+                ac = new AESCipherCBCnoPad(true, key);
+                perms = ac.processBlock(permsp, 0, permsp.length);
+            }
+            catch (Exception ex) {
+                throw new ExceptionConverter(ex);
+            }
+        }
+        else {
+            // PDF reference 3.5.2 Standard Security Handler, Algorithm 3.3-1
+            // If there is no owner password, use the user password instead.
+            byte userPad[] = padPassword(userPassword);
+            byte ownerPad[] = padPassword(ownerPassword);
 
-		this.ownerKey = computeOwnerKey(userPad, ownerPad);
-		documentID = createDocumentId();
-		setupByUserPad(this.documentID, userPad, this.ownerKey, permissions);
+            this.ownerKey = computeOwnerKey(userPad, ownerPad);
+            documentID = createDocumentId();
+            setupByUserPad(this.documentID, userPad, this.ownerKey, permissions);
+        }
 	}
+
+    private static final int VALIDATION_SALT_OFFSET = 32;
+    private static final int KEY_SALT_OFFSET = 40;
+    private static final int SALT_LENGHT = 8;
+    private static final int OU_LENGHT = 48;
+
+    public boolean readKey(PdfDictionary enc, byte[] password) {
+        try {
+            byte[] oValue = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.O).toString());
+            byte[] uValue = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.U).toString());
+            byte[] oeValue = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.OE).toString());
+            byte[] ueValue = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.UE).toString());
+            byte[] perms = com.itextpdf.text.DocWriter.getISOBytes(enc.get(PdfName.PERMS).toString());
+            boolean isUserPass = false;
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(password, 0, Math.min(password.length, 127));
+            md.update(oValue, VALIDATION_SALT_OFFSET, SALT_LENGHT);
+            md.update(uValue, 0, OU_LENGHT);
+            byte[] hash = md.digest();
+            boolean isOwnerPass = compareArray(hash, oValue, 32);
+            if (isOwnerPass) {
+                md.update(password, 0, Math.min(password.length, 127));
+                md.update(oValue, KEY_SALT_OFFSET, SALT_LENGHT);
+                md.update(uValue, 0, OU_LENGHT);
+                hash = md.digest();
+                AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, hash);
+                key = ac.processBlock(oeValue, 0, oeValue.length);
+            }
+            else {
+                md.update(password, 0, Math.min(password.length, 127));
+                md.update(uValue, VALIDATION_SALT_OFFSET, SALT_LENGHT);
+                hash = md.digest();
+                isUserPass = compareArray(hash, uValue, 32);
+                if (!isUserPass)
+                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("bad.user.password"));
+                md.update(password, 0, Math.min(password.length, 127));
+                md.update(uValue, KEY_SALT_OFFSET, SALT_LENGHT);
+                hash = md.digest();
+                AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, hash);
+                key = ac.processBlock(ueValue, 0, ueValue.length);
+            }
+            AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, key);
+            byte[] decPerms = ac.processBlock(perms, 0, perms.length);
+            if (decPerms[9] != (byte)'a' || decPerms[10] != (byte)'d' || decPerms[11] != (byte)'b')
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("bad.user.password"));
+            permissions = (decPerms[0] & 0xff) | ((decPerms[1] & 0xff) << 8)
+                    | ((decPerms[2] & 0xff) << 16) | ((decPerms[2] & 0xff) << 24);
+            encryptMetadata = decPerms[8] == (byte)'T';
+            return isOwnerPass;
+        }
+        catch (Exception ex) {
+            throw new ExceptionConverter(ex);
+        }
+    }
+
+    private static boolean compareArray(byte[] a, byte[] b, int len) {
+        for (int k = 0; k < len; ++k) {
+            if (a[k] != b[k]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 	public static byte[] createDocumentId() {
 		MessageDigest md5;
@@ -378,6 +522,8 @@ public class PdfEncryption {
 	}
 
 	public void setHashKey(int number, int generation) {
+        if (revision == AES_256)
+            return;
 		md5.reset(); // added by ujihara
 		extra[0] = (byte) number;
 		extra[1] = (byte) (number >> 8);
@@ -447,7 +593,8 @@ public class PdfEncryption {
 					stdcf.put(PdfName.CFM, PdfName.V2);
 				PdfDictionary cf = new PdfDictionary();
 				cf.put(PdfName.DEFAULTCRYPTFILTER, stdcf);
-				dic.put(PdfName.CF, cf);if (embeddedFilesOnly) {
+				dic.put(PdfName.CF, cf);
+                if (embeddedFilesOnly) {
 					dic.put(PdfName.EFF, PdfName.DEFAULTCRYPTFILTER);
 					dic.put(PdfName.STRF, PdfName.IDENTITY);
 					dic.put(PdfName.STMF, PdfName.IDENTITY);
@@ -493,7 +640,37 @@ public class PdfEncryption {
 				dic.put(PdfName.V, new PdfNumber(2));
 				dic.put(PdfName.LENGTH, new PdfNumber(128));
 
-			} else {
+			}
+            else if (revision == AES_256) {
+				if (!encryptMetadata)
+					dic.put(PdfName.ENCRYPTMETADATA, PdfBoolean.PDFFALSE);
+                dic.put(PdfName.OE, new PdfLiteral(PdfContentByte
+                        .escapeString(oeKey)));
+                dic.put(PdfName.UE, new PdfLiteral(PdfContentByte
+                        .escapeString(ueKey)));
+                dic.put(PdfName.PERMS, new PdfLiteral(PdfContentByte
+                        .escapeString(perms)));
+				dic.put(PdfName.V, new PdfNumber(revision));
+				dic.put(PdfName.LENGTH, new PdfNumber(256));
+				PdfDictionary stdcf = new PdfDictionary();
+				stdcf.put(PdfName.LENGTH, new PdfNumber(32));
+				if (embeddedFilesOnly) {
+					stdcf.put(PdfName.AUTHEVENT, PdfName.EFOPEN);
+					dic.put(PdfName.EFF, PdfName.STDCF);
+					dic.put(PdfName.STRF, PdfName.IDENTITY);
+					dic.put(PdfName.STMF, PdfName.IDENTITY);
+				}
+				else {
+					stdcf.put(PdfName.AUTHEVENT, PdfName.DOCOPEN);
+					dic.put(PdfName.STRF, PdfName.STDCF);
+					dic.put(PdfName.STMF, PdfName.STDCF);
+				}
+				stdcf.put(PdfName.CFM, PdfName.AESV3);
+				PdfDictionary cf = new PdfDictionary();
+				cf.put(PdfName.STDCF, stdcf);
+				dic.put(PdfName.CF, cf);
+            }
+            else {
 				if (!encryptMetadata)
 					dic.put(PdfName.ENCRYPTMETADATA, PdfBoolean.PDFFALSE);
 				dic.put(PdfName.R, new PdfNumber(AES_128));
@@ -534,7 +711,7 @@ public class PdfEncryption {
 	}
 
 	public int calculateStreamSize(int n) {
-		if (revision == AES_128)
+		if (revision == AES_128 || revision == AES_256)
 			return (n & 0x7ffffff0) + 32;
 		else
 			return n;
