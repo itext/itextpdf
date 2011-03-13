@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
@@ -41,66 +39,39 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf;
+package com.itextpdf.text.pdf.crypto;
 
-import com.itextpdf.text.pdf.crypto.AESCipher;
-import com.itextpdf.text.pdf.crypto.ARCFOUREncryption;
+import org.bouncycastle.crypto.BlockCipher;
+import org.bouncycastle.crypto.engines.AESFastEngine;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
 
-public class StandardDecryption {
-    protected ARCFOUREncryption arcfour;
-    protected AESCipher cipher;
-    private byte[] key;
-    private static final int AES_128 = 4;
-    private static final int AES_256 = 5;
-    private boolean aes;
-    private boolean initiated;
-    private byte[] iv = new byte[16];
-    private int ivptr;
-
-    /** Creates a new instance of StandardDecryption */
-    public StandardDecryption(byte key[], int off, int len, int revision) {
-        aes = (revision == AES_128 || revision == AES_256);
-        if (aes) {
-            this.key = new byte[len];
-            System.arraycopy(key, off, this.key, 0, len);
-        }
-        else {
-            arcfour = new ARCFOUREncryption();
-            arcfour.prepareARCFOURKey(key, off, len);
-        }
+/**
+ * Creates an AES Cipher with CBC and no padding.
+ * @author Paulo Soares
+ */
+public class AESCipherCBCnoPad {
+    private BlockCipher cbc;
+    
+    /** Creates a new instance of AESCipher */
+    public AESCipherCBCnoPad(boolean forEncryption, byte[] key) {
+        BlockCipher aes = new AESFastEngine();
+        cbc = new CBCBlockCipher(aes);
+        KeyParameter kp = new KeyParameter(key);
+        cbc.init(forEncryption, kp);
     }
     
-    public byte[] update(byte[] b, int off, int len) {
-        if (aes) {
-            if (initiated)
-                return cipher.update(b, off, len);
-            else {
-                int left = Math.min(iv.length - ivptr, len);
-                System.arraycopy(b, off, iv, ivptr, left);
-                off += left;
-                len -= left;
-                ivptr += left;
-                if (ivptr == iv.length) {
-                    cipher = new AESCipher(false, key, iv);
-                    initiated = true;
-                    if (len > 0)
-                        return cipher.update(b, off, len);
-                }
-                return null;
-            }
+    public byte[] processBlock(byte[] inp, int inpOff, int inpLen) {
+        if ((inpLen % cbc.getBlockSize()) != 0)
+            throw new IllegalArgumentException("Not multiple of block: " + inpLen);
+        byte[] outp = new byte[inpLen];
+        int baseOffset = 0;
+        while (inpLen > 0) {
+            cbc.processBlock(inp, inpOff, outp, baseOffset);
+            inpLen -= cbc.getBlockSize();
+            baseOffset += cbc.getBlockSize();
+            inpOff += cbc.getBlockSize();
         }
-        else {
-            byte[] b2 = new byte[len];
-            arcfour.encryptARCFOUR(b, off, len, b2, 0);
-            return b2;
-        }
-    }
-    
-    public byte[] finish() {
-        if (aes) {
-            return cipher.doFinal();
-        }
-        else
-            return null;
+        return outp;
     }
 }

@@ -617,6 +617,12 @@ public class PdfReader implements PdfViewerPreferences {
             s = enc.get(PdfName.O).toString();
             strings.remove(enc.get(PdfName.O));
             oValue = com.itextpdf.text.DocWriter.getISOBytes(s);
+            if (enc.contains(PdfName.OE))
+                strings.remove(enc.get(PdfName.OE));
+            if (enc.contains(PdfName.UE))
+                strings.remove(enc.get(PdfName.UE));
+            if (enc.contains(PdfName.PERMS))
+                strings.remove(enc.get(PdfName.PERMS));
 
             o = enc.get(PdfName.P);
             if (!o.isNumber())
@@ -656,6 +662,12 @@ public class PdfReader implements PdfViewerPreferences {
                     throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("no.compatible.encryption.found"));
                 PdfObject em = enc.get(PdfName.ENCRYPTMETADATA);
                 if (em != null && em.toString().equals("false"))
+                    cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
+                break;
+            case 5:
+                cryptoMode = PdfWriter.ENCRYPTION_AES_256;
+                PdfObject em5 = enc.get(PdfName.ENCRYPTMETADATA);
+                if (em5 != null && em5.toString().equals("false"))
                     cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
                 break;
             default:
@@ -764,17 +776,23 @@ public class PdfReader implements PdfViewerPreferences {
         decrypt.setCryptoMode(cryptoMode, lengthValue);
 
         if (filter.equals(PdfName.STANDARD)) {
-            //check by owner password
-            decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue);
-            if (!equalsArray(uValue, decrypt.userKey, rValue == 3 || rValue == 4 ? 16 : 32)) {
-                //check by user password
-                decrypt.setupByUserPassword(documentID, password, oValue, pValue);
-                if (!equalsArray(uValue, decrypt.userKey, rValue == 3 || rValue == 4 ? 16 : 32)) {
-                    throw new BadPasswordException(MessageLocalization.getComposedMessage("bad.user.password"));
-                }
+            if (rValue == 5) {
+                ownerPasswordUsed = decrypt.readKey(enc, password);
+                pValue = decrypt.getPermissions();
             }
-            else
-                ownerPasswordUsed = true;
+            else {
+                //check by owner password
+                decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue);
+                if (!equalsArray(uValue, decrypt.userKey, rValue == 3 || rValue == 4 ? 16 : 32)) {
+                    //check by user password
+                    decrypt.setupByUserPassword(documentID, password, oValue, pValue);
+                    if (!equalsArray(uValue, decrypt.userKey, rValue == 3 || rValue == 4 ? 16 : 32)) {
+                        throw new BadPasswordException(MessageLocalization.getComposedMessage("bad.user.password"));
+                    }
+                }
+                else
+                    ownerPasswordUsed = true;
+            }
         }
         else if (filter.equals(PdfName.PUBSEC)) {
             decrypt.setupByEncryptionKey(encryptionKey, lengthValue);
