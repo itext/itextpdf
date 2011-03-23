@@ -95,16 +95,24 @@ public class Document implements DocListener {
 
     // membervariables
     /**
-     * This constant may only be changed by Paulo Soares and/or Bruno Lowagie.
+     * This constant contains the name of the product.
+     * iText is a registered trademark.
+     * Please don't change this constant.
      * @since	2.1.6
      */
 	private static final String ITEXT = "iText\u00ae";
     /**
-     * This constant may only be changed by Paulo Soares and/or Bruno Lowagie.
+     * This constant contains the version number of this iText release.
+     * For debugging purposes, we request you NOT to change this constant.
      * @since	2.1.6
      */
 	private static final String RELEASE = "5.1.0_SNAPSHOT";
-	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
+	/**
+	 * This constant the iText version as shown in the producer line.
+	 * iText is a product developed by 1T3XT BVBA.
+	 * 1T3XT requests that you retain the iText producer line
+	 * in every PDF that is created or manipulated using iText.
+	 */
 	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " \u00a92000-2011 1T3XT BVBA";
 
 	/**
@@ -714,8 +722,10 @@ public class Document implements DocListener {
     }
 
 	/**
-	 * Gets the iText version.
-	 * This method may only be changed by Paulo Soares and/or Bruno Lowagie.
+	 * Returns the iText version as shown in the producer line.
+	 * iText is a product developed by 1T3XT BVBA.
+	 * 1T3XT requests that you retain the iText producer line
+	 * in every PDF that is created or manipulated using iText.
      * @return iText version
      */
     public static final String getVersion() {
