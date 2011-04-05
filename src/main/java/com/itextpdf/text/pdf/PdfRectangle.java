@@ -59,7 +59,7 @@ import com.itextpdf.text.Rectangle;
  * @see		PdfArray
  */
 
-public class PdfRectangle extends PdfArray {
+public class PdfRectangle extends NumberArray {
 
     // membervariables
 
