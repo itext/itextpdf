@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 /**
@@ -130,7 +131,7 @@ public class PdfArray extends PdfObject {
      *   something that isn't a <CODE>PdfObject</CODE>
      * @since 2.1.3
      */
-    public PdfArray(ArrayList<PdfObject> l) {
+    public PdfArray(List<PdfObject> l) {
         this();
         for (PdfObject element : l)
             add(element);
