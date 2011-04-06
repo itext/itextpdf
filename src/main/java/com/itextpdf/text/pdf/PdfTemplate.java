@@ -70,7 +70,13 @@ public class PdfTemplate extends PdfContentByte {
     protected PdfTransparencyGroup group;
     
     protected PdfOCG layer;
-    
+
+	/**
+	 * A dictionary with additional information
+	 * @since 5.1.0
+	 */
+	private PdfDictionary additional = null;
+	
     /**
      *Creates a <CODE>PdfTemplate</CODE>.
      */
@@ -260,6 +266,7 @@ public class PdfTemplate extends PdfContentByte {
             tpl.matrix = new PdfArray(matrix);
         }
         tpl.separator = separator;
+        tpl.additional = additional;
         return tpl;
     }
     
@@ -286,5 +293,26 @@ public class PdfTemplate extends PdfContentByte {
     public void setGroup(PdfTransparencyGroup group) {
         this.group = group;
     }
-    
+
+
+	/**
+	 * Getter for the dictionary with additional information.
+	 *
+	 * @return a PdfDictionary with additional information.
+	 * @since 5.1.0
+	 */
+	public PdfDictionary getAdditional() {
+		return this.additional;
+	}
+
+	/**
+	 * Sets a dictionary with extra entries, for instance /Measure.
+	 *
+	 * @param additional
+	 *            a PdfDictionary with additional information.
+	 * @since 5.1.0
+	 */
+	public void setAdditional(PdfDictionary additional) {
+		this.additional = additional;
+	}
 }
