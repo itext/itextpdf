@@ -87,6 +87,9 @@ public class PdfFormXObject extends PdfStream {
             put(PdfName.MATRIX, matrix);
         bytes = template.toPdf(null);
         put(PdfName.LENGTH, new PdfNumber(bytes.length));
+        if (template.getAdditional() != null) {
+        	putAll(template.getAdditional());
+        }
         flateCompress(compressionLevel);
     }
     
