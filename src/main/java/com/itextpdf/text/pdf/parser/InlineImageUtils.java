@@ -141,13 +141,14 @@ public final class InlineImageUtils {
      * Parses an inline image from the provided content parser.  The parser must be positioned immediately following the BI operator in the content stream.
      * The parser will be left with current position immediately following the EI operator that terminates the inline image
      * @param ps the content parser to use for reading the image. 
+     * @param resources 
      * @return the parsed image
      * @throws IOException if anything goes wring with the parsing
      * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing
      */
-    public static PdfImageObject parseInlineImage(PdfContentParser ps) throws IOException{
+    public static PdfImageObject parseInlineImage(PdfContentParser ps, PdfDictionary colorSpaceDic) throws IOException{
         PdfDictionary inlineImageDictionary = parseInlineImageDictionary(ps);
-        byte[] samples = parseInlineImageSamples(inlineImageDictionary, ps);
+        byte[] samples = parseInlineImageSamples(inlineImageDictionary, colorSpaceDic, ps);
         return new PdfImageObject(inlineImageDictionary, samples);
     }
     
@@ -213,7 +214,7 @@ public final class InlineImageUtils {
      * @param colorSpaceName the name of the color space. If null, a bi-tonal (black and white) color space is assumed.
      * @return the components per pixel for the specified color space
      */
-    private static int getComponentsPerPixel(PdfName colorSpaceName){
+    private static int getComponentsPerPixel(PdfName colorSpaceName, PdfDictionary colorSpaceDic){
         if (colorSpaceName == null)
             return 1;
         if (colorSpaceName.equals(PdfName.DEVICEGRAY))
@@ -222,6 +223,15 @@ public final class InlineImageUtils {
             return 3;
         if (colorSpaceName.equals(PdfName.DEVICECMYK))
             return 4;
+        
+        if (colorSpaceDic != null){
+            PdfArray colorSpace = colorSpaceDic.getAsArray(colorSpaceName);
+            if (colorSpace != null){
+                if (PdfName.INDEXED.equals(colorSpace.getAsName(0))){
+                    return 1;
+                }
+            }
+        }
         
         throw new IllegalArgumentException("Unexpected color space " + colorSpaceName);
     }
@@ -233,10 +243,10 @@ public final class InlineImageUtils {
      * @param imageDictionary the dictionary of the inline image
      * @return the number of bytes per row of the image
      */
-    private static int computeBytesPerRow(PdfDictionary imageDictionary){
+    private static int computeBytesPerRow(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic){
         PdfNumber wObj = imageDictionary.getAsNumber(PdfName.WIDTH);
         PdfNumber bpcObj = imageDictionary.getAsNumber(PdfName.BITSPERCOMPONENT);
-        int cpp = getComponentsPerPixel(imageDictionary.getAsName(PdfName.COLORSPACE));
+        int cpp = getComponentsPerPixel(imageDictionary.getAsName(PdfName.COLORSPACE), colorSpaceDic);
         
         int w = wObj.intValue();
         int bpc = bpcObj != null ? bpcObj.intValue() : 1;
@@ -257,7 +267,7 @@ public final class InlineImageUtils {
      * @return the samples of the image
      * @throws IOException if anything bad happens during parsing
      */
-    private static byte[] parseUnfilteredSamples(PdfDictionary imageDictionary, PdfContentParser ps) throws IOException{
+    private static byte[] parseUnfilteredSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfContentParser ps) throws IOException{
         // special case:  when no filter is specified, we just read the number of bits
         // per component, multiplied by the width and height.
         if (imageDictionary.contains(PdfName.FILTER))
@@ -265,7 +275,7 @@ public final class InlineImageUtils {
         
         PdfNumber h = imageDictionary.getAsNumber(PdfName.HEIGHT);
 
-        int bytesToRead = computeBytesPerRow(imageDictionary) * h.intValue();
+        int bytesToRead = computeBytesPerRow(imageDictionary, colorSpaceDic) * h.intValue();
         byte[] bytes = new byte[bytesToRead];
         PRTokeniser tokeniser = ps.getTokeniser();
         
@@ -301,11 +311,11 @@ public final class InlineImageUtils {
      * @return the samples of the image
      * @throws IOException if anything bad happens during parsing
      */
-    private static byte[] parseInlineImageSamples(PdfDictionary imageDictionary, PdfContentParser ps) throws IOException{
+    private static byte[] parseInlineImageSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfContentParser ps) throws IOException{
         // by the time we get to here, we have already parsed the ID operator
         
         if (!imageDictionary.contains(PdfName.FILTER)){
-            return parseUnfilteredSamples(imageDictionary, ps);
+            return parseUnfilteredSamples(imageDictionary, colorSpaceDic, ps);
         }
         
         

@@ -360,7 +360,8 @@ public class PdfContentStreamProcessor {
                 PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
                 if ("BI".equals(operator.toString())){
                     // we don't call invokeOperator for embedded images - this is one area of the PDF spec that is particularly nasty and inconsistent
-                    ImageRenderInfo renderInfo = ImageRenderInfo.createdForEmbeddedImage(gs().ctm, InlineImageUtils.parseInlineImage(ps));
+                    PdfDictionary colorSpaceDic = resources.getAsDict(PdfName.COLORSPACE);
+                    ImageRenderInfo renderInfo = ImageRenderInfo.createdForEmbeddedImage(gs().ctm, InlineImageUtils.parseInlineImage(ps, colorSpaceDic));
                     renderListener.renderImage(renderInfo);
                 } else {
                     invokeOperator(operator, operands);
