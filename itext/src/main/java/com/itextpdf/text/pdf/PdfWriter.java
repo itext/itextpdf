@@ -941,6 +941,36 @@ public class PdfWriter extends DocWriter implements
      * @since	2.1.5
      */
     protected PdfName tabs = null;
+    
+    /**
+     * Additional page dictionary entries.
+     * @since 5.1.0
+     */
+    protected PdfDictionary pageDictEntries = new PdfDictionary();
+    
+    /**
+     * Adds an additional entry for the page dictionary.
+     * @since 5.1.0
+     */
+    public void addPageDictEntry(PdfName key, PdfObject object) {
+    	pageDictEntries.put(key, object);
+    }
+    
+    /**
+     * Gets the additional pageDictEntries.
+     * @since 5.1.0
+     */
+    public PdfDictionary getPageDictEntries() {
+    	return pageDictEntries;
+    }
+    
+    /**
+     * Resets the additional pageDictEntries.
+     * @since 5.1.0
+     */
+    public void resetPageDictEntries() {
+    	pageDictEntries = new PdfDictionary();
+    }
 
     /**
      * Use this method to make sure the page tree has a linear structure
@@ -1014,6 +1044,15 @@ public class PdfWriter extends DocWriter implements
         return currentPageNumber;
     }
 
+    /**
+     * Sets the Viewport for the next page.
+     * @param viewport an array consisting of Viewport dictionaries.
+     * @since 5.1.0
+     */
+    public void setPageViewport(PdfArray vp) {
+    	addPageDictEntry(PdfName.VP, vp);
+    }
+    
     /**
      * Sets the value for the Tabs entry in the page tree.
      * @param	tabs	Can be PdfName.R, PdfName.C or PdfName.S.
@@ -1704,8 +1743,9 @@ public class PdfWriter extends DocWriter implements
     /**
      * Use this method to set the XMP Metadata for each page.
      * @param xmpMetadata The xmpMetadata to set.
+     * @throws IOException 
      */
-    public void setPageXmpMetadata(byte[] xmpMetadata) {
+    public void setPageXmpMetadata(byte[] xmpMetadata) throws IOException {
         pdf.setXmpMetadata(xmpMetadata);
     }
 
@@ -2813,19 +2853,6 @@ public class PdfWriter extends DocWriter implements
     }
 
 //  [U8] user units
-
-     protected float userunit = 0f;
-    /**
-     * Use this method to get the user unit.
-     * A user unit is a value that defines the default user space unit.
-     * The minimum UserUnit is 1 (1 unit = 1/72 inch).
-     * The maximum UserUnit is 75,000.
-     * Note that this userunit only works starting with PDF1.6!
-     * @return Returns the userunit.
-     */
-    public float getUserunit() {
-        return userunit;
-    }
     /**
      * Use this method to set the user unit.
      * A UserUnit is a value that defines the default user space unit.
@@ -2837,7 +2864,7 @@ public class PdfWriter extends DocWriter implements
      */
      public void setUserunit(float userunit) throws DocumentException {
  		if (userunit < 1f || userunit > 75000f) throw new DocumentException(MessageLocalization.getComposedMessage("userunit.should.be.a.value.between.1.and.75000"));
-         this.userunit = userunit;
+         addPageDictEntry(PdfName.USERUNIT, new PdfNumber(userunit));
          setAtLeastPdfVersion(VERSION_1_6);
      }
 

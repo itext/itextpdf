@@ -784,14 +784,22 @@ public class PdfDocument extends Document {
     protected int textEmptySize;
 
     // [C9] Metadata for the page
-    /** XMP Metadata for the page. */
-    protected byte[] xmpMetadata = null;
 	/**
 	 * Use this method to set the XMP Metadata.
 	 * @param xmpMetadata The xmpMetadata to set.
+	 * @throws IOException 
 	 */
-	public void setXmpMetadata(byte[] xmpMetadata) {
-		this.xmpMetadata = xmpMetadata;
+	public void setXmpMetadata(byte[] xmpMetadata) throws IOException {
+    	PdfStream xmp = new PdfStream(xmpMetadata);
+    	xmp.put(PdfName.TYPE, PdfName.METADATA);
+    	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+    	PdfEncryption crypto = writer.getEncryption();
+        if (crypto != null && !crypto.isMetadataEncrypted()) {
+            PdfArray ar = new PdfArray();
+            ar.add(PdfName.CRYPT);
+            xmp.put(PdfName.FILTER, ar);
+        }
+    	writer.addPageDictEntry(PdfName.METADATA, writer.addToBody(xmp).getIndirectReference());
 	}
 
     /**
@@ -854,46 +862,15 @@ public class PdfDocument extends Document {
 
         	PdfPage page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
         	page.put(PdfName.TABS, writer.getTabs());
+        	page.putAll(writer.getPageDictEntries());
+        	writer.resetPageDictEntries();
 
             // we complete the page dictionary
 
-            // [C9] if there is XMP data to add: add it
-            if (xmpMetadata != null) {
-            	PdfStream xmp = new PdfStream(xmpMetadata);
-            	xmp.put(PdfName.TYPE, PdfName.METADATA);
-            	xmp.put(PdfName.SUBTYPE, PdfName.XML);
-            	PdfEncryption crypto = writer.getEncryption();
-                if (crypto != null && !crypto.isMetadataEncrypted()) {
-                    PdfArray ar = new PdfArray();
-                    ar.add(PdfName.CRYPT);
-                    xmp.put(PdfName.FILTER, ar);
-                }
-            	page.put(PdfName.METADATA, writer.addToBody(xmp).getIndirectReference());
-            }
-
-        	// [U3] page actions: transition, duration, additional actions
-        	if (this.transition!=null) {
-        		page.put(PdfName.TRANS, this.transition.getTransitionDictionary());
-        		transition = null;
-        	}
-        	if (this.duration>0) {
-        		page.put(PdfName.DUR,new PdfNumber(this.duration));
-        		duration = 0;
-        	}
+        	// [U3] page actions: additional actions
         	if (pageAA != null) {
         		page.put(PdfName.AA, writer.addToBody(pageAA).getIndirectReference());
         		pageAA = null;
-        	}
-
-        	// [U4] we add the thumbs
-        	if (thumb != null) {
-        		page.put(PdfName.THUMB, thumb);
-        		thumb = null;
-        	}
-
-        	// [U8] we check if the userunit is defined
-        	if (writer.getUserunit() > 0f) {
-        		page.put(PdfName.USERUNIT, new PdfNumber(writer.getUserunit()));
         	}
 
         	// [C5] and [C8] we add the annotations
@@ -2200,21 +2177,13 @@ public class PdfDocument extends Document {
 
 //	[U3] page actions
 
-    /** The duration of the page */
-    protected int duration=-1; // negative values will indicate no duration
-
-    /** The page transition */
-    protected PdfTransition transition=null;
-
     /**
      * Sets the display duration for the page (for presentations)
      * @param seconds   the number of seconds to display the page
      */
     void setDuration(int seconds) {
         if (seconds > 0)
-            this.duration=seconds;
-        else
-            this.duration=-1;
+        	writer.addPageDictEntry(PdfName.DUR, new PdfNumber(seconds));
     }
 
     /**
@@ -2222,7 +2191,7 @@ public class PdfDocument extends Document {
      * @param transition   the PdfTransition object
      */
     void setTransition(PdfTransition transition) {
-        this.transition=transition;
+        writer.addPageDictEntry(PdfName.TRANS, transition.getTransitionDictionary());
     }
 
     protected PdfDictionary pageAA = null;
@@ -2235,9 +2204,8 @@ public class PdfDocument extends Document {
 
 //	[U8] thumbnail images
 
-    protected PdfIndirectReference thumb;
     void setThumbnail(Image image) throws PdfException, DocumentException {
-        thumb = writer.getImageReference(writer.addDirectImageSimple(image));
+        writer.addPageDictEntry(PdfName.THUMB, writer.getImageReference(writer.addDirectImageSimple(image)));
     }
 
 //	[M0] Page resources contain references to fonts, extgstate, images,...

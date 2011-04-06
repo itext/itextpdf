@@ -1835,6 +1835,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName VOFFSET = new PdfName("VOffset");
+    /**
+     * A name
+     * @since 5.1.0
+     */
+    public static final PdfName VP = new PdfName("VP");
     /** A name of an attribute. */
     public static final PdfName W = new PdfName("W");
     /** A name of an attribute. */
