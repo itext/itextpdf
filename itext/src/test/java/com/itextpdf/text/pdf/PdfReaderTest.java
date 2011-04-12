@@ -66,7 +66,9 @@ public class PdfReaderTest {
          */
         File testFile = TestResourceUtils.getResourceAsTempFile(this, "RomeoJuliet.pdf");
         RandomAccessFileOrArray f = new RandomAccessFileOrArray(testFile.getAbsolutePath());
-        PdfReader r = new PdfReader(f, null);
+        
+        // doesn't throw?
+        new PdfReader(f, null);
 
         assertTrue("kept open", f.isOpen());
     }
@@ -97,4 +99,18 @@ public class PdfReaderTest {
         rdr.getLinks(1);
     }
 
+    @Test
+    public void testPageResources() throws Exception {
+    	File testFile = TestResourceUtils.getResourceAsTempFile(this, "getLinkTest2.pdf");
+        String filename = testFile.getAbsolutePath();
+        PdfReader rdr = new PdfReader(new RandomAccessFileOrArray(filename), new byte[0]);
+
+        PdfDictionary pageResFromNum = rdr.getPageResources(1);
+        PdfDictionary pageResFromDict = rdr.getPageResources(rdr.getPageN(1));
+        // same size & keys
+        assertTrue( pageResFromNum.getKeys().equals(pageResFromDict.getKeys()) );
+
+        //iText-built resource dictionaries always have a "Procset" entry that is an array
+        assertTrue( pageResFromNum.getAsArray(PdfName.PROCSET) != null);
+    }
 }

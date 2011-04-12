@@ -2089,6 +2089,26 @@ public class PdfReader implements PdfViewerPreferences {
             }catch(Exception e){}
         }
     }
+    
+    /**
+     * Retrieve the given page's resource dictionary
+     * @param pageNum 1-based page number from which to retrieve the resource dictionary
+     * @return The page's resources, or 'null' if the page has none.
+     * @since 5.1
+     */
+    public PdfDictionary getPageResources(int pageNum) {
+    	return getPageResources(getPageN(pageNum));
+    }
+    
+    /**
+     * Retrieve the given page's resource dictionary
+     * @param pageDict the given page
+     * @return The page's resources, or 'null' if the page has none.
+     * @since 5.1
+     */
+    public PdfDictionary getPageResources(PdfDictionary pageDict) {
+    	return pageDict.getAsDict(PdfName.RESOURCES); 
+    }
 
     /** Gets the contents of the page.
      * @param pageNum the page number. 1 is the first
