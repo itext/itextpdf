@@ -2371,6 +2371,7 @@ public class PdfDocument extends Document {
             if (loop == 3) {
             	throw new DocumentException(MessageLocalization.getComposedMessage("infinite.table.loop"));
             }
+            ct.setAdjustFirstLine(true);
             newPage();
         }
         ptable.setHeadersInEvent(he);
