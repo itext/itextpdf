@@ -2349,6 +2349,9 @@ public class PdfDocument extends Document {
 	        p.setLeading(0);
 	        ct.addElement(p);
         }
+        else {
+        	ct.setAdjustFirstLine(false);
+        }
         ct.addElement(ptable);
         boolean he = ptable.isHeadersInEvent();
         ptable.setHeadersInEvent(true);
