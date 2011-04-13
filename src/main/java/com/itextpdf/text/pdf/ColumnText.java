@@ -1389,7 +1389,7 @@ public class ColumnText {
                 if (!table.isComplete())
                 	yTemp -= footerHeight;
                 for (k = listIdx; k < table.size(); ++k) {
-                    float rowHeight = table.getRowHeight(k);
+                    float rowHeight = table.getRow(k).getMaxHeights();
                     if (yTemp - rowHeight < minY)
                         break;
                     yTemp -= rowHeight;
@@ -1398,7 +1398,8 @@ public class ColumnText {
                 	yTemp += footerHeight;
                 // either k is the first row that doesn't fit on the page (break);
                 if (k < table.size()) {
-                	if (table.isSplitRows() && (!table.isSplitLate() || k == listIdx && firstPass)) {
+                	// a row certainly needs to be splitted
+                	if (table.isSplitRows() && (!table.isSplitLate() || table.hasRowspan(k - 1) || k == listIdx && firstPass)) {
                 		if (!splittedRow) {
                             splittedRow = true;
                             table = new PdfPTable(table);
@@ -1418,13 +1419,16 @@ public class ColumnText {
                             table.getRows().add(++k, newRow);
                         }
                     }
+                	// don't split the row, remove it
                     else if (!table.isSplitRows() && k == listIdx && firstPass) {
                         compositeElements.removeFirst();
                         splittedRow = false;
                         continue;
                     }
-                    else if (k == listIdx && !firstPass && (!table.isSplitRows() || table.isSplitLate()) && (table.getFooterRows() == 0 || table.isComplete()))
+                	// don't split the row, more it to the next page
+                    else if (k == listIdx && !firstPass && (!table.isSplitRows() || table.isSplitLate()) && (table.getFooterRows() == 0 || table.isComplete())) {
                         return NO_MORE_COLUMN;
+                    }
                 }
                 // or k is the number of rows in the table (for loop was done).
                 firstPass = false;
@@ -1492,7 +1496,7 @@ public class ColumnText {
                         nt.writeSelectedRows(0, -1, 0, -1, x1, yLineWrite, canvas, false);
                     if (splittedRow && table.size() > k) {
                        	PdfPRow splitted = table.getRows().get(k - footerRows);
-                    	splitted.copyContent(nt.getRow(nt.size() - 1));
+                    	splitted.copyLastRow(nt);
                     }
                     if (table.isExtendLastRow(newPageFollows)) {
                         last.setMaxHeights(rowHeight);

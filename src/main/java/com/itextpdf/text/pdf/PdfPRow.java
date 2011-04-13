@@ -565,10 +565,20 @@ public class PdfPRow {
 	 * @param copy	the row that needs to be copied
 	 * @since 5.1.0
 	 */
-	public void copyContent(PdfPRow copy) {
+	public void copyLastRow(PdfPTable table) {
+		if (table == null) {
+			return;
+		}
+		PdfPCell copy;
+		int lastRow;
 		for (int i = 0; i < cells.length; ++i) {
-			if (cells[i] != null)
-				cells[i].setColumn(copy.getCells()[i].getColumn());
+			lastRow = table.size() - 1;
+			copy = table.getRow(lastRow).getCells()[i];
+			while (copy == null && lastRow > 0) {
+				copy = table.getRow(--lastRow).getCells()[i];
+			}
+			if (cells[i] != null && copy != null)
+				cells[i].setColumn(copy.getColumn());
 		}
 	}
 
@@ -592,9 +602,9 @@ public class PdfPRow {
 			if (cell == null) {
 				int index = rowIndex;
 				if (table.rowSpanAbove(index, k)) {
-					newHeight += table.getRowHeight(index);
+					//newHeight += table.getRowHeight(index);
 					while (table.rowSpanAbove(--index, k)) {
-						newHeight += table.getRowHeight(index);
+						newHeight += table.getRow(index).getMaxHeights();
 					}
 					PdfPRow row = table.getRow(index);
 					if (row != null && row.getCells()[k] != null) {
@@ -684,5 +694,19 @@ public class PdfPRow {
 	 */
 	public PdfPCell[] getCells() {
 		return cells;
+	}
+	
+	/**
+	 * Checks if a cell in this row has a rowspan greater than 1.
+	 * @since 5.1.0
+	 */
+	public boolean hasRowspan() {
+    	if (cells == null)
+    		return false;
+    	for (int i = 0; i < cells.length; i++) {
+    		if (cells[i] != null && cells[i].getRowspan() > 1)
+    			return true;
+    	}
+    	return false;
 	}
 }
