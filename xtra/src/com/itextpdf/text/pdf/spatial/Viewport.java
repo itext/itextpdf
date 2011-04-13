@@ -54,7 +54,7 @@ import com.itextpdf.text.pdf.PdfString;
  * @since 5.1.0
  */
 public class Viewport extends PdfDictionary {
-	
+
 	/**
 	 * Creates a ViewPort dictionary.
 	 */
@@ -74,40 +74,40 @@ public class Viewport extends PdfDictionary {
 	 * The coordinates of this rectangle are independent of the origin of the
 	 * measuring coordinate system, specified in the Origin entry of the
 	 * measurement dictionary specified by Measure.
-	 * 
+	 *
 	 * @param bbox
 	 */
-	public void setBBox(Rectangle bbox) {
-		super.put(PdfName.BBOX, new PdfRectangle(bbox));
+	public void setBBox(final Rectangle bbox) {
+		super.put(PdfName.BBOX, new PdfRectangle(bbox, bbox.getRotation()));
 	}
 
 	/**
 	 * (Optional) A descriptive text string or title of the viewport, intended
 	 * for use in a user interface.
-	 * 
+	 *
 	 * @param value
 	 */
-	public void setName(PdfString value) {
+	public void setName(final PdfString value) {
 		super.put(PdfName.NAME, value);
 	}
 
 	/**
 	 * A measure dictionary that specifies the scale and units that shall apply
 	 * to measurements taken on the contents within the viewport.
-	 * 
+	 *
 	 * @param measure
 	 */
-	public void setMeasure(Measure measure) {
+	public void setMeasure(final Measure measure) {
 		super.put(PdfName.MEASURE, measure);
 	}
 
 	/**
 	 * {@link PointData} that shall specify the extended geospatial data that
 	 * applies to the image.
-	 * 
+	 *
 	 * @param ptData
 	 */
-	public void setPtData(PointData ptData) {
+	public void setPtData(final PointData ptData) {
 		super.put(PdfName.PTDATA, ptData);
 	}
 }
