@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -112,7 +113,7 @@ public class PdfDictionary extends PdfObject {
      *
      * @param type a <CODE>PdfName</CODE>
      */
-    public PdfDictionary(PdfName type) {
+    public PdfDictionary(final PdfName type) {
         this();
         dictionaryType = type;
         put(PdfName.TYPE, dictionaryType);
@@ -129,17 +130,17 @@ public class PdfDictionary extends PdfObject {
      * @throws IOException
      */
     @Override
-    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+    public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
         os.write('<');
         os.write('<');
         // loop over all the object-pairs in the HashMap
         PdfObject value;
         int type = 0;
-        for (PdfName key : hashMap.keySet()) {
-            value = hashMap.get(key);
-            key.toPdf(writer, os);
-            type = value.type();
-            if (type != PdfObject.ARRAY && type != PdfObject.DICTIONARY && type != PdfObject.NAME && type != PdfObject.STRING)
+        for (Entry<PdfName, PdfObject> e: hashMap.entrySet()) {
+        	e.getKey().toPdf(writer, os);
+        	value = e.getValue();
+			type = value.type();
+        	if (type != PdfObject.ARRAY && type != PdfObject.DICTIONARY && type != PdfObject.NAME && type != PdfObject.STRING)
                 os.write(' ');
             value.toPdf(writer, os);
         }
@@ -178,7 +179,7 @@ public class PdfDictionary extends PdfObject {
      * @param object the <CODE>PdfObject</CODE> to be associated with the
      *   <VAR>key</VAR>
      */
-    public void put(PdfName key, PdfObject object) {
+    public void put(final PdfName key, final PdfObject object) {
         if (object == null || object.isNull())
             hashMap.remove(key);
         else
@@ -197,7 +198,7 @@ public class PdfDictionary extends PdfObject {
      * @param value the <CODE>PdfObject</CODE> to be associated to the
      * <VAR>key</VAR>
      */
-    public void putEx(PdfName key, PdfObject value) {
+    public void putEx(final PdfName key, final PdfObject value) {
         if (value == null)
             return;
         put(key, value);
@@ -213,7 +214,7 @@ public class PdfDictionary extends PdfObject {
      * @param dic The <CODE>PdfDictionary</CODE> with the mappings to be
      *   copied over
      */
-    public void putAll(PdfDictionary dic) {
+    public void putAll(final PdfDictionary dic) {
         hashMap.putAll(dic.hashMap);
     }
 
@@ -223,7 +224,7 @@ public class PdfDictionary extends PdfObject {
      *
      * @param key a <CODE>PdfName</CODE>
      */
-    public void remove(PdfName key) {
+    public void remove(final PdfName key) {
         hashMap.remove(key);
     }
 
@@ -244,7 +245,7 @@ public class PdfDictionary extends PdfObject {
      * @return the </CODE>PdfObject</CODE> previously associated to the
      *   <VAR>key</VAR>
      */
-    public PdfObject get(PdfName key) {
+    public PdfObject get(final PdfName key) {
         return hashMap.get(key);
     }
 
@@ -259,7 +260,7 @@ public class PdfDictionary extends PdfObject {
      * @param key A key for the <CODE>PdfObject</CODE> to be returned
      * @return A direct <CODE>PdfObject</CODE> or <CODE>null</CODE>
      */
-    public PdfObject getDirectObject(PdfName key) {
+    public PdfObject getDirectObject(final PdfName key) {
         return PdfReader.getPdfObject(get(key));
     }
 
@@ -289,7 +290,7 @@ public class PdfDictionary extends PdfObject {
      *
      * @return <CODE>true</CODE> if the key is set, otherwise <CODE>false</CODE>.
      */
-    public boolean contains(PdfName key) {
+    public boolean contains(final PdfName key) {
         return hashMap.containsKey(key);
     }
 
@@ -342,11 +343,11 @@ public class PdfDictionary extends PdfObject {
 
     // OTHER METHODS
 
-    public void merge(PdfDictionary other) {
+    public void merge(final PdfDictionary other) {
         hashMap.putAll(other.hashMap);
     }
 
-    public void mergeDifferent(PdfDictionary other) {
+    public void mergeDifferent(final PdfDictionary other) {
         for (PdfName key : other.hashMap.keySet()) {
             if (!hashMap.containsKey(key))
                 hashMap.put(key, other.hashMap.get(key));
@@ -369,7 +370,7 @@ public class PdfDictionary extends PdfObject {
      * @return the associated <CODE>PdfDictionary</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfDictionary getAsDict(PdfName key) {
+    public PdfDictionary getAsDict(final PdfName key) {
         PdfDictionary dict = null;
         PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isDictionary())
@@ -390,7 +391,7 @@ public class PdfDictionary extends PdfObject {
      * @return the associated <CODE>PdfArray</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfArray getAsArray(PdfName key) {
+    public PdfArray getAsArray(final PdfName key) {
         PdfArray array = null;
         PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isArray())
@@ -411,7 +412,7 @@ public class PdfDictionary extends PdfObject {
      * @return the associated <CODE>PdfStream</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfStream getAsStream(PdfName key) {
+    public PdfStream getAsStream(final PdfName key) {
         PdfStream stream = null;
         PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isStream())
@@ -432,7 +433,7 @@ public class PdfDictionary extends PdfObject {
      * @return the associated <CODE>PdfString</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfString getAsString(PdfName key) {
+    public PdfString getAsString(final PdfName key) {
         PdfString string = null;
         PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isString())
@@ -453,7 +454,7 @@ public class PdfDictionary extends PdfObject {
      * @return the associated <CODE>PdfNumber</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfNumber getAsNumber(PdfName key) {
+    public PdfNumber getAsNumber(final PdfName key) {
         PdfNumber number = null;
         PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isNumber())
@@ -474,7 +475,7 @@ public class PdfDictionary extends PdfObject {
      * @return the associated <CODE>PdfName</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfName getAsName(PdfName key) {
+    public PdfName getAsName(final PdfName key) {
         PdfName name = null;
         PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isName())
@@ -495,7 +496,7 @@ public class PdfDictionary extends PdfObject {
      * @return the associated <CODE>PdfBoolean</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfBoolean getAsBoolean(PdfName key) {
+    public PdfBoolean getAsBoolean(final PdfName key) {
         PdfBoolean bool = null;
         PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isBoolean())
@@ -514,7 +515,7 @@ public class PdfDictionary extends PdfObject {
      * @return the associated <CODE>PdfIndirectReference</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfIndirectReference getAsIndirectObject(PdfName key) {
+    public PdfIndirectReference getAsIndirectObject(final PdfName key) {
         PdfIndirectReference ref = null;
         PdfObject orig = get(key); // not getDirect this time.
         if (orig != null && orig.isIndirect())
