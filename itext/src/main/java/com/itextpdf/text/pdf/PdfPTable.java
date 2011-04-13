@@ -974,6 +974,19 @@ public class PdfPTable implements LargeElement{
     }
 
     /**
+	 * Checks if a cell in a row has a rowspan greater than 1.
+	 * @since 5.1.0
+     */
+    public boolean hasRowspan(int rowIdx) {
+    	if (rowIdx < 0)
+    		return false;
+    	PdfPRow row = getRow(rowIdx);
+    	if (row == null)
+    		return false;
+    	return row.hasRowspan();
+    }
+    
+    /**
      * Gets the height of the rows that constitute the header as defined by
      * <CODE>setHeaderRows()</CODE>.
      *
@@ -1260,7 +1273,7 @@ public class PdfPTable implements LargeElement{
 			int stop = Math.min(end, start + cell.getRowspan());
 			float extra = 0;
 			for (int k = start + 1; k < stop; k++) {
-				extra += getRowHeight(k);
+				extra += getRow(k).getMaxHeights();
 			}
 			row.setExtraHeight(i, extra);
 		}
