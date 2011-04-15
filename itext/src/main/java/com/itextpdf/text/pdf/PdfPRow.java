@@ -146,7 +146,7 @@ public class PdfPRow {
 	 * Initializes the extra heights array.
 	 * @since	2.1.6
 	 */
-	public void initExtraHeights() {
+	protected void initExtraHeights() {
 		extraHeights = new float[cells.length];
 		for (int i = 0; i < extraHeights.length; i++) {
 			extraHeights[i] = 0;
@@ -170,7 +170,7 @@ public class PdfPRow {
 	 * 
 	 * @return the maximum height of the row.
 	 */
-	public float calculateHeights() {
+	protected void calculateHeights() {
 		maxHeight = 0;
 		for (int k = 0; k < cells.length; ++k) {
 			PdfPCell cell = cells[k];
@@ -185,7 +185,6 @@ public class PdfPRow {
 			}
 		}
 		calculated = true;
-		return maxHeight;
 	}
 
 	/**
@@ -524,9 +523,9 @@ public class PdfPRow {
 	 * @return the maximum height of the row
 	 */
 	public float getMaxHeights() {
-		if (calculated)
-			return maxHeight;
-		return calculateHeights();
+		if (!calculated)
+			calculateHeights();
+		return maxHeight;
 	}
 
 	/**
@@ -560,25 +559,27 @@ public class PdfPRow {
 	}
 	
 	/**
-	 * Copies the content of one row to this row.
+	 * Copies the content of a specific row in a table to this row.
 	 * Don't do this if the rows have a different number of cells.
-	 * @param copy	the row that needs to be copied
+	 * @param table	the table from which you want to copy a row
+	 * @param idx	the index of the row that needs to be copied
 	 * @since 5.1.0
 	 */
-	public void copyLastRow(PdfPTable table) {
+	public void copyRowContent(PdfPTable table, int idx) {
 		if (table == null) {
 			return;
 		}
 		PdfPCell copy;
-		int lastRow;
 		for (int i = 0; i < cells.length; ++i) {
-			lastRow = table.size() - 1;
+			int lastRow = idx;
 			copy = table.getRow(lastRow).getCells()[i];
 			while (copy == null && lastRow > 0) {
 				copy = table.getRow(--lastRow).getCells()[i];
 			}
-			if (cells[i] != null && copy != null)
+			if (cells[i] != null && copy != null) {
 				cells[i].setColumn(copy.getColumn());
+				this.calculated = false;
+			}
 		}
 	}
 
@@ -592,24 +593,25 @@ public class PdfPRow {
 	 * an empty row would result
 	 */
 	public PdfPRow splitRow(PdfPTable table, int rowIndex, float new_height) {
+		// second part of the row
 		PdfPCell newCells[] = new PdfPCell[cells.length];
 		float fixHs[] = new float[cells.length];
 		float minHs[] = new float[cells.length];
 		boolean allEmpty = true;
+		// loop over all the cells
 		for (int k = 0; k < cells.length; ++k) {
 			float newHeight = new_height;
 			PdfPCell cell = cells[k];
 			if (cell == null) {
 				int index = rowIndex;
 				if (table.rowSpanAbove(index, k)) {
-					//newHeight += table.getRowHeight(index);
 					while (table.rowSpanAbove(--index, k)) {
 						newHeight += table.getRow(index).getMaxHeights();
 					}
 					PdfPRow row = table.getRow(index);
 					if (row != null && row.getCells()[k] != null) {
 						newCells[k] = new PdfPCell(row.getCells()[k]);
-						newCells[k].consumeHeight(newHeight);
+						newCells[k].setColumn(null);
 						newCells[k].setRowspan(row.getCells()[k].getRowspan() - rowIndex + index);
 						allEmpty = false;
 					}
@@ -680,7 +682,6 @@ public class PdfPRow {
 		calculateHeights();
 		PdfPRow split = new PdfPRow(newCells);
 		split.widths = (float[]) widths.clone();
-		split.calculateHeights();
 		return split;
 	}
 	
@@ -694,19 +695,5 @@ public class PdfPRow {
 	 */
 	public PdfPCell[] getCells() {
 		return cells;
-	}
-	
-	/**
-	 * Checks if a cell in this row has a rowspan greater than 1.
-	 * @since 5.1.0
-	 */
-	public boolean hasRowspan() {
-    	if (cells == null)
-    		return false;
-    	for (int i = 0; i < cells.length; i++) {
-    		if (cells[i] != null && cells[i].getRowspan() > 1)
-    			return true;
-    	}
-    	return false;
 	}
 }

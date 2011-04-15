@@ -91,7 +91,11 @@ public class PdfPTable implements LargeElement{
     protected ArrayList<PdfPRow> rows = new ArrayList<PdfPRow>();
     protected float totalHeight = 0;
     protected PdfPCell currentRow[];
-    protected int currentRowIdx = 0;
+    /**
+     * The current column index.
+     * @since 5.1.0 renamed from currentRowIdx
+     */
+    protected int currentColIdx = 0;
     protected PdfPCell defaultCell = new PdfPCell((Phrase)null);
     protected float totalWidth = 0;
     protected float relativeWidths[];
@@ -269,7 +273,7 @@ public class PdfPTable implements LargeElement{
         System.arraycopy(sourceTable.absoluteWidths, 0, absoluteWidths, 0, getNumberOfColumns());
         totalWidth = sourceTable.totalWidth;
         totalHeight = sourceTable.totalHeight;
-        currentRowIdx = 0;
+        currentColIdx = 0;
         tableEvent = sourceTable.tableEvent;
         runDirection = sourceTable.runDirection;
         defaultCell = new PdfPCell(sourceTable.defaultCell);
@@ -307,7 +311,7 @@ public class PdfPTable implements LargeElement{
         absoluteWidths = new float[relativeWidths.length];
         totalHeight = 0;
         calculateWidths();
-        calculateHeights(true);
+        calculateHeights();
     }
 
     /**
@@ -349,7 +353,7 @@ public class PdfPTable implements LargeElement{
         this.totalWidth = totalWidth;
         totalHeight = 0;
         calculateWidths();
-        calculateHeights(true);
+        calculateHeights();
     }
 
     /**
@@ -397,31 +401,19 @@ public class PdfPTable implements LargeElement{
     /**
      * Calculates the heights of the table.
      *
-     * @param	firsttime	if true, the heights of the rows will be recalculated.
-     * This takes time; normally the heights of the rows are already calcultated,
-     * so in most cases, it's save to use false as parameter.
      * @return	the total height of the table. Note that it will be 0 if you didn't
      * specify the width of the table with setTotalWidth().
-     * @since	2.1.5	added a parameter and a return type to an existing method,
      * and made it public
      */
-    public float calculateHeights(final boolean firsttime) {
+    public float calculateHeights() {
         if (totalWidth <= 0)
             return 0;
         totalHeight = 0;
         for (int k = 0; k < rows.size(); ++k) {
-        	totalHeight += getRowHeight(k, firsttime);
+        	totalHeight += getRowHeight(k, true);
         }
         return totalHeight;
     }
-
-    /**
-     * Calculates the heights of the table.
-     */
-    public void calculateHeightsFast() {
-        calculateHeights(false);
-    }
-
 
     /**
      * Changes the number of columns. Any existing rows will be deleted.
@@ -462,7 +454,7 @@ public class PdfPTable implements LargeElement{
 
         int colspan = ncell.getColspan();
         colspan = Math.max(colspan, 1);
-        colspan = Math.min(colspan, currentRow.length - currentRowIdx);
+        colspan = Math.min(colspan, currentRow.length - currentColIdx);
         ncell.setColspan(colspan);
 
         if (colspan != 1)
@@ -474,15 +466,15 @@ public class PdfPTable implements LargeElement{
         skipColsWithRowspanAbove();
 
         boolean cellAdded = false;
-        if (currentRowIdx < currentRow.length) {
-	        currentRow[currentRowIdx] = ncell;
-	        currentRowIdx += colspan;
+        if (currentColIdx < currentRow.length) {
+	        currentRow[currentColIdx] = ncell;
+	        currentColIdx += colspan;
 	        cellAdded = true;
         }
 
         skipColsWithRowspanAbove();
 
-        while (currentRowIdx >= currentRow.length) {
+        while (currentColIdx >= currentRow.length) {
         	int numCols = getNumberOfColumns();
             if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
                 PdfPCell rtlRow[] = new PdfPCell[numCols];
@@ -503,14 +495,14 @@ public class PdfPTable implements LargeElement{
             }
             rows.add(row);
             currentRow = new PdfPCell[numCols];
-            currentRowIdx = 0;
+            currentColIdx = 0;
             skipColsWithRowspanAbove();
             rowCompleted = true;
         }
 
         if (!cellAdded) {
-            currentRow[currentRowIdx] = ncell;
-            currentRowIdx += colspan;
+            currentRow[currentColIdx] = ncell;
+            currentColIdx += colspan;
         }
     }
 
@@ -523,8 +515,8 @@ public class PdfPTable implements LargeElement{
     	int direction = 1;
     	if (runDirection == PdfWriter.RUN_DIRECTION_RTL)
     		direction = -1;
-    	while (rowSpanAbove(rows.size(), currentRowIdx))
-    		currentRowIdx += direction;
+    	while (rowSpanAbove(rows.size(), currentColIdx))
+    		currentColIdx += direction;
     }
 
     /**
@@ -541,6 +533,7 @@ public class PdfPTable implements LargeElement{
         }
         return null;
     }
+    
     /**
      * Checks if there are rows above belonging to a rowspan.
      * @param	currRow	the current row to check
@@ -551,7 +544,7 @@ public class PdfPTable implements LargeElement{
     boolean rowSpanAbove(final int currRow, final int currCol) {
     	if (currCol >= getNumberOfColumns()
     			|| currCol < 0
-    			|| currRow == 0)
+    			|| currRow < 1)
     		return false;
     	int row = currRow - 1;
     	PdfPRow aboveRow = rows.get(row);
@@ -913,7 +906,7 @@ public class PdfPTable implements LargeElement{
      * @return the height of a particular row
      * @since	5.0.0
      */
-    public float getRowHeight(final int idx, final boolean firsttime) {
+    protected float getRowHeight(final int idx, final boolean firsttime) {
         if (totalWidth <= 0 || idx < 0 || idx >= rows.size())
             return 0;
         PdfPRow row = rows.get(idx);
@@ -978,12 +971,20 @@ public class PdfPTable implements LargeElement{
 	 * @since 5.1.0
      */
     public boolean hasRowspan(int rowIdx) {
-    	if (rowIdx < 0)
-    		return false;
-    	PdfPRow row = getRow(rowIdx);
-    	if (row == null)
-    		return false;
-    	return row.hasRowspan();
+    	for (int i = 0; i < getNumberOfColumns(); i++) {
+    		if (rowSpanAbove(rowIdx, i))
+    			return true;
+    	}
+    	return false;
+    }
+    
+    /**
+     * Makes sure the footers value is lower than the headers value.
+     * @since 5.0.1
+     */
+    public void normalizeHeadersFooters() {
+        if (footerRows > headerRows)
+            footerRows = headerRows;
     }
     
     /**
@@ -1188,8 +1189,7 @@ public class PdfPTable implements LargeElement{
     }
 
     /**
-     * Gets a row with a given index
-     * (added by Jin-Hsia Yang).
+     * Gets a row with a given index.
      *
      * @param idx
      * @return the row at position idx
@@ -1219,37 +1219,7 @@ public class PdfPTable implements LargeElement{
     	if (start < 0 || end > size()) {
     		return list;
     	}
-    	PdfPRow firstRow = adjustCellsInRow(start, end);
-    	int colIndex = 0;
-    	PdfPCell cell;
-    	while (colIndex < getNumberOfColumns()) {
-    		int rowIndex = start;
-    		while (rowSpanAbove(rowIndex--, colIndex)) {
-    			PdfPRow row = getRow(rowIndex);
-    			if (row != null) {
-    				PdfPCell replaceCell = row.getCells()[colIndex];
-    				if (replaceCell != null) {
-        				firstRow.getCells()[colIndex] = new PdfPCell(replaceCell);
-    					float extra = 0;
-    					int stop = Math.min(rowIndex + replaceCell.getRowspan(), end);
-    					for (int j = start + 1; j < stop; j++) {
-    						extra += getRowHeight(j);
-    					}
-    					firstRow.setExtraHeight(colIndex, extra);
-    					float diff = getRowspanHeight(rowIndex, colIndex)
-    						- getRowHeight(start) - extra;
-    					firstRow.getCells()[colIndex].consumeHeight(diff);
-    				}
-    			}
-    		}
-    		cell = firstRow.getCells()[colIndex];
-    		if (cell == null)
-    			colIndex++;
-    		else
-    			colIndex += cell.getColspan();
-    	}
-    	list.add(firstRow);
-    	for (int i = start + 1; i < end; i++) {
+    	for (int i = start; i < end; i++) {
     		list.add(adjustCellsInRow(i, end));
     	}
     	return list;
@@ -1263,7 +1233,6 @@ public class PdfPTable implements LargeElement{
      */
     protected PdfPRow adjustCellsInRow(final int start, final int end) {
     	PdfPRow row = new PdfPRow(getRow(start));
-		row.initExtraHeights();
 		PdfPCell cell;
 		PdfPCell[] cells = row.getCells();
 		for (int i = 0; i < cells.length; i++) {
