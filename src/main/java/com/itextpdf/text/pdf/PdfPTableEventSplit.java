@@ -54,6 +54,9 @@ public interface PdfPTableEventSplit extends PdfPTableEvent {
      * before the <CODE>tableLayout</CODE> method and before the table is drawn.
      *
      * @param table the <CODE>PdfPTable</CODE> in use
+     * @param from	the first content row (header not included) that is shown
+     * @param to	the first row (footer not included) that is forwarded to the next page
+     * @since 5.1.0
      */
-    public void splitTable(PdfPTable table);
+    public void splitTable(PdfPTable table, int from, int to);
 }

@@ -81,12 +81,12 @@ public class PdfPTableEventForwarder implements PdfPTableEventSplit {
 
     /**
      * @see com.itextpdf.text.pdf.PdfPTableEventSplit#splitTable(com.itextpdf.text.pdf.PdfPTable)
-	 * @since iText 5.0.6
+	 * @since iText 5.1.0
      */
-    public void splitTable(PdfPTable table) {
+    public void splitTable(PdfPTable table, int from, int to) {
 		for (PdfPTableEvent event: events) {
 			if (event instanceof PdfPTableEventSplit)
-                ((PdfPTableEventSplit)event).splitTable(table);
+                ((PdfPTableEventSplit)event).splitTable(table, from, to);
 		}
     }
 }

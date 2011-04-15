@@ -2342,14 +2342,7 @@ public class PdfDocument extends Document {
         if (ptable.getKeepTogether() && !fitsPage(ptable, 0f) && currentHeight > 0)  {
         	newPage();
         }
-        // add dummy paragraph if we aren't at the top of a page, so that
-        // spacingBefore will be taken into account by ColumnText
-        if (currentHeight > 0) {
-	        Paragraph p = new Paragraph();
-	        p.setLeading(0);
-	        ct.addElement(p);
-        }
-        else {
+        if (currentHeight == 0) {
         	ct.setAdjustFirstLine(false);
         }
         ct.addElement(ptable);
@@ -2371,7 +2364,6 @@ public class PdfDocument extends Document {
             if (loop == 3) {
             	throw new DocumentException(MessageLocalization.getComposedMessage("infinite.table.loop"));
             }
-            ct.setAdjustFirstLine(true);
             newPage();
         }
         ptable.setHeadersInEvent(he);
