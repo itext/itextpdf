@@ -1511,7 +1511,7 @@ public class ColumnText {
                     if (newPageFollows) {
                         PdfPTableEvent tableEvent = table.getTableEvent();
                         if (tableEvent instanceof PdfPTableEventSplit) {
-                            ((PdfPTableEventSplit)tableEvent).splitTable(table, rowIdx, k);
+                            ((PdfPTableEventSplit)tableEvent).splitTable(table);
                         }
                     }
 
