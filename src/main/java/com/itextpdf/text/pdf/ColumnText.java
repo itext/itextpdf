@@ -1449,7 +1449,8 @@ public class ColumnText {
                     // if the row isn't null add it as an extra row
                     if (newRow == null) {
                     	splittedRow = -1;
-                    	return NO_MORE_COLUMN;
+                    	if (rowIdx == k)
+                    		return NO_MORE_COLUMN;
                     }
                     else {
                         yTemp = minY;
