@@ -222,6 +222,7 @@ no.compatible.encryption.found=No compatible encryption found
 no.error.just.an.old.style.table=No error, just an old style table
 no.font.is.defined=No font is defined.
 no.glyphs.defined.for.type3.font=No glyphs defined for Type3 font
+no.structtreeroot.found=No StructTreeRoot found, this probably isn't a tagged PDF document!
 no.valid.column.line.found=No valid column line found.
 no.valid.encryption.mode=No valid encryption mode
 not.a.placeable.windows.metafile=Not a placeable windows metafile

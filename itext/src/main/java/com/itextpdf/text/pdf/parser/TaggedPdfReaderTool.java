@@ -47,14 +47,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import com.itextpdf.text.pdf.PRStream;
+import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
+import com.itextpdf.text.xml.XMLUtil;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
@@ -89,6 +89,8 @@ public class TaggedPdfReaderTool {
 		// get the StructTreeRoot from the root object
 		PdfDictionary catalog = reader.getCatalog();
 		PdfDictionary struct = catalog.getAsDict(PdfName.STRUCTTREEROOT);
+		if (struct == null)
+			throw new IOException(MessageLocalization.getComposedMessage("no.structtreeroot.found"));
 		// Inspect the child or children of the StructTreeRoot
 		inspectChild(struct.getDirectObject(PdfName.K));
 		out.flush();
@@ -234,7 +236,7 @@ public class TaggedPdfReaderTool {
 					listener);
 			processor.processContent(PdfReader.getPageContent(page), page
 					.getAsDict(PdfName.RESOURCES));
-			out.print(SimpleXMLParser.escapeXML(listener.getResultantText(), true));
+			out.print(XMLUtil.escapeXML(listener.getResultantText(), true));
 		}
 		// if the identifier is an array, we call the parseTag method
 		// recursively
