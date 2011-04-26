@@ -97,9 +97,13 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
+				<version>2.3</version> <configuration> <archive> <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile> 
+				</archive> </configuration> </plugin> -->
+
 		</plugins>
 	</build>
-	<!-- Profiles - default, release -->
+	<!-- Profiles - default, all -->
 	<profiles>
 		<profile>
 			<id>default</id>
@@ -136,6 +140,49 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>osgi</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.felix</groupId>
+						<artifactId>maven-bundle-plugin</artifactId>
+						<version>2.3.4</version>
+						<extensions>true</extensions>
+						<executions>
+							<execution>
+								<id>bundle-manifest</id>
+								<phase>process-classes</phase>
+								<!-- bind the manifest.mf generation after the 'compile' phase -->
+								<goals>
+									<goal>manifest</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<!-- unpack bundle, so human can see the manifest without unpacking 
+								the jar -->
+							<unpackBundle>true</unpackBundle>
+							<!-- All com.itextpdf.text.* package are 'public' -->
+							<instructions>
+								<Export-Package>com.itextpdf.text.*</Export-Package>
+							</instructions>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.3</version>
+						<configuration>
+							<!-- Use the Bnd generated MANIFEST.MF in the jar -->
+							<archive>
+								<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+							</archive>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
