@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>itext-parent</artifactId>
+		<groupId>com.itextpdf</groupId>
+		<version>1.0.0</version>
+	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.itextpdf</groupId>
 	<artifactId>itext-asian</artifactId>
 	<packaging>jar</packaging>
 	<name>iText, a Free Java-PDF library</name>
 	<version>5.0.7-SNAPSHOT</version>
-	<description>iText, a free Java-PDF library</description>
 	<!-- General Info -->
+	<description>iTextAsian fonts for use in conjunction with iText, a free Java-PDF library</description>
 	<url>http://www.itextpdf.com/</url>
 	<licenses>
 		<license>
@@ -37,7 +42,6 @@
 		</resources>
 		<sourceDirectory>src/main/resources</sourceDirectory>
 		<testSourceDirectory>src/main/resources</testSourceDirectory>
-		<finalName>itext-asian</finalName>
 	</build>
 	<!-- Profiles - default, release -->
 	<properties>
