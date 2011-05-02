@@ -254,6 +254,8 @@ public class VerticalText {
         return status;
     }
 
+    private Float curCharSpace = 0f;
+
     void writeLine(PdfLine line, PdfContentByte text, PdfContentByte graphics) {
         PdfFont currentFont = null;
         PdfChunk chunk;
@@ -265,9 +267,17 @@ public class VerticalText {
                 text.setFontAndSize(currentFont.getFont(), currentFont.size());
             }
             BaseColor color = chunk.color();
+            Float charSpace = (Float)chunk.getAttribute(Chunk.CHAR_SPACING);
+            // no char space setting means "leave it as is".
+            if (charSpace != null && !curCharSpace.equals(charSpace)) {
+            	curCharSpace = charSpace.floatValue();
+            	text.setCharacterSpacing(curCharSpace);
+            }
             if (color != null)
                 text.setColorFill(color);
+            
             text.showText(chunk.toString());
+            
             if (color != null)
                 text.resetRGBColorFill();
         }
