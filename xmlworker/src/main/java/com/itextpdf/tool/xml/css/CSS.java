@@ -66,6 +66,7 @@ public final class CSS {
 		public static final String LIST_STYLE_POSITION = "list-style-position";
 		public static final String LIST_STYLE_IMAGE = "list-style-image";
 		public static final String MARGIN = "margin";
+		public static final String TOP = "top";
 		public static final String MARGIN_LEFT = "margin-left";
 		public static final String MARGIN_RIGHT = "margin-right";
 		public static final String MARGIN_TOP = "margin-top";
@@ -74,6 +75,18 @@ public final class CSS {
 		public static final String BORDER_WIDTH = "border-width";
 		public static final String BORDER_STYLE = "border-style";
 		public static final String BORDER_COLOR = "border-color";
+		public static final String BORDER_TOP_WIDTH = "border-top-width";
+		public static final String BORDER_BOTTOM_WIDTH = "border-bottom-width";
+		public static final String BORDER_LEFT_WIDTH = "border-left-width";
+		public static final String BORDER_RIGHT_WIDTH = "border-right-width";
+		public static final String BORDER_TOP_COLOR = "border-top-color";
+		public static final String BORDER_BOTTOM_COLOR = "border-bottom-color";
+		public static final String BORDER_LEFT_COLOR = "border-left-color";
+		public static final String BORDER_RIGHT_COLOR = "border-right-color";
+		public static final String BORDER_TOP_STYLE = "border-top-style";
+		public static final String BORDER_BOTTOM_STYLE = "border-bottom-style";
+		public static final String BORDER_LEFT_STYLE = "border-left-style";
+		public static final String BORDER_RIGHT_STYLE = "border-right-style";
 		public static final String PADDING = "padding";
 		public static final String PADDING_TOP = "padding-top";
 		public static final String PADDING_BOTTOM = "padding-bottom";
@@ -99,7 +112,6 @@ public final class CSS {
 		public static final String LINE_HEIGHT = "line-height";
 		public static final String TEXT_ALIGN = "text-align";
 		public static final String TEXT_INDENT = "text-indent";
-		public static final String TOP = "top";
 		public static final String POSITION = "position";
 		public static final String EMPTY_CELLS = "empty-cells";
 		public static final String CELLPADDING = "cellpadding";

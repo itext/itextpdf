@@ -501,10 +501,16 @@ public class CssUtils {
 	 * @param t the tag of which the total horizontal margin is needed.
 	 * @return float the total horizontal margin.
 	 */
-	public float getLeftAndRightMargin(final Tag t) {
+	public float getLeftAndRightMargin(final Tag t, final float pageWidth) {
 		float horizontalMargin = 0;
-		horizontalMargin += checkMetricStyle(t,"margin-right");
-		horizontalMargin += checkMetricStyle(t,"margin-left");
+		String value = t.getCSS().get(CSS.Property.MARGIN_LEFT);
+		if (value != null) {
+			horizontalMargin += parseValueToPt(value, pageWidth);
+		}
+		value = t.getCSS().get(CSS.Property.MARGIN_RIGHT);
+		if (value != null) {
+			horizontalMargin += parseValueToPt(value, pageWidth);
+		}
 		return horizontalMargin;
 	}
 

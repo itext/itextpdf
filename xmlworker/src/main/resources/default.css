@@ -8,7 +8,7 @@ dt {
 }
 /* styles below are taken from Mozilla Defaults */
 body, defaultRoot {
-    margin: 8px;
+    margin: 10%;
     font-size: 12pt;
 }
 p, dl, multicol {
@@ -76,8 +76,8 @@ xmp, pre, plaintext {
 table {
     margin-bottom: 0;
     margin-top: 0;
-    margin-left: 1em;
-    margin-right: 1em;
+    margin-left: 0;
+    margin-right: 0;
     text-indent: 0;
 }
 caption {

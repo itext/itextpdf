@@ -50,51 +50,143 @@ import com.itextpdf.text.BaseColor;
  *
  */
 public class TableStyleValues {
-	 private float borderSpacing;
-		private float tableBorderWidth;
-		private BaseColor tableBorderColor;
+	 	private float horBorderSpacing;
+	 	private float verBorderSpacing;
+		private float tableBorderLeftWidth;
+		private BaseColor tableBorderLeftColor;
+		private float tableBorderRightWidth;
+		private BaseColor tableBorderRightColor;
+		private float tableBorderTopWidth;
+		private BaseColor tableBorderTopColor;
+		private float tableBorderBottomWidth;
+		private BaseColor tableBorderBottomColor;
 
 		public TableStyleValues() {
 		}
-		public TableStyleValues(final float borderSpacing, final float tableBorderWidth, final BaseColor tableBorderColor) {
-			this.borderSpacing = borderSpacing;
-			this.tableBorderWidth = tableBorderWidth;
-			this.tableBorderColor = tableBorderColor;
+		public float getHorBorderSpacing() {
+			return horBorderSpacing;
+		}
+		public void setHorBorderSpacing(final float horBorderSpacing) {
+			this.horBorderSpacing = horBorderSpacing;
+		}
+		public void setVerBorderSpacing(final float verBorderSpacing) {
+			this.verBorderSpacing = verBorderSpacing;
+		}
+		public float getVerBorderSpacing() {
+			return verBorderSpacing;
 		}
 		/**
-		 * @return the tableBorderColor
+		 * @return the tableBorderLeftWidth
 		 */
-		public BaseColor getTableBorderColor() {
-			return tableBorderColor;
+		public float getTableBorderLeftWidth() {
+			return tableBorderLeftWidth;
 		}
 		/**
-		 * @param tableBorderColor the tableBorderColor to set
+		 * @param tableBorderLeftWidth the tableBorderLeftWidth to set
 		 */
-		public void setTableBorderColor(final BaseColor tableBorderColor) {
-			this.tableBorderColor = tableBorderColor;
+		public void setTableBorderLeftWidth(final float tableBorderLeftWidth) {
+			this.tableBorderLeftWidth = tableBorderLeftWidth;
 		}
 		/**
-		 * @return the cellPadding
+		 * @return the tableBorderLeftColor
 		 */
-		public float getBorderSpacing() {
-			return borderSpacing;
-		}
-	    /**
-		 * @param cellPadding the cellPadding to set
-		 */
-		public void setBorderSpacing(final float borderSpacing) {
-			this.borderSpacing = borderSpacing;
+		public BaseColor getTableBorderLeftColor() {
+			return tableBorderLeftColor;
 		}
 		/**
-		 * @return the tableBorderWidth
+		 * @param tableBorderLeftColor the tableBorderLeftColor to set
 		 */
-		public float getTableBorderWidth() {
-			return tableBorderWidth;
+		public void setTableBorderLeftColor(final BaseColor tableBorderLeftColor) {
+			this.tableBorderLeftColor = tableBorderLeftColor;
 		}
 		/**
-		 * @param tableBorderWidth the tableBorderWidth to set
+		 * @return the tableBorderRightWidth
 		 */
-		public void setTableBorderWidth(final float tableBorderWidth) {
-			this.tableBorderWidth = tableBorderWidth;
+		public float getTableBorderRightWidth() {
+			return tableBorderRightWidth;
+		}
+		/**
+		 * @param tableBorderRightWidth the tableBorderRightWidth to set
+		 */
+		public void setTableBorderRightWidth(final float tableBorderRightWidth) {
+			this.tableBorderRightWidth = tableBorderRightWidth;
+		}
+		/**
+		 * @return the tableBorderRightColor
+		 */
+		public BaseColor getTableBorderRightColor() {
+			return tableBorderRightColor;
+		}
+		/**
+		 * @param tableBorderRightColor the tableBorderRightColor to set
+		 */
+		public void setTableBorderRightColor(final BaseColor tableBorderRightColor) {
+			this.tableBorderRightColor = tableBorderRightColor;
+		}
+		/**
+		 * @return the tableBorderTopWidth
+		 */
+		public float getTableBorderTopWidth() {
+			return tableBorderTopWidth;
+		}
+		/**
+		 * @param tableBorderTopWidth the tableBorderTopWidth to set
+		 */
+		public void setTableBorderTopWidth(final float tableBorderTopWidth) {
+			this.tableBorderTopWidth = tableBorderTopWidth;
+		}
+		/**
+		 * @return the tableBorderTopColor
+		 */
+		public BaseColor getTableBorderTopColor() {
+			return tableBorderTopColor;
+		}
+		/**
+		 * @param tableBorderTopColor the tableBorderTopColor to set
+		 */
+		public void setTableBorderTopColor(final BaseColor tableBorderTopColor) {
+			this.tableBorderTopColor = tableBorderTopColor;
+		}
+		/**
+		 * @return the tableBorderBottomWidth
+		 */
+		public float getTableBorderBottomWidth() {
+			return tableBorderBottomWidth;
+		}
+		/**
+		 * @param tableBorderBottomWidth the tableBorderBottomWidth to set
+		 */
+		public void setTableBorderBottomWidth(final float tableBorderBottomWidth) {
+			this.tableBorderBottomWidth = tableBorderBottomWidth;
+		}
+		/**
+		 * @return the tableBorderBottomColor
+		 */
+		public BaseColor getTableBorderBottomColor() {
+			return tableBorderBottomColor;
+		}
+		/**
+		 * @param tableBorderBottomColor the tableBorderBottomColor to set
+		 */
+		public void setTableBorderBottomColor(final BaseColor tableBorderBottomColor) {
+			this.tableBorderBottomColor = tableBorderBottomColor;
+		}
+		/**
+		 * @param width
+		 */
+		public void setTableBorderWidth(final float width) {
+			tableBorderBottomWidth = width;
+			tableBorderLeftWidth = width;
+			tableBorderRightWidth = width;
+			tableBorderTopWidth = width;
+		}
+		/**
+		 * @param color
+		 */
+		public void setTableBorderColor(final BaseColor color) {
+			tableBorderBottomColor = color;
+			tableBorderLeftColor = color;
+			tableBorderRightColor = color;
+			tableBorderTopColor = color;
 		}
 	}

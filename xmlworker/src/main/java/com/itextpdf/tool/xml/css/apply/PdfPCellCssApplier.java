@@ -71,7 +71,7 @@ public class PdfPCellCssApplier implements CssApplier<PdfPCell> {
 
     private final CssUtils utils = CssUtils.getInstance();
 	private final XMLWorkerConfig configuration;
-	private final TableStyleValues tsv = new TableStyleValues();
+	private final TableStyleValues styleValues = new TableStyleValues();
 
 	public PdfPCellCssApplier(final XMLWorkerConfig configuration) {
 		this.configuration = configuration;
@@ -156,14 +156,16 @@ public class PdfPCellCssApplier implements CssApplier<PdfPCell> {
 				if(border != null) {
 					cell.setBorderColor(BaseColor.BLACK);
 					cell.setBorderWidth(utils.parsePxInCmMmPcToPt(border));
-					tsv.setBorderSpacing(1.5f);
+					styleValues.setHorBorderSpacing(1.5f);
+					styleValues.setVerBorderSpacing(1.5f);
 				}
 			} else {
-				tsv.setBorderSpacing(new Table().getBorderOrCellSpacing(table.getCSS(), table.getAttributes()));
+				styleValues.setHorBorderSpacing(new Table().getBorderOrCellSpacing(true, table.getCSS(), table.getAttributes()));
+				styleValues.setVerBorderSpacing(new Table().getBorderOrCellSpacing(false, table.getCSS(), table.getAttributes()));
 			}
 		}
 		cell.setBorder(Rectangle.NO_BORDER);
-		cell.setCellEvent(new CellSpacingEvent(tsv));
+		cell.setCellEvent(new CellSpacingEvent(styleValues));
         return cell;
     }
 

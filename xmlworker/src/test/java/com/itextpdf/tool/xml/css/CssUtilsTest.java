@@ -59,7 +59,7 @@ public class CssUtilsTest {
 		Tag t = new Tag(string);
 		t.getCSS().put("margin-left", "15pt");
 		t.getCSS().put("margin-right", "15pt");
-		Assert.assertEquals(30, css.getLeftAndRightMargin(t), 0);
+		Assert.assertEquals(30, css.getLeftAndRightMargin(t, 0f), 0);
 	}
 
 	@Test

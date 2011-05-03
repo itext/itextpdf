@@ -127,10 +127,12 @@ public class Table extends AbstractTagProcessor {
 		Map<String, String> css = tag.getCSS();
 		Map<String, String> attributes = tag.getAttributes();
 		if(css.containsKey("border-top-width")||css.containsKey("border-left-width")||css.containsKey("border-right-width")||css.containsKey("border-bottom-width")) {
-			styleValues.setBorderSpacing(getBorderOrCellSpacing(css, attributes));
+			styleValues.setHorBorderSpacing(getBorderOrCellSpacing(true, css, attributes));
+			styleValues.setVerBorderSpacing(getBorderOrCellSpacing(false, css, attributes));
 			inner.setTableEvent(new TableBorderEvent(styleValues, css));
 		} else if(attributes.containsKey(CSS.Property.BORDER)) {
-			styleValues.setBorderSpacing(1.5f);
+			styleValues.setHorBorderSpacing(1.5f);
+			styleValues.setVerBorderSpacing(1.5f);
 			styleValues.setTableBorderWidth(utils.parsePxInCmMmPcToPt(attributes.get(CSS.Property.BORDER)));
 			styleValues.setTableBorderColor(BaseColor.BLACK);
 			inner.setTableEvent(new SimpleTableBorderEvent(styleValues));
@@ -157,14 +159,19 @@ public class Table extends AbstractTagProcessor {
 	        	if(((PdfPCell)cell).getRowspan() > 1 && column != numberOfColumns-1) {
 	        		rowspanValue[column] = ((PdfPCell)cell).getRowspan()-1;
 	        	}
-	        	if(cell instanceof FixedWidthCell && fixedWidths[column] < ((FixedWidthCell) cell).getFixedWidth()) {
-	        		fixedWidths[column] = ((FixedWidthCell) cell).getFixedWidth();
-	        		columnWidths[column] = ((FixedWidthCell) cell).getFixedWidth();
+	        	if(cell instanceof FixedWidthCell){
+	        		float fixedWidth = ((FixedWidthCell) cell).getFixedWidth()+
+	        		getCellStartWidth((FixedWidthCell) cell) +
+	        		((FixedWidthCell) cell).getColspan() * styleValues.getHorBorderSpacing();
+					if(fixedWidth > fixedWidths[column]) {
+						fixedWidths[column] = fixedWidth;
+						columnWidths[column] = fixedWidth;
+					}
 	        	}
 	        	if(cell instanceof PdfPCell && ((PdfPCell)cell).getCompositeElements() != null) {
-		        	float[] settedValues = setCellWidthAndWidestWord((PdfPCell) cell);
-		        	float cellWidth = settedValues[0];
-		        	float widestWordOfCell = settedValues[1];
+		        	float[] widthValues = setCellWidthAndWidestWord((PdfPCell) cell);
+		        	float cellWidth = widthValues[0];
+		        	float widestWordOfCell = widthValues[1];
 		        	if(fixedWidths[column] == 0 && cellWidth > columnWidths[column]) {
 		        		columnWidths[column] = cellWidth;
 		        		if(cellWidth > largestColumn) {
@@ -179,15 +186,17 @@ public class Table extends AbstractTagProcessor {
 		        column++;
 	        }
 	    }
-//	    PdfPCell outerCell = new PdfPCell(inner);
-//		new PdfPCellCssApplier(configuration).apply(outerCell, tag);
 		float totalFixedWidth = getTotalFixedWidth(fixedWidths);
 		float targetWidth = 0;
-		if(attributes.get("width") != null || css.get("width") != null) {
+		if(attributes.get(CSS.Property.WIDTH) != null || css.get(CSS.Property.WIDTH) != null) {
 			targetWidth = new WidthCalculator().getWidth(tag, configuration);
 		} else if(CssUtils.ROOT_TAGS.contains(tag.getParent().getTag())) {
-			targetWidth = configuration.getPageSize().getWidth() - utils.getLeftAndRightMargin(tag);
-		} else {
+			float pageWidth = configuration.getPageSize().getWidth();
+			targetWidth = pageWidth - utils.getLeftAndRightMargin(tag.getParent(), pageWidth)
+							- utils.getLeftAndRightMargin(tag, pageWidth)
+							- utils.checkMetricStyle(tag, CSS.Property.BORDER_LEFT_WIDTH)
+							- utils.checkMetricStyle(tag, CSS.Property.BORDER_RIGHT_WIDTH);
+		} else /* this table is an inner table and width adjustment is done in outer table */{
 			targetWidth = getTotalWidth(columnWidths, tag);
 		}
 		float initialTotalWidth = getTotalWidth(columnWidths, tag);
@@ -215,26 +224,29 @@ public class Table extends AbstractTagProcessor {
 				//Reduce width of the column with the most text, if its widestWord still fits in the reduced column.
 				if(widestWords[indexOfLargestColumn] <= columnWidths[indexOfLargestColumn] - leftToReduce) {
 					columnWidths[indexOfLargestColumn] -= leftToReduce;
-				} else while (leftToReduce != 0) {
-					for(int column = 0; column<columnWidths.length; column++) {
+				} else { // set all columnWidths to their minimum with the widestWord array.
+					for(int column = 0; leftToReduce != 0 && column<columnWidths.length; column++) {
 						if(fixedWidths[column] == 0 && columnWidths[column] > widestWords[column]) {
 							float difference = columnWidths[column] - widestWords[column];
 							if(difference <= leftToReduce) {
-								leftToReduce -= columnWidths[column] - widestWords[column];
+								leftToReduce -= difference;
 								columnWidths[column] = widestWords[column];
 							} else {
 								columnWidths[column] -= leftToReduce;
+								leftToReduce = 0;
 							}
 						}
 					}
-					// If all columnWidths are set to the widestWordWidths and the table is still to wide, try to enlarge table width to fit all content.
-					if(getTotalWidth(widestWords, tag) < configuration.getPageSize().getWidth()) {
-						targetWidth = getTotalWidth(widestWords, tag);
-						leftToReduce = 0;
-					} else {
-						//If all columnWidths are set to the widestWordWidths and the table is still to wide content will fall off the edge of a page, which is similar to HTML.
-						targetWidth = configuration.getPageSize().getWidth();
-						leftToReduce = 0;
+					if(leftToReduce != 0) {
+						// If the table has an insufficient fixed width by an attribute or style, try to enlarge the table to its minimum width (= widestWords array).
+						if(getTotalWidth(widestWords, tag) < configuration.getPageSize().getWidth()) {
+							targetWidth = getTotalWidth(widestWords, tag);
+							leftToReduce = 0;
+						} else {
+							//If all columnWidths are set to the widestWordWidths and the table is still to wide content will fall off the edge of a page, which is similar to HTML.
+							targetWidth = configuration.getPageSize().getWidth();
+							leftToReduce = 0;
+						}
 					}
 				}
 			}
@@ -253,10 +265,6 @@ public class Table extends AbstractTagProcessor {
 			throw new RuntimeWorkerException(e);
 		}
 		setVerticalMargin(inner, tag);
-//		PdfPTable outer = new PdfPTable(1);
-//		outer.setTotalWidth(targetWidth);
-//		outer.setLockedWidth(true);
-//		outer.setSplitLate(false);
 		for (Element row : currentContent) {
 			int columnNumber = -1;
 			for (Element cell : ((TableRowElement) row).getContent()) {
@@ -295,22 +303,30 @@ public class Table extends AbstractTagProcessor {
 	}
 	/**
 	 * Extracts and parses the style border-spacing or the attribute cellspacing of a table tag. <br />
-	 * Favors the style border-spacing over the attribute cellspacing. If the style border-collapse is found in the css, the spacing is always 0f.
+	 * Favors the style border-spacing over the attribute cellspacing. If style="border-collapse:collapse" is found in the css, the spacing is always 0f.
 	 * @param css of the table tag.
 	 * @param attributes of the table tag.
-	 * @return spacing between two cells or a cell and the border of the table.
+	 * @return horizontal spacing between two cells or a cell and the border of the table.
 	 */
-	public float getBorderOrCellSpacing(final Map<String, String> css, final Map<String, String> attributes) {
+	public float getBorderOrCellSpacing(final boolean getHor, final Map<String, String> css, final Map<String, String> attributes) {
 		float spacing = 0;
 		String collapse = css.get("border-collapse");
 		if(collapse == null || collapse.equals("seperate")) {
-			spacing = utils.checkMetricStyle(css, "border-spacing");
-			if(spacing == 0){
+			String borderSpacing = css.get("border-spacing");
+			if(borderSpacing == null){
 				if(attributes.containsKey("cellspacing")) {
 					spacing = utils.parsePxInCmMmPcToPt(attributes.get("cellspacing"));
 				} else {
 					spacing = 1.5f;
 				}
+			} else if(borderSpacing.contains(" ")){
+				if(getHor) {
+					spacing = utils.parsePxInCmMmPcToPt(borderSpacing.split(" ")[0]);
+				} else {
+					spacing = utils.parsePxInCmMmPcToPt(borderSpacing.split(" ")[1]);
+				}
+			} else {
+				spacing = utils.parsePxInCmMmPcToPt(borderSpacing);
 			}
 		} else if(collapse.equals("collapse")){
 			spacing = 0;
@@ -403,13 +419,21 @@ public class Table extends AbstractTagProcessor {
 			width += f;
 		}
 		Map<String, String> css = tag.getCSS();
-		width += utils.checkMetricStyle(css, "border-left-width")+styleValues.getBorderSpacing();
-		width += utils.checkMetricStyle(css, "border-right-width")+styleValues.getBorderSpacing();
+		width += utils.checkMetricStyle(css, "border-left-width");
+		width += utils.checkMetricStyle(css, "border-right-width")+styleValues.getHorBorderSpacing();
+		String margin = css.get(CSS.Property.MARGIN_LEFT);
+		if(margin != null) {
+			utils.parseValueToPt(margin, configuration.getPageSize().getWidth());
+		}
+		margin = css.get(CSS.Property.MARGIN_RIGHT);
+		if(margin != null) {
+			utils.parseValueToPt(margin, configuration.getPageSize().getWidth());
+		}
 		return width;
 	}
 
 	private float getCellStartWidth(final PdfPCell cell) {
-		float spacing = cell.getColspan()*styleValues.getBorderSpacing();
+		float spacing = cell.getColspan()*styleValues.getHorBorderSpacing();
 		float left =  cell.getEffectivePaddingLeft();
 		left = (left>1)?left:2;
 		float right = cell.getEffectivePaddingRight();

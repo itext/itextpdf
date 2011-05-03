@@ -43,6 +43,7 @@
  */
 package com.itextpdf.tool.xml.html.table;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -67,29 +68,39 @@ public class CellSpacingEvent implements PdfPCellEvent {
 	 */
 	public void cellLayout(final PdfPCell cell, final Rectangle position,
 			final PdfContentByte[] canvases) {
-		float effectivePadding = cell.getBorderWidthLeft() + styleValues.getBorderSpacing();
+		float effectivePadding = cell.getBorderWidthLeft() + styleValues.getHorBorderSpacing();
 		float x1 = position.getLeft() + effectivePadding;
-		effectivePadding = cell.getBorderWidthRight() + styleValues.getBorderSpacing();
+		effectivePadding = cell.getBorderWidthRight() + styleValues.getHorBorderSpacing();
 		float x2 = position.getRight() - effectivePadding;
-		effectivePadding = cell.getBorderWidthTop() + styleValues.getBorderSpacing();
+		effectivePadding = cell.getBorderWidthTop() + styleValues.getVerBorderSpacing();
 		float y1 = position.getTop() - effectivePadding;
-		effectivePadding = cell.getBorderWidthBottom() + styleValues.getBorderSpacing();
+		effectivePadding = cell.getBorderWidthBottom() + styleValues.getVerBorderSpacing();
 		float y2 = position.getBottom() + effectivePadding;
-		 PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
+		PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
+		BaseColor borderColor = cell.getBorderColorLeft();
+		// Checking one border side is enough
+		if(borderColor != null) {
+			cb.setLineWidth(cell.getBorderWidthLeft());
+			cb.setColorStroke(borderColor);
 	        cb.moveTo(x1, y1); // start leftUpperCorner
-	        cb.setLineWidth(cell.getBorderWidthLeft());
-	        cb.setColorStroke(cell.getBorderColorLeft());
 	        cb.lineTo(x1, y2); // left
+	        cb.stroke();
 	        cb.setLineWidth(cell.getBorderWidthBottom());
 	        cb.setColorStroke(cell.getBorderColorBottom());
+	        cb.moveTo(x1, y2); // left
 	        cb.lineTo(x2, y2); // bottom
+	        cb.stroke();
 	        cb.setLineWidth(cell.getBorderWidthRight());
 	        cb.setColorStroke(cell.getBorderColorRight());
+	        cb.moveTo(x2, y2); // bottom
 	        cb.lineTo(x2, y1); // right
+	        cb.stroke();
 	        cb.setLineWidth(cell.getBorderWidthTop());
 	        cb.setColorStroke(cell.getBorderColorTop());
+	        cb.moveTo(x2, y1); // right
 	        cb.lineTo(x1, y1); // top
 	        cb.stroke();
 	        cb.resetRGBColorStroke();
+		}
 	}
 }

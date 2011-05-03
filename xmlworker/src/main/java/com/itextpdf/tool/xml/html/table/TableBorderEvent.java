@@ -77,27 +77,33 @@ public class TableBorderEvent implements PdfPTableEvent{
     	float top = utils.checkMetricStyle(css, "border-top-width");
     	float bottom = utils.checkMetricStyle(css, "border-bottom-width");
         float widths[] = width[0];
-		float effectivePadding = left+styleValues.getBorderSpacing();
+		float effectivePadding = left+styleValues.getHorBorderSpacing();
         float x1 = widths[0]-effectivePadding;
-		effectivePadding = right+styleValues.getBorderSpacing();
+		effectivePadding = right+styleValues.getHorBorderSpacing();
         float x2 = widths[widths.length - 1]+effectivePadding;
-		effectivePadding = top+styleValues.getBorderSpacing();
+		effectivePadding = top+styleValues.getVerBorderSpacing();
         float y1 = height[0]+effectivePadding;
-		effectivePadding = bottom+styleValues.getBorderSpacing();
+		effectivePadding = bottom+styleValues.getVerBorderSpacing();
         float y2 = height[height.length - 1]-effectivePadding;
         PdfContentByte cb = canvas[PdfPTable.LINECANVAS];
-        cb.moveTo(x1, y1); // start leftUpperCorner
         cb.setLineWidth(left);
         cb.setColorStroke(HtmlUtilities.decodeColor(css.get("border-left-color")));
+        cb.moveTo(x1, y1); // start leftUpperCorner
         cb.lineTo(x1, y2); // left
+        cb.stroke();
         cb.setLineWidth(bottom);
         cb.setColorStroke(HtmlUtilities.decodeColor(css.get("border-bottom-color")));
+        cb.moveTo(x1, y2); // left
         cb.lineTo(x2, y2); // bottom
+        cb.stroke();
         cb.setLineWidth(right);
         cb.setColorStroke(HtmlUtilities.decodeColor(css.get("border-right-color")));
+        cb.moveTo(x2, y2); // bottom
         cb.lineTo(x2, y1); // right
+        cb.stroke();
         cb.setLineWidth(top);
         cb.setColorStroke(HtmlUtilities.decodeColor(css.get("border-top-color")));
+        cb.moveTo(x2, y1); // right
         cb.lineTo(x1, y1); // top
         cb.stroke();
         cb.resetRGBColorStroke();
