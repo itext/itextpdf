@@ -100,7 +100,7 @@ public class Anchor extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		String name = tag.getAttributes().get(HTML.Attribute.NAME);
 		List<Element> elems = new ArrayList<Element>(0);
 		if (currentContent.size() > 0) {

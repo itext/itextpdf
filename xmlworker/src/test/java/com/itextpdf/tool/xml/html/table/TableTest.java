@@ -115,7 +115,7 @@ public class TableTest {
 	public void resolveBuild() {
 		Table table2 = new Table();
 		table2.setConfiguration(new XMLWorkerConfigurationImpl());
-		PdfPTable table = (PdfPTable) table2.endElement(tag, rows).get(0);
+		PdfPTable table = (PdfPTable) table2.end(tag, rows).get(0);
 		assertEquals(4, table.getNumberOfColumns());
 		assertEquals(4, table.getRow(0).getCells().length);
 	}

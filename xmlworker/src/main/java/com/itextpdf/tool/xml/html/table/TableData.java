@@ -82,7 +82,7 @@ public class TableData extends AbstractTagProcessor {
      * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
      */
     @Override
-	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 //    	PdfPCell cell = new PdfPCell();
 //    	Paragraph content = new Paragraph();
 //    	for (Element e : currentContent) {

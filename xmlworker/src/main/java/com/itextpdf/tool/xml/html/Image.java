@@ -72,7 +72,7 @@ public class Image extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		Map<String, String> attributes = tag.getAttributes();
 		String src = attributes.get(HTML.Attribute.SRC);
 		com.itextpdf.text.Image img = null;

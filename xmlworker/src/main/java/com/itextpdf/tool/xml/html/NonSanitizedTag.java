@@ -62,7 +62,7 @@ public class NonSanitizedTag extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
 	 */
 	@Override
-	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		List<Element> l = new ArrayList<Element>(1);
 		if (currentContent.size() > 0) {
 			l.add( Tags.currentContentToParagraph(currentContent, false));

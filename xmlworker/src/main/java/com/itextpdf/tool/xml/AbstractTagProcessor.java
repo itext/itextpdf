@@ -33,6 +33,7 @@ package com.itextpdf.tool.xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
@@ -69,18 +70,28 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 
 	/**
 	 * Calculates any found font size to pt values and set it in the CSS before calling
-	 * {@link AbstractTagProcessor#start(Tag)}
+	 * {@link AbstractTagProcessor#start(Tag)}.<br />
+	 * Checks for {@link CSS.Property#PAGE_BREAK_BEFORE}, if the value is always a new page is inserted
 	 *
 	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
 	public final List<Element> startElement(final Tag tag) {
 		float fontSize = fontsizeTrans.translateFontSize(tag);
 		tag.getCSS().put(CSS.Property.FONT_SIZE, fontSize + "pt");
+		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_BEFORE);
+		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
+			List<Element> list = new ArrayList<Element>(2);
+			list.add(Chunk.NEXTPAGE);
+			for (Element e : start(tag)) {
+				list.add(e);
+			}
+			return list;
+		}
 		return start(tag);
 	}
 
 	/**
-	 * Classes extending AbstractTagProcessor should override the start element for actions that should be done in
+	 * Classes extending AbstractTagProcessor should override this method for actions that should be done in
 	 * {@link TagProcessor#startElement(Tag)}. The {@link AbstractTagProcessor#startElement(Tag)} calls this method
 	 * after or before doing certain stuff, (see it's description).
 	 *
@@ -97,13 +108,33 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	public List<Element> content(final Tag tag, final String content) {
 		return new ArrayList<Element>(0);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
+	/**
+	 * Checks for {@link CSS.Property#PAGE_BREAK_AFTER}, if the value is always a new page is inserted
 	 */
-	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+	public final List<Element> endElement(Tag tag, List<Element> currentContent) {
+		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_AFTER);
+		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
+			List<Element> list = new ArrayList<Element>(2);
+			for (Element e : end(tag, currentContent)) {
+				list.add(e);
+			}
+			list.add(Chunk.NEXTPAGE);
+			return list;
+		}
+		return end(tag, currentContent);
+	}
+
+	/**
+	 * Classes extending AbstractTagProcessor should override this method for
+	 * actions that should be done in {@link TagProcessor#endElement(Tag, List)}.
+	 * The {@link AbstractTagProcessor#endElement(Tag, List)} calls this method
+	 * after or before doing certain stuff, (see it's description).
+	 * 
+	 * @param tag
+	 * @param currentContent
+	 * @return
+	 */
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		return new ArrayList<Element>(0);
 	}
 

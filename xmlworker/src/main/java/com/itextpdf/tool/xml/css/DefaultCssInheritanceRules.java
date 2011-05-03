@@ -54,25 +54,35 @@ import com.itextpdf.tool.xml.Tag;
  */
 public class DefaultCssInheritanceRules implements CssInheritanceRules {
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.css.CssInheritanceRules#inheritCssTag(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.itextpdf.tool.xml.css.CssInheritanceRules#inheritCssTag(java.lang
+	 * .String)
 	 */
 	public boolean inheritCssTag(final String tag) {
 		return true;
 	}
 
-	List<String> global = Arrays.asList(new String[] { "width", "height", "min-width", "max-width", "min-height", "max-height", "margin", "margin-left", "margin-right", "margin-top",
+	List<String> global = Arrays.asList(new String[] { "width", "height", "min-width", "max-width", "min-height",
+			"max-height", "margin", "margin-left", "margin-right", "margin-top",
 			"margin-bottom", "padding", "padding-left", "padding-right", "padding-top", "padding-bottom",
 			"border-top-width", "border-top-style", "border-top-color", "border-bottom-width",
 			"border-bottom-style", "border-bottom-color", "border-left-width", "border-left-style",
-			"border-left-color", "border-right-width", "border-right-style", "border-right-color" });
+			"border-left-color", "border-right-width", "border-right-style", "border-right-color",
+			CSS.Property.PAGE_BREAK_BEFORE ,CSS.Property.PAGE_BREAK_AFTER });
 	List<String> table = Arrays.asList(new String[] { "line-height", "font-size", "font-style", "font-weight",
 			"text-indent" });
 	// styles that should not be applied on the content of a td-tag.
 	List<String> td = Arrays.asList(new String[] { "vertical-align" });
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.css.CssInheritanceRules#inheritCssSelector(com.itextpdf.tool.xml.Tag, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.itextpdf.tool.xml.css.CssInheritanceRules#inheritCssSelector(com.
+	 * itextpdf.tool.xml.Tag, java.lang.String)
 	 */
 	public boolean inheritCssSelector(final Tag tag, final String key) {
 		if (global.contains(key)) {

@@ -52,7 +52,7 @@ public class OrderedUnorderedListTest {
 
 	@Test
 	public void testNoListMarginAndPadding(){
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.endElement(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
 		assertEquals(50f+25f-12f,((ListItem)endList.getItems().get(0)).getSpacingBefore(),0f);
 		assertEquals(50f+25f,((ListItem)endList.getItems().get(0)).getSpacingAfter(),0f);
 	}
@@ -60,7 +60,7 @@ public class OrderedUnorderedListTest {
 	@Test
 	public void testNoListPaddingTop(){
 		ul.getCSS().put("margin-top", "100pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.endElement(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
 		assertEquals(100f+25f-12f,((ListItem)endList.getItems().get(0)).getSpacingBefore(),0f);
 	}
 
@@ -68,7 +68,7 @@ public class OrderedUnorderedListTest {
 	public void testNoListPaddingTop2(){
 		ul.getCSS().put("margin-top", "100pt");
 		ul.getCSS().put("padding-top", "0pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.endElement(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
 		assertEquals(100f+25f-12f,((ListItem)endList.getItems().get(0)).getSpacingBefore(),0f);
 	}
 
@@ -76,14 +76,14 @@ public class OrderedUnorderedListTest {
 	public void testWithListPaddingTop(){
 		ul.getCSS().put("margin-top", "100pt");
 		ul.getCSS().put("padding-top", "25pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.endElement(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
 		assertEquals(100f+25f+50f+25f-12f,((ListItem)endList.getItems().get(0)).getSpacingBefore(),0f);
 	}
 
 	@Test
 	public void testNoListPaddingBottom(){
 		ul.getCSS().put("margin-bottom", "100pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.endElement(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
 		assertEquals(100f+25f,((ListItem)endList.getItems().get(0)).getSpacingAfter(),0f);
 	}
 
@@ -91,7 +91,7 @@ public class OrderedUnorderedListTest {
 	public void testNoListPaddingBottom2(){
 		ul.getCSS().put("margin-bottom", "100pt");
 		ul.getCSS().put("padding-bottom", "0pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.endElement(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
 		assertEquals(100f+25f,((ListItem)endList.getItems().get(0)).getSpacingAfter(),0f);
 	}
 
@@ -99,7 +99,7 @@ public class OrderedUnorderedListTest {
 	public void testWithListPaddingBottom(){
 		ul.getCSS().put("margin-bottom", "100pt");
 		ul.getCSS().put("padding-bottom", "25pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.endElement(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
 		assertEquals(100f+25f+50f+25f,((ListItem)endList.getItems().get(0)).getSpacingAfter(),0f);
 	}
 }

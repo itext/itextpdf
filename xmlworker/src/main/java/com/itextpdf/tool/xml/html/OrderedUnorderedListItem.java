@@ -77,7 +77,7 @@ public class OrderedUnorderedListItem extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
 	 */
 	@Override
-	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		ListItem li = new ListItem();
 		for (Element e : currentContent) {
 			li.add(e);

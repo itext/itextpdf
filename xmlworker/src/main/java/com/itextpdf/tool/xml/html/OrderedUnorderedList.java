@@ -61,7 +61,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
 	 */
 	@Override
-	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		List<Element> l = new ArrayList<Element>(1);
 		com.itextpdf.text.List list = new com.itextpdf.text.List();
 		if (currentContent.size() > 0) {

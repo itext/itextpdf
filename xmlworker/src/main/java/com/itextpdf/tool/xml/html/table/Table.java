@@ -103,7 +103,7 @@ public class Table extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
     @Override
-	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
     	int numberOfColumns = 0;
     	TableRowElement caption = null;
 		int rowNumber = 0;

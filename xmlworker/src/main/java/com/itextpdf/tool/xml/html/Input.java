@@ -48,7 +48,7 @@ public class Input extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
 	 */
 	@Override
-	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 //		configuration.getWriter().getVerticalPosition(false);
 //		TextField tf = new TextField(configuration.getWriter(), box, fieldName);
 		// How to wrap a textfield in a Element object?

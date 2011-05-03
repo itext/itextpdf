@@ -195,5 +195,6 @@ public final class CSS {
 		public static final String PERCENTAGE = "%";
 		public static final String EM = "em";
 		public static final String EX = "ex";
+		public static final String ALWAYS = "always";
 	}
 }

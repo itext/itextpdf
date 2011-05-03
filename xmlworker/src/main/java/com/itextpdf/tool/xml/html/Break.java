@@ -61,7 +61,7 @@ public class Break extends AbstractTagProcessor {
      * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
      */
     @Override
-	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
     	List<Element> l = new ArrayList<Element>(1);
     	l.add(Chunk.NEWLINE);
         return l;
