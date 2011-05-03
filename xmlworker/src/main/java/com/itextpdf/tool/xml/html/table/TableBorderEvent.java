@@ -45,6 +45,7 @@ package com.itextpdf.tool.xml.html.table;
 
 import java.util.Map;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -87,22 +88,34 @@ public class TableBorderEvent implements PdfPTableEvent{
         float y2 = height[height.length - 1]-effectivePadding;
         PdfContentByte cb = canvas[PdfPTable.LINECANVAS];
         cb.setLineWidth(left);
-        cb.setColorStroke(HtmlUtilities.decodeColor(css.get("border-left-color")));
+        BaseColor color = HtmlUtilities.decodeColor(css.get("border-left-color"));
+        if(color != null) {
+        	cb.setColorStroke(color);
+        }
         cb.moveTo(x1, y1); // start leftUpperCorner
         cb.lineTo(x1, y2); // left
         cb.stroke();
         cb.setLineWidth(bottom);
-        cb.setColorStroke(HtmlUtilities.decodeColor(css.get("border-bottom-color")));
+        color = HtmlUtilities.decodeColor(css.get("border-bottom-color"));
+        if(color != null) {
+        	cb.setColorStroke(color);
+        }
         cb.moveTo(x1, y2); // left
         cb.lineTo(x2, y2); // bottom
         cb.stroke();
         cb.setLineWidth(right);
-        cb.setColorStroke(HtmlUtilities.decodeColor(css.get("border-right-color")));
+        color = HtmlUtilities.decodeColor(css.get("border-right-color"));
+        if(color != null) {
+        	cb.setColorStroke(color);
+        }
         cb.moveTo(x2, y2); // bottom
         cb.lineTo(x2, y1); // right
         cb.stroke();
         cb.setLineWidth(top);
-        cb.setColorStroke(HtmlUtilities.decodeColor(css.get("border-top-color")));
+        color = HtmlUtilities.decodeColor(css.get("border-top-color"));
+        if(color != null) {
+        	cb.setColorStroke(color);
+        }
         cb.moveTo(x2, y1); // right
         cb.lineTo(x1, y1); // top
         cb.stroke();
