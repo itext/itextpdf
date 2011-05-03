@@ -1,0 +1,11 @@
+body {
+	margin: 20px;
+}
+
+.myclass {
+	color: blue;
+}
+
+#myid {
+	color: red;
+}
