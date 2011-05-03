@@ -1,5 +1,5 @@
 /*
- * $Id: $
+ * $Id$
  *
  * This file is part of the iText (R) project. Copyright (c) 1998-2011 1T3XT BVBA Authors: Balder Van Camp, Emiel
  * Ackermann, et al.

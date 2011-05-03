@@ -1,5 +1,5 @@
 /*
- * $Id: $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -74,12 +74,12 @@ public class Samples {
 
 	static {
 		FontFactory.registerDirectories();
+		Document.compress = false;
 	}
 
 	@Before
 	public void setup() {
 		list.add("xfa-support_");
-		list.add("Atkins_");
 		list.add("position_");
 		list.add("b-p_");
 		list.add("br-sub-sup_");
@@ -103,7 +103,6 @@ public class Samples {
 	@Test
 	public void createAllSamples() throws IOException {
 		for (String str : list) {
-			Document.compress = false;
 			final Document doc = new Document();
 			PdfWriter writer = null;
 			try {

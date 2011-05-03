@@ -1,5 +1,5 @@
 /*
- * $Id: TagProcessor.java 346 2011-05-02 14:02:36Z balder $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA

@@ -1,5 +1,5 @@
 /*
- * $Id: package-info.java 345 2011-05-02 12:55:24Z balder $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA

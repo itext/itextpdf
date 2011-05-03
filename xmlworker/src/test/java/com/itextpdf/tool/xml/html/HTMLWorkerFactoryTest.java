@@ -1,5 +1,5 @@
 /*
- * $Id: $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -88,23 +88,34 @@ public class HTMLWorkerFactoryTest {
 //    private static final String TEST = "text-indent_text-decoration_";
 //    private static final String TEST = "comment-double-print_";
 //    private static final String TEST = "tab_";
-	  private static final String TEST = "table_";
+//	  private static final String TEST = "table_";
 //	  private static final String TEST = "lists_";
 //	  private static final String TEST = "img_";
 //	  private static final String TEST = "position_";
 //	  private static final String TEST = "h_";
 //	  private static final String TEST = "booksales_";
-//	  private static final String TEST = "index_";
+	  private static final String TEST = "index_";
 //	  private static final String TEST = "lineheight_";
 
     static {
     	FontFactory.registerDirectories();
+    	LoggerFactory.getInstance().setLogger(new Logger() {
+
+			public void log(final String string) {
+				System.out.println(string);
+			}
+
+			public void log(final Class<?> klass, final String msg) {
+				System.out.println(String.format("[%s]\t%s",klass.getName(), msg));
+
+			}
+		});
+    	Document.compress = false;
     }
     private final CssUtils utils = CssUtils.getInstance();
 
 	@Test
 	public void parseXfaOnlyXML() throws IOException {
-		Document.compress = false;
 		final Document doc = new Document(PageSize.A4);
 		float margin = utils.parseValueToPt("10%", PageSize.A4.getWidth());
 		doc.setMargins(margin, margin, margin, margin);
@@ -122,17 +133,7 @@ public class HTMLWorkerFactoryTest {
 
 		conf.tagProcessorFactory(new Tags().getHtmlTagProcessorFactory()).cssResolver(cssResolver)
 				.acceptUnknown(true);
-		LoggerFactory.getInstance().setLogger(new Logger() {
-
-			public void log(final String string) {
-				System.out.println(string);
-			}
-
-			public void log(final Class<?> klass, final String msg) {
-				System.out.println(String.format("[%s]\t%s",klass.getName(), msg));
-
-			}
-		});
+		
 		BufferedInputStream bis = new BufferedInputStream(HTMLWorkerFactoryTest.class.getResourceAsStream(SNIPPETS+TEST+"snippet.html"));
 		XMLWorkerHelper helper = new XMLWorkerHelper();
 		CssFile defaultCSS = helper.getDefaultCSS();

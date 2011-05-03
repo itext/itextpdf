@@ -1,5 +1,5 @@
 /*
- * $Id: $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -118,6 +118,8 @@ public final class CSS {
 		public static final String CAPTION_SIDE = "caption-side";
 		public static final String TAB_STOPS = "tab-stops";
 		public static final String XFA_TAB_STOPS = "xfa-tab-stops";
+		public static final String PAGE_BREAK_BEFORE = "page-break-before";
+		public static final String PAGE_BREAK_AFTER = "page-break-after";
 	}
 
 	/**
