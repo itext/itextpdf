@@ -129,12 +129,13 @@ public class StyleAttrCSSResolver implements CSSResolver {
 		// get css for this tag from resolver
 		Map<String, String> tagCss = new HashMap<String, String>();
 		if (null != cssFiles && cssFiles.hasFiles()) {
-			Map<String, String> css = cssFiles.getCSS(t);
-			if (null != css) {
-				for (Entry<String, String> entry : css.entrySet()) {
-					splitRules(tagCss,utils.stripDoubleSpacesAndTrim(entry.getKey()), utils.stripDoubleSpacesAndTrim(entry.getValue()));
-				}
-			}
+			tagCss = cssFiles.getCSS(t);
+//			Map<String, String> css = cssFiles.getCSS(t);
+//			if (null != css) {
+//				for (Entry<String, String> entry : css.entrySet()) {
+//					splitRules(tagCss,utils.stripDoubleSpacesAndTrim(entry.getKey()), utils.stripDoubleSpacesAndTrim(entry.getValue()));
+//				}
+//			}
 		}
 		// get css from style attr
 		if (null != t.getAttributes() && !t.getAttributes().isEmpty()) {

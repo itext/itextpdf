@@ -116,7 +116,10 @@ public class LoadCssThroughLinkStyleTagTest {
 		cssFiles.populateCss(props, "body");
 		Assert.assertTrue(props.containsKey("font-size"));
 		Assert.assertTrue(props.containsKey("color"));
-		Assert.assertTrue(props.containsKey("margin"));
+		Assert.assertTrue(props.containsKey("margin-left"));
+		Assert.assertTrue(props.containsKey("margin-right"));
+		Assert.assertTrue(props.containsKey("margin-top"));
+		Assert.assertTrue(props.containsKey("margin-bottom"));
 	}
 	@Test
 	public void parse2CsszFilePluseStyleTagAndValidate() throws IOException {
@@ -125,7 +128,13 @@ public class LoadCssThroughLinkStyleTagTest {
 		cssFiles.populateCss(props, "body");
 		Assert.assertTrue(props.containsKey("font-size"));
 		Assert.assertTrue(props.containsKey("color"));
-		Assert.assertTrue(props.containsKey("margin"));
-		Assert.assertTrue(props.containsKey("padding"));
+		Assert.assertTrue(props.containsKey("margin-left"));
+		Assert.assertTrue(props.containsKey("margin-right"));
+		Assert.assertTrue(props.containsKey("margin-top"));
+		Assert.assertTrue(props.containsKey("margin-bottom"));
+		Assert.assertTrue(props.containsKey("padding-left"));
+		Assert.assertTrue(props.containsKey("padding-right"));
+		Assert.assertTrue(props.containsKey("padding-top"));
+		Assert.assertTrue(props.containsKey("padding-bottom"));
 	}
 }

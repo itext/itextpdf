@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.itextpdf.tool.xml.Tag;
@@ -91,7 +92,32 @@ public class CssFilesImpl implements CssFiles {
 	 */
 	public void populateCss(final Map<String, String> aggregatedProps, final String selector) {
 		for (CssFile cssFile : this.files) {
-			aggregatedProps.putAll(cssFile.get(selector));
+			Map<String, String> t = cssFile.get(selector);
+			Map<String, String> css = new HashMap<String, String>();
+			for (Entry<String, String> e : t.entrySet()) {
+				String key = utils.stripDoubleSpacesAndTrim(e.getKey());
+				String value = utils.stripDoubleSpacesAndTrim(e.getValue());
+				if (CSS.Property.BORDER.equalsIgnoreCase(key)) {
+					css.putAll(utils.parseBorder(value));
+				} else if (CSS.Property.MARGIN.equalsIgnoreCase(key)) {
+					css.putAll(utils.parseBoxValues(value, "margin-", ""));
+				} else if (CSS.Property.BORDER_WIDTH.equalsIgnoreCase(key)) {
+					css.putAll(utils.parseBoxValues(value, "border-", "-width"));
+				} else if (CSS.Property.BORDER_STYLE.equalsIgnoreCase(key)) {
+					css.putAll(utils.parseBoxValues(value, "border-", "-style"));
+				} else if (CSS.Property.BORDER_COLOR.equalsIgnoreCase(key)) {
+					css.putAll(utils.parseBoxValues(value, "border-", "-color"));
+				} else if (CSS.Property.PADDING.equalsIgnoreCase(key)) {
+					css.putAll(utils.parseBoxValues(value, "padding-", ""));
+				} else if (CSS.Property.FONT.equalsIgnoreCase(key)) {
+					css.putAll(utils.processFont(value));
+				} else if (CSS.Property.LIST_STYLE.equalsIgnoreCase(key)) {
+					css.putAll(utils.processListStyle(value));
+				} else {
+					css.put(key, value);
+				}
+			}
+			aggregatedProps.putAll(css);
 		}
 	}
 
