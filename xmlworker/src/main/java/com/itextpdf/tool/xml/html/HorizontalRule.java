@@ -44,12 +44,12 @@
 package com.itextpdf.tool.xml.html;
 
 import java.util.List;
+
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.LineSeparatorCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 
@@ -58,9 +58,6 @@ import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
  *
  */
 public class HorizontalRule extends AbstractTagProcessor {
-
-	private final CssUtils utils = CssUtils.getInstance();
-
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)

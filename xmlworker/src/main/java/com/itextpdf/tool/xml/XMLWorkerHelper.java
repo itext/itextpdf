@@ -56,8 +56,6 @@ import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.Tags;
 import com.itextpdf.tool.xml.parser.XMLParser;
-import com.itextpdf.tool.xml.parser.io.Appender;
-import com.itextpdf.tool.xml.parser.io.ParserListenerWriter;
 
 /**
  * A helper class for parsing XHTML/CSS flow to PDF.
