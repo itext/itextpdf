@@ -77,7 +77,8 @@ public class PointData extends PdfDictionary {
 
 	/**
 	 * Adds a point to the Point Data dictionary.
-	 * @param point	an XPTS value
+	 * @param value	an XPTS value
+	 * @param identifier
 	 */
 	public void addXPTSValue(PdfNumber value, PtIdentifier identifier) {
 		xpts.add(value);

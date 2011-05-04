@@ -167,8 +167,6 @@ public class PdfPRow {
 	
 	/**
 	 * Calculates the heights of each cell in the row.
-	 * 
-	 * @return the maximum height of the row.
 	 */
 	protected void calculateHeights() {
 		maxHeight = 0;

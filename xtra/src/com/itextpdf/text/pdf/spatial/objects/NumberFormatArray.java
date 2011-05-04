@@ -66,7 +66,7 @@ public class NumberFormatArray extends PdfArray {
 	
 	/**
 	 * Creates a PdfArray consisting of NumberFormatDictionary objects.
-	 * @param numbers a List containing NumberFormatDictionary objects
+	 * @param formats a List containing NumberFormatDictionary objects
 	 */
 	public NumberFormatArray(List<NumberFormatDictionary> formats) {
 		super();

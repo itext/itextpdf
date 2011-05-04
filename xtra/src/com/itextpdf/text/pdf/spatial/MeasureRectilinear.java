@@ -167,7 +167,7 @@ public class MeasureRectilinear extends Measure {
 	 * which x and y increase in value from this origin shall be determined by
 	 * {@link Viewport#setBBox(com.itextpdf.text.Rectangle)} entry.<br />
 	 * Default value: the first coordinate pair (lower-left corner) of the
-	 * rectangle specified by the viewport’s BBox entry.
+	 * rectangle specified by the viewport's BBox entry.
 	 * 
 	 * @param o an XYArray
 	 */

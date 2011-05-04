@@ -173,7 +173,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	}
 
     /**
-     * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#startElement(java.lang.String, java.util.HashMap)
+     * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#startElement(java.lang.String, java.util.Map)
      */
     public void startElement(String tag, Map<String, String> attrs) {
 		HTMLTagProcessor htmlTag = tags.get(tag);

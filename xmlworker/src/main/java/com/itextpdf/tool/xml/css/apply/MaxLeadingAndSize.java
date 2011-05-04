@@ -114,7 +114,7 @@ public final class MaxLeadingAndSize {
 	 * </ul>
 	 * Then this methods calculates the leading based on the font-size and the line-height.<br /><br />
 	 * If no line-height was given or if the line-height:normal was given, leading = font-size * 1.5f.
-	 * @param value string containing the line-height style value.
+	 * @param t tag of which the leading has to be calculated.
 	 * @return float containing the leading of the tag.
 	 */
 	public Float calculateLeading(final Tag t) {

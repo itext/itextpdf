@@ -155,7 +155,7 @@ public class CssStateController {
 	/**
 	 * Processes the character, delegates to states.
 	 *
-	 * @param i
+	 * @param c a character that needs to be processed
 	 */
 	public void process(final char c) {
 		current.process(c);

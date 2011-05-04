@@ -81,8 +81,8 @@ public class NumberFormatDictionary extends PdfDictionary {
 	 * previous number format array element to obtain a value in the units of
 	 * this dictionary. When this entry is in the first number format in the
 	 * array, its meaning (that is, what it shall be multiplied by) depends on
-	 * which entry in the {@link RectilinearMeasure} references the
-	 * {@link NumberFormat} array.
+	 * which entry in the RectilinearMeasure references the NumberFormat
+	 * array.
 	 * 
 	 * @param n
 	 */
@@ -169,7 +169,7 @@ public class NumberFormatDictionary extends PdfDictionary {
 	 * empty string indicates that no text shall be added.<br />
 	 * Default value: A single ASCII SPACE character "\u0020"
 	 * 
-	 * @param ps
+	 * @param ss
 	 */
 	public void setLabelRightString(PdfString ss) {
 		super.put(PdfName.SS, ss);
@@ -180,7 +180,7 @@ public class NumberFormatDictionary extends PdfDictionary {
 	 * to the calculated unit value. The characters
 	 * specified by setLabelLeftString and setLabelRightString shall be concatenated before considering this
 	 * entry. Default value: suffix.
-	 * @param PdfName.S or PdfName.P
+	 * @param pos PdfName.S or PdfName.P
 	 */
 	public void setLabelPosition(PdfName pos) {
 		super.put(PdfName.O, pos);

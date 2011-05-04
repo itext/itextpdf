@@ -65,8 +65,8 @@ public class ImageRetrieve {
 		this.provider = provider;
 	}
 	/**
-	 * @param src
-	 * @return
+	 * @param src an URI that can be used to retrieve an image
+	 * @return an iText Image object
 	 */
 	public com.itextpdf.text.Image retrieveImage(final String src) {
 		com.itextpdf.text.Image img;
