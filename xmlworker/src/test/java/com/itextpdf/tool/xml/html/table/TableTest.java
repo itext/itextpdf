@@ -54,10 +54,10 @@ import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
+import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 
@@ -72,14 +72,14 @@ public class TableTest {
 	private final Chunk extra = new Chunk("extra content");
 
 	private TableRowElement row1;
-	private final PdfPCell cell1Row1 = new PdfPCell();
-	private final PdfPCell cell2Row1 = new PdfPCell();
-	private final PdfPCell cell3Row1 = new PdfPCell();
-	private final PdfPCell cell4Row1 = new PdfPCell();
+	private final HtmlCell cell1Row1 = new HtmlCell();
+	private final HtmlCell cell2Row1 = new HtmlCell();
+	private final HtmlCell cell3Row1 = new HtmlCell();
+	private final HtmlCell cell4Row1 = new HtmlCell();
 	private TableRowElement row2;
-	private final PdfPCell cell1Row2 = new PdfPCell();
-	private final PdfPCell cell2Row2 = new PdfPCell();
-	private final PdfPCell cell3Row2 = new PdfPCell();
+	private final HtmlCell cell1Row2 = new HtmlCell();
+	private final HtmlCell cell2Row2 = new HtmlCell();
+	private final HtmlCell cell3Row2 = new HtmlCell();
 
 	@Before
 	public void setup() {
@@ -127,10 +127,10 @@ public class TableTest {
 	}
 	@Test
 	public void resolveColspan() {
-		assertEquals(2, ((PdfPCell)((TableRowElement) rows.get(1)).getContent().get(1)).getColspan());
+		assertEquals(2, ((HtmlCell)((TableRowElement) rows.get(1)).getContent().get(1)).getColspan());
 	}
 	@Test
 	public void resolveRowspan() {
-		assertEquals(2, ((PdfPCell)((TableRowElement) rows.get(0)).getContent().get(3)).getRowspan());
+		assertEquals(2, ((HtmlCell)((TableRowElement) rows.get(0)).getContent().get(3)).getRowspan());
 	}
 }
