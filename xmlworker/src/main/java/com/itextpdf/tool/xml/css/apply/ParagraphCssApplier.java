@@ -186,13 +186,13 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 		}
 		if(css.get(CSS.Property.POSITION).equalsIgnoreCase(CSS.Value.RELATIVE)) {
 			float textHeight = utils.validateTextHeight(css, p.getLeading() * numberOfLines);
-			if (configuration.getMemory().get("verticalPosition") == null) {
+			if (configuration.getMemory().get(XMLWorkerConfig.VERTICAL_POSITION) == null) {
 				ury += configuration.getWriter().getVerticalPosition(false);
 			} else {
-				ury += (Float)configuration.getMemory().get("verticalPosition");
+				ury += (Float)configuration.getMemory().get(XMLWorkerConfig.VERTICAL_POSITION);
 			}
 			lly = ury - textHeight;
-			configuration.getMemory().put("verticalPosition", textHeight + p.getSpacingBefore() + p.getSpacingAfter());
+			configuration.getMemory().put(XMLWorkerConfig.VERTICAL_POSITION, textHeight + p.getSpacingBefore() + p.getSpacingAfter());
 		} else { //position:"absolute"
 			lly = ury - utils.validateTextHeight(css, p.getLeading()*numberOfLines);
 		}

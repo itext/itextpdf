@@ -58,6 +58,10 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 public interface XMLWorkerConfig {
 
+	public static final String CURRENT_BOOKMARK = "CURRENT_BOOKMARK";
+	public static final String HEADER_NUMBER_LEVEL = "HEADER_NR_LVL";
+	public static final String VERTICAL_POSITION = "verticalPosition";
+
 	/**
 	 * The TagProcessorFactory to use in the XMLWorker.
 	 * 
@@ -139,6 +143,11 @@ public interface XMLWorkerConfig {
 	 * @return the character set used.
 	 */
 	Charset charSet();
+
+	/**
+	 * @return true if h1 to h6 tags should be auto-bookmarked
+	 */
+	boolean autoBookmark();
 
 
 }

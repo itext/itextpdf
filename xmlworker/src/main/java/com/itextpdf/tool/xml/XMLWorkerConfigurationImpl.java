@@ -67,9 +67,8 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	private PdfWriter writer;
 	private Document doc;
 	private final Map<String, Object> memory;
-	private final float ury = 0;
 	private Charset charSet = Charset.defaultCharset();
-	private boolean hasLogger = false;
+	private boolean isAutoBookMark = true;
 
 	/**
 	 *
@@ -253,5 +252,20 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	 */
 	public Charset charSet() {
 		return charSet;
+	}
+	/**
+	 * Defaults to true
+	 * @see XMLWorkerConfig#autoBookmark()
+	 */
+	public boolean autoBookmark() {
+		return this.isAutoBookMark;
+	}
+	
+	/**
+	 * 
+	 * @param bookmark true to enable auto bookmarking of headers, false otherwise.
+	 */
+	public void autoBookMark(boolean bookmark) {
+		this.isAutoBookMark = bookmark;
 	}
 }

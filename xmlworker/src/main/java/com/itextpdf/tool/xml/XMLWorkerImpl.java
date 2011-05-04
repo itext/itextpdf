@@ -268,6 +268,7 @@ public class XMLWorkerImpl implements XMLWorker {
 	 */
 	public void startDocument() {
 		this.currentContent.clear();
+		this.config.getMemory().clear();
 		// listener.startDocument();
 	}
 

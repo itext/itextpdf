@@ -45,11 +45,17 @@ package com.itextpdf.tool.xml.html;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfDestination;
+import com.itextpdf.text.pdf.PdfOutline;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 
@@ -78,15 +84,55 @@ public class Header extends AbstractTagProcessor {
 	 */
     @Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-    	List<Element> l = new ArrayList<Element>(1);
+		List<Element> l = new ArrayList<Element>(1);
 		if (currentContent.size() > 0) {
-			Paragraph p = (Paragraph) Tags.currentContentToParagraph(currentContent, true);
-			l.add(new ParagraphCssApplier(configuration).apply(p, tag));
+			Paragraph p = new ParagraphCssApplier(configuration).apply(
+					(Paragraph) Tags.currentContentToParagraph(currentContent, true), tag);
+			if (configuration.autoBookmark() && null != configuration.getWriter()) {
+				Map<String, Object> memory = configuration.getMemory();
+				Object levelObj = memory.get(XMLWorkerConfig.HEADER_NUMBER_LEVEL);
+				int level = getLevel(tag);
+				PdfWriter writer = configuration.getWriter();
+				if (null != levelObj) {
+					PdfOutline outline;
+					int oldLevel = ((Integer) levelObj).intValue();
+					if (oldLevel < level) {
+						memory.put(tag.getTag(), Integer.valueOf(0));
+						outline = (PdfOutline) memory.get(XMLWorkerConfig.CURRENT_BOOKMARK);
+					} else if (oldLevel > level) {
+						memory.put("h" + Integer.toString(oldLevel), Integer.valueOf(0));
+						outline = (PdfOutline) memory.get(XMLWorkerConfig.CURRENT_BOOKMARK);
+						outline = outline.parent().parent();
+					} else {
+						outline = (PdfOutline) memory.get(XMLWorkerConfig.CURRENT_BOOKMARK);
+						outline = outline.parent();
+					}
+					PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
+							writer.getVerticalPosition(false), 0);
+					PdfOutline outline2 = new PdfOutline(outline, destination, p);
+					memory.put(XMLWorkerConfig.CURRENT_BOOKMARK, outline2);
+				} else {
+					// first entry
+					PdfOutline root = writer.getRootOutline();
+					root.setDestinationPage(writer.getPageReference(writer.getCurrentPageNumber()));
+					memory.put(XMLWorkerConfig.CURRENT_BOOKMARK, root);
+				}
+				memory.put(XMLWorkerConfig.HEADER_NUMBER_LEVEL, Integer.valueOf(level));
+			}
+			l.add(p);
 		}
 		return l;
 	}
 
-    /*
+    /**
+	 * @param tag
+	 * @return
+	 */
+	private int getLevel(Tag tag) {
+		return Integer.parseInt(Character.toString(tag.getTag().charAt(1)));
+	}
+
+	/*
      * (non-Javadoc)
      *
      * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()

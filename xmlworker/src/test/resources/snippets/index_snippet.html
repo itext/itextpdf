@@ -1,54 +1,60 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <html>
 <head>
-<!--ISO-8859-1 <link rel="stylesheet" href="css/layout.css" type="text/css" />  -->
+<!-- <link rel="stylesheet" href="css/layout.css" type="text/css" />  -->
 <style type="text/css">
 body {
 	text-align: left;
 	margin-left: 10%;
 	margin-right: 10%;
 }
-tr {vertical-align:top;}
-p, pre, code {
+
+tr {
+	vertical-align: top;
+}
+
+p,pre,code {
 	text-align: left;
 }
-table, tr, td {
-	border: 1px dotted red;
+
+table,tr,td {
+	border: 1px dotted gray;
 }
 </style>
 </head>
 <body>
 	<div id="header">
-	<h1>
-		iText<sup>&reg;</sup> XMLWorker
-	</h1>
+		<h1>iText<sup>&reg;</sup> XMLWorker</h1>
 	</div>
 	<h2>Introduction</h2>
 	<p>
-		The iText<sup>&reg;</sup> XMLWorker is a package created for transforming
-		XML files to PDF. Although parsing XML was already possible with iText,
-		a new version has been created. Many developers use the XML to PDF
-		capabilities to parse simple HTML/XHTML snippets to PDF but the
-		support for CSS was somewhat limited. In the new XMLWorker there is
-		better support for CSS. Initially this is done purely for parsing
-		XHTML tags with CSS2, which is created with a wysiwyg editors (e.g.
-		TinyMCE or CKEditor) for instance. Of course it does not end here. By using the
-		XMLWorker it is possible to parse all kinds of XML and use CSS in
-		them, although this requires specific implementation of the XML-tags and/or CSS-styles.
+		The iText<sup>&reg;</sup> XMLWorker is a package created for
+		transforming XML files to PDF. Although parsing XML was already
+		possible with iText, a new version has been created. Many developers
+		use the XML to PDF capabilities to parse simple HTML/XHTML snippets to
+		PDF but the support for CSS was somewhat limited. In the new XMLWorker
+		there is better support for CSS. Initially this is done purely for
+		parsing XHTML tags with CSS2, which is created with a wysiwyg editors
+		(e.g. TinyMCE or CKEditor) for instance. Of course it does not end
+		here. By using the XMLWorker it is possible to parse all kinds of XML
+		and use CSS in them, although this requires specific implementation of
+		the XML-tags and/or CSS-styles.
 	</p>
 	<h2>Current Limitations</h2>
-	<p style="page-break-after: always;">
+	<p>
 		The XMLWorker is initially created to parse snippets and absolute
-		positioning is not yet supported. As a result, it is currently
-		not possible to surround everything with borders for instance. For the current CSS limitations
-		see <a href="#csssupport">CSS Support</a>.
+		positioning is not yet supported. As a result, it is currently not
+		possible to surround everything with borders for instance. For the
+		current CSS limitations see <a href="#csssupport">CSS Support</a>.
 	</p>
 	<h2>Parsing XHTML/CSS snippets</h2>
-	<p>Parsing XHTML snippets can be done with the default
-		implementation for parsing HTML to PDF. See <a href="#examples">code examples</a> for usage tips.</p>
+	<p>
+		Parsing XHTML snippets can be done with the default implementation for
+		parsing HTML to PDF. See <a href="#examples">code examples</a> for
+		usage tips.
+	</p>
 	<h3>Supported tags</h3>
 	<table>
-		<tr style="vertical-align:top">
+		<tr style="vertical-align: top">
 			<th>Tag</th>
 			<th>Comment</th>
 			<th>Supported Attributes</th>
@@ -150,7 +156,9 @@ table, tr, td {
 		</tr>
 		<tr>
 			<td>table</td>
-			<td>supported<br /><strong>nested tables not supported</strong></td>
+			<td>supported<br />
+			<strong>nested tables not supported</strong>
+			</td>
 			<td>width</td>
 		</tr>
 		<tr>
@@ -215,7 +223,7 @@ table, tr, td {
 		</tr>
 	</table>
 	<h3>Known issues</h3>
-	<p style="page-break-after: always;">
+	<p>
 		The implementation is not fully finished. There are a couple areas
 		that need to be fixed/improved and are still worked on.<br />It is
 		possible not all CSS will behave as expected, there is a lot and not
@@ -763,17 +771,17 @@ table, tr, td {
 		</tr>
 		<tr>
 			<td>page-break-after</td>
-			<td>n</td>
-			<td>n</td>
-			<td>n</td>
-			<td></td>
+			<td>s - only value always</td>
+			<td>s - only value always</td>
+			<td>s - only value always</td>
+			<td>s - only value always</td>
 		</tr>
 		<tr>
 			<td>page-break-before</td>
-			<td>n</td>
-			<td>n</td>
-			<td>n</td>
-			<td></td>
+			<td>s - only value always</td>
+			<td>s - only value always</td>
+			<td>s - only value always</td>
+			<td>s - only value always</td>
 		</tr>
 		<tr>
 			<td>page-break-inside</td>
@@ -909,7 +917,16 @@ table, tr, td {
 			<td></td>
 		</tr>
 	</table>
-	<h2 style="page-break-before: always;"><a name="examples">Examples</a></h2>
+	<h3>Notes</h3>
+	<p>When using
+	<code>page-break-before</code>
+	and
+	<code>page-break-after</code>
+	inside tags that are 1 element in PDF (like lists or tables) the
+	outcome of adding a new page is unpredicted.</p>
+	<h2>
+		<a name="examples">Examples</a>
+	</h2>
 	<h3>Default XHTML/CSS processing (Java):</h3>
 	<p>The quick way</p>
 	<pre>
@@ -968,26 +985,33 @@ table, tr, td {
 	</pre>
 	<h2>Demo</h2>
 	<p>
-		There is an <a href="http://demo.itextsupport.com/xmlworker">online demo</a> available where input can be
-		done through a tinyMCE editor and a PDF is created from the provided
-		input.
+		There is an <a href="http://demo.itextsupport.com/xmlworker">online
+			demo</a> available where input can be done through a tinyMCE editor and a
+		PDF is created from the provided input.
 	</p>
 	<h2>Plans for the future</h2>
 	<ul>
-		<li>support	absolute positioning, this would require an intermediate step to be	added to the current transformation process.</li>
-		<li>Provide a way to add none <code>com.itextpf.text.Element</code> objects to the document. (e.g. a ColumnText)</li>
+		<li>support absolute positioning, this would require an
+			intermediate step to be added to the current transformation process.</li>
+		<li>Provide a way to add none <code>com.itextpf.text.Element</code>
+			objects to the document. (e.g. a ColumnText)</li>
 	</ul>
 	<script type="text/javascript">
-	 var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-22083937-4']);
-	  _gaq.push(['_setDomainName', '.itextsupport.com']);
-	  _gaq.push(['_trackPageview']);
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-22083937-4' ]);
+		_gaq.push([ '_setDomainName', '.itextsupport.com' ]);
+		_gaq.push([ '_trackPageview' ]);
 
-	  (function() {
-	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
 	</script>
 </body>
 </html>
