@@ -69,8 +69,10 @@ public final class InlineImageUtils {
      * @since 5.0.4
      */
     public static class InlineImageParseException extends IOException{
-        
-        public InlineImageParseException(String message) {
+
+		private static final long serialVersionUID = 233760879000268548L;
+
+		public InlineImageParseException(String message) {
             super(message);
         }
 
@@ -141,7 +143,7 @@ public final class InlineImageUtils {
      * Parses an inline image from the provided content parser.  The parser must be positioned immediately following the BI operator in the content stream.
      * The parser will be left with current position immediately following the EI operator that terminates the inline image
      * @param ps the content parser to use for reading the image. 
-     * @param resources 
+     * @param colorSpaceDic a color space dictionary 
      * @return the parsed image
      * @throws IOException if anything goes wring with the parsing
      * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing

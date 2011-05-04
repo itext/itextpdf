@@ -1046,7 +1046,7 @@ public class PdfWriter extends DocWriter implements
 
     /**
      * Sets the Viewport for the next page.
-     * @param viewport an array consisting of Viewport dictionaries.
+     * @param vp an array consisting of Viewport dictionaries.
      * @since 5.1.0
      */
     public void setPageViewport(PdfArray vp) {
