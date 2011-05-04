@@ -82,7 +82,7 @@ public class Table extends AbstractTagProcessor {
 	 */
 	private static final CssUtils utils = CssUtils.getInstance();
 	private static final FontSizeTranslator fst = FontSizeTranslator.getInstance();
-	private final BorderStyleValues styleValues = new BorderStyleValues();
+	private final TableStyleValues styleValues = new TableStyleValues();
 
 	private final class TableRowElementComparator implements Comparator<Element> {
 		public int compare(final Element o1, final Element o2) {
@@ -143,7 +143,7 @@ public class Table extends AbstractTagProcessor {
 		for (Element row : currentContent) {
 			List<Element> cells = ((TableRowElement) row).getContent();
 			HtmlCell last = (HtmlCell) cells.get(cells.size()-1);
-			last.getBorderValues().setLastInRow(true);
+			last.getCellValues().setLastInRow(true);
 			last.setPaddingRight(last.getPaddingRight()+styleValues.getHorBorderSpacing());
 		}
 		float[] columnWidths = new float[numberOfColumns];
@@ -451,7 +451,7 @@ public class Table extends AbstractTagProcessor {
 		// colspan - 1, because one horBorderSpacing has been added to paddingLeft for all cells.
 		int spacingMultiplier = cell.getColspan() - 1;
 		// if lastInRow add one more horSpacing right of the cell.
-		spacingMultiplier += cell.getBorderValues().isLastInRow()?1:0;
+		spacingMultiplier += cell.getCellValues().isLastInRow()?1:0;
 		float spacing = spacingMultiplier*styleValues.getHorBorderSpacing();
 //		+ cell.getBorderValues().getBorderWidthLeft()/2
 //		+ cell.getBorderValues().getBorderWidthRight()/2;

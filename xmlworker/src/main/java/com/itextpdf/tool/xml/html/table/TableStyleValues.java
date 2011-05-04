@@ -49,7 +49,7 @@ import com.itextpdf.text.BaseColor;
  * @author Emiel Ackermann
  *
  */
-public class BorderStyleValues {
+public class TableStyleValues {
 	 	private float horBorderSpacing;
 	 	private float verBorderSpacing;
 		private float borderLeftWidth;
@@ -61,8 +61,9 @@ public class BorderStyleValues {
 		private float borderBottomWidth;
 		private BaseColor borderBottomColor;
 		private boolean isLastInRow = false;
+		private BaseColor background;
 
-		public BorderStyleValues() {
+		public TableStyleValues() {
 		}
 		public float getHorBorderSpacing() {
 			return horBorderSpacing;
@@ -195,5 +196,11 @@ public class BorderStyleValues {
 			borderLeftColor = color;
 			borderRightColor = color;
 			borderTopColor = color;
+		}
+		public void setBackground(final BaseColor background) {
+			this.background = background;
+		}
+		public BaseColor getBackground() {
+			return background;
 		}
 	}

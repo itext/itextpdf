@@ -49,7 +49,6 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPCellEvent;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 
 
 /**
@@ -57,9 +56,9 @@ import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
  *
  */
 public class CellSpacingEvent implements PdfPCellEvent {
-	private final BorderStyleValues styleValues;
+	private final TableStyleValues styleValues;
 
-	public CellSpacingEvent(final BorderStyleValues styleValues) {
+	public CellSpacingEvent(final TableStyleValues styleValues) {
 		this.styleValues = styleValues;
 	}
 
@@ -82,6 +81,13 @@ public class CellSpacingEvent implements PdfPCellEvent {
 		effectivePadding = styleValues.getBorderWidthBottom()/2;
 		float y2 = position.getBottom() + effectivePadding;
 		PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
+		BaseColor color = styleValues.getBackground();
+		if(color != null) {
+        	cb.setColorStroke(color);
+        	cb.setColorFill(color);
+        	cb.rectangle(x1, y1, x2-x1, y2-y1);
+        	cb.fill();
+        }
 		BaseColor borderColor = styleValues.getBorderColorLeft();
 		// Checking one border side is enough
 		if(borderColor != null) {

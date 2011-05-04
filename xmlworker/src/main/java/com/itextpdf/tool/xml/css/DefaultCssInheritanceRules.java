@@ -56,7 +56,7 @@ public class DefaultCssInheritanceRules implements CssInheritanceRules {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.itextpdf.tool.xml.css.CssInheritanceRules#inheritCssTag(java.lang
 	 * .String)
@@ -72,14 +72,15 @@ public class DefaultCssInheritanceRules implements CssInheritanceRules {
 			"border-bottom-style", "border-bottom-color", "border-left-width", "border-left-style",
 			"border-left-color", "border-right-width", "border-right-style", "border-right-color",
 			CSS.Property.PAGE_BREAK_BEFORE ,CSS.Property.PAGE_BREAK_AFTER });
-	List<String> table = Arrays.asList(new String[] { "line-height", "font-size", "font-style", "font-weight",
+	List<String> parentToTable = Arrays.asList(new String[] { "line-height", "font-size", "font-style", "font-weight",
 			"text-indent" });
+	List<String> tableToRow = Arrays.asList(new String[] { "background-color" });
 	// styles that should not be applied on the content of a td-tag.
-	List<String> td = Arrays.asList(new String[] { "vertical-align" });
+	List<String> tdToContent = Arrays.asList(new String[] { "vertical-align" });
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.itextpdf.tool.xml.css.CssInheritanceRules#inheritCssSelector(com.
 	 * itextpdf.tool.xml.Tag, java.lang.String)
@@ -88,11 +89,14 @@ public class DefaultCssInheritanceRules implements CssInheritanceRules {
 		if (global.contains(key)) {
 			return false;
 		}
-		if ("table".equals(tag.getTag())) { // from parent to table
-			return !table.contains(key);
+		if ("table".equals(tag.getTag())) {
+			return !parentToTable.contains(key);
+		}
+		if ("table".equals(tag.getParent().getTag())) {
+			return !tableToRow.contains(key);
 		}
 		if ("td".equalsIgnoreCase(tag.getParent().getTag())) {
-			return !td.contains(key);
+			return !tdToContent.contains(key);
 		}
 		return true;
 	}

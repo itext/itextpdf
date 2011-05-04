@@ -62,13 +62,13 @@ public class TableBorderEvent implements PdfPTableEvent{
 	 *
 	 */
 	private static final CssUtils utils = CssUtils.getInstance();
-	private final BorderStyleValues styleValues;
+	private final TableStyleValues styleValues;
 	private final Map<String, String> css;
 	/**
      * @see com.itextpdf.text.pdf.PdfPTableEvent#tableLayout(com.itextpdf.text.pdf.PdfPTable,
      *      float[][], float[], int, int, com.itextpdf.text.pdf.PdfContentByte[])
      */
-    public TableBorderEvent(final BorderStyleValues styleValues, final Map<String, String> css) {
+    public TableBorderEvent(final TableStyleValues styleValues, final Map<String, String> css) {
     	this.styleValues = styleValues;
     	this.css = css;
     }
@@ -87,16 +87,14 @@ public class TableBorderEvent implements PdfPTableEvent{
         float y1 = height[0]+effectivePadding;
 		effectivePadding = bottom/2+styleValues.getVerBorderSpacing();
         float y2 = height[height.length - 1]-effectivePadding;
-        PdfContentByte cb = canvas[PdfPTable.LINECANVAS];
+        PdfContentByte cb = canvas[PdfPTable.BACKGROUNDCANVAS];
         BaseColor color = HtmlUtilities.decodeColor(css.get(CSS.Property.BACKGROUND_COLOR));
         if(color != null) {
-        	cb.setLineWidth(styleValues.getVerBorderSpacing());
-        	cb.setColorStroke(color);
-        	float y = height[height.length - 1] - styleValues.getVerBorderSpacing()/2;
-        	cb.moveTo(widths[0]+left, y); // inner lower left
-        	cb.lineTo(widths[widths.length-1]-right, y); // inner lower right
-        	cb.stroke();
+        	cb.setColorFill(color);
+        	cb.rectangle(x1, y1, x2-x1, y2-y1);
+        	cb.fill();
         }
+        cb = canvas[PdfPTable.LINECANVAS];
         cb.setLineWidth(left);
         color = HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_LEFT_COLOR));
         setColorStroke(cb, color);

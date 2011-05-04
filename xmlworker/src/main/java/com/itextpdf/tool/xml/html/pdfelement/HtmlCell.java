@@ -44,11 +44,11 @@
 package com.itextpdf.tool.xml.html.pdfelement;
 
 import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.tool.xml.html.table.BorderStyleValues;
+import com.itextpdf.tool.xml.html.table.TableStyleValues;
 
 public class HtmlCell extends PdfPCell {
 	private float fixedWidth;
-	private BorderStyleValues border = new BorderStyleValues();
+	private TableStyleValues values = new TableStyleValues();
 
 	/**
 	 *
@@ -66,10 +66,10 @@ public class HtmlCell extends PdfPCell {
 		return fixedWidth;
 	}
 
-	public BorderStyleValues getBorderValues() {
-		return border;
+	public TableStyleValues getCellValues() {
+		return values;
 	}
-	public void setBorderValues(final BorderStyleValues border) {
-		this.border = border;
+	public void setCellValues(final TableStyleValues values) {
+		this.values = values;
 	}
 }

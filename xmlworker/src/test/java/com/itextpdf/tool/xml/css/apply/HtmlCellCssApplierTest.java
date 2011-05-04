@@ -125,10 +125,10 @@ public class HtmlCellCssApplierTest {
 		tag.getCSS().put("border-width-right", "7pt");
 		tag.getCSS().put("border-width-bottom", "8pt");
 		applier.apply(cell, tag);
-		assertEquals(5, cell.getBorderValues().getBorderWidthTop(), 0);
-		assertEquals(6, cell.getBorderValues().getBorderWidthLeft(), 0);
-		assertEquals(7, cell.getBorderValues().getBorderWidthRight(), 0);
-		assertEquals(8, cell.getBorderValues().getBorderWidthBottom(), 0);
+		assertEquals(5, cell.getCellValues().getBorderWidthTop(), 0);
+		assertEquals(6, cell.getCellValues().getBorderWidthLeft(), 0);
+		assertEquals(7, cell.getCellValues().getBorderWidthRight(), 0);
+		assertEquals(8, cell.getCellValues().getBorderWidthBottom(), 0);
 	}
 	@Test
 	public void resolveBorderColor() {
@@ -138,9 +138,9 @@ public class HtmlCellCssApplierTest {
 		tag.getCSS().put("border-color-right", "#0000ff");
 		tag.getCSS().put("border-color-bottom", "rgb(000,111,222)");
 		applier.apply(cell, tag);
-		assertEquals(BaseColor.RED, cell.getBorderValues().getBorderColorTop());
-		assertEquals(BaseColor.GREEN, cell.getBorderValues().getBorderColorLeft());
-		assertEquals(BaseColor.BLUE, cell.getBorderValues().getBorderColorRight());
-		assertEquals(new BaseColor(000,111,222), cell.getBorderValues().getBorderColorBottom());
+		assertEquals(BaseColor.RED, cell.getCellValues().getBorderColorTop());
+		assertEquals(BaseColor.GREEN, cell.getCellValues().getBorderColorLeft());
+		assertEquals(BaseColor.BLUE, cell.getCellValues().getBorderColorRight());
+		assertEquals(new BaseColor(000,111,222), cell.getCellValues().getBorderColorBottom());
 	}
 }

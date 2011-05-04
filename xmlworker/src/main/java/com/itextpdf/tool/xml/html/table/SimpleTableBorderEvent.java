@@ -52,12 +52,12 @@ import com.itextpdf.text.pdf.PdfPTableEvent;
  *
  */
 public class SimpleTableBorderEvent implements PdfPTableEvent{
-	private final BorderStyleValues styleValues;
+	private final TableStyleValues styleValues;
 	/**
      * @see com.itextpdf.text.pdf.PdfPTableEvent#tableLayout(com.itextpdf.text.pdf.PdfPTable,
      *      float[][], float[], int, int, com.itextpdf.text.pdf.PdfContentByte[])
      */
-    public SimpleTableBorderEvent(final BorderStyleValues styleValues) {
+    public SimpleTableBorderEvent(final TableStyleValues styleValues) {
     	this.styleValues = styleValues;
     }
     public void tableLayout(final PdfPTable table, final float[][] width, final float[] height,

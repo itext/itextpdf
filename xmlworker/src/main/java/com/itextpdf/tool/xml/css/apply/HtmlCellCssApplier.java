@@ -58,7 +58,7 @@ import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.WidthCalculator;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
-import com.itextpdf.tool.xml.html.table.BorderStyleValues;
+import com.itextpdf.tool.xml.html.table.TableStyleValues;
 import com.itextpdf.tool.xml.html.table.CellSpacingEvent;
 import com.itextpdf.tool.xml.html.table.Table;
 
@@ -70,7 +70,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 
     private final CssUtils utils = CssUtils.getInstance();
 	private final XMLWorkerConfig configuration;
-	private final BorderStyleValues borderValues = new BorderStyleValues();
+	private final TableStyleValues values = new TableStyleValues();
 
 	public HtmlCellCssApplier(final XMLWorkerConfig configuration) {
 		this.configuration = configuration;
@@ -83,6 +83,15 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
      * com.itextpdf.tool.xml.Tag)
      */
     public HtmlCell apply(final HtmlCell cell, final Tag t) {
+    	Tag table = t.getParent();
+    	while(!table.getTag().equals("table")){
+    		table = table.getParent();
+    	}
+    	String border = table.getAttributes().get(CSS.Property.BORDER);
+		if(border != null) {
+			cell.getCellValues().setBorderColor(BaseColor.BLACK);
+			cell.getCellValues().setBorderWidth(utils.parsePxInCmMmPcToPt(border));
+		}
     	Map<String, String> css = t.getCSS();
 		String emptyCells = css.get(CSS.Property.EMPTY_CELLS);
 		if(null != emptyCells && CSS.Value.HIDE.equalsIgnoreCase(emptyCells) && cell.getCompositeElements() == null) {
@@ -100,7 +109,6 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 	        if (null != rowspan) {
 	            cell.setRowspan(Integer.parseInt(rowspan));
 	        }
-	        boolean borderEncountered = false;
 	    	for (Entry<String, String> entry : css.entrySet()) {
 	        	String key = entry.getKey();
 				String value = entry.getValue();
@@ -108,7 +116,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 				if(key.equalsIgnoreCase(CSS.Property.HEIGHT)) {
 					cell.setFixedHeight(utils.parsePxInCmMmPcToPt(value));
 				} else if(key.equalsIgnoreCase(CSS.Property.BACKGROUND_COLOR)) {
-					cell.setBackgroundColor(HtmlUtilities.decodeColor(value));
+					values.setBackground(HtmlUtilities.decodeColor(value));
 				} else if(key.equalsIgnoreCase(CSS.Property.VERTICAL_ALIGN)) {
 					if(value.equalsIgnoreCase(CSS.Value.TOP)) {
 						cell.setVerticalAlignment(Element.ALIGN_TOP);
@@ -116,7 +124,6 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 						cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
 					}
 				} else if(key.contains(CSS.Property.BORDER)) {
-					borderEncountered = true;
 					if(key.contains(CSS.Value.TOP)) {
 						setTopOfBorder(cell, key, value);
 					} else if(key.contains(CSS.Value.BOTTOM)) {
@@ -146,108 +153,94 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 					}
 				}
 	    	}
-	    	Tag table = t.getParent();
-	    	while(!table.getTag().equals("table")){
-	    		table = table.getParent();
-	    	}
-	    	float horSpacing = 1.5f;
-	    	float verSpacing = 1.5f;
-	    	if(!borderEncountered) {
-				String border = table.getAttributes().get(CSS.Property.BORDER);
-				if(border != null) {
-					cell.setBorderColor(BaseColor.BLACK);
-					cell.setBorderWidth(utils.parsePxInCmMmPcToPt(border));
-				}
-			} else {
-				horSpacing = new Table().getBorderOrCellSpacing(true, table.getCSS(), table.getAttributes());
-				verSpacing = new Table().getBorderOrCellSpacing(false, table.getCSS(), table.getAttributes());
-			}
-	    	borderValues.setHorBorderSpacing(horSpacing);
-	    	borderValues.setVerBorderSpacing(verSpacing);
-	    	cell.setPaddingLeft(cell.getPaddingLeft()+horSpacing+borderValues.getBorderWidthLeft());
-			cell.setPaddingRight(cell.getPaddingRight()+borderValues.getBorderWidthRight());
-	    	cell.setPaddingTop(cell.getPaddingTop()+verSpacing);
+			float horSpacing = new Table().getBorderOrCellSpacing(true, table.getCSS(), table.getAttributes());
+			float verSpacing = new Table().getBorderOrCellSpacing(false, table.getCSS(), table.getAttributes());
+	    	values.setHorBorderSpacing(horSpacing);
+	    	values.setVerBorderSpacing(verSpacing);
+	    	cell.setPaddingLeft(cell.getPaddingLeft()+horSpacing+values.getBorderWidthLeft());
+			cell.setPaddingRight(cell.getPaddingRight()+values.getBorderWidthRight());
+	    	cell.setPaddingTop(cell.getPaddingTop()+verSpacing+values.getBorderWidthTop());
 	    	cell.setPaddingBottom(cell.getPaddingBottom()+verSpacing);
 		}
 		cell.setBorder(Rectangle.NO_BORDER);
-		cell.setCellEvent(new CellSpacingEvent(borderValues));
-		cell.setBorderValues(borderValues);
+		cell.setCellEvent(new CellSpacingEvent(values));
+		cell.setCellValues(values);
         return cell;
     }
 
 	private void setTopOfBorder(final HtmlCell cell, final String key, final String value) {
 		if(key.contains(CSS.Property.WIDTH)) {
-			borderValues.setBorderWidthTop(utils.parsePxInCmMmPcToPt(value));
+			values.setBorderWidthTop(utils.parsePxInCmMmPcToPt(value));
 		}
 		if(key.contains(CSS.Property.COLOR)) {
-			borderValues.setBorderColorTop(HtmlUtilities.decodeColor(value));
-			if(borderValues.getBorderWidthTop() == 0){
-				borderValues.setBorderWidthTop(2.25f);
+			values.setBorderColorTop(HtmlUtilities.decodeColor(value));
+			if(values.getBorderWidthTop() == 0){
+				values.setBorderWidthTop(2.25f);
 			}
-		} else if(borderValues.getBorderColorTop() == null){
-			borderValues.setBorderColorTop(BaseColor.BLACK);
+		} else if(values.getBorderColorTop() == null){
+			values.setBorderColorTop(BaseColor.BLACK);
 		}
 		if(key.contains("style")) {
 //			If any, which are the border styles in iText? simulate in the borderevent?
-			if(borderValues.getBorderWidthTop() == 0){
-				borderValues.setBorderWidthTop(2.25f);
+			if(values.getBorderWidthTop() == 0){
+				values.setBorderWidthTop(2.25f);
 			}
 		}
 	}
 	private void setBottomOfBorder(final HtmlCell cell, final String key, final String value) {
 		if(key.contains(CSS.Property.WIDTH)) {
-			borderValues.setBorderWidthBottom(utils.parsePxInCmMmPcToPt(value));
+			values.setBorderWidthBottom(utils.parsePxInCmMmPcToPt(value));
 		}
 		if(key.contains(CSS.Property.COLOR)) {
-			borderValues.setBorderColorBottom(HtmlUtilities.decodeColor(value));
-			if(borderValues.getBorderWidthBottom() == 0){
-				borderValues.setBorderWidthBottom(2.25f);
+			values.setBorderColorBottom(HtmlUtilities.decodeColor(value));
+			if(values.getBorderWidthBottom() == 0){
+				values.setBorderWidthBottom(2.25f);
 			}
-		} else if(borderValues.getBorderColorBottom() == null){
-			borderValues.setBorderColorBottom(BaseColor.BLACK);
+		} else if(values.getBorderColorBottom() == null){
+			values.setBorderColorBottom(BaseColor.BLACK);
 		}
 		if(key.contains("style")) {
 //			If any, which are the border styles in iText? simulate in the borderevent?
-			if(borderValues.getBorderWidthBottom() == 0){
-				borderValues.setBorderWidthBottom(2.25f);
+			if(values.getBorderWidthBottom() == 0){
+				values.setBorderWidthBottom(2.25f);
 			}
 		}
 	}
 	private void setLeftOfBorder(final HtmlCell cell, final String key, final String value) {
 		if(key.contains(CSS.Property.WIDTH)) {
-			borderValues.setBorderWidthLeft(utils.parsePxInCmMmPcToPt(value));
+			values.setBorderWidthLeft(utils.parsePxInCmMmPcToPt(value));
 		}
 		if(key.contains(CSS.Property.COLOR)) {
-			borderValues.setBorderColorLeft(HtmlUtilities.decodeColor(value));
-			if(borderValues.getBorderWidthLeft() == 0){
-				borderValues.setBorderWidthLeft(2.25f);
+			values.setBorderColorLeft(HtmlUtilities.decodeColor(value));
+			if(values.getBorderWidthLeft() == 0){
+				values.setBorderWidthLeft(2.25f);
 			}
-		} else if(borderValues.getBorderColorLeft() == null){
-			borderValues.setBorderColorLeft(BaseColor.BLACK);
+		} else if(values.getBorderColorLeft() == null){
+			values.setBorderColorLeft(BaseColor.BLACK);
 		}
 		if(key.contains("style")) {
 //			If any, which are the border styles in iText? simulate in the borderevent?
-			if(borderValues.getBorderWidthLeft() == 0){
-				borderValues.setBorderWidthLeft(2.25f);
+			if(values.getBorderWidthLeft() == 0){
+				values.setBorderWidthLeft(2.25f);
 			}
 		}
 	}
 	private void setRightOfBorder(final HtmlCell cell, final String key, final String value) {
 		if(key.contains(CSS.Property.WIDTH)) {
-			borderValues.setBorderWidthRight(utils.parsePxInCmMmPcToPt(value));
+			values.setBorderWidthRight(utils.parsePxInCmMmPcToPt(value));
 		}
 		if(key.contains(CSS.Property.COLOR)) {
-			borderValues.setBorderColorRight(HtmlUtilities.decodeColor(value));
-			if(borderValues.getBorderWidthRight() == 0){
-				borderValues.setBorderWidthRight(2.25f);
+			values.setBorderColorRight(HtmlUtilities.decodeColor(value));
+			if(values.getBorderWidthRight() == 0){
+				values.setBorderWidthRight(2.25f);
 			}
-		} else if(borderValues.getBorderColorRight() == null){
-			borderValues.setBorderColorRight(BaseColor.BLACK);
+		} else if(values.getBorderColorRight() == null){
+			values.setBorderColorRight(BaseColor.BLACK);
 		}
 		if(key.contains("style")) {
 //			If any, which are the border styles in iText? simulate in the borderevent?
-			if(borderValues.getBorderWidthRight() == 0){
-				borderValues.setBorderWidthRight(2.25f);
+			if(values.getBorderWidthRight() == 0){
+				values.setBorderWidthRight(2.25f);
 			}
 		}
 	}
