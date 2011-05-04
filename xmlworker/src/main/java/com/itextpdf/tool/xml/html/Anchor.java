@@ -110,7 +110,7 @@ public class Anchor extends AbstractTagProcessor {
 				for (Chunk c : e.getChunks()) {
 					if (null != url) {
 						if (url.startsWith("#")) {
-							if (null != logger) {
+							if (logger.isLogging()) {
 								logger.log(Anchor.class, String.format("Creating a local goto link to %s", url));
 							}
 							c.setLocalGoto(url.replaceFirst("#", ""));
@@ -123,14 +123,14 @@ public class Anchor extends AbstractTagProcessor {
 								}
 								url = root + url;
 							}
-							if (null != logger) {
+							if (logger.isLogging()) {
 								logger.log(Anchor.class, String.format("Creating a www link to %s", url));
 							}
 							c.setAnchor(url);
 						}
 					} else if (null != name) {
 						c.setLocalDestination(name);
-						if (null != logger) {
+						if (logger.isLogging()) {
 							logger.log(Anchor.class, String.format("Setting local destination for  %s", name));
 						}
 					}
@@ -143,7 +143,7 @@ public class Anchor extends AbstractTagProcessor {
 		// !currentContent > 0 ; An empty "a" tag has been encountered.
 		// we're using an anchor space hack here. without the space reader does not jump to destination
 		if (null != configuration.getWriter() &&  null != name) {
-			if (null != logger) {
+			if (logger.isLogging()) {
 				logger.log(Anchor.class, String.format("Trying to set local destination %s with space hack", name));
 			}
 			Chunk dest = new Chunk(" ").setLocalDestination(name);

@@ -111,6 +111,10 @@ public class SamplesTest {
 				System.out.println(String.format("[%s]\t%s",klass.getName(), msg));
 
 			}
+
+			public boolean isLogging() {
+				return true;
+			}
 		});
 		boolean success = true;
 		Document.compress = false;

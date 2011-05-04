@@ -83,12 +83,12 @@ public class Meta extends AbstractTagProcessor {
 							String enc = split2[1];
 							if (Charset.isSupported(enc)) {
 								this.configuration.charSet(Charset.forName(enc));
-								if (null != logger) {
+								if (logger.isLogging()) {
 									logger.log(
 											String.format("Detected Charset %s from meta tag, using detected charset.", enc));
 								}
 							} else {
-								if (null != logger) {
+								if (logger.isLogging()) {
 									logger.log(
 											String.format("No Charset detected from metatag, using %s.", this.configuration
 													.charSet().displayName()));

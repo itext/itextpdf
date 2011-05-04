@@ -109,6 +109,10 @@ public class HTMLWorkerFactoryTest {
 				System.out.println(String.format("[%s]\t%s",klass.getName(), msg));
 
 			}
+
+			public boolean isLogging() {
+				return true;
+			}
 		});
     	Document.compress = false;
     }

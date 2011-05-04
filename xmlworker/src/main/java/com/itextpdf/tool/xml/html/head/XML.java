@@ -72,12 +72,12 @@ public class XML extends AbstractTagProcessor {
 		if (null != enc) {
 			if (Charset.isSupported(enc)) {
 				this.configuration.charSet(Charset.forName(enc));
-				if (null != logger) {
+				if (logger.isLogging()) {
 					logger.log(
 							String.format("Detected Charset %s from xml tag, using detected charset.", enc));
 				}
 			} else {
-				if (null != logger) {
+				if (logger.isLogging()) {
 					logger.log(String.format("No Charset detected from xml tag, using default"));
 				}
 			}
