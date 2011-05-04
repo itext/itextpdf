@@ -293,7 +293,7 @@ public class XMLWorkerImpl implements XMLWorker {
 
 	/**
 	 * @param elementHandler
-	 * @return
+	 * @return an XMLWorkerImpl object
 	 */
 	public XMLWorkerImpl elementHandler(final ElementHandler elementHandler) {
 		this.listener = elementHandler;

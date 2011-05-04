@@ -119,7 +119,7 @@ public interface XMLWorkerConfig {
 	boolean isParsingHTML();
 
 	/**
-	 * @return
+	 * @return the configuration items in memory
 	 */
 	public Map<String, Object> getMemory();
 
