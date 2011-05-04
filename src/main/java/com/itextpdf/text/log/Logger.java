@@ -50,14 +50,21 @@ package com.itextpdf.text.log;
 public interface Logger {
 
 	/**
+	 * Called when a logging message is received
 	 * @param msg
 	 */
 	void log(String msg);
 
 	/**
+	 * Called when a logging message is received
 	 * @param klass
 	 * @param msg
 	 */
 	void log(Class<?> klass, String msg);
 
+	/**
+	 * Enable/disable logging.
+	 * @return true if there should be logged, false otherwise
+	 */
+	boolean isLogging();
 }
