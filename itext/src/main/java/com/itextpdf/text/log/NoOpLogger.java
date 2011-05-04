@@ -41,55 +41,22 @@
 package com.itextpdf.text.log;
 
 /**
- * LoggerFactory can be used to set a logger. The logger should be created by
- * users by implementing {@link Logger}. In the implementation users can choose
- * how they log received messages.
+ * The no-operation logger, it does nothing with the received logging
+ * statements. And returns false by default for {@link NoOpLogger#isLogging()}
  * 
  * @author redlab_b
  * 
  */
-public class LoggerFactory {
+public final class NoOpLogger implements Logger {
+	public void log(String msg) {
 
-	static {
-		myself = new LoggerFactory();
 	}
 
-	private static LoggerFactory myself;
-	/**
-	 * Returns the logger set in this LoggerFactory. Defaults to {@link NoOpLogger}
-	 * @return the logger.
-	 */
-	public static Logger getLogger() {
-		return myself.logger;
-	}
-	/**
-	 * Returns the LoggerFactory
-	 * @return singleton instance of this LoggerFactory
-	 */
-	public static LoggerFactory getInstance() {
-		return myself;
+	public void log(Class<?> klass, String msg) {
+
 	}
 
-	private Logger logger = new NoOpLogger();
-
-	private LoggerFactory() {
-	}
-
-	/**
-	 * Set the global logger to process logging statements with.
-	 * 
-	 * @param logger the logger
-	 */
-	public void setLogger(Logger logger) {
-		this.logger = logger;
-	}
-
-	/**
-	 * Get the logger.
-	 * 
-	 * @return the logger
-	 */
-	public Logger logger() {
-		return logger;
+	public boolean isLogging() {
+		return false;
 	}
 }
