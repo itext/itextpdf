@@ -88,13 +88,13 @@ public class HTMLWorkerFactoryTest {
 //    private static final String TEST = "text-indent_text-decoration_";
 //    private static final String TEST = "comment-double-print_";
 //    private static final String TEST = "tab_";
-//	  private static final String TEST = "table_";
+	  private static final String TEST = "table_";
 //	  private static final String TEST = "lists_";
 //	  private static final String TEST = "img_";
 //	  private static final String TEST = "position_";
 //	  private static final String TEST = "h_";
 //	  private static final String TEST = "booksales_";
-	  private static final String TEST = "index_";
+//	  private static final String TEST = "index_";
 //	  private static final String TEST = "lineheight_";
 
     static {
@@ -121,7 +121,7 @@ public class HTMLWorkerFactoryTest {
 	@Test
 	public void parseXfaOnlyXML() throws IOException {
 		final Document doc = new Document(PageSize.A4);
-		float margin = utils.parseValueToPt("10%", PageSize.A4.getWidth());
+		float margin = utils.parseRelativeValue("10%", PageSize.A4.getWidth());
 		doc.setMargins(margin, margin, margin, margin);
 		PdfWriter writer = null;
 		try {
@@ -137,7 +137,7 @@ public class HTMLWorkerFactoryTest {
 
 		conf.tagProcessorFactory(new Tags().getHtmlTagProcessorFactory()).cssResolver(cssResolver)
 				.acceptUnknown(true);
-		
+
 		BufferedInputStream bis = new BufferedInputStream(HTMLWorkerFactoryTest.class.getResourceAsStream(SNIPPETS+TEST+"snippet.html"));
 		XMLWorkerHelper helper = new XMLWorkerHelper();
 		CssFile defaultCSS = helper.getDefaultCSS();

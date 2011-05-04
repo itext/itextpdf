@@ -49,6 +49,7 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPCellEvent;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 
 
 /**
@@ -56,9 +57,9 @@ import com.itextpdf.text.pdf.PdfPTable;
  *
  */
 public class CellSpacingEvent implements PdfPCellEvent {
-	private final TableStyleValues styleValues;
+	private final BorderStyleValues styleValues;
 
-	public CellSpacingEvent(final TableStyleValues styleValues) {
+	public CellSpacingEvent(final BorderStyleValues styleValues) {
 		this.styleValues = styleValues;
 	}
 
@@ -68,35 +69,39 @@ public class CellSpacingEvent implements PdfPCellEvent {
 	 */
 	public void cellLayout(final PdfPCell cell, final Rectangle position,
 			final PdfContentByte[] canvases) {
-		float effectivePadding = cell.getBorderWidthLeft() + styleValues.getHorBorderSpacing();
+		float effectivePadding = styleValues.getBorderWidthLeft()/2 + styleValues.getHorBorderSpacing();
 		float x1 = position.getLeft() + effectivePadding;
-		effectivePadding = cell.getBorderWidthRight() + styleValues.getHorBorderSpacing();
+		if(styleValues.isLastInRow()){
+			effectivePadding = styleValues.getBorderWidthRight()/2 + styleValues.getHorBorderSpacing();
+		} else {
+			effectivePadding = styleValues.getBorderWidthRight()/2;
+		}
 		float x2 = position.getRight() - effectivePadding;
-		effectivePadding = cell.getBorderWidthTop() + styleValues.getVerBorderSpacing();
+		effectivePadding = styleValues.getBorderWidthTop()/2 + styleValues.getVerBorderSpacing();
 		float y1 = position.getTop() - effectivePadding;
-		effectivePadding = cell.getBorderWidthBottom() + styleValues.getVerBorderSpacing();
+		effectivePadding = styleValues.getBorderWidthBottom()/2;
 		float y2 = position.getBottom() + effectivePadding;
 		PdfContentByte cb = canvases[PdfPTable.LINECANVAS];
-		BaseColor borderColor = cell.getBorderColorLeft();
+		BaseColor borderColor = styleValues.getBorderColorLeft();
 		// Checking one border side is enough
 		if(borderColor != null) {
-			cb.setLineWidth(cell.getBorderWidthLeft());
+			cb.setLineWidth(styleValues.getBorderWidthLeft());
 			cb.setColorStroke(borderColor);
 	        cb.moveTo(x1, y1); // start leftUpperCorner
 	        cb.lineTo(x1, y2); // left
 	        cb.stroke();
-	        cb.setLineWidth(cell.getBorderWidthBottom());
-	        cb.setColorStroke(cell.getBorderColorBottom());
+	        cb.setLineWidth(styleValues.getBorderWidthBottom());
+	        cb.setColorStroke(styleValues.getBorderColorBottom());
 	        cb.moveTo(x1, y2); // left
 	        cb.lineTo(x2, y2); // bottom
 	        cb.stroke();
-	        cb.setLineWidth(cell.getBorderWidthRight());
-	        cb.setColorStroke(cell.getBorderColorRight());
+	        cb.setLineWidth(styleValues.getBorderWidthRight());
+	        cb.setColorStroke(styleValues.getBorderColorRight());
 	        cb.moveTo(x2, y2); // bottom
 	        cb.lineTo(x2, y1); // right
 	        cb.stroke();
-	        cb.setLineWidth(cell.getBorderWidthTop());
-	        cb.setColorStroke(cell.getBorderColorTop());
+	        cb.setLineWidth(styleValues.getBorderWidthTop());
+	        cb.setColorStroke(styleValues.getBorderColorTop());
 	        cb.moveTo(x2, y1); // right
 	        cb.lineTo(x1, y1); // top
 	        cb.stroke();

@@ -56,9 +56,8 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.html.pdfelement.FixedWidthCell;
+import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.html.table.TableRowElement;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
@@ -67,15 +66,15 @@ import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
  * @author Emiel Ackermann
  *
  */
-public class PdfPCellCssApplierTest {
+public class HtmlCellCssApplierTest {
 	private final List<Element> cells = new ArrayList<Element>();
 	Tag tag = new Tag("td", new HashMap<String, String>());
 	private final NoNewLineParagraph basicPara = new NoNewLineParagraph();
 	private final Chunk basic = new Chunk("content");
 
 	private TableRowElement row1;
-	private final PdfPCell cell = new PdfPCell();
-	private final PdfPCellCssApplier applier = new PdfPCellCssApplier(null);
+	private final HtmlCell cell = new HtmlCell();
+	private final HtmlCellCssApplier applier = new HtmlCellCssApplier(null);
 
 	@Before
 	public void setup() {
@@ -112,10 +111,10 @@ public class PdfPCellCssApplierTest {
 
 	@Test
 	public void resolveFixedWidth() {
-		PdfPCell fixed = new PdfPCell();
+		HtmlCell fixed = new HtmlCell();
 		tag.getAttributes().put("width", "90pt");
 		fixed = applier.apply(fixed, tag);
-		assertEquals(90, ((FixedWidthCell) fixed).getFixedWidth(), 0);
+		assertEquals(90, (fixed).getFixedWidth(), 0);
 	}
 
 	/**

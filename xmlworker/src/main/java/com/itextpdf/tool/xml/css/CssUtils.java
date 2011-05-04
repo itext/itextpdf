@@ -384,12 +384,13 @@ public class CssUtils {
 
 	}
 	/**
-	 * Convenience method for parsing a value to pt if a string can contain: <br />
+	 * Convenience method for parsing a value to pt if a value can contain: <br />
 	 * <ul>
 	 * 	<li>a numeric value in pixels (e.g. 123, 1.23, .123),</li>
 	 * 	<li>a value with a metric unit (px, in, cm, mm, pc or pt) attached to it,</li>
 	 * 	<li>or a value with a relative value (%, em, ex).</li>
 	 * </ul>
+	 * <b>Note:</b> baseValue must be in pt.<br /><br />
 	 * @param value the string containing the value to be parsed.
 	 * @param baseValue float needed for the calculation of the relative value.
 	 * @return parsedValue float containing the parsed value in pt.
@@ -404,16 +405,18 @@ public class CssUtils {
 		return parsedValue;
 	}
 	/**
-	 * @param parsedValue
-	 * @param unit
-	 * @param baseValue
+	 * Parses an relative value based on the base value that was given, in the metric unit of the base value. <br />
+	 * (e.g. margin=10% should be based on the page width, so if an A4 is used, the margin = 0.10*595.0 = 59.5f)
+	 * @param relativeValue in %, em or ex.
+	 * @param baseValue the value the returned float is based on.
+	 * @return the parsed float in the metric unit of the base value.
 	 */
-	public float parseRelativeValue(final String length, final float baseValue) {
-		int pos = determinePositionBetweenValueAndUnit(length);
+	public float parseRelativeValue(final String relativeValue, final float baseValue) {
+		int pos = determinePositionBetweenValueAndUnit(relativeValue);
 		if (pos == 0)
 			return 0f;
-		float f = Float.parseFloat(length.substring(0, pos) + "f");
-		String unit = length.substring(pos);
+		float f = Float.parseFloat(relativeValue.substring(0, pos) + "f");
+		String unit = relativeValue.substring(pos);
 		if (unit.startsWith("%")) {
 			f = baseValue * f / 100;
 		} else if (unit.startsWith("em")) {
@@ -424,7 +427,8 @@ public class CssUtils {
 		return f;
 	}
 	/**
-	 * Parses an length with an allowed metric unit (px, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23, .123) to pt. A numeric value is considered to be in px as is default in HTML/CSS.
+	 * Parses an length with an allowed metric unit (px, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23, .123) to pt.<br />
+	 * A numeric value is considered to be in px as is default in HTML/CSS.
 	 * @param length the string containing the length.
 	 * @return float the parsed length in pt.
 	 */
@@ -565,7 +569,7 @@ public class CssUtils {
 	public float calculateMarginTop(final Tag t, final String value, final float largestFont) {
 		float marginTop = parseValueToPt(value, largestFont);
 		try {
-			Tag previousSibling = new TagUtils().getPreviousSibling(t);
+			Tag previousSibling = new TagUtils().getSibling(t, -1);
 			String marginBottom = previousSibling.getCSS().get(CSS.Property.MARGIN_BOTTOM);
 			float marginBottomPrevious = 0;
 			if (marginBottom != null) {

@@ -43,30 +43,33 @@
  */
 package com.itextpdf.tool.xml.html.pdfelement;
 
-import java.util.List;
-
-import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.tool.xml.html.table.BorderStyleValues;
 
-public class FixedWidthCell extends PdfPCell {
-	private final float fixedWidth;
+public class HtmlCell extends PdfPCell {
+	private float fixedWidth;
+	private BorderStyleValues border = new BorderStyleValues();
 
 	/**
-	 * Constructor which is used to replace a PdfPCell with a FixedWithCell object.
-	 * @param compositeElements all elements in the original PdfPCell.
-	 * @param fixedWidth the fixed width of this cell.
+	 *
 	 */
-	public FixedWidthCell(final List<Element> compositeElements, final float fixedWidth) {
+	public HtmlCell() {
 		super();
+		fixedWidth = 0;
+	}
+
+	public void setFixedWidth(final float fixedWidth) {
 		this.fixedWidth = fixedWidth;
-		if(compositeElements != null) {
-			for(Element e: compositeElements) {
-				addElement(e);
-			}
-		}
 	}
 
 	public float getFixedWidth() {
 		return fixedWidth;
+	}
+
+	public BorderStyleValues getBorderValues() {
+		return border;
+	}
+	public void setBorderValues(final BorderStyleValues border) {
+		this.border = border;
 	}
 }

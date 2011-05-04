@@ -49,15 +49,15 @@ import java.util.List;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
-import com.itextpdf.tool.xml.css.apply.PdfPCellCssApplier;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.HTMLUtils;
+import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 /**
  * @author Balder Van Camp
@@ -83,14 +83,14 @@ public class TableData extends AbstractTagProcessor {
      */
     @Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-//    	PdfPCell cell = new PdfPCell();
+//    	HtmlCell cell = new HtmlCell();
 //    	Paragraph content = new Paragraph();
 //    	for (Element e : currentContent) {
 //    		content.add(e);
 //    	}
 //    	content = new ParagraphCssApplier(configuration).apply(content, tag);
 //    	cell.addElement(content);
-    	PdfPCell cell = new PdfPCell();
+    	HtmlCell cell = new HtmlCell();
     	List<Element> l = new ArrayList<Element>(1);
     	for (Element e : currentContent) {
     		if(e instanceof Paragraph) {
@@ -98,7 +98,7 @@ public class TableData extends AbstractTagProcessor {
     		}
     		cell.addElement(e);
     	}
-    	cell = new PdfPCellCssApplier(configuration).apply(cell, tag);
+    	cell = new HtmlCellCssApplier(configuration).apply(cell, tag);
     	if(tag.getTag().equalsIgnoreCase(HTML.Tag.CAPTION)) {
     		currentContent.clear();
     		currentContent.add(cell);

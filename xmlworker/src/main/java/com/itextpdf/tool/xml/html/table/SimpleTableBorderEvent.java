@@ -52,26 +52,26 @@ import com.itextpdf.text.pdf.PdfPTableEvent;
  *
  */
 public class SimpleTableBorderEvent implements PdfPTableEvent{
-	private final TableStyleValues styleValues;
+	private final BorderStyleValues styleValues;
 	/**
      * @see com.itextpdf.text.pdf.PdfPTableEvent#tableLayout(com.itextpdf.text.pdf.PdfPTable,
      *      float[][], float[], int, int, com.itextpdf.text.pdf.PdfContentByte[])
      */
-    public SimpleTableBorderEvent(final TableStyleValues styleValues) {
+    public SimpleTableBorderEvent(final BorderStyleValues styleValues) {
     	this.styleValues = styleValues;
     }
     public void tableLayout(final PdfPTable table, final float[][] width, final float[] height,
             final int headerRows, final int rowStart, final PdfContentByte[] canvas) {
-    	float effectivePadding = styleValues.getTableBorderTopWidth()/2+styleValues.getHorBorderSpacing();
+    	float effectivePadding = styleValues.getBorderWidthTop()/2+styleValues.getHorBorderSpacing();
         float widths[] = width[0];
         float x1 = widths[0]-effectivePadding;
         float x2 = widths[widths.length - 1]+effectivePadding;
-        effectivePadding = styleValues.getTableBorderTopWidth()/2+styleValues.getVerBorderSpacing();
+        effectivePadding = styleValues.getBorderWidthTop()/2+styleValues.getVerBorderSpacing();
         float y1 = height[0]+effectivePadding;
         float y2 = height[height.length - 1]-effectivePadding;
         PdfContentByte cb = canvas[PdfPTable.LINECANVAS];
-        cb.setLineWidth(styleValues.getTableBorderTopWidth());
-        cb.setColorStroke(styleValues.getTableBorderTopColor());
+        cb.setLineWidth(styleValues.getBorderWidthTop());
+        cb.setColorStroke(styleValues.getBorderColorTop());
         cb.rectangle(x1, y1, x2 - x1, y2 - y1);
         cb.stroke();
         cb.resetRGBColorStroke();
