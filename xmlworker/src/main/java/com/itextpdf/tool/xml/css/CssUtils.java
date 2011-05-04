@@ -251,7 +251,7 @@ public class CssUtils {
 	 * list style and its attributes into list-style-type, list-style-position, list-style-image,
 	 * font-weight, font-style, font-variant and font-family css styles.
 	 *
-	 * @param font the string containing the font style value.
+	 * @param listStyle the string containing the list style value.
 	 * @return a map with the values of font parsed into each css property.
 	 */
 	public Map<String, String> processListStyle(final String listStyle) {
@@ -564,7 +564,7 @@ public class CssUtils {
 	 * @param t the given tag.
 	 * @param value the margin-top value of the given tag.
 	 * @param largestFont
-	 * @return
+	 * @return an offset
 	 */
 	public float calculateMarginTop(final Tag t, final String value, final float largestFont) {
 		float marginTop = parseValueToPt(value, largestFont);

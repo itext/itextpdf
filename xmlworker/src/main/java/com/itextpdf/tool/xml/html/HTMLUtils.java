@@ -75,7 +75,7 @@ public class HTMLUtils {
 	/**
 	 * Sanitize the String for use in tags that must trim leading and trailing white space.
 	 * @param str
-	 * @return
+	 * @return a sanitized String
 	 */
 	public static String sanitize(final String str) {
 		return sanitize(str, true);
@@ -83,7 +83,7 @@ public class HTMLUtils {
 	/**
 	 * Sanitize the String for use in in-line tags.
 	 * @param str
-	 * @return
+	 * @return a sanitized String for use in in-line tags
 	 */
 	public static String sanitizeInline(final String str) {
 		return sanitize(str, false);

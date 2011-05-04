@@ -123,7 +123,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	/**
 	 * Also taking into account the CSS properties of any parent tag in the given tag.
 	 *
-	 * @see com.itextpdf.tool.xml.CSSResolver#resolveStyles(com.itextpdf.tool.xml .Tag)
+	 * @see com.itextpdf.tool.xml.CSSResolver#resolveStyles(com.itextpdf.tool.xml.Tag)
 	 */
 	public void resolveStyles(final Tag t) {
 		// get css for this tag from resolver

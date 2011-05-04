@@ -64,8 +64,8 @@ public class CellSpacingEvent implements PdfPCellEvent {
 	}
 
 	/**
-	 * @see com.lowagie.text.pdf.PdfPCellEvent#cellLayout(com.lowagie.text.pdf.PdfPCell,
-	 *      com.lowagie.text.Rectangle, com.lowagie.text.pdf.PdfContentByte[])
+	 * @see com.itextpdf.text.pdf.PdfPCellEvent#cellLayout(com.itextpdf.text.pdf.PdfPCell,
+	 * 		com.itextpdf.text.Rectangle, com.itextpdf.text.pdf.PdfContentByte[])
 	 */
 	public void cellLayout(final PdfPCell cell, final Rectangle position,
 			final PdfContentByte[] canvases) {

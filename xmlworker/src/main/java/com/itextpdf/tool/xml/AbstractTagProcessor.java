@@ -71,7 +71,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	/**
 	 * Calculates any found font size to pt values and set it in the CSS before calling
 	 * {@link AbstractTagProcessor#start(Tag)}.<br />
-	 * Checks for {@link CSS.Property#PAGE_BREAK_BEFORE}, if the value is always a new page is inserted
+	 * Checks for {@link com.itextpdf.tool.xml.css.CSS.Property#PAGE_BREAK_BEFORE}, if the value is always a new page is inserted
 	 *
 	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
@@ -109,7 +109,8 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 		return new ArrayList<Element>(0);
 	}
 	/**
-	 * Checks for {@link CSS.Property#PAGE_BREAK_AFTER}, if the value is always a new page is inserted
+	 * Checks for {@link com.itextpdf.tool.xml.css.CSS.Property#PAGE_BREAK_AFTER},
+	 * if the value is always a new page is inserted
 	 */
 	public final List<Element> endElement(Tag tag, List<Element> currentContent) {
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_AFTER);
@@ -132,7 +133,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * 
 	 * @param tag
 	 * @param currentContent
-	 * @return
+	 * @return a List containing iText Element objects
 	 */
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		return new ArrayList<Element>(0);
