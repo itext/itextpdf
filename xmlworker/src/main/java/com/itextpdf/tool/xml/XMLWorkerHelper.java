@@ -47,8 +47,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.List;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.tool.xml.css.CssFile;
 import com.itextpdf.tool.xml.css.CssFileProcessor;
@@ -125,6 +129,40 @@ public class XMLWorkerHelper {
 				.acceptUnknown(true);
 		final XMLWorker worker = new XMLWorkerImpl(config);
 		worker.setDocumentListener(d);
+		XMLParser p = new XMLParser(worker);
+		p.parse(in);
+	}
+	/**
+	 * Parses the xml data. This method configures the XMLWorker to parse (X)HTML/CSS and accept unknown tags.
+	 * Writes the output in the given PdfWriter with the given document.
+	 * @param writer the PdfWriter
+	 * @param document the Document
+	 * @param in the reader
+	 * @throws IOException thrown when something went wrong with the IO
+	 */
+	public void parseXHtml(final PdfWriter writer, final Document document, final Reader in) throws IOException {
+		XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
+		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver();
+		CssFile defaultCSS = getDefaultCSS();
+		if (null != defaultCSS) {
+			cssResolver.addCssFile(defaultCSS);
+		}
+		config.tagProcessorFactory(new Tags().getHtmlTagProcessorFactory()).cssResolver(cssResolver)
+		.acceptUnknown(true).pdfWriter(writer).document(document);
+		final XMLWorker worker = new XMLWorkerImpl(config);
+		worker.setDocumentListener(new ElementHandler() {
+			
+			public void addAll(List<Element> currentContent) throws DocumentException {
+				for (Element e : currentContent) {
+					document.add(e);
+				}
+			}
+			
+			public void add(Element e) throws DocumentException {
+				document.add(e);
+				
+			}
+		});
 		XMLParser p = new XMLParser(worker);
 		p.parse(in);
 	}

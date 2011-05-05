@@ -123,8 +123,9 @@ public class SamplesTest {
 			try {
 			System.out.println(str);
 			final Document doc = new Document();
+			PdfWriter writer = null;
 			try {
-				PdfWriter.getInstance(doc, new FileOutputStream(RESOURCE_TEST_PATH + "/" + str + "Test.pdf"));
+				writer = PdfWriter.getInstance(doc, new FileOutputStream(RESOURCE_TEST_PATH + "/" + str + "Test.pdf"));
 			} catch (DocumentException e) {
 				e.printStackTrace();
 			}
@@ -132,19 +133,7 @@ public class SamplesTest {
 			BufferedInputStream bis = new BufferedInputStream(SamplesTest.class.getResourceAsStream("/snippets/" + str
 					+ "snippet.html"));
 			XMLWorkerHelper helper = new XMLWorkerHelper();
-			helper.parseXHtml(new ElementHandler() {
-
-				public void addAll(final List<Element> currentContent) throws DocumentException {
-					for (Element e : currentContent) {
-						doc.add(e);
-					}
-
-				}
-
-				public void add(final Element e) throws DocumentException {
-					doc.add(e);
-				}
-			}, new InputStreamReader(bis));
+			helper.parseXHtml(writer, doc, new InputStreamReader(bis));
 			doc.close();
 			} catch (Exception e) {
 				System.out.println(e);
