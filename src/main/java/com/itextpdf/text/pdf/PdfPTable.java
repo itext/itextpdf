@@ -521,6 +521,9 @@ public class PdfPTable implements LargeElement{
 
     /**
      * Added by timmo3.  This will return the correct cell taking it's cellspan into account
+     * @param row the row index
+     * @param col the column index
+     * @return PdfPCell at the given row and position or null otherwise
      */
     PdfPCell cellAt(final int row, final int col) {
         PdfPCell[] cells = rows.get(row).getCells();
@@ -533,7 +536,7 @@ public class PdfPTable implements LargeElement{
         }
         return null;
     }
-    
+
     /**
      * Checks if there are rows above belonging to a rowspan.
      * @param	currRow	the current row to check
@@ -970,7 +973,7 @@ public class PdfPTable implements LargeElement{
 	 * Checks if a cell in a row has a rowspan greater than 1.
 	 * @since 5.1.0
      */
-    public boolean hasRowspan(int rowIdx) {
+    public boolean hasRowspan(final int rowIdx) {
     	if (rowIdx < rows.size() && getRow(rowIdx).hasRowspan()) {
     		return true;
     	}
@@ -980,7 +983,7 @@ public class PdfPTable implements LargeElement{
     	}
     	return false;
     }
-    
+
     /**
      * Makes sure the footers value is lower than the headers value.
      * @since 5.0.1
@@ -989,7 +992,7 @@ public class PdfPTable implements LargeElement{
         if (footerRows > headerRows)
             footerRows = headerRows;
     }
-    
+
     /**
      * Gets the height of the rows that constitute the header as defined by
      * <CODE>setHeaderRows()</CODE>.

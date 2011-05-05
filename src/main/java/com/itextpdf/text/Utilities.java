@@ -64,13 +64,16 @@ import com.itextpdf.text.pdf.PRTokeniser;
 public class Utilities {
 
 	/**
-	 * Gets the keys of a Hashtable
-	 *
+	 * Gets the keys of a Hashtable.
+	 * Marked as deprecated, not used anywhere anymore.
+	 * @param <K> type for the key
+	 * @param <V> type for the value
 	 * @param table
 	 *            a Hashtable
 	 * @return the keyset of a Hashtable (or an empty set if table is null)
 	 */
-	public static <K, V>  Set<K> getKeySet(Hashtable<K, V> table) {
+	@Deprecated
+	public static <K, V>  Set<K> getKeySet(final Hashtable<K, V> table) {
 		return table == null ? Collections.<K>emptySet() : table.keySet();
 	}
 
@@ -83,7 +86,7 @@ public class Utilities {
 	 *            the item to be added to the array
 	 * @return a new array with the item appended
 	 */
-	public static Object[][] addToArray(Object original[][], Object item[]) {
+	public static Object[][] addToArray(Object original[][], final Object item[]) {
 		if (original == null) {
 			original = new Object[1][];
 			original[0] = item;
@@ -102,7 +105,7 @@ public class Utilities {
 	 * @param key
 	 * @return a true/false value of a key in a Properties object
 	 */
-	public static boolean checkTrueOrFalse(Properties attributes, String key) {
+	public static boolean checkTrueOrFalse(final Properties attributes, final String key) {
 		return "true".equalsIgnoreCase(attributes.getProperty(key));
 	}
 
@@ -111,7 +114,7 @@ public class Utilities {
 	 * @param src the url to unescape
 	 * @return the unescaped value
 	 */
-	public static String unEscapeURL(String src) {
+	public static String unEscapeURL(final String src) {
 	    StringBuffer bf = new StringBuffer();
 	    char[] s = src.toCharArray();
 	    for (int k = 0; k < s.length; ++k) {
@@ -147,7 +150,7 @@ public class Utilities {
 	 * @return a valid URL
 	 * @throws MalformedURLException
 	 */
-	public static URL toURL(String filename) throws MalformedURLException {
+	public static URL toURL(final String filename) throws MalformedURLException {
         try {
             return new URL(filename);
         }
@@ -167,7 +170,7 @@ public class Utilities {
 	 *            the number of bytes to skip
 	 * @throws IOException
 	 */
-	static public void skip(InputStream is, int size) throws IOException {
+	static public void skip(final InputStream is, int size) throws IOException {
 	    long n;
 		while (size > 0) {
 	        n = is.skip(size);
@@ -183,7 +186,7 @@ public class Utilities {
 	 * @return	a value in points
 	 * @since	2.1.2
 	 */
-	public static final float millimetersToPoints(float value) {
+	public static final float millimetersToPoints(final float value) {
 	    return inchesToPoints(millimetersToInches(value));
 	}
 
@@ -193,7 +196,7 @@ public class Utilities {
 	 * @return	a value in inches
 	 * @since	2.1.2
 	 */
-	public static final float millimetersToInches(float value) {
+	public static final float millimetersToInches(final float value) {
 	    return value / 25.4f;
 	}
 
@@ -203,7 +206,7 @@ public class Utilities {
 	 * @return	a value in millimeters
 	 * @since	2.1.2
 	 */
-	public static final float pointsToMillimeters(float value) {
+	public static final float pointsToMillimeters(final float value) {
 	    return inchesToMillimeters(pointsToInches(value));
 	}
 
@@ -213,7 +216,7 @@ public class Utilities {
 	 * @return	a value in inches
 	 * @since	2.1.2
 	 */
-	public static final float pointsToInches(float value) {
+	public static final float pointsToInches(final float value) {
 	    return value / 72f;
 	}
 
@@ -223,7 +226,7 @@ public class Utilities {
 	 * @return	a value in millimeters
 	 * @since	2.1.2
 	 */
-	public static final float inchesToMillimeters(float value) {
+	public static final float inchesToMillimeters(final float value) {
 	    return value * 25.4f;
 	}
 
@@ -233,7 +236,7 @@ public class Utilities {
 	 * @return	a value in points
 	 * @since	2.1.2
 	 */
-	public static final float inchesToPoints(float value) {
+	public static final float inchesToPoints(final float value) {
 	    return value * 72f;
 	}
 
@@ -244,7 +247,7 @@ public class Utilities {
      * @return	true if the character belongs to the interval
      * @since	2.1.2
      */
-    public static boolean isSurrogateHigh(char c) {
+    public static boolean isSurrogateHigh(final char c) {
         return c >= '\ud800' && c <= '\udbff';
     }
 
@@ -255,7 +258,7 @@ public class Utilities {
      * @return	true if the character belongs to the interval
      * @since	2.1.2
      */
-    public static boolean isSurrogateLow(char c) {
+    public static boolean isSurrogateLow(final char c) {
         return c >= '\udc00' && c <= '\udfff';
     }
 
@@ -268,7 +271,7 @@ public class Utilities {
      * @return	true if the characters are surrogate pairs
      * @since	2.1.2
      */
-    public static boolean isSurrogatePair(String text, int idx) {
+    public static boolean isSurrogatePair(final String text, final int idx) {
         if (idx < 0 || idx > text.length() - 2)
             return false;
         return isSurrogateHigh(text.charAt(idx)) && isSurrogateLow(text.charAt(idx + 1));
@@ -283,7 +286,7 @@ public class Utilities {
      * @return	true if the characters are surrogate pairs
      * @since	2.1.2
      */
-    public static boolean isSurrogatePair(char[] text, int idx) {
+    public static boolean isSurrogatePair(final char[] text, final int idx) {
         if (idx < 0 || idx > text.length - 2)
             return false;
         return isSurrogateHigh(text[idx]) && isSurrogateLow(text[idx + 1]);
@@ -297,7 +300,7 @@ public class Utilities {
      * @return	a code point value
      * @since	2.1.2
      */
-    public static int convertToUtf32(char highSurrogate, char lowSurrogate) {
+    public static int convertToUtf32(final char highSurrogate, final char lowSurrogate) {
          return (highSurrogate - 0xd800) * 0x400 + lowSurrogate - 0xdc00 + 0x10000;
     }
 
@@ -308,7 +311,7 @@ public class Utilities {
      * @return	the code point value
      * @since	2.1.2
      */
-    public static int convertToUtf32(char[] text, int idx) {
+    public static int convertToUtf32(final char[] text, final int idx) {
          return (text[idx] - 0xd800) * 0x400 + text[idx + 1] - 0xdc00 + 0x10000;
     }
 
@@ -319,7 +322,7 @@ public class Utilities {
      * @return	the codepoint value
      * @since	2.1.2
      */
-    public static int convertToUtf32(String text, int idx) {
+    public static int convertToUtf32(final String text, final int idx) {
          return (text.charAt(idx) - 0xd800) * 0x400 + text.charAt(idx + 1) - 0xdc00 + 0x10000;
     }
 
@@ -340,9 +343,10 @@ public class Utilities {
      * Reads the contents of a file to a String.
      * @param	path	the path to the file
      * @return	a String with the contents of the file
+     * @throws IOException
      * @since	iText 5.0.0
      */
-	public static String readFileToString(String path) throws IOException {
+	public static String readFileToString(final String path) throws IOException {
 		return readFileToString(new File(path));
 	}
 
@@ -350,9 +354,10 @@ public class Utilities {
      * Reads the contents of a file to a String.
      * @param	file	a file
      * @return	a String with the contents of the file
+     * @throws IOException if file was not found or could not be read.
      * @since	iText 5.0.0
      */
-	public static String readFileToString(File file) throws IOException {
+	public static String readFileToString(final File file) throws IOException {
 		byte[] jsBytes = new byte[(int) file.length()];
 	    FileInputStream f = new FileInputStream(file);
 	    f.read(jsBytes);

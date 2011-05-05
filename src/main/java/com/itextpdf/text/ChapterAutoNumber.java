@@ -59,7 +59,7 @@ public class ChapterAutoNumber extends Chapter {
      * @since	2.1.4
      */
     protected boolean numberSet = false;
-    
+
     /**
      * Create a new object.
      *
@@ -71,7 +71,7 @@ public class ChapterAutoNumber extends Chapter {
 
     /**
      * Create a new object.
-     * 
+     *
      * @param title	    the Chapter title (as a <CODE>String</CODE>)
      */
     public ChapterAutoNumber(final String title) {
@@ -84,7 +84,8 @@ public class ChapterAutoNumber extends Chapter {
      * @param title  the Section title (as a <CODE>String</CODE>)
      * @return Returns the new section.
      */
-    public Section addSection(final String title) {
+    @Override
+	public Section addSection(final String title) {
     	if (isAddedCompletely()) {
     		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
@@ -97,16 +98,18 @@ public class ChapterAutoNumber extends Chapter {
      * @param title  the Section title (as a <CODE>Paragraph</CODE>)
      * @return Returns the new section.
      */
-    public Section addSection(final Paragraph title) {
+    @Override
+	public Section addSection(final Paragraph title) {
     	if (isAddedCompletely()) {
     		throw new IllegalStateException(MessageLocalization.getComposedMessage("this.largeelement.has.already.been.added.to.the.document"));
     	}
         return addSection(title, 2);
     }
-    
+
     /**
      * Changes the Chapter number.
      * @param	number	the new chapter number
+     * @return possibly increased number if the chapternumber was already set.
      * @since 2.1.4
      */
     public int setAutomaticNumber(int number) {

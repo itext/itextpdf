@@ -105,6 +105,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
 
     /**
      * Copy constructor for <CODE>Phrase</CODE>.
+     * @param phrase the Phrase to copy
      */
     public Phrase(final Phrase phrase) {
         super();
@@ -476,6 +477,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
 	/**
      * Returns the content as a String object.
      * This method differs from toString because toString will return an ArrayList with the toString value of the Chunks in this Phrase.
+	 * @return the content
      */
     public String getContent() {
     	StringBuffer buf = new StringBuffer();

@@ -132,14 +132,14 @@ public class PdfWriter extends DocWriter implements
         static class PdfCrossReference implements Comparable<PdfCrossReference> {
 
             // membervariables
-            private int type;
+            private final int type;
 
             /**	Byte offset in the PDF file. */
-            private int offset;
+            private final int offset;
 
-            private int refnum;
+            private final int refnum;
             /**	generation of the object. */
-            private int generation;
+            private final int generation;
 
             // constructors
             /**
@@ -149,7 +149,7 @@ public class PdfWriter extends DocWriter implements
              * @param	generation	generation number of the object
              */
 
-            PdfCrossReference(int refnum, int offset, int generation) {
+            PdfCrossReference(final int refnum, final int offset, final int generation) {
                 type = 0;
                 this.offset = offset;
                 this.refnum = refnum;
@@ -162,14 +162,14 @@ public class PdfWriter extends DocWriter implements
              * @param	offset		byte offset of the object
              */
 
-            PdfCrossReference(int refnum, int offset) {
+            PdfCrossReference(final int refnum, final int offset) {
                 type = 1;
                 this.offset = offset;
                 this.refnum = refnum;
                 this.generation = 0;
             }
 
-            PdfCrossReference(int type, int refnum, int offset, int generation) {
+            PdfCrossReference(final int type, final int refnum, final int offset, final int generation) {
                 this.type = type;
                 this.offset = offset;
                 this.refnum = refnum;
@@ -186,7 +186,7 @@ public class PdfWriter extends DocWriter implements
              * @throws IOException
              */
 
-            public void toPdf(OutputStream os) throws IOException {
+            public void toPdf(final OutputStream os) throws IOException {
                 StringBuffer off = new StringBuffer("0000000000").append(offset);
                 off.delete(0, off.length() - 10);
                 StringBuffer gen = new StringBuffer("00000").append(generation);
@@ -202,7 +202,7 @@ public class PdfWriter extends DocWriter implements
              * @param os
              * @throws IOException
              */
-            public void toPdf(int midSize, OutputStream os) throws IOException {
+            public void toPdf(int midSize, final OutputStream os) throws IOException {
                 os.write((byte)type);
                 while (--midSize >= 0)
                     os.write((byte)(offset >>> 8 * midSize & 0xff));
@@ -213,7 +213,7 @@ public class PdfWriter extends DocWriter implements
             /**
              * @see java.lang.Comparable#compareTo(java.lang.Object)
              */
-            public int compareTo(PdfCrossReference other) {
+            public int compareTo(final PdfCrossReference other) {
                 return refnum < other.refnum ? -1 : refnum==other.refnum ? 0 : 1;
             }
 
@@ -221,7 +221,7 @@ public class PdfWriter extends DocWriter implements
              * @see java.lang.Object#equals(java.lang.Object)
              */
             @Override
-            public boolean equals(Object obj) {
+            public boolean equals(final Object obj) {
                 if (obj instanceof PdfCrossReference) {
                     PdfCrossReference other = (PdfCrossReference)obj;
                     return refnum == other.refnum;
@@ -245,11 +245,11 @@ public class PdfWriter extends DocWriter implements
         // membervariables
 
         /** array containing the cross-reference table of the normal objects. */
-        private TreeSet<PdfCrossReference> xrefs;
+        private final TreeSet<PdfCrossReference> xrefs;
         private int refnum;
         /** the current byte position in the body. */
         private int position;
-        private PdfWriter writer;
+        private final PdfWriter writer;
         private ByteBuffer index;
         private ByteBuffer streamObjects;
         private int currentObjNum;
@@ -261,7 +261,7 @@ public class PdfWriter extends DocWriter implements
          * Constructs a new <CODE>PdfBody</CODE>.
          * @param writer
          */
-        PdfBody(PdfWriter writer) {
+        PdfBody(final PdfWriter writer) {
             xrefs = new TreeSet<PdfCrossReference>();
             xrefs.add(new PdfCrossReference(0, 0, GENERATION_MAX));
             position = writer.getOs().getCounter();
@@ -271,11 +271,11 @@ public class PdfWriter extends DocWriter implements
 
         // methods
 
-        void setRefnum(int refnum) {
+        void setRefnum(final int refnum) {
             this.refnum = refnum;
         }
 
-        private PdfWriter.PdfBody.PdfCrossReference addToObjStm(PdfObject obj, int nObj) throws IOException {
+        private PdfWriter.PdfBody.PdfCrossReference addToObjStm(final PdfObject obj, final int nObj) throws IOException {
             if (numObj >= OBJSINSTREAM)
                 flushObjStm();
             if (index == null) {
@@ -325,11 +325,11 @@ public class PdfWriter extends DocWriter implements
          * @throws IOException
          */
 
-        PdfIndirectObject add(PdfObject object) throws IOException {
+        PdfIndirectObject add(final PdfObject object) throws IOException {
             return add(object, getIndirectReferenceNumber());
         }
 
-        PdfIndirectObject add(PdfObject object, boolean inObjStm) throws IOException {
+        PdfIndirectObject add(final PdfObject object, final boolean inObjStm) throws IOException {
             return add(object, getIndirectReferenceNumber(), inObjStm);
         }
 
@@ -364,19 +364,19 @@ public class PdfWriter extends DocWriter implements
          * @throws IOException
          */
 
-        PdfIndirectObject add(PdfObject object, PdfIndirectReference ref) throws IOException {
+        PdfIndirectObject add(final PdfObject object, final PdfIndirectReference ref) throws IOException {
             return add(object, ref.getNumber());
         }
 
-        PdfIndirectObject add(PdfObject object, PdfIndirectReference ref, boolean inObjStm) throws IOException {
+        PdfIndirectObject add(final PdfObject object, final PdfIndirectReference ref, final boolean inObjStm) throws IOException {
             return add(object, ref.getNumber(), inObjStm);
         }
 
-        PdfIndirectObject add(PdfObject object, int refNumber) throws IOException {
+        PdfIndirectObject add(final PdfObject object, final int refNumber) throws IOException {
             return add(object, refNumber, true); // to false
         }
 
-        PdfIndirectObject add(PdfObject object, int refNumber, boolean inObjStm) throws IOException {
+        PdfIndirectObject add(final PdfObject object, final int refNumber, final boolean inObjStm) throws IOException {
             if (inObjStm && object.canBeInObjStm() && writer.isFullCompression()) {
                 PdfCrossReference pxref = addToObjStm(object, refNumber);
                 PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
@@ -430,7 +430,7 @@ public class PdfWriter extends DocWriter implements
          * @throws IOException
          */
 
-        void writeCrossReferenceTable(OutputStream os, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID, int prevxref) throws IOException {
+        void writeCrossReferenceTable(final OutputStream os, final PdfIndirectReference root, final PdfIndirectReference info, final PdfIndirectReference encryption, final PdfObject fileID, final int prevxref) throws IOException {
             int refNumber = 0;
             if (writer.isFullCompression()) {
                 flushObjStm();
@@ -540,7 +540,7 @@ public class PdfWriter extends DocWriter implements
          * @param prevxref
          */
 
-        PdfTrailer(int size, int offset, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID, int prevxref) {
+        PdfTrailer(final int size, final int offset, final PdfIndirectReference root, final PdfIndirectReference info, final PdfIndirectReference encryption, final PdfObject fileID, final int prevxref) {
             this.offset = offset;
             put(PdfName.SIZE, new PdfNumber(size));
             put(PdfName.ROOT, root);
@@ -562,7 +562,7 @@ public class PdfWriter extends DocWriter implements
          * @throws IOException
          */
         @Override
-        public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+        public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
             os.write(getISOBytes("trailer\n"));
             super.toPdf(null, os);
             os.write(getISOBytes("\nstartxref\n"));
@@ -591,7 +591,7 @@ public class PdfWriter extends DocWriter implements
      * @param	os			The <CODE>OutputStream</CODE> the writer has to write to.
      */
 
-    protected PdfWriter(PdfDocument document, OutputStream os) {
+    protected PdfWriter(final PdfDocument document, final OutputStream os) {
         super(document, os);
         pdf = document;
         directContent = new PdfContentByte(this);
@@ -608,7 +608,7 @@ public class PdfWriter extends DocWriter implements
      * @throws	DocumentException on error
      */
 
-    public static PdfWriter getInstance(Document document, OutputStream os)
+    public static PdfWriter getInstance(final Document document, final OutputStream os)
     throws DocumentException {
         PdfDocument pdf = new PdfDocument();
         document.addDocListener(pdf);
@@ -627,7 +627,7 @@ public class PdfWriter extends DocWriter implements
      * @throws DocumentException on error
      */
 
-    public static PdfWriter getInstance(Document document, OutputStream os, DocListener listener)
+    public static PdfWriter getInstance(final Document document, final OutputStream os, final DocListener listener)
     throws DocumentException {
         PdfDocument pdf = new PdfDocument();
         pdf.addDocListener(listener);
@@ -667,7 +667,7 @@ public class PdfWriter extends DocWriter implements
      *   terminated.
      * @return The current vertical page position.
      */
-    public float getVerticalPosition(boolean ensureNewLine) {
+    public float getVerticalPosition(final boolean ensureNewLine) {
         return pdf.getVerticalPosition(ensureNewLine);
     }
 
@@ -678,7 +678,7 @@ public class PdfWriter extends DocWriter implements
      * @since	2.1.6
      * @throws	DocumentException	if you try setting the leading after the document was opened.
      */
-    public void setInitialLeading(float leading) throws DocumentException {
+    public void setInitialLeading(final float leading) throws DocumentException {
     	if (open)
     		throw new DocumentException(MessageLocalization.getComposedMessage("you.can.t.set.the.initial.leading.if.the.document.is.already.open"));
     	pdf.setLeading(leading);
@@ -755,7 +755,7 @@ public class PdfWriter extends DocWriter implements
      * @throws IOException on error
      */
 
-    void addLocalDestinations(TreeMap<String, PdfDocument.Destination> desto) throws IOException {
+    void addLocalDestinations(final TreeMap<String, PdfDocument.Destination> desto) throws IOException {
         for (Map.Entry<String, PdfDocument.Destination> entry : desto.entrySet()) {
             String name = entry.getKey();
             PdfDocument.Destination dest = entry.getValue();
@@ -776,7 +776,7 @@ public class PdfWriter extends DocWriter implements
      * @return a PdfIndirectObject
      * @throws IOException
      */
-    public PdfIndirectObject addToBody(PdfObject object) throws IOException {
+    public PdfIndirectObject addToBody(final PdfObject object) throws IOException {
         PdfIndirectObject iobj = body.add(object);
         return iobj;
     }
@@ -789,7 +789,7 @@ public class PdfWriter extends DocWriter implements
      * @return a PdfIndirectObject
      * @throws IOException
      */
-    public PdfIndirectObject addToBody(PdfObject object, boolean inObjStm) throws IOException {
+    public PdfIndirectObject addToBody(final PdfObject object, final boolean inObjStm) throws IOException {
         PdfIndirectObject iobj = body.add(object, inObjStm);
         return iobj;
     }
@@ -802,7 +802,7 @@ public class PdfWriter extends DocWriter implements
      * @return a PdfIndirectObject
      * @throws IOException
      */
-    public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref) throws IOException {
+    public PdfIndirectObject addToBody(final PdfObject object, final PdfIndirectReference ref) throws IOException {
         PdfIndirectObject iobj = body.add(object, ref);
         return iobj;
     }
@@ -816,7 +816,7 @@ public class PdfWriter extends DocWriter implements
      * @return a PdfIndirectObject
      * @throws IOException
      */
-    public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref, boolean inObjStm) throws IOException {
+    public PdfIndirectObject addToBody(final PdfObject object, final PdfIndirectReference ref, final boolean inObjStm) throws IOException {
         PdfIndirectObject iobj = body.add(object, ref, inObjStm);
         return iobj;
     }
@@ -829,7 +829,7 @@ public class PdfWriter extends DocWriter implements
      * @return a PdfIndirectObject
      * @throws IOException
      */
-    public PdfIndirectObject addToBody(PdfObject object, int refNumber) throws IOException {
+    public PdfIndirectObject addToBody(final PdfObject object, final int refNumber) throws IOException {
         PdfIndirectObject iobj = body.add(object, refNumber);
         return iobj;
     }
@@ -843,7 +843,7 @@ public class PdfWriter extends DocWriter implements
      * @return a PdfIndirectObject
      * @throws IOException
      */
-    public PdfIndirectObject addToBody(PdfObject object, int refNumber, boolean inObjStm) throws IOException {
+    public PdfIndirectObject addToBody(final PdfObject object, final int refNumber, final boolean inObjStm) throws IOException {
         PdfIndirectObject iobj = body.add(object, refNumber, inObjStm);
         return iobj;
     }
@@ -882,7 +882,7 @@ public class PdfWriter extends DocWriter implements
  * to render the document.
  */
 
-    protected PdfDictionary getCatalog(PdfIndirectReference rootObj)
+    protected PdfDictionary getCatalog(final PdfIndirectReference rootObj)
     {
         PdfDictionary catalog = pdf.getCatalog(rootObj);
         // [F12] tagged PDF
@@ -941,29 +941,32 @@ public class PdfWriter extends DocWriter implements
      * @since	2.1.5
      */
     protected PdfName tabs = null;
-    
+
     /**
      * Additional page dictionary entries.
      * @since 5.1.0
      */
     protected PdfDictionary pageDictEntries = new PdfDictionary();
-    
+
     /**
      * Adds an additional entry for the page dictionary.
+     * @param key the key
+     * @param object the PdfObject for the given key
      * @since 5.1.0
      */
-    public void addPageDictEntry(PdfName key, PdfObject object) {
+    public void addPageDictEntry(final PdfName key, final PdfObject object) {
     	pageDictEntries.put(key, object);
     }
-    
+
     /**
      * Gets the additional pageDictEntries.
+     * @return the page dictionary entries
      * @since 5.1.0
      */
     public PdfDictionary getPageDictEntries() {
     	return pageDictEntries;
     }
-    
+
     /**
      * Resets the additional pageDictEntries.
      * @since 5.1.0
@@ -990,7 +993,7 @@ public class PdfWriter extends DocWriter implements
      * same size as the number of pages.
      * @throws DocumentException if all the pages are not present in the array
      */
-    public int reorderPages(int order[]) throws DocumentException {
+    public int reorderPages(final int order[]) throws DocumentException {
         return root.reorderPages(order);
     }
 
@@ -1049,10 +1052,10 @@ public class PdfWriter extends DocWriter implements
      * @param vp an array consisting of Viewport dictionaries.
      * @since 5.1.0
      */
-    public void setPageViewport(PdfArray vp) {
+    public void setPageViewport(final PdfArray vp) {
     	addPageDictEntry(PdfName.VP, vp);
     }
-    
+
     /**
      * Sets the value for the Tabs entry in the page tree.
      * @param	tabs	Can be PdfName.R, PdfName.C or PdfName.S.
@@ -1060,12 +1063,13 @@ public class PdfWriter extends DocWriter implements
      * or PdfName.W
      * @since	2.1.5
      */
-    public void setTabs(PdfName tabs) {
+    public void setTabs(final PdfName tabs) {
     	this.tabs = tabs;
     }
 
     /**
      * Returns the value to be used for the Tabs entry in the page tree.
+     * @return the Tabs PdfName
      * @since	2.1.5
      */
     public PdfName getTabs() {
@@ -1084,7 +1088,7 @@ public class PdfWriter extends DocWriter implements
      * @throws PdfException on error
      */
 
-    PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException {
+    PdfIndirectReference add(final PdfPage page, final PdfContents contents) throws PdfException {
         if (!open) {
             throw new PdfException(MessageLocalization.getComposedMessage("the.document.is.not.open"));
         }
@@ -1130,7 +1134,7 @@ public class PdfWriter extends DocWriter implements
      * @param event the <CODE>PdfPageEvent</CODE> for this document
      */
 
-    public void setPageEvent(PdfPageEvent event) {
+    public void setPageEvent(final PdfPageEvent event) {
     	if (event == null) this.pageEvent = null;
     	else if (this.pageEvent == null) this.pageEvent = event;
     	else if (this.pageEvent instanceof PdfPageEventForwarder) ((PdfPageEventForwarder)this.pageEvent).addPageEvent(event);
@@ -1359,11 +1363,11 @@ public class PdfWriter extends DocWriter implements
      * {@link SimpleBookmark}.
      * @param outlines the bookmarks or <CODE>null</CODE> to remove any
      */
-    public void setOutlines(List<HashMap<String, Object>> outlines) {
+    public void setOutlines(final List<HashMap<String, Object>> outlines) {
         newBookmarks = outlines;
     }
 
-    protected void writeOutlines(PdfDictionary catalog, boolean namedAsNames) throws IOException {
+    protected void writeOutlines(final PdfDictionary catalog, final boolean namedAsNames) throws IOException {
         if (newBookmarks == null || newBookmarks.isEmpty())
             return;
         PdfDictionary top = new PdfDictionary();
@@ -1407,17 +1411,17 @@ public class PdfWriter extends DocWriter implements
     protected PdfVersionImp pdf_version = new PdfVersionImp();
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfVersion#setPdfVersion(char) */
-    public void setPdfVersion(char version) {
+    public void setPdfVersion(final char version) {
         pdf_version.setPdfVersion(version);
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfVersion#setAtLeastPdfVersion(char) */
-    public void setAtLeastPdfVersion(char version) {
+    public void setAtLeastPdfVersion(final char version) {
     	pdf_version.setAtLeastPdfVersion(version);
     }
 
 	/** @see com.itextpdf.text.pdf.interfaces.PdfVersion#setPdfVersion(com.itextpdf.text.pdf.PdfName) */
-	public void setPdfVersion(PdfName version) {
+	public void setPdfVersion(final PdfName version) {
 		pdf_version.setPdfVersion(version);
 	}
 
@@ -1425,12 +1429,13 @@ public class PdfWriter extends DocWriter implements
 	 * @see com.itextpdf.text.pdf.interfaces.PdfVersion#addDeveloperExtension(com.itextpdf.text.pdf.PdfDeveloperExtension)
 	 * @since	2.1.6
 	 */
-	public void addDeveloperExtension(PdfDeveloperExtension de) {
+	public void addDeveloperExtension(final PdfDeveloperExtension de) {
 		pdf_version.addDeveloperExtension(de);
 	}
 
 	/**
 	 * Returns the version information.
+	 * @return the PdfVersion
 	 */
 	PdfVersionImp getPdfVersion() {
 		return pdf_version;
@@ -1501,12 +1506,12 @@ public class PdfWriter extends DocWriter implements
     public static final int PrintScalingNone = 1 << 24;
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfViewerPreferences#setViewerPreferences(int) */
-    public void setViewerPreferences(int preferences) {
+    public void setViewerPreferences(final int preferences) {
         pdf.setViewerPreferences(preferences);
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfViewerPreferences#addViewerPreference(com.itextpdf.text.pdf.PdfName, com.itextpdf.text.pdf.PdfObject) */
-    public void addViewerPreference(PdfName key, PdfObject value) {
+    public void addViewerPreference(final PdfName key, final PdfObject value) {
     	pdf.addViewerPreference(key, value);
     }
 
@@ -1516,7 +1521,7 @@ public class PdfWriter extends DocWriter implements
      * Use this method to add page labels
      * @param pageLabels the page labels
      */
-    public void setPageLabels(PdfPageLabels pageLabels) {
+    public void setPageLabels(final PdfPageLabels pageLabels) {
         pdf.setPageLabels(pageLabels);
     }
 
@@ -1533,7 +1538,7 @@ public class PdfWriter extends DocWriter implements
      *          use this method in combination with PdfCopy).
      * @since	iText 5.0
      */
-    public void addNamedDestinations(Map<String, String> map, int page_offset) {
+    public void addNamedDestinations(final Map<String, String> map, final int page_offset) {
     	int page;
     	String dest;
     	PdfDestination destination;
@@ -1552,7 +1557,7 @@ public class PdfWriter extends DocWriter implements
      * @param	dest	an explicit destination
      * @since	iText 5.0
      */
-    public void addNamedDestination(String name, int page, PdfDestination dest) {
+    public void addNamedDestination(final String name, final int page, final PdfDestination dest) {
     	dest.addPage(getPageReference(page));
     	pdf.localDestination(name, dest);
     }
@@ -1562,7 +1567,7 @@ public class PdfWriter extends DocWriter implements
       * When the document opens, all this JavaScript runs.
       * @param js The JavaScript action
       */
-     public void addJavaScript(PdfAction js) {
+     public void addJavaScript(final PdfAction js) {
          pdf.addJavaScript(js);
      }
 
@@ -1574,7 +1579,7 @@ public class PdfWriter extends DocWriter implements
       * Acrobat JavaScript engine does not support unicode,
       * so this may or may not work for you
       */
-     public void addJavaScript(String code, boolean unicode) {
+     public void addJavaScript(final String code, final boolean unicode) {
          addJavaScript(PdfAction.javaScript(code, this, unicode));
      }
 
@@ -1583,7 +1588,7 @@ public class PdfWriter extends DocWriter implements
       * When the document opens, all this JavaScript runs.
       * @param code the JavaScript code
       */
-     public void addJavaScript(String code) {
+     public void addJavaScript(final String code) {
          addJavaScript(code, false);
      }
      /**
@@ -1592,7 +1597,7 @@ public class PdfWriter extends DocWriter implements
       * @param name	The name of the JS Action in the name tree
       * @param js The JavaScript action
       */
-     public void addJavaScript(String name, PdfAction js) {
+     public void addJavaScript(final String name, final PdfAction js) {
          pdf.addJavaScript(name, js);
      }
 
@@ -1605,7 +1610,7 @@ public class PdfWriter extends DocWriter implements
       * Acrobat JavaScript engine does not support unicode,
       * so this may or may not work for you
       */
-     public void addJavaScript(String name, String code, boolean unicode) {
+     public void addJavaScript(final String name, final String code, final boolean unicode) {
          addJavaScript(name, PdfAction.javaScript(code, this, unicode));
      }
 
@@ -1615,7 +1620,7 @@ public class PdfWriter extends DocWriter implements
       * @param name	The name of the JS Action in the name tree
       * @param code the JavaScript code
       */
-     public void addJavaScript(String name, String code) {
+     public void addJavaScript(final String name, final String code) {
          addJavaScript(name, code, false);
      }
 
@@ -1629,7 +1634,7 @@ public class PdfWriter extends DocWriter implements
       * @param fileDisplay the actual file name stored in the pdf
       * @throws IOException on error
       */
-     public void addFileAttachment(String description, byte fileStore[], String file, String fileDisplay) throws IOException {
+     public void addFileAttachment(final String description, final byte fileStore[], final String file, final String fileDisplay) throws IOException {
          addFileAttachment(description, PdfFileSpecification.fileEmbedded(this, file, fileDisplay, fileStore));
      }
 
@@ -1637,16 +1642,18 @@ public class PdfWriter extends DocWriter implements
       * Use this method to add a file attachment at the document level.
       * @param description the file description
       * @param fs the file specification
+     * @throws IOException if the file attachment could not be added to the document
       */
-     public void addFileAttachment(String description, PdfFileSpecification fs) throws IOException {
+     public void addFileAttachment(final String description, final PdfFileSpecification fs) throws IOException {
          pdf.addFileAttachment(description, fs);
      }
 
      /**
       * Use this method to add a file attachment at the document level.
       * @param fs the file specification
+     * @throws IOException if the file attachment could not be added to the document
       */
-     public void addFileAttachment(PdfFileSpecification fs) throws IOException {
+     public void addFileAttachment(final PdfFileSpecification fs) throws IOException {
          addFileAttachment(null, fs);
      }
 
@@ -1664,17 +1671,17 @@ public class PdfWriter extends DocWriter implements
      public static final PdfName DID_PRINT = PdfName.DP;
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfDocumentActions#setOpenAction(java.lang.String) */
-    public void setOpenAction(String name) {
+    public void setOpenAction(final String name) {
          pdf.setOpenAction(name);
      }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfDocumentActions#setOpenAction(com.itextpdf.text.pdf.PdfAction) */
-    public void setOpenAction(PdfAction action) {
+    public void setOpenAction(final PdfAction action) {
          pdf.setOpenAction(action);
      }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfDocumentActions#setAdditionalAction(com.itextpdf.text.pdf.PdfName, com.itextpdf.text.pdf.PdfAction) */
-    public void setAdditionalAction(PdfName actionType, PdfAction action) throws DocumentException {
+    public void setAdditionalAction(final PdfName actionType, final PdfAction action) throws DocumentException {
          if (!(actionType.equals(DOCUMENT_CLOSE) ||
          actionType.equals(WILL_SAVE) ||
          actionType.equals(DID_SAVE) ||
@@ -1691,7 +1698,7 @@ public class PdfWriter extends DocWriter implements
      * Use this method to add the Collection dictionary.
      * @param collection a dictionary of type PdfCollection
      */
-    public void setCollection(PdfCollection collection) {
+    public void setCollection(final PdfCollection collection) {
         setAtLeastPdfVersion(VERSION_1_7);
         pdf.setCollection(collection);
     }
@@ -1709,21 +1716,21 @@ public class PdfWriter extends DocWriter implements
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfAnnotations#addAnnotation(com.itextpdf.text.pdf.PdfAnnotation) */
-    public void addAnnotation(PdfAnnotation annot) {
+    public void addAnnotation(final PdfAnnotation annot) {
         pdf.addAnnotation(annot);
     }
 
-    void addAnnotation(PdfAnnotation annot, int page) {
+    void addAnnotation(final PdfAnnotation annot, final int page) {
         addAnnotation(annot);
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfAnnotations#addCalculationOrder(com.itextpdf.text.pdf.PdfFormField) */
-    public void addCalculationOrder(PdfFormField annot) {
+    public void addCalculationOrder(final PdfFormField annot) {
         pdf.addCalculationOrder(annot);
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfAnnotations#setSigFlags(int) */
-    public void setSigFlags(int f) {
+    public void setSigFlags(final int f) {
         pdf.setSigFlags(f);
     }
 
@@ -1736,16 +1743,16 @@ public class PdfWriter extends DocWriter implements
      * Use this method to set the XMP Metadata.
      * @param xmpMetadata The xmpMetadata to set.
      */
-    public void setXmpMetadata(byte[] xmpMetadata) {
+    public void setXmpMetadata(final byte[] xmpMetadata) {
         this.xmpMetadata = xmpMetadata;
     }
 
     /**
      * Use this method to set the XMP Metadata for each page.
      * @param xmpMetadata The xmpMetadata to set.
-     * @throws IOException 
+     * @throws IOException
      */
-    public void setPageXmpMetadata(byte[] xmpMetadata) throws IOException {
+    public void setPageXmpMetadata(final byte[] xmpMetadata) throws IOException {
         pdf.setXmpMetadata(xmpMetadata);
     }
 
@@ -1785,10 +1792,10 @@ public class PdfWriter extends DocWriter implements
     public static final int PDFA1B = 4;
 
     /** Stores the PDF/X level. */
-    private PdfXConformanceImp pdfxConformance = new PdfXConformanceImp();
+    private final PdfXConformanceImp pdfxConformance = new PdfXConformanceImp();
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfXConformance#setPDFXConformance(int) */
-    public void setPDFXConformance(int pdfx) {
+    public void setPDFXConformance(final int pdfx) {
         if (pdfxConformance.getPDFXConformance() == pdfx)
             return;
         if (pdf.isOpen())
@@ -1825,7 +1832,7 @@ public class PdfWriter extends DocWriter implements
      * @since 2.1.5
      * @throws IOException on error
      */
-    public void setOutputIntents(String outputConditionIdentifier, String outputCondition, String registryName, String info, ICC_Profile colorProfile) throws IOException {
+    public void setOutputIntents(final String outputConditionIdentifier, final String outputCondition, final String registryName, final String info, final ICC_Profile colorProfile) throws IOException {
         getExtraCatalog();
         PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
         if (outputCondition != null)
@@ -1868,7 +1875,7 @@ public class PdfWriter extends DocWriter implements
      *
      * @throws IOException
      */
-    public void setOutputIntents(String outputConditionIdentifier, String outputCondition, String registryName, String info, byte destOutputProfile[]) throws IOException {
+    public void setOutputIntents(final String outputConditionIdentifier, final String outputCondition, final String registryName, final String info, final byte destOutputProfile[]) throws IOException {
         ICC_Profile colorProfile = destOutputProfile == null ? null : ICC_Profile.getInstance(destOutputProfile);
         setOutputIntents(outputConditionIdentifier, outputCondition, registryName, info, colorProfile);
     }
@@ -1884,7 +1891,7 @@ public class PdfWriter extends DocWriter implements
      * @return <CODE>true</CODE> if the output intent dictionary exists, <CODE>false</CODE>
      * otherwise
      */
-    public boolean setOutputIntents(PdfReader reader, boolean checkExistence) throws IOException {
+    public boolean setOutputIntents(final PdfReader reader, final boolean checkExistence) throws IOException {
         PdfDictionary catalog = reader.getCatalog();
         PdfArray outs = catalog.getAsArray(PdfName.OUTPUTINTENTS);
         if (outs == null)
@@ -1907,7 +1914,7 @@ public class PdfWriter extends DocWriter implements
         return true;
     }
 
-    private static String getNameString(PdfDictionary dic, PdfName key) {
+    private static String getNameString(final PdfDictionary dic, final PdfName key) {
         PdfObject obj = PdfReader.getPdfObject(dic.get(key));
         if (obj == null || !obj.isString())
             return null;
@@ -2028,7 +2035,7 @@ public class PdfWriter extends DocWriter implements
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(byte[], byte[], int, int) */
-    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType) throws DocumentException {
+    public void setEncryption(final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) throws DocumentException {
         if (pdf.isOpen())
             throw new DocumentException(MessageLocalization.getComposedMessage("encryption.can.only.be.added.before.opening.the.document"));
         crypto = new PdfEncryption();
@@ -2037,7 +2044,7 @@ public class PdfWriter extends DocWriter implements
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(java.security.cert.Certificate[], int[], int) */
-    public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
+    public void setEncryption(final Certificate[] certs, final int[] permissions, final int encryptionType) throws DocumentException {
         if (pdf.isOpen())
             throw new DocumentException(MessageLocalization.getComposedMessage("encryption.can.only.be.added.before.opening.the.document"));
         crypto = new PdfEncryption();
@@ -2065,7 +2072,7 @@ public class PdfWriter extends DocWriter implements
      * @deprecated As of iText 2.0.3, replaced by (@link #setEncryption(byte[], byte[], int, int)}. Scheduled for removal at or after 2.2.0
      */
     @Deprecated
-    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
+    public void setEncryption(final byte userPassword[], final byte ownerPassword[], final int permissions, final boolean strength128Bits) throws DocumentException {
         setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? STANDARD_ENCRYPTION_128 : STANDARD_ENCRYPTION_40);
     }
 
@@ -2084,7 +2091,7 @@ public class PdfWriter extends DocWriter implements
      * @deprecated As of iText 2.0.3, replaced by (@link #setEncryption(byte[], byte[], int, int)}. Scheduled for removal at or after 2.2.0
      */
     @Deprecated
-    public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+    public void setEncryption(final boolean strength, final String userPassword, final String ownerPassword, final int permissions) throws DocumentException {
         setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength ? STANDARD_ENCRYPTION_128 : STANDARD_ENCRYPTION_40);
     }
 
@@ -2104,7 +2111,7 @@ public class PdfWriter extends DocWriter implements
      * @deprecated As of iText 2.0.3, replaced by (@link #setEncryption(byte[], byte[], int, int)}. Scheduled for removal at or after 2.2.0
      */
     @Deprecated
-    public void setEncryption(int encryptionType, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+    public void setEncryption(final int encryptionType, final String userPassword, final String ownerPassword, final int permissions) throws DocumentException {
         setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, encryptionType);
     }
 
@@ -2153,7 +2160,7 @@ public class PdfWriter extends DocWriter implements
      * @param compressionLevel a value between 0 (best speed) and 9 (best compression)
      * @since 2.1.3
      */
-    public void setCompressionLevel(int compressionLevel) {
+    public void setCompressionLevel(final int compressionLevel) {
         if (compressionLevel < PdfStream.NO_COMPRESSION || compressionLevel > PdfStream.BEST_COMPRESSION)
             this.compressionLevel = PdfStream.DEFAULT_COMPRESSION;
         else
@@ -2176,7 +2183,7 @@ public class PdfWriter extends DocWriter implements
      * and position 1 is an <CODE>PdfIndirectReference</CODE>
      */
 
-    FontDetails addSimple(BaseFont bf) {
+    FontDetails addSimple(final BaseFont bf) {
         if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
             return new FontDetails(new PdfName("F" + fontNumber++), ((DocumentFont)bf).getIndirectReference(), bf);
         }
@@ -2189,7 +2196,7 @@ public class PdfWriter extends DocWriter implements
         return ret;
     }
 
-    void eliminateFontSubset(PdfDictionary fonts) {
+    void eliminateFontSubset(final PdfDictionary fonts) {
         for (Object element : documentFonts.values()) {
             FontDetails ft = (FontDetails)element;
             if (fonts.get(ft.getFontName()) != null)
@@ -2213,7 +2220,7 @@ public class PdfWriter extends DocWriter implements
      * @return the <CODE>PdfName</CODE> for this template
      */
 
-    PdfName addDirectTemplateSimple(PdfTemplate template, PdfName forcedName) {
+    PdfName addDirectTemplateSimple(PdfTemplate template, final PdfName forcedName) {
         PdfIndirectReference ref = template.getIndirectReference();
         Object obj[] = formXObjects.get(ref);
         PdfName name = null;
@@ -2253,7 +2260,7 @@ public class PdfWriter extends DocWriter implements
      * @param tp the template to release
      * @throws IOException on error
      */
-    public void releaseTemplate(PdfTemplate tp) throws IOException {
+    public void releaseTemplate(final PdfTemplate tp) throws IOException {
         PdfIndirectReference ref = tp.getIndirectReference();
         Object[] objs = formXObjects.get(ref);
         if (objs == null || objs[1] == null)
@@ -2284,7 +2291,7 @@ public class PdfWriter extends DocWriter implements
      * @param pageNumber the page number. The first page is 1
      * @return the template representing the imported page
      */
-    public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
+    public PdfImportedPage getImportedPage(final PdfReader reader, final int pageNumber) {
         return getPdfReaderInstance(reader).getImportedPage(pageNumber);
     }
 
@@ -2296,7 +2303,7 @@ public class PdfWriter extends DocWriter implements
      * @return the instance for the provided reader
      * @since 5.0.3
      */
-    protected PdfReaderInstance getPdfReaderInstance(PdfReader reader){
+    protected PdfReaderInstance getPdfReaderInstance(final PdfReader reader){
         PdfReaderInstance inst = readerInstances.get(reader);
         if (inst == null) {
             inst = reader.getPdfReaderInstance(this);
@@ -2304,7 +2311,7 @@ public class PdfWriter extends DocWriter implements
         }
         return inst;
     }
-    
+
     /**
      * Use this method to writes the reader to the document
      * and free the memory used by it.
@@ -2314,7 +2321,7 @@ public class PdfWriter extends DocWriter implements
      * @param reader the <CODE>PdfReader</CODE> to free
      * @throws IOException on error
      */
-    public void freeReader(PdfReader reader) throws IOException {
+    public void freeReader(final PdfReader reader) throws IOException {
         currentPdfReaderInstance = readerInstances.get(reader);
         if (currentPdfReaderInstance == null)
             return;
@@ -2338,14 +2345,14 @@ public class PdfWriter extends DocWriter implements
 
     protected PdfReaderInstance currentPdfReaderInstance;
 
-    protected int getNewObjectNumber(PdfReader reader, int number, int generation) {
+    protected int getNewObjectNumber(final PdfReader reader, final int number, final int generation) {
         if (currentPdfReaderInstance == null) {
         	currentPdfReaderInstance = getPdfReaderInstance(reader);
         }
     	return currentPdfReaderInstance.getNewObjectNumber(number, generation);
     }
 
-    RandomAccessFileOrArray getReaderFile(PdfReader reader) {
+    RandomAccessFileOrArray getReaderFile(final PdfReader reader) {
         return currentPdfReaderInstance.getReaderFile();
     }
 
@@ -2367,7 +2374,7 @@ public class PdfWriter extends DocWriter implements
      * @return an <CODE>Object[]</CODE> where position 0 is a <CODE>PdfName</CODE>
      * and position 1 is an <CODE>PdfIndirectReference</CODE>
      */
-    ColorDetails addSimple(PdfSpotColor spc) {
+    ColorDetails addSimple(final PdfSpotColor spc) {
         ColorDetails ret = documentColors.get(spc);
         if (ret == null) {
             ret = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), spc);
@@ -2384,7 +2391,7 @@ public class PdfWriter extends DocWriter implements
     /** The pattern number counter for the colors in the document. */
     protected int patternNumber = 1;
 
-    PdfName addSimplePattern(PdfPatternPainter painter) {
+    PdfName addSimplePattern(final PdfPatternPainter painter) {
         PdfName name = documentPatterns.get(painter);
         try {
             if ( name == null ) {
@@ -2402,7 +2409,7 @@ public class PdfWriter extends DocWriter implements
 
     protected HashSet<PdfShadingPattern> documentShadingPatterns = new HashSet<PdfShadingPattern>();
 
-    void addSimpleShadingPattern(PdfShadingPattern shading) {
+    void addSimpleShadingPattern(final PdfShadingPattern shading) {
         if (!documentShadingPatterns.contains(shading)) {
             shading.setName(patternNumber);
             ++patternNumber;
@@ -2415,7 +2422,7 @@ public class PdfWriter extends DocWriter implements
 
     protected HashSet<PdfShading> documentShadings = new HashSet<PdfShading>();
 
-    void addSimpleShading(PdfShading shading) {
+    void addSimpleShading(final PdfShading shading) {
         if (!documentShadings.contains(shading)) {
             documentShadings.add(shading);
             shading.setName(documentShadings.size());
@@ -2426,7 +2433,7 @@ public class PdfWriter extends DocWriter implements
 
     protected HashMap<PdfDictionary, PdfObject[]> documentExtGState = new HashMap<PdfDictionary, PdfObject[]>();
 
-    PdfObject[] addSimpleExtGState(PdfDictionary gstate) {
+    PdfObject[] addSimpleExtGState(final PdfDictionary gstate) {
         if (!documentExtGState.containsKey(gstate)) {
             PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_GSTATE, gstate);
             documentExtGState.put(gstate, new PdfObject[]{new PdfName("GS" + (documentExtGState.size() + 1)), getPdfIndirectReference()});
@@ -2437,7 +2444,7 @@ public class PdfWriter extends DocWriter implements
 //  [F11] adding properties (OCG, marked content)
 
     protected HashMap<Object, PdfObject[]> documentProperties = new HashMap<Object, PdfObject[]>();
-    PdfObject[] addSimpleProperty(Object prop, PdfIndirectReference refi) {
+    PdfObject[] addSimpleProperty(final Object prop, final PdfIndirectReference refi) {
         if (!documentProperties.containsKey(prop)) {
             if (prop instanceof PdfOCG)
             	PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_LAYER, null);
@@ -2446,7 +2453,7 @@ public class PdfWriter extends DocWriter implements
         return documentProperties.get(prop);
     }
 
-    boolean propertyExists(Object prop) {
+    boolean propertyExists(final Object prop) {
         return documentProperties.containsKey(prop);
     }
 
@@ -2517,7 +2524,7 @@ public class PdfWriter extends DocWriter implements
      * ON, all others must be turned OFF.
      * @param group the radio group
      */
-    public void addOCGRadioGroup(ArrayList<PdfLayer> group) {
+    public void addOCGRadioGroup(final ArrayList<PdfLayer> group) {
         PdfArray ar = new PdfArray();
         for (int k = 0; k < group.size(); ++k) {
             PdfLayer layer = group.get(k);
@@ -2537,11 +2544,11 @@ public class PdfWriter extends DocWriter implements
      * @param layer	the layer that needs to be added to the array of locked OCGs
      * @since	2.1.2
      */
-    public void lockLayer(PdfLayer layer) {
+    public void lockLayer(final PdfLayer layer) {
         OCGLocked.add(layer.getRef());
     }
 
-    private static void getOCGOrder(PdfArray order, PdfLayer layer) {
+    private static void getOCGOrder(final PdfArray order, final PdfLayer layer) {
         if (!layer.isOnPanel())
             return;
         if (layer.getTitle() == null)
@@ -2559,7 +2566,7 @@ public class PdfWriter extends DocWriter implements
             order.add(kids);
     }
 
-    private void addASEvent(PdfName event, PdfName category) {
+    private void addASEvent(final PdfName event, final PdfName category) {
         PdfArray arr = new PdfArray();
         for (Object element : documentOCG) {
             PdfLayer layer = (PdfLayer)element;
@@ -2583,9 +2590,10 @@ public class PdfWriter extends DocWriter implements
     }
 
     /**
+     * @param erase true to erase the {@link PdfName#OCGS} and {@link PdfName#D} from the OCProperties first.
      * @since 2.1.2
      */
-    protected void fillOCProperties(boolean erase) {
+    protected void fillOCProperties(final boolean erase) {
         if (OCProperties == null)
             OCProperties = new PdfOCProperties();
         if (erase) {
@@ -2635,7 +2643,7 @@ public class PdfWriter extends DocWriter implements
         d.put(PdfName.LISTMODE, PdfName.VISIBLEPAGES);
     }
 
-    void registerLayer(PdfOCG layer) {
+    void registerLayer(final PdfOCG layer) {
         PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_LAYER, null);
         if (layer instanceof PdfLayer) {
             PdfLayer la = (PdfLayer)layer;
@@ -2671,7 +2679,7 @@ public class PdfWriter extends DocWriter implements
      * This change only takes effect in the next page.
      * @param crop the crop box
      */
-    public void setCropBoxSize(Rectangle crop) {
+    public void setCropBoxSize(final Rectangle crop) {
         pdf.setCropBoxSize(crop);
     }
 
@@ -2681,7 +2689,7 @@ public class PdfWriter extends DocWriter implements
      * @param boxName the box size
      * @param size the size
      */
-    public void setBoxSize(String boxName, Rectangle size) {
+    public void setBoxSize(final String boxName, final Rectangle size) {
         pdf.setBoxSize(boxName, size);
     }
 
@@ -2690,7 +2698,7 @@ public class PdfWriter extends DocWriter implements
      * or null if not defined.
      * @param boxName crop, trim, art or bleed
      */
-    public Rectangle getBoxSize(String boxName) {
+    public Rectangle getBoxSize(final String boxName) {
         return pdf.getBoxSize(boxName);
     }
 
@@ -2703,7 +2711,7 @@ public class PdfWriter extends DocWriter implements
      * setPageEmpty(true) won't have any effect.
      * @param pageEmpty the state
      */
-    public void setPageEmpty(boolean pageEmpty) {
+    public void setPageEmpty(final boolean pageEmpty) {
         if (pageEmpty)
             return;
         pdf.setPageEmpty(pageEmpty);
@@ -2726,19 +2734,19 @@ public class PdfWriter extends DocWriter implements
     public static final PdfName PAGE_CLOSE = PdfName.C;
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfPageActions#setPageAction(com.itextpdf.text.pdf.PdfName, com.itextpdf.text.pdf.PdfAction) */
-    public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException {
+    public void setPageAction(final PdfName actionType, final PdfAction action) throws DocumentException {
           if (!actionType.equals(PAGE_OPEN) && !actionType.equals(PAGE_CLOSE))
               throw new DocumentException(MessageLocalization.getComposedMessage("invalid.page.additional.action.type.1", actionType.toString()));
           pdf.setPageAction(actionType, action);
       }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfPageActions#setDuration(int) */
-    public void setDuration(int seconds) {
+    public void setDuration(final int seconds) {
          pdf.setDuration(seconds);
      }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfPageActions#setTransition(com.itextpdf.text.pdf.PdfTransition) */
-    public void setTransition(PdfTransition transition) {
+    public void setTransition(final PdfTransition transition) {
          pdf.setTransition(transition);
      }
 
@@ -2750,7 +2758,7 @@ public class PdfWriter extends DocWriter implements
      * @throws PdfException on error
      * @throws DocumentException or error
      */
-    public void setThumbnail(Image image) throws PdfException, DocumentException {
+    public void setThumbnail(final Image image) throws PdfException, DocumentException {
         pdf.setThumbnail(image);
     }
 
@@ -2775,7 +2783,7 @@ public class PdfWriter extends DocWriter implements
      * Use this method to set the group dictionary.
      * @param group New value of property group.
      */
-    public void setGroup(PdfDictionary group) {
+    public void setGroup(final PdfDictionary group) {
         this.group = group;
     }
 
@@ -2809,7 +2817,7 @@ public class PdfWriter extends DocWriter implements
      * then the extra character spacing will be zero.
      * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
      */
-    public void setSpaceCharRatio(float spaceCharRatio) {
+    public void setSpaceCharRatio(final float spaceCharRatio) {
         if (spaceCharRatio < 0.001f)
             this.spaceCharRatio = 0.001f;
         else
@@ -2838,7 +2846,7 @@ public class PdfWriter extends DocWriter implements
      * This is only used as a placeholder as it does not affect anything.
      * @param runDirection the run direction
      */
-    public void setRunDirection(int runDirection) {
+    public void setRunDirection(final int runDirection) {
         if (runDirection < RUN_DIRECTION_NO_BIDI || runDirection > RUN_DIRECTION_RTL)
             throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.run.direction.1", runDirection));
         this.runDirection = runDirection;
@@ -2862,7 +2870,7 @@ public class PdfWriter extends DocWriter implements
      * @param userunit The userunit to set.
      * @throws DocumentException on error
      */
-     public void setUserunit(float userunit) throws DocumentException {
+     public void setUserunit(final float userunit) throws DocumentException {
  		if (userunit < 1f || userunit > 75000f) throw new DocumentException(MessageLocalization.getComposedMessage("userunit.should.be.a.value.between.1.and.75000"));
          addPageDictEntry(PdfName.USERUNIT, new PdfNumber(userunit));
          setAtLeastPdfVersion(VERSION_1_6);
@@ -2892,7 +2900,7 @@ public class PdfWriter extends DocWriter implements
      * or <CODE>PdfName.DEFAULTCMYK</CODE>
      * @param cs the colorspace. A <CODE>null</CODE> or <CODE>PdfNull</CODE> removes any colorspace with the same name
      */
-    public void setDefaultColorspace(PdfName key, PdfObject cs) {
+    public void setDefaultColorspace(final PdfName key, final PdfObject cs) {
         if (cs == null || cs.isNull())
             defaultColorspace.remove(key);
         defaultColorspace.put(key, cs);
@@ -2905,7 +2913,7 @@ public class PdfWriter extends DocWriter implements
     protected ColorDetails patternColorspaceGRAY;
     protected ColorDetails patternColorspaceCMYK;
 
-    ColorDetails addSimplePatternColorspace(BaseColor color) {
+    ColorDetails addSimplePatternColorspace(final BaseColor color) {
         int type = ExtendedColor.getType(color);
         if (type == ExtendedColor.TYPE_PATTERN || type == ExtendedColor.TYPE_SHADING)
             throw new RuntimeException(MessageLocalization.getComposedMessage("an.uncolored.tile.pattern.can.not.have.another.pattern.or.shading.as.color"));
@@ -2972,7 +2980,7 @@ public class PdfWriter extends DocWriter implements
      * @param strictImageSequence new value of property strictImageSequence
      *
      */
-    public void setStrictImageSequence(boolean strictImageSequence) {
+    public void setStrictImageSequence(final boolean strictImageSequence) {
         pdf.setStrictImageSequence(strictImageSequence);
     }
 
@@ -2988,7 +2996,7 @@ public class PdfWriter extends DocWriter implements
     protected PdfDictionary imageDictionary = new PdfDictionary();
 
     /** This is the list with all the images in the document. */
-    private HashMap<Long, PdfName> images = new HashMap<Long, PdfName>();
+    private final HashMap<Long, PdfName> images = new HashMap<Long, PdfName>();
 
     /**
      * Use this method to adds an image to the document
@@ -3000,7 +3008,7 @@ public class PdfWriter extends DocWriter implements
      * @throws PdfException on error
      * @throws DocumentException on error
      */
-    public PdfName addDirectImageSimple(Image image) throws PdfException, DocumentException {
+    public PdfName addDirectImageSimple(final Image image) throws PdfException, DocumentException {
         return addDirectImageSimple(image, null);
     }
 
@@ -3015,7 +3023,7 @@ public class PdfWriter extends DocWriter implements
      * @throws PdfException on error
      * @throws DocumentException on error
      */
-    public PdfName addDirectImageSimple(Image image, PdfIndirectReference fixedRef) throws PdfException, DocumentException {
+    public PdfName addDirectImageSimple(final Image image, final PdfIndirectReference fixedRef) throws PdfException, DocumentException {
         PdfName name;
         // if the images is already added, just retrieve the name
         if (images.containsKey(image.getMySerialId())) {
@@ -3086,11 +3094,12 @@ public class PdfWriter extends DocWriter implements
      * Writes a <CODE>PdfImage</CODE> to the outputstream.
      *
      * @param pdfImage the image to be added
+     * @param fixedRef the IndirectReference, may be null then a new indirect reference is returned
      * @return a <CODE>PdfIndirectReference</CODE> to the encapsulated image
      * @throws PdfException when a document isn't open yet, or has been closed
      */
 
-    PdfIndirectReference add(PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException {
+    PdfIndirectReference add(final PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException {
         if (! imageDictionary.contains(pdfImage.name())) {
             PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_IMAGE, pdfImage);
             if (fixedRef instanceof PRIndirectReference) {
@@ -3119,11 +3128,11 @@ public class PdfWriter extends DocWriter implements
      * @return a <CODE>PdfIndirectReference</CODE>
      */
 
-    PdfIndirectReference getImageReference(PdfName name) {
+    PdfIndirectReference getImageReference(final PdfName name) {
         return (PdfIndirectReference) imageDictionary.get(name);
     }
 
-    protected PdfIndirectReference add(PdfICCBased icc) {
+    protected PdfIndirectReference add(final PdfICCBased icc) {
         PdfIndirectObject object;
         try {
             object = addToBody(icc);
@@ -3143,9 +3152,10 @@ public class PdfWriter extends DocWriter implements
      * Gets an indirect reference to a JBIG2 Globals stream.
      * Adds the stream if it hasn't already been added to the writer.
 	 * @param	content a byte array that may already been added to the writer inside a stream object.
+     * @return the PdfIndirectReference of the stream
      * @since  2.1.5
      */
-    protected PdfIndirectReference getReferenceJBIG2Globals(byte[] content) {
+    protected PdfIndirectReference getReferenceJBIG2Globals(final byte[] content) {
         if (content == null) return null;
         for (PdfStream stream : JBIG2Globals.keySet()) {
             if (Arrays.equals(content, stream.getBytes())) {
@@ -3181,7 +3191,7 @@ public class PdfWriter extends DocWriter implements
      * Sets the flag indicating the presence of structure elements that contain user properties attributes.
      * @param userProperties the user properties flag
      */
-    public void setUserProperties(boolean userProperties) {
+    public void setUserProperties(final boolean userProperties) {
         this.userProperties = userProperties;
     }
 
@@ -3210,7 +3220,7 @@ public class PdfWriter extends DocWriter implements
      * to use the default blending colorspace
      * @since 2.1.0
      */
-    public void setRgbTransparencyBlending(boolean rgbTransparencyBlending) {
+    public void setRgbTransparencyBlending(final boolean rgbTransparencyBlending) {
         this.rgbTransparencyBlending = rgbTransparencyBlending;
     }
 }

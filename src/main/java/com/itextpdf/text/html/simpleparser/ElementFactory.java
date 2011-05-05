@@ -74,7 +74,7 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
  * @since 5.0.6 (renamed)
  */
 public class ElementFactory {
-	
+
 
 
 	/**
@@ -94,10 +94,10 @@ public class ElementFactory {
 	 * @param provider
 	 * @since	5.0.6 renamed from setFontImp
 	 */
-	public void setFontProvider(FontProvider provider) {
+	public void setFontProvider(final FontProvider provider) {
 		this.provider = provider;
 	}
-	
+
 	/**
 	 * Getter for the font provider
 	 * @return provider
@@ -112,15 +112,15 @@ public class ElementFactory {
 	 * @param	chain	chain of properties
 	 * @return	an iText Font object
 	 */
-	public Font getFont(ChainedProperties chain) {
-		
+	public Font getFont(final ChainedProperties chain) {
+
 		// [1] font name
-		
+
 		String face = chain.getProperty(HtmlTags.FACE);
-		// try again, under the CSS key.  
-		//ISSUE: If both are present, we always go with face, even if font-family was  
-		//  defined more recently in our ChainedProperties.  One solution would go like this: 
-		//    Map all our supported style attributes to the 'normal' tag name, so we could   
+		// try again, under the CSS key.
+		//ISSUE: If both are present, we always go with face, even if font-family was
+		//  defined more recently in our ChainedProperties.  One solution would go like this:
+		//    Map all our supported style attributes to the 'normal' tag name, so we could
 		//    look everything up under that one tag, retrieving the most current value.
 		if (face == null || face.trim().length() == 0) {
 			face = chain.getProperty(HtmlTags.FONTFAMILY);
@@ -139,23 +139,23 @@ public class ElementFactory {
 					break;
 			}
 		}
-		
+
 		// [2] encoding
 		String encoding = chain.getProperty(HtmlTags.ENCODING);
 		if (encoding == null)
 			encoding = BaseFont.WINANSI;
-		
+
 		// [3] embedded
-		
+
 		// [4] font size
 		String value = chain.getProperty(HtmlTags.SIZE);
 		float size = 12;
 		if (value != null)
 			size = Float.parseFloat(value);
-		
+
 		// [5] font style
 		int style = 0;
-		
+
 		// text-decoration
 		String decoration = chain.getProperty(HtmlTags.TEXTDECORATION);
 		if (decoration != null && decoration.trim().length() != 0) {
@@ -177,22 +177,22 @@ public class ElementFactory {
 		// strikethru
 		if (chain.hasProperty(HtmlTags.S))
 			style |= Font.STRIKETHRU;
-		
+
 		// [6] Color
 		BaseColor color = HtmlUtilities.decodeColor(chain.getProperty(HtmlTags.COLOR));
-		
+
 		// Get the font object from the provider
 		return provider.getFont(face, encoding, true, size, style, color);
 	}
-	
-	
+
+
 	/**
 	 * Creates an iText Chunk
 	 * @param content the content of the Chunk
 	 * @param chain the hierarchy chain
 	 * @return a Chunk
 	 */
-	public Chunk createChunk(String content, ChainedProperties chain) {
+	public Chunk createChunk(final String content, final ChainedProperties chain) {
 		Font font = getFont(chain);
 		Chunk ck = new Chunk(content, font);
 		if (chain.hasProperty(HtmlTags.SUB))
@@ -209,7 +209,7 @@ public class ElementFactory {
 	 * @param	chain	the hierarchy chain
 	 * @return	a Paragraph without any content
 	 */
-	public Paragraph createParagraph(ChainedProperties chain) {
+	public Paragraph createParagraph(final ChainedProperties chain) {
 		Paragraph paragraph = new Paragraph();
 		updateElement(paragraph, chain);
 		return paragraph;
@@ -221,19 +221,19 @@ public class ElementFactory {
 	 * @param	chain	the hierarchy chain
 	 * @return	a ListItem without any content
 	 */
-	public ListItem createListItem(ChainedProperties chain) {
+	public ListItem createListItem(final ChainedProperties chain) {
 		ListItem item = new ListItem();
 		updateElement(item, chain);
 		return item;
 	}
-	
+
 	/**
 	 * Method that does the actual Element creating for
 	 * the createParagraph and createListItem method.
 	 * @param paragraph
 	 * @param chain
 	 */
-	protected void updateElement(Paragraph paragraph, ChainedProperties chain) {
+	protected void updateElement(final Paragraph paragraph, final ChainedProperties chain) {
 		// Alignment
 		String value = chain.getProperty(HtmlTags.ALIGN);
 		paragraph.setAlignment(HtmlUtilities.alignmentValue(value));
@@ -280,7 +280,7 @@ public class ElementFactory {
 	 * @param	paragraph	the Paragraph for which we set the leading
 	 * @param	leading		the String value of the leading
 	 */
-	protected static void setParagraphLeading(Paragraph paragraph, String leading) {
+	protected static void setParagraphLeading(final Paragraph paragraph, final String leading) {
 		// default leading
 		if (leading == null) {
 			paragraph.setLeading(0, 1.5f);
@@ -313,7 +313,7 @@ public class ElementFactory {
 	 * @return	a HyphenationEvent
 	 * @since	2.1.2
 	 */
-	public HyphenationEvent getHyphenation(ChainedProperties chain) {
+	public HyphenationEvent getHyphenation(final ChainedProperties chain) {
 		String value = chain.getProperty(HtmlTags.HYPHENATION);
 		// no hyphenation defined
 		if (value == null || value.length() == 0) {
@@ -346,12 +346,15 @@ public class ElementFactory {
 		}
 		return new HyphenationAuto(lang, country, leftMin, rightMin);
 	}
-	
+
 	/**
 	 * Creates a LineSeparator.
+	 * @param attrs the attributes
+	 * @param offset
+	 * @return a LineSeparator
 	 * @since 5.0.6
 	 */
-	public LineSeparator createLineSeparator(Map<String, String> attrs, float offset) {
+	public LineSeparator createLineSeparator(final Map<String, String> attrs, final float offset) {
 		// line thickness
 		float lineWidth = 1;
 		String size = attrs.get(HtmlTags.SIZE);
@@ -375,15 +378,27 @@ public class ElementFactory {
 		int align = HtmlUtilities.alignmentValue(attrs.get(HtmlTags.ALIGN));
 		return new LineSeparator(lineWidth, percentage, lineColor, align, offset);
 	}
-	
+
+	/**
+	 * @param src
+	 * @param attrs
+	 * @param chain
+	 * @param document
+	 * @param img_provider
+	 * @param img_store
+	 * @param img_baseurl
+	 * @return the Image
+	 * @throws DocumentException
+	 * @throws IOException
+	 */
 	public Image createImage(
 			String src,
-			Map<String, String> attrs,
-			ChainedProperties chain,
-			DocListener document,
-			ImageProvider img_provider,
-			HashMap<String, Image> img_store,
-			String img_baseurl) throws DocumentException, IOException {
+			final Map<String, String> attrs,
+			final ChainedProperties chain,
+			final DocListener document,
+			final ImageProvider img_provider,
+			final HashMap<String, Image> img_store,
+			final String img_baseurl) throws DocumentException, IOException {
 		Image img = null;
 		// getting the image using an image provider
 		if (img_provider != null)
@@ -410,7 +425,7 @@ public class ElementFactory {
 		img = Image.getInstance(src);
 		if (img == null)
 			return null;
-		
+
 		float actualFontSize = HtmlUtilities.parseLength(
 			chain.getProperty(HtmlTags.SIZE),
 			HtmlUtilities.DEFAULT_FONT_SIZE);
@@ -431,7 +446,7 @@ public class ElementFactory {
 					/ img.getHeight();
 			img.scaleAbsolute(widthInPoints, heightInPoints);
 		}
-		
+
 		String before = chain.getProperty(HtmlTags.BEFORE);
 		if (before != null)
 			img.setSpacingBefore(Float.parseFloat(before));
@@ -441,8 +456,13 @@ public class ElementFactory {
 		img.setWidthPercentage(0);
 		return img;
 	}
-	
-	public List createList(String tag, ChainedProperties chain) {
+
+	/**
+	 * @param tag
+	 * @param chain
+	 * @return the List
+	 */
+	public List createList(final String tag, final ChainedProperties chain) {
 		List list;
 		if (HtmlTags.UL.equalsIgnoreCase(tag)) {
 			list = new List(List.UNORDERED);
