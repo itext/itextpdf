@@ -66,7 +66,14 @@ public class BaseColor {
     private static final double FACTOR = 0.7;
     private final int value;
 
-    public BaseColor(int red, int green, int blue, int alpha) {
+    /**
+     * Construct a new BaseColor.
+     * @param red the value for the red gamma
+     * @param green the value for the green gamma
+     * @param blue the value for the blue gamma
+     * @param alpha the value for the alpha gamma
+     */
+    public BaseColor(final int red, final int green, final int blue, final int alpha) {
         validate(red);
         validate(green);
         validate(blue);
@@ -74,46 +81,90 @@ public class BaseColor {
         value = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 0);
     }
 
-    public BaseColor(int red, int green, int blue) {
+    /**
+     * @param red
+     * @param green
+     * @param blue
+     */
+    public BaseColor(final int red, final int green, final int blue) {
         this(red, green, blue, 255);
     }
 
-    public BaseColor(float red, float green, float blue, float alpha) {
+    /**
+     * Construct a BaseColor with float values.
+     * @param red
+     * @param green
+     * @param blue
+     * @param alpha
+     */
+    public BaseColor(final float red, final float green, final float blue, final float alpha) {
         this((int)(red * 255 + .5), (int)(green * 255 + .5), (int)(blue * 255 + .5), (int)(alpha * 255 + .5));
     }
 
-    public BaseColor(float red, float green, float blue) {
+    /**
+     * Construct a BaseColor with float values.
+     * @param red
+     * @param green
+     * @param blue
+     */
+    public BaseColor(final float red, final float green, final float blue) {
         this(red, green, blue, 1f);
     }
-
-    public BaseColor(int argb) {
+    /**
+     * Construct a BaseColor by setting the combined value.
+     * @param argb
+     */
+    public BaseColor(final int argb) {
         value = argb;
     }
 
-    public BaseColor(java.awt.Color color) {
+    /**
+     * Construct a new BaseColor from a java.awt.Color
+     * @param color
+     */
+    public BaseColor(final java.awt.Color color) {
         value = color.getRGB();
     }
 
+    /**
+     * @return the combined color value
+     */
     public int getRGB() {
         return value;
     }
-
+    /**
+     *
+     * @return the value for red
+     */
     public int getRed() {
         return (getRGB() >> 16) & 0xFF;
     }
-
+    /**
+     *
+     * @return the value for green
+     */
     public int getGreen() {
         return (getRGB() >> 8) & 0xFF;
     }
-
+    /**
+     *
+     * @return the value for blue
+     */
     public int getBlue() {
         return (getRGB() >> 0) & 0xFF;
     }
-
+    /**
+     *
+     * @return the value for the alpha channel
+     */
     public int getAlpha() {
         return (getRGB() >> 24) & 0xff;
     }
 
+    /**
+     * Make this BaseColor brighter. Factor used is 0.7.
+     * @return the new BaseColor
+     */
     public BaseColor brighter() {
         int r = getRed();
         int g = getGreen();
@@ -135,6 +186,10 @@ public class BaseColor {
                 Math.min((int) (b / FACTOR), 255));
     }
 
+    /**
+     * Make this color darker. Factor used is 0.7
+     * @return the new BaseColor
+     */
     public BaseColor darker() {
         return new BaseColor(Math.max((int) (getRed() * FACTOR), 0),
                 Math.max((int) (getGreen() * FACTOR), 0),
@@ -142,7 +197,7 @@ public class BaseColor {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         return obj instanceof BaseColor && ((BaseColor) obj).value == this.value;
     }
 
@@ -152,7 +207,7 @@ public class BaseColor {
     }
 
 
-    private static void validate(int value) {
+    private static void validate(final int value) {
         if (value < 0 || value > 255)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("color.value.outside.range.0.255"));
     }

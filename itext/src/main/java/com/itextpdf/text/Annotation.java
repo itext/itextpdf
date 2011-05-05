@@ -174,6 +174,7 @@ public class Annotation implements Element {
 
 	/**
 	 * Copy constructor.
+	 * @param an the annotation to create a new Annotation from
 	 */
     public Annotation(final Annotation an) {
         annotationtype = an.annotationtype;

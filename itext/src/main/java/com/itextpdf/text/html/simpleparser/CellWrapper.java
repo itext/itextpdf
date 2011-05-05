@@ -100,6 +100,7 @@ public class CellWrapper implements TextElementArray {
      * Creates a PdfPCell element based on a tag and its properties.
      * @param	tag		a cell tag
      * @param	chain	the hierarchy chain
+     * @return the created PdfPCell
      */
 	public PdfPCell createPdfPCell(final String tag, final ChainedProperties chain) {
 		PdfPCell cell = new PdfPCell((Phrase)null);

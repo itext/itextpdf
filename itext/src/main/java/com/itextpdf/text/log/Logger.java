@@ -44,7 +44,8 @@
 package com.itextpdf.text.log;
 
 /**
- * @author Balder Van Camp
+ * Logger interface, set an implementation in {@link LoggerFactory#setLogger(Logger)}.
+ * @author redlab_b
  *
  */
 public interface Logger {

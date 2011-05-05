@@ -219,7 +219,7 @@ public abstract class Image extends Rectangle {
 	 * @param url
 	 *            the <CODE>URL</CODE> where the image can be found.
 	 */
-	public Image(URL url) {
+	public Image(final URL url) {
 		super(0, 0);
 		this.url = url;
 		this.alignment = DEFAULT;
@@ -236,7 +236,7 @@ public abstract class Image extends Rectangle {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static Image getInstance(URL url) throws BadElementException,
+	public static Image getInstance(final URL url) throws BadElementException,
 			MalformedURLException, IOException {
 		InputStream is = null;
 		try {
@@ -334,7 +334,7 @@ public abstract class Image extends Rectangle {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static Image getInstance(String filename)
+	public static Image getInstance(final String filename)
 			throws BadElementException, MalformedURLException, IOException {
 		return getInstance(Utilities.toURL(filename));
 	}
@@ -349,7 +349,7 @@ public abstract class Image extends Rectangle {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static Image getInstance(byte imgb[]) throws BadElementException,
+	public static Image getInstance(final byte imgb[]) throws BadElementException,
 			MalformedURLException, IOException {
 		InputStream is = null;
 		try {
@@ -408,6 +408,7 @@ public abstract class Image extends Rectangle {
 				int c8 = is.read();
 				if ( c5 == '\r' && c6 == '\n' && c7 == 0x1a && c8 == '\n' ) {
 					int file_header_flags = is.read();
+					// TODO number of pages never read, can be removed?
 					int number_of_pages = -1;
 					if ( (file_header_flags & 0x2) == 0x2 ) {
 						number_of_pages = is.read() << 24 | is.read() << 16 | is.read() << 8 | is.read();
@@ -454,8 +455,8 @@ public abstract class Image extends Rectangle {
 	 * @throws BadElementException
 	 *             on error
 	 */
-	public static Image getInstance(int width, int height, int components,
-			int bpc, byte data[]) throws BadElementException {
+	public static Image getInstance(final int width, final int height, final int components,
+			final int bpc, final byte data[]) throws BadElementException {
 		return Image.getInstance(width, height, components, bpc, data, null);
 	}
 
@@ -465,9 +466,10 @@ public abstract class Image extends Rectangle {
 	 * @param	height	the height of the image
 	 * @param	data	the raw image data
 	 * @param	globals	JBIG2 globals
+	 * @return the Image
 	 * @since	2.1.5
 	 */
-	public static Image getInstance(int width, int height, byte[] data, byte[] globals) {
+	public static Image getInstance(final int width, final int height, final byte[] data, final byte[] globals) {
 		Image img = new ImgJBIG2(width, height, data, globals);
 		return img;
 	}
@@ -496,8 +498,8 @@ public abstract class Image extends Rectangle {
 	 * @throws BadElementException
 	 *             on error
 	 */
-	public static Image getInstance(int width, int height, boolean reverseBits,
-			int typeCCITT, int parameters, byte[] data)
+	public static Image getInstance(final int width, final int height, final boolean reverseBits,
+			final int typeCCITT, final int parameters, final byte[] data)
 			throws BadElementException {
 		return Image.getInstance(width, height, reverseBits, typeCCITT,
 				parameters, data, null);
@@ -530,8 +532,8 @@ public abstract class Image extends Rectangle {
 	 * @throws BadElementException
 	 *             on error
 	 */
-	public static Image getInstance(int width, int height, boolean reverseBits,
-			int typeCCITT, int parameters, byte[] data, int transparency[])
+	public static Image getInstance(final int width, final int height, final boolean reverseBits,
+			final int typeCCITT, final int parameters, final byte[] data, final int transparency[])
 			throws BadElementException {
 		if (transparency != null && transparency.length != 2)
 			throw new BadElementException(MessageLocalization.getComposedMessage("transparency.length.must.be.equal.to.2.with.ccitt.images"));
@@ -561,8 +563,8 @@ public abstract class Image extends Rectangle {
 	 * @throws BadElementException
 	 *             on error
 	 */
-	public static Image getInstance(int width, int height, int components,
-			int bpc, byte data[], int transparency[])
+	public static Image getInstance(final int width, final int height, final int components,
+			final int bpc, final byte data[], final int transparency[])
 			throws BadElementException {
 		if (transparency != null && transparency.length != components * 2)
 			throw new BadElementException(MessageLocalization.getComposedMessage("transparency.length.must.be.equal.to.componentes.2"));
@@ -586,7 +588,7 @@ public abstract class Image extends Rectangle {
 	 * @return an Image object
 	 * @throws BadElementException
 	 */
-	public static Image getInstance(PdfTemplate template)
+	public static Image getInstance(final PdfTemplate template)
 			throws BadElementException {
 		return new ImgTemplate(template);
 	}
@@ -609,7 +611,7 @@ public abstract class Image extends Rectangle {
 	 * @throws IOException
 	 *             on error
 	 */
-	public static Image getInstance(java.awt.Image image, java.awt.Color color,
+	public static Image getInstance(final java.awt.Image image, final java.awt.Color color,
 			boolean forceBW) throws BadElementException, IOException {
 
 		if(image instanceof BufferedImage){
@@ -779,7 +781,7 @@ public abstract class Image extends Rectangle {
 	 * @throws IOException
 	 *             on error
 	 */
-	public static Image getInstance(java.awt.Image image, java.awt.Color color)
+	public static Image getInstance(final java.awt.Image image, final java.awt.Color color)
 			throws BadElementException, IOException {
 		return Image.getInstance(image, color, false);
 	}
@@ -799,7 +801,7 @@ public abstract class Image extends Rectangle {
 	 *             on error
 	 * @throws IOException
 	 */
-	public static Image getInstance(PdfWriter writer, java.awt.Image awtImage, float quality) throws BadElementException, IOException {
+	public static Image getInstance(final PdfWriter writer, final java.awt.Image awtImage, final float quality) throws BadElementException, IOException {
 		return getInstance(new PdfContentByte(writer), awtImage, quality);
 	}
 
@@ -818,7 +820,7 @@ public abstract class Image extends Rectangle {
      *             on error
      * @throws IOException
      */
-    public static Image getInstance(PdfContentByte cb, java.awt.Image awtImage, float quality) throws BadElementException, IOException {
+    public static Image getInstance(final PdfContentByte cb, final java.awt.Image awtImage, final float quality) throws BadElementException, IOException {
         java.awt.image.PixelGrabber pg = new java.awt.image.PixelGrabber(awtImage,
                 0, 0, -1, -1, true);
         try {
@@ -859,7 +861,7 @@ public abstract class Image extends Rectangle {
      * Setter for property directReference.
      * @param directReference New value of property directReference.
      */
-    public void setDirectReference(PdfIndirectReference directReference) {
+    public void setDirectReference(final PdfIndirectReference directReference) {
         this.directReference = directReference;
     }
 
@@ -869,7 +871,7 @@ public abstract class Image extends Rectangle {
      * @throws BadElementException on error
      * @return the image
      */
-    public static Image getInstance(PRIndirectReference ref) throws BadElementException {
+    public static Image getInstance(final PRIndirectReference ref) throws BadElementException {
         PdfDictionary dic = (PdfDictionary)PdfReader.getPdfObjectRelease(ref);
         int width = ((PdfNumber)PdfReader.getPdfObjectRelease(dic.get(PdfName.WIDTH))).intValue();
         int height = ((PdfNumber)PdfReader.getPdfObjectRelease(dic.get(PdfName.HEIGHT))).intValue();
@@ -900,7 +902,7 @@ public abstract class Image extends Rectangle {
 	 * @param image
 	 *            another Image object.
 	 */
-	protected Image(Image image) {
+	protected Image(final Image image) {
 		super(image);
 		this.type = image.type;
 		this.url = image.url;
@@ -955,7 +957,7 @@ public abstract class Image extends Rectangle {
 	 *            an Image object
 	 * @return a new Image object
 	 */
-	public static Image getInstance(Image image) {
+	public static Image getInstance(final Image image) {
 		if (image == null)
 			return null;
 		try {
@@ -1044,7 +1046,7 @@ public abstract class Image extends Rectangle {
 	 * @param url
 	 *            the url of the image
 	 */
-	public void setUrl(URL url) {
+	public void setUrl(final URL url) {
 		this.url = url;
 	}
 
@@ -1090,7 +1092,7 @@ public abstract class Image extends Rectangle {
 	 * @param template
 	 *            the template with the content
 	 */
-	public void setTemplateData(PdfTemplate template) {
+	public void setTemplateData(final PdfTemplate template) {
 		this.template[0] = template;
 	}
 
@@ -1110,7 +1112,7 @@ public abstract class Image extends Rectangle {
 	 *            the alignment
 	 */
 
-	public void setAlignment(int alignment) {
+	public void setAlignment(final int alignment) {
 		this.alignment = alignment;
 	}
 
@@ -1131,7 +1133,7 @@ public abstract class Image extends Rectangle {
 	 *            the alternative information
 	 */
 
-	public void setAlt(String alt) {
+	public void setAlt(final String alt) {
 		this.alt = alt;
 	}
 
@@ -1142,7 +1144,7 @@ public abstract class Image extends Rectangle {
 	 * @param absoluteY
 	 */
 
-	public void setAbsolutePosition(float absoluteX, float absoluteY) {
+	public void setAbsolutePosition(final float absoluteX, final float absoluteY) {
 		this.absoluteX = absoluteX;
 		this.absoluteY = absoluteY;
 	}
@@ -1231,7 +1233,7 @@ public abstract class Image extends Rectangle {
 	 * @param newHeight
 	 *            the new height
 	 */
-	public void scaleAbsolute(float newWidth, float newHeight) {
+	public void scaleAbsolute(final float newWidth, final float newHeight) {
 		plainWidth = newWidth;
 		plainHeight = newHeight;
 		float[] matrix = matrix();
@@ -1246,7 +1248,7 @@ public abstract class Image extends Rectangle {
 	 * @param newWidth
 	 *            the new width
 	 */
-	public void scaleAbsoluteWidth(float newWidth) {
+	public void scaleAbsoluteWidth(final float newWidth) {
 		plainWidth = newWidth;
 		float[] matrix = matrix();
 		scaledWidth = matrix[DX] - matrix[CX];
@@ -1260,7 +1262,7 @@ public abstract class Image extends Rectangle {
 	 * @param newHeight
 	 *            the new height
 	 */
-	public void scaleAbsoluteHeight(float newHeight) {
+	public void scaleAbsoluteHeight(final float newHeight) {
 		plainHeight = newHeight;
 		float[] matrix = matrix();
 		scaledWidth = matrix[DX] - matrix[CX];
@@ -1274,7 +1276,7 @@ public abstract class Image extends Rectangle {
 	 * @param percent
 	 *            the scaling percentage
 	 */
-	public void scalePercent(float percent) {
+	public void scalePercent(final float percent) {
 		scalePercent(percent, percent);
 	}
 
@@ -1286,7 +1288,7 @@ public abstract class Image extends Rectangle {
 	 * @param percentY
 	 *            the scaling percentage of the height
 	 */
-	public void scalePercent(float percentX, float percentY) {
+	public void scalePercent(final float percentX, final float percentY) {
 		plainWidth = getWidth() * percentX / 100f;
 		plainHeight = getHeight() * percentY / 100f;
 		float[] matrix = matrix();
@@ -1303,7 +1305,7 @@ public abstract class Image extends Rectangle {
 	 * @param fitHeight
 	 *            the height to fit
 	 */
-	public void scaleToFit(float fitWidth, float fitHeight) {
+	public void scaleToFit(final float fitWidth, final float fitHeight) {
         scalePercent(100);
 		float percentX = fitWidth * 100 / getScaledWidth();
 		float percentY = fitHeight * 100 / getScaledHeight();
@@ -1353,7 +1355,8 @@ public abstract class Image extends Rectangle {
 	/** a static that is used for attributing a unique id to each image. */
 	static long serialId = 0;
 
-	/** Creates a new serial id. */
+	/** Creates a new serial id.
+	 * @return the new serialId */
 	static protected synchronized Long getSerialId() {
 		++serialId;
 		return Long.valueOf(serialId);
@@ -1395,7 +1398,7 @@ public abstract class Image extends Rectangle {
 	 * @param r
 	 *            rotation in radians
 	 */
-	public void setRotation(float r) {
+	public void setRotation(final float r) {
 		double d = 2.0 * Math.PI;
 		rotationRadians = (float) ((r + initialRotation) % d);
 		if (rotationRadians < 0) {
@@ -1412,7 +1415,7 @@ public abstract class Image extends Rectangle {
 	 * @param deg
 	 *            rotation in degrees
 	 */
-	public void setRotationDegrees(float deg) {
+	public void setRotationDegrees(final float deg) {
 		double d = Math.PI;
 		setRotation(deg / 180 * (float) d);
 	}
@@ -1430,7 +1433,7 @@ public abstract class Image extends Rectangle {
      * to be compensated.
      * @param initialRotation New value of property initialRotation.
      */
-    public void setInitialRotation(float initialRotation) {
+    public void setInitialRotation(final float initialRotation) {
         float old_rot = rotationRadians - this.initialRotation;
         this.initialRotation = initialRotation;
         setRotation(old_rot);
@@ -1464,7 +1467,7 @@ public abstract class Image extends Rectangle {
 	 *
 	 * @param f
 	 */
-	public void setIndentationLeft(float f) {
+	public void setIndentationLeft(final float f) {
 		indentationLeft = f;
 	}
 
@@ -1482,7 +1485,7 @@ public abstract class Image extends Rectangle {
 	 *
 	 * @param f
 	 */
-	public void setIndentationRight(float f) {
+	public void setIndentationRight(final float f) {
 		indentationRight = f;
 	}
 
@@ -1502,7 +1505,7 @@ public abstract class Image extends Rectangle {
 	 *            the new spacing
 	 */
 
-	public void setSpacingBefore(float spacing) {
+	public void setSpacingBefore(final float spacing) {
 		this.spacingBefore = spacing;
 	}
 
@@ -1522,7 +1525,7 @@ public abstract class Image extends Rectangle {
 	 *            the new spacing
 	 */
 
-	public void setSpacingAfter(float spacing) {
+	public void setSpacingAfter(final float spacing) {
 		this.spacingAfter = spacing;
 	}
 
@@ -1548,7 +1551,7 @@ public abstract class Image extends Rectangle {
 	 * @param widthPercentage
 	 *            New value of property widthPercentage.
 	 */
-	public void setWidthPercentage(float widthPercentage) {
+	public void setWidthPercentage(final float widthPercentage) {
 		this.widthPercentage = widthPercentage;
 	}
 
@@ -1575,7 +1578,7 @@ public abstract class Image extends Rectangle {
 	 * @param scaleToFitLineWhenOverflow true if you want the image to scale to the available width
 	 * @since iText 5.0.6
 	 */
-	public void setScaleToFitLineWhenOverflow(boolean scaleToFitLineWhenOverflow) {
+	public void setScaleToFitLineWhenOverflow(final boolean scaleToFitLineWhenOverflow) {
 		this.scaleToFitLineWhenOverflow = scaleToFitLineWhenOverflow;
 	}
 
@@ -1590,7 +1593,7 @@ public abstract class Image extends Rectangle {
 	 * @param annotation
 	 *            the annotation
 	 */
-	public void setAnnotation(Annotation annotation) {
+	public void setAnnotation(final Annotation annotation) {
 		this.annotation = annotation;
 	}
 
@@ -1624,7 +1627,7 @@ public abstract class Image extends Rectangle {
 	 * @param layer
 	 *            the layer this image belongs to
 	 */
-	public void setLayer(PdfOCG layer) {
+	public void setLayer(final PdfOCG layer) {
 		this.layer = layer;
 	}
 
@@ -1649,7 +1652,7 @@ public abstract class Image extends Rectangle {
 	 * @param interpolation
 	 *            New value of property interpolation.
 	 */
-	public void setInterpolation(boolean interpolation) {
+	public void setInterpolation(final boolean interpolation) {
 		this.interpolation = interpolation;
 	}
 
@@ -1678,7 +1681,7 @@ public abstract class Image extends Rectangle {
 	 *            New value of property originalType.
 	 *
 	 */
-	public void setOriginalType(int originalType) {
+	public void setOriginalType(final int originalType) {
 		this.originalType = originalType;
 	}
 
@@ -1699,7 +1702,7 @@ public abstract class Image extends Rectangle {
 	 *            New value of property originalData.
 	 *
 	 */
-	public void setOriginalData(byte[] originalData) {
+	public void setOriginalData(final byte[] originalData) {
 		this.originalData = originalData;
 	}
 
@@ -1724,7 +1727,7 @@ public abstract class Image extends Rectangle {
 	 * @param deflated
 	 *            New value of property deflated.
 	 */
-	public void setDeflated(boolean deflated) {
+	public void setDeflated(final boolean deflated) {
 		this.deflated = deflated;
 	}
 
@@ -1762,7 +1765,7 @@ public abstract class Image extends Rectangle {
 	 * @param dpiY
 	 *            dpi for y coordinates
 	 */
-	public void setDpi(int dpiX, int dpiY) {
+	public void setDpi(final int dpiX, final int dpiY) {
 		this.dpiX = dpiX;
 		this.dpiY = dpiY;
 	}
@@ -1787,7 +1790,7 @@ public abstract class Image extends Rectangle {
 	 * @param XYRatio
 	 *            the X/Y pixel dimensionless aspect ratio
 	 */
-	public void setXYRatio(float XYRatio) {
+	public void setXYRatio(final float XYRatio) {
 		this.XYRatio = XYRatio;
 	}
 
@@ -1825,7 +1828,7 @@ public abstract class Image extends Rectangle {
 	 * @param invert
 	 *            true or false
 	 */
-	public void setInverted(boolean invert) {
+	public void setInverted(final boolean invert) {
 		this.invert = invert;
 	}
 
@@ -1838,7 +1841,7 @@ public abstract class Image extends Rectangle {
 	 * @param profile
 	 *            the profile
 	 */
-	public void tagICC(ICC_Profile profile) {
+	public void tagICC(final ICC_Profile profile) {
 		this.profile = profile;
 	}
 
@@ -1878,7 +1881,7 @@ public abstract class Image extends Rectangle {
 	 * @param additional
 	 *            a PdfDictionary with additional information.
 	 */
-	public void setAdditional(PdfDictionary additional) {
+	public void setAdditional(final PdfDictionary additional) {
 		this.additional = additional;
 	}
 
@@ -1913,7 +1916,7 @@ public abstract class Image extends Rectangle {
 	/**
 	 * Gets a PDF Name from an array or returns the object that was passed.
 	 */
-    private PdfObject simplifyColorspace(PdfArray obj) {
+    private PdfObject simplifyColorspace(final PdfArray obj) {
         if (obj == null)
             return obj;
         PdfName first = obj.getAsName(0);
@@ -1986,7 +1989,7 @@ public abstract class Image extends Rectangle {
 	 * @throws DocumentException
 	 *             on error
 	 */
-	public void setImageMask(Image mask) throws DocumentException {
+	public void setImageMask(final Image mask) throws DocumentException {
 		if (this.mask)
 			throw new DocumentException(MessageLocalization.getComposedMessage("an.image.mask.cannot.contain.another.image.mask"));
 		if (!mask.mask)
@@ -2011,7 +2014,7 @@ public abstract class Image extends Rectangle {
 	 * @param smask
 	 *            New value of property smask.
 	 */
-	public void setSmask(boolean smask) {
+	public void setSmask(final boolean smask) {
 		this.smask = smask;
 	}
 
@@ -2034,7 +2037,7 @@ public abstract class Image extends Rectangle {
 	 * @param transparency
 	 *            the transparency values
 	 */
-	public void setTransparency(int transparency[]) {
+	public void setTransparency(final int transparency[]) {
 		this.transparency = transparency;
 	}
 
@@ -2053,7 +2056,7 @@ public abstract class Image extends Rectangle {
 	 * @param compressionLevel a value between 0 (best speed) and 9 (best compression)
      * @since	2.1.3
 	 */
-	public void setCompressionLevel(int compressionLevel) {
+	public void setCompressionLevel(final int compressionLevel) {
 		if (compressionLevel < PdfStream.NO_COMPRESSION || compressionLevel > PdfStream.BEST_COMPRESSION)
 			this.compressionLevel = PdfStream.DEFAULT_COMPRESSION;
 		else

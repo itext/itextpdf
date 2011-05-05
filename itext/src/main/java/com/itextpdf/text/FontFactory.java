@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text;
 
-import java.util.Properties;
 import java.util.Set;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -128,7 +127,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style, BaseColor color) {
+    public static Font getFont(final String fontname, final String encoding, final boolean embedded, final float size, final int style, final BaseColor color) {
         return fontImp.getFont(fontname, encoding, embedded, size, style, color);
     }
 
@@ -146,7 +145,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style, BaseColor color, boolean cached) {
+    public static Font getFont(final String fontname, final String encoding, final boolean embedded, final float size, final int style, final BaseColor color, final boolean cached) {
         return fontImp.getFont(fontname, encoding, embedded, size, style, color, cached);
     }
 
@@ -161,7 +160,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style) {
+    public static Font getFont(final String fontname, final String encoding, final boolean embedded, final float size, final int style) {
         return getFont(fontname, encoding, embedded, size, style, null);
     }
 
@@ -175,7 +174,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, String encoding, boolean embedded, float size) {
+    public static Font getFont(final String fontname, final String encoding, final boolean embedded, final float size) {
         return getFont(fontname, encoding, embedded, size, Font.UNDEFINED, null);
     }
 
@@ -188,7 +187,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, String encoding, boolean embedded) {
+    public static Font getFont(final String fontname, final String encoding, final boolean embedded) {
         return getFont(fontname, encoding, embedded, Font.UNDEFINED, Font.UNDEFINED, null);
     }
 
@@ -203,7 +202,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, String encoding, float size, int style, BaseColor color) {
+    public static Font getFont(final String fontname, final String encoding, final float size, final int style, final BaseColor color) {
         return getFont(fontname, encoding, defaultEmbedding, size, style, color);
     }
 
@@ -217,7 +216,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, String encoding, float size, int style) {
+    public static Font getFont(final String fontname, final String encoding, final float size, final int style) {
         return getFont(fontname, encoding, defaultEmbedding, size, style, null);
     }
 
@@ -230,7 +229,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, String encoding, float size) {
+    public static Font getFont(final String fontname, final String encoding, final float size) {
         return getFont(fontname, encoding, defaultEmbedding, size, Font.UNDEFINED, null);
     }
 
@@ -242,7 +241,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, String encoding) {
+    public static Font getFont(final String fontname, final String encoding) {
         return getFont(fontname, encoding, defaultEmbedding, Font.UNDEFINED, Font.UNDEFINED, null);
     }
 
@@ -256,7 +255,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, float size, int style, BaseColor color) {
+    public static Font getFont(final String fontname, final float size, final int style, final BaseColor color) {
         return getFont(fontname, defaultEncoding, defaultEmbedding, size, style, color);
     }
 
@@ -270,7 +269,7 @@ public final class FontFactory {
  * @since 2.1.0
  */
 
-    public static Font getFont(String fontname, float size, BaseColor color) {
+    public static Font getFont(final String fontname, final float size, final BaseColor color) {
         return getFont(fontname, defaultEncoding, defaultEmbedding, size, Font.UNDEFINED, color);
     }
 
@@ -283,7 +282,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, float size, int style) {
+    public static Font getFont(final String fontname, final float size, final int style) {
         return getFont(fontname, defaultEncoding, defaultEmbedding, size, style, null);
     }
 
@@ -295,7 +294,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname, float size) {
+    public static Font getFont(final String fontname, final float size) {
         return getFont(fontname, defaultEncoding, defaultEmbedding, size, Font.UNDEFINED, null);
     }
 
@@ -306,7 +305,7 @@ public final class FontFactory {
  * @return the Font constructed based on the parameters
  */
 
-    public static Font getFont(String fontname) {
+    public static Font getFont(final String fontname) {
         return getFont(fontname, defaultEncoding, defaultEmbedding, Font.UNDEFINED, Font.UNDEFINED, null);
     }
 
@@ -316,7 +315,7 @@ public final class FontFactory {
      * @param fullName the font name
      * @param path the font path
      */
-    public static void registerFamily(String familyName, String fullName, String path) {
+    public static void registerFamily(final String familyName, final String fullName, final String path) {
         fontImp.registerFamily(familyName, fullName, path);
     }
 
@@ -326,7 +325,7 @@ public final class FontFactory {
  * @param   path    the path to a ttf- or ttc-file
  */
 
-    public static void register(String path) {
+    public static void register(final String path) {
         register(path, null);
     }
 
@@ -337,7 +336,7 @@ public final class FontFactory {
  * @param   alias   the alias you want to use for the font
  */
 
-    public static void register(String path, String alias) {
+    public static void register(final String path, final String alias) {
         fontImp.register(path, alias);
     }
 
@@ -345,7 +344,7 @@ public final class FontFactory {
      * @param dir the directory
      * @return the number of fonts registered
      */
-    public static int registerDirectory(String dir) {
+    public static int registerDirectory(final String dir) {
         return fontImp.registerDirectory(dir);
     }
 
@@ -356,7 +355,7 @@ public final class FontFactory {
      * @return the number of fonts registered
      * @since 2.1.2
      */
-    public static int registerDirectory(String dir, boolean scanSubdirectories) {
+    public static int registerDirectory(final String dir, final boolean scanSubdirectories) {
         return fontImp.registerDirectory(dir, scanSubdirectories);
     }
 
@@ -392,7 +391,7 @@ public final class FontFactory {
  * @return true if a given font is registered
  */
 
-    public static boolean contains(String fontname) {
+    public static boolean contains(final String fontname) {
         return fontImp.isRegistered(fontname);
     }
 
@@ -403,7 +402,7 @@ public final class FontFactory {
  * @return  true if the font is found
  */
 
-    public static boolean isRegistered(String fontname) {
+    public static boolean isRegistered(final String fontname) {
         return fontImp.isRegistered(fontname);
     }
 
@@ -419,7 +418,7 @@ public final class FontFactory {
      * Sets the font factory implementation.
      * @param fontImp the font factory implementation
      */
-    public static void setFontImp(FontFactoryImp fontImp) {
+    public static void setFontImp(final FontFactoryImp fontImp) {
         if (fontImp == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("fontfactoryimp.cannot.be.null"));
         FontFactory.fontImp = fontImp;
