@@ -713,4 +713,16 @@ public class PdfPRow {
 	public PdfPCell[] getCells() {
 		return cells;
 	}
+
+    /**
+	 * Checks if a cell in the row has a rowspan greater than 1.
+	 * @since 5.1.0
+     */
+	public boolean hasRowspan() {
+		for (int i = 0; i < cells.length; i++) {
+			if (cells[i] != null && cells[i].getRowspan() > 1)
+				return true;
+		}
+		return false;
+	}
 }
