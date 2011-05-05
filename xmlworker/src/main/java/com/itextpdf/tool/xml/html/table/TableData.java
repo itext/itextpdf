@@ -51,14 +51,11 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
-import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
-import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 /**
  * @author Balder Van Camp
  *
@@ -94,25 +91,24 @@ public class TableData extends AbstractTagProcessor {
     	List<Element> l = new ArrayList<Element>(1);
     	for (Element e : currentContent) {
     		if(e instanceof Paragraph) {
-    			e = new ParagraphCssApplier(configuration).apply((Paragraph)e, tag);
+    			e = new ParagraphCssApplier(configuration).apply((Paragraph)e, tag); // is this needed? Looks like double css applying...
     		}
     		cell.addElement(e);
     	}
-    	cell = new HtmlCellCssApplier(configuration).apply(cell, tag);
-    	if(tag.getTag().equalsIgnoreCase(HTML.Tag.CAPTION)) {
-    		currentContent.clear();
-    		currentContent.add(cell);
-    		String captionSideValue = tag.getCSS().get(CSS.Property.CAPTION_SIDE);
-    		if(captionSideValue != null && captionSideValue.equalsIgnoreCase(CSS.Value.BOTTOM)) {
-    			l.add(new TableRowElement(currentContent, Place.CAPTION_BOTTOM));
-    		} else {
-    			l.add(new TableRowElement(currentContent, Place.CAPTION_TOP));
-    		}
+//    	if(tag.getTag().equalsIgnoreCase(HTML.Tag.CAPTION)) {
+//    		currentContent.clear();
+//    		currentContent.add(cell);
+//    		String captionSideValue = tag.getCSS().get(CSS.Property.CAPTION_SIDE);
+//    		if(captionSideValue != null && captionSideValue.equalsIgnoreCase(CSS.Value.BOTTOM)) {
+//    			l.add(new TableRowElement(currentContent, Place.CAPTION_BOTTOM));
+//    		} else {
+//    			l.add(new TableRowElement(currentContent, Place.CAPTION_TOP));
+//    		}
+//    		return l;
+//    	} else {
+    		l.add(new HtmlCellCssApplier(configuration).apply(cell, tag));
     		return l;
-    	} else {
-    		l.add(cell);
-    		return l;
-    	}
+//    	}
     }
 
     /* (non-Javadoc)

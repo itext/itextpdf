@@ -55,6 +55,7 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPRow;
@@ -68,7 +69,6 @@ import com.itextpdf.tool.xml.css.WidthCalculator;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
-import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 
 /**
  * @author Emiel Ackermann
@@ -105,14 +105,14 @@ public class Table extends AbstractTagProcessor {
     @Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
     	int numberOfColumns = 0;
-    	TableRowElement caption = null;
+    	Paragraph caption = null;
 		int rowNumber = 0;
 		int total = currentContent.size();
 		boolean found = false;
 		while (!found && rowNumber < total) {
-			TableRowElement row =  ((TableRowElement)currentContent.get(rowNumber));
-			if(row.getPlace().equals(Place.CAPTION_BOTTOM) || row.getPlace().equals(Place.CAPTION_TOP)) {
-				caption = (row);
+			Element content = currentContent.get(rowNumber);
+			if (content instanceof Paragraph) {
+				caption = (Paragraph) content;
 				found = true;
 			}
 			rowNumber++;
@@ -297,19 +297,25 @@ public class Table extends AbstractTagProcessor {
 				inner.addCell((HtmlCell) cell);
 			}
 		}
-//		if (caption != null) {
-//			if (caption.getPlace().equals(Place.CAPTION_TOP)) {
-//				outer.addCell((HtmlCell) caption.getContent().get(0));
-//				outer.addCell(outerCell);
-//			} else if (caption.getPlace().equals(Place.CAPTION_BOTTOM)) {
-//				outer.addCell(outerCell);
-//				outer.addCell((HtmlCell) caption.getContent().get(0));
-//			}
-//		} else {
-//			outer.addCell(outerCell);
-//		}
 		List<Element> elems = new ArrayList<Element>();
-		elems.add(inner);
+		if (caption != null) {
+			int i = 0;
+			Tag captionTag = tag.getChildren().get(i);
+			while(!captionTag.getTag().equalsIgnoreCase("caption")) {
+				i++;
+				captionTag = tag.getChildren().get(i);
+			}
+			String captionSideValue = captionTag.getCSS().get(CSS.Property.CAPTION_SIDE);
+    		if(captionSideValue != null && captionSideValue.equalsIgnoreCase(CSS.Value.BOTTOM)) {
+    			elems.add(inner);
+    			elems.add(caption);
+    		} else {
+    			elems.add(caption);
+				elems.add(inner);
+    		}
+		} else {
+			elems.add(inner);
+		}
 		return elems;
 	}
 	/**
@@ -456,8 +462,6 @@ public class Table extends AbstractTagProcessor {
 		// if lastInRow add one more horSpacing right of the cell.
 		spacingMultiplier += cell.getCellValues().isLastInRow()?1:0;
 		float spacing = spacingMultiplier*styleValues.getHorBorderSpacing();
-//		+ cell.getBorderValues().getBorderWidthLeft()/2
-//		+ cell.getBorderValues().getBorderWidthRight()/2;
 		float left =  cell.getPaddingLeft();
 		left = (left>1)?left:2;
 		float right = cell.getPaddingRight();
