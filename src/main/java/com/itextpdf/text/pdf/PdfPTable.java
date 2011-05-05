@@ -971,8 +971,11 @@ public class PdfPTable implements LargeElement{
 	 * @since 5.1.0
      */
     public boolean hasRowspan(int rowIdx) {
+    	if (rowIdx < rows.size() && getRow(rowIdx).hasRowspan()) {
+    		return true;
+    	}
     	for (int i = 0; i < getNumberOfColumns(); i++) {
-    		if (rowSpanAbove(rowIdx, i))
+    		if (rowSpanAbove(rowIdx - 1, i))
     			return true;
     	}
     	return false;
