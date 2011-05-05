@@ -538,19 +538,38 @@ public class PdfPRow {
 
 	//end add
 
-	float[] getEventWidth(float xPos) {
-		int n = 0;
-		for (int k = 0; k < cells.length; ++k) {
-			if (cells[k] != null)
-				++n;
-		}
-		float width[] = new float[n + 1];
-		n = 0;
-		width[n++] = xPos;
-		for (int k = 0; k < cells.length; ++k) {
+	float[] getEventWidth(float xPos, float[] absoluteWidths) {
+		int n = 1;
+		for (int k = 0; k < cells.length; ) {
 			if (cells[k] != null) {
-				width[n] = width[n - 1] + cells[k].getWidth();
-				++n;
+				n++;
+				k += cells[k].getColspan();
+			}
+			else {
+				while (k < cells.length && cells[k] == null) {
+					n++;
+					k++;
+				}
+			}
+		}
+		float width[] = new float[n];
+		width[0] = xPos;
+		n = 1;
+		for (int k = 0; k < cells.length && n < width.length; ) {
+			if (cells[k] != null) {
+				int colspan = cells[k].getColspan();
+				width[n] = width[n - 1];
+				for (int i = 0; i < colspan && k < absoluteWidths.length; i++) {
+					width[n] += absoluteWidths[k++];
+				}
+				n++;
+			}
+			else {
+				width[n] = width[n - 1];
+				while (k < cells.length && cells[k] == null) {
+					width[n] += absoluteWidths[k++];
+				}
+				n++;
 			}
 		}
 		return width;

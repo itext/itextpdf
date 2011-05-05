@@ -1286,7 +1286,7 @@ public class PdfPTable implements LargeElement{
     }
 
     float [][] getEventWidths(final float xPos, int firstRow, int lastRow, final boolean includeHeaders) {
-        if (includeHeaders) {
+    	if (includeHeaders) {
             firstRow = Math.max(firstRow, headerRows);
             lastRow = Math.max(lastRow, headerRows);
         }
@@ -1299,7 +1299,7 @@ public class PdfPTable implements LargeElement{
                     if (row == null)
                         ++n;
                     else
-                        widths[n++] = row.getEventWidth(xPos);
+                        widths[n++] = row.getEventWidth(xPos, absoluteWidths);
                 }
             }
             for (; firstRow < lastRow; ++firstRow) {
@@ -1307,7 +1307,7 @@ public class PdfPTable implements LargeElement{
                     if (row == null)
                         ++n;
                     else
-                        widths[n++] = row.getEventWidth(xPos);
+                        widths[n++] = row.getEventWidth(xPos, absoluteWidths);
             }
         }
         else {
