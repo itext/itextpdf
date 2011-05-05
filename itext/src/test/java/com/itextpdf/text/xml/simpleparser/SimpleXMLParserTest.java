@@ -54,16 +54,16 @@ import org.junit.Test;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 
 /**
- * 
+ *
  * @author Balder Van Camp
- * 
+ *
  */
 public class SimpleXMLParserTest {
 
 	/**
 	 * Validate correct whitespace handling of SimpleXMLHandler.
 	 * Carriage return received as text instead of space.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -73,28 +73,24 @@ public class SimpleXMLParserTest {
 		final StringBuilder b = new StringBuilder();
 		SimpleXMLParser.parse(new SimpleXMLDocHandler() {
 
-			public void text(String str) {
+			public void text(final String str) {
 				b.append(str);
 
 			}
 
-			public void startElement(String tag, Map<String, String> h) {
-				// TODO Auto-generated method stub
+			public void startElement(final String tag, final Map<String, String> h) {
 
 			}
 
 			public void startDocument() {
-				// TODO Auto-generated method stub
 
 			}
 
-			public void endElement(String tag) {
-				// TODO Auto-generated method stub
+			public void endElement(final String tag) {
 
 			}
 
 			public void endDocument() {
-				// TODO Auto-generated method stub
 
 			}
 		}, null, new StringReader(whitespace), true);
