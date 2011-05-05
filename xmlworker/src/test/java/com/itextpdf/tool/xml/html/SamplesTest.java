@@ -97,6 +97,7 @@ public class SamplesTest {
 		list.add("tab_");
 		list.add("table_");
 		list.add("lists_");
+		list.add("headers_");
 	}
 
 	@Test

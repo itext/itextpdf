@@ -35,13 +35,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 
 /**
  * @author Balder Van Camp
@@ -97,7 +98,7 @@ public class Body extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitize(content);
 		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
-			l.add(new Chunk(sanitized));
+			l.add(new ParagraphCssApplier(configuration).apply(new Paragraph(sanitized), tag));
 		}
 		return l;
 	}

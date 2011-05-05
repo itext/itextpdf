@@ -74,7 +74,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 					float ownFontSize = fst.getFontSize(tag);
 					float ownMarginTop = 0;
 					if(tag.getCSS().get(CSS.Property.MARGIN_TOP)==null) {
-						if(CssUtils.ROOT_TAGS.contains(tag.getParent().getTag())) {
+						if(configuration.getRootTags().contains(tag.getParent().getTag())) {
 							ownMarginTop = ownFontSize;
 						}
 					} else {
@@ -123,7 +123,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 		float ownFontSize = fst.getFontSize(tag);
 		float ownMargin = 0;
 		if(tag.getCSS().get(CSS.Property.MARGIN+end)==null) {
-			if(CssUtils.ROOT_TAGS.contains(tag.getParent().getTag())) {
+			if(configuration.getRootTags().contains(tag.getParent().getTag())) {
 				ownMargin = ownFontSize;
 			}
 		} else {

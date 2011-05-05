@@ -71,7 +71,11 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 	}
 
 	public Paragraph apply(final Paragraph p, final Tag t) {
-		m.setVariablesBasedOnChildren(t);
+		if (this.configuration.getRootTags().contains(t.getTag())) {
+			m.setLeading(t);
+		} else {
+			m.setVariablesBasedOnChildren(t);
+		}
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		Map<String, String> css = t.getCSS();
         for (Entry<String, String> entry : css.entrySet()) {
@@ -109,11 +113,11 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 		}
 		// setDefaultMargin to largestFont if no margin-top is set and p-tag is child of the root tag.
 		String parent = t.getParent().getTag();
-		if(css.get(CSS.Property.MARGIN_TOP) == null && CssUtils.ROOT_TAGS.contains(parent)) {
+		if(css.get(CSS.Property.MARGIN_TOP) == null && configuration.getRootTags().contains(parent)) {
 			p.setSpacingBefore(p.getSpacingBefore()+utils.calculateMarginTop(t, fontSize+"pt", 0));
 		}
 		// setDefaultMargin to largestFont if no margin-bottom is set and p-tag is child of the root tag.
-		if(css.get(CSS.Property.MARGIN_BOTTOM) == null && CssUtils.ROOT_TAGS.contains(parent)) {
+		if(css.get(CSS.Property.MARGIN_BOTTOM) == null && configuration.getRootTags().contains(parent)) {
 			p.setSpacingAfter(p.getSpacingAfter()+fontSize);
 			css.put(CSS.Property.MARGIN_BOTTOM, fontSize+"pt");
 		}

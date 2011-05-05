@@ -73,7 +73,6 @@ public class CssUtils {
 	private static final String _0_TOP_1 = "{0}top{1}";
 	private static CssUtils myself;
 
-	public static final List<String> ROOT_TAGS = Arrays.asList(new String[] { "defaultRoot", "body", "div" });
 	public static final int DEFAULT_FONT_SIZE_PT = 12;
 	private final FontSizeTranslator fontSizeTranslater = FontSizeTranslator.getInstance();
 

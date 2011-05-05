@@ -139,7 +139,7 @@ public class Anchor extends AbstractTagProcessor {
 				p.add(e);
 			}
 			elems.add(new NoNewLineParagraphCssApplier(configuration).apply(p, tag));
-		}
+		} else
 		// !currentContent > 0 ; An empty "a" tag has been encountered.
 		// we're using an anchor space hack here. without the space reader does not jump to destination
 		if (null != configuration.getWriter() &&  null != name) {
@@ -147,14 +147,17 @@ public class Anchor extends AbstractTagProcessor {
 				logger.log(Anchor.class, String.format("Trying to set local destination %s with space hack", name));
 			}
 			Chunk dest = new Chunk(" ").setLocalDestination(name);
+			elems.add(dest);
+			/*
 			PdfWriter writer = configuration.getWriter();
 			ColumnText c = new ColumnText(writer.getDirectContent());
-			c.setSimpleColumn(new Phrase(dest), 1, writer.getVerticalPosition(false), 10, writer.getVerticalPosition(false)+10, 5, Element.ALIGN_LEFT);
+			c.setSimpleColumn(new Phrase(dest), 1, writer.getVerticalPosition(false), 1, writer.getVerticalPosition(false), 5, Element.ALIGN_LEFT);
 			try {
 				c.go();
 			} catch (DocumentException e) {
 				throw new RuntimeWorkerException(e);
 			}
+			*/
 		}
 		return elems;
 	}

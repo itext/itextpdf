@@ -73,7 +73,7 @@ public class WidthCalculator {
 				}
 				width = utils.parseRelativeValue(widthValue, firstAncestorsWidth);
 			}
-		} else if (CssUtils.ROOT_TAGS.contains(tag.getTag())){
+		} else if (configuration.getRootTags().contains(tag.getTag())){
 			width = configuration.getPageSize().getWidth();
 		}
 		return width;

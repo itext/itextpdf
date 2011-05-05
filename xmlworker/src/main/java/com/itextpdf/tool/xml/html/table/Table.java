@@ -200,7 +200,7 @@ public class Table extends AbstractTagProcessor {
 		float targetWidth = 0;
 		if(attributes.get(CSS.Property.WIDTH) != null || css.get(CSS.Property.WIDTH) != null) {
 			targetWidth = new WidthCalculator().getWidth(tag, configuration);
-		} else if(CssUtils.ROOT_TAGS.contains(tag.getParent().getTag())) {
+		} else if(configuration.getRootTags().contains(tag.getParent().getTag())) {
 			float pageWidth = configuration.getPageSize().getWidth();
 			targetWidth = pageWidth - utils.getLeftAndRightMargin(tag.getParent(), pageWidth)
 							- utils.getLeftAndRightMargin(tag, pageWidth)

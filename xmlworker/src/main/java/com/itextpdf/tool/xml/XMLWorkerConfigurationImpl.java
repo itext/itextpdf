@@ -44,10 +44,14 @@
 package com.itextpdf.tool.xml;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -69,6 +73,7 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	private final Map<String, Object> memory;
 	private Charset charSet = Charset.defaultCharset();
 	private boolean isAutoBookMark = true;
+	private final List<String> roottags = Arrays.asList(new String[] { "defaultRoot", "body", "div" });
 
 	/**
 	 *
@@ -268,4 +273,19 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	public void autoBookMark(boolean bookmark) {
 		this.isAutoBookMark = bookmark;
 	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.XMLWorkerConfig#getRootTags()
+	 */
+	public List<String> getRootTags() {
+		return new ArrayList<String>(roottags);
+	}
+	
+	public void addRootTag(String tag) {
+		roottags.add(tag);
+	}
+	
+	public void removeRootTag(String tag) {
+		roottags.remove(tag);
+	}
+	
 }

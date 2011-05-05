@@ -109,11 +109,11 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 		}
 		// setDefaultMargin to largestFont if no margin-top is set and p-tag is child of the root tag.
 		String parent = t.getParent().getTag();
-		if(css.get(CSS.Property.MARGIN_TOP) == null && CssUtils.ROOT_TAGS.contains(parent)) {
+		if(css.get(CSS.Property.MARGIN_TOP) == null && configuration.getRootTags().contains(parent)) {
 			p.setSpacingBefore(p.getSpacingBefore()+utils.calculateMarginTop(t, fontSize+"pt", 0));
 		}
 		// setDefaultMargin to largestFont if no margin-bottom is set and p-tag is child of the root tag.
-		if(css.get(CSS.Property.MARGIN_BOTTOM) == null && CssUtils.ROOT_TAGS.contains(parent)) {
+		if(css.get(CSS.Property.MARGIN_BOTTOM) == null && configuration.getRootTags().contains(parent)) {
 			p.setSpacingAfter(p.getSpacingAfter()+fontSize);
 			css.put(CSS.Property.MARGIN_BOTTOM, fontSize+"pt");
 		}

@@ -76,6 +76,14 @@ public final class MaxLeadingAndSize {
 		float largestLeadingChildren = getLargestLeadingFromChildren(t.getChildren());
 		largestLeading = leadingParent>largestLeadingChildren?leadingParent:largestLeadingChildren;
 	}
+	
+	/**
+	 * Set the largest leading based on calculateLeading only. (Children not taken into account)
+	 * @param tag
+	 */
+	public void setLeading(final Tag tag) {
+		largestLeading = calculateLeading(tag);
+	}
 	/**
 	 * Iterates over all children in a List and returns the largest font size found.
 	 * @param children List<Tag> containing a list of children.

@@ -43,10 +43,12 @@
  */
 package com.itextpdf.tool.xml;
 
+import java.util.List;
 import java.nio.charset.Charset;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -148,6 +150,11 @@ public interface XMLWorkerConfig {
 	 * @return true if h1 to h6 tags should be auto-bookmarked
 	 */
 	boolean autoBookmark();
+
+	/**
+	 * @return
+	 */
+	List<String> getRootTags();
 
 
 }

@@ -93,6 +93,8 @@ public class Header extends AbstractTagProcessor {
 				Object levelObj = memory.get(XMLWorkerConfig.HEADER_NUMBER_LEVEL);
 				int level = getLevel(tag);
 				PdfWriter writer = configuration.getWriter();
+				PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
+						writer.getVerticalPosition(false), 0);
 				if (null != levelObj) {
 					PdfOutline outline;
 					int oldLevel = ((Integer) levelObj).intValue();
@@ -107,15 +109,13 @@ public class Header extends AbstractTagProcessor {
 						outline = (PdfOutline) memory.get(XMLWorkerConfig.CURRENT_BOOKMARK);
 						outline = outline.parent();
 					}
-					PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
-							writer.getVerticalPosition(false), 0);
 					PdfOutline outline2 = new PdfOutline(outline, destination, p);
 					memory.put(XMLWorkerConfig.CURRENT_BOOKMARK, outline2);
 				} else {
 					// first entry
 					PdfOutline root = writer.getRootOutline();
-					root.setDestinationPage(writer.getPageReference(writer.getCurrentPageNumber()));
-					memory.put(XMLWorkerConfig.CURRENT_BOOKMARK, root);
+					PdfOutline outline2 = new PdfOutline(root, destination, p);
+					memory.put(XMLWorkerConfig.CURRENT_BOOKMARK, outline2);
 				}
 				memory.put(XMLWorkerConfig.HEADER_NUMBER_LEVEL, Integer.valueOf(level));
 			}
