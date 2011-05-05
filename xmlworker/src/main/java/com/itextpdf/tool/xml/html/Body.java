@@ -40,6 +40,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
@@ -80,6 +81,7 @@ public class Body extends AbstractTagProcessor {
 					marginTop = utils.parseValueToPt(value, pageWidth);
 				} else if(key.equalsIgnoreCase(CSS.Property.MARGIN_BOTTOM)) {
 					marginBottom = utils.parseValueToPt(value, pageWidth);
+					configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, marginBottom);
 				}
 			}
 			doc.setMargins(marginLeft, marginRight, marginTop, marginBottom);

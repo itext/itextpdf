@@ -37,6 +37,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
@@ -68,42 +69,41 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 			list = new ListStyleTypeCssApplier(configuration).apply(list, tag);
 			for (int i=0; i<currentContent.size(); i++) {
 				ListItem li = (ListItem) currentContent.get(i);
-				// FIXME margin and padding left and right have been applied on ListItem level, but do not seem to work.
 				// margin and padding-top of this list will be set on the first ListItem.
 				if(i==0){
-					float ownFontSize = fst.getFontSize(tag);
-					float ownMarginTop = 0;
-					if(tag.getCSS().get(CSS.Property.MARGIN_TOP)==null) {
-						if(configuration.getRootTags().contains(tag.getParent().getTag())) {
-							ownMarginTop = ownFontSize;
-						}
-					} else {
-						ownMarginTop = utils.parseValueToPt(tag.getCSS().get(CSS.Property.MARGIN_TOP),ownFontSize);
-					}
-					float ownPaddingTop = tag.getCSS().get(CSS.Property.PADDING_TOP)!=null?utils.parseValueToPt(tag.getCSS().get(CSS.Property.PADDING_TOP),ownFontSize):0;
-					float totalSpacingTop = 0;
-					//Margin-top values of this tag and its first child needs to be compared if paddingTop = 0.
-					if(ownPaddingTop == 0) {
-						Tag firstChild = tag.getChildren().get(0);
-						float firstChildFontSize = fst.getFontSize(firstChild);
-						float firstChildMarginTop = firstChild.getCSS().get(CSS.Property.MARGIN_TOP)!=null?utils.parseValueToPt(firstChild.getCSS().get(CSS.Property.MARGIN_TOP),firstChildFontSize):0;
-						float firstChildPaddingTop = firstChild.getCSS().get(CSS.Property.PADDING_TOP)!=null?utils.parseValueToPt(firstChild.getCSS().get(CSS.Property.PADDING_TOP),firstChildFontSize):0;
-						totalSpacingTop = firstChildPaddingTop;
-						float marginTop = 0;
-						if(ownMarginTop != 0 && firstChildMarginTop != 0){
-							marginTop = ownMarginTop>=firstChildMarginTop?ownMarginTop:firstChildMarginTop;
-						} else if (ownMarginTop != 0) {
-							marginTop = ownMarginTop;
-						} else if (firstChildMarginTop != 0) {
-							marginTop = firstChildMarginTop;
-						}
-						totalSpacingTop += utils.calculateMarginTop(tag, marginTop+"pt", 0);
-					} else {
-						// SpacingBefore has already been applied on the ListItem itself and it can be reused.
-						totalSpacingTop = li.getSpacingBefore();
-						totalSpacingTop += utils.calculateMarginTop(tag, ownMarginTop+"pt", 0);
-						totalSpacingTop += ownPaddingTop;
-					}
+//					float ownFontSize = fst.getFontSize(tag);
+//					float ownMarginTop = 0;
+//					if(tag.getCSS().get(CSS.Property.MARGIN_TOP)==null) {
+//						if(configuration.getRootTags().contains(tag.getParent().getTag())) {
+//							ownMarginTop = ownFontSize;
+//						}
+//					} else {
+//						ownMarginTop = utils.parseValueToPt(tag.getCSS().get(CSS.Property.MARGIN_TOP),ownFontSize);
+//					}
+//					float ownPaddingTop = tag.getCSS().get(CSS.Property.PADDING_TOP)!=null?utils.parseValueToPt(tag.getCSS().get(CSS.Property.PADDING_TOP),ownFontSize):0;
+//					float totalSpacingTop = 0;
+//					//Margin-top values of this tag and its first child needs to be compared if paddingTop = 0.
+//					if(ownPaddingTop == 0) {
+//						Tag firstChild = tag.getChildren().get(0);
+//						float firstChildFontSize = fst.getFontSize(firstChild);
+//						float firstChildMarginTop = firstChild.getCSS().get(CSS.Property.MARGIN_TOP)!=null?utils.parseValueToPt(firstChild.getCSS().get(CSS.Property.MARGIN_TOP),firstChildFontSize):0;
+//						float firstChildPaddingTop = firstChild.getCSS().get(CSS.Property.PADDING_TOP)!=null?utils.parseValueToPt(firstChild.getCSS().get(CSS.Property.PADDING_TOP),firstChildFontSize):0;
+//						totalSpacingTop = firstChildPaddingTop;
+//						float marginTop = 0;
+//						if(ownMarginTop != 0 && firstChildMarginTop != 0){
+//							marginTop = ownMarginTop>=firstChildMarginTop?ownMarginTop:firstChildMarginTop;
+//						} else if (ownMarginTop != 0) {
+//							marginTop = ownMarginTop;
+//						} else if (firstChildMarginTop != 0) {
+//							marginTop = firstChildMarginTop;
+//						}
+//						totalSpacingTop += utils.calculateMarginTop(marginTop+"pt", 0, configuration);
+//					} else {
+//						// SpacingBefore has already been applied on the ListItem itself and it can be reused.
+//						totalSpacingTop = li.getSpacingBefore();
+//						totalSpacingTop += utils.calculateMarginTop(ownMarginTop+"pt", 0, configuration);
+//						totalSpacingTop += ownPaddingTop;
+//					}
 					li.setSpacingBefore(calculateTopOrBottomMargin(true, tag, i, li));
 				// margin and padding-bottom of this list will be set on the last ListItem.
 				}
@@ -122,16 +122,17 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 		String end = isTop?"-top":"-bottom";
 		float ownFontSize = fst.getFontSize(tag);
 		float ownMargin = 0;
-		if(tag.getCSS().get(CSS.Property.MARGIN+end)==null) {
+		String marginValue = tag.getCSS().get(CSS.Property.MARGIN+end);
+		if(marginValue==null) {
 			if(configuration.getRootTags().contains(tag.getParent().getTag())) {
 				ownMargin = ownFontSize;
 			}
 		} else {
-			ownMargin = utils.parseValueToPt(tag.getCSS().get(CSS.Property.MARGIN+end),ownFontSize);
+			ownMargin = utils.parseValueToPt(marginValue,ownFontSize);
 		}
 		float ownPadding = tag.getCSS().get(CSS.Property.PADDING+end)!=null?utils.parseValueToPt(tag.getCSS().get(CSS.Property.PADDING+end),ownFontSize):0;
 		float totalSpacing = 0;
-		//Margin values of this tag and its first child needs to be compared if paddingTop or bottom = 0.
+		//Margin values of this tag and its first child need to be compared if paddingTop or bottom = 0.
 		if(ownPadding == 0) {
 			Tag child = tag.getChildren().get(i);
 			float childFontSize = fst.getFontSize(child);
@@ -146,17 +147,19 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 				margin = childMargin;
 			}
 			if(isTop) {
-				totalSpacing = childPadding + utils.calculateMarginTop(tag, margin+"pt", 0);
+				totalSpacing = childPadding + utils.calculateMarginTop(margin+"pt", 0, configuration);
 			} else {
 				totalSpacing = childPadding + margin;
+				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, margin);
 			}
 		} else {
-			// Spacing has already been applied on the ListItem itself and it can be reused.
+			// Spacing has already been applied on the ListItem itself and it can be added to spacing of the list.
 			if(isTop){
 				totalSpacing = li.getSpacingBefore();
-				totalSpacing += utils.calculateMarginTop(tag, ownMargin+"pt", 0);
+				totalSpacing += utils.calculateMarginTop(ownMargin+"pt", 0, configuration);
 			} else {
 				totalSpacing = li.getSpacingAfter()+ownMargin;
+				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, ownMargin);
 			}
 			totalSpacing += ownPadding;
 		}

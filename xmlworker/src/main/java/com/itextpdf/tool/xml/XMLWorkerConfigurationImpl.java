@@ -51,7 +51,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -248,9 +247,9 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.XMLWorkerConfig#charSet(java.nio.charset.Charset)
 	 */
-	public void charSet(Charset charSet) {
+	public void charSet(final Charset charSet) {
 		this.charSet  = charSet;
-		
+
 	}
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.XMLWorkerConfig#charSet()
@@ -265,12 +264,12 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	public boolean autoBookmark() {
 		return this.isAutoBookMark;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param bookmark true to enable auto bookmarking of headers, false otherwise.
 	 */
-	public void autoBookMark(boolean bookmark) {
+	public void autoBookMark(final boolean bookmark) {
 		this.isAutoBookMark = bookmark;
 	}
 	/* (non-Javadoc)
@@ -279,13 +278,12 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	public List<String> getRootTags() {
 		return new ArrayList<String>(roottags);
 	}
-	
-	public void addRootTag(String tag) {
+
+	public void addRootTag(final String tag) {
 		roottags.add(tag);
 	}
-	
-	public void removeRootTag(String tag) {
+
+	public void removeRootTag(final String tag) {
 		roottags.remove(tag);
 	}
-	
 }

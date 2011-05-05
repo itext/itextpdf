@@ -82,11 +82,13 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 			String key = entry.getKey();
 			String value = entry.getValue();
 			if(CSS.Property.MARGIN_TOP.equalsIgnoreCase(key)) {
-				p.setSpacingBefore(p.getSpacingBefore() + utils.calculateMarginTop(t, value, fontSize));
+				p.setSpacingBefore(p.getSpacingBefore() + utils.calculateMarginTop(value, fontSize, configuration));
 			} else if(CSS.Property.PADDING_TOP.equalsIgnoreCase(key)) {
 				p.setSpacingBefore(p.getSpacingBefore() + utils.parseValueToPt(value, fontSize));
 			} else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
-				p.setSpacingAfter(p.getSpacingAfter() + utils.parseValueToPt(value, fontSize));
+				float after = utils.parseValueToPt(value, fontSize);
+				p.setSpacingAfter(p.getSpacingAfter() + after);
+				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, after);
 			} else if (CSS.Property.PADDING_BOTTOM.equalsIgnoreCase(key)) {
 				p.setSpacingAfter(p.getSpacingAfter() + utils.parseValueToPt(value, fontSize));
 			} else if(CSS.Property.MARGIN_LEFT.equalsIgnoreCase(key)) {
@@ -114,12 +116,13 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 		// setDefaultMargin to largestFont if no margin-top is set and p-tag is child of the root tag.
 		String parent = t.getParent().getTag();
 		if(css.get(CSS.Property.MARGIN_TOP) == null && configuration.getRootTags().contains(parent)) {
-			p.setSpacingBefore(p.getSpacingBefore()+utils.calculateMarginTop(t, fontSize+"pt", 0));
+			p.setSpacingBefore(p.getSpacingBefore()+utils.calculateMarginTop(fontSize+"pt", 0, configuration));
 		}
 		// setDefaultMargin to largestFont if no margin-bottom is set and p-tag is child of the root tag.
 		if(css.get(CSS.Property.MARGIN_BOTTOM) == null && configuration.getRootTags().contains(parent)) {
 			p.setSpacingAfter(p.getSpacingAfter()+fontSize);
 			css.put(CSS.Property.MARGIN_BOTTOM, fontSize+"pt");
+			configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, fontSize);
 		}
 		p.setLeading(m.getLeading());
 		if(p.getAlignment() == -1) {

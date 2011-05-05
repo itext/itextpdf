@@ -47,15 +47,13 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.WebColors;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.TagUtils;
-import com.itextpdf.tool.xml.exceptions.NoSiblingException;
+import com.itextpdf.tool.xml.XMLWorkerConfig;
 
 /**
  * @author Balder Van Camp
@@ -556,34 +554,23 @@ public class CssUtils {
 	}
 
 	/**
-	 * Calculates the margin top or spacingBefore of a paragraph or noNewLineParagraph based on the given tag and its previous tag (or previous sibling).
+	 * Calculates the margin top or spacingBefore based on the given value and the last margin bottom.
 	 * <br /><br />
 	 * In HTML the margin-bottom of a tag overlaps with the margin-top of a following tag.
 	 * This method simulates this behavior by subtracting the margin-top value of the given tag from the margin-bottom of the previous tag. The remaining value is returned or if the margin-bottom value is the largest, 0 is returned
-	 * @param t the given tag.
 	 * @param value the margin-top value of the given tag.
-	 * @param largestFont
+	 * @param largestFont used if a relative value was given to calculate margin.
+	 * @param config XmlWorkerConfig containing the last margin bottom.
 	 * @return an offset
 	 */
-	public float calculateMarginTop(final Tag t, final String value, final float largestFont) {
+	public float calculateMarginTop(final String value, final float largestFont, final XMLWorkerConfig config) {
 		float marginTop = parseValueToPt(value, largestFont);
-		try {
-			Tag previousSibling = new TagUtils().getSibling(t, -1);
-			String marginBottom = previousSibling.getCSS().get(CSS.Property.MARGIN_BOTTOM);
-			float marginBottomPrevious = 0;
-			if (marginBottom != null) {
-				if(isRelativeValue(marginBottom)) {
-					float fontSizePrevious = fontSizeTranslater.getFontSize(previousSibling);
-					marginBottomPrevious = parseRelativeValue(marginBottom, fontSizePrevious);
-				} else {
-					marginBottomPrevious = parsePxInCmMmPcToPt(marginBottom);
-				}
-				marginTop = (marginTop>marginBottomPrevious)?marginTop-marginBottomPrevious:0;
-			}
-			return marginTop;
+		Map<String, Object> memory = config.getMemory();
+		Object mb = memory.get(XMLWorkerConfig.LAST_MARGIN_BOTTOM);
+		if(mb != null) {
+			float marginBottom = (Float)mb;
+			marginTop = (marginTop>marginBottom)?marginTop-marginBottom:0;
 		}
-		catch (NoSiblingException e) {
-			return marginTop;
-		}
+		return marginTop;
 	}
 }

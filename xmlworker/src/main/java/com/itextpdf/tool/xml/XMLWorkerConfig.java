@@ -53,9 +53,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  * Configuration object for the XMLWorker.
- * 
+ *
  * @author Balder Van Camp
- * 
+ *
  */
 public interface XMLWorkerConfig {
 
@@ -67,59 +67,62 @@ public interface XMLWorkerConfig {
 	 * Reserved as key in the {@link XMLWorkerConfig#getMemory()} map.
 	 */
 	public static final String BOOKMARK_TREE = "BOOKMARK_TREE";
-
+	/**
+	 * Reserved as key in the {@link XMLWorkerConfig#getMemory()} map.
+	 */
+	public static final String LAST_MARGIN_BOTTOM = "lastMarginBottom";
 	/**
 	 * The TagProcessorFactory to use in the XMLWorker.
-	 * 
+	 *
 	 * @return the tag factory
 	 */
 	TagProcessorFactory getTagFactory();
 
 	/**
 	 * Whether or not the {@link XMLWorker} should accept unknown tags.
-	 * 
+	 *
 	 * @return true if unknown tags should be accepted
 	 */
 	boolean acceptUnknown();
 
 	/**
 	 * The Provider implementation to use in the XMLWorker.
-	 * 
+	 *
 	 * @return the provider
 	 */
 	Provider getProvider();
 
 	/**
 	 * The CSSResolver to use in the XMLWorker.
-	 * 
+	 *
 	 * @return the CSSResolver
 	 */
 	CSSResolver getCssResolver();
 
 	/**
 	 * Returns the page size that must be used.
-	 * 
+	 *
 	 * @return the page size rectangle
 	 */
 	Rectangle getPageSize();
 
 	/**
 	 * Returns the document everything will be added to if any (== may be null).
-	 * 
+	 *
 	 * @return the document
 	 */
 	Document getDocument();
 
 	/**
 	 * Returns the writer if any (== may be null).
-	 * 
+	 *
 	 * @return the PdfWriter
 	 */
 	PdfWriter getWriter();
 
 	/**
 	 * Used by the XMLWorkerImpl to convert all parsed tags to lower.
-	 * 
+	 *
 	 * @return true for lower-case, false to leave tags as they are.
 	 */
 	boolean isParsingHTML();
@@ -131,21 +134,21 @@ public interface XMLWorkerConfig {
 
 	/**
 	 * Used by the XMLWorkerImpl to return a default root tag if no root tag is present in given snippet.
-	 * 
+	 *
 	 * @return a default root tag.
 	 */
 	Tag getDefaultRoot();
 
 	/**
 	 * Sets the character set to be used.
-	 * 
+	 *
 	 * @param charSet
 	 */
 	void charSet(Charset charSet);
 
 	/**
 	 * Returns the character set used. Defaults to {@link Charset#defaultCharset()}
-	 * 
+	 *
 	 * @return the character set used.
 	 */
 	Charset charSet();
@@ -156,7 +159,7 @@ public interface XMLWorkerConfig {
 	boolean autoBookmark();
 
 	/**
-	 * Tags in this list are defined as roottags. In certain cases roottags behave different for calculating CSS to PDF values for e.g. leading. 
+	 * Tags in this list are defined as roottags. In certain cases roottags behave different for calculating CSS to PDF values for e.g. leading.
 	 * @return a list of tags that count as roottags
 	 */
 	List<String> getRootTags();

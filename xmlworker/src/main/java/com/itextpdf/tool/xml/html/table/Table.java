@@ -62,6 +62,7 @@ import com.itextpdf.text.pdf.PdfPRow;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
@@ -476,13 +477,15 @@ public class Table extends AbstractTagProcessor {
         	String key = css.getKey();
 			String value = css.getValue();
 			if(CSS.Property.MARGIN_TOP.equalsIgnoreCase(key)) {
-				spacingBefore += utils.calculateMarginTop(t, value, fst.getFontSize(t));
+				spacingBefore += utils.calculateMarginTop(value, fst.getFontSize(t), configuration);
 			} else if (CSS.Property.BORDER_TOP_WIDTH.equalsIgnoreCase(key)) {
-               spacingBefore += utils.parseValueToPt(value, fst.getFontSize(t));
+				spacingBefore += utils.parseValueToPt(value, fst.getFontSize(t));
 			} else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
-               spacingAfter += utils.parseValueToPt(value, fst.getFontSize(t));
+				float marginBottom = utils.parseValueToPt(value, fst.getFontSize(t));
+				spacingAfter += marginBottom;
+				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, marginBottom);
 			} else if (CSS.Property.BORDER_BOTTOM_WIDTH.equalsIgnoreCase(key)) {
-               spacingAfter += utils.parseValueToPt(value, fst.getFontSize(t));
+				spacingAfter += utils.parseValueToPt(value, fst.getFontSize(t));
 			}
 		}
 		table.setSpacingBefore(spacingBefore);
