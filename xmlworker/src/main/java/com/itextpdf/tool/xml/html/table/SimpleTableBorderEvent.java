@@ -62,12 +62,13 @@ public class SimpleTableBorderEvent implements PdfPTableEvent{
     }
     public void tableLayout(final PdfPTable table, final float[][] width, final float[] height,
             final int headerRows, final int rowStart, final PdfContentByte[] canvas) {
-    	float effectivePadding = styleValues.getBorderWidthTop()/2+styleValues.getHorBorderSpacing();
+    	float effectivePadding = styleValues.getBorderWidthTop()/2;
         float widths[] = width[0];
         float x1 = widths[0]-effectivePadding;
         float x2 = widths[widths.length - 1]+effectivePadding;
-        effectivePadding = styleValues.getBorderWidthTop()/2+styleValues.getVerBorderSpacing();
+        effectivePadding = styleValues.getBorderWidthTop()/2;
         float y1 = height[0]+effectivePadding;
+        effectivePadding += styleValues.getVerBorderSpacing();
         float y2 = height[height.length - 1]-effectivePadding;
         PdfContentByte cb = canvas[PdfPTable.LINECANVAS];
         cb.setLineWidth(styleValues.getBorderWidthTop());

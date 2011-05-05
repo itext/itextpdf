@@ -134,8 +134,8 @@ public class Table extends AbstractTagProcessor {
 			styleValues.setVerBorderSpacing(getBorderOrCellSpacing(false, css, attributes));
 			inner.setTableEvent(new TableBorderEvent(styleValues, css));
 		} else if(attributes.containsKey(CSS.Property.BORDER)) {
-			styleValues.setHorBorderSpacing(1.5f);
-			styleValues.setVerBorderSpacing(1.5f);
+			styleValues.setHorBorderSpacing(getBorderOrCellSpacing(true, css, attributes));
+			styleValues.setVerBorderSpacing(getBorderOrCellSpacing(false, css, attributes));
 			styleValues.setBorderWidth(utils.parsePxInCmMmPcToPt(attributes.get(CSS.Property.BORDER)));
 			styleValues.setBorderColor(BaseColor.BLACK);
 			inner.setTableEvent(new SimpleTableBorderEvent(styleValues));
@@ -158,7 +158,7 @@ public class Table extends AbstractTagProcessor {
 			HtmlCell currentCell = null;
 	        for (Element cell : ((TableRowElement) row).getContent()) {
 	        	currentCell = (HtmlCell) cell;
-	        	if(rowspanValue[column] != 0) {
+	        	if(rowspanValue[column] > 1) {
 	        		rowspanValue[column] = rowspanValue[column]-1;
 	        		++column;
 	        	}
@@ -328,6 +328,7 @@ public class Table extends AbstractTagProcessor {
 		if(collapse == null || collapse.equals("seperate")) {
 			String borderSpacing = css.get("border-spacing");
 			String cellSpacing = attributes.get("cellspacing");
+			String borderAttr = attributes.get("border");
 			if(borderSpacing != null) {
 				if(borderSpacing.contains(" ")){
 					if(getHor) {
@@ -340,6 +341,8 @@ public class Table extends AbstractTagProcessor {
 				}
 			} else if (cellSpacing != null){
 				spacing = utils.parsePxInCmMmPcToPt(cellSpacing);
+			} else if (borderAttr != null){
+				spacing = utils.parsePxInCmMmPcToPt(borderAttr);
 			}
 		} else if(collapse.equals("collapse")){
 			spacing = 0;

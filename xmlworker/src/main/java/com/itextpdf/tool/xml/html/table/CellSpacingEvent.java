@@ -89,29 +89,41 @@ public class CellSpacingEvent implements PdfPCellEvent {
         	cb.fill();
         }
 		BaseColor borderColor = styleValues.getBorderColorLeft();
-		// Checking one border side is enough
-		if(borderColor != null) {
-			cb.setLineWidth(styleValues.getBorderWidthLeft());
+		float width = styleValues.getBorderWidthLeft();
+		if(borderColor != null && width != 0) {
+			cb.setLineWidth(width);
 			cb.setColorStroke(borderColor);
 	        cb.moveTo(x1, y1); // start leftUpperCorner
 	        cb.lineTo(x1, y2); // left
 	        cb.stroke();
-	        cb.setLineWidth(styleValues.getBorderWidthBottom());
-	        cb.setColorStroke(styleValues.getBorderColorBottom());
+		}
+		borderColor = styleValues.getBorderColorBottom();
+		width = styleValues.getBorderWidthBottom();
+		if(borderColor != null && width != 0) {
+			cb.setLineWidth(width);
+			cb.setColorStroke(borderColor);
 	        cb.moveTo(x1, y2); // left
 	        cb.lineTo(x2, y2); // bottom
 	        cb.stroke();
-	        cb.setLineWidth(styleValues.getBorderWidthRight());
-	        cb.setColorStroke(styleValues.getBorderColorRight());
+		}
+		borderColor = styleValues.getBorderColorRight();
+		width = styleValues.getBorderWidthRight();
+		if(borderColor != null && width != 0) {
+			cb.setLineWidth(width);
+			cb.setColorStroke(borderColor);
 	        cb.moveTo(x2, y2); // bottom
 	        cb.lineTo(x2, y1); // right
 	        cb.stroke();
-	        cb.setLineWidth(styleValues.getBorderWidthTop());
-	        cb.setColorStroke(styleValues.getBorderColorTop());
+		}
+		borderColor = styleValues.getBorderColorTop();
+		width = styleValues.getBorderWidthTop();
+		if(borderColor != null && width != 0) {
+			cb.setLineWidth(width);
+			cb.setColorStroke(borderColor);
 	        cb.moveTo(x2, y1); // right
 	        cb.lineTo(x1, y1); // top
 	        cb.stroke();
-	        cb.resetRGBColorStroke();
 		}
+	    cb.resetRGBColorStroke();
 	}
 }

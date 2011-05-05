@@ -3,84 +3,61 @@
 <head>
 </head>
 <body>
-<p style="margin-top:50px">Table test</p>
-<table style="margin:10px;padding:10px;border:3pt red solid;empty-cells:hide;" cellspacing=10px><!--
-	float:right;line-height:100px;margin-bottom:200px;
-	werkend: font-style:italic; color: #00f; font-family: Verdana;text-decoration: underline;  text-align: right;
-	 font-weight: bold;line-height:100px;letter-spacing: 5px;font-size: 15px;
-	--><tr>
-		<td width=90 style="border:15pt solid blue;vertical-align:top;">Cell <b>1,1</b> more content</td>
-		<td style="font-size:20pt;margin:20px;">Cell 1,2 more content</td>
-		<td><p style="text-align:right;color:red;">Cell 1,3</p></td>
-		<td colspan="2" style="border:2pt solid blue;vertical-align:bottom;">Cell 1,4-1,5</td>
-	</tr>
-	<tr style="margin:100px;background-color:rgb(160,160,160)">
-		<td colspan="2" style="border:2pt solid blue;">Cell 2,1-2,2</td>
-		<td rowspan="2" style="border:2pt solid green;">Cell 2,3 (- 3,3)</td>
-		<td>Cell 2,4 more content and a LongWordWithALotOfLetters to cause this table to fall of the page.</td>
-		<td>Cell 2,5</td>
-	</tr>
-	<tfoot>
+<h1>Basic table test</h1>
+<h2>Default table no styles</h2>
+<table>
 	<tr>
-		<td>Footer 1,1</td>
-		<td>Footer 1,2</td>
-		<td>Footer 1,3</td>
-		<td>Footer 1,4</td>
-		<td>Footer 1,5</td>
-	</tr>
-	</tfoot>
-	<thead>
-	<tr>
-		<td>Header 1,1</td>
-		<td>Header 1,2</td>
-		<td>Header 1,3</td>
-		<td>Header 1,4</td>
-		<td>Header 1,5</td>
-	</tr>
-	</thead>
-	<tfoot>
-	<tr>
-		<td>Footer 2,1</td>
-		<td>Footer 2,2</td>
-		<td>Footer 2,3</td>
-		<td>Footer 2,4</td>
-		<td>Footer 2,5</td>
-	</tr>
-	</tfoot>
-	<tr>
-		<td width=25 style="border-bottom-style:solid;border-bottom-color:pink">Cell 3,1</td>
-		<td style="text-align:right;border:4px solid purple">Cell 3,2 more content and other stuff to cause the content to fall of the page.</td>
-		<td style="border:5pt solid blue;"></td>
-		<td rowspan="3" style="border:2pt solid green;">Cell 3,5-<br />4,5-<br />5,5</td>
-	</tr>
-	<caption style="caption-side:top">This is the caption of this table</caption>
-	<tr>
-		<td colspan="2" style="text-align:center;border:2pt solid blue;">Cell 4,1 - 4,2</td>
-		<td rowspan="2" style="border:2pt solid green;">Cell 4,3 (- 5,3)</td>
-		<td>Cell 4,4</td>
-	</tr>
-	<thead>
-	<tr>
-		<td>Header 2,1</td>
-		<td>Header 2,2</td>
-		<td>Header 2,3</td>
-		<td>Header 2,4</td>
-		<td>Header 2,5</td>
-	</tr>
-	</thead>
-	<tr>
-		<td style="border-bottom-style:solid;border-bottom-color:pink">Cell 5,1</td>
-		<td>Cell 5,2 more content and other stuff to cause the content to fall of the   page.</td>
-		<td>Cell 5,4</td>
+		<td>Simple Cell 1.1</td>
+		<td>Simple Cell 1.2</td>
+		<td>Simple Cell 1.3</td>
 	</tr>
 	<tr>
-		<td style="border-bottom-style:solid;border-bottom-color:pink">Cell 6,1</td>
-		<td>Cell 6,2 more content and other stuff to cause the content to fall of the   page.</td>
-		<td>Cell 6,3</td>
-		<td>Cell 6,4</td>
-		<td>Cell 6,5</td>
+		<td>Simple Cell 2.1</td>
+		<td>Simple Cell 2.2</td>
+		<td>Simple Cell 2.3</td>
 	</tr>
 </table>
+<h2>Table with style border-collapse:collapse</h2>
+<table style="border-collapse:collapse">
+	<tr>
+		<td>Simple Cell 1.1</td>
+		<td>Simple Cell 1.2</td>
+		<td>Simple Cell 1.3</td>
+	</tr>
+	<tr>
+		<td>Simple Cell 2.1</td>
+		<td>Simple Cell 2.2</td>
+		<td>Simple Cell 2.3</td>
+	</tr>
+</table>
+<h2>Table with attribute border="2"</h2>
+<table border="2">
+	<tr>
+		<td>Simple Cell 1.1</td>
+		<td>Simple Cell 1.2</td>
+		<td>Simple Cell 1.3</td>
+	</tr>
+	<tr>
+		<td>Simple Cell 2.1</td>
+		<td>Simple Cell 2.2</td>
+		<td>Simple Cell 2.3</td>
+	</tr>
+</table>
+<h2>Table with attribute border="5" and style border-collapse:collapse</h2>
+<table style="border-collapse:collapse" border="5">
+	<tr>
+		<td>Simple Cell 1.1</td>
+		<td style="border:5px red solid">Simple Cell 1.2</td>
+		<td>Simple Cell 1.3</td>
+	</tr>
+	<tr>
+		<td>Simple Cell 2.1</td>
+		<td>Simple Cell 2.2</td>
+		<td>Simple Cell 2.3</td>
+	</tr>
+</table>
+<h1>Complex tables</h1>
+<h2>Complex 1</h2>
 <table style="border-spacing: 30px ;border-style:solid;border-left-color:blue;border-width:15px;border-right-color:yellow;background-color:rgb(160,160,160)">
 	<tr style="background-color:rgb(240,240,240)">
 		<td style="border-style:solid;border-left-color:blue;border-width:5px;border-right-color:yellow">Cell 1<br /><img src="http://itextpdf.com/img/logo.gif" height="150" width="150" /></td>
@@ -105,6 +82,88 @@
 		</td>
 		<td style="border-style:solid;border-color:green">Cell 3 containing just normal words to fill the contents of this cell.</td>
 		<td style="border-style:solid;border-color:yellow;border-width:3px">Cell 3 containing just normal words to fill the contents of this cell.</td>
+	</tr>
+</table>
+<h2>Complex 2</h2>
+<p>Table with attribute cellspacing=10px and styles:</p>
+<ul>
+	<li>margin:10px;</li>
+	<li>padding:10px;</li>
+	<li>border:3pt red solid;</li>
+	<li>empty-cells:hide;</li>
+</ul>
+<p>Different row types:</p>
+<ul>
+	<li>header</li>
+	<li>body</li>
+	<li>footer</li>
+	<li>caption</li>
+</ul>
+<p>A row with styles background-color:rgb(160,160,160)</p>
+<p>Different cells with attributes:</p>
+<ul>
+	<li>width=90</li>
+	<li>colspan="5"</li>
+	<li>rowspan="2"</li>
+</ul>
+<p>Different cells with styles like:</p>
+<ul>
+	<li>vertical-align:top;</li>
+	<li>vertical-align:bottom;</li>
+	<li>border:4px solid purple"</li>
+	<li>border-bottom-style:solid;border-bottom-color:pink</li>
+	<li>font-size:20pt</li>
+</ul>
+<table style="margin:10px;padding:10px;border:3pt red solid;empty-cells:hide;" cellspacing=10px >
+	<tfoot>
+	<tr>
+		<td>Footer 1,1</td>
+		<td>Footer 1,2</td>
+		<td>Footer 1,3</td>
+		<td>Footer 1,4</td>
+		<td>Footer 1,5</td>
+	</tr>
+	</tfoot>
+	<thead>
+	<tr>
+		<td>Header 1,1</td>
+		<td>Header 1,2</td>
+		<td>Header 1,3</td>
+		<td>Header 1,4</td>
+		<td>Header 1,5</td>
+	</tr>
+	</thead>
+	<tr>
+		<td width=90 style="border:15pt solid blue;vertical-align:top;">Cell <b>1,1</b> more content</td>
+		<td style="font-size:20pt;">Cell 1,2 more content</td>
+		<td><p style="text-align:right;color:red;">Cell 1,3</p></td>
+		<td colspan="2" style="border:2pt solid blue;vertical-align:bottom;">Cell 1,4-1,5</td>
+	</tr>
+	<tr style="background-color:rgb(160,160,160)">
+		<td colspan="2" style="border:2pt solid blue;">Cell 2,1-2,2</td>
+		<td rowspan="2">Cell 2,3 (- 3,3) with <b style="color:red">rowspan=2</b></td>
+		<td>Cell 2,4 more content and a LongWordWithALotOfLetters to try to let this table fall of the page.</td>
+		<td>Cell 2,5</td>
+	</tr>
+	<tr>
+		<td width=25 style="border-bottom-style:solid;border-bottom-color:pink">Cell 3,1</td>
+		<td style="text-align:right;border:4px solid purple">Cell 3,2 more content and other stuff to cause the content to fall of the page.</td>
+		<td style="border:5pt solid blue;"></td>
+		<td rowspan="3" style="border:2pt solid green;background-color:rgb(160,160,160)">Cell 3,5-<br />4,5-<br />5,5</td>
+	</tr>
+	<caption style="caption-side:top">This is the caption of this table</caption>
+	<tr>
+		<td colspan="2" style="text-align:center;border:2pt solid blue;">Cell 4,1 - 4,2</td>
+		<td rowspan="2" style="border:2pt solid green;">Cell 4,3 (- 5,3)</td>
+		<td>Cell 4,4</td>
+	</tr>
+	<tr>
+		<td style="border-bottom-style:solid;border-bottom-color:pink">Cell 5,1</td>
+		<td>Cell 5,2 more content and other stuff to cause the content to fall of the page.</td>
+		<td>Cell 5,4</td>
+	</tr>
+	<tr>
+		<td colspan="5" style="border-bottom-style:solid;border-bottom-color:brown">Cell 6,1</td>
 	</tr>
 </table>
 </body>
