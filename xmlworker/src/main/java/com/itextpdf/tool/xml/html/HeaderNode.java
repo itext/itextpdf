@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: Header.java 21 2011-05-05 10:30:41Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -41,129 +41,56 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml;
+package com.itextpdf.tool.xml.html;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.itextpdf.text.pdf.PdfOutline;
 /**
- * Represents an encountered tag.
- *
- * @author Balder
+ * Helper class to keep the PdfOutline structure for Headers.
+ * @author redlab_b
  *
  */
-public class Tag {
+public class HeaderNode {
 
-	private Tag parent;
-	private final String tag;
-	private final Map<String, String> attributes;
-	private Map<String, String> css;
-	private final List<Tag> children;
+	private int level;
+	private PdfOutline outline;
+	private HeaderNode parent;
 
-	/**
-	 * Construct a tag.
-	 *
-	 * @param tag the tag name
-	 * @param h the attributes in the tag
-	 */
-	public Tag(final String tag, final Map<String, String> h) {
-		this.tag = tag;
-		this.attributes = h;
-		this.css = new HashMap<String, String>(0);
-		this.children = new ArrayList<Tag>();
-	}
 
 	/**
-	 * @param tag the tag name
+	 * Constructor.
+	 * @param level the level
+	 * @param outline the PdfOutline for this HeaderNode
+	 * @param parent the parent HeaderNode
+	 * 
 	 */
-	public Tag(final String tag) {
-		this(tag, new HashMap<String, String>());
-	}
-
-	/**
-	 * Set the tags parent tag.
-	 *
-	 * @param parent the parent tag of this tag
-	 */
-	public void setParent(final Tag parent) {
+	public HeaderNode(int level, PdfOutline outline, HeaderNode parent) {
+		this.level = level;
+		this.outline = outline;
 		this.parent = parent;
-
-	}
-
-	/**
-	 * Returns the parent tag for this tag.
-	 *
-	 * @return the parent tag or null if none
-	 */
-	public Tag getParent() {
-		return this.parent;
-	}
-
-	/**
-	 * The tags name.
-	 *
-	 * @return the tag name
-	 */
-	public String getTag() {
-		return this.tag;
-	}
-
-	/**
-	 * Returns a Map of css property, value.
-	 *
-	 * @return the css, never null but can be an empty map.
-	 */
-	public Map<String, String> getCSS() {
-		return this.css;
-	}
-
-	/**
-	 * Set the css map. If <code>null</code> is given the css is cleared.
-	 *
-	 * @param css set css properties
-	 */
-	public void setCSS(final Map<String, String> css) {
-		if (null != css) {
-			this.css = css;
-		} else {
-			this.css.clear();
-		}
-	}
-
-	/**
-	 * @return the attributes of the tag
-	 */
-	public Map<String, String> getAttributes() {
-		return attributes;
-	}
-
-	/**
-	 * Add a child tag to this tag. The given tags parent is set to this tag.
-	 *
-	 * @param t the tag
-	 */
-	public void addChild(final Tag t) {
-		t.setParent(this);
-		this.children.add(t);
-
-	}
-
-	/**
-	 * Returns all children of this tag.
-	 *
-	 * @return the children tags of this tag.
-	 */
-	public List<Tag> getChildren() {
-		return this.children;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * The parent node for this node.
+	 * @return HeaderNode
 	 */
-	@Override
-	public String toString() {
-		return String.format("%s", this.tag);
+	public HeaderNode parent() {
+		return parent;
 	}
+	/**
+	 * Return the level of this HeaderNode.
+	 * @return level
+	 * 
+	 */
+	public int level() {
+		return level;
+	}
+	
+	/**
+	 * Returns the PdfOutline attached to this HeaderNode.
+	 * @return the PdfOutline of this HeaderNode
+	 */
+	public PdfOutline outline() {
+		return outline;
+	}
+	
 }

@@ -92,10 +92,10 @@ public class HTMLWorkerFactoryTest {
 //	  private static final String TEST = "lists_";
 //	  private static final String TEST = "img_";
 //	  private static final String TEST = "position_";
-//	  private static final String TEST = "h_";
+	  private static final String TEST = "h_";
 //	  private static final String TEST = "booksales_";
 //	  private static final String TEST = "index_";
-	  private static final String TEST = "headers_";
+//	  private static final String TEST = "headers_";
 //	  private static final String TEST = "index_anchor_";
 //	  private static final String TEST = "lineheight_";
 

@@ -55,16 +55,16 @@ import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 
 /**
- * @author Emiel Ackermann
+ * @author Emiel Ackermann, redlab_b
  *
  */
 public class Header extends AbstractTagProcessor {
 
+	private static final String BOOKMARK_TREE = "BOOKMARK_TREE";
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document, java.lang.String)
@@ -89,35 +89,29 @@ public class Header extends AbstractTagProcessor {
 			Paragraph p = new ParagraphCssApplier(configuration).apply(
 					(Paragraph) Tags.currentContentToParagraph(currentContent, true), tag);
 			if (configuration.autoBookmark() && null != configuration.getWriter()) {
-				Map<String, Object> memory = configuration.getMemory();
-				Object levelObj = memory.get(XMLWorkerConfig.HEADER_NUMBER_LEVEL);
-				int level = getLevel(tag);
 				PdfWriter writer = configuration.getWriter();
 				PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
 						writer.getVerticalPosition(false), 0);
-				if (null != levelObj) {
-					PdfOutline outline;
-					int oldLevel = ((Integer) levelObj).intValue();
-					if (oldLevel < level) {
-						memory.put(tag.getTag(), Integer.valueOf(0));
-						outline = (PdfOutline) memory.get(XMLWorkerConfig.CURRENT_BOOKMARK);
-					} else if (oldLevel > level) {
-						memory.put("h" + Integer.toString(oldLevel), Integer.valueOf(0));
-						outline = (PdfOutline) memory.get(XMLWorkerConfig.CURRENT_BOOKMARK);
-						outline = outline.parent().parent();
-					} else {
-						outline = (PdfOutline) memory.get(XMLWorkerConfig.CURRENT_BOOKMARK);
-						outline = outline.parent();
-					}
-					PdfOutline outline2 = new PdfOutline(outline, destination, p);
-					memory.put(XMLWorkerConfig.CURRENT_BOOKMARK, outline2);
+				Map<String, Object> memory = configuration.getMemory();
+				HeaderNode tree = (HeaderNode) memory.get(BOOKMARK_TREE);
+				int level = getLevel(tag);
+				if (null == tree) {
+					// first h tag encounter
+					tree = new HeaderNode(0, writer.getRootOutline(), null);
 				} else {
-					// first entry
-					PdfOutline root = writer.getRootOutline();
-					PdfOutline outline2 = new PdfOutline(root, destination, p);
-					memory.put(XMLWorkerConfig.CURRENT_BOOKMARK, outline2);
+					// get position in tree | calculate parent
+					int lastLevel = tree.level();
+					if (lastLevel == level) {
+						tree = tree.parent();
+					} else if (lastLevel > level) {
+						while (lastLevel >= level) {
+							lastLevel = tree.parent().level();
+							tree = tree.parent();
+						}
+					}
 				}
-				memory.put(XMLWorkerConfig.HEADER_NUMBER_LEVEL, Integer.valueOf(level));
+				HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, p), tree);
+				memory.put(BOOKMARK_TREE, node);
 			}
 			l.add(p);
 		}
