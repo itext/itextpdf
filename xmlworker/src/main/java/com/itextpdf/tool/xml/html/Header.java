@@ -55,6 +55,7 @@ import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 
@@ -63,8 +64,6 @@ import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
  *
  */
 public class Header extends AbstractTagProcessor {
-
-	private static final String BOOKMARK_TREE = "BOOKMARK_TREE";
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document, java.lang.String)
@@ -93,7 +92,7 @@ public class Header extends AbstractTagProcessor {
 				PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
 						writer.getVerticalPosition(false), 0);
 				Map<String, Object> memory = configuration.getMemory();
-				HeaderNode tree = (HeaderNode) memory.get(BOOKMARK_TREE);
+				HeaderNode tree = (HeaderNode) memory.get(XMLWorkerConfig.BOOKMARK_TREE);
 				int level = getLevel(tag);
 				if (null == tree) {
 					// first h tag encounter
@@ -111,7 +110,7 @@ public class Header extends AbstractTagProcessor {
 					}
 				}
 				HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, p), tree);
-				memory.put(BOOKMARK_TREE, node);
+				memory.put(XMLWorkerConfig.BOOKMARK_TREE, node);
 			}
 			l.add(p);
 		}

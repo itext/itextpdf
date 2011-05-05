@@ -52,13 +52,14 @@ import com.itextpdf.tool.xml.Provider;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class ImageRetrieve {
 
 	private final Provider provider;
 	/**
+	 * @param provider the provider to use.
 	 *
 	 */
 	public ImageRetrieve(final Provider provider) {

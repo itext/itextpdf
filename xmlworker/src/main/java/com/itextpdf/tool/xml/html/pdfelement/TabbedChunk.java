@@ -46,37 +46,77 @@ package com.itextpdf.tool.xml.html.pdfelement;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 
+/**
+ * 
+ * A TabbedChunk is a Chunk that contains tabcount and alignment
+ * data to allow the HTML to PDF conversion to accept tabstop css.
+ * 
+ */
 public class TabbedChunk extends Chunk {
 	private int tabCount;
 	private String alignment;
 
+	/**
+	 * Constructor
+	 * @param content the content of the Chunk
+	 */
 	public TabbedChunk(String content) {
 		super(content);
 	}
-
+	
+	/**
+	 * 
+	 * @param verticalPositionMark the drawInterface to use to draw the tab. tabPosition an X
+	 * @param parseToPt that will be used as start position for the next Chunk.
+	 * @param b if true, a newline will be added if the tabPosition has already
+	 * been reached.
+	 * @param alignment the alignment
+	 */
 	public TabbedChunk(VerticalPositionMark verticalPositionMark,
 			float parseToPt, boolean b, String alignment) {
 		super(verticalPositionMark, parseToPt, b);
 		this.alignment = alignment;
 	}
-
+	
+	/**
+	 * @param verticalPositionMark the drawInterface to use to draw the tab. tabPosition an X
+	 * @param parseToPt that will be used as start position for the next Chunk.
+	 * @param b if true, a newline will be added if the tabPosition has already
+	 * been reached.
+	 */
 	public TabbedChunk(VerticalPositionMark verticalPositionMark,
 			float parseToPt, boolean b) {
 		super(verticalPositionMark, parseToPt, b);
 	}
 
+	/**
+	 * Set the tabCount for this Chunk.
+	 * @param tabCount  the tabcount
+	 */
 	public void setTabCount(int tabCount) {
 		this.tabCount = tabCount;
 	}
 
+	/**
+	 * Returns the tabCount for this Chunk.
+	 * @return tabCount
+	 */
 	public int getTabCount() {
 		return tabCount;
 	}
 
+	/**
+	 * Returns the alignment for this Chunk.
+	 * @param alignment the alignment
+	 */
 	public void setAlignment(String alignment) {
 		this.alignment = alignment;
 	}
 
+	/**
+	 * Return the Alignment for this Chunk
+	 * @return alignment
+	 */
 	public String getAlignment() {
 		return alignment;
 	}

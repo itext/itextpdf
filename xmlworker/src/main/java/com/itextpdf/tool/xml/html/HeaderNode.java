@@ -1,5 +1,5 @@
 /*
- * $Id: Header.java 21 2011-05-05 10:30:41Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA

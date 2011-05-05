@@ -43,12 +43,11 @@
  */
 package com.itextpdf.tool.xml;
 
-import java.util.List;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -60,9 +59,14 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 public interface XMLWorkerConfig {
 
-	public static final String CURRENT_BOOKMARK = "CURRENT_BOOKMARK";
-	public static final String HEADER_NUMBER_LEVEL = "HEADER_NR_LVL";
+	/**
+	 * Reserved as key in the {@link XMLWorkerConfig#getMemory()} map.
+	 */
 	public static final String VERTICAL_POSITION = "verticalPosition";
+	/**
+	 * Reserved as key in the {@link XMLWorkerConfig#getMemory()} map.
+	 */
+	public static final String BOOKMARK_TREE = "BOOKMARK_TREE";
 
 	/**
 	 * The TagProcessorFactory to use in the XMLWorker.
@@ -152,7 +156,8 @@ public interface XMLWorkerConfig {
 	boolean autoBookmark();
 
 	/**
-	 * @return
+	 * Tags in this list are defined as roottags. In certain cases roottags behave different for calculating CSS to PDF values for e.g. leading. 
+	 * @return a list of tags that count as roottags
 	 */
 	List<String> getRootTags();
 

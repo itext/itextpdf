@@ -44,11 +44,15 @@
 package com.itextpdf.tool.xml.parser.io;
 
 /**
- * @author Balder Van Camp
+ * Copied from itextpdf.
  *
  */
 public class EncodingUtil {
-
+	/**
+	 * 
+	 * @param decl a string from header or meta tag to detect encoding
+	 * @return encoding String
+	 */
 	public static String getDeclaredEncoding(final String decl) {
 		if (decl == null)
 			return null;
