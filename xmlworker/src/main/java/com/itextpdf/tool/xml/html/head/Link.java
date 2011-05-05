@@ -55,7 +55,7 @@ import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.HTML;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class Link extends AbstractTagProcessor {

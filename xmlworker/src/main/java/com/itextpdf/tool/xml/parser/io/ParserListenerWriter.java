@@ -50,7 +50,7 @@ import com.itextpdf.tool.xml.parser.XMLParserListener;
 
 /**
  * Debugging util.
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class ParserListenerWriter implements XMLParserListener {

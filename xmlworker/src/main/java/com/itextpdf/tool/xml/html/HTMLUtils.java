@@ -44,7 +44,7 @@
 package com.itextpdf.tool.xml.html;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class HTMLUtils {

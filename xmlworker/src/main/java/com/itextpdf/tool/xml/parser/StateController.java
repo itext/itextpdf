@@ -62,7 +62,7 @@ import com.itextpdf.tool.xml.parser.state.XmlState;
 
 /**
  * Switches the current state in the {@link XMLParser}.
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class StateController {

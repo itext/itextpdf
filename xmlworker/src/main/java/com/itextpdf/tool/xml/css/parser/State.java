@@ -1,7 +1,7 @@
 package com.itextpdf.tool.xml.css.parser;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface State {

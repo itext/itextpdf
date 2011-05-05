@@ -56,7 +56,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class CssUtils {

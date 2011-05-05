@@ -55,7 +55,7 @@ import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class OrderedUnorderedListItem extends AbstractTagProcessor {

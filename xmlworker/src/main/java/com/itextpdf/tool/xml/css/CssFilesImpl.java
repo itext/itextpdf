@@ -40,7 +40,7 @@ import java.util.Set;
 import com.itextpdf.tool.xml.Tag;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class CssFilesImpl implements CssFiles {

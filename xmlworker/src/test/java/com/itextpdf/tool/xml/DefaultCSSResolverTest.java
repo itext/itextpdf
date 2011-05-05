@@ -57,7 +57,7 @@ import com.itextpdf.tool.xml.css.CssInheritanceRules;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class DefaultCSSResolverTest {

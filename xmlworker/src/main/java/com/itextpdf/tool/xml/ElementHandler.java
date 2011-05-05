@@ -49,7 +49,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface ElementHandler  {

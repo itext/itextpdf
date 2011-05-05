@@ -1,7 +1,7 @@
 package com.itextpdf.tool.xml.parser;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public enum TagState {

@@ -42,7 +42,7 @@ import com.itextpdf.tool.xml.css.FontSizeTranslator;
  * Abstract TagProcessor that allows setting the configuration object to a protected member variable.<br />
  * Adds empty implementations for TagProcessor methods.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public abstract class AbstractTagProcessor implements TagProcessor {

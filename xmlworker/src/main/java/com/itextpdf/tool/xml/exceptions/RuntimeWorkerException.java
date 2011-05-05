@@ -47,7 +47,7 @@ import com.itextpdf.text.DocumentException;
 
 /**
  * Thrown when the XMLWorker has a {@link DocumentException}
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class RuntimeWorkerException extends RuntimeException {

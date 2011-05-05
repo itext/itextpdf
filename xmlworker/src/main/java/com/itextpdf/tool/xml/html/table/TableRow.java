@@ -53,7 +53,7 @@ import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class TableRow extends AbstractTagProcessor {

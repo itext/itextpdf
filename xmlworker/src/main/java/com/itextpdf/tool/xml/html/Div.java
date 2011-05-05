@@ -52,7 +52,7 @@ import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class Div extends AbstractTagProcessor {

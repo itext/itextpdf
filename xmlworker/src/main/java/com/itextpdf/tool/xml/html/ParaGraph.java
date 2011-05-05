@@ -47,7 +47,7 @@ import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class ParaGraph extends AbstractTagProcessor {

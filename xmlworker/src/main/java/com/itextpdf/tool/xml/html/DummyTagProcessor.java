@@ -35,7 +35,7 @@ import com.itextpdf.tool.xml.AbstractTagProcessor;
 /**
  * Does nothing.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class DummyTagProcessor extends AbstractTagProcessor {

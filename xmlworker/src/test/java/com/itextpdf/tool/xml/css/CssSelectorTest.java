@@ -55,7 +55,7 @@ import org.junit.Test;
 import com.itextpdf.tool.xml.Tag;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class CssSelectorTest {

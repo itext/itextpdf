@@ -48,7 +48,7 @@ import com.itextpdf.tool.xml.net.ReadingProcessor;
 
 /**
  * A {@link ReadingProcessor} that creates a {@link CssFiles} from the given bytes.
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class CssFileProcessor implements ReadingProcessor {

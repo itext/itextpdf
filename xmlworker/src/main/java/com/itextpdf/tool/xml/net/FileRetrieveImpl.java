@@ -52,7 +52,7 @@ import java.net.URL;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class FileRetrieveImpl {

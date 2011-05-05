@@ -64,7 +64,7 @@ import com.itextpdf.tool.xml.parser.XMLParser;
 /**
  * A helper class for parsing XHTML/CSS flow to PDF.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class XMLWorkerHelper {

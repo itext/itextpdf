@@ -48,7 +48,7 @@ import com.itextpdf.tool.xml.parser.State;
 
 /**
  * Handles CDATA, currently nothing is done with the data.
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class CdataState implements State {

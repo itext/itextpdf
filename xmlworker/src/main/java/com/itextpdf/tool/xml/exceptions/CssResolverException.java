@@ -44,7 +44,7 @@
 package com.itextpdf.tool.xml.exceptions;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class CssResolverException extends Exception {

@@ -48,7 +48,7 @@ import java.util.Map;
 
 /**
  * Implementation of CssFile, the CSS is stored in a map.
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class CssFileImpl implements CssFile {

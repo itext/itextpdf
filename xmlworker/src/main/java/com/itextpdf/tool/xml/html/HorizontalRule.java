@@ -54,7 +54,7 @@ import com.itextpdf.tool.xml.css.apply.LineSeparatorCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class HorizontalRule extends AbstractTagProcessor {

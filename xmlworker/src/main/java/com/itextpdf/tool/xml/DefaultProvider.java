@@ -50,7 +50,7 @@ import com.itextpdf.text.Image;
 
 /**
  * Default implementation of Provider.
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class DefaultProvider implements Provider {

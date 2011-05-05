@@ -45,7 +45,7 @@ package com.itextpdf.tool.xml.parser.io;
 
 /**
  * Monitors what is read.
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface ParserMonitor {

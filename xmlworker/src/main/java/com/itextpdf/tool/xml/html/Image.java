@@ -57,7 +57,7 @@ import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class Image extends AbstractTagProcessor {

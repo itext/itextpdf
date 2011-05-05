@@ -61,7 +61,7 @@ import com.itextpdf.tool.xml.parser.io.ParserMonitor;
 /**
  * Reads an XML file. Attach a {@link XMLParserListener} for receiving events.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class XMLParser {

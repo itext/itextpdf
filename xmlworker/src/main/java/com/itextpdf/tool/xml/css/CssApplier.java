@@ -49,7 +49,7 @@ import com.itextpdf.tool.xml.Tag;
 /**
  * Applies CSS to an Element.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  * @param <T> the {@link Element} this CSSApplier must apply css on;
  *
  */

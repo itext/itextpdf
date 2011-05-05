@@ -49,7 +49,7 @@ import java.util.Map;
 /**
  * Wrapper class for different things that need to be kept track of between different states.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class XMLParserMemory {

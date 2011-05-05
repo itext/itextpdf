@@ -56,7 +56,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {

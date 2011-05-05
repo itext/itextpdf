@@ -52,7 +52,7 @@ import com.itextpdf.tool.xml.TagProcessorFactory;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class Tags {

@@ -55,7 +55,7 @@ import com.itextpdf.text.Image;
  * At the same time, it is a memory for already used images, or a developer can set the images that will be used through
  * {@link Provider#store(String, com.itextpdf.text.Image)}.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface Provider {

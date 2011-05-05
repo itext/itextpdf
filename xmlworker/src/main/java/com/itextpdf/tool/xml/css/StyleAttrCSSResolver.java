@@ -62,7 +62,7 @@ import com.itextpdf.tool.xml.net.FileRetrieveImpl;
 /**
  * Resolves CSS properties.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class StyleAttrCSSResolver implements CSSResolver {

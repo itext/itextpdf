@@ -35,24 +35,19 @@ import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Phrase;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Provider;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
-import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class Anchor extends AbstractTagProcessor {

@@ -47,7 +47,7 @@ import java.util.Map;
 
 /**
  * Represents a CSS file.
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface CssFile {

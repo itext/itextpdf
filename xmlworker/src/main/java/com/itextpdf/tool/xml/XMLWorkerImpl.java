@@ -59,7 +59,7 @@ import com.itextpdf.tool.xml.html.HTMLUtils;
 /**
  * The implementation of the XMLWorker.
  * 
- * @author Balder Van Camp
+ * @author redlab_b
  * 
  */
 public class XMLWorkerImpl implements XMLWorker {

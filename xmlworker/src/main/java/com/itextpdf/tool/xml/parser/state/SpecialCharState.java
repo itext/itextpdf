@@ -48,7 +48,7 @@ import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class SpecialCharState implements State {

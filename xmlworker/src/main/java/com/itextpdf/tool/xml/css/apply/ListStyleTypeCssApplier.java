@@ -61,7 +61,7 @@ import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class ListStyleTypeCssApplier implements CssApplier<List> {

@@ -53,7 +53,7 @@ import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class Style extends AbstractTagProcessor {

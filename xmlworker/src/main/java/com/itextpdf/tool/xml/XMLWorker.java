@@ -49,7 +49,7 @@ import com.itextpdf.tool.xml.parser.XMLParserListener;
 /**
  * The XMLWorker interface.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface XMLWorker extends SimpleXMLDocHandler, XMLParserListener {

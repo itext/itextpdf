@@ -54,7 +54,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 /**
  * Configuration object for the XMLWorker.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface XMLWorkerConfig {

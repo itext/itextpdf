@@ -53,7 +53,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class Span extends AbstractTagProcessor {

@@ -44,7 +44,7 @@ import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class OrderedUnorderedList extends AbstractTagProcessor {

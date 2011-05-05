@@ -46,7 +46,7 @@ package com.itextpdf.tool.xml.parser;
 import java.util.List;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface XMLParserConfig {

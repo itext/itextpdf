@@ -48,7 +48,7 @@ import java.util.Map;
 /**
  * Can be added to the {@link XMLParser} to receive events.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface XMLParserListener {

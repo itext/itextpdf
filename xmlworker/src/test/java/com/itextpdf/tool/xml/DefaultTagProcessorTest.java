@@ -55,7 +55,7 @@ import com.itextpdf.tool.xml.html.table.Table;
 
 /**
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class DefaultTagProcessorTest {

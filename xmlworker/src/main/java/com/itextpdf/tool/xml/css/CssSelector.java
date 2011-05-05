@@ -50,7 +50,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.HTML;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class CssSelector {

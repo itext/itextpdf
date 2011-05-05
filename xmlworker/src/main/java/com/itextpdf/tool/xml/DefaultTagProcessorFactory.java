@@ -53,7 +53,7 @@ import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
  * {@link ClassLoader}s this Processor can also load the processors when they are only stored with there fully qualified
  * class names.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class DefaultTagProcessorFactory implements TagProcessorFactory {

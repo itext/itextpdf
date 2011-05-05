@@ -65,7 +65,7 @@ import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class LoadCssThroughLinkStyleTagTest {

@@ -48,7 +48,7 @@ import java.util.List;
 import com.itextpdf.text.Element;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface TagProcessor {

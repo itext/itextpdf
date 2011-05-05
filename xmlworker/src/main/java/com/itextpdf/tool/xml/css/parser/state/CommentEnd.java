@@ -4,7 +4,7 @@ import com.itextpdf.tool.xml.css.parser.CssStateController;
 import com.itextpdf.tool.xml.css.parser.State;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class CommentEnd implements State {

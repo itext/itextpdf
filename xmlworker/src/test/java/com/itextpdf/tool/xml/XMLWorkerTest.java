@@ -55,13 +55,13 @@ import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class XMLWorkerTest {
 
     /**
-     * @author Balder Van Camp
+     * @author redlab_b
      *
      */
     private final static class ListenerImpl implements ElementHandler {

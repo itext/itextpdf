@@ -51,7 +51,7 @@ import java.io.Reader;
  * A {@link BufferedReader} decorator that send all that is read through {@link MonitorInputReader#read()} to the
  * attached {@link ParserMonitor} before returning it.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class MonitorInputReader extends BufferedReader {

@@ -51,7 +51,7 @@ import org.junit.Test;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class HtmlUtilsTest {

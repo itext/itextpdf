@@ -49,7 +49,7 @@ import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssApplier;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class ImageCssApplier implements CssApplier<Image> {

@@ -49,7 +49,7 @@ import java.util.List;
 import com.itextpdf.tool.xml.Tag;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class DefaultCssInheritanceRules implements CssInheritanceRules {

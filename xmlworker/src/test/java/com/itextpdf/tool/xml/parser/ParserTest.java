@@ -53,7 +53,7 @@ import com.itextpdf.tool.xml.parser.io.Appender;
 import com.itextpdf.tool.xml.parser.io.ParserListenerWriter;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class ParserTest {

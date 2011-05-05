@@ -57,7 +57,7 @@ import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class TableData extends AbstractTagProcessor {

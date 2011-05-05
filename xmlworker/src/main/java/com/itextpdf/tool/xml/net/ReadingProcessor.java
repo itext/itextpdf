@@ -44,7 +44,7 @@
 package com.itextpdf.tool.xml.net;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface ReadingProcessor {

@@ -41,7 +41,7 @@ import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class NonSanitizedTag extends AbstractTagProcessor {

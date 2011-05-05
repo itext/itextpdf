@@ -13,7 +13,7 @@ import com.itextpdf.tool.xml.css.parser.state.Rule;
 import com.itextpdf.tool.xml.css.parser.state.Unknown;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class CssStateController {

@@ -50,7 +50,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class TableRowElement implements Element {

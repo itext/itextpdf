@@ -48,7 +48,7 @@ import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 /**
  * A TagProcessorFactory creates TagProcessors used by the {@link XMLWorker}.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface TagProcessorFactory {

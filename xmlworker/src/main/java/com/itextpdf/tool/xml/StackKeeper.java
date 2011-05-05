@@ -52,7 +52,7 @@ import com.itextpdf.text.Element;
 /**
  * Simple wrapper of a {@link List} to put {@link Element}s in that are created by inner tags of the given Tag.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class StackKeeper {

@@ -48,7 +48,7 @@ import com.itextpdf.tool.xml.exceptions.CssResolverException;
 /**
  * Resolves CSS rules for a given tag.
  *
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface CSSResolver {

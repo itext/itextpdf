@@ -54,7 +54,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public class FileRetrieveTest {

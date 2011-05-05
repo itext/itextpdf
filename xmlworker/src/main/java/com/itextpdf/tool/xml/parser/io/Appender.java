@@ -45,7 +45,7 @@ package com.itextpdf.tool.xml.parser.io;
 
 /**
  * An Appender appends String to something.
- * @author Balder Van Camp
+ * @author redlab_b
  *
  */
 public interface Appender {
