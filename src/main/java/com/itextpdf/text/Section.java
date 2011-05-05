@@ -377,8 +377,9 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
 
     /**
      * Adds a marked section. For use in class MarkedSection only!
+     * @return the MarkedSection
      */
-    public MarkedSection addMarkedSection() {
+    protected MarkedSection addMarkedSection() {
     	MarkedSection section = new MarkedSection(new Section(null, numberDepth + 1));
     	add(section);
     	return section;
