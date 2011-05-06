@@ -43,6 +43,7 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
+import java.io.IOException;
 import java.util.Map;
 
 import com.itextpdf.text.Chunk;
@@ -51,6 +52,8 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.List;
 import com.itextpdf.text.RomanList;
 import com.itextpdf.text.ZapfDingbatsList;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
@@ -68,6 +71,7 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 
 	private final XMLWorkerConfig configuration;
 	private final CssUtils utils = CssUtils.getInstance();
+	private static final Logger logger = LoggerFactory.getLogger();
 
 	/**
 	 * @param configuration the provider
@@ -88,9 +92,9 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 		String styleType = css.get(CSS.Property.LIST_STYLE_TYPE);
 		if (null != styleType) {
 			if (styleType.equalsIgnoreCase(CSS.Value.NONE)) {
-				list.setLettered(false);
-				list.setNumbered(false);
-				list.setListSymbol("");
+				lst.setLettered(false);
+				lst.setNumbered(false);
+				lst.setListSymbol("");
 			} else if (CSS.Value.DECIMAL.equalsIgnoreCase(styleType)) {
 				lst = new List(List.ORDERED);
 			} else if (CSS.Value.DISC.equalsIgnoreCase(styleType)) {
@@ -121,10 +125,21 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 		}
 		if (null != css.get(CSS.Property.LIST_STYLE_IMAGE)
 				&& !css.get(CSS.Property.LIST_STYLE_IMAGE).equalsIgnoreCase(CSS.Value.NONE)) {
-			Image img = new ImageRetrieve(configuration.getProvider())
-					.retrieveImage(utils.extractUrl(css.get(
-							CSS.Property.LIST_STYLE_IMAGE)));
-			list.setListSymbol(new Chunk(img, 0, 0, true));
+			lst = new List();
+			String url = utils.extractUrl(css.get(CSS.Property.LIST_STYLE_IMAGE));
+			Image img = null;
+			try {
+				img = new ImageRetrieve(configuration.getProvider()).retrieveImage(url);
+				lst.setListSymbol(new Chunk(img, 0, 0, false));
+				if (logger.isLogging()) {
+					logger.log(ListStyleTypeCssApplier.class, String.format("Using image as list symbol from %s", url));
+				}
+			} catch (IOException e) {
+				if (logger.isLogging()) {
+					logger.log(ListStyleTypeCssApplier.class, String.format("Failed retrieving image from %s", url));
+				}
+				lst = new List(List.UNORDERED);
+			}
 		}
 		lst.setAlignindent(false);
 		lst.setAutoindent(false);
@@ -138,7 +153,7 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		leftIndent += css.get(CSS.Property.MARGIN_LEFT)!=null?utils.parseValueToPt(css.get(CSS.Property.MARGIN_LEFT),fontSize):0;
 		leftIndent += css.get(CSS.Property.PADDING_LEFT)!=null?utils.parseValueToPt(css.get(CSS.Property.PADDING_LEFT),fontSize):0;
-		lst.setIndentationLeft(leftIndent);
+//		lst.setIndentationLeft(leftIndent);
 		return lst;
 	}
 

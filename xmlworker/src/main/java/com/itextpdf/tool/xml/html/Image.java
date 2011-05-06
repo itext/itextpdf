@@ -43,17 +43,21 @@
  */
 package com.itextpdf.tool.xml.html;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
+import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 
 /**
@@ -63,6 +67,7 @@ import com.itextpdf.tool.xml.net.ImageRetrieve;
 public class Image extends AbstractTagProcessor {
 
 	private final CssUtils utils = CssUtils.getInstance();
+	private static final Logger logger = LoggerFactory.getLogger();
 
 	/*
 	 * (non-Javadoc)
@@ -79,7 +84,16 @@ public class Image extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
 		if (null != src && src.length() > 0) {
 			// check if the image was already added once
-			img = new ImageRetrieve(configuration.getProvider()).retrieveImage(src);
+			try {
+				img = new ImageRetrieve(configuration.getProvider()).retrieveImage(src);
+				if (logger.isLogging()) {
+					logger.log(ListStyleTypeCssApplier.class, String.format("Using image from %s", src));
+				}
+			} catch (IOException e) {
+				if (logger.isLogging()) {
+					logger.log(ListStyleTypeCssApplier.class, String.format("Failed retrieving image from %s", src));
+				}
+			}
 			if (null != img) {
 				String width = attributes.get(HTML.Attribute.WIDTH);
 				float widthInPoints = utils.parsePxInCmMmPcToPt(width);

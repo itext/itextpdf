@@ -68,8 +68,9 @@ public class ImageRetrieve {
 	/**
 	 * @param src an URI that can be used to retrieve an image
 	 * @return an iText Image object
+	 * @throws IOException
 	 */
-	public com.itextpdf.text.Image retrieveImage(final String src) {
+	public com.itextpdf.text.Image retrieveImage(final String src) throws IOException {
 		com.itextpdf.text.Image img;
 		img = provider.retrieve(src);
 
@@ -103,8 +104,6 @@ public class ImageRetrieve {
 					throw new RuntimeWorkerException(e);
 				} catch (MalformedURLException e) {
 					throw new RuntimeWorkerException(e);
-				} catch (IOException e) {
-//					throw new RuntimeWorkerException(e);
 				}
 			}
 		}
