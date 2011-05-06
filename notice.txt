@@ -1,0 +1,20 @@
+iText consists of several jars.
+
+The main iText release contains:
+- itextpdf-x.y.z.jar: the core library
+- itext-xtra-x.y.z.jar: extra functionality (PDF 2!)
+This project is hosted on http://sourceforge.net/projects/itext/
+You can find the latest release here:
+http://sourceforge.net/projects/itext/files/iText/
+
+In some cases, you'll need extra jars.
+These jars are bundled in a zip file here:
+http://sourceforge.net/projects/itext/files/extrajars/
+
+For XML (and HTML) functionality, you need this jar:
+- xmlworker-x.y.z.jar
+This project is hosted on http://sourceforge.net/projects/xmlworker/
+
+Finally, we also have a tool that can help you debug PDFs:
+- itext-rups-x.y.z.jar
+This project is hosted on http://sourceforge.net/projects/itextrups/
