@@ -13,7 +13,6 @@ import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
-import com.itextpdf.tool.xml.css.FontSizeTranslator;
 
 /**
  * @author Emiel Ackermann
@@ -57,7 +56,6 @@ public class LineSeparatorCssApplier implements CssApplier<LineSeparator>{
 			}
 		}
 		ls.setPercentage(percentage);
-		ls.setOffset(FontSizeTranslator.getInstance().getFontSize(t));
 		return ls;
 	}
 
