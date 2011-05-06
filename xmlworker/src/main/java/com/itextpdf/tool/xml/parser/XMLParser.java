@@ -53,10 +53,13 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.xml.XMLUtil;
 import com.itextpdf.text.xml.simpleparser.IanaEncodings;
 import com.itextpdf.tool.xml.parser.io.MonitorInputReader;
 import com.itextpdf.tool.xml.parser.io.ParserMonitor;
+import com.itextpdf.tool.xml.parser.TagState;
 
 /**
  * Reads an XML file. Attach a {@link XMLParserListener} for receiving events.
@@ -74,12 +77,24 @@ public class XMLParser {
 	private long openclosed;
 	private ParserMonitor monitor;
 	private String text = "";
+	private TagState tagState;
+	private static final Logger LOGGER = LoggerFactory.getLogger();
 
 	/**
 	 * Constructs a default XMLParser ready for HTML/XHTML processing.
 	 */
 	public XMLParser() {
-		this.controller = new StateController(this);
+		this.controller = new StateController(this, true);
+		controller.unknown();
+		memory = new XMLParserMemory();
+		listeners = new CopyOnWriteArrayList<XMLParserListener>();
+	}
+	/**
+	 * Constructs a XMLParser.
+	 * @param isHtml false if this parser is not going to parse HTML and whitespace should be submitted as text too.
+	 */
+	public XMLParser(boolean isHtml) {
+		this.controller = new StateController(this, isHtml);
 		controller.unknown();
 		memory = new XMLParserMemory();
 		listeners = new CopyOnWriteArrayList<XMLParserListener>();
@@ -209,7 +224,7 @@ public class XMLParser {
 	}
 
 	/**
-	 * @param character
+	 * @param character the int that will be converted to a character.
 	 * @return the parser
 	 */
 	public XMLParser append(final int character) {
@@ -295,14 +310,19 @@ public class XMLParser {
 				l.startDocument();
 			}
 		}
-		callText(TagState.OPEN, this.memory.getCurrentTag().toLowerCase());
+		currentTagState(TagState.OPEN);
+		callText();
 		for (XMLParserListener l : listeners) {
-			l.startElement(this.memory.getCurrentTag().toLowerCase(), this.memory.getAttributes());
+			l.startElement(this.memory.getCurrentTag(), this.memory.getAttributes());
 		}
 	}
 
-	private void callText(final TagState state, final String tag) {
+	/**
+	 * Call this method to submit the text to listeners.
+	 */
+	private void callText() {
 		if (text.length() > 0) {
+			// LOGGER .log(text);
 			for (XMLParserListener l : listeners) {
 				l.text(text);
 			}
@@ -315,9 +335,10 @@ public class XMLParser {
 	 */
 	public void endElement() {
 		openclosed--;
-		callText(TagState.CLOSE, this.memory.getCurrentTag().toLowerCase() );
+		currentTagState(TagState.CLOSE);
+		callText();
 		for (XMLParserListener l : listeners) {
-			l.endElement(this.memory.getCurrentTag().toLowerCase());
+			l.endElement(this.memory.getCurrentTag());
 		}
 		if (openclosed == 0) {
 			controller.unknown();
@@ -340,7 +361,7 @@ public class XMLParser {
 	 * Triggered for comments.
 	 */
 	public void comment() {
-		callText(TagState.NONE, null);
+		callText();
 		for (XMLParserListener l : listeners) {
 			l.comment(current());
 		}
@@ -369,5 +390,36 @@ public class XMLParser {
 			return decl.substring(idx1 + 1, idx3);
 		}
 		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	public char currentLastChar() {
+		StringBuilder current = this.memory.current();
+		if (current.length() > 0) {
+			return current.charAt(current.length() -1);
+		}
+		return ' ';
+	}
+
+	/**
+	 * @return
+	 */
+	public String currentTag() {
+		return this.memory.getCurrentTag();
+	}
+	/**
+	 * @return
+	 */
+	public TagState currentTagState() {
+		return this.tagState;
+	}
+
+	/**
+	 * @param state
+	 */
+	private void currentTagState(TagState state) {
+		this.tagState = state;
 	}
 }

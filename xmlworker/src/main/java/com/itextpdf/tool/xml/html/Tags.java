@@ -84,7 +84,7 @@ public class Tags {
 		factory.addProcessor("table", defaultpackage + "table.Table");
 		factory.addProcessor("tr", defaultpackage + "table.TableRow");
 		factory.addProcessor("td", defaultpackage + "table.TableData");
-		factory.addProcessor("th", defaultpackage + "table.TableData");
+		factory.addProcessor(HTML.Tag.TH, defaultpackage + "table.TableData");
 		factory.addProcessor("caption", paragraph);
 		factory.addProcessor("p", paragraph);
 		factory.addProcessor("dt", paragraph);

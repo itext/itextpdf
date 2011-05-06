@@ -68,7 +68,7 @@ public class ParserTest {
 	public void stickyComment() throws IOException {
 		String html = "<p><!--stickycomment-->sometext  moretext</p>";
 		String expected = "<p><!--stickycomment-->sometext  moretext</p>";
-		XMLParser p = new XMLParser();
+		XMLParser p = new XMLParser(false);
 		final StringBuilder b = init(html, p);
 		p.parse(new ByteArrayInputStream(html.getBytes()));
 		Assert.assertEquals(expected, b.toString());

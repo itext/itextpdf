@@ -43,21 +43,46 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.TagState;
 import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
  *
  */
-public class InsideTagState implements State {
+public class InsideTagHTMLState implements State {
 
 	private final XMLParser parser;
+	private int lastChar = (int) ' ';
+	private List<String> noSanitize = new ArrayList<String>(1);
+	private List<String> ignoreLastChars = new ArrayList<String>(9);
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
-	public InsideTagState(final XMLParser parser) {
+	public InsideTagHTMLState(final XMLParser parser) {
 		this.parser = parser;
+		noSanitize.add(HTML.Tag.PRE);
+		ignoreLastChars.add(HTML.Tag.P);
+		ignoreLastChars.add(HTML.Tag.DIV);
+		ignoreLastChars.add(HTML.Tag.H1);
+		ignoreLastChars.add(HTML.Tag.H2);
+		ignoreLastChars.add(HTML.Tag.H3);
+		ignoreLastChars.add(HTML.Tag.H4);
+		ignoreLastChars.add(HTML.Tag.H5);
+		ignoreLastChars.add(HTML.Tag.H6);
+		ignoreLastChars.add(HTML.Tag.TD);
+		ignoreLastChars.add(HTML.Tag.TH);
+		ignoreLastChars.add(HTML.Tag.UL);
+		ignoreLastChars.add(HTML.Tag.OL);
+		ignoreLastChars.add(HTML.Tag.LI);
+		ignoreLastChars.add(HTML.Tag.DD);
+		ignoreLastChars.add(HTML.Tag.DT);
+		ignoreLastChars.add(HTML.Tag.HR);
 	}
 
 	/*
@@ -75,7 +100,28 @@ public class InsideTagState implements State {
 		} else if (character == '&') {
 			this.parser.selectState().specialChar();
 		} else  {
-			this.parser.append(character);
+			String tag = this.parser.currentTag();
+			TagState state = this.parser.currentTagState();
+			if (noSanitize.contains(tag) && TagState.OPEN == state) {
+				this.parser.append(character);
+			} else {
+				if (this.parser.memory().whitespaceTag().length() != 0) {
+					if (ignoreLastChars.contains(this.parser.memory().whitespaceTag())) {
+						lastChar = (int) ' ';
+					}
+					this.parser.memory().whitespaceTag("");
+				}
+				boolean whitespace = Character.isWhitespace(this.lastChar);
+				boolean noWhiteSpace = !Character.isWhitespace(character);
+				if (!whitespace || (whitespace && noWhiteSpace)) {
+					if (noWhiteSpace) {
+						this.parser.append(character);
+					} else {
+						this.parser.append(' ');
+					}
+				}
+				this.lastChar = character;
+			}
 		}
 
 	}

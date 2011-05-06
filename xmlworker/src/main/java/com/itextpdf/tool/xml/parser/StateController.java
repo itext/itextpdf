@@ -50,6 +50,7 @@ import com.itextpdf.tool.xml.parser.state.ClosingTagState;
 import com.itextpdf.tool.xml.parser.state.CommentState;
 import com.itextpdf.tool.xml.parser.state.DocTypeState;
 import com.itextpdf.tool.xml.parser.state.DoubleQuotedAttrValueState;
+import com.itextpdf.tool.xml.parser.state.InsideTagHTMLState;
 import com.itextpdf.tool.xml.parser.state.InsideTagState;
 import com.itextpdf.tool.xml.parser.state.SelfClosingTagState;
 import com.itextpdf.tool.xml.parser.state.SingleQuotedAttrValueState;
@@ -90,13 +91,14 @@ public class StateController {
 	/**
 	 * Constructs a StateController with the given parser.
 	 * @param parser the Parser
+	 * @param isHTML true if this parser is going to parse HTML, this results in different whitespace handling.
 	 */
-	public StateController(final XMLParser parser) {
+	public StateController(final XMLParser parser, boolean isHTML) {
 		this.parser = parser;
 		unknown = new UnknownState(parser);
 		tagEncountered = new TagEncounteredState(parser);
 		tagAttributes = new TagAttributeState(parser);
-		inTag = new InsideTagState(parser);
+		inTag = (isHTML)?new InsideTagHTMLState(parser):new InsideTagState(parser);
 		attrValue = new AttributeValueState(parser);
 		singleQuoted = new SingleQuotedAttrValueState(parser);
 		doubleQuoted = new DoubleQuotedAttrValueState(parser);

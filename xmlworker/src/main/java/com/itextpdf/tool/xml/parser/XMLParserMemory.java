@@ -60,6 +60,7 @@ public class XMLParserMemory {
 	private final StringBuilder current = new StringBuilder();
 	private final StringBuilder comment = new StringBuilder();;
 	private final Map<String, String> attr;
+	private String wsTag = "";
 
 	/**
 	 *
@@ -73,6 +74,7 @@ public class XMLParserMemory {
 	 */
 	public void currentTag(final String content) {
 		this.currentTag = content;
+		this.wsTag = content;
 		this.attr.clear();
 	}
 
@@ -115,7 +117,7 @@ public class XMLParserMemory {
 
 	/**
 	 *
-	 * @return a stringbuilder for the current entity
+	 * @return a StringBuilder for the current entity
 	 */
 	public StringBuilder currentEntity() {
 		return this.currentEntity;
@@ -128,6 +130,20 @@ public class XMLParserMemory {
 	 */
 	public StringBuilder comment() {
 		return this.comment;
+	}
+
+	/**
+	 * @return
+	 */
+	public String whitespaceTag() {
+		return this.wsTag ;
+	}
+
+	/**
+	 * @param string
+	 */
+	public void whitespaceTag(String tag) {
+		this.wsTag = tag;
 	}
 
 }

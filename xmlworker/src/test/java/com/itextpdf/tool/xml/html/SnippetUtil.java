@@ -61,7 +61,11 @@ public class SnippetUtil {
 		for (Element e : elementList) {
 			System.out.println("element " + i + ", runtime class = " + e.getClass().toString());
 			for (Chunk c : e.getChunks()) {
-				System.out.println(c.getClass().toString()+ " " + j + ": " + c.getContent());
+				if (Chunk.NEWLINE.getContent().equals(c.getContent())) {
+					System.out.println("newline");
+				} else {
+					System.out.println(c.getClass().toString()+ " " + j + ": " + c.getContent());
+				}
 				++j;
 			}
 			++i;

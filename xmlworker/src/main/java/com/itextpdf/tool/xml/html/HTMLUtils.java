@@ -71,6 +71,7 @@ public class HTMLUtils {
 			builder.append(' ');
 		}
 		return builder.toString();
+//		return str;
 	}
 	/**
 	 * Sanitize the String for use in tags that must trim leading and trailing white space.

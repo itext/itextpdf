@@ -73,6 +73,12 @@ public final class HTML {
 		public static final String H5 = "h5";
 		public static final String H6 = "h6";
 		public static final String TD = "td";
+		public static final String BR = "br";
+		public static final String LI = "li";
+		public static final String DD = "dd";
+		public static final String DT = "dt";
+		public static final String TH = "th";
+		public static final String HR = "hr";
 
 	}
 	/**

@@ -158,5 +158,26 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 		map.put(tag, new FactoryObject(processor.getClass().getName(), processor));
 
 	}
+	
+	/**
+	 * 
+	 * @param processor the TagProcessor.
+	 * @param tags list of tags this processor maps to.
+	 */
+	public void addProcessor( final TagProcessor processor, final String ... tags) {
+		for (String tag : tags) {
+			addProcessor(tag, processor);
+		}
+	}
+	/**
+	 * 
+	 * @param className the fully qualified class name (class has to be found on classpath)
+	 * @param tags list of tags this processor maps to.
+	 */
+	public void addProcessor( final String className, final String ... tags) {
+		for (String tag : tags) {
+			addProcessor(tag, className);
+		}
+	}
 
 }
