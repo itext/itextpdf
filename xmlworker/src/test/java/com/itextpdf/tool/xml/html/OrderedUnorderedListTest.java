@@ -21,16 +21,20 @@ import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 
 /**
  * @author Emiel Ackermann
- * 
+ *
  */
 public class OrderedUnorderedListTest {
 
 	private Tag root;
 	private Tag p;
 	private Tag ul;
-	private Tag li;
-	private List<Element> currentContent;
-	private ListItem listItem;
+	private Tag first;
+	private Tag last;
+	private List<Element> listWithOne;
+	private List<Element> listWithTwo;
+	private final ListItem single = new ListItem("Single");
+	private final ListItem start = new ListItem("Start");
+	private final ListItem end = new ListItem("End");
 	private XMLWorkerConfig config;
 	private OrderedUnorderedList orderedUnorderedList;
 
@@ -39,77 +43,133 @@ public class OrderedUnorderedListTest {
 		root = new Tag("body");
 		p = new Tag("p");
 		ul = new Tag("ul");
-		li = new Tag("li");
+		first = new Tag("li");
+		last = new Tag("li");
 
-		currentContent = new ArrayList<Element>();
-		listItem = new ListItem("ListItem");
+		listWithOne = new ArrayList<Element>();
+		listWithTwo = new ArrayList<Element>();
 		config = new XMLWorkerConfigurationImpl();
 		orderedUnorderedList = new OrderedUnorderedList();
 		orderedUnorderedList.setConfiguration(config);
 		root.addChild(p);
 		root.addChild(ul);
-		ul.addChild(li);
+		ul.addChild(first);
+		ul.addChild(last);
 		p.getCSS().put("font-size", "12pt");
 		new ParagraphCssApplier(config).apply(new Paragraph("paragraph"), p);
-		li.getCSS().put("margin-top", "50pt");
-		li.getCSS().put("padding-top", "25pt");
-		li.getCSS().put("margin-bottom", "50pt");
-		li.getCSS().put("padding-bottom", "25pt");
-		li.getCSS().put("font-size", "12pt");
-		new ParagraphCssApplier(config).apply(listItem, li);
-		currentContent.add(listItem);
+		first.getCSS().put("margin-top", "50pt");
+		first.getCSS().put("padding-top", "25pt");
+		first.getCSS().put("margin-bottom", "50pt");
+		first.getCSS().put("padding-bottom", "25pt");
+		last.getCSS().put("margin-bottom", "50pt");
+		last.getCSS().put("padding-bottom", "25pt");
+		listWithOne.add(single);
+		listWithTwo.add(start);
+		listWithTwo.add(end);
 	}
-
 	@Test
-	public void testNoListMarginAndPadding() {
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
+	public void listWithOneNoListMarginAndPadding() {
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithOne).get(0);
 		assertEquals(50f + 25f - 12f, ((ListItem) endList.getItems().get(0)).getSpacingBefore(), 0f);
 		assertEquals(50f + 25f, ((ListItem) endList.getItems().get(0)).getSpacingAfter(), 0f);
 	}
 
 	@Test
-	public void testNoListPaddingTop() {
+	public void listWithOneNoListPaddingTop() {
 		ul.getCSS().put("margin-top", "100pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithOne).get(0);
 		assertEquals(100f + 25f - 12f, ((ListItem) endList.getItems().get(0)).getSpacingBefore(), 0f);
 	}
 
 	@Test
-	public void testNoListPaddingTop2() {
+	public void listWithOneNoListPaddingTop2() {
 		ul.getCSS().put("margin-top", "100pt");
 		ul.getCSS().put("padding-top", "0pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithOne).get(0);
 		assertEquals(100f + 25f - 12f, ((ListItem) endList.getItems().get(0)).getSpacingBefore(), 0f);
 	}
 
 	@Test
-	public void testWithListPaddingTop() {
+	public void listWithOneWithListPaddingTop() {
 		ul.getCSS().put("margin-top", "100pt");
 		ul.getCSS().put("padding-top", "25pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithOne).get(0);
 		assertEquals(100f + 25f + 50f + 25f - 12f, ((ListItem) endList.getItems().get(0)).getSpacingBefore(), 0f);
 	}
 
 	@Test
-	public void testNoListPaddingBottom() {
+	public void listWithOneNoListPaddingBottom() {
 		ul.getCSS().put("margin-bottom", "100pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithOne).get(0);
 		assertEquals(100f + 25f, ((ListItem) endList.getItems().get(0)).getSpacingAfter(), 0f);
 	}
 
 	@Test
-	public void testNoListPaddingBottom2() {
+	public void listWithOneNoListPaddingBottom2() {
 		ul.getCSS().put("margin-bottom", "100pt");
 		ul.getCSS().put("padding-bottom", "0pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithOne).get(0);
 		assertEquals(100f + 25f, ((ListItem) endList.getItems().get(0)).getSpacingAfter(), 0f);
 	}
 
 	@Test
-	public void testWithListPaddingBottom() {
+	public void listWithOneWithListPaddingBottom() {
 		ul.getCSS().put("margin-bottom", "100pt");
 		ul.getCSS().put("padding-bottom", "25pt");
-		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, currentContent).get(0);
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithOne).get(0);
 		assertEquals(100f + 25f + 50f + 25f, ((ListItem) endList.getItems().get(0)).getSpacingAfter(), 0f);
+	}
+
+	@Test
+	public void listWithTwoNoListMarginAndPadding() {
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithTwo).get(0);
+		assertEquals(50f + 25f - 12f, ((ListItem) endList.getItems().get(0)).getSpacingBefore(), 0f);
+		assertEquals(50f + 25f, ((ListItem) endList.getItems().get(1)).getSpacingAfter(), 0f);
+	}
+
+	@Test
+	public void listWithTwoNoListPaddingTop() {
+		ul.getCSS().put("margin-top", "100pt");
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithTwo).get(0);
+		assertEquals(100f + 25f - 12f, ((ListItem) endList.getItems().get(0)).getSpacingBefore(), 0f);
+	}
+
+	@Test
+	public void listWithTwoNoListPaddingTop2() {
+		ul.getCSS().put("margin-top", "100pt");
+		ul.getCSS().put("padding-top", "0pt");
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithTwo).get(0);
+		assertEquals(100f + 25f - 12f, ((ListItem) endList.getItems().get(0)).getSpacingBefore(), 0f);
+	}
+
+	@Test
+	public void listWithTwoWithListPaddingTop() {
+		ul.getCSS().put("margin-top", "100pt");
+		ul.getCSS().put("padding-top", "25pt");
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithTwo).get(0);
+		assertEquals(100f + 25f + 50f + 25f - 12f, ((ListItem) endList.getItems().get(0)).getSpacingBefore(), 0f);
+	}
+
+	@Test
+	public void listWithTwoNoListPaddingBottom() {
+		ul.getCSS().put("margin-bottom", "100pt");
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithTwo).get(0);
+		assertEquals(100f + 25f, ((ListItem) endList.getItems().get(1)).getSpacingAfter(), 0f);
+	}
+
+	@Test
+	public void listWithTwoNoListPaddingBottom2() {
+		ul.getCSS().put("margin-bottom", "100pt");
+		ul.getCSS().put("padding-bottom", "0pt");
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithTwo).get(0);
+		assertEquals(100f + 25f, ((ListItem) endList.getItems().get(1)).getSpacingAfter(), 0f);
+	}
+
+	@Test
+	public void listWithTwoWithListPaddingBottom() {
+		ul.getCSS().put("margin-bottom", "100pt");
+		ul.getCSS().put("padding-bottom", "25pt");
+		com.itextpdf.text.List endList = (com.itextpdf.text.List) orderedUnorderedList.end(ul, listWithTwo).get(0);
+		assertEquals(100f + 25f + 50f + 25f, ((ListItem) endList.getItems().get(1)).getSpacingAfter(), 0f);
 	}
 }

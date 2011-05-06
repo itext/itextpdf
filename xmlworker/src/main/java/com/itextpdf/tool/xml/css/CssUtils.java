@@ -331,11 +331,7 @@ public class CssUtils {
 	 * @return float the parsed value of the style or 0f if the value was invalid.
 	 */
 	public float checkMetricStyle(final Tag t, final String style) {
-		String value = t.getCSS().get(style);
-		if (value != null && isMetricValue(value)) {
-			return parsePxInCmMmPcToPt(value);
-		}
-		return 0f;
+		return checkMetricStyle(t.getCSS(), style);
 	}
 	/**
 	 * Use only if value of style is a metric value ({@link CssUtils#isMetricValue(String)}) or a numeric value in pixels ({@link CssUtils#isNumericValue(String)}).<br />
@@ -564,7 +560,20 @@ public class CssUtils {
 	 * @return an offset
 	 */
 	public float calculateMarginTop(final String value, final float largestFont, final XMLWorkerConfig config) {
-		float marginTop = parseValueToPt(value, largestFont);
+		return calculateMarginTop(parseValueToPt(value, largestFont), config);
+	}
+
+	/**
+	 * Calculates the margin top or spacingBefore based on the given value and the last margin bottom.
+	 * <br /><br />
+	 * In HTML the margin-bottom of a tag overlaps with the margin-top of a following tag.
+	 * This method simulates this behavior by subtracting the margin-top value of the given tag from the margin-bottom of the previous tag. The remaining value is returned or if the margin-bottom value is the largest, 0 is returned
+	 * @param value float containing the margin-top value.
+	 * @param config XmlWorkerConfig containing the last margin bottom.
+	 * @return an offset
+	 */
+	public float calculateMarginTop(final float value, final XMLWorkerConfig config) {
+		float marginTop = value;
 		Map<String, Object> memory = config.getMemory();
 		Object mb = memory.get(XMLWorkerConfig.LAST_MARGIN_BOTTOM);
 		if(mb != null) {

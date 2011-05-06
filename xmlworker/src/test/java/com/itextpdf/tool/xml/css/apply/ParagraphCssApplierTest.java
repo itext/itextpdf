@@ -69,7 +69,8 @@ public class ParagraphCssApplierTest {
 	private Tag child;
 	private Paragraph firstPara;
 	private Paragraph secondPara;
-	private final ParagraphCssApplier applier = new ParagraphCssApplier(new XMLWorkerConfigurationImpl());
+	private final XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
+	private final ParagraphCssApplier applier = new ParagraphCssApplier(config);
 
 	@Before
 	public void setup() {
@@ -170,6 +171,7 @@ public class ParagraphCssApplierTest {
 		first.getCSS().put("margin-bottom", "25pt");
 		second.getCSS().put("margin-top", "30pt");
 
+		applier.apply(firstPara, first);
 		applier.apply(secondPara, second);
 		assertEquals(30-25, secondPara.getSpacingBefore(), 0);
 	}
@@ -179,6 +181,7 @@ public class ParagraphCssApplierTest {
 		first.getCSS().put("margin-bottom", "35pt");
 		second.getCSS().put("margin-top", "30pt");
 
+		applier.apply(firstPara, first);
 		applier.apply(secondPara, second);
 		//30-35 is reverted to 0.
 		assertEquals(0, secondPara.getSpacingBefore(), 0);
@@ -189,6 +192,7 @@ public class ParagraphCssApplierTest {
 		first.getCSS().put("margin-bottom", "2em");
 		second.getCSS().put("margin-top", "30pt");
 
+		applier.apply(firstPara, first);
 		applier.apply(secondPara, second);
 		assertEquals(30-(2*12), secondPara.getSpacingBefore(), 0);
 	}
@@ -200,6 +204,7 @@ public class ParagraphCssApplierTest {
 		first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first)+"pt");
 		second.getCSS().put("margin-top", "60pt");
 
+		applier.apply(firstPara, first);
 		applier.apply(secondPara, second);
 		// 60 - 2 * (18px = 13.5pt)
 		assertEquals(60-(2*13.5f), secondPara.getSpacingBefore(), 0);
@@ -212,6 +217,7 @@ public class ParagraphCssApplierTest {
 		first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first)+"pt");
 		second.getCSS().put("margin-top", "60pt");
 
+		applier.apply(firstPara, first);
 		applier.apply(secondPara, second);
 		assertEquals(60-(2*12*2), secondPara.getSpacingBefore(), 0);
 	}

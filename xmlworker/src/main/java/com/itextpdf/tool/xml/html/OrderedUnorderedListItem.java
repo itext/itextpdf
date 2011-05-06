@@ -52,7 +52,6 @@ import com.itextpdf.text.ListItem;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 
 /**
  * @author redlab_b
@@ -83,7 +82,7 @@ public class OrderedUnorderedListItem extends AbstractTagProcessor {
 			li.add(e);
 		}
 		List<Element> l = new ArrayList<Element>(1);
-		l.add(new ParagraphCssApplier(configuration).apply(li, tag));
+		l.add(li); // css applying is handled in the OrderedUnorderedList Class.
 		return l;
 	}
 

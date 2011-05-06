@@ -42,6 +42,7 @@ import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
+import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 
 /**
  * @author redlab_b
@@ -69,56 +70,29 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 			list = new ListStyleTypeCssApplier(configuration).apply(list, tag);
 			for (int i=0; i<currentContent.size(); i++) {
 				ListItem li = (ListItem) currentContent.get(i);
-				// margin and padding-top of this list will be set on the first ListItem.
-				if(i==0){
-//					float ownFontSize = fst.getFontSize(tag);
-//					float ownMarginTop = 0;
-//					if(tag.getCSS().get(CSS.Property.MARGIN_TOP)==null) {
-//						if(configuration.getRootTags().contains(tag.getParent().getTag())) {
-//							ownMarginTop = ownFontSize;
-//						}
-//					} else {
-//						ownMarginTop = utils.parseValueToPt(tag.getCSS().get(CSS.Property.MARGIN_TOP),ownFontSize);
-//					}
-//					float ownPaddingTop = tag.getCSS().get(CSS.Property.PADDING_TOP)!=null?utils.parseValueToPt(tag.getCSS().get(CSS.Property.PADDING_TOP),ownFontSize):0;
-//					float totalSpacingTop = 0;
-//					//Margin-top values of this tag and its first child needs to be compared if paddingTop = 0.
-//					if(ownPaddingTop == 0) {
-//						Tag firstChild = tag.getChildren().get(0);
-//						float firstChildFontSize = fst.getFontSize(firstChild);
-//						float firstChildMarginTop = firstChild.getCSS().get(CSS.Property.MARGIN_TOP)!=null?utils.parseValueToPt(firstChild.getCSS().get(CSS.Property.MARGIN_TOP),firstChildFontSize):0;
-//						float firstChildPaddingTop = firstChild.getCSS().get(CSS.Property.PADDING_TOP)!=null?utils.parseValueToPt(firstChild.getCSS().get(CSS.Property.PADDING_TOP),firstChildFontSize):0;
-//						totalSpacingTop = firstChildPaddingTop;
-//						float marginTop = 0;
-//						if(ownMarginTop != 0 && firstChildMarginTop != 0){
-//							marginTop = ownMarginTop>=firstChildMarginTop?ownMarginTop:firstChildMarginTop;
-//						} else if (ownMarginTop != 0) {
-//							marginTop = ownMarginTop;
-//						} else if (firstChildMarginTop != 0) {
-//							marginTop = firstChildMarginTop;
-//						}
-//						totalSpacingTop += utils.calculateMarginTop(marginTop+"pt", 0, configuration);
-//					} else {
-//						// SpacingBefore has already been applied on the ListItem itself and it can be reused.
-//						totalSpacingTop = li.getSpacingBefore();
-//						totalSpacingTop += utils.calculateMarginTop(ownMarginTop+"pt", 0, configuration);
-//						totalSpacingTop += ownPaddingTop;
-//					}
-					li.setSpacingBefore(calculateTopOrBottomMargin(true, tag, i, li));
-				// margin and padding-bottom of this list will be set on the last ListItem.
+				Tag child = tag.getChildren().get(i);
+				if(currentContent.size() == 1) {
+					child.getCSS().put(CSS.Property.MARGIN_TOP, calculateTopOrBottomSpacing(true, false, tag, child)+"pt");
+					float marginBottom = calculateTopOrBottomSpacing(false, false, tag, child);
+					child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom+"pt");
+					list.add(new ParagraphCssApplier(configuration).apply(li, child));
+				} else {
+					if(i==0){
+						child.getCSS().put(CSS.Property.MARGIN_TOP, calculateTopOrBottomSpacing(true, false, tag, child)+"pt");
+					}
+					if (i==currentContent.size()-1) {
+						float marginBottom = calculateTopOrBottomSpacing(false, true, tag, child);
+						child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom+"pt");
+					}
+					list.add(new ParagraphCssApplier(configuration).apply(li, child));
 				}
-				if (i==currentContent.size()-1) {
-					li.setSpacingAfter(calculateTopOrBottomMargin(false, tag, i, li));
-
-				}
-				list.add(li);
 			}
 		}
 		l.add(list);
 		return l;
 	}
 
-	private float calculateTopOrBottomMargin(final boolean isTop, final Tag tag, final int i, final ListItem li) {
+	private float calculateTopOrBottomSpacing(final boolean isTop, final boolean storeMarginBottom, final Tag tag, final Tag child) {
 		String end = isTop?"-top":"-bottom";
 		float ownFontSize = fst.getFontSize(tag);
 		float ownMargin = 0;
@@ -132,12 +106,10 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 		}
 		float ownPadding = tag.getCSS().get(CSS.Property.PADDING+end)!=null?utils.parseValueToPt(tag.getCSS().get(CSS.Property.PADDING+end),ownFontSize):0;
 		float totalSpacing = 0;
+		float childFontSize = fst.getFontSize(child);
+		float childMargin = child.getCSS().get(CSS.Property.MARGIN+end)!=null?utils.parseValueToPt(child.getCSS().get(CSS.Property.MARGIN+end),childFontSize):0;
 		//Margin values of this tag and its first child need to be compared if paddingTop or bottom = 0.
 		if(ownPadding == 0) {
-			Tag child = tag.getChildren().get(i);
-			float childFontSize = fst.getFontSize(child);
-			float childMargin = child.getCSS().get(CSS.Property.MARGIN+end)!=null?utils.parseValueToPt(child.getCSS().get(CSS.Property.MARGIN+end),childFontSize):0;
-			float childPadding = child.getCSS().get(CSS.Property.PADDING+end)!=null?utils.parseValueToPt(child.getCSS().get(CSS.Property.PADDING+end),childFontSize):0;
 			float margin = 0;
 			if(ownMargin != 0 && childMargin != 0){
 				margin = ownMargin>=childMargin?ownMargin:childMargin;
@@ -146,22 +118,15 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 			} else if (childMargin != 0) {
 				margin = childMargin;
 			}
-			if(isTop) {
-				totalSpacing = childPadding + utils.calculateMarginTop(margin+"pt", 0, configuration);
-			} else {
-				totalSpacing = childPadding + margin;
+			if(!isTop && storeMarginBottom){
 				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, margin);
 			}
-		} else {
-			// Spacing has already been applied on the ListItem itself and it can be added to spacing of the list.
-			if(isTop){
-				totalSpacing = li.getSpacingBefore();
-				totalSpacing += utils.calculateMarginTop(ownMargin+"pt", 0, configuration);
-			} else {
-				totalSpacing = li.getSpacingAfter()+ownMargin;
+			totalSpacing = margin;
+		} else { // ownpadding != 0 and all margins and paddings need to be accumulated.
+			totalSpacing = ownMargin+ownPadding+childMargin;
+			if(!isTop && storeMarginBottom){
 				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, ownMargin);
 			}
-			totalSpacing += ownPadding;
 		}
 		return totalSpacing;
 	}
