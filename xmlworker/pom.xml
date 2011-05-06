@@ -9,7 +9,7 @@
 	<groupId>com.itextpdf.tool</groupId>
 	<artifactId>xmlworker</artifactId>
 	<name>iText XML Worker</name>
-	<version>0.9.0-SNAPSHOT</version>
+	<version>0.9.1</version>
 	<description>Parses XML to PDF, with CSS support, using iText</description>
 	<licenses>
 		<license>
