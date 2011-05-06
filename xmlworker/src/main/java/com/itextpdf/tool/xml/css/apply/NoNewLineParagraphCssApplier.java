@@ -77,6 +77,8 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 			m.setVariablesBasedOnChildren(t);
 		}
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
+		float lmb = 0;
+		boolean hasLMB = false;
 		Map<String, String> css = t.getCSS();
         for (Entry<String, String> entry : css.entrySet()) {
 			String key = entry.getKey();
@@ -88,7 +90,8 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 			} else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
 				float after = utils.parseValueToPt(value, fontSize);
 				p.setSpacingAfter(p.getSpacingAfter() + after);
-				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, after);
+				lmb = after;
+				hasLMB = true;
 			} else if (CSS.Property.PADDING_BOTTOM.equalsIgnoreCase(key)) {
 				p.setSpacingAfter(p.getSpacingAfter() + utils.parseValueToPt(value, fontSize));
 			} else if(CSS.Property.MARGIN_LEFT.equalsIgnoreCase(key)) {
@@ -122,11 +125,15 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 		if(css.get(CSS.Property.MARGIN_BOTTOM) == null && configuration.getRootTags().contains(parent)) {
 			p.setSpacingAfter(p.getSpacingAfter()+fontSize);
 			css.put(CSS.Property.MARGIN_BOTTOM, fontSize+"pt");
-			configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, fontSize);
+			lmb = fontSize;
+			hasLMB = true;
 		}
 		p.setLeading(m.getLeading());
 		if(p.getAlignment() == -1) {
 			p.setAlignment(Element.ALIGN_LEFT);
+		}
+		if (hasLMB) {
+			configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, lmb);
 		}
 		// TODO reactive for positioning and implement more
 //		if(null != configuration.getWriter() && null != css.get("position")) {

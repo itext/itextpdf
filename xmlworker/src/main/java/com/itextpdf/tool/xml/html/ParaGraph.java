@@ -62,7 +62,7 @@ public class ParaGraph extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> content(final Tag tag, final String content) {
-		String sanitized = HTMLUtils.sanitizeInline(content);
+		String sanitized = HTMLUtils.sanitize(content);
 		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
 			if ((null != tag.getCSS().get(CSS.Property.TAB_INTERVAL))) {
