@@ -58,6 +58,22 @@ public class HtmlCell extends PdfPCell {
 		fixedWidth = 0;
 	}
 
+	/**
+	 * @param innerCell
+	 * @param b
+	 */
+	public HtmlCell(PdfPCell pdfPCell, boolean b) {
+		this(pdfPCell);
+		values.setLastInRow(b);
+	}
+
+	/**
+	 * @param pdfPCell
+	 */
+	public HtmlCell(PdfPCell pdfPCell) {
+		super(pdfPCell);
+	}
+
 	public void setFixedWidth(final float fixedWidth) {
 		this.fixedWidth = fixedWidth;
 	}

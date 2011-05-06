@@ -290,8 +290,8 @@ public class Table extends AbstractTagProcessor {
 //							float originalHeight = ((PdfPTable) baseLevel).getTotalHeight();
 							float columnWidth = columnWidths[columnNumber];
 							((PdfPTable) baseLevel).setTotalWidth(columnWidth);
-							HtmlCell innerCell = (HtmlCell) ((PdfPTable) baseLevel).getRow(0).getCells()[0];
-							((PdfPTable)innerCell .getCompositeElements().get(0)).setTotalWidth(columnWidth-getCellStartWidth(innerCell));
+//							HtmlCell innerCell = new HtmlCell(((PdfPTable) baseLevel).getRow(0).getCells()[0]);
+//							((PdfPTable)innerCell .getCompositeElements().get(0)).setTotalWidth(columnWidth-getCellStartWidth(innerCell));
 						}
 					}
 				}
@@ -400,11 +400,16 @@ public class Table extends AbstractTagProcessor {
         	} else if (baseLevel instanceof PdfPTable) {
         		rulesWidth.add(cellWidth);
 				cellWidth = startWidth + ((PdfPTable)baseLevel).getTotalWidth();
+				 ((PdfPTable)baseLevel).getRows().size();
+				
 				for(PdfPRow innerRow :((PdfPTable)baseLevel).getRows()) {
 					float minRowWidth = 0;
+					int size = innerRow.getCells().length;
+					int celnr = 0;
 					for(PdfPCell innerCell : innerRow.getCells()) {
+						celnr++;
 						if(innerCell != null) {
-							float innerWidestWordOfCell = setCellWidthAndWidestWord((HtmlCell) innerCell)[1];
+							float innerWidestWordOfCell = setCellWidthAndWidestWord(new HtmlCell(innerCell, celnr == size))[1];
 							minRowWidth += innerWidestWordOfCell;
 						}
 					}

@@ -83,9 +83,6 @@ public class TableData extends AbstractTagProcessor {
     	HtmlCell cell = new HtmlCell();
     	List<Element> l = new ArrayList<Element>(1);
     	for (Element e : currentContent) {
-//    		if(e instanceof Paragraph) {
-//    			e = new ParagraphCssApplier(configuration).apply((Paragraph)e, tag); // is this needed? Looks like double css applying...
-//    		}
     		cell.addElement(e);
     	}
     		l.add(new HtmlCellCssApplier(configuration).apply(cell, tag));

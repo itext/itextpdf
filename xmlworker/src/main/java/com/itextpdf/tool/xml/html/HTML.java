@@ -63,6 +63,16 @@ public final class HTML {
 		public static final String OL = "ol";
 		public static final String UL = "ul";
 		public static final String CAPTION = "caption";
+		public static final String PRE = "pre";
+		public static final String P = "p";
+		public static final String DIV = "div";
+		public static final String H1 = "h1";
+		public static final String H2 = "h2";
+		public static final String H3 = "h3";
+		public static final String H4 = "h4";
+		public static final String H5 = "h5";
+		public static final String H6 = "h6";
+		public static final String TD = "td";
 
 	}
 	/**
