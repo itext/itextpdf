@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>itext-parent</artifactId>
+		<groupId>com.itextpdf</groupId>
+		<version>1.0.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.itextpdf</groupId>
+	<artifactId>itext-asian</artifactId>
+	<packaging>jar</packaging>
+	<name>iText, a Free Java-PDF library</name>
+	<version>5.1.0</version>
+	<!-- General Info -->
+	<description>iTextAsian fonts for use in conjunction with iText, a free Java-PDF library</description>
+	<url>http://www.itextpdf.com/</url>
+	<licenses>
+		<license>
+			<name>GNU Affero General Public License v3</name>
+			<url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:http://itext.svn.sourceforge.net/svnroot/itext/trunk/itext</connection>
+		<url>http://itext.svn.sourceforge.net/viewvc/itext</url>
+	</scm>
+
+	<!-- Build -->
+	<build>
+		<filters>
+		</filters>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.cmap</include>
+					<include>**/*.properties</include>
+					<include>**/cmap_info.txt</include>
+				</includes>
+			</resource>
+		</resources>
+		<sourceDirectory>src/main/resources</sourceDirectory>
+		<testSourceDirectory>src/main/resources</testSourceDirectory>
+	</build>
+	<!-- Profiles - default, release -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+</project>

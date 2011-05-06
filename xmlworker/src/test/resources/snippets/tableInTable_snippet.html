@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+</head>
+<body>
+<p style="margin-top:50px">Table in table test</p>
+<table border="3 solid" style="background-color:rgb(160,160,160)">
+	<tr>
+		<td>Cell 1</td>
+		<td>Cell 2
+			<ol style="list-style:upper-latin outside">
+				<li>ListItem 1</li>
+				<li>ListItem 2</li>
+			</ol>
+			WithOneLargeWordSoThisDeterminesTheWidthOfTheColumn
+		</td>
+		<td>
+			<table style="border:3pt blue solid;background-color:rgb(255,255,255)">
+				<tr>
+					<td>Inner table row 1, cell 1</td>
+					<td>Inner table row 1, cell 2</td>
+				</tr>
+				<tr>
+					<td>Inner table row 2, cell 1</td>
+					<td>Inner table Longer Row2, cell 2 To See What This Does</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>Cell 1<br /><img src="http://itextpdf.com/img/logo.gif" height="150" width="150" /></td>
+		<td>Cell 2
+			<ol style="list-style:upper-latin outside">
+				<li>ListItem 1</li>
+				<li>ListItem 2</li>
+			</ol>
+			WithOneLargeWordSoThisDeterminesTheWidthOfTheColumn
+		</td>
+		<td>Cell 3 containing just normal words to fill the contents of this cell.</td>
+	</tr>
+</table>
+</body>
+</html>

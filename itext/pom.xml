@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>itext-parent</artifactId>
+		<groupId>com.itextpdf</groupId>
+		<version>1.0.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.itextpdf</groupId>
+	<artifactId>itextpdf</artifactId>
+	<packaging>jar</packaging>
+	<name>iText, a Free Java-PDF library</name>
+	<version>5.1.0</version>
+	<description>iText, a free Java-PDF library</description>
+	<!-- General Info -->
+	<url>http://www.itextpdf.com/</url>
+	<mailingLists>
+		<mailingList>
+			<name>iText Questions</name>
+			<subscribe>
+				http://lists.sourceforge.net/lists/listinfo/itext-questions
+			</subscribe>
+			<post>itext-questions@lists.sourceforge.net</post>
+			<archive>
+				http://news.gmane.org/gmane.comp.java.lib.itext.general
+			</archive>
+			<otherArchives>
+				<otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+				<otherArchive>http://www.junlu.com/2.html</otherArchive>
+				<otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+				<otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+			</otherArchives>
+		</mailingList>
+	</mailingLists>
+	<developers>
+		<developer>
+			<id>blowagie</id>
+			<name>Bruno Lowagie</name>
+			<email>bruno@lowagie.com</email>
+			<url>http://www.lowagie.com</url>
+		</developer>
+		<developer>
+			<id>psoares33</id>
+			<name>Paulo Soares</name>
+			<email>psoares33@users.sourceforge.net</email>
+		</developer>
+		<developer>
+			<id>mstorer</id>
+			<name>Mark Storer</name>
+			<email>mstorer3772@gmail.com</email>
+		</developer>
+		<developer>
+			<id>trumpetinc</id>
+			<name>Kevin Day</name>
+			<email>kevin@trumpetinc.com</email>
+		</developer>
+		<developer>
+			<id>xlv</id>
+			<name>Xavier Le Vourch</name>
+			<email>xavier.levourch@xlv-labs.com</email>
+			<url>http://www.xlv-labs.com</url>
+		</developer>
+		<developer>
+			<id>redlab_b</id>
+			<name>Balder Van Camp</name>
+			<email>balder@redlab.be</email>
+			<url>http://www.redlab.be/</url>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU Affero General Public License v3</name>
+			<url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:http://itext.svn.sourceforge.net/svnroot/itext/trunk/itext</connection>
+		<url>http://itext.svn.sourceforge.net/viewvc/itext</url>
+	</scm>
+
+	<!-- Build -->
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.lng</include>
+					<include>**/*.afm</include>
+					<include>**/*.html</include>
+					<include>**/*.txt</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<!-- Add osgi meta data to manifest file -->
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.3.4</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>bundle-manifest</id>
+						<phase>process-classes</phase>
+						<!-- bind the manifest.mf generation after the 'compile' phase -->
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- unpack bundle, so human can see the manifest without unpacking 
+						the jar -->
+					<unpackBundle>true</unpackBundle>
+					<!-- All com.itextpdf.text.* package are 'public' -->
+					<instructions>
+						<Export-Package>com.itextpdf.text.*</Export-Package>
+						<Import-Package>org.bouncycastle.*;resolution:=optional</Import-Package> 
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<!-- Use the Bnd generated MANIFEST.MF in the jar -->
+					<archive>
+						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- Dependencies -->
+	<dependencies>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bctsp-jdk15</artifactId>
+			<version>1.46</version>
+			<type>jar</type>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<configLocation>checkstyle-config.xml</configLocation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<checkstyle.header.file>license.txt</checkstyle.header.file>
+	</properties>
+</project>
