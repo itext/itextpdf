@@ -46,16 +46,16 @@ package com.itextpdf.tool.xml.html.table;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
+import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
+import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 /**
  * @author redlab_b
  *
@@ -70,7 +70,7 @@ public class TableData extends AbstractTagProcessor {
     	String sanitized = HTMLUtils.sanitizeInline(content);
     	List<Element> l = new ArrayList<Element>(1);
     	if (sanitized.length() > 0) {
-    		l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+    		l.add(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(sanitized), tag));
     	}
     	return l;
     }
@@ -80,35 +80,16 @@ public class TableData extends AbstractTagProcessor {
      */
     @Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-//    	HtmlCell cell = new HtmlCell();
-//    	Paragraph content = new Paragraph();
-//    	for (Element e : currentContent) {
-//    		content.add(e);
-//    	}
-//    	content = new ParagraphCssApplier(configuration).apply(content, tag);
-//    	cell.addElement(content);
     	HtmlCell cell = new HtmlCell();
     	List<Element> l = new ArrayList<Element>(1);
     	for (Element e : currentContent) {
-    		if(e instanceof Paragraph) {
-    			e = new ParagraphCssApplier(configuration).apply((Paragraph)e, tag); // is this needed? Looks like double css applying...
-    		}
+//    		if(e instanceof Paragraph) {
+//    			e = new ParagraphCssApplier(configuration).apply((Paragraph)e, tag); // is this needed? Looks like double css applying...
+//    		}
     		cell.addElement(e);
     	}
-//    	if(tag.getTag().equalsIgnoreCase(HTML.Tag.CAPTION)) {
-//    		currentContent.clear();
-//    		currentContent.add(cell);
-//    		String captionSideValue = tag.getCSS().get(CSS.Property.CAPTION_SIDE);
-//    		if(captionSideValue != null && captionSideValue.equalsIgnoreCase(CSS.Value.BOTTOM)) {
-//    			l.add(new TableRowElement(currentContent, Place.CAPTION_BOTTOM));
-//    		} else {
-//    			l.add(new TableRowElement(currentContent, Place.CAPTION_TOP));
-//    		}
-//    		return l;
-//    	} else {
     		l.add(new HtmlCellCssApplier(configuration).apply(cell, tag));
     		return l;
-//    	}
     }
 
     /* (non-Javadoc)
