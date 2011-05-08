@@ -168,7 +168,7 @@ public class DocumentFont extends BaseFont {
             IntHashtable widths = readWidths((PdfArray)PdfReader.getPdfObjectRelease(cidft.get(PdfName.W)));
             PdfDictionary fontDesc = (PdfDictionary)PdfReader.getPdfObjectRelease(cidft.get(PdfName.FONTDESCRIPTOR));
             fillFontDesc(fontDesc);
-            if (toUniObject != null){
+            if (toUniObject instanceof PRStream){
                 fillMetrics(PdfReader.getStreamBytes((PRStream)toUniObject), widths, dw);
             }
 
@@ -377,10 +377,10 @@ public class DocumentFont extends BaseFont {
 
     private CMap processToUnicode() {
         CMap cmapRet = null;
-        PdfObject toUni = PdfReader.getPdfObject(this.font.get(PdfName.TOUNICODE));
-        if (toUni != null) {
+        PdfObject toUni = PdfReader.getPdfObjectRelease(this.font.get(PdfName.TOUNICODE));
+        if (toUni instanceof PRStream) {
             try {
-                byte[] touni = PdfReader.getStreamBytes((PRStream) PdfReader.getPdfObjectRelease(toUni));
+                byte[] touni = PdfReader.getStreamBytes((PRStream)toUni);
                 CMapParser cmapParser = new CMapParser();
                 cmapRet = cmapParser.parse(new ByteArrayInputStream(touni));
             } catch (Exception e) {

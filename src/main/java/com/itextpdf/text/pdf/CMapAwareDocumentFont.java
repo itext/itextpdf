@@ -96,11 +96,11 @@ public class CMapAwareDocumentFont extends DocumentFont {
      */
     private void processToUnicode(){
         
-        PdfObject toUni = fontDic.get(PdfName.TOUNICODE);
-        if (toUni != null){
+        PdfObject toUni = PdfReader.getPdfObjectRelease(fontDic.get(PdfName.TOUNICODE));
+        if (toUni instanceof PRStream){
             
             try {
-                byte[] touni = PdfReader.getStreamBytes((PRStream)PdfReader.getPdfObjectRelease(toUni));
+                byte[] touni = PdfReader.getStreamBytes((PRStream)toUni);
     
                 CMapParser cmapParser = new CMapParser();
                 toUnicodeCmap = cmapParser.parse(new ByteArrayInputStream(touni));
