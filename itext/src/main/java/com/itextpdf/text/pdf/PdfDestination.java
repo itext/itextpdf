@@ -46,9 +46,7 @@ package com.itextpdf.text.pdf;
 import java.util.StringTokenizer;
 
 /**
- * A <CODE>PdfColor</CODE> defines a Color (it's a <CODE>PdfArray</CODE> containing 3 values).
- *
- * @see		PdfDictionary
+ * A <CODE>PdfDestination</CODE> is a reference to a location in a PDF file.
  */
 
 public class PdfDestination extends PdfArray {
