@@ -43,6 +43,7 @@
  */
 package com.itextpdf.tool.xml.css;
 
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class CSSFilesTest {
 		CssFilesImpl files = new CssFilesImpl();
 		StyleAttrCSSResolver resolver = new StyleAttrCSSResolver(files);
 		URL u = CSSFilesTest.class.getResource("/css/style.css");
-		resolver.addCssFile(u.getPath());
+		resolver.addCssFile(u.getPath().replace("%20", " ")); // fix url conversion of space (%20) for File
 		Map<String, String> attr = new HashMap<String, String>();
 		Tag t = new Tag("body", attr);
 		Map<String, String> css = files.getCSS(t);

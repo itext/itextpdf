@@ -68,18 +68,28 @@ public class Tag {
 	 * @param tag the tag name
 	 * @param h the attributes in the tag
 	 */
-	public Tag(final String tag, final Map<String, String> h) {
-		this.tag = tag;
-		this.attributes = h;
-		this.css = new HashMap<String, String>(0);
-		this.children = new ArrayList<Tag>();
+	public Tag(final String tag, final Map<String, String> attr) {
+		this(tag, attr, new HashMap<String, String>(0));
 	}
 
 	/**
 	 * @param tag the tag name
 	 */
 	public Tag(final String tag) {
-		this(tag, new HashMap<String, String>());
+		this(tag, new HashMap<String, String>(0), new HashMap<String, String>(0));
+	}
+
+	/**
+	 * 
+	 * @param tag
+	 * @param attr
+	 * @param css
+	 */
+	public Tag(String tag, Map<String, String> attr, Map<String, String> css ) {
+		this.tag = tag;
+		this.attributes = attr;
+		this.css = css;
+		this.children = new ArrayList<Tag>(0);
 	}
 
 	/**

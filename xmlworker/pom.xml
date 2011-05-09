@@ -50,6 +50,48 @@
 		<connection>scm:svn:https://xmlworker.svn.sourceforge.net/svnroot/xmlworker/trunk</connection>
 		<url>http://xmlworker.svn.sourceforge.net/viewvc/xmlworker</url>
 	</scm>
+	<build>
+		<plugins>
+			<plugin>
+				<!-- Add osgi meta data to manifest file -->
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.3.4</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>bundle-manifest</id>
+						<phase>process-classes</phase>
+						<!-- bind the manifest.mf generation after the 'compile' phase -->
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- unpack bundle, so human can see the manifest without unpacking 
+						the jar -->
+					<unpackBundle>true</unpackBundle>
+					<!-- All com.itextpdf.text.* package are 'public' -->
+					<instructions>
+						<Export-Package>com.itextpdf.tool.xml.*</Export-Package>
+						<Import-Package>com.itextpdf.text.*</Import-Package> 
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<!-- Use the Bnd generated MANIFEST.MF in the jar -->
+					<archive>
+						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>com.itextpdf</groupId>

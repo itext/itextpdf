@@ -79,7 +79,7 @@ public class HTMLUtils {
 	 * @return a sanitized String
 	 */
 	public static String sanitize(final String str) {
-		return sanitize(str, true);
+		return sanitize(str, false);
 	}
 	/**
 	 * Sanitize the String for use in in-line tags.

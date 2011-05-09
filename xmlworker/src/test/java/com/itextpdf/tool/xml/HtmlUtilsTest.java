@@ -63,15 +63,15 @@ public class HtmlUtilsTest {
 		util = new HTMLUtils();
 	}
 
-	@Test
-	public void testSpaceLeading() {
-		Assert.assertEquals("leading space removed", util.sanitize(" leading space removed"));
-	}
-
-	@Test
-	public void testSpaceTrailing() {
-		Assert.assertEquals("trailing space removed", util.sanitize("trailing space removed "));
-	}
+//	@Test
+//	public void testSpaceLeading() {
+//		Assert.assertEquals("leading space removed", util.sanitize(" leading space removed"));
+//	}
+//
+//	@Test
+//	public void testSpaceTrailing() {
+//		Assert.assertEquals("trailing space removed", util.sanitize("trailing space removed "));
+//	}
 
 	@Test
 	public void testRTN() {

@@ -201,13 +201,15 @@ public class Table extends AbstractTagProcessor {
 		float targetWidth = 0;
 		if(attributes.get(CSS.Property.WIDTH) != null || css.get(CSS.Property.WIDTH) != null) {
 			targetWidth = new WidthCalculator().getWidth(tag, configuration);
-		} else if(configuration.getRootTags().contains(tag.getParent().getTag())) {
+		} else if(null != tag.getParent() && configuration.getRootTags().contains(tag.getParent().getTag())) {
 			float pageWidth = configuration.getPageSize().getWidth();
 			targetWidth = pageWidth - utils.getLeftAndRightMargin(tag.getParent(), pageWidth)
 							- utils.getLeftAndRightMargin(tag, pageWidth)
 							- utils.checkMetricStyle(tag, CSS.Property.BORDER_LEFT_WIDTH)
 							- utils.checkMetricStyle(tag, CSS.Property.BORDER_RIGHT_WIDTH)
 							- styleValues.getHorBorderSpacing();
+		} else if (null == tag.getParent()) {
+			targetWidth = configuration.getPageSize().getWidth();
 		} else /* this table is an inner table and width adjustment is done in outer table */{
 			targetWidth = getTotalWidth(columnWidths, tag);
 		}

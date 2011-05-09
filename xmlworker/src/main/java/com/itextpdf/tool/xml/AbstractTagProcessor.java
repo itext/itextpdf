@@ -113,16 +113,13 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * if the value is always a new page is inserted
 	 */
 	public final List<Element> endElement(Tag tag, List<Element> currentContent) {
+		List<Element> list = end(tag, currentContent);
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_AFTER);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
-			List<Element> list = new ArrayList<Element>(2);
-			for (Element e : end(tag, currentContent)) {
-				list.add(e);
-			}
 			list.add(Chunk.NEXTPAGE);
 			return list;
 		}
-		return end(tag, currentContent);
+		return list;
 	}
 
 	/**

@@ -108,9 +108,10 @@ public class XMLWorkerImpl implements XMLWorker {
 		if (null != current) {
 			current.addChild(t);
 			t.setParent(current);
-		} else {
-			t.setParent(config.getDefaultRoot());
-		}
+		} 
+//		else {
+//			t.setParent(config.getDefaultRoot());
+//		}
 		current = t;
 		if (null != config.getCssResolver()) {
 			config.getCssResolver().resolveStyles(t);

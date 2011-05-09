@@ -59,36 +59,59 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	 */
 	private static final CssUtils utils = CssUtils.getInstance();
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
+	 * java.util.List)
 	 */
 	@Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		List<Element> l = new ArrayList<Element>(1);
-		com.itextpdf.text.List list = new com.itextpdf.text.List();
 		if (currentContent.size() > 0) {
+			com.itextpdf.text.List list = new com.itextpdf.text.List();
 			list = new ListStyleTypeCssApplier(configuration).apply(list, tag);
-			for (int i=0; i<currentContent.size(); i++) {
-				ListItem li = (ListItem) currentContent.get(i);
-				Tag child = tag.getChildren().get(i);
-				if(currentContent.size() == 1) {
-					child.getCSS().put(CSS.Property.MARGIN_TOP, calculateTopOrBottomSpacing(true, false, tag, child)+"pt");
-					float marginBottom = calculateTopOrBottomSpacing(false, false, tag, child);
-					child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom+"pt");
-					list.add(new ParagraphCssApplier(configuration).apply(li, child));
+			boolean firstItem = true;
+			List<ListItem> listItems = new ArrayList<ListItem>();
+			for (Element element : currentContent) {
+				if (element instanceof ListItem) {
+					if (firstItem) {
+						l.add(list);
+						firstItem = false;
+					}
+					listItems.add((ListItem) element);
 				} else {
-					if(i==0){
-						child.getCSS().put(CSS.Property.MARGIN_TOP, calculateTopOrBottomSpacing(true, false, tag, child)+"pt");
-					}
-					if (i==currentContent.size()-1) {
-						float marginBottom = calculateTopOrBottomSpacing(false, true, tag, child);
-						child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom+"pt");
-					}
-					list.add(new ParagraphCssApplier(configuration).apply(li, child));
+					l.add(element);
 				}
 			}
+			if (listItems.size() > 0) {
+				int i = 0;
+				for (ListItem li : listItems) {
+					Tag child = tag.getChildren().get(i);
+					if (listItems.size() == 1) {
+						child.getCSS().put(CSS.Property.MARGIN_TOP,
+								calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
+						float marginBottom = calculateTopOrBottomSpacing(false, false, tag, child);
+						child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
+					} else {
+						if (i == 0) {
+							child.getCSS().put(CSS.Property.MARGIN_TOP,
+									calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
+						}
+						if (i == listItems.size() - 1) {
+							float marginBottom = calculateTopOrBottomSpacing(false, true, tag, child);
+							child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
+						}
+					}
+					list.add(new ParagraphCssApplier(configuration).apply(li, child));
+					i++;
+				}
+				
+				
+				
+			}
 		}
-		l.add(list);
 		return l;
 	}
 
@@ -98,7 +121,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 		float ownMargin = 0;
 		String marginValue = tag.getCSS().get(CSS.Property.MARGIN+end);
 		if(marginValue==null) {
-			if(configuration.getRootTags().contains(tag.getParent().getTag())) {
+			if(null != tag.getParent() && configuration.getRootTags().contains(tag.getParent().getTag())) {
 				ownMargin = ownFontSize;
 			}
 		} else {

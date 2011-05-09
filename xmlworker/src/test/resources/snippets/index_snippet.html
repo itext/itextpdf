@@ -1,6 +1,5 @@
 <html>
 <head>
-<!-- <link rel="stylesheet" href="css/layout.css" type="text/css" />  -->
 <style type="text/css">
 body {
 	text-align: left;
@@ -23,7 +22,9 @@ table,tr,td {
 </head>
 <body>
 	<div id="header">
-		<h1>iText<sup>&reg;</sup> XMLWorker</h1>
+		<h1>
+			iText<sup>&reg;</sup> XMLWorker
+		</h1>
 	</div>
 	<h2>Introduction</h2>
 	<p>
@@ -61,7 +62,7 @@ table,tr,td {
 		</tr>
 		<tr>
 			<td>xml</td>
-			<td>if available used for parsing charset</td>
+			<td>if available used for parsing charset / must be tested more deeply</td>
 			<td>encoding</td>
 		</tr>
 		<tr>
@@ -156,10 +157,9 @@ table,tr,td {
 		</tr>
 		<tr>
 			<td>table</td>
-			<td>supported<br />
-			<strong>nested tables not supported</strong>
+			<td>supported<br />Nested tables can work, but we advise against using them
 			</td>
-			<td>width</td>
+			<td>width, border, cellspacing, cellpadding</td>
 		</tr>
 		<tr>
 			<td>tr</td>
@@ -223,23 +223,17 @@ table,tr,td {
 		</tr>
 	</table>
 	<h3>Known issues</h3>
-	<ul>
-		<li>The implementation is not fully finished. There are a couple areas
-		that need to be fixed/improved and are still worked on.</li>
-		<li>It is possible not all CSS will behave as expected, there is a lot and not
-		every possible combination is fully tested and implemented.</li>
-		<li>Javascript is totally ignored at the moment.</li>
-		<li>The provided snippets content
-		character encoding is not taken into account, we are working on that.</li>
-	</ul>
+	<p>
+		The implementation is not fully finished. There are a couple areas
+		that need to be fixed/improved and are still worked on.<br />It is
+		possible not all CSS will behave as expected, there is a lot and not
+		every possible combination is fully tested and implemented.<br />Javascript
+		is totally ignored at the moment.<br />The provided snippets content
+		character encoding is taken into account, but no tests has been done with it yet.
+	</p>
 	<h2>
 		<a name="csssupport">CSS Support</a>
 	</h2>
-	<code>
-	some code yeah
-	nextline
-	nextline with<br />break between
-	</code>
 	<p>n = not supported, f = fully supported, s = somehow supported</p>
 	<table>
 		<tr>
@@ -961,22 +955,41 @@ table,tr,td {
 	</pre>
 	<p>The extended setup</p>
 	<pre>
-	// create a document to write to
-	final Document doc = new Document();
-	PdfWriter.getInstance(doc, new FileOutputStream("out.pdf"));
-	// make sure it's open
-	doc.open();
-	// read the html from somewhere
-	BufferedInputStream bis = new BufferedInputStream(new FileInputStream("snippet.html"));
-	// setup default config
+	// Create a TagProcessor
+	DefaultTagProcessorFactory htmlTagProcessorFactory = (DefaultTagProcessorFactory) new Tags().getHtmlTagProcessorFactory();
+	// if needed override tag that you don't want to parse to DummyTagProcessor
+	htmlTagProcessorFactory.addProcessor("img", new DummyTagProcessor());
+	htmlTagProcessorFactory.addProcessor("link", new DummyTagProcessor());
+	// Create a fresh configuration and set needed configuration objects.
 	XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
-	config.tagProcessorFactory(new Tags().getHtmlTagProcessorFactory()).cssResolver(new StyleAttrCSSResolver()).acceptUnknown(true));
-	XMLWorkerHelper helper = new XMLWorkerHelper();
-	// parse and listen for elements to add to the document
-	helper.parseXHtml(new ElementHandler() {
+	// Attach the default CSS to a new CSSResolver
+	CssFile defaultCSS = new XMLWorkerHelper().getDefaultCSS();
+	StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver();
+	cssResolver.addCssFile(defaultCSS);
+	// attach more CSS files if needed
+	cssResolver.addCssFile(otherCssFile);
+	// set the TagProcessorFactory
+	config.tagProcessorFactory(htmlTagProcessorFactory).cssResolver(cssResolver)
+			.acceptUnknown(true);
+	// create a document
+	final Document doc = new Document();
+	doc.setPageSize(PageSize.A4);
+	// create writer
+	PdfWriter writer = PdfWriter.getInstance(doc, outputStream);
+	writer.setPageEvent(new WatermarkEvent());
+	// set margins for first page
+	float margin = CssUtils.getInstance().parsePxInCmMmPcToPt("8px");
+	doc.setMargins(margin, margin, margin, margin);
+	// OPEN the document !
+	doc.open();
+	config.document(doc).pdfWriter(writer);
+	// create the worker
+	final XMLWorker worker = new XMLWorkerImpl(config);
+	// attach an ElementHandler
+	worker.setDocumentListener(new ElementHandler() {
 
-		public void addAll(final List&lt;Element&gt; currentContent) throws DocumentException {
-			for (Element e : currentContent) {
+		public void addAll(final List&lt;Element&gt; arg0) throws DocumentException {
+			for (Element e : arg0) {
 				doc.add(e);
 			}
 
@@ -985,9 +998,11 @@ table,tr,td {
 		public void add(final Element e) throws DocumentException {
 			doc.add(e);
 		}
-	}, new InputStreamReader(bis), config);
-	
-	doc.close();
+	});
+	// Set the worker in the parser and start parsing
+	XMLParser p = new XMLParser(worker);
+	p.parse(new StringReader(content));
+	writer.close();
 	</pre>
 	<h2>Demo</h2>
 	<p>
@@ -1002,22 +1017,5 @@ table,tr,td {
 		<li>Provide a way to add none <code>com.itextpf.text.Element</code>
 			objects to the document. (e.g. a ColumnText)</li>
 	</ul>
-	<script type="text/javascript">
-		var _gaq = _gaq || [];
-		_gaq.push([ '_setAccount', 'UA-22083937-4' ]);
-		_gaq.push([ '_setDomainName', '.itextsupport.com' ]);
-		_gaq.push([ '_trackPageview' ]);
-
-		(function() {
-			var ga = document.createElement('script');
-			ga.type = 'text/javascript';
-			ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
-					: 'http://www')
-					+ '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0];
-			s.parentNode.insertBefore(ga, s);
-		})();
-	</script>
 </body>
 </html>
