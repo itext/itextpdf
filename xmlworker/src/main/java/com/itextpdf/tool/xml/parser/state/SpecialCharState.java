@@ -56,7 +56,7 @@ public class SpecialCharState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public SpecialCharState(final XMLParser parser) {
 		this.parser =parser;

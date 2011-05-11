@@ -97,9 +97,10 @@ public class HTMLWorkerFactoryTest {
 //	  private static final String TEST = "booksales_";
 //	  private static final String TEST = "index_";
 //	  private static final String TEST = "headers_";
-	  private static final String TEST = "headers_noroottag_";
+//	  private static final String TEST = "headers_noroottag_";
 //	  private static final String TEST = "index_anchor_";
 //	  private static final String TEST = "lineheight_";
+	  private static final String TEST = "table_exception_";
 
     static {
     	FontFactory.registerDirectories();
@@ -149,7 +150,7 @@ public class HTMLWorkerFactoryTest {
 			cssResolver.addCssFile(defaultCSS);
 		}
 		doc.open();
-		helper.parseXHtml(new ElementHandler() {
+		helper.parseXML(new ElementHandler() {
 
 			public void addAll(final List<Element> currentContent) throws DocumentException {
 				for (Element e : currentContent) {

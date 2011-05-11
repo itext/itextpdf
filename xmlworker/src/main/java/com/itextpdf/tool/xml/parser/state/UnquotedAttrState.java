@@ -55,7 +55,7 @@ public class UnquotedAttrState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public UnquotedAttrState(final XMLParser parser) {
 		this.parser = parser;

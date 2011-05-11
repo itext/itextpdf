@@ -43,7 +43,6 @@
  */
 package com.itextpdf.tool.xml;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -53,7 +52,6 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.tool.xml.css.CssFile;
 import com.itextpdf.tool.xml.css.CssFileProcessor;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
@@ -62,14 +60,13 @@ import com.itextpdf.tool.xml.html.Tags;
 import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
- * A helper class for parsing XHTML/CSS flow to PDF.
+ * A helper class for parsing XHTML/CSS or XML flow to PDF.
  *
  * @author redlab_b
  *
  */
 public class XMLWorkerHelper {
 
-	private XMLWorker worker;
 	private CssFile defaultCssFile;
 	private final Object lock = new Object();
 
@@ -168,68 +165,16 @@ public class XMLWorkerHelper {
 	}
 
 	/**
-	 *
-	 * @param d
-	 * @param in
-	 * @param config
-	 * @throws IOException
+	 * 
+	 * @param handler the handler that will receive created Elements
+	 * @param in the reader to read HTML from
+	 * @param config the configuration for the XMLWorker
+	 * @throws IOException if something went wrong with the IO
 	 */
-	public void parseXHtml(final ElementHandler d, final Reader in, final XMLWorkerConfig config) throws IOException {
+	public void parseXML(final ElementHandler handler, final Reader in, final XMLWorkerConfig config) throws IOException {
 		final XMLWorker worker = new XMLWorkerImpl(config);
-		worker.setDocumentListener(d);
-		XMLParser p = new XMLParser(worker);
-//		p.addListener(new ParserListenerWriter(new Appender() {
-//
-//			public Appender append(final String str) {
-//				System.out.print(str);
-//				return this;
-//			}
-//
-//			public Appender append(final char c) {
-//				System.out.print(c);
-//				return this;
-//			}
-//
-//		}, true));
+		worker.setDocumentListener(handler);
+		XMLParser p = new XMLParser(config.isParsingHTML(), worker);
 		p.parse(in);
 	}
-
-	/**
-	 * @param xml
-	 * @throws IOException
-	 */
-	@Deprecated
-	public void processXML(final byte[] xml) throws IOException {
-		XMLParser p = new XMLParser();
-		p.addListener(worker);
-		p.parse(new ByteArrayInputStream(xml));
-	}
-
-	/**
-	 * @param html
-	 * @throws IOException
-	 */
-	@Deprecated
-	public void processHTML(final byte[] html) throws IOException {
-		XMLParser p = new XMLParser();
-		p.addListener(worker);
-		p.parse(new ByteArrayInputStream(html));
-	}
-
-	/**
-	 * @param worker the worker to set
-	 */
-	@Deprecated
-	public void setWorker(final XMLWorker worker) {
-		this.worker = worker;
-	}
-
-	/**
-	 * @return the worker
-	 */
-	@Deprecated
-	public SimpleXMLDocHandler getWorker() {
-		return worker;
-	}
-
 }

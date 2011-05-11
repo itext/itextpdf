@@ -43,11 +43,13 @@
  */
 package com.itextpdf.tool.xml.html.table;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
+import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 
 /**
  * @author redlab_b
@@ -66,13 +68,20 @@ public class TableRowElement implements Element {
 		}
 	};
 	private final Place place;
-	private final List<Element> content;
+	private final List<HtmlCell> content;
 
     /**
      * @param currentContent
+     * @param place 
      */
     public TableRowElement(final List<Element> currentContent, final Place place) {
-        content = currentContent;
+        // filter out none TD elements, discard others
+    	content = new ArrayList<HtmlCell>(currentContent.size());
+    	for (Element e : currentContent) {
+    		if (e instanceof HtmlCell) {
+    			content.add((HtmlCell) e);
+    		}
+    	}
         this.place = place;
     }
 
@@ -114,10 +123,13 @@ public class TableRowElement implements Element {
     /**
      * @return the content
      */
-    public List<Element> getContent() {
+    public List<HtmlCell> getContent() {
         return content;
     }
 
+	/**
+	 * @return the type of cell, defined by type of tag
+	 */
 	public Place getPlace() {
 		return place;
 	}

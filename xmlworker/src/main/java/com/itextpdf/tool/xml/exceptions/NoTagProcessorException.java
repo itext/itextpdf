@@ -43,9 +43,15 @@
  */
 package com.itextpdf.tool.xml.exceptions;
 
+import com.itextpdf.tool.xml.TagProcessor;
+import com.itextpdf.tool.xml.TagProcessorFactory;
+
 /**
- * @author Balder
- *
+ * Thrown by {@link TagProcessorFactory#getProcessor(String)} when the given tag
+ * did not map to any {@link TagProcessor}.
+ * 
+ * @author redlab_b
+ * 
  */
 public class NoTagProcessorException extends RuntimeException {
 
@@ -55,7 +61,7 @@ public class NoTagProcessorException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @param tag
+	 * @param tag the tag
 	 *
 	 */
 	public NoTagProcessorException(final String tag) {
@@ -63,8 +69,8 @@ public class NoTagProcessorException extends RuntimeException {
 	}
 
     /**
-     * @param tag
-     * @param e
+     * @param tag the tag
+     * @param e a possible underlying exception
      */
 	public NoTagProcessorException(final String tag, final Exception e) {
 		super(tag, e);

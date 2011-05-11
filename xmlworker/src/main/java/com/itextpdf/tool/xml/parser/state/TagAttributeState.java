@@ -55,7 +55,7 @@ public class TagAttributeState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public TagAttributeState(final XMLParser parser) {
 		this.parser = parser;

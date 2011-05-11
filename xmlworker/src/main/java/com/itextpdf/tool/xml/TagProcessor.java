@@ -55,11 +55,10 @@ public interface TagProcessor {
 
 
     /**
-     * This method is called when a tag has been encountered of the TagProcessor
-     * implementation that is mapped to the tag.
+     * This method is called when a tag has been encountered.
      *
      * @param tag the tag encountered
-     * @return Element
+     * @return Element an Element to add to the current content;
      */
     List<Element> startElement(Tag tag);
 
@@ -74,15 +73,17 @@ public interface TagProcessor {
      */
     List<Element> content(Tag tag, String content);
 
-    /**
-     * This method is called when a closing tag has been encountered of the
-     * TagProcessor implementation that is mapped to the tag.
-     *
-     * @param tag the tag encountered
-     * @param currentContent a list of content created by e.g. previous
-     *        TagProcessors.
-     * @return the resulting element to add to the document or a content stack.
-     */
+	/**
+	 * This method is called when a closing tag has been encountered of the
+	 * TagProcessor implementation that is mapped to the tag.
+	 * 
+	 * @param tag the tag encountered
+	 * @param currentContent a list of content possibly created by TagProcessing
+	 *            of inner tags, and by <code>startElement</code> and
+	 *            <code>content</code> methods of this <code>TagProcessor</code>
+	 *            .
+	 * @return the resulting element to add to the document or a content stack.
+	 */
     List<Element> endElement(Tag tag, List<Element> currentContent);
 
     /**

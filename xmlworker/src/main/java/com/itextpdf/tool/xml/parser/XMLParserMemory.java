@@ -46,6 +46,8 @@ package com.itextpdf.tool.xml.parser;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.itextpdf.tool.xml.parser.state.InsideTagHTMLState;
+
 /**
  * Wrapper class for different things that need to be kept track of between different states.
  *
@@ -70,7 +72,8 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * @param content
+	 * Set the encountered tag
+	 * @param content the tag
 	 */
 	public void currentTag(final String content) {
 		this.currentTag = content;
@@ -79,14 +82,16 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * @param attr
+	 * Sets the encountered attribute
+	 * @param attr the attribute
 	 */
 	public void currentAttr(final String attr) {
 		this.currentAttr = attr;
 	}
 
 	/**
-	 * @param content
+	 * Sets the current attribute value
+	 * @param content the current attributes value
 	 */
 	public void putCurrentAttrValue(final String content) {
 		attr.put(this.currentAttr.toLowerCase(), content);
@@ -95,13 +100,14 @@ public class XMLParserMemory {
 	/**
 	 * The current text buffer.
 	 *
-	 * @return current
+	 * @return current text buffer
 	 */
 	public StringBuilder current() {
 		return current;
 	}
 
 	/**
+	 * Returns the current tag
 	 * @return the currentTag
 	 */
 	public String getCurrentTag() {
@@ -109,6 +115,7 @@ public class XMLParserMemory {
 	}
 
 	/**
+	 * Returns a map of all attributes and their value found on the current tag
 	 * @return the attributes of the current tag
 	 */
 	public Map<String, String> getAttributes() {
@@ -116,7 +123,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 *
+	 * Returns the current entity buffer
 	 * @return a StringBuilder for the current entity
 	 */
 	public StringBuilder currentEntity() {
@@ -124,7 +131,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Comment ending tag memory.
+	 * Returns the xml comment buffer
 	 *
 	 * @return comment
 	 */
@@ -133,14 +140,18 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * @return
+	 * Returns last tag that needs to be taken into account for HTML Whitespace handling.<br />
+	 * Used by {@link InsideTagHTMLState}, only for HTML processing.
+	 * @return tag 
 	 */
 	public String whitespaceTag() {
 		return this.wsTag ;
 	}
 
 	/**
-	 * @param string
+	 * Sets the last tag that needs to be taken into account for HTML Whitespace handling<br />
+	 * Used by {@link InsideTagHTMLState}, only for HTML processing.
+	 * @param tag the tag
 	 */
 	public void whitespaceTag(String tag) {
 		this.wsTag = tag;

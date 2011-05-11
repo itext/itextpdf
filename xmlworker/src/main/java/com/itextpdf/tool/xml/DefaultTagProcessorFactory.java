@@ -58,12 +58,17 @@ import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
  */
 public class DefaultTagProcessorFactory implements TagProcessorFactory {
 
+	/**
+	 * Internal Object to keep TagProcessors.
+	 * @author redlab_b
+	 *
+	 */
 	protected final class FactoryObject {
 		private final String className;
 		private TagProcessor proc;
 
 		/**
-		 * @param className
+		 * @param className the fully qualified class name
 		 *
 		 */
 		public FactoryObject(final String className) {
@@ -71,8 +76,8 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 		}
 
 		/**
-		 * @param className
-		 * @param processor
+		 * @param className the fully qualified class name
+		 * @param processor the processor object
 		 */
 		public FactoryObject(final String className, final TagProcessor processor) {
 			this(className);
@@ -107,9 +112,10 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 	}
 
 	/**
-	 * @param className
+	 * Tries to load given processor with Class.forName
+	 * @param className fully qualified className
 	 * @return the loaded tag processor
-	 * @throws NoTagProcessorException
+	 * @throws NoTagProcessorException if TagProcessor could not be loaded.
 	 */
 	protected TagProcessor load(final String className) throws NoTagProcessorException {
 		try {
@@ -139,17 +145,17 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 	}
 
 	/**
-	 * Add a TagProcessor.
+	 * Add an unloaded TagProcessor.
 	 *
 	 * @param tag the tag the processor with the given className maps to
-	 * @param className the fully qualified class name (class has to be found on classpath)
+	 * @param className the fully qualified class name (class has to be found on classpath, will be loaded with Class.forName()
 	 */
 	public void addProcessor(final String tag, final String className) {
 		map.put(tag, new FactoryObject(className));
 	}
 
 	/**
-	 * Add a TagProcessor.
+	 * Add a loaded TagProcessor.
 	 *
 	 * @param tag the tag the processor with the given className maps to
 	 * @param processor the TagProcessor
@@ -160,7 +166,7 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 	}
 	
 	/**
-	 * 
+	 * Add one tag processor that handles multiple tags.
 	 * @param processor the TagProcessor.
 	 * @param tags list of tags this processor maps to.
 	 */
@@ -170,7 +176,7 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 		}
 	}
 	/**
-	 * 
+	 * Add one tag processor that handles multiple tags.
 	 * @param className the fully qualified class name (class has to be found on classpath)
 	 * @param tags list of tags this processor maps to.
 	 */

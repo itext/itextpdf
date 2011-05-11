@@ -55,7 +55,7 @@ public class SingleQuotedAttrValueState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public SingleQuotedAttrValueState(final XMLParser parser) {
 		this.parser = parser;

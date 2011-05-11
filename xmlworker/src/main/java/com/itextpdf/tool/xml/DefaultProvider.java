@@ -91,20 +91,22 @@ public class DefaultProvider implements Provider {
 
 	}
 	/**
-	 *
-	 * @param root
+	 * Set a global image root.
+	 * @param root the global image root
 	 */
 	public void setGlobalImageRoot(final String root) {
 		this.map.put(GLOBAL_IMAGE_ROOT, root);
 	}
 	/**
-	 * @param root
+	 * Set a global link root
+	 * @param root the global link root
 	 */
 	public void setGlobalLinkRoot(final String root) {
 		this.map.put(GLOBAL_LINK_ROOT, root);
 	}
 	/**
-	 * @param root
+	 * Set a global css root
+	 * @param root the global css root
 	 */
 	public void setGlobalCssRoot(final String root) {
 		this.map.put(GLOBAL_CSS_ROOT, root);

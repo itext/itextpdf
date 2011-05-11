@@ -55,7 +55,7 @@ public class CloseCommentState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public CloseCommentState(final XMLParser parser) {
 		this.parser = parser;

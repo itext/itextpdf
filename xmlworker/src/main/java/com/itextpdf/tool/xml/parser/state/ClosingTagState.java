@@ -55,7 +55,7 @@ public class ClosingTagState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public ClosingTagState(final XMLParser parser) {
 		this.parser = parser;

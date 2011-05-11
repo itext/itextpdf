@@ -81,8 +81,8 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 		memory = new HashMap<String, Object>();
 	}
 	/**
-	 * @param doc
-	 * @param writer
+	 * @param doc the document to write to.
+	 * @param writer the writer used to write the document.
 	 */
 	public XMLWorkerConfigurationImpl(final Document doc, final PdfWriter writer){
 		this();
@@ -122,7 +122,7 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	/**
 	 * Sets the CSS.
 	 *
-	 * @param cssResolver
+	 * @param cssResolver the CSSResolver implementation
 	 * @return XMLWorkerConfigurationImpl object
 	 */
 	public XMLWorkerConfigurationImpl cssResolver(final CSSResolver cssResolver) {
@@ -143,7 +143,7 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	}
 
 	/**
-	 * @param acceptUnknown
+	 * @param acceptUnknown set true to allow unknown tags in the XML.
 	 * @return XMLWorkerConfigurationImpl object
 	 */
 	public XMLWorkerConfigurationImpl acceptUnknown(final boolean acceptUnknown) {
@@ -153,7 +153,7 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 
 	/**
 	 *
-	 * @param provider
+	 * @param provider set the Provider to use
 	 * @return XMLWorkerConfigurationImpl object
 	 */
 	public XMLWorkerConfigurationImpl provider(final Provider provider) {
@@ -279,11 +279,11 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 		return new ArrayList<String>(roottags);
 	}
 
+	/**
+	 * Add a tag to the rootTags list.
+	 * @param tag name of the tag
+	 */
 	public void addRootTag(final String tag) {
 		roottags.add(tag);
-	}
-
-	public void removeRootTag(final String tag) {
-		roottags.remove(tag);
 	}
 }

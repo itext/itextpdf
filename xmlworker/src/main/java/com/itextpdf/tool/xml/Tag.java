@@ -66,7 +66,7 @@ public class Tag {
 	 * Construct a tag.
 	 *
 	 * @param tag the tag name
-	 * @param h the attributes in the tag
+	 * @param attr the attributes in the tag
 	 */
 	public Tag(final String tag, final Map<String, String> attr) {
 		this(tag, attr, new HashMap<String, String>(0));
@@ -81,9 +81,9 @@ public class Tag {
 
 	/**
 	 * 
-	 * @param tag
-	 * @param attr
-	 * @param css
+	 * @param tag the tag name
+	 * @param attr the attributes 
+	 * @param css a map with CSS
 	 */
 	public Tag(String tag, Map<String, String> attr, Map<String, String> css ) {
 		this.tag = tag;

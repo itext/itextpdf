@@ -55,7 +55,7 @@ public class SelfClosingTagState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public SelfClosingTagState(final XMLParser parser) {
 		this.parser = parser;

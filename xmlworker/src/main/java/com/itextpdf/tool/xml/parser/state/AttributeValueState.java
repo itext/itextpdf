@@ -55,7 +55,7 @@ public class AttributeValueState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public AttributeValueState(final XMLParser parser) {
 		this.parser = parser;

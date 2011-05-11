@@ -55,7 +55,7 @@ public class UnknownState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param xmlParser
+	 * @param xmlParser the XMLParser
 	 */
 	public UnknownState(final XMLParser xmlParser) {
 		this.parser = xmlParser;

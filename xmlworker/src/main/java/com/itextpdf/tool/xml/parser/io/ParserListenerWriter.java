@@ -61,15 +61,16 @@ public class ParserListenerWriter implements XMLParserListener {
 	private final boolean formatted;
 
 	/**
-	 * @param writer
-	 * @param formatted
+	 * @param writer the appender
+	 * @param formatted true if output should be formatted
 	 */
 	public ParserListenerWriter(final Appender writer, final boolean formatted) {
 		this.writer = writer;
 		this.formatted = formatted;
 	}
 	/**
-	 * @param writer
+	 * Construct a new ParserListenerWriter with the given appender and default formatted to true;
+	 * @param writer the appender
 	 */
 	public ParserListenerWriter(final Appender writer) {
 		this(writer, true);

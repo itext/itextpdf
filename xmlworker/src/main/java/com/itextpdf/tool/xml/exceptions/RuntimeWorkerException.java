@@ -43,10 +43,9 @@
  */
 package com.itextpdf.tool.xml.exceptions;
 
-import com.itextpdf.text.DocumentException;
 
 /**
- * Thrown when the XMLWorker has a {@link DocumentException}
+ * Thrown when the XMLWorker throws an Exception that we want to convert to a RuntimeException.
  * @author redlab_b
  *
  */

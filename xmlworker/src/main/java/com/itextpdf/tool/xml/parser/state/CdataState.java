@@ -56,7 +56,7 @@ public class CdataState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public CdataState(final XMLParser parser) {
 		this.parser = parser;

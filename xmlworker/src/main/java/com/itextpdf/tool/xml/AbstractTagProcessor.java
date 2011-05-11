@@ -39,11 +39,19 @@ import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 
 /**
- * Abstract TagProcessor that allows setting the configuration object to a protected member variable.<br />
- * Adds empty implementations for TagProcessor methods.
- *
+ * Abstract TagProcessor that allows setting the configuration object to a
+ * protected member variable.<br />
+ * Implements {@link TagProcessor#startElement(Tag)} and
+ * {@link TagProcessor#endElement(Tag, List)} to calculate font sizes and add
+ * new pages if needed.<br />
+ * Extend from this class instead of implementing {@link TagProcessor} to
+ * benefit from auto fontsize metric conversion to pt and
+ * page-break-before/after insertion. Override
+ * {@link AbstractTagProcessor#start(Tag)} and
+ * {@link AbstractTagProcessor#end(Tag, List)} in your extension.
+ * 
  * @author redlab_b
- *
+ * 
  */
 public abstract class AbstractTagProcessor implements TagProcessor {
 
@@ -69,11 +77,13 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	}
 
 	/**
-	 * Calculates any found font size to pt values and set it in the CSS before calling
-	 * {@link AbstractTagProcessor#start(Tag)}.<br />
-	 * Checks for {@link com.itextpdf.tool.xml.css.CSS.Property#PAGE_BREAK_BEFORE}, if the value is always a new page is inserted
-	 *
-	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
+	 * Calculates any found font size to pt values and set it in the CSS before
+	 * calling {@link AbstractTagProcessor#start(Tag)}.<br />
+	 * Checks for
+	 * {@link com.itextpdf.tool.xml.css.CSS.Property#PAGE_BREAK_BEFORE}, if the
+	 * value is always a <code>Chunk.NEXTPAGE</code> added before the
+	 * implementors {@link AbstractTagProcessor#start(Tag)} method.
+	 * 
 	 */
 	public final List<Element> startElement(final Tag tag) {
 		float fontSize = fontsizeTrans.translateFontSize(tag);
@@ -95,7 +105,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * {@link TagProcessor#startElement(Tag)}. The {@link AbstractTagProcessor#startElement(Tag)} calls this method
 	 * after or before doing certain stuff, (see it's description).
 	 *
-	 * @param tag
+	 * @param tag the tag
 	 * @return an element to be added to current content, may be null
 	 */
 	public List<Element> start(final Tag tag){ return new ArrayList<Element>(0); };
@@ -108,9 +118,13 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	public List<Element> content(final Tag tag, final String content) {
 		return new ArrayList<Element>(0);
 	}
+
 	/**
-	 * Checks for {@link com.itextpdf.tool.xml.css.CSS.Property#PAGE_BREAK_AFTER},
-	 * if the value is always a new page is inserted
+	 * Checks for
+	 * {@link com.itextpdf.tool.xml.css.CSS.Property#PAGE_BREAK_AFTER}, if the
+	 * value is always a <code>Chunk.NEXTPAGE</code> is added to the
+	 * currentContentList after calling
+	 * {@link AbstractTagProcessor#end(Tag, List)}.
 	 */
 	public final List<Element> endElement(Tag tag, List<Element> currentContent) {
 		List<Element> list = end(tag, currentContent);
@@ -128,8 +142,8 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * The {@link AbstractTagProcessor#endElement(Tag, List)} calls this method
 	 * after or before doing certain stuff, (see it's description).
 	 * 
-	 * @param tag
-	 * @param currentContent
+	 * @param tag the tag
+	 * @param currentContent the content created from e.g. inner tags, inner content and not yet added to document.
 	 * @return a List containing iText Element objects
 	 */
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {

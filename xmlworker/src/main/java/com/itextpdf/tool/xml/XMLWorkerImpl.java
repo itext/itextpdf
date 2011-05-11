@@ -82,8 +82,8 @@ public class XMLWorkerImpl implements XMLWorker {
 	}
 
 	/**
-	 * 
-	 * @param config
+	 * Constructs a new XMLWorker
+	 * @param config the configuration
 	 */
 	public XMLWorkerImpl(final XMLWorkerConfig config) {
 		this();
@@ -293,7 +293,7 @@ public class XMLWorkerImpl implements XMLWorker {
 	}
 
 	/**
-	 * @param elementHandler
+	 * @param elementHandler the handler that will receive the elements created
 	 * @return an XMLWorkerImpl object
 	 */
 	public XMLWorkerImpl elementHandler(final ElementHandler elementHandler) {

@@ -13,6 +13,7 @@ import com.itextpdf.tool.xml.css.parser.state.Rule;
 import com.itextpdf.tool.xml.css.parser.state.Unknown;
 
 /**
+ * State controller for CSS Processing
  * @author redlab_b
  *
  */
@@ -32,6 +33,7 @@ public class CssStateController {
 	private final CssFile css;
 
 	/**
+	 * @param file the CssFile
 	 *
 	 */
 	public CssStateController(final CssFile file) {
@@ -48,14 +50,8 @@ public class CssStateController {
 	}
 
 	/**
-	 * Sets the state to the previous state
-	 */
-	public void previous() {
-		this.current = previous;
-	}
-
-	/**
-	 * @param c
+	 * Appends a character to the buffer.
+	 * @param c the char to append to the buffer.
 	 */
 	public void append(final char c) {
 		this.buffer.append(c);
@@ -63,21 +59,53 @@ public class CssStateController {
 	}
 
 	/**
-	 *
+	 * Sets the state to the previous state
 	 */
-	public void stateCommentEnd() {
-		setState(commentEnd);
+	public void previous() {
+		this.current = previous;
 	}
 
 	/**
-	 * @param commentEnd2
+	 * Processes the character, delegates to states.
+	 *
+	 * @param c a character that needs to be processed
 	 */
+	public void process(final char c) {
+		current.process(c);
+	}
+
+	private void processProps(final String props) {
+		String[] split = props.split(";");
+		Map<String, String> map = new HashMap<String, String>();
+		for (String prop : split) {
+			String[] propSplit = prop.split(":");
+			if (propSplit.length == 2) {
+				map.put(utils.stripDoubleSpacesAndTrim(propSplit[0]), utils.stripDoubleSpacesAndTrim(propSplit[1]));
+			}
+		}
+		if (currentSelector.contains(",")) {
+			String[] selectors = currentSelector.split(",");
+			for (String selector : selectors) {
+				css.add(utils.stripDoubleSpacesAndTrim(selector), map);
+			}
+		} else {
+			css.add(utils.stripDoubleSpacesAndTrim(currentSelector), map);
+		}
+	}
+
 	private void setState(final State state) {
 		this.current = state;
 	}
 
 	private void setPrevious() {
 		this.previous = current;
+	}
+
+	/**
+	 *
+	 */
+	public void stateCommentEnd() {
+		setState(commentEnd);
 	}
 
 	/**
@@ -106,22 +134,6 @@ public class CssStateController {
 	/**
 	 *
 	 */
-	public void storeSelector() {
-		this.currentSelector = buffer.toString();
-		buffer.setLength(0);
-	}
-
-	/**
-	 *
-	 */
-	public void storeProperties() {
-		processProps(buffer.toString());
-		buffer.setLength(0);
-	}
-
-	/**
-	 *
-	 */
 	public void stateUnknown() {
 		setState(unknown);
 	}
@@ -133,31 +145,19 @@ public class CssStateController {
 		setState(rule);
 	}
 
-	private void processProps(final String props) {
-		String[] split = props.split(";");
-		Map<String, String> map = new HashMap<String, String>();
-		for (String prop : split) {
-			String[] propSplit = prop.split(":");
-			if (propSplit.length == 2) {
-				map.put(utils.stripDoubleSpacesAndTrim(propSplit[0]), utils.stripDoubleSpacesAndTrim(propSplit[1]));
-			}
-		}
-		if (currentSelector.contains(",")) {
-			String[] selectors = currentSelector.split(",");
-			for (String selector : selectors) {
-				css.add(utils.stripDoubleSpacesAndTrim(selector), map);
-			}
-		} else {
-			css.add(utils.stripDoubleSpacesAndTrim(currentSelector), map);
-		}
+	/**
+	 *
+	 */
+	public void storeSelector() {
+		this.currentSelector = buffer.toString();
+		buffer.setLength(0);
 	}
 
 	/**
-	 * Processes the character, delegates to states.
 	 *
-	 * @param c a character that needs to be processed
 	 */
-	public void process(final char c) {
-		current.process(c);
+	public void storeProperties() {
+		processProps(buffer.toString());
+		buffer.setLength(0);
 	}
 }

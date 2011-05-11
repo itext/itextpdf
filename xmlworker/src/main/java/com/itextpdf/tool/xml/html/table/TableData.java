@@ -47,12 +47,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
@@ -75,19 +73,23 @@ public class TableData extends AbstractTagProcessor {
     	return l;
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
+	 * java.util.List, com.itextpdf.text.Document)
+	 */
+	@Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-    	HtmlCell cell = new HtmlCell();
-    	List<Element> l = new ArrayList<Element>(1);
-    	for (Element e : currentContent) {
-    		cell.addElement(e);
-    	}
-    		l.add(new HtmlCellCssApplier(configuration).apply(cell, tag));
-    		return l;
-    }
+		HtmlCell cell = new HtmlCell();
+		List<Element> l = new ArrayList<Element>(1);
+		for (Element e : currentContent) {
+			cell.addElement(e);
+		}
+		l.add(new HtmlCellCssApplier(configuration).apply(cell, tag));
+		return l;
+	}
 
     /* (non-Javadoc)
      * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()

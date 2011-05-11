@@ -44,6 +44,7 @@
 package com.itextpdf.tool.xml;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,7 @@ import org.junit.Test;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -75,7 +77,6 @@ public class XMLWorkerTest {
     }
 
     private XMLWorker worker;
-    private XMLWorkerHelper workerFactory;
 	private XMLWorkerConfigurationImpl config;
 
     @Before
@@ -125,11 +126,10 @@ public class XMLWorkerTest {
     @Test(expected = NoTagProcessorException.class)
     public void unknownTagNotAllowed() throws IOException {
         worker = new XMLWorkerImpl(config);
-        workerFactory = new XMLWorkerHelper();
-        workerFactory.setWorker(worker);
         worker.setDocumentListener(new ListenerImpl());
         String xml = "<q>rejferofjerfejro</q>";
-        workerFactory.processXML(xml.getBytes());
+        XMLParser parser = new XMLParser(worker);
+        parser.parse(new StringReader(xml));
     }
 
     /**
@@ -141,11 +141,10 @@ public class XMLWorkerTest {
     public void unknownTagAllowed() throws IOException {
     	config.acceptUnknown(true);
         worker = new XMLWorkerImpl(config);
-        workerFactory = new XMLWorkerHelper();
-        workerFactory.setWorker(worker);
         worker.setDocumentListener(new ListenerImpl());
         String xml = "<q>rejferofjerfejro</q>";
-        workerFactory.processXML(xml.getBytes());
+        XMLParser parser = new XMLParser(worker);
+        parser.parse(new StringReader(xml));
     }
 
     /**
@@ -156,10 +155,9 @@ public class XMLWorkerTest {
     @Test
     public void knownTagFoundAndLoaded() throws IOException {
         worker = new XMLWorkerImpl(config);
-        workerFactory = new XMLWorkerHelper();
-        workerFactory.setWorker(worker);
         worker.setDocumentListener(new ListenerImpl());
         String xml = "<t>rejferofjerfejro</t>";
-        workerFactory.processXML(xml.getBytes());
+        XMLParser parser = new XMLParser(worker);
+        parser.parse(new StringReader(xml));
     }
 }

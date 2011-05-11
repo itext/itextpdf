@@ -55,7 +55,7 @@ public class DocTypeState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public DocTypeState(final XMLParser parser) {
 		this.parser = parser;

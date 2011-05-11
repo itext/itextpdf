@@ -54,7 +54,7 @@ public class InsideTagState implements State {
 
 	private final XMLParser parser;
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public InsideTagState(final XMLParser parser) {
 		this.parser = parser;
