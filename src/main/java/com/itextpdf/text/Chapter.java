@@ -49,7 +49,7 @@ import java.util.ArrayList;
  * A <CODE>Chapter</CODE> is a special <CODE>Section</CODE>.
  * <P>
  * A chapter number has to be created using a <CODE>Paragraph</CODE> as title
- * and an <CODE>int</CODE> as chapter number. The chapter number is shown be
+ * and an <CODE>int</CODE> as chapter number. The chapter number is shown by
  * default. If you don't want to see the chapter number, you have to set the
  * numberdepth to <VAR>0</VAR>.
  * <P>
