@@ -44,6 +44,8 @@
 package com.itextpdf.text;
 
 import java.util.ArrayList;
+
+import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.factories.RomanAlphabetFactory;
 
 /**
@@ -91,7 +93,7 @@ import com.itextpdf.text.factories.RomanAlphabetFactory;
  * @see		ListItem
  */
 
-public class List implements TextElementArray {
+public class List implements TextElementArray, Indentable {
 
     // constants
 

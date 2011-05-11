@@ -43,11 +43,12 @@
  */
 package com.itextpdf.text;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
+import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
@@ -76,7 +77,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Section extends ArrayList<Element> implements TextElementArray, LargeElement {
+public class Section extends ArrayList<Element> implements TextElementArray, LargeElement, Indentable {
     // constant
 	/**
 	 * A possible number style. The default number style: "1.2.3."
