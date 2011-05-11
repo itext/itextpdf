@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.api.Indentable;
+import com.itextpdf.text.api.Spaceable;
+
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
  * <P>
@@ -64,7 +67,7 @@ package com.itextpdf.text;
  * @see		ListItem
  */
 
-public class Paragraph extends Phrase {
+public class Paragraph extends Phrase implements Indentable, Spaceable {
 
 	// constants
 	private static final long serialVersionUID = 7852314969733375514L;
@@ -193,8 +196,8 @@ public class Paragraph extends Phrase {
         	setIndentationLeft(p.getIndentationLeft());
         	setIndentationRight(p.getIndentationRight());
         	setFirstLineIndent(p.getFirstLineIndent());
-        	setSpacingAfter(p.spacingAfter());
-        	setSpacingBefore(p.spacingBefore());
+        	setSpacingAfter(p.getSpacingAfter());
+        	setSpacingBefore(p.getSpacingBefore());
         	setExtraParagraphSpace(p.getExtraParagraphSpace());
         }
     }
@@ -289,20 +292,16 @@ public class Paragraph extends Phrase {
         this.multipliedLeading = multipliedLeading;
     }
 
-    /**
-     * Sets the indentation of this paragraph on the left side.
-     *
-     * @param	indentation		the new indentation
-     */
+    /* (non-Javadoc)
+	 * @see com.itextpdf.text.Indentable#setIndentationLeft(float)
+	 */
     public void setIndentationLeft(float indentation) {
         this.indentationLeft = indentation;
     }
 
-    /**
-     * Sets the indentation of this paragraph on the right side.
-     *
-     * @param	indentation		the new indentation
-     */
+    /* (non-Javadoc)
+	 * @see com.itextpdf.text.Indentable#setIndentationRight(float)
+	 */
     public void setIndentationRight(float indentation) {
         this.indentationRight = indentation;
     }
@@ -315,20 +314,16 @@ public class Paragraph extends Phrase {
         this.firstLineIndent = firstLineIndent;
     }
 
-    /**
-     * Sets the spacing before this paragraph.
-     *
-     * @param	spacing		the new spacing
-     */
+    /* (non-Javadoc)
+	 * @see com.itextpdf.text.Spaceable#setSpacingBefore(float)
+	 */
     public void setSpacingBefore(float spacing) {
         this.spacingBefore = spacing;
     }
 
-    /**
-     * Sets the spacing after this paragraph.
-     *
-     * @param	spacing		the new spacing
-     */
+    /* (non-Javadoc)
+	 * @see com.itextpdf.text.Spaceable#setSpacingAfter(float)
+	 */
     public void setSpacingAfter(float spacing) {
         this.spacingAfter = spacing;
     }
@@ -387,19 +382,15 @@ public class Paragraph extends Phrase {
     	return getLeading() + m;
     }
 
-	/**
-     * Gets the indentation of this paragraph on the left side.
-     *
-     * @return	the indentation
-     */
+	/* (non-Javadoc)
+	 * @see com.itextpdf.text.Indentable#getIndentationLeft()
+	 */
     public float getIndentationLeft() {
         return indentationLeft;
     }
 
-	/**
-	 * Gets the indentation of this paragraph on the right side.
-	 *
-	 * @return	the indentation
+	/* (non-Javadoc)
+	 * @see com.itextpdf.text.Indentable#getIndentationRight()
 	 */
     public float getIndentationRight() {
         return indentationRight;
@@ -413,20 +404,16 @@ public class Paragraph extends Phrase {
         return this.firstLineIndent;
     }
 
-    /**
-     * Gets the spacing before this paragraph.
-     * @return	the spacing
-     * @since	2.1.5
-     */
+    /* (non-Javadoc)
+	 * @see com.itextpdf.text.Spaceable#getSpacingBefore()
+	 */
     public float getSpacingBefore() {
     	return spacingBefore;
     }
 
-    /**
-     * Gets the spacing after this paragraph.
-     * @return	the spacing
-     * @since	2.1.5
-     */
+    /* (non-Javadoc)
+	 * @see com.itextpdf.text.Spaceable#getSpacingAfter()
+	 */
     public float getSpacingAfter() {
     	return spacingAfter;
     }

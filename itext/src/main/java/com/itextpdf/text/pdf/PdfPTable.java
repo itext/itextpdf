@@ -54,6 +54,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.LargeElement;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
 
@@ -66,7 +67,7 @@ import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
  * @author Paulo Soares
  */
 
-public class PdfPTable implements LargeElement{
+public class PdfPTable implements LargeElement, Spaceable{
 
     /**
      * The index of the original <CODE>PdfcontentByte</CODE>.
@@ -1646,5 +1647,19 @@ public class PdfPTable implements LargeElement{
 	 */
 	public void setComplete(final boolean complete) {
 		this.complete = complete;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.text.api.Spaceable#getSpacingBefore()
+	 */
+	public float getSpacingBefore() {
+		return spacingBefore;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.text.api.Spaceable#getSpacingAfter()
+	 */
+	public float getSpacingAfter() {
+		return spacingAfter;
 	}
 }
