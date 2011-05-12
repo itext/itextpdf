@@ -104,17 +104,15 @@ public class Table extends AbstractTagProcessor {
 	@Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		int numberOfColumns = 0;
-		// 
+		//
 		List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
 		List<Element> invalidRowElements = new ArrayList<Element>(1);
 		for (Element e : currentContent) {
 			int localNumCols = 0;
 			if (e instanceof TableRowElement) {
 				TableRowElement tableRowElement = (TableRowElement) e;
-				for (Element cell : tableRowElement.getContent()) {
-					if (cell instanceof HtmlCell) {
-						localNumCols += ((HtmlCell) cell).getColspan();
-					}
+				for (HtmlCell cell : tableRowElement.getContent()) {
+						localNumCols += cell.getColspan();
 				}
 				tableRows.add(tableRowElement);
 			} else {
@@ -147,38 +145,30 @@ public class Table extends AbstractTagProcessor {
 		//
 		for (TableRowElement row : tableRows) {
 			List<HtmlCell> cells = row.getContent();
-			HtmlCell last = (HtmlCell) cells.get(cells.size() - 1);
+			HtmlCell last = cells.get(cells.size() - 1);
 			last.getCellValues().setLastInRow(true);
 			last.setPaddingRight(last.getPaddingRight() + styleValues.getHorBorderSpacing());
 		}
 		float[] columnWidths = new float[numberOfColumns];
 		float[] widestWords = new float[numberOfColumns];
 		float[] fixedWidths = new float[numberOfColumns];
-//		int[] rowspanValue = new int[numberOfColumns];
+		int[] rowspanValue = new int[numberOfColumns];
 		float largestColumn = 0;
 		int indexOfLargestColumn = 0;
 		// Initial fill of the widths arrays
 		for (TableRowElement row : tableRows) {
 			int column = 0;
 			for (HtmlCell cell : row.getContent()) {
-//				if (column >= numberOfColumns) {
-//					boolean a = false;
-//				}
-//				if (rowspanValue[column] > 1) {
-//					rowspanValue[column] = rowspanValue[column] - 1;
-//					++column;
-//				}
-//				if (cell.getColspan() > 1) {
-//					if (LOG.isLogging()) {
-//						LOG.log(String.format("Cell Colspan: %d", cell.getColspan()));
-//					}
-//					column += cell.getColspan() - 1;
-//				}
-				// sets a rowspan counter for current column (counter not
-				// needed for last column).
-//				if (cell.getRowspan() > 1 && column != numberOfColumns - 1) {
-//					rowspanValue[column] = cell.getRowspan() - 1;
-//				}
+				// check whether the current column should be skipped due to a rowspan value of higher cell in this column.
+				while (rowspanValue[column] > 1) {
+					rowspanValue[column] = rowspanValue[column] - 1;
+					++column;
+				}
+//				sets a rowspan counter for current column (counter not
+//				needed for last column).
+				if (cell.getRowspan() > 1 && column != numberOfColumns - 1) {
+					rowspanValue[column] = cell.getRowspan() - 1;
+				}
 				if (cell.getFixedWidth() != 0) {
 					float fixedWidth = cell.getFixedWidth() +
 								getCellStartWidth(cell, styleValues) +

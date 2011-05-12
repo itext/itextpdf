@@ -89,7 +89,7 @@ public class HTMLWorkerFactoryTest {
 //    private static final String TEST = "comment-double-print_";
 //    private static final String TEST = "tab_";
 //	  private static final String TEST = "table_";
-//	  private static final String TEST = "tableInTable_";
+	  private static final String TEST = "tableInTable_";
 //	  private static final String TEST = "lists_";
 //	  private static final String TEST = "img_";
 //	  private static final String TEST = "position_";
@@ -101,7 +101,8 @@ public class HTMLWorkerFactoryTest {
 //	  private static final String TEST = "index_anchor_";
 //	  private static final String TEST = "lineheight_";
 //	  private static final String TEST = "table_exception_";
-	  private static final String TEST = "pagebreaks_";
+//	  private static final String TEST = "table_exception_";
+//	  private static final String TEST = "pagebreaks_";
 
     static {
     	FontFactory.registerDirectories();
