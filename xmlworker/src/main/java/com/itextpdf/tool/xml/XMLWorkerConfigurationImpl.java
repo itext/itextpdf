@@ -268,9 +268,11 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	/**
 	 *
 	 * @param bookmark true to enable auto bookmarking of headers, false otherwise.
+	 * @return this configuration object
 	 */
-	public void autoBookMark(final boolean bookmark) {
+	public XMLWorkerConfig autoBookMark(final boolean bookmark) {
 		this.isAutoBookMark = bookmark;
+		return this;
 	}
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.XMLWorkerConfig#getRootTags()
