@@ -331,10 +331,10 @@ public class Table extends AbstractTagProcessor {
 		if (invalidRowElements.size() > 0) {
 			// all invalid row elements taken as caption
 			int i = 0;
-			Tag captionTag = tag.getChildren().get(i);
-			while (!captionTag.getTag().equalsIgnoreCase(HTML.Tag.CAPTION)) {
-				i++;
+			Tag captionTag = tag.getChildren().get(i++);
+			while (!captionTag.getTag().equalsIgnoreCase(HTML.Tag.CAPTION) && i < tag.getChildren().size()) {
 				captionTag = tag.getChildren().get(i);
+				i++;
 			}
 			String captionSideValue = captionTag.getCSS().get(CSS.Property.CAPTION_SIDE);
 			if (captionSideValue != null && captionSideValue.equalsIgnoreCase(CSS.Value.BOTTOM)) {
