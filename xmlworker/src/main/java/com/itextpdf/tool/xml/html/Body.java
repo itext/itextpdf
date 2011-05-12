@@ -32,16 +32,10 @@ package com.itextpdf.tool.xml.html;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
-import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 

@@ -61,7 +61,6 @@ import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPRow;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
@@ -70,6 +69,7 @@ import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.WidthCalculator;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 

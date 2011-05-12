@@ -38,7 +38,6 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;

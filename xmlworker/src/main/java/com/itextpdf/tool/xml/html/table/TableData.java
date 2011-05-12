@@ -47,10 +47,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;

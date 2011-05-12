@@ -50,8 +50,8 @@ import java.util.List;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 
 /**
  * Supports detection of:

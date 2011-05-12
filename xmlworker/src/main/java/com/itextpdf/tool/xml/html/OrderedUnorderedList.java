@@ -35,7 +35,6 @@ import java.util.List;
 
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;

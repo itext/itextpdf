@@ -28,13 +28,16 @@
  *
  * For more information, please contact iText Software Corp. at this address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml;
+package com.itextpdf.tool.xml.html;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.TagProcessor;
+import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 
@@ -49,9 +52,9 @@ import com.itextpdf.tool.xml.css.FontSizeTranslator;
  * page-break-before/after insertion. Override
  * {@link AbstractTagProcessor#start(Tag)} and
  * {@link AbstractTagProcessor#end(Tag, List)} in your extension.
- * 
+ *
  * @author redlab_b
- * 
+ *
  */
 public abstract class AbstractTagProcessor implements TagProcessor {
 
@@ -83,7 +86,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * {@link com.itextpdf.tool.xml.css.CSS.Property#PAGE_BREAK_BEFORE}, if the
 	 * value is always a <code>Chunk.NEXTPAGE</code> added before the
 	 * implementors {@link AbstractTagProcessor#start(Tag)} method.
-	 * 
+	 *
 	 */
 	public final List<Element> startElement(final Tag tag) {
 		float fontSize = fontsizeTrans.translateFontSize(tag);
@@ -126,7 +129,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * currentContentList after calling
 	 * {@link AbstractTagProcessor#end(Tag, List)}.
 	 */
-	public final List<Element> endElement(Tag tag, List<Element> currentContent) {
+	public final List<Element> endElement(final Tag tag, final List<Element> currentContent) {
 		List<Element> list = end(tag, currentContent);
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_AFTER);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
@@ -141,7 +144,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * actions that should be done in {@link TagProcessor#endElement(Tag, List)}.
 	 * The {@link AbstractTagProcessor#endElement(Tag, List)} calls this method
 	 * after or before doing certain stuff, (see it's description).
-	 * 
+	 *
 	 * @param tag the tag
 	 * @param currentContent the content created from e.g. inner tags, inner content and not yet added to document.
 	 * @return a List containing iText Element objects

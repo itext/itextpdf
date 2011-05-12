@@ -38,7 +38,6 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Provider;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;

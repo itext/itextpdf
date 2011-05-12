@@ -53,7 +53,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfDestination;
 import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
