@@ -100,7 +100,8 @@ public class HTMLWorkerFactoryTest {
 //	  private static final String TEST = "headers_noroottag_";
 //	  private static final String TEST = "index_anchor_";
 //	  private static final String TEST = "lineheight_";
-	  private static final String TEST = "table_exception_";
+//	  private static final String TEST = "table_exception_";
+	  private static final String TEST = "pagebreaks_";
 
     static {
     	FontFactory.registerDirectories();
