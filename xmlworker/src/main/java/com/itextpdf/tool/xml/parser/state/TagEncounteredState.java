@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -68,7 +68,7 @@ public class TagEncounteredState implements State {
 	 */
 	public void process(final int character) {
 		String tag = this.parser.current();
-		if (Character.isWhitespace(character) || character == '>' || character == '/' || tag.equals("!--") || tag.equals("![CDATA[")) {
+		if (Character.isWhitespace(character) || character == '>' || character == '/' || character == ':' || tag.equals("!--") || tag.equals("![CDATA[")) {
 			// cope with <? xml and <! DOCTYPE
 			if (tag.length() > 0) {
 				if (tag.equals("!--")) {
@@ -102,8 +102,10 @@ public class TagEncounteredState implements State {
 					this.parser.memory().currentTag(this.parser.current());
 					this.parser.flush();
 					this.parser.selectState().selfClosing();
+				} else if (character == ':') {
+					this.parser.memory().namespace(tag);
+					this.parser.flush();
 				}
-
 			} else if (character == '/') {
 				this.parser.selectState().closingTag();
 			}

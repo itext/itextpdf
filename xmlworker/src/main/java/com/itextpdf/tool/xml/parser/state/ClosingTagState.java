@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -69,7 +69,11 @@ public class ClosingTagState implements State {
 			this.parser.memory().currentTag(this.parser.current());
 			this.parser.endElement();
 			this.parser.flush();
+			this.parser.memory().flushNameSpace();
 			parser.selectState().inTag();
+		} else if (character == ':') {
+			this.parser.memory().namespace(this.parser.current());
+			this.parser.flush();
 		} else if (!Character.isWhitespace(character)){
 			this.parser.append(character);
 		}

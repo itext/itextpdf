@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -70,6 +70,7 @@ public class SelfClosingTagState implements State {
 			this.parser.startElement();
 			this.parser.endElement();
 			this.parser.flush();
+			this.parser.memory().flushNameSpace();
 			this.parser.selectState().inTag();
 		}
 	}

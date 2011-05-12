@@ -43,7 +43,6 @@
  */
 package com.itextpdf.tool.xml;
 
-import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.tool.xml.parser.XMLParserListener;
 
 /**
@@ -52,7 +51,7 @@ import com.itextpdf.tool.xml.parser.XMLParserListener;
  * @author redlab_b
  *
  */
-public interface XMLWorker extends SimpleXMLDocHandler, XMLParserListener {
+public interface XMLWorker extends XMLParserListener {
 	/**
 	 * Set the configuration object.
 	 *

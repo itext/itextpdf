@@ -57,9 +57,10 @@ public interface TagProcessorFactory {
 	 * Looks up a TagProcessor for the given tag.
 	 *
 	 * @param tag the tag to find a processor for.
+	 * @param nameSpace the namespace
 	 * @return the {@link TagProcessor} mapped to this tag.
 	 * @throws NoTagProcessorException implementers should thrown this if there is no mapping found.
 	 */
-	TagProcessor getProcessor(String tag) throws NoTagProcessorException;
+	TagProcessor getProcessor(String tag, String nameSpace) throws NoTagProcessorException;
 
 }

@@ -58,9 +58,9 @@ import com.itextpdf.tool.xml.parser.XMLParser;
 public class InsideTagHTMLState implements State {
 
 	private final XMLParser parser;
-	private int lastChar = (int) ' ';
-	private List<String> noSanitize = new ArrayList<String>(1);
-	private List<String> ignoreLastChars = new ArrayList<String>(9);
+	private int lastChar = ' ';
+	private final List<String> noSanitize = new ArrayList<String>(1);
+	private final List<String> ignoreLastChars = new ArrayList<String>(9);
 	/**
 	 * @param parser the XMLParser
 	 */
@@ -83,6 +83,7 @@ public class InsideTagHTMLState implements State {
 		ignoreLastChars.add(HTML.Tag.DD);
 		ignoreLastChars.add(HTML.Tag.DT);
 		ignoreLastChars.add(HTML.Tag.HR);
+		ignoreLastChars.add(HTML.Tag.BR);
 	}
 
 	/*
@@ -107,7 +108,7 @@ public class InsideTagHTMLState implements State {
 			} else {
 				if (this.parser.memory().whitespaceTag().length() != 0) {
 					if (ignoreLastChars.contains(this.parser.memory().whitespaceTag())) {
-						lastChar = (int) ' ';
+						lastChar = ' ';
 					}
 					this.parser.memory().whitespaceTag("");
 				}

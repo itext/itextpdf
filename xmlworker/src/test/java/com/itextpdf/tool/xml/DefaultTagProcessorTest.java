@@ -71,12 +71,12 @@ public class DefaultTagProcessorTest {
 
 	@Test
 	public void testLoadClassName() {
-		assertTrue(tp.getProcessor("a") instanceof Anchor);
-		assertTrue(tp.getProcessor("table") instanceof Table);
+		assertTrue(tp.getProcessor("a", "") instanceof Anchor);
+		assertTrue(tp.getProcessor("table", "") instanceof Table);
 	}
 
 	@Test(expected = NoTagProcessorException.class)
 	public void loadFail() {
-		tp.getProcessor("unknown");
+		tp.getProcessor("unknown", "");
 	}
 }

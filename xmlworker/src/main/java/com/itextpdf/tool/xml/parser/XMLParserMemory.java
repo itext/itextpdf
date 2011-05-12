@@ -63,6 +63,7 @@ public class XMLParserMemory {
 	private final StringBuilder comment = new StringBuilder();;
 	private final Map<String, String> attr;
 	private String wsTag = "";
+	private String currentNameSpace = "";
 
 	/**
 	 *
@@ -142,7 +143,7 @@ public class XMLParserMemory {
 	/**
 	 * Returns last tag that needs to be taken into account for HTML Whitespace handling.<br />
 	 * Used by {@link InsideTagHTMLState}, only for HTML processing.
-	 * @return tag 
+	 * @return tag
 	 */
 	public String whitespaceTag() {
 		return this.wsTag ;
@@ -153,8 +154,31 @@ public class XMLParserMemory {
 	 * Used by {@link InsideTagHTMLState}, only for HTML processing.
 	 * @param tag the tag
 	 */
-	public void whitespaceTag(String tag) {
+	public void whitespaceTag(final String tag) {
 		this.wsTag = tag;
+	}
+
+	/**
+	 * Sets the current namespace
+	 * @param ns the current namespace
+	 */
+	public void namespace(final String ns) {
+		this.currentNameSpace = ns;
+	}
+
+	/**
+	 * Flushes the namespace memory
+	 */
+	public void flushNameSpace() {
+		this.currentNameSpace = "";
+	}
+
+	/**
+	 * Get the current namespace
+	 * @return the current namespace or empty String if no namespace
+	 */
+	public String getNameSpace() {
+		return this.currentNameSpace;
 	}
 
 }

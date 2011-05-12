@@ -49,9 +49,12 @@ import java.util.Map;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 
 /**
- * A Default implementation of the TagProcessorFactory that uses a map to store the TagProcessors. Within the same
- * {@link ClassLoader}s this Processor can also load the processors when they are only stored with there fully qualified
- * class names.
+ * A Default implementation of the TagProcessorFactory that uses a map to store
+ * the TagProcessors. Within the same {@link ClassLoader}s this Processor can
+ * also load the processors when they are only stored with there fully qualified
+ * class names.<br />
+ * <strong>Note:</strong> this implementation does not use namespaces (yet)!
+ *
  *
  * @author redlab_b
  *
@@ -136,7 +139,7 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 	/**
 	 * @throws NoTagProcessorException when the processor was not found for the given tag.
 	 */
-	public TagProcessor getProcessor(final String tag) {
+	public TagProcessor getProcessor(final String tag, final String nameSpace) {
 		FactoryObject fo = map.get(tag);
 		if (fo != null) {
 			return fo.getProcessor();
@@ -164,7 +167,7 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 		map.put(tag, new FactoryObject(processor.getClass().getName(), processor));
 
 	}
-	
+
 	/**
 	 * Add one tag processor that handles multiple tags.
 	 * @param processor the TagProcessor.
