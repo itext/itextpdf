@@ -66,6 +66,8 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.TextElementArray;
 import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.HtmlUtilities;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.draw.LineSeparator;
@@ -74,6 +76,7 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(HTMLWorker.class);
 	/**
 	 * DocListener that will listen to the Elements
 	 * produced by parsing the HTML.
@@ -96,7 +99,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * Creates a new instance of HTMLWorker
 	 * @param document A class that implements <CODE>DocListener</CODE>
 	 */
-	public HTMLWorker(DocListener document) {
+	public HTMLWorker(final DocListener document) {
 		this(document, null, null);
 	}
 
@@ -107,7 +110,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param style		A StyleSheet
 	 * @since 5.0.6
 	 */
-	public HTMLWorker(DocListener document, Map<String, HTMLTagProcessor> tags, StyleSheet style) {
+	public HTMLWorker(final DocListener document, final Map<String, HTMLTagProcessor> tags, final StyleSheet style) {
 		this.document = document;
 		setSupportedTags(tags);
 		setStyleSheet(style);
@@ -139,7 +142,8 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param reader	the content
 	 * @throws IOException
 	 */
-	public void parse(Reader reader) throws IOException {
+	public void parse(final Reader reader) throws IOException {
+		LOGGER.info("Please note, there is a more extended version of the HTMLWorker available in the iText XMLWorker");
 		SimpleXMLParser.parse(this, null, reader, true);
 	}
 
@@ -175,7 +179,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     /**
      * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#startElement(java.lang.String, java.util.Map)
      */
-    public void startElement(String tag, Map<String, String> attrs) {
+    public void startElement(final String tag, final Map<String, String> attrs) {
 		HTMLTagProcessor htmlTag = tags.get(tag);
 		if (htmlTag == null) {
 			return;
@@ -217,7 +221,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	/**
 	 * @see com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler#endElement(java.lang.String)
 	 */
-	public void endElement(String tag) {
+	public void endElement(final String tag) {
 		HTMLTagProcessor htmlTag = tags.get(tag);
 		if (htmlTag == null) {
 			return;
@@ -298,7 +302,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param element
 	 * @since 5.0.6
 	 */
-	public void pushToStack(Element element) {
+	public void pushToStack(final Element element) {
 		if (element != null)
 			stack.push(element);
 	}
@@ -309,7 +313,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param attrs	the corresponding attributes
 	 * @since 5.0.6
 	 */
-	public void updateChain(String tag, Map<String, String> attrs) {
+	public void updateChain(final String tag, final Map<String, String> attrs) {
 		chain.addToChain(tag, attrs);
 	}
 
@@ -318,7 +322,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param tag	the new tag
 	 * @since 5.0.6
 	 */
-	public void updateChain(String tag) {
+	public void updateChain(final String tag) {
 		chain.removeChain(tag);
 	}
 
@@ -372,7 +376,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param providers a Map with different providers
 	 * @since 5.0.6
 	 */
-	public void setProviders(Map<String, Object> providers) {
+	public void setProviders(final Map<String, Object> providers) {
 		if (providers == null)
 			return;
 		this.providers = providers;
@@ -397,7 +401,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @return	a Chunk with content
 	 * @since 5.0.6
 	 */
-	public Chunk createChunk(String content) {
+	public Chunk createChunk(final String content) {
 		return factory.createChunk(content, chain);
 	}
 	/**
@@ -414,7 +418,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @return	a List object
 	 * @since 5.0.6
 	 */
-	public com.itextpdf.text.List createList(String tag) {
+	public com.itextpdf.text.List createList(final String tag) {
 		return factory.createList(tag, chain);
 	}
 	/**
@@ -431,7 +435,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @return a LineSeparator object
 	 * @since 5.0.6
 	 */
-	public LineSeparator createLineSeparator(Map<String, String> attrs) {
+	public LineSeparator createLineSeparator(final Map<String, String> attrs) {
 		return factory.createLineSeparator(attrs, currentParagraph.getLeading()/2);
 	}
 
@@ -443,7 +447,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @throws IOException
 	 * @since 5.0.6
 	 */
-	public Image createImage(Map<String, String> attrs) throws DocumentException, IOException {
+	public Image createImage(final Map<String, String> attrs) throws DocumentException, IOException {
 		String src = attrs.get(HtmlTags.SRC);
 		if (src == null)
 			return null;
@@ -461,7 +465,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @return	a CellWrapper object
 	 * @since 5.0.6
 	 */
-	public CellWrapper createCell(String tag) {
+	public CellWrapper createCell(final String tag) {
 		return new CellWrapper(tag, chain);
 	}
 
@@ -555,7 +559,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @throws DocumentException
 	 * @since	5.0.6
 	 */
-	public void processImage(Image img, Map<String, String> attrs) throws DocumentException {
+	public void processImage(final Image img, final Map<String, String> attrs) throws DocumentException {
 		ImageProcessor processor = (ImageProcessor)providers.get(HTMLWorker.IMG_PROCESSOR);
 		if (processor == null || !processor.process(img, attrs, chain, document)) {
 			String align = attrs.get(HtmlTags.ALIGN);
@@ -701,7 +705,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param pendingTR the pendingTR to set
 	 * @since 5.0.6
 	 */
-	public void setPendingTR(boolean pendingTR) {
+	public void setPendingTR(final boolean pendingTR) {
 		this.pendingTR = pendingTR;
 	}
 
@@ -717,7 +721,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param pendingTD the pendingTD to set
 	 * @since 5.0.6
 	 */
-	public void setPendingTD(boolean pendingTD) {
+	public void setPendingTD(final boolean pendingTD) {
 		this.pendingTD = pendingTD;
 	}
 
@@ -733,7 +737,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param pendingLI the pendingLI to set
 	 * @since 5.0.6
 	 */
-	public void setPendingLI(boolean pendingLI) {
+	public void setPendingLI(final boolean pendingLI) {
 		this.pendingLI = pendingLI;
 	}
 
@@ -749,7 +753,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param insidePRE the insidePRE to set
 	 * @since 5.0.6
 	 */
-	public void setInsidePRE(boolean insidePRE) {
+	public void setInsidePRE(final boolean insidePRE) {
 		this.insidePRE = insidePRE;
 	}
 
@@ -765,7 +769,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @param skipText the skipText to set
 	 * @since 5.0.6
 	 */
-	public void setSkipText(boolean skipText) {
+	public void setSkipText(final boolean skipText) {
 		this.skipText = skipText;
 	}
 
@@ -781,7 +785,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @return a List of Element objects
 	 * @throws IOException
 	 */
-	public static List<Element> parseToList(Reader reader, StyleSheet style)
+	public static List<Element> parseToList(final Reader reader, final StyleSheet style)
 			throws IOException {
 		return parseToList(reader, style, null);
 	}
@@ -794,8 +798,8 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @return a List of Element objects
 	 * @throws IOException
 	 */
-	public static List<Element> parseToList(Reader reader, StyleSheet style,
-			HashMap<String, Object> providers) throws IOException {
+	public static List<Element> parseToList(final Reader reader, final StyleSheet style,
+			final HashMap<String, Object> providers) throws IOException {
 		return parseToList(reader, style, null, providers);
 	}
 
@@ -809,8 +813,8 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @throws IOException
 	 * @since 5.0.6
 	 */
-	public static List<Element> parseToList(Reader reader, StyleSheet style,
-			Map<String, HTMLTagProcessor> tags, HashMap<String, Object> providers) throws IOException {
+	public static List<Element> parseToList(final Reader reader, final StyleSheet style,
+			final Map<String, HTMLTagProcessor> tags, final HashMap<String, Object> providers) throws IOException {
 		HTMLWorker worker = new HTMLWorker(null, tags, style);
 		worker.document = worker;
 		worker.setProviders(providers);
@@ -824,7 +828,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	/**
 	 * @see com.itextpdf.text.ElementListener#add(com.itextpdf.text.Element)
 	 */
-	public boolean add(Element element) throws DocumentException {
+	public boolean add(final Element element) throws DocumentException {
 		objectList.add(element);
 		return true;
 	}
@@ -857,7 +861,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	/**
 	 * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
 	 */
-	public boolean setMarginMirroring(boolean marginMirroring) {
+	public boolean setMarginMirroring(final boolean marginMirroring) {
 		return false;
 	}
 
@@ -865,28 +869,28 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
      * @see com.itextpdf.text.DocListener#setMarginMirroring(boolean)
 	 * @since	2.1.6
 	 */
-	public boolean setMarginMirroringTopBottom(boolean marginMirroring) {
+	public boolean setMarginMirroringTopBottom(final boolean marginMirroring) {
 		return false;
 	}
 
 	/**
 	 * @see com.itextpdf.text.DocListener#setMargins(float, float, float, float)
 	 */
-	public boolean setMargins(float marginLeft, float marginRight,
-			float marginTop, float marginBottom) {
+	public boolean setMargins(final float marginLeft, final float marginRight,
+			final float marginTop, final float marginBottom) {
 		return true;
 	}
 
 	/**
 	 * @see com.itextpdf.text.DocListener#setPageCount(int)
 	 */
-	public void setPageCount(int pageN) {
+	public void setPageCount(final int pageN) {
 	}
 
 	/**
 	 * @see com.itextpdf.text.DocListener#setPageSize(com.itextpdf.text.Rectangle)
 	 */
-	public boolean setPageSize(Rectangle pageSize) {
+	public boolean setPageSize(final Rectangle pageSize) {
 		return true;
 	}
 
@@ -897,7 +901,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 	 * @deprecated use setProviders() instead
 	 */
 	@Deprecated
-	public void setInterfaceProps(HashMap<String, Object> providers) {
+	public void setInterfaceProps(final HashMap<String, Object> providers) {
 		setProviders(providers);
 	}
 	/**
