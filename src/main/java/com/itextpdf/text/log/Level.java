@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: Logger.java 4847 2011-05-05 19:46:13Z redlab_b $
  *
  * This file is part of the iText (R) project. Copyright (c) 1998-2011 1T3XT
  * BVBA Authors: Balder Van Camp, Emiel Ackermann, et al.
@@ -41,65 +41,11 @@
 package com.itextpdf.text.log;
 
 /**
- * Logger interface
- * {@link LoggerFactory#setLogger(Logger)}.
- *
+ * The different log levels.
  * @author redlab_b
  *
  */
-public interface Logger {
+public enum Level {
 
-	/**
-	 * @param klass
-	 * @return the logger for the given klass
-	 */
-	Logger getLogger(Class<?> klass);
-
-	Logger getLogger(String name);
-	/**
-	 * @param level
-	 * @return true if there should be logged for the given level
-	 */
-	boolean isLogging(Level level);
-	/**
-	 * Log a warning message.
-	 * @param message
-	 */
-	void warn(final String message);
-
-	/**
-	 * Log a trace message.
-	 * @param message
-	 */
-	void trace(final String message);
-
-	/**
-	 * Log a debug message.
-	 * @param message
-	 */
-	void debug(final String message);
-
-	/**
-	 * Log an info message.
-	 * @param message
-	 */
-	void info(final String message);
-	/**
-	 * Log an error message.
-	 * @param message
-	 */
-	void error(final String message);
-
-	/**
-	 * Log an error message and exception.
-	 * @param message
-	 * @param e
-	 */
-	void error(final String message, Exception e);
-
-	/**
-	 * @param name
-	 * @return
-	 */
-
+	ERROR, WARN, INFO, DEBUG, TRACE;
 }
