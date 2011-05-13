@@ -58,6 +58,14 @@ public class CssFilesImpl implements CssFiles {
 		this.select = new CssSelector();
 	}
 
+	/**
+	 * @param css
+	 */
+	public CssFilesImpl(final CssFile css) {
+		this();
+		this.add(css);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *

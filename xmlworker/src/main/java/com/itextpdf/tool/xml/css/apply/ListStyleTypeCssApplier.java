@@ -52,6 +52,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.List;
 import com.itextpdf.text.RomanList;
 import com.itextpdf.text.ZapfDingbatsList;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
@@ -62,6 +63,7 @@ import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
+import com.itextpdf.tool.xml.net.exc.NoImageException;
 
 /**
  * @author redlab_b
@@ -71,7 +73,7 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 
 	private final XMLWorkerConfig configuration;
 	private final CssUtils utils = CssUtils.getInstance();
-	private static final Logger logger = LoggerFactory.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(ListStyleTypeCssApplier.class);
 
 	/**
 	 * @param configuration the provider
@@ -131,12 +133,17 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 			try {
 				img = new ImageRetrieve(configuration.getProvider()).retrieveImage(url);
 				lst.setListSymbol(new Chunk(img, 0, 0, false));
-				if (logger.isLogging()) {
-					logger.log(ListStyleTypeCssApplier.class, String.format("Using image as list symbol from %s", url));
+				if (logger.isLogging(Level.TRACE)) {
+					logger.trace(String.format("Using image as list symbol from %s", url));
 				}
 			} catch (IOException e) {
-				if (logger.isLogging()) {
-					logger.log(ListStyleTypeCssApplier.class, String.format("Failed retrieving image from %s", url));
+				if (logger.isLogging(Level.ERROR)) {
+					logger.error(String.format("Failed retrieving image from %s", url), e);
+				}
+				lst = new List(List.UNORDERED);
+			} catch (NoImageException e) {
+				if (logger.isLogging(Level.ERROR)) {
+					logger.error(e.getLocalizedMessage(), e);
 				}
 				lst = new List(List.UNORDERED);
 			}

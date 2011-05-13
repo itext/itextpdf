@@ -48,15 +48,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Provider;
-import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.net.exc.NoImageException;
 
 /**
  * @author redlab_b
  *
  */
 public class ImageRetrieve {
-
 	private final Provider provider;
 	/**
 	 * @param provider the provider to use.
@@ -68,9 +69,10 @@ public class ImageRetrieve {
 	/**
 	 * @param src an URI that can be used to retrieve an image
 	 * @return an iText Image object
+	 * @throws NoImageException
 	 * @throws IOException
 	 */
-	public com.itextpdf.text.Image retrieveImage(final String src) throws IOException {
+	public com.itextpdf.text.Image retrieveImage(final String src) throws NoImageException, IOException {
 		com.itextpdf.text.Image img;
 		img = provider.retrieve(src);
 
@@ -94,17 +96,17 @@ public class ImageRetrieve {
 						img = com.itextpdf.text.Image.getInstance(path);
 					} else {
 						img = com.itextpdf.text.Image.getInstance(new URL("file:///" + path));
-
 					}
 					if (null != img) {
 						provider.store( src, img);
 					}
-					// TODO configurable option if errors should be swallowed ?
 				} catch (BadElementException e) {
-					throw new RuntimeWorkerException(e);
+					throw new NoImageException(src, e);
 				} catch (MalformedURLException e) {
-					throw new RuntimeWorkerException(e);
+					throw new NoImageException(src, e);
 				}
+			} else {
+				throw new NoImageException(src);
 			}
 		}
 		return img;

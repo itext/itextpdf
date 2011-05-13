@@ -50,14 +50,15 @@ import java.util.Map;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
-import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
+import com.itextpdf.tool.xml.net.exc.NoImageException;
 
 /**
  * @author redlab_b
@@ -66,7 +67,7 @@ import com.itextpdf.tool.xml.net.ImageRetrieve;
 public class Image extends AbstractTagProcessor {
 
 	private final CssUtils utils = CssUtils.getInstance();
-	private static final Logger logger = LoggerFactory.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(Image.class);
 
 	/*
 	 * (non-Javadoc)
@@ -84,13 +85,17 @@ public class Image extends AbstractTagProcessor {
 		if (null != src && src.length() > 0) {
 			// check if the image was already added once
 			try {
-				img = new ImageRetrieve(configuration.getProvider()).retrieveImage(src);
-				if (logger.isLogging()) {
-					logger.log(ListStyleTypeCssApplier.class, String.format("Using image from %s", src));
+				if (logger.isLogging(Level.TRACE)) {
+					logger.trace(String.format("Using image from %s", src));
 				}
+				img = new ImageRetrieve(configuration.getProvider()).retrieveImage(src);
 			} catch (IOException e) {
-				if (logger.isLogging()) {
-					logger.log(ListStyleTypeCssApplier.class, String.format("Failed retrieving image from %s", src));
+				if (logger.isLogging(Level.ERROR)) {
+					logger.error(String.format("Failed retrieving image from %s continue without image", src), e);
+				}
+			} catch (NoImageException e) {
+				if (logger.isLogging(Level.ERROR)) {
+					logger.error(e.getLocalizedMessage(), e);
 				}
 			}
 			if (null != img) {

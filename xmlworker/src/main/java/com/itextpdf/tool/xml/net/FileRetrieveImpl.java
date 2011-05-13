@@ -49,6 +49,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 
 /**
@@ -57,14 +60,18 @@ import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
  */
 public class FileRetrieveImpl {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileRetrieveImpl.class);
     /**
-     * Process content from a given URL.
+     * Process content from a given URL. using {@link URL#openStream()}
      * @param url the URL to process
      * @param processor the ReadingProcessor
      * @throws IOException if something went wrong.
      */
     public void processFromURL(final URL url, final ReadingProcessor processor) throws IOException {
     	// TODO add proxy
+    	if (LOGGER.isLogging(Level.DEBUG)) {
+			LOGGER.debug(String.format("Retrieving file from URL %s", url.toString()));
+		}
         read(processor, url.openStream());
     }
     /**

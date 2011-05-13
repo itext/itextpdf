@@ -67,7 +67,7 @@ public class Tags {
 	/**
 	 * @return a default XHTML {@link TagProcessorFactory}
 	 */
-	public final TagProcessorFactory getHtmlTagProcessorFactory() {
+	public static final TagProcessorFactory getHtmlTagProcessorFactory() {
 		DefaultTagProcessorFactory factory = new DefaultTagProcessorFactory();
 		factory.addProcessor("xml", defaultpackage+"head.XML");
 		factory.addProcessor("!doctype", dummyTagProcessor);

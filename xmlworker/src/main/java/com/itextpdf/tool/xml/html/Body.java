@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
@@ -45,6 +47,7 @@ import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 public class Body extends AbstractTagProcessor {
 
 //	private final CssUtils utils = CssUtils.getInstance();
+	private static final Logger LOGGER = LoggerFactory.getLogger(Body.class);
 
 	/*
 	 * (non-Javadoc)

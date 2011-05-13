@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: XMLWorkerConfigurationImpl.java 53 2011-05-12 13:33:22Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -41,50 +41,77 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
+package com.itextpdf.tool.xml.taglistener;
 
-package com.itextpdf.tool.xml.html.head;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.itextpdf.text.Element;
-import com.itextpdf.text.log.Level;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.TagListener;
+import com.itextpdf.tool.xml.css.CSS;
+import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.html.HTML;
 
 /**
  * @author redlab_b
  *
  */
-public class XML extends AbstractTagProcessor {
-
-	private static final Logger logger = LoggerFactory.getLogger(XML.class);
-	/*
-	 * (non-Javadoc)
+public class DocMarginTagListener implements TagListener {
+	/**
 	 *
-	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
-	@Override
-	public List<Element> start(final Tag tag) {
-		String enc = tag.getAttributes().get("encoding");
-		if (null != enc) {
-			if (Charset.isSupported(enc)) {
-				this.configuration.charSet(Charset.forName(enc));
-				if (logger.isLogging(Level.DEBUG)) {
-					logger.debug(
-							String.format("Detected Charset %s from xml tag, using detected charset.", enc));
-				}
-			} else {
-				if (logger.isLogging(Level.DEBUG)) {
-					logger.debug(String.format("No Charset detected from xml tag, using default"));
-				}
-			}
+	private final PdfWriter writer;
+	/**
+	 *
+	 */
+	private final Document doc;
+	private final CssUtils cssUtils;
 
-		}
-		return new ArrayList<Element>(0);
+	/**
+	 * @param writer
+	 * @param doc
+	 */
+	public DocMarginTagListener(final PdfWriter writer, final Document doc) {
+		this.writer = writer;
+		this.doc = doc;
+		this.cssUtils = CssUtils.getInstance();
 	}
 
+	public void open(final Tag tag) {
+		if (tag.getTag().equalsIgnoreCase(HTML.Tag.BODY)) {
+			float pageWidth = doc.getPageSize().getWidth();
+			float marginLeft = 0;
+			float marginRight = 0;
+			float marginTop = 0;
+			float marginBottom = 0;
+			Map<String, String> css = tag.getCSS();
+			for (Entry<String, String> entry : css.entrySet()) {
+				String key = entry.getKey();
+				String value = entry.getValue();
+				if (key.equalsIgnoreCase(CSS.Property.MARGIN_LEFT)) {
+					marginLeft = cssUtils.parseValueToPt(value, pageWidth);
+				} else if (key.equalsIgnoreCase(CSS.Property.MARGIN_RIGHT)) {
+					marginRight = cssUtils.parseValueToPt(value, pageWidth);
+				} else if (key.equalsIgnoreCase(CSS.Property.MARGIN_TOP)) {
+					marginTop = cssUtils.parseValueToPt(value, pageWidth);
+				} else if (key.equalsIgnoreCase(CSS.Property.MARGIN_BOTTOM)) {
+					marginBottom = cssUtils.parseValueToPt(value, pageWidth);
+				}
+			}
+			doc.setMargins(marginLeft, marginRight, marginTop, marginBottom);
+			doc.open();
+		}
+
+	}
+
+	public void close(final Tag tag) {
+		if (tag.getTag().equalsIgnoreCase(HTML.Tag.BODY)) {
+			writer.close();
+		}
+	}
+
+	public void text(final Tag tag, final String text) {
+	}
 }

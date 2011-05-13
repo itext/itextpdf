@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
@@ -63,7 +64,7 @@ import com.itextpdf.tool.xml.html.AbstractTagProcessor;
  */
 public class Meta extends AbstractTagProcessor {
 
-	private static final Logger logger = LoggerFactory.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(Meta.class);
 	/*
 	 * (non-Javadoc)
 	 *
@@ -83,13 +84,13 @@ public class Meta extends AbstractTagProcessor {
 							String enc = split2[1];
 							if (Charset.isSupported(enc)) {
 								this.configuration.charSet(Charset.forName(enc));
-								if (logger.isLogging()) {
-									logger.log(
+								if (logger.isLogging(Level.DEBUG)) {
+									logger.debug(
 											String.format("Detected Charset %s from meta tag, using detected charset.", enc));
 								}
 							} else {
-								if (logger.isLogging()) {
-									logger.log(
+								if (logger.isLogging(Level.DEBUG)) {
+									logger.debug(
 											String.format("No Charset detected from metatag, using %s.", this.configuration
 													.charSet().displayName()));
 								}

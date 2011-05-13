@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: XMLWorkerConfigurationImpl.java 53 2011-05-12 13:33:22Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -41,50 +41,45 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-
-package com.itextpdf.tool.xml.html.head;
-
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.itextpdf.text.Element;
-import com.itextpdf.text.log.Level;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+package com.itextpdf.tool.xml.exceptions;
 
 /**
- * @author redlab_b
+ * Due to support for Java 1.5, a NotImplementedException
  *
  */
-public class XML extends AbstractTagProcessor {
+public class NotImplementedException extends RuntimeException {
 
-	private static final Logger logger = LoggerFactory.getLogger(XML.class);
-	/*
-	 * (non-Javadoc)
+	/**
 	 *
-	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
-	@Override
-	public List<Element> start(final Tag tag) {
-		String enc = tag.getAttributes().get("encoding");
-		if (null != enc) {
-			if (Charset.isSupported(enc)) {
-				this.configuration.charSet(Charset.forName(enc));
-				if (logger.isLogging(Level.DEBUG)) {
-					logger.debug(
-							String.format("Detected Charset %s from xml tag, using detected charset.", enc));
-				}
-			} else {
-				if (logger.isLogging(Level.DEBUG)) {
-					logger.debug(String.format("No Charset detected from xml tag, using default"));
-				}
-			}
+	private static final long serialVersionUID = 1L;
 
-		}
-		return new ArrayList<Element>(0);
+	/**
+	 *
+	 */
+	public NotImplementedException() {
+	}
+
+	/**
+	 * @param arg0
+	 */
+	public NotImplementedException(final String arg0) {
+		super(arg0);
+	}
+
+	/**
+	 * @param arg0
+	 */
+	public NotImplementedException(final Throwable arg0) {
+		super(arg0);
+	}
+
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public NotImplementedException(final String arg0, final Throwable arg1) {
+		super(arg0, arg1);
 	}
 
 }

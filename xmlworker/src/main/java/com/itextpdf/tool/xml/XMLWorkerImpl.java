@@ -118,6 +118,9 @@ public class XMLWorkerImpl implements XMLWorker, SimpleXMLDocHandler {
 		if (null != config.getCssResolver()) {
 			config.getCssResolver().resolveStyles(t);
 		}
+		if (hasTagListener()) {
+			listenStart();
+		}
 		try {
 			TagProcessor tp = resolveProcessor(tag, ns);
 			if (tp.isStackOwner()) {
@@ -165,6 +168,9 @@ public class XMLWorkerImpl implements XMLWorker, SimpleXMLDocHandler {
 	public void endElement(String tag, final String ns) {
 		if (config.isParsingHTML()) {
 			tag = tag.toLowerCase();
+		}
+		if (hasTagListener()) {
+			listenEnd();
 		}
 		TagProcessor tp;
 		try {
@@ -220,6 +226,8 @@ public class XMLWorkerImpl implements XMLWorker, SimpleXMLDocHandler {
 		}
 	}
 
+
+
 	/**
 	 * This method is called when the {@link SimpleXMLParser} encountered text. This method searches for the current tag
 	 * {@link TagProcessor} in the given {@link TagProcessorFactory}. If none found and acceptUknown is false a
@@ -233,11 +241,15 @@ public class XMLWorkerImpl implements XMLWorker, SimpleXMLDocHandler {
 					String encoded;
 					try {
 						// TODO Java 1.6 - replace charste.name() with charset
-						// FIXME issues with html entities and utf!
+						// FIXME issues with html entities and utf or something else!
+						// or transmit bytes to this method convert here using detected charset?
 						encoded = new String(str.getBytes(), this.config.charSet().name());
 						// encoded = new String(str.getBytes());
 					} catch (UnsupportedEncodingException e) {
 						throw new RuntimeWorkerException(e);
+					}
+					if (hasTagListener()) {
+						listenText(encoded);
 					}
 					TagProcessor tp = resolveProcessor(current.getTag(), current.getNameSpace());
 					List<Element> content = tp.content(current, encoded);
@@ -262,6 +274,37 @@ public class XMLWorkerImpl implements XMLWorker, SimpleXMLDocHandler {
 			}
 		}
 
+	}
+
+	/**
+	 * @param none
+	 * @param encoded
+	 */
+	private void listenStart() {
+		for (TagListener tl : config.getTagListeners()) {
+			tl.open(current);
+		}
+	}
+
+	/**
+	 * @param current2
+	 */
+	private void listenEnd() {
+		for (TagListener tl : config.getTagListeners()) {
+			tl.close(current);
+		}
+	}
+
+	private void listenText(final String text) {
+		for (TagListener tl : config.getTagListeners()) {
+			tl.text(current, text);
+		}
+	}
+	/**
+	 * @return
+	 */
+	private boolean hasTagListener() {
+		return config.hasTagListener();
 	}
 
 	/*

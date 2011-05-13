@@ -49,9 +49,9 @@ package com.itextpdf.tool.xml.html;
  *
  */
 public final class HTML {
-	
+
 	/**
-	 * 
+	 *
 	 * All Tags.
 	 *
 	 */
@@ -79,6 +79,8 @@ public final class HTML {
 		public static final String DT = "dt";
 		public static final String TH = "th";
 		public static final String HR = "hr";
+		public static final String BODY = "body";
+		public static final String HTML = "html";
 
 	}
 	/**

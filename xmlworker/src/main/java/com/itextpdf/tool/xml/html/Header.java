@@ -50,6 +50,9 @@ import java.util.Map;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfDestination;
 import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -64,6 +67,7 @@ import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
  */
 public class Header extends AbstractTagProcessor {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(Header.class);
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
@@ -97,7 +101,7 @@ public class Header extends AbstractTagProcessor {
 					// first h tag encounter
 					tree = new HeaderNode(0, writer.getRootOutline(), null);
 				} else {
-					// get position in tree | calculate parent
+					// calculate parent
 					int lastLevel = tree.level();
 					if (lastLevel == level) {
 						tree = tree.parent();
@@ -108,8 +112,15 @@ public class Header extends AbstractTagProcessor {
 						}
 					}
 				}
+				if (LOGGER.isLogging(Level.TRACE)) {
+					LOGGER.trace(String.format("Creating bookmark on %s", p.toString()));
+				}
 				HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, p), tree);
 				memory.put(XMLWorkerConfig.BOOKMARK_TREE, node);
+			} else {
+				if (LOGGER.isLogging(Level.TRACE)) {
+					LOGGER.trace("Autobookmarking disabled.");
+				}
 			}
 			l.add(p);
 		}
@@ -120,7 +131,7 @@ public class Header extends AbstractTagProcessor {
 	 * @param tag
 	 * @return
 	 */
-	private int getLevel(Tag tag) {
+	private int getLevel(final Tag tag) {
 		return Integer.parseInt(Character.toString(tag.getTag().charAt(1)));
 	}
 

@@ -49,6 +49,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
@@ -56,6 +57,17 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
+ * <p>A default implementation of the XMLWorkerConfig.</p>
+ * This configuration sets default values for:<br />
+ * {@link XMLWorkerConfigurationImpl#provider(Provider)} set to {@link DefaultProvider}<br />
+ * {@link XMLWorkerConfigurationImpl#pageSize(Rectangle)} set to {@link PageSize#A4}<br />
+ * {@link XMLWorkerConfigurationImpl#autoBookmark()} set to <code>false<code><br />
+ * {@link XMLWorkerConfigurationImpl#charSet()} set to {@link Charset#defaultCharset()}<br />
+ * {@link XMLWorkerConfigurationImpl#getRootTags()} set to <code> { "defaultRoot", "body", "div" }</code><br />
+ * {@link XMLWorkerConfigurationImpl#acceptUnknown} set to <code>false</code><br />
+ * {@link XMLWorkerConfigurationImpl#isHTML} set to <code>false</code><br />
+ * {@link XMLWorkerConfigurationImpl#getTagFactory()} you must set with {@link XMLWorkerConfigurationImpl#tagProcessorFactory(TagProcessorFactory)}<br />
+ * Other things you can set are not mandatory.
  * @author redlab_b
  *
  */
@@ -71,14 +83,17 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	private Document doc;
 	private final Map<String, Object> memory;
 	private Charset charSet = Charset.defaultCharset();
-	private boolean isAutoBookMark = true;
+	private boolean isAutoBookMark = false;
 	private final List<String> roottags = Arrays.asList(new String[] { "defaultRoot", "body", "div" });
+	private final List<TagListener> tagListeners;
+	private boolean hasTaglistener;
 
 	/**
 	 *
 	 */
 	public XMLWorkerConfigurationImpl(){
 		memory = new HashMap<String, Object>();
+		this.tagListeners = new CopyOnWriteArrayList<TagListener>();
 	}
 	/**
 	 * @param doc the document to write to.
@@ -270,7 +285,7 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	 * @param bookmark true to enable auto bookmarking of headers, false otherwise.
 	 * @return this configuration object
 	 */
-	public XMLWorkerConfig autoBookMark(final boolean bookmark) {
+	public XMLWorkerConfigurationImpl autoBookMark(final boolean bookmark) {
 		this.isAutoBookMark = bookmark;
 		return this;
 	}
@@ -287,5 +302,39 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	 */
 	public void addRootTag(final String tag) {
 		roottags.add(tag);
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.XMLWorkerConfig#getTagListeners()
+	 */
+	public List<TagListener> getTagListeners() {
+		return new ArrayList<TagListener>(this.tagListeners);
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.XMLWorkerConfig#hasTagListener()
+	 */
+	public boolean hasTagListener() {
+		return this.hasTaglistener;
+	}
+
+	/**
+	 * @param tagListener
+	 * @return this configuration object
+	 */
+	public XMLWorkerConfigurationImpl addTagListener(final TagListener tagListener) {
+		this.tagListeners.add(tagListener);
+		this.hasTaglistener = true;
+		return this;
+	}
+
+	/**
+	 * @param tl
+	 * @return this configuration object
+	 */
+	public XMLWorkerConfigurationImpl removeTagListener(final TagListener tl) {
+		this.tagListeners.remove(tl);
+		if (this.tagListeners.size()==0) {
+			this.hasTaglistener = false;
+		}
+		return this;
 	}
 }

@@ -69,13 +69,10 @@
 					</execution>
 				</executions>
 				<configuration>
-					<!-- unpack bundle, so human can see the manifest without unpacking 
-						the jar -->
 					<unpackBundle>true</unpackBundle>
-					<!-- All com.itextpdf.text.* package are 'public' -->
 					<instructions>
 						<Export-Package>com.itextpdf.tool.xml.*</Export-Package>
-						<Import-Package>com.itextpdf.text.*</Import-Package> 
+						<Import-Package>com.itextpdf.text.*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -84,7 +81,6 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.1</version>
 				<configuration>
-					<!-- Use the Bnd generated MANIFEST.MF in the jar -->
 					<archive>
 						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
 					</archive>
@@ -92,11 +88,39 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>all</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.8</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<links>
+								<link>http://api.itextpdf.com/itext/</link>
+								<link>http://api.itextpdf.com/xtra/</link>
+							</links>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.1.0</version>
+			<version>5.1.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -110,5 +134,4 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
 </project>

@@ -164,5 +164,15 @@ public interface XMLWorkerConfig {
 	 */
 	List<String> getRootTags();
 
+	/**
+	 * @return
+	 */
+	List<TagListener> getTagListeners();
+
+	/**
+	 * @return
+	 */
+	boolean hasTagListener();
+
 
 }

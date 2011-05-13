@@ -36,6 +36,7 @@ import java.util.Map;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Provider;
@@ -51,7 +52,7 @@ import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
  */
 public class Anchor extends AbstractTagProcessor {
 
-	private static final Logger logger = LoggerFactory.getLogger();
+	private static final Logger LOGGER = LoggerFactory.getLogger(Anchor.class);
 	/*
 	 * (non-Javadoc)
 	 *
@@ -90,8 +91,12 @@ public class Anchor extends AbstractTagProcessor {
 		return l;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
+	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
@@ -104,8 +109,8 @@ public class Anchor extends AbstractTagProcessor {
 				for (Chunk c : e.getChunks()) {
 					if (null != url) {
 						if (url.startsWith("#")) {
-							if (logger.isLogging()) {
-								logger.log(Anchor.class, String.format("Creating a local goto link to %s", url));
+							if (LOGGER.isLogging(Level.TRACE)) {
+								LOGGER.trace(String.format("Creating a local goto link to %s", url));
 							}
 							c.setLocalGoto(url.replaceFirst("#", ""));
 						} else {
@@ -117,15 +122,15 @@ public class Anchor extends AbstractTagProcessor {
 								}
 								url = root + url;
 							}
-							if (logger.isLogging()) {
-								logger.log(Anchor.class, String.format("Creating a www link to %s", url));
+							if (LOGGER.isLogging(Level.TRACE)) {
+								LOGGER.trace(String.format("Creating a www link to %s", url));
 							}
 							c.setAnchor(url);
 						}
 					} else if (null != name) {
 						c.setLocalDestination(name);
-						if (logger.isLogging()) {
-							logger.log(Anchor.class, String.format("Setting local destination for  %s", name));
+						if (LOGGER.isLogging(Level.TRACE)) {
+							LOGGER.trace(String.format("Setting local destination for  %s", name));
 						}
 					}
 
@@ -135,23 +140,22 @@ public class Anchor extends AbstractTagProcessor {
 			elems.add(new NoNewLineParagraphCssApplier(configuration).apply(p, tag));
 		} else
 		// !currentContent > 0 ; An empty "a" tag has been encountered.
-		// we're using an anchor space hack here. without the space reader does not jump to destination
-		if (null != configuration.getWriter() &&  null != name) {
-			if (logger.isLogging()) {
-				logger.log(Anchor.class, String.format("Trying to set local destination %s with space hack", name));
+		// we're using an anchor space hack here. without the space, reader does
+		// not jump to destination
+		if (null != configuration.getWriter() && null != name) {
+			if (LOGGER.isLogging(Level.TRACE)) {
+				LOGGER.trace(String.format("Trying to set local destination %s with space hack", name));
 			}
 			Chunk dest = new Chunk(" ").setLocalDestination(name);
 			elems.add(dest);
 			/*
-			PdfWriter writer = configuration.getWriter();
-			ColumnText c = new ColumnText(writer.getDirectContent());
-			c.setSimpleColumn(new Phrase(dest), 1, writer.getVerticalPosition(false), 1, writer.getVerticalPosition(false), 5, Element.ALIGN_LEFT);
-			try {
-				c.go();
-			} catch (DocumentException e) {
-				throw new RuntimeWorkerException(e);
-			}
-			*/
+			 * PdfWriter writer = configuration.getWriter(); ColumnText c = new
+			 * ColumnText(writer.getDirectContent()); c.setSimpleColumn(new
+			 * Phrase(dest), 1, writer.getVerticalPosition(false), 1,
+			 * writer.getVerticalPosition(false), 5, Element.ALIGN_LEFT); try {
+			 * c.go(); } catch (DocumentException e) { throw new
+			 * RuntimeWorkerException(e); }
+			 */
 		}
 		return elems;
 	}

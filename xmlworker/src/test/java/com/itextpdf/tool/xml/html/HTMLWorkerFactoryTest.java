@@ -55,8 +55,6 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
@@ -89,14 +87,15 @@ public class HTMLWorkerFactoryTest {
 //    private static final String TEST = "comment-double-print_";
 //    private static final String TEST = "tab_";
 //	  private static final String TEST = "table_";
-	  private static final String TEST = "tableInTable_";
+
+//	  private static final String TEST = "tableInTable_";
 //	  private static final String TEST = "lists_";
 //	  private static final String TEST = "img_";
 //	  private static final String TEST = "position_";
 //	  private static final String TEST = "h_";
 //	  private static final String TEST = "booksales_";
 //	  private static final String TEST = "index_";
-//	  private static final String TEST = "headers_";
+	  private static final String TEST = "headers_";
 //	  private static final String TEST = "headers_noroottag_";
 //	  private static final String TEST = "index_anchor_";
 //	  private static final String TEST = "lineheight_";
@@ -106,21 +105,6 @@ public class HTMLWorkerFactoryTest {
 
     static {
     	FontFactory.registerDirectories();
-    	LoggerFactory.getInstance().setLogger(new Logger() {
-
-			public void log(final String string) {
-				System.out.println(string);
-			}
-
-			public void log(final Class<?> klass, final String msg) {
-				System.out.println(String.format("[%s]\t%s",klass.getName(), msg));
-
-			}
-
-			public boolean isLogging() {
-				return true;
-			}
-		});
     	Document.compress = false;
     }
     private final CssUtils utils = CssUtils.getInstance();

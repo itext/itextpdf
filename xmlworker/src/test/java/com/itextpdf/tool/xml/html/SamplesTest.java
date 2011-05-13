@@ -58,7 +58,6 @@ import org.junit.Test;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
@@ -94,28 +93,12 @@ public class SamplesTest {
 		list.add("comment-double-print_");
 		list.add("tab_");
 		list.add("table_");
-		list.add("tableInTable_");
 		list.add("lists_");
 		list.add("headers_");
 	}
 
 	@Test
 	public void createAllSamples() throws IOException {
-		LoggerFactory.getInstance().setLogger(new Logger() {
-
-			public void log(final String string) {
-				System.out.println(string);
-			}
-
-			public void log(final Class<?> klass, final String msg) {
-				System.out.println(String.format("[%s]\t%s",klass.getName(), msg));
-
-			}
-
-			public boolean isLogging() {
-				return true;
-			}
-		});
 		boolean success = true;
 		Document.compress = false;
 		for (String str : list) {

@@ -65,7 +65,9 @@ public class TableBorderEvent implements PdfPTableEvent{
 	private final TableStyleValues styleValues;
 	private final Map<String, String> css;
 	/**
-     * @see com.itextpdf.text.pdf.PdfPTableEvent#tableLayout(com.itextpdf.text.pdf.PdfPTable,
+     * @param styleValues
+	 * @param css
+	 * @see com.itextpdf.text.pdf.PdfPTableEvent#tableLayout(com.itextpdf.text.pdf.PdfPTable,
      *      float[][], float[], int, int, com.itextpdf.text.pdf.PdfContentByte[])
      */
     public TableBorderEvent(final TableStyleValues styleValues, final Map<String, String> css) {

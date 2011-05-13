@@ -51,7 +51,7 @@ import java.util.Map;
 /**
  * Represents an encountered tag.
  *
- * @author Balder
+ * @author redlab_b
  *
  */
 public class Tag {
