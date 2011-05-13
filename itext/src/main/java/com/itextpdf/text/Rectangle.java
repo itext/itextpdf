@@ -168,7 +168,7 @@ public class Rectangle implements Element {
 	 * @since iText 5.0.6
 	 */
 	public Rectangle(final float llx, final float lly, final float urx, final float ury, final int rotation) {
-		this(0, 0, urx, ury);
+		this(llx, lly, urx, ury);
 		setRotation(rotation);
 	}
 
