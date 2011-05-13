@@ -114,7 +114,6 @@ public class AutoPDFTagListener implements TagListener, ElementHandler {
 	public void close(final Tag tag) {
 		if (tag.getTag().equalsIgnoreCase(HTML.Tag.BODY)) {
 			doc.close();
-			writer.close();
 		}
 	}
 

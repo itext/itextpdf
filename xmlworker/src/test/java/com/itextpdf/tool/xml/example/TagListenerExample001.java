@@ -71,6 +71,7 @@ public class TagListenerExample001 {
 		.tagProcessorFactory(Tags.getHtmlTagProcessorFactory())
 		// Set the cssResolver
 		.cssResolver(cssResolver)
+		.autoBookMark(false)
 		.addTagListener(new DocMarginTagListener(writer, doc))
 		.document(doc).pdfWriter(writer);
 		// Read the html
@@ -91,7 +92,7 @@ public class TagListenerExample001 {
 			}
 		}, new InputStreamReader(bis), config);
 		doc.close();
-		writer.close();
+		//writer.close();
 
 	}
 }
