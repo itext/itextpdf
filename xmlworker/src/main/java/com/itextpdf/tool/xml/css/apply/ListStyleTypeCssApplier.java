@@ -123,7 +123,7 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 		} else if (t.getTag().equalsIgnoreCase(HTML.Tag.OL)) {
 			lst = new List(List.ORDERED);
 		} else if (t.getTag().equalsIgnoreCase(HTML.Tag.UL)) {
-			lst = new ZapfDingbatsList(108);
+			lst = new List(List.UNORDERED);
 		}
 		if (null != css.get(CSS.Property.LIST_STYLE_IMAGE)
 				&& !css.get(CSS.Property.LIST_STYLE_IMAGE).equalsIgnoreCase(CSS.Value.NONE)) {

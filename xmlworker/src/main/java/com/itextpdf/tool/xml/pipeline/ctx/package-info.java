@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: package-info.java 8 2011-05-03 16:45:05Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -41,38 +41,9 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.itextpdf.text.Element;
-
 /**
- * @author redlab_b
- *
+ * Collection of {@link com.itextpdf.tool.xml.pipeline.CustomContext} and
+ * {@link com.itextpdf.tool.xml.pipeline.WorkerContext} implementations.
  */
-public class WritableElement implements Writable {
+package com.itextpdf.tool.xml.pipeline.ctx;
 
-	private final ArrayList<Element> list;
-	/**
-	 *
-	 */
-	public WritableElement() {
-		this.list = new ArrayList<Element>();
-	}
-	/**
-	 * @param currentContent
-	 */
-	public WritableElement(final List<Element> currentContent) {
-		this();
-		this.list.addAll(currentContent);
-	}
-	/**
-	 * @return the list of element
-	 */
-	public List<Element> elements() {
-		return list;
-	}
-
-}
