@@ -58,7 +58,6 @@ import org.junit.Test;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
@@ -114,7 +113,7 @@ public class SamplesTest {
 			doc.open();
 			BufferedInputStream bis = new BufferedInputStream(SamplesTest.class.getResourceAsStream("/snippets/" + str
 					+ "snippet.html"));
-			XMLWorkerHelper helper = new XMLWorkerHelper();
+			XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 			helper.parseXHtml(writer, doc, new InputStreamReader(bis));
 			doc.close();
 			} catch (Exception e) {

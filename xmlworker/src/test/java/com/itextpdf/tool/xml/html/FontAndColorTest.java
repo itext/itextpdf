@@ -55,13 +55,14 @@ import org.junit.Test;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 
 /**
@@ -76,18 +77,14 @@ public class FontAndColorTest {
 	public void setup() throws IOException {
 		FontFactory.registerDirectories();
 		BufferedInputStream bis = new BufferedInputStream(FontAndColorTest.class.getResourceAsStream("/snippets/font_color_snippet.html"));
-		XMLWorkerHelper helper = new XMLWorkerHelper();
+		XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 		elementList = new ArrayList<Element>();
 		helper.parseXHtml(new ElementHandler() {
 
-            public void addAll(final List<Element> currentContent) throws DocumentException {
-                elementList.addAll(currentContent);
+			public void add(final Writable w) {
+				elementList.addAll(((WritableElement) w).elements());
 
-            }
-
-            public void add(final Element e) throws DocumentException {
-                elementList.add(e);
-            }
+			}
         }, new InputStreamReader(bis));
 	}
 	@Test

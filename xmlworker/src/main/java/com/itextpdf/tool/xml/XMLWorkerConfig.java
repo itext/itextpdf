@@ -50,6 +50,7 @@ import java.util.Map;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.pipeline.Pipeline;
 
 /**
  * Configuration object for the XMLWorker.
@@ -167,12 +168,7 @@ public interface XMLWorkerConfig {
 	/**
 	 * @return
 	 */
-	List<TagListener> getTagListeners();
-
-	/**
-	 * @return
-	 */
-	boolean hasTagListener();
+	Pipeline getPipeline();
 
 
 }

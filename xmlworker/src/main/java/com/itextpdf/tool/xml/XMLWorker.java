@@ -59,10 +59,5 @@ public interface XMLWorker extends XMLParserListener {
 	 */
 	void setConfiguration(XMLWorkerConfig config);
 
-	/**
-	 * The element handler receives elements created by the XMLWorker.
-	 *
-	 * @param elementHandler the elementHandler to use.
-	 */
-	void setDocumentListener(final ElementHandler elementHandler);
+
 }

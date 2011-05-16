@@ -75,7 +75,7 @@ public class TableData extends AbstractTagProcessor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
 	 * java.util.List, com.itextpdf.text.Document)

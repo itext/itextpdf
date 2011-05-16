@@ -46,18 +46,20 @@ package com.itextpdf.tool.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.List;
-
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.css.CssFile;
 import com.itextpdf.tool.xml.css.CssFileProcessor;
+import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
-import com.itextpdf.tool.xml.html.Tags;
 import com.itextpdf.tool.xml.parser.XMLParser;
+import com.itextpdf.tool.xml.pipeline.Pipeline;
+import com.itextpdf.tool.xml.pipeline.pipe.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.pipe.ElementHandlerPipeline;
+import com.itextpdf.tool.xml.pipeline.pipe.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.pipe.PdfWriterPipeline;
 
 /**
  * A helper class for parsing XHTML/CSS or XML flow to PDF.
@@ -67,13 +69,18 @@ import com.itextpdf.tool.xml.parser.XMLParser;
  */
 public class XMLWorkerHelper {
 
+	private static XMLWorkerHelper myself = new XMLWorkerHelper();
 	private CssFile defaultCssFile;
 	private final Object lock = new Object();
 
+	public static XMLWorkerHelper getInstance() {
+		return myself ;
+
+	}
 	/**
 	 *
 	 */
-	public XMLWorkerHelper() {
+	private XMLWorkerHelper() {
 
 	}
 
@@ -116,17 +123,14 @@ public class XMLWorkerHelper {
 	 * @throws IOException thrown when something went wrong with the IO
 	 */
 	public void parseXHtml(final ElementHandler d, final Reader in) throws IOException {
-		XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
-		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver();
-		CssFile defaultCSS = getDefaultCSS();
-		if (null != defaultCSS) {
-			cssResolver.addCssFile(defaultCSS);
-		}
-		config.tagProcessorFactory(new Tags().getHtmlTagProcessorFactory()).cssResolver(cssResolver)
-				.acceptUnknown(true);
-		final XMLWorker worker = new XMLWorkerImpl(config);
-		worker.setDocumentListener(d);
-		XMLParser p = new XMLParser(worker);
+		XMLWorkerConfigurationImpl conf = new XMLWorkerConfigurationImpl();
+		CssFilesImpl cssFiles = new CssFilesImpl();
+		cssFiles.add(new XMLWorkerHelper().getDefaultCSS());
+		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(conf, new ElementHandlerPipeline(d, null)));
+		conf.isParsingHTML(true).acceptUnknown(true).cssResolver(cssResolver).autoBookMark(true).pipeline(pipeline);
+		XMLWorkerImpl worker = new XMLWorkerImpl(conf);
+		XMLParser p = new XMLParser(conf.isParsingHTML(), worker);
 		p.parse(in);
 	}
 	/**
@@ -137,44 +141,17 @@ public class XMLWorkerHelper {
 	 * @param in the reader
 	 * @throws IOException thrown when something went wrong with the IO
 	 */
-	public void parseXHtml(final PdfWriter writer, final Document document, final Reader in) throws IOException {
-		XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
-		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver();
-		CssFile defaultCSS = getDefaultCSS();
-		if (null != defaultCSS) {
-			cssResolver.addCssFile(defaultCSS);
-		}
-		config.tagProcessorFactory(new Tags().getHtmlTagProcessorFactory()).cssResolver(cssResolver)
-		.acceptUnknown(true).pdfWriter(writer).document(document);
-		final XMLWorker worker = new XMLWorkerImpl(config);
-		worker.setDocumentListener(new ElementHandler() {
-			
-			public void addAll(List<Element> currentContent) throws DocumentException {
-				for (Element e : currentContent) {
-					document.add(e);
-				}
-			}
-			
-			public void add(Element e) throws DocumentException {
-				document.add(e);
-				
-			}
-		});
-		XMLParser p = new XMLParser(worker);
+	public void parseXHtml(final PdfWriter writer, final Document doc, final Reader in) throws IOException {
+		XMLWorkerConfigurationImpl conf = new XMLWorkerConfigurationImpl();
+		conf.document(doc).pdfWriter(writer);
+		CssFilesImpl cssFiles = new CssFilesImpl();
+		cssFiles.add(new XMLWorkerHelper().getDefaultCSS());
+		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(conf, new PdfWriterPipeline(doc, writer)));
+		conf.isParsingHTML(true).acceptUnknown(true).autoBookMark(true).cssResolver(cssResolver).pipeline(pipeline);
+		XMLWorkerImpl worker = new XMLWorkerImpl(conf);
+		XMLParser p = new XMLParser(conf.isParsingHTML(), worker);
 		p.parse(in);
 	}
 
-	/**
-	 * 
-	 * @param handler the handler that will receive created Elements
-	 * @param in the reader to read HTML from
-	 * @param config the configuration for the XMLWorker
-	 * @throws IOException if something went wrong with the IO
-	 */
-	public void parseXML(final ElementHandler handler, final Reader in, final XMLWorkerConfig config) throws IOException {
-		final XMLWorker worker = new XMLWorkerImpl(config);
-		worker.setDocumentListener(handler);
-		XMLParser p = new XMLParser(config.isParsingHTML(), worker);
-		p.parse(in);
-	}
 }

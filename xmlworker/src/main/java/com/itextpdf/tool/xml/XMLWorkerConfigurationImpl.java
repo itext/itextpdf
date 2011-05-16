@@ -49,12 +49,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.pipeline.Pipeline;
 
 /**
  * <p>A default implementation of the XMLWorkerConfig.</p>
@@ -85,15 +84,14 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	private Charset charSet = Charset.defaultCharset();
 	private boolean isAutoBookMark = false;
 	private final List<String> roottags = Arrays.asList(new String[] { "defaultRoot", "body", "div" });
-	private final List<TagListener> tagListeners;
 	private boolean hasTaglistener;
+	private Pipeline pipeline;
 
 	/**
 	 *
 	 */
 	public XMLWorkerConfigurationImpl(){
 		memory = new HashMap<String, Object>();
-		this.tagListeners = new CopyOnWriteArrayList<TagListener>();
 	}
 	/**
 	 * @param doc the document to write to.
@@ -303,38 +301,15 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	public void addRootTag(final String tag) {
 		roottags.add(tag);
 	}
+
 	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.XMLWorkerConfig#getTagListeners()
+	 * @see com.itextpdf.tool.xml.XMLWorkerConfig#getPipeline()
 	 */
-	public List<TagListener> getTagListeners() {
-		return new ArrayList<TagListener>(this.tagListeners);
-	}
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.XMLWorkerConfig#hasTagListener()
-	 */
-	public boolean hasTagListener() {
-		return this.hasTaglistener;
+	public Pipeline getPipeline() {
+		return pipeline;
 	}
 
-	/**
-	 * @param tagListener
-	 * @return this configuration object
-	 */
-	public XMLWorkerConfigurationImpl addTagListener(final TagListener tagListener) {
-		this.tagListeners.add(tagListener);
-		this.hasTaglistener = true;
-		return this;
-	}
-
-	/**
-	 * @param tl
-	 * @return this configuration object
-	 */
-	public XMLWorkerConfigurationImpl removeTagListener(final TagListener tl) {
-		this.tagListeners.remove(tl);
-		if (this.tagListeners.size()==0) {
-			this.hasTaglistener = false;
-		}
-		return this;
+	public void pipeline(final Pipeline pipeline) {
+		this.pipeline = pipeline;
 	}
 }

@@ -43,10 +43,7 @@
  */
 package com.itextpdf.tool.xml;
 
-import java.util.List;
-
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
+import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * @author redlab_b
@@ -54,16 +51,10 @@ import com.itextpdf.text.Element;
  */
 public interface ElementHandler  {
 
-    /**
-     * @param currentContent list of elements to sequentially add.
-     * @throws DocumentException
-     */
-    void addAll(List<Element> currentContent) throws DocumentException;
 
     /**
-     * @param e
-     * @throws DocumentException
+     * @param w
      */
-    void add(Element e) throws DocumentException;
+    void add(Writable w);
 
 }

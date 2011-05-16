@@ -54,7 +54,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
@@ -63,6 +62,8 @@ import com.itextpdf.tool.xml.TagProcessorFactory;
 import com.itextpdf.tool.xml.XMLWorker;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 
 /**
@@ -81,18 +82,14 @@ public class LineHeightLetterSpacingTest {
 	public void setup() throws IOException {
 		FontFactory.registerDirectories();
 		BufferedInputStream bis = new BufferedInputStream(LineHeightLetterSpacingTest.class.getResourceAsStream("/snippets/line-height_letter-spacing_snippet.html"));
-		XMLWorkerHelper helper = new XMLWorkerHelper();
+		XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 		elementList = new ArrayList<Element>();
 		helper.parseXHtml(new ElementHandler() {
 
-            public void addAll(final List<Element> currentContent) throws DocumentException {
-                elementList.addAll(currentContent);
+			public void add(final Writable w) {
+				elementList.addAll(((WritableElement) w).elements());
 
-            }
-
-            public void add(final Element e) throws DocumentException {
-                elementList.add(e);
-            }
+			}
         }, new InputStreamReader(bis));
 	}
 	@Test

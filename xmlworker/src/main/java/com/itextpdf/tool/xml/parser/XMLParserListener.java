@@ -86,14 +86,4 @@ public interface XMLParserListener {
 	 */
 	void comment(String comment);
 
-	/**
-	 * Triggered on the start reading.
-	 */
-	void startDocument();
-
-	/**
-	 * Triggered on the end reading.
-	 */
-	void endDocument();
-
 }

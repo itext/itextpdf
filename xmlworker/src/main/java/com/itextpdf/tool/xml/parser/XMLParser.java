@@ -302,12 +302,6 @@ public class XMLParser {
 	 * Triggered when an opening tag has been encountered.
 	 */
 	public void startElement() {
-		if (0 == openclosed++) {
-			// encountered root element, starting document
-			for (XMLParserListener l : listeners) {
-				l.startDocument();
-			}
-		}
 		currentTagState(TagState.OPEN);
 		callText();
 		for (XMLParserListener l : listeners) {
@@ -332,17 +326,10 @@ public class XMLParser {
 	 * Triggered when a closing tag has been encountered.
 	 */
 	public void endElement() {
-		openclosed--;
 		currentTagState(TagState.CLOSE);
 		callText();
 		for (XMLParserListener l : listeners) {
 			l.endElement(this.memory.getCurrentTag(), this.memory.getNameSpace());
-		}
-		if (openclosed == 0) {
-			controller.unknown();
-			for (XMLParserListener l : listeners) {
-				l.endDocument();
-			}
 		}
 	}
 

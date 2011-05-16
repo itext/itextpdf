@@ -46,23 +46,21 @@ package com.itextpdf.tool.xml.html;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.DefaultProvider;
-import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.XMLWorker;
 import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.XMLWorkerImpl;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.parser.XMLParser;
+import com.itextpdf.tool.xml.pipeline.pipe.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.pipe.HtmlPipeline;
 
 /**
  * @author redlab_b
@@ -86,18 +84,8 @@ public class LoadCssThroughLinkStyleTagTest {
 		String path = LoadCssThroughLinkStyleTagTest.class.getResource("/css/test.css").getPath();
 		provider.setGlobalCssRoot(path.substring(0, path.lastIndexOf("test.css")));
 		config.tagProcessorFactory(new Tags().getHtmlTagProcessorFactory()).cssResolver(cssResolver)
-		.acceptUnknown(false).provider(provider);
+		.acceptUnknown(false).provider(provider).pipeline(new CssResolverPipeline(cssResolver, new HtmlPipeline(config, null)));
 		final XMLWorker worker = new XMLWorkerImpl(config);
-		worker.setDocumentListener(new ElementHandler() {
-
-			public void addAll(final List<Element> currentContent) throws DocumentException {
-
-			}
-
-			public void add(final Element e) throws DocumentException {
-
-			}
-		});
 		p = new XMLParser(worker);
 	}
 

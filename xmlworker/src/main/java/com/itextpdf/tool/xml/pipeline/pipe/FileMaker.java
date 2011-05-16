@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.itextpdf.tool.xml.taglistener;
+package com.itextpdf.tool.xml.pipeline.pipe;
 
 import java.io.IOException;
 import java.io.OutputStream;
