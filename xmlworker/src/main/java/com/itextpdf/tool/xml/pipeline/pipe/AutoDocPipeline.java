@@ -66,7 +66,8 @@ public class AutoDocPipeline extends AbstractPipeline {
 			} catch (DocumentException e) {
 				throw new PipelineException(e);
 			}
-		} else if (t.getTag().equalsIgnoreCase(opentag)) {
+		}
+		if (t.getTag().equalsIgnoreCase(opentag)) {
 			MapContext cc = (MapContext) getContext().get(PdfWriterPipeline.class);
 			Document d = (Document) cc.get(PdfWriterPipeline.DOCUMENT);
 			CssUtils cssUtils = CssUtils.getInstance();
