@@ -11,12 +11,12 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.TagProcessor;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
-import com.itextpdf.tool.xml.pipeline.CustomContext;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
+import com.itextpdf.tool.xml.pipeline.CustomContext;
 import com.itextpdf.tool.xml.pipeline.NoCustomContextException;
+import com.itextpdf.tool.xml.pipeline.Pipeline;
 import com.itextpdf.tool.xml.pipeline.PipelineException;
 import com.itextpdf.tool.xml.pipeline.ProcessObject;
-import com.itextpdf.tool.xml.pipeline.Pipeline;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
@@ -92,7 +92,7 @@ public class HtmlPipeline extends AbstractPipeline {
 		List<Element> elems = tp.content(t, content);
 		if (hcc.isEmpty() && elems.size() > 0) {
 			po.add(new WritableElement(elems));
-		} else {
+		} else if (elems.size() > 0){
 			StackKeeper peek = hcc.peek();
 			for (Element e : elems) {
 				peek.add(e);

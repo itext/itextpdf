@@ -6,7 +6,6 @@ package com.itextpdf.tool.xml.pipeline.pipe;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.StackKeeper;
@@ -22,7 +21,7 @@ import com.itextpdf.tool.xml.pipeline.CustomContext;
  */
 public class HtmlPipelineContext implements CustomContext {
 
-	private final Queue<StackKeeper> queue;
+	private final LinkedList<StackKeeper> queue;
 	private final boolean acceptUnknown = true;
 	private final TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
 	private final List<Element> ctn = new ArrayList<Element>();
@@ -50,15 +49,16 @@ public class HtmlPipelineContext implements CustomContext {
 	 * @param stackKeeper
 	 */
 	public void addFirst(final StackKeeper stackKeeper) {
-		this.queue.offer(stackKeeper);
+		this.queue.addFirst(stackKeeper);
 
 	}
 
 	/**
+	 * Retrieves, but does not remove, the head (first element) of this list.
 	 * @return
 	 */
 	public StackKeeper peek() {
-		return this.queue.peek();
+			return this.queue.getFirst();
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class HtmlPipelineContext implements CustomContext {
 	 * @return
 	 */
 	public StackKeeper poll() {
-		return this.queue.poll();
+		return this.queue.removeFirst();
 	}
 
 }
