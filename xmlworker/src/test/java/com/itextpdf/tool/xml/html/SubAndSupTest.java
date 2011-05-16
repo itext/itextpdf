@@ -94,7 +94,7 @@ public class SubAndSupTest {
 	@Test
 	public void resolveNewLines() throws IOException {
 		assertEquals(Chunk.NEWLINE, elementList.get(1));
-//		assertEquals(Chunk.NEWLINE, elementList.get(3).getChunks().get(2)); // Testing on a inner Chunk.NEWLINE not possible?
+		assertEquals(Chunk.NEWLINE.getContent(), elementList.get(3).getChunks().get(1).getContent());
 	}
 	@Test
 	public void resolveFontSize() throws IOException {

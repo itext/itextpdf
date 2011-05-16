@@ -43,15 +43,10 @@
  */
 package com.itextpdf.tool.xml.html.table;
 
-import java.util.Map;
-
 import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPTableEvent;
-import com.itextpdf.tool.xml.css.CSS;
-import com.itextpdf.tool.xml.css.CssUtils;
 
 /**
  * @author Emiel Ackermann
@@ -61,25 +56,22 @@ public class TableBorderEvent implements PdfPTableEvent{
 	/**
 	 *
 	 */
-	private static final CssUtils utils = CssUtils.getInstance();
 	private final TableStyleValues styleValues;
-	private final Map<String, String> css;
 	/**
      * @param styleValues
 	 * @param css
 	 * @see com.itextpdf.text.pdf.PdfPTableEvent#tableLayout(com.itextpdf.text.pdf.PdfPTable,
      *      float[][], float[], int, int, com.itextpdf.text.pdf.PdfContentByte[])
      */
-    public TableBorderEvent(final TableStyleValues styleValues, final Map<String, String> css) {
+    public TableBorderEvent(final TableStyleValues styleValues) {
     	this.styleValues = styleValues;
-    	this.css = css;
     }
     public void tableLayout(final PdfPTable table, final float[][] width, final float[] height,
             final int headerRows, final int rowStart, final PdfContentByte[] canvas) {
-    	float left = utils.checkMetricStyle(css, CSS.Property.BORDER_LEFT_WIDTH);
-    	float right = utils.checkMetricStyle(css, CSS.Property.BORDER_RIGHT_WIDTH);
-    	float top = utils.checkMetricStyle(css, CSS.Property.BORDER_TOP_WIDTH);
-    	float bottom = utils.checkMetricStyle(css, CSS.Property.BORDER_BOTTOM_WIDTH);
+    	float left = styleValues.getBorderWidthLeft();
+    	float right = styleValues.getBorderWidthRight();
+    	float top = styleValues.getBorderWidthTop();
+    	float bottom = styleValues.getBorderWidthBottom();
         float widths[] = width[0];
 		float effectivePadding = left/2;
         float x1 = widths[0]-effectivePadding;
@@ -90,7 +82,7 @@ public class TableBorderEvent implements PdfPTableEvent{
 		effectivePadding = bottom/2+styleValues.getVerBorderSpacing();
         float y2 = height[height.length - 1]-effectivePadding;
         PdfContentByte cb = canvas[PdfPTable.BACKGROUNDCANVAS];
-        BaseColor color = HtmlUtilities.decodeColor(css.get(CSS.Property.BACKGROUND_COLOR));
+        BaseColor color = styleValues.getBackground();
         if(color != null) {
         	cb.setColorFill(color);
         	cb.rectangle(x1, y1, x2-x1, y2-y1);
@@ -98,25 +90,25 @@ public class TableBorderEvent implements PdfPTableEvent{
         }
         cb = canvas[PdfPTable.LINECANVAS];
         cb.setLineWidth(left);
-        color = HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_LEFT_COLOR));
+        color = styleValues.getBorderColorLeft();
         setColorStroke(cb, color);
         cb.moveTo(x1, y1); // start leftUpperCorner
         cb.lineTo(x1, y2); // left
         cb.stroke();
         cb.setLineWidth(bottom);
-        color = HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_BOTTOM_COLOR));
+        color = styleValues.getBorderColorBottom();
         setColorStroke(cb, color);
         cb.moveTo(x1, y2); // left
         cb.lineTo(x2, y2); // bottom
         cb.stroke();
         cb.setLineWidth(right);
-        color = HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_RIGHT_COLOR));
+        color = styleValues.getBorderColorRight();
         setColorStroke(cb, color);
         cb.moveTo(x2, y2); // bottom
         cb.lineTo(x2, y1); // right
         cb.stroke();
         cb.setLineWidth(top);
-        color = HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_TOP_COLOR));
+        color = styleValues.getBorderColorTop();
         setColorStroke(cb, color);
         cb.moveTo(x2, y1); // right
         cb.lineTo(x1, y1); // top
@@ -129,5 +121,8 @@ public class TableBorderEvent implements PdfPTableEvent{
         } else {
         	cb.setColorStroke(BaseColor.BLACK);
         }
+	}
+	public TableStyleValues getTableStyleValues(){
+		return this.styleValues;
 	}
 }

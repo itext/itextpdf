@@ -72,7 +72,6 @@ public class CssUtils {
 	private static CssUtils myself;
 
 	public static final int DEFAULT_FONT_SIZE_PT = 12;
-	private final FontSizeTranslator fontSizeTranslater = FontSizeTranslator.getInstance();
 
 
 	/**
@@ -323,6 +322,7 @@ public class CssUtils {
 		}
 		return rules;
 	}
+
 	/**
 	 * Use only if value of style is a metric value ({@link CssUtils#isMetricValue(String)}) or a numeric value in pixels ({@link CssUtils#isNumericValue(String)}).<br />
 	 * Checks if the style is present in the css of the tag, then parses it to pt. and returns the parsed value.
