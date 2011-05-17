@@ -47,9 +47,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -65,11 +66,13 @@ public class Span extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
     @Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Writable> content(final Tag tag, final String content) {
     	String sanitized = HTMLUtils.sanitizeInline(content);
-    	List<Element> l = new ArrayList<Element>(1);
+    	List<Writable> l = new ArrayList<Writable>(1);
     	if (sanitized.length() > 0) {
-    		l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+    		WritableElement we = new WritableElement();
+			we.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+			l.add(we);
     	}
     	return l;
 	}
@@ -79,12 +82,8 @@ public class Span extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
 	 */
     @Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-    	List<Element> l = new ArrayList<Element>(1);
-		if (currentContent.size() > 0) {
-			l.add(Tags.currentContentToParagraph(currentContent, false));
-		}
-		return l;
+	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+		return Tags.currentContentToParagraph(currentContent, false);
 	}
 
     /*

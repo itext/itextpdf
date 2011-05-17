@@ -43,13 +43,18 @@
  */
 package com.itextpdf.tool.xml.html;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.tool.xml.DefaultTagProcessorFactory;
 import com.itextpdf.tool.xml.TagProcessorFactory;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableDirect;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -128,29 +133,52 @@ public class Tags {
 	}
 
 	/**
-	 * Adds currentContent list to a paragraph element. If addNewLines is true a Paragraph object is returned, else a
-	 * NoNewLineParagraph object is returned.
+	 * Adds currentContent list to a paragraph element. If addNewLines is true a
+	 * Paragraph object is returned, else a NoNewLineParagraph object is
+	 * returned.
 	 *
 	 * @param currentContent List<Element> of the current elements to be added.
-	 * @param addNewLines boolean to declare which paragraph element should be returned, true if new line should be added or not.
-	 * @return Element either a Paragraph object or a NoNewLineParagraph object. Or null if current content was empty
+	 * @param addNewLines boolean to declare which paragraph element should be
+	 *            returned, true if new line should be added or not.
+	 * @return
 	 */
-	public final static Element currentContentToParagraph(final List<Element> currentContent, final boolean addNewLines) {
+	public final static List<Writable> currentContentToParagraph(final List<Writable> currentContent,
+			final boolean addNewLines) {
+		List<Writable> list = new ArrayList<Writable>(1);
 		if (currentContent.size() > 0) {
-			if (addNewLines) {
-				Paragraph p = new Paragraph();
-				for (Element e : currentContent) {
-					p.add(e);
+			boolean hasWritableDirect = false;
+			Phrase p = null;
+			for (Writable w : currentContent) {
+				if (w instanceof WritableElement) {
+					for (Element e : ((WritableElement) w).elements()) {
+						if (null == p) {
+							if (addNewLines) {
+								p = new Paragraph();
+							} else {
+								p = new NoNewLineParagraph();
+							}
+						} else if (hasWritableDirect) {
+							p = new NoNewLineParagraph();
+						}
+						hasWritableDirect = false;
+						p.add(e);
+					}
+				} else if (w instanceof WritableDirect) {
+					hasWritableDirect = true;
+					if (null != p) {
+						WritableElement we = new WritableElement();
+						we.add(p);
+						list.add(we);
+					}
+					list.add(w);
 				}
-				return p;
-			} else {
-				NoNewLineParagraph p = new NoNewLineParagraph();
-				for (Element e : currentContent) {
-					p.add(e);
-				}
-				return p;
+			}
+			if (!hasWritableDirect && null != p) {
+				WritableElement we = new WritableElement();
+				we.add(p);
+				list.add(we);
 			}
 		}
-		throw new IllegalArgumentException("currentContent cannot be null");
+		return list;
 	}
 }

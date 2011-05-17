@@ -33,12 +33,13 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -56,7 +57,7 @@ public class Body extends AbstractTagProcessor {
 	 * com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> start(final Tag tag) {
+	public List<Writable> start(final Tag tag) {
 //		Document doc = configuration.getDocument();
 //		float pageWidth = configuration.getPageSize().getWidth();
 ////TODO how to set the margins of the first page of a doc? Before doc is opened, but how to get the margins out of the body-tag?
@@ -83,7 +84,7 @@ public class Body extends AbstractTagProcessor {
 //			doc.setMargins(marginLeft, marginRight, marginTop, marginBottom);
 //		}
 //
-		return new ArrayList<Element>(0);
+		return new ArrayList<Writable>(0);
 	}
 
 	/*
@@ -93,11 +94,13 @@ public class Body extends AbstractTagProcessor {
 	 * com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Writable> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitize(content);
-		List<Element> l = new ArrayList<Element>(1);
+		List<Writable> l = new ArrayList<Writable>(1);
 		if (sanitized.length() > 0) {
-			l.add(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(sanitized), tag));
+			WritableElement we = new WritableElement();
+			we.add(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(sanitized), tag));
+			l.add(we);
 		}
 		return l;
 	}

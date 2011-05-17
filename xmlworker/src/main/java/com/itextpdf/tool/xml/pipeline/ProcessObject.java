@@ -44,6 +44,7 @@
 package com.itextpdf.tool.xml.pipeline;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 
@@ -78,6 +79,15 @@ public class ProcessObject {
 	 */
 	public void add(final Writable writable) {
 		queue.add(writable);
+	}
+	/**
+	 * @param elems
+	 */
+	public void addAll(final List<Writable> elems) {
+		for (Writable w : elems) {
+			queue.add(w);
+		}
+
 	}
 
 }

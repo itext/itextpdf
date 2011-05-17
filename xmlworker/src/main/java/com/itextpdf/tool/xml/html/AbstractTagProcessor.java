@@ -34,12 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.TagProcessor;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * Abstract TagProcessor that allows setting the configuration object to a
@@ -88,14 +89,16 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * implementors {@link AbstractTagProcessor#start(Tag)} method.
 	 *
 	 */
-	public final List<Element> startElement(final Tag tag) {
+	public final List<Writable> startElement(final Tag tag) {
 		float fontSize = fontsizeTrans.translateFontSize(tag);
 		tag.getCSS().put(CSS.Property.FONT_SIZE, fontSize + "pt");
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_BEFORE);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
-			List<Element> list = new ArrayList<Element>(2);
-			list.add(Chunk.NEXTPAGE);
-			for (Element e : start(tag)) {
+			List<Writable> list = new ArrayList<Writable>(2);
+			WritableElement we = new WritableElement();
+			we.add(Chunk.NEXTPAGE);
+			list.add(we);
+			for (Writable e : start(tag)) {
 				list.add(e);
 			}
 			return list;
@@ -111,15 +114,15 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @param tag the tag
 	 * @return an element to be added to current content, may be null
 	 */
-	public List<Element> start(final Tag tag){ return new ArrayList<Element>(0); };
+	public List<Writable> start(final Tag tag){ return new ArrayList<Writable>(0); };
 
 	/*
 	 * (non-Javadoc)
 	 *
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
-	public List<Element> content(final Tag tag, final String content) {
-		return new ArrayList<Element>(0);
+	public List<Writable> content(final Tag tag, final String content) {
+		return new ArrayList<Writable>(0);
 	}
 
 	/**
@@ -129,11 +132,13 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * currentContentList after calling
 	 * {@link AbstractTagProcessor#end(Tag, List)}.
 	 */
-	public final List<Element> endElement(final Tag tag, final List<Element> currentContent) {
-		List<Element> list = end(tag, currentContent);
+	public final List<Writable> endElement(final Tag tag, final List<Writable> currentContent) {
+		List<Writable> list = end(tag, currentContent);
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_AFTER);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
-			list.add(Chunk.NEXTPAGE);
+			WritableElement we = new WritableElement();
+			we.add(Chunk.NEXTPAGE);
+			list.add(we);
 			return list;
 		}
 		return list;
@@ -149,8 +154,8 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @param currentContent the content created from e.g. inner tags, inner content and not yet added to document.
 	 * @return a List containing iText Element objects
 	 */
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		return new ArrayList<Element>(0);
+	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+		return new ArrayList<Writable>(0);
 	}
 
 	/**

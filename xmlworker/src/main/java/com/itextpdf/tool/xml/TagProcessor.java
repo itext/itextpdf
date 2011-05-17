@@ -45,7 +45,7 @@ package com.itextpdf.tool.xml;
 
 import java.util.List;
 
-import com.itextpdf.text.Element;
+import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * @author redlab_b
@@ -60,7 +60,7 @@ public interface TagProcessor {
      * @param tag the tag encountered
      * @return Element an Element to add to the current content;
      */
-    List<Element> startElement(Tag tag);
+    List<Writable> startElement(Tag tag);
 
     /**
      * This method is called if there is text content encountered between the
@@ -71,12 +71,12 @@ public interface TagProcessor {
      *        mapped to.
      * @return the element to add to the currentContent list
      */
-    List<Element> content(Tag tag, String content);
+    List<Writable> content(Tag tag, String content);
 
 	/**
 	 * This method is called when a closing tag has been encountered of the
 	 * TagProcessor implementation that is mapped to the tag.
-	 * 
+	 *
 	 * @param tag the tag encountered
 	 * @param currentContent a list of content possibly created by TagProcessing
 	 *            of inner tags, and by <code>startElement</code> and
@@ -84,7 +84,7 @@ public interface TagProcessor {
 	 *            .
 	 * @return the resulting element to add to the document or a content stack.
 	 */
-    List<Element> endElement(Tag tag, List<Element> currentContent);
+    List<Writable> endElement(Tag tag, List<Writable> currentContent);
 
     /**
      * @return true if the tag implementation must keep it's own currentContent

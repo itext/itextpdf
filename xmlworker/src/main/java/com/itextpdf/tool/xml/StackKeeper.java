@@ -48,6 +48,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * Simple wrapper of a {@link List} to put {@link Element}s in that are created by inner tags of the given Tag.
@@ -58,14 +59,14 @@ import com.itextpdf.text.Element;
 public class StackKeeper {
 
 	private final Tag tag;
-	private final List<Element> stack;
+	private final List<Writable> stack;
 
 	/**
 	 * @param t the tag
 	 */
 	public StackKeeper(final Tag t) {
 		this.tag = t;
-		this.stack = new ArrayList<Element>();
+		this.stack = new ArrayList<Writable>();
 	}
 
 	/**
@@ -73,14 +74,14 @@ public class StackKeeper {
 	 *
 	 * @param content the element to add
 	 */
-	public void add(final Element content) {
+	public void add(final Writable content) {
 		this.stack.add(content);
 	}
 
 	/**
 	 * @return the elements in this stack
 	 */
-	public List<Element> getElements() {
+	public List<Writable> getElements() {
 		return this.stack;
 
 	}
@@ -90,7 +91,7 @@ public class StackKeeper {
 	 *
 	 * @param elements collection of Element
 	 */
-	public void addAll(final Collection<? extends Element> elements) {
+	public void addAll(final Collection<? extends Writable> elements) {
 		this.stack.addAll(elements);
 	}
 

@@ -45,7 +45,6 @@ package com.itextpdf.tool.xml.pipeline.pipe;
 
 import java.util.List;
 
-import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.StackKeeper;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.TagProcessor;
@@ -57,7 +56,7 @@ import com.itextpdf.tool.xml.pipeline.NoCustomContextException;
 import com.itextpdf.tool.xml.pipeline.Pipeline;
 import com.itextpdf.tool.xml.pipeline.PipelineException;
 import com.itextpdf.tool.xml.pipeline.ProcessObject;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
+import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * @author redlab_b
@@ -91,11 +90,11 @@ public class HtmlPipeline extends AbstractPipeline {
 			if (tp.isStackOwner()) {
 				hcc.addFirst(new StackKeeper(t));
 			}
-			List<Element> content = tp.startElement(t);
+			List<Writable> content = tp.startElement(t);
 			if (content.size() > 0) {
 				if (tp.isStackOwner()) {
 					StackKeeper peek = hcc.peek();
-					for (Element elem : content) {
+					for (Writable elem : content) {
 						peek.add(elem);
 					}
 				} else {
@@ -130,12 +129,12 @@ public class HtmlPipeline extends AbstractPipeline {
 	public Pipeline content(final Tag t, final String content, final ProcessObject po) throws PipelineException {
 		HtmlPipelineContext hcc = getMyContext();
 		TagProcessor tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
-		List<Element> elems = tp.content(t, content);
+		List<Writable> elems = tp.content(t, content);
 		if (hcc.isEmpty() && elems.size() > 0) {
-			po.add(new WritableElement(elems));
+			po.addAll(elems);
 		} else if (elems.size() > 0){
 			StackKeeper peek = hcc.peek();
-			for (Element e : elems) {
+			for (Writable e : elems) {
 				peek.add(e);
 			}
 		}
@@ -156,33 +155,34 @@ public class HtmlPipeline extends AbstractPipeline {
 		try {
 			tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
 			if (hcc.isEmpty()) {
-				List<Element> elems = tp.endElement(t, hcc.currentContent());
+				List<Writable> elems = tp.endElement(t, hcc.currentContent());
 				if (elems.size() > 0) {
-					for (Element e : elems) {
+					for (Writable e : elems) {
 						hcc.currentContent().add(e);
 					}
 				}
-				po.add(new WritableElement(hcc.currentContent()));
+				po.addAll(hcc.currentContent());
 				hcc.currentContent().clear();
 			} else if (tp.isStackOwner()) {
 				// remove the element from the StackKeeper Queue if end tag is
 				// found
-				List<Element> elements = hcc.poll().getElements();
-				List<Element> elems = tp.endElement(t, elements);
+				List<Writable> elems = tp.endElement(t,  hcc.poll().getElements());
 				if (hcc.isEmpty() && elems.size() > 0) {
-					po.add(new WritableElement(elems));
+					for (Writable e : elems) {
+						po.add(e);
+					}
 				} else if (elems.size() > 0) {
 					StackKeeper peek = hcc.peek();
-					for (Element elem : elems) {
+					for (Writable elem : elems) {
 						peek.add(elem);
 					}
 				}
 				hcc.currentContent().clear();
 			} else {
-				List<Element> elems = tp.endElement(t, hcc.currentContent());
+				List<Writable> elems = tp.endElement(t, hcc.currentContent());
 				if (elems.size() > 0) {
 					StackKeeper peek = hcc.peek();
-					for (Element elem : elems) {
+					for (Writable elem : elems) {
 						peek.add(elem);
 					}
 				}

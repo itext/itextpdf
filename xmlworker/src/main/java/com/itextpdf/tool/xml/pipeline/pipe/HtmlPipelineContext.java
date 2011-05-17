@@ -47,13 +47,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.StackKeeper;
 import com.itextpdf.tool.xml.TagProcessor;
 import com.itextpdf.tool.xml.TagProcessorFactory;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.html.Tags;
 import com.itextpdf.tool.xml.pipeline.CustomContext;
+import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * @author redlab_b
@@ -64,7 +64,7 @@ public class HtmlPipelineContext implements CustomContext {
 	private final LinkedList<StackKeeper> queue;
 	private final boolean acceptUnknown = true;
 	private final TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
-	private final List<Element> ctn = new ArrayList<Element>();
+	private final List<Writable> ctn = new ArrayList<Writable>();
 	private final XMLWorkerConfig config;
 
 	/**
@@ -104,7 +104,7 @@ public class HtmlPipelineContext implements CustomContext {
 	/**
 	 * @return
 	 */
-	public List<Element> currentContent() {
+	public List<Writable> currentContent() {
 		return ctn;
 	}
 

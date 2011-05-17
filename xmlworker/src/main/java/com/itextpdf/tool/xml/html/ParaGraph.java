@@ -42,8 +42,12 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -60,23 +64,25 @@ public class ParaGraph extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Writable> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitize(content);
-		List<Element> l = new ArrayList<Element>(1);
+		List<Writable> l = new ArrayList<Writable>(1);
 		if (sanitized.length() > 0) {
+			WritableElement we = new WritableElement();
 			if ((null != tag.getCSS().get(CSS.Property.TAB_INTERVAL))) {
 				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
 				if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 					tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
 				}
-				l.add(new ChunkCssApplier().apply(tabbedChunk, tag));
+				we.add(new ChunkCssApplier().apply(tabbedChunk, tag));
 			} else if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
 				tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
-				l.add(new ChunkCssApplier().apply(tabbedChunk, tag));
+				we.add(new ChunkCssApplier().apply(tabbedChunk, tag));
 			} else {
-				l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+				we.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
 			}
+			l.add(we);
 		}
 		return l;
 	}
@@ -96,23 +102,34 @@ public class ParaGraph extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		List<Element> l = new ArrayList<Element>(1);
+	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+		List<Writable> l = new ArrayList<Writable>(1);
 		if (currentContent.size() > 0) {
 			Paragraph p = new Paragraph();
 			Map<String, String> css = tag.getCSS();
 			if (null != css.get(CSS.Property.TAB_INTERVAL)) {
-				addTabIntervalContent(currentContent, p, css.get(CSS.Property.TAB_INTERVAL));
+//				addTabIntervalContent(currentContent, p, css.get(CSS.Property.TAB_INTERVAL));
 			} else if (null != css.get(CSS.Property.TAB_STOPS)) { // <para tabstops=".." /> could use same implementation page 62
-				addTabStopsContent(currentContent, p, css.get(CSS.Property.TAB_STOPS));
+//				addTabStopsContent(currentContent, p, css.get(CSS.Property.TAB_STOPS));
 			} else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page
 															// 63
-				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
+//				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
 																					// extracted.
 			} else {
-				p = (Paragraph) Tags.currentContentToParagraph(currentContent, true);
+				List<Writable> list = Tags.currentContentToParagraph(currentContent, true);
+				for (Writable w : list) {
+					if (w instanceof WritableElement) {
+						for (Element e : ((WritableElement)w).elements()) {
+							if (e instanceof Paragraph) {
+								new ParagraphCssApplier(configuration).apply((Paragraph) e, tag);
+							} else if (e instanceof NoNewLineParagraph) {
+								new NoNewLineParagraphCssApplier(configuration).apply((NoNewLineParagraph) e, tag);
+							}
+						}
+					}
+				}
+				l.addAll(list);
 			}
-			l.add(new ParagraphCssApplier(configuration).apply(p, tag));
 		}
 		return l;
 	}

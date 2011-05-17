@@ -68,6 +68,9 @@ public class WritableElement implements Writable {
 		this();
 		this.list.addAll(currentContent);
 	}
+	public void add(final Element e) {
+		list.add(e);
+	}
 	/**
 	 * @return the list of element
 	 */
