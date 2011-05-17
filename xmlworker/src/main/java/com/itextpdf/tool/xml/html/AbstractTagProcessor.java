@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.TagProcessor;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
@@ -161,5 +162,16 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 */
 	public boolean isStackOwner() {
 		return false;
+	}
+	/**
+	 * @param elements
+	 * @return
+	 */
+	protected WritableElement createNewWritableElement(final List<Element> elements) {
+		WritableElement writableElement = new WritableElement();
+		for (Element e : elements) {
+			writableElement.add(e);
+		}
+		return writableElement;
 	}
 }

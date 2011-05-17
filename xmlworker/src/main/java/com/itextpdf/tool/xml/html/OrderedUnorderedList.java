@@ -68,48 +68,47 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	 * java.util.List)
 	 */
 	@Override
-	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
-		List<Writable> writables = new ArrayList<Writable>(1);
-		if (currentContent.size() > 0) {
-			com.itextpdf.text.List list = new ListStyleTypeCssApplier(configuration).apply(new com.itextpdf.text.List(), tag);
-			for (Writable w : currentContent) {
-				if (w instanceof WritableElement) {
-					for (Element e: ((WritableElement) w).elements()) {
-						list.add(e);
-					}
-				} else {
-					writables.add(w);
+	public List<Writable> end(final Tag tag, final List<Writable> writables) {
+		List<Element> listElements = new ArrayList<Element>();
+		List<Writable> mywritables = new ArrayList<Writable>();
+		for (Writable w : writables) {
+			if (w instanceof WritableElement) {
+				for (Element e : ((WritableElement) w).elements()) {
+					listElements.add(e);
 				}
+			} else {
+				mywritables.add(w);
 			}
-			if (list.size() > 0) {
-				int i = 0;
-				ArrayList<Element> items = list.getItems();
-				for (Element li : items) {
-					if (li instanceof ListItem) {
-						Tag child = tag.getChildren().get(i);
-						if (list.size() == 1) {
-							child.getCSS().put(CSS.Property.MARGIN_TOP,
-									calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
-							float marginBottom = calculateTopOrBottomSpacing(false, false, tag, child);
-							child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
-						} else {
-							if (i == 0) {
-								child.getCSS().put(CSS.Property.MARGIN_TOP,
-										calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
-							}
-							if (i == list.size() - 1) {
-								float marginBottom = calculateTopOrBottomSpacing(false, true, tag, child);
-								child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
-							}
-						}
-						list.add(new ParagraphCssApplier(configuration).apply((ListItem) li, child));
-					}
-					i++;
-				}
-			}
-			writables.add(new WritableElement(list));
 		}
-		return writables;
+		if (listElements.size() > 0) {
+			com.itextpdf.text.List list = new ListStyleTypeCssApplier(configuration).apply(
+					new com.itextpdf.text.List(), tag);
+			int i = 0;
+			for (Element li : listElements) {
+				if (li instanceof ListItem) {
+					Tag child = tag.getChildren().get(i);
+					if (list.size() == 1) {
+						child.getCSS().put(CSS.Property.MARGIN_TOP,
+									calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
+						float marginBottom = calculateTopOrBottomSpacing(false, false, tag, child);
+						child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
+					} else {
+						if (i == 0) {
+							child.getCSS().put(CSS.Property.MARGIN_TOP,
+										calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
+						}
+						if (i == list.size() - 1) {
+							float marginBottom = calculateTopOrBottomSpacing(false, true, tag, child);
+							child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
+						}
+					}
+					list.add(new ParagraphCssApplier(configuration).apply((ListItem) li, child));
+				}
+				i++;
+			}
+			mywritables.add(new WritableElement(list));
+		}
+		return mywritables;
 	}
 
 	private float calculateTopOrBottomSpacing(final boolean isTop, final boolean storeMarginBottom, final Tag tag, final Tag child) {

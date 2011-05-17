@@ -48,30 +48,37 @@ import java.util.List;
 
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 /**
  * @author redlab_b
  *
  */
 public class TableData extends AbstractTagProcessor {
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document, java.lang.String)
-     */
-    @Override
-	public List<Element> content(final Tag tag, final String content) {
-    	String sanitized = HTMLUtils.sanitizeInline(content);
-    	List<Element> l = new ArrayList<Element>(1);
-    	if (sanitized.length() > 0) {
-    		l.add(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(sanitized), tag));
-    	}
-    	return l;
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag,
+	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
+	 */
+	@Override
+	public List<Writable> content(final Tag tag, final String content) {
+		String sanitized = HTMLUtils.sanitizeInline(content);
+		List<Writable> l = new ArrayList<Writable>(1);
+		if (sanitized.length() > 0) {
+			WritableElement we = new WritableElement(new NoNewLineParagraphCssApplier(configuration).apply(
+					new NoNewLineParagraph(sanitized), tag));
+			l.add(we);
+		}
+		return l;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -81,13 +88,20 @@ public class TableData extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
 		HtmlCell cell = new HtmlCell();
-		List<Element> l = new ArrayList<Element>(1);
-		for (Element e : currentContent) {
-			cell.addElement(e);
+		List<Writable> l = new ArrayList<Writable>(1);
+		WritableElement writable = new WritableElement(cell);
+		l.add(writable);
+		for (Writable we : currentContent) {
+			if (we instanceof WritableElement) {
+				for (Element e :((WritableElement) we).elements()) {
+					cell.addElement(e);
+				}
+			} else {
+				l.add(we);
+			}
 		}
-		l.add(new HtmlCellCssApplier(configuration).apply(cell, tag));
 		return l;
 	}
 

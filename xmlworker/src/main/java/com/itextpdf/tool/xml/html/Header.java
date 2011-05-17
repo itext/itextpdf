@@ -92,13 +92,13 @@ public class Header extends AbstractTagProcessor {
 		List<Writable> l = new ArrayList<Writable>(1);
 		if (currentContent.size() > 0) {
 			List<Writable> currentContentToParagraph = Tags.currentContentToParagraph(currentContent, true);
-			final Paragraph p = new Paragraph();
-			for (Writable w: currentContentToParagraph) {
-				if (w instanceof WritableElement) {
-					p.addAll(((WritableElement) w).elements());
-				}
-			}
 			if (configuration.autoBookmark()) {
+				final Paragraph title = new Paragraph();
+				for (Writable w: currentContentToParagraph) {
+					if (w instanceof WritableElement) {
+						title.addAll(((WritableElement) w).elements());
+					}
+				}
 				l.add(new WritableDirect() {
 
 					public void write(final PdfWriter writer, final Document doc) throws DocumentException {
@@ -123,9 +123,9 @@ public class Header extends AbstractTagProcessor {
 							}
 						}
 						if (LOGGER.isLogging(Level.TRACE)) {
-							LOGGER.trace(String.format("Creating bookmark on %s", p.toString()));
+							LOGGER.trace(String.format("Creating bookmark on %s", title.toString()));
 						}
-						HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, p), tree);
+						HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, title), tree);
 						memory.put(XMLWorkerConfig.BOOKMARK_TREE, node);
 					}
 				});

@@ -111,21 +111,26 @@ public class Table extends AbstractTagProcessor {
 		int numberOfColumns = 0;
 		//
 		List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
-		List<Writable> invalidRowElements = new ArrayList<Writable>(1);
+		List<Element> invalidRowElements = new ArrayList<Element>(1);
 		for (Writable w : currentContent) {
 			int localNumCols = 0;
-			if (e instanceof TableRowElement) {
-				TableRowElement tableRowElement = (TableRowElement) e;
-				for (HtmlCell cell : tableRowElement.getContent()) {
-						localNumCols += cell.getColspan();
+			if (w instanceof WritableElement) {
+				for (Element e : ((WritableElement)w).elements()){
+					if (e instanceof TableRowElement) {
+						TableRowElement tableRowElement = (TableRowElement) e;
+						for (HtmlCell cell : tableRowElement.getContent()) {
+								localNumCols += cell.getColspan();
+						}
+						tableRows.add(tableRowElement);
+					} else {
+						invalidRowElements.add(e);
+					}
+					if (localNumCols > numberOfColumns) {
+						numberOfColumns = localNumCols;
+					}
 				}
-				tableRows.add(tableRowElement);
-			} else {
-				invalidRowElements.add(e);
 			}
-			if (localNumCols > numberOfColumns) {
-				numberOfColumns = localNumCols;
-			}
+
 		}
 		Collections.sort(tableRows, new TableRowElementComparator());
 		//
@@ -340,9 +345,9 @@ public class Table extends AbstractTagProcessor {
 			String captionSideValue = captionTag.getCSS().get(CSS.Property.CAPTION_SIDE);
 			if (captionSideValue != null && captionSideValue.equalsIgnoreCase(CSS.Value.BOTTOM)) {
 				elems.add(new WritableElement(table));
-				elems.addAll(invalidRowElements);
+				elems.add(createNewWritableElement(invalidRowElements));
 			} else {
-				elems.addAll(invalidRowElements);
+				elems.add(createNewWritableElement(invalidRowElements));
 				elems.add(new WritableElement(table));
 			}
 		} else {

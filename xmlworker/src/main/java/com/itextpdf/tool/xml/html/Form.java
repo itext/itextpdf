@@ -46,14 +46,6 @@ import com.itextpdf.tool.xml.pipeline.WritableElement;
 public class Form extends AbstractTagProcessor {
 
 	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
-	 */
-	@Override
-	public List<Writable> start(final Tag tag) {
-		return new ArrayList<Writable>(0);
-	}
-
-	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
 	@Override
