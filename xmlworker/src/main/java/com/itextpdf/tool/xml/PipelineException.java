@@ -55,10 +55,25 @@ public class PipelineException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @param e1
+	 * @param e
 	 */
-	public PipelineException(final Exception e1) {
-		super(e1);
+	public PipelineException(final Exception e) {
+		super(e);
+	}
+
+	/**
+	 * @param msg
+	 * @param e
+	 */
+	public PipelineException(final String msg, final Exception e) {
+		super(msg, e);
+	}
+
+	/**
+	 * @param msg
+	 */
+	public PipelineException(final String msg) {
+		super(msg);
 	}
 
 }

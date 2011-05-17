@@ -76,4 +76,10 @@ public interface CSSResolver {
 	 */
 	void addCssFile(String href)  throws CssResolverException;
 
+	/**
+	 * @param content
+	 * @throws CssResolverException
+	 */
+	void addCss(String content) throws CssResolverException;
+
 }

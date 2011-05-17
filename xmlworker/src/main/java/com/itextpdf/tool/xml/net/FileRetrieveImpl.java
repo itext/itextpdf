@@ -48,6 +48,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
@@ -58,39 +60,74 @@ import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
  * @author redlab_b
  *
  */
-public class FileRetrieveImpl {
+public class FileRetrieveImpl implements FileRetrieve {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileRetrieveImpl.class);
-    /**
-     * Process content from a given URL. using {@link URL#openStream()}
-     * @param url the URL to process
-     * @param processor the ReadingProcessor
-     * @throws IOException if something went wrong.
-     */
-    public void processFromURL(final URL url, final ReadingProcessor processor) throws IOException {
+	private final List<File> rootdirs;
+	private final List<String> urls;
+
+	/**
+	 *
+	 */
+	public FileRetrieveImpl() {
+		rootdirs = new CopyOnWriteArrayList<File>();
+		urls = new CopyOnWriteArrayList<String>();
+	}
+
+	/**
+	 * @param strings
+	 */
+	public FileRetrieveImpl(final String[] strings) {
+		this();
+		for (String s : strings) {
+			if (s.startsWith("http")) {
+				urls.add(s);
+			} else {
+				File f = new File(s);
+				if (f.isDirectory()) {
+					rootdirs.add(f);
+				}
+			}
+		}
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.net.FileRetrieve#processFromURL(java.net.URL, com.itextpdf.tool.xml.net.ReadingProcessor)
+	 */
+    public void processFromHref(final String href, final ReadingProcessor processor) throws IOException  {
     	// TODO add proxy
     	if (LOGGER.isLogging(Level.DEBUG)) {
-			LOGGER.debug(String.format("Retrieving file from URL %s", url.toString()));
+			LOGGER.debug(String.format("Retrieving file from href %s", href));
 		}
-        read(processor, url.openStream());
-    }
-    /**
-     * Process content from a given file.
-     * @param file the file to process
-     * @param processor the ReadingProcessor
-     * @throws IOException if something went wrong.
-     */
-    public void processFromFile(final File file, final ReadingProcessor processor) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        read(processor, in);
+    	if (href.startsWith("http")) {
+    		read(processor, new URL(href).openStream());
+    		return;
+    	}
+    	if (new File(href).isFile()) {
+			FileInputStream in = new FileInputStream(new File(href));
+	        read(processor, in);
+	        return;
+		}
+    	for (String root : urls) {
+    		try {
+				URL url = new URL(root + href);
+				read(processor, url.openStream());
+				return;
+			} catch (IOException e) {
+			}
+    	}
+    	for (File f : rootdirs) {
+    		if (new File(f, href).isFile()) {
+    			FileInputStream in = new FileInputStream(new File(f, href));
+    	        read(processor, in);
+    	        return;
+    		}
+    	}
+
     }
 
-    /**
-     * Process content from a given stream.
-     * @param in the stream to process
-     * @param processor the ReadingProcessor
-     * @throws IOException if something went wrong.
-     */
+    /* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.net.FileRetrieve#processFromStream(java.io.InputStream, com.itextpdf.tool.xml.net.ReadingProcessor)
+	 */
     public void processFromStream(final InputStream in, final ReadingProcessor processor) throws IOException {
         read(processor, in);
     }
@@ -118,5 +155,17 @@ public class FileRetrieveImpl {
             }
         }
     }
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.net.FileRetrieve#addRootDir(java.io.File)
+	 */
+	public void addRootDir(final File file) {
+		rootdirs.add(file);
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.net.FileRetrieve#addRootDir(java.io.File)
+	 */
+	public void addURL(final String url) {
+		urls.add(url);
+	}
 
 }

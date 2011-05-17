@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 
@@ -77,6 +78,12 @@ public class DummyTagProcessor implements TagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#setConfiguration(com.itextpdf.tool.xml.XMLWorkerConfig)
 	 */
 	public void setConfiguration(final XMLWorkerConfig config) {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.html.TagProcessor#setContext(com.itextpdf.tool.xml.WorkerContext)
+	 */
+	public void setContext(final WorkerContext context) {
 	}
 
 

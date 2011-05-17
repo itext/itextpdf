@@ -43,30 +43,55 @@
  */
 package com.itextpdf.tool.xml;
 
-import com.itextpdf.tool.xml.exceptions.NotImplementedException;
-
 /**
  * @author redlab_b
  *
  */
 public interface Pipeline {
 
+	/**
+	 * Sets the global worker context.
+	 * @param context
+	 */
 	public void setContext(WorkerContext context);
 
+	/**
+	 * Called when an opening tag has been encountered.
+	 * @param t the Tag
+	 * @param po a processObject to put {@link Writable}s in
+	 * @return the next pipeline in line
+	 * @throws PipelineException
+	 */
 	public Pipeline open(Tag t, ProcessObject po) throws PipelineException;
 
+	/**
+	 * Called when content has been encountered.
+	 * @param t the Tag
+	 * @param content the content
+	 * @param po a processObject to put {@link Writable}s in
+	 * @return the next pipeline in line
+	 * @throws PipelineException
+	 */
 	public Pipeline content(Tag t, String content, ProcessObject po) throws PipelineException;
 
+	/**
+	 * Called when a closing tag has been encountered.
+	 * @param t the Tag
+	 * @param po a processObject to put {@link Writable}s in
+	 * @return the next pipeline in line
+	 * @throws PipelineException
+	 */
 	public Pipeline close(Tag t, ProcessObject po) throws PipelineException;
 
 	/**
-	 * @return
+	 * Returns the next pipeline in line.
+	 * @return the next pipeline
 	 */
 	public Pipeline getNext();
 
 	/**
-	 * @return
-	 * @throws NotImplementedException
+	 * @return a <strong>new</strong> custom context for this pipeline
+	 * @throws NoCustomContextException if there is no custom context for this pipeline
 	 */
 	public CustomContext getCustomContext() throws NoCustomContextException;
 }

@@ -46,6 +46,7 @@ package com.itextpdf.tool.xml.html;
 import java.util.List;
 
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 
@@ -99,5 +100,10 @@ public interface TagProcessor {
 	 * @param config the configuration object.
 	 */
 	void setConfiguration(XMLWorkerConfig config);
+
+	/**
+	 * @param context
+	 */
+	void setContext(WorkerContext context);
 
 }

@@ -110,11 +110,18 @@ public class HtmlPipeline extends AbstractPipeline {
 
 	/**
 	 * @return
+	 * @throws PipelineException
 	 */
-	private HtmlPipelineContext getMyContext() {
-		CustomContext cc = getContext().get(HtmlPipeline.class);
-		HtmlPipelineContext hcc = (HtmlPipelineContext) cc;
-		return hcc;
+	private HtmlPipelineContext getMyContext() throws PipelineException {
+		CustomContext cc;
+		try {
+			cc = getContext().get(HtmlPipeline.class);
+			HtmlPipelineContext hcc = (HtmlPipelineContext) cc;
+			return hcc;
+		} catch (NoCustomContextException e) {
+			throw new PipelineException("HtmlPipeline cries, it cannot find it's own context.", e);
+		}
+
 	}
 
 	/*
@@ -198,8 +205,9 @@ public class HtmlPipeline extends AbstractPipeline {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.pipeline.Pipeline#getNewCustomContext()
 	 */
+	@Override
 	public CustomContext getCustomContext() throws NoCustomContextException {
-		return new HtmlPipelineContext(config);
+		return new HtmlPipelineContext(config, getContext());
 	}
 
 }

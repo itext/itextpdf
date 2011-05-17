@@ -53,7 +53,7 @@ import java.io.OutputStream;
 public interface FileMaker {
 
 	/**
-	 * @return the outputstream to write the pdf to
+	 * @return the OutputStream to write the PDF to
 	 * @throws IOException
 	 */
 	OutputStream getStream() throws IOException;

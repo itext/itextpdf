@@ -57,6 +57,7 @@ import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.XMLWorkerImpl;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
+import com.itextpdf.tool.xml.net.FileRetrieveImpl;
 import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
@@ -78,11 +79,12 @@ public class LoadCssThroughLinkStyleTagTest {
 
 		XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
 		cssFiles = new CssFilesImpl();
-		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
-		DefaultProvider provider = new DefaultProvider();
 		String path = LoadCssThroughLinkStyleTagTest.class.getResource("/css/test.css").getPath();
-		provider.setGlobalCssRoot(path.substring(0, path.lastIndexOf("test.css")));
-		config.tagProcessorFactory(new Tags().getHtmlTagProcessorFactory()).cssResolver(cssResolver)
+		path = path.substring(0, path.lastIndexOf("test.css"));
+		FileRetrieveImpl r = new FileRetrieveImpl(new String [] {path} );
+		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles, r );
+		DefaultProvider provider = new DefaultProvider();
+		config.tagProcessorFactory(Tags.getHtmlTagProcessorFactory()).cssResolver(cssResolver)
 		.acceptUnknown(false).provider(provider).pipeline(new CssResolverPipeline(cssResolver, new HtmlPipeline(config, null)));
 		final XMLWorker worker = new XMLWorkerImpl(config);
 		p = new XMLParser(worker);

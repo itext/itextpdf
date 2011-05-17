@@ -51,6 +51,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.tool.xml.net.FileRetrieve;
 import com.itextpdf.tool.xml.net.FileRetrieveImpl;
 
 /**
@@ -60,7 +61,7 @@ import com.itextpdf.tool.xml.net.FileRetrieveImpl;
 public class CSSFileProcessorTest {
 
     private CssFileProcessor proc;
-    private FileRetrieveImpl retriever;
+    private FileRetrieve retriever;
 
     @Before
     public void setup() {

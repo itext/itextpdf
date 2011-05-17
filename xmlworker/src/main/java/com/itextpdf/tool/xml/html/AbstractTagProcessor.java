@@ -37,14 +37,20 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
+import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.WritableDirect;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
+import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
 
 /**
  * Abstract TagProcessor that allows setting the configuration object to a
@@ -68,6 +74,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 */
 	protected XMLWorkerConfig configuration;
 	private final FontSizeTranslator fontsizeTrans;
+	private WorkerContext context;
 
 	/**
 	 *
@@ -84,6 +91,20 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 		this.configuration = config;
 	}
 
+	/**
+	 * @param context
+	 */
+	public void setContext(final WorkerContext context) {
+		this.context = context;
+	}
+
+	/**
+	 * @return CSSResolver
+	 * @throws CssResolverException
+	 */
+	public CSSResolver getCSSResolver() throws NoCustomContextException {
+		return (CSSResolver)((MapContext) this.context.get(CssResolverPipeline.class)).get(CssResolverPipeline.CSS_RESOLVER);
+	}
 	/**
 	 * Calculates any found font size to pt values and set it in the CSS before
 	 * calling {@link AbstractTagProcessor#start(Tag)}.<br />

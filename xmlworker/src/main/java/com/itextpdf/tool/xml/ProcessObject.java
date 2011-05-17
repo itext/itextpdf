@@ -47,8 +47,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-
 /**
+ * Passed in the pipeline as water through a hose. The process object hold a
+ * queue with {@link Writable}s.
+ *
  * @author redlab_b
  *
  */
@@ -75,19 +77,18 @@ public class ProcessObject {
 		return queue.poll();
 	}
 	/**
-	 * @param writable
+	 * Add a writable.
+	 * @param writable the writable to add
 	 */
 	public void add(final Writable writable) {
 		queue.add(writable);
 	}
 	/**
-	 * @param elems
+	 * Adds a list of writable.
+	 * @param elems the writables
 	 */
 	public void addAll(final List<Writable> elems) {
-		for (Writable w : elems) {
-			queue.add(w);
-		}
-
+			queue.addAll(elems);
 	}
 
 }

@@ -53,7 +53,8 @@ public interface WorkerContext {
 	 * @param klass
 	 * @param name
 	 * @return
+	 * @throws NoCustomContextException
 	 */
-	CustomContext get(Class<?> klass);
+	CustomContext get(Class<?> klass) throws NoCustomContextException;
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id$
+rfdddddtd * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -48,6 +48,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.itextpdf.tool.xml.CustomContext;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.html.TagProcessor;
@@ -65,13 +66,16 @@ public class HtmlPipelineContext implements CustomContext {
 	private final TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
 	private final List<Writable> ctn = new ArrayList<Writable>();
 	private final XMLWorkerConfig config;
+	private final WorkerContext context;
 
 	/**
+	 * @param workerContext
 	 *
 	 */
-	public HtmlPipelineContext(final XMLWorkerConfig config) {
+	public HtmlPipelineContext(final XMLWorkerConfig config, final WorkerContext workerContext) {
 		this.queue = new LinkedList<StackKeeper>();
 		this.config = config;
+		this.context = workerContext;
 	}
 	/**
 	 * @param tag
@@ -80,6 +84,7 @@ public class HtmlPipelineContext implements CustomContext {
 	 */
 	public TagProcessor resolveProcessor(final String tag, final String nameSpace) {
 		TagProcessor tp = tagFactory.getProcessor(tag, nameSpace);
+		tp.setContext(context);
 		tp.setConfiguration(config);
 		return tp;
 	}

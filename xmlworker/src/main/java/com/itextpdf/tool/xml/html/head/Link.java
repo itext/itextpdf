@@ -46,13 +46,13 @@ package com.itextpdf.tool.xml.html.head;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
-import com.itextpdf.tool.xml.html.Provider;
 
 /**
  * @author redlab_b
@@ -68,13 +68,11 @@ public class Link extends AbstractTagProcessor {
 		if (tag.getAttributes().containsKey(HTML.Attribute.TYPE) && tag.getAttributes().get(HTML.Attribute.TYPE).equalsIgnoreCase("text/css")) {
 			String href = tag.getAttributes().get(HTML.Attribute.HREF);
 			if (null != href) {
-				if (!href.startsWith("http")) {
-					href = configuration.getProvider().get(Provider.GLOBAL_CSS_ROOT) + href;
-				}
 				try {
-					configuration.getCssResolver().addCssFile(href);
+					getCSSResolver().addCssFile(href);
 				} catch (CssResolverException e) {
 					throw new RuntimeWorkerException(e);
+				} catch (NoCustomContextException e) {
 				}
 			}
 		}

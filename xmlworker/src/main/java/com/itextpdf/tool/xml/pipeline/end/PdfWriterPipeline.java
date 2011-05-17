@@ -113,40 +113,45 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	 * @throws PipelineException
 	 */
 	private void write(final ProcessObject po) throws PipelineException {
-		CustomContext cc = getContext().get(PdfWriterPipeline.class);
-		MapContext mp = (MapContext) cc;
-		if (po.containsWritable()) {
-			Document doc = (Document) mp.get(DOCUMENT);
-			PdfWriter writer = (PdfWriter) mp.get(WRITER);
-			boolean continuousWrite = (Boolean) mp.get(CONTINUOUS);
-			Writable writable = null;
-			while (null != (writable = po.poll())) {
-				if (writable instanceof WritableElement) {
-					for (Element e : ((WritableElement) writable).elements()) {
-						try {
-							if (!doc.add(e)) {
-								LOG.trace(String.format("Failed to add %s element to the document, no exception was thrown.", e.toString()));
-							}
-						} catch (DocumentException e1) {
-							if (!continuousWrite) {
-								throw new PipelineException(e1);
-							} else {
-								LOG.error("Adding to document threw exception, I've swallowed it!", e1);
+		CustomContext cc;
+		try {
+			cc = getContext().get(PdfWriterPipeline.class);
+			MapContext mp = (MapContext) cc;
+			if (po.containsWritable()) {
+				Document doc = (Document) mp.get(DOCUMENT);
+				PdfWriter writer = (PdfWriter) mp.get(WRITER);
+				boolean continuousWrite = (Boolean) mp.get(CONTINUOUS);
+				Writable writable = null;
+				while (null != (writable = po.poll())) {
+					if (writable instanceof WritableElement) {
+						for (Element e : ((WritableElement) writable).elements()) {
+							try {
+								if (!doc.add(e)) {
+									LOG.trace(String.format("Failed to add %s element to the document, no exception was thrown.", e.toString()));
+								}
+							} catch (DocumentException e1) {
+								if (!continuousWrite) {
+									throw new PipelineException(e1);
+								} else {
+									LOG.error("Adding to document threw exception, I've swallowed it!", e1);
+								}
 							}
 						}
-					}
-				} else if (writable instanceof WritableDirect) {
-					try {
-						((WritableDirect) writable).write(writer, doc);
-					} catch (DocumentException e) {
-						if (!continuousWrite) {
-							throw new PipelineException(e);
-						} else {
-							LOG.error("Adding to document threw exception, I've swallowed it!", e);
+					} else if (writable instanceof WritableDirect) {
+						try {
+							((WritableDirect) writable).write(writer, doc);
+						} catch (DocumentException e) {
+							if (!continuousWrite) {
+								throw new PipelineException(e);
+							} else {
+								LOG.error("Adding to document threw exception, I've swallowed it!", e);
+							}
 						}
 					}
 				}
 			}
+		} catch (NoCustomContextException e2) {
+			throw new PipelineException("PdfWriterPipeline is sad, it cannot find it's own context.");
 		}
 	}
 
@@ -191,6 +196,7 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	 *
 	 * @see com.itextpdf.tool.xml.pipeline.Pipeline#getNewCustomContext()
 	 */
+	@Override
 	public CustomContext getCustomContext() throws NoCustomContextException {
 		MapContext mc = new MapContext();
 		mc.put(CONTINUOUS, Boolean.TRUE);

@@ -82,9 +82,11 @@ public class CssResolverPipeline extends AbstractPipeline {
 	 */
 	@Override
 	public Pipeline open(final Tag t, final ProcessObject po) throws PipelineException {
-		CustomContext cc = getContext().get(CssResolverPipeline.class);
-		if (null != cc) {
+		CustomContext cc;
+		try {
+			cc = getContext().get(CssResolverPipeline.class);
 			((CSSResolver) ((MapContext) cc).get(CSS_RESOLVER)).resolveStyles(t);
+		} catch (NoCustomContextException e) {
 		}
 		return getNext();
 	}
@@ -94,6 +96,7 @@ public class CssResolverPipeline extends AbstractPipeline {
 	 *
 	 * @see com.itextpdf.tool.xml.pipeline.Pipeline#getNewCustomContext()
 	 */
+	@Override
 	public CustomContext getCustomContext() throws NoCustomContextException {
 		MapContext mc = new MapContext();
 		mc.put(CSS_RESOLVER, this.resolver);

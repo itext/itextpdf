@@ -70,7 +70,6 @@ public class XMLParser {
 	private final StateController controller;
 	private final List<XMLParserListener> listeners;
 	private final XMLParserMemory memory;
-	private long openclosed;
 	private ParserMonitor monitor;
 	private String text = "";
 	private TagState tagState;

@@ -33,8 +33,6 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
@@ -46,46 +44,6 @@ import com.itextpdf.tool.xml.pipeline.WritableElement;
  *
  */
 public class Body extends AbstractTagProcessor {
-
-//	private final CssUtils utils = CssUtils.getInstance();
-	private static final Logger LOGGER = LoggerFactory.getLogger(Body.class);
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag, java.util.List,
-	 * com.itextpdf.text.Document)
-	 */
-	@Override
-	public List<Writable> start(final Tag tag) {
-//		Document doc = configuration.getDocument();
-//		float pageWidth = configuration.getPageSize().getWidth();
-////TODO how to set the margins of the first page of a doc? Before doc is opened, but how to get the margins out of the body-tag?
-//		if (null != doc) {
-//			float marginLeft = 0;
-//			float marginRight = 0;
-//			float marginTop = 0;
-//			float marginBottom = 0;
-//			Map<String, String> css = tag.getCSS();
-//			for (Entry<String, String> entry : css.entrySet()) {
-//	        	String key = entry.getKey();
-//				String value = entry.getValue();
-//				if(key.equalsIgnoreCase(CSS.Property.MARGIN_LEFT)) {
-//					marginLeft = utils.parseValueToPt(value, pageWidth);
-//				} else if(key.equalsIgnoreCase(CSS.Property.MARGIN_RIGHT)) {
-//					marginRight = utils.parseValueToPt(value, pageWidth);
-//				} else if(key.equalsIgnoreCase(CSS.Property.MARGIN_TOP)) {
-//					marginTop = utils.parseValueToPt(value, pageWidth);
-//				} else if(key.equalsIgnoreCase(CSS.Property.MARGIN_BOTTOM)) {
-//					marginBottom = utils.parseValueToPt(value, pageWidth);
-//					configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, marginBottom);
-//				}
-//			}
-//			doc.setMargins(marginLeft, marginRight, marginTop, marginBottom);
-//		}
-//
-		return new ArrayList<Writable>(0);
-	}
 
 	/*
 	 * (non-Javadoc)
