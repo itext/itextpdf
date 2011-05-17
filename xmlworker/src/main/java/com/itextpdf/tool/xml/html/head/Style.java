@@ -46,11 +46,11 @@ package com.itextpdf.tool.xml.html.head;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * @author redlab_b
@@ -62,14 +62,14 @@ public class Style extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Writable> content(final Tag tag, final String content) {
 		try {
 			// TODO detect file encoding from html-meta or xml
 			configuration.getCssResolver().addCss(content, System.getProperty("file.encoding"));
 		} catch (CssResolverException e) {
 			throw new RuntimeWorkerException(e);
 		}
-		return new ArrayList<Element>(0);
+		return new ArrayList<Writable>(0);
 	}
 
 }

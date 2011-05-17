@@ -48,12 +48,12 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * @author redlab_b
@@ -68,7 +68,7 @@ public class XML extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
 	@Override
-	public List<Element> start(final Tag tag) {
+	public List<Writable> start(final Tag tag) {
 		String enc = tag.getAttributes().get("encoding");
 		if (null != enc) {
 			if (Charset.isSupported(enc)) {
@@ -84,7 +84,7 @@ public class XML extends AbstractTagProcessor {
 			}
 
 		}
-		return new ArrayList<Element>(0);
+		return new ArrayList<Writable>(0);
 	}
 
 }
