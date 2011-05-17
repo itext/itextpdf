@@ -35,16 +35,25 @@ import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Provider;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableDirect;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -61,7 +70,7 @@ public class Anchor extends AbstractTagProcessor {
 	 * .Tag, java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> start(final Tag tag) {
+	public List<Writable> start(final Tag tag) {
 		if (null != tag.getAttributes().get(HTML.Attribute.HREF)) {
 			Map<String, String> css = tag.getCSS();
 			if (css.get(CSS.Property.TEXT_DECORATION) == null) {
@@ -71,7 +80,7 @@ public class Anchor extends AbstractTagProcessor {
 				css.put(CSS.Property.COLOR, "blue");
 			}
 		}
-		return new ArrayList<Element>(0);
+		return new ArrayList<Writable>(0);
 	}
 
 	/*
@@ -82,11 +91,13 @@ public class Anchor extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Writable> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Element> l = new ArrayList<Element>(1);
+		List<Writable> l = new ArrayList<Writable>(1);
 		if (sanitized.length() > 0) {
-			l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+			WritableElement we = new WritableElement();
+			we.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+			l.add(we);
 		}
 		return l;
 	}
@@ -99,55 +110,71 @@ public class Anchor extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		String name = tag.getAttributes().get(HTML.Attribute.NAME);
-		List<Element> elems = new ArrayList<Element>(0);
+	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+		final String name = tag.getAttributes().get(HTML.Attribute.NAME);
+		List<Writable> elems = new ArrayList<Writable>(0);
 		if (currentContent.size() > 0) {
 			NoNewLineParagraph p = new NoNewLineParagraph();
 			String url = tag.getAttributes().get(HTML.Attribute.HREF);
-			for (Element e : currentContent) {
-				for (Chunk c : e.getChunks()) {
-					if (null != url) {
-						if (url.startsWith("#")) {
-							if (LOGGER.isLogging(Level.TRACE)) {
-								LOGGER.trace(String.format("Creating a local goto link to %s", url));
-							}
-							c.setLocalGoto(url.replaceFirst("#", ""));
-						} else {
-							// TODO check url validity?
-							if (null != configuration.getProvider() && !url.startsWith("http")) {
-								String root = configuration.getProvider().get(Provider.GLOBAL_LINK_ROOT);
-								if (root.endsWith("/") && url.startsWith("/")) {
-									root = root.substring(0, root.length() - 1);
+			for (Writable w : currentContent) {
+				if (w instanceof WritableElement) {
+					for (Element e : ((WritableElement) w).elements()) {
+						if (e instanceof Chunk) {
+							if (null != url) {
+								if (url.startsWith("#")) {
+									if (LOGGER.isLogging(Level.TRACE)) {
+										LOGGER.trace(String.format("Creating a local goto link to %s", url));
+									}
+									((Chunk) e).setLocalGoto(url.replaceFirst("#", ""));
+								} else {
+									// TODO check url validity?
+									if (null != configuration.getProvider() && !url.startsWith("http")) {
+										String root = configuration.getProvider().get(Provider.GLOBAL_LINK_ROOT);
+										if (root.endsWith("/") && url.startsWith("/")) {
+											root = root.substring(0, root.length() - 1);
+										}
+										url = root + url;
+									}
+									if (LOGGER.isLogging(Level.TRACE)) {
+										LOGGER.trace(String.format("Creating a www link to %s", url));
+									}
+									((Chunk) e).setAnchor(url);
 								}
-								url = root + url;
+							} else if (null != name) {
+								((Chunk) e).setLocalDestination(name);
+								if (LOGGER.isLogging(Level.TRACE)) {
+									LOGGER.trace(String.format("Setting local destination for  %s", name));
+								}
 							}
-							if (LOGGER.isLogging(Level.TRACE)) {
-								LOGGER.trace(String.format("Creating a www link to %s", url));
-							}
-							c.setAnchor(url);
 						}
-					} else if (null != name) {
-						c.setLocalDestination(name);
-						if (LOGGER.isLogging(Level.TRACE)) {
-							LOGGER.trace(String.format("Setting local destination for  %s", name));
-						}
+						p.add(e);
 					}
-
 				}
-				p.add(e);
+				WritableElement we = new WritableElement();
+				we.add(new NoNewLineParagraphCssApplier(configuration).apply(p, tag));
+				elems.add(we);
 			}
-			elems.add(new NoNewLineParagraphCssApplier(configuration).apply(p, tag));
 		} else
 		// !currentContent > 0 ; An empty "a" tag has been encountered.
 		// we're using an anchor space hack here. without the space, reader does
 		// not jump to destination
-		if (null != configuration.getWriter() && null != name) {
+		if (null != name) {
 			if (LOGGER.isLogging(Level.TRACE)) {
 				LOGGER.trace(String.format("Trying to set local destination %s with space hack", name));
 			}
-			Chunk dest = new Chunk(" ").setLocalDestination(name);
-			elems.add(dest);
+			elems.add(new WritableDirect() {
+
+				public void write(final PdfWriter writer, final Document doc) throws DocumentException {
+					ColumnText c = new ColumnText(writer.getDirectContent());
+					float verticalPosition = writer.getVerticalPosition(false);
+					c.setSimpleColumn(new Phrase(new Chunk(" ").setLocalDestination(name)), 1, verticalPosition-5, 6, verticalPosition, 5, Element.ALIGN_LEFT);
+					try {
+						c.go();
+					} catch (DocumentException e) {
+						throw new RuntimeWorkerException(e);
+					}
+				}
+			});
 			/*
 			 * PdfWriter writer = configuration.getWriter(); ColumnText c = new
 			 * ColumnText(writer.getDirectContent()); c.setSimpleColumn(new

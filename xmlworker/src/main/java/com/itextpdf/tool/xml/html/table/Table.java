@@ -404,56 +404,59 @@ public class Table extends AbstractTagProcessor {
 		float widestWordOfCell = 0f;
 		float startWidth = getCellStartWidth(cell);
 		float cellWidth = startWidth;
-		for(Element baseLevel: cell.getCompositeElements()){
-        	if (baseLevel instanceof Phrase) {
-        		for(int i=0; i < ((Phrase)baseLevel).size() ; i++) {
-        			Element inner = ((Phrase)baseLevel).get(i);
-        			if (inner instanceof Chunk) {
-	        			cellWidth += ((Chunk)inner).getWidthPoint();
-	        			float widestWord = startWidth + new ChunkCssApplier().getWidestWord((Chunk) inner);
-						if(widestWord > widestWordOfCell) {
-	        				widestWordOfCell = widestWord;
+		List<Element> compositeElements = cell.getCompositeElements();
+		if (compositeElements != null) {
+			for(Element baseLevel: compositeElements){
+	        	if (baseLevel instanceof Phrase) {
+	        		for(int i=0; i < ((Phrase)baseLevel).size() ; i++) {
+	        			Element inner = ((Phrase)baseLevel).get(i);
+	        			if (inner instanceof Chunk) {
+		        			cellWidth += ((Chunk)inner).getWidthPoint();
+		        			float widestWord = startWidth + new ChunkCssApplier().getWidestWord((Chunk) inner);
+							if(widestWord > widestWordOfCell) {
+		        				widestWordOfCell = widestWord;
+		        			}
 	        			}
-        			}
-        		}
-        		rulesWidth.add(cellWidth);
-        		cellWidth = startWidth;
-        	} else if (baseLevel instanceof com.itextpdf.text.List) {
-				for(Element li: ((com.itextpdf.text.List)baseLevel).getItems()) {
-    				rulesWidth.add(cellWidth);
-    				cellWidth = startWidth + ((ListItem)li).getIndentationLeft();
-					for(Chunk c :((ListItem)li).getChunks()) {
-						cellWidth += c.getWidthPoint();
-	        			float widestWord = new ChunkCssApplier().getWidestWord(c);
-						if(startWidth + widestWord > widestWordOfCell) {
-	        				widestWordOfCell = startWidth + widestWord;
-	        			}
-					}
-				}
-				rulesWidth.add(cellWidth);
-				cellWidth = startWidth;
-        	} else if (baseLevel instanceof PdfPTable) {
-        		rulesWidth.add(cellWidth);
-				cellWidth = startWidth + ((PdfPTable)baseLevel).getTotalWidth();
-				for(PdfPRow innerRow :((PdfPTable)baseLevel).getRows()) {
-					float minRowWidth = 0;
-					int size = innerRow.getCells().length;
-					int celnr = 0;
-					for(PdfPCell innerCell : innerRow.getCells()) {
-						celnr++;
-						if(innerCell != null) {
-							float innerWidestWordOfCell = setCellWidthAndWidestWord(new HtmlCell(innerCell, celnr == size))[1];
-							minRowWidth += innerWidestWordOfCell;
+	        		}
+	        		rulesWidth.add(cellWidth);
+	        		cellWidth = startWidth;
+	        	} else if (baseLevel instanceof com.itextpdf.text.List) {
+					for(Element li: ((com.itextpdf.text.List)baseLevel).getItems()) {
+	    				rulesWidth.add(cellWidth);
+	    				cellWidth = startWidth + ((ListItem)li).getIndentationLeft();
+						for(Chunk c :((ListItem)li).getChunks()) {
+							cellWidth += c.getWidthPoint();
+		        			float widestWord = new ChunkCssApplier().getWidestWord(c);
+							if(startWidth + widestWord > widestWordOfCell) {
+		        				widestWordOfCell = startWidth + widestWord;
+		        			}
 						}
 					}
-					if(minRowWidth > widestWordOfCell){
-						widestWordOfCell = minRowWidth;
+					rulesWidth.add(cellWidth);
+					cellWidth = startWidth;
+	        	} else if (baseLevel instanceof PdfPTable) {
+	        		rulesWidth.add(cellWidth);
+					cellWidth = startWidth + ((PdfPTable)baseLevel).getTotalWidth();
+					for(PdfPRow innerRow :((PdfPTable)baseLevel).getRows()) {
+						float minRowWidth = 0;
+						int size = innerRow.getCells().length;
+						int celnr = 0;
+						for(PdfPCell innerCell : innerRow.getCells()) {
+							celnr++;
+							if(innerCell != null) {
+								float innerWidestWordOfCell = setCellWidthAndWidestWord(new HtmlCell(innerCell, celnr == size))[1];
+								minRowWidth += innerWidestWordOfCell;
+							}
+						}
+						if(minRowWidth > widestWordOfCell){
+							widestWordOfCell = minRowWidth;
+						}
 					}
-				}
-				rulesWidth.add(cellWidth);
-				cellWidth = startWidth;
-        	}
-    	}
+					rulesWidth.add(cellWidth);
+					cellWidth = startWidth;
+	        	}
+	    	}
+		}
 		for(Float width: rulesWidth) {
 			if(width > cellWidth) {
 				cellWidth = width;

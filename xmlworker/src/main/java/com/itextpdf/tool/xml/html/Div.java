@@ -47,8 +47,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -60,11 +62,13 @@ public class Div extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Writable> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Element> l = new ArrayList<Element>(1);
+		List<Writable> l = new ArrayList<Writable>(1);
     	if (sanitized.length() > 0) {
-    		l.add( new Chunk(sanitized));
+    		WritableElement we = new WritableElement();
+    		we.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+    		l.add(we);
     	}
 		return l;
 	}

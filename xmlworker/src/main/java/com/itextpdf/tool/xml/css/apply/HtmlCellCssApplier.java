@@ -48,6 +48,7 @@ import java.util.Map.Entry;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
@@ -94,11 +95,11 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
     	Map<String, String> css = t.getCSS();
 		String emptyCells = css.get(CSS.Property.EMPTY_CELLS);
 		if(null != emptyCells && CSS.Value.HIDE.equalsIgnoreCase(emptyCells) && cell.getCompositeElements() == null) {
-//			cell.setBorder(Rectangle.NO_BORDER);
+			cell.setBorder(Rectangle.NO_BORDER);
 		} else {
 	    	cell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Default css behavior. Implementation of "vertical-align" style further along.
-			if(t.getAttributes().get(HTML.Attribute.WIDTH) != null || css.get("width") != null) {
-				cell.setFixedWidth(new WidthCalculator().getWidth(t, configuration));
+			if(t.getAttributes().get(HTML.Attribute.WIDTH) != null || css.get(HTML.Attribute.WIDTH) != null) {
+				cell.setMinimumHeight(new WidthCalculator().getWidth(t, configuration));
 			}
 	        String colspan = t.getAttributes().get(HTML.Attribute.COLSPAN);
 	        if (null != colspan) {
@@ -161,7 +162,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 	    	cell.setPaddingTop(cell.getPaddingTop()+verSpacing+values.getBorderWidthTop());
 	    	cell.setPaddingBottom(cell.getPaddingBottom()+verSpacing+values.getBorderWidthBottom());
 		}
-//		cell.setBorder(Rectangle.NO_BORDER);
+		cell.setBorder(Rectangle.NO_BORDER);
 		cell.setCellEvent(new CellSpacingEvent(values));
 		cell.setCellValues(values);
         return cell;
