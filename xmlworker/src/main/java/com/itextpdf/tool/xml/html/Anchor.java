@@ -44,14 +44,13 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.Provider;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
-import com.itextpdf.tool.xml.pipeline.Writable;
 import com.itextpdf.tool.xml.pipeline.WritableDirect;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 

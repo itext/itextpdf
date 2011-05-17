@@ -36,13 +36,13 @@ import java.util.List;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
-import com.itextpdf.tool.xml.pipeline.Writable;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**

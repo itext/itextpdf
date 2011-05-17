@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.tool.xml.Writable;
 
 /**
  * @author redlab_b

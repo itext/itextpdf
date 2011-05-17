@@ -36,9 +36,9 @@ import java.util.List;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
-import com.itextpdf.tool.xml.pipeline.Writable;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**

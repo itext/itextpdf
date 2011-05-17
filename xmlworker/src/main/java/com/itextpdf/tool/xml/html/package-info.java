@@ -42,7 +42,7 @@
  * address: sales@itextpdf.com
  */
 /**
- * TagProcessor implementations for tags in XHTML/HTML. Use {@link com.itextpdf.tool.xml.html.Tags} to setup HTML parsing with the {@link com.itextpdf.tool.xml.XMLWorkerImpl}.
+ * Everything used by the {@link com.itextpdf.tool.xml.pipeline.html.HtmlPipeline} is in here.
  * <br/>This package is part of iText&reg; XMLWorker.
  */
 package com.itextpdf.tool.xml.html;

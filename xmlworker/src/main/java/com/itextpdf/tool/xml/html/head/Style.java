@@ -47,10 +47,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
-import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * @author redlab_b

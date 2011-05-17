@@ -35,8 +35,8 @@ import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.pipeline.Writable;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 
@@ -63,7 +63,7 @@ public class NonSanitizedTag extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
-		return Tags.currentContentToParagraph(currentContent, false);
+		return AbstractTagProcessor.currentContentToParagraph(currentContent, false);
 	}
 
 }

@@ -58,8 +58,8 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.ElementHandler;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
-import com.itextpdf.tool.xml.pipeline.Writable;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 

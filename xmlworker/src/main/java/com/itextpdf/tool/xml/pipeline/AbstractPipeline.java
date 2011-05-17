@@ -43,7 +43,13 @@
  */
 package com.itextpdf.tool.xml.pipeline;
 
+import com.itextpdf.tool.xml.CustomContext;
+import com.itextpdf.tool.xml.NoCustomContextException;
+import com.itextpdf.tool.xml.Pipeline;
+import com.itextpdf.tool.xml.PipelineException;
+import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 
 /**
  * @author redlab_b

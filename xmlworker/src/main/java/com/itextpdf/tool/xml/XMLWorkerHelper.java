@@ -55,11 +55,10 @@ import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.parser.XMLParser;
-import com.itextpdf.tool.xml.pipeline.Pipeline;
-import com.itextpdf.tool.xml.pipeline.pipe.CssResolverPipeline;
-import com.itextpdf.tool.xml.pipeline.pipe.ElementHandlerPipeline;
-import com.itextpdf.tool.xml.pipeline.pipe.HtmlPipeline;
-import com.itextpdf.tool.xml.pipeline.pipe.PdfWriterPipeline;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.end.ElementHandlerPipeline;
+import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 
 /**
  * A helper class for parsing XHTML/CSS or XML flow to PDF.

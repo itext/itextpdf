@@ -34,9 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.TagProcessor;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
-import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * Does nothing.

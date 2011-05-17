@@ -41,92 +41,27 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline.pipe;
+package com.itextpdf.tool.xml.html;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import com.itextpdf.tool.xml.StackKeeper;
-import com.itextpdf.tool.xml.TagProcessor;
-import com.itextpdf.tool.xml.TagProcessorFactory;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
-import com.itextpdf.tool.xml.html.Tags;
-import com.itextpdf.tool.xml.pipeline.CustomContext;
-import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.XMLWorker;
+import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 
 /**
+ * A TagProcessorFactory creates TagProcessors used by the {@link XMLWorker}.
+ *
  * @author redlab_b
  *
  */
-public class HtmlPipelineContext implements CustomContext {
-
-	private final LinkedList<StackKeeper> queue;
-	private final boolean acceptUnknown = true;
-	private final TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
-	private final List<Writable> ctn = new ArrayList<Writable>();
-	private final XMLWorkerConfig config;
+public interface TagProcessorFactory {
 
 	/**
+	 * Looks up a TagProcessor for the given tag.
 	 *
+	 * @param tag the tag to find a processor for.
+	 * @param nameSpace the namespace
+	 * @return the {@link TagProcessor} mapped to this tag.
+	 * @throws NoTagProcessorException implementers should thrown this if there is no mapping found.
 	 */
-	public HtmlPipelineContext(final XMLWorkerConfig config) {
-		this.queue = new LinkedList<StackKeeper>();
-		this.config = config;
-	}
-	/**
-	 * @param tag
-	 * @param nameSpace
-	 * @return
-	 */
-	public TagProcessor resolveProcessor(final String tag, final String nameSpace) {
-		TagProcessor tp = tagFactory.getProcessor(tag, nameSpace);
-		tp.setConfiguration(config);
-		return tp;
-	}
-
-	/**
-	 * @param stackKeeper
-	 */
-	public void addFirst(final StackKeeper stackKeeper) {
-		this.queue.addFirst(stackKeeper);
-
-	}
-
-	/**
-	 * Retrieves, but does not remove, the head (first element) of this list.
-	 * @return
-	 */
-	public StackKeeper peek() {
-			return this.queue.getFirst();
-	}
-
-	/**
-	 * @return
-	 */
-	public List<Writable> currentContent() {
-		return ctn;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean acceptUnknown() {
-		return this.acceptUnknown;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isEmpty() {
-		return queue.isEmpty();
-	}
-
-	/**
-	 * @return
-	 */
-	public StackKeeper poll() {
-		return this.queue.removeFirst();
-	}
+	TagProcessor getProcessor(String tag, String nameSpace) throws NoTagProcessorException;
 
 }

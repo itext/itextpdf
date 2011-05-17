@@ -41,7 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline.pipe;
+package com.itextpdf.tool.xml.pipeline.html;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -51,14 +51,15 @@ import java.util.Map.Entry;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.Pipeline;
+import com.itextpdf.tool.xml.PipelineException;
+import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
-import com.itextpdf.tool.xml.pipeline.Pipeline;
-import com.itextpdf.tool.xml.pipeline.PipelineException;
-import com.itextpdf.tool.xml.pipeline.ProcessObject;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
+import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 
 /**
  * @author redlab_b

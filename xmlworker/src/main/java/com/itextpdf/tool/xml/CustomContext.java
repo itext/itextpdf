@@ -43,36 +43,11 @@
  */
 package com.itextpdf.tool.xml;
 
-import com.itextpdf.tool.xml.exceptions.CssResolverException;
-
 /**
- * Resolves CSS rules for a given tag.
- *
  * @author redlab_b
  *
  */
-public interface CSSResolver {
+public interface CustomContext {
 
-	/**
-	 * This method is should resolve css, meaning, it will look at the css and retrieve relevant css rules for the given
-	 * tag. The rules can then be set in {@link Tag#setCSS(java.util.Map)}
-	 *
-	 * @param t the tag.
-	 */
-	void resolveStyles(Tag t);
-
-	/**
-	 * Add a piece of CSS code.
-	 * @param content the CSS
-	 * @param charSet
-	 * @throws CssResolverException
-	 */
-	void addCss(String content, String charSet) throws CssResolverException;
-
-	/**
-	 * @param href the link to the css file
-	 * @throws CssResolverException
-	 */
-	void addCssFile(String href)  throws CssResolverException;
 
 }

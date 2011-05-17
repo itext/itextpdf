@@ -43,9 +43,9 @@
  */
 package com.itextpdf.tool.xml.pipeline.ctx;
 
+import com.itextpdf.tool.xml.CustomContext;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.NotImplementedException;
-import com.itextpdf.tool.xml.pipeline.CustomContext;
-import com.itextpdf.tool.xml.pipeline.WorkerContext;
 
 /**
  * @author redlab_b

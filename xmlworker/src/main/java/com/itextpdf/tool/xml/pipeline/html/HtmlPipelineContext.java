@@ -41,44 +41,91 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline;
+package com.itextpdf.tool.xml.pipeline.html;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.itextpdf.tool.xml.CustomContext;
+import com.itextpdf.tool.xml.Writable;
+import com.itextpdf.tool.xml.XMLWorkerConfig;
+import com.itextpdf.tool.xml.html.TagProcessor;
+import com.itextpdf.tool.xml.html.TagProcessorFactory;
+import com.itextpdf.tool.xml.html.Tags;
 
 /**
  * @author redlab_b
  *
  */
-public class NoCustomContextException extends Exception {
+public class HtmlPipelineContext implements CustomContext {
+
+	private final LinkedList<StackKeeper> queue;
+	private final boolean acceptUnknown = true;
+	private final TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
+	private final List<Writable> ctn = new ArrayList<Writable>();
+	private final XMLWorkerConfig config;
 
 	/**
 	 *
 	 */
-	public NoCustomContextException() {
-		// TODO Auto-generated constructor stub
+	public HtmlPipelineContext(final XMLWorkerConfig config) {
+		this.queue = new LinkedList<StackKeeper>();
+		this.config = config;
+	}
+	/**
+	 * @param tag
+	 * @param nameSpace
+	 * @return
+	 */
+	public TagProcessor resolveProcessor(final String tag, final String nameSpace) {
+		TagProcessor tp = tagFactory.getProcessor(tag, nameSpace);
+		tp.setConfiguration(config);
+		return tp;
 	}
 
 	/**
-	 * @param arg0
+	 * @param stackKeeper
 	 */
-	public NoCustomContextException(final String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public void addFirst(final StackKeeper stackKeeper) {
+		this.queue.addFirst(stackKeeper);
+
 	}
 
 	/**
-	 * @param arg0
+	 * Retrieves, but does not remove, the head (first element) of this list.
+	 * @return
 	 */
-	public NoCustomContextException(final Throwable arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public StackKeeper peek() {
+			return this.queue.getFirst();
 	}
 
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * @return
 	 */
-	public NoCustomContextException(final String arg0, final Throwable arg1) {
-		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
+	public List<Writable> currentContent() {
+		return ctn;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean acceptUnknown() {
+		return this.acceptUnknown;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return queue.isEmpty();
+	}
+
+	/**
+	 * @return
+	 */
+	public StackKeeper poll() {
+		return this.queue.removeFirst();
 	}
 
 }

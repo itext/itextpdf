@@ -41,65 +41,63 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml;
+package com.itextpdf.tool.xml.html;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
+import com.itextpdf.tool.xml.XMLWorkerConfig;
 
 /**
- * Simple wrapper of a {@link List} to put {@link Element}s in that are created by inner tags of the given Tag.
- *
  * @author redlab_b
  *
  */
-public class StackKeeper {
+public interface TagProcessor {
 
-	private final Tag tag;
-	private final List<Writable> stack;
+
+    /**
+     * This method is called when a tag has been encountered.
+     *
+     * @param tag the tag encountered
+     * @return Element an Element to add to the current content;
+     */
+    List<Writable> startElement(Tag tag);
+
+    /**
+     * This method is called if there is text content encountered between the
+     * opening and closing tags this TagProcessor is mapped to.
+     *
+     * @param tag the tag encountered
+     * @param content the text content between the tags this TagProcessor is
+     *        mapped to.
+     * @return the element to add to the currentContent list
+     */
+    List<Writable> content(Tag tag, String content);
 
 	/**
-	 * @param t the tag
-	 */
-	public StackKeeper(final Tag t) {
-		this.tag = t;
-		this.stack = new ArrayList<Writable>();
-	}
-
-	/**
-	 * Add an element to this keepers stack.
+	 * This method is called when a closing tag has been encountered of the
+	 * TagProcessor implementation that is mapped to the tag.
 	 *
-	 * @param content the element to add
+	 * @param tag the tag encountered
+	 * @param currentContent a list of content possibly created by TagProcessing
+	 *            of inner tags, and by <code>startElement</code> and
+	 *            <code>content</code> methods of this <code>TagProcessor</code>
+	 *            .
+	 * @return the resulting element to add to the document or a content stack.
 	 */
-	public void add(final Writable content) {
-		this.stack.add(content);
-	}
+    List<Writable> endElement(Tag tag, List<Writable> currentContent);
+
+    /**
+     * @return true if the tag implementation must keep it's own currentContent
+     *         stack.
+     */
+    boolean isStackOwner();
 
 	/**
-	 * @return the elements in this stack
+	 * The configuration object setter.
+	 * @param config the configuration object.
 	 */
-	public List<Writable> getElements() {
-		return this.stack;
-
-	}
-
-	/**
-	 * Add all given elements to the stack, according to the natural order.
-	 *
-	 * @param elements collection of Element
-	 */
-	public void addAll(final Collection<? extends Writable> elements) {
-		this.stack.addAll(elements);
-	}
-
-	/**
-	 * @return the tag
-	 */
-	public Tag getTag() {
-		return tag;
-	}
+	void setConfiguration(XMLWorkerConfig config);
 
 }

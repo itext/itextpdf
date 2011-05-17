@@ -41,22 +41,21 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline.pipe;
+package com.itextpdf.tool.xml.pipeline.html;
 
 import java.util.List;
 
-import com.itextpdf.tool.xml.StackKeeper;
+import com.itextpdf.tool.xml.CustomContext;
+import com.itextpdf.tool.xml.NoCustomContextException;
+import com.itextpdf.tool.xml.Pipeline;
+import com.itextpdf.tool.xml.PipelineException;
+import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.TagProcessor;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
+import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
-import com.itextpdf.tool.xml.pipeline.CustomContext;
-import com.itextpdf.tool.xml.pipeline.NoCustomContextException;
-import com.itextpdf.tool.xml.pipeline.Pipeline;
-import com.itextpdf.tool.xml.pipeline.PipelineException;
-import com.itextpdf.tool.xml.pipeline.ProcessObject;
-import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * @author redlab_b

@@ -41,7 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml;
+package com.itextpdf.tool.xml.html;
 
 import java.util.HashMap;
 import java.util.Map;

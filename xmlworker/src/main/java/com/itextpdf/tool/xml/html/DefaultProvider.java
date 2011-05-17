@@ -41,19 +41,74 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline;
+package com.itextpdf.tool.xml.html;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.itextpdf.text.Image;
 
 /**
+ * Default implementation of Provider.
  * @author redlab_b
  *
  */
-public interface WorkerContext {
+public class DefaultProvider implements Provider {
+
+	private final Map<String, String> map;
+	private final HashMap<String, Image> images;
 
 	/**
-	 * @param klass
-	 * @param name
-	 * @return
+	 *
 	 */
-	CustomContext get(Class<?> klass);
+	public DefaultProvider() {
+		this.map = new HashMap<String, String>();
+		this.images = new HashMap<String, Image>();
+		this.map.put(GLOBAL_IMAGE_ROOT, "");
+		this.map.put(GLOBAL_LINK_ROOT, "");
+		this.map.put(GLOBAL_CSS_ROOT, "");
+	}
 
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.Provider#get(java.lang.String)
+	 */
+	public String get(final String key) {
+		return this.map.get(key);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.Provider#retrieve(java.lang.String)
+	 */
+	public Image retrieve(final String src) {
+		return images.get(src);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.Provider#store(com.itextpdf.text.Image)
+	 */
+	public void store(final String src, final Image img) {
+		images.put(src, img);
+
+	}
+	/**
+	 * Set a global image root.
+	 * @param root the global image root
+	 */
+	public void setGlobalImageRoot(final String root) {
+		this.map.put(GLOBAL_IMAGE_ROOT, root);
+	}
+	/**
+	 * Set a global link root
+	 * @param root the global link root
+	 */
+	public void setGlobalLinkRoot(final String root) {
+		this.map.put(GLOBAL_LINK_ROOT, root);
+	}
+	/**
+	 * Set a global css root
+	 * @param root the global css root
+	 */
+	public void setGlobalCssRoot(final String root) {
+		this.map.put(GLOBAL_CSS_ROOT, root);
+	}
 }

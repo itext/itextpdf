@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.exceptions;
 
-import com.itextpdf.tool.xml.TagProcessor;
-import com.itextpdf.tool.xml.TagProcessorFactory;
+import com.itextpdf.tool.xml.html.TagProcessor;
+import com.itextpdf.tool.xml.html.TagProcessorFactory;
 
 /**
  * Thrown by {@link TagProcessorFactory#getProcessor(String)} when the given tag

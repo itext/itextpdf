@@ -50,7 +50,7 @@ import java.net.URL;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.tool.xml.Provider;
+import com.itextpdf.tool.xml.html.Provider;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
 
 /**

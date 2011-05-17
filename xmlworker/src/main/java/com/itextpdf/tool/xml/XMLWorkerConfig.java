@@ -50,7 +50,9 @@ import java.util.Map;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.pipeline.Pipeline;
+import com.itextpdf.tool.xml.html.Provider;
+import com.itextpdf.tool.xml.html.TagProcessorFactory;
+import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 
 /**
  * Configuration object for the XMLWorker.

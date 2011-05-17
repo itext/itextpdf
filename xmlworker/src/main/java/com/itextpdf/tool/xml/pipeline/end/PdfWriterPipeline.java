@@ -41,7 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline.pipe;
+package com.itextpdf.tool.xml.pipeline.end;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -49,14 +49,14 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.CustomContext;
+import com.itextpdf.tool.xml.NoCustomContextException;
+import com.itextpdf.tool.xml.Pipeline;
+import com.itextpdf.tool.xml.PipelineException;
+import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
-import com.itextpdf.tool.xml.pipeline.CustomContext;
-import com.itextpdf.tool.xml.pipeline.NoCustomContextException;
-import com.itextpdf.tool.xml.pipeline.Pipeline;
-import com.itextpdf.tool.xml.pipeline.PipelineException;
-import com.itextpdf.tool.xml.pipeline.ProcessObject;
-import com.itextpdf.tool.xml.pipeline.Writable;
 import com.itextpdf.tool.xml.pipeline.WritableDirect;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;

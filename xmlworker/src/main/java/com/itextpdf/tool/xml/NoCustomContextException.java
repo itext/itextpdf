@@ -41,53 +41,44 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
+package com.itextpdf.tool.xml;
 
 /**
  * @author redlab_b
  *
  */
-public class ProcessObject {
+public class NoCustomContextException extends Exception {
 
-	private final Queue<Writable> queue;
 	/**
 	 *
 	 */
-	public ProcessObject() {
-		queue = new LinkedList<Writable>();
-	}
-	/**
-	 * @return true if a writable is contained.
-	 */
-	public boolean containsWritable() {
-		return !queue.isEmpty();
+	public NoCustomContextException() {
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @return a Writable or null if none.
+	 * @param arg0
 	 */
-	public Writable poll() {
-		return queue.poll();
+	public NoCustomContextException(final String arg0) {
+		super(arg0);
+		// TODO Auto-generated constructor stub
 	}
-	/**
-	 * @param writable
-	 */
-	public void add(final Writable writable) {
-		queue.add(writable);
-	}
-	/**
-	 * @param elems
-	 */
-	public void addAll(final List<Writable> elems) {
-		for (Writable w : elems) {
-			queue.add(w);
-		}
 
+	/**
+	 * @param arg0
+	 */
+	public NoCustomContextException(final Throwable arg0) {
+		super(arg0);
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public NoCustomContextException(final String arg0, final Throwable arg1) {
+		super(arg0, arg1);
+		// TODO Auto-generated constructor stub
 	}
 
 }

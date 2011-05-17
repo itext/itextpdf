@@ -43,59 +43,30 @@
  */
 package com.itextpdf.tool.xml;
 
-import java.util.List;
-
-import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.exceptions.NotImplementedException;
 
 /**
  * @author redlab_b
  *
  */
-public interface TagProcessor {
+public interface Pipeline {
 
+	public void setContext(WorkerContext context);
 
-    /**
-     * This method is called when a tag has been encountered.
-     *
-     * @param tag the tag encountered
-     * @return Element an Element to add to the current content;
-     */
-    List<Writable> startElement(Tag tag);
+	public Pipeline open(Tag t, ProcessObject po) throws PipelineException;
 
-    /**
-     * This method is called if there is text content encountered between the
-     * opening and closing tags this TagProcessor is mapped to.
-     *
-     * @param tag the tag encountered
-     * @param content the text content between the tags this TagProcessor is
-     *        mapped to.
-     * @return the element to add to the currentContent list
-     */
-    List<Writable> content(Tag tag, String content);
+	public Pipeline content(Tag t, String content, ProcessObject po) throws PipelineException;
+
+	public Pipeline close(Tag t, ProcessObject po) throws PipelineException;
 
 	/**
-	 * This method is called when a closing tag has been encountered of the
-	 * TagProcessor implementation that is mapped to the tag.
-	 *
-	 * @param tag the tag encountered
-	 * @param currentContent a list of content possibly created by TagProcessing
-	 *            of inner tags, and by <code>startElement</code> and
-	 *            <code>content</code> methods of this <code>TagProcessor</code>
-	 *            .
-	 * @return the resulting element to add to the document or a content stack.
+	 * @return
 	 */
-    List<Writable> endElement(Tag tag, List<Writable> currentContent);
-
-    /**
-     * @return true if the tag implementation must keep it's own currentContent
-     *         stack.
-     */
-    boolean isStackOwner();
+	public Pipeline getNext();
 
 	/**
-	 * The configuration object setter.
-	 * @param config the configuration object.
+	 * @return
+	 * @throws NotImplementedException
 	 */
-	void setConfiguration(XMLWorkerConfig config);
-
+	public CustomContext getCustomContext() throws NoCustomContextException;
 }

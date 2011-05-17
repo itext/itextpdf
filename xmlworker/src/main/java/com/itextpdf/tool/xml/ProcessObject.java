@@ -43,24 +43,51 @@
  */
 package com.itextpdf.tool.xml;
 
-import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 
 /**
- * A TagProcessorFactory creates TagProcessors used by the {@link XMLWorker}.
- *
  * @author redlab_b
  *
  */
-public interface TagProcessorFactory {
+public class ProcessObject {
+
+	private final Queue<Writable> queue;
+	/**
+	 *
+	 */
+	public ProcessObject() {
+		queue = new LinkedList<Writable>();
+	}
+	/**
+	 * @return true if a writable is contained.
+	 */
+	public boolean containsWritable() {
+		return !queue.isEmpty();
+	}
 
 	/**
-	 * Looks up a TagProcessor for the given tag.
-	 *
-	 * @param tag the tag to find a processor for.
-	 * @param nameSpace the namespace
-	 * @return the {@link TagProcessor} mapped to this tag.
-	 * @throws NoTagProcessorException implementers should thrown this if there is no mapping found.
+	 * @return a Writable or null if none.
 	 */
-	TagProcessor getProcessor(String tag, String nameSpace) throws NoTagProcessorException;
+	public Writable poll() {
+		return queue.poll();
+	}
+	/**
+	 * @param writable
+	 */
+	public void add(final Writable writable) {
+		queue.add(writable);
+	}
+	/**
+	 * @param elems
+	 */
+	public void addAll(final List<Writable> elems) {
+		for (Writable w : elems) {
+			queue.add(w);
+		}
+
+	}
 
 }

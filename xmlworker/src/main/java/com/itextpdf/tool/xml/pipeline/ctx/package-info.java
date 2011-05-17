@@ -42,8 +42,8 @@
  * address: sales@itextpdf.com
  */
 /**
- * Collection of {@link com.itextpdf.tool.xml.pipeline.CustomContext} and
- * {@link com.itextpdf.tool.xml.pipeline.WorkerContext} implementations.
+ * Collection of {@link com.itextpdf.tool.xml.CustomContext} and
+ * {@link com.itextpdf.tool.xml.WorkerContext} implementations.
  */
 package com.itextpdf.tool.xml.pipeline.ctx;
 

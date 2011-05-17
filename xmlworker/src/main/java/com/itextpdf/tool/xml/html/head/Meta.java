@@ -51,8 +51,8 @@ import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
-import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * Supports detection of:

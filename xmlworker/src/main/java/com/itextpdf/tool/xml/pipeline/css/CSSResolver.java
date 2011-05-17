@@ -1,5 +1,5 @@
 /*
- * $Id: package-info.java 8 2011-05-03 16:45:05Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -41,7 +41,39 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
+package com.itextpdf.tool.xml.pipeline.css;
+
+import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.exceptions.CssResolverException;
+
 /**
- * Collection of pipelines that can be used to setup XML processing in the {@link com.itextpdf.tool.xml.XMLWorker}
+ * Resolves CSS rules for a given tag.
+ *
+ * @author redlab_b
+ *
  */
-package com.itextpdf.tool.xml.pipeline.pipe;
+public interface CSSResolver {
+
+	/**
+	 * This method is should resolve css, meaning, it will look at the css and retrieve relevant css rules for the given
+	 * tag. The rules can then be set in {@link Tag#setCSS(java.util.Map)}
+	 *
+	 * @param t the tag.
+	 */
+	void resolveStyles(Tag t);
+
+	/**
+	 * Add a piece of CSS code.
+	 * @param content the CSS
+	 * @param charSet
+	 * @throws CssResolverException
+	 */
+	void addCss(String content, String charSet) throws CssResolverException;
+
+	/**
+	 * @param href the link to the css file
+	 * @throws CssResolverException
+	 */
+	void addCssFile(String href)  throws CssResolverException;
+
+}

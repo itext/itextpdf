@@ -58,9 +58,9 @@ import com.itextpdf.text.pdf.PdfDestination;
 import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.pipeline.Writable;
 import com.itextpdf.tool.xml.pipeline.WritableDirect;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
@@ -91,7 +91,7 @@ public class Header extends AbstractTagProcessor {
 	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
 		List<Writable> l = new ArrayList<Writable>(1);
 		if (currentContent.size() > 0) {
-			List<Writable> currentContentToParagraph = Tags.currentContentToParagraph(currentContent, true);
+			List<Writable> currentContentToParagraph = AbstractTagProcessor.currentContentToParagraph(currentContent, true);
 			if (configuration.autoBookmark()) {
 				final Paragraph title = new Paragraph();
 				for (Writable w: currentContentToParagraph) {

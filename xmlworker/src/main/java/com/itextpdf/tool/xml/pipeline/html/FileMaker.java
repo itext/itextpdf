@@ -41,7 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline.pipe;
+package com.itextpdf.tool.xml.pipeline.html;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -53,11 +53,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.itextpdf.tool.xml.CSSResolver;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.FileRetrieveImpl;
+import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 
 /**
  * Resolves CSS properties.
@@ -123,7 +123,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	/**
 	 * Also taking into account the CSS properties of any parent tag in the given tag.
 	 *
-	 * @see com.itextpdf.tool.xml.CSSResolver#resolveStyles(com.itextpdf.tool.xml.Tag)
+	 * @see com.itextpdf.tool.xml.pipeline.css.CSSResolver#resolveStyles(com.itextpdf.tool.xml.Tag)
 	 */
 	public void resolveStyles(final Tag t) {
 		// get css for this tag from resolver

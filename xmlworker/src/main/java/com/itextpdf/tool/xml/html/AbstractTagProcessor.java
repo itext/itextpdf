@@ -35,12 +35,15 @@ import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.TagProcessor;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
-import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
+import com.itextpdf.tool.xml.pipeline.WritableDirect;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
@@ -158,7 +161,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	/**
 	 * Defaults to false.
 	 *
-	 * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
+	 * @see com.itextpdf.tool.xml.html.TagProcessor#isStackOwner()
 	 */
 	public boolean isStackOwner() {
 		return false;
@@ -173,5 +176,50 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 			writableElement.add(e);
 		}
 		return writableElement;
+	}
+	/**
+	 * Adds currentContent list to a paragraph element. If addNewLines is true a
+	 * Paragraph object is returned, else a NoNewLineParagraph object is
+	 * returned.
+	 *
+	 * @param currentContent List<Element> of the current elements to be added.
+	 * @param addNewLines boolean to declare which paragraph element should be
+	 *            returned, true if new line should be added or not.
+	 * @return
+	 */
+	public final static List<Writable> currentContentToParagraph(final List<Writable> currentContent,
+			final boolean addNewLines) {
+		List<Writable> list = new ArrayList<Writable>(1);
+		if (currentContent.size() > 0) {
+			boolean hasWritableDirect = false;
+			Phrase p = null;
+			for (Writable w : currentContent) {
+				if (w instanceof WritableElement) {
+					for (Element e : ((WritableElement) w).elements()) {
+						if (null == p) {
+							if (addNewLines) {
+								p = new Paragraph();
+							} else {
+								p = new NoNewLineParagraph();
+							}
+						} else if (hasWritableDirect) {
+							p = new NoNewLineParagraph();
+						}
+						hasWritableDirect = false;
+						p.add(e);
+					}
+				} else if (w instanceof WritableDirect) {
+					hasWritableDirect = true;
+					if (null != p) {
+						list.add(new WritableElement(p));
+					}
+					list.add(w);
+				}
+			}
+			if (!hasWritableDirect && null != p) {
+				list.add(new WritableElement(p));
+			}
+		}
+		return list;
 	}
 }

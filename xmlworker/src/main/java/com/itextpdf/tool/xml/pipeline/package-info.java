@@ -42,6 +42,6 @@
  * address: sales@itextpdf.com
  */
 /**
- * The pipeline package contains the pipeline interfaces and objects used by {@link com.itextpdf.tool.xml.pipeline.Pipeline}s
+ * The pipeline package contains the pipeline implementations
  */
 package com.itextpdf.tool.xml.pipeline;

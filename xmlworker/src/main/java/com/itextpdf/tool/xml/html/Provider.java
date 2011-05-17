@@ -41,69 +41,57 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline.pipe;
+package com.itextpdf.tool.xml.html;
 
-import com.itextpdf.tool.xml.ElementHandler;
-import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
-import com.itextpdf.tool.xml.pipeline.Pipeline;
-import com.itextpdf.tool.xml.pipeline.PipelineException;
-import com.itextpdf.tool.xml.pipeline.ProcessObject;
-import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.text.Image;
 
 /**
+ * The provider object provides the {@link TagProcessor}s implementation with certain data. It is mainly for the
+ * html/css parsing capabilities. An &lt;img&gt; or &lt;a&gt; tag can be provided with the a string to prepend to the
+ * link in the src or href attribute. In example when the src attribute of an image isn't an absolute link (e.g. it is
+ * picture.jpg but should be http://www.example.com/picture.jpg to retrieve the picture, then the
+ * http://www.example.com/ part will be looked up through {@link Provider#get(String)} with
+ * {@link Provider#GLOBAL_IMAGE_ROOT}.<br />
+ * At the same time, it is a memory for already used images, or a developer can set the images that will be used through
+ * {@link Provider#store(String, com.itextpdf.text.Image)}.
+ *
  * @author redlab_b
  *
  */
-public class ElementHandlerPipeline extends AbstractPipeline {
-
-	private final ElementHandler handler;
+public interface Provider {
 
 	/**
-	 * @param next
+	 * The key for the image root.
 	 */
-	public ElementHandlerPipeline(final ElementHandler handler, final Pipeline next) {
-		super(next);
-		this.handler =handler;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.pipeline.AbstractPipeline#open(com.itextpdf.tool.xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
+	public static final String GLOBAL_IMAGE_ROOT = "globalImgRoot";
+	/**
+	 * The key for the link root.
 	 */
-	@Override
-	public Pipeline open(final Tag t, final ProcessObject po) throws PipelineException {
-		consume(po);
-		return getNext();
-	}
+	public static final String GLOBAL_LINK_ROOT = "globalLinkRoot";
+	/**
+	 * The key for the css root.
+	 */
+	public static final String GLOBAL_CSS_ROOT = "globalCssRoot";
 
 	/**
-	 * @param po
+	 * Retrieve a value from the configuration mapping in the provider.
+	 *
+	 * @param key the key to lookup
+	 * @return the value or null if not found
 	 */
-	private void consume(final ProcessObject po) {
-		if (po.containsWritable()) {
-			Writable w = null;
-			while ( null != (w =po.poll())) {
-				handler.add(w);
-			}
-		}
-	}
+	public String get(String key);
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.pipeline.AbstractPipeline#content(com.itextpdf.tool.xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
+	/**
+	 * Looks up an image.
+	 * @param src the value of the src attribute of the image to lookup
+	 * @return the Image or null if not found
 	 */
-	@Override
-	public Pipeline content(final Tag t, final String content, final ProcessObject po) throws PipelineException {
-		consume(po);
-		return getNext();
-	}
+	public Image retrieve(String src);
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.pipeline.AbstractPipeline#close(com.itextpdf.tool.xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
+	/**
+	 * Stores an image.
+	 * @param src the value of the src attribute of the image
+	 * @param img the image
 	 */
-	@Override
-	public Pipeline close(final Tag t, final ProcessObject po) throws PipelineException {
-		consume(po);
-		return getNext();
-	}
-
+	public void store(String src, Image img);
 }

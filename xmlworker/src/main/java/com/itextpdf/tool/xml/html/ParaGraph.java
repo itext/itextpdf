@@ -39,6 +39,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
@@ -46,7 +47,6 @@ import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
-import com.itextpdf.tool.xml.pipeline.Writable;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
@@ -116,7 +116,7 @@ public class ParaGraph extends AbstractTagProcessor {
 //				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
 																					// extracted.
 			} else {
-				List<Writable> list = Tags.currentContentToParagraph(currentContent, true);
+				List<Writable> list = AbstractTagProcessor.currentContentToParagraph(currentContent, true);
 				for (Writable w : list) {
 					if (w instanceof WritableElement) {
 						for (Element e : ((WritableElement)w).elements()) {

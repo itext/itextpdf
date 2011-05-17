@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.Writable;
 
 /**
  * @author Emiel Ackermann

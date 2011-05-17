@@ -43,7 +43,6 @@
  */
 package com.itextpdf.tool.xml;
 
-import com.itextpdf.tool.xml.pipeline.Writable;
 
 /**
  * @author redlab_b

@@ -50,11 +50,9 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
-import com.itextpdf.tool.xml.pipeline.CustomContext;
-import com.itextpdf.tool.xml.pipeline.NoCustomContextException;
-import com.itextpdf.tool.xml.pipeline.PipelineException;
-import com.itextpdf.tool.xml.pipeline.ProcessObject;
-import com.itextpdf.tool.xml.pipeline.Pipeline;
+import com.itextpdf.tool.xml.html.TagProcessor;
+import com.itextpdf.tool.xml.html.TagProcessorFactory;
+import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 
 /**

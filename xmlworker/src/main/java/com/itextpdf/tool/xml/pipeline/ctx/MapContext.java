@@ -46,7 +46,7 @@ package com.itextpdf.tool.xml.pipeline.ctx;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.itextpdf.tool.xml.pipeline.CustomContext;
+import com.itextpdf.tool.xml.CustomContext;
 
 /**
  * @author redlab_b

@@ -46,13 +46,13 @@ package com.itextpdf.tool.xml.html.head;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.tool.xml.Provider;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
-import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.html.Provider;
 
 /**
  * @author redlab_b
