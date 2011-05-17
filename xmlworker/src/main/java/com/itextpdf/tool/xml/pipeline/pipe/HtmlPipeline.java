@@ -68,6 +68,7 @@ public class HtmlPipeline extends AbstractPipeline {
 	private final XMLWorkerConfig config;
 
 	/**
+	 * @param config
 	 * @param next
 	 */
 	public HtmlPipeline(final XMLWorkerConfig config, final Pipeline next) {
@@ -98,7 +99,7 @@ public class HtmlPipeline extends AbstractPipeline {
 						peek.add(elem);
 					}
 				} else {
-					po.add(new WritableElement(hcc.currentContent()));
+					hcc.currentContent().addAll(content);
 				}
 			}
 		} catch (NoTagProcessorException e) {

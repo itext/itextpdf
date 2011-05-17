@@ -46,6 +46,8 @@ package com.itextpdf.tool.xml.pipeline.pipe;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
@@ -65,6 +67,7 @@ import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
  */
 public class PdfWriterPipeline extends AbstractPipeline {
 
+	private static final Logger LOG = LoggerFactory.getLogger(PdfWriterPipeline.class);
 	private Document doc;
 	private PdfWriter writer;
 
@@ -83,8 +86,8 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	}
 
 	/**
-	 * @param doc2
-	 * @param writer2
+	 * @param doc
+	 * @param writer
 	 */
 	public PdfWriterPipeline(final Document doc, final PdfWriter writer) {
 		super(null);
@@ -93,10 +96,16 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	}
 
 	/**
-	 *
+	 * The key for the {@link Document} in the {@link MapContext} used as {@link CustomContext}.
 	 */
 	public static final String DOCUMENT = "DOCUMENT";
+	/**
+	 * The key for the {@link PdfWriter} in the {@link MapContext} used as {@link CustomContext}.
+	 */
 	public static final String WRITER = "WRITER";
+	/**
+	 * The key for the a boolean in the {@link MapContext} used as {@link CustomContext}. Setting to true enables swallowing of DocumentExceptions
+	 */
 	public static final String CONTINUOUS = "CONTINUOUS";
 
 	/**
@@ -116,13 +125,13 @@ public class PdfWriterPipeline extends AbstractPipeline {
 					for (Element e : ((WritableElement) writable).elements()) {
 						try {
 							if (!doc.add(e)) {
-								// do something: log ?
+								LOG.trace(String.format("Failed to add %s element to the document, no exception was thrown.", e.toString()));
 							}
 						} catch (DocumentException e1) {
 							if (!continuousWrite) {
 								throw new PipelineException(e1);
 							} else {
-								// TODO log
+								LOG.error("Adding to document threw exception, I've swallowed it!", e1);
 							}
 						}
 					}
@@ -133,7 +142,7 @@ public class PdfWriterPipeline extends AbstractPipeline {
 						if (!continuousWrite) {
 							throw new PipelineException(e);
 						} else {
-							// TODO log
+							LOG.error("Adding to document threw exception, I've swallowed it!", e);
 						}
 					}
 				}

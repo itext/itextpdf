@@ -49,6 +49,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
@@ -84,7 +85,6 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 	private Charset charSet = Charset.defaultCharset();
 	private boolean isAutoBookMark = false;
 	private final List<String> roottags = Arrays.asList(new String[] { "defaultRoot", "body", "div" });
-	private boolean hasTaglistener;
 	private Pipeline pipeline;
 
 	/**
