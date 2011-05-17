@@ -42,9 +42,11 @@ import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
- * @author redlab_b
+ * @author Emiel Ackermann
  *
  */
 public class OrderedUnorderedList extends AbstractTagProcessor {
@@ -60,58 +62,54 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
 	 * java.util.List)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		List<Element> l = new ArrayList<Element>(1);
+	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+		List<Writable> writables = new ArrayList<Writable>(1);
 		if (currentContent.size() > 0) {
-			com.itextpdf.text.List list = new com.itextpdf.text.List();
-			list = new ListStyleTypeCssApplier(configuration).apply(list, tag);
-			boolean firstItem = true;
-			List<ListItem> listItems = new ArrayList<ListItem>();
-			for (Element element : currentContent) {
-				if (element instanceof ListItem) {
-					if (firstItem) {
-						l.add(list);
-						firstItem = false;
+			com.itextpdf.text.List list = new ListStyleTypeCssApplier(configuration).apply(new com.itextpdf.text.List(), tag);
+			for (Writable w : currentContent) {
+				if (w instanceof WritableElement) {
+					for (Element e: ((WritableElement) w).elements()) {
+						list.add(e);
 					}
-					listItems.add((ListItem) element);
 				} else {
-					l.add(element);
+					writables.add(w);
 				}
 			}
-			if (listItems.size() > 0) {
+			if (list.size() > 0) {
 				int i = 0;
-				for (ListItem li : listItems) {
-					Tag child = tag.getChildren().get(i);
-					if (listItems.size() == 1) {
-						child.getCSS().put(CSS.Property.MARGIN_TOP,
-								calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
-						float marginBottom = calculateTopOrBottomSpacing(false, false, tag, child);
-						child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
-					} else {
-						if (i == 0) {
+				ArrayList<Element> items = list.getItems();
+				for (Element li : items) {
+					if (li instanceof ListItem) {
+						Tag child = tag.getChildren().get(i);
+						if (list.size() == 1) {
 							child.getCSS().put(CSS.Property.MARGIN_TOP,
 									calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
-						}
-						if (i == listItems.size() - 1) {
-							float marginBottom = calculateTopOrBottomSpacing(false, true, tag, child);
+							float marginBottom = calculateTopOrBottomSpacing(false, false, tag, child);
 							child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
+						} else {
+							if (i == 0) {
+								child.getCSS().put(CSS.Property.MARGIN_TOP,
+										calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
+							}
+							if (i == list.size() - 1) {
+								float marginBottom = calculateTopOrBottomSpacing(false, true, tag, child);
+								child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
+							}
 						}
+						list.add(new ParagraphCssApplier(configuration).apply((ListItem) li, child));
 					}
-					list.add(new ParagraphCssApplier(configuration).apply(li, child));
 					i++;
 				}
-				
-				
-				
 			}
+			writables.add(new WritableElement(list));
 		}
-		return l;
+		return writables;
 	}
 
 	private float calculateTopOrBottomSpacing(final boolean isTop, final boolean storeMarginBottom, final Tag tag, final Tag child) {

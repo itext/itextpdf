@@ -47,10 +47,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -62,11 +63,11 @@ public class OrderedUnorderedListItem extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Writable> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Element> l = new ArrayList<Element>(1);
+		List<Writable> l = new ArrayList<Writable>(1);
     	if (sanitized.length() > 0) {
-    		l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+    		l.add(new WritableElement(new ChunkCssApplier().apply(new Chunk(sanitized), tag)));
     	}
     	return l;
 	}
@@ -75,13 +76,17 @@ public class OrderedUnorderedListItem extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+		List<Writable> l = new ArrayList<Writable>(1);
 		ListItem li = new ListItem();
-		for (Element e : currentContent) {
-			li.add(e);
+		for (Writable e : currentContent) {
+			if(e instanceof WritableElement) {
+				li.addAll(((WritableElement) e).elements());
+			} else {
+				l.add(e);
+			}
 		}
-		List<Element> l = new ArrayList<Element>(1);
-		l.add(li); // css applying is handled in the OrderedUnorderedList Class.
+		l.add(new WritableElement(li)); // css applying is handled in the OrderedUnorderedList Class.
 		return l;
 	}
 

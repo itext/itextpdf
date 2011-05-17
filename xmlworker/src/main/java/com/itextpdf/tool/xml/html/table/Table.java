@@ -75,6 +75,8 @@ import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author Emiel Ackermann
@@ -105,12 +107,12 @@ public class Table extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
 		int numberOfColumns = 0;
 		//
 		List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
-		List<Element> invalidRowElements = new ArrayList<Element>(1);
-		for (Element e : currentContent) {
+		List<Writable> invalidRowElements = new ArrayList<Writable>(1);
+		for (Writable w : currentContent) {
 			int localNumCols = 0;
 			if (e instanceof TableRowElement) {
 				TableRowElement tableRowElement = (TableRowElement) e;
@@ -326,7 +328,7 @@ public class Table extends AbstractTagProcessor {
 				table.addCell(cell);
 			}
 		}
-		List<Element> elems = new ArrayList<Element>();
+		List<Writable> elems = new ArrayList<Writable>();
 		if (invalidRowElements.size() > 0) {
 			// all invalid row elements taken as caption
 			int i = 0;
@@ -337,14 +339,14 @@ public class Table extends AbstractTagProcessor {
 			}
 			String captionSideValue = captionTag.getCSS().get(CSS.Property.CAPTION_SIDE);
 			if (captionSideValue != null && captionSideValue.equalsIgnoreCase(CSS.Value.BOTTOM)) {
-				elems.add(table);
+				elems.add(new WritableElement(table));
 				elems.addAll(invalidRowElements);
 			} else {
 				elems.addAll(invalidRowElements);
-				elems.add(table);
+				elems.add(new WritableElement(table));
 			}
 		} else {
-			elems.add(table);
+			elems.add(new WritableElement(table));
 		}
 		return elems;
 	}

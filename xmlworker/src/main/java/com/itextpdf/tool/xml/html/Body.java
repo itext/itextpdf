@@ -98,9 +98,7 @@ public class Body extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitize(content);
 		List<Writable> l = new ArrayList<Writable>(1);
 		if (sanitized.length() > 0) {
-			WritableElement we = new WritableElement();
-			we.add(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(sanitized), tag));
-			l.add(we);
+			l.add(new WritableElement(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(sanitized), tag)));
 		}
 		return l;
 	}

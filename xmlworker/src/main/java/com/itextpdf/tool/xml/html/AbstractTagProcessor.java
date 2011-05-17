@@ -95,9 +95,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_BEFORE);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
 			List<Writable> list = new ArrayList<Writable>(2);
-			WritableElement we = new WritableElement();
-			we.add(Chunk.NEXTPAGE);
-			list.add(we);
+			list.add(new WritableElement(Chunk.NEXTPAGE));
 			for (Writable e : start(tag)) {
 				list.add(e);
 			}
@@ -136,9 +134,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 		List<Writable> list = end(tag, currentContent);
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_AFTER);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
-			WritableElement we = new WritableElement();
-			we.add(Chunk.NEXTPAGE);
-			list.add(we);
+			list.add(new WritableElement(Chunk.NEXTPAGE));
 			return list;
 		}
 		return list;

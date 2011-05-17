@@ -63,9 +63,7 @@ public class Break extends AbstractTagProcessor {
     @Override
 	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
     	List<Writable> l = new ArrayList<Writable>(1);
-    	WritableElement we = new WritableElement();
-    	we.add(Chunk.NEWLINE);
-    	l.add(we);
+    	l.add(new WritableElement(Chunk.NEWLINE));
         return l;
     }
 

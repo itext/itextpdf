@@ -64,12 +64,15 @@ public class WritableElement implements Writable {
 	/**
 	 * @param currentContent
 	 */
-	public WritableElement(final List<Element> currentContent) {
+	public WritableElement(final Element e) {
 		this();
-		this.list.addAll(currentContent);
+		this.list.add(e);
 	}
 	public void add(final Element e) {
 		list.add(e);
+	}
+	public void addAll(final List<Element> l) {
+		list.addAll(l);
 	}
 	/**
 	 * @return the list of element

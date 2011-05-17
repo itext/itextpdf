@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
@@ -59,7 +60,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.pipeline.Writable;
+import com.itextpdf.tool.xml.pipeline.WritableDirect;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author Emiel Ackermann, redlab_b
@@ -72,11 +75,11 @@ public class Header extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
     @Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Writable> content(final Tag tag, final String content) {
     	String sanitized = HTMLUtils.sanitizeInline(content);
-    	List<Element> l = new ArrayList<Element>(1);
+    	List<Writable> l = new ArrayList<Writable>(1);
     	if (sanitized.length() > 0) {
-    		l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+    		l.add(new WritableElement(new ChunkCssApplier().apply(new Chunk(sanitized), tag)));
     	}
         return l;
 	}
@@ -85,44 +88,53 @@ public class Header extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
 	 */
     @Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		List<Element> l = new ArrayList<Element>(1);
+	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+		List<Writable> l = new ArrayList<Writable>(1);
 		if (currentContent.size() > 0) {
-			Paragraph p = new ParagraphCssApplier(configuration).apply(
-					(Paragraph) Tags.currentContentToParagraph(currentContent, true), tag);
-			if (configuration.autoBookmark() && null != configuration.getWriter()) {
-				PdfWriter writer = configuration.getWriter();
-				PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
-						writer.getVerticalPosition(false), 0);
-				Map<String, Object> memory = configuration.getMemory();
-				HeaderNode tree = (HeaderNode) memory.get(XMLWorkerConfig.BOOKMARK_TREE);
-				int level = getLevel(tag);
-				if (null == tree) {
-					// first h tag encounter
-					tree = new HeaderNode(0, writer.getRootOutline(), null);
-				} else {
-					// calculate parent
-					int lastLevel = tree.level();
-					if (lastLevel == level) {
-						tree = tree.parent();
-					} else if (lastLevel > level) {
-						while (lastLevel >= level) {
-							lastLevel = tree.parent().level();
-							tree = tree.parent();
+			List<Writable> currentContentToParagraph = Tags.currentContentToParagraph(currentContent, true);
+			final Paragraph p = new Paragraph();
+			for (Writable w: currentContentToParagraph) {
+				if (w instanceof WritableElement) {
+					p.addAll(((WritableElement) w).elements());
+				}
+			}
+			if (configuration.autoBookmark()) {
+				l.add(new WritableDirect() {
+
+					public void write(final PdfWriter writer, final Document doc) throws DocumentException {
+						PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
+								writer.getVerticalPosition(false), 0);
+						Map<String, Object> memory = configuration.getMemory();
+						HeaderNode tree = (HeaderNode) memory.get(XMLWorkerConfig.BOOKMARK_TREE);
+						int level = getLevel(tag);
+						if (null == tree) {
+							// first h tag encounter
+							tree = new HeaderNode(0, writer.getRootOutline(), null);
+						} else {
+							// calculate parent
+							int lastLevel = tree.level();
+							if (lastLevel == level) {
+								tree = tree.parent();
+							} else if (lastLevel > level) {
+								while (lastLevel >= level) {
+									lastLevel = tree.parent().level();
+									tree = tree.parent();
+								}
+							}
 						}
+						if (LOGGER.isLogging(Level.TRACE)) {
+							LOGGER.trace(String.format("Creating bookmark on %s", p.toString()));
+						}
+						HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, p), tree);
+						memory.put(XMLWorkerConfig.BOOKMARK_TREE, node);
 					}
-				}
-				if (LOGGER.isLogging(Level.TRACE)) {
-					LOGGER.trace(String.format("Creating bookmark on %s", p.toString()));
-				}
-				HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, p), tree);
-				memory.put(XMLWorkerConfig.BOOKMARK_TREE, node);
+				});
 			} else {
 				if (LOGGER.isLogging(Level.TRACE)) {
 					LOGGER.trace("Autobookmarking disabled.");
 				}
 			}
-			l.add(p);
+			l.addAll(currentContentToParagraph); //TODO Margins top and bottom, other css.
 		}
 		return l;
 	}

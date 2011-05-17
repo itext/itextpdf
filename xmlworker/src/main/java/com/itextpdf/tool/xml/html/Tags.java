@@ -166,17 +166,13 @@ public class Tags {
 				} else if (w instanceof WritableDirect) {
 					hasWritableDirect = true;
 					if (null != p) {
-						WritableElement we = new WritableElement();
-						we.add(p);
-						list.add(we);
+						list.add(new WritableElement(p));
 					}
 					list.add(w);
 				}
 			}
 			if (!hasWritableDirect && null != p) {
-				WritableElement we = new WritableElement();
-				we.add(p);
-				list.add(we);
+				list.add(new WritableElement(p));
 			}
 		}
 		return list;

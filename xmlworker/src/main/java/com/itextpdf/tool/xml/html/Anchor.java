@@ -95,9 +95,7 @@ public class Anchor extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Writable> l = new ArrayList<Writable>(1);
 		if (sanitized.length() > 0) {
-			WritableElement we = new WritableElement();
-			we.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
-			l.add(we);
+			l.add(new WritableElement(new ChunkCssApplier().apply(new Chunk(sanitized), tag)));
 		}
 		return l;
 	}
@@ -150,9 +148,7 @@ public class Anchor extends AbstractTagProcessor {
 						p.add(e);
 					}
 				}
-				WritableElement we = new WritableElement();
-				we.add(new NoNewLineParagraphCssApplier(configuration).apply(p, tag));
-				elems.add(we);
+				elems.add(new WritableElement(new NoNewLineParagraphCssApplier(configuration).apply(p, tag)));
 			}
 		} else
 		// !currentContent > 0 ; An empty "a" tag has been encountered.
