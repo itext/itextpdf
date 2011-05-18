@@ -51,6 +51,7 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.Writable;
+import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
@@ -94,8 +95,6 @@ public class TableData extends AbstractTagProcessor {
 	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
 		HtmlCell cell = new HtmlCell();
 		List<Writable> l = new ArrayList<Writable>(1);
-		WritableElement writable = new WritableElement(cell);
-		l.add(writable);
 		for (Writable we : currentContent) {
 			if (we instanceof WritableElement) {
 				for (Element e :((WritableElement) we).elements()) {
@@ -108,6 +107,8 @@ public class TableData extends AbstractTagProcessor {
 				l.add(we);
 			}
 		}
+		WritableElement writable = new WritableElement(new HtmlCellCssApplier(configuration).apply(cell, tag));
+		l.add(writable);
 		return l;
 	}
 
