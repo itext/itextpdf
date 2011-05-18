@@ -91,7 +91,7 @@ public class Header extends AbstractTagProcessor {
 	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
 		List<Writable> l = new ArrayList<Writable>(1);
 		if (currentContent.size() > 0) {
-			List<Writable> currentContentToParagraph = AbstractTagProcessor.currentContentToParagraph(currentContent, true);
+			List<Writable> currentContentToParagraph = currentContentToWritables(currentContent, true, true, tag);
 			if (configuration.autoBookmark()) {
 				final Paragraph title = new Paragraph();
 				for (Writable w: currentContentToParagraph) {

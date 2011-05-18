@@ -88,15 +88,14 @@ public class HTMLWorkerFactoryTest {
 //    private static final String TEST = "comment-double-print_";
 //    private static final String TEST = "tab_";
 //	  private static final String TEST = "table_";
-
 //	  private static final String TEST = "tableInTable_";
 //	  private static final String TEST = "lists_";
 //	  private static final String TEST = "img_";
 //	  private static final String TEST = "position_";
-//	  private static final String TEST = "h_";
+	  private static final String TEST = "h_";
 //	  private static final String TEST = "booksales_";
 //	  private static final String TEST = "index_";
-	  private static final String TEST = "headers_";
+//	  private static final String TEST = "headers_";
 //	  private static final String TEST = "headers_noroottag_";
 //	  private static final String TEST = "index_anchor_";
 //	  private static final String TEST = "lineheight_";

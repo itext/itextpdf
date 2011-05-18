@@ -116,7 +116,7 @@ public class ParaGraph extends AbstractTagProcessor {
 //				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
 																					// extracted.
 			} else {
-				List<Writable> list = AbstractTagProcessor.currentContentToParagraph(currentContent, true);
+				List<Writable> list = currentContentToWritables(currentContent, true, true, tag);
 				for (Writable w : list) {
 					if (w instanceof WritableElement) {
 						for (Element e : ((WritableElement)w).elements()) {

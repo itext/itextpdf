@@ -44,6 +44,8 @@ import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
+import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
+import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.WritableDirect;
@@ -206,10 +208,11 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @param currentContent List<Element> of the current elements to be added.
 	 * @param addNewLines boolean to declare which paragraph element should be
 	 *            returned, true if new line should be added or not.
+	 * @param tag
 	 * @return
 	 */
-	public final static List<Writable> currentContentToParagraph(final List<Writable> currentContent,
-			final boolean addNewLines) {
+	public final List<Writable> currentContentToWritables(final List<Writable> currentContent,
+			final boolean addNewLines, final boolean applyCSS, final Tag tag) {
 		List<Writable> list = new ArrayList<Writable>(1);
 		if (currentContent.size() > 0) {
 			boolean hasWritableDirect = false;
@@ -219,9 +222,17 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 					for (Element e : ((WritableElement) w).elements()) {
 						if (null == p) {
 							if (addNewLines) {
-								p = new Paragraph();
+								if(applyCSS) {
+									p = new ParagraphCssApplier(configuration).apply(new Paragraph(), tag);
+								} else {
+									p = new Paragraph();
+								}
 							} else {
-								p = new NoNewLineParagraph();
+								if(applyCSS) {
+									p = new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(), tag);
+								} else {
+									p = new NoNewLineParagraph();
+								}
 							}
 						} else if (hasWritableDirect) {
 							p = new NoNewLineParagraph();
@@ -242,5 +253,9 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 			}
 		}
 		return list;
+	}
+	public final List<Writable> currentContentToWritables(final List<Writable> currentContent,
+			final boolean addNewLines) {
+		return this.currentContentToWritables(currentContent, addNewLines, false, null);
 	}
 }

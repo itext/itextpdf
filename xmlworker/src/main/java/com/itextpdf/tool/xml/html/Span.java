@@ -81,7 +81,7 @@ public class Span extends AbstractTagProcessor {
 	 */
     @Override
 	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
-		return AbstractTagProcessor.currentContentToParagraph(currentContent, false);
+		return currentContentToWritables(currentContent, false, true, tag);
 	}
 
     /*
