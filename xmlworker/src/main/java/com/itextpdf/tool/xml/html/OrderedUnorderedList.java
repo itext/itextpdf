@@ -74,7 +74,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 		for (Writable w : writables) {
 			if (w instanceof WritableElement) {
 				for (Element e : ((WritableElement) w).elements()) {
-					if (e instanceof ListItem ) {
+					if (e instanceof ListItem || e instanceof com.itextpdf.text.List) {
 						listElements.add(e);
 					} else {
 						ListItem listItem = new ListItem();
@@ -111,7 +111,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 					}
 					list.add(new ParagraphCssApplier(configuration).apply((ListItem) li, child));
 				} else {
-
+					list.add(li);
 				}
 				i++;
 			}
