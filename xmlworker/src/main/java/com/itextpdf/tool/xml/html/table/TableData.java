@@ -47,6 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
@@ -61,6 +63,7 @@ import com.itextpdf.tool.xml.pipeline.WritableElement;
  */
 public class TableData extends AbstractTagProcessor {
 
+	private static final Logger LOG = LoggerFactory.getLogger(TableData.class);
 	/*
 	 * (non-Javadoc)
 	 *
@@ -96,6 +99,9 @@ public class TableData extends AbstractTagProcessor {
 		for (Writable we : currentContent) {
 			if (we instanceof WritableElement) {
 				for (Element e :((WritableElement) we).elements()) {
+					if (e instanceof HtmlCell) {
+						LOG.trace(String.format("Adding element %s to HtmlCell", e.getClass().getName()));
+					}
 					cell.addElement(e);
 				}
 			} else {

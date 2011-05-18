@@ -92,9 +92,14 @@ public class HtmlPipeline extends AbstractPipeline {
 			List<Writable> content = tp.startElement(t);
 			if (content.size() > 0) {
 				if (tp.isStackOwner()) {
-					StackKeeper peek = hcc.peek();
-					for (Writable elem : content) {
-						peek.add(elem);
+					StackKeeper peek;
+					try {
+						peek = hcc.peek();
+						for (Writable elem : content) {
+							peek.add(elem);
+						}
+					} catch (NoStackException e) {
+						throw new PipelineException(String.format("Could not find stack for %s", t.toString()), e);
 					}
 				} else {
 					hcc.currentContent().addAll(content);
@@ -136,12 +141,15 @@ public class HtmlPipeline extends AbstractPipeline {
 		HtmlPipelineContext hcc = getMyContext();
 		TagProcessor tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
 		List<Writable> elems = tp.content(t, content);
-		if (hcc.isEmpty() && elems.size() > 0) {
-			po.addAll(elems);
-		} else if (elems.size() > 0){
-			StackKeeper peek = hcc.peek();
-			for (Writable e : elems) {
-				peek.add(e);
+		if (elems.size() > 0){
+			StackKeeper peek;
+			try {
+				peek = hcc.peek();
+				for (Writable e : elems) {
+					peek.add(e);
+				}
+			} catch (NoStackException e) {
+				hcc.currentContent().addAll(elems);
 			}
 		}
 		return getNext();
@@ -160,38 +168,31 @@ public class HtmlPipeline extends AbstractPipeline {
 		TagProcessor tp;
 		try {
 			tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
-			if (hcc.isEmpty()) {
-				List<Writable> elems = tp.endElement(t, hcc.currentContent());
-				if (elems.size() > 0) {
-					for (Writable e : elems) {
-						hcc.currentContent().add(e);
-					}
-				}
-				po.addAll(hcc.currentContent());
-				hcc.currentContent().clear();
-			} else if (tp.isStackOwner()) {
+			List<Writable> elems = null;
+			if (tp.isStackOwner()) {
 				// remove the element from the StackKeeper Queue if end tag is
 				// found
-				List<Writable> elems = tp.endElement(t,  hcc.poll().getElements());
-				if (hcc.isEmpty() && elems.size() > 0) {
-					for (Writable e : elems) {
-						po.add(e);
-					}
-				} else if (elems.size() > 0) {
-					StackKeeper peek = hcc.peek();
-					for (Writable elem : elems) {
-						peek.add(elem);
-					}
+				StackKeeper tagStack;
+				try {
+					tagStack = hcc.poll();
+				} catch (NoStackException e) {
+					throw new PipelineException(String.format("Could not find stack for %s", t.toString()), e);
 				}
-				hcc.currentContent().clear();
+				elems = tp.endElement(t,  tagStack.getElements());
 			} else {
-				List<Writable> elems = tp.endElement(t, hcc.currentContent());
-				if (elems.size() > 0) {
-					StackKeeper peek = hcc.peek();
+				elems = tp.endElement(t, hcc.currentContent());
+				hcc.currentContent().clear();
+			}
+			if (elems.size() > 0) {
+				try {
+					StackKeeper stack = hcc.peek();
 					for (Writable elem : elems) {
-						peek.add(elem);
+						stack.add(elem);
 					}
+				} catch (NoStackException e) {
+					po.addAll(elems);
 				}
+
 			}
 		} catch (NoTagProcessorException e) {
 			if (!hcc.acceptUnknown()) {

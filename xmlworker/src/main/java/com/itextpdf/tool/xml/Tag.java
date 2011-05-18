@@ -189,11 +189,15 @@ public class Tag {
 		return ns;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * Print the tag
 	 */
 	@Override
 	public String toString() {
-		return String.format("%s", this.tag);
+		if ("".equalsIgnoreCase(ns)) {
+			return String.format("%s", this.tag);
+		}
+		return  String.format("%s:%s", this.ns, this.tag);
+
 	}
 }

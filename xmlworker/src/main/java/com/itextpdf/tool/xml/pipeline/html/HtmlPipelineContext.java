@@ -46,6 +46,7 @@ package com.itextpdf.tool.xml.pipeline.html;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.itextpdf.tool.xml.CustomContext;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -78,9 +79,9 @@ public class HtmlPipelineContext implements CustomContext {
 		this.context = workerContext;
 	}
 	/**
-	 * @param tag
-	 * @param nameSpace
-	 * @return
+	 * @param tag the tag to find a TagProcessor for
+	 * @param nameSpace the namespace.
+	 * @return a TagProcessor
 	 */
 	public TagProcessor resolveProcessor(final String tag, final String nameSpace) {
 		TagProcessor tp = tagFactory.getProcessor(tag, nameSpace);
@@ -99,38 +100,50 @@ public class HtmlPipelineContext implements CustomContext {
 
 	/**
 	 * Retrieves, but does not remove, the head (first element) of this list.
-	 * @return
+	 * @return a StackKeeper
+	 * @throws NoStackException if there are no elements on the stack
 	 */
-	public StackKeeper peek() {
+	public StackKeeper peek() throws NoStackException {
+
+		try {
 			return this.queue.getFirst();
+		} catch (NoSuchElementException e) {
+			throw new NoStackException();
+		}
 	}
 
 	/**
-	 * @return
+	 * @return the current content of writables.
 	 */
 	public List<Writable> currentContent() {
 		return ctn;
 	}
 
 	/**
-	 * @return
+	 * @return if this pipelines tag processing accept unknown tags: true. False otherwise
 	 */
 	public boolean acceptUnknown() {
 		return this.acceptUnknown;
 	}
 
 	/**
-	 * @return
+	 * @return returns true if the stack is empty
 	 */
 	public boolean isEmpty() {
 		return queue.isEmpty();
 	}
 
 	/**
-	 * @return
+	 * Retrieves and removes the top of the stack.
+	 * @return a StackKeeper
+	 * @throws NoStackException if there are no elements on the stack
 	 */
-	public StackKeeper poll() {
-		return this.queue.removeFirst();
+	public StackKeeper poll() throws NoStackException {
+		try {
+			return this.queue.removeFirst();
+		} catch (NoSuchElementException e) {
+			throw new NoStackException();
+		}
 	}
 
 }
