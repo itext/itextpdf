@@ -113,20 +113,20 @@ public class Table extends AbstractTagProcessor {
 		List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
 		List<Element> invalidRowElements = new ArrayList<Element>(1);
 		for (Writable w : currentContent) {
-			int localNumCols = 0;
 			if (w instanceof WritableElement) {
 				for (Element e : ((WritableElement)w).elements()){
+					int localNumCols = 0;
 					if (e instanceof TableRowElement) {
 						TableRowElement tableRowElement = (TableRowElement) e;
 						for (HtmlCell cell : tableRowElement.getContent()) {
 								localNumCols += cell.getColspan();
 						}
+						if (localNumCols > numberOfColumns) {
+							numberOfColumns = localNumCols;
+						}
 						tableRows.add(tableRowElement);
 					} else {
 						invalidRowElements.add(e);
-					}
-					if (localNumCols > numberOfColumns) {
-						numberOfColumns = localNumCols;
 					}
 				}
 			}

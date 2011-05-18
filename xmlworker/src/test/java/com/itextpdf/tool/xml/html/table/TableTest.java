@@ -108,6 +108,7 @@ public class TableTest {
 		cell3Row2.addElement(extraPara);
 		cells2.add(cell1Row2);
 		cells2.add(cell2Row2);
+		//cells2.add(cell3Row2);
 		row2 = new TableRowElement(cells2, Place.BODY);
 
 		rows.add(row1);
@@ -128,8 +129,8 @@ public class TableTest {
 		List l = new ArrayList<Writable>(1);
 		l.add(createNewWritableElement(rows));
 		PdfPTable table = (PdfPTable) ((WritableElement ) table2.end(tag, l).get(0)).elements().get(0);
-		assertEquals(4, table.getNumberOfColumns());
 		assertEquals(4, table.getRow(0).getCells().length);
+		assertEquals(4, table.getNumberOfColumns());
 	}
 
 	@Test
