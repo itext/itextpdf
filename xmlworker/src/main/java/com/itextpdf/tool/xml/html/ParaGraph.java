@@ -105,13 +105,14 @@ public class ParaGraph extends AbstractTagProcessor {
 			Paragraph p = new Paragraph();
 			Map<String, String> css = tag.getCSS();
 			if (null != css.get(CSS.Property.TAB_INTERVAL)) {
-//				addTabIntervalContent(currentContent, p, css.get(CSS.Property.TAB_INTERVAL));
+				addTabIntervalContent(currentContent, p, css.get(CSS.Property.TAB_INTERVAL));
+				l.add(new WritableElement(p));
 			} else if (null != css.get(CSS.Property.TAB_STOPS)) { // <para tabstops=".." /> could use same implementation page 62
-//				addTabStopsContent(currentContent, p, css.get(CSS.Property.TAB_STOPS));
-			} else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page
-															// 63
-//				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
-																					// extracted.
+				addTabStopsContent(currentContent, p, css.get(CSS.Property.TAB_STOPS));
+				l.add(new WritableElement(p));
+			} else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page 63
+				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be extracted.
+				l.add(new WritableElement(p));
 			} else {
 				List<Writable> list = currentContentToWritables(currentContent, true, true, tag);
 				l.addAll(list);
@@ -120,19 +121,23 @@ public class ParaGraph extends AbstractTagProcessor {
 		return l;
 	}
 
-	private void addTabIntervalContent(final List<Element> currentContent, final Paragraph p, final String value) {
+	private void addTabIntervalContent(final List<Writable> currentContent, final Paragraph p, final String value) {
 		float width = 0;
-		for(Element e: currentContent) {
-			if (e instanceof TabbedChunk) {
-				width += ((TabbedChunk) e).getTabCount()*CssUtils.getInstance().parsePxInCmMmPcToPt(value);
-				TabbedChunk tab = new TabbedChunk(new VerticalPositionMark(), width, false);
-				p.add(new Chunk(tab));
-				p.add(new Chunk((TabbedChunk) e));
+		for(Writable w: currentContent) {
+			if (w instanceof WritableElement) {
+				for (Element e : ((WritableElement) w).elements()) {
+					if (e instanceof TabbedChunk) {
+						width += ((TabbedChunk) e).getTabCount()*CssUtils.getInstance().parsePxInCmMmPcToPt(value);
+						TabbedChunk tab = new TabbedChunk(new VerticalPositionMark(), width, false);
+						p.add(new Chunk(tab));
+						p.add(new Chunk((TabbedChunk) e));
+					}
+				}
 			}
 		}
 	}
 
-	private void addTabStopsContent(final List<Element> currentContent, final Paragraph p, final String value) {
+	private void addTabStopsContent(final List<Writable> currentContent, final Paragraph p, final String value) {
 		List<Chunk> tabs = new ArrayList<Chunk>();
 		String[] alignAndWidth = value.split(" ");
 		float tabWidth = 0;
@@ -143,17 +148,21 @@ public class ParaGraph extends AbstractTagProcessor {
 		}
 		int tabsPerRow = tabs.size();
 		int currentTab = 0;
-		for(Element e: currentContent) {
-			if (e instanceof TabbedChunk) {
-				if(currentTab == tabsPerRow) {
-					currentTab = 0;
-				}
-				if(((TabbedChunk) e).getTabCount() != 0 /* == 1*/) {
-					p.add(new Chunk(tabs.get(currentTab)));
-					p.add(new Chunk((TabbedChunk) e));
-					++currentTab;
-//				} else { // wat doet een tabCount van groter dan 1? sla een tab over of count * tabWidth?
-//					int widthMultiplier = ((TabbedChunk) e).getTabCount();
+		for(Writable w: currentContent) {
+			if (w instanceof WritableElement) {
+				for (Element e : ((WritableElement) w).elements()) {
+					if (e instanceof TabbedChunk) {
+						if(currentTab == tabsPerRow) {
+							currentTab = 0;
+						}
+						if(((TabbedChunk) e).getTabCount() != 0 /* == 1*/) {
+							p.add(new Chunk(tabs.get(currentTab)));
+							p.add(new Chunk((TabbedChunk) e));
+							++currentTab;
+		//				} else { // wat doet een tabCount van groter dan 1? sla een tab over of count * tabWidth?
+		//					int widthMultiplier = ((TabbedChunk) e).getTabCount();
+						}
+					}
 				}
 			}
 		}
