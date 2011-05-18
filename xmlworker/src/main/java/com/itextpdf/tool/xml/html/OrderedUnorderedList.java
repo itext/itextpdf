@@ -74,20 +74,27 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 		for (Writable w : writables) {
 			if (w instanceof WritableElement) {
 				for (Element e : ((WritableElement) w).elements()) {
-					listElements.add(e);
+					if (e instanceof ListItem ) {
+						listElements.add(e);
+					} else {
+						ListItem listItem = new ListItem();
+						listItem.add(e);
+						listElements.add(listItem);
+					}
 				}
 			} else {
 				mywritables.add(w);
 			}
 		}
-		if (listElements.size() > 0) {
+		int size = listElements.size();
+		if (size > 0) {
 			com.itextpdf.text.List list = new ListStyleTypeCssApplier(configuration).apply(
 					new com.itextpdf.text.List(), tag);
 			int i = 0;
 			for (Element li : listElements) {
 				if (li instanceof ListItem) {
 					Tag child = tag.getChildren().get(i);
-					if (list.size() == 1) {
+					if (size == 1) {
 						child.getCSS().put(CSS.Property.MARGIN_TOP,
 									calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
 						float marginBottom = calculateTopOrBottomSpacing(false, false, tag, child);
@@ -97,12 +104,14 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 							child.getCSS().put(CSS.Property.MARGIN_TOP,
 										calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
 						}
-						if (i == list.size() - 1) {
+						if (i == size - 1) {
 							float marginBottom = calculateTopOrBottomSpacing(false, true, tag, child);
 							child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
 						}
 					}
 					list.add(new ParagraphCssApplier(configuration).apply((ListItem) li, child));
+				} else {
+
 				}
 				i++;
 			}
