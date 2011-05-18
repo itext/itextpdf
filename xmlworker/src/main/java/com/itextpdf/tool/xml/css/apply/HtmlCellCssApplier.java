@@ -70,8 +70,11 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 
     private final CssUtils utils = CssUtils.getInstance();
 	private final XMLWorkerConfig configuration;
-	private final TableStyleValues values = new TableStyleValues();
 
+
+	/**
+	 * @param configuration
+	 */
 	public HtmlCellCssApplier(final XMLWorkerConfig configuration) {
 		this.configuration = configuration;
 	}
@@ -83,6 +86,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
      * com.itextpdf.tool.xml.Tag)
      */
     public HtmlCell apply(final HtmlCell cell, final Tag t) {
+    	final TableStyleValues values = new TableStyleValues();
     	Tag table = t.getParent();
     	while(!table.getTag().equals("table")){
     		table = table.getParent();
@@ -125,13 +129,13 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 					}
 				} else if(key.contains(CSS.Property.BORDER)) {
 					if(key.contains(CSS.Value.TOP)) {
-						setTopOfBorder(cell, key, value);
+						setTopOfBorder(cell, key, value, values);
 					} else if(key.contains(CSS.Value.BOTTOM)) {
-						setBottomOfBorder(cell, key, value);
+						setBottomOfBorder(cell, key, value, values);
 					} else if(key.contains(CSS.Value.LEFT)) {
-						setLeftOfBorder(cell, key, value);
+						setLeftOfBorder(cell, key, value, values);
 					} else if(key.contains(CSS.Value.RIGHT)) {
-						setRightOfBorder(cell, key, value);
+						setRightOfBorder(cell, key, value, values);
 					}
 				} else if(key.contains(CSS.Property.CELLPADDING) || key.contains(CSS.Property.PADDING)) {
 					if(key.contains(CSS.Value.TOP)) {
@@ -168,7 +172,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
         return cell;
     }
 
-	private void setTopOfBorder(final HtmlCell cell, final String key, final String value) {
+	private void setTopOfBorder(final HtmlCell cell, final String key, final String value, final TableStyleValues values) {
 		if(key.contains(CSS.Property.WIDTH)) {
 			values.setBorderWidthTop(utils.parsePxInCmMmPcToPt(value));
 		}
@@ -184,7 +188,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 			}
 		}
 	}
-	private void setBottomOfBorder(final HtmlCell cell, final String key, final String value) {
+	private void setBottomOfBorder(final HtmlCell cell, final String key, final String value, final TableStyleValues values) {
 		if(key.contains(CSS.Property.WIDTH)) {
 			values.setBorderWidthBottom(utils.parsePxInCmMmPcToPt(value));
 		}
@@ -200,7 +204,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 			}
 		}
 	}
-	private void setLeftOfBorder(final HtmlCell cell, final String key, final String value) {
+	private void setLeftOfBorder(final HtmlCell cell, final String key, final String value, final TableStyleValues values) {
 		if(key.contains(CSS.Property.WIDTH)) {
 			values.setBorderWidthLeft(utils.parsePxInCmMmPcToPt(value));
 		}
@@ -216,7 +220,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 			}
 		}
 	}
-	private void setRightOfBorder(final HtmlCell cell, final String key, final String value) {
+	private void setRightOfBorder(final HtmlCell cell, final String key, final String value, final TableStyleValues values) {
 		if(key.contains(CSS.Property.WIDTH)) {
 			values.setBorderWidthRight(utils.parsePxInCmMmPcToPt(value));
 		}

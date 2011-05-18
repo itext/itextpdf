@@ -88,7 +88,6 @@ public class SubAndSupTest {
 	}
 	@Test
 	public void resolveNumberOfElements() throws IOException {
-		SnippetUtil.printAllContent(elementList);
 		assertEquals(7, elementList.size()); // Br's count for one element(Chunk.NEWLINE).
 	}
 	@Test
