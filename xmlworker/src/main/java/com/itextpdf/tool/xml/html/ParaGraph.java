@@ -43,9 +43,6 @@ import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
-import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
@@ -117,17 +114,6 @@ public class ParaGraph extends AbstractTagProcessor {
 																					// extracted.
 			} else {
 				List<Writable> list = currentContentToWritables(currentContent, true, true, tag);
-				for (Writable w : list) {
-					if (w instanceof WritableElement) {
-						for (Element e : ((WritableElement)w).elements()) {
-							if (e instanceof Paragraph) {
-								new ParagraphCssApplier(configuration).apply((Paragraph) e, tag);
-							} else if (e instanceof NoNewLineParagraph) {
-								new NoNewLineParagraphCssApplier(configuration).apply((NoNewLineParagraph) e, tag);
-							}
-						}
-					}
-				}
 				l.addAll(list);
 			}
 		}

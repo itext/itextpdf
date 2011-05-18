@@ -222,17 +222,9 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 					for (Element e : ((WritableElement) w).elements()) {
 						if (null == p) {
 							if (addNewLines) {
-								if(applyCSS) {
-									p = new ParagraphCssApplier(configuration).apply(new Paragraph(), tag);
-								} else {
-									p = new Paragraph();
-								}
+								p = new Paragraph();
 							} else {
-								if(applyCSS) {
-									p = new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(), tag);
-								} else {
-									p = new NoNewLineParagraph();
-								}
+								p = new NoNewLineParagraph();
 							}
 						} else if (hasWritableDirect) {
 							p = new NoNewLineParagraph();
@@ -243,12 +235,26 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 				} else if (w instanceof WritableDirect) {
 					hasWritableDirect = true;
 					if (null != p) {
+						if(applyCSS) {
+							if (p instanceof Paragraph) {
+								p = new ParagraphCssApplier(configuration).apply((Paragraph) p, tag);
+							} else {
+								p = new NoNewLineParagraphCssApplier(configuration).apply((NoNewLineParagraph) p, tag);
+							}
+						}
 						list.add(new WritableElement(p));
 					}
 					list.add(w);
 				}
 			}
 			if (!hasWritableDirect && null != p) {
+				if(applyCSS) {
+					if (p instanceof Paragraph) {
+						p = new ParagraphCssApplier(configuration).apply((Paragraph) p, tag);
+					} else {
+						p = new NoNewLineParagraphCssApplier(configuration).apply((NoNewLineParagraph) p, tag);
+					}
+				}
 				list.add(new WritableElement(p));
 			}
 		}
