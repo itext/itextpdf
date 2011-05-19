@@ -103,7 +103,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 		} else {
 	    	cell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Default css behavior. Implementation of "vertical-align" style further along.
 			if(t.getAttributes().get(HTML.Attribute.WIDTH) != null || css.get(HTML.Attribute.WIDTH) != null) {
-				cell.setMinimumHeight(new WidthCalculator().getWidth(t, configuration));
+				cell.setFixedWidth(new WidthCalculator().getWidth(t, configuration));
 			}
 	        String colspan = t.getAttributes().get(HTML.Attribute.COLSPAN);
 	        if (null != colspan) {
@@ -118,7 +118,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 				String value = entry.getValue();
 				cell.setUseBorderPadding(true);
 				if(key.equalsIgnoreCase(CSS.Property.HEIGHT)) {
-					cell.setFixedHeight(utils.parsePxInCmMmPcToPt(value));
+					cell.setMinimumHeight(utils.parsePxInCmMmPcToPt(value));
 				} else if(key.equalsIgnoreCase(CSS.Property.BACKGROUND_COLOR)) {
 					values.setBackground(HtmlUtilities.decodeColor(value));
 				} else if(key.equalsIgnoreCase(CSS.Property.VERTICAL_ALIGN)) {

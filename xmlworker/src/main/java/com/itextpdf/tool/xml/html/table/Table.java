@@ -56,6 +56,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
@@ -216,97 +217,100 @@ public class Table extends AbstractTagProcessor {
 			}
 		}
 		float totalFixedWidth = getTotalFixedWidth(fixedWidths);
+		float pageWidth = configuration.getPageSize().getWidth();
 		float targetWidth = 0;
+		float marginsBordersSpacing = getTotalMarginsBordersSpacing(tag, styleValues.getHorBorderSpacing());
 		if (attributes.get(CSS.Property.WIDTH) != null || css.get(CSS.Property.WIDTH) != null) {
-			targetWidth = new WidthCalculator().getWidth(tag, configuration);
-		} else if (null != tag.getParent() && configuration.getRootTags().contains(tag.getParent().getTag())) {
-			float pageWidth = configuration.getPageSize().getWidth();
-			targetWidth = pageWidth - utils.getLeftAndRightMargin(tag.getParent(), pageWidth)
-							- utils.getLeftAndRightMargin(tag, pageWidth)
-							- utils.checkMetricStyle(tag, CSS.Property.BORDER_LEFT_WIDTH)
-							- utils.checkMetricStyle(tag, CSS.Property.BORDER_RIGHT_WIDTH)
-							- styleValues.getHorBorderSpacing();
-		} else if (null == tag.getParent()) {
-			targetWidth = configuration.getPageSize().getWidth() - 20;
+			targetWidth = new WidthCalculator().getWidth(tag, configuration)-marginsBordersSpacing;
+		} else if (null == tag.getParent() || (null != tag.getParent() && configuration.getRootTags().contains(tag.getParent().getTag()))) {
+			targetWidth = pageWidth-marginsBordersSpacing;
 		} else /*
 				 * this table is an inner table and width adjustment is done in outer table
 				 */{
 			targetWidth = getTotalWidth(columnWidths, tag, styleValues.getHorBorderSpacing());
 		}
-		float initialTotalWidth = getTotalWidth(columnWidths, tag, styleValues.getHorBorderSpacing());
-		float targetPercentage = (targetWidth - totalFixedWidth) / (initialTotalWidth - totalFixedWidth);
-		// Reduce width of columns if the columnWidth array + borders + paddings
-		// is too large for the given targetWidth.
-		if (initialTotalWidth > targetWidth) {
-			float leftToReduce = 0;
+		if (totalFixedWidth > targetWidth) {
+			float targetPercentage = targetWidth / totalFixedWidth;
 			for (int column = 0; column < columnWidths.length; column++) {
-				if (fixedWidths[column] == 0) {
-					// Reduce width of the column to its targetWidth, if
-					// widestWord of column still fits in the targetWidth of the
-					// column.
-					if (widestWords[column] <= columnWidths[column] * targetPercentage) {
-						columnWidths[column] *= targetPercentage;
-						// else take the widest word and calculate space left to
-						// reduce.
-					} else {
-						columnWidths[column] = widestWords[column];
-						leftToReduce += widestWords[column] - columnWidths[column] * targetPercentage;
-					}
-					// if widestWord of a column does not fit in the fixedWidth,
-					// set the column width to the widestWord.
-				} else if (fixedWidths[column] < widestWords[column]) {
-					columnWidths[column] = widestWords[column];
-					leftToReduce += widestWords[column] - fixedWidths[column];
-				}
+				columnWidths[column] *= targetPercentage;
 			}
-			if (leftToReduce != 0) {
-				// Reduce width of the column with the most text, if its
-				// widestWord still fits in the reduced column.
-				if (widestWords[indexOfLargestColumn] <= columnWidths[indexOfLargestColumn] - leftToReduce) {
-					columnWidths[indexOfLargestColumn] -= leftToReduce;
-				} else { // set all columnWidths to their minimum with the
-							// widestWord array.
-					for (int column = 0; leftToReduce != 0 && column < columnWidths.length; column++) {
-						if (fixedWidths[column] == 0 && columnWidths[column] > widestWords[column]) {
-							float difference = columnWidths[column] - widestWords[column];
-							if (difference <= leftToReduce) {
-								leftToReduce -= difference;
-								columnWidths[column] = widestWords[column];
+		} else {
+			float initialTotalWidth = getTotalWidth(columnWidths, tag, styleValues.getHorBorderSpacing());
+			float targetPercentage = (targetWidth - totalFixedWidth) / (initialTotalWidth - totalFixedWidth);
+			// Reduce width of columns if the columnWidth array + borders + paddings
+			// is too large for the given targetWidth.
+			if (initialTotalWidth > targetWidth) {
+				float leftToReduce = 0;
+				for (int column = 0; column < columnWidths.length; column++) {
+					if (fixedWidths[column] == 0) {
+						// Reduce width of the column to its targetWidth, if
+						// widestWord of column still fits in the targetWidth of the
+						// column.
+						if (widestWords[column] <= columnWidths[column] * targetPercentage) {
+							columnWidths[column] *= targetPercentage;
+							// else take the widest word and calculate space left to
+							// reduce.
+						} else {
+							columnWidths[column] = widestWords[column];
+							leftToReduce += widestWords[column] - columnWidths[column] * targetPercentage;
+						}
+						// if widestWord of a column does not fit in the fixedWidth,
+						// set the column width to the widestWord.
+					} else if (fixedWidths[column] < widestWords[column]) {
+						columnWidths[column] = widestWords[column];
+						leftToReduce += widestWords[column] - fixedWidths[column];
+					}
+				}
+				if (leftToReduce != 0) {
+					// Reduce width of the column with the most text, if its
+					// widestWord still fits in the reduced column.
+					if (widestWords[indexOfLargestColumn] <= columnWidths[indexOfLargestColumn] - leftToReduce) {
+						columnWidths[indexOfLargestColumn] -= leftToReduce;
+					} else { // set all columnWidths to their minimum with the
+								// widestWord array.
+						for (int column = 0; leftToReduce != 0 && column < columnWidths.length; column++) {
+							if (fixedWidths[column] == 0 && columnWidths[column] > widestWords[column]) {
+								float difference = columnWidths[column] - widestWords[column];
+								if (difference <= leftToReduce) {
+									leftToReduce -= difference;
+									columnWidths[column] = widestWords[column];
+								} else {
+									columnWidths[column] -= leftToReduce;
+									leftToReduce = 0;
+								}
+							}
+						}
+						if (leftToReduce != 0) {
+							// If the table has an insufficient fixed width by an
+							// attribute or style, try to enlarge the table to its
+							// minimum width (= widestWords array).
+							if (getTotalWidth(widestWords, tag, styleValues.getHorBorderSpacing()) < pageWidth) {
+								targetWidth = getTotalWidth(widestWords, tag, styleValues.getHorBorderSpacing());
+								leftToReduce = 0;
 							} else {
-								columnWidths[column] -= leftToReduce;
+								// If all columnWidths are set to the
+								// widestWordWidths and the table is still to wide
+								// content will fall off the edge of a page, which
+								// is similar to HTML.
+								targetWidth = pageWidth - marginsBordersSpacing;
 								leftToReduce = 0;
 							}
 						}
 					}
-					if (leftToReduce != 0) {
-						// If the table has an insufficient fixed width by an
-						// attribute or style, try to enlarge the table to its
-						// minimum width (= widestWords array).
-						if (getTotalWidth(widestWords, tag, styleValues.getHorBorderSpacing()) < configuration.getPageSize().getWidth()) {
-							targetWidth = getTotalWidth(widestWords, tag, styleValues.getHorBorderSpacing());
-							leftToReduce = 0;
-						} else {
-							// If all columnWidths are set to the
-							// widestWordWidths and the table is still to wide
-							// content will fall off the edge of a page, which
-							// is similar to HTML.
-							targetWidth = configuration.getPageSize().getWidth() - 20;
-							leftToReduce = 0;
-						}
-					}
 				}
-			}
-			// Enlarge width of columns to fit the targetWidth.
-		} else if (initialTotalWidth < targetWidth) {
-			for (int column = 0; column < columnWidths.length; column++) {
-				if (fixedWidths[column] == 0) {
-					columnWidths[column] *= targetPercentage;
+				// Enlarge width of columns to fit the targetWidth.
+			} else if (initialTotalWidth < targetWidth) {
+				for (int column = 0; column < columnWidths.length; column++) {
+					if (fixedWidths[column] == 0) {
+						columnWidths[column] *= targetPercentage;
+					}
 				}
 			}
 		}
 		try {
 			table.setTotalWidth(columnWidths);
 			table.setLockedWidth(true);
+			table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		} catch (DocumentException e) {
 			throw new RuntimeWorkerException(e);
 		}
@@ -332,6 +336,7 @@ public class Table extends AbstractTagProcessor {
 				}
 				table.addCell(cell);
 			}
+			table.completeRow();
 		}
 		List<Writable> elems = new ArrayList<Writable>();
 		if (invalidRowElements.size() > 0) {
@@ -491,18 +496,19 @@ public class Table extends AbstractTagProcessor {
 		for(float f: columnWidths) {
 			width += f;
 		}
-		Map<String, String> css = tag.getCSS();
-		width += utils.checkMetricStyle(css, "border-left-width");
-		width += utils.checkMetricStyle(css, "border-right-width")+horBorderSpacing;
-		String margin = css.get(CSS.Property.MARGIN_LEFT);
-		if(margin != null) {
-			utils.parseValueToPt(margin, configuration.getPageSize().getWidth());
+		return width += getTotalMarginsBordersSpacing(tag, horBorderSpacing);
+	}
+
+	private float getTotalMarginsBordersSpacing(final Tag tag, final float horBorderSpacing) {
+		float total = utils.getLeftAndRightMargin(tag, configuration.getPageSize().getWidth())
+			+ utils.checkMetricStyle(tag, CSS.Property.BORDER_LEFT_WIDTH)
+			+ utils.checkMetricStyle(tag, CSS.Property.BORDER_RIGHT_WIDTH)
+			+ horBorderSpacing;
+		Tag parent = tag.getParent();
+		if (parent != null) {
+			total += utils.getLeftAndRightMargin(parent, configuration.getPageSize().getWidth());
 		}
-		margin = css.get(CSS.Property.MARGIN_RIGHT);
-		if(margin != null) {
-			utils.parseValueToPt(margin, configuration.getPageSize().getWidth());
-		}
-		return width;
+		return total;
 	}
 
 	private float getCellStartWidth(final HtmlCell cell) {
