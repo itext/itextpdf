@@ -80,7 +80,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
         fontDic = (PdfDictionary)PdfReader.getPdfObjectRelease(refFont);
 
         processToUnicode();
-        if (toUnicodeCmap == null)
+        //if (toUnicodeCmap == null)
             processUni2Byte();
         
         spaceWidth = super.getWidth(' ');
@@ -119,6 +119,8 @@ public class CMapAwareDocumentFont extends DocumentFont {
     private void processUni2Byte(){
         IntHashtable uni2byte = getUni2Byte();
         int e[] = uni2byte.toOrderedKeys();
+        if (e.length == 0)
+            return;
         
         cidbyte2uni = new char[256];
         for (int k = 0; k < e.length; ++k) {
@@ -185,7 +187,11 @@ public class CMapAwareDocumentFont extends DocumentFont {
         if (toUnicodeCmap != null){
             if (offset + len > bytes.length)
                 throw new ArrayIndexOutOfBoundsException(MessageLocalization.getComposedMessage("invalid.index.1", offset + len));
-            return toUnicodeCmap.lookup(bytes, offset, len);
+            String s = toUnicodeCmap.lookup(bytes, offset, len);
+            if (s != null)
+                return s;
+            if (len != 1 || cidbyte2uni == null)
+                return null;
         }
 
         if (len == 1){
