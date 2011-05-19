@@ -178,7 +178,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @return a List containing iText Element objects
 	 */
 	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
-		return new ArrayList<Writable>(0);
+		return new ArrayList<Writable>(currentContent);
 	}
 
 	/**

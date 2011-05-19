@@ -149,7 +149,7 @@ public class HtmlPipeline extends AbstractPipeline {
 					peek.add(e);
 				}
 			} catch (NoStackException e) {
-				hcc.currentContent().addAll(elems);
+				po.addAll(elems);
 			}
 		}
 		return getNext();

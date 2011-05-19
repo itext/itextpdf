@@ -50,6 +50,8 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
+import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
@@ -66,7 +68,8 @@ public class Div extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Writable> l = new ArrayList<Writable>(1);
     	if (sanitized.length() > 0) {
-    		l.add(new WritableElement(new ChunkCssApplier().apply(new Chunk(sanitized), tag)));
+    		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
+    		l.add(new WritableElement(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(c), tag)));
     	}
 		return l;
 	}
