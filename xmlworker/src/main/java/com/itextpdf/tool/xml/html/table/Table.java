@@ -156,7 +156,7 @@ public class Table extends AbstractTagProcessor {
 		styleValues.setHorBorderSpacing(getBorderOrCellSpacing(true, css, attributes));
 		styleValues.setVerBorderSpacing(getBorderOrCellSpacing(false, css, attributes));
 		table.setTableEvent(new TableBorderEvent(styleValues));
-		setVerticalMargin(table, tag, styleValues.getVerBorderSpacing());
+		setVerticalMargin(table, tag, styleValues);
 		for (TableRowElement row : tableRows) {
 			List<HtmlCell> cells = row.getContent();
 			HtmlCell last = cells.get(cells.size() - 1);
@@ -395,7 +395,7 @@ public class Table extends AbstractTagProcessor {
 			} else if (cellSpacing != null){
 				spacing = utils.parsePxInCmMmPcToPt(cellSpacing);
 			} else if (borderAttr != null){
-				spacing = utils.parsePxInCmMmPcToPt(borderAttr);
+				spacing = 1.5f;
 			}
 		} else if(collapse.equals("collapse")){
 			spacing = 0;
@@ -525,9 +525,9 @@ public class Table extends AbstractTagProcessor {
 		return spacing + left+right+1; // Default 2pt left and right padding + 1 for a border(?).
 	}
 
-	private void setVerticalMargin(final PdfPTable table, final Tag t, final float verBorderSpacing) {
-		float spacingBefore = 0;
-		float spacingAfter = 0;
+	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values) {
+		float spacingBefore = values.getVerBorderSpacing()+values.getBorderWidthTop();
+		float spacingAfter = values.getBorderWidthBottom();
 		for (Entry<String, String> css : t.getCSS().entrySet()) {
         	String key = css.getKey();
 			String value = css.getValue();
@@ -544,7 +544,7 @@ public class Table extends AbstractTagProcessor {
 			}
 		}
 		table.setSpacingBefore(spacingBefore);
-		table.setSpacingAfter(spacingAfter+verBorderSpacing);
+		table.setSpacingAfter(spacingAfter);
 	}
     /*
      * (non-Javadoc)

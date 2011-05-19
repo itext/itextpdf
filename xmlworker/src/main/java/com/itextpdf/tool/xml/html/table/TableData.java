@@ -46,17 +46,17 @@ package com.itextpdf.tool.xml.html.table;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.Writable;
+import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
-import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
-import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 /**
  * @author redlab_b
@@ -77,8 +77,9 @@ public class TableData extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Writable> l = new ArrayList<Writable>(1);
 		if (sanitized.length() > 0) {
-			WritableElement we = new WritableElement(new NoNewLineParagraphCssApplier(configuration).apply(
-					new NoNewLineParagraph(sanitized), tag));
+			Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
+//			NoNewLineParagraph noNewLineParagraph = new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(c), tag);
+			WritableElement we = new WritableElement(c);
 			l.add(we);
 		}
 		return l;
