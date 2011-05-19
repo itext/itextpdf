@@ -312,7 +312,8 @@ public class XMLWorkerConfigurationImpl implements XMLWorkerConfig {
 		return pipeline;
 	}
 
-	public void pipeline(final Pipeline pipeline) {
+	public XMLWorkerConfigurationImpl pipeline(final Pipeline pipeline) {
 		this.pipeline = pipeline;
+		return this;
 	}
 }
