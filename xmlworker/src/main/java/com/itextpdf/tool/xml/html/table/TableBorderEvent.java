@@ -93,38 +93,46 @@ public class TableBorderEvent implements PdfPTableEvent{
         if(color == null && left != 0) {
         	color = BaseColor.BLACK;
         }
-        cb.setLineWidth(left);
-        cb.setColorStroke(color);
-        cb.moveTo(x1, y1); // start leftUpperCorner
-        cb.lineTo(x1, y2); // left
-        cb.stroke();
+        if(color != null) {
+	        cb.setLineWidth(left);
+	        cb.setColorStroke(color);
+	        cb.moveTo(x1, y1); // start leftUpperCorner
+	        cb.lineTo(x1, y2); // left
+	        cb.stroke();
+        }
         color = styleValues.getBorderColorBottom();
         if(color == null && bottom != 0) {
         	color = BaseColor.BLACK;
         }
-        cb.setLineWidth(bottom);
-        cb.setColorStroke(color);
-        cb.moveTo(x1, y2); // left
-        cb.lineTo(x2, y2); // bottom
-        cb.stroke();
+        if(color != null) {
+	        cb.setLineWidth(bottom);
+	        cb.setColorStroke(color);
+	        cb.moveTo(x1, y2); // left
+	        cb.lineTo(x2, y2); // bottom
+	        cb.stroke();
+        }
         color = styleValues.getBorderColorRight();
         if(color == null && right != 0) {
         	color = BaseColor.BLACK;
         }
-        cb.setLineWidth(right);
-        cb.setColorStroke(color);
-        cb.moveTo(x2, y2); // bottom
-        cb.lineTo(x2, y1); // right
-        cb.stroke();
+        if(color != null) {
+	        cb.setLineWidth(right);
+	        cb.setColorStroke(color);
+	        cb.moveTo(x2, y2); // bottom
+	        cb.lineTo(x2, y1); // right
+	        cb.stroke();
+        }
         color = styleValues.getBorderColorTop();
         if(color == null && top != 0) {
         	color = BaseColor.BLACK;
         }
-        cb.setLineWidth(top);
-        cb.setColorStroke(color);
-        cb.moveTo(x2, y1); // right
-        cb.lineTo(x1, y1); // top
-        cb.stroke();
+        if(color != null) {
+	        cb.setLineWidth(top);
+	        cb.setColorStroke(color);
+	        cb.moveTo(x2, y1); // right
+	        cb.lineTo(x1, y1); // top
+	        cb.stroke();
+        }
         cb.resetRGBColorStroke();
     }
 	public TableStyleValues getTableStyleValues(){
