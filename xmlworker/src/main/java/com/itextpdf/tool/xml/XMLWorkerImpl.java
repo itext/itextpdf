@@ -41,8 +41,6 @@
 package com.itextpdf.tool.xml;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Element;
@@ -65,7 +63,6 @@ import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 public class XMLWorkerImpl implements XMLWorker {
 
 	private Tag current = null;
-	private final List<Element> currentContent;
 	private XMLWorkerConfig config;
 	private Pipeline rootpPipe;
 	private WorkerContextImpl context;
@@ -76,7 +73,6 @@ public class XMLWorkerImpl implements XMLWorker {
 	 * @param provider
 	 */
 	private XMLWorkerImpl() {
-		this.currentContent = new ArrayList<Element>();
 	}
 
 	/**

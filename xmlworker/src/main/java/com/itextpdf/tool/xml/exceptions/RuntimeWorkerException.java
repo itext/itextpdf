@@ -65,8 +65,8 @@ public class RuntimeWorkerException extends RuntimeException {
 	}
 
 	/**
-	 * @param message
-	 * @param cause
+	 * @param message a message
+	 * @param cause a cause
 	 */
 	public RuntimeWorkerException(final String message, final Throwable cause) {
 		super(message, cause);
@@ -74,7 +74,7 @@ public class RuntimeWorkerException extends RuntimeException {
 	}
 
 	/**
-	 * @param message
+	 * @param message a message
 	 */
 	public RuntimeWorkerException(final String message) {
 		super(message);
@@ -82,7 +82,7 @@ public class RuntimeWorkerException extends RuntimeException {
 	}
 
 	/**
-	 * @param cause
+	 * @param cause a cause
 	 */
 	public RuntimeWorkerException(final Throwable cause) {
 		super(cause);

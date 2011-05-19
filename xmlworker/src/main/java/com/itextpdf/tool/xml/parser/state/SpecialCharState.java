@@ -44,8 +44,8 @@
 package com.itextpdf.tool.xml.parser.state;
 
 import com.itextpdf.text.xml.simpleparser.EntitiesToUnicode;
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -68,16 +68,16 @@ public class SpecialCharState implements State {
 	public void process(final int character) {
 		StringBuilder entity = this.parser.memory().currentEntity();
 		if(character == ';') {
-			if ("nbsp".equals(entity.toString())) {
-				parser.append(' '); // TODO check if it's good idea to transform &nbsp into a space ?
-			} else {
+//			if ("nbsp".equals(entity.toString())) {
+//				parser.append(' '); // TODO check if it's good idea to transform &nbsp into a space ?
+//			} else {
 				char decoded = EntitiesToUnicode.decodeEntity(entity.toString());
 				if (decoded == '\0') {
 					parser.append('&').append(entity.toString()).append(';');
 				} else {
 					parser.append(decoded);
 				}
-			}
+//			}
             parser.selectState().inTag();
             this.parser.memory().currentEntity().setLength(0);
 		 } else if (character != '#' && (character < '0' || character > '9') && (character < 'a' || character > 'z')

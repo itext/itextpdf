@@ -67,8 +67,8 @@ import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
  * {@link XMLWorkerConfigurationImpl#autoBookmark()} set to <code>false<code><br />
  * {@link XMLWorkerConfigurationImpl#charSet()} set to {@link Charset#defaultCharset()}<br />
  * {@link XMLWorkerConfigurationImpl#getRootTags()} set to <code> { "defaultRoot", "body", "div" }</code><br />
- * {@link XMLWorkerConfigurationImpl#acceptUnknown} set to <code>false</code><br />
- * {@link XMLWorkerConfigurationImpl#isHTML} set to <code>false</code><br />
+ * {@link XMLWorkerConfigurationImpl#acceptUnknown()} set to <code>false</code><br />
+ * {@link XMLWorkerConfigurationImpl#isParsingHTML()} set to <code>false</code><br />
  * {@link XMLWorkerConfigurationImpl#getTagFactory()} you must set with {@link XMLWorkerConfigurationImpl#tagProcessorFactory(TagProcessorFactory)}<br />
  * Other things you can set are not mandatory.
  * @author redlab_b

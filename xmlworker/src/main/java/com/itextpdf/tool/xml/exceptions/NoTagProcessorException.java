@@ -47,11 +47,11 @@ import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.html.TagProcessorFactory;
 
 /**
- * Thrown by {@link TagProcessorFactory#getProcessor(String)} when the given tag
+ * Thrown by {@link TagProcessorFactory#getProcessor(String, String)} when the given tag
  * did not map to any {@link TagProcessor}.
- * 
+ *
  * @author redlab_b
- * 
+ *
  */
 public class NoTagProcessorException extends RuntimeException {
 

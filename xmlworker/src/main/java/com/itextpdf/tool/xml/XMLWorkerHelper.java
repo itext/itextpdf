@@ -46,6 +46,7 @@ package com.itextpdf.tool.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -72,6 +73,10 @@ public class XMLWorkerHelper {
 	private CssFile defaultCssFile;
 	private final Object lock = new Object();
 
+	/**
+	 * Get a XMLWorkerHelper
+	 * @return a singleton instance of XMLWorkerHelper
+	 */
 	public static XMLWorkerHelper getInstance() {
 		return myself ;
 
@@ -136,7 +141,7 @@ public class XMLWorkerHelper {
 	 * Parses the xml data. This method configures the XMLWorker to parse (X)HTML/CSS and accept unknown tags.
 	 * Writes the output in the given PdfWriter with the given document.
 	 * @param writer the PdfWriter
-	 * @param document the Document
+	 * @param doc the Document
 	 * @param in the reader
 	 * @throws IOException thrown when something went wrong with the IO
 	 */

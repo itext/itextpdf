@@ -62,22 +62,22 @@ public class CssResolverException extends Exception {
 	}
 
 	/**
-	 * @param message
-	 * @param cause
+	 * @param message a message
+	 * @param cause a cause
 	 */
 	public CssResolverException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 
 	/**
-	 * @param message
+	 * @param message a message
 	 */
 	public CssResolverException(final String message) {
 		super(message);
 	}
 
 	/**
-	 * @param cause
+	 * @param cause a cause
 	 */
 	public CssResolverException(final Throwable cause) {
 		super(cause);

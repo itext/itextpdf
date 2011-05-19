@@ -61,22 +61,22 @@ public class NotImplementedException extends RuntimeException {
 	}
 
 	/**
-	 * @param arg0
+	 * @param arg0 a message
 	 */
 	public NotImplementedException(final String arg0) {
 		super(arg0);
 	}
 
 	/**
-	 * @param arg0
+	 * @param arg0 a cause
 	 */
 	public NotImplementedException(final Throwable arg0) {
 		super(arg0);
 	}
 
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * @param arg0 a message
+	 * @param arg1 a cause
 	 */
 	public NotImplementedException(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
