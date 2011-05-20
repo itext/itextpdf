@@ -47,10 +47,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
+import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
@@ -74,4 +77,51 @@ public class Div extends AbstractTagProcessor {
 		return l;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
+	 * java.util.List, com.itextpdf.text.Document)
+	 */
+	@Override
+	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+		Paragraph p = null;
+		List<Writable> l = new ArrayList<Writable>(1);
+		for (Writable we : currentContent) {
+			if (we instanceof WritableElement) {
+				for (Element e :((WritableElement) we).elements()) {
+					if (e instanceof NoNewLineParagraph || e instanceof Chunk) {
+						if(p == null) {
+							p = new Paragraph();
+						}
+						p.add(e);
+					} else {
+						if (p != null) {
+							WritableElement writable = new WritableElement(new ParagraphCssApplier(configuration).apply(p, tag));
+							l.add(writable);
+							p = null;
+						}
+						l.add(we);
+					}
+				}
+			} else {
+				l.add(we); // WD wordt nu wel verkeerd geplaatst.
+//				1 methode voor deze en AbstractTagProcessor#currentContentToWritables en TableData#end?
+			}
+		}
+		if (p != null) {
+			WritableElement writable = new WritableElement(new ParagraphCssApplier(configuration).apply(p, tag));
+			l.add(writable);
+		}
+		return l;
+	}
+
+	 /* (non-Javadoc)
+     * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
+     */
+    @Override
+	public boolean isStackOwner() {
+        return true;
+    }
 }

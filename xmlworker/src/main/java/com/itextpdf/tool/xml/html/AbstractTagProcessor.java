@@ -219,7 +219,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 			Phrase p = null;
 			for (Writable w : currentContent) {
 				if (w instanceof WritableElement) {
-					for (Element e : ((WritableElement) w).elements()) {
+					for (Element e : ((WritableElement) w).elements()) { // Wat als e een tabel of lijst is? Check op instanceof?
 						if (null == p) {
 							if (addNewLines) {
 								p = new Paragraph();
