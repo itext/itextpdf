@@ -48,7 +48,6 @@ import java.util.Map.Entry;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
@@ -99,7 +98,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
     	Map<String, String> css = t.getCSS();
 		String emptyCells = css.get(CSS.Property.EMPTY_CELLS);
 		if(null != emptyCells && CSS.Value.HIDE.equalsIgnoreCase(emptyCells) && cell.getCompositeElements() == null) {
-			cell.setBorder(Rectangle.NO_BORDER);
+//			cell.setBorder(Rectangle.NO_BORDER);
 		} else {
 	    	cell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Default css behavior. Implementation of "vertical-align" style further along.
 			if(t.getAttributes().get(HTML.Attribute.WIDTH) != null || css.get(HTML.Attribute.WIDTH) != null) {
@@ -124,8 +123,10 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 				} else if(key.equalsIgnoreCase(CSS.Property.VERTICAL_ALIGN)) {
 					if(value.equalsIgnoreCase(CSS.Value.TOP)) {
 						cell.setVerticalAlignment(Element.ALIGN_TOP);
+						cell.setPaddingTop(cell.getPaddingTop()+6);
 					} else if(value.equalsIgnoreCase(CSS.Value.BOTTOM)) {
 						cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+						cell.setPaddingBottom(cell.getPaddingBottom()+6);
 					}
 				} else if(key.contains(CSS.Property.BORDER)) {
 					if(key.contains(CSS.Value.TOP)) {
@@ -163,10 +164,13 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 	    	values.setVerBorderSpacing(verSpacing);
 	    	cell.setPaddingLeft(cell.getPaddingLeft()+horSpacing+values.getBorderWidthLeft());
 			cell.setPaddingRight(cell.getPaddingRight()+values.getBorderWidthRight());
-	    	cell.setPaddingTop(cell.getPaddingTop()+verSpacing+values.getBorderWidthTop());
-	    	cell.setPaddingBottom(cell.getPaddingBottom()+verSpacing+values.getBorderWidthBottom());
+			if (verSpacing < 18){
+				verSpacing = verSpacing*2.5f-18;
+			}
+	    	cell.setPaddingTop(cell.getPaddingTop()+verSpacing/2+values.getBorderWidthTop());
+	    	cell.setPaddingBottom(cell.getPaddingBottom()+values.getBorderWidthBottom()+1);
 		}
-		cell.setBorder(Rectangle.NO_BORDER);
+//		cell.setBorder(Rectangle.NO_BORDER);
 		cell.setCellEvent(new CellSpacingEvent(values));
 		cell.setCellValues(values);
         return cell;

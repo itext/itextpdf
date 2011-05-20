@@ -516,31 +516,27 @@ public class Table extends AbstractTagProcessor {
 		// colspan - 1, because one horBorderSpacing has been added to paddingLeft for all cells.
 		int spacingMultiplier = cell.getColspan() - 1;
 		// if lastInRow add one more horSpacing right of the cell.
-		spacingMultiplier += cellStyleValues.isLastInRow()?1:0;
 		float spacing = spacingMultiplier*cellStyleValues.getHorBorderSpacing();
-		float left =  cell.getPaddingLeft();
-		left = (left>1)?left:2;
-		float right = cell.getPaddingRight();
-		right = (right>1)?right:2;
-		return spacing + left+right+1; // Default 2pt left and right padding + 1 for a border(?).
+		return spacing + cell.getPaddingLeft()+cell.getPaddingRight()+1; // Default 2pt left and right padding + 1 for a border(?).
 	}
 
 	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values) {
-		float spacingBefore = values.getVerBorderSpacing()+values.getBorderWidthTop();
-		float spacingAfter = values.getBorderWidthBottom();
+		float spacingBefore = values.getBorderWidthTop();
+		Map<String, Object> memory = configuration.getMemory();
+		Object mb = memory.get(XMLWorkerConfig.LAST_MARGIN_BOTTOM);
+		if(mb != null) {
+			spacingBefore += (Float)mb;
+		}
+		float spacingAfter = values.getVerBorderSpacing()+values.getBorderWidthBottom();
 		for (Entry<String, String> css : t.getCSS().entrySet()) {
         	String key = css.getKey();
 			String value = css.getValue();
 			if(CSS.Property.MARGIN_TOP.equalsIgnoreCase(key)) {
-				spacingBefore += utils.calculateMarginTop(value, fst.getFontSize(t), configuration);
-			} else if (CSS.Property.BORDER_TOP_WIDTH.equalsIgnoreCase(key)) {
 				spacingBefore += utils.parseValueToPt(value, fst.getFontSize(t));
 			} else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
 				float marginBottom = utils.parseValueToPt(value, fst.getFontSize(t));
 				spacingAfter += marginBottom;
 				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, marginBottom);
-			} else if (CSS.Property.BORDER_BOTTOM_WIDTH.equalsIgnoreCase(key)) {
-				spacingAfter += utils.parseValueToPt(value, fst.getFontSize(t));
 			}
 		}
 		table.setSpacingBefore(spacingBefore);
