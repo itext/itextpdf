@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hyphenation-info SYSTEM "hyphenation.dtd">
 <hyphenation-info>
+
+<!-- Created by Jérôme Marant from OFFO FOP's Hyphenation Patterns -->
 
 <!-- Latin Hyphenation Patterns -->
 
@@ -109,11 +112,50 @@
 <!-- \message{Latin Hyphenation Patterns `lahyph' Version 3.2 <2010/06/01>} -->
 
 
-
+<hyphen-char value="-"/>
 <hyphen-min before="2" after="2"/>
 
 <exceptions>
 </exceptions>
+
+<classes>
+<!-- @!$%^&*()_-+=~`{[}]:;|<,.>?/0123456789 -->
+'
+aA
+bB
+cC
+dD
+eE
+fF
+gG
+hH
+iI
+jJ
+kK
+lL
+mM
+nN
+oO
+pP
+qQ
+rR
+sS
+tT
+uU
+vV
+wW
+xX
+yY
+zZ
+áÁ
+éÉ
+íÍ
+óÓ
+úÚ
+ýÝ
+æӔ
+œŒ
+</classes>
 
 <patterns>
 .a2b3l
