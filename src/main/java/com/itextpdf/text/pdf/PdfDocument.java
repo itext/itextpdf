@@ -70,6 +70,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Section;
+import com.itextpdf.text.api.WriterOperation;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.draw.DrawInterface;
@@ -398,6 +399,7 @@ public class PdfDocument extends Document {
             return false;
         }
         try {
+        	// TODO refactor this uber long switch to State/Strategy or something ...
             switch(element.type()) {
                 // Information (headers)
                 case Element.HEADER:
@@ -710,6 +712,11 @@ public class PdfDocument extends Document {
                 	mo.process(this);
                 	break;
                 }
+                case Element.WRITABLE_DIRECT:
+                	if (null != writer) {
+                		((WriterOperation)element).write(writer, this);
+                	}
+                	break;
                 default:
                     return false;
             }

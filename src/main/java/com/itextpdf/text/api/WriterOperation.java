@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: Paragraph.java 4784 2011-03-15 08:33:00Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -43,37 +43,21 @@
  */
 package com.itextpdf.text.api;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfWriter;
+
 /**
- * Objects implementing Indentable allow to set indentation left and right.
+ * @author itextpdf.com
+ *
  */
-public interface Indentable {
+public interface WriterOperation {
 
 	/**
-	 * Sets the indentation on the left side.
-	 *
-	 * @param	indentation		the new indentation
+	 * Receive a writer and the document to do certain operations on them.
+	 * @param writer the PdfWriter
+	 * @param doc the document
+	 * @throws DocumentException
 	 */
-	void setIndentationLeft(float indentation);
-
-	/**
-	 * Sets the indentation on the right side.
-	 *
-	 * @param	indentation		the new indentation
-	 */
-	void setIndentationRight(float indentation);
-
-	/**
-	 * Gets the indentation on the left side.
-	 *
-	 * @return	the indentation
-	 */
-	float getIndentationLeft();
-
-	/**
-	 * Gets the indentation on the right side.
-	 *
-	 * @return	the indentation
-	 */
-	float getIndentationRight();
-
+	void write(final PdfWriter writer, final Document doc) throws DocumentException;
 }
