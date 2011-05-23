@@ -1,5 +1,5 @@
 /*
- * $Id: Utilities.java 4847 2011-05-05 19:46:13Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
