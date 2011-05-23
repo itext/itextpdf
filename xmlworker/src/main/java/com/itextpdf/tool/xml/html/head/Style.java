@@ -46,11 +46,11 @@ package com.itextpdf.tool.xml.html.head;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
@@ -71,7 +71,7 @@ public class Style extends AbstractTagProcessor {
 	 * java.lang.String)
 	 */
 	@Override
-	public List<Writable> content(final Tag tag, final String content) {
+	public List<Element> content(final Tag tag, final String content) {
 		try {
 			CSSResolver cssResolver = getCSSResolver();
 			cssResolver.addCss(content);
@@ -79,7 +79,7 @@ public class Style extends AbstractTagProcessor {
 			LOG.error(content + "\ncould not be parsed, proceeding without", e);
 		} catch (NoCustomContextException e) {
 		}
-		return new ArrayList<Writable>(0);
+		return new ArrayList<Element>(0);
 	}
 
 }

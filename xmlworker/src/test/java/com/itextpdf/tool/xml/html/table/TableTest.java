@@ -56,13 +56,11 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 public class TableTest {
 	private final List<Element> cells1 = new ArrayList<Element>();
@@ -115,20 +113,11 @@ public class TableTest {
 		rows.add(row2);
 	}
 
-	private WritableElement createNewWritableElement(final List<Element> elements) {
-		WritableElement writableElement = new WritableElement();
-		for (Element e : elements) {
-			writableElement.add(e);
-		}
-		return writableElement;
-	}
 	@Test
 	public void resolveBuild() {
 		AbstractTagProcessor table2 = new Table();
 		table2.setConfiguration(new XMLWorkerConfigurationImpl());
-		List l = new ArrayList<Writable>(1);
-		l.add(createNewWritableElement(rows));
-		PdfPTable table = (PdfPTable) ((WritableElement ) table2.end(tag, l).get(0)).elements().get(0);
+		PdfPTable table = (PdfPTable) (table2.end(tag, rows).get(0));
 		assertEquals(4, table.getRow(0).getCells().length);
 		assertEquals(4, table.getNumberOfColumns());
 	}

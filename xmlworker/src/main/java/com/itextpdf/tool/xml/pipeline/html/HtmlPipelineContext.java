@@ -1,5 +1,5 @@
 /*
-rfdddddtd * $Id$
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -48,9 +48,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.CustomContext;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.html.TagProcessorFactory;
@@ -65,7 +65,7 @@ public class HtmlPipelineContext implements CustomContext {
 	private final LinkedList<StackKeeper> queue;
 	private final boolean acceptUnknown = true;
 	private final TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
-	private final List<Writable> ctn = new ArrayList<Writable>();
+	private final List<Element> ctn = new ArrayList<Element>();
 	private final XMLWorkerConfig config;
 	private final WorkerContext context;
 
@@ -115,7 +115,7 @@ public class HtmlPipelineContext implements CustomContext {
 	/**
 	 * @return the current content of writables.
 	 */
-	public List<Writable> currentContent() {
+	public List<Element> currentContent() {
 		return ctn;
 	}
 

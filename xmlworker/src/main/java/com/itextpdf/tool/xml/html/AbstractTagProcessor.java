@@ -36,11 +36,9 @@ import java.util.List;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
@@ -48,8 +46,6 @@ import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
-import com.itextpdf.tool.xml.pipeline.WritableDirect;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
@@ -116,16 +112,14 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * implementors {@link AbstractTagProcessor#start(Tag)} method.
 	 *
 	 */
-	public final List<Writable> startElement(final Tag tag) {
+	public final List<Element> startElement(final Tag tag) {
 		float fontSize = fontsizeTrans.translateFontSize(tag);
 		tag.getCSS().put(CSS.Property.FONT_SIZE, fontSize + "pt");
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_BEFORE);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
-			List<Writable> list = new ArrayList<Writable>(2);
-			list.add(new WritableElement(Chunk.NEXTPAGE));
-			for (Writable e : start(tag)) {
-				list.add(e);
-			}
+			List<Element> list = new ArrayList<Element>(2);
+			list.add(Chunk.NEXTPAGE);
+			list.addAll(start(tag));
 			return list;
 		}
 		return start(tag);
@@ -139,15 +133,15 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @param tag the tag
 	 * @return an element to be added to current content, may be null
 	 */
-	public List<Writable> start(final Tag tag){ return new ArrayList<Writable>(0); };
+	public List<Element> start(final Tag tag){ return new ArrayList<Element>(0); };
 
 	/*
 	 * (non-Javadoc)
 	 *
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
-	public List<Writable> content(final Tag tag, final String content) {
-		return new ArrayList<Writable>(0);
+	public List<Element> content(final Tag tag, final String content) {
+		return new ArrayList<Element>(0);
 	}
 
 	/**
@@ -157,11 +151,11 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * currentContentList after calling
 	 * {@link AbstractTagProcessor#end(Tag, List)}.
 	 */
-	public final List<Writable> endElement(final Tag tag, final List<Writable> currentContent) {
-		List<Writable> list = end(tag, currentContent);
+	public final List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+		List<Element> list = end(tag, currentContent);
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_AFTER);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
-			list.add(new WritableElement(Chunk.NEXTPAGE));
+			list.add(Chunk.NEXTPAGE);
 			return list;
 		}
 		return list;
@@ -177,8 +171,8 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @param currentContent the content created from e.g. inner tags, inner content and not yet added to document.
 	 * @return a List containing iText Element objects
 	 */
-	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
-		return new ArrayList<Writable>(currentContent);
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+		return new ArrayList<Element>(currentContent);
 	}
 
 	/**
@@ -189,17 +183,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	public boolean isStackOwner() {
 		return false;
 	}
-	/**
-	 * @param elements
-	 * @return
-	 */
-	protected WritableElement createNewWritableElement(final List<Element> elements) {
-		WritableElement writableElement = new WritableElement();
-		for (Element e : elements) {
-			writableElement.add(e);
-		}
-		return writableElement;
-	}
+
 	/**
 	 * Adds currentContent list to a paragraph element. If addNewLines is true a
 	 * Paragraph object is returned, else a NoNewLineParagraph object is
@@ -211,56 +195,32 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @param tag
 	 * @return
 	 */
-	public final List<Writable> currentContentToWritables(final List<Writable> currentContent,
+	public final List<Element> currentContentToWritables(final List<Element> currentContent,
 			final boolean addNewLines, final boolean applyCSS, final Tag tag) {
-		List<Writable> list = new ArrayList<Writable>(1);
+		List<Element> list = new ArrayList<Element>();
 		if (currentContent.size() > 0) {
-			boolean hasWritableDirect = false;
-			Phrase p = null;
-			for (Writable w : currentContent) {
-				if (w instanceof WritableElement) {
-					for (Element e : ((WritableElement) w).elements()) { // Wat als e een tabel of lijst is? Check op instanceof?
-						if (null == p) {
-							if (addNewLines) {
-								p = new Paragraph();
-							} else {
-								p = new NoNewLineParagraph();
-							}
-						} else if (hasWritableDirect) {
-							p = new NoNewLineParagraph();
-						}
-						hasWritableDirect = false;
-						p.add(e);
-					}
-				} else if (w instanceof WritableDirect) {
-					hasWritableDirect = true;
-					if (null != p) {
-						if(applyCSS) {
-							if (p instanceof Paragraph) {
-								p = new ParagraphCssApplier(configuration).apply((Paragraph) p, tag);
-							} else {
-								p = new NoNewLineParagraphCssApplier(configuration).apply((NoNewLineParagraph) p, tag);
-							}
-						}
-						list.add(new WritableElement(p));
-					}
-					list.add(w);
+			if (addNewLines) {
+				Paragraph p = new Paragraph();
+				for (Element e : currentContent) {
+					p.add(e);
 				}
-			}
-			if (!hasWritableDirect && null != p) {
-				if(applyCSS) {
-					if (p instanceof Paragraph) {
-						p = new ParagraphCssApplier(configuration).apply((Paragraph) p, tag);
-					} else {
-						p = new NoNewLineParagraphCssApplier(configuration).apply((NoNewLineParagraph) p, tag);
-					}
+				if (applyCSS) {
+					p = new ParagraphCssApplier(configuration).apply(p, tag);
 				}
-				list.add(new WritableElement(p));
+				list.add(p);
+			} else {
+				NoNewLineParagraph p = new NoNewLineParagraph();
+				for (Element e : currentContent) {
+					p.add(e);
+				}
+				p = new NoNewLineParagraphCssApplier(configuration).apply(p, tag);
+				list.add(p);
 			}
+			// TODO enhance
 		}
 		return list;
 	}
-	public final List<Writable> currentContentToWritables(final List<Writable> currentContent,
+	public final List<Element> currentContentToWritables(final List<Element> currentContent,
 			final boolean addNewLines) {
 		return this.currentContentToWritables(currentContent, addNewLines, false, null);
 	}

@@ -49,17 +49,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -78,11 +77,11 @@ public class Image extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		Map<String, String> attributes = tag.getAttributes();
 		String src = attributes.get(HTML.Attribute.SRC);
 		com.itextpdf.text.Image img = null;
-		List<Writable> l = new ArrayList<Writable>(1);
+		List<Element> l = new ArrayList<Element>(1);
 		if (null != src && src.length() > 0) {
 			// check if the image was already added once
 			try {
@@ -113,7 +112,7 @@ public class Image extends AbstractTagProcessor {
 					widthInPoints = img.getWidth() * heightInPoints / img.getHeight();
 					img.scaleAbsolute(widthInPoints, heightInPoints);
 				}
-				l.add(new WritableElement(new ChunkCssApplier().apply(new Chunk(new ImageCssApplier().apply(img, tag), 0, 0, true), tag)));
+				l.add(new ChunkCssApplier().apply(new Chunk(new ImageCssApplier().apply(img, tag), 0, 0, true), tag));
 			}
 		}
 		return l;

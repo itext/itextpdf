@@ -49,6 +49,7 @@ import java.util.List;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
+import com.itextpdf.tool.xml.exceptions.NotImplementedException;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 
 /**
@@ -72,7 +73,7 @@ public class TableRowElement implements Element {
 
     /**
      * @param currentContent
-     * @param place 
+     * @param place
      */
     public TableRowElement(final List<Element> currentContent, final Place place) {
         // filter out none TD elements, discard others
@@ -89,35 +90,35 @@ public class TableRowElement implements Element {
      * @see com.itextpdf.text.Element#process(com.itextpdf.text.ElementListener)
      */
     public boolean process(final ElementListener listener) {
-        return false;
+    	throw new NotImplementedException();
     }
 
     /* (non-Javadoc)
      * @see com.itextpdf.text.Element#type()
      */
     public int type() {
-        return 0;
+    	throw new NotImplementedException();
     }
 
     /* (non-Javadoc)
      * @see com.itextpdf.text.Element#isContent()
      */
     public boolean isContent() {
-        return false;
+    	throw new NotImplementedException();
     }
 
     /* (non-Javadoc)
      * @see com.itextpdf.text.Element#isNestable()
      */
     public boolean isNestable() {
-        return false;
+    	throw new NotImplementedException();
     }
 
     /* (non-Javadoc)
      * @see com.itextpdf.text.Element#getChunks()
      */
     public List<Chunk> getChunks() {
-        return null;
+        throw new NotImplementedException();
     }
 
     /**

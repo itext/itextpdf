@@ -39,20 +39,18 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.WritableDirectElement;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
-import com.itextpdf.tool.xml.pipeline.WritableDirect;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -69,7 +67,7 @@ public class Anchor extends AbstractTagProcessor {
 	 * .Tag, java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Writable> start(final Tag tag) {
+	public List<Element> start(final Tag tag) {
 		if (null != tag.getAttributes().get(HTML.Attribute.HREF)) {
 			Map<String, String> css = tag.getCSS();
 			if (css.get(CSS.Property.TEXT_DECORATION) == null) {
@@ -79,7 +77,7 @@ public class Anchor extends AbstractTagProcessor {
 				css.put(CSS.Property.COLOR, "blue");
 			}
 		}
-		return new ArrayList<Writable>(0);
+		return new ArrayList<Element>(0);
 	}
 
 	/*
@@ -90,11 +88,11 @@ public class Anchor extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Writable> content(final Tag tag, final String content) {
+	public List<Element> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Writable> l = new ArrayList<Writable>(1);
+		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
-			l.add(new WritableElement(new ChunkCssApplier().apply(new Chunk(sanitized), tag)));
+			l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
 		}
 		return l;
 	}
@@ -107,15 +105,13 @@ public class Anchor extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		final String name = tag.getAttributes().get(HTML.Attribute.NAME);
-		List<Writable> elems = new ArrayList<Writable>(0);
+		List<Element> elems = new ArrayList<Element>(0);
 		if (currentContent.size() > 0) {
 			NoNewLineParagraph p = new NoNewLineParagraph();
 			String url = tag.getAttributes().get(HTML.Attribute.HREF);
-			for (Writable w : currentContent) {
-				if (w instanceof WritableElement) {
-					for (Element e : ((WritableElement) w).elements()) {
+			for (Element e : currentContent) {
 						if (e instanceof Chunk) {
 							if (null != url) {
 								if (url.startsWith("#")) {
@@ -145,10 +141,8 @@ public class Anchor extends AbstractTagProcessor {
 							}
 						}
 						p.add(e);
-					}
 				}
-				elems.add(new WritableElement(new NoNewLineParagraphCssApplier(configuration).apply(p, tag)));
-			}
+				elems.add(new NoNewLineParagraphCssApplier(configuration).apply(p, tag));
 		} else
 		// !currentContent > 0 ; An empty "a" tag has been encountered.
 		// we're using an anchor space hack here. without the space, reader does
@@ -157,9 +151,9 @@ public class Anchor extends AbstractTagProcessor {
 			if (LOGGER.isLogging(Level.TRACE)) {
 				LOGGER.trace(String.format("Trying to set local destination %s with space hack", name));
 			}
-			elems.add(new WritableDirect() {
+			elems.add(new WritableDirectElement() {
 
-				public void write(final PdfWriter writer, final Document doc) throws DocumentException {
+			public void write(final PdfWriter writer, final Document doc) throws DocumentException {
 					ColumnText c = new ColumnText(writer.getDirectContent());
 					float verticalPosition = writer.getVerticalPosition(false);
 					c.setSimpleColumn(new Phrase(new Chunk(" ").setLocalDestination(name)), 1, verticalPosition-5, 6, verticalPosition, 5, Element.ALIGN_LEFT);

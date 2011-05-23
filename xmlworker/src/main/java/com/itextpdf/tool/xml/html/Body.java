@@ -33,11 +33,10 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -52,11 +51,11 @@ public class Body extends AbstractTagProcessor {
 	 * com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Writable> content(final Tag tag, final String content) {
+	public List<Element> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitize(content);
-		List<Writable> l = new ArrayList<Writable>(1);
+		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
-			l.add(new WritableElement(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(sanitized), tag)));
+			l.add(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(sanitized), tag));
 		}
 		return l;
 	}

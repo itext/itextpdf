@@ -50,6 +50,7 @@ import java.util.Map.Entry;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.WritableDirectElement;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Pipeline;
@@ -59,7 +60,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
-import com.itextpdf.tool.xml.pipeline.WritableDirect;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
 import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 
@@ -122,7 +123,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 				cc = (MapContext) getContext().get(PdfWriterPipeline.class);
 
 				Document d = (Document) cc.get(PdfWriterPipeline.DOCUMENT);
-				po.add(new WritableDirect() {
+				po.add(new WritableElement(new WritableDirectElement() {
 
 					public void write(final PdfWriter writer, final Document d) throws DocumentException {
 						CssUtils cssUtils = CssUtils.getInstance();
@@ -149,7 +150,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 						d.open();
 
 					}
-				});
+				}));
 				CssUtils cssUtils = CssUtils.getInstance();
 				float pageWidth = d.getPageSize().getWidth();
 				float marginLeft = 0;

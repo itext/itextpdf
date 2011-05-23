@@ -50,7 +50,6 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
@@ -67,12 +66,12 @@ public class Div extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
 	@Override
-	public List<Writable> content(final Tag tag, final String content) {
+	public List<Element> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Writable> l = new ArrayList<Writable>(1);
+		List<Element> l = new ArrayList<Element>(1);
     	if (sanitized.length() > 0) {
     		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
-    		l.add(new WritableElement(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(c), tag)));
+    		l.add(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(c), tag));
     	}
 		return l;
 	}
@@ -85,10 +84,10 @@ public class Div extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		Paragraph p = null;
-		List<Writable> l = new ArrayList<Writable>(1);
-		for (Writable we : currentContent) {
+		List<Element> l = new ArrayList<Element>(1);
+		for (Element we : currentContent) {
 			if (we instanceof WritableElement) {
 				for (Element e :((WritableElement) we).elements()) {
 					if (e instanceof NoNewLineParagraph || e instanceof Chunk) {
@@ -98,8 +97,7 @@ public class Div extends AbstractTagProcessor {
 						p.add(e);
 					} else {
 						if (p != null) {
-							WritableElement writable = new WritableElement(new ParagraphCssApplier(configuration).apply(p, tag));
-							l.add(writable);
+							l.add(new ParagraphCssApplier(configuration).apply(p, tag));
 							p = null;
 						}
 						l.add(we);
@@ -111,8 +109,7 @@ public class Div extends AbstractTagProcessor {
 			}
 		}
 		if (p != null) {
-			WritableElement writable = new WritableElement(new ParagraphCssApplier(configuration).apply(p, tag));
-			l.add(writable);
+			l.add(new ParagraphCssApplier(configuration).apply(p, tag));
 		}
 		return l;
 	}

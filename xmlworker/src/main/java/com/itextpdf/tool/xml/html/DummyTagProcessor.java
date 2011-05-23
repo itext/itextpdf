@@ -33,9 +33,9 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 
 /**
@@ -49,22 +49,22 @@ public class DummyTagProcessor implements TagProcessor {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
-	public List<Writable> startElement(final Tag tag) {
-		return new ArrayList<Writable>(0);
+	public List<Element> startElement(final Tag tag) {
+		return new ArrayList<Element>(0);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
-	public List<Writable> content(final Tag tag, final String content) {
-		return new ArrayList<Writable>(0);
+	public List<Element> content(final Tag tag, final String content) {
+		return new ArrayList<Element>(0);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
 	 */
-	public List<Writable> endElement(final Tag tag, final List<Writable> currentContent) {
-		return new ArrayList<Writable>(0);
+	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+		return new ArrayList<Element>(0);
 	}
 
 	/* (non-Javadoc)

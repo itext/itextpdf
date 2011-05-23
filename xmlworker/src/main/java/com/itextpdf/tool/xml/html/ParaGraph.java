@@ -39,12 +39,10 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -61,25 +59,23 @@ public class ParaGraph extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Writable> content(final Tag tag, final String content) {
+	public List<Element> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitize(content);
-		List<Writable> l = new ArrayList<Writable>(1);
+		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
-			WritableElement we = new WritableElement();
 			if ((null != tag.getCSS().get(CSS.Property.TAB_INTERVAL))) {
 				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
 				if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 					tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
 				}
-				we.add(new ChunkCssApplier().apply(tabbedChunk, tag));
+				l.add(new ChunkCssApplier().apply(tabbedChunk, tag));
 			} else if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
 				tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
-				we.add(new ChunkCssApplier().apply(tabbedChunk, tag));
+				l.add(new ChunkCssApplier().apply(tabbedChunk, tag));
 			} else {
-				we.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+				l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
 			}
-			l.add(we);
 		}
 		return l;
 	}
@@ -99,45 +95,43 @@ public class ParaGraph extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
-		List<Writable> l = new ArrayList<Writable>(1);
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+		List<Element> l = new ArrayList<Element>(1);
 		if (currentContent.size() > 0) {
 			Paragraph p = new Paragraph();
 			Map<String, String> css = tag.getCSS();
 			if (null != css.get(CSS.Property.TAB_INTERVAL)) {
 				addTabIntervalContent(currentContent, p, css.get(CSS.Property.TAB_INTERVAL));
-				l.add(new WritableElement(p));
+				l.add(p);
 			} else if (null != css.get(CSS.Property.TAB_STOPS)) { // <para tabstops=".." /> could use same implementation page 62
 				addTabStopsContent(currentContent, p, css.get(CSS.Property.TAB_STOPS));
-				l.add(new WritableElement(p));
-			} else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page 63
-				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be extracted.
-				l.add(new WritableElement(p));
+				l.add(p);
+			} else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page
+															// 63
+				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
+				l.add(p);																	// extracted.
 			} else {
-				List<Writable> list = currentContentToWritables(currentContent, true, true, tag);
-				l.addAll(list);
+				for (Element e:  currentContentToWritables(currentContent, true, true, tag)) {
+					l.add(e);
+				}
 			}
 		}
 		return l;
 	}
 
-	private void addTabIntervalContent(final List<Writable> currentContent, final Paragraph p, final String value) {
+	private void addTabIntervalContent(final List<Element> currentContent, final Paragraph p, final String value) {
 		float width = 0;
-		for(Writable w: currentContent) {
-			if (w instanceof WritableElement) {
-				for (Element e : ((WritableElement) w).elements()) {
-					if (e instanceof TabbedChunk) {
-						width += ((TabbedChunk) e).getTabCount()*CssUtils.getInstance().parsePxInCmMmPcToPt(value);
-						TabbedChunk tab = new TabbedChunk(new VerticalPositionMark(), width, false);
-						p.add(new Chunk(tab));
-						p.add(new Chunk((TabbedChunk) e));
-					}
-				}
+		for(Element e: currentContent) {
+			if (e instanceof TabbedChunk) {
+				width += ((TabbedChunk) e).getTabCount()*CssUtils.getInstance().parsePxInCmMmPcToPt(value);
+				TabbedChunk tab = new TabbedChunk(new VerticalPositionMark(), width, false);
+				p.add(new Chunk(tab));
+				p.add(new Chunk((TabbedChunk) e));
 			}
 		}
 	}
 
-	private void addTabStopsContent(final List<Writable> currentContent, final Paragraph p, final String value) {
+	private void addTabStopsContent(final List<Element> currentContent, final Paragraph p, final String value) {
 		List<Chunk> tabs = new ArrayList<Chunk>();
 		String[] alignAndWidth = value.split(" ");
 		float tabWidth = 0;
@@ -148,21 +142,17 @@ public class ParaGraph extends AbstractTagProcessor {
 		}
 		int tabsPerRow = tabs.size();
 		int currentTab = 0;
-		for(Writable w: currentContent) {
-			if (w instanceof WritableElement) {
-				for (Element e : ((WritableElement) w).elements()) {
-					if (e instanceof TabbedChunk) {
-						if(currentTab == tabsPerRow) {
-							currentTab = 0;
-						}
-						if(((TabbedChunk) e).getTabCount() != 0 /* == 1*/) {
-							p.add(new Chunk(tabs.get(currentTab)));
-							p.add(new Chunk((TabbedChunk) e));
-							++currentTab;
-		//				} else { // wat doet een tabCount van groter dan 1? sla een tab over of count * tabWidth?
-		//					int widthMultiplier = ((TabbedChunk) e).getTabCount();
-						}
-					}
+		for(Element e: currentContent) {
+			if (e instanceof TabbedChunk) {
+				if(currentTab == tabsPerRow) {
+					currentTab = 0;
+				}
+				if(((TabbedChunk) e).getTabCount() != 0 /* == 1*/) {
+					p.add(new Chunk(tabs.get(currentTab)));
+					p.add(new Chunk((TabbedChunk) e));
+					++currentTab;
+//				} else { // wat doet een tabCount van groter dan 1? sla een tab over of count * tabWidth?
+//					int widthMultiplier = ((TabbedChunk) e).getTabCount();
 				}
 			}
 		}

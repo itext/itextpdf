@@ -48,11 +48,9 @@ import java.util.List;
 
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -64,19 +62,9 @@ public class TableRow extends AbstractTagProcessor {
      * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
      */
     @Override
-	public List<Writable> end(final Tag tag, final List<Writable> writables) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
     	TableRowElement row = null;
-    	List<Writable> l = new ArrayList<Writable>(1);
-    	ArrayList<Element> currentContent = new ArrayList<Element>();
-    	for (Writable we : writables) {
-			if (we instanceof WritableElement) {
-				for (Element e :((WritableElement) we).elements()) {
-					currentContent.add(e);
-				}
-			} else {
-				l.add(we);
-			}
-		}
+    	List<Element> l = new ArrayList<Element>(1);
     	if(tag.getParent().getTag().equalsIgnoreCase(HTML.Tag.THEAD)) {
         	row = new TableRowElement(currentContent, Place.HEADER);
     	} else if(tag.getParent().getTag().equalsIgnoreCase(HTML.Tag.TBODY)) {
@@ -86,8 +74,7 @@ public class TableRow extends AbstractTagProcessor {
     	} else {
     		row = new TableRowElement(currentContent, Place.BODY);
     	}
-    	Writable w = new WritableElement(row);
-    	l.add(w);
+    	l.add(row);
         return l;
     }
 

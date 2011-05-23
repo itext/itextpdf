@@ -36,14 +36,12 @@ import java.util.List;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author Emiel Ackermann
@@ -68,12 +66,9 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	 * java.util.List)
 	 */
 	@Override
-	public List<Writable> end(final Tag tag, final List<Writable> writables) {
+	public List<Element> end(final Tag tag, final List<Element> writables) {
 		List<Element> listElements = new ArrayList<Element>();
-		List<Writable> mywritables = new ArrayList<Writable>();
-		for (Writable w : writables) {
-			if (w instanceof WritableElement) {
-				for (Element e : ((WritableElement) w).elements()) {
+		for (Element e : writables) {
 					if (e instanceof ListItem || e instanceof com.itextpdf.text.List) {
 						listElements.add(e);
 					} else {
@@ -81,12 +76,9 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 						listItem.add(e);
 						listElements.add(listItem);
 					}
-				}
-			} else {
-				mywritables.add(w);
-			}
 		}
 		int size = listElements.size();
+		List<Element> mywritables = new ArrayList<Element>();
 		if (size > 0) {
 			com.itextpdf.text.List list = new ListStyleTypeCssApplier(configuration).apply(
 					new com.itextpdf.text.List(), tag);
@@ -115,7 +107,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 				}
 				i++;
 			}
-			mywritables.add(new WritableElement(list));
+			mywritables.add(list);
 		}
 		return mywritables;
 	}

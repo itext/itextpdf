@@ -51,13 +51,11 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 /**
  * @author redlab_b
  *
@@ -73,14 +71,13 @@ public class TableData extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Writable> content(final Tag tag, final String content) {
+	public List<Element> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Writable> l = new ArrayList<Writable>(1);
+		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
 			Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
 //			NoNewLineParagraph noNewLineParagraph = new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(c), tag);
-			WritableElement we = new WritableElement(c);
-			l.add(we);
+			l.add(c);
 		}
 		return l;
 	}
@@ -93,23 +90,16 @@ public class TableData extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		HtmlCell cell = new HtmlCell();
-		List<Writable> l = new ArrayList<Writable>(1);
-		for (Writable we : currentContent) {
-			if (we instanceof WritableElement) {
-				for (Element e :((WritableElement) we).elements()) {
-					if (e instanceof HtmlCell) {
-						LOG.trace(String.format("Adding element %s to HtmlCell", e.getClass().getName()));
-					}
-					cell.addElement(e);
-				}
-			} else {
-				l.add(we);
+		List<Element> l = new ArrayList<Element>(1);
+		for (Element e : currentContent) {
+			if (e instanceof HtmlCell) {
+				LOG.trace(String.format("Adding element %s to HtmlCell", e.getClass().getName()));
 			}
+			cell.addElement(e);
 		}
-		WritableElement writable = new WritableElement(new HtmlCellCssApplier(configuration).apply(cell, tag));
-		l.add(writable);
+		l.add(new HtmlCellCssApplier(configuration).apply(cell, tag));
 		return l;
 	}
 

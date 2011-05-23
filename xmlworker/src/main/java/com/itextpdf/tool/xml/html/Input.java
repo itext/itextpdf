@@ -33,8 +33,8 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 
 /**
  * @author Emiel Ackermann
@@ -47,11 +47,11 @@ public class Input extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
 	 */
 	@Override
-	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 //		configuration.getWriter().getVerticalPosition(false);
 //		TextField tf = new TextField(configuration.getWriter(), box, fieldName);
 		// How to wrap a textfield in a Element object?
-		return new ArrayList<Writable>(0);
+		return new ArrayList<Element>(0);
 	}
 
 

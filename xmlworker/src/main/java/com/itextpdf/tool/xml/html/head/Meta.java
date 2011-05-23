@@ -47,11 +47,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 
 /**
@@ -71,7 +71,7 @@ public class Meta extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
 	@Override
-	public List<Writable> start(final Tag tag) {
+	public List<Element> start(final Tag tag) {
 		if (null != tag.getAttributes().get("http-equiv")
 				&& "Content-Type".equalsIgnoreCase(tag.getAttributes().get("http-equiv"))) {
 			String content = tag.getAttributes().get("content");
@@ -101,7 +101,7 @@ public class Meta extends AbstractTagProcessor {
 				}
 			}
 		}
-		return new ArrayList<Writable>(0);
+		return new ArrayList<Element>(0);
 	}
 
 }

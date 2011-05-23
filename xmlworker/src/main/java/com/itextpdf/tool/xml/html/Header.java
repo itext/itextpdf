@@ -50,7 +50,9 @@ import java.util.Map;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.WritableDirectElement;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
@@ -58,11 +60,8 @@ import com.itextpdf.text.pdf.PdfDestination;
 import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.pipeline.WritableDirect;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author Emiel Ackermann, redlab_b
@@ -75,11 +74,11 @@ public class Header extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
     @Override
-	public List<Writable> content(final Tag tag, final String content) {
+	public List<Element> content(final Tag tag, final String content) {
     	String sanitized = HTMLUtils.sanitizeInline(content);
-    	List<Writable> l = new ArrayList<Writable>(1);
+    	List<Element> l = new ArrayList<Element>(1);
     	if (sanitized.length() > 0) {
-    		l.add(new WritableElement(new ChunkCssApplier().apply(new Chunk(sanitized), tag)));
+    		l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
     	}
         return l;
 	}
@@ -88,18 +87,16 @@ public class Header extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
 	 */
     @Override
-	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
-		List<Writable> l = new ArrayList<Writable>(1);
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+		List<Element> l = new ArrayList<Element>(1);
 		if (currentContent.size() > 0) {
-			List<Writable> currentContentToParagraph = currentContentToWritables(currentContent, true, true, tag);
+			List<Element> currentContentToParagraph = currentContentToWritables(currentContent, true, true, tag);
 			if (configuration.autoBookmark()) {
 				final Paragraph title = new Paragraph();
-				for (Writable w: currentContentToParagraph) {
-					if (w instanceof WritableElement) {
-						title.addAll(((WritableElement) w).elements());
-					}
+				for (Element w: currentContentToParagraph) {
+						title.add(w);
 				}
-				l.add(new WritableDirect() {
+				l.add(new WritableDirectElement() {
 
 					public void write(final PdfWriter writer, final Document doc) throws DocumentException {
 						PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,

@@ -34,10 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author Emiel Ackermann
@@ -49,11 +48,11 @@ public class Form extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
 	@Override
-	public List<Writable> content(final Tag tag, final String content) {
+	public List<Element> content(final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Writable> l = new ArrayList<Writable>(1);
+		List<Element> l = new ArrayList<Element>(1);
     	if (sanitized.length() > 0) {
-    		l.add(new WritableElement(new ChunkCssApplier().apply(new Chunk(sanitized), tag)));
+    		l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
     	}
 		return l;
 	}

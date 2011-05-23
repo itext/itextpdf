@@ -46,13 +46,12 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.LineSeparatorCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -64,12 +63,12 @@ public class HorizontalRule extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
 	 */
     @Override
-	public List<Writable> end(final Tag tag, final List<Writable> currentContent) {
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		LineSeparator lineSeparator = new LineSeparatorCssApplier(configuration).apply(new LineSeparator(), tag);
 		Paragraph p = new Paragraph();
 		p.add(lineSeparator);
-		List<Writable> list = new ArrayList<Writable>();
-		list.add(new WritableElement(new ParagraphCssApplier(configuration).apply(p, tag)));
+		List<Element> list = new ArrayList<Element>();
+		list.add(new ParagraphCssApplier(configuration).apply(p, tag));
 		return list;
 	}
 

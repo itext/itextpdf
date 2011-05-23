@@ -46,9 +46,9 @@ package com.itextpdf.tool.xml.html.head;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
@@ -64,7 +64,7 @@ public class Link extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
 	@Override
-	public List<Writable> start(final Tag tag) {
+	public List<Element> start(final Tag tag) {
 		if (tag.getAttributes().containsKey(HTML.Attribute.TYPE) && tag.getAttributes().get(HTML.Attribute.TYPE).equalsIgnoreCase("text/css")) {
 			String href = tag.getAttributes().get(HTML.Attribute.HREF);
 			if (null != href) {
@@ -76,7 +76,7 @@ public class Link extends AbstractTagProcessor {
 				}
 			}
 		}
-		return new ArrayList<Writable>(0);
+		return new ArrayList<Element>(0);
 	}
 
 }

@@ -45,17 +45,18 @@ package com.itextpdf.tool.xml.pipeline.html;
 
 import java.util.List;
 
+import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.CustomContext;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.PipelineException;
 import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -89,20 +90,22 @@ public class HtmlPipeline extends AbstractPipeline {
 			if (tp.isStackOwner()) {
 				hcc.addFirst(new StackKeeper(t));
 			}
-			List<Writable> content = tp.startElement(t);
+			List<Element> content = tp.startElement(t);
 			if (content.size() > 0) {
 				if (tp.isStackOwner()) {
 					StackKeeper peek;
 					try {
 						peek = hcc.peek();
-						for (Writable elem : content) {
+						for (Element elem : content) {
 							peek.add(elem);
 						}
 					} catch (NoStackException e) {
 						throw new PipelineException(String.format("Could not find stack for %s", t.toString()), e);
 					}
 				} else {
-					hcc.currentContent().addAll(content);
+					for (Element elem : content) {
+						hcc.currentContent().add(elem);
+					}
 				}
 			}
 		} catch (NoTagProcessorException e) {
@@ -140,16 +143,20 @@ public class HtmlPipeline extends AbstractPipeline {
 	public Pipeline content(final Tag t, final String content, final ProcessObject po) throws PipelineException {
 		HtmlPipelineContext hcc = getMyContext();
 		TagProcessor tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
-		List<Writable> elems = tp.content(t, content);
+		List<Element> elems = tp.content(t, content);
 		if (elems.size() > 0){
 			StackKeeper peek;
 			try {
 				peek = hcc.peek();
-				for (Writable e : elems) {
+				for (Element e : elems) {
 					peek.add(e);
 				}
 			} catch (NoStackException e) {
-				po.addAll(elems);
+				WritableElement writableElement = new WritableElement();
+				for (Element elem : elems) {
+					writableElement.add(elem);
+				}
+				po.add(writableElement);
 			}
 		}
 		return getNext();
@@ -168,7 +175,7 @@ public class HtmlPipeline extends AbstractPipeline {
 		TagProcessor tp;
 		try {
 			tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
-			List<Writable> elems = null;
+			List<Element> elems = null;
 			if (tp.isStackOwner()) {
 				// remove the element from the StackKeeper Queue if end tag is
 				// found
@@ -186,11 +193,13 @@ public class HtmlPipeline extends AbstractPipeline {
 			if (elems.size() > 0) {
 				try {
 					StackKeeper stack = hcc.peek();
-					for (Writable elem : elems) {
+					for (Element elem : elems) {
 						stack.add(elem);
 					}
 				} catch (NoStackException e) {
-					po.addAll(elems);
+					WritableElement writableElement = new WritableElement();
+						po.add(writableElement);
+						writableElement.addAll(elems);
 				}
 
 			}

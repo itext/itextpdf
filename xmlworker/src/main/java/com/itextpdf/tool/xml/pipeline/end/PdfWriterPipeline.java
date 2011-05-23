@@ -57,7 +57,6 @@ import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
-import com.itextpdf.tool.xml.pipeline.WritableDirect;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
 
@@ -135,16 +134,6 @@ public class PdfWriterPipeline extends AbstractPipeline {
 								} else {
 									LOG.error("Adding to document threw exception, I've swallowed it!", e1);
 								}
-							}
-						}
-					} else if (writable instanceof WritableDirect) {
-						try {
-							((WritableDirect) writable).write(writer, doc);
-						} catch (DocumentException e) {
-							if (!continuousWrite) {
-								throw new PipelineException(e);
-							} else {
-								LOG.error("Adding to document threw exception, I've swallowed it!", e);
 							}
 						}
 					}

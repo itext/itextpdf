@@ -45,9 +45,9 @@ package com.itextpdf.tool.xml.html;
 
 import java.util.List;
 
+import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 
 /**
@@ -63,7 +63,7 @@ public interface TagProcessor {
      * @param tag the tag encountered
      * @return Element an Element to add to the current content;
      */
-    List<Writable> startElement(Tag tag);
+    List<Element> startElement(Tag tag);
 
     /**
      * This method is called if there is text content encountered between the
@@ -74,7 +74,7 @@ public interface TagProcessor {
      *        mapped to.
      * @return the element to add to the currentContent list
      */
-    List<Writable> content(Tag tag, String content);
+    List<Element> content(Tag tag, String content);
 
 	/**
 	 * This method is called when a closing tag has been encountered of the
@@ -87,7 +87,7 @@ public interface TagProcessor {
 	 *            .
 	 * @return the resulting element to add to the document or a content stack.
 	 */
-    List<Writable> endElement(Tag tag, List<Writable> currentContent);
+    List<Element> endElement(Tag tag, List<Element> currentContent);
 
     /**
      * @return true if the tag implementation must keep it's own currentContent
