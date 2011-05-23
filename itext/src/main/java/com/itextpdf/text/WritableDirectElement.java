@@ -41,39 +41,67 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.api;
+package com.itextpdf.text;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.itextpdf.text.api.WriterOperation;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 
 /**
- * Objects implementing Indentable allow to set indentation left and right.
+ * An element that is not an element, it holds {@link Element#WRITABLE_DIRECT}
+ * as Element type. It implements WriterOperation to do operations on the
+ * {@link PdfWriter} and the {@link Document} that must be done at the time of
+ * the writing. Much like a {@link VerticalPositionMark} but little different.
+ *
+ * @author itextpdf.com
+ *
  */
-public interface Indentable {
+public abstract class WritableDirectElement implements Element, WriterOperation {
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see com.itextpdf.text.Element#process(com.itextpdf.text.ElementListener)
+	 */
+	public boolean process(final ElementListener listener) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
-	 * Sets the indentation on the left side.
-	 *
-	 * @param	indentation		the new indentation
+	 * @return {@link Element#WRITABLE_DIRECT}
 	 */
-	void setIndentationLeft(float indentation);
+	public int type() {
+		return Element.WRITABLE_DIRECT;
+	}
 
-	/**
-	 * Sets the indentation on the right side.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param	indentation		the new indentation
+	 * @see com.itextpdf.text.Element#isContent()
 	 */
-	void setIndentationRight(float indentation);
+	public boolean isContent() {
+		return false;
+	}
 
-	/**
-	 * Gets the indentation on the left side.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @return	the indentation
+	 * @see com.itextpdf.text.Element#isNestable()
 	 */
-	float getIndentationLeft();
+	public boolean isNestable() {
+		throw new UnsupportedOperationException();
+	}
 
-	/**
-	 * Gets the indentation on the right side.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @return	the indentation
+	 * @see com.itextpdf.text.Element#getChunks()
 	 */
-	float getIndentationRight();
+	public List<Chunk> getChunks() {
+		return new ArrayList<Chunk>(0);
+	}
 
 }
