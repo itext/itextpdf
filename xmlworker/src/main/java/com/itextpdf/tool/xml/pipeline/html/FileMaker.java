@@ -54,7 +54,7 @@ public interface FileMaker {
 
 	/**
 	 * @return the OutputStream to write the PDF to
-	 * @throws IOException
+	 * @throws IOException if
 	 */
 	OutputStream getStream() throws IOException;
 

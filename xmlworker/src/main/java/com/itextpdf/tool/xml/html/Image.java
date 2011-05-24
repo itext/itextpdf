@@ -53,12 +53,15 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
+import com.itextpdf.tool.xml.pipeline.html.NoImageProviderException;
 
 /**
  * @author redlab_b
@@ -86,9 +89,13 @@ public class Image extends AbstractTagProcessor {
 			// check if the image was already added once
 			try {
 				if (logger.isLogging(Level.TRACE)) {
-					logger.trace(String.format("Using image from %s", src));
+					logger.trace(String.format("Trying to use image from %s", src));
 				}
-				img = new ImageRetrieve(configuration.getProvider()).retrieveImage(src);
+				try {
+					img = new ImageRetrieve(getHtmlPipelineContext().getImageProvider()).retrieveImage(src);
+				} catch (NoImageProviderException e) {
+					img = new ImageRetrieve().retrieveImage(src);
+				}
 			} catch (IOException e) {
 				if (logger.isLogging(Level.ERROR)) {
 					logger.error(String.format("Failed retrieving image from %s continue without image", src), e);
@@ -97,6 +104,8 @@ public class Image extends AbstractTagProcessor {
 				if (logger.isLogging(Level.ERROR)) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
+			} catch (NoCustomContextException e) {
+				throw new RuntimeWorkerException(e);
 			}
 			if (null != img) {
 				String width = attributes.get(HTML.Attribute.WIDTH);

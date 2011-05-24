@@ -60,7 +60,6 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.html.table.TableRowElement;
-import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 
 /**
  * @author Emiel Ackermann
@@ -84,7 +83,6 @@ public class HtmlCellCssApplierTest {
 		basicPara.add(basic);
 		cell.addElement(basicPara);
 		cells.add(cell);
-		row1 = new TableRowElement(cells, Place.BODY);
 	}
 
 	/*Disabled as long as the default borders are enabled*/

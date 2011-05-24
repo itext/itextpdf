@@ -64,7 +64,6 @@ public class CssSelectorTest {
 	private Tag root;
 	private Tag rChild;
 	private Tag idroot;
-	private Tag idchild;
 	@Before
 	public void setup() {
 		css = new CssSelector();
@@ -80,7 +79,6 @@ public class CssSelectorTest {
 		Map<String, String> classAttr = new HashMap<String, String>();
 		classAttr.put("class", "childClass");
 		classAttr.put("id", "childId");
-		idchild = new Tag("rChild", classAttr);
 	}
 
 	@Test

@@ -46,6 +46,7 @@ package com.itextpdf.tool.xml.pipeline.html;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import com.itextpdf.text.Element;
@@ -62,12 +63,15 @@ import com.itextpdf.tool.xml.html.Tags;
  */
 public class HtmlPipelineContext implements CustomContext {
 
+	public static final String BOOKMARK_TREE = "header.autobookmark.RootNode";
+	public static final String LAST_MARGIN_BOTTOM = "lastMarginBottom";
 	private final LinkedList<StackKeeper> queue;
 	private final boolean acceptUnknown = true;
 	private final TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
 	private final List<Element> ctn = new ArrayList<Element>();
 	private final XMLWorkerConfig config;
 	private final WorkerContext context;
+	private ImageProvider imageProvider;
 
 	/**
 	 * @param workerContext
@@ -144,6 +148,28 @@ public class HtmlPipelineContext implements CustomContext {
 		} catch (NoSuchElementException e) {
 			throw new NoStackException();
 		}
+	}
+	/**
+	 * @return
+	 */
+	public boolean autoBookmark() {
+		return config.autoBookmark();
+	}
+	/**
+	 * @return
+	 */
+	public Map<String, Object> getMemory() {
+		return config.getMemory();
+	}
+	/**
+	 *
+	 */
+	public ImageProvider getImageProvider() throws NoImageProviderException{
+		if (null == this.imageProvider) {
+			throw new NoImageProviderException();
+		}
+		return this.imageProvider;
+
 	}
 
 }

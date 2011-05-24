@@ -59,7 +59,7 @@ import com.itextpdf.text.Image;
  *
  */
 public interface Provider {
-
+	// TODO remove
 	/**
 	 * The key for the image root.
 	 */

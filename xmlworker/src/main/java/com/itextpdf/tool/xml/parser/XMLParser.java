@@ -409,5 +409,11 @@ public class XMLParser {
 	private void currentTagState(final TagState state) {
 		this.tagState = state;
 	}
+	/**
+	 * @param monitor the monitor to set
+	 */
+	public void setMonitor(final ParserMonitor monitor) {
+		this.monitor = monitor;
+	}
 
 }

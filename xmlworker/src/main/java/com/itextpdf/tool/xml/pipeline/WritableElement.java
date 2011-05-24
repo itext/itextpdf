@@ -50,6 +50,8 @@ import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Writable;
 
 /**
+ * A WritableElement holds all elements that need to be added to a Document.
+ * It's used at least in the HTML processing of the XMLWorker.
  * @author redlab_b
  *
  */
@@ -63,20 +65,35 @@ public class WritableElement implements Writable {
 		this.list = new ArrayList<Element>();
 	}
 	/**
-	 * @param currentContent
+	 * Construct a WritableElement
+	 * @param e an element to add to the list of elements.
 	 */
 	public WritableElement(final Element e) {
 		this();
 		this.list.add(e);
 	}
+
+	/**
+	 * Add a single element to the list of elements.
+	 * @param e an Element
+	 */
 	public void add(final Element e) {
 		list.add(e);
 	}
+
+	/**
+	 * add all elements to the list. (Note do not submit 1
+	 * com.itextpdf.text.Paragraph this extends from ArrayList, and just the
+	 * Content will be added....)
+	 *
+	 * @param l the list to add.
+	 */
 	public void addAll(final List<Element> l) {
 		list.addAll(l);
 	}
 	/**
-	 * @return the list of element
+	 * Returns the list of elements.
+	 * @return the list of elements.
 	 */
 	public List<Element> elements() {
 		return list;

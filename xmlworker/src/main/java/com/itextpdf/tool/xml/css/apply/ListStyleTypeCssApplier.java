@@ -56,7 +56,6 @@ import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
@@ -71,7 +70,6 @@ import com.itextpdf.tool.xml.net.exc.NoImageException;
  */
 public class ListStyleTypeCssApplier implements CssApplier<List> {
 
-	private final XMLWorkerConfig configuration;
 	private final CssUtils utils = CssUtils.getInstance();
 	private static final Logger logger = LoggerFactory.getLogger(ListStyleTypeCssApplier.class);
 
@@ -79,8 +77,7 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 	 * @param configuration the provider
 	 *
 	 */
-	public ListStyleTypeCssApplier(final XMLWorkerConfig configuration) {
-		this.configuration = configuration;
+	public ListStyleTypeCssApplier() {
 	}
 
 	/**
@@ -131,7 +128,8 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 			String url = utils.extractUrl(css.get(CSS.Property.LIST_STYLE_IMAGE));
 			Image img = null;
 			try {
-				img = new ImageRetrieve(configuration.getProvider()).retrieveImage(url);
+				// TODO add option to use ImageProvider
+				img = new ImageRetrieve().retrieveImage(url);
 				lst.setListSymbol(new Chunk(img, 0, 0, false));
 				if (logger.isLogging(Level.TRACE)) {
 					logger.trace(String.format("Using image as list symbol from %s", url));

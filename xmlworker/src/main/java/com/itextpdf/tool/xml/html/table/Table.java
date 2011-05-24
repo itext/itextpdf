@@ -43,6 +43,7 @@
  */
 package com.itextpdf.tool.xml.html.table;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -87,7 +88,12 @@ public class Table extends AbstractTagProcessor {
 	private static final CssUtils utils = CssUtils.getInstance();
 	private static final FontSizeTranslator fst = FontSizeTranslator.getInstance();
 
-	private final class TableRowElementComparator implements Comparator<TableRowElement> {
+	private final static class TableRowElementComparator implements Comparator<TableRowElement>, Serializable{
+		/**
+		 *
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public int compare(final TableRowElement o1, final TableRowElement o2) {
 			return o1.getPlace().getI().compareTo(o2.getPlace().getI());
 		}
@@ -502,7 +508,7 @@ public class Table extends AbstractTagProcessor {
 		for(float f: columnWidths) {
 			width += f;
 		}
-		return width += getTotalMarginsBordersSpacing(tag, horBorderSpacing);
+		return width + getTotalMarginsBordersSpacing(tag, horBorderSpacing);
 	}
 
 	private float getTotalMarginsBordersSpacing(final Tag tag, final float horBorderSpacing) {

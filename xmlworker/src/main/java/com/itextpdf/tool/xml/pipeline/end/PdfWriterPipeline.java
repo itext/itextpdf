@@ -118,7 +118,6 @@ public class PdfWriterPipeline extends AbstractPipeline {
 			MapContext mp = (MapContext) cc;
 			if (po.containsWritable()) {
 				Document doc = (Document) mp.get(DOCUMENT);
-				PdfWriter writer = (PdfWriter) mp.get(WRITER);
 				boolean continuousWrite = (Boolean) mp.get(CONTINUOUS);
 				Writable writable = null;
 				while (null != (writable = po.poll())) {

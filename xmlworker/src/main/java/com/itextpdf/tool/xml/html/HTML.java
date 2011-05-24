@@ -55,7 +55,7 @@ public final class HTML {
 	 * All Tags.
 	 *
 	 */
-	public final class Tag {
+	public final static class Tag {
 
 		public static final String THEAD = "thead";
 		public static final String TBODY = "thead";
@@ -86,7 +86,7 @@ public final class HTML {
 	/**
 	 * All attributes
 	 */
-	public final class Attribute {
+	public final static class Attribute {
 
 		public static final String CELLPADDING = "cellpadding";
 		public static final String CELLSPACING = "cellspacing";

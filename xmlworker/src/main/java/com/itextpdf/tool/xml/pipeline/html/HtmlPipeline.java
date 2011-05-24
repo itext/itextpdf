@@ -65,7 +65,6 @@ import com.itextpdf.tool.xml.pipeline.WritableElement;
 public class HtmlPipeline extends AbstractPipeline {
 
 	private final XMLWorkerConfig config;
-
 	/**
 	 * @param config
 	 * @param next
@@ -110,7 +109,7 @@ public class HtmlPipeline extends AbstractPipeline {
 			}
 		} catch (NoTagProcessorException e) {
 			if (!hcc.acceptUnknown()) {
-				throw new PipelineException(e);
+				throw e;
 			}
 		}
 		return getNext();

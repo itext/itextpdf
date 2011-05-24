@@ -18,6 +18,9 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
@@ -51,6 +54,9 @@ public class OrderedUnorderedListTest {
 		config = new XMLWorkerConfigurationImpl();
 		orderedUnorderedList = new OrderedUnorderedList();
 		orderedUnorderedList.setConfiguration(config);
+		WorkerContextImpl context = new WorkerContextImpl();
+		context.add(HtmlPipeline.class, new HtmlPipelineContext(config, context));
+		orderedUnorderedList.setContext(context);
 		root.addChild(p);
 		root.addChild(ul);
 		ul.addChild(first);

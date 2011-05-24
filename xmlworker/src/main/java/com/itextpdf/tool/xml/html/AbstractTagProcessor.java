@@ -44,11 +44,12 @@ import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
-import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * Abstract TagProcessor that allows setting the configuration object to a
@@ -90,18 +91,33 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	}
 
 	/**
-	 * @param context
+	 * @param context the global worker context.
 	 */
 	public void setContext(final WorkerContext context) {
 		this.context = context;
 	}
 
 	/**
+	 * Fetches the CSSResolver used if any. This requires the
+	 * CssResolverPipeline to be a pipe before the HtmlPipeline.
+	 *
 	 * @return CSSResolver
-	 * @throws CssResolverException
+	 * @throws NoCustomContextException if the context of the
+	 *             {@link CssResolverPipeline} could not be found.
 	 */
 	public CSSResolver getCSSResolver() throws NoCustomContextException {
-		return (CSSResolver)((MapContext) this.context.get(CssResolverPipeline.class)).get(CssResolverPipeline.CSS_RESOLVER);
+		return (CSSResolver) ((MapContext) this.context.get(CssResolverPipeline.class))
+				.get(CssResolverPipeline.CSS_RESOLVER);
+	}
+
+	/**
+	 * Fetches the HtmlPipelineContext used if any.
+	 * @return a HtmlPipelineContext
+	 * @throws NoCustomContextException if the context of the
+	 *             {@link HtmlPipelineContext} could not be found.
+	 */
+	public HtmlPipelineContext getHtmlPipelineContext() throws NoCustomContextException {
+		return ((HtmlPipelineContext) this.context.get(HtmlPipeline.class));
 	}
 	/**
 	 * Calculates any found font size to pt values and set it in the CSS before

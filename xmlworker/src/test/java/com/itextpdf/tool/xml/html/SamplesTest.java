@@ -57,7 +57,6 @@ import org.junit.Test;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
@@ -69,7 +68,7 @@ public class SamplesTest {
 	private final List<String> list = new ArrayList<String>();
 
 	static {
-		FontFactory.registerDirectories();
+	//	FontFactory.registerDirectories();
 	}
 
 	@Before
@@ -93,6 +92,7 @@ public class SamplesTest {
 		list.add("comment-double-print_");
 		list.add("tab_");
 		list.add("table_");
+		list.add("tableInTable_");
 		list.add("lists_");
 		list.add("headers_");
 	}
@@ -100,7 +100,6 @@ public class SamplesTest {
 	@Test
 	public void createAllSamples() throws IOException {
 		boolean success = true;
-		Document.compress = false;
 		for (String str : list) {
 			try {
 			System.out.println(str);

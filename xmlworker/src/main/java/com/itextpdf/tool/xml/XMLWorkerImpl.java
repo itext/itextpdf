@@ -131,8 +131,7 @@ public class XMLWorkerImpl implements XMLWorker {
 		try {
 			while (null != (wp = wp.open(t, po)));
 		} catch (PipelineException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeWorkerException(e);
 		}
 
 	}
@@ -151,17 +150,22 @@ public class XMLWorkerImpl implements XMLWorker {
 	 * elementList.
 	 *
 	 */
-	public void endElement(String tag, final String ns) {
+	public void endElement(final String tag, final String ns) {
+		String thetag = null;
 		if (config.isParsingHTML()) {
-			tag = tag.toLowerCase();
+			thetag = tag.toLowerCase();
+		} else {
+			thetag = tag;
+		}
+		if (null != current && !thetag.equals(current.getTag())) {
+			throw new RuntimeWorkerException(String.format("Invalid nested tag %s found, expected closing tag %s", thetag, current.getTag()));
 		}
 		Pipeline wp = rootpPipe;
 		ProcessObject po = new ProcessObject();
 		try {
 			while (null != (wp = wp.close(current, po)));
 		} catch (PipelineException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeWorkerException(e);
 		} finally {
 			if (null != current)
 			current = current.getParent();
@@ -197,8 +201,7 @@ public class XMLWorkerImpl implements XMLWorker {
 					try {
 						while (null != (wp = wp.content(current, encoded, po)));
 					} catch (PipelineException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						throw new RuntimeWorkerException(e);
 					}
 				} catch (NoTagProcessorException e) {
 					if (!this.config.acceptUnknown()) {

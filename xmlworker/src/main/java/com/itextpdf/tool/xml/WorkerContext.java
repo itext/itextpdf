@@ -50,10 +50,9 @@ package com.itextpdf.tool.xml;
 public interface WorkerContext {
 
 	/**
-	 * @param klass
-	 * @param name
-	 * @return
-	 * @throws NoCustomContextException
+	 * @param klass the class to find the custom context for.
+	 * @return a CustomContext for the given Class.
+	 * @throws NoCustomContextException if no CustomContext is found.
 	 */
 	CustomContext get(Class<?> klass) throws NoCustomContextException;
 

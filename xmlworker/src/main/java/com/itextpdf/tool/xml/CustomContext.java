@@ -44,6 +44,7 @@
 package com.itextpdf.tool.xml;
 
 /**
+ * A marker interface for providing local contexts to {@link Pipeline}s.
  * @author redlab_b
  *
  */

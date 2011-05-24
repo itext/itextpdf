@@ -52,6 +52,8 @@ import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
 
 /**
+ * As the {@link PdfWriterPipeline} but this one just passes everything on to an {@link ElementHandler}.
+ * Allowing you to get all {@link Writable}s at the end of the pipeline. (or in between)
  * @author redlab_b
  *
  */
@@ -60,7 +62,8 @@ public class ElementHandlerPipeline extends AbstractPipeline {
 	private final ElementHandler handler;
 
 	/**
-	 * @param next
+	 * @param handler the ElementHandler
+	 * @param next the next pipeline in line. (or <code>null</code> if none )
 	 */
 	public ElementHandlerPipeline(final ElementHandler handler, final Pipeline next) {
 		super(next);
@@ -77,6 +80,7 @@ public class ElementHandlerPipeline extends AbstractPipeline {
 	}
 
 	/**
+	 * Called in <code>open</code>, <code>content</code> and <code>close</code> to pass the {@link Writable}s to the handler
 	 * @param po
 	 */
 	private void consume(final ProcessObject po) {

@@ -44,6 +44,7 @@
 package com.itextpdf.tool.xml;
 
 /**
+ * An exception that can be thrown by a Pipeline.
  * @author redlab_b
  *
  */
@@ -55,22 +56,22 @@ public class PipelineException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @param e
+	 * @param e an exception.
 	 */
 	public PipelineException(final Exception e) {
 		super(e);
 	}
 
 	/**
-	 * @param msg
-	 * @param e
+	 * @param msg a message.
+	 * @param e an exception.
 	 */
 	public PipelineException(final String msg, final Exception e) {
 		super(msg, e);
 	}
 
 	/**
-	 * @param msg
+	 * @param msg a message.
 	 */
 	public PipelineException(final String msg) {
 		super(msg);

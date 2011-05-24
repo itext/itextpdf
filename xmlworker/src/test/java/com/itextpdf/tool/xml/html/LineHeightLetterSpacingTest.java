@@ -55,7 +55,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.text.Element;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.Writable;
@@ -79,7 +78,6 @@ public class LineHeightLetterSpacingTest {
 
 	@Before
 	public void setup() throws IOException {
-		FontFactory.registerDirectories();
 		BufferedInputStream bis = new BufferedInputStream(LineHeightLetterSpacingTest.class.getResourceAsStream("/snippets/line-height_letter-spacing_snippet.html"));
 		XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 		elementList = new ArrayList<Element>();

@@ -44,6 +44,7 @@
 package com.itextpdf.tool.xml.pipeline.ctx;
 
 import com.itextpdf.tool.xml.CustomContext;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.NotImplementedException;
 
@@ -62,8 +63,12 @@ public class WorkerContextImpl extends MapContext implements WorkerContext {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.pipeline.WorkerContext#get(java.lang.Class)
 	 */
-	public CustomContext get(final Class<?> klass) {
-		return (CustomContext) super.get(klass.getName());
+	public CustomContext get(final Class<?> klass) throws NoCustomContextException {
+		 Object c = super.get(klass.getName());
+		 if (c != null) {
+			 return (CustomContext) c;
+		 }
+		 throw new NoCustomContextException(String.format("CustomContext not found for %s", klass.getName()));
 	}
 	/**
 	 *

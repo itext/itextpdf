@@ -46,6 +46,7 @@ import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import org.junit.Test;
 
 import com.itextpdf.text.Document;
@@ -80,16 +81,15 @@ public class HTMLWorkerFactoryTest {
 //    private static final String TEST = "font_color_";
 //    private static final String TEST = "fontSizes_";
 //    private static final String TEST = "line-height_letter-spacing_";
-//    private static final String TEST = "longtext_";
+    private static final String TEST = "longtext_";
 //    private static final String TEST = "xfa-support_";
 //    private static final String TEST = "margin-align_";
 //    private static final String TEST = "xfa-hor-vert_";
 //    private static final String TEST = "text-indent_text-decoration_";
 //    private static final String TEST = "comment-double-print_";
-//    private static final String TEST = "div_";
 //    private static final String TEST = "tab_";
 //	  private static final String TEST = "table_";
-	  private static final String TEST = "tableInTable_";
+//	  private static final String TEST = "tableInTable_";
 //	  private static final String TEST = "table_incomplete_";
 //	  private static final String TEST = "lists_";
 //	  private static final String TEST = "img_";

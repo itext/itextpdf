@@ -55,7 +55,6 @@ import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.Writable;
@@ -73,7 +72,6 @@ public class SubAndSupTest {
 
 	@Before
 	public void setup() throws IOException {
-		FontFactory.registerDirectories();
 		BufferedInputStream bis = new BufferedInputStream(SubAndSupTest.class.getResourceAsStream("/snippets/br-sub-sup_snippet.html"));
 		XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 		elementList = new ArrayList<Element>();

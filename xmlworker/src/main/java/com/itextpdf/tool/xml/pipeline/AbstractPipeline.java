@@ -61,7 +61,7 @@ public abstract class AbstractPipeline implements Pipeline {
 	private final Pipeline next;
 
 	/**
-	 * @param next
+	 * @param next the pipeline that's next in the sequence.
 	 *
 	 */
 	public AbstractPipeline(final Pipeline next) {
@@ -88,7 +88,7 @@ public abstract class AbstractPipeline implements Pipeline {
 	}
 
 	/**
-	 * @return
+	 * @return the WorkerContext
 	 */
 	public WorkerContext getContext() {
 		return this.context;

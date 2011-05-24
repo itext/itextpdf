@@ -59,9 +59,10 @@ import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfDestination;
 import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann, redlab_b
@@ -91,44 +92,49 @@ public class Header extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
 		if (currentContent.size() > 0) {
 			List<Element> currentContentToParagraph = currentContentToWritables(currentContent, true, true, tag);
-			if (configuration.autoBookmark()) {
-				final Paragraph title = new Paragraph();
-				for (Element w: currentContentToParagraph) {
-						title.add(w);
-				}
-				l.add(new WritableDirectElement() {
+			final HtmlPipelineContext context;
+			try {
+				context = getHtmlPipelineContext();
+				if (context.autoBookmark()) {
+					final Paragraph title = new Paragraph();
+					for (Element w: currentContentToParagraph) {
+							title.add(w);
+					}
 
-					public void write(final PdfWriter writer, final Document doc) throws DocumentException {
-						PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
-								writer.getVerticalPosition(false), 0);
-						Map<String, Object> memory = configuration.getMemory();
-						HeaderNode tree = (HeaderNode) memory.get(XMLWorkerConfig.BOOKMARK_TREE);
-						int level = getLevel(tag);
-						if (null == tree) {
-							// first h tag encounter
-							tree = new HeaderNode(0, writer.getRootOutline(), null);
-						} else {
-							// calculate parent
-							int lastLevel = tree.level();
-							if (lastLevel == level) {
-								tree = tree.parent();
-							} else if (lastLevel > level) {
-								while (lastLevel >= level) {
-									lastLevel = tree.parent().level();
+					l.add(new WritableDirectElement() {
+
+						public void write(final PdfWriter writer, final Document doc) throws DocumentException {
+							PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
+									writer.getVerticalPosition(false), 0);
+							Map<String, Object> memory = context.getMemory();
+							HeaderNode tree = (HeaderNode) memory.get(HtmlPipelineContext.BOOKMARK_TREE);
+							int level = getLevel(tag);
+							if (null == tree) {
+								// first h tag encounter
+								tree = new HeaderNode(0, writer.getRootOutline(), null);
+							} else {
+								// calculate parent
+								int lastLevel = tree.level();
+								if (lastLevel == level) {
 									tree = tree.parent();
+								} else if (lastLevel > level) {
+									while (lastLevel >= level) {
+										lastLevel = tree.parent().level();
+										tree = tree.parent();
+									}
 								}
 							}
+							if (LOGGER.isLogging(Level.TRACE)) {
+								LOGGER.trace(String.format("Creating bookmark on %s", title.toString()));
+							}
+							HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, title), tree);
+							memory.put(HtmlPipelineContext.BOOKMARK_TREE, node);
 						}
-						if (LOGGER.isLogging(Level.TRACE)) {
-							LOGGER.trace(String.format("Creating bookmark on %s", title.toString()));
-						}
-						HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, title), tree);
-						memory.put(XMLWorkerConfig.BOOKMARK_TREE, node);
-					}
-				});
-			} else {
-				if (LOGGER.isLogging(Level.TRACE)) {
-					LOGGER.trace("Autobookmarking disabled.");
+					});
+				}
+			} catch (NoCustomContextException e) {
+				if (LOGGER.isLogging(Level.ERROR)) {
+					LOGGER.error("Autobookmarking disabled, unable to find custom context to define enabled/disabled.", e);
 				}
 			}
 			l.addAll(currentContentToParagraph); //TODO Margins top and bottom, other css.

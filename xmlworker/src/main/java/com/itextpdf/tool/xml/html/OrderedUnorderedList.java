@@ -35,13 +35,15 @@ import java.util.List;
 
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
@@ -80,7 +82,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 		int size = listElements.size();
 		List<Element> mywritables = new ArrayList<Element>();
 		if (size > 0) {
-			com.itextpdf.text.List list = new ListStyleTypeCssApplier(configuration).apply(
+			com.itextpdf.text.List list = new ListStyleTypeCssApplier().apply(
 					new com.itextpdf.text.List(), tag);
 			int i = 0;
 			for (Element li : listElements) {
@@ -113,6 +115,11 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	}
 
 	private float calculateTopOrBottomSpacing(final boolean isTop, final boolean storeMarginBottom, final Tag tag, final Tag child) {
+		float totalSpacing = 0;
+		try {
+			HtmlPipelineContext context = getHtmlPipelineContext();
+
+
 		String end = isTop?"-top":"-bottom";
 		float ownFontSize = fst.getFontSize(tag);
 		float ownMargin = 0;
@@ -125,7 +132,6 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 			ownMargin = utils.parseValueToPt(marginValue,ownFontSize);
 		}
 		float ownPadding = tag.getCSS().get(CSS.Property.PADDING+end)!=null?utils.parseValueToPt(tag.getCSS().get(CSS.Property.PADDING+end),ownFontSize):0;
-		float totalSpacing = 0;
 		float childFontSize = fst.getFontSize(child);
 		float childMargin = child.getCSS().get(CSS.Property.MARGIN+end)!=null?utils.parseValueToPt(child.getCSS().get(CSS.Property.MARGIN+end),childFontSize):0;
 		//Margin values of this tag and its first child need to be compared if paddingTop or bottom = 0.
@@ -139,14 +145,17 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 				margin = childMargin;
 			}
 			if(!isTop && storeMarginBottom){
-				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, margin);
+				context.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, margin);
 			}
 			totalSpacing = margin;
 		} else { // ownpadding != 0 and all margins and paddings need to be accumulated.
 			totalSpacing = ownMargin+ownPadding+childMargin;
 			if(!isTop && storeMarginBottom){
-				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, ownMargin);
+				context.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, ownMargin);
 			}
+		}
+		} catch (NoCustomContextException e) {
+			throw new RuntimeWorkerException(e);
 		}
 		return totalSpacing;
 	}
