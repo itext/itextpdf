@@ -63,6 +63,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  */
 public class RandomAccessFileOrArray implements DataInput {
     
+	public static final byte[] EOF = { '%', '%', 'E', 'O', 'F' };
+	
     MappedRandomAccessFile rf;
     RandomAccessFile trf;
     boolean plainRandomAccess;
@@ -182,7 +184,19 @@ public class RandomAccessFileOrArray implements DataInput {
             out.write(b, 0, read);
         }
         out.close();
-        return out.toByteArray();
+        byte[] arr = out.toByteArray();
+        int len = arr.length;
+        int i = 4;
+        while (len-- > 0 && i > 0) {
+        	if (arr[len] != EOF[i]) {
+        		arr[len] = '\0';
+        		i = 4;
+        	}
+        	else {
+        		i--;
+        	}
+        }
+        return arr;
     }
 
     public RandomAccessFileOrArray(byte arrayIn[]) {
