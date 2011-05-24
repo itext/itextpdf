@@ -78,6 +78,7 @@ public class SamplesTest {
 		list.add("position_");
 		list.add("b-p_");
 		list.add("br-sub-sup_");
+		list.add("div_");
 		list.add("font_color_");
 		list.add("lineheight_");
 		list.add("index_");

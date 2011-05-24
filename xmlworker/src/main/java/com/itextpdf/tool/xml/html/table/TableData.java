@@ -94,9 +94,6 @@ public class TableData extends AbstractTagProcessor {
 		HtmlCell cell = new HtmlCell();
 		List<Element> l = new ArrayList<Element>(1);
 		for (Element e : currentContent) {
-			if (e instanceof HtmlCell) {
-				LOG.trace(String.format("Adding element %s to HtmlCell", e.getClass().getName()));
-			}
 			cell.addElement(e);
 		}
 		l.add(new HtmlCellCssApplier(configuration).apply(cell, tag));

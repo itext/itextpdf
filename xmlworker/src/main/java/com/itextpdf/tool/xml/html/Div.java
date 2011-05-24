@@ -54,7 +54,6 @@ import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -87,29 +86,25 @@ public class Div extends AbstractTagProcessor {
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		Paragraph p = null;
 		List<Element> l = new ArrayList<Element>(1);
-		for (Element we : currentContent) {
-			if (we instanceof WritableElement) {
-				for (Element e :((WritableElement) we).elements()) {
-					if (e instanceof NoNewLineParagraph || e instanceof Chunk) {
-						if(p == null) {
-							p = new Paragraph();
-						}
-						p.add(e);
-					} else {
-						if (p != null) {
-							l.add(new ParagraphCssApplier(configuration).apply(p, tag));
-							p = null;
-						}
-						l.add(we);
-					}
+		for (Element e : currentContent) {
+			if(e instanceof Paragraph) {
+				if (p != null) {
+					p = new ParagraphCssApplier(configuration).apply(p, tag);
+					l.add(p);
+					p = null;
 				}
+				l.add(e);
 			} else {
-				l.add(we); // WD wordt nu wel verkeerd geplaatst.
-//				1 methode voor deze en AbstractTagProcessor#currentContentToWritables en TableData#end?
+				if (p == null) {
+					p = new Paragraph();
+				}
+				p.add(e);
 			}
+//			1 methode voor deze en AbstractTagProcessor#currentContentToWritables en TableData#end?
 		}
 		if (p != null) {
-			l.add(new ParagraphCssApplier(configuration).apply(p, tag));
+			p = new ParagraphCssApplier(configuration).apply(p, tag);
+			l.add(p);
 		}
 		return l;
 	}
