@@ -43,7 +43,6 @@
  */
 package com.itextpdf.tool.xml.html.table;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -88,12 +87,7 @@ public class Table extends AbstractTagProcessor {
 	private static final CssUtils utils = CssUtils.getInstance();
 	private static final FontSizeTranslator fst = FontSizeTranslator.getInstance();
 
-	private final static class TableRowElementComparator implements Comparator<TableRowElement>, Serializable{
-		/**
-		 *
-		 */
-		private static final long serialVersionUID = 1L;
-
+	private final class TableRowElementComparator implements Comparator<TableRowElement> {
 		public int compare(final TableRowElement o1, final TableRowElement o2) {
 			return o1.getPlace().getI().compareTo(o2.getPlace().getI());
 		}
@@ -136,33 +130,10 @@ public class Table extends AbstractTagProcessor {
 		Collections.sort(tableRows, new TableRowElementComparator());
 		//
 		PdfPTable table = new PdfPTable(numberOfColumns);
-		TableStyleValues styleValues = new TableStyleValues();
-		Map<String, String> css = tag.getCSS();
-		Map<String, String> attributes = tag.getAttributes();
-		if (attributes.containsKey(CSS.Property.BORDER)) {
-			styleValues.setBorderColor(BaseColor.BLACK);
-			styleValues.setBorderWidth(utils.parsePxInCmMmPcToPt(attributes.get(CSS.Property.BORDER)));
-		} else {
-			styleValues.setBorderColorBottom(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_BOTTOM_COLOR)));
-			styleValues.setBorderColorTop(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_TOP_COLOR)));
-			styleValues.setBorderColorLeft(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_LEFT_COLOR)));
-			styleValues.setBorderColorRight(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_RIGHT_COLOR)));
-			styleValues.setBorderWidthBottom(utils.checkMetricStyle(css, CSS.Property.BORDER_BOTTOM_WIDTH));
-			styleValues.setBorderWidthTop(utils.checkMetricStyle(css, CSS.Property.BORDER_TOP_WIDTH));
-			styleValues.setBorderWidthLeft(utils.checkMetricStyle(css, CSS.Property.BORDER_LEFT_WIDTH));
-			styleValues.setBorderWidthRight(utils.checkMetricStyle(css, CSS.Property.BORDER_RIGHT_WIDTH));
-		}
-		styleValues.setBackground(HtmlUtilities.decodeColor(css.get(CSS.Property.BACKGROUND_COLOR)));
-		styleValues.setHorBorderSpacing(getBorderOrCellSpacing(true, css, attributes));
-		styleValues.setVerBorderSpacing(getBorderOrCellSpacing(false, css, attributes));
+		TableStyleValues styleValues = setStyleValues(tag);
 		table.setTableEvent(new TableBorderEvent(styleValues));
 		setVerticalMargin(table, tag, styleValues);
-		for (TableRowElement row : tableRows) {
-			List<HtmlCell> cells = row.getContent();
-			HtmlCell last = cells.get(cells.size() - 1);
-			last.getCellValues().setLastInRow(true);
-			last.setPaddingRight(last.getPaddingRight() + styleValues.getHorBorderSpacing());
-		}
+		widenLastCell(tableRows, styleValues.getHorBorderSpacing());
 		float[] columnWidths = new float[numberOfColumns];
 		float[] widestWords = new float[numberOfColumns];
 		float[] fixedWidths = new float[numberOfColumns];
@@ -217,28 +188,15 @@ public class Table extends AbstractTagProcessor {
 				}
 			}
 		}
-		float totalFixedWidth = getTotalFixedWidth(fixedWidths);
-		float pageWidth = configuration.getPageSize().getWidth();
-		float targetWidth = 0;
-		float marginsBordersSpacing = getTotalMarginsBordersSpacing(tag, styleValues.getHorBorderSpacing());
-		if (attributes.get(CSS.Property.WIDTH) != null || css.get(CSS.Property.WIDTH) != null) {
-			targetWidth = new WidthCalculator().getWidth(tag, configuration) - marginsBordersSpacing;
-		} else if (null == tag.getParent()
-				|| (null != tag.getParent() && configuration.getRootTags().contains(tag.getParent().getTag()))) {
-			targetWidth = pageWidth - marginsBordersSpacing;
-		} else /*
-				 * this table is an inner table and width adjustment is done in
-				 * outer table
-				 */{
-			targetWidth = getTotalWidth(columnWidths, tag, styleValues.getHorBorderSpacing());
-		}
+		float totalFixedWidth = getTableWidth(fixedWidths, tag, styleValues.getHorBorderSpacing());
+		float targetWidth = calculateTargetWidth(tag, columnWidths, styleValues.getHorBorderSpacing());
 		if (totalFixedWidth > targetWidth) {
 			float targetPercentage = targetWidth / totalFixedWidth;
 			for (int column = 0; column < columnWidths.length; column++) {
 				columnWidths[column] *= targetPercentage;
 			}
 		} else {
-			float initialTotalWidth = getTotalWidth(columnWidths, tag, styleValues.getHorBorderSpacing());
+			float initialTotalWidth = getTableWidth(columnWidths, tag, styleValues.getHorBorderSpacing());
 			float targetPercentage = (targetWidth - totalFixedWidth) / (initialTotalWidth - totalFixedWidth);
 			// Reduce width of columns if the columnWidth array + borders +
 			// paddings
@@ -293,8 +251,9 @@ public class Table extends AbstractTagProcessor {
 							// attribute or style, try to enlarge the table to
 							// its
 							// minimum width (= widestWords array).
-							if (getTotalWidth(widestWords, tag, styleValues.getHorBorderSpacing()) < pageWidth) {
-								targetWidth = getTotalWidth(widestWords, tag, styleValues.getHorBorderSpacing());
+							float pageWidth = configuration.getPageSize().getWidth();
+							if (getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing()) < pageWidth) {
+								targetWidth = getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing());
 								leftToReduce = 0;
 							} else {
 								// If all columnWidths are set to the
@@ -303,7 +262,7 @@ public class Table extends AbstractTagProcessor {
 								// content will fall off the edge of a page,
 								// which
 								// is similar to HTML.
-								targetWidth = pageWidth - marginsBordersSpacing;
+								targetWidth = pageWidth - getTableOuterWidth(tag, styleValues.getHorBorderSpacing());
 								leftToReduce = 0;
 							}
 						}
@@ -374,6 +333,72 @@ public class Table extends AbstractTagProcessor {
 	}
 
 	/**
+	 * Calculates the target width. If one of the following is true:
+	 * <ol>
+	 * <li>the attribute or style "width" if found in the given tag.<br />
+	 * targetWidth = width value </li>
+	 * <li>table's parent is a root tag or table has no parent.<br />
+	 * targetWidth = width of the page - {@link Table#getTableOuterWidth(Tag, float)}.</li>
+	 * </ol>
+	 * If none of the above is true, the width of the table is set to its default with the columnWidths array.
+	 * @param columnWidths
+	 * @return
+	 */
+	private float calculateTargetWidth(final Tag tag, final float[] columnWidths, final float horBorderSpacing) {
+		float targetWidth = 0;
+		float marginsBordersSpacing = getTableOuterWidth(tag, horBorderSpacing);
+		if (tag.getAttributes().get(CSS.Property.WIDTH) != null || tag.getCSS().get(CSS.Property.WIDTH) != null) {
+			targetWidth = new WidthCalculator().getWidth(tag, configuration) - marginsBordersSpacing;
+		} else if (null == tag.getParent()
+				|| (null != tag.getParent() && configuration.getRootTags().contains(tag.getParent().getTag()))) {
+			targetWidth = configuration.getPageSize().getWidth() - marginsBordersSpacing;
+		} else /* this table is an inner table and width adjustment is done in outer table */ {
+			targetWidth = getTableWidth(columnWidths, tag, horBorderSpacing);
+		}
+		return targetWidth;
+	}
+	/**
+	 * Adds horizontal border spacing to the right padding of the last cell of each row.
+	 * @param tableRows List of {@link TableRowElement} objects of the table.
+	 * @param horBorderSpacing float containing the horizontal border spacing of the table.
+	 */
+	private void widenLastCell(final List<TableRowElement> tableRows, final float horBorderSpacing) {
+		for (TableRowElement row : tableRows) {
+			List<HtmlCell> cells = row.getContent();
+			HtmlCell last = cells.get(cells.size() - 1);
+			last.getCellValues().setLastInRow(true);
+			last.setPaddingRight(last.getPaddingRight() + horBorderSpacing);
+		}
+	}
+
+	/** Set the table style values in a {@link TableStyleValues} object based on attributes and css of the given tag.
+	 * @param tag containing attributes and css.
+	 * @return a {@link TableStyleValues} object containing the table's style values.
+	 */
+	private TableStyleValues setStyleValues(final Tag tag) {
+		TableStyleValues styleValues = new TableStyleValues();
+		Map<String, String> css = tag.getCSS();
+		Map<String, String> attributes = tag.getAttributes();
+		if (attributes.containsKey(CSS.Property.BORDER)) {
+			styleValues.setBorderColor(BaseColor.BLACK);
+			styleValues.setBorderWidth(utils.parsePxInCmMmPcToPt(attributes.get(CSS.Property.BORDER)));
+		} else {
+			styleValues.setBorderColorBottom(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_BOTTOM_COLOR)));
+			styleValues.setBorderColorTop(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_TOP_COLOR)));
+			styleValues.setBorderColorLeft(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_LEFT_COLOR)));
+			styleValues.setBorderColorRight(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_RIGHT_COLOR)));
+			styleValues.setBorderWidthBottom(utils.checkMetricStyle(css, CSS.Property.BORDER_BOTTOM_WIDTH));
+			styleValues.setBorderWidthTop(utils.checkMetricStyle(css, CSS.Property.BORDER_TOP_WIDTH));
+			styleValues.setBorderWidthLeft(utils.checkMetricStyle(css, CSS.Property.BORDER_LEFT_WIDTH));
+			styleValues.setBorderWidthRight(utils.checkMetricStyle(css, CSS.Property.BORDER_RIGHT_WIDTH));
+		}
+		styleValues.setBackground(HtmlUtilities.decodeColor(css.get(CSS.Property.BACKGROUND_COLOR)));
+		styleValues.setHorBorderSpacing(getBorderOrCellSpacing(true, css, attributes));
+		styleValues.setVerBorderSpacing(getBorderOrCellSpacing(false, css, attributes));
+		return styleValues;
+	}
+
+	/**
 	 * Extracts and parses the style border-spacing or the attribute cellspacing
 	 * of a table tag, if present. Favors the style border-spacing over the
 	 * attribute cellspacing. <br />
@@ -416,12 +441,18 @@ public class Table extends AbstractTagProcessor {
 	}
 
 	/**
-	 * @param styleValues
-	 * @param column
-	 * @param fixedWidths
-	 * @param widestWords
-	 * @param columnWidths
-	 * @return
+	 * Sets the default cell width and widest word of a cell.
+	 * <ul>
+	 * <li>cell width = {@link Table#getCellStartWidth(HtmlCell)} + the width of the widest line of text.</li>
+	 * <li>widest word = {@link Table#getCellStartWidth(HtmlCell)} + the widest word of the cell.</li>
+	 * </ul>
+	 * These 2 widths are used as the starting point when determining the width of the table in
+	 * @param cell HtmlCell of which the widths are needed.
+	 * @return float array containing the default cell width and the widest word.
+	 * <ul>
+	 * <li>float[0] = cell width.</li>
+	 * <li>float[1] = widest word.</li>
+	 * </ul>
 	 */
 	private float[] setCellWidthAndWidestWord(final HtmlCell cell) {
 		List<Float> rulesWidth = new ArrayList<Float>();
@@ -489,29 +520,27 @@ public class Table extends AbstractTagProcessor {
 	return new float[]{cellWidth, widestWordOfCell};
 	}
 
-	/**
-	 * @param fixedWidths
-	 * @return
-	 */
-	private float getTotalFixedWidth(final float[] fixedWidths) {
-		int fixedWidthTotal = 0;
-		for(float f: fixedWidths) {
-			if(f != 0) {
-				fixedWidthTotal += f;
-			}
-		}
-		return fixedWidthTotal;
-	}
-
-	private float getTotalWidth(final float[] columnWidths, final Tag tag, final float horBorderSpacing) {
+	private float getTableWidth(final float[] widths, final Tag tag, final float horBorderSpacing) {
 		float width = 0;
-		for(float f: columnWidths) {
+		for(float f: widths) {
 			width += f;
 		}
-		return width + getTotalMarginsBordersSpacing(tag, horBorderSpacing);
+		return width + getTableOuterWidth(tag, horBorderSpacing);
 	}
 
-	private float getTotalMarginsBordersSpacing(final Tag tag, final float horBorderSpacing) {
+	/**
+	 * Adds horizontal values of a table and its parent if present. Following values are added up:
+	 * <ul>
+	 * <li>left and right margins of the table.</li>
+	 * <li>left and right border widths of the table.</li>
+	 * <li>left and right margins of the parent of the table is present.</li>
+	 * <li>one horizontal border spacing.</li>
+	 * </ul>
+	 * @param tag
+	 * @param horBorderSpacing
+	 * @return
+	 */
+	private float getTableOuterWidth(final Tag tag, final float horBorderSpacing) {
 		float total = utils.getLeftAndRightMargin(tag, configuration.getPageSize().getWidth())
 			+ utils.checkMetricStyle(tag, CSS.Property.BORDER_LEFT_WIDTH)
 			+ utils.checkMetricStyle(tag, CSS.Property.BORDER_RIGHT_WIDTH)
@@ -523,15 +552,31 @@ public class Table extends AbstractTagProcessor {
 		return total;
 	}
 
+	/**
+	 * Calculates the start width of a cell. Following values are added up:
+	 * <ul>
+	 * <li>padding left, this includes left border width and a horizontal border spacing.</li>
+	 * <li>padding right, this includes right border width.</li>
+	 * <li>the (colspan - 1) * horizontal border spacing.</li>
+	 * </ul>
+	 * @param cell HtmlCell of which the start width is needed.
+	 * @return float containing the start width.
+	 */
 	private float getCellStartWidth(final HtmlCell cell) {
 		TableStyleValues cellStyleValues = cell.getCellValues();
 		// colspan - 1, because one horBorderSpacing has been added to paddingLeft for all cells.
 		int spacingMultiplier = cell.getColspan() - 1;
-		// if lastInRow add one more horSpacing right of the cell.
 		float spacing = spacingMultiplier*cellStyleValues.getHorBorderSpacing();
-		return spacing + cell.getPaddingLeft()+cell.getPaddingRight()+1; // Default 2pt left and right padding + 1 for a border(?).
+		return spacing + cell.getPaddingLeft()+cell.getPaddingRight()+1;
 	}
 
+	/**
+	 * Sets the top and bottom margin of the given table.
+	 *
+	 * @param table PdfPTable on which the margins need to be set.
+	 * @param t Tag containing the margin styles and font size if needed.
+	 * @param values {@link TableStyleValues} containing border widths and border spacing values.
+	 */
 	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values) {
 		float spacingBefore = values.getBorderWidthTop();
 		Map<String, Object> memory = configuration.getMemory();

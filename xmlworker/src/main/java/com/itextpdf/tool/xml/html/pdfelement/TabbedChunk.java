@@ -47,10 +47,10 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 
 /**
- * 
+ *
  * A TabbedChunk is a Chunk that contains tabcount and alignment
  * data to allow the HTML to PDF conversion to accept tabstop css.
- * 
+ *
  */
 public class TabbedChunk extends Chunk {
 	private int tabCount;
@@ -60,32 +60,32 @@ public class TabbedChunk extends Chunk {
 	 * Constructor
 	 * @param content the content of the Chunk
 	 */
-	public TabbedChunk(String content) {
+	public TabbedChunk(final String content) {
 		super(content);
 	}
-	
+
 	/**
-	 * 
-	 * @param verticalPositionMark the drawInterface to use to draw the tab. tabPosition an X
+	 *
+	 * @param verticalPositionMark the drawInterface used to draw the tab. tabPosition an X
 	 * @param parseToPt that will be used as start position for the next Chunk.
 	 * @param b if true, a newline will be added if the tabPosition has already
 	 * been reached.
 	 * @param alignment the alignment
 	 */
-	public TabbedChunk(VerticalPositionMark verticalPositionMark,
-			float parseToPt, boolean b, String alignment) {
+	public TabbedChunk(final VerticalPositionMark verticalPositionMark,
+			final float parseToPt, final boolean b, final String alignment) {
 		super(verticalPositionMark, parseToPt, b);
 		this.alignment = alignment;
 	}
-	
+
 	/**
 	 * @param verticalPositionMark the drawInterface to use to draw the tab. tabPosition an X
 	 * @param parseToPt that will be used as start position for the next Chunk.
 	 * @param b if true, a newline will be added if the tabPosition has already
 	 * been reached.
 	 */
-	public TabbedChunk(VerticalPositionMark verticalPositionMark,
-			float parseToPt, boolean b) {
+	public TabbedChunk(final VerticalPositionMark verticalPositionMark,
+			final float parseToPt, final boolean b) {
 		super(verticalPositionMark, parseToPt, b);
 	}
 
@@ -93,7 +93,7 @@ public class TabbedChunk extends Chunk {
 	 * Set the tabCount for this Chunk.
 	 * @param tabCount  the tabcount
 	 */
-	public void setTabCount(int tabCount) {
+	public void setTabCount(final int tabCount) {
 		this.tabCount = tabCount;
 	}
 
@@ -109,7 +109,7 @@ public class TabbedChunk extends Chunk {
 	 * Returns the alignment for this Chunk.
 	 * @param alignment the alignment
 	 */
-	public void setAlignment(String alignment) {
+	public void setAlignment(final String alignment) {
 		this.alignment = alignment;
 	}
 
@@ -120,5 +120,5 @@ public class TabbedChunk extends Chunk {
 	public String getAlignment() {
 		return alignment;
 	}
-	
+
 }

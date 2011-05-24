@@ -106,8 +106,7 @@ public class ParaGraph extends AbstractTagProcessor {
 			} else if (null != css.get(CSS.Property.TAB_STOPS)) { // <para tabstops=".." /> could use same implementation page 62
 				addTabStopsContent(currentContent, p, css.get(CSS.Property.TAB_STOPS));
 				l.add(p);
-			} else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page
-															// 63
+			} else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page 63
 				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
 				l.add(p);																	// extracted.
 			} else {
@@ -119,6 +118,14 @@ public class ParaGraph extends AbstractTagProcessor {
 		return l;
 	}
 
+	/**
+	 * Applies the tab interval of the p tag on its {@link TabbedChunk} elements. <br />
+	 * The style "xfa-tab-count" of the {@link TabbedChunk} is multiplied with the tab interval of the p tag. This width is then added to a new {@link TabbedChunk}.
+	 *
+	 * @param currentContent containing the elements inside the p tag.
+	 * @param p paragraph to which the tabbed chunks will be added.
+	 * @param value the value of style "tab-interval".
+	 */
 	private void addTabIntervalContent(final List<Element> currentContent, final Paragraph p, final String value) {
 		float width = 0;
 		for(Element e: currentContent) {
@@ -131,6 +138,13 @@ public class ParaGraph extends AbstractTagProcessor {
 		}
 	}
 
+	/**
+	 * Applies the tab stops of the p tag on its {@link TabbedChunk} elements.
+	 *
+	 * @param currentContent containing the elements inside the p tag.
+	 * @param p paragraph to which the tabbed chunks will be added.
+	 * @param value the value of style "tab-stops".
+	 */
 	private void addTabStopsContent(final List<Element> currentContent, final Paragraph p, final String value) {
 		List<Chunk> tabs = new ArrayList<Chunk>();
 		String[] alignAndWidth = value.split(" ");
