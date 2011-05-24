@@ -44,28 +44,76 @@
 package com.itextpdf.tool.xml.html.pdfelement;
 
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.List;
+import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.tool.xml.html.Image;
 
 /**
- * A paragraph that sets {@link Paragraph#setNewLine(boolean)} to false.
- * @author itextpdf.com
+ * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
+ * <P>
+ * A <CODE>Paragraph</CODE> has the same qualities of a <CODE>Phrase</CODE>, but also
+ * some additional layout-parameters:
+ * <UL>
+ * <LI>the indentation
+ * <LI>the alignment of the text
+ * </UL>
  *
+ * Example:
+ * <BLOCKQUOTE><PRE>
+ * <STRONG>Paragraph p = new Paragraph("This is a paragraph",
+ *               FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLDITALIC, new Color(0, 0, 255)));</STRONG>
+ * </PRE></BLOCKQUOTE>
+ *
+ * @see		Element
+ * @see		Phrase
+ * @see		ListItem
  */
-public class NoNewLineParagraph extends Paragraph {
+
+public class NoNewLineParagraph extends Phrase {
 
 	 /**
 	 *
 	 */
 	private static final long serialVersionUID = -8392940968188620772L;
 
+    // membervariables
+
+	/** The alignment of the text. */
+    protected int alignment = Element.ALIGN_UNDEFINED;
+
+    /** The text leading that is multiplied by the biggest font size in the line. */
+    protected float multipliedLeading = 0;
+
+    /** The indentation of this paragraph on the left side. */
+    protected float indentationLeft;
+
+    /** The indentation of this paragraph on the right side. */
+    protected float indentationRight;
+
+    /** Holds value of property firstLineIndent. */
+    private float firstLineIndent = 0;
+
+    /** The spacing before the paragraph. */
+    protected float spacingBefore;
+
+    /** The spacing after the paragraph. */
+    protected float spacingAfter;
+
+    /** Holds value of property extraParagraphSpace. */
+    private float extraParagraphSpace = 0;
+
+    /** Does the paragraph has to be kept together on 1 page. */
+    protected boolean keeptogether = false;
+
 	/**
      * Constructs a <CODE>Paragraph</CODE>.
      */
     public NoNewLineParagraph() {
         super();
-        this.setNewLine(false);
     }
 
     /**
@@ -75,7 +123,6 @@ public class NoNewLineParagraph extends Paragraph {
      */
     public NoNewLineParagraph(final float leading) {
         super(leading);
-        this.setNewLine(false);
     }
 
     /**
@@ -85,7 +132,6 @@ public class NoNewLineParagraph extends Paragraph {
      */
     public NoNewLineParagraph(final Chunk chunk) {
         super(chunk);
-        this.setNewLine(false);
     }
 
     /**
@@ -97,7 +143,6 @@ public class NoNewLineParagraph extends Paragraph {
      */
     public NoNewLineParagraph(final float leading, final Chunk chunk) {
         super(leading, chunk);
-        this.setNewLine(false);
     }
 
     /**
@@ -107,7 +152,6 @@ public class NoNewLineParagraph extends Paragraph {
      */
     public NoNewLineParagraph(final String string) {
         super(string);
-        this.setNewLine(false);
     }
 
     /**
@@ -119,7 +163,6 @@ public class NoNewLineParagraph extends Paragraph {
      */
     public NoNewLineParagraph(final String string, final Font font) {
         super(string, font);
-        this.setNewLine(false);
     }
 
     /**
@@ -131,7 +174,6 @@ public class NoNewLineParagraph extends Paragraph {
      */
     public NoNewLineParagraph(final float leading, final String string) {
         super(leading, string);
-        this.setNewLine(false);
     }
 
     /**
@@ -144,7 +186,6 @@ public class NoNewLineParagraph extends Paragraph {
      */
     public NoNewLineParagraph(final float leading, final String string, final Font font) {
         super(leading, string, font);
-        this.setNewLine(false);
     }
 
     /**
@@ -154,7 +195,18 @@ public class NoNewLineParagraph extends Paragraph {
      */
     public NoNewLineParagraph(final Phrase phrase) {
         super(phrase);
-        this.setNewLine(false);
+        if (phrase instanceof NoNewLineParagraph) {
+        	NoNewLineParagraph p = (NoNewLineParagraph)phrase;
+        	alignment = p.getAlignment();
+        	leading = phrase.getLeading();
+        	multipliedLeading = p.getMultipliedLeading();
+        	indentationLeft = p.getIndentationLeft();
+        	indentationRight = p.getIndentationRight();
+        	firstLineIndent = p.getFirstLineIndent();
+        	spacingAfter = p.getSpacingAfter();
+        	spacingBefore = p.getSpacingBefore();
+        	extraParagraphSpace = p.getExtraParagraphSpace();
+        }
         if (phrase instanceof Paragraph) {
         	Paragraph p = (Paragraph)phrase;
         	setAlignment(p.getAlignment());
@@ -168,5 +220,249 @@ public class NoNewLineParagraph extends Paragraph {
         }
     }
 
+	/**
+     * Adds an <CODE>Element</CODE> to the <CODE>Paragraph</CODE>.
+     *
+     * @param	o the element to add.
+     * @return true is adding the object succeeded
+     */
+    @Override
+    public boolean add(final Element o) {
+        if (o instanceof List) {
+            List list = (List) o;
+            list.setIndentationLeft(list.getIndentationLeft() + indentationLeft);
+            list.setIndentationRight(indentationRight);
+            return super.add(list);
+        }
+        else if (o instanceof Image) {
+            super.addSpecial(o);
+            return true;
+        }
+        return super.add(o);
+    }
+    /**
+     * Sets the alignment of this paragraph.
+     *
+     * @param	alignment		the new alignment
+     */
+    public void setAlignment(final int alignment) {
+        this.alignment = alignment;
+    }
+
+    /**
+     * @see com.itextpdf.text.Phrase#setLeading(float)
+     */
+    @Override
+    public void setLeading(final float fixedLeading) {
+        this.leading = fixedLeading;
+        this.multipliedLeading = 0;
+    }
+
+    /**
+     * Sets the variable leading. The resultant leading will be
+     * multipliedLeading*maxFontSize where maxFontSize is the
+     * size of the biggest font in the line.
+     * @param multipliedLeading the variable leading
+     */
+    public void setMultipliedLeading(final float multipliedLeading) {
+        this.leading = 0;
+        this.multipliedLeading = multipliedLeading;
+    }
+
+    /**
+     * Sets the leading fixed and variable. The resultant leading will be
+     * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
+     * size of the biggest font in the line.
+     * @param fixedLeading the fixed leading
+     * @param multipliedLeading the variable leading
+     */
+    public void setLeading(final float fixedLeading, final float multipliedLeading) {
+        this.leading = fixedLeading;
+        this.multipliedLeading = multipliedLeading;
+    }
+
+    /**
+     * Sets the indentation of this paragraph on the left side.
+     *
+     * @param	indentation		the new indentation
+     */
+    public void setIndentationLeft(final float indentation) {
+        this.indentationLeft = indentation;
+    }
+
+    /**
+     * Sets the indentation of this paragraph on the right side.
+     *
+     * @param	indentation		the new indentation
+     */
+    public void setIndentationRight(final float indentation) {
+        this.indentationRight = indentation;
+    }
+
+    /**
+     * Setter for property firstLineIndent.
+     * @param firstLineIndent New value of property firstLineIndent.
+     */
+    public void setFirstLineIndent(final float firstLineIndent) {
+        this.firstLineIndent = firstLineIndent;
+    }
+
+    /**
+     * Sets the spacing before this paragraph.
+     *
+     * @param	spacing		the new spacing
+     */
+    public void setSpacingBefore(final float spacing) {
+        this.spacingBefore = spacing;
+    }
+
+    /**
+     * Sets the spacing after this paragraph.
+     *
+     * @param	spacing		the new spacing
+     */
+    public void setSpacingAfter(final float spacing) {
+        this.spacingAfter = spacing;
+    }
+
+    /**
+     * Indicates that the paragraph has to be kept together on one page.
+     *
+     * @param   keeptogether    true of the paragraph may not be split over 2 pages
+     */
+    public void setKeepTogether(final boolean keeptogether) {
+        this.keeptogether = keeptogether;
+    }
+
+    /**
+     * Checks if this paragraph has to be kept together on one page.
+     *
+     * @return  true if the paragraph may not be split over 2 pages.
+     */
+    public boolean getKeepTogether() {
+        return keeptogether;
+    }
+
+    // methods to retrieve information
+
+	/**
+     * Gets the alignment of this paragraph.
+     *
+     * @return	alignment
+     */
+    public int getAlignment() {
+        return alignment;
+    }
+
+    /**
+     * Gets the variable leading.
+     * @return the leading
+     */
+    public float getMultipliedLeading() {
+        return multipliedLeading;
+    }
+
+    /**
+     * Gets the total leading.
+     * This method is based on the assumption that the
+     * font of the Paragraph is the font of all the elements
+     * that make part of the paragraph. This isn't necessarily
+     * true.
+     * @return the total leading (fixed and multiplied)
+     */
+    public float getTotalLeading() {
+    	float m = font == null ?
+    			Font.DEFAULTSIZE * multipliedLeading : font.getCalculatedLeading(multipliedLeading);
+    	if (m > 0 && !hasLeading()) {
+    		return m;
+    	}
+    	return getLeading() + m;
+    }
+
+	/**
+     * Gets the indentation of this paragraph on the left side.
+     *
+     * @return	the indentation
+     */
+    public float getIndentationLeft() {
+        return indentationLeft;
+    }
+
+	/**
+	 * Gets the indentation of this paragraph on the right side.
+	 *
+	 * @return	the indentation
+	 */
+    public float getIndentationRight() {
+        return indentationRight;
+    }
+
+    /**
+     * Getter for property firstLineIndent.
+     * @return Value of property firstLineIndent.
+     */
+    public float getFirstLineIndent() {
+        return this.firstLineIndent;
+    }
+
+    /**
+     * Gets the spacing before this paragraph.
+     * @return	the spacing
+     * @since	2.1.5
+     */
+    public float getSpacingBefore() {
+    	return spacingBefore;
+    }
+
+    /**
+     * Gets the spacing after this paragraph.
+     * @return	the spacing
+     * @since	2.1.5
+     */
+    public float getSpacingAfter() {
+    	return spacingAfter;
+    }
+
+    /**
+     * Getter for property extraParagraphSpace.
+     * @return Value of property extraParagraphSpace.
+     */
+    public float getExtraParagraphSpace() {
+        return this.extraParagraphSpace;
+    }
+
+    /**
+     * Setter for property extraParagraphSpace.
+     * @param extraParagraphSpace New value of property extraParagraphSpace.
+     */
+    public void setExtraParagraphSpace(final float extraParagraphSpace) {
+        this.extraParagraphSpace = extraParagraphSpace;
+    }
+
+    // scheduled for removal
+
+    /**
+     * Gets the spacing before this paragraph.
+     *
+     * @return	the spacing
+     * @deprecated As of iText 2.1.5, replaced by {@link #getSpacingBefore()},
+     * scheduled for removal at 2.3.0
+     */
+    @Deprecated
+    public float spacingBefore() {
+        return getSpacingBefore();
+    }
+
+    /**
+     * Gets the spacing after this paragraph.
+     *
+     * @return	the spacing
+     * @deprecated As of iText 2.1.5, replaced by {@link #getSpacingAfter()},
+     * scheduled for removal at 2.3.0
+     */
+    @Deprecated
+    public float spacingAfter() {
+        return spacingAfter;
+    }
 
 }
