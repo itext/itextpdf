@@ -216,7 +216,7 @@ public class HtmlPipeline extends AbstractPipeline {
 	 */
 	@Override
 	public CustomContext getCustomContext() throws NoCustomContextException {
-		return new HtmlPipelineContext(config, getContext());
+		return new HtmlPipelineContext(getContext());
 	}
 
 }

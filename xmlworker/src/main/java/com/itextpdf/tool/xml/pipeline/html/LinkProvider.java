@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: Image.java 94 2011-05-23 23:38:48Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -41,46 +41,17 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml;
-
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.text.log.SysoLogger;
-import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
-import com.itextpdf.tool.xml.html.Anchor;
-import com.itextpdf.tool.xml.html.TagProcessorFactory;
-import com.itextpdf.tool.xml.html.Tags;
-import com.itextpdf.tool.xml.html.table.Table;
+package com.itextpdf.tool.xml.pipeline.html;
 
 /**
- *
- * @author redlab_b
+ * @author itextpdf.com
  *
  */
-public class DefaultTagProcessorTest {
+public interface LinkProvider {
 
+	/**
+	 * @return the root for links in the document.
+	 */
+	String getLinkRoot();
 
-	private TagProcessorFactory tp;
-
-	@Before
-	public void setup() {
-		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
-		tp = new Tags().getHtmlTagProcessorFactory();
-
-	}
-
-	@Test
-	public void testLoadClassName() {
-		assertTrue(tp.getProcessor("a", "") instanceof Anchor);
-		assertTrue(tp.getProcessor("table", "") instanceof Table);
-	}
-
-	@Test(expected = NoTagProcessorException.class)
-	public void loadFail() {
-		tp.getProcessor("unknown", "");
-	}
 }

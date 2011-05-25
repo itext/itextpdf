@@ -52,9 +52,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
+import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.XMLWorker;
 import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
-import com.itextpdf.tool.xml.XMLWorkerImpl;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.net.FileRetrieveImpl;
@@ -76,7 +78,7 @@ public class LoadCssThroughLinkStyleTagTest {
 
 	@Before
 	public void setup() {
-
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
 		cssFiles = new CssFilesImpl();
 		String path = LoadCssThroughLinkStyleTagTest.class.getResource("/css/test.css").getPath();
@@ -84,9 +86,10 @@ public class LoadCssThroughLinkStyleTagTest {
 		FileRetrieveImpl r = new FileRetrieveImpl(new String [] {path} );
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles, r );
 		DefaultProvider provider = new DefaultProvider();
+		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(config, null));
 		config.tagProcessorFactory(Tags.getHtmlTagProcessorFactory()).cssResolver(cssResolver)
-		.acceptUnknown(false).provider(provider).pipeline(new CssResolverPipeline(cssResolver, new HtmlPipeline(config, null)));
-		final XMLWorker worker = new XMLWorkerImpl(config);
+		.acceptUnknown(false).provider(provider).pipeline(pipeline);
+		final XMLWorker worker = new XMLWorker(pipeline, true);
 		p = new XMLParser(worker);
 	}
 

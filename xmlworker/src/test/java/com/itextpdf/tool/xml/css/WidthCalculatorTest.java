@@ -11,10 +11,11 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
-import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
@@ -26,11 +27,12 @@ public class WidthCalculatorTest {
 	Tag table = new Tag("table", new HashMap<String,String>());
 	Tag row = new Tag("tr", new HashMap<String,String>());
 	Tag cell = new Tag("td", new HashMap<String,String>());
-	private final XMLWorkerConfig config = new XMLWorkerConfigurationImpl();
+	private final HtmlPipelineContext config = new HtmlPipelineContext(null);
 	private final WidthCalculator calc = new WidthCalculator();
 
 	@Before
 	public void before() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		body.addChild(table);
 		table.setParent(body);
 		table.addChild(row);

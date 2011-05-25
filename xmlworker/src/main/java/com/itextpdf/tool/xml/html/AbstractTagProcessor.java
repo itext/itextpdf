@@ -39,11 +39,11 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
@@ -71,9 +71,8 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	/**
 	 * The configuration object of the XMLWorker.
 	 */
-	protected XMLWorkerConfig configuration;
 	private final FontSizeTranslator fontsizeTrans;
-	private WorkerContext context;
+	private final ThreadLocal<WorkerContext> ctxLocal = new ThreadLocal<WorkerContext>();
 
 	/**
 	 *
@@ -81,20 +80,15 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	public AbstractTagProcessor() {
 		fontsizeTrans = FontSizeTranslator.getInstance();
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.itextpdf.tool.xml.TagProcessor#setConfiguration(com.itextpdf.tool.xml.XMLWorkerConfig)
-	 */
-	public void setConfiguration(final XMLWorkerConfig config) {
-		this.configuration = config;
-	}
 
 	/**
+	 * Set the WorkerContext, It's stored in a ThreadLocal context, allowing reuse of the
+	 * TagProcessorFactory in different {@link HtmlPipeline}s.
+	 *
 	 * @param context the global worker context.
 	 */
 	public void setContext(final WorkerContext context) {
-		this.context = context;
+		ctxLocal.set(context);
 	}
 
 	/**
@@ -106,7 +100,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 *             {@link CssResolverPipeline} could not be found.
 	 */
 	public CSSResolver getCSSResolver() throws NoCustomContextException {
-		return (CSSResolver) ((MapContext) this.context.get(CssResolverPipeline.class))
+		return (CSSResolver) ((MapContext) this.ctxLocal.get().get(CssResolverPipeline.class))
 				.get(CssResolverPipeline.CSS_RESOLVER);
 	}
 
@@ -117,7 +111,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 *             {@link HtmlPipelineContext} could not be found.
 	 */
 	public HtmlPipelineContext getHtmlPipelineContext() throws NoCustomContextException {
-		return ((HtmlPipelineContext) this.context.get(HtmlPipeline.class));
+		return ((HtmlPipelineContext) this.ctxLocal.get().get(HtmlPipeline.class));
 	}
 	/**
 	 * Calculates any found font size to pt values and set it in the CSS before
@@ -213,28 +207,32 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 */
 	public final List<Element> currentContentToWritables(final List<Element> currentContent,
 			final boolean addNewLines, final boolean applyCSS, final Tag tag) {
-		List<Element> list = new ArrayList<Element>();
-		if (currentContent.size() > 0) {
-			if (addNewLines) {
-				Paragraph p = new Paragraph();
-				for (Element e : currentContent) {
-					p.add(e);
+		try {
+			List<Element> list = new ArrayList<Element>();
+			if (currentContent.size() > 0) {
+				if (addNewLines) {
+					Paragraph p = new Paragraph();
+					for (Element e : currentContent) {
+						p.add(e);
+					}
+					if (applyCSS) {
+						p = new ParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
+					}
+					list.add(p);
+				} else {
+					NoNewLineParagraph p = new NoNewLineParagraph();
+					for (Element e : currentContent) {
+						p.add(e);
+					}
+					p = new NoNewLineParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
+					list.add(p);
 				}
-				if (applyCSS) {
-					p = new ParagraphCssApplier(configuration).apply(p, tag);
-				}
-				list.add(p);
-			} else {
-				NoNewLineParagraph p = new NoNewLineParagraph();
-				for (Element e : currentContent) {
-					p.add(e);
-				}
-				p = new NoNewLineParagraphCssApplier(configuration).apply(p, tag);
-				list.add(p);
+				// TODO enhance
 			}
-			// TODO enhance
+			return list;
+		} catch (NoCustomContextException e) {
+			throw new RuntimeWorkerException(e);
 		}
-		return list;
 	}
 	public final List<Element> currentContentToWritables(final List<Element> currentContent,
 			final boolean addNewLines) {

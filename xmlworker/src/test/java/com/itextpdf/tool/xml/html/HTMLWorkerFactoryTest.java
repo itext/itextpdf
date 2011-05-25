@@ -52,11 +52,13 @@ import org.junit.Test;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Pipeline;
+import com.itextpdf.tool.xml.XMLWorker;
 import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
-import com.itextpdf.tool.xml.XMLWorkerImpl;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
@@ -108,6 +110,7 @@ public class HTMLWorkerFactoryTest {
     static {
     	//FontFactory.registerDirectories();
     	Document.compress = false;
+    	LoggerFactory.getInstance().setLogger(new SysoLogger(3));
     }
     private final CssUtils utils = CssUtils.getInstance();
 
@@ -132,7 +135,7 @@ public class HTMLWorkerFactoryTest {
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(conf, new PdfWriterPipeline(doc, writer)));
 		conf.isParsingHTML(true).acceptUnknown(true).autoBookMark(true).pipeline(pipeline);
-		XMLWorkerImpl worker = new XMLWorkerImpl(conf);
+		XMLWorker worker = new XMLWorker(pipeline, true);
 		doc.open();
 		XMLParser p = new XMLParser(conf.isParsingHTML(), worker);
 		p.parse(new InputStreamReader(bis));

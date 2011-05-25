@@ -51,6 +51,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.net.FileRetrieve;
 import com.itextpdf.tool.xml.net.FileRetrieveImpl;
 
@@ -65,6 +67,7 @@ public class CSSFileProcessorTest {
 
     @Before
     public void setup() {
+    	LoggerFactory.getInstance().setLogger(new SysoLogger(3));
         proc = new CssFileProcessor();
         retriever = new FileRetrieveImpl();
     }

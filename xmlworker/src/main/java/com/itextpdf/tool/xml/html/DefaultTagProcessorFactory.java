@@ -96,6 +96,9 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 			return this.className;
 		}
 
+		/**
+		 * @return return the processor
+		 */
 		public TagProcessor getProcessor() {
 			if (null == this.proc) {
 				this.proc = load(this.className);

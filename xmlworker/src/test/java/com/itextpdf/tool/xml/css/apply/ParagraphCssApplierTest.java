@@ -53,10 +53,13 @@ import org.junit.Test;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 public class ParagraphCssApplierTest {
 	/**
@@ -70,10 +73,11 @@ public class ParagraphCssApplierTest {
 	private Paragraph firstPara;
 	private Paragraph secondPara;
 	private final XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
-	private final ParagraphCssApplier applier = new ParagraphCssApplier(config);
+	private final ParagraphCssApplier applier = new ParagraphCssApplier(new HtmlPipelineContext(null));
 
 	@Before
 	public void setup() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		parent = new Tag("body",null);
 		first = new Tag(null, null);
 		second = new Tag(null, null);

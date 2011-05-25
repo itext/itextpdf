@@ -124,7 +124,7 @@ public interface XMLWorkerConfig {
 	PdfWriter getWriter();
 
 	/**
-	 * Used by the XMLWorkerImpl to convert all parsed tags to lower.
+	 * Used by the XMLWorker to convert all parsed tags to lower.
 	 *
 	 * @return true for lower-case, false to leave tags as they are.
 	 */
@@ -136,7 +136,7 @@ public interface XMLWorkerConfig {
 	public Map<String, Object> getMemory();
 
 	/**
-	 * Used by the XMLWorkerImpl to return a default root tag if no root tag is present in given snippet.
+	 * Used by the XMLWorker to return a default root tag if no root tag is present in given snippet.
 	 *
 	 * @return a default root tag.
 	 */

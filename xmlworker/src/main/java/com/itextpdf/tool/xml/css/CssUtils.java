@@ -54,6 +54,7 @@ import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.WebColors;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author redlab_b
@@ -556,11 +557,11 @@ public class CssUtils {
 	 * This method simulates this behavior by subtracting the margin-top value of the given tag from the margin-bottom of the previous tag. The remaining value is returned or if the margin-bottom value is the largest, 0 is returned
 	 * @param value the margin-top value of the given tag.
 	 * @param largestFont used if a relative value was given to calculate margin.
-	 * @param config XmlWorkerConfig containing the last margin bottom.
+	 * @param configuration XmlWorkerConfig containing the last margin bottom.
 	 * @return an offset
 	 */
-	public float calculateMarginTop(final String value, final float largestFont, final XMLWorkerConfig config) {
-		return calculateMarginTop(parseValueToPt(value, largestFont), config);
+	public float calculateMarginTop(final String value, final float largestFont, final HtmlPipelineContext configuration) {
+		return calculateMarginTop(parseValueToPt(value, largestFont), configuration);
 	}
 
 	/**
@@ -569,12 +570,12 @@ public class CssUtils {
 	 * In HTML the margin-bottom of a tag overlaps with the margin-top of a following tag.
 	 * This method simulates this behavior by subtracting the margin-top value of the given tag from the margin-bottom of the previous tag. The remaining value is returned or if the margin-bottom value is the largest, 0 is returned
 	 * @param value float containing the margin-top value.
-	 * @param config XmlWorkerConfig containing the last margin bottom.
+	 * @param configuration XmlWorkerConfig containing the last margin bottom.
 	 * @return an offset
 	 */
-	public float calculateMarginTop(final float value, final XMLWorkerConfig config) {
+	public float calculateMarginTop(final float value, final HtmlPipelineContext configuration) {
 		float marginTop = value;
-		Map<String, Object> memory = config.getMemory();
+		Map<String, Object> memory = configuration.getMemory();
 		Object mb = memory.get(XMLWorkerConfig.LAST_MARGIN_BOTTOM);
 		if(mb != null) {
 			float marginBottom = (Float)mb;

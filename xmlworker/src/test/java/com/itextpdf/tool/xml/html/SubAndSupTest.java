@@ -56,6 +56,8 @@ import org.junit.Test;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
@@ -72,6 +74,7 @@ public class SubAndSupTest {
 
 	@Before
 	public void setup() throws IOException {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		BufferedInputStream bis = new BufferedInputStream(SubAndSupTest.class.getResourceAsStream("/snippets/br-sub-sup_snippet.html"));
 		XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 		elementList = new ArrayList<Element>();

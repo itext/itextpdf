@@ -49,10 +49,12 @@ import java.util.List;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 
 /**
@@ -70,7 +72,11 @@ public class Div extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
     	if (sanitized.length() > 0) {
     		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
-    		l.add(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(c), tag));
+    		try {
+				l.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext()).apply(new NoNewLineParagraph(c), tag));
+			} catch (NoCustomContextException e) {
+				throw new RuntimeWorkerException(e);
+			}
     	}
 		return l;
 	}
@@ -84,29 +90,35 @@ public class Div extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		Paragraph p = null;
-		List<Element> l = new ArrayList<Element>(1);
-		for (Element e : currentContent) {
-			if(e instanceof Paragraph) {
-				if (p != null) {
-					p = new ParagraphCssApplier(configuration).apply(p, tag);
-					l.add(p);
-					p = null;
+		try {
+			Paragraph p = null;
+			List<Element> l = new ArrayList<Element>(1);
+			for (Element e : currentContent) {
+				if (e instanceof Paragraph) {
+					if (p != null) {
+						p = new ParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
+						l.add(p);
+						p = null;
+					}
+					l.add(e);
+				} else {
+					if (p == null) {
+						p = new Paragraph();
+					}
+					p.add(e);
 				}
-				l.add(e);
-			} else {
-				if (p == null) {
-					p = new Paragraph();
-				}
-				p.add(e);
+				// 1 methode voor deze en
+				// AbstractTagProcessor#currentContentToWritables en
+				// TableData#end?
 			}
-//			1 methode voor deze en AbstractTagProcessor#currentContentToWritables en TableData#end?
+			if (p != null) {
+				p = new ParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
+				l.add(p);
+			}
+			return l;
+		} catch (NoCustomContextException e) {
+			throw new RuntimeWorkerException(e);
 		}
-		if (p != null) {
-			p = new ParagraphCssApplier(configuration).apply(p, tag);
-			l.add(p);
-		}
-		return l;
 	}
 
 	 /* (non-Javadoc)

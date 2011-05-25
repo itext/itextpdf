@@ -53,6 +53,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.css.CssInheritanceRules;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 
@@ -71,6 +73,7 @@ public class DefaultCSSResolverTest {
 	 */
 	@Before
 	public void setup() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		css = new StyleAttrCSSResolver();
 		HashMap<String, String> pAttr = new HashMap<String, String>();
         pAttr.put("style", "fontk: Verdana; color: blue; test: a");

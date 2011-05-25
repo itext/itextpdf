@@ -45,10 +45,14 @@ package com.itextpdf.tool.xml.parser;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.parser.io.Appender;
 import com.itextpdf.tool.xml.parser.io.ParserListenerWriter;
 
@@ -58,7 +62,10 @@ import com.itextpdf.tool.xml.parser.io.ParserListenerWriter;
  */
 public class ParserTest {
 
-
+	@Before
+	public void setup() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
+	}
 	/**
 	 * Validate comment whitespace handling .
 	 *

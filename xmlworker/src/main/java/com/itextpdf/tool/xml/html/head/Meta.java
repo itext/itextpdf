@@ -51,6 +51,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 
@@ -64,7 +65,7 @@ import com.itextpdf.tool.xml.html.AbstractTagProcessor;
  */
 public class Meta extends AbstractTagProcessor {
 
-	private static final Logger logger = LoggerFactory.getLogger(Meta.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Meta.class);
 	/*
 	 * (non-Javadoc)
 	 *
@@ -82,18 +83,22 @@ public class Meta extends AbstractTagProcessor {
 						String[] split2 = str.split("=");
 						if (split2.length > 1) {
 							String enc = split2[1];
+							try {
 							if (Charset.isSupported(enc)) {
-								this.configuration.charSet(Charset.forName(enc));
-								if (logger.isLogging(Level.DEBUG)) {
-									logger.debug(
+								getHtmlPipelineContext().charSet(Charset.forName(enc));
+								if (LOGGER.isLogging(Level.DEBUG)) {
+									LOGGER.debug(
 											String.format("Detected Charset %s from meta tag, using detected charset.", enc));
 								}
 							} else {
-								if (logger.isLogging(Level.DEBUG)) {
-									logger.debug(
-											String.format("No Charset detected from metatag, using %s.", this.configuration
+								if (LOGGER.isLogging(Level.DEBUG)) {
+									LOGGER.debug(
+											String.format("No Charset detected from metatag, using %s.", getHtmlPipelineContext()
 													.charSet().displayName()));
 								}
+							}
+							} catch (NoCustomContextException e) {
+								LOGGER.error("", e);
 							}
 						}
 

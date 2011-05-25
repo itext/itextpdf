@@ -48,6 +48,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 
 /**
@@ -60,6 +62,7 @@ public class HtmlUtilsTest {
 
 	@Before
 	public void setup() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		util = new HTMLUtils();
 	}
 

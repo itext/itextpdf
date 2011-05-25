@@ -52,6 +52,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 
 /**
@@ -66,6 +68,7 @@ public class CssSelectorTest {
 	private Tag idroot;
 	@Before
 	public void setup() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		css = new CssSelector();
 		root = new Tag("root");
 		rChild = new Tag("rChild");

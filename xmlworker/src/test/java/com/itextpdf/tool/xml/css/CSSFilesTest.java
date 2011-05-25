@@ -43,7 +43,6 @@
  */
 package com.itextpdf.tool.xml.css;
 
-import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +51,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 
@@ -59,6 +60,7 @@ public class CSSFilesTest {
 
 	@Test
 	public void loadandretrieve() throws  CssResolverException {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		CssFilesImpl files = new CssFilesImpl();
 		StyleAttrCSSResolver resolver = new StyleAttrCSSResolver(files);
 		URL u = CSSFilesTest.class.getResource("/css/style.css");

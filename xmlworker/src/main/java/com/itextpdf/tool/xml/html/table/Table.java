@@ -65,6 +65,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPRow;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPTableEvent;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
@@ -107,229 +108,238 @@ public class Table extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		int numberOfColumns = 0;
-		//
-		List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
-		List<Element> invalidRowElements = new ArrayList<Element>(1);
-		for (Element e : currentContent) {
-			int localNumCols = 0;
-			if (e instanceof TableRowElement) {
-				TableRowElement tableRowElement = (TableRowElement) e;
-				for (HtmlCell cell : tableRowElement.getContent()) {
-					localNumCols += cell.getColspan();
+		try {
+			int numberOfColumns = 0;
+			//
+			List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
+			List<Element> invalidRowElements = new ArrayList<Element>(1);
+			for (Element e : currentContent) {
+				int localNumCols = 0;
+				if (e instanceof TableRowElement) {
+					TableRowElement tableRowElement = (TableRowElement) e;
+					for (HtmlCell cell : tableRowElement.getContent()) {
+						localNumCols += cell.getColspan();
+					}
+					if (localNumCols > numberOfColumns) {
+						numberOfColumns = localNumCols;
+					}
+					tableRows.add(tableRowElement);
+				} else {
+					invalidRowElements.add(e);
 				}
-				if (localNumCols > numberOfColumns) {
-					numberOfColumns = localNumCols;
-				}
-				tableRows.add(tableRowElement);
-			} else {
-				invalidRowElements.add(e);
-			}
 
-		}
-		Collections.sort(tableRows, new TableRowElementComparator());
-		//
-		PdfPTable table = new PdfPTable(numberOfColumns);
-		TableStyleValues styleValues = setStyleValues(tag);
-		table.setTableEvent(new TableBorderEvent(styleValues));
-		setVerticalMargin(table, tag, styleValues);
-		widenLastCell(tableRows, styleValues.getHorBorderSpacing());
-		float[] columnWidths = new float[numberOfColumns];
-		float[] widestWords = new float[numberOfColumns];
-		float[] fixedWidths = new float[numberOfColumns];
-		int[] rowspanValue = new int[numberOfColumns];
-		float largestColumn = 0;
-		int indexOfLargestColumn = 0;
-		// Initial fill of the widths arrays
-		for (TableRowElement row : tableRows) {
-			int column = 0;
-			for (HtmlCell cell : row.getContent()) {
-				// check whether the current column should be skipped due to a
-				// rowspan value of higher cell in this column.
-				while (rowspanValue[column] > 1) {
-					rowspanValue[column] = rowspanValue[column] - 1;
-					++column;
-				}
-				// sets a rowspan counter for current column (counter not
-				// needed for last column).
-				if (cell.getRowspan() > 1 && column != numberOfColumns - 1) {
-					rowspanValue[column] = cell.getRowspan() - 1;
-				}
-				if (cell.getFixedWidth() != 0) {
-					float fixedWidth = cell.getFixedWidth() +
-								getCellStartWidth(cell) +
-								cell.getColspan() * styleValues.getHorBorderSpacing();
-					if (fixedWidth > fixedWidths[column]) {
-						fixedWidths[column] = fixedWidth;
-						columnWidths[column] = fixedWidth;
+			}
+			Collections.sort(tableRows, new TableRowElementComparator());
+			//
+			PdfPTable table = new PdfPTable(numberOfColumns);
+			TableStyleValues styleValues = setStyleValues(tag);
+			table.setTableEvent(new TableBorderEvent(styleValues));
+			setVerticalMargin(table, tag, styleValues);
+			widenLastCell(tableRows, styleValues.getHorBorderSpacing());
+			float[] columnWidths = new float[numberOfColumns];
+			float[] widestWords = new float[numberOfColumns];
+			float[] fixedWidths = new float[numberOfColumns];
+			int[] rowspanValue = new int[numberOfColumns];
+			float largestColumn = 0;
+			int indexOfLargestColumn = 0;
+			// Initial fill of the widths arrays
+			for (TableRowElement row : tableRows) {
+				int column = 0;
+				for (HtmlCell cell : row.getContent()) {
+					// check whether the current column should be skipped due to a
+					// rowspan value of higher cell in this column.
+					while (rowspanValue[column] > 1) {
+						rowspanValue[column] = rowspanValue[column] - 1;
+						++column;
 					}
-				}
-				if (cell.getCompositeElements() != null) {
-					float[] widthValues = setCellWidthAndWidestWord(cell);
-					float cellWidth = widthValues[0];
-					float widestWordOfCell = widthValues[1];
-					if (fixedWidths[column] == 0 && cellWidth > columnWidths[column]) {
-						columnWidths[column] = cellWidth;
-						if (cellWidth > largestColumn) {
-							largestColumn = cellWidth;
-							indexOfLargestColumn = column;
+					// sets a rowspan counter for current column (counter not
+					// needed for last column).
+					if (cell.getRowspan() > 1 && column != numberOfColumns - 1) {
+						rowspanValue[column] = cell.getRowspan() - 1;
+					}
+					if (cell.getFixedWidth() != 0) {
+						float fixedWidth = cell.getFixedWidth() +
+									getCellStartWidth(cell) +
+									cell.getColspan() * styleValues.getHorBorderSpacing();
+						if (fixedWidth > fixedWidths[column]) {
+							fixedWidths[column] = fixedWidth;
+							columnWidths[column] = fixedWidth;
 						}
 					}
-					if (widestWordOfCell > widestWords[column]) {
-						widestWords[column] = widestWordOfCell;
+					if (cell.getCompositeElements() != null) {
+						float[] widthValues = setCellWidthAndWidestWord(cell);
+						float cellWidth = widthValues[0];
+						float widestWordOfCell = widthValues[1];
+						if (fixedWidths[column] == 0 && cellWidth > columnWidths[column]) {
+							columnWidths[column] = cellWidth;
+							if (cellWidth > largestColumn) {
+								largestColumn = cellWidth;
+								indexOfLargestColumn = column;
+							}
+						}
+						if (widestWordOfCell > widestWords[column]) {
+							widestWords[column] = widestWordOfCell;
+						}
+					}
+					column++;
+					if (cell.getColspan() > 1) {
+						if (LOG.isLogging(Level.TRACE)) {
+							LOG.trace(String.format("Cell Colspan: %d", cell.getColspan()));
+						}
+						column += cell.getColspan() - 1;
 					}
 				}
-				column++;
-				if (cell.getColspan() > 1) {
-					if (LOG.isLogging(Level.TRACE)) {
-						LOG.trace(String.format("Cell Colspan: %d", cell.getColspan()));
-					}
-					column += cell.getColspan() - 1;
-				}
 			}
-		}
-		float totalFixedWidth = getTableWidth(fixedWidths, tag, styleValues.getHorBorderSpacing());
-		float targetWidth = calculateTargetWidth(tag, columnWidths, styleValues.getHorBorderSpacing());
-		if (totalFixedWidth > targetWidth) {
-			float targetPercentage = targetWidth / totalFixedWidth;
-			for (int column = 0; column < columnWidths.length; column++) {
-				columnWidths[column] *= targetPercentage;
-			}
-		} else {
-			float initialTotalWidth = getTableWidth(columnWidths, tag, styleValues.getHorBorderSpacing());
-			float targetPercentage = (targetWidth - totalFixedWidth) / (initialTotalWidth - totalFixedWidth);
-			// Reduce width of columns if the columnWidth array + borders +
-			// paddings
-			// is too large for the given targetWidth.
-			if (initialTotalWidth > targetWidth) {
-				float leftToReduce = 0;
+			float totalFixedWidth = getTableWidth(fixedWidths, tag, styleValues.getHorBorderSpacing());
+			float targetWidth = calculateTargetWidth(tag, columnWidths, styleValues.getHorBorderSpacing());
+			if (totalFixedWidth > targetWidth) {
+				float targetPercentage = targetWidth / totalFixedWidth;
 				for (int column = 0; column < columnWidths.length; column++) {
-					if (fixedWidths[column] == 0) {
-						// Reduce width of the column to its targetWidth, if
-						// widestWord of column still fits in the targetWidth of
-						// the
-						// column.
-						if (widestWords[column] <= columnWidths[column] * targetPercentage) {
-							columnWidths[column] *= targetPercentage;
-							// else take the widest word and calculate space
-							// left to
-							// reduce.
-						} else {
-							columnWidths[column] = widestWords[column];
-							leftToReduce += widestWords[column] - columnWidths[column] * targetPercentage;
-						}
-						// if widestWord of a column does not fit in the
-						// fixedWidth,
-						// set the column width to the widestWord.
-					} else if (fixedWidths[column] < widestWords[column]) {
-						columnWidths[column] = widestWords[column];
-						leftToReduce += widestWords[column] - fixedWidths[column];
-					}
+					columnWidths[column] *= targetPercentage;
 				}
-				if (leftToReduce != 0) {
-					// Reduce width of the column with the most text, if its
-					// widestWord still fits in the reduced column.
-					if (widestWords[indexOfLargestColumn] <= columnWidths[indexOfLargestColumn] - leftToReduce) {
-						columnWidths[indexOfLargestColumn] -= leftToReduce;
-					} else { // set all columnWidths to their minimum with the
-								// widestWord array.
-						for (int column = 0; leftToReduce != 0 && column < columnWidths.length; column++) {
-							if (fixedWidths[column] == 0 && columnWidths[column] > widestWords[column]) {
-								float difference = columnWidths[column] - widestWords[column];
-								if (difference <= leftToReduce) {
-									leftToReduce -= difference;
-									columnWidths[column] = widestWords[column];
+			} else {
+				float initialTotalWidth = getTableWidth(columnWidths, tag, styleValues.getHorBorderSpacing());
+				float targetPercentage = (targetWidth - totalFixedWidth) / (initialTotalWidth - totalFixedWidth);
+				// Reduce width of columns if the columnWidth array + borders +
+				// paddings
+				// is too large for the given targetWidth.
+				if (initialTotalWidth > targetWidth) {
+					float leftToReduce = 0;
+					for (int column = 0; column < columnWidths.length; column++) {
+						if (fixedWidths[column] == 0) {
+							// Reduce width of the column to its targetWidth, if
+							// widestWord of column still fits in the targetWidth of
+							// the
+							// column.
+							if (widestWords[column] <= columnWidths[column] * targetPercentage) {
+								columnWidths[column] *= targetPercentage;
+								// else take the widest word and calculate space
+								// left to
+								// reduce.
+							} else {
+								columnWidths[column] = widestWords[column];
+								leftToReduce += widestWords[column] - columnWidths[column] * targetPercentage;
+							}
+							// if widestWord of a column does not fit in the
+							// fixedWidth,
+							// set the column width to the widestWord.
+						} else if (fixedWidths[column] < widestWords[column]) {
+							columnWidths[column] = widestWords[column];
+							leftToReduce += widestWords[column] - fixedWidths[column];
+						}
+					}
+					if (leftToReduce != 0) {
+						// Reduce width of the column with the most text, if its
+						// widestWord still fits in the reduced column.
+						if (widestWords[indexOfLargestColumn] <= columnWidths[indexOfLargestColumn] - leftToReduce) {
+							columnWidths[indexOfLargestColumn] -= leftToReduce;
+						} else { // set all columnWidths to their minimum with the
+									// widestWord array.
+							for (int column = 0; leftToReduce != 0 && column < columnWidths.length; column++) {
+								if (fixedWidths[column] == 0 && columnWidths[column] > widestWords[column]) {
+									float difference = columnWidths[column] - widestWords[column];
+									if (difference <= leftToReduce) {
+										leftToReduce -= difference;
+										columnWidths[column] = widestWords[column];
+									} else {
+										columnWidths[column] -= leftToReduce;
+										leftToReduce = 0;
+									}
+								}
+							}
+							if (leftToReduce != 0) {
+								// If the table has an insufficient fixed width by
+								// an
+								// attribute or style, try to enlarge the table to
+								// its
+								// minimum width (= widestWords array).
+								float pageWidth;
+								try {
+									pageWidth = getHtmlPipelineContext().getPageSize().getWidth();
+								} catch (NoCustomContextException e1) {
+									throw new RuntimeWorkerException(e1);
+								}
+								if (getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing()) < pageWidth) {
+									targetWidth = getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing());
+									leftToReduce = 0;
 								} else {
-									columnWidths[column] -= leftToReduce;
+									// If all columnWidths are set to the
+									// widestWordWidths and the table is still to
+									// wide
+									// content will fall off the edge of a page,
+									// which
+									// is similar to HTML.
+									targetWidth = pageWidth - getTableOuterWidth(tag, styleValues.getHorBorderSpacing());
 									leftToReduce = 0;
 								}
 							}
 						}
-						if (leftToReduce != 0) {
-							// If the table has an insufficient fixed width by
-							// an
-							// attribute or style, try to enlarge the table to
-							// its
-							// minimum width (= widestWords array).
-							float pageWidth = configuration.getPageSize().getWidth();
-							if (getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing()) < pageWidth) {
-								targetWidth = getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing());
-								leftToReduce = 0;
-							} else {
-								// If all columnWidths are set to the
-								// widestWordWidths and the table is still to
-								// wide
-								// content will fall off the edge of a page,
-								// which
-								// is similar to HTML.
-								targetWidth = pageWidth - getTableOuterWidth(tag, styleValues.getHorBorderSpacing());
-								leftToReduce = 0;
+					}
+					// Enlarge width of columns to fit the targetWidth.
+				} else if (initialTotalWidth < targetWidth) {
+					for (int column = 0; column < columnWidths.length; column++) {
+						if (fixedWidths[column] == 0) {
+							columnWidths[column] *= targetPercentage;
+						}
+					}
+				}
+			}
+			try {
+				table.setTotalWidth(columnWidths);
+				table.setLockedWidth(true);
+				table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+			} catch (DocumentException e) {
+				throw new RuntimeWorkerException(e);
+			}
+			for (TableRowElement row : tableRows) {
+				int columnNumber = -1;
+				for (HtmlCell cell : row.getContent()) {
+					columnNumber += cell.getColspan();
+					List<Element> compositeElements = cell.getCompositeElements();
+					if (compositeElements != null) {
+						for (Element baseLevel : compositeElements) {
+							if (baseLevel instanceof PdfPTable) {
+								TableStyleValues cellValues = cell.getCellValues();
+								float totalBordersWidth = cellValues.isLastInRow() ? styleValues.getHorBorderSpacing() * 2
+										: styleValues.getHorBorderSpacing();
+								totalBordersWidth += cellValues.getBorderWidthLeft() + cellValues.getBorderWidthRight();
+								float columnWidth = columnWidths[columnNumber];
+								PdfPTableEvent tableEvent = ((PdfPTable) baseLevel).getTableEvent();
+								TableStyleValues innerStyleValues = ((TableBorderEvent) tableEvent).getTableStyleValues();
+								totalBordersWidth += innerStyleValues.getBorderWidthLeft();
+								totalBordersWidth += innerStyleValues.getBorderWidthRight();
+								((PdfPTable) baseLevel).setTotalWidth(columnWidth - totalBordersWidth);
 							}
 						}
 					}
+					table.addCell(cell);
 				}
-				// Enlarge width of columns to fit the targetWidth.
-			} else if (initialTotalWidth < targetWidth) {
-				for (int column = 0; column < columnWidths.length; column++) {
-					if (fixedWidths[column] == 0) {
-						columnWidths[column] *= targetPercentage;
-					}
-				}
+				table.completeRow();
 			}
-		}
-		try {
-			table.setTotalWidth(columnWidths);
-			table.setLockedWidth(true);
-			table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-		} catch (DocumentException e) {
+			List<Element> elems = new ArrayList<Element>();
+			if (invalidRowElements.size() > 0) {
+				// all invalid row elements taken as caption
+				int i = 0;
+				Tag captionTag = tag.getChildren().get(i++);
+				while (!captionTag.getTag().equalsIgnoreCase(HTML.Tag.CAPTION) && i < tag.getChildren().size()) {
+					captionTag = tag.getChildren().get(i);
+					i++;
+				}
+				String captionSideValue = captionTag.getCSS().get(CSS.Property.CAPTION_SIDE);
+				if (captionSideValue != null && captionSideValue.equalsIgnoreCase(CSS.Value.BOTTOM)) {
+					elems.add(table);
+					elems.addAll(invalidRowElements);
+				} else {
+					elems.addAll(invalidRowElements);
+					elems.add(table);
+				}
+			} else {
+				elems.add(table);
+			}
+			return elems;
+		} catch (NoCustomContextException e) {
 			throw new RuntimeWorkerException(e);
 		}
-		for (TableRowElement row : tableRows) {
-			int columnNumber = -1;
-			for (HtmlCell cell : row.getContent()) {
-				columnNumber += cell.getColspan();
-				List<Element> compositeElements = cell.getCompositeElements();
-				if (compositeElements != null) {
-					for (Element baseLevel : compositeElements) {
-						if (baseLevel instanceof PdfPTable) {
-							TableStyleValues cellValues = cell.getCellValues();
-							float totalBordersWidth = cellValues.isLastInRow() ? styleValues.getHorBorderSpacing() * 2
-									: styleValues.getHorBorderSpacing();
-							totalBordersWidth += cellValues.getBorderWidthLeft() + cellValues.getBorderWidthRight();
-							float columnWidth = columnWidths[columnNumber];
-							PdfPTableEvent tableEvent = ((PdfPTable) baseLevel).getTableEvent();
-							TableStyleValues innerStyleValues = ((TableBorderEvent) tableEvent).getTableStyleValues();
-							totalBordersWidth += innerStyleValues.getBorderWidthLeft();
-							totalBordersWidth += innerStyleValues.getBorderWidthRight();
-							((PdfPTable) baseLevel).setTotalWidth(columnWidth - totalBordersWidth);
-						}
-					}
-				}
-				table.addCell(cell);
-			}
-			table.completeRow();
-		}
-		List<Element> elems = new ArrayList<Element>();
-		if (invalidRowElements.size() > 0) {
-			// all invalid row elements taken as caption
-			int i = 0;
-			Tag captionTag = tag.getChildren().get(i++);
-			while (!captionTag.getTag().equalsIgnoreCase(HTML.Tag.CAPTION) && i < tag.getChildren().size()) {
-				captionTag = tag.getChildren().get(i);
-				i++;
-			}
-			String captionSideValue = captionTag.getCSS().get(CSS.Property.CAPTION_SIDE);
-			if (captionSideValue != null && captionSideValue.equalsIgnoreCase(CSS.Value.BOTTOM)) {
-				elems.add(table);
-				elems.addAll(invalidRowElements);
-			} else {
-				elems.addAll(invalidRowElements);
-				elems.add(table);
-			}
-		} else {
-			elems.add(table);
-		}
-		return elems;
 	}
 
 	/**
@@ -343,15 +353,16 @@ public class Table extends AbstractTagProcessor {
 	 * If none of the above is true, the width of the table is set to its default with the columnWidths array.
 	 * @param columnWidths
 	 * @return
+	 * @throws NoCustomContextException
 	 */
-	private float calculateTargetWidth(final Tag tag, final float[] columnWidths, final float horBorderSpacing) {
+	private float calculateTargetWidth(final Tag tag, final float[] columnWidths, final float horBorderSpacing) throws NoCustomContextException {
 		float targetWidth = 0;
 		float marginsBordersSpacing = getTableOuterWidth(tag, horBorderSpacing);
 		if (tag.getAttributes().get(CSS.Property.WIDTH) != null || tag.getCSS().get(CSS.Property.WIDTH) != null) {
-			targetWidth = new WidthCalculator().getWidth(tag, configuration) - marginsBordersSpacing;
+			targetWidth = new WidthCalculator().getWidth(tag, getHtmlPipelineContext()) - marginsBordersSpacing;
 		} else if (null == tag.getParent()
-				|| (null != tag.getParent() && configuration.getRootTags().contains(tag.getParent().getTag()))) {
-			targetWidth = configuration.getPageSize().getWidth() - marginsBordersSpacing;
+				|| (null != tag.getParent() && getHtmlPipelineContext().getRootTags().contains(tag.getParent().getTag()))) {
+			targetWidth = getHtmlPipelineContext().getPageSize().getWidth() - marginsBordersSpacing;
 		} else /* this table is an inner table and width adjustment is done in outer table */ {
 			targetWidth = getTableWidth(columnWidths, tag, horBorderSpacing);
 		}
@@ -520,7 +531,7 @@ public class Table extends AbstractTagProcessor {
 	return new float[]{cellWidth, widestWordOfCell};
 	}
 
-	private float getTableWidth(final float[] widths, final Tag tag, final float horBorderSpacing) {
+	private float getTableWidth(final float[] widths, final Tag tag, final float horBorderSpacing) throws NoCustomContextException {
 		float width = 0;
 		for(float f: widths) {
 			width += f;
@@ -539,15 +550,16 @@ public class Table extends AbstractTagProcessor {
 	 * @param tag
 	 * @param horBorderSpacing
 	 * @return
+	 * @throws NoCustomContextException
 	 */
-	private float getTableOuterWidth(final Tag tag, final float horBorderSpacing) {
-		float total = utils.getLeftAndRightMargin(tag, configuration.getPageSize().getWidth())
+	private float getTableOuterWidth(final Tag tag, final float horBorderSpacing) throws NoCustomContextException {
+		float total = utils.getLeftAndRightMargin(tag, getHtmlPipelineContext().getPageSize().getWidth())
 			+ utils.checkMetricStyle(tag, CSS.Property.BORDER_LEFT_WIDTH)
 			+ utils.checkMetricStyle(tag, CSS.Property.BORDER_RIGHT_WIDTH)
 			+ horBorderSpacing;
 		Tag parent = tag.getParent();
 		if (parent != null) {
-			total += utils.getLeftAndRightMargin(parent, configuration.getPageSize().getWidth());
+			total += utils.getLeftAndRightMargin(parent, getHtmlPipelineContext().getPageSize().getWidth());
 		}
 		return total;
 	}
@@ -576,10 +588,11 @@ public class Table extends AbstractTagProcessor {
 	 * @param table PdfPTable on which the margins need to be set.
 	 * @param t Tag containing the margin styles and font size if needed.
 	 * @param values {@link TableStyleValues} containing border widths and border spacing values.
+	 * @throws NoCustomContextException
 	 */
-	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values) {
+	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values) throws NoCustomContextException {
 		float spacingBefore = values.getBorderWidthTop();
-		Map<String, Object> memory = configuration.getMemory();
+		Map<String, Object> memory = getHtmlPipelineContext().getMemory();
 		Object mb = memory.get(XMLWorkerConfig.LAST_MARGIN_BOTTOM);
 		if(mb != null) {
 			spacingBefore += (Float)mb;
@@ -593,7 +606,7 @@ public class Table extends AbstractTagProcessor {
 			} else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
 				float marginBottom = utils.parseValueToPt(value, fst.getFontSize(t));
 				spacingAfter += marginBottom;
-				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, marginBottom);
+				getHtmlPipelineContext().getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, marginBottom);
 			}
 		}
 		table.setSpacingBefore(spacingBefore);

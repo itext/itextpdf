@@ -9,10 +9,10 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
@@ -20,13 +20,13 @@ import com.itextpdf.tool.xml.css.CssUtils;
  */
 public class LineSeparatorCssApplier implements CssApplier<LineSeparator>{
 
-	private final XMLWorkerConfig configuration;
+	private final HtmlPipelineContext configuration;
 
 	/**
-	 * @param configuration
+	 * @param htmlPipelineContext
 	 */
-	public LineSeparatorCssApplier(final XMLWorkerConfig configuration) {
-		this.configuration = configuration;
+	public LineSeparatorCssApplier(final HtmlPipelineContext htmlPipelineContext) {
+		this.configuration = htmlPipelineContext;
 	}
 
 	/* (non-Javadoc)

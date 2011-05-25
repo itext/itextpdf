@@ -57,6 +57,8 @@ import org.junit.Test;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
@@ -69,6 +71,7 @@ public class SamplesTest {
 
 	static {
 	//	FontFactory.registerDirectories();
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 	}
 
 	@Before

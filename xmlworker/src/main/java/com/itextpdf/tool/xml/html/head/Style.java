@@ -54,8 +54,12 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 
 /**
+ * The Style TagProcessor will try to add the content of a &lt;style&gt; to the
+ * {@link CssResolverPipeline} CSS. If the content cannot be parsed, an error is logged.
+ *
  * @author redlab_b
  *
  */
@@ -78,6 +82,7 @@ public class Style extends AbstractTagProcessor {
 		} catch (CssResolverException e) {
 			LOG.error(content + "\ncould not be parsed, proceeding without", e);
 		} catch (NoCustomContextException e) {
+			LOG.trace("style tag not parsed, no CustomContext found for CssResolverPipeline");
 		}
 		return new ArrayList<Element>(0);
 	}

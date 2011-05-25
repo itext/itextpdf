@@ -56,7 +56,8 @@ import org.junit.Test;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.Writable;
@@ -75,7 +76,7 @@ public class FontAndColorTest {
 
 	@Before
 	public void setup() throws IOException {
-		FontFactory.registerDirectories();
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		BufferedInputStream bis = new BufferedInputStream(FontAndColorTest.class.getResourceAsStream("/snippets/font_color_snippet.html"));
 		XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 		elementList = new ArrayList<Element>();

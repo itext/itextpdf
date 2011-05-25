@@ -34,8 +34,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 
 /**
@@ -55,7 +57,11 @@ public class Body extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitize(content);
 		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
-			l.add(new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(sanitized), tag));
+			try {
+				l.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext()).apply(new NoNewLineParagraph(sanitized), tag));
+			} catch (NoCustomContextException e) {
+				throw new RuntimeWorkerException(e);
+			}
 		}
 		return l;
 	}

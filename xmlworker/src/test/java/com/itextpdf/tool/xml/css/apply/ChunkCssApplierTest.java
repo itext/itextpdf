@@ -52,6 +52,8 @@ import org.junit.Test;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 
 public class ChunkCssApplierTest {
@@ -61,6 +63,7 @@ public class ChunkCssApplierTest {
 
 	@Before
 	public void setup() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		t = new Tag(null, null);
 		c = new Chunk("default text for chunk creation");
 		applier.apply(c, t);

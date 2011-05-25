@@ -71,13 +71,13 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	public List<Element> end(final Tag tag, final List<Element> writables) {
 		List<Element> listElements = new ArrayList<Element>();
 		for (Element e : writables) {
-					if (e instanceof ListItem || e instanceof com.itextpdf.text.List) {
-						listElements.add(e);
-					} else {
-						ListItem listItem = new ListItem();
-						listItem.add(e);
-						listElements.add(listItem);
-					}
+			if (e instanceof ListItem || e instanceof com.itextpdf.text.List) {
+				listElements.add(e);
+			} else {
+				ListItem listItem = new ListItem();
+				listItem.add(e);
+				listElements.add(listItem);
+			}
 		}
 		int size = listElements.size();
 		List<Element> mywritables = new ArrayList<Element>();
@@ -103,7 +103,11 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 							child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
 						}
 					}
-					list.add(new ParagraphCssApplier(configuration).apply((ListItem) li, child));
+					try {
+						list.add(new ParagraphCssApplier(getHtmlPipelineContext()).apply((ListItem) li, child));
+					} catch (NoCustomContextException e1) {
+						throw new RuntimeWorkerException(e1);
+					}
 				} else {
 					list.add(li);
 				}
@@ -125,7 +129,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 		float ownMargin = 0;
 		String marginValue = tag.getCSS().get(CSS.Property.MARGIN+end);
 		if(marginValue==null) {
-			if(null != tag.getParent() && configuration.getRootTags().contains(tag.getParent().getTag())) {
+			if(null != tag.getParent() && getHtmlPipelineContext().getRootTags().contains(tag.getParent().getTag())) {
 				ownMargin = ownFontSize;
 			}
 		} else {

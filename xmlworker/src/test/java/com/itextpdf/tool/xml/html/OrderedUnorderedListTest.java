@@ -14,6 +14,8 @@ import org.junit.Test;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
@@ -43,6 +45,7 @@ public class OrderedUnorderedListTest {
 
 	@Before
 	public void before() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		root = new Tag("body");
 		p = new Tag("p");
 		ul = new Tag("ul");
@@ -53,16 +56,16 @@ public class OrderedUnorderedListTest {
 		listWithTwo = new ArrayList<Element>();
 		config = new XMLWorkerConfigurationImpl();
 		orderedUnorderedList = new OrderedUnorderedList();
-		orderedUnorderedList.setConfiguration(config);
 		WorkerContextImpl context = new WorkerContextImpl();
-		context.add(HtmlPipeline.class, new HtmlPipelineContext(config, context));
+		HtmlPipelineContext context2 = new HtmlPipelineContext(context);
+		context.add(HtmlPipeline.class, context2);
 		orderedUnorderedList.setContext(context);
 		root.addChild(p);
 		root.addChild(ul);
 		ul.addChild(first);
 		ul.addChild(last);
 		p.getCSS().put("font-size", "12pt");
-		new ParagraphCssApplier(config).apply(new Paragraph("paragraph"), p);
+		new ParagraphCssApplier(context2).apply(new Paragraph("paragraph"), p);
 		first.getCSS().put("margin-top", "50pt");
 		first.getCSS().put("padding-top", "25pt");
 		first.getCSS().put("margin-bottom", "50pt");

@@ -11,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 
@@ -26,6 +28,7 @@ public class FontSizeTranslatorTest {
 
 	@Before
 	public void before() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		p.addChild(span);
 		span.setParent(p);
 	}

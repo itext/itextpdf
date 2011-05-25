@@ -48,11 +48,11 @@ import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
@@ -62,7 +62,6 @@ import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
  */
 public class TableData extends AbstractTagProcessor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TableData.class);
 	/*
 	 * (non-Javadoc)
 	 *
@@ -96,7 +95,11 @@ public class TableData extends AbstractTagProcessor {
 		for (Element e : currentContent) {
 			cell.addElement(e);
 		}
-		l.add(new HtmlCellCssApplier(configuration).apply(cell, tag));
+		try {
+			l.add(new HtmlCellCssApplier(getHtmlPipelineContext()).apply(cell, tag));
+		} catch (NoCustomContextException e1) {
+			throw new RuntimeWorkerException(e1);
+		}
 		return l;
 	}
 

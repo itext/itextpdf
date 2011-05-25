@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -80,7 +81,7 @@ public class FileRetrieveImpl implements FileRetrieve {
 	public FileRetrieveImpl(final String[] strings) {
 		this();
 		for (String s : strings) {
-			if (s.startsWith("http")) {
+			if (s.startsWith("http") || s.startsWith("https")) {
 				urls.add(s);
 			} else {
 				File f = new File(s);
@@ -90,40 +91,67 @@ public class FileRetrieveImpl implements FileRetrieve {
 			}
 		}
 	}
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.net.FileRetrieve#processFromURL(java.net.URL, com.itextpdf.tool.xml.net.ReadingProcessor)
+
+	/**
+	 * ProcessFromHref first tries to create an {@link URL} from the given href,
+	 * if that throws a {@link MalformedURLException}, it will prepend the given
+	 * root urls to href until a valid URL is found. If there by then there is
+	 * no valid url found, ths method will see if the given href is a valid file
+	 * and can read it. If it's not a valid file or a file that can't be read,
+	 * the given rootdirs will be set as rootpath with the given href as
+	 * filepath untill a valid file has been found.
 	 */
-    public void processFromHref(final String href, final ReadingProcessor processor) throws IOException  {
-    	// TODO add proxy
-    	if (LOGGER.isLogging(Level.DEBUG)) {
+	public void processFromHref(final String href, final ReadingProcessor processor) throws IOException {
+		if (LOGGER.isLogging(Level.DEBUG)) {
 			LOGGER.debug(String.format("Retrieving file from href %s", href));
 		}
-    	if (href.startsWith("http")) {
-    		read(processor, new URL(href).openStream());
-    		return;
-    	}
-    	if (new File(href).isFile()) {
-			FileInputStream in = new FileInputStream(new File(href));
-	        read(processor, in);
-	        return;
+		URL url = null;
+		File f = null;
+		boolean isfile = false;
+		try {
+			url = new URL(href);
+		} catch (MalformedURLException e) {
+			try {
+				url = detectWithRootUrls(href);
+			} catch (MalformedURLException e1) {
+				// its probably a file, try to detect it.
+				f = new File(href);
+				isfile = true;
+				if (!(f.isFile() && f.canRead())) {
+					isfile = false;
+					for (File root : rootdirs) {
+						f = new File(root, href);
+						if (f.isFile() && f.canRead()) {
+							isfile = true;
+							break;
+						}
+
+					}
+				}
+			}
 		}
-    	for (String root : urls) {
+		InputStream in = null;
+		if (null != url) {
+			in = url.openStream();
+		} else if (isfile) {
+			in = new FileInputStream(f);
+		}
+		read(processor, in);
+	}
+
+	/**
+	 * @param href
+	 * @throws MalformedURLException if no valid url could be found.
+	 */
+	private URL detectWithRootUrls(final String href) throws MalformedURLException {
+		for (String root : urls) {
     		try {
-				URL url = new URL(root + href);
-				read(processor, url.openStream());
-				return;
-			} catch (IOException e) {
+				return new URL(root + href);
+			} catch (MalformedURLException e) {
 			}
     	}
-    	for (File f : rootdirs) {
-    		if (new File(f, href).isFile()) {
-    			FileInputStream in = new FileInputStream(new File(f, href));
-    	        read(processor, in);
-    	        return;
-    		}
-    	}
-
-    }
+		throw new MalformedURLException();
+	}
 
     /* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.net.FileRetrieve#processFromStream(java.io.InputStream, com.itextpdf.tool.xml.net.ReadingProcessor)

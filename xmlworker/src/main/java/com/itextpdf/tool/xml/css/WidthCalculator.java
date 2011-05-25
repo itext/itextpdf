@@ -44,8 +44,8 @@
 package com.itextpdf.tool.xml.css;
 
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
@@ -55,7 +55,7 @@ public class WidthCalculator {
 
 	private final CssUtils utils = CssUtils.getInstance();
 
-	public float getWidth(final Tag tag, final XMLWorkerConfig configuration){
+	public float getWidth(final Tag tag, final HtmlPipelineContext htmlPipelineContext){
 		float width = 0;
 		String widthValue = tag.getCSS().get(HTML.Attribute.WIDTH);
 		if(widthValue == null) {
@@ -69,12 +69,12 @@ public class WidthCalculator {
 				float firstAncestorsWidth = 0;
 				while(firstAncestorsWidth == 0) {
 					ancestor = ancestor.getParent();
-					firstAncestorsWidth = getWidth(ancestor, configuration);
+					firstAncestorsWidth = getWidth(ancestor, htmlPipelineContext);
 				}
 				width = utils.parseRelativeValue(widthValue, firstAncestorsWidth);
 			}
-		} else if (configuration.getRootTags().contains(tag.getTag())){
-			width = configuration.getPageSize().getWidth();
+		} else if (htmlPipelineContext.getRootTags().contains(tag.getTag())){
+			width = htmlPipelineContext.getPageSize().getWidth();
 		}
 		return width;
 	}

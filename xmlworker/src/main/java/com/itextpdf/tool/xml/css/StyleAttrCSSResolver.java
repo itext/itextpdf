@@ -76,7 +76,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	private final CssUtils utils;
 	private CssInheritanceRules inherit;
 	private final CssFiles cssFiles;
-	private final FileRetrieve retrieve;
+	private FileRetrieve retrieve;
 
 	/**
 	 * Construct a new {@link StyleAttrCSSResolver} with default settings.
@@ -299,7 +299,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 
 	/**
 	 * Add a file to the CssFiles Collection.
-	 * @param file
+	 * @param file the CssFile to add.
 	 */
 	public void addCssFile(final CssFile file) {
 		this.cssFiles.add(file);
@@ -328,5 +328,14 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	public void setCssInheritanceRules(final CssInheritanceRules inherit) {
 		this.inherit = inherit;
 	}
+
+	/**
+	 * The {@link FileRetrieve} implementation to use in {@link StyleAttrCSSResolver#addCssFile(String)}.
+	 * @param retrieve the retrieve to set
+	 */
+	public void setFileRetrieve(final FileRetrieve retrieve) {
+		this.retrieve = retrieve;
+	}
+
 
 }

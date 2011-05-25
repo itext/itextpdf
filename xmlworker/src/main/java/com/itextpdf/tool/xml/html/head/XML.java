@@ -52,6 +52,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 
@@ -61,7 +62,7 @@ import com.itextpdf.tool.xml.html.AbstractTagProcessor;
  */
 public class XML extends AbstractTagProcessor {
 
-	private static final Logger logger = LoggerFactory.getLogger(XML.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(XML.class);
 	/*
 	 * (non-Javadoc)
 	 *
@@ -72,14 +73,18 @@ public class XML extends AbstractTagProcessor {
 		String enc = tag.getAttributes().get("encoding");
 		if (null != enc) {
 			if (Charset.isSupported(enc)) {
-				this.configuration.charSet(Charset.forName(enc));
-				if (logger.isLogging(Level.DEBUG)) {
-					logger.debug(
-							String.format("Detected Charset %s from xml tag, using detected charset.", enc));
+				try {
+					getHtmlPipelineContext().charSet(Charset.forName(enc));
+					if (LOGGER.isLogging(Level.DEBUG)) {
+						LOGGER.debug(
+								String.format("Detected Charset %s from xml tag, using detected charset.", enc));
+					}
+				} catch (NoCustomContextException e) {
+					LOGGER.error("", e);
 				}
 			} else {
-				if (logger.isLogging(Level.DEBUG)) {
-					logger.debug(String.format("No Charset detected from xml tag, using default"));
+				if (LOGGER.isLogging(Level.DEBUG)) {
+					LOGGER.debug(String.format("No Charset detected from xml tag, using default"));
 				}
 			}
 

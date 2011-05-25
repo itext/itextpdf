@@ -54,6 +54,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
@@ -70,6 +72,7 @@ public class PandBTest {
 
 	@Before
 	public void setup() throws IOException {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		BufferedInputStream bis = new BufferedInputStream(PandBTest.class.getResourceAsStream("/snippets/b-p_snippet.html"));
 		XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 		elementList = new ArrayList<Element>();

@@ -133,7 +133,7 @@ public class XMLWorkerHelper {
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(conf, new ElementHandlerPipeline(d, null)));
 		conf.isParsingHTML(true).acceptUnknown(true).cssResolver(cssResolver).autoBookMark(true).pipeline(pipeline);
-		XMLWorkerImpl worker = new XMLWorkerImpl(conf);
+		XMLWorker worker = new XMLWorker(pipeline, true);
 		XMLParser p = new XMLParser(conf.isParsingHTML(), worker);
 		p.parse(in);
 	}
@@ -153,7 +153,7 @@ public class XMLWorkerHelper {
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(conf, new PdfWriterPipeline(doc, writer)));
 		conf.isParsingHTML(true).acceptUnknown(true).autoBookMark(true).cssResolver(cssResolver).pipeline(pipeline);
-		XMLWorkerImpl worker = new XMLWorkerImpl(conf);
+		XMLWorker worker = new XMLWorker(pipeline, true);
 		XMLParser p = new XMLParser(conf.isParsingHTML(), worker);
 		p.parse(in);
 	}

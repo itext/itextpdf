@@ -48,7 +48,6 @@ import java.util.List;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 
 /**
  * @author redlab_b
@@ -94,12 +93,6 @@ public interface TagProcessor {
      *         stack.
      */
     boolean isStackOwner();
-
-	/**
-	 * The configuration object setter.
-	 * @param config the configuration object.
-	 */
-	void setConfiguration(XMLWorkerConfig config);
 
 	/**
 	 * @param context

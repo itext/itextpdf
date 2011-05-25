@@ -43,16 +43,20 @@
  */
 package com.itextpdf.tool.xml.pipeline.html;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.tool.xml.CustomContext;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.html.TagProcessorFactory;
 import com.itextpdf.tool.xml.html.Tags;
@@ -63,24 +67,35 @@ import com.itextpdf.tool.xml.html.Tags;
  */
 public class HtmlPipelineContext implements CustomContext {
 
+	/**
+	 *  Key for the memory, used to store bookmark nodes
+	 */
 	public static final String BOOKMARK_TREE = "header.autobookmark.RootNode";
+	/**
+	 * Key for the memory, used in Html TagProcessing
+	 */
 	public static final String LAST_MARGIN_BOTTOM = "lastMarginBottom";
 	private final LinkedList<StackKeeper> queue;
 	private final boolean acceptUnknown = true;
 	private final TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
 	private final List<Element> ctn = new ArrayList<Element>();
-	private final XMLWorkerConfig config;
 	private final WorkerContext context;
 	private ImageProvider imageProvider;
+	private Rectangle pageSize = PageSize.A4;
+	private Charset charset;
+	private final List<String> roottags = Arrays.asList(new String[] { "defaultRoot", "body", "div" });
+	private LinkProvider linkprovider;
+	private boolean autoBookmark;
+	private final Map<String, Object> memory;
 
 	/**
 	 * @param workerContext
 	 *
 	 */
-	public HtmlPipelineContext(final XMLWorkerConfig config, final WorkerContext workerContext) {
+	public HtmlPipelineContext(final WorkerContext workerContext) {
 		this.queue = new LinkedList<StackKeeper>();
-		this.config = config;
 		this.context = workerContext;
+		this.memory = new HashMap<String, Object>();
 	}
 	/**
 	 * @param tag the tag to find a TagProcessor for
@@ -90,7 +105,6 @@ public class HtmlPipelineContext implements CustomContext {
 	public TagProcessor resolveProcessor(final String tag, final String nameSpace) {
 		TagProcessor tp = tagFactory.getProcessor(tag, nameSpace);
 		tp.setContext(context);
-		tp.setConfiguration(config);
 		return tp;
 	}
 
@@ -150,18 +164,20 @@ public class HtmlPipelineContext implements CustomContext {
 		}
 	}
 	/**
-	 * @return
+	 * @return true if auto-bookmarks should be enabled. False otherwise.
 	 */
 	public boolean autoBookmark() {
-		return config.autoBookmark();
+		return autoBookmark;
 	}
 	/**
-	 * @return
+	 * @return the memory
 	 */
 	public Map<String, Object> getMemory() {
-		return config.getMemory();
+		return memory;
 	}
 	/**
+	 * @return the image provider.
+	 * @throws NoImageProviderException if there is no {@link ImageProvider}
 	 *
 	 */
 	public ImageProvider getImageProvider() throws NoImageProviderException{
@@ -170,6 +186,43 @@ public class HtmlPipelineContext implements CustomContext {
 		}
 		return this.imageProvider;
 
+	}
+	/**
+	 * @param forName
+	 */
+	public void charSet(final Charset cSet) {
+		this.charset = cSet;
+
+	}
+	/**
+	 * @return
+	 */
+	public Charset charSet() {
+		return charset;
+	}
+	/**
+	 * @return
+	 */
+	public Rectangle getPageSize() {
+		return this.pageSize;
+	}
+	/**
+	 * @return
+	 */
+	public List<String> getRootTags() {
+		return roottags;
+	}
+	/**
+	 * @return
+	 */
+	public LinkProvider getLinkProvider() {
+		return linkprovider;
+	}
+	/**
+	 * @param pageSize the pageSize to set
+	 */
+	public void setPageSize(final Rectangle pageSize) {
+		this.pageSize = pageSize;
 	}
 
 }

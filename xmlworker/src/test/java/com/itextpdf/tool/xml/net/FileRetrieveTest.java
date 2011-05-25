@@ -53,6 +53,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
+
 /**
  * @author redlab_b
  *
@@ -62,6 +65,7 @@ public class FileRetrieveTest {
 
     @Before
     public void setup() {
+    	LoggerFactory.getInstance().setLogger(new SysoLogger(3));
         retriever = new FileRetrieveImpl();
     }
 

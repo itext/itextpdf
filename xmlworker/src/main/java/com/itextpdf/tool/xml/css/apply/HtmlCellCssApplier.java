@@ -51,7 +51,6 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
@@ -61,6 +60,7 @@ import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.table.CellSpacingEvent;
 import com.itextpdf.tool.xml.html.table.Table;
 import com.itextpdf.tool.xml.html.table.TableStyleValues;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
@@ -69,14 +69,14 @@ import com.itextpdf.tool.xml.html.table.TableStyleValues;
 public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 
     private final CssUtils utils = CssUtils.getInstance();
-	private final XMLWorkerConfig configuration;
+	private final HtmlPipelineContext configuration;
 
 
 	/**
-	 * @param configuration
+	 * @param htmlPipelineContext
 	 */
-	public HtmlCellCssApplier(final XMLWorkerConfig configuration) {
-		this.configuration = configuration;
+	public HtmlCellCssApplier(final HtmlPipelineContext htmlPipelineContext) {
+		this.configuration = htmlPipelineContext;
 	}
     /*
      * (non-Javadoc)
