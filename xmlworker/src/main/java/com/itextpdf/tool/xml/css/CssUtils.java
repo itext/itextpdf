@@ -53,7 +53,6 @@ import java.util.Set;
 import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.WebColors;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
@@ -576,7 +575,7 @@ public class CssUtils {
 	public float calculateMarginTop(final float value, final HtmlPipelineContext configuration) {
 		float marginTop = value;
 		Map<String, Object> memory = configuration.getMemory();
-		Object mb = memory.get(XMLWorkerConfig.LAST_MARGIN_BOTTOM);
+		Object mb = memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
 		if(mb != null) {
 			float marginBottom = (Float)mb;
 			marginTop = (marginTop>marginBottom)?marginTop-marginBottom:0;

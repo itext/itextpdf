@@ -57,7 +57,7 @@ import com.itextpdf.tool.xml.WorkerContext;
  */
 public abstract class AbstractPipeline implements Pipeline {
 
-	private WorkerContext context;
+	protected WorkerContext context;
 	private final Pipeline next;
 
 	/**

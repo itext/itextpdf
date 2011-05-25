@@ -17,8 +17,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
-import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
@@ -40,7 +38,6 @@ public class OrderedUnorderedListTest {
 	private final ListItem single = new ListItem("Single");
 	private final ListItem start = new ListItem("Start");
 	private final ListItem end = new ListItem("End");
-	private XMLWorkerConfig config;
 	private OrderedUnorderedList orderedUnorderedList;
 
 	@Before
@@ -54,10 +51,9 @@ public class OrderedUnorderedListTest {
 
 		listWithOne = new ArrayList<Element>();
 		listWithTwo = new ArrayList<Element>();
-		config = new XMLWorkerConfigurationImpl();
 		orderedUnorderedList = new OrderedUnorderedList();
 		WorkerContextImpl context = new WorkerContextImpl();
-		HtmlPipelineContext context2 = new HtmlPipelineContext(context);
+		HtmlPipelineContext context2 = new HtmlPipelineContext();
 		context.add(HtmlPipeline.class, context2);
 		orderedUnorderedList.setContext(context);
 		root.addChild(p);

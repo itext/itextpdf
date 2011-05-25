@@ -36,7 +36,6 @@ import java.util.List;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 
 /**
  * Does nothing.
@@ -72,12 +71,6 @@ public class DummyTagProcessor implements TagProcessor {
 	 */
 	public boolean isStackOwner() {
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.TagProcessor#setConfiguration(com.itextpdf.tool.xml.XMLWorkerConfig)
-	 */
-	public void setConfiguration(final XMLWorkerConfig config) {
 	}
 
 	/* (non-Javadoc)

@@ -60,6 +60,7 @@ import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.end.ElementHandlerPipeline;
 import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * A helper class for parsing XHTML/CSS or XML flow to PDF.
@@ -127,14 +128,14 @@ public class XMLWorkerHelper {
 	 * @throws IOException thrown when something went wrong with the IO
 	 */
 	public void parseXHtml(final ElementHandler d, final Reader in) throws IOException {
-		XMLWorkerConfigurationImpl conf = new XMLWorkerConfigurationImpl();
 		CssFilesImpl cssFiles = new CssFilesImpl();
-		cssFiles.add(new XMLWorkerHelper().getDefaultCSS());
+		cssFiles.add(getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
-		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(conf, new ElementHandlerPipeline(d, null)));
-		conf.isParsingHTML(true).acceptUnknown(true).cssResolver(cssResolver).autoBookMark(true).pipeline(pipeline);
+		HtmlPipelineContext hpc = new HtmlPipelineContext();
+		hpc.setAcceptUnknown(true).autoBookmark(true);
+		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new ElementHandlerPipeline(d, null)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
-		XMLParser p = new XMLParser(conf.isParsingHTML(), worker);
+		XMLParser p = new XMLParser(true, worker);
 		p.parse(in);
 	}
 	/**
@@ -146,15 +147,14 @@ public class XMLWorkerHelper {
 	 * @throws IOException thrown when something went wrong with the IO
 	 */
 	public void parseXHtml(final PdfWriter writer, final Document doc, final Reader in) throws IOException {
-		XMLWorkerConfigurationImpl conf = new XMLWorkerConfigurationImpl();
-		conf.document(doc).pdfWriter(writer);
 		CssFilesImpl cssFiles = new CssFilesImpl();
 		cssFiles.add(new XMLWorkerHelper().getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
-		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(conf, new PdfWriterPipeline(doc, writer)));
-		conf.isParsingHTML(true).acceptUnknown(true).autoBookMark(true).cssResolver(cssResolver).pipeline(pipeline);
+		HtmlPipelineContext hpc = new HtmlPipelineContext();
+		hpc.setAcceptUnknown(true).autoBookmark(true);
+		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
-		XMLParser p = new XMLParser(conf.isParsingHTML(), worker);
+		XMLParser p = new XMLParser(true, worker);
 		p.parse(in);
 	}
 

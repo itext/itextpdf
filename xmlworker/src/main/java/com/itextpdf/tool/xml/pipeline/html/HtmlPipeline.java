@@ -52,8 +52,8 @@ import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.PipelineException;
 import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
@@ -64,14 +64,15 @@ import com.itextpdf.tool.xml.pipeline.WritableElement;
  */
 public class HtmlPipeline extends AbstractPipeline {
 
-	private final XMLWorkerConfig config;
+	private final HtmlPipelineContext hpc;
+
 	/**
-	 * @param config
-	 * @param next
+	 * @param hpc the initial {@link HtmlPipelineContext}
+	 * @param next the next pipe in row
 	 */
-	public HtmlPipeline(final XMLWorkerConfig config, final Pipeline next) {
+	public HtmlPipeline(final HtmlPipelineContext hpc, final Pipeline next) {
 		super(next);
-		this.config = config;
+		this.hpc = hpc;
 	}
 
 	/*
@@ -216,7 +217,13 @@ public class HtmlPipeline extends AbstractPipeline {
 	 */
 	@Override
 	public CustomContext getCustomContext() throws NoCustomContextException {
-		return new HtmlPipelineContext(getContext());
+		try {
+			HtmlPipelineContext clone = hpc.clone();
+			clone.setContext(context);
+			return clone;
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeWorkerException(e);
+		}
 	}
 
 }

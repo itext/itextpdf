@@ -76,25 +76,24 @@ public class HtmlPipelineContext implements CustomContext {
 	 */
 	public static final String LAST_MARGIN_BOTTOM = "lastMarginBottom";
 	private final LinkedList<StackKeeper> queue;
-	private final boolean acceptUnknown = true;
-	private final TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
+	private boolean acceptUnknown = true;
+	private TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
 	private final List<Element> ctn = new ArrayList<Element>();
-	private final WorkerContext context;
+	private WorkerContext context;
 	private ImageProvider imageProvider;
 	private Rectangle pageSize = PageSize.A4;
 	private Charset charset;
-	private final List<String> roottags = Arrays.asList(new String[] { "defaultRoot", "body", "div" });
+	private List<String> roottags = Arrays.asList(new String[] { "defaultRoot", "body", "div" });
 	private LinkProvider linkprovider;
-	private boolean autoBookmark;
+	private boolean autoBookmark = true;
 	private final Map<String, Object> memory;
 
 	/**
 	 * @param workerContext
 	 *
 	 */
-	public HtmlPipelineContext(final WorkerContext workerContext) {
+	public HtmlPipelineContext() {
 		this.queue = new LinkedList<StackKeeper>();
-		this.context = workerContext;
 		this.memory = new HashMap<String, Object>();
 	}
 	/**
@@ -104,7 +103,7 @@ public class HtmlPipelineContext implements CustomContext {
 	 */
 	public TagProcessor resolveProcessor(final String tag, final String nameSpace) {
 		TagProcessor tp = tagFactory.getProcessor(tag, nameSpace);
-		tp.setContext(context);
+		tp.setContext(context); // TODO change with 'this' ?
 		return tp;
 	}
 
@@ -187,12 +186,14 @@ public class HtmlPipelineContext implements CustomContext {
 		return this.imageProvider;
 
 	}
+
 	/**
 	 * @param forName
+	 * @return
 	 */
-	public void charSet(final Charset cSet) {
+	public HtmlPipelineContext charSet(final Charset cSet) {
 		this.charset = cSet;
-
+		return this;
 	}
 	/**
 	 * @return
@@ -220,9 +221,79 @@ public class HtmlPipelineContext implements CustomContext {
 	}
 	/**
 	 * @param pageSize the pageSize to set
+	 * @return
 	 */
-	public void setPageSize(final Rectangle pageSize) {
+	public HtmlPipelineContext setPageSize(final Rectangle pageSize) {
 		this.pageSize = pageSize;
+		return this;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public HtmlPipelineContext clone() throws CloneNotSupportedException {
+		HtmlPipelineContext newCtx = new HtmlPipelineContext();
+		newCtx.setPageSize(this.pageSize).setLinkProvider(this.linkprovider).setImageProvider(this.imageProvider)
+				.setRootTags(this.roottags).charSet(this.charset).autoBookmark(this.autoBookmark)
+				.setTagFactory(this.tagFactory).setAcceptUnknown(this.acceptUnknown);
+		newCtx.setContext(this.context);
+		return newCtx;
+	}
+	/**
+	 * @param context
+	 */
+	void setContext(final WorkerContext context) {
+		this.context = context;
+	}
+	/**
+	 * @param acceptUnknown
+	 * @return
+	 */
+	public HtmlPipelineContext setAcceptUnknown(final boolean acceptUnknown) {
+		this.acceptUnknown = acceptUnknown;
+		return this;
+	}
+	/**
+	 * @param tagFactory
+	 * @return
+	 */
+	public HtmlPipelineContext setTagFactory(final TagProcessorFactory tagFactory) {
+		this.tagFactory = tagFactory;
+		return this;
+	}
+	/**
+	 * @param autoBookmark
+	 * @return
+	 */
+	public HtmlPipelineContext autoBookmark(final boolean autoBookmark) {
+		this.autoBookmark = autoBookmark;
+		return this;
+	}
+	/**
+	 * @param roottags
+	 * @return
+	 */
+	public HtmlPipelineContext setRootTags(final List<String> roottags) {
+		this.roottags = roottags;
+		return this;
+	}
+	/**
+	 * @param imageProvider
+	 * @return
+	 */
+	public HtmlPipelineContext setImageProvider(final ImageProvider imageProvider) {
+		this.imageProvider = imageProvider;
+		return this;
+	}
+	/**
+	 * @param linkprovider
+	 * @return
+	 */
+	public HtmlPipelineContext setLinkProvider(final LinkProvider linkprovider) {
+		this.linkprovider = linkprovider;
+		return this;
+	}
 }

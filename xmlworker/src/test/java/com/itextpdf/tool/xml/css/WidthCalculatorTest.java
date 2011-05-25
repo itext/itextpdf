@@ -27,7 +27,7 @@ public class WidthCalculatorTest {
 	Tag table = new Tag("table", new HashMap<String,String>());
 	Tag row = new Tag("tr", new HashMap<String,String>());
 	Tag cell = new Tag("td", new HashMap<String,String>());
-	private final HtmlPipelineContext config = new HtmlPipelineContext(null);
+	private final HtmlPipelineContext config = new HtmlPipelineContext();
 	private final WidthCalculator calc = new WidthCalculator();
 
 	@Before

@@ -56,13 +56,13 @@ import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.XMLWorker;
-import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.net.FileRetrieveImpl;
 import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author redlab_b
@@ -79,16 +79,14 @@ public class LoadCssThroughLinkStyleTagTest {
 	@Before
 	public void setup() {
 		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
-		XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
 		cssFiles = new CssFilesImpl();
 		String path = LoadCssThroughLinkStyleTagTest.class.getResource("/css/test.css").getPath();
 		path = path.substring(0, path.lastIndexOf("test.css"));
 		FileRetrieveImpl r = new FileRetrieveImpl(new String [] {path} );
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles, r );
-		DefaultProvider provider = new DefaultProvider();
-		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(config, null));
-		config.tagProcessorFactory(Tags.getHtmlTagProcessorFactory()).cssResolver(cssResolver)
-		.acceptUnknown(false).provider(provider).pipeline(pipeline);
+		HtmlPipelineContext hpc = new HtmlPipelineContext();
+		hpc.setAcceptUnknown(false).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, null));
 		final XMLWorker worker = new XMLWorker(pipeline, true);
 		p = new XMLParser(worker);
 	}

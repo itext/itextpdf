@@ -5,7 +5,6 @@ package com.itextpdf.tool.xml.css.apply;
 
 import com.itextpdf.text.ListItem;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CssApplier;
 
 /**
@@ -14,13 +13,11 @@ import com.itextpdf.tool.xml.css.CssApplier;
  */
 public class ListItemCssApplier implements CssApplier<ListItem>{
 
-	private final XMLWorkerConfig configuration;
 
 	/**
 	 * @param configuration
 	 */
-	public ListItemCssApplier(final XMLWorkerConfig configuration) {
-		this.configuration = configuration;
+	public ListItemCssApplier() {
 	}
 
 	/* (non-Javadoc)

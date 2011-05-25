@@ -49,7 +49,6 @@ import java.util.Map.Entry;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
@@ -133,7 +132,7 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 		}
 
 		if (hasLMB) {
-			configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, lmb);
+			configuration.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, lmb);
 		}
 		// TODO reactive for positioning and implement more
 //		if(null != configuration.getWriter() && null != css.get("position")) {

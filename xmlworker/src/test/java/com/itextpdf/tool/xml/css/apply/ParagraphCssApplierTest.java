@@ -56,7 +56,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
@@ -72,8 +71,7 @@ public class ParagraphCssApplierTest {
 	private Tag child;
 	private Paragraph firstPara;
 	private Paragraph secondPara;
-	private final XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
-	private final ParagraphCssApplier applier = new ParagraphCssApplier(new HtmlPipelineContext(null));
+	private final ParagraphCssApplier applier = new ParagraphCssApplier(new HtmlPipelineContext());
 
 	@Before
 	public void setup() {

@@ -50,6 +50,7 @@ import java.util.Map.Entry;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.WritableDirectElement;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.NoCustomContextException;
@@ -62,12 +63,14 @@ import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 
 /**
  * This pipeline can automagically create documents. Allowing you to parse
  * continuously, without needing to renew the configuration. This class does
- * expect {@link PdfWriterPipeline} to be the last pipe of the line.
+ * expect {@link PdfWriterPipeline} to be the last pipe of the line. If a
+ * {@link HtmlPipeline} is available it's context will also be reset.
  *
  * @author redlab_b
  *
@@ -77,19 +80,22 @@ public class AutoDocPipeline extends AbstractPipeline {
 	private final FileMaker fm;
 	private final String tag;
 	private final String opentag;
+	private final Rectangle pagesize;
 
 	/**
 	 * Constructor
 	 * @param fm a FileMaker to provide a stream for every new document
 	 * @param tag the tag on with to create a new document and close it
 	 * @param opentag the tag on which to open the document ( {@link Document#open()}
+	 * @param pagesize the pagesize for the documents
 	 *
 	 */
-	public AutoDocPipeline(final FileMaker fm, final String tag, final String opentag) {
+	public AutoDocPipeline(final FileMaker fm, final String tag, final String opentag, final Rectangle pagesize) {
 		super(null);
 		this.fm = fm;
 		this.tag = tag;
 		this.opentag = opentag;
+		this.pagesize = pagesize;
 	}
 
 	/*
@@ -106,7 +112,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 			if (tag.equals(tagName)) {
 				MapContext cc;
 				cc = (MapContext) getContext().get(PdfWriterPipeline.class);
-				Document d = new Document();
+				Document d = new Document(pagesize);
 				try {
 					OutputStream os = fm.getStream();
 					cc.put(PdfWriterPipeline.DOCUMENT, d);
@@ -202,6 +208,14 @@ public class AutoDocPipeline extends AbstractPipeline {
 				throw new PipelineException("AutoDocPipeline depends on PdfWriterPipeline.", e);
 			}
 			// TODO clean
+			try {
+				HtmlPipelineContext hpc = (HtmlPipelineContext) getContext().get(HtmlPipeline.class);
+				HtmlPipelineContext clone = hpc.clone();
+				clone.setPageSize(pagesize);
+				((WorkerContextImpl)getContext()).add(HtmlPipeline.class, clone);
+			} catch (NoCustomContextException e) {
+			} catch (CloneNotSupportedException e) {
+			}
 		}
 		return getNext();
 	}

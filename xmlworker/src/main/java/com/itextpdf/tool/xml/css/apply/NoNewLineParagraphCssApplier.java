@@ -48,7 +48,6 @@ import java.util.Map.Entry;
 
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
@@ -134,7 +133,7 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 		}
 
 		if (hasLMB) {
-			configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, lmb);
+			configuration.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, lmb);
 		}
 		return p;
 	}

@@ -57,7 +57,6 @@ import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.XMLWorker;
-import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.CssUtils;
@@ -66,6 +65,7 @@ import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 
 /**
@@ -128,16 +128,15 @@ public class HTMLWorkerFactoryTest {
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
-		XMLWorkerConfigurationImpl conf = new XMLWorkerConfigurationImpl();
-		conf.document(doc).pdfWriter(writer);
 		CssFilesImpl cssFiles = new CssFilesImpl();
 		cssFiles.add(XMLWorkerHelper.getInstance().getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
-		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(conf, new PdfWriterPipeline(doc, writer)));
-		conf.isParsingHTML(true).acceptUnknown(true).autoBookMark(true).pipeline(pipeline);
+		HtmlPipelineContext hpc = new HtmlPipelineContext();
+		hpc.setAcceptUnknown(true).autoBookmark(true);
+		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
 		doc.open();
-		XMLParser p = new XMLParser(conf.isParsingHTML(), worker);
+		XMLParser p = new XMLParser(true, worker);
 		p.parse(new InputStreamReader(bis));
         doc.close();
 	}

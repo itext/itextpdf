@@ -67,7 +67,6 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPTableEvent;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
@@ -77,6 +76,7 @@ import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
@@ -593,7 +593,7 @@ public class Table extends AbstractTagProcessor {
 	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values) throws NoCustomContextException {
 		float spacingBefore = values.getBorderWidthTop();
 		Map<String, Object> memory = getHtmlPipelineContext().getMemory();
-		Object mb = memory.get(XMLWorkerConfig.LAST_MARGIN_BOTTOM);
+		Object mb = memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
 		if(mb != null) {
 			spacingBefore += (Float)mb;
 		}
@@ -606,7 +606,7 @@ public class Table extends AbstractTagProcessor {
 			} else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
 				float marginBottom = utils.parseValueToPt(value, fst.getFontSize(t));
 				spacingAfter += marginBottom;
-				getHtmlPipelineContext().getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, marginBottom);
+				getHtmlPipelineContext().getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, marginBottom);
 			}
 		}
 		table.setSpacingBefore(spacingBefore);
