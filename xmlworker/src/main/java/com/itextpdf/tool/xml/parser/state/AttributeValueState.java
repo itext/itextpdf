@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -72,7 +72,7 @@ public class AttributeValueState implements State {
 		} else if (character == '"') {
 			this.parser.selectState().doubleQuotedAttr();
 		} else if (!Character.isWhitespace((char) character)){
-			this.parser.memory().current().append((char) character);
+			this.parser.append(character);
 			this.parser.selectState().unquotedAttr();
 		}
 	}

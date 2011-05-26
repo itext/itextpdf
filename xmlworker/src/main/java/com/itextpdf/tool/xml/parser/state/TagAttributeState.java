@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -69,11 +69,11 @@ public class TagAttributeState implements State {
 			// self closing tag detected
 			parser.selectState().selfClosing();
 		} else if (character == '=') {
-			this.parser.memory().currentAttr(this.parser.current());
+			this.parser.memory().currentAttr(this.parser.bufferToString());
 			this.parser.flush();
 			this.parser.selectState().attributeValue();
 		} else if (Character.isWhitespace(character)){
-			String attr = this.parser.current();
+			String attr = this.parser.bufferToString();
 			if (attr.length() > 0) {
 				this.parser.memory().currentAttr(attr);
 				this.parser.flush();

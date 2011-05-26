@@ -43,6 +43,7 @@
  */
 package com.itextpdf.tool.xml.pipeline.html;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.itextpdf.text.Element;
@@ -139,12 +140,22 @@ public class HtmlPipeline extends AbstractPipeline {
 	 * .xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline content(final Tag t, final String content, final ProcessObject po) throws PipelineException {
+	public Pipeline content(final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
 		HtmlPipelineContext hcc = getMyContext();
 		TagProcessor tp;
 		try {
 			tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
-			List<Element> elems = tp.content(t, content);
+			String ctn = null;
+			if (null != hcc.charSet()) {
+				try {
+					ctn = new String(b, hcc.charSet().name());
+				} catch (UnsupportedEncodingException e) {
+					throw new RuntimeWorkerException("detected charset is not supported", e);
+				}
+			} else {
+				ctn = new String(b);
+			}
+			List<Element> elems = tp.content(t, ctn);
 			if (elems.size() > 0) {
 				StackKeeper peek;
 				try {

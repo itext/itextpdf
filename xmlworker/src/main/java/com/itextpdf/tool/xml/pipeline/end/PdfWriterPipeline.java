@@ -162,7 +162,7 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	 * .xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline content(final Tag t, final String content, final ProcessObject po) throws PipelineException {
+	public Pipeline content(final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
 		write(po);
 		return getNext();
 	}

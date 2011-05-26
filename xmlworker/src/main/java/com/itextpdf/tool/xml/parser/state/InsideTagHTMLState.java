@@ -93,7 +93,7 @@ public class InsideTagHTMLState implements State {
 	 */
 	public void process(final int character) {
 		if (character == '<') {
-			if (this.parser.current().length() > 0) {
+			if (this.parser.bufferSize() > 0) {
 				this.parser.text(this.parser.current());
 			}
 			this.parser.flush();

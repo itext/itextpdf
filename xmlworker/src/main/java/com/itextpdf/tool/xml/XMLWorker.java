@@ -78,7 +78,6 @@ public class XMLWorker implements XMLParserListener {
 	/**
 	 * Constructs a new XMLWorker
 	 *
-	 * @param config the configuration
 	 * @param pipeline
 	 * @param parseHtml
 	 */
@@ -180,25 +179,13 @@ public class XMLWorker implements XMLParserListener {
 	 * {@link TagProcessor#content(Tag, String)} is called.<br />
 	 * The returned {@link Element} if any is added to the currentContent stack.
 	 */
-	public void text(final String str) {
+	public void text(final byte[] b) {
 		if (null != current) {
-			if (str.length() > 0) {
-				String encoded;
-//				try {
-					// TODO Java 1.6 - replace charste.name() with charset
-					// FIXME issues with html entities and utf or something
-					// else!
-					// or transmit bytes to this method convert here using
-					// detected charset?
-					encoded = new String(str.getBytes());
-					// encoded = new String(str.getBytes());
-//				} catch (UnsupportedEncodingException e) {
-//					throw new RuntimeWorkerException(e);
-//				}
+			if (b.length > 0) {
 				Pipeline wp = rootpPipe;
 				ProcessObject po = new ProcessObject();
 				try {
-					while (null != (wp = wp.content(current, encoded, po)))
+					while (null != (wp = wp.content(current, b, po)))
 						;
 				} catch (PipelineException e) {
 					throw new RuntimeWorkerException(e);

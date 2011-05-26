@@ -43,6 +43,7 @@
  */
 package com.itextpdf.tool.xml.parser;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,8 +60,8 @@ public class XMLParserMemory {
 	private String currentTag;
 	private String currentAttr;
 	private final StringBuilder currentEntity = new StringBuilder();
-	private final StringBuilder current = new StringBuilder();
-	private final StringBuilder comment = new StringBuilder();;
+	private final StringBuilder comment = new StringBuilder();
+	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	private final Map<String, String> attr;
 	private String wsTag = "";
 	private String currentNameSpace = "";
@@ -103,8 +104,8 @@ public class XMLParserMemory {
 	 *
 	 * @return current text buffer
 	 */
-	public StringBuilder current() {
-		return current;
+	public ByteArrayOutputStream current() {
+		return baos;
 	}
 
 	/**
@@ -179,6 +180,13 @@ public class XMLParserMemory {
 	 */
 	public String getNameSpace() {
 		return this.currentNameSpace;
+	}
+
+	/**
+	 *
+	 */
+	public void resetBuffer() {
+		this.baos = new ByteArrayOutputStream();
 	}
 
 }

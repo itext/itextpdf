@@ -66,13 +66,13 @@ public class ClosingTagState implements State {
 	 */
 	public void process(final int character) {
 		if (character == '>') {
-			this.parser.memory().currentTag(this.parser.current());
+			this.parser.memory().currentTag(this.parser.bufferToString());
 			this.parser.endElement();
 			this.parser.flush();
 			this.parser.memory().flushNameSpace();
 			parser.selectState().inTag();
 		} else if (character == ':') {
-			this.parser.memory().namespace(this.parser.current());
+			this.parser.memory().namespace(this.parser.bufferToString());
 			this.parser.flush();
 		} else if (!Character.isWhitespace(character)){
 			this.parser.append(character);

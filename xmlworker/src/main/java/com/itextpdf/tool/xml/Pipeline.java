@@ -72,7 +72,7 @@ public interface Pipeline {
 	 * @return the next pipeline in line
 	 * @throws PipelineException
 	 */
-	public Pipeline content(Tag t, String content, ProcessObject po) throws PipelineException;
+	public Pipeline content(Tag t, byte[] content, ProcessObject po) throws PipelineException;
 
 	/**
 	 * Called when a closing tag has been encountered.

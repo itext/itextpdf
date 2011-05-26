@@ -63,9 +63,9 @@ public interface XMLParserListener {
 
 	/**
 	 * Triggered by content.
-	 * @param content the content encountered between tags.
+	 * @param text the content encountered between tags.
 	 */
-	void text(String content);
+	void text(byte[] text);
 
 	/**
 	 * Triggered on a closing tag.

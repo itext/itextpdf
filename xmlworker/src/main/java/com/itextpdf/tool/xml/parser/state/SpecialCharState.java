@@ -73,7 +73,7 @@ public class SpecialCharState implements State {
 //			} else {
 				char decoded = EntitiesToUnicode.decodeEntity(entity.toString());
 				if (decoded == '\0') {
-					parser.append('&').append(entity.toString()).append(';');
+					parser.append('&').append(entity.toString().getBytes()).append(';');
 				} else {
 					parser.append(decoded);
 				}
@@ -82,7 +82,7 @@ public class SpecialCharState implements State {
             this.parser.memory().currentEntity().setLength(0);
 		 } else if (character != '#' && (character < '0' || character > '9') && (character < 'a' || character > 'z')
                 && (character < 'A' || character > 'Z') || entity.length() >= 7) {
-			 parser.append('&').append(entity.toString());
+			 parser.append('&').append(entity.toString().getBytes());
 			 parser.selectState().inTag();
 			 this.parser.memory().currentEntity().setLength(0);
         } else {

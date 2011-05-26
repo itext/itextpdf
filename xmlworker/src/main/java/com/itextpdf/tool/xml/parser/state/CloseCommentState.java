@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -73,7 +73,7 @@ public class CloseCommentState implements State {
 			this.parser.flush();
 			parser.selectState().inTag();
 		} else  {
-			this.parser.append(this.parser.memory().comment().toString());
+			this.parser.append(this.parser.memory().comment().toString().getBytes());
 			this.parser.memory().comment().setLength(0);
 			parser.selectState().comment();
 		}

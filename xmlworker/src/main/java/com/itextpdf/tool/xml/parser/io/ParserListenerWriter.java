@@ -79,8 +79,8 @@ public class ParserListenerWriter implements XMLParserListener {
 	public void unknownText(final String string) {
 	}
 
-	public void text(final String content) {
-		writer.append(content);
+	public void text(final byte[] b) {
+		writer.append(new String(b));
 	}
 
 	public void startElement(final String currentTag, final Map<String, String> attributes, final String ns) {

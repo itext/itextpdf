@@ -96,7 +96,7 @@ public class ElementHandlerPipeline extends AbstractPipeline {
 	 * @see com.itextpdf.tool.xml.pipeline.AbstractPipeline#content(com.itextpdf.tool.xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline content(final Tag t, final String content, final ProcessObject po) throws PipelineException {
+	public Pipeline content(final Tag t, final byte[] content, final ProcessObject po) throws PipelineException {
 		consume(po);
 		return getNext();
 	}

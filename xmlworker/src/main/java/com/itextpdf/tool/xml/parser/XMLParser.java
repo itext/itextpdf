@@ -71,7 +71,7 @@ public class XMLParser {
 	private final List<XMLParserListener> listeners;
 	private final XMLParserMemory memory;
 	private ParserMonitor monitor;
-	private String text = "";
+	private byte[] text = null;
 	private TagState tagState;
 
 	/**
@@ -231,7 +231,7 @@ public class XMLParser {
 	 * @return the parser
 	 */
 	public XMLParser append(final int character) {
-		this.memory.current().append((char) character);
+		this.memory.current().write(character);
 		return this;
 
 	}
@@ -241,20 +241,20 @@ public class XMLParser {
 	 * @return the parser
 	 */
 	public XMLParser append(final char character) {
-		this.memory.current().append(character);
+		this.memory.current().write(character);
 		return this;
 
 	}
 
-	/**
-	 * @param str the String to append
-	 * @return the parser
-	 */
-	public XMLParser append(final String str) {
-		this.memory.current().append(str);
-		return this;
-
-	}
+//	/**
+//	 * @param str the String to append
+//	 * @return the parser
+//	 */
+//	public XMLParser append(final String str) {
+//		this.memory.current().write(str.getBytes());
+//		return this;
+//
+//	}
 
 	/**
 	 * The state controller of the parser
@@ -277,15 +277,15 @@ public class XMLParser {
 	 * Flushes the currently stored data in the buffer.
 	 */
 	public void flush() {
-		this.memory.current().setLength(0);
+		this.memory.resetBuffer();
 	}
 
 	/**
 	 * Returns the current content of the text buffer.
 	 * @return current buffer content
 	 */
-	public String current() {
-		return this.memory.current().toString();
+	public byte[] current() {
+		return this.memory.current().toByteArray();
 	}
 
 	/**
@@ -312,12 +312,12 @@ public class XMLParser {
 	 * Call this method to submit the text to listeners.
 	 */
 	private void callText() {
-		if (text.length() > 0) {
+		if (null != text && text.length > 0) {
 			// LOGGER .log(text);
 			for (XMLParserListener l : listeners) {
 				l.text(text);
 			}
-			text = "";
+			text = null;
 		}
 	}
 
@@ -335,10 +335,10 @@ public class XMLParser {
 	/**
 	 * Triggered when content has been encountered.
 	 *
-	 * @param content the content
+	 * @param bs the content
 	 */
-	public void text(final String content) {
-		text = content;
+	public void text(final byte[] bs) {
+		text = bs;
 	}
 
 	/**
@@ -347,7 +347,7 @@ public class XMLParser {
 	public void comment() {
 		callText();
 		for (XMLParserListener l : listeners) {
-			l.comment(current());
+			l.comment(this.memory.current().toString());
 		}
 	}
 
@@ -380,9 +380,9 @@ public class XMLParser {
 	 * @return the current last character of the buffer or ' ' if none.
 	 */
 	public char currentLastChar() {
-		StringBuilder current = this.memory.current();
-		if (current.length() > 0) {
-			return current.charAt(current.length() -1);
+		byte[] current = this.memory.current().toByteArray();
+		if (current.length > 0) {
+			return (char)(current.length -1);
 		}
 		return ' ';
 	}
@@ -414,6 +414,28 @@ public class XMLParser {
 	 */
 	public void setMonitor(final ParserMonitor monitor) {
 		this.monitor = monitor;
+	}
+	/**
+	 * @return
+	 */
+	public String bufferToString() {
+		return this.memory.current().toString();
+	}
+	/**
+	 * @param bytes
+	 * @return
+	 */
+	public XMLParser append(final byte[] bytes) {
+		for (byte b : bytes) {
+			this.memory.current().write(b);
+		}
+		return this;
+	}
+	/**
+	 * @return
+	 */
+	public int bufferSize() {
+		return (null != this.memory.current())?this.memory.current().size():0;
 	}
 
 }
