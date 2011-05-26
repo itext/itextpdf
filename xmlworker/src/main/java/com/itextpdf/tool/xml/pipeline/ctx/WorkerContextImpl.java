@@ -49,6 +49,10 @@ import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.NotImplementedException;
 
 /**
+ * The global WorkerContext, a storage for CustomContexts. It extends
+ * {@link MapContext} but overrides the MapContext methods to throw
+ * {@link NotImplementedException}.
+ *
  * @author redlab_b
  *
  */
@@ -72,23 +76,22 @@ public class WorkerContextImpl extends MapContext implements WorkerContext {
 	}
 	/**
 	 *
-	 * @param klass
-	 * @param context
+	 * @param klass the class to store the CustomContext for.
+	 * @param context the CustomContext to store.
 	 */
 	public void add(final Class<?> klass, final CustomContext context) {
 		super.put(klass.getName(), context);
 	}
 	/**
-	 * Accepts {@link CustomContext} objects only.
-	 * @throws IllegalArgumentException if anything else then a {@link CustomContext} is passed as argument.
+	 * @throws NotImplementedException because it's not implemented.
 	 */
 	@Override
 	public void put(final String key, final Object o) {
 		throw new NotImplementedException();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.pipeline.ctx.MapContext#get(java.lang.String)
+	/**
+	 * @throws NotImplementedException because it's not implemented.
 	 */
 	@Override
 	public Object get(final String key) {

@@ -61,6 +61,7 @@ import com.itextpdf.tool.xml.pipeline.WritableElement;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
 
 /**
+ * This pipeline writes to a Document.
  * @author redlab_b
  *
  */
@@ -71,22 +72,21 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	private PdfWriter writer;
 
 	/**
-	 * @param next
 	 */
 	public PdfWriterPipeline() {
 		super(null);
 	}
 
 	/**
-	 * @param next
+	 * @param next the next pipeline if any.
 	 */
 	public PdfWriterPipeline(final Pipeline next) {
 		super(next);
 	}
 
 	/**
-	 * @param doc
-	 * @param writer
+	 * @param doc the document
+	 * @param writer the writer
 	 */
 	public PdfWriterPipeline(final Document doc, final PdfWriter writer) {
 		super(null);
@@ -193,10 +193,18 @@ public class PdfWriterPipeline extends AbstractPipeline {
 		return mc;
 	}
 
+	/**
+	 * The document to write to.
+	 * @param document the Document
+	 */
 	public void setDocument(final Document document) {
 		this.doc = document;
 	}
 
+	/**
+	 * The writer used to write to the document.
+	 * @param writer the writer.
+	 */
 	public void setWriter(final PdfWriter writer) {
 		this.writer = writer;
 	}

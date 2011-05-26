@@ -55,8 +55,9 @@ import com.itextpdf.tool.xml.exceptions.CssResolverException;
 public interface CSSResolver {
 
 	/**
-	 * This method is should resolve css, meaning, it will look at the css and retrieve relevant css rules for the given
-	 * tag. The rules can then be set in {@link Tag#setCSS(java.util.Map)}
+	 * This method should resolve css, meaning, it will look at the css and
+	 * retrieve relevant css rules for the given tag. The rules must then be set
+	 * in {@link Tag#setCSS(java.util.Map)}.
 	 *
 	 * @param t the tag.
 	 */
@@ -65,20 +66,22 @@ public interface CSSResolver {
 	/**
 	 * Add a piece of CSS code.
 	 * @param content the CSS
-	 * @param charSet
-	 * @throws CssResolverException
+	 * @param charSet a charset
+	 * @throws CssResolverException thrown if something goes wrong
 	 */
 	void addCss(String content, String charSet) throws CssResolverException;
 
 	/**
-	 * @param href the link to the css file
-	 * @throws CssResolverException
+	 * Add a
+	 * @param href the link to the css file ( an absolute uri )
+	 * @throws CssResolverException thrown if something goes wrong
 	 */
 	void addCssFile(String href)  throws CssResolverException;
 
 	/**
-	 * @param content
-	 * @throws CssResolverException
+	 * Add a piece of CSS code.
+	 * @param content the content to parse to css
+	 * @throws CssResolverException thrown if something goes wrong
 	 */
 	void addCss(String content) throws CssResolverException;
 

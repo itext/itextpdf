@@ -53,6 +53,7 @@ import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
 
 /**
+ * This Pipeline resolves CSS for the Tags it receives in {@link CssResolverPipeline#open(Tag, ProcessObject)}
  * @author redlab_b
  *
  */
@@ -61,8 +62,8 @@ public class CssResolverPipeline extends AbstractPipeline {
 	private final CSSResolver resolver;
 
 	/**
-	 * @param next
-	 * @param cssResolver
+	 * @param next the next pipeline.
+	 * @param cssResolver the {@link CSSResolver} to use in this Pipeline
 	 */
 	public CssResolverPipeline(final CSSResolver cssResolver, final Pipeline next) {
 		super(next);
@@ -91,10 +92,10 @@ public class CssResolverPipeline extends AbstractPipeline {
 		return getNext();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.itextpdf.tool.xml.pipeline.Pipeline#getNewCustomContext()
+	/**
+	 * The CustomContext returned is a {@link MapContext} containing 1 key/value
+	 * pair: key:{@link CssResolverPipeline#CSS_RESOLVER}, value
+	 * {@link CSSResolver}.
 	 */
 	@Override
 	public CustomContext getCustomContext() throws NoCustomContextException {

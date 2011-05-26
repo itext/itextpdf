@@ -18,5 +18,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface ThreadSafe {
+	/**
+	 * An optional comment
+	 * @return the description if any.
+	 */
+	String value() default "";
 
 }

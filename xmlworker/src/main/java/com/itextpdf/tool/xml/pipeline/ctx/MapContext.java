@@ -47,11 +47,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.itextpdf.tool.xml.CustomContext;
+import com.itextpdf.tool.xml.ThreadSafe;
 
 /**
+ * A CustomContext that holds data in a Map
  * @author redlab_b
  *
  */
+@ThreadSafe("Content hold in a ConcurrentHashMap")
 public class MapContext implements CustomContext {
 
 	private final Map<String, Object> map;
@@ -63,10 +66,20 @@ public class MapContext implements CustomContext {
 		map = new ConcurrentHashMap<String, Object>();
 	}
 
+
+	/**
+	 * @param key the key
+	 * @return the object belonging to the key or null if not found
+	 */
 	public Object get(final String key) {
 		return map.get(key);
 	}
 
+	/**
+	 *
+	 * @param key the key
+	 * @param o the object to put.
+	 */
 	public void put(final String key, final Object o) {
 		map.put(key, o);
 	}

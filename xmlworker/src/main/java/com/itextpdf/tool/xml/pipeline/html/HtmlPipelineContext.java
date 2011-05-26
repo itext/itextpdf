@@ -107,7 +107,7 @@ public class HtmlPipelineContext implements CustomContext, Cloneable {
 	 */
 	protected TagProcessor resolveProcessor(final String tag, final String nameSpace) {
 		TagProcessor tp = tagFactory.getProcessor(tag, nameSpace);
-		tp.setContext(context); // TODO change with 'this' ?
+		tp.setContext(context);
 		return tp;
 	}
 

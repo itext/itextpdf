@@ -46,25 +46,27 @@ package com.itextpdf.tool.xml.pipeline.html;
 import com.itextpdf.text.Image;
 
 /**
+ * A Provider for Images found in HTML.
  * @author itextpdf.com
  *
  */
 public interface ImageProvider {
 
 	/**
-	 * @param src
-	 * @return
+	 * @param src the source found in src attribute
+	 * @return the {@link Image}
 	 */
 	Image retrieve(String src);
 
 	/**
-	 * @return
+	 * @return a rootpath to set before the src attribute
 	 */
 	String getImageRootPath();
 
 	/**
-	 * @param src
-	 * @param img
+	 * Store allows ImageProvider users to cache the found images.
+	 * @param src the src attribute
+	 * @param img the image.
 	 */
 	void store(String src, Image img);
 
