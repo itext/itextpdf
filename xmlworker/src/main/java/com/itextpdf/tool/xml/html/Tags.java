@@ -59,6 +59,7 @@ public class Tags {
 	private static String paragraph = defaultpackage + "ParaGraph";
 
 	/**
+	 * Returns a new {@link DefaultTagProcessorFactory}
 	 * @return a default XHTML {@link TagProcessorFactory}
 	 */
 	public static final TagProcessorFactory getHtmlTagProcessorFactory() {

@@ -135,28 +135,34 @@ public class HtmlPipeline extends AbstractPipeline {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * com.itextpdf.tool.xml.pipeline.Pipeline#content(com.itextpdf.tool
+	 * @see com.itextpdf.tool.xml.pipeline.Pipeline#content(com.itextpdf.tool
 	 * .xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
 	public Pipeline content(final Tag t, final String content, final ProcessObject po) throws PipelineException {
 		HtmlPipelineContext hcc = getMyContext();
-		TagProcessor tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
-		List<Element> elems = tp.content(t, content);
-		if (elems.size() > 0){
-			StackKeeper peek;
-			try {
-				peek = hcc.peek();
-				for (Element e : elems) {
-					peek.add(e);
+		TagProcessor tp;
+		try {
+			tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
+			List<Element> elems = tp.content(t, content);
+			if (elems.size() > 0) {
+				StackKeeper peek;
+				try {
+					peek = hcc.peek();
+					for (Element e : elems) {
+						peek.add(e);
+					}
+				} catch (NoStackException e) {
+					WritableElement writableElement = new WritableElement();
+					for (Element elem : elems) {
+						writableElement.add(elem);
+					}
+					po.add(writableElement);
 				}
-			} catch (NoStackException e) {
-				WritableElement writableElement = new WritableElement();
-				for (Element elem : elems) {
-					writableElement.add(elem);
-				}
-				po.add(writableElement);
+			}
+		} catch (NoTagProcessorException e) {
+			if (!hcc.acceptUnknown()) {
+				throw e;
 			}
 		}
 		return getNext();
@@ -207,7 +213,6 @@ public class HtmlPipeline extends AbstractPipeline {
 			if (!hcc.acceptUnknown()) {
 				throw e;
 			}
-		} finally {
 		}
 		return getNext();
 	}
