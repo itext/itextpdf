@@ -53,9 +53,9 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.tool.xml.html.Image;
 
 /**
- * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
+ * A <CODE>NoNewLineParagraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
  * <P>
- * A <CODE>Paragraph</CODE> has the same qualities of a <CODE>Phrase</CODE>, but also
+ * A <CODE>NoNewLineParagraph</CODE> has the same qualities of a <CODE>Phrase</CODE>, but also
  * some additional layout-parameters:
  * <UL>
  * <LI>the indentation
@@ -64,7 +64,7 @@ import com.itextpdf.tool.xml.html.Image;
  *
  * Example:
  * <BLOCKQUOTE><PRE>
- * <STRONG>Paragraph p = new Paragraph("This is a paragraph",
+ * <STRONG>NoNewLineParagraph p = new NoNewLineParagraph("This is a paragraph",
  *               FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLDITALIC, new Color(0, 0, 255)));</STRONG>
  * </PRE></BLOCKQUOTE>
  *

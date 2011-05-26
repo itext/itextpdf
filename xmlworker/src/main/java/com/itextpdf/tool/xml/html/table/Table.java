@@ -76,6 +76,7 @@ import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
+import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
@@ -88,13 +89,18 @@ public class Table extends AbstractTagProcessor {
 	private static final CssUtils utils = CssUtils.getInstance();
 	private static final FontSizeTranslator fst = FontSizeTranslator.getInstance();
 
+	/**
+	 * Reorganizes table rows based on the designated {@link Place} in a table.
+	 * @author Emiel Ackermann
+	 *
+	 */
 	private final class TableRowElementComparator implements Comparator<TableRowElement> {
 		public int compare(final TableRowElement o1, final TableRowElement o2) {
 			return o1.getPlace().getI().compareTo(o2.getPlace().getI());
 		}
 	}
 	/**
-	 *
+	 * Default constructor.
 	 */
 	public Table() {
 	}
@@ -110,7 +116,6 @@ public class Table extends AbstractTagProcessor {
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		try {
 			int numberOfColumns = 0;
-			//
 			List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
 			List<Element> invalidRowElements = new ArrayList<Element>(1);
 			for (Element e : currentContent) {
@@ -233,7 +238,7 @@ public class Table extends AbstractTagProcessor {
 						// widestWord still fits in the reduced column.
 						if (widestWords[indexOfLargestColumn] <= columnWidths[indexOfLargestColumn] - leftToReduce) {
 							columnWidths[indexOfLargestColumn] -= leftToReduce;
-						} else { // set all columnWidths to their minimum with the
+						} else { // set all columns to their minimum, with the
 									// widestWord array.
 							for (int column = 0; leftToReduce != 0 && column < columnWidths.length; column++) {
 								if (fixedWidths[column] == 0 && columnWidths[column] > widestWords[column]) {
@@ -343,16 +348,14 @@ public class Table extends AbstractTagProcessor {
 	}
 
 	/**
-	 * Calculates the target width. If one of the following is true:
+	 * Calculates the target width. First checks if:
 	 * <ol>
-	 * <li>the attribute or style "width" if found in the given tag.<br />
-	 * targetWidth = width value </li>
-	 * <li>table's parent is a root tag or table has no parent.<br />
-	 * targetWidth = width of the page - {@link Table#getTableOuterWidth(Tag, float)}.</li>
+	 * <li>the attribute or style "width" is found in the given tag, then the targetWidth = width value </li>
+	 * <li>table's parent is a root tag or table has no parent, then the targetWidth = width of the page - {@link Table#getTableOuterWidth(Tag, float)}.</li>
 	 * </ol>
 	 * If none of the above is true, the width of the table is set to its default with the columnWidths array.
-	 * @param columnWidths
-	 * @return
+	 * @param columnWidths float[] containing the widest lines of text found in the columns.
+	 * @return float the target width of a table.
 	 * @throws NoCustomContextException
 	 */
 	private float calculateTargetWidth(final Tag tag, final float[] columnWidths, final float horBorderSpacing) throws NoCustomContextException {
@@ -531,6 +534,14 @@ public class Table extends AbstractTagProcessor {
 	return new float[]{cellWidth, widestWordOfCell};
 	}
 
+	/**
+	 * Calculates the total width based on {@link Table#getTableOuterWidth(Tag, float)} and the given parameters.
+	 * @param widths array of floats containing column width values.
+	 * @param tag the table tag.
+	 * @param horBorderSpacing of the table.
+	 * @return a table's width.
+	 * @throws NoCustomContextException
+	 */
 	private float getTableWidth(final float[] widths, final Tag tag, final float horBorderSpacing) throws NoCustomContextException {
 		float width = 0;
 		for(float f: widths) {

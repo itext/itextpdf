@@ -55,6 +55,7 @@ import com.itextpdf.tool.xml.css.CssFileProcessor;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.html.Tags;
 import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.end.ElementHandlerPipeline;
@@ -132,7 +133,7 @@ public class XMLWorkerHelper {
 		cssFiles.add(getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		HtmlPipelineContext hpc = new HtmlPipelineContext();
-		hpc.setAcceptUnknown(true).autoBookmark(true);
+		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
 		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new ElementHandlerPipeline(d, null)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
 		XMLParser p = new XMLParser(true, worker);
@@ -151,7 +152,7 @@ public class XMLWorkerHelper {
 		cssFiles.add(new XMLWorkerHelper().getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		HtmlPipelineContext hpc = new HtmlPipelineContext();
-		hpc.setAcceptUnknown(true).autoBookmark(true);
+		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
 		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
 		XMLParser p = new XMLParser(true, worker);

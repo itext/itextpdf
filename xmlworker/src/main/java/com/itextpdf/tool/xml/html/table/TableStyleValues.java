@@ -46,6 +46,8 @@ package com.itextpdf.tool.xml.html.table;
 import com.itextpdf.text.BaseColor;
 
 /**
+ * Class is used for storing style values of a table or cell. The stored style values are used when drawing the borders and background colors of tables or cells.
+ *
  * @author Emiel Ackermann
  *
  */
@@ -63,23 +65,46 @@ public class TableStyleValues {
 		private boolean isLastInRow = false;
 		private BaseColor background;
 
+		/**
+		 * Default constructor.
+		 */
 		public TableStyleValues() {
 		}
+		/**
+		 * @return the horBorderSpacing
+		 */
 		public float getHorBorderSpacing() {
 			return horBorderSpacing;
 		}
+		/**
+		 * @param sets the horBorderSpacing
+		 */
 		public void setHorBorderSpacing(final float horBorderSpacing) {
 			this.horBorderSpacing = horBorderSpacing;
 		}
+		/**
+		 * @param sets the verBorderSpacing
+		 */
 		public void setVerBorderSpacing(final float verBorderSpacing) {
 			this.verBorderSpacing = verBorderSpacing;
 		}
+		/**
+		 * @return the verBorderSpacing
+		 */
 		public float getVerBorderSpacing() {
 			return verBorderSpacing;
 		}
+		/**
+		 * Only used by cells. This boolean is used for adding a horizontal border spacing to the right of a cell.
+		 * @param isLastInRow boolean.
+		 */
 		public void setLastInRow(final boolean isLastInRow) {
 			this.isLastInRow = isLastInRow;
 		}
+		/**
+		 * Only used by cells. This boolean is used for adding a horizontal border spacing to the right of a cell.
+		 * @return isLastInRow boolean.
+		 */
 		public boolean isLastInRow() {
 			return isLastInRow;
 		}
@@ -180,7 +205,8 @@ public class TableStyleValues {
 			this.borderBottomColor = borderBottomColor;
 		}
 		/**
-		 * @param width
+		 * Sets the border width for the entire table or cell.
+		 * @param width float.
 		 */
 		public void setBorderWidth(final float width) {
 			borderBottomWidth = width;
@@ -189,7 +215,8 @@ public class TableStyleValues {
 			borderTopWidth = width;
 		}
 		/**
-		 * @param color
+		 * Sets the border color for the entire table or cell.
+		 * @param color BaseColor.
 		 */
 		public void setBorderColor(final BaseColor color) {
 			borderBottomColor = color;
@@ -197,9 +224,17 @@ public class TableStyleValues {
 			borderRightColor = color;
 			borderTopColor = color;
 		}
+		/**
+		 * Sets background color.
+		 * @param background BaseColor.
+		 */
 		public void setBackground(final BaseColor background) {
 			this.background = background;
 		}
+		/**
+		 * Get background color.
+		 * @return BaseColor
+		 */
 		public BaseColor getBackground() {
 			return background;
 		}

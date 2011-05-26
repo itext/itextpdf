@@ -64,6 +64,9 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 		this.configuration = htmlPipelineContext;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
+	 */
 	public NoNewLineParagraph apply(final NoNewLineParagraph p, final Tag t) {
 		if (this.configuration.getRootTags().contains(t.getTag())) {
 			m.setLeading(t);
@@ -124,7 +127,7 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 				lmb = fontSize;
 				hasLMB = true;
 			}
-			p.setLeading(m.getLeading());
+			p.setLeading(m.getLargestLeading());
 			if(p.getAlignment() == -1) {
 				p.setAlignment(Element.ALIGN_LEFT);
 			}

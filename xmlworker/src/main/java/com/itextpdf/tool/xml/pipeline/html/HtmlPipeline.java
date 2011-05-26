@@ -60,6 +60,8 @@ import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
+ * The HtmlPipeline transforms received tags and content to PDF Elements.<br />
+ * To configure this pipeline a {@link HtmlPipelineContext}.
  * @author redlab_b
  *
  */
@@ -235,7 +237,7 @@ public class HtmlPipeline extends AbstractPipeline {
 	public CustomContext getCustomContext() throws NoCustomContextException {
 		try {
 			HtmlPipelineContext clone = hpc.clone();
-			clone.setContext(context);
+			clone.setContext(getContext());
 			return clone;
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeWorkerException(e);

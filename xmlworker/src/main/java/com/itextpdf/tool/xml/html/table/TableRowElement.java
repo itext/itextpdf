@@ -58,6 +58,21 @@ import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
  */
 public class TableRowElement implements Element {
 
+	/**
+	 * Enumeration used for determining the correct order of TableRowElements when adding the table to a document.
+	 * <br />
+	 * Possible values:
+	 * <ul>
+	 * <li>CAPTION_TOP</li>
+	 * <li>HEADER</li>
+	 * <li>BODY</li>
+	 * <li>FOOTER</li>
+	 * <li>CAPTION_BOTTOM</li>
+	 * </ul>
+	 *
+	 * @author Emiel Ackermann
+	 *
+	 */
 	public enum Place{CAPTION_TOP(-2),HEADER(-1),BODY(0),FOOTER(1),CAPTION_BOTTOM(2);
 
 		private Integer i;
@@ -72,8 +87,9 @@ public class TableRowElement implements Element {
 	private final List<HtmlCell> content;
 
     /**
-     * @param currentContent
-     * @param place
+     * Constructor based on the currentContent and a {@link Place}. All none {@link TableData} elements are filtered out of the current content list.
+     * @param currentContent List<Element> containing all elements found between <tr> and </tr>.
+     * @param place a {@link Place} in the table (caption, header, body or footer).
      */
     public TableRowElement(final List<Element> currentContent, final Place place) {
         // filter out none TD elements, discard others
@@ -122,14 +138,14 @@ public class TableRowElement implements Element {
     }
 
     /**
-     * @return the content
+     * @return the content.
      */
     public List<HtmlCell> getContent() {
         return content;
     }
 
 	/**
-	 * @return the type of cell, defined by type of tag
+	 * @return the {@link Place} of the row.
 	 */
 	public Place getPlace() {
 		return place;

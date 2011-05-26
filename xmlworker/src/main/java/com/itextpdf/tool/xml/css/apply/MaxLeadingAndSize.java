@@ -51,13 +51,19 @@ import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 
+/**
+ * Serves as a container class for the largest font size and/or largest leading found in a tag and all its siblings.
+ *
+ * @author Emiel Ackermann
+ *
+ */
 public final class MaxLeadingAndSize {
 	private final CssUtils utils = CssUtils.getInstance();
 	private final FontSizeTranslator fontSizeTranslator = FontSizeTranslator.getInstance();
 	private float largestLeading;
 	private float largestFont;
 
-	public float getLeading() {
+	public float getLargestLeading() {
 		return largestLeading;
 	}
 
@@ -76,7 +82,7 @@ public final class MaxLeadingAndSize {
 		float largestLeadingChildren = getLargestLeadingFromChildren(t.getChildren());
 		largestLeading = leadingParent>largestLeadingChildren?leadingParent:largestLeadingChildren;
 	}
-	
+
 	/**
 	 * Set the largest leading based on calculateLeading only. (Children not taken into account)
 	 * @param tag
@@ -99,6 +105,11 @@ public final class MaxLeadingAndSize {
 		}
 		return largestFont;
 	}
+	/**
+	 * Iterates over all children in a List and returns the largest leading found.
+	 * @param children List<Tag> containing a list of children.
+	 * @return float largest leading.
+	 */
 	private float getLargestLeadingFromChildren(final List<Tag> children) {
 		float leading = 0;
 		for(Tag tag: children) {
@@ -131,7 +142,6 @@ public final class MaxLeadingAndSize {
 		float fontSize = fontSizeTranslator.getFontSize(t);
 		if(css.get(CSS.Property.LINE_HEIGHT) != null) {
 			String value = css.get(CSS.Property.LINE_HEIGHT);
-			// value contains a numeric value with an unit.
 			if(utils.isNumericValue(value)) {
 				leading = Float.parseFloat(value) * fontSize;
 			} else if (utils.isRelativeValue(value)) {

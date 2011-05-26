@@ -45,6 +45,7 @@ package com.itextpdf.tool.xml;
 
 
 /**
+ * A the listener interface for receiving {@link Writable}s.
  * @author redlab_b
  *
  */
@@ -52,7 +53,8 @@ public interface ElementHandler  {
 
 
     /**
-     * @param w
+     * Receive a Writable.
+     * @param w the writable to add
      */
     void add(Writable w);
 

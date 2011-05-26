@@ -64,6 +64,9 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 		this.configuration = htmlPipelineContext;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
+	 */
 	public Paragraph apply(final Paragraph p, final Tag t) {
 		if (this.configuration.getRootTags().contains(t.getTag())) {
 			m.setLeading(t);
@@ -123,7 +126,7 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 				lmb = fontSize;
 				hasLMB = true;
 			}
-			p.setLeading(m.getLeading());
+			p.setLeading(m.getLargestLeading());
 			if(p.getAlignment() == -1) {
 				p.setAlignment(Element.ALIGN_LEFT);
 			}

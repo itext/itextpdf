@@ -57,15 +57,20 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.tool.xml.CustomContext;
 import com.itextpdf.tool.xml.WorkerContext;
+import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
+import com.itextpdf.tool.xml.html.Header;
+import com.itextpdf.tool.xml.html.Image;
 import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.html.TagProcessorFactory;
 import com.itextpdf.tool.xml.html.Tags;
 
 /**
+ * The CustomContext object for the HtmlPipeline.<br />
+ * Use this to configure your {@link HtmlPipeline}.
  * @author redlab_b
  *
  */
-public class HtmlPipelineContext implements CustomContext {
+public class HtmlPipelineContext implements CustomContext, Cloneable {
 
 	/**
 	 *  Key for the memory, used to store bookmark nodes
@@ -77,20 +82,19 @@ public class HtmlPipelineContext implements CustomContext {
 	public static final String LAST_MARGIN_BOTTOM = "lastMarginBottom";
 	private final LinkedList<StackKeeper> queue;
 	private boolean acceptUnknown = true;
-	private TagProcessorFactory tagFactory = Tags.getHtmlTagProcessorFactory();
+	private TagProcessorFactory tagFactory;
 	private final List<Element> ctn = new ArrayList<Element>();
 	private WorkerContext context;
 	private ImageProvider imageProvider;
 	private Rectangle pageSize = PageSize.A4;
 	private Charset charset;
-	private List<String> roottags = Arrays.asList(new String[] { "defaultRoot", "body", "div" });
+	private List<String> roottags = Arrays.asList(new String[] { "body", "div" });
 	private LinkProvider linkprovider;
 	private boolean autoBookmark = true;
 	private final Map<String, Object> memory;
 
 	/**
-	 * @param workerContext
-	 *
+	 * Construct a new HtmlPipelineContext object
 	 */
 	public HtmlPipelineContext() {
 		this.queue = new LinkedList<StackKeeper>();
@@ -101,16 +105,17 @@ public class HtmlPipelineContext implements CustomContext {
 	 * @param nameSpace the namespace.
 	 * @return a TagProcessor
 	 */
-	public TagProcessor resolveProcessor(final String tag, final String nameSpace) {
+	protected TagProcessor resolveProcessor(final String tag, final String nameSpace) {
 		TagProcessor tp = tagFactory.getProcessor(tag, nameSpace);
 		tp.setContext(context); // TODO change with 'this' ?
 		return tp;
 	}
 
 	/**
-	 * @param stackKeeper
+	 * Add a {@link StackKeeper} to the top of the stack list.
+	 * @param stackKeeper the {@link StackKeeper}
 	 */
-	public void addFirst(final StackKeeper stackKeeper) {
+	protected void addFirst(final StackKeeper stackKeeper) {
 		this.queue.addFirst(stackKeeper);
 
 	}
@@ -120,7 +125,7 @@ public class HtmlPipelineContext implements CustomContext {
 	 * @return a StackKeeper
 	 * @throws NoStackException if there are no elements on the stack
 	 */
-	public StackKeeper peek() throws NoStackException {
+	protected StackKeeper peek() throws NoStackException {
 
 		try {
 			return this.queue.getFirst();
@@ -130,9 +135,9 @@ public class HtmlPipelineContext implements CustomContext {
 	}
 
 	/**
-	 * @return the current content of writables.
+	 * @return the current content of elements.
 	 */
-	public List<Element> currentContent() {
+	protected List<Element> currentContent() {
 		return ctn;
 	}
 
@@ -146,7 +151,7 @@ public class HtmlPipelineContext implements CustomContext {
 	/**
 	 * @return returns true if the stack is empty
 	 */
-	public boolean isEmpty() {
+	protected boolean isEmpty() {
 		return queue.isEmpty();
 	}
 
@@ -155,7 +160,7 @@ public class HtmlPipelineContext implements CustomContext {
 	 * @return a StackKeeper
 	 * @throws NoStackException if there are no elements on the stack
 	 */
-	public StackKeeper poll() throws NoStackException {
+	protected StackKeeper poll() throws NoStackException {
 		try {
 			return this.queue.removeFirst();
 		} catch (NoSuchElementException e) {
@@ -188,50 +193,61 @@ public class HtmlPipelineContext implements CustomContext {
 	}
 
 	/**
-	 * @param forName
-	 * @return
+	 * Set a {@link Charset} to use.
+	 * @param cSet the charset.
+	 * @return this <code>HtmlPipelineContext</code>
 	 */
 	public HtmlPipelineContext charSet(final Charset cSet) {
 		this.charset = cSet;
 		return this;
 	}
 	/**
-	 * @return
+	 * @return the {@link Charset} to use, or null if none configured.
 	 */
 	public Charset charSet() {
 		return charset;
 	}
 	/**
-	 * @return
+	 * Returns a {@link Rectangle}
+	 * @return the pagesize.
 	 */
 	public Rectangle getPageSize() {
 		return this.pageSize;
 	}
+
 	/**
-	 * @return
+	 * @return a list of tags to be taken as root-tags. This matters for
+	 *         margins. By default the root-tags are &lt;body&gt; and
+	 *         &lt;div&gt;
 	 */
 	public List<String> getRootTags() {
 		return roottags;
 	}
+
 	/**
-	 * @return
+	 * Returns the LinkProvider, used to prepend e.g. http://www.example.org/ to
+	 * found &lt;a&gt; tags that have no absolute url.
+	 *
+	 * @return the LinkProvider if any.
 	 */
 	public LinkProvider getLinkProvider() {
 		return linkprovider;
 	}
 	/**
 	 * @param pageSize the pageSize to set
-	 * @return
+	 * @return this <code>HtmlPipelineContext</code>
 	 */
 	public HtmlPipelineContext setPageSize(final Rectangle pageSize) {
 		this.pageSize = pageSize;
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#clone()
+	/**
+	 * Create a clone of this HtmlPipelineContext, the clone only contains the
+	 * initial values, not the internal values. This meaning, the state of the
+	 * current Context is not copied to the clone. Only the configurational
+	 * important stuff like the LinkProvider, ImageProvider,
+	 * TagProcessorFactory, acceptUnknown, charset, autobookmark are copied.
 	 */
 	@Override
 	public HtmlPipelineContext clone() throws CloneNotSupportedException {
@@ -243,54 +259,76 @@ public class HtmlPipelineContext implements CustomContext {
 		return newCtx;
 	}
 	/**
-	 * @param context
+	 * Set the global WorkerContext
+	 * @param context the WorkerContext
 	 */
 	void setContext(final WorkerContext context) {
 		this.context = context;
 	}
+
 	/**
-	 * @param acceptUnknown
-	 * @return
+	 * Set to true to allow the HtmlPipeline to accept tags it does not find in
+	 * the given {@link TagProcessorFactory}
+	 *
+	 * @param acceptUnknown true or false
+	 * @return this <code>HtmlPipelineContext</code>
 	 */
 	public HtmlPipelineContext setAcceptUnknown(final boolean acceptUnknown) {
 		this.acceptUnknown = acceptUnknown;
 		return this;
 	}
 	/**
-	 * @param tagFactory
-	 * @return
+	 * Set the {@link TagProcessorFactory} to be used. For HTML use {@link Tags#getHtmlTagProcessorFactory()}
+	 * @param tagFactory the {@link TagProcessorFactory} that should be used
+	 * @return this <code>HtmlPipelineContext</code>
 	 */
 	public HtmlPipelineContext setTagFactory(final TagProcessorFactory tagFactory) {
 		this.tagFactory = tagFactory;
 		return this;
 	}
+
 	/**
-	 * @param autoBookmark
-	 * @return
+	 * Set to true to enable the automatic creation of bookmarks on &lt;h1&gt;
+	 * to &lt;h6&gt; tags. Works in conjunction with {@link Header}.
+	 *
+	 * @param autoBookmark true or false
+	 * @return this <code>HtmlPipelineContext</code>
 	 */
 	public HtmlPipelineContext autoBookmark(final boolean autoBookmark) {
 		this.autoBookmark = autoBookmark;
 		return this;
 	}
+
 	/**
-	 * @param roottags
-	 * @return
+	 * Set the root-tags, this matters for margins. By default these are set to
+	 * &lt;body&gt; and &lt;div&gt;.
+	 *
+	 * @param roottags the root tags
+	 * @return this <code>HtmlPipelineContext</code>
 	 */
 	public HtmlPipelineContext setRootTags(final List<String> roottags) {
 		this.roottags = roottags;
 		return this;
 	}
+
 	/**
-	 * @param imageProvider
-	 * @return
+	 * An ImageProvider can be provided and works in conjunction with
+	 * {@link Image} and {@link ListStyleTypeCssApplier} for List Images.
+	 *
+	 * @param imageProvider the {@link ImageProvider} to use.
+	 * @return this <code>HtmlPipelineContext</code>
 	 */
 	public HtmlPipelineContext setImageProvider(final ImageProvider imageProvider) {
 		this.imageProvider = imageProvider;
 		return this;
 	}
+
 	/**
-	 * @param linkprovider
-	 * @return
+	 * Set the LinkProvider to use if any.
+	 *
+	 * @param linkprovider the LinkProvider (@see
+	 *            {@link HtmlPipelineContext#getLinkProvider()}
+	 * @return this <code>HtmlPipelineContext</code>
 	 */
 	public HtmlPipelineContext setLinkProvider(final LinkProvider linkprovider) {
 		this.linkprovider = linkprovider;

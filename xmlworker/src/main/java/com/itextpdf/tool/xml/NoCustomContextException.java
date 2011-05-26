@@ -44,6 +44,7 @@
 package com.itextpdf.tool.xml;
 
 /**
+ * Thrown when a CustomContext is requested but there is none.
  * @author redlab_b
  *
  */
@@ -52,33 +53,34 @@ public class NoCustomContextException extends Exception {
 	/**
 	 *
 	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 *
+	 */
 	public NoCustomContextException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @param arg0
+	 * @param arg0 a description.
 	 */
 	public NoCustomContextException(final String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @param arg0
+	 * @param arg0 a throwable.
 	 */
 	public NoCustomContextException(final Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * @param arg0 a description.
+	 * @param arg1 a throwable.
 	 */
 	public NoCustomContextException(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 
 }

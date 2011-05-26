@@ -52,12 +52,16 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 
 /**
+ * Abstract class with default implementations. Override this instead of
+ * implementing Pipeline and let your pipeline override only the methods
+ * relevant to your implementation.
+ *
  * @author redlab_b
  *
  */
 public abstract class AbstractPipeline implements Pipeline {
 
-	protected WorkerContext context;
+	private WorkerContext context;
 	private final Pipeline next;
 
 	/**
