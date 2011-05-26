@@ -74,7 +74,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Set the encountered tag
+	 * Set the encountered tag.
 	 * @param content the tag
 	 */
 	public void currentTag(final String content) {
@@ -84,7 +84,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Sets the encountered attribute
+	 * Sets the encountered attribute.
 	 * @param attr the attribute
 	 */
 	public void currentAttr(final String attr) {
@@ -92,8 +92,8 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Sets the current attribute value
-	 * @param content the current attributes value
+	 * Sets the current attribute value.
+	 * @param content the current attributes value.
 	 */
 	public void putCurrentAttrValue(final String content) {
 		attr.put(this.currentAttr.toLowerCase(), content);
@@ -109,7 +109,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Returns the current tag
+	 * Returns the current tag.
 	 * @return the currentTag
 	 */
 	public String getCurrentTag() {
@@ -117,7 +117,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Returns a map of all attributes and their value found on the current tag
+	 * Returns a map of all attributes and their value found on the current tag.
 	 * @return the attributes of the current tag
 	 */
 	public Map<String, String> getAttributes() {
@@ -125,7 +125,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Returns the current entity buffer
+	 * Returns the current entity buffer.
 	 * @return a StringBuilder for the current entity
 	 */
 	public StringBuilder currentEntity() {
@@ -133,7 +133,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Returns the xml comment buffer
+	 * Returns the xml comment buffer.
 	 *
 	 * @return comment
 	 */
@@ -151,7 +151,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Sets the last tag that needs to be taken into account for HTML Whitespace handling<br />
+	 * Sets the last tag that needs to be taken into account for HTML Whitespace handling.<br />
 	 * Used by {@link InsideTagHTMLState}, only for HTML processing.
 	 * @param tag the tag
 	 */
@@ -160,7 +160,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Sets the current namespace
+	 * Sets the current namespace.
 	 * @param ns the current namespace
 	 */
 	public void namespace(final String ns) {
@@ -168,14 +168,14 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Flushes the namespace memory
+	 * Flushes the namespace memory.
 	 */
 	public void flushNameSpace() {
 		this.currentNameSpace = "";
 	}
 
 	/**
-	 * Get the current namespace
+	 * Get the current namespace.
 	 * @return the current namespace or empty String if no namespace
 	 */
 	public String getNameSpace() {
@@ -183,7 +183,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 *
+	 * Resets the ByteArrayOutputStream of this class.
 	 */
 	public void resetBuffer() {
 		this.baos = new ByteArrayOutputStream();

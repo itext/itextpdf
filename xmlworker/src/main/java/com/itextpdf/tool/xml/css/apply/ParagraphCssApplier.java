@@ -113,13 +113,12 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 				p.setFirstLineIndent(utils.parseValueToPt(value, fontSize));
 			}
 		}
+        // setDefaultMargin to largestFont if no margin-bottom is set and p-tag is child of the root tag.
 		if (null != t.getParent()) {
-	        // setDefaultMargin to largestFont if no margin-top is set and p-tag is child of the root tag.
 			String parent = t.getParent().getTag();
 			if(css.get(CSS.Property.MARGIN_TOP) == null && configuration.getRootTags().contains(parent)) {
 				p.setSpacingBefore(p.getSpacingBefore()+utils.calculateMarginTop(fontSize+"pt", 0, configuration));
 			}
-			// setDefaultMargin to largestFont if no margin-bottom is set and p-tag is child of the root tag.
 			if(css.get(CSS.Property.MARGIN_BOTTOM) == null && configuration.getRootTags().contains(parent)) {
 				p.setSpacingAfter(p.getSpacingAfter()+fontSize);
 				css.put(CSS.Property.MARGIN_BOTTOM, fontSize+"pt");
@@ -130,8 +129,6 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 			if(p.getAlignment() == -1) {
 				p.setAlignment(Element.ALIGN_LEFT);
 			}
-		} else {
-			// FIXME margin code if there is no parent
 		}
 
 		if (hasLMB) {
