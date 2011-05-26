@@ -78,8 +78,9 @@ public class XMLWorker implements XMLParserListener {
 	/**
 	 * Constructs a new XMLWorker
 	 *
-	 * @param pipeline
-	 * @param parseHtml
+	 * @param pipeline the pipeline
+	 * @param parseHtml true if this XMLWorker is parsing HTML, this actually just means:
+	 *            convert all tags to lowercase.
 	 */
 	public XMLWorker(final Pipeline pipeline, final boolean parseHtml) {
 		this();

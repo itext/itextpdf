@@ -51,7 +51,6 @@ import java.util.Map.Entry;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.WritableDirectElement;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Pipeline;
@@ -61,7 +60,6 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
@@ -127,36 +125,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 			if (t.getTag().equalsIgnoreCase(opentag)) {
 				MapContext cc;
 				cc = (MapContext) getContext().get(PdfWriterPipeline.class);
-
 				Document d = (Document) cc.get(PdfWriterPipeline.DOCUMENT);
-				po.add(new WritableElement(new WritableDirectElement() {
-
-					public void write(final PdfWriter writer, final Document d) throws DocumentException {
-						CssUtils cssUtils = CssUtils.getInstance();
-						float pageWidth = d.getPageSize().getWidth();
-						float marginLeft = 0;
-						float marginRight = 0;
-						float marginTop = 0;
-						float marginBottom = 0;
-						Map<String, String> css = t.getCSS();
-						for (Entry<String, String> entry : css.entrySet()) {
-							String key = entry.getKey();
-							String value = entry.getValue();
-							if (key.equalsIgnoreCase(CSS.Property.MARGIN_LEFT)) {
-								marginLeft = cssUtils.parseValueToPt(value, pageWidth);
-							} else if (key.equalsIgnoreCase(CSS.Property.MARGIN_RIGHT)) {
-								marginRight = cssUtils.parseValueToPt(value, pageWidth);
-							} else if (key.equalsIgnoreCase(CSS.Property.MARGIN_TOP)) {
-								marginTop = cssUtils.parseValueToPt(value, pageWidth);
-							} else if (key.equalsIgnoreCase(CSS.Property.MARGIN_BOTTOM)) {
-								marginBottom = cssUtils.parseValueToPt(value, pageWidth);
-							}
-						}
-						d.setMargins(marginLeft, marginRight, marginTop, marginBottom);
-						d.open();
-
-					}
-				}));
 				CssUtils cssUtils = CssUtils.getInstance();
 				float pageWidth = d.getPageSize().getWidth();
 				float marginLeft = 0;
@@ -207,7 +176,6 @@ public class AutoDocPipeline extends AbstractPipeline {
 			} catch (NoCustomContextException e) {
 				throw new PipelineException("AutoDocPipeline depends on PdfWriterPipeline.", e);
 			}
-			// TODO clean
 			try {
 				HtmlPipelineContext hpc = (HtmlPipelineContext) getContext().get(HtmlPipeline.class);
 				HtmlPipelineContext clone = hpc.clone();

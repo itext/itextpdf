@@ -51,7 +51,7 @@ public interface Pipeline {
 
 	/**
 	 * Sets the global worker context.
-	 * @param context
+	 * @param context the worker context
 	 */
 	public void setContext(WorkerContext context);
 
@@ -60,7 +60,7 @@ public interface Pipeline {
 	 * @param t the Tag
 	 * @param po a processObject to put {@link Writable}s in
 	 * @return the next pipeline in line
-	 * @throws PipelineException
+	 * @throws PipelineException can be thrown to indicate that something went wrong.
 	 */
 	public Pipeline open(Tag t, ProcessObject po) throws PipelineException;
 
@@ -70,7 +70,7 @@ public interface Pipeline {
 	 * @param content the content
 	 * @param po a processObject to put {@link Writable}s in
 	 * @return the next pipeline in line
-	 * @throws PipelineException
+	 * @throws PipelineException can be thrown to indicate that something went wrong.
 	 */
 	public Pipeline content(Tag t, byte[] content, ProcessObject po) throws PipelineException;
 
@@ -79,7 +79,7 @@ public interface Pipeline {
 	 * @param t the Tag
 	 * @param po a processObject to put {@link Writable}s in
 	 * @return the next pipeline in line
-	 * @throws PipelineException
+	 * @throws PipelineException  can be thrown to indicate that something went wrong.
 	 */
 	public Pipeline close(Tag t, ProcessObject po) throws PipelineException;
 
