@@ -69,22 +69,12 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	 * java.util.List)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> writables) {
-		List<Element> listElements = new ArrayList<Element>();
-		for (Element e : writables) {
-			if (e instanceof ListItem || e instanceof com.itextpdf.text.List) {
-				listElements.add(e);
-			} else {
-				ListItem listItem = new ListItem();
-				listItem.add(e);
-				listElements.add(listItem);
-			}
-		}
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+		List<Element> listElements = populateList(currentContent);
 		int size = listElements.size();
-		List<Element> mywritables = new ArrayList<Element>();
+		List<Element> returnedList = new ArrayList<Element>();
 		if (size > 0) {
-			com.itextpdf.text.List list = new ListStyleTypeCssApplier().apply(
-					new com.itextpdf.text.List(), tag);
+			com.itextpdf.text.List list = new ListStyleTypeCssApplier().apply(new com.itextpdf.text.List(), tag);
 			int i = 0;
 			for (Element li : listElements) {
 				if (li instanceof ListItem) {
@@ -114,51 +104,85 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 				}
 				i++;
 			}
-			mywritables.add(list);
+			returnedList.add(list);
 		}
-		return mywritables;
+		return returnedList;
 	}
-
+	/**
+	 * Fills a java.util.List with all elements found in currentContent. Places elements that are not a {@link ListItem} or {@link com.itextpdf.text.List} in a new ListItem object.
+	 *
+	 * @param currentContent
+	 * @return java.util.List with only {@link ListItem}s or {@link com.itextpdf.text.List}s in it.
+	 */
+	private List<Element> populateList(final List<Element> currentContent) {
+		List<Element> listElements = new ArrayList<Element>();
+		for (Element e : currentContent) {
+			if (e instanceof ListItem || e instanceof com.itextpdf.text.List) {
+				listElements.add(e);
+			} else {
+				ListItem listItem = new ListItem();
+				listItem.add(e);
+				listElements.add(listItem);
+			}
+		}
+		return listElements;
+	}
+	/**
+	 * Calculates top or bottom spacing of the list. In HTML following possibilities exist:
+	 * <ul>
+	 * <li><b>padding-top of the ul/ol tag == 0.</b><br />
+	 * The margin-top values of the ul/ol tag and its <b>first</b> li tag are <b>compared</b>. The total spacing before is the largest margin value and the first li's padding-top.</li>
+	 * <li><b>padding-top of the ul/ol tag != 0.</b><br />
+	 * The margin-top or bottom values of the ul/ol tag and its first li tag are <b>accumulated</b>, along with padding-top values of both tags.</li>
+	 * <li><b>padding-bottom of the ul/ol tag == 0.</b><br />
+	 * The margin-bottom values of the ul/ol tag and its <b>last</b> li tag are <b>compared</b>. The total spacing after is the largest margin value and the first li's padding-bottom.</li>
+	 * <li><b>padding-bottom of the ul/ol tag != 0.</b><br />
+	 * The margin-bottom or bottom values of the ul/ol tag and its last li tag are <b>accumulated</b>, along with padding-bottom values of both tags.</li>
+	 * </ul>
+	 * @param isTop boolean, if true the top spacing is calculated, if false the bottom spacing is calculated.
+	 * @param storeMarginBottom if true the calculated margin bottom value is stored for later comparison with the top margin value of the next tag.
+	 * @param tag the ul/ol tag.
+	 * @param child first or last li tag of this list.
+	 * @return float containing the spacing before or after.
+	 */
 	private float calculateTopOrBottomSpacing(final boolean isTop, final boolean storeMarginBottom, final Tag tag, final Tag child) {
 		float totalSpacing = 0;
 		try {
 			HtmlPipelineContext context = getHtmlPipelineContext();
-
-
-		String end = isTop?"-top":"-bottom";
-		float ownFontSize = fst.getFontSize(tag);
-		float ownMargin = 0;
-		String marginValue = tag.getCSS().get(CSS.Property.MARGIN+end);
-		if(marginValue==null) {
-			if(null != tag.getParent() && getHtmlPipelineContext().getRootTags().contains(tag.getParent().getTag())) {
-				ownMargin = ownFontSize;
+			String end = isTop?"-top":"-bottom";
+			float ownFontSize = fst.getFontSize(tag);
+			float ownMargin = 0;
+			String marginValue = tag.getCSS().get(CSS.Property.MARGIN+end);
+			if(marginValue==null) {
+				if(null != tag.getParent() && getHtmlPipelineContext().getRootTags().contains(tag.getParent().getTag())) {
+					ownMargin = ownFontSize;
+				}
+			} else {
+				ownMargin = utils.parseValueToPt(marginValue,ownFontSize);
 			}
-		} else {
-			ownMargin = utils.parseValueToPt(marginValue,ownFontSize);
-		}
-		float ownPadding = tag.getCSS().get(CSS.Property.PADDING+end)!=null?utils.parseValueToPt(tag.getCSS().get(CSS.Property.PADDING+end),ownFontSize):0;
-		float childFontSize = fst.getFontSize(child);
-		float childMargin = child.getCSS().get(CSS.Property.MARGIN+end)!=null?utils.parseValueToPt(child.getCSS().get(CSS.Property.MARGIN+end),childFontSize):0;
-		//Margin values of this tag and its first child need to be compared if paddingTop or bottom = 0.
-		if(ownPadding == 0) {
-			float margin = 0;
-			if(ownMargin != 0 && childMargin != 0){
-				margin = ownMargin>=childMargin?ownMargin:childMargin;
-			} else if (ownMargin != 0) {
-				margin = ownMargin;
-			} else if (childMargin != 0) {
-				margin = childMargin;
+			float ownPadding = tag.getCSS().get(CSS.Property.PADDING+end)!=null?utils.parseValueToPt(tag.getCSS().get(CSS.Property.PADDING+end),ownFontSize):0;
+			float childFontSize = fst.getFontSize(child);
+			float childMargin = child.getCSS().get(CSS.Property.MARGIN+end)!=null?utils.parseValueToPt(child.getCSS().get(CSS.Property.MARGIN+end),childFontSize):0;
+			//Margin values of this tag and its first child need to be compared if paddingTop or bottom = 0.
+			if(ownPadding == 0) {
+				float margin = 0;
+				if(ownMargin != 0 && childMargin != 0){
+					margin = ownMargin>=childMargin?ownMargin:childMargin;
+				} else if (ownMargin != 0) {
+					margin = ownMargin;
+				} else if (childMargin != 0) {
+					margin = childMargin;
+				}
+				if(!isTop && storeMarginBottom){
+					context.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, margin);
+				}
+				totalSpacing = margin;
+			} else { // ownpadding != 0 and all margins and paddings need to be accumulated.
+				totalSpacing = ownMargin+ownPadding+childMargin;
+				if(!isTop && storeMarginBottom){
+					context.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, ownMargin);
+				}
 			}
-			if(!isTop && storeMarginBottom){
-				context.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, margin);
-			}
-			totalSpacing = margin;
-		} else { // ownpadding != 0 and all margins and paddings need to be accumulated.
-			totalSpacing = ownMargin+ownPadding+childMargin;
-			if(!isTop && storeMarginBottom){
-				context.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, ownMargin);
-			}
-		}
 		} catch (NoCustomContextException e) {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
 		}

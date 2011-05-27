@@ -247,11 +247,10 @@ public class CssUtils {
 	}
 	/**
 	 * Preparation before implementing the list style in iText. Splits the given
-	 * list style and its attributes into list-style-type, list-style-position, list-style-image,
-	 * font-weight, font-style, font-variant and font-family css styles.
+	 * list style and its attributes into list-style-type, list-style-position and list-style-image.
 	 *
 	 * @param listStyle the string containing the list style value.
-	 * @return a map with the values of font parsed into each css property.
+	 * @return a map with the values of the parsed list style into each css property.
 	 */
 	public Map<String, String> processListStyle(final String listStyle) {
 		Map<String, String> rules = new HashMap<String, String>();
@@ -283,7 +282,7 @@ public class CssUtils {
 	 * font-weight, font-style, font-variant and font-family css styles.
 	 *
 	 * @param font the string containing the font style value.
-	 * @return a map with the values of font parsed into each css property.
+	 * @return a map with the values of the parsed font into each css property.
 	 */
 	public Map<String, String> processFont(final String font) {
 		Map<String, String> rules = new HashMap<String, String>();
@@ -309,7 +308,6 @@ public class CssUtils {
 				style = styleAndRest[0];
 				rest = styleAndRest[1];
 			}
-			// inherit implementeren? op basis van plaatsing == i style of variant..
 		}
 
 		if (isMetricValue(style) || isNumericValue(style)) {
