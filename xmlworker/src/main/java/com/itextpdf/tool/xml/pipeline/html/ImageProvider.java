@@ -70,4 +70,9 @@ public interface ImageProvider {
 	 */
 	void store(String src, Image img);
 
+	/**
+	 * Resets the cached images.
+	 */
+	void reset();
+
 }
