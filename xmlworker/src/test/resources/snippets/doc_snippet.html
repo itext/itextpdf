@@ -1,11 +1,8 @@
 <html>
 <head>
-<link rel="stylesheet" href="http://demo.itextsupport.com/xmlworker/css/layout.css" type="text/css" />
 <style type="text/css">
 body {
 	text-align: left;
-	margin-left: 10%;
-	margin-right: 10%;
 }
 
 tr {
@@ -18,6 +15,8 @@ p,pre,code {
 
 table,tr,td {
 	border: 1px dotted gray;
+	repeat-header:yes;
+	repeat-footer:yes;
 }
 </style>
 </head>
@@ -55,12 +54,14 @@ table,tr,td {
 		usage tips.
 	</p>
 	<h3>Supported tags</h3>
-	<table>
+	<table border="1">
+		<thead>
 		<tr style="vertical-align: top">
 			<th>Tag</th>
 			<th>Comment</th>
 			<th>Supported Attributes</th>
 		</tr>
+		</thead>
 		<tr>
 			<td>xml</td>
 			<td>if available used for parsing charset / must be tested more deeply</td>
@@ -236,7 +237,8 @@ table,tr,td {
 		<a name="csssupport">CSS Support</a>
 	</h2>
 	<p>n = not supported, f = fully supported, s = somehow supported</p>
-	<table>
+	<table border="1">
+		<thead>
 		<tr>
 			<th>Property<br />The CSS property (CSS2/3)</th>
 			<th>Text<br />CSS properties applicable on text</th>
@@ -245,6 +247,7 @@ table,tr,td {
 			<th>list<br />CSS properties applicable on list (ul, ol, li)</th>
 			<th>image<br />CSS properties applicable on images (img)</th>
 		</tr>
+		</thead>
 		<tr>
 			<td>background</td>
 			<td></td>
@@ -919,12 +922,20 @@ table,tr,td {
 		</tr>
 	</table>
 	<h3>Notes</h3>
-	<p>When using
-	<code>page-break-before</code>
-	and
-	<code>page-break-after</code>
-	inside tags that are 1 element in PDF (like lists or tables) the
-	outcome of adding a new page is unpredicted.</p>
+	<ul>
+		<li>When using <code>page-break-before</code> and <code>page-break-after</code>
+			inside tags that are 1 element in PDF (like lists or tables) the
+			outcome of adding a new page is unpredicted.
+		</li>
+		<li>Parsed HTML tables can be spread over several pages. 
+			To implement repeating headers and/or footers, 
+			the tag <code>table</code> can implement 2 XMLWorker specific styles:
+			<ul>
+				<li><code>repeat-header:yes</code></li>
+				<li><code>repeat-footer:yes</code></li>
+			</ul>
+		</li>
+	</ul>
 	<h2>
 		<a name="examples">Examples</a>
 	</h2>
@@ -1007,8 +1018,7 @@ table,tr,td {
 	</pre>
 	<h2>Demo</h2>
 	<p>
-		There is an <a href="http://demo.itextsupport.com/xmlworker">online
-			demo</a> available where input can be done through a tinyMCE editor and a
+		There is a demo available where input can be done through a tinyMCE editor and a
 		PDF is created from the provided input.
 	</p>
 	<h2>Plans for the future</h2>
@@ -1018,5 +1028,9 @@ table,tr,td {
 		<li>Provide a way to add none <code>com.itextpf.text.Element</code>
 			objects to the document. (e.g. a ColumnText)</li>
 	</ul>
+	<p style="page-break-before: always;">Links<br />
+	<a href="http://www.itextpdf.com">iText</a>, <a href="http://demo.itextsupport.com/xmlworker">online
+			demo</a>, <a href="https://sourceforge.net/projects/xmlworker/">XML Worker Project</a>
+	</p>
 </body>
 </html>

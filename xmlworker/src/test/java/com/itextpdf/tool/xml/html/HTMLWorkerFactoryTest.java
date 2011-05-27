@@ -76,6 +76,7 @@ public class HTMLWorkerFactoryTest {
     public static final String RESOURCE_TEST_PATH = "./target/test-classes/";
 	public static final String SNIPPETS = "/snippets/";
 
+//	private static final String TEST = "doc_";
 //    private static final String TEST = "xfa-support_";
 //    private static final String TEST = "Atkins_";
 //    private static final String TEST = "b-p_";
@@ -83,7 +84,7 @@ public class HTMLWorkerFactoryTest {
 //    private static final String TEST = "font_color_";
 //    private static final String TEST = "fontSizes_";
 //    private static final String TEST = "line-height_letter-spacing_";
-    private static final String TEST = "longtext_";
+//    private static final String TEST = "longtext_";
 //    private static final String TEST = "error_message_test_";
 //    private static final String TEST = "xfa-support_";
 //    private static final String TEST = "margin-align_";
@@ -94,7 +95,7 @@ public class HTMLWorkerFactoryTest {
 //	  private static final String TEST = "table_";
 //	  private static final String TEST = "tableInTable_";
 //	  private static final String TEST = "table_incomplete_";
-//	  private static final String TEST = "lists_";
+	  private static final String TEST = "lists_";
 //	  private static final String TEST = "img_";
 //	  private static final String TEST = "position_";
 //	  private static final String TEST = "h_";

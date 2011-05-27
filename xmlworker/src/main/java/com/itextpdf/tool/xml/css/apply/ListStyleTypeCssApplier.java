@@ -86,6 +86,7 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 	 */
 	// not implemented: list-style-type:armenian, georgian, decimal-leading-zero.
 	public List apply(final List list, final Tag t) {
+		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		List lst = list;
 		Map<String, String> css = t.getCSS();
 		String styleType = css.get(CSS.Property.LIST_STYLE_TYPE);
@@ -98,10 +99,13 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 				lst = new List(List.ORDERED);
 			} else if (CSS.Value.DISC.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(108);
+				shrinkSymbol(lst, fontSize);
 			} else if (CSS.Value.SQUARE.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(110);
+				shrinkSymbol(lst, fontSize);
 			} else if (CSS.Value.CIRCLE.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(109);
+				shrinkSymbol(lst, fontSize);
 			} else if (CSS.Value.LOWER_ROMAN.equals(styleType)) {
 				lst = new RomanList(true, 0);
 			} else if (CSS.Value.UPPER_ROMAN.equals(styleType)) {
@@ -121,6 +125,7 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 			lst = new List(List.ORDERED);
 		} else if (t.getTag().equalsIgnoreCase(HTML.Tag.UL)) {
 			lst = new List(List.UNORDERED);
+			shrinkSymbol(lst, fontSize);
 		}
 		if (null != css.get(CSS.Property.LIST_STYLE_IMAGE)
 				&& !css.get(CSS.Property.LIST_STYLE_IMAGE).equalsIgnoreCase(CSS.Value.NONE)) {
@@ -148,18 +153,25 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 		}
 		lst.setAlignindent(false);
 		lst.setAutoindent(false);
-		lst.setSymbolIndent(20);
+		lst.setSymbolIndent(12);
 		float leftIndent = 0;
 		if (null != css.get(CSS.Property.LIST_STYLE_POSITION) && css.get(CSS.Property.LIST_STYLE_POSITION).equalsIgnoreCase(CSS.Value.INSIDE)) {
 			leftIndent += 30;
 		} else {
 			leftIndent += 15;
 		}
-		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		leftIndent += css.get(CSS.Property.MARGIN_LEFT)!=null?utils.parseValueToPt(css.get(CSS.Property.MARGIN_LEFT),fontSize):0;
 		leftIndent += css.get(CSS.Property.PADDING_LEFT)!=null?utils.parseValueToPt(css.get(CSS.Property.PADDING_LEFT),fontSize):0;
 //		lst.setIndentationLeft(leftIndent);
 		return lst;
+	}
+
+	private void shrinkSymbol(final List lst, final float fontSize) {
+		Chunk symbol = lst.getSymbol();
+//		Image image = symbol.getImage();
+//		image.setSpacingAfter(2.5f);
+		symbol.setTextRise((fontSize-7)/2);
+		symbol.getFont().setSize(7);
 	}
 
 }

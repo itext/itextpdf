@@ -30,90 +30,6 @@
 		<td>Simple Cell 2.3</td>
 	</tr>
 </table>
-<table style="border-spacing: 2.5pt;" border="2">
-	<tr>
-		<td>Simple Cell 1.1</td>
-		<td>Simple Cell 1.2</td>
-		<td>Simple Cell 1.3</td>
-	</tr>
-	<tr>
-		<td>Simple Cell 2.1</td>
-		<td>Simple Cell 2.2</td>
-		<td>Simple Cell 2.3</td>
-	</tr>
-</table>
-<table style="border-spacing: 5pt;" border="2">
-	<tr>
-		<td>Simple Cell 1.1</td>
-		<td>Simple Cell 1.2</td>
-		<td>Simple Cell 1.3</td>
-	</tr>
-	<tr>
-		<td>Simple Cell 2.1</td>
-		<td>Simple Cell 2.2</td>
-		<td>Simple Cell 2.3</td>
-	</tr>
-</table>
-<table style="border-spacing: 10pt;" border="2">
-	<tr>
-		<td>Simple Cell 1.1</td>
-		<td>Simple Cell 1.2</td>
-		<td>Simple Cell 1.3</td>
-	</tr>
-	<tr>
-		<td>Simple Cell 2.1</td>
-		<td>Simple Cell 2.2</td>
-		<td>Simple Cell 2.3</td>
-	</tr>
-</table>
-<table style="border-spacing: 15pt;" border="2">
-	<tr>
-		<td>Simple Cell 1.1</td>
-		<td>Simple Cell 1.2</td>
-		<td>Simple Cell 1.3</td>
-	</tr>
-	<tr>
-		<td>Simple Cell 2.1</td>
-		<td>Simple Cell 2.2</td>
-		<td>Simple Cell 2.3</td>
-	</tr>
-</table>
-<table style="border-spacing: 20pt;" border="2">
-	<tr>
-		<td>Simple Cell 1.1</td>
-		<td>Simple Cell 1.2</td>
-		<td>Simple Cell 1.3</td>
-	</tr>
-	<tr>
-		<td>Simple Cell 2.1</td>
-		<td>Simple Cell 2.2</td>
-		<td>Simple Cell 2.3</td>
-	</tr>
-</table>
-<table style="border-spacing: 40pt;" border="2">
-	<tr>
-		<td>Simple Cell 1.1</td>
-		<td>Simple Cell 1.2</td>
-		<td>Simple Cell 1.3</td>
-	</tr>
-	<tr>
-		<td>Simple Cell 2.1</td>
-		<td>Simple Cell 2.2</td>
-		<td>Simple Cell 2.3</td>
-	</tr>
-</table>
-<table style="border-spacing: 60pt;border:30pt red solid;">
-	<tr>
-		<td>Simple Cell 1.1</td>
-		<td>Simple Cell 1.2</td>
-		<td>Simple Cell 1.3</td>
-	</tr>
-	<tr>
-		<td>Simple Cell 2.1</td>
-		<td>Simple Cell 2.2</td>
-		<td>Simple Cell 2.3</td>
-	</tr>
-</table>
 <h2>Table with attribute border="2"</h2>
 <table border="60">
 	<tr>
@@ -174,7 +90,12 @@
 	<li>padding:10px;</li>
 	<li>border:3pt red solid;</li>
 	<li>empty-cells:hide;</li>
+	<li>repeat-header:yes</li>
+	<li>repeat-footer:yes</li>
 </ul>
+<p><b>Note:</b> repeat-header and repeat-footer are NOT real HTML attributes, but only work in combination with this XMLWorker.
+These two styles are used by iText to repeat headers and footers of large tables that are split over several pages.</p>  
+
 <p>Different row types:</p>
 <ul>
 	<li>header</li>
@@ -197,13 +118,19 @@
 	<li>border-bottom-style:solid;border-bottom-color:pink</li>
 	<li>font-size:20pt</li>
 </ul>
-<table style="margin:10px;padding:10px;border:3pt red solid;empty-cells:hide;" cellspacing=10px >
+<table style="repeat-header:yes;repeat-footer:yes;margin:10px;padding:10px;border:3pt red solid;empty-cells:hide;" cellspacing=10px >
 	<tfoot>
 	<tr>
 		<td>Footer 1,1</td>
 		<td>Footer 1,2</td>
 		<td>Footer 1,3</td>
 		<td>Footer 1,4</td>
+	</tr>
+		<tr>
+		<td>Footer 2,1</td>
+		<td>Footer 2,2</td>
+		<td>Footer 2,3</td>
+		<td>Footer 2,4</td>
 	</tr>
 	</tfoot>
 	<thead>
@@ -212,6 +139,12 @@
 		<td>Header 1,2</td>
 		<td>Header 1,3</td>
 		<td>Header 1,4</td>
+	</tr>
+		<tr>
+		<td>Header 2,1</td>
+		<td>Header 2,2</td>
+		<td>Header 2,3</td>
+		<td>Header 2,4</td>
 	</tr>
 	</thead>
 	<tr>
@@ -243,6 +176,10 @@
 	</tr>
 	<tr>
 		<td colspan="5" style="border-bottom-style:solid;border-bottom-color:brown">Cell 6,1</td>
+	</tr>
+		<tr>
+		<td colspan="4" style="border-bottom-style:solid;border-bottom-color:brown">Cell 7,1</td>
+		<td>Cell 7,2 with content in it to split this table across several pages to show the repeat-header and repeat-footer css styles.</td>
 	</tr>
 </table>
 </body>

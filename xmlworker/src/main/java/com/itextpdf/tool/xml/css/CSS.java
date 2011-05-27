@@ -120,6 +120,8 @@ public final class CSS {
 		public static final String XFA_TAB_STOPS = "xfa-tab-stops";
 		public static final String PAGE_BREAK_BEFORE = "page-break-before";
 		public static final String PAGE_BREAK_AFTER = "page-break-after";
+		public static final String REPEAT_HEADER = "repeat-header";
+		public static final String REPEAT_FOOTER = "repeat-footer";
 	}
 
 	/**
