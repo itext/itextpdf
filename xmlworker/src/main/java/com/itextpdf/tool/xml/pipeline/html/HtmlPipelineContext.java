@@ -244,10 +244,11 @@ public class HtmlPipelineContext implements CustomContext, Cloneable {
 
 	/**
 	 * Create a clone of this HtmlPipelineContext, the clone only contains the
-	 * initial values, not the internal values. This meaning, the state of the
+	 * initial values, not the internal values. Beware, the state of the
 	 * current Context is not copied to the clone. Only the configurational
-	 * important stuff like the LinkProvider, ImageProvider,
-	 * TagProcessorFactory, acceptUnknown, charset, autobookmark are copied.
+	 * important stuff like the LinkProvider, ImageProvider (on this one also
+	 * {@link ImageProvider#reset()} is called, TagProcessorFactory,
+	 * acceptUnknown, charset, autobookmark are copied.
 	 */
 	@Override
 	public HtmlPipelineContext clone() throws CloneNotSupportedException {
@@ -256,6 +257,10 @@ public class HtmlPipelineContext implements CustomContext, Cloneable {
 				.setRootTags(this.roottags).charSet(this.charset).autoBookmark(this.autoBookmark)
 				.setTagFactory(this.tagFactory).setAcceptUnknown(this.acceptUnknown);
 		newCtx.setContext(this.context);
+		try {
+			newCtx.getImageProvider().reset();
+		} catch (NoImageProviderException e) {
+		}
 		return newCtx;
 	}
 	/**
