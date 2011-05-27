@@ -91,13 +91,23 @@ public class Table extends AbstractTagProcessor {
 	private static final FontSizeTranslator fst = FontSizeTranslator.getInstance();
 
 	/**
-	 * Reorganizes table rows based on the designated {@link Place} in a table.
+	 * Reorganizes table rows based on the designated normal {@link Place} in a table.
 	 * @author Emiel Ackermann
 	 *
 	 */
-	private final class TableRowElementComparator implements Comparator<TableRowElement> {
+	private final class NormalRowComparator implements Comparator<TableRowElement> {
 		public int compare(final TableRowElement o1, final TableRowElement o2) {
-			return o1.getPlace().getI().compareTo(o2.getPlace().getI());
+			return o1.getPlace().getNormal().compareTo(o2.getPlace().getNormal());
+		}
+	}
+	/**
+	 * Reorganizes table rows based on the designated repeated {@link Place} in a table.
+	 * @author Emiel Ackermann
+	 *
+	 */
+	private final class RepeatedRowComparator implements Comparator<TableRowElement> {
+		public int compare(final TableRowElement o1, final TableRowElement o2) {
+			return o1.getPlace().getRepeated().compareTo(o2.getPlace().getRepeated());
 		}
 	}
 	/**
@@ -119,6 +129,10 @@ public class Table extends AbstractTagProcessor {
 			int numberOfColumns = 0;
 			List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
 			List<Element> invalidRowElements = new ArrayList<Element>(1);
+			String repeatHeader = tag.getCSS().get(CSS.Property.REPEAT_HEADER);
+			String repeatFooter = tag.getCSS().get(CSS.Property.REPEAT_FOOTER);
+			int headerRows = 0;
+			int footerRows = 0;
 			for (Element e : currentContent) {
 				int localNumCols = 0;
 				if (e instanceof TableRowElement) {
@@ -130,14 +144,24 @@ public class Table extends AbstractTagProcessor {
 						numberOfColumns = localNumCols;
 					}
 					tableRows.add(tableRowElement);
+					if (repeatHeader != null && repeatHeader.equalsIgnoreCase("yes") && tableRowElement.getPlace().equals(TableRowElement.Place.HEADER)) {
+						headerRows++;
+					}
+					if (repeatFooter != null && repeatFooter.equalsIgnoreCase("yes") && tableRowElement.getPlace().equals(TableRowElement.Place.FOOTER)){
+						footerRows++;
+					}
 				} else {
 					invalidRowElements.add(e);
 				}
-
 			}
-			Collections.sort(tableRows, new TableRowElementComparator());
-			//
+			if(repeatFooter == null || !repeatFooter.equalsIgnoreCase("yes")) {
+				Collections.sort(tableRows, new NormalRowComparator());
+			} else {
+				Collections.sort(tableRows, new RepeatedRowComparator());
+			}
 			PdfPTable table = new PdfPTable(numberOfColumns);
+			table.setHeaderRows(headerRows+footerRows);
+			table.setFooterRows(footerRows);
 			TableStyleValues styleValues = setStyleValues(tag);
 			table.setTableEvent(new TableBorderEvent(styleValues));
 			setVerticalMargin(table, tag, styleValues);

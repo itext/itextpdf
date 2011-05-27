@@ -73,14 +73,19 @@ public class TableRowElement implements Element {
 	 * @author Emiel Ackermann
 	 *
 	 */
-	public enum Place{CAPTION_TOP(-2),HEADER(-1),BODY(0),FOOTER(1),CAPTION_BOTTOM(2);
+	public enum Place{CAPTION_TOP(-2, -2),HEADER(-1, -1),BODY(0, 1),FOOTER(1, 0),CAPTION_BOTTOM(2, 2);
 
-		private Integer i;
-		private Place(final Integer i) {
-			this.i = i;
+		private Integer normal;
+		private Integer repeated;
+		private Place(final Integer normal, final Integer repeated) {
+			this.normal = normal;
+			this.repeated = repeated;
 		}
-		public Integer getI() {
-			return i;
+		public Integer getNormal() {
+			return normal;
+		}
+		public Integer getRepeated() {
+			return repeated;
 		}
 	};
 	private final Place place;
