@@ -73,7 +73,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 
 
 	/**
-	 * @param htmlPipelineContext
+	 * @param htmlPipelineContext the context
 	 */
 	public HtmlCellCssApplier(final HtmlPipelineContext htmlPipelineContext) {
 		this.configuration = htmlPipelineContext;
@@ -103,7 +103,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 		} else {
 	    	cell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Default css behavior. Implementation of "vertical-align" style further along.
 			if(t.getAttributes().get(HTML.Attribute.WIDTH) != null || css.get(HTML.Attribute.WIDTH) != null) {
-				cell.setFixedWidth(new WidthCalculator().getWidth(t, configuration));
+				cell.setFixedWidth(new WidthCalculator().getWidth(t, configuration.getRootTags(), configuration.getPageSize().getWidth()));
 			}
 	        String colspan = t.getAttributes().get(HTML.Attribute.COLSPAN);
 	        if (null != colspan) {

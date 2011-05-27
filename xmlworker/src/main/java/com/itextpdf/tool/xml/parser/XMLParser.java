@@ -219,7 +219,7 @@ public class XMLParser {
 	/**
 	 * Set the current state.
 	 *
-	 * @param state
+	 * @param state the current state
 	 */
 	protected void setState(final State state) {
 		this.state = state;
@@ -415,14 +415,14 @@ public class XMLParser {
 		this.monitor = monitor;
 	}
 	/**
-	 * @return
+	 * @return the current buffer as a String
 	 */
 	public String bufferToString() {
 		return this.memory.current().toString();
 	}
 	/**
-	 * @param bytes
-	 * @return
+	 * @param bytes the byte array to append
+	 * @return this XMLParser
 	 */
 	public XMLParser append(final byte[] bytes) {
 		for (byte b : bytes) {
@@ -431,7 +431,7 @@ public class XMLParser {
 		return this;
 	}
 	/**
-	 * @return
+	 * @return the size of the buffer
 	 */
 	public int bufferSize() {
 		return (null != this.memory.current())?this.memory.current().size():0;

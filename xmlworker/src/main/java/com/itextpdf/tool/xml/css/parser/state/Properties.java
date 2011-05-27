@@ -12,7 +12,7 @@ public class Properties implements State {
 	private final CssStateController controller;
 
 	/**
-	 * @param cssStateController
+	 * @param cssStateController the controller
 	 */
 	public Properties(final CssStateController cssStateController) {
 		this.controller = cssStateController;

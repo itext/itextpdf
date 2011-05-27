@@ -73,17 +73,44 @@ public class TableRowElement implements Element {
 	 * @author Emiel Ackermann
 	 *
 	 */
-	public enum Place{CAPTION_TOP(-2, -2),HEADER(-1, -1),BODY(0, 1),FOOTER(1, 0),CAPTION_BOTTOM(2, 2);
+	public enum Place{
+		/**
+		 * The caption element on top
+		 */
+		CAPTION_TOP(-2, -2),/**
+		 *
+		 * A header row
+		 */
+		HEADER(-1, -1),/**
+		 *
+		 * Body rows
+		 */
+		BODY(0, 1),/**
+		 *  Footer rows
+		 */
+		FOOTER(1, 0), /**
+		 * The caption element in the bottom
+		 */
+		CAPTION_BOTTOM(2, 2);
 
 		private Integer normal;
 		private Integer repeated;
+
 		private Place(final Integer normal, final Integer repeated) {
 			this.normal = normal;
 			this.repeated = repeated;
 		}
+		/**
+		 * The position when header/footers should not be repeated on each page.
+		 * @return an integer position
+		 */
 		public Integer getNormal() {
 			return normal;
 		}
+		/**
+		 * The position when headers/footers should be repeated on each page.
+		 * @return an integer position
+		 */
 		public Integer getRepeated() {
 			return repeated;
 		}

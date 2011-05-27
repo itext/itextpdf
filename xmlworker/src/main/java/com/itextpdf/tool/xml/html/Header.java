@@ -92,7 +92,7 @@ public class Header extends AbstractTagProcessor {
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		List<Element> l = new ArrayList<Element>(1);
 		if (currentContent.size() > 0) {
-			List<Element> currentContentToParagraph = currentContentToWritables(currentContent, true, true, tag);
+			List<Element> currentContentToParagraph = currentContentToParagraph(currentContent, true, true, tag);
 			final HtmlPipelineContext context;
 			try {
 				context = getHtmlPipelineContext();

@@ -62,7 +62,7 @@ public class NonSanitizedTag extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		return currentContentToWritables(currentContent, false, true, tag);
+		return currentContentToParagraph(currentContent, false, true, tag);
 	}
 
 }

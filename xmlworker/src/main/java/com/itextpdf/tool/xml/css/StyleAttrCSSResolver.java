@@ -68,11 +68,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	/**
 	 *
 	 */
-	private static final String HTTP = "http";
-	/**
-	 *
-	 */
-	public static final String STYLE = "style";
+	public static final String STYLE = HTML.Attribute.STYLE;
 	private final CssUtils utils;
 	private CssInheritanceRules inherit;
 	private final CssFiles cssFiles;
@@ -122,6 +118,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	 * @param rules the {@link CssInheritanceRules} to use.
 	 * @param cssFiles a {@link CssFiles} implementation.
 	 * @param utils the CssUtils to use.
+	 * @param fileRetrieve the {@link FileRetrieve} implementation
 	 */
 	public StyleAttrCSSResolver(final CssInheritanceRules rules, final CssFiles cssFiles, final CssUtils utils, final FileRetrieve fileRetrieve) {
 		this.utils = utils;
@@ -131,10 +128,10 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	}
 
 	/**
-	 * @param cssFiles2
-	 * @param r
+	 * @param cssFiles the {@link CssFile} implementation
+	 * @param r the {@link FileRetrieve} implementation
 	 */
-	public StyleAttrCSSResolver(final CssFilesImpl cssFiles, final FileRetrieveImpl r) {
+	public StyleAttrCSSResolver(final CssFiles cssFiles, final FileRetrieve r) {
 		this(new DefaultCssInheritanceRules(), cssFiles, CssUtils.getInstance(), r);
 	}
 
@@ -264,10 +261,9 @@ public class StyleAttrCSSResolver implements CSSResolver {
 		return true;
 	}
 
-	/**
-	 * @param content
-	 * @param charSet
-	 * @throws CssResolverException
+	/*
+	 * (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.pipeline.css.CSSResolver#addCss(java.lang.String, java.lang.String)
 	 */
 	public void addCss(final String content, final String charSet) throws CssResolverException {
 		CssFileProcessor proc = new CssFileProcessor();

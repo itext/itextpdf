@@ -71,6 +71,9 @@ public class CssUtils {
 	private static final String _0_TOP_1 = "{0}top{1}";
 	private static CssUtils myself;
 
+	/**
+	 * Default font size if none is set.
+	 */
 	public static final int DEFAULT_FONT_SIZE_PT = 12;
 
 
@@ -496,6 +499,7 @@ public class CssUtils {
 	/**
 	 * Returns the sum of the left and right margin of a tag.
 	 * @param t the tag of which the total horizontal margin is needed.
+	 * @param pageWidth the page width
 	 * @return float the total horizontal margin.
 	 */
 	public float getLeftAndRightMargin(final Tag t, final float pageWidth) {

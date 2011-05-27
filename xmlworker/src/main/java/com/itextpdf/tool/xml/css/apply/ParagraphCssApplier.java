@@ -55,11 +55,20 @@ import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
+/**
+ * Applies CSS on a {@link Paragraph}
+ * @author itextpdf.com
+ *
+ */
 public class ParagraphCssApplier implements CssApplier<Paragraph> {
 	private final CssUtils utils = CssUtils.getInstance();
 	private final MaxLeadingAndSize m = new MaxLeadingAndSize();
 	private final HtmlPipelineContext configuration;
 
+	/**
+	 * Construct a ParagraphCssApplier with the given {@link HtmlPipelineContext}
+	 * @param htmlPipelineContext the context
+	 */
 	public ParagraphCssApplier(final HtmlPipelineContext htmlPipelineContext) {
 		this.configuration = htmlPipelineContext;
 	}

@@ -81,6 +81,7 @@ public final class HTML {
 		public static final String HR = "hr";
 		public static final String BODY = "body";
 		public static final String HTML = "html";
+		public static final String TABLE = "table";
 
 	}
 	/**

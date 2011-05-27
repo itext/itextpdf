@@ -44,17 +44,17 @@ public class WidthCalculatorTest {
 	@Test
 	public void resolveTableWidth80() throws IOException {
 		table.getAttributes().put(HTML.Attribute.WIDTH, "80%");
-		assertEquals(0.8*config.getPageSize().getWidth(), calc.getWidth(table, config), 0);
+		assertEquals(0.8*config.getPageSize().getWidth(), calc.getWidth(table, config.getRootTags(), config.getPageSize().getWidth()), 0);
 	}
 	@Test
 	public void resolveCellWidth20of100() throws IOException {
 		cell.getAttributes().put(HTML.Attribute.WIDTH, "20%");
-		assertEquals(config.getPageSize().getWidth()*0.2f, calc.getWidth(cell, config),0.01f);
+		assertEquals(config.getPageSize().getWidth()*0.2f, calc.getWidth(cell, config.getRootTags(), config.getPageSize().getWidth()),0.01f);
 	}
 	@Test
 	public void resolveCellWidth20of80() throws IOException {
 		table.getAttributes().put(HTML.Attribute.WIDTH, "80%");
 		cell.getAttributes().put(HTML.Attribute.WIDTH, "20%");
-		assertEquals(0.8f*config.getPageSize().getWidth()*0.2f, calc.getWidth(cell, config),0.01f);
+		assertEquals(0.8f*config.getPageSize().getWidth()*0.2f, calc.getWidth(cell, config.getRootTags(), config.getPageSize().getWidth()),0.01f);
 	}
 }

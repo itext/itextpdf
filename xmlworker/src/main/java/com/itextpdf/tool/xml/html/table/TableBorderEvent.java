@@ -57,12 +57,15 @@ public class TableBorderEvent implements PdfPTableEvent{
 	 *
 	 */
 	private final TableStyleValues styleValues;
+
 	/**
-     * @param styleValues
-	 * @param css
+	 * Construct a new TableBorderEvent with the given TableStyleValues.
+	 *
+	 * @param styleValues the TableStyleValues
 	 * @see com.itextpdf.text.pdf.PdfPTableEvent#tableLayout(com.itextpdf.text.pdf.PdfPTable,
-     *      float[][], float[], int, int, com.itextpdf.text.pdf.PdfContentByte[])
-     */
+	 *      float[][], float[], int, int,
+	 *      com.itextpdf.text.pdf.PdfContentByte[])
+	 */
     public TableBorderEvent(final TableStyleValues styleValues) {
     	this.styleValues = styleValues;
     }
@@ -135,10 +138,13 @@ public class TableBorderEvent implements PdfPTableEvent{
         }
         cb.resetRGBColorStroke();
     }
+
+    /**
+     * Returns the used TableStyleValues
+     * @return TableStyleValues
+     */
 	public TableStyleValues getTableStyleValues(){
 		return this.styleValues;
 	}
-	private void checkBorderColors(final TableStyleValues styleValues) {
 
-	}
 }

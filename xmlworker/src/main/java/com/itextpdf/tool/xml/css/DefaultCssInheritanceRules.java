@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.html.HTML;
 
 /**
  * @author redlab_b
@@ -65,18 +66,18 @@ public class DefaultCssInheritanceRules implements CssInheritanceRules {
 		return true;
 	}
 
-	List<String> global = Arrays.asList(new String[] { "width", "height", "min-width", "max-width", "min-height",
+	private static final List<String> GLOBAL = Arrays.asList(new String[] { "width", "height", "min-width", "max-width", "min-height",
 			"max-height", "margin", "margin-left", "margin-right", "margin-top",
 			"margin-bottom", "padding", "padding-left", "padding-right", "padding-top", "padding-bottom",
 			"border-top-width", "border-top-style", "border-top-color", "border-bottom-width",
 			"border-bottom-style", "border-bottom-color", "border-left-width", "border-left-style",
 			"border-left-color", "border-right-width", "border-right-style", "border-right-color",
 			CSS.Property.PAGE_BREAK_BEFORE ,CSS.Property.PAGE_BREAK_AFTER });
-	List<String> parentToTable = Arrays.asList(new String[] { "line-height", "font-size", "font-style", "font-weight",
+	private static final List<String> PARENT_TO_TABLE = Arrays.asList(new String[] { "line-height", "font-size", "font-style", "font-weight",
 			"text-indent" });
-	List<String> tableToRow = Arrays.asList(new String[] { "background-color" });
+	private static final List<String> TABLE_IN_ROW = Arrays.asList(new String[] { "background-color" });
 	// styles that should not be applied on the content of a td-tag.
-	List<String> tdToContent = Arrays.asList(new String[] { "vertical-align" });
+	private static final List<String> TD_TO_CONTENT = Arrays.asList(new String[] { "vertical-align" });
 
 	/*
 	 * (non-Javadoc)
@@ -86,17 +87,17 @@ public class DefaultCssInheritanceRules implements CssInheritanceRules {
 	 * itextpdf.tool.xml.Tag, java.lang.String)
 	 */
 	public boolean inheritCssSelector(final Tag tag, final String key) {
-		if (global.contains(key)) {
+		if (GLOBAL.contains(key)) {
 			return false;
 		}
-		if ("table".equals(tag.getTag())) {
-			return !parentToTable.contains(key);
+		if (HTML.Tag.TABLE.equals(tag.getTag())) {
+			return !PARENT_TO_TABLE.contains(key);
 		}
-		if ("table".equals(tag.getParent().getTag())) {
-			return !tableToRow.contains(key);
+		if (HTML.Tag.TABLE.equals(tag.getParent().getTag())) {
+			return !TABLE_IN_ROW.contains(key);
 		}
-		if ("td".equalsIgnoreCase(tag.getParent().getTag())) {
-			return !tdToContent.contains(key);
+		if (HTML.Tag.TD.equalsIgnoreCase(tag.getParent().getTag())) {
+			return !TD_TO_CONTENT.contains(key);
 		}
 		return true;
 	}

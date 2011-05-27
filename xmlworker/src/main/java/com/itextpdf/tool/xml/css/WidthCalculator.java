@@ -43,9 +43,10 @@
  */
 package com.itextpdf.tool.xml.css;
 
+import java.util.List;
+
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.HTML;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
@@ -55,7 +56,14 @@ public class WidthCalculator {
 
 	private final CssUtils utils = CssUtils.getInstance();
 
-	public float getWidth(final Tag tag, final HtmlPipelineContext htmlPipelineContext){
+	/**
+	 * Tries to calculate a width from a tag and it's ancestors.
+	 * @param tag the tag to use
+	 * @param roottags the root tags,
+	 * @param pagewidth the page width
+	 * @return the width
+	 */
+	public float getWidth(final Tag tag, final List<String> roottags, final float pagewidth){
 		float width = 0;
 		String widthValue = tag.getCSS().get(HTML.Attribute.WIDTH);
 		if(widthValue == null) {
@@ -69,12 +77,12 @@ public class WidthCalculator {
 				float firstAncestorsWidth = 0;
 				while(firstAncestorsWidth == 0) {
 					ancestor = ancestor.getParent();
-					firstAncestorsWidth = getWidth(ancestor, htmlPipelineContext);
+					firstAncestorsWidth = getWidth(ancestor, roottags, pagewidth);
 				}
 				width = utils.parseRelativeValue(widthValue, firstAncestorsWidth);
 			}
-		} else if (htmlPipelineContext.getRootTags().contains(tag.getTag())){
-			width = htmlPipelineContext.getPageSize().getWidth();
+		} else if (roottags.contains(tag.getTag())){
+			width = pagewidth;
 		}
 		return width;
 	}

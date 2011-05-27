@@ -83,28 +83,28 @@ public class HtmlCell extends PdfPCell {
 	}
 	/**
 	 * Sets the fixed width of the HtmlCell.
-	 * @param fixedWidth
+	 * @param fixedWidth the fixed cell width
 	 */
 	public void setFixedWidth(final float fixedWidth) {
 		this.fixedWidth = fixedWidth;
 	}
 	/**
 	 * Gets the fixed width of the HtmlCell.
-	 * @param fixedWidth
+	 * @return the fixed Width value
 	 */
 	public float getFixedWidth() {
 		return fixedWidth;
 	}
 	/**
 	 * Gets the {@link TableStyleValues} of the HtmlCell.
-	 * @param fixedWidth
+	 * @return TableStyleValues
 	 */
 	public TableStyleValues getCellValues() {
 		return values;
 	}
 	/**
 	 * Sets the {@link TableStyleValues} of the HtmlCell.
-	 * @param fixedWidth
+	 * @param values the TableStyleValues
 	 */
 	public void setCellValues(final TableStyleValues values) {
 		this.values = values;

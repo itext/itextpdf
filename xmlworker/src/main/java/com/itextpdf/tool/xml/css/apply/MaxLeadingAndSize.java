@@ -63,10 +63,17 @@ public final class MaxLeadingAndSize {
 	private float largestLeading;
 	private float largestFont;
 
+	/**
+	 *
+	 * @return largest leading
+	 */
 	public float getLargestLeading() {
 		return largestLeading;
 	}
-
+	/**
+	 *
+	 * @return largest font size
+	 */
 	public float getLargestFont() {
 		return largestFont;
 	}
@@ -85,7 +92,7 @@ public final class MaxLeadingAndSize {
 
 	/**
 	 * Set the largest leading based on calculateLeading only. (Children not taken into account)
-	 * @param tag
+	 * @param tag the tag
 	 */
 	public void setLeading(final Tag tag) {
 		largestLeading = calculateLeading(tag);

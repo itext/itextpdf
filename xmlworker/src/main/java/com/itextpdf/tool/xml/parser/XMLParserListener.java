@@ -69,20 +69,20 @@ public interface XMLParserListener {
 
 	/**
 	 * Triggered on a closing tag.
-	 * @param tag
+	 * @param tag the tag
 	 * @param ns the namespace or empty String
 	 */
 	void endElement(String tag, String ns);
 
 	/**
 	 * Triggered for text found outside root tag.
-	 * @param text
+	 * @param text the text
 	 */
 	void unknownText(String text);
 
 	/**
 	 * Triggered for comments that are found.
-	 * @param comment
+	 * @param comment the comment
 	 */
 	void comment(String comment);
 

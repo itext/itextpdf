@@ -50,10 +50,10 @@ package com.itextpdf.tool.xml.net;
 public interface ReadingProcessor {
 
 	/**
-	 * Process the given bit.
+	 * Process the given character.
 	 *
-	 * @param inbit
+	 * @param character the character integer value that must be processed
 	 */
-	void process(int inbit);
+	void process(int character);
 
 }

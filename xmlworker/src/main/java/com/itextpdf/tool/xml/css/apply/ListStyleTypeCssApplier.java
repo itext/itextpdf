@@ -66,7 +66,7 @@ import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
 
 /**
- * @author redlab_b
+ * @author itextpdf.com
  *
  */
 public class ListStyleTypeCssApplier implements CssApplier<List> {
@@ -75,7 +75,6 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 	private static final Logger LOG = LoggerFactory.getLogger(ListStyleTypeCssApplier.class);
 
 	/**
-	 * @param configuration the provider
 	 *
 	 */
 	public ListStyleTypeCssApplier() {
@@ -174,5 +173,4 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 		symbol.setTextRise((fontSize-7)/2);
 		symbol.getFont().setSize(7);
 	}
-
 }

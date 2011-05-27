@@ -386,11 +386,12 @@ public class Table extends AbstractTagProcessor {
 	private float calculateTargetWidth(final Tag tag, final float[] columnWidths, final float horBorderSpacing) throws NoCustomContextException {
 		float targetWidth = 0;
 		float marginsBordersSpacing = getTableOuterWidth(tag, horBorderSpacing);
+		HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext();
 		if (tag.getAttributes().get(CSS.Property.WIDTH) != null || tag.getCSS().get(CSS.Property.WIDTH) != null) {
-			targetWidth = new WidthCalculator().getWidth(tag, getHtmlPipelineContext()) - marginsBordersSpacing;
+			targetWidth = new WidthCalculator().getWidth(tag, htmlPipelineContext.getRootTags(), htmlPipelineContext.getPageSize().getWidth()) - marginsBordersSpacing;
 		} else if (null == tag.getParent()
-				|| (null != tag.getParent() && getHtmlPipelineContext().getRootTags().contains(tag.getParent().getTag()))) {
-			targetWidth = getHtmlPipelineContext().getPageSize().getWidth() - marginsBordersSpacing;
+				|| (null != tag.getParent() &&htmlPipelineContext.getRootTags().contains(tag.getParent().getTag()))) {
+			targetWidth = htmlPipelineContext.getPageSize().getWidth() - marginsBordersSpacing;
 		} else /* this table is an inner table and width adjustment is done in outer table */ {
 			targetWidth = getTableWidth(columnWidths, tag, horBorderSpacing);
 		}

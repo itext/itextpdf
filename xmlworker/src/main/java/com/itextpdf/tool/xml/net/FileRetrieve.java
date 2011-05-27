@@ -8,14 +8,14 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * @author Balder Van Camp
+ * @author itextpdf.com
  *
  */
 public interface FileRetrieve {
 
 	/**
 	 * Process content from a given URL. using {@link URL#openStream()}
-	 * @param url the URL to process
+	 * @param href the URL to process
 	 * @param processor the ReadingProcessor
 	 * @throws IOException if something went wrong.
 	 */

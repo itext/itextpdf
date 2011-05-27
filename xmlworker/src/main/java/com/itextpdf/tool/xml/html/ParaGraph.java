@@ -110,7 +110,7 @@ public class ParaGraph extends AbstractTagProcessor {
 				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
 				l.add(p);																	// extracted.
 			} else {
-				for (Element e:  currentContentToWritables(currentContent, true, true, tag)) {
+				for (Element e:  currentContentToParagraph(currentContent, true, true, tag)) {
 					l.add(e);
 				}
 			}

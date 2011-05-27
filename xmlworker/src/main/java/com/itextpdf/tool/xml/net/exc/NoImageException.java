@@ -64,8 +64,8 @@ public class NoImageException extends Exception {
 	}
 
 	/**
-	 * @param src
-	 * @param e
+	 * @param src the src attribute, used by localization message
+	 * @param e the actual error
 	 */
 	public NoImageException(final String src, final Exception e) {
 		super(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.IMG_SRC_NOTCONVERTED), src), e);

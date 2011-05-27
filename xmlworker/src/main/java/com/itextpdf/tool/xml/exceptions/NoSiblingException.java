@@ -73,8 +73,8 @@ public class NoSiblingException extends Exception {
     }
 
 	/**
-	 * @param s
-	 * @param e
+	 * @param s a message
+	 * @param e an exception
 	 */
 	public NoSiblingException(final String s, final Throwable e) {
 		super(s, e);

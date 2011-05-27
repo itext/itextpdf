@@ -50,7 +50,9 @@ package com.itextpdf.tool.xml.html;
 public class HTMLUtils {
 
 	/**
-	 * @param str
+	 * @param str the string to sanitize
+	 * @param trim to trim or not to trim
+	 * @return sanitized string
 	 */
 	public static String sanitize(final String str, final boolean trim) {
 		StringBuilder builder = new StringBuilder();
@@ -75,7 +77,7 @@ public class HTMLUtils {
 	}
 	/**
 	 * Sanitize the String for use in tags that must trim leading and trailing white space.
-	 * @param str
+	 * @param str the string to sanitize
 	 * @return a sanitized String
 	 */
 	public static String sanitize(final String str) {
@@ -83,7 +85,7 @@ public class HTMLUtils {
 	}
 	/**
 	 * Sanitize the String for use in in-line tags.
-	 * @param str
+	 * @param str the string to sanitize
 	 * @return a sanitized String for use in in-line tags
 	 */
 	public static String sanitizeInline(final String str) {

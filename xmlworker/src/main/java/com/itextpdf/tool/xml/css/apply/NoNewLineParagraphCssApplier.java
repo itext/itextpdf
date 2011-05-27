@@ -55,11 +55,20 @@ import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
+/**
+ *
+ * @author itextpdf.com
+ *
+ */
 public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagraph> {
 	private final CssUtils utils = CssUtils.getInstance();
 	private final MaxLeadingAndSize m = new MaxLeadingAndSize();
 	private final HtmlPipelineContext configuration;
 
+	/**
+	 * Construct a NoNewLineParagraphCssApplier with the given {@link HtmlPipelineContext}
+	 * @param htmlPipelineContext the context
+	 */
 	public NoNewLineParagraphCssApplier(final HtmlPipelineContext htmlPipelineContext) {
 		this.configuration = htmlPipelineContext;
 	}

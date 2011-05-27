@@ -77,7 +77,17 @@ public class FileRetrieveImpl implements FileRetrieve {
 	}
 
 	/**
-	 * @param strings
+	 * Constructs a new FileRetrieveImpl with the given root url's and
+	 * directories
+	 *
+	 * @param strings an array of strings, if the String starts with http or
+	 *            https it's taken as URL otherwise we check if it's a directory
+	 *            with
+	 *
+	 *            <pre>
+	 * File f = new File(str);
+	 * f.isDirectory()
+	 * </pre>
 	 */
 	public FileRetrieveImpl(final String[] strings) {
 		this();
@@ -94,13 +104,13 @@ public class FileRetrieveImpl implements FileRetrieve {
 	}
 
 	/**
-	 * ProcessFromHref first tries to create an {@link URL} from the given href,
+	 * ProcessFromHref first tries to create an {@link URL} from the given <code>href</code>,
 	 * if that throws a {@link MalformedURLException}, it will prepend the given
-	 * root urls to href until a valid URL is found. If there by then there is
-	 * no valid url found, ths method will see if the given href is a valid file
-	 * and can read it. If it's not a valid file or a file that can't be read,
-	 * the given rootdirs will be set as rootpath with the given href as
-	 * filepath untill a valid file has been found.
+	 * root URLs to <code>href</code> until a valid URL is found.<br />If by then there is
+	 * no valid url found, this method will see if the given <code>href</code> is a valid file
+	 * and can read it.<br />If it's not a valid file or a file that can't be read,
+	 * the given root directories will be set as root path with the given <code>href</code> as
+	 * file path until a valid file has been found.
 	 */
 	public void processFromHref(final String href, final ReadingProcessor processor) throws IOException {
 		if (LOGGER.isLogging(Level.DEBUG)) {
@@ -141,8 +151,8 @@ public class FileRetrieveImpl implements FileRetrieve {
 	}
 
 	/**
-	 * @param href
-	 * @throws MalformedURLException if no valid url could be found.
+	 * @param href the reference
+	 * @throws MalformedURLException if no valid URL could be found.
 	 */
 	private URL detectWithRootUrls(final String href) throws MalformedURLException {
 		for (String root : urls) {
@@ -194,8 +204,8 @@ public class FileRetrieveImpl implements FileRetrieve {
 	}
 
 	/**
-	 * Add a rooturl
-	 * @param url the url
+	 * Add a root URL.
+	 * @param url the URL
 	 */
 	public void addURL(final String url) {
 		urls.add(url);

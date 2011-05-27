@@ -23,7 +23,7 @@ public class LineSeparatorCssApplier implements CssApplier<LineSeparator>{
 	private final HtmlPipelineContext configuration;
 
 	/**
-	 * @param htmlPipelineContext
+	 * @param htmlPipelineContext the context
 	 */
 	public LineSeparatorCssApplier(final HtmlPipelineContext htmlPipelineContext) {
 		this.configuration = htmlPipelineContext;

@@ -58,6 +58,10 @@ import com.itextpdf.text.pdf.PdfPTable;
 public class CellSpacingEvent implements PdfPCellEvent {
 	private final TableStyleValues styleValues;
 
+	/**
+	 * Construct a new CellSpacingEvent with the given TableStyleValues
+	 * @param styleValues the TableStyleValues
+	 */
 	public CellSpacingEvent(final TableStyleValues styleValues) {
 		this.styleValues = styleValues;
 	}

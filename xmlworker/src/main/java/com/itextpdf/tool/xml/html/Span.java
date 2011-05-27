@@ -49,9 +49,7 @@ import java.util.List;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
  * @author redlab_b
@@ -82,7 +80,7 @@ public class Span extends AbstractTagProcessor {
 	 */
     @Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		return currentContentToWritables(currentContent, false, true, tag);
+		return currentContentToParagraph(currentContent, false, true, tag);
 	}
 
     /*

@@ -95,7 +95,8 @@ public interface TagProcessor {
     boolean isStackOwner();
 
 	/**
-	 * @param context
+	 * Sets the WorkerContext
+	 * @param context the WorkerContext
 	 */
 	void setContext(WorkerContext context);
 

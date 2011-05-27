@@ -203,10 +203,11 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @param currentContent List<Element> of the current elements to be added.
 	 * @param addNewLines boolean to declare which paragraph element should be
 	 *            returned, true if new line should be added or not.
-	 * @param tag
-	 * @return
+	 * @param applyCSS true if CSS should be applied on the paragraph
+	 * @param tag the relevant tag
+	 * @return a List with paragraphs
 	 */
-	public final List<Element> currentContentToWritables(final List<Element> currentContent,
+	public final List<Element> currentContentToParagraph(final List<Element> currentContent,
 			final boolean addNewLines, final boolean applyCSS, final Tag tag) {
 		try {
 			List<Element> list = new ArrayList<Element>();
@@ -235,8 +236,17 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
 		}
 	}
-	public final List<Element> currentContentToWritables(final List<Element> currentContent,
+
+	/**
+	 * Default apply CSS to false and tag to null.
+	 * @see AbstractTagProcessor#currentContentToParagraph(List, boolean, boolean, Tag)
+	 * @param currentContent List<Element> of the current elements to be added.
+	 * @param addNewLines boolean to declare which paragraph element should be
+	 *            returned, true if new line should be added or not.
+	 * @return a List with paragraphs
+	 */
+	public final List<Element> currentContentToParagraph(final List<Element> currentContent,
 			final boolean addNewLines) {
-		return this.currentContentToWritables(currentContent, addNewLines, false, null);
+		return this.currentContentToParagraph(currentContent, addNewLines, false, null);
 	}
 }

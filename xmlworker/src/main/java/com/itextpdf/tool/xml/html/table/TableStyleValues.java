@@ -77,13 +77,13 @@ public class TableStyleValues {
 			return horBorderSpacing;
 		}
 		/**
-		 * @param sets the horBorderSpacing
+		 * @param horBorderSpacing the spacing
 		 */
 		public void setHorBorderSpacing(final float horBorderSpacing) {
 			this.horBorderSpacing = horBorderSpacing;
 		}
 		/**
-		 * @param sets the verBorderSpacing
+		 * @param verBorderSpacing the spacing
 		 */
 		public void setVerBorderSpacing(final float verBorderSpacing) {
 			this.verBorderSpacing = verBorderSpacing;

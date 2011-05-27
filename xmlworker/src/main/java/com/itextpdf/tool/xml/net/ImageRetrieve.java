@@ -73,8 +73,8 @@ public class ImageRetrieve {
 	/**
 	 * @param src an URI that can be used to retrieve an image
 	 * @return an iText Image object
-	 * @throws NoImageException
-	 * @throws IOException
+	 * @throws NoImageException if there is no image
+	 * @throws IOException if an IOException occurred
 	 */
 	public com.itextpdf.text.Image retrieveImage(final String src) throws NoImageException, IOException {
 		com.itextpdf.text.Image img = null;
