@@ -58,6 +58,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
+import com.itextpdf.tool.xml.exceptions.ErrorMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
@@ -105,7 +106,7 @@ public class Image extends AbstractTagProcessor {
 					logger.error(e.getLocalizedMessage(), e);
 				}
 			} catch (NoCustomContextException e) {
-				throw new RuntimeWorkerException(e);
+				throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e);
 			}
 			if (null != img) {
 				String width = attributes.get(HTML.Attribute.WIDTH);

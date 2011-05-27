@@ -50,6 +50,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
+import com.itextpdf.tool.xml.exceptions.ErrorMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 
@@ -180,7 +181,7 @@ public class Anchor extends AbstractTagProcessor {
 			}
 			return elems;
 		} catch (NoCustomContextException e) {
-			throw new RuntimeWorkerException(e);
+			throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e);
 		}
 	}
 

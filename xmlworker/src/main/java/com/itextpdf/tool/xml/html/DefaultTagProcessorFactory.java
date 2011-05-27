@@ -46,6 +46,7 @@ package com.itextpdf.tool.xml.html;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.itextpdf.tool.xml.exceptions.ErrorMessages;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 
 /**
@@ -128,13 +129,13 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 			Class<?> c = Class.forName(className);
 			return (TagProcessor) c.newInstance();
 		} catch (LinkageError e) {
-			throw new NoTagProcessorException(className);
+			throw new NoTagProcessorException(String.format(ErrorMessages.getInstance().getString(ErrorMessages.NO_TAGPROCESSOR), className));
 		} catch (ClassNotFoundException e) {
-			throw new NoTagProcessorException(className, e);
+			throw new NoTagProcessorException(String.format(ErrorMessages.getInstance().getString(ErrorMessages.NO_TAGPROCESSOR), className), e);
 		} catch (InstantiationException e) {
-			throw new NoTagProcessorException(className, e);
+			throw new NoTagProcessorException(String.format(ErrorMessages.getInstance().getString(ErrorMessages.NO_TAGPROCESSOR), className), e);
 		} catch (IllegalAccessException e) {
-			throw new NoTagProcessorException(className, e);
+			throw new NoTagProcessorException(String.format(ErrorMessages.getInstance().getString(ErrorMessages.NO_TAGPROCESSOR), className), e);
 		}
 
 	}

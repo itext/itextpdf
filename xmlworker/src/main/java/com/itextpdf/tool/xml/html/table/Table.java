@@ -72,6 +72,7 @@ import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.WidthCalculator;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.exceptions.ErrorMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
@@ -262,7 +263,7 @@ public class Table extends AbstractTagProcessor {
 								try {
 									pageWidth = getHtmlPipelineContext().getPageSize().getWidth();
 								} catch (NoCustomContextException e1) {
-									throw new RuntimeWorkerException(e1);
+									throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e1);
 								}
 								if (getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing()) < pageWidth) {
 									targetWidth = getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing());
@@ -294,7 +295,7 @@ public class Table extends AbstractTagProcessor {
 				table.setLockedWidth(true);
 				table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 			} catch (DocumentException e) {
-				throw new RuntimeWorkerException(e);
+				throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e);
 			}
 			for (TableRowElement row : tableRows) {
 				int columnNumber = -1;
@@ -343,7 +344,7 @@ public class Table extends AbstractTagProcessor {
 			}
 			return elems;
 		} catch (NoCustomContextException e) {
-			throw new RuntimeWorkerException(e);
+			throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e);
 		}
 	}
 

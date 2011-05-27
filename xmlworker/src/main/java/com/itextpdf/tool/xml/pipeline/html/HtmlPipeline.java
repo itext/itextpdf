@@ -53,6 +53,7 @@ import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.PipelineException;
 import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.exceptions.ErrorMessages;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.TagProcessor;
@@ -152,7 +153,7 @@ public class HtmlPipeline extends AbstractPipeline {
 				try {
 					ctn = new String(b, hcc.charSet().name());
 				} catch (UnsupportedEncodingException e) {
-					throw new RuntimeWorkerException("detected charset is not supported", e);
+					throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.UNSUPPORTED_CHARSET), e);
 				}
 			} else {
 				ctn = new String(b);
@@ -240,7 +241,8 @@ public class HtmlPipeline extends AbstractPipeline {
 			clone.setContext(getContext());
 			return clone;
 		} catch (CloneNotSupportedException e) {
-			throw new RuntimeWorkerException(e);
+			String message = String.format(ErrorMessages.getInstance().getString(ErrorMessages.UNSUPPORTED_CLONING), hpc.getClass().toString());
+			throw new RuntimeWorkerException(message, e);
 		}
 	}
 

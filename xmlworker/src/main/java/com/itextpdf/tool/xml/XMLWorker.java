@@ -41,10 +41,10 @@
 package com.itextpdf.tool.xml;
 
 import java.util.Map;
-
 import com.itextpdf.text.Element;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
+import com.itextpdf.tool.xml.exceptions.ErrorMessages;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.TagProcessor;
@@ -158,7 +158,7 @@ public class XMLWorker implements XMLParserListener {
 			thetag = tag;
 		}
 		if (null != current && !thetag.equals(current.getTag())) {
-			throw new RuntimeWorkerException(String.format("Invalid nested tag %s found, expected closing tag %s", thetag, current.getTag()));
+			throw new RuntimeWorkerException(String.format(ErrorMessages.getInstance().getString(ErrorMessages.INVALID_NESTED_TAG), thetag, current.getTag()));
 		}
 		Pipeline wp = rootpPipe;
 		ProcessObject po = new ProcessObject();

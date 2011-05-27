@@ -42,6 +42,7 @@ import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.exceptions.ErrorMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
@@ -106,7 +107,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 					try {
 						list.add(new ParagraphCssApplier(getHtmlPipelineContext()).apply((ListItem) li, child));
 					} catch (NoCustomContextException e1) {
-						throw new RuntimeWorkerException(e1);
+						throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e1);
 					}
 				} else {
 					list.add(li);
@@ -159,7 +160,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 			}
 		}
 		} catch (NoCustomContextException e) {
-			throw new RuntimeWorkerException(e);
+			throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e);
 		}
 		return totalSpacing;
 	}
