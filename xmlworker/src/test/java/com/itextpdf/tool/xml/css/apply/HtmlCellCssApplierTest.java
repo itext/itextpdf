@@ -62,6 +62,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.html.table.TableRowElement;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
@@ -76,7 +77,7 @@ public class HtmlCellCssApplierTest {
 
 	private TableRowElement row1;
 	private final HtmlCell cell = new HtmlCell();
-	private final HtmlCellCssApplier applier = new HtmlCellCssApplier(null);
+	private final HtmlCellCssApplier applier = new HtmlCellCssApplier(new HtmlPipelineContext());
 
 	@Before
 	public void setup() {
