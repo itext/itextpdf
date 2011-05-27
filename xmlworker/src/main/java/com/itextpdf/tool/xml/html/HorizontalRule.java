@@ -68,7 +68,7 @@ public class HorizontalRule extends AbstractTagProcessor {
     @Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		try {
-			List<Element> list = new ArrayList<Element>();;
+			List<Element> list = new ArrayList<Element>();
 			LineSeparator lineSeparator = new LineSeparatorCssApplier(getHtmlPipelineContext()).apply(new LineSeparator(), tag);
 			Paragraph p = new Paragraph();
 			p.add(lineSeparator);

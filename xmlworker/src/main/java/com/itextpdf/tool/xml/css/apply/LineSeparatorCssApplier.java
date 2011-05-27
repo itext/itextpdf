@@ -56,6 +56,7 @@ public class LineSeparatorCssApplier implements CssApplier<LineSeparator>{
 			}
 		}
 		ls.setPercentage(percentage);
+		ls.setOffset(9);
 		return ls;
 	}
 
