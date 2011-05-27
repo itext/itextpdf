@@ -87,7 +87,7 @@ public class Style extends AbstractTagProcessor {
 				LOG.trace(content);
 			}
 		} catch (NoCustomContextException e) {
-			LOG.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.CUSTOMCONTEXT_404_CONTINUE), CssResolverPipeline.class.getName()));
+			LOG.warn(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.CUSTOMCONTEXT_404_CONTINUE), CssResolverPipeline.class.getName()));
 		}
 		return new ArrayList<Element>(0);
 	}

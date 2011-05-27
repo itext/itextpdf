@@ -149,7 +149,7 @@ public class XMLWorkerHelper {
 	 */
 	public void parseXHtml(final PdfWriter writer, final Document doc, final Reader in) throws IOException {
 		CssFilesImpl cssFiles = new CssFilesImpl();
-		cssFiles.add(new XMLWorkerHelper().getDefaultCSS());
+		cssFiles.add(getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		HtmlPipelineContext hpc = new HtmlPipelineContext();
 		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
