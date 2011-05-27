@@ -47,11 +47,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
@@ -80,9 +82,12 @@ public class Style extends AbstractTagProcessor {
 			CSSResolver cssResolver = getCSSResolver();
 			cssResolver.addCss(content);
 		} catch (CssResolverException e) {
-			LOG.error(content + "\ncould not be parsed, proceeding without", e);
+			LOG.error(LocaleMessages.getInstance().getMessage(LocaleMessages.STYLE_NOTPARSED), e);
+			if (LOG.isLogging(Level.TRACE)) {
+				LOG.trace(content);
+			}
 		} catch (NoCustomContextException e) {
-			LOG.trace("style tag not parsed, no CustomContext found for CssResolverPipeline");
+			LOG.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.CUSTOMCONTEXT_404_CONTINUE), CssResolverPipeline.class.getName()));
 		}
 		return new ArrayList<Element>(0);
 	}

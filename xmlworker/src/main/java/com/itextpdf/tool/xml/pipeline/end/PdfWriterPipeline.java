@@ -56,6 +56,7 @@ import com.itextpdf.tool.xml.PipelineException;
 import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.Writable;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
@@ -82,6 +83,7 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	 */
 	public PdfWriterPipeline(final Pipeline next) {
 		super(next);
+		continiously = true;
 	}
 
 	/**
@@ -92,6 +94,7 @@ public class PdfWriterPipeline extends AbstractPipeline {
 		super(null);
 		this.doc = doc;
 		this.writer = writer;
+		continiously = true;
 	}
 
 	/**
@@ -106,6 +109,7 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	 * The key for the a boolean in the {@link MapContext} used as {@link CustomContext}. Setting to true enables swallowing of DocumentExceptions
 	 */
 	public static final String CONTINUOUS = "CONTINUOUS";
+	private Boolean continiously;
 
 	/**
 	 * @param po
@@ -125,13 +129,13 @@ public class PdfWriterPipeline extends AbstractPipeline {
 						for (Element e : ((WritableElement) writable).elements()) {
 							try {
 								if (!doc.add(e)) {
-									LOG.trace(String.format("Failed to add %s element to the document, no exception was thrown.", e.toString()));
+									LOG.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.ELEMENT_NOT_ADDED), e.toString()));
 								}
 							} catch (DocumentException e1) {
 								if (!continuousWrite) {
 									throw new PipelineException(e1);
 								} else {
-									LOG.error("Adding to document threw exception, I've swallowed it!", e1);
+									LOG.error(LocaleMessages.getInstance().getMessage(LocaleMessages.ELEMENT_NOT_ADDED_EXC), e1);
 								}
 							}
 						}
@@ -139,7 +143,7 @@ public class PdfWriterPipeline extends AbstractPipeline {
 				}
 			}
 		} catch (NoCustomContextException e2) {
-			throw new PipelineException("PdfWriterPipeline is sad, it cannot find it's own context.");
+			throw new PipelineException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.OWN_CONTEXT_404), PdfWriter.class.getClass().getName()));
 		}
 	}
 
@@ -187,7 +191,8 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	@Override
 	public CustomContext getCustomContext() throws NoCustomContextException {
 		MapContext mc = new MapContext();
-		mc.put(CONTINUOUS, Boolean.TRUE);
+		continiously = Boolean.TRUE;
+		mc.put(CONTINUOUS, continiously);
 		mc.put(DOCUMENT, doc);
 		mc.put(WRITER, writer);
 		return mc;

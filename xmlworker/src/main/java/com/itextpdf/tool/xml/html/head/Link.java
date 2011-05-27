@@ -52,6 +52,7 @@ import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
@@ -76,9 +77,9 @@ public class Link extends AbstractTagProcessor {
 				try {
 					getCSSResolver().addCssFile(href);
 				} catch (CssResolverException e) {
-					LOG.error(href + "\ncould not be parsed, proceeding without", e);
+					LOG.error(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.LINK_404), href), e);
 				} catch (NoCustomContextException e) {
-					LOG.trace("style tag not parsed, no CustomContext found for CssResolverPipeline");
+					LOG.warn(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.CUSTOMCONTEXT_404_CONTINUE), CssResolverPipeline.class.getName()));
 				}
 			}
 		}

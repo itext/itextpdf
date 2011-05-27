@@ -62,6 +62,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
@@ -125,7 +126,7 @@ public class Header extends AbstractTagProcessor {
 								}
 							}
 							if (LOGGER.isLogging(Level.TRACE)) {
-								LOGGER.trace(String.format("Creating bookmark on %s", title.toString()));
+								LOGGER.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.ADD_HEADER), title.toString()));
 							}
 							HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, title), tree);
 							memory.put(HtmlPipelineContext.BOOKMARK_TREE, node);
@@ -134,7 +135,7 @@ public class Header extends AbstractTagProcessor {
 				}
 			} catch (NoCustomContextException e) {
 				if (LOGGER.isLogging(Level.ERROR)) {
-					LOGGER.error("Autobookmarking disabled, unable to find custom context to define enabled/disabled.", e);
+					LOGGER.error(LocaleMessages.getInstance().getMessage(LocaleMessages.HEADER_BM_DISABLED), e);
 				}
 			}
 			l.addAll(currentContentToParagraph); //TODO Margins top and bottom, other css.

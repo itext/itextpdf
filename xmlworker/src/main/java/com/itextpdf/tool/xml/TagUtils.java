@@ -45,7 +45,7 @@ package com.itextpdf.tool.xml;
 
 import java.util.List;
 
-import com.itextpdf.tool.xml.exceptions.ErrorMessages;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.NoSiblingException;
 
 /**
@@ -69,7 +69,7 @@ public class TagUtils {
 			List<Tag> siblings = t.getParent().getChildren();
 			sibling = siblings.get(siblings.indexOf(t)+i);
 		} catch(IndexOutOfBoundsException e) {
-			throw new NoSiblingException(String.format(ErrorMessages.getInstance().getString(ErrorMessages.NO_SIBLING),t.getTag(), i), e);
+			throw new NoSiblingException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_SIBLING),t.getTag(), i), e);
 		}
 		return sibling;
 	}

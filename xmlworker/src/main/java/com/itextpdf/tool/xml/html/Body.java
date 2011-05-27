@@ -37,7 +37,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
-import com.itextpdf.tool.xml.exceptions.ErrorMessages;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 
@@ -61,7 +61,7 @@ public class Body extends AbstractTagProcessor {
 			try {
 				l.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext()).apply(new NoNewLineParagraph(sanitized), tag));
 			} catch (NoCustomContextException e) {
-				throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e);
+				throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
 			}
 		}
 		return l;

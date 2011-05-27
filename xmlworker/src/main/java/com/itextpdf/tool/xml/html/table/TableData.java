@@ -52,7 +52,7 @@ import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
-import com.itextpdf.tool.xml.exceptions.ErrorMessages;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
@@ -99,7 +99,7 @@ public class TableData extends AbstractTagProcessor {
 		try {
 			l.add(new HtmlCellCssApplier(getHtmlPipelineContext()).apply(cell, tag));
 		} catch (NoCustomContextException e1) {
-			throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e1);
+			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
 		}
 		return l;
 	}

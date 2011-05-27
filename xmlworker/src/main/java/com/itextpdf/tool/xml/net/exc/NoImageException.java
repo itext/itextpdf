@@ -43,6 +43,8 @@
  */
 package com.itextpdf.tool.xml.net.exc;
 
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+
 /**
  * @author redlab_b
  *
@@ -66,8 +68,7 @@ public class NoImageException extends Exception {
 	 * @param e
 	 */
 	public NoImageException(final String src, final Exception e) {
-		super(String.format("Could not convert location to path. [%s] src parameter", src), e);
+		super(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.IMG_SRC_NOTCONVERTED), src), e);
 	}
-
 
 }

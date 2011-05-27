@@ -60,6 +60,7 @@ import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
@@ -71,7 +72,7 @@ import com.itextpdf.tool.xml.net.exc.NoImageException;
 public class ListStyleTypeCssApplier implements CssApplier<List> {
 
 	private final CssUtils utils = CssUtils.getInstance();
-	private static final Logger logger = LoggerFactory.getLogger(ListStyleTypeCssApplier.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ListStyleTypeCssApplier.class);
 
 	/**
 	 * @param configuration the provider
@@ -136,17 +137,17 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 				// TODO add option to use ImageProvider
 				img = new ImageRetrieve().retrieveImage(url);
 				lst.setListSymbol(new Chunk(img, 0, 0, false));
-				if (logger.isLogging(Level.TRACE)) {
-					logger.trace(String.format("Using image as list symbol from %s", url));
+				if (LOG.isLogging(Level.TRACE)) {
+					LOG.trace(String.format(LocaleMessages.getInstance().getMessage("html.tag.list"), url));
 				}
 			} catch (IOException e) {
-				if (logger.isLogging(Level.ERROR)) {
-					logger.error(String.format("Failed retrieving image from %s", url), e);
+				if (LOG.isLogging(Level.ERROR)) {
+					LOG.error(String.format(LocaleMessages.getInstance().getMessage("html.tag.list.failed"), url), e);
 				}
 				lst = new List(List.UNORDERED);
 			} catch (NoImageException e) {
-				if (logger.isLogging(Level.ERROR)) {
-					logger.error(e.getLocalizedMessage(), e);
+				if (LOG.isLogging(Level.ERROR)) {
+					LOG.error(e.getLocalizedMessage(), e);
 				}
 				lst = new List(List.UNORDERED);
 			}
@@ -162,7 +163,7 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 		}
 		leftIndent += css.get(CSS.Property.MARGIN_LEFT)!=null?utils.parseValueToPt(css.get(CSS.Property.MARGIN_LEFT),fontSize):0;
 		leftIndent += css.get(CSS.Property.PADDING_LEFT)!=null?utils.parseValueToPt(css.get(CSS.Property.PADDING_LEFT),fontSize):0;
-//		lst.setIndentationLeft(leftIndent);
+		lst.setIndentationLeft(leftIndent);
 		return lst;
 	}
 

@@ -53,6 +53,7 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 
 /**
@@ -88,13 +89,13 @@ public class Meta extends AbstractTagProcessor {
 								getHtmlPipelineContext().charSet(Charset.forName(enc));
 								if (LOGGER.isLogging(Level.DEBUG)) {
 									LOGGER.debug(
-											String.format("Detected Charset %s from meta tag, using detected charset.", enc));
+											String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.META_CC), enc));
 								}
 							} else {
 								if (LOGGER.isLogging(Level.DEBUG)) {
 									LOGGER.debug(
-											String.format("No Charset detected from metatag, using %s.", getHtmlPipelineContext()
-													.charSet().displayName()));
+											String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.META_404), getHtmlPipelineContext()
+													.charSet()));
 								}
 							}
 							} catch (NoCustomContextException e) {

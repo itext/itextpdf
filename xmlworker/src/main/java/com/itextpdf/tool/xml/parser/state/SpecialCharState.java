@@ -69,7 +69,7 @@ public class SpecialCharState implements State {
 		StringBuilder entity = this.parser.memory().currentEntity();
 		if(character == ';') {
 //			if ("nbsp".equals(entity.toString())) {
-//				parser.append(' '); // TODO check if it's good idea to transform &nbsp into a space ?
+//				parser.append(' '); // TODO check yes or no if it's good idea to transform &nbsp into a space ?
 //			} else {
 				char decoded = EntitiesToUnicode.decodeEntity(entity.toString());
 				if (decoded == '\0') {

@@ -59,6 +59,7 @@ import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
@@ -151,7 +152,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 
 			}
 		} catch (NoCustomContextException e) {
-			throw new PipelineException("AutoDocPipeline depends on PdfWriterPipeline.", e);
+			throw new PipelineException(LocaleMessages.getInstance().getMessage(LocaleMessages.PIPELINE_AUTODOC), e);
 		}
 
 		return getNext();

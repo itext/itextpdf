@@ -52,7 +52,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.xml.XMLUtil;
 import com.itextpdf.text.xml.simpleparser.IanaEncodings;
 import com.itextpdf.tool.xml.parser.io.MonitorInputReader;
@@ -187,7 +186,7 @@ public class XMLParser {
 		byte b4[] = new byte[4];
 		int count = in.read(b4);
 		if (count != 4)
-			throw new IOException(MessageLocalization.getComposedMessage("insufficient.length"));
+			throw new IOException("Insufficient length");
 		String encoding = XMLUtil.getEncodingName(b4);
 		String decl = null;
 		if (encoding.equals("UTF-8")) {

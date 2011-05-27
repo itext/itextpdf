@@ -58,7 +58,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
-import com.itextpdf.tool.xml.exceptions.ErrorMessages;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
@@ -90,7 +90,7 @@ public class Image extends AbstractTagProcessor {
 			// check if the image was already added once
 			try {
 				if (logger.isLogging(Level.TRACE)) {
-					logger.trace(String.format("Trying to use image from %s", src));
+					logger.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_USE), src));
 				}
 				try {
 					img = new ImageRetrieve(getHtmlPipelineContext().getImageProvider()).retrieveImage(src);
@@ -99,14 +99,14 @@ public class Image extends AbstractTagProcessor {
 				}
 			} catch (IOException e) {
 				if (logger.isLogging(Level.ERROR)) {
-					logger.error(String.format("Failed retrieving image from %s continue without image", src), e);
+					logger.error(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_RETRIEVE_FAIL), src), e);
 				}
 			} catch (NoImageException e) {
 				if (logger.isLogging(Level.ERROR)) {
-					logger.error(e.getLocalizedMessage(), e);
+					logger.error("", e);
 				}
 			} catch (NoCustomContextException e) {
-				throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e);
+				throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
 			}
 			if (null != img) {
 				String width = attributes.get(HTML.Attribute.WIDTH);

@@ -72,7 +72,7 @@ public class WorkerContextImpl extends MapContext implements WorkerContext {
 		 if (c != null) {
 			 return (CustomContext) c;
 		 }
-		 throw new NoCustomContextException(String.format("CustomContext not found for %s", klass.getName()));
+		 throw new NoCustomContextException();
 	}
 	/**
 	 *

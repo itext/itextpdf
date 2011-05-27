@@ -54,6 +54,8 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 
 /**
@@ -72,21 +74,23 @@ public class XML extends AbstractTagProcessor {
 	public List<Element> start(final Tag tag) {
 		String enc = tag.getAttributes().get("encoding");
 		if (null != enc) {
-			if (Charset.isSupported(enc)) {
 				try {
+					if (Charset.isSupported(enc)) {
 					getHtmlPipelineContext().charSet(Charset.forName(enc));
 					if (LOGGER.isLogging(Level.DEBUG)) {
 						LOGGER.debug(
-								String.format("Detected Charset %s from xml tag, using detected charset.", enc));
+								String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.META_CC), enc));
+					}
+					} else {
+						if (LOGGER.isLogging(Level.DEBUG)) {
+							LOGGER.debug(
+									String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.META_404), getHtmlPipelineContext()
+											.charSet()));
+						}
 					}
 				} catch (NoCustomContextException e) {
-					LOGGER.error("", e);
+					throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT));
 				}
-			} else {
-				if (LOGGER.isLogging(Level.DEBUG)) {
-					LOGGER.debug(String.format("No Charset detected from xml tag, using default"));
-				}
-			}
 
 		}
 		return new ArrayList<Element>(0);

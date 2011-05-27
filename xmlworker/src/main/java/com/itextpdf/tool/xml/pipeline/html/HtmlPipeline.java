@@ -53,7 +53,7 @@ import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.PipelineException;
 import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.exceptions.ErrorMessages;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.TagProcessor;
@@ -104,7 +104,7 @@ public class HtmlPipeline extends AbstractPipeline {
 							peek.add(elem);
 						}
 					} catch (NoStackException e) {
-						throw new PipelineException(String.format("Could not find stack for %s", t.toString()), e);
+						throw new PipelineException(String.format(LocaleMessages.STACK_404, t.toString()), e);
 					}
 				} else {
 					for (Element elem : content) {
@@ -131,7 +131,7 @@ public class HtmlPipeline extends AbstractPipeline {
 			HtmlPipelineContext hcc = (HtmlPipelineContext) cc;
 			return hcc;
 		} catch (NoCustomContextException e) {
-			throw new PipelineException("HtmlPipeline cries, it cannot find it's own context.", e);
+			throw new PipelineException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.OWN_CONTEXT_404), HtmlPipeline.class.getName()), e);
 		}
 
 	}
@@ -153,7 +153,7 @@ public class HtmlPipeline extends AbstractPipeline {
 				try {
 					ctn = new String(b, hcc.charSet().name());
 				} catch (UnsupportedEncodingException e) {
-					throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.UNSUPPORTED_CHARSET), e);
+					throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.UNSUPPORTED_CHARSET), e);
 				}
 			} else {
 				ctn = new String(b);
@@ -203,7 +203,7 @@ public class HtmlPipeline extends AbstractPipeline {
 				try {
 					tagStack = hcc.poll();
 				} catch (NoStackException e) {
-					throw new PipelineException(String.format("Could not find stack for %s", t.toString()), e);
+					throw new PipelineException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.STACK_404), t.toString()), e);
 				}
 				elems = tp.endElement(t,  tagStack.getElements());
 			} else {
@@ -241,7 +241,7 @@ public class HtmlPipeline extends AbstractPipeline {
 			clone.setContext(getContext());
 			return clone;
 		} catch (CloneNotSupportedException e) {
-			String message = String.format(ErrorMessages.getInstance().getString(ErrorMessages.UNSUPPORTED_CLONING), hpc.getClass().toString());
+			String message = String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.UNSUPPORTED_CLONING), hpc.getClass().toString());
 			throw new RuntimeWorkerException(message, e);
 		}
 	}

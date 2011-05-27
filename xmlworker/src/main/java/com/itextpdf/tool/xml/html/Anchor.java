@@ -50,7 +50,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
-import com.itextpdf.tool.xml.exceptions.ErrorMessages;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 
@@ -119,7 +119,7 @@ public class Anchor extends AbstractTagProcessor {
 						if (null != url) {
 							if (url.startsWith("#")) {
 								if (LOGGER.isLogging(Level.TRACE)) {
-									LOGGER.trace(String.format("Creating a local goto link to %s", url));
+									LOGGER.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.A_LOCALGOTO), url));
 								}
 								((Chunk) e).setLocalGoto(url.replaceFirst("#", ""));
 							} else {
@@ -132,14 +132,14 @@ public class Anchor extends AbstractTagProcessor {
 									url = root + url;
 								}
 								if (LOGGER.isLogging(Level.TRACE)) {
-									LOGGER.trace(String.format("Creating a www link to %s", url));
+									LOGGER.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.A_EXTERNAL), url));
 								}
 								((Chunk) e).setAnchor(url);
 							}
 						} else if (null != name) {
 							((Chunk) e).setLocalDestination(name);
 							if (LOGGER.isLogging(Level.TRACE)) {
-								LOGGER.trace(String.format("Setting local destination for  %s", name));
+								LOGGER.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.A_SETLOCALGOTO), name));
 							}
 						}
 					}
@@ -153,7 +153,7 @@ public class Anchor extends AbstractTagProcessor {
 			// not jump to destination
 			if (null != name) {
 				if (LOGGER.isLogging(Level.TRACE)) {
-					LOGGER.trace(String.format("Trying to set local destination %s with space hack", name));
+					LOGGER.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.SPACEHACK), name));
 				}
 				elems.add(new WritableDirectElement() {
 
@@ -181,7 +181,7 @@ public class Anchor extends AbstractTagProcessor {
 			}
 			return elems;
 		} catch (NoCustomContextException e) {
-			throw new RuntimeWorkerException(ErrorMessages.getInstance().getString(ErrorMessages.NO_CUSTOM_CONTEXT), e);
+			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
 		}
 	}
 

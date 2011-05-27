@@ -55,6 +55,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 
 /**
@@ -103,7 +104,7 @@ public class FileRetrieveImpl implements FileRetrieve {
 	 */
 	public void processFromHref(final String href, final ReadingProcessor processor) throws IOException {
 		if (LOGGER.isLogging(Level.DEBUG)) {
-			LOGGER.debug(String.format("Retrieving file from href %s", href));
+			LOGGER.debug(String.format(LocaleMessages.getInstance().getMessage("retrieve.file.from"), href));
 		}
 		URL url = null;
 		File f = null;
@@ -183,14 +184,18 @@ public class FileRetrieveImpl implements FileRetrieve {
             }
         }
     }
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.net.FileRetrieve#addRootDir(java.io.File)
+
+	/**
+	 * Add a root directory.
+	 * @param dir the root directory
 	 */
-	public void addRootDir(final File file) {
-		rootdirs.add(file);
+	public void addRootDir(final File dir) {
+		rootdirs.add(dir);
 	}
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.net.FileRetrieve#addRootDir(java.io.File)
+
+	/**
+	 * Add a rooturl
+	 * @param url the url
 	 */
 	public void addURL(final String url) {
 		urls.add(url);
