@@ -112,6 +112,7 @@ public class ZapfDingbatsNumberList extends List {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
 			Chunk chunk = new Chunk(preSymbol, symbol.getFont());
+            chunk.setAttributes(symbol.getAttributes());
 			switch (type ) {
 				case 0:
 					chunk.append(String.valueOf((char)(first + list.size() + 171)));
