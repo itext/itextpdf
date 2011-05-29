@@ -225,10 +225,10 @@ public class XmpWriter {
         			p.addProducer(((PdfString)obj).toUnicodeString());
         		}
         		if (PdfName.CREATIONDATE.equals(key)) {
-        			basic.addCreateDate(((PdfDate)obj).getW3CDate());
+        			basic.addCreateDate(PdfDate.getW3CDate(obj.toString()));
         		}
         		if (PdfName.MODDATE.equals(key)) {
-        			basic.addModDate(((PdfDate)obj).getW3CDate());
+        			basic.addModDate(PdfDate.getW3CDate(obj.toString()));
         		}
         	}
         	if (dc.size() > 0) addRdfDescription(dc);
