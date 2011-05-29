@@ -281,6 +281,7 @@ public class List implements TextElementArray, Indentable {
             ListItem item = (ListItem) o;
             if (numbered || lettered) {
                 Chunk chunk = new Chunk(preSymbol, symbol.getFont());
+                chunk.setAttributes(symbol.getAttributes());
                 int index = first + list.size();
                 if ( lettered )
                     chunk.append(RomanAlphabetFactory.getString(index, lowercase));
