@@ -273,29 +273,32 @@ class PdfStamperImp extends PdfWriter {
         if (xmpMetadata != null) {
         	altMetadata = xmpMetadata;
         }
-        if (moreInfo != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try {
-                XmpWriter xmp = new XmpWriter(baos, newInfo, getPDFXConformance());
-                xmp.close();
-                altMetadata = baos.toByteArray();
-            }
-            catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
         if (altMetadata != null) {
         	PdfStream xmp;
         	try {
-        		XmpReader xmpr = new XmpReader(altMetadata);
-        		if (!(xmpr.replaceNode("http://ns.adobe.com/pdf/1.3/", "Producer", producer)
-        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/pdf/1.3/", "Producer", producer)))
-        			xmpr.add("rdf:Description", "http://ns.adobe.com/pdf/1.3/", "pdf:Producer", producer);
-        		if (!(xmpr.replaceNode("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate())
-        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate())))
-        			xmpr.add("rdf:Description", "http://ns.adobe.com/xap/1.0/", "xmp:ModifyDate", date.getW3CDate());
-        		if (!(xmpr.replaceNode("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate())
-        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate()))) {
+        		XmpReader xmpr;
+        		if (moreInfo == null) {
+	        		xmpr = new XmpReader(altMetadata);
+	        		if (!(xmpr.replaceNode("http://ns.adobe.com/pdf/1.3/", "Producer", producer)
+	        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/pdf/1.3/", "Producer", producer)))
+	        			xmpr.add("rdf:Description", "http://ns.adobe.com/pdf/1.3/", "pdf:Producer", producer);
+	        		if (!(xmpr.replaceNode("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate())
+	        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/xap/1.0/", "ModifyDate", date.getW3CDate())))
+	        			xmpr.add("rdf:Description", "http://ns.adobe.com/xap/1.0/", "xmp:ModifyDate", date.getW3CDate());
+	        		if (!(xmpr.replaceNode("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate())
+	        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/xap/1.0/", "MetadataDate", date.getW3CDate()))) {
+	        		}
+        		}
+        		else {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    try {
+                        XmpWriter xmpw = new XmpWriter(baos, newInfo, getPDFXConformance());
+                        xmpw.close();
+                    }
+                    catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
+	        		xmpr = new XmpReader(baos.toByteArray());
         		}
             	xmp = new PdfStream(xmpr.serializeDoc());
         	}
