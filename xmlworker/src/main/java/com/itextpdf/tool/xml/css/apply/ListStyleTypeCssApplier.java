@@ -97,6 +97,7 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 				lst.setListSymbol("");
 			} else if (CSS.Value.DECIMAL.equalsIgnoreCase(styleType)) {
 				lst = new List(List.ORDERED);
+				synchronizeSymbol(fontSize, lst);
 			} else if (CSS.Value.DISC.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(108);
 				shrinkSymbol(lst, fontSize);
@@ -108,21 +109,28 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 				shrinkSymbol(lst, fontSize);
 			} else if (CSS.Value.LOWER_ROMAN.equals(styleType)) {
 				lst = new RomanList(true, 0);
+				synchronizeSymbol(fontSize, lst);
 			} else if (CSS.Value.UPPER_ROMAN.equals(styleType)) {
 				lst = new RomanList(false, 0);
+				synchronizeSymbol(fontSize, lst);
 			} else if (CSS.Value.LOWER_GREEK.equals(styleType)) {
 				lst = new GreekList(true, 0);
+				synchronizeSymbol(fontSize, lst);
 			} else if (CSS.Value.UPPER_GREEK.equals(styleType)) {
 				lst = new GreekList(false, 0);
+				synchronizeSymbol(fontSize, lst);
 			} else if (CSS.Value.LOWER_ALPHA.equals(styleType) || CSS.Value.LOWER_LATIN.equals(styleType)) {
 				lst = new List(List.ORDERED, List.ALPHABETICAL);
+				synchronizeSymbol(fontSize, lst);
 				lst.setLowercase(true);
 			} else if (CSS.Value.UPPER_ALPHA.equals(styleType) || CSS.Value.UPPER_LATIN.equals(styleType)) {
 				lst = new List(List.ORDERED, List.ALPHABETICAL);
+				synchronizeSymbol(fontSize, lst);
 				lst.setLowercase(false);
 			}
 		} else if (t.getTag().equalsIgnoreCase(HTML.Tag.OL)) {
 			lst = new List(List.ORDERED);
+			synchronizeSymbol(fontSize, lst);
 		} else if (t.getTag().equalsIgnoreCase(HTML.Tag.UL)) {
 			lst = new List(List.UNORDERED);
 			shrinkSymbol(lst, fontSize);
@@ -153,7 +161,6 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 		}
 		lst.setAlignindent(false);
 		lst.setAutoindent(false);
-		lst.setSymbolIndent(12);
 		float leftIndent = 0;
 		if (null != css.get(CSS.Property.LIST_STYLE_POSITION) && css.get(CSS.Property.LIST_STYLE_POSITION).equalsIgnoreCase(CSS.Value.INSIDE)) {
 			leftIndent += 30;
@@ -166,11 +173,15 @@ public class ListStyleTypeCssApplier implements CssApplier<List> {
 		return lst;
 	}
 
+	private void synchronizeSymbol(final float fontSize, final List lst) {
+		lst.getSymbol().getFont().setSize(fontSize);
+		lst.setSymbolIndent(fontSize);
+	}
+
 	private void shrinkSymbol(final List lst, final float fontSize) {
+		lst.setSymbolIndent(12);
 		Chunk symbol = lst.getSymbol();
-//		Image image = symbol.getImage();
-//		image.setSpacingAfter(2.5f);
-		symbol.setTextRise((fontSize-7)/2);
+		symbol.setTextRise(2);
 		symbol.getFont().setSize(7);
 	}
 }
