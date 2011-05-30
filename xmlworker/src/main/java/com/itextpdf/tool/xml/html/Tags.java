@@ -64,11 +64,11 @@ public class Tags {
 	 */
 	public static final TagProcessorFactory getHtmlTagProcessorFactory() {
 		DefaultTagProcessorFactory factory = new DefaultTagProcessorFactory();
-		factory.addProcessor("xml", defaultpackage+"head.XML");
+		factory.addProcessor("xml", dummyTagProcessor);
 		factory.addProcessor("!doctype", dummyTagProcessor);
 		factory.addProcessor("html", dummyTagProcessor);
 		factory.addProcessor("head", dummyTagProcessor);
-		factory.addProcessor("meta", defaultpackage+"head.Meta");
+		factory.addProcessor("meta", dummyTagProcessor);
 		factory.addProcessor("object", dummyTagProcessor);
 		factory.addProcessor("title", defaultpackage + "head.Title");
 		factory.addProcessor("link", defaultpackage + "head.Link");
