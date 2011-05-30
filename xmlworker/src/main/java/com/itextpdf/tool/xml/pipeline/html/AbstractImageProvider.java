@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java 94 2011-05-23 23:38:48Z redlab_b $
+ * $Id: HtmlPipelineContext.java 128 2011-05-27 13:22:11Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -43,37 +43,45 @@
  */
 package com.itextpdf.tool.xml.pipeline.html;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.itextpdf.text.Image;
 
 /**
- * A Provider for Images found in HTML.
  * @author itextpdf.com
  *
  */
-public interface ImageProvider {
+public abstract class AbstractImageProvider implements ImageProvider {
+
+	private final Map<String, Image> map;
 
 	/**
-	 * Retrieve and image from the store.
-	 * @param src the source found in src attribute
-	 * @return the {@link Image}
+	 *
 	 */
-	Image retrieve(String src);
+	public AbstractImageProvider() {
+		this.map = new ConcurrentHashMap<String, Image>();
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.pipeline.html.ImageProvider#retrieve(java.lang.String)
+	 */
+	public Image retrieve(final String src) {
+		return map.get(src);
+	}
 
-	/**
-	 * @return a rootpath to set before the src attribute
-	 */
-	String getImageRootPath();
 
-	/**
-	 * Store allows ImageProvider users to cache the found images.
-	 * @param src the src attribute
-	 * @param img the image.
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.pipeline.html.ImageProvider#store(java.lang.String, com.itextpdf.text.Image)
 	 */
-	void store(String src, Image img);
+	public void store(final String src, final Image img) {
+		map.put(src, img);
+	}
 
-	/**
-	 * Resets the cached images.
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.pipeline.html.ImageProvider#reset()
 	 */
-	void reset();
+	public void reset() {
+		this.map.clear();
+	}
 
 }

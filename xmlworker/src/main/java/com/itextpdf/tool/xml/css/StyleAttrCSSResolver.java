@@ -297,7 +297,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	 * Add a file to the CssFiles Collection.
 	 * @param file the CssFile to add.
 	 */
-	public void addCssFile(final CssFile file) {
+	public void addCss(final CssFile file) {
 		this.cssFiles.add(file);
 	}
 

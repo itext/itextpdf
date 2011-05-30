@@ -175,5 +175,21 @@ public class XMLWorkerHelper {
 		XMLParser p = new XMLParser(true, worker);
 		p.parse(in);
 	}
+	/**
+	 * @param d
+	 * @param resourceAsStream
+	 * @throws IOException
+	 */
+	public void parseXHtml(final ElementHandler d, final InputStream in) throws IOException {
+		CssFilesImpl cssFiles = new CssFilesImpl();
+		cssFiles.add(getDefaultCSS());
+		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+		HtmlPipelineContext hpc = new HtmlPipelineContext();
+		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new ElementHandlerPipeline(d, null)));
+		XMLWorker worker = new XMLWorker(pipeline, true);
+		XMLParser p = new XMLParser(true, worker);
+		p.parse(in);
+	}
 
 }

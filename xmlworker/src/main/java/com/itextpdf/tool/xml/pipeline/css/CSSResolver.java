@@ -44,6 +44,7 @@
 package com.itextpdf.tool.xml.pipeline.css;
 
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.css.CssFile;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 
 /**
@@ -84,6 +85,11 @@ public interface CSSResolver {
 	 * @throws CssResolverException thrown if something goes wrong
 	 */
 	void addCss(String content) throws CssResolverException;
+
+	/**
+	 * @param defaultCSS
+	 */
+	void addCss(CssFile defaultCSS);
 
 
 }
