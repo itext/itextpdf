@@ -158,5 +158,22 @@ public class XMLWorkerHelper {
 		XMLParser p = new XMLParser(true, worker);
 		p.parse(in);
 	}
+	/**
+	 * @param writer
+	 * @param doc
+	 * @param in
+	 * @throws IOException
+	 */
+	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in) throws IOException {
+		CssFilesImpl cssFiles = new CssFilesImpl();
+		cssFiles.add(getDefaultCSS());
+		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+		HtmlPipelineContext hpc = new HtmlPipelineContext();
+		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
+		XMLWorker worker = new XMLWorker(pipeline, true);
+		XMLParser p = new XMLParser(true, worker);
+		p.parse(in);
+	}
 
 }

@@ -7,7 +7,7 @@ dt {
 	margin: 0;
 }
 /* styles below are taken from Mozilla Defaults */
-body, defaultRoot {
+body {
     margin: 10%;
     font-size: 12pt;
 }
