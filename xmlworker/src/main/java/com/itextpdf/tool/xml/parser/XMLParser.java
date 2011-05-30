@@ -135,7 +135,7 @@ public class XMLParser {
 	 * @throws IOException if IO went wrong
 	 */
 	public void parse(final InputStream in) throws IOException {
-		parse(new InputStreamReader(in));
+		parseStream(in);
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class XMLParser {
 		if (detectEncoding) {
 			parse(detectEncoding(in));
 		} else {
-			parse(new InputStreamReader(in));
+			parse(in);
 		}
 	}
 
@@ -169,6 +169,20 @@ public class XMLParser {
 		while (-1 != (read = r.read())) {
 			state.process(read);
 		}
+		} finally {
+			r.close();
+		}
+	}
+	/**
+	 * @param r
+	 * @throws IOException
+	 */
+	private void parseStream(final InputStream r) throws IOException {
+		int read = -1;
+		try {
+			while (-1 != (read = r.read())) {
+				state.process(read);
+			}
 		} finally {
 			r.close();
 		}
