@@ -45,9 +45,10 @@ package com.itextpdf.tool.xml;
 
 /**
  * @author redlab_b
+ * @param <T>
  *
  */
-public interface Pipeline {
+public interface Pipeline<T extends CustomContext> {
 
 	/**
 	 * Sets the global worker context.
@@ -62,7 +63,7 @@ public interface Pipeline {
 	 * @return the next pipeline in line
 	 * @throws PipelineException can be thrown to indicate that something went wrong.
 	 */
-	public Pipeline open(Tag t, ProcessObject po) throws PipelineException;
+	public Pipeline<?> open(Tag t, ProcessObject po) throws PipelineException;
 
 	/**
 	 * Called when content has been encountered.
@@ -72,7 +73,7 @@ public interface Pipeline {
 	 * @return the next pipeline in line
 	 * @throws PipelineException can be thrown to indicate that something went wrong.
 	 */
-	public Pipeline content(Tag t, byte[] content, ProcessObject po) throws PipelineException;
+	public Pipeline<?> content(Tag t, byte[] content, ProcessObject po) throws PipelineException;
 
 	/**
 	 * Called when a closing tag has been encountered.
@@ -81,17 +82,17 @@ public interface Pipeline {
 	 * @return the next pipeline in line
 	 * @throws PipelineException  can be thrown to indicate that something went wrong.
 	 */
-	public Pipeline close(Tag t, ProcessObject po) throws PipelineException;
+	public Pipeline<?> close(Tag t, ProcessObject po) throws PipelineException;
 
 	/**
 	 * Returns the next pipeline in line.
 	 * @return the next pipeline
 	 */
-	public Pipeline getNext();
+	public Pipeline<?> getNext();
 
 	/**
 	 * @return a <strong>new</strong> custom context for this pipeline
 	 * @throws NoCustomContextException if there is no custom context for this pipeline
 	 */
-	public CustomContext getCustomContext() throws NoCustomContextException;
+	public T getNewCustomContext() throws NoCustomContextException;
 }

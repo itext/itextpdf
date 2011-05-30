@@ -63,7 +63,7 @@ import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 public class XMLWorker implements XMLParserListener {
 
 	private Tag current = null;
-	private Pipeline rootpPipe;
+	private Pipeline<?> rootpPipe;
 	private WorkerContextImpl context;
 	private boolean parseHtml;
 
@@ -82,12 +82,12 @@ public class XMLWorker implements XMLParserListener {
 	 * @param parseHtml true if this XMLWorker is parsing HTML, this actually just means:
 	 *            convert all tags to lowercase.
 	 */
-	public XMLWorker(final Pipeline pipeline, final boolean parseHtml) {
+	public XMLWorker(final Pipeline<?> pipeline, final boolean parseHtml) {
 		this();
 		this.parseHtml = parseHtml;
 		rootpPipe = pipeline;
 		this.context = new WorkerContextImpl();
-		Pipeline p = rootpPipe;
+		Pipeline<?> p = rootpPipe;
 		while (null != (p = setCustomContext(p)))
 			;
 
@@ -97,10 +97,10 @@ public class XMLWorker implements XMLParserListener {
 	 * @return the {@link Pipeline#getNext()} value
 	 *
 	 */
-	private Pipeline setCustomContext(final Pipeline pipeline) {
+	private Pipeline<?> setCustomContext(final Pipeline<?> pipeline) {
 		try {
 			pipeline.setContext(context);
-			CustomContext cc = pipeline.getCustomContext();
+			CustomContext cc = pipeline.getNewCustomContext();
 			context.add(pipeline.getClass(), cc);
 		} catch (NoCustomContextException e) {
 		}
@@ -126,7 +126,7 @@ public class XMLWorker implements XMLParserListener {
 			current.addChild(t);
 		}
 		current = t;
-		Pipeline wp = rootpPipe;
+		Pipeline<?> wp = rootpPipe;
 		ProcessObject po = new ProcessObject();
 		try {
 			while (null != (wp = wp.open(t, po)));
@@ -160,7 +160,7 @@ public class XMLWorker implements XMLParserListener {
 		if (null != current && !thetag.equals(current.getTag())) {
 			throw new RuntimeWorkerException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.INVALID_NESTED_TAG), thetag, current.getTag()));
 		}
-		Pipeline wp = rootpPipe;
+		Pipeline<?> wp = rootpPipe;
 		ProcessObject po = new ProcessObject();
 		try {
 			while (null != (wp = wp.close(current, po)));
@@ -183,7 +183,7 @@ public class XMLWorker implements XMLParserListener {
 	public void text(final byte[] b) {
 		if (null != current) {
 			if (b.length > 0) {
-				Pipeline wp = rootpPipe;
+				Pipeline<?> wp = rootpPipe;
 				ProcessObject po = new ProcessObject();
 				try {
 					while (null != (wp = wp.content(current, b, po)))

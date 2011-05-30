@@ -66,7 +66,7 @@ import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
  * @author redlab_b
  *
  */
-public class PdfWriterPipeline extends AbstractPipeline {
+public class PdfWriterPipeline extends AbstractPipeline<MapContext> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PdfWriterPipeline.class);
 	private Document doc;
@@ -81,9 +81,8 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	/**
 	 * @param next the next pipeline if any.
 	 */
-	public PdfWriterPipeline(final Pipeline next) {
+	public PdfWriterPipeline(final Pipeline<?> next) {
 		super(next);
-		continiously = true;
 	}
 
 	/**
@@ -154,7 +153,7 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	 * xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline open(final Tag t, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> open(final Tag t, final ProcessObject po) throws PipelineException {
 		write(po);
 		return getNext();
 	}
@@ -166,7 +165,7 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	 * .xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline content(final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> content(final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
 		write(po);
 		return getNext();
 	}
@@ -178,23 +177,25 @@ public class PdfWriterPipeline extends AbstractPipeline {
 	 * .xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline close(final Tag t, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> close(final Tag t, final ProcessObject po) throws PipelineException {
 		write(po);
 		return getNext();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.itextpdf.tool.xml.pipeline.Pipeline#getNewCustomContext()
+	/**
+	 * Uses {@link MapContext} as CustomContext.
 	 */
 	@Override
-	public CustomContext getCustomContext() throws NoCustomContextException {
+	public MapContext getNewCustomContext() throws NoCustomContextException {
 		MapContext mc = new MapContext();
 		continiously = Boolean.TRUE;
 		mc.put(CONTINUOUS, continiously);
-		mc.put(DOCUMENT, doc);
-		mc.put(WRITER, writer);
+		if (null != doc) {
+			mc.put(DOCUMENT, doc);
+		}
+		if (null != writer) {
+			mc.put(WRITER, writer);
+		}
 		return mc;
 	}
 

@@ -134,7 +134,7 @@ public class XMLWorkerHelper {
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		HtmlPipelineContext hpc = new HtmlPipelineContext();
 		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
-		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new ElementHandlerPipeline(d, null)));
+		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new ElementHandlerPipeline(d, null)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
 		XMLParser p = new XMLParser(true, worker);
 		p.parse(in);
@@ -153,7 +153,7 @@ public class XMLWorkerHelper {
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		HtmlPipelineContext hpc = new HtmlPipelineContext();
 		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
-		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
+		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
 		XMLParser p = new XMLParser(true, worker);
 		p.parse(in);

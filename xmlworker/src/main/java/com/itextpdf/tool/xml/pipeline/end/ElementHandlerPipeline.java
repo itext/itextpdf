@@ -57,6 +57,7 @@ import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
  * @author redlab_b
  *
  */
+@SuppressWarnings("rawtypes")
 public class ElementHandlerPipeline extends AbstractPipeline {
 
 	private final ElementHandler handler;
@@ -65,6 +66,7 @@ public class ElementHandlerPipeline extends AbstractPipeline {
 	 * @param handler the ElementHandler
 	 * @param next the next pipeline in line. (or <code>null</code> if none )
 	 */
+	@SuppressWarnings("unchecked")
 	public ElementHandlerPipeline(final ElementHandler handler, final Pipeline next) {
 		super(next);
 		this.handler =handler;

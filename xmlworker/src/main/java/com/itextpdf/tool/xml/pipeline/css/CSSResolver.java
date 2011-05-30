@@ -85,4 +85,5 @@ public interface CSSResolver {
 	 */
 	void addCss(String content) throws CssResolverException;
 
+
 }

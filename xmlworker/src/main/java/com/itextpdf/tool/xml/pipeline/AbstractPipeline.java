@@ -57,19 +57,20 @@ import com.itextpdf.tool.xml.WorkerContext;
  * relevant to your implementation.
  *
  * @author redlab_b
+ * @param <T>
  *
  */
-public abstract class AbstractPipeline implements Pipeline {
+public abstract class AbstractPipeline<T extends CustomContext> implements Pipeline<T> {
 
 	private WorkerContext context;
-	private final Pipeline next;
+	private Pipeline<?> next;
 
 	/**
 	 * @param next the pipeline that's next in the sequence.
 	 *
 	 */
-	public AbstractPipeline(final Pipeline next) {
-		this.next = next;
+	public AbstractPipeline(final Pipeline<?> next) {
+		setNext(next);
 	}
 	/*
 	 * (non-Javadoc)
@@ -87,7 +88,7 @@ public abstract class AbstractPipeline implements Pipeline {
 	 *
 	 * @see com.itextpdf.tool.xml.pipeline.Pipeline#getNext()
 	 */
-	public Pipeline getNext() {
+	public Pipeline<?> getNext() {
 		return next;
 	}
 
@@ -97,43 +98,45 @@ public abstract class AbstractPipeline implements Pipeline {
 	public WorkerContext getContext() {
 		return this.context;
 	}
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Just calls getNext.
 	 *
-	 * @see
-	 * com.itextpdf.tool.xml.pipeline.Pipeline#open(com.itextpdf.tool.
-	 * xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
-	public Pipeline open(final Tag t, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> open(final Tag t, final ProcessObject po) throws PipelineException {
 		return getNext();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Just calls getNext.
+	 * @param t
+	 * @param content
+	 * @param po
+	 * @return next pipeline
+	 * @throws PipelineException
 	 *
-	 * @see
-	 * com.itextpdf.tool.xml.pipeline.Pipeline#content(com.itextpdf.tool
-	 * .xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
-	public Pipeline content(final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> content(final Tag t, final  byte[] content, final ProcessObject po) throws PipelineException {
 		return getNext();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Just calls getNext.
 	 *
-	 * @see
-	 * com.itextpdf.tool.xml.pipeline.Pipeline#close(com.itextpdf.tool
-	 * .xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
-	public Pipeline close(final Tag t, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> close(final Tag t, final ProcessObject po) throws PipelineException {
 		return getNext();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.pipeline.Pipeline#getCustomContext()
 	 */
-	public CustomContext getCustomContext() throws NoCustomContextException {
+	public T getNewCustomContext() throws NoCustomContextException {
 		throw new NoCustomContextException();
+	}
+	/**
+	 * @param next
+	 */
+	protected void setNext(final Pipeline<?> next) {
+		this.next = next;
 	}
 }

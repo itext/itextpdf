@@ -66,7 +66,7 @@ import com.itextpdf.tool.xml.pipeline.WritableElement;
  * @author redlab_b
  *
  */
-public class HtmlPipeline extends AbstractPipeline {
+public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 
 	private final HtmlPipelineContext hpc;
 
@@ -74,7 +74,7 @@ public class HtmlPipeline extends AbstractPipeline {
 	 * @param hpc the initial {@link HtmlPipelineContext}
 	 * @param next the next pipe in row
 	 */
-	public HtmlPipeline(final HtmlPipelineContext hpc, final Pipeline next) {
+	public HtmlPipeline(final HtmlPipelineContext hpc, final Pipeline<?> next) {
 		super(next);
 		this.hpc = hpc;
 	}
@@ -87,7 +87,7 @@ public class HtmlPipeline extends AbstractPipeline {
 	 * xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline open(final Tag t, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> open(final Tag t, final ProcessObject po) throws PipelineException {
 		HtmlPipelineContext hcc = getMyContext();
 		try {
 			TagProcessor tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
@@ -143,7 +143,7 @@ public class HtmlPipeline extends AbstractPipeline {
 	 * .xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline content(final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> content(final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
 		HtmlPipelineContext hcc = getMyContext();
 		TagProcessor tp;
 		try {
@@ -190,7 +190,7 @@ public class HtmlPipeline extends AbstractPipeline {
 	 * .xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline close(final Tag t, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> close(final Tag t, final ProcessObject po) throws PipelineException {
 		HtmlPipelineContext hcc = getMyContext();
 		TagProcessor tp;
 		try {
@@ -235,7 +235,7 @@ public class HtmlPipeline extends AbstractPipeline {
 	 * @see com.itextpdf.tool.xml.pipeline.Pipeline#getNewCustomContext()
 	 */
 	@Override
-	public CustomContext getCustomContext() throws NoCustomContextException {
+	public HtmlPipelineContext getNewCustomContext() throws NoCustomContextException {
 		try {
 			HtmlPipelineContext clone = hpc.clone();
 			clone.setContext(getContext());

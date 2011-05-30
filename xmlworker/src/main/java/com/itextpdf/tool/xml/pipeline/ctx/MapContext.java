@@ -47,14 +47,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.itextpdf.tool.xml.CustomContext;
-import com.itextpdf.tool.xml.ThreadSafe;
 
 /**
  * A CustomContext that holds data in a Map
  * @author redlab_b
  *
  */
-@ThreadSafe("Content hold in a ConcurrentHashMap")
 public class MapContext implements CustomContext {
 
 	private final Map<String, Object> map;

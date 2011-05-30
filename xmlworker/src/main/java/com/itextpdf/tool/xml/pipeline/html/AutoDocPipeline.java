@@ -74,6 +74,7 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
  * @author redlab_b
  *
  */
+@SuppressWarnings("rawtypes")
 public class AutoDocPipeline extends AbstractPipeline {
 
 	private final FileMaker fm;
@@ -89,6 +90,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 	 * @param pagesize the pagesize for the documents
 	 *
 	 */
+	@SuppressWarnings("unchecked")
 	public AutoDocPipeline(final FileMaker fm, final String tag, final String opentag, final Rectangle pagesize) {
 		super(null);
 		this.fm = fm;
@@ -105,7 +107,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 	 * .xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline open(final Tag t, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> open(final Tag t, final ProcessObject po) throws PipelineException {
 		try {
 			String tagName = t.getTag();
 			if (tag.equals(tagName)) {
@@ -166,7 +168,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 	 * .xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline close(final Tag t, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> close(final Tag t, final ProcessObject po) throws PipelineException {
 		String tagName = t.getTag();
 		if (tag.equals(tagName)) {
 			MapContext cc;
