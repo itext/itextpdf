@@ -87,9 +87,10 @@ public interface CSSResolver {
 	void addCss(String content) throws CssResolverException;
 
 	/**
-	 * @param defaultCSS
+	 * Add a CssFile
+	 * @param file the CssFile
 	 */
-	void addCss(CssFile defaultCSS);
+	void addCss(CssFile file);
 
 
 }

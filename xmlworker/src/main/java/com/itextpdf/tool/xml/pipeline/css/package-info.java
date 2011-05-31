@@ -41,58 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml;
-
 /**
- * @author redlab_b
- * @param <T> the type of CustomContext
- *
+ *  Contains CSS processing pipeline.
  */
-public interface Pipeline<T extends CustomContext> {
-
-	/**
-	 * Sets the global worker context.
-	 * @param context the worker context
-	 */
-	public void setContext(WorkerContext context);
-
-	/**
-	 * Called when an opening tag has been encountered.
-	 * @param t the Tag
-	 * @param po a processObject to put {@link Writable}s in
-	 * @return the next pipeline in line
-	 * @throws PipelineException can be thrown to indicate that something went wrong.
-	 */
-	public Pipeline<?> open(Tag t, ProcessObject po) throws PipelineException;
-
-	/**
-	 * Called when content has been encountered.
-	 * @param t the Tag
-	 * @param content the content
-	 * @param po a processObject to put {@link Writable}s in
-	 * @return the next pipeline in line
-	 * @throws PipelineException can be thrown to indicate that something went wrong.
-	 */
-	public Pipeline<?> content(Tag t, byte[] content, ProcessObject po) throws PipelineException;
-
-	/**
-	 * Called when a closing tag has been encountered.
-	 * @param t the Tag
-	 * @param po a processObject to put {@link Writable}s in
-	 * @return the next pipeline in line
-	 * @throws PipelineException  can be thrown to indicate that something went wrong.
-	 */
-	public Pipeline<?> close(Tag t, ProcessObject po) throws PipelineException;
-
-	/**
-	 * Returns the next pipeline in line.
-	 * @return the next pipeline
-	 */
-	public Pipeline<?> getNext();
-
-	/**
-	 * @return a <strong>new</strong> custom context for this pipeline
-	 * @throws NoCustomContextException if there is no custom context for this pipeline
-	 */
-	public T getNewCustomContext() throws NoCustomContextException;
-}
+package com.itextpdf.tool.xml.pipeline.css;

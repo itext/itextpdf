@@ -21,7 +21,7 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 /**
- * @author Balder Van Camp
+ * @author itextpdf.com
  *
  */
 public class XMLWorkerHelperExample extends Setup {

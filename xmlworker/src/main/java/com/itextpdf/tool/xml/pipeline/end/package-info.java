@@ -1,5 +1,5 @@
 /*
- * $Id: package-info.java 8 2011-05-03 16:45:05Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -42,6 +42,6 @@
  * address: sales@itextpdf.com
  */
 /**
- * Collection of pipelines that can be used to setup XML processing in the {@link com.itextpdf.tool.xml.XMLWorker}
+ * Contains pipelines that can be used as last pipe in the line.
  */
 package com.itextpdf.tool.xml.pipeline.end;

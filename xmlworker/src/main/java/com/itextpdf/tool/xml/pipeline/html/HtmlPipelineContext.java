@@ -234,6 +234,7 @@ public class HtmlPipelineContext implements CustomContext, Cloneable {
 		return linkprovider;
 	}
 	/**
+	 * If no pageSize is set, the default value A4 is used.
 	 * @param pageSize the pageSize to set
 	 * @return this <code>HtmlPipelineContext</code>
 	 */

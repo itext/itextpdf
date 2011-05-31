@@ -57,7 +57,7 @@ import com.itextpdf.tool.xml.WorkerContext;
  * relevant to your implementation.
  *
  * @author redlab_b
- * @param <T>
+ * @param <T> the type of CustomContext
  *
  */
 public abstract class AbstractPipeline<T extends CustomContext> implements Pipeline<T> {
@@ -108,11 +108,6 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 
 	/**
 	 * Just calls getNext.
-	 * @param t
-	 * @param content
-	 * @param po
-	 * @return next pipeline
-	 * @throws PipelineException
 	 *
 	 */
 	public Pipeline<?> content(final Tag t, final  byte[] content, final ProcessObject po) throws PipelineException {
@@ -133,8 +128,12 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	public T getNewCustomContext() throws NoCustomContextException {
 		throw new NoCustomContextException();
 	}
+
 	/**
-	 * @param next
+	 * Protected setNext method. When using this while parsing one can make live
+	 * changes the pipeline structure. Use with caution.
+	 *
+	 * @param next set the next pipeline
 	 */
 	protected void setNext(final Pipeline<?> next) {
 		this.next = next;

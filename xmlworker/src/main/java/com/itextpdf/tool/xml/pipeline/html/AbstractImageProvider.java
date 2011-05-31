@@ -1,5 +1,5 @@
 /*
- * $Id: HtmlPipelineContext.java 128 2011-05-27 13:22:11Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA

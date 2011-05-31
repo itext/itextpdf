@@ -57,6 +57,7 @@ import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.Tags;
 import com.itextpdf.tool.xml.parser.XMLParser;
+import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.end.ElementHandlerPipeline;
 import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
@@ -176,9 +177,9 @@ public class XMLWorkerHelper {
 		p.parse(in);
 	}
 	/**
-	 * @param d
-	 * @param resourceAsStream
-	 * @throws IOException
+	 * @param d the ElementHandler
+	 * @param in the InputStream
+	 * @throws IOException if something went seriously wrong with IO.
 	 */
 	public void parseXHtml(final ElementHandler d, final InputStream in) throws IOException {
 		CssFilesImpl cssFiles = new CssFilesImpl();
@@ -192,4 +193,17 @@ public class XMLWorkerHelper {
 		p.parse(in);
 	}
 
+	/**
+	 * Get a CSSResolver implementation.
+	 * @param addDefaultCss true if the defaultCss should already be added.
+	 * @return the default CSSResolver
+	 *
+	 */
+	public CSSResolver getDefaultCssResolver(final boolean addDefaultCss) {
+		CSSResolver resolver = new StyleAttrCSSResolver();
+		if (addDefaultCss) {
+			resolver.addCss(getDefaultCSS());
+		}
+		return resolver;
+	}
 }
