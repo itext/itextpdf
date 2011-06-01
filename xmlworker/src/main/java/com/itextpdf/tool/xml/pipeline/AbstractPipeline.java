@@ -50,6 +50,7 @@ import com.itextpdf.tool.xml.PipelineException;
 import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 
 /**
  * Abstract class with default implementations. Override this instead of
@@ -62,7 +63,7 @@ import com.itextpdf.tool.xml.WorkerContext;
  */
 public abstract class AbstractPipeline<T extends CustomContext> implements Pipeline<T> {
 
-	private WorkerContext context;
+	private final ThreadLocal<WorkerContext> wc = new ThreadLocal<WorkerContext>();
 	private Pipeline<?> next;
 
 	/**
@@ -79,8 +80,8 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	 * com.itextpdf.tool.xml.pipeline.Pipeline#setContext(com.itextpdf
 	 * .tool.xml.pipeline.WorkerContext)
 	 */
-	public void setContext(final WorkerContext context) {
-		this.context = context;
+	public final void setContext(final WorkerContext context) {
+		this.wc.set(context);
 	}
 
 	/*
@@ -95,8 +96,8 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	/**
 	 * @return the WorkerContext
 	 */
-	public WorkerContext getContext() {
-		return this.context;
+	public final WorkerContext getContext() {
+		return wc.get();
 	}
 	/**
 	 * Just calls getNext.
@@ -129,6 +130,18 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 		throw new NoCustomContextException();
 	}
 
+	@SuppressWarnings("unchecked")
+	public final T getLocalContext() throws PipelineException {
+		try {
+			CustomContext cc = getContext().get(this.getClass());
+			if (null != cc) {
+				return (T) cc;
+			}
+			throw new PipelineException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.OWN_CONTEXT_404), this.getClass().getName()));
+		} catch (NoCustomContextException e) {
+			throw new PipelineException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.OWN_CONTEXT_404), this.getClass().getName()), e);
+		}
+	}
 	/**
 	 * Protected setNext method. When using this while parsing one can make live
 	 * changes the pipeline structure. Use with caution.

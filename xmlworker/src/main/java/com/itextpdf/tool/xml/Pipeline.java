@@ -1,4 +1,5 @@
 /*
+
  * $Id$
  *
  * This file is part of the iText (R) project.
@@ -95,4 +96,10 @@ public interface Pipeline<T extends CustomContext> {
 	 * @throws NoCustomContextException if there is no custom context for this pipeline
 	 */
 	public T getNewCustomContext() throws NoCustomContextException;
+
+	/**
+	 * @return the local context
+	 * @throws PipelineException if there is no custom context
+	 */
+	T getLocalContext() throws PipelineException;
 }

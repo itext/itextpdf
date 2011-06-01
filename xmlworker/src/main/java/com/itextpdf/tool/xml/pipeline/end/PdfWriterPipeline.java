@@ -115,34 +115,32 @@ public class PdfWriterPipeline extends AbstractPipeline<MapContext> {
 	 * @throws PipelineException
 	 */
 	private void write(final ProcessObject po) throws PipelineException {
-		CustomContext cc;
-		try {
-			cc = getContext().get(PdfWriterPipeline.class);
-			MapContext mp = (MapContext) cc;
-			if (po.containsWritable()) {
-				Document doc = (Document) mp.get(DOCUMENT);
-				boolean continuousWrite = (Boolean) mp.get(CONTINUOUS);
-				Writable writable = null;
-				while (null != (writable = po.poll())) {
-					if (writable instanceof WritableElement) {
-						for (Element e : ((WritableElement) writable).elements()) {
-							try {
-								if (!doc.add(e)) {
-									LOG.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.ELEMENT_NOT_ADDED), e.toString()));
-								}
-							} catch (DocumentException e1) {
-								if (!continuousWrite) {
-									throw new PipelineException(e1);
-								} else {
-									LOG.error(LocaleMessages.getInstance().getMessage(LocaleMessages.ELEMENT_NOT_ADDED_EXC), e1);
-								}
+		MapContext mp = getLocalContext();
+		if (po.containsWritable()) {
+			Document doc = (Document) mp.get(DOCUMENT);
+			boolean continuousWrite = (Boolean) mp.get(CONTINUOUS);
+			Writable writable = null;
+			while (null != (writable = po.poll())) {
+				if (writable instanceof WritableElement) {
+					for (Element e : ((WritableElement) writable).elements()) {
+						try {
+							if (!doc.add(e)) {
+								LOG.trace(String.format(
+										LocaleMessages.getInstance().getMessage(LocaleMessages.ELEMENT_NOT_ADDED),
+										e.toString()));
+							}
+						} catch (DocumentException e1) {
+							if (!continuousWrite) {
+								throw new PipelineException(e1);
+							} else {
+								LOG.error(
+										LocaleMessages.getInstance().getMessage(LocaleMessages.ELEMENT_NOT_ADDED_EXC),
+										e1);
 							}
 						}
 					}
 				}
 			}
-		} catch (NoCustomContextException e2) {
-			throw new PipelineException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.OWN_CONTEXT_404), PdfWriter.class.getClass().getName()));
 		}
 	}
 

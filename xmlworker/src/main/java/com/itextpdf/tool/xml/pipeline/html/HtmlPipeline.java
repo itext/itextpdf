@@ -47,7 +47,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.CustomContext;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.PipelineException;
@@ -88,7 +87,7 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 	 */
 	@Override
 	public Pipeline<?> open(final Tag t, final ProcessObject po) throws PipelineException {
-		HtmlPipelineContext hcc = getMyContext();
+		HtmlPipelineContext hcc = getLocalContext();
 		try {
 			TagProcessor tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
 			if (tp.isStackOwner()) {
@@ -120,22 +119,6 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 		return getNext();
 	}
 
-	/**
-	 * @return
-	 * @throws PipelineException
-	 */
-	private HtmlPipelineContext getMyContext() throws PipelineException {
-		CustomContext cc;
-		try {
-			cc = getContext().get(HtmlPipeline.class);
-			HtmlPipelineContext hcc = (HtmlPipelineContext) cc;
-			return hcc;
-		} catch (NoCustomContextException e) {
-			throw new PipelineException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.OWN_CONTEXT_404), HtmlPipeline.class.getName()), e);
-		}
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 *
@@ -144,7 +127,7 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 	 */
 	@Override
 	public Pipeline<?> content(final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
-		HtmlPipelineContext hcc = getMyContext();
+		HtmlPipelineContext hcc = getLocalContext();
 		TagProcessor tp;
 		try {
 			tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
@@ -191,7 +174,7 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 	 */
 	@Override
 	public Pipeline<?> close(final Tag t, final ProcessObject po) throws PipelineException {
-		HtmlPipelineContext hcc = getMyContext();
+		HtmlPipelineContext hcc = getLocalContext();
 		TagProcessor tp;
 		try {
 			tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
