@@ -2570,7 +2570,7 @@ public class PdfWriter extends DocWriter implements
         PdfArray arr = new PdfArray();
         for (Object element : documentOCG) {
             PdfLayer layer = (PdfLayer)element;
-            PdfDictionary usage = (PdfDictionary)layer.get(PdfName.USAGE);
+            PdfDictionary usage = (PdfDictionary)layer.getAsDict(PdfName.USAGE);
             if (usage != null && usage.get(category) != null)
                 arr.add(layer.getRef());
         }
