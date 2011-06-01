@@ -2576,8 +2576,8 @@ public class PdfWriter extends DocWriter implements
         }
         if (arr.size() == 0)
             return;
-        PdfDictionary d = (PdfDictionary)OCProperties.get(PdfName.D);
-        PdfArray arras = (PdfArray)d.get(PdfName.AS);
+        PdfDictionary d = OCProperties.getAsDict(PdfName.D);
+        PdfArray arras = d.getAsArray(PdfName.AS);
         if (arras == null) {
             arras = new PdfArray();
             d.put(PdfName.AS, arras);
