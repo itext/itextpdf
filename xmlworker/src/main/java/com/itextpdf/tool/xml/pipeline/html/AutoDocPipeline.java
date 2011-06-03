@@ -52,6 +52,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.Experimental;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.PipelineException;
@@ -75,6 +76,7 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
  *
  */
 @SuppressWarnings("rawtypes")
+@Experimental("Untested for a while, forgot about it's existance - thus, not yet documented")
 public class AutoDocPipeline extends AbstractPipeline {
 
 	private final FileMaker fm;

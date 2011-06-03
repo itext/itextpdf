@@ -56,6 +56,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.tool.xml.CustomContext;
+import com.itextpdf.tool.xml.Experimental;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.html.Header;
@@ -197,6 +198,7 @@ public class HtmlPipelineContext implements CustomContext, Cloneable {
 	 * @param cSet the charset.
 	 * @return this <code>HtmlPipelineContext</code>
 	 */
+	@Experimental
 	public HtmlPipelineContext charSet(final Charset cSet) {
 		this.charset = cSet;
 		return this;

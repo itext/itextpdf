@@ -40,6 +40,9 @@
  */
 package com.itextpdf.tool.xml;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.Map;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
@@ -49,6 +52,7 @@ import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.html.TagProcessorFactory;
+import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.XMLParserListener;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
@@ -64,7 +68,12 @@ public class XMLWorker implements XMLParserListener {
 
 	private Tag current = null;
 	private Pipeline<?> rootpPipe;
-	private WorkerContextImpl context;
+	private static ThreadLocal<WorkerContextImpl> context = new ThreadLocal<WorkerContextImpl>() {
+		@Override
+		protected WorkerContextImpl initialValue() {
+			return new WorkerContextImpl();
+		};
+	};
 	private boolean parseHtml;
 
 	/**
@@ -79,18 +88,49 @@ public class XMLWorker implements XMLParserListener {
 	 * Constructs a new XMLWorker
 	 *
 	 * @param pipeline the pipeline
-	 * @param parseHtml true if this XMLWorker is parsing HTML, this actually just means:
-	 *            convert all tags to lowercase.
+	 * @param parseHtml true if this XMLWorker is parsing HTML, this actually
+	 *            just means: convert all tags to lowercase.
 	 */
 	public XMLWorker(final Pipeline<?> pipeline, final boolean parseHtml) {
 		this();
 		this.parseHtml = parseHtml;
 		rootpPipe = pipeline;
-		this.context = new WorkerContextImpl();
 		Pipeline<?> p = rootpPipe;
 		while (null != (p = setCustomContext(p)))
 			;
 
+	}
+
+	/**
+	 * The method parse allows you to reuse the same XMLWorker Configuration on a
+	 * per thread basis.
+	 *
+	 * @param in the stream to read XML/HTML from
+	 * @throws IOException if could not read
+	 */
+	@Experimental("Do not expect everything to work as a snap, configure and play with the pipelines")
+	public void parse(final InputStream in) throws IOException {
+		Pipeline<?> p = rootpPipe;
+		while (null != (p = setCustomContext(p)))
+			;
+		XMLParser parser = new XMLParser(parseHtml, this);
+		parser.parse(in);
+	}
+
+	/**
+	 * The method parse allows you to reuse the same XMLWorker Configuration on a
+	 * per thread basis.
+	 *
+	 * @param in the reader to read XML/HTML from
+	 * @throws IOException if could not read
+	 */
+	@Experimental("Do not expect everything to work as a snap, configure and play with the pipelines")
+	public void parse(final Reader in) throws IOException {
+		Pipeline<?> p = rootpPipe;
+		while (null != (p = setCustomContext(p)))
+			;
+		XMLParser parser = new XMLParser(parseHtml, this);
+		parser.parse(in);
 	}
 
 	/**
@@ -99,9 +139,10 @@ public class XMLWorker implements XMLParserListener {
 	 */
 	private Pipeline<?> setCustomContext(final Pipeline<?> pipeline) {
 		try {
-			pipeline.setContext(context);
+			WorkerContextImpl ctx = context.get();
+			pipeline.setContext(ctx);
 			CustomContext cc = pipeline.getNewCustomContext();
-			context.add(pipeline.getClass(), cc);
+			ctx.add(pipeline.getClass(), cc);
 		} catch (NoCustomContextException e) {
 		}
 		return pipeline.getNext();
@@ -129,7 +170,8 @@ public class XMLWorker implements XMLParserListener {
 		Pipeline<?> wp = rootpPipe;
 		ProcessObject po = new ProcessObject();
 		try {
-			while (null != (wp = wp.open(t, po)));
+			while (null != (wp = wp.open(t, po)))
+				;
 		} catch (PipelineException e) {
 			throw new RuntimeWorkerException(e);
 		}
@@ -158,17 +200,20 @@ public class XMLWorker implements XMLParserListener {
 			thetag = tag;
 		}
 		if (null != current && !thetag.equals(current.getTag())) {
-			throw new RuntimeWorkerException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.INVALID_NESTED_TAG), thetag, current.getTag()));
+			throw new RuntimeWorkerException(String.format(
+					LocaleMessages.getInstance().getMessage(LocaleMessages.INVALID_NESTED_TAG), thetag,
+					current.getTag()));
 		}
 		Pipeline<?> wp = rootpPipe;
 		ProcessObject po = new ProcessObject();
 		try {
-			while (null != (wp = wp.close(current, po)));
+			while (null != (wp = wp.close(current, po)))
+				;
 		} catch (PipelineException e) {
 			throw new RuntimeWorkerException(e);
 		} finally {
 			if (null != current)
-			current = current.getParent();
+				current = current.getParent();
 		}
 	}
 

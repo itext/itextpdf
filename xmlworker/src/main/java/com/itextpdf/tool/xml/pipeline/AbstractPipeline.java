@@ -143,12 +143,12 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 		}
 	}
 	/**
-	 * Protected setNext method. When using this while parsing one can make live
+	 * setNext method. When using this while parsing one can make live
 	 * changes the pipeline structure. Use with caution.
 	 *
 	 * @param next set the next pipeline
 	 */
-	protected void setNext(final Pipeline<?> next) {
+	public void setNext(final Pipeline<?> next) {
 		this.next = next;
 	}
 }

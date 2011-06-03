@@ -52,6 +52,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.tool.xml.Experimental;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
@@ -62,6 +63,7 @@ import com.itextpdf.tool.xml.html.AbstractTagProcessor;
  * @author redlab_b
  *
  */
+@Experimental
 public class XML extends AbstractTagProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(XML.class);
