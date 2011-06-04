@@ -41,46 +41,81 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml;
+package com.itextpdf.tool.xml.pipeline;
 
-import static org.junit.Assert.assertTrue;
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.text.log.SysoLogger;
-import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
-import com.itextpdf.tool.xml.html.Anchor;
-import com.itextpdf.tool.xml.html.TagProcessorFactory;
-import com.itextpdf.tool.xml.html.Tags;
-import com.itextpdf.tool.xml.html.table.Table;
+import com.itextpdf.tool.xml.CustomContext;
+import com.itextpdf.tool.xml.NoCustomContextException;
+import com.itextpdf.tool.xml.Pipeline;
+import com.itextpdf.tool.xml.PipelineException;
 
 /**
- *
- * @author redlab_b
+ * @author itextpdf.com
  *
  */
-public class DefaultTagProcessorTest {
+public class PipelineTest {
 
+	private AbstractPipelineExtension abstractPipelineExtension;
+	private AbstractPipeline<?> ap;
+	/**
+	 *
+	 */
+	private final class AbstractPipelineExtension extends AbstractPipeline<CustomContext> {
+		/**
+		 * @param next
+		 */
+		private AbstractPipelineExtension(final Pipeline<?> next) {
+			super(next);
+		}
+	}
 
-	private TagProcessorFactory tp;
-
+	/** Init test. */
 	@Before
 	public void setup() {
-		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
-		tp = new Tags().getHtmlTagProcessorFactory();
-
+		abstractPipelineExtension = new AbstractPipelineExtension(null);
+		ap = new AbstractPipeline<CustomContext>(abstractPipelineExtension) {
+		};
 	}
-
+	/**
+	 * Expect a {@link NoCustomContextException} on calling getNewNoCustomContext.
+	 * @throws NoCustomContextException
+	 */
+	@Test(expected=NoCustomContextException.class)
+	public void validateNoCustomContextExceptionThrown() throws NoCustomContextException {
+		AbstractPipeline<?> ap = new AbstractPipeline<CustomContext>(null) {
+		};
+		ap.getNewCustomContext();
+	}
+	/**
+	 * Verify that getNext actually returns the next pipeline.
+	 */
 	@Test
-	public void testLoadClassName() {
-		assertTrue(tp.getProcessor("a", "") instanceof Anchor);
-		assertTrue(tp.getProcessor("table", "") instanceof Table);
+	public void validateNext() {
+		Assert.assertEquals(abstractPipelineExtension, ap.getNext());
 	}
-
-	@Test(expected = NoTagProcessorException.class)
-	public void loadFail() {
-		tp.getProcessor("unknown", "");
+	/**
+	 * Verify that close actually returns the next pipeline.
+	 */
+	@Test
+	public void validateNextClose() throws PipelineException {
+		Assert.assertEquals(abstractPipelineExtension, ap.close(null, null));
+	}
+	/**
+	 * Verify that open actually returns the next pipeline.
+	 */
+	@Test
+	public void validateNextOpen() throws PipelineException {
+		Assert.assertEquals(abstractPipelineExtension, ap.open(null, null));
+	}
+	/**
+	 * Verify that content actually returns the next pipeline.
+	 */
+	@Test
+	public void validateNextContent() throws PipelineException {
+		Assert.assertEquals(abstractPipelineExtension, ap.content(null, null, null));
 	}
 }

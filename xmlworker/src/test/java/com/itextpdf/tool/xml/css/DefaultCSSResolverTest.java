@@ -41,7 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml;
+package com.itextpdf.tool.xml.css;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -55,6 +55,7 @@ import org.junit.Test;
 
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.log.SysoLogger;
+import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CssInheritanceRules;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 
