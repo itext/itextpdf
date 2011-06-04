@@ -63,6 +63,7 @@ public class ElementHandlerPipeline extends AbstractPipeline {
 	private final ElementHandler handler;
 
 	/**
+	 * Does not use a context.
 	 * @param handler the ElementHandler
 	 * @param next the next pipeline in line. (or <code>null</code> if none )
 	 */
