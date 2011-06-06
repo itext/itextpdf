@@ -32,7 +32,6 @@ package com.itextpdf.tool.xml.html;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -47,7 +46,6 @@ import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
@@ -61,26 +59,6 @@ import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 public class Anchor extends AbstractTagProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Anchor.class);
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml
-	 * .Tag, java.util.List, com.itextpdf.text.Document)
-	 */
-	@Override
-	public List<Element> start(final Tag tag) {
-		if (null != tag.getAttributes().get(HTML.Attribute.HREF)) {
-			Map<String, String> css = tag.getCSS();
-			if (css.get(CSS.Property.TEXT_DECORATION) == null) {
-				css.put(CSS.Property.TEXT_DECORATION, CSS.Value.UNDERLINE);
-			}
-			if (css.get(CSS.Property.COLOR) == null) {
-				css.put(CSS.Property.COLOR, "blue");
-			}
-		}
-		return new ArrayList<Element>(0);
-	}
 
 	/*
 	 * (non-Javadoc)
