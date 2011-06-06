@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
@@ -115,7 +115,7 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 	 *
 	 */
 	public DefaultTagProcessorFactory() {
-		this.map = new HashMap<String, FactoryObject>();
+		this.map = new ConcurrentHashMap<String, FactoryObject>();
 	}
 
 	/**
@@ -171,11 +171,8 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 		map.put(tag, new FactoryObject(processor.getClass().getName(), processor));
 
 	}
-
 	/**
-	 * Add one tag processor that handles multiple tags.
-	 * @param processor the TagProcessor.
-	 * @param tags list of tags this processor maps to.
+	 *
 	 */
 	public void addProcessor( final TagProcessor processor, final String ... tags) {
 		for (String tag : tags) {
@@ -191,6 +188,13 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 		for (String tag : tags) {
 			addProcessor(tag, className);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.html.TagProcessorFactory#removeProcessor(java.lang.String)
+	 */
+	public void removeProcessor(final String tag) {
+		map.remove(tag);
 	}
 
 }

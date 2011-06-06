@@ -44,6 +44,7 @@
 package com.itextpdf.tool.xml.html.tps;
 
 import static org.junit.Assert.assertTrue;
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,36 +52,58 @@ import org.junit.Test;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.Anchor;
+import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.html.TagProcessorFactory;
 import com.itextpdf.tool.xml.html.Tags;
-import com.itextpdf.tool.xml.html.table.Table;
 
 /**
  *
  * @author redlab_b
  *
  */
-public class DefaultTagProcessorTest {
+public class DefaultTagProcessorFactoryTest {
 
+
+	/**
+	 * @author itextpdf.com
+	 *
+	 */
+	private final class TagProcessorImplementation extends AbstractTagProcessor {
+	}
 
 	private TagProcessorFactory tp;
+	private TagProcessorImplementation tpi;
 
 	@Before
 	public void setup() {
 		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		tp = new Tags().getHtmlTagProcessorFactory();
+		tpi = new TagProcessorImplementation();
 
 	}
 
 	@Test
-	public void testLoadClassName() {
+	public void testLoadDefaults() {
 		assertTrue(tp.getProcessor("a", "") instanceof Anchor);
-		assertTrue(tp.getProcessor("table", "") instanceof Table);
 	}
 
 	@Test(expected = NoTagProcessorException.class)
 	public void loadFail() {
 		tp.getProcessor("unknown", "");
+	}
+
+	@Test
+	public void addTagProcessor() {
+		tp.addProcessor(tpi, "addatag");
+		TagProcessor processor = tp.getProcessor("addatag", "");
+		Assert.assertEquals(tpi, processor);
+	}
+	@Test(expected = NoTagProcessorException.class)
+	public void removeTagProcessor() {
+		tp.addProcessor(tpi, "addatag");
+		tp.removeProcessor("addatag");
+		tp.getProcessor("addatag", "");
 	}
 }

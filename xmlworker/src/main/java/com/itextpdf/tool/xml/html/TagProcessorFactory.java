@@ -63,5 +63,16 @@ public interface TagProcessorFactory {
 	 * @throws NoTagProcessorException implementers should thrown this if there is no mapping found.
 	 */
 	TagProcessor getProcessor(String tag, String nameSpace) throws NoTagProcessorException;
+	/**
+	 * Add a tag processor and the tags it maps to.
+	 * @param processor the TagProcessor.
+	 * @param tags tags this processor maps to.
+	 */
+	void addProcessor(final TagProcessor processor, final String ... tags);
+	/**
+	 * Removes a TagProcessor for a specific tag.
+	 * @param tag the tag to remove the processor for.
+	 */
+	void removeProcessor(String tag);
 
 }
