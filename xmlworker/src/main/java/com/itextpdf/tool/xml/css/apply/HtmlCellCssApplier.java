@@ -165,10 +165,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 	    	values.setVerBorderSpacing(verSpacing);
 	    	cell.setPaddingLeft(cell.getPaddingLeft()+horSpacing+values.getBorderWidthLeft());
 			cell.setPaddingRight(cell.getPaddingRight()+values.getBorderWidthRight());
-			if (verSpacing < 18){
-				verSpacing = verSpacing*2.5f-18;
-			}
-	    	cell.setPaddingTop(cell.getPaddingTop()+verSpacing/2+values.getBorderWidthTop());
+	    	cell.setPaddingTop(cell.getPaddingTop()+verSpacing+values.getBorderWidthTop());
 	    	cell.setPaddingBottom(cell.getPaddingBottom()+values.getBorderWidthBottom()+1);
 		}
 		cell.setBorder(Rectangle.NO_BORDER);
