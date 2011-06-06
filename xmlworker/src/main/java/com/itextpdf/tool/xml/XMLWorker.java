@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Map;
+
 import com.itextpdf.text.Element;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
@@ -67,22 +68,14 @@ import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 public class XMLWorker implements XMLParserListener {
 
 	private Tag current = null;
-	private Pipeline<?> rootpPipe;
+	private final Pipeline<?> rootpPipe;
 	private static ThreadLocal<WorkerContextImpl> context = new ThreadLocal<WorkerContextImpl>() {
 		@Override
 		protected WorkerContextImpl initialValue() {
 			return new WorkerContextImpl();
 		};
 	};
-	private boolean parseHtml;
-
-	/**
-	 * @param factory
-	 * @param acceptUnknown
-	 * @param provider
-	 */
-	private XMLWorker() {
-	}
+	private final boolean parseHtml;
 
 	/**
 	 * Constructs a new XMLWorker
@@ -92,7 +85,6 @@ public class XMLWorker implements XMLParserListener {
 	 *            just means: convert all tags to lowercase.
 	 */
 	public XMLWorker(final Pipeline<?> pipeline, final boolean parseHtml) {
-		this();
 		this.parseHtml = parseHtml;
 		rootpPipe = pipeline;
 		Pipeline<?> p = rootpPipe;

@@ -86,6 +86,7 @@ public class HorizontalRule extends AbstractTagProcessor {
      */
     @Override
 	public boolean isStackOwner() {
+    	// TODO should this be a stack owner ? a hr never has content, or does it?
         return true;
     }
 

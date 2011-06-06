@@ -55,6 +55,14 @@ import com.itextpdf.tool.xml.exceptions.NoSiblingException;
  *
  */
 public class TagUtils {
+
+	private static final TagUtils myself = new TagUtils();
+
+	/**
+	 *
+	 */
+	public TagUtils() {
+	}
 	/**
 	 * Method used for retrieving a sibling of the given tag t.
 	 *
@@ -72,5 +80,13 @@ public class TagUtils {
 			throw new NoSiblingException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_SIBLING),t.getTag(), i), e);
 		}
 		return sibling;
+	}
+
+	/**
+	 * @return singleton instance of TagUtils
+	 *
+	 */
+	public static TagUtils getInstance() {
+		return myself;
 	}
 }
