@@ -52,7 +52,9 @@ import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
 import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
 
 /**
- * This Pipeline resolves CSS for the Tags it receives in {@link CssResolverPipeline#open(Tag, ProcessObject)}
+ * This Pipeline resolves CSS for the Tags it receives in
+ * {@link CssResolverPipeline#open(Tag, ProcessObject)}
+ *
  * @author redlab_b
  *
  */
@@ -62,7 +64,8 @@ public class CssResolverPipeline extends AbstractPipeline<MapContext> {
 
 	/**
 	 * @param next the next pipeline.
-	 * @param cssResolver the {@link CSSResolver} to use in this Pipeline
+	 * @param cssResolver the {@link CSSResolver} to use in this Pipeline, it
+	 *            will be stored in a ThreadLocal variable.
 	 */
 	public CssResolverPipeline(final CSSResolver cssResolver, final Pipeline<?> next) {
 		super(next);
@@ -100,7 +103,8 @@ public class CssResolverPipeline extends AbstractPipeline<MapContext> {
 
 	/**
 	 * Stores the cssResolver for the calling thread.
-	 * @param resolver
+	 *
+	 * @param resolver the CSSResolver to use.
 	 */
 	public void setResolver(final CSSResolver resolver) {
 		CssResolverPipeline.resolver.set(resolver);

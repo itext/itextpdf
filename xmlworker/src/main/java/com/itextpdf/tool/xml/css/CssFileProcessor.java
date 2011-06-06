@@ -47,7 +47,7 @@ import com.itextpdf.tool.xml.css.parser.CssStateController;
 import com.itextpdf.tool.xml.net.ReadingProcessor;
 
 /**
- * A {@link ReadingProcessor} that creates a {@link CssFiles} from the given bytes.
+ * A {@link ReadingProcessor} that creates a {@link CssFile} from the given bytes.
  * @author redlab_b
  *
  */
