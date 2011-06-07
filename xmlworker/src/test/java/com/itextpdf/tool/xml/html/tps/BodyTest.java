@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: TPBreakTest.java 148 2011-06-04 21:11:16Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -41,89 +41,43 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.html;
+package com.itextpdf.tool.xml.html.tps;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Chunk;
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
-import com.itextpdf.tool.xml.exceptions.LocaleMessages;
-import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.html.Body;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
- * @author redlab_b
+ * @author itextpdf.com
  *
  */
-public class Div extends AbstractTagProcessor {
+public class BodyTest {
+	final Body b = new Body();
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
-	 */
-	@Override
-	public List<Element> content(final Tag tag, final String content) {
-		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Element> l = new ArrayList<Element>(1);
-    	if (sanitized.length() > 0) {
-    		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
-    		try {
-				l.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext()).apply(new NoNewLineParagraph(c), tag));
-			} catch (NoCustomContextException e) {
-				throw new RuntimeWorkerException(e);
-			}
-    	}
-		return l;
+	@Before
+	public void init() {
+		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.add(HtmlPipeline.class, new HtmlPipelineContext());
+		b.setContext(workerContextImpl);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
-	 * java.util.List, com.itextpdf.text.Document)
+	/**
+	 * Verifies that the call to content of {@link Body} returns a NoNewLineParagraph.
 	 */
-	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		try {
-			Paragraph p = null;
-			List<Element> l = new ArrayList<Element>(1);
-			for (Element e : currentContent) {
-				if (e instanceof Paragraph) {
-					if (p != null) {
-						p = new ParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
-						l.add(p);
-						p = null;
-					}
-					l.add(e);
-				} else {
-					if (p == null) {
-						p = new Paragraph();
-					}
-					p.add(e);
-				}
-			}
-			if (p != null) {
-				p = new ParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
-				l.add(p);
-			}
-			return l;
-		} catch (NoCustomContextException e) {
-			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
-		}
+	@Test
+	public void verifyContent() {
+		final List<Element> content = b.content(new Tag("body"), "text inside a body tag");
+		Assert.assertTrue(content.get(0) instanceof NoNewLineParagraph);
 	}
-
-	 /* (non-Javadoc)
-     * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
-     */
-    @Override
-	public boolean isStackOwner() {
-        return true;
-    }
 }
