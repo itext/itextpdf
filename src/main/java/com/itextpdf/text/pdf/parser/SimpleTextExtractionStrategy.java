@@ -123,7 +123,7 @@ public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
             //System.out.println("<< Hard Return >>");
             result.append('\n');
         } else if (!firstRender){ 
-            if (result.charAt(result.length()-1) != ' ' && renderInfo.getText().charAt(0) != ' '){ // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
+            if (result.charAt(result.length()-1) != ' ' && renderInfo.getText().length() > 0 && renderInfo.getText().charAt(0) != ' '){ // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
                 float spacing = lastEnd.subtract(start).length();
                 if (spacing > renderInfo.getSingleSpaceWidth()/2f){
                     result.append(' ');
