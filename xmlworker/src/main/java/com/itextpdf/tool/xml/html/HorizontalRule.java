@@ -79,15 +79,4 @@ public class HorizontalRule extends AbstractTagProcessor {
 		}
 	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
-     */
-    @Override
-	public boolean isStackOwner() {
-    	// TODO should this be a stack owner ? a hr never has content, or does it?
-        return true;
-    }
-
 }
