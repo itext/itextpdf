@@ -102,4 +102,9 @@ public interface Pipeline<T extends CustomContext> {
 	 * @throws PipelineException if there is no custom context
 	 */
 	T getLocalContext() throws PipelineException;
+
+	/**
+	 * @return a key to use as key for the context
+	 */
+	public String getContextKey();
 }

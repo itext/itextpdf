@@ -114,7 +114,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 			String tagName = t.getTag();
 			if (tag.equals(tagName)) {
 				MapContext cc;
-				cc = (MapContext) getContext().get(PdfWriterPipeline.class);
+				cc = (MapContext) getContext().get(PdfWriterPipeline.class.getName());
 				Document d = new Document(pagesize);
 				try {
 					OutputStream os = fm.getStream();
@@ -129,7 +129,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 			}
 			if (t.getTag().equalsIgnoreCase(opentag)) {
 				MapContext cc;
-				cc = (MapContext) getContext().get(PdfWriterPipeline.class);
+				cc = (MapContext) getContext().get(PdfWriterPipeline.class.getName());
 				Document d = (Document) cc.get(PdfWriterPipeline.DOCUMENT);
 				CssUtils cssUtils = CssUtils.getInstance();
 				float pageWidth = d.getPageSize().getWidth();
@@ -175,17 +175,17 @@ public class AutoDocPipeline extends AbstractPipeline {
 		if (tag.equals(tagName)) {
 			MapContext cc;
 			try {
-				cc = (MapContext) getContext().get(PdfWriterPipeline.class);
+				cc = (MapContext) getContext().get(PdfWriterPipeline.class.getName());
 				Document d = (Document) cc.get(PdfWriterPipeline.DOCUMENT);
 				d.close();
 			} catch (NoCustomContextException e) {
 				throw new PipelineException("AutoDocPipeline depends on PdfWriterPipeline.", e);
 			}
 			try {
-				HtmlPipelineContext hpc = (HtmlPipelineContext) getContext().get(HtmlPipeline.class);
+				HtmlPipelineContext hpc = (HtmlPipelineContext) getContext().get(HtmlPipeline.class.getName());
 				HtmlPipelineContext clone = hpc.clone();
 				clone.setPageSize(pagesize);
-				((WorkerContextImpl)getContext()).add(HtmlPipeline.class, clone);
+				((WorkerContextImpl)getContext()).add(HtmlPipeline.class.getName(), clone);
 			} catch (NoCustomContextException e) {
 			} catch (CloneNotSupportedException e) {
 			}

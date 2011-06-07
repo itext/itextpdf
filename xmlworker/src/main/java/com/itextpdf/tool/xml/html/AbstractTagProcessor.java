@@ -101,7 +101,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 *             {@link CssResolverPipeline} could not be found.
 	 */
 	public CSSResolver getCSSResolver() throws NoCustomContextException {
-		return (CSSResolver) ((MapContext) this.ctxLocal.get().get(CssResolverPipeline.class))
+		return (CSSResolver) ((MapContext) this.ctxLocal.get().get(CssResolverPipeline.class.getName()))
 				.get(CssResolverPipeline.CSS_RESOLVER);
 	}
 
@@ -112,7 +112,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 *             {@link HtmlPipelineContext} could not be found.
 	 */
 	public HtmlPipelineContext getHtmlPipelineContext() throws NoCustomContextException {
-		return ((HtmlPipelineContext) this.ctxLocal.get().get(HtmlPipeline.class));
+		return ((HtmlPipelineContext) this.ctxLocal.get().get(HtmlPipeline.class.getName()));
 	}
 	/**
 	 * Calculates any found font size to pt values and set it in the CSS before

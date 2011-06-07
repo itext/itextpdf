@@ -56,46 +56,33 @@ import com.itextpdf.tool.xml.exceptions.NotImplementedException;
  * @author redlab_b
  *
  */
-public class WorkerContextImpl extends MapContext implements WorkerContext {
+public class WorkerContextImpl implements WorkerContext {
+
+	private final MapContext mc;
 
 	/**
 	 *
 	 */
 	public WorkerContextImpl() {
-		super();
+		this.mc = new MapContext();
 	}
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.pipeline.WorkerContext#get(java.lang.Class)
 	 */
-	public CustomContext get(final Class<?> klass) throws NoCustomContextException {
-		 Object c = super.get(klass.getName());
+	public CustomContext get(final String klass) throws NoCustomContextException {
+		 Object c = mc.get(klass);
 		 if (c != null) {
 			 return (CustomContext) c;
 		 }
 		 throw new NoCustomContextException();
 	}
 	/**
-	 *
-	 * @param klass the class to store the CustomContext for.
+	 * Convenience method.
+	 * @param key the key to store the CustomContext for.
 	 * @param context the CustomContext to store.
 	 */
-	public void add(final Class<?> klass, final CustomContext context) {
-		super.put(klass.getName(), context);
-	}
-	/**
-	 * @throws NotImplementedException because it's not implemented.
-	 */
-	@Override
-	public void put(final String key, final Object o) {
-		throw new NotImplementedException();
-	}
-
-	/**
-	 * @throws NotImplementedException because it's not implemented.
-	 */
-	@Override
-	public Object get(final String key) {
-		throw new NotImplementedException();
+	public void add(final String key, final CustomContext context) {
+		mc.put(key, context);
 	}
 
 

@@ -71,7 +71,7 @@ public class DivTest {
 	@Before
 	public void init() {
 		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.add(HtmlPipeline.class, new HtmlPipelineContext());
+		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
 		d.setContext(workerContextImpl);
 	}
 
@@ -95,7 +95,7 @@ public class DivTest {
 		currentContent.add(new NoNewLineParagraph("first content text"));
 		currentContent.add(new Paragraph("footer text"));
 		final List<Element> endContent = d.end(new Tag("div"), currentContent);
-		Assert.assertTrue(endContent.size() == 3);
+		Assert.assertEquals(3, endContent.size());
 		Assert.assertTrue(endContent.get(0) instanceof Paragraph);
 		Assert.assertTrue(endContent.get(1) instanceof Paragraph);
 		Assert.assertTrue(endContent.get(2) instanceof Paragraph);

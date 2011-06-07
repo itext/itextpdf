@@ -54,7 +54,7 @@ public class OrderedUnorderedListTest {
 		orderedUnorderedList = new OrderedUnorderedList();
 		WorkerContextImpl context = new WorkerContextImpl();
 		HtmlPipelineContext context2 = new HtmlPipelineContext();
-		context.add(HtmlPipeline.class, context2);
+		context.add(HtmlPipeline.class.getName(), context2);
 		orderedUnorderedList.setContext(context);
 		root.addChild(p);
 		root.addChild(ul);

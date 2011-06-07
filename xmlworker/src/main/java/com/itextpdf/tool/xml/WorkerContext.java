@@ -50,10 +50,13 @@ package com.itextpdf.tool.xml;
 public interface WorkerContext {
 
 	/**
-	 * @param klass the class to find the custom context for.
+	 * @param key the key to find the custom context for. (internally
+	 *            itextpdf.com uses the pipelines fully qualified klassName, so
+	 *            when you want to use our pipelines twice in the same 'line'
+	 *            you have to override it to change the key used)
 	 * @return a CustomContext for the given Class.
 	 * @throws NoCustomContextException if no CustomContext is found.
 	 */
-	CustomContext get(Class<?> klass) throws NoCustomContextException;
+	CustomContext get(String key) throws NoCustomContextException;
 
 }

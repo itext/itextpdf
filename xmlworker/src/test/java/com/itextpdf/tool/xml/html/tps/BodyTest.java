@@ -68,7 +68,7 @@ public class BodyTest {
 	@Before
 	public void init() {
 		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.add(HtmlPipeline.class, new HtmlPipelineContext());
+		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
 		b.setContext(workerContextImpl);
 	}
 

@@ -134,7 +134,7 @@ public class XMLWorker implements XMLParserListener {
 			WorkerContextImpl ctx = context.get();
 			pipeline.setContext(ctx);
 			CustomContext cc = pipeline.getNewCustomContext();
-			ctx.add(pipeline.getClass(), cc);
+			ctx.add(pipeline.getContextKey(), cc);
 		} catch (NoCustomContextException e) {
 		}
 		return pipeline.getNext();

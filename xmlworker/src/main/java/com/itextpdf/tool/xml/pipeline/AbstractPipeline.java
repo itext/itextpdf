@@ -131,9 +131,9 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	}
 
 	@SuppressWarnings("unchecked")
-	public final T getLocalContext() throws PipelineException {
+	public T getLocalContext() throws PipelineException {
 		try {
-			CustomContext cc = getContext().get(this.getClass());
+			CustomContext cc = getContext().get(this.getClass().getName());
 			if (null != cc) {
 				return (T) cc;
 			}
@@ -150,5 +150,12 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	 */
 	public void setNext(final Pipeline<?> next) {
 		this.next = next;
+	}
+
+	/**
+	 * Defaults to the fully qualified class name of the object.
+	 */
+	public String getContextKey() {
+		return this.getClass().getName();
 	}
 }
