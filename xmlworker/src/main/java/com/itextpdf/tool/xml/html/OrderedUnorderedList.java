@@ -35,6 +35,9 @@ import java.util.List;
 
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
@@ -60,6 +63,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	 *
 	 */
 	private static final CssUtils utils = CssUtils.getInstance();
+	private static final Logger LOG = LoggerFactory.getLogger(OrderedUnorderedList.class);
 
 	/*
 	 * (non-Javadoc)
@@ -74,7 +78,15 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 		int size = listElements.size();
 		List<Element> returnedList = new ArrayList<Element>();
 		if (size > 0) {
-			com.itextpdf.text.List list = new ListStyleTypeCssApplier().apply(new com.itextpdf.text.List(), tag);
+			HtmlPipelineContext htmlPipelineContext = null;
+			try {
+				htmlPipelineContext = getHtmlPipelineContext();
+			} catch (NoCustomContextException e) {
+				if (LOG.isLogging(Level.ERROR)) {
+					LOG.error(LocaleMessages.getInstance().getMessage("customcontext.404.continue"), e);
+				}
+			}
+			com.itextpdf.text.List list = new ListStyleTypeCssApplier().apply(new com.itextpdf.text.List(), tag, htmlPipelineContext);
 			int i = 0;
 			for (Element li : listElements) {
 				if (li instanceof ListItem) {

@@ -138,7 +138,7 @@ public class Header extends AbstractTagProcessor {
 					LOGGER.error(LocaleMessages.getInstance().getMessage(LocaleMessages.HEADER_BM_DISABLED), e);
 				}
 			}
-			l.addAll(currentContentToParagraph); //TODO Margins top and bottom, other css.
+			l.addAll(currentContentToParagraph);
 		}
 		return l;
 	}
