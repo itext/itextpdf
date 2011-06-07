@@ -20,6 +20,7 @@ import com.itextpdf.tool.xml.html.Anchor;
 public class AnchorTest {
 
 
+
 	/**
 	 * Validates that the content of an &lt;a&gt; is transformed to a Chunk.
 	 */
@@ -30,5 +31,13 @@ public class AnchorTest {
 		String content2 = "some content";
 		List<Element> ct = a.content(t , content2);
 		Assert.assertEquals(content2, ct.get(0).getChunks().get(0).getContent());
+	}
+
+	/**
+	 * Verifies if {@link Achor} is a stack owner. Should be true.
+	 */
+	@Test
+	public void verifyIfStackOwner() {
+		Assert.assertTrue(new Anchor().isStackOwner());
 	}
 }

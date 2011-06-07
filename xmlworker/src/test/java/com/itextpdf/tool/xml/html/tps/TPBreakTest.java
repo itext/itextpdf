@@ -68,4 +68,12 @@ public class TPBreakTest {
 		final List<Element> end = br.end(null, null);
 		Assert.assertEquals(Chunk.NEWLINE, end.get(0));
 	}
+
+	/**
+	 * Verifies if {@link Break} is a stack owner. Should be false.
+	 */
+	@Test
+	public void verifyIfStackOwner() {
+		Assert.assertTrue(!new Break().isStackOwner());
+	}
 }

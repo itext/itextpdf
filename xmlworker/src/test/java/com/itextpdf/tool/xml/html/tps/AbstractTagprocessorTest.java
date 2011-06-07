@@ -88,4 +88,8 @@ public class AbstractTagprocessorTest {
 		a.startElement(tag);
 		Assert.assertEquals("12.0pt",tag.getCSS().get("font-size"));
 	}
+	@Test
+	public void verifyIfStackowner() {
+		Assert.assertTrue(!new AbstractTagProcessor() {}.isStackOwner());
+	}
 }

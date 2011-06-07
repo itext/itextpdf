@@ -67,12 +67,17 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  */
 public class DivTest {
 	final Div d = new Div();
+	List<Element> currentContent = new ArrayList<Element>();
 
 	@Before
 	public void init() {
 		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
 		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
 		d.setContext(workerContextImpl);
+		currentContent.add(new Paragraph("titel paragraph"));
+		currentContent.add(Chunk.NEWLINE);
+		currentContent.add(new NoNewLineParagraph("first content text"));
+		currentContent.add(new Paragraph("footer text"));
 	}
 
 	/**
@@ -85,19 +90,30 @@ public class DivTest {
 	}
 
 	/**
-	 * Verifies that the call to content of {@link Div} returns a NoNewLineParagraph.
+	 * Verifies that the numbers of paragraphs returned by {@link Div#end}.
 	 */
 	@Test
-	public void verifyEnd() {
-		List<Element> currentContent = new ArrayList<Element>();
-		currentContent.add(new Paragraph("titel paragraph"));
-		currentContent.add(Chunk.NEWLINE);
-		currentContent.add(new NoNewLineParagraph("first content text"));
-		currentContent.add(new Paragraph("footer text"));
+	public void verifyNumberOfParagraphs() {
 		final List<Element> endContent = d.end(new Tag("div"), currentContent);
 		Assert.assertEquals(3, endContent.size());
+	}
+
+	/**
+	 * Verifies that the class of the elements returned by {@link Div#end}.
+	 */
+	@Test
+	public void verifyIfParagraphs() {
+		final List<Element> endContent = d.end(new Tag("div"), currentContent);
 		Assert.assertTrue(endContent.get(0) instanceof Paragraph);
 		Assert.assertTrue(endContent.get(1) instanceof Paragraph);
 		Assert.assertTrue(endContent.get(2) instanceof Paragraph);
+	}
+
+	/**
+	 * Verifies if {@link Div} is a stack owner. Should be true.
+	 */
+	@Test
+	public void verifyIfStackOwner() {
+		Assert.assertTrue(d.isStackOwner());
 	}
 }

@@ -80,4 +80,12 @@ public class BodyTest {
 		final List<Element> content = b.content(new Tag("body"), "text inside a body tag");
 		Assert.assertTrue(content.get(0) instanceof NoNewLineParagraph);
 	}
+
+	/**
+	 * Verifies if {@link Body} is a stack owner. Should be true.
+	 */
+	@Test
+	public void verifyIfStackOwner() {
+		Assert.assertTrue(!b.isStackOwner());
+	}
 }
