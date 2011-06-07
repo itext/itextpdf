@@ -47,6 +47,7 @@ import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
@@ -83,7 +84,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 				htmlPipelineContext = getHtmlPipelineContext();
 			} catch (NoCustomContextException e) {
 				if (LOG.isLogging(Level.ERROR)) {
-					LOG.error(LocaleMessages.getInstance().getMessage("customcontext.404.continue"), e);
+					LOG.error(String.format(LocaleMessages.getInstance().getMessage("customcontext.404.continue"), HtmlPipeline.class.getName()), e);
 				}
 			}
 			com.itextpdf.text.List list = new ListStyleTypeCssApplier().apply(new com.itextpdf.text.List(), tag, htmlPipelineContext);

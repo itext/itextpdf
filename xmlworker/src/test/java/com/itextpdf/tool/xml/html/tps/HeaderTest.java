@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: TPBreakTest.java 148 2011-06-04 21:11:16Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -43,53 +43,65 @@
  */
 package com.itextpdf.tool.xml.html.tps;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.WritableDirectElement;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.html.Header;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author itextpdf.com
  *
  */
-public class AbstractTagprocessorTest {
+public class HeaderTest {
+	/**
+	 *
+	 */
+	private static final Tag H2 = new Tag("h2");
+	final Header h = new Header();
+	private List<Element> content = null;
 
+	@Before
+	public void init() {
+		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext().autoBookmark(true));
+		h.setContext(workerContextImpl);
+		content = h.content(H2, "text inside a header tag");
+	}
+
+	/**
+	 * Verifies that the call to content of {@link Header} returns a Chunk.
+	 */
+	@Test
+	public void verifyContent() {
+		Assert.assertTrue(content.get(0) instanceof Chunk);
+	}
+
+	/**
+	 * Verifies if {@link Header#end} returns both a WritableDirectElement and a Paragraph.
+	 */
 	@Test
 	public void verifyEnd() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("page-break-after", "always");
-		List<Element> end = a.endElement(tag , new ArrayList<Element>());
-		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
+		List<Element> end = h.end(H2, content);
+		Assert.assertTrue(end.get(0) instanceof WritableDirectElement);
+		Assert.assertTrue(end.get(1) instanceof Paragraph);
 	}
+	/**
+	 * Verifies if {@link Header} is a stack owner. Should be true.
+	 */
 	@Test
-	public void verifyStart() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("page-break-before", "always");
-		List<Element> end = a.startElement(tag);
-		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
-	}
-	@Test
-	public void verifyFontsizeTranslation() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("font-size", "16px");
-		a.startElement(tag);
-		Assert.assertEquals("12.0pt",tag.getCSS().get("font-size"));
-	}
-	@Test
-	public void verifyIfStackowner() {
-		Assert.assertFalse(new AbstractTagProcessor() {}.isStackOwner());
+	public void verifyIfStackOwner() {
+		Assert.assertTrue(h.isStackOwner());
 	}
 }

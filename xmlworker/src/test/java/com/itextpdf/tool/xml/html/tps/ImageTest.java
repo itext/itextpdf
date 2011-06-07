@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: TPBreakTest.java 148 2011-06-04 21:11:16Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -43,53 +43,58 @@
  */
 package com.itextpdf.tool.xml.html.tps;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.html.Image;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author itextpdf.com
  *
  */
-public class AbstractTagprocessorTest {
+public class ImageTest {
+	/**
+	 *
+	 */
+	private static final Tag I = new Tag("i");
+	final Image i = new Image();
 
+	@Before
+	public void init() {
+		I.getAttributes().put(HTML.Attribute.SRC, "http://t1.gstatic.com/images?q=tbn:ANd9GcQ2s33YgZ8dDEEDW3kwK9EBWR1vHXJgMPJXjaaAfxfPvFSZ9shB");
+		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		i.setContext(workerContextImpl);
+	}
+
+	/**
+	 * Verifies that the call to end of {@link Image} returns a List<Element> containing a Chunk with a Image in it.
+	 */
 	@Test
 	public void verifyEnd() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("page-break-after", "always");
-		List<Element> end = a.endElement(tag , new ArrayList<Element>());
-		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
+		final List<Element> content = i.end(I, null);
+		Assert.assertTrue(content.get(0) instanceof Chunk);
+		HashMap<String, Object> attributes = ((Chunk)content.get(0)).getAttributes();
+		Assert.assertTrue(attributes.containsKey("IMAGE"));
 	}
+
+	/**
+	 * Verifies if {@link Image} is a stack owner. Should be false.
+	 */
 	@Test
-	public void verifyStart() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("page-break-before", "always");
-		List<Element> end = a.startElement(tag);
-		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
-	}
-	@Test
-	public void verifyFontsizeTranslation() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("font-size", "16px");
-		a.startElement(tag);
-		Assert.assertEquals("12.0pt",tag.getCSS().get("font-size"));
-	}
-	@Test
-	public void verifyIfStackowner() {
-		Assert.assertFalse(new AbstractTagProcessor() {}.isStackOwner());
+	public void verifyIfStackOwner() {
+		Assert.assertFalse(i.isStackOwner());
 	}
 }

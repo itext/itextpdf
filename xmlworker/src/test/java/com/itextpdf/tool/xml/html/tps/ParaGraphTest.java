@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: TPBreakTest.java 148 2011-06-04 21:11:16Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -48,48 +48,56 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.html.ParaGraph;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author itextpdf.com
  *
  */
-public class AbstractTagprocessorTest {
+public class ParaGraphTest {
+	final ParaGraph p = new ParaGraph();
+	List<Element> currentContent = new ArrayList<Element>();
 
+	@Before
+	public void init() {
+		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		p.setContext(workerContextImpl);
+		currentContent.addAll(p.content(new Tag("p"), "some paragraph text"));
+	}
+
+	/**
+	 * Verifies that the call to content of {@link ParaGraph} returns a Chunk.
+	 */
+	@Test
+	public void verifyContent() {
+		Assert.assertTrue(currentContent.get(0) instanceof Chunk);
+	}
+
+	/**
+	 * Verifies if the class of the elements returned by {@link ParaGraph#end} is a Paragraph.
+	 */
 	@Test
 	public void verifyEnd() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("page-break-after", "always");
-		List<Element> end = a.endElement(tag , new ArrayList<Element>());
-		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
+		final List<Element> endContent = p.end(new Tag("p"), currentContent);
+		Assert.assertTrue(endContent.get(0) instanceof Paragraph);
 	}
+
+	/**
+	 * Verifies if {@link ParaGraph} is a stack owner. Should be true.
+	 */
 	@Test
-	public void verifyStart() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("page-break-before", "always");
-		List<Element> end = a.startElement(tag);
-		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
-	}
-	@Test
-	public void verifyFontsizeTranslation() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("font-size", "16px");
-		a.startElement(tag);
-		Assert.assertEquals("12.0pt",tag.getCSS().get("font-size"));
-	}
-	@Test
-	public void verifyIfStackowner() {
-		Assert.assertFalse(new AbstractTagProcessor() {}.isStackOwner());
+	public void verifyIfStackOwner() {
+		Assert.assertTrue(p.isStackOwner());
 	}
 }

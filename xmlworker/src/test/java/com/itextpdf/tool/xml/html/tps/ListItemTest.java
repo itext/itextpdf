@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: TPBreakTest.java 148 2011-06-04 21:11:16Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -48,48 +48,56 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.ListItem;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.html.OrderedUnorderedListItem;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author itextpdf.com
  *
  */
-public class AbstractTagprocessorTest {
+public class ListItemTest {
+	final OrderedUnorderedListItem li = new OrderedUnorderedListItem();
+	List<Element> currentContent = new ArrayList<Element>();
 
+	@Before
+	public void init() {
+		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		li.setContext(workerContextImpl);
+		currentContent.addAll(li.content(new Tag("li"), "list item"));
+	}
+
+	/**
+	 * Verifies that the call to content of {@link OrderedUnorderedListItem} returns a Chunk.
+	 */
+	@Test
+	public void verifyContent() {
+		Assert.assertTrue(currentContent.get(0) instanceof Chunk);
+	}
+
+	/**
+	 * Verifies if the class of the elements returned by {@link OrderedUnorderedListItem#end} is a ListItem.
+	 */
 	@Test
 	public void verifyEnd() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("page-break-after", "always");
-		List<Element> end = a.endElement(tag , new ArrayList<Element>());
-		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
+		final List<Element> endContent = li.end(new Tag("li"), currentContent);
+		Assert.assertTrue(endContent.get(0) instanceof ListItem);
 	}
+
+	/**
+	 * Verifies if {@link OrderedUnorderedListItem} is a stack owner. Should be true.
+	 */
 	@Test
-	public void verifyStart() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("page-break-before", "always");
-		List<Element> end = a.startElement(tag);
-		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
-	}
-	@Test
-	public void verifyFontsizeTranslation() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("font-size", "16px");
-		a.startElement(tag);
-		Assert.assertEquals("12.0pt",tag.getCSS().get("font-size"));
-	}
-	@Test
-	public void verifyIfStackowner() {
-		Assert.assertFalse(new AbstractTagProcessor() {}.isStackOwner());
+	public void verifyIfStackOwner() {
+		Assert.assertTrue(li.isStackOwner());
 	}
 }

@@ -82,10 +82,10 @@ public class BodyTest {
 	}
 
 	/**
-	 * Verifies if {@link Body} is a stack owner. Should be true.
+	 * Verifies if {@link Body} is a stack owner. Should be false.
 	 */
 	@Test
 	public void verifyIfStackOwner() {
-		Assert.assertTrue(!b.isStackOwner());
+		Assert.assertFalse(b.isStackOwner());
 	}
 }

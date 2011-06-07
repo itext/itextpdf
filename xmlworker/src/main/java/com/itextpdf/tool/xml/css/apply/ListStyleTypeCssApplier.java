@@ -155,6 +155,7 @@ public class ListStyleTypeCssApplier {
 					}
 				}
 				lst.setListSymbol(new Chunk(img, 0, 0, false));
+				lst.setSymbolIndent(img.getWidth());
 				if (LOG.isLogging(Level.TRACE)) {
 					LOG.trace(String.format(LocaleMessages.getInstance().getMessage("html.tag.list"), url));
 				}

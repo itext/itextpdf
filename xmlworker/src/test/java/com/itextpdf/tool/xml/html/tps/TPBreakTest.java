@@ -74,6 +74,6 @@ public class TPBreakTest {
 	 */
 	@Test
 	public void verifyIfStackOwner() {
-		Assert.assertTrue(!new Break().isStackOwner());
+		Assert.assertFalse(new Break().isStackOwner());
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: TPBreakTest.java 148 2011-06-04 21:11:16Z redlab_b $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -43,53 +43,62 @@
  */
 package com.itextpdf.tool.xml.html.tps;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.html.Span;
+import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author itextpdf.com
  *
  */
-public class AbstractTagprocessorTest {
+public class SpanTest {
+	final Span s = new Span();
+	private List<Element> content = null;
 
+	@Before
+	public void init() {
+		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		s.setContext(workerContextImpl);
+		content = s.content(new Tag("span"), "	text snippet " +
+		"return it sanitized!!       ");
+	}
+
+	/**
+	 * Verifies if the call to content of {@link Span} returns a Chunk with all white spaces removed.
+	 */
+	@Test
+	public void verifyContent() {
+		Assert.assertTrue(content.get(0) instanceof Chunk);
+		String unsanitized = content.get(0).toString();
+		Assert.assertEquals(" text snippet return it sanitized!! ", unsanitized);
+	}
+
+	/**
+	 * Verifies if the call to end of {@link Span} returns a NoNewLineParagraph.
+	 */
 	@Test
 	public void verifyEnd() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("page-break-after", "always");
-		List<Element> end = a.endElement(tag , new ArrayList<Element>());
-		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
+		Assert.assertTrue(s.end(new Tag("span"), content).get(0) instanceof NoNewLineParagraph);
 	}
+
+	/**
+	 * Verifies if {@link Span} is a stack owner. Should be true.
+	 */
 	@Test
-	public void verifyStart() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("page-break-before", "always");
-		List<Element> end = a.startElement(tag);
-		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
-	}
-	@Test
-	public void verifyFontsizeTranslation() {
-		AbstractTagProcessor a = new AbstractTagProcessor() {
-		};
-		Tag tag = new Tag("dummy");
-		tag.getCSS().put("font-size", "16px");
-		a.startElement(tag);
-		Assert.assertEquals("12.0pt",tag.getCSS().get("font-size"));
-	}
-	@Test
-	public void verifyIfStackowner() {
-		Assert.assertFalse(new AbstractTagProcessor() {}.isStackOwner());
+	public void verifyIfStackOwner() {
+		Assert.assertTrue(s.isStackOwner());
 	}
 }
