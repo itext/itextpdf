@@ -11,7 +11,7 @@
 	<artifactId>itext-hyph-xml</artifactId>
 	<packaging>jar</packaging>
 	<name>iText, a Free Java-PDF library</name>
-	<version>5.1.0</version>
+	<version>5.1.1</version>
 	<!-- General Info -->
 	<description>XML files that can be used for hyphenation</description>
 	<url>http://www.itextpdf.com/</url>
