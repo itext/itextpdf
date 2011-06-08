@@ -1298,7 +1298,7 @@ public class PdfReader implements PdfViewerPreferences {
     protected void readXref() throws IOException {
         hybridXref = false;
         newXrefType = false;
-        tokens.seek(tokens.getStartxref());
+        tokens.seek(tokens.getStartxref(1024));
         tokens.nextToken();
         if (!tokens.getStringValue().equals("startxref"))
             throw new InvalidPdfException(MessageLocalization.getComposedMessage("startxref.not.found"));

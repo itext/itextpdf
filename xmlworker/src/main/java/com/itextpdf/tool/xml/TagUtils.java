@@ -45,6 +45,7 @@ package com.itextpdf.tool.xml;
 
 import java.util.List;
 
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.NoSiblingException;
 
 /**
@@ -54,6 +55,14 @@ import com.itextpdf.tool.xml.exceptions.NoSiblingException;
  *
  */
 public class TagUtils {
+
+	private static final TagUtils myself = new TagUtils();
+
+	/**
+	 *
+	 */
+	public TagUtils() {
+	}
 	/**
 	 * Method used for retrieving a sibling of the given tag t.
 	 *
@@ -63,13 +72,21 @@ public class TagUtils {
 	 * @throws NoSiblingException when no previous sibling can be found, because the tag is the first child.
 	 */
 	public Tag getSibling(final Tag t, final int i) throws NoSiblingException {
-		Tag previousSibling = null;
+		Tag sibling = null;
 		try {
 			List<Tag> siblings = t.getParent().getChildren();
-			previousSibling = siblings.get(siblings.indexOf(t)+i);
+			sibling = siblings.get(siblings.indexOf(t)+i);
 		} catch(IndexOutOfBoundsException e) {
-			throw new NoSiblingException("No previous sibling");
+			throw new NoSiblingException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_SIBLING),t.getTag(), i), e);
 		}
-		return previousSibling;
+		return sibling;
+	}
+
+	/**
+	 * @return singleton instance of TagUtils
+	 *
+	 */
+	public static TagUtils getInstance() {
+		return myself;
 	}
 }

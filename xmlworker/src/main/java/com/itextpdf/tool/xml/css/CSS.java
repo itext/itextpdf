@@ -56,6 +56,7 @@ public final class CSS {
 	 */
 	public static final class Property {
 
+		private Property() {};
 		public static final String BACKGROUND_IMAGE = "background-image";
 		public static final String BACKGROUND_REPEAT = "background-repeat";
 		public static final String BACKGROUND_ATTACHMENT = "background-attachment";
@@ -120,6 +121,8 @@ public final class CSS {
 		public static final String XFA_TAB_STOPS = "xfa-tab-stops";
 		public static final String PAGE_BREAK_BEFORE = "page-break-before";
 		public static final String PAGE_BREAK_AFTER = "page-break-after";
+		public static final String REPEAT_HEADER = "repeat-header";
+		public static final String REPEAT_FOOTER = "repeat-footer";
 	}
 
 	/**
@@ -127,6 +130,7 @@ public final class CSS {
 	 *
 	 */
 	public static final class Value {
+		private Value(){};
 		public static final String THIN = "thin";
 		public static final String MEDIUM = "medium";
 		public static final String THICK = "thick";

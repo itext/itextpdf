@@ -56,17 +56,20 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.html.table.TableRowElement;
-import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
  *
  */
 public class HtmlCellCssApplierTest {
+
 	private final List<Element> cells = new ArrayList<Element>();
 	Tag tag = new Tag("td", new HashMap<String, String>());
 	private final NoNewLineParagraph basicPara = new NoNewLineParagraph();
@@ -74,17 +77,17 @@ public class HtmlCellCssApplierTest {
 
 	private TableRowElement row1;
 	private final HtmlCell cell = new HtmlCell();
-	private final HtmlCellCssApplier applier = new HtmlCellCssApplier(null);
+	private final HtmlCellCssApplier applier = new HtmlCellCssApplier(new HtmlPipelineContext());
 
 	@Before
 	public void setup() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		Tag parent = new Tag("tr");
 		parent.setParent(new Tag("table"));
 		tag.setParent(parent);
 		basicPara.add(basic);
 		cell.addElement(basicPara);
 		cells.add(cell);
-		row1 = new TableRowElement(cells, Place.BODY);
 	}
 
 	/*Disabled as long as the default borders are enabled*/

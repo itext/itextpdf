@@ -55,7 +55,7 @@ public class UnquotedAttrState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public UnquotedAttrState(final XMLParser parser) {
 		this.parser = parser;
@@ -68,7 +68,7 @@ public class UnquotedAttrState implements State {
 		if (!Character.isWhitespace(character)) {
 			this.parser.append(character);
 		} else {
-			this.parser.memory().putCurrentAttrValue(this.parser.current());
+			this.parser.memory().putCurrentAttrValue(this.parser.bufferToString());
 			this.parser.flush();
 			this.parser.selectState().tagAttributes();
 		}

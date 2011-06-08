@@ -47,27 +47,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
-import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
+import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 
 /**
+ * The Style TagProcessor will try to add the content of a &lt;style&gt; to the
+ * {@link CssResolverPipeline} CSS. If the content cannot be parsed, an error is logged.
+ *
  * @author redlab_b
  *
  */
 public class Style extends AbstractTagProcessor {
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
+	private static final Logger LOG = LoggerFactory.getLogger(Style.class);
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag,
+	 * java.lang.String)
 	 */
 	@Override
 	public List<Element> content(final Tag tag, final String content) {
 		try {
-			// TODO detect file encoding from html-meta or xml
-			configuration.getCssResolver().addCss(content, System.getProperty("file.encoding"));
+			CSSResolver cssResolver = getCSSResolver();
+			cssResolver.addCss(content);
 		} catch (CssResolverException e) {
-			throw new RuntimeWorkerException(e);
+			LOG.error(LocaleMessages.getInstance().getMessage(LocaleMessages.STYLE_NOTPARSED), e);
+			if (LOG.isLogging(Level.TRACE)) {
+				LOG.trace(content);
+			}
+		} catch (NoCustomContextException e) {
+			LOG.warn(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.CUSTOMCONTEXT_404_CONTINUE), CssResolverPipeline.class.getName()));
 		}
 		return new ArrayList<Element>(0);
 	}

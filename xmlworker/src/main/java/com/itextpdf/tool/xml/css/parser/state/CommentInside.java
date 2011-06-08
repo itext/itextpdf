@@ -12,7 +12,7 @@ public class CommentInside implements State {
 	private final CssStateController controller;
 
 	/**
-	 * @param cssStateController
+	 * @param cssStateController the controller
 	 */
 	public CommentInside(final CssStateController cssStateController) {
 		this.controller = cssStateController;

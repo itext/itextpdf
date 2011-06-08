@@ -54,15 +54,15 @@ public interface CssInheritanceRules {
 
 	/**
 	 * Validate inheritance of parent tag CSS.
-	 * @param tag
+	 * @param tag the tag
 	 * @return true if the tag can inherit CSS from it's parent tag, false otherwise.
 	 */
 	boolean inheritCssTag(String tag);
 
 	/**
 	 * Validate inheritance of any CSS property for the given tag.
-	 * @param tag
-	 * @param key
+	 * @param tag the tag
+	 * @param key the css property
 	 * @return true if this property can be inherited from the parent tag for the given tag, false otherwise.
 	 */
 	boolean inheritCssSelector(Tag tag, String key);

@@ -12,7 +12,7 @@ public class CommentEnd implements State {
 	private final CssStateController controller;
 
 	/**
-	 * @param controller
+	 * @param controller the controller
 	 */
 	public CommentEnd(final CssStateController controller) {
 		this.controller = controller;

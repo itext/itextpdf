@@ -38,12 +38,10 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
 
 /**
@@ -62,7 +60,7 @@ public class ParaGraph extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> content(final Tag tag, final String content) {
-		String sanitized = HTMLUtils.sanitizeInline(content);
+		String sanitized = HTMLUtils.sanitize(content);
 		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
 			if ((null != tag.getCSS().get(CSS.Property.TAB_INTERVAL))) {
@@ -104,20 +102,30 @@ public class ParaGraph extends AbstractTagProcessor {
 			Map<String, String> css = tag.getCSS();
 			if (null != css.get(CSS.Property.TAB_INTERVAL)) {
 				addTabIntervalContent(currentContent, p, css.get(CSS.Property.TAB_INTERVAL));
+				l.add(p);
 			} else if (null != css.get(CSS.Property.TAB_STOPS)) { // <para tabstops=".." /> could use same implementation page 62
 				addTabStopsContent(currentContent, p, css.get(CSS.Property.TAB_STOPS));
-			} else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page
-															// 63
+				l.add(p);
+			} else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page 63
 				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
-																					// extracted.
+				l.add(p);																	// extracted.
 			} else {
-				p = (Paragraph) Tags.currentContentToParagraph(currentContent, true);
+				for (Element e:  currentContentToParagraph(currentContent, true, true, tag)) {
+					l.add(e);
+				}
 			}
-			l.add(new ParagraphCssApplier(configuration).apply(p, tag));
 		}
 		return l;
 	}
 
+	/**
+	 * Applies the tab interval of the p tag on its {@link TabbedChunk} elements. <br />
+	 * The style "xfa-tab-count" of the {@link TabbedChunk} is multiplied with the tab interval of the p tag. This width is then added to a new {@link TabbedChunk}.
+	 *
+	 * @param currentContent containing the elements inside the p tag.
+	 * @param p paragraph to which the tabbed chunks will be added.
+	 * @param value the value of style "tab-interval".
+	 */
 	private void addTabIntervalContent(final List<Element> currentContent, final Paragraph p, final String value) {
 		float width = 0;
 		for(Element e: currentContent) {
@@ -130,6 +138,13 @@ public class ParaGraph extends AbstractTagProcessor {
 		}
 	}
 
+	/**
+	 * Applies the tab stops of the p tag on its {@link TabbedChunk} elements.
+	 *
+	 * @param currentContent containing the elements inside the p tag.
+	 * @param p paragraph to which the tabbed chunks will be added.
+	 * @param value the value of style "tab-stops".
+	 */
 	private void addTabStopsContent(final List<Element> currentContent, final Paragraph p, final String value) {
 		List<Chunk> tabs = new ArrayList<Chunk>();
 		String[] alignAndWidth = value.split(" ");

@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.css;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of CssFile, the CSS is stored in a map.
@@ -59,7 +59,7 @@ public class CssFileImpl implements CssFile {
      * Constructs a new CssFileImpl.
      */
     public CssFileImpl() {
-        map = new HashMap<String, Map<String, String>>();
+        map = new ConcurrentHashMap<String, Map<String, String>>();
     }
 
     /*
@@ -84,7 +84,7 @@ public class CssFileImpl implements CssFile {
      */
     public Map<String, String> get(final String selector) {
         Map<String, String> map = this.map.get(selector);
-		return null == map?new HashMap<String, String>(0):map;
+		return null == map?new ConcurrentHashMap<String, String>(0):map;
     }
 
 }

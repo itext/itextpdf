@@ -52,7 +52,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.xml.XMLUtil;
 import com.itextpdf.text.xml.simpleparser.IanaEncodings;
 import com.itextpdf.tool.xml.parser.io.MonitorInputReader;
@@ -70,27 +69,42 @@ public class XMLParser {
 	private final StateController controller;
 	private final List<XMLParserListener> listeners;
 	private final XMLParserMemory memory;
-	private int previousChar = -1;
-	private long openclosed;
 	private ParserMonitor monitor;
-	private String text = "";
+	private byte[] text = null;
+	private TagState tagState;
 
 	/**
 	 * Constructs a default XMLParser ready for HTML/XHTML processing.
 	 */
 	public XMLParser() {
-		this.controller = new StateController(this);
+		this(true);
+	}
+	/**
+	 * Constructs a XMLParser.
+	 * @param isHtml false if this parser is not going to parse HTML and whitespace should be submitted as text too.
+	 */
+	public XMLParser(final boolean isHtml) {
+		this.controller = new StateController(this, isHtml);
 		controller.unknown();
 		memory = new XMLParserMemory();
 		listeners = new CopyOnWriteArrayList<XMLParserListener>();
 	}
 
 	/**
-	 * Construct an XMLParser with the given XMLParserConfig.
-	 * @param listener
+	 * Construct an HTML XMLParser with the given XMLParserConfig.
+	 * @param listener the listener
 	 */
 	public XMLParser(final XMLParserListener listener) {
-		this();
+		this(true);
+		listeners.add(listener);
+	}
+	/**
+	 * Construct an HTML XMLParser with the given XMLParserConfig.
+	 * @param isHtml false if this parser is not going to parse HTML and whitespace should be submitted as text too.
+	 * @param listener the listener
+	 */
+	public XMLParser(final boolean isHtml, final XMLParserListener listener) {
+		this(isHtml);
 		listeners.add(listener);
 	}
 
@@ -106,7 +120,8 @@ public class XMLParser {
 	}
 
 	/**
-	 * @param pl
+	 * Removes a Listener from the list of listeners.
+	 * @param pl the {@link XMLParserListener} to remove
 	 * @return the parser
 	 */
 	public XMLParser removeListener(final XMLParserListener pl) {
@@ -115,29 +130,32 @@ public class XMLParser {
 	}
 
 	/**
-	 * @param in
-	 * @throws IOException
+	 * Parse an InputStream.
+	 * @param in the InputStream to parse
+	 * @throws IOException if IO went wrong
 	 */
 	public void parse(final InputStream in) throws IOException {
-		parse(new InputStreamReader(in));
+		parseStream(in);
 	}
 
 	/**
-	 * @param in
-	 * @param detectEncoding
-	 * @throws IOException
+	 * Parse an InputStream.
+	 * @param in the InputStream to parse
+	 * @param detectEncoding true if encoding should be detected from the stream
+	 * @throws IOException if IO went wrong
 	 */
 	public void parse(final InputStream in, final boolean detectEncoding) throws IOException {
 		if (detectEncoding) {
 			parse(detectEncoding(in));
 		} else {
-			parse(new InputStreamReader(in));
+			parse(in);
 		}
 	}
 
 	/**
-	 * @param reader
-	 * @throws IOException
+	 * Parse an Reader
+	 * @param reader the reader
+	 * @throws IOException if IO went wrong
 	 */
 	public void parse(final Reader reader) throws IOException {
 		int read = -1;
@@ -150,8 +168,21 @@ public class XMLParser {
 		try {
 		while (-1 != (read = r.read())) {
 			state.process(read);
-			previousChar = read;
 		}
+		} finally {
+			r.close();
+		}
+	}
+	/**
+	 * @param r
+	 * @throws IOException
+	 */
+	private void parseStream(final InputStream r) throws IOException {
+		int read = -1;
+		try {
+			while (-1 != (read = r.read())) {
+				state.process(read);
+			}
 		} finally {
 			r.close();
 		}
@@ -160,16 +191,16 @@ public class XMLParser {
 	/**
 	 * Detects encoding from a stream.
 	 *
-	 * @param in
+	 * @param in the stream
 	 * @return a Reader with the deduced encoding.
-	 * @throws IOException
-	 * @throws UnsupportedEncodingException
+	 * @throws IOException if IO went wrong
+	 * @throws UnsupportedEncodingException if unsupported encoding was detected
 	 */
 	public InputStreamReader detectEncoding(final InputStream in) throws IOException, UnsupportedEncodingException {
 		byte b4[] = new byte[4];
 		int count = in.read(b4);
 		if (count != 4)
-			throw new IOException(MessageLocalization.getComposedMessage("insufficient.length"));
+			throw new IOException("Insufficient length");
 		String encoding = XMLUtil.getEncodingName(b4);
 		String decl = null;
 		if (encoding.equals("UTF-8")) {
@@ -202,51 +233,44 @@ public class XMLParser {
 	/**
 	 * Set the current state.
 	 *
-	 * @param state
+	 * @param state the current state
 	 */
 	protected void setState(final State state) {
 		this.state = state;
 	}
 
 	/**
-	 * @param character
+	 * @param character the int that will be converted to a character.
 	 * @return the parser
 	 */
 	public XMLParser append(final int character) {
-		this.memory.current().append((char) character);
+		this.memory.current().write(character);
 		return this;
 
 	}
 
 	/**
-	 * @param character
+	 * @param character the character to append
 	 * @return the parser
 	 */
 	public XMLParser append(final char character) {
-		this.memory.current().append(character);
+		this.memory.current().write(character);
 		return this;
 
 	}
 
-	/**
-	 * @param character
-	 * @return the parser
-	 */
-	public XMLParser append(final String character) {
-		this.memory.current().append(character);
-		return this;
-
-	}
-
-	/**
-	 * @return the previous char
-	 */
-	@Deprecated
-	public int getPreviousChar() {
-		return previousChar;
-	}
+//	/**
+//	 * @param str the String to append
+//	 * @return the parser
+//	 */
+//	public XMLParser append(final String str) {
+//		this.memory.current().write(str.getBytes());
+//		return this;
+//
+//	}
 
 	/**
+	 * The state controller of the parser
 	 * @return {@link StateController}
 	 */
 	public StateController selectState() {
@@ -266,14 +290,15 @@ public class XMLParser {
 	 * Flushes the currently stored data in the buffer.
 	 */
 	public void flush() {
-		this.memory.current().setLength(0);
+		this.memory.resetBuffer();
 	}
 
 	/**
+	 * Returns the current content of the text buffer.
 	 * @return current buffer content
 	 */
-	public String current() {
-		return this.memory.current().toString();
+	public byte[] current() {
+		return this.memory.current().toByteArray();
 	}
 
 	/**
@@ -289,24 +314,23 @@ public class XMLParser {
 	 * Triggered when an opening tag has been encountered.
 	 */
 	public void startElement() {
-		if (0 == openclosed++) {
-			// encountered root element, starting document
-			for (XMLParserListener l : listeners) {
-				l.startDocument();
-			}
-		}
-		callText(TagState.OPEN, this.memory.getCurrentTag().toLowerCase());
+		currentTagState(TagState.OPEN);
+		callText();
 		for (XMLParserListener l : listeners) {
-			l.startElement(this.memory.getCurrentTag().toLowerCase(), this.memory.getAttributes());
+			l.startElement(this.memory.getCurrentTag(), this.memory.getAttributes(), this.memory.getNameSpace());
 		}
 	}
 
-	private void callText(final TagState state, final String tag) {
-		if (text.length() > 0) {
+	/**
+	 * Call this method to submit the text to listeners.
+	 */
+	private void callText() {
+		if (null != text && text.length > 0) {
+			// LOGGER .log(text);
 			for (XMLParserListener l : listeners) {
 				l.text(text);
 			}
-			text = "";
+			text = null;
 		}
 	}
 
@@ -314,35 +338,29 @@ public class XMLParser {
 	 * Triggered when a closing tag has been encountered.
 	 */
 	public void endElement() {
-		openclosed--;
-		callText(TagState.CLOSE, this.memory.getCurrentTag().toLowerCase() );
+		currentTagState(TagState.CLOSE);
+		callText();
 		for (XMLParserListener l : listeners) {
-			l.endElement(this.memory.getCurrentTag().toLowerCase());
-		}
-		if (openclosed == 0) {
-			controller.unknown();
-			for (XMLParserListener l : listeners) {
-				l.endDocument();
-			}
+			l.endElement(this.memory.getCurrentTag(), this.memory.getNameSpace());
 		}
 	}
 
 	/**
 	 * Triggered when content has been encountered.
 	 *
-	 * @param content
+	 * @param bs the content
 	 */
-	public void text(final String content) {
-		text = content;
+	public void text(final byte[] bs) {
+		text = bs;
 	}
 
 	/**
 	 * Triggered for comments.
 	 */
 	public void comment() {
-		callText(TagState.NONE, null);
+		callText();
 		for (XMLParserListener l : listeners) {
-			l.comment(current());
+			l.comment(this.memory.current().toString());
 		}
 	}
 
@@ -370,4 +388,67 @@ public class XMLParser {
 		}
 		return null;
 	}
+
+	/**
+	 * @return the current last character of the buffer or ' ' if none.
+	 */
+	public char currentLastChar() {
+		byte[] current = this.memory.current().toByteArray();
+		if (current.length > 0) {
+			return (char)(current.length -1);
+		}
+		return ' ';
+	}
+
+	/**
+	 * Get the current tag
+	 * @return the current tag.
+	 */
+	public String currentTag() {
+		return this.memory.getCurrentTag();
+	}
+	/**
+	 * Get the state of the current tag
+	 * @return the state of the current tag
+	 */
+	public TagState currentTagState() {
+		return this.tagState;
+	}
+
+	/**
+	 *  Set the state of the current tag
+	 * @param state the state of the current tag
+	 */
+	private void currentTagState(final TagState state) {
+		this.tagState = state;
+	}
+	/**
+	 * @param monitor the monitor to set
+	 */
+	public void setMonitor(final ParserMonitor monitor) {
+		this.monitor = monitor;
+	}
+	/**
+	 * @return the current buffer as a String
+	 */
+	public String bufferToString() {
+		return this.memory.current().toString();
+	}
+	/**
+	 * @param bytes the byte array to append
+	 * @return this XMLParser
+	 */
+	public XMLParser append(final byte[] bytes) {
+		for (byte b : bytes) {
+			this.memory.current().write(b);
+		}
+		return this;
+	}
+	/**
+	 * @return the size of the buffer
+	 */
+	public int bufferSize() {
+		return (null != this.memory.current())?this.memory.current().size():0;
+	}
+
 }

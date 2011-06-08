@@ -43,8 +43,9 @@
  */
 package com.itextpdf.tool.xml.css;
 
+import java.util.List;
+
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.html.HTML;
 
 /**
@@ -55,7 +56,14 @@ public class WidthCalculator {
 
 	private final CssUtils utils = CssUtils.getInstance();
 
-	public float getWidth(final Tag tag, final XMLWorkerConfig configuration){
+	/**
+	 * Tries to calculate a width from a tag and it's ancestors.
+	 * @param tag the tag to use
+	 * @param roottags the root tags,
+	 * @param pagewidth the page width
+	 * @return the width
+	 */
+	public float getWidth(final Tag tag, final List<String> roottags, final float pagewidth){
 		float width = 0;
 		String widthValue = tag.getCSS().get(HTML.Attribute.WIDTH);
 		if(widthValue == null) {
@@ -67,14 +75,18 @@ public class WidthCalculator {
 			} else if (utils.isRelativeValue(widthValue)) {
 				Tag ancestor = tag;
 				float firstAncestorsWidth = 0;
-				while(firstAncestorsWidth == 0) {
+				while(firstAncestorsWidth == 0 && ancestor.getParent() != null) {
 					ancestor = ancestor.getParent();
-					firstAncestorsWidth = getWidth(ancestor, configuration);
+					firstAncestorsWidth = getWidth(ancestor, roottags, pagewidth);
 				}
-				width = utils.parseRelativeValue(widthValue, firstAncestorsWidth);
+				if (firstAncestorsWidth == 0) {
+					width = utils.parseRelativeValue(widthValue, pagewidth);
+				} else {
+					width = utils.parseRelativeValue(widthValue, firstAncestorsWidth);
+				}
 			}
-		} else if (configuration.getRootTags().contains(tag.getTag())){
-			width = configuration.getPageSize().getWidth();
+		} else if (roottags.contains(tag.getTag())){
+			width = pagewidth;
 		}
 		return width;
 	}

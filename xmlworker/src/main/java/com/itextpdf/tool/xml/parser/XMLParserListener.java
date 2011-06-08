@@ -55,43 +55,35 @@ public interface XMLParserListener {
 
 	/**
 	 * Triggered on an opening tag.
-	 * @param currentTag the tag of the element
+	 * @param tag the tag of the element
 	 * @param attributes the attributes found on the tag
+	 * @param ns the namespace or empty String
 	 */
-	void startElement(String currentTag, Map<String, String> attributes);
+	void startElement(String tag, Map<String, String> attributes, String ns);
 
 	/**
 	 * Triggered by content.
-	 * @param content the content encountered between tags.
+	 * @param text the content encountered between tags.
 	 */
-	void text(String content);
+	void text(byte[] text);
 
 	/**
 	 * Triggered on a closing tag.
-	 * @param currentTag
+	 * @param tag the tag
+	 * @param ns the namespace or empty String
 	 */
-	void endElement(String currentTag);
+	void endElement(String tag, String ns);
 
 	/**
 	 * Triggered for text found outside root tag.
-	 * @param text
+	 * @param text the text
 	 */
 	void unknownText(String text);
 
 	/**
 	 * Triggered for comments that are found.
-	 * @param comment
+	 * @param comment the comment
 	 */
 	void comment(String comment);
-
-	/**
-	 * Triggered on the start reading.
-	 */
-	void startDocument();
-
-	/**
-	 * Triggered on the end reading.
-	 */
-	void endDocument();
 
 }

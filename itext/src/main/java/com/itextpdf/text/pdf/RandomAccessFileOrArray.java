@@ -62,7 +62,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * @author Paulo Soares
  */
 public class RandomAccessFileOrArray implements DataInput {
-    
+	
     MappedRandomAccessFile rf;
     RandomAccessFile trf;
     boolean plainRandomAccess;

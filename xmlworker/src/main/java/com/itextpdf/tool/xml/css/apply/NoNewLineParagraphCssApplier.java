@@ -46,30 +46,36 @@ package com.itextpdf.tool.xml.css.apply;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.html.HtmlUtilities;
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
-import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
+/**
+ *
+ * @author itextpdf.com
+ *
+ */
 public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagraph> {
 	private final CssUtils utils = CssUtils.getInstance();
 	private final MaxLeadingAndSize m = new MaxLeadingAndSize();
-	private final XMLWorkerConfig configuration;
+	private final HtmlPipelineContext configuration;
 
-	public NoNewLineParagraphCssApplier(final XMLWorkerConfig configuration) {
-		this.configuration = configuration;
+	/**
+	 * Construct a NoNewLineParagraphCssApplier with the given {@link HtmlPipelineContext}
+	 * @param htmlPipelineContext the context
+	 */
+	public NoNewLineParagraphCssApplier(final HtmlPipelineContext htmlPipelineContext) {
+		this.configuration = htmlPipelineContext;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
+	 */
 	public NoNewLineParagraph apply(final NoNewLineParagraph p, final Tag t) {
 		if (this.configuration.getRootTags().contains(t.getTag())) {
 			m.setLeading(t);
@@ -77,6 +83,8 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 			m.setVariablesBasedOnChildren(t);
 		}
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
+		float lmb = 0;
+		boolean hasLMB = false;
 		Map<String, String> css = t.getCSS();
         for (Entry<String, String> entry : css.entrySet()) {
 			String key = entry.getKey();
@@ -88,7 +96,8 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 			} else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
 				float after = utils.parseValueToPt(value, fontSize);
 				p.setSpacingAfter(p.getSpacingAfter() + after);
-				configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, after);
+				lmb = after;
+				hasLMB = true;
 			} else if (CSS.Property.PADDING_BOTTOM.equalsIgnoreCase(key)) {
 				p.setSpacingAfter(p.getSpacingAfter() + utils.parseValueToPt(value, fontSize));
 			} else if(CSS.Property.MARGIN_LEFT.equalsIgnoreCase(key)) {
@@ -114,109 +123,27 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 			}
 		}
 		// setDefaultMargin to largestFont if no margin-top is set and p-tag is child of the root tag.
-		String parent = t.getParent().getTag();
-		if(css.get(CSS.Property.MARGIN_TOP) == null && configuration.getRootTags().contains(parent)) {
-			p.setSpacingBefore(p.getSpacingBefore()+utils.calculateMarginTop(fontSize+"pt", 0, configuration));
+        if (null != t.getParent()) {
+			String parent = t.getParent().getTag();
+			if(css.get(CSS.Property.MARGIN_TOP) == null && configuration.getRootTags().contains(parent)) {
+				p.setSpacingBefore(p.getSpacingBefore()+utils.calculateMarginTop(fontSize+"pt", 0, configuration));
+			}
+			if(css.get(CSS.Property.MARGIN_BOTTOM) == null && configuration.getRootTags().contains(parent)) {
+				p.setSpacingAfter(p.getSpacingAfter()+fontSize);
+				css.put(CSS.Property.MARGIN_BOTTOM, fontSize+"pt");
+				lmb = fontSize;
+				hasLMB = true;
+			}
+			p.setLeading(m.getLargestLeading());
+			if(p.getAlignment() == -1) {
+				p.setAlignment(Element.ALIGN_LEFT);
+			}
 		}
-		// setDefaultMargin to largestFont if no margin-bottom is set and p-tag is child of the root tag.
-		if(css.get(CSS.Property.MARGIN_BOTTOM) == null && configuration.getRootTags().contains(parent)) {
-			p.setSpacingAfter(p.getSpacingAfter()+fontSize);
-			css.put(CSS.Property.MARGIN_BOTTOM, fontSize+"pt");
-			configuration.getMemory().put(XMLWorkerConfig.LAST_MARGIN_BOTTOM, fontSize);
+
+		if (hasLMB) {
+			configuration.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, lmb);
 		}
-		p.setLeading(m.getLeading());
-		if(p.getAlignment() == -1) {
-			p.setAlignment(Element.ALIGN_LEFT);
-		}
-		// TODO reactive for positioning and implement more
-//		if(null != configuration.getWriter() && null != css.get("position")) {
-//			positionNoNewLineParagraph(p, css);
-//			p = null;
-//		}
 		return p;
 	}
 
-	private void positionNoNewLineParagraph(final NoNewLineParagraph p, final Map<String, String> css) {
-		PdfContentByte canvas = configuration.getWriter().getDirectContent();
-		ColumnText ct = new ColumnText(canvas);
-		float remainingWidth = configuration.getPageSize().getWidth();
-		int numberOfLines = 1;
-		float llx = 0;
-		float lly = 0;
-		float urx = 0;
-		float ury = 0;
-		if(null != css.get(CSS.Value.LEFT)) {
-			llx = utils.parsePxInCmMmPcToPt(css.get(CSS.Value.LEFT));
-			remainingWidth -= llx;
-		} else if(null != css.get(CSS.Value.RIGHT)) { // in html right is ignored if left is set.
-			urx = utils.parsePxInCmMmPcToPt(css.get(CSS.Value.RIGHT));
-			remainingWidth -= urx;
-		}
-		if(llx == 0) {
-			llx = urx;
-			for(Chunk c: p.getChunks()) {
-				remainingWidth -= c.getWidthPoint();
-				llx -= c.getWidthPoint();
-				if(remainingWidth < 0) {
-					numberOfLines++;
-					remainingWidth = configuration.getPageSize().getWidth()-urx-Math.abs(remainingWidth);
-				}
-			}
-			if(llx < 0) {
-				llx = 0;
-			}
-		} else if(urx == 0) {
-			urx = llx;
-			for(Chunk c: p.getChunks()) {
-				remainingWidth -= c.getWidthPoint();
-				urx += c.getWidthPoint();
-				if(remainingWidth < 0) {
-					numberOfLines++;
-					remainingWidth = configuration.getPageSize().getWidth()-llx-Math.abs(remainingWidth);
-				}
-			}
-			if(urx > configuration.getPageSize().getWidth()) {
-				urx = configuration.getPageSize().getWidth();
-			}
-//				urx += p.getFirstLineIndent() + p.getIndentationLeft() + p.getIndentationRight();
-		} else {
-			for(Chunk c: p.getChunks()) {
-				remainingWidth -= c.getWidthPoint();
-				if(remainingWidth < 0) {
-					numberOfLines++;
-					remainingWidth = configuration.getPageSize().getWidth()-llx-urx-Math.abs(remainingWidth);
-				}
-			}
-		}
-		if(null != css.get(CSS.Property.TOP)) {
-			ury = -utils.parsePxInCmMmPcToPt(css.get(CSS.Property.TOP))-p.getSpacingBefore();
-		}
-		if(css.get(CSS.Property.POSITION).equalsIgnoreCase(CSS.Value.RELATIVE)) {
-			float textHeight = utils.validateTextHeight(css, p.getLeading() * numberOfLines);
-			if (configuration.getMemory().get(XMLWorkerConfig.VERTICAL_POSITION) == null) {
-				ury += configuration.getWriter().getVerticalPosition(false);
-			} else {
-				ury += (Float)configuration.getMemory().get(XMLWorkerConfig.VERTICAL_POSITION);
-			}
-			lly = ury - textHeight;
-			configuration.getMemory().put(XMLWorkerConfig.VERTICAL_POSITION, textHeight + p.getSpacingBefore() + p.getSpacingAfter());
-		} else { //position:"absolute"
-			lly = ury - utils.validateTextHeight(css, p.getLeading()*numberOfLines);
-		}
-		ct.setSimpleColumn(p, llx, lly, urx, ury, p.getLeading(), p.getAlignment());
-		if(null != css.get(CSS.Property.BACKGROUND_COLOR)) {
-			canvas.setColorFill(HtmlUtilities.decodeColor(css.get(CSS.Property.BACKGROUND_COLOR)));
-			llx -= p.getIndentationLeft();
-			lly -= utils.checkMetricStyle(css, CSS.Property.PADDING_BOTTOM) + p.getLeading()/3.5f;
-			urx += p.getIndentationRight();
-			ury += utils.checkMetricStyle(css, CSS.Property.PADDING_TOP);
-			canvas.rectangle(llx, lly, urx-llx, ury-lly);
-			canvas.fill();
-		}
-		try {
-			ct.go();
-		} catch (DocumentException e) {
-			throw new RuntimeWorkerException(e);
-		}
-	}
 }

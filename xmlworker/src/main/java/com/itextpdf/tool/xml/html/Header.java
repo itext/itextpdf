@@ -48,16 +48,22 @@ import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.WritableDirectElement;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfDestination;
 import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann, redlab_b
@@ -65,6 +71,7 @@ import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
  */
 public class Header extends AbstractTagProcessor {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(Header.class);
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
@@ -85,34 +92,53 @@ public class Header extends AbstractTagProcessor {
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
 		List<Element> l = new ArrayList<Element>(1);
 		if (currentContent.size() > 0) {
-			Paragraph p = new ParagraphCssApplier(configuration).apply(
-					(Paragraph) Tags.currentContentToParagraph(currentContent, true), tag);
-			if (configuration.autoBookmark() && null != configuration.getWriter()) {
-				PdfWriter writer = configuration.getWriter();
-				PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
-						writer.getVerticalPosition(false), 0);
-				Map<String, Object> memory = configuration.getMemory();
-				HeaderNode tree = (HeaderNode) memory.get(XMLWorkerConfig.BOOKMARK_TREE);
-				int level = getLevel(tag);
-				if (null == tree) {
-					// first h tag encounter
-					tree = new HeaderNode(0, writer.getRootOutline(), null);
-				} else {
-					// get position in tree | calculate parent
-					int lastLevel = tree.level();
-					if (lastLevel == level) {
-						tree = tree.parent();
-					} else if (lastLevel > level) {
-						while (lastLevel >= level) {
-							lastLevel = tree.parent().level();
-							tree = tree.parent();
-						}
+			List<Element> currentContentToParagraph = currentContentToParagraph(currentContent, true, true, tag);
+			final HtmlPipelineContext context;
+			try {
+				context = getHtmlPipelineContext();
+				if (context.autoBookmark()) {
+					final Paragraph title = new Paragraph();
+					for (Element w: currentContentToParagraph) {
+							title.add(w);
 					}
+
+					l.add(new WritableDirectElement() {
+
+						public void write(final PdfWriter writer, final Document doc) throws DocumentException {
+							PdfDestination destination = new PdfDestination(PdfDestination.XYZ, 20,
+									writer.getVerticalPosition(false), 0);
+							Map<String, Object> memory = context.getMemory();
+							HeaderNode tree = (HeaderNode) memory.get(HtmlPipelineContext.BOOKMARK_TREE);
+							int level = getLevel(tag);
+							if (null == tree) {
+								// first h tag encounter
+								tree = new HeaderNode(0, writer.getRootOutline(), null);
+							} else {
+								// calculate parent
+								int lastLevel = tree.level();
+								if (lastLevel == level) {
+									tree = tree.parent();
+								} else if (lastLevel > level) {
+									while (lastLevel >= level) {
+										lastLevel = tree.parent().level();
+										tree = tree.parent();
+									}
+								}
+							}
+							if (LOGGER.isLogging(Level.TRACE)) {
+								LOGGER.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.ADD_HEADER), title.toString()));
+							}
+							HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, title), tree);
+							memory.put(HtmlPipelineContext.BOOKMARK_TREE, node);
+						}
+					});
 				}
-				HeaderNode node = new HeaderNode(level,new PdfOutline(tree.outline(), destination, p), tree);
-				memory.put(XMLWorkerConfig.BOOKMARK_TREE, node);
+			} catch (NoCustomContextException e) {
+				if (LOGGER.isLogging(Level.ERROR)) {
+					LOGGER.error(LocaleMessages.getInstance().getMessage(LocaleMessages.HEADER_BM_DISABLED), e);
+				}
 			}
-			l.add(p);
+			l.addAll(currentContentToParagraph);
 		}
 		return l;
 	}
@@ -121,7 +147,7 @@ public class Header extends AbstractTagProcessor {
 	 * @param tag
 	 * @return
 	 */
-	private int getLevel(Tag tag) {
+	private int getLevel(final Tag tag) {
 		return Integer.parseInt(Character.toString(tag.getTag().charAt(1)));
 	}
 

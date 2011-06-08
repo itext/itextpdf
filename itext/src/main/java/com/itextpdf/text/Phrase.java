@@ -280,11 +280,12 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
                 }
                 super.add(index, chunk);
             }
+         // TODO same as in document - change else-if to generic adding that works everywhere
             else if (element.type() == Element.PHRASE ||
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
             element.type() == Element.YMARK ||
-            element.type() == Element.MARKED) {
+            element.type() == Element.MARKED || element.type() == Element.WRITABLE_DIRECT) {
                 super.add(index, element);
             }
             else {
@@ -323,6 +324,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
     public boolean add(final Element element) {
         if (element == null) return false;
         try {
+        	// TODO same as in document - change switch to generic adding that works everywhere
             switch(element.type()) {
                 case Element.CHUNK:
                     return addChunk((Chunk) element);
@@ -347,6 +349,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
                 case Element.PTABLE: // case added by mr. Karen Vardanyan
                 case Element.LIST:
                 case Element.YMARK:
+                case Element.WRITABLE_DIRECT:
                         return super.add(element);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));

@@ -12,7 +12,7 @@ public class Rule implements State {
 	private final CssStateController controller;
 
 	/**
-	 * @param cssStateController
+	 * @param cssStateController the controller
 	 */
 	public Rule(final CssStateController cssStateController) {
 		this.controller= cssStateController;

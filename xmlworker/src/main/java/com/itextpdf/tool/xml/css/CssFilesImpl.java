@@ -40,7 +40,7 @@ import java.util.Set;
 import com.itextpdf.tool.xml.Tag;
 
 /**
- * @author redlab_b
+ * @author itextpdf.com
  *
  */
 public class CssFilesImpl implements CssFiles {
@@ -56,6 +56,15 @@ public class CssFilesImpl implements CssFiles {
 		this.files = new ArrayList<CssFile>();
 		this.utils = CssUtils.getInstance();
 		this.select = new CssSelector();
+	}
+
+	/**
+	 * Construct a new CssFilesImpl with the given css file.
+	 * @param css the css file
+	 */
+	public CssFilesImpl(final CssFile css) {
+		this();
+		this.add(css);
 	}
 
 	/*

@@ -42,7 +42,9 @@
  * address: sales@itextpdf.com
  */
 /**
- * XMLWorker package provides a framework to parse XML to iText {@link com.itextpdf.text.Element}s. Included is a HTML to PDF parsers.
+ * XMLWorker package provides a framework to parse XML to PDF with iText. Included is a HTML to PDF parsers.
+ * This package contains XMLWorker classes. Take a look at {@link com.itextpdf.tool.xml.XMLWorkerHelper} for
+ * factory methods that setup HTML/CSS parsing
  * <br/>This package is part of iText&reg; XMLWorker.
  */
 package com.itextpdf.tool.xml;

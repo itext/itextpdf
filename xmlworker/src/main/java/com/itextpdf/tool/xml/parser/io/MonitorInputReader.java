@@ -48,8 +48,8 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * A {@link BufferedReader} decorator that send all that is read through {@link MonitorInputReader#read()} to the
- * attached {@link ParserMonitor} before returning it.
+ * A {@link BufferedReader} decorator that send all that is read via {@link MonitorInputReader#read()} to the
+ * attached {@link ParserMonitor} before returning the read int.
  *
  * @author redlab_b
  *
@@ -59,8 +59,8 @@ public class MonitorInputReader extends BufferedReader {
 	private final ParserMonitor monitor;
 
 	/**
-	 * @param reader
-	 * @param monitor
+	 * @param reader the actual reader
+	 * @param monitor the monitor
 	 */
 	public MonitorInputReader(final Reader reader, final ParserMonitor monitor) {
 		super(reader);

@@ -44,20 +44,18 @@
 package com.itextpdf.tool.xml.css;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.itextpdf.tool.xml.CSSResolver;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.net.FileRetrieve;
 import com.itextpdf.tool.xml.net.FileRetrieveImpl;
+import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 
 /**
  * Resolves CSS properties.
@@ -70,14 +68,11 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	/**
 	 *
 	 */
-	private static final String HTTP = "http";
-	/**
-	 *
-	 */
-	public static final String STYLE = "style";
+	public static final String STYLE = HTML.Attribute.STYLE;
 	private final CssUtils utils;
 	private CssInheritanceRules inherit;
 	private final CssFiles cssFiles;
+	private FileRetrieve retrieve;
 
 	/**
 	 * Construct a new {@link StyleAttrCSSResolver} with default settings.
@@ -115,15 +110,35 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	 * @param utils the CssUtils to use.
 	 */
 	public StyleAttrCSSResolver(final CssInheritanceRules rules, final CssFiles cssFiles, final CssUtils utils) {
+		this(rules, cssFiles, utils, new FileRetrieveImpl());
+	}
+	/**
+	 * Construct a new StyleAttrCSSResolver with the given {@link CssFiles} and {@link CssUtils}.
+	 *
+	 * @param rules the {@link CssInheritanceRules} to use.
+	 * @param cssFiles a {@link CssFiles} implementation.
+	 * @param utils the CssUtils to use.
+	 * @param fileRetrieve the {@link FileRetrieve} implementation
+	 */
+	public StyleAttrCSSResolver(final CssInheritanceRules rules, final CssFiles cssFiles, final CssUtils utils, final FileRetrieve fileRetrieve) {
 		this.utils = utils;
 		this.cssFiles = cssFiles;
 		this.inherit = rules;
+		this.retrieve = fileRetrieve;
+	}
+
+	/**
+	 * @param cssFiles the {@link CssFile} implementation
+	 * @param r the {@link FileRetrieve} implementation
+	 */
+	public StyleAttrCSSResolver(final CssFiles cssFiles, final FileRetrieve r) {
+		this(new DefaultCssInheritanceRules(), cssFiles, CssUtils.getInstance(), r);
 	}
 
 	/**
 	 * Also taking into account the CSS properties of any parent tag in the given tag.
 	 *
-	 * @see com.itextpdf.tool.xml.CSSResolver#resolveStyles(com.itextpdf.tool.xml.Tag)
+	 * @see com.itextpdf.tool.xml.pipeline.css.CSSResolver#resolveStyles(com.itextpdf.tool.xml.Tag)
 	 */
 	public void resolveStyles(final Tag t) {
 		// get css for this tag from resolver
@@ -246,14 +261,12 @@ public class StyleAttrCSSResolver implements CSSResolver {
 		return true;
 	}
 
-	/**
-	 * @param content
-	 * @param charSet
-	 * @throws CssResolverException
+	/*
+	 * (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.pipeline.css.CSSResolver#addCss(java.lang.String, java.lang.String)
 	 */
 	public void addCss(final String content, final String charSet) throws CssResolverException {
 		CssFileProcessor proc = new CssFileProcessor();
-		FileRetrieveImpl retrieve = new FileRetrieveImpl();
 		try {
 			retrieve.processFromStream(new ByteArrayInputStream(content.getBytes(charSet)), proc);
 			this.cssFiles.add(proc.getCss());
@@ -267,20 +280,13 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	/**
 	 * Add a file to the CssFiles Collection.
 	 *
-	 * @param href the path, if it starts with http we try to retrieve the file from the net, if not we try a normal
-	 *            file operation.
+	 * @param href the path, if it starts with http we try to retrieve the file
+	 *            from the net, if not we try a normal file operation.
 	 */
 	public void addCssFile(final String href) throws CssResolverException {
-		FileRetrieveImpl retrieve = new FileRetrieveImpl();
 		CssFileProcessor cssFileProcessor = new CssFileProcessor();
 		try {
-			if (href.startsWith(HTTP)) {
-				retrieve.processFromURL(new URL(href), cssFileProcessor);
-			} else {
-				retrieve.processFromFile(new File(href), cssFileProcessor);
-			}
-		} catch (MalformedURLException e) {
-			throw new CssResolverException(e);
+			retrieve.processFromHref(href, cssFileProcessor);
 		} catch (IOException e) {
 			throw new CssResolverException(e);
 		}
@@ -289,9 +295,43 @@ public class StyleAttrCSSResolver implements CSSResolver {
 
 	/**
 	 * Add a file to the CssFiles Collection.
-	 * @param file
+	 * @param file the CssFile to add.
 	 */
-	public void addCssFile(final CssFile file) {
+	public void addCss(final CssFile file) {
 		this.cssFiles.add(file);
 	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.pipeline.css.CSSResolver#addCss(java.lang.String)
+	 */
+	public void addCss(final String content) throws CssResolverException {
+		CssFileProcessor proc = new CssFileProcessor();
+		FileRetrieve retrieve = new FileRetrieveImpl();
+		try {
+			retrieve.processFromStream(new ByteArrayInputStream(content.getBytes()), proc);
+			this.cssFiles.add(proc.getCss());
+		} catch (UnsupportedEncodingException e) {
+			throw new CssResolverException(e);
+		} catch (IOException e) {
+			throw new CssResolverException(e);
+		}
+
+	}
+
+	/**
+	 * @param inherit the inherit to set
+	 */
+	public void setCssInheritanceRules(final CssInheritanceRules inherit) {
+		this.inherit = inherit;
+	}
+
+	/**
+	 * The {@link FileRetrieve} implementation to use in {@link StyleAttrCSSResolver#addCssFile(String)}.
+	 * @param retrieve the retrieve to set
+	 */
+	public void setFileRetrieve(final FileRetrieve retrieve) {
+		this.retrieve = retrieve;
+	}
+
+
 }

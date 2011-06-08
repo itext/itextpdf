@@ -43,8 +43,11 @@
  */
 package com.itextpdf.tool.xml.parser;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.itextpdf.tool.xml.parser.state.InsideTagHTMLState;
 
 /**
  * Wrapper class for different things that need to be kept track of between different states.
@@ -57,9 +60,11 @@ public class XMLParserMemory {
 	private String currentTag;
 	private String currentAttr;
 	private final StringBuilder currentEntity = new StringBuilder();
-	private final StringBuilder current = new StringBuilder();
-	private final StringBuilder comment = new StringBuilder();;
+	private final StringBuilder comment = new StringBuilder();
+	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	private final Map<String, String> attr;
+	private String wsTag = "";
+	private String currentNameSpace = "";
 
 	/**
 	 *
@@ -69,22 +74,26 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * @param content
+	 * Set the encountered tag.
+	 * @param content the tag
 	 */
 	public void currentTag(final String content) {
 		this.currentTag = content;
+		this.wsTag = content;
 		this.attr.clear();
 	}
 
 	/**
-	 * @param attr
+	 * Sets the encountered attribute.
+	 * @param attr the attribute
 	 */
 	public void currentAttr(final String attr) {
 		this.currentAttr = attr;
 	}
 
 	/**
-	 * @param content
+	 * Sets the current attribute value.
+	 * @param content the current attributes value.
 	 */
 	public void putCurrentAttrValue(final String content) {
 		attr.put(this.currentAttr.toLowerCase(), content);
@@ -93,13 +102,14 @@ public class XMLParserMemory {
 	/**
 	 * The current text buffer.
 	 *
-	 * @return current
+	 * @return current text buffer
 	 */
-	public StringBuilder current() {
-		return current;
+	public ByteArrayOutputStream current() {
+		return baos;
 	}
 
 	/**
+	 * Returns the current tag.
 	 * @return the currentTag
 	 */
 	public String getCurrentTag() {
@@ -107,6 +117,7 @@ public class XMLParserMemory {
 	}
 
 	/**
+	 * Returns a map of all attributes and their value found on the current tag.
 	 * @return the attributes of the current tag
 	 */
 	public Map<String, String> getAttributes() {
@@ -114,20 +125,68 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 *
-	 * @return a stringbuilder for the current entity
+	 * Returns the current entity buffer.
+	 * @return a StringBuilder for the current entity
 	 */
 	public StringBuilder currentEntity() {
 		return this.currentEntity;
 	}
 
 	/**
-	 * Comment ending tag memory.
+	 * Returns the xml comment buffer.
 	 *
 	 * @return comment
 	 */
 	public StringBuilder comment() {
 		return this.comment;
+	}
+
+	/**
+	 * Returns last tag that needs to be taken into account for HTML Whitespace handling.<br />
+	 * Used by {@link InsideTagHTMLState}, only for HTML processing.
+	 * @return tag
+	 */
+	public String whitespaceTag() {
+		return this.wsTag ;
+	}
+
+	/**
+	 * Sets the last tag that needs to be taken into account for HTML Whitespace handling.<br />
+	 * Used by {@link InsideTagHTMLState}, only for HTML processing.
+	 * @param tag the tag
+	 */
+	public void whitespaceTag(final String tag) {
+		this.wsTag = tag;
+	}
+
+	/**
+	 * Sets the current namespace.
+	 * @param ns the current namespace
+	 */
+	public void namespace(final String ns) {
+		this.currentNameSpace = ns;
+	}
+
+	/**
+	 * Flushes the namespace memory.
+	 */
+	public void flushNameSpace() {
+		this.currentNameSpace = "";
+	}
+
+	/**
+	 * Get the current namespace.
+	 * @return the current namespace or empty String if no namespace
+	 */
+	public String getNameSpace() {
+		return this.currentNameSpace;
+	}
+
+	/**
+	 * Resets the ByteArrayOutputStream of this class.
+	 */
+	public void resetBuffer() {
+		this.baos = new ByteArrayOutputStream();
 	}
 
 }

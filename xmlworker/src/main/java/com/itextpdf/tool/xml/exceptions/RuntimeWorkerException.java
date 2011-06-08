@@ -43,10 +43,9 @@
  */
 package com.itextpdf.tool.xml.exceptions;
 
-import com.itextpdf.text.DocumentException;
 
 /**
- * Thrown when the XMLWorker has a {@link DocumentException}
+ * Thrown when the XMLWorker throws an Exception that we want to convert to a RuntimeException.
  * @author redlab_b
  *
  */
@@ -66,8 +65,8 @@ public class RuntimeWorkerException extends RuntimeException {
 	}
 
 	/**
-	 * @param message
-	 * @param cause
+	 * @param message a message
+	 * @param cause a cause
 	 */
 	public RuntimeWorkerException(final String message, final Throwable cause) {
 		super(message, cause);
@@ -75,7 +74,7 @@ public class RuntimeWorkerException extends RuntimeException {
 	}
 
 	/**
-	 * @param message
+	 * @param message a message
 	 */
 	public RuntimeWorkerException(final String message) {
 		super(message);
@@ -83,7 +82,7 @@ public class RuntimeWorkerException extends RuntimeException {
 	}
 
 	/**
-	 * @param cause
+	 * @param cause a cause
 	 */
 	public RuntimeWorkerException(final Throwable cause) {
 		super(cause);

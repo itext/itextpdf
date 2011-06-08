@@ -46,9 +46,13 @@ package com.itextpdf.tool.xml.html.head;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
+import com.itextpdf.text.WritableDirectElement;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 
 /**
  * @author redlab_b
@@ -61,10 +65,14 @@ public class Title extends AbstractTagProcessor{
 	 */
 	@Override
 	public List<Element> content(final Tag tag, final String content) {
-		if (configuration.getDocument() != null) {
-			configuration.getDocument().addTitle(content);
-		}
-		return new ArrayList<Element>(0);
+		ArrayList<Element> list = new ArrayList<Element>(1);
+		list.add(new WritableDirectElement() {
+
+			public void write(final PdfWriter writer, final Document doc) throws DocumentException {
+				doc.addTitle(content);
+			}
+		});
+		return list;
 	}
 
 

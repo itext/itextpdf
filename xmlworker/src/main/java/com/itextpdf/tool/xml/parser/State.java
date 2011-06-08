@@ -52,7 +52,7 @@ public interface State {
 
 	/**
 	 * Processes a character and does something with it or does nothing.
-	 * @param character
+	 * @param character the character (int) to process.
 	 */
 	void process(int character);
 

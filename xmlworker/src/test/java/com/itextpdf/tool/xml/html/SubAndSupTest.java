@@ -54,12 +54,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.ElementHandler;
+import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
+import com.itextpdf.tool.xml.pipeline.WritableElement;
 
 
 /**
@@ -72,21 +74,18 @@ public class SubAndSupTest {
 
 	@Before
 	public void setup() throws IOException {
-		FontFactory.registerDirectories();
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		BufferedInputStream bis = new BufferedInputStream(SubAndSupTest.class.getResourceAsStream("/snippets/br-sub-sup_snippet.html"));
-		XMLWorkerHelper helper = new XMLWorkerHelper();
+		XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 		elementList = new ArrayList<Element>();
 		helper.parseXHtml(new ElementHandler() {
 
-            public void addAll(final List<Element> currentContent) throws DocumentException {
-                elementList.addAll(currentContent);
+			public void add(final Writable w) {
+				elementList.addAll(((WritableElement) w).elements());
 
-            }
-
-            public void add(final Element e) throws DocumentException {
-                elementList.add(e);
-            }
+			}
         }, new InputStreamReader(bis));
+
 	}
 	@Test
 	public void resolveNumberOfElements() throws IOException {
@@ -95,7 +94,7 @@ public class SubAndSupTest {
 	@Test
 	public void resolveNewLines() throws IOException {
 		assertEquals(Chunk.NEWLINE, elementList.get(1));
-//		assertEquals(Chunk.NEWLINE, elementList.get(3).getChunks().get(2)); // Testing on a inner Chunk.NEWLINE not possible?
+		assertEquals(Chunk.NEWLINE.getContent(), elementList.get(3).getChunks().get(1).getContent());
 	}
 	@Test
 	public void resolveFontSize() throws IOException {

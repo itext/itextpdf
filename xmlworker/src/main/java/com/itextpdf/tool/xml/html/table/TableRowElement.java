@@ -43,11 +43,14 @@
  */
 package com.itextpdf.tool.xml.html.table;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ElementListener;
+import com.itextpdf.tool.xml.exceptions.NotImplementedException;
+import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 
 /**
  * @author redlab_b
@@ -55,24 +58,79 @@ import com.itextpdf.text.ElementListener;
  */
 public class TableRowElement implements Element {
 
-	public enum Place{CAPTION_TOP(-2),HEADER(-1),BODY(0),FOOTER(1),CAPTION_BOTTOM(2);
+	/**
+	 * Enumeration used for determining the correct order of TableRowElements when adding the table to a document.
+	 * <br />
+	 * Possible values:
+	 * <ul>
+	 * <li>CAPTION_TOP</li>
+	 * <li>HEADER</li>
+	 * <li>BODY</li>
+	 * <li>FOOTER</li>
+	 * <li>CAPTION_BOTTOM</li>
+	 * </ul>
+	 *
+	 * @author Emiel Ackermann
+	 *
+	 */
+	public enum Place{
+		/**
+		 * The caption element on top
+		 */
+		CAPTION_TOP(-2, -2),/**
+		 *
+		 * A header row
+		 */
+		HEADER(-1, -1),/**
+		 *
+		 * Body rows
+		 */
+		BODY(0, 1),/**
+		 *  Footer rows
+		 */
+		FOOTER(1, 0), /**
+		 * The caption element in the bottom
+		 */
+		CAPTION_BOTTOM(2, 2);
 
-		private Integer i;
-		private Place(final Integer i) {
-			this.i = i;
+		private Integer normal;
+		private Integer repeated;
+
+		private Place(final Integer normal, final Integer repeated) {
+			this.normal = normal;
+			this.repeated = repeated;
 		}
-		public Integer getI() {
-			return i;
+		/**
+		 * The position when header/footers should not be repeated on each page.
+		 * @return an integer position
+		 */
+		public Integer getNormal() {
+			return normal;
+		}
+		/**
+		 * The position when headers/footers should be repeated on each page.
+		 * @return an integer position
+		 */
+		public Integer getRepeated() {
+			return repeated;
 		}
 	};
 	private final Place place;
-	private final List<Element> content;
+	private final List<HtmlCell> content;
 
     /**
-     * @param currentContent
+     * Constructor based on the currentContent and a {@link Place}. All none {@link TableData} elements are filtered out of the current content list.
+     * @param currentContent List<Element> containing all elements found between <tr> and </tr>.
+     * @param place a {@link Place} in the table (caption, header, body or footer).
      */
     public TableRowElement(final List<Element> currentContent, final Place place) {
-        content = currentContent;
+        // filter out none TD elements, discard others
+    	content = new ArrayList<HtmlCell>(currentContent.size());
+    	for (Element e : currentContent) {
+    		if (e instanceof HtmlCell) {
+    			content.add((HtmlCell) e);
+    		}
+    	}
         this.place = place;
     }
 
@@ -80,44 +138,47 @@ public class TableRowElement implements Element {
      * @see com.itextpdf.text.Element#process(com.itextpdf.text.ElementListener)
      */
     public boolean process(final ElementListener listener) {
-        return false;
+    	throw new NotImplementedException();
     }
 
     /* (non-Javadoc)
      * @see com.itextpdf.text.Element#type()
      */
     public int type() {
-        return 0;
+    	throw new NotImplementedException();
     }
 
     /* (non-Javadoc)
      * @see com.itextpdf.text.Element#isContent()
      */
     public boolean isContent() {
-        return false;
+    	throw new NotImplementedException();
     }
 
     /* (non-Javadoc)
      * @see com.itextpdf.text.Element#isNestable()
      */
     public boolean isNestable() {
-        return false;
+    	throw new NotImplementedException();
     }
 
     /* (non-Javadoc)
      * @see com.itextpdf.text.Element#getChunks()
      */
     public List<Chunk> getChunks() {
-        return null;
+        throw new NotImplementedException();
     }
 
     /**
-     * @return the content
+     * @return the content.
      */
-    public List<Element> getContent() {
+    public List<HtmlCell> getContent() {
         return content;
     }
 
+	/**
+	 * @return the {@link Place} of the row.
+	 */
 	public Place getPlace() {
 		return place;
 	}

@@ -44,8 +44,8 @@
 package com.itextpdf.tool.xml.parser.state;
 
 import com.itextpdf.text.xml.simpleparser.EntitiesToUnicode;
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -56,7 +56,7 @@ public class SpecialCharState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public SpecialCharState(final XMLParser parser) {
 		this.parser =parser;
@@ -68,17 +68,21 @@ public class SpecialCharState implements State {
 	public void process(final int character) {
 		StringBuilder entity = this.parser.memory().currentEntity();
 		if(character == ';') {
-            char decoded = EntitiesToUnicode.decodeEntity(entity.toString());
-            if (decoded == '\0') {
-            	parser.append('&').append(entity.toString()).append(';');
-            } else {
-            	parser.append(decoded);
-            }
+//			if ("nbsp".equals(entity.toString())) {
+//				parser.append(' '); // TODO check yes or no if it's good idea to transform &nbsp into a space ?
+//			} else {
+				char decoded = EntitiesToUnicode.decodeEntity(entity.toString());
+				if (decoded == '\0') {
+					parser.append('&').append(entity.toString().getBytes()).append(';');
+				} else {
+					parser.append(decoded);
+				}
+//			}
             parser.selectState().inTag();
             this.parser.memory().currentEntity().setLength(0);
 		 } else if (character != '#' && (character < '0' || character > '9') && (character < 'a' || character > 'z')
                 && (character < 'A' || character > 'Z') || entity.length() >= 7) {
-			 parser.append('&').append(entity.toString());
+			 parser.append('&').append(entity.toString().getBytes());
 			 parser.selectState().inTag();
 			 this.parser.memory().currentEntity().setLength(0);
         } else {

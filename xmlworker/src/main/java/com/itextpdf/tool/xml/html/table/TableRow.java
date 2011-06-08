@@ -47,8 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 

@@ -53,7 +53,7 @@ import java.util.Set;
 import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.WebColors;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfig;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author redlab_b
@@ -71,8 +71,10 @@ public class CssUtils {
 	private static final String _0_TOP_1 = "{0}top{1}";
 	private static CssUtils myself;
 
+	/**
+	 * Default font size if none is set.
+	 */
 	public static final int DEFAULT_FONT_SIZE_PT = 12;
-	private final FontSizeTranslator fontSizeTranslater = FontSizeTranslator.getInstance();
 
 
 	/**
@@ -245,11 +247,10 @@ public class CssUtils {
 	}
 	/**
 	 * Preparation before implementing the list style in iText. Splits the given
-	 * list style and its attributes into list-style-type, list-style-position, list-style-image,
-	 * font-weight, font-style, font-variant and font-family css styles.
+	 * list style and its attributes into list-style-type, list-style-position and list-style-image.
 	 *
 	 * @param listStyle the string containing the list style value.
-	 * @return a map with the values of font parsed into each css property.
+	 * @return a map with the values of the parsed list style into each css property.
 	 */
 	public Map<String, String> processListStyle(final String listStyle) {
 		Map<String, String> rules = new HashMap<String, String>();
@@ -281,7 +282,7 @@ public class CssUtils {
 	 * font-weight, font-style, font-variant and font-family css styles.
 	 *
 	 * @param font the string containing the font style value.
-	 * @return a map with the values of font parsed into each css property.
+	 * @return a map with the values of the parsed font into each css property.
 	 */
 	public Map<String, String> processFont(final String font) {
 		Map<String, String> rules = new HashMap<String, String>();
@@ -307,7 +308,6 @@ public class CssUtils {
 				style = styleAndRest[0];
 				rest = styleAndRest[1];
 			}
-			// inherit implementeren? op basis van plaatsing == i style of variant..
 		}
 
 		if (isMetricValue(style) || isNumericValue(style)) {
@@ -323,6 +323,7 @@ public class CssUtils {
 		}
 		return rules;
 	}
+
 	/**
 	 * Use only if value of style is a metric value ({@link CssUtils#isMetricValue(String)}) or a numeric value in pixels ({@link CssUtils#isNumericValue(String)}).<br />
 	 * Checks if the style is present in the css of the tag, then parses it to pt. and returns the parsed value.
@@ -331,11 +332,7 @@ public class CssUtils {
 	 * @return float the parsed value of the style or 0f if the value was invalid.
 	 */
 	public float checkMetricStyle(final Tag t, final String style) {
-		String value = t.getCSS().get(style);
-		if (value != null && isMetricValue(value)) {
-			return parsePxInCmMmPcToPt(value);
-		}
-		return 0f;
+		return checkMetricStyle(t.getCSS(), style);
 	}
 	/**
 	 * Use only if value of style is a metric value ({@link CssUtils#isMetricValue(String)}) or a numeric value in pixels ({@link CssUtils#isNumericValue(String)}).<br />
@@ -500,6 +497,7 @@ public class CssUtils {
 	/**
 	 * Returns the sum of the left and right margin of a tag.
 	 * @param t the tag of which the total horizontal margin is needed.
+	 * @param pageWidth the page width
 	 * @return float the total horizontal margin.
 	 */
 	public float getLeftAndRightMargin(final Tag t, final float pageWidth) {
@@ -560,13 +558,26 @@ public class CssUtils {
 	 * This method simulates this behavior by subtracting the margin-top value of the given tag from the margin-bottom of the previous tag. The remaining value is returned or if the margin-bottom value is the largest, 0 is returned
 	 * @param value the margin-top value of the given tag.
 	 * @param largestFont used if a relative value was given to calculate margin.
-	 * @param config XmlWorkerConfig containing the last margin bottom.
+	 * @param configuration XmlWorkerConfig containing the last margin bottom.
 	 * @return an offset
 	 */
-	public float calculateMarginTop(final String value, final float largestFont, final XMLWorkerConfig config) {
-		float marginTop = parseValueToPt(value, largestFont);
-		Map<String, Object> memory = config.getMemory();
-		Object mb = memory.get(XMLWorkerConfig.LAST_MARGIN_BOTTOM);
+	public float calculateMarginTop(final String value, final float largestFont, final HtmlPipelineContext configuration) {
+		return calculateMarginTop(parseValueToPt(value, largestFont), configuration);
+	}
+
+	/**
+	 * Calculates the margin top or spacingBefore based on the given value and the last margin bottom.
+	 * <br /><br />
+	 * In HTML the margin-bottom of a tag overlaps with the margin-top of a following tag.
+	 * This method simulates this behavior by subtracting the margin-top value of the given tag from the margin-bottom of the previous tag. The remaining value is returned or if the margin-bottom value is the largest, 0 is returned
+	 * @param value float containing the margin-top value.
+	 * @param configuration XmlWorkerConfig containing the last margin bottom.
+	 * @return an offset
+	 */
+	public float calculateMarginTop(final float value, final HtmlPipelineContext configuration) {
+		float marginTop = value;
+		Map<String, Object> memory = configuration.getMemory();
+		Object mb = memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
 		if(mb != null) {
 			float marginBottom = (Float)mb;
 			marginTop = (marginTop>marginBottom)?marginTop-marginBottom:0;

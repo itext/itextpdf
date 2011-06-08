@@ -55,7 +55,7 @@ public class CommentState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public CommentState(final XMLParser parser) {
 		this.parser = parser;

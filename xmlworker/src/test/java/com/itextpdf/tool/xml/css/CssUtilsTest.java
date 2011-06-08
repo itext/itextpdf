@@ -31,11 +31,14 @@
 package com.itextpdf.tool.xml.css;
 
 import java.util.Map;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 
 /**
@@ -50,6 +53,7 @@ public class CssUtilsTest {
 
 	@Before
 	public void setup() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		css = CssUtils.getInstance();
 		string = "  een  twee   drie    vier    een  twee   drie    vier";
 	}

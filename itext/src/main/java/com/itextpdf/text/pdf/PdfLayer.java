@@ -114,7 +114,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
      */
     public void addChild(PdfLayer child) {
         if (child.parent != null)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.layer.1.already.has.a.parent", ((PdfString)child.get(PdfName.NAME)).toUnicodeString()));
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.layer.1.already.has.a.parent", child.getAsString(PdfName.NAME).toUnicodeString()));
         child.parent = this;
         if (children == null)
             children = new ArrayList<PdfLayer>();
@@ -189,7 +189,7 @@ public class PdfLayer extends PdfDictionary implements PdfOCG {
     }
 
     private PdfDictionary getUsage() {
-        PdfDictionary usage = (PdfDictionary)get(PdfName.USAGE);
+        PdfDictionary usage = getAsDict(PdfName.USAGE);
         if (usage == null) {
             usage = new PdfDictionary();
             put(PdfName.USAGE, usage);

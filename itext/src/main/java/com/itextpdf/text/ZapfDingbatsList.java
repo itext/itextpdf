@@ -113,6 +113,7 @@ public class ZapfDingbatsList extends List {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
 			Chunk chunk = new Chunk(preSymbol, symbol.getFont());
+            chunk.setAttributes(symbol.getAttributes());
 			chunk.append(String.valueOf((char)zn));
 			chunk.append(postSymbol);
 			item.setListSymbol(chunk);

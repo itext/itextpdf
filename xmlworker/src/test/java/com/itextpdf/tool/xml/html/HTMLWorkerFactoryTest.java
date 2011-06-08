@@ -46,24 +46,26 @@ import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
 
 import org.junit.Test;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
-import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.ElementHandler;
-import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
+import com.itextpdf.tool.xml.Pipeline;
+import com.itextpdf.tool.xml.XMLWorker;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
-import com.itextpdf.tool.xml.css.CssFile;
+import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
+import com.itextpdf.tool.xml.parser.XMLParser;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 
 /**
@@ -74,6 +76,7 @@ public class HTMLWorkerFactoryTest {
     public static final String RESOURCE_TEST_PATH = "./target/test-classes/";
 	public static final String SNIPPETS = "/snippets/";
 
+//	private static final String TEST = "doc_";
 //    private static final String TEST = "xfa-support_";
 //    private static final String TEST = "Atkins_";
 //    private static final String TEST = "b-p_";
@@ -82,6 +85,7 @@ public class HTMLWorkerFactoryTest {
 //    private static final String TEST = "fontSizes_";
 //    private static final String TEST = "line-height_letter-spacing_";
 //    private static final String TEST = "longtext_";
+//    private static final String TEST = "error_message_test_";
 //    private static final String TEST = "xfa-support_";
 //    private static final String TEST = "margin-align_";
 //    private static final String TEST = "xfa-hor-vert_";
@@ -89,39 +93,32 @@ public class HTMLWorkerFactoryTest {
 //    private static final String TEST = "comment-double-print_";
 //    private static final String TEST = "tab_";
 //	  private static final String TEST = "table_";
-	  private static final String TEST = "lists_";
+	  private static final String TEST = "tableInTable_";
+//	  private static final String TEST = "table_incomplete_";
+//	  private static final String TEST = "lists_";
 //	  private static final String TEST = "img_";
 //	  private static final String TEST = "position_";
 //	  private static final String TEST = "h_";
 //	  private static final String TEST = "booksales_";
 //	  private static final String TEST = "index_";
 //	  private static final String TEST = "headers_";
+//	  private static final String TEST = "headers_noroottag_";
 //	  private static final String TEST = "index_anchor_";
 //	  private static final String TEST = "lineheight_";
+//	  private static final String TEST = "table_exception_";
+//	  private static final String TEST = "table_exception_";
+//	  private static final String TEST = "pagebreaks_";
 
     static {
-    	FontFactory.registerDirectories();
-    	LoggerFactory.getInstance().setLogger(new Logger() {
-
-			public void log(final String string) {
-				System.out.println(string);
-			}
-
-			public void log(final Class<?> klass, final String msg) {
-				System.out.println(String.format("[%s]\t%s",klass.getName(), msg));
-
-			}
-
-			public boolean isLogging() {
-				return true;
-			}
-		});
+    	//FontFactory.registerDirectories();
     	Document.compress = false;
+    	LoggerFactory.getInstance().setLogger(new SysoLogger(3));
     }
     private final CssUtils utils = CssUtils.getInstance();
 
 	@Test
 	public void parseXfaOnlyXML() throws IOException {
+		BufferedInputStream bis = new BufferedInputStream(HTMLWorkerFactoryTest.class.getResourceAsStream(SNIPPETS+TEST+"snippet.html"));
 		final Document doc = new Document(PageSize.A4);
 		float margin = utils.parseRelativeValue("10%", PageSize.A4.getWidth());
 		doc.setMargins(margin, margin, margin, margin);
@@ -133,33 +130,16 @@ public class HTMLWorkerFactoryTest {
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
-		XMLWorkerConfigurationImpl conf = new XMLWorkerConfigurationImpl();
-		conf.document(doc).pdfWriter(writer);
-		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver();
-
-		conf.tagProcessorFactory(new Tags().getHtmlTagProcessorFactory()).cssResolver(cssResolver)
-				.acceptUnknown(true);
-
-		BufferedInputStream bis = new BufferedInputStream(HTMLWorkerFactoryTest.class.getResourceAsStream(SNIPPETS+TEST+"snippet.html"));
-		XMLWorkerHelper helper = new XMLWorkerHelper();
-		CssFile defaultCSS = helper.getDefaultCSS();
-		if (null != defaultCSS) {
-			cssResolver.addCssFile(defaultCSS);
-		}
+		CssFilesImpl cssFiles = new CssFilesImpl();
+		cssFiles.add(XMLWorkerHelper.getInstance().getDefaultCSS());
+		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+		HtmlPipelineContext hpc = new HtmlPipelineContext();
+		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
+		XMLWorker worker = new XMLWorker(pipeline, true);
 		doc.open();
-		helper.parseXHtml(new ElementHandler() {
-
-			public void addAll(final List<Element> currentContent) throws DocumentException {
-				for (Element e : currentContent) {
-					doc.add(e);
-				}
-
-			}
-
-			public void add(final Element e) throws DocumentException {
-				doc.add(e);
-			}
-		}, new InputStreamReader(bis), conf);
+		XMLParser p = new XMLParser(true, worker);
+		p.parse(new InputStreamReader(bis));
         doc.close();
 	}
 }

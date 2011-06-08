@@ -43,13 +43,7 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import java.util.List;
 
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.tool.xml.DefaultTagProcessorFactory;
-import com.itextpdf.tool.xml.TagProcessorFactory;
-import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 
 /**
  * @author redlab_b
@@ -65,15 +59,16 @@ public class Tags {
 	private static String paragraph = defaultpackage + "ParaGraph";
 
 	/**
+	 * Returns a new {@link DefaultTagProcessorFactory}
 	 * @return a default XHTML {@link TagProcessorFactory}
 	 */
-	public final TagProcessorFactory getHtmlTagProcessorFactory() {
+	public static final TagProcessorFactory getHtmlTagProcessorFactory() {
 		DefaultTagProcessorFactory factory = new DefaultTagProcessorFactory();
-		factory.addProcessor("xml", defaultpackage+"head.XML");
+		factory.addProcessor("xml", dummyTagProcessor);
 		factory.addProcessor("!doctype", dummyTagProcessor);
 		factory.addProcessor("html", dummyTagProcessor);
 		factory.addProcessor("head", dummyTagProcessor);
-		factory.addProcessor("meta", defaultpackage+"head.Meta");
+		factory.addProcessor("meta", dummyTagProcessor);
 		factory.addProcessor("object", dummyTagProcessor);
 		factory.addProcessor("title", defaultpackage + "head.Title");
 		factory.addProcessor("link", defaultpackage + "head.Link");
@@ -84,7 +79,7 @@ public class Tags {
 		factory.addProcessor("table", defaultpackage + "table.Table");
 		factory.addProcessor("tr", defaultpackage + "table.TableRow");
 		factory.addProcessor("td", defaultpackage + "table.TableData");
-		factory.addProcessor("th", defaultpackage + "table.TableData");
+		factory.addProcessor(HTML.Tag.TH, defaultpackage + "table.TableData");
 		factory.addProcessor("caption", paragraph);
 		factory.addProcessor("p", paragraph);
 		factory.addProcessor("dt", paragraph);
@@ -125,32 +120,5 @@ public class Tags {
 		factory.addProcessor("h6", headers);
 		factory.addProcessor("hr", defaultpackage + "HorizontalRule");
 		return factory;
-	}
-
-	/**
-	 * Adds currentContent list to a paragraph element. If addNewLines is true a Paragraph object is returned, else a
-	 * NoNewLineParagraph object is returned.
-	 *
-	 * @param currentContent List<Element> of the current elements to be added.
-	 * @param addNewLines boolean to declare which paragraph element should be returned, true if new line should be added or not.
-	 * @return Element either a Paragraph object or a NoNewLineParagraph object. Or null if current content was empty
-	 */
-	public final static Element currentContentToParagraph(final List<Element> currentContent, final boolean addNewLines) {
-		if (currentContent.size() > 0) {
-			if (addNewLines) {
-				Paragraph p = new Paragraph();
-				for (Element e : currentContent) {
-					p.add(e);
-				}
-				return p;
-			} else {
-				NoNewLineParagraph p = new NoNewLineParagraph();
-				for (Element e : currentContent) {
-					p.add(e);
-				}
-				return p;
-			}
-		}
-		throw new IllegalArgumentException("currentContent cannot be null");
 	}
 }

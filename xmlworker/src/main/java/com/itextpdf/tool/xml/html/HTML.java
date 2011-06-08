@@ -49,13 +49,23 @@ package com.itextpdf.tool.xml.html;
  *
  */
 public final class HTML {
-	
+
 	/**
-	 * 
+	 *
+	 */
+	private HTML() {
+	}
+	/**
+	 *
 	 * All Tags.
 	 *
 	 */
-	public final class Tag {
+	public final static class Tag {
+		/**
+		 *
+		 */
+		private Tag() {
+		}
 
 		public static final String THEAD = "thead";
 		public static final String TBODY = "thead";
@@ -63,12 +73,37 @@ public final class HTML {
 		public static final String OL = "ol";
 		public static final String UL = "ul";
 		public static final String CAPTION = "caption";
+		public static final String PRE = "pre";
+		public static final String P = "p";
+		public static final String DIV = "div";
+		public static final String H1 = "h1";
+		public static final String H2 = "h2";
+		public static final String H3 = "h3";
+		public static final String H4 = "h4";
+		public static final String H5 = "h5";
+		public static final String H6 = "h6";
+		public static final String TD = "td";
+		public static final String BR = "br";
+		public static final String LI = "li";
+		public static final String DD = "dd";
+		public static final String DT = "dt";
+		public static final String TH = "th";
+		public static final String HR = "hr";
+		public static final String BODY = "body";
+		public static final String HTML = "html";
+		public static final String TABLE = "table";
 
 	}
 	/**
 	 * All attributes
 	 */
-	public final class Attribute {
+	public final static class Attribute {
+
+		/**
+		 *
+		 */
+		private Attribute() {
+		}
 
 		public static final String CELLPADDING = "cellpadding";
 		public static final String CELLSPACING = "cellspacing";

@@ -30,7 +30,12 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import com.itextpdf.tool.xml.AbstractTagProcessor;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.itextpdf.text.Element;
+import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 
 /**
  * Does nothing.
@@ -38,7 +43,41 @@ import com.itextpdf.tool.xml.AbstractTagProcessor;
  * @author redlab_b
  *
  */
-public class DummyTagProcessor extends AbstractTagProcessor {
+public class DummyTagProcessor implements TagProcessor {
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
+	 */
+	public List<Element> startElement(final Tag tag) {
+		return new ArrayList<Element>(0);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
+	 */
+	public List<Element> content(final Tag tag, final String content) {
+		return new ArrayList<Element>(0);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
+	 */
+	public List<Element> endElement(final Tag tag, final List<Element> currentContent) {
+		return new ArrayList<Element>(0);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
+	 */
+	public boolean isStackOwner() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.html.TagProcessor#setContext(com.itextpdf.tool.xml.WorkerContext)
+	 */
+	public void setContext(final WorkerContext context) {
+	}
 
 
 }

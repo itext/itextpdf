@@ -44,6 +44,8 @@
 package com.itextpdf.text;
 
 import java.util.ArrayList;
+
+import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.factories.RomanAlphabetFactory;
 
 /**
@@ -91,7 +93,7 @@ import com.itextpdf.text.factories.RomanAlphabetFactory;
  * @see		ListItem
  */
 
-public class List implements TextElementArray {
+public class List implements TextElementArray, Indentable {
 
     // constants
 
@@ -279,6 +281,7 @@ public class List implements TextElementArray {
             ListItem item = (ListItem) o;
             if (numbered || lettered) {
                 Chunk chunk = new Chunk(preSymbol, symbol.getFont());
+                chunk.setAttributes(symbol.getAttributes());
                 int index = first + list.size();
                 if ( lettered )
                     chunk.append(RomanAlphabetFactory.getString(index, lowercase));

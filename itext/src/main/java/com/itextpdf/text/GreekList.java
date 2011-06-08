@@ -107,6 +107,7 @@ public class GreekList extends List {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
 			Chunk chunk = new Chunk(preSymbol, symbol.getFont());
+            chunk.setAttributes(symbol.getAttributes());
 			chunk.append(GreekAlphabetFactory.getString(first + list.size(), lowercase));
 			chunk.append(postSymbol);
 			item.setListSymbol(chunk);

@@ -43,27 +43,19 @@
  */
 package com.itextpdf.tool.xml;
 
-import java.util.List;
-
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
 
 /**
+ * A the listener interface for receiving {@link Writable}s.
  * @author redlab_b
  *
  */
 public interface ElementHandler  {
 
-    /**
-     * @param currentContent list of elements to sequentially add.
-     * @throws DocumentException
-     */
-    void addAll(List<Element> currentContent) throws DocumentException;
 
     /**
-     * @param e
-     * @throws DocumentException
+     * Receive a Writable.
+     * @param w the writable to add
      */
-    void add(Element e) throws DocumentException;
+    void add(Writable w);
 
 }

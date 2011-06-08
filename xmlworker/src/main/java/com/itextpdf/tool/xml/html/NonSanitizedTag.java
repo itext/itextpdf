@@ -35,7 +35,6 @@ import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 
@@ -53,7 +52,7 @@ public class NonSanitizedTag extends AbstractTagProcessor {
 	public List<Element> content(final Tag tag, final String content) {
 		List<Element> l = new ArrayList<Element>(1);
 		if (null != content && content.length() > 0) {
-			l.add( new ChunkCssApplier().apply(new Chunk(content), tag));
+			l.add(new ChunkCssApplier().apply(new Chunk(content), tag));
 		}
 		return l;
 	}
@@ -63,11 +62,7 @@ public class NonSanitizedTag extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-		List<Element> l = new ArrayList<Element>(1);
-		if (currentContent.size() > 0) {
-			l.add( Tags.currentContentToParagraph(currentContent, false));
-		}
-		return l;
+		return currentContentToParagraph(currentContent, false, true, tag);
 	}
 
 }

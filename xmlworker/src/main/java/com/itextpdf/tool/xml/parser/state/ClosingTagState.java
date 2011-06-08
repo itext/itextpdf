@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -55,7 +55,7 @@ public class ClosingTagState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public ClosingTagState(final XMLParser parser) {
 		this.parser = parser;
@@ -66,10 +66,14 @@ public class ClosingTagState implements State {
 	 */
 	public void process(final int character) {
 		if (character == '>') {
-			this.parser.memory().currentTag(this.parser.current());
+			this.parser.memory().currentTag(this.parser.bufferToString());
 			this.parser.endElement();
 			this.parser.flush();
+			this.parser.memory().flushNameSpace();
 			parser.selectState().inTag();
+		} else if (character == ':') {
+			this.parser.memory().namespace(this.parser.bufferToString());
+			this.parser.flush();
 		} else if (!Character.isWhitespace(character)){
 			this.parser.append(character);
 		}

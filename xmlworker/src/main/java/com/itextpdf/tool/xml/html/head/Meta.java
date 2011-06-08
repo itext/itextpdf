@@ -48,10 +48,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
+import com.itextpdf.tool.xml.Experimental;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 
 /**
  * Supports detection of:
@@ -61,9 +65,10 @@ import com.itextpdf.tool.xml.Tag;
  * </dl>
  *
  */
+@Experimental
 public class Meta extends AbstractTagProcessor {
 
-	private static final Logger logger = LoggerFactory.getLogger();
+	private static final Logger LOGGER = LoggerFactory.getLogger(Meta.class);
 	/*
 	 * (non-Javadoc)
 	 *
@@ -81,18 +86,22 @@ public class Meta extends AbstractTagProcessor {
 						String[] split2 = str.split("=");
 						if (split2.length > 1) {
 							String enc = split2[1];
+							try {
 							if (Charset.isSupported(enc)) {
-								this.configuration.charSet(Charset.forName(enc));
-								if (logger.isLogging()) {
-									logger.log(
-											String.format("Detected Charset %s from meta tag, using detected charset.", enc));
+								getHtmlPipelineContext().charSet(Charset.forName(enc));
+								if (LOGGER.isLogging(Level.DEBUG)) {
+									LOGGER.debug(
+											String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.META_CC), enc));
 								}
 							} else {
-								if (logger.isLogging()) {
-									logger.log(
-											String.format("No Charset detected from metatag, using %s.", this.configuration
-													.charSet().displayName()));
+								if (LOGGER.isLogging(Level.DEBUG)) {
+									LOGGER.debug(
+											String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.META_404), getHtmlPipelineContext()
+													.charSet()));
 								}
+							}
+							} catch (NoCustomContextException e) {
+								LOGGER.error("", e);
 							}
 						}
 

@@ -42,7 +42,8 @@
  * address: sales@itextpdf.com
  */
 /**
- * TagProcessor implementations for tags in XHTML/HTML. Use {@link com.itextpdf.tool.xml.html.Tags} to setup HTML parsing with the {@link com.itextpdf.tool.xml.XMLWorkerImpl}.
+ * Everything to parse HTML tags to pdf used by the {@link com.itextpdf.tool.xml.pipeline.html.HtmlPipeline} is in here.
+ * For CSS things take a look at com.itextpdf.tool.xml.css
  * <br/>This package is part of iText&reg; XMLWorker.
  */
 package com.itextpdf.tool.xml.html;

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.tool.xml.css;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.itextpdf.tool.xml.Tag;
@@ -69,7 +69,7 @@ public class CssSelector {
 	 * @return set of selectors
 	 */
 	public Set<String> createAllSelectors(final Tag t) {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new LinkedHashSet<String>();
 		set.addAll(createTagSelectors(t));
 		set.addAll(createClassSelectors(t));
 		set.addAll(createIdSelector(t));
@@ -81,7 +81,7 @@ public class CssSelector {
 	 * @return all selectors for the given tag.
 	 */
 	public Set<String> createTagSelectors(final Tag t) {
-		Set<String> selectors = new HashSet<String>();
+		Set<String> selectors = new LinkedHashSet<String>();
 		selectors.add(t.getTag());
 		if (null != t.getParent()) {
 			Tag parent = t.getParent();
@@ -118,7 +118,7 @@ public class CssSelector {
 	 */
 	public Set<String> createClassSelectors(final Tag t) {
 		String classes = t.getAttributes().get(HTML.Attribute.CLASS);
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new LinkedHashSet<String>();
 		if (null != classes) {
 			String[] classSplit = this.utils.stripDoubleSpacesAndTrim(classes).split("//s");
 			for (String klass : classSplit) {
@@ -137,7 +137,7 @@ public class CssSelector {
 	 */
 	public Set<String> createIdSelector(final Tag t) {
 		String id = t.getAttributes().get(HTML.Attribute.ID);
-		Set<String> set = new HashSet<String>(1);
+		Set<String> set = new LinkedHashSet<String>(1);
 		if (null != id) {
 			StringBuilder builder = new StringBuilder();
 			builder.append('#').append(id);

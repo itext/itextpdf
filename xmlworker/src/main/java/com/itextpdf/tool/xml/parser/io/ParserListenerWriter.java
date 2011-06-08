@@ -61,15 +61,16 @@ public class ParserListenerWriter implements XMLParserListener {
 	private final boolean formatted;
 
 	/**
-	 * @param writer
-	 * @param formatted
+	 * @param writer the appender
+	 * @param formatted true if output should be formatted
 	 */
 	public ParserListenerWriter(final Appender writer, final boolean formatted) {
 		this.writer = writer;
 		this.formatted = formatted;
 	}
 	/**
-	 * @param writer
+	 * Construct a new ParserListenerWriter with the given appender and default formatted to true;
+	 * @param writer the appender
 	 */
 	public ParserListenerWriter(final Appender writer) {
 		this(writer, true);
@@ -78,24 +79,26 @@ public class ParserListenerWriter implements XMLParserListener {
 	public void unknownText(final String string) {
 	}
 
-	public void text(final String content) {
-		writer.append(content);
+	public void text(final byte[] b) {
+		writer.append(new String(b));
 	}
 
-	public void startElement(final String currentTag, final Map<String, String> attributes) {
+	public void startElement(final String currentTag, final Map<String, String> attributes, final String ns) {
+		String myns = (ns.length() > 0)?ns+":":ns;
 		if( attributes.size() >0) {
-			writer.append("<"+currentTag+ " ");
+			writer.append("<").append(myns ).append(currentTag).append(" ");
 			for (Entry<String,String> e : attributes.entrySet()) {
 				writer.append(e.getKey()).append("=\"").append(e.getValue()).append("\"");
 			}
 			writer.append('>');
 		} else {
-			writer.append('<').append(currentTag).append('>');
+			writer.append('<').append(myns).append(currentTag).append('>');
 		}
 	}
 
-	public void endElement(final String curentTag) {
-		writer.append("</").append(curentTag).append('>');
+	public void endElement(final String curentTag, final String ns) {
+		String myns = (ns.length() > 0)?ns+":":ns;
+		writer.append("</").append(myns).append(curentTag).append('>');
 		if (formatted) {
 			writer.append((char) Character.LINE_SEPARATOR);
 		}
@@ -107,14 +110,5 @@ public class ParserListenerWriter implements XMLParserListener {
 	public void comment(final String comment) {
 		writer.append("<!--").append(comment).append("-->");
 	}
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.parser.ParserListener#startDocument()
-	 */
-	public void startDocument() {
-	}
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.parser.ParserListener#endDocument()
-	 */
-	public void endDocument() {
-	}
+
 }

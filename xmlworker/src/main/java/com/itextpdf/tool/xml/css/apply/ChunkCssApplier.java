@@ -73,8 +73,13 @@ public class ChunkCssApplier implements CssApplier<Chunk> {
 	public static final List<String> BOLD = Arrays.asList(new String[] { "bold", "bolder", "600", "700", "800", "900" });
 	private final CssUtils utils = CssUtils.getInstance();
 
-
-	// following are missing completely: font-variant.
+	 /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element,
+     * com.itextpdf.tool.xml.Tag)
+     */
 	public Chunk apply(final Chunk c, final Tag t) {
 		String fontName = BaseFont.HELVETICA;
 		String encoding = BaseFont.CP1252;

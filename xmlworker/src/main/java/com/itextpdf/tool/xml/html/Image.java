@@ -43,18 +43,26 @@
  */
 package com.itextpdf.tool.xml.html;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
+import com.itextpdf.tool.xml.net.exc.NoImageException;
+import com.itextpdf.tool.xml.pipeline.html.NoImageProviderException;
 
 /**
  * @author redlab_b
@@ -63,6 +71,7 @@ import com.itextpdf.tool.xml.net.ImageRetrieve;
 public class Image extends AbstractTagProcessor {
 
 	private final CssUtils utils = CssUtils.getInstance();
+	private static final Logger logger = LoggerFactory.getLogger(Image.class);
 
 	/*
 	 * (non-Javadoc)
@@ -79,7 +88,26 @@ public class Image extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
 		if (null != src && src.length() > 0) {
 			// check if the image was already added once
-			img = new ImageRetrieve(configuration.getProvider()).retrieveImage(src);
+			try {
+				if (logger.isLogging(Level.TRACE)) {
+					logger.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_USE), src));
+				}
+				try {
+					img = new ImageRetrieve(getHtmlPipelineContext().getImageProvider()).retrieveImage(src);
+				} catch (NoImageProviderException e) {
+					img = new ImageRetrieve().retrieveImage(src);
+				}
+			} catch (IOException e) {
+				if (logger.isLogging(Level.ERROR)) {
+					logger.error(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_RETRIEVE_FAIL), src), e);
+				}
+			} catch (NoImageException e) {
+				if (logger.isLogging(Level.ERROR)) {
+					logger.error("", e);
+				}
+			} catch (NoCustomContextException e) {
+				throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
+			}
 			if (null != img) {
 				String width = attributes.get(HTML.Attribute.WIDTH);
 				float widthInPoints = utils.parsePxInCmMmPcToPt(width);

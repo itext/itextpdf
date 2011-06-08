@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -55,7 +55,7 @@ public class TagEncounteredState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public TagEncounteredState(final XMLParser parser) {
 		this.parser = parser;
@@ -67,8 +67,8 @@ public class TagEncounteredState implements State {
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
 	public void process(final int character) {
-		String tag = this.parser.current();
-		if (Character.isWhitespace(character) || character == '>' || character == '/' || tag.equals("!--") || tag.equals("![CDATA[")) {
+		String tag = this.parser.bufferToString();
+		if (Character.isWhitespace(character) || character == '>' || character == '/' || character == ':' || tag.equals("!--") || tag.equals("![CDATA[")) {
 			// cope with <? xml and <! DOCTYPE
 			if (tag.length() > 0) {
 				if (tag.equals("!--")) {
@@ -90,7 +90,7 @@ public class TagEncounteredState implements State {
 					parser.selectState().doctype();
 					this.parser.append(character);
 				} else if (Character.isWhitespace(character)) {
-					this.parser.memory().currentTag(this.parser.current());
+					this.parser.memory().currentTag(this.parser.bufferToString());
 					this.parser.flush();
 					this.parser.selectState().tagAttributes();
 				} else if (character == '>') {
@@ -99,11 +99,13 @@ public class TagEncounteredState implements State {
 					this.parser.startElement();
 					this.parser.selectState().inTag();
 				} else if (character == '/') {
-					this.parser.memory().currentTag(this.parser.current());
+					this.parser.memory().currentTag(this.parser.bufferToString());
 					this.parser.flush();
 					this.parser.selectState().selfClosing();
+				} else if (character == ':') {
+					this.parser.memory().namespace(tag);
+					this.parser.flush();
 				}
-
 			} else if (character == '/') {
 				this.parser.selectState().closingTag();
 			}

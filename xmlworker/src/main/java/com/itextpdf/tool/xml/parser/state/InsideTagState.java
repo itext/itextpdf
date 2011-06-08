@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -53,9 +53,8 @@ import com.itextpdf.tool.xml.parser.State;
 public class InsideTagState implements State {
 
 	private final XMLParser parser;
-
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public InsideTagState(final XMLParser parser) {
 		this.parser = parser;
@@ -68,7 +67,7 @@ public class InsideTagState implements State {
 	 */
 	public void process(final int character) {
 		if (character == '<') {
-			if (this.parser.current().length() > 0) {
+			if (this.parser.bufferSize() > 0) {
 				this.parser.text(this.parser.current());
 			}
 			this.parser.flush();

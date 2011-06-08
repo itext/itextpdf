@@ -124,6 +124,11 @@ public class FontSizeTranslator {
 		return size;
 	}
 
+	/**
+	 * Retrieves the pt font size from {@link Tag#getCSS()} with {@link CSS.Property#FONT_SIZE} or returns default 12pt
+	 * @param tag the tag to get the font-size from.
+	 * @return the font size
+	 */
 	public float getFontSize(final Tag tag) {
 		String str = tag.getCSS().get(CSS.Property.FONT_SIZE);
 		if (null != str) {

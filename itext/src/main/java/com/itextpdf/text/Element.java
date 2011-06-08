@@ -172,6 +172,12 @@ public interface Element {
 	 */
 	public static final int YMARK = 55;
 
+	/**
+	 * This is an element thats not an element.
+	 * @see WritableDirectElement
+	 */
+	public static final int WRITABLE_DIRECT = 666;
+
 	// static membervariables (alignment)
 
 	/**

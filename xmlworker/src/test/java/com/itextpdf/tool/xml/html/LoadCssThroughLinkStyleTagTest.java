@@ -46,23 +46,23 @@ package com.itextpdf.tool.xml.html;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.DefaultProvider;
-import com.itextpdf.tool.xml.ElementHandler;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
+import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.XMLWorker;
-import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
-import com.itextpdf.tool.xml.XMLWorkerImpl;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
+import com.itextpdf.tool.xml.net.FileRetrieveImpl;
 import com.itextpdf.tool.xml.parser.XMLParser;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author redlab_b
@@ -78,26 +78,16 @@ public class LoadCssThroughLinkStyleTagTest {
 
 	@Before
 	public void setup() {
-
-		XMLWorkerConfigurationImpl config = new XMLWorkerConfigurationImpl();
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		cssFiles = new CssFilesImpl();
-		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
-		DefaultProvider provider = new DefaultProvider();
 		String path = LoadCssThroughLinkStyleTagTest.class.getResource("/css/test.css").getPath();
-		provider.setGlobalCssRoot(path.substring(0, path.lastIndexOf("test.css")));
-		config.tagProcessorFactory(new Tags().getHtmlTagProcessorFactory()).cssResolver(cssResolver)
-		.acceptUnknown(false).provider(provider);
-		final XMLWorker worker = new XMLWorkerImpl(config);
-		worker.setDocumentListener(new ElementHandler() {
-
-			public void addAll(final List<Element> currentContent) throws DocumentException {
-
-			}
-
-			public void add(final Element e) throws DocumentException {
-
-			}
-		});
+		path = path.substring(0, path.lastIndexOf("test.css"));
+		FileRetrieveImpl r = new FileRetrieveImpl(new String [] {path} );
+		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles, r );
+		HtmlPipelineContext hpc = new HtmlPipelineContext();
+		hpc.setAcceptUnknown(false).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, null));
+		final XMLWorker worker = new XMLWorker(pipeline, true);
 		p = new XMLParser(worker);
 	}
 

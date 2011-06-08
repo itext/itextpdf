@@ -51,6 +51,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 
@@ -58,10 +60,11 @@ public class CSSFilesTest {
 
 	@Test
 	public void loadandretrieve() throws  CssResolverException {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		CssFilesImpl files = new CssFilesImpl();
 		StyleAttrCSSResolver resolver = new StyleAttrCSSResolver(files);
 		URL u = CSSFilesTest.class.getResource("/css/style.css");
-		resolver.addCssFile(u.getPath());
+		resolver.addCssFile(u.getPath().replace("%20", " ")); // fix url conversion of space (%20) for File
 		Map<String, String> attr = new HashMap<String, String>();
 		Tag t = new Tag("body", attr);
 		Map<String, String> css = files.getCSS(t);

@@ -44,14 +44,17 @@
 package com.itextpdf.tool.xml.net;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 
 /**
  * @author redlab_b
@@ -62,13 +65,14 @@ public class FileRetrieveTest {
 
     @Before
     public void setup() {
+    	LoggerFactory.getInstance().setLogger(new SysoLogger(3));
         retriever = new FileRetrieveImpl();
     }
 
     @Test
     public void retrieveURL() throws MalformedURLException, IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        retriever.processFromURL(new URL("http://www.redlab.be/test/test.css"), new ReadingProcessor() {
+        retriever.processFromHref("http://www.redlab.be/test/test.css", new ReadingProcessor() {
 
         	public void process(final int inbit) {
                 out.write((char)inbit);
@@ -90,5 +94,18 @@ public class FileRetrieveTest {
                 });
 		css.close();
         Assert.assertEquals("Not right length of byte array", 87, out.size());
+    }
+    @Test
+    public void retrieveFile() throws MalformedURLException, IOException {
+    	final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    	retriever.addRootDir(new File("./target/test-classes"));
+    	retriever.processFromHref("/css/test.css",
+    			new ReadingProcessor() {
+
+    		public void process(final int inbit) {
+    			out.write((char)inbit);
+    		}
+    	});
+    	Assert.assertEquals("Not right length of byte array", 87, out.size());
     }
 }

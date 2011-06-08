@@ -47,19 +47,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
-import com.itextpdf.tool.xml.Provider;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
-import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTML;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 
 /**
+ * The Link TagProcessor will try to add the content of a &lt;link&gt; that has the attribute type set to "text/css" to the
+ * {@link CssResolverPipeline} CSS. If the content cannot be parsed, an error is logged.
  * @author redlab_b
  *
  */
 public class Link extends AbstractTagProcessor {
 
+	private static final Logger LOG = LoggerFactory.getLogger(Link.class);
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
@@ -68,13 +74,12 @@ public class Link extends AbstractTagProcessor {
 		if (tag.getAttributes().containsKey(HTML.Attribute.TYPE) && tag.getAttributes().get(HTML.Attribute.TYPE).equalsIgnoreCase("text/css")) {
 			String href = tag.getAttributes().get(HTML.Attribute.HREF);
 			if (null != href) {
-				if (!href.startsWith("http")) {
-					href = configuration.getProvider().get(Provider.GLOBAL_CSS_ROOT) + href;
-				}
 				try {
-					configuration.getCssResolver().addCssFile(href);
+					getCSSResolver().addCssFile(href);
 				} catch (CssResolverException e) {
-					throw new RuntimeWorkerException(e);
+					LOG.error(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.LINK_404), href), e);
+				} catch (NoCustomContextException e) {
+					LOG.warn(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.CUSTOMCONTEXT_404_CONTINUE), CssResolverPipeline.class.getName()));
 				}
 			}
 		}

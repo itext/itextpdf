@@ -48,12 +48,13 @@ import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 /**
@@ -62,54 +63,46 @@ import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
  */
 public class TableData extends AbstractTagProcessor {
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document, java.lang.String)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag,
+	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
+	 */
+	@Override
 	public List<Element> content(final Tag tag, final String content) {
-    	String sanitized = HTMLUtils.sanitizeInline(content);
-    	List<Element> l = new ArrayList<Element>(1);
-    	if (sanitized.length() > 0) {
-    		l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
-    	}
-    	return l;
-    }
+		String sanitized = HTMLUtils.sanitizeInline(content);
+		List<Element> l = new ArrayList<Element>(1);
+		if (sanitized.length() > 0) {
+			Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
+//			NoNewLineParagraph noNewLineParagraph = new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(c), tag);
+			l.add(c);
+		}
+		return l;
+	}
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
+	 * java.util.List, com.itextpdf.text.Document)
+	 */
+	@Override
 	public List<Element> end(final Tag tag, final List<Element> currentContent) {
-//    	HtmlCell cell = new HtmlCell();
-//    	Paragraph content = new Paragraph();
-//    	for (Element e : currentContent) {
-//    		content.add(e);
-//    	}
-//    	content = new ParagraphCssApplier(configuration).apply(content, tag);
-//    	cell.addElement(content);
-    	HtmlCell cell = new HtmlCell();
-    	List<Element> l = new ArrayList<Element>(1);
-    	for (Element e : currentContent) {
-    		if(e instanceof Paragraph) {
-    			e = new ParagraphCssApplier(configuration).apply((Paragraph)e, tag); // is this needed? Looks like double css applying...
-    		}
-    		cell.addElement(e);
-    	}
-//    	if(tag.getTag().equalsIgnoreCase(HTML.Tag.CAPTION)) {
-//    		currentContent.clear();
-//    		currentContent.add(cell);
-//    		String captionSideValue = tag.getCSS().get(CSS.Property.CAPTION_SIDE);
-//    		if(captionSideValue != null && captionSideValue.equalsIgnoreCase(CSS.Value.BOTTOM)) {
-//    			l.add(new TableRowElement(currentContent, Place.CAPTION_BOTTOM));
-//    		} else {
-//    			l.add(new TableRowElement(currentContent, Place.CAPTION_TOP));
-//    		}
-//    		return l;
-//    	} else {
-    		l.add(new HtmlCellCssApplier(configuration).apply(cell, tag));
-    		return l;
-//    	}
-    }
+		HtmlCell cell = new HtmlCell();
+		List<Element> l = new ArrayList<Element>(1);
+		for (Element e : currentContent) {
+			cell.addElement(e);
+		}
+		try {
+			l.add(new HtmlCellCssApplier(getHtmlPipelineContext()).apply(cell, tag));
+		} catch (NoCustomContextException e1) {
+			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
+		}
+		return l;
+	}
 
     /* (non-Javadoc)
      * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()

@@ -51,6 +51,8 @@ import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.itextpdf.text.api.Indentable;
+import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.ICC_Profile;
 import com.itextpdf.text.pdf.PRIndirectReference;
@@ -82,7 +84,7 @@ import com.itextpdf.text.pdf.codec.TiffImage;
  * @see Rectangle
  */
 
-public abstract class Image extends Rectangle {
+public abstract class Image extends Rectangle implements Indentable, Spaceable {
 
 	// static final membervariables
 

@@ -57,12 +57,9 @@ import org.junit.Test;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 /**
@@ -73,7 +70,8 @@ public class SamplesTest {
 	private final List<String> list = new ArrayList<String>();
 
 	static {
-		FontFactory.registerDirectories();
+	//	FontFactory.registerDirectories();
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 	}
 
 	@Before
@@ -82,6 +80,7 @@ public class SamplesTest {
 		list.add("position_");
 		list.add("b-p_");
 		list.add("br-sub-sup_");
+		list.add("div_");
 		list.add("font_color_");
 		list.add("lineheight_");
 		list.add("index_");
@@ -96,29 +95,14 @@ public class SamplesTest {
 		list.add("comment-double-print_");
 		list.add("tab_");
 		list.add("table_");
+		list.add("tableInTable_");
 		list.add("lists_");
 		list.add("headers_");
 	}
 
 	@Test
 	public void createAllSamples() throws IOException {
-		LoggerFactory.getInstance().setLogger(new Logger() {
-
-			public void log(final String string) {
-				System.out.println(string);
-			}
-
-			public void log(final Class<?> klass, final String msg) {
-				System.out.println(String.format("[%s]\t%s",klass.getName(), msg));
-
-			}
-
-			public boolean isLogging() {
-				return true;
-			}
-		});
 		boolean success = true;
-		Document.compress = false;
 		for (String str : list) {
 			try {
 			System.out.println(str);
@@ -132,7 +116,7 @@ public class SamplesTest {
 			doc.open();
 			BufferedInputStream bis = new BufferedInputStream(SamplesTest.class.getResourceAsStream("/snippets/" + str
 					+ "snippet.html"));
-			XMLWorkerHelper helper = new XMLWorkerHelper();
+			XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
 			helper.parseXHtml(writer, doc, new InputStreamReader(bis));
 			doc.close();
 			} catch (Exception e) {

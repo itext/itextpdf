@@ -48,8 +48,15 @@ import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.AbstractTagProcessor;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
+import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 
 /**
  * @author redlab_b
@@ -65,9 +72,58 @@ public class Div extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Element> l = new ArrayList<Element>(1);
     	if (sanitized.length() > 0) {
-    		l.add( new Chunk(sanitized));
+    		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
+    		try {
+				l.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext()).apply(new NoNewLineParagraph(c), tag));
+			} catch (NoCustomContextException e) {
+				throw new RuntimeWorkerException(e);
+			}
     	}
 		return l;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
+	 * java.util.List, com.itextpdf.text.Document)
+	 */
+	@Override
+	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+		try {
+			Paragraph p = null;
+			List<Element> l = new ArrayList<Element>(1);
+			for (Element e : currentContent) {
+				if (e instanceof Paragraph) {
+					if (p != null) {
+						p = new ParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
+						l.add(p);
+						p = null;
+					}
+					l.add(e);
+				} else {
+					if (p == null) {
+						p = new Paragraph();
+					}
+					p.add(e);
+				}
+			}
+			if (p != null) {
+				p = new ParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
+				l.add(p);
+			}
+			return l;
+		} catch (NoCustomContextException e) {
+			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
+		}
+	}
+
+	 /* (non-Javadoc)
+     * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
+     */
+    @Override
+	public boolean isStackOwner() {
+        return true;
+    }
 }

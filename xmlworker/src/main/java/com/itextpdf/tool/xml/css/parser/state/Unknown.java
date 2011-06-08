@@ -12,7 +12,7 @@ public class Unknown implements State {
 	private final CssStateController controller;
 
 	/**
-	 * @param cssStateController
+	 * @param cssStateController the controller
 	 */
 	public Unknown(final CssStateController cssStateController) {
 		this.controller= cssStateController;

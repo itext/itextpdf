@@ -51,7 +51,7 @@ import java.util.Map;
 /**
  * Represents an encountered tag.
  *
- * @author Balder
+ * @author redlab_b
  *
  */
 public class Tag {
@@ -61,25 +61,48 @@ public class Tag {
 	private final Map<String, String> attributes;
 	private Map<String, String> css;
 	private final List<Tag> children;
+	private final String ns;
 
 	/**
 	 * Construct a tag.
 	 *
 	 * @param tag the tag name
-	 * @param h the attributes in the tag
+	 * @param attr the attributes in the tag
 	 */
-	public Tag(final String tag, final Map<String, String> h) {
-		this.tag = tag;
-		this.attributes = h;
-		this.css = new HashMap<String, String>(0);
-		this.children = new ArrayList<Tag>();
+	public Tag(final String tag, final Map<String, String> attr) {
+		this(tag, attr, new HashMap<String, String>(0), "");
 	}
 
 	/**
 	 * @param tag the tag name
 	 */
 	public Tag(final String tag) {
-		this(tag, new HashMap<String, String>());
+		this(tag, new HashMap<String, String>(0), new HashMap<String, String>(0), "");
+	}
+
+	/**
+	 *
+	 * @param tag the tag name
+	 * @param attr the attributes
+	 * @param css a map with CSS
+	 * @param ns the namespace
+	 */
+	public Tag(final String tag, final Map<String, String> attr, final Map<String, String> css, final String ns ) {
+		this.tag = tag;
+		this.attributes = attr;
+		this.css = css;
+		this.children = new ArrayList<Tag>(0);
+		this.ns = ns;
+	}
+
+	/**
+	 *
+	 * @param tag the tag name
+	 * @param attr the attributes
+	 * @param ns the namespace
+	 */
+	public Tag(final String tag, final Map<String, String> attr, final String ns) {
+		this(tag, attr,new HashMap<String, String>(0),ns );
 	}
 
 	/**
@@ -158,12 +181,23 @@ public class Tag {
 	public List<Tag> getChildren() {
 		return this.children;
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+
+	/**
+	 * @return the ns
+	 */
+	public String getNameSpace() {
+		return ns;
+	}
+
+	/**
+	 * Print the tag
 	 */
 	@Override
 	public String toString() {
-		return String.format("%s", this.tag);
+		if ("".equalsIgnoreCase(ns)) {
+			return String.format("%s", this.tag);
+		}
+		return  String.format("%s:%s", this.ns, this.tag);
+
 	}
 }

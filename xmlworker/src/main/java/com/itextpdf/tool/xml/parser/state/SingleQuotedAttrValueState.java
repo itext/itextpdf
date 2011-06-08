@@ -43,8 +43,8 @@
  */
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.State;
+import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**
  * @author redlab_b
@@ -55,7 +55,7 @@ public class SingleQuotedAttrValueState implements State {
 	private final XMLParser parser;
 
 	/**
-	 * @param parser
+	 * @param parser the XMLParser
 	 */
 	public SingleQuotedAttrValueState(final XMLParser parser) {
 		this.parser = parser;
@@ -66,7 +66,7 @@ public class SingleQuotedAttrValueState implements State {
 	 */
 	public void process(final int character) {
 		if (character == '\'') {
-			this.parser.memory().putCurrentAttrValue(this.parser.current());
+			this.parser.memory().putCurrentAttrValue(this.parser.bufferToString());
 			this.parser.flush();
 			this.parser.selectState().tagAttributes();
 		} else {

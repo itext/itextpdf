@@ -54,12 +54,17 @@ import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.XMLWorkerConfigurationImpl;
+import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 public class TableTest {
 	private final List<Element> cells1 = new ArrayList<Element>();
@@ -83,6 +88,7 @@ public class TableTest {
 
 	@Before
 	public void setup() {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
 		tag.setParent(new Tag("defaultRoot"));
 		basicPara.add(basic);
 		extraPara.add(extra);
@@ -105,6 +111,7 @@ public class TableTest {
 		cell3Row2.addElement(extraPara);
 		cells2.add(cell1Row2);
 		cells2.add(cell2Row2);
+		//cells2.add(cell3Row2);
 		row2 = new TableRowElement(cells2, Place.BODY);
 
 		rows.add(row1);
@@ -113,11 +120,13 @@ public class TableTest {
 
 	@Test
 	public void resolveBuild() {
-		Table table2 = new Table();
-		table2.setConfiguration(new XMLWorkerConfigurationImpl());
-		PdfPTable table = (PdfPTable) table2.end(tag, rows).get(0);
-		assertEquals(4, table.getNumberOfColumns());
+		AbstractTagProcessor table2 = new Table();
+		WorkerContextImpl context = new WorkerContextImpl();
+		context.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		table2.setContext(context);
+		PdfPTable table = (PdfPTable) (table2.end(tag, rows).get(0));
 		assertEquals(4, table.getRow(0).getCells().length);
+		assertEquals(4, table.getNumberOfColumns());
 	}
 
 	@Test
@@ -127,10 +136,10 @@ public class TableTest {
 	}
 	@Test
 	public void resolveColspan() {
-		assertEquals(2, ((HtmlCell)((TableRowElement) rows.get(1)).getContent().get(1)).getColspan());
+		assertEquals(2, (((TableRowElement) rows.get(1)).getContent().get(1)).getColspan());
 	}
 	@Test
 	public void resolveRowspan() {
-		assertEquals(2, ((HtmlCell)((TableRowElement) rows.get(0)).getContent().get(3)).getRowspan());
+		assertEquals(2, (((TableRowElement) rows.get(0)).getContent().get(3)).getRowspan());
 	}
 }
