@@ -52,10 +52,20 @@ public final class HTML {
 
 	/**
 	 *
+	 */
+	private HTML() {
+	}
+	/**
+	 *
 	 * All Tags.
 	 *
 	 */
 	public final static class Tag {
+		/**
+		 *
+		 */
+		private Tag() {
+		}
 
 		public static final String THEAD = "thead";
 		public static final String TBODY = "thead";
@@ -88,6 +98,12 @@ public final class HTML {
 	 * All attributes
 	 */
 	public final static class Attribute {
+
+		/**
+		 *
+		 */
+		private Attribute() {
+		}
 
 		public static final String CELLPADDING = "cellpadding";
 		public static final String CELLSPACING = "cellspacing";

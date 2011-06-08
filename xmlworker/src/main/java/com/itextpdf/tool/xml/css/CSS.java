@@ -56,6 +56,7 @@ public final class CSS {
 	 */
 	public static final class Property {
 
+		private Property() {};
 		public static final String BACKGROUND_IMAGE = "background-image";
 		public static final String BACKGROUND_REPEAT = "background-repeat";
 		public static final String BACKGROUND_ATTACHMENT = "background-attachment";
@@ -129,6 +130,7 @@ public final class CSS {
 	 *
 	 */
 	public static final class Value {
+		private Value(){};
 		public static final String THIN = "thin";
 		public static final String MEDIUM = "medium";
 		public static final String THICK = "thick";
