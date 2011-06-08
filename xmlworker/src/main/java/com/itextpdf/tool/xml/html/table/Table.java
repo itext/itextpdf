@@ -533,8 +533,10 @@ public class Table extends AbstractTagProcessor {
 	        		rulesWidth.add(cellWidth);
 					cellWidth = startWidth + ((PdfPTable)baseLevel).getTotalWidth();
 					for(PdfPRow innerRow :((PdfPTable)baseLevel).getRows()) {
-						float minRowWidth = 0;
 						int size = innerRow.getCells().length;
+						TableBorderEvent event = (TableBorderEvent) ((PdfPTable)baseLevel).getTableEvent();
+						TableStyleValues values = event.getTableStyleValues();
+						float minRowWidth = values.getBorderWidthLeft()+(size+1)*values.getHorBorderSpacing()+values.getBorderWidthRight();
 						int celnr = 0;
 						for(PdfPCell innerCell : innerRow.getCells()) {
 							celnr++;

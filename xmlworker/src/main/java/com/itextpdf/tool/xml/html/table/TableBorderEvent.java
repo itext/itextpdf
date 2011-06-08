@@ -92,45 +92,45 @@ public class TableBorderEvent implements PdfPTableEvent{
         	cb.fill();
         }
         cb = canvas[PdfPTable.LINECANVAS];
-        color = styleValues.getBorderColorLeft();
-        if(color == null && left != 0) {
-        	color = BaseColor.BLACK;
+        if(left != 0) {
+        	color = styleValues.getBorderColorLeft();
+        	if(color == null) {
+        		color = BaseColor.BLACK;
+        	}
+        	cb.setLineWidth(left);
+        	cb.setColorStroke(color);
+        	cb.moveTo(x1, y1); // start leftUpperCorner
+        	cb.lineTo(x1, y2); // left
+        	cb.stroke();
         }
-        if(color != null) {
-	        cb.setLineWidth(left);
-	        cb.setColorStroke(color);
-	        cb.moveTo(x1, y1); // start leftUpperCorner
-	        cb.lineTo(x1, y2); // left
-	        cb.stroke();
+        if(bottom != 0) {
+        	color = styleValues.getBorderColorBottom();
+        	if(color == null) {
+        		color = BaseColor.BLACK;
+        	}
+        	cb.setLineWidth(bottom);
+ 	        cb.setColorStroke(color);
+ 	        cb.moveTo(x1, y2); // left
+ 	        cb.lineTo(x2, y2); // bottom
+ 	        cb.stroke();
         }
-        color = styleValues.getBorderColorBottom();
-        if(color == null && bottom != 0) {
-        	color = BaseColor.BLACK;
-        }
-        if(color != null) {
-	        cb.setLineWidth(bottom);
-	        cb.setColorStroke(color);
-	        cb.moveTo(x1, y2); // left
-	        cb.lineTo(x2, y2); // bottom
-	        cb.stroke();
-        }
-        color = styleValues.getBorderColorRight();
-        if(color == null && right != 0) {
-        	color = BaseColor.BLACK;
-        }
-        if(color != null) {
-	        cb.setLineWidth(right);
+        if(right != 0) {
+        	color = styleValues.getBorderColorRight();
+        	if(color == null) {
+        		color = BaseColor.BLACK;
+        	}
+        	cb.setLineWidth(right);
 	        cb.setColorStroke(color);
 	        cb.moveTo(x2, y2); // bottom
 	        cb.lineTo(x2, y1); // right
 	        cb.stroke();
         }
-        color = styleValues.getBorderColorTop();
-        if(color == null && top != 0) {
-        	color = BaseColor.BLACK;
-        }
-        if(color != null) {
-	        cb.setLineWidth(top);
+        if(top != 0) {
+        	color = styleValues.getBorderColorTop();
+        	if(color == null) {
+        		color = BaseColor.BLACK;
+        	}
+        	cb.setLineWidth(top);
 	        cb.setColorStroke(color);
 	        cb.moveTo(x2, y1); // right
 	        cb.lineTo(x1, y1); // top

@@ -92,7 +92,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
     		table = table.getParent();
     	}
     	String border = table.getAttributes().get(CSS.Property.BORDER);
-		if(border != null) {
+		if(border != null && !border.equals("0")) {
 			values.setBorderColor(BaseColor.BLACK);
 			values.setBorderWidth(0.75f);
 		}

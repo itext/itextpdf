@@ -73,15 +73,15 @@ public class WidthCalculator {
 			if(utils.isNumericValue(widthValue) || utils.isMetricValue(widthValue)) {
 				width = utils.parsePxInCmMmPcToPt(widthValue);
 			} else if (utils.isRelativeValue(widthValue)) {
-				if (roottags.contains(tag.getTag())){
+				Tag ancestor = tag;
+				float firstAncestorsWidth = 0;
+				while(firstAncestorsWidth == 0 && ancestor.getParent() != null) {
+					ancestor = ancestor.getParent();
+					firstAncestorsWidth = getWidth(ancestor, roottags, pagewidth);
+				}
+				if (firstAncestorsWidth == 0) {
 					width = utils.parseRelativeValue(widthValue, pagewidth);
 				} else {
-					Tag ancestor = tag;
-					float firstAncestorsWidth = 0;
-					while(firstAncestorsWidth == 0) {
-						ancestor = ancestor.getParent();
-						firstAncestorsWidth = getWidth(ancestor, roottags, pagewidth);
-					}
 					width = utils.parseRelativeValue(widthValue, firstAncestorsWidth);
 				}
 			}
