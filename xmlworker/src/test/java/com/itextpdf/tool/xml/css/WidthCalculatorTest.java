@@ -82,6 +82,11 @@ public class WidthCalculatorTest {
 	}
 
 	@Test
+	public void resolveBodyWidth80() throws IOException {
+		body.getAttributes().put(HTML.Attribute.WIDTH, "80%");
+		assertEquals(0.8*config.getPageSize().getWidth(), calc.getWidth(body, config.getRootTags(), config.getPageSize().getWidth()), 0);
+	}
+	@Test
 	public void resolveTableWidth80() throws IOException {
 		table.getAttributes().put(HTML.Attribute.WIDTH, "80%");
 		assertEquals(0.8*config.getPageSize().getWidth(), calc.getWidth(table, config.getRootTags(), config.getPageSize().getWidth()), 0);
