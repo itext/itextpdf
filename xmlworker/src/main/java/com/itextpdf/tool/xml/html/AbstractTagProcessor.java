@@ -69,11 +69,9 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  */
 public abstract class AbstractTagProcessor implements TagProcessor {
 
-	/**
-	 * The configuration object of the XMLWorker.
-	 */
+	// FIXME wouldn't it be better to pass the context along with the method calls? I believe it is
+	private final static ThreadLocal<WorkerContext> ctxLocal = new ThreadLocal<WorkerContext>();
 	private final FontSizeTranslator fontsizeTrans;
-	private final ThreadLocal<WorkerContext> ctxLocal = new ThreadLocal<WorkerContext>();
 
 	/**
 	 *
@@ -93,26 +91,26 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	}
 
 	/**
-	 * Fetches the CSSResolver used if any. This requires the
-	 * CssResolverPipeline to be a pipe before the HtmlPipeline.
+	 * Utility method that fetches the CSSResolver from the if any and if it uses the default key.
 	 *
 	 * @return CSSResolver
 	 * @throws NoCustomContextException if the context of the
 	 *             {@link CssResolverPipeline} could not be found.
 	 */
 	public CSSResolver getCSSResolver() throws NoCustomContextException {
-		return (CSSResolver) ((MapContext) this.ctxLocal.get().get(CssResolverPipeline.class.getName()))
-				.get(CssResolverPipeline.CSS_RESOLVER);
+		return (CSSResolver) ((MapContext)ctxLocal.get().get(CssResolverPipeline.class.getName())).get(CssResolverPipeline.CSS_RESOLVER);
 	}
 
 	/**
-	 * Fetches the HtmlPipelineContext used if any.
+	 * Utility method that fetches the HtmlPipelineContext used if any and if it
+	 * uses the default key.
+	 *
 	 * @return a HtmlPipelineContext
 	 * @throws NoCustomContextException if the context of the
 	 *             {@link HtmlPipelineContext} could not be found.
 	 */
 	public HtmlPipelineContext getHtmlPipelineContext() throws NoCustomContextException {
-		return ((HtmlPipelineContext) this.ctxLocal.get().get(HtmlPipeline.class.getName()));
+		return ((HtmlPipelineContext) ctxLocal.get().get(HtmlPipeline.class.getName()));
 	}
 	/**
 	 * Calculates any found font size to pt values and set it in the CSS before
@@ -229,7 +227,6 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 					p = new NoNewLineParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
 					list.add(p);
 				}
-				// TODO enhance
 			}
 			return list;
 		} catch (NoCustomContextException e) {

@@ -133,7 +133,7 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	@SuppressWarnings("unchecked")
 	public T getLocalContext() throws PipelineException {
 		try {
-			CustomContext cc = getContext().get(this.getClass().getName());
+			CustomContext cc = getContext().get(getContextKey());
 			if (null != cc) {
 				return (T) cc;
 			}
