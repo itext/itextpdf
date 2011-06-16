@@ -43,6 +43,7 @@
  */
 package com.itextpdf.tool.xml.net;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -103,7 +104,7 @@ public class ImageRetrieve {
 					if (path.startsWith("http")) {
 						img = com.itextpdf.text.Image.getInstance(path);
 					} else {
-						img = com.itextpdf.text.Image.getInstance(new URL("file:///" + path));
+						img = com.itextpdf.text.Image.getInstance(new File(path).toURI().toURL());
 					}
 					if (null != provider && null != img) {
 						provider.store( src, img);
