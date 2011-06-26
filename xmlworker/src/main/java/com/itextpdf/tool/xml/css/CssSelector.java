@@ -120,7 +120,7 @@ public class CssSelector {
 		String classes = t.getAttributes().get(HTML.Attribute.CLASS);
 		Set<String> set = new LinkedHashSet<String>();
 		if (null != classes) {
-			String[] classSplit = this.utils.stripDoubleSpacesAndTrim(classes).split("//s");
+			String[] classSplit = this.utils.stripDoubleSpacesAndTrim(classes).split(" ");
 			for (String klass : classSplit) {
 				StringBuilder builder = new StringBuilder();
 				builder.append('.').append(klass);
