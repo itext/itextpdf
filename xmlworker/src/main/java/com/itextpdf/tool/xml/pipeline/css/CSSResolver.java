@@ -68,29 +68,38 @@ public interface CSSResolver {
 	 * Add a piece of CSS code.
 	 * @param content the CSS
 	 * @param charSet a charset
+	 * @param isPersistent true if the added css should not be deleted on a call to clear
 	 * @throws CssResolverException thrown if something goes wrong
 	 */
-	void addCss(String content, String charSet) throws CssResolverException;
+	void addCss(String content, String charSet, boolean isPersistent) throws CssResolverException;
 
 	/**
 	 * Add a
 	 * @param href the link to the css file ( an absolute uri )
+	 * @param isPersistent  true if the added css should not be deleted on a call to clear
 	 * @throws CssResolverException thrown if something goes wrong
 	 */
-	void addCssFile(String href)  throws CssResolverException;
+	void addCssFile(String href, boolean isPersistent)  throws CssResolverException;
 
 	/**
 	 * Add a piece of CSS code.
 	 * @param content the content to parse to css
+	 * @param isPersistent  true if the added css should not be deleted on a call to clear
 	 * @throws CssResolverException thrown if something goes wrong
 	 */
-	void addCss(String content) throws CssResolverException;
+	void addCss(String content, boolean isPersistent) throws CssResolverException;
 
 	/**
 	 * Add a CssFile
 	 * @param file the CssFile
 	 */
 	void addCss(CssFile file);
+
+	/**
+	 * @return
+	 * @throws CssResolverException
+	 */
+	CSSResolver clear() throws CssResolverException;
 
 
 }

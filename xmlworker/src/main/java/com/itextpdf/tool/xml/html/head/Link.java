@@ -51,6 +51,7 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
@@ -70,12 +71,12 @@ public class Link extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
 	@Override
-	public List<Element> start(final Tag tag) {
+	public List<Element> start(final WorkerContext ctx, final Tag tag) {
 		if (tag.getAttributes().containsKey(HTML.Attribute.TYPE) && tag.getAttributes().get(HTML.Attribute.TYPE).equalsIgnoreCase("text/css")) {
 			String href = tag.getAttributes().get(HTML.Attribute.HREF);
 			if (null != href) {
 				try {
-					getCSSResolver().addCssFile(href);
+					getCSSResolver(ctx).addCssFile(href, false);
 				} catch (CssResolverException e) {
 					LOG.error(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.LINK_404), href), e);
 				} catch (NoCustomContextException e) {

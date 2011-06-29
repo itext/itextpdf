@@ -86,4 +86,14 @@ public interface XMLParserListener {
 	 */
 	void comment(String comment);
 
+	/**
+	 * Triggered when parsing has started.
+	 */
+	void init();
+
+	/**
+	 * Triggered when parsing is finished and the stream will be closed.
+	 */
+	void close();
+
 }

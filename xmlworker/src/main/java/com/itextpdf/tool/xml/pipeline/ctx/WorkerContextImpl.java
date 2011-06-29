@@ -81,7 +81,7 @@ public class WorkerContextImpl implements WorkerContext {
 	 * @param key the key to store the CustomContext for.
 	 * @param context the CustomContext to store.
 	 */
-	public void add(final String key, final CustomContext context) {
+	public void put(final String key, final CustomContext context) {
 		mc.put(key, context);
 	}
 

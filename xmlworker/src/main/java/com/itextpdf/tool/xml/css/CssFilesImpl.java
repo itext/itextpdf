@@ -32,6 +32,7 @@ package com.itextpdf.tool.xml.css;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -135,6 +136,19 @@ public class CssFilesImpl implements CssFiles {
 	 */
 	public void add(final CssFile css) {
 		this.files.add(css);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.css.CssFiles#clear()
+	 */
+	public void clear() {
+		Iterator<CssFile> iterator = files.iterator();
+		while(iterator.hasNext()) {
+			CssFile next = iterator.next();
+			if (!next.isPersistent()) {
+				iterator.remove();
+			}
+		}
 	}
 
 }

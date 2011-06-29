@@ -40,6 +40,7 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
@@ -74,14 +75,14 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	 * java.util.List)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		List<Element> listElements = populateList(currentContent);
 		int size = listElements.size();
 		List<Element> returnedList = new ArrayList<Element>();
 		if (size > 0) {
 			HtmlPipelineContext htmlPipelineContext = null;
 			try {
-				htmlPipelineContext = getHtmlPipelineContext();
+				htmlPipelineContext = getHtmlPipelineContext(ctx);
 			} catch (NoCustomContextException e) {
 				if (LOG.isLogging(Level.ERROR)) {
 					LOG.error(String.format(LocaleMessages.getInstance().getMessage("customcontext.404.continue"), HtmlPipeline.class.getName()), e);
@@ -94,21 +95,21 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 					Tag child = tag.getChildren().get(i);
 					if (size == 1) {
 						child.getCSS().put(CSS.Property.MARGIN_TOP,
-									calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
-						float marginBottom = calculateTopOrBottomSpacing(false, false, tag, child);
+									calculateTopOrBottomSpacing(true, false, tag, child, ctx) + "pt");
+						float marginBottom = calculateTopOrBottomSpacing(false, false, tag, child, ctx);
 						child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
 					} else {
 						if (i == 0) {
 							child.getCSS().put(CSS.Property.MARGIN_TOP,
-										calculateTopOrBottomSpacing(true, false, tag, child) + "pt");
+										calculateTopOrBottomSpacing(true, false, tag, child, ctx) + "pt");
 						}
 						if (i == size - 1) {
-							float marginBottom = calculateTopOrBottomSpacing(false, true, tag, child);
+							float marginBottom = calculateTopOrBottomSpacing(false, true, tag, child, ctx);
 							child.getCSS().put(CSS.Property.MARGIN_BOTTOM, marginBottom + "pt");
 						}
 					}
 					try {
-						list.add(new ParagraphCssApplier(getHtmlPipelineContext()).apply((ListItem) li, child));
+						list.add(new ParagraphCssApplier(getHtmlPipelineContext(ctx)).apply((ListItem) li, child));
 					} catch (NoCustomContextException e1) {
 						throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
 					}
@@ -156,18 +157,19 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	 * @param storeMarginBottom if true the calculated margin bottom value is stored for later comparison with the top margin value of the next tag.
 	 * @param tag the ul/ol tag.
 	 * @param child first or last li tag of this list.
+	 * @param ctx
 	 * @return float containing the spacing before or after.
 	 */
-	private float calculateTopOrBottomSpacing(final boolean isTop, final boolean storeMarginBottom, final Tag tag, final Tag child) {
+	private float calculateTopOrBottomSpacing(final boolean isTop, final boolean storeMarginBottom, final Tag tag, final Tag child, final WorkerContext ctx) {
 		float totalSpacing = 0;
 		try {
-			HtmlPipelineContext context = getHtmlPipelineContext();
+			HtmlPipelineContext context = getHtmlPipelineContext(ctx);
 			String end = isTop?"-top":"-bottom";
 			float ownFontSize = fst.getFontSize(tag);
 			float ownMargin = 0;
 			String marginValue = tag.getCSS().get(CSS.Property.MARGIN+end);
 			if(marginValue==null) {
-				if(null != tag.getParent() && getHtmlPipelineContext().getRootTags().contains(tag.getParent().getTag())) {
+				if(null != tag.getParent() && getHtmlPipelineContext(ctx).getRootTags().contains(tag.getParent().getTag())) {
 					ownMargin = ownFontSize;
 				}
 			} else {

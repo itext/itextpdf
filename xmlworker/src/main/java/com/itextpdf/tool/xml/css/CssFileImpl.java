@@ -54,11 +54,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CssFileImpl implements CssFile {
 
     private final Map<String, Map<String, String>> map;
+	private boolean persistent;
 
     /**
      * Constructs a new CssFileImpl.
      */
     public CssFileImpl() {
+    	persistent = false;
         map = new ConcurrentHashMap<String, Map<String, String>>();
     }
 
@@ -87,4 +89,17 @@ public class CssFileImpl implements CssFile {
 		return null == map?new ConcurrentHashMap<String, String>(0):map;
     }
 
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.css.CssFile#isPersistent()
+	 */
+	public boolean isPersistent() {
+		return persistent;
+	}
+
+	/**
+	 * @param isPeristent
+	 */
+	public void isPersistent(final boolean isPeristent) {
+		this.persistent = isPeristent;
+	}
 }

@@ -65,7 +65,7 @@ public class TPBreakTest {
 	@Test
 	public void verifyBreakChunk() {
 		final Break br = new Break();
-		final List<Element> end = br.end(null, null);
+		final List<Element> end = br.end(null, null, null);
 		Assert.assertEquals(Chunk.NEWLINE, end.get(0));
 	}
 

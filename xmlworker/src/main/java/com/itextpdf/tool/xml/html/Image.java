@@ -55,6 +55,7 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
@@ -81,7 +82,7 @@ public class Image extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		Map<String, String> attributes = tag.getAttributes();
 		String src = attributes.get(HTML.Attribute.SRC);
 		com.itextpdf.text.Image img = null;
@@ -93,7 +94,7 @@ public class Image extends AbstractTagProcessor {
 					logger.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_USE), src));
 				}
 				try {
-					img = new ImageRetrieve(getHtmlPipelineContext().getImageProvider()).retrieveImage(src);
+					img = new ImageRetrieve(getHtmlPipelineContext(ctx).getImageProvider()).retrieveImage(src);
 				} catch (NoImageProviderException e) {
 					img = new ImageRetrieve().retrieveImage(src);
 				}

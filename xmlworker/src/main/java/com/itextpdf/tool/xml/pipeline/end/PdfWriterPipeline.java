@@ -50,11 +50,11 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.CustomContext;
-import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.PipelineException;
 import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
@@ -110,12 +110,29 @@ public class PdfWriterPipeline extends AbstractPipeline<MapContext> {
 	public static final String CONTINUOUS = "CONTINUOUS";
 	private Boolean continiously;
 
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.pipeline.AbstractPipeline#init(com.itextpdf.tool.xml.WorkerContext)
+	 */
+	@Override
+	public Pipeline<?> init(final WorkerContext context) throws PipelineException {
+		MapContext mc = new MapContext();
+		continiously = Boolean.TRUE;
+		mc.put(CONTINUOUS, continiously);
+		if (null != doc) {
+			mc.put(DOCUMENT, doc);
+		}
+		if (null != writer) {
+			mc.put(WRITER, writer);
+		}
+		context.put(getContextKey(), mc);
+		return super.init(context);
+	}
 	/**
 	 * @param po
 	 * @throws PipelineException
 	 */
-	private void write(final ProcessObject po) throws PipelineException {
-		MapContext mp = getLocalContext();
+	private void write(final WorkerContext context, final ProcessObject po) throws PipelineException {
+		MapContext mp = getLocalContext(context);
 		if (po.containsWritable()) {
 			Document doc = (Document) mp.get(DOCUMENT);
 			boolean continuousWrite = (Boolean) mp.get(CONTINUOUS);
@@ -151,8 +168,8 @@ public class PdfWriterPipeline extends AbstractPipeline<MapContext> {
 	 * xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline<?> open(final Tag t, final ProcessObject po) throws PipelineException {
-		write(po);
+	public Pipeline<?> open(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
+		write(context, po);
 		return getNext();
 	}
 
@@ -163,8 +180,8 @@ public class PdfWriterPipeline extends AbstractPipeline<MapContext> {
 	 * .xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline<?> content(final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
-		write(po);
+	public Pipeline<?> content(final WorkerContext context, final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
+		write(context, po);
 		return getNext();
 	}
 
@@ -175,26 +192,9 @@ public class PdfWriterPipeline extends AbstractPipeline<MapContext> {
 	 * .xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline<?> close(final Tag t, final ProcessObject po) throws PipelineException {
-		write(po);
+	public Pipeline<?> close(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
+		write(context ,po);
 		return getNext();
-	}
-
-	/**
-	 * Uses {@link MapContext} as CustomContext.
-	 */
-	@Override
-	public MapContext getNewCustomContext() throws NoCustomContextException {
-		MapContext mc = new MapContext();
-		continiously = Boolean.TRUE;
-		mc.put(CONTINUOUS, continiously);
-		if (null != doc) {
-			mc.put(DOCUMENT, doc);
-		}
-		if (null != writer) {
-			mc.put(WRITER, writer);
-		}
-		return mc;
 	}
 
 	/**

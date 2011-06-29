@@ -49,6 +49,7 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.text.log.LoggerFactory;
@@ -56,20 +57,44 @@ import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 
+/**
+ * @author redlab_b
+ *
+ */
 public class CSSFilesTest {
 
-	@Test
-	public void loadandretrieve() throws  CssResolverException {
+
+	private CssFilesImpl files;
+	private Tag t;
+
+	@Before
+	public void setup() throws CssResolverException {
 		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
-		CssFilesImpl files = new CssFilesImpl();
-		StyleAttrCSSResolver resolver = new StyleAttrCSSResolver(files);
-		URL u = CSSFilesTest.class.getResource("/css/style.css");
-		resolver.addCssFile(u.getPath().replace("%20", " ")); // fix url conversion of space (%20) for File
-		Map<String, String> attr = new HashMap<String, String>();
-		Tag t = new Tag("body", attr);
-		Map<String, String> css = files.getCSS(t);
+		files = new CssFilesImpl();
+		final StyleAttrCSSResolver resolver = new StyleAttrCSSResolver(files);
+		final URL u = CSSFilesTest.class.getResource("/css/style.css");
+		resolver.addCssFile(u.getPath().replace("%20", " "), false); // fix url conversion of space (%20) for File
+		final Map<String, String> attr = new HashMap<String, String>();
+		t = new Tag("body", attr);
+	}
+	@Test
+	public void getStyle() throws  CssResolverException {
+		final Map<String, String> css = files.getCSS(t);
 		Assert.assertTrue(css.containsKey("font-size"));
 		Assert.assertTrue(css.containsKey("color"));
 	}
 
+	@Test
+	public void clear() {
+		files.clear();
+		Assert.assertFalse("files detected", files.hasFiles());
+	}
+	@Test
+	public void clearWithPersistent() {
+		CssFileImpl css = new CssFileImpl();
+		css.isPersistent(true);
+		files.add(css);
+		files.clear();
+		Assert.assertTrue("no files detected", files.hasFiles());
+	}
 }

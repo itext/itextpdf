@@ -52,6 +52,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.WritableDirectElement;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 
 /**
@@ -64,7 +65,7 @@ public class Title extends AbstractTagProcessor{
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Element> content(WorkerContext ctx, final Tag tag, final String content) {
 		ArrayList<Element> list = new ArrayList<Element>(1);
 		list.add(new WritableDirectElement() {
 

@@ -67,7 +67,7 @@ public class AbstractTagprocessorTest {
 		};
 		Tag tag = new Tag("dummy");
 		tag.getCSS().put("page-break-after", "always");
-		List<Element> end = a.endElement(tag , new ArrayList<Element>());
+		List<Element> end = a.endElement(null , tag, new ArrayList<Element>());
 		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
 	}
 	@Test
@@ -76,7 +76,7 @@ public class AbstractTagprocessorTest {
 		};
 		Tag tag = new Tag("dummy");
 		tag.getCSS().put("page-break-before", "always");
-		List<Element> end = a.startElement(tag);
+		List<Element> end = a.startElement(null, tag);
 		Assert.assertEquals(Chunk.NEXTPAGE, end.get(0));
 	}
 	@Test
@@ -85,7 +85,7 @@ public class AbstractTagprocessorTest {
 		};
 		Tag tag = new Tag("dummy");
 		tag.getCSS().put("font-size", "16px");
-		a.startElement(tag);
+		a.startElement(null, tag);
 		Assert.assertEquals("12.0pt",tag.getCSS().get("font-size"));
 	}
 	@Test

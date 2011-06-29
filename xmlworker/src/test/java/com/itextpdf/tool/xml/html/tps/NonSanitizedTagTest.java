@@ -66,13 +66,13 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 public class NonSanitizedTagTest {
 	final NonSanitizedTag t = new NonSanitizedTag();
 	private List<Element> content = null;
+	private WorkerContextImpl workerContextImpl;
 
 	@Before
 	public void init() {
-		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
-		t.setContext(workerContextImpl);
-		content = t.content(new Tag("pre"), "	code snippet {" +
+		workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		content = t.content(workerContextImpl, new Tag("pre"), "	code snippet {" +
 		"return it all!!}        ");
 	}
 
@@ -92,7 +92,7 @@ public class NonSanitizedTagTest {
 	 */
 	@Test
 	public void verifyEnd() {
-		Assert.assertTrue(t.end(new Tag("pre"), content).get(0) instanceof NoNewLineParagraph);
+		Assert.assertTrue(t.end(workerContextImpl, new Tag("pre"), content).get(0) instanceof NoNewLineParagraph);
 	}
 
 	/**

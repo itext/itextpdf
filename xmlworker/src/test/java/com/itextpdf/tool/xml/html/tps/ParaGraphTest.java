@@ -67,13 +67,13 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 public class ParaGraphTest {
 	final ParaGraph p = new ParaGraph();
 	List<Element> currentContent = new ArrayList<Element>();
+	private WorkerContextImpl workerContextImpl;
 
 	@Before
 	public void init() {
-		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
-		p.setContext(workerContextImpl);
-		currentContent.addAll(p.content(new Tag("p"), "some paragraph text"));
+		workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		currentContent.addAll(p.content(workerContextImpl, new Tag("p"), "some paragraph text"));
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class ParaGraphTest {
 	 */
 	@Test
 	public void verifyEnd() {
-		final List<Element> endContent = p.end(new Tag("p"), currentContent);
+		final List<Element> endContent = p.end(workerContextImpl, new Tag("p"), currentContent);
 		Assert.assertTrue(endContent.get(0) instanceof Paragraph);
 	}
 

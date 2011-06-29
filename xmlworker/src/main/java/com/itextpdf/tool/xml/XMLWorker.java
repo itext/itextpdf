@@ -40,9 +40,6 @@
  */
 package com.itextpdf.tool.xml;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.util.Map;
 
 import com.itextpdf.text.Element;
@@ -53,7 +50,6 @@ import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.html.TagProcessorFactory;
-import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.parser.XMLParserListener;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
@@ -87,59 +83,16 @@ public class XMLWorker implements XMLParserListener {
 	public XMLWorker(final Pipeline<?> pipeline, final boolean parseHtml) {
 		this.parseHtml = parseHtml;
 		rootpPipe = pipeline;
-		Pipeline<?> p = rootpPipe;
-		while (null != (p = setCustomContext(p)))
-			;
-
 	}
 
-	/**
-	 * The method parse allows you to reuse the same XMLWorker Configuration on a
-	 * per thread basis.
-	 *
-	 * @param in the stream to read XML/HTML from
-	 * @throws IOException if could not read
-	 */
-	@Experimental("Do not expect everything to work as a snap, configure and play with the pipelines")
-	public void parse(final InputStream in) throws IOException {
+	public void init()  {
 		Pipeline<?> p = rootpPipe;
-		while (null != (p = setCustomContext(p)))
-			;
-		XMLParser parser = new XMLParser(parseHtml, this);
-		parser.parse(in);
-	}
-
-	/**
-	 * The method parse allows you to reuse the same XMLWorker Configuration on a
-	 * per thread basis.
-	 *
-	 * @param in the reader to read XML/HTML from
-	 * @throws IOException if could not read
-	 */
-	@Experimental("Do not expect everything to work as a snap, configure and play with the pipelines")
-	public void parse(final Reader in) throws IOException {
-		Pipeline<?> p = rootpPipe;
-		while (null != (p = setCustomContext(p)))
-			;
-		XMLParser parser = new XMLParser(parseHtml, this);
-		parser.parse(in);
-	}
-
-	/**
-	 * @return the {@link Pipeline#getNext()} value
-	 *
-	 */
-	private Pipeline<?> setCustomContext(final Pipeline<?> pipeline) {
 		try {
-			WorkerContextImpl ctx = context.get();
-			pipeline.setContext(ctx);
-			CustomContext cc = pipeline.getNewCustomContext();
-			ctx.add(pipeline.getContextKey(), cc);
-		} catch (NoCustomContextException e) {
+			while ((p = p.init(context.get()))!= null);
+		} catch (PipelineException e) {
+			throw new RuntimeWorkerException(e);
 		}
-		return pipeline.getNext();
 	}
-
 	/**
 	 * Called when a starting tag has been encountered by the
 	 * {@link SimpleXMLParser}. This method creates a {@link Tag} for the
@@ -162,7 +115,7 @@ public class XMLWorker implements XMLParserListener {
 		Pipeline<?> wp = rootpPipe;
 		ProcessObject po = new ProcessObject();
 		try {
-			while (null != (wp = wp.open(t, po)))
+			while (null != (wp = wp.open(context.get(), t, po)))
 				;
 		} catch (PipelineException e) {
 			throw new RuntimeWorkerException(e);
@@ -199,7 +152,7 @@ public class XMLWorker implements XMLParserListener {
 		Pipeline<?> wp = rootpPipe;
 		ProcessObject po = new ProcessObject();
 		try {
-			while (null != (wp = wp.close(current, po)))
+			while (null != (wp = wp.close(context.get(), current, po)))
 				;
 		} catch (PipelineException e) {
 			throw new RuntimeWorkerException(e);
@@ -214,7 +167,7 @@ public class XMLWorker implements XMLParserListener {
 	 * This method searches for the current tag {@link TagProcessor} in the
 	 * given {@link TagProcessorFactory}. If none found and acceptUknown is
 	 * false a {@link NoTagProcessorException} is thrown. If found the
-	 * {@link TagProcessor#content(Tag, String)} is called.<br />
+	 * {@link TagProcessor#content(WorkerContext, Tag, String)} is called.<br />
 	 * The returned {@link Element} if any is added to the currentContent stack.
 	 */
 	public void text(final byte[] b) {
@@ -223,7 +176,7 @@ public class XMLWorker implements XMLParserListener {
 				Pipeline<?> wp = rootpPipe;
 				ProcessObject po = new ProcessObject();
 				try {
-					while (null != (wp = wp.content(current, b, po)))
+					while (null != (wp = wp.content(context.get(), current, b, po)))
 						;
 				} catch (PipelineException e) {
 					throw new RuntimeWorkerException(e);
@@ -253,4 +206,10 @@ public class XMLWorker implements XMLParserListener {
 		// TODO xml comment encountered
 	}
 
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.parser.XMLParserListener#close()
+	 */
+	public void close() {
+		context.remove();
+	}
 }

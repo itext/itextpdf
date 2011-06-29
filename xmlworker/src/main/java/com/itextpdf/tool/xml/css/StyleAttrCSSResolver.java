@@ -265,11 +265,13 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	 * (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.pipeline.css.CSSResolver#addCss(java.lang.String, java.lang.String)
 	 */
-	public void addCss(final String content, final String charSet) throws CssResolverException {
+	public void addCss(final String content, final String charSet, final boolean isPersistent) throws CssResolverException {
 		CssFileProcessor proc = new CssFileProcessor();
 		try {
 			retrieve.processFromStream(new ByteArrayInputStream(content.getBytes(charSet)), proc);
-			this.cssFiles.add(proc.getCss());
+			CssFile css = proc.getCss();
+			css.isPersistent(isPersistent);
+			this.cssFiles.add(css);
 		} catch (UnsupportedEncodingException e) {
 			throw new CssResolverException(e);
 		} catch (IOException e) {
@@ -283,14 +285,16 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	 * @param href the path, if it starts with http we try to retrieve the file
 	 *            from the net, if not we try a normal file operation.
 	 */
-	public void addCssFile(final String href) throws CssResolverException {
+	public void addCssFile(final String href, final boolean isPersistent) throws CssResolverException {
 		CssFileProcessor cssFileProcessor = new CssFileProcessor();
 		try {
 			retrieve.processFromHref(href, cssFileProcessor);
 		} catch (IOException e) {
 			throw new CssResolverException(e);
 		}
-		this.cssFiles.add(cssFileProcessor.getCss());
+		CssFile css = cssFileProcessor.getCss();
+		css.isPersistent(isPersistent);
+		this.cssFiles.add(css);
 	}
 
 	/**
@@ -304,12 +308,14 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.pipeline.css.CSSResolver#addCss(java.lang.String)
 	 */
-	public void addCss(final String content) throws CssResolverException {
+	public void addCss(final String content, final boolean isPersistent) throws CssResolverException {
 		CssFileProcessor proc = new CssFileProcessor();
 		FileRetrieve retrieve = new FileRetrieveImpl();
 		try {
 			retrieve.processFromStream(new ByteArrayInputStream(content.getBytes()), proc);
-			this.cssFiles.add(proc.getCss());
+			CssFile css = proc.getCss();
+			css.isPersistent(isPersistent);
+			this.cssFiles.add(css);
 		} catch (UnsupportedEncodingException e) {
 			throw new CssResolverException(e);
 		} catch (IOException e) {
@@ -326,11 +332,19 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	}
 
 	/**
-	 * The {@link FileRetrieve} implementation to use in {@link StyleAttrCSSResolver#addCssFile(String)}.
+	 * The {@link FileRetrieve} implementation to use in {@link StyleAttrCSSResolver#addCss(String, boolean)}.
 	 * @param retrieve the retrieve to set
 	 */
 	public void setFileRetrieve(final FileRetrieve retrieve) {
 		this.retrieve = retrieve;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.pipeline.css.CSSResolver#clear()
+	 */
+	public CSSResolver clear() throws CssResolverException {
+		cssFiles.clear();
+		return this;
 	}
 
 

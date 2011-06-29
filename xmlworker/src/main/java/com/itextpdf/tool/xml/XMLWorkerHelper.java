@@ -50,6 +50,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.css.CssFile;
 import com.itextpdf.tool.xml.css.CssFileProcessor;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
+import com.itextpdf.tool.xml.css.CSSFileWrapper;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.Tags;
@@ -101,7 +102,7 @@ public class XMLWorkerHelper {
 					while (-1 != (i = in.read())) {
 						cssFileProcessor.process((char) i);
 					}
-					XMLWorkerHelper.defaultCssFile = cssFileProcessor.getCss();
+					XMLWorkerHelper.defaultCssFile = new CSSFileWrapper(cssFileProcessor.getCss(), true);
 				} catch (final IOException e) {
 					throw new RuntimeWorkerException(e);
 				} finally {

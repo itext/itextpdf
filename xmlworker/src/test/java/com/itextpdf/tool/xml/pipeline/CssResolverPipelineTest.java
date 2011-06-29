@@ -55,6 +55,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 
 /**
  * Verifies that the CssResolving process is executed by the CssResolverPipeline.
@@ -69,12 +70,14 @@ public class CssResolverPipelineTest {
 	@Before
 	public void setup() throws CssResolverException, PipelineException {
 		StyleAttrCSSResolver css = new StyleAttrCSSResolver();
-		css.addCss("dummy { key1: value1; key2: value2 } .aklass { key3: value3;} #dumid { key4: value4}");
+		css.addCss("dummy { key1: value1; key2: value2 } .aklass { key3: value3;} #dumid { key4: value4}", true);
 		CssResolverPipeline p = new CssResolverPipeline(css, null);
 		Tag t = new Tag("dummy");
 		t.getAttributes().put("id", "dumid");
 		t.getAttributes().put("class", "aklass");
-		Pipeline<?> open = p.open(t, null);
+		WorkerContextImpl context = new WorkerContextImpl();
+		p.init(context);
+		Pipeline<?> open = p.open(context, t, null);
 		css2 = t.getCSS();
 	}
 

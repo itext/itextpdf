@@ -41,84 +41,32 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.pipeline;
-
-import junit.framework.Assert;
+package com.itextpdf.tool.xml.css;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.itextpdf.tool.xml.CustomContext;
-import com.itextpdf.tool.xml.Pipeline;
-import com.itextpdf.tool.xml.PipelineException;
-import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
-
 /**
- * @author itextpdf.com
+ * @author Balder Van Camp
  *
  */
-public class PipelineTest {
+public class CssFileWrapperTest {
 
-	private AbstractPipelineExtension abstractPipelineExtension;
-	private AbstractPipeline<?> ap;
-	private WorkerContext ctx;
-	/**
-	 *
-	 */
-	private final class AbstractPipelineExtension extends AbstractPipeline<CustomContext> {
-		/**
-		 * @param next
-		 */
-		private AbstractPipelineExtension(final Pipeline<?> next) {
-			super(next);
-		}
-	}
+	private CSSFileWrapper w;
 
-	/** Init test. */
 	@Before
-	public void setup() {
-		ctx = new WorkerContextImpl();
-		abstractPipelineExtension = new AbstractPipelineExtension(null);
-		ap = new AbstractPipeline<CustomContext>(abstractPipelineExtension) {
-		};
+	public void setup(){
+		CssFile css = new CssFileImpl();
+		w = new CSSFileWrapper(css , true);
 	}
-	/**
-	 * Expect a {@link PipelineException} on calling getNewNoCustomContext.
-	 * @throws PipelineException
-	 */
-	@Test(expected=PipelineException.class)
-	public void validateNoCustomContextExceptionThrown() throws PipelineException {
-		AbstractPipeline<?> ap = new AbstractPipeline<CustomContext>(null) {
-		};
-		ap.getLocalContext(ctx);
+
+
+	@Test(expected=UnsupportedOperationException.class)
+	public void testadd() {
+		w.add("", null);
 	}
-	/**
-	 * Verify that getNext actually returns the next pipeline.
-	 */
-	@Test
-	public void validateNext() {
-		Assert.assertEquals(abstractPipelineExtension, ap.getNext());
-	}
-	/**
-	 * Verify that close actually returns the next pipeline.
-	 */
-	@Test
-	public void validateNextClose() throws PipelineException {
-		Assert.assertEquals(abstractPipelineExtension, ap.close(ctx, null, null));
-	}
-	/**
-	 * Verify that open actually returns the next pipeline.
-	 */
-	@Test
-	public void validateNextOpen() throws PipelineException {
-		Assert.assertEquals(abstractPipelineExtension, ap.open(ctx, null, null));
-	}
-	/**
-	 * Verify that content actually returns the next pipeline.
-	 */
-	@Test
-	public void validateNextContent() throws PipelineException {
-		Assert.assertEquals(abstractPipelineExtension, ap.content(ctx, null, null, null));
+	@Test(expected=UnsupportedOperationException.class)
+	public void testisPersistent() {
+		w.isPersistent(false);
 	}
 }

@@ -59,4 +59,11 @@ public interface WorkerContext {
 	 */
 	CustomContext get(String key) throws NoCustomContextException;
 
+	/**
+	 * Store a customContext for the given key.
+	 * @param contextKey
+	 * @param context
+	 */
+	void put(String contextKey, CustomContext context);
+
 }

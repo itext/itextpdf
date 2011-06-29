@@ -49,6 +49,7 @@ import java.util.List;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 
 /**
  * @author redlab_b
@@ -60,7 +61,7 @@ public class Break extends AbstractTagProcessor {
      * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List, com.itextpdf.text.Document)
      */
     @Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
     	List<Element> l = new ArrayList<Element>(1);
     	l.add(Chunk.NEWLINE);
         return l;

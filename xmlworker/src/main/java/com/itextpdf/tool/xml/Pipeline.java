@@ -52,59 +52,46 @@ package com.itextpdf.tool.xml;
 public interface Pipeline<T extends CustomContext> {
 
 	/**
-	 * Sets the global worker context.
-	 * @param context the worker context
+	 * @param context
+	 * @return the next pipeline in line
+	 * @throws PipelineException
 	 */
-	public void setContext(WorkerContext context);
-
+	Pipeline<?> init(final WorkerContext context) throws PipelineException;
 	/**
 	 * Called when an opening tag has been encountered.
+	 * @param context the WorkerContext
 	 * @param t the Tag
 	 * @param po a processObject to put {@link Writable}s in
 	 * @return the next pipeline in line
 	 * @throws PipelineException can be thrown to indicate that something went wrong.
 	 */
-	public Pipeline<?> open(Tag t, ProcessObject po) throws PipelineException;
+	Pipeline<?> open(WorkerContext context, Tag t, ProcessObject po) throws PipelineException;
 
 	/**
 	 * Called when content has been encountered.
+	 * @param context the WorkerContext
 	 * @param t the Tag
 	 * @param content the content
 	 * @param po a processObject to put {@link Writable}s in
 	 * @return the next pipeline in line
 	 * @throws PipelineException can be thrown to indicate that something went wrong.
 	 */
-	public Pipeline<?> content(Tag t, byte[] content, ProcessObject po) throws PipelineException;
+	Pipeline<?> content(WorkerContext context, Tag t, byte[] content, ProcessObject po) throws PipelineException;
 
 	/**
 	 * Called when a closing tag has been encountered.
+	 * @param context the WorkerContext
 	 * @param t the Tag
 	 * @param po a processObject to put {@link Writable}s in
 	 * @return the next pipeline in line
 	 * @throws PipelineException  can be thrown to indicate that something went wrong.
 	 */
-	public Pipeline<?> close(Tag t, ProcessObject po) throws PipelineException;
+	Pipeline<?> close(WorkerContext context, Tag t, ProcessObject po) throws PipelineException;
 
 	/**
 	 * Returns the next pipeline in line.
 	 * @return the next pipeline
 	 */
-	public Pipeline<?> getNext();
+	Pipeline<?> getNext();
 
-	/**
-	 * @return a <strong>new</strong> custom context for this pipeline
-	 * @throws NoCustomContextException if there is no custom context for this pipeline
-	 */
-	public T getNewCustomContext() throws NoCustomContextException;
-
-	/**
-	 * @return the local context
-	 * @throws PipelineException if there is no custom context
-	 */
-	T getLocalContext() throws PipelineException;
-
-	/**
-	 * @return a key to use as key for the context
-	 */
-	public String getContextKey();
 }

@@ -158,6 +158,9 @@ public class XMLParser {
 	 * @throws IOException if IO went wrong
 	 */
 	public void parse(final Reader reader) throws IOException {
+		for (XMLParserListener l : listeners) {
+			l.init();
+		}
 		int read = -1;
 		Reader r;
 		if (monitor != null) {
@@ -170,6 +173,9 @@ public class XMLParser {
 			state.process(read);
 		}
 		} finally {
+			for (XMLParserListener l : listeners) {
+				l.close();
+			}
 			r.close();
 		}
 	}
@@ -178,12 +184,18 @@ public class XMLParser {
 	 * @throws IOException
 	 */
 	private void parseStream(final InputStream r) throws IOException {
+		for (XMLParserListener l : listeners) {
+			l.init();
+		}
 		int read = -1;
 		try {
 			while (-1 != (read = r.read())) {
 				state.process(read);
 			}
 		} finally {
+			for (XMLParserListener l : listeners) {
+				l.close();
+			}
 			r.close();
 		}
 	}

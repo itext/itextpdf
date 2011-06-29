@@ -110,5 +110,15 @@ public class ParserListenerWriter implements XMLParserListener {
 	public void comment(final String comment) {
 		writer.append("<!--").append(comment).append("-->");
 	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.parser.XMLParserListener#init()
+	 */
+	public void init() {
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.parser.XMLParserListener#close()
+	 */
+	public void close() {
+	}
 
 }

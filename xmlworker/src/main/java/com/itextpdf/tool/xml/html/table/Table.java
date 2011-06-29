@@ -67,6 +67,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPTableEvent;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
@@ -124,7 +125,7 @@ public class Table extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		try {
 			int numberOfColumns = 0;
 			List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
@@ -164,7 +165,7 @@ public class Table extends AbstractTagProcessor {
 			table.setFooterRows(footerRows);
 			TableStyleValues styleValues = setStyleValues(tag);
 			table.setTableEvent(new TableBorderEvent(styleValues));
-			setVerticalMargin(table, tag, styleValues);
+			setVerticalMargin(table, tag, styleValues, ctx);
 			widenLastCell(tableRows, styleValues.getHorBorderSpacing());
 			float[] columnWidths = new float[numberOfColumns];
 			float[] widestWords = new float[numberOfColumns];
@@ -220,15 +221,15 @@ public class Table extends AbstractTagProcessor {
 					}
 				}
 			}
-			float totalFixedWidth = getTableWidth(fixedWidths, tag, styleValues.getHorBorderSpacing());
-			float targetWidth = calculateTargetWidth(tag, columnWidths, styleValues.getHorBorderSpacing());
+			float totalFixedWidth = getTableWidth(fixedWidths, tag, styleValues.getHorBorderSpacing(), ctx);
+			float targetWidth = calculateTargetWidth(tag, columnWidths, styleValues.getHorBorderSpacing(), ctx);
 			if (totalFixedWidth > targetWidth) {
 				float targetPercentage = targetWidth / totalFixedWidth;
 				for (int column = 0; column < columnWidths.length; column++) {
 					columnWidths[column] *= targetPercentage;
 				}
 			} else {
-				float initialTotalWidth = getTableWidth(columnWidths, tag, styleValues.getHorBorderSpacing());
+				float initialTotalWidth = getTableWidth(columnWidths, tag, styleValues.getHorBorderSpacing(), ctx);
 				float targetPercentage = (targetWidth - totalFixedWidth) / (initialTotalWidth - totalFixedWidth);
 				// Reduce width of columns if the columnWidth array + borders +
 				// paddings
@@ -285,12 +286,12 @@ public class Table extends AbstractTagProcessor {
 								// minimum width (= widestWords array).
 								float pageWidth;
 								try {
-									pageWidth = getHtmlPipelineContext().getPageSize().getWidth();
+									pageWidth = getHtmlPipelineContext(ctx).getPageSize().getWidth();
 								} catch (NoCustomContextException e1) {
 									throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
 								}
-								if (getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing()) < pageWidth) {
-									targetWidth = getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing());
+								if (getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing(), ctx) < pageWidth) {
+									targetWidth = getTableWidth(widestWords, tag, styleValues.getHorBorderSpacing(), ctx);
 									leftToReduce = 0;
 								} else {
 									// If all columnWidths are set to the
@@ -299,7 +300,7 @@ public class Table extends AbstractTagProcessor {
 									// content will fall off the edge of a page,
 									// which
 									// is similar to HTML.
-									targetWidth = pageWidth - getTableOuterWidth(tag, styleValues.getHorBorderSpacing());
+									targetWidth = pageWidth - getTableOuterWidth(tag, styleValues.getHorBorderSpacing(), ctx);
 									leftToReduce = 0;
 								}
 							}
@@ -380,20 +381,21 @@ public class Table extends AbstractTagProcessor {
 	 * </ol>
 	 * If none of the above is true, the width of the table is set to its default with the columnWidths array.
 	 * @param columnWidths float[] containing the widest lines of text found in the columns.
+	 * @param ctx
 	 * @return float the target width of a table.
 	 * @throws NoCustomContextException
 	 */
-	private float calculateTargetWidth(final Tag tag, final float[] columnWidths, final float horBorderSpacing) throws NoCustomContextException {
+	private float calculateTargetWidth(final Tag tag, final float[] columnWidths, final float horBorderSpacing, final WorkerContext ctx) throws NoCustomContextException {
 		float targetWidth = 0;
-		float marginsBordersSpacing = getTableOuterWidth(tag, horBorderSpacing);
-		HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext();
+		float marginsBordersSpacing = getTableOuterWidth(tag, horBorderSpacing, ctx);
+		HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
 		if (tag.getAttributes().get(CSS.Property.WIDTH) != null || tag.getCSS().get(CSS.Property.WIDTH) != null) {
 			targetWidth = new WidthCalculator().getWidth(tag, htmlPipelineContext.getRootTags(), htmlPipelineContext.getPageSize().getWidth()) - marginsBordersSpacing;
 		} else if (null == tag.getParent()
 				|| (null != tag.getParent() &&htmlPipelineContext.getRootTags().contains(tag.getParent().getTag()))) {
 			targetWidth = htmlPipelineContext.getPageSize().getWidth() - marginsBordersSpacing;
 		} else /* this table is an inner table and width adjustment is done in outer table */ {
-			targetWidth = getTableWidth(columnWidths, tag, horBorderSpacing);
+			targetWidth = getTableWidth(columnWidths, tag, horBorderSpacing, ctx);
 		}
 		return targetWidth;
 	}
@@ -567,15 +569,16 @@ public class Table extends AbstractTagProcessor {
 	 * @param widths array of floats containing column width values.
 	 * @param tag the table tag.
 	 * @param horBorderSpacing of the table.
+	 * @param ctx
 	 * @return a table's width.
 	 * @throws NoCustomContextException
 	 */
-	private float getTableWidth(final float[] widths, final Tag tag, final float horBorderSpacing) throws NoCustomContextException {
+	private float getTableWidth(final float[] widths, final Tag tag, final float horBorderSpacing, final WorkerContext ctx) throws NoCustomContextException {
 		float width = 0;
 		for(float f: widths) {
 			width += f;
 		}
-		return width + getTableOuterWidth(tag, horBorderSpacing);
+		return width + getTableOuterWidth(tag, horBorderSpacing, ctx);
 	}
 
 	/**
@@ -588,17 +591,18 @@ public class Table extends AbstractTagProcessor {
 	 * </ul>
 	 * @param tag
 	 * @param horBorderSpacing
+	 * @param ctx
 	 * @return
 	 * @throws NoCustomContextException
 	 */
-	private float getTableOuterWidth(final Tag tag, final float horBorderSpacing) throws NoCustomContextException {
-		float total = utils.getLeftAndRightMargin(tag, getHtmlPipelineContext().getPageSize().getWidth())
+	private float getTableOuterWidth(final Tag tag, final float horBorderSpacing, final WorkerContext ctx) throws NoCustomContextException {
+		float total = utils.getLeftAndRightMargin(tag, getHtmlPipelineContext(ctx).getPageSize().getWidth())
 			+ utils.checkMetricStyle(tag, CSS.Property.BORDER_LEFT_WIDTH)
 			+ utils.checkMetricStyle(tag, CSS.Property.BORDER_RIGHT_WIDTH)
 			+ horBorderSpacing;
 		Tag parent = tag.getParent();
 		if (parent != null) {
-			total += utils.getLeftAndRightMargin(parent, getHtmlPipelineContext().getPageSize().getWidth());
+			total += utils.getLeftAndRightMargin(parent, getHtmlPipelineContext(ctx).getPageSize().getWidth());
 		}
 		return total;
 	}
@@ -627,11 +631,12 @@ public class Table extends AbstractTagProcessor {
 	 * @param table PdfPTable on which the margins need to be set.
 	 * @param t Tag containing the margin styles and font size if needed.
 	 * @param values {@link TableStyleValues} containing border widths and border spacing values.
+	 * @param ctx
 	 * @throws NoCustomContextException
 	 */
-	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values) throws NoCustomContextException {
+	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values, final WorkerContext ctx) throws NoCustomContextException {
 		float spacingBefore = values.getBorderWidthTop();
-		Map<String, Object> memory = getHtmlPipelineContext().getMemory();
+		Map<String, Object> memory = getHtmlPipelineContext(ctx).getMemory();
 		Object mb = memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
 		if(mb != null) {
 			spacingBefore += (Float)mb;
@@ -645,7 +650,7 @@ public class Table extends AbstractTagProcessor {
 			} else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
 				float marginBottom = utils.parseValueToPt(value, fst.getFontSize(t));
 				spacingAfter += marginBottom;
-				getHtmlPipelineContext().getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, marginBottom);
+				getHtmlPipelineContext(ctx).getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, marginBottom);
 			}
 		}
 		table.setSpacingBefore(spacingBefore);

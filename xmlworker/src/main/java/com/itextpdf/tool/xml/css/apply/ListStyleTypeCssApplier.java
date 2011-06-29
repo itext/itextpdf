@@ -84,6 +84,10 @@ public class ListStyleTypeCssApplier {
 	/**
 	 * The ListCssApplier has the capabilities to change the type of the given {@link List} dependable on the css.
 	 * This means: <strong>Always replace your list with the returned one and add content to the list after applying!</strong>
+	 * @param list
+	 * @param t
+	 * @param htmlPipelineContext
+	 * @return
 	 */
 	// not implemented: list-style-type:armenian, georgian, decimal-leading-zero.
 	public List apply(final List list, final Tag t, final HtmlPipelineContext htmlPipelineContext) {

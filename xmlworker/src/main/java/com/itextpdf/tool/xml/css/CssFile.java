@@ -67,4 +67,14 @@ public interface CssFile {
 	 */
 	Map<String, String> get(String selector);
 
+	/**
+	 * @return if this CSS file should never be thrown away. Used in CSSFilesImpl#clear
+	 */
+	boolean isPersistent();
+
+	/**
+	 * @param b
+	 */
+	void isPersistent(boolean b);
+
 }

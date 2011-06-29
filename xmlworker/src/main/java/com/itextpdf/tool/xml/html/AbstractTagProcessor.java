@@ -48,29 +48,27 @@ import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
-import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
+import com.itextpdf.tool.xml.pipeline.ctx.ObjectContext;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * Abstract TagProcessor that allows setting the configuration object to a
  * protected member variable.<br />
- * Implements {@link TagProcessor#startElement(Tag)} and
- * {@link TagProcessor#endElement(Tag, List)} to calculate font sizes and add
+ * Implements {@link TagProcessor#startElement(WorkerContext, Tag)} and
+ * {@link TagProcessor#endElement(WorkerContext, Tag, List)} to calculate font sizes and add
  * new pages if needed.<br />
  * Extend from this class instead of implementing {@link TagProcessor} to
  * benefit from auto fontsize metric conversion to pt and
  * page-break-before/after insertion. Override
- * {@link AbstractTagProcessor#start(Tag)} and
- * {@link AbstractTagProcessor#end(Tag, List)} in your extension.
+ * {@link AbstractTagProcessor#start(WorkerContext, Tag)} and
+ * {@link AbstractTagProcessor#end(WorkerContext, Tag, List)} in your extension.
  *
  * @author redlab_b
  *
  */
 public abstract class AbstractTagProcessor implements TagProcessor {
 
-	// FIXME wouldn't it be better to pass the context along with the method calls? I believe it is
-	private final static ThreadLocal<WorkerContext> ctxLocal = new ThreadLocal<WorkerContext>();
 	private final FontSizeTranslator fontsizeTrans;
 
 	/**
@@ -81,24 +79,14 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	}
 
 	/**
-	 * Set the WorkerContext, It's stored in a ThreadLocal context, allowing reuse of the
-	 * TagProcessorFactory in different {@link HtmlPipeline}s.
-	 *
-	 * @param context the global worker context.
-	 */
-	public void setContext(final WorkerContext context) {
-		ctxLocal.set(context);
-	}
-
-	/**
 	 * Utility method that fetches the CSSResolver from the if any and if it uses the default key.
 	 *
 	 * @return CSSResolver
 	 * @throws NoCustomContextException if the context of the
 	 *             {@link CssResolverPipeline} could not be found.
 	 */
-	public CSSResolver getCSSResolver() throws NoCustomContextException {
-		return (CSSResolver) ((MapContext)ctxLocal.get().get(CssResolverPipeline.class.getName())).get(CssResolverPipeline.CSS_RESOLVER);
+	public CSSResolver getCSSResolver(final WorkerContext context) throws NoCustomContextException {
+		return ((ObjectContext<CSSResolver>)context.get(CssResolverPipeline.class.getName())).get();
 	}
 
 	/**
@@ -109,47 +97,48 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @throws NoCustomContextException if the context of the
 	 *             {@link HtmlPipelineContext} could not be found.
 	 */
-	public HtmlPipelineContext getHtmlPipelineContext() throws NoCustomContextException {
-		return ((HtmlPipelineContext) ctxLocal.get().get(HtmlPipeline.class.getName()));
+	public HtmlPipelineContext getHtmlPipelineContext(final WorkerContext context) throws NoCustomContextException {
+		return ((HtmlPipelineContext) context.get(HtmlPipeline.class.getName()));
 	}
 	/**
 	 * Calculates any found font size to pt values and set it in the CSS before
-	 * calling {@link AbstractTagProcessor#start(Tag)}.<br />
+	 * calling {@link AbstractTagProcessor#start(WorkerContext, Tag)}.<br />
 	 * Checks for
 	 * {@link com.itextpdf.tool.xml.css.CSS.Property#PAGE_BREAK_BEFORE}, if the
 	 * value is always a <code>Chunk.NEXTPAGE</code> added before the
-	 * implementors {@link AbstractTagProcessor#start(Tag)} method.
+	 * implementors {@link AbstractTagProcessor#start(WorkerContext, Tag)} method.
 	 *
 	 */
-	public final List<Element> startElement(final Tag tag) {
+	public final List<Element> startElement(final WorkerContext ctx, final Tag tag) {
 		float fontSize = fontsizeTrans.translateFontSize(tag);
 		tag.getCSS().put(CSS.Property.FONT_SIZE, fontSize + "pt");
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_BEFORE);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
 			List<Element> list = new ArrayList<Element>(2);
 			list.add(Chunk.NEXTPAGE);
-			list.addAll(start(tag));
+			list.addAll(start(ctx, tag));
 			return list;
 		}
-		return start(tag);
+		return start(ctx, tag);
 	}
 
 	/**
 	 * Classes extending AbstractTagProcessor should override this method for actions that should be done in
-	 * {@link TagProcessor#startElement(Tag)}. The {@link AbstractTagProcessor#startElement(Tag)} calls this method
+	 * {@link TagProcessor#startElement(WorkerContext, Tag)}. The {@link AbstractTagProcessor#startElement(WorkerContext, Tag)} calls this method
 	 * after or before doing certain stuff, (see it's description).
-	 *
+	 * @param ctx the WorkerContext
 	 * @param tag the tag
+	 *
 	 * @return an element to be added to current content, may be null
 	 */
-	public List<Element> start(final Tag tag){ return new ArrayList<Element>(0); };
+	public List<Element> start(final WorkerContext ctx, final Tag tag){ return new ArrayList<Element>(0); };
 
 	/*
 	 * (non-Javadoc)
 	 *
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
 		return new ArrayList<Element>(0);
 	}
 
@@ -158,10 +147,10 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * {@link com.itextpdf.tool.xml.css.CSS.Property#PAGE_BREAK_AFTER}, if the
 	 * value is always a <code>Chunk.NEXTPAGE</code> is added to the
 	 * currentContentList after calling
-	 * {@link AbstractTagProcessor#end(Tag, List)}.
+	 * {@link AbstractTagProcessor#end(WorkerContext, Tag, List)}.
 	 */
-	public final List<Element> endElement(final Tag tag, final List<Element> currentContent) {
-		List<Element> list = end(tag, currentContent);
+	public final List<Element> endElement(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
+		List<Element> list = end(ctx, tag, currentContent);
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_AFTER);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
 			list.add(Chunk.NEXTPAGE);
@@ -172,15 +161,16 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 
 	/**
 	 * Classes extending AbstractTagProcessor should override this method for
-	 * actions that should be done in {@link TagProcessor#endElement(Tag, List)}.
-	 * The {@link AbstractTagProcessor#endElement(Tag, List)} calls this method
+	 * actions that should be done in {@link TagProcessor#endElement(WorkerContext, Tag, List)}.
+	 * The {@link AbstractTagProcessor#endElement(WorkerContext, Tag, List)} calls this method
 	 * after or before doing certain stuff, (see it's description).
-	 *
+	 * @param ctx the WorkerContext
 	 * @param tag the tag
 	 * @param currentContent the content created from e.g. inner tags, inner content and not yet added to document.
+	 *
 	 * @return a List containing iText Element objects
 	 */
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		return new ArrayList<Element>(currentContent);
 	}
 
@@ -203,10 +193,11 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 *            returned, true if new line should be added or not.
 	 * @param applyCSS true if CSS should be applied on the paragraph
 	 * @param tag the relevant tag
+	 * @param context the WorkerContext
 	 * @return a List with paragraphs
 	 */
 	public final List<Element> currentContentToParagraph(final List<Element> currentContent,
-			final boolean addNewLines, final boolean applyCSS, final Tag tag) {
+			final boolean addNewLines, final boolean applyCSS, final Tag tag, final WorkerContext ctx) {
 		try {
 			List<Element> list = new ArrayList<Element>();
 			if (currentContent.size() > 0) {
@@ -216,7 +207,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 						p.add(e);
 					}
 					if (applyCSS) {
-						p = new ParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
+						p = new ParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(p, tag);
 					}
 					list.add(p);
 				} else {
@@ -224,7 +215,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 					for (Element e : currentContent) {
 						p.add(e);
 					}
-					p = new NoNewLineParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
+					p = new NoNewLineParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(p, tag);
 					list.add(p);
 				}
 			}
@@ -236,7 +227,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 
 	/**
 	 * Default apply CSS to false and tag to null.
-	 * @see AbstractTagProcessor#currentContentToParagraph(List, boolean, boolean, Tag)
+	 * @see AbstractTagProcessor#currentContentToParagraph(List, boolean, boolean, Tag, WorkerContext)
 	 * @param currentContent List<Element> of the current elements to be added.
 	 * @param addNewLines boolean to declare which paragraph element should be
 	 *            returned, true if new line should be added or not.
@@ -244,6 +235,6 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 */
 	public final List<Element> currentContentToParagraph(final List<Element> currentContent,
 			final boolean addNewLines) {
-		return this.currentContentToParagraph(currentContent, addNewLines, false, null);
+		return this.currentContentToParagraph(currentContent, addNewLines, false, null, null);
 	}
 }

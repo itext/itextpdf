@@ -62,6 +62,9 @@ import com.itextpdf.tool.xml.parser.io.ParserListenerWriter;
  */
 public class ParserTest {
 
+	/**
+	 *
+	 */
 	@Before
 	public void setup() {
 		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
