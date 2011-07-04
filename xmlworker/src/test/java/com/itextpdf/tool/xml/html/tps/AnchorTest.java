@@ -73,7 +73,7 @@ public class AnchorTest {
 	}
 
 	/**
-	 * Verifies if {@link Achor} is a stack owner. Should be true.
+	 * Verifies if {@link Anchor} is a stack owner. Should be true.
 	 */
 	@Test
 	public void verifyIfStackOwner() {
