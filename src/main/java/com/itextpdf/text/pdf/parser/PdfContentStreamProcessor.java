@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
