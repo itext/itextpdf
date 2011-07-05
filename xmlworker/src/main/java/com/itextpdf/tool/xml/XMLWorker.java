@@ -42,16 +42,10 @@ package com.itextpdf.tool.xml;
 
 import java.util.Map;
 
-import com.itextpdf.text.Element;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
-import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
-import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
-import com.itextpdf.tool.xml.html.TagProcessor;
-import com.itextpdf.tool.xml.html.TagProcessorFactory;
 import com.itextpdf.tool.xml.parser.XMLParserListener;
-import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 
 /**
@@ -63,7 +57,6 @@ import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
  */
 public class XMLWorker implements XMLParserListener {
 
-	private Tag current = null;
 	private final Pipeline<?> rootpPipe;
 	private static ThreadLocal<WorkerContextImpl> context = new ThreadLocal<WorkerContextImpl>() {
 		@Override
@@ -93,29 +86,18 @@ public class XMLWorker implements XMLParserListener {
 			throw new RuntimeWorkerException(e);
 		}
 	}
-	/**
-	 * Called when a starting tag has been encountered by the
-	 * {@link SimpleXMLParser}. This method creates a {@link Tag} for the
-	 * encountered tag. The parent for the encountered tag is set if any. The
-	 * css is resolved with the given {@link CSSResolver} if any. A
-	 * {@link TagProcessor} for the encountered {@link Tag} is loaded from the
-	 * given {@link TagProcessorFactory}. If none found and acceptUknown is
-	 * false a {@link NoTagProcessorException} is thrown. If found the
-	 * TagProcessors startElement is called.
-	 */
-	public void startElement(String tag, final Map<String, String> attr, final String ns) {
-		if (parseHtml) {
-			tag = tag.toLowerCase();
+
+	public void startElement(final String tag, final Map<String, String> attr, final String ns) {
+		Tag t = createTag(tag, attr, ns);
+		WorkerContextImpl ctx = context.get();
+		if (null != ctx.getCurrentTag()) {
+			ctx.getCurrentTag().addChild(t);
 		}
-		Tag t = new Tag(tag, attr, ns);
-		if (null != current) {
-			current.addChild(t);
-		}
-		current = t;
+		ctx.setCurrentTag(t);
 		Pipeline<?> wp = rootpPipe;
 		ProcessObject po = new ProcessObject();
 		try {
-			while (null != (wp = wp.open(context.get(), t, po)))
+			while (null != (wp = wp.open(ctx, t, po)))
 				;
 		} catch (PipelineException e) {
 			throw new RuntimeWorkerException(e);
@@ -124,19 +106,20 @@ public class XMLWorker implements XMLParserListener {
 	}
 
 	/**
-	 * Called when an ending tag is encountered by the {@link SimpleXMLParser}.
-	 * This method searches for the tags {@link TagProcessor} in the given
-	 * {@link TagProcessorFactory}. If none found and acceptUknown is false a
-	 * {@link NoTagProcessorException} is thrown. If found the TagProcessors
-	 * endElement is called.<br />
-	 * The returned Element by the TagProcessor is added to the currentContent
-	 * stack.<br />
-	 * If any of the parent tags or the given tags
-	 * {@link TagProcessor#isStackOwner()} is true. The returned Element is put
-	 * on the respective stack.Else it element is added to the document or the
-	 * elementList.
-	 *
+	 * Creates a new Tag object from the given parameters.
+	 * @param tag the tag name
+	 * @param attr the attributes
+	 * @param ns the namespace if any
+	 * @return a Tag
 	 */
+	protected Tag createTag(String tag, final Map<String, String> attr, final String ns) {
+		if (parseHtml) {
+			tag = tag.toLowerCase();
+		}
+		Tag t = new Tag(tag, attr, ns);
+		return t;
+	}
+
 	public void endElement(final String tag, final String ns) {
 		String thetag = null;
 		if (parseHtml) {
@@ -144,39 +127,38 @@ public class XMLWorker implements XMLParserListener {
 		} else {
 			thetag = tag;
 		}
-		if (null != current && !thetag.equals(current.getTag())) {
+		WorkerContextImpl ctx = context.get();
+		if (null != ctx.getCurrentTag() && !thetag.equals(ctx.getCurrentTag().getTag())) {
 			throw new RuntimeWorkerException(String.format(
 					LocaleMessages.getInstance().getMessage(LocaleMessages.INVALID_NESTED_TAG), thetag,
-					current.getTag()));
+					ctx.getCurrentTag().getTag()));
 		}
 		Pipeline<?> wp = rootpPipe;
 		ProcessObject po = new ProcessObject();
 		try {
-			while (null != (wp = wp.close(context.get(), current, po)))
+			while (null != (wp = wp.close(ctx, ctx.getCurrentTag(), po)))
 				;
 		} catch (PipelineException e) {
 			throw new RuntimeWorkerException(e);
 		} finally {
-			if (null != current)
-				current = current.getParent();
+			if (null != ctx.getCurrentTag())
+				ctx.setCurrentTag(ctx.getCurrentTag().getParent());
 		}
 	}
 
 	/**
-	 * This method is called when the {@link SimpleXMLParser} encountered text.
-	 * This method searches for the current tag {@link TagProcessor} in the
-	 * given {@link TagProcessorFactory}. If none found and acceptUknown is
-	 * false a {@link NoTagProcessorException} is thrown. If found the
-	 * {@link TagProcessor#content(WorkerContext, Tag, String)} is called.<br />
-	 * The returned {@link Element} if any is added to the currentContent stack.
+	 * This method passes encountered text to the pipeline via the
+	 * {@link Pipeline#content(WorkerContext, Tag, byte[], ProcessObject)}
+	 * method.
 	 */
 	public void text(final byte[] b) {
-		if (null != current) {
+		WorkerContextImpl ctx = context.get();
+		if (null != ctx.getCurrentTag()) {
 			if (b.length > 0) {
 				Pipeline<?> wp = rootpPipe;
 				ProcessObject po = new ProcessObject();
 				try {
-					while (null != (wp = wp.content(context.get(), current, b, po)))
+					while (null != (wp = wp.content(ctx, ctx.getCurrentTag(), b, po)))
 						;
 				} catch (PipelineException e) {
 					throw new RuntimeWorkerException(e);
@@ -211,5 +193,13 @@ public class XMLWorker implements XMLParserListener {
 	 */
 	public void close() {
 		context.remove();
+	}
+
+	/**
+	 * Returns the current tag.
+	 * @return the current tag
+	 */
+	protected Tag getCurrentTag() {
+		return context.get().getCurrentTag();
 	}
 }

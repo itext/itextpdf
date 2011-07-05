@@ -66,4 +66,14 @@ public interface WorkerContext {
 	 */
 	void put(String contextKey, CustomContext context);
 
+	/**
+	 * Contains the current tag.
+	 * @param t the Tag
+	 */
+	void setCurrentTag(Tag t);
+
+	/**
+	 * @return the current tag
+	 */
+	Tag getCurrentTag();
 }

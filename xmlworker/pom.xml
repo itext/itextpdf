@@ -100,7 +100,7 @@
 				<configuration>
 					<excludes>
 						<exclude>examples/*.java</exclude>
-						<exclude>*BugRunnerTest.java</exclude>
+						<exclude>com/itextpdf/tool/xml/BugRunnerTest.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
