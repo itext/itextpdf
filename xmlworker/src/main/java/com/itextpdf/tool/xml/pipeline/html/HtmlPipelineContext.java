@@ -246,23 +246,32 @@ public class HtmlPipelineContext implements CustomContext, Cloneable {
 
 	/**
 	 * Create a clone of this HtmlPipelineContext, the clone only contains the
-	 * initial values, not the internal values. Beware, the state of the
-	 * current Context is not copied to the clone. Only the configurational
-	 * important stuff like the LinkProvider, ImageProvider (on this one also
-	 * {@link ImageProvider#reset()} is called, TagProcessorFactory,
-	 * acceptUnknown, charset, autobookmark are copied.
+	 * initial values, not the internal values. Beware, the state of the current
+	 * Context is not copied to the clone. Only the configurational important
+	 * stuff like the LinkProvider (same object), ImageProvider (new
+	 * {@link AbstractImageProvider} with same ImageRootPath) ,
+	 * TagProcessorFactory (same object), acceptUnknown (primitive), charset
+	 * (Charset.forName to get a new charset), autobookmark (primitive) are
+	 * copied.
 	 */
 	@Override
 	public HtmlPipelineContext clone() throws CloneNotSupportedException {
 		HtmlPipelineContext newCtx = new HtmlPipelineContext();
-		newCtx.setPageSize(this.pageSize).setLinkProvider(this.linkprovider).setImageProvider(this.imageProvider)
-				.setRootTags(this.roottags).charSet(this.charset).autoBookmark(this.autoBookmark)
-				.setTagFactory(this.tagFactory).setAcceptUnknown(this.acceptUnknown);
-		newCtx.setContext(this.context);
-		try {
-			newCtx.getImageProvider().reset();
-		} catch (NoImageProviderException e) {
+		if (this.imageProvider != null) {
+			final String rootPath =  imageProvider.getImageRootPath();
+			newCtx.setImageProvider(new AbstractImageProvider() {
+
+				public String getImageRootPath() {
+					return rootPath;
+				}
+			});
 		}
+		if (null != this.charset) {
+			newCtx.charSet(Charset.forName(this.charset.name()));
+		}
+		newCtx.setPageSize(new Rectangle(this.pageSize)).setLinkProvider(this.linkprovider)
+				.setRootTags(new ArrayList<String>(this.roottags)).autoBookmark(this.autoBookmark)
+				.setTagFactory(this.tagFactory).setAcceptUnknown(this.acceptUnknown);
 		return newCtx;
 	}
 	/**
