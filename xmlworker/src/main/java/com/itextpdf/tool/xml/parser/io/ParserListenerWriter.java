@@ -88,7 +88,7 @@ public class ParserListenerWriter implements XMLParserListener {
 		if( attributes.size() >0) {
 			writer.append("<").append(myns ).append(currentTag).append(" ");
 			for (Entry<String,String> e : attributes.entrySet()) {
-				writer.append(e.getKey()).append("=\"").append(e.getValue()).append("\"");
+				writer.append(e.getKey()).append("=\"").append(e.getValue()).append("\" ");
 			}
 			writer.append('>');
 		} else {

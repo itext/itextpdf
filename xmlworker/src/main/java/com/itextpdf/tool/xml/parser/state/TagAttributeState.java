@@ -73,23 +73,45 @@ public class TagAttributeState implements State {
 			this.parser.flush();
 			this.parser.selectState().attributeValue();
 		} else if (Character.isWhitespace(character)){
-			String attr = this.parser.bufferToString();
-			if (attr.length() > 0) {
-				this.parser.memory().currentAttr(attr);
-				this.parser.flush();
-			}
+			setAttribute();
 		} else if (character == '>') {
+			checkAttributeWithNoValue();
 			this.parser.startElement();
 			this.parser.flush();
 			this.parser.selectState().inTag();
 		} else if (character == '?'){
+			checkAttributeWithNoValue();
 			this.parser.startElement();
 			this.parser.flush();
 			this.parser.selectState().xml();
+		} else if (this.parser.memory().hasCurrentAttribute() && !Character.isWhitespace(character)) {
+			// assume attribute with no value, example tag <?formServer defaultPDFRenderFormat acrobat8.1dynamic?>
+			this.parser.memory().putCurrentAttrValue("");
+			this.parser.append(character);
 		} else {
 			this.parser.append(character);
 		}
 
+	}
+
+	private void checkAttributeWithNoValue() {
+		if (setAttribute()) {
+			this.parser.memory().putCurrentAttrValue("");
+		}
+	}
+
+	/**
+	 * @return true if an attribute was set
+	 *
+	 */
+	protected boolean setAttribute() {
+		String attr = this.parser.bufferToString();
+		if (attr.length() > 0) {
+			this.parser.memory().currentAttr(attr);
+			this.parser.flush();
+			return true;
+		}
+		return false;
 	}
 
 }

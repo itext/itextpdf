@@ -92,11 +92,24 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Sets the current attribute value.
+	 * true if there is a currentAttribute
+	 * @return true or false
+	 */
+	public boolean hasCurrentAttribute() {
+		return null != this.currentAttr;
+	}
+	/**
+	 * Sets the current attribute value and adds the attribute (if it's not
+	 * null) to the attribute map.
+	 *
 	 * @param content the current attributes value.
 	 */
 	public void putCurrentAttrValue(final String content) {
-		attr.put(this.currentAttr.toLowerCase(), content);
+		if (null != this.currentAttr) {
+			// TODO (html==true)? attr to lowercase?
+			attr.put(this.currentAttr, content);
+			this.currentAttr = null;
+		}
 	}
 
 	/**
