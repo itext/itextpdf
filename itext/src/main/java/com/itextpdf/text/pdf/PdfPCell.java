@@ -174,7 +174,7 @@ public class PdfPCell extends Rectangle{
             setPadding(borderWidth / 2);
         }
         else {
-            column.addText(this.phrase = new Phrase(new Chunk(image, 0, 0)));
+            column.addText(this.phrase = new Phrase(new Chunk(image, 0, 0, true)));
             column.setLeading(0, 1);
             setPadding(0);
         }
