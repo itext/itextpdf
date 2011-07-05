@@ -76,6 +76,11 @@ public class SamplesTest {
 
 	@Before
 	public void setup() {
+		list.add("widthTable_");
+		list.add("test-table-a_");
+		list.add("test-table-b_");
+		list.add("test-table-c_");
+		list.add("test-table-d_");
 		list.add("xfa-support_");
 		list.add("position_");
 		list.add("b-p_");
