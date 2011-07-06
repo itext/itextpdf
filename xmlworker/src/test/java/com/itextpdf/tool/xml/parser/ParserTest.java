@@ -45,6 +45,8 @@ package com.itextpdf.tool.xml.parser;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -96,6 +98,34 @@ public class ParserTest {
 		p.parse(new ByteArrayInputStream(html.getBytes()));
 		String str = b.toString();
 		Assert.assertTrue(str.contains("acrobat8.1dynamic") && str.contains("defaultPDFRenderFormat"));
+	}
+	@Test
+	public void specialChars() throws IOException {
+		XMLParser p = new XMLParser(false, new XMLParserListener() {
+
+			public void unknownText(final String text) {
+			}
+
+			public void text(final byte[] text) {
+				org.junit.Assert.assertArrayEquals("eéèçàë".getBytes(), text);
+			}
+
+			public void startElement(final String tag, final Map<String, String> attributes, final String ns) {
+			}
+
+			public void init() {
+			}
+
+			public void endElement(final String tag, final String ns) {
+			}
+
+			public void comment(final String comment) {
+			}
+
+			public void close() {
+			}
+		});
+		p.parse(new InputStreamReader(ParserTest.class.getResourceAsStream("parser.xml"), "ISO-8859-1"));
 	}
 
 	/**

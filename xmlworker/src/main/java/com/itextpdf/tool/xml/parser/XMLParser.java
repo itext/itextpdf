@@ -252,7 +252,7 @@ public class XMLParser {
 	}
 
 	/**
-	 * @param character the int that will be converted to a character.
+	 * @param character the int that will be appended to the buffer.
 	 * @return the parser
 	 */
 	public XMLParser append(final int character) {
