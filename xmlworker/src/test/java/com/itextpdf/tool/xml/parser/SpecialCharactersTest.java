@@ -27,6 +27,7 @@ public class SpecialCharactersTest {
 	private InsideTagHTMLState itState;
 	private int hex;
 	private String e;
+	private char accent;
 
 	@Before
 	public void setUp() {
@@ -38,7 +39,6 @@ public class SpecialCharactersTest {
 		regStr = "�";
 		hex = 0x00ae;
 		e = "Travailleur ou chômeur, ouvrier, employé ou cadre, homme ou femme, jeune ou moins jeune,... au Syndicat libéral vous n'êtes pas un numéro et vous pouvez compter sur l'aide de l'ensemble de nos collaborateurs.";
-
 	}
 
 	@Test

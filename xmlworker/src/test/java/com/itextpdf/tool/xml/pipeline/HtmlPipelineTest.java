@@ -3,6 +3,8 @@
  */
 package com.itextpdf.tool.xml.pipeline;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +50,8 @@ public class HtmlPipelineTest {
 		Assert.assertNotNull(p.getLocalContext(wc));
 	}
 	@Test
-	public void text() throws PipelineException {
-		byte[] b = "aeéèàçï".getBytes();
+	public void text() throws PipelineException, UnsupportedEncodingException {
+		final byte[] b = "aeéèàçï".getBytes("ISO-8859-1");
 		 TagProcessorFactory tagFactory = new TagProcessorFactory() {
 
 				public void removeProcessor(final String tag) {
@@ -72,7 +74,12 @@ public class HtmlPipelineTest {
 						}
 
 						public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
-							Assert.assertEquals("aeéèàçï", content);
+							try {
+								Assert.assertEquals(new String(b, "ISO-8859-1"), content);
+							} catch (UnsupportedEncodingException e) {
+								e.printStackTrace();
+								Assert.fail(e.getLocalizedMessage());
+							}
 							return new ArrayList<Element>(0);
 						}
 					};
@@ -81,7 +88,7 @@ public class HtmlPipelineTest {
 				public void addProcessor(final TagProcessor processor, final String... tags) {
 				}
 			};;
-		p.getLocalContext(wc).setTagFactory(tagFactory );
+		p.getLocalContext(wc).setTagFactory(tagFactory ).charSet(Charset.forName("ISO-8859-1"));
 		p.content(wc, new Tag("tag"), b , new ProcessObject());
 	}
 }
