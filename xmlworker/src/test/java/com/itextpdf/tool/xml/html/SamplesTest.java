@@ -88,7 +88,7 @@ public class SamplesTest {
 		list.add("div_");
 		list.add("font_color_");
 		list.add("lineheight_");
-		list.add("index_");
+//		list.add("index_");
 		list.add("img_");
 		list.add("h_");
 		list.add("fontSizes_");
