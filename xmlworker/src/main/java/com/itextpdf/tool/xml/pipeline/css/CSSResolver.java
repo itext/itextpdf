@@ -96,7 +96,7 @@ public interface CSSResolver {
 	void addCss(CssFile file);
 
 	/**
-	 * @return
+	 * @return an instance of this resolver
 	 * @throws CssResolverException
 	 */
 	CSSResolver clear() throws CssResolverException;

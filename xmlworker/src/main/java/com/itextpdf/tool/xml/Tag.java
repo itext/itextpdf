@@ -106,6 +106,14 @@ public class Tag {
 	}
 
 	/**
+	 * @param tag
+	 * @param ns
+	 */
+	public Tag(final String tag, final String ns) {
+		 this(tag, new HashMap<String, String>(0), new HashMap<String, String>(0), "");
+	}
+
+	/**
 	 * Set the tags parent tag.
 	 *
 	 * @param parent the parent tag of this tag
@@ -199,5 +207,35 @@ public class Tag {
 		}
 		return  String.format("%s:%s", this.ns, this.tag);
 
+	}
+
+	/**
+	 * Compare this tag to t for namespace and name equality.
+	 * @param t the tag to compare with
+	 * @return true if the namespace and tag are the same.
+	 */
+	public boolean compareTag(final Tag t) {
+		if (this == t) {
+			return true;
+		}
+		if (t == null) {
+			return false;
+		}
+		Tag other = t;
+		if (ns == null) {
+			if (other.ns != null) {
+				return false;
+			}
+		} else if (!ns.equals(other.ns)) {
+			return false;
+		}
+		if (tag == null) {
+			if (other.tag != null) {
+				return false;
+			}
+		} else if (!tag.equals(other.tag)) {
+			return false;
+		}
+		return true;
 	}
 }

@@ -57,7 +57,6 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.tool.xml.CustomContext;
 import com.itextpdf.tool.xml.Experimental;
-import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.html.Header;
 import com.itextpdf.tool.xml.html.Image;
@@ -85,7 +84,6 @@ public class HtmlPipelineContext implements CustomContext, Cloneable {
 	private boolean acceptUnknown = true;
 	private TagProcessorFactory tagFactory;
 	private final List<Element> ctn = new ArrayList<Element>();
-	private WorkerContext context;
 	private ImageProvider imageProvider;
 	private Rectangle pageSize = PageSize.A4;
 	private Charset charset;
@@ -274,13 +272,7 @@ public class HtmlPipelineContext implements CustomContext, Cloneable {
 				.setTagFactory(this.tagFactory).setAcceptUnknown(this.acceptUnknown);
 		return newCtx;
 	}
-	/**
-	 * Set the global WorkerContext
-	 * @param context the WorkerContext
-	 */
-	void setContext(final WorkerContext context) {
-		this.context = context;
-	}
+
 
 	/**
 	 * Set to true to allow the HtmlPipeline to accept tags it does not find in
@@ -350,4 +342,5 @@ public class HtmlPipelineContext implements CustomContext, Cloneable {
 		this.linkprovider = linkprovider;
 		return this;
 	}
+
 }

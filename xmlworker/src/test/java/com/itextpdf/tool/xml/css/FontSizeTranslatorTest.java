@@ -63,8 +63,8 @@ import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 public class FontSizeTranslatorTest {
 
 	private final FontSizeTranslator fst = FontSizeTranslator.getInstance();
-	Tag p = new Tag("p", null);
-	Tag span = new Tag("span", null);
+	Tag p = new Tag("p");
+	Tag span = new Tag("span");
 
 	@Before
 	public void before() {

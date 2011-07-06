@@ -80,7 +80,6 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 	public Pipeline<?> init(final WorkerContext context) throws PipelineException {
 		try {
 			HtmlPipelineContext clone = hpc.clone();
-			clone.setContext(context);
 			context.put(getContextKey(), clone);
 		} catch (CloneNotSupportedException e) {
 			String message = String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.UNSUPPORTED_CLONING),

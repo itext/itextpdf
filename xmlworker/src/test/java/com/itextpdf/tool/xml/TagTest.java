@@ -101,4 +101,19 @@ public class TagTest {
 		t2.setParent(t);
 		Assert.assertEquals(0, t.getChildren().size());
 	}
+
+	public void compareTrue() {
+		Assert.assertTrue(new Tag("pappie").compareTag(new Tag("pappie")));
+	}
+
+	public void compareFalse() {
+		Assert.assertFalse(new Tag("pappie").compareTag(new Tag("lappie")));
+	}
+	public void compareTrueNS() {
+		Assert.assertTrue(new Tag("pappie", "ns").compareTag(new Tag("pappie", "ns")));
+	}
+
+	public void compareFalseNS() {
+		Assert.assertFalse(new Tag("pappie", "ns").compareTag(new Tag("pappie", "xs")));
+	}
 }

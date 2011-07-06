@@ -90,7 +90,7 @@ public class FontAndColorTest {
 	}
 	@Test
 	public void resolveFontSize() throws IOException {
-		Tag t = new Tag(null, null);
+		Tag t = new Tag("t");
 		Chunk c = new Chunk("default text with no styles attached.");
 		c = new ChunkCssApplier().apply(c, t);
 		assertEquals(12, c.getFont().getSize(), 0);
