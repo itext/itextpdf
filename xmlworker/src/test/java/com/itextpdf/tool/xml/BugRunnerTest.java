@@ -60,7 +60,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 /**
- * Added to visually check all snippets. (see target/text-classes/*.pdf )
+ *
  */
 public class BugRunnerTest {
 	public static final String RESOURCE_TEST_PATH = "./target/test-classes";

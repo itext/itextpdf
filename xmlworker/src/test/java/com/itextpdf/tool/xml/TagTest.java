@@ -91,7 +91,7 @@ public class TagTest {
 	}
 
 	/**
-	 * Validates that the parent tag is does not have the tag where setparent is
+	 * Validates that the parent tag does not have the tag set as child when set parent is
 	 * called as parent.
 	 */
 	@Test
@@ -102,18 +102,41 @@ public class TagTest {
 		Assert.assertEquals(0, t.getChildren().size());
 	}
 
+	/**
+	 * Compare equal tag names.
+	 */
+	@Test
 	public void compareTrue() {
 		Assert.assertTrue(new Tag("pappie").compareTag(new Tag("pappie")));
 	}
-
+	/**
+	 * Compare notEqual tag names
+	 */
+	@Test
 	public void compareFalse() {
 		Assert.assertFalse(new Tag("pappie").compareTag(new Tag("lappie")));
 	}
+	/**
+	 * Compare equal namespace (and tagname)
+	 */
+	@Test
 	public void compareTrueNS() {
 		Assert.assertTrue(new Tag("pappie", "ns").compareTag(new Tag("pappie", "ns")));
 	}
 
+	/**
+	 * Compare different namespace (and equal tagname).
+	 */
+	@Test
 	public void compareFalseNS() {
 		Assert.assertFalse(new Tag("pappie", "ns").compareTag(new Tag("pappie", "xs")));
 	}
+	/**
+	 * Compare different namespace and different tagname.
+	 */
+	@Test
+	public void compareFalseTagAndNS() {
+		Assert.assertFalse(new Tag("pappie", "ns").compareTag(new Tag("mammie", "xs")));
+	}
+
 }

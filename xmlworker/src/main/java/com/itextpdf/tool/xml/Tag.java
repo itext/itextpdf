@@ -45,6 +45,7 @@ package com.itextpdf.tool.xml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ import java.util.Map;
  * @author redlab_b
  *
  */
-public class Tag {
+public class Tag implements Iterable<Tag> {
 
 	private Tag parent;
 	private final String tag;
@@ -92,6 +93,9 @@ public class Tag {
 		this.attributes = attr;
 		this.css = css;
 		this.children = new ArrayList<Tag>(0);
+		if (ns == null) {
+			throw new NullPointerException("NS cannot be null");
+		}
 		this.ns = ns;
 	}
 
@@ -110,7 +114,7 @@ public class Tag {
 	 * @param ns
 	 */
 	public Tag(final String tag, final String ns) {
-		 this(tag, new HashMap<String, String>(0), new HashMap<String, String>(0), "");
+		 this(tag, new HashMap<String, String>(0), new HashMap<String, String>(0), ns);
 	}
 
 	/**
@@ -237,5 +241,114 @@ public class Tag {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * @return the child iterator.
+	 */
+	public Iterator<Tag> iterator() {
+		return children.iterator();
+	}
+
+	/**
+	 * @param name
+	 * @param ns
+	 * @return the child
+	 */
+	public Tag getChild(final String name, final String ns) {
+		return getChild(name, ns, false);
+	}
+
+	/**
+	 * @param name
+	 * @param ns
+	 * @param recursive true if the tree should be fully inwards inspected.
+	 * @return the child if found
+	 */
+	public Tag getChild(final String name, final String ns, final boolean recursive) {
+		return recursiveGetChild(this, name, ns, recursive);
+	}
+
+	/**
+	 * Whether or not this DOMLike has children.
+	 *
+	 * @return true if there are children
+	 */
+	public boolean hasChildren() {
+		return getChildren().size() != 0;
+	}
+
+	/**
+	 * Whether or not this DOMLike has a parent.
+	 *
+	 * @return true if parent is not <code>null</code>
+	 */
+	public boolean hasParent() {
+		return getParent() != null;
+	}
+
+	/**
+	 * @param name
+	 * @param ns
+	 * @return true if a child with given name and ns is found
+	 */
+	public boolean hasChild(final String name, final String ns) {
+		return hasChild(name, ns, false);
+	}
+
+	/**
+	 *
+	 * @param name
+	 * @param ns
+	 * @param recursive true if childrens children children children ... should be inspected too.
+	 * @return true if a child with the given name and ns is found.
+	 */
+	public boolean hasChild(final String name, final String ns, final boolean recursive) {
+		if (recursive) {
+			return recursiveHasChild(this, name, ns, true);
+		} else {
+			return recursiveHasChild(this, name, ns, false);
+		}
+	}
+
+	/**
+	 * @param tag
+	 * @param name
+	 * @param ns
+	 * @param recursive
+	 * @return true if the child is found in the child tree
+	 */
+	private boolean recursiveHasChild(final Tag tag, final String name, final String ns, final boolean recursive) {
+		for (Tag t : tag) {
+			if (t.compareTag(new Tag(name, ns))) {
+				return true;
+			} else if (recursive) {
+				if (recursiveHasChild(t, name, ns, recursive)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param tag
+	 * @param name
+	 * @param ns
+	 * @param recursive
+	 * @return the child tag
+	 */
+	private Tag recursiveGetChild(final Tag tag, final String name, final String ns, final boolean recursive) {
+		for (Tag t : tag) {
+			if (t.compareTag(new Tag(name, ns))) {
+				return t;
+			} else if (recursive) {
+				Tag rT = null;
+				if (null != (rT = recursiveGetChild(t, name, ns, recursive))) {
+					return rT;
+				}
+			}
+		}
+		return null;
 	}
 }
