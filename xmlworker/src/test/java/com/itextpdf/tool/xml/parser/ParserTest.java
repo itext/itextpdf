@@ -109,8 +109,8 @@ public class ParserTest {
 
 			public void text(final byte[] text) {
 				try {
-//					Assert.assertEquals("eéèçàë", new String(text));
-					org.junit.Assert.assertEquals("eéèçàõ", new String(text, "ISO-8859-1"));
+//					Assert.assertEquals("e\u00e9\u00e8\u00e7\u00e0\00f4", new String(text));
+					org.junit.Assert.assertEquals("e\u00e9\u00e8\u00e7\u00e0\u00f5", new String(text, "ISO-8859-1"));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 					Assert.fail(e.getLocalizedMessage());

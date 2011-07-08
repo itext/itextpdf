@@ -36,9 +36,9 @@ public class SpecialCharactersTest {
 		itState = new InsideTagHTMLState(parser);
 		reg = 174;
 		regHtml = "&reg";
-		regStr = "�";
+		regStr = "\u00ae";
 		hex = 0x00ae;
-		e = "Travailleur ou chômeur, ouvrier, employé ou cadre, homme ou femme, jeune ou moins jeune,... au Syndicat libéral vous n'êtes pas un numéro et vous pouvez compter sur l'aide de l'ensemble de nos collaborateurs.";
+		e = "Travailleur ou ch\u00f4meur, ouvrier, employ\u00e9 ou cadre, homme ou femme, jeune ou moins jeune,... au Syndicat lib\u00e9ral vous n'\u00eates pas un num\u00e9ro et vous pouvez compter sur l'aide de l'ensemble de nos collaborateurs.";
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public class SpecialCharactersTest {
 	}
 
 	@Test
-	public void testEéçEtc() throws UnsupportedEncodingException {
+	public void testEacuteCcedilleEtc() throws UnsupportedEncodingException {
 		for (int i = 0; i < e.length(); i++) {
 			itState.process(e.codePointAt(i));
 		}
