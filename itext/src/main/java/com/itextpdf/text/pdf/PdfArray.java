@@ -62,7 +62,7 @@ import java.util.ListIterator;
  *
  * @see		PdfObject
  */
-public class PdfArray extends PdfObject {
+public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
 	// CLASS VARIABLES
 
@@ -85,7 +85,7 @@ public class PdfArray extends PdfObject {
      *
      * @param	object		a <CODE>PdfObject</CODE> that has to be added to the array
      */
-    public PdfArray(PdfObject object) {
+    public PdfArray(final PdfObject object) {
         super(ARRAY);
         arrayList = new ArrayList<PdfObject>();
         arrayList.add(object);
@@ -100,7 +100,7 @@ public class PdfArray extends PdfObject {
      *
      * @param values    an array of <CODE>float</CODE> values to be added
      */
-    public PdfArray(float values[]) {
+    public PdfArray(final float values[]) {
         super(ARRAY);
         arrayList = new ArrayList<PdfObject>();
         add(values);
@@ -115,7 +115,7 @@ public class PdfArray extends PdfObject {
      *
      * @param values    an array of <CODE>int</CODE> values to be added
      */
-    public PdfArray(int values[]) {
+    public PdfArray(final int values[]) {
         super(ARRAY);
         arrayList = new ArrayList<PdfObject>();
         add(values);
@@ -131,7 +131,7 @@ public class PdfArray extends PdfObject {
      *   something that isn't a <CODE>PdfObject</CODE>
      * @since 2.1.3
      */
-    public PdfArray(List<PdfObject> l) {
+    public PdfArray(final List<PdfObject> l) {
         this();
         for (PdfObject element : l)
             add(element);
@@ -143,7 +143,7 @@ public class PdfArray extends PdfObject {
      *
      * @param array    a <CODE>PdfArray</CODE> to be added to the array
      */
-    public PdfArray(PdfArray array) {
+    public PdfArray(final PdfArray array) {
         super(ARRAY);
         arrayList = new ArrayList<PdfObject>(array.arrayList);
     }
@@ -158,7 +158,7 @@ public class PdfArray extends PdfObject {
      * @param os the <CODE>OutputStream</CODE> to write the bytes to.
      */
     @Override
-    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+    public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
         os.write('[');
 
         Iterator<PdfObject> i = arrayList.iterator();
@@ -209,7 +209,7 @@ public class PdfArray extends PdfObject {
      * @return the previous value
      * @since 2.1.5
      */
-    public PdfObject set(int idx, PdfObject obj) {
+    public PdfObject set(final int idx, final PdfObject obj) {
         return arrayList.set(idx, obj);
     }
 
@@ -223,7 +223,7 @@ public class PdfArray extends PdfObject {
      * @throws IndexOutOfBoundsException the specified position doesn't exist
      * @since 2.1.5
      */
-    public PdfObject remove(int idx) {
+    public PdfObject remove(final int idx) {
         return arrayList.remove(idx);
     }
 
@@ -265,7 +265,7 @@ public class PdfArray extends PdfObject {
      * @param object <CODE>PdfObject</CODE> to add
      * @return always <CODE>true</CODE>
      */
-    public boolean add(PdfObject object) {
+    public boolean add(final PdfObject object) {
         return arrayList.add(object);
     }
 
@@ -280,7 +280,7 @@ public class PdfArray extends PdfObject {
      * @param values An array of <CODE>float</CODE> values to add
      * @return always <CODE>true</CODE>
      */
-    public boolean add(float values[]) {
+    public boolean add(final float values[]) {
         for (int k = 0; k < values.length; ++k)
             arrayList.add(new PdfNumber(values[k]));
         return true;
@@ -296,7 +296,7 @@ public class PdfArray extends PdfObject {
      * @param values An array of <CODE>int</CODE> values to add
      * @return always <CODE>true</CODE>
      */
-    public boolean add(int values[]) {
+    public boolean add(final int values[]) {
         for (int k = 0; k < values.length; ++k)
             arrayList.add(new PdfNumber(values[k]));
         return true;
@@ -314,7 +314,7 @@ public class PdfArray extends PdfObject {
      *   last position currently set, plus 1.
      * @since 2.1.5
      */
-    public void add(int index, PdfObject element) {
+    public void add(final int index, final PdfObject element) {
         arrayList.add(index, element);
     }
 
@@ -327,7 +327,7 @@ public class PdfArray extends PdfObject {
      *
      * @param object The <CODE>PdfObject</CODE> to add
      */
-    public void addFirst(PdfObject object) {
+    public void addFirst(final PdfObject object) {
         arrayList.add(0, object);
     }
 
@@ -338,7 +338,7 @@ public class PdfArray extends PdfObject {
      * @param object The <CODE>PdfObject</CODE> to check
      * @return <CODE>true</CODE>
      */
-    public boolean contains(PdfObject object) {
+    public boolean contains(final PdfObject object) {
         return arrayList.contains(object);
     }
 
@@ -362,7 +362,7 @@ public class PdfArray extends PdfObject {
      * @param idx The index of the <CODE>PdfObject</CODE> to be returned
      * @return A <CODE>PdfObject</CODE>
      */
-    public PdfObject getPdfObject(int idx) {
+    public PdfObject getPdfObject(final int idx) {
         return arrayList.get(idx);
     }
 
@@ -376,7 +376,7 @@ public class PdfArray extends PdfObject {
      * @param idx The index of the <CODE>PdfObject</CODE> to be returned
      * @return A direct <CODE>PdfObject</CODE> or <CODE>null</CODE>
      */
-    public PdfObject getDirectObject(int idx) {
+    public PdfObject getDirectObject(final int idx) {
         return PdfReader.getPdfObject(getPdfObject(idx));
     }
 
@@ -396,7 +396,7 @@ public class PdfArray extends PdfObject {
      * @return the corresponding <CODE>PdfDictionary</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfDictionary getAsDict(int idx) {
+    public PdfDictionary getAsDict(final int idx) {
         PdfDictionary dict = null;
         PdfObject orig = getDirectObject(idx);
         if (orig != null && orig.isDictionary())
@@ -417,7 +417,7 @@ public class PdfArray extends PdfObject {
      * @return the corresponding <CODE>PdfArray</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfArray getAsArray(int idx) {
+    public PdfArray getAsArray(final int idx) {
         PdfArray array = null;
         PdfObject orig = getDirectObject(idx);
         if (orig != null && orig.isArray())
@@ -438,7 +438,7 @@ public class PdfArray extends PdfObject {
      * @return the corresponding <CODE>PdfStream</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfStream getAsStream(int idx) {
+    public PdfStream getAsStream(final int idx) {
         PdfStream stream = null;
         PdfObject orig = getDirectObject(idx);
         if (orig != null && orig.isStream())
@@ -459,7 +459,7 @@ public class PdfArray extends PdfObject {
      * @return the corresponding <CODE>PdfString</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfString getAsString(int idx) {
+    public PdfString getAsString(final int idx) {
         PdfString string = null;
         PdfObject orig = getDirectObject(idx);
         if (orig != null && orig.isString())
@@ -480,7 +480,7 @@ public class PdfArray extends PdfObject {
      * @return the corresponding <CODE>PdfNumber</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfNumber getAsNumber(int idx) {
+    public PdfNumber getAsNumber(final int idx) {
         PdfNumber number = null;
         PdfObject orig = getDirectObject(idx);
         if (orig != null && orig.isNumber())
@@ -501,7 +501,7 @@ public class PdfArray extends PdfObject {
      * @return the corresponding <CODE>PdfName</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfName getAsName(int idx) {
+    public PdfName getAsName(final int idx) {
         PdfName name = null;
         PdfObject orig = getDirectObject(idx);
         if (orig != null && orig.isName())
@@ -522,7 +522,7 @@ public class PdfArray extends PdfObject {
      * @return the corresponding <CODE>PdfBoolean</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfBoolean getAsBoolean(int idx) {
+    public PdfBoolean getAsBoolean(final int idx) {
         PdfBoolean bool = null;
         PdfObject orig = getDirectObject(idx);
         if (orig != null && orig.isBoolean())
@@ -541,11 +541,18 @@ public class PdfArray extends PdfObject {
      * @return the corresponding <CODE>PdfIndirectReference</CODE> object,
      *   or <CODE>null</CODE>
      */
-    public PdfIndirectReference getAsIndirectObject(int idx) {
+    public PdfIndirectReference getAsIndirectObject(final int idx) {
         PdfIndirectReference ref = null;
         PdfObject orig = getPdfObject(idx); // not getDirect this time.
         if (orig != null && orig.isIndirect())
             ref = (PdfIndirectReference) orig;
         return ref;
     }
+
+	/**
+	 * @return an iterator that iterates over the {@link PdfObject}s in this PdfArray.
+	 */
+	public Iterator<PdfObject> iterator() {
+		return arrayList.iterator();
+	}
 }
