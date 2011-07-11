@@ -421,7 +421,7 @@ public class CssUtils {
 		return f;
 	}
 	/**
-	 * Parses an length with an allowed metric unit (px, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23, .123) to pt.<br />
+	 * Parses a length with an allowed metric unit (px, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23, .123) to pt.<br />
 	 * A numeric value is considered to be in px as is default in HTML/CSS.
 	 * @param length the string containing the length.
 	 * @return float the parsed length in pt.
