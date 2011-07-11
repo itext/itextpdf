@@ -146,6 +146,8 @@ public class FileRetrieveImpl implements FileRetrieve {
 			in = url.openStream();
 		} else if (isfile) {
 			in = new FileInputStream(f);
+		} else {
+			throw new IOException(LocaleMessages.getInstance().getMessage("retrieve.file.from.nothing"));
 		}
 		read(processor, in);
 	}
