@@ -82,7 +82,7 @@ public class XMLWorker implements XMLParserListener {
 	public void init()  {
 		Pipeline<?> p = rootpPipe;
 		try {
-			while ((p = p.init(context.get()))!= null);
+			while ((p = p.init(getLocalWC()))!= null);
 		} catch (PipelineException e) {
 			throw new RuntimeWorkerException(e);
 		}
@@ -90,7 +90,7 @@ public class XMLWorker implements XMLParserListener {
 
 	public void startElement(final String tag, final Map<String, String> attr, final String ns) {
 		Tag t = createTag(tag, attr, ns);
-		WorkerContextImpl ctx = context.get();
+		WorkerContext ctx = getLocalWC();
 		if (null != ctx.getCurrentTag()) {
 			ctx.getCurrentTag().addChild(t);
 		}
@@ -128,7 +128,7 @@ public class XMLWorker implements XMLParserListener {
 		} else {
 			thetag = tag;
 		}
-		WorkerContextImpl ctx = context.get();
+		WorkerContext ctx = getLocalWC();
 		if (null != ctx.getCurrentTag() && !thetag.equals(ctx.getCurrentTag().getTag())) {
 			throw new RuntimeWorkerException(String.format(
 					LocaleMessages.getInstance().getMessage(LocaleMessages.INVALID_NESTED_TAG), thetag,
@@ -153,7 +153,7 @@ public class XMLWorker implements XMLParserListener {
 	 * method.
 	 */
 	public void text(final byte[] b) {
-		WorkerContextImpl ctx = context.get();
+		WorkerContext ctx = getLocalWC();
 		if (null != ctx.getCurrentTag()) {
 			if (b.length > 0) {
 				Pipeline<?> wp = rootpPipe;
@@ -201,7 +201,7 @@ public class XMLWorker implements XMLParserListener {
 	 * @return the current tag
 	 */
 	protected Tag getCurrentTag() {
-		return context.get().getCurrentTag();
+		return getLocalWC().getCurrentTag();
 	}
 
 	/**
