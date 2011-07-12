@@ -52,6 +52,10 @@ package com.itextpdf.tool.xml;
 public interface Pipeline<T extends CustomContext> {
 
 	/**
+	 * The init method allows implementation to initialize the pipeline. e.g.
+	 * Initialize their CustomContext here and add it to the WorkerContext
+	 * through {@link WorkerContext#put(String, CustomContext)}.
+	 *
 	 * @param context
 	 * @return the next pipeline in line
 	 * @throws PipelineException
