@@ -42,15 +42,16 @@ package com.itextpdf.tool.xml;
 
 import java.util.Map;
 
-import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.parser.XMLParserListener;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 
 /**
- * The implementation of the XMLWorker. For legacy purposes this class also
- * implements {@link SimpleXMLDocHandler}
+ * The implementation of the {@link XMLParserListener}.<br />
+ * <strong>Important Note</strong>: This class the XMLWorker stores the
+ * {@link WorkerContext} (Which is a {@link WorkerContextImpl}) in a ThreadLocal
+ * variable, WorkerContext is confined to threads here.
  *
  * @author redlab_b
  *
@@ -201,5 +202,15 @@ public class XMLWorker implements XMLParserListener {
 	 */
 	protected Tag getCurrentTag() {
 		return context.get().getCurrentTag();
+	}
+
+	/**
+	 * Returns the local WorkerContext, beware: could be a newly initialized
+	 * one, if {@link XMLWorker#close()} has been called before.
+	 *
+	 * @return the local WorkerContext
+	 */
+	protected WorkerContext getLocalWC() {
+		return context.get();
 	}
 }
