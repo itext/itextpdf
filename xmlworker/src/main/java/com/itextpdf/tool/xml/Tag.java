@@ -260,6 +260,7 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
+	 * Finds the first child that matches the given name and ns.
 	 * @param name
 	 * @param ns
 	 * @param recursive true if the tree should be fully inwards inspected.
