@@ -50,6 +50,7 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -126,22 +127,48 @@ public class RandomAccessFileOrArray implements DataInput {
         	return;
         }
         this.filename = filename;
-        if (plainRandomAccess){
-            trf = new RandomAccessFile(filename, "r");
+        openFile(filename);
+    }
+
+    /**
+     * Utility method that opens the underlying file in plain random access mode or mapped random access mode
+     * @param filename the file to open
+     * @throws FileNotFoundException if the file does not exist
+     * @since 5.1.2
+     */
+    
+    private void openFile(String filename) throws IOException{
+        
+        File f = new File(filename);
+        if (f.length() > Integer.MAX_VALUE || plainRandomAccess){ // files larger than Integer.MAX_VALUE can't be mapped
+            openForPlainRandomAccess(filename);
         }else{
             try{
                 rf = new MappedRandomAccessFile(filename, "r");
+                trf = null;
             } catch (IOException e){
                 if (exceptionIsMapFailureException(e)){
-                    this.plainRandomAccess = true;
-                    trf = new RandomAccessFile(filename, "r");
+                    openForPlainRandomAccess(filename);
                 } else {
                     throw e;
                 }
             }
         }
+        
     }
-
+    
+    /**
+     * Utility method that opens this RAFOA in plain random access mode
+     * @param filename the file to open
+     * @throws FileNotFoundException if the file does not exist
+     * @since 5.1.2
+     */
+    private void openForPlainRandomAccess(String filename) throws FileNotFoundException{
+        this.plainRandomAccess = true;
+        trf = new RandomAccessFile(filename, "r");
+        rf = null;
+    }
+    
     /**
      * Utility method that determines whether a given IOException is the result
      * of a failure to map a memory mapped file.  It would be better if the runtime
@@ -300,10 +327,7 @@ public class RandomAccessFileOrArray implements DataInput {
     
     public void reOpen() throws IOException {
         if (filename != null && rf == null && trf == null) {
-            if (plainRandomAccess)
-                trf = new RandomAccessFile(filename, "r");
-            else
-                rf = new MappedRandomAccessFile(filename, "r");
+            openFile(filename);
         }
         seek(0);
     }
