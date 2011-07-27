@@ -106,7 +106,7 @@ public class PdfPCell extends Rectangle{
     private PdfPCellEvent cellEvent;
 
     /** Holds value of property useDescender. */
-    private boolean useDescender = true;
+    private boolean useDescender = false;
 
     /** Increases padding to include border if true */
     private boolean useBorderPadding = false;
@@ -129,7 +129,6 @@ public class PdfPCell extends Rectangle{
         borderWidth = 0.5f;
         border = BOX;
         column.setLeading(0, 1);
-        column.setUseAscender(true);
     }
 
     /**
@@ -144,7 +143,6 @@ public class PdfPCell extends Rectangle{
         border = BOX;
         column.addText(this.phrase = phrase);
         column.setLeading(0, 1);
-        column.setUseAscender(true);
     }
 
     /**
@@ -168,14 +166,13 @@ public class PdfPCell extends Rectangle{
         super(0, 0, 0, 0);
         borderWidth = 0.5f;
         border = BOX;
+        column.setLeading(0, 1);
         if (fit) {
             this.image = image;
-            column.setLeading(0, 1);
             setPadding(borderWidth / 2);
         }
         else {
             column.addText(this.phrase = new Phrase(new Chunk(image, 0, 0, true)));
-            column.setLeading(0, 1);
             setPadding(0);
         }
     }
