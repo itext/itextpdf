@@ -80,7 +80,7 @@ public class HTMLWorkerFactoryTest {
 //    private static final String TEST = "xfa-support_";
 //    private static final String TEST = "Atkins_";
 //    private static final String TEST = "b-p_";
-//    private static final String TEST = "br-sub-sup_";
+    private static final String TEST = "br-sub-sup_";
 //    private static final String TEST = "font_color_";
 //    private static final String TEST = "fontSizes_";
 //    private static final String TEST = "line-height_letter-spacing_";
@@ -110,7 +110,7 @@ public class HTMLWorkerFactoryTest {
 //	  private static final String TEST ="test-table-a_";
 //	  private static final String TEST ="test-table-b_";
 //	  private static final String TEST ="test-table-c_";
-	  private static final String TEST ="test-table-d_";
+//	  private static final String TEST ="test-table-d_";
 //	  private static final String TEST = "pagebreaks_";
 
     static {
