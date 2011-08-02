@@ -2694,6 +2694,7 @@ public class PdfContentByte {
     public void drawRadioField(float llx, float lly, float urx, float ury, final boolean on) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
         if (lly > ury) { float y = lly; lly = ury; ury = y; }
+        saveState();
         // silver circle
         setLineWidth(1);
         setLineCap(1);
@@ -2720,6 +2721,7 @@ public class PdfContentByte {
             arc(llx + 4f, lly + 4f, urx - 4f, ury - 4f, 0, 360);
             fill();
         }
+        restoreState();
     }
 
     /**
@@ -2786,6 +2788,7 @@ public class PdfContentByte {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
         if (lly > ury) { float y = lly; lly = ury; ury = y; }
         // black rectangle not filled
+        saveState();
         setColorStroke(new BaseColor(0x00, 0x00, 0x00));
         setLineWidth(1);
         setLineCap(0);
@@ -2819,6 +2822,7 @@ public class PdfContentByte {
         setFontAndSize(bf, size);
         showTextAligned(PdfContentByte.ALIGN_CENTER, text, llx + (urx - llx) / 2, lly + (ury - lly - size) / 2, 0);
         endText();
+        restoreState();
     }
 
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
