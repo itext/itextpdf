@@ -331,6 +331,7 @@ public class XMLParser {
 		for (XMLParserListener l : listeners) {
 			l.startElement(this.memory.getCurrentTag(), this.memory.getAttributes(), this.memory.getNameSpace());
 		}
+		this.memory().flushNameSpace();
 	}
 
 	/**

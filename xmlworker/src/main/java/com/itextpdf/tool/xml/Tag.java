@@ -214,7 +214,7 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
-	 * Compare this tag to t for namespace and name equality.
+	 * Compare this tag with t for namespace and name equality.
 	 * @param t the tag to compare with
 	 * @return true if the namespace and tag are the same.
 	 */
@@ -271,7 +271,7 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
-	 * Whether or not this DOMLike has children.
+	 * Whether or not this tag has children.
 	 *
 	 * @return true if there are children
 	 */
@@ -280,7 +280,7 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
-	 * Whether or not this DOMLike has a parent.
+	 * Whether or not this tag has a parent.
 	 *
 	 * @return true if parent is not <code>null</code>
 	 */
@@ -301,7 +301,7 @@ public class Tag implements Iterable<Tag> {
 	 *
 	 * @param name
 	 * @param ns
-	 * @param recursive true if childrens children children children ... should be inspected too.
+	 * @param recursive true if children's children children children ... should be inspected too.
 	 * @return true if a child with the given name and ns is found.
 	 */
 	public boolean hasChild(final String name, final String ns, final boolean recursive) {
