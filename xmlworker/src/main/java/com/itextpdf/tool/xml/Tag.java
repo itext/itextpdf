@@ -195,6 +195,21 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
+	 * Returns all children of this tag with the given name.
+	 *
+	 * @return the children tags of this tag with the given name.
+	 */
+	public List<Tag> getChildren(final String name) {
+		List<Tag> named = new ArrayList<Tag>();
+		for(Tag child: this.children) {
+			if(child.getTag().equals(name)) {
+				named.add(child);
+			}
+		}
+		return named;
+	}
+
+	/**
 	 * @return the ns
 	 */
 	public String getNameSpace() {
