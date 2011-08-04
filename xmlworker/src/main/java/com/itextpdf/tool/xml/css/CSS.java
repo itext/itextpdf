@@ -123,7 +123,8 @@ public final class CSS {
 		public static final String PAGE_BREAK_AFTER = "page-break-after";
 		public static final String REPEAT_HEADER = "repeat-header";
 		public static final String REPEAT_FOOTER = "repeat-footer";
-		public static final String LEFT = "LEFT";
+		public static final String LEFT = "left";
+		public static final String DISPLAY = "display";
 	}
 
 	/**
@@ -201,5 +202,6 @@ public final class CSS {
 		public static final String EM = "em";
 		public static final String EX = "ex";
 		public static final String ALWAYS = "always";
+		public static final String ABSOLUTE = "absolute";
 	}
 }
