@@ -770,7 +770,21 @@ public class PdfPKCS7 {
     public int getSigningInfoVersion() {
         return signerversion;
     }
+    
+    /**
+     * Getter for the digest encryption algorithm
+     */
+    public String getDigestEncryptionAlgorithmOid() {
+        return digestEncryptionAlgorithm;
+    }
 
+    /**
+     * Getter for the digest algorithm
+     */
+    public String getDigestAlgorithmOid() {
+        return digestAlgorithm;
+    }
+    
     /**
      * Get the algorithm used to calculate the message digest
      * @return the algorithm used to calculate the message digest
