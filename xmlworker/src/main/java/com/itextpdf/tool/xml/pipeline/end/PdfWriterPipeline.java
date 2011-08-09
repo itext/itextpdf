@@ -180,7 +180,7 @@ public class PdfWriterPipeline extends AbstractPipeline<MapContext> {
 	 * .xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline<?> content(final WorkerContext context, final Tag t, final byte[] b, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> content(final WorkerContext context, final Tag currentTag, final String text, final ProcessObject po) throws PipelineException {
 		write(context, po);
 		return getNext();
 	}

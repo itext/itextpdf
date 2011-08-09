@@ -152,14 +152,14 @@ public class XMLWorker implements XMLParserListener {
 	 * {@link Pipeline#content(WorkerContext, Tag, byte[], ProcessObject)}
 	 * method.
 	 */
-	public void text(final byte[] b) {
+	public void text(final String text) {
 		WorkerContext ctx = getLocalWC();
 		if (null != ctx.getCurrentTag()) {
-			if (b.length > 0) {
+			if (text.length() > 0) {
 				Pipeline<?> wp = rootpPipe;
 				ProcessObject po = new ProcessObject();
 				try {
-					while (null != (wp = wp.content(ctx, ctx.getCurrentTag(), b, po)))
+					while (null != (wp = wp.content(ctx, ctx.getCurrentTag(), text, po)))
 						;
 				} catch (PipelineException e) {
 					throw new RuntimeWorkerException(e);

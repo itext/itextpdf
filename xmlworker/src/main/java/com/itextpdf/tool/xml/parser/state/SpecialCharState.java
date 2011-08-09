@@ -65,7 +65,7 @@ public class SpecialCharState implements State {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
-	public void process(final int character) {
+	public void process(final char character) {
 		StringBuilder entity = this.parser.memory().currentEntity();
 		if(character == ';') {
 //			if ("nbsp".equals(entity.toString())) {
@@ -73,7 +73,7 @@ public class SpecialCharState implements State {
 //			} else {
 				char decoded = EntitiesToUnicode.decodeEntity(entity.toString());
 				if (decoded == '\0') {
-					parser.append('&').append(entity.toString().getBytes()).append(';');
+					parser.append('&').append(entity.toString()).append(';');
 				} else {
 					parser.append(decoded);
 				}
@@ -82,11 +82,11 @@ public class SpecialCharState implements State {
             this.parser.memory().currentEntity().setLength(0);
 		 } else if (character != '#' && (character < '0' || character > '9') && (character < 'a' || character > 'z')
                 && (character < 'A' || character > 'Z') || entity.length() >= 7) {
-			 parser.append('&').append(entity.toString().getBytes());
+			 parser.append('&').append(entity.toString());
 			 parser.selectState().inTag();
 			 this.parser.memory().currentEntity().setLength(0);
         } else {
-        	entity.append((char) character);
+        	entity.append(character);
         }
 	}
 

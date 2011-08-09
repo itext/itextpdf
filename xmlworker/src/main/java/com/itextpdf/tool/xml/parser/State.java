@@ -52,8 +52,8 @@ public interface State {
 
 	/**
 	 * Processes a character and does something with it or does nothing.
-	 * @param character the character (int) to process.
+	 * @param read the character for processing.
 	 */
-	void process(int character);
+	void process(char read);
 
 }

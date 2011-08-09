@@ -91,7 +91,7 @@ public class InsideTagHTMLState implements State {
 	 *
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
-	public void process(final int character) {
+	public void process(final char character) {
 		if (character == '<') {
 			if (this.parser.bufferSize() > 0) {
 				this.parser.text(this.parser.current());

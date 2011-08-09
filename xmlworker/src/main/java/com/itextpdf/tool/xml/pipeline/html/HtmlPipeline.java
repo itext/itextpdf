@@ -40,7 +40,6 @@
  */
 package com.itextpdf.tool.xml.pipeline.html;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.itextpdf.text.Element;
@@ -51,7 +50,6 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
-import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
@@ -137,24 +135,24 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 	 * .xml.Tag, java.lang.String, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline<?> content(final WorkerContext context, final Tag t, final byte[] b, final ProcessObject po)
+	public Pipeline<?> content(final WorkerContext context, final Tag t, final String text, final ProcessObject po)
 			throws PipelineException {
 		HtmlPipelineContext hcc = getLocalContext(context);
 		TagProcessor tp;
 		try {
 			tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
-			String ctn = null;
-			if (null != hcc.charSet()) {
-				try {
-					ctn = new String(b, hcc.charSet().name());
-				} catch (UnsupportedEncodingException e) {
-					throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(
-							LocaleMessages.UNSUPPORTED_CHARSET), e);
-				}
-			} else {
-				ctn = new String(b);
-			}
-			List<Element> elems = tp.content(context, t, ctn);
+//			String ctn = null;
+//			if (null != hcc.charSet()) {
+//				try {
+//					ctn = new String(b, hcc.charSet().name());
+//				} catch (UnsupportedEncodingException e) {
+//					throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(
+//							LocaleMessages.UNSUPPORTED_CHARSET), e);
+//				}
+//			} else {
+//				ctn = new String(b);
+//			}
+			List<Element> elems = tp.content(context, t, text);
 			if (elems.size() > 0) {
 				StackKeeper peek;
 				try {

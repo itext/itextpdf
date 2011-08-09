@@ -51,7 +51,7 @@ public class HtmlPipelineTest {
 	}
 	@Test
 	public void text() throws PipelineException, UnsupportedEncodingException {
-		final byte[] b = "aeéèàçï".getBytes("ISO-8859-1");
+		final String b = new String("aeéèàçï".getBytes(), "ISO-8859-1");
 		 TagProcessorFactory tagFactory = new TagProcessorFactory() {
 
 				public void removeProcessor(final String tag) {
@@ -74,12 +74,7 @@ public class HtmlPipelineTest {
 						}
 
 						public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
-							try {
-								Assert.assertEquals(new String(b, "ISO-8859-1"), content);
-							} catch (UnsupportedEncodingException e) {
-								e.printStackTrace();
-								Assert.fail(e.getLocalizedMessage());
-							}
+								Assert.assertEquals(b, content);
 							return new ArrayList<Element>(0);
 						}
 					};

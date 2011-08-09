@@ -66,7 +66,7 @@ public class TagEncounteredState implements State {
 	 *
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
-	public void process(final int character) {
+	public void process(final char character) {
 		String tag = this.parser.bufferToString();
 		if (Character.isWhitespace(character) || character == '>' || character == '/' || character == ':' || tag.equals("!--") || tag.equals("![CDATA[")) {
 			// cope with <? xml and <! DOCTYPE

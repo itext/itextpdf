@@ -80,7 +80,7 @@ public interface Pipeline<T extends CustomContext> {
 	 * @return the next pipeline in line
 	 * @throws PipelineException can be thrown to indicate that something went wrong.
 	 */
-	Pipeline<?> content(WorkerContext context, Tag t, byte[] content, ProcessObject po) throws PipelineException;
+	Pipeline<?> content(WorkerContext context, Tag t, String content, ProcessObject po) throws PipelineException;
 
 	/**
 	 * Called when a closing tag has been encountered.

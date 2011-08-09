@@ -33,7 +33,7 @@ public class XMLWorkerTest {
 				return null;
 			}
 
-			public Pipeline content(final WorkerContext context, final Tag t, final byte[] content, final ProcessObject po)
+			public Pipeline content(final WorkerContext context, final Tag t, final String content, final ProcessObject po)
 					throws PipelineException {
 				called = true;
 				return null;
@@ -65,12 +65,12 @@ public class XMLWorkerTest {
 	@Test
 	public void verifyPipelineContentCalled() {
 		worker.startElement("test", new HashMap<String, String>() , "ns");
-		worker.text("test".getBytes());
+		worker.text("test");
 		Assert.assertTrue(called);
 	}
 	@Test
 	public void verifyPipelineContentNotCalledOnNoTag() {
-		worker.text("test".getBytes());
+		worker.text("test");
 		Assert.assertFalse(called);
 	}
 	@Test

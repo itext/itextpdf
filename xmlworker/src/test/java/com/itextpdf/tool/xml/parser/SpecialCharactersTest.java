@@ -43,8 +43,8 @@ public class SpecialCharactersTest {
 
 	@Test
 	public void testIntCode() throws UnsupportedEncodingException {
-		itState.process(hex);
-		String str = new String(parser.memory().current().toByteArray(), "ISO-8859-1");
+		itState.process((char) hex);
+		String str = parser.memory().current().toString();
 		System.out.println(str);
 		Assert.assertEquals(hex, str.charAt(0));
 	}
@@ -55,16 +55,16 @@ public class SpecialCharactersTest {
 		scState.process('e');
 		scState.process('g');
 		scState.process(';');
-		String str = new String(parser.memory().current().toByteArray(), "ISO-8859-1");
+		String str = parser.memory().current().toString();
 		Assert.assertEquals(hex, str.charAt(0));
 	}
 
 	@Test
 	public void testEacuteCcedilleEtc() throws UnsupportedEncodingException {
 		for (int i = 0; i < e.length(); i++) {
-			itState.process(e.codePointAt(i));
+			itState.process((char) e.codePointAt(i));
 		}
-		String str = new String(parser.memory().current().toByteArray(), "ISO-8859-1");
+		String str = parser.memory().current().toString();
 		Assert.assertEquals(e, str);
 	}
 }

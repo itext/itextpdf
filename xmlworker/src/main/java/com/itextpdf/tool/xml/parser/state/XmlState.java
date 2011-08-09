@@ -64,7 +64,7 @@ public class XmlState implements State {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
-	public void process(final int character) {
+	public void process(final char character) {
 		if (character == '>') {
 			this.parser.endElement();
 			this.parser.selectState().unknown();

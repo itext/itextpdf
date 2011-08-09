@@ -94,7 +94,7 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	 * Just calls getNext.
 	 *
 	 */
-	public Pipeline<?> content(final WorkerContext context, final Tag t, final  byte[] content, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> content(final WorkerContext ctx, final Tag currentTag, final String text, final ProcessObject po) throws PipelineException {
 		return getNext();
 	}
 

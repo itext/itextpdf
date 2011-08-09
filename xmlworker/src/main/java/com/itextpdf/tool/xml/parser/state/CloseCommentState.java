@@ -64,7 +64,7 @@ public class CloseCommentState implements State {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
-	public void process(final int character) {
+	public void process(final char character) {
 		if (character == '-') {
 			this.parser.memory().comment().append('-');
 		} else if (character == '>' && this.parser.memory().comment().length() == 2) {
@@ -73,7 +73,7 @@ public class CloseCommentState implements State {
 			this.parser.flush();
 			parser.selectState().inTag();
 		} else  {
-			this.parser.append(this.parser.memory().comment().toString().getBytes());
+			this.parser.append(this.parser.memory().comment().toString());
 			this.parser.memory().comment().setLength(0);
 			parser.selectState().comment();
 		}
