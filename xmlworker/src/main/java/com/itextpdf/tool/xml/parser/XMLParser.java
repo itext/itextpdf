@@ -184,6 +184,11 @@ public class XMLParser {
 		}
 	}
 
+	public void parse(InputStream in, Charset charSet) throws IOException {
+		InputStreamReader reader = new InputStreamReader(in, charSet);
+		parse(reader);
+		
+	}
 	/**
 	 * Parse an Reader
 	 *
@@ -218,9 +223,6 @@ public class XMLParser {
 	 * @throws IOException
 	 */
 	private void parseStream(final InputStream r) throws IOException {
-		for (XMLParserListener l : listeners) {
-			l.init();
-		}
 		InputStreamReader reader = new InputStreamReader(r, charset);
 		parse(reader);
 	}
@@ -498,6 +500,10 @@ public class XMLParser {
 		this.memory.current().append(string);
 		return this;
 
+	}
+
+	public Charset getCharset() {
+		return charset;
 	}
 
 }

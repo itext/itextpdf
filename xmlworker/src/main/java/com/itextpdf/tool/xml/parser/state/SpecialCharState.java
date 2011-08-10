@@ -75,7 +75,9 @@ public class SpecialCharState implements State {
 				if (decoded == '\0') {
 					parser.append('&').append(entity.toString()).append(';');
 				} else {
-					parser.append(decoded);
+//					CharBuffer cb = CharBuffer.wrap(new char[] {decoded});
+//					Normalizer.normalize(target_chars, Normalizer.Form.NFD);
+					parser.append(Character.toString(decoded));
 				}
 //			}
             parser.selectState().inTag();

@@ -45,6 +45,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -94,7 +96,7 @@ public class ParserTest {
 	@Test
 	public void specialTag() throws IOException {
 		String html = "<p><?formServer acrobat8.1dynamic defaultPDFRenderFormat?>ohoh</p>";
-		XMLParser p = new XMLParser(false, Charset.forName("ISO-8859-1"));
+		XMLParser p = new XMLParser(false, Charset.forName("UTF-8"));
 		final StringBuilder b = init(html, p);
 		p.parse(new ByteArrayInputStream(html.getBytes()));
 		String str = b.toString();
@@ -103,8 +105,8 @@ public class ParserTest {
 
 	@Test
 	public void specialChars() throws IOException {
+		final List<String> list = new ArrayList<String>();
 		XMLParser p = new XMLParser(false, new XMLParserListener() {
-
 			public void unknownText(final String text) {
 			}
 
@@ -125,17 +127,16 @@ public class ParserTest {
 			}
 
 			public void text(final String text) {
-				try {
-//					Assert.assertEquals("e\u00e9\u00e8\u00e7\u00e0\00f4", new String(text));
-					org.junit.Assert.assertEquals("e\u00e9\u00e8\u00e7\u00e0\u00f5", new String(text.getBytes(), "ISO-8859-1"));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-					Assert.fail(e.getLocalizedMessage());
-				}
+					list.add(text);
+				
 
 			}
 		});
-		p.parse(ParserTest.class.getResourceAsStream("parser.xml"));
+		p.parse(ParserTest.class.getResourceAsStream("parser.xml"), Charset.forName("UTF-8"));
+//		org.junit.Assert.assertEquals(new String("e\u00e9\u00e8\u00e7\u00e0\u00f5".getBytes("UTF-8"), "UTF-8"), list.get(0));
+//		org.junit.Assert.assertEquals(new String("e\u00e9\u00e8\u00e7\u00e0\u00f5".getBytes("UTF-8"), "UTF-8"), list.get(1));
+		org.junit.Assert.assertEquals("e\u00e9\u00e8\u00e7\u00e0\u00f5", list.get(0));
+		org.junit.Assert.assertEquals("e\u00e9\u00e8\u00e7\u00e0\u00f5", list.get(1));
 	}
 
 	public void readBare() throws UnsupportedEncodingException {
