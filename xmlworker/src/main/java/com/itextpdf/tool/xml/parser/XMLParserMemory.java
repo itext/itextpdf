@@ -60,10 +60,11 @@ public class XMLParserMemory {
 	private String currentAttr;
 	private final StringBuilder currentEntity = new StringBuilder();
 	private final StringBuilder comment = new StringBuilder();
-	private StringBuilder baos = new StringBuilder();
+	private final StringBuilder baos = new StringBuilder();
 	private final Map<String, String> attr;
 	private String wsTag = "";
 	private String currentNameSpace = "";
+	private char lastChar;
 
 	/**
 	 *
@@ -199,6 +200,21 @@ public class XMLParserMemory {
 	 */
 	public void resetBuffer() {
 		this.baos.setLength(0);
+	}
+
+	/**
+	 * @param c
+	 */
+	public void lastChar(final char c) {
+		this.lastChar = c;
+
+	}
+
+	/**
+	 * @return
+	 */
+	public char lastChar() {
+		return this.lastChar;
 	}
 
 }

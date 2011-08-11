@@ -80,6 +80,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 
 	/**
 	 * Utility method that fetches the CSSResolver from the if any and if it uses the default key.
+	 * @param context the WorkerContext
 	 *
 	 * @return CSSResolver
 	 * @throws NoCustomContextException if the context of the
@@ -92,7 +93,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	/**
 	 * Utility method that fetches the HtmlPipelineContext used if any and if it
 	 * uses the default key.
-	 *
+	 * @param context the WorkerContext
 	 * @return a HtmlPipelineContext
 	 * @throws NoCustomContextException if the context of the
 	 *             {@link HtmlPipelineContext} could not be found.
@@ -193,7 +194,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 *            returned, true if new line should be added or not.
 	 * @param applyCSS true if CSS should be applied on the paragraph
 	 * @param tag the relevant tag
-	 * @param context the WorkerContext
+	 * @param ctx the WorkerContext
 	 * @return a List with paragraphs
 	 */
 	public final List<Element> currentContentToParagraph(final List<Element> currentContent,

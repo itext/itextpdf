@@ -74,10 +74,12 @@ public class SpecialCharState implements State {
 				char decoded = EntitiesToUnicode.decodeEntity(entity.toString());
 				if (decoded == '\0') {
 					parser.append('&').append(entity.toString()).append(';');
+					parser.memory().lastChar(';');
 				} else {
 //					CharBuffer cb = CharBuffer.wrap(new char[] {decoded});
 //					Normalizer.normalize(target_chars, Normalizer.Form.NFD);
 					parser.append(Character.toString(decoded));
+					parser.memory().lastChar(decoded);
 				}
 //			}
             parser.selectState().inTag();

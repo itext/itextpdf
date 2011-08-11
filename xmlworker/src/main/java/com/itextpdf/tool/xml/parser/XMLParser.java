@@ -70,7 +70,7 @@ public class XMLParser {
 	private ParserMonitor monitor;
 	private String text = null;
 	private TagState tagState;
-	private Charset charset;
+	private final Charset charset;
 
 	/**
 	 * Constructs a default XMLParser ready for HTML/XHTML processing.
@@ -160,17 +160,17 @@ public class XMLParser {
 	}
 
 	/**
-	 * Parse an InputStream.
+	 * Parse an InputStream with default encoding set
 	 *
 	 * @param in the InputStream to parse
 	 * @throws IOException if IO went wrong
 	 */
 	public void parse(final InputStream in) throws IOException {
-		parseStream(in);
+		parse(new InputStreamReader(in));
 	}
 
 	/**
-	 * Parse an InputStream.
+	 * Parse an InputStream that optionally detects encoding from the stream
 	 *
 	 * @param in the InputStream to parse
 	 * @param detectEncoding true if encoding should be detected from the stream
@@ -184,10 +184,16 @@ public class XMLParser {
 		}
 	}
 
-	public void parse(InputStream in, Charset charSet) throws IOException {
+	/**
+	 * Parses an InputStream using the given encoding
+	 * @param in
+	 * @param charSet
+	 * @throws IOException
+	 */
+	public void parse(final InputStream in, final Charset charSet) throws IOException {
 		InputStreamReader reader = new InputStreamReader(in, charSet);
 		parse(reader);
-		
+
 	}
 	/**
 	 * Parse an Reader
@@ -196,6 +202,15 @@ public class XMLParser {
 	 * @throws IOException if IO went wrong
 	 */
 	public void parse(final Reader reader) throws IOException {
+		parseWithReader(reader);
+	}
+
+	/**
+	 * The actual parse method
+	 * @param r
+	 * @throws IOException
+	 */
+	private void parseWithReader(final Reader reader) throws IOException {
 		for (XMLParserListener l : listeners) {
 			l.init();
 		}
@@ -216,15 +231,6 @@ public class XMLParser {
 			}
 			r.close();
 		}
-	}
-
-	/**
-	 * @param r
-	 * @throws IOException
-	 */
-	private void parseStream(final InputStream r) throws IOException {
-		InputStreamReader reader = new InputStreamReader(r, charset);
-		parse(reader);
 	}
 
 	/**

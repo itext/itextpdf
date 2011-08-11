@@ -48,10 +48,10 @@ import java.nio.charset.Charset;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.css.CSSFileWrapper;
 import com.itextpdf.tool.xml.css.CssFile;
 import com.itextpdf.tool.xml.css.CssFileProcessor;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
-import com.itextpdf.tool.xml.css.CSSFileWrapper;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.Tags;
@@ -167,10 +167,10 @@ public class XMLWorkerHelper {
 	}
 
 	/**
-	 * @param writer
-	 * @param doc
-	 * @param in
-	 * @throws IOException
+	 * @param writer the writer to use
+	 * @param doc the document to use
+	 * @param in the {@link InputStream} of the XHTML source.
+	 * @throws IOException if the {@link InputStream} could not be read.
 	 */
 	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final Charset charset) throws IOException {
 		CssFilesImpl cssFiles = new CssFilesImpl();
