@@ -100,7 +100,7 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
-	 *
+	 * Create a new tag object.
 	 * @param tag the tag name
 	 * @param attr the attributes
 	 * @param ns the namespace
@@ -110,6 +110,7 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
+	 * Create a new tag object.
 	 * @param tag
 	 * @param ns
 	 */
@@ -139,8 +140,11 @@ public class Tag implements Iterable<Tag> {
 	/**
 	 * The tags name.
 	 *
+	 * @deprecated marked as deprecated in favor for getName, we won't remove it
+	 *             yet.
 	 * @return the tag name
 	 */
+	@Deprecated
 	public String getTag() {
 		return this.tag;
 	}
@@ -366,5 +370,16 @@ public class Tag implements Iterable<Tag> {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the name of the tag.<br />(Actually the same as getTag method, but
+	 * after using XMLWorker for a while we caught ourself always trying to call
+	 * Tag#getName() instead of Tag#getTag())
+	 *
+	 * @return the name of the tag.
+	 */
+	public String getName() {
+		return this.tag;
 	}
 }

@@ -71,9 +71,9 @@ public class MonitorInputReader extends BufferedReader {
 	 * Currently the only overridden method that sends data to the given monitor.
 	 */
 	@Override
-	public int read() throws IOException {
-		int i = super.read();
-		monitor.read(i);
+	public int read(final char[] c) throws IOException {
+		int i = super.read(c);
+		monitor.read(c);
 		return i;
 	}
 

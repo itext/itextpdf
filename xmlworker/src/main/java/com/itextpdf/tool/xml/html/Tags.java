@@ -43,6 +43,8 @@
  */
 package com.itextpdf.tool.xml.html;
 
+import com.itextpdf.tool.xml.html.HTML.Tag;
+
 
 
 /**
@@ -64,61 +66,61 @@ public class Tags {
 	 */
 	public static final TagProcessorFactory getHtmlTagProcessorFactory() {
 		DefaultTagProcessorFactory factory = new DefaultTagProcessorFactory();
-		factory.addProcessor("xml", dummyTagProcessor);
+		factory.addProcessor(Tag.XML, dummyTagProcessor);
 		factory.addProcessor("!doctype", dummyTagProcessor);
-		factory.addProcessor("html", dummyTagProcessor);
-		factory.addProcessor("head", dummyTagProcessor);
-		factory.addProcessor("meta", dummyTagProcessor);
-		factory.addProcessor("object", dummyTagProcessor);
-		factory.addProcessor("title", defaultpackage + "head.Title");
-		factory.addProcessor("link", defaultpackage + "head.Link");
-		factory.addProcessor("style", defaultpackage + "head.Style");
-		factory.addProcessor("body", defaultpackage + "Body");
-		factory.addProcessor("div", defaultpackage + "Div");
-		factory.addProcessor("a", defaultpackage + "Anchor");
-		factory.addProcessor("table", defaultpackage + "table.Table");
-		factory.addProcessor("tr", defaultpackage + "table.TableRow");
-		factory.addProcessor("td", defaultpackage + "table.TableData");
-		factory.addProcessor(HTML.Tag.TH, defaultpackage + "table.TableData");
-		factory.addProcessor("caption", paragraph);
-		factory.addProcessor("p", paragraph);
-		factory.addProcessor("dt", paragraph);
-		factory.addProcessor("dd", paragraph);
-		factory.addProcessor("br", defaultpackage + "Break");
-		factory.addProcessor("span", span);
-		factory.addProcessor("small", span);
-		factory.addProcessor("big", span);
-		factory.addProcessor("s", span);
-		factory.addProcessor("strike", span);
-		factory.addProcessor("del", span);
-		factory.addProcessor("sub", span);
-		factory.addProcessor("sup", span);
-		factory.addProcessor("b", span);
-		factory.addProcessor("strong", span);
-		factory.addProcessor("i", span);
-		factory.addProcessor("cite", span);
-		factory.addProcessor("em", span);
-		factory.addProcessor("address", span);
-		factory.addProcessor("dfn", span);
-		factory.addProcessor("var", span);
-		factory.addProcessor("pre", nonSanitized);
-		factory.addProcessor("tt", nonSanitized);
-		factory.addProcessor("code", nonSanitized);
-		factory.addProcessor("kbd", nonSanitized);
-		factory.addProcessor("samp", nonSanitized);
-		factory.addProcessor("u", span);
-		factory.addProcessor("ins", span);
-		factory.addProcessor("img", defaultpackage + "Image");
-		factory.addProcessor("ul", defaultpackage + "OrderedUnorderedList");
-		factory.addProcessor("ol", defaultpackage + "OrderedUnorderedList");
-		factory.addProcessor("li", defaultpackage + "OrderedUnorderedListItem");
-		factory.addProcessor("h1", headers);
-		factory.addProcessor("h2", headers);
-		factory.addProcessor("h3", headers);
-		factory.addProcessor("h4", headers);
-		factory.addProcessor("h5", headers);
-		factory.addProcessor("h6", headers);
-		factory.addProcessor("hr", defaultpackage + "HorizontalRule");
+		factory.addProcessor(Tag.HTML, dummyTagProcessor);
+		factory.addProcessor(Tag.HEAD, dummyTagProcessor);
+		factory.addProcessor(Tag.META, dummyTagProcessor);
+		factory.addProcessor(Tag.OBJECT, dummyTagProcessor);
+		factory.addProcessor(Tag.TITLE, defaultpackage + "head.Title");
+		factory.addProcessor(Tag.LINK, defaultpackage + "head.Link");
+		factory.addProcessor(Tag.STYLE, defaultpackage + "head.Style");
+		factory.addProcessor(Tag.BODY, defaultpackage + "Body");
+		factory.addProcessor(Tag.DIV, defaultpackage + "Div");
+		factory.addProcessor(Tag.A, defaultpackage + "Anchor");
+		factory.addProcessor(Tag.TABLE, defaultpackage + "table.Table");
+		factory.addProcessor(Tag.TR, defaultpackage + "table.TableRow");
+		factory.addProcessor(Tag.TD, defaultpackage + "table.TableData");
+		factory.addProcessor(Tag.TH, defaultpackage + "table.TableData");
+		factory.addProcessor(Tag.CAPTION, paragraph);
+		factory.addProcessor(Tag.P, paragraph);
+		factory.addProcessor(Tag.DT, paragraph);
+		factory.addProcessor(Tag.DD, paragraph);
+		factory.addProcessor(Tag.BR, defaultpackage + "Break");
+		factory.addProcessor(Tag.SPAN, span);
+		factory.addProcessor(Tag.SMALL, span);
+		factory.addProcessor(Tag.BIG, span);
+		factory.addProcessor(Tag.S, span);
+		factory.addProcessor(Tag.STRIKE, span);
+		factory.addProcessor(Tag.DEL, span);
+		factory.addProcessor(Tag.SUB, span);
+		factory.addProcessor(Tag.SUP, span);
+		factory.addProcessor(Tag.B, span);
+		factory.addProcessor(Tag.STRONG, span);
+		factory.addProcessor(Tag.I, span);
+		factory.addProcessor(Tag.CITE, span);
+		factory.addProcessor(Tag.EM, span);
+		factory.addProcessor(Tag.ADDRESS, span);
+		factory.addProcessor(Tag.DFN, span);
+		factory.addProcessor(Tag.VAR, span);
+		factory.addProcessor(Tag.PRE, nonSanitized);
+		factory.addProcessor(Tag.TT, nonSanitized);
+		factory.addProcessor(Tag.CODE, nonSanitized);
+		factory.addProcessor(Tag.KBD, nonSanitized);
+		factory.addProcessor(Tag.SAMP, nonSanitized);
+		factory.addProcessor(Tag.U, span);
+		factory.addProcessor(Tag.INS, span);
+		factory.addProcessor(Tag.IMG, defaultpackage + "Image");
+		factory.addProcessor(Tag.UL, defaultpackage + "OrderedUnorderedList");
+		factory.addProcessor(Tag.OL, defaultpackage + "OrderedUnorderedList");
+		factory.addProcessor(Tag.LI, defaultpackage + "OrderedUnorderedListItem");
+		factory.addProcessor(Tag.H1, headers);
+		factory.addProcessor(Tag.H2, headers);
+		factory.addProcessor(Tag.H3, headers);
+		factory.addProcessor(Tag.H4, headers);
+		factory.addProcessor(Tag.H5, headers);
+		factory.addProcessor(Tag.H6, headers);
+		factory.addProcessor(Tag.HR, defaultpackage + "HorizontalRule");
 		return factory;
 	}
 }
