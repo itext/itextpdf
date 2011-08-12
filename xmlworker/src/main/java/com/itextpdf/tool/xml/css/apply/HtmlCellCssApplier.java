@@ -88,7 +88,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
     public HtmlCell apply(final HtmlCell cell, final Tag t) {
     	final TableStyleValues values = new TableStyleValues();
     	Tag table = t.getParent();
-    	while(!table.getTag().equals("table")){
+    	while(!table.getName().equals("table")){
     		table = table.getParent();
     	}
     	String border = table.getAttributes().get(CSS.Property.BORDER);

@@ -77,7 +77,7 @@ public class TagUtils {
 			List<Tag> siblings = t.getParent().getChildren();
 			sibling = siblings.get(siblings.indexOf(t)+i);
 		} catch(IndexOutOfBoundsException e) {
-			throw new NoSiblingException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_SIBLING),t.getTag(), i), e);
+			throw new NoSiblingException(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_SIBLING),t.getName(), i), e);
 		}
 		return sibling;
 	}

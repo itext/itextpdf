@@ -85,7 +85,7 @@ public class WidthCalculator {
 					width = utils.parseRelativeValue(widthValue, firstAncestorsWidth);
 				}
 			}
-		} else if (roottags.contains(tag.getTag())){
+		} else if (roottags.contains(tag.getName())){
 			width = pagewidth;
 		}
 		return width;

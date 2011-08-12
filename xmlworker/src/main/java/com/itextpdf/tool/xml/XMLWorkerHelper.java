@@ -170,6 +170,7 @@ public class XMLWorkerHelper {
 	 * @param writer the writer to use
 	 * @param doc the document to use
 	 * @param in the {@link InputStream} of the XHTML source.
+	 * @param charset the charset to use
 	 * @throws IOException if the {@link InputStream} could not be read.
 	 */
 	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final Charset charset) throws IOException {
@@ -188,6 +189,7 @@ public class XMLWorkerHelper {
 	/**
 	 * @param d the ElementHandler
 	 * @param in the InputStream
+	 * @param charset the charset to use
 	 * @throws IOException if something went seriously wrong with IO.
 	 */
 	public void parseXHtml(final ElementHandler d, final InputStream in, final Charset charset) throws IOException {

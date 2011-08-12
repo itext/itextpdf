@@ -61,8 +61,8 @@ public interface WorkerContext {
 
 	/**
 	 * Store a customContext for the given key.
-	 * @param contextKey
-	 * @param context
+	 * @param contextKey the key to find the given CustomContext with.
+	 * @param context the CustomContext to set for the given key
 	 */
 	void put(String contextKey, CustomContext context);
 

@@ -43,7 +43,7 @@ package com.itextpdf.tool.xml.css;
 import java.util.Map;
 
 /**
- * This Wrapper disabled the add and isPersistent(final boolean b) methods.
+ * This Wrapper disables the add and isPersistent(final boolean b) methods.
  *
  * @author redlab_b
  *
@@ -54,8 +54,11 @@ public class CSSFileWrapper implements CssFile {
 	private final CssFile css;
 
 	/**
-	 * @param css
-	 * @param b
+	 * Constructs a CssFile that does not allow adding of new CSS (given you
+	 * don't mess with the CssFile provided on construction).
+	 *
+	 * @param css the css file
+	 * @param b true if this file should be kept forever.
 	 */
 	public CSSFileWrapper(final CssFile css, final boolean b) {
 		this.css = css;

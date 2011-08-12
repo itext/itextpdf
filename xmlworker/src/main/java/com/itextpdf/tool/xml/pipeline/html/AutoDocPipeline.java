@@ -112,7 +112,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 	@Override
 	public Pipeline<?> open(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
 		try {
-			String tagName = t.getTag();
+			String tagName = t.getName();
 			if (tag.equals(tagName)) {
 				MapContext cc;
 				cc = (MapContext) context.get(PdfWriterPipeline.class.getName());
@@ -128,7 +128,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 				}
 
 			}
-			if (t.getTag().equalsIgnoreCase(opentag)) {
+			if (t.getName().equalsIgnoreCase(opentag)) {
 				MapContext cc;
 				cc = (MapContext) context.get(PdfWriterPipeline.class.getName());
 				Document d = (Document) cc.get(PdfWriterPipeline.DOCUMENT);
@@ -172,7 +172,7 @@ public class AutoDocPipeline extends AbstractPipeline {
 	 */
 	@Override
 	public Pipeline<?> close(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
-		String tagName = t.getTag();
+		String tagName = t.getName();
 		if (tag.equals(tagName)) {
 			MapContext cc;
 			try {

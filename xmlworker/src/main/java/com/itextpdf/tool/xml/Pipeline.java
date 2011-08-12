@@ -56,9 +56,9 @@ public interface Pipeline<T extends CustomContext> {
 	 * Initialize their CustomContext here and add it to the WorkerContext
 	 * through {@link WorkerContext#put(String, CustomContext)}.
 	 *
-	 * @param context
+	 * @param context the WorkerContext
 	 * @return the next pipeline in line
-	 * @throws PipelineException
+	 * @throws PipelineException can be thrown to indicate that something went wrong.
 	 */
 	Pipeline<?> init(final WorkerContext context) throws PipelineException;
 	/**

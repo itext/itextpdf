@@ -48,21 +48,21 @@ public class DummyTagProcessor implements TagProcessor {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
-	public List<Element> startElement(WorkerContext ctx, final Tag tag) {
+	public List<Element> startElement(final WorkerContext ctx, final Tag tag) {
 		return new ArrayList<Element>(0);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
-	public List<Element> content(WorkerContext ctx, final Tag tag, final String content) {
+	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
 		return new ArrayList<Element>(0);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List)
 	 */
-	public List<Element> endElement(WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
+	public List<Element> endElement(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		return new ArrayList<Element>(0);
 	}
 
@@ -71,12 +71,6 @@ public class DummyTagProcessor implements TagProcessor {
 	 */
 	public boolean isStackOwner() {
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.html.TagProcessor#setContext(com.itextpdf.tool.xml.WorkerContext)
-	 */
-	public void setContext(final WorkerContext context) {
 	}
 
 

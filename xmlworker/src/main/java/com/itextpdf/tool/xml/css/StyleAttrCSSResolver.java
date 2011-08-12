@@ -175,7 +175,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 		}
 		// inherit css from parent tags, as defined in provided CssInheritanceRules or if property = inherit
 		Map<String, String> css = t.getCSS();
-		if (mustInherit(t.getTag()) && null != t.getParent() && null != t.getParent().getCSS()) {
+		if (mustInherit(t.getName()) && null != t.getParent() && null != t.getParent().getCSS()) {
 			if (null != this.inherit) {
 				for (Entry<String, String> entry : t.getParent().getCSS().entrySet()) {
 					String key = entry.getKey();

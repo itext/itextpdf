@@ -203,7 +203,8 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * @param c
+	 * Set the last char
+	 * @param c the char
 	 */
 	public void lastChar(final char c) {
 		this.lastChar = c;
@@ -211,7 +212,7 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * @return
+	 * @return the last char parameter.
 	 */
 	public char lastChar() {
 		return this.lastChar;

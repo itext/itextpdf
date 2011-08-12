@@ -82,27 +82,27 @@ public class CssSelector {
 	 */
 	public Set<String> createTagSelectors(final Tag t) {
 		Set<String> selectors = new LinkedHashSet<String>();
-		selectors.add(t.getTag());
+		selectors.add(t.getName());
 		if (null != t.getParent()) {
 			Tag parent = t.getParent();
-			StringBuilder b = new StringBuilder(t.getTag());
-			StringBuilder bStripped = new StringBuilder(t.getTag());
-			StringBuilder bElem = new StringBuilder(t.getTag());
-			StringBuilder bChild = new StringBuilder(t.getTag());
-			StringBuilder bChildSpaced = new StringBuilder(t.getTag());
+			StringBuilder b = new StringBuilder(t.getName());
+			StringBuilder bStripped = new StringBuilder(t.getName());
+			StringBuilder bElem = new StringBuilder(t.getName());
+			StringBuilder bChild = new StringBuilder(t.getName());
+			StringBuilder bChildSpaced = new StringBuilder(t.getName());
 			Tag child = t;
 			while (null != parent) {
 				if (parent.getChildren().indexOf(child) == 0) {
-					bChild.insert(0, '+').insert(0, parent.getTag());
-					bChildSpaced.insert(0, " + ").insert(0, parent.getTag());
+					bChild.insert(0, '+').insert(0, parent.getName());
+					bChildSpaced.insert(0, " + ").insert(0, parent.getName());
 					selectors.add(bChild.toString());
 					selectors.add(bChildSpaced.toString());
 				}
-				b.insert(0, " > ").insert(0, parent.getTag());
+				b.insert(0, " > ").insert(0, parent.getName());
 				selectors.add(b.toString());
-				bStripped.insert(0, ">").insert(0, parent.getTag());
+				bStripped.insert(0, ">").insert(0, parent.getName());
 				selectors.add(bStripped.toString());
-				bElem.insert(0, ' ').insert(0, parent.getTag());
+				bElem.insert(0, ' ').insert(0, parent.getName());
 				selectors.add(bElem.toString());
 				child = parent;
 				parent = parent.getParent();

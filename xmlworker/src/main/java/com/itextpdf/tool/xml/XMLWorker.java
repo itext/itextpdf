@@ -129,10 +129,10 @@ public class XMLWorker implements XMLParserListener {
 			thetag = tag;
 		}
 		WorkerContext ctx = getLocalWC();
-		if (null != ctx.getCurrentTag() && !thetag.equals(ctx.getCurrentTag().getTag())) {
+		if (null != ctx.getCurrentTag() && !thetag.equals(ctx.getCurrentTag().getName())) {
 			throw new RuntimeWorkerException(String.format(
 					LocaleMessages.getInstance().getMessage(LocaleMessages.INVALID_NESTED_TAG), thetag,
-					ctx.getCurrentTag().getTag()));
+					ctx.getCurrentTag().getName()));
 		}
 		Pipeline<?> wp = rootpPipe;
 		ProcessObject po = new ProcessObject();
@@ -149,7 +149,7 @@ public class XMLWorker implements XMLParserListener {
 
 	/**
 	 * This method passes encountered text to the pipeline via the
-	 * {@link Pipeline#content(WorkerContext, Tag, byte[], ProcessObject)}
+	 * {@link Pipeline#content(WorkerContext, Tag, String, ProcessObject)}
 	 * method.
 	 */
 	public void text(final String text) {

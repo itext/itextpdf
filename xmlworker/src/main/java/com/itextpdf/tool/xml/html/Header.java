@@ -149,7 +149,7 @@ public class Header extends AbstractTagProcessor {
 	 * @return
 	 */
 	private int getLevel(final Tag tag) {
-		return Integer.parseInt(Character.toString(tag.getTag().charAt(1)));
+		return Integer.parseInt(Character.toString(tag.getName().charAt(1)));
 	}
 
 	/*

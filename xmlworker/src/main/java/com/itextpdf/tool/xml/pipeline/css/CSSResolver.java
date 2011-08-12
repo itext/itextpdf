@@ -97,7 +97,7 @@ public interface CSSResolver {
 
 	/**
 	 * @return an instance of this resolver
-	 * @throws CssResolverException
+	 * @throws CssResolverException thrown if something goes wrong
 	 */
 	CSSResolver clear() throws CssResolverException;
 

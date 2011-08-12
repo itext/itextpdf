@@ -60,13 +60,11 @@ public final class HTML {
 
 	/**
 	 *
-	 * All Tags.
+	 * All Tags used in HTML.
 	 *
 	 */
 	public final static class Tag {
-		/**
-		 *
-		 */
+
 		private Tag() {
 		}
 
@@ -270,7 +268,7 @@ public final class HTML {
 	}
 
 	/**
-	 * All attributes
+	 * Attributes used in HTML tags.
 	 */
 	public final static class Attribute {
 

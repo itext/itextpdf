@@ -133,10 +133,10 @@ public class ListStyleTypeCssApplier {
 				synchronizeSymbol(fontSize, lst);
 				lst.setLowercase(false);
 			}
-		} else if (t.getTag().equalsIgnoreCase(HTML.Tag.OL)) {
+		} else if (t.getName().equalsIgnoreCase(HTML.Tag.OL)) {
 			lst = new List(List.ORDERED);
 			synchronizeSymbol(fontSize, lst);
-		} else if (t.getTag().equalsIgnoreCase(HTML.Tag.UL)) {
+		} else if (t.getName().equalsIgnoreCase(HTML.Tag.UL)) {
 			lst = new List(List.UNORDERED);
 			shrinkSymbol(lst, fontSize);
 		}

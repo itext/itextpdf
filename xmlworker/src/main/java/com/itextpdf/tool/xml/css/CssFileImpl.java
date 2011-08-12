@@ -97,7 +97,8 @@ public class CssFileImpl implements CssFile {
 	}
 
 	/**
-	 * @param isPeristent
+	 * Indicates that this file should be kept.
+	 * @param isPeristent set to true if this file should be kept.
 	 */
 	public void isPersistent(final boolean isPeristent) {
 		this.persistent = isPeristent;

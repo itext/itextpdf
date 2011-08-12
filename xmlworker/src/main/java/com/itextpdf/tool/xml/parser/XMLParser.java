@@ -52,6 +52,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.itextpdf.text.xml.XMLUtil;
 import com.itextpdf.text.xml.simpleparser.IanaEncodings;
+import com.itextpdf.tool.xml.parser.io.EncodingUtil;
 import com.itextpdf.tool.xml.parser.io.MonitorInputReader;
 import com.itextpdf.tool.xml.parser.io.ParserMonitor;
 
@@ -70,7 +71,7 @@ public class XMLParser {
 	private ParserMonitor monitor;
 	private String text = null;
 	private TagState tagState;
-	private final Charset charset;
+	private Charset charset;
 
 	/**
 	 * Constructs a default XMLParser ready for HTML/XHTML processing.
@@ -112,7 +113,7 @@ public class XMLParser {
 	 * @param isHtml false if this parser is not going to parse HTML and
 	 *            whitespace should be submitted as text too.
 	 * @param listener the listener
-	 * @param charset the Charset
+	 * @param charset the Charset to use
 	 */
 	public XMLParser(final boolean isHtml, final XMLParserListener listener, final Charset charset) {
 		this(isHtml, charset);
@@ -120,20 +121,22 @@ public class XMLParser {
 	}
 
 	/**
-	 * @param b
-	 * @param worker
+	 * Constructs a new Parser with the default jvm charset.
+	 * @param b true if HTML is being parsed
+	 * @param listener the XMLParserListener
 	 */
-	public XMLParser(final boolean b, final XMLParserListener worker) {
+	public XMLParser(final boolean b, final XMLParserListener listener) {
 		this(b, Charset.defaultCharset());
-		listeners.add(worker);
+		listeners.add(listener);
 	}
 
 	/**
-	 * @param worker
+	 * Constructs a new Parser with HTML parsing set to true and the default jvm charset.
+	 * @param listener the XMLParserListener
 	 */
-	public XMLParser(final XMLParserListener worker) {
+	public XMLParser(final XMLParserListener listener) {
 		this(true, Charset.defaultCharset());
-		listeners.add(worker);
+		listeners.add(listener);
 	}
 
 	/**
@@ -186,11 +189,12 @@ public class XMLParser {
 
 	/**
 	 * Parses an InputStream using the given encoding
-	 * @param in
-	 * @param charSet
-	 * @throws IOException
+	 * @param in the stream to read
+	 * @param charSet to use for the constructed reader.
+	 * @throws IOException if reading fails
 	 */
 	public void parse(final InputStream in, final Charset charSet) throws IOException {
+		this.charset = charSet;
 		InputStreamReader reader = new InputStreamReader(in, charSet);
 		parse(reader);
 
@@ -268,7 +272,7 @@ public class XMLParser {
 			decl = new String(bi.toByteArray(), "CP037");
 		}
 		if (decl != null) {
-			decl = getDeclaredEncoding(decl);
+			decl = EncodingUtil.getDeclaredEncoding(decl);
 			if (decl != null)
 				encoding = decl;
 		}
@@ -403,31 +407,6 @@ public class XMLParser {
 		}
 	}
 
-	private static String getDeclaredEncoding(final String decl) {
-		if (decl == null)
-			return null;
-		int idx = decl.indexOf("encoding");
-		if (idx < 0)
-			return null;
-		int idx1 = decl.indexOf('"', idx);
-		int idx2 = decl.indexOf('\'', idx);
-		if (idx1 == idx2)
-			return null;
-		if (idx1 < 0 && idx2 > 0 || idx2 > 0 && idx2 < idx1) {
-			int idx3 = decl.indexOf('\'', idx2 + 1);
-			if (idx3 < 0)
-				return null;
-			return decl.substring(idx2 + 1, idx3);
-		}
-		if (idx2 < 0 && idx1 > 0 || idx1 > 0 && idx1 < idx2) {
-			int idx3 = decl.indexOf('"', idx1 + 1);
-			if (idx3 < 0)
-				return null;
-			return decl.substring(idx1 + 1, idx3);
-		}
-		return null;
-	}
-
 	/**
 	 * @return the current last character of the buffer or ' ' if none.
 	 */
@@ -484,7 +463,7 @@ public class XMLParser {
 
 	/**
 	 * @param bytes the byte array to append
-	 * @return this XMLParser
+	 * @return this instance of the XMLParser
 	 */
 	public XMLParser append(final char[] bytes) {
 		this.memory.current().append(bytes);
@@ -499,15 +478,19 @@ public class XMLParser {
 	}
 
 	/**
-	 * @param string
-	 * @return
+	 * Appends the given string to the buffer.
+	 * @param string the String to append
+	 * @return this instance of the XMLParser
 	 */
 	public XMLParser append(final String string) {
 		this.memory.current().append(string);
 		return this;
 
 	}
-
+	/**
+	 * Returns the current used character set.
+	 * @return the charset
+	 */
 	public Charset getCharset() {
 		return charset;
 	}

@@ -96,6 +96,6 @@ public class StackKeeperTest {
 	}
 	@Test
 	public void validateTag() {
-		Assert.assertEquals(t, sk.getTag());
+		Assert.assertEquals(t, sk.getName());
 	}
 }

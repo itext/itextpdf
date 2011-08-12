@@ -73,7 +73,8 @@ public interface CssFile {
 	boolean isPersistent();
 
 	/**
-	 * @param b
+	 * Indicates that this file should be kept.
+	 * @param b true if this file should be kept.
 	 */
 	void isPersistent(boolean b);
 

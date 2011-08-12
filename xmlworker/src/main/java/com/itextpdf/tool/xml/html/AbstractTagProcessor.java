@@ -86,6 +86,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @throws NoCustomContextException if the context of the
 	 *             {@link CssResolverPipeline} could not be found.
 	 */
+	@SuppressWarnings("unchecked")
 	public CSSResolver getCSSResolver(final WorkerContext context) throws NoCustomContextException {
 		return ((ObjectContext<CSSResolver>)context.get(CssResolverPipeline.class.getName())).get();
 	}

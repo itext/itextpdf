@@ -111,8 +111,8 @@ public class Tag implements Iterable<Tag> {
 
 	/**
 	 * Create a new tag object.
-	 * @param tag
-	 * @param ns
+	 * @param tag the name of the tag
+	 * @param ns the namespace of the tag (do not set null, set an empty String)
 	 */
 	public Tag(final String tag, final String ns) {
 		 this(tag, new HashMap<String, String>(0), new HashMap<String, String>(0), ns);
@@ -200,13 +200,14 @@ public class Tag implements Iterable<Tag> {
 
 	/**
 	 * Returns all children of this tag with the given name.
+	 * @param name the name of the tags to look for
 	 *
 	 * @return the children tags of this tag with the given name.
 	 */
 	public List<Tag> getChildren(final String name) {
 		List<Tag> named = new ArrayList<Tag>();
 		for(Tag child: this.children) {
-			if(child.getTag().equals(name)) {
+			if(child.getName().equals(name)) {
 				named.add(child);
 			}
 		}
@@ -270,8 +271,9 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
-	 * @param name
-	 * @param ns
+	 * Finds the first child that matches the given name and namespace.
+	 * @param name the name of the tag
+	 * @param ns the namespace
 	 * @return the child
 	 */
 	public Tag getChild(final String name, final String ns) {
@@ -279,9 +281,9 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
-	 * Finds the first child that matches the given name and ns.
-	 * @param name
-	 * @param ns
+	 * Finds the first child that matches the given name and ns. Optionally look in the whole tree (in children of children of children ...)
+	 * @param name name of the tag
+	 * @param ns the namespace
 	 * @param recursive true if the tree should be fully inwards inspected.
 	 * @return the child if found
 	 */
@@ -308,8 +310,9 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
-	 * @param name
-	 * @param ns
+	 * Check if this tag has a child with the given name and namespace.
+	 * @param name the name of the tag to look for
+	 * @param ns the namespace (if no namespace, set an empty String)
 	 * @return true if a child with given name and ns is found
 	 */
 	public boolean hasChild(final String name, final String ns) {
@@ -317,9 +320,9 @@ public class Tag implements Iterable<Tag> {
 	}
 
 	/**
-	 *
-	 * @param name
-	 * @param ns
+	 * Check if this tag has a child with the given name and namespace.
+	 * @param name the name of the tag to look for
+	 * @param ns the namespace (if no namespace, set an empty String)
 	 * @param recursive true if children's children children children ... should be inspected too.
 	 * @return true if a child with the given name and ns is found.
 	 */

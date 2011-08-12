@@ -169,7 +169,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 			float ownMargin = 0;
 			String marginValue = tag.getCSS().get(CSS.Property.MARGIN+end);
 			if(marginValue==null) {
-				if(null != tag.getParent() && getHtmlPipelineContext(ctx).getRootTags().contains(tag.getParent().getTag())) {
+				if(null != tag.getParent() && getHtmlPipelineContext(ctx).getRootTags().contains(tag.getParent().getName())) {
 					ownMargin = ownFontSize;
 				}
 			} else {

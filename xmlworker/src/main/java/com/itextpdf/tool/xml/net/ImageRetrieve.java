@@ -46,7 +46,6 @@ package com.itextpdf.tool.xml.net;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.tool.xml.net.exc.NoImageException;

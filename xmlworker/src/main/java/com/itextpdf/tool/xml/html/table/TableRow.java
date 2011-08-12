@@ -66,11 +66,11 @@ public class TableRow extends AbstractTagProcessor {
 	public List<Element> end(WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
     	TableRowElement row = null;
     	List<Element> l = new ArrayList<Element>(1);
-    	if(tag.getParent().getTag().equalsIgnoreCase(HTML.Tag.THEAD)) {
+    	if(tag.getParent().getName().equalsIgnoreCase(HTML.Tag.THEAD)) {
         	row = new TableRowElement(currentContent, Place.HEADER);
-    	} else if(tag.getParent().getTag().equalsIgnoreCase(HTML.Tag.TBODY)) {
+    	} else if(tag.getParent().getName().equalsIgnoreCase(HTML.Tag.TBODY)) {
     		row = new TableRowElement(currentContent, Place.BODY);
-    	} else if(tag.getParent().getTag().equalsIgnoreCase(HTML.Tag.TFOOT)) {
+    	} else if(tag.getParent().getName().equalsIgnoreCase(HTML.Tag.TFOOT)) {
     		row = new TableRowElement(currentContent, Place.FOOTER);
     	} else {
     		row = new TableRowElement(currentContent, Place.BODY);

@@ -249,7 +249,7 @@ public class Table extends AbstractTagProcessor {
 				tableWidthFixed = true;
 			} else if (initialTotalWidth <= max) {
 				targetWidth = initialTotalWidth;
-			} else if (null == tag.getParent() || (null != tag.getParent() && htmlPipelineContext.getRootTags().contains(tag.getParent().getTag()))) {
+			} else if (null == tag.getParent() || (null != tag.getParent() && htmlPipelineContext.getRootTags().contains(tag.getParent().getName()))) {
 				targetWidth = max;
 			} else /* this table is an inner table and width adjustment is done in outer table */{
 				targetWidth = getTableWidth(columnWidths, outerWidth);
@@ -393,7 +393,7 @@ public class Table extends AbstractTagProcessor {
 				// all invalid row elements taken as caption
 				int i = 0;
 				Tag captionTag = tag.getChildren().get(i++);
-				while (!captionTag.getTag().equalsIgnoreCase(HTML.Tag.CAPTION) && i < tag.getChildren().size()) {
+				while (!captionTag.getName().equalsIgnoreCase(HTML.Tag.CAPTION) && i < tag.getChildren().size()) {
 					captionTag = tag.getChildren().get(i);
 					i++;
 				}
@@ -436,6 +436,7 @@ public class Table extends AbstractTagProcessor {
 	 * @return float the target width of a table.
 	 * @throws NoCustomContextException
 	 */
+	@SuppressWarnings("unused")
 	private float calculateTargetWidth(final Tag tag, final float[] columnWidths, final float outerWidth,
 			final WorkerContext ctx) throws NoCustomContextException {
 		float targetWidth = 0;
@@ -451,7 +452,7 @@ public class Table extends AbstractTagProcessor {
 		} else if (start <= max) {
 			targetWidth = start;
 		} else if (null == tag.getParent()
-				|| (null != tag.getParent() && htmlPipelineContext.getRootTags().contains(tag.getParent().getTag()))) {
+				|| (null != tag.getParent() && htmlPipelineContext.getRootTags().contains(tag.getParent().getName()))) {
 			targetWidth = max;
 		} else /*
 				 * this table is an inner table and width adjustment is done in

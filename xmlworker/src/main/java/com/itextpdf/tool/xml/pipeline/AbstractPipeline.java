@@ -83,7 +83,7 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	}
 
 	/**
-	 * Just calls getNext.
+	 * Just calls getNext.<br />Override this to get notified on encountered opening tags.
 	 *
 	 */
 	public Pipeline<?> open(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
@@ -91,7 +91,7 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	}
 
 	/**
-	 * Just calls getNext.
+	 * Just calls getNext.<br />Override this to get notified on encountered content.
 	 *
 	 */
 	public Pipeline<?> content(final WorkerContext ctx, final Tag currentTag, final String text, final ProcessObject po) throws PipelineException {
@@ -99,16 +99,22 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	}
 
 	/**
-	 * Just calls getNext.
+	 * Just calls getNext.<br />Override this to get notified on encountered closing tags.
 	 *
 	 */
 	public Pipeline<?> close(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
 		return getNext();
 	}
+
 	/**
-	 * @param context
-	 * @return the local context for this class using {@link AbstractPipeline#getContextKey()}
-	 * @throws PipelineException
+	 * Returns the local context for this class using getContextKey, override
+	 * this together with getContextKey to change the key usage in case you want
+	 * to add multiple identical pipelines to the worker.
+	 *
+	 * @param context the WorkerContext
+	 * @return the local context for this class using
+	 *         {@link AbstractPipeline#getContextKey()}
+	 * @throws PipelineException thrown when there is no {@link CustomContext} or the CustomContext is null.
 	 */
 	@SuppressWarnings("unchecked")
 	public T getLocalContext(final WorkerContext context) throws PipelineException {

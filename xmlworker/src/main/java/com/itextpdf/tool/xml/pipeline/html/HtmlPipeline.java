@@ -98,7 +98,7 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 	public Pipeline<?> open(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
 		HtmlPipelineContext hcc = getLocalContext(context);
 		try {
-			TagProcessor tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
+			TagProcessor tp = hcc.resolveProcessor(t.getName(), t.getNameSpace());
 			if (tp.isStackOwner()) {
 				hcc.addFirst(new StackKeeper(t));
 			}
@@ -140,7 +140,7 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 		HtmlPipelineContext hcc = getLocalContext(context);
 		TagProcessor tp;
 		try {
-			tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
+			tp = hcc.resolveProcessor(t.getName(), t.getNameSpace());
 //			String ctn = null;
 //			if (null != hcc.charSet()) {
 //				try {
@@ -187,7 +187,7 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 		HtmlPipelineContext hcc = getLocalContext(context);
 		TagProcessor tp;
 		try {
-			tp = hcc.resolveProcessor(t.getTag(), t.getNameSpace());
+			tp = hcc.resolveProcessor(t.getName(), t.getNameSpace());
 			List<Element> elems = null;
 			if (tp.isStackOwner()) {
 				// remove the element from the StackKeeper Queue if end tag is

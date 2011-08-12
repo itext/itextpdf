@@ -91,7 +91,8 @@ public interface XMLParserListener {
 	void close();
 
 	/**
-	 * @param text
+	 * Called when text is encountered.
+	 * @param text the text
 	 */
 	void text(String text);
 
