@@ -74,7 +74,8 @@ import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
  * All the bookmarks have a "Title" with the
  * bookmark title and optionally a "Style" that can be "bold", "italic" or a
  * combination of both. They can also have a "Color" key with a value of three
- * floats separated by spaces. The key "Open" can have the values "true" or "false" and
+ * floats with values in the range 0.0 to 1.0 separated by spaces.
+ * The key "Open" can have the values "true" or "false" and
  * signals the open status of the children. It's "true" by default.
  * <p>
  * The actions and the parameters can be:
