@@ -72,21 +72,21 @@ public class NonSanitizedTagTest {
 	public void init() {
 		workerContextImpl = new WorkerContextImpl();
 		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
-		content = t.content(workerContextImpl, new Tag("pre"), "	code snippet {" +
+		content = t.content(workerContextImpl, new Tag("pre"), "   code snippet {" +
 		"return it all!!}        ");
 	}
 
 	/**
 	 * Verifies if the call to content of {@link NonSanitizedTag} returns a Chunk with all white spaces in it.
 	 */
+	 
 	@Test
 	public void verifyContent() {
 		Assert.assertTrue(content.get(0) instanceof Chunk);
 		String unsanitized = content.get(0).toString();
-		Assert.assertEquals("	code snippet {" +
+		Assert.assertEquals("   code snippet {" +
 				"return it all!!}        ", unsanitized);
 	}
-
 	/**
 	 * Verifies if the call to end of {@link NonSanitizedTag} returns a NoNewLineParagraph.
 	 */

@@ -52,6 +52,6 @@ public class HTMLWhiteSpacesTest {
 			}
 		});
 		p.parse(new StringReader(str));
-		Assert.assertEquals("€ 124", b.toString());
+		Assert.assertEquals("\u20ac 124", b.toString());
 	}
 }
