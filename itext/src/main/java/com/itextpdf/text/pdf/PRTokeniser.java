@@ -216,9 +216,11 @@ public class PRTokeniser {
         file.setStartOffset(idx);
     }
 
-    public int getStartxref(int arrLength) throws IOException {
+    public int getStartxref() throws IOException {
+    	int arrLength = 1024;
     	int fileLength = file.length();
     	int pos = fileLength - arrLength;
+    	if (pos < 1) pos = 1;
     	while (pos > 0){
     	    file.seek(pos);
     	    String str = readString(arrLength);
