@@ -106,7 +106,7 @@ public class Document implements DocListener {
      * For debugging purposes, we request you NOT to change this constant.
      * @since	2.1.6
      */
-	private static final String RELEASE = "5.1.2-SNAPSHOT";
+	private static final String RELEASE = "5.1.2";
 	/**
 	 * This constant the iText version as shown in the producer line.
 	 * iText is a product developed by 1T3XT BVBA.
