@@ -499,7 +499,6 @@ public class PdfReader implements PdfViewerPreferences {
                 readXref();
             }
             catch (Exception e) {
-            	e.printStackTrace();
                 try {
                     rebuilt = true;
                     rebuildXref();
