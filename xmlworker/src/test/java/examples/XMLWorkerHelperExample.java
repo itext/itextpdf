@@ -46,6 +46,7 @@ package examples;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.junit.Test;
@@ -85,7 +86,7 @@ public class XMLWorkerHelperExample extends Setup {
 				"./target/test-classes/examples/columbus.pdf")));
 		doc.open();
 		XMLWorkerHelper.getInstance().parseXHtml(instance, doc,
-				XMLWorkerHelperExample.class.getResourceAsStream("columbus.html"));
+				XMLWorkerHelperExample.class.getResourceAsStream("columbus.html"), Charset.defaultCharset());
 		doc.close();
 	}
 
@@ -104,6 +105,6 @@ public class XMLWorkerHelperExample extends Setup {
 				}
 
 			}
-		}, XMLWorkerHelperExample.class.getResourceAsStream("columbus.html"));
+		}, XMLWorkerHelperExample.class.getResourceAsStream("columbus.html"), Charset.defaultCharset());
 	}
 }

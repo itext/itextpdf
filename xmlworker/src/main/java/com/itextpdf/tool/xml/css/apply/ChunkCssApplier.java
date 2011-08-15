@@ -153,6 +153,9 @@ public class ChunkCssApplier implements CssApplier<Chunk> {
 				c.setUnderline(0.75f, size/4f);
 			}
 		}
+		if (null != rules.get(CSS.Property.BACKGROUND_COLOR)) {
+			c.setBackground(HtmlUtilities.decodeColor(rules.get(CSS.Property.BACKGROUND_COLOR)));
+		}
 		Font f  = FontFactory.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, color);
 		c.setFont(f);
 		return c;

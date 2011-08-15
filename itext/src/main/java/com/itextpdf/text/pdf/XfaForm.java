@@ -60,6 +60,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -169,6 +170,24 @@ public class XfaForm {
             }
             n = n.getNextSibling();
         }
+        if (datasetsNode == null)
+        	createDatasetsNode(domDocument.getFirstChild());
+    }
+    
+    /**
+     * Some XFA forms don't have a datasets node.
+     * If this is the case, we have to add one.
+     */
+    private void createDatasetsNode(Node n) {
+    	while (n.getChildNodes().getLength() == 0) {
+    		n = n.getNextSibling();
+    	}
+    	if (n != null) {
+            Element e = n.getOwnerDocument().createElement("xfa:datasets");
+            e.setAttribute("xmlns:xfa", XFA_DATA_SCHEMA);
+            datasetsNode = e;
+            n.appendChild(datasetsNode);
+    	}
     }
 
     /**

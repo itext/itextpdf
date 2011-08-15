@@ -51,6 +51,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
@@ -68,13 +69,13 @@ public class Div extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Element> l = new ArrayList<Element>(1);
     	if (sanitized.length() > 0) {
     		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
     		try {
-				l.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext()).apply(new NoNewLineParagraph(c), tag));
+				l.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(new NoNewLineParagraph(c), tag));
 			} catch (NoCustomContextException e) {
 				throw new RuntimeWorkerException(e);
 			}
@@ -90,14 +91,14 @@ public class Div extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		try {
 			Paragraph p = null;
 			List<Element> l = new ArrayList<Element>(1);
 			for (Element e : currentContent) {
 				if (e instanceof Paragraph) {
 					if (p != null) {
-						p = new ParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
+						p = new ParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(p, tag);
 						l.add(p);
 						p = null;
 					}
@@ -110,7 +111,7 @@ public class Div extends AbstractTagProcessor {
 				}
 			}
 			if (p != null) {
-				p = new ParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag);
+				p = new ParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(p, tag);
 				l.add(p);
 			}
 			return l;

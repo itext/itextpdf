@@ -62,12 +62,6 @@ public interface XMLParserListener {
 	void startElement(String tag, Map<String, String> attributes, String ns);
 
 	/**
-	 * Triggered by content.
-	 * @param text the content encountered between tags.
-	 */
-	void text(byte[] text);
-
-	/**
 	 * Triggered on a closing tag.
 	 * @param tag the tag
 	 * @param ns the namespace or empty String
@@ -85,5 +79,21 @@ public interface XMLParserListener {
 	 * @param comment the comment
 	 */
 	void comment(String comment);
+
+	/**
+	 * Triggered when parsing has started.
+	 */
+	void init();
+
+	/**
+	 * Triggered when parsing is finished and the stream will be closed.
+	 */
+	void close();
+
+	/**
+	 * Called when text is encountered.
+	 * @param text the text
+	 */
+	void text(String text);
 
 }

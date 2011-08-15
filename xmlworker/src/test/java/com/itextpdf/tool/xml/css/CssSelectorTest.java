@@ -114,4 +114,12 @@ public class CssSelectorTest {
 		Assert.assertEquals("Too many entries",3,  rootSelectors.size());
 	}
 
+	@Test
+	public void createClassSelectorsMultipleCSSClasses() {
+		Tag t = new Tag("dummy");
+		t.getAttributes().put("class", "klass1 klass2 klass3");
+		Set<String> set = css.createClassSelectors(t);
+		Assert.assertEquals("should have found 3 selectors", 3, set.size());
+	}
+
 }

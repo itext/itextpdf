@@ -148,7 +148,7 @@ public class DefaultCSSResolverTest {
 			}
 
 			public boolean inheritCssSelector(final Tag tag, final String key) {
-				return "child".equals(tag.getTag()) && "color".equals(key);
+				return "child".equals(tag.getName()) && "color".equals(key);
 			}
 		});
 		css.resolveStyles(parent);

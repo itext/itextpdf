@@ -43,7 +43,6 @@
  */
 package com.itextpdf.tool.xml.parser;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,10 +60,11 @@ public class XMLParserMemory {
 	private String currentAttr;
 	private final StringBuilder currentEntity = new StringBuilder();
 	private final StringBuilder comment = new StringBuilder();
-	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	private final StringBuilder baos = new StringBuilder();
 	private final Map<String, String> attr;
 	private String wsTag = "";
 	private String currentNameSpace = "";
+	private char lastChar;
 
 	/**
 	 *
@@ -92,11 +92,24 @@ public class XMLParserMemory {
 	}
 
 	/**
-	 * Sets the current attribute value.
+	 * true if there is a currentAttribute
+	 * @return true or false
+	 */
+	public boolean hasCurrentAttribute() {
+		return null != this.currentAttr;
+	}
+	/**
+	 * Sets the current attribute value and adds the attribute (if it's not
+	 * null) to the attribute map.
+	 *
 	 * @param content the current attributes value.
 	 */
 	public void putCurrentAttrValue(final String content) {
-		attr.put(this.currentAttr.toLowerCase(), content);
+		if (null != this.currentAttr) {
+			// TODO (html==true)? attr to lowercase?
+			attr.put(this.currentAttr, content);
+			this.currentAttr = null;
+		}
 	}
 
 	/**
@@ -104,7 +117,7 @@ public class XMLParserMemory {
 	 *
 	 * @return current text buffer
 	 */
-	public ByteArrayOutputStream current() {
+	public StringBuilder current() {
 		return baos;
 	}
 
@@ -186,7 +199,23 @@ public class XMLParserMemory {
 	 * Resets the ByteArrayOutputStream of this class.
 	 */
 	public void resetBuffer() {
-		this.baos = new ByteArrayOutputStream();
+		this.baos.setLength(0);
+	}
+
+	/**
+	 * Set the last char
+	 * @param c the char
+	 */
+	public void lastChar(final char c) {
+		this.lastChar = c;
+
+	}
+
+	/**
+	 * @return the last char parameter.
+	 */
+	public char lastChar() {
+		return this.lastChar;
 	}
 
 }

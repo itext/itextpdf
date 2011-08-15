@@ -63,7 +63,6 @@ import com.itextpdf.tool.xml.exceptions.LocaleMessages;
  */
 public abstract class AbstractPipeline<T extends CustomContext> implements Pipeline<T> {
 
-	private final ThreadLocal<WorkerContext> wc = new ThreadLocal<WorkerContext>();
 	private Pipeline<?> next;
 
 	/**
@@ -72,16 +71,6 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	 */
 	public AbstractPipeline(final Pipeline<?> next) {
 		setNext(next);
-	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * com.itextpdf.tool.xml.pipeline.Pipeline#setContext(com.itextpdf
-	 * .tool.xml.pipeline.WorkerContext)
-	 */
-	public final void setContext(final WorkerContext context) {
-		this.wc.set(context);
 	}
 
 	/*
@@ -94,46 +83,43 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 	}
 
 	/**
-	 * @return the WorkerContext
-	 */
-	public final WorkerContext getContext() {
-		return wc.get();
-	}
-	/**
-	 * Just calls getNext.
+	 * Just calls getNext.<br />Override this to get notified on encountered opening tags.
 	 *
 	 */
-	public Pipeline<?> open(final Tag t, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> open(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
 		return getNext();
 	}
 
 	/**
-	 * Just calls getNext.
+	 * Just calls getNext.<br />Override this to get notified on encountered content.
 	 *
 	 */
-	public Pipeline<?> content(final Tag t, final  byte[] content, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> content(final WorkerContext ctx, final Tag currentTag, final String text, final ProcessObject po) throws PipelineException {
 		return getNext();
 	}
 
 	/**
-	 * Just calls getNext.
+	 * Just calls getNext.<br />Override this to get notified on encountered closing tags.
 	 *
 	 */
-	public Pipeline<?> close(final Tag t, final ProcessObject po) throws PipelineException {
+	public Pipeline<?> close(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
 		return getNext();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.pipeline.Pipeline#getCustomContext()
+	/**
+	 * Returns the local context for this class using getContextKey, override
+	 * this together with getContextKey to change the key usage in case you want
+	 * to add multiple identical pipelines to the worker.
+	 *
+	 * @param context the WorkerContext
+	 * @return the local context for this class using
+	 *         {@link AbstractPipeline#getContextKey()}
+	 * @throws PipelineException thrown when there is no {@link CustomContext} or the CustomContext is null.
 	 */
-	public T getNewCustomContext() throws NoCustomContextException {
-		throw new NoCustomContextException();
-	}
-
 	@SuppressWarnings("unchecked")
-	public T getLocalContext() throws PipelineException {
+	public T getLocalContext(final WorkerContext context) throws PipelineException {
 		try {
-			CustomContext cc = getContext().get(this.getClass().getName());
+			CustomContext cc = context.get(getContextKey());
 			if (null != cc) {
 				return (T) cc;
 			}
@@ -154,8 +140,16 @@ public abstract class AbstractPipeline<T extends CustomContext> implements Pipel
 
 	/**
 	 * Defaults to the fully qualified class name of the object.
+	 * @return <code>getClass().getName()</code> as name.
 	 */
 	public String getContextKey() {
 		return this.getClass().getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.Pipeline#init(com.itextpdf.tool.xml.WorkerContext)
+	 */
+	public Pipeline<?> init(final WorkerContext context) throws PipelineException {
+		return getNext();
 	}
 }

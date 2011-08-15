@@ -59,4 +59,21 @@ public interface WorkerContext {
 	 */
 	CustomContext get(String key) throws NoCustomContextException;
 
+	/**
+	 * Store a customContext for the given key.
+	 * @param contextKey the key to find the given CustomContext with.
+	 * @param context the CustomContext to set for the given key
+	 */
+	void put(String contextKey, CustomContext context);
+
+	/**
+	 * Contains the current tag.
+	 * @param t the Tag
+	 */
+	void setCurrentTag(Tag t);
+
+	/**
+	 * @return the current tag
+	 */
+	Tag getCurrentTag();
 }

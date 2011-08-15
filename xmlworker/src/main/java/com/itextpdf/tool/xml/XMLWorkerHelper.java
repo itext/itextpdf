@@ -43,10 +43,12 @@ package com.itextpdf.tool.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.Charset;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.css.CSSFileWrapper;
 import com.itextpdf.tool.xml.css.CssFile;
 import com.itextpdf.tool.xml.css.CssFileProcessor;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
@@ -101,7 +103,7 @@ public class XMLWorkerHelper {
 					while (-1 != (i = in.read())) {
 						cssFileProcessor.process((char) i);
 					}
-					XMLWorkerHelper.defaultCssFile = cssFileProcessor.getCss();
+					XMLWorkerHelper.defaultCssFile = new CSSFileWrapper(cssFileProcessor.getCss(), true);
 				} catch (final IOException e) {
 					throw new RuntimeWorkerException(e);
 				} finally {
@@ -135,7 +137,8 @@ public class XMLWorkerHelper {
 		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new ElementHandlerPipeline(d,
 				null)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
-		XMLParser p = new XMLParser(true, worker);
+		XMLParser p = new XMLParser();
+		p.addListener(worker);
 		p.parse(in);
 	}
 
@@ -158,17 +161,19 @@ public class XMLWorkerHelper {
 		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc,
 				writer)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
-		XMLParser p = new XMLParser(true, worker);
+		XMLParser p = new XMLParser();
+		p.addListener(worker);
 		p.parse(in);
 	}
 
 	/**
-	 * @param writer
-	 * @param doc
-	 * @param in
-	 * @throws IOException
+	 * @param writer the writer to use
+	 * @param doc the document to use
+	 * @param in the {@link InputStream} of the XHTML source.
+	 * @param charset the charset to use
+	 * @throws IOException if the {@link InputStream} could not be read.
 	 */
-	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in) throws IOException {
+	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final Charset charset) throws IOException {
 		CssFilesImpl cssFiles = new CssFilesImpl();
 		cssFiles.add(getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
@@ -177,16 +182,17 @@ public class XMLWorkerHelper {
 		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc,
 				writer)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
-		XMLParser p = new XMLParser(true, worker);
+		XMLParser p = new XMLParser(true, worker, charset);
 		p.parse(in);
 	}
 
 	/**
 	 * @param d the ElementHandler
 	 * @param in the InputStream
+	 * @param charset the charset to use
 	 * @throws IOException if something went seriously wrong with IO.
 	 */
-	public void parseXHtml(final ElementHandler d, final InputStream in) throws IOException {
+	public void parseXHtml(final ElementHandler d, final InputStream in, final Charset charset) throws IOException {
 		CssFilesImpl cssFiles = new CssFilesImpl();
 		cssFiles.add(getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
@@ -195,7 +201,7 @@ public class XMLWorkerHelper {
 		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new ElementHandlerPipeline(d,
 				null)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
-		XMLParser p = new XMLParser(true, worker);
+		XMLParser p = new XMLParser(true, worker, charset);
 		p.parse(in);
 	}
 

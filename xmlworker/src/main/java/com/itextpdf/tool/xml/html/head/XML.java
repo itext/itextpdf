@@ -55,6 +55,7 @@ import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.Experimental;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
@@ -73,12 +74,12 @@ public class XML extends AbstractTagProcessor {
 	 * @see com.itextpdf.tool.xml.TagProcessor#startElement(com.itextpdf.tool.xml.Tag)
 	 */
 	@Override
-	public List<Element> start(final Tag tag) {
+	public List<Element> start(final WorkerContext ctx, final Tag tag) {
 		String enc = tag.getAttributes().get("encoding");
 		if (null != enc) {
 				try {
 					if (Charset.isSupported(enc)) {
-					getHtmlPipelineContext().charSet(Charset.forName(enc));
+					getHtmlPipelineContext(ctx).charSet(Charset.forName(enc));
 					if (LOGGER.isLogging(Level.DEBUG)) {
 						LOGGER.debug(
 								String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.META_CC), enc));
@@ -86,7 +87,7 @@ public class XML extends AbstractTagProcessor {
 					} else {
 						if (LOGGER.isLogging(Level.DEBUG)) {
 							LOGGER.debug(
-									String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.META_404), getHtmlPipelineContext()
+									String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.META_404), getHtmlPipelineContext(ctx)
 											.charSet()));
 						}
 					}

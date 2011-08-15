@@ -90,13 +90,13 @@ public class DefaultCssInheritanceRules implements CssInheritanceRules {
 		if (GLOBAL.contains(key)) {
 			return false;
 		}
-		if (HTML.Tag.TABLE.equals(tag.getTag())) {
+		if (HTML.Tag.TABLE.equals(tag.getName())) {
 			return !PARENT_TO_TABLE.contains(key);
 		}
-		if (HTML.Tag.TABLE.equals(tag.getParent().getTag())) {
+		if (HTML.Tag.TABLE.equals(tag.getParent().getName())) {
 			return !TABLE_IN_ROW.contains(key);
 		}
-		if (HTML.Tag.TD.equalsIgnoreCase(tag.getParent().getTag())) {
+		if (HTML.Tag.TD.equalsIgnoreCase(tag.getParent().getName())) {
 			return !TD_TO_CONTENT.contains(key);
 		}
 		return true;

@@ -65,7 +65,7 @@ public class CdataState implements State {
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
-	public void process(final int character) {
+	public void process(final char character) {
 		if (character == '>' && "]]".equals(this.parser.memory().comment().toString()) ) {
 			this.parser.memory().comment().setLength(0);
 			this.parser.flush();

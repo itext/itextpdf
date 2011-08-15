@@ -45,6 +45,7 @@ package com.itextpdf.tool.xml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ import java.util.Map;
  * @author redlab_b
  *
  */
-public class Tag {
+public class Tag implements Iterable<Tag> {
 
 	private Tag parent;
 	private final String tag;
@@ -92,17 +93,29 @@ public class Tag {
 		this.attributes = attr;
 		this.css = css;
 		this.children = new ArrayList<Tag>(0);
+		if (ns == null) {
+			throw new NullPointerException("NS cannot be null");
+		}
 		this.ns = ns;
 	}
 
 	/**
-	 *
+	 * Create a new tag object.
 	 * @param tag the tag name
 	 * @param attr the attributes
 	 * @param ns the namespace
 	 */
 	public Tag(final String tag, final Map<String, String> attr, final String ns) {
 		this(tag, attr,new HashMap<String, String>(0),ns );
+	}
+
+	/**
+	 * Create a new tag object.
+	 * @param tag the name of the tag
+	 * @param ns the namespace of the tag (do not set null, set an empty String)
+	 */
+	public Tag(final String tag, final String ns) {
+		 this(tag, new HashMap<String, String>(0), new HashMap<String, String>(0), ns);
 	}
 
 	/**
@@ -127,8 +140,11 @@ public class Tag {
 	/**
 	 * The tags name.
 	 *
+	 * @deprecated marked as deprecated in favor for getName, we won't remove it
+	 *             yet.
 	 * @return the tag name
 	 */
+	@Deprecated
 	public String getTag() {
 		return this.tag;
 	}
@@ -183,6 +199,22 @@ public class Tag {
 	}
 
 	/**
+	 * Returns all children of this tag with the given name.
+	 * @param name the name of the tags to look for
+	 *
+	 * @return the children tags of this tag with the given name.
+	 */
+	public List<Tag> getChildren(final String name) {
+		List<Tag> named = new ArrayList<Tag>();
+		for(Tag child: this.children) {
+			if(child.getName().equals(name)) {
+				named.add(child);
+			}
+		}
+		return named;
+	}
+
+	/**
 	 * @return the ns
 	 */
 	public String getNameSpace() {
@@ -199,5 +231,158 @@ public class Tag {
 		}
 		return  String.format("%s:%s", this.ns, this.tag);
 
+	}
+
+	/**
+	 * Compare this tag with t for namespace and name equality.
+	 * @param t the tag to compare with
+	 * @return true if the namespace and tag are the same.
+	 */
+	public boolean compareTag(final Tag t) {
+		if (this == t) {
+			return true;
+		}
+		if (t == null) {
+			return false;
+		}
+		Tag other = t;
+		if (ns == null) {
+			if (other.ns != null) {
+				return false;
+			}
+		} else if (!ns.equals(other.ns)) {
+			return false;
+		}
+		if (tag == null) {
+			if (other.tag != null) {
+				return false;
+			}
+		} else if (!tag.equals(other.tag)) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @return the child iterator.
+	 */
+	public Iterator<Tag> iterator() {
+		return children.iterator();
+	}
+
+	/**
+	 * Finds the first child that matches the given name and namespace.
+	 * @param name the name of the tag
+	 * @param ns the namespace
+	 * @return the child
+	 */
+	public Tag getChild(final String name, final String ns) {
+		return getChild(name, ns, false);
+	}
+
+	/**
+	 * Finds the first child that matches the given name and ns. Optionally look in the whole tree (in children of children of children ...)
+	 * @param name name of the tag
+	 * @param ns the namespace
+	 * @param recursive true if the tree should be fully inwards inspected.
+	 * @return the child if found
+	 */
+	public Tag getChild(final String name, final String ns, final boolean recursive) {
+		return recursiveGetChild(this, name, ns, recursive);
+	}
+
+	/**
+	 * Whether or not this tag has children.
+	 *
+	 * @return true if there are children
+	 */
+	public boolean hasChildren() {
+		return getChildren().size() != 0;
+	}
+
+	/**
+	 * Whether or not this tag has a parent.
+	 *
+	 * @return true if parent is not <code>null</code>
+	 */
+	public boolean hasParent() {
+		return getParent() != null;
+	}
+
+	/**
+	 * Check if this tag has a child with the given name and namespace.
+	 * @param name the name of the tag to look for
+	 * @param ns the namespace (if no namespace, set an empty String)
+	 * @return true if a child with given name and ns is found
+	 */
+	public boolean hasChild(final String name, final String ns) {
+		return hasChild(name, ns, false);
+	}
+
+	/**
+	 * Check if this tag has a child with the given name and namespace.
+	 * @param name the name of the tag to look for
+	 * @param ns the namespace (if no namespace, set an empty String)
+	 * @param recursive true if children's children children children ... should be inspected too.
+	 * @return true if a child with the given name and ns is found.
+	 */
+	public boolean hasChild(final String name, final String ns, final boolean recursive) {
+		if (recursive) {
+			return recursiveHasChild(this, name, ns, true);
+		} else {
+			return recursiveHasChild(this, name, ns, false);
+		}
+	}
+
+	/**
+	 * @param tag
+	 * @param name
+	 * @param ns
+	 * @param recursive
+	 * @return true if the child is found in the child tree
+	 */
+	private boolean recursiveHasChild(final Tag tag, final String name, final String ns, final boolean recursive) {
+		for (Tag t : tag) {
+			if (t.compareTag(new Tag(name, ns))) {
+				return true;
+			} else if (recursive) {
+				if (recursiveHasChild(t, name, ns, recursive)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param tag
+	 * @param name
+	 * @param ns
+	 * @param recursive
+	 * @return the child tag
+	 */
+	private Tag recursiveGetChild(final Tag tag, final String name, final String ns, final boolean recursive) {
+		for (Tag t : tag) {
+			if (t.compareTag(new Tag(name, ns))) {
+				return t;
+			} else if (recursive) {
+				Tag rT = null;
+				if (null != (rT = recursiveGetChild(t, name, ns, recursive))) {
+					return rT;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the name of the tag.<br />(Actually the same as getTag method, but
+	 * after using XMLWorker for a while we caught ourself always trying to call
+	 * Tag#getName() instead of Tag#getTag())
+	 *
+	 * @return the name of the tag.
+	 */
+	public String getName() {
+		return this.tag;
 	}
 }

@@ -356,7 +356,7 @@ public class Chunk implements Element {
 	 * @return a <CODE>String</CODE>
 	 */
 	public String getContent() {
-		return content.toString();
+		return content.toString().replaceAll("\t", "");
 	}
 
 	/**

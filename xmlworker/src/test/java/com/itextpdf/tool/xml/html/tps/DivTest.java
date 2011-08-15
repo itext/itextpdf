@@ -68,12 +68,12 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 public class DivTest {
 	final Div d = new Div();
 	List<Element> currentContent = new ArrayList<Element>();
+	private WorkerContextImpl workerContextImpl;
 
 	@Before
 	public void init() {
-		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
-		d.setContext(workerContextImpl);
+		workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
 		currentContent.add(new Paragraph("titel paragraph"));
 		currentContent.add(Chunk.NEWLINE);
 		currentContent.add(new NoNewLineParagraph("first content text"));
@@ -85,7 +85,7 @@ public class DivTest {
 	 */
 	@Test
 	public void verifyContent() {
-		final List<Element> content = d.content(new Tag("div"), "text inside a div tag");
+		final List<Element> content = d.content(workerContextImpl, new Tag("div"), "text inside a div tag");
 		Assert.assertTrue(content.get(0) instanceof NoNewLineParagraph);
 	}
 
@@ -94,7 +94,7 @@ public class DivTest {
 	 */
 	@Test
 	public void verifyNumberOfParagraphs() {
-		final List<Element> endContent = d.end(new Tag("div"), currentContent);
+		final List<Element> endContent = d.end(workerContextImpl, new Tag("div"), currentContent);
 		Assert.assertEquals(3, endContent.size());
 	}
 
@@ -103,7 +103,7 @@ public class DivTest {
 	 */
 	@Test
 	public void verifyIfParagraphs() {
-		final List<Element> endContent = d.end(new Tag("div"), currentContent);
+		final List<Element> endContent = d.end(workerContextImpl, new Tag("div"), currentContent);
 		Assert.assertTrue(endContent.get(0) instanceof Paragraph);
 		Assert.assertTrue(endContent.get(1) instanceof Paragraph);
 		Assert.assertTrue(endContent.get(2) instanceof Paragraph);

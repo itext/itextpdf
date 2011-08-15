@@ -79,16 +79,13 @@ public class ParserListenerWriter implements XMLParserListener {
 	public void unknownText(final String string) {
 	}
 
-	public void text(final byte[] b) {
-		writer.append(new String(b));
-	}
 
 	public void startElement(final String currentTag, final Map<String, String> attributes, final String ns) {
 		String myns = (ns.length() > 0)?ns+":":ns;
 		if( attributes.size() >0) {
 			writer.append("<").append(myns ).append(currentTag).append(" ");
 			for (Entry<String,String> e : attributes.entrySet()) {
-				writer.append(e.getKey()).append("=\"").append(e.getValue()).append("\"");
+				writer.append(e.getKey()).append("=\"").append(e.getValue()).append("\" ");
 			}
 			writer.append('>');
 		} else {
@@ -109,6 +106,23 @@ public class ParserListenerWriter implements XMLParserListener {
 	 */
 	public void comment(final String comment) {
 		writer.append("<!--").append(comment).append("-->");
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.parser.XMLParserListener#init()
+	 */
+	public void init() {
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.parser.XMLParserListener#close()
+	 */
+	public void close() {
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.parser.XMLParserListener#text(java.lang.String)
+	 */
+	public void text(final String text) {
+		writer.append(text);
+
 	}
 
 }

@@ -58,7 +58,6 @@ import com.itextpdf.tool.xml.parser.XMLParser;
 public class InsideTagHTMLState implements State {
 
 	private final XMLParser parser;
-	private int lastChar = ' ';
 	private final List<String> noSanitize = new ArrayList<String>(1);
 	private final List<String> ignoreLastChars = new ArrayList<String>(9);
 	/**
@@ -91,7 +90,7 @@ public class InsideTagHTMLState implements State {
 	 *
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
-	public void process(final int character) {
+	public void process(final char character) {
 		if (character == '<') {
 			if (this.parser.bufferSize() > 0) {
 				this.parser.text(this.parser.current());
@@ -108,11 +107,11 @@ public class InsideTagHTMLState implements State {
 			} else {
 				if (this.parser.memory().whitespaceTag().length() != 0) {
 					if (ignoreLastChars.contains(this.parser.memory().whitespaceTag())) {
-						lastChar = ' ';
+						parser.memory().lastChar(' ');
 					}
 					this.parser.memory().whitespaceTag("");
 				}
-				boolean whitespace = Character.isWhitespace(this.lastChar);
+				boolean whitespace = Character.isWhitespace(parser.memory().lastChar());
 				boolean noWhiteSpace = !Character.isWhitespace(character);
 				if (!whitespace || (whitespace && noWhiteSpace)) {
 					if (noWhiteSpace) {
@@ -121,7 +120,7 @@ public class InsideTagHTMLState implements State {
 						this.parser.append(' ');
 					}
 				}
-				this.lastChar = character;
+				parser.memory().lastChar(character);
 			}
 		}
 

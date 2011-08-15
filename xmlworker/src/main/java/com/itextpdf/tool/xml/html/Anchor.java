@@ -46,6 +46,7 @@ import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
@@ -68,7 +69,7 @@ public class Anchor extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
@@ -85,7 +86,7 @@ public class Anchor extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		try {
 			final String name = tag.getAttributes().get(HTML.Attribute.NAME);
 			List<Element> elems = new ArrayList<Element>(0);
@@ -102,8 +103,8 @@ public class Anchor extends AbstractTagProcessor {
 								((Chunk) e).setLocalGoto(url.replaceFirst("#", ""));
 							} else {
 								// TODO check url validity?
-								if (null != getHtmlPipelineContext().getLinkProvider() && !url.startsWith("http")) {
-									String root = getHtmlPipelineContext().getLinkProvider().getLinkRoot();
+								if (null != getHtmlPipelineContext(ctx).getLinkProvider() && !url.startsWith("http")) {
+									String root = getHtmlPipelineContext(ctx).getLinkProvider().getLinkRoot();
 									if (root.endsWith("/") && url.startsWith("/")) {
 										root = root.substring(0, root.length() - 1);
 									}
@@ -123,7 +124,7 @@ public class Anchor extends AbstractTagProcessor {
 					}
 					p.add(e);
 				}
-				elems.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext()).apply(p, tag));
+				elems.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(p, tag));
 			} else
 			// !currentContent > 0 ; An empty "a" tag has been encountered.
 			// we're using an anchor space hack here. without the space, reader

@@ -69,5 +69,9 @@ public interface CssFiles {
 	 * @param css the CssFile to add.
 	 */
 	void add(CssFile css);
+	/**
+	 *
+	 */
+	void clear();
 
 }

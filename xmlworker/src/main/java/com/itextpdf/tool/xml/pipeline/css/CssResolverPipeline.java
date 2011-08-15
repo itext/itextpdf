@@ -43,25 +43,39 @@
  */
 package com.itextpdf.tool.xml.pipeline.css;
 
-import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.PipelineException;
 import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
+import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
-import com.itextpdf.tool.xml.pipeline.ctx.MapContext;
+import com.itextpdf.tool.xml.pipeline.ctx.ObjectContext;
 
 /**
  * This Pipeline resolves CSS for the Tags it receives in
- * {@link CssResolverPipeline#open(Tag, ProcessObject)}
+ * {@link CssResolverPipeline#open(WorkerContext, Tag, ProcessObject)}
  *
  * @author redlab_b
  *
  */
-public class CssResolverPipeline extends AbstractPipeline<MapContext> {
+public class CssResolverPipeline extends AbstractPipeline<ObjectContext<CSSResolver>> {
 
-	private static final ThreadLocal<CSSResolver> resolver = new ThreadLocal<CSSResolver>();
+	private CSSResolver resolver;
 
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.pipeline.AbstractPipeline#init(com.itextpdf.tool.xml.WorkerContext)
+	 */
+	@Override
+	public Pipeline<?> init(final WorkerContext context) throws PipelineException {
+		try {
+			ObjectContext<CSSResolver> mc = new ObjectContext<CSSResolver>(resolver.clear());
+			context.put(getContextKey(), mc);
+			return super.init(context);
+		} catch (CssResolverException e) {
+			throw new PipelineException(e);
+		}
+	}
 	/**
 	 * @param next the next pipeline.
 	 * @param cssResolver the {@link CSSResolver} to use in this Pipeline, it
@@ -69,7 +83,7 @@ public class CssResolverPipeline extends AbstractPipeline<MapContext> {
 	 */
 	public CssResolverPipeline(final CSSResolver cssResolver, final Pipeline<?> next) {
 		super(next);
-		resolver.set(cssResolver);
+		this.resolver = cssResolver;
 	}
 
 	/**
@@ -84,21 +98,9 @@ public class CssResolverPipeline extends AbstractPipeline<MapContext> {
 	 * xml.Tag, com.itextpdf.tool.xml.pipeline.ProcessObject)
 	 */
 	@Override
-	public Pipeline<?> open(final Tag t, final ProcessObject po) throws PipelineException {
-		resolver.get().resolveStyles(t);
+	public Pipeline<?> open(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
+		getLocalContext(context).get().resolveStyles(t);
 		return getNext();
-	}
-
-	/**
-	 * The CustomContext returned is a {@link MapContext} containing 1 key/value
-	 * pair: key:{@link CssResolverPipeline#CSS_RESOLVER}, value
-	 * {@link CSSResolver}.
-	 */
-	@Override
-	public MapContext getNewCustomContext() throws NoCustomContextException {
-		MapContext mc = new MapContext();
-		mc.put(CSS_RESOLVER, resolver.get());
-		return mc;
 	}
 
 	/**
@@ -107,6 +109,6 @@ public class CssResolverPipeline extends AbstractPipeline<MapContext> {
 	 * @param resolver the CSSResolver to use.
 	 */
 	public void setResolver(final CSSResolver resolver) {
-		CssResolverPipeline.resolver.set(resolver);
+		this.resolver = resolver;
 	}
 }

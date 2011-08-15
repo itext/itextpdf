@@ -123,6 +123,12 @@ public final class CSS {
 		public static final String PAGE_BREAK_AFTER = "page-break-after";
 		public static final String REPEAT_HEADER = "repeat-header";
 		public static final String REPEAT_FOOTER = "repeat-footer";
+		public static final String LEFT = "left";
+		public static final String DISPLAY = "display";
+		public static final String MIN_WIDTH = "min-width";
+		public static final String MAX_WIDTH = "max-width";
+		public static final Object MIN_HEIGHT = "min-height";
+		public static final Object MAX_HEIGHT = "max-height";
 	}
 
 	/**
@@ -200,5 +206,7 @@ public final class CSS {
 		public static final String EM = "em";
 		public static final String EX = "ex";
 		public static final String ALWAYS = "always";
+		public static final String ABSOLUTE = "absolute";
+		public static final String AUTO = "auto";
 	}
 }

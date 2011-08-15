@@ -66,7 +66,7 @@ public class AttributeValueState implements State {
 	 *
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
-	public void process(final int character) {
+	public void process(final char character) {
 		if (character == '\'') {
 			this.parser.selectState().singleQuotedAttr();
 		} else if (character == '"') {

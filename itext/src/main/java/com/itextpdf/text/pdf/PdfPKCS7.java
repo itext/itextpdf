@@ -131,6 +131,7 @@ public class PdfPKCS7 {
     private X509Certificate signCert;
     private byte[] digest;
     private MessageDigest messageDigest;
+    private MessageDigest encContDigest; // Stefan Santesson
     private String digestAlgorithm, digestEncryptionAlgorithm;
     private Signature sig;
     private transient PrivateKey privKey;
@@ -525,10 +526,14 @@ public class PdfPKCS7 {
                 }
             }
             if (RSAdata != null || digestAttr != null) {
-                if (provider == null || provider.startsWith("SunPKCS11"))
+                if (provider == null || provider.startsWith("SunPKCS11")) {
                     messageDigest = MessageDigest.getInstance(getHashAlgorithm());
-                else
+                    encContDigest = MessageDigest.getInstance(getHashAlgorithm()); // Stefan Santesson
+                }
+                else {
                     messageDigest = MessageDigest.getInstance(getHashAlgorithm(), provider);
+                    encContDigest = MessageDigest.getInstance(getHashAlgorithm(), provider); // Stefan Santesson
+                }
             }
             if (provider == null)
                 sig = Signature.getInstance(getDigestAlgorithm());
@@ -644,9 +649,17 @@ public class PdfPKCS7 {
         	final byte [] msgDigestBytes = messageDigest.digest();
         	boolean verifyRSAdata = true;
             sig.update(sigAttr);
-            if (RSAdata != null)
+            // Stefan Santesson fixed a bug, keeping the code backward compatible
+            boolean encContDigestCompare = false;
+            if (RSAdata != null) {
                 verifyRSAdata = Arrays.equals(msgDigestBytes, RSAdata);
-            verifyResult = Arrays.equals(msgDigestBytes, digestAttr) && sig.verify(digest) && verifyRSAdata;
+                encContDigest.update(RSAdata);
+                encContDigestCompare = Arrays.equals(encContDigest.digest(), digestAttr);
+            }
+            boolean absentEncContDigestCompare = Arrays.equals(msgDigestBytes, digestAttr);
+            boolean concludingDigestCompare = absentEncContDigestCompare || encContDigestCompare;
+            boolean sigVerify = sig.verify(digest);
+            verifyResult = concludingDigestCompare && sigVerify && verifyRSAdata;
         }
         else {
             if (RSAdata != null)
@@ -757,7 +770,21 @@ public class PdfPKCS7 {
     public int getSigningInfoVersion() {
         return signerversion;
     }
+    
+    /**
+     * Getter for the digest encryption algorithm
+     */
+    public String getDigestEncryptionAlgorithmOid() {
+        return digestEncryptionAlgorithm;
+    }
 
+    /**
+     * Getter for the digest algorithm
+     */
+    public String getDigestAlgorithmOid() {
+        return digestAlgorithm;
+    }
+    
     /**
      * Get the algorithm used to calculate the message digest
      * @return the algorithm used to calculate the message digest

@@ -45,6 +45,7 @@ package com.itextpdf.tool.xml.pipeline.ctx;
 
 import com.itextpdf.tool.xml.CustomContext;
 import com.itextpdf.tool.xml.NoCustomContextException;
+import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.NotImplementedException;
 
@@ -59,6 +60,7 @@ import com.itextpdf.tool.xml.exceptions.NotImplementedException;
 public class WorkerContextImpl implements WorkerContext {
 
 	private final MapContext mc;
+	private Tag tag;
 
 	/**
 	 *
@@ -81,8 +83,21 @@ public class WorkerContextImpl implements WorkerContext {
 	 * @param key the key to store the CustomContext for.
 	 * @param context the CustomContext to store.
 	 */
-	public void add(final String key, final CustomContext context) {
+	public void put(final String key, final CustomContext context) {
 		mc.put(key, context);
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.WorkerContext#setCurrentTag()
+	 */
+	public void setCurrentTag(final Tag t) {
+		this.tag = t;
+
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.WorkerContext#getCurrentTag()
+	 */
+	public Tag getCurrentTag() {
+		return tag;
 	}
 
 

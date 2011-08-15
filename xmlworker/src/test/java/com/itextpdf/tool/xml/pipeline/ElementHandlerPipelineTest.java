@@ -56,6 +56,7 @@ import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.PipelineException;
 import com.itextpdf.tool.xml.ProcessObject;
 import com.itextpdf.tool.xml.Writable;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 import com.itextpdf.tool.xml.pipeline.end.ElementHandlerPipeline;
 
 /**
@@ -69,6 +70,7 @@ public class ElementHandlerPipelineTest {
 	private ProcessObject po;
 	private ElementHandlerPipeline p;
 	private WritableElement writable;
+	private WorkerContextImpl context;
 
 	@Before
 	public void setup() throws PipelineException {
@@ -83,6 +85,8 @@ public class ElementHandlerPipelineTest {
 		po = new ProcessObject();
 		writable = new WritableElement(new Chunk("aaaaa"));
 		po.add(writable);
+		context = new WorkerContextImpl();
+		p.init(context);
 	}
 
 	/**
@@ -91,7 +95,7 @@ public class ElementHandlerPipelineTest {
 	 */
 	@Test
 	public void runOpen() throws PipelineException {
-		p.close(null, po);
+		p.open(context, null, po);
 		Assert.assertEquals(writable, lst.get(0));
 	}
 	/**
@@ -100,7 +104,7 @@ public class ElementHandlerPipelineTest {
 	 */
 	@Test
 	public void runContent() throws PipelineException {
-		p.close(null, po);
+		p.content(context, null, null, po);
 		Assert.assertEquals(writable, lst.get(0));
 	}
 	/**
@@ -109,7 +113,7 @@ public class ElementHandlerPipelineTest {
 	 */
 	@Test
 	public void runClose() throws PipelineException {
-		p.close(null, po);
+		p.close(context, null, po);
 		Assert.assertEquals(writable, lst.get(0));
 	}
 }

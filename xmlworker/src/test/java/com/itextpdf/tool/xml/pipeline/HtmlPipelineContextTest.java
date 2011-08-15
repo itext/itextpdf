@@ -99,14 +99,7 @@ public class HtmlPipelineContextTest {
 	public void verifyMemory() {
 		Assert.assertNotNull(ctx.getMemory());
 	}
-	/**
-	 *   Verifies that memory is not null
-	 * @throws CloneNotSupportedException
-	 */
-	@Test
-	public void verifyCloneIsPossible() throws CloneNotSupportedException {
-		HtmlPipelineContext clone = ctx.clone();
-	}
+
 	/**
 	 * Verifies that NoImageProviderException is thrown
 	 * @throws NoImageProviderException
@@ -115,4 +108,5 @@ public class HtmlPipelineContextTest {
 	public void verifyNoImageProvider() throws NoImageProviderException {
 		ctx.getImageProvider();
 	}
+
 }

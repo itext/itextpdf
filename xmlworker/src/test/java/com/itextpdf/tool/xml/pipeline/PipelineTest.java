@@ -49,9 +49,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.tool.xml.CustomContext;
-import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Pipeline;
 import com.itextpdf.tool.xml.PipelineException;
+import com.itextpdf.tool.xml.WorkerContext;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 
 /**
  * @author itextpdf.com
@@ -61,6 +62,7 @@ public class PipelineTest {
 
 	private AbstractPipelineExtension abstractPipelineExtension;
 	private AbstractPipeline<?> ap;
+	private WorkerContext ctx;
 	/**
 	 *
 	 */
@@ -76,19 +78,20 @@ public class PipelineTest {
 	/** Init test. */
 	@Before
 	public void setup() {
+		ctx = new WorkerContextImpl();
 		abstractPipelineExtension = new AbstractPipelineExtension(null);
 		ap = new AbstractPipeline<CustomContext>(abstractPipelineExtension) {
 		};
 	}
 	/**
-	 * Expect a {@link NoCustomContextException} on calling getNewNoCustomContext.
-	 * @throws NoCustomContextException
+	 * Expect a {@link PipelineException} on calling getNewNoCustomContext.
+	 * @throws PipelineException
 	 */
-	@Test(expected=NoCustomContextException.class)
-	public void validateNoCustomContextExceptionThrown() throws NoCustomContextException {
+	@Test(expected=PipelineException.class)
+	public void validateNoCustomContextExceptionThrown() throws PipelineException {
 		AbstractPipeline<?> ap = new AbstractPipeline<CustomContext>(null) {
 		};
-		ap.getNewCustomContext();
+		ap.getLocalContext(ctx);
 	}
 	/**
 	 * Verify that getNext actually returns the next pipeline.
@@ -102,20 +105,20 @@ public class PipelineTest {
 	 */
 	@Test
 	public void validateNextClose() throws PipelineException {
-		Assert.assertEquals(abstractPipelineExtension, ap.close(null, null));
+		Assert.assertEquals(abstractPipelineExtension, ap.close(ctx, null, null));
 	}
 	/**
 	 * Verify that open actually returns the next pipeline.
 	 */
 	@Test
 	public void validateNextOpen() throws PipelineException {
-		Assert.assertEquals(abstractPipelineExtension, ap.open(null, null));
+		Assert.assertEquals(abstractPipelineExtension, ap.open(ctx, null, null));
 	}
 	/**
 	 * Verify that content actually returns the next pipeline.
 	 */
 	@Test
 	public void validateNextContent() throws PipelineException {
-		Assert.assertEquals(abstractPipelineExtension, ap.content(null, null, null));
+		Assert.assertEquals(abstractPipelineExtension, ap.content(ctx, null, null, null));
 	}
 }

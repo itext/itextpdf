@@ -71,13 +71,13 @@ public class HeaderTest {
 	private static final Tag H2 = new Tag("h2");
 	final Header h = new Header();
 	private List<Element> content = null;
+	private WorkerContextImpl workerContextImpl;
 
 	@Before
 	public void init() {
-		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext().autoBookmark(true));
-		h.setContext(workerContextImpl);
-		content = h.content(H2, "text inside a header tag");
+		workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext().autoBookmark(true));
+		content = h.content(workerContextImpl, H2, "text inside a header tag");
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class HeaderTest {
 	 */
 	@Test
 	public void verifyEnd() {
-		List<Element> end = h.end(H2, content);
+		List<Element> end = h.end(workerContextImpl, H2, content);
 		Assert.assertTrue(end.get(0) instanceof WritableDirectElement);
 		Assert.assertTrue(end.get(1) instanceof Paragraph);
 	}

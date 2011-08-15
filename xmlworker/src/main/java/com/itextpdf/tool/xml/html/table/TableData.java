@@ -50,6 +50,7 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
@@ -71,7 +72,7 @@ public class TableData extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
@@ -90,14 +91,14 @@ public class TableData extends AbstractTagProcessor {
 	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		HtmlCell cell = new HtmlCell();
 		List<Element> l = new ArrayList<Element>(1);
 		for (Element e : currentContent) {
 			cell.addElement(e);
 		}
 		try {
-			l.add(new HtmlCellCssApplier(getHtmlPipelineContext()).apply(cell, tag));
+			l.add(new HtmlCellCssApplier(getHtmlPipelineContext(ctx)).apply(cell, tag));
 		} catch (NoCustomContextException e1) {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
 		}

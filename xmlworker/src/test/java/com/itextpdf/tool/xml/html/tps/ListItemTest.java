@@ -67,13 +67,13 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 public class ListItemTest {
 	final OrderedUnorderedListItem li = new OrderedUnorderedListItem();
 	List<Element> currentContent = new ArrayList<Element>();
+	private WorkerContextImpl workerContextImpl;
 
 	@Before
 	public void init() {
-		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
-		li.setContext(workerContextImpl);
-		currentContent.addAll(li.content(new Tag("li"), "list item"));
+		workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		currentContent.addAll(li.content(null, new Tag("li"), "list item"));
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class ListItemTest {
 	 */
 	@Test
 	public void verifyEnd() {
-		final List<Element> endContent = li.end(new Tag("li"), currentContent);
+		final List<Element> endContent = li.end(workerContextImpl, new Tag("li"), currentContent);
 		Assert.assertTrue(endContent.get(0) instanceof ListItem);
 	}
 

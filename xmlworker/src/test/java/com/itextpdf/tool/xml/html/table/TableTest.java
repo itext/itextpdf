@@ -122,9 +122,8 @@ public class TableTest {
 	public void resolveBuild() {
 		AbstractTagProcessor table2 = new Table();
 		WorkerContextImpl context = new WorkerContextImpl();
-		context.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
-		table2.setContext(context);
-		PdfPTable table = (PdfPTable) (table2.end(tag, rows).get(0));
+		context.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		PdfPTable table = (PdfPTable) (table2.end(context, tag, rows).get(0));
 		assertEquals(4, table.getRow(0).getCells().length);
 		assertEquals(4, table.getNumberOfColumns());
 	}

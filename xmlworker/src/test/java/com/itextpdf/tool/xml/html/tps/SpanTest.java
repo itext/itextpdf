@@ -66,13 +66,13 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 public class SpanTest {
 	final Span s = new Span();
 	private List<Element> content = null;
+	private WorkerContextImpl workerContextImpl;
 
 	@Before
 	public void init() {
-		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
-		s.setContext(workerContextImpl);
-		content = s.content(new Tag("span"), "	text snippet " +
+		workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		content = s.content(workerContextImpl, new Tag("span"), "	text snippet " +
 		"return it sanitized!!       ");
 	}
 
@@ -91,7 +91,7 @@ public class SpanTest {
 	 */
 	@Test
 	public void verifyEnd() {
-		Assert.assertTrue(s.end(new Tag("span"), content).get(0) instanceof NoNewLineParagraph);
+		Assert.assertTrue(s.end(workerContextImpl, new Tag("span"), content).get(0) instanceof NoNewLineParagraph);
 	}
 
 	/**

@@ -54,6 +54,7 @@ import org.junit.Test;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.Image;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
@@ -70,13 +71,13 @@ public class ImageTest {
 	 */
 	private static final Tag I = new Tag("i");
 	final Image i = new Image();
+	private WorkerContext workerContextImpl;
 
 	@Before
 	public void init() {
 		I.getAttributes().put(HTML.Attribute.SRC, "http://t1.gstatic.com/images?q=tbn:ANd9GcQ2s33YgZ8dDEEDW3kwK9EBWR1vHXJgMPJXjaaAfxfPvFSZ9shB");
-		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
-		i.setContext(workerContextImpl);
+		workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
 	}
 
 	/**
@@ -84,7 +85,7 @@ public class ImageTest {
 	 */
 	@Test
 	public void verifyEnd() {
-		final List<Element> content = i.end(I, null);
+		final List<Element> content = i.end(workerContextImpl, I, null);
 		Assert.assertTrue(content.get(0) instanceof Chunk);
 		HashMap<String, Object> attributes = ((Chunk)content.get(0)).getAttributes();
 		Assert.assertTrue(attributes.containsKey("IMAGE"));

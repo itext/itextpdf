@@ -76,10 +76,10 @@ public class ParagraphCssApplierTest {
 	@Before
 	public void setup() {
 		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
-		parent = new Tag("body",null);
-		first = new Tag(null, null);
-		second = new Tag(null, null);
-		child =  new Tag(null,null);
+		parent = new Tag("body");
+		first = new Tag(null);
+		second = new Tag(null);
+		child =  new Tag(null);
 
 		parent.addChild(first);
 		first.setParent(parent);

@@ -149,13 +149,16 @@ public class XmpReader {
 			return false;
 		Node pNode;
 		Node node;
+		String prefix;
 		for (int i = 0; i < nodes.getLength(); i++) {
 			pNode = nodes.item(i);
 			NamedNodeMap attrs = pNode.getAttributes();
 			for (int j = 0; j < attrs.getLength(); j++) {
 				node = attrs.item(j);
 				if (namespaceURI.equals(node.getNodeValue())) {
-					node = domDocument.createElement(localName);
+					prefix = node.getLocalName();
+					node = domDocument.createElementNS(namespaceURI, localName);
+					node.setPrefix(prefix);
 					node.appendChild(domDocument.createTextNode(value));
 					pNode.appendChild(node);
 					return true;

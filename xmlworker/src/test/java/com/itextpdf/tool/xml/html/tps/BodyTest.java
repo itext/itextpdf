@@ -64,12 +64,12 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  */
 public class BodyTest {
 	final Body b = new Body();
+	private WorkerContextImpl workerContextImpl;
 
 	@Before
 	public void init() {
-		WorkerContextImpl workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.add(HtmlPipeline.class.getName(), new HtmlPipelineContext());
-		b.setContext(workerContextImpl);
+		workerContextImpl = new WorkerContextImpl();
+		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class BodyTest {
 	 */
 	@Test
 	public void verifyContent() {
-		final List<Element> content = b.content(new Tag("body"), "text inside a body tag");
+		final List<Element> content = b.content(workerContextImpl, new Tag("body"), "text inside a body tag");
 		Assert.assertTrue(content.get(0) instanceof NoNewLineParagraph);
 	}
 

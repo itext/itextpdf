@@ -64,7 +64,7 @@ public class ChunkCssApplierTest {
 	@Before
 	public void setup() {
 		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
-		t = new Tag(null, null);
+		t = new Tag(null);
 		c = new Chunk("default text for chunk creation");
 		applier.apply(c, t);
 	}

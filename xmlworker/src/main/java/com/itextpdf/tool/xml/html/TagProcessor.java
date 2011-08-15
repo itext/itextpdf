@@ -58,35 +58,38 @@ public interface TagProcessor {
 
     /**
      * This method is called when a tag has been encountered.
-     *
+     * @param ctx the WorkerContext
      * @param tag the tag encountered
+     *
      * @return Element an Element to add to the current content;
      */
-    List<Element> startElement(Tag tag);
+    List<Element> startElement(WorkerContext ctx, Tag tag);
 
     /**
      * This method is called if there is text content encountered between the
      * opening and closing tags this TagProcessor is mapped to.
-     *
+     * @param ctx the WorkerContext
      * @param tag the tag encountered
      * @param content the text content between the tags this TagProcessor is
      *        mapped to.
+     *
      * @return the element to add to the currentContent list
      */
-    List<Element> content(Tag tag, String content);
+    List<Element> content(WorkerContext ctx, Tag tag, String content);
 
 	/**
 	 * This method is called when a closing tag has been encountered of the
 	 * TagProcessor implementation that is mapped to the tag.
-	 *
+	 * @param ctx the WorkerContext
 	 * @param tag the tag encountered
 	 * @param currentContent a list of content possibly created by TagProcessing
 	 *            of inner tags, and by <code>startElement</code> and
 	 *            <code>content</code> methods of this <code>TagProcessor</code>
 	 *            .
+	 *
 	 * @return the resulting element to add to the document or a content stack.
 	 */
-    List<Element> endElement(Tag tag, List<Element> currentContent);
+    List<Element> endElement(WorkerContext ctx, Tag tag, List<Element> currentContent);
 
     /**
      * @return true if the tag implementation must keep it's own currentContent
@@ -94,10 +97,5 @@ public interface TagProcessor {
      */
     boolean isStackOwner();
 
-	/**
-	 * Sets the WorkerContext
-	 * @param context the WorkerContext
-	 */
-	void setContext(WorkerContext context);
 
 }

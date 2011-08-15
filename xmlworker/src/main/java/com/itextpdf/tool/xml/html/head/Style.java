@@ -52,6 +52,7 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
+import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
@@ -77,10 +78,10 @@ public class Style extends AbstractTagProcessor {
 	 * java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final Tag tag, final String content) {
+	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
 		try {
-			CSSResolver cssResolver = getCSSResolver();
-			cssResolver.addCss(content);
+			CSSResolver cssResolver = getCSSResolver(ctx);
+			cssResolver.addCss(content, false);
 		} catch (CssResolverException e) {
 			LOG.error(LocaleMessages.getInstance().getMessage(LocaleMessages.STYLE_NOTPARSED), e);
 			if (LOG.isLogging(Level.TRACE)) {

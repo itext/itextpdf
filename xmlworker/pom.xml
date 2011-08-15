@@ -9,7 +9,7 @@
 	<groupId>com.itextpdf.tool</groupId>
 	<artifactId>xmlworker</artifactId>
 	<name>iText XML Worker</name>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<description>Parses XML to PDF, with CSS support, using iText</description>
 	<licenses>
 		<license>
@@ -18,6 +18,13 @@
 		</license>
 	</licenses>
 	<url>http://www.itextpdf.com/</url>
+	<issueManagement>
+		<url>https://sourceforge.net/tracker/?group_id=541147</url>
+	</issueManagement>
+	<ciManagement>
+		<system>jenkins-ci</system>
+		<url>http://ci.itextsupport.com/</url>
+	</ciManagement>
 	<mailingLists>
 		<mailingList>
 			<name>iText Questions</name>
@@ -86,6 +93,17 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<excludes>
+						<exclude>examples/*.java</exclude>
+						<exclude>com/itextpdf/tool/xml/BugRunnerTest.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
@@ -120,7 +138,7 @@
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.1.1</version>
+			<version>5.1.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
