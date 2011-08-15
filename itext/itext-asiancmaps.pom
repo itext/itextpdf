@@ -11,7 +11,7 @@
 	<artifactId>itext-asiancmaps</artifactId>
 	<packaging>jar</packaging>
 	<name>iTextAsianCmaps</name>
-	<version>5.1.1</version>
+	<version>5.1.2</version>
 	<description>iTextAsianCmaps fonts for use in conjunction with iText, a free Java-PDF library</description>
 	<!-- General Info -->
 	<url>http://www.itextpdf.com/</url>
