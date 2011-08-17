@@ -1,0 +1,36 @@
+<p class="title">Parsing HTML into a list of Element objects</p>
+<p>When iText parses an XML file, it interprets the different tags and, whenever possible, iText will create a corresponding <code>Element</code> object.
+Suppose you're not interested in creating PDF, but you just want parse the HTML into a list of iText <code>Element</code> objects.</p>
+<pre>
+XMLWorkerHelper.getInstance().parseXHtml(new ElementHandler() {
+    public void add(final Writable w) {
+        if (w instanceof WritableElement) {
+            List&lt;Element&gt; elements = ((WritableElement)w).elements();
+            // write class names of elements to file
+        }
+    }
+}, HTMLParsingToList.class.getResourceAsStream("/html/walden.html"));
+</pre>
+<p class="caption">see <a href="http://tutorial.itextpdf.com/src/main/java/tutorial/xmlworker/HTMLParsingToList.java">HTMLParsingToList</a>
+and the resulting PDF <a href="http://tutorial.itextpdf.com/results/xmlworker/objects.txt">objects.txt</a></p>
+<p>Let's take a look at the first handful of objects.</p>
+<pre>com.itextpdf.tool.xml.html.head.Title$1
+com.itextpdf.text.Chunk
+com.itextpdf.text.Paragraph
+com.itextpdf.tool.xml.html.Header$1
+com.itextpdf.text.Paragraph
+
+</pre>
+<p>The first object is a <code>Title</code> header. It will result in a bookmark. The first real <code>Element</code> is a <code>Chunk</code>.
+This is the chunk of text between the <code>&lt;pre&gt;</code> tags in the HTML file:</p>
+<pre>&lt;pre&gt;
+
+The Project Gutenberg EBook of Walden, and On The Duty Of Civil
+Disobedience, by Henry David Thoreau
+
+This eBook is for the use of anyone anywhere at no cost and with
+almost no restrictions whatsoever. ...
+&lt;pre&gt;
+
+</pre>
+<p>This snippet is converted to a <code>Chunk</code>, and a <code>Chunk</code> is an <code>Element</code> that doesn't have a leading of its own, hence the gibberish: all the lines between the <code>&lt;pre&gt;</code> tags are written on top of each other, until the first <code>&lt;p&gt;</code> tag is encountered, resulting in a <code>Paragraph</code> object.</p>

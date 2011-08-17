@@ -1,0 +1,22 @@
+<p class="title">The StyleAttrCSSResolver explained</p>
+<p>The major function of a <code>CSSResolver</code> is detecting the right CSS for a given tag.
+The <code>StyleAttrCssResolver</code> uses the following criteria:</p>
+<ol>
+<li>All inheritable CSS from the parent tag is added to the current tag.</li>
+<li>All <code>CssFile</code> are checked for rules applying on the given tag
+in the order they were added to the <code>CSSResolver</code>.
+Rules defined on the same property are overridden.</li>
+<li>Finally any CSS found in the tag's <code>style</code> attribute is added to the tags CSS.</li>
+</ol>
+<p>Note that <code>CssFile</code>s can be added to a <code>CSSResolver</code> at any time.
+When adding a <code>CssFile</code> to the <code>StyleAttrCssResolver</code>, it's used by
+the resolving process immediately. There's no method to remove a <code>CssFile</code> in the
+<code>CSSResolver</code> interface, but that doesn't mean you can't add such a method in your
+custom implementation.</p>
+<p>You can provide inheritance rules for the <code>StyleAttrCssResolver</code> class
+with the <code>setCssInheritanceRules()</code> method. By default, the <code>DefaultCssInheritanceRules</code>
+are used, but you can always write your own implementation of the <code>CssInheritanceRules</code> interface,
+for instance if you don't want certain CSS properties to be inherited from a tag.</p>
+<p>All of this is very interesting if your XML is very similar to HTML and if your styles are defined using CSS.
+But if your XML is completely different, and if you need to produce content that doesn't fit in iText's <code>Element</code>
+objects, you'll need to write your own <code>Pipeline</code>.</p>

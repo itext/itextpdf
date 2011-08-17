@@ -1,0 +1,42 @@
+<p class="title">Changing the default configuration</p>
+<p>Let's take a look at another HTML file: <a href="http://tutorial.itextpdf.com/src/main/resources/html/thoreau.html">thoreau.html</a>.
+If we use the default configuration to create the corresponding PDF, we detect some problems in the resulting PDF <a href="http://tutorial.itextpdf.com/results/xmlworker/thoreau0.pdf">thoreau0.pdf</a>:</p>
+<ul>
+<li>We've defined a different font in the <code>body</code> tag (<code>style="font-family: Nimbus Roman No9 L,Times New Roman"</code>), but the font in the resulting PDF is Helvetica.</li>
+<li>There are three images in the HTML document, but none of them show up in the PDF.</li>
+<li>There are three links in the HTML document, but only the links to another http-site work, the local link is broken.</li>
+</ul>
+<p>Let's find out how to fix these problems by looking at the following example:</p>
+<pre>
+FontFactory.registerDirectories();
+Document document = new Document();
+PdfWriter writer = PdfWriter.getInstance(document,
+    new FileOutputStream("results/xmlworker/thoreau1.pdf"));
+document.open();
+HtmlPipelineContext htmlContext = new HtmlPipelineContext();
+htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
+htmlContext.setImageProvider(new AbstractImageProvider() {
+    public String getImageRootPath() {
+        return "src/main/resources/html/";
+    }
+});
+htmlContext.setLinkProvider(new LinkProvider() {
+    public String getLinkRoot() {
+        return "http://tutorial.itextpdf.com/src/main/resources/html/";
+    }
+});
+CSSResolver cssResolver =
+    XMLWorkerHelper.getInstance().getDefaultCssResolver(true);
+Pipeline&lt;?&gt; pipeline =
+    new CssResolverPipeline(cssResolver,
+            new HtmlPipeline(htmlContext,
+                new PdfWriterPipeline(document, writer)));
+XMLWorker worker = new XMLWorker(pipeline, true);
+XMLParser p = new XMLParser(worker);
+p.parse(HTMLParsingProcess.class.getResourceAsStream("/html/thoreau.html"));
+document.close();
+</pre>
+
+<p class="caption">See <a href="http://tutorial.itextpdf.com/src/main/java/tutorial/xmlworker/HTMLParsingImagesLinks1.java">HTMLParsingImagesLinks1.java</a> and the resulting PDF <a href="http://tutorial.itextpdf.com/results/xmlworker/thoreau1.pdf">thoreau1.pdf</a></p>
+
+<p>As you can see, we don't need a special XML Worker configuration to fix the font problem.</p>

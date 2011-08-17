@@ -1,0 +1,18 @@
+<p class="title">Fixing the leading problem</p>
+<p>When no content has been added to a <code>Document</code>, the initial leading is 0.
+As soon as a <code>Paragraph</code> is added to the <code>Document</code>, the default leading changes into the leading of that <code>Paragraph</code>.
+In our first example, we started by adding a <code>Chunk</code> object, and all of its content was written on the first line because the initial leading is 0.
+We can avoid this problem by setting an initial leading. In the next example, we set the initial leading to 12.5 point.</p>
+<pre>
+Document document = new Document();
+PdfWriter writer = PdfWriter.getInstance(document,
+    new FileOutputStream("results/xmlworker/walden2.pdf"));
+writer.setInitialLeading(12.5f);
+document.open();
+XMLWorkerHelper.getInstance().parseXHtml(writer, document,
+    HTMLParsingDefault2.class.getResourceAsStream("/html/walden.html"));
+document.close();
+</pre>
+<p class="caption">see <a href="http://tutorial.itextpdf.com/src/main/java/tutorial/xmlworker/HTMLParsingDefault2.java">HTMLParsingDefault2</a>
+and the resulting PDF <a href="http://tutorial.itextpdf.com/results/xmlworker/walden1.pdf">walden2.pdf</a></p>
+<p>The content inside the <code>&lt;pre&gt;</code> tags in the HTML file is now legible in the PDF.</p>

@@ -1,0 +1,32 @@
+<p class="title">Adding an ImageProvider</p>
+<p>We've used a relative path to our images in <a href="http://tutorial.itextpdf.com/src/main/resources/html/thoreau.html">thoreau.html</a>:</p>
+<pre>&lt;img src="img/Henry_David_Thoreau_1861.jpg" /&gt;
+
+</pre>
+<p>If the HTML file you're parsing is stored in a directory that is different from the working directory, iText won't be able to create <code>Image</code> objects.
+We have to supply an implementation of the <code>ImageProvider</code> interface that tells iText what to do if an <code>img</code> tag is encountered.
+This interface has the following methods:</p>
+<ul>
+<li><code>Image retrieve(final String src);</code></li>
+<li><code>String getImageRootPath();</code></li>
+<li><code>void store(String src, Image img);</code></li>
+<li><code>void reset();</code></li>
+</ul>
+<p>You can write your own class implementing these four methods, or you can subclass <code>AbstractImageProvider</code>.
+It is preferred to do the latter.
+XML Worker will use the <code>store()</code> method of the <code>AbstractImageProvider</code> class to cache all the <code>Image</code> objects that are encountered in a <code>Map</code>.
+These objects will be reused when the <code>retrieve()</code> method is called for an image with the same <code>src</code>.
+If you don't cache images, your PDF will be bloated. The same image bits and bytes will be written to the PDF more than once.
+The <code>reset()</code> method clears the cache; it is used when an <code>ImageProvider</code> is cloned.
+Finally, the <code>getImageRootPath()</code> method isn't implemented. You have to implement it yourself, as is done in the following snippet:</p>
+<pre>htmlContext.setImageProvider(new AbstractImageProvider() {
+    public String getImageRootPath() {
+        return "src/main/resources/html/";
+    }
+});
+
+</pre>
+<p>The relative path from our workdir to our <a href="http://tutorial.itextpdf.com/src/main/resources/html/thoreau.html">thoreau.html</a> file is <code>"src/main/resources/html/"</code>.
+By using this <code>ImageProvider</code> in the <code>HtmlPipelineContext</code>, relative paths in the <code>src</code> attribute of an <code>img</code> tag will be adapted.
+iText will add <code>src/main/resources/html/</code> to the <code>src</code> attribute of the tag (e.g. <code>img/Henry_David_Thoreau_1861.jpg</code>), resulting in the path <code>src/main/resources/html/img/Henry_David_Thoreau_1861.jpg</code>.
+This path is valid relative to the working directory.</p>

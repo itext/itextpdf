@@ -1,0 +1,21 @@
+<p class="title">Adding a LinkProvider</p>
+<p>It makes perfect sense to create a PDF with http links that open an URL in a browser window.
+It's more delicate to add a relative link to a PDF document. If the document is downloaded and consulted off line,
+the relative link requires that the document that is referred to is present on your system at the correct location.
+Looking at <a href="http://tutorial.itextpdf.com/results/xmlworker/thoreau1.pdf">thoreau1.pdf</a>, we see
+that there's a link to the <a href="http://tutorial.itextpdf.com/src/main/resources/html/walden.html">walden.html</a> file
+that is in the same folder as <a href="http://tutorial.itextpdf.com/src/main/resources/html/thoreau.html">thoreau.html</a> file.
+However, the PDF we're creating is written to a different directory. If we want the link to work, we need to change the base URL.
+This can be done by implementing <code>LinkProvider</code>, an interface with a single method: <code>getLinkRoot()</code>,
+and adding it to the <code>HtmlPipelineContext</code> using the <code>setLinkProvider()</code> method.</p>
+<pre>
+htmlContext.setLinkProvider(new LinkProvider() {
+    public String getLinkRoot() {
+        return "http://tutorial.itextpdf.com/src/main/resources/html/";
+    }
+});
+
+</pre>
+<p>In this case, the relative link <code>&lt;a href="walden.html"&gt;Walden&lt;/a&gt;</code> is changed into an absolute link to
+<a href="http://tutorial.itextpdf.com/src/main/resources/html/walden.html">http://tutorial.itextpdf.com/src/main/resources/html/walden.html</a>.</p>
+<p>Congratulations! You can now parse HTML. Now let's take a look at ways to extend XML Worker so that you can also parse other XML documents.</p>

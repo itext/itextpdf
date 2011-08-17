@@ -1,0 +1,60 @@
+<p class="title">Parsing HTML step by step</p>
+<p>The following snippet shows what happens in step 4 of the PDF creation process in more detail.</p>
+<pre>
+HtmlPipelineContext htmlContext = new HtmlPipelineContext();
+htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
+CSSResolver cssResolver =
+    XMLWorkerHelper.getInstance().getDefaultCssResolver(true);
+Pipeline&lt;?&gt; pipeline =
+    new CssResolverPipeline(cssResolver,
+        new HtmlPipeline(htmlContext,
+            new PdfWriterPipeline(document, writer)));
+XMLWorker worker = new XMLWorker(pipeline, true);
+XMLParser p = new XMLParser(worker);
+p.parse(HTMLParsingProcess.class.getResourceAsStream("/html/walden.html"));
+</pre>
+
+<p class="caption">see <a href="http://tutorial.itextpdf.com/src/main/java/tutorial/xmlworker/HTMLParsingProcess.java">HTMLParsingProcess</a> and the resulting PDF <a href="http://tutorial.itextpdf.com/results/xmlworker/walden3.pdf">walden3.pdf</a></p>
+
+<p>Let's do a buttom-up examination of this snippet.</p>
+<strong>HTML input</strong>
+<p>As you can see, we parse the HTML as an <code>InputStream</code>. We could also have used a <code>Reader</code> object to read the HTML file.</p>
+<strong>XMLParser</strong>
+<p>The <code>XMLParser</code> class expects an implementation of the <code>XMLParserListener</code> interface. <code>XMLWorker</code> is such an implementation. Another implementation (<code>ParserListenerWriter</code>) was written for debugging purposes.</p>
+<strong>XMLWorker</strong>
+<p>The <code>XMLWorker</code> constructor expects two parameters: a <code>Pipeline&lt;?&gt;</code> and a boolean indicating whether or not the XML should be treated as HTML. If <code>true</code>, all tags will be converted to lowercase and whitespace used to indent the HTML syntax will be ignored.
+Internally, <code>XMLWorker</code> creates <code>Tag</code> objects that are processed using implementations of the <code>TagProcessor</code> interface (for instance <code>com.itextpdf.tool.xml.html.Anchor</code> is the tag processor for the <code>&lt;a&gt;</code>-tag).</p>
+<strong>Pipeline&lt;?&gt;</strong>
+<p>In this case, we're parsing XHTML and CSS to PDF; we define the <code>Pipeline&lt;?&gt;</code> as a chain of three <code>Pipeline</code> implementations:</p>
+<ol>
+<li>a <code>CssResolverPipeline</code>,</li>
+<li>an <code>HtmlPipeline</code>, and</li>
+<li>a <code>PdfWriterPipeline</code>.</li>
+</ol>
+<p>You create the first pipeline passing the second one as a parameter; the second pipeline is instantiated passing the third as a parameter; and so on.</p>
+<pre>Pipeline&lt;?&gt; pipeline =
+    new CssResolverPipeline(cssResolver,
+        new HtmlPipeline(htmlContext,
+            new PdfWriterPipeline(document, writer)));
+
+</pre>
+<p>The <code>PdfWriterPipeline</code> marks the end of the pipeline: it creates the PDF document.</p>
+<strong>CssResolverPipeline</strong>
+<p>The style of your HTML document is probably defined using Cascading Style Sheets (CSS). The <code>CSSResolverPipeline</code> is responsible for  adding the correct CSS Properties to each <code>Tag</code> that is created by <code>XMLWorker</code>. Without a <code>CssResolverPipeline</code>, the document would be parsed without style.
+The <code>CssResolverPipeline</code> constructor needs a <code>CssResolver</code> instance. The <code>getDefaultCssResolver()</code> method in the <code>XMLWorkerHelper</code> class provides a default <code>CssResolver</code>:</p>
+<pre>CSSResolver cssResolver = XMLWorkerHelper.getInstance().getDefaultCssResolver(true);
+
+</pre>
+<p>The <code>boolean</code> parameter indicates whether or not the <code>default.css</code> (shipped with XML Worker) should be added to the resolver.</p>
+<strong>HtmlPipeline</strong>
+<p>Next in line, is the <code>HtmlPipeline</code>. Its constructor expects an <code>HtmlPipelineContext</code>.</p>
+<pre>HtmlPipelineContext htmlContext = new HtmlPipelineContext();
+htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
+
+</pre>
+<p>Using the <code>setTagFactory()</code> method of the <code>HtmlPipelineContext</code>, you can configure how the <code>HtmlPipeline</code> should interpret the tags encountered by the parser. We've created a default implementation of the <code>TagProcessorFactory</code> interface for parsing HTML. It can be obtained using the <code>getHtmlTagProcessorFactory()</code> method in the <code>Tags</code> class.</p>
+<p>If you want to parse other types of XML, you'll need to implement your own <code>Pipeline</code> implementations, for instance an <code>SvgPipeline</code>.</p>
+<strong>PdfWriterPipeline</strong>
+<p>This is the end of the pipeline. The <code>PdfWriterPipeline</code> constructor expects the <code>Document</code> and a <code>PdfWriter</code> instance you've created in step 1 and 2 of the PDF creation process.</p>
+<p>In some cases, using the default configuration won't be sufficient, and you'll need to configure XML Worker yourself.
+This is the case if you want to parse HTML with images and links.</p>

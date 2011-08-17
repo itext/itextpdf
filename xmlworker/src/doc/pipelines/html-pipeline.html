@@ -1,0 +1,34 @@
+<p class="title">How to extend the HtmlPipeline class</p>
+<p>We've already configured a <code>HtmlPipeline</code> by changing the <code>HtmlPipelineContext</code>.
+We've defined an <code>ImageProvider</code> and a <code>LinkProvider</code> and applied it using the
+<code>setImageProvider()</code> and <code>setLinkProvider()</code> method, but there's more.</p>
+<p>Each time a new <code>XMLWorker</code>/<code>XmlParser</code> is started with the same <code>HtmlPipeline</code>,
+the context is cloned using some defaults. You can change these defaults with the following methods:</p>
+<ul>
+<li>The <code>charSet()</code> method &#151; change the character set</li>
+<li>The <code>setPageSize()</code> method &#151; changess the default page size (which is A4)</li>
+<li>The <code>autoBookmark()</code> method &#151; enables or disables the automatic creation of bookmarks. The default is: enabled (<code>true</code>).</li>
+<li>The <code>setAcceptUnknown()</code> method &#151; should XML Worker accept unknown tags? The default value is <code>true</code>.</li>
+<li>The <code>setRootTags()</code> method &#151; by default <code>body</code> and <code>div</code> are set as root tags. This affects the margin calculations.</li>
+</ul>
+<p>In previous examples, we've also used the <code>setTagFactory()</code> method.
+We can completely change the way <code>HtmlPipeline</code> interprets tags by creating a custom <code>TagProcessorFactory</code>.</p>
+<p><code>XMLWorker</code> creates <code>Tag</code> objects that contains attributes, styles and a hierarchy (one parent, zero or more children).
+<code>HtmlPipeline</code> transforms these <code>Tag</code>s into <code>com.itextpdf.text.Element</code> objects with the help of <code>TagProcessor</code>s.
+You can find a series of precanned <code>TagProcessor</code> implementations in the <code>com.itextpdf.tool.xml.html</code> package.</p>
+<p>The default <code>TagProcessorFactory</code> can be obtained from the <code>Tags</code> class, using the <code>getHtmlTagProcessorFactory()</code> method.
+Not all tags are enabled by default. Some tags are linked to the <code>DummyTagProcessor</code> (a processor that doesn't do anything), other tags result in a <code>TagProcessor</code> with a very specific implementation.
+You can extend the <code>HtmlPipeline</code> by adding your own <code>TagProcessor</code> implementations to the <code>TagProcessorFactory</code> with
+the <code>addProcessor()</code> method. This will either replace the default functionality of already supported tags,
+or add functionality for new tags.</p>
+<p>Suppose that you have HTML code in which you've used a custom tag that should trigger a call to a database, for example a &lt;userdata&gt; tag.
+<code>XMLWorker</code> will detect this tag and pass it to the <code>HtmlPipeline</code>.
+As a result, <code>HtmlPipeline</code> looks for the appropriate <code>TagProcessor</code> in its <code>HtmlPipelineContext</code>.
+You can implement the <code>TagProcessor</code> interface or extend the <code>AbstractTagProcessor</code> class
+in such a way that it performs a database query, adding its <code>ResultSet</code> to the <code>Document</code>
+in the form of a (list of) <code>Element</code> object(s). You should prefer extending <code>AbstractTagProcessor</code>,
+as this class comes with precanned <code>page-break-before</code>, <code>page-break-after</code>, and <code>fontsize</code> handling.</p>
+<p>Note that your <code>TagProcessor</code> can use CSS if you introduced a <code>CssResolverPipeline</code> before each pipeline that wants to apply styles.
+The <code>CssResolverPipeline</code> is responsible for setting the right CSS properties on each tag.
+This pipeline requires a <code>CSSResolver</code> that contains your css file.
+Let's take a look at the <code>StyleAttrCssResolver</code> that is shipped with XML Worker.</p>

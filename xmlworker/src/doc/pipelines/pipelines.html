@@ -1,0 +1,39 @@
+<p class="mastertitle">Write your own Pipeline</p>
+<p>Pipelines were introduced to separate <code>Tag</code> processing from content received from the XMLWorker.
+Different pipelines will result in different actions. Creating PDF is only one of the many possible actions.</p>
+<p>If you need functionality that goes beyond HTML to PDF rendering, you need to implement the <code>Pipeline</code>
+interface.</p>
+<pre>
+public interface Pipeline&lt;T extends CustomContext&gt; {
+
+	Pipeline init(final WorkerContext context) throws PipelineException;
+	Pipeline open(WorkerContext context, Tag t, ProcessObject po) throws PipelineException;
+	Pipeline content(WorkerContext context, Tag t, byte[] content, ProcessObject po) throws PipelineException;
+	Pipeline close(WorkerContext context, Tag t, ProcessObject po) throws PipelineException;
+	Pipeline getNext();
+
+}
+
+</pre>
+<p> For your convenience, the <code>AbstractPipeline</code> already implements all this method.
+It's always a good idea to write subclass. This allows you to inherit all the default behavior,
+so that you only have to implement the <code>open()</code>, <code>content()</code>, and <code>close()</code> methods.
+These methods are called when <code>XMLWorker</code> detects that a tag is opened, when it
+detects content inside a tag, and when it detects that a tag is closed.</p><p><code>XMLWorker</code>
+passes a <code>Tag</code> object (containing the name of the tag, attributes, styles, its parent,
+and its children) as well as a <code>ProcessObject</code> to these methods. In the case of the <code>content()</code>
+method, you also get a <code>byte</code> array with whatever was found in-between tags.
+This lifecycle of such a <code>ProcessObject</code> object starts in the first pipeline that is encountered
+and it ends in the final pipeline. It contains a list of <code>Writable</code> objects.
+<code>Writable</code> is used as a marker interface, allowing you to pass virtually
+anything from one pipeline to another. For instance the <code>PdfWriterPipeline</code> expects
+the <code>ProcessObject</code> to contain lists of <code>WritableElements</code>.
+These contain lists of <code>Element</code> object that can be added to a document.
+In the HTML to PDF implementation, the <code>HtmlPipeline</code> add <code>Element</code> objects
+to a <code>WritableElement</code> and puts them in the <code>ProcessObject</code> that is passed on to the
+<code>PdfWriterPipeline</code>.</p>
+<p>The WorkerContext lives as long as the parsing is going on, the context can be filled with CustomContext implementations 
+used by pipelines. This way pipelines can access a CustomContext of another pipeline. In the existing pipelines this is done in the init
+method which is called by the XMLParsers various parse methods.</p>
+<p>Please consult the source code of the existing pipelines for inspiration when writing your
+own <code>Pipeline</code> implementation.</p>

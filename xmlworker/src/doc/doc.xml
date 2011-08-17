@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itextdoc:pdf xmlns:itextdoc="http://www.itextsupport.com/schema/itextdoc-1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.itextsupport.com/schema/itextdoc-1.0.xsd" author="itextpdf.com"
+	filename="itextpdf.com-xmlworker-documentation.pdf" title="XMLWorker Documentation">
+	<itextdoc:css default="true" file="pdf.css" />
+	 <itextdoc:css default="false" file="site/style.css" rel="site flat" />
+	<itextdoc:header file="site/header.html" rel="site" />
+	<itextdoc:footer file="site/footer.html" rel="site" />
+	<itextdoc:body bookmarks="true">
+		<itextdoc:part title="Introduction" file="intro.html" />
+		<itextdoc:part title="Default Configuration for HTML" file="html_config.html" class="pagebreak">
+			<itextdoc:part title="Example using the default setup" file="example/xmlworker-helper-001.html">
+				<itextdoc:part title="Parsing HTML into a list of Element objects" file="example/xmlworker-helper-002.html" />
+				<itextdoc:part title="Fixing the leading problem" file="example/xmlworker-helper-003.html" />
+			</itextdoc:part>
+		</itextdoc:part>
+		<itextdoc:part title="Understanding XML Worker" file="understandingxmlworker.html">
+			<itextdoc:part title="Parsing HTML step by step" file="example/default-setup.html" />
+			<itextdoc:part title="Changing the default configuration" file="setup-yourself.html">
+				<itextdoc:part title="Registering fonts for the font factory" file="example/fontfactory.html" />
+				<itextdoc:part title="Adding an ImageProvider" file="example/add-imageprovider.html" />
+				<itextdoc:part title="Adding a LinkProvider" file="example/add-linkprovider.html" />
+			</itextdoc:part>
+		</itextdoc:part>
+		<itextdoc:part title="Extending XMLWorker" file="ext/extending.html" >
+			<itextdoc:part title="How to extend the HtmlPipeline" file="pipelines/html-pipeline.html">
+				<itextdoc:part title="CssResolverPipeline" file="pipelines/cssresolver-pipeline.html" />
+			</itextdoc:part>
+			<itextdoc:part title="Write your own Pipeline" file="pipelines/pipelines.html" />
+		</itextdoc:part>
+		<itextdoc:part title="References" file="references/references.html" class="pagebreak">
+			<itextdoc:part title="Requirements" file="references/requirements.html" />
+			<itextdoc:part title="HTML Tag Support" file="references/supported_tags.html" />
+			<itextdoc:part title="CSS Support" file="references/supported_css.html" />
+			<itextdoc:part title="XMLWorker Specific CSS" file="references/xmlworker_css.html" />
+			<itextdoc:part title="Links" file="references/links.html" />
+		</itextdoc:part>
+	</itextdoc:body>
+	<itextdoc:copy>
+		<itextdoc:cp rs="img/logo.gif" />
+	</itextdoc:copy>
+</itextdoc:pdf>
