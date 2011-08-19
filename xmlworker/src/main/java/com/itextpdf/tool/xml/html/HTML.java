@@ -182,12 +182,19 @@ public final class HTML {
 		}
 
 		/**
-		 * List with the tags that are not visible in the browser.
+		 * List with the tags that are not visible in the browser.<br />
+		 * Tag.HTML, Tag.HEAD, Tag.META, Tag.SCRIPT, Tag.LINK, Tag.STYLE,
+		 * Tag.TITLE
 		 */
 		public static final Set<String> NOT_VISIBLE = new HashSet<String>(Arrays.asList(new String[] { Tag.HTML,
 				Tag.HEAD, Tag.META, Tag.SCRIPT, Tag.LINK, Tag.STYLE, Tag.TITLE }));
 		/**
-		 * Groups all tags that are block level tags by default.
+		 * Groups all tags that are block level tags by default.<br />
+		 * Tag.ADDRESS, Tag.ARTICLE, Tag.ASIDE, Tag.AUDIO, Tag.BLOCKQUOTE,
+		 * Tag.CANVAS, Tag.DD, Tag.DIV, Tag.FIELDSET, Tag.FIGCAPTION,
+		 * Tag.FIGURE, Tag.FOOTER, Tag.FORM, Tag.H1, Tag.H2, Tag.H3, Tag.H4,
+		 * Tag.H5, Tag.H6, Tag.HEADER, Tag.HGROUP, Tag.HR, Tag.NOSCRIPT, Tag.OL,
+		 * Tag.OUTPUT, Tag.P, Tag.PRE, Tag.SECTION, Tag.TABLE, Tag.UL, Tag.VIDEO
 		 */
 		public static final Set<String> BLOCK_LEVEL = new HashSet<String>(Arrays.asList(new String[] { Tag.ADDRESS,
 				Tag.ARTICLE, Tag.ASIDE, Tag.AUDIO, Tag.BLOCKQUOTE, Tag.CANVAS, Tag.DD, Tag.DIV, Tag.FIELDSET,
@@ -200,7 +207,9 @@ public final class HTML {
 		 * Elements belonging to the <em>metadata content</em> category modify
 		 * the presentation or the behavior of the rest of the document, set up
 		 * links to others documents, or convey other <em>out of band</em>
-		 * information.
+		 * information.<br />
+		 * Tag.BASE, Tag.COMMAND, Tag.LINK, Tag.META, Tag.NOSCRIPT, Tag.STYLE,
+		 * Tag.TITLE
 		 */
 		public static final Set<String> METADATA = new HashSet<String>(Arrays.asList(new String[] { Tag.BASE,
 				Tag.COMMAND, Tag.LINK, Tag.META, Tag.NOSCRIPT, Tag.STYLE, Tag.TITLE }));
@@ -208,7 +217,19 @@ public final class HTML {
 		/**
 		 * HTML5<br />
 		 * Elements belonging to the flow content category typically contain
-		 * text or embedded content.
+		 * text or embedded content.<br />
+		 * Tag.A, Tag.ABBR, Tag.ADDRESS, Tag.ARTICLE, Tag.ASIDE, Tag.AUDIO,
+		 * Tag.B, Tag.BDO, Tag.BLOCKQUOTE, Tag.BR, Tag.BUTTON, Tag.CANVAS,
+		 * Tag.CITE, Tag.CODE, Tag.COMMAND, Tag.DATALIST, Tag.DEL, Tag.DETAILS,
+		 * Tag.DFN, Tag.DIV, Tag.DL, Tag.EM, Tag.EMBED, Tag.FIELDSET,
+		 * Tag.FIGURE, Tag.FOOTER, Tag.FORM, Tag.H1, Tag.H2, Tag.H3, Tag.H4,
+		 * Tag.H5, Tag.H6, Tag.HEADER, Tag.HGROUP, Tag.HR, Tag.I, Tag.IFRAME,
+		 * Tag.IMG, Tag.INPUT, Tag.INS, Tag.KBD, Tag.KEYGEN, Tag.LABEL, Tag.MAP,
+		 * Tag.MARK, Tag.MATH, Tag.MENU, Tag.METER, Tag.NAV, Tag.NOSCRIPT,
+		 * Tag.OBJECT, Tag.OL, Tag.OUTPUT, Tag.P, Tag.PRE, Tag.PROGRESS, Tag.Q,
+		 * Tag.RUBY, Tag.SAMP, Tag.SCRIPT, Tag.SECTION, Tag.SELECT, Tag.SMALL,
+		 * Tag.SPAN, Tag.STRONG, Tag.SUB, Tag.SUP, Tag.SVG, Tag.TABLE,
+		 * Tag.TEXTAREA, Tag.TIME, Tag.UL, Tag.VAR, Tag.VIDEO, Tag.WBR
 		 */
 		public static final Set<String> FLOW_CONTENT = new HashSet<String>(Arrays.asList(new String[] { Tag.A,
 				Tag.ABBR, Tag.ADDRESS, Tag.ARTICLE, Tag.ASIDE, Tag.AUDIO, Tag.B, Tag.BDO, Tag.BLOCKQUOTE, Tag.BR,
@@ -230,7 +251,8 @@ public final class HTML {
 		 * <code><a rel="custom" href="https://developer.mozilla.org/en/HTML/Element/footer">&lt;footer&gt;</a></code>
 		 * elements, and <a rel="internal"
 		 * href="https://developer.mozilla.org/#heading_content">heading
-		 * content</a>. <footer> elements, and heading content.
+		 * content</a>. <footer> elements, and heading content.<br />
+		 * Tag.ARTICLE, Tag.ASIDE, Tag.NAV, Tag.SECTION
 		 */
 		public static final Set<String> SECTIONING_CONTENT = new HashSet<String>(Arrays.asList(new String[] {
 				Tag.ARTICLE, Tag.ASIDE, Tag.NAV, Tag.SECTION }));
@@ -240,7 +262,8 @@ public final class HTML {
 		 * explicit <a
 		 * href="https://developer.mozilla.org/#sectioning_content">sectioning
 		 * content</a> element or implicitly defined by the heading content
-		 * itself.
+		 * itself.<br />
+		 * Tag.H1, Tag.H2, Tag.H3, Tag.H4, Tag.H5, Tag.H6, Tag.HGROUP
 		 */
 		public static final Set<String> HEADING_CONTENT = new HashSet<String>(Arrays.asList(new String[] {
 				Tag.H1, Tag.H2, Tag.H3, Tag.H4, Tag.H5, Tag.H6, Tag.HGROUP
@@ -248,7 +271,14 @@ public final class HTML {
 		/**
 		 * HTML5<br />
 		 * Phrasing content defines the text and the mark-up it contains. Runs
-		 * of phrasing content make up paragraphs.
+		 * of phrasing content make up paragraphs.<br />
+		 * Tag.ABBR, Tag.AUDIO, Tag.B, Tag.BDO, Tag.BR, Tag.BUTTON, Tag.CANVAS,
+		 * Tag.CITE, Tag.CODE, Tag.COMMAND, Tag.DATALIST, Tag.DFN, Tag.EM,
+		 * Tag.EMBED, Tag.I, Tag.IFRAME, Tag.IMG, Tag.INPUT, Tag.KBD,
+		 * Tag.KEYGEN, Tag.LABEL, Tag.MARK, Tag.MATH, Tag.METER, Tag.NOSCRIPT,
+		 * Tag.OBJECT, Tag.OUTPUT, Tag.PROGRESS, Tag.Q, Tag.RUBY, Tag.SAMP,
+		 * Tag.SCRIPT, Tag.SELECT, Tag.SMALL, Tag.SPAN, Tag.STRONG, Tag.SUB,
+		 * Tag.SUP, Tag.SVG, Tag.TEXTAREA, Tag.TIME, Tag.VAR, Tag.VIDEO, Tag.WBR
 		 */
 		public static final Set<String> PHRASING_CONTENT = new HashSet<String>(Arrays.asList(new String[] {
 				Tag.ABBR, Tag.AUDIO, Tag.B, Tag.BDO, Tag.BR, Tag.BUTTON, Tag.CANVAS, Tag.CITE, Tag.CODE, Tag.COMMAND,
@@ -260,7 +290,9 @@ public final class HTML {
 		/**
 		 * HTML5<br />
 		 * Embedded content imports another resource or inserts content from
-		 * another mark-up language or namespace into the document.
+		 * another mark-up language or namespace into the document.<br />
+		 * Tag.AUDIO, Tag.CANVAS, Tag.EMBED, Tag.IFRAME, Tag.IMG, Tag.MATH,
+		 * Tag.OBJECT, Tag.SVG, Tag.VIDEO
 		 */
 		public static final Set<String> EMBEDDED_CONTENT = new HashSet<String>(Arrays.asList(new String[] {
 				Tag.AUDIO, Tag.CANVAS, Tag.EMBED, Tag.IFRAME, Tag.IMG, Tag.MATH, Tag.OBJECT, Tag.SVG, Tag.VIDEO
@@ -291,6 +323,20 @@ public final class HTML {
 		public static final String TYPE = "type";
 		public static final String COLSPAN = "colspan";
 		public static final String ROWSPAN = "rowspan";
+
+		/**
+		 * Possible attribute values.
+		 *
+		 * @author itextpdf.com
+		 *
+		 */
+		public static final class Value {
+			public static final String TEXTCSS = "text/css";
+
+			private Value() {
+			};
+
+		}
 
 	}
 }
