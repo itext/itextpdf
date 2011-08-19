@@ -20,6 +20,8 @@
 				<itextdoc:part title="Registering fonts for the font factory" file="example/fontfactory.html" />
 				<itextdoc:part title="Adding an ImageProvider" file="example/add-imageprovider.html" />
 				<itextdoc:part title="Adding a LinkProvider" file="example/add-linkprovider.html" />
+				<itextdoc:part title="Adding CSS" file="example/add-css.html" />
+				<itextdoc:part title="Congratulations" bookmark="false" file="example/closing.html"/>
 			</itextdoc:part>
 		</itextdoc:part>
 		<itextdoc:part title="Extending XMLWorker" file="ext/extending.html" >

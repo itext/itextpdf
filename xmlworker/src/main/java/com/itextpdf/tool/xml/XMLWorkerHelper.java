@@ -54,6 +54,8 @@ import com.itextpdf.tool.xml.css.CssFileProcessor;
 import com.itextpdf.tool.xml.css.CssFilesImpl;
 import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.html.TagProcessor;
+import com.itextpdf.tool.xml.html.TagProcessorFactory;
 import com.itextpdf.tool.xml.html.Tags;
 import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
@@ -72,7 +74,6 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 public class XMLWorkerHelper {
 
 	private static XMLWorkerHelper myself = new XMLWorkerHelper();
-	private static CssFile defaultCssFile;
 
 	/**
 	 * Get a Singleton XMLWorkerHelper
@@ -84,6 +85,9 @@ public class XMLWorkerHelper {
 
 	}
 
+	private TagProcessorFactory tpf;
+	private CssFile defaultCssFile;
+
 	/**
 	 */
 	private XMLWorkerHelper() {
@@ -94,7 +98,7 @@ public class XMLWorkerHelper {
 	 * @return the default css file.
 	 */
 	public synchronized CssFile getDefaultCSS() {
-		if (null == XMLWorkerHelper.defaultCssFile) {
+		if (null == defaultCssFile) {
 			final InputStream in = XMLWorkerHelper.class.getResourceAsStream("/default.css");
 			if (null != in) {
 				final CssFileProcessor cssFileProcessor = new CssFileProcessor();
@@ -103,7 +107,7 @@ public class XMLWorkerHelper {
 					while (-1 != (i = in.read())) {
 						cssFileProcessor.process((char) i);
 					}
-					XMLWorkerHelper.defaultCssFile = new CSSFileWrapper(cssFileProcessor.getCss(), true);
+					defaultCssFile = new CSSFileWrapper(cssFileProcessor.getCss(), true);
 				} catch (final IOException e) {
 					throw new RuntimeWorkerException(e);
 				} finally {
@@ -133,7 +137,7 @@ public class XMLWorkerHelper {
 		cssFiles.add(getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		HtmlPipelineContext hpc = new HtmlPipelineContext();
-		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory());
 		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new ElementHandlerPipeline(d,
 				null)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
@@ -157,7 +161,7 @@ public class XMLWorkerHelper {
 		cssFiles.add(getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		HtmlPipelineContext hpc = new HtmlPipelineContext();
-		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory());
 		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc,
 				writer)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
@@ -178,7 +182,7 @@ public class XMLWorkerHelper {
 		cssFiles.add(getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		HtmlPipelineContext hpc = new HtmlPipelineContext();
-		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory());
 		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc,
 				writer)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
@@ -197,7 +201,7 @@ public class XMLWorkerHelper {
 		cssFiles.add(getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		HtmlPipelineContext hpc = new HtmlPipelineContext();
-		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory());
 		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new ElementHandlerPipeline(d,
 				null)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
@@ -218,5 +222,19 @@ public class XMLWorkerHelper {
 			resolver.addCss(getDefaultCSS());
 		}
 		return resolver;
+	}
+
+	/**
+	 * Retrieves the default factory for processing HTML tags from
+	 * {@link Tags#getHtmlTagProcessorFactory()}. On subsequent calls the same
+	 * {@link TagProcessorFactory} is returned every time. <br />
+	 * @return a
+	 *         <code>DefaultTagProcessorFactory<code> that maps HTML tags to {@link TagProcessor}s
+	 */
+	protected synchronized TagProcessorFactory getDefaultTagProcessorFactory() {
+		if (null == tpf) {
+			tpf = Tags.getHtmlTagProcessorFactory();
+		}
+		return tpf;
 	}
 }

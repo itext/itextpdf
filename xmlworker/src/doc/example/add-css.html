@@ -1,0 +1,47 @@
+<p class="title">Adding CSS</p>
+<p>
+	If you use the
+	<code>CssResolverPipeline</code>
+	with the default
+	<code>CSSResolver</code>
+	there are 4 ways to add CSS to the XML Worker:
+</p>
+<ul>
+	<li>to the CSSResolver before starting to parse</li>
+	<li>through the link tag in the head of the HTML file</li>
+	<li>in the style tag in your HTML</li>
+	<li>in the style attribute of HTML tags</li>
+</ul>
+<p bookmark="true">How to add a CSS File to the CSSResolver</p>
+<p>
+	If you have the CSS File as an
+	<code>InputStream</code>
+	or as an URL, you can use the
+	<code>FileRetrieveImpl</code>
+	class in combination with the
+	<code>CssFileProcessor</code>
+</p>
+<pre>
+	FileRetrieve retrieve = new FileRetrieveImpl();
+	CssFileProcessor cssFileProcessor = new CssFileProcessor();
+	retrieve.processFromStream(stream, cssFileProcessor);
+	CssFile css = cssFileProcessor.getCss();
+	cssResolver.addCssFile(css);
+
+</pre>
+<p>
+	You could also add the CSS from a
+	<code>String</code>
+	through the
+	<code>addCssFile(final String href, final boolean isPersistent)</code>
+	method. The
+	<code>isPersistent</code>
+	parameter is their to indicate that the added CSS should remain in the
+	CssResolver during subsequent parses of HTML with the same XMLWorker.
+	If
+	<code>isPersistent</code>
+	is
+	<code>false</code>
+	the added Css will be removed on the XMLWorkers call to the
+	CssPipeline's init method which is called for every new HTML that is parsed.
+</p>
