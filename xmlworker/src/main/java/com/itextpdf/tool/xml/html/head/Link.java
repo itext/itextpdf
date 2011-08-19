@@ -72,7 +72,7 @@ public class Link extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> start(final WorkerContext ctx, final Tag tag) {
-		if (tag.getAttributes().containsKey(HTML.Attribute.TYPE) && tag.getAttributes().get(HTML.Attribute.TYPE).equalsIgnoreCase("text/css")) {
+		if (HTML.Attribute.Value.TEXTCSS.equalsIgnoreCase(tag.getAttributes().get(HTML.Attribute.TYPE))) {
 			String href = tag.getAttributes().get(HTML.Attribute.HREF);
 			if (null != href) {
 				try {
