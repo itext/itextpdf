@@ -1603,7 +1603,7 @@ public class PdfGraphics2D extends Graphics2D {
                 cb.setAction(action, (float)mx[4], (float)mx[5], (float)(mx[0]+mx[4]), (float)(mx[3]+mx[5]));
             }
         } catch (Exception ex) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(ex);
         }
         if (currentFillGState != 255) {
             PdfGState gs = fillGState[currentFillGState];
