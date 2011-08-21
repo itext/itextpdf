@@ -292,7 +292,7 @@ public class DocumentFont extends BaseFont {
         else {
             if (enc.isName())
                 fillEncoding((PdfName)enc);
-            else {
+            else if (enc.isDictionary()) {
                 PdfDictionary encDic = (PdfDictionary)enc;
                 enc = PdfReader.getPdfObject(encDic.get(PdfName.BASEENCODING));
                 if (enc == null)
