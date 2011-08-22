@@ -3,7 +3,7 @@
 Different pipelines will result in different actions. Creating PDF is only one of the many possible actions.</p>
 <p>If you need functionality that goes beyond HTML to PDF rendering, you need to implement the <code>Pipeline</code>
 interface.</p>
-<pre>
+<pre code="java">
 public interface Pipeline&lt;T extends CustomContext&gt; {
 
 	Pipeline init(final WorkerContext context) throws PipelineException;

@@ -9,7 +9,7 @@
 </ol>
 <p>Let's take a look at a code snippet that converts the <a href="http://tutorial.itextpdf.com/src/main/resources/html/walden.html">walden.html</a> file to PDF.
 In this snippet we use the <code>XMLWorkerHelper</code> class and its <code>parseXHtml()</code> method to do all the work:</p>
-<pre>
+<pre code="java">
     Document document = new Document();
     PdfWriter writer = PdfWriter.getInstance(document,
         new FileOutputStream("results/walden1.pdf"));

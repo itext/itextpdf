@@ -5,7 +5,7 @@ If that font isn't found, the default font can be used (which is what happened i
 <p>XML Worker uses the <code>FontFactory</code> class to retrieve fonts. Initially, this class is only aware of the <em>standard Type 1 fonts</em>.
 If we want iText to find <em>Nimbus Roman No9 L</em> or <em>Times New Roman</em>, we need to register these fonts (see section 11.4.1 of <a href="http://itextpdf.com/book/">iText in Action &#151; Second Edition</a>).
 In this example, we just register the "usual suspects":</p>
-<pre>FontFactory.registerDirectories();
+<pre code="java">FontFactory.registerDirectories();
 
 </pre>
 <p>On Windows, this method will find the font files <i>times.ttf</i>, <i>timesbd.ttf</i>, <i>timesbi.ttf</i>, and <i>timesi.ttf</i>. iText will use fonts these to render all the text in the HTML.

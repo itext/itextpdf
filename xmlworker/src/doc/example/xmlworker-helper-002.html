@@ -1,7 +1,7 @@
 <p class="title">Parsing HTML into a list of Element objects</p>
 <p>When iText parses an XML file, it interprets the different tags and, whenever possible, iText will create a corresponding <code>Element</code> object.
 Suppose you're not interested in creating PDF, but you just want parse the HTML into a list of iText <code>Element</code> objects.</p>
-<pre>
+<pre code="java">
 XMLWorkerHelper.getInstance().parseXHtml(new ElementHandler() {
     public void add(final Writable w) {
         if (w instanceof WritableElement) {
@@ -14,7 +14,7 @@ XMLWorkerHelper.getInstance().parseXHtml(new ElementHandler() {
 <p class="caption">see <a href="http://tutorial.itextpdf.com/src/main/java/tutorial/xmlworker/HTMLParsingToList.java">HTMLParsingToList</a>
 and the resulting PDF <a href="http://tutorial.itextpdf.com/results/xmlworker/objects.txt">objects.txt</a></p>
 <p>Let's take a look at the first handful of objects.</p>
-<pre>com.itextpdf.tool.xml.html.head.Title$1
+<pre code="java">com.itextpdf.tool.xml.html.head.Title$1
 com.itextpdf.text.Chunk
 com.itextpdf.text.Paragraph
 com.itextpdf.tool.xml.html.Header$1

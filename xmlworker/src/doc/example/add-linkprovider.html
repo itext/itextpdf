@@ -8,7 +8,7 @@ that is in the same folder as <a href="http://tutorial.itextpdf.com/src/main/res
 However, the PDF we're creating is written to a different directory. If we want the link to work, we need to change the base URL.
 This can be done by implementing <code>LinkProvider</code>, an interface with a single method: <code>getLinkRoot()</code>,
 and adding it to the <code>HtmlPipelineContext</code> using the <code>setLinkProvider()</code> method.</p>
-<pre>
+<pre code="java">
 htmlContext.setLinkProvider(new LinkProvider() {
     public String getLinkRoot() {
         return "http://tutorial.itextpdf.com/src/main/resources/html/";

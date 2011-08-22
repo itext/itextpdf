@@ -3,7 +3,7 @@
 As soon as a <code>Paragraph</code> is added to the <code>Document</code>, the default leading changes into the leading of that <code>Paragraph</code>.
 In our first example, we started by adding a <code>Chunk</code> object, and all of its content was written on the first line because the initial leading is 0.
 We can avoid this problem by setting an initial leading. In the next example, we set the initial leading to 12.5 point.</p>
-<pre>
+<pre code="java">
 Document document = new Document();
 PdfWriter writer = PdfWriter.getInstance(document,
     new FileOutputStream("results/xmlworker/walden2.pdf"));

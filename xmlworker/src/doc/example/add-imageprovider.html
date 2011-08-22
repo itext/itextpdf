@@ -19,7 +19,7 @@ These objects will be reused when the <code>retrieve()</code> method is called f
 If you don't cache images, your PDF will be bloated. The same image bits and bytes will be written to the PDF more than once.
 The <code>reset()</code> method clears the cache; it is used when an <code>ImageProvider</code> is cloned.
 Finally, the <code>getImageRootPath()</code> method isn't implemented. You have to implement it yourself, as is done in the following snippet:</p>
-<pre>htmlContext.setImageProvider(new AbstractImageProvider() {
+<pre code="java">htmlContext.setImageProvider(new AbstractImageProvider() {
     public String getImageRootPath() {
         return "src/main/resources/html/";
     }

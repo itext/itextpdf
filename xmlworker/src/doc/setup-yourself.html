@@ -7,7 +7,7 @@ If we use the default configuration to create the corresponding PDF, we detect s
 <li>There are three links in the HTML document, but only the links to another http-site work, the local link is broken.</li>
 </ul>
 <p>Let's find out how to fix these problems by looking at the following example:</p>
-<pre>
+<pre code="java">
 FontFactory.registerDirectories();
 Document document = new Document();
 PdfWriter writer = PdfWriter.getInstance(document,

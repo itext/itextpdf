@@ -1,6 +1,6 @@
 <p class="title">Parsing HTML step by step</p>
 <p>The following snippet shows what happens in step 4 of the PDF creation process in more detail.</p>
-<pre>
+<pre code="java">
 HtmlPipelineContext htmlContext = new HtmlPipelineContext();
 htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
 CSSResolver cssResolver =
@@ -32,7 +32,7 @@ Internally, <code>XMLWorker</code> creates <code>Tag</code> objects that are pro
 <li>a <code>PdfWriterPipeline</code>.</li>
 </ol>
 <p>You create the first pipeline passing the second one as a parameter; the second pipeline is instantiated passing the third as a parameter; and so on.</p>
-<pre>Pipeline&lt;?&gt; pipeline =
+<pre code="java">Pipeline&lt;?&gt; pipeline =
     new CssResolverPipeline(cssResolver,
         new HtmlPipeline(htmlContext,
             new PdfWriterPipeline(document, writer)));
@@ -42,13 +42,13 @@ Internally, <code>XMLWorker</code> creates <code>Tag</code> objects that are pro
 <strong>CssResolverPipeline</strong>
 <p>The style of your HTML document is probably defined using Cascading Style Sheets (CSS). The <code>CSSResolverPipeline</code> is responsible for  adding the correct CSS Properties to each <code>Tag</code> that is created by <code>XMLWorker</code>. Without a <code>CssResolverPipeline</code>, the document would be parsed without style.
 The <code>CssResolverPipeline</code> constructor needs a <code>CssResolver</code> instance. The <code>getDefaultCssResolver()</code> method in the <code>XMLWorkerHelper</code> class provides a default <code>CssResolver</code>:</p>
-<pre>CSSResolver cssResolver = XMLWorkerHelper.getInstance().getDefaultCssResolver(true);
+<pre code="java">CSSResolver cssResolver = XMLWorkerHelper.getInstance().getDefaultCssResolver(true);
 
 </pre>
 <p>The <code>boolean</code> parameter indicates whether or not the <code>default.css</code> (shipped with XML Worker) should be added to the resolver.</p>
 <strong>HtmlPipeline</strong>
 <p>Next in line, is the <code>HtmlPipeline</code>. Its constructor expects an <code>HtmlPipelineContext</code>.</p>
-<pre>HtmlPipelineContext htmlContext = new HtmlPipelineContext();
+<pre code="java">HtmlPipelineContext htmlContext = new HtmlPipelineContext();
 htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
 
 </pre>
