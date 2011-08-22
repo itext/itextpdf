@@ -93,7 +93,9 @@ public class CssUtilsTest {
 
 	@Test
 	public void parseLength() {
+		Assert.assertEquals(9, css.parsePxInCmMmPcToPt("12"), 0);
 		Assert.assertEquals(576, css.parsePxInCmMmPcToPt("8inch"), 0);
+		Assert.assertEquals(576, css.parsePxInCmMmPcToPt("8", CSS.Value.IN), 0);
 	}
 
 	@Test

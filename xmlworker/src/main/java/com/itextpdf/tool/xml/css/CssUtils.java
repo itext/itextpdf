@@ -421,41 +421,49 @@ public class CssUtils {
 		return f;
 	}
 	/**
-	 * Parses a length with an allowed metric unit (px, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23, .123) to pt.<br />
-	 * A numeric value is considered to be in px as is default in HTML/CSS.
+	 * Parses a length with an allowed metric unit (px, pt, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23, .123) to pt.<br />
+	 * A numeric value (without px, pt, etc in the given length string) is considered to be in the default metric that was given.
 	 * @param length the string containing the length.
-	 * @return float the parsed length in pt.
+	 * @param defaultMetric the string containing the metric if it is possible that the length string does not contain one. If null the length is considered to be in px as is default in HTML/CSS.
+	 * @return
 	 */
-	public float parsePxInCmMmPcToPt(final String length) {
+	public float parsePxInCmMmPcToPt(final String length, final String defaultMetric) {
 		int pos = determinePositionBetweenValueAndUnit(length);
 		if (pos == 0)
 			return 0f;
 		float f = Float.parseFloat(length.substring(0, pos) + "f");
 		String unit = length.substring(pos);
 		// inches
-		if (unit.startsWith("in")) {
+		if (unit.startsWith(CSS.Value.IN) || (unit.equals("") && defaultMetric.equals(CSS.Value.IN))) {
 			f *= 72f;
 		}
 		// centimeters
-		else if (unit.startsWith("cm")) {
+		else if (unit.startsWith(CSS.Value.CM) || (unit.equals("") && defaultMetric.equals(CSS.Value.CM))) {
 			f = (f / 2.54f) * 72f;
 		}
 		// millimeters
-		else if (unit.startsWith("mm")) {
+		else if (unit.startsWith(CSS.Value.MM) || (unit.equals("") && defaultMetric.equals(CSS.Value.MM))) {
 			f = (f / 25.4f) * 72f;
 		}
 		// picas
-		else if (unit.startsWith("pc")) {
+		else if (unit.startsWith(CSS.Value.PC) || (unit.equals("") && defaultMetric.equals(CSS.Value.PC))) {
 			f *= 12f;
 		}
-		// points
-		else if (unit.startsWith("pt")) {
-		}
-		// default: we assume the length was measured in pixels (1px = 0.75pt).
-		else {
+		// pixels (1px = 0.75pt).
+		else if (unit.startsWith(CSS.Value.PX) || (unit.equals("") && defaultMetric.equals(CSS.Value.PX))) {
 			f *= 0.75f;
 		}
 		return f;
+	}
+
+	/**
+	 * Parses a length with an allowed metric unit (px, pt, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23, .123) to pt.<br />
+	 * A numeric value is considered to be in px as is default in HTML/CSS.
+	 * @param length the string containing the length.
+	 * @return float the parsed length in pt.
+	 */
+	public float parsePxInCmMmPcToPt(final String length) {
+		return parsePxInCmMmPcToPt(length, CSS.Value.PX);
 	}
 
 	/**
