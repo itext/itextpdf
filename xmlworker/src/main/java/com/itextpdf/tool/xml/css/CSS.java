@@ -127,8 +127,10 @@ public final class CSS {
 		public static final String DISPLAY = "display";
 		public static final String MIN_WIDTH = "min-width";
 		public static final String MAX_WIDTH = "max-width";
-		public static final Object MIN_HEIGHT = "min-height";
-		public static final Object MAX_HEIGHT = "max-height";
+		public static final String MIN_HEIGHT = "min-height";
+		public static final String MAX_HEIGHT = "max-height";
+		public static final String RIGHT = "right";
+		public static final String BOTTOM = "bottom";
 	}
 
 	/**
