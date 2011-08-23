@@ -210,5 +210,8 @@ public final class CSS {
 		public static final String ALWAYS = "always";
 		public static final String ABSOLUTE = "absolute";
 		public static final String AUTO = "auto";
+		public static final String INLINE = "inline";
+		public static final String BLOCK = "block";
+
 	}
 }

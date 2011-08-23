@@ -47,8 +47,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
@@ -73,7 +71,11 @@ public class Anchor extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
-			l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+			try {
+				l.add(CssAppliers.getInstance().apply(new Chunk(sanitized), tag, getHtmlPipelineContext(ctx)));
+			} catch (NoCustomContextException e) {
+				throw new RuntimeWorkerException(e);
+			}
 		}
 		return l;
 	}
@@ -124,7 +126,7 @@ public class Anchor extends AbstractTagProcessor {
 					}
 					p.add(e);
 				}
-				elems.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(p, tag));
+				elems.add(CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx)));
 			} else
 			// !currentContent > 0 ; An empty "a" tag has been encountered.
 			// we're using an anchor space hack here. without the space, reader

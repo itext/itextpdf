@@ -41,8 +41,6 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
-import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
@@ -209,7 +207,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 						p.add(e);
 					}
 					if (applyCSS) {
-						p = new ParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(p, tag);
+						p = (Paragraph) CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx));
 					}
 					list.add(p);
 				} else {
@@ -217,7 +215,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 					for (Element e : currentContent) {
 						p.add(e);
 					}
-					p = new NoNewLineParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(p, tag);
+					p = (NoNewLineParagraph) CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx));
 					list.add(p);
 				}
 			}

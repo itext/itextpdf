@@ -38,12 +38,14 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author redlab_b
@@ -64,18 +66,24 @@ public class ParaGraph extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitize(content);
 		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
+			HtmlPipelineContext myctx;
+			try {
+				myctx = getHtmlPipelineContext(ctx);
+			} catch (NoCustomContextException e) {
+				throw new RuntimeWorkerException(e);
+			}
 			if ((null != tag.getCSS().get(CSS.Property.TAB_INTERVAL))) {
 				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
 				if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 					tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
 				}
-				l.add(new ChunkCssApplier().apply(tabbedChunk, tag));
+				l.add(CssAppliers.getInstance().apply(tabbedChunk, tag,myctx));
 			} else if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
 				tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
-				l.add(new ChunkCssApplier().apply(tabbedChunk, tag));
+				l.add(CssAppliers.getInstance().apply(tabbedChunk, tag, myctx));
 			} else {
-				l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+				l.add(CssAppliers.getInstance().apply(new Chunk(sanitized), tag, myctx));
 			}
 		}
 		return l;

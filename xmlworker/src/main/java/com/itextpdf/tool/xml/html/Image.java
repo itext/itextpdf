@@ -57,12 +57,11 @@ import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.CssUtils;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 import com.itextpdf.tool.xml.pipeline.html.NoImageProviderException;
 
 /**
@@ -123,7 +122,12 @@ public class Image extends AbstractTagProcessor {
 					widthInPoints = img.getWidth() * heightInPoints / img.getHeight();
 					img.scaleAbsolute(widthInPoints, heightInPoints);
 				}
-				l.add(new ChunkCssApplier().apply(new Chunk(new ImageCssApplier().apply(img, tag), 0, 0, true), tag));
+				try {
+					HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
+					l.add(CssAppliers.getInstance().apply(new Chunk((com.itextpdf.text.Image) CssAppliers.getInstance().apply(img, tag, htmlPipelineContext), 0, 0, true), tag, htmlPipelineContext));
+				} catch (NoCustomContextException e) {
+					throw new RuntimeWorkerException(e);
+				}
 			}
 		}
 		return l;

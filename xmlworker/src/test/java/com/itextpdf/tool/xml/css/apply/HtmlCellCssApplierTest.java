@@ -77,7 +77,8 @@ public class HtmlCellCssApplierTest {
 
 	private TableRowElement row1;
 	private final HtmlCell cell = new HtmlCell();
-	private final HtmlCellCssApplier applier = new HtmlCellCssApplier(new HtmlPipelineContext());
+	private final HtmlCellCssApplier applier = new HtmlCellCssApplier();
+	private HtmlPipelineContext config;
 
 	@Before
 	public void setup() {
@@ -88,11 +89,12 @@ public class HtmlCellCssApplierTest {
 		basicPara.add(basic);
 		cell.addElement(basicPara);
 		cells.add(cell);
+		config = new HtmlPipelineContext();
 	}
 
 	/*Disabled as long as the default borders are enabled*/
 	public void resolveNoBorder() {
-		applier.apply(cell, tag);
+		applier.apply(cell, tag, config,config);
 		assertEquals(Rectangle.NO_BORDER, cell.getBorder());
 	}
 
@@ -100,7 +102,7 @@ public class HtmlCellCssApplierTest {
 	public void resolveColspan() {
 		assertEquals(1, cell.getColspan(), 0);
 		tag.getAttributes().put("colspan", "2");
-		applier.apply(cell, tag);
+		applier.apply(cell, tag, config,config);
 		assertEquals(2, cell.getColspan());
 	}
 
@@ -108,7 +110,7 @@ public class HtmlCellCssApplierTest {
 	public void resolveRowspan() {
 		assertEquals(1, cell.getRowspan(), 0);
 		tag.getAttributes().put("rowspan", "3");
-		applier.apply(cell, tag);
+		applier.apply(cell, tag, config,config);
 		assertEquals(3, cell.getRowspan());
 	}
 
@@ -116,7 +118,7 @@ public class HtmlCellCssApplierTest {
 	public void resolveFixedWidth() {
 		HtmlCell fixed = new HtmlCell();
 		tag.getAttributes().put("width", "90pt");
-		fixed = applier.apply(fixed, tag);
+		fixed = applier.apply(fixed, tag, config,config);
 		assertEquals(90, (fixed).getFixedWidth(), 0);
 	}
 
@@ -127,7 +129,7 @@ public class HtmlCellCssApplierTest {
 		tag.getCSS().put("border-width-left", "6pt");
 		tag.getCSS().put("border-width-right", "7pt");
 		tag.getCSS().put("border-width-bottom", "8pt");
-		applier.apply(cell, tag);
+		applier.apply(cell, tag, config,config);
 		assertEquals(5, cell.getCellValues().getBorderWidthTop(), 0);
 		assertEquals(6, cell.getCellValues().getBorderWidthLeft(), 0);
 		assertEquals(7, cell.getCellValues().getBorderWidthRight(), 0);
@@ -140,7 +142,7 @@ public class HtmlCellCssApplierTest {
 		tag.getCSS().put("border-color-left", "#0f0");
 		tag.getCSS().put("border-color-right", "#0000ff");
 		tag.getCSS().put("border-color-bottom", "rgb(000,111,222)");
-		applier.apply(cell, tag);
+		applier.apply(cell, tag, config,config);
 		assertEquals(BaseColor.RED, cell.getCellValues().getBorderColorTop());
 		assertEquals(BaseColor.GREEN, cell.getCellValues().getBorderColorLeft());
 		assertEquals(BaseColor.BLUE, cell.getCellValues().getBorderColorRight());

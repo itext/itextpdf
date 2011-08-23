@@ -50,7 +50,6 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
-import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
@@ -60,24 +59,23 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  * @author itextpdf.com
  *
  */
-public class ParagraphCssApplier implements CssApplier<Paragraph> {
+public class ParagraphCssApplier  {
 	private final CssUtils utils = CssUtils.getInstance();
-	private final MaxLeadingAndSize m = new MaxLeadingAndSize();
-	private final HtmlPipelineContext configuration;
+
 
 	/**
 	 * Construct a ParagraphCssApplier with the given {@link HtmlPipelineContext}
 	 * @param htmlPipelineContext the context
 	 */
-	public ParagraphCssApplier(final HtmlPipelineContext htmlPipelineContext) {
-		this.configuration = htmlPipelineContext;
+	public ParagraphCssApplier() {
 	}
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
 	 */
-	public Paragraph apply(final Paragraph p, final Tag t) {
-		if (this.configuration.getRootTags().contains(t.getName())) {
+	public Paragraph apply(final Paragraph p, final Tag t, final MarginMemory configuration) {
+		MaxLeadingAndSize m = new MaxLeadingAndSize();
+		if (configuration.getRootTags().contains(t.getName())) {
 			m.setLeading(t);
 		} else {
 			m.setVariablesBasedOnChildren(t);
@@ -141,7 +139,7 @@ public class ParagraphCssApplier implements CssApplier<Paragraph> {
 		}
 
 		if (hasLMB) {
-			configuration.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, lmb);
+			configuration.setLastMarginBottom(lmb);
 		}
 		// TODO reactive for positioning and implement more
 //		if(null != configuration.getWriter() && null != css.get("position")) {

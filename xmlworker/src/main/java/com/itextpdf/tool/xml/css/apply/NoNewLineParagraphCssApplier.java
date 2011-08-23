@@ -49,35 +49,26 @@ import java.util.Map.Entry;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
-import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  *
  * @author itextpdf.com
  *
  */
-public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagraph> {
+public class NoNewLineParagraphCssApplier {
 	private final CssUtils utils = CssUtils.getInstance();
-	private final MaxLeadingAndSize m = new MaxLeadingAndSize();
-	private final HtmlPipelineContext configuration;
 
-	/**
-	 * Construct a NoNewLineParagraphCssApplier with the given {@link HtmlPipelineContext}
-	 * @param htmlPipelineContext the context
-	 */
-	public NoNewLineParagraphCssApplier(final HtmlPipelineContext htmlPipelineContext) {
-		this.configuration = htmlPipelineContext;
-	}
+
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
 	 */
-	public NoNewLineParagraph apply(final NoNewLineParagraph p, final Tag t) {
-		if (this.configuration.getRootTags().contains(t.getName())) {
+	public NoNewLineParagraph apply(final NoNewLineParagraph p, final Tag t, final MarginMemory configuration) {
+		MaxLeadingAndSize m = new MaxLeadingAndSize();
+		if (configuration.getRootTags().contains(t.getName())) {
 			m.setLeading(t);
 		} else {
 			m.setVariablesBasedOnChildren(t);
@@ -141,7 +132,7 @@ public class NoNewLineParagraphCssApplier implements CssApplier<NoNewLineParagra
 		}
 
 		if (hasLMB) {
-			configuration.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, lmb);
+			configuration.setLastMarginBottom(lmb);
 		}
 		return p;
 	}

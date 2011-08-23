@@ -53,8 +53,6 @@ import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
@@ -75,7 +73,7 @@ public class Div extends AbstractTagProcessor {
     	if (sanitized.length() > 0) {
     		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
     		try {
-				l.add(new NoNewLineParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(new NoNewLineParagraph(c), tag));
+				l.add(CssAppliers.getInstance().apply(new NoNewLineParagraph(c), tag, getHtmlPipelineContext(ctx)));
 			} catch (NoCustomContextException e) {
 				throw new RuntimeWorkerException(e);
 			}
@@ -98,8 +96,7 @@ public class Div extends AbstractTagProcessor {
 			for (Element e : currentContent) {
 				if (e instanceof Paragraph) {
 					if (p != null) {
-						p = new ParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(p, tag);
-						l.add(p);
+						l.add(CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx)));
 						p = null;
 					}
 					l.add(e);
@@ -111,8 +108,7 @@ public class Div extends AbstractTagProcessor {
 				}
 			}
 			if (p != null) {
-				p = new ParagraphCssApplier(getHtmlPipelineContext(ctx)).apply(p, tag);
-				l.add(p);
+				l.add(CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx)));
 			}
 			return l;
 		} catch (NoCustomContextException e) {

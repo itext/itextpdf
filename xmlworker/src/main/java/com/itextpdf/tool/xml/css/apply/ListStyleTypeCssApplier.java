@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.GreekList;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.List;
@@ -63,8 +64,7 @@ import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
-import com.itextpdf.tool.xml.pipeline.html.NoImageProviderException;
+import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
 
 /**
  * @author itextpdf.com
@@ -90,7 +90,7 @@ public class ListStyleTypeCssApplier {
 	 * @return the changed {@link List}
 	 */
 	// not implemented: list-style-type:armenian, georgian, decimal-leading-zero.
-	public List apply(final List list, final Tag t, final HtmlPipelineContext htmlPipelineContext) {
+	public List apply(final List list, final Tag t, final ImageProvider htmlPipelineContext) {
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		List lst = list;
 		Map<String, String> css = t.getCSS();
@@ -150,10 +150,10 @@ public class ListStyleTypeCssApplier {
 					img = new ImageRetrieve().retrieveImage(url);
 				} else {
 					try {
-						img = new ImageRetrieve(htmlPipelineContext.getImageProvider()).retrieveImage(url);
-					} catch (NoImageProviderException e) {
+						img = new ImageRetrieve(htmlPipelineContext).retrieveImage(url);
+					} catch (NoImageException e) {
 						if (LOG.isLogging(Level.TRACE)) {
-							LOG.trace(String.format(LocaleMessages.getInstance().getMessage("pipeline.html.noimageprovider"), htmlPipelineContext.getClass().getName()));
+							LOG.trace(String.format(LocaleMessages.getInstance().getMessage("css.applier.list.noimage")));
 						}
 						img = new ImageRetrieve().retrieveImage(url);
 					}
@@ -199,5 +199,14 @@ public class ListStyleTypeCssApplier {
 		Chunk symbol = lst.getSymbol();
 		symbol.setTextRise(2);
 		symbol.getFont().setSize(7);
+	}
+
+	/**
+	 * @param e
+	 * @param t
+	 * @return
+	 */
+	public Element apply(final List e, final Tag t) {
+		return apply(e, t, null);
 	}
 }

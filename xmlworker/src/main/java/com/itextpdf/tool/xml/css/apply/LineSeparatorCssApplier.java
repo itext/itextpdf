@@ -10,29 +10,18 @@ import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
-import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
  *
  */
-public class LineSeparatorCssApplier implements CssApplier<LineSeparator>{
-
-	private final HtmlPipelineContext configuration;
-
-	/**
-	 * @param htmlPipelineContext the context
-	 */
-	public LineSeparatorCssApplier(final HtmlPipelineContext htmlPipelineContext) {
-		this.configuration = htmlPipelineContext;
-	}
+public class LineSeparatorCssApplier {
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
 	 */
-	public LineSeparator apply(final LineSeparator ls, final Tag t) {
+	public LineSeparator apply(final LineSeparator ls, final Tag t, final PageSizeContainable psc) {
     	float lineWidth = 1;
     	Map<String, String> css = t.getCSS();
 		if(css.get(CSS.Property.HEIGHT) != null) {
@@ -52,7 +41,7 @@ public class LineSeparatorCssApplier implements CssApplier<LineSeparator>{
 			if(widthStr.contains("%")) {
 				percentage = Float.parseFloat(widthStr.replace("%", ""));
 			} else {
-				percentage = (CssUtils.getInstance().parsePxInCmMmPcToPt(widthStr)/configuration.getPageSize().getWidth())*100;
+				percentage = (CssUtils.getInstance().parsePxInCmMmPcToPt(widthStr)/psc.getPageSize().getWidth())*100;
 			}
 		}
 		ls.setPercentage(percentage);

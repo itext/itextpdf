@@ -53,7 +53,8 @@ import java.util.Set;
 import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.WebColors;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import com.itextpdf.tool.xml.css.apply.MarginMemory;
+import com.itextpdf.tool.xml.exceptions.NoDataException;
 
 /**
  * @author redlab_b
@@ -569,7 +570,7 @@ public class CssUtils {
 	 * @param configuration XmlWorkerConfig containing the last margin bottom.
 	 * @return an offset
 	 */
-	public float calculateMarginTop(final String value, final float largestFont, final HtmlPipelineContext configuration) {
+	public float calculateMarginTop(final String value, final float largestFont, final MarginMemory configuration) {
 		return calculateMarginTop(parseValueToPt(value, largestFont), configuration);
 	}
 
@@ -582,13 +583,13 @@ public class CssUtils {
 	 * @param configuration XmlWorkerConfig containing the last margin bottom.
 	 * @return an offset
 	 */
-	public float calculateMarginTop(final float value, final HtmlPipelineContext configuration) {
+	public float calculateMarginTop(final float value, final MarginMemory configuration) {
 		float marginTop = value;
-		Map<String, Object> memory = configuration.getMemory();
-		Object mb = memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
-		if(mb != null) {
-			float marginBottom = (Float)mb;
+		Float mb;
+		try {
+			float marginBottom = configuration.getLastMarginBottom();
 			marginTop = (marginTop>marginBottom)?marginTop-marginBottom:0;
+		} catch (NoDataException e) {
 		}
 		return marginTop;
 	}

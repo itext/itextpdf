@@ -58,6 +58,9 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.tool.xml.CustomContext;
 import com.itextpdf.tool.xml.Experimental;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
+import com.itextpdf.tool.xml.css.apply.MarginMemory;
+import com.itextpdf.tool.xml.css.apply.PageSizeContainable;
+import com.itextpdf.tool.xml.exceptions.NoDataException;
 import com.itextpdf.tool.xml.html.Header;
 import com.itextpdf.tool.xml.html.Image;
 import com.itextpdf.tool.xml.html.TagProcessor;
@@ -70,7 +73,7 @@ import com.itextpdf.tool.xml.html.Tags;
  * @author redlab_b
  *
  */
-public class HtmlPipelineContext implements CustomContext, Cloneable {
+public class HtmlPipelineContext implements CustomContext, Cloneable, MarginMemory, PageSizeContainable {
 
 	/**
 	 *  Key for the memory, used to store bookmark nodes
@@ -341,6 +344,24 @@ public class HtmlPipelineContext implements CustomContext, Cloneable {
 	public HtmlPipelineContext setLinkProvider(final LinkProvider linkprovider) {
 		this.linkprovider = linkprovider;
 		return this;
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.css.MarginMemory#getLastMarginBottom()
+	 */
+	public Float getLastMarginBottom() throws NoDataException {
+		Map<String, Object> memory = getMemory();
+		Object o =  memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
+		if (null == o) {
+			throw new NoDataException();
+		} else {
+			return (Float) o;
+		}
+	}
+	/* (non-Javadoc)
+	 * @see com.itextpdf.tool.xml.css.MarginMemory#setLastMarginBottom(float)
+	 */
+	public void setLastMarginBottom(final Float lmb) {
+		getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, lmb);
 	}
 
 }

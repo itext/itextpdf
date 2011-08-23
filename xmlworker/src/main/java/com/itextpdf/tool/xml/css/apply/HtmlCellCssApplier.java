@@ -52,7 +52,6 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
-import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.WidthCalculator;
 import com.itextpdf.tool.xml.html.HTML;
@@ -60,24 +59,15 @@ import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.table.CellSpacingEvent;
 import com.itextpdf.tool.xml.html.table.Table;
 import com.itextpdf.tool.xml.html.table.TableStyleValues;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author Emiel Ackermann
  *
  */
-public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
+public class HtmlCellCssApplier {
 
     private final CssUtils utils = CssUtils.getInstance();
-	private final HtmlPipelineContext configuration;
 
-
-	/**
-	 * @param htmlPipelineContext the context
-	 */
-	public HtmlCellCssApplier(final HtmlPipelineContext htmlPipelineContext) {
-		this.configuration = htmlPipelineContext;
-	}
     /*
      * (non-Javadoc)
      *
@@ -85,7 +75,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
      * com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element,
      * com.itextpdf.tool.xml.Tag)
      */
-    public HtmlCell apply(final HtmlCell cell, final Tag t) {
+    public HtmlCell apply(final HtmlCell cell, final Tag t, final MarginMemory memory, final PageSizeContainable psc) {
     	final TableStyleValues values = new TableStyleValues();
     	Tag table = t.getParent();
     	while(!table.getName().equals("table")){
@@ -103,7 +93,7 @@ public class HtmlCellCssApplier implements CssApplier<HtmlCell> {
 		} else {
 	    	cell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Default css behavior. Implementation of "vertical-align" style further along.
 			if(t.getAttributes().get(HTML.Attribute.WIDTH) != null || css.get(HTML.Attribute.WIDTH) != null) {
-				cell.setFixedWidth(new WidthCalculator().getWidth(t, configuration.getRootTags(), configuration.getPageSize().getWidth()));
+				cell.setFixedWidth(new WidthCalculator().getWidth(t, memory.getRootTags(), psc.getPageSize().getWidth()));
 			}
 	        String colspan = t.getAttributes().get(HTML.Attribute.COLSPAN);
 	        if (null != colspan) {
