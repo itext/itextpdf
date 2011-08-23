@@ -87,6 +87,7 @@ public class PdfImageObject {
     public static final String TYPE_JPG = "jpg";
     public static final String TYPE_JP2 = "jp2";
     public static final String TYPE_TIF = "tif";
+    public static final String TYPE_JBIG2 = "jbig2";
 
     protected String fileType;
 
@@ -221,6 +222,9 @@ public class PdfImageObject {
             }
             else if (PdfName.JPXDECODE.equals(filter)) {
                 fileType = TYPE_JP2;
+                return streamBytes;
+            } else if (PdfName.JBIG2DECODE.equals(filter)){
+                fileType = TYPE_JBIG2;
                 return streamBytes;
             }
             throw new UnsupportedPdfException("Unsupported stream filter " + filter);
