@@ -129,7 +129,8 @@ public class ParaGraph extends AbstractTagProcessor {
 
 	/**
 	 * Applies the tab interval of the p tag on its {@link TabbedChunk} elements. <br />
-	 * The style "xfa-tab-count" of the {@link TabbedChunk} is multiplied with the tab interval of the p tag. This width is then added to a new {@link TabbedChunk}.
+	 * The style "xfa-tab-count" of the {@link TabbedChunk} is multiplied with the tab interval of the p tag. This width is then added to a new {@link TabbedChunk}.</br>
+	 * Elements other than TabbedChunks are added directly to the given Paragraph p.
 	 *
 	 * @param currentContent containing the elements inside the p tag.
 	 * @param p paragraph to which the tabbed chunks will be added.
@@ -143,6 +144,8 @@ public class ParaGraph extends AbstractTagProcessor {
 				TabbedChunk tab = new TabbedChunk(new VerticalPositionMark(), width, false);
 				p.add(new Chunk(tab));
 				p.add(new Chunk((TabbedChunk) e));
+			} else {
+				p.add(e);
 			}
 		}
 	}

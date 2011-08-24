@@ -137,7 +137,7 @@ public class ChunkCssApplier {
 			}
 		}
 		String xfaVertScale = rules.get(CSS.Property.XFA_FONT_VERTICAL_SCALE);
-		if (null != xfaVertScale) { // only % allowed; need a catch block NumberFormatExc?
+		if (null != xfaVertScale) {
 			if(xfaVertScale.contains("%")) {
 				size *= Float.parseFloat(xfaVertScale.replace("%", ""))/100;
 				c.setHorizontalScaling(100/Float.parseFloat(xfaVertScale.replace("%", "")));
