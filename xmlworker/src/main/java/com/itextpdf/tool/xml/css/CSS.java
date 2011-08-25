@@ -131,6 +131,7 @@ public final class CSS {
 		public static final String MAX_HEIGHT = "max-height";
 		public static final String RIGHT = "right";
 		public static final String BOTTOM = "bottom";
+		public static final String FLOAT = "float";
 	}
 
 	/**
