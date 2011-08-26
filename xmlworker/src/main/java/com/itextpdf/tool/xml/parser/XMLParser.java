@@ -226,7 +226,7 @@ public class XMLParser {
 		}
 		char read[] = new char[1];
 		try {
-			while (-1 != (reader.read(read))) {
+			while (-1 != (r.read(read))) {
 				state.process(read[0]);
 			}
 		} finally {
