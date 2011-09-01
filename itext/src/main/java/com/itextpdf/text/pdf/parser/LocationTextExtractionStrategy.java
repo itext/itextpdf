@@ -188,7 +188,11 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             this.endLocation = endLocation;
             this.charSpaceWidth = charSpaceWidth;
             
-            orientationVector = endLocation.subtract(startLocation).normalize();
+            Vector oVector = endLocation.subtract(startLocation);
+            if (oVector.length() == 0) {
+            	oVector = new Vector(1, 0, 0);
+            }
+            orientationVector = oVector.normalize();
             orientationMagnitude = (int)(Math.atan2(orientationVector.get(Vector.I2), orientationVector.get(Vector.I1))*1000);
 
             // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
