@@ -191,10 +191,10 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * @param currentContent List<Element> of the current elements to be added.
 	 * @param addNewLines boolean to declare which paragraph element should be
 	 *            returned, true if new line should be added or not.
-	 * @param applyCSS true if CSS should be applied on the paragraph
-	 * @param tag the relevant tag
-	 * @param ctx the WorkerContext
-	 * @return a List with paragraphs
+	 * @param applyCSS true if CSS should be applied on the paragraph.
+	 * @param tag the relevant tag.
+	 * @param ctx the WorkerContext.
+	 * @return a List of paragraphs.
 	 */
 	public final List<Element> currentContentToParagraph(final List<Element> currentContent,
 			final boolean addNewLines, final boolean applyCSS, final Tag tag, final WorkerContext ctx) {
