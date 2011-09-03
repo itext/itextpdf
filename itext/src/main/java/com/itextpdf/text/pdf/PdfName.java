@@ -299,6 +299,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName CENTERWINDOW = new PdfName("CenterWindow");
     /** A name */
     public static final PdfName CERT = new PdfName("Cert");
+    /** A name
+     * @since 5.1.3
+     */
+    public static final PdfName CERTS = new PdfName("Certs");
     /** A name */
     public static final PdfName CF = new PdfName("CF");
     /** A name */
@@ -400,6 +404,14 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName CREATOR = new PdfName("Creator");
     /** A name */
     public static final PdfName CREATORINFO = new PdfName("CreatorInfo");
+    /** A name
+     * @since 5.1.3
+     */
+    public static final PdfName CRL = new PdfName("CRL");
+    /** A name
+     * @since 5.1.3
+     */
+    public static final PdfName CRLS = new PdfName("CRLs");
     /** A name */
     public static final PdfName CROPBOX = new PdfName("CropBox");
     /** A name */
@@ -512,6 +524,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName DR = new PdfName("DR");
     /** A name */
     public static final PdfName DS = new PdfName("DS");
+    /** A name
+     * @since 5.1.3
+     */
+    public static final PdfName DSS = new PdfName("DSS");
     /** A name */
     public static final PdfName DUR = new PdfName("Dur");
     /** A name */
@@ -568,6 +584,10 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.1.0
      */
     public static final PdfName EPSG = new PdfName("EPSG");
+    /** A name
+     * @since 5.1.3
+     */
+    public static final PdfName ETSI_RFC3161 = new PdfName("ETSI.RFC3161");
     /** A name */
     public static final PdfName EXTEND = new PdfName("Extend");
     /**
@@ -1129,6 +1149,14 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName OCMD = new PdfName("OCMD");
     /** A name */
     public static final PdfName OCPROPERTIES = new PdfName("OCProperties");
+    /** A name
+     * @since 5.1.3
+     */
+    public static final PdfName OCSP = new PdfName("OCSP");
+    /** A name
+     * @since 5.1.3
+     */
+    public static final PdfName OCSPS = new PdfName("OCSPs");
     /** A name */
     public static final PdfName OE = new PdfName("OE");
     /** A name */
@@ -1721,6 +1749,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName TRUETYPE = new PdfName("TrueType");
     /**
      * A name
+     * @since 5.1.3
+     */
+    public static final PdfName TS = new PdfName("TS");
+    /**
+     * A name
      * @since 5.0.2
      */
     public static final PdfName TTL = new PdfName("Ttl");
@@ -1840,6 +1873,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 5.1.0
      */
     public static final PdfName VP = new PdfName("VP");
+    /**
+     * A name
+     * @since 5.1.3
+     */
+    public static final PdfName VRI = new PdfName("VRI");
     /** A name of an attribute. */
     public static final PdfName W = new PdfName("W");
     /** A name of an attribute. */
