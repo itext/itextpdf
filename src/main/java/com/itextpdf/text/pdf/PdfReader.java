@@ -2234,9 +2234,7 @@ public class PdfReader implements PdfViewerPreferences {
                 throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("the.filter.1.is.not.supported", filterName));
             
             PdfDictionary decodeParams = (PdfDictionary)(j < dp.size() ? dp.get(j) : null);
-            System.out.println("Decoding " + filterName + " before = " + b.length);
             b = filterHandler.decode(b, filterName, decodeParams, streamDictionary);
-            System.out.println("Decoded " + filterName + " after = " + b.length);
         }
         return b;
     }
