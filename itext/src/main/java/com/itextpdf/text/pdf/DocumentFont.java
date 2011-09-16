@@ -368,6 +368,12 @@ public class DocumentFont extends BaseFont {
         }
         if (first != null && last != null && newWidths != null) {
             int f = first.intValue();
+            int nSize = f + newWidths.size();
+            if (widths.length < nSize) {
+            	int[] tmp = new int[nSize];
+            	System.arraycopy(widths, 0, tmp, 0, f);
+            	widths = tmp;
+            }
             for (int k = 0; k < newWidths.size(); ++k) {
                 widths[f + k] = newWidths.getAsNumber(k).intValue();
             }
