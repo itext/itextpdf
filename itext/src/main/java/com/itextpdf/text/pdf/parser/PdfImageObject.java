@@ -212,7 +212,11 @@ public class PdfImageObject {
 	 * @throws IOException if there is a problem with reading from the underlying stream  
 	 */
     private void findColorspace(PdfObject colorspace, boolean allowIndexed) throws IOException {
-        if (PdfName.DEVICEGRAY.equals(colorspace)) {
+        if (colorspace == null && bpc == 1){ // handle imagemasks
+            stride = (width*bpc + 7) / 8;
+            pngColorType = 0;
+        }
+        else if (PdfName.DEVICEGRAY.equals(colorspace)) {
             stride = (width * bpc + 7) / 8;
             pngColorType = 0;
         }
