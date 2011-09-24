@@ -74,12 +74,13 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  */
 public class HTMLWorkerFactoryTest {
     public static final String RESOURCE_TEST_PATH = "./target/test-classes/";
-	public static final String SNIPPETS = "/snippets/";
+//	public static final String SNIPPETS = "/snippets/";
+	public static final String SNIPPETS = "/bugs/";
 
 //	private static final String TEST = "doc_";
 //    private static final String TEST = "xfa-support_";
 //    private static final String TEST = "Atkins_";
-    private static final String TEST = "b-p_";
+//    private static final String TEST = "b-p_";
 //    private static final String TEST = "br-sub-sup_";
 //    private static final String TEST = "font_color_";
 //    private static final String TEST = "fontSizes_";
@@ -112,6 +113,10 @@ public class HTMLWorkerFactoryTest {
 //	  private static final String TEST ="test-table-c_";
 //	  private static final String TEST ="test-table-d_";
 //	  private static final String TEST = "pagebreaks_";
+
+	// Bug snippets
+
+	  private static final String TEST = "colored_lists_";
 
     static {
     	//FontFactory.registerDirectories();
