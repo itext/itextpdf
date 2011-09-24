@@ -481,6 +481,12 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
                     outline.put(PdfName.A, dic);
                 }
             }
+            else if ("JS".equals(action)) {
+            	String code = (String)map.get("Code");
+            	if(code != null) {
+                    outline.put(PdfName.A, PdfAction.javaScript(code, writer));
+            	}
+            }
             else if ("Launch".equals(action)) {
                 String file = (String)map.get("File");
                 if (file != null) {
