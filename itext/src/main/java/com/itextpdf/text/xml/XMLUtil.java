@@ -81,10 +81,7 @@ public class XMLUtil {
                     sb.append("&apos;");
                     break;
                 default:
-                	if (c == 0x9 || c == 0xA || c == 0xD
-                		|| c >= 0x20 && c <= 0xD7FF
-                		|| c >= 0xE000 && c <= 0xFFFD
-                		|| c >= 0x10000 && c <= 0x10FFFF) {
+                	if (isValidCharacterValue(c)) {
                 		if (onlyASCII && c > 127)
                 			sb.append("&#").append(c).append(';');
                 		else
@@ -94,6 +91,115 @@ public class XMLUtil {
         }
         return sb.toString();
     }
+
+    /**
+     * Unescapes a String, replacing &#nn;, &lt;, &gt;, &amp;, &quot;,
+     * and &apos to the corresponding characters.
+     * @param s	a String with entities
+     * @return the unescaped string
+     */
+    public static String unescapeXML(final String s) {
+        char[] cc = s.toCharArray();
+        int len = cc.length;
+        StringBuffer sb = new StringBuffer();
+        int pos;
+        String esc;
+        for (int i = 0; i < len; i++) {
+            int c = cc[i];
+            if (c == '&') {
+            	pos = findInArray(';', cc, i + 3);
+            	if (pos > -1) {
+                	esc = new String(cc, i + 1, pos - i - 1);
+                	if (esc.startsWith("#")) {
+                		esc = esc.substring(1);
+                		if (isValidCharacterValue(esc)) {
+                			c = (char)Integer.parseInt(esc);
+                			i = pos;
+                		}
+                	}
+                	else {
+                		int tmp = unescape(esc);
+                		if (tmp > 0) {
+                			c = tmp;
+                			i = pos;
+                		}
+                	}
+            	}
+            }
+			sb.append((char)c);
+        }
+        return sb.toString();
+    }
+ 
+    /**
+     * Unescapes 'lt', 'gt', 'apos', 'quote' and 'amp' to the
+     * corresponding character values.
+     * @param	s	a string representing a character
+     * @return	a character value
+     */
+    public static int unescape(String s) {
+    	if ("apos".equals(s))
+    		return '\'';
+    	if ("quot".equals(s))
+    		return '"';
+    	if ("lt".equals(s))
+    		return '<';
+    	if ("gt".equals(s))
+    		return '>';
+    	if ("amp".equals(s))
+    		return '&';
+    	return -1;
+    }
+    
+    /**
+     * Checks if a character value should be escaped/unescaped.
+     * @param	s	the String representation of an integer
+     * @return	true if it's OK to escape or unescape this value 
+     */
+    public static boolean isValidCharacterValue(String s) {
+    	try {
+    		int i = Integer.parseInt(s);
+    		return isValidCharacterValue(i);
+    	}
+    	catch (NumberFormatException nfe) {
+    		return false;
+    	}
+    }
+    
+    /**
+     * Checks if a character value should be escaped/unescaped.
+     * @param	c	a character value
+     * @return	true if it's OK to escape or unescape this value 
+     */
+    public static boolean isValidCharacterValue(int c) {
+    	return (c == 0x9 || c == 0xA || c == 0xD
+    			|| c >= 0x20 && c <= 0xD7FF
+    			|| c >= 0xE000 && c <= 0xFFFD
+    			|| c >= 0x10000 && c <= 0x10FFFF);
+    }
+    
+    /**
+     * Looks for a character in a character array, starting from a certain position
+     * @param needle	the character you're looking for
+     * @param haystack	the character array
+     * @param start		the start position
+     * @return	the position where the character was found, or -1 if it wasn't found.
+     */
+    public static int findInArray(char needle, char[] haystack, int start) {
+    	for (int i = start; i < haystack.length; i++) {
+    		if (haystack[i] == ';')
+    			return i;
+    	}
+    	return -1;
+    }
+    
+    /**
+     * Unescapes a string, replacing &amp;lt;, &amp;gt;, &amp;amp;, &amp;apos;, &amp;quot;
+     * and and &amp;#nn; by the approriate characters.
+     * @param s the string to be unescaped
+     * @return the unescaped string
+     * @since 5.1.3
+     */
 
     /**
      * Returns the IANA encoding name that is auto-detected from
