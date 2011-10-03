@@ -58,6 +58,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.xml.XMLUtil;
 import com.itextpdf.text.xml.XmlDomWriter;
 
 /**
@@ -104,7 +105,7 @@ public class XmpReader {
 			return false;
 		for (int i = 0; i < nodes.getLength(); i++) {
 			node = nodes.item(i);
-			setNodeText(domDocument, node, value);
+			setNodeText(domDocument, node, XMLUtil.escapeXML(value, false));
 		}
 		return true;
 	}
