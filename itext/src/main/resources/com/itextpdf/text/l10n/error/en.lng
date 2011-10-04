@@ -414,3 +414,4 @@ you.have.to.define.a.boolean.array.for.this.collection.sort.dictionary=You have 
 you.have.used.the.wrong.constructor.for.this.fieldpositioningevents.class=You have used the wrong constructor for this FieldPositioningEvents class.
 you.must.set.a.value.before.adding.a.prefix=You must set a value before adding a prefix.
 you.need.a.single.boolean.for.this.collection.sort.dictionary=You need a single boolean for this collection sort dictionary.
+the.decode.parameter.type.1.is.not.supported=The decode parameter type {1} is not supported.

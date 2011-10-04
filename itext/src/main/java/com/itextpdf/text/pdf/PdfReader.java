@@ -2233,7 +2233,20 @@ public class PdfReader implements PdfViewerPreferences {
             if (filterHandler == null)
                 throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("the.filter.1.is.not.supported", filterName));
             
-            PdfDictionary decodeParams = (PdfDictionary)(j < dp.size() ? dp.get(j) : null);
+            PdfDictionary decodeParams;
+            if (j < dp.size()){
+                PdfObject dpEntry = getPdfObject(dp.get(j));
+                if (dpEntry instanceof PdfDictionary){
+                    decodeParams = (PdfDictionary)dpEntry;
+                } else if (dpEntry == null || dpEntry instanceof PdfNull) {
+                    decodeParams = null;
+                } else {
+                    throw new UnsupportedPdfException(MessageLocalization.getComposedMessage("the.decode.parameter.type.1.is.not.supported", dpEntry.getClass().toString()));
+                }
+                
+            } else {
+                decodeParams = null;
+            }
             b = filterHandler.decode(b, filterName, decodeParams, streamDictionary);
         }
         return b;
