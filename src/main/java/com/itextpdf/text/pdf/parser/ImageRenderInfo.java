@@ -97,13 +97,9 @@ public class ImageRenderInfo {
      * @return an object containing the image dictionary and byte[]
      * @since 5.0.2
      */
-    public PdfImageObject getImage() {
-        try {
-            prepareImageObject();
-            return imageObject;
-        } catch (IOException e) {
-            return null;
-        }
+    public PdfImageObject getImage() throws IOException {
+        prepareImageObject();
+        return imageObject;
     }
     
     private void prepareImageObject() throws IOException{
