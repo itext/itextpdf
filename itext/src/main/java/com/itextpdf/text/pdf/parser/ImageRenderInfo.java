@@ -46,7 +46,6 @@ package com.itextpdf.text.pdf.parser;
 import java.io.IOException;
 
 import com.itextpdf.text.pdf.PRStream;
-import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfReader;
 
