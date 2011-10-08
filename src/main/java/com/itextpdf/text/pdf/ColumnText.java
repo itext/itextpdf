@@ -44,6 +44,7 @@
 package com.itextpdf.text.pdf;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 import com.itextpdf.text.Chunk;
@@ -717,6 +718,13 @@ public class ColumnText {
      */
     public float getYLine() {
         return yLine;
+    }
+    
+    /**
+     * Gets the number of rows that were drawn when a table is involved.
+     */
+    public int getRowsDrawn() {
+    	return rowIdx;
     }
 
     /**
@@ -1639,6 +1647,10 @@ public class ColumnText {
         return composite && !compositeElements.isEmpty() && compositeElements.getFirst().type() == Element.YMARK;
     }
 
+    public List<Element> getCompositeElements() {
+    	return compositeElements;
+    }
+    
     /**
      * Checks if UseAscender is enabled/disabled.
      *
