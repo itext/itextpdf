@@ -54,6 +54,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 
@@ -649,6 +650,14 @@ public class ColumnText {
         if (rectangularWidth < 0)
             rectangularWidth = 0;
         rectangularMode = true;
+    }
+    
+    /**
+     * Simplified method for rectangular columns.
+     * @param rect	the rectangle for the column
+     */
+    public void setSimpleColumn(Rectangle rect) {
+    	setSimpleColumn(rect.getLeft(), rect.getBottom(), rect.getRight(), rect.getTop());
     }
 
     /**
