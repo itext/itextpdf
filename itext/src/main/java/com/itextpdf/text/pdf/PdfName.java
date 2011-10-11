@@ -513,6 +513,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName DOCOPEN = new PdfName("DocOpen");
     /**
      * A name.
+     * @since 5.1.3
+     */
+    public static final PdfName DOCTIMESTAMP = new PdfName( "DocTimeStamp" );
+    /**
+     * A name.
      * @since 2.1.6
      */
     public static final PdfName DOCUMENT = new PdfName( "Document" );

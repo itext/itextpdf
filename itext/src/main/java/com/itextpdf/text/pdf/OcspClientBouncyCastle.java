@@ -71,6 +71,9 @@ import org.bouncycastle.ocsp.SingleResp;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Level;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 
 /**
  * OcspClient implementation using BouncyCastle.
@@ -78,24 +81,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * @since	2.1.6
  */
 public class OcspClientBouncyCastle implements OcspClient {
-    /** root certificate */
-    private X509Certificate rootCert;
-    /** check certificate */
-    private X509Certificate checkCert;
-    /** OCSP URL */
-    private String url;
-
-    /**
-     * Creates an instance of an OcspClient that will be using BouncyCastle.
-     * @param checkCert	the check certificate
-     * @param rootCert	the root certificate
-     * @param url	the OCSP URL
-     */
-    public OcspClientBouncyCastle(X509Certificate checkCert, X509Certificate rootCert, String url) {
-        this.checkCert = checkCert;
-        this.rootCert = rootCert;
-        this.url = url;
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(OcspClientBouncyCastle.class);
 
     /**
      * Generates an OCSP request using BouncyCastle.
@@ -129,12 +115,23 @@ public class OcspClientBouncyCastle implements OcspClient {
         return gen.generate();
     }
 
-    /**
-     * @return 	a byte array
-     * @see com.itextpdf.text.pdf.OcspClient#getEncoded()
-     */
-    public byte[] getEncoded() {
+	/**
+	 * Gets an encoded byte array with OCSP validation. The method should not throw an exception.
+     * @param checkCert to certificate to check
+     * @param rootCert the parent certificate
+     * @param the url to get the verification. It it's null it will be taken
+     * from the check cert or from other implementation specific source
+	 * @return	a byte array with the validation or null if the validation could not be obtained
+	 */
+    public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
+            if (checkCert == null || rootCert == null)
+                return null;
+            if (url == null) {
+                url = PdfPKCS7.getOCSPURL(checkCert);
+            }
+            if (url == null)
+                return null;
             OCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
             byte[] array = request.getEncoded();
             URL urlt = new URL(url);
@@ -175,7 +172,8 @@ public class OcspClientBouncyCastle implements OcspClient {
             }
         }
         catch (Exception ex) {
-            throw new ExceptionConverter(ex);
+            if (LOGGER.isLogging(Level.ERROR))
+                LOGGER.error("OcspClientBouncyCastle", ex);
         }
         return null;
     }
