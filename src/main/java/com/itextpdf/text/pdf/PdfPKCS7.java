@@ -271,6 +271,9 @@ public class PdfPKCS7 {
             return ret;
     }
 
+    public static String getAllowedDigests(String name) {
+        return allowedDigests.get(name.toUpperCase());
+    }
     /**
      * Gets the timestamp token if there is one.
      * @return the timestamp token or null
@@ -566,7 +569,7 @@ public class PdfPKCS7 {
         this.privKey = privKey;
         this.provider = provider;
 
-        digestAlgorithm = allowedDigests.get(hashAlgorithm.toUpperCase());
+        digestAlgorithm = getAllowedDigests(hashAlgorithm);
         if (digestAlgorithm == null)
             throw new NoSuchAlgorithmException(MessageLocalization.getComposedMessage("unknown.hash.algorithm.1", hashAlgorithm));
 
@@ -1281,8 +1284,8 @@ public class PdfPKCS7 {
             // Added by Martin Brunecky, 07/12/2007 folowing Aiken Sam, 2006-11-15
             // Sam found Adobe expects time-stamped SHA1-1 of the encrypted digest
             if (tsaClient != null) {
-                byte[] tsImprint = MessageDigest.getInstance("SHA-1").digest(digest);
-                byte[] tsToken = tsaClient.getTimeStampToken(this, tsImprint);
+                byte[] tsImprint = MessageDigest.getInstance(tsaClient.getDigestAlgorithm()).digest(digest);
+                byte[] tsToken = tsaClient.getTimeStampToken(tsImprint);
                 if (tsToken != null) {
                     ASN1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);
                     if (unauthAttributes != null) {

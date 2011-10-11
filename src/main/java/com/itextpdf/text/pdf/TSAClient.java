@@ -61,13 +61,18 @@ public interface TSAClient {
     public int getTokenSizeEstimate();
     
     /**
+     * Gets the algorithm used to digest the data imprint
+     * @return the digest algorithm name
+     */
+    public String getDigestAlgorithm();
+
+    /**
      * Get RFC 3161 timeStampToken.
      * Method may return null indicating that timestamp should be skipped.
-     * @param caller PdfPKCS7 - calling PdfPKCS7 instance (in case caller needs it)
      * @param imprint byte[] - data imprint to be time-stamped
      * @return byte[] - encoded, TSA signed data of the timeStampToken
      * @throws Exception - TSA request failed
      */
-    public byte[] getTimeStampToken(PdfPKCS7 caller, byte[] imprint) throws Exception;
+    public byte[] getTimeStampToken(byte[] imprint) throws Exception;
     
 }
