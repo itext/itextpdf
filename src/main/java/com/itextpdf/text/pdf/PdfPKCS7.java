@@ -112,6 +112,14 @@ import org.bouncycastle.tsp.TimeStampToken;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.jce.provider.CertPathValidatorUtilities;
+import org.bouncycastle.jce.provider.RFC3280CertPathUtilities;
 
 /**
  * This class does all the processing related to signing and verifying a PKCS#7
@@ -1020,6 +1028,34 @@ public class PdfPKCS7 {
                             return AccessLocation ;
                         }
                     }
+                }
+            }
+        } catch (Exception e)  {
+        }
+        return null;
+    }
+
+    public static String getCrlUrl(X509Certificate certificate) throws CertificateParsingException {
+        try {
+            DERObject obj = getExtensionValue(certificate, X509Extensions.CRLDistributionPoints.getId());
+            if (obj == null) {
+                return null;
+            }
+            CRLDistPoint dist = CRLDistPoint.getInstance(obj);
+            DistributionPoint[] dists = dist.getDistributionPoints();
+            for (DistributionPoint p : dists) {
+                DistributionPointName distributionPointName = p.getDistributionPoint();
+                if (DistributionPointName.FULL_NAME != distributionPointName.getType()) {
+                    continue;
+                }
+                GeneralNames generalNames = (GeneralNames)distributionPointName.getName();
+                GeneralName[] names = generalNames.getNames();
+                for (GeneralName name : names) {
+                    if (name.getTagNo() != GeneralName.uniformResourceIdentifier) {
+                        continue;
+                    }
+                    DERIA5String derStr = DERIA5String.getInstance(name.getDERObject());
+                    return derStr.getString();
                 }
             }
         } catch (Exception e)  {
