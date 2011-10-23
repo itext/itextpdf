@@ -6,8 +6,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERObject;
 
@@ -28,21 +33,35 @@ public class LtvVerification {
         acroFields = stp.getAcroFields();
     }
 
-    public boolean AddVerification(String signatureName) throws Exception {
+    public boolean AddVerification(String signatureName, OcspClient ocsp, CrlClient crl, boolean checkAllCertificates) throws Exception {
         PdfPKCS7 pk = acroFields.verifySignature(signatureName);
         Certificate[] xc = pk.getSignCertificateChain();
-        String urlOcsp = PdfPKCS7.getOCSPURL((X509Certificate)xc[0]);
         ValidationData vd = new ValidationData();
-        if (urlOcsp != null && xc.length > 1) {
-            OcspClientBouncyCastle oc = new OcspClientBouncyCastle((X509Certificate)xc[0], (X509Certificate)xc[1], urlOcsp);
-            vd.ocsp = oc.getEncoded();
+        for (int k = 0; k < xc.length; ++k) {
+            byte[] ocspEnc = null;
+            if (k < xc.length - 1) {
+                ocspEnc = ocsp.getEncoded((X509Certificate)xc[k], (X509Certificate)xc[k + 1], null);
+                if (ocspEnc != null)
+                    vd.ocsps.add(ocspEnc);
+            }
+            if (ocspEnc == null) {
+                byte[] cim = crl.getEncoded((X509Certificate)xc[k], null);
+                if (cim != null) {
+                    boolean dup = false;
+                    for (byte[] b : vd.crls) {
+                        if (Arrays.equals(b, cim)) {
+                            dup = true;
+                            break;
+                        }
+                    }
+                    if (!dup)
+                        vd.crls.add(cim);
+                }
+            }
+            if (!checkAllCertificates)
+                break;
         }
-        else {
-            String urlCrl = PdfPKCS7.getCrlUrl((X509Certificate)xc[0]);
-            CrlClientImp cim = new CrlClientImp(urlCrl);
-            vd.crl = cim.getEncoded();
-        }
-        if (vd.crl == null && vd.ocsp == null)
+        if (vd.crls.isEmpty() && vd.ocsps.isEmpty())
             return false;
         validated.put(GetSignatureHashKey(signatureName), vd);
         return true;
@@ -59,20 +78,24 @@ public class LtvVerification {
             bc = pkcs.getEncoded();
         }
         bt = HashBytesSha1(bc);
+        return new PdfName(ConvertToHex(bt));
+    }
+
+    private static String ConvertToHex(byte[] bt) {
         ByteBuffer buf = new ByteBuffer();
         for (byte b : bt) {
             buf.appendHex(b);
         }
-        return new PdfName(PdfEncodings.convertToString(buf.toByteArray(), null).toUpperCase());
+        return PdfEncodings.convertToString(buf.toByteArray(), null).toUpperCase();
     }
-
+    
     private static byte[] HashBytesSha1(byte[] b) throws NoSuchAlgorithmException {
         MessageDigest sh = MessageDigest.getInstance("SHA1");
         return sh.digest(b);
     }
 
     private static class ValidationData {
-        public byte[] crl;
-        public byte[] ocsp;
+        public List<byte[]> crls = new ArrayList<byte[]>();
+        public List<byte[]> ocsps = new ArrayList<byte[]>();
     }
 }
