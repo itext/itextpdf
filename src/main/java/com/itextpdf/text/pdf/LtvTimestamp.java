@@ -60,7 +60,7 @@ public class LtvTimestamp {
      * automatically
      * @throws Exception
      */
-    public static void Timestamp(PdfSignatureAppearance sap, TSAClient tsa, String signatureName) throws Exception {
+    public static void timestamp(PdfSignatureAppearance sap, TSAClient tsa, String signatureName) throws Exception {
         int contentEstimated = tsa.getTokenSizeEstimate();
         sap.setVisibleSignature(new Rectangle(0,0,0,0), 1, signatureName);
 
@@ -80,7 +80,6 @@ public class LtvTimestamp {
         }
         byte[] tsImprint = messageDigest.digest();
         byte[] tsToken = tsa.getTimeStampToken(tsImprint);
-        //byte[] encodedSig = new byte[]{1,2,3,4,5,6,5,4,3,2,1};
 
         if (contentEstimated + 2 < tsToken.length)
             throw new Exception("Not enough space");
