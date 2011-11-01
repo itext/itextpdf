@@ -1,5 +1,6 @@
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -17,7 +18,7 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERObject;
 
 /**
- *
+ * Add validation according to PAdES-LTV (part 4)
  * @author psoares
  */
 public class LtvVerification {
@@ -25,26 +26,64 @@ public class LtvVerification {
     private PdfReader reader;
     private AcroFields acroFields;
     private Map<PdfName,ValidationData> validated = new HashMap<PdfName,ValidationData>();
+    private boolean used = false;
+    /**
+     * What type of validation to include 
+     */
+    public enum Level {
+        /**
+         * Include only OCSP
+         */
+        OCSP, 
+        /**
+         * Include only CRL
+         */
+        CRL, 
+        /**
+         * Include both OCSP and CRL
+         */
+        OCSP_CRL, 
+        /**
+         * Include CRL only if OCSP can't be read
+         */
+        OCSP_OPTIONAL_CRL
+    };
 
-
+    /**
+     * The validation constructor
+     * @param stp the PdfStamper to apply the validation to
+     */
     public LtvVerification(PdfStamper stp) {
         writer = (PdfStamperImp)stp.getWriter();
         reader = stp.getReader();
         acroFields = stp.getAcroFields();
     }
 
-    public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, boolean checkAllCertificates, boolean includeOcspAndCrl) throws Exception {
+    /**
+     * Add validation for a particular signature
+     * @param signatureName the signature to validate (it may be a timestamp)
+     * @param ocsp the interface to get the OCSP
+     * @param crl the interface to get the CRL
+     * @param checkAllCertificates true to validate all the certificates in the 
+     * certificate chain, false to validate only the signing certificate
+     * @param level the validation options to include
+     * @return true if a validation was generated, false otherwise
+     * @throws Exception 
+     */
+    public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, boolean checkAllCertificates, Level level) throws Exception {
+        if (used)
+            throw new IllegalStateException(MessageLocalization.getComposedMessage("validation.already.output"));
         PdfPKCS7 pk = acroFields.verifySignature(signatureName);
         Certificate[] xc = pk.getSignCertificateChain();
         ValidationData vd = new ValidationData();
         for (int k = 0; k < xc.length; ++k) {
             byte[] ocspEnc = null;
-            if (k < xc.length - 1) {
+            if (level != Level.CRL && k < xc.length - 1) {
                 ocspEnc = ocsp.getEncoded((X509Certificate)xc[k], (X509Certificate)xc[k + 1], null);
                 if (ocspEnc != null)
                     vd.ocsps.add(ocspEnc);
             }
-            if (includeOcspAndCrl || ocspEnc == null) {
+            if (level != Level.OCSP || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null)) {
                 byte[] cim = crl.getEncoded((X509Certificate)xc[k], null);
                 if (cim != null) {
                     boolean dup = false;
@@ -94,24 +133,76 @@ public class LtvVerification {
         return sh.digest(b);
     }
 
+    /**
+     * Merges the validation with any validation already in the document or creates
+     * a new one.
+     * @throws IOException 
+     */
     public void merge() throws IOException {
         if (validated.isEmpty())
             return;
-        createDss();
-//        PdfDictionary catalog = reader.getCatalog();
-//        PdfObject dss = catalog.get(PdfName.DSS);
-//        if (dss == null)
-//            createDss();
-//        else
-//            updateDss();
+        if (used)
+            throw new IllegalStateException(MessageLocalization.getComposedMessage("validation.already.output"));
+        used = true;
+        PdfDictionary catalog = reader.getCatalog();
+        PdfObject dss = catalog.get(PdfName.DSS);
+        if (dss == null)
+            createDss();
+        else
+            updateDss();
+    }
+    
+    private void updateDss() throws IOException {
+        PdfDictionary catalog = reader.getCatalog();
+        writer.markUsed(catalog);
+        PdfDictionary dss = catalog.getAsDict(PdfName.DSS);
+        PdfArray ocsps = dss.getAsArray(PdfName.OCSPS);
+        PdfArray crls = dss.getAsArray(PdfName.CRLS);
+        dss.remove(PdfName.OCSPS);
+        dss.remove(PdfName.CRLS);
+        PdfDictionary vrim = dss.getAsDict(PdfName.VRI);
+        //delete old validations
+        if (vrim != null) {
+            for (PdfName n : vrim.getKeys()) {
+                if (validated.containsKey(n)) {
+                    PdfDictionary vri = vrim.getAsDict(n);
+                    if (vri != null) {
+                        deleteOldReferences(ocsps, vri.getAsArray(PdfName.OCSP));
+                        deleteOldReferences(crls, vri.getAsArray(PdfName.CRL));
+                    }
+                }
+            }
+        }
+        outputDss(dss, vrim, ocsps, crls);
+    }
+    
+    private static void deleteOldReferences(PdfArray all, PdfArray toDelete) {
+        if (all == null || toDelete == null)
+            return;
+        for (PdfObject pi : toDelete) {
+            if (!pi.isIndirect())
+                continue;
+            PRIndirectReference pir = (PRIndirectReference)pi;
+            for (int k = 0; k < all.size(); ++k) {
+                PdfObject po = all.getPdfObject(k);
+                if (!po.isIndirect())
+                    continue;
+                PRIndirectReference pod = (PRIndirectReference)po;
+                if (pir.getNumber() == pod.getNumber()) {
+                    all.remove(k);
+                    --k;
+                }
+            }
+        }
     }
     
     private void createDss() throws IOException {
+        outputDss(new PdfDictionary(), new PdfDictionary(), new PdfArray(), new PdfArray());
+    }
+    
+    private void outputDss(PdfDictionary dss, PdfDictionary vrim, PdfArray ocsps, PdfArray crls) throws IOException {
         PdfDictionary catalog = reader.getCatalog();
         writer.markUsed(catalog);
-        PdfArray ocsps = new PdfArray();
-        PdfArray crls = new PdfArray();
-        PdfDictionary vrim = new PdfDictionary();
         for (PdfName vkey : validated.keySet()) {
             PdfArray ocsp = new PdfArray();
             PdfArray crl = new PdfArray();
@@ -136,7 +227,6 @@ public class LtvVerification {
                 vri.put(PdfName.CRL, writer.addToBody(crl, false).getIndirectReference());
             vrim.put(vkey, writer.addToBody(vri, false).getIndirectReference());
         }
-        PdfDictionary dss = new PdfDictionary();
         dss.put(PdfName.VRI, writer.addToBody(vrim, false).getIndirectReference());
         if (ocsps.size() > 0)
             dss.put(PdfName.OCSPS, writer.addToBody(ocsps, false).getIndirectReference());

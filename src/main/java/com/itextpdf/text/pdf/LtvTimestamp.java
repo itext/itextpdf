@@ -48,12 +48,12 @@ import java.security.MessageDigest;
 import java.util.HashMap;
 
 /**
- * PAdES LTV Timestamp
+ * PAdES-LTV Timestamp
  * @author Pulo Soares
  */
 public class LtvTimestamp {
     /**
-     * Signs a document with a PAdES LTV Timestamp. The document is closed at the end.
+     * Signs a document with a PAdES-LTV Timestamp. The document is closed at the end.
      * @param sap the signature appearance
      * @param tsa the timestamp generator
      * @param signatureName the signature name or null to have a name generated
