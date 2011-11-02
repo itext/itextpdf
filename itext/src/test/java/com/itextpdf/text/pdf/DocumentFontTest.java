@@ -92,18 +92,4 @@ public class DocumentFontTest {
         new DocumentFont(fontDicIndirect); // this used to throw an NPE
     }
     
-    @Test
-    public void testWidths() throws Exception{
-        final PdfReader pdfReader = TestResourceUtils.getResourceAsPdfReader(this, "fontwithwidthissue.pdf");
-
-        try {
-            PdfDictionary fontsDic = pdfReader.getPageN(1).getAsDict(PdfName.RESOURCES).getAsDict(PdfName.FONT);
-            PRIndirectReference fontDicIndirect = (PRIndirectReference)fontsDic.get(new PdfName("F1"));
-            
-            DocumentFont f = new DocumentFont(fontDicIndirect);
-            Assert.assertTrue("Width should not be 0", f.getWidth('h') != 0);
-        } finally {
-            pdfReader.close();
-        }
-    }
 }
