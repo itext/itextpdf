@@ -15,7 +15,7 @@ In this snippet we use the <code>XMLWorkerHelper</code> class and its <code>pars
         new FileOutputStream("results/walden1.pdf"));
     document.open();
     XMLWorkerHelper.getInstance().parseXHtml(writer, document,
-        HTMLParsingDefault.class.getResourceAsStream("/html/walden.html"));
+        HTMLParsingDefault.class.getResourceAsStream("/html/walden.html"), null);
     document.close();
 </pre>
 <p class="caption">see <a href="http://tutorial.itextpdf.com/src/main/java/tutorial/xmlworker/HTMLParsingDefault.java">HTMLParsingDefault</a>

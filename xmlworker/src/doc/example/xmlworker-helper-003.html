@@ -10,7 +10,7 @@ PdfWriter writer = PdfWriter.getInstance(document,
 writer.setInitialLeading(12.5f);
 document.open();
 XMLWorkerHelper.getInstance().parseXHtml(writer, document,
-    HTMLParsingDefault2.class.getResourceAsStream("/html/walden.html"));
+    HTMLParsingDefault2.class.getResourceAsStream("/html/walden.html"), null);
 document.close();
 </pre>
 <p class="caption">see <a href="http://tutorial.itextpdf.com/src/main/java/tutorial/xmlworker/HTMLParsingDefault2.java">HTMLParsingDefault2</a>
