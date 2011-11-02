@@ -30,7 +30,6 @@
  */
 package com.itextpdf.text.pdf.fonts.cmaps;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
