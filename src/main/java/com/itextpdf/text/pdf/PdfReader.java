@@ -74,9 +74,6 @@ import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
-import com.itextpdf.text.pdf.codec.TIFFConstants;
-import com.itextpdf.text.pdf.codec.TIFFFaxDecoder;
-import com.itextpdf.text.pdf.codec.TIFFFaxDecompressor;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
 
