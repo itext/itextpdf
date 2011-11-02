@@ -53,7 +53,7 @@ public class LtvVerification {
      * The validation constructor
      * @param stp the PdfStamper to apply the validation to
      */
-    public LtvVerification(PdfStamper stp) {
+    LtvVerification(PdfStamper stp) {
         writer = (PdfStamperImp)stp.getWriter();
         reader = stp.getReader();
         acroFields = stp.getAcroFields();
@@ -78,12 +78,12 @@ public class LtvVerification {
         ValidationData vd = new ValidationData();
         for (int k = 0; k < xc.length; ++k) {
             byte[] ocspEnc = null;
-            if (level != Level.CRL && k < xc.length - 1) {
+            if (ocsp != null && level != Level.CRL && k < xc.length - 1) {
                 ocspEnc = ocsp.getEncoded((X509Certificate)xc[k], (X509Certificate)xc[k + 1], null);
                 if (ocspEnc != null)
                     vd.ocsps.add(ocspEnc);
             }
-            if (level != Level.OCSP || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null)) {
+            if (crl != null && (level != Level.OCSP || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
                 byte[] cim = crl.getEncoded((X509Certificate)xc[k], null);
                 if (cim != null) {
                     boolean dup = false;
@@ -138,11 +138,9 @@ public class LtvVerification {
      * a new one.
      * @throws IOException 
      */
-    public void merge() throws IOException {
-        if (validated.isEmpty())
+    void merge() throws IOException {
+        if (used || validated.isEmpty())
             return;
-        if (used)
-            throw new IllegalStateException(MessageLocalization.getComposedMessage("validation.already.output"));
         used = true;
         PdfDictionary catalog = reader.getCatalog();
         PdfObject dss = catalog.get(PdfName.DSS);

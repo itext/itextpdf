@@ -915,6 +915,7 @@ public class PdfSignatureAppearance {
     public void preClose(HashMap<PdfName, Integer> exclusionSizes) throws IOException, DocumentException {
         if (preClosed)
             throw new DocumentException(MessageLocalization.getComposedMessage("document.already.pre.closed"));
+        stamper.mergeVerification();
         preClosed = true;
         AcroFields af = writer.getAcroFields();
         String name = getFieldName();
