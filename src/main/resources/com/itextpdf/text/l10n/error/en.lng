@@ -417,3 +417,6 @@ you.must.set.a.value.before.adding.a.prefix=You must set a value before adding a
 you.need.a.single.boolean.for.this.collection.sort.dictionary=You need a single boolean for this collection sort dictionary.
 the.decode.parameter.type.1.is.not.supported=The decode parameter type {1} is not supported.
 the.color.space.1.is.not.supported=The color space {1} is not supported.
+the.color.depth.1.is.not.supported=The color depth {1} is not supported.
+N.value.1.is.not.supported=N value {1} is not supported
+Decoding.can't.happen.on.this.type.of.stream.(.1.)=Decoding can't happen on this type of stream ({1})
