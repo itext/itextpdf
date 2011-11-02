@@ -207,7 +207,7 @@ public class XmpWriter {
         		obj = info.get(key);
         		if (obj == null)
         			continue;
-        		value = XMLUtil.escapeXML(((PdfString)obj).toUnicodeString(), false);
+        		value = ((PdfString)obj).toUnicodeString();
         		if (PdfName.TITLE.equals(key)) {
         			dc.addTitle(value);
         		}

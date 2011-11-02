@@ -46,6 +46,8 @@ package com.itextpdf.text.xml.xmp;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import com.itextpdf.text.xml.XMLUtil;
+
 /**
  * Abstract superclass of the XmpSchemas supported by iText.
  */
@@ -110,7 +112,7 @@ public abstract class XmpSchema extends Properties {
 	 */
 	@Override
     public Object setProperty(String key, String value) {
-		return super.setProperty(key, escape(value));
+		return super.setProperty(key, XMLUtil.escapeXML(value, false));
 	}
 
 	/**
@@ -138,30 +140,9 @@ public abstract class XmpSchema extends Properties {
 	/**
 	 * @param content
 	 * @return an escaped string
+	 * @deprecated use XMLUtil.escapeXml(String s, boolean onlyASCII) instead.
 	 */
 	public static String escape(String content) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < content.length(); i++) {
-			switch(content.charAt(i)) {
-			case '<':
-				buf.append("&lt;");
-				break;
-			case '>':
-				buf.append("&gt;");
-				break;
-			case '\'':
-				buf.append("&apos;");
-				break;
-			case '\"':
-				buf.append("&quot;");
-				break;
-			case '&':
-				buf.append("&amp;");
-				break;
-			default:
-				buf.append(content.charAt(i));
-			}
-		}
-		return buf.toString();
+		return XMLUtil.escapeXML(content, false);
 	}
 }

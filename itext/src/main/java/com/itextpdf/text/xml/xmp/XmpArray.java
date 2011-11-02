@@ -45,6 +45,8 @@ package com.itextpdf.text.xml.xmp;
 
 import java.util.ArrayList;
 
+import com.itextpdf.text.xml.XMLUtil;
+
 /**
  * StringBuffer to construct an XMP array.
  */
@@ -82,7 +84,7 @@ public class XmpArray extends ArrayList<String> {
 		for (String string : this) {
 			s = string;
 			buf.append("<rdf:li>");
-			buf.append(XmpSchema.escape(s));
+			buf.append(XMLUtil.escapeXML(s, false));
 			buf.append("</rdf:li>");
 		}
 		buf.append("</");

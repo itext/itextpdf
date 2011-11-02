@@ -46,6 +46,8 @@ package com.itextpdf.text.xml.xmp;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import com.itextpdf.text.xml.XMLUtil;
+
 public class LangAlt extends Properties {
 
 	/** A serial version id. */
@@ -69,7 +71,7 @@ public class LangAlt extends Properties {
 	 * Add a language.
 	 */
 	public void addLanguage(String language, String value) {
-		setProperty(language, XmpSchema.escape(value));
+		setProperty(language, XMLUtil.escapeXML(value, false));
 	}
 
 	/**

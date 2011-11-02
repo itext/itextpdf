@@ -105,7 +105,7 @@ public class XmpReader {
 			return false;
 		for (int i = 0; i < nodes.getLength(); i++) {
 			node = nodes.item(i);
-			setNodeText(domDocument, node, XMLUtil.escapeXML(value, false));
+			setNodeText(domDocument, node, value);
 		}
 		return true;
 	}
