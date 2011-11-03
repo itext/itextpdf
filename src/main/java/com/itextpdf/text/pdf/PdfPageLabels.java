@@ -197,6 +197,9 @@ public class PdfPageLabels {
 				if (d.contains(PdfName.S)) {
 					type = ((PdfName)d.get(PdfName.S)).toString().charAt(1);
 				}
+				else {
+					type = 'e';
+				}
 			}
 			switch(type) {
 			default:
@@ -213,6 +216,9 @@ public class PdfPageLabels {
 				break;
 			case 'a':
 				labelstrings[i] = prefix + RomanAlphabetFactory.getLowerCaseString(pagecount);
+				break;
+			case 'e':
+				labelstrings[i] = prefix;
 				break;
 			}
 			pagecount++;
