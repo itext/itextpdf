@@ -10,10 +10,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERObject;
 
@@ -102,6 +100,9 @@ public class LtvVerification {
         }
         if (vd.crls.isEmpty() && vd.ocsps.isEmpty())
             return false;
+        for (Certificate c : xc) {
+            vd.certs.add(c.getEncoded());
+        }
         validated.put(getSignatureHashKey(signatureName), vd);
         return true;
     }
@@ -156,8 +157,10 @@ public class LtvVerification {
         PdfDictionary dss = catalog.getAsDict(PdfName.DSS);
         PdfArray ocsps = dss.getAsArray(PdfName.OCSPS);
         PdfArray crls = dss.getAsArray(PdfName.CRLS);
+        PdfArray certs = dss.getAsArray(PdfName.CERTS);
         dss.remove(PdfName.OCSPS);
         dss.remove(PdfName.CRLS);
+        dss.remove(PdfName.CERTS);
         PdfDictionary vrim = dss.getAsDict(PdfName.VRI);
         //delete old validations
         if (vrim != null) {
@@ -167,11 +170,18 @@ public class LtvVerification {
                     if (vri != null) {
                         deleteOldReferences(ocsps, vri.getAsArray(PdfName.OCSP));
                         deleteOldReferences(crls, vri.getAsArray(PdfName.CRL));
+                        deleteOldReferences(certs, vri.getAsArray(PdfName.CERT));
                     }
                 }
             }
         }
-        outputDss(dss, vrim, ocsps, crls);
+        if (ocsps == null)
+            ocsps = new PdfArray();
+        if (crls == null)
+            crls = new PdfArray();
+        if (certs == null)
+            certs = new PdfArray();
+        outputDss(dss, vrim, ocsps, crls, certs);
     }
     
     private static void deleteOldReferences(PdfArray all, PdfArray toDelete) {
@@ -195,15 +205,16 @@ public class LtvVerification {
     }
     
     private void createDss() throws IOException {
-        outputDss(new PdfDictionary(), new PdfDictionary(), new PdfArray(), new PdfArray());
+        outputDss(new PdfDictionary(), new PdfDictionary(), new PdfArray(), new PdfArray(), new PdfArray());
     }
     
-    private void outputDss(PdfDictionary dss, PdfDictionary vrim, PdfArray ocsps, PdfArray crls) throws IOException {
+    private void outputDss(PdfDictionary dss, PdfDictionary vrim, PdfArray ocsps, PdfArray crls, PdfArray certs) throws IOException {
         PdfDictionary catalog = reader.getCatalog();
         writer.markUsed(catalog);
         for (PdfName vkey : validated.keySet()) {
             PdfArray ocsp = new PdfArray();
             PdfArray crl = new PdfArray();
+            PdfArray cert = new PdfArray();
             PdfDictionary vri = new PdfDictionary();
             for (byte[] b : validated.get(vkey).crls) {
                 PdfStream ps = new PdfStream(b);
@@ -219,10 +230,19 @@ public class LtvVerification {
                 ocsp.add(iref);
                 ocsps.add(iref);
             }
+            for (byte[] b : validated.get(vkey).certs) {
+                PdfStream ps = new PdfStream(b);
+                ps.flateCompress();
+                PdfIndirectReference iref = writer.addToBody(ps, false).getIndirectReference();
+                cert.add(iref);
+                certs.add(iref);
+            }
             if (ocsp.size() > 0)
                 vri.put(PdfName.OCSP, writer.addToBody(ocsp, false).getIndirectReference());
             if (crl.size() > 0)
                 vri.put(PdfName.CRL, writer.addToBody(crl, false).getIndirectReference());
+            if (cert.size() > 0)
+                vri.put(PdfName.CERT, writer.addToBody(cert, false).getIndirectReference());
             vrim.put(vkey, writer.addToBody(vri, false).getIndirectReference());
         }
         dss.put(PdfName.VRI, writer.addToBody(vrim, false).getIndirectReference());
@@ -230,11 +250,14 @@ public class LtvVerification {
             dss.put(PdfName.OCSPS, writer.addToBody(ocsps, false).getIndirectReference());
         if (crls.size() > 0)
             dss.put(PdfName.CRLS, writer.addToBody(crls, false).getIndirectReference());
+        if (certs.size() > 0)
+            dss.put(PdfName.CERTS, writer.addToBody(certs, false).getIndirectReference());
         catalog.put(PdfName.DSS, writer.addToBody(dss, false).getIndirectReference());
     }
     
     private static class ValidationData {
         public List<byte[]> crls = new ArrayList<byte[]>();
         public List<byte[]> ocsps = new ArrayList<byte[]>();
+        public List<byte[]> certs = new ArrayList<byte[]>();
     }
 }
