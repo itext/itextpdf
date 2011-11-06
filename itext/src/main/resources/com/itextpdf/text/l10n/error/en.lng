@@ -389,7 +389,7 @@ use.pdfstamper.getundercontent.or.pdfstamper.getovercontent=Use PdfStamper.getUn
 use.pdfstamper.setthumbnail=Use PdfStamper.setThumbnail().
 use.setpageaction.pdfname.actiontype.pdfaction.action.int.page=Use setPageAction(PdfName actionType, PdfAction action, int page)
 userunit.should.be.a.value.between.1.and.75000=UserUnit should be a value between 1 and 75000.
-validation.already.output=Validation already output
+verification.already.output=Verification already output
 verticaltext.go.with.simulate.eq.eq.false.and.text.eq.eq.null=VerticalText.go with simulate==false and text==null.
 while.removing.wmf.placeable.header=while removing wmf placeable header
 writelength.can.only.be.called.after.output.of.the.stream.body=writeLength() can only be called after output of the stream body.
