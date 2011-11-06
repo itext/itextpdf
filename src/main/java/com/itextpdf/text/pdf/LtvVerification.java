@@ -16,7 +16,7 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERObject;
 
 /**
- * Add validation according to PAdES-LTV (part 4)
+ * Add verification according to PAdES-LTV (part 4)
  * @author psoares
  */
 public class LtvVerification {
@@ -26,7 +26,7 @@ public class LtvVerification {
     private Map<PdfName,ValidationData> validated = new HashMap<PdfName,ValidationData>();
     private boolean used = false;
     /**
-     * What type of validation to include 
+     * What type of verification to include 
      */
     public enum Level {
         /**
@@ -45,10 +45,38 @@ public class LtvVerification {
          * Include CRL only if OCSP can't be read
          */
         OCSP_OPTIONAL_CRL
-    };
+    }
 
     /**
-     * The validation constructor
+     * Options for how many certificates to include
+     */
+    public enum CertificateOption {
+        /**
+         * Include verification just for the signing certificate
+         */
+        SIGNING_CERTIFICATE,
+        /**
+         * Include verification for the whole chain of certificates
+         */
+        WHOLE_CHAIN
+    }
+    
+    /**
+     * Certificate inclusion in the DSS and VRI dictionaries in the CERT and CERTS
+     * keys
+     */
+    public enum CertificateInclusion {
+        /**
+         * Include certificates in the DSS and VRI dictionaries
+         */
+        YES,
+        /**
+         * Do not include certificates in the DSS and VRI dictionaries
+         */
+        NO
+    }
+    /**
+     * The verification constructor
      * @param stp the PdfStamper to apply the validation to
      */
     LtvVerification(PdfStamper stp) {
@@ -58,7 +86,7 @@ public class LtvVerification {
     }
 
     /**
-     * Add validation for a particular signature
+     * Add verification for a particular signature
      * @param signatureName the signature to validate (it may be a timestamp)
      * @param ocsp the interface to get the OCSP
      * @param crl the interface to get the CRL
@@ -68,9 +96,9 @@ public class LtvVerification {
      * @return true if a validation was generated, false otherwise
      * @throws Exception 
      */
-    public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, boolean checkAllCertificates, Level level) throws Exception {
+    public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws Exception {
         if (used)
-            throw new IllegalStateException(MessageLocalization.getComposedMessage("validation.already.output"));
+            throw new IllegalStateException(MessageLocalization.getComposedMessage("verification.already.output"));
         PdfPKCS7 pk = acroFields.verifySignature(signatureName);
         Certificate[] xc = pk.getSignCertificateChain();
         ValidationData vd = new ValidationData();
@@ -95,13 +123,15 @@ public class LtvVerification {
                         vd.crls.add(cim);
                 }
             }
-            if (!checkAllCertificates)
+            if (certOption == CertificateOption.SIGNING_CERTIFICATE)
                 break;
         }
         if (vd.crls.isEmpty() && vd.ocsps.isEmpty())
             return false;
-        for (Certificate c : xc) {
-            vd.certs.add(c.getEncoded());
+        if (certInclude == CertificateInclusion.YES) {
+            for (Certificate c : xc) {
+                vd.certs.add(c.getEncoded());
+            }
         }
         validated.put(getSignatureHashKey(signatureName), vd);
         return true;
