@@ -413,8 +413,8 @@ public class ColumnText {
 
 	/**
 	 * Adds an element. Elements supported are <CODE>Paragraph</CODE>,
-	 * <CODE>List</CODE>, <CODE>PdfPTable</CODE>, <CODE>Image</CODE> and
-	 * <CODE>Graphic</CODE>. Also accepts a <code>Chunk</code> and a
+	 * <CODE>List</CODE>, <CODE>PdfPTable</CODE> and <CODE>Image</CODE>.
+	 * Also accepts a <code>Chunk</code> and a
 	 * <code>Phrase</code>, they are placed in a new <code>Paragraph<code>.
 	 * <p>
 	 * It removes all the text placed with <CODE>addText()</CODE>.
