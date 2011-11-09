@@ -3727,7 +3727,7 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     /**
-     * @return byte of computed user password, or null if not encrypted or no ownerPassword is used.
+     * @return byte array of computed user password, or null if not encrypted or no ownerPassword is used.
      */
     public byte[] computeUserPassword() {
     	if (!encrypted || !ownerPasswordUsed) return null;
