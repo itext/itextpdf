@@ -90,11 +90,11 @@ public class LtvVerification {
      * @param signatureName the signature to validate (it may be a timestamp)
      * @param ocsp the interface to get the OCSP
      * @param crl the interface to get the CRL
-     * @param checkAllCertificates true to validate all the certificates in the 
-     * certificate chain, false to validate only the signing certificate
+     * @param certOption
      * @param level the validation options to include
+     * @param certInclude
      * @return true if a validation was generated, false otherwise
-     * @throws Exception 
+     * @throws Exception
      */
     public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws Exception {
         if (used)
