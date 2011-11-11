@@ -54,6 +54,7 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.xml.XMLUtil;
 
 /**
  * With this class you can create an Xmp Stream that can be used for adding
@@ -200,29 +201,31 @@ public class XmpWriter {
         	XmpBasicSchema basic = new XmpBasicSchema();
         	PdfName key;
         	PdfObject obj;
+        	String value;
         	for (PdfName pdfName : info.getKeys()) {
         		key = pdfName;
         		obj = info.get(key);
         		if (obj == null)
         			continue;
+        		value = ((PdfString)obj).toUnicodeString();
         		if (PdfName.TITLE.equals(key)) {
-        			dc.addTitle(((PdfString)obj).toUnicodeString());
+        			dc.addTitle(value);
         		}
         		if (PdfName.AUTHOR.equals(key)) {
-        			dc.addAuthor(((PdfString)obj).toUnicodeString());
+        			dc.addAuthor(value);
         		}
         		if (PdfName.SUBJECT.equals(key)) {
-        			dc.addSubject(((PdfString)obj).toUnicodeString());
-        			dc.addDescription(((PdfString)obj).toUnicodeString());
+        			dc.addSubject(value);
+        			dc.addDescription(value);
         		}
         		if (PdfName.KEYWORDS.equals(key)) {
-        			p.addKeywords(((PdfString)obj).toUnicodeString());
+        			p.addKeywords(value);
         		}
         		if (PdfName.CREATOR.equals(key)) {
-        			basic.addCreatorTool(((PdfString)obj).toUnicodeString());
+        			basic.addCreatorTool(value);
         		}
         		if (PdfName.PRODUCER.equals(key)) {
-        			p.addProducer(((PdfString)obj).toUnicodeString());
+        			p.addProducer(value);
         		}
         		if (PdfName.CREATIONDATE.equals(key)) {
         			basic.addCreateDate(PdfDate.getW3CDate(obj.toString()));

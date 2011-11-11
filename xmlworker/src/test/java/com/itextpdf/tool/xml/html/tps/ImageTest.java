@@ -53,6 +53,8 @@ import org.junit.Test;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.html.HTML;
@@ -69,13 +71,16 @@ public class ImageTest {
 	/**
 	 *
 	 */
+	static {
+		LoggerFactory.getInstance().setLogger(new SysoLogger(5));
+	}
 	private static final Tag I = new Tag("i");
 	final Image i = new Image();
 	private WorkerContext workerContextImpl;
 
 	@Before
 	public void init() {
-		I.getAttributes().put(HTML.Attribute.SRC, "http://t1.gstatic.com/images?q=tbn:ANd9GcQ2s33YgZ8dDEEDW3kwK9EBWR1vHXJgMPJXjaaAfxfPvFSZ9shB");
+		I.getAttributes().put(HTML.Attribute.SRC, "target/test-classes/images.jpg");
 		workerContextImpl = new WorkerContextImpl();
 		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
 	}

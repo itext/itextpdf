@@ -91,4 +91,5 @@ public class DocumentFontTest {
         
         new DocumentFont(fontDicIndirect); // this used to throw an NPE
     }
+    
 }

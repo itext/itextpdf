@@ -1288,11 +1288,14 @@ class PdfStamperImp extends PdfWriter {
 
     void deleteOutlines() {
         PdfDictionary catalog = reader.getCatalog();
-        PRIndirectReference outlines = (PRIndirectReference)catalog.get(PdfName.OUTLINES);
-        if (outlines == null)
-            return;
-        outlineTravel(outlines);
-        PdfReader.killIndirect(outlines);
+        PdfObject obj = catalog.get(PdfName.OUTLINES);
+        if (obj == null)
+        	return;
+        if (obj instanceof PRIndirectReference) {
+        	PRIndirectReference outlines = (PRIndirectReference)obj;
+        	outlineTravel(outlines);
+        	PdfReader.killIndirect(outlines);
+        }
         catalog.remove(PdfName.OUTLINES);
         markUsed(catalog);
     }

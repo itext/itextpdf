@@ -44,6 +44,7 @@
 package com.itextpdf.text.pdf;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 import com.itextpdf.text.Chunk;
@@ -54,6 +55,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 
@@ -409,15 +411,16 @@ public class ColumnText {
         addText(new Phrase(chunk));
     }
 
-    /**
-     * Adds an element. Elements supported are <CODE>Paragraph</CODE>,
-     * <CODE>List</CODE>, <CODE>PdfPTable</CODE>, <CODE>Image</CODE> and
-     * <CODE>Graphic</CODE>.
-     * <p>
-     * It removes all the text placed with <CODE>addText()</CODE>.
-     *
-     * @param element the <CODE>Element</CODE>
-     */
+	/**
+	 * Adds an element. Elements supported are <CODE>Paragraph</CODE>,
+	 * <CODE>List</CODE>, <CODE>PdfPTable</CODE> and <CODE>Image</CODE>.
+	 * Also accepts a <code>Chunk</code> and a
+	 * <code>Phrase</code>, they are placed in a new <code>Paragraph<code>.
+	 * <p>
+	 * It removes all the text placed with <CODE>addText()</CODE>.
+	 *
+	 * @param element the <CODE>Element</CODE>
+	 */
     public void addElement(Element element) {
         if (element == null)
             return;
@@ -649,6 +652,14 @@ public class ColumnText {
             rectangularWidth = 0;
         rectangularMode = true;
     }
+    
+    /**
+     * Simplified method for rectangular columns.
+     * @param rect	the rectangle for the column
+     */
+    public void setSimpleColumn(Rectangle rect) {
+    	setSimpleColumn(rect.getLeft(), rect.getBottom(), rect.getRight(), rect.getTop());
+    }
 
     /**
      * Sets the leading to fixed.
@@ -707,6 +718,13 @@ public class ColumnText {
      */
     public float getYLine() {
         return yLine;
+    }
+    
+    /**
+     * Gets the number of rows that were drawn when a table is involved.
+     */
+    public int getRowsDrawn() {
+    	return rowIdx;
     }
 
     /**
@@ -1629,6 +1647,10 @@ public class ColumnText {
         return composite && !compositeElements.isEmpty() && compositeElements.getFirst().type() == Element.YMARK;
     }
 
+    public List<Element> getCompositeElements() {
+    	return compositeElements;
+    }
+    
     /**
      * Checks if UseAscender is enabled/disabled.
      *

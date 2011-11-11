@@ -71,7 +71,8 @@ public class ParagraphCssApplierTest {
 	private Tag child;
 	private Paragraph firstPara;
 	private Paragraph secondPara;
-	private final ParagraphCssApplier applier = new ParagraphCssApplier(new HtmlPipelineContext());
+	private final ParagraphCssApplier applier = new ParagraphCssApplier();
+	private HtmlPipelineContext configuration;
 
 	@Before
 	public void setup() {
@@ -92,7 +93,8 @@ public class ParagraphCssApplierTest {
 		child.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(child)+"pt");
 		firstPara = new Paragraph(new Chunk("default text for chunk creation"));
 		secondPara = new Paragraph(new Chunk("default text for chunk creation"));
-		applier.apply(firstPara, first);
+		configuration = new HtmlPipelineContext();
+		applier.apply(firstPara, first,configuration);
 	}
 
 	@Test
@@ -100,15 +102,15 @@ public class ParagraphCssApplierTest {
 		assertEquals(Element.ALIGN_LEFT, firstPara.getAlignment(), 0);
 
 		first.getCSS().put("text-align", "right");
-		applier.apply(firstPara, first);
+		applier.apply(firstPara, first, configuration);
 		assertEquals(Element.ALIGN_RIGHT, firstPara.getAlignment(), 0);
 
 		first.getCSS().put("text-align", "left");
-		applier.apply(firstPara, first);
+		applier.apply(firstPara, first, configuration);
 		assertEquals(Element.ALIGN_LEFT, firstPara.getAlignment(), 0);
 
 		first.getCSS().put("text-align", "center");
-		applier.apply(firstPara, first);
+		applier.apply(firstPara, first,configuration);
 		assertEquals(Element.ALIGN_CENTER, firstPara.getAlignment(), 0);
 	}
 	@Test
@@ -116,7 +118,7 @@ public class ParagraphCssApplierTest {
 		assertEquals(0f, firstPara.getFirstLineIndent(), 0);
 
 		first.getCSS().put("text-indent", "16pt");
-		applier.apply(firstPara, first);
+		applier.apply(firstPara, first,configuration);
 		assertEquals(16, firstPara.getFirstLineIndent(), 0);
 	}
 	@Test
@@ -124,7 +126,7 @@ public class ParagraphCssApplierTest {
 		assertEquals(0f, firstPara.getIndentationLeft(), 0);
 
 		first.getCSS().put("margin-left", "10pt");
-		applier.apply(firstPara, first);
+		applier.apply(firstPara, first,configuration);
 		assertEquals(10, firstPara.getIndentationLeft(), 0);
 	}
 	@Test
@@ -132,7 +134,7 @@ public class ParagraphCssApplierTest {
 		assertEquals(0f, firstPara.getIndentationRight(), 0);
 
 		first.getCSS().put("margin-right", "10pt");
-		applier.apply(firstPara, first);
+		applier.apply(firstPara, first,configuration);
 		assertEquals(10, firstPara.getIndentationRight(), 0);
 	}
 	@Test
@@ -140,15 +142,15 @@ public class ParagraphCssApplierTest {
 		assertEquals(18f, firstPara.getLeading(), 0);
 
 		first.getCSS().put("line-height", "25pt");
-		applier.apply(firstPara, first);
+		applier.apply(firstPara, first,configuration);
 		assertEquals(25, firstPara.getLeading(), 0);
 
 		child.getCSS().put("line-height", "19pt");
-		applier.apply(firstPara, first);
+		applier.apply(firstPara, first,configuration);
 		assertEquals(25, firstPara.getLeading(), 0);
 
 		child.getCSS().put("line-height", "30pt");
-		applier.apply(firstPara, first);
+		applier.apply(firstPara, first,configuration);
 		assertEquals(30, firstPara.getLeading(), 0);
 	}
 	@Test
@@ -156,7 +158,7 @@ public class ParagraphCssApplierTest {
 		assertEquals(12, firstPara.getSpacingBefore(), 0);
 		second.getCSS().put("margin-bottom", "25pt");
 
-		applier.apply(secondPara, second);
+		applier.apply(secondPara, second,configuration);
 		assertEquals(25, secondPara.getSpacingAfter(), 0);
 	}
 	@Test
@@ -164,7 +166,7 @@ public class ParagraphCssApplierTest {
 		parent.addChild(second);
 		second.getCSS().put("margin-top", "22pt");
 
-		applier.apply(secondPara, second);
+		applier.apply(secondPara, second,configuration);
 		assertEquals(22-12, secondPara.getSpacingBefore(), 0);
 	}
 	@Test
@@ -173,8 +175,8 @@ public class ParagraphCssApplierTest {
 		first.getCSS().put("margin-bottom", "25pt");
 		second.getCSS().put("margin-top", "30pt");
 
-		applier.apply(firstPara, first);
-		applier.apply(secondPara, second);
+		applier.apply(firstPara, first,configuration);
+		applier.apply(secondPara, second,configuration);
 		assertEquals(30-25, secondPara.getSpacingBefore(), 0);
 	}
 	@Test
@@ -183,8 +185,8 @@ public class ParagraphCssApplierTest {
 		first.getCSS().put("margin-bottom", "35pt");
 		second.getCSS().put("margin-top", "30pt");
 
-		applier.apply(firstPara, first);
-		applier.apply(secondPara, second);
+		applier.apply(firstPara, first,configuration);
+		applier.apply(secondPara, second,configuration);
 		//30-35 is reverted to 0.
 		assertEquals(0, secondPara.getSpacingBefore(), 0);
 	}
@@ -194,8 +196,8 @@ public class ParagraphCssApplierTest {
 		first.getCSS().put("margin-bottom", "2em");
 		second.getCSS().put("margin-top", "30pt");
 
-		applier.apply(firstPara, first);
-		applier.apply(secondPara, second);
+		applier.apply(firstPara, first,configuration);
+		applier.apply(secondPara, second,configuration);
 		assertEquals(30-(2*12), secondPara.getSpacingBefore(), 0);
 	}
 	@Test
@@ -206,8 +208,8 @@ public class ParagraphCssApplierTest {
 		first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first)+"pt");
 		second.getCSS().put("margin-top", "60pt");
 
-		applier.apply(firstPara, first);
-		applier.apply(secondPara, second);
+		applier.apply(firstPara, first,configuration);
+		applier.apply(secondPara, second,configuration);
 		// 60 - 2 * (18px = 13.5pt)
 		assertEquals(60-(2*13.5f), secondPara.getSpacingBefore(), 0);
 	}
@@ -219,8 +221,8 @@ public class ParagraphCssApplierTest {
 		first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first)+"pt");
 		second.getCSS().put("margin-top", "60pt");
 
-		applier.apply(firstPara, first);
-		applier.apply(secondPara, second);
+		applier.apply(firstPara, first,configuration);
+		applier.apply(secondPara, second,configuration);
 		assertEquals(60-(2*12*2), secondPara.getSpacingBefore(), 0);
 	}
 }

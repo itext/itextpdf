@@ -73,7 +73,7 @@ public class ListItemTest {
 	public void init() {
 		workerContextImpl = new WorkerContextImpl();
 		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
-		currentContent.addAll(li.content(null, new Tag("li"), "list item"));
+		currentContent.addAll(li.content(workerContextImpl, new Tag("li"), "list item"));
 	}
 
 	/**

@@ -59,6 +59,7 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.xml.XMLUtil;
 import com.itextpdf.text.xml.simpleparser.IanaEncodings;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
@@ -158,6 +159,10 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
                         else if (PdfName.URI.equals(PdfReader.getPdfObjectRelease(action.get(PdfName.S)))) {
                             map.put("Action", "URI");
                             map.put("URI", ((PdfString)PdfReader.getPdfObjectRelease(action.get(PdfName.URI))).toUnicodeString());
+                        }
+                        else if (PdfName.JAVASCRIPT.equals(PdfReader.getPdfObjectRelease(action.get(PdfName.S)))) {
+                            map.put("Action", "JS");
+                            map.put("Code", PdfReader.getPdfObjectRelease(action.get(PdfName.JS)).toString());
                         }
                         else if (PdfName.GOTOR.equals(PdfReader.getPdfObjectRelease(action.get(PdfName.S)))) {
                             dest = PdfReader.getPdfObjectRelease(action.get(PdfName.D));
@@ -481,6 +486,12 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
                     outline.put(PdfName.A, dic);
                 }
             }
+            else if ("JS".equals(action)) {
+            	String code = (String)map.get("Code");
+            	if(code != null) {
+                    outline.put(PdfName.A, PdfAction.javaScript(code, writer));
+            	}
+            }
             else if ("Launch".equals(action)) {
                 String file = (String)map.get("File");
                 if (file != null) {
@@ -597,14 +608,14 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
                     String value = (String) entry.getValue();
                     if (key.equals("Named") || key.equals("NamedN"))
                         value = SimpleNamedDestination.escapeBinaryString(value);
-                    out.write(SimpleXMLParser.escapeXML(value, onlyASCII));
+                    out.write(XMLUtil.escapeXML(value, onlyASCII));
                     out.write("\" ");
                 }
             }
             out.write(">");
             if (title == null)
                 title = "";
-            out.write(SimpleXMLParser.escapeXML(title, onlyASCII));
+            out.write(XMLUtil.escapeXML(title, onlyASCII));
             if (kids != null) {
                 out.write("\n");
                 exportToXMLNode(kids, out, indent + 1, onlyASCII);
@@ -660,7 +671,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
      */
     public static void exportToXML(List<HashMap<String, Object>> list, Writer wrt, String encoding, boolean onlyASCII) throws IOException {
         wrt.write("<?xml version=\"1.0\" encoding=\"");
-        wrt.write(SimpleXMLParser.escapeXML(encoding, onlyASCII));
+        wrt.write(XMLUtil.escapeXML(encoding, onlyASCII));
         wrt.write("\"?>\n<Bookmark>\n");
         exportToXMLNode(list, wrt, 1, onlyASCII);
         wrt.write("</Bookmark>\n");

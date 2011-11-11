@@ -64,7 +64,7 @@ public class OrderedUnorderedListTest {
 		ul.addChild(first);
 		ul.addChild(last);
 		p.getCSS().put("font-size", "12pt");
-		new ParagraphCssApplier(context2).apply(new Paragraph("paragraph"), p);
+		new ParagraphCssApplier().apply(new Paragraph("paragraph"), p, context2);
 		first.getCSS().put("margin-top", "50pt");
 		first.getCSS().put("padding-top", "25pt");
 		first.getCSS().put("margin-bottom", "50pt");

@@ -389,6 +389,7 @@ use.pdfstamper.getundercontent.or.pdfstamper.getovercontent=Use PdfStamper.getUn
 use.pdfstamper.setthumbnail=Use PdfStamper.setThumbnail().
 use.setpageaction.pdfname.actiontype.pdfaction.action.int.page=Use setPageAction(PdfName actionType, PdfAction action, int page)
 userunit.should.be.a.value.between.1.and.75000=UserUnit should be a value between 1 and 75000.
+verification.already.output=Verification already output
 verticaltext.go.with.simulate.eq.eq.false.and.text.eq.eq.null=VerticalText.go with simulate==false and text==null.
 while.removing.wmf.placeable.header=while removing wmf placeable header
 writelength.can.only.be.called.after.output.of.the.stream.body=writeLength() can only be called after output of the stream body.
@@ -414,3 +415,8 @@ you.have.to.define.a.boolean.array.for.this.collection.sort.dictionary=You have 
 you.have.used.the.wrong.constructor.for.this.fieldpositioningevents.class=You have used the wrong constructor for this FieldPositioningEvents class.
 you.must.set.a.value.before.adding.a.prefix=You must set a value before adding a prefix.
 you.need.a.single.boolean.for.this.collection.sort.dictionary=You need a single boolean for this collection sort dictionary.
+the.decode.parameter.type.1.is.not.supported=The decode parameter type {1} is not supported.
+the.color.space.1.is.not.supported=The color space {1} is not supported.
+the.color.depth.1.is.not.supported=The color depth {1} is not supported.
+N.value.1.is.not.supported=N value {1} is not supported
+Decoding.can't.happen.on.this.type.of.stream.(.1.)=Decoding can't happen on this type of stream ({1})

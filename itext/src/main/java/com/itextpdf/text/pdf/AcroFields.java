@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.codec.Base64;
+import com.itextpdf.text.xml.XmlToTxt;
 
 /**
  * Query and change fields in existing documents either by method
@@ -1316,14 +1318,17 @@ public class AcroFields {
     
     /**
      * Sets the rich value for the given field.  See <a href="http://www.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/PDF32000_2008.pdf">PDF Reference</a> chapter 
-     * 12.7.3.4 (Rich Text) and 12.7.4.3 (Text Fields) for further details.
+     * 12.7.3.4 (Rich Text) and 12.7.4.3 (Text Fields) for further details. Note that iText doesn't create an appearance for Rich Text fields.
+     * So you either need to use XML Worker to create an appearance (/N entry in the /AP dictionary), or you need to use setGenerateAppearances(false) to tell the viewer
+     * that iText didn't create any appearances.
      * @param name  Field name
      * @param richValue html markup 
      * @return success/failure (will fail if the field isn't found, isn't a text field, or doesn't support rich text)
      * @throws DocumentException
+     * @throws IOException 
      * @since 5.0.6
      */
-    public boolean setFieldRichValue(String name, String richValue) throws DocumentException {
+    public boolean setFieldRichValue(String name, String richValue) throws DocumentException, IOException {
         if (writer == null) {
         	// can't set field values: fail
             throw new DocumentException(MessageLocalization.getComposedMessage("this.acrofields.instance.is.read.only"));
@@ -1353,7 +1358,10 @@ public class AcroFields {
     	
     	PdfString richString = new PdfString(richValue);
     	item.writeToAll(PdfName.RV, richString, Item.WRITE_MERGED | Item.WRITE_VALUE);
-    	
+
+		InputStream is = new ByteArrayInputStream(richValue.getBytes());
+		PdfString valueString = new PdfString(XmlToTxt.parse(is));
+		item.writeToAll(PdfName.V, valueString, Item.WRITE_MERGED | Item.WRITE_VALUE);
     	return true;
     }
 

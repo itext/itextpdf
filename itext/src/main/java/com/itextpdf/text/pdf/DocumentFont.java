@@ -64,10 +64,10 @@ public class DocumentFont extends BaseFont {
     private PdfDictionary font;
     private IntHashtable uni2byte = new IntHashtable();
     private IntHashtable diffmap;
-    private float Ascender = 800;
-    private float CapHeight = 700;
-    private float Descender = -200;
-    private float ItalicAngle = 0;
+    private float ascender = 800;
+    private float capHeight = 700;
+    private float descender = -200;
+    private float italicAngle = 0;
     private float llx = -50;
     private float lly = -200;
     private float urx = 100;
@@ -292,7 +292,7 @@ public class DocumentFont extends BaseFont {
         else {
             if (enc.isName())
                 fillEncoding((PdfName)enc);
-            else {
+            else if (enc.isDictionary()) {
                 PdfDictionary encDic = (PdfDictionary)enc;
                 enc = PdfReader.getPdfObject(encDic.get(PdfName.BASEENCODING));
                 if (enc == null)
@@ -357,10 +357,10 @@ public class DocumentFont extends BaseFont {
                 }
                 diffmap = null;
             }
-            Ascender = bf.getFontDescriptor(ASCENT, 1000);
-            CapHeight = bf.getFontDescriptor(CAPHEIGHT, 1000);
-            Descender = bf.getFontDescriptor(DESCENT, 1000);
-            ItalicAngle = bf.getFontDescriptor(ITALICANGLE, 1000);
+            ascender = bf.getFontDescriptor(ASCENT, 1000);
+            capHeight = bf.getFontDescriptor(CAPHEIGHT, 1000);
+            descender = bf.getFontDescriptor(DESCENT, 1000);
+            italicAngle = bf.getFontDescriptor(ITALICANGLE, 1000);
             llx = bf.getFontDescriptor(BBOXLLX, 1000);
             lly = bf.getFontDescriptor(BBOXLLY, 1000);
             urx = bf.getFontDescriptor(BBOXURX, 1000);
@@ -368,6 +368,12 @@ public class DocumentFont extends BaseFont {
         }
         if (first != null && last != null && newWidths != null) {
             int f = first.intValue();
+            int nSize = f + newWidths.size();
+            if (widths.length < nSize) {
+            	int[] tmp = new int[nSize];
+            	System.arraycopy(widths, 0, tmp, 0, f);
+            	widths = tmp;
+            }
             for (int k = 0; k < newWidths.size(); ++k) {
                 widths[f + k] = newWidths.getAsNumber(k).intValue();
             }
@@ -394,16 +400,16 @@ public class DocumentFont extends BaseFont {
             return;
         PdfNumber v = fontDesc.getAsNumber(PdfName.ASCENT);
         if (v != null)
-            Ascender = v.floatValue();
+            ascender = v.floatValue();
         v = fontDesc.getAsNumber(PdfName.CAPHEIGHT);
         if (v != null)
-            CapHeight = v.floatValue();
+            capHeight = v.floatValue();
         v = fontDesc.getAsNumber(PdfName.DESCENT);
         if (v != null)
-            Descender = v.floatValue();
+            descender = v.floatValue();
         v = fontDesc.getAsNumber(PdfName.ITALICANGLE);
         if (v != null)
-            ItalicAngle = v.floatValue();
+            italicAngle = v.floatValue();
         PdfArray bbox = fontDesc.getAsArray(PdfName.FONTBBOX);
         if (bbox != null) {
             llx = bbox.getAsNumber(0).floatValue();
@@ -421,6 +427,10 @@ public class DocumentFont extends BaseFont {
                 ury = t;
             }
         }
+        float maxAscent = Math.max(ury, ascender);
+        float minDescent = Math.min(lly, descender);
+        ascender = maxAscent * 1000 / (maxAscent - minDescent);
+        descender = minDescent * 1000 / (maxAscent - minDescent);
     }
 
     private void fillEncoding(PdfName encoding) {
@@ -474,14 +484,14 @@ public class DocumentFont extends BaseFont {
         switch (key) {
             case AWT_ASCENT:
             case ASCENT:
-                return Ascender * fontSize / 1000;
+                return ascender * fontSize / 1000;
             case CAPHEIGHT:
-                return CapHeight * fontSize / 1000;
+                return capHeight * fontSize / 1000;
             case AWT_DESCENT:
             case DESCENT:
-                return Descender * fontSize / 1000;
+                return descender * fontSize / 1000;
             case ITALICANGLE:
-                return ItalicAngle;
+                return italicAngle;
             case BBOXLLX:
                 return llx * fontSize / 1000;
             case BBOXLLY:

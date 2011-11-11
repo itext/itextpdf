@@ -58,6 +58,7 @@ import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 /**
  * @author redlab_b
  *
@@ -86,9 +87,8 @@ public class TableData extends AbstractTagProcessor {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
-	 * java.util.List, com.itextpdf.text.Document)
+	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List,
+	 * com.itextpdf.text.Document)
 	 */
 	@Override
 	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
@@ -98,9 +98,11 @@ public class TableData extends AbstractTagProcessor {
 			cell.addElement(e);
 		}
 		try {
-			l.add(new HtmlCellCssApplier(getHtmlPipelineContext(ctx)).apply(cell, tag));
+			HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
+			l.add(new HtmlCellCssApplier().apply(cell, tag, htmlPipelineContext, htmlPipelineContext));
 		} catch (NoCustomContextException e1) {
-			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
+			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT),
+					e1);
 		}
 		return l;
 	}

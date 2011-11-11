@@ -100,7 +100,7 @@ public class StackKeeper {
 	/**
 	 * @return the tag
 	 */
-	public Tag getName() {
+	public Tag getTag() {
 		return tag;
 	}
 

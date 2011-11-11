@@ -45,6 +45,8 @@ package com.itextpdf.text.pdf;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Map;
+
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.pdf.fonts.cmaps.CMap;
@@ -69,7 +71,9 @@ public class CMapAwareDocumentFont extends DocumentFont {
 	 *	Mapping between CID code (single byte only for now) and unicode equivalent
 	 *  as derived by the font's encoding.  Only needed if the ToUnicode CMap is not provided.
 	 */
-    private char[] cidbyte2uni = new char[256];
+    private char[] cidbyte2uni;
+    
+    private Map<Integer,Integer> uni2cid;
     
     /**
      * Creates an instance of a CMapAwareFont based on an indirect reference to a font.
@@ -104,6 +108,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
     
                 CMapParser cmapParser = new CMapParser();
                 toUnicodeCmap = cmapParser.parse(new ByteArrayInputStream(touni));
+                uni2cid = toUnicodeCmap.createReverseMapping();
             } catch (IOException e) {
                 // technically, we should log this or provide some sort of feedback... but sometimes the cmap will be junk, but it's still possible to get text, so we don't want to throw an exception
                 //throw new IllegalStateException("Unable to process ToUnicode map - " + e.getMessage(), e);
@@ -172,7 +177,10 @@ public class CMapAwareDocumentFont extends DocumentFont {
     public int getWidth(int char1) {
         if (char1 == ' ')
             return spaceWidth;
-        
+        if (uni2cid != null && uni2cid.containsKey(char1)) {
+        	char1 = uni2cid.get(char1);
+        	return widths[char1];
+        }
         return super.getWidth(char1);
     }
     
@@ -195,7 +203,10 @@ public class CMapAwareDocumentFont extends DocumentFont {
         }
 
         if (len == 1){
-            return new String(cidbyte2uni, 0xff & bytes[offset], 1);
+            if (cidbyte2uni == null)
+                return "";
+            else
+                return new String(cidbyte2uni, 0xff & bytes[offset], 1);
         }
         
         throw new Error("Multi-byte glyphs not implemented yet");

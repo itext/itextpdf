@@ -52,6 +52,9 @@ import org.junit.Test;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.Anchor;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author itextpdf.com
@@ -68,7 +71,10 @@ public class AnchorTest {
 		Anchor a = new Anchor();
 		Tag t = new Tag("dummy");
 		String content2 = "some content";
-		List<Element> ct = a.content(null , t, content2);
+		WorkerContextImpl ctx = new WorkerContextImpl();
+		HtmlPipelineContext htmlPipelineContext = new HtmlPipelineContext();
+		ctx.put(HtmlPipeline.class.getName(), htmlPipelineContext);
+		List<Element> ct = a.content(ctx , t, content2);
 		Assert.assertEquals(content2, ct.get(0).getChunks().get(0).getContent());
 	}
 

@@ -159,4 +159,25 @@ public class CMap
         return codeSpaceRanges;
     }
 
+    public Map<Integer, Integer> createReverseMapping() throws IOException {
+    	Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+    	for (Map.Entry<Integer, String> entry : singleByteMappings.entrySet()) {
+    		result.put(convertToInt(entry.getValue()), entry.getKey());
+    	}
+    	for (Map.Entry<Integer, String> entry : doubleByteMappings.entrySet()) {
+    		result.put(convertToInt(entry.getValue()), entry.getKey());
+    	}
+    	return result;
+    }
+    
+    private int convertToInt(String s) throws IOException {
+        byte[] b = s.getBytes("UTF-16BE");
+        int value = 0;
+        for (int i = 0; i < b.length - 1; i++) {
+        	value += b[i] & 0xff;
+        	value <<= 8;
+        }
+    	value += b[b.length - 1] & 0xff;
+    	return value;
+    }
 }

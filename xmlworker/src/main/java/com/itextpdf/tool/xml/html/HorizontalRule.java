@@ -52,8 +52,6 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.css.apply.LineSeparatorCssApplier;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
@@ -72,10 +70,10 @@ public class HorizontalRule extends AbstractTagProcessor {
 		try {
 			List<Element> list = new ArrayList<Element>();
 			HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-			LineSeparator lineSeparator = new LineSeparatorCssApplier(htmlPipelineContext).apply(new LineSeparator(), tag);
+			LineSeparator lineSeparator = (LineSeparator) CssAppliers.getInstance().apply(new LineSeparator(), tag, htmlPipelineContext);
 			Paragraph p = new Paragraph();
 			p.add(lineSeparator);
-			list.add(new ParagraphCssApplier(htmlPipelineContext).apply(p, tag));
+			list.add(CssAppliers.getInstance().apply(p, tag, htmlPipelineContext));
 			return list;
 		} catch (NoCustomContextException e) {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);

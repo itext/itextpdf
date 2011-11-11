@@ -56,7 +56,6 @@ import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
-import com.itextpdf.tool.xml.css.CssApplier;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 
@@ -64,7 +63,7 @@ import com.itextpdf.tool.xml.css.FontSizeTranslator;
  * Applies CSS Rules to Chunks
  *
  */
-public class ChunkCssApplier implements CssApplier<Chunk> {
+public class ChunkCssApplier {
 	/**
 	 * FF4 and IE8 provide normal text and bold text. All other values are translated to one of these 2 styles <br />
 	 * 100 - 500 and "lighter" = normal.<br />
@@ -138,7 +137,7 @@ public class ChunkCssApplier implements CssApplier<Chunk> {
 			}
 		}
 		String xfaVertScale = rules.get(CSS.Property.XFA_FONT_VERTICAL_SCALE);
-		if (null != xfaVertScale) { // only % allowed; need a catch block NumberFormatExc?
+		if (null != xfaVertScale) {
 			if(xfaVertScale.contains("%")) {
 				size *= Float.parseFloat(xfaVertScale.replace("%", ""))/100;
 				c.setHorizontalScaling(100/Float.parseFloat(xfaVertScale.replace("%", "")));

@@ -38,12 +38,14 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
  * @author redlab_b
@@ -64,18 +66,24 @@ public class ParaGraph extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitize(content);
 		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
+			HtmlPipelineContext myctx;
+			try {
+				myctx = getHtmlPipelineContext(ctx);
+			} catch (NoCustomContextException e) {
+				throw new RuntimeWorkerException(e);
+			}
 			if ((null != tag.getCSS().get(CSS.Property.TAB_INTERVAL))) {
 				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
 				if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 					tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
 				}
-				l.add(new ChunkCssApplier().apply(tabbedChunk, tag));
+				l.add(CssAppliers.getInstance().apply(tabbedChunk, tag,myctx));
 			} else if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
 				tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
-				l.add(new ChunkCssApplier().apply(tabbedChunk, tag));
+				l.add(CssAppliers.getInstance().apply(tabbedChunk, tag, myctx));
 			} else {
-				l.add(new ChunkCssApplier().apply(new Chunk(sanitized), tag));
+				l.add(CssAppliers.getInstance().apply(new Chunk(sanitized), tag, myctx));
 			}
 		}
 		return l;
@@ -121,7 +129,8 @@ public class ParaGraph extends AbstractTagProcessor {
 
 	/**
 	 * Applies the tab interval of the p tag on its {@link TabbedChunk} elements. <br />
-	 * The style "xfa-tab-count" of the {@link TabbedChunk} is multiplied with the tab interval of the p tag. This width is then added to a new {@link TabbedChunk}.
+	 * The style "xfa-tab-count" of the {@link TabbedChunk} is multiplied with the tab interval of the p tag. This width is then added to a new {@link TabbedChunk}.</br>
+	 * Elements other than TabbedChunks are added directly to the given Paragraph p.
 	 *
 	 * @param currentContent containing the elements inside the p tag.
 	 * @param p paragraph to which the tabbed chunks will be added.
@@ -135,6 +144,8 @@ public class ParaGraph extends AbstractTagProcessor {
 				TabbedChunk tab = new TabbedChunk(new VerticalPositionMark(), width, false);
 				p.add(new Chunk(tab));
 				p.add(new Chunk((TabbedChunk) e));
+			} else {
+				p.add(e);
 			}
 		}
 	}

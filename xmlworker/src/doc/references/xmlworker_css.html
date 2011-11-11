@@ -1,0 +1,13 @@
+<p class="title">XMLWorker Specific CSS</p>
+<ul>
+	<li><code>page-break-before</code> and <code>page-break-after</code> are supported but only with value <code>always</code>.
+		When using <code>page-break-before</code> and <code>page-break-after</code> inside tags that are one element in PDF
+		(like lists or tables) the outcome of adding a new page is unpredictable.</li>
+	<li>Parsed HTML tables can be spread over several pages. To implement repeating headers and/or footers, set 
+		<ul>
+			<li><code>repeat-header:yes</code></li>
+			<li><code>repeat-footer:yes</code></li>
+		</ul>
+		on the tag <code>table</code> as css style.
+	</li>
+</ul>

@@ -35,9 +35,10 @@ import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 
 
 /**
@@ -53,7 +54,11 @@ public class NonSanitizedTag extends AbstractTagProcessor {
 	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
 		List<Element> l = new ArrayList<Element>(1);
 		if (null != content && content.length() > 0) {
-			l.add(new ChunkCssApplier().apply(new Chunk(content), tag));
+			try {
+				l.add(CssAppliers.getInstance().apply(new Chunk(content), tag, getHtmlPipelineContext(ctx)));
+			} catch (NoCustomContextException e) {
+				throw new RuntimeWorkerException(e);
+			}
 		}
 		return l;
 	}

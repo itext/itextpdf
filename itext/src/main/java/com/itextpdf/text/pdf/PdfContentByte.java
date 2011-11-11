@@ -3119,6 +3119,7 @@ public class PdfContentByte {
     public void beginMarkedContentSequence(final PdfName tag, final PdfDictionary property, final boolean inline) {
         if (property == null) {
             content.append(tag.getBytes()).append(" BMC").append_i(separator);
+            ++mcDepth;
             return;
         }
         content.append(tag.getBytes()).append(' ');

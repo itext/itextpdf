@@ -1,9 +1,7 @@
 /*
- * $Id$
- *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
- * Authors: Balder Van Camp, Emiel Ackermann, et al.
+ * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
@@ -41,25 +39,56 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.tool.xml.css;
 
-import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.Tag;
+package com.itextpdf.text.pdf;
+
+import com.itextpdf.text.Rectangle;
+import java.io.InputStream;
+import java.security.MessageDigest;
+import java.util.HashMap;
 
 /**
- * Applies CSS to an Element.
- *
- * @author redlab_b
- * @param <T> the {@link Element} this CSSApplier must apply css on;
- *
+ * PAdES-LTV Timestamp
+ * @author Pulo Soares
  */
-public interface CssApplier<T extends Element> {
-	/**
-	 * Apply CSS from a given tag to a given element.
-	 *
-	 * @param element the element
-	 * @param t the tag the CSS has to be taken from
-	 * @return the given element
-	 */
-	public T apply(T element, Tag t);
+public class LtvTimestamp {
+    /**
+     * Signs a document with a PAdES-LTV Timestamp. The document is closed at the end.
+     * @param sap the signature appearance
+     * @param tsa the timestamp generator
+     * @param signatureName the signature name or null to have a name generated
+     * automatically
+     * @throws Exception
+     */
+    public static void timestamp(PdfSignatureAppearance sap, TSAClient tsa, String signatureName) throws Exception {
+        int contentEstimated = tsa.getTokenSizeEstimate();
+        sap.setVisibleSignature(new Rectangle(0,0,0,0), 1, signatureName);
+
+        PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, PdfName.ETSI_RFC3161);
+        dic.put(PdfName.TYPE, PdfName.DOCTIMESTAMP);
+        sap.setCryptoDictionary(dic);
+
+        HashMap exc = new HashMap();
+        exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
+        sap.preClose(exc);
+        InputStream data = sap.getRangeStream();
+        MessageDigest messageDigest = MessageDigest.getInstance(tsa.getDigestAlgorithm());
+        byte[] buf = new byte[4096];
+        int n;
+        while ((n = data.read(buf)) > 0) {
+            messageDigest.update(buf, 0, n);
+        }
+        byte[] tsImprint = messageDigest.digest();
+        byte[] tsToken = tsa.getTimeStampToken(tsImprint);
+
+        if (contentEstimated + 2 < tsToken.length)
+            throw new Exception("Not enough space");
+
+        byte[] paddedSig = new byte[contentEstimated];
+        System.arraycopy(tsToken, 0, paddedSig, 0, tsToken.length);
+
+        PdfDictionary dic2 = new PdfDictionary();
+        dic2.put(PdfName.CONTENTS, new PdfString(paddedSig).setHexWriting(true));
+        sap.close(dic2);
+    }
 }

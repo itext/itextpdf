@@ -58,6 +58,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.xml.XMLUtil;
 import com.itextpdf.text.xml.XmlDomWriter;
 
 /**

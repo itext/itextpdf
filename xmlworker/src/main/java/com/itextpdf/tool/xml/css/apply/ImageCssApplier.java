@@ -46,13 +46,12 @@ package com.itextpdf.tool.xml.css.apply;
 import com.itextpdf.text.Image;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
-import com.itextpdf.tool.xml.css.CssApplier;
 
 /**
  * @author redlab_b
  *
  */
-public class ImageCssApplier implements CssApplier<Image> {
+public class ImageCssApplier {
 
 	/* (non-Javadoc)
 	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
