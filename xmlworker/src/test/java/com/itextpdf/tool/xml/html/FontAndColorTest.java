@@ -42,16 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.tool.xml.html;
-import static org.junit.Assert.assertEquals;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -64,45 +54,56 @@ import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 
 /**
  * @author Balder
- *
  */
 public class FontAndColorTest {
 
-	private List<Element> elementList;
+    private List<Element> elementList;
 
-	@Before
-	public void setup() throws IOException {
-		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
-		BufferedInputStream bis = new BufferedInputStream(FontAndColorTest.class.getResourceAsStream("/snippets/font_color_snippet.html"));
-		XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
-		elementList = new ArrayList<Element>();
-		helper.parseXHtml(new ElementHandler() {
+    @Before
+    public void setup() throws IOException {
+        LoggerFactory.getInstance().setLogger(new SysoLogger(3));
+        BufferedInputStream bis = new BufferedInputStream(FontAndColorTest.class.getResourceAsStream("/snippets/font_color_snippet.html"));
+        XMLWorkerHelper helper = XMLWorkerHelper.getInstance();
+        elementList = new ArrayList<Element>();
+        helper.parseXHtml(new ElementHandler() {
 
-			public void add(final Writable w) {
-				elementList.addAll(((WritableElement) w).elements());
+                public void add(final Writable w) {
+                    elementList.addAll(((WritableElement) w).elements());
+                }
+            }, new InputStreamReader(bis));
+    }
 
-			}
-        }, new InputStreamReader(bis));
-	}
-	@Test
-	public void resolveFontSize() throws IOException {
-		Tag t = new Tag("t");
-		Chunk c = new Chunk("default text with no styles attached.");
-		c = new ChunkCssApplier().apply(c, t);
-		assertEquals(12, c.getFont().getSize(), 0);
-		t.getCSS().put("font-size", "18pt");
-		c = new ChunkCssApplier().apply(c, t);
-		assertEquals(18, c.getFont().getSize(), 0);
-	}
-	@Test
-	public void resolveColor() throws IOException {
-		assertEquals(BaseColor.BLACK, elementList.get(0).getChunks().get(0).getFont().getColor());
-		assertEquals(255, elementList.get(2).getChunks().get(0).getFont().getColor().getBlue());
-		assertEquals(255, elementList.get(2).getChunks().get(1).getFont().getColor().getGreen());
-		assertEquals(255, elementList.get(2).getChunks().get(5).getFont().getColor().getRed());
-	}
+    @Test
+    public void resolveFontSize() throws IOException {
+        Tag t = new Tag("t");
+        t.getCSS().put("font-size", "12pt");
+        Chunk c = new Chunk("default text with no styles attached.");
+        c = new ChunkCssApplier().apply(c, t);
+        assertEquals(12, c.getFont().getSize(), 0);
+        t.getCSS().put("font-size", "18pt");
+        c = new ChunkCssApplier().apply(c, t);
+        assertEquals(18, c.getFont().getSize(), 0);
+    }
+
+    @Test
+    public void resolveColor() throws IOException {
+        assertEquals(BaseColor.BLACK, elementList.get(0).getChunks().get(0).getFont().getColor());
+        assertEquals(255, elementList.get(2).getChunks().get(0).getFont().getColor().getBlue());
+        assertEquals(255, elementList.get(2).getChunks().get(1).getFont().getColor().getGreen());
+        assertEquals(255, elementList.get(2).getChunks().get(5).getFont().getColor().getRed());
+    }
 }

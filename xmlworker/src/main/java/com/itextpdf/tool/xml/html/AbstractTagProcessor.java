@@ -35,6 +35,7 @@ import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
@@ -111,7 +112,9 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 */
 	public final List<Element> startElement(final WorkerContext ctx, final Tag tag) {
 		float fontSize = fontsizeTrans.translateFontSize(tag);
-		tag.getCSS().put(CSS.Property.FONT_SIZE, fontSize + "pt");
+        if (fontSize != Font.UNDEFINED) {
+		    tag.getCSS().put(CSS.Property.FONT_SIZE, fontSize + "pt");
+        }
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_BEFORE);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
 			List<Element> list = new ArrayList<Element>(2);

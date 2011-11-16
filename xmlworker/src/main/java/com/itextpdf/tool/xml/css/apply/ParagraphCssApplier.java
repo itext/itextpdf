@@ -43,9 +43,7 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.Tag;
@@ -54,100 +52,109 @@ import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Applies CSS on a {@link Paragraph}
- * @author itextpdf.com
  *
+ * @author itextpdf.com
  */
-public class ParagraphCssApplier  {
-	private final CssUtils utils = CssUtils.getInstance();
+public class ParagraphCssApplier {
+    private final CssUtils utils = CssUtils.getInstance();
 
 
-	/**
-	 * Construct a ParagraphCssApplier with the given {@link HtmlPipelineContext}
-	 * @param htmlPipelineContext the context
-	 */
-	public ParagraphCssApplier() {
-	}
+    /**
+     * Construct a ParagraphCssApplier with the given {@link HtmlPipelineContext}
+     *
+     * @param htmlPipelineContext the context
+     */
+    public ParagraphCssApplier() {
+    }
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
-	 */
-	public Paragraph apply(final Paragraph p, final Tag t, final MarginMemory configuration) {
-		MaxLeadingAndSize m = new MaxLeadingAndSize();
-		if (configuration.getRootTags().contains(t.getName())) {
-			m.setLeading(t);
-		} else {
-			m.setVariablesBasedOnChildren(t);
-		}
-		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
-		float lmb = 0;
-		boolean hasLMB = false;
-		Map<String, String> css = t.getCSS();
+    /* (non-Javadoc)
+      * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
+      */
+    public Paragraph apply(final Paragraph p, final Tag t, final MarginMemory configuration) {
+        MaxLeadingAndSize m = new MaxLeadingAndSize();
+        if (configuration.getRootTags().contains(t.getName())) {
+            m.setLeading(t);
+        } else {
+            m.setVariablesBasedOnChildren(t);
+        }
+        float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
+        float lmb = 0;
+        boolean hasLMB = false;
+        Map<String, String> css = t.getCSS();
         for (Entry<String, String> entry : css.entrySet()) {
-			String key = entry.getKey();
-			String value = entry.getValue();
-			if(CSS.Property.MARGIN_TOP.equalsIgnoreCase(key)) {
-				p.setSpacingBefore(p.getSpacingBefore() + utils.calculateMarginTop(value, fontSize, configuration));
-			} else if(CSS.Property.PADDING_TOP.equalsIgnoreCase(key)) {
-				p.setSpacingBefore(p.getSpacingBefore() + utils.parseValueToPt(value, fontSize));
-			} else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
-				float after = utils.parseValueToPt(value, fontSize);
-				p.setSpacingAfter(p.getSpacingAfter() + after);
-				lmb = after;
-				hasLMB = true;
-			} else if (CSS.Property.PADDING_BOTTOM.equalsIgnoreCase(key)) {
-				p.setSpacingAfter(p.getSpacingAfter() + utils.parseValueToPt(value, fontSize));
-			} else if(CSS.Property.MARGIN_LEFT.equalsIgnoreCase(key)) {
-				p.setIndentationLeft(p.getIndentationLeft() + utils.parseValueToPt(value, fontSize));
-			} else if(CSS.Property.MARGIN_RIGHT.equalsIgnoreCase(key)) {
-				p.setIndentationRight(p.getIndentationRight() + utils.parseValueToPt(value, fontSize));
-			} else if (CSS.Property.PADDING_LEFT.equalsIgnoreCase(key)) {
-				p.setIndentationLeft(p.getIndentationLeft() + utils.parseValueToPt(value, fontSize));
-			} else if (CSS.Property.PADDING_RIGHT.equalsIgnoreCase(key)) {
-				p.setIndentationRight(p.getIndentationRight() + utils.parseValueToPt(value, fontSize));
-			} else if(CSS.Property.TEXT_ALIGN.equalsIgnoreCase(key)) {
-				if(CSS.Value.RIGHT.equalsIgnoreCase(value)){
-					p.setAlignment(Element.ALIGN_RIGHT);
-				} else if(CSS.Value.CENTER.equalsIgnoreCase(value)){
-					p.setAlignment(Element.ALIGN_CENTER);
-				} else if(CSS.Value.LEFT.equalsIgnoreCase(value)){
-					p.setAlignment(Element.ALIGN_LEFT);
-				} else if (CSS.Value.JUSTIFY.equalsIgnoreCase(value)) {
-					p.setAlignment(Element.ALIGN_JUSTIFIED);
-				}
-			} else if (CSS.Property.TEXT_INDENT.equalsIgnoreCase(key)) {
-				p.setFirstLineIndent(utils.parseValueToPt(value, fontSize));
-			}
-		}
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (CSS.Property.MARGIN_TOP.equalsIgnoreCase(key)) {
+                p.setSpacingBefore(p.getSpacingBefore() + utils.calculateMarginTop(value, fontSize, configuration));
+            } else if (CSS.Property.PADDING_TOP.equalsIgnoreCase(key)) {
+                p.setSpacingBefore(p.getSpacingBefore() + utils.parseValueToPt(value, fontSize));
+            } else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
+                float after = utils.parseValueToPt(value, fontSize);
+                p.setSpacingAfter(p.getSpacingAfter() + after);
+                lmb = after;
+                hasLMB = true;
+            } else if (CSS.Property.PADDING_BOTTOM.equalsIgnoreCase(key)) {
+                p.setSpacingAfter(p.getSpacingAfter() + utils.parseValueToPt(value, fontSize));
+            } else if (CSS.Property.MARGIN_LEFT.equalsIgnoreCase(key)) {
+                p.setIndentationLeft(p.getIndentationLeft() + utils.parseValueToPt(value, fontSize));
+            } else if (CSS.Property.MARGIN_RIGHT.equalsIgnoreCase(key)) {
+                p.setIndentationRight(p.getIndentationRight() + utils.parseValueToPt(value, fontSize));
+            } else if (CSS.Property.PADDING_LEFT.equalsIgnoreCase(key)) {
+                p.setIndentationLeft(p.getIndentationLeft() + utils.parseValueToPt(value, fontSize));
+            } else if (CSS.Property.PADDING_RIGHT.equalsIgnoreCase(key)) {
+                p.setIndentationRight(p.getIndentationRight() + utils.parseValueToPt(value, fontSize));
+            } else if (CSS.Property.TEXT_ALIGN.equalsIgnoreCase(key)) {
+                if (CSS.Value.RIGHT.equalsIgnoreCase(value)) {
+                    p.setAlignment(Element.ALIGN_RIGHT);
+                } else if (CSS.Value.CENTER.equalsIgnoreCase(value)) {
+                    p.setAlignment(Element.ALIGN_CENTER);
+                } else if (CSS.Value.LEFT.equalsIgnoreCase(value)) {
+                    p.setAlignment(Element.ALIGN_LEFT);
+                } else if (CSS.Value.JUSTIFY.equalsIgnoreCase(value)) {
+                    p.setAlignment(Element.ALIGN_JUSTIFIED);
+                }
+            } else if (CSS.Property.TEXT_INDENT.equalsIgnoreCase(key)) {
+                p.setFirstLineIndent(utils.parseValueToPt(value, fontSize));
+            } else if (CSS.Property.LINE_HEIGHT.equalsIgnoreCase(key)) {
+                p.setLeading(utils.parseValueToPt(value, fontSize));
+            }
+        }
         // setDefaultMargin to largestFont if no margin-bottom is set and p-tag is child of the root tag.
-		if (null != t.getParent()) {
-			String parent = t.getParent().getName();
-			if(css.get(CSS.Property.MARGIN_TOP) == null && configuration.getRootTags().contains(parent)) {
-				p.setSpacingBefore(p.getSpacingBefore()+utils.calculateMarginTop(fontSize+"pt", 0, configuration));
-			}
-			if(css.get(CSS.Property.MARGIN_BOTTOM) == null && configuration.getRootTags().contains(parent)) {
-				p.setSpacingAfter(p.getSpacingAfter()+fontSize);
-				css.put(CSS.Property.MARGIN_BOTTOM, fontSize+"pt");
-				lmb = fontSize;
-				hasLMB = true;
-			}
-			p.setLeading(m.getLargestLeading());
-			if(p.getAlignment() == -1) {
-				p.setAlignment(Element.ALIGN_LEFT);
-			}
-		}
+        if (null != t.getParent()) {
+            String parent = t.getParent().getName();
+            if (css.get(CSS.Property.MARGIN_TOP) == null && configuration.getRootTags().contains(parent)) {
+                p.setSpacingBefore(p.getSpacingBefore() + utils.calculateMarginTop(fontSize + "pt", 0, configuration));
+            }
+            if (css.get(CSS.Property.MARGIN_BOTTOM) == null && configuration.getRootTags().contains(parent)) {
+                p.setSpacingAfter(p.getSpacingAfter() + fontSize);
+                css.put(CSS.Property.MARGIN_BOTTOM, fontSize + "pt");
+                lmb = fontSize;
+                hasLMB = true;
+            }
+            p.setLeading(m.getLargestLeading());
+            if (p.getAlignment() == -1) {
+                p.setAlignment(Element.ALIGN_LEFT);
+            }
+        }
 
-		if (hasLMB) {
-			configuration.setLastMarginBottom(lmb);
-		}
-		// TODO reactive for positioning and implement more
+        if (hasLMB) {
+            configuration.setLastMarginBottom(lmb);
+        }
+        //TODO this only work around for applaying of font properties to paragraph
+        Chunk dummy = new ChunkCssApplier().apply(new Chunk("dummy"), t);
+        p.setFont(dummy.getFont());
+        // TODO reactive for positioning and implement more
 //		if(null != configuration.getWriter() && null != css.get("position")) {
 //			positionNoNewLineParagraph(p, css);
 //			p = null;
 //		}
-		return p;
-	}
+        return p;
+    }
 
 //	private void positionParagraph(final Paragraph p, final Map<String, String> css) {
 //		PdfContentByte canvas = configuration.getWriter().getDirectContent();

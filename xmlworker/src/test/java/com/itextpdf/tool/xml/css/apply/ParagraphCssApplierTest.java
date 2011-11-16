@@ -43,13 +43,6 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
@@ -59,170 +52,195 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class ParagraphCssApplierTest {
-	/**
-	 *
-	 */
-	private static final FontSizeTranslator fst = FontSizeTranslator.getInstance();
-	private Tag parent;
-	private Tag first;
-	private Tag second;
-	private Tag child;
-	private Paragraph firstPara;
-	private Paragraph secondPara;
-	private final ParagraphCssApplier applier = new ParagraphCssApplier();
-	private HtmlPipelineContext configuration;
+    /**
+     *
+     */
+    private static final FontSizeTranslator fst = FontSizeTranslator.getInstance();
+    private Tag parent;
+    private Tag first;
+    private Tag second;
+    private Tag child;
+    private Paragraph firstPara;
+    private Paragraph secondPara;
+    private final ParagraphCssApplier applier = new ParagraphCssApplier();
+    private HtmlPipelineContext configuration;
 
-	@Before
-	public void setup() {
-		LoggerFactory.getInstance().setLogger(new SysoLogger(3));
-		parent = new Tag("body");
-		first = new Tag(null);
-		second = new Tag(null);
-		child =  new Tag(null);
+    @Before
+    public void setup() {
+        LoggerFactory.getInstance().setLogger(new SysoLogger(3));
+        parent = new Tag("body");
+        parent.getCSS().put(CSS.Property.FONT_FAMILY, "Helvetica");
+        parent.getCSS().put(CSS.Property.FONT_SIZE, "12pt");
+        first = new Tag(null);
+        first.getCSS().put(CSS.Property.FONT_FAMILY, "Helvetica");
+        first.getCSS().put(CSS.Property.FONT_SIZE, "12pt");
+        second = new Tag(null);
+        second.getCSS().put(CSS.Property.FONT_FAMILY, "Helvetica");
+        second.getCSS().put(CSS.Property.FONT_SIZE, "12pt");
+        child = new Tag(null);
+        child.getCSS().put(CSS.Property.FONT_FAMILY, "Helvetica");
+        child.getCSS().put(CSS.Property.FONT_SIZE, "12pt");
 
-		parent.addChild(first);
-		first.setParent(parent);
-		second.setParent(parent);
-		first.addChild(child);
-		second.addChild(child);
-		parent.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(parent)+"pt");
-		first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first)+"pt");
-		second.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(second)+"pt");
-		child.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(child)+"pt");
-		firstPara = new Paragraph(new Chunk("default text for chunk creation"));
-		secondPara = new Paragraph(new Chunk("default text for chunk creation"));
-		configuration = new HtmlPipelineContext();
-		applier.apply(firstPara, first,configuration);
-	}
+        parent.addChild(first);
+        first.setParent(parent);
+        second.setParent(parent);
+        first.addChild(child);
+        second.addChild(child);
+        parent.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(parent) + "pt");
+        first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first) + "pt");
+        second.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(second) + "pt");
+        child.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(child) + "pt");
+        firstPara = new Paragraph(new Chunk("default text for chunk creation"));
+        secondPara = new Paragraph(new Chunk("default text for chunk creation"));
+        configuration = new HtmlPipelineContext();
+        applier.apply(firstPara, first, configuration);
+    }
 
-	@Test
-	public void resolveAlignment() throws IOException {
-		assertEquals(Element.ALIGN_LEFT, firstPara.getAlignment(), 0);
+    @Test
+    public void resolveAlignment() throws IOException {
+        assertEquals(Element.ALIGN_LEFT, firstPara.getAlignment(), 0);
 
-		first.getCSS().put("text-align", "right");
-		applier.apply(firstPara, first, configuration);
-		assertEquals(Element.ALIGN_RIGHT, firstPara.getAlignment(), 0);
+        first.getCSS().put("text-align", "right");
+        applier.apply(firstPara, first, configuration);
+        assertEquals(Element.ALIGN_RIGHT, firstPara.getAlignment(), 0);
 
-		first.getCSS().put("text-align", "left");
-		applier.apply(firstPara, first, configuration);
-		assertEquals(Element.ALIGN_LEFT, firstPara.getAlignment(), 0);
+        first.getCSS().put("text-align", "left");
+        applier.apply(firstPara, first, configuration);
+        assertEquals(Element.ALIGN_LEFT, firstPara.getAlignment(), 0);
 
-		first.getCSS().put("text-align", "center");
-		applier.apply(firstPara, first,configuration);
-		assertEquals(Element.ALIGN_CENTER, firstPara.getAlignment(), 0);
-	}
-	@Test
-	public void resolveFirstLineIndent() throws IOException {
-		assertEquals(0f, firstPara.getFirstLineIndent(), 0);
+        first.getCSS().put("text-align", "center");
+        applier.apply(firstPara, first, configuration);
+        assertEquals(Element.ALIGN_CENTER, firstPara.getAlignment(), 0);
+    }
 
-		first.getCSS().put("text-indent", "16pt");
-		applier.apply(firstPara, first,configuration);
-		assertEquals(16, firstPara.getFirstLineIndent(), 0);
-	}
-	@Test
-	public void resolveIndentationLeft() throws IOException {
-		assertEquals(0f, firstPara.getIndentationLeft(), 0);
+    @Test
+    public void resolveFirstLineIndent() throws IOException {
+        assertEquals(0f, firstPara.getFirstLineIndent(), 0);
 
-		first.getCSS().put("margin-left", "10pt");
-		applier.apply(firstPara, first,configuration);
-		assertEquals(10, firstPara.getIndentationLeft(), 0);
-	}
-	@Test
-	public void resolveIndentationRight() throws IOException {
-		assertEquals(0f, firstPara.getIndentationRight(), 0);
+        first.getCSS().put("text-indent", "16pt");
+        applier.apply(firstPara, first, configuration);
+        assertEquals(16, firstPara.getFirstLineIndent(), 0);
+    }
 
-		first.getCSS().put("margin-right", "10pt");
-		applier.apply(firstPara, first,configuration);
-		assertEquals(10, firstPara.getIndentationRight(), 0);
-	}
-	@Test
-	public void resolveLeading() throws IOException {
-		assertEquals(18f, firstPara.getLeading(), 0);
+    @Test
+    public void resolveIndentationLeft() throws IOException {
+        assertEquals(0f, firstPara.getIndentationLeft(), 0);
 
-		first.getCSS().put("line-height", "25pt");
-		applier.apply(firstPara, first,configuration);
-		assertEquals(25, firstPara.getLeading(), 0);
+        first.getCSS().put("margin-left", "10pt");
+        applier.apply(firstPara, first, configuration);
+        assertEquals(10, firstPara.getIndentationLeft(), 0);
+    }
 
-		child.getCSS().put("line-height", "19pt");
-		applier.apply(firstPara, first,configuration);
-		assertEquals(25, firstPara.getLeading(), 0);
+    @Test
+    public void resolveIndentationRight() throws IOException {
+        assertEquals(0f, firstPara.getIndentationRight(), 0);
 
-		child.getCSS().put("line-height", "30pt");
-		applier.apply(firstPara, first,configuration);
-		assertEquals(30, firstPara.getLeading(), 0);
-	}
-	@Test
-	public void resolveSpacingAfter() throws IOException {
-		assertEquals(12, firstPara.getSpacingBefore(), 0);
-		second.getCSS().put("margin-bottom", "25pt");
+        first.getCSS().put("margin-right", "10pt");
+        applier.apply(firstPara, first, configuration);
+        assertEquals(10, firstPara.getIndentationRight(), 0);
+    }
 
-		applier.apply(secondPara, second,configuration);
-		assertEquals(25, secondPara.getSpacingAfter(), 0);
-	}
-	@Test
-	public void resolveSpacingBeforeIs10() throws IOException {
-		parent.addChild(second);
-		second.getCSS().put("margin-top", "22pt");
+    @Test
+    public void resolveLeading() throws IOException {
+        assertEquals(18f, firstPara.getLeading(), 0);
 
-		applier.apply(secondPara, second,configuration);
-		assertEquals(22-12, secondPara.getSpacingBefore(), 0);
-	}
-	@Test
-	public void resolveSpacingBeforeIs5() throws IOException {
-		parent.addChild(second);
-		first.getCSS().put("margin-bottom", "25pt");
-		second.getCSS().put("margin-top", "30pt");
+        first.getCSS().put("line-height", "25pt");
+        applier.apply(firstPara, first, configuration);
+        assertEquals(25, firstPara.getLeading(), 0);
 
-		applier.apply(firstPara, first,configuration);
-		applier.apply(secondPara, second,configuration);
-		assertEquals(30-25, secondPara.getSpacingBefore(), 0);
-	}
-	@Test
-	public void resolveSpacingBeforeIs0() throws IOException {
-		parent.addChild(second);
-		first.getCSS().put("margin-bottom", "35pt");
-		second.getCSS().put("margin-top", "30pt");
+        child.getCSS().put("line-height", "19pt");
+        applier.apply(firstPara, first, configuration);
+        assertEquals(25, firstPara.getLeading(), 0);
 
-		applier.apply(firstPara, first,configuration);
-		applier.apply(secondPara, second,configuration);
-		//30-35 is reverted to 0.
-		assertEquals(0, secondPara.getSpacingBefore(), 0);
-	}
-	@Test
-	public void resolveSpacingBeforeIs6() throws IOException {
-		parent.addChild(second);
-		first.getCSS().put("margin-bottom", "2em");
-		second.getCSS().put("margin-top", "30pt");
+        child.getCSS().put("line-height", "30pt");
+        applier.apply(firstPara, first, configuration);
+        assertEquals(30, firstPara.getLeading(), 0);
+    }
 
-		applier.apply(firstPara, first,configuration);
-		applier.apply(secondPara, second,configuration);
-		assertEquals(30-(2*12), secondPara.getSpacingBefore(), 0);
-	}
-	@Test
-	public void resolveSpacingBeforeIs24() throws IOException {
-		parent.addChild(second);
-		first.getCSS().put("margin-bottom", "2em");
-		first.getCSS().put(CSS.Property.FONT_SIZE, "18");
-		first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first)+"pt");
-		second.getCSS().put("margin-top", "60pt");
+    @Test
+    public void resolveSpacingAfter() throws IOException {
+        assertEquals(12, firstPara.getSpacingBefore(), 0);
+        second.getCSS().put("margin-bottom", "25pt");
 
-		applier.apply(firstPara, first,configuration);
-		applier.apply(secondPara, second,configuration);
-		// 60 - 2 * (18px = 13.5pt)
-		assertEquals(60-(2*13.5f), secondPara.getSpacingBefore(), 0);
-	}
-	@Test
-	public void resolveSpacingBeforeIs12() throws IOException {
-		parent.addChild(second);
-		first.getCSS().put("margin-bottom", "2em");
-		first.getCSS().put(CSS.Property.FONT_SIZE, "2em");
-		first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first)+"pt");
-		second.getCSS().put("margin-top", "60pt");
+        applier.apply(secondPara, second, configuration);
+        assertEquals(25, secondPara.getSpacingAfter(), 0);
+    }
 
-		applier.apply(firstPara, first,configuration);
-		applier.apply(secondPara, second,configuration);
-		assertEquals(60-(2*12*2), secondPara.getSpacingBefore(), 0);
-	}
+    @Test
+    public void resolveSpacingBeforeIs10() throws IOException {
+        parent.addChild(second);
+        second.getCSS().put("margin-top", "22pt");
+
+        applier.apply(secondPara, second, configuration);
+        assertEquals(22 - 12, secondPara.getSpacingBefore(), 0);
+    }
+
+    @Test
+    public void resolveSpacingBeforeIs5() throws IOException {
+        parent.addChild(second);
+        first.getCSS().put("margin-bottom", "25pt");
+        second.getCSS().put("margin-top", "30pt");
+
+        applier.apply(firstPara, first, configuration);
+        applier.apply(secondPara, second, configuration);
+        assertEquals(30 - 25, secondPara.getSpacingBefore(), 0);
+    }
+
+    @Test
+    public void resolveSpacingBeforeIs0() throws IOException {
+        parent.addChild(second);
+        first.getCSS().put("margin-bottom", "35pt");
+        second.getCSS().put("margin-top", "30pt");
+
+        applier.apply(firstPara, first, configuration);
+        applier.apply(secondPara, second, configuration);
+        //30-35 is reverted to 0.
+        assertEquals(0, secondPara.getSpacingBefore(), 0);
+    }
+
+    @Test
+    public void resolveSpacingBeforeIs6() throws IOException {
+        parent.addChild(second);
+        first.getCSS().put("margin-bottom", "2em");
+        second.getCSS().put("margin-top", "30pt");
+
+        applier.apply(firstPara, first, configuration);
+        applier.apply(secondPara, second, configuration);
+        assertEquals(30 - (2 * 12), secondPara.getSpacingBefore(), 0);
+    }
+
+    @Test
+    public void resolveSpacingBeforeIs24() throws IOException {
+        parent.addChild(second);
+        first.getCSS().put("margin-bottom", "2em");
+        first.getCSS().put(CSS.Property.FONT_SIZE, "18");
+        first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first) + "pt");
+        second.getCSS().put("margin-top", "60pt");
+
+        applier.apply(firstPara, first, configuration);
+        applier.apply(secondPara, second, configuration);
+        // 60 - 2 * (18px = 13.5pt)
+        assertEquals(60 - (2 * 13.5f), secondPara.getSpacingBefore(), 0);
+    }
+
+    @Test
+    public void resolveSpacingBeforeIs12() throws IOException {
+        parent.addChild(second);
+        first.getCSS().put("margin-bottom", "2em");
+        first.getCSS().put(CSS.Property.FONT_SIZE, "2em");
+        first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first) + "pt");
+        second.getCSS().put("margin-top", "60pt");
+
+        applier.apply(firstPara, first, configuration);
+        applier.apply(secondPara, second, configuration);
+        assertEquals(60 - (2 * 12 * 2), secondPara.getSpacingBefore(), 0);
+    }
 }
