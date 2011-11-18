@@ -76,12 +76,12 @@ public class ParagraphCssApplier {
       * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
       */
     public Paragraph apply(final Paragraph p, final Tag t, final MarginMemory configuration) {
-        MaxLeadingAndSize m = new MaxLeadingAndSize();
+        /*MaxLeadingAndSize m = new MaxLeadingAndSize();
         if (configuration.getRootTags().contains(t.getName())) {
             m.setLeading(t);
         } else {
             m.setVariablesBasedOnChildren(t);
-        }
+        }*/
         float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
         float lmb = 0;
         boolean hasLMB = false;
@@ -121,7 +121,13 @@ public class ParagraphCssApplier {
             } else if (CSS.Property.TEXT_INDENT.equalsIgnoreCase(key)) {
                 p.setFirstLineIndent(utils.parseValueToPt(value, fontSize));
             } else if (CSS.Property.LINE_HEIGHT.equalsIgnoreCase(key)) {
-                p.setLeading(utils.parseValueToPt(value, fontSize));
+                if(utils.isNumericValue(value)) {
+                    p.setLeading(Float.parseFloat(value) * fontSize);
+                } else if (utils.isRelativeValue(value)) {
+                    p.setLeading(utils.parseRelativeValue(value, fontSize));
+                } else if (utils.isMetricValue(value)){
+                    p.setLeading(utils.parsePxInCmMmPcToPt(value));
+                }
             }
         }
         // setDefaultMargin to largestFont if no margin-bottom is set and p-tag is child of the root tag.
@@ -136,7 +142,7 @@ public class ParagraphCssApplier {
                 lmb = fontSize;
                 hasLMB = true;
             }
-            p.setLeading(m.getLargestLeading());
+            //p.setLeading(m.getLargestLeading());  We need possibility to detect that line-height undefined;
             if (p.getAlignment() == -1) {
                 p.setAlignment(Element.ALIGN_LEFT);
             }

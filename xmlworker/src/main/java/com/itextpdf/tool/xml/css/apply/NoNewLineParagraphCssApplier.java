@@ -67,12 +67,12 @@ public class NoNewLineParagraphCssApplier {
 	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
 	 */
 	public NoNewLineParagraph apply(final NoNewLineParagraph p, final Tag t, final MarginMemory configuration) {
-		MaxLeadingAndSize m = new MaxLeadingAndSize();
+		/*MaxLeadingAndSize m = new MaxLeadingAndSize();
 		if (configuration.getRootTags().contains(t.getName())) {
 			m.setLeading(t);
 		} else {
 			m.setVariablesBasedOnChildren(t);
-		}
+		}*/
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		float lmb = 0;
 		boolean hasLMB = false;
@@ -125,7 +125,7 @@ public class NoNewLineParagraphCssApplier {
 				lmb = fontSize;
 				hasLMB = true;
 			}
-			p.setLeading(m.getLargestLeading());
+			//p.setLeading(m.getLargestLeading());
 			if(p.getAlignment() == -1) {
 				p.setAlignment(Element.ALIGN_LEFT);
 			}

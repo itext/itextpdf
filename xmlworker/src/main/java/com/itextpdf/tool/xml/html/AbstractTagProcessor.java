@@ -205,7 +205,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 			List<Element> list = new ArrayList<Element>();
 			if (currentContent.size() > 0) {
 				if (addNewLines) {
-					Paragraph p = new Paragraph();
+					Paragraph p = new Paragraph(Float.NaN);
 					for (Element e : currentContent) {
 						p.add(e);
 					}
@@ -214,7 +214,7 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 					}
 					list.add(p);
 				} else {
-					NoNewLineParagraph p = new NoNewLineParagraph();
+					NoNewLineParagraph p = new NoNewLineParagraph(Float.NaN);
 					for (Element e : currentContent) {
 						p.add(e);
 					}
