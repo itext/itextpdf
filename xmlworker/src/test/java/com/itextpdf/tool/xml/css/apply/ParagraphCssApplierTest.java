@@ -97,6 +97,7 @@ public class ParagraphCssApplierTest {
         second.addChild(child);
         parent.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(parent) + "pt");
         first.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(first) + "pt");
+        first.getCSS().put(CSS.Property.TEXT_ALIGN, CSS.Value.LEFT);
         second.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(second) + "pt");
         child.getCSS().put(CSS.Property.FONT_SIZE, fst.translateFontSize(child) + "pt");
         firstPara = new Paragraph(new Chunk("default text for chunk creation"));
@@ -169,7 +170,7 @@ public class ParagraphCssApplierTest {
 
     @Test
     public void resolveSpacingAfter() throws IOException {
-        assertEquals(12, firstPara.getSpacingBefore(), 0);
+        assertEquals(0, firstPara.getSpacingBefore(), 0);
         second.getCSS().put("margin-bottom", "25pt");
 
         applier.apply(secondPara, second, configuration);
@@ -179,8 +180,10 @@ public class ParagraphCssApplierTest {
     @Test
     public void resolveSpacingBeforeIs10() throws IOException {
         parent.addChild(second);
+        first.getCSS().put("margin-bottom", "12pt");
         second.getCSS().put("margin-top", "22pt");
 
+        applier.apply(firstPara, first, configuration);
         applier.apply(secondPara, second, configuration);
         assertEquals(22 - 12, secondPara.getSpacingBefore(), 0);
     }
