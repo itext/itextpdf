@@ -703,6 +703,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     /** A name */
     public static final PdfName FONTDESCRIPTOR = new PdfName("FontDescriptor");
     /** A name */
+    public static final PdfName FONTFAMILY = new PdfName("FontFamily");
+    /** A name */
     public static final PdfName FONTFILE = new PdfName("FontFile");
     /** A name */
     public static final PdfName FONTFILE2 = new PdfName("FontFile2");
