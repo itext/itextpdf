@@ -131,7 +131,7 @@ public class ParagraphCssApplier {
             }
         }
         // setDefaultMargin to largestFont if no margin-bottom is set and p-tag is child of the root tag.
-        if (null != t.getParent()) {
+        /*if (null != t.getParent()) {
             String parent = t.getParent().getName();
             if (css.get(CSS.Property.MARGIN_TOP) == null && configuration.getRootTags().contains(parent)) {
                 p.setSpacingBefore(p.getSpacingBefore() + utils.calculateMarginTop(fontSize + "pt", 0, configuration));
@@ -146,7 +146,7 @@ public class ParagraphCssApplier {
             if (p.getAlignment() == -1) {
                 p.setAlignment(Element.ALIGN_LEFT);
             }
-        }
+        }*/
 
         if (hasLMB) {
             configuration.setLastMarginBottom(lmb);
