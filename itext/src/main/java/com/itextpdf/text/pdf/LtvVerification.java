@@ -12,8 +12,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.DEREnumerated;
 import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 
 /**
  * Add verification according to PAdES-LTV (part 4)
@@ -107,9 +113,9 @@ public class LtvVerification {
             if (ocsp != null && level != Level.CRL && k < xc.length - 1) {
                 ocspEnc = ocsp.getEncoded((X509Certificate)xc[k], (X509Certificate)xc[k + 1], null);
                 if (ocspEnc != null)
-                    vd.ocsps.add(ocspEnc);
+                    vd.ocsps.add(buildOCSPResponse(ocspEnc));
             }
-            if (crl != null && (level != Level.OCSP || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
+            if (crl != null && (level == Level.CRL || level == Level.OCSP_CRL || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
                 byte[] cim = crl.getEncoded((X509Certificate)xc[k], null);
                 if (cim != null) {
                     boolean dup = false;
@@ -137,6 +143,19 @@ public class LtvVerification {
         return true;
     }
 
+    private static byte[] buildOCSPResponse(byte[] BasicOCSPResponse) throws IOException {
+        DEROctetString doctet = new DEROctetString(BasicOCSPResponse);
+        ASN1EncodableVector v2 = new ASN1EncodableVector();
+        v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
+        v2.add(doctet);
+        DEREnumerated den = new DEREnumerated(0);
+        ASN1EncodableVector v3 = new ASN1EncodableVector();
+        v3.add(den);
+        v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));            
+        DERSequence seq = new DERSequence(v3);
+        return seq.getEncoded();
+    }
+    
     private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {
         PdfDictionary dic = acroFields.getSignatureDictionary(signatureName);
         PdfString contents = dic.getAsString(PdfName.CONTENTS);
