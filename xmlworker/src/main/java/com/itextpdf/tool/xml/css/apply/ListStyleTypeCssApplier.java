@@ -120,27 +120,34 @@ public class ListStyleTypeCssApplier {
 			} else if (CSS.Value.LOWER_ROMAN.equals(styleType)) {
 				lst = new RomanList(true, 0);
 				synchronizeSymbol(fontSize, lst, color);
+				lst.setAutoindent(true);
 			} else if (CSS.Value.UPPER_ROMAN.equals(styleType)) {
 				lst = new RomanList(false, 0);
+				lst.setAutoindent(true);
 				synchronizeSymbol(fontSize, lst, color);
 			} else if (CSS.Value.LOWER_GREEK.equals(styleType)) {
 				lst = new GreekList(true, 0);
 				synchronizeSymbol(fontSize, lst, color);
+				lst.setAutoindent(true);
 			} else if (CSS.Value.UPPER_GREEK.equals(styleType)) {
 				lst = new GreekList(false, 0);
 				synchronizeSymbol(fontSize, lst, color);
+				lst.setAutoindent(true);
 			} else if (CSS.Value.LOWER_ALPHA.equals(styleType) || CSS.Value.LOWER_LATIN.equals(styleType)) {
 				lst = new List(List.ORDERED, List.ALPHABETICAL);
 				synchronizeSymbol(fontSize, lst, color);
 				lst.setLowercase(true);
+				lst.setAutoindent(true);
 			} else if (CSS.Value.UPPER_ALPHA.equals(styleType) || CSS.Value.UPPER_LATIN.equals(styleType)) {
 				lst = new List(List.ORDERED, List.ALPHABETICAL);
 				synchronizeSymbol(fontSize, lst, color);
 				lst.setLowercase(false);
+				lst.setAutoindent(true);
 			}
 		} else if (t.getName().equalsIgnoreCase(HTML.Tag.OL)) {
 			lst = new List(List.ORDERED);
 			synchronizeSymbol(fontSize, lst, color);
+			lst.setAutoindent(true);
 		} else if (t.getName().equalsIgnoreCase(HTML.Tag.UL)) {
 			lst = new List(List.UNORDERED);
 			shrinkSymbol(lst, fontSize, color);
@@ -179,9 +186,9 @@ public class ListStyleTypeCssApplier {
 				}
 				lst = new List(List.UNORDERED);
 			}
+			lst.setAutoindent(false);
 		}
 		lst.setAlignindent(false);
-		lst.setAutoindent(false);
 		float leftIndent = 0;
 		if (null != css.get(CSS.Property.LIST_STYLE_POSITION) && css.get(CSS.Property.LIST_STYLE_POSITION).equalsIgnoreCase(CSS.Value.INSIDE)) {
 			leftIndent += 30;
