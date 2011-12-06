@@ -116,11 +116,8 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
                     
                     if (dist < -chunk.charSpaceWidth)
                         sb.append(' ');
-                    // if the text in the chunk is empty, we skip the TextChunk
-                    else if (chunk.text.length() == 0)
-                    	continue;
                     // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
-                    else if (dist > chunk.charSpaceWidth/2.0f && chunk.text.charAt(0) != ' ' && lastChunk.text.charAt(lastChunk.text.length()-1) != ' ')
+                    else if (dist > chunk.charSpaceWidth/2.0f && chunk.text.length() != 0 && chunk.text.charAt(0) != ' ' && lastChunk.text.length() != 0 && lastChunk.text.charAt(lastChunk.text.length()-1) != ' ')
                         sb.append(' ');
 
                     sb.append(chunk.text);
