@@ -248,7 +248,7 @@ public class CFFFont {
 
     int getPosition() {
         try {
-            return buf.getFilePointer();
+            return (int)buf.getFilePointer();
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);

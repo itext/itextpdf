@@ -69,12 +69,12 @@ public class RandomAccessFileOrArray implements DataInput {
     boolean plainRandomAccess;
     String filename;
     byte arrayIn[];
-    int arrayInPtr;
+    long arrayInPtr;
     byte back;
     boolean isBack = false;
     
     /** Holds value of property startOffset. */
-    private int startOffset = 0;
+    private long startOffset = 0;
 
     public RandomAccessFileOrArray(String filename) throws IOException {
     	this(filename, false, Document.plainRandomAccess);
@@ -238,7 +238,7 @@ public class RandomAccessFileOrArray implements DataInput {
         else {
             if (arrayInPtr >= arrayIn.length)
                 return -1;
-            return arrayIn[arrayInPtr++] & 0xff;
+            return arrayIn[(int)(arrayInPtr++)] & 0xff;
         }
     }
     
@@ -265,8 +265,8 @@ public class RandomAccessFileOrArray implements DataInput {
             if (arrayInPtr >= arrayIn.length)
                 return -1;
             if (arrayInPtr + len > arrayIn.length)
-                len = arrayIn.length - arrayInPtr;
-            System.arraycopy(arrayIn, arrayInPtr, b, off, len);
+                len = (int)(arrayIn.length - arrayInPtr);
+            System.arraycopy(arrayIn, (int)arrayInPtr, b, off, len);
             arrayInPtr += len;
             return len + n;
         }
@@ -291,10 +291,6 @@ public class RandomAccessFileOrArray implements DataInput {
     }
     
     public long skip(long n) throws IOException {
-        return skipBytes((int)n);
-    }
-    
-    public int skipBytes(int n) throws IOException {
         if (n <= 0) {
             return 0;
         }
@@ -309,9 +305,9 @@ public class RandomAccessFileOrArray implements DataInput {
                 adj = 1;
             }
         }
-        int pos;
-        int len;
-        int newpos;
+        long pos;
+        long len;
+        long newpos;
         
         pos = getFilePointer();
         len = length();
@@ -323,6 +319,10 @@ public class RandomAccessFileOrArray implements DataInput {
         
         /* return the actual number of bytes skipped */
         return newpos - pos + adj;
+    }
+    
+    public int skipBytes(int n) throws IOException {
+        return (int)skip(n);
     }
     
     public void reOpen() throws IOException {
@@ -358,16 +358,16 @@ public class RandomAccessFileOrArray implements DataInput {
         }
     }
     
-    public int length() throws IOException {
+    public long length() throws IOException {
         if (arrayIn == null) {
             insureOpen();
-            return (int)(plainRandomAccess ? trf.length() : rf.length()) - startOffset;
+            return (plainRandomAccess ? trf.length() : rf.length()) - startOffset;
         }
         else
             return arrayIn.length - startOffset;
     }
     
-    public void seek(int pos) throws IOException {
+    public void seek(long pos) throws IOException {
         pos += startOffset;
         isBack = false;
         if (arrayIn == null) {
@@ -381,15 +381,11 @@ public class RandomAccessFileOrArray implements DataInput {
             arrayInPtr = pos;
     }
     
-    public void seek(long pos) throws IOException {
-        seek((int)pos);
-    }
-    
-    public int getFilePointer() throws IOException {
+    public long getFilePointer() throws IOException {
         insureOpen();
         int n = isBack ? 1 : 0;
         if (arrayIn == null) {
-            return (int)(plainRandomAccess ? trf.getFilePointer() : rf.getFilePointer()) - n - startOffset;
+            return (plainRandomAccess ? trf.getFilePointer() : rf.getFilePointer()) - n - startOffset;
         }
         else
             return arrayInPtr - n - startOffset;
@@ -634,7 +630,7 @@ public class RandomAccessFileOrArray implements DataInput {
     }
     
     public String readLine() throws IOException {
-        StringBuffer input = new StringBuffer();
+        StringBuilder input = new StringBuilder();
         int c = -1;
         boolean eol = false;
         
@@ -646,7 +642,7 @@ public class RandomAccessFileOrArray implements DataInput {
                     break;
                 case '\r':
                     eol = true;
-                    int cur = getFilePointer();
+                    long cur = getFilePointer();
                     if ((read()) != '\n') {
                         seek(cur);
                     }
@@ -671,7 +667,7 @@ public class RandomAccessFileOrArray implements DataInput {
      * @return Value of property startOffset.
      *
      */
-    public int getStartOffset() {
+    public long getStartOffset() {
         return this.startOffset;
     }
     
@@ -679,7 +675,7 @@ public class RandomAccessFileOrArray implements DataInput {
      * @param startOffset New value of property startOffset.
      *
      */
-    public void setStartOffset(int startOffset) {
+    public void setStartOffset(long startOffset) {
         this.startOffset = startOffset;
     }
 

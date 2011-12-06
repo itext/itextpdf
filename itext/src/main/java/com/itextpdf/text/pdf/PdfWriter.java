@@ -135,7 +135,7 @@ public class PdfWriter extends DocWriter implements
             private final int type;
 
             /**	Byte offset in the PDF file. */
-            private final int offset;
+            private final long offset;
 
             private final int refnum;
             /**	generation of the object. */
@@ -149,7 +149,7 @@ public class PdfWriter extends DocWriter implements
              * @param	generation	generation number of the object
              */
 
-            PdfCrossReference(final int refnum, final int offset, final int generation) {
+            PdfCrossReference(final int refnum, final long offset, final int generation) {
                 type = 0;
                 this.offset = offset;
                 this.refnum = refnum;
@@ -162,14 +162,14 @@ public class PdfWriter extends DocWriter implements
              * @param	offset		byte offset of the object
              */
 
-            PdfCrossReference(final int refnum, final int offset) {
+            PdfCrossReference(final int refnum, final long offset) {
                 type = 1;
                 this.offset = offset;
                 this.refnum = refnum;
                 this.generation = 0;
             }
 
-            PdfCrossReference(final int type, final int refnum, final int offset, final int generation) {
+            PdfCrossReference(final int type, final int refnum, final long offset, final int generation) {
                 this.type = type;
                 this.offset = offset;
                 this.refnum = refnum;
@@ -248,7 +248,7 @@ public class PdfWriter extends DocWriter implements
         private final TreeSet<PdfCrossReference> xrefs;
         private int refnum;
         /** the current byte position in the body. */
-        private int position;
+        private long position;
         private final PdfWriter writer;
         private ByteBuffer index;
         private ByteBuffer streamObjects;
@@ -405,7 +405,7 @@ public class PdfWriter extends DocWriter implements
          * @return		an offset
          */
 
-        int offset() {
+        long offset() {
             return position;
         }
 
@@ -430,7 +430,7 @@ public class PdfWriter extends DocWriter implements
          * @throws IOException
          */
 
-        void writeCrossReferenceTable(final OutputStream os, final PdfIndirectReference root, final PdfIndirectReference info, final PdfIndirectReference encryption, final PdfObject fileID, final int prevxref) throws IOException {
+        void writeCrossReferenceTable(final OutputStream os, final PdfIndirectReference root, final PdfIndirectReference info, final PdfIndirectReference encryption, final PdfObject fileID, final long prevxref) throws IOException {
             int refNumber = 0;
             if (writer.isFullCompression()) {
                 flushObjStm();
@@ -455,8 +455,8 @@ public class PdfWriter extends DocWriter implements
             sections.add(Integer.valueOf(first));
             sections.add(Integer.valueOf(len));
             if (writer.isFullCompression()) {
-                int mid = 4;
-                int mask = 0xff000000;
+                int mid = 5;
+                long mask = 0xff00000000L;
                 for (; mid > 1; --mid) {
                     if ((mask & position) != 0)
                         break;
@@ -524,7 +524,7 @@ public class PdfWriter extends DocWriter implements
 
         // membervariables
 
-        int offset;
+        long offset;
 
         // constructors
 
@@ -540,7 +540,7 @@ public class PdfWriter extends DocWriter implements
          * @param prevxref
          */
 
-        PdfTrailer(final int size, final int offset, final PdfIndirectReference root, final PdfIndirectReference info, final PdfIndirectReference encryption, final PdfObject fileID, final int prevxref) {
+        PdfTrailer(final int size, final long offset, final PdfIndirectReference root, final PdfIndirectReference info, final PdfIndirectReference encryption, final PdfObject fileID, final long prevxref) {
             this.offset = offset;
             put(PdfName.SIZE, new PdfNumber(size));
             put(PdfName.ROOT, root);
@@ -1160,7 +1160,7 @@ public class PdfWriter extends DocWriter implements
 //	Open and Close methods + method that create the PDF
 
     /** A number referring to the previous Cross-Reference Table. */
-    protected int prevxref = 0;
+    protected long prevxref = 0;
 
     /**
      * Signals that the <CODE>Document</CODE> has been opened and that
@@ -2339,7 +2339,7 @@ public class PdfWriter extends DocWriter implements
      * the current size is needed.
      * @return the approximate size without fonts or templates
      */
-    public int getCurrentDocumentSize() {
+    public long getCurrentDocumentSize() {
         return body.offset() + body.size() * 20 + 0x48;
     }
 

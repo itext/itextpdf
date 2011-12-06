@@ -52,7 +52,7 @@ public class PdfLiteral extends PdfObject {
     /**
      * Holds value of property position.
      */
-    private int position;
+    private long position;
         
     public PdfLiteral(String text) {
         super(0, text);
@@ -86,7 +86,7 @@ public class PdfLiteral extends PdfObject {
      * Getter for property position.
      * @return Value of property position.
      */
-    public int getPosition() {
+    public long getPosition() {
         return this.position;
     }
     

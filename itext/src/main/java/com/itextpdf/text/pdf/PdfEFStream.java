@@ -148,7 +148,7 @@ public class PdfEFStream extends PdfStream {
             }
             if (ose != null)
                 ose.finish();
-            inputStreamLength = osc.getCounter();
+            inputStreamLength = (int)osc.getCounter();
         }
         else {
             if (crypto == null) {

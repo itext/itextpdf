@@ -55,7 +55,7 @@ import com.itextpdf.text.ExceptionConverter;
 public class PRStream extends PdfStream {
     
     protected PdfReader reader;
-    protected int offset;
+    protected long offset;
     protected int length;
     
     //added by ujihara for decryption
@@ -83,7 +83,7 @@ public class PRStream extends PdfStream {
         this.reader = reader;
     }
 
-    public PRStream(PdfReader reader, int offset) {
+    public PRStream(PdfReader reader, long offset) {
         this.reader = reader;
         this.offset = offset;
     }
@@ -182,7 +182,7 @@ public class PRStream extends PdfStream {
         put(PdfName.LENGTH, new PdfNumber(length));
     }
     
-    public int getOffset() {
+    public long getOffset() {
         return offset;
     }
     
