@@ -96,6 +96,17 @@ public class PdfNumber extends PdfObject {
     }
     
     /**
+     * Constructs a new <CODE>PdfNumber</CODE>-object of type long.
+     *
+     * @param value    value of the new <CODE>PdfNumber</CODE>-object
+     */
+    public PdfNumber(long value) {
+        super(NUMBER);
+        this.value = value;
+        setContent(String.valueOf(value));
+    }
+    
+    /**
      * Constructs a new <CODE>PdfNumber</CODE>-object of type real.
      *
      * @param value    value of the new <CODE>PdfNumber</CODE>-object
@@ -124,6 +135,15 @@ public class PdfNumber extends PdfObject {
      */
     public int intValue() {
         return (int) value;
+    }
+    
+    /**
+     * Returns the primitive <CODE>long</CODE> value of this object.
+     *
+     * @return The value as <CODE>long</CODE>
+     */
+    public long longValue() {
+        return (long) value;
     }
     
     /**

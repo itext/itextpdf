@@ -335,7 +335,7 @@ public class PdfStream extends PdfDictionary {
             }
             if (ose != null)
                 ose.finish();
-            inputStreamLength = osc.getCounter();
+            inputStreamLength = (int)osc.getCounter();
         }
         else {
             if (crypto != null && !crypto.isEmbeddedFilesOnly()) {

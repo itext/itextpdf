@@ -231,7 +231,7 @@ public class JBIG2SegmentReader {
 	}
 
 	void readSegment(JBIG2Segment s) throws IOException {
-		int ptr = ra.getFilePointer();
+		int ptr = (int)ra.getFilePointer();
 
 		if ( s.dataLength == 0xffffffffl ) {
 			// TODO figure this bit out, 7.2.7
@@ -243,7 +243,7 @@ public class JBIG2SegmentReader {
 		s.data = data;
 
 		if ( s.type == PAGE_INFORMATION ) {
-			int last = ra.getFilePointer();
+			int last = (int)ra.getFilePointer();
 			ra.seek(ptr);
 			int page_bitmap_width = ra.readInt();
 			int page_bitmap_height = ra.readInt();
@@ -259,7 +259,7 @@ public class JBIG2SegmentReader {
 	}
 
 	JBIG2Segment readHeader() throws IOException {
-		int ptr = ra.getFilePointer();
+		int ptr = (int)ra.getFilePointer();
 		// 7.2.1
 		int segment_number = ra.readInt();
 		JBIG2Segment s = new JBIG2Segment(segment_number);
@@ -323,7 +323,7 @@ public class JBIG2SegmentReader {
 
 		// 7.2.6
 		int segment_page_association;
-		int page_association_offset = ra.getFilePointer() - ptr;
+		int page_association_offset = (int)ra.getFilePointer() - ptr;
 		if ( page_association_size ) {
 			segment_page_association = ra.readInt();
 		} else {
@@ -351,7 +351,7 @@ public class JBIG2SegmentReader {
 		// TODO the 0xffffffff value that might be here, and how to understand those afflicted segments
 		s.dataLength = segment_data_length;
 
-		int end_ptr = ra.getFilePointer();
+		int end_ptr = (int)ra.getFilePointer();
 		ra.seek(ptr);
 		byte[] header_data = new byte[end_ptr - ptr];
 		ra.read(header_data);

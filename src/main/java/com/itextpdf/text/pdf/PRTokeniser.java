@@ -120,11 +120,11 @@ public class PRTokeniser {
         this.file = file;
     }
     
-    public void seek(int pos) throws IOException {
+    public void seek(long pos) throws IOException {
         file.seek(pos);
     }
     
-    public int getFilePointer() throws IOException {
+    public long getFilePointer() throws IOException {
         return file.getFilePointer();
     }
 
@@ -132,7 +132,7 @@ public class PRTokeniser {
         file.close();
     }
     
-    public int length() throws IOException {
+    public long length() throws IOException {
         return file.length();
     }
 
@@ -149,7 +149,7 @@ public class PRTokeniser {
     }
     
     public String readString(int size) throws IOException {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         int ch;
         while ((size--) > 0) {
             ch = file.read();
@@ -216,10 +216,10 @@ public class PRTokeniser {
         file.setStartOffset(idx);
     }
 
-    public int getStartxref() throws IOException {
+    public long getStartxref() throws IOException {
     	int arrLength = 1024;
-    	int fileLength = file.length();
-    	int pos = fileLength - arrLength;
+    	long fileLength = file.length();
+    	long pos = fileLength - arrLength;
     	if (pos < 1) pos = 1;
     	while (pos > 0){
     	    file.seek(pos);
@@ -245,7 +245,7 @@ public class PRTokeniser {
         int level = 0;
         String n1 = null;
         String n2 = null;
-        int ptr = 0;
+        long ptr = 0;
         while (nextToken()) {
             if (type == TokenType.COMMENT)
                 continue;
@@ -500,6 +500,10 @@ public class PRTokeniser {
         return true;
     }
     
+    public long longValue() {
+        return Long.parseLong(stringValue);
+    }
+    
     public int intValue() {
         return Integer.parseInt(stringValue);
     }
@@ -523,7 +527,7 @@ public class PRTokeniser {
                     break;
                 case '\r':
                     eol = true;
-                    int cur = getFilePointer();
+                    long cur = getFilePointer();
                     if ((read()) != '\n') {
                         seek(cur);
                     }
@@ -551,7 +555,7 @@ public class PRTokeniser {
                         break;
                     case '\r':
                         eol = true;
-                        int cur = getFilePointer();
+                        long cur = getFilePointer();
                         if ((read()) != '\n') {
                             seek(cur);
                         }
@@ -570,7 +574,7 @@ public class PRTokeniser {
         return true;
     }
     
-    public static int[] checkObjectStart(byte line[]) {
+    public static long[] checkObjectStart(byte line[]) {
         try {
             PRTokeniser tk = new PRTokeniser(line);
             int num = 0;
@@ -585,7 +589,7 @@ public class PRTokeniser {
                 return null;
             if (!tk.getStringValue().equals("obj"))
                 return null;
-            return new int[]{num, gen};
+            return new long[]{num, gen};
         }
         catch (Exception ioe) {
             // empty on purpose
