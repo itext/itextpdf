@@ -95,6 +95,24 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     }
 
     /**
+     * @param str
+     * @return true if the string starts with a space character, false if the string is empty or starts with a non-space character
+     */
+    private boolean startsWithSpace(String str){
+        if (str.length() == 0) return false;
+        return str.charAt(0) == ' ';
+    }
+    
+    /**
+     * @param str
+     * @return true if the string ends with a space character, false if the string is empty or ends with a non-space character
+     */
+    private boolean endsWithSpace(String str){
+        if (str.length() == 0) return false;
+        return str.charAt(str.length()-1) == ' ';
+    }
+
+    /**
      * Returns the result so far.
      * @return  a String with the resulting text.
      */
@@ -117,7 +135,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
                     if (dist < -chunk.charSpaceWidth)
                         sb.append(' ');
                     // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
-                    else if (dist > chunk.charSpaceWidth/2.0f && chunk.text.length() != 0 && chunk.text.charAt(0) != ' ' && lastChunk.text.length() != 0 && lastChunk.text.charAt(lastChunk.text.length()-1) != ' ')
+                    else if (dist > chunk.charSpaceWidth/2.0f && !startsWithSpace(chunk.text) && !endsWithSpace(lastChunk.text))
                         sb.append(' ');
 
                     sb.append(chunk.text);
