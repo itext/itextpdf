@@ -116,7 +116,9 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
                     
                     if (dist < -chunk.charSpaceWidth)
                         sb.append(' ');
-
+                    // if the text in the chunk is empty, we skip the TextChunk
+                    else if (chunk.text.length() == 0)
+                    	continue;
                     // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
                     else if (dist > chunk.charSpaceWidth/2.0f && chunk.text.charAt(0) != ' ' && lastChunk.text.charAt(lastChunk.text.length()-1) != ' ')
                         sb.append(' ');
@@ -133,7 +135,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         return sb.toString();
 
     }
-
+    
     /** Used for debugging only */
     private void dumpState(){
         for (Iterator<TextChunk> iterator = locationalResult.iterator(); iterator.hasNext(); ) {
@@ -151,8 +153,6 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      * @see com.itextpdf.text.pdf.parser.RenderListener#renderText(com.itextpdf.text.pdf.parser.TextRenderInfo)
      */
     public void renderText(TextRenderInfo renderInfo) {
-    	if (renderInfo.getText().length() == 0)
-    		return;
     	LineSegment segment = renderInfo.getBaseline();
         TextChunk location = new TextChunk(renderInfo.getText(), segment.getStartPoint(), segment.getEndPoint(), renderInfo.getSingleSpaceWidth());
         locationalResult.add(location);        
