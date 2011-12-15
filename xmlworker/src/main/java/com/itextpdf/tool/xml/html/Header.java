@@ -64,6 +64,7 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.html.table.TableData;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
@@ -101,6 +102,9 @@ public class Header extends AbstractTagProcessor {
 			final HtmlPipelineContext context;
 			try {
 				context = getHtmlPipelineContext(ctx);
+				boolean oldBookmark = context.autoBookmark();
+				if(tag.getParent().getName().equals("td"))
+					context.autoBookmark(false);
 				if (context.autoBookmark()) {
 					final Paragraph title = new Paragraph();
 					for (Element w: currentContentToParagraph) {
@@ -138,6 +142,7 @@ public class Header extends AbstractTagProcessor {
 						}
 					});
 				}
+				context.autoBookmark(oldBookmark);
 			} catch (NoCustomContextException e) {
 				if (LOGGER.isLogging(Level.ERROR)) {
 					LOGGER.error(LocaleMessages.getInstance().getMessage(LocaleMessages.HEADER_BM_DISABLED), e);

@@ -121,6 +121,8 @@ public class Tags {
 		factory.addProcessor(Tag.H5, headers);
 		factory.addProcessor(Tag.H6, headers);
 		factory.addProcessor(Tag.HR, defaultpackage + "HorizontalRule");
+		//added by Jeroen Nouws
+		factory.addProcessor(Tag.LABEL, span);
 		return factory;
 	}
 }
