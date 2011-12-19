@@ -64,8 +64,8 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
-import com.itextpdf.tool.xml.html.table.TableData;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import com.itextpdf.tool.xml.util.ParentTreeUtil;
 
 /**
  * @author Emiel Ackermann, redlab_b
@@ -97,14 +97,22 @@ public class Header extends AbstractTagProcessor {
     @Override
 	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		List<Element> l = new ArrayList<Element>(1);
+		ParentTreeUtil pt = new ParentTreeUtil();
 		if (currentContent.size() > 0) {
 			List<Element> currentContentToParagraph = currentContentToParagraph(currentContent, true, true, tag, ctx);
 			final HtmlPipelineContext context;
 			try {
 				context = getHtmlPipelineContext(ctx);
 				boolean oldBookmark = context.autoBookmark();
-				if(tag.getParent().getName().equals("td"))
+		
+				if(!(pt.getParentTree(tag).isEmpty())&& pt.getParentTree(tag).contains(HTML.Tag.TD))
 					context.autoBookmark(false);
+				
+				/*if(tag.getParent()!=null&&tag.getParent().getName().equals(HTML.Tag.TD)){
+					context.autoBookmark(false);
+					System.out.println(tag.getParent().getName());
+				}*/
+				
 				if (context.autoBookmark()) {
 					final Paragraph title = new Paragraph();
 					for (Element w: currentContentToParagraph) {

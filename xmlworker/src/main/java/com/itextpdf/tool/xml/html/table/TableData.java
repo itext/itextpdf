@@ -45,6 +45,7 @@ package com.itextpdf.tool.xml.html.table;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
@@ -59,26 +60,31 @@ import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+
 /**
  * @author redlab_b
- *
+ * 
  */
 public class TableData extends AbstractTagProcessor {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag,
 	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
+	public List<Element> content(final WorkerContext ctx, final Tag tag,
+			final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Element> l = new ArrayList<Element>(1);
+
 		if (sanitized.length() > 0) {
 			Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
-//			NoNewLineParagraph noNewLineParagraph = new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(c), tag);
+			// NoNewLineParagraph noNewLineParagraph = new
+			// NoNewLineParagraphCssApplier(configuration).apply(new
+			// NoNewLineParagraph(c), tag);
 			l.add(c);
 		}
 		return l;
@@ -86,12 +92,14 @@ public class TableData extends AbstractTagProcessor {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List,
-	 * com.itextpdf.text.Document)
+	 * 
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
+	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final WorkerContext ctx, final Tag tag,
+			final List<Element> currentContent) {
 		HtmlCell cell = new HtmlCell();
 		List<Element> l = new ArrayList<Element>(1);
 		for (Element e : currentContent) {
@@ -99,20 +107,23 @@ public class TableData extends AbstractTagProcessor {
 		}
 		try {
 			HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-			l.add(new HtmlCellCssApplier().apply(cell, tag, htmlPipelineContext, htmlPipelineContext));
+			l.add(new HtmlCellCssApplier().apply(cell, tag,
+					htmlPipelineContext, htmlPipelineContext));
 		} catch (NoCustomContextException e1) {
-			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT),
-					e1);
+			throw new RuntimeWorkerException(LocaleMessages.getInstance()
+					.getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
 		}
 		return l;
 	}
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
+	 */
+	@Override
 	public boolean isStackOwner() {
-        return true;
-    }
+		return true;
+	}
 
 }
