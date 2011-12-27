@@ -50,6 +50,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.text.pdf.PdfString;
+
 /**
  * @author kevin
  */
@@ -63,17 +65,17 @@ public class CMapTest {
     public void tearDown() throws Exception {
     }
 
-    private void checkInsertAndRetrieval(byte[] bytes, String uni) throws Exception{
-        CMap c = new CMap();
-        c.addMapping(bytes, uni);
+    private void checkInsertAndRetrieval(final byte[] bytes, final String uni) throws Exception{
+		CMapToUnicode c = new CMapToUnicode();
+		c.addChar(new PdfString(bytes), new PdfString(uni, "UTF-16BE"));
         String lookupResult = c.lookup(bytes, 0, bytes.length);
         Assert.assertEquals(uni, lookupResult);
-        
+
     }
-    
+
     @Test
     public void testHighOrderBytes() throws Exception {
-        
+
         checkInsertAndRetrieval(new byte[]{(byte)0x91}, "\u2018");
         checkInsertAndRetrieval(new byte[]{(byte)0x91, (byte)0x92}, "\u2018");
 

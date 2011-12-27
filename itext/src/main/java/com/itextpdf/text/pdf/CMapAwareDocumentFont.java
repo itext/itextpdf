@@ -43,14 +43,20 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.ByteArrayInputStream;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Utilities;
 import java.io.IOException;
 import java.util.Map;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
 
-import com.itextpdf.text.pdf.fonts.cmaps.CMap;
-import com.itextpdf.text.pdf.fonts.cmaps.CMapParser;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapByteCid;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapCache;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapCidUni;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapParserEx;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapSequence;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapToUnicode;
+import com.itextpdf.text.pdf.fonts.cmaps.CidLocationFromByte;
 
 
 /**
@@ -66,7 +72,9 @@ public class CMapAwareDocumentFont extends DocumentFont {
     /** The CMap constructed from the ToUnicode map from the font's dictionary, if present.
 	 *  This CMap transforms CID values into unicode equivalent
 	 */
-    private CMap toUnicodeCmap;
+    private CMapToUnicode toUnicodeCmap;
+    private CMapByteCid byteCid;
+    private CMapCidUni cidUni;
 	/**
 	 *	Mapping between CID code (single byte only for now) and unicode equivalent
 	 *  as derived by the font's encoding.  Only needed if the ToUnicode CMap is not provided.
@@ -91,7 +99,15 @@ public class CMapAwareDocumentFont extends DocumentFont {
         if (spaceWidth == 0){
             spaceWidth = computeAverageWidth();
         }
-        
+        if (cjkEncoding != null) {
+            try {
+                byteCid = CMapCache.getCachedCMapByteCid(cjkEncoding);
+                cidUni = CMapCache.getCachedCMapCidUni(uniMap);
+            }
+            catch (Exception ex) {
+                throw new ExceptionConverter(ex);
+            }
+        }
     }
 
     /**
@@ -99,17 +115,17 @@ public class CMapAwareDocumentFont extends DocumentFont {
      * @since 2.1.7
      */
     private void processToUnicode(){
-        
         PdfObject toUni = PdfReader.getPdfObjectRelease(fontDic.get(PdfName.TOUNICODE));
         if (toUni instanceof PRStream){
-            
             try {
                 byte[] touni = PdfReader.getStreamBytes((PRStream)toUni);
-    
-                CMapParser cmapParser = new CMapParser();
-                toUnicodeCmap = cmapParser.parse(new ByteArrayInputStream(touni));
+                CidLocationFromByte lb = new CidLocationFromByte(touni);
+                toUnicodeCmap = new CMapToUnicode();
+                CMapParserEx.parseCid("", toUnicodeCmap, lb);
                 uni2cid = toUnicodeCmap.createReverseMapping();
             } catch (IOException e) {
+                toUnicodeCmap = null;
+                uni2cid = null;
                 // technically, we should log this or provide some sort of feedback... but sometimes the cmap will be junk, but it's still possible to get text, so we don't want to throw an exception
                 //throw new IllegalStateException("Unable to process ToUnicode map - " + e.getMessage(), e);
             }
@@ -174,6 +190,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
      * Override to allow special handling for fonts that don't specify width of space character
      * @see com.itextpdf.text.pdf.DocumentFont#getWidth(int)
      */
+    @Override
     public int getWidth(int char1) {
         if (char1 == ' ')
             return spaceWidth;
@@ -221,16 +238,26 @@ public class CMapAwareDocumentFont extends DocumentFont {
      * @since 2.1.7
      */
     public String decode(byte[] cidbytes, final int offset, final int len){
-        StringBuffer sb = new StringBuffer(); // it's a shame we can't make this StringBuilder
-        for(int i = offset; i < offset + len; i++){
-            String rslt = decodeSingleCID(cidbytes, i, 1);
-            if (rslt == null && i < offset + len - 1){
-                rslt = decodeSingleCID(cidbytes, i, 2);
-                i++;
+        StringBuilder sb = new StringBuilder();
+        if (toUnicodeCmap == null && byteCid != null) {
+            CMapSequence seq = new CMapSequence(cidbytes, offset, len);
+            String cid = byteCid.decodeSequence(seq);
+            for (int k = 0; k < cid.length(); ++k) {
+                int c = cidUni.lookup(cid.charAt(k));
+                if (c > 0)
+                    sb.append(Utilities.convertFromUtf32(c));
             }
-            sb.append(rslt);
         }
-
+        else {
+            for(int i = offset; i < offset + len; i++){
+                String rslt = decodeSingleCID(cidbytes, i, 1);
+                if (rslt == null && i < offset + len - 1){
+                    rslt = decodeSingleCID(cidbytes, i, 2);
+                    i++;
+                }
+                sb.append(rslt);
+            }
+        }
         return sb.toString();
     }
 
