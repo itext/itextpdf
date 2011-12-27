@@ -2,25 +2,43 @@
 %%DocumentNeededResources: ProcSet (CIDInit)
 %%IncludeResource: ProcSet (CIDInit)
 %%BeginResource: CMap (HKscs-B5-H)
-%%Title: (HKscs-B5-H Adobe CNS1 4)
-%%Version: 2.002
+%%Title: (HKscs-B5-H Adobe CNS1 6)
+%%Version: 2.006
 %%Copyright: -----------------------------------------------------------
-%%Copyright: Copyright 1990-2002 Adobe Systems Incorporated.
-%%Copyright: All Rights Reserved.
+%%Copyright: Copyright 1990-2009 Adobe Systems Incorporated.
+%%Copyright: All rights reserved.
 %%Copyright:
-%%Copyright: Patents Pending
+%%Copyright: Redistribution and use in source and binary forms, with or
+%%Copyright: without modification, are permitted provided that the
+%%Copyright: following conditions are met:
 %%Copyright:
-%%Copyright: NOTICE: All information contained herein is the property
-%%Copyright: of Adobe Systems Incorporated.
+%%Copyright: Redistributions of source code must retain the above
+%%Copyright: copyright notice, this list of conditions and the following
+%%Copyright: disclaimer.
 %%Copyright:
-%%Copyright: Permission is granted for redistribution of this file
-%%Copyright: provided this copyright notice is maintained intact and
-%%Copyright: that the contents of this file are not altered in any
-%%Copyright: way from its original form.
+%%Copyright: Redistributions in binary form must reproduce the above
+%%Copyright: copyright notice, this list of conditions and the following
+%%Copyright: disclaimer in the documentation and/or other materials
+%%Copyright: provided with the distribution. 
 %%Copyright:
-%%Copyright: PostScript and Display PostScript are trademarks of
-%%Copyright: Adobe Systems Incorporated which may be registered in
-%%Copyright: certain jurisdictions.
+%%Copyright: Neither the name of Adobe Systems Incorporated nor the names
+%%Copyright: of its contributors may be used to endorse or promote
+%%Copyright: products derived from this software without specific prior
+%%Copyright: written permission. 
+%%Copyright:
+%%Copyright: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+%%Copyright: CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+%%Copyright: INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+%%Copyright: MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+%%Copyright: DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+%%Copyright: CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+%%Copyright: SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+%%Copyright: NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+%%Copyright: LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+%%Copyright: HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+%%Copyright: CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+%%Copyright: OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+%%Copyright: SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 %%Copyright: -----------------------------------------------------------
 %%EndComments
 
@@ -33,11 +51,11 @@ begincmap
 /CIDSystemInfo 3 dict dup begin
   /Registry (Adobe) def
   /Ordering (CNS1) def
-  /Supplement 4 def
+  /Supplement 6 def
 end def
 
 /CMapName /HKscs-B5-H def
-/CMapVersion 2.002 def
+/CMapVersion 2.006 def
 /CMapType 1 def
 
 /XUID [1 10 25580] def
@@ -46,7 +64,7 @@ end def
 
 2 begincodespacerange
   <00>   <80>
-  <8840> <FEFE>
+  <8740> <FEFE>
 endcodespacerange
 
 1 beginnotdefrange
@@ -109,7 +127,10 @@ endnotdefrange
 <8b5b> 17348
 <8b61> 17319
 <8b68> 17324
+<8c62> 19022
+<8cdb> 19023
 <8cdc> 18964
+<8d40> 19057
 <8d62> 17338
 <8d68> 17339
 <8d69> 17312
@@ -151,12 +172,12 @@ endnotdefrange
 <8f69> 10178
 <8f6e> 8877
 <8f79> 18086
-<8fb0> 18087
-<8fc5> 18088
-<8fc6> 14368
 endcidchar
 
 100 begincidchar
+<8fb0> 18087
+<8fc5> 18088
+<8fc6> 14368
 <8fc7> 18089
 <8fca> 18090
 <8fcb> 4940
@@ -254,12 +275,12 @@ endcidchar
 <994f> 15725
 <9954> 17369
 <995c> 17370
-<9964> 17372
-<996a> 15726
-<996e> 15727
 endcidchar
 
 100 begincidchar
+<9964> 17372
+<996a> 15726
+<996e> 15727
 <9975> 15728
 <9978> 15729
 <99a1> 18255
@@ -357,12 +378,12 @@ endcidchar
 <9bca> 15803
 <9bcb> 18513
 <9bcc> 15804
-<9bcd> 18514
-<9bce> 17360
-<9bcf> 18515
 endcidchar
 
 100 begincidchar
+<9bcd> 18514
+<9bce> 17360
+<9bcf> 18515
 <9bd2> 18516
 <9bd3> 15807
 <9bd4> 18517
@@ -460,12 +481,12 @@ endcidchar
 <9dc4> 1510
 <9dc9> 18652
 <9dca> 15972
-<9dd2> 18655
-<9dfc> 18660
-<9e43> 18661
 endcidchar
 
 100 begincidchar
+<9dd2> 18655
+<9dfc> 18660
+<9e43> 18661
 <9e5f> 18662
 <9e63> 18663
 <9e68> 16054
@@ -563,12 +584,12 @@ endcidchar
 <f268> 12783
 <f4b5> 12526
 <f663> 12900
+endcidchar
+
+45 begincidchar
 <f9c4> 13585
 <f9c5> 13629
 <f9c6> 13641
-endcidchar
-
-42 begincidchar
 <fa5f> 2106
 <fa66> 2557
 <fabd> 781
@@ -615,6 +636,10 @@ endcidchar
 
 100 begincidrange
 <20> <7e> 1
+<8740> <8765> 18965
+<8767> <8779> 19003
+<877a> <877e> 19088
+<87a1> <87df> 19093
 <8840> <8855> 17609
 <8856> <887e> 18785
 <88a1> <88a8> 18826
@@ -670,6 +695,9 @@ endcidchar
 <8ca7> <8cc5> 18916
 <8cc9> <8ccc> 18947
 <8cce> <8cda> 18951
+<8cdd> <8ce4> 19024
+<8ce6> <8cfe> 19032
+<8d42> <8d5f> 19058
 <8d60> <8d61> 17961
 <8d63> <8d67> 17963
 <8d6b> <8d6d> 17968
@@ -707,6 +735,9 @@ endcidchar
 <8f6f> <8f78> 14316
 <8f7a> <8f7e> 14327
 <8fa1> <8faf> 14332
+endcidrange
+
+100 begincidrange
 <8fb1> <8fc4> 14348
 <8fc8> <8fc9> 14369
 <8fcd> <8fd9> 14374
@@ -714,9 +745,6 @@ endcidchar
 <8fe4> <8ffb> 14396
 <9040> <9054> 14422
 <9056> <905b> 14444
-endcidrange
-
-100 begincidrange
 <905c> <905e> 18095
 <905f> <906c> 14451
 <9070> <9079> 14467
@@ -810,6 +838,9 @@ endcidrange
 <99af> <99b1> 18265
 <99b3> <99b5> 18268
 <99b7> <99b9> 18271
+endcidrange
+
+100 begincidrange
 <99bb> <99c9> 18274
 <99cb> <99cc> 18289
 <99ce> <99d2> 18291
@@ -817,9 +848,6 @@ endcidrange
 <99d7> <99de> 18298
 <99e0> <99e1> 18306
 <99e9> <99ee> 18311
-endcidrange
-
-100 begincidrange
 <99f0> <99f3> 18317
 <99f5> <99fe> 18321
 <9a40> <9a49> 18331
@@ -913,6 +941,9 @@ endcidrange
 <9d7a> <9d7d> 18627
 <9da1> <9da4> 18631
 <9da5> <9da8> 15952
+endcidrange
+
+100 begincidrange
 <9dac> <9dad> 15957
 <9dae> <9daf> 18637
 <9db1> <9db2> 18639
@@ -920,9 +951,6 @@ endcidrange
 <9dbc> <9dbd> 15964
 <9dbf> <9dc0> 15966
 <9dc1> <9dc2> 18648
-endcidrange
-
-100 begincidrange
 <9dc5> <9dc6> 18650
 <9dc7> <9dc8> 15970
 <9dcb> <9dcc> 18653
@@ -1016,6 +1044,9 @@ endcidrange
 <a6a1> <a6fe> 972
 <a740> <a77e> 1066
 <a7a1> <a7fe> 1129
+endcidrange
+
+100 begincidrange
 <a840> <a87e> 1223
 <a8a1> <a8fe> 1286
 <a940> <a97e> 1380
@@ -1023,9 +1054,6 @@ endcidrange
 <aa40> <aa7e> 1537
 <aaa1> <aafe> 1600
 <ab40> <ab7e> 1694
-endcidrange
-
-100 begincidrange
 <aba1> <abfe> 1757
 <ac40> <ac7e> 1851
 <aca1> <acfd> 1914
@@ -1119,6 +1147,9 @@ endcidrange
 <cd40> <cd7e> 6623
 <cda1> <cdfe> 6686
 <ce40> <ce7e> 6780
+endcidrange
+
+100 begincidrange
 <cea1> <cefe> 6843
 <cf40> <cf7e> 6937
 <cfa1> <cffe> 7000
@@ -1126,9 +1157,6 @@ endcidrange
 <d0a1> <d0fe> 7157
 <d140> <d17e> 7251
 <d1a1> <d1fe> 7314
-endcidrange
-
-100 begincidrange
 <d240> <d27e> 7408
 <d2a1> <d2fe> 7471
 <d340> <d37e> 7565
@@ -1222,6 +1250,9 @@ endcidrange
 <f4b6> <f4fc> 12829
 <f4fd> <f4fe> 12901
 <f540> <f57e> 12903
+endcidrange
+
+67 begincidrange
 <f5a1> <f5fe> 12966
 <f640> <f662> 13060
 <f664> <f67e> 13095
@@ -1229,9 +1260,6 @@ endcidrange
 <f740> <f77e> 13216
 <f7a1> <f7fe> 13279
 <f840> <f87e> 13373
-endcidrange
-
-60 begincidrange
 <f8a1> <f8fe> 13436
 <f940> <f976> 13530
 <f977> <f97e> 13586
