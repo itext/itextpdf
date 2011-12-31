@@ -63,8 +63,13 @@ public class NoNewLineParagraphCssApplier {
 
 
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
+	/**
+	 * Styles a NoNewLineParagraph
+	 * 
+	 * @param p the paragraph to style
+	 * @param t the tag
+	 * @param configuration the MarginMemory to check margin sizes
+	 * @return a styled NoNewLineParagraph
 	 */
 	public NoNewLineParagraph apply(final NoNewLineParagraph p, final Tag t, final MarginMemory configuration) {
 		/*MaxLeadingAndSize m = new MaxLeadingAndSize();

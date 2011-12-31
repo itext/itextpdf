@@ -50,6 +50,7 @@ import java.util.Set;
  * @author redlab_b
  *
  */
+@SuppressWarnings("javadoc")
 public final class HTML {
 
 	/**

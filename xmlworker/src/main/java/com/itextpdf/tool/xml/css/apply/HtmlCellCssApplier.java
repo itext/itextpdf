@@ -48,6 +48,7 @@ import java.util.Map.Entry;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.tool.xml.Tag;
@@ -68,13 +69,15 @@ public class HtmlCellCssApplier {
 
     private final CssUtils utils = CssUtils.getInstance();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element,
-     * com.itextpdf.tool.xml.Tag)
-     */
+	/**
+	 * Applies css to a HtmlCell
+	 * 
+	 * @param cell the HtmlCell
+	 * @param t the tag with the styles
+	 * @param memory current margin memory
+	 * @param psc the {@link PageSize} container
+	 * @return a styled HtmlCell
+	 */
     public HtmlCell apply(final HtmlCell cell, final Tag t, final MarginMemory memory, final PageSizeContainable psc) {
     	final TableStyleValues values = new TableStyleValues();
     	Tag table = t.getParent();

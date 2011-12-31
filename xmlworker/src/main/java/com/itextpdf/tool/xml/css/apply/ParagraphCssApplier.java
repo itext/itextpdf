@@ -50,8 +50,6 @@ import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
-
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -61,20 +59,23 @@ import java.util.Map.Entry;
  * @author itextpdf.com
  */
 public class ParagraphCssApplier {
-    private final CssUtils utils = CssUtils.getInstance();
 
 
     /**
-     * Construct a ParagraphCssApplier with the given {@link HtmlPipelineContext}
-     *
-     * @param htmlPipelineContext the context
-     */
+	 * Construct a ParagraphCssApplier.
+	 *
+	 */
     public ParagraphCssApplier() {
     }
 
-    /* (non-Javadoc)
-      * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
-      */
+	/**
+	 * Styles a paragraph
+	 *
+	 * @param p the paragraph
+	 * @param t the tag
+	 * @param configuration the MarginMemory
+	 * @return a styled {@link Paragraph}
+	 */
     public Paragraph apply(final Paragraph p, final Tag t, final MarginMemory configuration) {
         /*MaxLeadingAndSize m = new MaxLeadingAndSize();
         if (configuration.getRootTags().contains(t.getName())) {
@@ -82,6 +83,7 @@ public class ParagraphCssApplier {
         } else {
             m.setVariablesBasedOnChildren(t);
         }*/
+		final CssUtils utils = CssUtils.getInstance();
         float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
         float lmb = 0;
         boolean hasLMB = false;

@@ -421,12 +421,17 @@ public class CssUtils {
 		}
 		return f;
 	}
+	
 	/**
-	 * Parses a length with an allowed metric unit (px, pt, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23, .123) to pt.<br />
-	 * A numeric value (without px, pt, etc in the given length string) is considered to be in the default metric that was given.
+	 * Parses a length with an allowed metric unit (px, pt, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23,
+	 * .123) to pt.<br />
+	 * A numeric value (without px, pt, etc in the given length string) is considered to be in the default metric that
+	 * was given.
+	 * 
 	 * @param length the string containing the length.
-	 * @param defaultMetric the string containing the metric if it is possible that the length string does not contain one. If null the length is considered to be in px as is default in HTML/CSS.
-	 * @return
+	 * @param defaultMetric the string containing the metric if it is possible that the length string does not contain
+	 *            one. If null the length is considered to be in px as is default in HTML/CSS.
+	 * @return parsed value
 	 */
 	public float parsePxInCmMmPcToPt(final String length, final String defaultMetric) {
 		int pos = determinePositionBetweenValueAndUnit(length);
@@ -585,7 +590,6 @@ public class CssUtils {
 	 */
 	public float calculateMarginTop(final float value, final MarginMemory configuration) {
 		float marginTop = value;
-		Float mb;
 		try {
 			float marginBottom = configuration.getLastMarginBottom();
 			marginTop = (marginTop>marginBottom)?marginTop-marginBottom:0;

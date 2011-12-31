@@ -50,6 +50,7 @@ import java.util.ResourceBundle;
  * @author Emiel Ackermann
  *
  */
+@SuppressWarnings("javadoc")
 public class LocaleMessages {
 
 	public static final String UNSUPPORTED_CHARSET = "unsupported.charset";

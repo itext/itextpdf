@@ -22,22 +22,22 @@ public class NoDataException extends Exception {
 	}
 
 	/**
-	 * @param message
+	 * @param message the message
 	 */
 	public NoDataException(final String message) {
 		super(message);
 	}
 
 	/**
-	 * @param cause
+	 * @param cause a cause
 	 */
 	public NoDataException(final Throwable cause) {
 		super(cause);
 	}
 
 	/**
-	 * @param message
-	 * @param cause
+	 * @param message the message
+	 * @param cause the cause
 	 */
 	public NoDataException(final String message, final Throwable cause) {
 		super(message, cause);

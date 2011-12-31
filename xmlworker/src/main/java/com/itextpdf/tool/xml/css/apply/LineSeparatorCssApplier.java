@@ -6,6 +6,7 @@ package com.itextpdf.tool.xml.css.apply;
 import java.util.Map;
 
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.Tag;
@@ -18,8 +19,13 @@ import com.itextpdf.tool.xml.css.CssUtils;
  */
 public class LineSeparatorCssApplier {
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
+	/**
+	 * Applies CSS to LineSeparators
+	 * 
+	 * @param ls the LineSeparator
+	 * @param t the tag with styles
+	 * @param psc the {@link PageSize} container
+	 * @return the styled {@link LineSeparator}
 	 */
 	public LineSeparator apply(final LineSeparator ls, final Tag t, final PageSizeContainable psc) {
     	float lineWidth = 1;

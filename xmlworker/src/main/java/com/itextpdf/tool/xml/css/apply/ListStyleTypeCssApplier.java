@@ -85,15 +85,18 @@ public class ListStyleTypeCssApplier {
 	}
 
 	/**
-	 * The ListCssApplier has the capabilities to change the type of the given {@link List} dependable on the css.
-	 * This means: <strong>Always replace your list with the returned one and add content to the list after applying!</strong>
+	 * The ListCssApplier has the capabilities to change the type of the given {@link List} dependable on the css. This
+	 * means: <strong>Always replace your list with the returned one and add content to the list after
+	 * applying!</strong><br />
+	 * note: not implemented list-style-type:armenian, georgian, decimal-leading-zero.
+	 *
 	 * @param list the list to style
 	 * @param t the tag
 	 * @param htmlPipelineContext the context
 	 * @return the changed {@link List}
 	 */
-	// not implemented: list-style-type:armenian, georgian, decimal-leading-zero.
 	public List apply(final List list, final Tag t, final ImageProvider htmlPipelineContext) {
+		// not implemented: list-style-type:armenian, georgian, decimal-leading-zero.
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		List lst = list;
 		Map<String, String> css = t.getCSS();
@@ -218,9 +221,12 @@ public class ListStyleTypeCssApplier {
 	}
 
 	/**
-	 * @param e
-	 * @param t
-	 * @return
+	 * Utility method applying style to a list when no ImageProvider is available.
+	 * 
+	 * @param e the list
+	 * @param t the tag
+	 * @see ListStyleTypeCssApplier#apply(List, Tag, ImageProvider)
+	 * @return styled element
 	 */
 	public Element apply(final List e, final Tag t) {
 		return apply(e, t, null);

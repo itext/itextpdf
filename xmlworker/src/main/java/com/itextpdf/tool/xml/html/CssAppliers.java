@@ -33,6 +33,7 @@ package com.itextpdf.tool.xml.html;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.List;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.Image;
@@ -92,10 +93,25 @@ public class CssAppliers {
 	}
 
 	/**
-	 * @param e
-	 * @param t
-	 * @param ctx
-	 * @return the element with CSS applied onto
+	 * Given the element e, this method will lookup the right applier for the given Element. The mapping is done by
+	 * instance of.<br />
+	 * order of check:
+	 * <ol>
+	 * <li>{@link Chunk}</li>
+	 * <li>{@link Paragraph}</li>
+	 * <li>{@link NoNewLineParagraph}</li>
+	 * <li>{@link HtmlCell}</li>
+	 * <li>{@link List}</li>
+	 * <li>{@link LineSeparator}</li>
+	 * <li>{@link Image}</li>
+	 * </ol>
+	 *
+	 * @param e the Element
+	 * @param t the tag
+	 * @param mm the MarginMemory
+	 * @param psc the {@link PageSize} container
+	 * @param ip an ImageProvider
+	 * @return the element with CSS applied onto, note: the element can be a new element.
 	 */
 	public Element apply(Element e, final Tag t, final MarginMemory mm, final PageSizeContainable psc, final ImageProvider ip) {
 		// warning, mapping is done by instance of, make sure to add things in the right order when adding more.
@@ -118,6 +134,15 @@ public class CssAppliers {
 
 	}
 
+	/**
+	 * Convenience method.
+	 * 
+	 * @see #apply(Element, Tag, MarginMemory, PageSizeContainable, ImageProvider)
+	 * @param e the Element
+	 * @param t the tag
+	 * @param ctx the Context object
+	 * @return the element with CSS applied onto, note: the element can be a new element.
+	 */
 	public Element apply(final Element e, final Tag t, final HtmlPipelineContext ctx) {
 		try {
 			return this.apply(e, t, ctx, ctx, ctx.getImageProvider());

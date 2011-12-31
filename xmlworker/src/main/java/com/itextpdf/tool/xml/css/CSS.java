@@ -47,6 +47,7 @@ package com.itextpdf.tool.xml.css;
  * CSS Property-Value container.
  *
  */
+@SuppressWarnings("javadoc")
 public final class CSS {
 
 	private CSS(){}

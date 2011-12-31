@@ -45,7 +45,6 @@ package com.itextpdf.tool.xml.html.table;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;

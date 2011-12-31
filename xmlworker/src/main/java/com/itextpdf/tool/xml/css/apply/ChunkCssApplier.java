@@ -71,13 +71,12 @@ public class ChunkCssApplier {
     public static final List<String> BOLD = Arrays.asList(new String[]{"bold", "bolder", "600", "700", "800", "900"});
     private final CssUtils utils = CssUtils.getInstance();
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see
-    * com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element,
-    * com.itextpdf.tool.xml.Tag)
-    */
+	/**
+	 * 
+	 * @param c the Chunk to apply CSS to.
+	 * @param t the tag containing the chunk data
+	 * @return the styled chunk
+	 */
     public Chunk apply(final Chunk c, final Tag t) {
         String fontName = null;
         String encoding = BaseFont.CP1252;
