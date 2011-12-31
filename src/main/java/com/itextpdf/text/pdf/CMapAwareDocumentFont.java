@@ -49,8 +49,9 @@ import java.util.Map;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
 
-import com.itextpdf.text.pdf.fonts.cmaps.CMap;
-import com.itextpdf.text.pdf.fonts.cmaps.CMapParser;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapParserEx;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapToUnicode;
+import com.itextpdf.text.pdf.fonts.cmaps.CidLocationFromByte;
 
 
 /**
@@ -66,7 +67,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
     /** The CMap constructed from the ToUnicode map from the font's dictionary, if present.
 	 *  This CMap transforms CID values into unicode equivalent
 	 */
-    private CMap toUnicodeCmap;
+    private CMapToUnicode toUnicodeCmap;
 	/**
 	 *	Mapping between CID code (single byte only for now) and unicode equivalent
 	 *  as derived by the font's encoding.  Only needed if the ToUnicode CMap is not provided.
@@ -105,11 +106,13 @@ public class CMapAwareDocumentFont extends DocumentFont {
             
             try {
                 byte[] touni = PdfReader.getStreamBytes((PRStream)toUni);
-    
-                CMapParser cmapParser = new CMapParser();
-                toUnicodeCmap = cmapParser.parse(new ByteArrayInputStream(touni));
+                CidLocationFromByte lb = new CidLocationFromByte(touni);
+                toUnicodeCmap = new CMapToUnicode();
+                CMapParserEx.parseCid("", toUnicodeCmap, lb);
                 uni2cid = toUnicodeCmap.createReverseMapping();
             } catch (IOException e) {
+                toUnicodeCmap = null;
+                uni2cid = null;
                 // technically, we should log this or provide some sort of feedback... but sometimes the cmap will be junk, but it's still possible to get text, so we don't want to throw an exception
                 //throw new IllegalStateException("Unable to process ToUnicode map - " + e.getMessage(), e);
             }

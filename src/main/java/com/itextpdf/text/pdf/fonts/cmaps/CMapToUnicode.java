@@ -30,10 +30,11 @@
  */
 package com.itextpdf.text.pdf.fonts.cmaps;
 
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfString;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -44,17 +45,15 @@ import com.itextpdf.text.error_messages.MessageLocalization;
  * @author Ben Litchfield (ben@benlitchfield.com)
  * @since	2.1.4
  */
-public class CMap
-{
-    private List<CodespaceRange> codeSpaceRanges = new ArrayList<CodespaceRange>();
+public class CMapToUnicode extends AbstractCMap {
+
     private Map<Integer, String> singleByteMappings = new HashMap<Integer, String>();
     private Map<Integer, String> doubleByteMappings = new HashMap<Integer, String>();
 
     /**
      * Creates a new instance of CMap.
      */
-    public CMap()
-    {
+    public CMapToUnicode() {
         //default constructor
     }
 
@@ -63,8 +62,7 @@ public class CMap
      *
      * @return true If there are any one byte mappings, false otherwise.
      */
-    public boolean hasOneByteMappings()
-    {
+    public boolean hasOneByteMappings() {
         return !singleByteMappings.isEmpty();
     }
 
@@ -73,8 +71,7 @@ public class CMap
      *
      * @return true If there are any two byte mappings, false otherwise.
      */
-    public boolean hasTwoByteMappings()
-    {
+    public boolean hasTwoByteMappings() {
         return !doubleByteMappings.isEmpty();
     }
 
@@ -87,97 +84,76 @@ public class CMap
      *
      * @return The string that matches the lookup.
      */
-    public String lookup( byte[] code, int offset, int length )
-    {
+    public String lookup(byte[] code, int offset, int length) {
 
         String result = null;
         Integer key = null;
-        if( length == 1 )
-        {
+        if (length == 1) {
 
-            key = Integer.valueOf( code[offset] & 0xff );
-            result = singleByteMappings.get( key );
-        }
-        else if( length == 2 )
-        {
+            key = Integer.valueOf(code[offset] & 0xff);
+            result = singleByteMappings.get(key);
+        } else if (length == 2) {
             int intKey = code[offset] & 0xff;
             intKey <<= 8;
-            intKey += code[offset+1] & 0xff;
-            key = Integer.valueOf( intKey );
+            intKey += code[offset + 1] & 0xff;
+            key = Integer.valueOf(intKey);
 
-            result = doubleByteMappings.get( key );
+            result = doubleByteMappings.get(key);
         }
 
         return result;
     }
 
-    /**
-     * This will add a mapping.
-     *
-     * @param src The src to the mapping.
-     * @param dest The dest to the mapping.
-     *
-     * @throws IOException if the src is invalid.
-     */
-    public void addMapping( byte[] src, String dest ) throws IOException
-    {
-        if( src.length == 1 )
-        {
-            singleByteMappings.put( Integer.valueOf( src[0] & 0xff ), dest );
-        }
-        else if( src.length == 2 )
-        {
-            int intSrc = src[0]&0xFF;
-            intSrc <<= 8;
-            intSrc |= src[1]&0xFF;
-            doubleByteMappings.put( Integer.valueOf( intSrc), dest );
-        }
-        else
-        {
-            throw new IOException(MessageLocalization.getComposedMessage("mapping.code.should.be.1.or.two.bytes.and.not.1", src.length));
-        }
-    }
-
-
-    /**
-     * This will add a codespace range.
-     *
-     * @param range A single codespace range.
-     */
-    public void addCodespaceRange( CodespaceRange range )
-    {
-        codeSpaceRanges.add( range );
-    }
-
-    /**
-     * Getter for property codeSpaceRanges.
-     *
-     * @return Value of property codeSpaceRanges.
-     */
-    public List<CodespaceRange> getCodeSpaceRanges()
-    {
-        return codeSpaceRanges;
-    }
-
     public Map<Integer, Integer> createReverseMapping() throws IOException {
-    	Map<Integer, Integer> result = new HashMap<Integer, Integer>();
-    	for (Map.Entry<Integer, String> entry : singleByteMappings.entrySet()) {
-    		result.put(convertToInt(entry.getValue()), entry.getKey());
-    	}
-    	for (Map.Entry<Integer, String> entry : doubleByteMappings.entrySet()) {
-    		result.put(convertToInt(entry.getValue()), entry.getKey());
-    	}
-    	return result;
+        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+        for (Map.Entry<Integer, String> entry : singleByteMappings.entrySet()) {
+            result.put(convertToInt(entry.getValue()), entry.getKey());
+        }
+        for (Map.Entry<Integer, String> entry : doubleByteMappings.entrySet()) {
+            result.put(convertToInt(entry.getValue()), entry.getKey());
+        }
+        return result;
     }
-    
+
     private int convertToInt(String s) throws IOException {
         byte[] b = s.getBytes("UTF-16BE");
         int value = 0;
         for (int i = 0; i < b.length - 1; i++) {
-        	value += b[i] & 0xff;
-        	value <<= 8;
+            value += b[i] & 0xff;
+            value <<= 8;
         }
-    	value += b[b.length - 1] & 0xff;
-    	return value;
+        value += b[b.length - 1] & 0xff;
+        return value;
+    }
+
+    @Override
+    void addChar(PdfString mark, PdfObject code) {
+        try {
+            byte[] src = mark.getBytes();
+            String dest = createStringFromBytes(code.getBytes());
+            if (src.length == 1) {
+                singleByteMappings.put(Integer.valueOf(src[0] & 0xff), dest);
+            } else if (src.length == 2) {
+                int intSrc = src[0] & 0xFF;
+                intSrc <<= 8;
+                intSrc |= src[1] & 0xFF;
+                doubleByteMappings.put(Integer.valueOf(intSrc), dest);
+            } else {
+                throw new IOException(MessageLocalization.getComposedMessage("mapping.code.should.be.1.or.two.bytes.and.not.1", src.length));
+            }
+        }
+        catch (Exception ex) {
+            throw new ExceptionConverter(ex);
+        }
+    }
+    
+    private String createStringFromBytes(byte[] bytes) throws IOException {
+        String retval = null;
+        if (bytes.length == 1) {
+            retval = new String(bytes);
+        } else {
+            retval = new String(bytes, "UTF-16BE");
+        }
+        return retval;
     }
 }
