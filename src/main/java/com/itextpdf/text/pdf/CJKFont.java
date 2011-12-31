@@ -89,6 +89,7 @@ class CJKFont extends BaseFont {
     private CMapCidByte cidByte;
     private CMapUniCid uniCid;
     private CMapCidUni cidUni;
+    private String uniMap;
 
     /** The font name */
     private String fontName;
@@ -118,7 +119,6 @@ class CJKFont extends BaseFont {
                 }
             }
             catch (Exception e) {
-                e.printStackTrace();
             }
             propertiesLoaded = true;
         }
@@ -166,13 +166,17 @@ class CJKFont extends BaseFont {
         loadCMaps();
     }
 
+    String getUniMap() {
+        return uniMap;
+    }
+    
     private void loadCMaps() throws DocumentException {
         try {
             fontDesc = allFonts.get(fontName);
             hMetrics = (IntHashtable)fontDesc.get("W");
             vMetrics = (IntHashtable)fontDesc.get("W2");
             String registry = (String)fontDesc.get("Registry");
-            String uniMap = "";
+            uniMap = "";
             for (String name : registryNames.get(registry + "_Uni")) {
                 uniMap = name;
                 if (name.endsWith("V") && vertical)
@@ -641,7 +645,6 @@ class CJKFont extends BaseFont {
 
     private static HashMap<String, Object> readFontProperties(String name) throws IOException {
         name += ".properties";
-        System.out.println(name);
         InputStream is = getResourceStream(RESOURCE_PATH_CMAP + name);
         Properties p = new Properties();
         p.load(is);

@@ -73,6 +73,8 @@ public class DocumentFont extends BaseFont {
     private float urx = 100;
     private float ury = 900;
     private boolean isType0 = false;
+    protected String cjkEncoding;
+    protected String uniMap;
 
     private BaseFont cjkMirror;
 
@@ -118,6 +120,8 @@ public class DocumentFont extends BaseFont {
                     catch (Exception e) {
                         throw new ExceptionConverter(e);
                     }
+                    cjkEncoding = enc;
+                    uniMap = ((CJKFont)cjkMirror).getUniMap();
                     return;
                 }
                 if (PdfName.TYPE0.equals(subType) && enc.equals("Identity-H")) {
