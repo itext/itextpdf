@@ -90,12 +90,18 @@ public class PngWriter {
         writeChunk(IEND, new byte[0]);
     }
 
-    public void writeData(byte[] data, final int len, final int stride) throws IOException {
+    public void writeData(byte[] data, final int stride) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         DeflaterOutputStream zip = new DeflaterOutputStream(stream);
-        for (int k = 0; k < len; k += stride) {
+        int k;
+        for (k = 0; k < data.length-stride; k += stride) {
             zip.write(0);
             zip.write(data, k, stride);
+        }
+        int remaining = data.length - k;
+        if (remaining > 0){
+            zip.write(0);
+            zip.write(data, k, remaining);
         }
         zip.finish();
         writeChunk(IDAT, stream.toByteArray());

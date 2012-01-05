@@ -358,7 +358,7 @@ public class PdfImageObject {
                 png.writeIccProfile(icc);
             if (palette != null)
                 png.writePalette(palette);
-            png.writeData(imageBytes, width*height*pngBitDepth/8, stride);
+            png.writeData(imageBytes, stride);
             png.writeEnd();
             streamContentType = ImageBytesType.PNG;
             imageBytes = ms.toByteArray();
