@@ -75,6 +75,7 @@ public class BugRunnerTest {
 	public void setup() {
 		list.add("3353957.html");
 		list.add("ol-test.html");
+        list.add("processing-instructions.html");
 	}
 
 	@Test

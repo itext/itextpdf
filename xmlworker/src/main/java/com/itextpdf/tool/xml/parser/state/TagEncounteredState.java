@@ -68,7 +68,7 @@ public class TagEncounteredState implements State {
 	 */
 	public void process(final char character) {
 		String tag = this.parser.bufferToString();
-		if (Character.isWhitespace(character) || character == '>' || character == '/' || character == ':' || tag.equals("!--") || tag.equals("![CDATA[")) {
+		if (Character.isWhitespace(character) || character == '>' || character == '/' || character == ':' || character == '?' || tag.equals("!--") || tag.equals("![CDATA[")) {
 			// cope with <? xml and <! DOCTYPE
 			if (tag.length() > 0) {
 				if (tag.equals("!--")) {
@@ -93,22 +93,31 @@ public class TagEncounteredState implements State {
 					this.parser.memory().currentTag(this.parser.bufferToString());
 					this.parser.flush();
 					this.parser.selectState().tagAttributes();
-				} else if (character == '>') {
+                } else if (character == '?') {
+                    this.parser.memory().currentTag(tag.substring(1));
+                    this.parser.flush();
+                    this.parser.startElement();
+                    this.parser.selectState().xml();
+                } else if (character == '>') {
 					this.parser.memory().currentTag(tag);
 					this.parser.flush();
 					this.parser.startElement();
 					this.parser.selectState().inTag();
 				} else if (character == '/') {
-					this.parser.memory().currentTag(this.parser.bufferToString());
+					this.parser.memory().currentTag(tag);
 					this.parser.flush();
 					this.parser.selectState().selfClosing();
 				} else if (character == ':') {
 					this.parser.memory().namespace(tag);
 					this.parser.flush();
 				}
-			} else if (character == '/') {
-				this.parser.selectState().closingTag();
-			}
+			} else {
+                if (character == '/') {
+				    this.parser.selectState().closingTag();
+			    } else if (character == '?') {
+                    this.parser.append(character);
+                }
+            }
 		} else {
 			this.parser.append(character);
 		}
