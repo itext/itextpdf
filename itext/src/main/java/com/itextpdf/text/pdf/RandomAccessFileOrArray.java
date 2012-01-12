@@ -179,7 +179,7 @@ public class RandomAccessFileOrArray implements DataInput {
      * @since 5.0.3
      */
     private static boolean exceptionIsMapFailureException(IOException e){
-        if (e.getMessage().indexOf("Map failed") >= 0)
+        if (e.getMessage() != null && e.getMessage().indexOf("Map failed") >= 0)
             return true;
 
         return false;
