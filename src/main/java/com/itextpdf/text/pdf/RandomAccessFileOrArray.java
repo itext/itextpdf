@@ -139,8 +139,7 @@ public class RandomAccessFileOrArray implements DataInput {
     
     private void openFile(String filename) throws IOException{
         
-        File f = new File(filename);
-        if (f.length() > Integer.MAX_VALUE || plainRandomAccess){ // files larger than Integer.MAX_VALUE can't be mapped
+        if (plainRandomAccess){
             openForPlainRandomAccess(filename);
         }else{
             try{
