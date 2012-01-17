@@ -181,6 +181,13 @@ public abstract class BaseFont {
      * @since 5.0.2
      */
     public static final int WIDTH_CLASS = 22;
+    /**
+     * The entry of PDF FontDescriptor dictionary.
+     * (Optional; PDF 1.5; strongly recommended for Type 3 fonts in Tagged PDF documents)
+     * The weight (thickness) component of the fully-qualified font name or font specifier.
+     * A value larger than 500 indicates bold font-weight.
+     */
+    public static final int FONT_WEIGHT = 23;
     /** The font is Type 1.
      */
     public static final int FONT_TYPE_T1 = 0;

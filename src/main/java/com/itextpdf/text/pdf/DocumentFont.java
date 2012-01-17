@@ -68,6 +68,7 @@ public class DocumentFont extends BaseFont {
     private float capHeight = 700;
     private float descender = -200;
     private float italicAngle = 0;
+    private float fontWeight = 0;
     private float llx = -50;
     private float lly = -200;
     private float urx = 100;
@@ -337,6 +338,7 @@ public class DocumentFont extends BaseFont {
             capHeight = bf.getFontDescriptor(CAPHEIGHT, 1000);
             descender = bf.getFontDescriptor(DESCENT, 1000);
             italicAngle = bf.getFontDescriptor(ITALICANGLE, 1000);
+            fontWeight = bf.getFontDescriptor(FONT_WEIGHT, 1000);
             llx = bf.getFontDescriptor(BBOXLLX, 1000);
             lly = bf.getFontDescriptor(BBOXLLY, 1000);
             urx = bf.getFontDescriptor(BBOXURX, 1000);
@@ -388,6 +390,10 @@ public class DocumentFont extends BaseFont {
         v = fontDesc.getAsNumber(PdfName.ITALICANGLE);
         if (v != null)
             italicAngle = v.floatValue();
+        v = fontDesc.getAsNumber(PdfName.FONTWEIGHT);
+        if (v != null) {
+            fontWeight = v.floatValue();
+        }
         PdfArray bbox = fontDesc.getAsArray(PdfName.FONTBBOX);
         if (bbox != null) {
             llx = bbox.getAsNumber(0).floatValue();
@@ -482,6 +488,8 @@ public class DocumentFont extends BaseFont {
                 return 0;
             case AWT_MAXADVANCE:
                 return (urx - llx) * fontSize / 1000;
+            case FONT_WEIGHT:
+                return fontWeight * fontSize / 1000;
         }
         return 0;
     }

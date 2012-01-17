@@ -714,6 +714,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName FONTMATRIX = new PdfName("FontMatrix");
     /** A name */
     public static final PdfName FONTNAME = new PdfName("FontName");
+    /** A name */
+    public static final PdfName FONTWEIGHT = new PdfName("FontWeight");
     /**
      * A name
      * @since	2.1.6
