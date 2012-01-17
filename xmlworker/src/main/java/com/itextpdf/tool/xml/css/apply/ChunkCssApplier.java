@@ -69,7 +69,7 @@ public class ChunkCssApplier {
      * 600 - 900 and "bolder" = bold.
      */
     public static final List<String> BOLD = Arrays.asList(new String[]{"bold", "bolder", "600", "700", "800", "900"});
-    private final CssUtils utils = CssUtils.getInstance();
+    protected final CssUtils utils = CssUtils.getInstance();
 
 	/**
 	 * 
@@ -78,55 +78,16 @@ public class ChunkCssApplier {
 	 * @return the styled chunk
 	 */
     public Chunk apply(final Chunk c, final Tag t) {
-        String fontName = null;
-        String encoding = BaseFont.CP1252;
-        float size = new FontSizeTranslator().getFontSize(t);
-        int style = Font.UNDEFINED;
-        BaseColor color = null;
+        Font f = applyFontStyles(t);
+        float size = f.getSize();
         Map<String, String> rules = t.getCSS();
         for (Entry<String, String> entry : rules.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            if (CSS.Property.FONT_WEIGHT.equalsIgnoreCase(key)) {
-                if (CSS.Value.BOLD.contains(value)) {
-                    if (style == Font.ITALIC) {
-                        style = Font.BOLDITALIC;
-                    } else {
-                        style = Font.BOLD;
-                    }
-                } else {
-                    if (style == Font.BOLDITALIC) {
-                        style = Font.ITALIC;
-                    } else {
-                        style = Font.NORMAL;
-                    }
-                }
-            } else if (CSS.Property.FONT_STYLE.equalsIgnoreCase(key)) {
-                if (value.equalsIgnoreCase(CSS.Value.ITALIC)) {
-                    if (style == Font.BOLD) {
-                        style = Font.BOLDITALIC;
-                    } else {
-                        style = Font.ITALIC;
-                    }
-                }
+            if (CSS.Property.FONT_STYLE.equalsIgnoreCase(key)) {
                 if (value.equalsIgnoreCase(CSS.Value.OBLIQUE)) {
                     c.setSkew(0, 12);
                 }
-            } else if (CSS.Property.FONT_FAMILY.equalsIgnoreCase(key)) {
-                if (value.contains(",")) {
-                    String[] fonts = value.split(",");
-                    for (String s : fonts) {
-                        s = s.trim();
-                        if (!FontFactory.getFont(s).getFamilyname().equalsIgnoreCase("unknown")) {
-                            fontName = s;
-                            break;
-                        }
-                    }
-                } else {
-                    fontName = value;
-                }
-            } else if (CSS.Property.COLOR.equalsIgnoreCase(key)) {
-                color = HtmlUtilities.decodeColor(value);
             } else if (CSS.Property.LETTER_SPACING.equalsIgnoreCase(key)) {
                 c.setCharacterSpacing(utils.parsePxInCmMmPcToPt(value));
             } else if (null != rules.get(CSS.Property.XFA_FONT_HORIZONTAL_SCALE)) { // only % allowed; need a catch block NumberFormatExc?
@@ -163,9 +124,62 @@ public class ChunkCssApplier {
         if (null != rules.get(CSS.Property.BACKGROUND_COLOR)) {
             c.setBackground(HtmlUtilities.decodeColor(rules.get(CSS.Property.BACKGROUND_COLOR)));
         }
-        Font f = FontFactory.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, color);
+        f.setSize(size);
         c.setFont(f);
         return c;
+    }
+
+    public Font applyFontStyles(final Tag t) {
+        String fontName = null;
+        String encoding = BaseFont.CP1252;
+        float size = new FontSizeTranslator().getFontSize(t);
+        int style = Font.UNDEFINED;
+        BaseColor color = null;
+        Map<String, String> rules = t.getCSS();
+        for (Entry<String, String> entry : rules.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (CSS.Property.FONT_WEIGHT.equalsIgnoreCase(key)) {
+                if (CSS.Value.BOLD.contains(value)) {
+                    if (style == Font.ITALIC) {
+                        style = Font.BOLDITALIC;
+                    } else {
+                        style = Font.BOLD;
+                    }
+                } else {
+                    if (style == Font.BOLDITALIC) {
+                        style = Font.ITALIC;
+                    } else {
+                        style = Font.NORMAL;
+                    }
+                }
+            } else if (CSS.Property.FONT_STYLE.equalsIgnoreCase(key)) {
+                if (value.equalsIgnoreCase(CSS.Value.ITALIC)) {
+                    if (style == Font.BOLD) {
+                        style = Font.BOLDITALIC;
+                    } else {
+                        style = Font.ITALIC;
+                    }
+                }
+            } else if (CSS.Property.FONT_FAMILY.equalsIgnoreCase(key)) {
+                if (value.contains(",")) {
+                    String[] fonts = value.split(",");
+                    for (String s : fonts) {
+                        s = s.trim();
+                        if (!FontFactory.getFont(s).getFamilyname().equalsIgnoreCase("unknown")) {
+                            fontName = s;
+                            break;
+                        }
+                    }
+                } else {
+                    fontName = value;
+                }
+            } else if (CSS.Property.COLOR.equalsIgnoreCase(key)) {
+                color = HtmlUtilities.decodeColor(value);
+            }
+        }
+        Font f = FontFactory.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, color);
+        return f;
     }
 
     /**

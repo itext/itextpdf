@@ -45,11 +45,15 @@ package com.itextpdf.tool.xml.css.apply;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
+import com.itextpdf.tool.xml.html.CssAppliers;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -153,9 +157,8 @@ public class ParagraphCssApplier {
         if (hasLMB) {
             configuration.setLastMarginBottom(lmb);
         }
-        //TODO this only work around for applaying of font properties to paragraph
-        Chunk dummy = new ChunkCssApplier().apply(new Chunk("dummy"), t);
-        p.setFont(dummy.getFont());
+        Font font = CssAppliers.getInstance().getChunkCssAplier().applyFontStyles(t);
+        p.setFont(font);
         // TODO reactive for positioning and implement more
 //		if(null != configuration.getWriter() && null != css.get("position")) {
 //			positionNoNewLineParagraph(p, css);

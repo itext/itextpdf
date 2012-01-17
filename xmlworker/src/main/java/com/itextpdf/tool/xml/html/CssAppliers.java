@@ -71,7 +71,7 @@ public class CssAppliers {
 		return myself;
 	}
 
-	private final ChunkCssApplier chunk;
+	private ChunkCssApplier chunk;
 	private final ParagraphCssApplier paragraph;
 	private final NoNewLineParagraphCssApplier nonewlineparagraph;
 	private final HtmlCellCssApplier htmlcell;
@@ -151,4 +151,11 @@ public class CssAppliers {
 		}
 	}
 
+    public ChunkCssApplier getChunkCssAplier() {
+        return  chunk;
+    }
+
+    public void setChunkCssAplier(ChunkCssApplier chunkCssAplier) {
+        this.chunk = chunkCssAplier;
+    }
 }
