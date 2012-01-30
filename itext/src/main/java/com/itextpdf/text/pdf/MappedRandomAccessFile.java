@@ -144,6 +144,9 @@ public class MappedRandomAccessFile {
             int mapN = (int) (pos / BUFSIZE);
             int offN = (int) (pos % BUFSIZE);
             
+            if (offN >= mappedBuffers[mapN].limit())
+                return -1;
+            
             byte b = mappedBuffers[mapN].get(offN);
             pos++;
             int n = b & 0xff;
@@ -167,7 +170,11 @@ public class MappedRandomAccessFile {
         int totalRead = 0;
         
         while(totalRead < len){
+            if (mapN > mappedBuffers.length) // we have run out of data to read from
+                break;
             MappedByteBuffer currentBuffer = mappedBuffers[mapN];
+            if (offN > currentBuffer.limit())
+                break;
             currentBuffer.position(offN);
             int bytesFromThisBuffer = Math.min(len, currentBuffer.remaining());
             currentBuffer.get(bytes, off, bytesFromThisBuffer);
@@ -178,10 +185,8 @@ public class MappedRandomAccessFile {
             mapN++;
             offN = 0;
             
-            if (mapN > mappedBuffers.length) // we have run out of data to read from
-                break;
         }
-        return totalRead;
+        return totalRead == 0 ? -1 : totalRead;
     }
 
     /**
