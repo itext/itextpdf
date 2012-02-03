@@ -43,23 +43,7 @@
  */
 package com.itextpdf.tool.xml.parser;
 
-import com.itextpdf.tool.xml.parser.state.AttributeValueState;
-import com.itextpdf.tool.xml.parser.state.CdataState;
-import com.itextpdf.tool.xml.parser.state.CloseCommentState;
-import com.itextpdf.tool.xml.parser.state.ClosingTagState;
-import com.itextpdf.tool.xml.parser.state.CommentState;
-import com.itextpdf.tool.xml.parser.state.DocTypeState;
-import com.itextpdf.tool.xml.parser.state.DoubleQuotedAttrValueState;
-import com.itextpdf.tool.xml.parser.state.InsideTagHTMLState;
-import com.itextpdf.tool.xml.parser.state.InsideTagState;
-import com.itextpdf.tool.xml.parser.state.SelfClosingTagState;
-import com.itextpdf.tool.xml.parser.state.SingleQuotedAttrValueState;
-import com.itextpdf.tool.xml.parser.state.SpecialCharState;
-import com.itextpdf.tool.xml.parser.state.TagAttributeState;
-import com.itextpdf.tool.xml.parser.state.TagEncounteredState;
-import com.itextpdf.tool.xml.parser.state.UnknownState;
-import com.itextpdf.tool.xml.parser.state.UnquotedAttrState;
-import com.itextpdf.tool.xml.parser.state.XmlState;
+import com.itextpdf.tool.xml.parser.state.*;
 
 /**
  * Switches the current state in the {@link XMLParser}.
@@ -84,6 +68,7 @@ public class StateController {
 	private final State xml;
 	private final State doctype;
 	private final State unquoted;
+    private final State processingInstruction;
 	private final XMLParser parser;
 	private State currentState;
 	private State previousState;
@@ -111,6 +96,7 @@ public class StateController {
 		xml = new XmlState(parser);
 		doctype = new DocTypeState(parser);
 		unquoted = new UnquotedAttrState(parser);
+        processingInstruction = new ProcessingInstructionEncounteredState(parser);
 		previousState = null;
 		currentState = null;
 	}
@@ -191,6 +177,14 @@ public class StateController {
 		return setState(doubleQuoted);
 	}
 
+    /**
+	 * set Parser state to {@link ProcessingInstructionEncounteredState}.
+	 * @return Parser
+	 */
+    public XMLParser processingInstructions() {
+        return setState(processingInstruction);
+    }
+
 	/**
 	 * set Parser state to {@link SelfClosingTagState}.
 	 * @return Parser
@@ -237,14 +231,6 @@ public class StateController {
 	 */
 	public XMLParser cdata() {
 		return setState(cdata);
-	}
-
-	/**
-	 * set Parser state to {@link XmlState}.
-	 * @return Parser
-	 */
-	public XMLParser xml() {
-		return setState(xml);
 	}
 
 	/**

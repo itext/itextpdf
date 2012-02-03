@@ -65,16 +65,19 @@ public class UnquotedAttrState implements State {
 	 * @see com.itextpdf.tool.xml.parser.State#process(int)
 	 */
 	public void process(final char character) {
-		if (Character.isWhitespace(character)) {
-			this.parser.memory().putCurrentAttrValue(this.parser.bufferToString());
-			this.parser.flush();
-			this.parser.selectState().tagAttributes();
-		} else if (character == '?'){
-			this.parser.memory().putCurrentAttrValue(this.parser.bufferToString());
-			this.parser.startElement();
-			this.parser.flush();
-			this.parser.selectState().xml();
-		} else {
+        if (Character.isWhitespace(character)) {
+            this.parser.memory().putCurrentAttrValue(this.parser.bufferToString());
+            this.parser.flush();
+            this.parser.selectState().tagAttributes();
+        } else if (character == '>') {
+            this.parser.memory().putCurrentAttrValue(this.parser.bufferToString());
+            this.parser.startElement();
+            this.parser.selectState().inTag();
+        } else if (character == '/') {
+            this.parser.memory().putCurrentAttrValue(this.parser.bufferToString());
+            this.parser.flush();
+            this.parser.selectState().selfClosing();
+        } else {
             this.parser.append(character);
         }
 	}

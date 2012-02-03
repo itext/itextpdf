@@ -80,11 +80,6 @@ public class TagEncounteredState implements State {
 					this.parser.flush();
 					parser.selectState().cdata();
 					this.parser.append(character);
-				} else if (tag.equals("?xml")) {
-					this.parser.memory().currentTag("xml");
-					this.parser.flush();
-					parser.selectState().tagAttributes();
-					this.parser.append(character);
 				} else if (tag.equals("!DOCTYPE")) {
 					this.parser.flush();
 					parser.selectState().doctype();
@@ -93,11 +88,6 @@ public class TagEncounteredState implements State {
 					this.parser.memory().currentTag(this.parser.bufferToString());
 					this.parser.flush();
 					this.parser.selectState().tagAttributes();
-                } else if (character == '?') {
-                    this.parser.memory().currentTag(tag.substring(1));
-                    this.parser.flush();
-                    this.parser.startElement();
-                    this.parser.selectState().xml();
                 } else if (character == '>') {
 					this.parser.memory().currentTag(tag);
 					this.parser.flush();
@@ -116,6 +106,7 @@ public class TagEncounteredState implements State {
 				    this.parser.selectState().closingTag();
 			    } else if (character == '?') {
                     this.parser.append(character);
+                    this.parser.selectState().processingInstructions();
                 }
             }
 		} else {
