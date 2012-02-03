@@ -122,7 +122,9 @@ public class PRAcroForm extends PdfDictionary {
         hashMap = root.hashMap;
         pushAttrib(root);
         PdfArray fieldlist = (PdfArray)PdfReader.getPdfObjectRelease(root.get(PdfName.FIELDS));
-        iterateFields(fieldlist, null, null);
+        if (fieldlist != null) {
+            iterateFields(fieldlist, null, null);
+        }
     }
 
     /**
