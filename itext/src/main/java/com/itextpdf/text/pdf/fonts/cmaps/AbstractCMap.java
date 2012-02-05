@@ -97,6 +97,9 @@ public abstract class AbstractCMap {
         byte[] a2 = decodeStringToByte(to);
         if (a1.length != a2.length || a1.length == 0)
             throw new IllegalArgumentException("Invalid map.");
+        byte[] sout = null;
+        if (code instanceof PdfString)
+            sout = decodeStringToByte((PdfString)code);
         int start = a1[a1.length - 1] & 0xff;
         int end = a2[a2.length - 1] & 0xff;
         for (int k = start; k <= end; ++k) {
@@ -109,6 +112,12 @@ public abstract class AbstractCMap {
             else if (code instanceof PdfNumber) {
                 int nn = ((PdfNumber)code).intValue() + k - start;
                 addChar(s, new PdfNumber(nn));
+            }
+            else if (code instanceof PdfString) {
+                PdfString s1 = new PdfString(sout);
+                s1.setHexWriting(true);
+                ++sout[sout.length - 1];
+                addChar(s, s1);
             }
         }
     }
