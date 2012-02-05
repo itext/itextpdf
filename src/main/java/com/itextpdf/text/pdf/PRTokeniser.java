@@ -479,10 +479,24 @@ public class PRTokeniser {
                 outBuf = new StringBuffer();
                 if (ch == '-' || ch == '+' || ch == '.' || (ch >= '0' && ch <= '9')) {
                     type = TokenType.NUMBER;
-                    do {
+                    if (ch == '-') {
+                        // Take care of number like "--234". If Acrobat can read them so must we.
+                        boolean minus = false;
+                        do {
+                            minus = !minus;
+                            ch = file.read();
+                        } while (ch == '-');
+                        if (minus)
+                            outBuf.append('-');
+                    }
+                    else {
                         outBuf.append((char)ch);
                         ch = file.read();
-                    } while (ch != -1 && ((ch >= '0' && ch <= '9') || ch == '.'));
+                    }
+                    while (ch != -1 && ((ch >= '0' && ch <= '9') || ch == '.')) {
+                        outBuf.append((char)ch);
+                        ch = file.read();
+                    }
                 }
                 else {
                     type = TokenType.OTHER;

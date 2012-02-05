@@ -194,10 +194,6 @@ public class CMapAwareDocumentFont extends DocumentFont {
     public int getWidth(int char1) {
         if (char1 == ' ')
             return spaceWidth;
-        if (uni2cid != null && uni2cid.containsKey(char1)) {
-        	char1 = uni2cid.get(char1);
-        	return widths[char1];
-        }
         return super.getWidth(char1);
     }
     
