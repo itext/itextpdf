@@ -115,6 +115,17 @@ public class CMapToUnicode extends AbstractCMap {
         return result;
     }
 
+    public Map<Integer, Integer> createDirectMapping() throws IOException {
+        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+        for (Map.Entry<Integer, String> entry : singleByteMappings.entrySet()) {
+            result.put(entry.getKey(), convertToInt(entry.getValue()));
+        }
+        for (Map.Entry<Integer, String> entry : doubleByteMappings.entrySet()) {
+            result.put(entry.getKey(), convertToInt(entry.getValue()));
+        }
+        return result;
+    }
+
     private int convertToInt(String s) throws IOException {
         byte[] b = s.getBytes("UTF-16BE");
         int value = 0;
