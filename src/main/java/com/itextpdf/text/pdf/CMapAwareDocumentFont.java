@@ -93,16 +93,16 @@ public class CMapAwareDocumentFont extends DocumentFont {
 
         processToUnicode();
         try {
-            //if (toUnicodeCmap == null)
-                processUni2Byte();
-
+        	//if (toUnicodeCmap == null)
+            processUni2Byte();
+        
             spaceWidth = super.getWidth(' ');
             if (spaceWidth == 0){
-                spaceWidth = computeAverageWidth();
+            	spaceWidth = computeAverageWidth();
             }
             if (cjkEncoding != null) {
-                    byteCid = CMapCache.getCachedCMapByteCid(cjkEncoding);
-                    cidUni = CMapCache.getCachedCMapCidUni(uniMap);
+                	byteCid = CMapCache.getCachedCMapByteCid(cjkEncoding);
+                	cidUni = CMapCache.getCachedCMapCidUni(uniMap);
             }
         }
         catch (Exception ex) {
@@ -135,38 +135,39 @@ public class CMapAwareDocumentFont extends DocumentFont {
     /**
      * Inverts DocumentFont's uni2byte mapping to obtain a cid-to-unicode mapping based
      * on the font's encoding
+     * @throws IOException 
      * @since 2.1.7
      */
-    private void processUni2Byte() throws IOException {
+    private void processUni2Byte() throws IOException{
+        IntHashtable uni2byte = getUni2Byte();
+        int e[] = uni2byte.toOrderedKeys();
+        if (e.length == 0)
+            return;
+        
         cidbyte2uni = new char[256];
-        if (toUnicodeCmap != null) {
-            Map<Integer, Integer> dm = toUnicodeCmap.createDirectMapping();
-            for (Map.Entry<Integer, Integer> kv : dm.entrySet()) {
-                if (kv.getKey() < 256)
-                    cidbyte2uni[kv.getKey().intValue()] = (char)kv.getValue().intValue();
-            }
+        if (toUnicodeCmap == null) {
+        	for (int k = 0; k < e.length; ++k) {
+        		int n = uni2byte.get(e[k]);
+            
+        		// this is messy, messy - an encoding can have multiple unicode values mapping to the same cid - we are going to arbitrarily choose the first one
+        		// what we really need to do is to parse the encoding, and handle the differences info ourselves.  This is a huge duplication of code of what is already
+        		// being done in DocumentFont, so I really hate to go down that path without seriously thinking about a change in the organization of the Font class hierarchy
+        		if (n < 256 && cidbyte2uni[n] == 0)
+                cidbyte2uni[n] = (char)e[k];
+        	}
         }
         else {
-            IntHashtable uni2byte = getUni2Byte();
-            int e[] = uni2byte.toOrderedKeys();
-            if (e.length == 0)
-                return;
-
-            cidbyte2uni = new char[256];
-            for (int k = 0; k < e.length; ++k) {
-                int n = uni2byte.get(e[k]);
-
-                // this is messy, messy - an encoding can have multiple unicode values mapping to the same cid - we are going to arbitrarily choose the first one
-                // what we really need to do is to parse the encoding, and handle the differences info ourselves.  This is a huge duplication of code of what is already
-                // being done in DocumentFont, so I really hate to go down that path without seriously thinking about a change in the organization of the Font class hierarchy
-                if (n < 256 && cidbyte2uni[n] == 0)
-                    cidbyte2uni[n] = (char)e[k];
-            }
+        	Map<Integer, Integer> dm = toUnicodeCmap.createDirectMapping();
+        	for (Map.Entry<Integer, Integer> kv : dm.entrySet()) {
+        		if (kv.getKey() < 256) {
+        			cidbyte2uni[kv.getKey().intValue()] = (char)kv.getValue().intValue();
+        		}
+        	}
         }
         IntHashtable diffmap = getDiffmap();
         if (diffmap != null) {
             // the difference array overrides the existing encoding
-            int e[] = diffmap.toOrderedKeys();
+            e = diffmap.toOrderedKeys();
             for (int k = 0; k < e.length; ++k) {
                 int n = diffmap.get(e[k]);
                 if (n < 256)
