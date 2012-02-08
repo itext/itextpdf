@@ -515,9 +515,13 @@ public class PdfReader implements PdfViewerPreferences {
                     throw new InvalidPdfException(e.getMessage());
                 rebuilt = true;
                 encrypted = false;
-                rebuildXref();
-                lastXref = -1;
-                readDocObj();
+                try{
+                    rebuildXref();
+                    lastXref = -1;
+                    readDocObj();
+                } catch (Exception ne){
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
+                }
             }
 
             strings.clear();
