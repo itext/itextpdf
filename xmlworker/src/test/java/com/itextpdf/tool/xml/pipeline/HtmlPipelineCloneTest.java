@@ -26,7 +26,7 @@ public class HtmlPipelineCloneTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		ctx = new HtmlPipelineContext();
+		ctx = new HtmlPipelineContext(null);
 		ctx.setImageProvider(new AbstractImageProvider() {
 
 			public String getImageRootPath() {

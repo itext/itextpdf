@@ -52,6 +52,7 @@ import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.html.CssAppliers;
+import com.itextpdf.tool.xml.html.CssAppliersImpl;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 import java.util.Map;
@@ -65,11 +66,14 @@ import java.util.Map.Entry;
 public class ParagraphCssApplier {
 
 
-    /**
+	private final CssAppliers appliers;
+
+	/**
 	 * Construct a ParagraphCssApplier.
 	 *
 	 */
-    public ParagraphCssApplier() {
+	public ParagraphCssApplier(final CssAppliers appliers) {
+		this.appliers = appliers;
     }
 
 	/**
@@ -157,7 +161,7 @@ public class ParagraphCssApplier {
         if (hasLMB) {
             configuration.setLastMarginBottom(lmb);
         }
-        Font font = CssAppliers.getInstance().getChunkCssAplier().applyFontStyles(t);
+		Font font = appliers.getChunkCssAplier().applyFontStyles(t);
         p.setFont(font);
         // TODO reactive for positioning and implement more
 //		if(null != configuration.getWriter() && null != css.get("position")) {

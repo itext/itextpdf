@@ -62,7 +62,7 @@ public class HtmlPipelineContextTest {
 
 	@Before
 	public void setup() {
-		ctx = new HtmlPipelineContext();
+		ctx = new HtmlPipelineContext(null);
 	}
 	/**
 	 * Verifies the default page size A4.

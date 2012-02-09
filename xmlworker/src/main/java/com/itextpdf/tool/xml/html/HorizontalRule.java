@@ -70,10 +70,10 @@ public class HorizontalRule extends AbstractTagProcessor {
 		try {
 			List<Element> list = new ArrayList<Element>();
 			HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-			LineSeparator lineSeparator = (LineSeparator) CssAppliers.getInstance().apply(new LineSeparator(), tag, htmlPipelineContext);
+			LineSeparator lineSeparator = (LineSeparator) getCssAppliers().apply(new LineSeparator(), tag, htmlPipelineContext);
 			Paragraph p = new Paragraph();
 			p.add(lineSeparator);
-			list.add(CssAppliers.getInstance().apply(p, tag, htmlPipelineContext));
+			list.add(getCssAppliers().apply(p, tag, htmlPipelineContext));
 			return list;
 		} catch (NoCustomContextException e) {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);

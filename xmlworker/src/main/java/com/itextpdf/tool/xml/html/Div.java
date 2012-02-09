@@ -73,7 +73,7 @@ public class Div extends AbstractTagProcessor {
     	if (sanitized.length() > 0) {
     		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
     		try {
-				l.add(CssAppliers.getInstance().apply(new NoNewLineParagraph(c), tag, getHtmlPipelineContext(ctx)));
+				l.add(getCssAppliers().apply(new NoNewLineParagraph(c), tag, getHtmlPipelineContext(ctx)));
 			} catch (NoCustomContextException e) {
 				throw new RuntimeWorkerException(e);
 			}
@@ -96,7 +96,7 @@ public class Div extends AbstractTagProcessor {
 			for (Element e : currentContent) {
 				if (e instanceof Paragraph) {
 					if (p != null) {
-						l.add(CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx)));
+						l.add(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
 						p = null;
 					}
 					l.add(e);
@@ -108,7 +108,7 @@ public class Div extends AbstractTagProcessor {
 				}
 			}
 			if (p != null) {
-				l.add(CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx)));
+				l.add(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
 			}
 			return l;
 		} catch (NoCustomContextException e) {

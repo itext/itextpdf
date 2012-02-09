@@ -124,7 +124,7 @@ public class Image extends AbstractTagProcessor {
 				}
 				try {
 					HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-					l.add(CssAppliers.getInstance().apply(new Chunk((com.itextpdf.text.Image) CssAppliers.getInstance().apply(img, tag, htmlPipelineContext), 0, 0, true), tag, htmlPipelineContext));
+					l.add(getCssAppliers().apply(new Chunk((com.itextpdf.text.Image) getCssAppliers().apply(img, tag, htmlPipelineContext), 0, 0, true), tag, htmlPipelineContext));
 				} catch (NoCustomContextException e) {
 					throw new RuntimeWorkerException(e);
 				}

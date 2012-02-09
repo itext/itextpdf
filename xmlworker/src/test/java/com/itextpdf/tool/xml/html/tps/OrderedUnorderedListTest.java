@@ -20,6 +20,7 @@ import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.html.CssAppliersImpl;
 import com.itextpdf.tool.xml.html.OrderedUnorderedList;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
@@ -56,8 +57,10 @@ public class OrderedUnorderedListTest {
 		listWithOne = new ArrayList<Element>();
 		listWithTwo = new ArrayList<Element>();
 		orderedUnorderedList = new OrderedUnorderedList();
+		CssAppliersImpl cssAppliers = new CssAppliersImpl();
+		orderedUnorderedList.setCssAppliers(cssAppliers);
 		workerContextImpl = new WorkerContextImpl();
-		HtmlPipelineContext context2 = new HtmlPipelineContext();
+		HtmlPipelineContext context2 = new HtmlPipelineContext(cssAppliers);
 		workerContextImpl.put(HtmlPipeline.class.getName(), context2);
 		root.addChild(p);
 		root.addChild(ul);
@@ -66,7 +69,7 @@ public class OrderedUnorderedListTest {
 		p.getCSS().put("font-size", "12pt");
         p.getCSS().put("margin-top", "12pt");
         p.getCSS().put("margin-bottom", "12pt");
-		new ParagraphCssApplier().apply(new Paragraph("paragraph"), p, context2);
+		new ParagraphCssApplier(cssAppliers).apply(new Paragraph("paragraph"), p, context2);
 		first.getCSS().put("margin-top", "50pt");
 		first.getCSS().put("padding-top", "25pt");
 		first.getCSS().put("margin-bottom", "50pt");

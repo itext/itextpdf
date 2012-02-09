@@ -72,7 +72,7 @@ public class Anchor extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
 		if (sanitized.length() > 0) {
 			try {
-				l.add(CssAppliers.getInstance().apply(new Chunk(sanitized), tag, getHtmlPipelineContext(ctx)));
+				l.add(getCssAppliers().apply(new Chunk(sanitized), tag, getHtmlPipelineContext(ctx)));
 			} catch (NoCustomContextException e) {
 				throw new RuntimeWorkerException(e);
 			}
@@ -126,7 +126,7 @@ public class Anchor extends AbstractTagProcessor {
 					}
 					p.add(e);
 				}
-				elems.add(CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx)));
+				elems.add(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
 			} else
 			// !currentContent > 0 ; An empty "a" tag has been encountered.
 			// we're using an anchor space hack here. without the space, reader

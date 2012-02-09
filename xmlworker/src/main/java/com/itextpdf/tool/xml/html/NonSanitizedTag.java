@@ -55,7 +55,7 @@ public class NonSanitizedTag extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
 		if (null != content && content.length() > 0) {
 			try {
-				l.add(CssAppliers.getInstance().apply(new Chunk(content), tag, getHtmlPipelineContext(ctx)));
+				l.add(getCssAppliers().apply(new Chunk(content), tag, getHtmlPipelineContext(ctx)));
 			} catch (NoCustomContextException e) {
 				throw new RuntimeWorkerException(e);
 			}

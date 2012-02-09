@@ -39,7 +39,7 @@ public class HtmlPipelineTest {
 	 */
 	@Before
 	public void setup() throws PipelineException {
-		hpc = new HtmlPipelineContext();
+		hpc = new HtmlPipelineContext(null);
 		p = new HtmlPipeline(hpc, null);
 		wc = new WorkerContextImpl();
 		p.init(wc);

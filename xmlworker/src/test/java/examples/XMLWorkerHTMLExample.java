@@ -85,7 +85,7 @@ public class XMLWorkerHTMLExample extends Setup {
 		PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(new File(
 				"./target/test-classes/examples/columbus2.pdf")));
 		doc.open();
-		HtmlPipelineContext htmlContext = new HtmlPipelineContext();
+		HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
 		htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
 		CSSResolver cssResolver = XMLWorkerHelper.getInstance().getDefaultCssResolver(true);
 		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(htmlContext,
@@ -109,7 +109,7 @@ public class XMLWorkerHTMLExample extends Setup {
 		PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(new File(
 				"./target/test-classes/examples/columbus3.pdf")));
 		doc.open();
-		HtmlPipelineContext htmlContext = new HtmlPipelineContext();
+		HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
 		htmlContext.setImageProvider(new AbstractImageProvider() {
 
 			public String getImageRootPath() {
@@ -138,7 +138,7 @@ public class XMLWorkerHTMLExample extends Setup {
 		PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(new File(
 				"./target/test-classes/examples/columbus3.pdf")));
 		doc.open();
-		HtmlPipelineContext htmlContext = new HtmlPipelineContext();
+		HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
 		htmlContext.setLinkProvider(new LinkProvider() {
 
 			public String getLinkRoot() {

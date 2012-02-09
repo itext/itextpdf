@@ -10,6 +10,7 @@ the context is cloned using some defaults. You can change these defaults with th
 <li>The <code>autoBookmark()</code> method &#151; enables or disables the automatic creation of bookmarks. The default is: enabled (<code>true</code>).</li>
 <li>The <code>setAcceptUnknown()</code> method &#151; should XML Worker accept unknown tags? The default value is <code>true</code>.</li>
 <li>The <code>setRootTags()</code> method &#151; by default <code>body</code> and <code>div</code> are set as root tags. This affects the margin calculations.</li>
+<li>The <code>setCssAppliers()</code> method allows you to set a custom CssAppliers class which in it's turn allows you to create custom css appliers.</li>
 </ul>
 <p>In previous examples, we've also used the <code>setTagFactory()</code> method.
 We can completely change the way <code>HtmlPipeline</code> interprets tags by creating a custom <code>TagProcessorFactory</code>.</p>

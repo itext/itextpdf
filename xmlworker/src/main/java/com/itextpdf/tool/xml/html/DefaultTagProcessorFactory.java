@@ -141,6 +141,34 @@ public class DefaultTagProcessorFactory implements TagProcessorFactory {
 	}
 
 	/**
+	 * Tries to load given processor with Class.forName
+	 * 
+	 * @param className fully qualified className
+	 * @param loader the classloader to use
+	 * @return the loaded tag processor
+	 * @throws NoTagProcessorException if TagProcessor could not be loaded.
+	 */
+	protected TagProcessor load(final String className, final ClassLoader loader) throws NoTagProcessorException {
+		try {
+			Class<?> c = loader.loadClass(className);
+			return (TagProcessor) c.newInstance();
+		} catch (LinkageError e) {
+			throw new NoTagProcessorException(String.format(
+					LocaleMessages.getInstance().getMessage(LocaleMessages.NO_TAGPROCESSOR), className));
+		} catch (ClassNotFoundException e) {
+			throw new NoTagProcessorException(String.format(
+					LocaleMessages.getInstance().getMessage(LocaleMessages.NO_TAGPROCESSOR), className), e);
+		} catch (InstantiationException e) {
+			throw new NoTagProcessorException(String.format(
+					LocaleMessages.getInstance().getMessage(LocaleMessages.NO_TAGPROCESSOR), className), e);
+		} catch (IllegalAccessException e) {
+			throw new NoTagProcessorException(String.format(
+					LocaleMessages.getInstance().getMessage(LocaleMessages.NO_TAGPROCESSOR), className), e);
+		}
+
+	}
+
+	/**
 	 * @throws NoTagProcessorException when the processor was not found for the given tag.
 	 */
 	public TagProcessor getProcessor(final String tag, final String nameSpace) {

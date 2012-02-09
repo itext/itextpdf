@@ -57,6 +57,7 @@ import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.log.SysoLogger;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
+import com.itextpdf.tool.xml.html.CssAppliersImpl;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.Image;
 import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
@@ -80,9 +81,10 @@ public class ImageTest {
 
 	@Before
 	public void init() {
+		i.setCssAppliers(new CssAppliersImpl());
 		I.getAttributes().put(HTML.Attribute.SRC, "target/test-classes/images.jpg");
 		workerContextImpl = new WorkerContextImpl();
-		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext(null));
 	}
 
 	/**

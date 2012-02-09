@@ -77,13 +77,13 @@ public class ParaGraph extends AbstractTagProcessor {
 				if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 					tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
 				}
-				l.add(CssAppliers.getInstance().apply(tabbedChunk, tag,myctx));
+				l.add(getCssAppliers().apply(tabbedChunk, tag,myctx));
 			} else if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
 				tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
-				l.add(CssAppliers.getInstance().apply(tabbedChunk, tag, myctx));
+				l.add(getCssAppliers().apply(tabbedChunk, tag, myctx));
 			} else {
-				l.add(CssAppliers.getInstance().apply(new Chunk(sanitized), tag, myctx));
+				l.add(getCssAppliers().apply(new Chunk(sanitized), tag, myctx));
 			}
 		}
 		return l;
