@@ -264,11 +264,23 @@ public class DocumentFont extends BaseFont {
     }
 
     private void doType1TT() {
-        boolean toUnicodeUsed = false;
         CMapToUnicode toUnicode = null;
         PdfObject enc = PdfReader.getPdfObject(font.get(PdfName.ENCODING));
-        if (enc == null)
+        if (enc == null) {
             fillEncoding(null);
+            try {
+                toUnicode = processToUnicode();
+                if (toUnicode != null) {
+                    Map<Integer, Integer> rm = toUnicode.createReverseMapping();
+                    for (Map.Entry<Integer, Integer> kv : rm.entrySet()) {
+                        uni2byte.put(kv.getKey().intValue(), kv.getValue().intValue());
+                    }
+                }
+            }
+            catch (Exception ex) {
+                throw new ExceptionConverter(ex);
+            }
+        }
         else {
             if (enc.isName())
                 fillEncoding((PdfName)enc);
@@ -299,8 +311,6 @@ public class DocumentFont extends BaseFont {
                                     if (toUnicode == null) {
                                         toUnicode = new CMapToUnicode();
                                     }
-                                    else
-                                        toUnicodeUsed = true;
                                 }
                                 final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
                                 if ((unicode != null) && (unicode.length() == 1)) {
@@ -312,20 +322,6 @@ public class DocumentFont extends BaseFont {
                         }
                     }
                 }
-            }
-        }
-        if (!toUnicodeUsed) {
-            try {
-                toUnicode = processToUnicode();
-                if (toUnicode != null) {
-                    Map<Integer, Integer> rm = toUnicode.createReverseMapping();
-                    for (Map.Entry<Integer, Integer> kv : rm.entrySet()) {
-                        uni2byte.put(kv.getKey().intValue(), kv.getValue().intValue());
-                    }
-                }
-            }
-            catch (Exception ex) {
-                throw new ExceptionConverter(ex);
             }
         }
         PdfArray newWidths = font.getAsArray(PdfName.WIDTHS);
