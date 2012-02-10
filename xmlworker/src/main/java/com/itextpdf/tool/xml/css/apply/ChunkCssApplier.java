@@ -72,7 +72,7 @@ public class ChunkCssApplier {
     protected final CssUtils utils = CssUtils.getInstance();
 
 	/**
-	 * 
+	 *
 	 * @param c the Chunk to apply CSS to.
 	 * @param t the tag containing the chunk data
 	 * @return the styled chunk
@@ -162,17 +162,18 @@ public class ChunkCssApplier {
                     }
                 }
             } else if (CSS.Property.FONT_FAMILY.equalsIgnoreCase(key)) {
+				// TODO improve fontfamily parsing (what if a font family has a comma in the name ? )
                 if (value.contains(",")) {
                     String[] fonts = value.split(",");
                     for (String s : fonts) {
-                        s = s.trim();
+                        s = utils.trimAndRemoveQuoutes(s);
                         if (!FontFactory.getFont(s).getFamilyname().equalsIgnoreCase("unknown")) {
                             fontName = s;
                             break;
                         }
                     }
                 } else {
-                    fontName = value;
+					fontName = utils.trimAndRemoveQuoutes(value);
                 }
             } else if (CSS.Property.COLOR.equalsIgnoreCase(key)) {
                 color = HtmlUtilities.decodeColor(value);
@@ -182,7 +183,7 @@ public class ChunkCssApplier {
         return f;
     }
 
-    /**
+	/**
      * Method used for retrieving the widest word of a chunk of text. All styles of the chunk will be taken into account when calculating the width of the words.
      *
      * @param c chunk of which the widest word is required.
