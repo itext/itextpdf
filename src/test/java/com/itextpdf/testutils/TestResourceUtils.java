@@ -81,7 +81,11 @@ public final class TestResourceUtils {
         }else{
             contextClass = context.getClass();
         }
-        return contextClass.getClassLoader().getResourceAsStream(getFullyQualifiedResourceName(contextClass, resourceName));
+        String fullResourceName = getFullyQualifiedResourceName(contextClass, resourceName);
+        InputStream is = contextClass.getClassLoader().getResourceAsStream(fullResourceName);
+        if (is == null)
+            throw new IllegalArgumentException("Unable to find test resource '" + fullResourceName + "'");
+        return is;
     }
 
     public static void purgeTempFiles(){
@@ -109,6 +113,8 @@ public final class TestResourceUtils {
     }
     
     private static File writeStreamToTempFile(InputStream is) throws IOException{
+        if (is == null) throw new NullPointerException("Input stream is null");
+        
         File f = File.createTempFile(TESTPREFIX, ".pdf");
         f.deleteOnExit();
 
