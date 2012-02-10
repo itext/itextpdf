@@ -144,6 +144,9 @@ public class MappedRandomAccessFile {
             int mapN = (int) (pos / BUFSIZE);
             int offN = (int) (pos % BUFSIZE);
             
+            if (mapN >= mappedBuffers.length) // we have run out of data to read from
+                return -1;
+            
             if (offN >= mappedBuffers[mapN].limit())
                 return -1;
             
