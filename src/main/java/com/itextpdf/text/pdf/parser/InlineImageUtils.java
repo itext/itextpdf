@@ -151,7 +151,7 @@ public final class InlineImageUtils {
     public static PdfImageObject parseInlineImage(PdfContentParser ps, PdfDictionary colorSpaceDic) throws IOException{
         PdfDictionary inlineImageDictionary = parseInlineImageDictionary(ps);
         byte[] samples = parseInlineImageSamples(inlineImageDictionary, colorSpaceDic, ps);
-        return new PdfImageObject(inlineImageDictionary, samples);
+        return new PdfImageObject(inlineImageDictionary, samples, colorSpaceDic);
     }
     
     /**
