@@ -123,6 +123,7 @@ public class PdfImageObject {
 	private PdfDictionary dictionary;
 	/** The decoded image bytes (after applying filters), or the raw image bytes if unable to decode */
 	private byte[] imageBytes;
+	private PdfDictionary colorSpaceDic;
 	
     private int pngColorType = -1;
     private int pngBitDepth;
@@ -155,7 +156,7 @@ public class PdfImageObject {
 	 * @throws IOException
 	 */
 	public PdfImageObject(PRStream stream) throws IOException {
-		this(stream, PdfReader.getStreamBytesRaw(stream));
+		this(stream, PdfReader.getStreamBytesRaw(stream), null);
 	}
 	
 
@@ -166,8 +167,9 @@ public class PdfImageObject {
 	 * @param samples the samples
 	 * @since 5.0.3
 	 */
-	protected PdfImageObject(PdfDictionary dictionary, byte[] samples) throws IOException {
+	protected PdfImageObject(PdfDictionary dictionary, byte[] samples, PdfDictionary colorSpaceDic) throws IOException {
 	    this.dictionary = dictionary;
+	    this.colorSpaceDic = colorSpaceDic;
         TrackingFilter trackingFilter = new TrackingFilter();
         Map<PdfName, FilterHandlers.FilterHandler> handlers = new HashMap<PdfName, FilterHandlers.FilterHandler>(FilterHandlers.getDefaultFilterHandlers());
         handlers.put(PdfName.JBIG2DECODE, trackingFilter);
@@ -286,6 +288,12 @@ public class PdfImageObject {
         bpc = dictionary.getAsNumber(PdfName.BITSPERCOMPONENT).intValue();
         pngBitDepth = bpc;
         PdfObject colorspace = dictionary.getDirectObject(PdfName.COLORSPACE);
+        if (colorspace instanceof PdfName && colorSpaceDic != null){
+            PdfObject csLookup = colorSpaceDic.getDirectObject((PdfName)colorspace);
+            if (csLookup != null)
+                colorspace = csLookup;
+        }
+
         palette = null;
         icc = null;
         stride = 0;
