@@ -33,10 +33,7 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.*;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -154,11 +151,30 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 	 * {@link AbstractTagProcessor#end(WorkerContext, Tag, List)}.
 	 */
 	public final List<Element> endElement(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
-		List<Element> list = end(ctx, tag, currentContent);
+        List<Element> list = new ArrayList<Element>();
+        if (currentContent.isEmpty()) {
+            list = end(ctx, tag, currentContent);
+        } else {
+            List<Element> elements = new ArrayList<Element>();
+            for (Element el : currentContent) {
+                if (el instanceof Chunk && ((Chunk) el).hasAttributes() && ((Chunk) el).getAttributes().containsKey(Chunk.NEWPAGE)) {
+                    if (elements.size() > 0) {
+                        list.addAll(end(ctx, tag, elements));
+                        elements.clear();
+                    }
+                    list.add(el);
+                } else {
+                    elements.add(el);
+                }
+            }
+            if (elements.size() > 0) {
+                list.addAll(end(ctx, tag, elements));
+                elements.clear();
+            }
+        }
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_AFTER);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
 			list.add(Chunk.NEXTPAGE);
-			return list;
 		}
 		return list;
 	}

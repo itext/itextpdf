@@ -80,7 +80,7 @@ public class CssStateController {
 		for (String prop : split) {
 			String[] propSplit = prop.split(":");
 			if (propSplit.length == 2) {
-				map.put(utils.stripDoubleSpacesAndTrim(propSplit[0]), utils.stripDoubleSpacesAndTrim(propSplit[1]));
+				map.put(utils.stripDoubleSpacesTrimAndToLowerCase(propSplit[0]), utils.stripDoubleSpacesAndTrim(propSplit[1]));
 			}
 		}
 		if (currentSelector.contains(",")) {

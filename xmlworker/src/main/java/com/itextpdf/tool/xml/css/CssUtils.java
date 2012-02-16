@@ -200,6 +200,10 @@ public class CssUtils {
 		}
 	}
 
+    public String stripDoubleSpacesTrimAndToLowerCase(final String str) {
+        return stripDoubleSpacesAndTrim(str).toLowerCase();
+    }
+
 	private static final Set<String> backgroundPositions = new HashSet<String>(
 			Arrays.asList(new String[] { CSS.Value.LEFT, CSS.Value.CENTER, CSS.Value.BOTTOM, CSS.Value.TOP, CSS.Value.RIGHT }));
 

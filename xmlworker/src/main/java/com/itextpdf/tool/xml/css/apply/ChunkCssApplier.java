@@ -43,10 +43,7 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.*;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.tool.xml.Tag;
@@ -70,7 +67,19 @@ public class ChunkCssApplier {
      */
     public static final List<String> BOLD = Arrays.asList(new String[]{"bold", "bolder", "600", "700", "800", "900"});
     protected final CssUtils utils = CssUtils.getInstance();
+    protected FontProvider fontProvider;
 
+    public ChunkCssApplier() {
+        this(null);
+    }
+
+    public ChunkCssApplier(FontProvider fontProvider) {
+        if (fontProvider != null) {
+            this.fontProvider = fontProvider;
+        } else {
+            this.fontProvider = new FontFactoryImp();
+        }
+    }
 	/**
 	 *
 	 * @param c the Chunk to apply CSS to.
@@ -167,7 +176,7 @@ public class ChunkCssApplier {
                     String[] fonts = value.split(",");
                     for (String s : fonts) {
                         s = utils.trimAndRemoveQuoutes(s);
-                        if (!FontFactory.getFont(s).getFamilyname().equalsIgnoreCase("unknown")) {
+                        if (fontProvider.isRegistered(s)) {
                             fontName = s;
                             break;
                         }
@@ -179,7 +188,7 @@ public class ChunkCssApplier {
                 color = HtmlUtilities.decodeColor(value);
             }
         }
-        Font f = FontFactory.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, color);
+        Font f = fontProvider.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, color);
         return f;
     }
 
@@ -215,5 +224,13 @@ public class ChunkCssApplier {
         target.setCharacterSpacing(source.getCharacterSpacing());
         target.setHorizontalScaling(source.getHorizontalScaling());
         target.setHorizontalScaling(source.getHorizontalScaling());
+    }
+
+    public FontProvider getFontProvider() {
+        return this.fontProvider;
+    }
+
+    public void setFontProvider(FontProvider fontProvider) {
+        this.fontProvider = fontProvider;
     }
 }

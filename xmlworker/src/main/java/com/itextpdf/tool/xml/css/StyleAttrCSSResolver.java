@@ -143,8 +143,12 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	public void resolveStyles(final Tag t) {
 		// get css for this tag from resolver
 		Map<String, String> tagCss = new HashMap<String, String>();
+        Map<String, String> paragraphListCss = null;
 		if (null != cssFiles && cssFiles.hasFiles()) {
 			tagCss = cssFiles.getCSS(t);
+            if (t.getName().equalsIgnoreCase(HTML.Tag.P)) {
+                paragraphListCss = cssFiles.getCSS(new Tag(HTML.Tag.UL));
+            }
 //			Map<String, String> css = cssFiles.getCSS(t);
 //			if (null != css) {
 //				for (Entry<String, String> entry : css.entrySet()) {
@@ -166,7 +170,7 @@ public class StyleAttrCSSResolver implements CSSResolver {
 				for (String s : styles) {
 					String[] part = s.split(":",2);
 					if (part.length == 2) {
-						String key = part[0].trim();
+						String key = utils.stripDoubleSpacesTrimAndToLowerCase(part[0]);
 						String value = utils.stripDoubleSpacesAndTrim(part[1]);
 						splitRules(tagCss, key, value);
 					}
@@ -175,6 +179,10 @@ public class StyleAttrCSSResolver implements CSSResolver {
 		}
 		// inherit css from parent tags, as defined in provided CssInheritanceRules or if property = inherit
 		Map<String, String> css = t.getCSS();
+        if (paragraphListCss != null && paragraphListCss.containsKey(CSS.Property.LIST_STYLE_TYPE)) {
+            css.put(CSS.Property.LIST_STYLE_TYPE, paragraphListCss.get(CSS.Property.LIST_STYLE_TYPE));
+        }
+
 		if (mustInherit(t.getName()) && null != t.getParent() && null != t.getParent().getCSS()) {
 			if (null != this.inherit) {
 				for (Entry<String, String> entry : t.getParent().getCSS().entrySet()) {

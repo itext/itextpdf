@@ -71,7 +71,7 @@ public class Div extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Element> l = new ArrayList<Element>(1);
     	if (sanitized.length() > 0) {
-    		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
+    		Chunk c = getCssAppliers().getChunkCssAplier().apply(new Chunk(sanitized), tag);
     		try {
 				l.add(getCssAppliers().apply(new NoNewLineParagraph(c), tag, getHtmlPipelineContext(ctx)));
 			} catch (NoCustomContextException e) {

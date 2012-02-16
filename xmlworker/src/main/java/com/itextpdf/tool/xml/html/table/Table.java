@@ -586,7 +586,7 @@ public class Table extends AbstractTagProcessor {
 						Element inner = ((Phrase) baseLevel).get(i);
 						if (inner instanceof Chunk) {
 							cellWidth += ((Chunk) inner).getWidthPoint();
-							float widestWord = startWidth + new ChunkCssApplier().getWidestWord((Chunk) inner);
+							float widestWord = startWidth + getCssAppliers().getChunkCssAplier().getWidestWord((Chunk) inner);
 							if (widestWord > widestWordOfCell) {
 								widestWordOfCell = widestWord;
 							}
@@ -600,7 +600,7 @@ public class Table extends AbstractTagProcessor {
 						cellWidth = startWidth + ((ListItem) li).getIndentationLeft();
 						for (Chunk c : ((ListItem) li).getChunks()) {
 							cellWidth += c.getWidthPoint();
-							float widestWord = new ChunkCssApplier().getWidestWord(c);
+							float widestWord = getCssAppliers().getChunkCssAplier().getWidestWord(c);
 							if (startWidth + widestWord > widestWordOfCell) {
 								widestWordOfCell = startWidth + widestWord;
 							}

@@ -48,16 +48,9 @@ import java.nio.charset.Charset;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.css.CSSFileWrapper;
-import com.itextpdf.tool.xml.css.CssFile;
-import com.itextpdf.tool.xml.css.CssFileProcessor;
-import com.itextpdf.tool.xml.css.CssFilesImpl;
-import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
+import com.itextpdf.tool.xml.css.*;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
-import com.itextpdf.tool.xml.html.CssAppliersImpl;
-import com.itextpdf.tool.xml.html.TagProcessor;
-import com.itextpdf.tool.xml.html.TagProcessorFactory;
-import com.itextpdf.tool.xml.html.Tags;
+import com.itextpdf.tool.xml.html.*;
 import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
@@ -98,9 +91,8 @@ public class XMLWorkerHelper {
 	/**
 	 * @return the default css file.
 	 */
-	public synchronized CssFile getDefaultCSS() {
+	public synchronized CssFile getCSS(InputStream in) {
 		if (null == defaultCssFile) {
-			final InputStream in = XMLWorkerHelper.class.getResourceAsStream("/default.css");
 			if (null != in) {
 				final CssFileProcessor cssFileProcessor = new CssFileProcessor();
 				int i = -1;
@@ -122,6 +114,10 @@ public class XMLWorkerHelper {
 		}
 		return defaultCssFile;
 	}
+
+    public synchronized CssFile getDefaultCSS() {
+        return  getCSS(XMLWorkerHelper.class.getResourceAsStream("/default.css"));
+    }
 
 	/**
 	 * Parses the xml data in the given reader and sends created {@link Element}
@@ -179,8 +175,20 @@ public class XMLWorkerHelper {
 	 * @throws IOException if the {@link InputStream} could not be read.
 	 */
 	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final Charset charset) throws IOException {
-		CssFilesImpl cssFiles = new CssFilesImpl();
-		cssFiles.add(getDefaultCSS());
+		parseXHtml(writer,doc,in, XMLWorkerHelper.class.getResourceAsStream("/default.css"), charset);
+	}
+
+    /**
+	 * @param writer the writer to use
+	 * @param doc the document to use
+	 * @param in the {@link InputStream} of the XHTML source.
+     * @param in the {@link CssFiles} of the css files.
+	 * @param charset the charset to use
+	 * @throws IOException if the {@link InputStream} could not be read.
+	 */
+	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile, final Charset charset) throws IOException {
+        CssFilesImpl cssFiles = new CssFilesImpl();
+		cssFiles.add(getCSS(inCssFile));
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
 		HtmlPipelineContext hpc = new HtmlPipelineContext(null);
 		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory());

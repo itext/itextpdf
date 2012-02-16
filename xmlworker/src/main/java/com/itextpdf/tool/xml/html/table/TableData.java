@@ -48,10 +48,10 @@ import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Image;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
@@ -80,7 +80,7 @@ public class TableData extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
 
 		if (sanitized.length() > 0) {
-			Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
+			Chunk c = getCssAppliers().getChunkCssAplier().apply(new Chunk(sanitized), tag);
 			// NoNewLineParagraph noNewLineParagraph = new
 			// NoNewLineParagraphCssApplier(configuration).apply(new
 			// NoNewLineParagraph(c), tag);
@@ -102,6 +102,12 @@ public class TableData extends AbstractTagProcessor {
 		HtmlCell cell = new HtmlCell();
 		List<Element> l = new ArrayList<Element>(1);
 		for (Element e : currentContent) {
+            if (e == Chunk.NEWLINE) {
+                int index = currentContent.indexOf(e);
+                if (index == currentContent.size() - 1 || !(currentContent.get(index + 1) instanceof Image)) {
+                    continue;
+                }
+            }
 			cell.addElement(e);
 		}
 		try {

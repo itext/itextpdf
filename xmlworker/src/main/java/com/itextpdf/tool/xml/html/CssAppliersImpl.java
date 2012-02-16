@@ -32,6 +32,8 @@ package com.itextpdf.tool.xml.html;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactoryImp;
+import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.List;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.LineSeparator;
@@ -73,18 +75,22 @@ public class CssAppliersImpl implements CssAppliers {
 	private ListStyleTypeCssApplier list;
 	private LineSeparatorCssApplier lineseparator;
 	private ImageCssApplier image;
-
 	/**
 	 *
 	 */
 	public CssAppliersImpl() {
-		chunk = new ChunkCssApplier();
+		chunk = new ChunkCssApplier(null);
 		paragraph = new ParagraphCssApplier(this);
 		nonewlineparagraph = new NoNewLineParagraphCssApplier();
 		htmlcell = new HtmlCellCssApplier();
 		list = new ListStyleTypeCssApplier();
 		lineseparator = new LineSeparatorCssApplier();
 		image = new ImageCssApplier();
+	}
+
+    public CssAppliersImpl(FontProvider fontProvider) {
+        this();
+        chunk.setFontProvider(fontProvider);
 	}
 
 	/* (non-Javadoc)

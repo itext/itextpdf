@@ -52,11 +52,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import com.itextpdf.text.Element;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import com.itextpdf.tool.xml.CustomContext;
 import com.itextpdf.tool.xml.Experimental;
+import com.itextpdf.tool.xml.XMLWorkerFontProvider;
 import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
 import com.itextpdf.tool.xml.css.apply.MarginMemory;
 import com.itextpdf.tool.xml.css.apply.PageSizeContainable;
@@ -108,7 +107,7 @@ public class HtmlPipelineContext implements CustomContext, Cloneable, MarginMemo
 		this.memory = new HashMap<String, Object>();
         this.cssAppliers = cssAppliers;
         if (this.cssAppliers == null) {
-		    this.cssAppliers = new CssAppliersImpl();
+		    this.cssAppliers = new CssAppliersImpl(new XMLWorkerFontProvider());
         }
 	}
 	/**
