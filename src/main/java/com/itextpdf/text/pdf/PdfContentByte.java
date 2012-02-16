@@ -1163,14 +1163,7 @@ public class PdfContentByte {
                 PdfTemplate template = image.getTemplateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
-                float offsetX = 0;
-                float offsetY = 0;
-                Rectangle r = template.getBoundingBox();
-                if (r != null) {
-                	offsetX = r.getRight();
-                	offsetY = r.getBottom();
-                }
-                addTemplate(template, a / w, b / w, c / h, d / h, e - offsetX, f - offsetY);
+                addTemplate(template, a / w, b / w, c / h, d / h, e, f);
             }
             else {
                 content.append("q ");
