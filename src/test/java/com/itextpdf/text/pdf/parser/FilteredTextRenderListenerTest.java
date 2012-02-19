@@ -44,7 +44,7 @@
 package com.itextpdf.text.pdf.parser;
 
 
-import java.awt.Rectangle;
+import com.itextpdf.text.geom.Rectangle;
 import java.io.ByteArrayOutputStream;
 
 import junit.framework.Assert;
