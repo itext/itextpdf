@@ -57,7 +57,7 @@ public class RegionTextRenderFilter extends RenderFilter {
     
     /**
      * Constructs a filter
-     * @param filterRect the rectangle to filter text against.  Note that this is a java.awt.Rectangle !
+     * @param filterRect the rectangle to filter text against.  Note that this is a com.itextpdf.text.geom.Rectangle !
      */
     public RegionTextRenderFilter(Rectangle2D filterRect) {
         this.filterRect = filterRect;
@@ -65,7 +65,7 @@ public class RegionTextRenderFilter extends RenderFilter {
     
     /**
      * Constructs a filter
-     * @param filterRect the rectangle to filter text against.  Note that this is a java.awt.Rectangle !
+     * @param filterRect the rectangle to filter text against.
      */
     public RegionTextRenderFilter(Rectangle filterRect) {
         this.filterRect = new com.itextpdf.text.geom.Rectangle(filterRect);

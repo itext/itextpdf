@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.awt.geom.Rectangle2D;
+import com.itextpdf.text.geom.Rectangle2D;
 
 /**
  * Represents a line segment in a particular coordinate system.  This class is immutable.

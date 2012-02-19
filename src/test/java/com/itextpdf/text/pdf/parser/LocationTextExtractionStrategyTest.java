@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-
-import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
 
 import org.junit.After;
@@ -58,6 +56,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.geom.AffineTransform;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;

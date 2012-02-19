@@ -42,7 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.awt.geom.AffineTransform;
 import java.awt.print.PrinterJob;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +56,7 @@ import com.itextpdf.text.ImgJBIG2;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
+import com.itextpdf.text.geom.AffineTransform;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
 
