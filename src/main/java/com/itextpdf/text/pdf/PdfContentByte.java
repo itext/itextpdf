@@ -1131,13 +1131,25 @@ public class PdfContentByte {
      * adds an image with the given matrix.
      * @param image image to add
      * @param transform transform to apply to the template prior to adding it.
-     * @since 5.0.1
      */
     public void addImage(final Image image, final AffineTransform transform) throws DocumentException {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
     	addImage( image, (float)matrix[0], (float)matrix[1], (float)matrix[2],
     			  (float)matrix[3], (float)matrix[4],(float) matrix[5], false );
+    }
+    
+    /**
+     * adds an image with the given matrix.
+     * @param image image to add
+     * @param transform transform to apply to the template prior to adding it.
+     * @since 5.0.1
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
+     */
+    public void addImage(final Image image, final java.awt.geom.AffineTransform transform) throws DocumentException {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	addImage(image, new AffineTransform(matrix));
     }
 
     /**
@@ -1541,13 +1553,23 @@ public class PdfContentByte {
      * Changes the text matrix.
      * <P>
      * @param transform overwrite the current text matrix with this one
-     * @since 5.0.1
      */
     public void setTextMatrix(final AffineTransform transform) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
     	setTextMatrix((float)matrix[0], (float)matrix[1], (float)matrix[2],
     			      (float)matrix[3], (float)matrix[4], (float)matrix[5] );
+    }
+    /**
+     * Changes the text matrix.
+     * <P>
+     * @param transform overwrite the current text matrix with this one
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
+     */
+    public void setTextMatrix(final java.awt.geom.AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	setTextMatrix(new AffineTransform(matrix));
     }
     /**
      * Changes the text matrix. The first four parameters are {1,0,0,1}.
@@ -1798,13 +1820,22 @@ public class PdfContentByte {
     /**
      * Concatenate a matrix to the current transformation matrix.
      * @param transform added to the Current Transformation Matrix
-     * @since 5.0.1
      */
     public void concatCTM(final AffineTransform transform) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
     	concatCTM( (float)matrix[0], (float)matrix[1], (float)matrix[2],
     			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
+    }
+    /**
+     * Concatenate a matrix to the current transformation matrix.
+     * @param transform added to the Current Transformation Matrix
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
+     */
+    public void concatCTM(final java.awt.geom.AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	concatCTM(new AffineTransform(matrix));
     }
 
     /**
@@ -2090,14 +2121,24 @@ public class PdfContentByte {
      * adds a template with the given matrix.
      * @param template template to add
      * @param transform transform to apply to the template prior to adding it.
-     * @since 5.0.1
      */
     public void addTemplate(final PdfTemplate template, final AffineTransform transform) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
     	addTemplate( template, (float)matrix[0], (float)matrix[1], (float)matrix[2],
     			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
-
+    }
+    
+    /**
+     * adds a template with the given matrix.
+     * @param template template to add
+     * @param transform transform to apply to the template prior to adding it.
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as paramter
+     */
+    public void addTemplate(final PdfTemplate template, final java.awt.geom.AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	addTemplate(template, new AffineTransform(matrix));
     }
 
     void addTemplateReference(final PdfIndirectReference template, PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) {
@@ -3038,10 +3079,21 @@ public class PdfContentByte {
      * @param af the transformation
      */
     public void transform(final AffineTransform af) {
-        double arr[] = new double[6];
-        af.getMatrix(arr);
-        content.append(arr[0]).append(' ').append(arr[1]).append(' ').append(arr[2]).append(' ');
-        content.append(arr[3]).append(' ').append(arr[4]).append(' ').append(arr[5]).append(" cm").append_i(separator);
+        double matrix[] = new double[6];
+        af.getMatrix(matrix);
+        content.append(matrix[0]).append(' ').append(matrix[1]).append(' ').append(matrix[2]).append(' ');
+        content.append(matrix[3]).append(' ').append(matrix[4]).append(' ').append(matrix[5]).append(" cm").append_i(separator);
+    }
+
+    /** Concatenates a transformation to the current transformation
+     * matrix.
+     * @param af the transformation
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
+     */
+    public void transform(final java.awt.geom.AffineTransform af) {
+        double matrix[] = new double[6];
+        af.getMatrix(matrix);
+        transform(new AffineTransform(matrix));
     }
 
     void addAnnotation(final PdfAnnotation annot) {
