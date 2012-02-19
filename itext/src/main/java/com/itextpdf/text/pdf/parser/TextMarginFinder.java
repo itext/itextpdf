@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.awt.geom.Rectangle2D;
+import com.itextpdf.text.geom.Rectangle2D;
 
 /**
  * Allows you to find the rectangle that contains all the text in a page.
