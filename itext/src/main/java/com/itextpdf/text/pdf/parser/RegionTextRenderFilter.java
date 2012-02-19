@@ -43,9 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.awt.geom.Rectangle2D;
-
-
 /**
  * A {@link RenderFilter} that only allows text within a specified rectangular region
  * @since 5.0.1
@@ -53,16 +50,16 @@ import java.awt.geom.Rectangle2D;
 public class RegionTextRenderFilter extends RenderFilter {
 
     /** the region to allow text from */
-    private final Rectangle2D filterRect;
+    private final com.itextpdf.text.geom.Rectangle2D filterRect;
     
     /**
      * Constructs a filter
      * @param filterRect the rectangle to filter text against.  Note that this is a java.awt.Rectangle !
      */
-    public RegionTextRenderFilter(Rectangle2D filterRect) {
+    public RegionTextRenderFilter(com.itextpdf.text.geom.Rectangle2D filterRect) {
         this.filterRect = filterRect;
     }
-
+    
     /** 
      * @see com.itextpdf.text.pdf.parser.RenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
      */
