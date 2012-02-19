@@ -60,7 +60,7 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
     
     public Rectangle(com.itextpdf.text.Rectangle r) {
     	r.normalize();
-    	setBounds(r.getLeft(), r.getRight(), r.getWidth(), r.getHeight());
+    	setBounds(r.getLeft(), r.getBottom(), r.getWidth(), r.getHeight());
     }
 
     public Rectangle(Dimension d) {

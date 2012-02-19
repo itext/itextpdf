@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-
-import com.itextpdf.text.geom.Rectangle;
 import java.io.ByteArrayOutputStream;
 
 import junit.framework.Assert;
@@ -55,6 +53,7 @@ import org.junit.Test;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
@@ -79,7 +78,7 @@ public class FilteredTextRenderListenerTest {
         
         PdfReader reader = new PdfReader(pdf);
         float pageHeight = reader.getPageSize(1).getHeight();
-        Rectangle upperLeft = new Rectangle(0, (int)pageHeight-30, 250, 30);
+        Rectangle upperLeft = new Rectangle(0, (int)pageHeight-30, 250, (int)pageHeight);
         
         Assert.assertTrue(textIsInRectangle(reader, "Upper Left", upperLeft));
         Assert.assertFalse(textIsInRectangle(reader, "Upper Right", upperLeft));
