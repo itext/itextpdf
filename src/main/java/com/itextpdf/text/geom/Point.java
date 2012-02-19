@@ -29,14 +29,18 @@ public class Point extends Point2D implements Serializable {
 
     private static final long serialVersionUID = -5276940640259749850L;
 
-    public int x;
-    public int y;
+    public double x;
+    public double y;
 
     public Point() {
         setLocation(0, 0);
     }
 
     public Point(int x, int y) {
+        setLocation(x, y);
+    }
+
+    public Point(double x, double y) {
         setLocation(x, y);
     }
 
@@ -80,22 +84,26 @@ public class Point extends Point2D implements Serializable {
     }
 
     public void setLocation(int x, int y) {
-        this.x = x;
-        this.y = y;
+        setLocation((double)x, (double)y);
     }
 
     @Override
     public void setLocation(double x, double y) {
-        x = x < Integer.MIN_VALUE ? Integer.MIN_VALUE : x > Integer.MAX_VALUE ? Integer.MAX_VALUE : x;
-        y = y < Integer.MIN_VALUE ? Integer.MIN_VALUE : y > Integer.MAX_VALUE ? Integer.MAX_VALUE : y;
-        setLocation((int)Math.round(x), (int)Math.round(y));
+    	this.x = x;
+    	this.y = y;
     }
 
     public void move(int x, int y) {
+        move((double)x, (double)y);
+    }
+    public void move(double x, double y) {
         setLocation(x, y);
     }
 
     public void translate(int dx, int dy) {
+        translate((double)x, (double)y);
+    }
+    public void translate(double dx, double dy) {
         x += dx;
         y += dy;
     }

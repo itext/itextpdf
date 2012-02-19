@@ -32,8 +32,8 @@ public class Dimension extends Dimension2D implements Serializable {
 
     private static final long serialVersionUID = 4723952579491349524L;
 
-    public int width;
-    public int height;
+    public double width;
+    public double height;
 
     public Dimension(Dimension d) {
         this(d.width, d.height);
@@ -41,6 +41,10 @@ public class Dimension extends Dimension2D implements Serializable {
 
     public Dimension() {
         this(0, 0);
+    }
+
+    public Dimension(double width, double height) {
+        setSize(width, height);
     }
 
     public Dimension(int width, int height) {

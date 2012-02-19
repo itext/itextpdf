@@ -29,10 +29,10 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
 
     private static final long serialVersionUID = -4345857070255674764L;
 
-    public int x;
-    public int y;
-    public int width;
-    public int height;
+    public double x;
+    public double y;
+    public double width;
+    public double height;
 
     public Rectangle() {
         setBounds(0, 0, 0, 0);
@@ -46,7 +46,7 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
         setBounds(p.x, p.y, d.width, d.height);
     }
 
-    public Rectangle(int x, int y, int width, int height) {
+    public Rectangle(double x, double y, double width, double height) {
         setBounds(x, y, width, height);
     }
 
@@ -56,6 +56,11 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
 
     public Rectangle(Rectangle r) {
         setBounds(r.x, r.y, r.width, r.height);
+    }
+    
+    public Rectangle(com.itextpdf.text.Rectangle r) {
+    	r.normalize();
+    	setBounds(r.getLeft(), r.getRight(), r.getWidth(), r.getHeight());
     }
 
     public Rectangle(Dimension d) {
@@ -91,7 +96,10 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
         return new Dimension(width, height);
     }
 
-    public void setSize(int width, int height) {
+    public void setSize(int mx, int my) {
+    	setSize((double)mx, (double)my);
+    }
+    public void setSize(double width, double height) {
         this.width = width;
         this.height = height;
     }
@@ -104,21 +112,16 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
         return new Point(x, y);
     }
 
-    public void setLocation(int x, int y) {
+    public void setLocation(int mx, int my) {
+    	setLocation((double)mx, (double)my);
+    }
+    public void setLocation(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
     public void setLocation(Point p) {
         setLocation(p.x, p.y);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public void move(int x, int y) {
-        setLocation(x, y);
     }
 
     @Override
@@ -128,22 +131,6 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
         int x2 = (int)Math.ceil(x + width);
         int y2 = (int)Math.ceil(y + height);
         setBounds(x1, y1, x2 - x1, y2 - y1);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public void resize(int width, int height) {
-        setBounds(x, y, width, height);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public void reshape(int x, int y, int width, int height) {
-        setBounds(x, y, width, height);
     }
 
     @Override
@@ -157,6 +144,9 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
     }
 
     public void setBounds(int x, int y, int width, int height) {
+        setBounds((double)x, (double)y, (double)width, (double)height);
+    }
+    public void setBounds(double x, double y, double width, double height) {
         this.x = x;
         this.y = y;
         this.height = height;
@@ -167,7 +157,10 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
         setBounds(r.x, r.y, r.width, r.height);
     }
 
-    public void grow(int dx, int dy) {
+    public void grow(int mx, int my) {
+    	translate((double)mx, (double)my);
+    }
+    public void grow(double dx, double dy) {
         x -= dx;
         y -= dy;
         width += dx + dx;
@@ -175,15 +168,21 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
     }
 
     public void translate(int mx, int my) {
+    	translate((double)mx, (double)my);
+    }
+    public void translate(double mx, double my) {
         x += mx;
         y += my;
     }
 
     public void add(int px, int py) {
-        int x1 = Math.min(x, px);
-        int x2 = Math.max(x + width, px);
-        int y1 = Math.min(y, py);
-        int y2 = Math.max(y + height, py);
+    	add((double)px, (double)py);
+    }
+    public void add(double px, double py) {
+        double x1 = Math.min(x, px);
+        double x2 = Math.max(x + width, px);
+        double y1 = Math.min(y, py);
+        double y2 = Math.max(y + height, py);
         setBounds(x1, y1, x2 - x1, y2 - y1);
     }
 
@@ -192,14 +191,17 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
     }
 
     public void add(Rectangle r) {
-        int x1 = Math.min(x, r.x);
-        int x2 = Math.max(x + width, r.x + r.width);
-        int y1 = Math.min(y, r.y);
-        int y2 = Math.max(y + height, r.y + r.height);
+        double x1 = Math.min(x, r.x);
+        double x2 = Math.max(x + width, r.x + r.width);
+        double y1 = Math.min(y, r.y);
+        double y2 = Math.max(y + height, r.y + r.height);
         setBounds(x1, y1, x2 - x1, y2 - y1);
     }
 
     public boolean contains(int px, int py) {
+        return contains((double)px, (double)py);
+    }
+    public boolean contains(double px, double py) {
         if (isEmpty()) {
             return false;
         }
@@ -219,16 +221,12 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
         return contains(rx, ry) && contains(rx + rw - 1, ry + rh - 1);
     }
 
-    public boolean contains(Rectangle r) {
-        return contains(r.x, r.y, r.width, r.height);
+    public boolean contains(double rx, double ry, double rw, double rh) {
+        return contains(rx, ry) && contains(rx + rw - 0.01, ry + rh - 0.01);
     }
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public boolean inside(int px, int py) {
-        return contains(px, py);
+    public boolean contains(Rectangle r) {
+        return contains(r.x, r.y, r.width, r.height);
     }
 
     @Override
@@ -242,10 +240,10 @@ public class Rectangle extends Rectangle2D implements Shape, Serializable {
     }
 
     public Rectangle intersection(Rectangle r) {
-        int x1 = Math.max(x, r.x);
-        int y1 = Math.max(y, r.y);
-        int x2 = Math.min(x + width, r.x + r.width);
-        int y2 = Math.min(y + height, r.y + r.height);
+        double x1 = Math.max(x, r.x);
+        double y1 = Math.max(y, r.y);
+        double x2 = Math.min(x + width, r.x + r.width);
+        double y2 = Math.min(y + height, r.y + r.height);
         return new Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 
