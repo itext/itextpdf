@@ -262,7 +262,8 @@ public class CMapAwareDocumentFont extends DocumentFont {
                     rslt = decodeSingleCID(cidbytes, i, 2);
                     i++;
                 }
-                sb.append(rslt);
+                if (rslt != null)
+                    sb.append(rslt);
             }
         }
         return sb.toString();
