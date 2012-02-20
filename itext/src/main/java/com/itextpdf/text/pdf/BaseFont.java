@@ -131,13 +131,13 @@ public abstract class BaseFont {
      */
     public static final int BBOXURY = 8;
 
-    /** java.awt.Font property */
+    /** AWT Font property */
     public static final int AWT_ASCENT = 9;
-    /** java.awt.Font property */
+    /** AWT Font property */
     public static final int AWT_DESCENT = 10;
-    /** java.awt.Font property */
+    /** AWT Font property */
     public static final int AWT_LEADING = 11;
-    /** java.awt.Font property */
+    /** AWT Font property */
     public static final int AWT_MAXADVANCE = 12;
     /**
      * The underline position. Usually a negative value.

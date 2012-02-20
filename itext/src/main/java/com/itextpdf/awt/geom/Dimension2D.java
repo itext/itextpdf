@@ -21,18 +21,30 @@
 /**
  * @author Denis M. Kishenko
  */
-package com.itextpdf.text.geom;
+package com.itextpdf.awt.geom;
 
-public class IllegalPathStateException extends RuntimeException {
+public abstract class Dimension2D implements Cloneable {
 
-    private static final long serialVersionUID = -5158084205220481094L;
-
-    public IllegalPathStateException() {
+    protected Dimension2D() {
     }
 
-    public IllegalPathStateException(String s) {
-        super(s);
+    public abstract double getWidth();
+
+    public abstract double getHeight();
+
+    public abstract void setSize(double width, double height);
+
+    public void setSize(Dimension2D d) {
+        setSize(d.getWidth(), d.getHeight());
     }
 
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+    }
 }
 

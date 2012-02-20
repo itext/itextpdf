@@ -45,8 +45,8 @@ package com.itextpdf.tool.xml.svg;
 
 import java.util.Map;
 
+import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.geom.AffineTransform;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.tool.xml.Pipeline;

@@ -21,13 +21,13 @@
 /**
  * @author Denis M. Kishenko
  */
-package com.itextpdf.text.geom;
+package com.itextpdf.awt.geom;
 
 import java.io.IOException;
 import java.io.Serializable;
 
-import com.itextpdf.text.geom.misc.Messages;
-import com.itextpdf.text.geom.misc.HashCode;
+import com.itextpdf.awt.geom.misc.HashCode;
+import com.itextpdf.awt.geom.misc.Messages;
 
 public class AffineTransform implements Cloneable, Serializable {
 

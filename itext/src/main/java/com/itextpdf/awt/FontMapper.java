@@ -1,9 +1,9 @@
 /*
- * $Id$
+ * $Id: FontMapper.java 4784 2011-03-15 08:33:00Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
- * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
+ * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
@@ -41,50 +41,38 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf.parser;
+package com.itextpdf.awt;
 
-import com.itextpdf.awt.geom.Rectangle2D;
-import com.itextpdf.text.Rectangle;
+import java.awt.Font;
+
+import com.itextpdf.text.pdf.BaseFont;
 
 /**
- * A {@link RenderFilter} that only allows text within a specified rectangular region
- * @since 5.0.1
+ * A FontMapper implementation handles mappings between AWT Fonts and PDF
+ * fonts. An interface is used instead of a fixed class because there isn't
+ * an exact correlation between the font types, so each application is free
+ * to define a mapping which is appropriate for it.
  */
-public class RegionTextRenderFilter extends RenderFilter {
 
-    /** the region to allow text from */
-    private final Rectangle2D filterRect;
-    
-    /**
-     * Constructs a filter
-     * @param filterRect the rectangle to filter text against.  Note that this is a com.itextpdf.text.geom.Rectangle !
-     */
-    public RegionTextRenderFilter(Rectangle2D filterRect) {
-        this.filterRect = filterRect;
-    }
-    
-    /**
-     * Constructs a filter
-     * @param filterRect the rectangle to filter text against.
-     */
-    public RegionTextRenderFilter(Rectangle filterRect) {
-        this.filterRect = new com.itextpdf.awt.geom.Rectangle(filterRect);
-    } 
-    /** 
-     * @see com.itextpdf.text.pdf.parser.RenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
-     */
-    public boolean allowText(TextRenderInfo renderInfo){
-    	LineSegment segment = renderInfo.getBaseline();
-        Vector startPoint = segment.getStartPoint();
-        Vector endPoint = segment.getEndPoint();
-        
-        float x1 = startPoint.get(Vector.I1);
-        float y1 = startPoint.get(Vector.I2);
-        float x2 = endPoint.get(Vector.I1);
-        float y2 = endPoint.get(Vector.I2);
-        
-        return filterRect.intersectsLine(x1, y1, x2, y2);
-    }
+public interface FontMapper {
 
+    /**
+     * Returns a BaseFont which can be used to represent the given AWT Font
+     *
+     * @param	font		the font to be converted
+     * @return	a BaseFont which has similar properties to the provided Font
+     */
+
+    public BaseFont awtToPdf(Font font);
+
+    /**
+     * Returns an AWT Font which can be used to represent the given BaseFont
+     *
+     * @param	font		the font to be converted
+     * @param	size		the desired point size of the resulting font
+     * @return	a Font which has similar properties to the provided BaseFont
+     */
+
+    public Font pdfToAwt(BaseFont font, int size);
 
 }

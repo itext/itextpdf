@@ -19,7 +19,7 @@
  *  That's why we imported the code into iText.
  */
 
-package com.itextpdf.text.geom.misc;
+package com.itextpdf.awt.geom.misc;
 
 /**
  * This class is a convenience method to sequentially calculate hash code of the

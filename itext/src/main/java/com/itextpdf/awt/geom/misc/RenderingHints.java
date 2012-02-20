@@ -21,7 +21,7 @@
 /**
  * @author Alexey A. Petrenko
  */
-package com.itextpdf.text.geom.misc;
+package com.itextpdf.awt.geom.misc;
 
 import java.util.Collection;
 import java.util.HashMap;

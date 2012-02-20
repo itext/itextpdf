@@ -51,8 +51,6 @@ import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
-import java.awt.Canvas;
-import java.awt.image.MemoryImageSource;
 import java.util.Map;
 
 /**
@@ -113,6 +111,8 @@ public class BarcodeQRCode {
         return Image.getInstance(bm.getWidth(), bm.getHeight(), false, Image.CCITTG4, Image.CCITT_BLACKIS1, g4, null);
     }
 
+    // AWT related methods (remove this if you port to Android / GAE)
+
     /** Creates a <CODE>java.awt.Image</CODE>.
      * @param foreground the color of the bars
      * @param background the color of the background
@@ -121,7 +121,7 @@ public class BarcodeQRCode {
     public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int f = foreground.getRGB();
         int g = background.getRGB();
-        Canvas canvas = new Canvas();
+        java.awt.Canvas canvas = new java.awt.Canvas();
 
         int width = bm.getWidth();
         int height = bm.getHeight();
@@ -134,7 +134,7 @@ public class BarcodeQRCode {
             }
         }
 
-        java.awt.Image img = canvas.createImage(new MemoryImageSource(width, height, pix, 0, width));
+        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(width, height, pix, 0, width));
         return img;
     }
 }

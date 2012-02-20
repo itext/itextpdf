@@ -1,9 +1,9 @@
 /*
- * $Id$
+ * $Id: AsianFontMapper.java 4784 2011-03-15 08:33:00Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
- * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
+ * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
@@ -41,50 +41,60 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf.parser;
+package com.itextpdf.awt;
 
-import com.itextpdf.awt.geom.Rectangle2D;
-import com.itextpdf.text.Rectangle;
+import java.awt.Font;
 
-/**
- * A {@link RenderFilter} that only allows text within a specified rectangular region
- * @since 5.0.1
- */
-public class RegionTextRenderFilter extends RenderFilter {
+import com.itextpdf.awt.DefaultFontMapper.BaseFontParameters;
+import com.itextpdf.text.pdf.BaseFont;
 
-    /** the region to allow text from */
-    private final Rectangle2D filterRect;
-    
-    /**
-     * Constructs a filter
-     * @param filterRect the rectangle to filter text against.  Note that this is a com.itextpdf.text.geom.Rectangle !
-     */
-    public RegionTextRenderFilter(Rectangle2D filterRect) {
-        this.filterRect = filterRect;
-    }
-    
-    /**
-     * Constructs a filter
-     * @param filterRect the rectangle to filter text against.
-     */
-    public RegionTextRenderFilter(Rectangle filterRect) {
-        this.filterRect = new com.itextpdf.awt.geom.Rectangle(filterRect);
-    } 
-    /** 
-     * @see com.itextpdf.text.pdf.parser.RenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
-     */
-    public boolean allowText(TextRenderInfo renderInfo){
-    	LineSegment segment = renderInfo.getBaseline();
-        Vector startPoint = segment.getStartPoint();
-        Vector endPoint = segment.getEndPoint();
-        
-        float x1 = startPoint.get(Vector.I1);
-        float y1 = startPoint.get(Vector.I2);
-        float x2 = endPoint.get(Vector.I1);
-        float y2 = endPoint.get(Vector.I2);
-        
-        return filterRect.intersectsLine(x1, y1, x2, y2);
-    }
+public class AsianFontMapper extends DefaultFontMapper {
+	
+	public static final String ChineseSimplifiedFont = "STSong-Light";
+	public static final String ChineseSimplifiedEncoding_H = "UniGB-UCS2-H";
+	public static final String ChineseSimplifiedEncoding_V = "UniGB-UCS2-V";
+	
+	public static final String ChineseTraditionalFont_MHei = "MHei-Medium";
+	public static final String ChineseTraditionalFont_MSung = "MSung-Light";
+	public static final String ChineseTraditionalEncoding_H = "UniCNS-UCS2-H";
+	public static final String ChineseTraditionalEncoding_V = "UniCNS-UCS2-V";
+	
+	public static final String JapaneseFont_Go = "HeiseiKakuGo-W5";
+	public static final String JapaneseFont_Min = "HeiseiMin-W3";
+	public static final String JapaneseEncoding_H = "UniJIS-UCS2-H";
+	public static final String JapaneseEncoding_V = "UniJIS-UCS2-V";
+	public static final String JapaneseEncoding_HW_H = "UniJIS-UCS2-HW-H";
+	public static final String JapaneseEncoding_HW_V = "UniJIS-UCS2-HW-V";
+	
+	public static final String KoreanFont_GoThic = "HYGoThic-Medium";
+	public static final String KoreanFont_SMyeongJo = "HYSMyeongJo-Medium";
+	public static final String KoreanEncoding_H = "UniKS-UCS2-H";
+	public static final String KoreanEncoding_V = "UniKS-UCS2-V";
+	
+	private final String defaultFont;
+	private final String encoding;
 
+	public AsianFontMapper(String font, String encoding) {
+		super();
+		
+		this.defaultFont = font;
+		this.encoding = encoding;
+	}
+
+	public BaseFont awtToPdf(Font font) {
+		try {
+			BaseFontParameters p = getBaseFontParameters(font.getFontName());
+			if (p != null){
+				return BaseFont.createFont(p.fontName, p.encoding, p.embedded, p.cached, p.ttfAfm, p.pfb);
+			}else{
+				return BaseFont.createFont(defaultFont, encoding, true);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 
 }

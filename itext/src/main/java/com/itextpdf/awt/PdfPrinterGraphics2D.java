@@ -1,9 +1,9 @@
 /*
- * $Id$
+ * $Id: PdfPrinterGraphics2D.java 4784 2011-03-15 08:33:00Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
- * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
+ * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
@@ -41,50 +41,28 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf.parser;
+package com.itextpdf.awt;
 
-import com.itextpdf.awt.geom.Rectangle2D;
-import com.itextpdf.text.Rectangle;
+import java.awt.print.PrinterGraphics;
+import java.awt.print.PrinterJob;
+
+import com.itextpdf.text.pdf.PdfContentByte;
 
 /**
- * A {@link RenderFilter} that only allows text within a specified rectangular region
- * @since 5.0.1
+ * This is an extension class for the sole purpose of implementing the
+ * {@link java.awt.print.PrinterGraphics PrinterGraphics} interface.
  */
-public class RegionTextRenderFilter extends RenderFilter {
+public class PdfPrinterGraphics2D extends PdfGraphics2D implements PrinterGraphics
+{
+	private PrinterJob printerJob;
+	
+	public PdfPrinterGraphics2D(PdfContentByte cb, float width, float height, FontMapper fontMapper,
+			boolean onlyShapes, boolean convertImagesToJPEG, float quality, PrinterJob printerJob)	{
+		super(cb, width, height, fontMapper, onlyShapes, convertImagesToJPEG, quality);
+		this.printerJob = printerJob;
+	}
 
-    /** the region to allow text from */
-    private final Rectangle2D filterRect;
-    
-    /**
-     * Constructs a filter
-     * @param filterRect the rectangle to filter text against.  Note that this is a com.itextpdf.text.geom.Rectangle !
-     */
-    public RegionTextRenderFilter(Rectangle2D filterRect) {
-        this.filterRect = filterRect;
-    }
-    
-    /**
-     * Constructs a filter
-     * @param filterRect the rectangle to filter text against.
-     */
-    public RegionTextRenderFilter(Rectangle filterRect) {
-        this.filterRect = new com.itextpdf.awt.geom.Rectangle(filterRect);
-    } 
-    /** 
-     * @see com.itextpdf.text.pdf.parser.RenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
-     */
-    public boolean allowText(TextRenderInfo renderInfo){
-    	LineSegment segment = renderInfo.getBaseline();
-        Vector startPoint = segment.getStartPoint();
-        Vector endPoint = segment.getEndPoint();
-        
-        float x1 = startPoint.get(Vector.I1);
-        float y1 = startPoint.get(Vector.I2);
-        float x2 = endPoint.get(Vector.I1);
-        float y2 = endPoint.get(Vector.I2);
-        
-        return filterRect.intersectsLine(x1, y1, x2, y2);
-    }
-
-
+	public PrinterJob getPrinterJob()	{
+		return printerJob;
+	}
 }
