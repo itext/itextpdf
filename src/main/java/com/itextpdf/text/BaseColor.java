@@ -119,14 +119,6 @@ public class BaseColor {
     }
 
     /**
-     * Construct a new BaseColor from a java.awt.Color
-     * @param color
-     */
-    public BaseColor(final java.awt.Color color) {
-        value = color.getRGB();
-    }
-
-    /**
      * @return the combined color value
      */
     public int getRGB() {

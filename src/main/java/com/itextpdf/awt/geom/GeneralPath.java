@@ -21,12 +21,12 @@
 /**
  * @author Denis M. Kishenko
  */
-package com.itextpdf.text.geom;
+package com.itextpdf.awt.geom;
 
 import java.util.NoSuchElementException;
 
-import com.itextpdf.text.geom.gl.Crossing;
-import com.itextpdf.text.geom.misc.Messages;
+import com.itextpdf.awt.geom.gl.Crossing;
+import com.itextpdf.awt.geom.misc.Messages;
 
 public final class GeneralPath implements Shape, Cloneable {
 

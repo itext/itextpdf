@@ -26,7 +26,7 @@
  * if this tool runs again. Better make changes in the template file.
  */
 
-package com.itextpdf.text.geom.misc;
+package com.itextpdf.awt.geom.misc;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;

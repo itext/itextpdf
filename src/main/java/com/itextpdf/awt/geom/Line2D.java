@@ -21,11 +21,11 @@
 /**
  * @author Denis M. Kishenko
  */
-package com.itextpdf.text.geom;
+package com.itextpdf.awt.geom;
 
 import java.util.NoSuchElementException;
 
-import com.itextpdf.text.geom.misc.Messages;
+import com.itextpdf.awt.geom.misc.Messages;
 
 public abstract class Line2D implements Shape, Cloneable {
 

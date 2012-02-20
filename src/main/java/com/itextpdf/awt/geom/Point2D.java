@@ -21,9 +21,9 @@
 /**
  * @author Denis M. Kishenko
  */
-package com.itextpdf.text.geom;
+package com.itextpdf.awt.geom;
 
-import com.itextpdf.text.geom.misc.HashCode;
+import com.itextpdf.awt.geom.misc.HashCode;
 
 public abstract class Point2D implements Cloneable {
 

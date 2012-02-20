@@ -21,11 +21,11 @@
 /**
  * @author Denis M. Kishenko
  */
-package com.itextpdf.text.geom;
+package com.itextpdf.awt.geom;
 
 import java.io.Serializable;
 
-import com.itextpdf.text.geom.misc.HashCode;
+import com.itextpdf.awt.geom.misc.HashCode;
 
 
 public class Dimension extends Dimension2D implements Serializable {

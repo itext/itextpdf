@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Canvas;
-import java.awt.image.MemoryImageSource;
 import java.util.Arrays;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
@@ -650,6 +648,8 @@ public class BarcodeEAN extends Barcode{
         }
         return rect;
     }
+
+    // AWT related methods (remove this if you port to Android / GAE)
     
     /** Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
@@ -660,7 +660,7 @@ public class BarcodeEAN extends Barcode{
     public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int f = foreground.getRGB();
         int g = background.getRGB();
-        Canvas canvas = new Canvas();
+        java.awt.Canvas canvas = new java.awt.Canvas();
 
         int width = 0;
         byte bars[] = null;
@@ -709,7 +709,7 @@ public class BarcodeEAN extends Barcode{
         for (int k = width; k < pix.length; k += width) {
             System.arraycopy(pix, 0, pix, k, width); 
         }
-        java.awt.Image img = canvas.createImage(new MemoryImageSource(width, height, pix, 0, width));
+        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(width, height, pix, 0, width));
         
         return img;
     }    

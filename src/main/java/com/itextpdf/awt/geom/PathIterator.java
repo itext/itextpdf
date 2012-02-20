@@ -19,32 +19,30 @@
  *  That's why we imported the code into iText.
  */
 /**
- * @author Alexey A. Petrenko
+ * @author Denis M. Kishenko
  */
-package com.itextpdf.text.geom;
+package com.itextpdf.awt.geom;
 
-/**
- * Shape
- *
- */
-public interface Shape {
-    public boolean contains(double x, double y);
+public interface PathIterator {
 
-    public boolean contains(double x, double y, double w, double h);
+    public static final int WIND_EVEN_ODD = 0;
+    public static final int WIND_NON_ZERO = 1;
 
-    public boolean contains(Point2D point);
+    public static final int SEG_MOVETO  = 0;
+    public static final int SEG_LINETO  = 1;
+    public static final int SEG_QUADTO  = 2;
+    public static final int SEG_CUBICTO = 3;
+    public static final int SEG_CLOSE   = 4;
 
-    public boolean contains(Rectangle2D r);
+    public int getWindingRule();
 
-    public Rectangle getBounds();
+    public boolean isDone();
 
-    public Rectangle2D getBounds2D();
+    public void next();
 
-    public PathIterator getPathIterator(AffineTransform at);
+    public int currentSegment(float[] coords);
 
-    public PathIterator getPathIterator(AffineTransform at, double flatness);
+    public int currentSegment(double[] coords);
 
-    public boolean intersects(double x, double y, double w, double h);
-
-    public boolean intersects(Rectangle2D r);
 }
+

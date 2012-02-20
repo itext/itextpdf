@@ -42,10 +42,13 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.awt.print.PrinterJob;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.itextpdf.awt.FontMapper;
+import com.itextpdf.awt.PdfGraphics2D;
+import com.itextpdf.awt.PdfPrinterGraphics2D;
+import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.Annotation;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
@@ -56,7 +59,6 @@ import com.itextpdf.text.ImgJBIG2;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
-import com.itextpdf.text.geom.AffineTransform;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
 
@@ -1138,19 +1140,6 @@ public class PdfContentByte {
     	addImage( image, (float)matrix[0], (float)matrix[1], (float)matrix[2],
     			  (float)matrix[3], (float)matrix[4],(float) matrix[5], false );
     }
-    
-    /**
-     * adds an image with the given matrix.
-     * @param image image to add
-     * @param transform transform to apply to the template prior to adding it.
-     * @since 5.0.1
-     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
-     */
-    public void addImage(final Image image, final java.awt.geom.AffineTransform transform) throws DocumentException {
-    	double matrix[] = new double[6];
-    	transform.getMatrix(matrix);
-    	addImage(image, new AffineTransform(matrix));
-    }
 
     /**
      * Adds an <CODE>Image</CODE> to the page. The positioning of the <CODE>Image</CODE>
@@ -1560,17 +1549,7 @@ public class PdfContentByte {
     	setTextMatrix((float)matrix[0], (float)matrix[1], (float)matrix[2],
     			      (float)matrix[3], (float)matrix[4], (float)matrix[5] );
     }
-    /**
-     * Changes the text matrix.
-     * <P>
-     * @param transform overwrite the current text matrix with this one
-     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
-     */
-    public void setTextMatrix(final java.awt.geom.AffineTransform transform) {
-    	double matrix[] = new double[6];
-    	transform.getMatrix(matrix);
-    	setTextMatrix(new AffineTransform(matrix));
-    }
+    
     /**
      * Changes the text matrix. The first four parameters are {1,0,0,1}.
      * <P>
@@ -1826,16 +1805,6 @@ public class PdfContentByte {
     	transform.getMatrix(matrix);
     	concatCTM( (float)matrix[0], (float)matrix[1], (float)matrix[2],
     			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
-    }
-    /**
-     * Concatenate a matrix to the current transformation matrix.
-     * @param transform added to the Current Transformation Matrix
-     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
-     */
-    public void concatCTM(final java.awt.geom.AffineTransform transform) {
-    	double matrix[] = new double[6];
-    	transform.getMatrix(matrix);
-    	concatCTM(new AffineTransform(matrix));
     }
 
     /**
@@ -2127,18 +2096,6 @@ public class PdfContentByte {
     	transform.getMatrix(matrix);
     	addTemplate( template, (float)matrix[0], (float)matrix[1], (float)matrix[2],
     			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
-    }
-    
-    /**
-     * adds a template with the given matrix.
-     * @param template template to add
-     * @param transform transform to apply to the template prior to adding it.
-     * @deprecated use com.itextpdf.text.geom.AffineTransform as paramter
-     */
-    public void addTemplate(final PdfTemplate template, final java.awt.geom.AffineTransform transform) {
-    	double matrix[] = new double[6];
-    	transform.getMatrix(matrix);
-    	addTemplate(template, new AffineTransform(matrix));
     }
 
     void addTemplateReference(final PdfIndirectReference template, PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) {
@@ -2866,148 +2823,6 @@ public class PdfContentByte {
         restoreState();
     }
 
-    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
-     * are translated to PDF commands as shapes. No PDF fonts will appear.
-     * @param width the width of the panel
-     * @param height the height of the panel
-     * @return a <CODE>Graphics2D</CODE>
-     */
-    public java.awt.Graphics2D createGraphicsShapes(final float width, final float height) {
-        return new PdfGraphics2D(this, width, height, null, true, false, 0);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
-     * are translated to PDF commands as shapes. No PDF fonts will appear.
-     * @param width the width of the panel
-     * @param height the height of the panel
-     * @param printerJob a printer job
-     * @return a <CODE>Graphics2D</CODE>
-     */
-    public java.awt.Graphics2D createPrinterGraphicsShapes(final float width, final float height, final PrinterJob printerJob) {
-        return new PdfPrinterGraphics2D(this, width, height, null, true, false, 0, printerJob);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
-     * are translated to PDF commands.
-     * @param width the width of the panel
-     * @param height the height of the panel
-     * @return a <CODE>Graphics2D</CODE>
-     */
-    public java.awt.Graphics2D createGraphics(final float width, final float height) {
-        return new PdfGraphics2D(this, width, height, null, false, false, 0);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
-     * are translated to PDF commands.
-     * @param width the width of the panel
-     * @param height the height of the panel
-     * @param printerJob
-     * @return a <CODE>Graphics2D</CODE>
-     */
-    public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final PrinterJob printerJob) {
-        return new PdfPrinterGraphics2D(this, width, height, null, false, false, 0, printerJob);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
-     * are translated to PDF commands.
-     * @param width the width of the panel
-     * @param height the height of the panel
-     * @param convertImagesToJPEG
-     * @param quality
-     * @return a <CODE>Graphics2D</CODE>
-     */
-    public java.awt.Graphics2D createGraphics(final float width, final float height, final boolean convertImagesToJPEG, final float quality) {
-        return new PdfGraphics2D(this, width, height, null, false, convertImagesToJPEG, quality);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
-     * are translated to PDF commands.
-     * @param width the width of the panel
-     * @param height the height of the panel
-     * @param convertImagesToJPEG
-     * @param quality
-     * @param printerJob
-     * @return a <CODE>Graphics2D</CODE>
-     */
-    public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final boolean convertImagesToJPEG, final float quality, final PrinterJob printerJob) {
-        return new PdfPrinterGraphics2D(this, width, height, null, false, convertImagesToJPEG, quality, printerJob);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
-     * are translated to PDF commands.
-     * @param width
-     * @param height
-     * @param convertImagesToJPEG
-     * @param quality
-     * @return A Graphics2D object
-     */
-    public java.awt.Graphics2D createGraphicsShapes(final float width, final float height, final boolean convertImagesToJPEG, final float quality) {
-        return new PdfGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
-     * are translated to PDF commands.
-     * @param width
-     * @param height
-     * @param convertImagesToJPEG
-     * @param quality
-     * @param printerJob
-     * @return a Graphics2D object
-     */
-    public java.awt.Graphics2D createPrinterGraphicsShapes(final float width, final float height, final boolean convertImagesToJPEG, final float quality, final PrinterJob printerJob) {
-        return new PdfPrinterGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality, printerJob);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
-     * are translated to PDF commands.
-     * @param width the width of the panel
-     * @param height the height of the panel
-     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
-     * @return a <CODE>Graphics2D</CODE>
-     */
-    public java.awt.Graphics2D createGraphics(final float width, final float height, final FontMapper fontMapper) {
-        return new PdfGraphics2D(this, width, height, fontMapper, false, false, 0);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
-     * are translated to PDF commands.
-     * @param width the width of the panel
-     * @param height the height of the panel
-     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
-     * @param printerJob a printer job
-     * @return a <CODE>Graphics2D</CODE>
-     */
-    public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final FontMapper fontMapper, final PrinterJob printerJob) {
-        return new PdfPrinterGraphics2D(this, width, height, fontMapper, false, false, 0, printerJob);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
-     * are translated to PDF commands.
-     * @param width the width of the panel
-     * @param height the height of the panel
-     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
-     * @param convertImagesToJPEG converts awt images to jpeg before inserting in pdf
-     * @param quality the quality of the jpeg
-     * @return a <CODE>Graphics2D</CODE>
-     */
-    public java.awt.Graphics2D createGraphics(final float width, final float height, final FontMapper fontMapper, final boolean convertImagesToJPEG, final float quality) {
-        return new PdfGraphics2D(this, width, height, fontMapper, false, convertImagesToJPEG, quality);
-    }
-
-    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
-     * are translated to PDF commands.
-     * @param width the width of the panel
-     * @param height the height of the panel
-     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
-     * @param convertImagesToJPEG converts awt images to jpeg before inserting in pdf
-     * @param quality the quality of the jpeg
-     * @param printerJob a printer job
-     * @return a <CODE>Graphics2D</CODE>
-     */
-    public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final FontMapper fontMapper, final boolean convertImagesToJPEG, final float quality, final PrinterJob printerJob) {
-        return new PdfPrinterGraphics2D(this, width, height, fontMapper, false, convertImagesToJPEG, quality, printerJob);
-    }
-
     PageResources getPageResources() {
         return pdf.getPageResources();
     }
@@ -3083,17 +2898,6 @@ public class PdfContentByte {
         af.getMatrix(matrix);
         content.append(matrix[0]).append(' ').append(matrix[1]).append(' ').append(matrix[2]).append(' ');
         content.append(matrix[3]).append(' ').append(matrix[4]).append(' ').append(matrix[5]).append(" cm").append_i(separator);
-    }
-
-    /** Concatenates a transformation to the current transformation
-     * matrix.
-     * @param af the transformation
-     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
-     */
-    public void transform(final java.awt.geom.AffineTransform af) {
-        double matrix[] = new double[6];
-        af.getMatrix(matrix);
-        transform(new AffineTransform(matrix));
     }
 
     void addAnnotation(final PdfAnnotation annot) {
@@ -3229,5 +3033,208 @@ public class PdfContentByte {
     	if (!stateList.isEmpty()) {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.save.restore.state.operators"));
     	}
+    }
+
+    // AWT related methods (remove this if you port to Android / GAE)
+    
+    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
+     * are translated to PDF commands as shapes. No PDF fonts will appear.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createGraphicsShapes(final float width, final float height) {
+        return new PdfGraphics2D(this, width, height, null, true, false, 0);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands as shapes. No PDF fonts will appear.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param printerJob a printer job
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createPrinterGraphicsShapes(final float width, final float height, final java.awt.print.PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, null, true, false, 0, printerJob);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createGraphics(final float width, final float height) {
+        return new PdfGraphics2D(this, width, height, null, false, false, 0);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param printerJob
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final java.awt.print.PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, null, false, false, 0, printerJob);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param convertImagesToJPEG
+     * @param quality
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createGraphics(final float width, final float height, final boolean convertImagesToJPEG, final float quality) {
+        return new PdfGraphics2D(this, width, height, null, false, convertImagesToJPEG, quality);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param convertImagesToJPEG
+     * @param quality
+     * @param printerJob
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final boolean convertImagesToJPEG, final float quality, final java.awt.print.PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, null, false, convertImagesToJPEG, quality, printerJob);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width
+     * @param height
+     * @param convertImagesToJPEG
+     * @param quality
+     * @return A Graphics2D object
+     */
+    public java.awt.Graphics2D createGraphicsShapes(final float width, final float height, final boolean convertImagesToJPEG, final float quality) {
+        return new PdfGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width
+     * @param height
+     * @param convertImagesToJPEG
+     * @param quality
+     * @param printerJob
+     * @return a Graphics2D object
+     */
+    public java.awt.Graphics2D createPrinterGraphicsShapes(final float width, final float height, final boolean convertImagesToJPEG, final float quality, final java.awt.print.PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality, printerJob);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createGraphics(final float width, final float height, final FontMapper fontMapper) {
+        return new PdfGraphics2D(this, width, height, fontMapper, false, false, 0);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
+     * @param printerJob a printer job
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final FontMapper fontMapper, final java.awt.print.PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, fontMapper, false, false, 0, printerJob);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
+     * @param convertImagesToJPEG converts awt images to jpeg before inserting in pdf
+     * @param quality the quality of the jpeg
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createGraphics(final float width, final float height, final FontMapper fontMapper, final boolean convertImagesToJPEG, final float quality) {
+        return new PdfGraphics2D(this, width, height, fontMapper, false, convertImagesToJPEG, quality);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
+     * @param convertImagesToJPEG converts awt images to jpeg before inserting in pdf
+     * @param quality the quality of the jpeg
+     * @param printerJob a printer job
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final FontMapper fontMapper, final boolean convertImagesToJPEG, final float quality, final java.awt.print.PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, fontMapper, false, convertImagesToJPEG, quality, printerJob);
+    }
+    
+    /**
+     * adds an image with the given matrix.
+     * @param image image to add
+     * @param transform transform to apply to the template prior to adding it.
+     * @since 5.0.1
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
+     */
+    public void addImage(final Image image, final java.awt.geom.AffineTransform transform) throws DocumentException {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	addImage(image, new AffineTransform(matrix));
+    }
+    
+    /**
+     * adds a template with the given matrix.
+     * @param template template to add
+     * @param transform transform to apply to the template prior to adding it.
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as paramter
+     */
+    public void addTemplate(final PdfTemplate template, final java.awt.geom.AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	addTemplate(template, new AffineTransform(matrix));
+    }
+    
+    /**
+     * Concatenate a matrix to the current transformation matrix.
+     * @param transform added to the Current Transformation Matrix
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
+     */
+    public void concatCTM(final java.awt.geom.AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	concatCTM(new AffineTransform(matrix));
+    }
+    
+    /**
+     * Changes the text matrix.
+     * <P>
+     * @param transform overwrite the current text matrix with this one
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
+     */
+    public void setTextMatrix(final java.awt.geom.AffineTransform transform) {
+    	double matrix[] = new double[6];
+    	transform.getMatrix(matrix);
+    	setTextMatrix(new AffineTransform(matrix));
+    }
+
+    /** Concatenates a transformation to the current transformation
+     * matrix.
+     * @param af the transformation
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
+     */
+    public void transform(final java.awt.geom.AffineTransform af) {
+        double matrix[] = new double[6];
+        af.getMatrix(matrix);
+        transform(new AffineTransform(matrix));
     }
 }

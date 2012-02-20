@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -382,10 +381,12 @@ public class PdfImageObject {
         return imageBytes; 
     }
 
+    // AWT related methods (remove this if you port to Android / GAE)
+
     /**
      * @since 5.0.3 renamed from getAwtImage()
      */
-    public BufferedImage getBufferedImage() throws IOException {
+    public java.awt.image.BufferedImage getBufferedImage() throws IOException {
         byte[] img = getImageAsBytes();
         if (img == null)
             return null;

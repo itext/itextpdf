@@ -21,10 +21,10 @@
 /**
  * @author Denis M. Kishenko
  */
-package com.itextpdf.text.geom.gl;
+package com.itextpdf.awt.geom.gl;
 
-import com.itextpdf.text.geom.Shape;
-import com.itextpdf.text.geom.PathIterator;
+import com.itextpdf.awt.geom.PathIterator;
+import com.itextpdf.awt.geom.Shape;
 
 public class Crossing {
 

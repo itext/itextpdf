@@ -21,7 +21,7 @@
 /**
  * @author Denis M. Kishenko
  */
-package com.itextpdf.text.geom;
+package com.itextpdf.awt.geom;
 
 import java.io.Serializable;
 
