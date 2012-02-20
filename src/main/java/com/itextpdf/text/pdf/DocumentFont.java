@@ -99,12 +99,22 @@ public class DocumentFont extends BaseFont {
         0,230,0,0,0,305,0,0,322,248,339,223,0,0,0,0};
 
     /** Creates a new instance of DocumentFont */
+    DocumentFont(PdfDictionary font) {
+        this.refFont = null;
+        this.font = font;
+        init();
+    }
+    /** Creates a new instance of DocumentFont */
     DocumentFont(PRIndirectReference refFont) {
+        this.refFont = refFont;
+        font = (PdfDictionary)PdfReader.getPdfObject(refFont);
+        init();
+    }
+
+    private void init() {
         encoding = "";
         fontSpecific = false;
-        this.refFont = refFont;
         fontType = FONT_TYPE_DOCUMENT;
-        font = (PdfDictionary)PdfReader.getPdfObject(refFont);
         PdfName baseFont = font.getAsName(PdfName.BASEFONT);
         fontName = baseFont != null ? PdfName.decodeName(baseFont.toString()) : "Unspecified Font Name";
             PdfName subType = font.getAsName(PdfName.SUBTYPE);
@@ -133,7 +143,7 @@ public class DocumentFont extends BaseFont {
             }
         }
     }
-
+    
     private void processType0(PdfDictionary font) {
         try {
             PdfObject toUniObject = PdfReader.getPdfObjectRelease(font.get(PdfName.TOUNICODE));
@@ -703,6 +713,8 @@ public class DocumentFont extends BaseFont {
     }
 
     PdfIndirectReference getIndirectReference() {
+        if (refFont == null)
+            throw new IllegalArgumentException("Font reuse not allowed with direct font objects.");
         return refFont;
     }
 
