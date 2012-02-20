@@ -202,7 +202,18 @@ public class DocumentFont extends BaseFont {
             PdfObject ob = null;
             boolean notFound = true;
             int nestLevel = 0;
-            while ((notFound || nestLevel > 0) && (ob = ps.readPRObject()) != null) {
+            int maxExc = 50;
+            while ((notFound || nestLevel > 0)) {
+                try {
+                    ob = ps.readPRObject();
+                }
+                catch (Exception ex) {
+                    if (--maxExc < 0)
+                        break;
+                    continue;
+                }
+                if (ob == null)
+                    break;
                 if (ob.type() == PdfContentParser.COMMAND_TYPE) {
                 	if (ob.toString().equals("begin")) {
                 		notFound = false;
