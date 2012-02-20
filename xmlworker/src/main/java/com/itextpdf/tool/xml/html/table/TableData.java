@@ -99,6 +99,12 @@ public class TableData extends AbstractTagProcessor {
 	public List<Element> end(final WorkerContext ctx, final Tag tag,
 			final List<Element> currentContent) {
 		HtmlCell cell = new HtmlCell();
+        try {
+            HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
+            cell = new HtmlCellCssApplier().apply(cell, tag, htmlPipelineContext, htmlPipelineContext);
+        } catch (NoCustomContextException e1) {
+            throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
+        }
         cell.getColumn().setUseAscender(true);
 		List<Element> l = new ArrayList<Element>(1);
         List<Element> chunks = new ArrayList<Element>();
@@ -145,14 +151,6 @@ public class TableData extends AbstractTagProcessor {
             p.setAlignment(cell.getHorizontalAlignment());
             cell.addElement(p);
         }
-        try {
-			HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-			cell = new HtmlCellCssApplier().apply(cell, tag,
-					htmlPipelineContext, htmlPipelineContext);
-		} catch (NoCustomContextException e1) {
-			throw new RuntimeWorkerException(LocaleMessages.getInstance()
-					.getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
-		}
     	l.add(cell);
 		return l;
 	}
