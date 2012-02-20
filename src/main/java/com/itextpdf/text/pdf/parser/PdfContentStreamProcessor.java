@@ -145,7 +145,7 @@ public class PdfContentStreamProcessor {
      * @return the font
      * @since 5.0.6
      */
-    public CMapAwareDocumentFont getFont(PRIndirectReference ind) {
+    private CMapAwareDocumentFont getFont(PRIndirectReference ind) {
         Integer n = Integer.valueOf(ind.getNumber());
         CMapAwareDocumentFont font = cachedFonts.get(n);
         if (font == null) {
@@ -349,7 +349,8 @@ public class PdfContentStreamProcessor {
 
 
     /**
-     * Processes PDF syntax
+     * Processes PDF syntax.
+     * <b>Note:</b> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
      * @param contentBytes	the bytes of a content stream
      * @param resources		the resources that come with the content stream
      */
