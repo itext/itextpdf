@@ -145,7 +145,7 @@ public class HtmlCellCssApplier {
                 height = heightCalc.getHeight(row, psc.getPageSize().getHeight());
             }
             if (height != null) {
-                cell.setFixedHeight(height);
+                cell.setMinimumHeight(height);
             }
 
 	        String colspan = t.getAttributes().get(HTML.Attribute.COLSPAN);
@@ -160,9 +160,7 @@ public class HtmlCellCssApplier {
 	        	String key = entry.getKey();
 				String value = entry.getValue();
 				cell.setUseBorderPadding(true);
-				if(key.equalsIgnoreCase(CSS.Property.HEIGHT)) {
-					cell.setMinimumHeight(utils.parsePxInCmMmPcToPt(value));
-				} else if(key.equalsIgnoreCase(CSS.Property.BACKGROUND_COLOR)) {
+                if(key.equalsIgnoreCase(CSS.Property.BACKGROUND_COLOR)) {
 					values.setBackground(HtmlUtilities.decodeColor(value));
 				} else if(key.equalsIgnoreCase(CSS.Property.VERTICAL_ALIGN)) {
 					if(value.equalsIgnoreCase(CSS.Value.TOP)) {

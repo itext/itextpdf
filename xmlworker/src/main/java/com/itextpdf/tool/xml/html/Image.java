@@ -112,6 +112,7 @@ public class Image extends AbstractTagProcessor {
 				String width = attributes.get(HTML.Attribute.WIDTH);
 				float widthInPoints = utils.parsePxInCmMmPcToPt(width);
 				String height = attributes.get(HTML.Attribute.HEIGHT);
+                img.setScaleToFitLineWhenOverflow(true);
 				float heightInPoints = utils.parsePxInCmMmPcToPt(height);
 				if (widthInPoints > 0 && heightInPoints > 0) {
 					img.scaleAbsolute(widthInPoints, heightInPoints);

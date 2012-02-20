@@ -5,25 +5,14 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactoryImp;
 import com.itextpdf.text.pdf.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
  */
 public class XMLWorkerFontProvider extends FontFactoryImp {
-    private final Map<String, BaseFont> fonts = new ConcurrentHashMap<String, BaseFont>();
-    private final Map<String, BaseFont> unicodeFonts = new ConcurrentHashMap<String, BaseFont>();
-    private HashMap<String, String> fontNamesMap = new HashMap<String, String>();
     private HashMap<String, String> fontSubstitutionMap = new HashMap<String, String>();
-    private ArrayList<File> filesToDelete = new ArrayList<File>();
 
     public XMLWorkerFontProvider() {
         this(null, null);
@@ -58,137 +47,41 @@ public class XMLWorkerFontProvider extends FontFactoryImp {
             return new Font(Font.FontFamily.UNDEFINED, size, style);
         }
 
-        String resolvedFontName = resolveFontName(fontname);
-        BaseFont unicodeBaseFont = getUnicodeBaseFont(resolvedFontName, encoding, size, style);
-        String unicodeFontName = null;
-        if (unicodeBaseFont != null) {
-            unicodeFontName = unicodeBaseFont.getFullFontName()[0][3];
-        }
-        if ((unicodeFontName != null) && (unicodeFonts.get(unicodeFontName) == null)) {
-            unicodeFonts.put(unicodeFontName, unicodeBaseFont);
-        }
-        return new Font(unicodeBaseFont, size, style);
+        Font unicodeFont = getUnicodeFont(fontname, encoding, size, style);
+        return unicodeFont;
     }
 
-    public BaseFont getBaseFont(final String fontName, String encoding, final float size, final int style) {
-        String fontNameAndStyle = fontName;
-        String styleString = getStyleString(style);
-        if ((styleString != null) && (styleString.length() > 0))
-            fontNameAndStyle = fontNameAndStyle + " " + styleString;
-        fontNameAndStyle = fontNameAndStyle.toLowerCase();
-        BaseFont baseFont = fonts.get(fontNameAndStyle);
-        if (baseFont == null) {
-            try {
-                baseFont = createBaseFont(fontName, encoding, size, style);
-                if (baseFont == null) {
-                    String substFontName = fontSubstitutionMap.get(fontName);
-                    if ((substFontName != null) && (substFontName.length() > 0)) {
-                        baseFont = createBaseFont(substFontName,encoding, size, style);
-                    }
-                }
-                if (baseFont != null && unicodeFonts.get(fontNameAndStyle) == null) {
-                    unicodeFonts.put(fontNameAndStyle, baseFont);
-                }
-            } catch (UnsupportedCharsetException uce) {
-                return null;
+    private Font getUnicodeFont(String fontName, String encoding, float size, int style) {
+        Font font = null;
+        try {
+            BaseFont baseFont = null;
+            font = super.getFont(fontName, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, size, style, null);
+
+            if (font != null) {
+                baseFont = font.getBaseFont();
             }
-        }
 
-        return baseFont;
-    }
-
-    public void dispose() {
-        this.finalize();
-    }
-
-    protected void finalize() {
-        for (File f : filesToDelete) {
-            f.delete();
-        }
-        filesToDelete.clear();
-    }
-
-    private BaseFont getUnicodeBaseFont(String fontName, String encoding, float size, int style) {
-        String fontNameAndStyle = fontName;
-        String styleString = getStyleString(style);
-        if ((styleString != null) && (styleString.length() > 0))
-            fontNameAndStyle = fontNameAndStyle + " " + styleString;
-        fontNameAndStyle = fontNameAndStyle.toLowerCase();
-        BaseFont baseFont = unicodeFonts.get(fontNameAndStyle);
-        if (baseFont == null) {
-            try {
-                baseFont = createBaseFont(fontName, BaseFont.IDENTITY_H, size, style);
-                if (baseFont == null) {
-                    String substFontName = fontSubstitutionMap.get(fontName);
-                    if ((substFontName != null) && (substFontName.length() > 0)) {
-                        baseFont = createBaseFont(substFontName, BaseFont.IDENTITY_H, size, style);
-                    }
+            if (baseFont == null) {
+                String substFontName = fontSubstitutionMap.get(fontName);
+                if ((substFontName != null) && (substFontName.length() > 0)) {
+                    font = super.getFont(substFontName, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, size, style, null);
                 }
-                if (baseFont != null && unicodeFonts.get(fontNameAndStyle) == null) {
-                    unicodeFonts.put(fontNameAndStyle, baseFont);
-                }
-            } catch (UnsupportedCharsetException uce) {
-                baseFont = createBaseFont(fontName, encoding, size, style);
-                if (baseFont == null) {
-                    String substFontName = fontSubstitutionMap.get(fontName);
-                    if ((substFontName != null) && (substFontName.length() > 0)) {
-                        baseFont = createBaseFont(substFontName, encoding, size, style);
-                    }
+            }
+        } catch (UnsupportedCharsetException uce) {
+            BaseFont baseFont = null;
+            font = super.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, null);
+
+            if (font != null) {
+                baseFont = font.getBaseFont();
+            }
+            if (baseFont == null) {
+                String substFontName = fontSubstitutionMap.get(fontName);
+                if ((substFontName != null) && (substFontName.length() > 0)) {
+                    font = super.getFont(substFontName, encoding, BaseFont.EMBEDDED, size, style, null);
                 }
             }
         }
 
-        return baseFont;
-    }
-
-    private BaseFont createBaseFont(String fontName, String encoding, float size, int style) {
-        BaseFont baseFont = null;
-        Font f = super.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, null);
-        if (f != null) {
-            baseFont = f.getBaseFont();
-        }
-        return baseFont;
-    }
-
-    private String resolveFontName(String fontname) {
-        String resolved = fontNamesMap.get(fontname);
-        if (resolved != null && resolved.length() > 0)
-            return resolved;
-        else
-            return fontname;
-    }
-
-    private static boolean isFontFacesEqual(final String s1, final String s2) {
-        String trimmedS1 = s1.toLowerCase().trim();
-        String trimmedS2 = s2.toLowerCase().trim();
-        int length = trimmedS1.length();
-        if (length > trimmedS2.length()) {
-            length = trimmedS2.length();
-        }
-        if (length > 5) {
-            length = 5;
-        }
-        return trimmedS1.substring(0,length).equals(trimmedS2.substring(0,length));
-    }
-
-    /**
-     * Converts the Integer style to a String which could be a part of BaseFont family font name.
-     * Also converts the Integer style to Font.Normal, to avoid having double styles being applied.
-     *
-     * @param style Integer. Either Font.BOLD, Font.ITALIC or Font.BOLDITALIC is converted.
-     * @return styleName which could be a part of BaseFont family font name.
-     */
-    private String getStyleString(final Integer style) {
-        String styleName = "";
-        if (style != Font.UNDEFINED) {
-            if ((style & Font.BOLD) != 0 && (style & Font.ITALIC) != 0) {
-                styleName = Font.FontStyle.BOLD.getValue() + Font.FontStyle.ITALIC.getValue();
-            } else if ((style & Font.BOLD) != 0) {
-                styleName = Font.FontStyle.BOLD.getValue();
-            } else if ((style & Font.ITALIC) != 0) {
-                styleName = Font.FontStyle.BOLD.getValue();
-            }
-        }
-        return styleName;
+        return font;
     }
 }

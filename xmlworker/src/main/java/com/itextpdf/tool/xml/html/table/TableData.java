@@ -57,6 +57,7 @@ import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
+import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 /**
@@ -109,7 +110,7 @@ public class TableData extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
         List<Element> chunks = new ArrayList<Element>();
 		for (Element e : currentContent) {
-            if (e instanceof Chunk || e instanceof LineSeparator) {
+            if (e instanceof Chunk || e instanceof NoNewLineParagraph || e instanceof LineSeparator) {
                 if (e == Chunk.NEWLINE) {
                     int index = currentContent.indexOf(e);
                     if (index == currentContent.size() - 1) {

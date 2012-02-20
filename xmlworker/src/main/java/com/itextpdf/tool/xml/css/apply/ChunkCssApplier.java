@@ -44,6 +44,7 @@
 package com.itextpdf.tool.xml.css.apply;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.tool.xml.Tag;
@@ -172,24 +173,42 @@ public class ChunkCssApplier {
                 }
             } else if (CSS.Property.FONT_FAMILY.equalsIgnoreCase(key)) {
 				// TODO improve fontfamily parsing (what if a font family has a comma in the name ? )
-                if (value.contains(",")) {
-                    String[] fonts = value.split(",");
-                    for (String s : fonts) {
-                        s = utils.trimAndRemoveQuoutes(s);
-                        if (fontProvider.isRegistered(s)) {
-                            fontName = s;
-                            break;
-                        }
-                    }
-                } else {
-					fontName = utils.trimAndRemoveQuoutes(value);
-                }
+                fontName = value;
             } else if (CSS.Property.COLOR.equalsIgnoreCase(key)) {
                 color = HtmlUtilities.decodeColor(value);
             }
         }
-        Font f = fontProvider.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, color);
-        return f;
+        if (fontName != null) {
+            if (fontName.contains(",")) {
+                String[] fonts = fontName.split(",");
+                Font firstFont = null;
+                for (String s : fonts) {
+                    s = utils.trimAndRemoveQuoutes(s);
+                    if (fontProvider.isRegistered(s)) {
+                        Font f = fontProvider.getFont(s, encoding, BaseFont.EMBEDDED, size, style, color);
+                        if (f != null && (style == Font.NORMAL || style == Font.UNDEFINED || (f.getStyle() & style) == 0)) {
+                            return f;
+                        }
+                        if (firstFont == null) {
+                            firstFont = f;
+                        }
+                    }
+                }
+                if (firstFont != null) {
+                    return firstFont;
+                } else {
+                    if (fonts.length > 0) {
+                        fontName = utils.trimAndRemoveQuoutes(fontName.split(",")[0]);
+                    } else {
+                        fontName = null;
+                    }
+                }
+            } else {
+                fontName = utils.trimAndRemoveQuoutes(fontName);
+            }
+        }
+
+        return fontProvider.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, color);
     }
 
 	/**
