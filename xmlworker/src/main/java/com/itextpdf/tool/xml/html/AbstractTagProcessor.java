@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -224,6 +225,9 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 				if (addNewLines) {
 					Paragraph p = new Paragraph(Float.NaN);
 					for (Element e : currentContent) {
+                        if (e instanceof LineSeparator) {
+                            p.add(Chunk.NEWLINE);
+                        }
 						p.add(e);
 					}
 					if (applyCSS) {

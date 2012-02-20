@@ -324,6 +324,8 @@ public final class HTML {
 		public static final String TYPE = "type";
 		public static final String COLSPAN = "colspan";
 		public static final String ROWSPAN = "rowspan";
+        public static final String VALIGN  = "valign";
+        public static final String ALIGN  = "align";
 
 		/**
 		 * Possible attribute values.

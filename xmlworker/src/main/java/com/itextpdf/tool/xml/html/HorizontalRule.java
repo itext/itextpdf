@@ -46,6 +46,7 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.LineSeparator;
@@ -72,8 +73,9 @@ public class HorizontalRule extends AbstractTagProcessor {
 			HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
 			LineSeparator lineSeparator = (LineSeparator) getCssAppliers().apply(new LineSeparator(), tag, htmlPipelineContext);
 			Paragraph p = new Paragraph();
+            p.setMultipliedLeading(1.2f);
 			p.add(lineSeparator);
-			list.add(getCssAppliers().apply(p, tag, htmlPipelineContext));
+			list.add(lineSeparator);
 			return list;
 		} catch (NoCustomContextException e) {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);

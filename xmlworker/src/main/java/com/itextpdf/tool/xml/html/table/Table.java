@@ -65,10 +65,7 @@ import com.itextpdf.text.pdf.PdfPTableEvent;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.css.CSS;
-import com.itextpdf.tool.xml.css.CssUtils;
-import com.itextpdf.tool.xml.css.FontSizeTranslator;
-import com.itextpdf.tool.xml.css.WidthCalculator;
+import com.itextpdf.tool.xml.css.*;
 import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
@@ -360,9 +357,20 @@ public class Table extends AbstractTagProcessor {
 				throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(
 						LocaleMessages.NO_CUSTOM_CONTEXT), e);
 			}
+
+            Float tableHeight = new HeightCalculator().getHeight(tag, getHtmlPipelineContext(ctx).getPageSize().getHeight());
+
 			for (TableRowElement row : tableRows) {
 				int columnNumber = -1;
+                Float computedRowHeight = null;
+                if ( tableHeight != null &&  tableRows.indexOf(row) == tableRows.size() - 1) {
+                    float computedTableHeigt = table.calculateHeights();
+                    computedRowHeight = tableHeight - computedTableHeigt;
+                }
 				for (HtmlCell cell : row.getContent()) {
+                    if (computedRowHeight != null && computedRowHeight > 0) {
+                        cell.setFixedHeight(computedRowHeight);
+                    }
 					columnNumber += cell.getColspan();
 					List<Element> compositeElements = cell.getCompositeElements();
 					if (compositeElements != null) {

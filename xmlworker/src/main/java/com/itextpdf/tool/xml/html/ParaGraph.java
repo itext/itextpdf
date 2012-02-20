@@ -38,12 +38,14 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
@@ -139,6 +141,7 @@ public class ParaGraph extends AbstractTagProcessor {
 
     protected void processParagraphItems(final WorkerContext ctx, final Tag tag, final List<Element> paragraphItems, List<Element> l) {
         Paragraph p = new Paragraph();
+        p.setMultipliedLeading(1.2f);
         Element lastElement = paragraphItems.get(paragraphItems.size() - 1);
         if (lastElement == Chunk.NEWLINE) {
             paragraphItems.remove(paragraphItems.size() - 1);
@@ -203,6 +206,9 @@ public class ParaGraph extends AbstractTagProcessor {
 				p.add(new Chunk(tab));
 				p.add(new Chunk((TabbedChunk) e));
 			} else {
+                if (e instanceof LineSeparator) {
+                    p.add(Chunk.NEWLINE);
+                }
 				p.add(e);
 			}
 		}

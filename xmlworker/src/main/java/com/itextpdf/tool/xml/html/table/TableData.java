@@ -46,9 +46,8 @@ package com.itextpdf.tool.xml.html.table;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Image;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -100,24 +99,61 @@ public class TableData extends AbstractTagProcessor {
 	public List<Element> end(final WorkerContext ctx, final Tag tag,
 			final List<Element> currentContent) {
 		HtmlCell cell = new HtmlCell();
+        cell.getColumn().setUseAscender(true);
 		List<Element> l = new ArrayList<Element>(1);
+        List<Element> chunks = new ArrayList<Element>();
 		for (Element e : currentContent) {
-            if (e == Chunk.NEWLINE) {
-                int index = currentContent.indexOf(e);
-                if (index == currentContent.size() - 1 || !(currentContent.get(index + 1) instanceof Image)) {
-                    continue;
+            if (e instanceof Chunk || e instanceof LineSeparator) {
+                if (e == Chunk.NEWLINE) {
+                    int index = currentContent.indexOf(e);
+                    if (index == currentContent.size() - 1) {
+                        continue;
+                    } else {
+                        Element nextElement = currentContent.get(index + 1);
+                        if (nextElement instanceof Paragraph) {
+                            continue;
+                        }
+                        if (chunks.isEmpty()) {
+                            continue;
+                        }
+
+                    }
+                } else if (e instanceof LineSeparator) {
+                    chunks.add(Chunk.NEWLINE);
                 }
+                chunks.add(e);
+                continue;
+            } else if (!chunks.isEmpty()) {
+                Paragraph p = new Paragraph();
+                p.setMultipliedLeading(1.2f);
+                p.addAll(chunks);
+                p.setAlignment(cell.getHorizontalAlignment());
+                cell.addElement(p);
+                chunks.clear();
             }
+
+            if (e instanceof Paragraph) {
+                ((Paragraph)e).setAlignment(cell.getHorizontalAlignment());
+            }
+
 			cell.addElement(e);
 		}
-		try {
+        if (!chunks.isEmpty()) {
+            Paragraph p = new Paragraph();
+            p.setMultipliedLeading(1.2f);
+            p.addAll(chunks);
+            p.setAlignment(cell.getHorizontalAlignment());
+            cell.addElement(p);
+        }
+        try {
 			HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-			l.add(new HtmlCellCssApplier().apply(cell, tag,
-					htmlPipelineContext, htmlPipelineContext));
+			cell = new HtmlCellCssApplier().apply(cell, tag,
+					htmlPipelineContext, htmlPipelineContext);
 		} catch (NoCustomContextException e1) {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance()
 					.getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
 		}
+    	l.add(cell);
 		return l;
 	}
 
