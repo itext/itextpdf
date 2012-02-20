@@ -83,6 +83,12 @@ public class CMapAwareDocumentFont extends DocumentFont {
     
     private Map<Integer,Integer> uni2cid;
     
+    public CMapAwareDocumentFont(PdfDictionary font) {
+        super(font);
+        fontDic = font;
+        initFont();
+    }
+    
     /**
      * Creates an instance of a CMapAwareFont based on an indirect reference to a font.
      * @param refFont	the indirect reference to a font
@@ -90,7 +96,10 @@ public class CMapAwareDocumentFont extends DocumentFont {
     public CMapAwareDocumentFont(PRIndirectReference refFont) {
         super(refFont);
         fontDic = (PdfDictionary)PdfReader.getPdfObjectRelease(refFont);
+        initFont();
+    }
 
+    private void initFont() {
         processToUnicode();
         try {
         	//if (toUnicodeCmap == null)
@@ -109,7 +118,6 @@ public class CMapAwareDocumentFont extends DocumentFont {
             throw new ExceptionConverter(ex);
         }
     }
-
     /**
      * Parses the ToUnicode entry, if present, and constructs a CMap for it
      * @since 2.1.7

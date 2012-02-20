@@ -155,6 +155,10 @@ public class PdfContentStreamProcessor {
         return font;
     }
 
+    public CMapAwareDocumentFont getFont(PdfDictionary fontResource) {
+        return new CMapAwareDocumentFont(fontResource);
+    }
+
     /**
      * Loads all the supported graphics and text state operators in a map.
      */
@@ -575,7 +579,12 @@ public class PdfContentStreamProcessor {
             float size = ((PdfNumber)operands.get(1)).floatValue();
 
             PdfDictionary fontsDictionary = processor.resources.getAsDict(PdfName.FONT);
-            CMapAwareDocumentFont font = processor.getFont((PRIndirectReference)fontsDictionary.get(fontResourceName));
+            CMapAwareDocumentFont font;
+            PdfObject fontObject = fontsDictionary.get(fontResourceName);
+            if (fontObject instanceof PdfDictionary)
+                font = processor.getFont((PdfDictionary)fontObject);
+            else
+                font = processor.getFont((PRIndirectReference)fontObject);
 
             processor.gs().font = font;
             processor.gs().fontSize = size;
