@@ -888,7 +888,7 @@ public class ColumnText {
                 if (isUseAscender() && Float.isNaN(firstLineY))
                 	currentLeading = line.getAscender();
                 else
-                	currentLeading = Math.max(fixedLeading + maxSize[0] * multipliedLeading, maxSize[1]);
+                	currentLeading = Math.max(fixedLeading + maxSize[0] * multipliedLeading, maxSize[1] - descender);
                 if (yLine > maxY || yLine - currentLeading < minY ) {
                 	status = NO_MORE_COLUMN;
                 	bidiLine.restore();
