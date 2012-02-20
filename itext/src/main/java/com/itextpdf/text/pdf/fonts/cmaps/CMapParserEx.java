@@ -81,8 +81,16 @@ public class CMapParserEx {
         try {
             ArrayList<PdfObject> list = new ArrayList<PdfObject>();
             PdfContentParser cp = new PdfContentParser(inp);
+            int maxExc = 50;
             while (true) {
-                cp.parse(list);
+                try {
+                    cp.parse(list);
+                }
+                catch (Exception ex) {
+                    if (--maxExc < 0)
+                        break;
+                    continue;
+                }
                 if (list.isEmpty())
                     break;
                 String last = list.get(list.size() - 1).toString();
