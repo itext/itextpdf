@@ -106,7 +106,7 @@ public class InsideTagHTMLState implements State {
 				this.parser.append(character);
 			} else {
 				if (this.parser.memory().whitespaceTag().length() != 0) {
-					if (ignoreLastChars.contains(this.parser.memory().whitespaceTag())) {
+					if (ignoreLastChars.contains(this.parser.memory().whitespaceTag().toLowerCase())) {
 						parser.memory().lastChar(' ');
 					}
 					this.parser.memory().whitespaceTag("");
