@@ -68,7 +68,7 @@ public class LtvTimestamp {
         dic.put(PdfName.TYPE, PdfName.DOCTIMESTAMP);
         sap.setCryptoDictionary(dic);
 
-        HashMap exc = new HashMap();
+        HashMap<PdfName,Integer> exc = new HashMap<PdfName,Integer>();
         exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
         sap.preClose(exc);
         InputStream data = sap.getRangeStream();

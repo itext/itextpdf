@@ -58,6 +58,7 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.xml.simpleparser.IanaEncodings;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.itextpdf.text.xml.simpleparser.SimpleXMLParser;
+import com.itextpdf.text.xml.XMLUtil;
 
 /**
  *
@@ -131,15 +132,15 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
      */
     public static void exportToXML(HashMap<String, String> names, Writer wrt, String encoding, boolean onlyASCII) throws IOException {
         wrt.write("<?xml version=\"1.0\" encoding=\"");
-        wrt.write(SimpleXMLParser.escapeXML(encoding, onlyASCII));
+        wrt.write(XMLUtil.escapeXML(encoding, onlyASCII));
         wrt.write("\"?>\n<Destination>\n");
         for (Map.Entry<String, String> entry: names.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             wrt.write("  <Name Page=\"");
-            wrt.write(SimpleXMLParser.escapeXML(value, onlyASCII));
+            wrt.write(XMLUtil.escapeXML(value, onlyASCII));
             wrt.write("\">");
-            wrt.write(SimpleXMLParser.escapeXML(escapeBinaryString(key), onlyASCII));
+            wrt.write(XMLUtil.escapeXML(escapeBinaryString(key), onlyASCII));
             wrt.write("</Name>\n");
         }
         wrt.write("</Destination>\n");

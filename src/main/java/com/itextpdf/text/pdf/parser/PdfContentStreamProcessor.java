@@ -155,7 +155,7 @@ public class PdfContentStreamProcessor {
         return font;
     }
 
-    public CMapAwareDocumentFont getFont(PdfDictionary fontResource) {
+    private CMapAwareDocumentFont getFont(PdfDictionary fontResource) {
         return new CMapAwareDocumentFont(fontResource);
     }
 
