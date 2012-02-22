@@ -154,8 +154,8 @@ public class PdfImageObject {
 	 * @param stream a PRStream
 	 * @throws IOException
 	 */
-	public PdfImageObject(PRStream stream) throws IOException {
-		this(stream, PdfReader.getStreamBytesRaw(stream), null);
+	public PdfImageObject(PRStream stream, PdfDictionary colorSpaceDic) throws IOException {
+		this(stream, PdfReader.getStreamBytesRaw(stream), colorSpaceDic);
 	}
 	
 

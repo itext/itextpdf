@@ -148,7 +148,7 @@ public class PdfContentStreamProcessorTest
         Vector start = renderInfo.getBaseline().getStartPoint();
         final float x = start.get(Vector.I1);
         final float y = start.get(Vector.I2);
-        System.out.println("Display text: '" + renderInfo.getText() + "' (" + x + "," + y + ")");
+//        System.out.println("Display text: '" + renderInfo.getText() + "' (" + x + "," + y + ")");
         if (y > _lastY){
           Assert.fail("Text has jumped back up the page");
         }

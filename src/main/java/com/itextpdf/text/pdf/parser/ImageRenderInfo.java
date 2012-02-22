@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf.parser;
 import java.io.IOException;
 
 import com.itextpdf.text.pdf.PRStream;
+import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfReader;
 
@@ -58,12 +59,25 @@ public class ImageRenderInfo {
     private final Matrix ctm;
     /** A reference to the image XObject */
     private final PdfIndirectReference ref;
+    /** A reference to an inline image */
+    private final InlineImageInfo inlineImageInfo;
+    /** the color space associated with the image */
+    private final PdfDictionary colorSpaceDictionary;
     /** the image object to be rendered, if it has been parsed already.  Null otherwise. */
     private PdfImageObject imageObject = null;
     
-    private ImageRenderInfo(Matrix ctm, PdfIndirectReference ref) {
+    private ImageRenderInfo(Matrix ctm, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary) {
         this.ctm = ctm;
         this.ref = ref;
+        this.inlineImageInfo = null;
+        this.colorSpaceDictionary = colorSpaceDictionary;
+    }
+
+    private ImageRenderInfo(Matrix ctm, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary) {
+        this.ctm = ctm;
+        this.ref = null;
+        this.inlineImageInfo = inlineImageInfo;
+        this.colorSpaceDictionary = colorSpaceDictionary;
     }
     
     /**
@@ -73,8 +87,8 @@ public class ImageRenderInfo {
      * @return the ImageRenderInfo representing the rendered XObject
      * @since 5.0.1
      */
-    public static ImageRenderInfo createForXObject(Matrix ctm, PdfIndirectReference ref){
-        return new ImageRenderInfo(ctm, ref);
+    public static ImageRenderInfo createForXObject(Matrix ctm, PdfIndirectReference ref, PdfDictionary colorSpaceDictionary){
+        return new ImageRenderInfo(ctm, ref, colorSpaceDictionary);
     }
     
     /**
@@ -85,9 +99,8 @@ public class ImageRenderInfo {
      * @return the ImageRenderInfo representing the rendered embedded image
      * @since 5.0.1
      */
-    protected static ImageRenderInfo createdForEmbeddedImage(Matrix ctm, PdfImageObject imageObject){
-        ImageRenderInfo renderInfo = new ImageRenderInfo(ctm, null);
-        renderInfo.imageObject = imageObject;
+    protected static ImageRenderInfo createForEmbeddedImage(Matrix ctm, InlineImageInfo inlineImageInfo, PdfDictionary colorSpaceDictionary){
+        ImageRenderInfo renderInfo = new ImageRenderInfo(ctm, inlineImageInfo, colorSpaceDictionary);
         return renderInfo;
     }
     
@@ -105,8 +118,12 @@ public class ImageRenderInfo {
         if (imageObject != null)
             return;
         
-        PRStream stream = (PRStream)PdfReader.getPdfObject(ref);
-        imageObject = new PdfImageObject(stream);        
+        if (ref != null){
+            PRStream stream = (PRStream)PdfReader.getPdfObject(ref);
+            imageObject = new PdfImageObject(stream, colorSpaceDictionary);
+        } else if (inlineImageInfo != null){
+            imageObject = new PdfImageObject(inlineImageInfo.getImageDictionary(), inlineImageInfo.getSamples(), colorSpaceDictionary);
+        }
     }
     
     /**
