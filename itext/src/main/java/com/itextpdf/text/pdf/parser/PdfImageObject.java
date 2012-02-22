@@ -157,6 +157,16 @@ public class PdfImageObject {
 	public PdfImageObject(PRStream stream) throws IOException {
 		this(stream, PdfReader.getStreamBytesRaw(stream), null);
 	}
+    
+	/**
+	 * Creates a PdfImage object.
+	 * @param stream a PRStream
+	 * @param colorSpaceDic	a color space dictionary
+	 * @throws IOException
+	 */
+	public PdfImageObject(PRStream stream, PdfDictionary colorSpaceDic) throws IOException {
+		this(stream, PdfReader.getStreamBytesRaw(stream), colorSpaceDic);
+	}
 	
 
 	
@@ -164,6 +174,7 @@ public class PdfImageObject {
 	 * Creats a PdfImage object using an explicitly provided dictionary and image bytes
 	 * @param dictionary the dictionary for the image
 	 * @param samples the samples
+	 * @param colorSpaceDic	a color space dictionary
 	 * @since 5.0.3
 	 */
 	protected PdfImageObject(PdfDictionary dictionary, byte[] samples, PdfDictionary colorSpaceDic) throws IOException {

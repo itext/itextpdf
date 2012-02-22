@@ -365,7 +365,7 @@ public class PdfContentStreamProcessor {
                 if ("BI".equals(operator.toString())){
                     // we don't call invokeOperator for embedded images - this is one area of the PDF spec that is particularly nasty and inconsistent
                     PdfDictionary colorSpaceDic = resources != null ? resources.getAsDict(PdfName.COLORSPACE) : null;
-                    ImageRenderInfo renderInfo = ImageRenderInfo.createdForEmbeddedImage(gs().ctm, InlineImageUtils.parseInlineImage(ps, colorSpaceDic));
+                    ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs().ctm, InlineImageUtils.parseInlineImage(ps, colorSpaceDic), colorSpaceDic);
                     renderListener.renderImage(renderInfo);
                 } else {
                     invokeOperator(operator, operands);
@@ -846,7 +846,8 @@ public class PdfContentStreamProcessor {
     private static class ImageXObjectDoHandler implements XObjectDoHandler{
 
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
-            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs().ctm, ref);
+            PdfDictionary colorSpaceDic = processor.resources.getAsDict(PdfName.COLORSPACE);
+            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs().ctm, ref, colorSpaceDic);
             processor.renderListener.renderImage(renderInfo);
         }
     }

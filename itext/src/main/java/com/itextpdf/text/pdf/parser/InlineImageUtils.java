@@ -148,10 +148,10 @@ public final class InlineImageUtils {
      * @throws IOException if anything goes wring with the parsing
      * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing
      */
-    public static PdfImageObject parseInlineImage(PdfContentParser ps, PdfDictionary colorSpaceDic) throws IOException{
+    public static InlineImageInfo parseInlineImage(PdfContentParser ps, PdfDictionary colorSpaceDic) throws IOException{
         PdfDictionary inlineImageDictionary = parseInlineImageDictionary(ps);
         byte[] samples = parseInlineImageSamples(inlineImageDictionary, colorSpaceDic, ps);
-        return new PdfImageObject(inlineImageDictionary, samples, colorSpaceDic);
+        return new InlineImageInfo(samples, inlineImageDictionary);
     }
     
     /**
