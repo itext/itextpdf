@@ -91,7 +91,6 @@ public class PdfConcatenate {
 		open();
 		int n = reader. getNumberOfPages();
 	    for (int i = 1; i <= n; i++) {
-	    	System.out.println(i);
 	        copy.addPage(copy.getImportedPage(reader, i));
 	    }
 	    copy.freeReader(reader);
