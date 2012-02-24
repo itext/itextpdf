@@ -126,6 +126,14 @@ public class Table extends AbstractTagProcessor {
 	@Override
 	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		try {
+			boolean percentage = false;
+			String widthValue = tag.getCSS().get(HTML.Attribute.WIDTH);
+			if(widthValue == null) {
+				widthValue = tag.getAttributes().get(HTML.Attribute.WIDTH);
+			}
+			if(widthValue != null && widthValue.trim().endsWith("%")) {
+				percentage = true;
+			}
 			int numberOfColumns = 0;
 			List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
 			List<Element> invalidRowElements = new ArrayList<Element>(1);
@@ -394,6 +402,10 @@ public class Table extends AbstractTagProcessor {
 					table.addCell(cell);
 				}
 				table.completeRow();
+			}
+			if (percentage) {
+				table.setWidthPercentage(utils.parsePxInCmMmPcToPt(widthValue));
+				table.setLockedWidth(false);
 			}
 			List<Element> elems = new ArrayList<Element>();
 			if (invalidRowElements.size() > 0) {
