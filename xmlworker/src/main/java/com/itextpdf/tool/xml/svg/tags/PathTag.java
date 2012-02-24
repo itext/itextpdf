@@ -98,7 +98,7 @@ public class PathTag extends AbstractGraphicProcessor{
 	
 	//clean this write new tokenizer
 	List<String> splitPath(String path){		
-		if(path.isEmpty()) return null;
+		if(path.trim().length() == 0) return null;
 		
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(path.charAt(0));
