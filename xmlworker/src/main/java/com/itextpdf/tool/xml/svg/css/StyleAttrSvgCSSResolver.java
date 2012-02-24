@@ -225,7 +225,6 @@ public class StyleAttrSvgCSSResolver implements CSSResolver {
 	 * @param css the css map to populate
 	 * @param key the property
 	 * @param value the value
-	 */
 	private void splitRules(final Map<String, String> css, final String key, final String value) {
 		if (CSS.Property.BORDER.equalsIgnoreCase(key)) {
 			css.putAll(utils.parseBorder(value));
@@ -247,6 +246,7 @@ public class StyleAttrSvgCSSResolver implements CSSResolver {
 			css.put(key, value);
 		}
 	}
+	 */
 
 	/**
 	 * By setting an implementation of {@link CssInheritanceRules} a developer can set rules on what css selectors are

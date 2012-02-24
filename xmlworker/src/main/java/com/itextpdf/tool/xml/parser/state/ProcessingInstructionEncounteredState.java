@@ -1,6 +1,5 @@
 package com.itextpdf.tool.xml.parser.state;
 
-import com.itextpdf.tool.xml.parser.State;
 import com.itextpdf.tool.xml.parser.XMLParser;
 
 /**

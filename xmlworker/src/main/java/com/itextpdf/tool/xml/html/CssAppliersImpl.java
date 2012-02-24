@@ -32,7 +32,6 @@ package com.itextpdf.tool.xml.html;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.FontFactoryImp;
 import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.List;
 import com.itextpdf.text.Paragraph;

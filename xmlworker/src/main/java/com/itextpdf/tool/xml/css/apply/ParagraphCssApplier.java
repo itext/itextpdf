@@ -43,7 +43,6 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
@@ -52,8 +51,6 @@ import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 import com.itextpdf.tool.xml.html.CssAppliers;
-import com.itextpdf.tool.xml.html.CssAppliersImpl;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 
 import java.util.Map;
 import java.util.Map.Entry;

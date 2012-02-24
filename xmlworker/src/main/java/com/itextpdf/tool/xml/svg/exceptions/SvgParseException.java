@@ -46,6 +46,9 @@ package com.itextpdf.tool.xml.svg.exceptions;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 
 public class SvgParseException extends RuntimeWorkerException {
+	/** */
+	private static final long serialVersionUID = -3420618803693948175L;
+
 	public SvgParseException(String message){
 		super(message);
 	}

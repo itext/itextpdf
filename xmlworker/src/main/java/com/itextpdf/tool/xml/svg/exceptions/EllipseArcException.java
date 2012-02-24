@@ -46,6 +46,9 @@ package com.itextpdf.tool.xml.svg.exceptions;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 
 public class EllipseArcException extends RuntimeWorkerException {
+	/** */
+	private static final long serialVersionUID = 644639213479124050L;
+
 	public EllipseArcException(String message){
 		super(message);
 	}

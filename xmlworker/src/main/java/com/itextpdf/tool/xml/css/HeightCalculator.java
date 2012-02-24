@@ -3,8 +3,6 @@ package com.itextpdf.tool.xml.css;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.HTML;
 
-import java.util.List;
-
 /**
  *
  */
