@@ -695,6 +695,9 @@ public class PdfContentByte {
      */
 
     public void moveTo(final float x, final float y) {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append(x).append(' ').append(y).append(" m").append_i(separator);
     }
 
@@ -707,6 +710,9 @@ public class PdfContentByte {
      */
 
     public void lineTo(final float x, final float y) {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append(x).append(' ').append(y).append(" l").append_i(separator);
     }
 
@@ -722,6 +728,9 @@ public class PdfContentByte {
      */
 
     public void curveTo(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append(x1).append(' ').append(y1).append(' ').append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" c").append_i(separator);
     }
 
@@ -735,6 +744,9 @@ public class PdfContentByte {
      */
 
     public void curveTo(final float x2, final float y2, final float x3, final float y3) {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" v").append_i(separator);
     }
 
@@ -748,6 +760,9 @@ public class PdfContentByte {
      */
 
     public void curveFromTo(final float x1, final float y1, final float x3, final float y3) {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append(x1).append(' ').append(y1).append(' ').append(x3).append(' ').append(y3).append(" y").append_i(separator);
     }
 
@@ -778,6 +793,9 @@ public class PdfContentByte {
      */
 
     public void rectangle(final float x, final float y, final float w, final float h) {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append(x).append(' ').append(y).append(' ').append(w).append(' ').append(h).append(" re").append_i(separator);
     }
 
@@ -1011,6 +1029,9 @@ public class PdfContentByte {
      */
 
     public void closePath() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append("h").append_i(separator);
     }
 
@@ -1019,6 +1040,9 @@ public class PdfContentByte {
      */
 
     public void newPath() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append("n").append_i(separator);
     }
 
@@ -1027,6 +1051,9 @@ public class PdfContentByte {
      */
 
     public void stroke() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append("S").append_i(separator);
     }
 
@@ -1035,6 +1062,9 @@ public class PdfContentByte {
      */
 
     public void closePathStroke() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append("s").append_i(separator);
     }
 
@@ -1043,6 +1073,9 @@ public class PdfContentByte {
      */
 
     public void fill() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append("f").append_i(separator);
     }
 
@@ -1051,6 +1084,9 @@ public class PdfContentByte {
      */
 
     public void eoFill() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append("f*").append_i(separator);
     }
 
@@ -1059,6 +1095,9 @@ public class PdfContentByte {
      */
 
     public void fillStroke() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append("B").append_i(separator);
     }
 
@@ -1067,6 +1106,9 @@ public class PdfContentByte {
      */
 
     public void closePathFillStroke() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append("b").append_i(separator);
     }
 
@@ -1075,6 +1117,9 @@ public class PdfContentByte {
      */
 
     public void eoFillStroke() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append("B*").append_i(separator);
     }
 
@@ -1083,6 +1128,9 @@ public class PdfContentByte {
      */
 
     public void closePathEoFillStroke() {
+    	if (inText) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
         content.append("b*").append_i(separator);
     }
 

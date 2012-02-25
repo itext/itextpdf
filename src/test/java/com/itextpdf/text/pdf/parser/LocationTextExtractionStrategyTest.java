@@ -288,7 +288,6 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
             canvas.showTextAligned(PdfContentByte.ALIGN_LEFT, text, x, y, 0);
             x += 70.0;
         }
-        canvas.stroke();
         canvas.endText();
         
         doc.close();
@@ -322,7 +321,6 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
             canvas.showTextAligned(PdfContentByte.ALIGN_LEFT, text, x, y, 0);
             y -= 25.0;
         }
-        canvas.stroke();
         canvas.endText();
         
         doc.close();

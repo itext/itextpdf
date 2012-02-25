@@ -202,7 +202,6 @@ public class SimpleTextExtractionStrategyTest {
         template.setFontAndSize(BaseFont.createFont(), 12);
         template.moveText(5, template.getHeight()-5);
         template.showText(xobjectText);
-        template.stroke();
         template.endText();
         
         Image xobjectImage = Image.getInstance(template);
