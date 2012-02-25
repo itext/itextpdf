@@ -368,6 +368,7 @@ type3.font.used.with.the.wrong.pdfwriter=Type3 font used with the wrong PdfWrite
 types.is.null=types is null
 unbalanced.begin.end.marked.content.operators=Unbalanced begin/end marked content operators.
 unbalanced.begin.end.text.operators=Unbalanced begin/end text operators.
+path.construction.operator.inside.text.object=Path construction or drawing operators aren't allowed inside a text object.
 unbalanced.layer.operators=Unbalanced layer operators.
 unbalanced.marked.content.operators=Unbalanced marked content operators.
 unbalanced.save.restore.state.operators=Unbalanced save/restore state operators.
