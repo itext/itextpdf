@@ -11,7 +11,7 @@
 	<artifactId>itext-asian</artifactId>
 	<packaging>jar</packaging>
 	<name>iText, a Free Java-PDF library</name>
-	<version>5.1.3</version>
+	<version>5.1.4</version>
 	<!-- General Info -->
 	<description>iTextAsian fonts for use in conjunction with iText, a free Java-PDF library</description>
 	<url>http://www.itextpdf.com/</url>
@@ -34,8 +34,7 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<includes>
-					<include>**/*.cmap</include>
-					<include>**/*.properties</include>
+					<include>com/itextpdf/text/pdf/fonts/cmaps/**</include>
 					<include>**/cmap_info.txt</include>
 				</includes>
 			</resource>
