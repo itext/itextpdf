@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 import com.itextpdf.text.ExceptionConverter;
@@ -59,19 +60,19 @@ public class ICC_Profile {
     }
 
     public static ICC_Profile getInstance(byte[] data) {
-        try {
-            if (data.length < 128 || data[36] != 0x61 || data[37] != 0x63
-                || data[38] != 0x73 || data[39] != 0x70)
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.icc.profile"));
-            ICC_Profile icc = new ICC_Profile();
-            icc.data = data;
-            Integer cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
-            icc.numComponents = cs == null ? 0 : cs.intValue();
-            return icc;
-        }
-        catch (Exception ex) {
-            throw new ExceptionConverter(ex);
-        }
+        if (data.length < 128 || data[36] != 0x61 || data[37] != 0x63
+            || data[38] != 0x73 || data[39] != 0x70)
+            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.icc.profile"));
+		try {
+	        ICC_Profile icc = new ICC_Profile();
+	        icc.data = data;
+	        Integer cs;
+			cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
+	        icc.numComponents = cs == null ? 0 : cs.intValue();
+	        return icc;
+		} catch (UnsupportedEncodingException e) {
+			throw new ExceptionConverter(e);
+		}
     }
 
     public static ICC_Profile getInstance(InputStream file) {
