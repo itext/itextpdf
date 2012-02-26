@@ -120,6 +120,7 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.jce.provider.CertPathValidatorUtilities;
 import org.bouncycastle.jce.provider.RFC3280CertPathUtilities;
+import org.bouncycastle.tsp.TimeStampTokenInfo;
 
 /**
  * This class does all the processing related to signing and verifying a PKCS#7
@@ -690,8 +691,10 @@ public class PdfPKCS7 {
     public boolean verifyTimestampImprint() throws NoSuchAlgorithmException {
         if (timeStampToken == null)
             return false;
-        MessageImprint imprint = timeStampToken.getTimeStampInfo().toTSTInfo().getMessageImprint();
-        byte[] md = MessageDigest.getInstance("SHA-1").digest(digest);
+        TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
+        MessageImprint imprint = info.toTSTInfo().getMessageImprint();
+        String algOID = info.getMessageImprintAlgOID();
+        byte[] md = MessageDigest.getInstance(algOID).digest(digest);
         byte[] imphashed = imprint.getHashedMessage();
         boolean res = Arrays.equals(md, imphashed);
         return res;
