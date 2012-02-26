@@ -2300,6 +2300,9 @@ public class AcroFields {
                     cert = v.getAsArray(PdfName.CERT).getAsString(0);
                 pk = new PdfPKCS7(contents.getOriginalBytes(), cert.getBytes(), provider);
             }
+            else if (sub.equals(PdfName.ETSI_RFC3161)) {
+                pk = new PdfPKCS7(contents.getOriginalBytes(), true, provider);
+            }
             else
                 pk = new PdfPKCS7(contents.getOriginalBytes(), provider);
             updateByteRange(pk, v);
