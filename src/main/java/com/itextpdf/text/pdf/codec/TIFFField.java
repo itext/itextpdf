@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2008 by Paulo Soares.
+ * Copyright 2003-2012 by Paulo Soares.
  *
  * This code was originally released in 2001 by SUN (see class
  * com.sun.media.imageio.plugins.tiff.TIFFField.java)
