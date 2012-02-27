@@ -1,8 +1,9 @@
 /*
  * $Id: CssAppliersImpl.java 265 2012-01-17 12:38:18Z eugenemark $
  *
- * This file is part of the iText (R) project. Copyright (c) 1998-2011 1T3XT BVBA Authors: Balder Van Camp, Emiel
- * Ackermann, et al.
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2012 1T3XT BVBA
+ * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General
  * Public License version 3 as published by the Free Software Foundation with the addition of the following permission
