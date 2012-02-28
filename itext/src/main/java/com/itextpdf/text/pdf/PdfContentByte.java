@@ -3090,9 +3090,10 @@ public class PdfContentByte {
      * @param width the width of the panel
      * @param height the height of the panel
      * @return a <CODE>Graphics2D</CODE>
+     * @deprecated use the constructor in PdfGraphics2D
      */
     public java.awt.Graphics2D createGraphicsShapes(final float width, final float height) {
-        return new PdfGraphics2D(this, width, height, null, true, false, 0);
+        return new PdfGraphics2D(this, width, height, true);
     }
 
     /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
@@ -3101,9 +3102,10 @@ public class PdfContentByte {
      * @param height the height of the panel
      * @param printerJob a printer job
      * @return a <CODE>Graphics2D</CODE>
+     * @deprecated use the constructor in PdfPrinterGraphics2D
      */
     public java.awt.Graphics2D createPrinterGraphicsShapes(final float width, final float height, final java.awt.print.PrinterJob printerJob) {
-        return new PdfPrinterGraphics2D(this, width, height, null, true, false, 0, printerJob);
+        return new PdfPrinterGraphics2D(this, width, height, true, printerJob);
     }
 
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
@@ -3111,9 +3113,10 @@ public class PdfContentByte {
      * @param width the width of the panel
      * @param height the height of the panel
      * @return a <CODE>Graphics2D</CODE>
+     * @deprecated use the constructor in PdfGraphics2D
      */
     public java.awt.Graphics2D createGraphics(final float width, final float height) {
-        return new PdfGraphics2D(this, width, height, null, false, false, 0);
+        return new PdfGraphics2D(this, width, height);
     }
 
     /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
@@ -3122,9 +3125,10 @@ public class PdfContentByte {
      * @param height the height of the panel
      * @param printerJob
      * @return a <CODE>Graphics2D</CODE>
+     * @deprecated use the constructor in PdfPrinterGraphics2D
      */
     public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final java.awt.print.PrinterJob printerJob) {
-        return new PdfPrinterGraphics2D(this, width, height, null, false, false, 0, printerJob);
+        return new PdfPrinterGraphics2D(this, width, height, printerJob);
     }
 
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
@@ -3134,6 +3138,7 @@ public class PdfContentByte {
      * @param convertImagesToJPEG
      * @param quality
      * @return a <CODE>Graphics2D</CODE>
+     * @deprecated use the constructor in PdfGraphics2D
      */
     public java.awt.Graphics2D createGraphics(final float width, final float height, final boolean convertImagesToJPEG, final float quality) {
         return new PdfGraphics2D(this, width, height, null, false, convertImagesToJPEG, quality);
@@ -3147,6 +3152,7 @@ public class PdfContentByte {
      * @param quality
      * @param printerJob
      * @return a <CODE>Graphics2D</CODE>
+     * @deprecated use the constructor in PdfGraphics2D
      */
     public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final boolean convertImagesToJPEG, final float quality, final java.awt.print.PrinterJob printerJob) {
         return new PdfPrinterGraphics2D(this, width, height, null, false, convertImagesToJPEG, quality, printerJob);
@@ -3159,6 +3165,7 @@ public class PdfContentByte {
      * @param convertImagesToJPEG
      * @param quality
      * @return A Graphics2D object
+     * @deprecated use the constructor in PdfPrinterGraphics2D
      */
     public java.awt.Graphics2D createGraphicsShapes(final float width, final float height, final boolean convertImagesToJPEG, final float quality) {
         return new PdfGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality);
@@ -3172,6 +3179,7 @@ public class PdfContentByte {
      * @param quality
      * @param printerJob
      * @return a Graphics2D object
+     * @deprecated use the constructor in PdfPrinterGraphics2D
      */
     public java.awt.Graphics2D createPrinterGraphicsShapes(final float width, final float height, final boolean convertImagesToJPEG, final float quality, final java.awt.print.PrinterJob printerJob) {
         return new PdfPrinterGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality, printerJob);
@@ -3183,9 +3191,10 @@ public class PdfContentByte {
      * @param height the height of the panel
      * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
      * @return a <CODE>Graphics2D</CODE>
+     * @deprecated use the constructor in PdfPrinterGraphics2D
      */
     public java.awt.Graphics2D createGraphics(final float width, final float height, final FontMapper fontMapper) {
-        return new PdfGraphics2D(this, width, height, fontMapper, false, false, 0);
+        return new PdfGraphics2D(this, width, height, fontMapper);
     }
 
     /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
@@ -3195,9 +3204,10 @@ public class PdfContentByte {
      * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
      * @param printerJob a printer job
      * @return a <CODE>Graphics2D</CODE>
+     * @deprecated use the constructor in PdfPrinterGraphics2D
      */
     public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final FontMapper fontMapper, final java.awt.print.PrinterJob printerJob) {
-        return new PdfPrinterGraphics2D(this, width, height, fontMapper, false, false, 0, printerJob);
+        return new PdfPrinterGraphics2D(this, width, height, fontMapper, printerJob);
     }
 
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
@@ -3208,6 +3218,7 @@ public class PdfContentByte {
      * @param convertImagesToJPEG converts awt images to jpeg before inserting in pdf
      * @param quality the quality of the jpeg
      * @return a <CODE>Graphics2D</CODE>
+     * @deprecated use the constructor in PdfPrinterGraphics2D
      */
     public java.awt.Graphics2D createGraphics(final float width, final float height, final FontMapper fontMapper, final boolean convertImagesToJPEG, final float quality) {
         return new PdfGraphics2D(this, width, height, fontMapper, false, convertImagesToJPEG, quality);
@@ -3222,6 +3233,7 @@ public class PdfContentByte {
      * @param quality the quality of the jpeg
      * @param printerJob a printer job
      * @return a <CODE>Graphics2D</CODE>
+     * @deprecated use the constructor in PdfPrinterGraphics2D
      */
     public java.awt.Graphics2D createPrinterGraphics(final float width, final float height, final FontMapper fontMapper, final boolean convertImagesToJPEG, final float quality, final java.awt.print.PrinterJob printerJob) {
         return new PdfPrinterGraphics2D(this, width, height, fontMapper, false, convertImagesToJPEG, quality, printerJob);
