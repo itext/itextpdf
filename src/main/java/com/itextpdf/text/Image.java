@@ -49,6 +49,7 @@ import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -2057,7 +2058,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
         int w = pg.getWidth();
         int h = pg.getHeight();
         PdfTemplate tp = cb.createTemplate(w, h);
-        java.awt.Graphics2D g2d = tp.createGraphics(w, h, true, quality);
+        PdfGraphics2D g2d = new PdfGraphics2D(tp, w, h, null, false, true, quality);
         g2d.drawImage(awtImage, 0, 0, null);
         g2d.dispose();
         return getInstance(tp);

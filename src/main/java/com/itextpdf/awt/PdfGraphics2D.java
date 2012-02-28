@@ -207,12 +207,22 @@ public class PdfGraphics2D extends Graphics2D {
 		return dg2;
 	}
 	
-    private PdfGraphics2D() {
+	private PdfGraphics2D() {}
+	
+    public PdfGraphics2D(PdfContentByte cb, final float width, final float height) {
+    	this(cb, width, height, null, false, false, 0);
     }
 
+    public PdfGraphics2D(PdfContentByte cb, final float width, final float height, final FontMapper fontMapper) {
+    	this(cb, width, height, fontMapper, false, false, 0);
+    }
+    
+    public PdfGraphics2D(PdfContentByte cb, final float width, final float height, final boolean onlyShapes) {
+    	this(cb, width, height, null, onlyShapes, false, 0);
+    }
+    
     /**
      * Constructor for PDFGraphics2D.
-     *
      */
     public PdfGraphics2D(PdfContentByte cb, float width, float height, FontMapper fontMapper, boolean onlyShapes, boolean convertImagesToJPEG, float quality) {
         super();
