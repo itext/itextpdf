@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -112,6 +112,7 @@ public class Image extends AbstractTagProcessor {
 				String width = attributes.get(HTML.Attribute.WIDTH);
 				float widthInPoints = utils.parsePxInCmMmPcToPt(width);
 				String height = attributes.get(HTML.Attribute.HEIGHT);
+                img.setScaleToFitLineWhenOverflow(true);
 				float heightInPoints = utils.parsePxInCmMmPcToPt(height);
 				if (widthInPoints > 0 && heightInPoints > 0) {
 					img.scaleAbsolute(widthInPoints, heightInPoints);
@@ -124,7 +125,7 @@ public class Image extends AbstractTagProcessor {
 				}
 				try {
 					HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-					l.add(CssAppliers.getInstance().apply(new Chunk((com.itextpdf.text.Image) CssAppliers.getInstance().apply(img, tag, htmlPipelineContext), 0, 0, true), tag, htmlPipelineContext));
+					l.add(getCssAppliers().apply(new Chunk((com.itextpdf.text.Image) getCssAppliers().apply(img, tag, htmlPipelineContext), 0, 0, true), tag, htmlPipelineContext));
 				} catch (NoCustomContextException e) {
 					throw new RuntimeWorkerException(e);
 				}

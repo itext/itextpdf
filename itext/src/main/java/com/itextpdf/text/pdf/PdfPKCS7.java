@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -120,6 +120,7 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.jce.provider.CertPathValidatorUtilities;
 import org.bouncycastle.jce.provider.RFC3280CertPathUtilities;
+import org.bouncycastle.tsp.TimeStampTokenInfo;
 
 /**
  * This class does all the processing related to signing and verifying a PKCS#7
@@ -149,6 +150,7 @@ public class PdfPKCS7 {
     private byte externalDigest[];
     private byte externalRSAdata[];
     private String provider;
+    private boolean isTsp;
 
     private static final String ID_PKCS7_DATA = "1.2.840.113549.1.7.1";
     private static final String ID_PKCS7_SIGNED_DATA = "1.2.840.113549.1.7.2";
@@ -334,6 +336,14 @@ public class PdfPKCS7 {
         }
     }
 
+    /**
+     * Check if it's a PAdES-LTV timestamp.
+     * @return true if it's a PAdES-LTV timestamp, false otherwise
+     */
+    public boolean isTsp() {
+        return isTsp;
+    }
+    
     private BasicOCSPResp basicResp;
 
     /**
@@ -401,8 +411,13 @@ public class PdfPKCS7 {
      * @param contentsKey the /Contents key
      * @param provider the provider or <code>null</code> for the default provider
      */
-    @SuppressWarnings("unchecked")
     public PdfPKCS7(byte[] contentsKey, String provider) {
+        this(contentsKey, false, provider);
+    }
+
+    @SuppressWarnings("unchecked")
+    public PdfPKCS7(byte[] contentsKey, boolean tsp, String provider) {
+        isTsp = tsp;
         try {
             this.provider = provider;
             ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(contentsKey));
@@ -536,21 +551,30 @@ public class PdfPKCS7 {
                     this.timeStampToken = new TimeStampToken(contentInfo);
                 }
             }
-            if (RSAdata != null || digestAttr != null) {
-                if (provider == null || provider.startsWith("SunPKCS11")) {
-                    messageDigest = MessageDigest.getInstance(getHashAlgorithm());
-                    encContDigest = MessageDigest.getInstance(getHashAlgorithm()); // Stefan Santesson
-                }
-                else {
-                    messageDigest = MessageDigest.getInstance(getHashAlgorithm(), provider);
-                    encContDigest = MessageDigest.getInstance(getHashAlgorithm(), provider); // Stefan Santesson
-                }
+            if (isTsp) {
+                ContentInfo contentInfoTsp = new ContentInfo(signedData);
+                this.timeStampToken = new TimeStampToken(contentInfoTsp);
+                TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
+                String algOID = info.getMessageImprintAlgOID();
+                messageDigest = MessageDigest.getInstance(algOID);
             }
-            if (provider == null)
-                sig = Signature.getInstance(getDigestAlgorithm());
-            else
-                sig = Signature.getInstance(getDigestAlgorithm(), provider);
-            sig.initVerify(signCert.getPublicKey());
+            else {
+                if (RSAdata != null || digestAttr != null) {
+                    if (provider == null || provider.startsWith("SunPKCS11")) {
+                        messageDigest = MessageDigest.getInstance(getHashAlgorithm());
+                        encContDigest = MessageDigest.getInstance(getHashAlgorithm()); // Stefan Santesson
+                    }
+                    else {
+                        messageDigest = MessageDigest.getInstance(getHashAlgorithm(), provider);
+                        encContDigest = MessageDigest.getInstance(getHashAlgorithm(), provider); // Stefan Santesson
+                    }
+                }
+                if (provider == null)
+                    sig = Signature.getInstance(getDigestAlgorithm());
+                else
+                    sig = Signature.getInstance(getDigestAlgorithm(), provider);
+                sig.initVerify(signCert.getPublicKey());
+            }
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
@@ -642,7 +666,7 @@ public class PdfPKCS7 {
      * @throws SignatureException on error
      */
     public void update(byte[] buf, int off, int len) throws SignatureException {
-        if (RSAdata != null || digestAttr != null)
+        if (RSAdata != null || digestAttr != null || isTsp)
             messageDigest.update(buf, off, len);
         else
             sig.update(buf, off, len);
@@ -656,26 +680,35 @@ public class PdfPKCS7 {
     public boolean verify() throws SignatureException {
         if (verified)
             return verifyResult;
-        if (sigAttr != null) {
-        	final byte [] msgDigestBytes = messageDigest.digest();
-        	boolean verifyRSAdata = true;
-            sig.update(sigAttr);
-            // Stefan Santesson fixed a bug, keeping the code backward compatible
-            boolean encContDigestCompare = false;
-            if (RSAdata != null) {
-                verifyRSAdata = Arrays.equals(msgDigestBytes, RSAdata);
-                encContDigest.update(RSAdata);
-                encContDigestCompare = Arrays.equals(encContDigest.digest(), digestAttr);
-            }
-            boolean absentEncContDigestCompare = Arrays.equals(msgDigestBytes, digestAttr);
-            boolean concludingDigestCompare = absentEncContDigestCompare || encContDigestCompare;
-            boolean sigVerify = sig.verify(digest);
-            verifyResult = concludingDigestCompare && sigVerify && verifyRSAdata;
+        if (isTsp) {
+            TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
+            MessageImprint imprint = info.toTSTInfo().getMessageImprint();
+            byte[] md = messageDigest.digest();
+            byte[] imphashed = imprint.getHashedMessage();
+            verifyResult = Arrays.equals(md, imphashed);
         }
         else {
-            if (RSAdata != null)
-                sig.update(messageDigest.digest());
-            verifyResult = sig.verify(digest);
+            if (sigAttr != null) {
+                final byte [] msgDigestBytes = messageDigest.digest();
+                boolean verifyRSAdata = true;
+                sig.update(sigAttr);
+                // Stefan Santesson fixed a bug, keeping the code backward compatible
+                boolean encContDigestCompare = false;
+                if (RSAdata != null) {
+                    verifyRSAdata = Arrays.equals(msgDigestBytes, RSAdata);
+                    encContDigest.update(RSAdata);
+                    encContDigestCompare = Arrays.equals(encContDigest.digest(), digestAttr);
+                }
+                boolean absentEncContDigestCompare = Arrays.equals(msgDigestBytes, digestAttr);
+                boolean concludingDigestCompare = absentEncContDigestCompare || encContDigestCompare;
+                boolean sigVerify = sig.verify(digest);
+                verifyResult = concludingDigestCompare && sigVerify && verifyRSAdata;
+            }
+            else {
+                if (RSAdata != null)
+                    sig.update(messageDigest.digest());
+                verifyResult = sig.verify(digest);
+            }
         }
         verified = true;
         return verifyResult;
@@ -690,8 +723,10 @@ public class PdfPKCS7 {
     public boolean verifyTimestampImprint() throws NoSuchAlgorithmException {
         if (timeStampToken == null)
             return false;
-        MessageImprint imprint = timeStampToken.getTimeStampInfo().toTSTInfo().getMessageImprint();
-        byte[] md = MessageDigest.getInstance("SHA-1").digest(digest);
+        TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
+        MessageImprint imprint = info.toTSTInfo().getMessageImprint();
+        String algOID = info.getMessageImprintAlgOID();
+        byte[] md = MessageDigest.getInstance(algOID).digest(digest);
         byte[] imphashed = imprint.getHashedMessage();
         boolean res = Arrays.equals(md, imphashed);
         return res;

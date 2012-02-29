@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-
-import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
 
 import org.junit.After;
@@ -52,6 +50,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
@@ -289,7 +288,6 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
             canvas.showTextAligned(PdfContentByte.ALIGN_LEFT, text, x, y, 0);
             x += 70.0;
         }
-        canvas.stroke();
         canvas.endText();
         
         doc.close();
@@ -323,7 +321,6 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
             canvas.showTextAligned(PdfContentByte.ALIGN_LEFT, text, x, y, 0);
             y -= 25.0;
         }
-        canvas.stroke();
         canvas.endText();
         
         doc.close();

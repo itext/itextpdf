@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,7 +68,7 @@ public class TagEncounteredState implements State {
 	 */
 	public void process(final char character) {
 		String tag = this.parser.bufferToString();
-		if (Character.isWhitespace(character) || character == '>' || character == '/' || character == ':' || tag.equals("!--") || tag.equals("![CDATA[")) {
+		if (Character.isWhitespace(character) || character == '>' || character == '/' || character == ':' || character == '?' || tag.equals("!--") || tag.equals("![CDATA[")) {
 			// cope with <? xml and <! DOCTYPE
 			if (tag.length() > 0) {
 				if (tag.equals("!--")) {
@@ -80,11 +80,6 @@ public class TagEncounteredState implements State {
 					this.parser.flush();
 					parser.selectState().cdata();
 					this.parser.append(character);
-				} else if (tag.equals("?xml")) {
-					this.parser.memory().currentTag("xml");
-					this.parser.flush();
-					parser.selectState().tagAttributes();
-					this.parser.append(character);
 				} else if (tag.equals("!DOCTYPE")) {
 					this.parser.flush();
 					parser.selectState().doctype();
@@ -93,22 +88,27 @@ public class TagEncounteredState implements State {
 					this.parser.memory().currentTag(this.parser.bufferToString());
 					this.parser.flush();
 					this.parser.selectState().tagAttributes();
-				} else if (character == '>') {
+                } else if (character == '>') {
 					this.parser.memory().currentTag(tag);
 					this.parser.flush();
 					this.parser.startElement();
 					this.parser.selectState().inTag();
 				} else if (character == '/') {
-					this.parser.memory().currentTag(this.parser.bufferToString());
+					this.parser.memory().currentTag(tag);
 					this.parser.flush();
 					this.parser.selectState().selfClosing();
 				} else if (character == ':') {
 					this.parser.memory().namespace(tag);
 					this.parser.flush();
 				}
-			} else if (character == '/') {
-				this.parser.selectState().closingTag();
-			}
+			} else {
+                if (character == '/') {
+				    this.parser.selectState().closingTag();
+			    } else if (character == '?') {
+                    this.parser.append(character);
+                    this.parser.selectState().processingInstructions();
+                }
+            }
 		} else {
 			this.parser.append(character);
 		}

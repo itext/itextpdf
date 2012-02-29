@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -199,6 +199,10 @@ public class CssUtils {
 			return String.valueOf(charArray).trim();
 		}
 	}
+
+    public String stripDoubleSpacesTrimAndToLowerCase(final String str) {
+        return stripDoubleSpacesAndTrim(str).toLowerCase();
+    }
 
 	private static final Set<String> backgroundPositions = new HashSet<String>(
 			Arrays.asList(new String[] { CSS.Value.LEFT, CSS.Value.CENTER, CSS.Value.BOTTOM, CSS.Value.TOP, CSS.Value.RIGHT }));
@@ -421,12 +425,17 @@ public class CssUtils {
 		}
 		return f;
 	}
+
 	/**
-	 * Parses a length with an allowed metric unit (px, pt, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23, .123) to pt.<br />
-	 * A numeric value (without px, pt, etc in the given length string) is considered to be in the default metric that was given.
+	 * Parses a length with an allowed metric unit (px, pt, in, cm, mm, pc, em or ex) or numeric value (e.g. 123, 1.23,
+	 * .123) to pt.<br />
+	 * A numeric value (without px, pt, etc in the given length string) is considered to be in the default metric that
+	 * was given.
+	 *
 	 * @param length the string containing the length.
-	 * @param defaultMetric the string containing the metric if it is possible that the length string does not contain one. If null the length is considered to be in px as is default in HTML/CSS.
-	 * @return
+	 * @param defaultMetric the string containing the metric if it is possible that the length string does not contain
+	 *            one. If null the length is considered to be in px as is default in HTML/CSS.
+	 * @return parsed value
 	 */
 	public float parsePxInCmMmPcToPt(final String length, final String defaultMetric) {
 		int pos = determinePositionBetweenValueAndUnit(length);
@@ -585,12 +594,25 @@ public class CssUtils {
 	 */
 	public float calculateMarginTop(final float value, final MarginMemory configuration) {
 		float marginTop = value;
-		Float mb;
 		try {
 			float marginBottom = configuration.getLastMarginBottom();
 			marginTop = (marginTop>marginBottom)?marginTop-marginBottom:0;
 		} catch (NoDataException e) {
 		}
 		return marginTop;
+	}
+
+	/**
+	 * Trims a string and removes surrounding " or '.
+	 *
+	 * @param s the string
+	 * @return trimmed and unquoted string
+	 */
+	public String trimAndRemoveQuoutes(String s) {
+		s = s.trim();
+		if ((s.startsWith("\"") || s.startsWith("'")) && s.endsWith("\"") || s.endsWith("'")) {
+			s = s.substring(1, s.length() - 1);
+		}
+		return s;
 	}
 }

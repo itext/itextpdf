@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,8 +61,12 @@ import java.security.PrivilegedAction;
  */
 public class MappedRandomAccessFile {
 
-    private MappedByteBuffer mappedByteBuffer = null;
+    private static final int BUFSIZE = 1 << 30;
+    
     private FileChannel channel = null;
+    private MappedByteBuffer[] mappedBuffers;
+    private long size;
+    private long pos;
 
     /**
      * Constructs a new MappedRandomAccessFile instance
@@ -95,8 +99,33 @@ public class MappedRandomAccessFile {
     throws IOException {
 
         this.channel = channel;
-        this.mappedByteBuffer = channel.map(mapMode, 0L, channel.size());
-        mappedByteBuffer.load();
+        
+        
+        size = channel.size();
+        pos = 0;
+        int requiredBuffers = (int)(size/BUFSIZE) + (size % BUFSIZE == 0 ? 0 : 1);
+        //System.out.println("This will require " + requiredBuffers + " buffers");
+        
+        mappedBuffers = new MappedByteBuffer[requiredBuffers];
+        try{
+            int index = 0;
+            for(long offset = 0; offset < size; offset += BUFSIZE){
+                long size2 = Math.min(size - offset, BUFSIZE);
+                mappedBuffers[index] = channel.map(mapMode, offset, size2);
+                mappedBuffers[index].load();
+                index++;
+            }
+            if (index != requiredBuffers){
+                throw new Error("Should never happen - " + index + " != " + requiredBuffers);
+            }
+        } catch (IOException e){
+            close();
+            throw e;
+        } catch (RuntimeException e){
+            close();
+            throw e;
+        }
+        
     }
 
     /**
@@ -112,7 +141,17 @@ public class MappedRandomAccessFile {
      */
     public int read() {
         try {
-            byte b = mappedByteBuffer.get();
+            int mapN = (int) (pos / BUFSIZE);
+            int offN = (int) (pos % BUFSIZE);
+            
+            if (mapN >= mappedBuffers.length) // we have run out of data to read from
+                return -1;
+            
+            if (offN >= mappedBuffers[mapN].limit())
+                return -1;
+            
+            byte b = mappedBuffers[mapN].get(offN);
+            pos++;
             int n = b & 0xff;
 
             return n;
@@ -129,16 +168,28 @@ public class MappedRandomAccessFile {
      * @return int bytes read or -1 on EOF
      */
     public int read(byte bytes[], int off, int len) {
-        int pos = mappedByteBuffer.position();
-        int limit = mappedByteBuffer.limit();
-        if (pos == limit)
-            return -1; // EOF
-        int newlimit = pos + len - off;
-        if (newlimit > limit) {
-            len = limit - pos; // don't read beyond EOF
+        int mapN = (int) (pos / BUFSIZE);
+        int offN = (int) (pos % BUFSIZE);
+        int totalRead = 0;
+        
+        while(totalRead < len){
+            if (mapN > mappedBuffers.length) // we have run out of data to read from
+                break;
+            MappedByteBuffer currentBuffer = mappedBuffers[mapN];
+            if (offN > currentBuffer.limit())
+                break;
+            currentBuffer.position(offN);
+            int bytesFromThisBuffer = Math.min(len, currentBuffer.remaining());
+            currentBuffer.get(bytes, off, bytesFromThisBuffer);
+            off += bytesFromThisBuffer;
+            pos += bytesFromThisBuffer;
+            totalRead += bytesFromThisBuffer;
+
+            mapN++;
+            offN = 0;
+            
         }
-        mappedByteBuffer.get(bytes, off, len);
-        return len;
+        return totalRead == 0 ? -1 : totalRead;
     }
 
     /**
@@ -146,7 +197,7 @@ public class MappedRandomAccessFile {
      * @return long
      */
     public long getFilePointer() {
-        return mappedByteBuffer.position();
+        return pos;
     }
 
     /**
@@ -154,7 +205,7 @@ public class MappedRandomAccessFile {
      * @param pos long position
      */
     public void seek(long pos) {
-        mappedByteBuffer.position((int) pos);
+        this.pos = pos;
     }
 
     /**
@@ -162,7 +213,7 @@ public class MappedRandomAccessFile {
      * @return long length
      */
     public long length() {
-        return mappedByteBuffer.limit();
+        return size;
     }
 
     /**
@@ -170,8 +221,13 @@ public class MappedRandomAccessFile {
      * Cleans the mapped bytebuffer and closes the channel
      */
     public void close() throws IOException {
-        clean(mappedByteBuffer);
-        mappedByteBuffer = null;
+        for(int i = 0; i < mappedBuffers.length; i++){
+            if (mappedBuffers[i] != null){
+                clean(mappedBuffers[i]);
+                mappedBuffers[i] = null;
+            }
+        }
+
         if (channel != null)
             channel.close();
         channel = null;

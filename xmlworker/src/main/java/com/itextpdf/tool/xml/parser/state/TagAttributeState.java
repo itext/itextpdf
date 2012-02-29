@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ import com.itextpdf.tool.xml.parser.XMLParser;
  */
 public class TagAttributeState implements State {
 
-	private final XMLParser parser;
+	protected final XMLParser parser;
 
 	/**
 	 * @param parser the XMLParser
@@ -79,11 +79,6 @@ public class TagAttributeState implements State {
 			this.parser.startElement();
 			this.parser.flush();
 			this.parser.selectState().inTag();
-		} else if (character == '?'){
-			checkAttributeWithNoValue();
-			this.parser.startElement();
-			this.parser.flush();
-			this.parser.selectState().xml();
 		} else if (this.parser.memory().hasCurrentAttribute() && !Character.isWhitespace(character)) {
 			// assume attribute with no value, example tag <?formServer defaultPDFRenderFormat acrobat8.1dynamic?>
 			this.parser.memory().putCurrentAttrValue("");
@@ -94,7 +89,7 @@ public class TagAttributeState implements State {
 
 	}
 
-	private void checkAttributeWithNoValue() {
+	protected void checkAttributeWithNoValue() {
 		if (setAttribute()) {
 			this.parser.memory().putCurrentAttrValue("");
 		}

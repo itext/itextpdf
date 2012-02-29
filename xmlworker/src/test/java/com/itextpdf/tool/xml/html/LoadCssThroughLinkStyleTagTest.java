@@ -84,7 +84,7 @@ public class LoadCssThroughLinkStyleTagTest {
 		path = path.substring(0, path.lastIndexOf("test.css"));
 		FileRetrieveImpl r = new FileRetrieveImpl(new String [] {path} );
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles, r );
-		HtmlPipelineContext hpc = new HtmlPipelineContext();
+		HtmlPipelineContext hpc = new HtmlPipelineContext(null);
 		hpc.setAcceptUnknown(false).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
 		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, null));
 		final XMLWorker worker = new XMLWorker(pipeline, true);

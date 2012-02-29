@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.pdf.draw.DrawInterface;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
@@ -389,6 +391,17 @@ public class BidiLine {
         		}
         		detailChunks[currentChar].adjustLeft(leftX);
         		width = originalWidth - tabPosition;
+            } else if (ck.isSeparator()) {
+                Object[] sep = (Object[])ck.getAttribute(Chunk.SEPARATOR);
+                DrawInterface di = (DrawInterface)sep[0];
+                Boolean vertical = (Boolean)sep[1];
+                if (vertical && di instanceof LineSeparator) {
+                    float separatorWidth = originalWidth * ((LineSeparator) di).getPercentage() / 100f;
+                    width -= separatorWidth;
+                    if (width < 0) {
+                        width = 0;
+                    }
+                }
             }
             if (surrogate)
                 ++currentChar;

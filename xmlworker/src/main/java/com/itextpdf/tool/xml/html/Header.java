@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,6 +65,7 @@ import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import com.itextpdf.tool.xml.util.ParentTreeUtil;
 
 /**
  * @author Emiel Ackermann, redlab_b
@@ -82,7 +83,7 @@ public class Header extends AbstractTagProcessor {
     	List<Element> l = new ArrayList<Element>(1);
     	if (sanitized.length() > 0) {
     		try {
-				l.add(CssAppliers.getInstance().apply(new Chunk(sanitized), tag, getHtmlPipelineContext(ctx)));
+				l.add(getCssAppliers().apply(new Chunk(sanitized), tag, getHtmlPipelineContext(ctx)));
 			} catch (NoCustomContextException e) {
 				throw new RuntimeWorkerException(e);
 			}
@@ -96,11 +97,22 @@ public class Header extends AbstractTagProcessor {
     @Override
 	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		List<Element> l = new ArrayList<Element>(1);
+		ParentTreeUtil pt = new ParentTreeUtil();
 		if (currentContent.size() > 0) {
 			List<Element> currentContentToParagraph = currentContentToParagraph(currentContent, true, true, tag, ctx);
 			final HtmlPipelineContext context;
 			try {
 				context = getHtmlPipelineContext(ctx);
+				boolean oldBookmark = context.autoBookmark();
+		
+				if(!(pt.getParentTree(tag).isEmpty())&& pt.getParentTree(tag).contains(HTML.Tag.TD))
+					context.autoBookmark(false);
+				
+				/*if(tag.getParent()!=null&&tag.getParent().getName().equals(HTML.Tag.TD)){
+					context.autoBookmark(false);
+					System.out.println(tag.getParent().getName());
+				}*/
+				
 				if (context.autoBookmark()) {
 					final Paragraph title = new Paragraph();
 					for (Element w: currentContentToParagraph) {
@@ -138,6 +150,7 @@ public class Header extends AbstractTagProcessor {
 						}
 					});
 				}
+				context.autoBookmark(oldBookmark);
 			} catch (NoCustomContextException e) {
 				if (LOGGER.isLogging(Level.ERROR)) {
 					LOGGER.error(LocaleMessages.getInstance().getMessage(LocaleMessages.HEADER_BM_DISABLED), e);

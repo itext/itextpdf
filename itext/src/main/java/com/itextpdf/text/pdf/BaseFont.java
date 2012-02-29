@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -131,13 +131,13 @@ public abstract class BaseFont {
      */
     public static final int BBOXURY = 8;
 
-    /** java.awt.Font property */
+    /** AWT Font property */
     public static final int AWT_ASCENT = 9;
-    /** java.awt.Font property */
+    /** AWT Font property */
     public static final int AWT_DESCENT = 10;
-    /** java.awt.Font property */
+    /** AWT Font property */
     public static final int AWT_LEADING = 11;
-    /** java.awt.Font property */
+    /** AWT Font property */
     public static final int AWT_MAXADVANCE = 12;
     /**
      * The underline position. Usually a negative value.
@@ -181,6 +181,13 @@ public abstract class BaseFont {
      * @since 5.0.2
      */
     public static final int WIDTH_CLASS = 22;
+    /**
+     * The entry of PDF FontDescriptor dictionary.
+     * (Optional; PDF 1.5; strongly recommended for Type 3 fonts in Tagged PDF documents)
+     * The weight (thickness) component of the fully-qualified font name or font specifier.
+     * A value larger than 500 indicates bold font-weight.
+     */
+    public static final int FONT_WEIGHT = 23;
     /** The font is Type 1.
      */
     public static final int FONT_TYPE_T1 = 0;

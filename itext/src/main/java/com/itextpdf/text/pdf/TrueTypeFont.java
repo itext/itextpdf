@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -544,7 +544,7 @@ class TrueTypeFont extends BaseFont {
             int length = rf.readUnsignedShort();
             int offset = rf.readUnsignedShort();
             if (nameID == id) {
-                int pos = rf.getFilePointer();
+                int pos = (int)rf.getFilePointer();
                 rf.seek(table_location[0] + startOfStorage + offset);
                 String name;
                 if (platformID == 0 || platformID == 3 || platformID == 2 && platformEncodingID == 1){
@@ -584,7 +584,7 @@ class TrueTypeFont extends BaseFont {
             int nameID = rf.readUnsignedShort();
             int length = rf.readUnsignedShort();
             int offset = rf.readUnsignedShort();
-            int pos = rf.getFilePointer();
+            int pos = (int)rf.getFilePointer();
             rf.seek(table_location[0] + startOfStorage + offset);
             String name;
             if (platformID == 0 || platformID == 3 || platformID == 2 && platformEncodingID == 1){
@@ -1152,7 +1152,7 @@ class TrueTypeFont extends BaseFont {
         try {
             rf2 = new RandomAccessFileOrArray(rf);
             rf2.reOpen();
-            byte b[] = new byte[rf2.length()];
+            byte b[] = new byte[(int)rf2.length()];
             rf2.readFully(b);
             return b;
         }

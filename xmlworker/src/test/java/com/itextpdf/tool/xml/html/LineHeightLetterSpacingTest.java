@@ -104,7 +104,7 @@ public class LineHeightLetterSpacingTest {
 	@Test
 	public void resolveLeading() throws IOException {
 		assertEquals(18, ((Paragraph)elementList.get(0)).getLeading(), 0);
-		assertEquals(30, ((Paragraph)elementList.get(1)).getLeading(), 0); // leading laten bepalen door inner line-height setting?
+		assertEquals(8, ((Paragraph)elementList.get(1)).getLeading(), 0); // leading laten bepalen door inner line-height setting?
 		assertEquals(160, ((Paragraph)elementList.get(2)).getLeading(), 0);
 		assertEquals(21, ((Paragraph)elementList.get(3)).getLeading(), 0); //1.75em
 		assertEquals(45, ((Paragraph)elementList.get(4)).getLeading(), 0);

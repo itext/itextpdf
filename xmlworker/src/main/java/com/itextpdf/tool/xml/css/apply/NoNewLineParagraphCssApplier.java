@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,16 +63,21 @@ public class NoNewLineParagraphCssApplier {
 
 
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
+	/**
+	 * Styles a NoNewLineParagraph
+	 * 
+	 * @param p the paragraph to style
+	 * @param t the tag
+	 * @param configuration the MarginMemory to check margin sizes
+	 * @return a styled NoNewLineParagraph
 	 */
 	public NoNewLineParagraph apply(final NoNewLineParagraph p, final Tag t, final MarginMemory configuration) {
-		MaxLeadingAndSize m = new MaxLeadingAndSize();
+		/*MaxLeadingAndSize m = new MaxLeadingAndSize();
 		if (configuration.getRootTags().contains(t.getName())) {
 			m.setLeading(t);
 		} else {
 			m.setVariablesBasedOnChildren(t);
-		}
+		}*/
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		float lmb = 0;
 		boolean hasLMB = false;
@@ -125,7 +130,7 @@ public class NoNewLineParagraphCssApplier {
 				lmb = fontSize;
 				hasLMB = true;
 			}
-			p.setLeading(m.getLargestLeading());
+			//p.setLeading(m.getLargestLeading());
 			if(p.getAlignment() == -1) {
 				p.setAlignment(Element.ALIGN_LEFT);
 			}

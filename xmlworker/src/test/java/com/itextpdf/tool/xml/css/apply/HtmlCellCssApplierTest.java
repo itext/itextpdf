@@ -89,7 +89,7 @@ public class HtmlCellCssApplierTest {
 		basicPara.add(basic);
 		cell.addElement(basicPara);
 		cells.add(cell);
-		config = new HtmlPipelineContext();
+		config = new HtmlPipelineContext(null);
 	}
 
 	/*Disabled as long as the default borders are enabled*/

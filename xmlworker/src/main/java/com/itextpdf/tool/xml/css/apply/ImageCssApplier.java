@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,8 +53,12 @@ import com.itextpdf.tool.xml.css.CSS;
  */
 public class ImageCssApplier {
 
-	/* (non-Javadoc)
-	 * @see com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element, com.itextpdf.tool.xml.Tag)
+	/**
+	 * Applies CSS to an Image
+	 * 
+	 * @param img the image
+	 * @param tag the tag with the css
+	 * @return a styled Image
 	 */
 	public Image apply(final Image img, final Tag tag) {
 		 String before = tag.getCSS().get(CSS.Property.BEFORE);

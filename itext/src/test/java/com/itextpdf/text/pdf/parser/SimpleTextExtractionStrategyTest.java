@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-
-import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
 
 import org.junit.After;
@@ -52,6 +50,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
@@ -203,7 +202,6 @@ public class SimpleTextExtractionStrategyTest {
         template.setFontAndSize(BaseFont.createFont(), 12);
         template.moveText(5, template.getHeight()-5);
         template.showText(xobjectText);
-        template.stroke();
         template.endText();
         
         Image xobjectImage = Image.getInstance(template);

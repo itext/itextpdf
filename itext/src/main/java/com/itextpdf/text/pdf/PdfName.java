@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -703,6 +703,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     /** A name */
     public static final PdfName FONTDESCRIPTOR = new PdfName("FontDescriptor");
     /** A name */
+    public static final PdfName FONTFAMILY = new PdfName("FontFamily");
+    /** A name */
     public static final PdfName FONTFILE = new PdfName("FontFile");
     /** A name */
     public static final PdfName FONTFILE2 = new PdfName("FontFile2");
@@ -712,6 +714,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName FONTMATRIX = new PdfName("FontMatrix");
     /** A name */
     public static final PdfName FONTNAME = new PdfName("FontName");
+    /** A name */
+    public static final PdfName FONTWEIGHT = new PdfName("FontWeight");
     /**
      * A name
      * @since	2.1.6

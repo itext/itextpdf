@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,15 +85,18 @@ public class ListStyleTypeCssApplier {
 	}
 
 	/**
-	 * The ListCssApplier has the capabilities to change the type of the given {@link List} dependable on the css.
-	 * This means: <strong>Always replace your list with the returned one and add content to the list after applying!</strong>
+	 * The ListCssApplier has the capabilities to change the type of the given {@link List} dependable on the css. This
+	 * means: <strong>Always replace your list with the returned one and add content to the list after
+	 * applying!</strong><br />
+	 * note: not implemented list-style-type:armenian, georgian, decimal-leading-zero.
+	 *
 	 * @param list the list to style
 	 * @param t the tag
 	 * @param htmlPipelineContext the context
 	 * @return the changed {@link List}
 	 */
-	// not implemented: list-style-type:armenian, georgian, decimal-leading-zero.
 	public List apply(final List list, final Tag t, final ImageProvider htmlPipelineContext) {
+		// not implemented: list-style-type:armenian, georgian, decimal-leading-zero.
 		float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
 		List lst = list;
 		Map<String, String> css = t.getCSS();
@@ -120,27 +123,34 @@ public class ListStyleTypeCssApplier {
 			} else if (CSS.Value.LOWER_ROMAN.equals(styleType)) {
 				lst = new RomanList(true, 0);
 				synchronizeSymbol(fontSize, lst, color);
+				lst.setAutoindent(true);
 			} else if (CSS.Value.UPPER_ROMAN.equals(styleType)) {
 				lst = new RomanList(false, 0);
+				lst.setAutoindent(true);
 				synchronizeSymbol(fontSize, lst, color);
 			} else if (CSS.Value.LOWER_GREEK.equals(styleType)) {
 				lst = new GreekList(true, 0);
 				synchronizeSymbol(fontSize, lst, color);
+				lst.setAutoindent(true);
 			} else if (CSS.Value.UPPER_GREEK.equals(styleType)) {
 				lst = new GreekList(false, 0);
 				synchronizeSymbol(fontSize, lst, color);
+				lst.setAutoindent(true);
 			} else if (CSS.Value.LOWER_ALPHA.equals(styleType) || CSS.Value.LOWER_LATIN.equals(styleType)) {
 				lst = new List(List.ORDERED, List.ALPHABETICAL);
 				synchronizeSymbol(fontSize, lst, color);
 				lst.setLowercase(true);
+				lst.setAutoindent(true);
 			} else if (CSS.Value.UPPER_ALPHA.equals(styleType) || CSS.Value.UPPER_LATIN.equals(styleType)) {
 				lst = new List(List.ORDERED, List.ALPHABETICAL);
 				synchronizeSymbol(fontSize, lst, color);
 				lst.setLowercase(false);
+				lst.setAutoindent(true);
 			}
 		} else if (t.getName().equalsIgnoreCase(HTML.Tag.OL)) {
 			lst = new List(List.ORDERED);
 			synchronizeSymbol(fontSize, lst, color);
+			lst.setAutoindent(true);
 		} else if (t.getName().equalsIgnoreCase(HTML.Tag.UL)) {
 			lst = new List(List.UNORDERED);
 			shrinkSymbol(lst, fontSize, color);
@@ -179,9 +189,9 @@ public class ListStyleTypeCssApplier {
 				}
 				lst = new List(List.UNORDERED);
 			}
+			lst.setAutoindent(false);
 		}
 		lst.setAlignindent(false);
-		lst.setAutoindent(false);
 		float leftIndent = 0;
 		if (null != css.get(CSS.Property.LIST_STYLE_POSITION) && css.get(CSS.Property.LIST_STYLE_POSITION).equalsIgnoreCase(CSS.Value.INSIDE)) {
 			leftIndent += 30;
@@ -211,9 +221,12 @@ public class ListStyleTypeCssApplier {
 	}
 
 	/**
-	 * @param e
-	 * @param t
-	 * @return
+	 * Utility method applying style to a list when no ImageProvider is available.
+	 * 
+	 * @param e the list
+	 * @param t the tag
+	 * @see ListStyleTypeCssApplier#apply(List, Tag, ImageProvider)
+	 * @return styled element
 	 */
 	public Element apply(final List e, final Tag t) {
 		return apply(e, t, null);

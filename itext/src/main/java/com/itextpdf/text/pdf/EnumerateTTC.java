@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,7 @@ class EnumerateTTC extends TrueTypeFont{
             rf.skipBytes(4);
             int dirCount = rf.readInt();
             names = new String[dirCount];
-            int dirPos = rf.getFilePointer();
+            int dirPos = (int)rf.getFilePointer();
             for (int dirIdx = 0; dirIdx < dirCount; ++dirIdx) {
                 tables.clear();
                 rf.seek(dirPos);

@@ -2,7 +2,7 @@
  * $Id:  $
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,6 @@ public class PdfConcatenate {
 		open();
 		int n = reader. getNumberOfPages();
 	    for (int i = 1; i <= n; i++) {
-	    	System.out.println(i);
 	        copy.addPage(copy.getImportedPage(reader, i));
 	    }
 	    copy.freeReader(reader);

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,9 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.awt.Canvas;
-import java.awt.Image;
-import java.awt.image.MemoryImageSource;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.Element;
@@ -293,6 +290,8 @@ public class BarcodeInter25 extends Barcode{
         }
         return getBarcodeSize();
     }   
+
+    // AWT related methods (remove this if you port to Android / GAE)
     
     /** Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
@@ -303,7 +302,7 @@ public class BarcodeInter25 extends Barcode{
     public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int f = foreground.getRGB();
         int g = background.getRGB();
-        Canvas canvas = new Canvas();
+        java.awt.Canvas canvas = new java.awt.Canvas();
 
         String bCode = keepNumbers(code);
         if (generateChecksum)
@@ -328,7 +327,7 @@ public class BarcodeInter25 extends Barcode{
         for (int k = fullWidth; k < pix.length; k += fullWidth) {
             System.arraycopy(pix, 0, pix, k, fullWidth); 
         }
-        Image img = canvas.createImage(new MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
+        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
         
         return img;
     }    

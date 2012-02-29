@@ -103,7 +103,7 @@ public class SpecialCharInPDFTest {
 		CssFilesImpl cssFiles = new CssFilesImpl();
 		cssFiles.add(XMLWorkerHelper.getInstance().getDefaultCSS());
 		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
-		HtmlPipelineContext hpc = new HtmlPipelineContext();
+		HtmlPipelineContext hpc = new HtmlPipelineContext(null);
 		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory()).charSet(Charset.forName("ISO-8859-1"));
 		Pipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer)));
 		XMLWorker worker = new XMLWorker(pipeline, true);

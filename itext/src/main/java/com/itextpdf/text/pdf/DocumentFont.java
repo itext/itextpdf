@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,12 +45,13 @@ package com.itextpdf.text.pdf;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.pdf.fonts.cmaps.CMap;
-import com.itextpdf.text.pdf.fonts.cmaps.CMapParser;
-import java.io.ByteArrayInputStream;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapToUnicode;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapParserEx;
+import com.itextpdf.text.pdf.fonts.cmaps.CidLocationFromByte;
 
 /**
  *
@@ -68,26 +69,16 @@ public class DocumentFont extends BaseFont {
     private float capHeight = 700;
     private float descender = -200;
     private float italicAngle = 0;
+    private float fontWeight = 0;
     private float llx = -50;
     private float lly = -200;
     private float urx = 100;
     private float ury = 900;
     private boolean isType0 = false;
+    protected String cjkEncoding;
+    protected String uniMap;
 
     private BaseFont cjkMirror;
-
-    private static String cjkNames[] = {"HeiseiMin-W3", "HeiseiKakuGo-W5", "STSong-Light", "MHei-Medium",
-        "MSung-Light", "HYGoThic-Medium", "HYSMyeongJo-Medium", "MSungStd-Light", "STSongStd-Light",
-        "HYSMyeongJoStd-Medium", "KozMinPro-Regular"};
-
-    private static String cjkEncs[] = {"UniJIS-UCS2-H", "UniJIS-UCS2-H", "UniGB-UCS2-H", "UniCNS-UCS2-H",
-        "UniCNS-UCS2-H", "UniKS-UCS2-H", "UniKS-UCS2-H", "UniCNS-UCS2-H", "UniGB-UCS2-H",
-        "UniKS-UCS2-H", "UniJIS-UCS2-H"};
-
-    private static String cjkNames2[] = {"MSungStd-Light", "STSongStd-Light", "HYSMyeongJoStd-Medium", "KozMinPro-Regular"};
-
-    private static String cjkEncs2[] = {"UniCNS-UCS2-H", "UniGB-UCS2-H", "UniKS-UCS2-H", "UniJIS-UCS2-H",
-        "UniCNS-UTF16-H", "UniGB-UTF16-H", "UniKS-UTF16-H", "UniJIS-UTF16-H"};
 
     private static final int stdEnc[] = {
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -108,45 +99,42 @@ public class DocumentFont extends BaseFont {
         0,230,0,0,0,305,0,0,322,248,339,223,0,0,0,0};
 
     /** Creates a new instance of DocumentFont */
+    DocumentFont(PdfDictionary font) {
+        this.refFont = null;
+        this.font = font;
+        init();
+    }
+    /** Creates a new instance of DocumentFont */
     DocumentFont(PRIndirectReference refFont) {
+        this.refFont = refFont;
+        font = (PdfDictionary)PdfReader.getPdfObject(refFont);
+        init();
+    }
+
+    private void init() {
         encoding = "";
         fontSpecific = false;
-        this.refFont = refFont;
         fontType = FONT_TYPE_DOCUMENT;
-        font = (PdfDictionary)PdfReader.getPdfObject(refFont);
         PdfName baseFont = font.getAsName(PdfName.BASEFONT);
         fontName = baseFont != null ? PdfName.decodeName(baseFont.toString()) : "Unspecified Font Name";
-        PdfName subType = font.getAsName(PdfName.SUBTYPE);
+            PdfName subType = font.getAsName(PdfName.SUBTYPE);
         if (PdfName.TYPE1.equals(subType) || PdfName.TRUETYPE.equals(subType))
             doType1TT();
         else {
-            for (int k = 0; k < cjkNames.length; ++k) {
-                if (fontName.startsWith(cjkNames[k])) {
-                    fontName = cjkNames[k];
+            PdfName encodingName = font.getAsName(PdfName.ENCODING);
+            if (encodingName != null){
+                String enc = PdfName.decodeName(encodingName.toString());
+                String ffontname = CJKFont.GetCompatibleFont(enc);
+                if (ffontname != null) {
                     try {
-                        cjkMirror = BaseFont.createFont(fontName, cjkEncs[k], false);
+                        cjkMirror = BaseFont.createFont(ffontname, enc, false);
                     }
                     catch (Exception e) {
                         throw new ExceptionConverter(e);
                     }
+                    cjkEncoding = enc;
+                    uniMap = ((CJKFont)cjkMirror).getUniMap();
                     return;
-                }
-            }
-            PdfName encodingName = font.getAsName(PdfName.ENCODING);
-            if (encodingName != null){
-                String enc = PdfName.decodeName(encodingName.toString());
-                for (int k = 0; k < cjkEncs2.length; ++k) {
-                    if (enc.startsWith(cjkEncs2[k])) {
-                        try {
-                            if (k > 3)
-                                k -= 4;
-                            cjkMirror = BaseFont.createFont(cjkNames2[k], cjkEncs2[k], false);
-                        }
-                        catch (Exception e) {
-                            throw new ExceptionConverter(e);
-                        }
-                        return;
-                    }
                 }
                 if (PdfName.TYPE0.equals(subType) && enc.equals("Identity-H")) {
                     processType0(font);
@@ -155,7 +143,7 @@ public class DocumentFont extends BaseFont {
             }
         }
     }
-
+    
     private void processType0(PdfDictionary font) {
         try {
             PdfObject toUniObject = PdfReader.getPdfObjectRelease(font.get(PdfName.TOUNICODE));
@@ -214,7 +202,18 @@ public class DocumentFont extends BaseFont {
             PdfObject ob = null;
             boolean notFound = true;
             int nestLevel = 0;
-            while ((notFound || nestLevel > 0) && (ob = ps.readPRObject()) != null) {
+            int maxExc = 50;
+            while ((notFound || nestLevel > 0)) {
+                try {
+                    ob = ps.readPRObject();
+                }
+                catch (Exception ex) {
+                    if (--maxExc < 0)
+                        break;
+                    continue;
+                }
+                if (ob == null)
+                    break;
                 if (ob.type() == PdfContentParser.COMMAND_TYPE) {
                 	if (ob.toString().equals("begin")) {
                 		notFound = false;
@@ -286,9 +285,23 @@ public class DocumentFont extends BaseFont {
     }
 
     private void doType1TT() {
+        CMapToUnicode toUnicode = null;
         PdfObject enc = PdfReader.getPdfObject(font.get(PdfName.ENCODING));
-        if (enc == null)
+        if (enc == null) {
             fillEncoding(null);
+            try {
+                toUnicode = processToUnicode();
+                if (toUnicode != null) {
+                    Map<Integer, Integer> rm = toUnicode.createReverseMapping();
+                    for (Map.Entry<Integer, Integer> kv : rm.entrySet()) {
+                        uni2byte.put(kv.getKey().intValue(), kv.getValue().intValue());
+                    }
+                }
+            }
+            catch (Exception ex) {
+                throw new ExceptionConverter(ex);
+            }
+        }
         else {
             if (enc.isName())
                 fillEncoding((PdfName)enc);
@@ -301,7 +314,6 @@ public class DocumentFont extends BaseFont {
                     fillEncoding((PdfName)enc);
                 PdfArray diffs = encDic.getAsArray(PdfName.DIFFERENCES);
                 if (diffs != null) {
-                    CMap toUnicode = null;
                     diffmap = new IntHashtable();
                     int currentNumber = 0;
                     for (int k = 0; k < diffs.size(); ++k) {
@@ -318,7 +330,7 @@ public class DocumentFont extends BaseFont {
                                 if (toUnicode == null) {
                                     toUnicode = processToUnicode();
                                     if (toUnicode == null) {
-                                        toUnicode = new CMap();
+                                        toUnicode = new CMapToUnicode();
                                     }
                                 }
                                 final String unicode = toUnicode.lookup(new byte[]{(byte) currentNumber}, 0, 1);
@@ -361,6 +373,7 @@ public class DocumentFont extends BaseFont {
             capHeight = bf.getFontDescriptor(CAPHEIGHT, 1000);
             descender = bf.getFontDescriptor(DESCENT, 1000);
             italicAngle = bf.getFontDescriptor(ITALICANGLE, 1000);
+            fontWeight = bf.getFontDescriptor(FONT_WEIGHT, 1000);
             llx = bf.getFontDescriptor(BBOXLLX, 1000);
             lly = bf.getFontDescriptor(BBOXLLY, 1000);
             urx = bf.getFontDescriptor(BBOXURX, 1000);
@@ -381,15 +394,17 @@ public class DocumentFont extends BaseFont {
         fillFontDesc(font.getAsDict(PdfName.FONTDESCRIPTOR));
     }
 
-    private CMap processToUnicode() {
-        CMap cmapRet = null;
+    private CMapToUnicode processToUnicode() {
+        CMapToUnicode cmapRet = null;
         PdfObject toUni = PdfReader.getPdfObjectRelease(this.font.get(PdfName.TOUNICODE));
         if (toUni instanceof PRStream) {
             try {
                 byte[] touni = PdfReader.getStreamBytes((PRStream)toUni);
-                CMapParser cmapParser = new CMapParser();
-                cmapRet = cmapParser.parse(new ByteArrayInputStream(touni));
+                CidLocationFromByte lb = new CidLocationFromByte(touni);
+                cmapRet = new CMapToUnicode();
+                CMapParserEx.parseCid("", cmapRet, lb);
             } catch (Exception e) {
+                cmapRet = null;
             }
         }
         return cmapRet;
@@ -410,6 +425,10 @@ public class DocumentFont extends BaseFont {
         v = fontDesc.getAsNumber(PdfName.ITALICANGLE);
         if (v != null)
             italicAngle = v.floatValue();
+        v = fontDesc.getAsNumber(PdfName.FONTWEIGHT);
+        if (v != null) {
+            fontWeight = v.floatValue();
+        }
         PdfArray bbox = fontDesc.getAsArray(PdfName.FONTBBOX);
         if (bbox != null) {
             llx = bbox.getAsNumber(0).floatValue();
@@ -504,6 +523,8 @@ public class DocumentFont extends BaseFont {
                 return 0;
             case AWT_MAXADVANCE:
                 return (urx - llx) * fontSize / 1000;
+            case FONT_WEIGHT:
+                return fontWeight * fontSize / 1000;
         }
         return 0;
     }
@@ -641,7 +662,7 @@ public class DocumentFont extends BaseFont {
     @Override
     byte[] convertToBytes(String text) {
         if (cjkMirror != null)
-            return PdfEncodings.convertToBytes(text, CJKFont.CJK_ENCODING);
+            return cjkMirror.convertToBytes(text);
         else if (isType0) {
             char[] chars = text.toCharArray();
             int len = chars.length;
@@ -684,7 +705,7 @@ public class DocumentFont extends BaseFont {
     @Override
     byte[] convertToBytes(int char1) {
         if (cjkMirror != null)
-            return PdfEncodings.convertToBytes((char)char1, CJKFont.CJK_ENCODING);
+            return cjkMirror.convertToBytes(char1);
         else if (isType0) {
             int[] ws = metrics.get(Integer.valueOf(char1));
             if (ws != null) {
@@ -703,6 +724,8 @@ public class DocumentFont extends BaseFont {
     }
 
     PdfIndirectReference getIndirectReference() {
+        if (refFont == null)
+            throw new IllegalArgumentException("Font reuse not allowed with direct font objects.");
         return refFont;
     }
 

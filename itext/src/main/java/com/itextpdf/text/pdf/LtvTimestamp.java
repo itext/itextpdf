@@ -1,6 +1,6 @@
 /*
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,7 +68,7 @@ public class LtvTimestamp {
         dic.put(PdfName.TYPE, PdfName.DOCTIMESTAMP);
         sap.setCryptoDictionary(dic);
 
-        HashMap exc = new HashMap();
+        HashMap<PdfName,Integer> exc = new HashMap<PdfName,Integer>();
         exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
         sap.preClose(exc);
         InputStream data = sap.getRangeStream();

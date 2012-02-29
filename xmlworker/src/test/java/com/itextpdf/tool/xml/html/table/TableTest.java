@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.itextpdf.tool.xml.html.CssAppliersImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -121,8 +122,9 @@ public class TableTest {
 	@Test
 	public void resolveBuild() {
 		AbstractTagProcessor table2 = new Table();
+        table2.setCssAppliers(new CssAppliersImpl());
 		WorkerContextImpl context = new WorkerContextImpl();
-		context.put(HtmlPipeline.class.getName(), new HtmlPipelineContext());
+		context.put(HtmlPipeline.class.getName(), new HtmlPipelineContext(null));
 		PdfPTable table = (PdfPTable) (table2.end(context, tag, rows).get(0));
 		assertEquals(4, table.getRow(0).getCells().length);
 		assertEquals(4, table.getNumberOfColumns());

@@ -1,8 +1,9 @@
 /*
  * $Id$
  *
- * This file is part of the iText (R) project. Copyright (c) 1998-2011 1T3XT BVBA Authors: Balder Van Camp, Emiel
- * Ackermann, et al.
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2012 1T3XT BVBA
+ * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General
  * Public License version 3 as published by the Free Software Foundation with the addition of the following permission
@@ -55,7 +56,7 @@ public class NonSanitizedTag extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
 		if (null != content && content.length() > 0) {
 			try {
-				l.add(CssAppliers.getInstance().apply(new Chunk(content), tag, getHtmlPipelineContext(ctx)));
+				l.add(getCssAppliers().apply(new Chunk(content), tag, getHtmlPipelineContext(ctx)));
 			} catch (NoCustomContextException e) {
 				throw new RuntimeWorkerException(e);
 			}

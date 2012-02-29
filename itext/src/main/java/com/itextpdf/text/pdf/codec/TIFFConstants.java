@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2005 by Paulo Soares.
+ * Copyright 2003-2012 by Paulo Soares.
  *
  * This list of constants was originally released with libtiff
  * under the following license:

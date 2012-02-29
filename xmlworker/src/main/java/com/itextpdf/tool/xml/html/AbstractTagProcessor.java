@@ -1,8 +1,9 @@
 /*
  * $Id$
  *
- * This file is part of the iText (R) project. Copyright (c) 1998-2011 1T3XT BVBA Authors: Balder Van Camp, Emiel
- * Ackermann, et al.
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2012
+ * 1T3XT BVBA Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General
  * Public License version 3 as published by the Free Software Foundation with the addition of the following permission
@@ -33,9 +34,8 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -65,9 +65,10 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  * @author redlab_b
  *
  */
-public abstract class AbstractTagProcessor implements TagProcessor {
+public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersAware {
 
 	private final FontSizeTranslator fontsizeTrans;
+	private CssAppliers cssAppliers;
 
 	/**
 	 *
@@ -111,7 +112,9 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 */
 	public final List<Element> startElement(final WorkerContext ctx, final Tag tag) {
 		float fontSize = fontsizeTrans.translateFontSize(tag);
-		tag.getCSS().put(CSS.Property.FONT_SIZE, fontSize + "pt");
+        if (fontSize != Font.UNDEFINED) {
+		    tag.getCSS().put(CSS.Property.FONT_SIZE, fontSize + "pt");
+        }
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_BEFORE);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
 			List<Element> list = new ArrayList<Element>(2);
@@ -150,11 +153,30 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	 * {@link AbstractTagProcessor#end(WorkerContext, Tag, List)}.
 	 */
 	public final List<Element> endElement(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
-		List<Element> list = end(ctx, tag, currentContent);
+        List<Element> list = new ArrayList<Element>();
+        if (currentContent.isEmpty()) {
+            list = end(ctx, tag, currentContent);
+        } else {
+            List<Element> elements = new ArrayList<Element>();
+            for (Element el : currentContent) {
+                if (el instanceof Chunk && ((Chunk) el).hasAttributes() && ((Chunk) el).getAttributes().containsKey(Chunk.NEWPAGE)) {
+                    if (elements.size() > 0) {
+                        list.addAll(end(ctx, tag, elements));
+                        elements.clear();
+                    }
+                    list.add(el);
+                } else {
+                    elements.add(el);
+                }
+            }
+            if (elements.size() > 0) {
+                list.addAll(end(ctx, tag, elements));
+                elements.clear();
+            }
+        }
 		String pagebreak = tag.getCSS().get(CSS.Property.PAGE_BREAK_AFTER);
 		if (null != pagebreak && CSS.Value.ALWAYS.equalsIgnoreCase(pagebreak)) {
 			list.add(Chunk.NEXTPAGE);
-			return list;
 		}
 		return list;
 	}
@@ -202,20 +224,23 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 			List<Element> list = new ArrayList<Element>();
 			if (currentContent.size() > 0) {
 				if (addNewLines) {
-					Paragraph p = new Paragraph();
+					Paragraph p = new Paragraph(Float.NaN);
 					for (Element e : currentContent) {
+                        if (e instanceof LineSeparator) {
+                            p.add(Chunk.NEWLINE);
+                        }
 						p.add(e);
 					}
 					if (applyCSS) {
-						p = (Paragraph) CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx));
+						p = (Paragraph) getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx));
 					}
 					list.add(p);
 				} else {
-					NoNewLineParagraph p = new NoNewLineParagraph();
+					NoNewLineParagraph p = new NoNewLineParagraph(Float.NaN);
 					for (Element e : currentContent) {
 						p.add(e);
 					}
-					p = (NoNewLineParagraph) CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx));
+					p = (NoNewLineParagraph) getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx));
 					list.add(p);
 				}
 			}
@@ -236,5 +261,23 @@ public abstract class AbstractTagProcessor implements TagProcessor {
 	public final List<Element> currentContentToParagraph(final List<Element> currentContent,
 			final boolean addNewLines) {
 		return this.currentContentToParagraph(currentContent, addNewLines, false, null, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see com.itextpdf.tool.xml.html.CssAppliersAware#setCssAppliers(com.itextpdf.tool.xml.html.CssAppliers)
+	 */
+	public void setCssAppliers(final CssAppliers cssAppliers) {
+		this.cssAppliers = cssAppliers;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.itextpdf.tool.xml.html.CssAppliersAware#getCssAppliers()
+	 */
+	public CssAppliers getCssAppliers() {
+		return cssAppliers;
 	}
 }

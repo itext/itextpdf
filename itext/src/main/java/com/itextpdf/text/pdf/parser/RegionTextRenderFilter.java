@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,8 +43,8 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.awt.geom.Rectangle2D;
-
+import com.itextpdf.awt.geom.Rectangle2D;
+import com.itextpdf.text.Rectangle;
 
 /**
  * A {@link RenderFilter} that only allows text within a specified rectangular region
@@ -57,12 +57,19 @@ public class RegionTextRenderFilter extends RenderFilter {
     
     /**
      * Constructs a filter
-     * @param filterRect the rectangle to filter text against.  Note that this is a java.awt.Rectangle !
+     * @param filterRect the rectangle to filter text against.  Note that this is a com.itextpdf.text.geom.Rectangle !
      */
     public RegionTextRenderFilter(Rectangle2D filterRect) {
         this.filterRect = filterRect;
     }
-
+    
+    /**
+     * Constructs a filter
+     * @param filterRect the rectangle to filter text against.
+     */
+    public RegionTextRenderFilter(Rectangle filterRect) {
+        this.filterRect = new com.itextpdf.awt.geom.Rectangle(filterRect);
+    } 
     /** 
      * @see com.itextpdf.text.pdf.parser.RenderFilter#allowText(com.itextpdf.text.pdf.parser.TextRenderInfo)
      */

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -116,14 +116,6 @@ public class BaseColor {
      */
     public BaseColor(final int argb) {
         value = argb;
-    }
-
-    /**
-     * Construct a new BaseColor from a java.awt.Color
-     * @param color
-     */
-    public BaseColor(final java.awt.Color color) {
-        value = color.getRGB();
     }
 
     /**

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Kevin Day, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -148,10 +148,10 @@ public final class InlineImageUtils {
      * @throws IOException if anything goes wring with the parsing
      * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing
      */
-    public static PdfImageObject parseInlineImage(PdfContentParser ps, PdfDictionary colorSpaceDic) throws IOException{
+    public static InlineImageInfo parseInlineImage(PdfContentParser ps, PdfDictionary colorSpaceDic) throws IOException{
         PdfDictionary inlineImageDictionary = parseInlineImageDictionary(ps);
         byte[] samples = parseInlineImageSamples(inlineImageDictionary, colorSpaceDic, ps);
-        return new PdfImageObject(inlineImageDictionary, samples);
+        return new InlineImageInfo(samples, inlineImageDictionary);
     }
     
     /**
@@ -285,7 +285,7 @@ public final class InlineImageUtils {
         // from the PDF spec:  Unless the image uses ASCIIHexDecode or ASCII85Decode as one of its filters, the ID operator shall be followed by a single white-space character, and the next character shall be interpreted as the first byte of image data.
         // unfortunately, we've seen some PDFs where there is no space following the ID, so we have to capture this case and handle it
         int startIndex = 0;
-        if (!PRTokeniser.isWhitespace(shouldBeWhiteSpace)){
+        if (!PRTokeniser.isWhitespace(shouldBeWhiteSpace) || shouldBeWhiteSpace == 0){ // tokeniser treats 0 as whitespace, but for our purposes, we shouldn't
             bytes[0] = (byte)shouldBeWhiteSpace;
             startIndex++;
         }

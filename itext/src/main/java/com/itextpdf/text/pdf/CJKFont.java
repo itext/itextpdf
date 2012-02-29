@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,12 +47,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Utilities;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapCache;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapCidByte;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapCidUni;
+import com.itextpdf.text.pdf.fonts.cmaps.CMapUniCid;
+import java.io.ByteArrayOutputStream;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
@@ -71,9 +80,16 @@ class CJKFont extends BaseFont {
 
     static Properties cjkFonts = new Properties();
     static Properties cjkEncodings = new Properties();
-    static Hashtable<String, char[]> allCMaps = new Hashtable<String, char[]>();
-    static Hashtable<String, HashMap<String, Object>> allFonts = new Hashtable<String, HashMap<String, Object>>();
+    private static final HashMap<String, HashMap<String, Object>> allFonts = new HashMap<String, HashMap<String, Object>>();
     private static boolean propertiesLoaded = false;
+    
+    /** The path to the font resources. */
+    public static final String RESOURCE_PATH_CMAP = RESOURCE_PATH + "cmaps/";
+    private static final HashMap<String,Set<String>> registryNames = new HashMap<String,Set<String>>();
+    private CMapCidByte cidByte;
+    private CMapUniCid uniCid;
+    private CMapCidUni cidUni;
+    private String uniMap;
 
     /** The font name */
     private String fontName;
@@ -84,7 +100,7 @@ class CJKFont extends BaseFont {
 
     private boolean cidDirect = false;
 
-    private char[] translationMap;
+    //private char[] translationMap;
     private IntHashtable vMetrics;
     private IntHashtable hMetrics;
     private HashMap<String, Object> fontDesc;
@@ -97,21 +113,34 @@ class CJKFont extends BaseFont {
             if (propertiesLoaded)
                 return;
             try {
-                InputStream is = getResourceStream(RESOURCE_PATH + "cjkfonts.properties");
-                cjkFonts.load(is);
-                is.close();
-                is = getResourceStream(RESOURCE_PATH + "cjkencodings.properties");
-                cjkEncodings.load(is);
-                is.close();
+                loadRegistry();
+                for (String font : registryNames.get("fonts")) {
+                    allFonts.put(font, readFontProperties(font));          
+                }
             }
             catch (Exception e) {
-                cjkFonts = new Properties();
-                cjkEncodings = new Properties();
             }
             propertiesLoaded = true;
         }
     }
 
+    private static void loadRegistry() throws IOException {
+        InputStream is = getResourceStream(RESOURCE_PATH_CMAP + "cjk_registry.properties");
+        Properties p = new Properties();
+        p.load(is);
+        is.close();
+        for (Object key : p.keySet()) {
+            String value = p.getProperty((String)key);
+            String[] sp = value.split(" ");
+            Set<String> hs = new HashSet<String>();
+            for (String s : sp) {
+                if (s.length() > 0)
+                    hs.add(s);
+            }
+            registryNames.put((String)key, hs);
+        }
+        
+    }
     /** Creates a CJK font.
      * @param fontName the name of the font
      * @param enc the encoding of the font
@@ -132,55 +161,65 @@ class CJKFont extends BaseFont {
         encoding = CJK_ENCODING;
         vertical = enc.endsWith("V");
         CMap = enc;
-        if (enc.startsWith("Identity-")) {
+        if (enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V))
             cidDirect = true;
-            String s = cjkFonts.getProperty(fontName);
-            s = s.substring(0, s.indexOf('_'));
-            char c[] = allCMaps.get(s);
-            if (c == null) {
-                c = readCMap(s);
-                if (c == null)
-                    throw new DocumentException(MessageLocalization.getComposedMessage("the.cmap.1.does.not.exist.as.a.resource", s));
-                c[CID_NEWLINE] = '\n';
-                allCMaps.put(s, c);
-            }
-            translationMap = c;
-        }
-        else {
-            char c[] = allCMaps.get(enc);
-            if (c == null) {
-                String s = cjkEncodings.getProperty(enc);
-                if (s == null)
-                    throw new DocumentException(MessageLocalization.getComposedMessage("the.resource.cjkencodings.properties.does.not.contain.the.encoding.1", enc));
-                StringTokenizer tk = new StringTokenizer(s);
-                String nt = tk.nextToken();
-                c = allCMaps.get(nt);
-                if (c == null) {
-                    c = readCMap(nt);
-                    allCMaps.put(nt, c);
-                }
-                if (tk.hasMoreTokens()) {
-                    String nt2 = tk.nextToken();
-                    char m2[] = readCMap(nt2);
-                    for (int k = 0; k < 0x10000; ++k) {
-                        if (m2[k] == 0)
-                            m2[k] = c[k];
-                    }
-                    allCMaps.put(enc, m2);
-                    c = m2;
-                }
-            }
-            translationMap = c;
-        }
-        fontDesc = allFonts.get(fontName);
-        if (fontDesc == null) {
-            fontDesc = readFontProperties(fontName);
-            allFonts.put(fontName, fontDesc);
-        }
-        hMetrics = (IntHashtable)fontDesc.get("W");
-        vMetrics = (IntHashtable)fontDesc.get("W2");
+        loadCMaps();
     }
 
+    String getUniMap() {
+        return uniMap;
+    }
+    
+    private void loadCMaps() throws DocumentException {
+        try {
+            fontDesc = allFonts.get(fontName);
+            hMetrics = (IntHashtable)fontDesc.get("W");
+            vMetrics = (IntHashtable)fontDesc.get("W2");
+            String registry = (String)fontDesc.get("Registry");
+            uniMap = "";
+            for (String name : registryNames.get(registry + "_Uni")) {
+                uniMap = name;
+                if (name.endsWith("V") && vertical)
+                    break;
+                if (!name.endsWith("V") && !vertical)
+                    break;
+            }
+            if (cidDirect) {
+                cidUni = CMapCache.getCachedCMapCidUni(uniMap);
+            }
+            else {
+                uniCid = CMapCache.getCachedCMapUniCid(uniMap);
+                cidByte = CMapCache.getCachedCMapCidByte(CMap);
+            }
+        }
+        catch (Exception ex) {
+            throw new DocumentException(ex);
+        }
+    }
+    
+    /**
+     * Returns a font compatible with a CJK encoding or null if not found.
+     * @param enc
+     * @return 
+     */
+    public static String GetCompatibleFont(String enc) {
+        loadProperties();
+        String registry = null;
+        for (Entry<String,Set<String>> e : registryNames.entrySet()) {
+            if (e.getValue().contains(enc)) {
+                registry = e.getKey();
+                break;
+            }
+        }
+        if (registry == null)
+            return null;
+        for (Entry<String, HashMap<String, Object>> e : allFonts.entrySet()) {
+            if (registry.equals(e.getValue().get("Registry")))
+                return e.getKey();
+        }
+        return null;
+    }
+    
     /** Checks if its a valid CJK font.
      * @param fontName the font name
      * @param enc the encoding
@@ -188,8 +227,15 @@ class CJKFont extends BaseFont {
      */
     public static boolean isCJKFont(String fontName, String enc) {
         loadProperties();
-        String encodings = cjkFonts.getProperty(fontName);
-        return encodings != null && (enc.equals("Identity-H") || enc.equals("Identity-V") || encodings.indexOf("_" + enc + "_") >= 0);
+        if (!registryNames.containsKey("fonts"))
+            return false;
+        if (!registryNames.get("fonts").contains(fontName))
+            return false;
+        if (enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V))
+            return true;
+        String registry = (String)allFonts.get(fontName).get("Registry");
+        Set<String> encodings = registryNames.get(registry);
+        return encodings != null && encodings.contains(enc);
     }
 
     /**
@@ -201,7 +247,7 @@ class CJKFont extends BaseFont {
     public int getWidth(int char1) {
         int c = char1;
         if (!cidDirect)
-            c = translationMap[c];
+            c = uniCid.lookup(char1);
         int v;
         if (vertical)
             v = vMetrics.get(c);
@@ -216,19 +262,23 @@ class CJKFont extends BaseFont {
     @Override
     public int getWidth(String text) {
         int total = 0;
-        for (int k = 0; k < text.length(); ++k) {
-            int c = text.charAt(k);
-            if (!cidDirect)
-                c = translationMap[c];
-            int v;
-            if (vertical)
-                v = vMetrics.get(c);
-            else
-                v = hMetrics.get(c);
-            if (v > 0)
-                total += v;
-            else
-                total += 1000;
+        if (cidDirect) {
+            for (int k = 0; k < text.length(); ++k) {
+                total += getWidth(text.charAt(k));
+            }
+        }
+        else {
+            for (int k = 0; k < text.length(); ++k) {
+                int val;
+                if (Utilities.isSurrogatePair(text, k)) {
+                    val = Utilities.convertToUtf32(text, k);
+                    k++;
+                }
+                else {
+                    val = text.charAt(k);
+                }
+                total += getWidth(val);
+            }
         }
         return total;
     }
@@ -276,9 +326,16 @@ class CJKFont extends BaseFont {
         else
             dic.put(PdfName.DW, new PdfNumber(1000));
         PdfDictionary cdic = new PdfDictionary();
-        cdic.put(PdfName.REGISTRY, new PdfString((String)fontDesc.get("Registry"), null));
-        cdic.put(PdfName.ORDERING, new PdfString((String)fontDesc.get("Ordering"), null));
-        cdic.put(PdfName.SUPPLEMENT, new PdfLiteral((String)fontDesc.get("Supplement")));
+        if (cidDirect) {
+            cdic.put(PdfName.REGISTRY, new PdfString(cidUni.getRegistry(), null));
+            cdic.put(PdfName.ORDERING, new PdfString(cidUni.getOrdering(), null));
+            cdic.put(PdfName.SUPPLEMENT, new PdfNumber(cidUni.getSupplement()));
+        }
+        else {
+            cdic.put(PdfName.REGISTRY, new PdfString(cidByte.getRegistry(), null));
+            cdic.put(PdfName.ORDERING, new PdfString(cidByte.getOrdering(), null));
+            cdic.put(PdfName.SUPPLEMENT, new PdfNumber(cidByte.getSupplement()));
+        }
         dic.put(PdfName.CIDSYSTEMINFO, cdic);
         return dic;
     }
@@ -420,21 +477,21 @@ class CJKFont extends BaseFont {
         return getFullFontName();
     }
 
-    static char[] readCMap(String name) {
-        try {
-            name = name + ".cmap";
-            InputStream is = getResourceStream(RESOURCE_PATH + name);
-            char c[] = new char[0x10000];
-            for (int k = 0; k < 0x10000; ++k)
-                c[k] = (char)((is.read() << 8) + is.read());
-            is.close();
-            return c;
-        }
-        catch (Exception e) {
-            // empty on purpose
-        }
-        return null;
-    }
+//    static char[] readCMap(String name) {
+//        try {
+//            name = name + ".cmap";
+//            InputStream is = getResourceStream(RESOURCE_PATH + name);
+//            char c[] = new char[0x10000];
+//            for (int k = 0; k < 0x10000; ++k)
+//                c[k] = (char)((is.read() << 8) + is.read());
+//            is.close();
+//            return c;
+//        }
+//        catch (Exception e) {
+//            // empty on purpose
+//        }
+//        return null;
+//    }
 
     static IntHashtable createMetric(String s) {
         IntHashtable h = new IntHashtable();
@@ -462,7 +519,7 @@ class CJKFont extends BaseFont {
         }
         if (lastValue == 0)
             return null;
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append('[');
         buf.append(lastCid);
         int state = FIRST;
@@ -548,7 +605,7 @@ class CJKFont extends BaseFont {
             return null;
         if (lastHValue == 0)
             lastHValue = 1000;
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append('[');
         buf.append(lastCid);
         int state = FIRST;
@@ -586,36 +643,33 @@ class CJKFont extends BaseFont {
         return buf.toString();
     }
 
-    static HashMap<String, Object> readFontProperties(String name) {
-        try {
-            name += ".properties";
-            InputStream is = getResourceStream(RESOURCE_PATH + name);
-            Properties p = new Properties();
-            p.load(is);
-            is.close();
-            IntHashtable W = createMetric(p.getProperty("W"));
-            p.remove("W");
-            IntHashtable W2 = createMetric(p.getProperty("W2"));
-            p.remove("W2");
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            for (Enumeration<Object> e = p.keys(); e.hasMoreElements();) {
-                Object obj = e.nextElement();
-                map.put((String)obj, p.getProperty((String)obj));
-            }
-            map.put("W", W);
-            map.put("W2", W2);
-            return map;
+    private static HashMap<String, Object> readFontProperties(String name) throws IOException {
+        name += ".properties";
+        InputStream is = getResourceStream(RESOURCE_PATH_CMAP + name);
+        Properties p = new Properties();
+        p.load(is);
+        is.close();
+        IntHashtable W = createMetric(p.getProperty("W"));
+        p.remove("W");
+        IntHashtable W2 = createMetric(p.getProperty("W2"));
+        p.remove("W2");
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        for (Enumeration<Object> e = p.keys(); e.hasMoreElements();) {
+            Object obj = e.nextElement();
+            map.put((String)obj, p.getProperty((String)obj));
         }
-        catch (Exception e) {
-            // empty on purpose
-        }
-        return null;
+        map.put("W", W);
+        map.put("W2", W2);
+        return map;
     }
 
     @Override
     public int getUnicodeEquivalent(int c) {
-        if (cidDirect)
-            return translationMap[c];
+        if (cidDirect) {
+            if (c == CID_NEWLINE)
+                return '\n';
+            return cidUni.lookup(c);
+        }
         return c;
     }
 
@@ -623,7 +677,7 @@ class CJKFont extends BaseFont {
     public int getCidCode(int c) {
         if (cidDirect)
             return c;
-        return translationMap[c];
+        return uniCid.lookup(c);
     }
 
     /** Checks if the font has any kerning pairs.
@@ -642,7 +696,9 @@ class CJKFont extends BaseFont {
      */
     @Override
     public boolean charExists(int c) {
-        return translationMap[c] != 0;
+        if (cidDirect)
+            return true;
+        return cidByte.lookup(uniCid.lookup(c)).length > 0;
     }
 
     /**
@@ -680,5 +736,54 @@ class CJKFont extends BaseFont {
     @Override
     protected int[] getRawCharBBox(int c, String name) {
         return null;
+    }
+    
+    /**
+     * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
+     * to the font's encoding.
+     * @param text the <CODE>String</CODE> to be converted
+     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
+     */
+    @Override
+    byte[] convertToBytes(String text) {
+        if (cidDirect)
+            return super.convertToBytes(text);
+        try {
+            if (text.length() == 1)
+                return convertToBytes((int)text.charAt(0));
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            for (int k = 0; k < text.length(); ++k) {
+                int val;
+                if (Utilities.isSurrogatePair(text, k)) {
+                    val = Utilities.convertToUtf32(text, k);
+                    k++;
+                }
+                else {
+                    val = text.charAt(k);
+                }
+                bout.write(convertToBytes(val));
+            }
+            return bout.toByteArray();
+        }
+        catch (Exception ex) {
+            throw new ExceptionConverter(ex);
+        }
+    }
+    
+    /**
+     * Converts a <CODE>char</CODE> to a </CODE>byte</CODE> array according
+     * to the font's encoding.
+     * @param char1 the <CODE>char</CODE> to be converted
+     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
+     */
+    @Override
+    byte[] convertToBytes(int char1) {
+        if (cidDirect)
+            return super.convertToBytes(char1);
+        return cidByte.lookup(uniCid.lookup(char1));
+    }
+    
+    public boolean isIdentity() {
+        return cidDirect;
     }
 }

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -180,9 +180,25 @@ class FontDetails {
             }
             case BaseFont.FONT_TYPE_CJK: {
                 int len = text.length();
-                for (int k = 0; k < len; ++k)
-                    cjkTag.put(cjkFont.getCidCode(text.charAt(k)), 0);
-                b = baseFont.convertToBytes(text);
+                if (cjkFont.isIdentity()) {
+                    for (int k = 0; k < len; ++k) {
+                        cjkTag.put(text.charAt(k), 0);
+                    }
+                }
+                else {
+                    for (int k = 0; k < len; ++k) {
+                        int val;
+                        if (Utilities.isSurrogatePair(text, k)) {
+                            val = Utilities.convertToUtf32(text, k);
+                            k++;
+                        }
+                        else {
+                            val = text.charAt(k);
+                        }
+                        cjkTag.put(cjkFont.getCidCode(val), 0);
+                    }
+                }
+                b = cjkFont.convertToBytes(text);
                 break;
             }
             case BaseFont.FONT_TYPE_DOCUMENT: {

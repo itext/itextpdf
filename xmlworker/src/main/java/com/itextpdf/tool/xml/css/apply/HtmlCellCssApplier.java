@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,11 +48,13 @@ import java.util.Map.Entry;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.css.HeightCalculator;
 import com.itextpdf.tool.xml.css.WidthCalculator;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
@@ -68,17 +70,23 @@ public class HtmlCellCssApplier {
 
     private final CssUtils utils = CssUtils.getInstance();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element,
-     * com.itextpdf.tool.xml.Tag)
-     */
+	/**
+	 * Applies css to a HtmlCell
+	 * 
+	 * @param cell the HtmlCell
+	 * @param t the tag with the styles
+	 * @param memory current margin memory
+	 * @param psc the {@link PageSize} container
+	 * @return a styled HtmlCell
+	 */
     public HtmlCell apply(final HtmlCell cell, final Tag t, final MarginMemory memory, final PageSizeContainable psc) {
     	final TableStyleValues values = new TableStyleValues();
     	Tag table = t.getParent();
-    	while(!table.getName().equals("table")){
+        Tag row = t.getParent();
+        while(row != null && !row.getName().equals(HTML.Tag.TR)){
+    		row = row.getParent();
+    	}
+        while(table!= null && !table.getName().equals(HTML.Tag.TABLE)){
     		table = table.getParent();
     	}
     	String border = table.getAttributes().get(CSS.Property.BORDER);
@@ -92,9 +100,54 @@ public class HtmlCellCssApplier {
 			cell.setBorder(Rectangle.NO_BORDER);
 		} else {
 	    	cell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Default css behavior. Implementation of "vertical-align" style further along.
+            String vAlign = null;
+            if (t.getAttributes().containsKey(HTML.Attribute.VALIGN)) {
+                vAlign = t.getAttributes().get(HTML.Attribute.VALIGN);
+            } else if (css.containsKey(HTML.Attribute.VALIGN)) {
+                vAlign = css.get(HTML.Attribute.VALIGN);
+            } else if (row != null) {
+                if (row.getAttributes().containsKey(HTML.Attribute.VALIGN)) {
+                    vAlign = row.getAttributes().get(HTML.Attribute.VALIGN);
+                } else if (row.getCSS().containsKey(HTML.Attribute.VALIGN)) {
+                    vAlign = row.getCSS().get(HTML.Attribute.VALIGN);
+                }
+            }
+            if (vAlign != null) {
+                if (vAlign.equalsIgnoreCase(CSS.Value.TOP)) {
+                    cell.setVerticalAlignment(Element.ALIGN_TOP);
+                } else if (vAlign.equalsIgnoreCase(CSS.Value.BOTTOM)) {
+                    cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                }
+            }
+
+            String align = null;
+            if (t.getAttributes().containsKey(HTML.Attribute.ALIGN)) {
+                align = t.getAttributes().get(HTML.Attribute.ALIGN);
+            } else if (css.containsKey(HTML.Attribute.ALIGN)) {
+                align = css.get(HTML.Attribute.ALIGN);
+            }
+
+            if (align != null) {
+                if (align.equalsIgnoreCase(CSS.Value.CENTER)) {
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                } else if (align.equalsIgnoreCase(CSS.Value.RIGHT)) {
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                }
+            }
+
 			if(t.getAttributes().get(HTML.Attribute.WIDTH) != null || css.get(HTML.Attribute.WIDTH) != null) {
 				cell.setFixedWidth(new WidthCalculator().getWidth(t, memory.getRootTags(), psc.getPageSize().getWidth()));
 			}
+
+            HeightCalculator heightCalc = new HeightCalculator();
+            Float height = heightCalc.getHeight(t, psc.getPageSize().getHeight());
+            if (height == null && row != null) {
+                height = heightCalc.getHeight(row, psc.getPageSize().getHeight());
+            }
+            if (height != null) {
+                cell.setMinimumHeight(height);
+            }
+
 	        String colspan = t.getAttributes().get(HTML.Attribute.COLSPAN);
 	        if (null != colspan) {
 	            cell.setColspan(Integer.parseInt(colspan));
@@ -107,9 +160,7 @@ public class HtmlCellCssApplier {
 	        	String key = entry.getKey();
 				String value = entry.getValue();
 				cell.setUseBorderPadding(true);
-				if(key.equalsIgnoreCase(CSS.Property.HEIGHT)) {
-					cell.setMinimumHeight(utils.parsePxInCmMmPcToPt(value));
-				} else if(key.equalsIgnoreCase(CSS.Property.BACKGROUND_COLOR)) {
+                if(key.equalsIgnoreCase(CSS.Property.BACKGROUND_COLOR)) {
 					values.setBackground(HtmlUtilities.decodeColor(value));
 				} else if(key.equalsIgnoreCase(CSS.Property.VERTICAL_ALIGN)) {
 					if(value.equalsIgnoreCase(CSS.Value.TOP)) {

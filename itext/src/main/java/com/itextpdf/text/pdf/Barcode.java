@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -422,14 +422,6 @@ public abstract class Barcode {
         }
     }
     
-    /** Creates a <CODE>java.awt.Image</CODE>. This image only
-     * contains the bars without any text.
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */    
-    public abstract java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background);
-    
     /** Gets the amount of ink spreading.
      * @return the ink spreading
      *
@@ -469,5 +461,14 @@ public abstract class Barcode {
     public void setAltText(String altText) {
         this.altText = altText;
     }
+
+    // AWT related methods (remove this if you port to Android / GAE)
     
+    /** Creates a <CODE>java.awt.Image</CODE>. This image only
+     * contains the bars without any text.
+     * @param foreground the color of the bars
+     * @param background the color of the background
+     * @return the image
+     */    
+    public abstract java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background);
 }

@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * This file is part of the iText (R) project. Copyright (c) 1998-2011 1T3XT
+ * This file is part of the iText (R) project. Copyright (c) 1998-2012 1T3XT
  * BVBA Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -65,11 +65,7 @@ import com.itextpdf.text.pdf.PdfPTableEvent;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.css.CSS;
-import com.itextpdf.tool.xml.css.CssUtils;
-import com.itextpdf.tool.xml.css.FontSizeTranslator;
-import com.itextpdf.tool.xml.css.WidthCalculator;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
+import com.itextpdf.tool.xml.css.*;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
@@ -130,6 +126,14 @@ public class Table extends AbstractTagProcessor {
 	@Override
 	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		try {
+			boolean percentage = false;
+			String widthValue = tag.getCSS().get(HTML.Attribute.WIDTH);
+			if(widthValue == null) {
+				widthValue = tag.getAttributes().get(HTML.Attribute.WIDTH);
+			}
+			if(widthValue != null && widthValue.trim().endsWith("%")) {
+				percentage = true;
+			}
 			int numberOfColumns = 0;
 			List<TableRowElement> tableRows = new ArrayList<TableRowElement>(currentContent.size());
 			List<Element> invalidRowElements = new ArrayList<Element>(1);
@@ -360,9 +364,20 @@ public class Table extends AbstractTagProcessor {
 				throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(
 						LocaleMessages.NO_CUSTOM_CONTEXT), e);
 			}
+
+            Float tableHeight = new HeightCalculator().getHeight(tag, getHtmlPipelineContext(ctx).getPageSize().getHeight());
+
 			for (TableRowElement row : tableRows) {
 				int columnNumber = -1;
+                Float computedRowHeight = null;
+                if ( tableHeight != null &&  tableRows.indexOf(row) == tableRows.size() - 1) {
+                    float computedTableHeigt = table.calculateHeights();
+                    computedRowHeight = tableHeight - computedTableHeigt;
+                }
 				for (HtmlCell cell : row.getContent()) {
+                    if (computedRowHeight != null && computedRowHeight > 0) {
+                        cell.setFixedHeight(computedRowHeight);
+                    }
 					columnNumber += cell.getColspan();
 					List<Element> compositeElements = cell.getCompositeElements();
 					if (compositeElements != null) {
@@ -387,6 +402,10 @@ public class Table extends AbstractTagProcessor {
 					table.addCell(cell);
 				}
 				table.completeRow();
+			}
+			if (percentage) {
+				table.setWidthPercentage(utils.parsePxInCmMmPcToPt(widthValue));
+				table.setLockedWidth(false);
 			}
 			List<Element> elems = new ArrayList<Element>();
 			if (invalidRowElements.size() > 0) {
@@ -586,7 +605,7 @@ public class Table extends AbstractTagProcessor {
 						Element inner = ((Phrase) baseLevel).get(i);
 						if (inner instanceof Chunk) {
 							cellWidth += ((Chunk) inner).getWidthPoint();
-							float widestWord = startWidth + new ChunkCssApplier().getWidestWord((Chunk) inner);
+							float widestWord = startWidth + getCssAppliers().getChunkCssAplier().getWidestWord((Chunk) inner);
 							if (widestWord > widestWordOfCell) {
 								widestWordOfCell = widestWord;
 							}
@@ -600,7 +619,7 @@ public class Table extends AbstractTagProcessor {
 						cellWidth = startWidth + ((ListItem) li).getIndentationLeft();
 						for (Chunk c : ((ListItem) li).getChunks()) {
 							cellWidth += c.getWidthPoint();
-							float widestWord = new ChunkCssApplier().getWidestWord(c);
+							float widestWord = getCssAppliers().getChunkCssAplier().getWidestWord(c);
 							if (startWidth + widestWord > widestWordOfCell) {
 								widestWordOfCell = startWidth + widestWord;
 							}

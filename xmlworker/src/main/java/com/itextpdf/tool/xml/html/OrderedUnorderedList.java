@@ -1,8 +1,9 @@
 /*
  * $Id$
  *
- * This file is part of the iText (R) project. Copyright (c) 1998-2011 1T3XT BVBA Authors: Balder Van Camp, Emiel
- * Ackermann, et al.
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2012 1T3XT BVBA
+ * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General
  * Public License version 3 as published by the Free Software Foundation with the addition of the following permission
@@ -35,8 +36,6 @@ import java.util.List;
 
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -61,7 +60,6 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 	 *
 	 */
 	private static final CssUtils utils = CssUtils.getInstance();
-	private static final Logger LOG = LoggerFactory.getLogger(OrderedUnorderedList.class);
 
 	/*
 	 * (non-Javadoc)
@@ -78,9 +76,9 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 			com.itextpdf.text.List list;
 			try {
 				htmlPipelineContext = getHtmlPipelineContext(ctx);
-					list = (com.itextpdf.text.List) CssAppliers.getInstance().apply(new com.itextpdf.text.List(), tag, htmlPipelineContext);
+					list = (com.itextpdf.text.List) getCssAppliers().apply(new com.itextpdf.text.List(), tag, htmlPipelineContext);
 				} catch (NoCustomContextException e) {
-				list =  (com.itextpdf.text.List) CssAppliers.getInstance().apply(new com.itextpdf.text.List(), tag, null);
+				list =  (com.itextpdf.text.List) getCssAppliers().apply(new com.itextpdf.text.List(), tag, null);
 			}
 
 			int i = 0;
@@ -103,7 +101,7 @@ public class OrderedUnorderedList extends AbstractTagProcessor {
 						}
 					}
 					try {
-						list.add(CssAppliers.getInstance().apply(li, child, getHtmlPipelineContext(ctx)));
+						list.add(getCssAppliers().apply(li, child, getHtmlPipelineContext(ctx)));
 					} catch (NoCustomContextException e1) {
 						throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
 					}

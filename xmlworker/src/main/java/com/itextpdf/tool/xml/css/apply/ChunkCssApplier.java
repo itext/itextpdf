@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,15 +43,8 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
+import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.tool.xml.Tag;
@@ -59,133 +52,204 @@ import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.css.FontSizeTranslator;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Applies CSS Rules to Chunks
- *
  */
 public class ChunkCssApplier {
-	/**
-	 * FF4 and IE8 provide normal text and bold text. All other values are translated to one of these 2 styles <br />
-	 * 100 - 500 and "lighter" = normal.<br />
-	 * 600 - 900 and "bolder" = bold.
-	 */
-	public static final List<String> BOLD = Arrays.asList(new String[] { "bold", "bolder", "600", "700", "800", "900" });
-	private final CssUtils utils = CssUtils.getInstance();
-
-	 /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.itextpdf.tool.xml.css.CssApplier#apply(com.itextpdf.text.Element,
-     * com.itextpdf.tool.xml.Tag)
+    /**
+     * FF4 and IE8 provide normal text and bold text. All other values are translated to one of these 2 styles <br />
+     * 100 - 500 and "lighter" = normal.<br />
+     * 600 - 900 and "bolder" = bold.
      */
-	public Chunk apply(final Chunk c, final Tag t) {
-		String fontName = BaseFont.HELVETICA;
-		String encoding = BaseFont.CP1252;
-		float size = new FontSizeTranslator().getFontSize(t);
-		int style = Font.NORMAL;
-		BaseColor color = BaseColor.BLACK;
-		Map<String, String> rules = t.getCSS();
-		for (Entry<String, String> entry : rules.entrySet()) {
-			String key = entry.getKey();
-			String value = entry.getValue();
-			if (CSS.Property.FONT_WEIGHT.equalsIgnoreCase(key) && CSS.Value.BOLD.contains(value)) {
-				if (style == Font.ITALIC)
-					style = Font.BOLDITALIC;
-				else
-					style = Font.BOLD;
-			} else if (CSS.Property.FONT_STYLE.equalsIgnoreCase(key)) {
-				if (value.equalsIgnoreCase(CSS.Value.ITALIC)) {
-					if (style == Font.BOLD)
-						style = Font.BOLDITALIC;
-					else
-						style = Font.ITALIC;
-				}
-				if (value.equalsIgnoreCase(CSS.Value.OBLIQUE)) {
-					c.setSkew(0, 12);
-				}
-			} else if (CSS.Property.FONT_FAMILY.equalsIgnoreCase(key)) {
-				if(value.contains(",")){
-					String[] fonts = value.split(",");
-					for(String s: fonts) {
-						s = s.trim();
-						if(!FontFactory.getFont(s).getFamilyname().equalsIgnoreCase("unknown")){
-							fontName = s;
-							break;
-						}
-					}
-				} else {
-					fontName = value;
-				}
-			} else if (CSS.Property.COLOR.equalsIgnoreCase(key)) {
-				color = HtmlUtilities.decodeColor(value);
-			} else if (CSS.Property.LETTER_SPACING.equalsIgnoreCase(key)) {
-				c.setCharacterSpacing(utils.parsePxInCmMmPcToPt(value));
-			} else if (null != rules.get(CSS.Property.XFA_FONT_HORIZONTAL_SCALE)) { // only % allowed; need a catch block NumberFormatExc?
-				c.setHorizontalScaling(Float.parseFloat(rules.get(CSS.Property.XFA_FONT_HORIZONTAL_SCALE).replace("%", ""))/100);
-			}
-		}
-		// following styles are separate from the for each loop, because they are based on font settings like size.
-		if (null != rules.get(CSS.Property.VERTICAL_ALIGN)) {
-			String value = rules.get(CSS.Property.VERTICAL_ALIGN);
-			if (value.equalsIgnoreCase(CSS.Value.SUPER)||value.equalsIgnoreCase(CSS.Value.TOP)||value.equalsIgnoreCase(CSS.Value.TEXT_TOP)) {
-				c.setTextRise((float) (size / 2 + 0.5));
-			} else if (value.equalsIgnoreCase(CSS.Value.SUB)||value.equalsIgnoreCase(CSS.Value.BOTTOM)||value.equalsIgnoreCase(CSS.Value.TEXT_BOTTOM)) {
-				c.setTextRise(-size / 2);
-			} else {
-				c.setTextRise(utils.parsePxInCmMmPcToPt(value));
-			}
-		}
-		String xfaVertScale = rules.get(CSS.Property.XFA_FONT_VERTICAL_SCALE);
-		if (null != xfaVertScale) {
-			if(xfaVertScale.contains("%")) {
-				size *= Float.parseFloat(xfaVertScale.replace("%", ""))/100;
-				c.setHorizontalScaling(100/Float.parseFloat(xfaVertScale.replace("%", "")));
-			}
-		}
-		if (null != rules.get(CSS.Property.TEXT_DECORATION)) { // Restriction? In html a underline and a line-through is possible on one piece of text. A Chunk can set an underline only once.
-			String value = rules.get(CSS.Property.TEXT_DECORATION);
-			if (CSS.Value.UNDERLINE.equalsIgnoreCase(value)) {
-				c.setUnderline(0.75f, -size/8f);
-			}
-			if (CSS.Value.LINE_THROUGH.equalsIgnoreCase(value)) {
-				c.setUnderline(0.75f, size/4f);
-			}
-		}
-		if (null != rules.get(CSS.Property.BACKGROUND_COLOR)) {
-			c.setBackground(HtmlUtilities.decodeColor(rules.get(CSS.Property.BACKGROUND_COLOR)));
-		}
-		Font f  = FontFactory.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, color);
-		c.setFont(f);
-		return c;
-	}
+    public static final List<String> BOLD = Arrays.asList(new String[]{"bold", "bolder", "600", "700", "800", "900"});
+    protected final CssUtils utils = CssUtils.getInstance();
+    protected FontProvider fontProvider;
+
+    public ChunkCssApplier() {
+        this(null);
+    }
+
+    public ChunkCssApplier(FontProvider fontProvider) {
+        if (fontProvider != null) {
+            this.fontProvider = fontProvider;
+        } else {
+            this.fontProvider = new FontFactoryImp();
+        }
+    }
 	/**
-	 * Method used for retrieving the widest word of a chunk of text. All styles of the chunk will be taken into account when calculating the width of the words.
-	 * @param c chunk of which the widest word is required.
-	 * @return float containing the width of the widest word.
+	 *
+	 * @param c the Chunk to apply CSS to.
+	 * @param t the tag containing the chunk data
+	 * @return the styled chunk
 	 */
-	public float getWidestWord(final Chunk c) {
-		String[] words = c.getContent().split("\\s");
-		float widestWord = 0;
-		for(int i = 0; i<words.length ; i++) {
-			Chunk word = new Chunk(words[i]);
-			copyChunkStyles(c, word);
-			if(word.getWidthPoint() > widestWord) {
-				widestWord = word.getWidthPoint();
-			}
-		}
-		return widestWord;
-	}
+    public Chunk apply(final Chunk c, final Tag t) {
+        Font f = applyFontStyles(t);
+        float size = f.getSize();
+        Map<String, String> rules = t.getCSS();
+        for (Entry<String, String> entry : rules.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (CSS.Property.FONT_STYLE.equalsIgnoreCase(key)) {
+                if (value.equalsIgnoreCase(CSS.Value.OBLIQUE)) {
+                    c.setSkew(0, 12);
+                }
+            } else if (CSS.Property.LETTER_SPACING.equalsIgnoreCase(key)) {
+                c.setCharacterSpacing(utils.parsePxInCmMmPcToPt(value));
+            } else if (null != rules.get(CSS.Property.XFA_FONT_HORIZONTAL_SCALE)) { // only % allowed; need a catch block NumberFormatExc?
+                c.setHorizontalScaling(Float.parseFloat(rules.get(CSS.Property.XFA_FONT_HORIZONTAL_SCALE).replace("%", "")) / 100);
+            }
+        }
+        // following styles are separate from the for each loop, because they are based on font settings like size.
+        if (null != rules.get(CSS.Property.VERTICAL_ALIGN)) {
+            String value = rules.get(CSS.Property.VERTICAL_ALIGN);
+            if (value.equalsIgnoreCase(CSS.Value.SUPER) || value.equalsIgnoreCase(CSS.Value.TOP) || value.equalsIgnoreCase(CSS.Value.TEXT_TOP)) {
+                c.setTextRise((float) (size / 2 + 0.5));
+            } else if (value.equalsIgnoreCase(CSS.Value.SUB) || value.equalsIgnoreCase(CSS.Value.BOTTOM) || value.equalsIgnoreCase(CSS.Value.TEXT_BOTTOM)) {
+                c.setTextRise(-size / 2);
+            } else {
+                c.setTextRise(utils.parsePxInCmMmPcToPt(value));
+            }
+        }
+        String xfaVertScale = rules.get(CSS.Property.XFA_FONT_VERTICAL_SCALE);
+        if (null != xfaVertScale) {
+            if (xfaVertScale.contains("%")) {
+                size *= Float.parseFloat(xfaVertScale.replace("%", "")) / 100;
+                c.setHorizontalScaling(100 / Float.parseFloat(xfaVertScale.replace("%", "")));
+            }
+        }
+        if (null != rules.get(CSS.Property.TEXT_DECORATION)) { // Restriction? In html a underline and a line-through is possible on one piece of text. A Chunk can set an underline only once.
+            String value = rules.get(CSS.Property.TEXT_DECORATION);
+            if (CSS.Value.UNDERLINE.equalsIgnoreCase(value)) {
+                c.setUnderline(0.75f, -size / 8f);
+            }
+            if (CSS.Value.LINE_THROUGH.equalsIgnoreCase(value)) {
+                c.setUnderline(0.75f, size / 4f);
+            }
+        }
+        if (null != rules.get(CSS.Property.BACKGROUND_COLOR)) {
+            c.setBackground(HtmlUtilities.decodeColor(rules.get(CSS.Property.BACKGROUND_COLOR)));
+        }
+        f.setSize(size);
+        c.setFont(f);
+        return c;
+    }
+
+    public Font applyFontStyles(final Tag t) {
+        String fontName = null;
+        String encoding = BaseFont.CP1252;
+        float size = new FontSizeTranslator().getFontSize(t);
+        int style = Font.UNDEFINED;
+        BaseColor color = null;
+        Map<String, String> rules = t.getCSS();
+        for (Entry<String, String> entry : rules.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (CSS.Property.FONT_WEIGHT.equalsIgnoreCase(key)) {
+                if (CSS.Value.BOLD.contains(value)) {
+                    if (style == Font.ITALIC) {
+                        style = Font.BOLDITALIC;
+                    } else {
+                        style = Font.BOLD;
+                    }
+                } else {
+                    if (style == Font.BOLDITALIC) {
+                        style = Font.ITALIC;
+                    } else {
+                        style = Font.NORMAL;
+                    }
+                }
+            } else if (CSS.Property.FONT_STYLE.equalsIgnoreCase(key)) {
+                if (value.equalsIgnoreCase(CSS.Value.ITALIC)) {
+                    if (style == Font.BOLD) {
+                        style = Font.BOLDITALIC;
+                    } else {
+                        style = Font.ITALIC;
+                    }
+                }
+            } else if (CSS.Property.FONT_FAMILY.equalsIgnoreCase(key)) {
+				// TODO improve fontfamily parsing (what if a font family has a comma in the name ? )
+                fontName = value;
+            } else if (CSS.Property.COLOR.equalsIgnoreCase(key)) {
+                color = HtmlUtilities.decodeColor(value);
+            }
+        }
+        if (fontName != null) {
+            if (fontName.contains(",")) {
+                String[] fonts = fontName.split(",");
+                Font firstFont = null;
+                for (String s : fonts) {
+                    s = utils.trimAndRemoveQuoutes(s);
+                    if (fontProvider.isRegistered(s)) {
+                        Font f = fontProvider.getFont(s, encoding, BaseFont.EMBEDDED, size, style, color);
+                        if (f != null && (style == Font.NORMAL || style == Font.UNDEFINED || (f.getStyle() & style) == 0)) {
+                            return f;
+                        }
+                        if (firstFont == null) {
+                            firstFont = f;
+                        }
+                    }
+                }
+                if (firstFont != null) {
+                    return firstFont;
+                } else {
+                    if (fonts.length > 0) {
+                        fontName = utils.trimAndRemoveQuoutes(fontName.split(",")[0]);
+                    } else {
+                        fontName = null;
+                    }
+                }
+            } else {
+                fontName = utils.trimAndRemoveQuoutes(fontName);
+            }
+        }
+
+        return fontProvider.getFont(fontName, encoding, BaseFont.EMBEDDED, size, style, color);
+    }
+
 	/**
-	 * Method used for copying styles from one chunk to another. Could be deprecated if the content of a chunk can be overwritten.
-	 * @param source chunk which contains the required styles.
-	 * @param target chunk which needs the required styles.
-	 */
-	public void copyChunkStyles(final Chunk source, final Chunk target) {
-		target.setFont(source.getFont());
-		target.setAttributes(source.getAttributes());
-		target.setCharacterSpacing(source.getCharacterSpacing());
-		target.setHorizontalScaling(source.getHorizontalScaling());
-		target.setHorizontalScaling(source.getHorizontalScaling());
-	}
+     * Method used for retrieving the widest word of a chunk of text. All styles of the chunk will be taken into account when calculating the width of the words.
+     *
+     * @param c chunk of which the widest word is required.
+     *
+     * @return float containing the width of the widest word.
+     */
+    public float getWidestWord(final Chunk c) {
+        String[] words = c.getContent().split("\\s");
+        float widestWord = 0;
+        for (int i = 0; i < words.length; i++) {
+            Chunk word = new Chunk(words[i]);
+            copyChunkStyles(c, word);
+            if (word.getWidthPoint() > widestWord) {
+                widestWord = word.getWidthPoint();
+            }
+        }
+        return widestWord;
+    }
+
+    /**
+     * Method used for copying styles from one chunk to another. Could be deprecated if the content of a chunk can be overwritten.
+     *
+     * @param source chunk which contains the required styles.
+     * @param target chunk which needs the required styles.
+     */
+    public void copyChunkStyles(final Chunk source, final Chunk target) {
+        target.setFont(source.getFont());
+        target.setAttributes(source.getAttributes());
+        target.setCharacterSpacing(source.getCharacterSpacing());
+        target.setHorizontalScaling(source.getHorizontalScaling());
+        target.setHorizontalScaling(source.getHorizontalScaling());
+    }
+
+    public FontProvider getFontProvider() {
+        return this.fontProvider;
+    }
+
+    public void setFontProvider(FontProvider fontProvider) {
+        this.fontProvider = fontProvider;
+    }
 }

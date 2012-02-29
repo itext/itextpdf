@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -143,7 +143,7 @@ public class PdfSignatureAppearance {
     private PdfStamper stamper;
     private boolean preClosed = false;
     private PdfSigGenericPKCS sigStandard;
-    private int range[];
+    private long range[];
     private RandomAccessFile raf;
     private byte bout[];
     private int boutLen;
@@ -1011,12 +1011,12 @@ public class PdfSignatureAppearance {
         }
         writer.close(stamper.getMoreInfo());
 
-        range = new int[exclusionLocations.size() * 2];
-        int byteRangePosition = exclusionLocations.get(PdfName.BYTERANGE).getPosition();
+        range = new long[exclusionLocations.size() * 2];
+        long byteRangePosition = exclusionLocations.get(PdfName.BYTERANGE).getPosition();
         exclusionLocations.remove(PdfName.BYTERANGE);
         int idx = 1;
         for (PdfLiteral lit: exclusionLocations.values()) {
-            int n = lit.getPosition();
+            long n = lit.getPosition();
             range[idx++] = n;
             range[idx++] = lit.getPosLength() + n;
         }
@@ -1033,13 +1033,13 @@ public class PdfSignatureAppearance {
             for (int k = 0; k < range.length; ++k)
                 bf.append(range[k]).append(' ');
             bf.append(']');
-            System.arraycopy(bf.getBuffer(), 0, bout, byteRangePosition, bf.size());
+            System.arraycopy(bf.getBuffer(), 0, bout, (int)byteRangePosition, bf.size());
         }
         else {
             try {
                 raf = new RandomAccessFile(tempFile, "rw");
-                int boutLen = (int)raf.length();
-                range[range.length - 1] = boutLen - range[range.length - 2];
+                long len = raf.length();
+                range[range.length - 1] = len - range[range.length - 2];
                 ByteBuffer bf = new ByteBuffer();
                 bf.append('[');
                 for (int k = 0; k < range.length; ++k)
@@ -1082,7 +1082,7 @@ public class PdfSignatureAppearance {
                 if (bf.size() > lit.getPosLength())
                     throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.key.1.is.too.big.is.2.reserved.3", key.toString(), String.valueOf(bf.size()), String.valueOf(lit.getPosLength())));
                 if (tempFile == null)
-                    System.arraycopy(bf.getBuffer(), 0, bout, lit.getPosition(), bf.size());
+                    System.arraycopy(bf.getBuffer(), 0, bout, (int)lit.getPosition(), bf.size());
                 else {
                     raf.seek(lit.getPosition());
                     raf.write(bf.getBuffer(), 0, bf.size());
@@ -1096,10 +1096,10 @@ public class PdfSignatureAppearance {
             else {
                 if (originalout != null) {
                     raf.seek(0);
-                    int length = (int)raf.length();
+                    long length = raf.length();
                     byte buf[] = new byte[8192];
                     while (length > 0) {
-                        int r = raf.read(buf, 0, Math.min(buf.length, length));
+                        int r = raf.read(buf, 0, (int)Math.min((long)buf.length, length));
                         if (r < 0)
                             throw new EOFException(MessageLocalization.getComposedMessage("unexpected.eof"));
                         originalout.write(buf, 0, r);
@@ -1407,10 +1407,10 @@ public class PdfSignatureAppearance {
         private byte b[] = new byte[1];
         private RandomAccessFile raf;
         private byte bout[];
-        private int range[];
-        private int rangePosition = 0;
+        private long range[];
+        private long rangePosition = 0;
 
-        private RangeStream(RandomAccessFile raf, byte bout[], int range[]) {
+        private RangeStream(RandomAccessFile raf, byte bout[], long range[]) {
             this.raf = raf;
             this.bout = bout;
             this.range = range;
@@ -1444,14 +1444,14 @@ public class PdfSignatureAppearance {
                 return -1;
             }
             for (int k = 0; k < range.length; k += 2) {
-                int start = range[k];
-                int end = start + range[k + 1];
+                long start = range[k];
+                long end = start + range[k + 1];
                 if (rangePosition < start)
                     rangePosition = start;
                 if (rangePosition >= start && rangePosition < end) {
-                    int lenf = Math.min(len, end - rangePosition);
+                    int lenf = (int)Math.min(len, (int)(end - rangePosition));
                     if (raf == null)
-                        System.arraycopy(bout, rangePosition, b, off, lenf);
+                        System.arraycopy(bout, (int)rangePosition, b, off, lenf);
                     else {
                         raf.seek(rangePosition);
                         raf.readFully(b, off, lenf);

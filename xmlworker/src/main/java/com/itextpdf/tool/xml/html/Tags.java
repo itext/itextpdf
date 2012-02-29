@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -121,6 +121,8 @@ public class Tags {
 		factory.addProcessor(Tag.H5, headers);
 		factory.addProcessor(Tag.H6, headers);
 		factory.addProcessor(Tag.HR, defaultpackage + "HorizontalRule");
+		//added by Jeroen Nouws
+		factory.addProcessor(Tag.LABEL, span);
 		return factory;
 	}
 }

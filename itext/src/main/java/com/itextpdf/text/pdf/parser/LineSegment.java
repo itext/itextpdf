@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Kevin Day, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.awt.geom.Rectangle2D;
+import com.itextpdf.awt.geom.Rectangle2D;
 
 /**
  * Represents a line segment in a particular coordinate system.  This class is immutable.

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1643,14 +1643,16 @@ class PdfStamperImp extends PdfWriter {
     		obj = arr.getPdfObject(i);
     		if (obj.isIndirect()) {
     			layer = ocgmap.get(obj.toString());
-    			layer.setOnPanel(true);
-    			registerLayer(layer);
-    			if (parent != null) {
-    				parent.addChild(layer);
-    			}
-    			if (arr.size() > i + 1 && arr.getPdfObject(i + 1).isArray()) {
-    				i++;
-    				addOrder(layer, (PdfArray)arr.getPdfObject(i), ocgmap);
+    			if (layer != null) {
+    				layer.setOnPanel(true);
+    				registerLayer(layer);
+    				if (parent != null) {
+    					parent.addChild(layer);
+    				}
+    				if (arr.size() > i + 1 && arr.getPdfObject(i + 1).isArray()) {
+    					i++;
+    					addOrder(layer, (PdfArray)arr.getPdfObject(i), ocgmap);
+    				}
     			}
     		}
     		else if (obj.isArray()) {

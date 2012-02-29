@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,10 +70,11 @@ public class HorizontalRule extends AbstractTagProcessor {
 		try {
 			List<Element> list = new ArrayList<Element>();
 			HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-			LineSeparator lineSeparator = (LineSeparator) CssAppliers.getInstance().apply(new LineSeparator(), tag, htmlPipelineContext);
+			LineSeparator lineSeparator = (LineSeparator) getCssAppliers().apply(new LineSeparator(), tag, htmlPipelineContext);
 			Paragraph p = new Paragraph();
+            p.setMultipliedLeading(1.2f);
 			p.add(lineSeparator);
-			list.add(CssAppliers.getInstance().apply(p, tag, htmlPipelineContext));
+			list.add(lineSeparator);
 			return list;
 		} catch (NoCustomContextException e) {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);

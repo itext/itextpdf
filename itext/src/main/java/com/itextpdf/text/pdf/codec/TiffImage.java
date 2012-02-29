@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -410,16 +410,16 @@ public class TiffImage {
                     throw new IOException(MessageLocalization.getComposedMessage("missing.tag.s.for.ojpeg.compression"));
                 }
                 int jpegOffset = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFOFFSET);
-                int jpegLength = s.length() - jpegOffset;
+                int jpegLength = (int)s.length() - jpegOffset;
 
                 if (dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFBYTECOUNT)) {
                     jpegLength = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFBYTECOUNT) +
                         (int)size[0];
                 }
                 
-                byte[] jpeg = new byte[Math.min(jpegLength, s.length() - jpegOffset)];
+                byte[] jpeg = new byte[Math.min(jpegLength, (int)s.length() - jpegOffset)];
 
-                int posFilePointer = s.getFilePointer();
+                int posFilePointer = (int)s.getFilePointer();
                 posFilePointer += jpegOffset;
                 s.seek(posFilePointer);
                 s.readFully(jpeg);

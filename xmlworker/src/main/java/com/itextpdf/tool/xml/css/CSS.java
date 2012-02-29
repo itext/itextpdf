@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ package com.itextpdf.tool.xml.css;
  * CSS Property-Value container.
  *
  */
+@SuppressWarnings("javadoc")
 public final class CSS {
 
 	private CSS(){}

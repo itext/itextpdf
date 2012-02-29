@@ -1,8 +1,9 @@
 /*
  * $Id$
  *
- * This file is part of the iText (R) project. Copyright (c) 1998-2011 1T3XT
- * BVBA Authors: Balder Van Camp, Emiel Ackermann, et al.
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2012 1T3XT BVBA
+ * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -50,6 +51,7 @@ import java.util.Set;
  * @author redlab_b
  *
  */
+@SuppressWarnings("javadoc")
 public final class HTML {
 
 	/**
@@ -323,6 +325,8 @@ public final class HTML {
 		public static final String TYPE = "type";
 		public static final String COLSPAN = "colspan";
 		public static final String ROWSPAN = "rowspan";
+        public static final String VALIGN  = "valign";
+        public static final String ALIGN  = "align";
 
 		/**
 		 * Possible attribute values.

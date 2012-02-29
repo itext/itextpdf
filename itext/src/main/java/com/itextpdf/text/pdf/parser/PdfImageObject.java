@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Kevin Day, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,6 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -123,6 +122,7 @@ public class PdfImageObject {
 	private PdfDictionary dictionary;
 	/** The decoded image bytes (after applying filters), or the raw image bytes if unable to decode */
 	private byte[] imageBytes;
+	private PdfDictionary colorSpaceDic;
 	
     private int pngColorType = -1;
     private int pngBitDepth;
@@ -155,7 +155,17 @@ public class PdfImageObject {
 	 * @throws IOException
 	 */
 	public PdfImageObject(PRStream stream) throws IOException {
-		this(stream, PdfReader.getStreamBytesRaw(stream));
+		this(stream, PdfReader.getStreamBytesRaw(stream), null);
+	}
+    
+	/**
+	 * Creates a PdfImage object.
+	 * @param stream a PRStream
+	 * @param colorSpaceDic	a color space dictionary
+	 * @throws IOException
+	 */
+	public PdfImageObject(PRStream stream, PdfDictionary colorSpaceDic) throws IOException {
+		this(stream, PdfReader.getStreamBytesRaw(stream), colorSpaceDic);
 	}
 	
 
@@ -164,10 +174,12 @@ public class PdfImageObject {
 	 * Creats a PdfImage object using an explicitly provided dictionary and image bytes
 	 * @param dictionary the dictionary for the image
 	 * @param samples the samples
+	 * @param colorSpaceDic	a color space dictionary
 	 * @since 5.0.3
 	 */
-	protected PdfImageObject(PdfDictionary dictionary, byte[] samples) throws IOException {
+	protected PdfImageObject(PdfDictionary dictionary, byte[] samples, PdfDictionary colorSpaceDic) throws IOException {
 	    this.dictionary = dictionary;
+	    this.colorSpaceDic = colorSpaceDic;
         TrackingFilter trackingFilter = new TrackingFilter();
         Map<PdfName, FilterHandlers.FilterHandler> handlers = new HashMap<PdfName, FilterHandlers.FilterHandler>(FilterHandlers.getDefaultFilterHandlers());
         handlers.put(PdfName.JBIG2DECODE, trackingFilter);
@@ -286,6 +298,12 @@ public class PdfImageObject {
         bpc = dictionary.getAsNumber(PdfName.BITSPERCOMPONENT).intValue();
         pngBitDepth = bpc;
         PdfObject colorspace = dictionary.getDirectObject(PdfName.COLORSPACE);
+        if (colorspace instanceof PdfName && colorSpaceDic != null){
+            PdfObject csLookup = colorSpaceDic.getDirectObject((PdfName)colorspace);
+            if (csLookup != null)
+                colorspace = csLookup;
+        }
+
         palette = null;
         icc = null;
         stride = 0;
@@ -374,10 +392,12 @@ public class PdfImageObject {
         return imageBytes; 
     }
 
+    // AWT related methods (remove this if you port to Android / GAE)
+
     /**
      * @since 5.0.3 renamed from getAwtImage()
      */
-    public BufferedImage getBufferedImage() throws IOException {
+    public java.awt.image.BufferedImage getBufferedImage() throws IOException {
         byte[] img = getImageAsBytes();
         if (img == null)
             return null;

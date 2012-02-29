@@ -40,7 +40,8 @@ public class PdfImageObjectTest {
             if (objRef == null)
                 throw new NullPointerException("Reference " + objectid + " not found - Available keys are " + xobjects.getKeys());
             PRStream stream = (PRStream)PdfReader.getPdfObject(objRef);
-            PdfImageObject img = new PdfImageObject(stream);
+            PdfDictionary colorSpaceDic = resources != null ? resources.getAsDict(PdfName.COLORSPACE) : null;
+            PdfImageObject img = new PdfImageObject(stream, colorSpaceDic);
             byte[] result = img.getImageAsBytes();
             Assert.assertNotNull(result);
             int zeroCount = 0;

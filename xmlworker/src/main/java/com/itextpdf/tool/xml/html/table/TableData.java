@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,39 +46,44 @@ package com.itextpdf.tool.xml.html.table;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
 import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
+import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+
 /**
  * @author redlab_b
- *
+ * 
  */
 public class TableData extends AbstractTagProcessor {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * com.itextpdf.tool.xml.TagProcessor#content(com.itextpdf.tool.xml.Tag,
 	 * java.util.List, com.itextpdf.text.Document, java.lang.String)
 	 */
 	@Override
-	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
+	public List<Element> content(final WorkerContext ctx, final Tag tag,
+			final String content) {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Element> l = new ArrayList<Element>(1);
+
 		if (sanitized.length() > 0) {
-			Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
-//			NoNewLineParagraph noNewLineParagraph = new NoNewLineParagraphCssApplier(configuration).apply(new NoNewLineParagraph(c), tag);
+			Chunk c = getCssAppliers().getChunkCssAplier().apply(new Chunk(sanitized), tag);
+			// NoNewLineParagraph noNewLineParagraph = new
+			// NoNewLineParagraphCssApplier(configuration).apply(new
+			// NoNewLineParagraph(c), tag);
 			l.add(c);
 		}
 		return l;
@@ -86,33 +91,79 @@ public class TableData extends AbstractTagProcessor {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag, java.util.List,
-	 * com.itextpdf.text.Document)
+	 * 
+	 * @see
+	 * com.itextpdf.tool.xml.TagProcessor#endElement(com.itextpdf.tool.xml.Tag,
+	 * java.util.List, com.itextpdf.text.Document)
 	 */
 	@Override
-	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
+	public List<Element> end(final WorkerContext ctx, final Tag tag,
+			final List<Element> currentContent) {
 		HtmlCell cell = new HtmlCell();
+        try {
+            HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
+            cell = new HtmlCellCssApplier().apply(cell, tag, htmlPipelineContext, htmlPipelineContext);
+        } catch (NoCustomContextException e1) {
+            throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
+        }
+        cell.getColumn().setUseAscender(true);
 		List<Element> l = new ArrayList<Element>(1);
+        List<Element> chunks = new ArrayList<Element>();
 		for (Element e : currentContent) {
+            if (e instanceof Chunk || e instanceof NoNewLineParagraph || e instanceof LineSeparator) {
+                if (e == Chunk.NEWLINE) {
+                    int index = currentContent.indexOf(e);
+                    if (index == currentContent.size() - 1) {
+                        continue;
+                    } else {
+                        Element nextElement = currentContent.get(index + 1);
+                        if (nextElement instanceof Paragraph) {
+                            continue;
+                        }
+                        if (chunks.isEmpty()) {
+                            continue;
+                        }
+
+                    }
+                } else if (e instanceof LineSeparator) {
+                    chunks.add(Chunk.NEWLINE);
+                }
+                chunks.add(e);
+                continue;
+            } else if (!chunks.isEmpty()) {
+                Paragraph p = new Paragraph();
+                p.setMultipliedLeading(1.2f);
+                p.addAll(chunks);
+                p.setAlignment(cell.getHorizontalAlignment());
+                cell.addElement(p);
+                chunks.clear();
+            }
+
+            if (e instanceof Paragraph) {
+                ((Paragraph)e).setAlignment(cell.getHorizontalAlignment());
+            }
+
 			cell.addElement(e);
 		}
-		try {
-			HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-			l.add(new HtmlCellCssApplier().apply(cell, tag, htmlPipelineContext, htmlPipelineContext));
-		} catch (NoCustomContextException e1) {
-			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT),
-					e1);
-		}
+        if (!chunks.isEmpty()) {
+            Paragraph p = new Paragraph();
+            p.setMultipliedLeading(1.2f);
+            p.addAll(chunks);
+            p.setAlignment(cell.getHorizontalAlignment());
+            cell.addElement(p);
+        }
+    	l.add(cell);
 		return l;
 	}
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.itextpdf.tool.xml.TagProcessor#isStackOwner()
+	 */
+	@Override
 	public boolean isStackOwner() {
-        return true;
-    }
+		return true;
+	}
 
 }

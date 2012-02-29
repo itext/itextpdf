@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -173,7 +173,7 @@ public class XfaForm {
         if (datasetsNode == null)
         	createDatasetsNode(domDocument.getFirstChild());
     }
-    
+
     /**
      * Some XFA forms don't have a datasets node.
      * If this is the case, we have to add one.
@@ -1169,9 +1169,27 @@ public class XfaForm {
 			data.appendChild(domDocument.importNode(node, true));
 		}
 		else {
-			data.replaceChild(domDocument.importNode(node, true), data.getFirstChild());
+// There's a possibility that first child node of XFA data is not an ELEMENT but simply a TEXT. In this case data will be duplicated.
+//			data.replaceChild(domDocument.importNode(node, true), data.getFirstChild());
+            Node firstNode = getFirstElementNode(data);
+            if (firstNode != null)
+                data.replaceChild(domDocument.importNode(node, true), firstNode);
 		}
         extractNodes();
 		setChanged(true);
     }
+
+    private Node getFirstElementNode(Node src) {
+        Node result = null;
+        NodeList list = src.getChildNodes();
+        for (int i = 0; i < list.getLength(); i++) {
+            if (list.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                result = list.item(i);
+                break;
+            }
+        }
+        return result;
+    }
+
+
 }

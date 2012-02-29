@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
@@ -71,9 +70,9 @@ public class Div extends AbstractTagProcessor {
 		String sanitized = HTMLUtils.sanitizeInline(content);
 		List<Element> l = new ArrayList<Element>(1);
     	if (sanitized.length() > 0) {
-    		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);
+    		Chunk c = getCssAppliers().getChunkCssAplier().apply(new Chunk(sanitized), tag);
     		try {
-				l.add(CssAppliers.getInstance().apply(new NoNewLineParagraph(c), tag, getHtmlPipelineContext(ctx)));
+				l.add(getCssAppliers().apply(new NoNewLineParagraph(c), tag, getHtmlPipelineContext(ctx)));
 			} catch (NoCustomContextException e) {
 				throw new RuntimeWorkerException(e);
 			}
@@ -96,7 +95,7 @@ public class Div extends AbstractTagProcessor {
 			for (Element e : currentContent) {
 				if (e instanceof Paragraph) {
 					if (p != null) {
-						l.add(CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx)));
+						l.add(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
 						p = null;
 					}
 					l.add(e);
@@ -108,7 +107,7 @@ public class Div extends AbstractTagProcessor {
 				}
 			}
 			if (p != null) {
-				l.add(CssAppliers.getInstance().apply(p, tag, getHtmlPipelineContext(ctx)));
+				l.add(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
 			}
 			return l;
 		} catch (NoCustomContextException e) {

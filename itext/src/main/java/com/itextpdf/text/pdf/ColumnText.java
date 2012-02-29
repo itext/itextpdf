@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -888,7 +888,7 @@ public class ColumnText {
                 if (isUseAscender() && Float.isNaN(firstLineY))
                 	currentLeading = line.getAscender();
                 else
-                	currentLeading = Math.max(fixedLeading + maxSize[0] * multipliedLeading, maxSize[1]);
+                	currentLeading = Math.max(fixedLeading + maxSize[0] * multipliedLeading, maxSize[1] - descender);
                 if (yLine > maxY || yLine - currentLeading < minY ) {
                 	status = NO_MORE_COLUMN;
                 	bidiLine.restore();

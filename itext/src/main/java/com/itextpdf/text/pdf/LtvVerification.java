@@ -1,3 +1,45 @@
+/*
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2012 1T3XT BVBA
+ * Authors: Bruno Lowagie, Paulo Soares, et al.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License version 3
+ * as published by the Free Software Foundation with the addition of the
+ * following permission added to Section 15 as permitted in Section 7(a):
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY 1T3XT,
+ * 1T3XT DISCLAIMS THE WARRANTY OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, see http://www.gnu.org/licenses or write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA, 02110-1301 USA, or download the license from the following URL:
+ * http://itextpdf.com/terms-of-use/
+ *
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public License,
+ * a covered work must retain the producer line in every PDF that is created
+ * or manipulated using iText.
+ *
+ * You can be released from the requirements of the license by purchasing
+ * a commercial license. Buying such a license is mandatory as soon as you
+ * develop commercial activities involving the iText software without
+ * disclosing the source code of your own applications.
+ * These activities include: offering paid services to customers as an ASP,
+ * serving PDFs on the fly in a web application, shipping iText with a closed
+ * source product.
+ *
+ * For more information, please contact iText Software Corp. at this
+ * address: sales@itextpdf.com
+ */
+
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -12,8 +54,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.DEREnumerated;
 import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 
 /**
  * Add verification according to PAdES-LTV (part 4)
@@ -107,9 +155,9 @@ public class LtvVerification {
             if (ocsp != null && level != Level.CRL && k < xc.length - 1) {
                 ocspEnc = ocsp.getEncoded((X509Certificate)xc[k], (X509Certificate)xc[k + 1], null);
                 if (ocspEnc != null)
-                    vd.ocsps.add(ocspEnc);
+                    vd.ocsps.add(buildOCSPResponse(ocspEnc));
             }
-            if (crl != null && (level != Level.OCSP || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
+            if (crl != null && (level == Level.CRL || level == Level.OCSP_CRL || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
                 byte[] cim = crl.getEncoded((X509Certificate)xc[k], null);
                 if (cim != null) {
                     boolean dup = false;
@@ -137,6 +185,19 @@ public class LtvVerification {
         return true;
     }
 
+    private static byte[] buildOCSPResponse(byte[] BasicOCSPResponse) throws IOException {
+        DEROctetString doctet = new DEROctetString(BasicOCSPResponse);
+        ASN1EncodableVector v2 = new ASN1EncodableVector();
+        v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
+        v2.add(doctet);
+        DEREnumerated den = new DEREnumerated(0);
+        ASN1EncodableVector v3 = new ASN1EncodableVector();
+        v3.add(den);
+        v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));            
+        DERSequence seq = new DERSequence(v3);
+        return seq.getEncoded();
+    }
+    
     private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {
         PdfDictionary dic = acroFields.getSignatureDictionary(signatureName);
         PdfString contents = dic.getAsString(PdfName.CONTENTS);

@@ -1,8 +1,9 @@
 /*
  * $Id$
  *
- * This file is part of the iText (R) project. Copyright (c) 1998-2011 1T3XT BVBA Authors: Balder Van Camp, Emiel
- * Ackermann, et al.
+ * This file is part of the iText (R) project.
+ * Copyright (c) 1998-2012 1T3XT BVBA
+ * Authors: Balder Van Camp, Emiel Ackermann, et al.
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General
  * Public License version 3 as published by the Free Software Foundation with the addition of the following permission
@@ -36,13 +37,16 @@ import java.util.Map;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
 import com.itextpdf.tool.xml.css.CSS;
 import com.itextpdf.tool.xml.css.CssUtils;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
@@ -77,13 +81,13 @@ public class ParaGraph extends AbstractTagProcessor {
 				if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 					tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
 				}
-				l.add(CssAppliers.getInstance().apply(tabbedChunk, tag,myctx));
+				l.add(getCssAppliers().apply(tabbedChunk, tag,myctx));
 			} else if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
 				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
 				tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
-				l.add(CssAppliers.getInstance().apply(tabbedChunk, tag, myctx));
+				l.add(getCssAppliers().apply(tabbedChunk, tag, myctx));
 			} else {
-				l.add(CssAppliers.getInstance().apply(new Chunk(sanitized), tag, myctx));
+				l.add(getCssAppliers().apply(new Chunk(sanitized), tag, myctx));
 			}
 		}
 		return l;
@@ -105,27 +109,84 @@ public class ParaGraph extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
-		List<Element> l = new ArrayList<Element>(1);
-		if (currentContent.size() > 0) {
-			Paragraph p = new Paragraph();
-			Map<String, String> css = tag.getCSS();
-			if (null != css.get(CSS.Property.TAB_INTERVAL)) {
-				addTabIntervalContent(currentContent, p, css.get(CSS.Property.TAB_INTERVAL));
-				l.add(p);
-			} else if (null != css.get(CSS.Property.TAB_STOPS)) { // <para tabstops=".." /> could use same implementation page 62
-				addTabStopsContent(currentContent, p, css.get(CSS.Property.TAB_STOPS));
-				l.add(p);
-			} else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page 63
-				addTabStopsContent(currentContent, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
-				l.add(p);																	// extracted.
-			} else {
-				for (Element e:  currentContentToParagraph(currentContent, true, true, tag, ctx)) {
-					l.add(e);
-				}
-			}
-		}
+        List<Element> l = new ArrayList<Element>(1);
+        if (currentContent.size() > 0) {
+            List<Element> elements = new ArrayList<Element>();
+            List<ListItem> listItems = new ArrayList<ListItem>();
+            for (Element el : currentContent) {
+                if (el instanceof ListItem) {
+                    if (!elements.isEmpty()) {
+                        processParagraphItems(ctx, tag, elements, l);
+                        elements.clear();
+                    }
+                    listItems.add((ListItem)el);
+                } else {
+                    if (!listItems.isEmpty()) {
+                        processListItems(ctx, tag, listItems, l);
+                        listItems.clear();
+                    }
+                    elements.add(el);
+                }
+            }
+            if (!elements.isEmpty()) {
+                processParagraphItems(ctx, tag, elements, l);
+                elements.clear();
+            } else if (!listItems.isEmpty()) {
+                processListItems(ctx, tag, listItems, l);
+                listItems.clear();
+            }
+        }
 		return l;
 	}
+
+    protected void processParagraphItems(final WorkerContext ctx, final Tag tag, final List<Element> paragraphItems, List<Element> l) {
+        Paragraph p = new Paragraph();
+        p.setMultipliedLeading(1.2f);
+        Element lastElement = paragraphItems.get(paragraphItems.size() - 1);
+        if (lastElement == Chunk.NEWLINE) {
+            paragraphItems.remove(paragraphItems.size() - 1);
+        }
+        Map<String, String> css = tag.getCSS();
+        if (null != css.get(CSS.Property.TAB_INTERVAL)) {
+            addTabIntervalContent(paragraphItems, p, css.get(CSS.Property.TAB_INTERVAL));
+            l.add(p);
+        } else if (null != css.get(CSS.Property.TAB_STOPS)) { // <para tabstops=".." /> could use same implementation page 62
+            addTabStopsContent(paragraphItems, p, css.get(CSS.Property.TAB_STOPS));
+            l.add(p);
+        } else if (null != css.get(CSS.Property.XFA_TAB_STOPS)) { // <para tabStops=".." /> could use same implementation page 63
+            addTabStopsContent(paragraphItems, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
+            l.add(p);                                                                    // extracted.
+        } else {
+            for (Element e : currentContentToParagraph(paragraphItems, true, true, tag, ctx)) {
+                l.add(e);
+            }
+        }
+    }
+    protected void processListItems(final WorkerContext ctx, final Tag tag, final List<ListItem> listItems, List<Element> l) {
+        try {
+            com.itextpdf.text.List list = new com.itextpdf.text.List();
+            list.setAlignindent(false);
+            list.setAutoindent(false);
+            list = (com.itextpdf.text.List) getCssAppliers().apply(list, tag,
+                getHtmlPipelineContext(ctx));
+            int i = 0;
+            for (ListItem li : listItems) {
+                li = (ListItem) getCssAppliers().apply(li, tag, getHtmlPipelineContext(ctx));
+                if (i != listItems.size() - 1) {
+                    li.setSpacingAfter(0);
+                }
+                if (i != 0 ) {
+                    li.setSpacingBefore(0);
+                }
+                i++;
+                li.setMultipliedLeading(1.2f);
+                list.add(li);
+            }
+            l.add(list);
+        } catch (NoCustomContextException e) {
+            throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
+        }
+    }
 
 	/**
 	 * Applies the tab interval of the p tag on its {@link TabbedChunk} elements. <br />
@@ -145,6 +206,9 @@ public class ParaGraph extends AbstractTagProcessor {
 				p.add(new Chunk(tab));
 				p.add(new Chunk((TabbedChunk) e));
 			} else {
+                if (e instanceof LineSeparator) {
+                    p.add(Chunk.NEWLINE);
+                }
 				p.add(e);
 			}
 		}

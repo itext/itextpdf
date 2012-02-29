@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Kevin Day, Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -145,7 +145,7 @@ public class PdfContentStreamProcessor {
      * @return the font
      * @since 5.0.6
      */
-    public CMapAwareDocumentFont getFont(PRIndirectReference ind) {
+    private CMapAwareDocumentFont getFont(PRIndirectReference ind) {
         Integer n = Integer.valueOf(ind.getNumber());
         CMapAwareDocumentFont font = cachedFonts.get(n);
         if (font == null) {
@@ -153,6 +153,10 @@ public class PdfContentStreamProcessor {
             cachedFonts.put(n, font);
         }
         return font;
+    }
+
+    private CMapAwareDocumentFont getFont(PdfDictionary fontResource) {
+        return new CMapAwareDocumentFont(fontResource);
     }
 
     /**
@@ -345,7 +349,8 @@ public class PdfContentStreamProcessor {
 
 
     /**
-     * Processes PDF syntax
+     * Processes PDF syntax.
+     * <b>Note:</b> If you re-use a given {@link PdfContentStreamProcessor}, you must call {@link PdfContentStreamProcessor#reset()}
      * @param contentBytes	the bytes of a content stream
      * @param resources		the resources that come with the content stream
      */
@@ -359,8 +364,8 @@ public class PdfContentStreamProcessor {
                 PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
                 if ("BI".equals(operator.toString())){
                     // we don't call invokeOperator for embedded images - this is one area of the PDF spec that is particularly nasty and inconsistent
-                    PdfDictionary colorSpaceDic = resources.getAsDict(PdfName.COLORSPACE);
-                    ImageRenderInfo renderInfo = ImageRenderInfo.createdForEmbeddedImage(gs().ctm, InlineImageUtils.parseInlineImage(ps, colorSpaceDic));
+                    PdfDictionary colorSpaceDic = resources != null ? resources.getAsDict(PdfName.COLORSPACE) : null;
+                    ImageRenderInfo renderInfo = ImageRenderInfo.createForEmbeddedImage(gs().ctm, InlineImageUtils.parseInlineImage(ps, colorSpaceDic), colorSpaceDic);
                     renderListener.renderImage(renderInfo);
                 } else {
                     invokeOperator(operator, operands);
@@ -575,7 +580,12 @@ public class PdfContentStreamProcessor {
             float size = ((PdfNumber)operands.get(1)).floatValue();
 
             PdfDictionary fontsDictionary = processor.resources.getAsDict(PdfName.FONT);
-            CMapAwareDocumentFont font = processor.getFont((PRIndirectReference)fontsDictionary.get(fontResourceName));
+            CMapAwareDocumentFont font;
+            PdfObject fontObject = fontsDictionary.get(fontResourceName);
+            if (fontObject instanceof PdfDictionary)
+                font = processor.getFont((PdfDictionary)fontObject);
+            else
+                font = processor.getFont((PRIndirectReference)fontObject);
 
             processor.gs().font = font;
             processor.gs().fontSize = size;
@@ -836,7 +846,8 @@ public class PdfContentStreamProcessor {
     private static class ImageXObjectDoHandler implements XObjectDoHandler{
 
         public void handleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference ref) {
-            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs().ctm, ref);
+            PdfDictionary colorSpaceDic = processor.resources.getAsDict(PdfName.COLORSPACE);
+            ImageRenderInfo renderInfo = ImageRenderInfo.createForXObject(processor.gs().ctm, ref, colorSpaceDic);
             processor.renderListener.renderImage(renderInfo);
         }
     }

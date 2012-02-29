@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2011 1T3XT BVBA
+ * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,7 @@ public class PngWriter {
     private static final byte[] IEND = DocWriter.getISOBytes("IEND");
     private static final byte[] iCCP = DocWriter.getISOBytes("iCCP");
 
-    private static long[] crc_table;
+    private static int[] crc_table;
 
     private OutputStream outp;
 
@@ -90,12 +90,18 @@ public class PngWriter {
         writeChunk(IEND, new byte[0]);
     }
 
-    public void writeData(byte[] data, int stride) throws IOException {
+    public void writeData(byte[] data, final int stride) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         DeflaterOutputStream zip = new DeflaterOutputStream(stream);
-        for (int k = 0; k < data.length; k += stride) {
+        int k;
+        for (k = 0; k < data.length-stride; k += stride) {
             zip.write(0);
             zip.write(data, k, stride);
+        }
+        int remaining = data.length - k;
+        if (remaining > 0){
+            zip.write(0);
+            zip.write(data, k, remaining);
         }
         zip.finish();
         writeChunk(IDAT, stream.toByteArray());
@@ -121,37 +127,37 @@ public class PngWriter {
     private static void make_crc_table() {
         if (crc_table != null)
             return;
-        long[] crc2 = new long[256];
+        int[] crc2 = new int[256];
         for (int n = 0; n < 256; n++) {
-            long c = n;
+            int c = n;
             for (int k = 0; k < 8; k++) {
                 if ((c & 1) != 0)
-                    c = 0xedb88320L ^ (c >> 1);
+                    c = 0xedb88320 ^ (c >>> 1);
                 else
-                    c = c >> 1;
+                    c = c >>> 1;
             }
             crc2[n] = c;
         }
         crc_table = crc2;
     }
 
-    private static long update_crc(long crc, byte[] buf, int offset, int len) {
-        long c = crc;
+    private static int update_crc(int crc, byte[] buf, int offset, int len) {
+        int c = crc;
 
         if (crc_table == null)
             make_crc_table();
         for (int n = 0; n < len; n++) {
-            c = crc_table[(int)((c ^ buf[n + offset]) & 0xff)] ^ (c >> 8);
+            c = crc_table[(c ^ buf[n + offset]) & 0xff] ^ (c >>> 8);
         }
         return c;
     }
 
-    private static long crc(byte[] buf, int offset, int len) {
-        return update_crc(0xffffffffL, buf, offset, len) ^ 0xffffffffL;
+    private static int crc(byte[] buf, int offset, int len) {
+        return update_crc(0xffffffff, buf, offset, len) ^ 0xffffffff;
     }
 
-    private static long crc(byte[] buf) {
-        return update_crc(0xffffffffL, buf, 0, buf.length) ^ 0xffffffffL;
+    private static int crc(byte[] buf) {
+        return update_crc(0xffffffff, buf, 0, buf.length) ^ 0xffffffff;
     }
 
     public void outputInt(int n) throws IOException {
@@ -169,8 +175,8 @@ public class PngWriter {
         outputInt(data.length);
         outp.write(chunkType, 0, 4);
         outp.write(data);
-        long c = update_crc(0xffffffffL, chunkType, 0, chunkType.length);
-        c = update_crc(c, data, 0, data.length) ^ 0xffffffffL;
-        outputInt((int)c);
+        int c = update_crc(0xffffffff, chunkType, 0, chunkType.length);
+        c = update_crc(c, data, 0, data.length) ^ 0xffffffff;
+        outputInt(c);
     }
 }
