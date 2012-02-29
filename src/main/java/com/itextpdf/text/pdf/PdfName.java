@@ -945,7 +945,7 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName L2R = new PdfName("L2R");
     /**
      * A name
-     * @since 5.1.4
+     * @since 5.2.1
      */
     public static final PdfName LAB = new PdfName("Lab");
     /** A name */
