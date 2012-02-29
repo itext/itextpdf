@@ -106,14 +106,14 @@ public class Document implements DocListener {
      * For debugging purposes, we request you NOT to change this constant.
      * @since	2.1.6
      */
-	private static final String RELEASE = "5.1.4-SNAPSHOT";
+	private static final String RELEASE = "5.2.1-SNAPSHOT";
 	/**
 	 * This constant the iText version as shown in the producer line.
 	 * iText is a product developed by 1T3XT BVBA.
 	 * 1T3XT requests that you retain the iText producer line
 	 * in every PDF that is created or manipulated using iText.
 	 */
-	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " \u00a92000-2011 1T3XT BVBA";
+	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " \u00a92000-2012 1T3XT BVBA";
 
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging
