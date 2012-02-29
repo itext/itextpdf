@@ -493,7 +493,7 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName DEVICECMYK = new PdfName("DeviceCMYK");
     /**
      * A name
-     * @since 5.1.4
+     * @since 5.2.1
      */
     public static final PdfName DEVICEN = new PdfName("DeviceN");
     /** A name */
