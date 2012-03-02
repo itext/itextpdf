@@ -3256,7 +3256,7 @@ public class PdfContentByte {
      * adds a template with the given matrix.
      * @param template template to add
      * @param transform transform to apply to the template prior to adding it.
-     * @deprecated use com.itextpdf.text.geom.AffineTransform as paramter
+     * @deprecated use com.itextpdf.text.geom.AffineTransform as parameter
      */
     public void addTemplate(final PdfTemplate template, final java.awt.geom.AffineTransform transform) {
     	double matrix[] = new double[6];
