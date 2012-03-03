@@ -276,8 +276,7 @@ public class XfaForm {
     public org.w3c.dom.Document getDomDocument() {
         return domDocument;
     }
-
-
+    
     /**
      * Finds the complete field name contained in the "classic" forms from a partial
      * name.
@@ -1123,21 +1122,29 @@ public class XfaForm {
     }
 
     public void fillXfaForm(File file) throws IOException {
-		fillXfaForm(new FileInputStream(file));
+    	fillXfaForm(file, false);
+    }
+    public void fillXfaForm(File file, boolean readOnly) throws IOException {
+		fillXfaForm(new FileInputStream(file), readOnly);
     }
 
     public void fillXfaForm(InputStream is) throws IOException {
-    	fillXfaForm(new InputSource(is));
+    	fillXfaForm(is, false);
+    }
+    public void fillXfaForm(InputStream is, boolean readOnly) throws IOException {
+    	fillXfaForm(new InputSource(is), readOnly);
     }
 
-
     public void fillXfaForm(InputSource is) throws IOException {
+    	fillXfaForm(is, false);
+    }
+    public void fillXfaForm(InputSource is, boolean readOnly) throws IOException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     	DocumentBuilder db;
 		try {
 			db = dbf.newDocumentBuilder();
 	    	Document newdoc = db.parse(is);
-	    	fillXfaForm(newdoc.getDocumentElement());
+	    	fillXfaForm(newdoc.getDocumentElement(), readOnly);
 		} catch (ParserConfigurationException e) {
 			throw new ExceptionConverter(e);
 		} catch (SAXException e) {
@@ -1145,11 +1152,20 @@ public class XfaForm {
 		}
     }
 
+    public void fillXfaForm(Node node) {
+    	fillXfaForm(node, false);
+    }
     /**
      * Replaces the data under datasets/data.
      * @since	iText 5.0.0
      */
-    public void fillXfaForm(Node node) {
+    public void fillXfaForm(Node node, boolean readOnly) {
+    	if (readOnly) {
+        	NodeList nodeList = domDocument.getElementsByTagName("field");
+        	for (int i = 0; i < nodeList.getLength(); i++) {
+    			((Element)nodeList.item(i)).setAttribute("access", "readOnly");
+    		}
+    	}
         NodeList allChilds = datasetsNode.getChildNodes();
         int len = allChilds.getLength();
         Node data = null;
