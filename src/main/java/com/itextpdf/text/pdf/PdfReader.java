@@ -3528,6 +3528,8 @@ public class PdfReader implements PdfViewerPreferences {
 
         private void iteratePages(final PRIndirectReference rpage) throws IOException {
             PdfDictionary page = (PdfDictionary)getPdfObject(rpage);
+            if (page == null)
+                return;
             PdfArray kidsPR = page.getAsArray(PdfName.KIDS);
             // reference to a leaf
             if (kidsPR == null) {
