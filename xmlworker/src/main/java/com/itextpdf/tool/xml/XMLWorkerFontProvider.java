@@ -75,6 +75,10 @@ public class XMLWorkerFontProvider extends FontFactoryImp {
         }
     }
 
+    public void addFontSubstitute(String font, String substitute) {
+    	fontSubstitutionMap.put(font, substitute);
+    }
+    
     @Override
     public Font getFont(final String fontname, final String encoding, final boolean embedded, final float size, final int style, final BaseColor color) {
         Font font = getFont(fontname, encoding, size, style);
