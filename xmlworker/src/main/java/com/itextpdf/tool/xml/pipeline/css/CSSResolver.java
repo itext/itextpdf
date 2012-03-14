@@ -46,6 +46,7 @@ package com.itextpdf.tool.xml.pipeline.css;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.CssFile;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
+import com.itextpdf.tool.xml.net.FileRetrieve;
 
 /**
  * Resolves CSS rules for a given tag.
@@ -95,6 +96,12 @@ public interface CSSResolver {
 	 */
 	void addCss(CssFile file);
 
+	/**
+	 * The {@link FileRetrieve} implementation to use in {@link CSSResolver#addCss(String, boolean)}.
+	 * @param retrieve the retrieve to set
+	 */
+	public void setFileRetrieve(final FileRetrieve retrieve);
+	
 	/**
 	 * @return an instance of this resolver
 	 * @throws CssResolverException thrown if something goes wrong

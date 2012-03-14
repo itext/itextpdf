@@ -89,7 +89,7 @@ public class FileRetrieveImpl implements FileRetrieve {
 	 * f.isDirectory()
 	 * </pre>
 	 */
-	public FileRetrieveImpl(final String[] strings) {
+	public FileRetrieveImpl(final String... strings) {
 		this();
 		for (String s : strings) {
 			if (s.startsWith("http") || s.startsWith("https")) {
@@ -101,6 +101,25 @@ public class FileRetrieveImpl implements FileRetrieve {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Constructs a new FileRetrieveImpl with the given root url's and
+	 * directories
+	 *
+	 * @param strings an array of strings, if the String starts with http or
+	 *            https it's taken as URL otherwise we check if it's a directory
+	 *            with
+	 *
+	 *            <pre>
+	 * File f = new File(str);
+	 * f.isDirectory()
+	 * </pre>
+	 */
+	public FileRetrieveImpl(File rootdir) {
+		this();
+		if (rootdir.isDirectory())
+			rootdirs.add(rootdir);
 	}
 
 	/**
