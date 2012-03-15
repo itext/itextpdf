@@ -53,6 +53,7 @@ import java.util.HashMap;
  *
  */
 public class XMLWorkerFontProvider extends FontFactoryImp {
+	public static final String DONTLOOKFORFONTS = "\ufffc";
     private HashMap<String, String> fontSubstitutionMap = new HashMap<String, String>();
 
     public XMLWorkerFontProvider() {
@@ -64,10 +65,10 @@ public class XMLWorkerFontProvider extends FontFactoryImp {
     }
 
     public XMLWorkerFontProvider(String fontsPath, HashMap<String, String> fontSubstitutionMap) {
-        if ((fontsPath != null) && (fontsPath.length() > 0)) {
-            super.registerDirectory(fontsPath, true);
-        } else {
+        if (fontsPath == null || fontsPath.length() == 0) {
             super.registerDirectories();
+        } else if (!fontsPath.equals(DONTLOOKFORFONTS)) {
+            super.registerDirectory(fontsPath, true);
         }
 
         if (fontSubstitutionMap != null) {

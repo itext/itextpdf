@@ -197,7 +197,10 @@ public class XMLWorkerHelper {
 				writer)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
 		XMLParser p = new XMLParser(true, worker, charset);
-		p.parse(in);
+		if (charset != null)
+			p.parse(in, charset);
+		else
+			p.parse(in);
 	}
 
 	/**
