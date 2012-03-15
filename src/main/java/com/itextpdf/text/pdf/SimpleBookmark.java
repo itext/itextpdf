@@ -292,6 +292,27 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
     }
 
     /**
+    * Gets a <CODE>List</CODE> with the bookmarks that are children of <CODE>outline</CODE>. It returns <CODE>null</CODE> if
+    * the document doesn't have any bookmarks.
+    * @param reader the document
+    * @param outline the outline dictionary to get bookmarks from
+    * @return a <CODE>List</CODE> with the bookmarks or <CODE>null</CODE> if the
+    * document doesn't have any
+    */
+    public static List<HashMap<String, Object>> getBookmark(PdfReader reader, PdfDictionary outline) {
+        PdfDictionary catalog = reader.getCatalog();
+        if (outline == null)
+            return null;
+        IntHashtable pages = new IntHashtable();
+        int numPages = reader.getNumberOfPages();
+        for (int k = 1; k <= numPages; ++k) {
+            pages.put(reader.getPageOrigRef(k).getNumber(), k);
+            reader.releasePage(k);
+        }
+        return bookmarkDepth(reader, (PdfDictionary)PdfReader.getPdfObjectRelease(outline.get(PdfName.FIRST)), pages);
+    }
+
+    /**
      * Removes the bookmark entries for a number of page ranges. The page ranges
      * consists of a number of pairs with the start/end page range. The page numbers
      * are inclusive.
