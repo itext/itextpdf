@@ -473,6 +473,15 @@ public class ColumnText {
         compositeElements.add(element);
     }
 
+    public static boolean isAllowedElement(Element element) {
+    	int type = element.type();
+    	if (type == Element.CHUNK || type == Element.PHRASE
+    			|| type == Element.PARAGRAPH || type == Element.LIST
+    			|| type == Element.YMARK || type == Element.PTABLE) return true;
+    	if (element instanceof Image) return true;
+		return false;
+    }
+    
     /**
      * Converts a sequence of lines representing one of the column bounds into
      * an internal format.
