@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text;
 
+import java.util.ArrayList;
+
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 
@@ -202,6 +204,48 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
         }
     }
 
+    /**
+     * Creates a shallow clone of the Paragraph.
+     * @return
+     */
+    public Paragraph cloneShallow() {
+    	Paragraph copy = new Paragraph();
+        copy.setFont(getFont());
+    	copy.setAlignment(getAlignment());
+    	copy.setLeading(getLeading(), multipliedLeading);
+    	copy.setIndentationLeft(getIndentationLeft());
+    	copy.setIndentationRight(getIndentationRight());
+    	copy.setFirstLineIndent(getFirstLineIndent());
+    	copy.setSpacingAfter(getSpacingAfter());
+    	copy.setSpacingBefore(getSpacingBefore());
+    	copy.setExtraParagraphSpace(getExtraParagraphSpace());
+    	return copy;
+    }
+    
+    /**
+     * Breaks this Paragraph up in different parts, separating paragraphs, lists and tables from each other.
+     * @return
+     */
+    public java.util.List<Element> breakUp() {
+    	java.util.List<Element> list = new ArrayList<Element>();
+		Paragraph tmp = cloneShallow();
+		for (Element e : this) {
+			if (e.type() == Element.LIST || e.type() == Element.PTABLE) {
+				if (tmp.size() > 0) {
+					list.add(tmp);
+					tmp = cloneShallow();
+				}
+				list.add(e);
+			}
+			else {
+				tmp.add(e);
+			}
+		}
+		if (tmp.size() > 0)
+			list.add(tmp);
+    	return list;
+    }
+    
     // implementation of the Element-methods
 
     /**
