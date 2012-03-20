@@ -470,6 +470,11 @@ public class ColumnText {
             bidiLine = null;
             waitPhrase = null;
         }
+        if (element.type() == Element.PARAGRAPH) {
+        	Paragraph p = (Paragraph)element;
+        	compositeElements.addAll(p.breakUp());
+        	return;
+        }
         compositeElements.add(element);
     }
 
