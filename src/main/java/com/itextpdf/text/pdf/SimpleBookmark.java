@@ -113,7 +113,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
     private SimpleBookmark() {
     }
 
-    private static List<HashMap<String, Object>> bookmarkDepth(PdfReader reader, PdfDictionary outline, IntHashtable pages) {
+    private static List<HashMap<String, Object>> bookmarkDepth(PdfReader reader, PdfDictionary outline, IntHashtable pages, boolean processCurrentOutlineOnly) {
         ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
         while (outline != null) {
             HashMap<String, Object> map = new HashMap<String, Object>();
@@ -219,10 +219,13 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
             }
             PdfDictionary first = (PdfDictionary)PdfReader.getPdfObjectRelease(outline.get(PdfName.FIRST));
             if (first != null) {
-                map.put("Kids", bookmarkDepth(reader, first, pages));
+                map.put("Kids", bookmarkDepth(reader, first, pages, false));
             }
             list.add(map);
-            outline = (PdfDictionary)PdfReader.getPdfObjectRelease(outline.get(PdfName.NEXT));
+            if (!processCurrentOutlineOnly)
+                outline = (PdfDictionary)PdfReader.getPdfObjectRelease(outline.get(PdfName.NEXT));
+            else
+                outline = null;
         }
         return list;
     }
@@ -282,13 +285,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
         if (obj == null || !obj.isDictionary())
             return null;
         PdfDictionary outlines = (PdfDictionary)obj;
-        IntHashtable pages = new IntHashtable();
-        int numPages = reader.getNumberOfPages();
-        for (int k = 1; k <= numPages; ++k) {
-            pages.put(reader.getPageOrigRef(k).getNumber(), k);
-            reader.releasePage(k);
-        }
-        return bookmarkDepth(reader, (PdfDictionary)PdfReader.getPdfObjectRelease(outlines.get(PdfName.FIRST)), pages);
+        return SimpleBookmark.getBookmark(reader, outlines, false);
     }
 
     /**
@@ -296,10 +293,11 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
     * the document doesn't have any bookmarks.
     * @param reader the document
     * @param outline the outline dictionary to get bookmarks from
+    * @param includeRoot indicates if to include <CODE>outline</CODE> parameter itself into returned list of bookmarks
     * @return a <CODE>List</CODE> with the bookmarks or <CODE>null</CODE> if the
     * document doesn't have any
     */
-    public static List<HashMap<String, Object>> getBookmark(PdfReader reader, PdfDictionary outline) {
+    public static List<HashMap<String, Object>> getBookmark(PdfReader reader, PdfDictionary outline, boolean includeRoot) {
         PdfDictionary catalog = reader.getCatalog();
         if (outline == null)
             return null;
@@ -309,7 +307,10 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
             pages.put(reader.getPageOrigRef(k).getNumber(), k);
             reader.releasePage(k);
         }
-        return bookmarkDepth(reader, (PdfDictionary)PdfReader.getPdfObjectRelease(outline.get(PdfName.FIRST)), pages);
+        if (includeRoot)
+            return bookmarkDepth(reader, outline, pages, true);
+        else
+            return bookmarkDepth(reader, (PdfDictionary)PdfReader.getPdfObjectRelease(outline.get(PdfName.FIRST)), pages, false);
     }
 
     /**
@@ -597,7 +598,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
      * some other XML document.
      * @param list the bookmarks
      * @param out the export destination. The writer is not closed
-     * @param indent the indentation level. Pretty printing significant only
+     * @param indent the indentation level. Pretty printing significant only. Use <CODE>-1</CODE> for no indents.
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>,
      * whatever the encoding
      * @throws IOException on error
@@ -606,8 +607,10 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
     @SuppressWarnings("unchecked")
     public static void exportToXMLNode(List<HashMap<String, Object>> list, Writer out, int indent, boolean onlyASCII) throws IOException {
         String dep = "";
-        for (int k = 0; k < indent; ++k)
-            dep += "  ";
+        if (indent != -1) {
+            for (int k = 0; k < indent; ++k)
+                dep += "  ";
+        }
         for (HashMap<String, Object> map : list) {
             String title = null;
             out.write(dep);
@@ -639,7 +642,7 @@ public final class SimpleBookmark implements SimpleXMLDocHandler {
             out.write(XMLUtil.escapeXML(title, onlyASCII));
             if (kids != null) {
                 out.write("\n");
-                exportToXMLNode(kids, out, indent + 1, onlyASCII);
+                exportToXMLNode(kids, out, indent == -1 ? indent : indent + 1, onlyASCII);
                 out.write(dep);
             }
             out.write("</Title>\n");
