@@ -91,6 +91,8 @@ public interface CssAppliers {
 	 * @return the chunk css applier
 	 */
 	ChunkCssApplier getChunkCssAplier();
+	
+	public void setChunkCssAplier(final ChunkCssApplier chunkCssAplier);
 
     CssAppliers clone();
 
