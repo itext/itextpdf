@@ -43,9 +43,6 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.PageSize;
@@ -61,6 +58,9 @@ import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.table.CellSpacingEvent;
 import com.itextpdf.tool.xml.html.table.Table;
 import com.itextpdf.tool.xml.html.table.TableStyleValues;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Emiel Ackermann
@@ -123,8 +123,8 @@ public class HtmlCellCssApplier {
             String align = null;
             if (t.getAttributes().containsKey(HTML.Attribute.ALIGN)) {
                 align = t.getAttributes().get(HTML.Attribute.ALIGN);
-            } else if (css.containsKey(HTML.Attribute.ALIGN)) {
-                align = css.get(HTML.Attribute.ALIGN);
+            } else if (css.containsKey(CSS.Property.TEXT_ALIGN)) {
+                align = css.get(CSS.Property.TEXT_ALIGN);
             }
 
             if (align != null) {
@@ -132,6 +132,8 @@ public class HtmlCellCssApplier {
                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 } else if (align.equalsIgnoreCase(CSS.Value.RIGHT)) {
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                } else if (align.equalsIgnoreCase(CSS.Value.JUSTIFY)) {
+                    cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
                 }
             }
 
@@ -200,8 +202,8 @@ public class HtmlCellCssApplier {
 					}
 				}
 	    	}
-			float horSpacing = new Table().getBorderOrCellSpacing(true, table.getCSS(), table.getAttributes());
-			float verSpacing = new Table().getBorderOrCellSpacing(false, table.getCSS(), table.getAttributes());
+			float horSpacing = Table.getBorderOrCellSpacing(true, table.getCSS(), table.getAttributes());
+			float verSpacing = Table.getBorderOrCellSpacing(false, table.getCSS(), table.getAttributes());
 	    	values.setHorBorderSpacing(horSpacing);
 	    	values.setVerBorderSpacing(verSpacing);
 	    	cell.setPaddingLeft(cell.getPaddingLeft()+horSpacing+values.getBorderWidthLeft());

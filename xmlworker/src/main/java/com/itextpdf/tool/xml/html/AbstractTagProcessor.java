@@ -31,10 +31,10 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.itextpdf.text.*;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
@@ -49,6 +49,9 @@ import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
 import com.itextpdf.tool.xml.pipeline.ctx.ObjectContext;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract TagProcessor that allows setting the configuration object to a

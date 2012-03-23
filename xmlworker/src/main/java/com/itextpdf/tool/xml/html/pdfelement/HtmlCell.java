@@ -62,6 +62,12 @@ public class HtmlCell extends PdfPCell {
 	public HtmlCell() {
 		super();
 		fixedWidth = 0;
+        setPaddingLeft(0);
+        setPaddingRight(0);
+        setPaddingTop(0);
+        setPaddingBottom(0);
+        setUseAscender(true);
+        setUseDescender(true);
 	}
 
 	/**

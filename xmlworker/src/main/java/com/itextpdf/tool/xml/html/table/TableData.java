@@ -43,10 +43,9 @@
  */
 package com.itextpdf.tool.xml.html.table;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.itextpdf.text.*;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
@@ -59,6 +58,9 @@ import com.itextpdf.tool.xml.html.HTMLUtils;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author redlab_b
@@ -106,7 +108,7 @@ public class TableData extends AbstractTagProcessor {
         } catch (NoCustomContextException e1) {
             throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
         }
-        cell.getColumn().setUseAscender(true);
+
 		List<Element> l = new ArrayList<Element>(1);
         List<Element> chunks = new ArrayList<Element>();
 		for (Element e : currentContent) {

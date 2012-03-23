@@ -210,7 +210,7 @@ public class Table extends AbstractTagProcessor {
 							}
 						}
 					}
-					if (cell.getCompositeElements() != null) {
+					if (cell.getCompositeElements() != null && colspan == 1) {
 						float[] widthValues = setCellWidthAndWidestWord(cell);
 						float cellWidth = widthValues[0] / colspan;
 						float widestWordOfCell = widthValues[1] / colspan;
@@ -366,7 +366,7 @@ public class Table extends AbstractTagProcessor {
 			}
 
             Float tableHeight = new HeightCalculator().getHeight(tag, getHtmlPipelineContext(ctx).getPageSize().getHeight());
-
+            int rowNumber = 0;
 			for (TableRowElement row : tableRows) {
 				int columnNumber = -1;
                 Float computedRowHeight = null;
@@ -375,9 +375,6 @@ public class Table extends AbstractTagProcessor {
                     computedRowHeight = tableHeight - computedTableHeigt;
                 }
 				for (HtmlCell cell : row.getContent()) {
-                    if (computedRowHeight != null && computedRowHeight > 0) {
-                        cell.setFixedHeight(computedRowHeight);
-                    }
 					columnNumber += cell.getColspan();
 					List<Element> compositeElements = cell.getCompositeElements();
 					if (compositeElements != null) {
@@ -400,8 +397,16 @@ public class Table extends AbstractTagProcessor {
 						}
 					}
 					table.addCell(cell);
+                    cell.getMaxHeight();
 				}
 				table.completeRow();
+                if (computedRowHeight != null && computedRowHeight > 0) {
+                    float rowHeight = table.getRow(rowNumber).getMaxHeights();
+                    if (rowHeight < computedRowHeight) {
+                        table.getRow(rowNumber).setMaxHeights(computedRowHeight);
+                    }
+                }
+                rowNumber++;
 			}
 			if (percentage) {
 				table.setWidthPercentage(utils.parsePxInCmMmPcToPt(widthValue));
@@ -544,9 +549,9 @@ public class Table extends AbstractTagProcessor {
 	 * @return horizontal or vertical spacing between two cells or a cell and
 	 *         the border of the table.
 	 */
-	public float getBorderOrCellSpacing(final boolean getHor, final Map<String, String> css,
+	static public float getBorderOrCellSpacing(final boolean getHor, final Map<String, String> css,
 			final Map<String, String> attributes) {
-		float spacing = 1.5f;
+		float spacing = 0f;
 		String collapse = css.get("border-collapse");
 		if (collapse == null || collapse.equals("seperate")) {
 			String borderSpacing = css.get("border-spacing");
@@ -565,7 +570,7 @@ public class Table extends AbstractTagProcessor {
 			} else if (cellSpacing != null) {
 				spacing = utils.parsePxInCmMmPcToPt(cellSpacing);
 			} else if (borderAttr != null) {
-				spacing = 1.5f;
+				spacing = utils.parsePxInCmMmPcToPt(borderAttr);
 			}
 		} else if (collapse.equals("collapse")) {
 			spacing = 0;
@@ -743,13 +748,13 @@ public class Table extends AbstractTagProcessor {
 	 */
 	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values,
 			final WorkerContext ctx) throws NoCustomContextException {
-		float spacingBefore = values.getBorderWidthTop();
+		float spacingBefore = 0;//values.getBorderWidthTop();
 		Map<String, Object> memory = getHtmlPipelineContext(ctx).getMemory();
-		Object mb = memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
+		/*Object mb = memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
 		if (mb != null) {
 			spacingBefore += (Float) mb;
-		}
-		float spacingAfter = values.getVerBorderSpacing() + values.getBorderWidthBottom();
+		}*/
+		float spacingAfter = 0;//values.getVerBorderSpacing() + values.getBorderWidthBottom();
 		for (Entry<String, String> css : t.getCSS().entrySet()) {
 			String key = css.getKey();
 			String value = css.getValue();
