@@ -42,10 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
@@ -58,6 +54,11 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.draw.DrawInterface;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -1381,6 +1382,7 @@ public class ColumnText {
 
                 // Y-offset
                 float yTemp = yLine;
+                yTemp += descender;
                 if (rowIdx == 0 && adjustFirstLine)
                     yTemp -= table.spacingBefore();
 
@@ -1571,6 +1573,7 @@ public class ColumnText {
                 }
 
                 yLine = yTemp;
+                descender = 0;
                 if (!(skipHeader || table.isComplete()))
                 	yLine += footerHeight;
                 if (k >= table.size()) {
