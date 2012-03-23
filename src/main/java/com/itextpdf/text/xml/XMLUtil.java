@@ -115,7 +115,10 @@ public class XMLUtil {
                 		if (isValidCharacterValue(esc)) {
                 			c = (char)Integer.parseInt(esc);
                 			i = pos;
-                		}
+                		} else {
+                            i = pos;
+                            continue;
+                        }
                 	}
                 	else {
                 		int tmp = unescape(esc);

@@ -43,10 +43,10 @@
  */
 package com.itextpdf.text;
 
-import java.util.ArrayList;
-
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
+
+import java.util.ArrayList;
 
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
@@ -232,6 +232,10 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
 		for (Element e : this) {
 			if (e.type() == Element.LIST || e.type() == Element.PTABLE) {
 				if (tmp.size() > 0) {
+                    tmp.setSpacingAfter(0);
+                    if (!list.isEmpty()) {
+                        tmp.setSpacingBefore(0);
+                    }
 					list.add(tmp);
 					tmp = cloneShallow();
 				}
@@ -241,8 +245,12 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
 				tmp.add(e);
 			}
 		}
-		if (tmp.size() > 0)
+		if (tmp.size() > 0) {
+            if (!list.isEmpty()) {
+                tmp.setSpacingBefore(0);
+            }
 			list.add(tmp);
+        }
     	return list;
     }
     
