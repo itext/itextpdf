@@ -208,7 +208,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
      * Creates a shallow clone of the Paragraph.
      * @return
      */
-    public Paragraph cloneShallow() {
+    public Paragraph cloneShallow(boolean spacingBefore) {
     	Paragraph copy = new Paragraph();
         copy.setFont(getFont());
     	copy.setAlignment(getAlignment());
@@ -217,7 +217,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
     	copy.setIndentationRight(getIndentationRight());
     	copy.setFirstLineIndent(getFirstLineIndent());
     	copy.setSpacingAfter(getSpacingAfter());
-    	copy.setSpacingBefore(getSpacingBefore());
+    	if (spacingBefore)
+    		copy.setSpacingBefore(getSpacingBefore());
     	copy.setExtraParagraphSpace(getExtraParagraphSpace());
     	return copy;
     }
@@ -228,16 +229,13 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
      */
     public java.util.List<Element> breakUp() {
     	java.util.List<Element> list = new ArrayList<Element>();
-		Paragraph tmp = cloneShallow();
+		Paragraph tmp = cloneShallow(true);
 		for (Element e : this) {
 			if (e.type() == Element.LIST || e.type() == Element.PTABLE) {
 				if (tmp.size() > 0) {
                     tmp.setSpacingAfter(0);
-                    if (!list.isEmpty()) {
-                        tmp.setSpacingBefore(0);
-                    }
 					list.add(tmp);
-					tmp = cloneShallow();
+					tmp = cloneShallow(false);
 				}
 				list.add(e);
 			}
@@ -246,9 +244,6 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
 			}
 		}
 		if (tmp.size() > 0) {
-            if (!list.isEmpty()) {
-                tmp.setSpacingBefore(0);
-            }
 			list.add(tmp);
         }
     	return list;
