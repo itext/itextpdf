@@ -228,6 +228,7 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 			if (currentContent.size() > 0) {
 				if (addNewLines) {
 					Paragraph p = new Paragraph(Float.NaN);
+                    p.setMultipliedLeading(1.2f);
 					for (Element e : currentContent) {
                         if (e instanceof LineSeparator) {
                             p.add(Chunk.NEWLINE);

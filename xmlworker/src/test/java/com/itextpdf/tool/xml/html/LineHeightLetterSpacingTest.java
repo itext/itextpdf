@@ -42,18 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.tool.xml.html;
-import static org.junit.Assert.assertEquals;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.log.LoggerFactory;
@@ -64,6 +52,18 @@ import com.itextpdf.tool.xml.XMLWorker;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.itextpdf.tool.xml.css.CssUtils;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -103,7 +103,7 @@ public class LineHeightLetterSpacingTest {
 	}
 	@Test
 	public void resolveLeading() throws IOException {
-		assertEquals(18, ((Paragraph)elementList.get(0)).getLeading(), 0);
+		assertTrue(Math.abs(1.2f - ((Paragraph)elementList.get(0)).getMultipliedLeading()) < 0.0001f);
 		assertEquals(8, ((Paragraph)elementList.get(1)).getLeading(), 0); // leading laten bepalen door inner line-height setting?
 		assertEquals(160, ((Paragraph)elementList.get(2)).getLeading(), 0);
 		assertEquals(21, ((Paragraph)elementList.get(3)).getLeading(), 0); //1.75em
