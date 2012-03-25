@@ -281,7 +281,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
             super.addSpecial(o);
             return true;
         }
-        else if (o instanceof Phrase) {
+        else if (o instanceof Paragraph) {
         	super.addSpecial(o);
         	return true;
         }
