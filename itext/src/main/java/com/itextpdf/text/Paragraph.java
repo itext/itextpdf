@@ -231,7 +231,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
     	java.util.List<Element> list = new ArrayList<Element>();
 		Paragraph tmp = cloneShallow(true);
 		for (Element e : this) {
-			if (e.type() == Element.LIST || e.type() == Element.PTABLE) {
+			if (e.type() == Element.LIST || e.type() == Element.PTABLE || e.type() == Element.PARAGRAPH) {
 				if (tmp.size() > 0) {
                     tmp.setSpacingAfter(0);
 					list.add(tmp);
@@ -282,16 +282,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
             return true;
         }
         else if (o instanceof Paragraph) {
-            super.add(o);
-            java.util.List<Chunk> chunks = getChunks();
-            if (!chunks.isEmpty()) {
-            	Chunk tmp = chunks.get(chunks.size() - 1);
-            	super.add(new Chunk("\n", tmp.getFont()));
-            }
-            else {
-            	super.add(Chunk.NEWLINE);
-            }
-            return true;
+        	super.addSpecial(o);
+        	return true;
         }
         return super.add(o);
     }
