@@ -528,6 +528,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName DOCUMENT = new PdfName( "Document" );
     /** A name */
     public static final PdfName DOMAIN = new PdfName("Domain");
+    /**
+     * A name.
+     * @since 5.2.1
+     */
+    public static final PdfName DOS = new PdfName("DOS");
     /** A name */
     public static final PdfName DP = new PdfName("DP");
     /** A name */
@@ -1015,6 +1020,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName LZWDECODE = new PdfName("LZWDecode");
     /** A name */
     public static final PdfName M = new PdfName("M");
+    /**
+     * A name.
+     * @since 5.2.1
+     */
+    public static final PdfName MAC = new PdfName("Mac");
     /**
      * A name
      * @since	2.1.6
@@ -1806,6 +1816,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName UHC = new PdfName("UHC");
     /** A name of an attribute. */
     public static final PdfName UNDERLINE = new PdfName("Underline");
+    /**
+     * A name.
+     * @since 5.2.1
+     */
+    public static final PdfName UNIX = new PdfName("Unix");
     /** A name */
     public static final PdfName UR = new PdfName("UR");
     /** A name */
