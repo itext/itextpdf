@@ -41,17 +41,14 @@
  */
 package com.itextpdf.tool.xml;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.nio.charset.Charset;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.css.*;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
-import com.itextpdf.tool.xml.html.*;
+import com.itextpdf.tool.xml.html.TagProcessor;
+import com.itextpdf.tool.xml.html.TagProcessorFactory;
+import com.itextpdf.tool.xml.html.Tags;
 import com.itextpdf.tool.xml.parser.XMLParser;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
 import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
@@ -59,6 +56,11 @@ import com.itextpdf.tool.xml.pipeline.end.ElementHandlerPipeline;
 import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.charset.Charset;
 
 /**
  * A helper class for parsing XHTML/CSS or XML flow to PDF.
@@ -219,7 +221,10 @@ public class XMLWorkerHelper {
 				null)));
 		XMLWorker worker = new XMLWorker(pipeline, true);
 		XMLParser p = new XMLParser(true, worker, charset);
-		p.parse(in);
+		if (charset != null)
+			p.parse(in, charset);
+		else
+			p.parse(in);
 	}
 
 	/**

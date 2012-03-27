@@ -241,6 +241,7 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 					list.add(p);
 				} else {
 					NoNewLineParagraph p = new NoNewLineParagraph(Float.NaN);
+                    p.setMultipliedLeading(1.2f);
 					for (Element e : currentContent) {
 						p.add(e);
 					}

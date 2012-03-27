@@ -397,7 +397,6 @@ public class Table extends AbstractTagProcessor {
 						}
 					}
 					table.addCell(cell);
-                    cell.getMaxHeight();
 				}
 				table.completeRow();
                 if (computedRowHeight != null && computedRowHeight > 0) {
@@ -749,8 +748,8 @@ public class Table extends AbstractTagProcessor {
 	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values,
 			final WorkerContext ctx) throws NoCustomContextException {
 		float spacingBefore = 0;//values.getBorderWidthTop();
-		Map<String, Object> memory = getHtmlPipelineContext(ctx).getMemory();
-		/*Object mb = memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
+		/*Map<String, Object> memory = getHtmlPipelineContext(ctx).getMemory();
+		Object mb = memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
 		if (mb != null) {
 			spacingBefore += (Float) mb;
 		}*/
