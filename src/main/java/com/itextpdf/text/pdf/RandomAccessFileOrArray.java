@@ -82,7 +82,7 @@ public class RandomAccessFileOrArray implements DataInput {
     
     /**
      * Constructs a new RandomAccessFileOrArrayObject
-     * @param filename the file to open (can be a file system file or one of hte following url strings: file://, http://, https://, jar:, wsjar:
+     * @param filename the file to open (can be a file system file or one of the following url strings: file://, http://, https://, jar:, wsjar:, vfszip:
      * @param forceRead if true, the entire file will be read into memory
      * @param plainRandomAccess if true, a regular RandomAccessFile is used to access the file contents.  If false, a memory mapped file will be used, unless the file cannot be mapped into memory, in which case regular RandomAccessFile will be used
      * @throws IOException if there is a failure opening or reading the file
@@ -91,8 +91,13 @@ public class RandomAccessFileOrArray implements DataInput {
         this.plainRandomAccess = plainRandomAccess;
         File file = new File(filename);
         if (!file.canRead()) {
-            if (filename.startsWith("file:/") || filename.startsWith("http://") 
-                    || filename.startsWith("https://") || filename.startsWith("jar:") || filename.startsWith("wsjar:")) {
+            if (filename.startsWith("file:/")
+            		|| filename.startsWith("http://") 
+                    || filename.startsWith("https://")
+                    || filename.startsWith("jar:")
+                    || filename.startsWith("wsjar:")
+                    || filename.startsWith("wsjar:")
+                    || filename.startsWith("vfszip:")) {
                 InputStream is = new URL(filename).openStream();
                 try {
                     this.arrayIn = InputStreamToArray(is);
