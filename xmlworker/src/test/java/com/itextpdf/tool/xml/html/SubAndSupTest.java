@@ -42,17 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.tool.xml.html;
-import static org.junit.Assert.assertEquals;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
@@ -62,6 +51,17 @@ import com.itextpdf.tool.xml.ElementHandler;
 import com.itextpdf.tool.xml.Writable;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -116,8 +116,8 @@ public class SubAndSupTest {
 	}
 	@Test
 	public void resolvePhraseLeading() throws IOException {
-		assertEquals(elementList.get(4).getChunks().get(0).getFont().getSize()*1.5f, ((Paragraph)elementList.get(4)).getLeading(), 0);
-		assertEquals(elementList.get(5).getChunks().get(0).getFont().getSize()*1.5f, ((Paragraph)elementList.get(5)).getLeading(), 0);
+		assertTrue(Math.abs(1.2f - ((Paragraph) elementList.get(4)).getMultipliedLeading()) < 0.0001);
+		assertTrue(Math.abs(1.2f - ((Paragraph) elementList.get(5)).getMultipliedLeading()) < 0.0001);
 	}
 
 }

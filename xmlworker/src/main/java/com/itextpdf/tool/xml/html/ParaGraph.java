@@ -31,10 +31,6 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ListItem;
@@ -50,6 +46,10 @@ import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.pdfelement.TabbedChunk;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author redlab_b
@@ -157,7 +157,14 @@ public class ParaGraph extends AbstractTagProcessor {
             addTabStopsContent(paragraphItems, p, css.get(CSS.Property.XFA_TAB_STOPS)); // leader elements needs to be
             l.add(p);                                                                    // extracted.
         } else {
-            for (Element e : currentContentToParagraph(paragraphItems, true, true, tag, ctx)) {
+            List<Element> paraList = currentContentToParagraph(paragraphItems, true, true, tag, ctx);
+            if (!l.isEmpty() && !paraList.isEmpty()) {
+                Element firstElement = paraList.get(0);
+                if (firstElement instanceof Paragraph ) {
+                    ((Paragraph) firstElement).setSpacingBefore(0);
+                }
+            }
+            for (Element e : paraList) {
                 l.add(e);
             }
         }
@@ -181,6 +188,12 @@ public class ParaGraph extends AbstractTagProcessor {
                 i++;
                 li.setMultipliedLeading(1.2f);
                 list.add(li);
+            }
+            if (!l.isEmpty()) {
+                Element latestElement = l.get(l.size() - 1);
+                if (latestElement instanceof Paragraph ) {
+                    ((Paragraph) latestElement).setSpacingAfter(0);
+                }
             }
             l.add(list);
         } catch (NoCustomContextException e) {

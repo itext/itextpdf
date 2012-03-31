@@ -90,6 +90,7 @@ import java.io.IOException;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
@@ -263,7 +264,11 @@ public class PdfPublicKeySecurityHandler {
                 tbscertificatestructure.getIssuer(),
                 tbscertificatestructure.getSerialNumber().getValue());
         Cipher cipher = Cipher.getInstance(algorithmidentifier.getObjectId().getId());
+        try{
         cipher.init(1, x509certificate);
+        }catch(InvalidKeyException e){
+        	cipher.init(1,x509certificate.getPublicKey());
+        }
         DEROctetString deroctetstring = new DEROctetString(cipher.doFinal(abyte0));
         RecipientIdentifier recipId = new RecipientIdentifier(issuerandserialnumber);
         return new KeyTransRecipientInfo( recipId, algorithmidentifier, deroctetstring);

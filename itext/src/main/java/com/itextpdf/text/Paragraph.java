@@ -46,6 +46,8 @@ package com.itextpdf.text;
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 
+import java.util.ArrayList;
+
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
  * <P>
@@ -202,6 +204,51 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
         }
     }
 
+    /**
+     * Creates a shallow clone of the Paragraph.
+     * @return
+     */
+    public Paragraph cloneShallow(boolean spacingBefore) {
+    	Paragraph copy = new Paragraph();
+        copy.setFont(getFont());
+    	copy.setAlignment(getAlignment());
+    	copy.setLeading(getLeading(), multipliedLeading);
+    	copy.setIndentationLeft(getIndentationLeft());
+    	copy.setIndentationRight(getIndentationRight());
+    	copy.setFirstLineIndent(getFirstLineIndent());
+    	copy.setSpacingAfter(getSpacingAfter());
+    	if (spacingBefore)
+    		copy.setSpacingBefore(getSpacingBefore());
+    	copy.setExtraParagraphSpace(getExtraParagraphSpace());
+    	return copy;
+    }
+    
+    /**
+     * Breaks this Paragraph up in different parts, separating paragraphs, lists and tables from each other.
+     * @return
+     */
+    public java.util.List<Element> breakUp() {
+    	java.util.List<Element> list = new ArrayList<Element>();
+		Paragraph tmp = cloneShallow(true);
+		for (Element e : this) {
+			if (e.type() == Element.LIST || e.type() == Element.PTABLE || e.type() == Element.PARAGRAPH) {
+				if (tmp.size() > 0) {
+                    tmp.setSpacingAfter(0);
+					list.add(tmp);
+					tmp = cloneShallow(false);
+				}
+				list.add(e);
+			}
+			else {
+				tmp.add(e);
+			}
+		}
+		if (tmp.size() > 0) {
+			list.add(tmp);
+        }
+    	return list;
+    }
+    
     // implementation of the Element-methods
 
     /**
@@ -235,16 +282,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
             return true;
         }
         else if (o instanceof Paragraph) {
-            super.add(o);
-            java.util.List<Chunk> chunks = getChunks();
-            if (!chunks.isEmpty()) {
-            	Chunk tmp = chunks.get(chunks.size() - 1);
-            	super.add(new Chunk("\n", tmp.getFont()));
-            }
-            else {
-            	super.add(Chunk.NEWLINE);
-            }
-            return true;
+        	super.addSpecial(o);
+        	return true;
         }
         return super.add(o);
     }

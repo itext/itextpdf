@@ -42,10 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
@@ -58,6 +54,11 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.draw.DrawInterface;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -470,9 +471,23 @@ public class ColumnText {
             bidiLine = null;
             waitPhrase = null;
         }
+        if (element.type() == Element.PARAGRAPH) {
+        	Paragraph p = (Paragraph)element;
+        	compositeElements.addAll(p.breakUp());
+        	return;
+        }
         compositeElements.add(element);
     }
 
+    public static boolean isAllowedElement(Element element) {
+    	int type = element.type();
+    	if (type == Element.CHUNK || type == Element.PHRASE
+    			|| type == Element.PARAGRAPH || type == Element.LIST
+    			|| type == Element.YMARK || type == Element.PTABLE) return true;
+    	if (element instanceof Image) return true;
+		return false;
+    }
+    
     /**
      * Converts a sequence of lines representing one of the column bounds into
      * an internal format.
@@ -1367,6 +1382,7 @@ public class ColumnText {
 
                 // Y-offset
                 float yTemp = yLine;
+                yTemp += descender;
                 if (rowIdx == 0 && adjustFirstLine)
                     yTemp -= table.spacingBefore();
 
@@ -1557,6 +1573,7 @@ public class ColumnText {
                 }
 
                 yLine = yTemp;
+                descender = 0;
                 if (!(skipHeader || table.isComplete()))
                 	yLine += footerHeight;
                 if (k >= table.size()) {

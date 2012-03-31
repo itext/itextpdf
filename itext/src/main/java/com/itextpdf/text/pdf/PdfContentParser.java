@@ -122,6 +122,8 @@ public class PdfContentParser {
                 throw new IOException(MessageLocalization.getComposedMessage("unexpected.end.of.file"));
                 if (tokeniser.getTokenType() == TokenType.END_DIC)
                     break;
+                if (tokeniser.getTokenType() == TokenType.OTHER && "def".equals(tokeniser.getStringValue()))
+                    continue;
                 if (tokeniser.getTokenType() != TokenType.NAME)
                     throw new IOException(MessageLocalization.getComposedMessage("dictionary.key.is.not.a.name"));
                 PdfName name = new PdfName(tokeniser.getStringValue(), false);

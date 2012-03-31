@@ -74,15 +74,17 @@ public class PathTag extends AbstractGraphicProcessor{
 			PathBean.Builder pathBuilder = new PathBean.Builder();
 			
 			List<String> list = splitPath(fullPath);
-			for (String str : list) {
-				if(str.length() == 1 && Character.isLetter(str.charAt(0))){
-					if(itemBuilder != null){
-						pathBuilder.setPathItem(itemBuilder.build());
-					}					
-					itemBuilder = new PathItem.Builder();
-					itemBuilder.setType(str.charAt(0));					
-				}else{
-					itemBuilder.addCoordinate(str);
+			if (list != null) {
+				for (String str : list) {
+					if(str.length() == 1 && Character.isLetter(str.charAt(0))){
+						if(itemBuilder != null){
+							pathBuilder.setPathItem(itemBuilder.build());
+						}					
+						itemBuilder = new PathItem.Builder();
+						itemBuilder.setType(str.charAt(0));					
+					}else{
+						itemBuilder.addCoordinate(str);
+					}
 				}
 			}
 			if(itemBuilder != null){

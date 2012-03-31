@@ -43,16 +43,12 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.xml.XMLUtil;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -63,6 +59,11 @@ import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 import com.itextpdf.tool.xml.pipeline.html.NoImageProviderException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author redlab_b
@@ -88,6 +89,8 @@ public class Image extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
 		if (null != src && src.length() > 0) {
 			// check if the image was already added once
+            src = XMLUtil.unescapeXML(src);
+            src = src.trim();
 			try {
 				if (logger.isLogging(Level.TRACE)) {
 					logger.trace(String.format(LocaleMessages.getInstance().getMessage(LocaleMessages.HTML_IMG_USE), src));
