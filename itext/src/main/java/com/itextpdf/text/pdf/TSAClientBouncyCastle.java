@@ -53,6 +53,7 @@ import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.tsp.*;
 
 import com.itextpdf.text.pdf.codec.Base64;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * Time Stamp Authority Client interface implementation using Bouncy Castle
@@ -138,7 +139,7 @@ public class TSAClientBouncyCastle implements TSAClient {
             tsqGenerator.setCertReq(true);
             // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
             BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
-            TimeStampRequest request = tsqGenerator.generate(PdfPKCS7.getAllowedDigests(getDigestAlgorithm()), imprint, nonce);
+            TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(PdfPKCS7.getAllowedDigests(getDigestAlgorithm())), imprint, nonce);
             byte[] requestBytes = request.getEncoded();
             
             // Call the communications layer

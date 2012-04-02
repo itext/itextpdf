@@ -56,8 +56,8 @@ import java.util.List;
 import java.util.Map;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.DEREnumerated;
-import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.ASN1Enumerated;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
@@ -190,7 +190,7 @@ public class LtvVerification {
         ASN1EncodableVector v2 = new ASN1EncodableVector();
         v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
         v2.add(doctet);
-        DEREnumerated den = new DEREnumerated(0);
+        ASN1Enumerated den = new ASN1Enumerated(0);
         ASN1EncodableVector v3 = new ASN1EncodableVector();
         v3.add(den);
         v3.add(new DERTaggedObject(true, 0, new DERSequence(v2)));            
@@ -205,7 +205,7 @@ public class LtvVerification {
         byte[] bt = null;
         if (PdfName.ETSI_RFC3161.equals(PdfReader.getPdfObject(dic.get(PdfName.SUBFILTER)))) {
             ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(bc));
-            DERObject pkcs = din.readObject();
+            ASN1Primitive pkcs = din.readObject();
             bc = pkcs.getEncoded();
         }
         bt = hashBytesSha1(bc);
