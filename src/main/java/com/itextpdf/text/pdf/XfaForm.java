@@ -43,22 +43,8 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.xml.XmlDomWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -66,8 +52,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.xml.XmlDomWriter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.*;
 
 /**
  * Processes XFA forms.
@@ -848,32 +837,34 @@ public class XfaForm {
         }
 
         private void processDatasetsInternal(Node n) {
-            HashMap<String, Integer> ss = new HashMap<String, Integer>();
-            Node n2 = n.getFirstChild();
-            while (n2 != null) {
-                if (n2.getNodeType() == Node.ELEMENT_NODE) {
-                    String s = escapeSom(n2.getLocalName());
-                    Integer i = ss.get(s);
-                    if (i == null)
-                        i = Integer.valueOf(0);
-                    else
-                        i = Integer.valueOf(i.intValue() + 1);
-                    ss.put(s, i);
-                    if (hasChildren(n2)) {
-                        stack.push(s + "[" + i.toString() + "]");
-                        processDatasetsInternal(n2);
-                        stack.pop();
+            if (n != null) {
+                HashMap<String, Integer> ss = new HashMap<String, Integer>();
+                Node n2 = n.getFirstChild();
+                while (n2 != null) {
+                    if (n2.getNodeType() == Node.ELEMENT_NODE) {
+                        String s = escapeSom(n2.getLocalName());
+                        Integer i = ss.get(s);
+                        if (i == null)
+                            i = Integer.valueOf(0);
+                        else
+                            i = Integer.valueOf(i.intValue() + 1);
+                        ss.put(s, i);
+                        if (hasChildren(n2)) {
+                            stack.push(s + "[" + i.toString() + "]");
+                            processDatasetsInternal(n2);
+                            stack.pop();
+                        }
+                        else {
+                            stack.push(s + "[" + i.toString() + "]");
+                            String unstack = printStack();
+                            order.add(unstack);
+                            inverseSearchAdd(unstack);
+                            name2Node.put(unstack, n2);
+                            stack.pop();
+                        }
                     }
-                    else {
-                        stack.push(s + "[" + i.toString() + "]");
-                        String unstack = printStack();
-                        order.add(unstack);
-                        inverseSearchAdd(unstack);
-                        name2Node.put(unstack, n2);
-                        stack.pop();
-                    }
+                    n2 = n2.getNextSibling();
                 }
-                n2 = n2.getNextSibling();
             }
         }
     }
