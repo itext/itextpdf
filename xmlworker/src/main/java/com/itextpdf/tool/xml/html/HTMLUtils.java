@@ -58,7 +58,7 @@ public class HTMLUtils {
 		StringBuilder builder = new StringBuilder();
 		char[] chars = str.toCharArray();
 		Character previous = null;
-		boolean gotChar = (chars.length == 1);
+		boolean gotChar = false;
 		for (char c : chars) {
 			if (!Character.isWhitespace(c)) {
 				if (((!gotChar && !trim) || gotChar)  && previous != null && Character.isWhitespace(previous)) {
