@@ -43,12 +43,12 @@
  */
 package com.itextpdf.text;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.HyphenationEvent;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
@@ -454,6 +454,10 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
             return font.getCalculatedLeading(1.5f);
         }
         return leading;
+    }
+
+    public float getTotalLeading() {
+        return getLeading();
     }
 
     /**
