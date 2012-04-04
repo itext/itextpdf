@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML-Print 1.0//EN"
+      "http://www.w3.org/MarkUp/DTD/xhtml-print10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>3_8-BF-06</title>
+</head>
+<body>
+<div class="TestPurpose">
+[<em>must</em> support the <code>colspan</code> attribute of the
+<code>td</code> and <code>th</code> elements].
+[<em>must</em> support the <code>rowspan</code> attribute of the
+<code>td</code> and <code>th</code> elements]  
+</div>
+<div class="AssertionsTested">Tests for assertions 50, 51 </div>
+
+<table>
+<tr><th colspan="2" style="border:solid black 1px">center</th></tr>
+<tr><td>left align</td><td>left align</td></tr>
+<tr><td colspan="2" style="border:solid black 1px" >left align</td></tr>
+</table>
+
+
+<p> 
+The second header must span both header rows. 
+The first data cell must span both data rows.</p>
+<table>
+<tr><th>center</th><th rowspan="2" style="border: black solid 1px">center</th></tr>
+<tr><th>center</th></tr>
+<tr><td rowspan="2" style="border: black solid 1px">left</td><td>left</td></tr>
+<tr><td>left</td></tr>
+</table>
+
+</body>
+</html>
