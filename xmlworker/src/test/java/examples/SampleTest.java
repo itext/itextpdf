@@ -5,6 +5,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.CompareTool;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerFontProvider;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 import org.junit.Assert;
 import org.junit.Before;
@@ -80,13 +81,12 @@ public class SampleTest {
 
     private void transformHtml2Pdf() throws IOException, DocumentException, InterruptedException {
         Document doc = new Document(PageSize.A4);
-        PdfWriter
-        pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPath + outPdf));
+        PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPath + outPdf));
         doc.open();
         doc.setMargins(0, 0, 0, 0);
         XMLWorkerHelper.getInstance()
                 .parseXHtml(pdfWriter, doc, new FileInputStream(inputHtml), SampleTest.class.getResourceAsStream("sampleTest.css"),
-                        null);
+                        new XMLWorkerFontProvider(SampleTest.class.getResource("fonts").getPath()));
         doc.close();
     }
 

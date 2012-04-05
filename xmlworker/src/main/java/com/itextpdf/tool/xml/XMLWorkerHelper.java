@@ -43,9 +43,11 @@ package com.itextpdf.tool.xml;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.css.*;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.html.CssAppliersImpl;
 import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.html.TagProcessorFactory;
 import com.itextpdf.tool.xml.html.Tags;
@@ -94,32 +96,35 @@ public class XMLWorkerHelper {
 	/**
 	 * @return the default css file.
 	 */
-	public synchronized CssFile getCSS(InputStream in) {
-		if (null == defaultCssFile) {
-			if (null != in) {
-				final CssFileProcessor cssFileProcessor = new CssFileProcessor();
-				int i = -1;
-				try {
-					while (-1 != (i = in.read())) {
-						cssFileProcessor.process((char) i);
-					}
-					defaultCssFile = new CSSFileWrapper(cssFileProcessor.getCss(), true);
-				} catch (final IOException e) {
-					throw new RuntimeWorkerException(e);
-				} finally {
-					try {
-						in.close();
-					} catch (final IOException e) {
-						throw new RuntimeWorkerException(e);
-					}
-				}
-			}
-		}
-		return defaultCssFile;
+	public static synchronized CssFile getCSS(InputStream in) {
+        CssFile cssFile = null;
+        if (null != in) {
+            final CssFileProcessor cssFileProcessor = new CssFileProcessor();
+            int i = -1;
+            try {
+                while (-1 != (i = in.read())) {
+                    cssFileProcessor.process((char) i);
+                }
+                cssFile = new CSSFileWrapper(cssFileProcessor.getCss(), true);
+            } catch (final IOException e) {
+                throw new RuntimeWorkerException(e);
+            } finally {
+                try {
+                    in.close();
+                } catch (final IOException e) {
+                    throw new RuntimeWorkerException(e);
+                }
+            }
+        }
+
+		return cssFile;
 	}
 
     public synchronized CssFile getDefaultCSS() {
-        return  getCSS(XMLWorkerHelper.class.getResourceAsStream("/default.css"));
+        if (null == defaultCssFile) {
+            defaultCssFile = getCSS(XMLWorkerHelper.class.getResourceAsStream("/default.css"));
+        }
+        return defaultCssFile;
     }
 
 	/**
@@ -189,20 +194,32 @@ public class XMLWorkerHelper {
 	 * @param charset the charset to use
 	 * @throws IOException if the {@link InputStream} could not be read.
 	 */
-	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile, final Charset charset) throws IOException {
+	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile, final Charset charset, final FontProvider fontProvider) throws IOException {
         CssFilesImpl cssFiles = new CssFilesImpl();
-		cssFiles.add(getCSS(inCssFile));
-		StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
-		HtmlPipelineContext hpc = new HtmlPipelineContext(null);
-		hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory());
-		Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(hpc, new PdfWriterPipeline(doc,
-				writer)));
-		XMLWorker worker = new XMLWorker(pipeline, true);
-		XMLParser p = new XMLParser(true, worker, charset);
+        cssFiles.add(getCSS(inCssFile));
+        StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+        HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(fontProvider));
+        hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory());
+        HtmlPipeline htmlPipeline = new HtmlPipeline(hpc, new PdfWriterPipeline(doc, writer));
+        Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, htmlPipeline);
+        XMLWorker worker = new XMLWorker(pipeline, true);
+        XMLParser p = new XMLParser(true, worker, charset);
 		if (charset != null)
 			p.parse(in, charset);
 		else
 			p.parse(in);
+	}
+
+    public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile) throws IOException {
+        parseXHtml(writer, doc, in, inCssFile, null, new XMLWorkerFontProvider());
+	}
+
+    public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile, final FontProvider fontProvider) throws IOException {
+        parseXHtml(writer, doc, in, inCssFile, null, fontProvider);
+	}
+
+    public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile, final Charset charset) throws IOException {
+        parseXHtml(writer, doc, in, inCssFile, charset, new XMLWorkerFontProvider());
 	}
 
 	/**
