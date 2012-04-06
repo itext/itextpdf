@@ -229,10 +229,10 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
      */
     public java.util.List<Element> breakUp() {
     	java.util.List<Element> list = new ArrayList<Element>();
-		Paragraph tmp = cloneShallow(true);
+		Paragraph tmp = null;
 		for (Element e : this) {
 			if (e.type() == Element.LIST || e.type() == Element.PTABLE || e.type() == Element.PARAGRAPH) {
-				if (tmp.size() > 0) {
+				if (tmp != null && tmp.size() > 0) {
                     tmp.setSpacingAfter(0);
 					list.add(tmp);
 					tmp = cloneShallow(false);
@@ -240,10 +240,13 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
 				list.add(e);
 			}
 			else {
+                if (tmp == null) {
+                    tmp = cloneShallow(list.size() == 0);
+                }
 				tmp.add(e);
 			}
 		}
-		if (tmp.size() > 0) {
+		if (tmp != null && tmp.size() > 0) {
 			list.add(tmp);
         }
     	return list;
