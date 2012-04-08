@@ -179,6 +179,16 @@ public class XMLWorkerHelper {
 	 * @param writer the writer to use
 	 * @param doc the document to use
 	 * @param in the {@link InputStream} of the XHTML source.
+	 * @throws IOException if the {@link InputStream} could not be read.
+	 */
+	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in) throws IOException {
+		parseXHtml(writer,doc,in, XMLWorkerHelper.class.getResourceAsStream("/default.css"), null, new XMLWorkerFontProvider());
+	}
+
+	/**
+	 * @param writer the writer to use
+	 * @param doc the document to use
+	 * @param in the {@link InputStream} of the XHTML source.
 	 * @param charset the charset to use
 	 * @throws IOException if the {@link InputStream} could not be read.
 	 */
