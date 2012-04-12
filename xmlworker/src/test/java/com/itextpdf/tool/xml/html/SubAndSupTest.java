@@ -93,7 +93,8 @@ public class SubAndSupTest {
 	}
 	@Test
 	public void resolveNewLines() throws IOException {
-		assertEquals(Chunk.NEWLINE, elementList.get(1));
+		assertEquals(Chunk.NEWLINE.getContent(), elementList.get(1).getChunks().get(0).getContent());
+        assertEquals(8f, elementList.get(1).getChunks().get(0).getFont().getSize(), 0);
 		assertEquals(Chunk.NEWLINE.getContent(), elementList.get(3).getChunks().get(1).getContent());
 	}
 	@Test

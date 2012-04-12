@@ -231,7 +231,13 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
                     p.setMultipliedLeading(1.2f);
 					for (Element e : currentContent) {
                         if (e instanceof LineSeparator) {
-                            p.add(Chunk.NEWLINE);
+                            try {
+                                HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
+                                Chunk newLine = (Chunk)getCssAppliers().apply(new Chunk(Chunk.NEWLINE), tag, htmlPipelineContext);
+                                p.add(newLine);
+                            } catch (NoCustomContextException e1) {
+                                throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
+                            }
                         }
 						p.add(e);
 					}

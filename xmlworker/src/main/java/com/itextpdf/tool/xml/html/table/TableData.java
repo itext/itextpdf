@@ -51,7 +51,6 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
@@ -105,7 +104,7 @@ public class TableData extends AbstractTagProcessor {
 		HtmlCell cell = new HtmlCell();
         try {
             HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-            cell = new HtmlCellCssApplier().apply(cell, tag, htmlPipelineContext, htmlPipelineContext);
+            cell = (HtmlCell) getCssAppliers().apply(cell, tag, htmlPipelineContext);
         } catch (NoCustomContextException e1) {
             throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
         }
@@ -120,7 +119,7 @@ public class TableData extends AbstractTagProcessor {
                 if (!listItems.isEmpty()) {
                     processListItems(ctx, tag, listItems, cell);
                 }
-                if (e == Chunk.NEWLINE) {
+                if (e instanceof Chunk && Chunk.NEWLINE.getContent().equals(((Chunk)e).getContent())) {
                     if (index == currentContent.size() - 1) {
                         continue;
                     } else {
@@ -128,13 +127,15 @@ public class TableData extends AbstractTagProcessor {
                         if (!(nextElement instanceof Chunk) && !(nextElement instanceof NoNewLineParagraph)) {
                             continue;
                         }
-                        //if (chunks.isEmpty()) {
-                            //continue;
-                        //}
-
                     }
                 } else if (e instanceof LineSeparator) {
-                    chunks.add(Chunk.NEWLINE);
+                    try {
+                        HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
+                        Chunk newLine = (Chunk)getCssAppliers().apply(new Chunk(Chunk.NEWLINE), tag, htmlPipelineContext);
+                        chunks.add(newLine);
+                    } catch (NoCustomContextException e1) {
+                        throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
+                    }
                 }
                 chunks.add(e);
                 continue;
@@ -188,10 +189,10 @@ public class TableData extends AbstractTagProcessor {
     private void processListItems(final WorkerContext ctx, final Tag tag, List<ListItem> listItems, HtmlCell cell) {
         try {
             com.itextpdf.text.List list = new com.itextpdf.text.List();
-            list.setAlignindent(false);
             list.setAutoindent(false);
             list = (com.itextpdf.text.List) getCssAppliers().apply(list, tag,
                     getHtmlPipelineContext(ctx));
+            list.setIndentationLeft(0);
             for (ListItem li : listItems) {
                 li = (ListItem) getCssAppliers().apply(li, tag, getHtmlPipelineContext(ctx));
                 li.setSpacingAfter(0);

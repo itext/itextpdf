@@ -43,15 +43,18 @@
  */
 package com.itextpdf.tool.xml.html.tps;
 
-import java.util.List;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.html.Break;
+import com.itextpdf.tool.xml.html.CssAppliersImpl;
+import com.itextpdf.tool.xml.pipeline.ctx.WorkerContextImpl;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import junit.framework.Assert;
+import org.junit.Test;
+
+import java.util.List;
 
 /**
  * @author itextpdf.com
@@ -65,8 +68,12 @@ public class TPBreakTest {
 	@Test
 	public void verifyBreakChunk() {
 		final Break br = new Break();
-		final List<Element> end = br.end(null, null, null);
-		Assert.assertEquals(Chunk.NEWLINE, end.get(0));
+        WorkerContextImpl workerContextImpl = new WorkerContextImpl();
+        CssAppliersImpl cssAppliers = new CssAppliersImpl();
+		workerContextImpl.put(HtmlPipeline.class.getName(), new HtmlPipelineContext(cssAppliers));
+        br.setCssAppliers(cssAppliers);
+		final List<Element> end = br.end(workerContextImpl, new Tag("span"), null);
+		Assert.assertEquals(Chunk.NEWLINE.getContent(), end.get(0).getChunks().get(0).getContent());
 	}
 
 	/**
