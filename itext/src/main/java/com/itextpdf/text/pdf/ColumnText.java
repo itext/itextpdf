@@ -1229,7 +1229,7 @@ public class ColumnText {
                         }
                         createHere = true;
                     }
-                    compositeColumn.setUseAscender(firstPass && adjustFirstLine ? useAscender : false);
+                    compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
                     compositeColumn.leftX = leftX;
                     compositeColumn.rightX = rightX;
                     compositeColumn.yLine = yLine;
@@ -1311,7 +1311,7 @@ public class ColumnText {
                             continue main_loop;
                         }
                         compositeColumn = new ColumnText(canvas);
-                        compositeColumn.setUseAscender(firstPass && adjustFirstLine ? useAscender : false);
+                        compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
                         compositeColumn.setAlignment(item.getAlignment());
                         compositeColumn.setIndent(item.getIndentationLeft() + listIndentation + item.getFirstLineIndent());
                         compositeColumn.setExtraParagraphSpace(item.getExtraParagraphSpace());
