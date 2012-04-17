@@ -2370,8 +2370,8 @@ public class PdfDocument extends Document {
     	}
         // ensuring that a new line has been started.
         ensureNewLine();
-        return table.getTotalHeight() + (currentHeight > 0 ? table.spacingBefore() : 0f)
-        	<= indentTop() - currentHeight - indentBottom() - margin;
+        Float spaceNeeded = table.isSkipFirstHeader() ? table.getTotalHeight() - table.getHeaderHeight() : table.getTotalHeight();
+        return spaceNeeded + (currentHeight > 0 ? table.spacingBefore() : 0f) <= indentTop() - currentHeight - indentBottom() - margin;
     }
 
     /**
