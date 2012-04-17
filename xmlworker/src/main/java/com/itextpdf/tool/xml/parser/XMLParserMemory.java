@@ -43,10 +43,10 @@
  */
 package com.itextpdf.tool.xml.parser;
 
+import com.itextpdf.tool.xml.parser.state.InsideTagHTMLState;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import com.itextpdf.tool.xml.parser.state.InsideTagHTMLState;
 
 /**
  * Wrapper class for different things that need to be kept track of between different states.
@@ -65,12 +65,14 @@ public class XMLParserMemory {
 	private String wsTag = "";
 	private String currentNameSpace = "";
 	private char lastChar;
+    private final boolean isHtml;
 
 	/**
 	 *
 	 */
-	public XMLParserMemory() {
+	public XMLParserMemory(boolean isHtml) {
 		this.attr = new HashMap<String, String>();
+        this.isHtml = isHtml;
 	}
 
 	/**
@@ -106,8 +108,11 @@ public class XMLParserMemory {
 	 */
 	public void putCurrentAttrValue(final String content) {
 		if (null != this.currentAttr) {
-			// TODO (html==true)? attr to lowercase?
-			attr.put(this.currentAttr, content);
+			if (isHtml) {
+			    attr.put(this.currentAttr.toLowerCase(), content);
+            } else {
+			    attr.put(this.currentAttr, content);
+            }
 			this.currentAttr = null;
 		}
 	}

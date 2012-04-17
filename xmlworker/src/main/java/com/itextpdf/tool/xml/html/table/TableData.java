@@ -124,7 +124,7 @@ public class TableData extends AbstractTagProcessor {
                         continue;
                     } else {
                         Element nextElement = currentContent.get(index + 1);
-                        if (!(nextElement instanceof Chunk) && !(nextElement instanceof NoNewLineParagraph)) {
+                        if (!chunks.isEmpty() && !(nextElement instanceof Chunk) && !(nextElement instanceof NoNewLineParagraph)) {
                             continue;
                         }
                     }

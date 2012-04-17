@@ -43,18 +43,7 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
-import java.io.IOException;
-import java.util.Map;
-
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.GreekList;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.List;
-import com.itextpdf.text.RomanList;
-import com.itextpdf.text.ZapfDingbatsList;
+import com.itextpdf.text.*;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
@@ -68,6 +57,9 @@ import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
 import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author itextpdf.com
@@ -113,6 +105,7 @@ public class ListStyleTypeCssApplier {
 				synchronizeSymbol(fontSize, lst, color);
 			} else if (CSS.Value.DISC.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(108);
+                fontSize *= 0.7f;
 				shrinkSymbol(lst, fontSize, color);
 			} else if (CSS.Value.SQUARE.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(110);
@@ -214,9 +207,9 @@ public class ListStyleTypeCssApplier {
 	private void shrinkSymbol(final List lst, final float fontSize, final BaseColor color) {
 		lst.setSymbolIndent(12);
 		Chunk symbol = lst.getSymbol();
-		symbol.setTextRise(2);
+		//symbol.setTextRise(2);
 		Font font = symbol.getFont();
-		font.setSize(7);
+		font.setSize(fontSize);
 		font.setColor(color);
 	}
 

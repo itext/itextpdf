@@ -41,19 +41,15 @@
  */
 package com.itextpdf.tool.xml.pipeline.html;
 
-import java.util.List;
-
 import com.itextpdf.text.Element;
-import com.itextpdf.tool.xml.Pipeline;
-import com.itextpdf.tool.xml.PipelineException;
-import com.itextpdf.tool.xml.ProcessObject;
-import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.WorkerContext;
+import com.itextpdf.tool.xml.*;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.NoTagProcessorException;
 import com.itextpdf.tool.xml.html.TagProcessor;
 import com.itextpdf.tool.xml.pipeline.AbstractPipeline;
 import com.itextpdf.tool.xml.pipeline.WritableElement;
+
+import java.util.List;
 
 /**
  * The HtmlPipeline transforms received tags and content to PDF Elements.<br />
@@ -99,6 +95,8 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 	public Pipeline<?> open(final WorkerContext context, final Tag t, final ProcessObject po) throws PipelineException {
 		HtmlPipelineContext hcc = getLocalContext(context);
 		try {
+            t.setLastMarginBottom(hcc.getMemory().get(HtmlPipelineContext.LAST_MARGIN_BOTTOM));
+            hcc.getMemory().remove(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
 			TagProcessor tp = hcc.resolveProcessor(t.getName(), t.getNameSpace());
 			if (tp.isStackOwner()) {
 				hcc.addFirst(new StackKeeper(t));
@@ -188,6 +186,11 @@ public class HtmlPipeline extends AbstractPipeline<HtmlPipelineContext> {
 		HtmlPipelineContext hcc = getLocalContext(context);
 		TagProcessor tp;
 		try {
+            if (t.getLastMarginBottom() != null) {
+                hcc.getMemory().put(HtmlPipelineContext.LAST_MARGIN_BOTTOM, t.getLastMarginBottom());
+            } else {
+                hcc.getMemory().remove(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
+            }
 			tp = hcc.resolveProcessor(t.getName(), t.getNameSpace());
 			List<Element> elems = null;
 			if (tp.isStackOwner()) {

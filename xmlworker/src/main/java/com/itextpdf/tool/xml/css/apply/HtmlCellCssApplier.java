@@ -80,19 +80,21 @@ public class HtmlCellCssApplier {
 	 * @return a styled HtmlCell
 	 */
     public HtmlCell apply(final HtmlCell cell, final Tag t, final MarginMemory memory, final PageSizeContainable psc) {
-    	final TableStyleValues values = new TableStyleValues();
-    	Tag table = t.getParent();
         Tag row = t.getParent();
         while(row != null && !row.getName().equals(HTML.Tag.TR)){
     		row = row.getParent();
     	}
+        Tag table = t.getParent();
         while(table!= null && !table.getName().equals(HTML.Tag.TABLE)){
     		table = table.getParent();
     	}
+
+        final TableStyleValues values = Table.setStyleValues(table);
+
     	String border = table.getAttributes().get(CSS.Property.BORDER);
 		if(border != null && !border.equals("0")) {
 			values.setBorderColor(BaseColor.BLACK);
-			values.setBorderWidth(0.75f);
+			values.setBorderWidth(Table.DEFAULT_CELL_BORDER_WIDTH);
 		}
     	Map<String, String> css = t.getCSS();
 		String emptyCells = css.get(CSS.Property.EMPTY_CELLS);
@@ -206,10 +208,10 @@ public class HtmlCellCssApplier {
 			float verSpacing = Table.getBorderOrCellSpacing(false, table.getCSS(), table.getAttributes());
 	    	values.setHorBorderSpacing(horSpacing);
 	    	values.setVerBorderSpacing(verSpacing);
-	    	cell.setPaddingLeft(cell.getPaddingLeft()+horSpacing+values.getBorderWidthLeft());
-			cell.setPaddingRight(cell.getPaddingRight()+values.getBorderWidthRight());
-	    	cell.setPaddingTop(cell.getPaddingTop()+verSpacing+values.getBorderWidthTop());
-	    	cell.setPaddingBottom(cell.getPaddingBottom()+values.getBorderWidthBottom()+1);
+	    	cell.setPaddingLeft(cell.getPaddingLeft() + horSpacing + values.getBorderWidthLeft());
+			cell.setPaddingRight(cell.getPaddingRight() + values.getBorderWidthRight());
+	    	cell.setPaddingTop(cell.getPaddingTop() + verSpacing + values.getBorderWidthTop());
+	    	cell.setPaddingBottom(cell.getPaddingBottom() + values.getBorderWidthBottom());
 		}
 		cell.setBorder(Rectangle.NO_BORDER);
 		cell.setCellEvent(new CellSpacingEvent(values));

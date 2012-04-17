@@ -63,6 +63,7 @@ public class Tag implements Iterable<Tag> {
 	private Map<String, String> css;
 	private final List<Tag> children;
 	private final String ns;
+    private Object lastMarginBottom = null;
 
 	/**
 	 * Construct a tag.
@@ -385,4 +386,12 @@ public class Tag implements Iterable<Tag> {
 	public String getName() {
 		return this.tag;
 	}
+
+    public Object getLastMarginBottom() {
+        return lastMarginBottom;
+    }
+
+    public void setLastMarginBottom(Object lastMarginBottom) {
+        this.lastMarginBottom = lastMarginBottom;
+    }
 }
