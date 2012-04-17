@@ -45,6 +45,7 @@ package com.itextpdf.text;
 
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
+import com.itextpdf.text.pdf.PdfPTable;
 
 import java.util.ArrayList;
 
@@ -237,6 +238,24 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
 					list.add(tmp);
 					tmp = cloneShallow(false);
 				}
+                if (list.size() == 0) {
+                    switch (e.type()) {
+                        case Element.PTABLE:
+                            ((PdfPTable) e).setSpacingBefore(getSpacingBefore());
+                            break;
+                        case Element.PARAGRAPH:
+                            ((Paragraph) e).setSpacingBefore(getSpacingBefore());
+                            break;
+                        case Element.LIST:
+                            ListItem firstItem = ((List)e).getFirstItem();
+                            if (firstItem != null) {
+                                firstItem.setSpacingBefore(getSpacingBefore());
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
 				list.add(e);
 			}
 			else {
@@ -248,6 +267,25 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
 		}
 		if (tmp != null && tmp.size() > 0) {
 			list.add(tmp);
+        }
+        if (list.size() != 0) {
+            Element lastElement = list.get(list.size() - 1);
+            switch (lastElement.type()) {
+                case Element.PTABLE :
+                    ((PdfPTable)lastElement).setSpacingAfter(getSpacingAfter());
+                    break;
+                case Element.PARAGRAPH :
+                    ((Paragraph)lastElement).setSpacingAfter(getSpacingAfter());
+                    break;
+                case Element.LIST :
+                    ListItem lastItem = ((List)lastElement).getLastItem();
+                    if (lastItem != null) {
+                        lastItem.setSpacingAfter(getSpacingAfter());
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     	return list;
     }
