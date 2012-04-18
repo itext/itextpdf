@@ -54,7 +54,7 @@ import java.util.HashMap;
  */
 public class XMLWorkerFontProvider extends FontFactoryImp {
 	public static final String DONTLOOKFORFONTS = "\ufffc";
-    private HashMap<String, String> fontSubstitutionMap = new HashMap<String, String>();
+    protected HashMap<String, String> fontSubstitutionMap = new HashMap<String, String>();
 
     public XMLWorkerFontProvider() {
         this(null, null);
