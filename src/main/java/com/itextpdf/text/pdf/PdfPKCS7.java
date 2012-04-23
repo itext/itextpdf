@@ -311,7 +311,7 @@ public class PdfPKCS7 {
             signCert = (X509Certificate)certs.iterator().next();
             crls = new ArrayList<CRL>();
             ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(contentsKey));
-            digest = ((DEROctetString)in.readObject()).getOctets();
+            digest = ((ASN1OctetString)in.readObject()).getOctets();
             if (provider == null)
                 sig = Signature.getInstance("SHA1withRSA");
             else
@@ -386,7 +386,7 @@ public class PdfPKCS7 {
             if (ret)
                 return;
         }
-        DEROctetString os = (DEROctetString)seq.getObjectAt(1);
+        ASN1OctetString os = (ASN1OctetString)seq.getObjectAt(1);
         ASN1InputStream inp = new ASN1InputStream(os.getOctets());
         BasicOCSPResponse resp = BasicOCSPResponse.getInstance(inp.readObject());
         basicResp = new BasicOCSPResp(resp);
@@ -427,7 +427,7 @@ public class PdfPKCS7 {
             ASN1ObjectIdentifier objId = (ASN1ObjectIdentifier)signedData.getObjectAt(0);
             if (!objId.getId().equals(ID_PKCS7_SIGNED_DATA))
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("not.a.valid.pkcs.7.object.not.signed.data"));
-            ASN1Sequence content = (ASN1Sequence)((DERTaggedObject)signedData.getObjectAt(1)).getObject();
+            ASN1Sequence content = (ASN1Sequence)((ASN1TaggedObject)signedData.getObjectAt(1)).getObject();
             // the positions that we care are:
             //     0 - version
             //     1 - digestAlgorithms
@@ -456,13 +456,13 @@ public class PdfPKCS7 {
             // the possible ID_PKCS7_DATA
             ASN1Sequence rsaData = (ASN1Sequence)content.getObjectAt(2);
             if (rsaData.size() > 1) {
-                DEROctetString rsaDataContent = (DEROctetString)((DERTaggedObject)rsaData.getObjectAt(1)).getObject();
+                ASN1OctetString rsaDataContent = (ASN1OctetString)((ASN1TaggedObject)rsaData.getObjectAt(1)).getObject();
                 RSAdata = rsaDataContent.getOctets();
             }
 
             // the signerInfos
             int next = 3;
-            while (content.getObjectAt(next) instanceof DERTaggedObject)
+            while (content.getObjectAt(next) instanceof ASN1TaggedObject)
                 ++next;
             ASN1Set signerInfos = (ASN1Set)content.getObjectAt(next);
             if (signerInfos.size() != 1)
@@ -502,7 +502,7 @@ public class PdfPKCS7 {
                     ASN1Sequence seq2 = (ASN1Sequence)sseq.getObjectAt(k);
                     if (((ASN1ObjectIdentifier)seq2.getObjectAt(0)).getId().equals(ID_MESSAGE_DIGEST)) {
                         ASN1Set set = (ASN1Set)seq2.getObjectAt(1);
-                        digestAttr = ((DEROctetString)set.getObjectAt(0)).getOctets();
+                        digestAttr = ((ASN1OctetString)set.getObjectAt(0)).getOctets();
                     }
                     else if (((ASN1ObjectIdentifier)seq2.getObjectAt(0)).getId().equals(ID_ADBE_REVOCATION)) {
                         ASN1Set setout = (ASN1Set)seq2.getObjectAt(1);
@@ -525,9 +525,9 @@ public class PdfPKCS7 {
                 ++next;
             }
             digestEncryptionAlgorithm = ((ASN1ObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
-            digest = ((DEROctetString)signerInfo.getObjectAt(next++)).getOctets();
-            if (next < signerInfo.size() && signerInfo.getObjectAt(next) instanceof DERTaggedObject) {
-                DERTaggedObject taggedObject = (DERTaggedObject) signerInfo.getObjectAt(next);
+            digest = ((ASN1OctetString)signerInfo.getObjectAt(next++)).getOctets();
+            if (next < signerInfo.size() && signerInfo.getObjectAt(next) instanceof ASN1TaggedObject) {
+                ASN1TaggedObject taggedObject = (ASN1TaggedObject) signerInfo.getObjectAt(next);
                 ASN1Set unat = ASN1Set.getInstance(taggedObject, false);
                 AttributeTable attble = new AttributeTable(unat);
                 Attribute ts = attble.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
@@ -1122,7 +1122,7 @@ public class PdfPKCS7 {
     }
 
     private static String getStringFromGeneralName(ASN1Primitive names) throws IOException {
-        DERTaggedObject taggedObject = (DERTaggedObject) names ;
+        ASN1TaggedObject taggedObject = (ASN1TaggedObject) names ;
         return new String(ASN1OctetString.getInstance(taggedObject, false).getOctets(), "ISO-8859-1");
     }
 
@@ -1135,7 +1135,7 @@ public class PdfPKCS7 {
         try {
             ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(enc));
             ASN1Sequence seq = (ASN1Sequence)in.readObject();
-            return (ASN1Primitive)seq.getObjectAt(seq.getObjectAt(0) instanceof DERTaggedObject ? 3 : 2);
+            return (ASN1Primitive)seq.getObjectAt(seq.getObjectAt(0) instanceof ASN1TaggedObject ? 3 : 2);
         }
         catch (IOException e) {
             throw new ExceptionConverter(e);
@@ -1151,7 +1151,7 @@ public class PdfPKCS7 {
         try {
             ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(enc));
             ASN1Sequence seq = (ASN1Sequence)in.readObject();
-            return (ASN1Primitive)seq.getObjectAt(seq.getObjectAt(0) instanceof DERTaggedObject ? 5 : 4);
+            return (ASN1Primitive)seq.getObjectAt(seq.getObjectAt(0) instanceof ASN1TaggedObject ? 5 : 4);
         }
         catch (IOException e) {
             throw new ExceptionConverter(e);
