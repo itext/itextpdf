@@ -43,22 +43,14 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.ListItem;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.draw.DrawInterface;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
+
+import com.itextpdf.text.*;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.draw.DrawInterface;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -894,7 +886,7 @@ public class ColumnText {
         			status = NO_MORE_TEXT;
         			break;
         		}
-                line = bidiLine.processLine(leftX, rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
+                line = bidiLine.processLine(leftX, rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions, minY, yLine, descender);
                 if (line == null) {
                 	status = NO_MORE_TEXT;
                 	break;
@@ -942,7 +934,7 @@ public class ColumnText {
                     text.beginText();
                     dirty = true;
                 }
-                line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
+                line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions, minY, yLine, descender);
                 if (line == null) {
                     status = NO_MORE_TEXT;
                     yLine = yTemp;
@@ -1096,7 +1088,7 @@ public class ColumnText {
         ColumnText ct = new ColumnText(null);
         ct.addText(phrase);
         ct.addWaitingPhrase();
-        PdfLine line = ct.bidiLine.processLine(0, 20000, Element.ALIGN_LEFT, runDirection, arabicOptions);
+        PdfLine line = ct.bidiLine.processLine(0, 20000, Element.ALIGN_LEFT, runDirection, arabicOptions, 0, 0, 0);
         if (line == null)
             return 0;
         else

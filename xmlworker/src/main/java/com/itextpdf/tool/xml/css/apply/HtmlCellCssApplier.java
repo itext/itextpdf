@@ -43,6 +43,9 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.PageSize;
@@ -58,9 +61,6 @@ import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.table.CellSpacingEvent;
 import com.itextpdf.tool.xml.html.table.Table;
 import com.itextpdf.tool.xml.html.table.TableStyleValues;
-
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @author Emiel Ackermann
@@ -149,7 +149,7 @@ public class HtmlCellCssApplier {
                 height = heightCalc.getHeight(row, psc.getPageSize().getHeight());
             }
             if (height != null) {
-                cell.setMinimumHeight(height);
+                cell.setFixedHeight(height);
             }
 
 	        String colspan = t.getAttributes().get(HTML.Attribute.COLSPAN);
