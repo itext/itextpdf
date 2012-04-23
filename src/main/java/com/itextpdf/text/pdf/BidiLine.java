@@ -322,7 +322,7 @@ public class BidiLine {
         }
     }
 
-    public PdfLine processLine(float leftX, float width, int alignment, int runDirection, int arabicOptions) {
+    public PdfLine processLine(float leftX, float width, int alignment, int runDirection, int arabicOptions, float minY, float yLine, float descender) {
         this.arabicOptions = arabicOptions;
         save();
         boolean isRTL = runDirection == PdfWriter.RUN_DIRECTION_RTL;
@@ -350,6 +350,13 @@ public class BidiLine {
         boolean surrogate = false;
         for (; currentChar < totalTextLength; ++currentChar) {
             ck = detailChunks[currentChar];
+            if (ck.isImage() && minY < yLine) {
+                Image img = ck.getImage();
+                if (img.isScaleToFitLineWhenOverflow() && yLine + 2 * descender - img.getScaledHeight() - ck.getImageOffsetY() - img.getSpacingBefore() < minY) {
+                    float scalePercent = (yLine + 2 * descender - ck.getImageOffsetY() - img.getSpacingBefore() - minY) / img.getHeight() * 100;
+            		img.scalePercent(scalePercent);
+                }
+            }
             surrogate = Utilities.isSurrogatePair(text, currentChar);
             if (surrogate)
                 uniC = ck.getUnicodeEquivalent(Utilities.convertToUtf32(text, currentChar));
