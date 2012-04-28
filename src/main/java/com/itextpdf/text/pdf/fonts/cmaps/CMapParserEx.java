@@ -128,7 +128,7 @@ public class CMapParserEx {
                     }
                 }
                 else if (last.equals(USECMAP) && list.size() == 2 && list.get(0) instanceof PdfName) {
-                    parseCid(cmapName, cmap, location, level + 1);
+                    parseCid(PdfName.decodeName(list.get(0).toString()), cmap, location, level + 1);
                 }
             }
         }
