@@ -70,6 +70,8 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import java.security.MessageDigest;
+import java.security.cert.X509CRL;
 
 /**
  * This class takes care of the cryptographic options and appearances that form a signature.
@@ -1150,6 +1152,79 @@ public class PdfSignatureAppearance {
         crypto.put(PdfName.REFERENCE, types);
     }
 
+    /**
+     * Signs the document using the detached mode.
+     * @param pk the private key
+     * @param chain the certificate chain
+     * @param crlList the CRL list
+     * @param ocspClient the OCSP client
+     * @param tsaClient the Timestamp client
+     * @param provider the provider or null
+     * @param hashAlgorithm the hash algorithm to use with the authenticated attributes. SHA256 will be used if null
+     * @param estimatedSize the reserved size for the signature. It will be estimated if 0
+     * @throws Exception 
+     */
+    public void signDetached(PrivateKey pk, Certificate[] chain, CRL[] crlList, OcspClient ocspClient, TSAClient tsaClient, String provider, String hashAlgorithm, int estimatedSize) throws Exception {
+        if (estimatedSize == 0) {
+            estimatedSize = 8192;
+            if (crlList != null) {
+                for (Object element : crlList) {
+                    estimatedSize += ((X509CRL)element).getEncoded().length + 10;
+                }
+            }
+            if (ocspClient != null)
+                estimatedSize += 4192;
+            if (tsaClient != null)
+                estimatedSize += 4192;
+        }
+        if (hashAlgorithm == null)
+            hashAlgorithm = "SHA256";
+        setCrypto(null, chain, crlList, null);
+        PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, PdfName.ADBE_PKCS7_DETACHED);
+        dic.setReason(getReason());
+        dic.setLocation(getLocation());
+        dic.setContact(getContact());
+        dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
+        setCryptoDictionary(dic);
+
+        HashMap<PdfName,Integer> exc = new HashMap<PdfName,Integer>();
+        exc.put(PdfName.CONTENTS, new Integer(estimatedSize * 2 + 2));
+        preClose(exc);
+
+        PdfPKCS7 sgn = new PdfPKCS7(pk, chain, crlList, hashAlgorithm, provider, false);
+        InputStream data = getRangeStream();
+        MessageDigest messageDigest;
+        if (provider == null)
+            messageDigest = MessageDigest.getInstance(hashAlgorithm);
+        else
+            messageDigest = MessageDigest.getInstance(hashAlgorithm, provider);
+        byte buf[] = new byte[8192];
+        int n;
+        while ((n = data.read(buf)) > 0) {
+            messageDigest.update(buf, 0, n);
+        }
+        byte hash[] = messageDigest.digest();
+        Calendar cal = Calendar.getInstance();
+        byte[] ocsp = null;
+        if (chain.length >= 2 && ocspClient != null) {
+            ocsp = ocspClient.getEncoded((X509Certificate)chain[0], (X509Certificate)chain[1], null);
+        }
+        byte sh[] = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp);
+        sgn.update(sh, 0, sh.length);
+        
+        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsaClient, ocsp);
+
+        if (estimatedSize + 2 < encodedSig.length)
+            throw new Exception("Not enough space");
+
+        byte[] paddedSig = new byte[estimatedSize];
+        System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
+
+        PdfDictionary dic2 = new PdfDictionary();
+        dic2.put(PdfName.CONTENTS, new PdfString(paddedSig).setHexWriting(true));
+        close(dic2);
+    }
+    
     /**
      * Gets the document bytes that are hashable when using external signatures. The general sequence is:
      * preClose(), getRangeStream() and close().
