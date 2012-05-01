@@ -76,8 +76,10 @@ import com.itextpdf.text.exceptions.UnsupportedPdfException;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
-import java.security.PrivateKey;
-import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+
+//import org.bouncycastle.cms.Recipient;
+//import java.security.PrivateKey;
+//import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 
 /** Reads a PDF document.
  * @author Paulo Soares
@@ -740,12 +742,14 @@ public class PdfReader implements PdfViewerPreferences {
 
                     while (recipientCertificatesIt.hasNext()) {
                         RecipientInformation recipientInfo = recipientCertificatesIt.next();
-
+                        
                         if (recipientInfo.getRID().match(certificate) && !foundRecipient) {
-                         envelopedData = recipientInfo.getContent(new JceKeyTransEnvelopedRecipient((PrivateKey)certificateKey).setProvider(certificateKeyProvider));
-                         foundRecipient = true;
-                        }
+                        	//Recipient jceKeyTransRecipient = new JceKeyTransEnvelopedRecipient((PrivateKey)certificateKey).setProvider(certificateKeyProvider);
+                        	envelopedData = recipientInfo.getContent(certificateKey, certificateKeyProvider);
+                        	foundRecipient = true;
+                        } 
                     }
+
                 }
                 catch (Exception f) {
                     throw new ExceptionConverter(f);
