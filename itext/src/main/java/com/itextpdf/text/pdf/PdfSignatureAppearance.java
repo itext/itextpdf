@@ -406,7 +406,13 @@ public class PdfSignatureAppearance {
             String text;
             if (layer2Text == null) {
                 StringBuffer buf = new StringBuffer();
-                buf.append("Digitally signed by ").append(PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN")).append('\n');
+                buf.append("Digitally signed by ");
+                String name = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
+                if (name == null)
+                    name = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("E");
+                if (name == null)
+                    name = "";
+                buf.append(name).append('\n');
                 SimpleDateFormat sd = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
                 buf.append("Date: ").append(sd.format(signDate.getTime()));
                 if (reason != null)
@@ -493,6 +499,10 @@ public class PdfSignatureAppearance {
             switch (renderingMode) {
             case NAME_AND_DESCRIPTION:
                 String signedBy = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
+                if (signedBy == null)
+                    signedBy = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("E");
+                if (signedBy == null)
+                    signedBy = "";
                 Rectangle sr2 = new Rectangle(signatureRect.getWidth() - MARGIN, signatureRect.getHeight() - MARGIN );
                 float signedSize = fitText(font, signedBy, sr2, -1, runDirection);
 
