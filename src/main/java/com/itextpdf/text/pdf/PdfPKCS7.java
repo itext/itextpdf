@@ -1642,7 +1642,7 @@ public class PdfPKCS7 {
         public static final ASN1ObjectIdentifier UID = new ASN1ObjectIdentifier("0.9.2342.19200300.100.1.1");
 
         /** A HashMap with default symbols */
-        public static HashMap<ASN1ObjectIdentifier, String> DefaultSymbols = new HashMap<ASN1ObjectIdentifier, String>();
+        public static final HashMap<ASN1ObjectIdentifier, String> DefaultSymbols = new HashMap<ASN1ObjectIdentifier, String>();
 
         static {
             DefaultSymbols.put(C, "C");
