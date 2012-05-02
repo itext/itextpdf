@@ -55,6 +55,7 @@ import java.util.HashMap;
 public class XMLWorkerFontProvider extends FontFactoryImp {
 	public static final String DONTLOOKFORFONTS = "\ufffc";
     protected HashMap<String, String> fontSubstitutionMap = new HashMap<String, String>();
+    protected boolean useUnicode = true;
 
     public XMLWorkerFontProvider() {
         this(null, null);
@@ -80,6 +81,10 @@ public class XMLWorkerFontProvider extends FontFactoryImp {
     	fontSubstitutionMap.put(font, substitute);
     }
     
+    public void setUseUnicode(boolean useUnicode) {
+    	this.useUnicode = useUnicode;
+    }
+    
     @Override
     public Font getFont(final String fontname, final String encoding, final boolean embedded, final float size, final int style, final BaseColor color) {
         Font font = getFont(fontname, encoding, size, style);
@@ -101,7 +106,7 @@ public class XMLWorkerFontProvider extends FontFactoryImp {
         Font font = null;
         try {
             BaseFont baseFont = null;
-            font = super.getFont(fontName, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, size, style, null);
+            font = super.getFont(fontName, useUnicode ? BaseFont.IDENTITY_H : encoding, BaseFont.EMBEDDED, size, style, null);
 
             if (font != null) {
                 baseFont = font.getBaseFont();
@@ -110,7 +115,7 @@ public class XMLWorkerFontProvider extends FontFactoryImp {
             if (baseFont == null) {
                 String substFontName = fontSubstitutionMap.get(fontName);
                 if ((substFontName != null) && (substFontName.length() > 0)) {
-                    font = super.getFont(substFontName, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, size, style, null);
+                    font = super.getFont(substFontName, useUnicode ? BaseFont.IDENTITY_H : encoding, BaseFont.EMBEDDED, size, style, null);
                 }
             }
         } catch (UnsupportedCharsetException uce) {
