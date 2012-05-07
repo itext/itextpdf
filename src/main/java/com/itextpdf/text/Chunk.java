@@ -899,4 +899,26 @@ public class Chunk implements Element {
 		}
 		return 0.0f;
 	}
+
+    public static final String WHITESPACE = "WHITESPACE";
+
+    public static Chunk createWhitespace(final String content) {
+        return createWhitespace(content, false);
+    }
+
+    public static Chunk createWhitespace(final String content, final boolean preserve) {
+        Chunk whitespace = null;
+        if (!preserve) {
+            whitespace = new Chunk(' ');
+            whitespace.setAttribute(WHITESPACE, content);
+        } else {
+             whitespace = new Chunk(content);
+        }
+
+        return whitespace;
+    }
+
+    public boolean isWhitespace() {
+        return attributes != null && attributes.containsKey(WHITESPACE);
+    }
 }
