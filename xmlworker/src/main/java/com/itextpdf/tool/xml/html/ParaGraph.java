@@ -67,29 +67,29 @@ public class ParaGraph extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
-		String sanitized = HTMLUtils.sanitize(content);
+		List<Chunk> sanitizedChunks = HTMLUtils.sanitize(content, false);
 		List<Element> l = new ArrayList<Element>(1);
-		if (sanitized.length() > 0) {
-			HtmlPipelineContext myctx;
-			try {
-				myctx = getHtmlPipelineContext(ctx);
-			} catch (NoCustomContextException e) {
-				throw new RuntimeWorkerException(e);
-			}
-			if ((null != tag.getCSS().get(CSS.Property.TAB_INTERVAL))) {
-				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
-				if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
-					tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
-				}
-				l.add(getCssAppliers().apply(tabbedChunk, tag,myctx));
-			} else if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
-				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
-				tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
-				l.add(getCssAppliers().apply(tabbedChunk, tag, myctx));
-			} else {
-				l.add(getCssAppliers().apply(new Chunk(sanitized), tag, myctx));
-			}
-		}
+        for (Chunk sanitized : sanitizedChunks) {
+            HtmlPipelineContext myctx;
+            try {
+                myctx = getHtmlPipelineContext(ctx);
+            } catch (NoCustomContextException e) {
+                throw new RuntimeWorkerException(e);
+            }
+            if ((null != tag.getCSS().get(CSS.Property.TAB_INTERVAL))) {
+                TabbedChunk tabbedChunk = new TabbedChunk(sanitized.getContent());
+                if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
+                    tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
+                }
+                l.add(getCssAppliers().apply(tabbedChunk, tag, myctx));
+            } else if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
+                TabbedChunk tabbedChunk = new TabbedChunk(sanitized.getContent());
+                tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
+                l.add(getCssAppliers().apply(tabbedChunk, tag, myctx));
+            } else {
+                l.add(getCssAppliers().apply(sanitized, tag, myctx));
+            }
+        }
 		return l;
 	}
 

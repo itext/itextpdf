@@ -34,6 +34,7 @@ package com.itextpdf.tool.xml.html;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
@@ -56,16 +57,24 @@ public class Body extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
-		String sanitized = HTMLUtils.sanitize(content);
+		List<Chunk> sanitizedChunks = HTMLUtils.sanitize(content, false);
 		List<Element> l = new ArrayList<Element>(1);
-		if (sanitized.length() > 0) {
-			try {
-				l.add(getCssAppliers().apply(new NoNewLineParagraph(sanitized), tag, getHtmlPipelineContext(ctx)));
-			} catch (NoCustomContextException e) {
-				throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
-			}
-		}
+        NoNewLineParagraph sanitizedNoNewLineParagraph = new NoNewLineParagraph();
+        for (Chunk sanitized : sanitizedChunks) {
+            sanitizedNoNewLineParagraph.add(sanitized);
+        }
+        if (sanitizedNoNewLineParagraph.size() > 0) {
+            try {
+                l.add(getCssAppliers().apply(sanitizedNoNewLineParagraph, tag, getHtmlPipelineContext(ctx)));
+            } catch (NoCustomContextException e) {
+                throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
+            }
+        }
 		return l;
 	}
 
+    @Override
+    public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
+        return currentContentToParagraph(currentContent, true, true, tag, ctx);
+    }
 }

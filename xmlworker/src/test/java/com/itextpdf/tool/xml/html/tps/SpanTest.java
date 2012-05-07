@@ -83,9 +83,9 @@ public class SpanTest {
 	 */
 	@Test
 	public void verifyContent() {
-		Assert.assertTrue(content.get(0) instanceof Chunk);
-		String unsanitized = content.get(0).toString();
-		Assert.assertEquals(" text snippet return it sanitized!! ", unsanitized);
+		Assert.assertTrue(content.get(1) instanceof Chunk);
+		String unsanitized = content.get(1).toString();
+		Assert.assertEquals("text snippet return it sanitized!!", unsanitized);
 	}
 
 	/**

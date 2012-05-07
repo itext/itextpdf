@@ -69,16 +69,7 @@ public class Anchor extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
-		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Element> l = new ArrayList<Element>(1);
-		if (sanitized.length() > 0) {
-			try {
-				l.add(getCssAppliers().apply(new Chunk(sanitized), tag, getHtmlPipelineContext(ctx)));
-			} catch (NoCustomContextException e) {
-				throw new RuntimeWorkerException(e);
-			}
-		}
-		return l;
+		return textContent(ctx, tag, content);
 	}
 
 	/*

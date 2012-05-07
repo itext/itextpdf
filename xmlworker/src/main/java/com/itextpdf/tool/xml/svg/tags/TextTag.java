@@ -114,7 +114,7 @@ public class TextTag extends AbstractGraphicProcessor {
 		
     	List<Element> l = new ArrayList<Element>(1);
 	   	    
-		String sanitized = HTMLUtils.sanitizeInline(content); //TODO check this
+		String sanitized = content.trim(); //TODO check this
 		
     	if (sanitized.length() > 0) {
     		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);

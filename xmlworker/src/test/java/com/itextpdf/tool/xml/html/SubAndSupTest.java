@@ -89,36 +89,36 @@ public class SubAndSupTest {
 	}
 	@Test
 	public void resolveNumberOfElements() throws IOException {
-		assertEquals(7, elementList.size()); // Br's count for one element(Chunk.NEWLINE).
+		assertEquals(8, elementList.size()); // Br's count for one element(Chunk.NEWLINE).
 	}
 	@Test
 	public void resolveNewLines() throws IOException {
 		assertEquals(Chunk.NEWLINE.getContent(), elementList.get(1).getChunks().get(0).getContent());
         assertEquals(8f, elementList.get(1).getChunks().get(0).getFont().getSize(), 0);
-		assertEquals(Chunk.NEWLINE.getContent(), elementList.get(3).getChunks().get(1).getContent());
+		assertEquals(Chunk.NEWLINE.getContent(), elementList.get(4).getChunks().get(1).getContent());
 	}
 	@Test
 	public void resolveFontSize() throws IOException {
-		assertEquals(12, elementList.get(4).getChunks().get(0).getFont().getSize(), 0);
-		assertEquals(9.75f, elementList.get(4).getChunks().get(1).getFont().getSize(), 0);
-		assertEquals(24, elementList.get(5).getChunks().get(0).getFont().getSize(), 0);
-		assertEquals(18f, elementList.get(5).getChunks().get(1).getFont().getSize(), 0);
+		assertEquals(12, elementList.get(5).getChunks().get(0).getFont().getSize(), 0);
+		assertEquals(9.75f, elementList.get(5).getChunks().get(2).getFont().getSize(), 0);
+		assertEquals(24, elementList.get(6).getChunks().get(0).getFont().getSize(), 0);
+		assertEquals(18f, elementList.get(6).getChunks().get(2).getFont().getSize(), 0);
 	}
 	@Test
 	public void resolveTextRise() throws IOException {
-		assertEquals(-9.75f/2, elementList.get(4).getChunks().get(1).getTextRise(), 0);
-		assertEquals(-9.75f/2, elementList.get(4).getChunks().get(2).getTextRise(), 0);
-		assertEquals(18/2+0.5, elementList.get(5).getChunks().get(1).getTextRise(), 0);
-		assertEquals(-18/2, elementList.get(5).getChunks().get(3).getTextRise(), 0);
-		assertEquals(0, elementList.get(6).getChunks().get(0).getTextRise(), 0);
-		assertEquals(-3, elementList.get(6).getChunks().get(1).getTextRise(), 0);
-		assertEquals(4, elementList.get(6).getChunks().get(8).getTextRise(), 0);
-		assertEquals(3, elementList.get(6).getChunks().get(13).getTextRise(), 0);
+		assertEquals(-9.75f/2, elementList.get(5).getChunks().get(2).getTextRise(), 0);
+		assertEquals(-9.75f/2, elementList.get(5).getChunks().get(4).getTextRise(), 0);
+		assertEquals(18/2+0.5, elementList.get(6).getChunks().get(2).getTextRise(), 0);
+		assertEquals(-18/2, elementList.get(6).getChunks().get(6).getTextRise(), 0);
+		assertEquals(0, elementList.get(7).getChunks().get(0).getTextRise(), 0);
+		assertEquals(-3, elementList.get(7).getChunks().get(2).getTextRise(), 0);
+		assertEquals(4, elementList.get(7).getChunks().get(14).getTextRise(), 0);
+		assertEquals(3, elementList.get(7).getChunks().get(22).getTextRise(), 0);
 	}
 	@Test
 	public void resolvePhraseLeading() throws IOException {
-		assertTrue(Math.abs(1.2f - ((Paragraph) elementList.get(4)).getMultipliedLeading()) < 0.0001);
 		assertTrue(Math.abs(1.2f - ((Paragraph) elementList.get(5)).getMultipliedLeading()) < 0.0001);
+		assertTrue(Math.abs(1.2f - ((Paragraph) elementList.get(6)).getMultipliedLeading()) < 0.0001);
 	}
 
 }

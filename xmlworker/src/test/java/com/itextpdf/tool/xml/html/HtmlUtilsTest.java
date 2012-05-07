@@ -78,10 +78,10 @@ public class HtmlUtilsTest {
 
 	@Test
 	public void testRTN() {
-		Assert.assertEquals("", util.sanitize("\r\n\t"));
+		Assert.assertEquals(" ", util.sanitize("\r\n\t", false).get(0).toString());
 	}
 	@Test
 	public void testRTNinline() {
-		Assert.assertEquals("", util.sanitizeInline("\r\n\t"));
+		Assert.assertEquals(" ", util.sanitizeInline("\r\n\t", false).get(0).toString());
 	}
 }

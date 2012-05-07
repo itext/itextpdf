@@ -148,6 +148,19 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 		return new ArrayList<Element>(0);
 	}
 
+    protected List<Element> textContent(final WorkerContext ctx, final Tag tag, final String content) {
+		List<Chunk> sanitizedChunks = HTMLUtils.sanitize(content, false);
+		List<Element> l = new ArrayList<Element>(1);
+        for (Chunk sanitized : sanitizedChunks) {
+            try {
+                l.add(getCssAppliers().apply(sanitized, tag, getHtmlPipelineContext(ctx)));
+            } catch (NoCustomContextException e) {
+                throw new RuntimeWorkerException(e);
+            }
+        }
+		return l;
+	}
+
 	/**
 	 * Checks for
 	 * {@link com.itextpdf.tool.xml.css.CSS.Property#PAGE_BREAK_AFTER}, if the
@@ -241,10 +254,12 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
                         }
 						p.add(e);
 					}
-					if (applyCSS) {
-						p = (Paragraph) getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx));
-					}
-					list.add(p);
+                    if (p.trim()) {
+                        if (applyCSS) {
+                            p = (Paragraph) getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx));
+                        }
+                        list.add(p);
+                    }
 				} else {
 					NoNewLineParagraph p = new NoNewLineParagraph(Float.NaN);
                     p.setMultipliedLeading(1.2f);

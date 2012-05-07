@@ -57,7 +57,7 @@ public class SampleTest {
         }
     }
 
-    @Test(timeout = 60000)
+    @Test
     public void test() throws IOException, DocumentException, InterruptedException {
         String testName = getTestName();
         if (!this.getClass().getName().equals(SampleTest.class.getName()) && (testName.length() > 0)) {

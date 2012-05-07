@@ -599,4 +599,24 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
     	return p;
     }
 
+    public boolean trim() {
+        while (this.size() > 0) {
+            Element firstChunk = this.get(0);
+            if (firstChunk instanceof Chunk && ((Chunk)firstChunk).isWhitespace()) {
+                this.remove(firstChunk);
+            } else {
+                break;
+            }
+        }
+        while (this.size() > 0) {
+            Element lastChunk = this.get(this.size() - 1);
+            if (lastChunk instanceof Chunk && ((Chunk)lastChunk).isWhitespace()) {
+                this.remove(lastChunk);
+            } else {
+                break;
+            }
+        }
+        return size() > 0;
+    }
+
 }

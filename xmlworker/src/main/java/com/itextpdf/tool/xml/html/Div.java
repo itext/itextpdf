@@ -67,16 +67,18 @@ public class Div extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
-		String sanitized = HTMLUtils.sanitizeInline(content);
+		List<Chunk> sanitizedChunks = HTMLUtils.sanitize(content, false);
+        NoNewLineParagraph noNewLineParagraph = new NoNewLineParagraph();
 		List<Element> l = new ArrayList<Element>(1);
-    	if (sanitized.length() > 0) {
-    		Chunk c = getCssAppliers().getChunkCssAplier().apply(new Chunk(sanitized), tag);
-    		try {
-				l.add(getCssAppliers().apply(new NoNewLineParagraph(c), tag, getHtmlPipelineContext(ctx)));
-			} catch (NoCustomContextException e) {
-				throw new RuntimeWorkerException(e);
-			}
-    	}
+        for (Chunk sanitized : sanitizedChunks) {
+            Chunk c = getCssAppliers().getChunkCssAplier().apply(sanitized, tag);
+            noNewLineParagraph.add(c);
+        }
+        try {
+            l.add(getCssAppliers().apply(noNewLineParagraph, tag, getHtmlPipelineContext(ctx)));
+        } catch (NoCustomContextException e) {
+            throw new RuntimeWorkerException(e);
+        }
 		return l;
 	}
 
@@ -106,8 +108,8 @@ public class Div extends AbstractTagProcessor {
 					p.add(e);
 				}
 			}
-			if (p != null) {
-				l.add(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
+			if (p != null && p.trim()) {
+                l.add(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
 			}
 			return l;
 		} catch (NoCustomContextException e) {

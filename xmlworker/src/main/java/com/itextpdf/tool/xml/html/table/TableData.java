@@ -78,17 +78,7 @@ public class TableData extends AbstractTagProcessor {
 	@Override
 	public List<Element> content(final WorkerContext ctx, final Tag tag,
 			final String content) {
-		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Element> l = new ArrayList<Element>(1);
-
-		if (sanitized.length() > 0) {
-			Chunk c = getCssAppliers().getChunkCssAplier().apply(new Chunk(sanitized), tag);
-			// NoNewLineParagraph noNewLineParagraph = new
-			// NoNewLineParagraphCssApplier(configuration).apply(new
-			// NoNewLineParagraph(c), tag);
-			l.add(c);
-		}
-		return l;
+		return textContent(ctx, tag, content);
 	}
 
 	/*
@@ -182,7 +172,9 @@ public class TableData extends AbstractTagProcessor {
         p.setMultipliedLeading(1.2f);
         p.addAll(chunks);
         p.setAlignment(cell.getHorizontalAlignment());
-        cell.addElement(p);
+        if (p.trim()) {
+            cell.addElement(p);
+        }
         chunks.clear();
     }
 
