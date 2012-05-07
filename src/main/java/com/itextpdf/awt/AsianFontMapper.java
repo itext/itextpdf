@@ -45,7 +45,6 @@ package com.itextpdf.awt;
 
 import java.awt.Font;
 
-import com.itextpdf.awt.DefaultFontMapper.BaseFontParameters;
 import com.itextpdf.text.pdf.BaseFont;
 
 public class AsianFontMapper extends DefaultFontMapper {
