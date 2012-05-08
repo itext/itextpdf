@@ -74,10 +74,12 @@ public class Div extends AbstractTagProcessor {
             Chunk c = getCssAppliers().getChunkCssAplier().apply(sanitized, tag);
             noNewLineParagraph.add(c);
         }
-        try {
-            l.add(getCssAppliers().apply(noNewLineParagraph, tag, getHtmlPipelineContext(ctx)));
-        } catch (NoCustomContextException e) {
-            throw new RuntimeWorkerException(e);
+        if (noNewLineParagraph.size() > 0) {
+            try {
+                l.add(getCssAppliers().apply(noNewLineParagraph, tag, getHtmlPipelineContext(ctx)));
+            } catch (NoCustomContextException e) {
+                throw new RuntimeWorkerException(e);
+            }
         }
 		return l;
 	}
