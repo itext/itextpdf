@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML-Print 1.0//EN"
+      "http://www.w3.org/MarkUp/DTD/xhtml-print10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>3_5-BF-01</title>
+</head>
+<body>
+<div class="TestPurpose">Common attributes in list module, printers SHALL
+also support the style attribute [on all elements with CORE attribute set
+25: A conforming printer MUST NOT treat [an] attribute [marked as N/A] as
+an error: title</div>
+<div class="AssertionsTested">Tests for assertions 25, 26, 27, 94, 23</div>
+
+<p>&lt;ul &gt;(block): Below must be a list of 5 words with bullets before each&nbsp;
+</p>
+<ul title="ignored" class="CL" id="H" style="color: green">
+	<li title="ignored" class="CL" id="I" style="color: green">&lt; li &gt; tag (block): This</li>
+	<li title="ignored" class="CL" id="J" style="color: green">&lt; li &gt; tag (block): is</li>
+	<li title="ignored" class="CL" id="K" style="color: green">&lt; li &gt; tag (block): an</li>
+	<li title="ignored" class="CL" id="L" style="color: green">&lt; li &gt; tag (block): unordered</li>
+	<li title="ignored" class="CL" id="M" style="color: green">&lt; li &gt; tag (block): list</li>
+</ul>
+
+</body>
+</html>
