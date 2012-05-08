@@ -1,5 +1,10 @@
 package com.itextpdf.tool.xml.examples;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
@@ -10,11 +15,6 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class SampleTest {
 
@@ -57,7 +57,7 @@ public class SampleTest {
         }
     }
 
-    @Test
+    @Test(timeout = 60000)
     public void test() throws IOException, DocumentException, InterruptedException {
         String testName = getTestName();
         if (!this.getClass().getName().equals(SampleTest.class.getName()) && (testName.length() > 0)) {
