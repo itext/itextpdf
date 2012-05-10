@@ -4,14 +4,27 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.CompareTool;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.Pipeline;
+import com.itextpdf.tool.xml.XMLWorker;
 import com.itextpdf.tool.xml.XMLWorkerFontProvider;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
+import com.itextpdf.tool.xml.css.CssFilesImpl;
+import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
+import com.itextpdf.tool.xml.html.CssAppliersImpl;
+import com.itextpdf.tool.xml.html.Tags;
+import com.itextpdf.tool.xml.parser.XMLParser;
+import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
+import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
+import com.itextpdf.tool.xml.pipeline.html.AbstractImageProvider;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +39,8 @@ public class SampleTest {
     private String cmpImage;
     private String differenceImage;
     private CompareTool compareTool;
+    private String testPath;
+    private String testName;
 
     public SampleTest() {
         compareTool = new CompareTool();
@@ -33,15 +48,15 @@ public class SampleTest {
 
     @Before
     public void setup() throws IOException {
-        String testPath = this.getClass().getName();
+        testPath = this.getClass().getName();
         testPath = testPath.replace(".", File.separator);
         testPath = testPath.substring(0, testPath.lastIndexOf(File.separator) + 1);
-        String testName = getTestName();
+        testName = getTestName();
         if (testName.length() > 0) {
             if (testName.contains(File.separator)) {
                 testName = testName.substring(testName.lastIndexOf(File.separator) + 1, testName.length());
             }
-            outPath = "." + File.separator + "target" + File.separator + testPath + File.separator + testName + File.separator;
+            outPath = "." + File.separator + "target" + File.separator + testPath + testName + File.separator;
             String inputPath = "." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + File.separator + testName + File.separator;
             differenceImage = outPath + "difference.png";
             outPdf = testName + ".pdf";
@@ -79,14 +94,35 @@ public class SampleTest {
         return false;
     }
 
+    class SampleTestImageProvider extends AbstractImageProvider {
+        final String imageRootPath;
+
+        public SampleTestImageProvider() {
+            imageRootPath = "." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + testName + File.separator;
+        }
+
+        public String getImageRootPath() {
+            return imageRootPath;
+        }
+    }
+
     private void transformHtml2Pdf() throws IOException, DocumentException, InterruptedException {
         Document doc = new Document(PageSize.A4);
         PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPath + outPdf));
         doc.open();
         doc.setMargins(0, 0, 0, 0);
-        XMLWorkerHelper.getInstance()
-                .parseXHtml(pdfWriter, doc, new FileInputStream(inputHtml), SampleTest.class.getResourceAsStream("sampleTest.css"),
-                        new XMLWorkerFontProvider(SampleTest.class.getResource("fonts").getPath()));
+
+        CssFilesImpl cssFiles = new CssFilesImpl();
+        cssFiles.add(XMLWorkerHelper.getCSS(SampleTest.class.getResourceAsStream("sampleTest.css")));
+        StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
+        HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(new XMLWorkerFontProvider(SampleTest.class.getResource("fonts").getPath())));
+        hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
+        hpc.setImageProvider(new SampleTestImageProvider());
+        HtmlPipeline htmlPipeline = new HtmlPipeline(hpc, new PdfWriterPipeline(doc, pdfWriter));
+        Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, htmlPipeline);
+        XMLWorker worker = new XMLWorker(pipeline, true);
+        XMLParser p = new XMLParser(true, worker, Charset.forName("UTF-8"));
+		p.parse(new FileInputStream(inputHtml), Charset.forName("UTF-8"));
         doc.close();
     }
 
