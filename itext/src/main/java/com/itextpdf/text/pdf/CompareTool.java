@@ -65,6 +65,9 @@ public class CompareTool {
                         bUnexpectedNumberOfPages = true;
                     }
                     int cnt = Math.min(imageFiles.length, cmpImageFiles.length);
+                    if (cnt < 1) {
+                        return "No files for comparing!!!\nThe result or sample pdf file is not processed by GhostScript.";
+                    }
                     Arrays.sort(imageFiles, new ImageNameComparator());
                     Arrays.sort(cmpImageFiles, new ImageNameComparator());
                     for (int i = 0; i < cnt; i++) {
