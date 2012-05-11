@@ -56,7 +56,6 @@ import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.pdf.crypto.AESCipherCBCnoPad;
 import com.itextpdf.text.pdf.crypto.IVGenerator;
-import java.security.DigestException;
 
 /**
  * 
