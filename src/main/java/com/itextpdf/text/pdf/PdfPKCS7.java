@@ -545,7 +545,7 @@ public class PdfPKCS7 {
                 this.timeStampToken = new TimeStampToken(contentInfoTsp);
                 TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
                 String algOID = info.getMessageImprintAlgOID().getId();
-                messageDigest = MessageDigest.getInstance(algOID);
+                messageDigest = MessageDigest.getInstance(getDigest(algOID));
             }
             else {
                 if (RSAdata != null || digestAttr != null) {
@@ -715,7 +715,7 @@ public class PdfPKCS7 {
         TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
         MessageImprint imprint = info.toASN1Structure().getMessageImprint();
         String algOID = info.getMessageImprintAlgOID().getId();
-        byte[] md = MessageDigest.getInstance(algOID).digest(digest);
+        byte[] md = MessageDigest.getInstance(getDigest(algOID)).digest(digest);
         byte[] imphashed = imprint.getHashedMessage();
         boolean res = Arrays.equals(md, imphashed);
         return res;
