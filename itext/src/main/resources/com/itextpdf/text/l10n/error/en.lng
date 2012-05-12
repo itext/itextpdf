@@ -327,6 +327,7 @@ the.number.of.booleans.in.this.array.doesn.t.correspond.with.the.number.of.field
 the.number.of.columns.in.pdfptable.constructor.must.be.greater.than.zero=The number of columns in PdfPTable constructor must be greater than zero.
 the.original.document.was.reused.read.it.again.from.file=The original document was reused. Read it again from file.
 the.page.number.must.be.gt.eq.1=The page number must be >= 1.
+the.page.size.must.be.smaller.than.14400.by.14400.its.1.by.2=The page size must be smaller than 14400 by 14400. It's {1} by {2}.
 the.parent.has.already.another.function=The parent has already another function.
 the.photometric.1.is.not.supported=The photometric {1} is not supported.
 the.resource.cjkencodings.properties.does.not.contain.the.encoding.1=The resource cjkencodings.properties does not contain the encoding {1}

@@ -369,9 +369,10 @@ public class PdfCopy extends PdfWriter {
      * Adds a blank page.
      * @param	rect The page dimension
      * @param	rotation The rotation angle in degrees
+     * @throws DocumentException 
      * @since	2.1.5
      */
-    public void addPage(Rectangle rect, int rotation) {
+    public void addPage(Rectangle rect, int rotation) throws DocumentException {
     	PdfRectangle mediabox = new PdfRectangle(rect, rotation);
     	PageResources resources = new PageResources();
     	PdfPage page = new PdfPage(mediabox, new HashMap<String, PdfRectangle>(), resources.getResources(), 0);
