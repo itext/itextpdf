@@ -277,7 +277,7 @@ class PdfStamperImp extends PdfWriter {
         	PdfStream xmp;
         	try {
         		XmpReader xmpr;
-        		if (moreInfo == null) {
+        		if (moreInfo == null || xmpMetadata != null) {
 	        		xmpr = new XmpReader(altMetadata);
 	        		if (!(xmpr.replaceNode("http://ns.adobe.com/pdf/1.3/", "Producer", producer)
 	        				|| xmpr.replaceDescriptionAttribute("http://ns.adobe.com/pdf/1.3/", "Producer", producer)))
