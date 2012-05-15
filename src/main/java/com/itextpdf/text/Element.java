@@ -161,6 +161,9 @@ public interface Element {
 	 */
 	public static final int JBIG2 = 36;
 
+    /** This is a possible type of <CODE>Element</CODE>. */
+	public static final int DIV = 37;
+
 	/** This is a possible type of <CODE>Element</CODE>. */
 	public static final int MULTI_COLUMN_TEXT = 40;
 
