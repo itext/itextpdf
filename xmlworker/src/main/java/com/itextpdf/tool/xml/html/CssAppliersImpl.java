@@ -36,18 +36,11 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.List;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfDiv;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.Image;
 import com.itextpdf.tool.xml.Tag;
-import com.itextpdf.tool.xml.css.apply.ChunkCssApplier;
-import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
-import com.itextpdf.tool.xml.css.apply.ImageCssApplier;
-import com.itextpdf.tool.xml.css.apply.LineSeparatorCssApplier;
-import com.itextpdf.tool.xml.css.apply.ListStyleTypeCssApplier;
-import com.itextpdf.tool.xml.css.apply.MarginMemory;
-import com.itextpdf.tool.xml.css.apply.NoNewLineParagraphCssApplier;
-import com.itextpdf.tool.xml.css.apply.PageSizeContainable;
-import com.itextpdf.tool.xml.css.apply.ParagraphCssApplier;
+import com.itextpdf.tool.xml.css.apply.*;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.pdfelement.NoNewLineParagraph;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
@@ -75,6 +68,7 @@ public class CssAppliersImpl implements CssAppliers {
 	private ListStyleTypeCssApplier list;
 	private LineSeparatorCssApplier lineseparator;
 	private ImageCssApplier image;
+    private DivCssApplier div;
 	/**
 	 *
 	 */
@@ -86,6 +80,7 @@ public class CssAppliersImpl implements CssAppliers {
 		list = new ListStyleTypeCssApplier();
 		lineseparator = new LineSeparatorCssApplier();
 		image = new ImageCssApplier();
+        div = new DivCssApplier();
 	}
 
     public CssAppliersImpl(FontProvider fontProvider) {
@@ -112,7 +107,9 @@ public class CssAppliersImpl implements CssAppliers {
 			e = lineseparator.apply((LineSeparator) e, t, psc);
 		} else if (e instanceof Image) {
 			e = image.apply((Image) e, t);
-		}
+		} else if (e instanceof PdfDiv) {
+            e = div.apply((PdfDiv)e, t, mm, psc);
+        }
 		return e;
 
 	}
@@ -146,6 +143,7 @@ public class CssAppliersImpl implements CssAppliers {
 	    clone.list = list;
 	    clone.lineseparator = lineseparator;
 	    clone.image = image;
+        clone.div = div;
 
         return clone;
     }
