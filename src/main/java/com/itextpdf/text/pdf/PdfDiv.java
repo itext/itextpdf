@@ -1,24 +1,53 @@
 package com.itextpdf.text.pdf;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.api.Spaceable;
 
 public class PdfDiv implements LargeElement, Spaceable {
+    public static final int NONE_FLOAT = -1;
+
+    public static final int LEFT_FLOAT = 0;
+
+    public static final int RIGHT_FLOAT = 1;
+
+    public static final int STATIC_POSITION = 0;
+
+    public static final int ABSOLUTE_POSITION = 1;
+
+    public static final int FIXED_POSITION = 2;
+
+    public static final int RELATIVE_POSITION = 3;
 
     private ArrayList<Element> content;
 
-    private Float xPos = null;
+    private Float left = null;
 
-    private Float yPos = null;
+    private Float top = null;
+
+    private Float right = null;
+
+    private Float bottom = null;
 
     private Float width = null;
 
     private Float height = null;
 
-    private int alignment = Element.ALIGN_UNDEFINED;
+    private int textAlignment = Element.ALIGN_UNDEFINED;
+
+    private float paddingLeft = 0;
+
+    private float paddingRight = 0;
+
+    private float paddingTop = 0;
+
+    private float paddingBottom = 0;
+
+    private int floatPosition = NONE_FLOAT;
+
+    private int position = STATIC_POSITION;
 
     /**
      * Indicates if the PdfPTable is complete once added to the document.
@@ -148,40 +177,56 @@ public class PdfDiv implements LargeElement, Spaceable {
     /**
      * Gets the alignment of this paragraph.
      *
-     * @return alignment
+     * @return textAlignment
      */
-    public int getAlignment() {
-        return alignment;
+    public int getTextAlignment() {
+        return this.textAlignment;
     }
 
 
     /**
      * Sets the alignment of this paragraph.
      *
-     * @param	alignment		the new alignment
+     * @param	textAlignment		the new alignment
      */
-    public void setAlignment(int alignment) {
-        this.alignment = alignment;
+    public void setTextAlignment(int textAlignment) {
+        this.textAlignment = textAlignment;
     }
 
     public void addElement(Element element) {
         content.add(element);
     }
 
-    public Float getXPos() {
-        return this.xPos;
+    public Float getLeft() {
+        return this.left;
     }
 
-    public void setXPos(Float xPos) {
-        this.xPos = xPos;
+    public void setLeft(Float left) {
+        this.left = left;
     }
 
-    public Float getYPos() {
-        return this.yPos;
+    public Float getRight() {
+        return this.right;
     }
 
-    public void setYPos(Float yPos) {
-        this.yPos = yPos;
+    public void setRight(Float right) {
+        this.right = right;
+    }
+
+    public Float getTop() {
+        return this.top;
+    }
+
+    public void setTop(Float top) {
+        this.top = top;
+    }
+
+    public Float getBottom() {
+        return this.bottom;
+    }
+
+    public void setBottom(Float bottom) {
+        this.bottom = bottom;
     }
 
     public Float getWidth() {
@@ -200,6 +245,54 @@ public class PdfDiv implements LargeElement, Spaceable {
         this.height = height;
     }
 
+    public float getPaddingLeft() {
+        return paddingLeft;
+    }
+
+    public void setPaddingLeft(float paddingLeft) {
+        this.paddingLeft = paddingLeft;
+    }
+
+    public float getPaddingRight() {
+        return paddingRight;
+    }
+
+    public void setPaddingRight(float paddingRight) {
+        this.paddingRight = paddingRight;
+    }
+
+    public float getPaddingTop() {
+        return paddingTop;
+    }
+
+    public void setPaddingTop(float paddingTop) {
+        this.paddingTop = paddingTop;
+    }
+
+    public float getPaddingBottom() {
+        return paddingBottom;
+    }
+
+    public void setPaddingBottom(float paddingBottom) {
+        this.paddingBottom = paddingBottom;
+    }
+
+        public int getFloatPosition() {
+        return floatPosition;
+    }
+
+    public void setFloatPosition(int floatPosition) {
+        this.floatPosition = floatPosition;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
     public Element popFirstElement() {
         Element firstElement = null;
         if (content.size() > 0) {
@@ -207,5 +300,9 @@ public class PdfDiv implements LargeElement, Spaceable {
             content.remove(0);
         }
         return firstElement;
+    }
+
+    public Rectangle writeContent(final PdfContentByte canvas, final float llx, final float lly, final float urx, final float ury) {
+        return new Rectangle(0, 0, 0, 0);
     }
 }
