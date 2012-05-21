@@ -61,7 +61,8 @@ public class Body extends AbstractTagProcessor {
 		List<Element> l = new ArrayList<Element>(1);
         NoNewLineParagraph sanitizedNoNewLineParagraph = new NoNewLineParagraph();
         for (Chunk sanitized : sanitizedChunks) {
-            sanitizedNoNewLineParagraph.add(sanitized);
+            Chunk c = getCssAppliers().getChunkCssAplier().apply(sanitized, tag);
+            sanitizedNoNewLineParagraph.add(c);
         }
         if (sanitizedNoNewLineParagraph.size() > 0) {
             try {
