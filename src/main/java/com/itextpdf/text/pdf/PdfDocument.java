@@ -1390,11 +1390,11 @@ public class PdfDocument extends Document {
                         localGoto((String)chunk.getAttribute(Chunk.LOCALGOTO), xMarker, yMarker, xMarker + width - subtract, yMarker + fontSize);
                     }
                     if (chunk.isAttribute(Chunk.LOCALDESTINATION)) {
-                        float subtract = lastBaseFactor;
+                        /*float subtract = lastBaseFactor;
                         if (nextChunk != null && nextChunk.isAttribute(Chunk.LOCALDESTINATION))
                             subtract = 0;
                         if (nextChunk == null)
-                            subtract += hangingCorrection;
+                            subtract += hangingCorrection;*/
                         localDestination((String)chunk.getAttribute(Chunk.LOCALDESTINATION), new PdfDestination(PdfDestination.XYZ, xMarker, yMarker + fontSize, 0));
                     }
                     if (chunk.isAttribute(Chunk.GENERICTAG)) {
