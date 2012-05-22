@@ -120,30 +120,30 @@ public class PdfGraphics2D extends Graphics2D {
 
     private static final AffineTransform IDENTITY = new AffineTransform();
 
-    private Font font;
-    private BaseFont baseFont;
-    private float fontSize;
-    private AffineTransform transform;
-    private Paint paint;
-    private Color background;
-    private float width;
-    private float height;
+    protected Font font;
+    protected BaseFont baseFont;
+    protected float fontSize;
+    protected AffineTransform transform;
+    protected Paint paint;
+    protected Color background;
+    protected float width;
+    protected float height;
 
-    private Area clip;
+    protected Area clip;
 
-    private RenderingHints rhints = new RenderingHints(null);
+    protected RenderingHints rhints = new RenderingHints(null);
 
-    private Stroke stroke;
-    private Stroke originalStroke;
+    protected Stroke stroke;
+    protected Stroke originalStroke;
 
-    private PdfContentByte cb;
+    protected PdfContentByte cb;
 
     /** Storage for BaseFont objects created. */
-    private HashMap<String, BaseFont> baseFonts;
+    protected HashMap<String, BaseFont> baseFonts;
 
-    private boolean disposeCalled = false;
+    protected boolean disposeCalled = false;
 
-    private FontMapper fontMapper;
+    protected FontMapper fontMapper;
 
     private static final class Kid {
         final int pos;
@@ -1545,7 +1545,7 @@ public class PdfGraphics2D extends Graphics2D {
         coords[5] = normalizeY(coords[5]);
     }
 
-    private AffineTransform normalizeMatrix() {
+    protected AffineTransform normalizeMatrix() {
         double[] mx = new double[6];
         AffineTransform result = AffineTransform.getTranslateInstance(0,0);
         result.getMatrix(mx);
