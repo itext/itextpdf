@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.pdf.PdfDiv;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.css.*;
@@ -62,6 +63,8 @@ public class DivCssApplier {
                 if (div.getHeight() == null || div.getTop() == null) {
                     div.setBottom(utils.parseValueToPt(value, fontSize));
                 }
+            } else if (key.equalsIgnoreCase(CSS.Property.BACKGROUND_COLOR)) {
+				div.setBackgroundColor(HtmlUtilities.decodeColor(value));
             } else if (key.equalsIgnoreCase(CSS.Property.PADDING_LEFT)) {
                 div.setPaddingLeft(utils.parseValueToPt(value, fontSize));
             } else if (key.equalsIgnoreCase(CSS.Property.PADDING_RIGHT)) {
@@ -76,17 +79,17 @@ public class DivCssApplier {
                 marginBottom = utils.parseValueToPt(value, fontSize);
             } else if (key.equalsIgnoreCase(CSS.Property.FLOAT)) {
                 if (value.equalsIgnoreCase(CSS.Value.LEFT)) {
-                    div.setFloatPosition(PdfDiv.LEFT_FLOAT);
+                    div.setFloatType(PdfDiv.FloatType.LEFT);
                 } else if (value.equalsIgnoreCase(CSS.Value.RIGHT)) {
-                    div.setFloatPosition(PdfDiv.RIGHT_FLOAT);
+                    div.setFloatType(PdfDiv.FloatType.RIGHT);
                 }
             } else if (key.equalsIgnoreCase(CSS.Property.POSITION)) {
                 if (value.equalsIgnoreCase(CSS.Value.ABSOLUTE)) {
-                    div.setPosition(PdfDiv.ABSOLUTE_POSITION);
+                    div.setPosition(PdfDiv.PositionType.ABSOLUTE);
                 } else if (value.equalsIgnoreCase(CSS.Value.FIXED)) {
-                    div.setPosition(PdfDiv.FIXED_POSITION);
+                    div.setPosition(PdfDiv.PositionType.FIXED);
                 } else if (value.equalsIgnoreCase(CSS.Value.RELATIVE)) {
-                    div.setPosition(PdfDiv.RELATIVE_POSITION);
+                    div.setPosition(PdfDiv.PositionType.RELATIVE);
                 }
             }
 

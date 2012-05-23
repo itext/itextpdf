@@ -455,7 +455,7 @@ public class ColumnText {
         else if (element.type() == Element.PHRASE) {
         	element = new Paragraph((Phrase)element);
         }
-        if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK)
+        if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK && element.type() != Element.DIV)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("element.not.allowed"));
         if (!composite) {
             composite = true;
@@ -1596,8 +1596,36 @@ public class ColumnText {
                     zh.draw(canvas, leftX, minY, rightX, maxY, yLine);
                 }
                 compositeElements.removeFirst();
-            }
-            else
+            } else if (element.type() == Element.DIV) {
+                ArrayList<PdfDiv> floatingElements = new ArrayList<PdfDiv>();
+                do {
+                    floatingElements.add((PdfDiv) element);
+                    compositeElements.removeFirst();
+                    element = !compositeElements.isEmpty() ? compositeElements.getFirst() : null;
+                } while (element != null && element.type() == Element.DIV);
+
+                compositeColumn = new ColumnText(canvas);
+                compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
+                //compositeColumn.setAlignment(div.getTextAlignment());
+                //compositeColumn.setIndent(para.getIndentationLeft() + para.getFirstLineIndent());
+                compositeColumn.setRunDirection(runDirection);
+                compositeColumn.setArabicOptions(arabicOptions);
+                compositeColumn.setSpaceCharRatio(spaceCharRatio);
+
+
+                FloatableLayout fl = new FloatableLayout(compositeColumn);
+                fl.setSimpleColumn(leftX, minY, rightX, yLine);
+                int status = fl.layout(floatingElements, simulate);
+
+                //firstPass = false;
+                yLine = fl.getYLine();
+                descender = 0;
+                compositeColumn = null;
+                if ((status & NO_MORE_TEXT) != 0) {
+                    compositeElements.addAll(floatingElements);
+                    return status;
+                }
+            } else
                 compositeElements.removeFirst();
         }
     }

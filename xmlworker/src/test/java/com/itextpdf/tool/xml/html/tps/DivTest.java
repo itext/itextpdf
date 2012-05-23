@@ -46,6 +46,7 @@ package com.itextpdf.tool.xml.html.tps;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.pdf.PdfDiv;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -97,18 +98,16 @@ public class DivTest {
 	@Test
 	public void verifyNumberOfParagraphs() {
 		final List<Element> endContent = d.end(workerContextImpl, new Tag("div"), currentContent);
-		Assert.assertEquals(3, endContent.size());
+		Assert.assertEquals(1, endContent.size());
 	}
 
 	/**
 	 * Verifies that the class of the elements returned by {@link Div#end}.
 	 */
 	@Test
-	public void verifyIfParagraphs() {
+	public void verifyIfPdfDiv() {
 		final List<Element> endContent = d.end(workerContextImpl, new Tag("div"), currentContent);
-		Assert.assertTrue(endContent.get(0) instanceof Paragraph);
-		Assert.assertTrue(endContent.get(1) instanceof Paragraph);
-		Assert.assertTrue(endContent.get(2) instanceof Paragraph);
+		Assert.assertTrue(endContent.get(0) instanceof PdfDiv);
 	}
 
 	/**

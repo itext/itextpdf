@@ -3,23 +3,14 @@ package com.itextpdf.text.pdf;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.*;
 import com.itextpdf.text.api.Spaceable;
 
 public class PdfDiv implements LargeElement, Spaceable {
-    public static final int NONE_FLOAT = -1;
+    public enum FloatType {NONE, LEFT, RIGHT};
 
-    public static final int LEFT_FLOAT = 0;
-
-    public static final int RIGHT_FLOAT = 1;
-
-    public static final int STATIC_POSITION = 0;
-
-    public static final int ABSOLUTE_POSITION = 1;
-
-    public static final int FIXED_POSITION = 2;
-
-    public static final int RELATIVE_POSITION = 3;
+    public enum PositionType {STATIC, ABSOLUTE, FIXED, RELATIVE};
 
     private ArrayList<Element> content;
 
@@ -45,9 +36,47 @@ public class PdfDiv implements LargeElement, Spaceable {
 
     private float paddingBottom = 0;
 
-    private int floatPosition = NONE_FLOAT;
+    private FloatType floatType = FloatType.NONE;
 
-    private int position = STATIC_POSITION;
+    private PositionType position = PositionType.STATIC;
+
+    public float getContentWidth() {
+        return contentWidth;
+    }
+
+    public void setContentWidth(float contentWidth) {
+        this.contentWidth = contentWidth;
+    }
+
+    public float getContentHeight() {
+        return contentHeight;
+    }
+
+    public void setContentHeight(float contentHeight) {
+        this.contentHeight = contentHeight;
+    }
+
+    public float getActualHeight() {
+        return height != null && height >= contentHeight ? height : contentHeight;
+    }
+
+    public float getActualWidth() {
+        return width != null && width >= contentWidth ? width : contentWidth;
+    }
+
+    private float contentWidth = 0;
+
+    private float contentHeight = 0;
+
+    public BaseColor getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(BaseColor backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    private BaseColor backgroundColor = null;
 
     /**
      * Indicates if the PdfPTable is complete once added to the document.
@@ -277,20 +306,28 @@ public class PdfDiv implements LargeElement, Spaceable {
         this.paddingBottom = paddingBottom;
     }
 
-        public int getFloatPosition() {
-        return floatPosition;
+    public FloatType getFloatType() {
+        return floatType;
     }
 
-    public void setFloatPosition(int floatPosition) {
-        this.floatPosition = floatPosition;
+    public void setFloatType(FloatType floatType) {
+        this.floatType = floatType;
     }
 
-    public int getPosition() {
+    public PositionType getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(PositionType position) {
         this.position = position;
+    }
+
+    public ArrayList<Element> getContent() {
+        return content;
+    }
+
+    public void setContent(ArrayList<Element> content) {
+        this.content = content;
     }
 
     public Element popFirstElement() {
@@ -302,7 +339,217 @@ public class PdfDiv implements LargeElement, Spaceable {
         return firstElement;
     }
 
-    public Rectangle writeContent(final PdfContentByte canvas, final float llx, final float lly, final float urx, final float ury) {
-        return new Rectangle(0, 0, 0, 0);
+    public int layout(final ColumnText compositeColumn, boolean simulate, final float llx, final float lly, final float urx, final float ury) throws DocumentException {
+
+        float leftX = Math.min(llx, urx);
+        float maxY = Math.max(lly, ury);
+        float minY = Math.min(lly, ury);
+        float rightX = Math.max(llx, urx);
+        float yLine = maxY;
+
+        if (width != null && width > 0) {
+            if (width < rightX - leftX) {
+                rightX = leftX + width;
+            } else if (width > rightX - leftX) {
+                return ColumnText.NO_MORE_COLUMN;
+            }
+        }
+
+        if (height != null && height > 0) {
+            if (height < maxY - minY) {
+                minY = maxY - height;
+            } else if (height > maxY - minY) {
+                return ColumnText.NO_MORE_COLUMN;
+            }
+        }
+
+        if (!simulate && position == PdfDiv.PositionType.RELATIVE) {
+            Float translationX = null;
+            if (left != null) {
+                translationX = left;
+            } else if (right != null) {
+                translationX = -right;
+            } else {
+                translationX = 0f;
+            }
+
+            Float translationY = null;
+            if (top != null) {
+                translationY = -top;
+            } else if (bottom != null) {
+                translationY = bottom;
+            } else {
+                translationY = 0f;
+            }
+            compositeColumn.getCanvas().saveState();
+            compositeColumn.getCanvas().transform(new AffineTransform(1f, 0, 0, 1f, translationX, translationY));
+        }
+
+        if (!simulate) {
+            if (backgroundColor != null && getActualWidth() > 0  && getActualHeight() > 0) {
+                float backgroundWidth = getActualWidth();
+                float backgroundHeight = getActualHeight();
+                if (width != null) {
+                    backgroundWidth = width > 0 ? width : 0;
+                }
+
+                if (height != null) {
+                    backgroundHeight = height > 0 ? height : 0;
+                }
+                if (backgroundWidth > 0 && backgroundHeight > 0) {
+                    Rectangle background = new Rectangle(leftX, maxY - backgroundHeight, leftX + backgroundWidth, maxY);
+                    background.setBackgroundColor(backgroundColor);
+                    compositeColumn.getCanvas().rectangle(background);
+                }
+            }
+        }
+
+        contentWidth = 0;
+        contentHeight = 0;
+
+        minY += paddingBottom;
+        leftX += paddingLeft;
+        rightX -= paddingRight;
+
+        yLine -= paddingTop;
+
+        ArrayList<PdfDiv> floatingElements = new ArrayList();
+
+        int status = ColumnText.NO_MORE_TEXT;
+
+        for (Element childElement : content) {
+            if (childElement instanceof PdfDiv) {
+                PdfDiv childFloatingElement = (PdfDiv) childElement;
+                if (childFloatingElement.getPosition() != PdfDiv.PositionType.FIXED && childFloatingElement.getPosition() != PdfDiv.PositionType.ABSOLUTE) {
+                    if (childFloatingElement.getFloatType() != PdfDiv.FloatType.NONE) {
+                        if (compositeColumn.getCompositeElements() != null && !compositeColumn.getCompositeElements().isEmpty()) {
+                            compositeColumn.setSimpleColumn(leftX, minY, rightX, yLine);
+                            compositeColumn.setFilledWidth(0);
+                            status = compositeColumn.go(simulate);
+                            yLine = compositeColumn.getYLine();
+                            yLine += compositeColumn.getDescender();
+                            if (contentWidth < compositeColumn.getFilledWidth()) {
+                                contentWidth = compositeColumn.getFilledWidth();
+                            }
+                            yLine += compositeColumn.getDescender();
+                            if ((status & ColumnText.NO_MORE_TEXT) == 0 ) {
+                                break;
+                            }
+                        }
+                        floatingElements.add(childFloatingElement);
+                        continue;
+
+                    }
+                }
+            }
+
+            if (!floatingElements.isEmpty()) {
+                FloatableLayout fl = new FloatableLayout(compositeColumn);
+                fl.setSimpleColumn(leftX, minY, rightX, yLine);
+                status = fl.layout(floatingElements, simulate);
+                yLine = fl.getYLine();
+                if (contentWidth < fl.getFilledWidth()) {
+                    contentWidth = fl.getFilledWidth();
+                }
+                if ((status & ColumnText.NO_MORE_TEXT) == 0) {
+                    break;
+                }
+            }
+
+            compositeColumn.addElement(childElement);
+        }
+
+
+        if ((status & ColumnText.NO_MORE_TEXT) != 0) {
+            if (!floatingElements.isEmpty()) {
+                FloatableLayout fl = new FloatableLayout(compositeColumn);
+                fl.setSimpleColumn(leftX, minY, rightX, yLine);
+                status = fl.layout(floatingElements, simulate);
+                yLine = fl.getYLine();
+                if (contentWidth < compositeColumn.getFilledWidth()) {
+                    contentWidth = fl.getFilledWidth();
+                }
+            } else if (compositeColumn.getCompositeElements() != null && !compositeColumn.getCompositeElements().isEmpty()) {
+                compositeColumn.setSimpleColumn(leftX, minY, rightX, yLine);
+                compositeColumn.setFilledWidth(0);
+                status = compositeColumn.go(simulate);
+                yLine = compositeColumn.getYLine();
+                yLine += compositeColumn.getDescender();
+                if (contentWidth < compositeColumn.getFilledWidth()) {
+                    contentWidth = compositeColumn.getFilledWidth();
+                }
+            }
+        }
+
+        if (!simulate && position == PdfDiv.PositionType.RELATIVE) {
+            compositeColumn.getCanvas().restoreState();
+        }
+
+        yLine -= paddingBottom;
+        contentHeight = maxY - yLine;
+        contentWidth += paddingLeft + paddingRight;
+
+        return status;
     }
+
+    /*public static int writeFloatingElements(final ColumnText compositeColumn, final float llx, final float lly, final float urx, final float ury, ArrayList<PdfDiv> floatingElements) throws DocumentException {
+        float currentLeftX = llx;
+        float currentRightX = urx;
+        float yLine = ury;
+        float minYLine = yLine;
+
+        while (floatingElements.isEmpty()) {
+            PdfDiv floatingElement = floatingElements.get(0);
+            floatingElements.remove(0);
+
+            Rectangle box;
+            if (floatingElement.getFloatType() == FloatType.LEFT) {
+                box = floatingElement.writeContent(compositeColumn, currentLeftX, lly, currentRightX, yLine);
+            } else if (floatingElement.getWidth() != null && floatingElement.getFloatType() == FloatType.RIGHT) {
+                box = floatingElement.writeContent(compositeColumn, currentRightX - floatingElement.getWidth(), lly, currentRightX, yLine);
+            } else {
+                box = floatingElement.writeContent(compositeColumn, currentLeftX, lly, currentRightX, yLine);
+            }
+
+            if ((status & ColumnText.NO_MORE_TEXT) == 0) {
+                if (yLine == minYLine) {
+                    return;
+                }
+                yLine = minYLine;
+                currentLeftX = llx;
+                currentRightX = urx;
+                floatingElement.writeContent(compositeColumn, currentLeftX, lly, currentRightX, yLine);
+                status = compositeColumn.;
+                minYLine = compositeColumn.getYLine();
+                if ((status & ColumnText.NO_MORE_TEXT) == 0) {
+                    return;
+                }
+            }
+
+            minYLine = compositeColumn.getYLine();
+
+            if (floatingElement.getFloatType() == FloatType.LEFT) {
+                if (floatingElement.getWidth() != null) {
+                    currentLeftX += floatingElement.getWidth();
+                } else {
+                    currentLeftX = llx;
+                    currentRightX = urx;
+                    yLine = minYLine;
+                }
+            } else if (floatingElement.getFloatType() == FloatType.RIGHT) {
+                if (floatingElement.getWidth() != null) {
+                    currentRightX -= floatingElement.getWidth();
+                } else {
+                    currentLeftX = llx;
+                    currentRightX = urx;
+                    yLine = minYLine;
+                }
+            }
+
+        }
+    }
+
+    public void writeSaticElements(final ColumnText compositeColumn, final float llx, final float lly, final float urx, final float ury) {
+
+    }*/
 }

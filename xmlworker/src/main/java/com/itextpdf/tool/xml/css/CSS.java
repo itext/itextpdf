@@ -58,6 +58,7 @@ public final class CSS {
 	public static final class Property {
 
 		private Property() {};
+        public static final String BACKGROUND = "background";
 		public static final String BACKGROUND_IMAGE = "background-image";
 		public static final String BACKGROUND_REPEAT = "background-repeat";
 		public static final String BACKGROUND_ATTACHMENT = "background-attachment";
