@@ -51,6 +51,11 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.HtmlUtilities;
 
+/**
+ * Old class to define styles for HTMLWorker.
+ * We've completely rewritten HTML to PDF functionality; see project XML Worker.
+ * XML Worker is able to parse CSS files and "style" attribute values.
+ */
 public class StyleSheet {
 
 	/**
