@@ -218,6 +218,7 @@ public class ColumnText {
     private float spaceCharRatio = GLOBAL_SPACE_CHAR_RATIO;
 
     private boolean lastWasNewline = true;
+    private boolean repeatFirstLineIndent = true;
 
     /** Holds value of property linesWritten. */
     private int linesWritten;
@@ -319,6 +320,7 @@ public class ColumnText {
         rectangularMode = org.rectangularMode;
         spaceCharRatio = org.spaceCharRatio;
         lastWasNewline = org.lastWasNewline;
+        repeatFirstLineIndent = org.repeatFirstLineIndent;
         linesWritten = org.linesWritten;
         arabicOptions = org.arabicOptions;
         runDirection = org.runDirection;
@@ -758,8 +760,18 @@ public class ColumnText {
      * @param indent the indent
      */
     public void setIndent(final float indent) {
+    	setIndent(indent, true);
+    }
+    /**
+     * Sets the first paragraph line indent.
+     *
+     * @param indent the indent
+     * @param	repeatFirstLineIndent	do we need to repeat the indentation of the first line after a newline?
+     */
+    public void setIndent(final float indent, final boolean repeatFirstLineIndent) {
         this.indent = indent;
         lastWasNewline = true;
+        this.repeatFirstLineIndent = repeatFirstLineIndent;
     }
 
     /**
@@ -947,7 +959,7 @@ public class ColumnText {
                 lastX = pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
                 currentFont = (PdfFont)currentValues[0];
             }
-            lastWasNewline = line.isNewlineSplit();
+            lastWasNewline = repeatFirstLineIndent && line.isNewlineSplit();
             yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
             ++linesWritten;
             descender = line.getDescender();
@@ -1188,7 +1200,7 @@ public class ColumnText {
     }
 
     protected int goComposite(final boolean simulate) throws DocumentException {
-        if (!rectangularMode)
+    	if (!rectangularMode)
             throw new DocumentException(MessageLocalization.getComposedMessage("irregular.columns.are.not.supported.in.composite.mode"));
         linesWritten = 0;
         descender = 0;
@@ -1207,7 +1219,7 @@ public class ColumnText {
                     if (compositeColumn == null) {
                         compositeColumn = new ColumnText(canvas);
                         compositeColumn.setAlignment(para.getAlignment());
-                        compositeColumn.setIndent(para.getIndentationLeft() + para.getFirstLineIndent());
+                        compositeColumn.setIndent(para.getIndentationLeft() + para.getFirstLineIndent(), false);
                         compositeColumn.setExtraParagraphSpace(para.getExtraParagraphSpace());
                         compositeColumn.setFollowingIndent(para.getIndentationLeft());
                         compositeColumn.setRightIndent(para.getIndentationRight());
@@ -1305,7 +1317,7 @@ public class ColumnText {
                         compositeColumn = new ColumnText(canvas);
                         compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
                         compositeColumn.setAlignment(item.getAlignment());
-                        compositeColumn.setIndent(item.getIndentationLeft() + listIndentation + item.getFirstLineIndent());
+                        compositeColumn.setIndent(item.getIndentationLeft() + listIndentation + item.getFirstLineIndent(), false);
                         compositeColumn.setExtraParagraphSpace(item.getExtraParagraphSpace());
                         compositeColumn.setFollowingIndent(compositeColumn.getIndent());
                         compositeColumn.setRightIndent(item.getIndentationRight() + list.getIndentationRight());
