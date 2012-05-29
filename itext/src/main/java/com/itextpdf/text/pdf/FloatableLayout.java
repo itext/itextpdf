@@ -48,7 +48,7 @@ public class FloatableLayout {
 
     public FloatableLayout(PdfContentByte canvas) {
         this.compositeColumn = new ColumnText(canvas);
-        //compositeColumn.setUseAscender(true);
+        compositeColumn.setUseAscender(true);
     }
 
     public void setSimpleColumn(final float llx, final float lly, final float urx, final float ury) {

@@ -423,6 +423,10 @@ public class PdfDiv implements LargeElement, Spaceable {
                 if (childFloatingElement.getPosition() != PdfDiv.PositionType.FIXED && childFloatingElement.getPosition() != PdfDiv.PositionType.ABSOLUTE) {
                     if (childFloatingElement.getFloatType() != PdfDiv.FloatType.NONE) {
                         if (compositeColumn.getCompositeElements() != null && !compositeColumn.getCompositeElements().isEmpty()) {
+                            Element firstElement = compositeColumn.getCompositeElements().get(0);
+                            if (firstElement instanceof Spaceable) {
+                                yLine -= ((Spaceable)firstElement).getSpacingBefore();
+                            }
                             compositeColumn.setSimpleColumn(leftX, minY, rightX, yLine);
                             compositeColumn.setFilledWidth(0);
                             status = compositeColumn.go(simulate);
@@ -470,6 +474,10 @@ public class PdfDiv implements LargeElement, Spaceable {
                     contentWidth = fl.getFilledWidth();
                 }
             } else if (compositeColumn.getCompositeElements() != null && !compositeColumn.getCompositeElements().isEmpty()) {
+                Element firstElement = compositeColumn.getCompositeElements().get(0);
+                if (firstElement instanceof Spaceable) {
+                    yLine -= ((Spaceable) firstElement).getSpacingBefore();
+                }
                 compositeColumn.setSimpleColumn(leftX, minY, rightX, yLine);
                 compositeColumn.setFilledWidth(0);
                 status = compositeColumn.go(simulate);

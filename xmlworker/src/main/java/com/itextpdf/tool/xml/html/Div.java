@@ -100,18 +100,10 @@ public class Div extends AbstractTagProcessor {
 			Paragraph p = null;
 			PdfDiv div = (PdfDiv)getCssAppliers().apply(new PdfDiv(), tag, getHtmlPipelineContext(ctx));
 			for (Element e : currentContent) {
-				if (e instanceof Paragraph) {
+				if (e instanceof Paragraph || e instanceof PdfDiv) {
 					if (p != null) {
                         if (p.trim()) {
-						    div.addElement(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
-                        }
-						p = null;
-					}
-					div.addElement(e);
-				} else if (e instanceof PdfDiv) {
-                    if (p != null) {
-                        if (p.trim()) {
-						    div.addElement(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
+						    div.addElement(p);
                         }
 						p = null;
 					}
@@ -119,13 +111,13 @@ public class Div extends AbstractTagProcessor {
                 } else {
 					if (p == null) {
 						p = new Paragraph();
-                        //p.setMultipliedLeading(1.2f);
+                        p.setMultipliedLeading(1.2f);
 					}
 					p.add(e);
 				}
 			}
 			if (p != null && p.trim()) {
-                div.addElement(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
+                div.addElement(p);
 			}
 
 			List<Element> l = new ArrayList<Element>(1);
