@@ -61,8 +61,8 @@ public class CssAppliersImpl implements CssAppliers {
 	 *
 	 * public static CssAppliersImpl getInstance() { return myself; }
 	 */
-	private ChunkCssApplier chunk;
-	private ParagraphCssApplier paragraph;
+	protected ChunkCssApplier chunk;
+	protected ParagraphCssApplier paragraph;
 	private NoNewLineParagraphCssApplier nonewlineparagraph;
 	private HtmlCellCssApplier htmlcell;
 	private ListStyleTypeCssApplier list;
