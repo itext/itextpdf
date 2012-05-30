@@ -335,6 +335,9 @@ public class PdfPRow {
                 }
 				boolean vf = false;
 				if (cell.getHeight() > currentMaxHeight) {
+					if (!img.isScaleToFitLineWhenOverflow()) {
+						continue;
+					}
 					img.scalePercent(100);
 					float scale = (currentMaxHeight - cell.getEffectivePaddingTop() - cell
 							.getEffectivePaddingBottom())
@@ -640,7 +643,9 @@ public class PdfPRow {
 			Image img = cell.getImage();
 			PdfPCell newCell = new PdfPCell(cell);
 			if (img != null) {
-				if (newHeight > cell.getEffectivePaddingBottom() + cell.getEffectivePaddingTop() + 2) {
+				float padding = cell.getEffectivePaddingBottom() + cell.getEffectivePaddingTop() + 2;
+				if ((img.isScaleToFitLineWhenOverflow() || img.getScaledHeight() + padding < newHeight)
+				    && newHeight > padding) {
 					newCell.setPhrase(null);
 					allEmpty = false;
 				}
