@@ -7,7 +7,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.api.Spaceable;
 
-public class FloatableLayout {
+public class FloatLayout {
     protected float maxY;
 
     protected float minY;
@@ -44,12 +44,12 @@ public class FloatableLayout {
 
     protected final List<Element> content;
 
-    public FloatableLayout(ColumnText compositeColumn, List<Element> elements) {
+    public FloatLayout(ColumnText compositeColumn, List<Element> elements) {
         this.compositeColumn = ColumnText.duplicate(compositeColumn);
         content = elements;
     }
 
-    public FloatableLayout(PdfContentByte canvas, List<Element> elements) {
+    public FloatLayout(PdfContentByte canvas, List<Element> elements) {
         this.compositeColumn = new ColumnText(canvas);
         compositeColumn.setUseAscender(false);
         content = elements;

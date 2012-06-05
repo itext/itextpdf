@@ -1625,7 +1625,7 @@ public class ColumnText {
                 compositeColumn.setSpaceCharRatio(spaceCharRatio);
 
 
-                FloatableLayout fl = new FloatableLayout(compositeColumn, floatingElements);
+                FloatLayout fl = new FloatLayout(compositeColumn, floatingElements);
                 fl.setSimpleColumn(leftX, minY, rightX, yLine);
                 int status = fl.layout(simulate);
 

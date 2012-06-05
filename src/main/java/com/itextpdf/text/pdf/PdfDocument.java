@@ -2379,7 +2379,7 @@ public class PdfDocument extends Document {
         if (floatingElements != null && !floatingElements.isEmpty()) {
             ArrayList<Element> cashedFloatingElements = floatingElements;
             floatingElements = null;
-            FloatableLayout fl = new FloatableLayout(writer.getDirectContent(), cashedFloatingElements);
+            FloatLayout fl = new FloatLayout(writer.getDirectContent(), cashedFloatingElements);
 
                 fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
                 int status = fl.layout(false);

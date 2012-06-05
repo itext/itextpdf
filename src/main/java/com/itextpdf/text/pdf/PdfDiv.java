@@ -48,7 +48,7 @@ public class PdfDiv implements Element, Spaceable {
 
     private PositionType position = PositionType.STATIC;
 
-    private FloatableLayout floatableLayout = null;
+    private FloatLayout floatLayout = null;
 
     public float getContentWidth() {
         return contentWidth;
@@ -414,17 +414,17 @@ public class PdfDiv implements Element, Spaceable {
         int status = ColumnText.NO_MORE_TEXT;
 
         if (!content.isEmpty()) {
-            //if (floatableLayout == null) {
-            ArrayList<Element> floatingElements = new ArrayList();
+            //if (floatLayout == null) {
+            ArrayList<Element> floatingElements = new ArrayList<Element>();
             floatingElements.addAll(content);
-            floatableLayout = new FloatableLayout(compositeColumn, floatingElements);
+            floatLayout = new FloatLayout(compositeColumn, floatingElements);
             //}
 
-            floatableLayout.setSimpleColumn(leftX, minY, rightX, yLine);
-            status = floatableLayout.layout(simulate);
-            yLine = floatableLayout.getYLine();
-            if (percentageWidth == null && contentWidth < floatableLayout.getFilledWidth()) {
-                contentWidth = floatableLayout.getFilledWidth();
+            floatLayout.setSimpleColumn(leftX, minY, rightX, yLine);
+            status = floatLayout.layout(simulate);
+            yLine = floatLayout.getYLine();
+            if (percentageWidth == null && contentWidth < floatLayout.getFilledWidth()) {
+                contentWidth = floatLayout.getFilledWidth();
             }
         }
 
