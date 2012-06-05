@@ -36,13 +36,37 @@ public class DivCssApplier {
             }
         }
 
-        if (t.getAttributes().get(HTML.Attribute.WIDTH) != null || css.get(HTML.Attribute.WIDTH) != null) {
-            div.setWidth(new WidthCalculator().getWidth(t, memory.getRootTags(), psc.getPageSize().getWidth()));
+
+        String widthValue = t.getCSS().get(HTML.Attribute.WIDTH);
+        if (widthValue == null) {
+            widthValue = t.getAttributes().get(HTML.Attribute.WIDTH);
+        }
+        if (widthValue != null) {
+            if (utils.isNumericValue(widthValue) || utils.isMetricValue(widthValue)) {
+				div.setWidth(utils.parsePxInCmMmPcToPt(widthValue));
+            } else if (utils.isRelativeValue(widthValue)) {
+                if (widthValue.contains(CSS.Value.PERCENTAGE)) {
+                    div.setPercentageWidth(utils.parseRelativeValue(widthValue, 1f));
+                } else {
+                    div.setWidth(utils.parseRelativeValue(widthValue, fontSize));
+                }
+            }
         }
 
-        if (t.getAttributes().containsKey(HTML.Attribute.HEIGHT) || css.containsKey(HTML.Attribute.HEIGHT)) {
-            Float height = new HeightCalculator().getHeight(t, psc.getPageSize().getHeight());
-            div.setHeight(height);
+        String heightValue = t.getCSS().get(HTML.Attribute.HEIGHT);
+        if (heightValue == null) {
+            heightValue = t.getAttributes().get(HTML.Attribute.HEIGHT);
+        }
+        if (heightValue != null) {
+            if (utils.isNumericValue(heightValue) || utils.isMetricValue(heightValue)) {
+                div.setHeight(utils.parsePxInCmMmPcToPt(heightValue));
+            } else if (utils.isRelativeValue(heightValue)) {
+                if (heightValue.contains(CSS.Value.PERCENTAGE)) {
+                    div.setPercentageHeight(utils.parseRelativeValue(heightValue, 1f));
+                } else {
+                    div.setHeight(utils.parseRelativeValue(heightValue, fontSize));
+                }
+            }
         }
 
         Float marginTop = null;

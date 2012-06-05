@@ -31,16 +31,16 @@ import org.junit.Test;
 
 public class SampleTest {
 
-    private String outPath;
-    private String outPdf;
+    protected String outPath;
+    protected String outPdf;
     private String outImage;
-    private String inputHtml;
+    protected String inputHtml;
     private String cmpPdf;
     private String cmpImage;
     private String differenceImage;
     private CompareTool compareTool;
-    private String testPath;
-    private String testName;
+    protected String testPath;
+    protected String testName;
 
     public SampleTest() {
         compareTool = new CompareTool();
@@ -72,7 +72,7 @@ public class SampleTest {
         }
     }
 
-    @Test(timeout = 60000)
+    @Test//(timeout = 60000)
     public void test() throws IOException, DocumentException, InterruptedException {
         String testName = getTestName();
         if (!this.getClass().getName().equals(SampleTest.class.getName()) && (testName.length() > 0)) {
@@ -94,7 +94,7 @@ public class SampleTest {
         return false;
     }
 
-    class SampleTestImageProvider extends AbstractImageProvider {
+    protected class SampleTestImageProvider extends AbstractImageProvider {
         final String imageRootPath;
 
         public SampleTestImageProvider() {
@@ -106,7 +106,7 @@ public class SampleTest {
         }
     }
 
-    private void transformHtml2Pdf() throws IOException, DocumentException, InterruptedException {
+    protected void transformHtml2Pdf() throws IOException, DocumentException, InterruptedException {
         Document doc = new Document(PageSize.A4);
         PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPath + outPdf));
         doc.open();

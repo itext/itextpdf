@@ -2366,40 +2366,28 @@ public class PdfDocument extends Document {
         ptable.setHeadersInEvent(he);
     }
 
-    private ArrayList<PdfDiv> floatingElements = new ArrayList<PdfDiv>();
+    private ArrayList<Element> floatingElements = new ArrayList<Element>();
 
     private void addDiv(final PdfDiv div) throws DocumentException {
         if (floatingElements == null) {
-            floatingElements = new ArrayList<PdfDiv>();
+            floatingElements = new ArrayList<Element>();
         }
         floatingElements.add(div);
     }
 
     private void flushFloatingElements() throws DocumentException {
         if (floatingElements != null && !floatingElements.isEmpty()) {
-            ArrayList<PdfDiv> cashedFloatingElements = floatingElements;
+            ArrayList<Element> cashedFloatingElements = floatingElements;
             floatingElements = null;
-            FloatableLayout fl = new FloatableLayout(writer.getDirectContent());
-            int loop = 0;
-            while (true) {
+            FloatLayout fl = new FloatLayout(writer.getDirectContent(), cashedFloatingElements);
+
                 fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
-                int status = fl.layout(cashedFloatingElements, false);
-                if ((status & ColumnText.NO_MORE_TEXT) != 0) {
+                int status = fl.layout(false);
+                //if ((status & ColumnText.NO_MORE_TEXT) != 0) {
                     text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
                     currentHeight = indentTop() - fl.getYLine();
-                    break;
-                }
-                if (indentTop() - currentHeight == fl.getYLine())
-                    ++loop;
-                else
-                    loop = 0;
-                if (loop == 3) {
-                    throw new DocumentException("There is a problem to process a div element." +
-                            "\nSuch div layout is not supported yet or " +
-                            "the div element overflow the page bounding box.");
-                }
-                newPage();
-            }
+                //}
+
         }
     }
 
