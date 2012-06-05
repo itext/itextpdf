@@ -1609,9 +1609,9 @@ public class ColumnText {
                 }
                 compositeElements.removeFirst();
             } else if (element.type() == Element.DIV) {
-                ArrayList<PdfDiv> floatingElements = new ArrayList<PdfDiv>();
+                ArrayList<Element> floatingElements = new ArrayList<Element>();
                 do {
-                    floatingElements.add((PdfDiv) element);
+                    floatingElements.add(element);
                     compositeElements.removeFirst();
                     element = !compositeElements.isEmpty() ? compositeElements.getFirst() : null;
                 } while (element != null && element.type() == Element.DIV);
@@ -1625,15 +1625,15 @@ public class ColumnText {
                 compositeColumn.setSpaceCharRatio(spaceCharRatio);
 
 
-                FloatableLayout fl = new FloatableLayout(compositeColumn);
+                FloatableLayout fl = new FloatableLayout(compositeColumn, floatingElements);
                 fl.setSimpleColumn(leftX, minY, rightX, yLine);
-                int status = fl.layout(floatingElements, simulate);
+                int status = fl.layout(simulate);
 
                 //firstPass = false;
                 yLine = fl.getYLine();
                 descender = 0;
                 compositeColumn = null;
-                if ((status & NO_MORE_TEXT) != 0) {
+                if ((status & NO_MORE_TEXT) == 0) {
                     compositeElements.addAll(floatingElements);
                     return status;
                 }

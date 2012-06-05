@@ -7,7 +7,7 @@ import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.*;
 import com.itextpdf.text.api.Spaceable;
 
-public class PdfDiv implements LargeElement, Spaceable {
+public class PdfDiv implements Element, Spaceable {
     public enum FloatType {NONE, LEFT, RIGHT};
 
     public enum PositionType {STATIC, ABSOLUTE, FIXED, RELATIVE};
@@ -26,6 +26,14 @@ public class PdfDiv implements LargeElement, Spaceable {
 
     private Float height = null;
 
+    private Float percentageHeight = null;
+
+    private Float percentageWidth = null;
+
+    private float contentWidth = 0;
+
+    private float contentHeight = 0;
+
     private int textAlignment = Element.ALIGN_UNDEFINED;
 
     private float paddingLeft = 0;
@@ -39,6 +47,8 @@ public class PdfDiv implements LargeElement, Spaceable {
     private FloatType floatType = FloatType.NONE;
 
     private PositionType position = PositionType.STATIC;
+
+    private FloatableLayout floatableLayout = null;
 
     public float getContentWidth() {
         return contentWidth;
@@ -64,9 +74,21 @@ public class PdfDiv implements LargeElement, Spaceable {
         return width != null && width >= contentWidth ? width : contentWidth;
     }
 
-    private float contentWidth = 0;
+    public Float getPercentageHeight() {
+        return percentageHeight;
+    }
 
-    private float contentHeight = 0;
+    public void setPercentageHeight(Float percentageHeight) {
+        this.percentageHeight = percentageHeight;
+    }
+
+    public Float getPercentageWidth() {
+        return percentageWidth;
+    }
+
+    public void setPercentageWidth(Float percentageWidth) {
+        this.percentageWidth = percentageWidth;
+    }
 
     public BaseColor getBackgroundColor() {
         return backgroundColor;
@@ -78,11 +100,7 @@ public class PdfDiv implements LargeElement, Spaceable {
 
     private BaseColor backgroundColor = null;
 
-    /**
-     * Indicates if the PdfPTable is complete once added to the document.
-     */
-    protected boolean complete = true;
-    /**
+     /**
      * The spacing before the table.
      */
     protected float spacingBefore;
@@ -95,27 +113,6 @@ public class PdfDiv implements LargeElement, Spaceable {
     public PdfDiv() {
         content = new ArrayList<Element>();
     }
-
-    /**
-	 * @see com.itextpdf.text.LargeElement#flushContent()
-	 */
-	public void flushContent() {
-		//content.clear();
-	}
-
-	/**
-	 * @see com.itextpdf.text.LargeElement#isComplete()
-	 */
-	public boolean isComplete() {
-		return complete;
-	}
-
-	/**
-	 * @see com.itextpdf.text.LargeElement#setComplete(boolean)
-	 */
-	public void setComplete(final boolean complete) {
-		this.complete = complete;
-	}
 
     /**
      * Gets all the chunks in this element.
@@ -330,15 +327,6 @@ public class PdfDiv implements LargeElement, Spaceable {
         this.content = content;
     }
 
-    public Element popFirstElement() {
-        Element firstElement = null;
-        if (content.size() > 0) {
-            firstElement = content.get(0);
-            content.remove(0);
-        }
-        return firstElement;
-    }
-
     public int layout(final ColumnText compositeColumn, boolean simulate, final float llx, final float lly, final float urx, final float ury) throws DocumentException {
 
         float leftX = Math.min(llx, urx);
@@ -353,6 +341,9 @@ public class PdfDiv implements LargeElement, Spaceable {
             } else if (width > rightX - leftX) {
                 return ColumnText.NO_MORE_COLUMN;
             }
+        } else if (percentageWidth != null) {
+            contentWidth = (rightX - leftX) * percentageWidth;
+            rightX = leftX + contentWidth;
         }
 
         if (height != null && height > 0) {
@@ -361,6 +352,9 @@ public class PdfDiv implements LargeElement, Spaceable {
             } else if (height > maxY - minY) {
                 return ColumnText.NO_MORE_COLUMN;
             }
+        } else if (percentageHeight != null) {
+            contentHeight = (maxY - minY) * percentageHeight;
+            minY = maxY - contentHeight;
         }
 
         if (!simulate && position == PdfDiv.PositionType.RELATIVE) {
@@ -404,8 +398,12 @@ public class PdfDiv implements LargeElement, Spaceable {
             }
         }
 
-        contentWidth = 0;
-        contentHeight = 0;
+        if (percentageWidth == null) {
+            contentWidth = 0;
+        }
+        if (percentageHeight == null) {
+            contentHeight = 0;
+        }
 
         minY += paddingBottom;
         leftX += paddingLeft;
@@ -413,151 +411,37 @@ public class PdfDiv implements LargeElement, Spaceable {
 
         yLine -= paddingTop;
 
-        ArrayList<PdfDiv> floatingElements = new ArrayList();
-
         int status = ColumnText.NO_MORE_TEXT;
 
-        for (Element childElement : content) {
-            if (childElement instanceof PdfDiv) {
-                PdfDiv childFloatingElement = (PdfDiv) childElement;
-                if (childFloatingElement.getPosition() != PdfDiv.PositionType.FIXED && childFloatingElement.getPosition() != PdfDiv.PositionType.ABSOLUTE) {
-                    if (childFloatingElement.getFloatType() != PdfDiv.FloatType.NONE) {
-                        if (compositeColumn.getCompositeElements() != null && !compositeColumn.getCompositeElements().isEmpty()) {
-                            Element firstElement = compositeColumn.getCompositeElements().get(0);
-                            if (firstElement instanceof Spaceable) {
-                                yLine -= ((Spaceable)firstElement).getSpacingBefore();
-                            }
-                            compositeColumn.setSimpleColumn(leftX, minY, rightX, yLine);
-                            compositeColumn.setFilledWidth(0);
-                            status = compositeColumn.go(simulate);
-                            yLine = compositeColumn.getYLine();
-                            yLine += compositeColumn.getDescender();
-                            if (contentWidth < compositeColumn.getFilledWidth()) {
-                                contentWidth = compositeColumn.getFilledWidth();
-                            }
-                            yLine += compositeColumn.getDescender();
-                            if ((status & ColumnText.NO_MORE_TEXT) == 0 ) {
-                                break;
-                            }
-                        }
-                        floatingElements.add(childFloatingElement);
-                        continue;
+        if (!content.isEmpty()) {
+            //if (floatableLayout == null) {
+            ArrayList<Element> floatingElements = new ArrayList();
+            floatingElements.addAll(content);
+            floatableLayout = new FloatableLayout(compositeColumn, floatingElements);
+            //}
 
-                    }
-                }
-            }
-
-            if (!floatingElements.isEmpty()) {
-                FloatableLayout fl = new FloatableLayout(compositeColumn);
-                fl.setSimpleColumn(leftX, minY, rightX, yLine);
-                status = fl.layout(floatingElements, simulate);
-                yLine = fl.getYLine();
-                if (contentWidth < fl.getFilledWidth()) {
-                    contentWidth = fl.getFilledWidth();
-                }
-                if ((status & ColumnText.NO_MORE_TEXT) == 0) {
-                    break;
-                }
-            }
-
-            compositeColumn.addElement(childElement);
-        }
-
-
-        if ((status & ColumnText.NO_MORE_TEXT) != 0) {
-            if (!floatingElements.isEmpty()) {
-                FloatableLayout fl = new FloatableLayout(compositeColumn);
-                fl.setSimpleColumn(leftX, minY, rightX, yLine);
-                status = fl.layout(floatingElements, simulate);
-                yLine = fl.getYLine();
-                if (contentWidth < compositeColumn.getFilledWidth()) {
-                    contentWidth = fl.getFilledWidth();
-                }
-            } else if (compositeColumn.getCompositeElements() != null && !compositeColumn.getCompositeElements().isEmpty()) {
-                Element firstElement = compositeColumn.getCompositeElements().get(0);
-                if (firstElement instanceof Spaceable) {
-                    yLine -= ((Spaceable) firstElement).getSpacingBefore();
-                }
-                compositeColumn.setSimpleColumn(leftX, minY, rightX, yLine);
-                compositeColumn.setFilledWidth(0);
-                status = compositeColumn.go(simulate);
-                yLine = compositeColumn.getYLine();
-                yLine += compositeColumn.getDescender();
-                if (contentWidth < compositeColumn.getFilledWidth()) {
-                    contentWidth = compositeColumn.getFilledWidth();
-                }
+            floatableLayout.setSimpleColumn(leftX, minY, rightX, yLine);
+            status = floatableLayout.layout(simulate);
+            yLine = floatableLayout.getYLine();
+            if (percentageWidth == null && contentWidth < floatableLayout.getFilledWidth()) {
+                contentWidth = floatableLayout.getFilledWidth();
             }
         }
+
 
         if (!simulate && position == PdfDiv.PositionType.RELATIVE) {
             compositeColumn.getCanvas().restoreState();
         }
 
         yLine -= paddingBottom;
-        contentHeight = maxY - yLine;
-        contentWidth += paddingLeft + paddingRight;
+        if (percentageHeight == null) {
+            contentHeight = maxY - yLine;
+        }
+
+        if (percentageWidth == null) {
+            contentWidth += paddingLeft + paddingRight;
+        }
 
         return status;
     }
-
-    /*public static int writeFloatingElements(final ColumnText compositeColumn, final float llx, final float lly, final float urx, final float ury, ArrayList<PdfDiv> floatingElements) throws DocumentException {
-        float currentLeftX = llx;
-        float currentRightX = urx;
-        float yLine = ury;
-        float minYLine = yLine;
-
-        while (floatingElements.isEmpty()) {
-            PdfDiv floatingElement = floatingElements.get(0);
-            floatingElements.remove(0);
-
-            Rectangle box;
-            if (floatingElement.getFloatType() == FloatType.LEFT) {
-                box = floatingElement.writeContent(compositeColumn, currentLeftX, lly, currentRightX, yLine);
-            } else if (floatingElement.getWidth() != null && floatingElement.getFloatType() == FloatType.RIGHT) {
-                box = floatingElement.writeContent(compositeColumn, currentRightX - floatingElement.getWidth(), lly, currentRightX, yLine);
-            } else {
-                box = floatingElement.writeContent(compositeColumn, currentLeftX, lly, currentRightX, yLine);
-            }
-
-            if ((status & ColumnText.NO_MORE_TEXT) == 0) {
-                if (yLine == minYLine) {
-                    return;
-                }
-                yLine = minYLine;
-                currentLeftX = llx;
-                currentRightX = urx;
-                floatingElement.writeContent(compositeColumn, currentLeftX, lly, currentRightX, yLine);
-                status = compositeColumn.;
-                minYLine = compositeColumn.getYLine();
-                if ((status & ColumnText.NO_MORE_TEXT) == 0) {
-                    return;
-                }
-            }
-
-            minYLine = compositeColumn.getYLine();
-
-            if (floatingElement.getFloatType() == FloatType.LEFT) {
-                if (floatingElement.getWidth() != null) {
-                    currentLeftX += floatingElement.getWidth();
-                } else {
-                    currentLeftX = llx;
-                    currentRightX = urx;
-                    yLine = minYLine;
-                }
-            } else if (floatingElement.getFloatType() == FloatType.RIGHT) {
-                if (floatingElement.getWidth() != null) {
-                    currentRightX -= floatingElement.getWidth();
-                } else {
-                    currentLeftX = llx;
-                    currentRightX = urx;
-                    yLine = minYLine;
-                }
-            }
-
-        }
-    }
-
-    public void writeSaticElements(final ColumnText compositeColumn, final float llx, final float lly, final float urx, final float ury) {
-
-    }*/
 }
