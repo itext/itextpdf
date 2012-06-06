@@ -40,6 +40,10 @@
  */
 package com.itextpdf.tool.xml.html.table;
 
+import java.util.*;
+import java.util.List;
+import java.util.Map.Entry;
+
 import com.itextpdf.text.*;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.log.Level;
@@ -60,10 +64,6 @@ import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
-
-import java.util.*;
-import java.util.List;
-import java.util.Map.Entry;
 
 /**
  * @author Emiel Ackermann
@@ -171,9 +171,12 @@ public class Table extends AbstractTagProcessor {
 			float[] columnWidths = new float[numberOfColumns];
 			float[] widestWords = new float[numberOfColumns];
 			float[] fixedWidths = new float[numberOfColumns];
+            float[] colspanWidestWords = new float[numberOfColumns];
 			int[] rowspanValue = new int[numberOfColumns];
 			float largestColumn = 0;
-			int indexOfLargestColumn = 0;
+            float largestColspanColumn = 0;
+			int indexOfLargestColumn = -1;
+            int indexOfLargestColspanColumn = -1;
 			// Initial fill of the widths arrays
 			for (TableRowElement row : tableRows) {
 				int column = 0;
@@ -202,7 +205,7 @@ public class Table extends AbstractTagProcessor {
 							}
 						}
 					}
-					if (cell.getCompositeElements() != null && colspan == 1) {
+					if (cell.getCompositeElements() != null) {
 						float[] widthValues = setCellWidthAndWidestWord(cell);
 						float cellWidth = widthValues[0] / colspan;
 						float widestWordOfCell = widthValues[1] / colspan;
@@ -210,13 +213,25 @@ public class Table extends AbstractTagProcessor {
 							int c = column + i;
 							if (fixedWidths[c] == 0 && cellWidth > columnWidths[c]) {
 								columnWidths[c] = cellWidth;
-								if (cellWidth > largestColumn) {
-									largestColumn = cellWidth;
-									indexOfLargestColumn = c;
-								}
-							}
-							if (widestWordOfCell > widestWords[c]) {
-								widestWords[c] = widestWordOfCell;
+                                if (colspan == 1) {
+                                    if (cellWidth > largestColumn) {
+                                        largestColumn = cellWidth;
+                                        indexOfLargestColumn = c;
+                                    }
+
+                                    if (widestWordOfCell > widestWords[c]) {
+                                        widestWords[c] = widestWordOfCell;
+                                    }
+                                } else {
+                                    if (cellWidth > largestColspanColumn) {
+                                        largestColspanColumn = cellWidth;
+                                        indexOfLargestColspanColumn = c;
+                                    }
+
+                                    if (widestWordOfCell > colspanWidestWords[c]) {
+                                        colspanWidestWords[c] = widestWordOfCell;
+                                    }
+                                }
 							}
 						}
 					}
@@ -230,6 +245,16 @@ public class Table extends AbstractTagProcessor {
 					column++;
 				}
 			}
+            if (indexOfLargestColumn == -1) {
+                indexOfLargestColumn = indexOfLargestColspanColumn;
+                if (indexOfLargestColumn == -1) {
+                    indexOfLargestColumn = 0;
+                }
+
+                for (int column = 0; column < numberOfColumns; column++) {
+                    widestWords[column] = colspanWidestWords[column];
+                }
+            }
 			float outerWidth = getTableOuterWidth(tag, styleValues.getHorBorderSpacing(), ctx);
 			float initialTotalWidth = getTableWidth(columnWidths, 0);
 //			float targetWidth = calculateTargetWidth(tag, columnWidths, outerWidth, ctx);

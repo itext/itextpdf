@@ -43,7 +43,18 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
-import com.itextpdf.text.*;
+import java.io.IOException;
+import java.util.Map;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.GreekList;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.List;
+import com.itextpdf.text.RomanList;
+import com.itextpdf.text.ZapfDingbatsList;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
@@ -57,9 +68,6 @@ import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.ImageRetrieve;
 import com.itextpdf.tool.xml.net.exc.NoImageException;
 import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author itextpdf.com
@@ -105,14 +113,24 @@ public class ListStyleTypeCssApplier {
 				synchronizeSymbol(fontSize, lst, color);
 			} else if (CSS.Value.DISC.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(108);
-                fontSize *= 0.7f;
-				shrinkSymbol(lst, fontSize, color);
+                lst.setAutoindent(false);
+                lst.setSymbolIndent(7.75f);
+                Chunk symbol = lst.getSymbol();
+                symbol.setTextRise(1.5f);
+                Font font = symbol.getFont();
+                font.setSize(4.5f);
+                font.setColor(color);
 			} else if (CSS.Value.SQUARE.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(110);
 				shrinkSymbol(lst, fontSize, color);
 			} else if (CSS.Value.CIRCLE.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(109);
-				shrinkSymbol(lst, fontSize, color);
+				lst.setAutoindent(false);
+                lst.setSymbolIndent(7.75f);
+                Chunk symbol = lst.getSymbol();
+                symbol.setTextRise(1.5f);
+                Font font = symbol.getFont();
+                font.setSize(4.5f);
 			} else if (CSS.Value.LOWER_ROMAN.equals(styleType)) {
 				lst = new RomanList(true, 0);
 				synchronizeSymbol(fontSize, lst, color);

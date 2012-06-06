@@ -151,6 +151,10 @@ ul, menu, dir {
     list-style-type: disc;
 }
 
+ul li ul {
+    list-style-type: circle;
+}
+
 ol {
     list-style-type: decimal;
 }
