@@ -48,6 +48,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.security.CertificateUtil;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -72,7 +74,7 @@ public class CrlClientImp implements CrlClient {
             if (url == null) {
                 if (checkCert == null)
                     return null;
-                url = PdfPKCS7.getCrlUrl(checkCert);
+                url = CertificateUtil.getCRLURL(checkCert);
             }
             if (url == null)
                 return null;

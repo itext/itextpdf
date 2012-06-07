@@ -70,6 +70,8 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.security.CertificateInfo;
+
 import java.security.MessageDigest;
 import java.security.cert.X509CRL;
 
@@ -409,9 +411,9 @@ public class PdfSignatureAppearance {
             if (layer2Text == null) {
                 StringBuffer buf = new StringBuffer();
                 buf.append("Digitally signed by ");
-                String name = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
+                String name = CertificateInfo.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
                 if (name == null)
-                    name = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("E");
+                    name = CertificateInfo.getSubjectFields((X509Certificate)certChain[0]).getField("E");
                 if (name == null)
                     name = "";
                 buf.append(name).append('\n');
@@ -500,9 +502,9 @@ public class PdfSignatureAppearance {
 
             switch (renderingMode) {
             case NAME_AND_DESCRIPTION:
-                String signedBy = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
+                String signedBy = CertificateInfo.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
                 if (signedBy == null)
-                    signedBy = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("E");
+                    signedBy = CertificateInfo.getSubjectFields((X509Certificate)certChain[0]).getField("E");
                 if (signedBy == null)
                     signedBy = "";
                 Rectangle sr2 = new Rectangle(signatureRect.getWidth() - MARGIN, signatureRect.getHeight() - MARGIN );
@@ -924,7 +926,8 @@ public class PdfSignatureAppearance {
      * @throws IOException on error
      * @throws DocumentException on error
      */
-    public void preClose(HashMap<PdfName, Integer> exclusionSizes) throws IOException, DocumentException {
+    @SuppressWarnings("deprecation")
+	public void preClose(HashMap<PdfName, Integer> exclusionSizes) throws IOException, DocumentException {
         if (preClosed)
             throw new DocumentException(MessageLocalization.getComposedMessage("document.already.pre.closed"));
         stamper.mergeVerification();

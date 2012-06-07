@@ -66,6 +66,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.security.CertificateUtil;
+
 import java.security.cert.CertificateEncodingException;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
@@ -121,7 +123,7 @@ public class OcspClientBouncyCastle implements OcspClient {
             if (checkCert == null || rootCert == null)
                 return null;
             if (url == null) {
-                url = PdfPKCS7.getOCSPURL(checkCert);
+                url = CertificateUtil.getOCSPURL(checkCert);
             }
             if (url == null)
                 return null;

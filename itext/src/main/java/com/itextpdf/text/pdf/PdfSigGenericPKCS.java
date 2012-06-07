@@ -49,6 +49,7 @@ import java.security.cert.CRL;
 import java.security.cert.Certificate;
 
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.pdf.security.CertificateInfo;
 
 /**
  * A signature dictionary representation for the standard filters.
@@ -114,7 +115,7 @@ public abstract class PdfSigGenericPKCS extends PdfSignature {
             }
             else
                 setContents(pkcs.getEncodedPKCS7());
-            name = PdfPKCS7.getSubjectFields(pkcs.getSigningCertificate()).getField("CN");
+            name = CertificateInfo.getSubjectFields(pkcs.getSigningCertificate()).getField("CN");
             if (name != null)
                 put(PdfName.NAME, new PdfString(name, PdfObject.TEXT_UNICODE));
             pkcs = new PdfPKCS7(privKey, certChain, crlList, hashAlgorithm, provider, PdfName.ADBE_PKCS7_SHA1.equals(get(PdfName.SUBFILTER)));
@@ -215,6 +216,7 @@ public abstract class PdfSigGenericPKCS extends PdfSignature {
 
     /**
      * Creates a standard filter of the type Windows Certificate.
+     * @deprecated See ISO-32000-2, adbe.pkcs7.sha1 should no longer be used
      */    
     public static class PPKMS extends PdfSigGenericPKCS {
         /**
