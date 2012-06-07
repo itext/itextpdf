@@ -1082,6 +1082,24 @@ public class PdfPKCS7 {
         return null;
     }
 
+    public static String getTSAURL(X509Certificate certificate) throws IOException {
+        String tsaUrl = null;
+        String tsaOID = "1.2.840.113583.1.1.9.1";
+        byte der[] = certificate.getExtensionValue(tsaOID);
+        if(der == null)
+            return null;
+        ASN1Primitive asn1obj = ASN1Primitive.fromByteArray(der);
+        DEROctetString octets = (DEROctetString)asn1obj;
+        asn1obj = ASN1Primitive.fromByteArray(octets.getOctets());
+        ASN1Sequence asn1seq = ASN1Sequence.getInstance(asn1obj);
+        ASN1Primitive taggedObj = asn1seq.getObjectAt(1).toASN1Primitive();
+        ASN1TaggedObject asn1TaggedObj = ASN1TaggedObject.getInstance(taggedObj);
+        DERUTF8String utf8 = DERUTF8String.getInstance(asn1TaggedObj, false); 
+        tsaUrl = utf8.toString();
+        return tsaUrl;
+    }
+    
+    
     /**
      * Checks if OCSP revocation refers to the document signing certificate.
      * @return true if it checks false otherwise
