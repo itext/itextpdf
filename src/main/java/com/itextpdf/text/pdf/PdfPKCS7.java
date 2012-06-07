@@ -48,7 +48,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
+import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -1018,87 +1020,6 @@ public class PdfPKCS7 {
         }
         return false;
     }
-
-    /**
-     * Retrieves the OCSP URL from the given certificate.
-     * @param certificate the certificate
-     * @return the URL or null
-     * @throws CertificateParsingException on error
-     * @since	2.1.6
-     */
-    public static String getOCSPURL(X509Certificate certificate) throws CertificateParsingException {
-        try {
-            ASN1Primitive obj = getExtensionValue(certificate, Extension.authorityInfoAccess.getId());
-            if (obj == null) {
-                return null;
-            }
-
-            ASN1Sequence AccessDescriptions = (ASN1Sequence) obj;
-            for (int i = 0; i < AccessDescriptions.size(); i++) {
-                ASN1Sequence AccessDescription = (ASN1Sequence) AccessDescriptions.getObjectAt(i);
-                if ( AccessDescription.size() != 2 ) {
-                    continue;
-                } else {
-                    if (AccessDescription.getObjectAt(0) instanceof ASN1ObjectIdentifier && ((ASN1ObjectIdentifier)AccessDescription.getObjectAt(0)).getId().equals("1.3.6.1.5.5.7.48.1")) {
-                        String AccessLocation =  getStringFromGeneralName((ASN1Primitive)AccessDescription.getObjectAt(1));
-                        if ( AccessLocation == null ) {
-                            return "" ;
-                        } else {
-                            return AccessLocation ;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e)  {
-        }
-        return null;
-    }
-
-    public static String getCrlUrl(X509Certificate certificate) throws CertificateParsingException {
-        try {
-            ASN1Primitive obj = getExtensionValue(certificate, Extension.cRLDistributionPoints.getId());
-            if (obj == null) {
-                return null;
-            }
-            CRLDistPoint dist = CRLDistPoint.getInstance(obj);
-            DistributionPoint[] dists = dist.getDistributionPoints();
-            for (DistributionPoint p : dists) {
-                DistributionPointName distributionPointName = p.getDistributionPoint();
-                if (DistributionPointName.FULL_NAME != distributionPointName.getType()) {
-                    continue;
-                }
-                GeneralNames generalNames = (GeneralNames)distributionPointName.getName();
-                GeneralName[] names = generalNames.getNames();
-                for (GeneralName name : names) {
-                    if (name.getTagNo() != GeneralName.uniformResourceIdentifier) {
-                        continue;
-                    }
-                    DERIA5String derStr = DERIA5String.getInstance((ASN1TaggedObject)name.toASN1Primitive(), false);
-                    return derStr.getString();
-                }
-            }
-        } catch (Exception e)  {
-        }
-        return null;
-    }
-
-    public static String getTSAURL(X509Certificate certificate) throws IOException {
-        String tsaUrl = null;
-        String tsaOID = "1.2.840.113583.1.1.9.1";
-        byte der[] = certificate.getExtensionValue(tsaOID);
-        if(der == null)
-            return null;
-        ASN1Primitive asn1obj = ASN1Primitive.fromByteArray(der);
-        DEROctetString octets = (DEROctetString)asn1obj;
-        asn1obj = ASN1Primitive.fromByteArray(octets.getOctets());
-        ASN1Sequence asn1seq = ASN1Sequence.getInstance(asn1obj);
-        ASN1Primitive taggedObj = asn1seq.getObjectAt(1).toASN1Primitive();
-        ASN1TaggedObject asn1TaggedObj = ASN1TaggedObject.getInstance(taggedObj);
-        DERUTF8String utf8 = DERUTF8String.getInstance(asn1TaggedObj, false); 
-        tsaUrl = utf8.toString();
-        return tsaUrl;
-    }
-    
     
     /**
      * Checks if OCSP revocation refers to the document signing certificate.
@@ -1123,22 +1044,6 @@ public class PdfPKCS7 {
         catch (Exception ex) {
         }
         return false;
-    }
-
-    private static ASN1Primitive getExtensionValue(X509Certificate cert, String oid) throws IOException {
-        byte[] bytes = cert.getExtensionValue(oid);
-        if (bytes == null) {
-            return null;
-        }
-        ASN1InputStream aIn = new ASN1InputStream(new ByteArrayInputStream(bytes));
-        ASN1OctetString octs = (ASN1OctetString) aIn.readObject();
-        aIn = new ASN1InputStream(new ByteArrayInputStream(octs.getOctets()));
-        return aIn.readObject();
-    }
-
-    private static String getStringFromGeneralName(ASN1Primitive names) throws IOException {
-        ASN1TaggedObject taggedObject = (ASN1TaggedObject) names ;
-        return new String(ASN1OctetString.getInstance(taggedObject, false).getOctets(), "ISO-8859-1");
     }
 
     /**
@@ -1826,5 +1731,175 @@ public class PdfPKCS7 {
             index = end;
             return buf.toString().trim();
         }
+    }
+    
+    
+    // Certificate utilities
+    
+    // Certificate Revocation Lists
+	
+	/**
+	 * Gets a CRL from a certificate
+	 * @param certificate
+	 * @return	the CRL or null if there's no CRL available
+	 * @throws CertificateException
+	 * @throws CRLException
+	 * @throws IOException
+	 */
+	public static CRL getCrl(X509Certificate certificate) throws CertificateException, CRLException, IOException {
+		return getCrl(getCrlUrl(certificate));
+	}
+    
+    /**
+     * Gets the URL of the Certificate Revocation List for a Certificate
+     * @param certificate	the Certificate
+     * @return	the String where you can check if the certificate was revoked
+     * @throws CertificateParsingException
+     * @throws IOException 
+     */
+    public static String getCrlUrl(X509Certificate certificate) throws CertificateParsingException {
+        ASN1Primitive obj;
+		try {
+			obj = getExtensionValue(certificate, Extension.cRLDistributionPoints.getId());
+		} catch (IOException e) {
+			obj = null;
+		}
+        if (obj == null) {
+            return null;
+        }
+        CRLDistPoint dist = CRLDistPoint.getInstance(obj);
+        DistributionPoint[] dists = dist.getDistributionPoints();
+        for (DistributionPoint p : dists) {
+            DistributionPointName distributionPointName = p.getDistributionPoint();
+            if (DistributionPointName.FULL_NAME != distributionPointName.getType()) {
+                continue;
+            }
+            GeneralNames generalNames = (GeneralNames)distributionPointName.getName();
+            GeneralName[] names = generalNames.getNames();
+            for (GeneralName name : names) {
+                if (name.getTagNo() != GeneralName.uniformResourceIdentifier) {
+                    continue;
+                }
+                DERIA5String derStr = DERIA5String.getInstance((ASN1TaggedObject)name.toASN1Primitive(), false);
+                return derStr.getString();
+            }
+        }
+        return null;
+    }
+	
+	/**
+	 * Gets the CRL object using a CRL URL.
+	 * @param url	the URL where to get the CRL
+	 * @return	a CRL object
+	 * @throws IOException
+	 * @throws CertificateException
+	 * @throws CRLException
+	 */
+	public static CRL getCrl(String url) throws IOException, CertificateException, CRLException {
+		if (url == null)
+			return null;
+		InputStream is = new URL(url).openStream();
+		CertificateFactory cf = CertificateFactory.getInstance("X.509");
+		return (CRL)cf.generateCRL(is); 
+	}
+
+	// Online Certificate Status Protocol
+	
+    /** The ID for the OCSP URL inside a certificate. */
+    public static final String OCSPOID = "1.3.6.1.5.5.7.48.1";
+    
+    /**
+     * Retrieves the OCSP URL from the given certificate.
+     * @param certificate the certificate
+     * @return the URL or null
+     * @throws IOException 
+     * @since	2.1.6
+     */
+    public static String getOCSPURL(X509Certificate certificate) {
+    	ASN1Primitive obj;
+		try {
+			obj = getExtensionValue(certificate, Extension.authorityInfoAccess.getId());
+	        if (obj == null) {
+	            return null;
+	        }
+	        ASN1Sequence AccessDescriptions = (ASN1Sequence) obj;
+	        for (int i = 0; i < AccessDescriptions.size(); i++) {
+	        	ASN1Sequence AccessDescription = (ASN1Sequence) AccessDescriptions.getObjectAt(i);
+	        	if ( AccessDescription.size() != 2 ) {
+	        		continue;
+	        	}
+	        	else if (AccessDescription.getObjectAt(0) instanceof ASN1ObjectIdentifier) {
+	        		ASN1ObjectIdentifier id = (ASN1ObjectIdentifier)AccessDescription.getObjectAt(0);
+	        		if (OCSPOID.equals(id.getId())) {
+	            		ASN1Primitive description = (ASN1Primitive)AccessDescription.getObjectAt(1);
+	                    String AccessLocation =  getStringFromGeneralName(description);
+	                    if (AccessLocation == null) {
+	                        return "" ;
+	                    }
+	                    else {
+	                        return AccessLocation ;
+	                    }
+	                }
+	            }
+	        }
+		} catch (IOException e) {
+			return null;
+		}
+        return null;
+    }
+
+    // Time Stamp Authority
+    
+    /** An ID to find the TSA URL. */
+    public static String TSAOID = "1.2.840.113583.1.1.9.1";
+
+    /**
+     * Gets the URL of the TSA if it's available on the certificate
+     * @param certificate	a certificate
+     * @return	a TSA URL
+     * @throws IOException
+     */
+    public static String getTSAURL(X509Certificate certificate) {
+        byte der[] = certificate.getExtensionValue(TSAOID);
+        if(der == null)
+            return null;
+        ASN1Primitive asn1obj;
+		try {
+			asn1obj = ASN1Primitive.fromByteArray(der);
+	        DEROctetString octets = (DEROctetString)asn1obj;
+	        asn1obj = ASN1Primitive.fromByteArray(octets.getOctets());
+	        ASN1Sequence asn1seq = ASN1Sequence.getInstance(asn1obj);
+	        return getStringFromGeneralName(asn1seq.getObjectAt(1).toASN1Primitive());
+		} catch (IOException e) {
+			return null;
+		}
+    }
+
+    /**
+     * @param certificate	the certificate from which we need the ExtensionValue
+     * @param oid the Object Identifier value for the extension.
+     * @return	the extension value as an ASN1Primitive object
+     * @throws IOException
+     */
+    private static ASN1Primitive getExtensionValue(X509Certificate certificate, String oid) throws IOException {
+        byte[] bytes = certificate.getExtensionValue(oid);
+        if (bytes == null) {
+            return null;
+        }
+        ASN1InputStream aIn = new ASN1InputStream(new ByteArrayInputStream(bytes));
+        ASN1OctetString octs = (ASN1OctetString) aIn.readObject();
+        aIn = new ASN1InputStream(new ByteArrayInputStream(octs.getOctets()));
+        return aIn.readObject();
+    }
+
+    /**
+     * Gets a String from an ASN1Primitive
+     * @param names	the ASN1Primitive
+     * @return	a human-readable String
+     * @throws IOException
+     */
+    private static String getStringFromGeneralName(ASN1Primitive names) throws IOException {
+        ASN1TaggedObject taggedObject = (ASN1TaggedObject) names ;
+        return new String(ASN1OctetString.getInstance(taggedObject, false).getOctets(), "ISO-8859-1");
     }
 }
