@@ -100,11 +100,8 @@ import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.jce.provider.CertPathValidatorUtilities;
-import org.bouncycastle.jce.provider.RFC3280CertPathUtilities;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
@@ -130,7 +127,6 @@ public class PdfPKCS7 {
     private MessageDigest encContDigest; // Stefan Santesson
     private String digestAlgorithm, digestEncryptionAlgorithm;
     private Signature sig;
-    private transient PrivateKey privKey;
     private byte RSAdata[];
     private boolean verified;
     private boolean verifyResult;
@@ -483,7 +479,7 @@ public class PdfPKCS7 {
             BigInteger serialNumber = ((ASN1Integer)issuerAndSerialNumber.getObjectAt(1)).getValue();
             for (Object element : certs) {
                 X509Certificate cert = (X509Certificate)element;
-                if (issuer.equals(cert.getIssuerDN()) && serialNumber.equals(cert.getSerialNumber())) {
+                if (cert.getIssuerDN().equals(issuer) && serialNumber.equals(cert.getSerialNumber())) {
                     signCert = cert;
                     break;
                 }
@@ -587,7 +583,6 @@ public class PdfPKCS7 {
       throws InvalidKeyException, NoSuchProviderException,
       NoSuchAlgorithmException
     {
-        this.privKey = privKey;
         this.provider = provider;
 
         digestAlgorithm = getAllowedDigests(hashAlgorithm);
