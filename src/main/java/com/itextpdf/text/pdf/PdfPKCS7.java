@@ -72,7 +72,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -111,26 +110,181 @@ import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
  * It's based in code found at org.bouncycastle.
  */
 public class PdfPKCS7 {
+	
+	// version info
+	
+	/** Version of the PKCS#7 object */
+    private int version = 1;
+    
+    /** Version of the PKCS#7 "SignerInfo" object. */
+    private int signerversion = 1;
+    
+    /**
+     * Get the version of the PKCS#7 object.
+     * @return the version of the PKCS#7 object.
+     */
+    public int getVersion() {
+        return version;
+    }
 
-    private byte sigAttr[];
-    private byte digestAttr[];
-    private int version, signerversion;
-    private Set<String> digestalgos;
+    /**
+     * Get the version of the PKCS#7 "SignerInfo" object.
+     * @return the version of the PKCS#7 "SignerInfo" object.
+     */
+    public int getSigningInfoVersion() {
+        return signerversion;
+    }
+    
+    // Encryption provider
+    
+    /** The encryption provider, e.g. "BC" if you use BouncyCastle. */
+    private String provider;
+
+	// Certificates
+    
+    /** All the X.509 certificates in no particular order. */
     private Collection<Certificate> certs;
-    private Collection<CRL> crls;
+    
+    /** All the X.509 certificates used for the main signature. */
     private Collection<Certificate> signCerts;
+
+    /** The X.509 certificate that is used to sign the digest. */
     private X509Certificate signCert;
-    private byte[] digest;
+    
+    /**
+     * Get all the X.509 certificates associated with this PKCS#7 object in no particular order.
+     * Other certificates, from OCSP for example, will also be included.
+     * @return the X.509 certificates associated with this PKCS#7 object
+     */
+    public Certificate[] getCertificates() {
+        return certs.toArray(new X509Certificate[certs.size()]);
+    }
+
+    /**
+     * Get the X.509 sign certificate chain associated with this PKCS#7 object.
+     * Only the certificates used for the main signature will be returned, with
+     * the signing certificate first.
+     * @return the X.509 certificates associated with this PKCS#7 object
+     * @since	2.1.6
+     */
+    public Certificate[] getSignCertificateChain() {
+        return signCerts.toArray(new X509Certificate[signCerts.size()]);
+    }
+    
+    /**
+     * Get the X.509 certificate actually used to sign the digest.
+     * @return the X.509 certificate actually used to sign the digest
+     */
+    public X509Certificate getSigningCertificate() {
+        return signCert;
+    }
+
+    /**
+     * Helper method that creates the collection of certificates
+     * used for the main signature based on the complete list
+     * of certificates and the sign certificate.
+     */
+    private void signCertificateChain() {
+        ArrayList<Certificate> cc = new ArrayList<Certificate>();
+        cc.add(signCert);
+        ArrayList<Certificate> oc = new ArrayList<Certificate>(certs);
+        for (int k = 0; k < oc.size(); ++k) {
+            if (signCert.equals(oc.get(k))) {
+                oc.remove(k);
+                --k;
+                continue;
+            }
+        }
+        boolean found = true;
+        while (found) {
+            X509Certificate v = (X509Certificate)cc.get(cc.size() - 1);
+            found = false;
+            for (int k = 0; k < oc.size(); ++k) {
+                try {
+                    if (provider == null)
+                        v.verify(((X509Certificate)oc.get(k)).getPublicKey());
+                    else
+                        v.verify(((X509Certificate)oc.get(k)).getPublicKey(), provider);
+                    found = true;
+                    cc.add(oc.get(k));
+                    oc.remove(k);
+                    break;
+                }
+                catch (Exception e) {
+                }
+            }
+        }
+        signCerts = cc;
+    }
+	
+	// Certificate Revocation Lists
+
+    private Collection<CRL> crls;
+
+    /**
+     * Get the X.509 certificate revocation lists associated with this PKCS#7 object
+     * @return the X.509 certificate revocation lists associated with this PKCS#7 object
+     */
+    public Collection<CRL> getCRLs() {
+        return crls;
+    }
+    
+    // Digest
+
+    /** The ID of the digest algorithm, e.g. "2.16.840.1.101.3.4.2.1". */
+    private String digestAlgorithmOid;
+    
+    /** The object that will create the digest */
     private MessageDigest messageDigest;
+    
+    /** The digest algorithms */
+    private Set<String> digestalgos;
+
+    /** The digest attributes */
+    private byte[] digestAttr;
+
+    /**
+     * Getter for the ID of the digest algorithm, e.g. "2.16.840.1.101.3.4.2.1"
+     */
+    public String getDigestAlgorithmOid() {
+        return digestAlgorithmOid;
+    }
+
+    /**
+     * Returns the name of the digest algorithm, e.g. "SHA256".
+     * @return the digest algorithm oid, e.g. "2.16.840.1.101.3.4.2.1"
+     */
+    public String getHashAlgorithm() {
+        return DigestAlgorithms.getDigest(digestAlgorithmOid);
+    }
+    
+    // Encryption
+    
+    /** The encryption algorithm. Can be "RSA" or "DSA". */
+    private String digestEncryptionAlgorithm;
+    
+    private byte[] digest;
+    
+    /**
+     * Get the algorithm used to calculate the message digest, e.g. "SHA1withRSA".
+     * @return the algorithm used to calculate the message digest
+     */
+    public String getDigestAlgorithm() {
+        String dea = EncryptionAlgorithms.getAlgorithm(digestEncryptionAlgorithm);
+        if (dea == null)
+            dea = digestEncryptionAlgorithm;
+
+        return getHashAlgorithm() + "with" + dea;
+    }
+    
+    private byte sigAttr[];
     private MessageDigest encContDigest; // Stefan Santesson
-    private String digestAlgorithm, digestEncryptionAlgorithm;
     private Signature sig;
     private byte RSAdata[];
     private boolean verified;
     private boolean verifyResult;
     private byte externalDigest[];
     private byte externalRSAdata[];
-    private String provider;
     private boolean isTsp;
 
     /**
@@ -376,7 +530,7 @@ public class PdfPKCS7 {
                     issuer.getName() + " / " + serialNumber.toString(16)));
             }
             signCertificateChain();
-            digestAlgorithm = ((ASN1ObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(2)).getObjectAt(0)).getId();
+            digestAlgorithmOid = ((ASN1ObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(2)).getObjectAt(0)).getId();
             next = 3;
             if (signerInfo.getObjectAt(next) instanceof ASN1TaggedObject) {
                 ASN1TaggedObject tagsig = (ASN1TaggedObject)signerInfo.getObjectAt(next);
@@ -472,15 +626,14 @@ public class PdfPKCS7 {
     {
         this.provider = provider;
 
-        digestAlgorithm = DigestAlgorithms.getAllowedDigests(hashAlgorithm);
-        if (digestAlgorithm == null)
+        digestAlgorithmOid = DigestAlgorithms.getAllowedDigests(hashAlgorithm);
+        if (digestAlgorithmOid == null)
             throw new NoSuchAlgorithmException(MessageLocalization.getComposedMessage("unknown.hash.algorithm.1", hashAlgorithm));
 
-        version = signerversion = 1;
         certs = new ArrayList<Certificate>();
         crls = new ArrayList<CRL>();
         digestalgos = new HashSet<String>();
-        digestalgos.add(digestAlgorithm);
+        digestalgos.add(digestAlgorithmOid);
 
         //
         // Copy in the certificates and crls used to sign the private key.
@@ -602,124 +755,12 @@ public class PdfPKCS7 {
         boolean res = Arrays.equals(md, imphashed);
         return res;
     }
-
-    /**
-     * Get all the X.509 certificates associated with this PKCS#7 object in no particular order.
-     * Other certificates, from OCSP for example, will also be included.
-     * @return the X.509 certificates associated with this PKCS#7 object
-     */
-    public Certificate[] getCertificates() {
-        return certs.toArray(new X509Certificate[certs.size()]);
-    }
-
-    /**
-     * Get the X.509 sign certificate chain associated with this PKCS#7 object.
-     * Only the certificates used for the main signature will be returned, with
-     * the signing certificate first.
-     * @return the X.509 certificates associated with this PKCS#7 object
-     * @since	2.1.6
-     */
-    public Certificate[] getSignCertificateChain() {
-        return signCerts.toArray(new X509Certificate[signCerts.size()]);
-    }
-
-    private void signCertificateChain() {
-        ArrayList<Certificate> cc = new ArrayList<Certificate>();
-        cc.add(signCert);
-        ArrayList<Certificate> oc = new ArrayList<Certificate>(certs);
-        for (int k = 0; k < oc.size(); ++k) {
-            if (signCert.equals(oc.get(k))) {
-                oc.remove(k);
-                --k;
-                continue;
-            }
-        }
-        boolean found = true;
-        while (found) {
-            X509Certificate v = (X509Certificate)cc.get(cc.size() - 1);
-            found = false;
-            for (int k = 0; k < oc.size(); ++k) {
-                try {
-                    if (provider == null)
-                        v.verify(((X509Certificate)oc.get(k)).getPublicKey());
-                    else
-                        v.verify(((X509Certificate)oc.get(k)).getPublicKey(), provider);
-                    found = true;
-                    cc.add(oc.get(k));
-                    oc.remove(k);
-                    break;
-                }
-                catch (Exception e) {
-                }
-            }
-        }
-        signCerts = cc;
-    }
-
-    /**
-     * Get the X.509 certificate revocation lists associated with this PKCS#7 object
-     * @return the X.509 certificate revocation lists associated with this PKCS#7 object
-     */
-    public Collection<CRL> getCRLs() {
-        return crls;
-    }
-
-    /**
-     * Get the X.509 certificate actually used to sign the digest.
-     * @return the X.509 certificate actually used to sign the digest
-     */
-    public X509Certificate getSigningCertificate() {
-        return signCert;
-    }
-
-    /**
-     * Get the version of the PKCS#7 object. Always 1
-     * @return the version of the PKCS#7 object. Always 1
-     */
-    public int getVersion() {
-        return version;
-    }
-
-    /**
-     * Get the version of the PKCS#7 "SignerInfo" object. Always 1
-     * @return the version of the PKCS#7 "SignerInfo" object. Always 1
-     */
-    public int getSigningInfoVersion() {
-        return signerversion;
-    }
     
     /**
      * Getter for the digest encryption algorithm
      */
     public String getDigestEncryptionAlgorithmOid() {
         return digestEncryptionAlgorithm;
-    }
-
-    /**
-     * Getter for the digest algorithm
-     */
-    public String getDigestAlgorithmOid() {
-        return digestAlgorithm;
-    }
-    
-    /**
-     * Get the algorithm used to calculate the message digest
-     * @return the algorithm used to calculate the message digest
-     */
-    public String getDigestAlgorithm() {
-        String dea = EncryptionAlgorithms.getAlgorithm(digestEncryptionAlgorithm);
-        if (dea == null)
-            dea = digestEncryptionAlgorithm;
-
-        return getHashAlgorithm() + "with" + dea;
-    }
-
-    /**
-     * Returns the algorithm.
-     * @return the digest algorithm
-     */
-    public String getHashAlgorithm() {
-        return DigestAlgorithms.getDigest(digestAlgorithm);
     }
 
     /**
@@ -932,66 +973,6 @@ public class PdfPKCS7 {
     }
 
     /**
-     * Get the "issuer" from the TBSCertificate bytes that are passed in
-     * @param enc a TBSCertificate in a byte array
-     * @return a ASN1Primitive
-     */
-    private static ASN1Primitive getIssuer(byte[] enc) {
-        try {
-            ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(enc));
-            ASN1Sequence seq = (ASN1Sequence)in.readObject();
-            return (ASN1Primitive)seq.getObjectAt(seq.getObjectAt(0) instanceof ASN1TaggedObject ? 3 : 2);
-        }
-        catch (IOException e) {
-            throw new ExceptionConverter(e);
-        }
-    }
-
-    /**
-     * Get the "subject" from the TBSCertificate bytes that are passed in
-     * @param enc A TBSCertificate in a byte array
-     * @return a ASN1Primitive
-     */
-    private static ASN1Primitive getSubject(byte[] enc) {
-        try {
-            ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(enc));
-            ASN1Sequence seq = (ASN1Sequence)in.readObject();
-            return (ASN1Primitive)seq.getObjectAt(seq.getObjectAt(0) instanceof ASN1TaggedObject ? 5 : 4);
-        }
-        catch (IOException e) {
-            throw new ExceptionConverter(e);
-        }
-    }
-
-    /**
-     * Get the issuer fields from an X509 Certificate
-     * @param cert an X509Certificate
-     * @return an X500Name
-     */
-    public static X500Name getIssuerFields(X509Certificate cert) {
-        try {
-            return new X500Name((ASN1Sequence)getIssuer(cert.getTBSCertificate()));
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
-    }
-
-    /**
-     * Get the subject fields from an X509 Certificate
-     * @param cert an X509Certificate
-     * @return an X500Name
-     */
-    public static X500Name getSubjectFields(X509Certificate cert) {
-        try {
-            return new X500Name((ASN1Sequence)getSubject(cert.getTBSCertificate()));
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
-    }
-
-    /**
      * Gets the bytes for the PKCS#1 object.
      * @return a byte array
      */
@@ -1121,13 +1102,13 @@ public class PdfPKCS7 {
             signerinfo.add(new ASN1Integer(signerversion));
 
             v = new ASN1EncodableVector();
-            v.add(getIssuer(signCert.getTBSCertificate()));
+            v.add(CertificateUtil.getIssuer(signCert.getTBSCertificate()));
             v.add(new ASN1Integer(signCert.getSerialNumber()));
             signerinfo.add(new DERSequence(v));
 
             // Add the digestAlgorithm
             v = new ASN1EncodableVector();
-            v.add(new ASN1ObjectIdentifier(digestAlgorithm));
+            v.add(new ASN1ObjectIdentifier(digestAlgorithmOid));
             v.add(new DERNull());
             signerinfo.add(new DERSequence(v));
 
@@ -1370,252 +1351,6 @@ public class PdfPKCS7 {
      */
     public void setSignName(String signName) {
         this.signName = signName;
-    }
-
-    /**
-     * a class that holds an X509 name
-     */
-    public static class X500Name {
-        /**
-         * country code - StringType(SIZE(2))
-         */
-        public static final ASN1ObjectIdentifier C = new ASN1ObjectIdentifier("2.5.4.6");
-
-        /**
-         * organization - StringType(SIZE(1..64))
-         */
-        public static final ASN1ObjectIdentifier O = new ASN1ObjectIdentifier("2.5.4.10");
-
-        /**
-         * organizational unit name - StringType(SIZE(1..64))
-         */
-        public static final ASN1ObjectIdentifier OU = new ASN1ObjectIdentifier("2.5.4.11");
-
-        /**
-         * Title
-         */
-        public static final ASN1ObjectIdentifier T = new ASN1ObjectIdentifier("2.5.4.12");
-
-        /**
-         * common name - StringType(SIZE(1..64))
-         */
-        public static final ASN1ObjectIdentifier CN = new ASN1ObjectIdentifier("2.5.4.3");
-
-        /**
-         * device serial number name - StringType(SIZE(1..64))
-         */
-        public static final ASN1ObjectIdentifier SN = new ASN1ObjectIdentifier("2.5.4.5");
-
-        /**
-         * locality name - StringType(SIZE(1..64))
-         */
-        public static final ASN1ObjectIdentifier L = new ASN1ObjectIdentifier("2.5.4.7");
-
-        /**
-         * state, or province name - StringType(SIZE(1..64))
-         */
-        public static final ASN1ObjectIdentifier ST = new ASN1ObjectIdentifier("2.5.4.8");
-
-        /** Naming attribute of type X520name */
-        public static final ASN1ObjectIdentifier SURNAME = new ASN1ObjectIdentifier("2.5.4.4");
-        /** Naming attribute of type X520name */
-        public static final ASN1ObjectIdentifier GIVENNAME = new ASN1ObjectIdentifier("2.5.4.42");
-        /** Naming attribute of type X520name */
-        public static final ASN1ObjectIdentifier INITIALS = new ASN1ObjectIdentifier("2.5.4.43");
-        /** Naming attribute of type X520name */
-        public static final ASN1ObjectIdentifier GENERATION = new ASN1ObjectIdentifier("2.5.4.44");
-        /** Naming attribute of type X520name */
-        public static final ASN1ObjectIdentifier UNIQUE_IDENTIFIER = new ASN1ObjectIdentifier("2.5.4.45");
-
-        /**
-         * Email address (RSA PKCS#9 extension) - IA5String.
-         * <p>Note: if you're trying to be ultra orthodox, don't use this! It shouldn't be in here.
-         */
-        public static final ASN1ObjectIdentifier EmailAddress = new ASN1ObjectIdentifier("1.2.840.113549.1.9.1");
-
-        /**
-         * email address in Verisign certificates
-         */
-        public static final ASN1ObjectIdentifier E = EmailAddress;
-
-        /** object identifier */
-        public static final ASN1ObjectIdentifier DC = new ASN1ObjectIdentifier("0.9.2342.19200300.100.1.25");
-
-        /** LDAP User id. */
-        public static final ASN1ObjectIdentifier UID = new ASN1ObjectIdentifier("0.9.2342.19200300.100.1.1");
-
-        /** A HashMap with default symbols */
-        public static final HashMap<ASN1ObjectIdentifier, String> DefaultSymbols = new HashMap<ASN1ObjectIdentifier, String>();
-
-        static {
-            DefaultSymbols.put(C, "C");
-            DefaultSymbols.put(O, "O");
-            DefaultSymbols.put(T, "T");
-            DefaultSymbols.put(OU, "OU");
-            DefaultSymbols.put(CN, "CN");
-            DefaultSymbols.put(L, "L");
-            DefaultSymbols.put(ST, "ST");
-            DefaultSymbols.put(SN, "SN");
-            DefaultSymbols.put(EmailAddress, "E");
-            DefaultSymbols.put(DC, "DC");
-            DefaultSymbols.put(UID, "UID");
-            DefaultSymbols.put(SURNAME, "SURNAME");
-            DefaultSymbols.put(GIVENNAME, "GIVENNAME");
-            DefaultSymbols.put(INITIALS, "INITIALS");
-            DefaultSymbols.put(GENERATION, "GENERATION");
-        }
-        /** A HashMap with values */
-        public HashMap<String, ArrayList<String>> values = new HashMap<String, ArrayList<String>>();
-
-        /**
-         * Constructs an X509 name
-         * @param seq an ASN1 Sequence
-         */
-        @SuppressWarnings("unchecked")
-        public X500Name(ASN1Sequence seq) {
-            Enumeration<ASN1Set> e = seq.getObjects();
-
-            while (e.hasMoreElements()) {
-                ASN1Set set = e.nextElement();
-
-                for (int i = 0; i < set.size(); i++) {
-                    ASN1Sequence s = (ASN1Sequence)set.getObjectAt(i);
-                    String id = DefaultSymbols.get(s.getObjectAt(0));
-                    if (id == null)
-                        continue;
-                    ArrayList<String> vs = values.get(id);
-                    if (vs == null) {
-                        vs = new ArrayList<String>();
-                        values.put(id, vs);
-                    }
-                    vs.add(((ASN1String)s.getObjectAt(1)).getString());
-                }
-            }
-        }
-        /**
-         * Constructs an X509 name
-         * @param dirName a directory name
-         */
-        public X500Name(String dirName) {
-            X509NameTokenizer   nTok = new X509NameTokenizer(dirName);
-
-            while (nTok.hasMoreTokens()) {
-                String  token = nTok.nextToken();
-                int index = token.indexOf('=');
-
-                if (index == -1) {
-                    throw new IllegalArgumentException(MessageLocalization.getComposedMessage("badly.formated.directory.string"));
-                }
-
-                String id = token.substring(0, index).toUpperCase();
-                String value = token.substring(index + 1);
-                ArrayList<String> vs = values.get(id);
-                if (vs == null) {
-                    vs = new ArrayList<String>();
-                    values.put(id, vs);
-                }
-                vs.add(value);
-            }
-
-        }
-
-        public String getField(String name) {
-            ArrayList<String> vs = values.get(name);
-            return vs == null ? null : (String)vs.get(0);
-        }
-
-        /**
-         * gets a field array from the values Hashmap
-         * @param name
-         * @return an ArrayList
-         */
-        public ArrayList<String> getFieldArray(String name) {
-            ArrayList<String> vs = values.get(name);
-            return vs == null ? null : vs;
-        }
-
-        /**
-         * getter for values
-         * @return a HashMap with the fields of the X509 name
-         */
-        public HashMap<String, ArrayList<String>> getFields() {
-            return values;
-        }
-
-        /**
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            return values.toString();
-        }
-    }
-
-    /**
-     * class for breaking up an X500 Name into it's component tokens, ala
-     * java.util.StringTokenizer. We need this class as some of the
-     * lightweight Java environment don't support classes like
-     * StringTokenizer.
-     */
-    public static class X509NameTokenizer {
-        private String          oid;
-        private int             index;
-        private StringBuffer    buf = new StringBuffer();
-
-        public X509NameTokenizer(
-        String oid) {
-            this.oid = oid;
-            this.index = -1;
-        }
-
-        public boolean hasMoreTokens() {
-            return index != oid.length();
-        }
-
-        public String nextToken() {
-            if (index == oid.length()) {
-                return null;
-            }
-
-            int     end = index + 1;
-            boolean quoted = false;
-            boolean escaped = false;
-
-            buf.setLength(0);
-
-            while (end != oid.length()) {
-                char    c = oid.charAt(end);
-
-                if (c == '"') {
-                    if (!escaped) {
-                        quoted = !quoted;
-                    }
-                    else {
-                        buf.append(c);
-                    }
-                    escaped = false;
-                }
-                else {
-                    if (escaped || quoted) {
-                        buf.append(c);
-                        escaped = false;
-                    }
-                    else if (c == '\\') {
-                        escaped = true;
-                    }
-                    else if (c == ',') {
-                        break;
-                    }
-                    else {
-                        buf.append(c);
-                    }
-                }
-                end++;
-            }
-
-            index = end;
-            return buf.toString().trim();
-        }
     }
     
     
