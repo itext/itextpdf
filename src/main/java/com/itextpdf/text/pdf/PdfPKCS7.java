@@ -94,6 +94,8 @@ import org.bouncycastle.tsp.TimeStampToken;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.security.CertificateUtil;
+import com.itextpdf.text.pdf.security.DigestAlgorithms;
+import com.itextpdf.text.pdf.security.EncryptionAlgorithms;
 import com.itextpdf.text.pdf.security.SecurityIDs;
 
 import org.bouncycastle.tsp.TimeStampTokenInfo;
@@ -153,110 +155,7 @@ public class PdfPKCS7 {
 
     private TimeStampToken timeStampToken;
 
-    private static final HashMap<String, String> digestNames = new HashMap<String, String>();
-    private static final HashMap<String, String> algorithmNames = new HashMap<String, String>();
-    private static final HashMap<String, String> allowedDigests = new HashMap<String, String>();
 
-    static {
-        digestNames.put("1.2.840.113549.2.5", "MD5");
-        digestNames.put("1.2.840.113549.2.2", "MD2");
-        digestNames.put("1.3.14.3.2.26", "SHA1");
-        digestNames.put("2.16.840.1.101.3.4.2.4", "SHA224");
-        digestNames.put("2.16.840.1.101.3.4.2.1", "SHA256");
-        digestNames.put("2.16.840.1.101.3.4.2.2", "SHA384");
-        digestNames.put("2.16.840.1.101.3.4.2.3", "SHA512");
-        digestNames.put("1.3.36.3.2.2", "RIPEMD128");
-        digestNames.put("1.3.36.3.2.1", "RIPEMD160");
-        digestNames.put("1.3.36.3.2.3", "RIPEMD256");
-        digestNames.put("1.2.840.113549.1.1.4", "MD5");
-        digestNames.put("1.2.840.113549.1.1.2", "MD2");
-        digestNames.put("1.2.840.113549.1.1.5", "SHA1");
-        digestNames.put("1.2.840.113549.1.1.14", "SHA224");
-        digestNames.put("1.2.840.113549.1.1.11", "SHA256");
-        digestNames.put("1.2.840.113549.1.1.12", "SHA384");
-        digestNames.put("1.2.840.113549.1.1.13", "SHA512");
-        digestNames.put("1.2.840.113549.2.5", "MD5");
-        digestNames.put("1.2.840.113549.2.2", "MD2");
-        digestNames.put("1.2.840.10040.4.3", "SHA1");
-        digestNames.put("2.16.840.1.101.3.4.3.1", "SHA224");
-        digestNames.put("2.16.840.1.101.3.4.3.2", "SHA256");
-        digestNames.put("2.16.840.1.101.3.4.3.3", "SHA384");
-        digestNames.put("2.16.840.1.101.3.4.3.4", "SHA512");
-        digestNames.put("1.3.36.3.3.1.3", "RIPEMD128");
-        digestNames.put("1.3.36.3.3.1.2", "RIPEMD160");
-        digestNames.put("1.3.36.3.3.1.4", "RIPEMD256");
-        digestNames.put("1.2.643.2.2.9", "GOST3411");
-
-        algorithmNames.put("1.2.840.113549.1.1.1", "RSA");
-        algorithmNames.put("1.2.840.10040.4.1", "DSA");
-        algorithmNames.put("1.2.840.113549.1.1.2", "RSA");
-        algorithmNames.put("1.2.840.113549.1.1.4", "RSA");
-        algorithmNames.put("1.2.840.113549.1.1.5", "RSA");
-        algorithmNames.put("1.2.840.113549.1.1.14", "RSA");
-        algorithmNames.put("1.2.840.113549.1.1.11", "RSA");
-        algorithmNames.put("1.2.840.113549.1.1.12", "RSA");
-        algorithmNames.put("1.2.840.113549.1.1.13", "RSA");
-        algorithmNames.put("1.2.840.10040.4.3", "DSA");
-        algorithmNames.put("2.16.840.1.101.3.4.3.1", "DSA");
-        algorithmNames.put("2.16.840.1.101.3.4.3.2", "DSA");
-        algorithmNames.put("1.3.36.3.3.1.3", "RSA");
-        algorithmNames.put("1.3.36.3.3.1.2", "RSA");
-        algorithmNames.put("1.3.36.3.3.1.4", "RSA");
-        algorithmNames.put("1.2.643.2.2.19", "ECGOST3410");
-
-        allowedDigests.put("MD5", "1.2.840.113549.2.5");
-        allowedDigests.put("MD2", "1.2.840.113549.2.2");
-        allowedDigests.put("SHA1", "1.3.14.3.2.26");
-        allowedDigests.put("SHA224", "2.16.840.1.101.3.4.2.4");
-        allowedDigests.put("SHA256", "2.16.840.1.101.3.4.2.1");
-        allowedDigests.put("SHA384", "2.16.840.1.101.3.4.2.2");
-        allowedDigests.put("SHA512", "2.16.840.1.101.3.4.2.3");
-        allowedDigests.put("MD-5", "1.2.840.113549.2.5");
-        allowedDigests.put("MD-2", "1.2.840.113549.2.2");
-        allowedDigests.put("SHA-1", "1.3.14.3.2.26");
-        allowedDigests.put("SHA-224", "2.16.840.1.101.3.4.2.4");
-        allowedDigests.put("SHA-256", "2.16.840.1.101.3.4.2.1");
-        allowedDigests.put("SHA-384", "2.16.840.1.101.3.4.2.2");
-        allowedDigests.put("SHA-512", "2.16.840.1.101.3.4.2.3");
-        allowedDigests.put("RIPEMD128", "1.3.36.3.2.2");
-        allowedDigests.put("RIPEMD-128", "1.3.36.3.2.2");
-        allowedDigests.put("RIPEMD160", "1.3.36.3.2.1");
-        allowedDigests.put("RIPEMD-160", "1.3.36.3.2.1");
-        allowedDigests.put("RIPEMD256", "1.3.36.3.2.3");
-        allowedDigests.put("RIPEMD-256", "1.3.36.3.2.3");
-    }
-
-    /**
-     * Gets the digest name for a certain id
-     * @param oid	an id (for instance "1.2.840.113549.2.5")
-     * @return	a digest name (for instance "MD5")
-     * @since	2.1.6
-     */
-    public static String getDigest(String oid) {
-        String ret = digestNames.get(oid);
-        if (ret == null)
-            return oid;
-        else
-            return ret;
-    }
-
-    /**
-     * Gets the algorithm name for a certain id.
-     * @param oid	an id (for instance "1.2.840.113549.1.1.1")
-     * @return	an algorithm name (for instance "RSA")
-     * @since	2.1.6
-     */
-    public static String getAlgorithm(String oid) {
-        String ret = algorithmNames.get(oid);
-        if (ret == null)
-            return oid;
-        else
-            return ret;
-    }
-
-    public static String getAllowedDigests(String name) {
-        return allowedDigests.get(name.toUpperCase());
-    }
     /**
      * Gets the timestamp token if there is one.
      * @return the timestamp token or null
@@ -529,7 +428,7 @@ public class PdfPKCS7 {
                 this.timeStampToken = new TimeStampToken(contentInfoTsp);
                 TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
                 String algOID = info.getMessageImprintAlgOID().getId();
-                messageDigest = MessageDigest.getInstance(getDigest(algOID));
+                messageDigest = MessageDigest.getInstance(DigestAlgorithms.getDigest(algOID));
             }
             else {
                 if (RSAdata != null || digestAttr != null) {
@@ -573,7 +472,7 @@ public class PdfPKCS7 {
     {
         this.provider = provider;
 
-        digestAlgorithm = getAllowedDigests(hashAlgorithm);
+        digestAlgorithm = DigestAlgorithms.getAllowedDigests(hashAlgorithm);
         if (digestAlgorithm == null)
             throw new NoSuchAlgorithmException(MessageLocalization.getComposedMessage("unknown.hash.algorithm.1", hashAlgorithm));
 
@@ -698,7 +597,7 @@ public class PdfPKCS7 {
         TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
         MessageImprint imprint = info.toASN1Structure().getMessageImprint();
         String algOID = info.getMessageImprintAlgOID().getId();
-        byte[] md = MessageDigest.getInstance(getDigest(algOID)).digest(digest);
+        byte[] md = MessageDigest.getInstance(DigestAlgorithms.getDigest(algOID)).digest(digest);
         byte[] imphashed = imprint.getHashedMessage();
         boolean res = Arrays.equals(md, imphashed);
         return res;
@@ -808,7 +707,7 @@ public class PdfPKCS7 {
      * @return the algorithm used to calculate the message digest
      */
     public String getDigestAlgorithm() {
-        String dea = getAlgorithm(digestEncryptionAlgorithm);
+        String dea = EncryptionAlgorithms.getAlgorithm(digestEncryptionAlgorithm);
         if (dea == null)
             dea = digestEncryptionAlgorithm;
 
@@ -820,7 +719,7 @@ public class PdfPKCS7 {
      * @return the digest algorithm
      */
     public String getHashAlgorithm() {
-        return getDigest(digestAlgorithm);
+        return DigestAlgorithms.getDigest(digestAlgorithm);
     }
 
     /**
