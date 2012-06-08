@@ -48,9 +48,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -86,7 +84,6 @@ import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.tsp.MessageImprint;
-import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.jce.provider.X509CertParser;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
@@ -96,12 +93,9 @@ import org.bouncycastle.tsp.TimeStampToken;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.x509.CRLDistPoint;
-import org.bouncycastle.asn1.x509.DistributionPoint;
-import org.bouncycastle.asn1.x509.DistributionPointName;
-import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.asn1.x509.GeneralNames;
+import com.itextpdf.text.pdf.security.CertificateUtil;
+import com.itextpdf.text.pdf.security.SecurityIDs;
+
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
@@ -137,14 +131,6 @@ public class PdfPKCS7 {
     private String provider;
     private boolean isTsp;
 
-    private static final String ID_PKCS7_DATA = "1.2.840.113549.1.7.1";
-    private static final String ID_PKCS7_SIGNED_DATA = "1.2.840.113549.1.7.2";
-    private static final String ID_RSA = "1.2.840.113549.1.1.1";
-    private static final String ID_DSA = "1.2.840.10040.4.1";
-    private static final String ID_CONTENT_TYPE = "1.2.840.113549.1.9.3";
-    private static final String ID_MESSAGE_DIGEST = "1.2.840.113549.1.9.4";
-    private static final String ID_SIGNING_TIME = "1.2.840.113549.1.9.5";
-    private static final String ID_ADBE_REVOCATION = "1.2.840.113583.1.1.8";
     /**
      * Holds value of property reason.
      */
@@ -425,7 +411,7 @@ public class PdfPKCS7 {
             }
             ASN1Sequence signedData = (ASN1Sequence)pkcs;
             ASN1ObjectIdentifier objId = (ASN1ObjectIdentifier)signedData.getObjectAt(0);
-            if (!objId.getId().equals(ID_PKCS7_SIGNED_DATA))
+            if (!objId.getId().equals(SecurityIDs.ID_PKCS7_SIGNED_DATA))
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("not.a.valid.pkcs.7.object.not.signed.data"));
             ASN1Sequence content = (ASN1Sequence)((ASN1TaggedObject)signedData.getObjectAt(1)).getObject();
             // the positions that we care are:
@@ -500,11 +486,11 @@ public class PdfPKCS7 {
 
                 for (int k = 0; k < sseq.size(); ++k) {
                     ASN1Sequence seq2 = (ASN1Sequence)sseq.getObjectAt(k);
-                    if (((ASN1ObjectIdentifier)seq2.getObjectAt(0)).getId().equals(ID_MESSAGE_DIGEST)) {
+                    if (((ASN1ObjectIdentifier)seq2.getObjectAt(0)).getId().equals(SecurityIDs.ID_MESSAGE_DIGEST)) {
                         ASN1Set set = (ASN1Set)seq2.getObjectAt(1);
                         digestAttr = ((ASN1OctetString)set.getObjectAt(0)).getOctets();
                     }
-                    else if (((ASN1ObjectIdentifier)seq2.getObjectAt(0)).getId().equals(ID_ADBE_REVOCATION)) {
+                    else if (((ASN1ObjectIdentifier)seq2.getObjectAt(0)).getId().equals(SecurityIDs.ID_ADBE_REVOCATION)) {
                         ASN1Set setout = (ASN1Set)seq2.getObjectAt(1);
                         ASN1Sequence seqout = (ASN1Sequence)setout.getObjectAt(0);
                         for (int j = 0; j < seqout.size(); ++j) {
@@ -617,10 +603,10 @@ public class PdfPKCS7 {
             //
             digestEncryptionAlgorithm = privKey.getAlgorithm();
             if (digestEncryptionAlgorithm.equals("RSA")) {
-                digestEncryptionAlgorithm = ID_RSA;
+                digestEncryptionAlgorithm = SecurityIDs.ID_RSA;
             }
             else if (digestEncryptionAlgorithm.equals("DSA")) {
-                digestEncryptionAlgorithm = ID_DSA;
+                digestEncryptionAlgorithm = SecurityIDs.ID_DSA;
             }
             else {
                 throw new NoSuchAlgorithmException(MessageLocalization.getComposedMessage("unknown.key.algorithm.1", digestEncryptionAlgorithm));
@@ -1142,10 +1128,10 @@ public class PdfPKCS7 {
         externalRSAdata = RSAdata;
         if (digestEncryptionAlgorithm != null) {
             if (digestEncryptionAlgorithm.equals("RSA")) {
-                this.digestEncryptionAlgorithm = ID_RSA;
+                this.digestEncryptionAlgorithm = SecurityIDs.ID_RSA;
             }
             else if (digestEncryptionAlgorithm.equals("DSA")) {
-                this.digestEncryptionAlgorithm = ID_DSA;
+                this.digestEncryptionAlgorithm = SecurityIDs.ID_DSA;
             }
             else
                 throw new ExceptionConverter(new NoSuchAlgorithmException(MessageLocalization.getComposedMessage("unknown.key.algorithm.1", digestEncryptionAlgorithm)));
@@ -1212,7 +1198,7 @@ public class PdfPKCS7 {
 
             // Create the contentInfo.
             ASN1EncodableVector v = new ASN1EncodableVector();
-            v.add(new ASN1ObjectIdentifier(ID_PKCS7_DATA));
+            v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_DATA));
             if (RSAdata != null)
                 v.add(new DERTaggedObject(0, new DEROctetString(RSAdata)));
             DERSequence contentinfo = new DERSequence(v);
@@ -1287,7 +1273,7 @@ public class PdfPKCS7 {
             // and return it
             //
             ASN1EncodableVector whole = new ASN1EncodableVector();
-            whole.add(new ASN1ObjectIdentifier(ID_PKCS7_SIGNED_DATA));
+            whole.add(new ASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_SIGNED_DATA));
             whole.add(new DERTaggedObject(0, new DERSequence(body)));
 
             ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
@@ -1372,20 +1358,20 @@ public class PdfPKCS7 {
         try {
             ASN1EncodableVector attribute = new ASN1EncodableVector();
             ASN1EncodableVector v = new ASN1EncodableVector();
-            v.add(new ASN1ObjectIdentifier(ID_CONTENT_TYPE));
-            v.add(new DERSet(new ASN1ObjectIdentifier(ID_PKCS7_DATA)));
+            v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_CONTENT_TYPE));
+            v.add(new DERSet(new ASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_DATA)));
             attribute.add(new DERSequence(v));
             v = new ASN1EncodableVector();
-            v.add(new ASN1ObjectIdentifier(ID_SIGNING_TIME));
+            v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_SIGNING_TIME));
             v.add(new DERSet(new DERUTCTime(signingTime.getTime())));
             attribute.add(new DERSequence(v));
             v = new ASN1EncodableVector();
-            v.add(new ASN1ObjectIdentifier(ID_MESSAGE_DIGEST));
+            v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_MESSAGE_DIGEST));
             v.add(new DERSet(new DEROctetString(secondDigest)));
             attribute.add(new DERSequence(v));
             if (ocsp != null || !crls.isEmpty()) {
                 v = new ASN1EncodableVector();
-                v.add(new ASN1ObjectIdentifier(ID_ADBE_REVOCATION));
+                v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_ADBE_REVOCATION));
 
                 ASN1EncodableVector revocationV = new ASN1EncodableVector();
 
@@ -1734,172 +1720,29 @@ public class PdfPKCS7 {
     }
     
     
-    // Certificate utilities
-    
-    // Certificate Revocation Lists
+    // Methods that were moved to CertificateUtil
 	
 	/**
-	 * Gets a CRL from a certificate
-	 * @param certificate
-	 * @return	the CRL or null if there's no CRL available
-	 * @throws CertificateException
-	 * @throws CRLException
-	 * @throws IOException
+	 * Gets the URL of the Certificate Revocation List for a Certificate
+	 * @param certificate	the Certificate
+	 * @return	the String where you can check if the certificate was revoked
+	 * @throws CertificateParsingException
+	 * @throws IOException 
+	 * @deprecated Use {@link CertificateUtil#getCRLURL(X509Certificate)} instead
 	 */
-	public static CRL getCrl(X509Certificate certificate) throws CertificateException, CRLException, IOException {
-		return getCrl(getCrlUrl(certificate));
+	public static String getCrlUrl(X509Certificate certificate) throws CertificateParsingException {
+		return CertificateUtil.getCRLURL(certificate);
 	}
     
     /**
-     * Gets the URL of the Certificate Revocation List for a Certificate
-     * @param certificate	the Certificate
-     * @return	the String where you can check if the certificate was revoked
-     * @throws CertificateParsingException
-     * @throws IOException 
-     */
-    public static String getCrlUrl(X509Certificate certificate) throws CertificateParsingException {
-        ASN1Primitive obj;
-		try {
-			obj = getExtensionValue(certificate, Extension.cRLDistributionPoints.getId());
-		} catch (IOException e) {
-			obj = null;
-		}
-        if (obj == null) {
-            return null;
-        }
-        CRLDistPoint dist = CRLDistPoint.getInstance(obj);
-        DistributionPoint[] dists = dist.getDistributionPoints();
-        for (DistributionPoint p : dists) {
-            DistributionPointName distributionPointName = p.getDistributionPoint();
-            if (DistributionPointName.FULL_NAME != distributionPointName.getType()) {
-                continue;
-            }
-            GeneralNames generalNames = (GeneralNames)distributionPointName.getName();
-            GeneralName[] names = generalNames.getNames();
-            for (GeneralName name : names) {
-                if (name.getTagNo() != GeneralName.uniformResourceIdentifier) {
-                    continue;
-                }
-                DERIA5String derStr = DERIA5String.getInstance((ASN1TaggedObject)name.toASN1Primitive(), false);
-                return derStr.getString();
-            }
-        }
-        return null;
-    }
-	
-	/**
-	 * Gets the CRL object using a CRL URL.
-	 * @param url	the URL where to get the CRL
-	 * @return	a CRL object
-	 * @throws IOException
-	 * @throws CertificateException
-	 * @throws CRLException
+	 * Retrieves the OCSP URL from the given certificate.
+	 * @param certificate the certificate
+	 * @return the URL or null
+	 * @throws IOException 
+	 * @since	2.1.6
+	 * @deprecated Use {@link CertificateUtil#getOCSPURL(X509Certificate)} instead
 	 */
-	public static CRL getCrl(String url) throws IOException, CertificateException, CRLException {
-		if (url == null)
-			return null;
-		InputStream is = new URL(url).openStream();
-		CertificateFactory cf = CertificateFactory.getInstance("X.509");
-		return (CRL)cf.generateCRL(is); 
+	public static String getOCSPURL(X509Certificate certificate) {
+		return CertificateUtil.getOCSPURL(certificate);
 	}
-
-	// Online Certificate Status Protocol
-	
-    /** The ID for the OCSP URL inside a certificate. */
-    public static final String OCSPOID = "1.3.6.1.5.5.7.48.1";
-    
-    /**
-     * Retrieves the OCSP URL from the given certificate.
-     * @param certificate the certificate
-     * @return the URL or null
-     * @throws IOException 
-     * @since	2.1.6
-     */
-    public static String getOCSPURL(X509Certificate certificate) {
-    	ASN1Primitive obj;
-		try {
-			obj = getExtensionValue(certificate, Extension.authorityInfoAccess.getId());
-	        if (obj == null) {
-	            return null;
-	        }
-	        ASN1Sequence AccessDescriptions = (ASN1Sequence) obj;
-	        for (int i = 0; i < AccessDescriptions.size(); i++) {
-	        	ASN1Sequence AccessDescription = (ASN1Sequence) AccessDescriptions.getObjectAt(i);
-	        	if ( AccessDescription.size() != 2 ) {
-	        		continue;
-	        	}
-	        	else if (AccessDescription.getObjectAt(0) instanceof ASN1ObjectIdentifier) {
-	        		ASN1ObjectIdentifier id = (ASN1ObjectIdentifier)AccessDescription.getObjectAt(0);
-	        		if (OCSPOID.equals(id.getId())) {
-	            		ASN1Primitive description = (ASN1Primitive)AccessDescription.getObjectAt(1);
-	                    String AccessLocation =  getStringFromGeneralName(description);
-	                    if (AccessLocation == null) {
-	                        return "" ;
-	                    }
-	                    else {
-	                        return AccessLocation ;
-	                    }
-	                }
-	            }
-	        }
-		} catch (IOException e) {
-			return null;
-		}
-        return null;
-    }
-
-    // Time Stamp Authority
-    
-    /** An ID to find the TSA URL. */
-    public static String TSAOID = "1.2.840.113583.1.1.9.1";
-
-    /**
-     * Gets the URL of the TSA if it's available on the certificate
-     * @param certificate	a certificate
-     * @return	a TSA URL
-     * @throws IOException
-     */
-    public static String getTSAURL(X509Certificate certificate) {
-        byte der[] = certificate.getExtensionValue(TSAOID);
-        if(der == null)
-            return null;
-        ASN1Primitive asn1obj;
-		try {
-			asn1obj = ASN1Primitive.fromByteArray(der);
-	        DEROctetString octets = (DEROctetString)asn1obj;
-	        asn1obj = ASN1Primitive.fromByteArray(octets.getOctets());
-	        ASN1Sequence asn1seq = ASN1Sequence.getInstance(asn1obj);
-	        return getStringFromGeneralName(asn1seq.getObjectAt(1).toASN1Primitive());
-		} catch (IOException e) {
-			return null;
-		}
-    }
-
-    /**
-     * @param certificate	the certificate from which we need the ExtensionValue
-     * @param oid the Object Identifier value for the extension.
-     * @return	the extension value as an ASN1Primitive object
-     * @throws IOException
-     */
-    private static ASN1Primitive getExtensionValue(X509Certificate certificate, String oid) throws IOException {
-        byte[] bytes = certificate.getExtensionValue(oid);
-        if (bytes == null) {
-            return null;
-        }
-        ASN1InputStream aIn = new ASN1InputStream(new ByteArrayInputStream(bytes));
-        ASN1OctetString octs = (ASN1OctetString) aIn.readObject();
-        aIn = new ASN1InputStream(new ByteArrayInputStream(octs.getOctets()));
-        return aIn.readObject();
-    }
-
-    /**
-     * Gets a String from an ASN1Primitive
-     * @param names	the ASN1Primitive
-     * @return	a human-readable String
-     * @throws IOException
-     */
-    private static String getStringFromGeneralName(ASN1Primitive names) throws IOException {
-        ASN1TaggedObject taggedObject = (ASN1TaggedObject) names ;
-        return new String(ASN1OctetString.getInstance(taggedObject, false).getOctets(), "ISO-8859-1");
-    }
 }
