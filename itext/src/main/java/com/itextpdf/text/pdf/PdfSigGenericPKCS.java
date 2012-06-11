@@ -55,10 +55,7 @@ import com.itextpdf.text.pdf.security.CertificateInfo;
  * A signature dictionary representation for the standard filters.
  */
 public abstract class PdfSigGenericPKCS extends PdfSignature {
-    /**
-     * The hash algorithm, for example "SHA1"
-     */    
-    protected String hashAlgorithm;
+
     /**
      * The crypto provider
      */    
@@ -72,9 +69,14 @@ public abstract class PdfSigGenericPKCS extends PdfSignature {
      */    
     protected String   name;
 
+    /**
+     * The hash algorithm, for example "SHA1"
+     */    
+    protected String hashAlgorithm;
+    private String digestEncryptionAlgorithm;
+    
     private byte externalDigest[];
     private byte externalRSAdata[];
-    private String digestEncryptionAlgorithm;
 
     /**
      * Creates a generic standard filter.
