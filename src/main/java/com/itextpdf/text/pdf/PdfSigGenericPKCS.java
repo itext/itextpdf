@@ -216,6 +216,7 @@ public abstract class PdfSigGenericPKCS extends PdfSignature {
 
     /**
      * Creates a standard filter of the type Windows Certificate.
+     * @deprecated See ISO-32000-2, adbe.pkcs7.sha1 should no longer be used
      */    
     public static class PPKMS extends PdfSigGenericPKCS {
         /**
