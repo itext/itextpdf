@@ -15,7 +15,7 @@ public class DivCssApplier {
 
     public PdfDiv apply(final PdfDiv div, final Tag t, final MarginMemory memory, final PageSizeContainable psc) {
         Map<String, String> css = t.getCSS();
-        float fontSize = FontSizeTranslator.getInstance().getFontSize(t);
+        float fontSize = FontSizeTranslator.getInstance().translateFontSize(t);
         if (fontSize == Font.UNDEFINED) {
             fontSize =  FontSizeTranslator.DEFAULT_FONT_SIZE;
         }

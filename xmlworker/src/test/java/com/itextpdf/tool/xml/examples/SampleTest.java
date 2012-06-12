@@ -33,18 +33,12 @@ public class SampleTest {
 
     protected String outPath;
     protected String outPdf;
-    private String outImage;
     protected String inputHtml;
     private String cmpPdf;
-    private String cmpImage;
     private String differenceImage;
     private CompareTool compareTool;
     protected String testPath;
     protected String testName;
-
-    public SampleTest() {
-        compareTool = new CompareTool();
-    }
 
     @Before
     public void setup() throws IOException {
@@ -59,11 +53,10 @@ public class SampleTest {
             outPath = "." + File.separator + "target" + File.separator + testPath + testName + File.separator;
             String inputPath = "." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + File.separator + testName + File.separator;
             differenceImage = outPath + "difference.png";
-            outPdf = testName + ".pdf";
-            outImage = "<testName>-%03d.png".replaceAll("<testName>", testName);
+            outPdf = outPath + testName + ".pdf";
             inputHtml = inputPath + "<testName>.html".replaceAll("<testName>", testName);
             cmpPdf = inputPath + "<testName>.pdf".replaceAll("<testName>", testName);
-            cmpImage = "cmp_<testName>-%03d.png".replaceAll("<testName>", testName);
+            compareTool = new CompareTool(outPdf, cmpPdf);
             File dir = new File(outPath);
             if (dir.exists()) {
                 deleteDirectory(dir);
@@ -72,13 +65,13 @@ public class SampleTest {
         }
     }
 
-    @Test//(timeout = 60000)
+    @Test(timeout = 120000)
     public void test() throws IOException, DocumentException, InterruptedException {
         String testName = getTestName();
         if (!this.getClass().getName().equals(SampleTest.class.getName()) && (testName.length() > 0)) {
             transformHtml2Pdf();
             if (detectCrashesAndHangUpsOnly() == false) {
-                String errorMessage = compareTool.compare(outPdf, cmpPdf, outPath, outImage, cmpImage, differenceImage);
+                String errorMessage = compareTool.compare(outPath, differenceImage);
                 if (errorMessage != null) {
                     Assert.fail(errorMessage);
                 }
@@ -108,7 +101,7 @@ public class SampleTest {
 
     protected void transformHtml2Pdf() throws IOException, DocumentException, InterruptedException {
         Document doc = new Document(PageSize.A4);
-        PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPath + outPdf));
+        PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPdf));
         doc.open();
         doc.setMargins(0, 0, 0, 0);
 

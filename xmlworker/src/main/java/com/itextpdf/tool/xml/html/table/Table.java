@@ -218,21 +218,22 @@ public class Table extends AbstractTagProcessor {
                                         largestColumn = cellWidth;
                                         indexOfLargestColumn = c;
                                     }
-
-                                    if (widestWordOfCell > widestWords[c]) {
-                                        widestWords[c] = widestWordOfCell;
-                                    }
                                 } else {
                                     if (cellWidth > largestColspanColumn) {
                                         largestColspanColumn = cellWidth;
                                         indexOfLargestColspanColumn = c;
                                     }
-
-                                    if (widestWordOfCell > colspanWidestWords[c]) {
-                                        colspanWidestWords[c] = widestWordOfCell;
-                                    }
                                 }
 							}
+                            if (colspan == 1) {
+                                if (widestWordOfCell > widestWords[c]) {
+                                    widestWords[c] = widestWordOfCell;
+                                }
+                            } else {
+                                if (widestWordOfCell > colspanWidestWords[c]) {
+                                    colspanWidestWords[c] = widestWordOfCell;
+                                }
+                            }
 						}
 					}
 					if (colspan > 1) {

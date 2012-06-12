@@ -79,7 +79,7 @@ public class FloatLayout {
                     floatingElements.add(floatingElement);
                     content.remove(0);
                 } else {
-                    if (!floatingElements.isEmpty() || (compositeColumn.getCompositeElements() != null && !compositeColumn.getCompositeElements().isEmpty())) {
+                    if (!floatingElements.isEmpty()) {
                         status = floatingLayout(floatingElements, simulate);
                         //if ((status & ColumnText.NO_MORE_TEXT) == 0) {
                         //    break;

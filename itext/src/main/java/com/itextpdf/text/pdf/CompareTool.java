@@ -17,17 +17,46 @@ public class CompareTool {
     static private String differentPages = "File <filename> differs on page <pagenumber>.";
     static private String undefinedGsPath = "Path to GhostScript is not specified. Please use -DgsExec=<path_to_ghostscript> (e.g. -DgsExec=\"C:/Program Files/gs/gs8.64/bin/gswin32c.exe\")";
 
+    private String cmpPdf;
+    private String cmpPdfName;
+    private String cmpImage;
+    private String outPdf;
+    private String outPdfName;
+    private String outImage;
 
-    public CompareTool() {
+
+    public CompareTool(String outPdf, String cmpPdf) {
+        init(outPdf, cmpPdf);
         gsExec = System.getProperty("gsExec");
         compareExec = System.getProperty("compareExec");
     }
 
-    public String compare(String outPdf, String cmpPdf, String outPath, String outImage, String cmpImage, String differenceImage) throws IOException, InterruptedException {
+    public String compare(String outPath, String differenceImage) throws IOException, InterruptedException {
         if (gsExec == null || gsExec.length() == 0) {
             return undefinedGsPath;
         }
         File targetDir = new File(outPath);
+        File[] imageFiles;
+        File[] cmpImageFiles;
+
+        if (!targetDir.exists()) {
+            targetDir.mkdir();
+        } else {
+            imageFiles = targetDir.listFiles(new PngFileFilter());
+            for (File file : imageFiles) {
+                file.delete();
+            }
+            cmpImageFiles = targetDir.listFiles(new CmpPngFileFilter());
+            for (File file : cmpImageFiles) {
+                file.delete();
+            }
+        }
+
+        File diffFile = new File(differenceImage);
+        if (diffFile.exists()) {
+            diffFile.delete();
+        }
+
         if (targetDir.exists()) {
             String gsParams = this.gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
             Process p = Runtime.getRuntime().exec(gsExec + gsParams);
@@ -43,7 +72,7 @@ public class CompareTool {
             }
             bre.close();
             if (p.waitFor() == 0) {
-                gsParams = this.gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPath + outPdf);
+                gsParams = this.gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
                 p = Runtime.getRuntime().exec(gsExec + gsParams);
                 bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -58,8 +87,8 @@ public class CompareTool {
                 int exitValue = p.waitFor();
 
                 if (exitValue == 0) {
-                    File[] imageFiles = targetDir.listFiles(new PngFileFilter());
-                    File[] cmpImageFiles = targetDir.listFiles(new CmpPngFileFilter());
+                    imageFiles = targetDir.listFiles(new PngFileFilter());
+                    cmpImageFiles = targetDir.listFiles(new CmpPngFileFilter());
                     boolean bUnexpectedNumberOfPages = false;
                     if (imageFiles.length != cmpImageFiles.length) {
                         bUnexpectedNumberOfPages = true;
@@ -116,6 +145,22 @@ public class CompareTool {
         return null;
     }
 
+    public String compare(String outPdf, String cmpPdf, String outPath, String differenceImage) throws IOException, InterruptedException {
+        init(outPdf, cmpPdf);
+        return compare(outPath, differenceImage);
+    }
+
+    private void init(String outPdf, String cmpPdf) {
+        this.outPdf = outPdf;
+        this.cmpPdf = cmpPdf;
+        outPdfName =  new File(outPdf).getName();
+        outPdfName.substring(0, outPdfName.indexOf('.'));
+        cmpPdfName = new File(cmpPdf).getName();
+        cmpPdfName.substring(0, cmpPdfName.indexOf('.'));
+        outImage = outPdfName + "-%03d.png";
+        cmpImage = "cmp_" + outPdfName + "-%03d.png";
+    }
+
     private boolean compareStreams(InputStream is1, InputStream is2) throws IOException {
         byte[] buffer1 = new byte[64 * 1024];
         byte[] buffer2 = new byte[64 * 1024];
@@ -134,28 +179,12 @@ public class CompareTool {
         return true;
     }
 
-    private void deleteDirectory(File path) {
-        if (path == null)
-            return;
-        if (path.exists()) {
-            for (File f : path.listFiles()) {
-                if (f.isDirectory()) {
-                    deleteDirectory(f);
-                    f.delete();
-                } else {
-                    f.delete();
-                }
-            }
-            path.delete();
-        }
-    }
-
     class PngFileFilter implements FileFilter {
         public boolean accept(File pathname) {
             String ap = pathname.getAbsolutePath();
             boolean b1 = ap.endsWith(".png");
             boolean b2 = ap.contains("cmp_");
-            return b1 && !b2;
+            return b1 && !b2 && ap.contains(outPdfName);
         }
     }
 
@@ -164,7 +193,7 @@ public class CompareTool {
             String ap = pathname.getAbsolutePath();
             boolean b1 = ap.endsWith(".png");
             boolean b2 = ap.contains("cmp_");
-            return b1 && b2;
+            return b1 && b2 && ap.contains(cmpPdfName);
         }
     }
 
