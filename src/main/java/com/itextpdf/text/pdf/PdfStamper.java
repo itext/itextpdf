@@ -191,30 +191,9 @@ public class PdfStamper
             stamper.close(moreInfo);
             return;
         }
-        sigApp.preClose();
-        PdfSigGenericPKCS sig = sigApp.getSigStandard();
-        PdfLiteral lit = (PdfLiteral)sig.get(PdfName.CONTENTS);
-        int totalBuf = (lit.getPosLength() - 2) / 2;
-        byte buf[] = new byte[8192];
-        int n;
-        InputStream inp = sigApp.getRangeStream();
-        try {
-            while ((n = inp.read(buf)) > 0) {
-                sig.getSigner().update(buf, 0, n);
-            }
+        else {
+            throw new DocumentException("Signature defined. Must be closed in PdfSignatureAppearance.");
         }
-        catch (SignatureException se) {
-            throw new ExceptionConverter(se);
-        }
-        buf = new byte[totalBuf];
-        byte[] bsig = sig.getSignerContents();
-        System.arraycopy(bsig, 0, buf, 0, bsig.length);
-        PdfString str = new PdfString(buf);
-        str.setHexWriting(true);
-        PdfDictionary dic = new PdfDictionary();
-        dic.put(PdfName.CONTENTS, str);
-        sigApp.close(dic);
-        stamper.reader.close();
     }
 
     /** Gets a <CODE>PdfContentByte</CODE> to write under the page of
