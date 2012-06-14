@@ -97,6 +97,14 @@ public class PdfSmartCopy extends PdfCopy {
                 return streamRef;
             }
         }
+        else if (srcObj.isDictionary()) {
+            streamKey = new ByteStore((PdfDictionary)srcObj);
+            validStream = true;
+            PdfIndirectReference streamRef = streamMap.get(streamKey);
+            if (streamRef != null) {
+                return streamRef;
+            }
+        }
 
         PdfIndirectReference theRef;
         RefKey key = new RefKey(in);
@@ -196,6 +204,20 @@ public class PdfSmartCopy extends PdfCopy {
             ByteBuffer bb = new ByteBuffer();
             int level = 100;
             serObject(str, level, bb);
+            this.b = bb.toByteArray();
+            md5 = null;
+        }
+
+        ByteStore(PdfDictionary dict) throws IOException {
+            try {
+                md5 = MessageDigest.getInstance("MD5");
+            }
+            catch (Exception e) {
+                throw new ExceptionConverter(e);
+            }
+            ByteBuffer bb = new ByteBuffer();
+            int level = 100;
+            serObject(dict, level, bb);
             this.b = bb.toByteArray();
             md5 = null;
         }
