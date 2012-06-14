@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.security.PrivateKey;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -70,9 +69,6 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.security.CertificateInfo;
-
-import java.security.MessageDigest;
-import java.security.cert.X509CRL;
 
 /**
  * Class that takes care of the cryptographic options
@@ -128,30 +124,6 @@ public class PdfSignatureAppearance {
         return this.certificationLevel;
     }
     
-    // Encryption provider
-    
-    /** The crypto provider, e.g. "BC" for BouncyCastle */
-    private String provider;
-
-    /**
-     * Returns the Cryptographic Service Provider that will sign the document.
-     * @return provider the name of the provider, for example "SUN",
-     * or <code>null</code> to use the default provider.
-     */
-    public String getProvider() {
-        return this.provider;
-    }
-
-    /**
-     * Sets the Cryptographic Service Provider that will sign the document.
-     *
-     * @param provider the name of the provider, for example "SUN", or
-     * <code>null</code> to use the default provider.
-     */
-    public void setProvider(String provider) {
-        this.provider = provider;
-    }
-    
     // signature info
 
     /** The reason for signing. */
@@ -159,6 +131,9 @@ public class PdfSignatureAppearance {
 
     /** Holds value of property location. */
     private String location;
+
+    /** The contact name of the signer. */
+    private String contact;
 
     /** Holds value of property signDate. */
     private Calendar signDate;
@@ -194,9 +169,6 @@ public class PdfSignatureAppearance {
     public void setLocation(String location) {
         this.location = location;
     }
-
-    /** The contact name of the signer. */
-    private String contact;
     
     /**
      * Gets the signing contact.
@@ -230,18 +202,7 @@ public class PdfSignatureAppearance {
         this.signDate = signDate;
     }
 
-    // Elements needed to sign a document
-    
-    /** The private key used for signing. */
-    private PrivateKey privKey;
-
-    /**
-     * Gets the private key.
-     * @return the private key
-     */
-    public java.security.PrivateKey getPrivKey() {
-        return privKey;
-    }
+    // the PDF file
     
     /** The file right before the signature is added (can be null). */
     private RandomAccessFile raf;
@@ -325,42 +286,31 @@ public class PdfSignatureAppearance {
         }
     }    
     
-    /** The encryption algorithm RSA or DSA */
-    private String digestEncryptionAlgorithm;
+    // stuff needed to sign the PDF
     
-    /** The signed digest. */
-    private byte externalDigest[];
-    
-    /** extra RSA data */
-    private byte externalRSAdata[];
-    
-    /**
-     * Sets the digest/signature to an external calculated value.
-     * @param digest the digest. This is the actual signature
-     * @param RSAdata the extra data that goes into the data tag in PKCS#7
-     * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the <CODE>digest</CODE>
-     * is also <CODE>null</CODE>. If the <CODE>digest</CODE> is not <CODE>null</CODE>
-     * then it may be "RSA" or "DSA"
-     */
-    public void setExternalDigest(byte digest[], byte RSAdata[], String digestEncryptionAlgorithm) {
-        externalDigest = digest;
-        externalRSAdata = RSAdata;
-        this.digestEncryptionAlgorithm = digestEncryptionAlgorithm;
-    }
-    
-    /** The certificate chain */
-    private Certificate[] certChain;
-
-    /**
-     * Gets the certificate chain.
-     * @return the certificate chain
-     */
-    public java.security.cert.Certificate[] getCertChain() {
-        return this.certChain;
-    }
+    /** The signing certificate */
+    private Certificate signCertificate;
     
     /** The Certificate Revocation Lists */
     private CRL[] crlList;
+    
+    /**
+     * Sets the cryptographic parameters.
+     * @param signCertificate the certificate 
+     * @param crlList the certificate revocation list. It may be <CODE>null</CODE>
+     */
+    public void setCrypto(Certificate signCertificate, CRL[] crlList) {
+        this.signCertificate = signCertificate;
+        this.crlList = crlList;
+    }
+
+    /**
+     * Gets the certificate that will be used to sign.
+     * @return the certificate chain
+     */
+    public java.security.cert.Certificate getSignCertificate() {
+        return this.signCertificate;
+    }
 
     /**
      * Gets the certificate revocation list.
@@ -388,58 +338,6 @@ public class PdfSignatureAppearance {
      */
     public void setCryptoDictionary(com.itextpdf.text.pdf.PdfDictionary cryptoDictionary) {
         this.cryptoDictionary = cryptoDictionary;
-    }
-    
-    // The signature standard that will be used if no crypto dictionary is defined.
-
-    /** The signature standard. */
-    private PdfSigGenericPKCS sigStandard;
-    
-    /**
-     * Gets the instance of the standard signature dictionary. This instance
-     * is only available after pre close.
-     * <p>
-     * The main use is to insert external signatures.
-     * @return the instance of the standard signature dictionary
-     */
-    public PdfSigGenericPKCS getSigStandard() {
-        return sigStandard;
-    }
-    
-    // filters
-    
-    /** The self signed filter. */
-    public static final PdfName SELF_SIGNED = PdfName.ADOBE_PPKLITE;
-    
-    /** The VeriSign filter. */
-    public static final PdfName VERISIGN_SIGNED = PdfName.VERISIGN_PPKVS;
-    
-    /** The Windows Certificate Security. */
-    public static final PdfName WINCER_SIGNED = PdfName.ADOBE_PPKMS;
-
-    /** The cryptographic filter that needs to be used. */
-    private PdfName filter;
-    
-    /**
-     * Gets the filter used to sign the document.
-     * @return the filter used to sign the document
-     */
-    public com.itextpdf.text.pdf.PdfName getFilter() {
-        return filter;
-    }
-
-    /**
-     * Sets the cryptographic parameters.
-     * @param privKey the private key
-     * @param certChain the certificate chain
-     * @param crlList the certificate revocation list. It may be <CODE>null</CODE>
-     * @param filter the cryptographic filter type. It can be SELF_SIGNED, VERISIGN_SIGNED or WINCER_SIGNED
-     */
-    public void setCrypto(PrivateKey privKey, Certificate[] certChain, CRL[] crlList, PdfName filter) {
-        this.privKey = privKey;
-        this.certChain = certChain;
-        this.crlList = crlList;
-        this.filter = filter;
     }
 
     // Signature event
@@ -997,11 +895,11 @@ public class PdfSignatureAppearance {
         if (app[2] == null) {
             String text;
             if (layer2Text == null) {
-                StringBuffer buf = new StringBuffer();
+                StringBuilder buf = new StringBuilder();
                 buf.append("Digitally signed by ");
-                String name = CertificateInfo.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
+                String name = CertificateInfo.getSubjectFields((X509Certificate)signCertificate).getField("CN");
                 if (name == null)
-                    name = CertificateInfo.getSubjectFields((X509Certificate)certChain[0]).getField("E");
+                    name = CertificateInfo.getSubjectFields((X509Certificate)signCertificate).getField("E");
                 if (name == null)
                     name = "";
                 buf.append(name).append('\n');
@@ -1090,9 +988,9 @@ public class PdfSignatureAppearance {
 
             switch (renderingMode) {
             case NAME_AND_DESCRIPTION:
-                String signedBy = CertificateInfo.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
+                String signedBy = CertificateInfo.getSubjectFields((X509Certificate)signCertificate).getField("CN");
                 if (signedBy == null)
-                    signedBy = CertificateInfo.getSubjectFields((X509Certificate)certChain[0]).getField("E");
+                    signedBy = CertificateInfo.getSubjectFields((X509Certificate)signCertificate).getField("E");
                 if (signedBy == null)
                     signedBy = "";
                 Rectangle sr2 = new Rectangle(signatureRect.getWidth() - MARGIN, signatureRect.getHeight() - MARGIN );
@@ -1175,12 +1073,12 @@ public class PdfSignatureAppearance {
                 font = new Font();
             else
                 font = new Font(layer2Font);
-            float size = font.getSize();
+            //float size = font.getSize();
             String text = "Signature Not Verified";
             if (layer4Text != null)
                 text = layer4Text;
             Rectangle sr = new Rectangle(rect.getWidth() - 2 * MARGIN, rect.getHeight() * TOP_SECTION - 2 * MARGIN);
-            size = ColumnText.fitText(font, text, sr, 15, runDirection);
+            float size = ColumnText.fitText(font, text, sr, 15, runDirection);
             ColumnText ct = new ColumnText(t);
             ct.setRunDirection(runDirection);
             ct.setSimpleColumn(new Phrase(text, font), MARGIN, 0, rect.getWidth() - MARGIN, rect.getHeight() - MARGIN, size, Element.ALIGN_LEFT);
@@ -1329,10 +1227,10 @@ public class PdfSignatureAppearance {
      * No external signatures are allowed if this method is called.
      * @throws IOException on error
      * @throws DocumentException on error
-     */
     public void preClose() throws IOException, DocumentException {
         preClose(null);
     }
+     */
 
     /**
      * This is the first method to be called when using external signatures. The general sequence is:
@@ -1350,7 +1248,6 @@ public class PdfSignatureAppearance {
      * @throws IOException on error
      * @throws DocumentException on error
      */
-    @SuppressWarnings("deprecation")
 	public void preClose(HashMap<PdfName, Integer> exclusionSizes) throws IOException, DocumentException {
         if (preClosed)
             throw new DocumentException(MessageLocalization.getComposedMessage("document.already.pre.closed"));
@@ -1394,36 +1291,7 @@ public class PdfSignatureAppearance {
 
         exclusionLocations = new HashMap<PdfName, PdfLiteral>();
         if (cryptoDictionary == null) {
-            if (PdfName.ADOBE_PPKLITE.equals(getFilter()))
-                sigStandard = new PdfSigGenericPKCS.PPKLite(getProvider());
-            else if (PdfName.ADOBE_PPKMS.equals(getFilter()))
-                sigStandard = new PdfSigGenericPKCS.PPKMS(getProvider());
-            else if (PdfName.VERISIGN_PPKVS.equals(getFilter()))
-                sigStandard = new PdfSigGenericPKCS.VeriSign(getProvider());
-            else
-                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("unknown.filter.1", getFilter()));
-            sigStandard.setExternalDigest(externalDigest, externalRSAdata, digestEncryptionAlgorithm);
-            if (getReason() != null)
-                sigStandard.setReason(getReason());
-            if (getLocation() != null)
-                sigStandard.setLocation(getLocation());
-            if (getContact() != null)
-                sigStandard.setContact(getContact());
-            sigStandard.put(PdfName.M, new PdfDate(getSignDate()));
-            sigStandard.setSignInfo(getPrivKey(), getCertChain(), getCrlList());
-            PdfString contents = (PdfString)sigStandard.get(PdfName.CONTENTS);
-            PdfLiteral lit = new PdfLiteral((contents.toString().length() + (PdfName.ADOBE_PPKLITE.equals(getFilter())?0:64)) * 2 + 2);
-            exclusionLocations.put(PdfName.CONTENTS, lit);
-            sigStandard.put(PdfName.CONTENTS, lit);
-            lit = new PdfLiteral(80);
-            exclusionLocations.put(PdfName.BYTERANGE, lit);
-            sigStandard.put(PdfName.BYTERANGE, lit);
-            if (certificationLevel > 0) {
-                addDocMDP(sigStandard);
-            }
-            if (signatureEvent != null)
-                signatureEvent.getSignatureDictionary(sigStandard);
-            writer.addToBody(sigStandard, refSig, false);
+            throw new DocumentException("No crypto dictionary defined.");
         }
         else {
             PdfLiteral lit = new PdfLiteral(80);
@@ -1583,80 +1451,5 @@ public class PdfSignatureAppearance {
             if (originalout != null)
                 try{originalout.close();}catch(Exception e){}
         }
-    }
-
-    // helper method to sign.
-    
-    /**
-     * Signs the document using the detached mode.
-     * @param pk the private key
-     * @param chain the certificate chain
-     * @param crlList the CRL list
-     * @param ocspClient the OCSP client
-     * @param tsaClient the Timestamp client
-     * @param provider the provider or null
-     * @param hashAlgorithm the hash algorithm to use with the authenticated attributes. SHA256 will be used if null
-     * @param estimatedSize the reserved size for the signature. It will be estimated if 0
-     * @throws Exception 
-     */
-    public void signDetached(PrivateKey pk, Certificate[] chain, CRL[] crlList, OcspClient ocspClient, TSAClient tsaClient, String provider, String hashAlgorithm, int estimatedSize) throws Exception {
-        if (estimatedSize == 0) {
-            estimatedSize = 8192;
-            if (crlList != null) {
-                for (Object element : crlList) {
-                    estimatedSize += ((X509CRL)element).getEncoded().length + 10;
-                }
-            }
-            if (ocspClient != null)
-                estimatedSize += 4192;
-            if (tsaClient != null)
-                estimatedSize += 4192;
-        }
-        if (hashAlgorithm == null)
-            hashAlgorithm = "SHA256";
-        setCrypto(null, chain, crlList, null);
-        PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, PdfName.ADBE_PKCS7_DETACHED);
-        dic.setReason(getReason());
-        dic.setLocation(getLocation());
-        dic.setContact(getContact());
-        dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
-        setCryptoDictionary(dic);
-
-        HashMap<PdfName,Integer> exc = new HashMap<PdfName,Integer>();
-        exc.put(PdfName.CONTENTS, new Integer(estimatedSize * 2 + 2));
-        preClose(exc);
-
-        PdfPKCS7 sgn = new PdfPKCS7(pk, chain, crlList, hashAlgorithm, provider, false);
-        InputStream data = getRangeStream();
-        MessageDigest messageDigest;
-        if (provider == null)
-            messageDigest = MessageDigest.getInstance(hashAlgorithm);
-        else
-            messageDigest = MessageDigest.getInstance(hashAlgorithm, provider);
-        byte buf[] = new byte[8192];
-        int n;
-        while ((n = data.read(buf)) > 0) {
-            messageDigest.update(buf, 0, n);
-        }
-        byte hash[] = messageDigest.digest();
-        Calendar cal = Calendar.getInstance();
-        byte[] ocsp = null;
-        if (chain.length >= 2 && ocspClient != null) {
-            ocsp = ocspClient.getEncoded((X509Certificate)chain[0], (X509Certificate)chain[1], null);
-        }
-        byte sh[] = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp);
-        sgn.update(sh, 0, sh.length);
-        
-        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsaClient, ocsp);
-
-        if (estimatedSize + 2 < encodedSig.length)
-            throw new Exception("Not enough space");
-
-        byte[] paddedSig = new byte[estimatedSize];
-        System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
-
-        PdfDictionary dic2 = new PdfDictionary();
-        dic2.put(PdfName.CONTENTS, new PdfString(paddedSig).setHexWriting(true));
-        close(dic2);
     }
 }
