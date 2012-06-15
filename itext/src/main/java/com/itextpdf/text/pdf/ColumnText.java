@@ -1319,9 +1319,11 @@ public class ColumnText {
                     }
                 }
                 firstPass = false;
-                yLine = compositeColumn.yLine;
-                linesWritten += compositeColumn.linesWritten;
-                descender = compositeColumn.descender;
+                if (compositeColumn.getLinesWritten() > 0) {
+                    yLine = compositeColumn.yLine;
+                    linesWritten += compositeColumn.linesWritten;
+                    descender = compositeColumn.descender;
+                }
                 if ((status & NO_MORE_TEXT) != 0) {
                     compositeColumn = null;
                     compositeElements.removeFirst();
