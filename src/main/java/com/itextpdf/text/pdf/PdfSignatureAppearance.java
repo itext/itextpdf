@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.security.PrivateKey;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -70,9 +69,6 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.security.CertificateInfo;
-
-import java.security.MessageDigest;
-import java.security.cert.X509CRL;
 
 /**
  * Class that takes care of the cryptographic options
@@ -136,6 +132,9 @@ public class PdfSignatureAppearance {
     /** Holds value of property location. */
     private String location;
 
+    /** The contact name of the signer. */
+    private String contact;
+
     /** Holds value of property signDate. */
     private Calendar signDate;
     
@@ -170,9 +169,6 @@ public class PdfSignatureAppearance {
     public void setLocation(String location) {
         this.location = location;
     }
-
-    /** The contact name of the signer. */
-    private String contact;
     
     /**
      * Gets the signing contact.
@@ -206,6 +202,8 @@ public class PdfSignatureAppearance {
         this.signDate = signDate;
     }
 
+    // the PDF file
+    
     /** The file right before the signature is added (can be null). */
     private RandomAccessFile raf;
     /** The bytes of the file right before the signature is added (if raf is null) */
@@ -288,19 +286,31 @@ public class PdfSignatureAppearance {
         }
     }    
     
+    // stuff needed to sign the PDF
+    
     /** The signing certificate */
     private Certificate signCertificate;
+    
+    /** The Certificate Revocation Lists */
+    private CRL[] crlList;
+    
+    /**
+     * Sets the cryptographic parameters.
+     * @param signCertificate the certificate 
+     * @param crlList the certificate revocation list. It may be <CODE>null</CODE>
+     */
+    public void setCrypto(Certificate signCertificate, CRL[] crlList) {
+        this.signCertificate = signCertificate;
+        this.crlList = crlList;
+    }
 
     /**
-     * Gets the certificate chain.
+     * Gets the certificate that will be used to sign.
      * @return the certificate chain
      */
     public java.security.cert.Certificate getSignCertificate() {
         return this.signCertificate;
     }
-    
-    /** The Certificate Revocation Lists */
-    private CRL[] crlList;
 
     /**
      * Gets the certificate revocation list.
@@ -328,16 +338,6 @@ public class PdfSignatureAppearance {
      */
     public void setCryptoDictionary(com.itextpdf.text.pdf.PdfDictionary cryptoDictionary) {
         this.cryptoDictionary = cryptoDictionary;
-    }
-    
-    /**
-     * Sets the cryptographic parameters.
-     * @param signCertificate the certificate 
-     * @param crlList the certificate revocation list. It may be <CODE>null</CODE>
-     */
-    public void setCrypto(Certificate signCertificate, CRL[] crlList) {
-        this.signCertificate = signCertificate;
-        this.crlList = crlList;
     }
 
     // Signature event
@@ -1227,10 +1227,10 @@ public class PdfSignatureAppearance {
      * No external signatures are allowed if this method is called.
      * @throws IOException on error
      * @throws DocumentException on error
-     */
     public void preClose() throws IOException, DocumentException {
         preClose(null);
     }
+     */
 
     /**
      * This is the first method to be called when using external signatures. The general sequence is:
@@ -1248,7 +1248,6 @@ public class PdfSignatureAppearance {
      * @throws IOException on error
      * @throws DocumentException on error
      */
-    @SuppressWarnings("deprecation")
 	public void preClose(HashMap<PdfName, Integer> exclusionSizes) throws IOException, DocumentException {
         if (preClosed)
             throw new DocumentException(MessageLocalization.getComposedMessage("document.already.pre.closed"));
