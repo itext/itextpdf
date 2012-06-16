@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id:  $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -41,22 +41,37 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf;
+package com.itextpdf.text.pdf.security;
 
+import com.itextpdf.text.ExceptionConverter;
+import java.security.cert.CRL;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 
 /**
- * Interface for the OCSP Client.
- * @since 2.1.6
+ * A class to handle offline Crls.
+ *
+ * @author psoares
  */
-public interface OcspClient {
-	/**
-	 * Gets an encoded byte array with OCSP validation. The method should not throw an exception.
-     * @param checkCert to certificate to check
-     * @param rootCert the parent certificate
-     * @param the url to get the verification. It it's null it will be taken
-     * from the check cert or from other implementation specific source
-	 * @return	a byte array with the validation or null if the validation could not be obtained
-	 */
-    public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url);
+public class CrlClientOffline implements CrlClient {
+    private byte[] crlEncoded;
+    
+    public CrlClientOffline(byte[] crlEncoded) {
+        this.crlEncoded = crlEncoded;
+    }
+
+    public CrlClientOffline(CRL crl) {
+        try {
+            crlEncoded = ((X509CRL)crl).getEncoded();
+        }
+        catch (Exception ex) {
+            throw new ExceptionConverter(ex);
+        }
+    }
+
+    
+    public byte[] getEncoded(X509Certificate checkCert, String url) {
+        return crlEncoded;
+    }
+    
 }

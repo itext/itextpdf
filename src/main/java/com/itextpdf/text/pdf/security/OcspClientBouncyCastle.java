@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: OcspClientBouncyCastle.java 5165 2012-06-08 07:46:56Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -41,7 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf;
+package com.itextpdf.text.pdf.security;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -66,6 +66,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import com.itextpdf.text.pdf.PdfEncryption;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 import com.itextpdf.text.pdf.security.CertificateUtil;
 
 import java.security.cert.CertificateEncodingException;

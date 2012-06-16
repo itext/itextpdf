@@ -1,6 +1,4 @@
 /*
- * $Id: ColumnText.java 5056 2012-02-20 14:56:44Z eugenemark $
- *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
@@ -41,65 +39,62 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.log.Level;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
-import com.itextpdf.text.pdf.security.CertificateUtil;
+package com.itextpdf.text.pdf.security;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfSignature;
+import com.itextpdf.text.pdf.PdfSignatureAppearance;
+import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.TSAClient;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.cert.X509Certificate;
+import java.security.MessageDigest;
+import java.util.HashMap;
 
 /**
- *
- * @author psoares
+ * PAdES-LTV Timestamp
+ * @author Pulo Soares
  */
-public class CrlClientImp implements CrlClient {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientImp.class);
+public class LtvTimestamp {
+    /**
+     * Signs a document with a PAdES-LTV Timestamp. The document is closed at the end.
+     * @param sap the signature appearance
+     * @param tsa the timestamp generator
+     * @param signatureName the signature name or null to have a name generated
+     * automatically
+     * @throws Exception
+     */
+    public static void timestamp(PdfSignatureAppearance sap, TSAClient tsa, String signatureName) throws Exception {
+        int contentEstimated = tsa.getTokenSizeEstimate();
+        sap.setVisibleSignature(new Rectangle(0,0,0,0), 1, signatureName);
 
-    public byte[] getEncoded(X509Certificate checkCert, String url) {
-        try {
-            if (url == null) {
-                if (checkCert == null)
-                    return null;
-                url = CertificateUtil.getCRLURL(checkCert);
-            }
-            if (url == null)
-                return null;
-            URL urlt = new URL(url);
-            HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
-            if (con.getResponseCode() / 100 != 2) {
-                throw new IOException(MessageLocalization.getComposedMessage("invalid.http.response.1", con.getResponseCode()));
-            }
-            //Get Response
-            InputStream inp = (InputStream) con.getContent();
-            byte[] buf = new byte[1024];
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            while (true) {
-                int n = inp.read(buf, 0, buf.length);
-                if (n <= 0)
-                    break;
-                bout.write(buf, 0, n);
-            }
-            inp.close();
-            return bout.toByteArray();
+        PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, PdfName.ETSI_RFC3161);
+        dic.put(PdfName.TYPE, PdfName.DOCTIMESTAMP);
+        sap.setCryptoDictionary(dic);
+
+        HashMap<PdfName,Integer> exc = new HashMap<PdfName,Integer>();
+        exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
+        sap.preClose(exc);
+        InputStream data = sap.getRangeStream();
+        MessageDigest messageDigest = MessageDigest.getInstance(tsa.getDigestAlgorithm());
+        byte[] buf = new byte[4096];
+        int n;
+        while ((n = data.read(buf)) > 0) {
+            messageDigest.update(buf, 0, n);
         }
-        catch (Exception ex) {
-            if (LOGGER.isLogging(Level.ERROR))
-                LOGGER.error("CrlClientImp", ex);
-        }
-        return null;
+        byte[] tsImprint = messageDigest.digest();
+        byte[] tsToken = tsa.getTimeStampToken(tsImprint);
+
+        if (contentEstimated + 2 < tsToken.length)
+            throw new Exception("Not enough space");
+
+        byte[] paddedSig = new byte[contentEstimated];
+        System.arraycopy(tsToken, 0, paddedSig, 0, tsToken.length);
+
+        PdfDictionary dic2 = new PdfDictionary();
+        dic2.put(PdfName.CONTENTS, new PdfString(paddedSig).setHexWriting(true));
+        sap.close(dic2);
     }
 }

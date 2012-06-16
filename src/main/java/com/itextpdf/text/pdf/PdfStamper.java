@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.pdf.security.LtvVerification;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -737,6 +738,10 @@ public class PdfStamper
      */
     public Map<String, PdfLayer> getPdfLayers() {
     	return stamper.getPdfLayers();
+    }
+    
+    public void markUsed(PdfObject obj) {
+        stamper.markUsed(obj);
     }
     
     public LtvVerification getLtvVerification() {
