@@ -40,17 +40,36 @@
  * address: sales@itextpdf.com
  */
 
-package com.itextpdf.text.pdf;
+package com.itextpdf.text.pdf.security;
 
+import com.itextpdf.text.pdf.security.OcspClient;
+import com.itextpdf.text.pdf.security.CrlClient;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.ByteBuffer;
+import com.itextpdf.text.pdf.PRIndirectReference;
+import com.itextpdf.text.pdf.PdfArray;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfEncodings;
+import com.itextpdf.text.pdf.PdfIndirectReference;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfPKCS7;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.PdfStream;
+import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.PdfWriter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +87,8 @@ import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
  * @author psoares
  */
 public class LtvVerification {
-    private PdfStamperImp writer;
+    private PdfStamper stp;
+    private PdfWriter writer;
     private PdfReader reader;
     private AcroFields acroFields;
     private Map<PdfName,ValidationData> validated = new HashMap<PdfName,ValidationData>();
@@ -124,11 +144,14 @@ public class LtvVerification {
         NO
     }
     /**
-     * The verification constructor
+     * The verification constructor. This class should only be created with
+     * PdfStamper.getLtvVerification() otherwise the information will not be
+     * added to the Pdf.
      * @param stp the PdfStamper to apply the validation to
      */
-    LtvVerification(PdfStamper stp) {
-        writer = (PdfStamperImp)stp.getWriter();
+    public LtvVerification(PdfStamper stp) {
+        this.stp = stp;
+        writer = stp.getWriter();
         reader = stp.getReader();
         acroFields = stp.getAcroFields();
     }
@@ -142,9 +165,10 @@ public class LtvVerification {
      * @param level the validation options to include
      * @param certInclude
      * @return true if a validation was generated, false otherwise
-     * @throws Exception
+     * @throws GeneralSecurityException 
+     * @throws IOException
      */
-    public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws Exception {
+    public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
         if (used)
             throw new IllegalStateException(MessageLocalization.getComposedMessage("verification.already.output"));
         PdfPKCS7 pk = acroFields.verifySignature(signatureName);
@@ -179,6 +203,38 @@ public class LtvVerification {
         if (certInclude == CertificateInclusion.YES) {
             for (Certificate c : xc) {
                 vd.certs.add(c.getEncoded());
+            }
+        }
+        validated.put(getSignatureHashKey(signatureName), vd);
+        return true;
+    }
+
+    /**
+     *
+     * Alternative addVerification.
+     * I assume that inputs are deduplicated.
+     *
+     * @throws IOException
+     * @throws GeneralSecurityException
+     *
+     */
+    public boolean addVerification(String signatureName, Collection<byte[]> ocsps, Collection<byte[]> crls, Collection<byte[]> certs) throws IOException, GeneralSecurityException {
+        if (used)
+            throw new IllegalStateException(MessageLocalization.getComposedMessage("verification.already.output"));
+        ValidationData vd = new ValidationData();
+        if (ocsps != null) {
+            for (byte[] ocsp : ocsps) {
+                vd.ocsps.add(buildOCSPResponse(ocsp));
+            }
+        }
+        if (crls != null) {
+            for (byte[] crl : crls) {
+                vd.crls.add(crl);
+            }
+        }
+        if (certs != null) {
+            for (byte[] cert : certs) {
+                vd.certs.add(cert);
             }
         }
         validated.put(getSignatureHashKey(signatureName), vd);
@@ -230,7 +286,7 @@ public class LtvVerification {
      * a new one.
      * @throws IOException 
      */
-    void merge() throws IOException {
+    public void merge() throws IOException {
         if (used || validated.isEmpty())
             return;
         used = true;
@@ -244,7 +300,7 @@ public class LtvVerification {
     
     private void updateDss() throws IOException {
         PdfDictionary catalog = reader.getCatalog();
-        writer.markUsed(catalog);
+        stp.markUsed(catalog);
         PdfDictionary dss = catalog.getAsDict(PdfName.DSS);
         PdfArray ocsps = dss.getAsArray(PdfName.OCSPS);
         PdfArray crls = dss.getAsArray(PdfName.CRLS);
@@ -301,7 +357,7 @@ public class LtvVerification {
     
     private void outputDss(PdfDictionary dss, PdfDictionary vrim, PdfArray ocsps, PdfArray crls, PdfArray certs) throws IOException {
         PdfDictionary catalog = reader.getCatalog();
-        writer.markUsed(catalog);
+        stp.markUsed(catalog);
         for (PdfName vkey : validated.keySet()) {
             PdfArray ocsp = new PdfArray();
             PdfArray crl = new PdfArray();

@@ -135,7 +135,7 @@ public class PdfPKCS7 {
      * @throws NoSuchProviderException on error
      * @throws NoSuchAlgorithmException on error
      */
-    public PdfPKCS7(PrivateKey privKey, Certificate[] certChain, CRL[] crlList,
+    public PdfPKCS7(PrivateKey privKey, Certificate[] certChain, 
                     String hashAlgorithm, String provider, boolean hasRSAdata)
       throws InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException {
         this.provider = provider;
@@ -152,13 +152,6 @@ public class PdfPKCS7 {
             certs.add(element);
         }
 
-        // Copy the crls
-        crls = new ArrayList<CRL>();
-        if (crlList != null) {
-            for (CRL element : crlList) {
-                crls.add(element);
-            }
-        }
 
         // initialize and add the digest algorithms.
         digestalgos = new HashSet<String>();
@@ -666,7 +659,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7() {
-        return getEncodedPKCS7(null, null, null, null);
+        return getEncodedPKCS7(null, null, null, null, null);
     }
 
     /**
@@ -677,7 +670,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime) {
-        return getEncodedPKCS7(secondDigest, signingTime, null, null);
+        return getEncodedPKCS7(secondDigest, signingTime, null, null, null);
     }
 
     /**
@@ -690,7 +683,7 @@ public class PdfPKCS7 {
      * @return byte[] the bytes for the PKCS7SignedData object
      * @since	2.1.6
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp) {
+    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -757,7 +750,7 @@ public class PdfPKCS7 {
 
             // add the authenticated attribute if present
             if (secondDigest != null && signingTime != null) {
-                signerinfo.add(new DERTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp)));
+                signerinfo.add(new DERTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes)));
             }
             // Add the digestEncryptionAlgorithm
             v = new ASN1EncodableVector();
@@ -869,9 +862,9 @@ public class PdfPKCS7 {
      * @param signingTime the signing time
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime, byte[] ocsp) {
+    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes) {
         try {
-            return getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp).getEncoded(ASN1Encoding.DER);
+            return getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes).getEncoded(ASN1Encoding.DER);
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
@@ -886,7 +879,7 @@ public class PdfPKCS7 {
      * @param signingTime the signing time
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], Calendar signingTime, byte[] ocsp) {
+    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes) {
         try {
             ASN1EncodableVector attribute = new ASN1EncodableVector();
             ASN1EncodableVector v = new ASN1EncodableVector();
@@ -901,16 +894,27 @@ public class PdfPKCS7 {
             v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_MESSAGE_DIGEST));
             v.add(new DERSet(new DEROctetString(secondDigest)));
             attribute.add(new DERSequence(v));
-            if (ocsp != null || !crls.isEmpty()) {
+            boolean haveCrl = false;
+            if (crlBytes != null) {
+                for (byte[] bCrl : crlBytes) {
+                    if (bCrl != null) {
+                        haveCrl = true;
+                        break;
+                    }
+                }
+            }
+            if (ocsp != null || haveCrl) {
                 v = new ASN1EncodableVector();
                 v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_ADBE_REVOCATION));
 
                 ASN1EncodableVector revocationV = new ASN1EncodableVector();
 
-                if (!crls.isEmpty()) {
+                if (haveCrl) {
                     ASN1EncodableVector v2 = new ASN1EncodableVector();
-                    for (Object element : crls) {
-                        ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream(((X509CRL)element).getEncoded()));
+                    for (byte[] bCrl : crlBytes) {
+                        if (bCrl == null)
+                            continue;
+                        ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream(bCrl));
                         v2.add(t.readObject());
                     }
                     revocationV.add(new DERTaggedObject(true, 0, new DERSequence(v2)));

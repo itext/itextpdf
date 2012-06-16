@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
@@ -132,9 +131,6 @@ public class PdfSignatureAppearance {
     /** Holds value of property location. */
     private String location;
 
-    /** The contact name of the signer. */
-    private String contact;
-
     /** Holds value of property signDate. */
     private Calendar signDate;
     
@@ -169,6 +165,9 @@ public class PdfSignatureAppearance {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    /** The contact name of the signer. */
+    private String contact;
     
     /**
      * Gets the signing contact.
@@ -286,40 +285,10 @@ public class PdfSignatureAppearance {
         }
     }    
     
-    // stuff needed to sign the PDF
-    
     /** The signing certificate */
     private Certificate signCertificate;
+
     
-    /** The Certificate Revocation Lists */
-    private CRL[] crlList;
-    
-    /**
-     * Sets the cryptographic parameters.
-     * @param signCertificate the certificate 
-     * @param crlList the certificate revocation list. It may be <CODE>null</CODE>
-     */
-    public void setCrypto(Certificate signCertificate, CRL[] crlList) {
-        this.signCertificate = signCertificate;
-        this.crlList = crlList;
-    }
-
-    /**
-     * Gets the certificate that will be used to sign.
-     * @return the certificate chain
-     */
-    public java.security.cert.Certificate getSignCertificate() {
-        return this.signCertificate;
-    }
-
-    /**
-     * Gets the certificate revocation list.
-     * @return the certificate revocation list
-     */
-    public java.security.cert.CRL[] getCrlList() {
-        return this.crlList;
-    }
-
     // Crypto dictionary
     
     /** The crypto dictionary */
@@ -338,6 +307,19 @@ public class PdfSignatureAppearance {
      */
     public void setCryptoDictionary(com.itextpdf.text.pdf.PdfDictionary cryptoDictionary) {
         this.cryptoDictionary = cryptoDictionary;
+    }
+    
+    /**
+     * Sets the certificate used to provide the text in the appearance.
+     * This certificate doesn't take part in the actual signing process.
+     * @param signCertificate the certificate 
+     */
+    public void setCertificate(Certificate signCertificate) {
+        this.signCertificate = signCertificate;
+    }
+
+    public Certificate getCertificate() {
+        return signCertificate;
     }
 
     // Signature event
@@ -1224,21 +1206,7 @@ public class PdfSignatureAppearance {
      * <p>
      * If calling preClose() <B>dont't</B> call PdfStamper.close().
      * <p>
-     * No external signatures are allowed if this method is called.
-     * @throws IOException on error
-     * @throws DocumentException on error
-    public void preClose() throws IOException, DocumentException {
-        preClose(null);
-    }
-     */
-
-    /**
-     * This is the first method to be called when using external signatures. The general sequence is:
-     * preClose(), getDocumentBytes() and close().
-     * <p>
-     * If calling preClose() <B>dont't</B> call PdfStamper.close().
-     * <p>
-     * If using an external signature <CODE>exclusionSizes</CODE> must contain at least
+     * <CODE>exclusionSizes</CODE> must contain at least
      * the <CODE>PdfName.CONTENTS</CODE> key with the size that it will take in the
      * document. Note that due to the hex string coding this size should be
      * byte_size*2+2.
