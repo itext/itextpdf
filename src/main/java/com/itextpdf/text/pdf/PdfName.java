@@ -602,6 +602,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     /** A name
      * @since 5.1.3
      */
+    public static final PdfName ETSI_CADES_DETACHED = new PdfName("ETSI.CAdES.detached");
+    /** A name */
     public static final PdfName ETSI_RFC3161 = new PdfName("ETSI.RFC3161");
     /** A name */
     public static final PdfName EXTEND = new PdfName("Extend");
