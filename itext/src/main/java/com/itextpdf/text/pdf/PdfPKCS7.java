@@ -114,6 +114,7 @@ import com.itextpdf.text.pdf.security.CertificateVerification;
 import com.itextpdf.text.pdf.security.DigestAlgorithms;
 import com.itextpdf.text.pdf.security.EncryptionAlgorithms;
 import com.itextpdf.text.pdf.security.SecurityIDs;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
  * This class does all the processing related to signing
@@ -534,7 +535,7 @@ public class PdfPKCS7 {
 
     /**
      * Returns the name of the digest algorithm, e.g. "SHA256".
-     * @return the digest algorithm oid, e.g. "2.16.840.1.101.3.4.2.1"
+     * @return the digest algorithm name, e.g. "SHA256"
      */
     public String getHashAlgorithm() {
         return DigestAlgorithms.getDigest(digestAlgorithmOid);
@@ -659,7 +660,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7() {
-        return getEncodedPKCS7(null, null, null, null, null);
+        return getEncodedPKCS7(null, null, null, null, null, false);
     }
 
     /**
@@ -670,7 +671,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime) {
-        return getEncodedPKCS7(secondDigest, signingTime, null, null, null);
+        return getEncodedPKCS7(secondDigest, signingTime, null, null, null, false);
     }
 
     /**
@@ -683,7 +684,7 @@ public class PdfPKCS7 {
      * @return byte[] the bytes for the PKCS7SignedData object
      * @since	2.1.6
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes) {
+    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, boolean cades) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -750,7 +751,7 @@ public class PdfPKCS7 {
 
             // add the authenticated attribute if present
             if (secondDigest != null && signingTime != null) {
-                signerinfo.add(new DERTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes)));
+                signerinfo.add(new DERTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, cades)));
             }
             // Add the digestEncryptionAlgorithm
             v = new ASN1EncodableVector();
@@ -862,9 +863,9 @@ public class PdfPKCS7 {
      * @param signingTime the signing time
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes) {
+    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, boolean cades) {
         try {
-            return getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes).getEncoded(ASN1Encoding.DER);
+            return getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, cades).getEncoded(ASN1Encoding.DER);
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
@@ -879,7 +880,7 @@ public class PdfPKCS7 {
      * @param signingTime the signing time
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes) {
+    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, boolean cades) {
         try {
             ASN1EncodableVector attribute = new ASN1EncodableVector();
             ASN1EncodableVector v = new ASN1EncodableVector();
@@ -935,6 +936,20 @@ public class PdfPKCS7 {
                 }
 
                 v.add(new DERSet(new DERSequence(revocationV)));
+                attribute.add(new DERSequence(v));
+            }
+            if (cades) {
+                v = new ASN1EncodableVector();
+                v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2));
+
+                ASN1EncodableVector aaV2 = new ASN1EncodableVector();
+                AlgorithmIdentifier algoId = new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestAlgorithmOid), null);
+                aaV2.add(algoId);
+                MessageDigest md = MessageDigest.getInstance(getHashAlgorithm());
+                byte[] dig = md.digest(signCert.getEncoded());
+                aaV2.add(new DEROctetString(dig));
+                
+                v.add(new DERSet(new DERSequence(new DERSequence(new DERSequence(aaV2)))));
                 attribute.add(new DERSequence(v));
             }
 
