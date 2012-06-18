@@ -822,6 +822,15 @@ public class ColumnText {
     }
 
     /**
+     * Gets the currentLeading.
+     *
+     * @return the currentLeading
+     */
+    public float getCurrentLeading() {
+        return currentLeading;
+    }
+
+    /**
      * Outputs the lines to the document. It is equivalent to <CODE>go(false)</CODE>.
      *
      * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
@@ -1324,6 +1333,7 @@ public class ColumnText {
                     linesWritten += compositeColumn.linesWritten;
                     descender = compositeColumn.descender;
                 }
+                currentLeading = compositeColumn.currentLeading;
                 if ((status & NO_MORE_TEXT) != 0) {
                     compositeColumn = null;
                     compositeElements.removeFirst();
@@ -1421,6 +1431,7 @@ public class ColumnText {
                 yLine = compositeColumn.yLine;
                 linesWritten += compositeColumn.linesWritten;
                 descender = compositeColumn.descender;
+                currentLeading = compositeColumn.currentLeading;
                 if (!Float.isNaN(compositeColumn.firstLineY) && !compositeColumn.firstLineYDone) {
                     if (!simulate)
                         showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.getListSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
@@ -1641,6 +1652,7 @@ public class ColumnText {
 
                 yLine = yTemp;
                 descender = 0;
+                currentLeading = 0;
                 if (!(skipHeader || table.isComplete()))
                 	yLine += footerHeight;
                 if (k >= table.size()) {
