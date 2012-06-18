@@ -1,5 +1,5 @@
 /*
- * $Id: ChunkCssApplierTest.java 254 2011-11-16 12:42:42Z eugenemark $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA

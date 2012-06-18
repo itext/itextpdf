@@ -1,5 +1,5 @@
 /*
- * $Id: TPBreakTest.java 148 2011-06-04 21:11:16Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA

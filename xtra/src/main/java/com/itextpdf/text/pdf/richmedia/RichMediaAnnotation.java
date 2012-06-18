@@ -1,5 +1,5 @@
 /*
- * $Id: RichMediaAnnotation.java 3927 2009-05-13 09:43:39Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

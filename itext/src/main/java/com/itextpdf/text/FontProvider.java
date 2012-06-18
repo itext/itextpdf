@@ -1,5 +1,5 @@
 /*
- * $Id: Chapter.java 3373 2008-05-12 16:21:24Z xlv $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

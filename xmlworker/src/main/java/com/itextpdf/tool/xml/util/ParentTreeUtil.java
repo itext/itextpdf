@@ -1,5 +1,5 @@
 /*
- * $Id: XMLWorker.java 221 2011-08-12 16:27:07Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT

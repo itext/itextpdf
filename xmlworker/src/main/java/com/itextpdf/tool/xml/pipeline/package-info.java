@@ -1,5 +1,5 @@
 /*
- * $Id: package-info.java 8 2011-05-03 16:45:05Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

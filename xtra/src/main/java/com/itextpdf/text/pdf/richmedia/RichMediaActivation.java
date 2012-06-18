@@ -1,5 +1,5 @@
 /*
- * $Id: RichMediaActivation.java 3821 2009-03-25 10:33:52Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

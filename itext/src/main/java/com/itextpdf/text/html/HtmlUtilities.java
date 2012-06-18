@@ -1,5 +1,5 @@
 /*
- * $Id: Markup.java 4672 2011-01-30 10:38:33Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

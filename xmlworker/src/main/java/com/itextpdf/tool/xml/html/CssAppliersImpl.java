@@ -1,5 +1,5 @@
 /*
- * $Id: CssAppliersImpl.java 265 2012-01-17 12:38:18Z eugenemark $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
