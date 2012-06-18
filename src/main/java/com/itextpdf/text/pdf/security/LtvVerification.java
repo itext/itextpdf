@@ -1,4 +1,6 @@
 /*
+ * $Id:  $
+ *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
  * Authors: Bruno Lowagie, Paulo Soares, et al.
@@ -39,7 +41,6 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-
 package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.pdf.security.OcspClient;

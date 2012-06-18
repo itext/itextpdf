@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.security;
 
-import com.itextpdf.text.ExceptionConverter;
+import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Signature;
 
@@ -64,22 +64,17 @@ public class ExternalSignaturePrivateKey implements ExternalSignature {
         encryptionAlgorithm = pk.getAlgorithm();
     }
     
-    public byte[] sign(byte[] b) {
-        try {
-            String signMode = hashAlgorithm + "with" + encryptionAlgorithm;
-            Signature sig;
-            if (provider == null)
-                sig = Signature.getInstance(signMode);
-            else
-                sig = Signature.getInstance(signMode, provider);
+    public byte[] sign(byte[] b) throws GeneralSecurityException {
+        String signMode = hashAlgorithm + "with" + encryptionAlgorithm;
+        Signature sig;
+        if (provider == null)
+            sig = Signature.getInstance(signMode);
+        else
+            sig = Signature.getInstance(signMode, provider);
 
-            sig.initSign(pk);
-            sig.update(b);
-            return sig.sign();
-        }
-        catch (Exception ex) {
-            throw new ExceptionConverter(ex);
-        }
+        sig.initSign(pk);
+        sig.update(b);
+        return sig.sign();
     }
 
     public String getEncryptionAlgorithm() {

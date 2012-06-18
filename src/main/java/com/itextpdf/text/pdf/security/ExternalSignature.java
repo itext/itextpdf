@@ -43,12 +43,14 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import java.security.GeneralSecurityException;
+
 /**
  *
  * @author psoares
  */
 public interface ExternalSignature {
-    public byte[] sign(byte[] b);
+    public byte[] sign(byte[] b) throws GeneralSecurityException;
     
     public String getEncryptionAlgorithm();
     
