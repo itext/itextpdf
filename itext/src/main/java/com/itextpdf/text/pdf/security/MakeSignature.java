@@ -59,7 +59,6 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -94,11 +93,12 @@ public class MakeSignature {
      */
     public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
             TSAClient tsaClient, String provider, int estimatedSize, boolean cades) throws IOException, DocumentException, GeneralSecurityException {
-        if (estimatedSize == 0) {
+        Collection<byte[]> crlBytes = processCrl(chain[0], crlList);
+    	if (estimatedSize == 0) {
             estimatedSize = 8192;
-            if (crlList != null) {
-                for (Object element : crlList) {
-                    estimatedSize += ((X509CRL) element).getEncoded().length + 10;
+            if (crlBytes != null) {
+                for (byte[] element : crlBytes) {
+                    estimatedSize += element.length + 10;
                 }
             }
             if (ocspClient != null)
@@ -137,7 +137,6 @@ public class MakeSignature {
         if (chain.length >= 2 && ocspClient != null) {
             ocsp = ocspClient.getEncoded((X509Certificate) chain[0], (X509Certificate) chain[1], null);
         }
-        Collection<byte[]> crlBytes = processCrl(chain[0], crlList);
         byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp, crlBytes, cades);
         byte[] extSignature = externalSignature.sign(sh);
         sgn.setExternalDigest(extSignature, null, externalSignature.getEncryptionAlgorithm());
