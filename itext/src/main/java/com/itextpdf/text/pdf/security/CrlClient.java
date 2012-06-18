@@ -44,6 +44,7 @@
  package com.itextpdf.text.pdf.security;
 
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 
 /**
  * Interface that needs to be implemented if you want to embed
@@ -55,7 +56,7 @@ public interface CrlClient {
 	 * Gets an encoded byte array.
 	 * @param	checkCert	the certificate from which a CRL URL can be obtained
 	 * @param	url		a CRL url if you don't want to obtain it from the certificate
-	 * @return	a byte array
+	 * @return	a collection of byte array each representing a crl. It may return null or an empty collection
 	 */
-    public byte[] getEncoded(X509Certificate checkCert, String url);
+    public Collection<byte[]> getEncoded(X509Certificate checkCert, String url);
 }

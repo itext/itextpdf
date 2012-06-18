@@ -182,17 +182,19 @@ public class LtvVerification {
                     vd.ocsps.add(buildOCSPResponse(ocspEnc));
             }
             if (crl != null && (level == Level.CRL || level == Level.OCSP_CRL || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
-                byte[] cim = crl.getEncoded((X509Certificate)xc[k], null);
-                if (cim != null) {
-                    boolean dup = false;
-                    for (byte[] b : vd.crls) {
-                        if (Arrays.equals(b, cim)) {
-                            dup = true;
-                            break;
+                Collection<byte[]> cims = crl.getEncoded((X509Certificate)xc[k], null);
+                if (cims != null) {
+                    for (byte[] cim : cims) {
+                        boolean dup = false;
+                        for (byte[] b : vd.crls) {
+                            if (Arrays.equals(b, cim)) {
+                                dup = true;
+                                break;
+                            }
                         }
+                        if (!dup)
+                            vd.crls.add(cim);
                     }
-                    if (!dup)
-                        vd.crls.add(cim);
                 }
             }
             if (certOption == CertificateOption.SIGNING_CERTIFICATE)
