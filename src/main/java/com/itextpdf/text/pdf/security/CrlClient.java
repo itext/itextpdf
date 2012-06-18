@@ -46,12 +46,15 @@
 import java.security.cert.X509Certificate;
 
 /**
- *
- * @author psoares
+ * Interface that needs to be implemented if you want to embed
+ * Certificate Revocation Lists into your PDF.
+ * @author Paulo Soares
  */
 public interface CrlClient {
 	/**
 	 * Gets an encoded byte array.
+	 * @param	checkCert	the certificate from which a CRL URL can be obtained
+	 * @param	url		a CRL url if you don't want to obtain it from the certificate
 	 * @return	a byte array
 	 */
     public byte[] getEncoded(X509Certificate checkCert, String url);

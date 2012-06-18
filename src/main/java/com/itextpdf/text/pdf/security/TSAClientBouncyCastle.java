@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: TSAClientBouncyCastle.java 5167 2012-06-08 12:21:30Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -41,7 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf;
+package com.itextpdf.text.pdf.security;
 
 import java.io.*;
 import java.math.*;
@@ -49,11 +49,9 @@ import java.net.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import org.bouncycastle.asn1.cmp.*;
-import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.tsp.*;
 
 import com.itextpdf.text.pdf.codec.Base64;
-import com.itextpdf.text.pdf.security.DigestAlgorithms;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
@@ -166,9 +164,8 @@ public class TSAClientBouncyCastle implements TSAClient {
             if (tsToken == null) {
                 throw new Exception(MessageLocalization.getComposedMessage("tsa.1.failed.to.return.time.stamp.token.2", tsaURL, response.getStatusString()));
             }
-            TimeStampTokenInfo info = tsToken.getTimeStampInfo(); // to view details
+            tsToken.getTimeStampInfo(); // to view details
             byte[] encoded = tsToken.getEncoded();
-            long stop = System.currentTimeMillis();
             
             // Update our token size estimate for the next call (padded to be safe)
             this.tokSzEstimate = encoded.length + 32;

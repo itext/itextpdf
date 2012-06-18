@@ -80,10 +80,10 @@ import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * OcspClient implementation using BouncyCastle.
- * @author psoares
- * @since	2.1.6
+ * @author Paulo Soarees
  */
 public class OcspClientBouncyCastle implements OcspClient {
+	/** The Logger instance */
     private static final Logger LOGGER = LoggerFactory.getLogger(OcspClientBouncyCastle.class);
 
     /**

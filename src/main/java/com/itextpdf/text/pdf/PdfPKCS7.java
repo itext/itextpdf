@@ -114,6 +114,8 @@ import com.itextpdf.text.pdf.security.CertificateVerification;
 import com.itextpdf.text.pdf.security.DigestAlgorithms;
 import com.itextpdf.text.pdf.security.EncryptionAlgorithms;
 import com.itextpdf.text.pdf.security.SecurityIDs;
+import com.itextpdf.text.pdf.security.TSAClient;
+
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**

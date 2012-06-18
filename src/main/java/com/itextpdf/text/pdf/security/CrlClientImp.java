@@ -56,12 +56,23 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 
 /**
- *
- * @author psoares
+ * An implementation of the CrlClient that fetches the CRL bytes
+ * from an URL.
+ * @author Paulo Soares
  */
 public class CrlClientImp implements CrlClient {
+
+	/** The Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientImp.class);
 
+    /**
+     * Fetches the CRL bytes from an URL.
+     * If no url is passed as parameter, the url will be obtained from the certificate.
+     * If you want to load a CRL from a local file, subclass this method and pass an
+     * URL with the path to the local file to this method. An other option is to use
+     * the CrlClientOffline class.
+     * @see com.itextpdf.text.pdf.security.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
+     */
     public byte[] getEncoded(X509Certificate checkCert, String url) {
         try {
             if (url == null) {

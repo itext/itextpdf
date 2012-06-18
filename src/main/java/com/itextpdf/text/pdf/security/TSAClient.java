@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: TSAClient.java 5075 2012-02-27 16:36:18Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -41,7 +41,7 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf;
+package com.itextpdf.text.pdf.security;
 
 /**
  * Time Stamp Authority client (caller) interface.

@@ -46,13 +46,31 @@ package com.itextpdf.text.pdf.security;
 import java.security.GeneralSecurityException;
 
 /**
- *
- * @author psoares
+ * Interface that needs to be implemented to do the actual signing.
+ * For instance: you'll have to implement this interface if you want
+ * to sign a PDF using a smart card.
+ * @author Paulo Soares
  */
 public interface ExternalSignature {
-    public byte[] sign(byte[] b) throws GeneralSecurityException;
+	
+    /**
+     * Creates a message digest using the hash algorithm
+     * and signs it using the encryption algorithm.
+     * @param message	the message you want to be hashed and signed
+     * @return	a signed message digest
+     * @throws GeneralSecurityException
+     */
+    public byte[] sign(byte[] message) throws GeneralSecurityException;
     
-    public String getEncryptionAlgorithm();
-    
+    /**
+     * Returns the hash algorithm.
+     * @return	the hash algorithm (e.g. "SHA-1", "SHA-256,...")
+     */
     public String getHashAlgorithm();
+    
+    /**
+     * Returns the encryption algorithm used for signing.
+     * @return the encryption algorithm ("RSA" or "DSA")
+     */
+    public String getEncryptionAlgorithm();
 }

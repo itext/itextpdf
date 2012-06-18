@@ -63,6 +63,10 @@ import org.bouncycastle.asn1.ASN1TaggedObject;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
+/**
+ * Class containing static methods that allow you to get information from
+ * an X509 Certificate: the issuer and the subject.
+ */
 public class CertificateInfo {
 
 	// Inner classes
