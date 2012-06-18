@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
@@ -51,9 +52,12 @@ import com.itextpdf.text.pdf.PdfSignature;
 import com.itextpdf.text.pdf.PdfSignatureAppearance;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.TSAClient;
+
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import java.security.cert.CRL;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
@@ -82,10 +86,14 @@ public class MakeSignature {
      * @param provider the provider or null
      * @param estimatedSize the reserved size for the signature. It will be estimated if 0
      * @param cades true to sign CAdES equivalent PAdES-BES, false to sign CMS
+     * @throws DocumentException 
+     * @throws IOException 
+     * @throws GeneralSecurityException 
+     * @throws NoSuchAlgorithmException 
      * @throws Exception 
      */
     public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
-            TSAClient tsaClient, String provider, int estimatedSize, boolean cades) throws Exception {
+            TSAClient tsaClient, String provider, int estimatedSize, boolean cades) throws IOException, DocumentException, GeneralSecurityException {
         if (estimatedSize == 0) {
             estimatedSize = 8192;
             if (crlList != null) {
@@ -137,7 +145,7 @@ public class MakeSignature {
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsaClient, ocsp, crlBytes, cades);
 
         if (estimatedSize + 2 < encodedSig.length)
-            throw new Exception("Not enough space");
+            throw new IOException("Not enough space");
 
         byte[] paddedSig = new byte[estimatedSize];
         System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
