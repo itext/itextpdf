@@ -47,6 +47,8 @@ import com.itextpdf.text.ExceptionConverter;
 import java.security.cert.CRL;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * An implementation of the CrlClient that handles offline
@@ -56,7 +58,7 @@ import java.security.cert.X509Certificate;
 public class CrlClientOffline implements CrlClient {
 	
 	/** The CRL as a byte array. */
-    private byte[] crlEncoded;
+    private ArrayList<byte[]> crls = new ArrayList<byte[]>();
     
     /**
      * Creates an instance of a CrlClient in case you
@@ -64,7 +66,7 @@ public class CrlClientOffline implements CrlClient {
      * @param crlEncoded	the CRL bytes
      */
     public CrlClientOffline(byte[] crlEncoded) {
-        this.crlEncoded = crlEncoded;
+        crls.add(crlEncoded);
     }
 
     /**
@@ -74,7 +76,7 @@ public class CrlClientOffline implements CrlClient {
      */
     public CrlClientOffline(CRL crl) {
         try {
-            crlEncoded = ((X509CRL)crl).getEncoded();
+            crls.add(((X509CRL)crl).getEncoded());
         }
         catch (Exception ex) {
             throw new ExceptionConverter(ex);
@@ -85,8 +87,8 @@ public class CrlClientOffline implements CrlClient {
      * Returns the CRL bytes (the parameters are ignored).
      * @see com.itextpdf.text.pdf.security.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
-    public byte[] getEncoded(X509Certificate checkCert, String url) {
-        return crlEncoded;
+    public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
+        return crls;
     }
     
 }

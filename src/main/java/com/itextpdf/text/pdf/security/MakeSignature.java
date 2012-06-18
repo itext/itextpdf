@@ -168,10 +168,10 @@ public class MakeSignature {
         for (CrlClient cc : crlList) {
             if (cc == null)
                 continue;
-            byte[] b = cc.getEncoded((X509Certificate)cert, null);
+            Collection<byte[]> b = cc.getEncoded((X509Certificate)cert, null);
             if (b == null)
                 continue;
-            crlBytes.add(b);
+            crlBytes.addAll(b);
         }
         if (crlBytes.isEmpty())
             return null;

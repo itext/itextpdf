@@ -54,6 +54,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * An implementation of the CrlClient that fetches the CRL bytes
@@ -73,7 +75,7 @@ public class CrlClientImp implements CrlClient {
      * the CrlClientOffline class.
      * @see com.itextpdf.text.pdf.security.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
-    public byte[] getEncoded(X509Certificate checkCert, String url) {
+    public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
         try {
             if (url == null) {
                 if (checkCert == null)
@@ -98,7 +100,9 @@ public class CrlClientImp implements CrlClient {
                 bout.write(buf, 0, n);
             }
             inp.close();
-            return bout.toByteArray();
+            ArrayList<byte[]> ar = new ArrayList<byte[]>();
+            ar.add(bout.toByteArray());
+            return ar;
         }
         catch (Exception ex) {
             if (LOGGER.isLogging(Level.ERROR))
