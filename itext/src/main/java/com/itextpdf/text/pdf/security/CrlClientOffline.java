@@ -49,17 +49,29 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 
 /**
- * A class to handle offline Crls.
- *
- * @author psoares
+ * An implementation of the CrlClient that handles offline
+ * Certificate Revocation Lists.
+ * @author Paulo Soares
  */
 public class CrlClientOffline implements CrlClient {
+	
+	/** The CRL as a byte array. */
     private byte[] crlEncoded;
     
+    /**
+     * Creates an instance of a CrlClient in case you
+     * have a local cache of the Certificate Revocation List.
+     * @param crlEncoded	the CRL bytes
+     */
     public CrlClientOffline(byte[] crlEncoded) {
         this.crlEncoded = crlEncoded;
     }
 
+    /**
+     * Creates an instance of a CrlClient in case you
+     * have a local cache of the Certificate Revocation List.
+     * @param crl	a CRL object
+     */
     public CrlClientOffline(CRL crl) {
         try {
             crlEncoded = ((X509CRL)crl).getEncoded();
@@ -68,8 +80,11 @@ public class CrlClientOffline implements CrlClient {
             throw new ExceptionConverter(ex);
         }
     }
-
     
+    /**
+     * Returns the CRL bytes (the parameters are ignored).
+     * @see com.itextpdf.text.pdf.security.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
+     */
     public byte[] getEncoded(X509Certificate checkCert, String url) {
         return crlEncoded;
     }

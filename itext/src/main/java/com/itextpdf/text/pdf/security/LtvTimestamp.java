@@ -49,14 +49,13 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfSignature;
 import com.itextpdf.text.pdf.PdfSignatureAppearance;
 import com.itextpdf.text.pdf.PdfString;
-import com.itextpdf.text.pdf.TSAClient;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.HashMap;
 
 /**
  * PAdES-LTV Timestamp
- * @author Pulo Soares
+ * @author Paulo Soares
  */
 public class LtvTimestamp {
     /**

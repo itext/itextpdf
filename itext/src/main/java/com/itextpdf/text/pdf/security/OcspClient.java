@@ -46,8 +46,7 @@ package com.itextpdf.text.pdf.security;
 import java.security.cert.X509Certificate;
 
 /**
- * Interface for the OCSP Client.
- * @since 2.1.6
+ * Interface for the OCSP Client
  */
 public interface OcspClient {
 	/**

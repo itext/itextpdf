@@ -49,6 +49,9 @@ import java.security.KeyStore;
 
 import com.itextpdf.text.ExceptionConverter;
 
+/**
+ * Utility class with some KeyStore related methods.
+ */
 public class KeyStoreUtil {
 
 	/**

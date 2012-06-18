@@ -55,7 +55,6 @@ import com.itextpdf.text.pdf.PdfEncodings;
 import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfPKCS7;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfStream;
@@ -85,7 +84,7 @@ import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 
 /**
  * Add verification according to PAdES-LTV (part 4)
- * @author psoares
+ * @author Paulo Soares
  */
 public class LtvVerification {
     private PdfStamper stp;

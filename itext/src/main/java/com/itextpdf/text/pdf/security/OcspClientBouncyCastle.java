@@ -80,10 +80,11 @@ import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * OcspClient implementation using BouncyCastle.
- * @author psoares
- * @since	2.1.6
+ * @author Paulo Soarees
  */
 public class OcspClientBouncyCastle implements OcspClient {
+	
+	/** The Logger instance */
     private static final Logger LOGGER = LoggerFactory.getLogger(OcspClientBouncyCastle.class);
 
     /**
@@ -101,7 +102,8 @@ public class OcspClientBouncyCastle implements OcspClient {
 
         // Generate the id for the certificate we are looking for
         CertificateID id = new CertificateID(
-                new JcaDigestCalculatorProviderBuilder().build().get(CertificateID.HASH_SHA1), new JcaX509CertificateHolder(issuerCert), serialNumber);
+                new JcaDigestCalculatorProviderBuilder().build().get(CertificateID.HASH_SHA1),
+                new JcaX509CertificateHolder(issuerCert), serialNumber);
 
         // basic request generation with nonce
         OCSPReqBuilder gen = new OCSPReqBuilder();

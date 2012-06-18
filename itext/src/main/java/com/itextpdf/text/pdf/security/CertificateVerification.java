@@ -57,6 +57,9 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
 
+/**
+ * This class consists of some methods that allow you to verify certificates.
+ */
 public class CertificateVerification {
 
     /**

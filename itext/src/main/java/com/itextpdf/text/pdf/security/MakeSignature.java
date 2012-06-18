@@ -47,11 +47,9 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfPKCS7;
 import com.itextpdf.text.pdf.PdfSignature;
 import com.itextpdf.text.pdf.PdfSignatureAppearance;
 import com.itextpdf.text.pdf.PdfString;
-import com.itextpdf.text.pdf.TSAClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,11 +65,13 @@ import java.util.HashMap;
 
 
 /**
- *
- * @author psoares
+ * Class that signs your PDF.
+ * @author Paulo Soares
  */
 public class MakeSignature {
+	/** Parameter to indicate that you want to sign using the Cryptographic Message Syntax. */
     public static final boolean CMS = false;
+	/** Parameter to indicate that you want to sign using CMS Advanced Electronic Signatures. */
     public static final boolean CADES = true;
     
     /**
@@ -155,14 +155,20 @@ public class MakeSignature {
 
     }
     
-    public static Collection<byte[]> processCrl(Certificate cer, Collection<CrlClient> crlList) {
+    /**
+     * Processes a CRL list.
+     * @param cert	a Certificate if one of the CrlList implementations needs to retrieve the CRL URL from it.
+     * @param crlList	a list of CrlClient implementations
+     * @return	a collection of CRL bytes that can be embedded in a PDF.
+     */
+    public static Collection<byte[]> processCrl(Certificate cert, Collection<CrlClient> crlList) {
         if (crlList == null)
             return null;
         ArrayList<byte[]> crlBytes = new ArrayList<byte[]>();
         for (CrlClient cc : crlList) {
             if (cc == null)
                 continue;
-            byte[] b = cc.getEncoded((X509Certificate)cer, null);
+            byte[] b = cc.getEncoded((X509Certificate)cert, null);
             if (b == null)
                 continue;
             crlBytes.add(b);
