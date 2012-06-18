@@ -1,5 +1,5 @@
 /*
- * $Id: ColumnText.java 5056 2012-02-20 14:56:44Z eugenemark $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
