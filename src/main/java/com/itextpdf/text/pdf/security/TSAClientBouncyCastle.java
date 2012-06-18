@@ -1,5 +1,5 @@
 /*
- * $Id: TSAClientBouncyCastle.java 5167 2012-06-08 12:21:30Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

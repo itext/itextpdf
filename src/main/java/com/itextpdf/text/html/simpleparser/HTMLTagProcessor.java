@@ -1,5 +1,5 @@
 /*
- * $Id: HTMLWorker.java 4666 2011-01-29 12:53:09Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -50,7 +50,7 @@ import com.itextpdf.text.DocumentException;
 
 /**
  * Interface that needs to be implemented by every tag that is supported by HTMLWorker.
- * @since 5.0.6
+ * @deprecated
  */
 public interface HTMLTagProcessor {
 	

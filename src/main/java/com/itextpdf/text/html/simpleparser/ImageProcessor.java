@@ -1,5 +1,5 @@
 /*
- * $Id: Img.java 4242 2010-01-02 23:22:20Z xlv $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

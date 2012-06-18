@@ -1,5 +1,5 @@
 /*
- * $Id: PdfPKCS7.java 5193 2012-06-18 13:36:09Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
