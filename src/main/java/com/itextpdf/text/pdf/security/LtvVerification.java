@@ -55,7 +55,6 @@ import com.itextpdf.text.pdf.PdfEncodings;
 import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfPKCS7;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfStream;

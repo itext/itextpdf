@@ -54,9 +54,9 @@ import java.security.cert.X509Certificate;
  * @author Paulo Soares
  */
 public class CrlClientOffline implements CrlClient {
+	
 	/** The CRL as a byte array. */
     private byte[] crlEncoded;
-    
     
     /**
      * Creates an instance of a CrlClient in case you
@@ -80,7 +80,6 @@ public class CrlClientOffline implements CrlClient {
             throw new ExceptionConverter(ex);
         }
     }
-
     
     /**
      * Returns the CRL bytes (the parameters are ignored).
