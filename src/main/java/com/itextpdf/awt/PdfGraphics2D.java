@@ -1,5 +1,5 @@
 /*
- * $Id: PdfGraphics2D.java 4956 2011-08-21 11:07:43Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
