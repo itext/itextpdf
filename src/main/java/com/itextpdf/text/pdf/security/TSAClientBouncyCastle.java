@@ -204,7 +204,7 @@ public class TSAClientBouncyCastle implements TSAClient {
         	tsaConnection = (URLConnection) url.openConnection();
         }
         catch (IOException ioe) {
-            throw new IOException(MessageLocalization.getComposedMessage("failed.to.get.tsa.response.from.1", tsaURL), ioe);
+            throw new IOException(MessageLocalization.getComposedMessage("failed.to.get.tsa.response.from.1", tsaURL));
         }
         tsaConnection.setDoInput(true);
         tsaConnection.setDoOutput(true);
