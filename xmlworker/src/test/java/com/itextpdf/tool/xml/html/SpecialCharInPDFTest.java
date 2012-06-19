@@ -1,5 +1,5 @@
 /*
- * $Id: HTMLWorkerFactoryTest.java 195 2011-07-06 09:09:16Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA

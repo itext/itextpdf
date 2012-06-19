@@ -1,5 +1,5 @@
 /*
- * $Id: SamplesTest.java 164 2011-06-07 10:39:10Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project. Copyright (c) 1998-2011 1T3XT
  * BVBA Authors: Balder Van Camp, Emiel Ackermann, et al.

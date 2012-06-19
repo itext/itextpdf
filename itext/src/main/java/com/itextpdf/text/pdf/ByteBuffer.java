@@ -265,6 +265,15 @@ public class ByteBuffer extends OutputStream {
         return append((double)i);
     }
     
+    /**
+     * Appends the string representation of a <CODE>long</CODE>.
+     * @param i the <CODE>long</CODE> to be appended
+     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     */
+    public ByteBuffer append(long i) {
+        return append(Long.toString(i));
+    }
+    
     public ByteBuffer append(byte b) {
         return append_i(b);
     }
@@ -381,7 +390,7 @@ public class ByteBuffer extends OutputStream {
                 int x = 100000;
                 int v = (int) (d * x);
                 
-                StringBuffer res = new StringBuffer();
+                StringBuilder res = new StringBuilder();
                 if (negative) res.append('-');
                 res.append("0.");
                 
@@ -496,7 +505,7 @@ public class ByteBuffer extends OutputStream {
                 }
                 return null;
             } else {
-                StringBuffer res = new StringBuffer();
+                StringBuilder res = new StringBuilder();
                 if (negative) res.append('-');
                 if (v >= 1000000) {
                     res.append( chars[(v / 1000000)] );
@@ -524,11 +533,12 @@ public class ByteBuffer extends OutputStream {
                 return res.toString();
             }
         } else {
-            StringBuffer res = new StringBuffer();
-            if (negative) res.append('-');
             d += 0.5;
             long v = (long) d;
-            return res.append(v).toString();
+            if (negative) 
+                return "-" + Long.toString(v);
+            else
+                return Long.toString(v);
         }
     }
     
@@ -573,6 +583,7 @@ public class ByteBuffer extends OutputStream {
      *
      * @return String translated from the buffer's contents.
      */
+    @Override
     public String toString() {
         return new String(buf, 0, count);
     }
@@ -606,6 +617,7 @@ public class ByteBuffer extends OutputStream {
         append((byte)b);
     }
     
+    @Override
     public void write(byte[] b, int off, int len) {
         append(b, off, len);
     }

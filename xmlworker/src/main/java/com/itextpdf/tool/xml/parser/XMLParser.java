@@ -91,7 +91,7 @@ public class XMLParser {
         this.charset = charset;
         this.controller = new StateController(this, isHtml);
         controller.unknown();
-        memory = new XMLParserMemory();
+        memory = new XMLParserMemory(isHtml);
         listeners = new CopyOnWriteArrayList<XMLParserListener>();
     }
 

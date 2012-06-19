@@ -1,5 +1,5 @@
 /*
- * $Id: $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -90,7 +90,7 @@ public class TextSpanTag extends AbstractGraphicProcessor {
 		}		
 		
     	List<Element> l = new ArrayList<Element>(1);
-		String sanitized = HTMLUtils.sanitizeInline(content); //TODO check this
+		String sanitized = content.trim(); //TODO check this
 		
     	if (sanitized.length() > 0) {    	
     		Chunk c = new ChunkCssApplier().apply(new Chunk(sanitized), tag);

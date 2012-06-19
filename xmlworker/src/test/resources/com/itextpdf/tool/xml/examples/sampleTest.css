@@ -1,0 +1,169 @@
+pre, tt, code, kbd, samp {
+	font-family: Courier;
+	font-size: 9pt;
+	line-height: 12pt;
+}
+dt {
+	margin: 0;
+}
+/* styles below are taken from Mozilla Defaults */
+body {
+    font-size: 12pt;
+}
+p, dl, multicol {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+dd {
+    margin-left: 40px;
+    margin-bottom: 0;
+    margin-right: 0;
+    margin-top: 0;
+}
+blockquote, figure {
+    margin: 1em 40px;
+}
+center {
+    display: block;
+    text-align: center;
+}
+blockquote[type="cite"] {
+    border: 3px solid;
+    padding-left: 1em;
+    border-color: blue;
+    border-width: thin;
+    margin: 1em 0;
+}
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0.67em 0;
+}
+h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0.83em 0;
+}
+h3 {
+    font-size: 1.7em;
+    font-weight: bold;
+    margin-bottom: 0.3em;
+}
+h4{
+    font-size: 1em;
+    font-weight: bold;
+    margin: 1.33em 0;
+}
+h5 {
+    font-size: 0.83em;
+    font-weight: bold;
+    margin: 1.67em 0;
+}
+h6 {
+    font-size: 0.67em;
+    font-weight: bold;
+    margin: 2.33em 0;
+}
+listing {
+    font-size: medium;
+    margin: 1em 0;
+    white-space: pre;
+}
+xmp, pre, plaintext {
+    margin: 1em 0;
+    white-space: pre;
+}
+table {
+    margin-bottom: 0;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    text-indent: 0;
+}
+caption {
+    text-align: center;
+}
+tr {
+    vertical-align: inherit;
+}
+tbody {
+    vertical-align: middle;
+}
+thead {
+    vertical-align: middle;
+}
+tfoot {
+    vertical-align: middle;
+}
+table > tr {
+    vertical-align: middle;
+}
+td {
+    padding-left: 0.75em;
+    padding-top: 0.75em;
+    text-align: inherit;
+    vertical-align: inherit;
+}
+th {
+    display: table-cell;
+    font-weight: bold;
+    padding: 1px;
+    vertical-align: inherit;
+}
+b, strong {
+    font-weight: bold;
+}
+i, cite, em, var, dfn, address {
+    font-style: italic;
+}
+u, ins {
+    text-decoration: underline;
+}
+s, strike, del {
+    text-decoration: line-through;
+}
+
+big {
+    font-size: larger;
+}
+small {
+    font-size: smaller;
+}
+sub {
+    font-size: smaller;
+    vertical-align: sub;
+}
+sup {
+    font-size: smaller;
+    vertical-align: super;
+}
+
+nobr {
+    white-space: nowrap;
+}
+mark {
+    background: none repeat scroll 0 0 yellow;
+    color: black;
+}
+abbr[title], acronym[title] {
+    border-bottom: 1px dotted;
+}
+ul, menu, dir {
+    list-style-type: disc;
+}
+
+ul li ul {
+    list-style-type: circle;
+}
+
+ol {
+    list-style-type: decimal;
+}
+hr {
+    color: gray;
+    height: 2px;
+}
+a {
+	text-decoration: underline;
+	color: blue;
+}

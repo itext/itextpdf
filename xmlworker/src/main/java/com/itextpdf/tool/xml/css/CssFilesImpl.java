@@ -124,11 +124,24 @@ public class CssFilesImpl implements CssFiles {
             } else if (CSS.Property.BORDER_COLOR.equalsIgnoreCase(key)) {
                 css.putAll(utils.parseBoxValues(value, "border-", "-color"));
             } else if (CSS.Property.PADDING.equalsIgnoreCase(key)) {
-                css.putAll(utils.parseBoxValues(value, "padding-", ""));
+                Map<String, String> paddings = utils.parseBoxValues(value, "padding-", "");
+                for (String paddingKey : paddings.keySet()) {
+                    if (!css.containsKey(paddingKey)) {
+                        css.put(paddingKey, paddings.get(paddingKey));
+                    }
+                }
+                //css.putAll(utils.parseBoxValues(value, "padding-", ""));
             } else if (CSS.Property.FONT.equalsIgnoreCase(key)) {
                 css.putAll(utils.processFont(value));
             } else if (CSS.Property.LIST_STYLE.equalsIgnoreCase(key)) {
                 css.putAll(utils.processListStyle(value));
+            } else if (CSS.Property.BACKGROUND.equalsIgnoreCase(key)) {
+                Map<String, String> backgroundStyles = utils.processBackground(value);
+                for (String backgroundKey : backgroundStyles.keySet()) {
+                    if (!css.containsKey(backgroundKey)) {
+                        css.put(backgroundKey, backgroundStyles.get(backgroundKey));
+                    }
+                }
             } else {
                 css.put(key, value);
             }

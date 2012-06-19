@@ -1,5 +1,5 @@
 /*
- * $Id: RichMediaExecuteAction.java 3915 2009-04-26 10:07:57Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

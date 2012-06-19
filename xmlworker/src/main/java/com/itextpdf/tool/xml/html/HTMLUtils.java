@@ -43,6 +43,11 @@
  */
 package com.itextpdf.tool.xml.html;
 
+import com.itextpdf.text.Chunk;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author redlab_b
  *
@@ -51,44 +56,57 @@ public class HTMLUtils {
 
 	/**
 	 * @param str the string to sanitize
-	 * @param trim to trim or not to trim
+	 * @param preserveWhiteSpace to trim or not to trim
 	 * @return sanitized string
 	 */
-	public static String sanitize(final String str, final boolean trim) {
+	private static List<Chunk> sanitize(final String str, final boolean preserveWhiteSpace, final boolean replaceNonBreakableSpaces) {
 		StringBuilder builder = new StringBuilder();
+        StringBuilder whitespaceBuilder = new StringBuilder();
 		char[] chars = str.toCharArray();
-		Character previous = null;
-		boolean gotChar = false;
+        ArrayList<Chunk> chunkList = new ArrayList<Chunk>();
+		boolean isWhitespace = chars.length > 0 ? Character.isWhitespace(chars[0]) : true;
 		for (char c : chars) {
-			if (!Character.isWhitespace(c)) {
-				if (((!gotChar && !trim) || gotChar)  && previous != null && Character.isWhitespace(previous)) {
-					builder.append(' ');
-				}
-				builder.append(c);
-				gotChar = true;
-			}
-			previous = c;
+			if (isWhitespace && !Character.isWhitespace(c)) {
+                if (builder.length() == 0) {
+                    chunkList.add(Chunk.createWhitespace(builder.toString(), preserveWhiteSpace));
+                } else {
+                    builder.append(" ");
+                }
+                whitespaceBuilder = new StringBuilder();
+            }
+
+            isWhitespace = Character.isWhitespace(c);
+            if (isWhitespace) {
+                whitespaceBuilder.append(c);
+            } else {
+                builder.append(c);
+            }
 		}
-		if (gotChar && !trim && Character.isWhitespace(previous)) {
-			builder.append(' ');
-		}
-		return builder.toString();
-//		return str;
+
+        if (builder.length() > 0) {
+            chunkList.add(new Chunk(replaceNonBreakableSpaces ? builder.toString().replace(Character.valueOf('\u00a0'), Character.valueOf(' ')) : builder.toString()));
+        }
+
+        if (whitespaceBuilder.length() > 0) {
+            chunkList.add(Chunk.createWhitespace(whitespaceBuilder.toString(), preserveWhiteSpace));
+        }
+
+		return chunkList;
 	}
-	/**
-	 * Sanitize the String for use in tags that must trim leading and trailing white space.
-	 * @param str the string to sanitize
-	 * @return a sanitized String
-	 */
-	public static String sanitize(final String str) {
-		return sanitize(str, false);
-	}
+
+    public static List<Chunk> sanitize(final String str, final boolean preserveWhiteSpace) {
+        return sanitize(str, preserveWhiteSpace, false);
+    }
 	/**
 	 * Sanitize the String for use in in-line tags.
 	 * @param str the string to sanitize
 	 * @return a sanitized String for use in in-line tags
 	 */
-	public static String sanitizeInline(final String str) {
-		return sanitize(str, false);
+	public static List<Chunk> sanitizeInline(final String str, final boolean preserveWhiteSpace) {
+		return sanitize(str, preserveWhiteSpace, false);
+	}
+
+    public static List<Chunk> sanitizeInline(final String str, final boolean preserveWhiteSpace, final boolean replaceNonBreakableSpaces) {
+		return sanitize(str, preserveWhiteSpace, replaceNonBreakableSpaces);
 	}
 }

@@ -58,6 +58,7 @@ public final class CSS {
 	public static final class Property {
 
 		private Property() {};
+        public static final String BACKGROUND = "background";
 		public static final String BACKGROUND_IMAGE = "background-image";
 		public static final String BACKGROUND_REPEAT = "background-repeat";
 		public static final String BACKGROUND_ATTACHMENT = "background-attachment";
@@ -77,6 +78,8 @@ public final class CSS {
 		public static final String BORDER_WIDTH = "border-width";
 		public static final String BORDER_STYLE = "border-style";
 		public static final String BORDER_COLOR = "border-color";
+        public static final String BORDER_COLLAPSE = "border-collapse";
+        public static final String BORDER_SPACING = "border-spacing";
 		public static final String BORDER_TOP_WIDTH = "border-top-width";
 		public static final String BORDER_BOTTOM_WIDTH = "border-bottom-width";
 		public static final String BORDER_LEFT_WIDTH = "border-left-width";
@@ -214,6 +217,7 @@ public final class CSS {
 		public static final String AUTO = "auto";
 		public static final String INLINE = "inline";
 		public static final String BLOCK = "block";
-
+        public static final String SEPARATE = "separate";
+        public static final String COLLAPSE = "collapse";
 	}
 }

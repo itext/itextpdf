@@ -54,7 +54,6 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.xml.XMLUtil;
 
 /**
  * With this class you can create an Xmp Stream that can be used for adding

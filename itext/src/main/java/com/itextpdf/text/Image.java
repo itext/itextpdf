@@ -1316,7 +1316,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
 	 * when the image exceeds the available width.
 	 * @since iText 5.0.6
 	 */
-	protected boolean scaleToFitLineWhenOverflow;
+	protected boolean scaleToFitLineWhenOverflow = true;
 
 	/**
 	 * Gets the value of scaleToFitLineWhenOverflow.

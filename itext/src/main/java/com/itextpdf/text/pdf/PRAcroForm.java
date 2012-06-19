@@ -59,16 +59,42 @@ public class PRAcroForm extends PdfDictionary {
      * This class holds the information for a single field
      */
     public static class FieldInformation {
-        String name;
+    	String fieldName;
         PdfDictionary info;
         PRIndirectReference ref;
 
-        FieldInformation(String name, PdfDictionary info, PRIndirectReference ref) {
-            this.name = name; this.info = info; this.ref = ref;
+        FieldInformation(String fieldName, PdfDictionary info, PRIndirectReference ref) {
+            this.fieldName = fieldName;
+        	this.info = info;
+            this.ref = ref;
         }
-        public String getName() { return name; }
-        public PdfDictionary getInfo() { return info; }
-        public PRIndirectReference getRef() { return ref; }
+        
+        /**
+         * Returns the name of the widget annotation (the /NM entry).
+         * @return	a String or null (if there's no /NM key)
+         */
+        public String getWidgetName() {
+        	PdfObject name = info.get(PdfName.NM);
+        	if (name != null)
+        		return name.toString();
+        	return null;
+        }
+        
+        /**
+         * Returns the full name of the field.
+         * @return	a String or null
+         */
+        public String getName() {
+        	return fieldName;
+        }
+        
+        public PdfDictionary getInfo() {
+        	return info;
+        }
+        
+        public PRIndirectReference getRef() {
+        	return ref;
+        }
     };
     ArrayList<FieldInformation> fields;
     ArrayList<PdfDictionary> stack;
@@ -131,29 +157,33 @@ public class PRAcroForm extends PdfDictionary {
      * After reading, we index all of the fields. Recursive.
      * @param fieldlist An array of fields
      * @param fieldDict the last field dictionary we encountered (recursively)
-     * @param title the pathname of the field, up to this point or null
+     * @param parentPath the pathname of the field, up to this point or null
      */
-    protected void iterateFields(PdfArray fieldlist, PRIndirectReference fieldDict, String title) {
+    protected void iterateFields(PdfArray fieldlist, PRIndirectReference fieldDict, String parentPath) {
         for (Iterator<PdfObject> it = fieldlist.listIterator(); it.hasNext();) {
             PRIndirectReference ref = (PRIndirectReference)it.next();
             PdfDictionary dict = (PdfDictionary) PdfReader.getPdfObjectRelease(ref);
 
             // if we are not a field dictionary, pass our parent's values
             PRIndirectReference myFieldDict = fieldDict;
-            String myTitle = title;
+            String fullPath = parentPath;
             PdfString tField = (PdfString)dict.get(PdfName.T);
             boolean isFieldDict = tField != null;
 
             if (isFieldDict) {
                 myFieldDict = ref;
-                if (title == null) myTitle = tField.toString();
-                else myTitle = title + '.' + tField.toString();
+                if (parentPath == null) {
+                	fullPath = tField.toString();
+                }
+                else {
+                	fullPath = parentPath + '.' + tField.toString();
+                }
             }
 
             PdfArray kids = (PdfArray)dict.get(PdfName.KIDS);
             if (kids != null) {
                 pushAttrib(dict);
-                iterateFields(kids, myFieldDict, myTitle);
+                iterateFields(kids, myFieldDict, fullPath);
                 stack.remove(stack.size() - 1);   // pop
             }
             else {          // leaf node
@@ -162,10 +192,10 @@ public class PRAcroForm extends PdfDictionary {
                     if (isFieldDict)
                         mergedDict = mergeAttrib(mergedDict, dict);
 
-                    mergedDict.put(PdfName.T, new PdfString(myTitle));
-                    FieldInformation fi = new FieldInformation(myTitle, mergedDict, myFieldDict);
+                    mergedDict.put(PdfName.T, new PdfString(fullPath));
+                    FieldInformation fi = new FieldInformation(fullPath, mergedDict, myFieldDict);
                     fields.add(fi);
-                    fieldByName.put(myTitle, fi);
+                    fieldByName.put(fullPath, fi);
                 }
             }
         }
@@ -185,7 +215,7 @@ public class PRAcroForm extends PdfDictionary {
             if (key.equals(PdfName.DR) || key.equals(PdfName.DA) ||
             key.equals(PdfName.Q)  || key.equals(PdfName.FF) ||
             key.equals(PdfName.DV) || key.equals(PdfName.V)
-            || key.equals(PdfName.FT)
+            || key.equals(PdfName.FT) || key.equals(PdfName.NM)
             || key.equals(PdfName.F)) {
                 targ.put(key,child.get(key));
             }

@@ -1,5 +1,5 @@
 /*
- * $Id: IncCell.java 4635 2010-11-28 17:38:03Z psoares33 $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

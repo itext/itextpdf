@@ -43,31 +43,20 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.*;
 
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.xml.XmlDomWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.xml.XmlDomWriter;
 
 /**
  * Processes XFA forms.
@@ -151,6 +140,22 @@ public class XfaForm {
      * @since	2.1.5
      */
     private void extractNodes() {
+        Map<String, Node> xfaNodes = extractXFANodes(domDocument);
+
+        if (xfaNodes.containsKey("template")) {
+            templateNode = xfaNodes.get("template");
+            templateSom = new Xml2SomTemplate(templateNode);
+        }
+        if (xfaNodes.containsKey("datasets")) {
+            datasetsNode = xfaNodes.get("datasets");
+            datasetsSom = new Xml2SomDatasets(datasetsNode.getFirstChild());
+        }
+        if (datasetsNode == null)
+        	createDatasetsNode(domDocument.getFirstChild());
+    }
+
+    public static Map<String, Node> extractXFANodes(Document domDocument) {
+        Map<String, Node> xfaNodes = new HashMap<String, Node>();
         Node n = domDocument.getFirstChild();
         while (n.getChildNodes().getLength() == 0) {
         	n = n.getNextSibling();
@@ -159,21 +164,13 @@ public class XfaForm {
         while (n != null) {
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 String s = n.getLocalName();
-                if ("template".equals(s)) {
-                	templateNode = n;
-                    templateSom = new Xml2SomTemplate(n);
-                }
-                else if ("datasets".equals(s)) {
-                    datasetsNode = n;
-                    datasetsSom = new Xml2SomDatasets(n.getFirstChild());
-                }
+                xfaNodes.put(s, n);
             }
             n = n.getNextSibling();
         }
-        if (datasetsNode == null)
-        	createDatasetsNode(domDocument.getFirstChild());
-    }
 
+        return xfaNodes;
+    }
     /**
      * Some XFA forms don't have a datasets node.
      * If this is the case, we have to add one.
@@ -848,32 +845,34 @@ public class XfaForm {
         }
 
         private void processDatasetsInternal(Node n) {
-            HashMap<String, Integer> ss = new HashMap<String, Integer>();
-            Node n2 = n.getFirstChild();
-            while (n2 != null) {
-                if (n2.getNodeType() == Node.ELEMENT_NODE) {
-                    String s = escapeSom(n2.getLocalName());
-                    Integer i = ss.get(s);
-                    if (i == null)
-                        i = Integer.valueOf(0);
-                    else
-                        i = Integer.valueOf(i.intValue() + 1);
-                    ss.put(s, i);
-                    if (hasChildren(n2)) {
-                        stack.push(s + "[" + i.toString() + "]");
-                        processDatasetsInternal(n2);
-                        stack.pop();
+            if (n != null) {
+                HashMap<String, Integer> ss = new HashMap<String, Integer>();
+                Node n2 = n.getFirstChild();
+                while (n2 != null) {
+                    if (n2.getNodeType() == Node.ELEMENT_NODE) {
+                        String s = escapeSom(n2.getLocalName());
+                        Integer i = ss.get(s);
+                        if (i == null)
+                            i = Integer.valueOf(0);
+                        else
+                            i = Integer.valueOf(i.intValue() + 1);
+                        ss.put(s, i);
+                        if (hasChildren(n2)) {
+                            stack.push(s + "[" + i.toString() + "]");
+                            processDatasetsInternal(n2);
+                            stack.pop();
+                        }
+                        else {
+                            stack.push(s + "[" + i.toString() + "]");
+                            String unstack = printStack();
+                            order.add(unstack);
+                            inverseSearchAdd(unstack);
+                            name2Node.put(unstack, n2);
+                            stack.pop();
+                        }
                     }
-                    else {
-                        stack.push(s + "[" + i.toString() + "]");
-                        String unstack = printStack();
-                        order.add(unstack);
-                        inverseSearchAdd(unstack);
-                        name2Node.put(unstack, n2);
-                        stack.pop();
-                    }
+                    n2 = n2.getNextSibling();
                 }
-                n2 = n2.getNextSibling();
             }
         }
     }

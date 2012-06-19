@@ -43,13 +43,13 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.ListItem;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * <CODE>PdfLine</CODE> defines an array with <CODE>PdfChunk</CODE>-objects
@@ -519,7 +519,8 @@ public class PdfLine {
                ascender = Math.max(ascender, ck.getImage().getScaledHeight() + ck.getImageOffsetY());
            else {
                PdfFont font = ck.font();
-               ascender = Math.max(ascender, font.getFont().getFontDescriptor(BaseFont.ASCENT, font.size()));
+               float textRise = ck.getTextRise();
+               ascender = Math.max(ascender, (textRise > 0 ? textRise : 0) + font.getFont().getFontDescriptor(BaseFont.ASCENT, font.size()));
            }
        }
        return ascender;
@@ -538,7 +539,8 @@ public class PdfLine {
                 descender = Math.min(descender, ck.getImageOffsetY());
             else {
                 PdfFont font = ck.font();
-                descender = Math.min(descender, font.getFont().getFontDescriptor(BaseFont.DESCENT, font.size()));
+                float textRise = ck.getTextRise();
+                descender = Math.min(descender, (textRise < 0 ? textRise : 0) + font.getFont().getFontDescriptor(BaseFont.DESCENT, font.size()));
             }
         }
         return descender;

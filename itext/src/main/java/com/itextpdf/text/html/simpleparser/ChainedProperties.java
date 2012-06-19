@@ -1,5 +1,5 @@
 /*
- * $Id: ChainedProperties.java 4666 2011-01-29 12:53:09Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

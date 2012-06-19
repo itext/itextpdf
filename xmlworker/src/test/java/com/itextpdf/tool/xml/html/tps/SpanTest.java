@@ -1,5 +1,5 @@
 /*
- * $Id: TPBreakTest.java 148 2011-06-04 21:11:16Z redlab_b $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2011 1T3XT BVBA
@@ -83,9 +83,9 @@ public class SpanTest {
 	 */
 	@Test
 	public void verifyContent() {
-		Assert.assertTrue(content.get(0) instanceof Chunk);
-		String unsanitized = content.get(0).toString();
-		Assert.assertEquals(" text snippet return it sanitized!! ", unsanitized);
+		Assert.assertTrue(content.get(1) instanceof Chunk);
+		String unsanitized = content.get(1).toString();
+		Assert.assertEquals("text snippet return it sanitized!!", unsanitized);
 	}
 
 	/**

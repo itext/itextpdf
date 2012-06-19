@@ -92,19 +92,19 @@ public class HorAndVertScalingTest {
 	public void resolveFontSize() throws IOException {
 		assertEquals(12, elementList.get(0).getChunks().get(0).getFont().getSize(), 0);
 		assertEquals(16, elementList.get(1).getChunks().get(0).getFont().getSize(), 0);
-		assertEquals(16*1.5, elementList.get(1).getChunks().get(1).getFont().getSize(), 0);
+		assertEquals(16*1.5, elementList.get(1).getChunks().get(2).getFont().getSize(), 0);
 		assertEquals(15, elementList.get(2).getChunks().get(0).getFont().getSize(), 0);
-		assertEquals(7.5, elementList.get(2).getChunks().get(1).getFont().getSize(), 0);
-		assertEquals(6.375, elementList.get(2).getChunks().get(2).getFont().getSize(), 0);
+		assertEquals(7.5, elementList.get(2).getChunks().get(2).getFont().getSize(), 0);
+		assertEquals(6.375, elementList.get(2).getChunks().get(4).getFont().getSize(), 0);
 	}
 	@Test
 	public void resolveScaling() throws IOException {
 		assertEquals(1, elementList.get(1).getChunks().get(0).getHorizontalScaling(), 0);
-		assertEquals(1/1.5f, elementList.get(1).getChunks().get(1).getHorizontalScaling(), 0);
+		assertEquals(1/1.5f, elementList.get(1).getChunks().get(2).getHorizontalScaling(), 0);
 		assertEquals(1, elementList.get(2).getChunks().get(0).getHorizontalScaling(), 0);
-		assertEquals(1/0.5f, elementList.get(2).getChunks().get(1).getHorizontalScaling(), 0);
 		assertEquals(1/0.5f, elementList.get(2).getChunks().get(2).getHorizontalScaling(), 0);
+		assertEquals(1/0.5f, elementList.get(2).getChunks().get(4).getHorizontalScaling(), 0);
 		assertEquals(1, elementList.get(3).getChunks().get(0).getHorizontalScaling(), 0);
-		assertEquals(1.5, elementList.get(3).getChunks().get(1).getHorizontalScaling(), 0);
+		assertEquals(1.5, elementList.get(3).getChunks().get(2).getHorizontalScaling(), 0);
 	}
 }

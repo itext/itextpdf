@@ -1,5 +1,5 @@
 /*
- * $Id: IncTable.java 4632 2010-11-24 14:44:42Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

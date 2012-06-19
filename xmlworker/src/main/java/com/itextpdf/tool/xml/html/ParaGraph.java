@@ -67,29 +67,29 @@ public class ParaGraph extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
-		String sanitized = HTMLUtils.sanitize(content);
+		List<Chunk> sanitizedChunks = HTMLUtils.sanitize(content, false);
 		List<Element> l = new ArrayList<Element>(1);
-		if (sanitized.length() > 0) {
-			HtmlPipelineContext myctx;
-			try {
-				myctx = getHtmlPipelineContext(ctx);
-			} catch (NoCustomContextException e) {
-				throw new RuntimeWorkerException(e);
-			}
-			if ((null != tag.getCSS().get(CSS.Property.TAB_INTERVAL))) {
-				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
-				if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
-					tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
-				}
-				l.add(getCssAppliers().apply(tabbedChunk, tag,myctx));
-			} else if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
-				TabbedChunk tabbedChunk = new TabbedChunk(sanitized);
-				tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
-				l.add(getCssAppliers().apply(tabbedChunk, tag, myctx));
-			} else {
-				l.add(getCssAppliers().apply(new Chunk(sanitized), tag, myctx));
-			}
-		}
+        for (Chunk sanitized : sanitizedChunks) {
+            HtmlPipelineContext myctx;
+            try {
+                myctx = getHtmlPipelineContext(ctx);
+            } catch (NoCustomContextException e) {
+                throw new RuntimeWorkerException(e);
+            }
+            if ((null != tag.getCSS().get(CSS.Property.TAB_INTERVAL))) {
+                TabbedChunk tabbedChunk = new TabbedChunk(sanitized.getContent());
+                if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
+                    tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
+                }
+                l.add(getCssAppliers().apply(tabbedChunk, tag, myctx));
+            } else if (null != getLastChild(tag) && null != getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)) {
+                TabbedChunk tabbedChunk = new TabbedChunk(sanitized.getContent());
+                tabbedChunk.setTabCount(Integer.parseInt(getLastChild(tag).getCSS().get(CSS.Property.XFA_TAB_COUNT)));
+                l.add(getCssAppliers().apply(tabbedChunk, tag, myctx));
+            } else {
+                l.add(getCssAppliers().apply(sanitized, tag, myctx));
+            }
+        }
 		return l;
 	}
 
@@ -143,12 +143,12 @@ public class ParaGraph extends AbstractTagProcessor {
         Paragraph p = new Paragraph();
         p.setMultipliedLeading(1.2f);
         Element lastElement = paragraphItems.get(paragraphItems.size() - 1);
-        if (lastElement == Chunk.NEWLINE) {
+        if (lastElement instanceof Chunk && Chunk.NEWLINE.getContent().equals(((Chunk) lastElement).getContent())) {
             paragraphItems.remove(paragraphItems.size() - 1);
         }
         Map<String, String> css = tag.getCSS();
         if (null != css.get(CSS.Property.TAB_INTERVAL)) {
-            addTabIntervalContent(paragraphItems, p, css.get(CSS.Property.TAB_INTERVAL));
+            addTabIntervalContent(ctx, tag, paragraphItems, p, css.get(CSS.Property.TAB_INTERVAL));
             l.add(p);
         } else if (null != css.get(CSS.Property.TAB_STOPS)) { // <para tabstops=".." /> could use same implementation page 62
             addTabStopsContent(paragraphItems, p, css.get(CSS.Property.TAB_STOPS));
@@ -173,9 +173,9 @@ public class ParaGraph extends AbstractTagProcessor {
         try {
             com.itextpdf.text.List list = new com.itextpdf.text.List();
             list.setAlignindent(false);
-            list.setAutoindent(false);
             list = (com.itextpdf.text.List) getCssAppliers().apply(list, tag,
                 getHtmlPipelineContext(ctx));
+            list.setIndentationLeft(0);
             int i = 0;
             for (ListItem li : listItems) {
                 li = (ListItem) getCssAppliers().apply(li, tag, getHtmlPipelineContext(ctx));
@@ -210,7 +210,7 @@ public class ParaGraph extends AbstractTagProcessor {
 	 * @param p paragraph to which the tabbed chunks will be added.
 	 * @param value the value of style "tab-interval".
 	 */
-	private void addTabIntervalContent(final List<Element> currentContent, final Paragraph p, final String value) {
+	private void addTabIntervalContent(final WorkerContext ctx, final Tag tag, final List<Element> currentContent, final Paragraph p, final String value) {
 		float width = 0;
 		for(Element e: currentContent) {
 			if (e instanceof TabbedChunk) {
@@ -220,7 +220,13 @@ public class ParaGraph extends AbstractTagProcessor {
 				p.add(new Chunk((TabbedChunk) e));
 			} else {
                 if (e instanceof LineSeparator) {
-                    p.add(Chunk.NEWLINE);
+                    try {
+                        HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
+                        Chunk newLine = (Chunk)getCssAppliers().apply(new Chunk(Chunk.NEWLINE), tag, htmlPipelineContext);
+                        p.add(newLine);
+                    } catch (NoCustomContextException e1) {
+                        throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
+                    }
                 }
 				p.add(e);
 			}

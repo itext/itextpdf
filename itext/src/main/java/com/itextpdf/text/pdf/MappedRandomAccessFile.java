@@ -173,7 +173,7 @@ public class MappedRandomAccessFile {
         int totalRead = 0;
         
         while(totalRead < len){
-            if (mapN > mappedBuffers.length) // we have run out of data to read from
+            if (mapN >= mappedBuffers.length) // we have run out of data to read from
                 break;
             MappedByteBuffer currentBuffer = mappedBuffers[mapN];
             if (offN > currentBuffer.limit())

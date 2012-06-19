@@ -113,13 +113,24 @@ public class ListStyleTypeCssApplier {
 				synchronizeSymbol(fontSize, lst, color);
 			} else if (CSS.Value.DISC.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(108);
-				shrinkSymbol(lst, fontSize, color);
+                lst.setAutoindent(false);
+                lst.setSymbolIndent(7.75f);
+                Chunk symbol = lst.getSymbol();
+                symbol.setTextRise(1.5f);
+                Font font = symbol.getFont();
+                font.setSize(4.5f);
+                font.setColor(color);
 			} else if (CSS.Value.SQUARE.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(110);
 				shrinkSymbol(lst, fontSize, color);
 			} else if (CSS.Value.CIRCLE.equalsIgnoreCase(styleType)) {
 				lst = new ZapfDingbatsList(109);
-				shrinkSymbol(lst, fontSize, color);
+				lst.setAutoindent(false);
+                lst.setSymbolIndent(7.75f);
+                Chunk symbol = lst.getSymbol();
+                symbol.setTextRise(1.5f);
+                Font font = symbol.getFont();
+                font.setSize(4.5f);
 			} else if (CSS.Value.LOWER_ROMAN.equals(styleType)) {
 				lst = new RomanList(true, 0);
 				synchronizeSymbol(fontSize, lst, color);
@@ -214,9 +225,9 @@ public class ListStyleTypeCssApplier {
 	private void shrinkSymbol(final List lst, final float fontSize, final BaseColor color) {
 		lst.setSymbolIndent(12);
 		Chunk symbol = lst.getSymbol();
-		symbol.setTextRise(2);
+		//symbol.setTextRise(2);
 		Font font = symbol.getFont();
-		font.setSize(7);
+		font.setSize(fontSize);
 		font.setColor(color);
 	}
 

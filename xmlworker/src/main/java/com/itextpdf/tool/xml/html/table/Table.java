@@ -40,20 +40,11 @@
  */
 package com.itextpdf.tool.xml.html.table;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ListItem;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
@@ -79,6 +70,7 @@ import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
  *
  */
 public class Table extends AbstractTagProcessor {
+    public static final float DEFAULT_CELL_BORDER_WIDTH = 0.75f;
 
 	private static final Logger LOG = LoggerFactory.getLogger(Table.class);
 	private static final CssUtils utils = CssUtils.getInstance();
@@ -179,9 +171,12 @@ public class Table extends AbstractTagProcessor {
 			float[] columnWidths = new float[numberOfColumns];
 			float[] widestWords = new float[numberOfColumns];
 			float[] fixedWidths = new float[numberOfColumns];
+            float[] colspanWidestWords = new float[numberOfColumns];
 			int[] rowspanValue = new int[numberOfColumns];
 			float largestColumn = 0;
-			int indexOfLargestColumn = 0;
+            float largestColspanColumn = 0;
+			int indexOfLargestColumn = -1;
+            int indexOfLargestColspanColumn = -1;
 			// Initial fill of the widths arrays
 			for (TableRowElement row : tableRows) {
 				int column = 0;
@@ -210,7 +205,7 @@ public class Table extends AbstractTagProcessor {
 							}
 						}
 					}
-					if (cell.getCompositeElements() != null && colspan == 1) {
+					if (cell.getCompositeElements() != null) {
 						float[] widthValues = setCellWidthAndWidestWord(cell);
 						float cellWidth = widthValues[0] / colspan;
 						float widestWordOfCell = widthValues[1] / colspan;
@@ -218,14 +213,27 @@ public class Table extends AbstractTagProcessor {
 							int c = column + i;
 							if (fixedWidths[c] == 0 && cellWidth > columnWidths[c]) {
 								columnWidths[c] = cellWidth;
-								if (cellWidth > largestColumn) {
-									largestColumn = cellWidth;
-									indexOfLargestColumn = c;
-								}
+                                if (colspan == 1) {
+                                    if (cellWidth > largestColumn) {
+                                        largestColumn = cellWidth;
+                                        indexOfLargestColumn = c;
+                                    }
+                                } else {
+                                    if (cellWidth > largestColspanColumn) {
+                                        largestColspanColumn = cellWidth;
+                                        indexOfLargestColspanColumn = c;
+                                    }
+                                }
 							}
-							if (widestWordOfCell > widestWords[c]) {
-								widestWords[c] = widestWordOfCell;
-							}
+                            if (colspan == 1) {
+                                if (widestWordOfCell > widestWords[c]) {
+                                    widestWords[c] = widestWordOfCell;
+                                }
+                            } else {
+                                if (widestWordOfCell > colspanWidestWords[c]) {
+                                    colspanWidestWords[c] = widestWordOfCell;
+                                }
+                            }
 						}
 					}
 					if (colspan > 1) {
@@ -238,6 +246,16 @@ public class Table extends AbstractTagProcessor {
 					column++;
 				}
 			}
+            if (indexOfLargestColumn == -1) {
+                indexOfLargestColumn = indexOfLargestColspanColumn;
+                if (indexOfLargestColumn == -1) {
+                    indexOfLargestColumn = 0;
+                }
+
+                for (int column = 0; column < numberOfColumns; column++) {
+                    widestWords[column] = colspanWidestWords[column];
+                }
+            }
 			float outerWidth = getTableOuterWidth(tag, styleValues.getHorBorderSpacing(), ctx);
 			float initialTotalWidth = getTableWidth(columnWidths, 0);
 //			float targetWidth = calculateTargetWidth(tag, columnWidths, outerWidth, ctx);
@@ -446,7 +464,7 @@ public class Table extends AbstractTagProcessor {
 	 * targetWidth = the total of the columnWidths array</li>
 	 * <li>if table's parent is a root tag or table has no parent, then the
 	 * targetWidth = width of the page - outerWidth
-	 * {@link Table#getTableOuterWidth(Tag, float)}.</li>
+	 * {@link Table#getTableOuterWidth(Tag, float, WorkerContext)}.</li>
 	 * </ol>
 	 * If none of the above is true, the width of the table is set to its
 	 * default with the columnWidths array.
@@ -511,7 +529,7 @@ public class Table extends AbstractTagProcessor {
 	 * @return a {@link TableStyleValues} object containing the table's style
 	 *         values.
 	 */
-	private TableStyleValues setStyleValues(final Tag tag) {
+	public static TableStyleValues setStyleValues(final Tag tag) {
 		TableStyleValues styleValues = new TableStyleValues();
 		Map<String, String> css = tag.getCSS();
 		Map<String, String> attributes = tag.getAttributes();
@@ -551,11 +569,10 @@ public class Table extends AbstractTagProcessor {
 	static public float getBorderOrCellSpacing(final boolean getHor, final Map<String, String> css,
 			final Map<String, String> attributes) {
 		float spacing = 0f;
-		String collapse = css.get("border-collapse");
-		if (collapse == null || collapse.equals("seperate")) {
-			String borderSpacing = css.get("border-spacing");
-			String cellSpacing = attributes.get("cellspacing");
-			String borderAttr = attributes.get("border");
+		String collapse = css.get(CSS.Property.BORDER_COLLAPSE);
+		if (collapse == null || collapse.equals(CSS.Value.SEPARATE)) {
+			String borderSpacing = css.get(CSS.Property.BORDER_SPACING);
+			String cellSpacing = attributes.get(HTML.Attribute.CELLSPACING);
 			if (borderSpacing != null) {
 				if (borderSpacing.contains(" ")) {
 					if (getHor) {
@@ -567,11 +584,11 @@ public class Table extends AbstractTagProcessor {
 					spacing = utils.parsePxInCmMmPcToPt(borderSpacing);
 				}
 			} else if (cellSpacing != null) {
-				spacing = utils.parsePxInCmMmPcToPt(cellSpacing);
-			} else if (borderAttr != null) {
-				spacing = utils.parsePxInCmMmPcToPt(borderAttr);
-			}
-		} else if (collapse.equals("collapse")) {
+			    spacing = utils.parsePxInCmMmPcToPt(cellSpacing);
+			} else {
+                spacing = 2f * DEFAULT_CELL_BORDER_WIDTH;
+            }
+		} else if (collapse.equals(CSS.Value.COLLAPSE)) {
 			spacing = 0;
 		}
 		return spacing;
@@ -671,7 +688,7 @@ public class Table extends AbstractTagProcessor {
 	 * outer width.
 	 *
 	 * @param widths array of floats containing column width values.
-	 * @param outer width equals the required space outside of the table for
+	 * @param outerWidth equals the required space outside of the table for
 	 *            margins and borders.
 	 * @return a table's width.
 	 * @throws NoCustomContextException
@@ -747,18 +764,14 @@ public class Table extends AbstractTagProcessor {
 	 */
 	private void setVerticalMargin(final PdfPTable table, final Tag t, final TableStyleValues values,
 			final WorkerContext ctx) throws NoCustomContextException {
-		float spacingBefore = 0;//values.getBorderWidthTop();
-		/*Map<String, Object> memory = getHtmlPipelineContext(ctx).getMemory();
-		Object mb = memory.get(HtmlPipelineContext.LAST_MARGIN_BOTTOM);
-		if (mb != null) {
-			spacingBefore += (Float) mb;
-		}*/
-		float spacingAfter = 0;//values.getVerBorderSpacing() + values.getBorderWidthBottom();
+		float spacingBefore = values.getBorderWidthTop();
+		float spacingAfter = values.getVerBorderSpacing() + values.getBorderWidthBottom();
 		for (Entry<String, String> css : t.getCSS().entrySet()) {
 			String key = css.getKey();
 			String value = css.getValue();
 			if (CSS.Property.MARGIN_TOP.equalsIgnoreCase(key)) {
-				spacingBefore += utils.parseValueToPt(value, fst.getFontSize(t));
+                final CssUtils utils = CssUtils.getInstance();
+				spacingBefore += utils.calculateMarginTop(value, fst.getFontSize(t), getHtmlPipelineContext(ctx));
 			} else if (CSS.Property.MARGIN_BOTTOM.equalsIgnoreCase(key)) {
 				float marginBottom = utils.parseValueToPt(value, fst.getFontSize(t));
 				spacingAfter += marginBottom;

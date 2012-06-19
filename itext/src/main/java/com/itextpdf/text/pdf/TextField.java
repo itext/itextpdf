@@ -508,12 +508,12 @@ public class TextField extends BaseField {
 
         int topChoice = getTopChoice();
 
-        if (text == null)
-        	text = ""; //fixed by Kazuya Ujihara (ujihara.jp)
-
-        if (topChoice >= 0)
+        if (uchoices.length > 0 && topChoice >= 0)
             text = uchoices[topChoice];
 
+        if (text == null)
+        	text = "";
+        
         PdfFormField field = null;
         String mix[][] = null;
 

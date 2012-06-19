@@ -1,5 +1,5 @@
 /*
- * $Id: AsianFontMapper.java 4784 2011-03-15 08:33:00Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -45,7 +45,6 @@ package com.itextpdf.awt;
 
 import java.awt.Font;
 
-import com.itextpdf.awt.DefaultFontMapper.BaseFontParameters;
 import com.itextpdf.text.pdf.BaseFont;
 
 public class AsianFontMapper extends DefaultFontMapper {

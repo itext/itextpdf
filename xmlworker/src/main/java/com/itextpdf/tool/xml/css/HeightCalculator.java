@@ -1,5 +1,5 @@
 /*
- * $Id:  $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT
@@ -61,12 +61,12 @@ public class HeightCalculator {
 				height = utils.parsePxInCmMmPcToPt(heightValue);
 			} else if (utils.isRelativeValue(heightValue)) {
 				Tag ancestor = tag;
-				float firstAncestorsWidth = 0;
-				while(firstAncestorsWidth == 0 && ancestor.getParent() != null) {
+				Float firstAncestorsWidth = null;
+				while(firstAncestorsWidth == null && ancestor.getParent() != null) {
 					ancestor = ancestor.getParent();
 					firstAncestorsWidth = getHeight(ancestor, pageHeight);
 				}
-				if (firstAncestorsWidth == 0) {
+				if (firstAncestorsWidth == null) {
 					height = utils.parseRelativeValue(heightValue, pageHeight);
 				} else {
 					height = utils.parseRelativeValue(heightValue, firstAncestorsWidth);

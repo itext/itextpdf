@@ -66,6 +66,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.codec.Base64;
+import com.itextpdf.text.pdf.security.PdfPKCS7;
 import com.itextpdf.text.xml.XmlToTxt;
 
 /**

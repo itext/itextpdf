@@ -43,19 +43,19 @@
  */
 package com.itextpdf.tool.xml.css;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.exceptions.CssResolverException;
 import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.net.FileRetrieve;
 import com.itextpdf.tool.xml.net.FileRetrieveImpl;
 import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Resolves CSS properties.
@@ -143,11 +143,11 @@ public class StyleAttrCSSResolver implements CSSResolver {
 	public void resolveStyles(final Tag t) {
 		// get css for this tag from resolver
 		Map<String, String> tagCss = new HashMap<String, String>();
-        Map<String, String> paragraphListCss = null;
+        Map<String, String> ListCss = null;
 		if (null != cssFiles && cssFiles.hasFiles()) {
 			tagCss = cssFiles.getCSS(t);
-            if (t.getName().equalsIgnoreCase(HTML.Tag.P)) {
-                paragraphListCss = cssFiles.getCSS(new Tag(HTML.Tag.UL));
+            if (t.getName().equalsIgnoreCase(HTML.Tag.P) || t.getName().equalsIgnoreCase(HTML.Tag.TD)) {
+                ListCss = cssFiles.getCSS(new Tag(HTML.Tag.UL));
             }
 //			Map<String, String> css = cssFiles.getCSS(t);
 //			if (null != css) {
@@ -179,8 +179,8 @@ public class StyleAttrCSSResolver implements CSSResolver {
 		}
 		// inherit css from parent tags, as defined in provided CssInheritanceRules or if property = inherit
 		Map<String, String> css = t.getCSS();
-        if (paragraphListCss != null && paragraphListCss.containsKey(CSS.Property.LIST_STYLE_TYPE)) {
-            css.put(CSS.Property.LIST_STYLE_TYPE, paragraphListCss.get(CSS.Property.LIST_STYLE_TYPE));
+        if (ListCss != null && ListCss.containsKey(CSS.Property.LIST_STYLE_TYPE)) {
+            css.put(CSS.Property.LIST_STYLE_TYPE, ListCss.get(CSS.Property.LIST_STYLE_TYPE));
         }
 
 		if (mustInherit(t.getName()) && null != t.getParent() && null != t.getParent().getCSS()) {

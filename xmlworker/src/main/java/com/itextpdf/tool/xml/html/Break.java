@@ -43,13 +43,17 @@
  */
 package com.itextpdf.tool.xml.html;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
+import com.itextpdf.tool.xml.exceptions.LocaleMessages;
+import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
+import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author redlab_b
@@ -63,7 +67,14 @@ public class Break extends AbstractTagProcessor {
     @Override
 	public List<Element> end(WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
     	List<Element> l = new ArrayList<Element>(1);
-    	l.add(Chunk.NEWLINE);
+        try {
+            HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
+            Chunk newLine = (Chunk) getCssAppliers().apply(new Chunk(Chunk.NEWLINE), tag, htmlPipelineContext);
+            l.add(newLine);
+        } catch (NoCustomContextException e1) {
+            throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
+        }
+
         return l;
     }
 

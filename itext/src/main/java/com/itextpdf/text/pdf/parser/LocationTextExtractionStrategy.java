@@ -266,12 +266,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             rslt = compareInts(distPerpendicular, rhs.distPerpendicular);
             if (rslt != 0) return rslt;
 
-            // note: it's never safe to check floating point numbers for equality, and if two chunks
-            // are truly right on top of each other, which one comes first or second just doesn't matter
-            // so we arbitrarily choose this way.
-            rslt = distParallelStart < rhs.distParallelStart ? -1 : 1;
-
-            return rslt;
+            return Float.compare(distParallelStart, rhs.distParallelStart);
         }
 
         /**

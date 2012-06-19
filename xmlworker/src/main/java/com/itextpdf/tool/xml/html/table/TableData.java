@@ -45,12 +45,12 @@ package com.itextpdf.tool.xml.html.table;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
-import com.itextpdf.tool.xml.css.apply.HtmlCellCssApplier;
 import com.itextpdf.tool.xml.exceptions.LocaleMessages;
 import com.itextpdf.tool.xml.exceptions.RuntimeWorkerException;
 import com.itextpdf.tool.xml.html.AbstractTagProcessor;
@@ -78,17 +78,7 @@ public class TableData extends AbstractTagProcessor {
 	@Override
 	public List<Element> content(final WorkerContext ctx, final Tag tag,
 			final String content) {
-		String sanitized = HTMLUtils.sanitizeInline(content);
-		List<Element> l = new ArrayList<Element>(1);
-
-		if (sanitized.length() > 0) {
-			Chunk c = getCssAppliers().getChunkCssAplier().apply(new Chunk(sanitized), tag);
-			// NoNewLineParagraph noNewLineParagraph = new
-			// NoNewLineParagraphCssApplier(configuration).apply(new
-			// NoNewLineParagraph(c), tag);
-			l.add(c);
-		}
-		return l;
+		return textContent(ctx, tag, content);
 	}
 
 	/*
@@ -104,41 +94,54 @@ public class TableData extends AbstractTagProcessor {
 		HtmlCell cell = new HtmlCell();
         try {
             HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
-            cell = new HtmlCellCssApplier().apply(cell, tag, htmlPipelineContext, htmlPipelineContext);
+            cell = (HtmlCell) getCssAppliers().apply(cell, tag, htmlPipelineContext);
         } catch (NoCustomContextException e1) {
             throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
         }
 
 		List<Element> l = new ArrayList<Element>(1);
         List<Element> chunks = new ArrayList<Element>();
+        List<ListItem> listItems = new ArrayList<ListItem>();
+        int index = -1;
 		for (Element e : currentContent) {
+            index++;
             if (e instanceof Chunk || e instanceof NoNewLineParagraph || e instanceof LineSeparator) {
-                if (e == Chunk.NEWLINE) {
-                    int index = currentContent.indexOf(e);
+                if (!listItems.isEmpty()) {
+                    processListItems(ctx, tag, listItems, cell);
+                }
+                if (e instanceof Chunk && Chunk.NEWLINE.getContent().equals(((Chunk)e).getContent())) {
                     if (index == currentContent.size() - 1) {
                         continue;
                     } else {
                         Element nextElement = currentContent.get(index + 1);
-                        if (nextElement instanceof Paragraph) {
+                        if (!chunks.isEmpty() && !(nextElement instanceof Chunk) && !(nextElement instanceof NoNewLineParagraph)) {
                             continue;
                         }
-                        if (chunks.isEmpty()) {
-                            continue;
-                        }
-
                     }
                 } else if (e instanceof LineSeparator) {
-                    chunks.add(Chunk.NEWLINE);
+                    try {
+                        HtmlPipelineContext htmlPipelineContext = getHtmlPipelineContext(ctx);
+                        Chunk newLine = (Chunk)getCssAppliers().apply(new Chunk(Chunk.NEWLINE), tag, htmlPipelineContext);
+                        chunks.add(newLine);
+                    } catch (NoCustomContextException e1) {
+                        throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e1);
+                    }
                 }
                 chunks.add(e);
                 continue;
-            } else if (!chunks.isEmpty()) {
-                Paragraph p = new Paragraph();
-                p.setMultipliedLeading(1.2f);
-                p.addAll(chunks);
-                p.setAlignment(cell.getHorizontalAlignment());
-                cell.addElement(p);
-                chunks.clear();
+            } else if (e instanceof ListItem) {
+                if (!chunks.isEmpty()) {
+                    processChunkItems(chunks, cell);
+                }
+                listItems.add((ListItem)e);
+                continue;
+            } else {
+                if (!chunks.isEmpty()) {
+                    processChunkItems(chunks, cell);
+                }
+                if (!listItems.isEmpty()) {
+                    processListItems(ctx, tag, listItems, cell);
+                }
             }
 
             if (e instanceof Paragraph) {
@@ -148,11 +151,7 @@ public class TableData extends AbstractTagProcessor {
 			cell.addElement(e);
 		}
         if (!chunks.isEmpty()) {
-            Paragraph p = new Paragraph();
-            p.setMultipliedLeading(1.2f);
-            p.addAll(chunks);
-            p.setAlignment(cell.getHorizontalAlignment());
-            cell.addElement(p);
+            processChunkItems(chunks, cell);
         }
     	l.add(cell);
 		return l;
@@ -167,5 +166,38 @@ public class TableData extends AbstractTagProcessor {
 	public boolean isStackOwner() {
 		return true;
 	}
+
+    private void processChunkItems(List<Element> chunks, HtmlCell cell) {
+        Paragraph p = new Paragraph();
+        p.setMultipliedLeading(1.2f);
+        p.addAll(chunks);
+        p.setAlignment(cell.getHorizontalAlignment());
+        if (p.trim()) {
+            cell.addElement(p);
+        }
+        chunks.clear();
+    }
+
+    private void processListItems(final WorkerContext ctx, final Tag tag, List<ListItem> listItems, HtmlCell cell) {
+        try {
+            com.itextpdf.text.List list = new com.itextpdf.text.List();
+            list.setAutoindent(false);
+            list = (com.itextpdf.text.List) getCssAppliers().apply(list, tag,
+                    getHtmlPipelineContext(ctx));
+            list.setIndentationLeft(0);
+            for (ListItem li : listItems) {
+                li = (ListItem) getCssAppliers().apply(li, tag, getHtmlPipelineContext(ctx));
+                li.setSpacingAfter(0);
+                li.setSpacingBefore(0);
+
+                li.setMultipliedLeading(1.2f);
+                list.add(li);
+            }
+            cell.addElement(list);
+            listItems.clear();
+        } catch (NoCustomContextException e) {
+            throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);
+        }
+    }
 
 }

@@ -45,7 +45,13 @@ package com.itextpdf.text.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.PrivateKey;
 import java.util.HashMap;
+
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.Recipient;
+import org.bouncycastle.cms.RecipientInformation;
+import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 
 import com.itextpdf.text.DocumentException;
 
@@ -312,4 +318,17 @@ public final class PdfEncryptor {
     public static boolean isDegradedPrintingAllowed(int permissions) {
         return (PdfWriter.ALLOW_DEGRADED_PRINTING & permissions) == PdfWriter.ALLOW_DEGRADED_PRINTING;
     }
+
+	/**
+	 * Gets the content from a recipient.
+	 * @param recipientInfo
+	 * @param certificateKey
+	 * @param certificateKeyProvider
+	 * @return
+	 * @throws CMSException
+	 */
+	public static byte[] getContent(RecipientInformation recipientInfo, PrivateKey certificateKey, String certificateKeyProvider) throws CMSException {
+	 	Recipient jceKeyTransRecipient = new JceKeyTransEnvelopedRecipient(certificateKey).setProvider(certificateKeyProvider);
+		return recipientInfo.getContent(jceKeyTransRecipient);
+	}
 }

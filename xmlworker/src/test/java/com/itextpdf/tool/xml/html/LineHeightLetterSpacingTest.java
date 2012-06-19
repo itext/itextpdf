@@ -112,6 +112,6 @@ public class LineHeightLetterSpacingTest {
 	@Test
 	public void resolveCharSpacing() throws IOException {
 		assertEquals(CssUtils.getInstance().parsePxInCmMmPcToPt("1.6pc"), elementList.get(5).getChunks().get(0).getCharacterSpacing(), 0);
-		assertEquals(CssUtils.getInstance().parsePxInCmMmPcToPt("0.83em"), elementList.get(6).getChunks().get(1).getCharacterSpacing(), 0);
+		assertEquals(CssUtils.getInstance().parsePxInCmMmPcToPt("0.83em"), elementList.get(6).getChunks().get(2).getCharacterSpacing(), 0);
 	}
 }

@@ -48,7 +48,9 @@ import java.util.List;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfDiv;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -67,16 +69,21 @@ public class Div extends AbstractTagProcessor {
 	 */
 	@Override
 	public List<Element> content(final WorkerContext ctx, final Tag tag, final String content) {
-		String sanitized = HTMLUtils.sanitizeInline(content);
+		List<Chunk> sanitizedChunks = HTMLUtils.sanitize(content, false);
+        NoNewLineParagraph noNewLineParagraph = new NoNewLineParagraph();
 		List<Element> l = new ArrayList<Element>(1);
-    	if (sanitized.length() > 0) {
-    		Chunk c = getCssAppliers().getChunkCssAplier().apply(new Chunk(sanitized), tag);
-    		try {
-				l.add(getCssAppliers().apply(new NoNewLineParagraph(c), tag, getHtmlPipelineContext(ctx)));
-			} catch (NoCustomContextException e) {
-				throw new RuntimeWorkerException(e);
-			}
-    	}
+        for (Chunk sanitized : sanitizedChunks) {
+            Font f = getCssAppliers().getChunkCssAplier().applyFontStyles(tag);
+            sanitized.setFont(f);
+            noNewLineParagraph.add(sanitized);
+        }
+        if (noNewLineParagraph.size() > 0) {
+            try {
+                l.add(getCssAppliers().apply(noNewLineParagraph, tag, getHtmlPipelineContext(ctx)));
+            } catch (NoCustomContextException e) {
+                throw new RuntimeWorkerException(e);
+            }
+        }
 		return l;
 	}
 
@@ -91,24 +98,30 @@ public class Div extends AbstractTagProcessor {
 	public List<Element> end(final WorkerContext ctx, final Tag tag, final List<Element> currentContent) {
 		try {
 			Paragraph p = null;
-			List<Element> l = new ArrayList<Element>(1);
+			PdfDiv div = (PdfDiv)getCssAppliers().apply(new PdfDiv(), tag, getHtmlPipelineContext(ctx));
 			for (Element e : currentContent) {
-				if (e instanceof Paragraph) {
+				if (e instanceof Paragraph || e instanceof PdfDiv) {
 					if (p != null) {
-						l.add(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
+                        if (p.trim()) {
+						    div.addElement(p);
+                        }
 						p = null;
 					}
-					l.add(e);
-				} else {
+					div.addElement(e);
+                } else {
 					if (p == null) {
 						p = new Paragraph();
+                        p.setMultipliedLeading(1.2f);
 					}
 					p.add(e);
 				}
 			}
-			if (p != null) {
-				l.add(getCssAppliers().apply(p, tag, getHtmlPipelineContext(ctx)));
+			if (p != null && p.trim()) {
+                div.addElement(p);
 			}
+
+			List<Element> l = new ArrayList<Element>(1);
+            l.add(div);
 			return l;
 		} catch (NoCustomContextException e) {
 			throw new RuntimeWorkerException(LocaleMessages.getInstance().getMessage(LocaleMessages.NO_CUSTOM_CONTEXT), e);

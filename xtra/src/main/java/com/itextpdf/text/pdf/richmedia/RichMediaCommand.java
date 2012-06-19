@@ -1,5 +1,5 @@
 /*
- * $Id: RichMediaCommand.java 3851 2009-04-08 23:33:34Z xlv $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

@@ -45,6 +45,7 @@ package com.itextpdf.text;
 
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
+import com.itextpdf.text.pdf.PdfPTable;
 
 import java.util.ArrayList;
 
@@ -229,22 +230,62 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
      */
     public java.util.List<Element> breakUp() {
     	java.util.List<Element> list = new ArrayList<Element>();
-		Paragraph tmp = cloneShallow(true);
+		Paragraph tmp = null;
 		for (Element e : this) {
 			if (e.type() == Element.LIST || e.type() == Element.PTABLE || e.type() == Element.PARAGRAPH) {
-				if (tmp.size() > 0) {
+				if (tmp != null && tmp.size() > 0) {
                     tmp.setSpacingAfter(0);
 					list.add(tmp);
 					tmp = cloneShallow(false);
 				}
+                if (list.size() == 0) {
+                    switch (e.type()) {
+                        case Element.PTABLE:
+                            ((PdfPTable) e).setSpacingBefore(getSpacingBefore());
+                            break;
+                        case Element.PARAGRAPH:
+                            ((Paragraph) e).setSpacingBefore(getSpacingBefore());
+                            break;
+                        case Element.LIST:
+                            ListItem firstItem = ((List)e).getFirstItem();
+                            if (firstItem != null) {
+                                firstItem.setSpacingBefore(getSpacingBefore());
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
 				list.add(e);
 			}
 			else {
+                if (tmp == null) {
+                    tmp = cloneShallow(list.size() == 0);
+                }
 				tmp.add(e);
 			}
 		}
-		if (tmp.size() > 0) {
+		if (tmp != null && tmp.size() > 0) {
 			list.add(tmp);
+        }
+        if (list.size() != 0) {
+            Element lastElement = list.get(list.size() - 1);
+            switch (lastElement.type()) {
+                case Element.PTABLE :
+                    ((PdfPTable)lastElement).setSpacingAfter(getSpacingAfter());
+                    break;
+                case Element.PARAGRAPH :
+                    ((Paragraph)lastElement).setSpacingAfter(getSpacingAfter());
+                    break;
+                case Element.LIST :
+                    ListItem lastItem = ((List)lastElement).getLastItem();
+                    if (lastItem != null) {
+                        lastItem.setSpacingAfter(getSpacingAfter());
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     	return list;
     }

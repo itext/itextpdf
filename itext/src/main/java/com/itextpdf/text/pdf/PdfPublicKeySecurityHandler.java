@@ -45,7 +45,7 @@
 /**
  *     The below 2 methods are from pdfbox.
  *
- *     private DERObject createDERForRecipient(byte[] in, X509Certificate cert) ;
+ *     private ASN1Primitive createDERForRecipient(byte[] in, X509Certificate cert) ;
  *     private KeyTransRecipientInfo computeRecipientInfo(X509Certificate x509certificate, byte[] abyte0);
  *
  *     2006-11-22 Aiken Sam.
@@ -102,8 +102,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERSet;
@@ -189,7 +189,7 @@ public class PdfPublicKeySecurityHandler {
         pkcs7input[22] = two;
         pkcs7input[23] = one;
 
-        DERObject obj = createDERForRecipient(pkcs7input, (X509Certificate)certificate);
+        ASN1Primitive obj = createDERForRecipient(pkcs7input, (X509Certificate)certificate);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -221,7 +221,7 @@ public class PdfPublicKeySecurityHandler {
         return EncodedRecipients;
     }
 
-    private DERObject createDERForRecipient(byte[] in, X509Certificate cert)
+    private ASN1Primitive createDERForRecipient(byte[] in, X509Certificate cert)
         throws IOException,
                GeneralSecurityException
     {
@@ -232,7 +232,7 @@ public class PdfPublicKeySecurityHandler {
         AlgorithmParameters algorithmparameters = algorithmparametergenerator.generateParameters();
         ByteArrayInputStream bytearrayinputstream = new ByteArrayInputStream(algorithmparameters.getEncoded("ASN.1"));
         ASN1InputStream asn1inputstream = new ASN1InputStream(bytearrayinputstream);
-        DERObject derobject = asn1inputstream.readObject();
+        ASN1Primitive derobject = asn1inputstream.readObject();
         KeyGenerator keygenerator = KeyGenerator.getInstance(s);
         keygenerator.init(128);
         SecretKey secretkey = keygenerator.generateKey();
@@ -242,13 +242,13 @@ public class PdfPublicKeySecurityHandler {
         DEROctetString deroctetstring = new DEROctetString(abyte1);
         KeyTransRecipientInfo keytransrecipientinfo = computeRecipientInfo(cert, secretkey.getEncoded());
         DERSet derset = new DERSet(new RecipientInfo(keytransrecipientinfo));
-        AlgorithmIdentifier algorithmidentifier = new AlgorithmIdentifier(new DERObjectIdentifier(s), derobject);
+        AlgorithmIdentifier algorithmidentifier = new AlgorithmIdentifier(new ASN1ObjectIdentifier(s), derobject);
         EncryptedContentInfo encryptedcontentinfo =
             new EncryptedContentInfo(PKCSObjectIdentifiers.data, algorithmidentifier, deroctetstring);
         EnvelopedData env = new EnvelopedData(null, derset, encryptedcontentinfo, null);
         ContentInfo contentinfo =
             new ContentInfo(PKCSObjectIdentifiers.envelopedData, env);
-        return contentinfo.getDERObject();
+        return contentinfo.toASN1Primitive();
     }
 
     private KeyTransRecipientInfo computeRecipientInfo(X509Certificate x509certificate, byte[] abyte0)
@@ -258,12 +258,12 @@ public class PdfPublicKeySecurityHandler {
             new ASN1InputStream(new ByteArrayInputStream(x509certificate.getTBSCertificate()));
         TBSCertificateStructure tbscertificatestructure =
             TBSCertificateStructure.getInstance(asn1inputstream.readObject());
-        AlgorithmIdentifier algorithmidentifier = tbscertificatestructure.getSubjectPublicKeyInfo().getAlgorithmId();
+        AlgorithmIdentifier algorithmidentifier = tbscertificatestructure.getSubjectPublicKeyInfo().getAlgorithm();
         IssuerAndSerialNumber issuerandserialnumber =
             new IssuerAndSerialNumber(
                 tbscertificatestructure.getIssuer(),
                 tbscertificatestructure.getSerialNumber().getValue());
-        Cipher cipher = Cipher.getInstance(algorithmidentifier.getObjectId().getId());
+        Cipher cipher = Cipher.getInstance(algorithmidentifier.getAlgorithm().getId());
         try{
         cipher.init(1, x509certificate);
         }catch(InvalidKeyException e){

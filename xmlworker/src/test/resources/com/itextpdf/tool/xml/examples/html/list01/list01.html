@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML-Print 1.0//EN"
+      "http://www.w3.org/MarkUp/DTD/xhtml-print10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>3_5-BF-01</title>
+</head>
+<body>
+<div class="TestPurpose">Common attributes in list module, printers SHALL
+also support the style attribute [on all elements with CORE attribute set
+25: A conforming printer MUST NOT treat [an] attribute [marked as N/A] as
+an error: title</div>
+<div class="AssertionsTested">Tests for assertions 25, 26, 27, 94, 23</div>
+
+<p>&lt;dl &gt;&nbsp; tag (block):  Below must be a list of three items with their definitions next to them but on the following line</p>
+<dl title="ignored" class="CL" id="A" style="color: green">
+<dt title="ignored" class="CL" id="B" style="color: green">&lt;dt &gt; tag (block): Item</dt><dd title="ignored" class="CL" id="C" style="color: green">&lt; dd &gt; tag (block): definition of item</dd>
+<dt title="ignored" class="CL" id="D" style="color: green">&lt;dt &gt; tag (block): Item</dt><dd title="ignored" class="CL" id="E" style="color: green">&lt; dd &gt; tag (block): definition of item</dd>
+<dt title="ignored" class="CL" id="F" style="color: green">&lt;dt &gt; tag (block): Item</dt><dd title="ignored" class="CL" id="G" style="color: green">&lt; dd &gt; tag (block): definition of item</dd>
+</dl>
+
+</body>
+</html>

@@ -102,8 +102,8 @@ public class FontAndColorTest {
     @Test
     public void resolveColor() throws IOException {
         assertEquals(BaseColor.BLACK, elementList.get(0).getChunks().get(0).getFont().getColor());
-        assertEquals(255, elementList.get(2).getChunks().get(0).getFont().getColor().getBlue());
-        assertEquals(255, elementList.get(2).getChunks().get(1).getFont().getColor().getGreen());
-        assertEquals(255, elementList.get(2).getChunks().get(5).getFont().getColor().getRed());
+        assertEquals(255, elementList.get(3).getChunks().get(0).getFont().getColor().getBlue());
+        assertEquals(255, elementList.get(3).getChunks().get(2).getFont().getColor().getGreen());
+        assertEquals(255, elementList.get(3).getChunks().get(10).getFont().getColor().getRed());
     }
 }

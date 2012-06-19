@@ -51,6 +51,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.Key;
 import java.security.MessageDigest;
+import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -738,12 +739,13 @@ public class PdfReader implements PdfViewerPreferences {
 
                     while (recipientCertificatesIt.hasNext()) {
                         RecipientInformation recipientInfo = recipientCertificatesIt.next();
-
+                        
                         if (recipientInfo.getRID().match(certificate) && !foundRecipient) {
-                         envelopedData = recipientInfo.getContent(certificateKey, certificateKeyProvider);
-                         foundRecipient = true;
-                        }
+                        	envelopedData = PdfEncryptor.getContent(recipientInfo, (PrivateKey)certificateKey, certificateKeyProvider);
+                        	foundRecipient = true;
+                        } 
                     }
+
                 }
                 catch (Exception f) {
                     throw new ExceptionConverter(f);

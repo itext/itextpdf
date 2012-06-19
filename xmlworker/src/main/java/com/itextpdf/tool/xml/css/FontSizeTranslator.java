@@ -49,6 +49,8 @@ import com.itextpdf.tool.xml.Tag;
  */
 public class FontSizeTranslator {
 
+    public static final float DEFAULT_FONT_SIZE = 12f;
+
     /**
      *
      */

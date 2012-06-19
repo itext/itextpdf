@@ -45,31 +45,10 @@ package com.itextpdf.text.pdf;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
-import com.itextpdf.text.Anchor;
-import com.itextpdf.text.Annotation;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
+import com.itextpdf.text.*;
 import com.itextpdf.text.List;
-import com.itextpdf.text.ListItem;
-import com.itextpdf.text.MarkedObject;
-import com.itextpdf.text.MarkedSection;
-import com.itextpdf.text.Meta;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.Section;
 import com.itextpdf.text.api.WriterOperation;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.collection.PdfCollection;
@@ -399,6 +378,9 @@ public class PdfDocument extends Document {
             return false;
         }
         try {
+            if (element.type() != Element.DIV) {
+                flushFloatingElements();
+            }
         	// TODO refactor this uber long switch to State/Strategy or something ...
             switch(element.type()) {
                 // Information (headers)
@@ -483,7 +465,7 @@ public class PdfDocument extends Document {
                 case Element.PHRASE: {
                 	leadingCount++;
                     // we cast the element to a phrase and set the leading of the document
-                    leading = ((Phrase) element).getLeading();
+                    leading = ((Phrase) element).getTotalLeading();
                     // we process the element
                     element.process(this);
                     leadingCount--;
@@ -717,6 +699,13 @@ public class PdfDocument extends Document {
                 		((WriterOperation)element).write(writer, this);
                 	}
                 	break;
+                case Element.DIV:
+                    ensureNewLine();
+                    flushLines();
+                    addDiv((PdfDiv)element);
+                    pageEmpty = false;
+                    //newLine();
+                    break;
                 default:
                     return false;
             }
@@ -836,6 +825,7 @@ public class PdfDocument extends Document {
         indentation.imageIndentRight = 0;
 
         try {
+            flushFloatingElements();
             // we flush the arraylist with recently written lines
         	flushLines();
 
@@ -1411,11 +1401,11 @@ public class PdfDocument extends Document {
                         localGoto((String)chunk.getAttribute(Chunk.LOCALGOTO), xMarker, yMarker, xMarker + width - subtract, yMarker + fontSize);
                     }
                     if (chunk.isAttribute(Chunk.LOCALDESTINATION)) {
-                        float subtract = lastBaseFactor;
+                        /*float subtract = lastBaseFactor;
                         if (nextChunk != null && nextChunk.isAttribute(Chunk.LOCALDESTINATION))
                             subtract = 0;
                         if (nextChunk == null)
-                            subtract += hangingCorrection;
+                            subtract += hangingCorrection;*/
                         localDestination((String)chunk.getAttribute(Chunk.LOCALDESTINATION), new PdfDestination(PdfDestination.XYZ, xMarker, yMarker + fontSize, 0));
                     }
                     if (chunk.isAttribute(Chunk.GENERICTAG)) {
@@ -2376,6 +2366,31 @@ public class PdfDocument extends Document {
         ptable.setHeadersInEvent(he);
     }
 
+    private ArrayList<Element> floatingElements = new ArrayList<Element>();
+
+    private void addDiv(final PdfDiv div) throws DocumentException {
+        if (floatingElements == null) {
+            floatingElements = new ArrayList<Element>();
+        }
+        floatingElements.add(div);
+    }
+
+    private void flushFloatingElements() throws DocumentException {
+        if (floatingElements != null && !floatingElements.isEmpty()) {
+            ArrayList<Element> cashedFloatingElements = floatingElements;
+            floatingElements = null;
+            FloatLayout fl = new FloatLayout(writer.getDirectContent(), cashedFloatingElements);
+
+                fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
+                int status = fl.layout(false);
+                //if ((status & ColumnText.NO_MORE_TEXT) != 0) {
+                    text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
+                    currentHeight = indentTop() - fl.getYLine();
+                //}
+
+        }
+    }
+
     /**
      * Checks if a <CODE>PdfPTable</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
      *
@@ -2391,8 +2406,8 @@ public class PdfDocument extends Document {
     	}
         // ensuring that a new line has been started.
         ensureNewLine();
-        return table.getTotalHeight() + (currentHeight > 0 ? table.spacingBefore() : 0f)
-        	<= indentTop() - currentHeight - indentBottom() - margin;
+        Float spaceNeeded = table.isSkipFirstHeader() ? table.getTotalHeight() - table.getHeaderHeight() : table.getTotalHeight();
+        return spaceNeeded + (currentHeight > 0 ? table.spacingBefore() : 0f) <= indentTop() - currentHeight - indentBottom() - margin;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * $Id: ALink.java 4113 2009-12-01 11:08:59Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA

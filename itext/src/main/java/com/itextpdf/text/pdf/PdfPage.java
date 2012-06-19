@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.pdf;
 import java.util.HashMap;
+
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.error_messages.MessageLocalization;
 /**
  * <CODE>PdfPage</CODE> is the PDF Page-object.
  * <P>
@@ -83,31 +86,15 @@ public class PdfPage extends PdfDictionary {
  * @param		mediaBox		a value for the <B>MediaBox</B> key
  * @param		resources		an indirect reference to a <CODE>PdfResources</CODE>-object
  * @param		rotate			a value for the <B>Rotate</B> key
+ * @throws DocumentException 
  */
 
-//    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfIndirectReference resources, PdfNumber rotate) {
-//        super(PAGE);
-//        this.mediaBox = mediaBox;
-//        put(PdfName.MEDIABOX, mediaBox);
-//        put(PdfName.RESOURCES, resources);
-//        if (rotate != null) {
-//            put(PdfName.ROTATE, rotate);
-//        }
-//        if (cropBox != null)
-//            put(PdfName.CROPBOX, new PdfRectangle(cropBox));
-//    }
-
-/**
- * Constructs a <CODE>PdfPage</CODE>.
- *
- * @param		mediaBox		a value for the <B>MediaBox</B> key
- * @param		resources		an indirect reference to a <CODE>PdfResources</CODE>-object
- * @param		rotate			a value for the <B>Rotate</B> key
- */
-
-    PdfPage(PdfRectangle mediaBox, HashMap<String, PdfRectangle> boxSize, PdfDictionary resources, int rotate) {
+    PdfPage(PdfRectangle mediaBox, HashMap<String, PdfRectangle> boxSize, PdfDictionary resources, int rotate) throws DocumentException {
         super(PAGE);
         this.mediaBox = mediaBox;
+        if (mediaBox != null && (mediaBox.width() > 14400 || mediaBox.height() > 14400)) {
+        	throw new DocumentException(MessageLocalization.getComposedMessage("the.page.size.must.be.smaller.than.14400.by.14400.its.1.by.2", mediaBox.width(), mediaBox.height()));
+        }
         put(PdfName.MEDIABOX, mediaBox);
         put(PdfName.RESOURCES, resources);
         if (rotate != 0) {
@@ -125,20 +112,10 @@ public class PdfPage extends PdfDictionary {
  *
  * @param		mediaBox		a value for the <B>MediaBox</B> key
  * @param		resources		an indirect reference to a <CODE>PdfResources</CODE>-object
+ * @throws DocumentException 
  */
 
-//    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfIndirectReference resources) {
-//        this(mediaBox, cropBox, resources, null);
-//    }
-
-/**
- * Constructs a <CODE>PdfPage</CODE>.
- *
- * @param		mediaBox		a value for the <B>MediaBox</B> key
- * @param		resources		an indirect reference to a <CODE>PdfResources</CODE>-object
- */
-
-    PdfPage(PdfRectangle mediaBox, HashMap<String, PdfRectangle> boxSize, PdfDictionary resources) {
+    PdfPage(PdfRectangle mediaBox, HashMap<String, PdfRectangle> boxSize, PdfDictionary resources) throws DocumentException {
         this(mediaBox, boxSize, resources, 0);
     }
 
