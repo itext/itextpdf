@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: ExternalSignaturePrivateKey.java 5193 2012-06-18 13:36:09Z blowagie $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -52,7 +52,7 @@ import java.security.Signature;
  * when you have a PrivateKey object.
  * @author Paulo Soares
  */
-public class ExternalSignaturePrivateKey implements ExternalSignature {
+public class PrivateKeySignature implements ExternalSignature {
 	
 	/** The private key object. */
     private PrivateKey pk;
@@ -69,7 +69,7 @@ public class ExternalSignaturePrivateKey implements ExternalSignature {
      * @param hashAlgorithm	the hash algorithm (e.g. "SHA-1", "SHA-256",...)
      * @param provider	the security provider (e.g. "BC")
      */
-    public ExternalSignaturePrivateKey(PrivateKey pk, String hashAlgorithm, String provider) {
+    public PrivateKeySignature(PrivateKey pk, String hashAlgorithm, String provider) {
         this.pk = pk;
         this.provider = provider;
         this.hashAlgorithm = DigestAlgorithms.getDigest(DigestAlgorithms.getAllowedDigests(hashAlgorithm));
