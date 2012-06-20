@@ -50,6 +50,21 @@ import java.util.HashMap;
  */
 public class DigestAlgorithms {
 
+	/** Algorithm available for signatures since PDF 1.3 */
+	public static final String SHA1 = "SHA-1";
+
+	/** Algorithm available for signatures since PDF 1.6 */
+	public static final String SHA256 = "SHA-256";
+
+	/** Algorithm available for signatures since PDF 1.7 */
+	public static final String SHA384 = "SHA-384";
+
+	/** Algorithm available for signatures since PDF 1.7 */
+	public static final String SHA512 = "SHA-512";
+
+	/** Algorithm available for signatures since PDF 1.7 */
+	public static final String RIPEMD160 = "RIPEMD160";
+	
 	/** Maps the digest IDs with the human-readable name of the digest algorithm. */
     private static final HashMap<String, String> digestNames = new HashMap<String, String>();
     
