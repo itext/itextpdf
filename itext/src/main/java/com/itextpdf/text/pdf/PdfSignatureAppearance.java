@@ -1013,15 +1013,10 @@ public class PdfSignatureAppearance {
                 im = Image.getInstance(signatureGraphic);
                 im.scaleToFit(signatureRect.getWidth(), signatureRect.getHeight());
 
-                p = new Paragraph();
+                p = new Paragraph(signatureRect.getHeight());
                 // must calculate the point to draw from to make image appear in middle of column
-                x = 0;
-                // experimentation found this magic number to counteract Adobe's signature graphic, which
-                // offsets the y co-ordinate by 15 units
-                y = -im.getScaledHeight() + 15;
-
-                x = x + (signatureRect.getWidth() - im.getScaledWidth()) / 2;
-                y = y - (signatureRect.getHeight() - im.getScaledHeight()) / 2;
+                x = (signatureRect.getWidth() - im.getScaledWidth()) / 2;
+                y = (signatureRect.getHeight() - im.getScaledHeight()) / 2;
                 p.add(new Chunk(im, x, y, false));
                 ct2.addElement(p);
                 ct2.go();
