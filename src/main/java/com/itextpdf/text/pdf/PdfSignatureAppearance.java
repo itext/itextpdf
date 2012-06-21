@@ -1013,7 +1013,7 @@ public class PdfSignatureAppearance {
                 im = Image.getInstance(signatureGraphic);
                 im.scaleToFit(signatureRect.getWidth(), signatureRect.getHeight());
 
-                p = new Paragraph();
+                p = new Paragraph(signatureRect.getHeight());
                 // must calculate the point to draw from to make image appear in middle of column
                 x = 0;
                 // experimentation found this magic number to counteract Adobe's signature graphic, which
