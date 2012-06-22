@@ -1021,7 +1021,7 @@ public class PdfSignatureAppearance {
                 y = -im.getScaledHeight() + 15;
 
                 x = x + (signatureRect.getWidth() - im.getScaledWidth()) / 2;
-                y = y - (signatureRect.getHeight() - im.getScaledHeight()) / 2;
+                y = y + (signatureRect.getHeight() - im.getScaledHeight()) / 2;
                 p.add(new Chunk(im, x, y, false));
                 ct2.addElement(p);
                 ct2.go();
