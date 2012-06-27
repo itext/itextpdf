@@ -835,7 +835,7 @@ public class PdfDocument extends Document {
         	int rotation = pageSize.getRotation();
 
         	// [C10]
-        	if (writer.isPdfX()) {
+        	if (writer.isPdfIso()) {
         		if (thisBoxSize.containsKey("art") && thisBoxSize.containsKey("trim"))
         			throw new PdfXConformanceException(MessageLocalization.getComposedMessage("only.one.of.artbox.or.trimbox.can.exist.in.the.page"));
         		if (!thisBoxSize.containsKey("art") && !thisBoxSize.containsKey("trim")) {
