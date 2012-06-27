@@ -41,27 +41,19 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf.interfaces;
+package com.itextpdf.text.pdf;
 
-public interface PdfXConformance extends PdfIsoConformance {
-    
-    /**
-     * Sets the PDF/X conformance level.
-     * Allowed values are PDFX1A2001, PDFX32002, PDFA1A and PDFA1B.
-     * It must be called before opening the document.
-     * @param pdfxConformance the conformance level
-     */    
-    public void setPDFXConformance(int pdfxConformance);
+public class PdfIsoConformanceException extends RuntimeException {
 
-	/**
-	 * Getter for the PDF/X Conformance value.
-	 * @return the pdfxConformance
-	 */
-	public int getPDFXConformance();
-	
+	/** Creates a new instance of PdfIsoConformanceException. */
+    public PdfIsoConformanceException() {
+    }
+
     /**
-     * Checks if the PDF/X Conformance is necessary.
-     * @return true if the PDF has to be in conformance with any of the PDF/X specifications
+     * Creates a new instance of PdfIsoConformanceException.
+     * @param s
      */
-    public boolean isPdfX();
+    public PdfIsoConformanceException(String s) {
+        super(s);
+    }    
 }

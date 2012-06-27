@@ -755,4 +755,8 @@ public class PdfStamper
             return;
         verification.merge();
     }
+
+    protected PdfStamper() {
+
+    }
 }
