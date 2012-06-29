@@ -344,6 +344,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
                 }
                     return success;
                 case Element.MARKED:
+                case Element.DIV:
                 case Element.ANCHOR:
                 case Element.ANNOTATION:
                 case Element.PTABLE: // case added by mr. Karen Vardanyan
