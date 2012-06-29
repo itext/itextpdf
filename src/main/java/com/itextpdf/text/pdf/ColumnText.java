@@ -475,7 +475,7 @@ public class ColumnText {
 
     public static boolean isAllowedElement(Element element) {
     	int type = element.type();
-    	if (type == Element.CHUNK || type == Element.PHRASE
+    	if (type == Element.CHUNK || type == Element.PHRASE || type == Element.DIV
     			|| type == Element.PARAGRAPH || type == Element.LIST
     			|| type == Element.YMARK || type == Element.PTABLE) return true;
     	if (element instanceof Image) return true;
