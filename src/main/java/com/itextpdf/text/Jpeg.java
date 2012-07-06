@@ -415,7 +415,7 @@ public class Jpeg extends Image {
                 total += icc[k].length - 14;
             }
             try {
-            	ICC_Profile icc_prof = ICC_Profile.getInstance(ficc);
+            	ICC_Profile icc_prof = ICC_Profile.getInstance(ficc, colorspace);
             	tagICC(icc_prof);
             }
             catch(IllegalArgumentException e) {

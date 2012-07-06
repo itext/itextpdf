@@ -58,18 +58,34 @@ public class ICC_Profile {
 
     protected ICC_Profile() {
     }
+    
+    public static ICC_Profile getInstance(byte[] data, int numComponents) {
+        if (data.length < 128 || data[36] != 0x61 || data[37] != 0x63
+                || data[38] != 0x73 || data[39] != 0x70)
+                throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.icc.profile"));
+        try {
+        	ICC_Profile icc = new ICC_Profile();
+        	icc.data = data;
+        	Integer cs;
+        	cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
+        	int nc = cs == null ? 0 : cs.intValue();
+        	icc.numComponents = nc;
+        	// invalid ICC
+        	if (nc != numComponents) {
+        		throw new IllegalArgumentException("ICC profile contains " + nc + " component(s), the image data contains " + numComponents + " component(s)");
+        	}
+        	return icc;
+    	} catch (UnsupportedEncodingException e) {
+			throw new ExceptionConverter(e);
+		}
+    }
 
     public static ICC_Profile getInstance(byte[] data) {
-        if (data.length < 128 || data[36] != 0x61 || data[37] != 0x63
-            || data[38] != 0x73 || data[39] != 0x70)
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.icc.profile"));
-		try {
-	        ICC_Profile icc = new ICC_Profile();
-	        icc.data = data;
+    	try {
 	        Integer cs;
 			cs = cstags.get(new String(data, 16, 4, "US-ASCII"));
-	        icc.numComponents = cs == null ? 0 : cs.intValue();
-	        return icc;
+	        int numComponents = cs == null ? 0 : cs.intValue();
+	        return getInstance(data, numComponents);
 		} catch (UnsupportedEncodingException e) {
 			throw new ExceptionConverter(e);
 		}
