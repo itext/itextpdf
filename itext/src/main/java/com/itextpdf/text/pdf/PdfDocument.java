@@ -425,8 +425,10 @@ public class PdfDocument extends Document {
                         PdfChunk overflow;
                         while ((overflow = line.add(chunk)) != null) {
                             carriageReturn();
+                            boolean newlineSplit = chunk.isNewlineSplit();
                             chunk = overflow;
-                            chunk.trimFirstSpace();
+                            if (!newlineSplit)
+                            	chunk.trimFirstSpace();
                         }
                     }
                     pageEmpty = false;
