@@ -94,7 +94,7 @@ public class PdfIndirectReference extends PdfObject {
  * @param		number			the object number.
  */
     
-    PdfIndirectReference(int type, int number) {
+    protected PdfIndirectReference(int type, int number) {
         this(type, number, 0);
     }
     

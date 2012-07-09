@@ -3258,7 +3258,7 @@ public class PdfReader implements PdfViewerPreferences {
         setViewerPreferences(this.viewerPreferences);
     }
 
-    void setViewerPreferences(final PdfViewerPreferencesImp vp) {
+    public void setViewerPreferences(final PdfViewerPreferencesImp vp) {
     	vp.addToCatalog(catalog);
     }
 

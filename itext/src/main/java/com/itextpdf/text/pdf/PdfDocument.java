@@ -1865,6 +1865,10 @@ public class PdfDocument extends Document {
         this.pageLabels = pageLabels;
     }
 
+    public PdfPageLabels getPageLabels() {
+        return this.pageLabels;
+    }
+
 //	[C5] named objects: local destinations, javascript, embedded files
 
     /**
