@@ -76,7 +76,7 @@ public class PdfIndirectObject {
     static final byte STARTOBJ[] = DocWriter.getISOBytes(" obj\n");
     static final byte ENDOBJ[] = DocWriter.getISOBytes("\nendobj\n");
     static final int SIZEOBJ = STARTOBJ.length + ENDOBJ.length;
-    PdfObject object;
+    protected PdfObject object;
     PdfWriter writer;
     
     // constructors
@@ -88,7 +88,7 @@ public class PdfIndirectObject {
  * @param		object			the direct object
  */
     
-    PdfIndirectObject(int number, PdfObject object, PdfWriter writer) {
+    protected PdfIndirectObject(int number, PdfObject object, PdfWriter writer) {
         this(number, 0, object, writer);
     }
     
@@ -148,7 +148,7 @@ public class PdfIndirectObject {
  * @param os the stream to write to
  * @throws IOException on write error
  */
-    void writeTo(OutputStream os) throws IOException
+    protected void writeTo(OutputStream os) throws IOException
     {
         os.write(DocWriter.getISOBytes(String.valueOf(number)));
         os.write(' ');
