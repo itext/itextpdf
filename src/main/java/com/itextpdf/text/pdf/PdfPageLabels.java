@@ -150,7 +150,7 @@ public class PdfPageLabels {
     /** Gets the page label dictionary to insert into the document.
      * @return the page label dictionary
      */
-    PdfDictionary getDictionary(PdfWriter writer) {
+    public PdfDictionary getDictionary(PdfWriter writer) {
         try {
             return PdfNumberTree.writeTree(map, writer);
         }

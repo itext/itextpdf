@@ -77,7 +77,7 @@ public class PdfIndirectObject {
     static final byte ENDOBJ[] = DocWriter.getISOBytes("\nendobj\n");
     static final int SIZEOBJ = STARTOBJ.length + ENDOBJ.length;
     protected PdfObject object;
-    PdfWriter writer;
+    protected PdfWriter writer;
     
     // constructors
     

@@ -289,7 +289,7 @@ public class PdfWriter extends DocWriter implements
             return new PdfWriter.PdfBody.PdfCrossReference(2, nObj, currentObjNum, idx);
         }
 
-        protected void flushObjStm() throws IOException {
+        public void flushObjStm() throws IOException {
             if (numObj == 0)
                 return;
             int first = index.size();
