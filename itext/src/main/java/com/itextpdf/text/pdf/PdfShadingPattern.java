@@ -90,7 +90,7 @@ public class PdfShadingPattern extends PdfDictionary {
         patternName = new PdfName("P" + number);
     }
     
-    void addToBody() throws IOException {
+    public void addToBody() throws IOException {
         put(PdfName.SHADING, getShadingReference());
         put(PdfName.MATRIX, new PdfArray(matrix));
         writer.addToBody(this, getPatternReference());

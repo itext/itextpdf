@@ -72,7 +72,7 @@ public class PdfPSXObject extends PdfTemplate {
      * @throws IOException
      */
     
-    PdfStream getFormXObject(int compressionLevel) throws IOException {
+    public PdfStream getFormXObject(int compressionLevel) throws IOException {
         PdfStream s = new PdfStream(content.toByteArray());
         s.put(PdfName.TYPE, PdfName.XOBJECT);
         s.put(PdfName.SUBTYPE, PdfName.PS);

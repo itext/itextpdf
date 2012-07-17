@@ -73,7 +73,7 @@ class ColorDetails {
     /** Gets the indirect reference to this color.
      * @return the indirect reference to this color
      */
-    PdfIndirectReference getIndirectReference() {
+    public PdfIndirectReference getIndirectReference() {
         return indirectReference;
     }
 
@@ -87,7 +87,7 @@ class ColorDetails {
     /** Gets the <CODE>SpotColor</CODE> object.
      * @return the <CODE>PdfSpotColor</CODE>
      */
-    PdfObject getSpotColor(PdfWriter writer) {
+    public PdfObject getSpotColor(PdfWriter writer) {
         return spotcolor.getSpotObject(writer);
     }
 }

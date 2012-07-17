@@ -258,7 +258,7 @@ class FontDetails {
      * Writes the font definition to the document.
      * @param writer the <CODE>PdfWriter</CODE> of this document
      */
-    void writeFont(PdfWriter writer) {
+    public void writeFont(PdfWriter writer) {
         try {
             switch (fontType) {
                 case BaseFont.FONT_TYPE_T3:
