@@ -43,12 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.*;
 import com.itextpdf.text.api.Spaceable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A special element to put a collection of elements at an absolute position.
@@ -380,6 +380,7 @@ public class PdfDiv implements Element, Spaceable {
         float minY = Math.min(lly, ury);
         float rightX = Math.max(llx, urx);
         float yLine = maxY;
+        boolean contentCutByFixedHeight = false;
 
         if (width != null && width > 0) {
             if (width < rightX - leftX) {
@@ -395,10 +396,14 @@ public class PdfDiv implements Element, Spaceable {
         if (height != null && height > 0) {
             if (height < maxY - minY) {
                 minY = maxY - height;
+                contentCutByFixedHeight = true;
             } else if (height > maxY - minY) {
                 return ColumnText.NO_MORE_COLUMN;
             }
         } else if (percentageHeight != null) {
+            if (percentageHeight < 1.0) {
+                contentCutByFixedHeight = true;
+            }
             contentHeight = (maxY - minY) * percentageHeight;
             minY = maxY - contentHeight;
         }
@@ -460,11 +465,11 @@ public class PdfDiv implements Element, Spaceable {
         int status = ColumnText.NO_MORE_TEXT;
 
         if (!content.isEmpty()) {
-            //if (floatLayout == null) {
-            ArrayList<Element> floatingElements = new ArrayList<Element>();
-            floatingElements.addAll(content);
-            floatLayout = new FloatLayout(compositeColumn, floatingElements);
-            //}
+            if (floatLayout == null) {
+                ArrayList<Element> floatingElements = new ArrayList<Element>();
+                floatingElements.addAll(content);
+                floatLayout = new FloatLayout(compositeColumn, floatingElements);
+            }
 
             floatLayout.setSimpleColumn(leftX, minY, rightX, yLine);
             status = floatLayout.layout(simulate);
@@ -488,6 +493,6 @@ public class PdfDiv implements Element, Spaceable {
             contentWidth += paddingLeft + paddingRight;
         }
 
-        return status;
+        return contentCutByFixedHeight ? ColumnText.NO_MORE_TEXT : status;
     }
 }

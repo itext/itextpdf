@@ -43,12 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.api.Spaceable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Helper class for PdfDiv to put a collection of Element objects
@@ -118,6 +118,8 @@ public class FloatLayout {
         filledWidth = 0;
 
         List<Element> floatingElements = new ArrayList<Element>();
+        List<Element> content = simulate ? (List) ((ArrayList) this.content).clone() : this.content;
+        ColumnText compositeColumn = simulate ? ColumnText.duplicate(this.compositeColumn) : this.compositeColumn;
 
         while (!content.isEmpty()) {
             if (content.get(0) instanceof PdfDiv) {
@@ -127,11 +129,13 @@ public class FloatLayout {
                     content.remove(0);
                 } else {
                     if (!floatingElements.isEmpty()) {
-                        status = floatingLayout(floatingElements, simulate);
-                        //if ((status & ColumnText.NO_MORE_TEXT) == 0) {
-                        //    break;
-                        //}
+                        status = floatingLayout(compositeColumn, floatingElements, simulate);
+                        if ((status & ColumnText.NO_MORE_TEXT) == 0) {
+                            break;
+                        }
                     }
+
+                    content.remove(0);
 
                     status = floatingElement.layout(compositeColumn, true, floatLeftX, minY, floatRightX, yLine);
 
@@ -144,10 +148,10 @@ public class FloatLayout {
                     if (floatingElement.getActualWidth() > filledWidth) {
                         filledWidth = floatingElement.getActualWidth();
                     }
-                    //if ((status & ColumnText.NO_MORE_TEXT) == 0) {
-                    //    break;
-                    //}
-                    content.remove(0);
+                    if ((status & ColumnText.NO_MORE_TEXT) == 0) {
+                        content.add(0, floatingElement);
+                        break;
+                    }
                 }
             } else {
                 floatingElements.add(content.get(0));
@@ -155,16 +159,16 @@ public class FloatLayout {
             }
         }
 
-        if (/*(status & ColumnText.NO_MORE_TEXT) != 0 && */!floatingElements.isEmpty()) {
-            status = floatingLayout(floatingElements, simulate);
+        if ((status & ColumnText.NO_MORE_TEXT) != 0 && !floatingElements.isEmpty()) {
+            status = floatingLayout(compositeColumn, floatingElements, simulate);
         }
 
-        content.addAll(floatingElements);
+        content.addAll(0, floatingElements);
 
         return status;
     }
 
-    private int floatingLayout(List<Element> floatingElements, boolean simulate) throws DocumentException {
+    private int floatingLayout(ColumnText compositeColumn, List<Element> floatingElements, boolean simulate) throws DocumentException {
         int status = ColumnText.NO_MORE_TEXT;
         float minYLine = yLine;
         float leftWidth = 0;
@@ -173,15 +177,17 @@ public class FloatLayout {
         while (!floatingElements.isEmpty()) {
             if (floatingElements.get(0) instanceof PdfDiv) {
                 PdfDiv floatingElement = (PdfDiv) floatingElements.get(0);
+                floatingElements.remove(0);
                 status = floatingElement.layout(compositeColumn, true, floatLeftX, minY, floatRightX, yLine);
                 if ((status & ColumnText.NO_MORE_TEXT) == 0) {
                     yLine = minYLine;
                     floatLeftX = leftX;
                     floatRightX = rightX;
                     status = floatingElement.layout(compositeColumn, true, floatLeftX, minY, floatRightX, yLine);
-                    //if ((status & ColumnText.NO_MORE_TEXT) == 0) {
-                    //    break;
-                    //}
+                    if ((status & ColumnText.NO_MORE_TEXT) == 0) {
+                        floatingElements.add(0, floatingElement);
+                        break;
+                    }
                 }
                 if (floatingElement.getFloatType() == PdfDiv.FloatType.LEFT) {
                     status = floatingElement.layout(compositeColumn, simulate, floatLeftX, minY, floatRightX, yLine);
@@ -199,6 +205,7 @@ public class FloatLayout {
                     yLine -= ((Spaceable) firstElement).getSpacingBefore();
                 }
                 compositeColumn.addElement(firstElement);
+                floatingElements.remove(0);
                 if (yLine > minYLine)
                     compositeColumn.setSimpleColumn(floatLeftX, yLine, floatRightX, minYLine);
                 else
@@ -243,13 +250,14 @@ public class FloatLayout {
                     yLine = compositeColumn.getYLine() + compositeColumn.getDescender();
                 }
 
-                compositeColumn.getCompositeElements().clear();
-                //if ((status & ColumnText.NO_MORE_TEXT) == 0) {
-                //    break;
-                //}
+                if ((status & ColumnText.NO_MORE_TEXT) == 0) {
+                    floatingElements.addAll(0, compositeColumn.getCompositeElements());
+                    compositeColumn.getCompositeElements().clear();
+                    break;
+                } else {
+                    compositeColumn.getCompositeElements().clear();
+                }
             }
-
-            floatingElements.remove(0);
         }
 
 
