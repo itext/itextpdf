@@ -117,8 +117,8 @@ public class FloatLayout {
         int status = ColumnText.NO_MORE_TEXT;
         filledWidth = 0;
 
-        List<Element> floatingElements = new ArrayList<Element>();
-        List<Element> content = simulate ? (List) ((ArrayList) this.content).clone() : this.content;
+        ArrayList<Element> floatingElements = new ArrayList<Element>();
+        List<Element> content = simulate ? new ArrayList<Element>(this.content) : this.content;
         ColumnText compositeColumn = simulate ? ColumnText.duplicate(this.compositeColumn) : this.compositeColumn;
 
         while (!content.isEmpty()) {
