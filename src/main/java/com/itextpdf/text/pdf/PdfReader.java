@@ -106,7 +106,7 @@ public class PdfReader implements PdfViewerPreferences {
     protected HashMap<Integer, IntHashtable> objStmMark;
     protected LongHashtable objStmToOffset;
     protected boolean newXrefType;
-    private ArrayList<PdfObject> xrefObj;
+    protected ArrayList<PdfObject> xrefObj;
     PdfDictionary rootPages;
     protected PdfDictionary trailer;
     protected PdfDictionary catalog;

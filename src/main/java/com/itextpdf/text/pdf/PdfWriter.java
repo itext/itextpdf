@@ -332,7 +332,7 @@ public class PdfWriter extends DocWriter implements
          * @return a PdfIndirectReference
          */
 
-        PdfIndirectReference getPdfIndirectReference() {
+        public PdfIndirectReference getPdfIndirectReference() {
             return new PdfIndirectReference(0, getIndirectReferenceNumber());
         }
 
