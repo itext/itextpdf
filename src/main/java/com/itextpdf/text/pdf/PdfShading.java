@@ -222,7 +222,7 @@ public class PdfShading {
         shadingName = new PdfName("Sh" + number);
     }
     
-    void addToBody() throws IOException {
+    public void addToBody() throws IOException {
         if (bBox != null)
             shading.put(PdfName.BBOX, new PdfArray(bBox));
         if (antiAlias)

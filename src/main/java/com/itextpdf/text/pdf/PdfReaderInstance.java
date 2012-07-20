@@ -163,7 +163,7 @@ class PdfReaderInstance {
         }
     }
 
-    void writeAllPages() throws IOException {
+    public void writeAllPages() throws IOException {
         try {
             file.reOpen();
             for (Object element : importedPages.values()) {
