@@ -56,7 +56,6 @@ import com.itextpdf.text.pdf.PdfImage;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.PdfXConformanceException;
 import com.itextpdf.text.pdf.ShadingColor;
