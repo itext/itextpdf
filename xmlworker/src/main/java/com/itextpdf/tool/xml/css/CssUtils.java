@@ -337,7 +337,11 @@ public class CssUtils {
 	 * @return float the parsed value of the style or 0f if the value was invalid.
 	 */
 	public float checkMetricStyle(final Tag t, final String style) {
-		return checkMetricStyle(t.getCSS(), style);
+		Float metricValue = checkMetricStyle(t.getCSS(), style);
+        if (metricValue != null) {
+            return metricValue;
+        }
+        return 0f;
 	}
 	/**
 	 * Use only if value of style is a metric value ({@link CssUtils#isMetricValue(String)}) or a numeric value in pixels ({@link CssUtils#isNumericValue(String)}).<br />
@@ -346,12 +350,12 @@ public class CssUtils {
 	 * @param style the style which needs to be checked.
 	 * @return float the parsed value of the style or 0f if the value was invalid.
 	 */
-	public float checkMetricStyle(final Map<String,String> css, final String style) {
+	public Float checkMetricStyle(final Map<String,String> css, final String style) {
 		String value = css.get(style);
 		if (value != null && (isMetricValue(value) || isNumericValue(value))) {
 			return parsePxInCmMmPcToPt(value);
 		}
-		return 0f;
+		return null;
 	}
 
 	/**

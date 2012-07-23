@@ -43,9 +43,6 @@
  */
 package com.itextpdf.tool.xml.css.apply;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.PageSize;
@@ -61,6 +58,9 @@ import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.table.CellSpacingEvent;
 import com.itextpdf.tool.xml.html.table.Table;
 import com.itextpdf.tool.xml.html.table.TableStyleValues;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Emiel Ackermann
@@ -89,13 +89,7 @@ public class HtmlCellCssApplier {
     		table = table.getParent();
     	}
 
-        final TableStyleValues values = Table.setStyleValues(table);
-
-    	String border = table.getAttributes().get(CSS.Property.BORDER);
-		if(border != null && !border.equals("0")) {
-			values.setBorderColor(BaseColor.BLACK);
-			values.setBorderWidth(Table.DEFAULT_CELL_BORDER_WIDTH);
-		}
+        final TableStyleValues values = Table.setBorderAttributeForCell(table);
     	Map<String, String> css = t.getCSS();
 		String emptyCells = css.get(CSS.Property.EMPTY_CELLS);
 		if(null != emptyCells && CSS.Value.HIDE.equalsIgnoreCase(emptyCells) && cell.getCompositeElements() == null) {
@@ -204,13 +198,9 @@ public class HtmlCellCssApplier {
 					}
 				}
 	    	}
-			float horSpacing = Table.getBorderOrCellSpacing(true, table.getCSS(), table.getAttributes());
-			float verSpacing = Table.getBorderOrCellSpacing(false, table.getCSS(), table.getAttributes());
-	    	values.setHorBorderSpacing(horSpacing);
-	    	values.setVerBorderSpacing(verSpacing);
-	    	cell.setPaddingLeft(cell.getPaddingLeft() + horSpacing + values.getBorderWidthLeft());
+	    	cell.setPaddingLeft(cell.getPaddingLeft() + values.getHorBorderSpacing() + values.getBorderWidthLeft());
 			cell.setPaddingRight(cell.getPaddingRight() + values.getBorderWidthRight());
-	    	cell.setPaddingTop(cell.getPaddingTop() + verSpacing + values.getBorderWidthTop());
+	    	cell.setPaddingTop(cell.getPaddingTop() + values.getVerBorderSpacing() + values.getBorderWidthTop());
 	    	cell.setPaddingBottom(cell.getPaddingBottom() + values.getBorderWidthBottom());
 		}
 		cell.setBorder(Rectangle.NO_BORDER);
