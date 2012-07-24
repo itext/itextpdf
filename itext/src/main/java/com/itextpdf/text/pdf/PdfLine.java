@@ -191,10 +191,16 @@ public class PdfLine {
     }
 
     private void addToLine(PdfChunk chunk) {
-        if (chunk.changeLeading && chunk.isImage()) {
-        	Image img = chunk.getImage();
-        	float f = img.getScaledHeight() + chunk.getImageOffsetY()
-        		+ img.getBorderWidthTop() + img.getSpacingBefore();
+        if (chunk.changeLeading) {
+        	float f;
+        	if (chunk.isImage()) {
+        		Image img = chunk.getImage();
+        		f = img.getScaledHeight() + chunk.getImageOffsetY()
+        				+ img.getBorderWidthTop() + img.getSpacingBefore();
+        	}
+        	else {
+        		f = chunk.getLeading();
+        	}
         	if (f > height) height = f;
         }
     	line.add(chunk);

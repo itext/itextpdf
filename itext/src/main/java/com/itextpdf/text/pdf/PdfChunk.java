@@ -92,6 +92,7 @@ public class PdfChunk {
         keysAttributes.add(Chunk.SEPARATOR);
         keysAttributes.add(Chunk.TAB);
         keysAttributes.add(Chunk.CHAR_SPACING);
+        keysAttributes.add(Chunk.LINEHEIGHT);
         keysNoStroke.add(Chunk.SUBSUPSCRIPT);
         keysNoStroke.add(Chunk.SPLITCHARACTER);
         keysNoStroke.add(Chunk.HYPHENATION);
@@ -143,6 +144,9 @@ public class PdfChunk {
 
 /** Indicates if the height and offset of the Image has to be taken into account */
     protected boolean changeLeading = false;
+    
+/** The leading that can overrule the existing leading. */
+    protected float leading = 0;
 
     // constructors
 
@@ -160,6 +164,8 @@ public class PdfChunk {
         this.attributes = other.attributes;
         this.noStroke = other.noStroke;
         this.baseFont = other.baseFont;
+        this.changeLeading = other.changeLeading;
+        this.leading = other.leading;
         Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
         if (obj == null)
             image = null;
@@ -239,7 +245,14 @@ public class PdfChunk {
         // the color can't be stored in a PdfFont
         noStroke.put(Chunk.COLOR, f.getColor());
         noStroke.put(Chunk.ENCODING, font.getFont().getEncoding());
-        Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
+
+        Float lh = (Float)attributes.get(Chunk.LINEHEIGHT);
+        if (lh != null) {
+        	changeLeading = true;
+        	leading = lh;
+        }
+        
+        Object[] obj = (Object[])attributes.get(Chunk.IMAGE);
         if (obj == null) {
             image = null;
         }
@@ -836,6 +849,10 @@ public class PdfChunk {
 
     public boolean changeLeading() {
         return changeLeading;
+    }
+    
+    public float getLeading() {
+    	return leading;
     }
 
     float getCharWidth(int c) {
