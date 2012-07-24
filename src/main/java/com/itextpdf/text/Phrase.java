@@ -269,31 +269,31 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
     @Override
     public void add(final int index, final Element element) {
     	if (element == null) return;
-        try {
-            if (element.type() == Element.CHUNK) {
-                Chunk chunk = (Chunk) element;
-                if (!font.isStandardFont()) {
-                    chunk.setFont(font.difference(chunk.getFont()));
-                }
-                if (hyphenation != null && chunk.getHyphenation() == null && !chunk.isEmpty()) {
-                	chunk.setHyphenation(hyphenation);
-                }
-                super.add(index, chunk);
+        switch (element.type()) {
+        case Element.CHUNK:
+            Chunk chunk = (Chunk) element;
+            if (!font.isStandardFont()) {
+                chunk.setFont(font.difference(chunk.getFont()));
             }
-         // TODO same as in document - change else-if to generic adding that works everywhere
-            else if (element.type() == Element.PHRASE ||
-            element.type() == Element.ANCHOR ||
-            element.type() == Element.ANNOTATION ||
-            element.type() == Element.YMARK ||
-            element.type() == Element.MARKED || element.type() == Element.WRITABLE_DIRECT) {
-                super.add(index, element);
+            if (hyphenation != null && chunk.getHyphenation() == null && !chunk.isEmpty()) {
+                chunk.setHyphenation(hyphenation);
             }
-            else {
-                throw new ClassCastException(String.valueOf(element.type()));
-            }
-        }
-        catch(ClassCastException cce) {
-            throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
+            super.add(index, chunk);
+            return;
+        case Element.PHRASE:
+        case Element.PARAGRAPH:
+        case Element.MARKED:
+        case Element.DIV:
+        case Element.ANCHOR:
+        case Element.ANNOTATION:
+        case Element.PTABLE:
+        case Element.LIST:
+        case Element.YMARK:
+        case Element.WRITABLE_DIRECT:
+            super.add(index, element);
+	        return;
+	    default:
+	        throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", element.getClass().getName()));
         }
     }
 
@@ -305,7 +305,7 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @since 5.0.1
      */
     public boolean add(final String s) {
-	if (s == null) {
+        if (s == null) {
             return false;
         }
         return super.add(new Chunk(s, font));
@@ -333,15 +333,15 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
                     Phrase phrase = (Phrase) element;
                     boolean success = true;
                     Element e;
-                for (Object element2 : phrase) {
-                    e = (Element) element2;
-                    if (e instanceof Chunk) {
-                        success &= addChunk((Chunk)e);
-                    }
-                    else {
-                        success &= this.add(e);
-                    }
-                }
+	                for (Object element2 : phrase) {
+	                    e = (Element) element2;
+	                    if (e instanceof Chunk) {
+	                        success &= addChunk((Chunk)e);
+	                    }
+	                    else {
+	                        success &= this.add(e);
+	                    }
+	                }
                     return success;
                 case Element.MARKED:
                 case Element.DIV:
