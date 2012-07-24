@@ -752,6 +752,20 @@ public class Chunk implements Element {
 		return setAttribute(GENERICTAG, text);
 	}
 
+	/** Key for line-height (alternative for leading in Phrase). */
+	public static final String LINEHEIGHT = "LINEHEIGHT";
+
+	/**
+	 * Sets a line height tag.
+	 *
+	 * @return this <CODE>Chunk</CODE>
+	 */
+
+	public Chunk setLineHeight(float lineheight) {
+		return setAttribute(LINEHEIGHT, lineheight);
+	}
+
+
 	/** Key for image. */
 	public static final String IMAGE = "IMAGE";
 
