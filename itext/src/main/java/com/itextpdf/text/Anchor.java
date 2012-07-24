@@ -216,25 +216,46 @@ public class Anchor extends Phrase {
      */
     @Override
     public List<Chunk> getChunks() {
-    	List<Chunk> tmp = new ArrayList<Chunk>();
-        Chunk chunk;
-        Iterator<Element> i = iterator();
         boolean localDestination = reference != null && reference.startsWith("#");
         boolean notGotoOK = true;
+    	List<Chunk> tmp = new ArrayList<Chunk>();
+        Iterator<Element> i = iterator();
+        Element element;
         while (i.hasNext()) {
-            chunk = (Chunk) i.next();
-            if (name != null && notGotoOK && !chunk.isEmpty()) {
-                chunk.setLocalDestination(name);
-                notGotoOK = false;
+            element = (Element) i.next();
+            if (element instanceof Chunk) {
+            	Chunk chunk = (Chunk)element;
+            	notGotoOK = applyAnchor(chunk, notGotoOK, localDestination);
+                tmp.add(chunk);
             }
-            if (localDestination) {
-                chunk.setLocalGoto(reference.substring(1));
+            else {
+            	for (Chunk c : element.getChunks()) {
+            		notGotoOK = applyAnchor(c, notGotoOK, localDestination);
+            		tmp.add(c);
+            	}
             }
-            else if (reference != null)
-                chunk.setAnchor(reference);
-            tmp.add(chunk);
         }
         return tmp;
+    }
+    
+    /**
+     * Applies the properties of the Anchor to a Chunk.
+     * @param chunk			the Chunk (part of the Anchor)
+     * @param notGotoOK		if true, this chunk will determine the local destination
+     * @param localDestination	true if the chunk is a local goto and the reference a local destination
+     * @return	the value of notGotoOK or false, if a previous Chunk was used to determine the local destination
+     */
+    protected boolean applyAnchor(Chunk chunk, boolean notGotoOK, boolean localDestination) {
+        if (name != null && notGotoOK && !chunk.isEmpty()) {
+            chunk.setLocalDestination(name);
+            notGotoOK = false;
+        }
+        if (localDestination) {
+            chunk.setLocalGoto(reference.substring(1));
+        }
+        else if (reference != null)
+            chunk.setAnchor(reference);
+        return notGotoOK;
     }
 
     /**
