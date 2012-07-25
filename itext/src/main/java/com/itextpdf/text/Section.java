@@ -328,6 +328,8 @@ public class Section extends ArrayList<Element> implements TextElementArray, Lar
      */
     @Override
     public boolean addAll(final Collection<? extends Element> collection) {
+    	if (collection.size() == 0)
+    		return false;
         for (Element element : collection) {
             this.add(element);
         }
