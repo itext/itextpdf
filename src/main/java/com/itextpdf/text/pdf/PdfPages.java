@@ -46,9 +46,9 @@ package com.itextpdf.text.pdf;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
@@ -144,7 +144,7 @@ public class PdfPages {
                     top.put(PdfName.PARENT, nextParents.get(p / leafSize));
                 }
                 else {
-                	top.put(PdfName.ITXT, new PdfString(Document.getRelease()));
+                	top.put(PdfName.ITXT, new PdfString(Version.getInstance().getRelease()));
                 }
                 writer.addToBody(top, tParents.get(p));
             }
