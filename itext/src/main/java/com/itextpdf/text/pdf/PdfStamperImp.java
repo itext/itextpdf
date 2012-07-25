@@ -54,11 +54,11 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.pdf.AcroFields.Item;
@@ -161,7 +161,8 @@ class PdfStamperImp extends PdfWriter {
         addFieldResources();
         PdfDictionary catalog = reader.getCatalog();
         PdfDictionary pages = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.PAGES));
-        pages.put(PdfName.ITXT, new PdfString(Document.getRelease()));
+        Version version = Version.getInstance();
+        pages.put(PdfName.ITXT, new PdfString(version.getRelease()));
         markUsed(pages);
         PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog());
         if (acroFields != null && acroFields.getXfa().isChanged()) {
@@ -223,12 +224,12 @@ class PdfStamperImp extends PdfWriter {
         if (oldInfo != null && oldInfo.get(PdfName.PRODUCER) != null)
         	producer = oldInfo.getAsString(PdfName.PRODUCER).toUnicodeString();
         if (producer == null) {
-        	producer = Document.getVersion();
+        	producer = version.getVersion();
         }
-        else if (producer.indexOf(Document.getProduct()) == -1) {
+        else if (producer.indexOf(version.getProduct()) == -1) {
         	StringBuffer buf = new StringBuffer(producer);
         	buf.append("; modified using ");
-        	buf.append(Document.getVersion());
+        	buf.append(version.getVersion());
         	producer = buf.toString();
         }
         PdfIndirectReference info = null;
@@ -379,6 +380,7 @@ class PdfStamperImp extends PdfWriter {
         // write the cross-reference table of the body
         body.writeCrossReferenceTable(os, root, info, encryption, fileID, prevxref);
         if (fullCompression) {
+        	writeKeyInfo(os);
             os.write(getISOBytes("startxref\n"));
             os.write(getISOBytes(String.valueOf(body.offset())));
             os.write(getISOBytes("\n%%EOF\n"));

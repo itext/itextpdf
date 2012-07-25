@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.xml.xmp;
 
-import com.itextpdf.text.Document;
+import com.itextpdf.text.Version;
 
 /**
  * An implementation of an XmpSchema.
@@ -66,7 +66,7 @@ public class PdfSchema extends XmpSchema {
 
 	public PdfSchema() {
 		super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
-		addProducer(Document.getVersion());
+		addProducer(Version.getInstance().getVersion());
 	}
 	
 	/**

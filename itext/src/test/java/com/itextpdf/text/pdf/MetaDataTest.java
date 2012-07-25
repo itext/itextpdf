@@ -51,6 +51,7 @@ import org.junit.Test;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Version;
 
 public class MetaDataTest {
 
@@ -66,7 +67,7 @@ public class MetaDataTest {
         
         PdfReader r = new PdfReader(baos.toByteArray());
 
-        assertEquals("Producer", r.getInfo().get("Producer"), Document.getVersion()); 
+        assertEquals("Producer", r.getInfo().get("Producer"), Version.getInstance().getVersion()); 
     }
 
 }
