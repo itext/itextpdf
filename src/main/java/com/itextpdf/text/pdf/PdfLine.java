@@ -452,14 +452,17 @@ public class PdfLine {
      * @return	an extra leading for images
      * @since	2.1.5
      */
-    float[] getMaxSize() {
+    float[] getMaxSize(float fixedLeading, float multipliedLeading) {
     	float normal_leading = 0;
     	float image_leading = -10000;
         PdfChunk chunk;
         for (int k = 0; k < line.size(); ++k) {
             chunk = line.get(k);
             if (!chunk.isImage()) {
-                normal_leading = Math.max(chunk.font().size(), normal_leading);
+                if (chunk.changeLeading())
+                    normal_leading = Math.max(chunk.getLeading(), normal_leading);
+                else
+                    normal_leading = Math.max(fixedLeading + multipliedLeading * chunk.font().size(), normal_leading);
             }
             else {
             	Image img = chunk.getImage();
@@ -469,7 +472,7 @@ public class PdfLine {
             	}
             }
         }
-        return new float[]{normal_leading, image_leading};
+        return new float[]{normal_leading > 0 ? normal_leading : fixedLeading, image_leading};
     }
 
     boolean isRTL() {

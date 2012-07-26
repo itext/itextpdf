@@ -912,11 +912,11 @@ public class ColumnText {
                 	status = NO_MORE_TEXT;
                 	break;
                 }
-                float[] maxSize = line.getMaxSize();
+                float[] maxSize = line.getMaxSize(fixedLeading, multipliedLeading);
                 if (isUseAscender() && Float.isNaN(firstLineY))
                 	currentLeading = line.getAscender();
                 else
-                	currentLeading = Math.max(fixedLeading + maxSize[0] * multipliedLeading, maxSize[1] - descender);
+                	currentLeading = Math.max(maxSize[0], maxSize[1] - descender);
                 if (yLine > maxY || yLine - currentLeading < minY ) {
                 	status = NO_MORE_COLUMN;
                 	bidiLine.restore();
