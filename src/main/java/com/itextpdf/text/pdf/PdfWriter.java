@@ -68,6 +68,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.ImgJBIG2;
 import com.itextpdf.text.ImgWMF;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
@@ -559,7 +560,9 @@ public class PdfWriter extends DocWriter implements
         public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
             os.write(getISOBytes("trailer\n"));
             super.toPdf(null, os);
-            os.write(getISOBytes("\nstartxref\n"));
+            os.write('\n');
+            writeKeyInfo(os);
+            os.write(getISOBytes("startxref\n"));
             os.write(getISOBytes(String.valueOf(offset)));
             os.write(getISOBytes("\n%%EOF\n"));
         }
@@ -1259,6 +1262,7 @@ public class PdfWriter extends DocWriter implements
                 // make the trailer
                 // [F2] full compression
                 if (fullCompression) {
+                	writeKeyInfo(os);
                     os.write(getISOBytes("startxref\n"));
                     os.write(getISOBytes(String.valueOf(body.offset())));
                     os.write(getISOBytes("\n%%EOF\n"));
@@ -3224,6 +3228,14 @@ public class PdfWriter extends DocWriter implements
         this.rgbTransparencyBlending = rgbTransparencyBlending;
     }
 
+    protected static void writeKeyInfo(OutputStream os) throws IOException {
+    	Version version = Version.getInstance();
+    	if (version.getKey() == null)
+    		return;
+        os.write(getISOBytes(String.format("%%%s-%s\n", version.getKey(), version.getRelease())));
+    	
+    }
+     
     protected TtfUnicodeWriter ttfUnicodeWriter = null;
 
     protected TtfUnicodeWriter getTtfUnicodeWriter() {

@@ -69,6 +69,11 @@ public final class Version {
 	private String release = "5.3.1-SNAPSHOT";
 	
 	/**
+	 * The license key.
+	 */
+	private String key = null;
+	
+	/**
 	 * This String contains the iText version as shown in the producer line.
 	 * iText is a product developed by 1T3XT BVBA.
 	 * 1T3XT requests that you retain the iText producer line
@@ -89,9 +94,35 @@ public final class Version {
 			version = new Version();
 			try {
 				Class<?> klass = Class.forName("com.itextpdf.license.LicenseKey");
-				Method m = klass.getMethod("getLicenseeCompany");
-				String company = (String)m.invoke(klass.newInstance());
-				version.iTextVersion += " (Licensed to " + company + ")";
+				Method m = klass.getMethod("getLicenseeInfo");
+				String[] info = (String[])m.invoke(klass.newInstance());
+				if (info[3] != null && info[3].trim().length() > 0) {
+					version.key = info[3];
+				}
+				else {
+					version.key = "Trial version ";
+					if (info[5] == null) {
+						version.key += "unauthorised";
+					}
+					else {
+						version.key += info[5];
+					}
+				}
+				if (info[4] != null && info[4].trim().length() > 0) {
+					version.iTextVersion = info[4];
+				}
+				else if (info[2] != null && info[2].trim().length() > 0) {
+					version.iTextVersion += " (" + info[2];
+					if (version.key.toLowerCase().startsWith("trial")) {
+						version.iTextVersion += "; licensed version)";
+					}
+					else {
+						version.iTextVersion += "; " + version.key + ")";
+					}
+				}
+				else {
+					throw new Exception();
+				}
 			} catch (Exception e) {
 				version.iTextVersion += " (AGPL-version)";
 			}
@@ -130,4 +161,11 @@ public final class Version {
         return iTextVersion;
     }
 
+    /**
+     * Returns a license key if one was provided, or null if not.
+     * @return a license key.
+     */
+    public String getKey() {
+    	return key;
+    }
 }

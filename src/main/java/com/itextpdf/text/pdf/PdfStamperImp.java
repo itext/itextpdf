@@ -380,6 +380,7 @@ class PdfStamperImp extends PdfWriter {
         // write the cross-reference table of the body
         body.writeCrossReferenceTable(os, root, info, encryption, fileID, prevxref);
         if (fullCompression) {
+        	writeKeyInfo(os);
             os.write(getISOBytes("startxref\n"));
             os.write(getISOBytes(String.valueOf(body.offset())));
             os.write(getISOBytes("\n%%EOF\n"));
