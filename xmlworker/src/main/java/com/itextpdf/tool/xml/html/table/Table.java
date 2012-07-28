@@ -604,7 +604,7 @@ public class Table extends AbstractTagProcessor {
         Map<String, String> attributes = tag.getAttributes();
         Map<String, String> css = tag.getCSS();
         String border = attributes.get(CSS.Property.BORDER);
-        if (border != null  && (border.isEmpty() || utils.parsePxInCmMmPcToPt(attributes.get(CSS.Property.BORDER)) > 0)) {
+        if (border != null  && (border.trim().length() == 0 || utils.parsePxInCmMmPcToPt(attributes.get(CSS.Property.BORDER)) > 0)) {
             styleValues.setBorderColor(BaseColor.BLACK);
             styleValues.setBorderWidth(Table.DEFAULT_CELL_BORDER_WIDTH);
         }
