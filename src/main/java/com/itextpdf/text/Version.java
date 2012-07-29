@@ -113,7 +113,7 @@ public final class Version {
 				}
 				else if (info[2] != null && info[2].trim().length() > 0) {
 					version.iTextVersion += " (" + info[2];
-					if (version.key.toLowerCase().startsWith("trial")) {
+					if (!version.key.toLowerCase().startsWith("trial")) {
 						version.iTextVersion += "; licensed version)";
 					}
 					else {
