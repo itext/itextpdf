@@ -243,7 +243,7 @@ public class PdfTemplate extends PdfContentByte {
      * @return the stream representing this template
      * @since	2.1.3	(replacing the method without param compressionLevel)
      */
-    PdfStream getFormXObject(int compressionLevel) throws IOException {
+    public PdfStream getFormXObject(int compressionLevel) throws IOException {
         return new PdfFormXObject(this, compressionLevel);
     }
         

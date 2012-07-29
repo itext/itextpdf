@@ -357,7 +357,7 @@ public class BmpImage {
             properties.put("colors_used", Long.valueOf(colorsUsed));
             properties.put("colors_important", Long.valueOf(colorsImportant));
 
-            if (size == 40) {
+            if (size == 40 || size == 52 || size == 56) {
                 // Windows 3.x and Windows NT
                 switch((int)compression) {
 
@@ -389,6 +389,21 @@ public class BmpImage {
                             properties.put("red_mask", Integer.valueOf(redMask));
                             properties.put("green_mask", Integer.valueOf(greenMask));
                             properties.put("blue_mask", Integer.valueOf(blueMask));
+                        }
+                        
+                        // 52 and 56 byte header have mandatory R, G and B masks
+                        if (size >= 52) {
+                        	redMask = (int)readDWord(inputStream);
+                            greenMask = (int)readDWord(inputStream);
+                            blueMask = (int)readDWord(inputStream);
+                            properties.put("red_mask", Integer.valueOf(redMask));
+                            properties.put("green_mask", Integer.valueOf(greenMask));
+                            properties.put("blue_mask", Integer.valueOf(blueMask));
+                        }
+                        // 56 byte header has mandatory alpha mask
+                        if (size == 56) {
+                        	alphaMask = (int)readDWord(inputStream);
+                        	properties.put("alpha_mask", Integer.valueOf(alphaMask));
                         }
 
                         // Read in the palette
@@ -429,6 +444,12 @@ public class BmpImage {
                         greenMask = (int)readDWord(inputStream);
                         blueMask = (int)readDWord(inputStream);
 
+                        // 56 byte header has mandatory alpha mask
+                        if (size == 56) {
+                        	alphaMask = (int)readDWord(inputStream);
+                        	properties.put("alpha_mask", Integer.valueOf(alphaMask));
+                        }
+                        
                         properties.put("red_mask", Integer.valueOf(redMask));
                         properties.put("green_mask", Integer.valueOf(greenMask));
                         properties.put("blue_mask", Integer.valueOf(blueMask));

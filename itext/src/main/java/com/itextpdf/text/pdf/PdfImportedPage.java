@@ -124,7 +124,7 @@ public class PdfImportedPage extends com.itextpdf.text.pdf.PdfTemplate {
      * @return the stream representing this page
      * @since	2.1.3	(replacing the method without param compressionLevel)
      */
-    PdfStream getFormXObject(int compressionLevel) throws IOException {
+    public PdfStream getFormXObject(int compressionLevel) throws IOException {
          return readerInstance.getFormXObject(pageNumber, compressionLevel);
     }
     

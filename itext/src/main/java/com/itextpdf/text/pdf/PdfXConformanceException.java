@@ -47,7 +47,7 @@ package com.itextpdf.text.pdf;
  *
  * @author  psoares
  */
-public class PdfXConformanceException extends RuntimeException {
+public class PdfXConformanceException extends PdfIsoConformanceException {
     
     private static final long serialVersionUID = 9199144538884293397L;
 

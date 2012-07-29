@@ -43,7 +43,7 @@
  */
 package com.itextpdf.text.pdf.interfaces;
 
-public interface PdfXConformance {
+public interface PdfXConformance extends PdfIsoConformance {
     
     /**
      * Sets the PDF/X conformance level.

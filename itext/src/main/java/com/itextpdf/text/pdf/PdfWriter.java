@@ -68,17 +68,12 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.ImgJBIG2;
 import com.itextpdf.text.ImgWMF;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
-import com.itextpdf.text.pdf.interfaces.PdfAnnotations;
-import com.itextpdf.text.pdf.interfaces.PdfDocumentActions;
-import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
-import com.itextpdf.text.pdf.interfaces.PdfPageActions;
-import com.itextpdf.text.pdf.interfaces.PdfRunDirection;
-import com.itextpdf.text.pdf.interfaces.PdfVersion;
-import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
-import com.itextpdf.text.pdf.interfaces.PdfXConformance;
+import com.itextpdf.text.pdf.interfaces.*;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import com.itextpdf.text.pdf.internal.PdfVersionImp;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
 import com.itextpdf.text.xml.xmp.XmpWriter;
@@ -97,7 +92,7 @@ public class PdfWriter extends DocWriter implements
 	PdfVersion,
 	PdfDocumentActions,
 	PdfPageActions,
-	PdfXConformance,
+    PdfIsoConformance,
 	PdfRunDirection,
 	PdfAnnotations {
 
@@ -129,7 +124,7 @@ public class PdfWriter extends DocWriter implements
          * <CODE>PdfCrossReference</CODE> is an entry in the PDF Cross-Reference table.
          */
 
-        static class PdfCrossReference implements Comparable<PdfCrossReference> {
+        static public class PdfCrossReference implements Comparable<PdfCrossReference> {
 
             // membervariables
             private final int type;
@@ -149,7 +144,7 @@ public class PdfWriter extends DocWriter implements
              * @param	generation	generation number of the object
              */
 
-            PdfCrossReference(final int refnum, final long offset, final int generation) {
+            public PdfCrossReference(final int refnum, final long offset, final int generation) {
                 type = 0;
                 this.offset = offset;
                 this.refnum = refnum;
@@ -162,21 +157,21 @@ public class PdfWriter extends DocWriter implements
              * @param	offset		byte offset of the object
              */
 
-            PdfCrossReference(final int refnum, final long offset) {
+            public PdfCrossReference(final int refnum, final long offset) {
                 type = 1;
                 this.offset = offset;
                 this.refnum = refnum;
                 this.generation = 0;
             }
 
-            PdfCrossReference(final int type, final int refnum, final long offset, final int generation) {
+            public PdfCrossReference(final int type, final int refnum, final long offset, final int generation) {
                 this.type = type;
                 this.offset = offset;
                 this.refnum = refnum;
                 this.generation = generation;
             }
 
-            int getRefnum() {
+            public int getRefnum() {
                 return refnum;
             }
 
@@ -245,15 +240,15 @@ public class PdfWriter extends DocWriter implements
         // membervariables
 
         /** array containing the cross-reference table of the normal objects. */
-        private final TreeSet<PdfCrossReference> xrefs;
-        private int refnum;
+        protected final TreeSet<PdfCrossReference> xrefs;
+        protected int refnum;
         /** the current byte position in the body. */
-        private long position;
-        private final PdfWriter writer;
-        private ByteBuffer index;
-        private ByteBuffer streamObjects;
-        private int currentObjNum;
-        private int numObj = 0;
+        protected long position;
+        protected final PdfWriter writer;
+        protected ByteBuffer index;
+        protected ByteBuffer streamObjects;
+        protected int currentObjNum;
+        protected int numObj = 0;
 
         // constructors
 
@@ -261,7 +256,7 @@ public class PdfWriter extends DocWriter implements
          * Constructs a new <CODE>PdfBody</CODE>.
          * @param writer
          */
-        PdfBody(final PdfWriter writer) {
+        protected PdfBody(final PdfWriter writer) {
             xrefs = new TreeSet<PdfCrossReference>();
             xrefs.add(new PdfCrossReference(0, 0, GENERATION_MAX));
             position = writer.getOs().getCounter();
@@ -275,7 +270,7 @@ public class PdfWriter extends DocWriter implements
             this.refnum = refnum;
         }
 
-        private PdfWriter.PdfBody.PdfCrossReference addToObjStm(final PdfObject obj, final int nObj) throws IOException {
+        protected PdfWriter.PdfBody.PdfCrossReference addToObjStm(final PdfObject obj, final int nObj) throws IOException {
             if (numObj >= OBJSINSTREAM)
                 flushObjStm();
             if (index == null) {
@@ -295,7 +290,7 @@ public class PdfWriter extends DocWriter implements
             return new PdfWriter.PdfBody.PdfCrossReference(2, nObj, currentObjNum, idx);
         }
 
-        private void flushObjStm() throws IOException {
+        public void flushObjStm() throws IOException {
             if (numObj == 0)
                 return;
             int first = index.size();
@@ -338,11 +333,11 @@ public class PdfWriter extends DocWriter implements
          * @return a PdfIndirectReference
          */
 
-        PdfIndirectReference getPdfIndirectReference() {
+        public PdfIndirectReference getPdfIndirectReference() {
             return new PdfIndirectReference(0, getIndirectReferenceNumber());
         }
 
-        int getIndirectReferenceNumber() {
+        protected int getIndirectReferenceNumber() {
             int n = refnum++;
             xrefs.add(new PdfCrossReference(n, 0, GENERATION_MAX));
             return n;
@@ -376,7 +371,7 @@ public class PdfWriter extends DocWriter implements
             return add(object, refNumber, true); // to false
         }
 
-        PdfIndirectObject add(final PdfObject object, final int refNumber, final boolean inObjStm) throws IOException {
+        protected PdfIndirectObject add(final PdfObject object, final int refNumber, final boolean inObjStm) throws IOException {
             if (inObjStm && object.canBeInObjStm() && writer.isFullCompression()) {
                 PdfCrossReference pxref = addToObjStm(object, refNumber);
                 PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
@@ -405,7 +400,7 @@ public class PdfWriter extends DocWriter implements
          * @return		an offset
          */
 
-        long offset() {
+        public long offset() {
             return position;
         }
 
@@ -415,7 +410,7 @@ public class PdfWriter extends DocWriter implements
          * @return	a number of objects
          */
 
-        int size() {
+        public int size() {
             return Math.max(xrefs.last().getRefnum() + 1, refnum);
         }
 
@@ -430,7 +425,7 @@ public class PdfWriter extends DocWriter implements
          * @throws IOException
          */
 
-        void writeCrossReferenceTable(final OutputStream os, final PdfIndirectReference root, final PdfIndirectReference info, final PdfIndirectReference encryption, final PdfObject fileID, final long prevxref) throws IOException {
+        public void writeCrossReferenceTable(final OutputStream os, final PdfIndirectReference root, final PdfIndirectReference info, final PdfIndirectReference encryption, final PdfObject fileID, final long prevxref) throws IOException {
             int refNumber = 0;
             if (writer.isFullCompression()) {
                 flushObjStm();
@@ -520,7 +515,7 @@ public class PdfWriter extends DocWriter implements
      * section 5.16 (page 59-60).
      */
 
-    static class PdfTrailer extends PdfDictionary {
+    static public class PdfTrailer extends PdfDictionary {
 
         // membervariables
 
@@ -540,7 +535,7 @@ public class PdfWriter extends DocWriter implements
          * @param prevxref
          */
 
-        PdfTrailer(final int size, final long offset, final PdfIndirectReference root, final PdfIndirectReference info, final PdfIndirectReference encryption, final PdfObject fileID, final long prevxref) {
+        public PdfTrailer(final int size, final long offset, final PdfIndirectReference root, final PdfIndirectReference info, final PdfIndirectReference encryption, final PdfObject fileID, final long prevxref) {
             this.offset = offset;
             put(PdfName.SIZE, new PdfNumber(size));
             put(PdfName.ROOT, root);
@@ -565,7 +560,9 @@ public class PdfWriter extends DocWriter implements
         public void toPdf(final PdfWriter writer, final OutputStream os) throws IOException {
             os.write(getISOBytes("trailer\n"));
             super.toPdf(null, os);
-            os.write(getISOBytes("\nstartxref\n"));
+            os.write('\n');
+            writeKeyInfo(os);
+            os.write(getISOBytes("startxref\n"));
             os.write(getISOBytes(String.valueOf(offset)));
             os.write(getISOBytes("\n%%EOF\n"));
         }
@@ -859,7 +856,7 @@ public class PdfWriter extends DocWriter implements
         return body.getPdfIndirectReference();
     }
 
-    int getIndirectReferenceNumber() {
+    protected int getIndirectReferenceNumber() {
         return body.getIndirectReferenceNumber();
     }
 
@@ -867,7 +864,7 @@ public class PdfWriter extends DocWriter implements
      * Returns the outputStreamCounter.
      * @return the outputStreamCounter
      */
-    OutputStreamCounter getOs() {
+    public OutputStreamCounter getOs() {
         return os;
     }
 
@@ -1176,7 +1173,7 @@ public class PdfWriter extends DocWriter implements
         try {
         	pdf_version.writeHeader(os);
             body = new PdfBody(this);
-            if (pdfxConformance.isPdfX32002()) {
+            if (isPdfX() && ((PdfXConformanceImp)pdfIsoConformance).isPdfX32002()) {
                 PdfDictionary sec = new PdfDictionary();
                 sec.put(PdfName.GAMMA, new PdfArray(new float[]{2.2f,2.2f,2.2f}));
                 sec.put(PdfName.MATRIX, new PdfArray(new float[]{0.4124f,0.2126f,0.0193f,0.3576f,0.7152f,0.1192f,0.1805f,0.0722f,0.9505f}));
@@ -1231,8 +1228,8 @@ public class PdfWriter extends DocWriter implements
                 }
                 // [C10] make pdfx conformant
                 if (isPdfX()) {
-                    pdfxConformance.completeInfoDictionary(getInfo());
-                    pdfxConformance.completeExtraCatalog(getExtraCatalog());
+                    completeInfoDictionary(getInfo());
+                    completeExtraCatalog(getExtraCatalog());
                 }
                 // [C11] Output Intents
                 if (extraCatalog != null) {
@@ -1265,6 +1262,7 @@ public class PdfWriter extends DocWriter implements
                 // make the trailer
                 // [F2] full compression
                 if (fullCompression) {
+                	writeKeyInfo(os);
                     os.write(getISOBytes("startxref\n"));
                     os.write(getISOBytes(String.valueOf(body.offset())));
                     os.write(getISOBytes("\n%%EOF\n"));
@@ -1770,7 +1768,7 @@ public class PdfWriter extends DocWriter implements
     private byte[] createXmpMetadataBytes() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            XmpWriter xmp = new XmpWriter(baos, pdf.getInfo(), pdfxConformance.getPDFXConformance());
+            XmpWriter xmp = getXmpWriter(baos, pdf.getInfo());
             xmp.close();
         }
         catch (IOException ioe) {
@@ -1786,37 +1784,51 @@ public class PdfWriter extends DocWriter implements
     public static final int PDFX1A2001 = 1;
     /** A PDF/X level. */
     public static final int PDFX32002 = 2;
-    /** PDFA-1A level. */
-    public static final int PDFA1A = 3;
-    /** PDFA-1B level. */
-    public static final int PDFA1B = 4;
 
-    /** Stores the PDF/X level. */
-    private final PdfXConformanceImp pdfxConformance = new PdfXConformanceImp();
+    /** Stores the PDF ISO conformance. */
+	protected PdfIsoConformance pdfIsoConformance = getPdfIsoConformance();
+
+    protected PdfIsoConformance getPdfIsoConformance() {
+        return new PdfXConformanceImp();
+    }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfXConformance#setPDFXConformance(int) */
     public void setPDFXConformance(final int pdfx) {
-        if (pdfxConformance.getPDFXConformance() == pdfx)
+		if (!(pdfIsoConformance instanceof PdfXConformanceImp))
+			return;
+        if (((PdfXConformance)pdfIsoConformance).getPDFXConformance() == pdfx)
             return;
         if (pdf.isOpen())
             throw new PdfXConformanceException(MessageLocalization.getComposedMessage("pdfx.conformance.can.only.be.set.before.opening.the.document"));
         if (crypto != null)
             throw new PdfXConformanceException(MessageLocalization.getComposedMessage("a.pdfx.conforming.document.cannot.be.encrypted"));
-        if (pdfx == PDFA1A || pdfx == PDFA1B)
-            setPdfVersion(VERSION_1_4);
-        else if (pdfx != PDFXNONE)
+        if (pdfx != PDFXNONE)
             setPdfVersion(VERSION_1_3);
-        pdfxConformance.setPDFXConformance(pdfx);
+        ((PdfXConformance)pdfIsoConformance).setPDFXConformance(pdfx);
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfXConformance#getPDFXConformance() */
     public int getPDFXConformance() {
-        return pdfxConformance.getPDFXConformance();
+		if (pdfIsoConformance instanceof PdfXConformanceImp)
+        	return ((PdfXConformance)pdfIsoConformance).getPDFXConformance();
+		else
+			return PDFXNONE;
     }
 
     /** @see com.itextpdf.text.pdf.interfaces.PdfXConformance#isPdfX() */
     public boolean isPdfX() {
-        return pdfxConformance.isPdfX();
+		if (pdfIsoConformance instanceof PdfXConformanceImp)
+        	return ((PdfXConformance)pdfIsoConformance).isPdfX();
+		else
+			return false;
+    }
+
+    /**
+     * Checks if any PDF ISO conformance is necessary.
+     * @return <code>true</code> if the PDF has to be in conformance with any of the PDF ISO specifications
+     */
+    public boolean isPdfIso() {
+        return pdfIsoConformance.isPdfIso();
     }
 
 //  [C11] Output intents
@@ -1825,7 +1837,7 @@ public class PdfWriter extends DocWriter implements
      * suppress any key.
      *
      * @param outputConditionIdentifier a value
-     * @param outputCondition           a value, "PDFA/A" to force GTS_PDFA1, otherwise cued by pdfxConformance.
+     * @param outputCondition           a value
      * @param registryName              a value
      * @param info                      a value
      * @param colorProfile              a value
@@ -1848,15 +1860,7 @@ public class PdfWriter extends DocWriter implements
             out.put(PdfName.DESTOUTPUTPROFILE, addToBody(stream).getIndirectReference());
         }
 
-        PdfName intentSubtype;
-        if (pdfxConformance.isPdfA1() || "PDFA/1".equals(outputCondition)) {
-            intentSubtype = PdfName.GTS_PDFA1;
-        }
-        else {
-            intentSubtype = PdfName.GTS_PDFX;
-        }
-
-        out.put(PdfName.S, intentSubtype);
+        out.put(PdfName.S, PdfName.GTS_PDFX);
 
         extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
     }
@@ -2189,7 +2193,7 @@ public class PdfWriter extends DocWriter implements
         }
         FontDetails ret = documentFonts.get(bf);
         if (ret == null) {
-            PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_FONT, bf);
+            PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_FONT, bf);
             ret = new FontDetails(new PdfName("F" + fontNumber++), body.getPdfIndirectReference(), bf);
             documentFonts.put(bf, ret);
         }
@@ -2435,7 +2439,7 @@ public class PdfWriter extends DocWriter implements
 
     PdfObject[] addSimpleExtGState(final PdfDictionary gstate) {
         if (!documentExtGState.containsKey(gstate)) {
-            PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_GSTATE, gstate);
+            PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_GSTATE, gstate);
             documentExtGState.put(gstate, new PdfObject[]{new PdfName("GS" + (documentExtGState.size() + 1)), getPdfIndirectReference()});
         }
         return documentExtGState.get(gstate);
@@ -2447,7 +2451,7 @@ public class PdfWriter extends DocWriter implements
     PdfObject[] addSimpleProperty(final Object prop, final PdfIndirectReference refi) {
         if (!documentProperties.containsKey(prop)) {
             if (prop instanceof PdfOCG)
-            	PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_LAYER, null);
+            	PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, null);
             documentProperties.put(prop, new PdfObject[]{new PdfName("Pr" + (documentProperties.size() + 1)), refi});
         }
         return documentProperties.get(prop);
@@ -2644,7 +2648,7 @@ public class PdfWriter extends DocWriter implements
     }
 
     void registerLayer(final PdfOCG layer) {
-        PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_LAYER, null);
+        PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_LAYER, null);
         if (layer instanceof PdfLayer) {
             PdfLayer la = (PdfLayer)layer;
             if (la.getTitle() == null) {
@@ -3101,7 +3105,7 @@ public class PdfWriter extends DocWriter implements
 
     PdfIndirectReference add(final PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException {
         if (! imageDictionary.contains(pdfImage.name())) {
-            PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_IMAGE, pdfImage);
+            PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_IMAGE, pdfImage);
             if (fixedRef instanceof PRIndirectReference) {
                 PRIndirectReference r2 = (PRIndirectReference)fixedRef;
                 fixedRef = new PdfIndirectReference(0, getNewObjectNumber(r2.getReader(), r2.getNumber(), r2.getGeneration()));
@@ -3223,4 +3227,74 @@ public class PdfWriter extends DocWriter implements
     public void setRgbTransparencyBlending(final boolean rgbTransparencyBlending) {
         this.rgbTransparencyBlending = rgbTransparencyBlending;
     }
+
+    protected static void writeKeyInfo(OutputStream os) throws IOException {
+    	Version version = Version.getInstance();
+    	if (version.getKey() == null)
+    		return;
+        os.write(getISOBytes(String.format("%%%s-%s\n", version.getKey(), version.getRelease())));
+    	
+    }
+     
+    protected TtfUnicodeWriter ttfUnicodeWriter = null;
+
+    protected TtfUnicodeWriter getTtfUnicodeWriter() {
+        if (ttfUnicodeWriter == null)
+            ttfUnicodeWriter = new TtfUnicodeWriter(this);
+        return ttfUnicodeWriter;
+    }
+
+    protected XmpWriter xmpWriter = null;
+
+    protected XmpWriter getXmpWriter(ByteArrayOutputStream baos, PdfDocument.PdfInfo info) throws IOException {
+        if (xmpWriter == null)
+            xmpWriter = new XmpWriter(baos, info);
+        return xmpWriter;
+    }
+
+    public static void checkPdfIsoConformance(PdfWriter writer, int key, Object obj1) {
+        if (writer != null)
+            writer.checkPdfIsoConformance(key, obj1);
+    }
+
+    protected void checkPdfIsoConformance(int key, Object obj1) {
+        PdfXConformanceImp.checkPDFXConformance(this, key, obj1);
+    }
+
+    private void completeInfoDictionary(PdfDictionary info) {
+        if (isPdfX()) {
+            if (info.get(PdfName.GTS_PDFXVERSION) == null) {
+                if (((PdfXConformanceImp)pdfIsoConformance).isPdfX1A2001()) {
+                    info.put(PdfName.GTS_PDFXVERSION, new PdfString("PDF/X-1:2001"));
+                    info.put(new PdfName("GTS_PDFXConformance"), new PdfString("PDF/X-1a:2001"));
+                }
+                else if (((PdfXConformanceImp)pdfIsoConformance).isPdfX32002())
+                    info.put(PdfName.GTS_PDFXVERSION, new PdfString("PDF/X-3:2002"));
+            }
+            if (info.get(PdfName.TITLE) == null) {
+                info.put(PdfName.TITLE, new PdfString("Pdf document"));
+            }
+            if (info.get(PdfName.CREATOR) == null) {
+                info.put(PdfName.CREATOR, new PdfString("Unknown"));
+            }
+            if (info.get(PdfName.TRAPPED) == null) {
+                info.put(PdfName.TRAPPED, new PdfName("False"));
+            }
+        }
+    }
+
+    private void completeExtraCatalog(PdfDictionary extraCatalog) {
+        if (isPdfX()) {
+            if (extraCatalog.get(PdfName.OUTPUTINTENTS) == null) {
+                PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
+                out.put(PdfName.OUTPUTCONDITION, new PdfString("SWOP CGATS TR 001-1995"));
+                out.put(PdfName.OUTPUTCONDITIONIDENTIFIER, new PdfString("CGATS TR 001"));
+                out.put(PdfName.REGISTRYNAME, new PdfString("http://www.color.org"));
+                out.put(PdfName.INFO, new PdfString(""));
+                out.put(PdfName.S, PdfName.GTS_PDFX);
+                extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
+            }
+        }
+    }
+
 }

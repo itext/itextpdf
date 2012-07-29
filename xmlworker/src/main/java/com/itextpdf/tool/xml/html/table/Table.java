@@ -40,10 +40,6 @@
  */
 package com.itextpdf.tool.xml.html.table;
 
-import java.util.*;
-import java.util.List;
-import java.util.Map.Entry;
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.html.HtmlUtilities;
 import com.itextpdf.text.log.Level;
@@ -64,6 +60,10 @@ import com.itextpdf.tool.xml.html.HTML;
 import com.itextpdf.tool.xml.html.pdfelement.HtmlCell;
 import com.itextpdf.tool.xml.html.table.TableRowElement.Place;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+
+import java.util.*;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * @author Emiel Ackermann
@@ -535,22 +535,85 @@ public class Table extends AbstractTagProcessor {
 		Map<String, String> attributes = tag.getAttributes();
 		if (attributes.containsKey(CSS.Property.BORDER)) {
 			styleValues.setBorderColor(BaseColor.BLACK);
-			styleValues.setBorderWidth(utils.parsePxInCmMmPcToPt(attributes.get(CSS.Property.BORDER)));
+            String borderValue = attributes.get(CSS.Property.BORDER);
+            if ("".equals(borderValue))
+                styleValues.setBorderWidth(DEFAULT_CELL_BORDER_WIDTH);
+            else
+			    styleValues.setBorderWidth(utils.parsePxInCmMmPcToPt(borderValue));
 		} else {
-			styleValues.setBorderColorBottom(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_BOTTOM_COLOR)));
-			styleValues.setBorderColorTop(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_TOP_COLOR)));
-			styleValues.setBorderColorLeft(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_LEFT_COLOR)));
-			styleValues.setBorderColorRight(HtmlUtilities.decodeColor(css.get(CSS.Property.BORDER_RIGHT_COLOR)));
-			styleValues.setBorderWidthBottom(utils.checkMetricStyle(css, CSS.Property.BORDER_BOTTOM_WIDTH));
-			styleValues.setBorderWidthTop(utils.checkMetricStyle(css, CSS.Property.BORDER_TOP_WIDTH));
-			styleValues.setBorderWidthLeft(utils.checkMetricStyle(css, CSS.Property.BORDER_LEFT_WIDTH));
-			styleValues.setBorderWidthRight(utils.checkMetricStyle(css, CSS.Property.BORDER_RIGHT_WIDTH));
+            for (Entry<String, String> entry : css.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (key.equalsIgnoreCase(CSS.Property.BORDER_LEFT_STYLE) && CSS.Value.SOLID.equalsIgnoreCase(value)) {
+                    styleValues.setBorderColorLeft(BaseColor.BLACK);
+                    styleValues.setBorderWidthLeft(DEFAULT_CELL_BORDER_WIDTH);
+                } else if (key.equalsIgnoreCase(CSS.Property.BORDER_RIGHT_STYLE) && CSS.Value.SOLID.equalsIgnoreCase(value)) {
+                    styleValues.setBorderColorRight(BaseColor.BLACK);
+                    styleValues.setBorderWidthRight(DEFAULT_CELL_BORDER_WIDTH);
+                } else if (key.equalsIgnoreCase(CSS.Property.BORDER_TOP_STYLE) && CSS.Value.SOLID.equalsIgnoreCase(value)) {
+                    styleValues.setBorderColorTop(BaseColor.BLACK);
+                    styleValues.setBorderWidthTop(DEFAULT_CELL_BORDER_WIDTH);
+                }  else if (key.equalsIgnoreCase(CSS.Property.BORDER_BOTTOM_STYLE) && CSS.Value.SOLID.equalsIgnoreCase(value)) {
+                    styleValues.setBorderColorBottom(BaseColor.BLACK);
+                    styleValues.setBorderWidthBottom(DEFAULT_CELL_BORDER_WIDTH);
+                }
+            }
+            
+            String color = css.get(CSS.Property.BORDER_BOTTOM_COLOR);
+            if (color != null) {
+			    styleValues.setBorderColorBottom(HtmlUtilities.decodeColor(color));
+            }
+            color = css.get(CSS.Property.BORDER_TOP_COLOR);
+            if (color != null) {
+                styleValues.setBorderColorTop(HtmlUtilities.decodeColor(color));
+            }
+            color = css.get(CSS.Property.BORDER_LEFT_COLOR);
+            if (color != null) {
+                styleValues.setBorderColorLeft(HtmlUtilities.decodeColor(color));
+            }
+            color = css.get(CSS.Property.BORDER_RIGHT_COLOR);
+            if (color != null) {
+                styleValues.setBorderColorRight(HtmlUtilities.decodeColor(color));
+            }
+            Float width = utils.checkMetricStyle(css, CSS.Property.BORDER_BOTTOM_WIDTH);
+            if (width != null) {
+			    styleValues.setBorderWidthBottom(width);
+            }
+            width =  utils.checkMetricStyle(css, CSS.Property.BORDER_TOP_WIDTH);
+            if (width != null) {
+                styleValues.setBorderWidthTop(width);
+            }
+            width =  utils.checkMetricStyle(css, CSS.Property.BORDER_RIGHT_WIDTH);
+            if (width != null) {
+                styleValues.setBorderWidthRight(width);
+            }
+            width = utils.checkMetricStyle(css, CSS.Property.BORDER_LEFT_WIDTH);
+            if (width != null) {
+                styleValues.setBorderWidthLeft(width);
+            }
 		}
 		styleValues.setBackground(HtmlUtilities.decodeColor(css.get(CSS.Property.BACKGROUND_COLOR)));
 		styleValues.setHorBorderSpacing(getBorderOrCellSpacing(true, css, attributes));
 		styleValues.setVerBorderSpacing(getBorderOrCellSpacing(false, css, attributes));
 		return styleValues;
 	}
+
+    public static TableStyleValues setBorderAttributeForCell(final Tag tag) {
+        TableStyleValues styleValues = new TableStyleValues();
+
+        Map<String, String> attributes = tag.getAttributes();
+        Map<String, String> css = tag.getCSS();
+        String border = attributes.get(CSS.Property.BORDER);
+        if (border != null  && (border.trim().length() == 0 || utils.parsePxInCmMmPcToPt(attributes.get(CSS.Property.BORDER)) > 0)) {
+            styleValues.setBorderColor(BaseColor.BLACK);
+            styleValues.setBorderWidth(Table.DEFAULT_CELL_BORDER_WIDTH);
+        }
+
+        styleValues.setHorBorderSpacing(getBorderOrCellSpacing(true, css, attributes));
+        styleValues.setVerBorderSpacing(getBorderOrCellSpacing(false, css, attributes));
+
+        return styleValues;
+    }
 
 	/**
 	 * Extracts and parses the style border-spacing or the attribute cellspacing

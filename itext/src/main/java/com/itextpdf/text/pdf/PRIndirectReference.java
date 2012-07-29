@@ -60,7 +60,7 @@ public class PRIndirectReference extends PdfIndirectReference {
  * @param		generation		the generation number.
  */
     
-    PRIndirectReference(PdfReader reader, int number, int generation) {
+    public PRIndirectReference(PdfReader reader, int number, int generation) {
         type = INDIRECT;
         this.number = number;
         this.generation = generation;
@@ -74,7 +74,7 @@ public class PRIndirectReference extends PdfIndirectReference {
  * @param		number			the object number.
  */
     
-    PRIndirectReference(PdfReader reader, int number) {
+    public PRIndirectReference(PdfReader reader, int number) {
         this(reader, number, 0);
     }
     

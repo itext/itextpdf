@@ -43,10 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.*;
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.List;
 import com.itextpdf.text.api.WriterOperation;
@@ -55,6 +51,10 @@ import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
+
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.*;
 
 /**
  * <CODE>PdfDocument</CODE> is the class that is used by <CODE>PdfWriter</CODE>
@@ -165,7 +165,7 @@ public class PdfDocument extends Document {
          */
 
         void addProducer() {
-            put(PdfName.PRODUCER, new PdfString(getVersion()));
+            put(PdfName.PRODUCER, new PdfString(Version.getInstance().getVersion()));
         }
 
         /**
@@ -425,8 +425,10 @@ public class PdfDocument extends Document {
                         PdfChunk overflow;
                         while ((overflow = line.add(chunk)) != null) {
                             carriageReturn();
+                            boolean newlineSplit = chunk.isNewlineSplit();
                             chunk = overflow;
-                            chunk.trimFirstSpace();
+                            if (!newlineSplit)
+                            	chunk.trimFirstSpace();
                         }
                     }
                     pageEmpty = false;
@@ -805,6 +807,12 @@ public class PdfDocument extends Document {
      */
     @Override
     public boolean newPage() {
+        try {
+            flushFloatingElements();
+        } catch (DocumentException de) {
+            // maybe this never happens, but it's better to check.
+            throw new ExceptionConverter(de);
+        }
         lastElementType = -1;
         if (isPageEmpty()) {
         	setNewPageSizeAndMargins();
@@ -825,7 +833,6 @@ public class PdfDocument extends Document {
         indentation.imageIndentRight = 0;
 
         try {
-            flushFloatingElements();
             // we flush the arraylist with recently written lines
         	flushLines();
 
@@ -835,7 +842,7 @@ public class PdfDocument extends Document {
         	int rotation = pageSize.getRotation();
 
         	// [C10]
-        	if (writer.isPdfX()) {
+        	if (writer.isPdfIso()) {
         		if (thisBoxSize.containsKey("art") && thisBoxSize.containsKey("trim"))
         			throw new PdfXConformanceException(MessageLocalization.getComposedMessage("only.one.of.artbox.or.trimbox.can.exist.in.the.page"));
         		if (!thisBoxSize.containsKey("art") && !thisBoxSize.containsKey("trim")) {
@@ -1865,6 +1872,10 @@ public class PdfDocument extends Document {
         this.pageLabels = pageLabels;
     }
 
+    public PdfPageLabels getPageLabels() {
+        return this.pageLabels;
+    }
+
 //	[C5] named objects: local destinations, javascript, embedded files
 
     /**
@@ -2380,14 +2391,25 @@ public class PdfDocument extends Document {
             ArrayList<Element> cashedFloatingElements = floatingElements;
             floatingElements = null;
             FloatLayout fl = new FloatLayout(writer.getDirectContent(), cashedFloatingElements);
-
+            int loop = 0;
+            while (true) {
                 fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
                 int status = fl.layout(false);
-                //if ((status & ColumnText.NO_MORE_TEXT) != 0) {
+                if ((status & ColumnText.NO_MORE_TEXT) != 0) {
                     text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
                     currentHeight = indentTop() - fl.getYLine();
-                //}
-
+                    break;
+                }
+                if (indentTop() - currentHeight == fl.getYLine() || isPageEmpty())
+                    ++loop;
+                else {
+                    loop = 0;
+                }
+                if (loop == 2) {
+                    return;
+                }
+                newPage();
+            }
         }
     }
 

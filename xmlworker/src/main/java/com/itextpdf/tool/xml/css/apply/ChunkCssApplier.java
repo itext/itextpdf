@@ -136,6 +136,22 @@ public class ChunkCssApplier {
         }
         f.setSize(size);
         c.setFont(f);
+
+        Float leading = null;
+        if(rules.get(CSS.Property.LINE_HEIGHT) != null) {
+            String value = rules.get(CSS.Property.LINE_HEIGHT);
+            if(utils.isNumericValue(value)) {
+                leading = Float.parseFloat(value) * c.getFont().getSize();
+            } else if (utils.isRelativeValue(value)) {
+                leading = utils.parseRelativeValue(value, c.getFont().getSize());
+            } else if (utils.isMetricValue(value)){
+                leading = utils.parsePxInCmMmPcToPt(value);
+            }
+        }
+
+        if (leading != null) {
+            c.setLineHeight(leading);
+        }
         return c;
     }
 

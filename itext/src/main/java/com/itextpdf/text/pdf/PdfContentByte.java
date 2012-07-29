@@ -60,6 +60,7 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
+import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
 
 /**
@@ -530,7 +531,7 @@ public class PdfContentByte {
      * @param   blue    the intensity of blue. A value between 0 and 1
      */
     private void HelperRGB(float red, float green, float blue) {
-    	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_RGB, null);
+    	PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_RGB, null);
         if (red < 0)
             red = 0.0f;
         else if (red > 1.0f)
@@ -2275,7 +2276,7 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorStroke(final BaseColor color) {
-    	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_COLOR, color);
+    	PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -2312,7 +2313,7 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorFill(final BaseColor color) {
-    	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_COLOR, color);
+    	PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -2393,7 +2394,7 @@ public class PdfContentByte {
      * @param tint the tint if it is a spot color, ignored otherwise
      */
     void outputColorNumbers(final BaseColor color, final float tint) {
-    	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_COLOR, color);
+    	PdfWriter.checkPdfIsoConformance(writer, PdfIsoKeys.PDFISOKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_RGB:

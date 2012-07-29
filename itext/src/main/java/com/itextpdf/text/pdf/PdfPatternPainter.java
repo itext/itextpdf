@@ -149,7 +149,7 @@ public final class PdfPatternPainter extends PdfTemplate {
      * Gets the stream representing this pattern
      * @return the stream representing this pattern
      */
-    PdfPattern getPattern() {
+    public PdfPattern getPattern() {
         return new PdfPattern(this);
     }
     
@@ -159,7 +159,7 @@ public final class PdfPatternPainter extends PdfTemplate {
      * @return the stream representing this pattern
      * @since	2.1.3
      */
-    PdfPattern getPattern(int compressionLevel) {
+    public PdfPattern getPattern(int compressionLevel) {
         return new PdfPattern(this, compressionLevel);
     }
     

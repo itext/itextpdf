@@ -54,11 +54,11 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.Version;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.pdf.AcroFields.Item;
@@ -71,12 +71,12 @@ import com.itextpdf.text.xml.xmp.XmpWriter;
 class PdfStamperImp extends PdfWriter {
     HashMap<PdfReader, IntHashtable> readers2intrefs = new HashMap<PdfReader, IntHashtable>();
     HashMap<PdfReader, RandomAccessFileOrArray> readers2file = new HashMap<PdfReader, RandomAccessFileOrArray>();
-    RandomAccessFileOrArray file;
+    protected RandomAccessFileOrArray file;
     PdfReader reader;
     IntHashtable myXref = new IntHashtable();
     /** Integer(page number) -> PageStamp */
     HashMap<PdfDictionary, PageStamp> pagesToContent = new HashMap<PdfDictionary, PageStamp>();
-    boolean closed = false;
+    protected boolean closed = false;
     /** Holds value of property rotateContents. */
     private boolean rotateContents = true;
     protected AcroFields acroFields;
@@ -103,7 +103,7 @@ class PdfStamperImp extends PdfWriter {
      * @throws DocumentException on error
      * @throws IOException
      */
-    PdfStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append) throws DocumentException, IOException {
+    protected PdfStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append) throws DocumentException, IOException {
         super(new PdfDocument(), os);
         if (!reader.isOpenedWithFullPermissions())
             throw new BadPasswordException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
@@ -147,7 +147,7 @@ class PdfStamperImp extends PdfWriter {
         initialXrefSize = reader.getXrefSize();
     }
 
-    void close(Map<String, String> moreInfo) throws IOException {
+    protected void close(Map<String, String> moreInfo) throws IOException {
         if (closed)
             return;
         if (useVp) {
@@ -161,7 +161,8 @@ class PdfStamperImp extends PdfWriter {
         addFieldResources();
         PdfDictionary catalog = reader.getCatalog();
         PdfDictionary pages = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.PAGES));
-        pages.put(PdfName.ITXT, new PdfString(Document.getRelease()));
+        Version version = Version.getInstance();
+        pages.put(PdfName.ITXT, new PdfString(version.getRelease()));
         markUsed(pages);
         PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog());
         if (acroFields != null && acroFields.getXfa().isChanged()) {
@@ -223,12 +224,12 @@ class PdfStamperImp extends PdfWriter {
         if (oldInfo != null && oldInfo.get(PdfName.PRODUCER) != null)
         	producer = oldInfo.getAsString(PdfName.PRODUCER).toUnicodeString();
         if (producer == null) {
-        	producer = Document.getVersion();
+        	producer = version.getVersion();
         }
-        else if (producer.indexOf(Document.getProduct()) == -1) {
+        else if (producer.indexOf(version.getProduct()) == -1) {
         	StringBuffer buf = new StringBuffer(producer);
         	buf.append("; modified using ");
-        	buf.append(Document.getVersion());
+        	buf.append(version.getVersion());
         	producer = buf.toString();
         }
         PdfIndirectReference info = null;
@@ -379,6 +380,7 @@ class PdfStamperImp extends PdfWriter {
         // write the cross-reference table of the body
         body.writeCrossReferenceTable(os, root, info, encryption, fileID, prevxref);
         if (fullCompression) {
+        	writeKeyInfo(os);
             os.write(getISOBytes("startxref\n"));
             os.write(getISOBytes(String.valueOf(body.offset())));
             os.write(getISOBytes("\n%%EOF\n"));
@@ -425,7 +427,7 @@ class PdfStamperImp extends PdfWriter {
         }
     }
 
-    void alterContents() throws IOException {
+    protected void alterContents() throws IOException {
         for (Object element : pagesToContent.values()) {
             PageStamp ps = (PageStamp)element;
             PdfDictionary pageN = ps.pageN;
@@ -826,7 +828,7 @@ class PdfStamperImp extends PdfWriter {
         return true;
     }
 
-    void flatFields() {
+    protected void flatFields() {
         if (append)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("field.flattening.is.not.supported.in.append.mode"));
         getAcroFields();
@@ -999,7 +1001,7 @@ class PdfStamperImp extends PdfWriter {
         }
     }
 
-    private void flatFreeTextFields()
+    protected void flatFreeTextFields()
 	{
 		if (append)
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("freetext.flattening.is.not.supported.in.append.mode"));
@@ -1131,7 +1133,7 @@ class PdfStamperImp extends PdfWriter {
         markUsed(fields);
     }
 
-    void addFieldResources() throws IOException {
+    protected void addFieldResources() throws IOException {
         if (fieldTemplates.isEmpty())
             return;
         PdfDictionary catalog = reader.getCatalog();
@@ -1302,7 +1304,7 @@ class PdfStamperImp extends PdfWriter {
         markUsed(catalog);
     }
 
-    void setJavaScript() throws IOException {
+    protected void setJavaScript() throws IOException {
         HashMap<String, PdfObject> djs = pdf.getDocumentLevelJS();
         if (djs.isEmpty())
             return;
@@ -1318,7 +1320,7 @@ class PdfStamperImp extends PdfWriter {
         names.put(PdfName.JAVASCRIPT, addToBody(tree).getIndirectReference());
     }
 
-    void addFileAttachments() throws IOException {
+    protected void addFileAttachments() throws IOException {
         HashMap<String, PdfObject> fs = pdf.getDocumentFileAttachment();
         if (fs.isEmpty())
             return;
@@ -1361,7 +1363,7 @@ class PdfStamperImp extends PdfWriter {
        	catalog.put( PdfName.COLLECTION, collection );
     }
 
-    void setOutlines() throws IOException {
+    protected void setOutlines() throws IOException {
         if (newBookmarks == null)
             return;
         deleteOutlines();

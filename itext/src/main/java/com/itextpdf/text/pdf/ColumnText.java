@@ -475,7 +475,7 @@ public class ColumnText {
 
     public static boolean isAllowedElement(Element element) {
     	int type = element.type();
-    	if (type == Element.CHUNK || type == Element.PHRASE
+    	if (type == Element.CHUNK || type == Element.PHRASE || type == Element.DIV
     			|| type == Element.PARAGRAPH || type == Element.LIST
     			|| type == Element.YMARK || type == Element.PTABLE) return true;
     	if (element instanceof Image) return true;
@@ -912,11 +912,11 @@ public class ColumnText {
                 	status = NO_MORE_TEXT;
                 	break;
                 }
-                float[] maxSize = line.getMaxSize();
+                float[] maxSize = line.getMaxSize(fixedLeading, multipliedLeading);
                 if (isUseAscender() && Float.isNaN(firstLineY))
                 	currentLeading = line.getAscender();
                 else
-                	currentLeading = Math.max(fixedLeading + maxSize[0] * multipliedLeading, maxSize[1] - descender);
+                	currentLeading = Math.max(maxSize[0], maxSize[1] - descender);
                 if (yLine > maxY || yLine - currentLeading < minY ) {
                 	status = NO_MORE_COLUMN;
                 	bidiLine.restore();
