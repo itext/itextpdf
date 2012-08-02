@@ -27,6 +27,7 @@
 a.pattern.can.not.be.used.as.a.template.to.create.an.image=A pattern can not be used as a template to create an image.
 a.pdfx.conforming.document.cannot.be.encrypted=A PDFX conforming document cannot be encrypted.
 a.signature.image.should.be.present.when.rendering.mode.is.graphic.only=A signature image should be present when rendering mode is graphic only.
+a.signature.image.should.be.present.when.rendering.mode.is.graphic.and.description=A signature image should be present when rendering mode is graphic and description.
 a.string.1.was.passed.in.state.only.on.off.and.toggle.are.allowed=A string '{1} was passed in state. Only 'ON', 'OFF' and 'Toggle' are allowed.
 a.tab.position.may.not.be.lower.than.0.yours.is.1=A tab position may not be lower than 0; yours is {1}
 a.table.should.have.at.least.1.column=A table should have at least 1 column.

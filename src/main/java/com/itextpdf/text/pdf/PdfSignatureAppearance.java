@@ -985,6 +985,9 @@ public class PdfSignatureAppearance {
                 ct2.go();
                 break;
             case GRAPHIC_AND_DESCRIPTION:
+                if (signatureGraphic == null) {
+                    throw new IllegalStateException(MessageLocalization.getComposedMessage("a.signature.image.should.be.present.when.rendering.mode.is.graphic.and.description"));
+                }
                 ct2 = new ColumnText(t);
                 ct2.setRunDirection(runDirection);
                 ct2.setSimpleColumn(signatureRect.getLeft(), signatureRect.getBottom(), signatureRect.getRight(), signatureRect.getTop(), 0, Element.ALIGN_RIGHT);
