@@ -504,6 +504,23 @@ public class TiffImage {
                         palette[k * 3 + 1] = (byte)(rgb[k + gColor] >>> 8);
                         palette[k * 3 + 2] = (byte)(rgb[k + bColor] >>> 8);
                     }
+                    // Colormap components are supposed to go from 0 to 655535 but,
+                    // as usually, some tiff producers just put values from 0 to 255.
+                    // Let's check for these broken tiffs.
+                    boolean colormapBroken = true;
+                    for (int k = 0; k < palette.length; ++k) {
+                        if (palette[k] != 0) {
+                            colormapBroken = false;
+                            break;
+                        }
+                    }
+                    if (colormapBroken) {
+                        for (int k = 0; k < gColor; ++k) {
+                            palette[k * 3] = (byte)rgb[k];
+                            palette[k * 3 + 1] = (byte)rgb[k + gColor];
+                            palette[k * 3 + 2] = (byte)rgb[k + bColor];
+                        }
+                    }
                     PdfArray indexed = new PdfArray();
                     indexed.add(PdfName.INDEXED);
                     indexed.add(PdfName.DEVICERGB);
