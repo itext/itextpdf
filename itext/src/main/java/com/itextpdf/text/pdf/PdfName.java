@@ -137,6 +137,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     /** A name */
     public static final PdfName AIS = new PdfName("AIS");
     /** A name */
+    public static final PdfName ALL = new PdfName("All");
+    /** A name */
     public static final PdfName ALLPAGES = new PdfName("AllPages");
     /** A name */
     public static final PdfName ALT = new PdfName("Alt");
@@ -606,6 +608,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     /** A name */
     public static final PdfName ETSI_RFC3161 = new PdfName("ETSI.RFC3161");
     /** A name */
+    public static final PdfName EXCLUDE = new PdfName("Exclude");
+    /** A name */
     public static final PdfName EXTEND = new PdfName("Extend");
     /**
      * A name
@@ -890,6 +894,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName IMAGEI = new PdfName("ImageI");
     /** A name */
     public static final PdfName IMAGEMASK = new PdfName("ImageMask");
+    /** A name */
+    public static final PdfName INCLUDE = new PdfName("Include");
     /**
      * A name
      * @since 5.0.2
@@ -1575,6 +1581,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName SHIFT_JIS = new PdfName("Shift-JIS");
     /** A name */
     public static final PdfName SIG = new PdfName("Sig");
+    /** A name */
+    public static final PdfName SIGFIELDLOCK = new PdfName("SigFieldLock");
     /** A name */
     public static final PdfName SIGFLAGS = new PdfName("SigFlags");
     /** A name */
