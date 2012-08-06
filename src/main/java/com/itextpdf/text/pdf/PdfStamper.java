@@ -43,13 +43,10 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.pdf.security.LtvVerification;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.List;
@@ -57,13 +54,13 @@ import java.util.Map;
 
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.collection.PdfCollection;
 import com.itextpdf.text.pdf.interfaces.PdfEncryptionSettings;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
+import com.itextpdf.text.pdf.security.LtvVerification;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte

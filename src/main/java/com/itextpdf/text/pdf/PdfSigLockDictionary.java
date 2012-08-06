@@ -106,10 +106,18 @@ public class PdfSigLockDictionary extends PdfDictionary  {
 	/**
 	 * Creates a signature lock for specific fields in the document.
 	 */
+	public PdfSigLockDictionary(LockAction action, String... fields) {
+		this(action, null, fields);
+	}
+	
+	/**
+	 * Creates a signature lock for specific fields in the document.
+	 */
 	public PdfSigLockDictionary(LockAction action, LockPermissions p, String... fields) {
 		super(PdfName.SIGFIELDLOCK);
 		this.put(PdfName.ACTION, action.getValue());
-		this.put(PdfName.P, p.getValue());
+		if (p != null)
+			this.put(PdfName.P, p.getValue());
 		PdfArray fieldsArray = new PdfArray();
 		for (String field : fields) {
 			fieldsArray.add(new PdfString(field));
