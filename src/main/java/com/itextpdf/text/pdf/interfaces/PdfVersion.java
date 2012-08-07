@@ -76,8 +76,9 @@ public interface PdfVersion {
 	/**
 	 * Sets the PDF version as it will appear in the Catalog.
 	 * Note that this only has effect if you use a later version
-	 * than the one that appears in the header; this method
-	 * ignores the parameter if you try to set a lower version.
+	 * than the one that appears in the header. This method
+	 * ignores the parameter if you try to set a lower version
+	 * than the one currently set in the Catalog.
 	 * @param version	the PDF name that will be used for the Version key in the catalog
 	 */
 	public void setPdfVersion(PdfName version);
