@@ -465,10 +465,23 @@ public class PdfDiv implements Element, Spaceable {
         int status = ColumnText.NO_MORE_TEXT;
 
         if (!content.isEmpty()) {
-            if (floatLayout == null) {
+            FloatLayout  floatLayout = null;
+            if (this.floatLayout == null) {
                 ArrayList<Element> floatingElements = new ArrayList<Element>();
                 floatingElements.addAll(content);
-                floatLayout = new FloatLayout(compositeColumn, floatingElements);
+                if (simulate) {
+                    floatLayout = new FloatLayout(compositeColumn, floatingElements);
+                } else {
+                    floatLayout = this.floatLayout = new FloatLayout(compositeColumn, floatingElements);
+                }
+            } else {
+                if (simulate) {
+                    ArrayList<Element> floatingElements = new ArrayList<Element>();
+                    floatingElements.addAll(this.floatLayout.content);
+                    floatLayout = new FloatLayout(this.floatLayout.compositeColumn, floatingElements);
+                } else {
+                    floatLayout = this.floatLayout;
+                }
             }
 
             floatLayout.setSimpleColumn(leftX, minY, rightX, yLine);
