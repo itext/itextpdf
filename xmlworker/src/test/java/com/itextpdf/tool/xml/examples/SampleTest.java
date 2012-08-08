@@ -1,13 +1,8 @@
 package com.itextpdf.tool.xml.examples;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.FontProvider;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.CompareTool;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -25,9 +20,13 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.AbstractImageProvider;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import com.itextpdf.tool.xml.pipeline.html.ImageProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.*;
+import java.nio.charset.Charset;
 
 public class SampleTest {
 
@@ -103,20 +102,30 @@ public class SampleTest {
         Document doc = new Document(PageSize.A4);
         PdfWriter pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(outPdf));
         doc.open();
-        doc.setMargins(0, 0, 0, 0);
+        transformHtml2Pdf(doc, pdfWriter, new SampleTestImageProvider(), new XMLWorkerFontProvider(SampleTest.class.getResource("fonts").getPath()), SampleTest.class.getResourceAsStream("sampleTest.css"));
+        doc.close();
+    }
 
+    protected void transformHtml2Pdf(Document doc, PdfWriter pdfWriter, ImageProvider imageProvider, FontProvider fontProvider, InputStream cssFile) throws IOException, DocumentException, InterruptedException {
         CssFilesImpl cssFiles = new CssFilesImpl();
-        cssFiles.add(XMLWorkerHelper.getCSS(SampleTest.class.getResourceAsStream("sampleTest.css")));
+        if (cssFile == null)
+            cssFile = SampleTest.class.getResourceAsStream("/default.css");
+        cssFiles.add(XMLWorkerHelper.getCSS(cssFile));
         StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
-        HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(new XMLWorkerFontProvider(SampleTest.class.getResource("fonts").getPath())));
+        HtmlPipelineContext hpc;
+
+        if (fontProvider != null)
+            hpc = new HtmlPipelineContext(new CssAppliersImpl(fontProvider));
+        else
+            hpc = new HtmlPipelineContext(null);
+
+        hpc.setImageProvider(imageProvider);
         hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(Tags.getHtmlTagProcessorFactory());
-        hpc.setImageProvider(new SampleTestImageProvider());
         HtmlPipeline htmlPipeline = new HtmlPipeline(hpc, new PdfWriterPipeline(doc, pdfWriter));
         Pipeline<?> pipeline = new CssResolverPipeline(cssResolver, htmlPipeline);
         XMLWorker worker = new XMLWorker(pipeline, true);
-        XMLParser p = new XMLParser(true, worker, Charset.forName("UTF-8"));
-		p.parse(new FileInputStream(inputHtml), Charset.forName("UTF-8"));
-        doc.close();
+        XMLParser xmlParse = new XMLParser(true, worker, Charset.forName("UTF-8"));
+        xmlParse.parse(new FileInputStream(inputHtml), Charset.forName("UTF-8"));
     }
 
     private void deleteDirectory(File path) {
