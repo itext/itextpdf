@@ -42,18 +42,18 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf.codec;
-import com.itextpdf.text.pdf.ICC_Profile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.ImgRaw;
 import com.itextpdf.text.Jpeg;
+import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.ICC_Profile;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
@@ -431,6 +431,30 @@ public class TiffImage {
                 byte[] jpeg = new byte[(int)size[0]];
                 s.seek(offset[0]);
                 s.readFully(jpeg);
+                // if quantization and/or Huffman tables are stored separately in the tiff,
+                // we need to add them to the jpeg data
+                TIFFField jpegtables = dir.getField(TIFFConstants.TIFFTAG_JPEGTABLES);
+                if (jpegtables != null) {
+                	byte[] temp = jpegtables.getAsBytes();
+                	int tableoffset = 0;
+                	int tablelength = temp.length;
+                	// remove FFD8 from start
+                	if (temp[0] == (byte) 0xFF && temp[1] == (byte) 0xD8) {
+                		tableoffset = 2;
+                		tablelength -= 2;
+                	}
+                	// remove FFD9 from end
+                	if (temp[temp.length-2] == (byte) 0xFF && temp[temp.length-1] == (byte) 0xD9)
+                		tablelength -= 2;
+                	byte[] tables = new byte[tablelength];
+                	System.arraycopy(temp, tableoffset, tables, 0, tablelength);
+                    // TODO insert after JFIF header, instead of at the start
+                    byte[] jpegwithtables = new byte[jpeg.length + tables.length];
+                    System.arraycopy(jpeg, 0, jpegwithtables, 0, 2);
+                    System.arraycopy(tables, 0, jpegwithtables, 2, tables.length);
+                    System.arraycopy(jpeg, 2, jpegwithtables, tables.length+2, jpeg.length-2);
+                    jpeg = jpegwithtables;
+                }
                 img = new Jpeg(jpeg);
             } 
             else {
