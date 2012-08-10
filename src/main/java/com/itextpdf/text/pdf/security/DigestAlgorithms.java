@@ -67,6 +67,9 @@ public class DigestAlgorithms {
 	
 	/** Maps the digest IDs with the human-readable name of the digest algorithm. */
     private static final HashMap<String, String> digestNames = new HashMap<String, String>();
+	
+	/** Maps digest algorithm that are unknown by the JDKs MessageDigest object to a known one. */
+    private static final HashMap<String, String> fixNames = new HashMap<String, String>();
     
     /** Maps the name of a digest algorithm with its ID. */
     private static final HashMap<String, String> allowedDigests = new HashMap<String, String>();
@@ -74,33 +77,37 @@ public class DigestAlgorithms {
     static {
         digestNames.put("1.2.840.113549.2.5", "MD5");
         digestNames.put("1.2.840.113549.2.2", "MD2");
-        digestNames.put("1.3.14.3.2.26", SHA1);
+        digestNames.put("1.3.14.3.2.26", "SHA1");
         digestNames.put("2.16.840.1.101.3.4.2.4", "SHA224");
-        digestNames.put("2.16.840.1.101.3.4.2.1", SHA256);
-        digestNames.put("2.16.840.1.101.3.4.2.2", SHA384);
-        digestNames.put("2.16.840.1.101.3.4.2.3", SHA512);
+        digestNames.put("2.16.840.1.101.3.4.2.1", "SHA256");
+        digestNames.put("2.16.840.1.101.3.4.2.2", "SHA384");
+        digestNames.put("2.16.840.1.101.3.4.2.3", "SHA512");
         digestNames.put("1.3.36.3.2.2", "RIPEMD128");
-        digestNames.put("1.3.36.3.2.1", RIPEMD160);
+        digestNames.put("1.3.36.3.2.1", "RIPEMD160");
         digestNames.put("1.3.36.3.2.3", "RIPEMD256");
         digestNames.put("1.2.840.113549.1.1.4", "MD5");
         digestNames.put("1.2.840.113549.1.1.2", "MD2");
-        digestNames.put("1.2.840.113549.1.1.5", SHA1);
+        digestNames.put("1.2.840.113549.1.1.5", "SHA1");
         digestNames.put("1.2.840.113549.1.1.14", "SHA224");
-        digestNames.put("1.2.840.113549.1.1.11", SHA256);
-        digestNames.put("1.2.840.113549.1.1.12", SHA384);
-        digestNames.put("1.2.840.113549.1.1.13", SHA512);
+        digestNames.put("1.2.840.113549.1.1.11", "SHA256");
+        digestNames.put("1.2.840.113549.1.1.12", "SHA384");
+        digestNames.put("1.2.840.113549.1.1.13", "SHA512");
         digestNames.put("1.2.840.113549.2.5", "MD5");
         digestNames.put("1.2.840.113549.2.2", "MD2");
-        digestNames.put("1.2.840.10040.4.3", SHA1);
+        digestNames.put("1.2.840.10040.4.3", "SHA1");
         digestNames.put("2.16.840.1.101.3.4.3.1", "SHA224");
-        digestNames.put("2.16.840.1.101.3.4.3.2", SHA256);
-        digestNames.put("2.16.840.1.101.3.4.3.3", SHA384);
-        digestNames.put("2.16.840.1.101.3.4.3.4", SHA512);
+        digestNames.put("2.16.840.1.101.3.4.3.2", "SHA256");
+        digestNames.put("2.16.840.1.101.3.4.3.3", "SHA384");
+        digestNames.put("2.16.840.1.101.3.4.3.4", "SHA512");
         digestNames.put("1.3.36.3.3.1.3", "RIPEMD128");
-        digestNames.put("1.3.36.3.3.1.2", RIPEMD160);
+        digestNames.put("1.3.36.3.3.1.2", "RIPEMD160");
         digestNames.put("1.3.36.3.3.1.4", "RIPEMD256");
         digestNames.put("1.2.643.2.2.9", "GOST3411");
 
+        fixNames.put("SHA256", SHA256);
+        fixNames.put("SHA384", SHA384);
+        fixNames.put("SHA512", SHA512);
+        
         allowedDigests.put("MD2", "1.2.840.113549.2.2");
         allowedDigests.put("MD-2", "1.2.840.113549.2.2");
         allowedDigests.put("MD5", "1.2.840.113549.2.5");
@@ -134,6 +141,12 @@ public class DigestAlgorithms {
             return oid;
         else
             return ret;
+    }
+    
+    public static String normalizeDigest(String algo) {
+    	if (fixNames.containsKey(algo))
+    		return fixNames.get(algo);
+    	return algo;
     }
 
     /**
