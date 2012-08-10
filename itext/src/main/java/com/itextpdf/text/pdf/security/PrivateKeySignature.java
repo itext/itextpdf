@@ -84,7 +84,7 @@ public class PrivateKeySignature implements ExternalSignature {
      * @see com.itextpdf.text.pdf.security.ExternalSignature#sign(byte[])
      */
     public byte[] sign(byte[] b) throws GeneralSecurityException {
-        String signMode = hashAlgorithm + "with" + encryptionAlgorithm;
+        String signMode = removeHyphen(hashAlgorithm) + "with" + encryptionAlgorithm;
         Signature sig;
         if (provider == null)
             sig = Signature.getInstance(signMode);
@@ -94,6 +94,22 @@ public class PrivateKeySignature implements ExternalSignature {
         sig.initSign(pk);
         sig.update(b);
         return sig.sign();
+    }
+    
+    /**
+     * The default MessageDigest class in the JDK doesn't recognize
+     * hash algorithms such as SHA256, only SHA-256.
+     * However, the hyphen isn't allowed in the signMode, so we need
+     * to remove the hyphen.
+     * @param hashAlgorithm
+     * @return
+     */
+    public String removeHyphen(String hashAlgorithm) {
+    	int pos = hashAlgorithm.indexOf('-');
+    	if (pos > -1) {
+    		return hashAlgorithm.substring(0, pos) + hashAlgorithm.substring(pos + 1);
+    	}
+    	return hashAlgorithm;
     }
     
     /**
