@@ -160,10 +160,6 @@ class PdfStamperImp extends PdfWriter {
         	flatFreeTextFields();
         addFieldResources();
         PdfDictionary catalog = reader.getCatalog();
-        PdfDictionary pages = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.PAGES));
-        Version version = Version.getInstance();
-        pages.put(PdfName.ITXT, new PdfString(version.getRelease()));
-        markUsed(pages);
         PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog());
         if (acroFields != null && acroFields.getXfa().isChanged()) {
             markUsed(acroForm);
@@ -223,6 +219,7 @@ class PdfStamperImp extends PdfWriter {
             skipInfo = iInfo.getNumber();
         if (oldInfo != null && oldInfo.get(PdfName.PRODUCER) != null)
         	producer = oldInfo.getAsString(PdfName.PRODUCER).toUnicodeString();
+        Version version = Version.getInstance();
         if (producer == null) {
         	producer = version.getVersion();
         }

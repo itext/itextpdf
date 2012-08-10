@@ -143,9 +143,6 @@ public class PdfPages {
                         nextParents.add(writer.getPdfIndirectReference());
                     top.put(PdfName.PARENT, nextParents.get(p / leafSize));
                 }
-                else {
-                	top.put(PdfName.ITXT, new PdfString(Version.getInstance().getRelease()));
-                }
                 writer.addToBody(top, tParents.get(p));
             }
             if (tParents.size() == 1) {

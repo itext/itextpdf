@@ -123,7 +123,7 @@ public class MakeSignature {
         InputStream data = sap.getRangeStream();
         MessageDigest messageDigest;
         if (provider == null)
-            messageDigest = MessageDigest.getInstance(hashAlgorithm);
+            messageDigest = MessageDigest.getInstance(DigestAlgorithms.normalizeDigest(hashAlgorithm));
         else
             messageDigest = MessageDigest.getInstance(hashAlgorithm, provider);
         byte buf[] = new byte[8192];

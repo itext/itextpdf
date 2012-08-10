@@ -3230,9 +3230,11 @@ public class PdfWriter extends DocWriter implements
 
     protected static void writeKeyInfo(OutputStream os) throws IOException {
     	Version version = Version.getInstance();
-    	if (version.getKey() == null)
-    		return;
-        os.write(getISOBytes(String.format("%%%s-%s\n", version.getKey(), version.getRelease())));
+    	String k = version.getKey();
+    	if (k == null) {
+            k = "iText";
+    	}
+        os.write(getISOBytes(String.format("%%%s-%s\n", k, version.getRelease())));
     	
     }
      
