@@ -657,6 +657,8 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      */
     public static final PdfName FG = new PdfName("FG");
     /** A name */
+    public static final PdfName FIELDMDP = new PdfName("FieldMDP");
+    /** A name */
     public static final PdfName FIELDS = new PdfName("Fields");
     /**
      * A name
