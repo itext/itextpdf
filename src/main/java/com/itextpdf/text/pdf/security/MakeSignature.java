@@ -44,6 +44,8 @@
 package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
@@ -69,6 +71,10 @@ import java.util.HashMap;
  * @author Paulo Soares
  */
 public class MakeSignature {
+
+	/** The Logger instance. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MakeSignature.class);
+    
 	/** Parameter to indicate that you want to sign using the Cryptographic Message Syntax. */
     public static final boolean CMS = false;
 	/** Parameter to indicate that you want to sign using CMS Advanced Electronic Signatures. */
@@ -171,6 +177,7 @@ public class MakeSignature {
         for (CrlClient cc : crlList) {
             if (cc == null)
                 continue;
+            LOGGER.info("Processing " + cc.getClass().getName());
             Collection<byte[]> b = cc.getEncoded((X509Certificate)cert, null);
             if (b == null)
                 continue;
