@@ -44,6 +44,8 @@
 package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
@@ -69,6 +71,10 @@ import java.util.HashMap;
  * @author Paulo Soares
  */
 public class MakeSignature {
+
+	/** The Logger instance. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MakeSignature.class);
+    
 	/** Parameter to indicate that you want to sign using the Cryptographic Message Syntax. */
     public static final boolean CMS = false;
 	/** Parameter to indicate that you want to sign using CMS Advanced Electronic Signatures. */
@@ -93,7 +99,10 @@ public class MakeSignature {
      */
     public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
             TSAClient tsaClient, String provider, int estimatedSize, boolean cades) throws IOException, DocumentException, GeneralSecurityException {
-        Collection<byte[]> crlBytes = processCrl(chain[0], crlList);
+        Collection<byte[]> crlBytes = null;
+        int i = 0;
+        while (crlBytes == null && i < chain.length)
+        	crlBytes = processCrl(chain[i++], crlList);
     	if (estimatedSize == 0) {
             estimatedSize = 8192;
             if (crlBytes != null) {
@@ -125,7 +134,7 @@ public class MakeSignature {
         if (provider == null)
             messageDigest = MessageDigest.getInstance(DigestAlgorithms.normalizeDigest(hashAlgorithm));
         else
-            messageDigest = MessageDigest.getInstance(hashAlgorithm, provider);
+            messageDigest = MessageDigest.getInstance(DigestAlgorithms.normalizeDigest(hashAlgorithm), provider);
         byte buf[] = new byte[8192];
         int n;
         while ((n = data.read(buf)) > 0) {
@@ -168,6 +177,7 @@ public class MakeSignature {
         for (CrlClient cc : crlList) {
             if (cc == null)
                 continue;
+            LOGGER.info("Processing " + cc.getClass().getName());
             Collection<byte[]> b = cc.getEncoded((X509Certificate)cert, null);
             if (b == null)
                 continue;
