@@ -1387,7 +1387,9 @@ public class PdfSignatureAppearance {
         reference.put(new PdfName("DigestLocation"), loc);
         reference.put(new PdfName("DigestMethod"), new PdfName("MD5"));
         reference.put(PdfName.DATA, writer.reader.getTrailer().get(PdfName.ROOT));
-        crypto.put(PdfName.REFERENCE, reference);
+        PdfArray types = new PdfArray();
+        types.add(reference);
+        crypto.put(PdfName.REFERENCE, types);
     }
     
     /**
