@@ -1,5 +1,5 @@
 /*
- * $Id: CrlClientOffline.java 5199 2012-06-18 20:14:38Z psoares33 $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
