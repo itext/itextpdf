@@ -51,7 +51,6 @@ import java.net.URL;
 import java.security.cert.X509Certificate;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import java.util.ArrayList;
@@ -76,14 +75,15 @@ public class CrlClientImp implements CrlClient {
      * @see com.itextpdf.text.pdf.security.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
+        if (checkCert == null)
+            return null;
+    	LOGGER.info("Looking for CRL for certificate " + checkCert.getSubjectDN());
         try {
-            if (url == null) {
-                if (checkCert == null)
-                    return null;
+            if (url == null)
                 url = CertificateUtil.getCRLURL(checkCert);
-            }
             if (url == null)
                 return null;
+            LOGGER.info("Found CRL url " + url);
             URL urlt = new URL(url);
             HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
             if (con.getResponseCode() / 100 != 2) {
@@ -105,8 +105,7 @@ public class CrlClientImp implements CrlClient {
             return ar;
         }
         catch (Exception ex) {
-            if (LOGGER.isLogging(Level.ERROR))
-                LOGGER.error("CrlClientImp", ex);
+            LOGGER.error("CrlClientImp", ex);
         }
         return null;
     }

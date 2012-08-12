@@ -93,7 +93,10 @@ public class MakeSignature {
      */
     public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
             TSAClient tsaClient, String provider, int estimatedSize, boolean cades) throws IOException, DocumentException, GeneralSecurityException {
-        Collection<byte[]> crlBytes = processCrl(chain[0], crlList);
+        Collection<byte[]> crlBytes = null;
+        int i = 0;
+        while (crlBytes == null && i < chain.length)
+        	crlBytes = processCrl(chain[i++], crlList);
     	if (estimatedSize == 0) {
             estimatedSize = 8192;
             if (crlBytes != null) {
