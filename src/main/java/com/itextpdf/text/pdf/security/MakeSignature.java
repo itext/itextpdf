@@ -134,7 +134,7 @@ public class MakeSignature {
         if (provider == null)
             messageDigest = MessageDigest.getInstance(DigestAlgorithms.normalizeDigest(hashAlgorithm));
         else
-            messageDigest = MessageDigest.getInstance(hashAlgorithm, provider);
+            messageDigest = MessageDigest.getInstance(DigestAlgorithms.normalizeDigest(hashAlgorithm), provider);
         byte buf[] = new byte[8192];
         int n;
         while ((n = data.read(buf)) > 0) {
