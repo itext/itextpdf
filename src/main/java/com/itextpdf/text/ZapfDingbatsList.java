@@ -85,6 +85,31 @@ public class ZapfDingbatsList extends List {
 		postSymbol = " ";
 	}
 
+    /**
+     * Creates a ZapfDingbatList with a colored symbol
+     *
+     * @param zn a char-number
+     * @param symbolIndent indent
+     * @param zapfDingbatColor color for the ZpafDingbat
+     */
+    public ZapfDingbatsList(int zn, int symbolIndent, BaseColor zapfDingbatColor) {
+		super(true, symbolIndent);
+		this.zn = zn;
+		float fontsize = symbol.getFont().getSize();
+		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL, zapfDingbatColor));
+		postSymbol = " ";
+	}
+
+    /**
+     * Sets the dingbat's color.
+     *
+     * @param zapfDingbatColor color for the ZapfDingbat
+     */
+    public void setDingbatColor(BaseColor zapfDingbatColor) {
+        float fontsize = symbol.getFont().getSize();
+        symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL, zapfDingbatColor));
+    }
+
 	/**
 	 * set the char-number
 	 * @param zn a char-number
