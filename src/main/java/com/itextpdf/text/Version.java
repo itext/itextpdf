@@ -120,6 +120,18 @@ public final class Version {
 						version.iTextVersion += "; " + version.key + ")";
 					}
 				}
+				// fall back to contact name, if company name is unavailable
+				else if (info[0] != null && info[0].trim().length() > 0) {
+					version.iTextVersion += " (" + info[0];
+					if (!version.key.toLowerCase().startsWith("trial")) {
+						// we shouldn't have a licensed version without company name,
+						// but let's account for it anyway
+						version.iTextVersion += "; licensed version)";
+					}
+					else {
+						version.iTextVersion += "; " + version.key + ")";
+					}
+				}
 				else {
 					throw new Exception();
 				}
