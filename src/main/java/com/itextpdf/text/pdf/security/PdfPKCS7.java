@@ -107,6 +107,7 @@ import org.bouncycastle.tsp.TimeStampTokenInfo;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
 
 /**
  * This class does all the processing related to signing
@@ -652,7 +653,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7() {
-        return getEncodedPKCS7(null, null, null, null, null, false);
+        return getEncodedPKCS7(null, null, null, null, null, CryptoStandard.CMS);
     }
 
     /**
@@ -663,7 +664,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime) {
-        return getEncodedPKCS7(secondDigest, signingTime, null, null, null, false);
+        return getEncodedPKCS7(secondDigest, signingTime, null, null, null, CryptoStandard.CMS);
     }
 
     /**
@@ -676,7 +677,7 @@ public class PdfPKCS7 {
      * @return byte[] the bytes for the PKCS7SignedData object
      * @since	2.1.6
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, boolean cades) {
+    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -743,7 +744,7 @@ public class PdfPKCS7 {
 
             // add the authenticated attribute if present
             if (secondDigest != null && signingTime != null) {
-                signerinfo.add(new DERTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, cades)));
+                signerinfo.add(new DERTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, sigtype)));
             }
             // Add the digestEncryptionAlgorithm
             v = new ASN1EncodableVector();
@@ -855,9 +856,9 @@ public class PdfPKCS7 {
      * @param signingTime the signing time
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, boolean cades) {
+    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
         try {
-            return getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, cades).getEncoded(ASN1Encoding.DER);
+            return getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, sigtype).getEncoded(ASN1Encoding.DER);
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
@@ -872,7 +873,7 @@ public class PdfPKCS7 {
      * @param signingTime the signing time
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, boolean cades) {
+    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
         try {
             ASN1EncodableVector attribute = new ASN1EncodableVector();
             ASN1EncodableVector v = new ASN1EncodableVector();
@@ -930,7 +931,7 @@ public class PdfPKCS7 {
                 v.add(new DERSet(new DERSequence(revocationV)));
                 attribute.add(new DERSequence(v));
             }
-            if (cades) {
+            if (sigtype == CryptoStandard.CADES) {
                 v = new ASN1EncodableVector();
                 v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2));
 
