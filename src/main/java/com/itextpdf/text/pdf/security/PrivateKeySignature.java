@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Signature;
@@ -75,13 +77,42 @@ public class PrivateKeySignature implements ExternalSignature {
         this.hashAlgorithm = DigestAlgorithms.getDigest(DigestAlgorithms.getAllowedDigests(hashAlgorithm));
         encryptionAlgorithm = pk.getAlgorithm();
     }
-    
+
     /**
-     * Creates a message digest using the hash algorithm
-     * and signs it using the encryption algorithm.
+     * Returns the hash algorithm.
+     * @return	the hash algorithm (e.g. "SHA-1", "SHA-256,...")
+     * @see com.itextpdf.text.pdf.security.ExternalSignature#getHashAlgorithm()
+     */
+    public String getHashAlgorithm() {
+        return hashAlgorithm;
+    }
+
+    /**
+     * Creates a message digest using the hash algorithm.
+     * This method will be used to hash a byte array of PDF syntax.
      * @param message	the message you want to be hashed and signed
      * @return	a signed message digest
-     * @see com.itextpdf.text.pdf.security.ExternalSignature#sign(byte[])
+     * @throws GeneralSecurityException
+     */
+    public byte[] digest(InputStream data) throws GeneralSecurityException, IOException {
+        return DigestAlgorithms.digest(data, hashAlgorithm, provider);
+    }
+    
+    /**
+     * Returns the encryption algorithm used for signing.
+     * @return the encryption algorithm ("RSA" or "DSA")
+     * @see com.itextpdf.text.pdf.security.ExternalSignature#getEncryptionAlgorithm()
+     */
+    public String getEncryptionAlgorithm() {
+        return encryptionAlgorithm;
+    }
+    
+    /**
+     * Signs it using the encryption algorithm in combination with
+     * the digest algorithm.
+     * @param message	the message you want to be hashed and signed
+     * @return	a signed message digest
+     * @throws GeneralSecurityException
      */
     public byte[] sign(byte[] b) throws GeneralSecurityException {
         String signMode = hashAlgorithm + "with" + encryptionAlgorithm;
@@ -95,23 +126,4 @@ public class PrivateKeySignature implements ExternalSignature {
         sig.update(b);
         return sig.sign();
     }
-    
-    /**
-     * Returns the hash algorithm.
-     * @return	the hash algorithm (e.g. "SHA-1", "SHA-256,...")
-     * @see com.itextpdf.text.pdf.security.ExternalSignature#getHashAlgorithm()
-     */
-    public String getHashAlgorithm() {
-        return hashAlgorithm;
-    }
-    
-    /**
-     * Returns the encryption algorithm used for signing.
-     * @return the encryption algorithm ("RSA" or "DSA")
-     * @see com.itextpdf.text.pdf.security.ExternalSignature#getEncryptionAlgorithm()
-     */
-    public String getEncryptionAlgorithm() {
-        return encryptionAlgorithm;
-    }
-    
 }

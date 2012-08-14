@@ -43,6 +43,12 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.HashMap;
 
 /**
@@ -130,6 +136,49 @@ public class DigestAlgorithms {
         allowedDigests.put("RIPEMD-256", "1.3.36.3.2.3");
     }
 
+    public static MessageDigest getMessageDigestFromOid(String digestOid, String provider)
+    	throws NoSuchAlgorithmException, NoSuchProviderException {
+    	return getMessageDigest(getDigest(digestOid), provider);
+    }
+    
+    /**
+     * Creates a MessageDigest object that can be used to create a hash.
+     * @param hashAlgorithm	the algorithm you want to use to create a hash
+     * @param provider	the provider you want to use to create the hash
+     * @return	a MessageDigest object
+     * @throws NoSuchAlgorithmException 
+     * @throws NoSuchProviderException 
+     * @throws GeneralSecurityException
+     */
+    public static MessageDigest getMessageDigest(String hashAlgorithm, String provider)
+    	throws NoSuchAlgorithmException, NoSuchProviderException {
+        if (provider == null || provider.startsWith("SunPKCS11"))
+            return MessageDigest.getInstance(DigestAlgorithms.normalizeDigestName(hashAlgorithm));
+        else
+            return MessageDigest.getInstance(hashAlgorithm, provider);
+    }
+    
+    
+    /**
+     * Creates a hash using a specific digest algorithm and a provider. 
+     * @param data	the message of which you want to create a hash
+     * @param hashAlgorithm	the algorithm used to create the hash
+     * @param provider	the provider used to create the hash
+     * @return	the hash
+     * @throws GeneralSecurityException
+     * @throws IOException
+     */
+    public static byte[] digest(InputStream data, String hashAlgorithm, String provider)
+    	throws GeneralSecurityException, IOException {
+        MessageDigest messageDigest = getMessageDigest(hashAlgorithm, provider);
+        byte buf[] = new byte[8192];
+        int n;
+        while ((n = data.read(buf)) > 0) {
+            messageDigest.update(buf, 0, n);
+        }
+        return messageDigest.digest();
+    }
+    
     /**
      * Gets the digest name for a certain id
      * @param oid	an id (for instance "1.2.840.113549.2.5")
@@ -143,7 +192,7 @@ public class DigestAlgorithms {
             return ret;
     }
     
-    public static String normalizeDigest(String algo) {
+    private static String normalizeDigestName(String algo) {
     	if (fixNames.containsKey(algo))
     		return fixNames.get(algo);
     	return algo;

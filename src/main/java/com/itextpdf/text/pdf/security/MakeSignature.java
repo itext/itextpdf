@@ -56,7 +56,6 @@ import com.itextpdf.text.pdf.PdfString;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -64,7 +63,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
-
 
 /**
  * Class that signs your PDF.
@@ -138,17 +136,7 @@ public class MakeSignature {
         String hashAlgorithm = externalSignature.getHashAlgorithm();
         PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, provider, false);
         InputStream data = sap.getRangeStream();
-        MessageDigest messageDigest;
-        if (provider == null)
-            messageDigest = MessageDigest.getInstance(DigestAlgorithms.normalizeDigest(hashAlgorithm));
-        else
-            messageDigest = MessageDigest.getInstance(DigestAlgorithms.normalizeDigest(hashAlgorithm), provider);
-        byte buf[] = new byte[8192];
-        int n;
-        while ((n = data.read(buf)) > 0) {
-            messageDigest.update(buf, 0, n);
-        }
-        byte hash[] = messageDigest.digest();
+        byte hash[] = externalSignature.digest(data);
         Calendar cal = Calendar.getInstance();
         byte[] ocsp = null;
         if (chain.length >= 2 && ocspClient != null) {
