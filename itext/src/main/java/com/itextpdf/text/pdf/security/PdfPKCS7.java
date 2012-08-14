@@ -168,10 +168,7 @@ public class PdfPKCS7 {
         // initialize the RSA data
         if (hasRSAdata) {
             RSAdata = new byte[0];
-            if (provider == null || provider.startsWith("SunPKCS11"))
-                messageDigest = MessageDigest.getInstance(getHashAlgorithm());
-            else
-                messageDigest = MessageDigest.getInstance(getHashAlgorithm(), provider);
+            messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
         }
 
         // initialize the Signature object
@@ -373,18 +370,12 @@ public class PdfPKCS7 {
                 this.timeStampToken = new TimeStampToken(contentInfoTsp);
                 TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
                 String algOID = info.getMessageImprintAlgOID().getId();
-                messageDigest = MessageDigest.getInstance(DigestAlgorithms.getDigest(algOID));
+                messageDigest = DigestAlgorithms.getMessageDigestFromOid(algOID, null);
             }
             else {
                 if (RSAdata != null || digestAttr != null) {
-                    if (provider == null || provider.startsWith("SunPKCS11")) {
-                        messageDigest = MessageDigest.getInstance(getHashAlgorithm());
-                        encContDigest = MessageDigest.getInstance(getHashAlgorithm()); // Stefan Santesson
-                    }
-                    else {
-                        messageDigest = MessageDigest.getInstance(getHashAlgorithm(), provider);
-                        encContDigest = MessageDigest.getInstance(getHashAlgorithm(), provider); // Stefan Santesson
-                    }
+                	messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
+                	encContDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
                 }
                 if (provider == null)
                     sig = Signature.getInstance(getDigestAlgorithm());
@@ -759,7 +750,9 @@ public class PdfPKCS7 {
             // Added by Martin Brunecky, 07/12/2007 folowing Aiken Sam, 2006-11-15
             // Sam found Adobe expects time-stamped SHA1-1 of the encrypted digest
             if (tsaClient != null) {
-                byte[] tsImprint = MessageDigest.getInstance(tsaClient.getDigestAlgorithm()).digest(digest);
+                byte[] tsImprint =
+                	DigestAlgorithms.getMessageDigest(tsaClient.getDigestAlgorithm(), tsaClient.getDigestProvider())
+                	.digest(digest);
                 byte[] tsToken = tsaClient.getTimeStampToken(tsImprint);
                 if (tsToken != null) {
                     ASN1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);
@@ -938,7 +931,7 @@ public class PdfPKCS7 {
                 ASN1EncodableVector aaV2 = new ASN1EncodableVector();
                 AlgorithmIdentifier algoId = new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestAlgorithmOid), null);
                 aaV2.add(algoId);
-                MessageDigest md = MessageDigest.getInstance(getHashAlgorithm());
+                MessageDigest md = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), null);
                 byte[] dig = md.digest(signCert.getEncoded());
                 aaV2.add(new DEROctetString(dig));
                 
@@ -1018,15 +1011,16 @@ public class PdfPKCS7 {
      * Checks if the timestamp refers to this document.
      * @throws java.security.NoSuchAlgorithmException on error
      * @return true if it checks false otherwise
+     * @throws NoSuchProviderException 
      * @since	2.1.6
      */
-    public boolean verifyTimestampImprint() throws NoSuchAlgorithmException {
+    public boolean verifyTimestampImprint() throws NoSuchAlgorithmException, NoSuchProviderException {
         if (timeStampToken == null)
             return false;
         TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
         MessageImprint imprint = info.toASN1Structure().getMessageImprint();
         String algOID = info.getMessageImprintAlgOID().getId();
-        byte[] md = MessageDigest.getInstance(DigestAlgorithms.getDigest(algOID)).digest(digest);
+        byte[] md = DigestAlgorithms.getMessageDigestFromOid(algOID, null).digest(digest);
         byte[] imphashed = imprint.getHashedMessage();
         boolean res = Arrays.equals(md, imphashed);
         return res;

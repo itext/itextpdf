@@ -143,6 +143,11 @@ public class TSAClientBouncyCastle implements TSAClient {
     public String getDigestAlgorithm() {
         return digestAlgorithm;
     }
+    
+    public String getDigestProvider() {
+    	return "BC";
+    }
+    
     /**
      * Get RFC 3161 timeStampToken.
      * Method may return null indicating that timestamp should be skipped.

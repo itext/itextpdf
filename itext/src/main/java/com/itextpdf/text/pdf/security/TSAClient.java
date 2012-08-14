@@ -65,6 +65,12 @@ public interface TSAClient {
      * @return the digest algorithm name
      */
     public String getDigestAlgorithm();
+    
+    /**
+     * Gets the provider used to create the digest.
+     * @return the name of the provider
+     */
+    public String getDigestProvider();
 
     /**
      * Get RFC 3161 timeStampToken.
