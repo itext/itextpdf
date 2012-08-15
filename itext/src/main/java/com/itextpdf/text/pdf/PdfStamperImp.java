@@ -147,12 +147,16 @@ class PdfStamperImp extends PdfWriter {
         initialXrefSize = reader.getXrefSize();
     }
 
+    protected void setViewerPreferences() {
+        reader.setViewerPreferences(viewerPreferences);
+        markUsed(reader.getTrailer().get(PdfName.ROOT));
+    }
+
     protected void close(Map<String, String> moreInfo) throws IOException {
         if (closed)
             return;
         if (useVp) {
-            reader.setViewerPreferences(viewerPreferences);
-            markUsed(reader.getTrailer().get(PdfName.ROOT));
+            setViewerPreferences();
         }
         if (flat)
             flatFields();
@@ -321,6 +325,10 @@ class PdfStamperImp extends PdfWriter {
         		markUsed(catalog);
         	}
         }
+        close(info, skipInfo);
+    }
+
+    protected void close(PdfIndirectReference info, int skipInfo) throws IOException {
         try {
             file.reOpen();
             alterContents();

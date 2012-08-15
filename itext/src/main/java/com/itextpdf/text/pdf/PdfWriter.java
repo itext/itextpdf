@@ -1284,12 +1284,7 @@ public class PdfWriter extends DocWriter implements
         }
     }
 
-    protected void addSharedObjectsToBody() throws IOException {
-        // [F3] add the fonts
-        for (FontDetails details : documentFonts.values()) {
-            details.writeFont(this);
-        }
-        // [F4] add the form XObjects
+    protected void addXFormsToBody() throws IOException {
         for (Object objs[] : formXObjects.values()) {
             PdfTemplate template = (PdfTemplate)objs[1];
             if (template != null && template.getIndirectReference() instanceof PRIndirectReference)
@@ -1298,6 +1293,15 @@ public class PdfWriter extends DocWriter implements
                 addToBody(template.getFormXObject(compressionLevel), template.getIndirectReference());
             }
         }
+    }
+
+    protected void addSharedObjectsToBody() throws IOException {
+        // [F3] add the fonts
+        for (FontDetails details : documentFonts.values()) {
+            details.writeFont(this);
+        }
+        // [F4] add the form XObjects
+        addXFormsToBody();
         // [F5] add all the dependencies in the imported pages
         for (PdfReaderInstance element : readerInstances.values()) {
             currentPdfReaderInstance= element;
