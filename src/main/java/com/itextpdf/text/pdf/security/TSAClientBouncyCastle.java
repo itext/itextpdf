@@ -90,7 +90,7 @@ public class TSAClientBouncyCastle implements TSAClient {
     protected int tokenSizeEstimate;
     
     /** The default value for the hash algorithm */
-    public static final String DEFAULTHASHALGORITHM = "SHA-1";
+    public static final String DEFAULTHASHALGORITHM = "SHA-256";
     
     /** Hash algorithm */
     protected String digestAlgorithm;
