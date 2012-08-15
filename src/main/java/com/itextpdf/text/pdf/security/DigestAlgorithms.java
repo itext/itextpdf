@@ -152,7 +152,7 @@ public class DigestAlgorithms {
      */
     public static MessageDigest getMessageDigest(String hashAlgorithm, String provider)
     	throws NoSuchAlgorithmException, NoSuchProviderException {
-        if (provider == null || provider.startsWith("SunPKCS11"))
+        if (provider == null || provider.startsWith("SunPKCS11") || provider.startsWith("SunMSCAPI"))
             return MessageDigest.getInstance(DigestAlgorithms.normalizeDigestName(hashAlgorithm));
         else
             return MessageDigest.getInstance(hashAlgorithm, provider);
