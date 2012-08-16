@@ -171,6 +171,11 @@ public class DigestAlgorithms {
     public static byte[] digest(InputStream data, String hashAlgorithm, String provider)
     	throws GeneralSecurityException, IOException {
         MessageDigest messageDigest = getMessageDigest(hashAlgorithm, provider);
+        return digest(data, messageDigest);
+    }
+    
+    public static byte[] digest(InputStream data, MessageDigest messageDigest)
+    	throws GeneralSecurityException, IOException {
         byte buf[] = new byte[8192];
         int n;
         while ((n = data.read(buf)) > 0) {
@@ -192,7 +197,7 @@ public class DigestAlgorithms {
             return ret;
     }
     
-    private static String normalizeDigestName(String algo) {
+    public static String normalizeDigestName(String algo) {
     	if (fixNames.containsKey(algo))
     		return fixNames.get(algo);
     	return algo;
