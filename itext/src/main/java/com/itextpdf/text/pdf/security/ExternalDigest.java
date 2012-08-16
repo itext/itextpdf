@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: $
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -43,36 +43,13 @@
  */
 package com.itextpdf.text.pdf.security;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 
 /**
- * Interface that needs to be implemented to do the actual signing.
- * For instance: you'll have to implement this interface if you want
- * to sign a PDF using a smart card.
- * @author Paulo Soares
+ *
+ * @author psoares
  */
-public interface ExternalSignature {
-    
-    /**
-     * Returns the hash algorithm.
-     * @return	the hash algorithm (e.g. "SHA-1", "SHA-256,...")
-     */
-    public String getHashAlgorithm();
-
-    /**
-     * Returns the encryption algorithm used for signing.
-     * @return the encryption algorithm ("RSA" or "DSA")
-     */
-    public String getEncryptionAlgorithm();
-	
-    /**
-     * Signs it using the encryption algorithm in combination with
-     * the digest algorithm.
-     * @param message	the message you want to be hashed and signed
-     * @return	a signed message digest
-     * @throws GeneralSecurityException
-     */
-    public byte[] sign(byte[] message) throws GeneralSecurityException;
+public interface ExternalDigest {
+    public MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException;
 }

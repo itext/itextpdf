@@ -82,8 +82,8 @@ public class MakeSignature {
      * @deprecated
      */
     public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
-            TSAClient tsaClient, String provider, int estimatedSize, boolean cades) throws IOException, DocumentException, GeneralSecurityException {
-    	signDetached(sap, externalSignature, chain, crlList, ocspClient, tsaClient, provider, estimatedSize, cades ? CryptoStandard.CADES : CryptoStandard.CMS);
+            TSAClient tsaClient, ExternalDigest externalDigest, String provider, int estimatedSize, boolean cades) throws IOException, DocumentException, GeneralSecurityException {
+    	signDetached(sap, externalSignature, chain, crlList, ocspClient, tsaClient, externalDigest, provider, estimatedSize, cades ? CryptoStandard.CADES : CryptoStandard.CMS);
     }
     
     /**
@@ -104,7 +104,7 @@ public class MakeSignature {
      * @throws Exception 
      */
     public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
-            TSAClient tsaClient, String provider, int estimatedSize, CryptoStandard sigtype) throws IOException, DocumentException, GeneralSecurityException {
+            TSAClient tsaClient, ExternalDigest externalDigest, String provider, int estimatedSize, CryptoStandard sigtype) throws IOException, DocumentException, GeneralSecurityException {
         Collection<byte[]> crlBytes = null;
         int i = 0;
         while (crlBytes == null && i < chain.length)
@@ -134,9 +134,9 @@ public class MakeSignature {
         sap.preClose(exc);
 
         String hashAlgorithm = externalSignature.getHashAlgorithm();
-        PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, provider, false);
+        PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, provider, externalDigest, false);
         InputStream data = sap.getRangeStream();
-        byte hash[] = externalSignature.digest(data);
+        byte hash[] = DigestAlgorithms.digest(data, externalDigest.getMessageDigest(externalSignature.getHashAlgorithm()));
         Calendar cal = Calendar.getInstance();
         byte[] ocsp = null;
         if (chain.length >= 2 && ocspClient != null) {
@@ -157,7 +157,6 @@ public class MakeSignature {
         PdfDictionary dic2 = new PdfDictionary();
         dic2.put(PdfName.CONTENTS, new PdfString(paddedSig).setHexWriting(true));
         sap.close(dic2);
-
     }
     
     /**

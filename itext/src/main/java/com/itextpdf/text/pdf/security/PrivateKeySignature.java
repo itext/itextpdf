@@ -88,17 +88,6 @@ public class PrivateKeySignature implements ExternalSignature {
     }
 
     /**
-     * Creates a message digest using the hash algorithm.
-     * This method will be used to hash a byte array of PDF syntax.
-     * @param message	the message you want to be hashed and signed
-     * @return	a signed message digest
-     * @throws GeneralSecurityException
-     */
-    public byte[] digest(InputStream data) throws GeneralSecurityException, IOException {
-        return DigestAlgorithms.digest(data, hashAlgorithm, provider);
-    }
-    
-    /**
      * Returns the encryption algorithm used for signing.
      * @return the encryption algorithm ("RSA" or "DSA")
      * @see com.itextpdf.text.pdf.security.ExternalSignature#getEncryptionAlgorithm()

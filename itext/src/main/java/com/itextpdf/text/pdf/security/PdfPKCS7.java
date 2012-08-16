@@ -130,10 +130,10 @@ public class PdfPKCS7 {
      * @throws NoSuchAlgorithmException on error
      */
     public PdfPKCS7(PrivateKey privKey, Certificate[] certChain, 
-                    String hashAlgorithm, String provider, boolean hasRSAdata)
+                    String hashAlgorithm, String provider, ExternalDigest interfaceDigest, boolean hasRSAdata)
       throws InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException {
         this.provider = provider;
-
+        this.interfaceDigest = interfaceDigest;
         // message digest
         digestAlgorithmOid = DigestAlgorithms.getAllowedDigests(hashAlgorithm);
         if (digestAlgorithmOid == null)
@@ -553,6 +553,7 @@ public class PdfPKCS7 {
      *	DIGITAL SIGNATURE CREATION
      */
 
+    private ExternalDigest interfaceDigest;
     // The signature is created externally
     
     /** The signed digest if created outside this class */   
@@ -931,7 +932,7 @@ public class PdfPKCS7 {
                 ASN1EncodableVector aaV2 = new ASN1EncodableVector();
                 AlgorithmIdentifier algoId = new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestAlgorithmOid), null);
                 aaV2.add(algoId);
-                MessageDigest md = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), null);
+                MessageDigest md = interfaceDigest.getMessageDigest(getHashAlgorithm());
                 byte[] dig = md.digest(signCert.getEncoded());
                 aaV2.add(new DEROctetString(dig));
                 
