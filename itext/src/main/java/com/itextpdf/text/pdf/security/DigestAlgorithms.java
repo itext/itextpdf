@@ -134,6 +134,7 @@ public class DigestAlgorithms {
         allowedDigests.put("RIPEMD-160", "1.3.36.3.2.1");
         allowedDigests.put("RIPEMD256", "1.3.36.3.2.3");
         allowedDigests.put("RIPEMD-256", "1.3.36.3.2.3");
+        allowedDigests.put("GOST3411", "1.2.643.2.2.9");
     }
 
     public static MessageDigest getMessageDigestFromOid(String digestOid, String provider)
