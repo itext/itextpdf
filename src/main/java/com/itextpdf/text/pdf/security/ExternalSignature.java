@@ -64,12 +64,6 @@ public interface ExternalSignature {
      * @return the encryption algorithm ("RSA" or "DSA")
      */
     public String getEncryptionAlgorithm();
-
-    /**
-     * Returns the provider used for signing.
-     * @return for instance "BC" in case you're using BouncyCastle
-     */
-    public String getProvider();
 	
     /**
      * Signs it using the encryption algorithm in combination with

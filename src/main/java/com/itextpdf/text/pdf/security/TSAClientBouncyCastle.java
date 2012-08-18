@@ -56,6 +56,8 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.codec.Base64;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
@@ -156,12 +158,12 @@ public class TSAClientBouncyCastle implements TSAClient {
         return tokenSizeEstimate;
     }
 
-    public String getDigestAlgorithm() {
-        return digestAlgorithm;
-    }
-    
-    public String getDigestProvider() {
-    	return "BC";
+    /**
+     * Gets the MessageDigest to digest the data imprint
+     * @return the digest algorithm name
+     */
+    public MessageDigest getMessageDigest() throws GeneralSecurityException {
+        return new BouncyCastleDigest().getMessageDigest(digestAlgorithm);
     }
     
     /**
@@ -179,7 +181,7 @@ public class TSAClientBouncyCastle implements TSAClient {
             tsqGenerator.setCertReq(true);
             // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
             BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
-            TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigests(getDigestAlgorithm())), imprint, nonce);
+            TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigests(digestAlgorithm)), imprint, nonce);
             byte[] requestBytes = request.getEncoded();
             
             // Call the communications layer

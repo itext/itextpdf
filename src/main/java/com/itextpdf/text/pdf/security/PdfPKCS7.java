@@ -751,9 +751,7 @@ public class PdfPKCS7 {
             // Added by Martin Brunecky, 07/12/2007 folowing Aiken Sam, 2006-11-15
             // Sam found Adobe expects time-stamped SHA1-1 of the encrypted digest
             if (tsaClient != null) {
-                byte[] tsImprint =
-                	DigestAlgorithms.getMessageDigest(tsaClient.getDigestAlgorithm(), tsaClient.getDigestProvider())
-                	.digest(digest);
+                byte[] tsImprint = tsaClient.getMessageDigest().digest(digest);
                 byte[] tsToken = tsaClient.getTimeStampToken(tsImprint);
                 if (tsToken != null) {
                     ASN1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);

@@ -43,6 +43,9 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+
 /**
  * Time Stamp Authority client (caller) interface.
  * <p>
@@ -61,17 +64,11 @@ public interface TSAClient {
     public int getTokenSizeEstimate();
     
     /**
-     * Gets the algorithm used to digest the data imprint
+     * Gets the MessageDigest to digest the data imprint
      * @return the digest algorithm name
      */
-    public String getDigestAlgorithm();
+    public MessageDigest getMessageDigest() throws GeneralSecurityException;
     
-    /**
-     * Gets the provider used to create the digest.
-     * @return the name of the provider
-     */
-    public String getDigestProvider();
-
     /**
      * Get RFC 3161 timeStampToken.
      * Method may return null indicating that timestamp should be skipped.
