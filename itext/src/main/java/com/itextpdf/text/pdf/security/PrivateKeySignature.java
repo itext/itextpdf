@@ -43,8 +43,6 @@
  */
 package com.itextpdf.text.pdf.security;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Signature;
@@ -94,6 +92,14 @@ public class PrivateKeySignature implements ExternalSignature {
      */
     public String getEncryptionAlgorithm() {
         return encryptionAlgorithm;
+    }
+
+    /**
+     * Returns the provider used for signing.
+     * @return for instance "BC" in case you're using BouncyCastle
+     */
+    public String getProvider() {
+    	return provider;
     }
     
     /**

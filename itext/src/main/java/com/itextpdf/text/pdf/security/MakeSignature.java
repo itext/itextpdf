@@ -76,15 +76,6 @@ public class MakeSignature {
     public enum CryptoStandard {
     	CMS, CADES
     }
-
-    /**
-     * Signs the document using the detached mode, CMS or CAdES equivalent.
-     * @deprecated
-     */
-    public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
-            TSAClient tsaClient, ExternalDigest externalDigest, String provider, int estimatedSize, boolean cades) throws IOException, DocumentException, GeneralSecurityException {
-    	signDetached(sap, externalSignature, chain, crlList, ocspClient, tsaClient, externalDigest, provider, estimatedSize, cades ? CryptoStandard.CADES : CryptoStandard.CMS);
-    }
     
     /**
      * Signs the document using the detached mode, CMS or CAdES equivalent.
@@ -104,8 +95,8 @@ public class MakeSignature {
      * @throws Exception 
      */
     public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
-            TSAClient tsaClient, String provider, int estimatedSize, CryptoStandard sigtype) throws IOException, DocumentException, GeneralSecurityException {
-    	signDetached(sap, externalSignature, chain, crlList, ocspClient, tsaClient, new ProviderDigest(provider), provider, estimatedSize, sigtype);
+            TSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, DocumentException, GeneralSecurityException {
+    	signDetached(sap, new BouncyCastleDigest(), externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype);
     }
     
     /**
@@ -126,8 +117,8 @@ public class MakeSignature {
      * @throws NoSuchAlgorithmException 
      * @throws Exception 
      */
-    public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
-            TSAClient tsaClient, ExternalDigest externalDigest, String provider, int estimatedSize, CryptoStandard sigtype) throws IOException, DocumentException, GeneralSecurityException {
+    public static void signDetached(PdfSignatureAppearance sap, ExternalDigest externalDigest, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
+            TSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, DocumentException, GeneralSecurityException {
         Collection<byte[]> crlBytes = null;
         int i = 0;
         while (crlBytes == null && i < chain.length)
@@ -157,6 +148,7 @@ public class MakeSignature {
         sap.preClose(exc);
 
         String hashAlgorithm = externalSignature.getHashAlgorithm();
+        String provider = externalSignature.getProvider();
         PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, provider, externalDigest, false);
         InputStream data = sap.getRangeStream();
         byte hash[] = DigestAlgorithms.digest(data, externalDigest.getMessageDigest(hashAlgorithm));
