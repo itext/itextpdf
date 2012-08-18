@@ -53,6 +53,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.codec.Base64;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -62,6 +64,7 @@ import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.tsp.TimeStampTokenInfo;
 
 /**
  * Time Stamp Authority Client interface implementation using Bouncy Castle
@@ -73,7 +76,10 @@ import org.bouncycastle.tsp.TimeStampToken;
  * @since	2.1.6
  */
 public class TSAClientBouncyCastle implements TSAClient {
-	
+
+	/** The Logger instance. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(TSAClientBouncyCastle.class);
+    
     /** URL of the Time Stamp Authority */
 	protected String tsaURL;
 	
@@ -83,6 +89,9 @@ public class TSAClientBouncyCastle implements TSAClient {
     /** TSA password */
     protected String tsaPassword;
 
+    /** An interface that allows you to inspect the timestamp info. */
+    protected TSAInfoBouncyCastle tsaInfo;
+    
     /** The default value for the hash algorithm */
     public static final int DEFAULTTOKENSIZE = 4096;
     
@@ -131,7 +140,14 @@ public class TSAClientBouncyCastle implements TSAClient {
         this.digestAlgorithm = digestAlgorithm;
     }
     
-    /**
+	/**
+	 * @param tsaInfo the tsaInfo to set
+	 */
+	public void setTSAInfo(TSAInfoBouncyCastle tsaInfo) {
+		this.tsaInfo = tsaInfo;
+	}
+
+	/**
      * Get the token size estimate.
      * Returned value reflects the result of the last succesfull call, padded
      * @return an estimate of the token size
@@ -188,9 +204,13 @@ public class TSAClientBouncyCastle implements TSAClient {
             if (tsToken == null) {
                 throw new IOException(MessageLocalization.getComposedMessage("tsa.1.failed.to.return.time.stamp.token.2", tsaURL, response.getStatusString()));
             }
-            tsToken.getTimeStampInfo(); // to view details
+            TimeStampTokenInfo tsTokenInfo = tsToken.getTimeStampInfo(); // to view details
             byte[] encoded = tsToken.getEncoded();
-            
+
+            LOGGER.info("Timestamp generated: " + tsTokenInfo.getGenTime());
+            if (tsaInfo != null) {
+            	tsaInfo.inspectTimeStampTokenInfo(tsTokenInfo);
+            }
             // Update our token size estimate for the next call (padded to be safe)
             this.tokenSizeEstimate = encoded.length + 32;
             return encoded;
