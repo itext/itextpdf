@@ -76,7 +76,7 @@ public class MakeSignature {
     public enum CryptoStandard {
     	CMS, CADES
     }
-    
+
     /**
      * Signs the document using the detached mode, CMS or CAdES equivalent.
      * @param sap the PdfSignatureAppearance
@@ -125,8 +125,7 @@ public class MakeSignature {
         sap.preClose(exc);
 
         String hashAlgorithm = externalSignature.getHashAlgorithm();
-        String provider = externalSignature.getProvider();
-        PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, provider, externalDigest, false);
+        PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, null, externalDigest, false);
         InputStream data = sap.getRangeStream();
         byte hash[] = DigestAlgorithms.digest(data, externalDigest.getMessageDigest(hashAlgorithm));
         Calendar cal = Calendar.getInstance();

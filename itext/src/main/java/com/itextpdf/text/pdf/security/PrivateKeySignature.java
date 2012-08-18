@@ -93,14 +93,6 @@ public class PrivateKeySignature implements ExternalSignature {
     public String getEncryptionAlgorithm() {
         return encryptionAlgorithm;
     }
-
-    /**
-     * Returns the provider used for signing.
-     * @return for instance "BC" in case you're using BouncyCastle
-     */
-    public String getProvider() {
-    	return provider;
-    }
     
     /**
      * Signs it using the encryption algorithm in combination with
