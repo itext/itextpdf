@@ -85,30 +85,7 @@ public class MakeSignature {
      * @param crlList the CRL list
      * @param ocspClient the OCSP client
      * @param tsaClient the Timestamp client
-     * @param provider the provider or null
-     * @param estimatedSize the reserved size for the signature. It will be estimated if 0
-     * @param sigtype Either Signature.CMS or Signature.CADES
-     * @throws DocumentException 
-     * @throws IOException 
-     * @throws GeneralSecurityException 
-     * @throws NoSuchAlgorithmException 
-     * @throws Exception 
-     */
-    public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
-            TSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, DocumentException, GeneralSecurityException {
-    	signDetached(sap, new BouncyCastleDigest(), externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype);
-    }
-    
-    /**
-     * Signs the document using the detached mode, CMS or CAdES equivalent.
-     * @param sap the PdfSignatureAppearance
-     * @param externalSignature the interface providing the actual signing
-     * @param chain the certificate chain
-     * @param crlList the CRL list
-     * @param ocspClient the OCSP client
-     * @param tsaClient the Timestamp client
      * @param externalDigest an implementation that provides the digest
-     * @param provider the provider or null
      * @param estimatedSize the reserved size for the signature. It will be estimated if 0
      * @param sigtype Either Signature.CMS or Signature.CADES
      * @throws DocumentException 
