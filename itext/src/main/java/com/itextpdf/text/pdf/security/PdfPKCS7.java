@@ -108,6 +108,7 @@ import org.bouncycastle.tsp.TimeStampTokenInfo;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
+import java.security.GeneralSecurityException;
 
 /**
  * This class does all the processing related to signing
@@ -1008,18 +1009,17 @@ public class PdfPKCS7 {
 
     /**
      * Checks if the timestamp refers to this document.
-     * @throws java.security.NoSuchAlgorithmException on error
      * @return true if it checks false otherwise
-     * @throws NoSuchProviderException 
+     * @throws GeneralSecurityException on error
      * @since	2.1.6
      */
-    public boolean verifyTimestampImprint() throws NoSuchAlgorithmException, NoSuchProviderException {
+    public boolean verifyTimestampImprint() throws GeneralSecurityException {
         if (timeStampToken == null)
             return false;
         TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
         MessageImprint imprint = info.toASN1Structure().getMessageImprint();
         String algOID = info.getMessageImprintAlgOID().getId();
-        byte[] md = DigestAlgorithms.getMessageDigestFromOid(algOID, null).digest(digest);
+        byte[] md = new BouncyCastleDigest().getMessageDigest(DigestAlgorithms.getDigest(algOID)).digest(digest);
         byte[] imphashed = imprint.getHashedMessage();
         boolean res = Arrays.equals(md, imphashed);
         return res;
