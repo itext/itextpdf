@@ -75,13 +75,31 @@ public class PrivateKeySignature implements ExternalSignature {
         this.hashAlgorithm = DigestAlgorithms.getDigest(DigestAlgorithms.getAllowedDigests(hashAlgorithm));
         encryptionAlgorithm = pk.getAlgorithm();
     }
+
+    /**
+     * Returns the hash algorithm.
+     * @return	the hash algorithm (e.g. "SHA-1", "SHA-256,...")
+     * @see com.itextpdf.text.pdf.security.ExternalSignature#getHashAlgorithm()
+     */
+    public String getHashAlgorithm() {
+        return hashAlgorithm;
+    }
+
+    /**
+     * Returns the encryption algorithm used for signing.
+     * @return the encryption algorithm ("RSA" or "DSA")
+     * @see com.itextpdf.text.pdf.security.ExternalSignature#getEncryptionAlgorithm()
+     */
+    public String getEncryptionAlgorithm() {
+        return encryptionAlgorithm;
+    }
     
     /**
-     * Creates a message digest using the hash algorithm
-     * and signs it using the encryption algorithm.
+     * Signs it using the encryption algorithm in combination with
+     * the digest algorithm.
      * @param message	the message you want to be hashed and signed
      * @return	a signed message digest
-     * @see com.itextpdf.text.pdf.security.ExternalSignature#sign(byte[])
+     * @throws GeneralSecurityException
      */
     public byte[] sign(byte[] b) throws GeneralSecurityException {
         String signMode = hashAlgorithm + "with" + encryptionAlgorithm;
@@ -95,23 +113,4 @@ public class PrivateKeySignature implements ExternalSignature {
         sig.update(b);
         return sig.sign();
     }
-    
-    /**
-     * Returns the hash algorithm.
-     * @return	the hash algorithm (e.g. "SHA-1", "SHA-256,...")
-     * @see com.itextpdf.text.pdf.security.ExternalSignature#getHashAlgorithm()
-     */
-    public String getHashAlgorithm() {
-        return hashAlgorithm;
-    }
-    
-    /**
-     * Returns the encryption algorithm used for signing.
-     * @return the encryption algorithm ("RSA" or "DSA")
-     * @see com.itextpdf.text.pdf.security.ExternalSignature#getEncryptionAlgorithm()
-     */
-    public String getEncryptionAlgorithm() {
-        return encryptionAlgorithm;
-    }
-    
 }

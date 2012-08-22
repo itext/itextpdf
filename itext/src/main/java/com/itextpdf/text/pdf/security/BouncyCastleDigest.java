@@ -45,37 +45,52 @@ package com.itextpdf.text.pdf.security;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import org.bouncycastle.jcajce.provider.digest.*;
 
 /**
- * Time Stamp Authority client (caller) interface.
- * <p>
- * Interface used by the PdfPKCS7 digital signature builder to call
- * Time Stamp Authority providing RFC 3161 compliant time stamp token.
- * @author Martin Brunecky, 07/17/2007
- * @since	2.1.6
+ * Implementation for digests accessed directly from the BouncyCastle library bypassing
+ * any provider definition.
  */
-public interface TSAClient {
-    /**
-     * Get the time stamp token size estimate.
-     * Implementation must return value large enough to accomodate the entire token
-     * returned by getTimeStampToken() _prior_ to actual getTimeStampToken() call.
-     * @return	an estimate of the token size
-     */
-    public int getTokenSizeEstimate();
-    
-    /**
-     * Gets the MessageDigest to digest the data imprint
-     * @return the digest algorithm name
-     */
-    public MessageDigest getMessageDigest() throws GeneralSecurityException;
-    
-    /**
-     * Get RFC 3161 timeStampToken.
-     * Method may return null indicating that timestamp should be skipped.
-     * @param imprint byte[] - data imprint to be time-stamped
-     * @return byte[] - encoded, TSA signed data of the timeStampToken
-     * @throws Exception - TSA request failed
-     */
-    public byte[] getTimeStampToken(byte[] imprint) throws Exception;
-    
+public class BouncyCastleDigest implements ExternalDigest {
+
+    public MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException {
+        String oid = DigestAlgorithms.getAllowedDigests(hashAlgorithm);
+        if (oid == null)
+            throw new NoSuchAlgorithmException(hashAlgorithm);
+        if (oid.equals("1.2.840.113549.2.2")) { //MD2
+            return new MD2.Digest();
+        }
+        else if (oid.equals("1.2.840.113549.2.5")) { //MD5
+            return new MD5.Digest();
+        }
+        else if (oid.equals("1.3.14.3.2.26")) { //SHA1
+            return new SHA1.Digest();
+        }
+        else if (oid.equals("2.16.840.1.101.3.4.2.4")) { //SHA224
+            return new SHA224.Digest();
+        }
+        else if (oid.equals("2.16.840.1.101.3.4.2.1")) { //SHA256
+            return new SHA256.Digest();
+        }
+        else if (oid.equals("2.16.840.1.101.3.4.2.2")) { //SHA384
+            return new SHA384.Digest();
+        }
+        else if (oid.equals("2.16.840.1.101.3.4.2.3")) { //SHA512
+            return new SHA512.Digest();
+        }
+        else if (oid.equals("1.3.36.3.2.2")) { //RIPEMD128
+            return new RIPEMD128.Digest();
+        }
+        else if (oid.equals("1.3.36.3.2.1")) { //RIPEMD160
+            return new RIPEMD160.Digest();
+        }
+        else if (oid.equals("1.3.36.3.2.3")) { //RIPEMD256
+            return new RIPEMD256.Digest();
+        }
+        else if (oid.equals("1.2.643.2.2.9")) { //GOST3411
+            return new GOST3411.Digest();
+        }
+        throw new NoSuchAlgorithmException(hashAlgorithm); //shouldn't get here
+    }
 }

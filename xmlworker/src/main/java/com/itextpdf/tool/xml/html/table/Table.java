@@ -393,7 +393,6 @@ public class Table extends AbstractTagProcessor {
                     computedRowHeight = tableHeight - computedTableHeigt;
                 }
 				for (HtmlCell cell : row.getContent()) {
-					columnNumber += cell.getColspan();
 					List<Element> compositeElements = cell.getCompositeElements();
 					if (compositeElements != null) {
 						for (Element baseLevel : compositeElements) {
@@ -404,8 +403,11 @@ public class Table extends AbstractTagProcessor {
 										: styleValues.getHorBorderSpacing();
 								totalBordersWidth += cellValues.getBorderWidthLeft()
 										+ cellValues.getBorderWidthRight();
-								float columnWidth = columnWidths[columnNumber];
-								PdfPTableEvent tableEvent = ((PdfPTable) baseLevel).getTableEvent();
+								float columnWidth = 0;
+                                for (int currentColumnNumber = columnNumber + 1 ;currentColumnNumber <= columnNumber + cell.getColspan(); currentColumnNumber++ ) {
+                                    columnWidth += columnWidths[currentColumnNumber];
+                                }
+                                PdfPTableEvent tableEvent = ((PdfPTable) baseLevel).getTableEvent();
 								TableStyleValues innerStyleValues = ((TableBorderEvent) tableEvent)
 										.getTableStyleValues();
 								totalBordersWidth += innerStyleValues.getBorderWidthLeft();
@@ -414,6 +416,8 @@ public class Table extends AbstractTagProcessor {
 							}
 						}
 					}
+                    columnNumber += cell.getColspan();
+
 					table.addCell(cell);
 				}
 				table.completeRow();

@@ -134,7 +134,17 @@ public class PdfCopy extends PdfWriter {
         indirectMap = new HashMap<PdfReader, HashMap<RefKey, IndirectReferences>>();
     }
 
-    /** Getter for property rotateContents.
+    /**
+     * Setting page events isn't possible with Pdf(Smart)Copy.
+     * Use the PageStamp class if you want to add content to copied pages.
+	 * @see com.itextpdf.text.pdf.PdfWriter#setPageEvent(com.itextpdf.text.pdf.PdfPageEvent)
+	 */
+	@Override
+	public void setPageEvent(PdfPageEvent event) {
+		throw new UnsupportedOperationException();
+	}
+
+	/** Getter for property rotateContents.
      * @return Value of property rotateContents.
      *
      */

@@ -1,5 +1,5 @@
 /*
- * $Id:  $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -66,7 +66,7 @@ public final class Version {
 	 * This String contains the version number of this iText release.
 	 * For debugging purposes, we request you NOT to change this constant.
 	 */
-	private String release = "5.3.1";
+	private String release = "5.3.2";
 	
 	/**
 	 * The license key.
@@ -114,6 +114,18 @@ public final class Version {
 				else if (info[2] != null && info[2].trim().length() > 0) {
 					version.iTextVersion += " (" + info[2];
 					if (!version.key.toLowerCase().startsWith("trial")) {
+						version.iTextVersion += "; licensed version)";
+					}
+					else {
+						version.iTextVersion += "; " + version.key + ")";
+					}
+				}
+				// fall back to contact name, if company name is unavailable
+				else if (info[0] != null && info[0].trim().length() > 0) {
+					version.iTextVersion += " (" + info[0];
+					if (!version.key.toLowerCase().startsWith("trial")) {
+						// we shouldn't have a licensed version without company name,
+						// but let's account for it anyway
 						version.iTextVersion += "; licensed version)";
 					}
 					else {

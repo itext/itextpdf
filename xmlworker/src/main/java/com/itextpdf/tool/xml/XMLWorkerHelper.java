@@ -206,7 +206,10 @@ public class XMLWorkerHelper {
 	 */
 	public void parseXHtml(final PdfWriter writer, final Document doc, final InputStream in, final InputStream inCssFile, final Charset charset, final FontProvider fontProvider) throws IOException {
         CssFilesImpl cssFiles = new CssFilesImpl();
-        cssFiles.add(getCSS(inCssFile));
+        if (inCssFile != null)
+            cssFiles.add(getCSS(inCssFile));
+        else
+            cssFiles.add(getDefaultCSS());
         StyleAttrCSSResolver cssResolver = new StyleAttrCSSResolver(cssFiles);
         HtmlPipelineContext hpc = new HtmlPipelineContext(new CssAppliersImpl(fontProvider));
         hpc.setAcceptUnknown(true).autoBookmark(true).setTagFactory(getDefaultTagProcessorFactory());

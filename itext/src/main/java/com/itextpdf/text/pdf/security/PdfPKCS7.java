@@ -107,6 +107,8 @@ import org.bouncycastle.tsp.TimeStampTokenInfo;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
+import java.security.GeneralSecurityException;
 
 /**
  * This class does all the processing related to signing
@@ -129,10 +131,10 @@ public class PdfPKCS7 {
      * @throws NoSuchAlgorithmException on error
      */
     public PdfPKCS7(PrivateKey privKey, Certificate[] certChain, 
-                    String hashAlgorithm, String provider, boolean hasRSAdata)
+                    String hashAlgorithm, String provider, ExternalDigest interfaceDigest, boolean hasRSAdata)
       throws InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException {
         this.provider = provider;
-
+        this.interfaceDigest = interfaceDigest;
         // message digest
         digestAlgorithmOid = DigestAlgorithms.getAllowedDigests(hashAlgorithm);
         if (digestAlgorithmOid == null)
@@ -167,10 +169,7 @@ public class PdfPKCS7 {
         // initialize the RSA data
         if (hasRSAdata) {
             RSAdata = new byte[0];
-            if (provider == null || provider.startsWith("SunPKCS11"))
-                messageDigest = MessageDigest.getInstance(getHashAlgorithm());
-            else
-                messageDigest = MessageDigest.getInstance(getHashAlgorithm(), provider);
+            messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
         }
 
         // initialize the Signature object
@@ -372,18 +371,12 @@ public class PdfPKCS7 {
                 this.timeStampToken = new TimeStampToken(contentInfoTsp);
                 TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
                 String algOID = info.getMessageImprintAlgOID().getId();
-                messageDigest = MessageDigest.getInstance(DigestAlgorithms.getDigest(algOID));
+                messageDigest = DigestAlgorithms.getMessageDigestFromOid(algOID, null);
             }
             else {
                 if (RSAdata != null || digestAttr != null) {
-                    if (provider == null || provider.startsWith("SunPKCS11")) {
-                        messageDigest = MessageDigest.getInstance(getHashAlgorithm());
-                        encContDigest = MessageDigest.getInstance(getHashAlgorithm()); // Stefan Santesson
-                    }
-                    else {
-                        messageDigest = MessageDigest.getInstance(getHashAlgorithm(), provider);
-                        encContDigest = MessageDigest.getInstance(getHashAlgorithm(), provider); // Stefan Santesson
-                    }
+                	messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
+                	encContDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
                 }
                 if (provider == null)
                     sig = Signature.getInstance(getDigestAlgorithm());
@@ -561,6 +554,7 @@ public class PdfPKCS7 {
      *	DIGITAL SIGNATURE CREATION
      */
 
+    private ExternalDigest interfaceDigest;
     // The signature is created externally
     
     /** The signed digest if created outside this class */   
@@ -652,7 +646,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7() {
-        return getEncodedPKCS7(null, null, null, null, null, false);
+        return getEncodedPKCS7(null, null, null, null, null, CryptoStandard.CMS);
     }
 
     /**
@@ -663,7 +657,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime) {
-        return getEncodedPKCS7(secondDigest, signingTime, null, null, null, false);
+        return getEncodedPKCS7(secondDigest, signingTime, null, null, null, CryptoStandard.CMS);
     }
 
     /**
@@ -676,7 +670,7 @@ public class PdfPKCS7 {
      * @return byte[] the bytes for the PKCS7SignedData object
      * @since	2.1.6
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, boolean cades) {
+    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -743,7 +737,7 @@ public class PdfPKCS7 {
 
             // add the authenticated attribute if present
             if (secondDigest != null && signingTime != null) {
-                signerinfo.add(new DERTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, cades)));
+                signerinfo.add(new DERTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, sigtype)));
             }
             // Add the digestEncryptionAlgorithm
             v = new ASN1EncodableVector();
@@ -758,7 +752,7 @@ public class PdfPKCS7 {
             // Added by Martin Brunecky, 07/12/2007 folowing Aiken Sam, 2006-11-15
             // Sam found Adobe expects time-stamped SHA1-1 of the encrypted digest
             if (tsaClient != null) {
-                byte[] tsImprint = MessageDigest.getInstance(tsaClient.getDigestAlgorithm()).digest(digest);
+                byte[] tsImprint = tsaClient.getMessageDigest().digest(digest);
                 byte[] tsToken = tsaClient.getTimeStampToken(tsImprint);
                 if (tsToken != null) {
                     ASN1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);
@@ -855,9 +849,9 @@ public class PdfPKCS7 {
      * @param signingTime the signing time
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, boolean cades) {
+    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
         try {
-            return getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, cades).getEncoded(ASN1Encoding.DER);
+            return getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp, crlBytes, sigtype).getEncoded(ASN1Encoding.DER);
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
@@ -872,7 +866,7 @@ public class PdfPKCS7 {
      * @param signingTime the signing time
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, boolean cades) {
+    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], Calendar signingTime, byte[] ocsp, Collection<byte[]> crlBytes, CryptoStandard sigtype) {
         try {
             ASN1EncodableVector attribute = new ASN1EncodableVector();
             ASN1EncodableVector v = new ASN1EncodableVector();
@@ -930,14 +924,14 @@ public class PdfPKCS7 {
                 v.add(new DERSet(new DERSequence(revocationV)));
                 attribute.add(new DERSequence(v));
             }
-            if (cades) {
+            if (sigtype == CryptoStandard.CADES) {
                 v = new ASN1EncodableVector();
                 v.add(new ASN1ObjectIdentifier(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2));
 
                 ASN1EncodableVector aaV2 = new ASN1EncodableVector();
                 AlgorithmIdentifier algoId = new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestAlgorithmOid), null);
                 aaV2.add(algoId);
-                MessageDigest md = MessageDigest.getInstance(getHashAlgorithm());
+                MessageDigest md = interfaceDigest.getMessageDigest(getHashAlgorithm());
                 byte[] dig = md.digest(signCert.getEncoded());
                 aaV2.add(new DEROctetString(dig));
                 
@@ -1015,17 +1009,17 @@ public class PdfPKCS7 {
 
     /**
      * Checks if the timestamp refers to this document.
-     * @throws java.security.NoSuchAlgorithmException on error
      * @return true if it checks false otherwise
+     * @throws GeneralSecurityException on error
      * @since	2.1.6
      */
-    public boolean verifyTimestampImprint() throws NoSuchAlgorithmException {
+    public boolean verifyTimestampImprint() throws GeneralSecurityException {
         if (timeStampToken == null)
             return false;
         TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
         MessageImprint imprint = info.toASN1Structure().getMessageImprint();
         String algOID = info.getMessageImprintAlgOID().getId();
-        byte[] md = MessageDigest.getInstance(DigestAlgorithms.getDigest(algOID)).digest(digest);
+        byte[] md = new BouncyCastleDigest().getMessageDigest(DigestAlgorithms.getDigest(algOID)).digest(digest);
         byte[] imphashed = imprint.getHashedMessage();
         boolean res = Arrays.equals(md, imphashed);
         return res;

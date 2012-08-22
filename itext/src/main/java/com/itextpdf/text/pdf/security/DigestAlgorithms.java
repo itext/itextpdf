@@ -43,6 +43,12 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.HashMap;
 
 /**
@@ -67,6 +73,9 @@ public class DigestAlgorithms {
 	
 	/** Maps the digest IDs with the human-readable name of the digest algorithm. */
     private static final HashMap<String, String> digestNames = new HashMap<String, String>();
+	
+	/** Maps digest algorithm that are unknown by the JDKs MessageDigest object to a known one. */
+    private static final HashMap<String, String> fixNames = new HashMap<String, String>();
     
     /** Maps the name of a digest algorithm with its ID. */
     private static final HashMap<String, String> allowedDigests = new HashMap<String, String>();
@@ -101,6 +110,10 @@ public class DigestAlgorithms {
         digestNames.put("1.3.36.3.3.1.4", "RIPEMD256");
         digestNames.put("1.2.643.2.2.9", "GOST3411");
 
+        fixNames.put("SHA256", SHA256);
+        fixNames.put("SHA384", SHA384);
+        fixNames.put("SHA512", SHA512);
+        
         allowedDigests.put("MD2", "1.2.840.113549.2.2");
         allowedDigests.put("MD-2", "1.2.840.113549.2.2");
         allowedDigests.put("MD5", "1.2.840.113549.2.5");
@@ -121,8 +134,57 @@ public class DigestAlgorithms {
         allowedDigests.put("RIPEMD-160", "1.3.36.3.2.1");
         allowedDigests.put("RIPEMD256", "1.3.36.3.2.3");
         allowedDigests.put("RIPEMD-256", "1.3.36.3.2.3");
+        allowedDigests.put("GOST3411", "1.2.643.2.2.9");
     }
 
+    public static MessageDigest getMessageDigestFromOid(String digestOid, String provider)
+    	throws NoSuchAlgorithmException, NoSuchProviderException {
+    	return getMessageDigest(getDigest(digestOid), provider);
+    }
+    
+    /**
+     * Creates a MessageDigest object that can be used to create a hash.
+     * @param hashAlgorithm	the algorithm you want to use to create a hash
+     * @param provider	the provider you want to use to create the hash
+     * @return	a MessageDigest object
+     * @throws NoSuchAlgorithmException 
+     * @throws NoSuchProviderException 
+     * @throws GeneralSecurityException
+     */
+    public static MessageDigest getMessageDigest(String hashAlgorithm, String provider)
+    	throws NoSuchAlgorithmException, NoSuchProviderException {
+        if (provider == null || provider.startsWith("SunPKCS11") || provider.startsWith("SunMSCAPI"))
+            return MessageDigest.getInstance(DigestAlgorithms.normalizeDigestName(hashAlgorithm));
+        else
+            return MessageDigest.getInstance(hashAlgorithm, provider);
+    }
+    
+    
+    /**
+     * Creates a hash using a specific digest algorithm and a provider. 
+     * @param data	the message of which you want to create a hash
+     * @param hashAlgorithm	the algorithm used to create the hash
+     * @param provider	the provider used to create the hash
+     * @return	the hash
+     * @throws GeneralSecurityException
+     * @throws IOException
+     */
+    public static byte[] digest(InputStream data, String hashAlgorithm, String provider)
+    	throws GeneralSecurityException, IOException {
+        MessageDigest messageDigest = getMessageDigest(hashAlgorithm, provider);
+        return digest(data, messageDigest);
+    }
+    
+    public static byte[] digest(InputStream data, MessageDigest messageDigest)
+    	throws GeneralSecurityException, IOException {
+        byte buf[] = new byte[8192];
+        int n;
+        while ((n = data.read(buf)) > 0) {
+            messageDigest.update(buf, 0, n);
+        }
+        return messageDigest.digest();
+    }
+    
     /**
      * Gets the digest name for a certain id
      * @param oid	an id (for instance "1.2.840.113549.2.5")
@@ -134,6 +196,12 @@ public class DigestAlgorithms {
             return oid;
         else
             return ret;
+    }
+    
+    public static String normalizeDigestName(String algo) {
+    	if (fixNames.containsKey(algo))
+    		return fixNames.get(algo);
+    	return algo;
     }
 
     /**

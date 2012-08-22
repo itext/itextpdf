@@ -47,26 +47,82 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.log.Level;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * An implementation of the CrlClient that fetches the CRL bytes
  * from an URL.
  * @author Paulo Soares
  */
-public class CrlClientImp implements CrlClient {
+public class CrlClientOnline implements CrlClient {
 
 	/** The Logger instance. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientImp.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientOnline.class);
+    
+    /** The URLs of the CRLs. */
+    protected List<URL> urls = new ArrayList<URL>();
 
+    /**
+     * Creates a CrlClientOnline instance that will try to find
+     * a single CRL by walking through the certificate chain.
+     */
+    public CrlClientOnline() {
+    }
+    
+    /**
+     * Creates a CrlClientOnline instance using one or more URLs.
+     */
+    public CrlClientOnline(String... crls) {
+    	for (String url : crls) {
+    		try {
+				urls.add(new URL(url));
+	            LOGGER.info("Added CRL url: " + url);
+			} catch (MalformedURLException e) {
+	            LOGGER.info("Skipped CRL url: " + url);
+			}
+    	}
+    }
+    
+    /**
+     * Creates a CrlClientOnline instance using one or more URLs.
+     */
+    public CrlClientOnline(URL... crls) {
+    	for (URL url : urls) {
+    		urls.add(url);
+            LOGGER.info("Added CRL url: " + url);
+    	}
+    }
+    
+    /**
+     * Creates a CrlClientOnline instance using a certificate chain.
+     */
+    public CrlClientOnline(Certificate[] chain) {
+        for (int i = 0; i < chain.length; i++) {
+        	X509Certificate cert = (X509Certificate)chain[i];
+        	String url = null;
+			try {
+	            LOGGER.info("Checking certificate: " + cert.getSubjectDN());
+				url = CertificateUtil.getCRLURL(cert);
+				if (url != null) {
+					urls.add(new URL(url));
+		            LOGGER.info("Added CRL url: " + url);
+				}
+			} catch (Exception e) {
+	            LOGGER.info("Skipped CRL url: " + url);
+			}
+        }
+    }
+    
     /**
      * Fetches the CRL bytes from an URL.
      * If no url is passed as parameter, the url will be obtained from the certificate.
@@ -76,38 +132,48 @@ public class CrlClientImp implements CrlClient {
      * @see com.itextpdf.text.pdf.security.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
-        try {
-            if (url == null) {
-                if (checkCert == null)
-                    return null;
-                url = CertificateUtil.getCRLURL(checkCert);
-            }
-            if (url == null)
-                return null;
-            URL urlt = new URL(url);
-            HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
-            if (con.getResponseCode() / 100 != 2) {
-                throw new IOException(MessageLocalization.getComposedMessage("invalid.http.response.1", con.getResponseCode()));
-            }
-            //Get Response
-            InputStream inp = (InputStream) con.getContent();
-            byte[] buf = new byte[1024];
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            while (true) {
-                int n = inp.read(buf, 0, buf.length);
-                if (n <= 0)
-                    break;
-                bout.write(buf, 0, n);
-            }
-            inp.close();
-            ArrayList<byte[]> ar = new ArrayList<byte[]>();
-            ar.add(bout.toByteArray());
-            return ar;
+        if (checkCert == null)
+            return null;
+        if (urls.size() == 0) {
+        	LOGGER.info("Looking for CRL for certificate " + checkCert.getSubjectDN());
+        	try {
+        		if (url == null)
+        			url = CertificateUtil.getCRLURL(checkCert);
+        		if (url == null)
+        			throw new NullPointerException();
+        		urls.add(new URL(url));
+        		LOGGER.info("Found CRL url: " + url);
+        	}
+        	catch (Exception e) {
+        		LOGGER.info("Skipped CRL url: " + e.getMessage());
+        	}
         }
-        catch (Exception ex) {
-            if (LOGGER.isLogging(Level.ERROR))
-                LOGGER.error("CrlClientImp", ex);
+        ArrayList<byte[]> ar = new ArrayList<byte[]>();
+        for (URL urlt : urls) {
+        	try {
+        		LOGGER.info("Checking CRL: " + urlt);
+        		HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
+        		if (con.getResponseCode() / 100 != 2) {
+        			throw new IOException(MessageLocalization.getComposedMessage("invalid.http.response.1", con.getResponseCode()));
+        		}
+        		//Get Response
+        		InputStream inp = (InputStream) con.getContent();
+        		byte[] buf = new byte[1024];
+        		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        		while (true) {
+        			int n = inp.read(buf, 0, buf.length);
+        			if (n <= 0)
+        				break;
+        			bout.write(buf, 0, n);
+        		}
+        		inp.close();
+        		ar.add(bout.toByteArray());
+        		LOGGER.info("Added CRL found at: " + urlt);
+        	}
+        	catch (Exception e) {
+        		LOGGER.info("Skipped CRL: " + e.getMessage() + " for " + urlt);
+        	}
         }
-        return null;
+        return ar;
     }
 }

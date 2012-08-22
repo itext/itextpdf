@@ -2127,6 +2127,8 @@ public class AcroFields {
         dic.put(PdfName.F, new PdfNumber(PdfAnnotation.FLAGS_PRINT));
     }
 
+    private ArrayList<String> orderedSignatureNames;
+    
     /**
      * Gets the field names that have signatures and are signed.
      *
@@ -2134,8 +2136,9 @@ public class AcroFields {
      */
     public ArrayList<String> getSignatureNames() {
         if (sigNames != null)
-            return new ArrayList<String>(sigNames.keySet());
+            return new ArrayList<String>(orderedSignatureNames);
         sigNames = new HashMap<String, int[]>();
+        orderedSignatureNames = new ArrayList<String>();
         ArrayList<Object[]> sorter = new ArrayList<Object[]>();
         for (Map.Entry<String, Item> entry: fields.entrySet()) {
             Item item = entry.getValue();
@@ -2169,9 +2172,10 @@ public class AcroFields {
                 int p[] = (int[])objs[1];
                 p[1] = k + 1;
                 sigNames.put(name, p);
+                orderedSignatureNames.add(name);
             }
         }
-        return new ArrayList<String>(sigNames.keySet());
+        return new ArrayList<String>(orderedSignatureNames);
     }
 
     /**

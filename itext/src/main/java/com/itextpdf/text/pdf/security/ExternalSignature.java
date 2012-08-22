@@ -52,25 +52,25 @@ import java.security.GeneralSecurityException;
  * @author Paulo Soares
  */
 public interface ExternalSignature {
-	
-    /**
-     * Creates a message digest using the hash algorithm
-     * and signs it using the encryption algorithm.
-     * @param message	the message you want to be hashed and signed
-     * @return	a signed message digest
-     * @throws GeneralSecurityException
-     */
-    public byte[] sign(byte[] message) throws GeneralSecurityException;
     
     /**
      * Returns the hash algorithm.
      * @return	the hash algorithm (e.g. "SHA-1", "SHA-256,...")
      */
     public String getHashAlgorithm();
-    
+
     /**
      * Returns the encryption algorithm used for signing.
      * @return the encryption algorithm ("RSA" or "DSA")
      */
     public String getEncryptionAlgorithm();
+	
+    /**
+     * Signs it using the encryption algorithm in combination with
+     * the digest algorithm.
+     * @param message	the message you want to be hashed and signed
+     * @return	a signed message digest
+     * @throws GeneralSecurityException
+     */
+    public byte[] sign(byte[] message) throws GeneralSecurityException;
 }

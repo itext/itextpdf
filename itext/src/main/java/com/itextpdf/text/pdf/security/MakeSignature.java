@@ -44,6 +44,8 @@
 package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
@@ -54,7 +56,6 @@ import com.itextpdf.text.pdf.PdfString;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -63,17 +64,19 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 
-
 /**
  * Class that signs your PDF.
  * @author Paulo Soares
  */
 public class MakeSignature {
-	/** Parameter to indicate that you want to sign using the Cryptographic Message Syntax. */
-    public static final boolean CMS = false;
-	/** Parameter to indicate that you want to sign using CMS Advanced Electronic Signatures. */
-    public static final boolean CADES = true;
-    
+
+	/** The Logger instance. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MakeSignature.class);
+
+    public enum CryptoStandard {
+    	CMS, CADES
+    }
+
     /**
      * Signs the document using the detached mode, CMS or CAdES equivalent.
      * @param sap the PdfSignatureAppearance
@@ -82,18 +85,21 @@ public class MakeSignature {
      * @param crlList the CRL list
      * @param ocspClient the OCSP client
      * @param tsaClient the Timestamp client
-     * @param provider the provider or null
+     * @param externalDigest an implementation that provides the digest
      * @param estimatedSize the reserved size for the signature. It will be estimated if 0
-     * @param cades true to sign CAdES equivalent PAdES-BES, false to sign CMS
+     * @param sigtype Either Signature.CMS or Signature.CADES
      * @throws DocumentException 
      * @throws IOException 
      * @throws GeneralSecurityException 
      * @throws NoSuchAlgorithmException 
      * @throws Exception 
      */
-    public static void signDetached(PdfSignatureAppearance sap, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
-            TSAClient tsaClient, String provider, int estimatedSize, boolean cades) throws IOException, DocumentException, GeneralSecurityException {
-        Collection<byte[]> crlBytes = processCrl(chain[0], crlList);
+    public static void signDetached(PdfSignatureAppearance sap, ExternalDigest externalDigest, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
+            TSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, DocumentException, GeneralSecurityException {
+        Collection<byte[]> crlBytes = null;
+        int i = 0;
+        while (crlBytes == null && i < chain.length)
+        	crlBytes = processCrl(chain[i++], crlList);
     	if (estimatedSize == 0) {
             estimatedSize = 8192;
             if (crlBytes != null) {
@@ -107,7 +113,7 @@ public class MakeSignature {
                 estimatedSize += 4192;
         }
         sap.setCertificate(chain[0]);
-        PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, cades ? PdfName.ETSI_CADES_DETACHED : PdfName.ADBE_PKCS7_DETACHED);
+        PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, sigtype == CryptoStandard.CADES ? PdfName.ETSI_CADES_DETACHED : PdfName.ADBE_PKCS7_DETACHED);
         dic.setReason(sap.getReason());
         dic.setLocation(sap.getLocation());
         dic.setContact(sap.getContact());
@@ -119,29 +125,19 @@ public class MakeSignature {
         sap.preClose(exc);
 
         String hashAlgorithm = externalSignature.getHashAlgorithm();
-        PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, provider, false);
+        PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, null, externalDigest, false);
         InputStream data = sap.getRangeStream();
-        MessageDigest messageDigest;
-        if (provider == null)
-            messageDigest = MessageDigest.getInstance(hashAlgorithm);
-        else
-            messageDigest = MessageDigest.getInstance(hashAlgorithm, provider);
-        byte buf[] = new byte[8192];
-        int n;
-        while ((n = data.read(buf)) > 0) {
-            messageDigest.update(buf, 0, n);
-        }
-        byte hash[] = messageDigest.digest();
+        byte hash[] = DigestAlgorithms.digest(data, externalDigest.getMessageDigest(hashAlgorithm));
         Calendar cal = Calendar.getInstance();
         byte[] ocsp = null;
         if (chain.length >= 2 && ocspClient != null) {
             ocsp = ocspClient.getEncoded((X509Certificate) chain[0], (X509Certificate) chain[1], null);
         }
-        byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp, crlBytes, cades);
+        byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, cal, ocsp, crlBytes, sigtype);
         byte[] extSignature = externalSignature.sign(sh);
         sgn.setExternalDigest(extSignature, null, externalSignature.getEncryptionAlgorithm());
 
-        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsaClient, ocsp, crlBytes, cades);
+        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsaClient, ocsp, crlBytes, sigtype);
 
         if (estimatedSize + 2 < encodedSig.length)
             throw new IOException("Not enough space");
@@ -152,7 +148,6 @@ public class MakeSignature {
         PdfDictionary dic2 = new PdfDictionary();
         dic2.put(PdfName.CONTENTS, new PdfString(paddedSig).setHexWriting(true));
         sap.close(dic2);
-
     }
     
     /**
@@ -168,6 +163,7 @@ public class MakeSignature {
         for (CrlClient cc : crlList) {
             if (cc == null)
                 continue;
+            LOGGER.info("Processing " + cc.getClass().getName());
             Collection<byte[]> b = cc.getEncoded((X509Certificate)cert, null);
             if (b == null)
                 continue;

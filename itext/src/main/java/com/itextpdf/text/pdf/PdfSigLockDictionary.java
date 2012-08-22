@@ -41,41 +41,87 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.text.pdf.security;
-
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
+package com.itextpdf.text.pdf;
 
 /**
- * Time Stamp Authority client (caller) interface.
- * <p>
- * Interface used by the PdfPKCS7 digital signature builder to call
- * Time Stamp Authority providing RFC 3161 compliant time stamp token.
- * @author Martin Brunecky, 07/17/2007
- * @since	2.1.6
+ * A signature field lock dictionary.
  */
-public interface TSAClient {
-    /**
-     * Get the time stamp token size estimate.
-     * Implementation must return value large enough to accomodate the entire token
-     * returned by getTimeStampToken() _prior_ to actual getTimeStampToken() call.
-     * @return	an estimate of the token size
-     */
-    public int getTokenSizeEstimate();
-    
-    /**
-     * Gets the MessageDigest to digest the data imprint
-     * @return the digest algorithm name
-     */
-    public MessageDigest getMessageDigest() throws GeneralSecurityException;
-    
-    /**
-     * Get RFC 3161 timeStampToken.
-     * Method may return null indicating that timestamp should be skipped.
-     * @param imprint byte[] - data imprint to be time-stamped
-     * @return byte[] - encoded, TSA signed data of the timeStampToken
-     * @throws Exception - TSA request failed
-     */
-    public byte[] getTimeStampToken(byte[] imprint) throws Exception;
-    
+public class PdfSigLockDictionary extends PdfDictionary  {
+	
+	/**
+	 * Enumerates the different actions of a signature lock.
+	 * Indicates the set of fields that should be locked:
+	 * all the fields in the document,
+	 * all the fields specified in the /Fields array
+	 * all the fields except those specified in the /Fields array
+	 */
+	public enum LockAction {
+		ALL(PdfName.ALL), INCLUDE(PdfName.INCLUDE), EXCLUDE(PdfName.EXCLUDE);
+		
+		private PdfName name;
+		
+		private LockAction(PdfName name) {
+			this.name = name;
+		}
+		
+		public PdfName getValue() {
+			return name;
+		}
+	}
+
+	/**
+	 * Enumerates the different levels of permissions.
+	 */
+	public enum LockPermissions {
+		NO_CHANGES_ALLOWED(1), FORM_FILLING(2), FORM_FILLING_AND_ANNOTATION(3);
+		
+		private PdfNumber number;
+		
+		private LockPermissions(int p) {
+			number = new PdfNumber(p);
+		}
+		
+		public PdfNumber getValue() {
+			return number;
+		}
+	}
+	
+	/**
+	 * Creates a signature lock valid for all fields in the document.
+	 */
+	public PdfSigLockDictionary() {
+		super(PdfName.SIGFIELDLOCK);
+		this.put(PdfName.ACTION, LockAction.ALL.getValue());
+	}
+	
+	/**
+	 * Creates a signature lock for all fields in the document,
+	 * setting specific permissions.
+	 */
+	public PdfSigLockDictionary(LockPermissions p) {
+		this();
+		this.put(PdfName.P, p.getValue());
+	}
+	
+	/**
+	 * Creates a signature lock for specific fields in the document.
+	 */
+	public PdfSigLockDictionary(LockAction action, String... fields) {
+		this(action, null, fields);
+	}
+	
+	/**
+	 * Creates a signature lock for specific fields in the document.
+	 */
+	public PdfSigLockDictionary(LockAction action, LockPermissions p, String... fields) {
+		super(PdfName.SIGFIELDLOCK);
+		this.put(PdfName.ACTION, action.getValue());
+		if (p != null)
+			this.put(PdfName.P, p.getValue());
+		PdfArray fieldsArray = new PdfArray();
+		for (String field : fields) {
+			fieldsArray.add(new PdfString(field));
+		}
+		this.put(PdfName.FIELDS, fieldsArray);
+	}
 }

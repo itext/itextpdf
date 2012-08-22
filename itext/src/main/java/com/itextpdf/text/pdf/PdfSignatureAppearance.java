@@ -985,6 +985,9 @@ public class PdfSignatureAppearance {
                 ct2.go();
                 break;
             case GRAPHIC_AND_DESCRIPTION:
+                if (signatureGraphic == null) {
+                    throw new IllegalStateException(MessageLocalization.getComposedMessage("a.signature.image.should.be.present.when.rendering.mode.is.graphic.and.description"));
+                }
                 ct2 = new ColumnText(t);
                 ct2.setRunDirection(runDirection);
                 ct2.setSimpleColumn(signatureRect.getLeft(), signatureRect.getBottom(), signatureRect.getRight(), signatureRect.getTop(), 0, Element.ALIGN_RIGHT);
@@ -1221,9 +1224,16 @@ public class PdfSignatureAppearance {
         boolean fieldExists = !(isInvisible() || isNewField());
         PdfIndirectReference refSig = writer.getPdfIndirectReference();
         writer.setSigFlags(3);
+        PdfDictionary fieldLock = null;
         if (fieldExists) {
             PdfDictionary widget = af.getFieldItem(name).getWidget(0);
             writer.markUsed(widget);
+            fieldLock = widget.getAsDict(PdfName.LOCK);
+            if (fieldLock != null) {
+            	if (!fieldLock.contains(PdfName.FIELDS)) {
+            		fieldLock = null;
+            	}
+            }
             widget.put(PdfName.P, writer.getPageReference(getPage()));
             widget.put(PdfName.V, refSig);
             PdfObject obj = PdfReader.getPdfObjectRelease(widget.get(PdfName.F));
@@ -1269,6 +1279,8 @@ public class PdfSignatureAppearance {
             }
             if (certificationLevel > 0)
                 addDocMDP(cryptoDictionary);
+            if (fieldLock != null)
+            	addFieldMDP(cryptoDictionary, fieldLock);
             if (signatureEvent != null)
                 signatureEvent.getSignatureDictionary(cryptoDictionary);
             writer.addToBody(cryptoDictionary, refSig, false);
@@ -1353,6 +1365,33 @@ public class PdfSignatureAppearance {
         crypto.put(PdfName.REFERENCE, types);
     }
 
+    /**
+     * Adds keys to the signature dictionary that define
+     * the field permissions.
+     * This method is only used for signatures that lock fields.
+     * @param crypto the signature dictionary
+     */
+    private void addFieldMDP(PdfDictionary crypto, PdfDictionary fieldLock) {
+        PdfDictionary reference = new PdfDictionary();
+        PdfDictionary transformParams = new PdfDictionary();
+        transformParams.putAll(fieldLock);
+        transformParams.put(PdfName.TYPE, PdfName.TRANSFORMPARAMS);
+        transformParams.put(PdfName.V, new PdfName("1.2"));
+        reference.put(PdfName.TRANSFORMMETHOD, PdfName.FIELDMDP);
+        reference.put(PdfName.TYPE, PdfName.SIGREF);
+        reference.put(PdfName.TRANSFORMPARAMS, transformParams);
+        reference.put(new PdfName("DigestValue"), new PdfString("aa"));
+        PdfArray loc = new PdfArray();
+        loc.add(new PdfNumber(0));
+        loc.add(new PdfNumber(0));
+        reference.put(new PdfName("DigestLocation"), loc);
+        reference.put(new PdfName("DigestMethod"), new PdfName("MD5"));
+        reference.put(PdfName.DATA, writer.reader.getTrailer().get(PdfName.ROOT));
+        PdfArray types = new PdfArray();
+        types.add(reference);
+        crypto.put(PdfName.REFERENCE, types);
+    }
+    
     /**
      * This is the last method to be called when using external signatures. The general sequence is:
      * preClose(), getDocumentBytes() and close().

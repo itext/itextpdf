@@ -78,7 +78,7 @@ public class LtvTimestamp {
         exc.put(PdfName.CONTENTS, new Integer(contentEstimated * 2 + 2));
         sap.preClose(exc);
         InputStream data = sap.getRangeStream();
-        MessageDigest messageDigest = MessageDigest.getInstance(tsa.getDigestAlgorithm());
+        MessageDigest messageDigest = tsa.getMessageDigest();
         byte[] buf = new byte[4096];
         int n;
         while ((n = data.read(buf)) > 0) {

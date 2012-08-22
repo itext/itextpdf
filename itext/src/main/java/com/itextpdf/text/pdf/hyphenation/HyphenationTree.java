@@ -334,6 +334,7 @@ public class HyphenationTree extends TernaryTree
                 }
             }
         }
+        int origlen = len;
         len = iLength;
         if (len < remainCharCount + pushCharCount) {
             // word is too short to be hyphenated
@@ -386,7 +387,7 @@ public class HyphenationTree extends TernaryTree
             // trim result array
             int[] res = new int[k];
             System.arraycopy(result, 0, res, 0, k);
-            return new Hyphenation(new String(w, offset, len), res);
+            return new Hyphenation(new String(w, offset, origlen), res);
         } else {
             return null;
         }

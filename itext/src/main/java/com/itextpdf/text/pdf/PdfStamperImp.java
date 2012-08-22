@@ -147,12 +147,16 @@ class PdfStamperImp extends PdfWriter {
         initialXrefSize = reader.getXrefSize();
     }
 
+    protected void setViewerPreferences() {
+        reader.setViewerPreferences(viewerPreferences);
+        markUsed(reader.getTrailer().get(PdfName.ROOT));
+    }
+
     protected void close(Map<String, String> moreInfo) throws IOException {
         if (closed)
             return;
         if (useVp) {
-            reader.setViewerPreferences(viewerPreferences);
-            markUsed(reader.getTrailer().get(PdfName.ROOT));
+            setViewerPreferences();
         }
         if (flat)
             flatFields();
@@ -160,10 +164,6 @@ class PdfStamperImp extends PdfWriter {
         	flatFreeTextFields();
         addFieldResources();
         PdfDictionary catalog = reader.getCatalog();
-        PdfDictionary pages = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.PAGES));
-        Version version = Version.getInstance();
-        pages.put(PdfName.ITXT, new PdfString(version.getRelease()));
-        markUsed(pages);
         PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), reader.getCatalog());
         if (acroFields != null && acroFields.getXfa().isChanged()) {
             markUsed(acroForm);
@@ -223,6 +223,7 @@ class PdfStamperImp extends PdfWriter {
             skipInfo = iInfo.getNumber();
         if (oldInfo != null && oldInfo.get(PdfName.PRODUCER) != null)
         	producer = oldInfo.getAsString(PdfName.PRODUCER).toUnicodeString();
+        Version version = Version.getInstance();
         if (producer == null) {
         	producer = version.getVersion();
         }
@@ -324,6 +325,10 @@ class PdfStamperImp extends PdfWriter {
         		markUsed(catalog);
         	}
         }
+        close(info, skipInfo);
+    }
+
+    protected void close(PdfIndirectReference info, int skipInfo) throws IOException {
         try {
             file.reOpen();
             alterContents();
