@@ -312,7 +312,7 @@ public class HyphenationTree extends TernaryTree
         // normalize word
         char[] c = new char[2];
         int iIgnoreAtBeginning = 0;
-        //int iLength = len;
+        int iLength = len;
         boolean bEndOfLetters = false;
         for (i = 1; i <= len; i++) {
             c[0] = w[offset + i - 1];
@@ -325,7 +325,7 @@ public class HyphenationTree extends TernaryTree
                     // ... after a letter character
                     bEndOfLetters = true;
                 }
-                //iLength --;
+                iLength --;
             } else {
                 if (!bEndOfLetters) {
                     word[i - iIgnoreAtBeginning] = (char)nc;
@@ -334,7 +334,8 @@ public class HyphenationTree extends TernaryTree
                 }
             }
         }
-        //len = iLength;
+        int origlen = len;
+        len = iLength;
         if (len < remainCharCount + pushCharCount) {
             // word is too short to be hyphenated
             return null;
@@ -386,7 +387,7 @@ public class HyphenationTree extends TernaryTree
             // trim result array
             int[] res = new int[k];
             System.arraycopy(result, 0, res, 0, k);
-            return new Hyphenation(new String(w, offset, len), res);
+            return new Hyphenation(new String(w, offset, origlen), res);
         } else {
             return null;
         }
