@@ -31,7 +31,7 @@ import java.util.HashMap;
  */
 public class HyphenationTree extends TernaryTree
             implements PatternConsumer {
-	
+
     private static final long serialVersionUID = -7763254239309429432L;
 
 	/**
@@ -311,15 +311,30 @@ public class HyphenationTree extends TernaryTree
 
         // normalize word
         char[] c = new char[2];
+        int iIgnoreAtBeginning = 0;
+        //int iLength = len;
+        boolean bEndOfLetters = false;
         for (i = 1; i <= len; i++) {
             c[0] = w[offset + i - 1];
             int nc = classmap.find(c, 0);
             if (nc < 0) {    // found a non-letter character ...
-                word[i] = c[0];
+                if (i == 1 + iIgnoreAtBeginning) {
+                    // ... before any letter character
+                    iIgnoreAtBeginning ++;
+                } else {
+                    // ... after a letter character
+                    bEndOfLetters = true;
+                }
+                //iLength --;
             } else {
-                word[i] = (char)nc;
+                if (!bEndOfLetters) {
+                    word[i - iIgnoreAtBeginning] = (char)nc;
+                } else {
+                    return null;
+                }
             }
         }
+        //len = iLength;
         if (len < remainCharCount + pushCharCount) {
             // word is too short to be hyphenated
             return null;
@@ -340,7 +355,7 @@ public class HyphenationTree extends TernaryTree
                 if (o instanceof String) {
                     j += ((String)o).length();
                     if (j >= remainCharCount && j < len - pushCharCount) {
-                        result[k++] = j;
+                        result[k++] = j + iIgnoreAtBeginning;
                     }
                 }
             }
@@ -361,7 +376,7 @@ public class HyphenationTree extends TernaryTree
             for (i = 0; i < len; i++) {
                 if ((il[i + 1] & 1) == 1 && i >= remainCharCount
                         && i <= len - pushCharCount) {
-                    result[k++] = i;
+                    result[k++] = i + iIgnoreAtBeginning;
                 }
             }
         }
