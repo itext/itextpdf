@@ -619,6 +619,7 @@ public class PdfSignatureAppearance {
      * Acrobat 6.0 and higher recommends that only layer n0 and n2 be present.
      * Use this method with value <code>false</code> if you want to ignore this recommendation.
      * @param acro6Layers if <code>true</code> only the layers n0 and n2 will be present
+     * @deprecated Adobe no longer supports Adobe Acrobat / Reader versions older than 9
      */
     public void setAcro6Layers(boolean acro6Layers) {
         this.acro6Layers = acro6Layers;
