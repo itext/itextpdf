@@ -133,6 +133,7 @@ public class OcspClientBouncyCastle implements OcspClient {
             }
             if (url == null)
                 return null;
+            LOGGER.info("Getting OCSP from " + url);
             OCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
             byte[] array = request.getEncoded();
             URL urlt = new URL(url);
