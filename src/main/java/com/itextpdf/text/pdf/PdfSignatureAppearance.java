@@ -605,7 +605,7 @@ public class PdfSignatureAppearance {
     }
     
     /** Appearance compliant with the recommendations introduced in Acrobat 6? */
-    private boolean acro6Layers = false;
+    private boolean acro6Layers = true;
     
     /**
      * Gets the Acrobat 6.0 layer mode.
