@@ -277,6 +277,7 @@ public class PdfReader implements PdfViewerPreferences {
         this.eofPos = reader.eofPos;
         this.freeXref = reader.freeXref;
         this.lastXref = reader.lastXref;
+        this.newXrefType = reader.newXrefType;
         this.tokens = new PRTokeniser(reader.tokens.getSafeFile());
         if (reader.decrypt != null)
             this.decrypt = new PdfEncryption(reader.decrypt);
