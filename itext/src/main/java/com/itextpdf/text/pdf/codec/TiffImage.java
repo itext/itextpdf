@@ -368,7 +368,7 @@ public class TiffImage {
             if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) { // some TIFF producers are really lousy, so...
                 size = new long[]{s.length() - (int)offset[0]};
             }
-            if (compression == TIFFConstants.COMPRESSION_LZW) {
+            if (compression == TIFFConstants.COMPRESSION_LZW || compression == TIFFConstants.COMPRESSION_DEFLATE || compression == TIFFConstants.COMPRESSION_ADOBE_DEFLATE) {
                 TIFFField predictorField = dir.getField(TIFFConstants.TIFFTAG_PREDICTOR);
                 if (predictorField != null) {
                     predictor = predictorField.getAsInt(0);
@@ -379,8 +379,9 @@ public class TiffImage {
                         throw new RuntimeException(MessageLocalization.getComposedMessage("1.bit.samples.are.not.supported.for.horizontal.differencing.predictor", bitsPerSample));
                     }
                 }
-                lzwDecoder = new TIFFLZWDecoder(w, predictor, 
-                                                samplePerPixel);
+            }
+            if (compression == TIFFConstants.COMPRESSION_LZW) {
+                lzwDecoder = new TIFFLZWDecoder(w, predictor, samplePerPixel);
             }
             int rowsLeft = h;
             ByteArrayOutputStream stream = null;
@@ -472,6 +473,7 @@ public class TiffImage {
                         case TIFFConstants.COMPRESSION_DEFLATE:
                         case TIFFConstants.COMPRESSION_ADOBE_DEFLATE:
                             inflate(im, outBuf);
+                            applyPredictor(outBuf, predictor, w, height, samplePerPixel);
                             break;
                         case TIFFConstants.COMPRESSION_NONE:
                             outBuf = im;
@@ -652,4 +654,16 @@ public class TiffImage {
         }
     }
 
+    public static void applyPredictor(byte[] uncompData, int predictor, int w, int h, int samplesPerPixel) {
+        if (predictor != 2)
+            return;
+        int count;
+        for (int j = 0; j < h; j++) {
+            count = samplesPerPixel * (j * w + 1);
+            for (int i = samplesPerPixel; i < w * samplesPerPixel; i++) {
+                uncompData[count] += uncompData[count - samplesPerPixel];
+                count++;
+            }
+        }    
+    }
 }
