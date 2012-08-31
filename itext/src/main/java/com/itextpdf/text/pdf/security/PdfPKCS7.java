@@ -90,6 +90,8 @@ import org.bouncycastle.asn1.DERUTCTime;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.ess.SigningCertificateV2;
+import org.bouncycastle.asn1.ess.ESSCertIDv2;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -107,8 +109,12 @@ import org.bouncycastle.tsp.TimeStampTokenInfo;
 
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
 import java.security.GeneralSecurityException;
+import org.bouncycastle.asn1.ess.ESSCertID;
+import org.bouncycastle.asn1.ess.SigningCertificate;
+import org.bouncycastle.asn1.x509.IssuerSerial;
 
 /**
  * This class does all the processing related to signing
@@ -218,22 +224,14 @@ public class PdfPKCS7 {
      * Use this constructor if you want to verify a signature using
      * the sub-filter adbe.pkcs7.detached or adbe.pkcs7.sha1.
      * @param contentsKey the /Contents key
-     * @param provider the provider or <code>null</code> for the default provider
-     */
-    public PdfPKCS7(byte[] contentsKey, String provider) {
-        this(contentsKey, false, provider);
-    }
-
-    /**
-     * Use this constructor if you want to verify a signature using
-     * the sub-filter adbe.pkcs7.detached or adbe.pkcs7.sha1.
-     * @param contentsKey the /Contents key
      * @param tsp set to true if there's a PAdES LTV time stamp.
      * @param provider the provider or <code>null</code> for the default provider
      */
     @SuppressWarnings("unchecked")
-	public PdfPKCS7(byte[] contentsKey, boolean tsp, String provider) {
-        isTsp = tsp;
+	public PdfPKCS7(byte[] contentsKey, PdfName filterSubtype, String provider) {
+        this.filterSubtype = filterSubtype;
+        isTsp = PdfName.ETSI_RFC3161.equals(filterSubtype);
+        isCades = PdfName.ETSI_CADES_DETACHED.equals(filterSubtype);
         try {
             this.provider = provider;
             ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(contentsKey));
@@ -321,6 +319,7 @@ public class PdfPKCS7 {
             signCertificateChain();
             digestAlgorithmOid = ((ASN1ObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(2)).getObjectAt(0)).getId();
             next = 3;
+            boolean foundCades = false;
             if (signerInfo.getObjectAt(next) instanceof ASN1TaggedObject) {
                 ASN1TaggedObject tagsig = (ASN1TaggedObject)signerInfo.getObjectAt(next);
                 ASN1Set sseq = ASN1Set.getInstance(tagsig, false);
@@ -328,11 +327,12 @@ public class PdfPKCS7 {
 
                 for (int k = 0; k < sseq.size(); ++k) {
                     ASN1Sequence seq2 = (ASN1Sequence)sseq.getObjectAt(k);
-                    if (((ASN1ObjectIdentifier)seq2.getObjectAt(0)).getId().equals(SecurityIDs.ID_MESSAGE_DIGEST)) {
+                    String idSeq2 = ((ASN1ObjectIdentifier)seq2.getObjectAt(0)).getId();
+                    if (idSeq2.equals(SecurityIDs.ID_MESSAGE_DIGEST)) {
                         ASN1Set set = (ASN1Set)seq2.getObjectAt(1);
                         digestAttr = ((ASN1OctetString)set.getObjectAt(0)).getOctets();
                     }
-                    else if (((ASN1ObjectIdentifier)seq2.getObjectAt(0)).getId().equals(SecurityIDs.ID_ADBE_REVOCATION)) {
+                    else if (idSeq2.equals(SecurityIDs.ID_ADBE_REVOCATION)) {
                         ASN1Set setout = (ASN1Set)seq2.getObjectAt(1);
                         ASN1Sequence seqout = (ASN1Sequence)setout.getObjectAt(0);
                         for (int j = 0; j < seqout.size(); ++j) {
@@ -347,11 +347,42 @@ public class PdfPKCS7 {
                             }
                         }
                     }
+                    else if (isCades && idSeq2.equals(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V1)) {
+                        ASN1Set setout = (ASN1Set)seq2.getObjectAt(1);
+                        ASN1Sequence seqout = (ASN1Sequence)setout.getObjectAt(0);
+                        SigningCertificate sv2 = SigningCertificate.getInstance(seqout);
+                        ESSCertID[] cerv2m = sv2.getCerts();
+                        ESSCertID cerv2 = cerv2m[0];
+                        byte[] enc2 = signCert.getEncoded();
+                        MessageDigest m2 = new BouncyCastleDigest().getMessageDigest("SHA-1");
+                        byte[] signCertHash = m2.digest(enc2);
+                        byte[] hs2 = cerv2.getCertHash();
+                        if (!Arrays.equals(signCertHash, hs2))
+                            throw new IllegalArgumentException("Signing certificate doesn't match the ESS information.");
+                        foundCades = true;
+                    }
+                    else if (isCades && idSeq2.equals(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2)) {
+                        ASN1Set setout = (ASN1Set)seq2.getObjectAt(1);
+                        ASN1Sequence seqout = (ASN1Sequence)setout.getObjectAt(0);
+                        SigningCertificateV2 sv2 = SigningCertificateV2.getInstance(seqout);
+                        ESSCertIDv2[] cerv2m = sv2.getCerts();
+                        ESSCertIDv2 cerv2 = cerv2m[0];
+                        AlgorithmIdentifier ai2 = cerv2.getHashAlgorithm();
+                        byte[] enc2 = signCert.getEncoded();
+                        MessageDigest m2 = new BouncyCastleDigest().getMessageDigest(DigestAlgorithms.getDigest(ai2.getAlgorithm().getId()));
+                        byte[] signCertHash = m2.digest(enc2);
+                        byte[] hs2 = cerv2.getCertHash();
+                        if (!Arrays.equals(signCertHash, hs2))
+                            throw new IllegalArgumentException("Signing certificate doesn't match the ESS information.");
+                        foundCades = true;
+                    }
                 }
                 if (digestAttr == null)
                     throw new IllegalArgumentException(MessageLocalization.getComposedMessage("authenticated.attribute.is.missing.the.digest"));
                 ++next;
             }
+            if (isCades && !foundCades)
+                throw new IllegalArgumentException("CAdES ESS information missing.");
             digestEncryptionAlgorithmOid = ((ASN1ObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
             digest = ((ASN1OctetString)signerInfo.getObjectAt(next++)).getOctets();
             if (next < signerInfo.size() && signerInfo.getObjectAt(next) instanceof ASN1TaggedObject) {
@@ -511,6 +542,7 @@ public class PdfPKCS7 {
     /** The digest attributes */
     private byte[] digestAttr;
 
+    private PdfName filterSubtype;
     /**
      * Getter for the ID of the digest algorithm, e.g. "2.16.840.1.101.3.4.2.1"
      */
@@ -1215,6 +1247,9 @@ public class PdfPKCS7 {
 
     /** True if there's a PAdES LTV time stamp. */
     private boolean isTsp;
+    
+    /** True if it's a CAdES signature type. */
+    private boolean isCades;
     
     /** BouncyCastle TimeStampToken. */
     private TimeStampToken timeStampToken;
