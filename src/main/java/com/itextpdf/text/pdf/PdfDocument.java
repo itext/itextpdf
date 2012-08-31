@@ -659,16 +659,6 @@ public class PdfDocument extends Document {
                     newLine();
                     break;
                 }
-                case Element.MULTI_COLUMN_TEXT: {
-                    ensureNewLine();
-                    flushLines();
-                    MultiColumnText multiText = (MultiColumnText) element;
-                    float height = multiText.write(writer.getDirectContent(), this, indentTop() - currentHeight);
-                    currentHeight += height;
-                    text.moveText(0, -1f* height);
-                    pageEmpty = false;
-                    break;
-                }
                 case Element.JPEG:
                 case Element.JPEG2000:
                 case Element.JBIG2:
