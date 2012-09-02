@@ -1248,7 +1248,7 @@ public class PdfPKCS7 {
     /** True if there's a PAdES LTV time stamp. */
     private boolean isTsp;
     
-    /** True if there's a PAdES LTV time stamp. */
+    /** True if it's a CAdES signature type. */
     private boolean isCades;
     
     /** BouncyCastle TimeStampToken. */
