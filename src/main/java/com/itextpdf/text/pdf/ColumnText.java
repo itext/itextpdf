@@ -50,6 +50,8 @@ import java.util.Stack;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 
 /**
@@ -78,6 +80,9 @@ import com.itextpdf.text.pdf.draw.DrawInterface;
  */
 
 public class ColumnText {
+	
+	private final Logger LOGGER = LoggerFactory.getLogger(ColumnText.class);
+	
     /** Eliminate the arabic vowels */
     public static final int AR_NOVOWEL = ArabicLigaturizer.ar_novowel;
     /** Compose the tashkeel in the ligatures. */
@@ -1520,14 +1525,17 @@ public class ColumnText {
                     yTemp -= rowHeight;
                 }
 
+                LOGGER.info("Want to split at row " + k);
                 int kTemp = k;
                 while (kTemp > rowIdx && kTemp < table.size() && table.getRow(kTemp).isMayNotBreak()) {
+                    LOGGER.info("May not split at row " + kTemp);
+                    yTemp += table.getRowHeight(kTemp);
                 	kTemp--;
                 }
                 if (kTemp > rowIdx && kTemp < k) {
                 	k = kTemp;
-                	yTemp = minY;
                 }
+                LOGGER.info("Will split at row " + k);
                 // only for incomplete tables:
                 if (!table.isComplete())
                 	yTemp += footerHeight;
@@ -1569,6 +1577,7 @@ public class ColumnText {
                     PdfPRow newRow = table.getRow(k).splitRow(table, k, h);
                     // if the row isn't null add it as an extra row
                     if (newRow == null) {
+                        LOGGER.info("Didn't split row!");
                     	splittedRow = -1;
                     	if (rowIdx == k)
                     		return NO_MORE_COLUMN;
@@ -1576,6 +1585,7 @@ public class ColumnText {
                     else {
                         yTemp = minY;
                         table.getRows().add(++k, newRow);
+                        LOGGER.info("Inserting row at position " + k);
                     }
                 }
                 // We're no longer in the first pass
