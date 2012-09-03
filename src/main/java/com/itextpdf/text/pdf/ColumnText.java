@@ -1520,7 +1520,8 @@ public class ColumnText {
                 // k will be the first row that doesn't fit
                 for (k = rowIdx; k < table.size(); ++k) {
                     float rowHeight = table.getRowHeight(k);
-                    if (yTemp - rowHeight < minY)
+                    LOGGER.info(String.format("Row %s height %s: space left %s", k, rowHeight, yTemp - rowHeight - minY));
+                    if (yTemp - rowHeight <= minY)
                         break;
                     yTemp -= rowHeight;
                 }
@@ -1532,7 +1533,7 @@ public class ColumnText {
                 	kTemp--;
                 }
                 if (kTemp > rowIdx && kTemp < k) {
-                    yTemp = minY;
+                	yTemp = minY;
                 	k = kTemp;
                 }
                 LOGGER.info("Will split at row " + k);
