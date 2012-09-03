@@ -1519,6 +1519,14 @@ public class ColumnText {
                         break;
                     yTemp -= rowHeight;
                 }
+
+                int kTemp = k;
+                while (kTemp > rowIdx && kTemp < table.size() && table.getRow(kTemp).isMayNotBreak()) {
+                	kTemp--;
+                }
+                if (kTemp > rowIdx && kTemp < k) {
+                	k = kTemp + 1;
+                }
                 // only for incomplete tables:
                 if (!table.isComplete())
                 	yTemp += footerHeight;

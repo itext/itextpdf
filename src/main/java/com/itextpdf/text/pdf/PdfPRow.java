@@ -56,6 +56,9 @@ import com.itextpdf.text.BaseColor;
  * @author Paulo Soares
  */
 public class PdfPRow {
+	
+	/** True if the table may not break after this row. */
+	public boolean mayNotBreak = false;
 
 	/** the bottom limit (bottom right y) */
 	public static final float BOTTOM_LIMIT = -(1 << 30);
@@ -99,6 +102,7 @@ public class PdfPRow {
 	 * @param row
 	 */
 	public PdfPRow(PdfPRow row) {
+		mayNotBreak = row.mayNotBreak;
 		maxHeight = row.maxHeight;
 		calculated = row.calculated;
 		cells = new PdfPCell[row.cells.length];
@@ -185,6 +189,20 @@ public class PdfPRow {
 		calculated = true;
 	}
 
+	/**
+	 * Setter for the mayNotBreak variable.
+	 */
+	public void setMayNotBreak(boolean mayNotBreak) {
+		this.mayNotBreak = mayNotBreak;
+	}
+	
+	/**
+	 * Getter for the mayNotbreak variable.
+	 */
+	public boolean isMayNotBreak() {
+		return mayNotBreak;
+	}
+	
 	/**
 	 * Writes the border and background of one cell in the row.
 	 * 
