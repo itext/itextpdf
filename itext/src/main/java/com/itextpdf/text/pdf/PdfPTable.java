@@ -43,32 +43,29 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ElementListener;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.LargeElement;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a table that can be put at an absolute position but can also
  * be added to the document as the class <CODE>Table</CODE>.
- * <P>
+ * <p/>
  * A PdfPTableEvent can be associated to the table to do custom drawing
  * when the table is rendered.
+ *
  * @author Paulo Soares
  */
 
-public class PdfPTable implements LargeElement, Spaceable{
+public class PdfPTable implements LargeElement, Spaceable {
 
+	private final Logger LOGGER = LoggerFactory.getLogger(PdfPTable.class);
     /**
      * The index of the original <CODE>PdfcontentByte</CODE>.
      */
@@ -94,10 +91,11 @@ public class PdfPTable implements LargeElement, Spaceable{
     protected PdfPCell currentRow[];
     /**
      * The current column index.
+     *
      * @since 5.1.0 renamed from currentRowIdx
      */
     protected int currentColIdx = 0;
-    protected PdfPCell defaultCell = new PdfPCell((Phrase)null);
+    protected PdfPCell defaultCell = new PdfPCell((Phrase) null);
     protected float totalWidth = 0;
     protected float relativeWidths[];
     protected float absoluteWidths[];
@@ -124,7 +122,8 @@ public class PdfPTable implements LargeElement, Spaceable{
     private boolean skipFirstHeader = false;
     /**
      * Holds value of property skipLastFooter.
-     * @since	2.1.6
+     *
+     * @since 2.1.6
      */
     private boolean skipLastFooter = false;
 
@@ -155,7 +154,7 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * Holds value of property extendLastRow.
      */
-    private boolean[] extendLastRow = { false, false };
+    private boolean[] extendLastRow = {false, false};
 
     /**
      * Holds value of property headersInEvent.
@@ -176,7 +175,7 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * Indicates if the PdfPTable is complete once added to the document.
      *
-     * @since	iText 2.0.8
+     * @since iText 2.0.8
      */
     protected boolean complete = true;
 
@@ -187,11 +186,14 @@ public class PdfPTable implements LargeElement, Spaceable{
 
     /**
      * Keeps track of the completeness of the current row.
-     * @since	2.1.6
+     *
+     * @since 2.1.6
      */
     protected boolean rowCompleted = true;
 
-    protected PdfPTable() {
+    protected boolean loopCheck = true;
+
+	protected PdfPTable() {
     }
 
     /**
@@ -265,8 +267,8 @@ public class PdfPTable implements LargeElement, Spaceable{
      * Copies the format of the sourceTable without copying the content.
      *
      * @param sourceTable
-	 * @since	2.1.6 private is now protected
-	 */
+     * @since 2.1.6 private is now protected
+     */
     protected void copyFormat(final PdfPTable sourceTable) {
         relativeWidths = new float[sourceTable.getNumberOfColumns()];
         absoluteWidths = new float[sourceTable.getNumberOfColumns()];
@@ -295,6 +297,7 @@ public class PdfPTable implements LargeElement, Spaceable{
         horizontalAlignment = sourceTable.horizontalAlignment;
         keepTogether = sourceTable.keepTogether;
         complete = sourceTable.complete;
+        loopCheck = sourceTable.loopCheck;
     }
 
     /**
@@ -302,7 +305,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      *
      * @param relativeWidths the relative widths of the table.
      * @throws DocumentException if the number of widths is different than the number
-     * of columns
+     *                           of columns
      */
     public void setWidths(final float relativeWidths[]) throws DocumentException {
         if (relativeWidths.length != getNumberOfColumns())
@@ -320,7 +323,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      *
      * @param relativeWidths the relative widths of the table.
      * @throws DocumentException if the number of widths is different than the number
-     * of columns
+     *                           of columns
      */
     public void setWidths(final int relativeWidths[]) throws DocumentException {
         float tb[] = new float[relativeWidths.length];
@@ -329,9 +332,9 @@ public class PdfPTable implements LargeElement, Spaceable{
         setWidths(tb);
     }
 
-	/**
-	 * @since	2.1.6 private is now protected
-	 */
+    /**
+     * @since 2.1.6 private is now protected
+     */
     protected void calculateWidths() {
         if (totalWidth <= 0)
             return;
@@ -362,7 +365,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      *
      * @param columnWidth the absolute width of each column
      * @throws DocumentException if the number of widths is different than the number
-     * of columns
+     *                           of columns
      */
     public void setTotalWidth(final float columnWidth[]) throws DocumentException {
         if (columnWidth.length != getNumberOfColumns())
@@ -377,7 +380,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      * Sets the percentage width of the table from the absolute column width.
      *
      * @param columnWidth the absolute width of each column
-     * @param pageSize the page size
+     * @param pageSize    the page size
      * @throws DocumentException
      */
     public void setWidthPercentage(final float columnWidth[], final Rectangle pageSize) throws DocumentException {
@@ -402,7 +405,7 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * Calculates the heights of the table.
      *
-     * @return	the total height of the table. Note that it will be 0 if you didn't
+     * @return the total height of the table. Note that it will be 0 if you didn't
      * specify the width of the table with setTotalWidth().
      * and made it public
      */
@@ -411,13 +414,14 @@ public class PdfPTable implements LargeElement, Spaceable{
             return 0;
         totalHeight = 0;
         for (int k = 0; k < rows.size(); ++k) {
-        	totalHeight += getRowHeight(k, true);
+            totalHeight += getRowHeight(k, true);
         }
         return totalHeight;
     }
 
     /**
      * Changes the number of columns. Any existing rows will be deleted.
+     *
      * @param newColCount the new number of columns
      * @since 5.0.2
      */
@@ -450,7 +454,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      * @param cell the cell element
      */
     public void addCell(final PdfPCell cell) {
-    	rowCompleted = false;
+        rowCompleted = false;
         PdfPCell ncell = new PdfPCell(cell);
 
         int colspan = ncell.getColspan();
@@ -468,15 +472,15 @@ public class PdfPTable implements LargeElement, Spaceable{
 
         boolean cellAdded = false;
         if (currentColIdx < currentRow.length) {
-	        currentRow[currentColIdx] = ncell;
-	        currentColIdx += colspan;
-	        cellAdded = true;
+            currentRow[currentColIdx] = ncell;
+            currentColIdx += colspan;
+            cellAdded = true;
         }
 
         skipColsWithRowspanAbove();
 
         while (currentColIdx >= currentRow.length) {
-        	int numCols = getNumberOfColumns();
+            int numCols = getNumberOfColumns();
             if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
                 PdfPCell rtlRow[] = new PdfPCell[numCols];
                 int rev = currentRow.length;
@@ -510,18 +514,20 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * When updating the row index, cells with rowspan should be taken into account.
      * This is what happens in this method.
-     * @since	2.1.6
+     *
+     * @since 2.1.6
      */
     private void skipColsWithRowspanAbove() {
-    	int direction = 1;
-    	if (runDirection == PdfWriter.RUN_DIRECTION_RTL)
-    		direction = -1;
-    	while (rowSpanAbove(rows.size(), currentColIdx))
-    		currentColIdx += direction;
+        int direction = 1;
+        if (runDirection == PdfWriter.RUN_DIRECTION_RTL)
+            direction = -1;
+        while (rowSpanAbove(rows.size(), currentColIdx))
+            currentColIdx += direction;
     }
 
     /**
      * Added by timmo3.  This will return the correct cell taking it's cellspan into account
+     *
      * @param row the row index
      * @param col the column index
      * @return PdfPCell at the given row and position or null otherwise
@@ -540,40 +546,41 @@ public class PdfPTable implements LargeElement, Spaceable{
 
     /**
      * Checks if there are rows above belonging to a rowspan.
-     * @param	currRow	the current row to check
-     * @param	currCol	the current column to check
-     * @return	true if there's a cell above that belongs to a rowspan
-     * @since	2.1.6
+     *
+     * @param    currRow    the current row to check
+     * @param    currCol    the current column to check
+     * @return true if there's a cell above that belongs to a rowspan
+     * @since 2.1.6
      */
     boolean rowSpanAbove(final int currRow, final int currCol) {
-    	if (currCol >= getNumberOfColumns()
-    			|| currCol < 0
-    			|| currRow < 1)
-    		return false;
-    	int row = currRow - 1;
-    	PdfPRow aboveRow = rows.get(row);
-    	if (aboveRow == null)
-    		return false;
-    	PdfPCell aboveCell = cellAt(row, currCol);
-    	while (aboveCell == null && row > 0) {
-    		aboveRow  = rows.get(--row);
-    		if (aboveRow == null)
-    			return false;
-    		aboveCell = cellAt(row, currCol);
-    	}
+        if (currCol >= getNumberOfColumns()
+                || currCol < 0
+                || currRow < 1)
+            return false;
+        int row = currRow - 1;
+        PdfPRow aboveRow = rows.get(row);
+        if (aboveRow == null)
+            return false;
+        PdfPCell aboveCell = cellAt(row, currCol);
+        while (aboveCell == null && row > 0) {
+            aboveRow = rows.get(--row);
+            if (aboveRow == null)
+                return false;
+            aboveCell = cellAt(row, currCol);
+        }
 
-    	int distance = currRow - row;
+        int distance = currRow - row;
 
-    	if (aboveCell.getRowspan() == 1 && distance > 1) {
-        	int col = currCol - 1;
-        	aboveRow = rows.get(row + 1);
-        	distance--;
-        	aboveCell = aboveRow.getCells()[col];
-        	while (aboveCell == null && col > 0)
-        		aboveCell = aboveRow.getCells()[--col];
-    	}
+        if (aboveCell.getRowspan() == 1 && distance > 1) {
+            int col = currCol - 1;
+            aboveRow = rows.get(row + 1);
+            distance--;
+            aboveCell = aboveRow.getCells()[col];
+            while (aboveCell == null && col > 0)
+                aboveCell = aboveRow.getCells()[--col];
+        }
 
-    	return aboveCell != null && aboveCell.getRowspan() > distance;
+        return aboveCell != null && aboveCell.getRowspan() > distance;
     }
 
 
@@ -601,7 +608,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      * Adds an Image as Cell.
      *
      * @param image the <CODE>Image</CODE> to add to the table.
-     * This image will fit in the cell
+     *              This image will fit in the cell
      */
     public void addCell(final Image image) {
         defaultCell.setImage(image);
@@ -625,12 +632,12 @@ public class PdfPTable implements LargeElement, Spaceable{
      * <CODE>canvases</CODE> is obtained from <CODE>beginWritingRows()</CODE>.
      *
      * @param rowStart the first row to be written, zero index
-     * @param rowEnd the last row to be written + 1. If it is -1 all the
-     * rows to the end are written
-     * @param xPos the x write coordinate
-     * @param yPos the y write coordinate
+     * @param rowEnd   the last row to be written + 1. If it is -1 all the
+     *                 rows to the end are written
+     * @param xPos     the x write coordinate
+     * @param yPos     the y write coordinate
      * @param canvases an array of 4 <CODE>PdfContentByte</CODE> obtained from
-     * <CODE>beginWrittingRows()</CODE>
+     *                 <CODE>beginWrittingRows()</CODE>
      * @return the y coordinate position of the bottom of the last row
      * @see #beginWritingRows(com.itextpdf.text.pdf.PdfContentByte)
      */
@@ -646,20 +653,20 @@ public class PdfPTable implements LargeElement, Spaceable{
      * The table event is only fired for complete rows.
      *
      * @param colStart the first column to be written, zero index
-     * @param colEnd the last column to be written + 1. If it is -1 all the
-     * columns to the end are written
+     * @param colEnd   the last column to be written + 1. If it is -1 all the
+     *                 columns to the end are written
      * @param rowStart the first row to be written, zero index
-     * @param rowEnd the last row to be written + 1. If it is -1 all the
-     * rows to the end are written
-     * @param xPos the x write coordinate
-     * @param yPos the y write coordinate
+     * @param rowEnd   the last row to be written + 1. If it is -1 all the
+     *                 rows to the end are written
+     * @param xPos     the x write coordinate
+     * @param yPos     the y write coordinate
      * @param canvases an array of 4 <CODE>PdfContentByte</CODE> obtained from
-     * <CODE>beginWritingRows()</CODE>
+     *                 <CODE>beginWritingRows()</CODE>
      * @return the y coordinate position of the bottom of the last row
      * @see #beginWritingRows(com.itextpdf.text.pdf.PdfContentByte)
      */
     public float writeSelectedRows(final int colStart, final int colEnd, final int rowStart, final int rowEnd, final float xPos, final float yPos, final PdfContentByte[] canvases) {
-    	return writeSelectedRows(colStart, colEnd, rowStart, rowEnd, xPos, yPos, canvases, true);
+        return writeSelectedRows(colStart, colEnd, rowStart, rowEnd, xPos, yPos, canvases, true);
     }
 
     /**
@@ -670,18 +677,18 @@ public class PdfPTable implements LargeElement, Spaceable{
      * The table event is only fired for complete rows.
      *
      * @param colStart the first column to be written, zero index
-     * @param colEnd the last column to be written + 1. If it is -1 all the
-     * columns to the end are written
+     * @param colEnd   the last column to be written + 1. If it is -1 all the
+     *                 columns to the end are written
      * @param rowStart the first row to be written, zero index
-     * @param rowEnd the last row to be written + 1. If it is -1 all the
-     * rows to the end are written
-     * @param xPos the x write coordinate
-     * @param yPos the y write coordinate
+     * @param rowEnd   the last row to be written + 1. If it is -1 all the
+     *                 rows to the end are written
+     * @param xPos     the x write coordinate
+     * @param yPos     the y write coordinate
      * @param canvases an array of 4 <CODE>PdfContentByte</CODE> obtained from
-     * <CODE>beginWritingRows()</CODE>
-     * @param	reusable if set to false, the content in the cells is "consumed";
-	 * if true, you can reuse the cells, the row, the parent table as many times you want.
+     *                 <CODE>beginWritingRows()</CODE>
      * @return the y coordinate position of the bottom of the last row
+     * @param    reusable if set to false, the content in the cells is "consumed";
+     * if true, you can reuse the cells, the row, the parent table as many times you want.
      * @see #beginWritingRows(com.itextpdf.text.pdf.PdfContentByte)
      * @since 5.1.0 added the reusable parameter
      */
@@ -695,7 +702,7 @@ public class PdfPTable implements LargeElement, Spaceable{
         if (rowEnd < 0)
             rowEnd = totalRows;
         else
-        	rowEnd = Math.min(rowEnd, totalRows);
+            rowEnd = Math.min(rowEnd, totalRows);
         if (rowStart >= rowEnd)
             return yPos;
 
@@ -703,12 +710,14 @@ public class PdfPTable implements LargeElement, Spaceable{
         if (colStart < 0)
             colStart = 0;
         else
-        	colStart = Math.min(colStart, totalCols);
+            colStart = Math.min(colStart, totalCols);
         if (colEnd < 0)
             colEnd = totalCols;
         else
-        	colEnd = Math.min(colEnd, totalCols);
+            colEnd = Math.min(colEnd, totalCols);
 
+        LOGGER.info(String.format("Writing row %s to %s; column %s to %s", rowStart, rowEnd, colStart, colEnd));
+        
         float yPosStart = yPos;
         for (int k = rowStart; k < rowEnd; ++k) {
             PdfPRow row = rows.get(k);
@@ -738,12 +747,12 @@ public class PdfPTable implements LargeElement, Spaceable{
      * Writes the selected rows to the document.
      *
      * @param rowStart the first row to be written, zero index
-     * @param rowEnd the last row to be written + 1. If it is -1 all the
-     * rows to the end are written
-     * @param xPos the x write coordinate
-     * @param yPos the y write coordinate
-     * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
-     * be written to
+     * @param rowEnd   the last row to be written + 1. If it is -1 all the
+     *                 rows to the end are written
+     * @param xPos     the x write coordinate
+     * @param yPos     the y write coordinate
+     * @param canvas   the <CODE>PdfContentByte</CODE> where the rows will
+     *                 be written to
      * @return the y coordinate position of the bottom of the last row
      */
     public float writeSelectedRows(final int rowStart, final int rowEnd, final float xPos, final float yPos, final PdfContentByte canvas) {
@@ -757,19 +766,19 @@ public class PdfPTable implements LargeElement, Spaceable{
      * The table event is only fired for complete rows.
      *
      * @param colStart the first column to be written, zero index
-     * @param colEnd the last column to be written + 1. If it is -1 all the
-     * columns to the end are written
+     * @param colEnd   the last column to be written + 1. If it is -1 all the
+     *                 columns to the end are written
      * @param rowStart the first row to be written, zero index
-     * @param rowEnd the last row to be written + 1. If it is -1 all the
-     * rows to the end are written
-     * @param xPos the x write coordinate
-     * @param yPos the y write coordinate
-     * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
-     * be written to
+     * @param rowEnd   the last row to be written + 1. If it is -1 all the
+     *                 rows to the end are written
+     * @param xPos     the x write coordinate
+     * @param yPos     the y write coordinate
+     * @param canvas   the <CODE>PdfContentByte</CODE> where the rows will
+     *                 be written to
      * @return the y coordinate position of the bottom of the last row
      */
     public float writeSelectedRows(final int colStart, final int colEnd, final int rowStart, final int rowEnd, final float xPos, final float yPos, final PdfContentByte canvas) {
-    	return writeSelectedRows(colStart, colEnd, rowStart, rowEnd, xPos, yPos, canvas, true);
+        return writeSelectedRows(colStart, colEnd, rowStart, rowEnd, xPos, yPos, canvas, true);
     }
 
 
@@ -780,18 +789,18 @@ public class PdfPTable implements LargeElement, Spaceable{
      * The table event is only fired for complete rows.
      *
      * @param colStart the first column to be written, zero index
-     * @param colEnd the last column to be written + 1. If it is -1 all the
-     * columns to the end are written
+     * @param colEnd   the last column to be written + 1. If it is -1 all the
+     *                 columns to the end are written
      * @param rowStart the first row to be written, zero index
-     * @param rowEnd the last row to be written + 1. If it is -1 all the
-     * rows to the end are written
-     * @param xPos the x write coordinate
-     * @param yPos the y write coordinate
-     * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
-     * be written to
-     * @param	reusable if set to false, the content in the cells is "consumed";
-	 * if true, you can reuse the cells, the row, the parent table as many times you want.
+     * @param rowEnd   the last row to be written + 1. If it is -1 all the
+     *                 rows to the end are written
+     * @param xPos     the x write coordinate
+     * @param yPos     the y write coordinate
+     * @param canvas   the <CODE>PdfContentByte</CODE> where the rows will
+     *                 be written to
      * @return the y coordinate position of the bottom of the last row
+     * @param    reusable if set to false, the content in the cells is "consumed";
+     * if true, you can reuse the cells, the row, the parent table as many times you want.
      * @since 5.1.0 added the reusable parameter
      */
     public float writeSelectedRows(int colStart, int colEnd, final int rowStart, final int rowEnd, final float xPos, final float yPos, final PdfContentByte canvas, final boolean reusable) {
@@ -799,14 +808,14 @@ public class PdfPTable implements LargeElement, Spaceable{
         if (colStart < 0)
             colStart = 0;
         else
-        	colStart = Math.min(colStart, totalCols);
+            colStart = Math.min(colStart, totalCols);
 
-    	if (colEnd < 0)
+        if (colEnd < 0)
             colEnd = totalCols;
-    	else
-    		colEnd = Math.min(colEnd, totalCols);
+        else
+            colEnd = Math.min(colEnd, totalCols);
 
-    	boolean clip = colStart != 0 || colEnd != totalCols;
+        boolean clip = colStart != 0 || colEnd != totalCols;
 
         if (clip) {
             float w = 0;
@@ -844,16 +853,16 @@ public class PdfPTable implements LargeElement, Spaceable{
      * The layers are placed in sequence on top of each other.
      *
      * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
-     * be written to
+     *               be written to
      * @return an array of 4 <CODE>PdfContentByte</CODE>
      * @see #writeSelectedRows(int, int, float, float, PdfContentByte[])
      */
     public static PdfContentByte[] beginWritingRows(final PdfContentByte canvas) {
         return new PdfContentByte[]{
-            canvas,
-            canvas.getDuplicate(),
-            canvas.getDuplicate(),
-            canvas.getDuplicate(),
+                canvas,
+                canvas.getDuplicate(),
+                canvas.getDuplicate(),
+                canvas.getDuplicate(),
         };
     }
 
@@ -900,15 +909,16 @@ public class PdfPTable implements LargeElement, Spaceable{
      * @return the height of a particular row
      */
     public float getRowHeight(final int idx) {
-    	return getRowHeight(idx, false);
+        return getRowHeight(idx, false);
     }
+
     /**
      * Gets the height of a particular row.
      *
-     * @param idx the row index (starts at 0)
-     * @param firsttime	is this the first time the row heigh is calculated?
+     * @param idx       the row index (starts at 0)
+     * @param firsttime is this the first time the row heigh is calculated?
      * @return the height of a particular row
-     * @since	5.0.0
+     * @since 5.0.0
      */
     protected float getRowHeight(final int idx, final boolean firsttime) {
         if (totalWidth <= 0 || idx < 0 || idx >= rows.size())
@@ -917,29 +927,29 @@ public class PdfPTable implements LargeElement, Spaceable{
         if (row == null)
             return 0;
         if (firsttime)
-        	row.setWidths(absoluteWidths);
+            row.setWidths(absoluteWidths);
         float height = row.getMaxHeights();
         PdfPCell cell;
         PdfPRow tmprow;
         for (int i = 0; i < relativeWidths.length; i++) {
-        	if(!rowSpanAbove(idx, i))
-        		continue;
-        	int rs = 1;
-        	while (rowSpanAbove(idx - rs, i)) {
-        		rs++;
-        	}
-        	tmprow = rows.get(idx - rs);
-        	cell = tmprow.getCells()[i];
-        	float tmp = 0;
-        	if (cell != null && cell.getRowspan() == rs + 1) {
-        		tmp = cell.getMaxHeight();
-        		while (rs > 0) {
-        			tmp -= getRowHeight(idx - rs);
-        			rs--;
-        		}
-        	}
-        	if (tmp > height)
-        		height = tmp;
+            if (!rowSpanAbove(idx, i))
+                continue;
+            int rs = 1;
+            while (rowSpanAbove(idx - rs, i)) {
+                rs++;
+            }
+            tmprow = rows.get(idx - rs);
+            cell = tmprow.getCells()[i];
+            float tmp = 0;
+            if (cell != null && cell.getRowspan() == rs + 1) {
+                tmp = cell.getMaxHeight();
+                while (rs > 0) {
+                    tmp -= getRowHeight(idx - rs);
+                    rs--;
+                }
+            }
+            if (tmp > height)
+                height = tmp;
         }
         row.setMaxHeights(height);
         return height;
@@ -949,10 +959,10 @@ public class PdfPTable implements LargeElement, Spaceable{
      * Gets the maximum height of a cell in a particular row (will only be different
      * from getRowHeight is one of the cells in the row has a rowspan > 1).
      *
-     * @param	rowIndex	the row index
-     * @param	cellIndex	the cell index
      * @return the height of a particular row including rowspan
-     * @since	2.1.6
+     * @param    rowIndex    the row index
+     * @param    cellIndex    the cell index
+     * @since 2.1.6
      */
     public float getRowspanHeight(final int rowIndex, final int cellIndex) {
         if (totalWidth <= 0 || rowIndex < 0 || rowIndex >= rows.size())
@@ -962,20 +972,24 @@ public class PdfPTable implements LargeElement, Spaceable{
             return 0;
         PdfPCell cell = row.getCells()[cellIndex];
         if (cell == null)
-        	return 0;
+            return 0;
         float rowspanHeight = 0;
         for (int j = 0; j < cell.getRowspan(); j++) {
-        	rowspanHeight += getRowHeight(rowIndex + j);
+            rowspanHeight += getRowHeight(rowIndex + j);
         }
         return rowspanHeight;
     }
 
     /**
-	 * Checks if a cell in a row has a rowspan greater than 1.
-	 * @since 5.1.0
+     * Checks if a cell in a row has a rowspan greater than 1.
+     *
+     * @since 5.1.0
      */
     public boolean hasRowspan(final int rowIdx) {
     	if (rowIdx < rows.size() && getRow(rowIdx).hasRowspan()) {
+    		return true;
+    	}
+    	if (rowIdx > 0 && getRow(rowIdx - 1).hasRowspan()) {
     		return true;
     	}
     	for (int i = 0; i < getNumberOfColumns(); i++) {
@@ -987,6 +1001,7 @@ public class PdfPTable implements LargeElement, Spaceable{
 
     /**
      * Makes sure the footers value is lower than the headers value.
+     *
      * @since 5.0.1
      */
     public void normalizeHeadersFooters() {
@@ -1046,9 +1061,9 @@ public class PdfPTable implements LargeElement, Spaceable{
         }
         rows.remove(rowNumber);
         if (rowNumber < headerRows) {
-        	--headerRows;
-        	if (rowNumber >= headerRows - footerRows)
-        		--footerRows;
+            --headerRows;
+            if (rowNumber >= headerRows - footerRows)
+                --footerRows;
         }
         return true;
     }
@@ -1078,11 +1093,11 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * Returns the number of columns.
      *
-     * @return	the number of columns.
-     * @since	2.1.1
+     * @return the number of columns.
+     * @since 2.1.1
      */
     public int getNumberOfColumns() {
-    	return relativeWidths.length;
+        return relativeWidths.length;
     }
 
     /**
@@ -1110,7 +1125,7 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * Gets all the chunks in this element.
      *
-     * @return	an <CODE>ArrayList</CODE>
+     * @return an <CODE>ArrayList</CODE>
      */
     public List<Chunk> getChunks() {
         return new ArrayList<Chunk>();
@@ -1119,40 +1134,39 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * Gets the type of the text element.
      *
-     * @return	a type
+     * @return a type
      */
     public int type() {
         return Element.PTABLE;
     }
 
-	/**
-	 * @see com.itextpdf.text.Element#isContent()
-	 * @since	iText 2.0.8
-	 */
-	public boolean isContent() {
-		return true;
-	}
+    /**
+     * @since iText 2.0.8
+     * @see com.itextpdf.text.Element#isContent()
+     */
+    public boolean isContent() {
+        return true;
+    }
 
-	/**
-	 * @see com.itextpdf.text.Element#isNestable()
-	 * @since	iText 2.0.8
-	 */
-	public boolean isNestable() {
-		return true;
-	}
+    /**
+     * @since iText 2.0.8
+     * @see com.itextpdf.text.Element#isNestable()
+     */
+    public boolean isNestable() {
+        return true;
+    }
 
     /**
      * Processes the element by adding it (or the different parts) to an
      * <CODE>ElementListener</CODE>.
      *
-     * @param	listener	an <CODE>ElementListener</CODE>
-     * @return	<CODE>true</CODE> if the element was processed successfully
+     * @param    listener    an <CODE>ElementListener</CODE>
+     * @return    <CODE>true</CODE> if the element was processed successfully
      */
     public boolean process(final ElementListener listener) {
         try {
             return listener.add(this);
-        }
-        catch(DocumentException de) {
+        } catch (DocumentException de) {
             return false;
         }
     }
@@ -1189,7 +1203,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      * It only has meaning if the width percentage is less than 100%.
      *
      * @param horizontalAlignment the horizontal alignment of the table
-     * relative to the page
+     *                            relative to the page
      */
     public void setHorizontalAlignment(final int horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
@@ -1215,63 +1229,130 @@ public class PdfPTable implements LargeElement, Spaceable{
     }
 
     /**
+     * Returns the index of the last completed row.
+     *
+     * @return the index of a row
+     */
+    public int getLastCompletedRowIndex() {
+        return rows.size() - 1;
+    }
+    
+    /**
+     * Defines where the table may be broken (if necessary).
+     *
+     * @param breakPoints int[]
+     */
+    public void setBreakPoints(int... breakPoints) {
+        for ( int i = 0; i < rows.size(); i++ ) {
+            getRow(i).setMayNotBreak(true);
+        }
+
+        for ( int i = 0; i < breakPoints.length; i++ ) {
+            getRow(breakPoints[i]).setMayNotBreak(false);
+        }
+    }
+
+    /**
+     * Defines which rows should not allow a page break (if possible).
+     *
+     * @param rows int[]
+     */
+    public void keepRowsTogether(int[] rows) {
+        for (int i = 0; i < rows.length; i++) {
+            getRow(rows[i]).setMayNotBreak(true);
+        }
+    }
+
+    /**
+     * Defines a range of rows that should not allow a page break (if possible).
+     *
+     * @param start int
+     * @param end int
+     */
+    public void keepRowsTogether(int start, int end) {
+        if (start < end) {
+            while (start < end) {
+                getRow(start).setMayNotBreak(true);
+                start++;
+            }
+        }
+    }
+
+    /**
+     * Defines a range of rows (from the parameter to the last row) that should not allow a page break (if possible).
+     *
+     * @param start int
+     */
+    public void keepRowsTogether(int start) {
+        if (start < rows.size()) {
+            for (int i = start; i < rows.size(); i++) {
+                getRow(i).setMayNotBreak(true);
+            }
+        }
+    }
+    
+    /**
      * Gets an arraylist with a selection of rows.
-     * @param	start	the first row in the selection
-     * @param	end 	the first row that isn't part of the selection
-     * @return	a selection of rows
-     * @since	2.1.6
+     *
+     * @param    start    the first row in the selection
+     * @param    end the first row that isn't part of the selection
+     * @return a selection of rows
+     * @since 2.1.6
      */
     public ArrayList<PdfPRow> getRows(final int start, final int end) {
-    	ArrayList<PdfPRow> list = new ArrayList<PdfPRow>();
-    	if (start < 0 || end > size()) {
-    		return list;
-    	}
-    	for (int i = start; i < end; i++) {
-    		list.add(adjustCellsInRow(i, end));
-    	}
-    	return list;
+        ArrayList<PdfPRow> list = new ArrayList<PdfPRow>();
+        if (start < 0 || end > size()) {
+            return list;
+        }
+        for (int i = start; i < end; i++) {
+            list.add(adjustCellsInRow(i, end));
+        }
+        return list;
     }
 
     /**
      * Calculates the extra height needed in a row because of rowspans.
-     * @param	start	the index of the start row (the one to adjust)
-     * @param	end		the index of the end row on the page
-     * @since	2.1.6
+     *
+     * @param    start    the index of the start row (the one to adjust)
+     * @param    end        the index of the end row on the page
+     * @since 2.1.6
      */
     protected PdfPRow adjustCellsInRow(final int start, final int end) {
-    	PdfPRow row = new PdfPRow(getRow(start));
-		PdfPCell cell;
-		PdfPCell[] cells = row.getCells();
-		for (int i = 0; i < cells.length; i++) {
-			cell = cells[i];
-			if (cell == null || cell.getRowspan() == 1)
-				continue;
-			int stop = Math.min(end, start + cell.getRowspan());
-			float extra = 0;
-			for (int k = start + 1; k < stop; k++) {
-				extra += getRow(k).getMaxHeights();
-			}
-			row.setExtraHeight(i, extra);
-		}
-    	return row;
+        PdfPRow row = new PdfPRow(getRow(start));
+        PdfPCell cell;
+        PdfPCell[] cells = row.getCells();
+        for (int i = 0; i < cells.length; i++) {
+            cell = cells[i];
+            if (cell == null || cell.getRowspan() == 1)
+                continue;
+            int stop = Math.min(end, start + cell.getRowspan());
+            float extra = 0;
+            for (int k = start + 1; k < stop; k++) {
+                extra += getRow(k).getMaxHeights();
+            }
+            row.setExtraHeight(i, extra);
+        }
+        return row;
     }
 
-    /** Sets the table event for this table.
+    /**
+     * Sets the table event for this table.
+     *
      * @param event the table event for this table
      */
     public void setTableEvent(final PdfPTableEvent event) {
-    	if (event == null)
-    		this.tableEvent = null;
-    	else if (this.tableEvent == null)
-    		this.tableEvent = event;
-    	else if (this.tableEvent instanceof PdfPTableEventForwarder)
-    		((PdfPTableEventForwarder)this.tableEvent).addTableEvent(event);
-    	else {
-    		PdfPTableEventForwarder forward = new PdfPTableEventForwarder();
-    		forward.addTableEvent(this.tableEvent);
-    		forward.addTableEvent(event);
-    		this.tableEvent = forward;
-    	}
+        if (event == null)
+            this.tableEvent = null;
+        else if (this.tableEvent == null)
+            this.tableEvent = event;
+        else if (this.tableEvent instanceof PdfPTableEventForwarder)
+            ((PdfPTableEventForwarder) this.tableEvent).addTableEvent(event);
+        else {
+            PdfPTableEventForwarder forward = new PdfPTableEventForwarder();
+            forward.addTableEvent(this.tableEvent);
+            forward.addTableEvent(event);
+            this.tableEvent = forward;
+        }
     }
 
     /**
@@ -1292,8 +1373,8 @@ public class PdfPTable implements LargeElement, Spaceable{
         return absoluteWidths;
     }
 
-    float [][] getEventWidths(final float xPos, int firstRow, int lastRow, final boolean includeHeaders) {
-    	if (includeHeaders) {
+    float[][] getEventWidths(final float xPos, int firstRow, int lastRow, final boolean includeHeaders) {
+        if (includeHeaders) {
             firstRow = Math.max(firstRow, headerRows);
             lastRow = Math.max(lastRow, headerRows);
         }
@@ -1310,15 +1391,14 @@ public class PdfPTable implements LargeElement, Spaceable{
                 }
             }
             for (; firstRow < lastRow; ++firstRow) {
-                    PdfPRow row = rows.get(firstRow);
-                    if (row == null)
-                        ++n;
-                    else
-                        widths[n++] = row.getEventWidth(xPos, absoluteWidths);
+                PdfPRow row = rows.get(firstRow);
+                if (row == null)
+                    ++n;
+                else
+                    widths[n++] = row.getEventWidth(xPos, absoluteWidths);
             }
-        }
-        else {
-        	int numCols = getNumberOfColumns();
+        } else {
+            int numCols = getNumberOfColumns();
             float width[] = new float[numCols + 1];
             width[0] = xPos;
             for (int k = 0; k < numCols; ++k)
@@ -1346,7 +1426,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      * (for instance if the footer says "continued on the next page")
      *
      * @return Value of property skipLastFooter.
-     * @since	2.1.6
+     * @since 2.1.6
      */
     public boolean isSkipLastFooter() {
         return skipLastFooter;
@@ -1367,7 +1447,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      * tables in succession belonging to the same printed table aspect.
      *
      * @param skipLastFooter New value of property skipLastFooter.
-     * @since	2.1.6
+     * @since 2.1.6
      */
     public void setSkipLastFooter(final boolean skipLastFooter) {
         this.skipLastFooter = skipLastFooter;
@@ -1377,19 +1457,19 @@ public class PdfPTable implements LargeElement, Spaceable{
      * Sets the run direction of the contents of the table.
      *
      * @param runDirection One of the following values:
-     * PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI,
-     * PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
+     *                     PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI,
+     *                     PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
      */
     public void setRunDirection(final int runDirection) {
         switch (runDirection) {
-        	case PdfWriter.RUN_DIRECTION_DEFAULT:
-        	case PdfWriter.RUN_DIRECTION_NO_BIDI:
-        	case PdfWriter.RUN_DIRECTION_LTR:
-        	case PdfWriter.RUN_DIRECTION_RTL:
-        		this.runDirection = runDirection;
-        		break;
-        	default:
-        		throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.run.direction.1", runDirection));
+            case PdfWriter.RUN_DIRECTION_DEFAULT:
+            case PdfWriter.RUN_DIRECTION_NO_BIDI:
+            case PdfWriter.RUN_DIRECTION_LTR:
+            case PdfWriter.RUN_DIRECTION_RTL:
+                this.runDirection = runDirection;
+                break;
+            default:
+                throw new RuntimeException(MessageLocalization.getComposedMessage("invalid.run.direction.1", runDirection));
         }
     }
 
@@ -1397,8 +1477,8 @@ public class PdfPTable implements LargeElement, Spaceable{
      * Returns the run direction of the contents in the table.
      *
      * @return One of the following values:
-     * PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI,
-     * PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
+     *         PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI,
+     *         PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
      */
     public int getRunDirection() {
         return runDirection;
@@ -1445,7 +1525,7 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * Sets the spacing before this table.
      *
-     * @param	spacing		the new spacing
+     * @param    spacing        the new spacing
      */
     public void setSpacingBefore(final float spacing) {
         this.spacingBefore = spacing;
@@ -1454,7 +1534,7 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * Sets the spacing after this table.
      *
-     * @param	spacing		the new spacing
+     * @param    spacing        the new spacing
      */
     public void setSpacingAfter(final float spacing) {
         this.spacingAfter = spacing;
@@ -1463,7 +1543,7 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * Gets the spacing before this table.
      *
-     * @return	the spacing
+     * @return the spacing
      */
     public float spacingBefore() {
         return spacingBefore;
@@ -1472,7 +1552,7 @@ public class PdfPTable implements LargeElement, Spaceable{
     /**
      * Gets the spacing after this table.
      *
-     * @return	the spacing
+     * @return the spacing
      */
     public float spacingAfter() {
         return spacingAfter;
@@ -1495,7 +1575,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      */
     public void setExtendLastRow(final boolean extendLastRows) {
         extendLastRow[0] = extendLastRows;
-		extendLastRow[1] = extendLastRows;
+        extendLastRow[1] = extendLastRows;
     }
 
     /**
@@ -1505,12 +1585,12 @@ public class PdfPTable implements LargeElement, Spaceable{
      *
      * @param extendLastRows true to extend the last row on each page; false otherwise
      * @param extendFinalRow false if you don't want to extend the final row of the complete table
-	 * @since iText 5.0.0
-	 */
-	public void setExtendLastRow(final boolean extendLastRows, final boolean extendFinalRow) {
-		extendLastRow[0] = extendLastRows;
-		extendLastRow[1] = extendFinalRow;
-	}
+     * @since iText 5.0.0
+     */
+    public void setExtendLastRow(final boolean extendLastRows, final boolean extendFinalRow) {
+        extendLastRow[0] = extendLastRows;
+        extendLastRow[1] = extendFinalRow;
+    }
 
     /**
      * Gets the value of the last row extension, taking into account
@@ -1520,13 +1600,13 @@ public class PdfPTable implements LargeElement, Spaceable{
      * @since iText 5.0.0
      */
     public boolean isExtendLastRow(final boolean newPageFollows) {
-    	if (newPageFollows) {
+        if (newPageFollows) {
             return extendLastRow[0];
-    	}
-		return extendLastRow[1];
+        }
+        return extendLastRow[1];
     }
 
-	/**
+    /**
      * Gets the header status inclusion in PdfPTableEvent.
      *
      * @return true if the headers are included; false otherwise
@@ -1579,7 +1659,7 @@ public class PdfPTable implements LargeElement, Spaceable{
      * Getter for property keepTogether
      *
      * @return true if it is tried to keep the table on one page;
-     * false otherwise
+     *         false otherwise
      */
     public boolean getKeepTogether() {
         return keepTogether;
@@ -1624,42 +1704,50 @@ public class PdfPTable implements LargeElement, Spaceable{
         }
     }
 
-	/**
-	 * @since	iText 2.0.8
-	 * @see com.itextpdf.text.LargeElement#flushContent()
-	 */
-	public void flushContent() {
-		deleteBodyRows();
-		setSkipFirstHeader(true);
+    /**
+     * @since iText 2.0.8
+     * @see com.itextpdf.text.LargeElement#flushContent()
+     */
+    public void flushContent() {
+        deleteBodyRows();
+        setSkipFirstHeader(true);
+    }
+
+    /**
+     * @since iText 2.0.8
+     * @see com.itextpdf.text.LargeElement#isComplete()
+     */
+    public boolean isComplete() {
+        return complete;
+    }
+
+    /**
+     * @since iText 2.0.8
+     * @see com.itextpdf.text.LargeElement#setComplete(boolean)
+     */
+    public void setComplete(final boolean complete) {
+        this.complete = complete;
+    }
+
+    /* (non-Javadoc)
+      * @see com.itextpdf.text.api.Spaceable#getSpacingBefore()
+      */
+    public float getSpacingBefore() {
+        return spacingBefore;
+    }
+
+    /* (non-Javadoc)
+      * @see com.itextpdf.text.api.Spaceable#getSpacingAfter()
+      */
+    public float getSpacingAfter() {
+        return spacingAfter;
+    }
+    
+    public boolean isLoopCheck() {
+		return loopCheck;
 	}
 
-	/**
-     * @since	iText 2.0.8
-	 * @see com.itextpdf.text.LargeElement#isComplete()
-	 */
-	public boolean isComplete() {
-		return complete;
-	}
-
-	/**
-     * @since	iText 2.0.8
-	 * @see com.itextpdf.text.LargeElement#setComplete(boolean)
-	 */
-	public void setComplete(final boolean complete) {
-		this.complete = complete;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.itextpdf.text.api.Spaceable#getSpacingBefore()
-	 */
-	public float getSpacingBefore() {
-		return spacingBefore;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.itextpdf.text.api.Spaceable#getSpacingAfter()
-	 */
-	public float getSpacingAfter() {
-		return spacingAfter;
+	public void setLoopCheck(boolean loopCheck) {
+		this.loopCheck = loopCheck;
 	}
 }
