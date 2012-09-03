@@ -1525,7 +1525,8 @@ public class ColumnText {
                 	kTemp--;
                 }
                 if (kTemp > rowIdx && kTemp < k) {
-                	k = kTemp + 1;
+                	k = kTemp;
+                	yTemp = minY;
                 }
                 // only for incomplete tables:
                 if (!table.isComplete())

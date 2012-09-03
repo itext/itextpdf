@@ -704,7 +704,7 @@ public class PdfPRow {
 					newCell.setPhrase(null);
 				allEmpty = (allEmpty && thisEmpty);
 			}
-			newCells[k] = newCell;
+			newCells[k] = newHeight > 0 ? newCell : null;
             cell.setFixedHeight(newHeight);
 		}
 		if (allEmpty) {
