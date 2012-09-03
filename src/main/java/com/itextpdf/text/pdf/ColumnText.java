@@ -1529,10 +1529,10 @@ public class ColumnText {
                 int kTemp = k;
                 while (kTemp > rowIdx && kTemp < table.size() && table.getRow(kTemp).isMayNotBreak()) {
                     LOGGER.info("May not split at row " + kTemp);
-                    yTemp += table.getRowHeight(kTemp);
                 	kTemp--;
                 }
                 if (kTemp > rowIdx && kTemp < k) {
+                    yTemp = minY;
                 	k = kTemp;
                 }
                 LOGGER.info("Will split at row " + k);

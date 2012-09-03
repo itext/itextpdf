@@ -49,8 +49,6 @@ import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
 
 /**
  * A row in a PdfPTable.
@@ -58,8 +56,6 @@ import com.itextpdf.text.log.LoggerFactory;
  * @author Paulo Soares
  */
 public class PdfPRow {
-
-	private final Logger LOGGER = LoggerFactory.getLogger(PdfPRow.class);
 	
 	/** True if the table may not break after this row. */
 	public boolean mayNotBreak = false;
@@ -330,7 +326,7 @@ public class PdfPRow {
 			if (cell == null)
 				continue;
 			float currentMaxHeight = maxHeight + extraHeights[k];
-			LOGGER.info("Current max height " + currentMaxHeight + "( " + maxHeight + " + " + extraHeights[k] + " )");
+			
 			writeBorderAndBackground(xPos, yPos, currentMaxHeight, cell, canvases);
 
 			Image img = cell.getImage();
@@ -635,7 +631,7 @@ public class PdfPRow {
 	 * an empty row would result
 	 */
 	public PdfPRow splitRow(PdfPTable table, int rowIndex, float new_height) {
-		LOGGER.info("Splitting row " + rowIndex + " with height " + new_height);
+		System.out.println("Splitting " + rowIndex + " " + new_height);
 		// second part of the row
 		PdfPCell newCells[] = new PdfPCell[cells.length];
 		float fixHs[] = new float[cells.length];

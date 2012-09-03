@@ -56,6 +56,8 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
 
 /**
@@ -69,6 +71,7 @@ import com.itextpdf.text.pdf.events.PdfPTableEventForwarder;
 
 public class PdfPTable implements LargeElement, Spaceable{
 
+	private final Logger LOGGER = LoggerFactory.getLogger(PdfPTable.class);
     /**
      * The index of the original <CODE>PdfcontentByte</CODE>.
      */
@@ -709,6 +712,8 @@ public class PdfPTable implements LargeElement, Spaceable{
         else
         	colEnd = Math.min(colEnd, totalCols);
 
+        LOGGER.info(String.format("Writing row %s to %s; column %s to %s", rowStart, rowEnd, colStart, colEnd));
+        
         float yPosStart = yPos;
         for (int k = rowStart; k < rowEnd; ++k) {
             PdfPRow row = rows.get(k);
@@ -1216,7 +1221,20 @@ public class PdfPTable implements LargeElement, Spaceable{
     public ArrayList<PdfPRow> getRows() {
         return rows;
     }
+    
+    /**
+     * Defines where the table may be broken (if necessary).
+     */
+    public void setBreaks(int[] breakPoints) {
+        for ( int i = 0; i < rows.size(); i++ ) {
+            getRow(i).setMayNotBreak(true);
+        }
 
+        for ( int i = 0; i < breakPoints.length; i++ ) {
+            getRow(breakPoints[i]).setMayNotBreak(false);
+        }
+    } 
+    
     /**
      * Gets an arraylist with a selection of rows.
      * @param	start	the first row in the selection
