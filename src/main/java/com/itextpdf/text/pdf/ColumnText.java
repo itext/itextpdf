@@ -1675,6 +1675,12 @@ public class ColumnText {
                 currentLeading = 0;
                 if (!(skipHeader || table.isComplete()))
                 	yLine += footerHeight;
+                while (k < table.size()) {
+                	if (table.getRowHeight(k) > 0) {
+                		break;
+                	}
+                	k++;
+                }
                 if (k >= table.size()) {
                 	// Use up space no more than left
                 	if(yLine - table.spacingAfter() < minY) {
