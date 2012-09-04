@@ -413,7 +413,10 @@ public class PdfPRow {
                     if (calcHeight > 0) {
                         if (cell.isUseDescender())
                             calcHeight -= ct.getDescender();
-                        ct = ColumnText.duplicate(cell.getColumn());
+                        if (reusable)
+                        	ct = ColumnText.duplicate(cell.getColumn());
+                        else
+                        	ct = cell.getColumn();
                         ct.setCanvases(canvases);
                         ct.setSimpleColumn(-0.003f, -0.001f, netWidth + 0.003f, calcHeight);
                         float pivotX;
