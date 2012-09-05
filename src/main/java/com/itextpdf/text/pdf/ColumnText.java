@@ -1676,7 +1676,7 @@ public class ColumnText {
                 if (!(skipHeader || table.isComplete()))
                 	yLine += footerHeight;
                 while (k < table.size()) {
-                	if (table.getRowHeight(k) > 0) {
+                	if (table.getRowHeight(k) > 0 || table.hasRowspan(k)) {
                 		break;
                 	}
                 	k++;

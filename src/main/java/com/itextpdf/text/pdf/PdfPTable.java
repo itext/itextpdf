@@ -1230,7 +1230,7 @@ public class PdfPTable implements LargeElement, Spaceable {
      *
      * @param breakPoints int[]
      */
-    public void setBreaks(int[] breakPoints) {
+    public void setBreakPoints(int... breakPoints) {
         for ( int i = 0; i < rows.size(); i++ ) {
             getRow(i).setMayNotBreak(true);
         }
