@@ -1532,7 +1532,7 @@ public class ColumnText {
                     LOGGER.info("May not split at row " + kTemp);
                 	kTemp--;
                 }
-                if (kTemp > rowIdx && kTemp < k) {
+                if ((kTemp > rowIdx && kTemp < k) || (kTemp == 0 && firstPass)) {
                 	yTemp = minY;
                 	k = kTemp;
                 }
