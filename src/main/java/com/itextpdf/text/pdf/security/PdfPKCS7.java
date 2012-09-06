@@ -613,6 +613,9 @@ public class PdfPKCS7 {
             else if (digestEncryptionAlgorithm.equals("DSA")) {
                 this.digestEncryptionAlgorithmOid = SecurityIDs.ID_DSA;
             }
+            else if (digestEncryptionAlgorithm.equals("ECDSA")) {
+                this.digestEncryptionAlgorithmOid = SecurityIDs.ID_ECDSA;
+            }
             else
                 throw new ExceptionConverter(new NoSuchAlgorithmException(MessageLocalization.getComposedMessage("unknown.key.algorithm.1", digestEncryptionAlgorithm)));
         }
