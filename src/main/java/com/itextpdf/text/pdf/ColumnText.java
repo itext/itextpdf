@@ -1277,7 +1277,8 @@ public class ColumnText {
     protected int goComposite(final boolean simulate) throws DocumentException {
     	if (!rectangularMode)
             throw new DocumentException(MessageLocalization.getComposedMessage("irregular.columns.are.not.supported.in.composite.mode"));
-        linesWritten = 0;
+        LOGGER.info("Go composite; simulation mode = " + simulate);
+    	linesWritten = 0;
         descender = 0;
         boolean firstPass = true;
         main_loop:
@@ -1532,9 +1533,10 @@ public class ColumnText {
                     LOGGER.info("May not split at row " + kTemp);
                 	kTemp--;
                 }
-                if ((kTemp > rowIdx && kTemp < k) || (kTemp == 0 && firstPass)) {
+                if ((kTemp > rowIdx && kTemp < k) || (kTemp == 0 && table.isLoopCheck())) {
                 	yTemp = minY;
                 	k = kTemp;
+                	table.setLoopCheck(false);
                 }
                 LOGGER.info("Will split at row " + k);
                 // only for incomplete tables:
@@ -1589,6 +1591,7 @@ public class ColumnText {
                         LOGGER.info("Inserting row at position " + k);
                     }
                 }
+
                 // We're no longer in the first pass
                 firstPass = false;
 

@@ -191,7 +191,9 @@ public class PdfPTable implements LargeElement, Spaceable {
      */
     protected boolean rowCompleted = true;
 
-    protected PdfPTable() {
+    protected boolean loopCheck = true;
+
+	protected PdfPTable() {
     }
 
     /**
@@ -295,6 +297,7 @@ public class PdfPTable implements LargeElement, Spaceable {
         horizontalAlignment = sourceTable.horizontalAlignment;
         keepTogether = sourceTable.keepTogether;
         complete = sourceTable.complete;
+        loopCheck = sourceTable.loopCheck;
     }
 
     /**
@@ -1730,4 +1733,12 @@ public class PdfPTable implements LargeElement, Spaceable {
     public float getSpacingAfter() {
         return spacingAfter;
     }
+    
+    public boolean isLoopCheck() {
+		return loopCheck;
+	}
+
+	public void setLoopCheck(boolean loopCheck) {
+		this.loopCheck = loopCheck;
+	}
 }
