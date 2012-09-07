@@ -156,13 +156,39 @@ public class TextRenderInfo {
 		return gs.getFont();
 	}
     
+	/**
+	 * @return The character spacing width, in user space units (Tc value, scaled to user space)
+	 * @since 5.3.3
+	 */
+	public float getCharacterSpacing(){
+		return convertWidthFromTextSpaceToUserSpace(gs.characterSpacing);
+	}
+	
+	/**
+	 * @return The word spacing width, in user space units (Tw value, scaled to user space)
+	 * @since 5.3.3
+	 */
+	public float getWordSpacing(){
+		return convertWidthFromTextSpaceToUserSpace(gs.wordSpacing);
+	}
+	
+	/**
+	 * 
+	 * @param width the width, in text space
+	 * @return the width in user space
+	 * @since 5.3.3
+	 */
+	private float convertWidthFromTextSpaceToUserSpace(float width){
+        LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(width, 0, 1));
+        LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
+        return userSpace.getLength();
+	}
+	
     /**
      * @return The width, in user space units, of a single space character in the current font
      */
     public float getSingleSpaceWidth(){
-        LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(getUnscaledFontSpaceWidth(), 0, 1));
-        LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
-        return userSpace.getLength();
+    	return convertWidthFromTextSpaceToUserSpace(getUnscaledFontSpaceWidth());
     }
     
     /**
