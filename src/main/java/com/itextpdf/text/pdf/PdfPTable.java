@@ -1231,7 +1231,7 @@ public class PdfPTable implements LargeElement, Spaceable {
     /**
      * Returns the index of the last completed row.
      *
-     * @return lastCompletedRowIndex int
+     * @return the index of a row
      */
     public int getLastCompletedRowIndex() {
         return rows.size() - 1;

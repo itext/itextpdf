@@ -1277,7 +1277,6 @@ public class ColumnText {
     protected int goComposite(final boolean simulate) throws DocumentException {
     	if (!rectangularMode)
             throw new DocumentException(MessageLocalization.getComposedMessage("irregular.columns.are.not.supported.in.composite.mode"));
-        LOGGER.info("Go composite; simulation mode = " + simulate);
     	linesWritten = 0;
         descender = 0;
         boolean firstPass = true;
@@ -1521,7 +1520,6 @@ public class ColumnText {
                 // k will be the first row that doesn't fit
                 for (k = rowIdx; k < table.size(); ++k) {
                     float rowHeight = table.getRowHeight(k);
-                    LOGGER.info(String.format("Row %s height %s: space left %s", k, rowHeight, yTemp - rowHeight - minY));
                     if (yTemp - rowHeight <= minY)
                         break;
                     yTemp -= rowHeight;
@@ -1530,8 +1528,7 @@ public class ColumnText {
                 LOGGER.info("Want to split at row " + k);
                 int kTemp = k;
                 while (kTemp > rowIdx && kTemp < table.size() && table.getRow(kTemp).isMayNotBreak()) {
-                    LOGGER.info("May not split at row " + kTemp);
-                	kTemp--;
+                    kTemp--;
                 }
                 if ((kTemp > rowIdx && kTemp < k) || (kTemp == 0 && table.isLoopCheck())) {
                 	yTemp = minY;
