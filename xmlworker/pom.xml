@@ -44,14 +44,6 @@
 		</mailingList>
 	</mailingLists>
 	<developers>
-		<developer>
-			<id>redlab_b</id>
-			<name>Balder Van Camp</name>
-		</developer>
-		<developer>
-			<id>emielackermann</id>
-			<name>Emiel Ackermann</name>
-		</developer>
 	</developers>
 	<scm>
 		<connection>scm:svn:https://xmlworker.svn.sourceforge.net/svnroot/xmlworker/trunk</connection>
