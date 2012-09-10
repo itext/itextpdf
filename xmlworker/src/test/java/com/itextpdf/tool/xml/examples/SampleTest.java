@@ -51,7 +51,7 @@ public class SampleTest {
             }
             outPath = "." + File.separator + "target" + File.separator + testPath + testName + File.separator;
             String inputPath = "." + File.separator + "target" + File.separator + "test-classes" + File.separator + testPath + File.separator + testName + File.separator;
-            differenceImage = outPath + "difference.png";
+            differenceImage = outPath + "difference";
             outPdf = outPath + testName + ".pdf";
             inputHtml = inputPath + "<testName>.html".replaceAll("<testName>", testName);
             cmpPdf = inputPath + "<testName>.pdf".replaceAll("<testName>", testName);
