@@ -145,6 +145,7 @@ public class CompareTool {
                     }
                     Arrays.sort(imageFiles, new ImageNameComparator());
                     Arrays.sort(cmpImageFiles, new ImageNameComparator());
+                    String differentPagesFail = null;
                     for (int i = 0; i < cnt; i++) {
                         System.out.print("Comparing page " + Integer.toString(i + 1) + " (" + imageFiles[i].getAbsolutePath() + ")...");
                         FileInputStream is1 = new FileInputStream(imageFiles[i]);
@@ -153,9 +154,8 @@ public class CompareTool {
                         is1.close();
                         is2.close();
                         if (!cmpResult) {
-                            String differentPagesFail = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", Integer.toString(i + 1));
                             if (compareExec != null && compareExec.length() > 0) {
-                                String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>", cmpImageFiles[i].getAbsolutePath()).replace("<difference>", differenceImage);
+                                String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>", cmpImageFiles[i].getAbsolutePath()).replace("<difference>", differenceImage + Integer.toString(i + 1) + ".png");
                                 p = Runtime.getRuntime().exec(compareExec + compareParams);
                                 bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
                                 while ((line = bre.readLine()) != null) {
@@ -164,19 +164,29 @@ public class CompareTool {
                                 bre.close();
                                 int cmpExitValue = p.waitFor();
                                 if (cmpExitValue == 0) {
-                                    differentPagesFail += "\nPlease, examine " + differenceImage + " for more details.";
-                                } else {
-
+                                    if (differentPagesFail == null)  {
+                                        differentPagesFail = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", Integer.toString(i + 1));
+                                        differentPagesFail += "\nPlease, examine " + differenceImage + Integer.toString(i + 1) + ".png for more details.";
+                                    } else {
+                                        differentPagesFail =
+                                                "File " + outPdf + " differs.\nPlease, examine difference images for more details.";
+                                    }
                                 }
                             } else {
+                                differentPagesFail = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", Integer.toString(i + 1));
                                 differentPagesFail += "\nYou can optionally specify path to ImageMagick compare tool (e.g. -DcompareExec=\"C:/Program Files/ImageMagick-6.5.4-2/compare.exe\") to visualize differences.";
+                                break;
                             }
-                            if (bUnexpectedNumberOfPages)
-                                differentPagesFail = unexpectedNumberOfPages.replace("<filename>", outPdf) + "\n" + differentPagesFail;
-                            return differentPagesFail;
+                            System.out.println(differentPagesFail);
                         } else {
                             System.out.println("done.");
                         }
+                    }
+                    if (differentPagesFail != null) {
+                        return differentPagesFail;
+                    } else {
+                        if (bUnexpectedNumberOfPages)
+                            return unexpectedNumberOfPages.replace("<filename>", outPdf) + "\n" + differentPagesFail;
                     }
                 } else {
                     return gsFailed.replace("<filename>", outPdf);
