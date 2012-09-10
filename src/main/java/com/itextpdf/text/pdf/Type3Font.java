@@ -43,10 +43,10 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.HashMap;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.util.HashMap;
 
 /**
  * A class to support Type3 fonts.
@@ -283,7 +283,7 @@ public class Type3Font extends BaseFont {
 
 
     @Override
-    byte[] convertToBytes(String text) {
+    public byte[] convertToBytes(String text) {
         char[] cc = text.toCharArray();
         byte[] b = new byte[cc.length];
         int p = 0;

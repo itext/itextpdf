@@ -43,11 +43,11 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.DocumentFont;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Provides information and calculations needed by render listeners
@@ -58,15 +58,15 @@ import com.itextpdf.text.pdf.DocumentFont;
  * discovered
  */
 public class TextRenderInfo {
-	
-    private final String text;
-    private final Matrix textToUserSpaceTransformMatrix;
-    private final GraphicsState gs;
+
+    protected final String text;
+    protected final Matrix textToUserSpaceTransformMatrix;
+    protected final GraphicsState gs;
     /**
      * Array containing marked content info for the text.
      * @since 5.0.2
      */
-    private final Collection<MarkedContentInfo> markedContentInfos;
+    protected final Collection<MarkedContentInfo> markedContentInfos;
     
     /**
      * Creates a new TextRenderInfo object
@@ -75,7 +75,7 @@ public class TextRenderInfo {
      * @param textMatrix the text matrix at the time of the render operation
      * @param markedContentInfo the marked content sequence, if available
      */
-    TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix, Collection<MarkedContentInfo> markedContentInfo) {
+    public TextRenderInfo(String text, GraphicsState gs, Matrix textMatrix, Collection<MarkedContentInfo> markedContentInfo) {
         this.text = text;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.ctm);
         this.gs = gs;
@@ -109,7 +109,7 @@ public class TextRenderInfo {
 	/**
      * @return the unscaled (i.e. in Text space) width of the text
      */
-    float getUnscaledWidth(){ 
+    public float getUnscaledWidth(){
         return getStringWidth(text); 
     }
     

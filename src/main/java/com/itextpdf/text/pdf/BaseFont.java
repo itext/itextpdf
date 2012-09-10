@@ -42,14 +42,14 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
-
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * Base class for the several font types supported
@@ -1014,7 +1014,7 @@ public abstract class BaseFont {
      * @param text the <CODE>String</CODE> to be converted
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
      */
-    byte[] convertToBytes(String text) {
+    public byte[] convertToBytes(String text) {
         if (directTextToByte)
             return PdfEncodings.convertToBytes(text, null);
         if (specialMap != null) {
