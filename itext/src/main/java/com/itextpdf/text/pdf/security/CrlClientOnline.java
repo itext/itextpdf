@@ -57,7 +57,8 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An implementation of the CrlClient that fetches the CRL bytes
@@ -70,7 +71,7 @@ public class CrlClientOnline implements CrlClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientOnline.class);
     
     /** The URLs of the CRLs. */
-    protected List<URL> urls = new ArrayList<URL>();
+    protected Set<URL> urls = new HashSet<URL>();
 
     /**
      * Creates a CrlClientOnline instance that will try to find
