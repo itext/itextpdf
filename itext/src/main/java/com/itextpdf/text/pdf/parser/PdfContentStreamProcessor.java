@@ -43,29 +43,12 @@
  */
 package com.itextpdf.text.pdf.parser;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.CMapAwareDocumentFont;
-import com.itextpdf.text.pdf.PRIndirectReference;
-import com.itextpdf.text.pdf.PRTokeniser;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfContentParser;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfIndirectReference;
-import com.itextpdf.text.pdf.PdfLiteral;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfStream;
-import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.*;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Processor for a PDF content Stream.
@@ -85,13 +68,13 @@ public class PdfContentStreamProcessor {
     /** Stack keeping track of the graphics state. */
     private final Stack<GraphicsState> gsStack = new Stack<GraphicsState>();
     /** Text matrix. */
-    private Matrix textMatrix;
+    protected Matrix textMatrix;
     /** Text line matrix. */
     private Matrix textLineMatrix;
     /** Listener that will be notified of render events */
-    final private RenderListener renderListener;
+    final protected RenderListener renderListener;
     /** A map with all supported XObject handlers */
-    final private Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
+    final protected Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
     /**
      * The font cache.
      * @since 5.0.6
@@ -234,7 +217,7 @@ public class PdfContentStreamProcessor {
      * Returns the current graphics state.
      * @return	the graphics state
      */
-    private GraphicsState gs(){
+    protected GraphicsState gs(){
         return gsStack.peek();
     }
 
@@ -275,7 +258,7 @@ public class PdfContentStreamProcessor {
      * @return	the encoded String
      * @since 2.1.7
      */
-    private String decode(PdfString in){
+    protected String decode(PdfString in){
         byte[] bytes = in.getBytes();
         return gs().font.decode(bytes, 0, bytes.length);
     }
@@ -298,7 +281,7 @@ public class PdfContentStreamProcessor {
      * Displays text.
      * @param string	the text to display
      */
-    private void displayPdfString(PdfString string){
+    protected void displayPdfString(PdfString string){
 
         String unicode = decode(string);
 
@@ -338,7 +321,7 @@ public class PdfContentStreamProcessor {
      * Adjusts the text matrix for the specified adjustment value (see TJ operator in the PDF spec for information)
      * @param tj the text adjustment
      */
-    private void applyTextAdjust(float tj){
+    protected void applyTextAdjust(float tj){
         float adjustBy = -tj/1000f * gs().fontSize * gs().horizontalScaling;
 
         textMatrix = new Matrix(adjustBy, 0).multiply(textMatrix);
