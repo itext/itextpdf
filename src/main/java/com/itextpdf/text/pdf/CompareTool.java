@@ -154,7 +154,6 @@ public class CompareTool {
                         is1.close();
                         is2.close();
                         if (!cmpResult) {
-                            differentPagesFail = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", Integer.toString(i + 1));
                             if (compareExec != null && compareExec.length() > 0) {
                                 String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath()).replace("<image2>", cmpImageFiles[i].getAbsolutePath()).replace("<difference>", differenceImage + Integer.toString(i + 1) + ".png");
                                 p = Runtime.getRuntime().exec(compareExec + compareParams);
@@ -165,14 +164,18 @@ public class CompareTool {
                                 bre.close();
                                 int cmpExitValue = p.waitFor();
                                 if (cmpExitValue == 0) {
-                                    if (differentPagesFail != null)  {
-                                        differentPagesFail += "\nPlease, examine difference image(s) for more details.";
-                                    } else {
+                                    if (differentPagesFail == null)  {
+                                        differentPagesFail = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", Integer.toString(i + 1));
                                         differentPagesFail += "\nPlease, examine " + differenceImage + Integer.toString(i + 1) + ".png for more details.";
+                                    } else {
+                                        differentPagesFail =
+                                                "File " + outPdf + " differs.\nPlease, examine difference images for more details.";
                                     }
                                 }
                             } else {
+                                differentPagesFail = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", Integer.toString(i + 1));
                                 differentPagesFail += "\nYou can optionally specify path to ImageMagick compare tool (e.g. -DcompareExec=\"C:/Program Files/ImageMagick-6.5.4-2/compare.exe\") to visualize differences.";
+                                break;
                             }
                             System.out.println(differentPagesFail);
                         } else {
