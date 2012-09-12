@@ -46,6 +46,7 @@ package com.itextpdf.text.pdf.security;
 import java.security.KeyStore;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Collection;
@@ -73,8 +74,23 @@ public class CertificateVerification {
     public static String verifyCertificate(X509Certificate cert, Collection<CRL> crls, Calendar calendar) {
         if (calendar == null)
             calendar = new GregorianCalendar();
-        if (cert.hasUnsupportedCriticalExtension())
-            return "Has unsupported critical extension";
+        if (cert.hasUnsupportedCriticalExtension()) {
+        	for (String oid : cert.getCriticalExtensionOIDs()) {
+    			// KEY USAGE and DIGITAL SIGNING is ALLOWED
+        		if ("2.5.29.15".equals(oid) && cert.getKeyUsage()[0]) {
+        			continue;
+        		}
+        		try {
+        			// EXTENDED KEY USAGE and TIMESTAMPING is ALLOWED
+					if ("2.5.29.37".equals(oid) && cert.getExtendedKeyUsage().contains("1.3.6.1.5.5.7.3.8")) {
+						continue;
+					}
+				} catch (CertificateParsingException e) {
+					// DO NOTHING;
+				}
+                return "Has unsupported critical extension";
+        	}
+        }
         try {
             cert.checkValidity(calendar.getTime());
         }
