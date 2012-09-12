@@ -1230,11 +1230,6 @@ public class PdfSignatureAppearance {
             PdfDictionary widget = af.getFieldItem(name).getWidget(0);
             writer.markUsed(widget);
             fieldLock = widget.getAsDict(PdfName.LOCK);
-            if (fieldLock != null) {
-            	if (!fieldLock.contains(PdfName.FIELDS)) {
-            		fieldLock = null;
-            	}
-            }
             widget.put(PdfName.P, writer.getPageReference(getPage()));
             widget.put(PdfName.V, refSig);
             PdfObject obj = PdfReader.getPdfObjectRelease(widget.get(PdfName.F));
