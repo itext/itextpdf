@@ -68,13 +68,13 @@ public class PdfContentStreamProcessor {
     /** Stack keeping track of the graphics state. */
     private final Stack<GraphicsState> gsStack = new Stack<GraphicsState>();
     /** Text matrix. */
-    protected Matrix textMatrix;
+    private Matrix textMatrix;
     /** Text line matrix. */
     private Matrix textLineMatrix;
     /** Listener that will be notified of render events */
-    final protected RenderListener renderListener;
+    final private RenderListener renderListener;
     /** A map with all supported XObject handlers */
-    final protected Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
+    final private Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
     /**
      * The font cache.
      * @since 5.0.6
@@ -217,7 +217,7 @@ public class PdfContentStreamProcessor {
      * Returns the current graphics state.
      * @return	the graphics state
      */
-    protected GraphicsState gs(){
+    private GraphicsState gs(){
         return gsStack.peek();
     }
 
@@ -258,7 +258,7 @@ public class PdfContentStreamProcessor {
      * @return	the encoded String
      * @since 2.1.7
      */
-    protected String decode(PdfString in){
+    private String decode(PdfString in){
         byte[] bytes = in.getBytes();
         return gs().font.decode(bytes, 0, bytes.length);
     }
@@ -281,7 +281,7 @@ public class PdfContentStreamProcessor {
      * Displays text.
      * @param string	the text to display
      */
-    protected void displayPdfString(PdfString string){
+    private void displayPdfString(PdfString string){
 
         String unicode = decode(string);
 
@@ -321,7 +321,7 @@ public class PdfContentStreamProcessor {
      * Adjusts the text matrix for the specified adjustment value (see TJ operator in the PDF spec for information)
      * @param tj the text adjustment
      */
-    protected void applyTextAdjust(float tj){
+    private void applyTextAdjust(float tj){
         float adjustBy = -tj/1000f * gs().fontSize * gs().horizontalScaling;
 
         textMatrix = new Matrix(adjustBy, 0).multiply(textMatrix);
