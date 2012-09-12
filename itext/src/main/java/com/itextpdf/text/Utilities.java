@@ -54,7 +54,9 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Set;
 
+import com.itextpdf.text.pdf.ByteBuffer;
 import com.itextpdf.text.pdf.PRTokeniser;
+import com.itextpdf.text.pdf.PdfEncodings;
 
 /**
  * A collection of convenience methods that were present in many different iText
@@ -362,5 +364,18 @@ public class Utilities {
 	    FileInputStream f = new FileInputStream(file);
 	    f.read(jsBytes);
 	    return new String(jsBytes);
+	}
+
+	/**
+	 * Converts an array of bytes to a String of hexadecimal values
+	 * @param bytes	a byte array
+	 * @return	the same bytes expressed as hexadecimal values
+	 */
+	public static String convertToHex(byte[] bytes) {
+	    ByteBuffer buf = new ByteBuffer();
+	    for (byte b : bytes) {
+	        buf.appendHex(b);
+	    }
+	    return PdfEncodings.convertToString(buf.toByteArray(), null).toUpperCase();
 	}
 }

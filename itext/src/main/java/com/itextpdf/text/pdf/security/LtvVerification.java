@@ -43,15 +43,14 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import com.itextpdf.text.Utilities;
 import com.itextpdf.text.pdf.security.OcspClient;
 import com.itextpdf.text.pdf.security.CrlClient;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.ByteBuffer;
 import com.itextpdf.text.pdf.PRIndirectReference;
 import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfEncodings;
 import com.itextpdf.text.pdf.PdfIndirectReference;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
@@ -267,17 +266,9 @@ public class LtvVerification {
             bc = pkcs.getEncoded();
         }
         bt = hashBytesSha1(bc);
-        return new PdfName(convertToHex(bt));
+        return new PdfName(Utilities.convertToHex(bt));
     }
 
-    private static String convertToHex(byte[] bt) {
-        ByteBuffer buf = new ByteBuffer();
-        for (byte b : bt) {
-            buf.appendHex(b);
-        }
-        return PdfEncodings.convertToString(buf.toByteArray(), null).toUpperCase();
-    }
-    
     private static byte[] hashBytesSha1(byte[] b) throws NoSuchAlgorithmException {
         MessageDigest sh = MessageDigest.getInstance("SHA1");
         return sh.digest(b);
