@@ -114,7 +114,6 @@ import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
 import java.security.GeneralSecurityException;
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.SigningCertificate;
-import org.bouncycastle.asn1.x509.IssuerSerial;
 
 /**
  * This class does all the processing related to signing
@@ -221,8 +220,7 @@ public class PdfPKCS7 {
     }
 
     /**
-     * Use this constructor if you want to verify a signature using
-     * the sub-filter adbe.pkcs7.detached or adbe.pkcs7.sha1.
+     * Use this constructor if you want to verify a signature.
      * @param contentsKey the /Contents key
      * @param tsp set to true if there's a PAdES LTV time stamp.
      * @param provider the provider or <code>null</code> for the default provider
@@ -575,11 +573,7 @@ public class PdfPKCS7 {
      * @return the algorithm used to calculate the message digest
      */
     public String getDigestAlgorithm() {
-        String dea = EncryptionAlgorithms.getAlgorithm(digestEncryptionAlgorithmOid);
-        if (dea == null)
-            dea = digestEncryptionAlgorithmOid;
-
-        return getHashAlgorithm() + "with" + dea;
+        return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
     }
 
     /*
@@ -1286,5 +1280,23 @@ public class PdfPKCS7 {
         Date date = timeStampToken.getTimeStampInfo().getGenTime();
         cal.setTime(date);
         return cal;
+    }
+    
+    /**
+     * Returns the filter subtype.
+     */
+    public PdfName getFilterSubtype() {
+    	return filterSubtype;
+    }
+    
+    /**
+     * Returns the encryption algorithm
+     * @return	the name of an encryption algorithm
+     */
+    public String getEncryptionAlgorithm() {
+        String encryptAlgo = EncryptionAlgorithms.getAlgorithm(digestEncryptionAlgorithmOid);
+        if (encryptAlgo == null)
+            encryptAlgo = digestEncryptionAlgorithmOid;
+        return encryptAlgo;
     }
 }
