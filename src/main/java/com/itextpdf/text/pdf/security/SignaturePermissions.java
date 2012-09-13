@@ -1,5 +1,5 @@
 /*
- * $Id: CertificateInfo.java 5193 2012-06-18 13:36:09Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -57,14 +57,23 @@ import com.itextpdf.text.pdf.PdfNumber;
  */
 public class SignaturePermissions {
 
+	/**
+	 * Class that contains a field lock action and
+	 * an array of the fields that are involved.
+	 */
 	public class FieldLock {
+		/** Can be /All, /Exclude or /Include */
 		PdfName action;
+		/** An array of PdfString values with fieldnames */
 		PdfArray fields;
+		/** Creates a FieldLock instance */
 		public FieldLock(PdfName action, PdfArray fields) {
 			this.action = action;
 			this.fields = fields;
 		}
+		/** Getter for the field lock action. */
 		public PdfName getAction() { return action; }
+		/** Getter for the fields involved in the lock action. */
 		public PdfArray getFields() { return fields; }
 	}
 	
