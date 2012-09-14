@@ -75,6 +75,10 @@ public class SignaturePermissions {
 		public PdfName getAction() { return action; }
 		/** Getter for the fields involved in the lock action. */
 		public PdfArray getFields() { return fields; }
+		/** toString method */
+		public String toString() {
+			return action.toString() + (fields == null ? "" : fields.toString());
+		}
 	}
 	
 	/** Is the signature a cerification signature (true) or an approval signature (false)? */
