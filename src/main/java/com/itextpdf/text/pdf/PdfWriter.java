@@ -2192,13 +2192,14 @@ public class PdfWriter extends DocWriter implements
      */
 
     FontDetails addSimple(final BaseFont bf) {
-        if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
-            return new FontDetails(new PdfName("F" + fontNumber++), ((DocumentFont)bf).getIndirectReference(), bf);
-        }
         FontDetails ret = documentFonts.get(bf);
         if (ret == null) {
             PdfWriter.checkPdfIsoConformance(this, PdfIsoKeys.PDFISOKEY_FONT, bf);
-            ret = new FontDetails(new PdfName("F" + fontNumber++), body.getPdfIndirectReference(), bf);
+            if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
+                ret = new FontDetails(new PdfName("F" + fontNumber++), ((DocumentFont)bf).getIndirectReference(), bf);
+            } else {
+                ret = new FontDetails(new PdfName("F" + fontNumber++), body.getPdfIndirectReference(), bf);
+            }
             documentFonts.put(bf, ret);
         }
         return ret;

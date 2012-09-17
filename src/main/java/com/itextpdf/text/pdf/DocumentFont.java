@@ -111,6 +111,10 @@ public class DocumentFont extends BaseFont {
         init();
     }
 
+    public PdfDictionary getFontDictionary() {
+        return font;
+    } 
+
     private void init() {
         encoding = "";
         fontSpecific = false;
