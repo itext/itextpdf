@@ -166,15 +166,20 @@ public class StyleAttrCSSResolver implements CSSResolver {
 			}
 			String styleAtt = t.getAttributes().get(HTML.Attribute.STYLE);
 			if (null != styleAtt && styleAtt.length() > 0) {
+                Map<String, String> tagAttrCss = new HashMap<String, String>();
 				String[] styles = styleAtt.split(";");
 				for (String s : styles) {
 					String[] part = s.split(":",2);
 					if (part.length == 2) {
 						String key = utils.stripDoubleSpacesTrimAndToLowerCase(part[0]);
 						String value = utils.stripDoubleSpacesAndTrim(part[1]);
-						splitRules(tagCss, key, value);
+						splitRules(tagAttrCss, key, value);
 					}
 				}
+
+                for (Entry<String, String> e : tagAttrCss.entrySet()) {
+                    tagCss.put(e.getKey(), e.getValue());
+                }
 			}
 		}
 		// inherit css from parent tags, as defined in provided CssInheritanceRules or if property = inherit
@@ -227,7 +232,14 @@ public class StyleAttrCSSResolver implements CSSResolver {
 			css.putAll(utils.processFont(value));
 		} else if (CSS.Property.LIST_STYLE.equalsIgnoreCase(key)) {
 			css.putAll(utils.processListStyle(value));
-		} else {
+		} else if (CSS.Property.BACKGROUND.equalsIgnoreCase(key)) {
+            Map<String, String> backgroundStyles = utils.processBackground(value);
+            for (String backgroundKey : backgroundStyles.keySet()) {
+                if (!css.containsKey(backgroundKey)) {
+                    css.put(backgroundKey, backgroundStyles.get(backgroundKey));
+                }
+            }
+        } else {
 			css.put(key, value);
 		}
 	}

@@ -44,11 +44,7 @@
 package com.itextpdf.tool.xml.css;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.itextpdf.text.html.HtmlTags;
 import com.itextpdf.text.html.WebColors;
@@ -150,7 +146,7 @@ public class CssUtils {
 	 */
 	public Map<String, String> parseBorder(final String border) {
 		HashMap<String, String> map = new HashMap<String, String>(0);
-		String split[] = border.split("\\s");
+		String split[] = splitComplexCssStyle(border);
 		int length = split.length;
 		if (length == 1) {
 			if (borderwidth.contains(split[0]) || isNumericValue(split[0]) || isMetricValue(split[0])) {
@@ -219,7 +215,7 @@ public class CssUtils {
 	 */
 	public Map<String, String> processBackground(final String background) {
 		Map<String, String> rules = new HashMap<String, String>();
-		String[] styles = background.split("\\s");
+		String[] styles = splitComplexCssStyle(background);
 		for(String style : styles) {
 			if (style.contains("url(")) {
 				rules.put(CSS.Property.BACKGROUND_IMAGE, style);
@@ -259,7 +255,7 @@ public class CssUtils {
 	 */
 	public Map<String, String> processListStyle(final String listStyle) {
 		Map<String, String> rules = new HashMap<String, String>();
-		String[] styles = listStyle.split("\\s");
+		String[] styles = splitComplexCssStyle(listStyle);
 		for(String style : styles) {
 			if (style.equalsIgnoreCase(CSS.Value.DISC)
 					|| style.equalsIgnoreCase(CSS.Value.SQUARE)
@@ -619,4 +615,9 @@ public class CssUtils {
 		}
 		return s;
 	}
+
+    public String[] splitComplexCssStyle(String s) {
+        s = s.replaceAll("\\s*,\\s*", ",") ;
+        return s.split("\\s");
+    }
 }
