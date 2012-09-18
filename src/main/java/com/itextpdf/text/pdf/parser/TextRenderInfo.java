@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf.parser;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.DocumentFont;
@@ -158,22 +159,23 @@ public class TextRenderInfo {
 	public DocumentFont getFont() {
 		return gs.getFont();
 	}
-    
-	/**
-	 * @return The character spacing width, in user space units (Tc value, scaled to user space)
-	 * @since 5.3.3
-	 */
-	public float getCharacterSpacing(){
-		return convertWidthFromTextSpaceToUserSpace(gs.characterSpacing);
-	}
-	
-	/**
-	 * @return The word spacing width, in user space units (Tw value, scaled to user space)
-	 * @since 5.3.3
-	 */
-	public float getWordSpacing(){
-		return convertWidthFromTextSpaceToUserSpace(gs.wordSpacing);
-	}
+
+// removing - this shouldn't be needed now that we are exposing getCharacterRenderInfos()
+//	/**
+//	 * @return The character spacing width, in user space units (Tc value, scaled to user space)
+//	 * @since 5.3.3
+//	 */
+//	public float getCharacterSpacing(){
+//		return convertWidthFromTextSpaceToUserSpace(gs.characterSpacing);
+//	}
+//	
+//	/**
+//	 * @return The word spacing width, in user space units (Tw value, scaled to user space)
+//	 * @since 5.3.3
+//	 */
+//	public float getWordSpacing(){
+//		return convertWidthFromTextSpaceToUserSpace(gs.wordSpacing);
+//	}
 	
 	/**
 	 * The rise represents how far above the nominal baseline the text should be rendered.  The {@link #getBaseline()}, {@link #getAscentLine()} and {@link #getDescentLine()} methods already include Rise.
@@ -269,4 +271,29 @@ public class TextRenderInfo {
         return totalWidth;
     }
     
+    /**
+     * Provides detail useful if a listener needs access to the position of each individual glyph in the text render operation
+     * @return A list of {@link TextRenderInfo} objects that represent each glyph used in the draw operation. The next effect is if there was a separate Tj opertion for each character in the rendered string
+     * @since 5.3.3
+     */
+    public List<TextRenderInfo> getCharacterRenderInfos(){
+        List<TextRenderInfo> rslt = new ArrayList<TextRenderInfo>(text.length());
+    	
+    	DocumentFont font = gs.font;
+        char[] chars = text.toCharArray();
+        float totalWidth = 0;
+        for (int i = 0; i < chars.length; i++) {
+            float w = font.getWidth(chars[i]) / 1000.0f;
+            float wordSpacing = chars[i] == 32 ? gs.wordSpacing : 0f;
+            
+            Matrix subTextMatrix = new Matrix(totalWidth, 0).multiply(textToUserSpaceTransformMatrix);
+            TextRenderInfo subInfo = new TextRenderInfo(text.substring(i, i+1), gs, subTextMatrix, markedContentInfos);
+            rslt.add(subInfo);
+            
+            totalWidth += (w * gs.fontSize + gs.characterSpacing + wordSpacing) * gs.horizontalScaling;
+            
+        }
+    	
+        return rslt;
+    }
 }
