@@ -84,6 +84,20 @@ public class TextRenderInfo {
     }
     
     /**
+     * Used for creating sub-TextRenderInfos for each individual character
+     * @param parent the parent TextRenderInfo
+     * @param charIndex the index of the character that this TextRenderInfo will represent
+     * @param horizontalOffset the unscaled horizontal offset of the character that this TextRenderInfo represents
+     * @since 5.3.3
+     */
+    private TextRenderInfo(TextRenderInfo parent, int charIndex, float horizontalOffset){
+    	this.text = parent.text.substring(charIndex, charIndex+1);
+    	this.textToUserSpaceTransformMatrix = new Matrix(horizontalOffset, 0).multiply(parent.textToUserSpaceTransformMatrix);
+    	this.gs = parent.gs;
+    	this.markedContentInfos = parent.markedContentInfos;
+    }
+    
+    /**
      * @return the text to render
      */
     public String getText(){ 
@@ -286,8 +300,7 @@ public class TextRenderInfo {
             float w = font.getWidth(chars[i]) / 1000.0f;
             float wordSpacing = chars[i] == 32 ? gs.wordSpacing : 0f;
             
-            Matrix subTextMatrix = new Matrix(totalWidth, 0).multiply(textToUserSpaceTransformMatrix);
-            TextRenderInfo subInfo = new TextRenderInfo(text.substring(i, i+1), gs, subTextMatrix, markedContentInfos);
+            TextRenderInfo subInfo = new TextRenderInfo(this, i, totalWidth);
             rslt.add(subInfo);
             
             totalWidth += (w * gs.fontSize + gs.characterSpacing + wordSpacing) * gs.horizontalScaling;
