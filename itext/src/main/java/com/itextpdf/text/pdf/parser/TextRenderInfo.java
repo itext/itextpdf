@@ -162,7 +162,11 @@ public class TextRenderInfo {
     }
     
     private LineSegment getUnscaledBaselineWithOffset(float yOffset){
-        return new LineSegment(new Vector(0, yOffset, 1), new Vector(getUnscaledWidth(), yOffset, 1));
+    	
+    	// we need to correct the width so we don't have an extra character spacing value at the end.  The extra character space is important for tracking relative text coordinate systems, but should not be part of the baseline
+    	float correctedUnscaledWidth = getUnscaledWidth() - gs.characterSpacing * gs.horizontalScaling;
+    	
+        return new LineSegment(new Vector(0, yOffset, 1), new Vector(correctedUnscaledWidth, yOffset, 1));
     }
 
 	/**
