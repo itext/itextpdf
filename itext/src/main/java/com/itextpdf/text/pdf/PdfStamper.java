@@ -78,8 +78,8 @@ public class PdfStamper
      */
     protected PdfStamperImp stamper;
     private Map<String, String> moreInfo;
-    private boolean hasSignature;
-    private PdfSignatureAppearance sigApp;
+    protected boolean hasSignature;
+    protected PdfSignatureAppearance sigApp;
     private LtvVerification verification;
 
     /** Starts the process of adding extra content to an existing PDF
