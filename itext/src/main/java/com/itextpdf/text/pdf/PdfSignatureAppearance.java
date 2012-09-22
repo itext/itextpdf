@@ -619,6 +619,7 @@ public class PdfSignatureAppearance {
      * Acrobat 6.0 and higher recommends that only layer n0 and n2 be present.
      * Use this method with value <code>false</code> if you want to ignore this recommendation.
      * @param acro6Layers if <code>true</code> only the layers n0 and n2 will be present
+     * @deprecated Adobe no longer supports Adobe Acrobat / Reader versions older than 9
      */
     public void setAcro6Layers(boolean acro6Layers) {
         this.acro6Layers = acro6Layers;
@@ -1229,11 +1230,6 @@ public class PdfSignatureAppearance {
             PdfDictionary widget = af.getFieldItem(name).getWidget(0);
             writer.markUsed(widget);
             fieldLock = widget.getAsDict(PdfName.LOCK);
-            if (fieldLock != null) {
-            	if (!fieldLock.contains(PdfName.FIELDS)) {
-            		fieldLock = null;
-            	}
-            }
             widget.put(PdfName.P, writer.getPageReference(getPage()));
             widget.put(PdfName.V, refSig);
             PdfObject obj = PdfReader.getPdfObjectRelease(widget.get(PdfName.F));
@@ -1387,7 +1383,9 @@ public class PdfSignatureAppearance {
         reference.put(new PdfName("DigestLocation"), loc);
         reference.put(new PdfName("DigestMethod"), new PdfName("MD5"));
         reference.put(PdfName.DATA, writer.reader.getTrailer().get(PdfName.ROOT));
-        PdfArray types = new PdfArray();
+        PdfArray types = crypto.getAsArray(PdfName.REFERENCE);
+        if (types == null)
+        	types = new PdfArray();
         types.add(reference);
         crypto.put(PdfName.REFERENCE, types);
     }

@@ -52,6 +52,7 @@ import org.junit.Test;
 
 import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
@@ -176,6 +177,17 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         Assert.assertEquals(0.1f, rsltParallel, 0.0001);
 
     }
+    
+    @Test
+    public void testSuperscript() throws Exception {
+        byte[] content = createPdfWithSupescript("Hel", "lo");
+        //TestResourceUtils.openBytesAsPdf(content);
+        PdfReader r= new PdfReader(content);
+        String text = PdfTextExtractor.getTextFromPage(r, 1, createRenderListenerForTest());
+        Assert.assertEquals("Hello", text);
+    	
+
+	}
     
     private byte[] createPdfWithNegativeCharSpacing(String str1, float charSpacing, String str2) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -328,4 +340,22 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         return new PdfReader(baos.toByteArray());
         
     }    
+    
+    private byte[] createPdfWithSupescript(String regularText, String superscriptText) throws Exception{
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+        final Document document = new Document();
+        PdfWriter.getInstance(document, byteStream);
+        document.open();
+        document.add(new Chunk(regularText));
+        Chunk c2 = new Chunk(superscriptText);
+        c2.setTextRise(7.0f);
+        document.add(c2);
+
+        document.close();
+
+        final byte[] pdfBytes = byteStream.toByteArray();
+
+        return pdfBytes;
+    }
 }

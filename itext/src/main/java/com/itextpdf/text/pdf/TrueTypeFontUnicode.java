@@ -43,15 +43,13 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.error_messages.MessageLocalization;
+
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.HashMap;
 
 /** Represents a True Type font with Unicode encoding. All the character
  * in the font can be used directly by using the encoding Identity-H or
@@ -357,7 +355,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator<int[]>{
      * @return always <CODE>null</CODE>
      */
     @Override
-    byte[] convertToBytes(String text) {
+    public byte[] convertToBytes(String text) {
         return null;
     }
 

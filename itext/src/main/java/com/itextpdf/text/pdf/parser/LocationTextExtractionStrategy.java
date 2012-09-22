@@ -169,6 +169,10 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      */
     public void renderText(TextRenderInfo renderInfo) {
     	LineSegment segment = renderInfo.getBaseline();
+    	if (renderInfo.getRise() != 0){ // remove the rise from the baseline - we do this because the text from a super/subscript render operations should probably be considered as part of the baseline of the text the super/sub is relative to 
+	    	Matrix riseOffsetTransform = new Matrix(0, -renderInfo.getRise());
+	    	segment = segment.transformBy(riseOffsetTransform);
+    	}
         TextChunk location = new TextChunk(renderInfo.getText(), segment.getStartPoint(), segment.getEndPoint(), renderInfo.getSingleSpaceWidth());
         locationalResult.add(location);        
     }

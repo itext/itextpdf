@@ -50,6 +50,8 @@ import java.util.Stack;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 
 /**
@@ -78,6 +80,9 @@ import com.itextpdf.text.pdf.draw.DrawInterface;
  */
 
 public class ColumnText {
+	
+	private final Logger LOGGER = LoggerFactory.getLogger(ColumnText.class);
+	
     /** Eliminate the arabic vowels */
     public static final int AR_NOVOWEL = ArabicLigaturizer.ar_novowel;
     /** Compose the tashkeel in the ligatures. */
@@ -1272,7 +1277,7 @@ public class ColumnText {
     protected int goComposite(final boolean simulate) throws DocumentException {
     	if (!rectangularMode)
             throw new DocumentException(MessageLocalization.getComposedMessage("irregular.columns.are.not.supported.in.composite.mode"));
-        linesWritten = 0;
+    	linesWritten = 0;
         descender = 0;
         boolean firstPass = true;
         main_loop:
@@ -1515,10 +1520,22 @@ public class ColumnText {
                 // k will be the first row that doesn't fit
                 for (k = rowIdx; k < table.size(); ++k) {
                     float rowHeight = table.getRowHeight(k);
-                    if (yTemp - rowHeight < minY)
+                    if (yTemp - rowHeight <= minY)
                         break;
                     yTemp -= rowHeight;
                 }
+
+                LOGGER.info("Want to split at row " + k);
+                int kTemp = k;
+                while (kTemp > rowIdx && kTemp < table.size() && table.getRow(kTemp).isMayNotBreak()) {
+                    kTemp--;
+                }
+                if ((kTemp > rowIdx && kTemp < k) || (kTemp == 0 && table.isLoopCheck())) {
+                	yTemp = minY;
+                	k = kTemp;
+                	table.setLoopCheck(false);
+                }
+                LOGGER.info("Will split at row " + k);
                 // only for incomplete tables:
                 if (!table.isComplete())
                 	yTemp += footerHeight;
@@ -1560,6 +1577,7 @@ public class ColumnText {
                     PdfPRow newRow = table.getRow(k).splitRow(table, k, h);
                     // if the row isn't null add it as an extra row
                     if (newRow == null) {
+                        LOGGER.info("Didn't split row!");
                     	splittedRow = -1;
                     	if (rowIdx == k)
                     		return NO_MORE_COLUMN;
@@ -1567,8 +1585,10 @@ public class ColumnText {
                     else {
                         yTemp = minY;
                         table.getRows().add(++k, newRow);
+                        LOGGER.info("Inserting row at position " + k);
                     }
                 }
+
                 // We're no longer in the first pass
                 firstPass = false;
 
@@ -1655,6 +1675,12 @@ public class ColumnText {
                 currentLeading = 0;
                 if (!(skipHeader || table.isComplete()))
                 	yLine += footerHeight;
+                while (k < table.size()) {
+                	if (table.getRowHeight(k) > 0 || table.hasRowspan(k)) {
+                		break;
+                	}
+                	k++;
+                }
                 if (k >= table.size()) {
                 	// Use up space no more than left
                 	if(yLine - table.spacingAfter() < minY) {

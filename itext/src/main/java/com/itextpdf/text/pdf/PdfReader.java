@@ -277,6 +277,7 @@ public class PdfReader implements PdfViewerPreferences {
         this.eofPos = reader.eofPos;
         this.freeXref = reader.freeXref;
         this.lastXref = reader.lastXref;
+        this.newXrefType = reader.newXrefType;
         this.tokens = new PRTokeniser(reader.tokens.getSafeFile());
         if (reader.decrypt != null)
             this.decrypt = new PdfEncryption(reader.decrypt);
@@ -3110,7 +3111,7 @@ public class PdfReader implements PdfViewerPreferences {
                     PdfObject v = dic.get(key);
                     if (v.isIndirect()) {
                         int num = ((PRIndirectReference)v).getNumber();
-                        if (num >= xrefObj.size() || !partial && xrefObj.get(num) == null) {
+                        if (num < 0 || num >= xrefObj.size() || !partial && xrefObj.get(num) == null) {
                             dic.put(key, PdfNull.PDFNULL);
                             continue;
                         }

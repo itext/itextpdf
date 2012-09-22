@@ -51,6 +51,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -116,6 +117,51 @@ public class OcspClientBouncyCastle implements OcspClient {
         return gen.build();
     }
 
+    private OCSPResp getOcspResponse(X509Certificate checkCert, X509Certificate rootCert, String url) throws GeneralSecurityException, OCSPException, IOException, OperatorException {
+        if (checkCert == null || rootCert == null)
+            return null;
+        if (url == null) {
+            url = CertificateUtil.getOCSPURL(checkCert);
+        }
+        if (url == null)
+            return null;
+        LOGGER.info("Getting OCSP from " + url);
+        OCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
+        byte[] array = request.getEncoded();
+        URL urlt = new URL(url);
+        HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
+        con.setRequestProperty("Content-Type", "application/ocsp-request");
+        con.setRequestProperty("Accept", "application/ocsp-response");
+        con.setDoOutput(true);
+        OutputStream out = con.getOutputStream();
+        DataOutputStream dataOut = new DataOutputStream(new BufferedOutputStream(out));
+        dataOut.write(array);
+        dataOut.flush();
+        dataOut.close();
+        if (con.getResponseCode() / 100 != 2) {
+            throw new IOException(MessageLocalization.getComposedMessage("invalid.http.response.1", con.getResponseCode()));
+        }
+        //Get Response
+        InputStream in = (InputStream) con.getContent();
+        return new OCSPResp(RandomAccessFileOrArray.InputStreamToArray(in));
+    }
+    
+    public BasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
+        try {
+            OCSPResp ocspResponse = getOcspResponse(checkCert, rootCert, url);
+            if (ocspResponse == null)
+            	return null;
+            if (ocspResponse.getStatus() != 0)
+                return null;
+            return (BasicOCSPResp) ocspResponse.getResponseObject();
+        }
+        catch (Exception ex) {
+            if (LOGGER.isLogging(Level.ERROR))
+                LOGGER.error(ex.getMessage());
+        }
+        return null;
+    }
+    
 	/**
 	 * Gets an encoded byte array with OCSP validation. The method should not throw an exception.
      * @param checkCert to certificate to check
@@ -126,35 +172,7 @@ public class OcspClientBouncyCastle implements OcspClient {
 	 */
     public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
-            if (checkCert == null || rootCert == null)
-                return null;
-            if (url == null) {
-                url = CertificateUtil.getOCSPURL(checkCert);
-            }
-            if (url == null)
-                return null;
-            OCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
-            byte[] array = request.getEncoded();
-            URL urlt = new URL(url);
-            HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
-            con.setRequestProperty("Content-Type", "application/ocsp-request");
-            con.setRequestProperty("Accept", "application/ocsp-response");
-            con.setDoOutput(true);
-            OutputStream out = con.getOutputStream();
-            DataOutputStream dataOut = new DataOutputStream(new BufferedOutputStream(out));
-            dataOut.write(array);
-            dataOut.flush();
-            dataOut.close();
-            if (con.getResponseCode() / 100 != 2) {
-                throw new IOException(MessageLocalization.getComposedMessage("invalid.http.response.1", con.getResponseCode()));
-            }
-            //Get Response
-            InputStream in = (InputStream) con.getContent();
-            OCSPResp ocspResponse = new OCSPResp(RandomAccessFileOrArray.InputStreamToArray(in));
-
-            if (ocspResponse.getStatus() != 0)
-                throw new IOException(MessageLocalization.getComposedMessage("invalid.status.1", ocspResponse.getStatus()));
-            BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
+            BasicOCSPResp basicResponse = getBasicOCSPResp(checkCert, rootCert, url);
             if (basicResponse != null) {
                 SingleResp[] responses = basicResponse.getResponses();
                 if (responses.length == 1) {
@@ -174,7 +192,7 @@ public class OcspClientBouncyCastle implements OcspClient {
         }
         catch (Exception ex) {
             if (LOGGER.isLogging(Level.ERROR))
-                LOGGER.error("OcspClientBouncyCastle", ex);
+                LOGGER.error(ex.getMessage());
         }
         return null;
     }

@@ -43,13 +43,17 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfSignature;
 import com.itextpdf.text.pdf.PdfSignatureAppearance;
 import com.itextpdf.text.pdf.PdfString;
+
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.HashMap;
 
@@ -64,9 +68,11 @@ public class LtvTimestamp {
      * @param tsa the timestamp generator
      * @param signatureName the signature name or null to have a name generated
      * automatically
-     * @throws Exception
+     * @throws DocumentException 
+     * @throws IOException 
+     * @throws GeneralSecurityException
      */
-    public static void timestamp(PdfSignatureAppearance sap, TSAClient tsa, String signatureName) throws Exception {
+    public static void timestamp(PdfSignatureAppearance sap, TSAClient tsa, String signatureName) throws IOException, DocumentException, GeneralSecurityException {
         int contentEstimated = tsa.getTokenSizeEstimate();
         sap.setVisibleSignature(new Rectangle(0,0,0,0), 1, signatureName);
 
@@ -85,10 +91,16 @@ public class LtvTimestamp {
             messageDigest.update(buf, 0, n);
         }
         byte[] tsImprint = messageDigest.digest();
-        byte[] tsToken = tsa.getTimeStampToken(tsImprint);
+        byte[] tsToken;
+        try {
+        	tsToken = tsa.getTimeStampToken(tsImprint);
+        }
+        catch(Exception e) {
+        	throw new GeneralSecurityException(e);
+        }
 
         if (contentEstimated + 2 < tsToken.length)
-            throw new Exception("Not enough space");
+            throw new IOException("Not enough space");
 
         byte[] paddedSig = new byte[contentEstimated];
         System.arraycopy(tsToken, 0, paddedSig, 0, tsToken.length);

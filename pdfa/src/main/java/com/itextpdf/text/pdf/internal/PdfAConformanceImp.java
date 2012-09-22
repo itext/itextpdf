@@ -68,8 +68,27 @@ public class PdfAConformanceImp implements PdfAConformance {
             return;
         switch (key) {
             case PdfIsoKeys.PDFISOKEY_FONT:
-                if (!((BaseFont)obj1).isEmbedded())
-                    throw new PdfAConformanceException(MessageLocalization.getComposedMessage("all.the.fonts.must.be.embedded.this.one.isn.t.1", ((BaseFont) obj1).getPostscriptFontName()));
+                BaseFont bf = (BaseFont)obj1;
+                if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
+                    PdfStream prs = null;
+                    PdfDictionary fontDictionary = ((DocumentFont)bf).getFontDictionary();
+                    PdfDictionary fontDescriptor = fontDictionary.getAsDict(PdfName.FONTDESCRIPTOR);
+                    if (fontDescriptor != null) {
+                        prs = fontDescriptor.getAsStream(PdfName.FONTFILE);
+                        if (prs == null) {
+                            prs = fontDescriptor.getAsStream(PdfName.FONTFILE2);
+                        }
+                        if (prs == null) {
+                            prs = fontDescriptor.getAsStream(PdfName.FONTFILE3);
+                        }
+                    }
+                    if (prs == null) {
+                        throw new PdfAConformanceException(MessageLocalization.getComposedMessage("all.the.fonts.must.be.embedded.this.one.isn.t.1", ((BaseFont) obj1).getPostscriptFontName()));
+                    }
+                } else {
+                    if (!bf.isEmbedded())
+                        throw new PdfAConformanceException(MessageLocalization.getComposedMessage("all.the.fonts.must.be.embedded.this.one.isn.t.1", ((BaseFont) obj1).getPostscriptFontName()));
+                }
                 break;
             case PdfIsoKeys.PDFISOKEY_IMAGE:
                 PdfImage image = (PdfImage)obj1;

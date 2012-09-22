@@ -333,19 +333,19 @@ public class Jpeg extends Image {
                         		continue;
                         	}
                         	k+=4;
-                        	int dx = (byteappd[k] << 8) + byteappd[k+1];
+                        	int dx = (byteappd[k] << 8) + (byteappd[k+1] & 0xff);
                         	k+=2;
                         	// skip 2 unknown bytes
                         	k+=2;
-                        	int unitsx = (byteappd[k] << 8) + byteappd[k+1];
+                        	int unitsx = (byteappd[k] << 8) + (byteappd[k+1] & 0xff);
                         	k+=2;
                         	// skip 2 unknown bytes
                         	k+=2;
-                        	int dy = (byteappd[k] << 8) + byteappd[k+1];
+                        	int dy = (byteappd[k] << 8) + (byteappd[k+1] & 0xff);
                         	k+=2;
                         	// skip 2 unknown bytes
                         	k+=2;
-                        	int unitsy = (byteappd[k] << 8) + byteappd[k+1];
+                        	int unitsy = (byteappd[k] << 8) + (byteappd[k+1] & 0xff);
                         	
                         	if (unitsx == 1 || unitsx == 2) {
                         		dx = (unitsx == 2 ? (int)(dx * 2.54f + 0.5f) : dx);

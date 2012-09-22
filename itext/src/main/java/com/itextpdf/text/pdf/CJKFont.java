@@ -43,13 +43,6 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Utilities;
@@ -58,10 +51,12 @@ import com.itextpdf.text.pdf.fonts.cmaps.CMapCache;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapCidByte;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapCidUni;
 import com.itextpdf.text.pdf.fonts.cmaps.CMapUniCid;
+
 import java.io.ByteArrayOutputStream;
-import java.util.HashSet;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
@@ -745,7 +740,7 @@ class CJKFont extends BaseFont {
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
      */
     @Override
-    byte[] convertToBytes(String text) {
+    public byte[] convertToBytes(String text) {
         if (cidDirect)
             return super.convertToBytes(text);
         try {

@@ -50,14 +50,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * An implementation of the CrlClient that fetches the CRL bytes
@@ -84,12 +85,7 @@ public class CrlClientOnline implements CrlClient {
      */
     public CrlClientOnline(String... crls) {
     	for (String url : crls) {
-    		try {
-				urls.add(new URL(url));
-	            LOGGER.info("Added CRL url: " + url);
-			} catch (MalformedURLException e) {
-	            LOGGER.info("Skipped CRL url: " + url);
-			}
+    		addUrl(url);
     	}
     }
     
@@ -98,8 +94,7 @@ public class CrlClientOnline implements CrlClient {
      */
     public CrlClientOnline(URL... crls) {
     	for (URL url : urls) {
-    		urls.add(url);
-            LOGGER.info("Added CRL url: " + url);
+    		addUrl(url);
     	}
     }
     
@@ -109,18 +104,38 @@ public class CrlClientOnline implements CrlClient {
     public CrlClientOnline(Certificate[] chain) {
         for (int i = 0; i < chain.length; i++) {
         	X509Certificate cert = (X509Certificate)chain[i];
-        	String url = null;
-			try {
-	            LOGGER.info("Checking certificate: " + cert.getSubjectDN());
-				url = CertificateUtil.getCRLURL(cert);
-				if (url != null) {
-					urls.add(new URL(url));
-		            LOGGER.info("Added CRL url: " + url);
-				}
-			} catch (Exception e) {
-	            LOGGER.info("Skipped CRL url: " + url);
+            LOGGER.info("Checking certificate: " + cert.getSubjectDN());
+        	try {
+				addUrl(CertificateUtil.getCRLURL(cert));
+			} catch (CertificateParsingException e) {
+	            LOGGER.info("Skipped CRL url (certificate could not be parsed)");
 			}
         }
+    }
+    
+    /**
+     * Adds an URL to the list of CRL URLs
+     * @param url	an URL in the form of a String
+     */
+    protected void addUrl(String url) {
+    	try {
+			addUrl(new URL(url));
+		} catch (MalformedURLException e) {
+            LOGGER.info("Skipped CRL url (malformed): " + url);
+		}
+    }
+
+    /**
+     * Adds an URL to the list of CRL URLs
+     * @param url	an URL object
+     */
+    protected void addUrl(URL url) {
+    	if (urls.contains(url)) {
+            LOGGER.info("Skipped CRL url (duplicate): " + url);
+    		return;
+    	}
+    	urls.add(url);
+        LOGGER.info("Added CRL url: " + url);
     }
     
     /**

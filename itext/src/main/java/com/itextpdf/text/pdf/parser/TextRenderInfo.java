@@ -45,6 +45,7 @@ package com.itextpdf.text.pdf.parser;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.DocumentFont;
@@ -83,6 +84,20 @@ public class TextRenderInfo {
     }
     
     /**
+     * Used for creating sub-TextRenderInfos for each individual character
+     * @param parent the parent TextRenderInfo
+     * @param charIndex the index of the character that this TextRenderInfo will represent
+     * @param horizontalOffset the unscaled horizontal offset of the character that this TextRenderInfo represents
+     * @since 5.3.3
+     */
+    private TextRenderInfo(TextRenderInfo parent, int charIndex, float horizontalOffset){
+    	this.text = parent.text.substring(charIndex, charIndex+1);
+    	this.textToUserSpaceTransformMatrix = new Matrix(horizontalOffset, 0).multiply(parent.textToUserSpaceTransformMatrix);
+    	this.gs = parent.gs;
+    	this.markedContentInfos = parent.markedContentInfos;
+    }
+    
+    /**
      * @return the text to render
      */
     public String getText(){ 
@@ -115,36 +130,43 @@ public class TextRenderInfo {
     
     /**
      * Gets the baseline for the text (i.e. the line that the text 'sits' on)
+     * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
      * @return the baseline line segment
      * @since 5.0.2
      */
     public LineSegment getBaseline(){
-        return getUnscaledBaselineWithOffset(0).transformBy(textToUserSpaceTransformMatrix);
+        return getUnscaledBaselineWithOffset(0 + gs.rise).transformBy(textToUserSpaceTransformMatrix);
     }
     
     /**
      * Gets the ascentline for the text (i.e. the line that represents the topmost extent that a string of the current font could have)
+     * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
      * @return the ascentline line segment
      * @since 5.0.2
      */
     public LineSegment getAscentLine(){
         float ascent = gs.getFont().getFontDescriptor(BaseFont.ASCENT, gs.getFontSize());
-        return getUnscaledBaselineWithOffset(ascent).transformBy(textToUserSpaceTransformMatrix);
+        return getUnscaledBaselineWithOffset(ascent + gs.rise).transformBy(textToUserSpaceTransformMatrix);
     }
     
     /**
-     * Gets the descentline for the text (i.e. the line that represents the bottom most extent that a string of the current font could have)
+     * Gets the descentline for the text (i.e. the line that represents the bottom most extent that a string of the current font could have).
+     * This value includes the Rise of the draw operation - see {@link #getRise()} for the amount added by Rise
      * @return the descentline line segment
      * @since 5.0.2
      */
     public LineSegment getDescentLine(){
         // per getFontDescription() API, descent is returned as a negative number, so we apply that as a normal vertical offset
         float descent = gs.getFont().getFontDescriptor(BaseFont.DESCENT, gs.getFontSize());
-        return getUnscaledBaselineWithOffset(descent).transformBy(textToUserSpaceTransformMatrix);
+        return getUnscaledBaselineWithOffset(descent + gs.rise).transformBy(textToUserSpaceTransformMatrix);
     }
     
     private LineSegment getUnscaledBaselineWithOffset(float yOffset){
-        return new LineSegment(new Vector(0, yOffset, 1), new Vector(getUnscaledWidth(), yOffset, 1));
+    	
+    	// we need to correct the width so we don't have an extra character spacing value at the end.  The extra character space is important for tracking relative text coordinate systems, but should not be part of the baseline
+    	float correctedUnscaledWidth = getUnscaledWidth() - gs.characterSpacing * gs.horizontalScaling;
+    	
+        return new LineSegment(new Vector(0, yOffset, 1), new Vector(correctedUnscaledWidth, yOffset, 1));
     }
 
 	/**
@@ -155,14 +177,66 @@ public class TextRenderInfo {
 	public DocumentFont getFont() {
 		return gs.getFont();
 	}
-    
+
+// removing - this shouldn't be needed now that we are exposing getCharacterRenderInfos()
+//	/**
+//	 * @return The character spacing width, in user space units (Tc value, scaled to user space)
+//	 * @since 5.3.3
+//	 */
+//	public float getCharacterSpacing(){
+//		return convertWidthFromTextSpaceToUserSpace(gs.characterSpacing);
+//	}
+//	
+//	/**
+//	 * @return The word spacing width, in user space units (Tw value, scaled to user space)
+//	 * @since 5.3.3
+//	 */
+//	public float getWordSpacing(){
+//		return convertWidthFromTextSpaceToUserSpace(gs.wordSpacing);
+//	}
+	
+	/**
+	 * The rise represents how far above the nominal baseline the text should be rendered.  The {@link #getBaseline()}, {@link #getAscentLine()} and {@link #getDescentLine()} methods already include Rise.
+	 * This method is exposed to allow listeners to determine if an explicit rise was involved in the computation of the baseline (this might be useful, for example, for identifying superscript rendering)
+	 * @return The Rise for the text draw operation, in user space units (Ts value, scaled to user space)
+	 * @since 5.3.3
+	 */
+	public float getRise(){
+		if (gs.rise == 0) return 0; // optimize the common case
+		
+		return convertHeightFromTextSpaceToUserSpace(gs.rise);
+	}
+	
+	/**
+	 * 
+	 * @param width the width, in text space
+	 * @return the width in user space
+	 * @since 5.3.3
+	 */
+	private float convertWidthFromTextSpaceToUserSpace(float width){
+        LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(width, 0, 1));
+        LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
+        return userSpace.getLength();
+	}
+
+	/**
+	 * 
+	 * @param height the height, in text space
+	 * @return the height in user space
+	 * @since 5.3.3
+	 */
+	private float convertHeightFromTextSpaceToUserSpace(float height){
+        LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(0, height, 1));
+        LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
+        return userSpace.getLength();
+	}
+
+	
     /**
      * @return The width, in user space units, of a single space character in the current font
      */
     public float getSingleSpaceWidth(){
-        LineSegment textSpace = new LineSegment(new Vector(0, 0, 1), new Vector(getUnscaledFontSpaceWidth(), 0, 1));
-        LineSegment userSpace = textSpace.transformBy(textToUserSpaceTransformMatrix);
-        return userSpace.getLength();
+    	return convertWidthFromTextSpaceToUserSpace(getUnscaledFontSpaceWidth());
     }
     
     /**
@@ -215,4 +289,28 @@ public class TextRenderInfo {
         return totalWidth;
     }
     
+    /**
+     * Provides detail useful if a listener needs access to the position of each individual glyph in the text render operation
+     * @return A list of {@link TextRenderInfo} objects that represent each glyph used in the draw operation. The next effect is if there was a separate Tj opertion for each character in the rendered string
+     * @since 5.3.3
+     */
+    public List<TextRenderInfo> getCharacterRenderInfos(){
+        List<TextRenderInfo> rslt = new ArrayList<TextRenderInfo>(text.length());
+    	
+    	DocumentFont font = gs.font;
+        char[] chars = text.toCharArray();
+        float totalWidth = 0;
+        for (int i = 0; i < chars.length; i++) {
+            float w = font.getWidth(chars[i]) / 1000.0f;
+            float wordSpacing = chars[i] == 32 ? gs.wordSpacing : 0f;
+            
+            TextRenderInfo subInfo = new TextRenderInfo(this, i, totalWidth);
+            rslt.add(subInfo);
+            
+            totalWidth += (w * gs.fontSize + gs.characterSpacing + wordSpacing) * gs.horizontalScaling;
+            
+        }
+    	
+        return rslt;
+    }
 }

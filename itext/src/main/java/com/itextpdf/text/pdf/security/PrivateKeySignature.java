@@ -74,6 +74,9 @@ public class PrivateKeySignature implements ExternalSignature {
         this.provider = provider;
         this.hashAlgorithm = DigestAlgorithms.getDigest(DigestAlgorithms.getAllowedDigests(hashAlgorithm));
         encryptionAlgorithm = pk.getAlgorithm();
+        if (encryptionAlgorithm.startsWith("EC")) {
+        	encryptionAlgorithm = "ECDSA";
+        }
     }
 
     /**
@@ -108,7 +111,6 @@ public class PrivateKeySignature implements ExternalSignature {
             sig = Signature.getInstance(signMode);
         else
             sig = Signature.getInstance(signMode, provider);
-
         sig.initSign(pk);
         sig.update(b);
         return sig.sign();

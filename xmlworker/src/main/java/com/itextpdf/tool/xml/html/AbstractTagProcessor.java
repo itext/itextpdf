@@ -240,7 +240,7 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 			List<Element> list = new ArrayList<Element>();
 			if (currentContent.size() > 0) {
 				if (addNewLines) {
-					Paragraph p = new Paragraph(Float.NaN);
+					Paragraph p = createParagraph();
                     p.setMultipliedLeading(1.2f);
 					for (Element e : currentContent) {
                         if (e instanceof LineSeparator) {
@@ -306,4 +306,8 @@ public abstract class AbstractTagProcessor implements TagProcessor, CssAppliersA
 	public CssAppliers getCssAppliers() {
 		return cssAppliers;
 	}
+
+    protected Paragraph createParagraph() {
+        return new Paragraph(Float.NaN);
+    }
 }
