@@ -43,11 +43,7 @@
  */
 package com.itextpdf.tool.xml;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Represents an encountered tag.
@@ -64,6 +60,7 @@ public class Tag implements Iterable<Tag> {
 	private final List<Tag> children;
 	private final String ns;
     private Object lastMarginBottom = null;
+
 
 	/**
 	 * Construct a tag.
@@ -93,7 +90,7 @@ public class Tag implements Iterable<Tag> {
 		this.tag = tag;
 		this.attributes = attr;
 		this.css = css;
-		this.children = new ArrayList<Tag>(0);
+		this.children = new LinkedList<Tag>();
 		if (ns == null) {
 			throw new NullPointerException("NS cannot be null");
 		}
@@ -126,7 +123,6 @@ public class Tag implements Iterable<Tag> {
 	 */
 	public void setParent(final Tag parent) {
 		this.parent = parent;
-
 	}
 
 	/**
@@ -187,7 +183,6 @@ public class Tag implements Iterable<Tag> {
 	public void addChild(final Tag t) {
 		t.setParent(this);
 		this.children.add(t);
-
 	}
 
 	/**
@@ -206,7 +201,7 @@ public class Tag implements Iterable<Tag> {
 	 * @return the children tags of this tag with the given name.
 	 */
 	public List<Tag> getChildren(final String name) {
-		List<Tag> named = new ArrayList<Tag>();
+		List<Tag> named = new LinkedList<Tag>();
 		for(Tag child: this.children) {
 			if(child.getName().equals(name)) {
 				named.add(child);
@@ -278,7 +273,7 @@ public class Tag implements Iterable<Tag> {
 	 * @return the child
 	 */
 	public Tag getChild(final String name, final String ns) {
-		return getChild(name, ns, false);
+        return getChild(name, ns, false);
 	}
 
 	/**
@@ -289,7 +284,7 @@ public class Tag implements Iterable<Tag> {
 	 * @return the child if found
 	 */
 	public Tag getChild(final String name, final String ns, final boolean recursive) {
-		return recursiveGetChild(this, name, ns, recursive);
+        return recursiveGetChild(this, name, ns, recursive);
 	}
 
 	/**
@@ -328,7 +323,7 @@ public class Tag implements Iterable<Tag> {
 	 * @return true if a child with the given name and ns is found.
 	 */
 	public boolean hasChild(final String name, final String ns, final boolean recursive) {
-		if (recursive) {
+        if (recursive) {
 			return recursiveHasChild(this, name, ns, true);
 		} else {
 			return recursiveHasChild(this, name, ns, false);
@@ -344,9 +339,10 @@ public class Tag implements Iterable<Tag> {
 	 */
 	private boolean recursiveHasChild(final Tag tag, final String name, final String ns, final boolean recursive) {
 		for (Tag t : tag) {
-			if (t.compareTag(new Tag(name, ns))) {
+			if (t.tag.equals(name) && t.ns.equals(ns)) {
 				return true;
 			} else if (recursive) {
+
 				if (recursiveHasChild(t, name, ns, recursive)) {
 					return true;
 				}
@@ -364,7 +360,7 @@ public class Tag implements Iterable<Tag> {
 	 */
 	private Tag recursiveGetChild(final Tag tag, final String name, final String ns, final boolean recursive) {
 		for (Tag t : tag) {
-			if (t.compareTag(new Tag(name, ns))) {
+			if (t.tag.equals(name) && t.ns.equals(ns)) {
 				return t;
 			} else if (recursive) {
 				Tag rT = null;
