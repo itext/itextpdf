@@ -44,6 +44,8 @@
 package com.itextpdf.text.pdf.security;
 
 import com.itextpdf.text.Utilities;
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.security.OcspClient;
 import com.itextpdf.text.pdf.security.CrlClient;
 import com.itextpdf.text.error_messages.MessageLocalization;
@@ -86,6 +88,9 @@ import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
  * @author Paulo Soares
  */
 public class LtvVerification {
+	
+	private Logger LOGGER = LoggerFactory.getLogger(LtvVerification.class);
+	
     private PdfStamper stp;
     private PdfWriter writer;
     private PdfReader reader;
@@ -171,17 +176,23 @@ public class LtvVerification {
         if (used)
             throw new IllegalStateException(MessageLocalization.getComposedMessage("verification.already.output"));
         PdfPKCS7 pk = acroFields.verifySignature(signatureName);
+        LOGGER.info("Adding verification for " + signatureName);
         Certificate[] xc = pk.getSignCertificateChain();
+        X509Certificate cert;
         ValidationData vd = new ValidationData();
         for (int k = 0; k < xc.length; ++k) {
+        	cert = (X509Certificate)xc[k];
+        	System.out.println("Certificate: " + cert.getSubjectDN());
             byte[] ocspEnc = null;
             if (ocsp != null && level != Level.CRL && k < xc.length - 1) {
-                ocspEnc = ocsp.getEncoded((X509Certificate)xc[k], (X509Certificate)xc[k + 1], null);
-                if (ocspEnc != null)
+                ocspEnc = ocsp.getEncoded(cert, (X509Certificate)xc[k + 1], null);
+                if (ocspEnc != null) {
                     vd.ocsps.add(buildOCSPResponse(ocspEnc));
+                    LOGGER.info("OCSP added");
+                }
             }
             if (crl != null && (level == Level.CRL || level == Level.OCSP_CRL || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
-                Collection<byte[]> cims = crl.getEncoded((X509Certificate)xc[k], null);
+                Collection<byte[]> cims = crl.getEncoded(cert, null);
                 if (cims != null) {
                     for (byte[] cim : cims) {
                         boolean dup = false;
@@ -191,8 +202,10 @@ public class LtvVerification {
                                 break;
                             }
                         }
-                        if (!dup)
+                        if (!dup) {
                             vd.crls.add(cim);
+                            LOGGER.info("CRL added");
+                        }
                     }
                 }
             }

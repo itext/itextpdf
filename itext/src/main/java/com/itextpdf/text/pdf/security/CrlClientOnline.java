@@ -149,14 +149,15 @@ public class CrlClientOnline implements CrlClient {
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
         if (checkCert == null)
             return null;
-        if (urls.size() == 0) {
+        List<URL> urllist = new ArrayList<URL>(urls);
+        if (urllist.size() == 0) {
         	LOGGER.info("Looking for CRL for certificate " + checkCert.getSubjectDN());
         	try {
         		if (url == null)
         			url = CertificateUtil.getCRLURL(checkCert);
         		if (url == null)
         			throw new NullPointerException();
-        		urls.add(new URL(url));
+        		urllist.add(new URL(url));
         		LOGGER.info("Found CRL url: " + url);
         	}
         	catch (Exception e) {
@@ -164,7 +165,7 @@ public class CrlClientOnline implements CrlClient {
         	}
         }
         ArrayList<byte[]> ar = new ArrayList<byte[]>();
-        for (URL urlt : urls) {
+        for (URL urlt : urllist) {
         	try {
         		LOGGER.info("Checking CRL: " + urlt);
         		HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
