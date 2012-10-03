@@ -334,7 +334,7 @@ public class ColumnText {
         splittedRow = org.splittedRow;
         if (org.composite) {
             compositeElements = new LinkedList<Element>(org.compositeElements);
-            if (splittedRow != -1) {
+            if (splittedRow != -1 && compositeElements.size() > 0) {
                 PdfPTable table = (PdfPTable)compositeElements.getFirst();
                 compositeElements.set(0, new PdfPTable(table));
             }
