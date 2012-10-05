@@ -1,5 +1,5 @@
 /*
- * $Id: LtvVerification.java 5437 2012-10-01 13:17:59Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
@@ -49,17 +49,13 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -241,7 +237,7 @@ public class LtvValidation {
 		// Get the certificate chain
 		Certificate[] chain = pkcs7.getSignCertificateChain();
 		if (chain.length < 2)
-        	throw new GeneralSecurityException("Self-signed TSA certificates can't be checked");
+        	throw new GeneralSecurityException("Self-signed certificates can't be checked");
 		// Validate the chain; get signing and issuer certificate
 		checkCertificateValidity(chain);
 		X509Certificate signCert = (X509Certificate) chain[0];

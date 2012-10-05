@@ -1,5 +1,5 @@
 /*
- * $Id: CertificateVerification.java 5400 2012-09-12 10:12:17Z blowagie $
+ * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 1998-2012 1T3XT BVBA
