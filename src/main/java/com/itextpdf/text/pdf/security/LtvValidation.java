@@ -48,12 +48,18 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -76,6 +82,7 @@ import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.security.LtvVerification.CertificateOption;
 
 /**
  * Verifies the signatures in an LTV document.
@@ -83,6 +90,11 @@ import com.itextpdf.text.pdf.PdfReader;
 public class LtvValidation {
 	/** The Logger instance */
 	protected final static Logger LOGGER = LoggerFactory.getLogger(LtvValidation.class);
+	
+	/** Do we need to check all certificate, or only the signing certificate? */
+	protected CertificateOption option = CertificateOption.SIGNING_CERTIFICATE;
+	/** A key store against which certificates can be verified. */
+	protected KeyStore keyStore = null;
 	
 	/** A reader object for the revision that is being verified. */
 	protected PdfReader reader;
@@ -108,10 +120,9 @@ public class LtvValidation {
 	 * @throws OperatorCreationException
 	 */
 	public void verify() throws IOException, GeneralSecurityException, OCSPException, OperatorCreationException {
-		while (pkcs7 != null && pkcs7.isTsp()) {
-			verifyDocumentLevelTimestamp();
+		while (pkcs7 != null) {
+			verifySignature();
 		}
-		verifySignatures();
 	}
 	
 	/**
@@ -130,6 +141,35 @@ public class LtvValidation {
 	}
 	
 	/**
+	 * Switches to the previous revision.
+	 * @throws IOException
+	 * @throws GeneralSecurityException 
+	 */
+	public void switchToPreviousRevision() throws IOException, GeneralSecurityException {
+		LOGGER.info("Switching to previous revision.");
+		dss = reader.getCatalog().getAsDict(PdfName.DSS);
+		Calendar cal = pkcs7.getTimeStampDate();
+		if (cal == null)
+			cal = pkcs7.getSignDate();
+		// TODO: get date from signature
+	    signDate = cal.getTime();
+		List<String> names = fields.getSignatureNames();
+		if (names.size() > 1) {
+			signatureName = names.get(names.size() - 2);
+			reader = new PdfReader(fields.extractRevision(signatureName));
+			this.fields = reader.getAcroFields();
+			names = fields.getSignatureNames();
+			signatureName = names.get(names.size() - 1);
+			pkcs7 = coversWholeDocument();
+			LOGGER.info(String.format("Checking %ssignature %s", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+		}
+		else {
+			LOGGER.info("No signatures in revision");
+			pkcs7 = null;
+		}
+	}
+	
+	/**
 	 * Checks if the signature covers the whole document
 	 * and throws an exception if the document was altered
 	 * @return a PdfPKCS7 object
@@ -137,9 +177,6 @@ public class LtvValidation {
 	 */
 	protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
 		PdfPKCS7 pkcs7 = fields.verifySignature(signatureName);
-		if (!pkcs7.isTsp()) {
-			LOGGER.warn("The final revision of this document doesn't contain a document-level timestamp.");
-		}
 		if (fields.signatureCoversWholeDocument(signatureName)) {
 			LOGGER.info("The document-level timestamp covers whole document.");
 		}
@@ -156,27 +193,21 @@ public class LtvValidation {
 	}
 	
 	/**
-	 * Switches to the previous revision.
-	 * @throws IOException
+	 * Sets the certificate option.
+	 * @param	option	Either CertificateOption.SIGNING_CERTIFICATE (default) or CertificateOption.WHOLE_CHAIN
 	 */
-	public void switchToPreviousRevision() throws IOException {
-		LOGGER.info("Switching to previous revision.");
-		dss = reader.getCatalog().getAsDict(PdfName.DSS);
-	    signDate = pkcs7.getTimeStampDate().getTime();
-		List<String> names = fields.getSignatureNames();
-		if (names.size() > 1) {
-			signatureName = names.get(names.size() - 2);
-			reader = new PdfReader(fields.extractRevision(signatureName));
-			this.fields = reader.getAcroFields();
-			names = fields.getSignatureNames();
-			signatureName = names.get(names.size() - 1);
-			pkcs7 = fields.verifySignature(signatureName, "BC");
-			LOGGER.info(String.format("Checking %ssignature %s", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
-		}
-		else {
-			LOGGER.info("No signatures in revision");
-		}
+	public void setCertificateOption(CertificateOption option) {
+		this.option = option;
 	}
+	
+	/**
+	 * Sets the Key Store against which a certificate can be checked.
+	 * @param keyStore a root store
+	 */
+	public void setKeyStore(KeyStore keyStore) {
+		this.keyStore = keyStore;
+	}
+	
 
 	/**
 	 * Checks the certificates in a certificate chain:
@@ -205,8 +236,8 @@ public class LtvValidation {
 	 * @throws OCSPException
 	 * @throws OperatorCreationException
 	 */
-	public void verifyDocumentLevelTimestamp() throws GeneralSecurityException, IOException, OCSPException, OperatorCreationException {
-        LOGGER.info("Verifying document-level timestamp.");
+	public void verifySignature() throws GeneralSecurityException, IOException, OCSPException, OperatorCreationException {
+        LOGGER.info("Verifying signature.");
 		// Get the certificate chain
 		Certificate[] chain = pkcs7.getSignCertificateChain();
 		if (chain.length < 2)
@@ -215,6 +246,11 @@ public class LtvValidation {
 		checkCertificateValidity(chain);
 		X509Certificate signCert = (X509Certificate) chain[0];
 		X509Certificate issuerCert = (X509Certificate) chain[1];
+		
+		// Trusted Anchors
+		if (keyStore != null) {
+			
+		}
 		
 		// Certificate Revocation Lists
 		List<X509CRL> crls;
@@ -259,51 +295,6 @@ public class LtvValidation {
 		if (ocspFound)
 			LOGGER.info("Valid OCSP found!");
 		switchToPreviousRevision();
-	}
-	
-	/**
-	 * Verifies the signatures.
-	 * @throws GeneralSecurityException
-	 * @throws IOException
-	 * @throws OCSPException
-	 * @throws OperatorCreationException
-	 */
-	public void verifySignatures() throws GeneralSecurityException, IOException, OCSPException, OperatorCreationException {
-		LOGGER.info("Verifying signatures.");
-		PdfPKCS7 pkcs7;
-		for (String name : fields.getSignatureNames()) {
-			LOGGER.info("Signature: " + name);
-			pkcs7 = fields.verifySignature(name);
-			// get the certificate chain
-			Certificate[] chain = pkcs7.getSignCertificateChain();
-			if (chain.length < 2)
-	        	throw new GeneralSecurityException("Self-signed TSA certificates can't be checked");
-			// Check the validity; get signing cert and issuer cert
-			checkCertificateValidity(chain);
-			X509Certificate signCert = (X509Certificate) chain[0];
-			X509Certificate issuerCert = (X509Certificate) chain[1];
-			// Verify the signature
-			if (pkcs7.verify()) {
-				LOGGER.info("Integrity verified!");
-				// Veriy CRLs from DSS
-				List<X509CRL> crls = getCRLsFromDSS();
-				boolean crlFound = verifyAgainstCrls(signCert, issuerCert, crls);
-				// Verify OCSPs from DSS
-				List<BasicOCSPResp> ocsps = getOCSPResponsesFromDSS();
-				// If no valid CRLs or OCSP responses are found:
-				boolean ocspFound = verifyAgainstOCSPs(signCert, issuerCert, ocsps);
-				if (!crlFound && !ocspFound)
-					throw new GeneralSecurityException("Couldn't verify with CRL or OCSP");
-				// Feedback
-				if (crlFound)
-					LOGGER.info("Valid CRL found!");
-				if (ocspFound)
-					LOGGER.info("Valid OCSP found!");
-			}
-			else {
-				throw new GeneralSecurityException("The document was altered after the final signature was applied.");
-			}
-		} 
 	}
 	
 	/**

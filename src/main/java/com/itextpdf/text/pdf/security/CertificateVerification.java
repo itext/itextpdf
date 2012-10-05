@@ -48,10 +48,12 @@ import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
@@ -116,14 +118,15 @@ public class CertificateVerification {
 	 * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
 	 * failed certificate and <CODE>error</CODE> is the error message
 	 */
-	public static Object[] verifyCertificates(Certificate certs[], KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
-	    if (calendar == null)
+	public static List<VerificationError> verifyCertificates(Certificate certs[], KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
+	    List<VerificationError> result = new ArrayList<VerificationError>();
+		if (calendar == null)
 	        calendar = new GregorianCalendar();
 	    for (int k = 0; k < certs.length; ++k) {
 	        X509Certificate cert = (X509Certificate)certs[k];
 	        String err = verifyCertificate(cert, crls, calendar);
 	        if (err != null)
-	            return new Object[]{cert, err};
+	            result.add(new VerificationError(cert, err));
 	        try {
 	            for (Enumeration<String> aliases = keystore.aliases(); aliases.hasMoreElements();) {
 	                try {
@@ -135,7 +138,7 @@ public class CertificateVerification {
 	                        continue;
 	                    try {
 	                        cert.verify(certStoreX509.getPublicKey());
-	                        return null;
+	                        return result;
 	                    }
 	                    catch (Exception e) {
 	                        continue;
@@ -159,10 +162,13 @@ public class CertificateVerification {
 	            catch (Exception e) {
 	            }
 	        }
-	        if (j == certs.length)
-	            return new Object[]{cert, "Cannot be verified against the KeyStore or the certificate chain"};
+	        if (j == certs.length) {
+	        	result.add(new VerificationError(cert, "Cannot be verified against the KeyStore or the certificate chain"));
+	        }
 	    }
-	    return new Object[]{null, "Invalid state. Possible circular certificate chain"};
+	    if (result.size() == 0)
+	    	result.add(new VerificationError(null, "Invalid state. Possible circular certificate chain"));
+	    return result;
 	}
 
 	/**
