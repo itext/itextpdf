@@ -56,6 +56,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -174,7 +175,7 @@ public class LtvValidation {
 	protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
 		PdfPKCS7 pkcs7 = fields.verifySignature(signatureName);
 		if (fields.signatureCoversWholeDocument(signatureName)) {
-			LOGGER.info("The document-level timestamp covers whole document.");
+			LOGGER.info("The timestamp covers whole document.");
 		}
 		else {
 			throw new GeneralSecurityException("Signature doesn't cover whole document.");
@@ -226,71 +227,108 @@ public class LtvValidation {
 	}
 	
 	/**
+	 * Checks if the certificate can be verified against a key in the key store with trusted anchors.
+	 */
+	public boolean verifyAgainstKeyStore(Certificate[] certs) throws GeneralSecurityException {
+		if (keyStore == null)
+			return false;
+
+	    for (int k = 0; k < certs.length; ++k) {
+	        X509Certificate cert = (X509Certificate)certs[k];
+	        for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
+	            try {
+	                String alias = aliases.nextElement();
+	                if (!keyStore.isCertificateEntry(alias))
+	                    continue;
+	                X509Certificate certStoreX509 = (X509Certificate)keyStore.getCertificate(alias);
+	                try {
+	                    cert.verify(certStoreX509.getPublicKey());
+	                    return true;
+	                }
+	                catch (Exception e) {
+	                    continue;
+	                }
+	            }
+	            catch (Exception ex) {
+	            }
+	        }
+        }
+		return false;
+	}
+	
+	/**
 	 * Verifies a document level timestamp.
 	 * @throws GeneralSecurityException
 	 * @throws IOException
 	 * @throws OCSPException
 	 * @throws OperatorCreationException
 	 */
-	public void verifySignature() throws GeneralSecurityException, IOException, OCSPException, OperatorCreationException {
+	public void verifySignature() throws GeneralSecurityException, IOException {
         LOGGER.info("Verifying signature.");
 		// Get the certificate chain
 		Certificate[] chain = pkcs7.getSignCertificateChain();
-		if (chain.length < 2)
-        	throw new GeneralSecurityException("Self-signed certificates can't be checked");
-		// Validate the chain; get signing and issuer certificate
 		checkCertificateValidity(chain);
-		X509Certificate signCert = (X509Certificate) chain[0];
-		X509Certificate issuerCert = (X509Certificate) chain[1];
+		boolean anchorFound = verifyAgainstKeyStore(chain);
+		// Feedback
+		if (anchorFound)
+			LOGGER.info("Verified against key store!");
 		
-		// Trusted Anchors
-		if (keyStore != null) {
-			
+		if (chain.length < 2 && !anchorFound)
+        	throw new GeneralSecurityException("Self-signed certificates can't be checked");
+		// get signing and issuer certificate
+		int total = Math.min(chain.length - 1, 2);
+		if (CertificateOption.WHOLE_CHAIN.equals(option)) {
+			if (!anchorFound) {
+				throw new GeneralSecurityException("No trusted anchor found to check complete chain.");
+			}
+			total = chain.length - 1;
 		}
-		
+		for (int i = 0; i < total; i++) {
+			X509Certificate signCertificate = (X509Certificate) chain[i];
+			LOGGER.info(signCertificate.getSubjectDN().getName());
+			if (!(isNotRevoked(signCertificate, (X509Certificate) chain[i + 1]) || anchorFound))
+				throw new GeneralSecurityException("Couldn't verify with CRL or OCSP or trusted anchor");
+		}
+		switchToPreviousRevision();
+	}
+	
+	public boolean isNotRevoked(X509Certificate signCert, X509Certificate issuerCert) throws GeneralSecurityException, IOException {
 		// Certificate Revocation Lists
-		List<X509CRL> crls;
-		// Get CRLs from DSS
-		if (dss != null) {
-			crls = getCRLsFromDSS();
-		}
-		// Or get CRL online
-		else {
+		List<X509CRL> crls = getCRLsFromDSS();
+		// Try to get CRL online
+		try {
 			String crlurl = CertificateUtil.getCRLURL(signCert);
-			CertificateFactory cf = CertificateFactory.getInstance("X.509");
-	        X509CRL crl = (X509CRL) cf.generateCRL(new URL(crlurl).openStream());
-	        crl.verify(issuerCert.getPublicKey());
-	        crls = new ArrayList<X509CRL>();
-	        crls.add(crl);
+			if (crlurl != null) {
+				LOGGER.info("Getting CRL from " + crlurl);
+				CertificateFactory cf = CertificateFactory.getInstance("X.509");
+				X509CRL crl = (X509CRL) cf.generateCRL(new URL(crlurl).openStream());
+				crl.verify(issuerCert.getPublicKey());
+				crls.add(crl);
+			}
+		}
+		catch(IOException e) {
+			// ignore the CRL
+		}
+		catch(GeneralSecurityException e) {
+			// ignore the CRL
 		}
 		// check the CRLs
 		boolean crlFound = verifyAgainstCrls(signCert, issuerCert, crls);
-		
-		// Online Certificate Status Protocol
-		List<BasicOCSPResp> ocsps;
-		// Get OCSP responses from DSS
-		if (dss != null) {
-			ocsps = getOCSPResponsesFromDSS();
-		}
-		// Or get OCSP response online
-		else {
-			ocsps = new ArrayList<BasicOCSPResp>();
-			BasicOCSPResp ocsp = getOcspResponse(signCert, issuerCert);
-			if (ocsp != null)
-				ocsps.add(ocsp);
-		}
-		// Check the OCSP responses
-		boolean ocspFound = verifyAgainstOCSPs(signCert, issuerCert, ocsps);
-		
-		// If no CRL or OCSP was available: we can't verify!
-		if (!crlFound && !ocspFound)
-			throw new GeneralSecurityException("Couldn't verify with CRL or OCSP");
-		// Feedback
 		if (crlFound)
 			LOGGER.info("Valid CRL found!");
+		
+		// Online Certificate Status Protocol
+		// Get OCSP responses from DSS
+		List<BasicOCSPResp>  ocsps = getOCSPResponsesFromDSS();
+		// Try to get OCSP response online
+		BasicOCSPResp ocsp = getOcspResponse(signCert, issuerCert);
+		if (ocsp != null)
+			ocsps.add(ocsp);
+		// Check the OCSP responses
+		boolean ocspFound = verifyAgainstOCSPs(signCert, issuerCert, ocsps);
 		if (ocspFound)
 			LOGGER.info("Valid OCSP found!");
-		switchToPreviousRevision();
+		return crlFound || ocspFound;
 	}
 	
 	/**
