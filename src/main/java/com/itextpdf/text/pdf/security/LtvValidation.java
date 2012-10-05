@@ -45,8 +45,6 @@ package com.itextpdf.text.pdf.security;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -59,17 +57,10 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.operator.ContentVerifierProvider;
 import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
@@ -84,7 +75,7 @@ import com.itextpdf.text.pdf.security.LtvVerification.CertificateOption;
 /**
  * Verifies the signatures in an LTV document.
  */
-public class LtvValidation {
+public class LtvValidation extends CertificateVerifier {
 	/** The Logger instance */
 	protected final static Logger LOGGER = LoggerFactory.getLogger(LtvValidation.class);
 	
@@ -92,6 +83,10 @@ public class LtvValidation {
 	protected CertificateOption option = CertificateOption.SIGNING_CERTIFICATE;
 	/** A key store against which certificates can be verified. */
 	protected KeyStore keyStore = null;
+	/** The class that is to be used to verify certificates. */
+	protected CertificateVerifier customVerifier;
+	/** Verify root. */
+	protected boolean verifyRootCertificate = true;
 	
 	/** A reader object for the revision that is being verified. */
 	protected PdfReader reader;
@@ -128,6 +123,7 @@ public class LtvValidation {
 	 * @throws GeneralSecurityException 
 	 */
 	public LtvValidation(PdfReader reader) throws GeneralSecurityException {
+		super(null);
 		this.reader = reader;
 		this.fields = reader.getAcroFields();
 		List<String> names = fields.getSignatureNames();
@@ -205,6 +201,19 @@ public class LtvValidation {
 		this.keyStore = keyStore;
 	}
 	
+	/**
+	 * Adds an extra Certificate verifier.
+	 */
+	public void setCustomVerifier(CertificateVerifier customVerifier) {
+		this.customVerifier = customVerifier;
+	}
+
+	/**
+	 * Set the verifyRootCertificate to false if you can't verify the root certificate.
+	 */
+	public void setVerifyRootCertificate(boolean verifyRootCertificate) {
+		this.verifyRootCertificate = verifyRootCertificate;
+	}
 
 	/**
 	 * Checks the certificates in a certificate chain:
@@ -276,59 +285,42 @@ public class LtvValidation {
 		if (chain.length < 2 && !anchorFound)
         	throw new GeneralSecurityException("Self-signed certificates can't be checked");
 		// get signing and issuer certificate
-		int total = Math.min(chain.length - 1, 2);
+		int total = 1;
 		if (CertificateOption.WHOLE_CHAIN.equals(option)) {
-			if (!anchorFound) {
-				throw new GeneralSecurityException("No trusted anchor found to check complete chain.");
-			}
-			total = chain.length - 1;
+			total = chain.length;
 		}
-		for (int i = 0; i < total; i++) {
-			X509Certificate signCertificate = (X509Certificate) chain[i];
-			LOGGER.info(signCertificate.getSubjectDN().getName());
-			if (!(isNotRevoked(signCertificate, (X509Certificate) chain[i + 1]) || anchorFound))
+		X509Certificate signCert;
+		X509Certificate issuerCert;
+		for (int i = 0; i < total; ) {
+			signCert = (X509Certificate) chain[i];
+			issuerCert = null;
+			i++;
+			if (i < chain.length)
+				issuerCert = (X509Certificate) chain[i];
+			LOGGER.info(signCert.getSubjectDN().getName());
+
+			CRLVerifier crlVerifier = new CRLVerifier(customVerifier, getCRLsFromDSS());
+			OCSPVerifier ocspVerifier = new OCSPVerifier(crlVerifier, getOCSPResponsesFromDSS());
+			verifier = new CertificateVerifier(ocspVerifier);
+			if (!(this.verify(signCert, issuerCert, signDate) || anchorFound))
 				throw new GeneralSecurityException("Couldn't verify with CRL or OCSP or trusted anchor");
 		}
 		switchToPreviousRevision();
 	}
 	
-	public boolean isNotRevoked(X509Certificate signCert, X509Certificate issuerCert) throws GeneralSecurityException, IOException {
-		// Certificate Revocation Lists
-		List<X509CRL> crls = getCRLsFromDSS();
-		// Try to get CRL online
-		try {
-			String crlurl = CertificateUtil.getCRLURL(signCert);
-			if (crlurl != null) {
-				LOGGER.info("Getting CRL from " + crlurl);
-				CertificateFactory cf = CertificateFactory.getInstance("X.509");
-				X509CRL crl = (X509CRL) cf.generateCRL(new URL(crlurl).openStream());
-				crl.verify(issuerCert.getPublicKey());
-				crls.add(crl);
-			}
-		}
-		catch(IOException e) {
-			// ignore the CRL
-		}
-		catch(GeneralSecurityException e) {
-			// ignore the CRL
-		}
-		// check the CRLs
-		boolean crlFound = verifyAgainstCrls(signCert, issuerCert, crls);
-		if (crlFound)
-			LOGGER.info("Valid CRL found!");
-		
-		// Online Certificate Status Protocol
-		// Get OCSP responses from DSS
-		List<BasicOCSPResp>  ocsps = getOCSPResponsesFromDSS();
-		// Try to get OCSP response online
-		BasicOCSPResp ocsp = getOcspResponse(signCert, issuerCert);
-		if (ocsp != null)
-			ocsps.add(ocsp);
-		// Check the OCSP responses
-		boolean ocspFound = verifyAgainstOCSPs(signCert, issuerCert, ocsps);
-		if (ocspFound)
-			LOGGER.info("Valid OCSP found!");
-		return crlFound || ocspFound;
+	/**
+	 * Verifies certificates against a list of CRLs and OCSP responses.
+	 * @param signingCert
+	 * @param issuerCert
+	 * @return true if the certificate was successfully verified.
+	 * @throws GeneralSecurityException
+	 * @throws IOException
+	 * @see com.itextpdf.text.pdf.security.CertificateVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate)
+	 */
+	public boolean verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
+		if (issuerCert == null)
+			return !verifyRootCertificate;
+		return verifier.verify(signCert, issuerCert, signDate);
 	}
 	
 	/**
@@ -351,64 +343,6 @@ public class LtvValidation {
 			crls.add(crl);
 		}
 		return crls;
-	}
-
-	
-	/**
-	 * Verifies a certificate against a list of CRLs
-	 * @param signCert	the signing certificate
-	 * @param issuerCert	the issuer of the signing certificate
-	 * @param crls	the list of CRLs
-	 * @return true if the certificate wasn't revoked by any matching CRL
-	 * @throws GeneralSecurityException
-	 */
-	public boolean verifyAgainstCrls(X509Certificate signCert, X509Certificate issuerCert, List<X509CRL> crls) throws GeneralSecurityException {
-		int validCrlsFound = 0;
-		for (X509CRL crl : crls) {
-			// We only check CRLs valid on the signing date for which the issuer matches
-			if (crl.getIssuerX500Principal().equals(signCert.getIssuerX500Principal())
-				&& signDate.after(crl.getThisUpdate()) && signDate.before(crl.getNextUpdate())) {
-				// the CRL has to be signed by the issuer of the signing certificate
-				try {
-					crl.verify(issuerCert.getPublicKey());
-				} catch (GeneralSecurityException e) {
-					continue;
-				}
-				// the signing certificate may not be revoked
-				if (crl.isRevoked(signCert)) {
-					throw new GeneralSecurityException("The certificate has been revoked.");
-				}
-				validCrlsFound++;
-			}
-		}
-		return validCrlsFound > 0;
-	}
-	
-	/**
-	 * Gets an OCSP response online and returns it if the status is GOOD
-	 * (without further checking).
-	 * @param signCert	the signing certificate
-	 * @param issuerCert	the issuer certificate
-	 * @return an OCSP response
-	 */
-	public BasicOCSPResp getOcspResponse(X509Certificate signCert, X509Certificate issuerCert) {
-		if (signCert == null && issuerCert == null) {
-			return null;
-		}
-		OcspClientBouncyCastle ocsp = new OcspClientBouncyCastle();
-		BasicOCSPResp ocspResp = ocsp.getBasicOCSPResp(
-				(X509Certificate) signCert, issuerCert, null);
-		if (ocspResp == null) {
-			return null;
-		}
-		SingleResp[] resp = ocspResp.getResponses();
-		for (int i = 0; i < resp.length; i++) {
-			Object status = resp[i].getCertStatus();
-			if (status == CertificateStatus.GOOD) {
-				return ocspResp;
-			}
-		}
-		return null;
 	}
 	
 	/**
@@ -435,81 +369,5 @@ public class LtvValidation {
 				}
 		}
 		return ocsps;
-	}
-	
-	
-	/**
-	 * Verifies a certificate against a list of OCSP responses
-	 * @param signCert	the signing certificate
-	 * @param issuerCert the issuer certificate
-	 * @param ocsps the list of BasicOCSPResp objects
-	 * @return true if the certificate corresponds with at least one valid OCSP response
-	 * @throws GeneralSecurityException
-	 * @throws IOException
-	 */
-	public boolean verifyAgainstOCSPs(X509Certificate signCert, X509Certificate issuerCert, List<BasicOCSPResp> ocsps) throws GeneralSecurityException, IOException {
-		int validOCSPsFound = 0;
-		BigInteger serialNumber = signCert.getSerialNumber();
-		for (BasicOCSPResp ocspResp : ocsps) {
-			// Getting the responses
-			SingleResp[] resp = ocspResp.getResponses();
-			for (int i = 0; i < resp.length; i++) {
-				// go to next if the revision was signed after the response expired
-				if (signDate.after(resp[i].getNextUpdate())) {
-					LOGGER.info(String.format("OCSP no longer valid: %s after %s", signDate, resp[i].getNextUpdate()));
-					continue;
-				}
-				if (!serialNumber.equals(resp[i].getCertID().getSerialNumber())) {
-					LOGGER.info("OCSP: Serial number doesn't match");
-					continue;
-				}
-				// go to next if the issuer doesn't match
-				try {
-					if (!resp[i].getCertID().matchesIssuer(new X509CertificateHolder(issuerCert.getEncoded()), new BcDigestCalculatorProvider())) {
-						LOGGER.info("OCSP: Issuers doesn't match.");
-						continue;
-					}
-				} catch (OCSPException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				// check the status of the certificate
-				Object status = resp[i].getCertStatus();
-				if (status == CertificateStatus.GOOD) {
-					// check if the OCSP response was genuine
-					verifyOCSPResponse(ocspResp, issuerCert);
-					validOCSPsFound++;
-				}
-			}
-		}
-		return validOCSPsFound > 0;
-	}
-	
-	/**
-	 * Verifies if an OCSP response is genuine
-	 * @param ocspResp	the OCSP response
-	 * @param issuerCert	the issuer certificate
-	 * @throws GeneralSecurityException
-	 */
-	public void verifyOCSPResponse(BasicOCSPResp ocspResp, Certificate issuerCert) throws GeneralSecurityException {
-		// by default the OCSP responder certificate is the issuer certificate
-		Certificate responderCert = issuerCert;
-		// if there's a different responder certificate, it's signed by the issuer certificate
-		X509CertificateHolder[] certHolders = ocspResp.getCerts();
-		if (certHolders.length > 0) {
-			responderCert = new JcaX509CertificateConverter().setProvider( "BC" ).getCertificate(certHolders[0]);
-			responderCert.verify(issuerCert.getPublicKey());
-		}
-		try {
-			// Checking if the response is valid
-			ContentVerifierProvider verifierProvider = new JcaContentVerifierProviderBuilder().setProvider("BC").build(responderCert.getPublicKey());
-			if (!ocspResp.isSignatureValid(verifierProvider)) {
-				throw new GeneralSecurityException("OCSP response could not be verified");
-			}
-		} catch (OperatorCreationException e) {
-			throw new GeneralSecurityException(e);
-		} catch (OCSPException e) {
-			throw new GeneralSecurityException(e);
-		}
 	}
 }
