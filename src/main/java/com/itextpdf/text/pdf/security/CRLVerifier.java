@@ -46,7 +46,6 @@ package com.itextpdf.text.pdf.security;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
@@ -57,33 +56,67 @@ import java.util.List;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 
+/**
+ * Class that allows you to verify a certificate against
+ * one or more Certificate Revocation Lists.
+ */
 public class CRLVerifier extends CertificateVerifier {
 	
 	/** The Logger instance */
 	protected final static Logger LOGGER = LoggerFactory.getLogger(CRLVerifier.class);
 	
+	/** The list of CRLs to check for revocation date. */
 	List<X509CRL> crls;
 	
+	/**
+	 * Creates a CRLVerifier instance.
+	 * @param verifier	the previous verifier in the chain
+	 * @param crls a list of CRLs
+	 */
 	public CRLVerifier(CertificateVerifier verifier, List<X509CRL> crls) {
 		super(verifier);
 		this.crls = crls;
 	}
 	
+	/**
+	 * Verifies if a a valid CRL is found for the certificate.
+	 * If this method returns false, it doesn't mean the certificate isn't valid.
+	 * It means we couldn't verify it against any CRL that was available.
+	 * @param signCert	the certificate that needs to be checked
+	 * @param issuerCert	its issuer
+	 * @return true if the certificate was successfully verified, false if no CRL was found
+	 * @see com.itextpdf.text.pdf.security.CertificateVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
+	 */
 	public boolean verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
 			throws GeneralSecurityException, IOException {
 		int validCrlsFound = 0;
-		for (X509CRL crl : crls) {
-			if (verify(crl, signCert, issuerCert, signDate))
-				validCrlsFound++;
+		// first check the list of CRLs that is provided
+		if (crls != null) {
+			for (X509CRL crl : crls) {
+				if (verify(crl, signCert, issuerCert, signDate))
+					validCrlsFound++;
+			}
 		}
+		// then check online if allowed
 		if (onlineCheckingAllowed && validCrlsFound == 0) {
 			if (verify(getCRL(signCert, issuerCert), signCert, issuerCert, signDate))
 				validCrlsFound++;
 		}
+		// show how many valid CRLs were found
 		LOGGER.info("Valid CRLs found: " + validCrlsFound);
+		// verify using the previous verifier in the chain (if any)
 		return super.verify(signCert, issuerCert, signDate) || validCrlsFound > 0;
 	}
 
+	/**
+	 * Verifies a certificate against a single CRL.
+	 * @param crl	the Certificate Revocation List
+	 * @param signCert	a certificate that needs to be verified
+	 * @param issuerCert	its issuer
+	 * @param signDate		the sign date
+	 * @return true if the verification succeeded
+	 * @throws GeneralSecurityException
+	 */
 	public boolean verify(X509CRL crl, X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException {
 		if (crl == null)
 			return false;
@@ -91,7 +124,7 @@ public class CRLVerifier extends CertificateVerifier {
 		if (crl.getIssuerX500Principal().equals(signCert.getIssuerX500Principal())
 			&& signDate.after(crl.getThisUpdate()) && signDate.before(crl.getNextUpdate())) {
 			// the signing certificate may not be revoked
-			if (verify(crl, issuerCert) && crl.isRevoked(signCert)) {
+			if (isSignatureValid(crl, issuerCert) && crl.isRevoked(signCert)) {
 				throw new GeneralSecurityException("The certificate has been revoked.");
 			}
 			return true;
@@ -99,20 +132,22 @@ public class CRLVerifier extends CertificateVerifier {
 		return false;
 	}
 	
+	/**
+	 * Fetches a CRL for a specific certificate online (without further checking).
+	 * @param signCert	the certificate
+	 * @param issuerCert	its issuer
+	 * @return	an X509CRL object
+	 */
 	public X509CRL getCRL(X509Certificate signCert, X509Certificate issuerCert) {
-		if (!onlineCheckingAllowed) {
-			LOGGER.info("Fetching CRL online isn't allowed");
-			return null;
-		}
 		try {
+			// gets the URL from the certificate
 			String crlurl = CertificateUtil.getCRLURL(signCert);
 			if (crlurl == null)
 				return null;
 			LOGGER.info("Getting CRL from " + crlurl);
 			CertificateFactory cf = CertificateFactory.getInstance("X.509");
-			X509CRL crl = (X509CRL) cf.generateCRL(new URL(crlurl).openStream());
-			if (verify(crl, issuerCert))
-				return crl;
+			// Creates the CRL
+			return (X509CRL) cf.generateCRL(new URL(crlurl).openStream());
 		}
 		catch(IOException e) {
 			return null;
@@ -120,26 +155,35 @@ public class CRLVerifier extends CertificateVerifier {
 		catch(GeneralSecurityException e) {
 			return null;
 		}
-		return null;
 	}
 	
-	public boolean verify(X509CRL crl, Certificate crlIssuer) {
+	/**
+	 * Checks if a CRL verifies against the issuer certificate or a trusted anchor.
+	 * @param crl	the CRL
+	 * @param crlIssuer	the trusted anchor
+	 * @return	true if the CRL can be trusted
+	 */
+	public boolean isSignatureValid(X509CRL crl, X509Certificate crlIssuer) {
+		// check if the CRL was issued by the issuer
 		try {
 			crl.verify(crlIssuer.getPublicKey());
 			return true;
 		} catch (GeneralSecurityException e) {
 			LOGGER.warn("CRL not issued by the same authority as the certificate that is being checked");
 		}
+		// check the CRL against trusted anchors
 		if (keyStore == null)
 			return false;
 		try {
+			// loop over the certificate in the key store
         	for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
                 String alias = aliases.nextElement();
                 try {
     				if (!keyStore.isCertificateEntry(alias))
     					continue;
-                    X509Certificate certStoreX509 = (X509Certificate)keyStore.getCertificate(alias);
-                    crl.verify(certStoreX509.getPublicKey());
+    				// check if the crl was signed by a trusted party (indirect CRLs)
+                    X509Certificate anchor = (X509Certificate)keyStore.getCertificate(alias);
+                    crl.verify(anchor.getPublicKey());
 	                return true;
                 } catch (GeneralSecurityException e) {
 					continue;

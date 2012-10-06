@@ -46,50 +46,37 @@ package com.itextpdf.text.pdf.security;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Enumeration;
 
+/**
+ * Superclass for a series of certificate verifiers that will typically
+ * be used as the final verifier in a chain of other verifiers.
+ * It wraps another <code>CertificateVerifier</code> whose verify()
+ * method will be called.
+ * There's also a simple verify() method to verify a certificate
+ * against a <code>KeyStore</code>.
+ */
 public class CertificateVerifier {
 
+	/** The previous CertificateVerifier in the chain of verifiers. */
 	protected CertificateVerifier verifier;
-	
-	protected boolean onlineCheckingAllowed = true;
 
 	/** A key store against which certificates can be verified. */
 	protected KeyStore keyStore = null;
+	
+	/** Indicates if going online to verify a certificate is allowed. */
+	protected boolean onlineCheckingAllowed = true;
 
+	/**
+	 * Creates the final CertificateVerifier in a chain of verifiers.
+	 * @param verifier	the previous verifier in the chain
+	 */
 	public CertificateVerifier(CertificateVerifier verifier) {
 		this.verifier = verifier;
 	}
 	
-	/**
-	 * Adds an extra Certificate verifier.
-	 */
-	public void setVerifier(CertificateVerifier verifier) {
-		this.verifier = verifier;
-	}
-
-	public void setOnlineCheckingAllowed(boolean onlineCheckingAllowed) {
-		this.onlineCheckingAllowed = onlineCheckingAllowed;
-	}
-	
-	/**
-	 * Verifies certificates.
-	 * @param signingCert
-	 * @param issuerCert
-	 * @return true if the certificate was successfully verified.
-	 * @throws GeneralSecurityException
-	 * @throws IOException
-	 */
-	public boolean verify(X509Certificate signingCert, X509Certificate issuerCert, Date signDate)
-			throws GeneralSecurityException, IOException {
-		if (verifier != null)
-			return verifier.verify(signingCert, issuerCert, signDate);
-		return false;
-	}
-
 	/**
 	 * Sets the Key Store against which a certificate can be checked.
 	 * @param keyStore a root store
@@ -97,18 +84,59 @@ public class CertificateVerifier {
 	public void setKeyStore(KeyStore keyStore) {
 		this.keyStore = keyStore;
 	}
+
+	/**
+	 * Decide whether or not online checking is allowed.
+	 * @param onlineCheckingAllowed
+	 */
+	public void setOnlineCheckingAllowed(boolean onlineCheckingAllowed) {
+		this.onlineCheckingAllowed = onlineCheckingAllowed;
+	}
 	
-	public boolean verify(Certificate cert) {
+	/**
+	 * Calls the previous verifier in the chain, or returns false.
+	 * @param signCert	the certificate that needs to be checked
+	 * @param issuerCert	its issuer
+	 * @param signDate		the date the certificate needs to be valid
+	 * @return true if the certificate was successfully verified.
+	 * @throws GeneralSecurityException
+	 * @throws IOException
+	 */
+	public boolean verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
+			throws GeneralSecurityException, IOException {
+		if (verifier != null)
+			return verifier.verify(signCert, issuerCert, signDate);
+		return false;
+	}
+	
+	/**
+	 * Verifies a single certificate against a key store (if present).
+	 * @param cert	the certificate to verify
+	 * @param signDate		the date the certificate needs to be valid
+	 * @return true if the certificate was signed by a trusted anchor in the root store
+	 */
+	public boolean verify(Date signDate, X509Certificate cert, X509Certificate issuer) {
 		if (keyStore == null)
 			return false;
+		if (issuer != null) {
+			try {
+				cert.verify(issuer.getPublicKey());
+				return true;
+			}
+			catch(GeneralSecurityException e) {
+				// do nothing
+			}
+		}
 		try {
+			if (signDate != null)
+				cert.checkValidity(signDate);
         	for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
                 String alias = aliases.nextElement();
                 try {
     					if (!keyStore.isCertificateEntry(alias))
     					    continue;
-                        X509Certificate certStoreX509 = (X509Certificate)keyStore.getCertificate(alias);
-						cert.verify(certStoreX509.getPublicKey());
+                        X509Certificate anchor = (X509Certificate)keyStore.getCertificate(alias);
+						cert.verify(anchor.getPublicKey());
 	                    return true;
 					} catch (GeneralSecurityException e) {
 						continue;
