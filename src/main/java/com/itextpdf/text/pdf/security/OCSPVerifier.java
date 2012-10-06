@@ -49,6 +49,7 @@ import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -82,11 +83,11 @@ public class OCSPVerifier extends CertificateVerifier {
 		BigInteger serialNumber = signCert.getSerialNumber();
 		int validOCSPsFound = 0;
 		for (BasicOCSPResp ocspResp : ocsps) {
-			if (checkOCSP(ocspResp, serialNumber, issuerCert, signDate))
+			if (verify(ocspResp, serialNumber, issuerCert, signDate))
 				validOCSPsFound++;
 		}
-		if (validOCSPsFound == 0) {
-			if (checkOCSP(getOcspResponse(signCert, issuerCert), serialNumber, issuerCert, signDate))
+		if (onlineCheckingAllowed && validOCSPsFound == 0) {
+			if (verify(getOcspResponse(signCert, issuerCert), serialNumber, issuerCert, signDate))
 				validOCSPsFound++;
 		}
 		LOGGER.info("Valid OCPS found: " + validOCSPsFound);
@@ -94,7 +95,7 @@ public class OCSPVerifier extends CertificateVerifier {
 	}
 	
 	
-	public boolean checkOCSP(BasicOCSPResp ocspResp, BigInteger serialNumber, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
+	public boolean verify(BasicOCSPResp ocspResp, BigInteger serialNumber, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
 		if (ocspResp == null)
 			return false;
 		// Getting the responses
@@ -123,7 +124,7 @@ public class OCSPVerifier extends CertificateVerifier {
 			Object status = resp[i].getCertStatus();
 			if (status == CertificateStatus.GOOD) {
 				// check if the OCSP response was genuine
-				verifyOCSPResponse(ocspResp, issuerCert);
+				verify(ocspResp, issuerCert);
 				return true;
 			}
 		}
@@ -136,7 +137,7 @@ public class OCSPVerifier extends CertificateVerifier {
 	 * @param issuerCert	the issuer certificate
 	 * @throws GeneralSecurityException
 	 */
-	public void verifyOCSPResponse(BasicOCSPResp ocspResp, Certificate issuerCert) throws GeneralSecurityException {
+	public void verify(BasicOCSPResp ocspResp, Certificate issuerCert) throws GeneralSecurityException {
 		// by default the OCSP responder certificate is the issuer certificate
 		Certificate responderCert = issuerCert;
 		// if there's a different responder certificate, it's signed by the issuer certificate
@@ -158,6 +159,42 @@ public class OCSPVerifier extends CertificateVerifier {
 		}
 	}
 	
+	public boolean verifySignature(BasicOCSPResp ocspResp, Certificate responderCert) {
+		if (isSignatureValid(ocspResp, responderCert))
+			return true;
+		if (keyStore == null)
+			return false;
+		try {
+        	for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
+                String alias = aliases.nextElement();
+                try {
+    				if (!keyStore.isCertificateEntry(alias))
+    					continue;
+                    X509Certificate certStoreX509 = (X509Certificate)keyStore.getCertificate(alias);
+                    if (isSignatureValid(ocspResp, certStoreX509));
+	                    return true;
+				} catch (GeneralSecurityException e) {
+					continue;
+				}
+        	}
+		}
+        catch (GeneralSecurityException e) {
+        	return false;
+        }
+		return false;
+	}
+	
+	public boolean isSignatureValid(BasicOCSPResp ocspResp, Certificate responderCert) {
+		try {
+			ContentVerifierProvider verifierProvider = new JcaContentVerifierProviderBuilder().setProvider("BC").build(responderCert.getPublicKey());
+			return ocspResp.isSignatureValid(verifierProvider);
+		} catch (OperatorCreationException e) {
+			return false;
+		} catch (OCSPException e) {
+			return false;
+		}
+	}
+	
 	/**
 	 * Gets an OCSP response online and returns it if the status is GOOD
 	 * (without further checking).
@@ -167,6 +204,10 @@ public class OCSPVerifier extends CertificateVerifier {
 	 */
 	public BasicOCSPResp getOcspResponse(X509Certificate signCert, X509Certificate issuerCert) {
 		if (signCert == null && issuerCert == null) {
+			return null;
+		}
+		if (!onlineCheckingAllowed) {
+			LOGGER.info("Fetching OCSP online isn't allowed");
 			return null;
 		}
 		OcspClientBouncyCastle ocsp = new OcspClientBouncyCastle();

@@ -45,15 +45,34 @@ package com.itextpdf.text.pdf.security;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Enumeration;
 
 public class CertificateVerifier {
 
 	protected CertificateVerifier verifier;
+	
+	protected boolean onlineCheckingAllowed = true;
+
+	/** A key store against which certificates can be verified. */
+	protected KeyStore keyStore = null;
 
 	public CertificateVerifier(CertificateVerifier verifier) {
 		this.verifier = verifier;
+	}
+	
+	/**
+	 * Adds an extra Certificate verifier.
+	 */
+	public void setVerifier(CertificateVerifier verifier) {
+		this.verifier = verifier;
+	}
+
+	public void setOnlineCheckingAllowed(boolean onlineCheckingAllowed) {
+		this.onlineCheckingAllowed = onlineCheckingAllowed;
 	}
 	
 	/**
@@ -68,6 +87,37 @@ public class CertificateVerifier {
 			throws GeneralSecurityException, IOException {
 		if (verifier != null)
 			return verifier.verify(signingCert, issuerCert, signDate);
+		return false;
+	}
+
+	/**
+	 * Sets the Key Store against which a certificate can be checked.
+	 * @param keyStore a root store
+	 */
+	public void setKeyStore(KeyStore keyStore) {
+		this.keyStore = keyStore;
+	}
+	
+	public boolean verify(Certificate cert) {
+		if (keyStore == null)
+			return false;
+		try {
+        	for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
+                String alias = aliases.nextElement();
+                try {
+    					if (!keyStore.isCertificateEntry(alias))
+    					    continue;
+                        X509Certificate certStoreX509 = (X509Certificate)keyStore.getCertificate(alias);
+						cert.verify(certStoreX509.getPublicKey());
+	                    return true;
+					} catch (GeneralSecurityException e) {
+						continue;
+					}
+        	}
+		}
+        catch (GeneralSecurityException e) {
+        	return false;
+        }
 		return false;
 	}
 }

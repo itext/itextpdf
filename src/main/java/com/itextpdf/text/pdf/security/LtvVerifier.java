@@ -46,7 +46,6 @@ package com.itextpdf.text.pdf.security;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
@@ -60,7 +59,6 @@ import java.util.List;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.operator.OperatorCreationException;
 
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
@@ -75,16 +73,12 @@ import com.itextpdf.text.pdf.security.LtvVerification.CertificateOption;
 /**
  * Verifies the signatures in an LTV document.
  */
-public class LtvValidation extends CertificateVerifier {
+public class LtvVerifier extends CertificateVerifier {
 	/** The Logger instance */
-	protected final static Logger LOGGER = LoggerFactory.getLogger(LtvValidation.class);
+	protected final static Logger LOGGER = LoggerFactory.getLogger(LtvVerifier.class);
 	
 	/** Do we need to check all certificate, or only the signing certificate? */
 	protected CertificateOption option = CertificateOption.SIGNING_CERTIFICATE;
-	/** A key store against which certificates can be verified. */
-	protected KeyStore keyStore = null;
-	/** The class that is to be used to verify certificates. */
-	protected CertificateVerifier customVerifier;
 	/** Verify root. */
 	protected boolean verifyRootCertificate = true;
 	
@@ -96,6 +90,8 @@ public class LtvValidation extends CertificateVerifier {
 	protected String signatureName;
 	/** The PdfPKCS7 object for the signature. */
 	protected PdfPKCS7 pkcs7;
+	
+	protected boolean initialRevision = true;
 	/**
 	 * The document security store for the revision that is being verified
 	 * (or <code>null</code> for the highest revision)
@@ -111,7 +107,7 @@ public class LtvValidation extends CertificateVerifier {
 	 * @throws OCSPException
 	 * @throws OperatorCreationException
 	 */
-	public void verify() throws IOException, GeneralSecurityException, OCSPException, OperatorCreationException {
+	public void verify() throws IOException, GeneralSecurityException {
 		while (pkcs7 != null) {
 			verifySignature();
 		}
@@ -122,7 +118,7 @@ public class LtvValidation extends CertificateVerifier {
 	 * @param reader	a reader for the document we want to verify.
 	 * @throws GeneralSecurityException 
 	 */
-	public LtvValidation(PdfReader reader) throws GeneralSecurityException {
+	public LtvVerifier(PdfReader reader) throws GeneralSecurityException {
 		super(null);
 		this.reader = reader;
 		this.fields = reader.getAcroFields();
@@ -140,6 +136,7 @@ public class LtvValidation extends CertificateVerifier {
 	 */
 	public void switchToPreviousRevision() throws IOException, GeneralSecurityException {
 		LOGGER.info("Switching to previous revision.");
+		initialRevision = false;
 		dss = reader.getCatalog().getAsDict(PdfName.DSS);
 		Calendar cal = pkcs7.getTimeStampDate();
 		if (cal == null)
@@ -192,22 +189,6 @@ public class LtvValidation extends CertificateVerifier {
 	public void setCertificateOption(CertificateOption option) {
 		this.option = option;
 	}
-	
-	/**
-	 * Sets the Key Store against which a certificate can be checked.
-	 * @param keyStore a root store
-	 */
-	public void setKeyStore(KeyStore keyStore) {
-		this.keyStore = keyStore;
-	}
-	
-	/**
-	 * Adds an extra Certificate verifier.
-	 */
-	public void setCustomVerifier(CertificateVerifier customVerifier) {
-		this.customVerifier = customVerifier;
-	}
-
 	/**
 	 * Set the verifyRootCertificate to false if you can't verify the root certificate.
 	 */
@@ -299,9 +280,6 @@ public class LtvValidation extends CertificateVerifier {
 				issuerCert = (X509Certificate) chain[i];
 			LOGGER.info(signCert.getSubjectDN().getName());
 
-			CRLVerifier crlVerifier = new CRLVerifier(customVerifier, getCRLsFromDSS());
-			OCSPVerifier ocspVerifier = new OCSPVerifier(crlVerifier, getOCSPResponsesFromDSS());
-			verifier = new CertificateVerifier(ocspVerifier);
 			if (!(this.verify(signCert, issuerCert, signDate) || anchorFound))
 				throw new GeneralSecurityException("Couldn't verify with CRL or OCSP or trusted anchor");
 		}
@@ -320,7 +298,13 @@ public class LtvValidation extends CertificateVerifier {
 	public boolean verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
 		if (issuerCert == null)
 			return !verifyRootCertificate;
-		return verifier.verify(signCert, issuerCert, signDate);
+		CRLVerifier crlVerifier = new CRLVerifier(verifier, getCRLsFromDSS());
+		crlVerifier.setKeyStore(keyStore);
+		crlVerifier.setOnlineCheckingAllowed(initialRevision || onlineCheckingAllowed);
+		OCSPVerifier ocspVerifier = new OCSPVerifier(crlVerifier, getOCSPResponsesFromDSS());
+		ocspVerifier.setKeyStore(keyStore);
+		ocspVerifier.setOnlineCheckingAllowed(initialRevision || onlineCheckingAllowed);
+		return new CertificateVerifier(ocspVerifier).verify(signCert, issuerCert, signDate);
 	}
 	
 	/**
