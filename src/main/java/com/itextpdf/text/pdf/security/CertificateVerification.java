@@ -172,6 +172,19 @@ public class CertificateVerification {
 	}
 
 	/**
+	 * Verifies a certificate chain against a KeyStore.
+	 * @param certs the certificate chain
+	 * @param keystore the <CODE>KeyStore</CODE>
+	 * @param calendar the date or <CODE>null</CODE> for the current date
+	 * @return <CODE>null</CODE> if the certificate chain could be validated or a
+	 * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
+	 * failed certificate and <CODE>error</CODE> is the error message
+	 */
+	public static List<VerificationException> verifyCertificates(Certificate certs[], KeyStore keystore, Calendar calendar) {
+		return verifyCertificates(certs, keystore, null, calendar);
+	}
+	
+	/**
 	 * Verifies an OCSP response against a KeyStore.
 	 * @param ocsp the OCSP response
 	 * @param keystore the <CODE>KeyStore</CODE>
