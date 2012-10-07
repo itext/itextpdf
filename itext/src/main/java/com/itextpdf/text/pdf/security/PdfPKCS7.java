@@ -491,7 +491,11 @@ public class PdfPKCS7 {
      * @return Value of property signDate.
      */
     public Calendar getSignDate() {
-        return this.signDate;
+        Calendar dt = getTimeStampDate();
+        if (dt == null)
+            return this.signDate;
+        else
+            return dt;
     }
 
     /**
