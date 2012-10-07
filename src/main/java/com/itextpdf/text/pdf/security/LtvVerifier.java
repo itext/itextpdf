@@ -210,6 +210,8 @@ public class LtvVerifier extends RootStoreVerifier {
 					if (list.size() == 0 && verifyRootCertificate) {
 						throw new GeneralSecurityException();
 					}
+					else if (chain.length > 1)
+						list.add(new VerificationOK(signCert, this.getClass(), "Root certificate passed without checking"));
 				}
 				catch(GeneralSecurityException e) {
 					throw new VerificationException(signCert, "Couldn't verify with CRL or OCSP or trusted anchor");
