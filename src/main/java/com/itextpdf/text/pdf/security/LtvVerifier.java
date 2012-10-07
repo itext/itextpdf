@@ -72,7 +72,7 @@ import com.itextpdf.text.pdf.security.LtvVerification.CertificateOption;
 /**
  * Verifies the signatures in an LTV document.
  */
-public class LtvVerifier extends CertificateVerifier {
+public class LtvVerifier extends RootStoreVerifier {
 	/** The Logger instance */
 	protected final static Logger LOGGER = LoggerFactory.getLogger(LtvVerifier.class);
 	
@@ -167,10 +167,12 @@ public class LtvVerifier extends CertificateVerifier {
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	public void verify() throws IOException, GeneralSecurityException {
+	public List<VerificationOK> verify() throws IOException, GeneralSecurityException {
+        List<VerificationOK> result = new ArrayList<VerificationOK>();
 		while (pkcs7 != null) {
-			verifySignature();
+			result.addAll(verifySignature());
 		}
+		return result;
 	}
 	
 	/**
@@ -178,8 +180,9 @@ public class LtvVerifier extends CertificateVerifier {
 	 * @throws GeneralSecurityException
 	 * @throws IOException
 	 */
-	public void verifySignature() throws GeneralSecurityException, IOException {
+	public List<VerificationOK> verifySignature() throws GeneralSecurityException, IOException {
         LOGGER.info("Verifying signature.");
+        List<VerificationOK> result = new ArrayList<VerificationOK>();
 		// Get the certificate chain
 		Certificate[] chain = pkcs7.getSignCertificateChain();
 		verifyChain(chain);
@@ -200,11 +203,22 @@ public class LtvVerifier extends CertificateVerifier {
 				issuerCert = (X509Certificate) chain[i];
 			// now lets verify the certificate
 			LOGGER.info(signCert.getSubjectDN().getName());
-			if (!(this.verify(signCert, issuerCert, signDate)))
-				throw new GeneralSecurityException("Couldn't verify with CRL or OCSP or trusted anchor");
+			List<VerificationOK> list = verify(signCert, issuerCert, signDate); 
+			if (list.size() == 0) {
+				try {
+					signCert.verify(signCert.getPublicKey());
+					if (verifyRootCertificate)
+						throw new GeneralSecurityException();
+				}
+				catch(GeneralSecurityException e) {
+					throw new GeneralSecurityException("Couldn't verify with CRL or OCSP or trusted anchor");
+				}
+			}
+			result.addAll(list);
 		}
 		// go to the previous revision
 		switchToPreviousRevision();
+		return result;
 	}
 
 	/**
@@ -234,30 +248,22 @@ public class LtvVerifier extends CertificateVerifier {
 	 * @return true if the certificate was successfully verified.
 	 * @throws GeneralSecurityException
 	 * @throws IOException
-	 * @see com.itextpdf.text.pdf.security.CertificateVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate)
+	 * @see com.itextpdf.text.pdf.security.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate)
 	 */
-	public boolean verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
-		// if the certificate is self-signed, there is nothing to check
-		if (issuerCert == null) {
-			// if we need to verify root certificates, we verify against a key store with trusted anchors
-			if (verifyRootCertificate) {
-				CertificateVerifier keystoreVerifier = new CertificateVerifier(null);
-				keystoreVerifier.setKeyStore(keyStore);
-				return keystoreVerifier.verify(signDate, signCert, null);
-			}
-			// else we just accept the certificate
-			else return true;
-		}
+	public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException, IOException {
+		// we'll verify agains the rootstore (if present)
+		RootStoreVerifier rootStoreVerifier = new RootStoreVerifier(verifier);
+		rootStoreVerifier.setRootStore(rootStore);
 		// We'll verify against a list of CRLs
-		CRLVerifier crlVerifier = new CRLVerifier(verifier, getCRLsFromDSS());
-		crlVerifier.setKeyStore(keyStore);
+		CRLVerifier crlVerifier = new CRLVerifier(rootStoreVerifier, getCRLsFromDSS());
+		crlVerifier.setRootStore(rootStore);
 		crlVerifier.setOnlineCheckingAllowed(latestRevision || onlineCheckingAllowed);
 		// We'll verify against a list of OCSPs
 		OCSPVerifier ocspVerifier = new OCSPVerifier(crlVerifier, getOCSPResponsesFromDSS());
-		ocspVerifier.setKeyStore(keyStore);
+		ocspVerifier.setRootStore(rootStore);
 		ocspVerifier.setOnlineCheckingAllowed(latestRevision || onlineCheckingAllowed);
 		// We verify the chain
-		return new CertificateVerifier(ocspVerifier).verify(signCert, issuerCert, signDate);
+		return ocspVerifier.verify(signCert, issuerCert, signDate);
 	}
 	
 	/**

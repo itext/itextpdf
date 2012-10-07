@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -69,7 +70,7 @@ import com.itextpdf.text.log.LoggerFactory;
  * Class that allows you to verify a certificate against
  * one or more OCSP responses.
  */
-public class OCSPVerifier extends CertificateVerifier {
+public class OCSPVerifier extends RootStoreVerifier {
 	
 	/** The Logger instance */
 	protected final static Logger LOGGER = LoggerFactory.getLogger(OCSPVerifier.class);
@@ -94,11 +95,12 @@ public class OCSPVerifier extends CertificateVerifier {
 	 * @param signCert	the certificate that needs to be checked
 	 * @param issuerCert	its issuer
 	 * @return true if the certificate was successfully verified, false if no OCSP response was found
-	 * @see com.itextpdf.text.pdf.security.CertificateVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
+	 * @see com.itextpdf.text.pdf.security.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
 	 */
-	public boolean verify(X509Certificate signCert,
+	public List<VerificationOK> verify(X509Certificate signCert,
 			X509Certificate issuerCert, Date signDate)
 			throws GeneralSecurityException, IOException {
+		List<VerificationOK> result = new ArrayList<VerificationOK>();
 		int validOCSPsFound = 0;
 		// first check in the list of OCSP responses that was provided
 		if (ocsps != null) {
@@ -113,9 +115,13 @@ public class OCSPVerifier extends CertificateVerifier {
 				validOCSPsFound++;
 		}
 		// show how many valid OCSP responses were found
-		LOGGER.info("Valid OCPS found: " + validOCSPsFound);
+		LOGGER.info("Valid OCSPs found: " + validOCSPsFound);
+		if (validOCSPsFound > 0)
+			result.add(new VerificationOK(signCert, this.getClass(), "Valid OCSPs Found: " + validOCSPsFound));
+		if (verifier != null)
+			result.addAll(verifier.verify(signCert, issuerCert, signDate));
 		// verify using the previous verifier in the chain (if any)
-		return super.verify(signCert, issuerCert, signDate) || validOCSPsFound > 0;
+		return result;
 	}
 	
 	
@@ -146,8 +152,7 @@ public class OCSPVerifier extends CertificateVerifier {
 					continue;
 				}
 			} catch (OCSPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				continue;
 			}
 			// check if the OCSP response was valid at the time of signing
 			if (signDate.after(resp[i].getNextUpdate())) {
@@ -170,15 +175,22 @@ public class OCSPVerifier extends CertificateVerifier {
 	 * @param ocspResp	the OCSP response
 	 * @param issuerCert	the issuer certificate
 	 * @throws GeneralSecurityException
+	 * @throws IOException
 	 */
-	public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert) throws GeneralSecurityException {
+	public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert) throws GeneralSecurityException, IOException {
 		// by default the OCSP responder certificate is the issuer certificate
 		X509Certificate responderCert = issuerCert;
 		// check if there's a responder certificate
 		X509CertificateHolder[] certHolders = ocspResp.getCerts();
 		if (certHolders.length > 0) {
 			responderCert = new JcaX509CertificateConverter().setProvider( "BC" ).getCertificate(certHolders[0]);
-			super.verify(null, responderCert, issuerCert);
+			try {
+				responderCert.verify(issuerCert.getPublicKey());
+			}
+			catch(GeneralSecurityException e) {
+				if (super.verify(responderCert, issuerCert, null).size() == 0)
+					throw new GeneralSecurityException("Responder certificate couldn't be verified");
+			}
 		}
 		// verify if the signature of the response is valid
 		if (!verifyResponse(ocspResp, responderCert))
@@ -198,16 +210,16 @@ public class OCSPVerifier extends CertificateVerifier {
 		if (isSignatureValid(ocspResp, responderCert))
 			return true;
 		// testing using trusted anchors
-		if (keyStore == null)
+		if (rootStore == null)
 			return false;
 		try {
 			// loop over the certificates in the root store
-        	for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
+        	for (Enumeration<String> aliases = rootStore.aliases(); aliases.hasMoreElements();) {
                 String alias = aliases.nextElement();
                 try {
-    				if (!keyStore.isCertificateEntry(alias))
+    				if (!rootStore.isCertificateEntry(alias))
     					continue;
-                    X509Certificate anchor = (X509Certificate)keyStore.getCertificate(alias);
+                    X509Certificate anchor = (X509Certificate)rootStore.getCertificate(alias);
                     if (isSignatureValid(ocspResp, anchor));
 	                    return true;
 				} catch (GeneralSecurityException e) {

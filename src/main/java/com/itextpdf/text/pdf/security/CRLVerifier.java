@@ -49,6 +49,7 @@ import java.security.GeneralSecurityException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -60,7 +61,7 @@ import com.itextpdf.text.log.LoggerFactory;
  * Class that allows you to verify a certificate against
  * one or more Certificate Revocation Lists.
  */
-public class CRLVerifier extends CertificateVerifier {
+public class CRLVerifier extends RootStoreVerifier {
 	
 	/** The Logger instance */
 	protected final static Logger LOGGER = LoggerFactory.getLogger(CRLVerifier.class);
@@ -85,10 +86,11 @@ public class CRLVerifier extends CertificateVerifier {
 	 * @param signCert	the certificate that needs to be checked
 	 * @param issuerCert	its issuer
 	 * @return true if the certificate was successfully verified, false if no CRL was found
-	 * @see com.itextpdf.text.pdf.security.CertificateVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
+	 * @see com.itextpdf.text.pdf.security.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
 	 */
-	public boolean verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
+	public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
 			throws GeneralSecurityException, IOException {
+		List<VerificationOK> result = new ArrayList<VerificationOK>();
 		int validCrlsFound = 0;
 		// first check the list of CRLs that is provided
 		if (crls != null) {
@@ -104,8 +106,13 @@ public class CRLVerifier extends CertificateVerifier {
 		}
 		// show how many valid CRLs were found
 		LOGGER.info("Valid CRLs found: " + validCrlsFound);
+		if (validCrlsFound > 0) {
+			result.add(new VerificationOK(signCert, this.getClass(), "Valid CRLs found: " + validCrlsFound));
+		}
+		if (verifier != null)
+			result.addAll(verifier.verify(signCert, issuerCert, signDate));
 		// verify using the previous verifier in the chain (if any)
-		return super.verify(signCert, issuerCert, signDate) || validCrlsFound > 0;
+		return result;
 	}
 
 	/**
@@ -118,7 +125,7 @@ public class CRLVerifier extends CertificateVerifier {
 	 * @throws GeneralSecurityException
 	 */
 	public boolean verify(X509CRL crl, X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException {
-		if (crl == null)
+		if (crl == null || signDate == null)
 			return false;
 		// We only check CRLs valid on the signing date for which the issuer matches
 		if (crl.getIssuerX500Principal().equals(signCert.getIssuerX500Principal())
@@ -165,24 +172,26 @@ public class CRLVerifier extends CertificateVerifier {
 	 */
 	public boolean isSignatureValid(X509CRL crl, X509Certificate crlIssuer) {
 		// check if the CRL was issued by the issuer
-		try {
-			crl.verify(crlIssuer.getPublicKey());
-			return true;
-		} catch (GeneralSecurityException e) {
-			LOGGER.warn("CRL not issued by the same authority as the certificate that is being checked");
+		if (crlIssuer != null) {
+			try {
+				crl.verify(crlIssuer.getPublicKey());
+				return true;
+			} catch (GeneralSecurityException e) {
+				LOGGER.warn("CRL not issued by the same authority as the certificate that is being checked");
+			}
 		}
 		// check the CRL against trusted anchors
-		if (keyStore == null)
+		if (rootStore == null)
 			return false;
 		try {
 			// loop over the certificate in the key store
-        	for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
+        	for (Enumeration<String> aliases = rootStore.aliases(); aliases.hasMoreElements();) {
                 String alias = aliases.nextElement();
                 try {
-    				if (!keyStore.isCertificateEntry(alias))
+    				if (!rootStore.isCertificateEntry(alias))
     					continue;
     				// check if the crl was signed by a trusted party (indirect CRLs)
-                    X509Certificate anchor = (X509Certificate)keyStore.getCertificate(alias);
+                    X509Certificate anchor = (X509Certificate)rootStore.getCertificate(alias);
                     crl.verify(anchor.getPublicKey());
 	                return true;
                 } catch (GeneralSecurityException e) {

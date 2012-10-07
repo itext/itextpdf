@@ -45,10 +45,10 @@ package com.itextpdf.text.pdf.security;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
+import java.util.List;
 
 /**
  * Superclass for a series of certificate verifiers that will typically
@@ -62,9 +62,6 @@ public class CertificateVerifier {
 
 	/** The previous CertificateVerifier in the chain of verifiers. */
 	protected CertificateVerifier verifier;
-
-	/** A key store against which certificates can be verified. */
-	protected KeyStore keyStore = null;
 	
 	/** Indicates if going online to verify a certificate is allowed. */
 	protected boolean onlineCheckingAllowed = true;
@@ -75,14 +72,6 @@ public class CertificateVerifier {
 	 */
 	public CertificateVerifier(CertificateVerifier verifier) {
 		this.verifier = verifier;
-	}
-	
-	/**
-	 * Sets the Key Store against which a certificate can be checked.
-	 * @param keyStore a root store
-	 */
-	public void setKeyStore(KeyStore keyStore) {
-		this.keyStore = keyStore;
 	}
 
 	/**
@@ -102,50 +91,22 @@ public class CertificateVerifier {
 	 * @throws GeneralSecurityException
 	 * @throws IOException
 	 */
-	public boolean verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
+	public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
 			throws GeneralSecurityException, IOException {
+		// Check if the certificate is valid on the signDate
+		if (signDate != null)
+			signCert.checkValidity(signDate);
+		// Check if the signature is valid
+		if (issuerCert != null) {
+			signCert.verify(issuerCert.getPublicKey());
+		}
+		// Also in case, the certificate is self-signed
+		else {
+			signCert.verify(signCert.getPublicKey());
+		}
+		List<VerificationOK> result = new ArrayList<VerificationOK>();
 		if (verifier != null)
-			return verifier.verify(signCert, issuerCert, signDate);
-		return false;
-	}
-	
-	/**
-	 * Verifies a single certificate against a key store (if present).
-	 * @param cert	the certificate to verify
-	 * @param signDate		the date the certificate needs to be valid
-	 * @return true if the certificate was signed by a trusted anchor in the root store
-	 */
-	public boolean verify(Date signDate, X509Certificate cert, X509Certificate issuer) {
-		if (keyStore == null)
-			return false;
-		if (issuer != null) {
-			try {
-				cert.verify(issuer.getPublicKey());
-				return true;
-			}
-			catch(GeneralSecurityException e) {
-				// do nothing
-			}
-		}
-		try {
-			if (signDate != null)
-				cert.checkValidity(signDate);
-        	for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
-                String alias = aliases.nextElement();
-                try {
-    					if (!keyStore.isCertificateEntry(alias))
-    					    continue;
-                        X509Certificate anchor = (X509Certificate)keyStore.getCertificate(alias);
-						cert.verify(anchor.getPublicKey());
-	                    return true;
-					} catch (GeneralSecurityException e) {
-						continue;
-					}
-        	}
-		}
-        catch (GeneralSecurityException e) {
-        	return false;
-        }
-		return false;
+			result.addAll(verifier.verify(signCert, issuerCert, signDate));
+		return result;
 	}
 }
