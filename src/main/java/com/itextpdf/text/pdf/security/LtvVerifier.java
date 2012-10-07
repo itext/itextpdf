@@ -141,24 +141,20 @@ public class LtvVerifier extends RootStoreVerifier {
 	 * @return a PdfPKCS7 object
 	 * @throws GeneralSecurityException
 	 */
-	/**
-	 * @return
-	 * @throws GeneralSecurityException
-	 */
 	protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
 		PdfPKCS7 pkcs7 = fields.verifySignature(signatureName);
 		if (fields.signatureCoversWholeDocument(signatureName)) {
 			LOGGER.info("The timestamp covers whole document.");
 		}
 		else {
-			throw new GeneralSecurityException("Signature doesn't cover whole document.");
+			throw new VerificationException(null, "Signature doesn't cover whole document.");
 		}
 		if (pkcs7.verify()) {
 			LOGGER.info("The signed document has not been modified.");
 			return pkcs7;
 		}
 		else {
-			throw new GeneralSecurityException("The document was altered after the final signature was applied.");
+			throw new VerificationException(null, "The document was altered after the final signature was applied.");
 		}
 	}
 	
@@ -167,8 +163,9 @@ public class LtvVerifier extends RootStoreVerifier {
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	public List<VerificationOK> verify() throws IOException, GeneralSecurityException {
-        List<VerificationOK> result = new ArrayList<VerificationOK>();
+	public List<VerificationOK> verify(List<VerificationOK> result) throws IOException, GeneralSecurityException {
+		if (result == null)
+			result = new ArrayList<VerificationOK>();
 		while (pkcs7 != null) {
 			result.addAll(verifySignature());
 		}
@@ -203,15 +200,19 @@ public class LtvVerifier extends RootStoreVerifier {
 				issuerCert = (X509Certificate) chain[i];
 			// now lets verify the certificate
 			LOGGER.info(signCert.getSubjectDN().getName());
-			List<VerificationOK> list = verify(signCert, issuerCert, signDate); 
+			List<VerificationOK> list = verify(signCert, issuerCert, signDate);
 			if (list.size() == 0) {
 				try {
-					signCert.verify(signCert.getPublicKey());
-					if (verifyRootCertificate)
+					signCert.verify(signCert.getPublicKey()); 
+					if (latestRevision && chain.length > 1) {
+						list.add(new VerificationOK(signCert, this.getClass(), "Root certificate in final revision"));
+					}
+					if (list.size() == 0 && verifyRootCertificate) {
 						throw new GeneralSecurityException();
+					}
 				}
 				catch(GeneralSecurityException e) {
-					throw new GeneralSecurityException("Couldn't verify with CRL or OCSP or trusted anchor");
+					throw new VerificationException(signCert, "Couldn't verify with CRL or OCSP or trusted anchor");
 				}
 			}
 			result.addAll(list);
@@ -245,7 +246,8 @@ public class LtvVerifier extends RootStoreVerifier {
 	 * Verifies certificates against a list of CRLs and OCSP responses.
 	 * @param signingCert
 	 * @param issuerCert
-	 * @return true if the certificate was successfully verified.
+	 * @return a list of <code>VerificationOK</code> objects.
+	 * The list will be empty if the certificate couldn't be verified.
 	 * @throws GeneralSecurityException
 	 * @throws IOException
 	 * @see com.itextpdf.text.pdf.security.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate)

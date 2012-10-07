@@ -118,15 +118,15 @@ public class CertificateVerification {
 	 * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
 	 * failed certificate and <CODE>error</CODE> is the error message
 	 */
-	public static List<VerificationError> verifyCertificates(Certificate certs[], KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
-	    List<VerificationError> result = new ArrayList<VerificationError>();
+	public static List<VerificationException> verifyCertificates(Certificate certs[], KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
+	    List<VerificationException> result = new ArrayList<VerificationException>();
 		if (calendar == null)
 	        calendar = new GregorianCalendar();
 	    for (int k = 0; k < certs.length; ++k) {
 	        X509Certificate cert = (X509Certificate)certs[k];
 	        String err = verifyCertificate(cert, crls, calendar);
 	        if (err != null)
-	            result.add(new VerificationError(cert, err));
+	            result.add(new VerificationException(cert, err));
 	        try {
 	            for (Enumeration<String> aliases = keystore.aliases(); aliases.hasMoreElements();) {
 	                try {
@@ -163,11 +163,11 @@ public class CertificateVerification {
 	            }
 	        }
 	        if (j == certs.length) {
-	        	result.add(new VerificationError(cert, "Cannot be verified against the KeyStore or the certificate chain"));
+	        	result.add(new VerificationException(cert, "Cannot be verified against the KeyStore or the certificate chain"));
 	        }
 	    }
 	    if (result.size() == 0)
-	    	result.add(new VerificationError(null, "Invalid state. Possible circular certificate chain"));
+	    	result.add(new VerificationException(null, "Invalid state. Possible circular certificate chain"));
 	    return result;
 	}
 

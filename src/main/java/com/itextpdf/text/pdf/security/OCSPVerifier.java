@@ -80,7 +80,7 @@ public class OCSPVerifier extends RootStoreVerifier {
 	
 	/**
 	 * Creates an OCSPVerifier instance.
-	 * @param verifier	the previous verifier in the chain
+	 * @param verifier	the next verifier in the chain
 	 * @param ocsps a list of OCSP responses
 	 */
 	public OCSPVerifier(CertificateVerifier verifier, List<BasicOCSPResp> ocsps) {
@@ -94,7 +94,8 @@ public class OCSPVerifier extends RootStoreVerifier {
 	 * It means we couldn't verify it against any OCSP response that was available.
 	 * @param signCert	the certificate that needs to be checked
 	 * @param issuerCert	its issuer
-	 * @return true if the certificate was successfully verified, false if no OCSP response was found
+	 * @return a list of <code>VerificationOK</code> objects.
+	 * The list will be empty if the certificate couldn't be verified.
 	 * @see com.itextpdf.text.pdf.security.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
 	 */
 	public List<VerificationOK> verify(X509Certificate signCert,
@@ -110,14 +111,17 @@ public class OCSPVerifier extends RootStoreVerifier {
 			}
 		}
 		// then check online if allowed
+		boolean online = false;
 		if (onlineCheckingAllowed && validOCSPsFound == 0) {
-			if (verify(getOcspResponse(signCert, issuerCert), signCert, issuerCert, signDate))
+			if (verify(getOcspResponse(signCert, issuerCert), signCert, issuerCert, signDate)) {
 				validOCSPsFound++;
+				online = true;
+			}
 		}
 		// show how many valid OCSP responses were found
 		LOGGER.info("Valid OCSPs found: " + validOCSPsFound);
 		if (validOCSPsFound > 0)
-			result.add(new VerificationOK(signCert, this.getClass(), "Valid OCSPs Found: " + validOCSPsFound));
+			result.add(new VerificationOK(signCert, this.getClass(), "Valid OCSPs Found: " + validOCSPsFound + (online ? " (online)" : "")));
 		if (verifier != null)
 			result.addAll(verifier.verify(signCert, issuerCert, signDate));
 		// verify using the previous verifier in the chain (if any)
@@ -189,12 +193,12 @@ public class OCSPVerifier extends RootStoreVerifier {
 			}
 			catch(GeneralSecurityException e) {
 				if (super.verify(responderCert, issuerCert, null).size() == 0)
-					throw new GeneralSecurityException("Responder certificate couldn't be verified");
+					throw new VerificationException(responderCert, "Responder certificate couldn't be verified");
 			}
 		}
 		// verify if the signature of the response is valid
 		if (!verifyResponse(ocspResp, responderCert))
-			throw new GeneralSecurityException("OCSP response could not be verified");
+			throw new VerificationException(responderCert, "OCSP response could not be verified");
 	}
 	
 	/**

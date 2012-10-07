@@ -56,11 +56,8 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 
 /**
- * Superclass for a series of certificate verifiers that will typically be used
- * as the final verifier in a chain of other verifiers. It wraps another
- * <code>CertificateVerifier</code> whose verify() method will be called.
- * There's also a simple verify() method to verify a certificate against a
- * <code>KeyStore</code>.
+ * Verifies a certificate against a <code>KeyStore</code>
+ * containing trusted anchors.
  */
 public class RootStoreVerifier extends CertificateVerifier {
 	
@@ -71,10 +68,10 @@ public class RootStoreVerifier extends CertificateVerifier {
 	protected KeyStore rootStore = null;
 
 	/**
-	 * Creates the final RootStoreVerifier in a chain of verifiers.
+	 * Creates a RootStoreVerifier in a chain of verifiers.
 	 * 
 	 * @param verifier
-	 *            the previous verifier in the chain
+	 *            the next verifier in the chain
 	 */
 	public RootStoreVerifier(CertificateVerifier verifier) {
 		super(verifier);
@@ -99,15 +96,18 @@ public class RootStoreVerifier extends CertificateVerifier {
 	 *            the issuer certificate
 	 * @param signDate
 	 *            the date the certificate needs to be valid
-	 * @return true if the certificate was signed by a trusted anchor in the
-	 *         root store
+	 * @return a list of <code>VerificationOK</code> objects.
+	 * The list will be empty if the certificate couldn't be verified.
 	 */
 	public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert,
 			Date signDate) throws GeneralSecurityException, IOException {
 		LOGGER.info("Root store verification: " + signCert.getSubjectDN().getName());
+		// verify using the CertificateVerifier if root store is missing
 		if (rootStore == null)
 			return super.verify(signCert, issuerCert, signDate);
 		try {
+			List<VerificationOK> result = new ArrayList<VerificationOK>();
+			// loop over the trusted anchors in the root store
 			for (Enumeration<String> aliases = rootStore.aliases(); aliases.hasMoreElements();) {
 				String alias = aliases.nextElement();
 				try {
@@ -117,18 +117,17 @@ public class RootStoreVerifier extends CertificateVerifier {
 							.getCertificate(alias);
 					signCert.verify(anchor.getPublicKey());
 					LOGGER.info("Certificate verified against root store");
-					List<VerificationOK> result = new ArrayList<VerificationOK>();
 					result.add(new VerificationOK(signCert, this.getClass(), "Certificate verified against root store."));
-					if (verifier != null)
-						result.addAll(verifier.verify(signCert, issuerCert, signDate));
+					result.addAll(super.verify(signCert, issuerCert, signDate));
 					return result;
 				} catch (GeneralSecurityException e) {
 					continue;
 				}
 			}
+			result.addAll(super.verify(signCert, issuerCert, signDate));
+			return result;
 		} catch (GeneralSecurityException e) {
 			return super.verify(signCert, issuerCert, signDate);
 		}
-		return super.verify(signCert, issuerCert, signDate);
 	}
 }

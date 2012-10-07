@@ -71,7 +71,7 @@ public class CRLVerifier extends RootStoreVerifier {
 	
 	/**
 	 * Creates a CRLVerifier instance.
-	 * @param verifier	the previous verifier in the chain
+	 * @param verifier	the next verifier in the chain
 	 * @param crls a list of CRLs
 	 */
 	public CRLVerifier(CertificateVerifier verifier, List<X509CRL> crls) {
@@ -85,7 +85,8 @@ public class CRLVerifier extends RootStoreVerifier {
 	 * It means we couldn't verify it against any CRL that was available.
 	 * @param signCert	the certificate that needs to be checked
 	 * @param issuerCert	its issuer
-	 * @return true if the certificate was successfully verified, false if no CRL was found
+	 * @return a list of <code>VerificationOK</code> objects.
+	 * The list will be empty if the certificate couldn't be verified.
 	 * @see com.itextpdf.text.pdf.security.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
 	 */
 	public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
@@ -100,14 +101,17 @@ public class CRLVerifier extends RootStoreVerifier {
 			}
 		}
 		// then check online if allowed
+		boolean online = false;
 		if (onlineCheckingAllowed && validCrlsFound == 0) {
-			if (verify(getCRL(signCert, issuerCert), signCert, issuerCert, signDate))
+			if (verify(getCRL(signCert, issuerCert), signCert, issuerCert, signDate)) {
 				validCrlsFound++;
+				online = true;
+			}
 		}
 		// show how many valid CRLs were found
 		LOGGER.info("Valid CRLs found: " + validCrlsFound);
 		if (validCrlsFound > 0) {
-			result.add(new VerificationOK(signCert, this.getClass(), "Valid CRLs found: " + validCrlsFound));
+			result.add(new VerificationOK(signCert, this.getClass(), "Valid CRLs found: " + validCrlsFound + (online ? " (online)" : "")));
 		}
 		if (verifier != null)
 			result.addAll(verifier.verify(signCert, issuerCert, signDate));
@@ -132,7 +136,7 @@ public class CRLVerifier extends RootStoreVerifier {
 			&& signDate.after(crl.getThisUpdate()) && signDate.before(crl.getNextUpdate())) {
 			// the signing certificate may not be revoked
 			if (isSignatureValid(crl, issuerCert) && crl.isRevoked(signCert)) {
-				throw new GeneralSecurityException("The certificate has been revoked.");
+				throw new VerificationException(signCert, "The certificate has been revoked.");
 			}
 			return true;
 		}
@@ -146,6 +150,8 @@ public class CRLVerifier extends RootStoreVerifier {
 	 * @return	an X509CRL object
 	 */
 	public X509CRL getCRL(X509Certificate signCert, X509Certificate issuerCert) {
+		if (issuerCert == null)
+			issuerCert = signCert;
 		try {
 			// gets the URL from the certificate
 			String crlurl = CertificateUtil.getCRLURL(signCert);

@@ -43,30 +43,22 @@
  */
 package com.itextpdf.text.pdf.security;
 
+import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
-public class VerificationError {
+/**
+ * An exception that is thrown when something is wrong with a certificate.
+ */
+public class VerificationException extends GeneralSecurityException {
 
-	protected Certificate cert;
-	protected String message;
+	/** A Serial Version UID */
+	private static final long serialVersionUID = 2978604513926438256L;
 	
-	public VerificationError(Certificate cert, String err) {
-		this.cert = cert;
-		this.message = err;
-	}
-
-	public Certificate getCert() {
-		return cert;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-	
-	public String toString() {
-		if (cert == null)
-			return message;
-		return String.format("Certificate %s failed: %s", ((X509Certificate)cert).getSubjectDN().getName(), message);
+	/**
+	 * Creates a VerificationException
+	 */
+	public VerificationException(Certificate cert, String message) {
+		super(String.format("Certificate %s failed: %s", cert == null ? "Unknown" : ((X509Certificate)cert).getSubjectDN().getName(), message));
 	}
 }

@@ -52,11 +52,9 @@ import java.util.List;
 
 /**
  * Superclass for a series of certificate verifiers that will typically
- * be used as the final verifier in a chain of other verifiers.
- * It wraps another <code>CertificateVerifier</code> whose verify()
+ * be used in a chain. It wraps another <code>CertificateVerifier</code>
+ * that is the next element in the chain of which the <code>verify()</code>
  * method will be called.
- * There's also a simple verify() method to verify a certificate
- * against a <code>KeyStore</code>.
  */
 public class CertificateVerifier {
 
@@ -83,11 +81,13 @@ public class CertificateVerifier {
 	}
 	
 	/**
-	 * Calls the previous verifier in the chain, or returns false.
+	 * Checks the validity of the certificate, and calls the next
+	 * verifier in the chain, if any.
 	 * @param signCert	the certificate that needs to be checked
 	 * @param issuerCert	its issuer
 	 * @param signDate		the date the certificate needs to be valid
-	 * @return true if the certificate was successfully verified.
+	 * @return a list of <code>VerificationOK</code> objects.
+	 * The list will be empty if the certificate couldn't be verified.
 	 * @throws GeneralSecurityException
 	 * @throws IOException
 	 */
