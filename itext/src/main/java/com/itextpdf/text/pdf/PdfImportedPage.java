@@ -43,6 +43,7 @@
  */
 package com.itextpdf.text.pdf;
 import java.io.IOException;
+
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.DocumentException;
@@ -56,6 +57,8 @@ public class PdfImportedPage extends com.itextpdf.text.pdf.PdfTemplate {
 
     PdfReaderInstance readerInstance;
     int pageNumber;
+    int rotation;
+    
     /**
      * True if the imported page has been copied to a writer.
      * @since iText 5.0.4
@@ -66,6 +69,7 @@ public class PdfImportedPage extends com.itextpdf.text.pdf.PdfTemplate {
         this.readerInstance = readerInstance;
         this.pageNumber = pageNumber;
         this.writer = writer;
+        rotation = readerInstance.getReader().getPageRotation(pageNumber);
         bBox = readerInstance.getReader().getPageSize(pageNumber);
         setMatrix(1, 0, 0, 1, -bBox.getLeft(), -bBox.getBottom());
         type = TYPE_IMPORTED;
@@ -82,6 +86,10 @@ public class PdfImportedPage extends com.itextpdf.text.pdf.PdfTemplate {
 
     public int getPageNumber() {
         return pageNumber;
+    }
+
+    public int getRotation() {
+        return rotation;
     }
 
 
