@@ -43,17 +43,17 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
+import com.itextpdf.text.Rectangle;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Rectangle;
 
 /**
  * Make copies of PDF documents. Documents can be edited after reading and
@@ -74,12 +74,14 @@ public class PdfCopy extends PdfWriter {
             hasCopied = false;
         }
         void setCopied() { hasCopied = true; }
+        void setNotCopied() { hasCopied = false; }
         boolean getCopied() { return hasCopied; }
         PdfIndirectReference getRef() { return theRef; }
-    };
+    }
     protected HashMap<RefKey, IndirectReferences> indirects;
     protected HashMap<PdfReader, HashMap<RefKey, IndirectReferences>> indirectMap;
-    protected int currentObjectNum = 1;
+    protected HashMap<PdfObject, PdfObject> parentObjects;
+    protected HashSet<PdfObject> disableIndirects;
     protected PdfReader reader;
     protected PdfIndirectReference acroForm;
     protected int[] namePtr = {0};
@@ -87,6 +89,8 @@ public class PdfCopy extends PdfWriter {
     private boolean rotateContents = true;
     protected PdfArray fieldArray;
     protected HashSet<PdfTemplate> fieldTemplates;
+    private PdfStructTreeController structTreeController = null;
+    private int currentStructArrayNumber = 0;
 
     /**
      * A key to allow us to hash indirect references
@@ -132,6 +136,8 @@ public class PdfCopy extends PdfWriter {
         document.addDocListener(pdf);
         pdf.addWriter(this);
         indirectMap = new HashMap<PdfReader, HashMap<RefKey, IndirectReferences>>();
+        parentObjects = new HashMap<PdfObject, PdfObject>();
+        disableIndirects = new HashSet<PdfObject>();
     }
 
     /**
@@ -168,6 +174,28 @@ public class PdfCopy extends PdfWriter {
      */
     @Override
     public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
+        if (structTreeController != null)
+            structTreeController.reader = null;
+        return getImportedPageImpl(reader, pageNumber);
+    }
+
+    public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber, boolean keepTaggedPdfStructure) throws BadPdfFormatException {
+        if (!keepTaggedPdfStructure)
+            return getImportedPage(reader, pageNumber);
+        else {
+            if (structTreeController != null) {
+                if (reader != structTreeController.reader)
+                    structTreeController.setReader(reader);
+            } else {
+                structTreeController = new PdfStructTreeController(reader, this);
+            }
+            disableIndirects.clear();
+            parentObjects.clear();
+            return getImportedPageImpl(reader, pageNumber);
+        }
+    }
+
+    protected PdfImportedPage getImportedPageImpl(PdfReader reader, int pageNumber) {
         if (currentPdfReaderInstance != null) {
             if (currentPdfReaderInstance.getReader() != reader) {
                 try {
@@ -187,7 +215,6 @@ public class PdfCopy extends PdfWriter {
         return currentPdfReaderInstance.getImportedPage(pageNumber);
     }
 
-
     /**
      * Translate a PRIndirectReference to a PdfIndirectReference
      * In addition, translates the object numbers, and copies the
@@ -197,10 +224,18 @@ public class PdfCopy extends PdfWriter {
      * we do from their namespace to ours is *at best* heuristic, and guaranteed to
      * fail under some circumstances.
      */
-    protected PdfIndirectReference copyIndirect(PRIndirectReference in) throws IOException, BadPdfFormatException {
+    protected PdfIndirectReference copyIndirect(PRIndirectReference in, boolean keepStructure, boolean directRootKids) throws IOException, BadPdfFormatException {
         PdfIndirectReference theRef;
         RefKey key = new RefKey(in);
         IndirectReferences iRef = indirects.get(key);
+        PdfObject obj = PdfReader.getPdfObjectRelease(in);
+        if ((keepStructure) && (directRootKids))
+            if (obj instanceof PdfDictionary) {
+                PdfDictionary dict = (PdfDictionary) obj;
+                if (dict.contains(PdfName.PG))
+                    return null;
+            }
+
         if (iRef != null) {
             theRef = iRef.getRef();
             if (iRef.getCopied()) {
@@ -212,7 +247,7 @@ public class PdfCopy extends PdfWriter {
             iRef = new IndirectReferences(theRef);
             indirects.put(key, iRef);
         }
-        PdfObject obj = PdfReader.getPdfObjectRelease(in);
+
         if (obj != null && obj.isDictionary()) {
             PdfObject type = PdfReader.getPdfObjectRelease(((PdfDictionary)obj).get(PdfName.TYPE));
             if (type != null && PdfName.PAGE.equals(type)) {
@@ -220,9 +255,86 @@ public class PdfCopy extends PdfWriter {
             }
         }
         iRef.setCopied();
-        obj = copyObject(obj);
-        addToBody(obj, theRef);
-        return theRef;
+        parentObjects.put(obj, in);
+        PdfObject res = copyObject(obj, keepStructure, directRootKids);
+        if (disableIndirects.contains(obj))
+            iRef.setNotCopied();
+        if ((res != null) && !(res instanceof PdfNull))
+        {
+            addToBody(res, theRef);
+            return theRef;
+        }
+        else {
+            indirects.remove(key);
+            return null;
+        }
+
+    }
+
+    /**
+     * Translate a PRIndirectReference to a PdfIndirectReference
+     * In addition, translates the object numbers, and copies the
+     * referenced object to the output file.
+     * NB: PRIndirectReferences (and PRIndirectObjects) really need to know what
+     * file they came from, because each file has its own namespace. The translation
+     * we do from their namespace to ours is *at best* heuristic, and guaranteed to
+     * fail under some circumstances.
+     */
+    protected PdfIndirectReference copyIndirect(PRIndirectReference in) throws IOException, BadPdfFormatException {
+        return copyIndirect(in, false, false);
+    }
+
+    /**
+     * Translate a PRDictionary to a PdfDictionary. Also translate all of the
+     * objects contained in it.
+     */
+    protected PdfDictionary copyDictionary(PdfDictionary in, boolean keepStruct, boolean directRootKids)
+            throws IOException, BadPdfFormatException {
+        PdfDictionary out = new PdfDictionary();
+        PdfObject type = PdfReader.getPdfObjectRelease(in.get(PdfName.TYPE));
+        
+        if (keepStruct)
+        {
+            if ((directRootKids) && (in.contains(PdfName.PG)))
+            {
+                PdfObject curr = in;
+                disableIndirects.add(curr);
+                while (parentObjects.containsKey(curr) && !(disableIndirects.contains(curr))) {
+                    curr = parentObjects.get(curr);
+                    disableIndirects.add(curr);
+                }
+                return null;
+            }
+                
+            PdfName structType = in.getAsName(PdfName.S);
+            structTreeController.addRole(structType);
+            structTreeController.addClass(in);
+        }
+        
+        for (Object element : in.getKeys()) {
+            PdfName key = (PdfName)element;
+            PdfObject value = in.get(key);
+            if (structTreeController != null && structTreeController.reader != null && (key.equals(PdfName.STRUCTPARENT) || key.equals(PdfName.STRUCTPARENTS))) {
+                out.put(key,new PdfNumber(currentStructArrayNumber));
+                structTreeController.copyStructTreeForPage((PdfNumber)value, currentStructArrayNumber++);
+                continue;
+            }
+            if (type != null && PdfName.PAGE.equals(type)) {
+                if (!key.equals(PdfName.B) && !key.equals(PdfName.PARENT)) {
+                    parentObjects.put(value, in);
+                    PdfObject res = copyObject(value, keepStruct, directRootKids);
+                    if ((res != null) && !(res instanceof PdfNull))
+                        out.put(key, res);
+                }
+            }
+            else {
+                PdfObject res = copyObject(value, keepStruct, directRootKids);
+                if ((res != null) && !(res instanceof PdfNull))
+                    out.put(key, res);
+            }
+        }
+
+        return out;
     }
 
     /**
@@ -231,21 +343,7 @@ public class PdfCopy extends PdfWriter {
      */
     protected PdfDictionary copyDictionary(PdfDictionary in)
     throws IOException, BadPdfFormatException {
-        PdfDictionary out = new PdfDictionary();
-        PdfObject type = PdfReader.getPdfObjectRelease(in.get(PdfName.TYPE));
-
-        for (Object element : in.getKeys()) {
-            PdfName key = (PdfName)element;
-            PdfObject value = in.get(key);
-            //	    System.out.println("Copy " + key);
-            if (type != null && PdfName.PAGE.equals(type)) {
-                if (!key.equals(PdfName.B) && !key.equals(PdfName.PARENT))
-                    out.put(key, copyObject(value));
-            }
-            else
-                out.put(key, copyObject(value));
-        }
-        return out;
+        return copyDictionary(in, false, false);
     }
 
     /**
@@ -257,41 +355,53 @@ public class PdfCopy extends PdfWriter {
         for (Object element : in.getKeys()) {
             PdfName key = (PdfName) element;
             PdfObject value = in.get(key);
-            out.put(key, copyObject(value));
+            parentObjects.put(value, in);
+            PdfObject res = copyObject(value);
+            if ((res != null) && !(res instanceof PdfNull))
+                out.put(key, res);
         }
 
         return out;
     }
 
+    /**
+     * Translate a PRArray to a PdfArray. Also translate all of the objects contained
+     * in it
+     */
+    protected PdfArray copyArray(PdfArray in, boolean keepStruct, boolean directRootKids) throws IOException, BadPdfFormatException {
+        PdfArray out = new PdfArray();
+
+        for (Iterator<PdfObject> i = in.listIterator(); i.hasNext();) {
+            PdfObject value = i.next();
+            parentObjects.put(value, in);
+            PdfObject res = copyObject(value, keepStruct, directRootKids);
+            if ((res != null) && !(res instanceof PdfNull))
+                out.add(res);
+        }
+        return out;
+    }
 
     /**
      * Translate a PRArray to a PdfArray. Also translate all of the objects contained
      * in it
      */
     protected PdfArray copyArray(PdfArray in) throws IOException, BadPdfFormatException {
-        PdfArray out = new PdfArray();
-
-        for (Iterator<PdfObject> i = in.listIterator(); i.hasNext();) {
-            PdfObject value = i.next();
-            out.add(copyObject(value));
-        }
-        return out;
+        return copyArray(in, false, false);
     }
 
     /**
      * Translate a PR-object to a Pdf-object
      */
-    protected PdfObject copyObject(PdfObject in) throws IOException,BadPdfFormatException {
+    protected PdfObject copyObject(PdfObject in, boolean keepStruct, boolean directRootKidds) throws IOException,BadPdfFormatException {
         if (in == null)
             return PdfNull.PDFNULL;
         switch (in.type) {
             case PdfObject.DICTIONARY:
-                //	        System.out.println("Dictionary: " + in.toString());
-                return copyDictionary((PdfDictionary)in);
+                return copyDictionary((PdfDictionary)in, keepStruct, directRootKidds);
             case PdfObject.INDIRECT:
-                return copyIndirect((PRIndirectReference)in);
+                return copyIndirect((PRIndirectReference)in, keepStruct, directRootKidds);
             case PdfObject.ARRAY:
-                return copyArray((PdfArray)in);
+                return copyArray((PdfArray)in, keepStruct, directRootKidds);
             case PdfObject.NUMBER:
             case PdfObject.NAME:
             case PdfObject.STRING:
@@ -313,6 +423,13 @@ public class PdfCopy extends PdfWriter {
                 System.out.println("CANNOT COPY type " + in.type);
                 return null;
         }
+    }
+
+    /**
+     * Translate a PR-object to a Pdf-object
+     */
+    protected PdfObject copyObject(PdfObject in) throws IOException,BadPdfFormatException {
+        return copyObject(in, false, false);
     }
 
     /**
@@ -432,6 +549,7 @@ public class PdfCopy extends PdfWriter {
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj) {
         try {
             PdfDictionary theCat = pdf.getCatalog(rootObj);
+            buildStructTreeRootForTagged(theCat);
             if (fieldArray == null) {
                 if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
             }
