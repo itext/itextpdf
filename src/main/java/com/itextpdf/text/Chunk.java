@@ -49,10 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.HyphenationEvent;
-import com.itextpdf.text.pdf.PdfAction;
-import com.itextpdf.text.pdf.PdfAnnotation;
-import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 
 /**
@@ -83,6 +80,8 @@ public class Chunk implements Element {
 
 	/** The character stand in for an image or a separator. */
 	public static final String OBJECT_REPLACEMENT_CHARACTER = "\ufffc";
+
+    public static enum MarkContentOperatorType {BDC, EMC, NONE};
 
 	/** This is a Chunk containing a newline. */
 	public static final Chunk NEWLINE = new Chunk("\n");
@@ -197,6 +196,42 @@ public class Chunk implements Element {
 		setAttribute(IMAGE, new Object[] { copyImage, new Float(offsetX),
 				new Float(offsetY), Boolean.FALSE });
 	}
+
+    public static final String BDC = "BDC";
+
+    public static final String EMC = "EMC";
+
+    public Chunk(MarkContentOperatorType operatorType, PdfName role) {
+        this(OBJECT_REPLACEMENT_CHARACTER, new Font());
+        switch (operatorType) {
+            case BDC:
+                setAttribute(Chunk.BDC,role);
+                break;
+            case EMC:
+                setAttribute(Chunk.EMC,null);
+                break;
+        };
+    }
+
+    public boolean isEMC() {
+        if (attributes == null)
+            return false;
+        return attributes.containsKey(EMC);
+    }
+
+    public boolean isBDC() {
+        return attributes != null && attributes.containsKey(BDC);
+    }
+
+    public boolean isMCOperator() {
+        if (attributes == null)
+            return false;
+        return attributes.containsKey(BDC) || attributes.containsKey(EMC);
+    }
+
+    public PdfName getMCRole() {
+        return (PdfName)attributes.get(BDC);
+    }
 
 	/**
 	 * Key for drawInterface of the Separator.

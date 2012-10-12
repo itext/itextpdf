@@ -45,6 +45,7 @@ package com.itextpdf.text;
 
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.factories.RomanAlphabetFactory;
+import com.itextpdf.text.pdf.PdfName;
 
 import java.util.ArrayList;
 
@@ -148,6 +149,10 @@ public class List implements TextElementArray, Indentable {
     /** The indentation of the listitems. */
     protected float symbolIndent = 0;
 
+    protected boolean isMarked = true;
+
+    protected PdfName role = PdfName.L;
+
     // constructors
 
     /** Constructs a <CODE>List</CODE>. */
@@ -210,6 +215,22 @@ public class List implements TextElementArray, Indentable {
         this.symbolIndent = symbolIndent;
     }
 
+    public boolean isMarked() {
+        return isMarked;
+    }
+
+    public void setMarked(boolean value) {
+        isMarked = value;
+    }
+
+    public void setRole(PdfName role) {
+        this.role = role;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
     // implementation of the Element-methods
 
     /**
@@ -221,8 +242,17 @@ public class List implements TextElementArray, Indentable {
      */
     public boolean process(final ElementListener listener) {
         try {
-            for (Element element : list) {
-                listener.add(element);
+            if (isMarked && !isEmpty()) {
+                listener.add(new Chunk(Chunk.MarkContentOperatorType.BDC,role));
+                for (Element element : list) {
+                    listener.add(element);
+                }
+                listener.add(new Chunk(Chunk.MarkContentOperatorType.EMC,null));
+            }
+            else {
+                for (Element element : list) {
+                    listener.add(element);
+                }
             }
             return true;
         }

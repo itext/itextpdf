@@ -44,6 +44,7 @@
 package com.itextpdf.text.pdf;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Image;
@@ -124,7 +125,12 @@ public class BidiLine {
     }
 
     public boolean isEmpty() {
-        return currentChar >= totalTextLength && indexChunk >= chunks.size();
+        int i = indexChunk;
+        for (; i < chunks.size(); ++i) {
+            if (!chunks.get(i).isMCOperator())
+                break;
+        }
+        return currentChar >= totalTextLength && i >= chunks.size();
     }
 
     public void clearChunks() {
@@ -132,6 +138,38 @@ public class BidiLine {
         totalTextLength = 0;
         currentChar = 0;
     }
+
+    private void addEMCChunks(){
+        char c;
+        char uniC;
+        BaseFont bf;
+        int j = indexChunkChar;
+        boolean breakLoop = false;
+        for (int i = indexChunk; i < chunks.size(); ++i) {
+            PdfChunk ck = chunks.get(indexChunk);
+            String s = ck.toString();               
+            if (ck.isEMC()) {
+                addPiece(s.charAt(0), ck);
+                chunks.remove(i);
+                continue;
+            }
+            bf = ck.font().getFont();
+            int len = s.length();
+            for (; j < len; ++j) {
+                c = s.charAt(j);
+                uniC = (char)bf.getUnicodeEquivalent(c);
+                if (uniC != '\r' && uniC != '\n') {
+                    breakLoop = true;
+                    break;
+                }
+            }
+            if (breakLoop)
+                break;
+            j = 0;
+        }
+    }
+    
+    private PdfChunk [] savedBMC = null;
 
     public boolean getParagraph(int runDirection) {
         this.runDirection = runDirection;
@@ -141,6 +179,11 @@ public class BidiLine {
         char c;
         char uniC;
         BaseFont bf;
+        if (savedBMC != null) {
+            for (PdfChunk chunk : savedBMC)
+                addPiece(chunk.toString().charAt(0),chunk);
+            savedBMC = null;
+        }
         for (; indexChunk < chunks.size(); ++indexChunk) {
             PdfChunk ck = chunks.get(indexChunk);
             bf = ck.font().getFont();
@@ -159,8 +202,17 @@ public class BidiLine {
                         ++indexChunk;
                     }
                     hasText = true;
-                    if (totalTextLength == 0)
+                    if (textIsEmpty()) {
+                        if (totalTextLength != 0) {
+                            savedBMC = new PdfChunk[totalTextLength];
+                            for (int i = 0; i < totalTextLength; ++i)
+                                savedBMC[i] = detailChunks[i];
+                        }
+                        totalTextLength = 0;
                         detailChunks[0] = ck;
+                        break;
+                    }
+                    addEMCChunks();
                     break;
                 }
                 addPiece(c, ck);
@@ -194,6 +246,13 @@ public class BidiLine {
             mirrorGlyphs();
         }
         totalTextLength = trimRightEx(0, totalTextLength - 1) + 1;
+        return true;
+    }
+
+    private boolean textIsEmpty() {
+        for (int i = 0; i < totalTextLength; ++i)
+            if (!detailChunks[i].isMCOperator())
+                return false;
         return true;
     }
 
@@ -332,7 +391,11 @@ public class BidiLine {
                 return null;
             if (totalTextLength == 0) {
                 ArrayList<PdfChunk> ar = new ArrayList<PdfChunk>();
-                PdfChunk ck = new PdfChunk("", detailChunks[0]);
+                int i = 0;
+                for (; ; ++i)
+                    if (!detailChunks[i].isMCOperator())
+                        break;
+                PdfChunk ck = new PdfChunk("", detailChunks[i]);
                 ar.add(ck);
                 return new PdfLine(0, 0, 0, alignment, true, ar, isRTL);
             }
@@ -350,6 +413,9 @@ public class BidiLine {
         boolean surrogate = false;
         for (; currentChar < totalTextLength; ++currentChar) {
             ck = detailChunks[currentChar];
+            if (ck.isMCOperator()) {
+                continue;
+            }
             if (ck.isImage() && minY < yLine) {
                 Image img = ck.getImage();
                 if (img.isScaleToFitLineWhenOverflow() && yLine + 2 * descender - img.getScaledHeight() - ck.getImageOffsetY() - img.getSpacingBefore() < minY) {
@@ -415,10 +481,12 @@ public class BidiLine {
         }
         if (lastValidChunk == null) {
             // not even a single char fit; must output the first char
+            int i = currentChar - 1;
+            for (; i >= 0 && detailChunks[i].isBDC(); --i);
             ++currentChar;
             if (surrogate)
                 ++currentChar;
-            return new PdfLine(0, originalWidth, 0, alignment, false, createArrayOfPdfChunks(currentChar - 1, currentChar - 1), isRTL);
+            return new PdfLine(0, originalWidth, 0, alignment, false, createArrayOfPdfChunks(i + 1, currentChar - 1), isRTL);
         }
         if (currentChar >= totalTextLength) {
             // there was more line than text
@@ -469,17 +537,19 @@ public class BidiLine {
         PdfChunk ck = null;
         float width = 0;
         for (; startIdx <= lastIdx; ++startIdx) {
+            ck = detailChunks[startIdx];
+            if (ck.isMCOperator())
+                continue;
             boolean surrogate = Utilities.isSurrogatePair(text, startIdx);
             if (surrogate) {
-                width += detailChunks[startIdx].getCharWidth(Utilities.convertToUtf32(text, startIdx));
+                width += ck.getCharWidth(Utilities.convertToUtf32(text, startIdx));
                 ++startIdx;
             }
             else {
                 c = text[startIdx];
-                ck = detailChunks[startIdx];
                 if (PdfChunk.noPrint(ck.getUnicodeEquivalent(c)))
                     continue;
-                width += detailChunks[startIdx].getCharWidth(c);
+                width += ck.getCharWidth(c);
             }
         }
         return width;
@@ -505,7 +575,7 @@ public class BidiLine {
             ck = detailChunks[idx];
             if (PdfChunk.noPrint(ck.getUnicodeEquivalent(c)))
                 continue;
-            if (ck.isImage() || ck.isSeparator() || ck.isTab()) {
+            if (ck.isImage() || ck.isSeparator() || ck.isTab() || ck.isMCOperator()) {
                 if (buf.length() > 0) {
                     ar.add(new PdfChunk(buf.toString(), refCk));
                     buf = new StringBuffer();
@@ -530,6 +600,15 @@ public class BidiLine {
         }
         if (extraPdfChunk != null)
             ar.add(extraPdfChunk);
+        if (currentChar != 0)
+            currentChar = trimLeftEx(currentChar, -1);
+        for (; currentChar < detailChunks.length && detailChunks[currentChar] != null; ++currentChar) {
+            if (detailChunks[currentChar].isEMC()) {
+                ar.add(detailChunks[currentChar]);
+            } else {
+                break;
+            }
+        }
         return ar;
     }
 
@@ -556,6 +635,8 @@ public class BidiLine {
         int idx = endIdx;
         char c;
         for (; idx >= startIdx; --idx) {
+            if (detailChunks[idx].isMCOperator())
+                continue;
             c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
             if (!isWS(c))
                 break;
@@ -567,6 +648,8 @@ public class BidiLine {
         int idx = startIdx;
         char c;
         for (; idx <= endIdx; ++idx) {
+            if (detailChunks[idx].isMCOperator())
+                continue;
             c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
             if (!isWS(c))
                 break;
@@ -578,6 +661,8 @@ public class BidiLine {
         int idx = endIdx;
         char c = 0;
         for (; idx >= startIdx; --idx) {
+            if (detailChunks[idx].isMCOperator())
+                continue;
             c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
             if (!isWS(c) && !PdfChunk.noPrint(c))
                 break;
@@ -588,6 +673,14 @@ public class BidiLine {
     public int trimLeftEx(int startIdx, int endIdx) {
         int idx = startIdx;
         char c = 0;
+        if (endIdx == -1) {
+            for (; idx < detailChunks.length && detailChunks[idx] != null; ++idx) {
+                c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
+                if (!isWS(c) && !PdfChunk.noPrint(c))
+                    break;
+            }
+            return idx;
+        }
         for (; idx <= endIdx; ++idx) {
             c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
             if (!isWS(c) && !PdfChunk.noPrint(c))

@@ -93,6 +93,8 @@ public class PdfChunk {
         keysAttributes.add(Chunk.TAB);
         keysAttributes.add(Chunk.CHAR_SPACING);
         keysAttributes.add(Chunk.LINEHEIGHT);
+        keysAttributes.add(Chunk.BDC);
+        keysAttributes.add(Chunk.EMC);
         keysNoStroke.add(Chunk.SUBSUPSCRIPT);
         keysNoStroke.add(Chunk.SPLITCHARACTER);
         keysNoStroke.add(Chunk.HYPHENATION);
@@ -144,9 +146,27 @@ public class PdfChunk {
 
 /** Indicates if the height and offset of the Image has to be taken into account */
     protected boolean changeLeading = false;
-    
+
 /** The leading that can overrule the existing leading. */
     protected float leading = 0;
+
+    public boolean isMCOperator() {
+        return isEMC() || isBDC();
+    }
+
+    public boolean isEMC() {
+        if (attributes == null)
+            return false;
+        return attributes.containsKey("EMC");
+    }
+
+    public boolean isBDC() {
+        return attributes != null && attributes.containsKey("BDC");
+    }
+
+    public PdfName getMCRole() {
+        return (PdfName)attributes.get("BDC");
+    }
 
     // constructors
 

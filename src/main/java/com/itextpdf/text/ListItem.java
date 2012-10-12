@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.pdf.PdfName;
+
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
  * that can be added to a <CODE>List</CODE>.
@@ -110,6 +112,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem() {
         super();
+        role = PdfName.LI;
     }
 
     /**
@@ -119,6 +122,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final float leading) {
         super(leading);
+        role = PdfName.LI;
     }
 
     /**
@@ -128,6 +132,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final Chunk chunk) {
         super(chunk);
+        role = PdfName.LI;
     }
 
     /**
@@ -137,6 +142,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final String string) {
         super(string);
+        role = PdfName.LI;
     }
 
     /**
@@ -148,6 +154,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final String string, final Font font) {
         super(string, font);
+        role = PdfName.LI;
     }
 
     /**
@@ -159,6 +166,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final float leading, final Chunk chunk) {
         super(leading, chunk);
+        role = PdfName.LI;
     }
 
     /**
@@ -170,6 +178,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final float leading, final String string) {
         super(leading, string);
+        role = PdfName.LI;
     }
 
     /**
@@ -182,6 +191,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final float leading, final String string, final Font font) {
         super(leading, string, font);
+        role = PdfName.LI;
     }
 
     /**
@@ -191,6 +201,7 @@ public class ListItem extends Paragraph {
      */
     public ListItem(final Phrase phrase) {
         super(phrase);
+        role = PdfName.LI;
     }
 
     // implementation of the Element-methods

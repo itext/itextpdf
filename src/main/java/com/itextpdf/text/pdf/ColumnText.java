@@ -240,6 +240,12 @@ public class ColumnText {
 
     protected ColumnText compositeColumn;
 
+    protected Stack<PdfChunk> unclosedMC = new Stack<PdfChunk>();
+
+    protected Phrase listLabel = null;
+
+    protected float listIndentation;
+
     protected LinkedList<Element> compositeElements;
 
     protected int listIdx = 0;
@@ -356,9 +362,7 @@ public class ColumnText {
     private void addWaitingPhrase() {
         if (bidiLine == null && waitPhrase != null) {
             bidiLine = new BidiLine();
-            for (Chunk c: waitPhrase.getChunks()) {
-                bidiLine.addChunk(new PdfChunk(c, null));
-            }
+			addText(waitPhrase, true);
             waitPhrase = null;
         }
     }
@@ -377,10 +381,22 @@ public class ColumnText {
             waitPhrase = phrase;
             return;
         }
-        for (Object element : phrase.getChunks()) {
-            bidiLine.addChunk(new PdfChunk((Chunk)element, null));
+		addText(phrase, true);
         }
+
+	private void addText(final Phrase phrase, boolean b) {
+        if (phrase.isMarked() && !phrase.isEmpty()) {
+            bidiLine.addChunk(new PdfChunk(new Chunk(Chunk.MarkContentOperatorType.BDC, phrase.getRole()),null));
+            for (Chunk c: phrase.getChunks()) {
+                bidiLine.addChunk(new PdfChunk(c, null));
     }
+            bidiLine.addChunk(new PdfChunk(new Chunk(Chunk.MarkContentOperatorType.EMC,null),null));
+        } else {
+            for (Chunk c: waitPhrase.getChunks()) {
+                bidiLine.addChunk(new PdfChunk(c, null));
+            }
+		}
+	}
 
     /**
      * Replaces the current text array with this <CODE>Phrase</CODE>.
@@ -899,6 +915,7 @@ public class ColumnText {
         PdfLine line;
         float x1;
         int status = 0;
+        Object [] unclosedMCArray = unclosedMC.toArray();
         while(true) {
         	firstIndent = lastWasNewline ? indent : followingIndent; //
         	if (rectangularMode) {
@@ -930,6 +947,17 @@ public class ColumnText {
                 yLine -= currentLeading;
                 if (!simulate && !dirty) {
                 	text.beginText();
+                    PdfWriter writer = getCanvas().getPdfWriter();
+                    if (writer.isTagged()) {
+                        for (Object o : unclosedMCArray) {
+                            PdfChunk chunk = (PdfChunk)o;
+                            PdfName role = chunk.getMCRole();
+                            if (role != null) {
+                                PdfStructureTreeRoot root = writer.getStructureTreeRoot();
+                                text.beginMarkedContentSequence(new PdfStructureElement(root, role));
+                            }
+                        }
+                    }
                 	dirty = true;
                 }
                 if (Float.isNaN(firstLineY))
@@ -958,6 +986,17 @@ public class ColumnText {
                     continue;
                 if (!simulate && !dirty) {
                     text.beginText();
+                    PdfWriter writer = getCanvas().getPdfWriter();
+                    if (writer.isTagged()) {
+                        for (Object o : unclosedMCArray) {
+                            PdfChunk chunk = (PdfChunk)o;
+                            PdfName role = chunk.getMCRole();
+                            if (role != null) {
+                                PdfStructureTreeRoot root = writer.getStructureTreeRoot();
+                                text.beginMarkedContentSequence(new PdfStructureElement(root, role));
+                            }
+                        }
+                    }
                     dirty = true;
                 }
                 line = bidiLine.processLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions, minY, yLine, descender);
@@ -970,7 +1009,9 @@ public class ColumnText {
             if (!simulate) {
                 currentValues[0] = currentFont;
                 text.setTextMatrix(x1 + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
+                pdf.saveUnclosedMC(unclosedMC);
                 lastX = pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
+                pdf.restoreUnclosedMC();
                 currentFont = (PdfFont)currentValues[0];
             }
             lastWasNewline = repeatFirstLineIndent && line.isNewlineSplit();
@@ -979,7 +1020,17 @@ public class ColumnText {
             descender = line.getDescender();
         }
         if (dirty) {
+            PdfWriter writer = getCanvas().getPdfWriter();
+            if (writer.isTagged()) {
+                for (int i = unclosedMC.size(); i > 0; --i)
+                    text.endMarkedContentSequence();
+            }
             text.endText();
+            if (listLabel != null && !Float.isNaN(firstLineY) && !firstLineYDone) {
+                if (!simulate)
+                    showTextAligned(canvas, Element.ALIGN_LEFT, listLabel, leftX + listIndentation, firstLineY, 0);
+                firstLineYDone = true;
+            }
             canvas.add(text);
         }
         return status;
@@ -1308,6 +1359,7 @@ public class ColumnText {
                         }
                         createHere = true;
                     }
+
                     compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
                     compositeColumn.leftX = leftX;
                     compositeColumn.rightX = rightX;
@@ -1345,6 +1397,7 @@ public class ColumnText {
                     yLine -= para.getSpacingAfter();
                 }
                 if ((status & NO_MORE_COLUMN) != 0) {
+
                     return NO_MORE_COLUMN;
                 }
             }
@@ -1352,8 +1405,13 @@ public class ColumnText {
                 com.itextpdf.text.List list = (com.itextpdf.text.List)element;
                 ArrayList<Element> items = list.getItems();
                 ListItem item = null;
-                float listIndentation = list.getIndentationLeft();
+                listIndentation = list.getIndentationLeft();
                 int count = 0;
+                /*if (listIdx == 0 && !simulate && canvas.getPdfWriter().isTagged()) {
+                    PdfStructureTreeRoot root = canvas.getPdfWriter().getStructureTreeRoot();
+                    canvas.beginMarkedContentSequence(new PdfStructureElement(root,list.getRole()));
+                    unclosedMC.push(new PdfChunk(new Chunk(Chunk.MarkContentOperatorType.BDC, list.getRole()),null));
+                }*/
                 Stack<Object[]> stack = new Stack<Object[]>();
                 for (int k = 0; k < items.size(); ++k) {
                     Object obj = items.get(k);
@@ -1367,6 +1425,11 @@ public class ColumnText {
                     else if (obj instanceof com.itextpdf.text.List) {
                         stack.push(new Object[]{list, Integer.valueOf(k), new Float(listIndentation)});
                         list = (com.itextpdf.text.List)obj;
+                        /*if (count == listIdx && !simulate && canvas.getPdfWriter().isTagged()) {
+                            PdfStructureTreeRoot root = canvas.getPdfWriter().getStructureTreeRoot();
+                            canvas.beginMarkedContentSequence(new PdfStructureElement(root,list.getRole()));
+                            unclosedMC.push(new PdfChunk(new Chunk(Chunk.MarkContentOperatorType.BDC, list.getRole()),null));
+                        }*/
                         items = list.getItems();
                         listIndentation += list.getIndentationLeft();
                         k = -1;
@@ -1374,6 +1437,10 @@ public class ColumnText {
                     }
                     if (k == items.size() - 1) {
                         if (!stack.isEmpty()) {
+                            /*if (!simulate && canvas.getPdfWriter().isTagged()) {
+                                canvas.endMarkedContentSequence();
+                                unclosedMC.pop();
+                            }*/
                             Object objs[] = stack.pop();
                             list = (com.itextpdf.text.List)objs[0];
                             items = list.getItems();
@@ -1388,6 +1455,10 @@ public class ColumnText {
                     boolean createHere = false;
                     if (compositeColumn == null) {
                         if (item == null) {
+                            /*if (!simulate && canvas.getPdfWriter().isTagged()) {
+                                canvas.endMarkedContentSequence();
+                                unclosedMC.pop();
+                            }*/
                             listIdx = 0;
                             compositeElements.removeFirst();
                             continue main_loop;
@@ -1396,6 +1467,7 @@ public class ColumnText {
                         compositeColumn.setUseAscender((firstPass || descender == 0) && adjustFirstLine ? useAscender : false);
                         compositeColumn.setAlignment(item.getAlignment());
                         compositeColumn.setIndent(item.getIndentationLeft() + listIndentation + item.getFirstLineIndent(), false);
+                        compositeColumn.listIndentation = listIndentation;
                         compositeColumn.setExtraParagraphSpace(item.getExtraParagraphSpace());
                         compositeColumn.setFollowingIndent(compositeColumn.getIndent());
                         compositeColumn.setRightIndent(item.getIndentationRight() + list.getIndentationRight());
@@ -1417,7 +1489,10 @@ public class ColumnText {
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = item.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
+                    compositeColumn.listLabel = new Phrase(item.getListSymbol());
+                    compositeColumn.listLabel.setRole(PdfName.LBL);
                     status = compositeColumn.go(simulate || keepCandidate && keep == 0);
+                    compositeColumn.listLabel = null;
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
@@ -1437,11 +1512,6 @@ public class ColumnText {
                 linesWritten += compositeColumn.linesWritten;
                 descender = compositeColumn.descender;
                 currentLeading = compositeColumn.currentLeading;
-                if (!Float.isNaN(compositeColumn.firstLineY) && !compositeColumn.firstLineYDone) {
-                    if (!simulate)
-                        showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.getListSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
-                    compositeColumn.firstLineYDone = true;
-                }
                 if ((status & NO_MORE_TEXT) != 0) {
                     compositeColumn = null;
                     ++listIdx;
