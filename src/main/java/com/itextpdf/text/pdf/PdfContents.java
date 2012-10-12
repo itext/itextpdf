@@ -51,8 +51,6 @@ import java.util.zip.DeflaterOutputStream;
 import com.itextpdf.text.DocWriter;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 
 /**
  * <CODE>PdfContents</CODE> is a <CODE>PdfStream</CODE> containing the contents (text + graphics) of a <CODE>PdfPage</CODE>.
@@ -81,11 +79,6 @@ class PdfContents extends PdfStream {
     PdfContents(PdfContentByte under, PdfContentByte content, PdfContentByte text, PdfContentByte secondContent, Rectangle page) throws BadPdfFormatException {
         super();
         try {
-            under.joinMarks(content);
-            if (text != null)
-                under.joinMarks(text);
-            under.joinMarks(secondContent);
-            under.validateMarks();
             OutputStream out = null;
             Deflater deflater = null;
             streamBytes = new ByteArrayOutputStream();

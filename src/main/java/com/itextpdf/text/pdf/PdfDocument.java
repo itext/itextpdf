@@ -326,24 +326,6 @@ public class PdfDocument extends Document {
     /** This represents the leading of the lines. */
     protected float leading = 0;
 
-    protected Stack<PdfChunk> unclosedMC = new Stack<PdfChunk>();
-
-    protected Stack<PdfChunk> savedUnclosedMC = null;
-
-    protected void restoreUnclosedMC() {
-        if (savedUnclosedMC == null)
-            return;
-        unclosedMC = savedUnclosedMC;
-        savedUnclosedMC = null;
-    }
-
-    protected void saveUnclosedMC(Stack<PdfChunk> unclosedMC) {
-        if (savedUnclosedMC != null)
-            return;
-        savedUnclosedMC = this.unclosedMC;
-        this.unclosedMC = unclosedMC;
-    }
-
     /**
      * Getter for the current leading.
      * @return	the current leading
@@ -435,10 +417,9 @@ public class PdfDocument extends Document {
                     if (line == null) {
                         carriageReturn();
                     }
-                    Chunk c = (Chunk) element;
 
                     // we cast the element to a chunk
-                    PdfChunk chunk = new PdfChunk(c, anchorAction);
+                    PdfChunk chunk = new PdfChunk((Chunk) element, anchorAction);
                     // we try to add the chunk to the line, until we succeed
                     {
                         PdfChunk overflow;
@@ -450,9 +431,7 @@ public class PdfDocument extends Document {
                             	chunk.trimFirstSpace();
                         }
                     }
-                    if (!chunk.isMCOperator()) {
                     pageEmpty = false;
-                    }
                     if (chunk.isAttribute(Chunk.NEWPAGE)) {
                         newPage();
                     }
@@ -846,10 +825,7 @@ public class PdfDocument extends Document {
         try {
             // we flush the arraylist with recently written lines
         	flushLines();
-            if (!unclosedMC.empty() && writer.isTagged()) {
-                for (int i = unclosedMC.size(); i > 0; --i)
-                    text.endMarkedContentSequence();
-            }
+
         	// we prepare the elements of the page dictionary
 
         	// [U1] page size and rotation
@@ -909,16 +885,6 @@ public class PdfDocument extends Document {
         	writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), pageSize));
         	// we initialize the new page
         	initPage();
-            if (!unclosedMC.empty() && writer.isTagged()) {
-                for (Object o : unclosedMC.toArray()) {
-                    PdfChunk chunk = (PdfChunk)o;
-                    PdfName role = chunk.getMCRole();
-                    if (role != null) {
-                        PdfStructureTreeRoot root = writer.getStructureTreeRoot();
-                        text.beginMarkedContentSequence(new PdfStructureElement(root,role));
-        }
-                }
-            }
         }
         catch(DocumentException de) {
         	// maybe this never happens, but it's better to check.
@@ -1130,7 +1096,7 @@ public class PdfDocument extends Document {
             lines = new ArrayList<PdfLine>();
         }
         // If the current line is not null or empty
-        if (line!= null && !line.isEmpty()) {
+        if (line != null && line.size() > 0) {
             // we check if the end of the page is reached (bugfix by Francois Gravel)
             if (currentHeight + line.height() + leading > indentTop() - indentBottom()) {
             	// if the end of the line is reached, we start a newPage which will flush existing lines
@@ -1143,7 +1109,6 @@ public class PdfDocument extends Document {
             }
             currentHeight += line.height();
             lines.add(line);
-            line = null;
             pageEmpty = false;
         }
         if (imageEnd > -1 && currentHeight > imageEnd) {
@@ -1152,7 +1117,7 @@ public class PdfDocument extends Document {
             indentation.imageIndentLeft = 0;
         }
         // a new current line is constructed
-        line = new PdfLine(indentLeft(), indentRight(), alignment, leading, line);
+        line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
     }
 
     /**
@@ -1222,10 +1187,7 @@ public class PdfDocument extends Document {
             text.moveText(moveTextX, -l.height());
             // is the line preceded by a symbol?
             if (l.listSymbol() != null) {
-                Phrase phrase = new Phrase(l.listSymbol());
-                phrase.setRole(PdfName.LBL);
-
-                ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, phrase, text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
+                ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
             }
 
             currentValues[0] = currentFont;
@@ -1289,12 +1251,7 @@ public class PdfDocument extends Document {
             }
             else {
                 float width = line.widthLeft();
-                int i = line.size() - 1;
-                for (; i >= 0; --i) {
-                    if (!line.getChunk(i).isMCOperator())
-                        break;
-                }
-                PdfChunk last = line.getChunk(i);
+                PdfChunk last = line.getChunk(line.size() - 1);
                 if (last != null) {
                     String s = last.toString();
                     char c;
@@ -1325,23 +1282,6 @@ public class PdfDocument extends Document {
         // looping over all the chunks in 1 line
         for (Iterator<PdfChunk> j = line.iterator(); j.hasNext(); ) {
             chunk = j.next();
-
-            if (chunk.isMCOperator()) {
-                if (!writer.isTagged())
-                    continue;
-                PdfName role = chunk.getMCRole();
-                if (role != null) {
-                    PdfStructureTreeRoot root = writer.getStructureTreeRoot();
-                    text.beginMarkedContentSequence(new PdfStructureElement(root,role));
-                    unclosedMC.push(chunk);
-                }
-                else {
-                    text.endMarkedContentSequence();
-                    unclosedMC.pop();
-                }
-                continue;
-            }
-
             BaseColor color = chunk.color();
             float fontSize = chunk.font().size();
             float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);

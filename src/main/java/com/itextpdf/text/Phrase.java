@@ -46,7 +46,6 @@ package com.itextpdf.text;
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.HyphenationEvent;
-import com.itextpdf.text.pdf.PdfName;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,26 +93,6 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      * @since	2.1.2
      */
     protected HyphenationEvent hyphenation = null;
-
-    protected boolean isMarked = true;
-
-    protected PdfName role = PdfName.P;
-
-    public boolean isMarked() {
-        return isMarked;
-    }
-
-    public void setMarked(boolean value) {
-        isMarked = value;
-    }
-
-    public void setRole(PdfName role) {
-        this.role = role;
-    }
-
-    public PdfName getRole() {
-        return role;
-    }
 
     // constructors
 
@@ -228,17 +207,8 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
      */
     public boolean process(final ElementListener listener) {
         try {
-            if (isMarked() && !isEmpty()) {
-                listener.add(new Chunk(Chunk.MarkContentOperatorType.BDC,role));
-                for (Object element : this) {
-                    listener.add((Element) element);
-                }
-                listener.add(new Chunk(Chunk.MarkContentOperatorType.EMC,null));
-            }
-            else {
-                for (Object element : this) {
-                    listener.add((Element) element);
-                }
+            for (Object element : this) {
+                listener.add((Element) element);
             }
             return true;
         }
@@ -363,9 +333,6 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
                     Phrase phrase = (Phrase) element;
                     boolean success = true;
                     Element e;
-                    if (phrase.isMarked() && !phrase.isEmpty()) {
-                        super.add(new Chunk(Chunk.MarkContentOperatorType.BDC, role));
-                    }
 	                for (Object element2 : phrase) {
 	                    e = (Element) element2;
 	                    if (e instanceof Chunk) {
@@ -375,9 +342,6 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
 	                        success &= this.add(e);
 	                    }
 	                }
-                    if (phrase.isMarked() && !phrase.isEmpty()) {
-                        super.add(new Chunk(Chunk.MarkContentOperatorType.EMC,null));
-                    }
                     return success;
                 case Element.MARKED:
                 case Element.DIV:
@@ -637,48 +601,16 @@ public class Phrase extends ArrayList<Element> implements TextElementArray {
     }
 
     public boolean trim() {
-        int i = 0, k = 0;
-        while (this.size() > i) {
-            Element firstChunk = this.get(i);
-            if (firstChunk instanceof Chunk && ((Chunk)firstChunk).isMCOperator()) {
-                if (((Chunk)firstChunk).isBDC()) {
-                    ++k;
-                    ++i;
-                    continue;
-                }
-                if (k > 0) {
-                    --k;
-                    --i;
-                    this.remove(i);
-                    this.remove(i);
-                    continue;
-                }
-                ++i;
-            }
+        while (this.size() > 0) {
+            Element firstChunk = this.get(0);
             if (firstChunk instanceof Chunk && ((Chunk)firstChunk).isWhitespace()) {
                 this.remove(firstChunk);
             } else {
                 break;
             }
         }
-        k = i = 0;
-        while (this.size() > i) {
-            Element lastChunk = this.get(this.size() - 1 - i);
-            if (lastChunk instanceof Chunk && ((Chunk)lastChunk).isMCOperator()) {
-                if (((Chunk)lastChunk).isEMC()) {
-                    ++k;
-                    ++i;
-                    continue;
-                }
-                if (k > 0) {
-                    --k;
-                    --i;
-                    this.remove(this.size() - 1 - i);
-                    this.remove(this.size() - 1 - i);
-                    continue;
-                }
-                ++i;
-            }
+        while (this.size() > 0) {
+            Element lastChunk = this.get(this.size() - 1);
             if (lastChunk instanceof Chunk && ((Chunk)lastChunk).isWhitespace()) {
                 this.remove(lastChunk);
             } else {

@@ -109,13 +109,6 @@ public class PdfLine {
         this.line = new ArrayList<PdfChunk>();
     }
 
-    PdfLine(float left, float right, int alignment, float height, PdfLine line) {
-        this(left, right, alignment, height);
-        if (line != null && line.size() != 0) {
-            this.line = (ArrayList<PdfChunk>)line.line.clone();
-        }
-    }
-
     /**
      * Creates a PdfLine object.
      * @param left				the left offset
@@ -134,10 +127,6 @@ public class PdfLine {
         this.line = line;
         this.newlineSplit = newlineSplit;
         this.isRTL = isRTL;
-    }
-
-    public ArrayList<PdfChunk> getChunks() {
-        return line;
     }
 
     // methods
@@ -180,7 +169,7 @@ public class PdfLine {
         }
         // if the length == 0 and there were no other chunks added to the line yet,
         // we risk to end up in an endless loop trying endlessly to add the same chunk
-        else if (isEmpty()) {
+        else if (line.size() < 1) {
             chunk = overflow;
             overflow = chunk.truncate(width);
             width -= chunk.width();
@@ -391,8 +380,6 @@ public class PdfLine {
     public int getLineLengthUtf32() {
         int total = 0;
         for (Object element : line) {
-            if (((PdfChunk)element).isMCOperator())
-                continue;
             total += ((PdfChunk)element).lengthUtf32();
         }
         return total;
@@ -471,8 +458,6 @@ public class PdfLine {
         PdfChunk chunk;
         for (int k = 0; k < line.size(); ++k) {
             chunk = line.get(k);
-            if (chunk.isMCOperator())
-                continue;
             if (!chunk.isImage()) {
                 if (chunk.changeLeading())
                     normal_leading = Math.max(chunk.getLeading(), normal_leading);
@@ -539,8 +524,6 @@ public class PdfLine {
        float ascender = 0;
        for (int k = 0; k < line.size(); ++k) {
            PdfChunk ck = line.get(k);
-           if (ck.isMCOperator())
-               continue;
            if (ck.isImage())
                ascender = Math.max(ascender, ck.getImage().getScaledHeight() + ck.getImageOffsetY());
            else {
@@ -561,8 +544,6 @@ public class PdfLine {
         float descender = 0;
         for (int k = 0; k < line.size(); ++k) {
             PdfChunk ck = line.get(k);
-            if (ck.isMCOperator())
-                continue;
             if (ck.isImage())
                 descender = Math.min(descender, ck.getImageOffsetY());
             else {
@@ -572,19 +553,5 @@ public class PdfLine {
             }
         }
         return descender;
-    }
-    // we ignore marked chunk
-    public boolean isEmpty() {
-        if (line == null || line.size() == 0)
-            return true;
-        for (PdfChunk chunk : line) {
-            if (!chunk.isMCOperator())
-                return false;
-        }
-        return true;
-    }
-
-    public void remove(int idx) {
-        line.remove(idx);
     }
 }

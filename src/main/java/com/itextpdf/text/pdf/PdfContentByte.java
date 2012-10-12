@@ -183,11 +183,9 @@ public class PdfContentByte {
     /** The separator between commands.
      */
     protected int separator = '\n';
+
+    private int mcDepth = 0;
     private boolean inText = false;
-
-    private int mcDepthFirst = 0;
-
-    private int mcDepthLast = 0;
 
     private static HashMap<PdfName, String> abrev = new HashMap<PdfName, String>();
 
@@ -263,7 +261,6 @@ public class PdfContentByte {
         if (other.writer != null && writer != other.writer)
             throw new RuntimeException(MessageLocalization.getComposedMessage("inconsistent.writers.are.you.mixing.two.documents"));
         content.append(other.content);
-        joinMarks(other);
     }
 
     /**
@@ -2967,38 +2964,12 @@ public class PdfContentByte {
         prs.addDefaultColor(name, obj);
     }
 
-    private void incMCDepth() {
-        ++mcDepthLast;
-    }
-
-    private void decMCDepth() {
-        if (mcDepthLast > 0)
-            --mcDepthLast;
-        else
-            --mcDepthFirst;
-    }
-
-    protected void joinMarks(PdfContentByte other) {
-        if (mcDepthLast + other.mcDepthFirst < 0) {
-            mcDepthFirst += mcDepthLast + other.mcDepthFirst;
-            mcDepthLast = other.mcDepthLast;
-        }
-        else
-        mcDepthLast += other.mcDepthFirst + other.mcDepthLast;
-    }
-
-    protected void validateMarks() {
-        if (mcDepthFirst != 0 || mcDepthLast != 0)
-            throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.marked.content.operators"));
-    }
-
     /**
      * Begins a marked content sequence. This sequence will be tagged with the structure <CODE>struc</CODE>.
      * The same structure can be used several times to connect text that belongs to the same logical segment
      * but is in a different location, like the same paragraph crossing to another page, for example.
      * @param struc the tagging structure
      */
-
     public void beginMarkedContentSequence(final PdfStructureElement struc) {
         PdfObject obj = struc.get(PdfName.K);
         int mark = pdf.getMarkPoint();
@@ -3027,7 +2998,7 @@ public class PdfContentByte {
             struc.put(PdfName.PG, writer.getCurrentPage());
         }
         pdf.incMarkPoint();
-        incMCDepth();
+        mcDepth++;
         content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
     }
 
@@ -3035,7 +3006,10 @@ public class PdfContentByte {
      * Ends a marked content sequence
      */
     public void endMarkedContentSequence() {
-        decMCDepth();
+    	if (mcDepth == 0) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.marked.content.operators"));
+    	}
+    	--mcDepth;
         content.append("EMC").append_i(separator);
     }
 
@@ -3050,7 +3024,7 @@ public class PdfContentByte {
     public void beginMarkedContentSequence(final PdfName tag, final PdfDictionary property, final boolean inline) {
         if (property == null) {
             content.append(tag.getBytes()).append(" BMC").append_i(separator);
-            incMCDepth();
+            ++mcDepth;
             return;
         }
         content.append(tag.getBytes()).append(' ');
@@ -3073,7 +3047,7 @@ public class PdfContentByte {
             content.append(name.getBytes());
         }
         content.append(" BDC").append_i(separator);
-        incMCDepth();
+        ++mcDepth;
     }
 
     /**
@@ -3096,6 +3070,9 @@ public class PdfContentByte {
      * @throws IllegalPdfSyntaxException (a runtime exception)
      */
     public void sanityCheck() {
+    	if (mcDepth != 0) {
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.marked.content.operators"));
+    	}
     	if (inText) {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
     	}
