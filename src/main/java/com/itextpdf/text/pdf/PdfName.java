@@ -334,6 +334,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName CIRCLE = new PdfName("Circle");
     /**
      * A name.
+     * @since 5.3.4
+     */
+    public static final PdfName CLASSMAP = new PdfName("ClassMap");
+    /**
+     * A name.
      * @since 5.1.0
      */
     public static final PdfName CLOUD = new PdfName("Cloud");
