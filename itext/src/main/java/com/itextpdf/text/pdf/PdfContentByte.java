@@ -43,20 +43,15 @@
  */
 package com.itextpdf.text.pdf;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 import com.itextpdf.awt.FontMapper;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.awt.PdfPrinterGraphics2D;
 import com.itextpdf.awt.geom.AffineTransform;
-import com.itextpdf.text.Annotation;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.ImgJBIG2;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
@@ -188,6 +183,10 @@ public class PdfContentByte {
     private boolean inText = false;
 
     private static HashMap<PdfName, String> abrev = new HashMap<PdfName, String>();
+
+    private ArrayList<Element> mcElements = new ArrayList<Element>();
+
+    private PdfContentByte duplicatedFrom = null;
 
     static {
         abrev.put(PdfName.BITSPERCOMPONENT, "/BPC ");
@@ -1488,8 +1487,12 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void showText(final String text) {
+//        if (writer.isTagged())
+//            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         showText2(text);
         content.append("Tj").append_i(separator);
+//        if (writer.isTagged())
+//            endMarkedContentSequence();
     }
 
     /**
@@ -1543,9 +1546,13 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final String text) {
+//        if (writer.isTagged())
+//            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         state.yTLM -= state.leading;
         showText2(text);
         content.append("'").append_i(separator);
+//        if (writer.isTagged())
+//            endMarkedContentSequence();
     }
 
     /**
@@ -1556,11 +1563,14 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
+//        if (writer.isTagged())
+//            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         state.yTLM -= state.leading;
         content.append(wordSpacing).append(' ').append(charSpacing);
         showText2(text);
         content.append("\"").append_i(separator);
-
+//        if (writer.isTagged())
+//            endMarkedContentSequence();
         // The " operator sets charSpace and wordSpace into graphics state
         // (cfr PDF reference v1.6, table 5.6)
         state.charSpace = charSpacing;
@@ -1595,8 +1605,8 @@ public class PdfContentByte {
     public void setTextMatrix(final AffineTransform transform) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
-    	setTextMatrix((float)matrix[0], (float)matrix[1], (float)matrix[2],
-    			      (float)matrix[3], (float)matrix[4], (float)matrix[5] );
+    	setTextMatrix((float) matrix[0], (float) matrix[1], (float) matrix[2],
+                (float) matrix[3], (float) matrix[4], (float) matrix[5]);
     }
     
     /**
@@ -1852,8 +1862,8 @@ public class PdfContentByte {
     public void concatCTM(final AffineTransform transform) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
-    	concatCTM( (float)matrix[0], (float)matrix[1], (float)matrix[2],
-    			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
+    	concatCTM((float) matrix[0], (float) matrix[1], (float) matrix[2],
+                (float) matrix[3], (float) matrix[4], (float) matrix[5]);
     }
 
     /**
@@ -2143,8 +2153,8 @@ public class PdfContentByte {
     public void addTemplate(final PdfTemplate template, final AffineTransform transform) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
-    	addTemplate( template, (float)matrix[0], (float)matrix[1], (float)matrix[2],
-    			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
+    	addTemplate(template, (float) matrix[0], (float) matrix[1], (float) matrix[2],
+                (float) matrix[3], (float) matrix[4], (float) matrix[5]);
     }
 
     void addTemplateReference(final PdfIndirectReference template, PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) {
@@ -2224,7 +2234,7 @@ public class PdfContentByte {
         content.append(' ');
         content.append((float)(yellow & 0xFF) / 0xFF);
         content.append(' ');
-        content.append((float)(black & 0xFF) / 0xFF);
+        content.append((float) (black & 0xFF) / 0xFF);
         content.append(" K").append_i(separator);
     }
 
@@ -2246,7 +2256,7 @@ public class PdfContentByte {
      */
 
     public void setRGBColorFill(final int red, final int green, final int blue) {
-        HelperRGB((float)(red & 0xFF) / 0xFF, (float)(green & 0xFF) / 0xFF, (float)(blue & 0xFF) / 0xFF);
+        HelperRGB((float) (red & 0xFF) / 0xFF, (float) (green & 0xFF) / 0xFF, (float) (blue & 0xFF) / 0xFF);
         content.append(" rg").append_i(separator);
     }
 
@@ -2267,7 +2277,7 @@ public class PdfContentByte {
      */
 
     public void setRGBColorStroke(final int red, final int green, final int blue) {
-        HelperRGB((float)(red & 0xFF) / 0xFF, (float)(green & 0xFF) / 0xFF, (float)(blue & 0xFF) / 0xFF);
+        HelperRGB((float) (red & 0xFF) / 0xFF, (float) (green & 0xFF) / 0xFF, (float) (blue & 0xFF) / 0xFF);
         content.append(" RG").append_i(separator);
     }
 
@@ -2280,7 +2290,7 @@ public class PdfContentByte {
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
-                setGrayStroke(((GrayColor)color).getGray());
+                setGrayStroke(((GrayColor) color).getGray());
                 break;
             }
             case ExtendedColor.TYPE_CMYK: {
@@ -2317,7 +2327,7 @@ public class PdfContentByte {
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
-                setGrayFill(((GrayColor)color).getGray());
+                setGrayFill(((GrayColor) color).getGray());
                 break;
             }
             case ExtendedColor.TYPE_CMYK: {
@@ -2562,6 +2572,8 @@ public class PdfContentByte {
     public void showText(final PdfTextArray text) {
         if (state.fontDetails == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("font.and.size.must.be.set.before.writing.any.text"));
+//        if (writer.isTagged())
+//            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         content.append("[");
         ArrayList<Object> arrayList = text.getArrayList();
         boolean lastWasNumber = false;
@@ -2579,6 +2591,8 @@ public class PdfContentByte {
             }
         }
         content.append("]TJ").append_i(separator);
+//        if (writer.isTagged())
+//            endMarkedContentSequence();
     }
 
     /**
@@ -2630,7 +2644,9 @@ public class PdfContentByte {
      * @return a copy of this <CODE>PdfContentByte</CODE>
      */
     public PdfContentByte getDuplicate() {
-        return new PdfContentByte(writer);
+        PdfContentByte cb = new PdfContentByte(writer);
+        cb.duplicatedFrom = this;
+        return cb;
     }
 
     /**
@@ -2998,7 +3014,7 @@ public class PdfContentByte {
             struc.put(PdfName.PG, writer.getCurrentPage());
         }
         pdf.incMarkPoint();
-        mcDepth++;
+        setMcDepth(getMcDepth() + 1);
         content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
     }
 
@@ -3006,10 +3022,10 @@ public class PdfContentByte {
      * Ends a marked content sequence
      */
     public void endMarkedContentSequence() {
-    	if (mcDepth == 0) {
+    	if (getMcDepth() == 0) {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.marked.content.operators"));
     	}
-    	--mcDepth;
+    	setMcDepth(getMcDepth() - 1);
         content.append("EMC").append_i(separator);
     }
 
@@ -3024,7 +3040,7 @@ public class PdfContentByte {
     public void beginMarkedContentSequence(final PdfName tag, final PdfDictionary property, final boolean inline) {
         if (property == null) {
             content.append(tag.getBytes()).append(" BMC").append_i(separator);
-            ++mcDepth;
+            setMcDepth(getMcDepth() + 1);
             return;
         }
         content.append(tag.getBytes()).append(' ');
@@ -3047,7 +3063,7 @@ public class PdfContentByte {
             content.append(name.getBytes());
         }
         content.append(" BDC").append_i(separator);
-        ++mcDepth;
+        setMcDepth(getMcDepth() + 1);
     }
 
     /**
@@ -3070,7 +3086,7 @@ public class PdfContentByte {
      * @throws IllegalPdfSyntaxException (a runtime exception)
      */
     public void sanityCheck() {
-    	if (mcDepth != 0) {
+    	if (getMcDepth() != 0) {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.marked.content.operators"));
     	}
     	if (inText) {
@@ -3298,4 +3314,102 @@ public class PdfContentByte {
         af.getMatrix(matrix);
         transform(new AffineTransform(matrix));
     }
+
+    protected void openMCBlock(Element element) {
+        if (writer.isTagged()) {
+            if (!getMcElements().contains(element)) {
+                openMCBlockInt(element);
+                getMcElements().add(element);
+            }
+        }
+    }
+
+    private PdfDictionary getParentStructureElement() {
+        PdfDictionary parent = null;
+        if (getMcElements().size() > 0)
+            parent = pdf.structElements.get(getMcElements().get(getMcElements().size() - 1));
+        if (parent == null) {
+            parent = writer.getStructureTreeRoot();
+        }
+        return parent;
+    }
+
+    private void openMCBlockInt(Element element) {
+        if (writer.isTagged()) {
+            PdfStructureElement structureElement = null;
+            if (element instanceof Paragraph) {
+                structureElement = new PdfStructureElement(getParentStructureElement(), PdfName.P);
+                beginMarkedContentSequence(structureElement);
+                pdf.structElements.put(element, structureElement);
+            }
+        }
+    }
+
+    protected void closeMCBlock(Element element) {
+        if (writer.isTagged()) {
+            if (getMcElements().contains(element)) {
+                closeMCBlockInt(element);
+                getMcElements().remove(element);
+            }
+        }
+    }
+
+    private void closeMCBlockInt(Element element) {
+        if (writer.isTagged()) {
+            if (element instanceof Paragraph) {
+                endMarkedContentSequence();
+                pdf.structElements.remove(element);
+            }
+        }
+    }
+
+    protected ArrayList<Element> saveMCBlocks() {
+        ArrayList<Element> mc = new ArrayList<Element>();
+        if (writer.isTagged()) {
+            mc = getMcElements();
+            for (int i = 0; i < mc.size(); i++) {
+                closeMCBlockInt(mc.get(i));
+            }
+            setMcElements(new ArrayList<Element>());
+        }
+        return mc;
+    }
+
+    protected void restoreMCBlocks(ArrayList<Element> mcElements) {
+        if (writer.isTagged() && mcElements != null) {
+            setMcElements(mcElements);
+            for (int i = 0; i < this.getMcElements().size(); i++) {
+                openMCBlockInt(this.getMcElements().get(i));
+            }
+        }
+    }
+
+    protected int getMcDepth() {
+        if (duplicatedFrom != null)
+            return duplicatedFrom.getMcDepth();
+        else
+            return mcDepth;
+    }
+
+    protected void setMcDepth(int value) {
+        if (duplicatedFrom != null)
+            duplicatedFrom.setMcDepth(value);
+        else
+            mcDepth = value;
+    }
+
+    protected ArrayList<Element> getMcElements() {
+        if (duplicatedFrom != null)
+            return duplicatedFrom.getMcElements();
+        else
+            return mcElements;
+    }
+
+    protected void setMcElements(ArrayList<Element> value) {
+        if (duplicatedFrom != null)
+            duplicatedFrom.setMcElements(value);
+        else
+            mcElements = value;
+    }
+
 }
