@@ -297,6 +297,9 @@ public class PdfDocument extends Document {
     /** The <CODE>PdfWriter</CODE>. */
     protected PdfWriter writer;
 
+    protected HashMap<Element, PdfStructureElement> structElements = new HashMap<Element, PdfStructureElement>();
+
+
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
      *
@@ -474,7 +477,8 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.PARAGRAPH: {
-                	leadingCount++;
+                    text.openMCBlock(element);
+                    leadingCount++;
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     addSpacing(paragraph.getSpacingBefore(), leading, paragraph.getFont());
@@ -527,6 +531,9 @@ public class PdfDocument extends Document {
                     indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
                     leadingCount--;
+                    if (writer.isTagged())
+                        flushLines();
+                    text.closeMCBlock(element);
                     break;
                 }
                 case Element.SECTION:
@@ -824,7 +831,7 @@ public class PdfDocument extends Document {
 
         try {
             // we flush the arraylist with recently written lines
-        	flushLines();
+            flushLines();
 
         	// we prepare the elements of the page dictionary
 
@@ -882,9 +889,22 @@ public class PdfDocument extends Document {
         		text.endText();
         	else
         		text = null;
+            ArrayList<ArrayList<Element>> mcBlocks = new ArrayList<ArrayList<Element>>(4);
+            mcBlocks.add(0, writer.getDirectContentUnder().saveMCBlocks());
+            if (graphics != null)
+                mcBlocks.add(1, graphics.saveMCBlocks());
+            if (text != null)
+                mcBlocks.add(2, text.saveMCBlocks());
+            mcBlocks.add(3, writer.getDirectContent().saveMCBlocks());
         	writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), pageSize));
         	// we initialize the new page
         	initPage();
+            writer.getDirectContentUnder().restoreMCBlocks(mcBlocks.get(0));
+            if (graphics != null)
+                graphics.restoreMCBlocks(mcBlocks.get(1));
+            if (text != null)
+                text.restoreMCBlocks(mcBlocks.get(2));
+            writer.getDirectContent().restoreMCBlocks(mcBlocks.get(3));
         }
         catch(DocumentException de) {
         	// maybe this never happens, but it's better to check.

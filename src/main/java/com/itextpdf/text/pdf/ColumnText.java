@@ -854,6 +854,10 @@ public class ColumnText {
      * @throws DocumentException on error
      */
     public int go(final boolean simulate) throws DocumentException {
+        return go(simulate, null);
+    }
+
+    protected int go(final boolean simulate, Element elementToGo) throws DocumentException {
         if (composite)
             return goComposite(simulate);
         addWaitingPhrase();
@@ -899,6 +903,12 @@ public class ColumnText {
         PdfLine line;
         float x1;
         int status = 0;
+        if (!simulate && pdf.writer.isTagged()) {
+            if (elementToGo instanceof Paragraph) {
+                if (text != null)
+                    text.openMCBlock(elementToGo);
+            }
+        }
         while(true) {
         	firstIndent = lastWasNewline ? indent : followingIndent; //
         	if (rectangularMode) {
@@ -977,6 +987,13 @@ public class ColumnText {
             yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
             ++linesWritten;
             descender = line.getDescender();
+        }
+        if (!simulate && pdf.writer != null && pdf.writer.isTagged()) {
+            if (elementToGo instanceof Paragraph) {
+                if ((status & NO_MORE_COLUMN) == 0)
+                    if (text != null)
+                        text.closeMCBlock(elementToGo);
+            }
         }
         if (dirty) {
             text.endText();
@@ -1317,7 +1334,7 @@ public class ColumnText {
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = para.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
-                    status = compositeColumn.go(simulate || keepCandidate && keep == 0);
+                    status = compositeColumn.go(simulate || keepCandidate && keep == 0, element);
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {

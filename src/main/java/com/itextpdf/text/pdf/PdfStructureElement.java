@@ -87,7 +87,24 @@ public class PdfStructureElement extends PdfDictionary {
         put(PdfName.P, parent.getReference());
         put(PdfName.TYPE, PdfName.STRUCTELEM);
     }
-    
+
+    protected PdfStructureElement(PdfDictionary parent, PdfName structureType) {
+        if (parent instanceof PdfStructureElement) {
+            top = ((PdfStructureElement)parent).top;
+            init(parent, structureType);
+            this.parent = (PdfStructureElement)parent;
+            put(PdfName.P, ((PdfStructureElement)parent).reference);
+            put(PdfName.TYPE, PdfName.STRUCTELEM);
+        } else if (parent instanceof PdfStructureTreeRoot) {
+            top = (PdfStructureTreeRoot)parent;
+            init(parent, structureType);
+            put(PdfName.P, ((PdfStructureTreeRoot)parent).getReference());
+            put(PdfName.TYPE, PdfName.STRUCTELEM);
+        } else {
+
+        }
+    }
+
     private void init(PdfDictionary parent, PdfName structureType) {
         PdfObject kido = parent.get(PdfName.K);
         PdfArray kids = null;
