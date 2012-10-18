@@ -95,7 +95,6 @@ public class TaggedPDFTest {
         document.close();
     }
 
-    @Ignore
     @Test
     public void createTaggedPDF4() throws DocumentException, FileNotFoundException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.pdf");
