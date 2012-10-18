@@ -1487,12 +1487,12 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void showText(final String text) {
-//        if (writer.isTagged())
-//            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
+        if (writer.isTagged())
+            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         showText2(text);
         content.append("Tj").append_i(separator);
-//        if (writer.isTagged())
-//            endMarkedContentSequence();
+        if (writer.isTagged())
+            endMarkedContentSequence();
     }
 
     /**
@@ -1546,13 +1546,13 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final String text) {
-//        if (writer.isTagged())
-//            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
+        if (writer.isTagged())
+            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         state.yTLM -= state.leading;
         showText2(text);
         content.append("'").append_i(separator);
-//        if (writer.isTagged())
-//            endMarkedContentSequence();
+        if (writer.isTagged())
+            endMarkedContentSequence();
     }
 
     /**
@@ -1563,14 +1563,14 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
-//        if (writer.isTagged())
-//            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
+        if (writer.isTagged())
+            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         state.yTLM -= state.leading;
         content.append(wordSpacing).append(' ').append(charSpacing);
         showText2(text);
         content.append("\"").append_i(separator);
-//        if (writer.isTagged())
-//            endMarkedContentSequence();
+        if (writer.isTagged())
+            endMarkedContentSequence();
         // The " operator sets charSpace and wordSpace into graphics state
         // (cfr PDF reference v1.6, table 5.6)
         state.charSpace = charSpacing;
@@ -2572,8 +2572,8 @@ public class PdfContentByte {
     public void showText(final PdfTextArray text) {
         if (state.fontDetails == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("font.and.size.must.be.set.before.writing.any.text"));
-//        if (writer.isTagged())
-//            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
+        if (writer.isTagged())
+            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         content.append("[");
         ArrayList<Object> arrayList = text.getArrayList();
         boolean lastWasNumber = false;
@@ -2591,8 +2591,8 @@ public class PdfContentByte {
             }
         }
         content.append("]TJ").append_i(separator);
-//        if (writer.isTagged())
-//            endMarkedContentSequence();
+        if (writer.isTagged())
+            endMarkedContentSequence();
     }
 
     /**
@@ -3318,8 +3318,9 @@ public class PdfContentByte {
     protected void openMCBlock(Element element) {
         if (writer.isTagged()) {
             if (!getMcElements().contains(element)) {
-                openMCBlockInt(element);
+                PdfStructureElement structureElement = openMCBlockInt(element);
                 getMcElements().add(element);
+                pdf.structElements.put(element, structureElement);
             }
         }
     }
@@ -3334,15 +3335,17 @@ public class PdfContentByte {
         return parent;
     }
 
-    private void openMCBlockInt(Element element) {
+    private PdfStructureElement openMCBlockInt(Element element) {
+        PdfStructureElement structureElement = null;
         if (writer.isTagged()) {
-            PdfStructureElement structureElement = null;
             if (element instanceof Paragraph) {
-                structureElement = new PdfStructureElement(getParentStructureElement(), PdfName.P);
+                structureElement = pdf.structElements.get(element);
+                if (structureElement == null)
+                    structureElement = new PdfStructureElement(getParentStructureElement(), PdfName.P);
                 beginMarkedContentSequence(structureElement);
-                pdf.structElements.put(element, structureElement);
             }
         }
+        return structureElement;
     }
 
     protected void closeMCBlock(Element element) {
@@ -3350,6 +3353,7 @@ public class PdfContentByte {
             if (getMcElements().contains(element)) {
                 closeMCBlockInt(element);
                 getMcElements().remove(element);
+                pdf.structElements.remove(element);
             }
         }
     }
@@ -3358,7 +3362,6 @@ public class PdfContentByte {
         if (writer.isTagged()) {
             if (element instanceof Paragraph) {
                 endMarkedContentSequence();
-                pdf.structElements.remove(element);
             }
         }
     }

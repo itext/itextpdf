@@ -108,14 +108,16 @@ public class PdfStructureElement extends PdfDictionary {
     private void init(PdfDictionary parent, PdfName structureType) {
         PdfObject kido = parent.get(PdfName.K);
         PdfArray kids = null;
-        if (kido != null && !kido.isArray())
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.parent.has.already.another.function"));
         if (kido == null) {
             kids = new PdfArray();
             parent.put(PdfName.K, kids);
-        }
-        else
+        } else if (kido instanceof PdfArray) {
             kids = (PdfArray)kido;
+        } else {
+            kids = new PdfArray();
+            kids.add(kido);
+            parent.put(PdfName.K, kids);
+        }
         kids.add(this);
         put(PdfName.S, structureType);
         reference = top.getWriter().getPdfIndirectReference();
@@ -132,7 +134,8 @@ public class PdfStructureElement extends PdfDictionary {
     void setPageMark(int page, int mark) {
         if (mark >= 0)
             put(PdfName.K, new PdfNumber(mark));
-        top.setPageMark(page, reference);
+        if (parent == null)
+            top.setPageMark(page, reference);
     }
     
     /**

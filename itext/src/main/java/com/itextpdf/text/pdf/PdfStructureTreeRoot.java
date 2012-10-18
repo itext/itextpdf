@@ -125,7 +125,7 @@ public class PdfStructureTreeRoot extends PdfDictionary {
         }
         ar.add(struc);
     }
-    
+
     void addPageMark(int newPage, PdfIndirectReference struc) {
         Integer integer = Integer.valueOf(newPage);
         PdfArray oldAr = (PdfArray)parentTree.get(integer);
@@ -145,7 +145,7 @@ public class PdfStructureTreeRoot extends PdfDictionary {
 
     private void nodeProcess(PdfDictionary struc, PdfIndirectReference reference) throws IOException {
         PdfObject obj = struc.get(PdfName.K);
-        if (obj != null && obj.isArray() && !(((PdfArray)obj).getPdfObject(0)).isNumber()) {
+        if (obj != null && obj.isArray()) {
             PdfArray ar = (PdfArray)obj;
             for (int k = 0; k < ar.size(); ++k) {
                 PdfDictionary dictionary = ar.getAsDict(k);
@@ -153,9 +153,11 @@ public class PdfStructureTreeRoot extends PdfDictionary {
                     continue;
                 if (!PdfName.STRUCTELEM.equals(dictionary.get(PdfName.TYPE)))
                     continue;
-                PdfStructureElement e = (PdfStructureElement) dictionary;
-                ar.set(k, e.getReference());
-                nodeProcess(e, e.getReference());
+                if (ar.getPdfObject(k) instanceof PdfStructureElement) {
+                    PdfStructureElement e = (PdfStructureElement) dictionary;
+                    ar.set(k, e.getReference());
+                    nodeProcess(e, e.getReference());
+                }
             }
         }
         if (reference != null)
