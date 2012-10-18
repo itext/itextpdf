@@ -43,13 +43,13 @@
  */
 package com.itextpdf.text.pdf;
 
-import java.util.ArrayList;
-
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Utilities;
 import com.itextpdf.text.pdf.draw.DrawInterface;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+
+import java.util.ArrayList;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
@@ -387,7 +387,10 @@ public class BidiLine {
                 break;
             if (splitChar)
                 lastSplit = currentChar;
-            width -= charWidth;
+
+            if (!ck.isTabSpace()) {
+                width -= charWidth;
+            }
         	lastValidChunk = ck;
             if (ck.isTab()) {
             	Object[] tab = (Object[])ck.getAttribute(Chunk.TAB);
@@ -398,7 +401,19 @@ public class BidiLine {
         		}
         		detailChunks[currentChar].adjustLeft(leftX);
         		width = originalWidth - tabPosition;
-            } else if (ck.isSeparator()) {
+            }
+            else if (ck.isTabSpace())
+            {
+                Float module = (Float)ck.getAttribute(Chunk.TABSPACE);
+                float decrement = module - ((originalWidth - width) % module);
+
+                if (width < decrement)
+                    return new PdfLine(0, originalWidth, width, alignment, true,
+                            createArrayOfPdfChunks(oldCurrentChar, currentChar-1), isRTL);
+
+                width -= decrement;
+            }
+            else if (ck.isSeparator()) {
                 Object[] sep = (Object[])ck.getAttribute(Chunk.SEPARATOR);
                 DrawInterface di = (DrawInterface)sep[0];
                 Boolean vertical = (Boolean)sep[1];
