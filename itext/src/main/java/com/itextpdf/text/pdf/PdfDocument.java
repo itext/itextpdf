@@ -1519,6 +1519,15 @@ public class PdfDocument extends Document {
             	array.add((tabPosition - xMarker) * 1000f / chunk.font.size() / hScale);
             	text.showText(array);
             }
+            else if (chunk.isTabSpace())
+            {
+                Float module = (Float)chunk.getAttribute(Chunk.TABSPACE);
+                float increment = module - ((xMarker - text.getXTLM()) % module);
+                xMarker += increment;
+                PdfTextArray array = new PdfTextArray();
+                array.add(-(increment * 1000f / chunk.font.size() / hScale));
+                text.showText(array);
+            }
             // If it is a CJK chunk or Unicode TTF we will have to simulate the
             // space adjustment.
             else if (isJustified && numberOfSpaces > 0 && chunk.isSpecialEncoding()) {
