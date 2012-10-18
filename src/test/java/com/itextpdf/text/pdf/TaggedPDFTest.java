@@ -4,6 +4,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -63,7 +64,7 @@ public class TaggedPDFTest {
         Paragraph paragraph = new Paragraph(text);
         paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8));
         ColumnText columnText = new ColumnText(writer.getDirectContent());
-        columnText.setSimpleColumn(36,36,250,800);
+        columnText.setSimpleColumn(36, 36, 250, 800);
         columnText.addElement(paragraph);
         columnText.go();
         columnText.setSimpleColumn(300,36,500,800);
@@ -93,4 +94,27 @@ public class TaggedPDFTest {
         document.add(paragraph);
         document.close();
     }
+
+    @Ignore
+    @Test
+    public void createTaggedPDF4() throws DocumentException, FileNotFoundException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.pdf");
+
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.beginMarkedContentSequence(PdfName.P);
+        canvas.beginMarkedContentSequence(PdfName.SPAN);
+        canvas.endMarkedContentSequence();
+        canvas.endMarkedContentSequence();
+
+        PdfStructureElement p = new PdfStructureElement(writer.getStructureTreeRoot(), PdfName.P);
+        canvas.beginMarkedContentSequence(p);
+        PdfStructureElement span = new PdfStructureElement(p, PdfName.SPAN);
+        canvas.beginMarkedContentSequence(span);
+        canvas.endMarkedContentSequence();
+        canvas.endMarkedContentSequence();
+
+        document.close();
+    }
+
+
 }
