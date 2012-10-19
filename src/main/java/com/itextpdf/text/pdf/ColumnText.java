@@ -988,15 +988,14 @@ public class ColumnText {
             ++linesWritten;
             descender = line.getDescender();
         }
-        if (!simulate && pdf.writer != null && pdf.writer.isTagged()) {
-            if (elementToGo instanceof Paragraph) {
-                if ((status & NO_MORE_COLUMN) == 0)
-                    if (text != null)
-                        text.closeMCBlock(elementToGo);
-            }
-        }
         if (dirty) {
             text.endText();
+            if (!simulate && pdf.writer.isTagged()) {
+                if (elementToGo instanceof Paragraph) {
+                    if (text != null && (status & NO_MORE_COLUMN) == 0)
+                        text.closeMCBlock(elementToGo);
+                }
+            }
             canvas.add(text);
         }
         return status;
