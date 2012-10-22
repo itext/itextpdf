@@ -288,16 +288,16 @@ public class PdfPKCS7 {
 
             // the certificates
 /*
-			This should work, but it doesn't because of a bug in BouncyCastle:
-			
+			This should work, but that's not always the case because of a bug in BouncyCastle:
+*/	
             X509CertParser cr = new X509CertParser();
             cr.engineInit(new ByteArrayInputStream(contentsKey));
             certs = cr.engineReadAll();
-            
-            The following workaround was provided by Alfonso Massa:
- */
+/*    
+            The following workaround was provided by Alfonso Massa, but it doesn't always work either.
+
             ASN1Set certSet = null;
-            //ASN1Set crlSet = null;
+            ASN1Set crlSet = null;
             while (content.getObjectAt(next) instanceof ASN1TaggedObject) {
                 ASN1TaggedObject tagged = (ASN1TaggedObject)content.getObjectAt(next);
 
@@ -306,7 +306,7 @@ public class PdfPKCS7 {
                     certSet = ASN1Set.getInstance(tagged, false);
                     break;
                 case 1:
-                    //crlSet = ASN1Set.getInstance(tagged, false);
+                    crlSet = ASN1Set.getInstance(tagged, false);
                     break;
                 default:
                     throw new IllegalArgumentException("unknown tag value " + tagged.getTagNo());
@@ -325,7 +325,7 @@ public class PdfPKCS7 {
     				certs.add(x509Certificate);
                 }
             }
-
+*/
             // the signerInfos
             ASN1Set signerInfos = (ASN1Set)content.getObjectAt(next);
             if (signerInfos.size() != 1)
