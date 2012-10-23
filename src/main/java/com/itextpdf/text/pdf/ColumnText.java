@@ -334,7 +334,7 @@ public class ColumnText {
         splittedRow = org.splittedRow;
         if (org.composite) {
             compositeElements = new LinkedList<Element>(org.compositeElements);
-            if (splittedRow != -1 && compositeElements.size() > 0) {
+            if (compositeElements.size() > 0 && compositeElements.get(0) instanceof PdfPTable) {
                 PdfPTable table = (PdfPTable)compositeElements.getFirst();
                 compositeElements.set(0, new PdfPTable(table));
             }
@@ -461,6 +461,8 @@ public class ColumnText {
         }
         else if (element.type() == Element.PHRASE) {
         	element = new Paragraph((Phrase)element);
+        } if (element.type() == Element.PTABLE) {
+            element = new PdfPTable((PdfPTable) element);
         }
         if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.YMARK && element.type() != Element.DIV)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("element.not.allowed"));
@@ -1333,7 +1335,7 @@ public class ColumnText {
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = para.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
-                    status = compositeColumn.go(simulate || keepCandidate && keep == 0, element);
+                    status = compositeColumn.go(simulate || keepCandidate && keep == 0);
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
@@ -1578,15 +1580,6 @@ public class ColumnText {
                 }
                 // SPLIT ROWS (IF WANTED AND NECESSARY)
                 else if (k < table.size()) {
-                	// if the row hasn't been split before, we duplicate (part of) the table
-                	if (k != splittedRow) {
-                		splittedRow = k + 1;
-                		table = new PdfPTable(table);
-                		compositeElements.set(0, table);
-                		ArrayList<PdfPRow> rows = table.getRows();
-                		for (int i = headerRows; i < rowIdx; ++i)
-                			rows.set(i, null);
-                	}
                 	// we calculate the remaining vertical space
                     float h = yTemp - minY;
                     // we create a new row with the remaining content
@@ -1599,6 +1592,15 @@ public class ColumnText {
                     		return NO_MORE_COLUMN;
                     }
                     else {
+                        // if the row hasn't been split before, we duplicate (part of) the table
+                        if (k != splittedRow) {
+                            splittedRow = k + 1;
+                            table = new PdfPTable(table);
+                            compositeElements.set(0, table);
+                            ArrayList<PdfPRow> rows = table.getRows();
+                            for (int i = headerRows; i < rowIdx; ++i)
+                                rows.set(i, null);
+                        }
                         yTemp = minY;
                         table.getRows().add(++k, newRow);
                         LOGGER.info("Inserting row at position " + k);
