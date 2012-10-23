@@ -2413,11 +2413,15 @@ public class PdfDocument extends Document {
             int loop = 0;
             while (true) {
                 fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
-                int status = fl.layout(false);
-                if ((status & ColumnText.NO_MORE_TEXT) != 0) {
-                    text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
-                    currentHeight = indentTop() - fl.getYLine();
-                    break;
+                try {
+                    int status = fl.layout(false);
+                    if ((status & ColumnText.NO_MORE_TEXT) != 0) {
+                        text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
+                        currentHeight = indentTop() - fl.getYLine();
+                        break;
+                    }
+                } catch (Exception exc) {
+                    return;
                 }
                 if (indentTop() - currentHeight == fl.getYLine() || isPageEmpty())
                     ++loop;
