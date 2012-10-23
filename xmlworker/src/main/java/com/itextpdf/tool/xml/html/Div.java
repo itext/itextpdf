@@ -51,6 +51,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfDiv;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.tool.xml.NoCustomContextException;
 import com.itextpdf.tool.xml.Tag;
 import com.itextpdf.tool.xml.WorkerContext;
@@ -100,7 +101,7 @@ public class Div extends AbstractTagProcessor {
 			Paragraph p = null;
 			PdfDiv div = (PdfDiv)getCssAppliers().apply(new PdfDiv(), tag, getHtmlPipelineContext(ctx));
 			for (Element e : currentContent) {
-				if (e instanceof Paragraph || e instanceof PdfDiv) {
+				if (e instanceof Paragraph || e instanceof PdfPTable|| e instanceof PdfDiv) {
 					if (p != null) {
                         if (p.trim()) {
 						    div.addElement(p);

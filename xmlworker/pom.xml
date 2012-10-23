@@ -93,6 +93,7 @@
 					<excludes>
 						<exclude>examples/*.java</exclude>
                         <exclude>com/itextpdf/tool/xml/examples/*.java</exclude>
+						<exclude>com/itextpdf/tool/xml/examples/css/div/*.java</exclude>
 						<exclude>com/itextpdf/tool/xml/BugRunnerTest.java</exclude>
 					</excludes>
 					<parallel>classes</parallel>
