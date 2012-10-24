@@ -85,7 +85,10 @@ class PdfContents extends PdfStream {
             if (Document.compress)
             {
                 compressed = true;
-                compressionLevel = text.getPdfWriter().getCompressionLevel();
+                if (text != null)
+                    compressionLevel = text.getPdfWriter().getCompressionLevel();
+                else if (content != null)
+                    compressionLevel = content.getPdfWriter().getCompressionLevel();
                 deflater = new Deflater(compressionLevel);
                 out = new DeflaterOutputStream(streamBytes, deflater);
             }
