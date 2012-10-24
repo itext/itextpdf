@@ -884,10 +884,7 @@ public class ColumnText {
         if (canvas != null) {
             graphics = canvas;
             pdf = canvas.getPdfDocument();
-            if (pdf.useSeparateCanvasesForTextAndGraphics)
-                text = canvas.getDuplicate();
-            else
-                text = canvas;
+            text = canvas.getDuplicate();
         }
         else if (!simulate)
             throw new NullPointerException(MessageLocalization.getComposedMessage("columntext.go.with.simulate.eq.eq.false.and.text.eq.eq.null"));
@@ -1001,8 +998,7 @@ public class ColumnText {
                         text.closeMCBlock(elementToGo);
                 }
             }
-            if (canvas != text)
-                canvas.add(text);
+            canvas.add(text);
         }
         return status;
     }

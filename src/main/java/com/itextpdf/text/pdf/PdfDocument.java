@@ -299,8 +299,6 @@ public class PdfDocument extends Document {
 
     protected HashMap<Element, PdfStructureElement> structElements = new HashMap<Element, PdfStructureElement>();
 
-    //for development needs only! to be removed once tagged pdf support is complete.
-    protected boolean useSeparateCanvasesForTextAndGraphics = true;
 
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
@@ -887,24 +885,24 @@ public class PdfDocument extends Document {
         	if (writer.isTagged())
         		page.put(PdfName.STRUCTPARENTS, new PdfNumber(writer.getCurrentPageNumber() - 1));
 
-            if (text.size() > textEmptySize || !useSeparateCanvasesForTextAndGraphics)
+            if (text.size() > textEmptySize)
         		text.endText();
         	else
         		text = null;
-            ArrayList<ArrayList<Element>> mcBlocks = new ArrayList<ArrayList<Element>>() {{ add(null); add(null); add(null); add(null);}}; ;
-            mcBlocks.set(0, writer.getDirectContentUnder().saveMCBlocks());
+            ArrayList<ArrayList<Element>> mcBlocks = new ArrayList<ArrayList<Element>>(4);
+            mcBlocks.add(0, writer.getDirectContentUnder().saveMCBlocks());
             if (graphics != null)
-                mcBlocks.set(1, graphics.saveMCBlocks());
-            if (useSeparateCanvasesForTextAndGraphics && text != null)
-                mcBlocks.set(2, text.saveMCBlocks());
-            mcBlocks.set(3, writer.getDirectContent().saveMCBlocks());
-        	writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, useSeparateCanvasesForTextAndGraphics ? text : null, writer.getDirectContent(), pageSize));
+                mcBlocks.add(1, graphics.saveMCBlocks());
+            if (text != null)
+                mcBlocks.add(2, text.saveMCBlocks());
+            mcBlocks.add(3, writer.getDirectContent().saveMCBlocks());
+        	writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), pageSize));
         	// we initialize the new page
         	initPage();
             writer.getDirectContentUnder().restoreMCBlocks(mcBlocks.get(0));
             if (graphics != null)
                 graphics.restoreMCBlocks(mcBlocks.get(1));
-            if (useSeparateCanvasesForTextAndGraphics && text != null)
+            if (text != null)
                 text.restoreMCBlocks(mcBlocks.get(2));
             writer.getDirectContent().restoreMCBlocks(mcBlocks.get(3));
         }
@@ -2173,15 +2171,10 @@ public class PdfDocument extends Document {
     		marginTop = nextMarginTop;
     		marginBottom = nextMarginBottom;
     	}
-        if (useSeparateCanvasesForTextAndGraphics) {
-            text = new PdfContentByte(writer);
-            text.reset();
-        } else {
-            text = graphics;
-        }
+        text = new PdfContentByte(writer);
+        text.reset();
         text.beginText();
-        if (!useSeparateCanvasesForTextAndGraphics)
-            textEmptySize = text.size();
+        textEmptySize = text.size();
         // we move to the left/top position of the page
         text.moveText(left(), top());
     }
