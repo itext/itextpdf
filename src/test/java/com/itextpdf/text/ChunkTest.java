@@ -29,10 +29,12 @@ public class ChunkTest {
 	private static final String _TAB = "\t4spaces    ";
     public static final String SOURCE11 = "./src/test/resources/com/itextpdf/text/Chunk/source11.pdf";
     public static final String SOURCE12 = "./src/test/resources/com/itextpdf/text/Chunk/source12.pdf";
-    public static final String OUT = "./target/com/itextpdf/test/Chunk/out.pdf";
+    public static final String OUTFOLDER = "./target/com/itextpdf/test/Chunk";
+    public static final String OUT = OUTFOLDER + "/out.pdf";
 
     @Before
     public void Init() throws IOException{
+        new File(OUTFOLDER).mkdirs();
         File f = new File(OUT.substring(0,32));
         if (!f.exists())
             f.mkdir();
