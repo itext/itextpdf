@@ -989,7 +989,8 @@ public class PdfPTable implements LargeElement, Spaceable {
     	if (rowIdx < rows.size() && getRow(rowIdx).hasRowspan()) {
     		return true;
     	}
-    	if (rowIdx > 0 && getRow(rowIdx - 1).hasRowspan()) {
+        PdfPRow previousRow = rowIdx > 0 ? getRow(rowIdx - 1) : null;
+    	if (previousRow != null && previousRow.hasRowspan()) {
     		return true;
     	}
     	for (int i = 0; i < getNumberOfColumns(); i++) {

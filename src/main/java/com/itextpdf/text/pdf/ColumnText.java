@@ -333,10 +333,13 @@ public class ColumnText {
         composite = org.composite;
         splittedRow = org.splittedRow;
         if (org.composite) {
-            compositeElements = new LinkedList<Element>(org.compositeElements);
-            if (compositeElements.size() > 0 && compositeElements.get(0) instanceof PdfPTable) {
-                PdfPTable table = (PdfPTable)compositeElements.getFirst();
-                compositeElements.set(0, new PdfPTable(table));
+            compositeElements = new LinkedList<Element>();
+            for (Element element : org.compositeElements) {
+                if (element instanceof PdfPTable) {
+                    compositeElements.add(new PdfPTable((PdfPTable)element));
+                } else {
+                    compositeElements.add(element);
+                }
             }
             if (org.compositeColumn != null)
                 compositeColumn = duplicate(org.compositeColumn);

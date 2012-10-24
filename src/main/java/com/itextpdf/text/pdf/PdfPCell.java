@@ -262,6 +262,9 @@ public class PdfPCell extends Rectangle{
             table = null;
             column.setText(null);
         }
+        if (element instanceof PdfPTable) {
+            ((PdfPTable) element).setSplitLate(false);
+        }
         column.addElement(element);
     }
 
@@ -943,7 +946,7 @@ public class PdfPCell extends Rectangle{
 			setBottom(getTop() - getEffectivePaddingTop() - getEffectivePaddingBottom() - refHeight);
 		}
 		else {
-			if (pivoted && hasFixedHeight())
+			if ((pivoted && hasFixedHeight()) || getColumn() == null)
 				setBottom(getTop() - getFixedHeight());
 			else {
 				ColumnText ct = ColumnText.duplicate(getColumn());
