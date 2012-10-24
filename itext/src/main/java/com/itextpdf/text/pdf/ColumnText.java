@@ -887,7 +887,10 @@ public class ColumnText {
         if (canvas != null) {
             graphics = canvas;
             pdf = canvas.getPdfDocument();
-            text = canvas.getDuplicate();
+            if (pdf.useSeparateCanvasesForTextAndGraphics)
+                text = canvas.getDuplicate();
+            else
+                text = canvas;
         }
         else if (!simulate)
             throw new NullPointerException(MessageLocalization.getComposedMessage("columntext.go.with.simulate.eq.eq.false.and.text.eq.eq.null"));
@@ -1001,7 +1004,8 @@ public class ColumnText {
                         text.closeMCBlock(elementToGo);
                 }
             }
-            canvas.add(text);
+            if (canvas != text)
+                canvas.add(text);
         }
         return status;
     }
@@ -1338,7 +1342,7 @@ public class ColumnText {
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = para.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
-                    status = compositeColumn.go(simulate || keepCandidate && keep == 0);
+                    status = compositeColumn.go(simulate || keepCandidate && keep == 0, element);
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
@@ -1551,7 +1555,7 @@ public class ColumnText {
                 while (kTemp > rowIdx && kTemp < table.size() && table.getRow(kTemp).isMayNotBreak()) {
                     kTemp--;
                 }
-                if ((kTemp > rowIdx && kTemp < k) || (kTemp == 0 && table.isLoopCheck())) {
+                if ((kTemp > rowIdx && kTemp < k) || (kTemp == 0 && table.getRow(0).isMayNotBreak() && table.isLoopCheck())) {
                 	yTemp = minY;
                 	k = kTemp;
                 	table.setLoopCheck(false);
