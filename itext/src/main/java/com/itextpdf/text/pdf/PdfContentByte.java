@@ -42,9 +42,6 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.itextpdf.awt.FontMapper;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.awt.PdfPrinterGraphics2D;
@@ -52,8 +49,12 @@ import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
+import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -720,8 +721,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x).append(' ').append(y).append(" m").append_i(separator);
     }
@@ -739,8 +740,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x).append(' ').append(y).append(" l").append_i(separator);
     }
@@ -761,8 +762,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x1).append(' ').append(y1).append(' ').append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" c").append_i(separator);
     }
@@ -781,8 +782,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" v").append_i(separator);
     }
@@ -801,8 +802,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x1).append(' ').append(y1).append(' ').append(x3).append(' ').append(y3).append(" y").append_i(separator);
     }
@@ -838,8 +839,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x).append(' ').append(y).append(' ').append(w).append(' ').append(h).append(" re").append_i(separator);
     }
@@ -1078,8 +1079,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("h").append_i(separator);
     }
@@ -1093,8 +1094,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("n").append_i(separator);
     }
@@ -1108,8 +1109,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("S").append_i(separator);
     }
@@ -1123,8 +1124,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("s").append_i(separator);
     }
@@ -1138,8 +1139,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("f").append_i(separator);
     }
@@ -1153,8 +1154,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("f*").append_i(separator);
     }
@@ -1168,8 +1169,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("B").append_i(separator);
     }
@@ -1183,8 +1184,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("b").append_i(separator);
     }
@@ -1198,8 +1199,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("B*").append_i(separator);
     }
@@ -1213,8 +1214,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("b*").append_i(separator);
     }
@@ -1442,17 +1443,17 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
 
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
+    	}
     	} else {
-            inText = true;
+    	inText = true;
             content.append("BT").append_i(separator);
             if (restoreTM) {
                 setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
             } else {
-                state.xTLM = 0;
-                state.yTLM = 0;
-            }
+        state.xTLM = 0;
+        state.yTLM = 0;
+    }
         }
     }
 
@@ -1471,12 +1472,12 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
 
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
+    	}
     	} else {
-            inText = false;
-            content.append("ET").append_i(separator);
-        }
+    	inText = false;
+        content.append("ET").append_i(separator);
+    }
     }
 
     /**
@@ -3281,8 +3282,8 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
                 endText();
             } else {
-                throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
-            }
+    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
+    	}
     	}
     	if (layerDepth != null && !layerDepth.isEmpty()) {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.layer.operators"));
@@ -3527,13 +3528,86 @@ public class PdfContentByte {
         return parent;
     }
 
+    private IPdfStructureElement getParentStructureInterface() {
+        if (getMcElements().size() > 0)
+            return pdf.structElements.get(getMcElements().get(getMcElements().size() - 1));
+        else
+            return writer.getStructureTreeRoot();
+    }
+
     private PdfStructureElement openMCBlockInt(Element element) {
         PdfStructureElement structureElement = null;
         if (writer.isTagged()) {
             if (element instanceof Paragraph) {
                 structureElement = pdf.structElements.get(element);
-                if (structureElement == null)
+                if (structureElement == null) {
                     structureElement = new PdfStructureElement(getParentStructureElement(), PdfName.P);
+                  Paragraph p = (Paragraph) element;
+
+                    // Setting non-inheritable attributes
+                    if ((p.getFont() != null) && (p.getFont().getColor() != null)){
+                        BaseColor c = p.getFont().getColor();
+                        float [] colors = new float[] {c.getRed()/255, c.getGreen()/255, c.getBlue()/255};
+                        structureElement.setAttribute(PdfName.COLOR, new PdfArray(colors));
+                    }
+                    if (Float.compare(p.getSpacingBefore(), 0f) != 0)
+                        structureElement.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(p.getSpacingBefore()));
+                    if (Float.compare(p.getSpacingAfter(), 0f) != 0)
+                        structureElement.setAttribute(PdfName.SPACEAFTER, new PdfNumber(p.getSpacingAfter()));
+                    if (Float.compare(p.getFirstLineIndent(), 0f) != 0)
+                        structureElement.setAttribute(PdfName.TEXTINDENT, new PdfNumber(p.getFirstLineIndent()));
+
+                    // Setting inheritable attributes
+                    IPdfStructureElement parent = getParentStructureInterface();
+                    PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+                    if (obj instanceof PdfNumber) {
+                        float startIndent = ((PdfNumber) obj).floatValue();
+                        if (Float.compare(startIndent, p.getIndentationLeft()) != 0)
+                            structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(p.getIndentationLeft()));
+                    }
+                    else {
+                        if (Math.abs(p.getIndentationLeft()) > Float.MIN_VALUE)
+                            structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(p.getIndentationLeft()));
+                    }
+
+                    obj = parent.getAttribute(PdfName.ENDINDENT);
+                    if (obj instanceof PdfNumber) {
+                        float endIndent = ((PdfNumber) obj).floatValue();
+                        if (Float.compare(endIndent, p.getIndentationRight()) != 0)
+                            structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(p.getIndentationRight()));
+                    }
+                    else {
+                        if (Float.compare(p.getIndentationRight(), 0) != 0)
+                            structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(p.getIndentationRight()));
+                    }
+
+                    PdfName align = null;
+                    switch (p.getAlignment()){
+                        case Element.ALIGN_LEFT:
+                            align = PdfName.START;
+                            break;
+                        case Element.ALIGN_CENTER:
+                            align = PdfName.CENTER;
+                            break;
+                        case Element.ALIGN_RIGHT:
+                            align = PdfName.END;
+                            break;
+                        case Element.ALIGN_JUSTIFIED:
+                            align = PdfName.JUSTIFY;
+                            break;
+                    }
+                    obj = parent.getAttribute(PdfName.TEXTALIGN);
+                    if (obj instanceof PdfName) {
+                        PdfName textAlign = ((PdfName) obj);
+                        if (align != null && !textAlign.equals(align))
+                            structureElement.setAttribute(PdfName.TEXTALIGN, align);
+                    }
+                    else {
+                        if (align != null && !PdfName.START.equals(align))
+                            structureElement.setAttribute(PdfName.TEXTALIGN, align);
+                    }
+
+                }
                 if (inText && autoControlTextBlocks) {
                     endText();
                 }

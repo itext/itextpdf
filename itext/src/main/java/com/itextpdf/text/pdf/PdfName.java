@@ -43,12 +43,12 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.error_messages.MessageLocalization;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.itextpdf.text.error_messages.MessageLocalization;
 
 /**
  * <CODE>PdfName</CODE> is an object that can be used as a name in a PDF-file.
@@ -354,6 +354,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName CODE = new PdfName("Code");
+    /**
+     * A name
+     * @since 5.3.4
+     */
+    public static final PdfName COLOR = new PdfName("Color");
     /** A name */
     public static final PdfName COLORS = new PdfName("Colors");
     /** A name */
@@ -597,6 +602,16 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName ENCRYPT = new PdfName("Encrypt");
     /** A name */
     public static final PdfName ENCRYPTMETADATA = new PdfName("EncryptMetadata");
+    /**
+     * A name
+     * @since 5.3.4
+     */
+    public static final PdfName END = new PdfName("End");
+    /**
+     * A name
+     * @since 5.3.4
+     */
+    public static final PdfName ENDINDENT = new PdfName("EndIndent");
     /** A name */
     public static final PdfName ENDOFBLOCK = new PdfName("EndOfBlock");
     /** A name */
@@ -958,6 +973,11 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName JPXDECODE = new PdfName("JPXDecode");
     /** A name */
     public static final PdfName JS = new PdfName("JS");
+    /**
+     * A name
+     * @since 5.3.4
+     */
+    public static final PdfName JUSTIFY = new PdfName("Justify");
     /** A name */
     public static final PdfName K = new PdfName("K");
     /** A name */
@@ -1609,6 +1629,16 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
      * @since 2.1.6
      */
     public static final PdfName SOUND = new PdfName("Sound");
+    /**
+     * A name
+     * @since 5.3.4
+     */
+    public static final PdfName SPACEAFTER = new PdfName("SpaceAfter");
+    /**
+     * A name
+     * @since 5.3.4
+     */
+    public static final PdfName SPACEBEFORE = new PdfName("SpaceBefore");
     /** A name */
     public static final PdfName SPAN = new PdfName("Span");
     /**
@@ -1636,6 +1666,16 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName STAMP = new PdfName("Stamp");
     /** A name */
     public static final PdfName STANDARD = new PdfName("Standard");
+    /**
+     * A name
+     * @since 5.3.4
+     */
+    public static final PdfName START = new PdfName("Start");
+    /**
+     * A name
+     * @since 5.3.4
+     */
+    public static final PdfName STARTINDENT = new PdfName("StartIndent");
     /** A name */
     public static final PdfName STATE = new PdfName("State");
     /** A name */
@@ -1706,6 +1746,16 @@ public class PdfName extends PdfObject implements Comparable<PdfName> {
     public static final PdfName TD = new PdfName("TD");
     /** A name */
     public static final PdfName TEXT = new PdfName("Text");
+    /**
+     * A name
+     * @since 5.3.4
+     */
+    public static final PdfName TEXTALIGN = new PdfName("TextAlign");
+    /**
+     * A name
+     * @since 5.3.4
+     */
+    public static final PdfName TEXTINDENT = new PdfName("TextIndent");
     /**
      * A name
      * @since 2.1.6
