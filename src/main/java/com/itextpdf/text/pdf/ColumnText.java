@@ -1342,7 +1342,7 @@ public class ColumnText {
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = para.getKeepTogether() && createHere && !(firstPass && adjustFirstLine);
-                    status = compositeColumn.go(simulate || keepCandidate && keep == 0);
+                    status = compositeColumn.go(simulate || keepCandidate && keep == 0, element);
                     lastX = compositeColumn.getLastX();
                     updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
