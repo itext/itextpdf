@@ -43,6 +43,8 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +53,7 @@ import java.util.Map;
  * The structure tree root corresponds to the highest hierarchy level in a tagged PDF.
  * @author Paulo Soares
  */
-public class PdfStructureTreeRoot extends PdfDictionary {
+public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructureElement {
 
     private HashMap<Integer, PdfObject> parentTree = new HashMap<Integer, PdfObject>();
     private PdfIndirectReference reference;
@@ -191,5 +193,32 @@ public class PdfStructureTreeRoot extends PdfDictionary {
             put(PdfName.CLASSMAP, writer.addToBody(classMap).getIndirectReference());
         }
         nodeProcess(this, reference);
+    }
+
+    /**
+     * Gets the first entarance of attribute.
+     * @returns PdfObject
+     * @since 5.3.4
+     */
+    public PdfObject getAttribute(PdfName name){
+        PdfDictionary attr = getAsDict(PdfName.A);
+        if (attr != null){
+            if (attr.contains(name))
+                return attr.get(name);
+        }
+        return null;
+    }
+
+    /**
+     * Sets the attribute value.
+     * @since 5.3.4
+     */
+    public void setAttribute(PdfName name, PdfObject obj){
+        PdfDictionary attr = getAsDict(PdfName.A);
+        if (attr == null){
+            attr = new PdfDictionary();
+            put(PdfName.A, attr);
+        }
+        attr.put(name, obj);
     }
 }
