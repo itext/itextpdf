@@ -258,9 +258,15 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             distParallelEnd = orientationVector.dot(endLocation);
         }
 
+        /**
+         * @return the start location of the text
+         */
         public Vector getStartLocation(){
         	return startLocation;
         }
+        /**
+         * @return the end location of the text
+         */
         public Vector getEndLocation(){
         	return endLocation;
         }
