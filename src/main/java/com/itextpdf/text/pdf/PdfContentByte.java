@@ -89,6 +89,8 @@ public class PdfContentByte {
         protected float cTLM = 0;
         protected float dTLM = 1;
 
+        protected float tx = 0;
+
         /** The current text leading. */
         protected float leading = 0;
 
@@ -114,6 +116,7 @@ public class PdfContentByte {
             bTLM = cp.bTLM;
             cTLM = cp.cTLM;
             dTLM = cp.dTLM;
+            tx = cp.tx;
             leading = cp.leading;
             scale = cp.scale;
             charSpace = cp.charSpace;
@@ -1449,7 +1452,9 @@ public class PdfContentByte {
     	inText = true;
             content.append("BT").append_i(separator);
             if (restoreTM) {
-                setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
+                float tx = state.xTLM;
+                setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.tx, state.yTLM);
+                state.xTLM = state.tx = tx;
             } else {
         state.xTLM = 0;
         state.yTLM = 0;
@@ -1635,9 +1640,10 @@ public class PdfContentByte {
         if (writer.isTagged())
             beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         showText2(text);
+        updateTx(text, 0);
         content.append("Tj").append_i(separator);
         if (writer.isTagged())
-            endMarkedContentSequence();
+           endMarkedContentSequence();
     }
 
     /**
@@ -1681,8 +1687,9 @@ public class PdfContentByte {
         BaseFont bf = state.fontDetails.getBaseFont();
         if (bf.hasKernPairs())
             showText(getKernArray(text, bf));
-        else
+        else {
             showText(text);
+        }
     }
 
     /**
@@ -1701,6 +1708,8 @@ public class PdfContentByte {
         content.append("'").append_i(separator);
         if (writer.isTagged())
             endMarkedContentSequence();
+        state.tx = state.xTLM;
+        updateTx(text, 0);
     }
 
     /**
@@ -1726,6 +1735,8 @@ public class PdfContentByte {
         // (cfr PDF reference v1.6, table 5.6)
         state.charSpace = charSpacing;
         state.wordSpace = wordSpacing;
+        state.tx = state.xTLM;
+        updateTx(text, 0);
     }
 
     /**
@@ -1750,6 +1761,7 @@ public class PdfContentByte {
         state.bTLM = b;
         state.cTLM = c;
         state.dTLM = d;
+        state.tx = state.xTLM;
         content.append(a).append(' ').append(b).append_i(' ')
         .append(c).append_i(' ').append(d).append_i(' ')
         .append(x).append_i(' ').append(y).append(" Tm").append_i(separator);
@@ -1791,7 +1803,11 @@ public class PdfContentByte {
         }
         state.xTLM += x;
         state.yTLM += y;
-        content.append(x).append(' ').append(y).append(" Td").append_i(separator);
+        if (autoControlTextBlocks && state.xTLM != state.tx) {
+            setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
+        } else {
+            content.append(x).append(' ').append(y).append(" Td").append_i(separator);
+        }
     }
 
     /**
@@ -1809,7 +1825,11 @@ public class PdfContentByte {
         state.xTLM += x;
         state.yTLM += y;
         state.leading = -y;
-        content.append(x).append(' ').append(y).append(" TD").append_i(separator);
+        if (autoControlTextBlocks && state.xTLM != state.tx) {
+            setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
+        } else {
+            content.append(x).append(' ').append(y).append(" TD").append_i(separator);
+        }
     }
 
     /**
@@ -1818,6 +1838,9 @@ public class PdfContentByte {
     public void newlineText() {
         if (!inText && autoControlTextBlocks) {
             beginText(true);
+        }
+        if (autoControlTextBlocks && state.xTLM != state.tx) {
+            setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
         }
         state.yTLM -= state.leading;
         content.append("T*").append_i(separator);
@@ -2766,6 +2789,7 @@ public class PdfContentByte {
         for (Object obj : arrayList) {
             if (obj instanceof String) {
                 showText2((String)obj);
+                updateTx((String)obj, 0);
                 lastWasNumber = false;
             }
             else {
@@ -2774,6 +2798,7 @@ public class PdfContentByte {
                 else
                     lastWasNumber = true;
                 content.append(((Float)obj).floatValue());
+                updateTx("", ((Float)obj).floatValue());
             }
         }
         content.append("]TJ").append_i(separator);
@@ -3684,6 +3709,10 @@ public class PdfContentByte {
             duplicatedFrom.setMcElements(value);
         else
             mcElements = value;
+    }
+
+    protected void updateTx(String text, float Tj) {
+        state.tx = state.tx + getEffectiveStringWidth(text, false) + (-Tj / 1000.f * state.size + state.charSpace + state.wordSpace) * state.scale / 100.f;
     }
 
 }
