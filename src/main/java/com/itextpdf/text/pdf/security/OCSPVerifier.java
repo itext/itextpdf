@@ -224,7 +224,7 @@ public class OCSPVerifier extends RootStoreVerifier {
     				if (!rootStore.isCertificateEntry(alias))
     					continue;
                     X509Certificate anchor = (X509Certificate)rootStore.getCertificate(alias);
-                    if (isSignatureValid(ocspResp, anchor));
+                    if (isSignatureValid(ocspResp, anchor))
 	                    return true;
 				} catch (GeneralSecurityException e) {
 					continue;
