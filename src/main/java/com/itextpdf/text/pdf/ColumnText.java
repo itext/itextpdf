@@ -1514,7 +1514,6 @@ public class ColumnText {
                 }
 
                 // HEADERS / FOOTERS
-
                 // how many header rows are real header rows; how many are footer rows?
                 table.normalizeHeadersFooters();
                 int headerRows = table.getHeaderRows();
@@ -1524,7 +1523,7 @@ public class ColumnText {
                 float footerHeight = table.getFooterHeight();
 
                 // do we need to skip the header?
-                boolean skipHeader = table.isSkipFirstHeader() && rowIdx <= realHeaderRows;
+                boolean skipHeader = table.isSkipFirstHeader() && rowIdx <= realHeaderRows && (table.isComplete() || rowIdx != realHeaderRows);
                 // if not, we wan't to be able to add more than just a header and a footer
                 if (!skipHeader) {
                     yTemp -= headerHeight;
@@ -1537,8 +1536,9 @@ public class ColumnText {
 
                 // how many real rows (not header or footer rows) fit on a page?
                 int k = 0;
-                if (rowIdx < headerRows)
+                if (rowIdx < headerRows) {
                     rowIdx = headerRows;
+                }
                 // if the table isn't complete, we need to be able to add a footer
                 if (!table.isComplete())
                 	yTemp -= footerHeight;
