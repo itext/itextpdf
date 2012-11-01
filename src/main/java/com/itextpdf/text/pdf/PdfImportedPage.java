@@ -44,10 +44,6 @@
 package com.itextpdf.text.pdf;
 import java.io.IOException;
 
-import com.itextpdf.awt.geom.AffineTransform;
-import com.itextpdf.awt.geom.Point;
-import com.itextpdf.awt.geom.Point2D;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
 
 import com.itextpdf.text.DocumentException;
@@ -72,26 +68,7 @@ public class PdfImportedPage extends com.itextpdf.text.pdf.PdfTemplate {
         this.pageNumber = pageNumber;
         this.writer = writer;
         bBox = readerInstance.getReader().getPageSize(pageNumber);
-        int rotationAngle = readerInstance.getReader().getPageRotation(pageNumber);
-        rotationAngle = rotationAngle % 360;
-        if (rotationAngle != 0) {
-            Point2D lowLeft = new Point(bBox.getLeft(), bBox.getBottom());
-            Point2D upperRight= new Point(bBox.getRight(), bBox.getTop());
-            AffineTransform rotation = AffineTransform.getRotateInstance(Math.toRadians(-rotationAngle));
-            lowLeft = rotation.transform(lowLeft, null);
-            upperRight = rotation.transform(upperRight, null);
-            Rectangle transformedRectangle = new Rectangle((float)lowLeft.getX(), (float)lowLeft.getY(), (float)upperRight.getX(), (float)upperRight.getY());
-            transformedRectangle.normalize();
-            AffineTransform transformation = new AffineTransform(1, 0, 0, 1, -transformedRectangle.getLeft(), -transformedRectangle.getBottom());
-            transformation.concatenate(rotation);
-            double[] transformationMatrix = new double[6];
-            transformation.getMatrix(transformationMatrix);
-            setMatrix((float)transformationMatrix[0], (float)transformationMatrix[1],
-                    (float)transformationMatrix[2], (float)transformationMatrix[3],
-                    (float)transformationMatrix[4], (float)transformationMatrix[5]);
-        } else {
-            setMatrix(1, 0, 0, 1, -bBox.getLeft(), -bBox.getBottom());
-        }
+        setMatrix(1, 0, 0, 1, -bBox.getLeft(), -bBox.getBottom());
         type = TYPE_IMPORTED;
     }
 
