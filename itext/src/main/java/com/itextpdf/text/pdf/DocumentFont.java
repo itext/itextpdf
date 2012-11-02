@@ -768,6 +768,14 @@ public class DocumentFont extends BaseFont {
         return null;
     }
 
+    @Override
+    public boolean isVertical() {
+        if (cjkMirror != null)
+            return cjkMirror.isVertical();
+        else
+            return super.isVertical();
+    }
+
     /**
      * Exposes the unicode - > CID map that is constructed from the font's encoding
      * @return the unicode to CID map

@@ -312,6 +312,8 @@ public abstract class BaseFont {
      */
     protected IntHashtable specialMap;
 
+    protected boolean vertical = false;
+
     static {
         BuiltinFonts14.put(COURIER, PdfName.COURIER);
         BuiltinFonts14.put(COURIER_BOLD, PdfName.COURIER_BOLD);
@@ -723,6 +725,14 @@ public abstract class BaseFont {
      */
     public static BaseFont createFont(PRIndirectReference fontRef) {
         return new DocumentFont(fontRef);
+    }
+
+    /**
+     * Indicates whether the font is used for verticl writing or not.
+     * @return <code>true</code> if the writing mode is vertical for the given font, <code>false</code> otherwise.
+     */
+    public boolean isVertical() {
+        return vertical;
     }
 
     /**

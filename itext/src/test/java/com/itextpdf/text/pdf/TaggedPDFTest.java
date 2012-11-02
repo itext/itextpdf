@@ -1,16 +1,21 @@
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.*;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.parser.*;
+import com.itextpdf.text.xml.XMLUtil;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.Set;
 
 public class TaggedPDFTest {
     private Document document;
@@ -55,28 +60,36 @@ public class TaggedPDFTest {
         document = new Document();
         writer = PdfWriter.getInstance(document, new FileOutputStream(path));
         writer.setTagged();
+        writer.pdf.putTextAndGraphicsTogether = true;
         document.open();
     }
 
     @Test
-    public void createTaggedPDF1() throws DocumentException, FileNotFoundException {
+    public void createTaggedPDF1() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.pdf");
         Paragraph paragraph = new Paragraph(text);
-        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8));
+        paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
         ColumnText columnText = new ColumnText(writer.getDirectContent());
         columnText.setSimpleColumn(36, 36, 250, 800);
         columnText.addElement(paragraph);
         columnText.go();
-        columnText.setSimpleColumn(300,36,500,800);
+        columnText.setSimpleColumn(300, 36, 500, 800);
         columnText.go();
         document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test1.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.xml"));
     }
 
     @Test
-    public void createTaggedPDF2() throws DocumentException, FileNotFoundException {
+    public void createTaggedPDF2() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out2.pdf");
         Paragraph paragraph = new Paragraph(text);
         ColumnText columnText = new ColumnText(writer.getDirectContent());
+
         columnText.setSimpleColumn(36,36,400,800);
         columnText.addElement(paragraph);
         columnText.go();
@@ -84,35 +97,114 @@ public class TaggedPDFTest {
         columnText.setSimpleColumn(36,36,400,800);
         columnText.go();
         document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out2.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out2.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test2.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out2.xml"));
     }
 
     @Test
-    public void createTaggedPDF3() throws DocumentException, FileNotFoundException {
+    public void createTaggedPDF3() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out3.pdf");
-        document.add(new Paragraph("Hello World!"));
         Paragraph paragraph = new Paragraph(text);
         document.add(paragraph);
         document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out3.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out3.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test3.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out3.xml"));
     }
 
     @Test
-    public void createTaggedPDF4() throws DocumentException, FileNotFoundException {
+    public void createTaggedPDF4() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.pdf");
+        Paragraph p = new Paragraph();
 
-        PdfContentByte canvas = writer.getDirectContent();
-        canvas.beginMarkedContentSequence(PdfName.P);
-        canvas.beginMarkedContentSequence(PdfName.SPAN);
-        canvas.endMarkedContentSequence();
-        canvas.endMarkedContentSequence();
+        try {
+            p.add(new Chunk("Quick brown "));
+            Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
+            p.add(new Chunk(i, 0, 0));
+            p.add(new Chunk(" jumped over a lazy "));
+            i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
+            p.add(new Chunk(i, 0, 0));
 
-        PdfStructureElement p = new PdfStructureElement(writer.getStructureTreeRoot(), PdfName.P);
-        canvas.beginMarkedContentSequence(p);
-        PdfStructureElement span = new PdfStructureElement(p, PdfName.SPAN);
-        canvas.beginMarkedContentSequence(span);
-        canvas.endMarkedContentSequence();
-        canvas.endMarkedContentSequence();
+        } catch (Exception e) {
 
+        }
+        document.add(p);
         document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test4.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.xml"));
+    }
+
+    private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setCoalescing(true);
+        dbf.setIgnoringElementContentWhitespace(true);
+        dbf.setIgnoringComments(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+
+        org.w3c.dom.Document doc1 = db.parse(new File(xml1));
+        doc1.normalizeDocument();
+
+        org.w3c.dom.Document doc2 = db.parse(new File(xml2));
+        doc2.normalizeDocument();
+
+        return doc2.isEqualNode(doc1);
+    }
+
+    static class MyTaggedPdfReaderTool extends TaggedPdfReaderTool {
+
+        @Override
+        public void parseTag(String tag, PdfObject object, PdfDictionary page)
+                throws IOException {
+            if (object instanceof PdfNumber) {
+                PdfNumber mcid = (PdfNumber) object;
+                RenderFilter filter = new MyMarkedContentRenderFilter(mcid.intValue());
+                TextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
+                FilteredTextRenderListener listener = new FilteredTextRenderListener(
+                        strategy, filter);
+                PdfContentStreamProcessor processor = new PdfContentStreamProcessor(
+                        listener);
+                processor.processContent(PdfReader.getPageContent(page), page
+                        .getAsDict(PdfName.RESOURCES));
+                out.print(XMLUtil.escapeXML(listener.getResultantText(), true));
+            } else {
+                super.parseTag(tag, object, page);
+            }
+        }
+
+        @Override
+        public void inspectChildDictionary(PdfDictionary k) throws IOException {
+            inspectChildDictionary(k, true);
+        }
+
+
+    }
+
+    static class MyMarkedContentRenderFilter extends MarkedContentRenderFilter {
+
+        int mcid;
+
+        public MyMarkedContentRenderFilter(int mcid) {
+            super(mcid);
+            this.mcid = mcid;
+        }
+
+        @Override
+        public boolean allowText(TextRenderInfo renderInfo){
+            return renderInfo.hasMcid(mcid, true);
+        }
+
     }
 
 
