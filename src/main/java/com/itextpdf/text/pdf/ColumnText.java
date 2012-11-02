@@ -887,7 +887,7 @@ public class ColumnText {
         if (canvas != null) {
             graphics = canvas;
             pdf = canvas.getPdfDocument();
-            if (pdf.useSeparateCanvasesForTextAndGraphics)
+            if (!pdf.putTextAndGraphicsTogether)
                 text = canvas.getDuplicate();
             else
                 text = canvas;

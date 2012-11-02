@@ -112,14 +112,32 @@ public class TextRenderInfo {
 	 * @since 5.0.2
 	 */
 	public boolean hasMcid(int mcid) {
-		for (MarkedContentInfo info : markedContentInfos) {
-            if (info.hasMcid())
-                if(info.getMcid() == mcid)
-                    return true;
-        }
-
-		return false;
+        return hasMcid(mcid, false);
 	}
+
+    /**
+	 * Checks if the text belongs to a marked content sequence
+	 * with a given mcid.
+     * @param mcid a marked content id
+     * @param checkTheTopmostLevelOnly indicates whether to check the topmost level of marked content stack only
+     * @return true if the text is marked with this id
+     * @since 5.3.5
+     */
+    public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
+        if (checkTheTopmostLevelOnly) {
+            if (markedContentInfos instanceof ArrayList) {
+                ArrayList<MarkedContentInfo> mci = (ArrayList<MarkedContentInfo>)markedContentInfos;
+                return mci.size() > 0 && mci.get(mci.size() - 1).getMcid() == mcid;
+            }
+        } else {
+            for (MarkedContentInfo info : markedContentInfos) {
+                if (info.hasMcid())
+                    if(info.getMcid() == mcid)
+                        return true;
+            }
+        }
+        return false;
+    }
 
 	/**
      * @return the unscaled (i.e. in Text space) width of the text

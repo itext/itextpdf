@@ -57,6 +57,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.xml.XMLUtil;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.util.Set;
 
 /**
  * Converts a tagged PDF document into an XML file.
@@ -66,9 +67,9 @@ import java.nio.charset.Charset;
 public class TaggedPdfReaderTool {
 
 	/** The reader object from which the content streams are read. */
-	PdfReader reader;
+	protected PdfReader reader;
 	/** The writer object to which the XML will be written */
-	PrintWriter out;
+	protected PrintWriter out;
 
 	/**
 	 * Parses a string with structured content.
@@ -143,6 +144,18 @@ public class TaggedPdfReaderTool {
 		}
 	}
 
+    /**
+     * If the child of a structured element is a dictionary, we inspect the
+     * child; we may also draw a tag.
+     *
+     * @param k
+     *            the child dictionary to inspect
+     */
+    public void inspectChildDictionary(PdfDictionary k) throws IOException {
+        inspectChildDictionary(k, false);
+    }
+
+
 	/**
 	 * If the child of a structured element is a dictionary, we inspect the
 	 * child; we may also draw a tag.
@@ -150,26 +163,48 @@ public class TaggedPdfReaderTool {
 	 * @param k
 	 *            the child dictionary to inspect
 	 */
-	public void inspectChildDictionary(PdfDictionary k) throws IOException {
-		if (k == null)
-			return;
-		PdfName s = k.getAsName(PdfName.S);
-		if (s != null) {
+    public void inspectChildDictionary(PdfDictionary k, boolean inspectAttributes) throws IOException {
+        if (k == null)
+            return;
+        PdfName s = k.getAsName(PdfName.S);
+        if (s != null) {
             String tagN = PdfName.decodeName(s.toString());
-			String tag = fixTagName(tagN);
-			out.print("<");
-			out.print(tag);
-			out.print(">");
-			PdfDictionary dict = k.getAsDict(PdfName.PG);
-			if (dict != null)
-				parseTag(tagN, k.getDirectObject(PdfName.K), dict);
-			inspectChild(k.getDirectObject(PdfName.K));
-			out.print("</");
-			out.print(tag);
-			out.println(">");
-		} else
-			inspectChild(k.getDirectObject(PdfName.K));
-	}
+            String tag = fixTagName(tagN);
+            out.print("<");
+            out.print(tag);
+            if (inspectAttributes) {
+                PdfDictionary a = k.getAsDict(PdfName.A);
+                if (a != null) {
+                    Set<PdfName> keys =  a.getKeys();
+                    for (PdfName key : keys) {
+                        out.print(' ');
+                        PdfObject value = a.get(key);
+                        value = PdfReader.getPdfObject(value);
+                        out.print(xmlName(key));
+                        out.print("=\"");
+                        out.print(value.toString());
+                        out.print("\"");
+                    }
+                }
+            }
+            out.print(">");
+            PdfDictionary dict = k.getAsDict(PdfName.PG);
+            if (dict != null)
+                parseTag(tagN, k.getDirectObject(PdfName.K), dict);
+            inspectChild(k.getDirectObject(PdfName.K));
+            out.print("</");
+            out.print(tag);
+            out.println(">");
+        } else
+            inspectChild(k.getDirectObject(PdfName.K));
+    }
+
+    protected String xmlName(PdfName name) {
+        String xmlName = name.toString().replaceFirst("/", "");
+        xmlName = Character.toLowerCase(xmlName.charAt(0))
+                   + xmlName.substring(1);
+        return xmlName;
+    }
 
     private static String fixTagName(String tag) {
         StringBuilder sb = new StringBuilder();

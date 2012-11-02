@@ -53,6 +53,7 @@ import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -103,6 +104,11 @@ public class PdfContentByte {
         /** The current word spacing */
         protected float wordSpace = 0;
 
+        protected BaseColor textColorFill = new GrayColor(0);
+        protected BaseColor graphicsColorFill = new GrayColor(0);
+        protected BaseColor textColorStroke = new GrayColor(0);
+        protected BaseColor graphicsColorStroke = new GrayColor(0);
+
         GraphicState() {
         }
 
@@ -121,6 +127,10 @@ public class PdfContentByte {
             scale = cp.scale;
             charSpace = cp.charSpace;
             wordSpace = cp.wordSpace;
+            textColorFill = cp.textColorFill;
+            graphicsColorFill = cp.graphicsColorFill;
+            textColorStroke = cp.textColorStroke;
+            graphicsColorStroke = cp.graphicsColorStroke;
         }
     }
 
@@ -203,9 +213,6 @@ public class PdfContentByte {
      */
     protected boolean autoControlTextBlocks = false;
 
-    //for development needs only! to be removed once tagged pdf support is complete.
-    private boolean allowTaggedImages = false;
-
     static {
         abrev.put(PdfName.BITSPERCOMPONENT, "/BPC ");
         abrev.put(PdfName.COLORSPACE, "/CS ");
@@ -231,7 +238,7 @@ public class PdfContentByte {
         if (wr != null) {
             writer = wr;
             pdf = writer.getPdfDocument();
-            autoControlTextBlocks = !pdf.useSeparateCanvasesForTextAndGraphics;
+            autoControlTextBlocks = pdf.putTextAndGraphicsTogether;
         }
     }
 
@@ -516,6 +523,7 @@ public class PdfContentByte {
      */
 
     public void setGrayFill(final float gray) {
+        saveColor(new GrayColor(gray), true);
         content.append(gray).append(" g").append_i(separator);
     }
 
@@ -524,6 +532,7 @@ public class PdfContentByte {
      */
 
     public void resetGrayFill() {
+        saveColor(new GrayColor(0), true);
         content.append("0 g").append_i(separator);
     }
 
@@ -537,6 +546,7 @@ public class PdfContentByte {
      */
 
     public void setGrayStroke(final float gray) {
+        saveColor(new GrayColor(gray), false);
         content.append(gray).append(" G").append_i(separator);
     }
 
@@ -545,6 +555,7 @@ public class PdfContentByte {
      */
 
     public void resetGrayStroke() {
+        saveColor(new GrayColor(0), false);
         content.append("0 G").append_i(separator);
     }
 
@@ -586,6 +597,7 @@ public class PdfContentByte {
      */
 
     public void setRGBColorFillF(final float red, final float green, final float blue) {
+        saveColor(new BaseColor(red, green, blue), true);
         HelperRGB(red, green, blue);
         content.append(" rg").append_i(separator);
     }
@@ -595,7 +607,7 @@ public class PdfContentByte {
      */
 
     public void resetRGBColorFill() {
-        content.append("0 g").append_i(separator);
+        resetGrayFill();
     }
 
     /**
@@ -613,6 +625,7 @@ public class PdfContentByte {
      */
 
     public void setRGBColorStrokeF(final float red, final float green, final float blue) {
+        saveColor(new BaseColor(red, green, blue), false);
         HelperRGB(red, green, blue);
         content.append(" RG").append_i(separator);
     }
@@ -623,7 +636,7 @@ public class PdfContentByte {
      */
 
     public void resetRGBColorStroke() {
-        content.append("0 G").append_i(separator);
+        resetGrayStroke();
     }
 
     /**
@@ -670,6 +683,7 @@ public class PdfContentByte {
      */
 
     public void setCMYKColorFillF(final float cyan, final float magenta, final float yellow, final float black) {
+        saveColor(new CMYKColor(cyan, magenta, yellow, black), true);
         HelperCMYK(cyan, magenta, yellow, black);
         content.append(" k").append_i(separator);
     }
@@ -680,6 +694,7 @@ public class PdfContentByte {
      */
 
     public void resetCMYKColorFill() {
+        saveColor(new CMYKColor(0, 0, 0, 1), true);
         content.append("0 0 0 1 k").append_i(separator);
     }
 
@@ -699,6 +714,7 @@ public class PdfContentByte {
      */
 
     public void setCMYKColorStrokeF(final float cyan, final float magenta, final float yellow, final float black) {
+        saveColor(new CMYKColor(cyan, magenta, yellow, black), false);
         HelperCMYK(cyan, magenta, yellow, black);
         content.append(" K").append_i(separator);
     }
@@ -709,6 +725,7 @@ public class PdfContentByte {
      */
 
     public void resetCMYKColorStroke() {
+        saveColor(new CMYKColor(0, 0, 0, 1), false);
         content.append("0 0 0 1 K").append_i(separator);
     }
 
@@ -1307,7 +1324,7 @@ public class PdfContentByte {
                 if (inText && autoControlTextBlocks) {
                     endText();
                 }
-                if (writer.isTagged() && allowTaggedImages)
+                if (writer.isTagged())
                     beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.FIGURE));
                 content.append("q ");
                 content.append(a).append(' ');
@@ -1372,7 +1389,7 @@ public class PdfContentByte {
                     name = prs.addXObject(name, writer.getImageReference(name));
                     content.append(' ').append(name.getBytes()).append(" Do Q").append_i(separator);
                 }
-                if (writer.isTagged() && allowTaggedImages)
+                if (writer.isTagged())
                     endMarkedContentSequence();
             }
             if (image.hasBorders()) {
@@ -1441,24 +1458,34 @@ public class PdfContentByte {
      * Starts the writing of text.
      * @param restoreTM indicates if to restore text matrix of the previous text block.
      */
-    public void beginText(boolean restoreTM) {
+    private void beginText(boolean restoreTM) {
     	if (inText) {
             if (autoControlTextBlocks) {
 
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
-    	}
+    		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
+    	    }
     	} else {
-    	inText = true;
+    	    inText = true;
             content.append("BT").append_i(separator);
             if (restoreTM) {
-                float tx = state.xTLM;
+                float xTLM = state.xTLM;
+                float tx = state.tx;
                 setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.tx, state.yTLM);
-                state.xTLM = state.tx = tx;
+                state.xTLM = xTLM;
+                state.tx = tx;
             } else {
-        state.xTLM = 0;
-        state.yTLM = 0;
-    }
+                state.xTLM = 0;
+                state.yTLM = 0;
+                state.tx = 0;
+            }
+            if (autoControlTextBlocks) {
+                try {
+                    restoreColor();
+                } catch (IOException ioe) {
+
+                }
+            }
         }
     }
 
@@ -1477,12 +1504,20 @@ public class PdfContentByte {
             if (autoControlTextBlocks) {
 
             } else {
-    		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
-    	}
+    	    	throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
+    	    }
     	} else {
-    	inText = false;
-        content.append("ET").append_i(separator);
-    }
+    	    inText = false;
+            content.append("ET").append_i(separator);
+            if (autoControlTextBlocks) {
+                try {
+                    restoreColor();
+                } catch (IOException ioe) {
+
+                }
+
+            }
+        }
     }
 
     /**
@@ -1935,7 +1970,6 @@ public class PdfContentByte {
      * @param kerned the kerning option
      * @return the width
      */
-
     public float getEffectiveStringWidth(final String text, final boolean kerned) {
         BaseFont bf = state.fontDetails.getBaseFont();
 
@@ -1949,8 +1983,7 @@ public class PdfContentByte {
             w += state.charSpace * (text.length() -1);
         }
 
-        int ft = bf.getFontType();
-        if (state.wordSpace != 0.0f && (ft == BaseFont.FONT_TYPE_T1 || ft == BaseFont.FONT_TYPE_TT || ft == BaseFont.FONT_TYPE_T3)) {
+        if (state.wordSpace != 0.0f && !bf.isVertical()) {
             for (int i = 0; i < text.length() -1; i++) {
                 if (text.charAt(i) == ' ')
                     w += state.wordSpace;
@@ -1960,6 +1993,39 @@ public class PdfContentByte {
             w = w * state.scale / 100.0f;
 
         //System.out.println("String width = " + Float.toString(w));
+        return w;
+    }
+
+    /**
+     * Computes the width of the given string taking in account
+     * the current values of "Character spacing", "Word Spacing"
+     * and "Horizontal Scaling".
+     * The spacing for the last character is also computed.
+     * It also takes into account kerning that can be specified within TJ operator (e.g. [(Hello) 123 (World)] TJ)
+     * @param text the string to get width of
+     * @param kerned the kerning option
+     * @param kerning the kerning option from TJ array
+     * @return the width
+     */
+    private float getEffectiveStringWidth(final String text, final boolean kerned, final float kerning) {
+        BaseFont bf = state.fontDetails.getBaseFont();
+        float w;
+        if (kerned)
+            w = bf.getWidthPointKerned(text, state.size);
+        else
+            w = bf.getWidthPoint(text, state.size);
+        if (state.charSpace != 0.0f && text.length() > 0) {
+            w += state.charSpace * (text.length());
+        }
+        if (state.wordSpace != 0.0f && !bf.isVertical()) {
+            for (int i = 0; i < text.length(); i++) {
+                if (text.charAt(i) == ' ')
+                    w += state.wordSpace;
+            }
+        }
+        w -= kerning / 1000.f * state.size;
+        if (state.scale != 100.0)
+            w = w * state.scale / 100.0f;
         return w;
     }
 
@@ -2329,7 +2395,7 @@ public class PdfContentByte {
         if (inText && autoControlTextBlocks) {
             endText();
         }
-        if (writer.isTagged() && allowTaggedImages)
+        if (writer.isTagged())
             beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.FIGURE));
         checkWriter();
         checkNoPattern(template);
@@ -2344,7 +2410,7 @@ public class PdfContentByte {
         content.append(e).append(' ');
         content.append(f).append(" cm ");
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
-        if (writer.isTagged() && allowTaggedImages)
+        if (writer.isTagged())
             endMarkedContentSequence();
     }
 
@@ -2407,6 +2473,7 @@ public class PdfContentByte {
      */
 
     public void setCMYKColorFill(final int cyan, final int magenta, final int yellow, final int black) {
+        saveColor(new CMYKColor(cyan, magenta, yellow, black), true);
         content.append((float)(cyan & 0xFF) / 0xFF);
         content.append(' ');
         content.append((float)(magenta & 0xFF) / 0xFF);
@@ -2434,6 +2501,7 @@ public class PdfContentByte {
      */
 
     public void setCMYKColorStroke(final int cyan, final int magenta, final int yellow, final int black) {
+        saveColor(new CMYKColor(cyan, magenta, yellow, black), false);
         content.append((float)(cyan & 0xFF) / 0xFF);
         content.append(' ');
         content.append((float)(magenta & 0xFF) / 0xFF);
@@ -2462,6 +2530,7 @@ public class PdfContentByte {
      */
 
     public void setRGBColorFill(final int red, final int green, final int blue) {
+        saveColor(new BaseColor(red, green, blue), true);
         HelperRGB((float) (red & 0xFF) / 0xFF, (float) (green & 0xFF) / 0xFF, (float) (blue & 0xFF) / 0xFF);
         content.append(" rg").append_i(separator);
     }
@@ -2483,6 +2552,7 @@ public class PdfContentByte {
      */
 
     public void setRGBColorStroke(final int red, final int green, final int blue) {
+        saveColor(new BaseColor(red, green, blue), false);
         HelperRGB((float) (red & 0xFF) / 0xFF, (float) (green & 0xFF) / 0xFF, (float) (blue & 0xFF) / 0xFF);
         content.append(" RG").append_i(separator);
     }
@@ -2572,6 +2642,7 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = state.colorDetails.getColorName();
         name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        saveColor(new SpotColor(sp, tint), true);
         content.append(name.getBytes()).append(" cs ").append(tint).append(" scn").append_i(separator);
     }
 
@@ -2586,6 +2657,7 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = state.colorDetails.getColorName();
         name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        saveColor(new SpotColor(sp, tint), false);
         content.append(name.getBytes()).append(" CS ").append(tint).append(" SCN").append_i(separator);
     }
 
@@ -2602,6 +2674,7 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = writer.addSimplePattern(p);
         name = prs.addPattern(name, p.getIndirectReference());
+        saveColor(new PatternColor(p), true);
         content.append(PdfName.PATTERN.getBytes()).append(" cs ").append(name.getBytes()).append(" scn").append_i(separator);
     }
 
@@ -2662,6 +2735,7 @@ public class PdfContentByte {
         name = prs.addPattern(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
         PdfName cName = prs.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
+        saveColor(new UncoloredPattern(p, color, tint), true);
         content.append(cName.getBytes()).append(" cs").append_i(separator);
         outputColorNumbers(color, tint);
         content.append(' ').append(name.getBytes()).append(" scn").append_i(separator);
@@ -2692,6 +2766,7 @@ public class PdfContentByte {
         name = prs.addPattern(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
         PdfName cName = prs.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
+        saveColor(new UncoloredPattern(p, color, tint), false);
         content.append(cName.getBytes()).append(" CS").append_i(separator);
         outputColorNumbers(color, tint);
         content.append(' ').append(name.getBytes()).append(" SCN").append_i(separator);
@@ -2710,6 +2785,7 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = writer.addSimplePattern(p);
         name = prs.addPattern(name, p.getIndirectReference());
+        saveColor(new PatternColor(p), false);
         content.append(PdfName.PATTERN.getBytes()).append(" CS ").append(name.getBytes()).append(" SCN").append_i(separator);
     }
 
@@ -2743,6 +2819,7 @@ public class PdfContentByte {
         writer.addSimpleShadingPattern(shading);
         PageResources prs = getPageResources();
         PdfName name = prs.addPattern(shading.getPatternName(), shading.getPatternReference());
+        saveColor(new ShadingColor(shading), true);
         content.append(PdfName.PATTERN.getBytes()).append(" cs ").append(name.getBytes()).append(" scn").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
@@ -2757,6 +2834,7 @@ public class PdfContentByte {
         writer.addSimpleShadingPattern(shading);
         PageResources prs = getPageResources();
         PdfName name = prs.addPattern(shading.getPatternName(), shading.getPatternReference());
+        saveColor(new ShadingColor(shading), false);
         content.append(PdfName.PATTERN.getBytes()).append(" CS ").append(name.getBytes()).append(" SCN").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
@@ -3567,71 +3645,7 @@ public class PdfContentByte {
                 structureElement = pdf.structElements.get(element);
                 if (structureElement == null) {
                     structureElement = new PdfStructureElement(getParentStructureElement(), PdfName.P);
-                  Paragraph p = (Paragraph) element;
-
-                    // Setting non-inheritable attributes
-                    if ((p.getFont() != null) && (p.getFont().getColor() != null)){
-                        BaseColor c = p.getFont().getColor();
-                        float [] colors = new float[] {c.getRed()/255, c.getGreen()/255, c.getBlue()/255};
-                        structureElement.setAttribute(PdfName.COLOR, new PdfArray(colors));
-                    }
-                    if (Float.compare(p.getSpacingBefore(), 0f) != 0)
-                        structureElement.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(p.getSpacingBefore()));
-                    if (Float.compare(p.getSpacingAfter(), 0f) != 0)
-                        structureElement.setAttribute(PdfName.SPACEAFTER, new PdfNumber(p.getSpacingAfter()));
-                    if (Float.compare(p.getFirstLineIndent(), 0f) != 0)
-                        structureElement.setAttribute(PdfName.TEXTINDENT, new PdfNumber(p.getFirstLineIndent()));
-
-                    // Setting inheritable attributes
-                    IPdfStructureElement parent = getParentStructureInterface();
-                    PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
-                    if (obj instanceof PdfNumber) {
-                        float startIndent = ((PdfNumber) obj).floatValue();
-                        if (Float.compare(startIndent, p.getIndentationLeft()) != 0)
-                            structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(p.getIndentationLeft()));
-                    }
-                    else {
-                        if (Math.abs(p.getIndentationLeft()) > Float.MIN_VALUE)
-                            structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(p.getIndentationLeft()));
-                    }
-
-                    obj = parent.getAttribute(PdfName.ENDINDENT);
-                    if (obj instanceof PdfNumber) {
-                        float endIndent = ((PdfNumber) obj).floatValue();
-                        if (Float.compare(endIndent, p.getIndentationRight()) != 0)
-                            structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(p.getIndentationRight()));
-                    }
-                    else {
-                        if (Float.compare(p.getIndentationRight(), 0) != 0)
-                            structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(p.getIndentationRight()));
-                    }
-
-                    PdfName align = null;
-                    switch (p.getAlignment()){
-                        case Element.ALIGN_LEFT:
-                            align = PdfName.START;
-                            break;
-                        case Element.ALIGN_CENTER:
-                            align = PdfName.CENTER;
-                            break;
-                        case Element.ALIGN_RIGHT:
-                            align = PdfName.END;
-                            break;
-                        case Element.ALIGN_JUSTIFIED:
-                            align = PdfName.JUSTIFY;
-                            break;
-                    }
-                    obj = parent.getAttribute(PdfName.TEXTALIGN);
-                    if (obj instanceof PdfName) {
-                        PdfName textAlign = ((PdfName) obj);
-                        if (align != null && !textAlign.equals(align))
-                            structureElement.setAttribute(PdfName.TEXTALIGN, align);
-                    }
-                    else {
-                        if (align != null && !PdfName.START.equals(align))
-                            structureElement.setAttribute(PdfName.TEXTALIGN, align);
-                    }
-
+                    writeParagraphAttributes(structureElement, (Paragraph) element);
                 }
                 if (inText && autoControlTextBlocks) {
                     endText();
@@ -3712,7 +3726,146 @@ public class PdfContentByte {
     }
 
     protected void updateTx(String text, float Tj) {
-        state.tx = state.tx + getEffectiveStringWidth(text, false) + (-Tj / 1000.f * state.size + state.charSpace + state.wordSpace) * state.scale / 100.f;
+        state.tx += getEffectiveStringWidth(text, false, Tj);
+    }
+
+    private void writeParagraphAttributes(PdfStructureElement structureElement, Paragraph paragraph) {
+        if (structureElement != null && paragraph != null) {
+            // Setting non-inheritable attributes
+            if ((paragraph.getFont() != null) && (paragraph.getFont().getColor() != null)){
+                BaseColor c = paragraph.getFont().getColor();
+                float [] colors = new float[] {c.getRed()/255, c.getGreen()/255, c.getBlue()/255};
+                structureElement.setAttribute(PdfName.COLOR, new PdfArray(colors));
+            }
+            if (Float.compare(paragraph.getSpacingBefore(), 0f) != 0)
+                structureElement.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(paragraph.getSpacingBefore()));
+            if (Float.compare(paragraph.getSpacingAfter(), 0f) != 0)
+                structureElement.setAttribute(PdfName.SPACEAFTER, new PdfNumber(paragraph.getSpacingAfter()));
+            if (Float.compare(paragraph.getFirstLineIndent(), 0f) != 0)
+                structureElement.setAttribute(PdfName.TEXTINDENT, new PdfNumber(paragraph.getFirstLineIndent()));
+
+            // Setting inheritable attributes
+            IPdfStructureElement parent = getParentStructureInterface();
+            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+            if (obj instanceof PdfNumber) {
+                float startIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(startIndent, paragraph.getIndentationLeft()) != 0)
+                    structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(paragraph.getIndentationLeft()));
+            }
+            else {
+                if (Math.abs(paragraph.getIndentationLeft()) > Float.MIN_VALUE)
+                    structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(paragraph.getIndentationLeft()));
+            }
+
+            obj = parent.getAttribute(PdfName.ENDINDENT);
+            if (obj instanceof PdfNumber) {
+                float endIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(endIndent, paragraph.getIndentationRight()) != 0)
+                    structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(paragraph.getIndentationRight()));
+            }
+            else {
+                if (Float.compare(paragraph.getIndentationRight(), 0) != 0)
+                    structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(paragraph.getIndentationRight()));
+            }
+
+            PdfName align = null;
+            switch (paragraph.getAlignment()){
+                case Element.ALIGN_LEFT:
+                    align = PdfName.START;
+                    break;
+                case Element.ALIGN_CENTER:
+                    align = PdfName.CENTER;
+                    break;
+                case Element.ALIGN_RIGHT:
+                    align = PdfName.END;
+                    break;
+                case Element.ALIGN_JUSTIFIED:
+                    align = PdfName.JUSTIFY;
+                    break;
+            }
+            obj = parent.getAttribute(PdfName.TEXTALIGN);
+            if (obj instanceof PdfName) {
+                PdfName textAlign = ((PdfName) obj);
+                if (align != null && !textAlign.equals(align))
+                    structureElement.setAttribute(PdfName.TEXTALIGN, align);
+            }
+            else {
+                if (align != null && !PdfName.START.equals(align))
+                    structureElement.setAttribute(PdfName.TEXTALIGN, align);
+            }
+        }
+    }
+
+    private void saveColor(BaseColor color, boolean fill) {
+        if (autoControlTextBlocks) {
+            if (inText) {
+                if (fill) {
+                    state.textColorFill = color;
+                } else {
+                    state.textColorStroke = color;
+                }
+            } else {
+                if (fill) {
+                    state.graphicsColorFill = color;
+                } else {
+                    state.graphicsColorStroke = color;
+                }
+            }
+        }
+    }
+
+    private void restoreColor(BaseColor color, boolean fill) throws IOException {
+        if (autoControlTextBlocks) {
+            if (color instanceof UncoloredPattern) {
+                UncoloredPattern c = (UncoloredPattern)color;
+                if (fill)
+                    setPatternFill(c.getPainter(), c.color, c.tint);
+                else
+                    setPatternStroke(c.getPainter(), c.color, c.tint);
+            } else {
+                if (fill)
+                    setColorFill(color);
+                else
+                    setColorStroke(color);
+            }
+        }
+    }
+
+    private void restoreColor() throws IOException {
+        if (autoControlTextBlocks) {
+            if (inText) {
+                if (!state.textColorFill.equals(state.graphicsColorFill)) {
+                    restoreColor(state.textColorFill, true);
+                }
+                if (!state.textColorStroke.equals(state.graphicsColorStroke)) {
+                    restoreColor(state.textColorStroke, false);
+                }
+            } else {
+                if (!state.textColorFill.equals(state.graphicsColorFill)) {
+                    restoreColor(state.graphicsColorFill, true);
+                }
+                if (!state.textColorStroke.equals(state.graphicsColorStroke)) {
+                    restoreColor(state.graphicsColorStroke, false);
+                }
+            }
+        }
+    }
+
+    static class UncoloredPattern extends PatternColor {
+        protected BaseColor color;
+        protected float tint;
+
+        protected UncoloredPattern(final PdfPatternPainter p, final BaseColor color, final float tint) {
+            super(p);
+            this.color = color;
+            this.tint = tint;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof UncoloredPattern && (((UncoloredPattern)obj).painter).equals(this.painter) && (((UncoloredPattern)obj).color).equals(this.color) && ((UncoloredPattern)obj).tint == this.tint;
+        }
+
     }
 
 }
