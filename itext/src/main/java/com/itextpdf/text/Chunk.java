@@ -43,17 +43,17 @@
  */
 package com.itextpdf.text;
 
-import java.net.URL;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.HyphenationEvent;
 import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfAnnotation;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.draw.DrawInterface;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * This is the smallest significant part of text that can be added to a
@@ -934,5 +934,22 @@ public class Chunk implements Element {
 
     public boolean isWhitespace() {
         return attributes != null && attributes.containsKey(WHITESPACE);
+    }
+
+    public static final String TABSPACE = "TABSPACE";
+
+    public static Chunk createTabspace() {
+        return createTabspace(60);
+    }
+
+    public static Chunk createTabspace(float spacing)
+    {
+        Chunk tabspace = new Chunk(" ");
+        tabspace.setAttribute(TABSPACE, spacing);
+        return tabspace;
+    }
+
+    public boolean isTabspace() {
+        return attributes != null && attributes.containsKey(TABSPACE);
     }
 }

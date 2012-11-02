@@ -297,6 +297,11 @@ public class PdfDocument extends Document {
     /** The <CODE>PdfWriter</CODE>. */
     protected PdfWriter writer;
 
+    protected HashMap<Element, PdfStructureElement> structElements = new HashMap<Element, PdfStructureElement>();
+
+    //for development needs only! to be removed once tagged pdf support is complete.
+    protected boolean useSeparateCanvasesForTextAndGraphics = true;
+
     /**
      * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
      *
@@ -474,7 +479,8 @@ public class PdfDocument extends Document {
                     break;
                 }
                 case Element.PARAGRAPH: {
-                	leadingCount++;
+                    text.openMCBlock(element);
+                    leadingCount++;
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     addSpacing(paragraph.getSpacingBefore(), leading, paragraph.getFont());
@@ -527,6 +533,9 @@ public class PdfDocument extends Document {
                     indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
                     leadingCount--;
+                    if (writer.isTagged())
+                        flushLines();
+                    text.closeMCBlock(element);
                     break;
                 }
                 case Element.SECTION:
@@ -824,7 +833,7 @@ public class PdfDocument extends Document {
 
         try {
             // we flush the arraylist with recently written lines
-        	flushLines();
+            flushLines();
 
         	// we prepare the elements of the page dictionary
 
@@ -878,13 +887,26 @@ public class PdfDocument extends Document {
         	if (writer.isTagged())
         		page.put(PdfName.STRUCTPARENTS, new PdfNumber(writer.getCurrentPageNumber() - 1));
 
-            if (text.size() > textEmptySize)
+            if (text.size() > textEmptySize || !useSeparateCanvasesForTextAndGraphics)
         		text.endText();
         	else
         		text = null;
-        	writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), pageSize));
+            ArrayList<ArrayList<Element>> mcBlocks = new ArrayList<ArrayList<Element>>() {{ add(null); add(null); add(null); add(null);}}; ;
+            mcBlocks.set(0, writer.getDirectContentUnder().saveMCBlocks());
+            if (graphics != null)
+                mcBlocks.set(1, graphics.saveMCBlocks());
+            if (useSeparateCanvasesForTextAndGraphics && text != null)
+                mcBlocks.set(2, text.saveMCBlocks());
+            mcBlocks.set(3, writer.getDirectContent().saveMCBlocks());
+        	writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, useSeparateCanvasesForTextAndGraphics ? text : null, writer.getDirectContent(), pageSize));
         	// we initialize the new page
         	initPage();
+            writer.getDirectContentUnder().restoreMCBlocks(mcBlocks.get(0));
+            if (graphics != null)
+                graphics.restoreMCBlocks(mcBlocks.get(1));
+            if (useSeparateCanvasesForTextAndGraphics && text != null)
+                text.restoreMCBlocks(mcBlocks.get(2));
+            writer.getDirectContent().restoreMCBlocks(mcBlocks.get(3));
         }
         catch(DocumentException de) {
         	// maybe this never happens, but it's better to check.
@@ -1498,6 +1520,15 @@ public class PdfDocument extends Document {
             	PdfTextArray array = new PdfTextArray();
             	array.add((tabPosition - xMarker) * 1000f / chunk.font.size() / hScale);
             	text.showText(array);
+            }
+            else if (chunk.isTabSpace())
+            {
+                Float module = (Float)chunk.getAttribute(Chunk.TABSPACE);
+                float increment = module - ((xMarker - text.getXTLM()) % module);
+                xMarker += increment;
+                PdfTextArray array = new PdfTextArray();
+                array.add(-(increment * 1000f / chunk.font.size() / hScale));
+                text.showText(array);
             }
             // If it is a CJK chunk or Unicode TTF we will have to simulate the
             // space adjustment.
@@ -2142,10 +2173,15 @@ public class PdfDocument extends Document {
     		marginTop = nextMarginTop;
     		marginBottom = nextMarginBottom;
     	}
-        text = new PdfContentByte(writer);
-        text.reset();
+        if (useSeparateCanvasesForTextAndGraphics) {
+            text = new PdfContentByte(writer);
+            text.reset();
+        } else {
+            text = graphics;
+        }
         text.beginText();
-        textEmptySize = text.size();
+        if (!useSeparateCanvasesForTextAndGraphics)
+            textEmptySize = text.size();
         // we move to the left/top position of the page
         text.moveText(left(), top());
     }
@@ -2384,11 +2420,15 @@ public class PdfDocument extends Document {
             int loop = 0;
             while (true) {
                 fl.setSimpleColumn(indentLeft(), indentBottom(), indentRight(), indentTop() - currentHeight);
-                int status = fl.layout(false);
-                if ((status & ColumnText.NO_MORE_TEXT) != 0) {
-                    text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
-                    currentHeight = indentTop() - fl.getYLine();
-                    break;
+                try {
+                    int status = fl.layout(false);
+                    if ((status & ColumnText.NO_MORE_TEXT) != 0) {
+                        text.moveText(0, fl.getYLine() - indentTop() + currentHeight);
+                        currentHeight = indentTop() - fl.getYLine();
+                        break;
+                    }
+                } catch (Exception exc) {
+                    return;
                 }
                 if (indentTop() - currentHeight == fl.getYLine() || isPageEmpty())
                     ++loop;

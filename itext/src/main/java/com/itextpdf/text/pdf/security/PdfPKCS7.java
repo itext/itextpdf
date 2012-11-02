@@ -47,6 +47,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -69,6 +70,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Enumerated;
@@ -90,8 +92,10 @@ import org.bouncycastle.asn1.DERUTCTime;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.ess.SigningCertificateV2;
+import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.ESSCertIDv2;
+import org.bouncycastle.asn1.ess.SigningCertificate;
+import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -102,6 +106,7 @@ import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.jce.X509Principal;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertParser;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
@@ -111,9 +116,6 @@ import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
-import java.security.GeneralSecurityException;
-import org.bouncycastle.asn1.ess.ESSCertID;
-import org.bouncycastle.asn1.ess.SigningCertificate;
 
 /**
  * This class does all the processing related to signing
@@ -225,7 +227,7 @@ public class PdfPKCS7 {
      * @param tsp set to true if there's a PAdES LTV time stamp.
      * @param provider the provider or <code>null</code> for the default provider
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public PdfPKCS7(byte[] contentsKey, PdfName filterSubtype, String provider) {
         this.filterSubtype = filterSubtype;
         isTsp = PdfName.ETSI_RFC3161.equals(filterSubtype);
@@ -272,11 +274,6 @@ public class PdfPKCS7 {
                 digestalgos.add(o.getId());
             }
 
-            // the certificates
-            X509CertParser cr = new X509CertParser();
-            cr.engineInit(new ByteArrayInputStream(contentsKey));
-            certs = cr.engineReadAll();
-
             // the possible ID_PKCS7_DATA
             ASN1Sequence rsaData = (ASN1Sequence)content.getObjectAt(2);
             if (rsaData.size() > 1) {
@@ -284,10 +281,52 @@ public class PdfPKCS7 {
                 RSAdata = rsaDataContent.getOctets();
             }
 
-            // the signerInfos
             int next = 3;
             while (content.getObjectAt(next) instanceof ASN1TaggedObject)
                 ++next;
+
+
+            // the certificates
+/*
+			This should work, but that's not always the case because of a bug in BouncyCastle:
+*/	
+            X509CertParser cr = new X509CertParser();
+            cr.engineInit(new ByteArrayInputStream(contentsKey));
+            certs = cr.engineReadAll();
+/*    
+            The following workaround was provided by Alfonso Massa, but it doesn't always work either.
+
+            ASN1Set certSet = null;
+            ASN1Set crlSet = null;
+            while (content.getObjectAt(next) instanceof ASN1TaggedObject) {
+                ASN1TaggedObject tagged = (ASN1TaggedObject)content.getObjectAt(next);
+
+                switch (tagged.getTagNo()) {
+                case 0:
+                    certSet = ASN1Set.getInstance(tagged, false);
+                    break;
+                case 1:
+                    crlSet = ASN1Set.getInstance(tagged, false);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unknown tag value " + tagged.getTagNo());
+                }
+                ++next;
+            }
+            certs = new ArrayList<Certificate>(certSet.size());
+
+            CertificateFactory certFact = CertificateFactory.getInstance("X.509", new BouncyCastleProvider());
+            for (Enumeration en = certSet.getObjects(); en.hasMoreElements();) {
+                ASN1Primitive obj = ((ASN1Encodable)en.nextElement()).toASN1Primitive();
+                if (obj instanceof ASN1Sequence) {
+    	            ByteArrayInputStream stream = new ByteArrayInputStream(obj.getEncoded());
+    	            X509Certificate x509Certificate = (X509Certificate)certFact.generateCertificate(stream);
+    	            stream.close();
+    				certs.add(x509Certificate);
+                }
+            }
+*/
+            // the signerInfos
             ASN1Set signerInfos = (ASN1Set)content.getObjectAt(next);
             if (signerInfos.size() != 1)
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("this.pkcs.7.object.has.multiple.signerinfos.only.one.is.supported.at.this.time"));
@@ -491,7 +530,11 @@ public class PdfPKCS7 {
      * @return Value of property signDate.
      */
     public Calendar getSignDate() {
-        return this.signDate;
+        Calendar dt = getTimeStampDate();
+        if (dt == null)
+            return this.signDate;
+        else
+            return dt;
     }
 
     /**
@@ -541,6 +584,7 @@ public class PdfPKCS7 {
     private byte[] digestAttr;
 
     private PdfName filterSubtype;
+
     /**
      * Getter for the ID of the digest algorithm, e.g. "2.16.840.1.101.3.4.2.1"
      */
@@ -573,7 +617,7 @@ public class PdfPKCS7 {
      * @return the algorithm used to calculate the message digest
      */
     public String getDigestAlgorithm() {
-        return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
+    	return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
     }
 
     /*
@@ -1244,7 +1288,7 @@ public class PdfPKCS7 {
 
     /** True if there's a PAdES LTV time stamp. */
     private boolean isTsp;
-    
+
     /** True if it's a CAdES signature type. */
     private boolean isCades;
     

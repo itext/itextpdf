@@ -160,6 +160,17 @@ public class PdfLine {
     		chunk.adjustLeft(left);
             addToLine(chunk);
         }
+        else if (chunk.isTabSpace()) {
+            if (!line.isEmpty())
+            {
+                Float module = (Float)chunk.getAttribute(Chunk.TABSPACE);
+                float decrement = module - ((originalWidth - width) % module);
+                if (width < decrement)
+                    return chunk;
+                width -= decrement;
+                addToLine(chunk);
+            }
+        }
         // if the length of the chunk > 0 we add it to the line
         else if (chunk.length() > 0 || chunk.isImage()) {
             if (overflow != null)

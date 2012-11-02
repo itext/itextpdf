@@ -43,14 +43,14 @@
  */
 package com.itextpdf.text.pdf;
 
-import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
 /**
  * This is a node in a document logical structure. It may contain a mark point or it may contain
  * other nodes.
  * @author Paulo Soares
  */
-public class PdfStructureElement extends PdfDictionary {
+public class PdfStructureElement extends PdfDictionary implements IPdfStructureElement{
     
     /**
      * Holds value of property kids.
@@ -87,18 +87,37 @@ public class PdfStructureElement extends PdfDictionary {
         put(PdfName.P, parent.getReference());
         put(PdfName.TYPE, PdfName.STRUCTELEM);
     }
-    
+
+    protected PdfStructureElement(PdfDictionary parent, PdfName structureType) {
+        if (parent instanceof PdfStructureElement) {
+            top = ((PdfStructureElement)parent).top;
+            init(parent, structureType);
+            this.parent = (PdfStructureElement)parent;
+            put(PdfName.P, ((PdfStructureElement)parent).reference);
+            put(PdfName.TYPE, PdfName.STRUCTELEM);
+        } else if (parent instanceof PdfStructureTreeRoot) {
+            top = (PdfStructureTreeRoot)parent;
+            init(parent, structureType);
+            put(PdfName.P, ((PdfStructureTreeRoot)parent).getReference());
+            put(PdfName.TYPE, PdfName.STRUCTELEM);
+        } else {
+
+        }
+    }
+
     private void init(PdfDictionary parent, PdfName structureType) {
         PdfObject kido = parent.get(PdfName.K);
         PdfArray kids = null;
-        if (kido != null && !kido.isArray())
-            throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.parent.has.already.another.function"));
         if (kido == null) {
             kids = new PdfArray();
             parent.put(PdfName.K, kids);
-        }
-        else
+        } else if (kido instanceof PdfArray) {
             kids = (PdfArray)kido;
+        } else {
+            kids = new PdfArray();
+            kids.add(kido);
+            parent.put(PdfName.K, kids);
+        }
         kids.add(this);
         put(PdfName.S, structureType);
         reference = top.getWriter().getPdfIndirectReference();
@@ -115,7 +134,8 @@ public class PdfStructureElement extends PdfDictionary {
     void setPageMark(int page, int mark) {
         if (mark >= 0)
             put(PdfName.K, new PdfNumber(mark));
-        top.setPageMark(page, reference);
+        if (parent == null)
+            top.setPageMark(page, reference);
     }
     
     /**
@@ -125,5 +145,38 @@ public class PdfStructureElement extends PdfDictionary {
      */    
     public PdfIndirectReference getReference() {
         return this.reference;
+    }
+
+    /**
+     * Gets the first entarance of attribute.
+     * @returns PdfObject
+     * @since 5.3.4
+     */
+    public PdfObject getAttribute(PdfName name){
+        PdfDictionary attr = getAsDict(PdfName.A);
+        if (attr != null){
+            if (attr.contains(name))
+                return attr.get(name);
+        }
+        PdfDictionary parent = getParent();
+        if (parent instanceof PdfStructureElement)
+            return ((PdfStructureElement) parent).getAttribute(name);
+        if (parent instanceof PdfStructureTreeRoot)
+            return  ((PdfStructureTreeRoot) parent).getAttribute(name);
+
+        return new PdfNull();
+    }
+
+    /**
+     * Sets the attribute value.
+     * @since 5.3.4
+     */
+    public void setAttribute(PdfName name, PdfObject obj){
+        PdfDictionary attr = getAsDict(PdfName.A);
+        if (attr == null){
+            attr = new PdfDictionary();
+            put(PdfName.A, attr);
+        }
+        attr.put(name, obj);
     }
 }

@@ -879,10 +879,19 @@ public class PdfWriter extends DocWriter implements
  * to render the document.
  */
 
-    protected PdfDictionary getCatalog(final PdfIndirectReference rootObj)
-    {
+    protected PdfDictionary getCatalog(final PdfIndirectReference rootObj) {
         PdfDictionary catalog = pdf.getCatalog(rootObj);
         // [F12] tagged PDF
+        buildStructTreeRootForTagged(catalog);
+        // [F13] OCG
+        if (!documentOCG.isEmpty()) {
+        	fillOCProperties(false);
+        	catalog.put(PdfName.OCPROPERTIES, OCProperties);
+        }
+        return catalog;
+    }
+
+    protected void buildStructTreeRootForTagged(PdfDictionary catalog) {
         if (tagged) {
             try {
                 getStructureTreeRoot().buildTree();
@@ -897,12 +906,6 @@ public class PdfWriter extends DocWriter implements
                 mi.put(PdfName.USERPROPERTIES, PdfBoolean.PDFTRUE);
             catalog.put(PdfName.MARKINFO, mi);
         }
-        // [F13] OCG
-        if (!documentOCG.isEmpty()) {
-        	fillOCProperties(false);
-        	catalog.put(PdfName.OCPROPERTIES, OCProperties);
-        }
-        return catalog;
     }
 
     /** Holds value of property extraCatalog this is used for Output Intents. */

@@ -43,16 +43,11 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.*;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.SplitCharacter;
-import com.itextpdf.text.Utilities;
 
 /**
  * A <CODE>PdfChunk</CODE> is the PDF translation of a <CODE>Chunk</CODE>.
@@ -91,6 +86,7 @@ public class PdfChunk {
         keysAttributes.add(Chunk.HSCALE);
         keysAttributes.add(Chunk.SEPARATOR);
         keysAttributes.add(Chunk.TAB);
+        keysAttributes.add(Chunk.TABSPACE);
         keysAttributes.add(Chunk.CHAR_SPACING);
         keysAttributes.add(Chunk.LINEHEIGHT);
         keysNoStroke.add(Chunk.SUBSUPSCRIPT);
@@ -543,6 +539,9 @@ public class PdfChunk {
         if (isAttribute(Chunk.SEPARATOR)) {
         	return 0;
         }
+        if (isAttribute(Chunk.TABSPACE)) {
+            return 0;
+        }
         return font.width(value);
     }
 
@@ -694,6 +693,15 @@ public class PdfChunk {
      */
     boolean isTab() {
     	return isAttribute(Chunk.TAB);
+    }
+
+    /**
+     * Checks if this <CODE>PdfChunk</CODE> is a tab Chunk.
+     * @return	true if this chunk is a separator.
+     * @since	5.3.4
+     */
+    boolean isTabSpace() {
+        return isAttribute(Chunk.TABSPACE);
     }
 
     /**

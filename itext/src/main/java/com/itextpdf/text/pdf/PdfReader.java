@@ -1509,7 +1509,7 @@ public class PdfReader implements PdfViewerPreferences {
             }
         }
         thisStream *= 2;
-        if (thisStream < xref.length)
+        if (thisStream + 1 < xref.length && xref[thisStream] == 0 && xref[thisStream + 1] == 0)
             xref[thisStream] = -1;
 
         if (prev == -1)
@@ -1731,7 +1731,7 @@ public class PdfReader implements PdfViewerPreferences {
         if (obj == null || !obj.isNumber())
             return in;
         int predictor = ((PdfNumber)obj).intValue();
-        if (predictor < 10)
+        if (predictor < 10 && predictor != 2)
             return in;
         int width = 1;
         obj = getPdfObject(dic.get(PdfName.COLUMNS));
@@ -1751,7 +1751,18 @@ public class PdfReader implements PdfViewerPreferences {
         int bytesPerRow = (colors*width*bpc + 7)/8;
         byte[] curr = new byte[bytesPerRow];
         byte[] prior = new byte[bytesPerRow];
-
+        if (predictor == 2) {
+			if (bpc == 8) {
+				int numRows = in.length / bytesPerRow;
+				for (int row = 0; row < numRows; row++) {
+					int rowStart = row * bytesPerRow;
+					for (int col = 0 + bytesPerPixel; col < bytesPerRow; col++) {
+						in[rowStart + col] = (byte)(in[rowStart + col] + in[rowStart + col - bytesPerPixel]);
+					}
+				}
+			}
+			return in;
+		}
         // Decode the (sub)image row-by-row
         while (true) {
             // Read the filter type byte and a row of data

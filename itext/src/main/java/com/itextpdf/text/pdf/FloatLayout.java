@@ -119,7 +119,6 @@ public class FloatLayout {
 
         ArrayList<Element> floatingElements = new ArrayList<Element>();
         List<Element> content = simulate ? new ArrayList<Element>(this.content) : this.content;
-        ColumnText compositeColumn = simulate ? ColumnText.duplicate(this.compositeColumn) : this.compositeColumn;
 
         while (!content.isEmpty()) {
             if (content.get(0) instanceof PdfDiv) {
@@ -204,6 +203,7 @@ public class FloatLayout {
                 if (firstElement instanceof Spaceable) {
                     yLine -= ((Spaceable) firstElement).getSpacingBefore();
                 }
+                compositeColumn = simulate ? ColumnText.duplicate(compositeColumn) : compositeColumn;
                 compositeColumn.addElement(firstElement);
                 floatingElements.remove(0);
                 if (yLine > minYLine)
@@ -251,7 +251,11 @@ public class FloatLayout {
                 }
 
                 if ((status & ColumnText.NO_MORE_TEXT) == 0) {
-                    floatingElements.addAll(0, compositeColumn.getCompositeElements());
+                    if (!simulate)
+                        floatingElements.addAll(0, compositeColumn.getCompositeElements());
+                    else {
+                        floatingElements.add(0, firstElement);
+                    }
                     compositeColumn.getCompositeElements().clear();
                     break;
                 } else {

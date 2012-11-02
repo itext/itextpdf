@@ -42,26 +42,19 @@
  * address: sales@itextpdf.com
  */
 package com.itextpdf.text.pdf;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.itextpdf.awt.FontMapper;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.awt.PdfPrinterGraphics2D;
 import com.itextpdf.awt.geom.AffineTransform;
-import com.itextpdf.text.Annotation;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.ImgJBIG2;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
+import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
-import com.itextpdf.text.pdf.internal.PdfXConformanceImp;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -91,6 +84,13 @@ public class PdfContentByte {
         /** The y position of the text line matrix. */
         protected float yTLM = 0;
 
+        protected float aTLM = 1;
+        protected float bTLM = 0;
+        protected float cTLM = 0;
+        protected float dTLM = 1;
+
+        protected float tx = 0;
+
         /** The current text leading. */
         protected float leading = 0;
 
@@ -112,6 +112,11 @@ public class PdfContentByte {
             size = cp.size;
             xTLM = cp.xTLM;
             yTLM = cp.yTLM;
+            aTLM = cp.aTLM;
+            bTLM = cp.bTLM;
+            cTLM = cp.cTLM;
+            dTLM = cp.dTLM;
+            tx = cp.tx;
             leading = cp.leading;
             scale = cp.scale;
             charSpace = cp.charSpace;
@@ -189,6 +194,18 @@ public class PdfContentByte {
 
     private static HashMap<PdfName, String> abrev = new HashMap<PdfName, String>();
 
+    private ArrayList<Element> mcElements = new ArrayList<Element>();
+
+    private PdfContentByte duplicatedFrom = null;
+
+    /**
+     * Indicates if to open/close text block automatically.
+     */
+    protected boolean autoControlTextBlocks = false;
+
+    //for development needs only! to be removed once tagged pdf support is complete.
+    private boolean allowTaggedImages = false;
+
     static {
         abrev.put(PdfName.BITSPERCOMPONENT, "/BPC ");
         abrev.put(PdfName.COLORSPACE, "/CS ");
@@ -214,6 +231,7 @@ public class PdfContentByte {
         if (wr != null) {
             writer = wr;
             pdf = writer.getPdfDocument();
+            autoControlTextBlocks = !pdf.useSeparateCanvasesForTextAndGraphics;
         }
     }
 
@@ -470,6 +488,9 @@ public class PdfContentByte {
      */
 
     public void clip() {
+        if (inText && autoControlTextBlocks) {
+            endText();
+        }
         content.append("W").append_i(separator);
     }
 
@@ -479,6 +500,9 @@ public class PdfContentByte {
      */
 
     public void eoClip() {
+        if (inText && autoControlTextBlocks) {
+            endText();
+        }
         content.append("W*").append_i(separator);
     }
 
@@ -697,7 +721,11 @@ public class PdfContentByte {
 
     public void moveTo(final float x, final float y) {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x).append(' ').append(y).append(" m").append_i(separator);
     }
@@ -712,7 +740,11 @@ public class PdfContentByte {
 
     public void lineTo(final float x, final float y) {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x).append(' ').append(y).append(" l").append_i(separator);
     }
@@ -730,7 +762,11 @@ public class PdfContentByte {
 
     public void curveTo(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x1).append(' ').append(y1).append(' ').append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" c").append_i(separator);
     }
@@ -746,7 +782,11 @@ public class PdfContentByte {
 
     public void curveTo(final float x2, final float y2, final float x3, final float y3) {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" v").append_i(separator);
     }
@@ -762,7 +802,11 @@ public class PdfContentByte {
 
     public void curveFromTo(final float x1, final float y1, final float x3, final float y3) {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x1).append(' ').append(y1).append(' ').append(x3).append(' ').append(y3).append(" y").append_i(separator);
     }
@@ -795,7 +839,11 @@ public class PdfContentByte {
 
     public void rectangle(final float x, final float y, final float w, final float h) {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append(x).append(' ').append(y).append(' ').append(w).append(' ').append(h).append(" re").append_i(separator);
     }
@@ -1031,7 +1079,11 @@ public class PdfContentByte {
 
     public void closePath() {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("h").append_i(separator);
     }
@@ -1042,7 +1094,11 @@ public class PdfContentByte {
 
     public void newPath() {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("n").append_i(separator);
     }
@@ -1053,7 +1109,11 @@ public class PdfContentByte {
 
     public void stroke() {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("S").append_i(separator);
     }
@@ -1064,7 +1124,11 @@ public class PdfContentByte {
 
     public void closePathStroke() {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("s").append_i(separator);
     }
@@ -1075,7 +1139,11 @@ public class PdfContentByte {
 
     public void fill() {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("f").append_i(separator);
     }
@@ -1086,7 +1154,11 @@ public class PdfContentByte {
 
     public void eoFill() {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("f*").append_i(separator);
     }
@@ -1097,7 +1169,11 @@ public class PdfContentByte {
 
     public void fillStroke() {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("B").append_i(separator);
     }
@@ -1108,7 +1184,11 @@ public class PdfContentByte {
 
     public void closePathFillStroke() {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("b").append_i(separator);
     }
@@ -1119,7 +1199,11 @@ public class PdfContentByte {
 
     public void eoFillStroke() {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("B*").append_i(separator);
     }
@@ -1130,7 +1214,11 @@ public class PdfContentByte {
 
     public void closePathEoFillStroke() {
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
+    	}
     	}
         content.append("b*").append_i(separator);
     }
@@ -1216,6 +1304,11 @@ public class PdfContentByte {
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
             }
             else {
+                if (inText && autoControlTextBlocks) {
+                    endText();
+                }
+                if (writer.isTagged() && allowTaggedImages)
+                    beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.FIGURE));
                 content.append("q ");
                 content.append(a).append(' ');
                 content.append(b).append(' ');
@@ -1279,6 +1372,8 @@ public class PdfContentByte {
                     name = prs.addXObject(name, writer.getImageReference(name));
                     content.append(' ').append(name.getBytes()).append(" Do Q").append_i(separator);
                 }
+                if (writer.isTagged() && allowTaggedImages)
+                    endMarkedContentSequence();
             }
             if (image.hasBorders()) {
                 saveState();
@@ -1344,15 +1439,34 @@ public class PdfContentByte {
 
     /**
      * Starts the writing of text.
+     * @param restoreTM indicates if to restore text matrix of the previous text block.
      */
-    public void beginText() {
+    public void beginText(boolean restoreTM) {
     	if (inText) {
+            if (autoControlTextBlocks) {
+
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
     	}
+    	} else {
     	inText = true;
+            content.append("BT").append_i(separator);
+            if (restoreTM) {
+                float tx = state.xTLM;
+                setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.tx, state.yTLM);
+                state.xTLM = state.tx = tx;
+            } else {
         state.xTLM = 0;
         state.yTLM = 0;
-        content.append("BT").append_i(separator);
+    }
+        }
+    }
+
+    /**
+     * Starts the writing of text.
+     */
+    public void beginText() {
+    	beginText(false);
     }
 
     /**
@@ -1360,10 +1474,15 @@ public class PdfContentByte {
      */
     public void endText() {
     	if (!inText) {
+            if (autoControlTextBlocks) {
+
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
     	}
+    	} else {
     	inText = false;
         content.append("ET").append_i(separator);
+    }
     }
 
     /**
@@ -1371,6 +1490,9 @@ public class PdfContentByte {
      * <CODE>restoreState</CODE> must be balanced.
      */
     public void saveState() {
+        if (inText && autoControlTextBlocks) {
+            endText();
+        }
         content.append("q").append_i(separator);
         stateList.add(new GraphicState(state));
     }
@@ -1380,6 +1502,9 @@ public class PdfContentByte {
      * <CODE>restoreState</CODE> must be balanced.
      */
     public void restoreState() {
+        if (inText && autoControlTextBlocks) {
+            endText();
+        }
         content.append("Q").append_i(separator);
         int idx = stateList.size() - 1;
         if (idx < 0)
@@ -1394,6 +1519,9 @@ public class PdfContentByte {
      * @param       charSpace           a parameter
      */
     public void setCharacterSpacing(final float charSpace) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         state.charSpace = charSpace;
         content.append(charSpace).append(" Tc").append_i(separator);
     }
@@ -1404,6 +1532,9 @@ public class PdfContentByte {
      * @param       wordSpace           a parameter
      */
     public void setWordSpacing(final float wordSpace) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         state.wordSpace = wordSpace;
         content.append(wordSpace).append(" Tw").append_i(separator);
     }
@@ -1414,6 +1545,9 @@ public class PdfContentByte {
      * @param       scale               a parameter
      */
     public void setHorizontalScaling(final float scale) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         state.scale = scale;
         content.append(scale).append(" Tz").append_i(separator);
     }
@@ -1427,6 +1561,9 @@ public class PdfContentByte {
      * @param       leading         the new leading
      */
     public void setLeading(final float leading) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         state.leading = leading;
         content.append(leading).append(" TL").append_i(separator);
     }
@@ -1438,6 +1575,9 @@ public class PdfContentByte {
      * @param size the font size in points
      */
     public void setFontAndSize(final BaseFont bf, final float size) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         checkWriter();
         if (size < 0.0001f && size > -0.0001f)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("font.size.too.small.1", String.valueOf(size)));
@@ -1455,6 +1595,9 @@ public class PdfContentByte {
      * @param       rendering               a parameter
      */
     public void setTextRenderingMode(final int rendering) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         content.append(rendering).append(" Tr").append_i(separator);
     }
 
@@ -1466,6 +1609,9 @@ public class PdfContentByte {
      * @param       rise                a parameter
      */
     public void setTextRise(final float rise) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         content.append(rise).append(" Ts").append_i(separator);
     }
 
@@ -1488,8 +1634,16 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void showText(final String text) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
+        if (writer.isTagged())
+            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         showText2(text);
+        updateTx(text, 0);
         content.append("Tj").append_i(separator);
+        if (writer.isTagged())
+           endMarkedContentSequence();
     }
 
     /**
@@ -1533,8 +1687,9 @@ public class PdfContentByte {
         BaseFont bf = state.fontDetails.getBaseFont();
         if (bf.hasKernPairs())
             showText(getKernArray(text, bf));
-        else
+        else {
             showText(text);
+        }
     }
 
     /**
@@ -1543,9 +1698,18 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final String text) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
+        if (writer.isTagged())
+            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         state.yTLM -= state.leading;
         showText2(text);
         content.append("'").append_i(separator);
+        if (writer.isTagged())
+            endMarkedContentSequence();
+        state.tx = state.xTLM;
+        updateTx(text, 0);
     }
 
     /**
@@ -1556,15 +1720,23 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
+        if (writer.isTagged())
+            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         state.yTLM -= state.leading;
         content.append(wordSpacing).append(' ').append(charSpacing);
         showText2(text);
         content.append("\"").append_i(separator);
-
+        if (writer.isTagged())
+            endMarkedContentSequence();
         // The " operator sets charSpace and wordSpace into graphics state
         // (cfr PDF reference v1.6, table 5.6)
         state.charSpace = charSpacing;
         state.wordSpace = wordSpacing;
+        state.tx = state.xTLM;
+        updateTx(text, 0);
     }
 
     /**
@@ -1580,8 +1752,16 @@ public class PdfContentByte {
      * @param       y           operand 3,2 in the matrix
      */
     public void setTextMatrix(final float a, final float b, final float c, final float d, final float x, final float y) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         state.xTLM = x;
         state.yTLM = y;
+        state.aTLM = a;
+        state.bTLM = b;
+        state.cTLM = c;
+        state.dTLM = d;
+        state.tx = state.xTLM;
         content.append(a).append(' ').append(b).append_i(' ')
         .append(c).append_i(' ').append(d).append_i(' ')
         .append(x).append_i(' ').append(y).append(" Tm").append_i(separator);
@@ -1595,8 +1775,8 @@ public class PdfContentByte {
     public void setTextMatrix(final AffineTransform transform) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
-    	setTextMatrix((float)matrix[0], (float)matrix[1], (float)matrix[2],
-    			      (float)matrix[3], (float)matrix[4], (float)matrix[5] );
+    	setTextMatrix((float) matrix[0], (float) matrix[1], (float) matrix[2],
+                (float) matrix[3], (float) matrix[4], (float) matrix[5]);
     }
     
     /**
@@ -1618,9 +1798,16 @@ public class PdfContentByte {
      * @param       y           y-coordinate of the new current point
      */
     public void moveText(final float x, final float y) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         state.xTLM += x;
         state.yTLM += y;
-        content.append(x).append(' ').append(y).append(" Td").append_i(separator);
+        if (autoControlTextBlocks && state.xTLM != state.tx) {
+            setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
+        } else {
+            content.append(x).append(' ').append(y).append(" Td").append_i(separator);
+        }
     }
 
     /**
@@ -1632,16 +1819,29 @@ public class PdfContentByte {
      * @param       y           y-coordinate of the new current point
      */
     public void moveTextWithLeading(final float x, final float y) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         state.xTLM += x;
         state.yTLM += y;
         state.leading = -y;
-        content.append(x).append(' ').append(y).append(" TD").append_i(separator);
+        if (autoControlTextBlocks && state.xTLM != state.tx) {
+            setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
+        } else {
+            content.append(x).append(' ').append(y).append(" TD").append_i(separator);
+        }
     }
 
     /**
      * Moves to the start of the next line.
      */
     public void newlineText() {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
+        if (autoControlTextBlocks && state.xTLM != state.tx) {
+            setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
+        }
         state.yTLM -= state.leading;
         content.append("T*").append_i(separator);
     }
@@ -1841,6 +2041,9 @@ public class PdfContentByte {
      * @param f an element of the transformation matrix
      **/
     public void concatCTM(final float a, final float b, final float c, final float d, final float e, final float f) {
+        if (inText && autoControlTextBlocks) {
+            endText();
+        }
         content.append(a).append(' ').append(b).append(' ').append(c).append(' ');
         content.append(d).append(' ').append(e).append(' ').append(f).append(" cm").append_i(separator);
     }
@@ -1852,8 +2055,8 @@ public class PdfContentByte {
     public void concatCTM(final AffineTransform transform) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
-    	concatCTM( (float)matrix[0], (float)matrix[1], (float)matrix[2],
-    			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
+    	concatCTM((float) matrix[0], (float) matrix[1], (float) matrix[2],
+                (float) matrix[3], (float) matrix[4], (float) matrix[5]);
     }
 
     /**
@@ -2101,6 +2304,9 @@ public class PdfContentByte {
      * @param psobject the object
      */
     public void addPSXObject(final PdfPSXObject psobject) {
+        if (inText && autoControlTextBlocks) {
+            endText();
+        }
         checkWriter();
         PdfName name = writer.addDirectTemplateSimple(psobject, null);
         PageResources prs = getPageResources();
@@ -2120,6 +2326,11 @@ public class PdfContentByte {
      * @param f an element of the transformation matrix
      */
     public void addTemplate(final PdfTemplate template, final float a, final float b, final float c, final float d, final float e, final float f) {
+        if (inText && autoControlTextBlocks) {
+            endText();
+        }
+        if (writer.isTagged() && allowTaggedImages)
+            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.FIGURE));
         checkWriter();
         checkNoPattern(template);
         PdfName name = writer.addDirectTemplateSimple(template, null);
@@ -2133,6 +2344,8 @@ public class PdfContentByte {
         content.append(e).append(' ');
         content.append(f).append(" cm ");
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
+        if (writer.isTagged() && allowTaggedImages)
+            endMarkedContentSequence();
     }
 
     /**
@@ -2143,11 +2356,14 @@ public class PdfContentByte {
     public void addTemplate(final PdfTemplate template, final AffineTransform transform) {
     	double matrix[] = new double[6];
     	transform.getMatrix(matrix);
-    	addTemplate( template, (float)matrix[0], (float)matrix[1], (float)matrix[2],
-    			  (float)matrix[3], (float)matrix[4],(float) matrix[5] );
+    	addTemplate(template, (float) matrix[0], (float) matrix[1], (float) matrix[2],
+                (float) matrix[3], (float) matrix[4], (float) matrix[5]);
     }
 
     void addTemplateReference(final PdfIndirectReference template, PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) {
+        if (inText && autoControlTextBlocks) {
+            endText();
+        }
         checkWriter();
         PageResources prs = getPageResources();
         name = prs.addXObject(name, template);
@@ -2224,7 +2440,7 @@ public class PdfContentByte {
         content.append(' ');
         content.append((float)(yellow & 0xFF) / 0xFF);
         content.append(' ');
-        content.append((float)(black & 0xFF) / 0xFF);
+        content.append((float) (black & 0xFF) / 0xFF);
         content.append(" K").append_i(separator);
     }
 
@@ -2246,7 +2462,7 @@ public class PdfContentByte {
      */
 
     public void setRGBColorFill(final int red, final int green, final int blue) {
-        HelperRGB((float)(red & 0xFF) / 0xFF, (float)(green & 0xFF) / 0xFF, (float)(blue & 0xFF) / 0xFF);
+        HelperRGB((float) (red & 0xFF) / 0xFF, (float) (green & 0xFF) / 0xFF, (float) (blue & 0xFF) / 0xFF);
         content.append(" rg").append_i(separator);
     }
 
@@ -2267,7 +2483,7 @@ public class PdfContentByte {
      */
 
     public void setRGBColorStroke(final int red, final int green, final int blue) {
-        HelperRGB((float)(red & 0xFF) / 0xFF, (float)(green & 0xFF) / 0xFF, (float)(blue & 0xFF) / 0xFF);
+        HelperRGB((float) (red & 0xFF) / 0xFF, (float) (green & 0xFF) / 0xFF, (float) (blue & 0xFF) / 0xFF);
         content.append(" RG").append_i(separator);
     }
 
@@ -2280,7 +2496,7 @@ public class PdfContentByte {
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
-                setGrayStroke(((GrayColor)color).getGray());
+                setGrayStroke(((GrayColor) color).getGray());
                 break;
             }
             case ExtendedColor.TYPE_CMYK: {
@@ -2317,7 +2533,7 @@ public class PdfContentByte {
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
-                setGrayFill(((GrayColor)color).getGray());
+                setGrayFill(((GrayColor) color).getGray());
                 break;
             }
             case ExtendedColor.TYPE_CMYK: {
@@ -2560,14 +2776,20 @@ public class PdfContentByte {
      * @param text array of text
      */
     public void showText(final PdfTextArray text) {
+        if (!inText && autoControlTextBlocks) {
+            beginText(true);
+        }
         if (state.fontDetails == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("font.and.size.must.be.set.before.writing.any.text"));
+        if (writer.isTagged())
+            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         content.append("[");
         ArrayList<Object> arrayList = text.getArrayList();
         boolean lastWasNumber = false;
         for (Object obj : arrayList) {
             if (obj instanceof String) {
                 showText2((String)obj);
+                updateTx((String)obj, 0);
                 lastWasNumber = false;
             }
             else {
@@ -2576,9 +2798,12 @@ public class PdfContentByte {
                 else
                     lastWasNumber = true;
                 content.append(((Float)obj).floatValue());
+                updateTx("", ((Float)obj).floatValue());
             }
         }
         content.append("]TJ").append_i(separator);
+        if (writer.isTagged())
+            endMarkedContentSequence();
     }
 
     /**
@@ -2630,7 +2855,9 @@ public class PdfContentByte {
      * @return a copy of this <CODE>PdfContentByte</CODE>
      */
     public PdfContentByte getDuplicate() {
-        return new PdfContentByte(writer);
+        PdfContentByte cb = new PdfContentByte(writer);
+        cb.duplicatedFrom = this;
+        return cb;
     }
 
     /**
@@ -2943,6 +3170,9 @@ public class PdfContentByte {
      * @param af the transformation
      */
     public void transform(final AffineTransform af) {
+        if (inText && autoControlTextBlocks) {
+            endText();
+        }
         double matrix[] = new double[6];
         af.getMatrix(matrix);
         content.append(matrix[0]).append(' ').append(matrix[1]).append(' ').append(matrix[2]).append(' ');
@@ -2998,7 +3228,7 @@ public class PdfContentByte {
             struc.put(PdfName.PG, writer.getCurrentPage());
         }
         pdf.incMarkPoint();
-        mcDepth++;
+        setMcDepth(getMcDepth() + 1);
         content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
     }
 
@@ -3006,10 +3236,10 @@ public class PdfContentByte {
      * Ends a marked content sequence
      */
     public void endMarkedContentSequence() {
-    	if (mcDepth == 0) {
+    	if (getMcDepth() == 0) {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.marked.content.operators"));
     	}
-    	--mcDepth;
+    	setMcDepth(getMcDepth() - 1);
         content.append("EMC").append_i(separator);
     }
 
@@ -3024,7 +3254,7 @@ public class PdfContentByte {
     public void beginMarkedContentSequence(final PdfName tag, final PdfDictionary property, final boolean inline) {
         if (property == null) {
             content.append(tag.getBytes()).append(" BMC").append_i(separator);
-            ++mcDepth;
+            setMcDepth(getMcDepth() + 1);
             return;
         }
         content.append(tag.getBytes()).append(' ');
@@ -3047,7 +3277,7 @@ public class PdfContentByte {
             content.append(name.getBytes());
         }
         content.append(" BDC").append_i(separator);
-        ++mcDepth;
+        setMcDepth(getMcDepth() + 1);
     }
 
     /**
@@ -3070,11 +3300,15 @@ public class PdfContentByte {
      * @throws IllegalPdfSyntaxException (a runtime exception)
      */
     public void sanityCheck() {
-    	if (mcDepth != 0) {
+    	if (getMcDepth() != 0) {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.marked.content.operators"));
     	}
     	if (inText) {
+            if (autoControlTextBlocks) {
+                endText();
+            } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
+    	}
     	}
     	if (layerDepth != null && !layerDepth.isEmpty()) {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.layer.operators"));
@@ -3298,4 +3532,187 @@ public class PdfContentByte {
         af.getMatrix(matrix);
         transform(new AffineTransform(matrix));
     }
+
+    protected void openMCBlock(Element element) {
+        if (writer.isTagged()) {
+            if (!getMcElements().contains(element)) {
+                PdfStructureElement structureElement = openMCBlockInt(element);
+                getMcElements().add(element);
+                pdf.structElements.put(element, structureElement);
+            }
+        }
+    }
+
+    private PdfDictionary getParentStructureElement() {
+        PdfDictionary parent = null;
+        if (getMcElements().size() > 0)
+            parent = pdf.structElements.get(getMcElements().get(getMcElements().size() - 1));
+        if (parent == null) {
+            parent = writer.getStructureTreeRoot();
+        }
+        return parent;
+    }
+
+    private IPdfStructureElement getParentStructureInterface() {
+        if (getMcElements().size() > 0)
+            return pdf.structElements.get(getMcElements().get(getMcElements().size() - 1));
+        else
+            return writer.getStructureTreeRoot();
+    }
+
+    private PdfStructureElement openMCBlockInt(Element element) {
+        PdfStructureElement structureElement = null;
+        if (writer.isTagged()) {
+            if (element instanceof Paragraph) {
+                structureElement = pdf.structElements.get(element);
+                if (structureElement == null) {
+                    structureElement = new PdfStructureElement(getParentStructureElement(), PdfName.P);
+                  Paragraph p = (Paragraph) element;
+
+                    // Setting non-inheritable attributes
+                    if ((p.getFont() != null) && (p.getFont().getColor() != null)){
+                        BaseColor c = p.getFont().getColor();
+                        float [] colors = new float[] {c.getRed()/255, c.getGreen()/255, c.getBlue()/255};
+                        structureElement.setAttribute(PdfName.COLOR, new PdfArray(colors));
+                    }
+                    if (Float.compare(p.getSpacingBefore(), 0f) != 0)
+                        structureElement.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(p.getSpacingBefore()));
+                    if (Float.compare(p.getSpacingAfter(), 0f) != 0)
+                        structureElement.setAttribute(PdfName.SPACEAFTER, new PdfNumber(p.getSpacingAfter()));
+                    if (Float.compare(p.getFirstLineIndent(), 0f) != 0)
+                        structureElement.setAttribute(PdfName.TEXTINDENT, new PdfNumber(p.getFirstLineIndent()));
+
+                    // Setting inheritable attributes
+                    IPdfStructureElement parent = getParentStructureInterface();
+                    PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+                    if (obj instanceof PdfNumber) {
+                        float startIndent = ((PdfNumber) obj).floatValue();
+                        if (Float.compare(startIndent, p.getIndentationLeft()) != 0)
+                            structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(p.getIndentationLeft()));
+                    }
+                    else {
+                        if (Math.abs(p.getIndentationLeft()) > Float.MIN_VALUE)
+                            structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(p.getIndentationLeft()));
+                    }
+
+                    obj = parent.getAttribute(PdfName.ENDINDENT);
+                    if (obj instanceof PdfNumber) {
+                        float endIndent = ((PdfNumber) obj).floatValue();
+                        if (Float.compare(endIndent, p.getIndentationRight()) != 0)
+                            structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(p.getIndentationRight()));
+                    }
+                    else {
+                        if (Float.compare(p.getIndentationRight(), 0) != 0)
+                            structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(p.getIndentationRight()));
+                    }
+
+                    PdfName align = null;
+                    switch (p.getAlignment()){
+                        case Element.ALIGN_LEFT:
+                            align = PdfName.START;
+                            break;
+                        case Element.ALIGN_CENTER:
+                            align = PdfName.CENTER;
+                            break;
+                        case Element.ALIGN_RIGHT:
+                            align = PdfName.END;
+                            break;
+                        case Element.ALIGN_JUSTIFIED:
+                            align = PdfName.JUSTIFY;
+                            break;
+                    }
+                    obj = parent.getAttribute(PdfName.TEXTALIGN);
+                    if (obj instanceof PdfName) {
+                        PdfName textAlign = ((PdfName) obj);
+                        if (align != null && !textAlign.equals(align))
+                            structureElement.setAttribute(PdfName.TEXTALIGN, align);
+                    }
+                    else {
+                        if (align != null && !PdfName.START.equals(align))
+                            structureElement.setAttribute(PdfName.TEXTALIGN, align);
+                    }
+
+                }
+                if (inText && autoControlTextBlocks) {
+                    endText();
+                }
+                beginMarkedContentSequence(structureElement);
+            }
+        }
+        return structureElement;
+    }
+
+    protected void closeMCBlock(Element element) {
+        if (writer.isTagged()) {
+            if (getMcElements().contains(element)) {
+                closeMCBlockInt(element);
+                getMcElements().remove(element);
+                pdf.structElements.remove(element);
+            }
+        }
+    }
+
+    private void closeMCBlockInt(Element element) {
+        if (writer.isTagged()) {
+            if (element instanceof Paragraph) {
+                if (inText && autoControlTextBlocks)
+                    endText();
+                endMarkedContentSequence();
+            }
+        }
+    }
+
+    protected ArrayList<Element> saveMCBlocks() {
+        ArrayList<Element> mc = new ArrayList<Element>();
+        if (writer.isTagged()) {
+            mc = getMcElements();
+            for (int i = 0; i < mc.size(); i++) {
+                closeMCBlockInt(mc.get(i));
+            }
+            setMcElements(new ArrayList<Element>());
+        }
+        return mc;
+    }
+
+    protected void restoreMCBlocks(ArrayList<Element> mcElements) {
+        if (writer.isTagged() && mcElements != null) {
+            setMcElements(mcElements);
+            for (int i = 0; i < this.getMcElements().size(); i++) {
+                openMCBlockInt(this.getMcElements().get(i));
+            }
+        }
+    }
+
+    protected int getMcDepth() {
+        if (duplicatedFrom != null)
+            return duplicatedFrom.getMcDepth();
+        else
+            return mcDepth;
+    }
+
+    protected void setMcDepth(int value) {
+        if (duplicatedFrom != null)
+            duplicatedFrom.setMcDepth(value);
+        else
+            mcDepth = value;
+    }
+
+    protected ArrayList<Element> getMcElements() {
+        if (duplicatedFrom != null)
+            return duplicatedFrom.getMcElements();
+        else
+            return mcElements;
+    }
+
+    protected void setMcElements(ArrayList<Element> value) {
+        if (duplicatedFrom != null)
+            duplicatedFrom.setMcElements(value);
+        else
+            mcElements = value;
+    }
+
+    protected void updateTx(String text, float Tj) {
+        state.tx = state.tx + getEffectiveStringWidth(text, false) + (-Tj / 1000.f * state.size + state.charSpace + state.wordSpace) * state.scale / 100.f;
+    }
+
 }

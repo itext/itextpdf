@@ -43,17 +43,22 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
+
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The structure tree root corresponds to the highest hierarchy level in a tagged PDF.
  * @author Paulo Soares
  */
-public class PdfStructureTreeRoot extends PdfDictionary {
+public class PdfStructureTreeRoot extends PdfDictionary implements IPdfStructureElement {
 
     private HashMap<Integer, PdfObject> parentTree = new HashMap<Integer, PdfObject>();
     private PdfIndirectReference reference;
+    private PdfDictionary classMap = null;
+    private HashMap<PdfName,PdfObject> classes = null;
 
     /**
      * Holds value of property writer.
@@ -80,6 +85,20 @@ public class PdfStructureTreeRoot extends PdfDictionary {
             put(PdfName.ROLEMAP, rm);
         }
         rm.put(used, standard);
+    }
+
+    public void mapClass(PdfName name, PdfObject object) {
+        if (classMap == null) {
+            classMap = new PdfDictionary();
+            classes = new HashMap<PdfName, PdfObject>();
+        }
+        classes.put(name,object);
+    }
+
+    public PdfObject getMappedClass(PdfName name) {
+        if (classes == null)
+            return null;
+        return classes.get(name);
     }
 
     /**
@@ -109,14 +128,38 @@ public class PdfStructureTreeRoot extends PdfDictionary {
         ar.add(struc);
     }
 
+    void addPageMark(int newPage, PdfIndirectReference struc) {
+        Integer integer = Integer.valueOf(newPage);
+        PdfArray oldAr = (PdfArray)parentTree.get(integer);
+        if (oldAr == null) {
+            oldAr = new PdfArray();
+            parentTree.put(integer, oldAr);
+            oldAr.add(struc);
+            return;
+        }
+        for (int i = 0; i < oldAr.size(); ++i) {
+            PdfIndirectReference ref = (PdfIndirectReference)oldAr.getPdfObject(i);
+            if (ref.number == struc.number)
+                return;
+        }
+        oldAr.add(struc);
+    }
+
     private void nodeProcess(PdfDictionary struc, PdfIndirectReference reference) throws IOException {
         PdfObject obj = struc.get(PdfName.K);
-        if (obj != null && obj.isArray() && !(((PdfArray)obj).getPdfObject(0)).isNumber()) {
+        if (obj != null && obj.isArray()) {
             PdfArray ar = (PdfArray)obj;
             for (int k = 0; k < ar.size(); ++k) {
-                PdfStructureElement e = (PdfStructureElement)ar.getAsDict(k);
-                ar.set(k, e.getReference());
-                nodeProcess(e, e.getReference());
+                PdfDictionary dictionary = ar.getAsDict(k);
+                if (dictionary == null)
+                    continue;
+                if (!PdfName.STRUCTELEM.equals(dictionary.get(PdfName.TYPE)))
+                    continue;
+                if (ar.getPdfObject(k) instanceof PdfStructureElement) {
+                    PdfStructureElement e = (PdfStructureElement) dictionary;
+                    ar.set(k, e.getReference());
+                    nodeProcess(e, e.getReference());
+                }
             }
         }
         if (reference != null)
@@ -132,7 +175,50 @@ public class PdfStructureTreeRoot extends PdfDictionary {
         PdfDictionary dicTree = PdfNumberTree.writeTree(numTree, writer);
         if (dicTree != null)
             put(PdfName.PARENTTREE, writer.addToBody(dicTree).getIndirectReference());
-
+        if (classMap != null) {
+            for (Map.Entry<PdfName,PdfObject> entry : classes.entrySet()) {
+                PdfObject value = entry.getValue();
+                if (value.isDictionary())
+                    classMap.put(entry.getKey(), writer.addToBody(value).getIndirectReference());
+                else if (value.isArray()) {
+                    PdfArray newArray = new PdfArray();
+                    PdfArray array = (PdfArray)value;
+                    for (int i = 0; i < array.size(); ++i) {
+                        if (array.getPdfObject(i).isDictionary())
+                            newArray.add(writer.addToBody(array.getAsDict(i)).getIndirectReference());
+                    }
+                    classMap.put(entry.getKey(),newArray);
+                }
+            }
+            put(PdfName.CLASSMAP, writer.addToBody(classMap).getIndirectReference());
+        }
         nodeProcess(this, reference);
+    }
+
+    /**
+     * Gets the first entarance of attribute.
+     * @returns PdfObject
+     * @since 5.3.4
+     */
+    public PdfObject getAttribute(PdfName name){
+        PdfDictionary attr = getAsDict(PdfName.A);
+        if (attr != null){
+            if (attr.contains(name))
+                return attr.get(name);
+        }
+        return null;
+    }
+
+    /**
+     * Sets the attribute value.
+     * @since 5.3.4
+     */
+    public void setAttribute(PdfName name, PdfObject obj){
+        PdfDictionary attr = getAsDict(PdfName.A);
+        if (attr == null){
+            attr = new PdfDictionary();
+            put(PdfName.A, attr);
+        }
+        attr.put(name, obj);
     }
 }
