@@ -45,9 +45,12 @@ package com.itextpdf.text;
 
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
-import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
@@ -70,7 +73,7 @@ import java.util.ArrayList;
  * @see		ListItem
  */
 
-public class Paragraph extends Phrase implements Indentable, Spaceable {
+public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessibleElement {
 
 	// constants
 	private static final long serialVersionUID = 7852314969733375514L;
@@ -538,6 +541,85 @@ public class Paragraph extends Phrase implements Indentable, Spaceable {
     @Deprecated
     public float spacingAfter() {
         return spacingAfter;
+    }
+
+    public void writeAttributes(final PdfStructureElement structureElement) {
+        if (structureElement != null) {
+            // Setting non-inheritable attributes
+            if ((this.getFont() != null) && (this.getFont().getColor() != null)){
+                BaseColor c = this.getFont().getColor();
+                float [] colors = new float[] {c.getRed()/255, c.getGreen()/255, c.getBlue()/255};
+                structureElement.setAttribute(PdfName.COLOR, new PdfArray(colors));
+            }
+            if (Float.compare(this.getSpacingBefore(), 0f) != 0)
+                structureElement.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(this.getSpacingBefore()));
+            if (Float.compare(this.getSpacingAfter(), 0f) != 0)
+                structureElement.setAttribute(PdfName.SPACEAFTER, new PdfNumber(this.getSpacingAfter()));
+            if (Float.compare(this.getFirstLineIndent(), 0f) != 0)
+                structureElement.setAttribute(PdfName.TEXTINDENT, new PdfNumber(this.getFirstLineIndent()));
+
+            // Setting inheritable attributes
+            IPdfStructureElement parent = (IPdfStructureElement)structureElement.getParent(true);
+            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+            if (obj instanceof PdfNumber) {
+                float startIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(startIndent, this.getIndentationLeft()) != 0)
+                    structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(this.getIndentationLeft()));
+            }
+            else {
+                if (Math.abs(this.getIndentationLeft()) > Float.MIN_VALUE)
+                    structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(this.getIndentationLeft()));
+            }
+
+            obj = parent.getAttribute(PdfName.ENDINDENT);
+            if (obj instanceof PdfNumber) {
+                float endIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(endIndent, this.getIndentationRight()) != 0)
+                    structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(this.getIndentationRight()));
+            }
+            else {
+                if (Float.compare(this.getIndentationRight(), 0) != 0)
+                    structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(this.getIndentationRight()));
+            }
+
+            PdfName align = null;
+            switch (this.getAlignment()){
+                case Element.ALIGN_LEFT:
+                    align = PdfName.START;
+                    break;
+                case Element.ALIGN_CENTER:
+                    align = PdfName.CENTER;
+                    break;
+                case Element.ALIGN_RIGHT:
+                    align = PdfName.END;
+                    break;
+                case Element.ALIGN_JUSTIFIED:
+                    align = PdfName.JUSTIFY;
+                    break;
+            }
+            obj = parent.getAttribute(PdfName.TEXTALIGN);
+            if (obj instanceof PdfName) {
+                PdfName textAlign = ((PdfName) obj);
+                if (align != null && !textAlign.equals(align))
+                    structureElement.setAttribute(PdfName.TEXTALIGN, align);
+            }
+            else {
+                if (align != null && !PdfName.START.equals(align))
+                    structureElement.setAttribute(PdfName.TEXTALIGN, align);
+            }
+        }
+    }
+
+    public PdfObject getAccessibleProperty(final PdfName key) {
+        return null;
+    }
+
+    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
+        return null;
     }
 
 }

@@ -57,12 +57,14 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
      */
     private PdfStructureElement parent;
     private PdfStructureTreeRoot top;
-    
+
     /**
      * Holds value of property reference.
      */
     private PdfIndirectReference reference;
-    
+
+    private int pageMark;
+
     /**
      * Creates a new instance of PdfStructureElement.
      * @param parent the parent of this node
@@ -75,12 +77,12 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         put(PdfName.P, parent.reference);
         put(PdfName.TYPE, PdfName.STRUCTELEM);
     }
-    
+
     /**
      * Creates a new instance of PdfStructureElement.
      * @param parent the parent of this node
      * @param structureType the type of structure. It may be a standard type or a user type mapped by the role map
-     */    
+     */
     public PdfStructureElement(PdfStructureTreeRoot parent, PdfName structureType) {
         top = parent;
         init(parent, structureType);
@@ -122,22 +124,29 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         put(PdfName.S, structureType);
         reference = top.getWriter().getPdfIndirectReference();
     }
-    
+
     /**
      * Gets the parent of this node.
      * @return the parent of this node
-     */    
+     */
     public PdfDictionary getParent() {
-        return parent;
+        return getParent(false);
     }
-    
+
+    public PdfDictionary getParent(boolean includeStructTreeRoot) {
+        if (parent == null && includeStructTreeRoot)
+            return top;
+        else
+            return parent;
+    }
+
     void setPageMark(int page, int mark) {
         if (mark >= 0)
             put(PdfName.K, new PdfNumber(mark));
-        if (parent == null)
+//        if (parent == null)
             top.setPageMark(page, reference);
     }
-    
+
     /**
      * Gets the reference this object will be written to.
      * @return the reference this object will be written to

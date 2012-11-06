@@ -48,32 +48,21 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Dictionary;
+import java.util.HashMap;
 
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.api.Indentable;
 import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.ICC_Profile;
-import com.itextpdf.text.pdf.PRIndirectReference;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfIndirectReference;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfOCG;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStream;
-import com.itextpdf.text.pdf.PdfTemplate;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.codec.BmpImage;
 import com.itextpdf.text.pdf.codec.CCITTG4Encoder;
 import com.itextpdf.text.pdf.codec.GifImage;
 import com.itextpdf.text.pdf.codec.JBIG2Image;
 import com.itextpdf.text.pdf.codec.PngImage;
 import com.itextpdf.text.pdf.codec.TiffImage;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -83,7 +72,7 @@ import com.itextpdf.text.pdf.codec.TiffImage;
  * @see Rectangle
  */
 
-public abstract class Image extends Rectangle implements Indentable, Spaceable {
+public abstract class Image extends Rectangle implements Indentable, Spaceable, IAccessibleElement {
 
 	// static final membervariables
 
@@ -211,6 +200,9 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
 
 	/** an iText attributed unique id for this image. */
 	protected Long mySerialId = getSerialId();
+
+    //** properties as required by PDF/UA (this is what typically written in BDC-EMC block in page contents). */
+    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
 
 	// image from file or URL
 
@@ -702,6 +694,8 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
 		this.imageMask = image.imageMask;
 		this.smask = image.smask;
 		this.transparency = image.transparency;
+
+        this.accessibleProperties = image.accessibleProperties;
 	}
 
 	/**
@@ -2063,4 +2057,26 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable {
         g2d.dispose();
         return getInstance(tp);
     }
+
+    public void writeAttributes(final PdfStructureElement structureElement) {
+
+    }
+
+    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+        if (accessibleProperties == null)
+            accessibleProperties = new HashMap<PdfName, PdfObject>();
+        accessibleProperties.put(key, value);
+    }
+
+    public PdfObject getAccessibleProperty(final PdfName key) {
+        if (accessibleProperties != null)
+            return accessibleProperties.get(key);
+        else
+            return null;
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
+        return accessibleProperties;
+    }
+
 }

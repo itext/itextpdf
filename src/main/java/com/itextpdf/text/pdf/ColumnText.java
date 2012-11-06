@@ -911,12 +911,6 @@ public class ColumnText {
         PdfLine line;
         float x1;
         int status = 0;
-        if (!simulate && pdf.writer.isTagged()) {
-            if (elementToGo instanceof Paragraph) {
-                if (text != null)
-                    text.openMCBlock(elementToGo);
-            }
-        }
         while(true) {
         	firstIndent = lastWasNewline ? indent : followingIndent; //
         	if (rectangularMode) {
@@ -947,6 +941,12 @@ public class ColumnText {
                 }
                 yLine -= currentLeading;
                 if (!simulate && !dirty) {
+                    if (pdf.writer.isTagged()) {
+                        if (elementToGo instanceof Paragraph) {
+                            if (text != null)
+                                text.openMCBlock(elementToGo);
+                        }
+                    }
                 	text.beginText();
                 	dirty = true;
                 }
@@ -975,6 +975,12 @@ public class ColumnText {
                 if (x2 - x1 <= firstIndent + rightIndent)
                     continue;
                 if (!simulate && !dirty) {
+                    if (pdf.writer.isTagged()) {
+                        if (elementToGo instanceof Paragraph) {
+                            if (text != null)
+                                text.openMCBlock(elementToGo);
+                        }
+                    }
                     text.beginText();
                     dirty = true;
                 }
@@ -1000,7 +1006,7 @@ public class ColumnText {
             text.endText();
             if (!simulate && pdf.writer.isTagged()) {
                 if (elementToGo instanceof Paragraph) {
-                    if (text != null && (status & NO_MORE_COLUMN) == 0)
+                    if (text != null)
                         text.closeMCBlock(elementToGo);
                 }
             }
