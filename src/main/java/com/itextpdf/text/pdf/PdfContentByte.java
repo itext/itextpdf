@@ -1313,21 +1313,21 @@ public class PdfContentByte {
         try {
             if (image.getLayer() != null)
                 beginLayer(image.getLayer());
+            if (inText && autoControlTextBlocks) {
+                endText();
+            }
+            if (writer.isTagged()) {
+                PdfStructureElement elem = new PdfStructureElement(getParentStructureElement(), image.getRole());
+                beginMarkedContentSequence(elem, image.getAccessibleProperties());
+            }
             if (image.isImgTemplate()) {
                 writer.addDirectImageSimple(image);
                 PdfTemplate template = image.getTemplateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
-                addTemplate(template, a / w, b / w, c / h, d / h, e, f);
+                addTemplate(template, a / w, b / w, c / h, d / h, e, f, true);
             }
             else {
-                if (inText && autoControlTextBlocks) {
-                    endText();
-                }
-                if (writer.isTagged()) {
-                    PdfStructureElement elem = new PdfStructureElement(getParentStructureElement(), PdfName.FIGURE);
-                    beginMarkedContentSequence(elem, image.getAccessibleProperties());
-                }
                 content.append("q ");
                 content.append(a).append(' ');
                 content.append(b).append(' ');
@@ -1391,9 +1391,9 @@ public class PdfContentByte {
                     name = prs.addXObject(name, writer.getImageReference(name));
                     content.append(' ').append(name.getBytes()).append(" Do Q").append_i(separator);
                 }
-                if (writer.isTagged())
-                    endMarkedContentSequence();
             }
+            if (writer.isTagged())
+                endMarkedContentSequence();
             if (image.hasBorders()) {
                 saveState();
                 float w = image.getWidth();
@@ -2394,11 +2394,17 @@ public class PdfContentByte {
      * @param f an element of the transformation matrix
      */
     public void addTemplate(final PdfTemplate template, final float a, final float b, final float c, final float d, final float e, final float f) {
-        if (inText && autoControlTextBlocks) {
-            endText();
+        addTemplate(template, a, b, c, d, e, f, false);
+    }
+
+    private void addTemplate(final PdfTemplate template, final float a, final float b, final float c, final float d, final float e, final float f, boolean ignoreTagging) {
+        if (!ignoreTagging) {
+            if (inText && autoControlTextBlocks) {
+                endText();
+            }
+            if (writer.isTagged())
+                beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.FIGURE));
         }
-        if (writer.isTagged())
-            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.FIGURE));
         checkWriter();
         checkNoPattern(template);
         PdfName name = writer.addDirectTemplateSimple(template, null);
@@ -2412,8 +2418,10 @@ public class PdfContentByte {
         content.append(e).append(' ');
         content.append(f).append(" cm ");
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
-        if (writer.isTagged())
-            endMarkedContentSequence();
+        if (!ignoreTagging) {
+            if (writer.isTagged())
+                endMarkedContentSequence();
+        }
     }
 
     /**
@@ -3665,7 +3673,7 @@ public class PdfContentByte {
             if (element instanceof Paragraph) {
                 structureElement = pdf.structElements.get(element);
                 if (structureElement == null) {
-                    structureElement = new PdfStructureElement(getParentStructureElement(), PdfName.P);
+                    structureElement = new PdfStructureElement(getParentStructureElement(), ((Paragraph)element).getRole());
                     ((Paragraph)element).writeAttributes(structureElement);
                 }
                 if (inText && autoControlTextBlocks) {

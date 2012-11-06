@@ -204,6 +204,8 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
     //** properties as required by PDF/UA (this is what typically written in BDC-EMC block in page contents). */
     protected HashMap<PdfName, PdfObject> accessibleProperties = null;
 
+    protected PdfName role = PdfName.FIGURE;
+
 	// image from file or URL
 
 	/**
@@ -696,6 +698,7 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		this.transparency = image.transparency;
 
         this.accessibleProperties = image.accessibleProperties;
+        this.role = image.role;
 	}
 
 	/**
@@ -2077,6 +2080,14 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 
     public HashMap<PdfName, PdfObject> getAccessibleProperties() {
         return accessibleProperties;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
     }
 
 }

@@ -37,4 +37,16 @@ public interface IAccessibleElement {
      */
     HashMap<PdfName, PdfObject> getAccessibleProperties();
 
+    /**
+     * Gets the role of the accessible element.
+     * @return
+     */
+    PdfName getRole();
+
+    /**
+     * Sets the role of the accessiblee element.
+     * @param role
+     */
+    void setRole(final PdfName role);
+
 }
