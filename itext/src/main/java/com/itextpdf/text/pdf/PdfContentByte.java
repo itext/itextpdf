@@ -1324,8 +1324,10 @@ public class PdfContentByte {
                 if (inText && autoControlTextBlocks) {
                     endText();
                 }
-                if (writer.isTagged())
-                    beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.FIGURE));
+                if (writer.isTagged()) {
+                    PdfStructureElement elem = new PdfStructureElement(getParentStructureElement(), PdfName.FIGURE);
+                    beginMarkedContentSequence(elem, image.getAccessibleProperties());
+                }
                 content.append("q ");
                 content.append(a).append(' ');
                 content.append(b).append(' ');
@@ -3279,6 +3281,17 @@ public class PdfContentByte {
      * @param struc the tagging structure
      */
     public void beginMarkedContentSequence(final PdfStructureElement struc) {
+        beginMarkedContentSequence(struc, null);
+    }
+
+    /**
+     * Begins a marked content sequence. This sequence will be tagged with the structure <CODE>struc</CODE>.
+     * The same structure can be used several times to connect text that belongs to the same logical segment
+     * but is in a different location, like the same paragraph crossing to another page, for example.
+     * @param struc the tagging structure
+     * @param accessibleProperties properties to be written into structure element (i.e. alternate text)
+     */
+    public void beginMarkedContentSequence(final PdfStructureElement struc, final HashMap<PdfName, PdfObject> accessibleProperties) {
         PdfObject obj = struc.get(PdfName.K);
         int mark = pdf.getMarkPoint();
         if (obj != null) {
@@ -3304,6 +3317,14 @@ public class PdfContentByte {
         else {
             struc.setPageMark(writer.getPageNumber() - 1, mark);
             struc.put(PdfName.PG, writer.getCurrentPage());
+        }
+        if (accessibleProperties != null) {
+            for (PdfName key : accessibleProperties.keySet()) {
+                PdfObject value = accessibleProperties.get(key);
+                if (value != null) {
+                    struc.put(key, value);
+                }
+            }
         }
         pdf.incMarkPoint();
         setMcDepth(getMcDepth() + 1);
@@ -3645,7 +3666,7 @@ public class PdfContentByte {
                 structureElement = pdf.structElements.get(element);
                 if (structureElement == null) {
                     structureElement = new PdfStructureElement(getParentStructureElement(), PdfName.P);
-                    writeParagraphAttributes(structureElement, (Paragraph) element);
+                    ((Paragraph)element).writeAttributes(structureElement);
                 }
                 if (inText && autoControlTextBlocks) {
                     endText();
@@ -3661,7 +3682,6 @@ public class PdfContentByte {
             if (getMcElements().contains(element)) {
                 closeMCBlockInt(element);
                 getMcElements().remove(element);
-                pdf.structElements.remove(element);
             }
         }
     }
@@ -3727,73 +3747,6 @@ public class PdfContentByte {
 
     protected void updateTx(String text, float Tj) {
         state.tx += getEffectiveStringWidth(text, false, Tj);
-    }
-
-    private void writeParagraphAttributes(PdfStructureElement structureElement, Paragraph paragraph) {
-        if (structureElement != null && paragraph != null) {
-            // Setting non-inheritable attributes
-            if ((paragraph.getFont() != null) && (paragraph.getFont().getColor() != null)){
-                BaseColor c = paragraph.getFont().getColor();
-                float [] colors = new float[] {c.getRed()/255, c.getGreen()/255, c.getBlue()/255};
-                structureElement.setAttribute(PdfName.COLOR, new PdfArray(colors));
-            }
-            if (Float.compare(paragraph.getSpacingBefore(), 0f) != 0)
-                structureElement.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(paragraph.getSpacingBefore()));
-            if (Float.compare(paragraph.getSpacingAfter(), 0f) != 0)
-                structureElement.setAttribute(PdfName.SPACEAFTER, new PdfNumber(paragraph.getSpacingAfter()));
-            if (Float.compare(paragraph.getFirstLineIndent(), 0f) != 0)
-                structureElement.setAttribute(PdfName.TEXTINDENT, new PdfNumber(paragraph.getFirstLineIndent()));
-
-            // Setting inheritable attributes
-            IPdfStructureElement parent = getParentStructureInterface();
-            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
-            if (obj instanceof PdfNumber) {
-                float startIndent = ((PdfNumber) obj).floatValue();
-                if (Float.compare(startIndent, paragraph.getIndentationLeft()) != 0)
-                    structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(paragraph.getIndentationLeft()));
-            }
-            else {
-                if (Math.abs(paragraph.getIndentationLeft()) > Float.MIN_VALUE)
-                    structureElement.setAttribute(PdfName.STARTINDENT, new PdfNumber(paragraph.getIndentationLeft()));
-            }
-
-            obj = parent.getAttribute(PdfName.ENDINDENT);
-            if (obj instanceof PdfNumber) {
-                float endIndent = ((PdfNumber) obj).floatValue();
-                if (Float.compare(endIndent, paragraph.getIndentationRight()) != 0)
-                    structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(paragraph.getIndentationRight()));
-            }
-            else {
-                if (Float.compare(paragraph.getIndentationRight(), 0) != 0)
-                    structureElement.setAttribute(PdfName.ENDINDENT, new PdfNumber(paragraph.getIndentationRight()));
-            }
-
-            PdfName align = null;
-            switch (paragraph.getAlignment()){
-                case Element.ALIGN_LEFT:
-                    align = PdfName.START;
-                    break;
-                case Element.ALIGN_CENTER:
-                    align = PdfName.CENTER;
-                    break;
-                case Element.ALIGN_RIGHT:
-                    align = PdfName.END;
-                    break;
-                case Element.ALIGN_JUSTIFIED:
-                    align = PdfName.JUSTIFY;
-                    break;
-            }
-            obj = parent.getAttribute(PdfName.TEXTALIGN);
-            if (obj instanceof PdfName) {
-                PdfName textAlign = ((PdfName) obj);
-                if (align != null && !textAlign.equals(align))
-                    structureElement.setAttribute(PdfName.TEXTALIGN, align);
-            }
-            else {
-                if (align != null && !PdfName.START.equals(align))
-                    structureElement.setAttribute(PdfName.TEXTALIGN, align);
-            }
-        }
     }
 
     private void saveColor(BaseColor color, boolean fill) {

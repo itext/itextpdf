@@ -68,6 +68,7 @@ public class TaggedPDFTest {
     public void createTaggedPDF1() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out1.pdf");
         Paragraph paragraph = new Paragraph(text);
+
         paragraph.setFont(new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.RED));
         ColumnText columnText = new ColumnText(writer.getDirectContent());
         columnText.setSimpleColumn(36, 36, 250, 800);
@@ -127,9 +128,11 @@ public class TaggedPDFTest {
         try {
             p.add(new Chunk("Quick brown "));
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
+            i.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
             p.add(new Chunk(i, 0, 0));
             p.add(new Chunk(" jumped over a lazy "));
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
+            i.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
             p.add(new Chunk(i, 0, 0));
 
         } catch (Exception e) {
