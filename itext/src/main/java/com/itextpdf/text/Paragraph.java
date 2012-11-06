@@ -107,6 +107,8 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
     /** Does the paragraph has to be kept together on 1 page. */
     protected boolean keeptogether = false;
 
+    protected PdfName role = PdfName.P;
+
     // constructors
 
     /**
@@ -224,6 +226,7 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
     	if (spacingBefore)
     		copy.setSpacingBefore(getSpacingBefore());
     	copy.setExtraParagraphSpace(getExtraParagraphSpace());
+        copy.setRole(getRole());
     	return copy;
     }
     
@@ -620,6 +623,14 @@ public class Paragraph extends Phrase implements Indentable, Spaceable, IAccessi
 
     public HashMap<PdfName, PdfObject> getAccessibleProperties() {
         return null;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
     }
 
 }

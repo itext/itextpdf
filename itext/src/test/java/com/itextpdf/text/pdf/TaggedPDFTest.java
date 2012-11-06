@@ -124,11 +124,13 @@ public class TaggedPDFTest {
     public void createTaggedPDF4() throws DocumentException, IOException, ParserConfigurationException, SAXException {
         initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.pdf");
         Paragraph p = new Paragraph();
+        p.setRole(new PdfName("Paragraph"));
 
         try {
             p.add(new Chunk("Quick brown "));
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
             i.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            i.setRole(new PdfName("Image"));
             p.add(new Chunk(i, 0, 0));
             p.add(new Chunk(" jumped over a lazy "));
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
