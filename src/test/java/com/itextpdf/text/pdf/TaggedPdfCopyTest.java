@@ -52,52 +52,55 @@ public class TaggedPdfCopyTest {
 
     @Test
     public void classMapConflict() throws IOException {
-        PdfReader reader = new PdfReader(SOURCE11);
+        PdfReader reader1 = new PdfReader(SOURCE11);
         try {
-            copy.addPage(copy.getImportedPage(reader, 76, true));
-        } catch (Exception e) {}
-        reader.close();
-        reader = new PdfReader(SOURCE12);
+            copy.addPage(copy.getImportedPage(reader1, 76, true));
+        } catch (BadPdfFormatException e) {}
+        reader1.close();
+        PdfReader reader2 = new PdfReader(SOURCE12);
         boolean exceptionThrown = false;
         try {
-            copy.addPage(copy.getImportedPage(reader, 76, true));
+            copy.addPage(copy.getImportedPage(reader2, 76, true));
         } catch (BadPdfFormatException bpfe) {
             exceptionThrown = true;
         }
+        reader2.close();
         if (!exceptionThrown)
             Assert.fail("BadPdfFormatException expected!");
     }
 
     @Test
     public void roleMapConflict() throws IOException{
-        PdfReader reader = new PdfReader(SOURCE11);
+        PdfReader reader1 = new PdfReader(SOURCE11);
+        PdfDictionary trailer = reader1.trailer;
         try {
-            copy.addPage(copy.getImportedPage(reader, 76, true));
-        } catch (Exception e) {}
-        reader.close();
-        reader = new PdfReader(SOURCE22);
+            copy.addPage(copy.getImportedPage(reader1, 76, true));
+        } catch (BadPdfFormatException e) {}
+        reader1.close();
+        PdfReader reader2 = new PdfReader(SOURCE22);
         boolean exceptionThrown = false;
         try {
-            copy.addPage(copy.getImportedPage(reader, 76, true));
+            copy.addPage(copy.getImportedPage(reader2, 76, true));
         } catch (BadPdfFormatException bpfe) {
             exceptionThrown = true;
         }
+        reader2.close();
         if (!exceptionThrown)
             Assert.fail("BadPdfFormatException expected!");
     }
 
     @Test
     public void pdfMergeTest() throws IOException, BadPdfFormatException {
-        PdfReader reader = new PdfReader(SOURCE11);
-        copy.addPage(copy.getImportedPage(reader, 76, true));
-        copy.addPage(copy.getImportedPage(reader, 83, true));
-        reader.close();
-        reader = new PdfReader(SOURCE32);
-        copy.addPage(copy.getImportedPage(reader, 69, true));
-        copy.addPage(copy.getImportedPage(reader, 267, true));
+        PdfReader reader1 = new PdfReader(SOURCE11);
+        copy.addPage(copy.getImportedPage(reader1, 76, true));
+        copy.addPage(copy.getImportedPage(reader1, 83, true));
+        reader1.close();
+        PdfReader reader2 = new PdfReader(SOURCE32);
+        copy.addPage(copy.getImportedPage(reader2, 69, true));
+        copy.addPage(copy.getImportedPage(reader2, 267, true));
         document.close();
-        reader.close();
-        reader = new PdfReader(OUT);
+        reader2.close();
+        PdfReader reader = new PdfReader(OUT);
         PdfObject obj = reader.getCatalog().get(PdfName.STRUCTTREEROOT);
         obj = PdfStructTreeController.getDirectObject(obj);
         if (!obj.isDictionary())
