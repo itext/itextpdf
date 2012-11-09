@@ -1472,7 +1472,8 @@ public class PdfDocument extends Document {
                         text.moveText(xMarker + lastBaseFactor + image.getScaledWidth() - text.getXTLM(), 0);
                     }
                 }
-                xMarker += width;
+                if (!chunk.isTabSpace())
+                    xMarker += width;
                 ++chunkStrokeIdx;
             }
 

@@ -408,7 +408,7 @@ public class BidiLine {
                 float decrement = module - ((originalWidth - width) % module);
 
                 if (width < decrement)
-                    return new PdfLine(0, originalWidth, width, alignment, true,
+                    return new PdfLine(0, originalWidth, width, alignment, false,
                             createArrayOfPdfChunks(oldCurrentChar, currentChar-1), isRTL);
 
                 width -= decrement;
@@ -485,7 +485,11 @@ public class BidiLine {
         float width = 0;
         for (; startIdx <= lastIdx; ++startIdx) {
             boolean surrogate = Utilities.isSurrogatePair(text, startIdx);
-            if (surrogate) {
+            if (detailChunks[startIdx].isTabSpace()){
+                Float module = (Float)detailChunks[startIdx].getAttribute(Chunk.TABSPACE);
+                float decrement = module - (width % module);
+                width += decrement;
+            } else if (surrogate) {
                 width += detailChunks[startIdx].getCharWidth(Utilities.convertToUtf32(text, startIdx));
                 ++startIdx;
             }
