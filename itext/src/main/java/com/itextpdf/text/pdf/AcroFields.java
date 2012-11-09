@@ -64,6 +64,7 @@ import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.error_messages.MessageLocalization;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.codec.Base64;
 import com.itextpdf.text.pdf.security.PdfPKCS7;
@@ -507,7 +508,7 @@ public class AcroFields {
 
     public static Object[] splitDAelements(String da) {
         try {
-            PRTokeniser tk = new PRTokeniser(PdfEncodings.convertToBytes(da, null));
+            PRTokeniser tk = new PRTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(PdfEncodings.convertToBytes(da, null))));
             ArrayList<String> stack = new ArrayList<String>();
             Object ret[] = new Object[3];
             while (tk.nextToken()) {

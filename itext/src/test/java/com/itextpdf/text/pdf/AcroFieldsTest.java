@@ -46,12 +46,24 @@ package com.itextpdf.text.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.itextpdf.testutils.TestResourceUtils;
 
 public class AcroFieldsTest {
     
+    @Before
+    public void setUp() throws Exception {
+        TestResourceUtils.purgeTempFiles();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        TestResourceUtils.purgeTempFiles();
+    }
+
     @Test
     public void testSetFields() throws Exception {
         singleTest("register.xfdf");
