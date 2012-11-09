@@ -286,6 +286,10 @@ public class PRTokeniser {
                 }
             }
         }
+        
+        if (level == 1){ // if the level 1 check returns EOF, then we are still looking at a number - set the type back to NUMBER
+        	type = TokenType.NUMBER;
+        }
         // if we hit here, the file is either corrupt (stream ended unexpectedly),
         // or the last token ended exactly at the end of a stream.  This last
         // case can occur inside an Object Stream.
@@ -505,7 +509,8 @@ public class PRTokeniser {
                         ch = file.read();
                     } while (!delims[ch + 1]);
                 }
-                backOnePosition(ch);
+                if(ch != -1)
+                	backOnePosition(ch);
                 break;
             }
         }

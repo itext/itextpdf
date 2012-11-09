@@ -1,4 +1,4 @@
-package com.itextpdf.text;
+package com.itextpdf.text.pdf;
 
 import junit.framework.Assert;
 
@@ -25,7 +25,7 @@ public class PRTokeniserTest {
 		
 		for(int i = 0; i < expectedTypes.length; i++){
 			tok.nextValidToken();
-			System.out.println(tok.getTokenType() + " -> " + tok.getStringValue());
+			//System.out.println(tok.getTokenType() + " -> " + tok.getStringValue());
 			Assert.assertEquals("Position " + i, expectedTypes[i], tok.getTokenType());
 		}
 	}
