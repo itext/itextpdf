@@ -67,6 +67,7 @@ import java.util.zip.InflaterInputStream;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.RecipientInformation;
 
+import com.itextpdf.text.Document;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
@@ -74,6 +75,9 @@ import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.exceptions.UnsupportedPdfException;
+import com.itextpdf.text.io.OffsetRandomAccessSource;
+import com.itextpdf.text.io.RandomAccessSource;
+import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.pdf.PRTokeniser.TokenType;
 import com.itextpdf.text.pdf.interfaces.PdfViewerPreferences;
 import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
@@ -148,9 +152,25 @@ public class PdfReader implements PdfViewerPreferences {
      */
     private boolean appendable;
 
-    protected PdfReader() {
+    /**
+     * Constructs a new PdfReader.  This is the master constructor.
+     */
+    private PdfReader(RandomAccessSource byteSource, boolean partialRead, byte ownerPassword[], Certificate certificate, Key certificateKey, String certificateKeyProvider) throws IOException {
+        this.certificate = certificate;
+        this.certificateKey = certificateKey;
+        this.certificateKeyProvider = certificateKeyProvider;
+        this.password = ownerPassword;
+        this.partial = partialRead;
+        
+        tokens = getOffsetTokeniser(byteSource);
+        
+        if (partialRead){
+        	readPdfPartial();
+        } else {
+        	readPdf();
+        }
     }
-
+    
     /** Reads and parses a PDF document.
      * @param filename the file name of the document
      * @throws IOException on error
@@ -165,9 +185,21 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final String filename, final byte ownerPassword[]) throws IOException {
-        password = ownerPassword;
-        tokens = new PRTokeniser(filename);
-        readPdf();
+    	
+        this(
+        		new RandomAccessSourceFactory()
+    			.setForceRead(false)
+    			.setUsePlainRandomAccess(Document.plainRandomAccess)
+    			.createBestSource(filename),
+    			
+    			false,
+    			ownerPassword,
+    			null,
+    			null,
+    			null
+        		
+        );   	
+    	
     }
 
     /** Reads and parses a PDF document.
@@ -184,9 +216,17 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final byte pdfIn[], final byte ownerPassword[]) throws IOException {
-        password = ownerPassword;
-        tokens = new PRTokeniser(pdfIn);
-        readPdf();
+        this(
+        		new RandomAccessSourceFactory().createSource(pdfIn),
+    			
+    			false,
+    			ownerPassword,
+    			null,
+    			null,
+    			null
+        		
+        );
+
     }
 
     /** Reads and parses a PDF document.
@@ -197,13 +237,26 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final String filename, final Certificate certificate, final Key certificateKey, final String certificateKeyProvider) throws IOException {
-        this.certificate = certificate;
-        this.certificateKey = certificateKey;
-        this.certificateKeyProvider = certificateKeyProvider;
-        tokens = new PRTokeniser(filename);
-        readPdf();
+        this(
+        		new RandomAccessSourceFactory()
+    			.setForceRead(false)
+    			.setUsePlainRandomAccess(Document.plainRandomAccess)
+    			.createBestSource(filename),
+    			
+    			false,
+    			null,
+    			certificate,
+    			certificateKey,
+    			certificateKeyProvider
+        		
+        );
+
     }
 
+
+    
+
+    
     /** Reads and parses a PDF document.
      * @param url the URL of the document
      * @throws IOException on error
@@ -218,9 +271,17 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final URL url, final byte ownerPassword[]) throws IOException {
-        password = ownerPassword;
-        tokens = new PRTokeniser(new RandomAccessFileOrArray(url));
-        readPdf();
+        this(
+        		new RandomAccessSourceFactory().createSource(url),
+    			
+    			false,
+    			ownerPassword,
+    			null,
+    			null,
+    			null
+        		
+        );
+
     }
 
     /**
@@ -231,9 +292,17 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final InputStream is, final byte ownerPassword[]) throws IOException {
-        password = ownerPassword;
-        tokens = new PRTokeniser(new RandomAccessFileOrArray(is));
-        readPdf();
+        this(
+        		new RandomAccessSourceFactory().createSource(is),
+    			
+    			false,
+    			ownerPassword,
+    			null,
+    			null,
+    			null
+        		
+        );
+    	
     }
 
     /**
@@ -256,10 +325,16 @@ public class PdfReader implements PdfViewerPreferences {
      * @throws IOException on error
      */
     public PdfReader(final RandomAccessFileOrArray raf, final byte ownerPassword[]) throws IOException {
-        password = ownerPassword;
-        partial = true;
-        tokens = new PRTokeniser(raf);
-        readPdfPartial();
+        this(
+        		raf.getByteSource(),
+    			
+    			true,
+    			ownerPassword,
+    			null,
+    			null,
+    			null
+        		
+        );
     }
 
     /** Creates an independent duplicate.
@@ -278,7 +353,7 @@ public class PdfReader implements PdfViewerPreferences {
         this.freeXref = reader.freeXref;
         this.lastXref = reader.lastXref;
         this.newXrefType = reader.newXrefType;
-        this.tokens = new PRTokeniser(reader.tokens.getSafeFile());
+        this.tokens = new PRTokeniser(reader.tokens.getSafeFile()); 
         if (reader.decrypt != null)
             this.decrypt = new PdfEncryption(reader.decrypt);
         this.pValue = reader.pValue;
@@ -300,6 +375,23 @@ public class PdfReader implements PdfViewerPreferences {
         this.ownerPasswordUsed = reader.ownerPasswordUsed;
     }
 
+    /**
+     * Utility method that checks the provided byte source to see if it has junk bytes at the beginning.  If junk bytes
+     * are found, construct a tokeniser that ignores the junk.  Otherwise, construct a tokeniser for the byte source as it is
+     * @param byteSource the source to check
+     * @return a tokeniser that is guaranteed to start at the PDF header
+     * @throws IOException if there is a problem reading the byte source
+     */
+    private static PRTokeniser getOffsetTokeniser(RandomAccessSource byteSource) throws IOException{
+    	PRTokeniser tok = new PRTokeniser(new RandomAccessFileOrArray(byteSource));
+    	int offset = tok.getHeaderOffset();
+    	if (offset != 0){
+    		RandomAccessSource offsetSource = new OffsetRandomAccessSource(byteSource, offset);
+    		tok = new PRTokeniser(new RandomAccessFileOrArray(offsetSource));
+    	}
+    	return tok;
+    }
+    
     /** Gets a new file instance of the original PDF
      * document.
      * @return a new file instance of the original PDF document
@@ -490,55 +582,49 @@ public class PdfReader implements PdfViewerPreferences {
         Math.max(llx, urx), Math.max(lly, ury));
     }
 
+    /**
+     * Parses the entire PDF
+     */
     protected void readPdf() throws IOException {
+        fileLength = tokens.getFile().length();
+        pdfVersion = tokens.checkPdfHeader();
         try {
-            fileLength = tokens.getFile().length();
-            pdfVersion = tokens.checkPdfHeader();
+            readXref();
+        }
+        catch (Exception e) {
             try {
-                readXref();
-            }
-            catch (Exception e) {
-                try {
-                    rebuilt = true;
-                    rebuildXref();
-                    lastXref = -1;
-                }
-                catch (Exception ne) {
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
-                }
-            }
-            try {
-                readDocObj();
-            }
-            catch (Exception e) {
-            	if (e instanceof BadPasswordException)
-            		throw new BadPasswordException(e.getMessage());
-                if (rebuilt || encryptionError)
-                    throw new InvalidPdfException(e.getMessage());
                 rebuilt = true;
-                encrypted = false;
-                try{
-                    rebuildXref();
-                    lastXref = -1;
-                    readDocObj();
-                } catch (Exception ne){
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
-                }
+                rebuildXref();
+                lastXref = -1;
             }
+            catch (Exception ne) {
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
+            }
+        }
+        try {
+            readDocObj();
+        }
+        catch (Exception e) {
+        	if (e instanceof BadPasswordException)
+        		throw new BadPasswordException(e.getMessage());
+            if (rebuilt || encryptionError)
+                throw new InvalidPdfException(e.getMessage());
+            rebuilt = true;
+            encrypted = false;
+            try{
+                rebuildXref();
+                lastXref = -1;
+                readDocObj();
+            } catch (Exception ne){
+                throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
+            }
+        }
 
-            strings.clear();
-            readPages();
-            eliminateSharedStreams();
-            removeUnusedObjects();
-        }
-        finally {
-            try {
-                tokens.close();
-            }
-            catch (Exception e) {
-                // empty on purpose
-            }
-        }
+        strings.clear();
+        readPages();
+        eliminateSharedStreams();
+        removeUnusedObjects();
+
     }
 
     protected void readPdfPartial() throws IOException {
@@ -555,7 +641,7 @@ public class PdfReader implements PdfViewerPreferences {
                     lastXref = -1;
                 }
                 catch (Exception ne) {
-                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()));
+                    throw new InvalidPdfException(MessageLocalization.getComposedMessage("rebuild.failed.1.original.message.2", ne.getMessage(), e.getMessage()), ne);
                 }
             }
             readDocObjPartial();
@@ -1064,7 +1150,7 @@ public class PdfReader implements PdfViewerPreferences {
         int first = stream.getAsNumber(PdfName.FIRST).intValue();
         byte b[] = getStreamBytes(stream, tokens.getFile());
         PRTokeniser saveTokens = tokens;
-        tokens = new PRTokeniser(b);
+        tokens = new PRTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(b)));
         try {
             int address = 0;
             boolean ok = true;
@@ -1218,7 +1304,7 @@ public class PdfReader implements PdfViewerPreferences {
         int n = stream.getAsNumber(PdfName.N).intValue();
         byte b[] = getStreamBytes(stream, tokens.getFile());
         PRTokeniser saveTokens = tokens;
-        tokens = new PRTokeniser(b);
+        tokens = new PRTokeniser(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(b)));
         try {
             int address[] = new int[n];
             int objNumber[] = new int[n];
@@ -3034,11 +3120,9 @@ public class PdfReader implements PdfViewerPreferences {
     }
 
     /**
-     * Closes the reader
+     * Closes the reader, and any underlying stream or data source used to create the reader
      */
     public void close() {
-        if (!partial)
-            return;
         try {
             tokens.close();
         }

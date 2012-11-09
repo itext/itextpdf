@@ -56,10 +56,21 @@ public class InvalidPdfException extends IOException {
 	private static final long serialVersionUID = -2319614911517026938L;
 
 	/**
-	 * Creates an instance of a NoPdfException.
+	 * Creates an instance with a message and no cause
 	 * @param	message	the reason why the document isn't a PDF document according to iText.
 	 */
 	public InvalidPdfException(String message) {
 		super(message);
 	}
+
+	/**
+	 * Creates an instance with a cause
+	 * @param message
+	 * @param cause
+	 */
+	public InvalidPdfException(String message, Throwable cause) {
+		super(message, cause);
+	}
+	
+	
 }
