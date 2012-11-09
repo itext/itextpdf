@@ -318,8 +318,7 @@ public class PdfReader implements PdfViewerPreferences {
     /**
      * Reads and parses a pdf document. Contrary to the other constructors only the xref is read
      * into memory. The reader is said to be working in "partial" mode as only parts of the pdf
-     * are read as needed. The pdf is left open but may be closed at any time with
-     * <CODE>PdfReader.close()</CODE>, reopen is automatic.
+     * are read as needed.
      * @param raf the document location
      * @param ownerPassword the password or <CODE>null</CODE> for no password
      * @throws IOException on error
