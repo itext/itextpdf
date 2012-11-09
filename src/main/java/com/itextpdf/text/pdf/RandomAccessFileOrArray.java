@@ -311,13 +311,7 @@ public class RandomAccessFileOrArray implements DataInput {
         return true;
     }
     
-    /**
-     * Takes care of closing the underlying byteSource (if appropriate) when this object is released by the garbage collector.
-     * It is much better practice to explicitly call close() when finished with this object. 
-     */
-    protected void finalize() throws Throwable {
-    	close();
-    }
+
     
     public void close() throws IOException {
         isBack = false;
