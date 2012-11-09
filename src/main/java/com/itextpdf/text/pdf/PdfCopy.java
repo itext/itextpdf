@@ -617,15 +617,16 @@ public class PdfCopy extends PdfWriter {
             PdfReaderInstance ri = currentPdfReaderInstance;
             pdf.close();
             super.close();
-            if (ri != null) {
-                try {
-                    ri.getReader().close();
-                    ri.getReaderFile().close();
-                }
-                catch (IOException ioe) {
-                    // empty on purpose
-                }
-            }
+// Users are responsible for closing PdfReaderw            
+//            if (ri != null) {
+//                try {
+//                    ri.getReader().close();
+//                    ri.getReaderFile().close();
+//                }
+//                catch (IOException ioe) {
+//                    // empty on purpose
+//                }
+//            }
         }
     }
     public PdfIndirectReference add(PdfOutline outline) { return null; }
