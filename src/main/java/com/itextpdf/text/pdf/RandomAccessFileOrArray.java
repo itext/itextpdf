@@ -51,6 +51,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import com.itextpdf.text.Document;
+import com.itextpdf.text.io.IndependentRandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 /** Intended to be layered on top of a low level RandomAccessSource object.  Provides
@@ -58,18 +59,13 @@ import com.itextpdf.text.io.RandomAccessSourceFactory;
  * <ul>
  * 	<li>tracks current position in the file</li>
  * 	<li>allows single byte pushback</li>
- * 	<li>allows reading of multi-byte data structures (int, long, String)</li>
+ * 	<li>allows reading of multi-byte data structures (int, long, String) for both Big and Little Endian representations</li>
  * 	<li>allows creation of independent 'views' of the underlying data source</li>
  * </ul>
  *
  * @author Paulo Soares, Kevin Day
  */
 public class RandomAccessFileOrArray implements DataInput {
-	
-	/**
-	 * Used to make sure that an RAFOA that was opened as a "view" of another RAFOA doesn't close the the underlying file
-	 */
-	private final boolean closeByteSourceOnClose;
 	
 	/**
 	 * The source that backs this object
@@ -90,15 +86,6 @@ public class RandomAccessFileOrArray implements DataInput {
      */
     private boolean isBack = false;
 
-    /**
-     * Creates a RandomAccessFileOrArray that wraps the specified byte source.  The byte source will be closed when
-     * this RandomAccessFileOrArray is closed.
-     * @param byteSource the byte source to wrap
-     */
-    public RandomAccessFileOrArray(RandomAccessSource byteSource){
-    	this(byteSource, true);
-    }
-    
     /**
      * @deprecated use {@link RandomAccessFileOrArray#RandomAccessFileOrArray(RandomAccessSource)} instead
      * @param filename
@@ -121,7 +108,7 @@ public class RandomAccessFileOrArray implements DataInput {
      */
     @Deprecated
     public RandomAccessFileOrArray(RandomAccessFileOrArray source) {
-    	this(source.byteSource, false);
+    	this(new IndependentRandomAccessSource(source.byteSource));
     }
 
     /**
@@ -130,20 +117,18 @@ public class RandomAccessFileOrArray implements DataInput {
      * @return the new view
      */
     public RandomAccessFileOrArray createView(){
-    	return new RandomAccessFileOrArray(byteSource, false);
+    	return new RandomAccessFileOrArray(new IndependentRandomAccessSource(byteSource));
     }
     
     /**
-     * Creates a new RandomAccessFileOrArray
-     * @param byteSource the source
-     * @param closeSourceOnClose whether the newly created object should close it's underlying source when itself is closed
+     * Creates a RandomAccessFileOrArray that wraps the specified byte source.  The byte source will be closed when
+     * this RandomAccessFileOrArray is closed.
+     * @param byteSource the byte source to wrap
      */
-    private RandomAccessFileOrArray(RandomAccessSource byteSource, boolean closeSourceOnClose){
+    public RandomAccessFileOrArray(RandomAccessSource byteSource){
     	this.byteSource = byteSource;
-    	this.closeByteSourceOnClose = closeSourceOnClose;
     }
-
-
+    
     /**
      * Constructs a new RandomAccessFileOrArrayObject
      * @param filename the file to open (can be a file system file or one of the following url strings: file://, http://, https://, jar:, wsjar:, vfszip:
@@ -315,8 +300,6 @@ public class RandomAccessFileOrArray implements DataInput {
     
     public void close() throws IOException {
         isBack = false;
-        
-        if (!closeByteSourceOnClose) return;
         
         byteSource.close();
     }
