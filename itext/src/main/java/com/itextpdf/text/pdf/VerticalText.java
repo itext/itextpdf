@@ -266,7 +266,27 @@ public class VerticalText {
                 currentFont = chunk.font();
                 text.setFontAndSize(currentFont.getFont(), currentFont.size());
             }
+            Object textRender[] = (Object[])chunk.getAttribute(Chunk.TEXTRENDERMODE);
+            int tr = 0;
+            float strokeWidth = 1;
             BaseColor color = chunk.color();
+            BaseColor strokeColor = null;
+            if (textRender != null) {
+                tr = ((Integer)textRender[0]).intValue() & 3;
+                if (tr != PdfContentByte.TEXT_RENDER_MODE_FILL)
+                    text.setTextRenderingMode(tr);
+                if (tr == PdfContentByte.TEXT_RENDER_MODE_STROKE || tr == PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE) {
+                    strokeWidth = ((Float)textRender[1]).floatValue();
+                    if (strokeWidth != 1)
+                        text.setLineWidth(strokeWidth);
+                    strokeColor = (BaseColor)textRender[2];
+                    if (strokeColor == null)
+                        strokeColor = color;
+                    if (strokeColor != null)
+                        text.setColorStroke(strokeColor);
+                }
+            }
+
             Float charSpace = (Float)chunk.getAttribute(Chunk.CHAR_SPACING);
             // no char space setting means "leave it as is".
             if (charSpace != null && !curCharSpace.equals(charSpace)) {
@@ -280,6 +300,12 @@ public class VerticalText {
             
             if (color != null)
                 text.resetRGBColorFill();
+            if (tr != PdfContentByte.TEXT_RENDER_MODE_FILL)
+                text.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);
+            if (strokeColor != null)
+                text.resetRGBColorStroke();
+            if (strokeWidth != 1)
+                text.setLineWidth(1);
         }
     }
 
