@@ -672,7 +672,7 @@ public class PdfGraphics2D extends Graphics2D {
 			AlphaComposite co = (AlphaComposite) composite;
 			if (co.getRule() == 3) {
 				Color c = (Color) paint;
-				this.paint = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha()));
+				this.paint = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha()*alpha));
 				realPaint = this.paint;
 			}
 		}
@@ -1422,8 +1422,9 @@ public class PdfGraphics2D extends Graphics2D {
                     g2.dg2 = null;
                 }
                 g2.internalDispose(buf);
+				last=pos;
             }
-            last=pos;
+            
         }
         buf.append(buf2.getBuffer(), last, buf2.size() - last);
     }
