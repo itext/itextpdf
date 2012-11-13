@@ -43,27 +43,7 @@
  */
 package com.itextpdf.awt;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Paint;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.TexturePaint;
-import java.awt.Transparency;
+import java.awt.*;
 import java.awt.RenderingHints.Key;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
@@ -146,10 +126,8 @@ public class PdfGraphics2D extends Graphics2D {
     protected FontMapper fontMapper;
 
     private static final class Kid {
-        final int pos;
         final PdfGraphics2D graphics;
-        Kid(int pos, PdfGraphics2D graphics) {
-            this.pos = pos;
+        Kid(PdfGraphics2D graphics) {
             this.graphics = graphics;
         }
     }
@@ -685,14 +663,17 @@ public class PdfGraphics2D extends Graphics2D {
         this.paint = paint;
 		realPaint = paint;
 
+        /*if(paint instanceof Color) {
+            Color c = (Color) paint;
+            this.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)c.getAlpha()/255f));
+        }*/
 		if (composite instanceof AlphaComposite && paint instanceof Color) {
 
 			AlphaComposite co = (AlphaComposite) composite;
-
 			if (co.getRule() == 3) {
 				Color c = (Color) paint;
-				this.paint = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha() * alpha));
-				realPaint = paint;
+				this.paint = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha()));
+				realPaint = this.paint;
 			}
 		}
 
@@ -983,7 +964,6 @@ public class PdfGraphics2D extends Graphics2D {
         boolean fractions = RenderingHints.VALUE_FRACTIONALMETRICS_ON.equals(getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS));
         return new FontRenderContext(new AffineTransform(), antialias, fractions);
     }
-
     /**
      * @see Graphics#create()
      */
@@ -995,7 +975,8 @@ public class PdfGraphics2D extends Graphics2D {
         g2.transform = new AffineTransform(this.transform);
         g2.baseFonts = this.baseFonts;
         g2.fontMapper = this.fontMapper;
-        g2.paint = this.paint;
+        Paint p = this.getPaint();
+        g2.setPaint(p);
         g2.fillGState = this.fillGState;
         g2.currentFillGState = this.currentFillGState;
         g2.strokeGState = this.strokeGState;
@@ -1004,7 +985,8 @@ public class PdfGraphics2D extends Graphics2D {
         g2.convertImagesToJPEG = this.convertImagesToJPEG;
         g2.jpegQuality = this.jpegQuality;
         g2.setFont(this.font);
-        g2.cb = this.cb.getDuplicate();
+
+        g2.cb = this.getContent().getDuplicate();
         g2.cb.saveState();
         g2.width = this.width;
         g2.height = this.height;
@@ -1018,12 +1000,13 @@ public class PdfGraphics2D extends Graphics2D {
         g2.oldStroke = g2.strokeOne;
         g2.setStrokeDiff(g2.oldStroke, null);
         g2.cb.saveState();
+
         if (g2.clip != null)
             g2.followPath(g2.clip, CLIP);
         g2.kid = true;
         if (this.kids == null)
             this.kids = new ArrayList<Kid>();
-        this.kids.add(new Kid(cb.getInternalBuffer().size(), g2));
+        this.kids.add(new Kid(g2));
         return g2;
     }
 
@@ -1427,18 +1410,20 @@ public class PdfGraphics2D extends Graphics2D {
         ByteBuffer buf2 = cb.getInternalBuffer();
         if (kids != null) {
             for (Kid kid: kids) {
-                pos = kid.pos;
                 PdfGraphics2D g2 = kid.graphics;
                 g2.cb.restoreState();
                 g2.cb.restoreState();
-                buf.append(buf2.getBuffer(), last, pos - last);
+                pos =  cb.getInternalBuffer().size();
+                buf.append(buf2.getBuffer(), last,  pos - last);
+
                 if (g2.dg2 != null) {
+
                 	g2.dg2.dispose();
-                	g2.dg2 = null;
+                    g2.dg2 = null;
                 }
                 g2.internalDispose(buf);
-                last = pos;
             }
+            last=pos;
         }
         buf.append(buf2.getBuffer(), last, buf2.size() - last);
     }
