@@ -469,18 +469,19 @@ public class PdfLine {
         PdfChunk chunk;
         for (int k = 0; k < line.size(); ++k) {
             chunk = line.get(k);
-            if (!chunk.isImage()) {
+            if (chunk.isImage()) {
+                Image img = chunk.getImage();
+                if (chunk.changeLeading()) {
+                    float height = img.getScaledHeight() + chunk.getImageOffsetY() + img.getSpacingBefore();
+                    image_leading = Math.max(height, image_leading);
+                }
+            } else if (chunk.isAccessibleTag()) {
+                normal_leading = Math.max(0, normal_leading);
+            } else {
                 if (chunk.changeLeading())
                     normal_leading = Math.max(chunk.getLeading(), normal_leading);
                 else
                     normal_leading = Math.max(fixedLeading + multipliedLeading * chunk.font().size(), normal_leading);
-            }
-            else {
-            	Image img = chunk.getImage();
-            	if (chunk.changeLeading()) {
-            		float height = img.getScaledHeight() + chunk.getImageOffsetY() + img.getSpacingBefore();
-            		image_leading = Math.max(height, image_leading);
-            	}
             }
         }
         return new float[]{normal_leading > 0 ? normal_leading : fixedLeading, image_leading};
@@ -531,20 +532,22 @@ public class PdfLine {
  * in this line.
  * @return maximum size of all the ascenders used in this line
  */
-   public float getAscender() {
+    public float getAscender() {
        float ascender = 0;
        for (int k = 0; k < line.size(); ++k) {
            PdfChunk ck = line.get(k);
            if (ck.isImage())
                ascender = Math.max(ascender, ck.getImage().getScaledHeight() + ck.getImageOffsetY());
-           else {
+           else if (ck.isAccessibleTag()) {
+                ascender = Math.max(ascender, 0);
+           } else {
                PdfFont font = ck.font();
                float textRise = ck.getTextRise();
                ascender = Math.max(ascender, (textRise > 0 ? textRise : 0) + font.getFont().getFontDescriptor(BaseFont.ASCENT, font.size()));
            }
        }
        return ascender;
-   }
+    }
 
 /**
  * Gets the biggest descender for all the fonts used
@@ -557,7 +560,9 @@ public class PdfLine {
             PdfChunk ck = line.get(k);
             if (ck.isImage())
                 descender = Math.min(descender, ck.getImageOffsetY());
-            else {
+            else if (ck.isAccessibleTag()) {
+                descender = Math.min(descender, 0);
+            } else {
                 PdfFont font = ck.font();
                 float textRise = ck.getTextRise();
                 descender = Math.min(descender, (textRise < 0 ? textRise : 0) + font.getFont().getFontDescriptor(BaseFont.DESCENT, font.size()));

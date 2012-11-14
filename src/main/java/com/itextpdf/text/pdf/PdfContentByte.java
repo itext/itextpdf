@@ -49,6 +49,7 @@ import com.itextpdf.awt.geom.AffineTransform;
 import com.itextpdf.text.*;
 import com.itextpdf.text.error_messages.MessageLocalization;
 import com.itextpdf.text.exceptions.IllegalPdfSyntaxException;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 import com.itextpdf.text.pdf.internal.PdfAnnotationsImp;
 import com.itextpdf.text.pdf.internal.PdfIsoKeys;
@@ -204,7 +205,7 @@ public class PdfContentByte {
 
     private static HashMap<PdfName, String> abrev = new HashMap<PdfName, String>();
 
-    private ArrayList<Element> mcElements = new ArrayList<Element>();
+    private ArrayList<IAccessibleElement> mcElements = new ArrayList<IAccessibleElement>();
 
     private PdfContentByte duplicatedFrom = null;
 
@@ -1316,16 +1317,12 @@ public class PdfContentByte {
             if (inText && autoControlTextBlocks) {
                 endText();
             }
-            if (writer.isTagged()) {
-                PdfStructureElement elem = new PdfStructureElement(getParentStructureElement(), image.getRole());
-                beginMarkedContentSequence(elem, image.getAccessibleProperties());
-            }
             if (image.isImgTemplate()) {
                 writer.addDirectImageSimple(image);
                 PdfTemplate template = image.getTemplateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
-                addTemplate(template, a / w, b / w, c / h, d / h, e, f, true);
+                addTemplate(template, a / w, b / w, c / h, d / h, e, f);
             }
             else {
                 content.append("q ");
@@ -1392,8 +1389,6 @@ public class PdfContentByte {
                     content.append(' ').append(name.getBytes()).append(" Do Q").append_i(separator);
                 }
             }
-            if (writer.isTagged())
-                endMarkedContentSequence();
             if (image.hasBorders()) {
                 saveState();
                 float w = image.getWidth();
@@ -1674,13 +1669,9 @@ public class PdfContentByte {
         if (!inText && autoControlTextBlocks) {
             beginText(true);
         }
-        if (writer.isTagged())
-            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         showText2(text);
         updateTx(text, 0);
         content.append("Tj").append_i(separator);
-        if (writer.isTagged())
-           endMarkedContentSequence();
     }
 
     /**
@@ -1738,13 +1729,9 @@ public class PdfContentByte {
         if (!inText && autoControlTextBlocks) {
             beginText(true);
         }
-        if (writer.isTagged())
-            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         state.yTLM -= state.leading;
         showText2(text);
         content.append("'").append_i(separator);
-        if (writer.isTagged())
-            endMarkedContentSequence();
         state.tx = state.xTLM;
         updateTx(text, 0);
     }
@@ -1760,14 +1747,10 @@ public class PdfContentByte {
         if (!inText && autoControlTextBlocks) {
             beginText(true);
         }
-        if (writer.isTagged())
-            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         state.yTLM -= state.leading;
         content.append(wordSpacing).append(' ').append(charSpacing);
         showText2(text);
         content.append("\"").append_i(separator);
-        if (writer.isTagged())
-            endMarkedContentSequence();
         // The " operator sets charSpace and wordSpace into graphics state
         // (cfr PDF reference v1.6, table 5.6)
         state.charSpace = charSpacing;
@@ -2394,16 +2377,8 @@ public class PdfContentByte {
      * @param f an element of the transformation matrix
      */
     public void addTemplate(final PdfTemplate template, final float a, final float b, final float c, final float d, final float e, final float f) {
-        addTemplate(template, a, b, c, d, e, f, false);
-    }
-
-    private void addTemplate(final PdfTemplate template, final float a, final float b, final float c, final float d, final float e, final float f, boolean ignoreTagging) {
-        if (!ignoreTagging) {
-            if (inText && autoControlTextBlocks) {
-                endText();
-            }
-            if (writer.isTagged())
-                beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.FIGURE));
+        if (inText && autoControlTextBlocks) {
+            endText();
         }
         checkWriter();
         checkNoPattern(template);
@@ -2418,10 +2393,6 @@ public class PdfContentByte {
         content.append(e).append(' ');
         content.append(f).append(" cm ");
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
-        if (!ignoreTagging) {
-            if (writer.isTagged())
-                endMarkedContentSequence();
-        }
     }
 
     /**
@@ -2869,8 +2840,6 @@ public class PdfContentByte {
         }
         if (state.fontDetails == null)
             throw new NullPointerException(MessageLocalization.getComposedMessage("font.and.size.must.be.set.before.writing.any.text"));
-        if (writer.isTagged())
-            beginMarkedContentSequence(new PdfStructureElement(getParentStructureElement(), PdfName.SPAN));
         content.append("[");
         ArrayList<Object> arrayList = text.getArrayList();
         boolean lastWasNumber = false;
@@ -2890,8 +2859,6 @@ public class PdfContentByte {
             }
         }
         content.append("]TJ").append_i(separator);
-        if (writer.isTagged())
-            endMarkedContentSequence();
     }
 
     /**
@@ -3425,195 +3392,6 @@ public class PdfContentByte {
     	}
     }
 
-    protected void openMCBlock(Element element) {
-        if (writer.isTagged()) {
-            if (!getMcElements().contains(element)) {
-                PdfStructureElement structureElement = openMCBlockInt(element);
-                getMcElements().add(element);
-                pdf.structElements.put(element, structureElement);
-            }
-        }
-    }
-
-    private PdfDictionary getParentStructureElement() {
-        PdfDictionary parent = null;
-        if (getMcElements().size() > 0)
-            parent = pdf.structElements.get(getMcElements().get(getMcElements().size() - 1));
-        if (parent == null) {
-            parent = writer.getStructureTreeRoot();
-        }
-        return parent;
-    }
-
-    private IPdfStructureElement getParentStructureInterface() {
-        if (getMcElements().size() > 0)
-            return pdf.structElements.get(getMcElements().get(getMcElements().size() - 1));
-        else
-            return writer.getStructureTreeRoot();
-    }
-
-    private PdfStructureElement openMCBlockInt(Element element) {
-        PdfStructureElement structureElement = null;
-        if (writer.isTagged()) {
-            if (element instanceof Paragraph) {
-                structureElement = pdf.structElements.get(element);
-                if (structureElement == null) {
-                    structureElement = new PdfStructureElement(getParentStructureElement(), ((Paragraph)element).getRole());
-                    ((Paragraph)element).writeAttributes(structureElement);
-                }
-                if (inText && autoControlTextBlocks) {
-                    endText();
-                }
-                beginMarkedContentSequence(structureElement);
-            }
-        }
-        return structureElement;
-    }
-
-    protected void closeMCBlock(Element element) {
-        if (writer.isTagged()) {
-            if (getMcElements().contains(element)) {
-                closeMCBlockInt(element);
-                getMcElements().remove(element);
-            }
-        }
-    }
-
-    private void closeMCBlockInt(Element element) {
-        if (writer.isTagged()) {
-            if (element instanceof Paragraph) {
-                if (inText && autoControlTextBlocks)
-                    endText();
-                endMarkedContentSequence();
-            }
-        }
-    }
-
-    protected ArrayList<Element> saveMCBlocks() {
-        ArrayList<Element> mc = new ArrayList<Element>();
-        if (writer.isTagged()) {
-            mc = getMcElements();
-            for (int i = 0; i < mc.size(); i++) {
-                closeMCBlockInt(mc.get(i));
-            }
-            setMcElements(new ArrayList<Element>());
-        }
-        return mc;
-    }
-
-    protected void restoreMCBlocks(ArrayList<Element> mcElements) {
-        if (writer.isTagged() && mcElements != null) {
-            setMcElements(mcElements);
-            for (int i = 0; i < this.getMcElements().size(); i++) {
-                openMCBlockInt(this.getMcElements().get(i));
-            }
-        }
-    }
-
-    protected int getMcDepth() {
-        if (duplicatedFrom != null)
-            return duplicatedFrom.getMcDepth();
-        else
-            return mcDepth;
-    }
-
-    protected void setMcDepth(int value) {
-        if (duplicatedFrom != null)
-            duplicatedFrom.setMcDepth(value);
-        else
-            mcDepth = value;
-    }
-
-    protected ArrayList<Element> getMcElements() {
-        if (duplicatedFrom != null)
-            return duplicatedFrom.getMcElements();
-        else
-            return mcElements;
-    }
-
-    protected void setMcElements(ArrayList<Element> value) {
-        if (duplicatedFrom != null)
-            duplicatedFrom.setMcElements(value);
-        else
-            mcElements = value;
-    }
-
-    protected void updateTx(String text, float Tj) {
-        state.tx += getEffectiveStringWidth(text, false, Tj);
-    }
-
-    private void saveColor(BaseColor color, boolean fill) {
-        if (autoControlTextBlocks) {
-            if (inText) {
-                if (fill) {
-                    state.textColorFill = color;
-                } else {
-                    state.textColorStroke = color;
-                }
-            } else {
-                if (fill) {
-                    state.graphicsColorFill = color;
-                } else {
-                    state.graphicsColorStroke = color;
-                }
-            }
-        }
-    }
-
-    private void restoreColor(BaseColor color, boolean fill) throws IOException {
-        if (autoControlTextBlocks) {
-            if (color instanceof UncoloredPattern) {
-                UncoloredPattern c = (UncoloredPattern)color;
-                if (fill)
-                    setPatternFill(c.getPainter(), c.color, c.tint);
-                else
-                    setPatternStroke(c.getPainter(), c.color, c.tint);
-            } else {
-                if (fill)
-                    setColorFill(color);
-                else
-                    setColorStroke(color);
-            }
-        }
-    }
-
-    private void restoreColor() throws IOException {
-        if (autoControlTextBlocks) {
-            if (inText) {
-                if (!state.textColorFill.equals(state.graphicsColorFill)) {
-                    restoreColor(state.textColorFill, true);
-                }
-                if (!state.textColorStroke.equals(state.graphicsColorStroke)) {
-                    restoreColor(state.textColorStroke, false);
-                }
-            } else {
-                if (!state.textColorFill.equals(state.graphicsColorFill)) {
-                    restoreColor(state.graphicsColorFill, true);
-                }
-                if (!state.textColorStroke.equals(state.graphicsColorStroke)) {
-                    restoreColor(state.graphicsColorStroke, false);
-                }
-            }
-        }
-    }
-
-    static class UncoloredPattern extends PatternColor {
-        protected BaseColor color;
-        protected float tint;
-
-        protected UncoloredPattern(final PdfPatternPainter p, final BaseColor color, final float tint) {
-            super(p);
-            this.color = color;
-            this.tint = tint;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof UncoloredPattern && (((UncoloredPattern)obj).painter).equals(this.painter) && (((UncoloredPattern)obj).color).equals(this.color) && ((UncoloredPattern)obj).tint == this.tint;
-        }
-
-    }
-
     // AWT related methods (remove this if you port to Android / GAE)
     
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
@@ -3827,6 +3605,188 @@ public class PdfContentByte {
         double matrix[] = new double[6];
         af.getMatrix(matrix);
         transform(new AffineTransform(matrix));
+    }
+
+    protected void openMCBlock(IAccessibleElement element) {
+        if (writer.isTagged() && element != null && element.getRole() != null) {
+            if (!getMcElements().contains(element)) {
+                PdfStructureElement structureElement = openMCBlockInt(element);
+                getMcElements().add(element);
+                pdf.structElements.put(element, structureElement);
+            }
+        }
+    }
+
+    private PdfDictionary getParentStructureElement() {
+        PdfDictionary parent = null;
+        if (getMcElements().size() > 0)
+            parent = pdf.structElements.get(getMcElements().get(getMcElements().size() - 1));
+        if (parent == null) {
+            parent = writer.getStructureTreeRoot();
+        }
+        return parent;
+    }
+
+    private PdfStructureElement openMCBlockInt(IAccessibleElement element) {
+        PdfStructureElement structureElement = null;
+        if (writer.isTagged()) {
+            if (element instanceof IAccessibleElement) {
+                structureElement = pdf.structElements.get(element);
+                if (structureElement == null) {
+                    structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
+                    structureElement.writeAttributes(element);
+                }
+                if (inText && autoControlTextBlocks) {
+                    endText();
+                }
+                beginMarkedContentSequence(structureElement, element.getAccessibleProperties());
+            }
+        }
+        return structureElement;
+    }
+
+    protected void closeMCBlock(IAccessibleElement element) {
+        if (writer.isTagged() && element != null && element.getRole() != null) {
+            if (getMcElements().contains(element)) {
+                closeMCBlockInt(element);
+                getMcElements().remove(element);
+            }
+        }
+    }
+
+    private void closeMCBlockInt(IAccessibleElement element) {
+        if (writer.isTagged()) {
+            if (element instanceof IAccessibleElement) {
+                if (inText && autoControlTextBlocks)
+                    endText();
+                endMarkedContentSequence();
+            }
+        }
+    }
+
+    protected ArrayList<IAccessibleElement> saveMCBlocks() {
+        ArrayList<IAccessibleElement> mc = new ArrayList<IAccessibleElement>();
+        if (writer.isTagged()) {
+            mc = getMcElements();
+            for (int i = 0; i < mc.size(); i++) {
+                closeMCBlockInt(mc.get(i));
+            }
+            setMcElements(new ArrayList<IAccessibleElement>());
+        }
+        return mc;
+    }
+
+    protected void restoreMCBlocks(ArrayList<IAccessibleElement> mcElements) {
+        if (writer.isTagged() && mcElements != null) {
+            setMcElements(mcElements);
+            for (int i = 0; i < this.getMcElements().size(); i++) {
+                openMCBlockInt(this.getMcElements().get(i));
+            }
+        }
+    }
+
+    protected int getMcDepth() {
+        if (duplicatedFrom != null)
+            return duplicatedFrom.getMcDepth();
+        else
+            return mcDepth;
+    }
+
+    protected void setMcDepth(int value) {
+        if (duplicatedFrom != null)
+            duplicatedFrom.setMcDepth(value);
+        else
+            mcDepth = value;
+    }
+
+    protected ArrayList<IAccessibleElement> getMcElements() {
+        if (duplicatedFrom != null)
+            return duplicatedFrom.getMcElements();
+        else
+            return mcElements;
+    }
+
+    protected void setMcElements(ArrayList<IAccessibleElement> value) {
+        if (duplicatedFrom != null)
+            duplicatedFrom.setMcElements(value);
+        else
+            mcElements = value;
+    }
+
+    protected void updateTx(String text, float Tj) {
+        state.tx += getEffectiveStringWidth(text, false, Tj);
+    }
+
+    private void saveColor(BaseColor color, boolean fill) {
+        if (autoControlTextBlocks) {
+            if (inText) {
+                if (fill) {
+                    state.textColorFill = color;
+                } else {
+                    state.textColorStroke = color;
+                }
+            } else {
+                if (fill) {
+                    state.graphicsColorFill = color;
+                } else {
+                    state.graphicsColorStroke = color;
+                }
+            }
+        }
+    }
+
+    private void restoreColor(BaseColor color, boolean fill) throws IOException {
+        if (autoControlTextBlocks) {
+            if (color instanceof UncoloredPattern) {
+                UncoloredPattern c = (UncoloredPattern)color;
+                if (fill)
+                    setPatternFill(c.getPainter(), c.color, c.tint);
+                else
+                    setPatternStroke(c.getPainter(), c.color, c.tint);
+            } else {
+                if (fill)
+                    setColorFill(color);
+                else
+                    setColorStroke(color);
+            }
+        }
+    }
+
+    private void restoreColor() throws IOException {
+        if (autoControlTextBlocks) {
+            if (inText) {
+                if (!state.textColorFill.equals(state.graphicsColorFill)) {
+                    restoreColor(state.textColorFill, true);
+                }
+                if (!state.textColorStroke.equals(state.graphicsColorStroke)) {
+                    restoreColor(state.textColorStroke, false);
+                }
+            } else {
+                if (!state.textColorFill.equals(state.graphicsColorFill)) {
+                    restoreColor(state.graphicsColorFill, true);
+                }
+                if (!state.textColorStroke.equals(state.graphicsColorStroke)) {
+                    restoreColor(state.graphicsColorStroke, false);
+                }
+            }
+        }
+    }
+
+    static class UncoloredPattern extends PatternColor {
+        protected BaseColor color;
+        protected float tint;
+
+        protected UncoloredPattern(final PdfPatternPainter p, final BaseColor color, final float tint) {
+            super(p);
+            this.color = color;
+            this.tint = tint;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof UncoloredPattern && (((UncoloredPattern)obj).painter).equals(this.painter) && (((UncoloredPattern)obj).color).equals(this.color) && ((UncoloredPattern)obj).tint == this.tint;
+        }
+
     }
 
 }

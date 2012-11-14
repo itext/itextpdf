@@ -2,7 +2,7 @@
 
 
 
-<Span>Quick brown </Span>
+<TextBlock>Quick brown </TextBlock>
 <Image></Image>
 <Span> jumped over a lazy </Span>
 <Figure></Figure>

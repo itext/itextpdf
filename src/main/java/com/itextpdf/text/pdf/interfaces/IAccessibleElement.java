@@ -12,12 +12,6 @@ import java.util.HashMap;
 public interface IAccessibleElement {
 
     /**
-     * Writes attributes of accessible element to pdf document. Attributes are written into <code>A</code> dictinaty within structure element.
-     * @param structureElement the element whcih attributes to be written.
-     */
-    void writeAttributes(final PdfStructureElement structureElement);
-
-    /**
      * Get the proeprty of accessible element (i.e. alternate text).
      * @param key
      * @return

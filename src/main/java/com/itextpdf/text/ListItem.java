@@ -43,6 +43,13 @@
  */
 package com.itextpdf.text;
 
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
+import com.itextpdf.text.pdf.PdfStructureElement;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
+
+import java.util.HashMap;
+
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
  * that can be added to a <CODE>List</CODE>.
@@ -90,7 +97,7 @@ package com.itextpdf.text;
  * @see	Paragraph
  */
 
-public class ListItem extends Paragraph {
+public class ListItem extends Paragraph implements IAccessibleElement {
 
     // constants
 	private static final long serialVersionUID = 1970670787169329006L;
@@ -102,6 +109,8 @@ public class ListItem extends Paragraph {
 	 * @since	5.0	used to be private
 	 */
     protected Chunk symbol;
+
+    protected PdfName role = PdfName.LI;
 
     // constructors
 
@@ -256,6 +265,26 @@ public class ListItem extends Paragraph {
      */
     public Chunk getListSymbol() {
         return symbol;
+    }
+
+    public PdfObject getAccessibleProperty(final PdfName key) {
+        return null;
+    }
+
+    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
+        return null;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
     }
 
 }
