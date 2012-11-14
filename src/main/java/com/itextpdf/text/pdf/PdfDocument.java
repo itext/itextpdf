@@ -300,8 +300,6 @@ public class PdfDocument extends Document {
 
     protected HashMap<IAccessibleElement, PdfStructureElement> structElements = new HashMap<IAccessibleElement, PdfStructureElement>();
 
-    protected boolean putTextAndGraphicsTogether = false;
-
     protected Stack<IAccessibleElement> accessibleElements = new Stack<IAccessibleElement>();
 
     /**
@@ -921,7 +919,7 @@ public class PdfDocument extends Document {
         	if (isTagged(writer))
         		page.put(PdfName.STRUCTPARENTS, new PdfNumber(writer.getCurrentPageNumber() - 1));
 
-            if (text.size() > textEmptySize || putTextAndGraphicsTogether)
+            if (text.size() > textEmptySize || isTagged(writer))
         		text.endText();
         	else
         		text = null;
@@ -929,16 +927,16 @@ public class PdfDocument extends Document {
             mcBlocks.set(0, writer.getDirectContentUnder().saveMCBlocks());
             if (graphics != null)
                 mcBlocks.set(1, graphics.saveMCBlocks());
-            if (!putTextAndGraphicsTogether && text != null)
+            if (!isTagged(writer) && text != null)
                 mcBlocks.set(2, text.saveMCBlocks());
             mcBlocks.set(3, writer.getDirectContent().saveMCBlocks());
-        	writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, !putTextAndGraphicsTogether ? text : null, writer.getDirectContent(), pageSize));
+        	writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, !isTagged(writer) ? text : null, writer.getDirectContent(), pageSize));
         	// we initialize the new page
         	initPage();
             writer.getDirectContentUnder().restoreMCBlocks(mcBlocks.get(0));
             if (graphics != null)
                 graphics.restoreMCBlocks(mcBlocks.get(1));
-            if (!putTextAndGraphicsTogether && text != null)
+            if (!isTagged(writer) && text != null)
                 text.restoreMCBlocks(mcBlocks.get(2));
             writer.getDirectContent().restoreMCBlocks(mcBlocks.get(3));
         }
@@ -2240,14 +2238,14 @@ public class PdfDocument extends Document {
     		marginTop = nextMarginTop;
     		marginBottom = nextMarginBottom;
     	}
-        if (!putTextAndGraphicsTogether) {
+        if (!isTagged(writer)) {
             text = new PdfContentByte(writer);
             text.reset();
         } else {
             text = graphics;
         }
         text.beginText();
-        if (putTextAndGraphicsTogether)
+        if (isTagged(writer))
             textEmptySize = text.size();
         // we move to the left/top position of the page
         text.moveText(left(), top());

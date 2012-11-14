@@ -929,7 +929,7 @@ public class ColumnText {
         if (canvas != null) {
             graphics = canvas;
             pdf = canvas.getPdfDocument();
-            if (!pdf.putTextAndGraphicsTogether)
+            if (!isTagged(canvas))
                 text = canvas.getDuplicate();
             else
                 text = canvas;

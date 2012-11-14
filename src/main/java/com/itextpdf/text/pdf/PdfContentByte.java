@@ -209,11 +209,6 @@ public class PdfContentByte {
 
     private PdfContentByte duplicatedFrom = null;
 
-    /**
-     * Indicates if to open/close text block automatically.
-     */
-    protected boolean autoControlTextBlocks = false;
-
     static {
         abrev.put(PdfName.BITSPERCOMPONENT, "/BPC ");
         abrev.put(PdfName.COLORSPACE, "/CS ");
@@ -239,7 +234,6 @@ public class PdfContentByte {
         if (wr != null) {
             writer = wr;
             pdf = writer.getPdfDocument();
-            autoControlTextBlocks = pdf.putTextAndGraphicsTogether;
         }
     }
 
@@ -496,7 +490,7 @@ public class PdfContentByte {
      */
 
     public void clip() {
-        if (inText && autoControlTextBlocks) {
+        if (inText && writer.isTagged()) {
             endText();
         }
         content.append("W").append_i(separator);
@@ -508,7 +502,7 @@ public class PdfContentByte {
      */
 
     public void eoClip() {
-        if (inText && autoControlTextBlocks) {
+        if (inText && writer.isTagged()) {
             endText();
         }
         content.append("W*").append_i(separator);
@@ -739,7 +733,7 @@ public class PdfContentByte {
 
     public void moveTo(final float x, final float y) {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -758,7 +752,7 @@ public class PdfContentByte {
 
     public void lineTo(final float x, final float y) {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -780,7 +774,7 @@ public class PdfContentByte {
 
     public void curveTo(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -800,7 +794,7 @@ public class PdfContentByte {
 
     public void curveTo(final float x2, final float y2, final float x3, final float y3) {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -820,7 +814,7 @@ public class PdfContentByte {
 
     public void curveFromTo(final float x1, final float y1, final float x3, final float y3) {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -857,7 +851,7 @@ public class PdfContentByte {
 
     public void rectangle(final float x, final float y, final float w, final float h) {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1097,7 +1091,7 @@ public class PdfContentByte {
 
     public void closePath() {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1112,7 +1106,7 @@ public class PdfContentByte {
 
     public void newPath() {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1127,7 +1121,7 @@ public class PdfContentByte {
 
     public void stroke() {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1142,7 +1136,7 @@ public class PdfContentByte {
 
     public void closePathStroke() {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1157,7 +1151,7 @@ public class PdfContentByte {
 
     public void fill() {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1172,7 +1166,7 @@ public class PdfContentByte {
 
     public void eoFill() {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1187,7 +1181,7 @@ public class PdfContentByte {
 
     public void fillStroke() {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1202,7 +1196,7 @@ public class PdfContentByte {
 
     public void closePathFillStroke() {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1217,7 +1211,7 @@ public class PdfContentByte {
 
     public void eoFillStroke() {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1232,7 +1226,7 @@ public class PdfContentByte {
 
     public void closePathEoFillStroke() {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("path.construction.operator.inside.text.object"));
@@ -1314,7 +1308,7 @@ public class PdfContentByte {
         try {
             if (image.getLayer() != null)
                 beginLayer(image.getLayer());
-            if (inText && autoControlTextBlocks) {
+            if (inText && writer.isTagged()) {
                 endText();
             }
             if (image.isImgTemplate()) {
@@ -1457,7 +1451,7 @@ public class PdfContentByte {
      */
     private void beginText(boolean restoreTM) {
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
 
             } else {
     		    throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
@@ -1476,7 +1470,7 @@ public class PdfContentByte {
                 state.yTLM = 0;
                 state.tx = 0;
             }
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 try {
                     restoreColor();
                 } catch (IOException ioe) {
@@ -1498,7 +1492,7 @@ public class PdfContentByte {
      */
     public void endText() {
     	if (!inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
 
             } else {
     	    	throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
@@ -1506,7 +1500,7 @@ public class PdfContentByte {
     	} else {
     	    inText = false;
             content.append("ET").append_i(separator);
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 try {
                     restoreColor();
                 } catch (IOException ioe) {
@@ -1522,7 +1516,7 @@ public class PdfContentByte {
      * <CODE>restoreState</CODE> must be balanced.
      */
     public void saveState() {
-        if (inText && autoControlTextBlocks) {
+        if (inText && writer.isTagged()) {
             endText();
         }
         content.append("q").append_i(separator);
@@ -1534,7 +1528,7 @@ public class PdfContentByte {
      * <CODE>restoreState</CODE> must be balanced.
      */
     public void restoreState() {
-        if (inText && autoControlTextBlocks) {
+        if (inText && writer.isTagged()) {
             endText();
         }
         content.append("Q").append_i(separator);
@@ -1551,7 +1545,7 @@ public class PdfContentByte {
      * @param       charSpace           a parameter
      */
     public void setCharacterSpacing(final float charSpace) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         state.charSpace = charSpace;
@@ -1564,7 +1558,7 @@ public class PdfContentByte {
      * @param       wordSpace           a parameter
      */
     public void setWordSpacing(final float wordSpace) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         state.wordSpace = wordSpace;
@@ -1577,7 +1571,7 @@ public class PdfContentByte {
      * @param       scale               a parameter
      */
     public void setHorizontalScaling(final float scale) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         state.scale = scale;
@@ -1593,7 +1587,7 @@ public class PdfContentByte {
      * @param       leading         the new leading
      */
     public void setLeading(final float leading) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         state.leading = leading;
@@ -1607,7 +1601,7 @@ public class PdfContentByte {
      * @param size the font size in points
      */
     public void setFontAndSize(final BaseFont bf, final float size) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         checkWriter();
@@ -1627,7 +1621,7 @@ public class PdfContentByte {
      * @param       rendering               a parameter
      */
     public void setTextRenderingMode(final int rendering) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         content.append(rendering).append(" Tr").append_i(separator);
@@ -1641,7 +1635,7 @@ public class PdfContentByte {
      * @param       rise                a parameter
      */
     public void setTextRise(final float rise) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         content.append(rise).append(" Ts").append_i(separator);
@@ -1666,7 +1660,7 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void showText(final String text) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         showText2(text);
@@ -1726,7 +1720,7 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final String text) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         state.yTLM -= state.leading;
@@ -1744,7 +1738,7 @@ public class PdfContentByte {
      * @param text the text to write
      */
     public void newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         state.yTLM -= state.leading;
@@ -1772,7 +1766,7 @@ public class PdfContentByte {
      * @param       y           operand 3,2 in the matrix
      */
     public void setTextMatrix(final float a, final float b, final float c, final float d, final float x, final float y) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         state.xTLM = x;
@@ -1818,12 +1812,12 @@ public class PdfContentByte {
      * @param       y           y-coordinate of the new current point
      */
     public void moveText(final float x, final float y) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         state.xTLM += x;
         state.yTLM += y;
-        if (autoControlTextBlocks && state.xTLM != state.tx) {
+        if (writer.isTagged() && state.xTLM != state.tx) {
             setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
         } else {
             content.append(x).append(' ').append(y).append(" Td").append_i(separator);
@@ -1839,13 +1833,13 @@ public class PdfContentByte {
      * @param       y           y-coordinate of the new current point
      */
     public void moveTextWithLeading(final float x, final float y) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         state.xTLM += x;
         state.yTLM += y;
         state.leading = -y;
-        if (autoControlTextBlocks && state.xTLM != state.tx) {
+        if (writer.isTagged() && state.xTLM != state.tx) {
             setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
         } else {
             content.append(x).append(' ').append(y).append(" TD").append_i(separator);
@@ -1856,10 +1850,10 @@ public class PdfContentByte {
      * Moves to the start of the next line.
      */
     public void newlineText() {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
-        if (autoControlTextBlocks && state.xTLM != state.tx) {
+        if (writer.isTagged() && state.xTLM != state.tx) {
             setTextMatrix(state.aTLM, state.bTLM, state.cTLM, state.dTLM, state.xTLM, state.yTLM);
         }
         state.yTLM -= state.leading;
@@ -2092,7 +2086,7 @@ public class PdfContentByte {
      * @param f an element of the transformation matrix
      **/
     public void concatCTM(final float a, final float b, final float c, final float d, final float e, final float f) {
-        if (inText && autoControlTextBlocks) {
+        if (inText && writer.isTagged()) {
             endText();
         }
         content.append(a).append(' ').append(b).append(' ').append(c).append(' ');
@@ -2355,7 +2349,7 @@ public class PdfContentByte {
      * @param psobject the object
      */
     public void addPSXObject(final PdfPSXObject psobject) {
-        if (inText && autoControlTextBlocks) {
+        if (inText && writer.isTagged()) {
             endText();
         }
         checkWriter();
@@ -2377,7 +2371,7 @@ public class PdfContentByte {
      * @param f an element of the transformation matrix
      */
     public void addTemplate(final PdfTemplate template, final float a, final float b, final float c, final float d, final float e, final float f) {
-        if (inText && autoControlTextBlocks) {
+        if (inText && writer.isTagged()) {
             endText();
         }
         checkWriter();
@@ -2408,7 +2402,7 @@ public class PdfContentByte {
     }
 
     void addTemplateReference(final PdfIndirectReference template, PdfName name, final float a, final float b, final float c, final float d, final float e, final float f) {
-        if (inText && autoControlTextBlocks) {
+        if (inText && writer.isTagged()) {
             endText();
         }
         checkWriter();
@@ -2835,7 +2829,7 @@ public class PdfContentByte {
      * @param text array of text
      */
     public void showText(final PdfTextArray text) {
-        if (!inText && autoControlTextBlocks) {
+        if (!inText && writer.isTagged()) {
             beginText(true);
         }
         if (state.fontDetails == null)
@@ -3225,7 +3219,7 @@ public class PdfContentByte {
      * @param af the transformation
      */
     public void transform(final AffineTransform af) {
-        if (inText && autoControlTextBlocks) {
+        if (inText && writer.isTagged()) {
             endText();
         }
         double matrix[] = new double[6];
@@ -3378,7 +3372,7 @@ public class PdfContentByte {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.marked.content.operators"));
     	}
     	if (inText) {
-            if (autoControlTextBlocks) {
+            if (writer.isTagged()) {
                 endText();
             } else {
     		throw new IllegalPdfSyntaxException(MessageLocalization.getComposedMessage("unbalanced.begin.end.text.operators"));
@@ -3636,7 +3630,7 @@ public class PdfContentByte {
                     structureElement = new PdfStructureElement(getParentStructureElement(), element.getRole());
                     structureElement.writeAttributes(element);
                 }
-                if (inText && autoControlTextBlocks) {
+                if (inText && writer.isTagged()) {
                     endText();
                 }
                 beginMarkedContentSequence(structureElement, element.getAccessibleProperties());
@@ -3657,7 +3651,7 @@ public class PdfContentByte {
     private void closeMCBlockInt(IAccessibleElement element) {
         if (writer.isTagged()) {
             if (element instanceof IAccessibleElement) {
-                if (inText && autoControlTextBlocks)
+                if (inText && writer.isTagged())
                     endText();
                 endMarkedContentSequence();
             }
@@ -3718,7 +3712,7 @@ public class PdfContentByte {
     }
 
     private void saveColor(BaseColor color, boolean fill) {
-        if (autoControlTextBlocks) {
+        if (writer.isTagged()) {
             if (inText) {
                 if (fill) {
                     state.textColorFill = color;
@@ -3736,7 +3730,7 @@ public class PdfContentByte {
     }
 
     private void restoreColor(BaseColor color, boolean fill) throws IOException {
-        if (autoControlTextBlocks) {
+        if (writer.isTagged()) {
             if (color instanceof UncoloredPattern) {
                 UncoloredPattern c = (UncoloredPattern)color;
                 if (fill)
@@ -3753,7 +3747,7 @@ public class PdfContentByte {
     }
 
     private void restoreColor() throws IOException {
-        if (autoControlTextBlocks) {
+        if (writer.isTagged()) {
             if (inText) {
                 if (!state.textColorFill.equals(state.graphicsColorFill)) {
                     restoreColor(state.textColorFill, true);

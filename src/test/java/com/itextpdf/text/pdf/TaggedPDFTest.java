@@ -60,10 +60,7 @@ public class TaggedPDFTest {
         document = new Document();
         writer = PdfWriter.getInstance(document, new FileOutputStream(path));
         writer.setTagged();
-        writer.pdf.putTextAndGraphicsTogether = true;
         document.open();
-        writer.getDirectContent().autoControlTextBlocks = true;
-        writer.getDirectContentUnder().autoControlTextBlocks = true;
     }
 
     @Test
