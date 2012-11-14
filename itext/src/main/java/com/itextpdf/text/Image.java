@@ -72,7 +72,7 @@ import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
  * @see Rectangle
  */
 
-public abstract class Image extends Rectangle implements Indentable, Spaceable, IAccessibleElement {
+public abstract class Image extends Rectangle implements Indentable, Spaceable {
 
 	// static final membervariables
 
@@ -200,11 +200,6 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 
 	/** an iText attributed unique id for this image. */
 	protected Long mySerialId = getSerialId();
-
-    //** properties as required by PDF/UA (this is what typically written in BDC-EMC block in page contents). */
-    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
-
-    protected PdfName role = PdfName.FIGURE;
 
 	// image from file or URL
 
@@ -696,9 +691,6 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
 		this.imageMask = image.imageMask;
 		this.smask = image.smask;
 		this.transparency = image.transparency;
-
-        this.accessibleProperties = image.accessibleProperties;
-        this.role = image.role;
 	}
 
 	/**
@@ -2059,35 +2051,6 @@ public abstract class Image extends Rectangle implements Indentable, Spaceable, 
         g2d.drawImage(awtImage, 0, 0, null);
         g2d.dispose();
         return getInstance(tp);
-    }
-
-    public void writeAttributes(final PdfStructureElement structureElement) {
-
-    }
-
-    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
-        if (accessibleProperties == null)
-            accessibleProperties = new HashMap<PdfName, PdfObject>();
-        accessibleProperties.put(key, value);
-    }
-
-    public PdfObject getAccessibleProperty(final PdfName key) {
-        if (accessibleProperties != null)
-            return accessibleProperties.get(key);
-        else
-            return null;
-    }
-
-    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
-        return accessibleProperties;
-    }
-
-    public PdfName getRole() {
-        return role;
-    }
-
-    public void setRole(final PdfName role) {
-        this.role = role;
     }
 
 }

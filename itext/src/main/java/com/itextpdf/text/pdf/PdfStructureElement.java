@@ -43,6 +43,10 @@
  */
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 import com.itextpdf.text.pdf.interfaces.IPdfStructureElement;
 
 /**
@@ -188,4 +192,75 @@ public class PdfStructureElement extends PdfDictionary implements IPdfStructureE
         }
         attr.put(name, obj);
     }
+
+    public void writeAttributes(final IAccessibleElement element) {
+        if (element instanceof Paragraph) {
+            writeAttributes((Paragraph) element);
+        }
+    }
+
+    private void writeAttributes(final Paragraph paragraph) {
+        if (paragraph != null) {
+            // Setting non-inheritable attributes
+            if ((paragraph.getFont() != null) && (paragraph.getFont().getColor() != null)) {
+                BaseColor c = paragraph.getFont().getColor();
+                float[] colors = new float[]{(float)c.getRed() / 255f, (float)c.getGreen() / 255f, (float)c.getBlue() / 255f};
+                this.setAttribute(PdfName.COLOR, new PdfArray(colors));
+            }
+            if (Float.compare(paragraph.getSpacingBefore(), 0f) != 0)
+                this.setAttribute(PdfName.SPACEBEFORE, new PdfNumber(paragraph.getSpacingBefore()));
+            if (Float.compare(paragraph.getSpacingAfter(), 0f) != 0)
+                this.setAttribute(PdfName.SPACEAFTER, new PdfNumber(paragraph.getSpacingAfter()));
+            if (Float.compare(paragraph.getFirstLineIndent(), 0f) != 0)
+                this.setAttribute(PdfName.TEXTINDENT, new PdfNumber(paragraph.getFirstLineIndent()));
+
+            // Setting inheritable attributes
+            IPdfStructureElement parent = (IPdfStructureElement) this.getParent(true);
+            PdfObject obj = parent.getAttribute(PdfName.STARTINDENT);
+            if (obj instanceof PdfNumber) {
+                float startIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(startIndent, paragraph.getIndentationLeft()) != 0)
+                    this.setAttribute(PdfName.STARTINDENT, new PdfNumber(paragraph.getIndentationLeft()));
+            } else {
+                if (Math.abs(paragraph.getIndentationLeft()) > Float.MIN_VALUE)
+                    this.setAttribute(PdfName.STARTINDENT, new PdfNumber(paragraph.getIndentationLeft()));
+            }
+
+            obj = parent.getAttribute(PdfName.ENDINDENT);
+            if (obj instanceof PdfNumber) {
+                float endIndent = ((PdfNumber) obj).floatValue();
+                if (Float.compare(endIndent, paragraph.getIndentationRight()) != 0)
+                    this.setAttribute(PdfName.ENDINDENT, new PdfNumber(paragraph.getIndentationRight()));
+            } else {
+                if (Float.compare(paragraph.getIndentationRight(), 0) != 0)
+                    this.setAttribute(PdfName.ENDINDENT, new PdfNumber(paragraph.getIndentationRight()));
+            }
+
+            PdfName align = null;
+            switch (paragraph.getAlignment()) {
+                case Element.ALIGN_LEFT:
+                    align = PdfName.START;
+                    break;
+                case Element.ALIGN_CENTER:
+                    align = PdfName.CENTER;
+                    break;
+                case Element.ALIGN_RIGHT:
+                    align = PdfName.END;
+                    break;
+                case Element.ALIGN_JUSTIFIED:
+                    align = PdfName.JUSTIFY;
+                    break;
+            }
+            obj = parent.getAttribute(PdfName.TEXTALIGN);
+            if (obj instanceof PdfName) {
+                PdfName textAlign = ((PdfName) obj);
+                if (align != null && !textAlign.equals(align))
+                    this.setAttribute(PdfName.TEXTALIGN, align);
+            } else {
+                if (align != null && !PdfName.START.equals(align))
+                    this.setAttribute(PdfName.TEXTALIGN, align);
+            }
+        }
+    }
+
 }

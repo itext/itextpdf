@@ -137,6 +137,7 @@ public class BidiLine {
         this.runDirection = runDirection;
         currentChar = 0;
         totalTextLength = 0;
+
         boolean hasText = false;
         char c;
         char uniC;
@@ -341,6 +342,11 @@ public class BidiLine {
         int lastSplit = -1;
         if (currentChar != 0)
             currentChar = trimLeftEx(currentChar, totalTextLength - 1);
+
+        ArrayList<Integer> skipPositions = new ArrayList<Integer>();
+        getSkipPositionsLeft(currentChar, totalTextLength - 1, skipPositions);
+        getSkipPositionsRight(currentChar, totalTextLength - 1, skipPositions);
+
         int oldCurrentChar = currentChar;
         int uniC = 0;
         PdfChunk ck = null;
@@ -362,7 +368,7 @@ public class BidiLine {
                 uniC = ck.getUnicodeEquivalent(Utilities.convertToUtf32(text, currentChar));
             else
                 uniC = ck.getUnicodeEquivalent(text[currentChar]);
-            if (PdfChunk.noPrint(uniC))
+            if (PdfChunk.noPrint(uniC) || skipPositions.contains(currentChar))
                 continue;
             if (surrogate)
                 charWidth = ck.getCharWidth(uniC);
@@ -512,10 +518,14 @@ public class BidiLine {
         boolean bidi = runDirection == PdfWriter.RUN_DIRECTION_LTR || runDirection == PdfWriter.RUN_DIRECTION_RTL;
         if (bidi)
             reorder(startIdx, endIdx);
+
         ArrayList<PdfChunk> ar = new ArrayList<PdfChunk>();
         PdfChunk refCk = detailChunks[startIdx];
         PdfChunk ck = null;
         StringBuffer buf = new StringBuffer();
+        ArrayList<Integer> skipPositions = new ArrayList<Integer>();
+        getSkipPositionsLeft(startIdx, endIdx, skipPositions);
+        getSkipPositionsRight(startIdx, endIdx, skipPositions);
         char c;
         int idx = 0;
         for (; startIdx <= endIdx; ++startIdx) {
@@ -524,14 +534,14 @@ public class BidiLine {
             ck = detailChunks[idx];
             if (PdfChunk.noPrint(ck.getUnicodeEquivalent(c)))
                 continue;
-            if (ck.isImage() || ck.isSeparator() || ck.isTab()) {
+            if (ck.isImage() || ck.isSeparator() || ck.isTab() || ck.isAccessibleTag()) {
                 if (buf.length() > 0) {
                     ar.add(new PdfChunk(buf.toString(), refCk));
                     buf = new StringBuffer();
                 }
                 ar.add(ck);
             }
-            else if (ck == refCk) {
+            else if (ck == refCk && !skipPositions.contains(idx)) {
                 buf.append(c);
             }
             else {
@@ -539,7 +549,7 @@ public class BidiLine {
                     ar.add(new PdfChunk(buf.toString(), refCk));
                     buf = new StringBuffer();
                 }
-                if (!ck.isImage() && !ck.isSeparator() && !ck.isTab())
+                if (!ck.isImage() && !ck.isSeparator() && !ck.isTab() && !ck.isAccessibleTag() && !skipPositions.contains(idx))
                     buf.append(c);
                 refCk = ck;
             }
@@ -582,6 +592,28 @@ public class BidiLine {
         return idx;
     }
 
+    private void getSkipPositionsRight(int startIdx, int endIdx, ArrayList<Integer> skipPositions) {
+        ArrayList<Integer> sp = new ArrayList<Integer>();
+        int idx = endIdx;
+        char c;
+        boolean wsOnly = true;
+        for (; idx >= startIdx; --idx) {
+            c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
+            if (!isWS(c) && !detailChunks[idx].isAccessibleTag()) {
+                wsOnly = false;
+                break;
+            }
+            else {
+                if (isWS(c)) {
+                    sp.add(idx);
+                }
+            }
+        }
+        if (wsOnly)
+            sp.clear();
+        skipPositions.addAll(sp);
+    }
+
     public int trimLeft(int startIdx, int endIdx) {
         int idx = startIdx;
         char c;
@@ -591,6 +623,28 @@ public class BidiLine {
                 break;
         }
         return idx;
+    }
+
+    private void getSkipPositionsLeft(int startIdx, int endIdx, ArrayList<Integer> skipPositions) {
+        ArrayList<Integer> sp = new ArrayList<Integer>();
+        int idx = endIdx;
+        char c;
+        boolean wsOnly = true;
+        for (; idx <= endIdx; ++idx) {
+            c = (char)detailChunks[idx].getUnicodeEquivalent(text[idx]);
+            if (!isWS(c) && !detailChunks[idx].isAccessibleTag()) {
+                wsOnly = false;
+                break;
+            }
+            else {
+                if (isWS(c)) {
+                    sp.add(idx);
+                }
+            }
+        }
+        if (wsOnly)
+            sp.clear();
+        skipPositions.addAll(sp);
     }
 
     public int trimRightEx(int startIdx, int endIdx) {

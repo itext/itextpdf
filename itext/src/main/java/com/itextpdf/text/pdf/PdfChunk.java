@@ -44,6 +44,7 @@
 package com.itextpdf.text.pdf;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -144,6 +145,14 @@ public class PdfChunk {
 /** The leading that can overrule the existing leading. */
     protected float leading = 0;
 
+    protected IAccessibleElement accessibleElement = null;
+    protected TagRole tagRole = PdfChunk.TagRole.Open;
+
+    enum TagRole {
+        Open,
+        Close
+    };
+
     // constructors
 
 /**
@@ -175,6 +184,13 @@ public class PdfChunk {
         splitCharacter = (SplitCharacter)noStroke.get(Chunk.SPLITCHARACTER);
         if (splitCharacter == null)
             splitCharacter = DefaultSplitCharacter.DEFAULT;
+    }
+
+    PdfChunk(final IAccessibleElement accessibleElement, final TagRole tagRole, final Chunk chunk) {
+        this(chunk == null ? new Chunk(Chunk.OBJECT_REPLACEMENT_CHARACTER, new Font()) : chunk, null);
+        value = Chunk.OBJECT_REPLACEMENT_CHARACTER;
+        this.accessibleElement = accessibleElement;
+        this.tagRole = tagRole;
     }
 
 /**
@@ -542,6 +558,8 @@ public class PdfChunk {
         if (isAttribute(Chunk.TABSPACE)) {
             return 0;
         }
+        if (isAccessibleTag())
+            return 0;
         return font.width(value);
     }
 
@@ -702,6 +720,10 @@ public class PdfChunk {
      */
     boolean isTabSpace() {
         return isAttribute(Chunk.TABSPACE);
+    }
+
+    boolean isAccessibleTag() {
+        return accessibleElement != null;
     }
 
     /**
@@ -875,6 +897,14 @@ public class PdfChunk {
 
     public static boolean noPrint(int c) {
         return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e;
+    }
+
+    public TagRole getTagRole() {
+        return tagRole;
+    }
+
+    public IAccessibleElement getAccessibleElement() {
+        return accessibleElement;
     }
 
 }

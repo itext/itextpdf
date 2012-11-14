@@ -62,6 +62,8 @@ public class TaggedPDFTest {
         writer.setTagged();
         writer.pdf.putTextAndGraphicsTogether = true;
         document.open();
+        writer.getDirectContent().autoControlTextBlocks = true;
+        writer.getDirectContentUnder().autoControlTextBlocks = true;
     }
 
     @Test
@@ -127,15 +129,19 @@ public class TaggedPDFTest {
         p.setRole(new PdfName("Paragraph"));
 
         try {
-            p.add(new Chunk("Quick brown "));
+            Chunk c = new Chunk("Quick brown ");
+            c.setRole(new PdfName("TextBlock"));
+            p.add(c);
             Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
-            i.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
-            i.setRole(new PdfName("Image"));
-            p.add(new Chunk(i, 0, 0));
+            c = new Chunk(i, 0, 0);
+            c.setRole(new PdfName("Image"));
+            c.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            p.add(c);
             p.add(new Chunk(" jumped over a lazy "));
             i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
-            i.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
-            p.add(new Chunk(i, 0, 0));
+            c = new Chunk(i, 0, 0);
+            c.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            p.add(c);
 
         } catch (Exception e) {
 
@@ -148,6 +154,77 @@ public class TaggedPDFTest {
         new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
         xmlOut.close();
         Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test4.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out4.xml"));
+    }
+
+    @Test
+    public void createTaggedPDF5() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out5.pdf");
+        List list = new List(true);
+        try {
+            list = new List(true);
+            ListItem listItem = new ListItem(new Chunk("Quick brown fox jumped over a lazy dog. A very long line appears here because we need new line."));
+            list.add(listItem);
+            Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
+            Chunk c = new Chunk(i, 0, 0);
+            c.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            listItem = new ListItem(c);
+            list.add(listItem);
+            listItem = new ListItem(new Chunk("jumped over a lazy"));
+            list.add(listItem);
+            i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
+            c = new Chunk(i, 0, 0);
+            c.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            listItem = new ListItem(c);
+            list.add(listItem);
+        } catch (Exception e) {
+
+        }
+        document.add(list);
+        document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out5.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out5.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test5.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out5.xml"));
+    }
+
+    @Test
+    public void createTaggedPDF6() throws DocumentException, IOException, ParserConfigurationException, SAXException {
+        initializeDocument("./target/com/itextpdf/test/pdf/TaggedPDFTest/out6.pdf");
+
+        ColumnText columnText = new ColumnText(writer.getDirectContent());
+
+        List list = new List(true);
+        try {
+            list = new List(true);
+            ListItem listItem = new ListItem(new Chunk("Quick brown fox jumped over a lazy dog. A very long line appears here because we need new line."));
+            list.add(listItem);
+            Image i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/fox.bmp");
+            Chunk c = new Chunk(i, 0, 0);
+            c.setAccessibleProperty(PdfName.ALT, new PdfString("Fox image"));
+            listItem = new ListItem(c);
+            list.add(listItem);
+            listItem = new ListItem(new Chunk("jumped over a lazy"));
+            list.add(listItem);
+            i = Image.getInstance("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/dog.bmp");
+            c = new Chunk(i, 0, 0);
+            c.setAccessibleProperty(PdfName.ALT, new PdfString("Dog image"));
+            listItem = new ListItem(c);
+            list.add(listItem);
+        } catch (Exception e) {
+
+        }
+        columnText.setSimpleColumn(36,36,400,800);
+        columnText.addElement(list);
+        columnText.go();
+        document.close();
+
+        PdfReader reader = new PdfReader("./target/com/itextpdf/test/pdf/TaggedPDFTest/out6.pdf");
+        FileOutputStream xmlOut = new FileOutputStream("./target/com/itextpdf/test/pdf/TaggedPDFTest/out6.xml");
+        new MyTaggedPdfReaderTool().convertToXml(reader, xmlOut);
+        xmlOut.close();
+        Assert.assertTrue(compareXmls("./src/test/resources/com/itextpdf/text/pdf/TaggedPdfTest/test6.xml", "./target/com/itextpdf/test/pdf/TaggedPDFTest/out6.xml"));
     }
 
     private boolean compareXmls(String xml1, String xml2) throws ParserConfigurationException, SAXException, IOException {

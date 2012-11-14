@@ -44,11 +44,9 @@
 package com.itextpdf.text;
 
 import com.itextpdf.text.error_messages.MessageLocalization;
-import com.itextpdf.text.pdf.HyphenationEvent;
-import com.itextpdf.text.pdf.PdfAction;
-import com.itextpdf.text.pdf.PdfAnnotation;
-import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.DrawInterface;
+import com.itextpdf.text.pdf.interfaces.IAccessibleElement;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -77,7 +75,7 @@ import java.util.List;
  * </BLOCKQUOTE>
  */
 
-public class Chunk implements Element {
+public class Chunk implements Element, IAccessibleElement {
 
 	// public static membervariables
 
@@ -104,6 +102,10 @@ public class Chunk implements Element {
 	/** Contains some of the attributes for this Chunk. */
 	protected HashMap<String, Object> attributes = null;
 
+    protected PdfName role = null;
+
+    protected HashMap<PdfName, PdfObject> accessibleProperties = null;
+
 	// constructors
 
 	/**
@@ -112,6 +114,7 @@ public class Chunk implements Element {
 	public Chunk() {
 		this.content = new StringBuffer();
 		this.font = new Font();
+        this.role = PdfName.SPAN;
 	}
 
     /**
@@ -128,6 +131,10 @@ public class Chunk implements Element {
         if (ck.attributes != null) {
             attributes = new HashMap<String, Object>(ck.attributes);
         }
+        role = ck.role;
+        if (ck.accessibleProperties != null) {
+            accessibleProperties = new HashMap<PdfName, PdfObject>(ck.accessibleProperties);
+        }
     }
 
 	/**
@@ -140,9 +147,10 @@ public class Chunk implements Element {
 	 *            the font
 	 */
 	public Chunk(final String content, final Font font) {
-		this.content = new StringBuffer(content);
-		this.font = font;
-	}
+        this.content = new StringBuffer(content);
+        this.font = font;
+        this.role = PdfName.SPAN;
+    }
 
 	/**
 	 * Constructs a chunk of text with a certain content, without specifying a
@@ -167,6 +175,7 @@ public class Chunk implements Element {
 		this.content = new StringBuffer();
 		this.content.append(c);
 		this.font = font;
+        this.role = PdfName.SPAN;
 	}
 
 	/**
@@ -196,6 +205,7 @@ public class Chunk implements Element {
 		copyImage.setAbsolutePosition(Float.NaN, Float.NaN);
 		setAttribute(IMAGE, new Object[] { copyImage, new Float(offsetX),
 				new Float(offsetY), Boolean.FALSE });
+        this.role = PdfName.FIGURE;
 	}
 
 	/**
@@ -224,6 +234,7 @@ public class Chunk implements Element {
 	public Chunk(final DrawInterface separator, final boolean vertical) {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		setAttribute(SEPARATOR, new Object[] {separator, Boolean.valueOf(vertical)});
+        this.role = null;
 	}
 
 	/**
@@ -257,6 +268,7 @@ public class Chunk implements Element {
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("a.tab.position.may.not.be.lower.than.0.yours.is.1", String.valueOf(tabPosition)));
 		}
 		setAttribute(TAB, new Object[] {separator, new Float(tabPosition), Boolean.valueOf(newline), new Float(0)});
+        this.role = null;
 	}
 
 	/**
@@ -276,6 +288,7 @@ public class Chunk implements Element {
 		this(OBJECT_REPLACEMENT_CHARACTER, new Font());
 		setAttribute(IMAGE, new Object[] { image, new Float(offsetX),
 				new Float(offsetY), Boolean.valueOf(changeLeading) });
+        this.role = PdfName.FIGURE;
 	}
 
 	// implementation of the Element-methods
@@ -952,4 +965,34 @@ public class Chunk implements Element {
     public boolean isTabspace() {
         return attributes != null && attributes.containsKey(TABSPACE);
     }
+
+    public PdfObject getAccessibleProperty(final PdfName key) {
+        if (accessibleProperties != null)
+            return accessibleProperties.get(key);
+        else
+            return null;
+    }
+
+    public void setAccessibleProperty(final PdfName key, final PdfObject value) {
+        if (accessibleProperties == null)
+            accessibleProperties = new HashMap<PdfName, PdfObject>();
+        accessibleProperties.put(key, value);
+    }
+
+    public HashMap<PdfName, PdfObject> getAccessibleProperties() {
+        return accessibleProperties;
+    }
+
+    public PdfName getRole() {
+        return role;
+    }
+
+    public void setRole(final PdfName role) {
+        this.role = role;
+    }
+
+    public void setAccessibleProperties(final HashMap<PdfName, PdfObject> accessibleProperties) {
+        this.accessibleProperties = accessibleProperties;
+    }
+
 }
