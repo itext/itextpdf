@@ -39,6 +39,7 @@ public interface IAccessibleElement {
 
     /**
      * Sets the role of the accessiblee element.
+     * Set role to <code>null</code> if you don't want to tag this element.
      * @param role
      */
     void setRole(final PdfName role);

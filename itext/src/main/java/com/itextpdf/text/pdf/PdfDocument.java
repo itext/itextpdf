@@ -427,11 +427,11 @@ public class PdfDocument extends Document {
                     PdfChunk chunk = new PdfChunk((Chunk) element, anchorAction);
                     PdfListBody lBody = null;
                     if (isTagged(writer)) {
-                        if (accessibleElements.size() > 0 && accessibleElements.peek() instanceof ListItem) {
+                        if (accessibleElements.size() > 0 && accessibleElements.peek() instanceof ListItem && accessibleElements.peek().getRole() != null) {
                             lBody = new PdfListBody();
                             line.add(new PdfChunk(lBody, PdfChunk.TagRole.Open, (Chunk)element));
                         }
-                        if (element instanceof IAccessibleElement) {
+                        if (element instanceof IAccessibleElement && ((IAccessibleElement)element).getRole() != null) {
                             line.add(new PdfChunk((IAccessibleElement)element, PdfChunk.TagRole.Open, (Chunk)element));
                         }
                     }
@@ -447,7 +447,7 @@ public class PdfDocument extends Document {
                         }
                     }
                     if (isTagged(writer)) {
-                        if (element instanceof IAccessibleElement) {
+                        if (element instanceof IAccessibleElement && ((IAccessibleElement)element).getRole() != null) {
                             line.add(new PdfChunk((IAccessibleElement)element, PdfChunk.TagRole.Close, (Chunk)element));
                         }
                         if (lBody != null) {
@@ -538,10 +538,10 @@ public class PdfDocument extends Document {
                     }
                     else {
                     	line.setExtraIndent(paragraph.getFirstLineIndent());
-                    	if (isTagged(writer))
+                    	if (isTagged(writer) && paragraph.getRole() != null)
                             line.add(new PdfChunk(paragraph, PdfChunk.TagRole.Open, null));
                         element.process(this);
-                        if (isTagged(writer))
+                        if (isTagged(writer) && paragraph.getRole() != null)
                             line.add(new PdfChunk(paragraph, PdfChunk.TagRole.Close, null));
                         carriageReturn();
                         addSpacing(paragraph.getSpacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
@@ -628,10 +628,10 @@ public class PdfDocument extends Document {
                     indentation.listIndentLeft += list.getIndentationLeft();
                     indentation.indentRight += list.getIndentationRight();
                     // we process the items in the list
-                    if (isTagged(writer))
+                    if (isTagged(writer) && list.getRole() != null)
                         line.add(new PdfChunk(list, PdfChunk.TagRole.Open, null));
                     element.process(this);
-                    if (isTagged(writer))
+                    if (isTagged(writer) && list.getRole() != null)
                         line.add(new PdfChunk(list, PdfChunk.TagRole.Close, null));
                     // some parameters are set back to normal again
                     indentation.listIndentLeft -= list.getIndentationLeft();
@@ -656,12 +656,12 @@ public class PdfDocument extends Document {
                     // we prepare the current line to be able to show us the listsymbol
                     line.setListItem(listItem);
                     // we process the item
-                    if (isTagged(writer)) {
+                    if (isTagged(writer) && listItem.getRole() != null) {
                         line.add(new PdfChunk(listItem, PdfChunk.TagRole.Open, null));
                         accessibleElements.push(listItem);
                     }
                     element.process(this);
-                    if (isTagged(writer)) {
+                    if (isTagged(writer) && listItem.getRole() != null) {
                         if (accessibleElements.size() > 0)
                             accessibleElements.pop();
                         line.add(new PdfChunk(listItem, PdfChunk.TagRole.Close, null));
