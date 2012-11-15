@@ -93,6 +93,23 @@
 			</resource>
 		</resources>
 		<plugins>
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>buildnumber-maven-plugin</artifactId>
+			<version>1.1</version>
+			<executions>
+				<execution>
+					<phase>validate</phase>
+					<goals>
+						<goal>create</goal>
+					</goals>
+				</execution>
+			</executions>
+			<configuration>
+				<doCheck>false</doCheck>
+				<doUpdate>false</doUpdate>
+			</configuration>
+		</plugin>
 			<plugin>
 				<!-- Add osgi meta data to manifest file -->
 				<groupId>org.apache.felix</groupId>
@@ -128,11 +145,25 @@
 					<!-- Use the Bnd generated MANIFEST.MF in the jar -->
 					<archive>
 						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Build>${buildNumber}</Implementation-Build>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>snapshot</id>
+			<build>
+				<finalName>${artifactId}-${version}-rev${buildNumber}</finalName>
+			</build>
+		</profile>
+	</profiles>
 	<!-- Dependencies -->
 	<dependencies>
         <dependency>
