@@ -369,23 +369,23 @@ public class ColumnText {
             if (isTagged(canvas)) {
                 if (waitPhrase instanceof ListItem) {
                     com.itextpdf.text.List list = getListIfItemIsFirst((ListItem)waitPhrase);
-                    if (list != null)
+                    if (list != null && list.getRole() != null)
                         bidiLine.addChunk(new PdfChunk(list, PdfChunk.TagRole.Open, null));
                 }
-                if (waitPhrase instanceof IAccessibleElement) {
+                if (waitPhrase instanceof IAccessibleElement && ((IAccessibleElement)waitPhrase).getRole() != null) {
                     bidiLine.addChunk(new PdfChunk((IAccessibleElement)waitPhrase, PdfChunk.TagRole.Open, null));
                 }
-                if (waitPhrase instanceof ListItem) {
+                if (waitPhrase instanceof ListItem && ((ListItem)waitPhrase).getRole() != null) {
                     lBody = new PdfListBody();
                     bidiLine.addChunk(new PdfChunk(lBody, PdfChunk.TagRole.Open, null));
                 }
             }
             for (Chunk c: waitPhrase.getChunks()) {
-                if (isTagged(canvas) && (c instanceof IAccessibleElement)) {
+                if (isTagged(canvas) && c.getRole() != null) {
                     bidiLine.addChunk(new PdfChunk(c, PdfChunk.TagRole.Open, null));
                 }
                 bidiLine.addChunk(new PdfChunk(c, null));
-                if (isTagged(canvas) && (c instanceof IAccessibleElement)) {
+                if (isTagged(canvas) && c.getRole() != null) {
                     bidiLine.addChunk(new PdfChunk(c, PdfChunk.TagRole.Close, null));
                 }
             }
@@ -393,12 +393,12 @@ public class ColumnText {
                 if (lBody != null) {
                     bidiLine.addChunk(new PdfChunk(lBody, PdfChunk.TagRole.Close, null));
                 }
-                if (waitPhrase instanceof IAccessibleElement) {
+                if (waitPhrase instanceof IAccessibleElement && ((IAccessibleElement)waitPhrase).getRole() != null) {
                     bidiLine.addChunk(new PdfChunk((IAccessibleElement)waitPhrase, PdfChunk.TagRole.Close, null));
                 }
                 if (waitPhrase instanceof ListItem) {
                     com.itextpdf.text.List list = getListIfItemIsLast((ListItem)waitPhrase);
-                    if (list != null)
+                    if (list != null && list.getRole() != null)
                         bidiLine.addChunk(new PdfChunk(list, PdfChunk.TagRole.Close, null));
                 }
             }
